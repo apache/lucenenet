@@ -1,741 +1,1032 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-using System.IO;
-using System.Linq;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
-using NUnit.Framework;
-
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using Directory = Lucene.Net.Store.Directory;
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using CompressionTools = Lucene.Net.Documents.CompressionTools;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using _TestUtil = Lucene.Net.Util._TestUtil;
-using Lucene.Net.Util;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    
-    /*
-    Verify we can read the pre-2.1 file format, do searches
-    against it, and add documents to it.*/
-    
-    [TestFixture]
-    public class TestBackwardsCompatibility:LuceneTestCase
-    {
-        
-        // Uncomment these cases & run them on an older Lucene
-        // version, to generate an index to test backwards
-        // compatibility.  Then, cd to build/test/index.cfs and
-        // run "zip index.<VERSION>.cfs.zip *"; cd to
-        // build/test/index.nocfs and run "zip
-        // index.<VERSION>.nocfs.zip *".  Then move those 2 zip
-        // files to your trunk checkout and add them to the
-        // oldNames array.
-        
-        /*
-        public void testCreatePreLocklessCFS() throws IOException {
-        createIndex("index.cfs", true);
-        }
-        
-        public void testCreatePreLocklessNoCFS() throws IOException {
-        createIndex("index.nocfs", false);
-        }
-        */
 
-        public class AnonymousFieldSelector : FieldSelector
-        {
-            public FieldSelectorResult Accept(string fieldName)
-            {
-                return ("compressed".Equals(fieldName)) ? FieldSelectorResult.SIZE : FieldSelectorResult.LOAD;
-            }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        
-        /* Unzips dirName + ".zip" --> dirName, removing dirName
-        first */
-        public virtual void  Unzip(System.String zipName, System.String destDirName)
-        {
-#if SHARP_ZIP_LIB
-            // get zip input stream
-            ICSharpCode.SharpZipLib.Zip.ZipInputStream zipFile;
-            zipFile = new ICSharpCode.SharpZipLib.Zip.ZipInputStream(System.IO.File.OpenRead(zipName + ".zip"));
 
-            // get dest directory name
-            System.String dirName = FullDir(destDirName);
-            System.IO.FileInfo fileDir = new System.IO.FileInfo(dirName);
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
+	using Document = Lucene.Net.Document.Document;
+	using DoubleDocValuesField = Lucene.Net.Document.DoubleDocValuesField;
+	using Field = Lucene.Net.Document.Field;
+	using FieldType = Lucene.Net.Document.FieldType;
+	using FloatDocValuesField = Lucene.Net.Document.FloatDocValuesField;
+	using IntField = Lucene.Net.Document.IntField;
+	using LongField = Lucene.Net.Document.LongField;
+	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
+	using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
+	using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
+	using StringField = Lucene.Net.Document.StringField;
+	using TextField = Lucene.Net.Document.TextField;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+	using FieldCache = Lucene.Net.Search.FieldCache;
+	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+	using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
+	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+	using TermQuery = Lucene.Net.Search.TermQuery;
+	using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+	using Directory = Lucene.Net.Store.Directory;
+	using FSDirectory = Lucene.Net.Store.FSDirectory;
+	using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory;
+	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+	using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
+	using Bits = Lucene.Net.Util.Bits;
+	using BytesRef = Lucene.Net.Util.BytesRef;
+	using Constants = Lucene.Net.Util.Constants;
+	using IOUtils = Lucene.Net.Util.IOUtils;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+	using StringHelper = Lucene.Net.Util.StringHelper;
+	using TestUtil = Lucene.Net.Util.TestUtil;
+	using AfterClass = org.junit.AfterClass;
+	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
 
-            // clean up old directory (if there) and create new directory
-            RmDir(fileDir.FullName);
-            System.IO.Directory.CreateDirectory(fileDir.FullName);
+	/*
+	  Verify we can read the pre-5.0 file format, do searches
+	  against it, and add documents to it.
+	*/
+	// note: add this if we make a 4.x impersonator
+	// TODO: don't use 4.x codec, its unrealistic since it means
+	// we won't even be running the actual code, only the impostor
+	// @SuppressCodecs("Lucene4x")
+	// Sep codec cannot yet handle the offsets in our 4.x index!
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene40", "Lucene41", "Appending", "Lucene42", "Lucene45"}) public class TestBackwardsCompatibility extends Lucene.Net.Util.LuceneTestCase
+	public class TestBackwardsCompatibility : LuceneTestCase
+	{
 
-            // copy file entries from zip stream to directory
-            ICSharpCode.SharpZipLib.Zip.ZipEntry entry;
-            while ((entry = zipFile.GetNextEntry()) != null)
-            {
-                System.IO.Stream streamout = new System.IO.BufferedStream(new System.IO.FileStream(new System.IO.FileInfo(System.IO.Path.Combine(fileDir.FullName, entry.Name)).FullName, System.IO.FileMode.Create));
-                
-                byte[] buffer = new byte[8192];
-                int len;
-                while ((len = zipFile.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    streamout.Write(buffer, 0, len);
-                }
-                
-                streamout.Close();
-            }
-            
-            zipFile.Close();
-#else
-            Assert.Fail("Needs integration with SharpZipLib");
-#endif
-        }
-        
-        [Test]
-        public virtual void  TestCreateCFS()
-        {
-            System.String dirName = "testindex.cfs";
-            CreateIndex(dirName, true);
-            RmDir(dirName);
-        }
-        
-        [Test]
-        public virtual void  TestCreateNoCFS()
-        {
-            System.String dirName = "testindex.nocfs";
-            CreateIndex(dirName, true);
-            RmDir(dirName);
-        }
+	  // Uncomment these cases & run them on an older Lucene version,
+	  // to generate indexes to test backwards compatibility.  These
+	  // indexes will be created under directory /tmp/idx/.
+	  //
+	  // However, you must first disable the Lucene TestSecurityManager,
+	  // which will otherwise disallow writing outside of the build/
+	  // directory - to do this, comment out the "java.security.manager"
+	  // <sysproperty> under the "test-macro" <macrodef>.
+	  //
+	  // Be sure to create the indexes with the actual format:
+	  //  ant test -Dtestcase=TestBackwardsCompatibility -Dversion=x.y.z
+	  //      -Dtests.codec=LuceneXY -Dtests.postingsformat=LuceneXY -Dtests.docvaluesformat=LuceneXY
+	  //
+	  // Zip up the generated indexes:
+	  //
+	  //    cd /tmp/idx/index.cfs   ; zip index.<VERSION>.cfs.zip *
+	  //    cd /tmp/idx/index.nocfs ; zip index.<VERSION>.nocfs.zip *
+	  //
+	  // Then move those 2 zip files to your trunk checkout and add them
+	  // to the oldNames array.
 
-        internal string[] oldNames = new []
-                                                {
-                                                    "19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs", "21.nocfs", "22.cfs", 
-                                                    "22.nocfs", "23.cfs", "23.nocfs", "24.cfs", "24.nocfs", "29.cfs",
-                                                    "29.nocfs"
-                                                };
+	  /*
+	  public void testCreateCFS() throws IOException {
+	    createIndex("index.cfs", true, false);
+	  }
+	
+	  public void testCreateNoCFS() throws IOException {
+	    createIndex("index.nocfs", false, false);
+	  }
+	  */
 
-        [Test]
-        private void assertCompressedFields29(Directory dir, bool shouldStillBeCompressed)
-        {
-            int count = 0;
-            int TEXT_PLAIN_LENGTH = TEXT_TO_COMPRESS.Length*2;
-            // FieldSelectorResult.SIZE returns 2*number_of_chars for String fields:
-            int BINARY_PLAIN_LENGTH = BINARY_TO_COMPRESS.Length;
+	/*
+	  // These are only needed for the special upgrade test to verify
+	  // that also single-segment indexes are correctly upgraded by IndexUpgrader.
+	  // You don't need them to be build for non-4.0 (the test is happy with just one
+	  // "old" segment format, version is unimportant:
+	  
+	  public void testCreateSingleSegmentCFS() throws IOException {
+	    createIndex("index.singlesegment.cfs", true, true);
+	  }
+	
+	  public void testCreateSingleSegmentNoCFS() throws IOException {
+	    createIndex("index.singlesegment.nocfs", false, true);
+	  }
+	
+	*/  
 
-            IndexReader reader = IndexReader.Open(dir, true);
-            try
-            {
-                // look into sub readers and check if raw merge is on/off
-                var readers = new System.Collections.Generic.List<IndexReader>();
-                ReaderUtil.GatherSubReaders(readers, reader);
-                foreach (IndexReader ir in readers)
-                {
-                    FieldsReader fr = ((SegmentReader) ir).GetFieldsReader();
-                    Assert.IsTrue(shouldStillBeCompressed != fr.CanReadRawDocs(),
-                                  "for a 2.9 index, FieldsReader.canReadRawDocs() must be false and other way round for a trunk index");
-                }
+	  /*
+	  public void testCreateMoreTermsIndex() throws Exception {
+	    // we use a real directory name that is not cleaned up,
+	    // because this method is only used to create backwards
+	    // indexes:
+	    File indexDir = new File("moreterms");
+	    TestUtil.rmDir(indexDir);
+	    Directory dir = newFSDirectory(indexDir);
+	
+	    LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
+	    mp.setUseCompoundFile(false);
+	    mp.setNoCFSRatio(1.0);
+	    mp.setMaxCFSSegmentSizeMB(Double.POSITIVE_INFINITY);
+	    MockAnalyzer analyzer = new MockAnalyzer(random());
+	    analyzer.setMaxTokenLength(TestUtil.nextInt(random(), 1, IndexWriter.MAX_TERM_LENGTH));
+	
+	    // TODO: remove randomness
+	    IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+	      .setMergePolicy(mp);
+	    conf.setCodec(Codec.forName("Lucene40"));
+	    IndexWriter writer = new IndexWriter(dir, conf);
+	    LineFileDocs docs = new LineFileDocs(null, true);
+	    for(int i=0;i<50;i++) {
+	      writer.addDocument(docs.nextDoc());
+	    }
+	    writer.close();
+	    dir.close();
+	
+	    // Gives you time to copy the index out!: (there is also
+	    // a test option to not remove temp dir...):
+	    Thread.sleep(100000);
+	  }
+	  */
 
-                // test that decompression works correctly
-                for (int i = 0; i < reader.MaxDoc; i++)
-                {
-                    if (!reader.IsDeleted(i))
-                    {
-                        Document d = reader.Document(i);
-                        if (d.Get("content3") != null) continue;
-                        count++;
-                        IFieldable compressed = d.GetFieldable("compressed");
-                        if (int.Parse(d.Get("id"))%2 == 0)
-                        {
-                            Assert.IsFalse(compressed.IsBinary);
-                            Assert.AreEqual(TEXT_TO_COMPRESS, compressed.StringValue,
-                                            "incorrectly decompressed string");
-                        }
-                        else
-                        {
-                            Assert.IsTrue(compressed.IsBinary);
-                            Assert.IsTrue(BINARY_TO_COMPRESS.SequenceEqual(compressed.GetBinaryValue()),
-                                          "incorrectly decompressed binary");
-                        }
-                    }
-                }
+	  internal static readonly string[] OldNames = new string[] {"40.cfs", "40.nocfs", "41.cfs", "41.nocfs", "42.cfs", "42.nocfs", "45.cfs", "45.nocfs", "461.cfs", "461.nocfs"};
 
-                //check if field was decompressed after optimize
-                for (int i = 0; i < reader.MaxDoc; i++)
-                {
-                    if (!reader.IsDeleted(i))
-                    {
-                        Document d = reader.Document(i, new AnonymousFieldSelector());
-                        if (d.Get("content3") != null) continue;
-                        count++;
-                        // read the size from the binary value using BinaryReader (this prevents us from doing the shift ops ourselves):
-                        // ugh, Java uses Big-Endian streams, so we need to do it manually.
-                        byte[] encodedSize = d.GetFieldable("compressed").GetBinaryValue().Take(4).Reverse().ToArray();
-                        int actualSize = BitConverter.ToInt32(encodedSize, 0);
-                        int compressedSize = int.Parse(d.Get("compressedSize"));
-                        bool binary = int.Parse(d.Get("id"))%2 > 0;
-                        int shouldSize = shouldStillBeCompressed
-                                             ? compressedSize
-                                             : (binary ? BINARY_PLAIN_LENGTH : TEXT_PLAIN_LENGTH);
-                        Assert.AreEqual(shouldSize, actualSize, "size incorrect");
-                        if (!shouldStillBeCompressed)
-                        {
-                            Assert.IsFalse(compressedSize == actualSize,
-                                           "uncompressed field should have another size than recorded in index");
-                        }
-                    }
-                }
-                Assert.AreEqual(34*2, count, "correct number of tests");
-            }
-            finally
-            {
-                reader.Dispose();
-            }
-        }
+	  internal readonly string[] UnsupportedNames = new string[] {"19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs", "21.nocfs", "22.cfs", "22.nocfs", "23.cfs", "23.nocfs", "24.cfs", "24.nocfs", "29.cfs", "29.nocfs"};
 
-        [Test]
-        public virtual void  TestOptimizeOldIndex()
-        {
-            int hasTested29 = 0;
-            for (int i = 0; i < oldNames.Length; i++)
-            {
-                System.String dirName = Paths.CombinePath(Paths.ProjectRootDirectory, "test/core/index/index." + oldNames[i]);
-                Unzip(dirName, oldNames[i]);
-                System.String fullPath = FullDir(oldNames[i]);
-                Directory dir = FSDirectory.Open(new System.IO.DirectoryInfo(fullPath));
+	  internal static readonly string[] OldSingleSegmentNames = new string[] {"40.optimized.cfs", "40.optimized.nocfs"};
 
-                if (oldNames[i].StartsWith("29."))
-                {
-                    assertCompressedFields29(dir, true);
-                    hasTested29++;
-                }
+	  internal static IDictionary<string, Directory> OldIndexDirs;
 
-                IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-                w.Optimize();
-                w.Close();
-                
-                _TestUtil.CheckIndex(dir);
+	  /// <summary>
+	  /// Randomizes the use of some of hte constructor variations
+	  /// </summary>
+	  private static IndexUpgrader NewIndexUpgrader(Directory dir)
+	  {
+		bool streamType = random().nextBoolean();
+		int choice = TestUtil.Next(random(), 0, 2);
+		switch (choice)
+		{
+		  case 0:
+			  return new IndexUpgrader(dir, TEST_VERSION_CURRENT);
+		  case 1:
+			  return new IndexUpgrader(dir, TEST_VERSION_CURRENT, streamType ? null : System.err, false);
+		  case 2:
+			  return new IndexUpgrader(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, null), false);
+		  default:
+			  Assert.Fail("case statement didn't get updated when random bounds changed");
+		  break;
+		}
+		return null; // never get here
+	  }
 
-                if (oldNames[i].StartsWith("29."))
-                {
-                    assertCompressedFields29(dir, false);
-                    hasTested29++;
-                }
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
+	  public static void BeforeClass()
+	  {
+		Assert.IsFalse("test infra is broken!", LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
+		IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
+		names.AddRange(Arrays.asList(OldNames));
+		names.AddRange(Arrays.asList(OldSingleSegmentNames));
+		OldIndexDirs = new Dictionary<>();
+		foreach (string name in names)
+		{
+		  File dir = createTempDir(name);
+		  File dataFile = new File(typeof(TestBackwardsCompatibility).getResource("index." + name + ".zip").toURI());
+		  TestUtil.unzip(dataFile, dir);
+		  OldIndexDirs[name] = newFSDirectory(dir);
+		}
+	  }
 
-                dir.Close();
-                RmDir(oldNames[i]);
-            }
-            Assert.AreEqual(4, hasTested29, "test for compressed field should have run 4 times");
-        }
-        
-        [Test]
-        public virtual void  TestSearchOldIndex()
-        {
-            for (int i = 0; i < oldNames.Length; i++)
-            {
-                System.String dirName = Paths.CombinePath(Paths.ProjectRootDirectory, "test/core/index/index." + oldNames[i]);
-                Unzip(dirName, oldNames[i]);
-                searchIndex(oldNames[i], oldNames[i]);
-                RmDir(oldNames[i]);
-            }
-        }
-        
-        [Test]
-        public virtual void  TestIndexOldIndexNoAdds()
-        {
-            for (int i = 0; i < oldNames.Length; i++)
-            {
-                System.String dirName = Paths.CombinePath(Paths.ProjectRootDirectory, "test/core/index/index." + oldNames[i]);
-                Unzip(dirName, oldNames[i]);
-                ChangeIndexNoAdds(oldNames[i]);
-                RmDir(oldNames[i]);
-            }
-        }
-        
-        [Test]
-        public virtual void  TestIndexOldIndex()
-        {
-            for (int i = 0; i < oldNames.Length; i++)
-            {
-                System.String dirName = Paths.CombinePath(Paths.ProjectRootDirectory, "test/core/index/index." + oldNames[i]);
-                Unzip(dirName, oldNames[i]);
-                ChangeIndexWithAdds(oldNames[i]);
-                RmDir(oldNames[i]);
-            }
-        }
-        
-        private void  TestHits(ScoreDoc[] hits, int expectedCount, IndexReader reader)
-        {
-            int hitCount = hits.Length;
-            Assert.AreEqual(expectedCount, hitCount, "wrong number of hits");
-            for (int i = 0; i < hitCount; i++)
-            {
-                reader.Document(hits[i].Doc);
-                reader.GetTermFreqVectors(hits[i].Doc);
-            }
-        }
-        
-        public virtual void  searchIndex(System.String dirName, System.String oldName)
-        {
-            //QueryParser parser = new QueryParser("contents", new WhitespaceAnalyzer());
-            //Query query = parser.parse("handle:1");
-            
-            dirName = FullDir(dirName);
-            
-            Directory dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirName));
-            IndexSearcher searcher = new IndexSearcher(dir, true);
-            IndexReader reader = searcher.IndexReader;
-            
-            _TestUtil.CheckIndex(dir);
-            
-            for (int i = 0; i < 35; i++)
-            {
-                if (!reader.IsDeleted(i))
-                {
-                    Document d = reader.Document(i);
-                    var fields = d.GetFields();
-                    if (!oldName.StartsWith("19.") && !oldName.StartsWith("20.") && !oldName.StartsWith("21.") && !oldName.StartsWith("22."))
-                    {
-                        if (d.GetField("content3") == null)
-                        {
-                            int numFields = oldName.StartsWith("29.") ? 7 : 5;
-                            Assert.AreEqual(numFields, fields.Count);
-                            Field f = d.GetField("id");
-                            Assert.AreEqual("" + i, f.StringValue);
-                            
-                            f = (Field) d.GetField("utf8");
-                            Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.StringValue);
-                            
-                            f = (Field) d.GetField("autf8");
-                            Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.StringValue);
-                            
-                            f = (Field) d.GetField("content2");
-                            Assert.AreEqual("here is more content with aaa aaa aaa", f.StringValue);
-                            
-                            f = (Field) d.GetField("fie\u2C77ld");
-                            Assert.AreEqual("field with non-ascii name", f.StringValue);
-                        }
-                    }
-                }
-                // Only ID 7 is deleted
-                else
-                    Assert.AreEqual(7, i);
-            }
-            
-            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            
-            // First document should be #21 since it's norm was
-            // increased:
-            Document d2 = searcher.Doc(hits[0].Doc);
-            Assert.AreEqual("21", d2.Get("id"), "didn't get the right document first");
-            
-            TestHits(hits, 34, searcher.IndexReader);
-            
-            if (!oldName.StartsWith("19.") && !oldName.StartsWith("20.") && !oldName.StartsWith("21.") && !oldName.StartsWith("22."))
-            {
-                // Test on indices >= 2.3
-                hits = searcher.Search(new TermQuery(new Term("utf8", "\u0000")), null, 1000).ScoreDocs;
-                Assert.AreEqual(34, hits.Length);
-                hits = searcher.Search(new TermQuery(new Term("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne")), null, 1000).ScoreDocs;
-                Assert.AreEqual(34, hits.Length);
-                hits = searcher.Search(new TermQuery(new Term("utf8", "ab\ud917\udc17cd")), null, 1000).ScoreDocs;
-                Assert.AreEqual(34, hits.Length);
-            }
-            
-            searcher.Close();
-            dir.Close();
-        }
-        
-        private int Compare(System.String name, System.String v)
-        {
-            int v0 = System.Int32.Parse(name.Substring(0, (2) - (0)));
-            int v1 = System.Int32.Parse(v);
-            return v0 - v1;
-        }
-        
-        /* Open pre-lockless index, add docs, do a delete &
-        * setNorm, and search */
-        public virtual void  ChangeIndexWithAdds(System.String dirName)
-        {
-            System.String origDirName = dirName;
-            dirName = FullDir(dirName);
-            
-            Directory dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirName));
-            
-            // open writer
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
-            
-            // add 10 docs
-            for (int i = 0; i < 10; i++)
-            {
-                AddDoc(writer, 35 + i);
-            }
-            
-            // make sure writer sees right total -- writer seems not to know about deletes in .del?
-            int expected;
-            if (Compare(origDirName, "24") < 0)
-            {
-                expected = 45;
-            }
-            else
-            {
-                expected = 46;
-            }
-            Assert.AreEqual(expected, writer.MaxDoc(), "wrong doc count");
-            writer.Close();
-            
-            // make sure searching sees right # hits
-            IndexSearcher searcher = new IndexSearcher(dir, true);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            Document d = searcher.Doc(hits[0].Doc);
-            Assert.AreEqual("21", d.Get("id"), "wrong first document");
-            TestHits(hits, 44, searcher.IndexReader);
-            searcher.Close();
-            
-            // make sure we can do delete & setNorm against this
-            // pre-lockless segment:
-            IndexReader reader = IndexReader.Open(dir, false);
-            Term searchTerm = new Term("id", "6");
-            int delCount = reader.DeleteDocuments(searchTerm);
-            Assert.AreEqual(1, delCount, "wrong delete count");
-            reader.SetNorm(22, "content", (float) 2.0);
-            reader.Close();
-            
-            // make sure they "took":
-            searcher = new IndexSearcher(dir, true);
-            hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            Assert.AreEqual(43, hits.Length, "wrong number of hits");
-            d = searcher.Doc(hits[0].Doc);
-            Assert.AreEqual("22", d.Get("id"), "wrong first document");
-            TestHits(hits, 43, searcher.IndexReader);
-            searcher.Close();
-            
-            // optimize
-            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
-            writer.Optimize();
-            writer.Close();
-            
-            searcher = new IndexSearcher(dir, true);
-            hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            Assert.AreEqual(43, hits.Length, "wrong number of hits");
-            d = searcher.Doc(hits[0].Doc);
-            TestHits(hits, 43, searcher.IndexReader);
-            Assert.AreEqual("22", d.Get("id"), "wrong first document");
-            searcher.Close();
-            
-            dir.Close();
-        }
-        
-        /* Open pre-lockless index, add docs, do a delete &
-        * setNorm, and search */
-        public virtual void  ChangeIndexNoAdds(System.String dirName)
-        {
-            dirName = FullDir(dirName);
-            
-            Directory dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirName));
-            
-            // make sure searching sees right # hits
-            IndexSearcher searcher = new IndexSearcher(dir, true);
-            ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            Assert.AreEqual(34, hits.Length, "wrong number of hits");
-            Document d = searcher.Doc(hits[0].Doc);
-            Assert.AreEqual("21", d.Get("id"), "wrong first document");
-            searcher.Close();
-            
-            // make sure we can do a delete & setNorm against this
-            // pre-lockless segment:
-            IndexReader reader = IndexReader.Open(dir, false);
-            Term searchTerm = new Term("id", "6");
-            int delCount = reader.DeleteDocuments(searchTerm);
-            Assert.AreEqual(1, delCount, "wrong delete count");
-            reader.SetNorm(22, "content", (float) 2.0);
-            reader.Close();
-            
-            // make sure they "took":
-            searcher = new IndexSearcher(dir, true);
-            hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            Assert.AreEqual(33, hits.Length, "wrong number of hits");
-            d = searcher.Doc(hits[0].Doc);
-            Assert.AreEqual("22", d.Get("id"), "wrong first document");
-            TestHits(hits, 33, searcher.IndexReader);
-            searcher.Close();
-            
-            // optimize
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), false, IndexWriter.MaxFieldLength.UNLIMITED);
-            writer.Optimize();
-            writer.Close();
-            
-            searcher = new IndexSearcher(dir, true);
-            hits = searcher.Search(new TermQuery(new Term("content", "aaa")), null, 1000).ScoreDocs;
-            Assert.AreEqual(33, hits.Length, "wrong number of hits");
-            d = searcher.Doc(hits[0].Doc);
-            Assert.AreEqual("22", d.Get("id"), "wrong first document");
-            TestHits(hits, 33, searcher.IndexReader);
-            searcher.Close();
-            
-            dir.Close();
-        }
-        
-        public virtual void  CreateIndex(System.String dirName, bool doCFS)
-        {
-            
-            RmDir(dirName);
-            
-            dirName = FullDir(dirName);
-            
-            Directory dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirName));
-            IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.UseCompoundFile = doCFS;
-            writer.SetMaxBufferedDocs(10);
-            
-            for (int i = 0; i < 35; i++)
-            {
-                AddDoc(writer, i);
-            }
-            Assert.AreEqual(35, writer.MaxDoc(), "wrong doc count");
-            writer.Close();
-            
-            // open fresh writer so we get no prx file in the added segment
-            writer = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
-            writer.UseCompoundFile = doCFS;
-            writer.SetMaxBufferedDocs(10);
-            AddNoProxDoc(writer);
-            writer.Close();
-            
-            // Delete one doc so we get a .del file:
-            IndexReader reader = IndexReader.Open(dir, false);
-            Term searchTerm = new Term("id", "7");
-            int delCount = reader.DeleteDocuments(searchTerm);
-            Assert.AreEqual(1, delCount, "didn't delete the right number of documents");
-            
-            // Set one norm so we get a .s0 file:
-            reader.SetNorm(21, "content", (float) 1.5);
-            reader.Close();
-        }
-        
-        /* Verifies that the expected file names were produced */
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
+	  public static void AfterClass()
+	  {
+		foreach (Directory d in OldIndexDirs.Values)
+		{
+		  d.close();
+		}
+		OldIndexDirs = null;
+	  }
 
-        [Test]
-        public virtual void TestExactFileNames()
-        {
-            System.String outputDir = "lucene.backwardscompat0.index";
-            RmDir(outputDir);
+	  /// <summary>
+	  /// this test checks that *only* IndexFormatTooOldExceptions are thrown when you open and operate on too old indexes! </summary>
+	  public virtual void TestUnsupportedOldIndexes()
+	  {
+		for (int i = 0;i < UnsupportedNames.Length;i++)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("TEST: index " + UnsupportedNames[i]);
+		  }
+		  File oldIndxeDir = createTempDir(UnsupportedNames[i]);
+		  TestUtil.unzip(getDataFile("unsupported." + UnsupportedNames[i] + ".zip"), oldIndxeDir);
+		  BaseDirectoryWrapper dir = newFSDirectory(oldIndxeDir);
+		  // don't checkindex, these are intentionally not supported
+		  dir.CheckIndexOnClose = false;
 
-            try
-            {
-                Directory dir = FSDirectory.Open(new System.IO.DirectoryInfo(FullDir(outputDir)));
+		  IndexReader reader = null;
+		  IndexWriter writer = null;
+		  try
+		  {
+			reader = DirectoryReader.open(dir);
+			Assert.Fail("DirectoryReader.open should not pass for " + UnsupportedNames[i]);
+		  }
+		  catch (IndexFormatTooOldException e)
+		  {
+			// pass
+		  }
+		  finally
+		  {
+			if (reader != null)
+			{
+				reader.close();
+			}
+			reader = null;
+		  }
 
-                IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true,
-                                                     IndexWriter.MaxFieldLength.UNLIMITED);
-                writer.SetRAMBufferSizeMB(16.0);
-                for (int i = 0; i < 35; i++)
-                {
-                    AddDoc(writer, i);
-                }
-                Assert.AreEqual(35, writer.MaxDoc(), "wrong doc count");
-                writer.Close();
+		  try
+		  {
+			writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+			Assert.Fail("IndexWriter creation should not pass for " + UnsupportedNames[i]);
+		  }
+		  catch (IndexFormatTooOldException e)
+		  {
+			// pass
+			if (VERBOSE)
+			{
+			  Console.WriteLine("TEST: got expected exc:");
+			  e.printStackTrace(System.out);
+			}
+			// Make sure exc message includes a path=
+			Assert.IsTrue("got exc message: " + e.Message, e.Message.IndexOf("path=\"") != -1);
+		  }
+		  finally
+		  {
+			// we should fail to open IW, and so it should be null when we get here.
+			// However, if the test fails (i.e., IW did not fail on open), we need
+			// to close IW. However, if merges are run, IW may throw
+			// IndexFormatTooOldException, and we don't want to mask the Assert.Fail()
+			// above, so close without waiting for merges.
+			if (writer != null)
+			{
+			  writer.close(false);
+			}
+			writer = null;
+		  }
 
-                // Delete one doc so we get a .del file:
-                IndexReader reader = IndexReader.Open(dir, false);
-                Term searchTerm = new Term("id", "7");
-                int delCount = reader.DeleteDocuments(searchTerm);
-                Assert.AreEqual(1, delCount, "didn't delete the right number of documents");
+		  ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+		  CheckIndex checker = new CheckIndex(dir);
+		  checker.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
+		  CheckIndex.Status indexStatus = checker.checkIndex();
+		  Assert.IsFalse(indexStatus.clean);
+		  Assert.IsTrue(bos.ToString(IOUtils.UTF_8).Contains(typeof(IndexFormatTooOldException).Name));
 
-                // Set one norm so we get a .s0 file:
-                reader.SetNorm(21, "content", (float) 1.5);
-                reader.Close();
+		  dir.close();
+		  TestUtil.rm(oldIndxeDir);
+		}
+	  }
 
-                // The numbering of fields can vary depending on which
-                // JRE is in use.  On some JREs we see content bound to
-                // field 0; on others, field 1.  So, here we have to
-                // figure out which field number corresponds to
-                // "content", and then set our expected file names below
-                // accordingly:
-                CompoundFileReader cfsReader = new CompoundFileReader(dir, "_0.cfs");
-                FieldInfos fieldInfos = new FieldInfos(cfsReader, "_0.fnm");
-                int contentFieldIndex = -1;
-                for (int i = 0; i < fieldInfos.Size(); i++)
-                {
-                    FieldInfo fi = fieldInfos.FieldInfo(i);
-                    if (fi.name_ForNUnit.Equals("content"))
-                    {
-                        contentFieldIndex = i;
-                        break;
-                    }
-                }
-                cfsReader.Close();
-                Assert.IsTrue(contentFieldIndex != -1,
-                              "could not locate the 'content' field number in the _2.cfs segment");
+	  public virtual void TestFullyMergeOldIndex()
+	  {
+		foreach (string name in OldNames)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("\nTEST: index=" + name);
+		  }
+		  Directory dir = newDirectory(OldIndexDirs[name]);
+		  IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  w.forceMerge(1);
+		  w.close();
 
-                // Now verify file names:
-                System.String[] expected;
-                expected = new System.String[]
-                               {"_0.cfs", "_0_1.del", "_0_1.s" + contentFieldIndex, "segments_3", "segments.gen"};
+		  dir.close();
+		}
+	  }
 
-                System.String[] actual = dir.ListAll();
-                System.Array.Sort(expected);
-                System.Array.Sort(actual);
-                if (!CollectionsHelper.Equals(expected, actual))
-                {
-                    Assert.Fail("incorrect filenames in index: expected:\n    " + AsString(expected) +
-                                "\n  actual:\n    " + AsString(actual));
-                }
-                dir.Close();
-            }
-            finally
-            {
-                RmDir(outputDir);
-            }
-        }
+	  public virtual void TestAddOldIndexes()
+	  {
+		foreach (string name in OldNames)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("\nTEST: old index " + name);
+		  }
+		  Directory targetDir = newDirectory();
+		  IndexWriter w = new IndexWriter(targetDir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  w.addIndexes(OldIndexDirs[name]);
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("\nTEST: done adding indices; now close");
+		  }
+		  w.close();
 
-        private System.String AsString(System.String[] l)
-        {
-            System.String s = "";
-            for (int i = 0; i < l.Length; i++)
-            {
-                if (i > 0)
-                {
-                    s += "\n    ";
-                }
-                s += l[i];
-            }
-            return s;
-        }
-        
-        private void  AddDoc(IndexWriter writer, int id)
-        {
-            Document doc = new Document();
-            doc.Add(new Field("content", "aaa", Field.Store.NO, Field.Index.ANALYZED));
-            doc.Add(new Field("id", System.Convert.ToString(id), Field.Store.YES, Field.Index.NOT_ANALYZED));
-            doc.Add(new Field("autf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            doc.Add(new Field("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            doc.Add(new Field("content2", "here is more content with aaa aaa aaa", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            doc.Add(new Field("fie\u2C77ld", "field with non-ascii name", Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-            /* This was used in 2.9 to generate an index with compressed field:
-            if (id % 2 == 0)
-            {
-                doc.Add(new Field("compressed", TEXT_TO_COMPRESS, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED));
-                doc.Add(new Field("compressedSize", System.Convert.ToString(TEXT_COMPRESSED_LENGTH), Field.Store.YES, Field.Index.NOT_ANALYZED));
-            }
-            else
-            {
-                doc.Add(new Field("compressed", BINARY_TO_COMPRESS, Field.Store.COMPRESS));
-                doc.Add(new Field("compressedSize", System.Convert.ToString(BINARY_COMPRESSED_LENGTH), Field.Store.YES, Field.Index.NOT_ANALYZED));
-            }*/
-            // Add numeric fields, to test if flex preserves encoding
-            doc.Add(new NumericField("trieInt", 4).SetIntValue(id));
-            doc.Add(new NumericField("trieLong", 4).SetLongValue(id));
-            writer.AddDocument(doc);
-        }
-        
-        private void  AddNoProxDoc(IndexWriter writer)
-        {
-            Document doc = new Document();
-            Field f = new Field("content3", "aaa", Field.Store.YES, Field.Index.ANALYZED);
-            f.OmitTermFreqAndPositions = true;
-            doc.Add(f);
-            f = new Field("content4", "aaa", Field.Store.YES, Field.Index.NO);
-            f.OmitTermFreqAndPositions = true;
-            doc.Add(f);
-            writer.AddDocument(doc);
-        }
-        
-        private void  RmDir(System.String dir)
-        {
-            System.IO.FileInfo fileDir = new System.IO.FileInfo(FullDir(dir));
-            bool tmpBool;
-            if (System.IO.File.Exists(fileDir.FullName))
-                tmpBool = true;
-            else
-                tmpBool = System.IO.Directory.Exists(fileDir.FullName);
-            if (tmpBool)
-            {
-                System.IO.FileInfo[] files = FileSupport.GetFiles(fileDir);
-                if (files != null)
-                {
-                    for (int i = 0; i < files.Length; i++)
-                    {
-                        bool tmpBool2;
-                        if (System.IO.File.Exists(files[i].FullName))
-                        {
-                            System.IO.File.Delete(files[i].FullName);
-                            tmpBool2 = true;
-                        }
-                        else if (System.IO.Directory.Exists(files[i].FullName))
-                        {
-                            System.IO.Directory.Delete(files[i].FullName);
-                            tmpBool2 = true;
-                        }
-                        else
-                            tmpBool2 = false;
-                        bool generatedAux = tmpBool2;
-                    }
-                }
-                bool tmpBool3;
-                if (System.IO.File.Exists(fileDir.FullName))
-                {
-                    System.IO.File.Delete(fileDir.FullName);
-                    tmpBool3 = true;
-                }
-                else if (System.IO.Directory.Exists(fileDir.FullName))
-                {
-                    System.IO.Directory.Delete(fileDir.FullName);
-                    tmpBool3 = true;
-                }
-                else
-                    tmpBool3 = false;
-                bool generatedAux2 = tmpBool3;
-            }
-        }
-        
-        public static System.String FullDir(System.String dirName)
-        {
-            return new System.IO.FileInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), dirName)).FullName;
-        }
-        
-        internal const System.String TEXT_TO_COMPRESS = "this is a compressed field and should appear in 3.0 as an uncompressed field after merge";
-        // FieldSelectorResult.SIZE returns compressed size for compressed fields,
-        // which are internally handled as binary;
-        // do it in the same way like FieldsWriter, do not use
-        // CompressionTools.compressString() for compressed fields:
-        internal static readonly byte[] BINARY_TO_COMPRESS = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+		  targetDir.close();
+		}
+	  }
 
-        /* This was used in 2.9 to generate an index with compressed field
-        internal static int TEXT_COMPRESSED_LENGTH;
-        internal static readonly int BINARY_COMPRESSED_LENGTH = CompressionTools.Compress(BINARY_TO_COMPRESS).Length;
-        static TestBackwardsCompatibility()
-        {
-            {
-                try
-                {
-                    TEXT_COMPRESSED_LENGTH = CompressionTools.Compress(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(TEXT_TO_COMPRESS)).Length;
-                }
-                catch (System.Exception e)
-                {
-                    throw new System.SystemException();
-                }
-            }
-        }*/
-    }
+	  public virtual void TestAddOldIndexesReader()
+	  {
+		foreach (string name in OldNames)
+		{
+		  IndexReader reader = DirectoryReader.open(OldIndexDirs[name]);
+
+		  Directory targetDir = newDirectory();
+		  IndexWriter w = new IndexWriter(targetDir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  w.addIndexes(reader);
+		  w.close();
+		  reader.close();
+
+		  targetDir.close();
+		}
+	  }
+
+	  public virtual void TestSearchOldIndex()
+	  {
+		foreach (string name in OldNames)
+		{
+		  SearchIndex(OldIndexDirs[name], name);
+		}
+	  }
+
+	  public virtual void TestIndexOldIndexNoAdds()
+	  {
+		foreach (string name in OldNames)
+		{
+		  Directory dir = newDirectory(OldIndexDirs[name]);
+		  ChangeIndexNoAdds(random(), dir);
+		  dir.close();
+		}
+	  }
+
+	  public virtual void TestIndexOldIndex()
+	  {
+		foreach (string name in OldNames)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("TEST: oldName=" + name);
+		  }
+		  Directory dir = newDirectory(OldIndexDirs[name]);
+		  ChangeIndexWithAdds(random(), dir, name);
+		  dir.close();
+		}
+	  }
+
+	  private void DoTestHits(ScoreDoc[] hits, int expectedCount, IndexReader reader)
+	  {
+		int hitCount = hits.Length;
+		Assert.AreEqual(expectedCount, hitCount, "wrong number of hits");
+		for (int i = 0;i < hitCount;i++)
+		{
+		  reader.document(hits[i].doc);
+		  reader.getTermVectors(hits[i].doc);
+		}
+	  }
+
+	  public virtual void SearchIndex(Directory dir, string oldName)
+	  {
+		//QueryParser parser = new QueryParser("contents", new MockAnalyzer(random));
+		//Query query = parser.parse("handle:1");
+
+		IndexReader reader = DirectoryReader.Open(dir);
+        IndexSearcher searcher = new IndexSearcher(dir, true);
+
+		TestUtil.CheckIndex(dir);
+
+		// true if this is a 4.0+ index
+		bool is40Index = MultiFields.GetMergedFieldInfos(reader).FieldInfo("content5") != null;
+		// true if this is a 4.2+ index
+		bool is42Index = MultiFields.GetMergedFieldInfos(reader).FieldInfo("dvSortedSet") != null;
+
+		Debug.Assert(is40Index); // NOTE: currently we can only do this on trunk!
+
+		Bits liveDocs = MultiFields.getLiveDocs(reader);
+
+		for (int i = 0;i < 35;i++)
+		{
+		  if (liveDocs.Get(i))
+		  {
+			Document d = reader.document(i);
+			IList<IndexableField> fields = d.Fields;
+			bool isProxDoc = d.GetField("content3") == null;
+			if (isProxDoc)
+			{
+			  int numFields = is40Index ? 7 : 5;
+			  Assert.AreEqual(numFields, fields.Count);
+			  IndexableField f = d.GetField("id");
+			  Assert.AreEqual("" + i, f.stringValue());
+
+			  f = d.getField("utf8");
+			  Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.stringValue());
+
+			  f = d.getField("autf8");
+			  Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", f.stringValue());
+
+			  f = d.getField("content2");
+			  Assert.AreEqual("here is more content with aaa aaa aaa", f.stringValue());
+
+			  f = d.getField("fie\u2C77ld");
+			  Assert.AreEqual("field with non-ascii name", f.stringValue());
+			}
+
+			Fields tfvFields = reader.getTermVectors(i);
+			Assert.IsNotNull( tfvFields, "i=" + i);
+			Terms tfv = tfvFields.terms("utf8");
+			Assert.IsNotNull( tfv, "docID=" + i + " index=" + oldName);
+		  }
+		  else
+		  {
+			// Only ID 7 is deleted
+			Assert.AreEqual(7, i);
+		  }
+		}
+
+		if (is40Index)
+		{
+		  // check docvalues fields
+		  NumericDocValues dvByte = MultiDocValues.getNumericValues(reader, "dvByte");
+		  BinaryDocValues dvBytesDerefFixed = MultiDocValues.getBinaryValues(reader, "dvBytesDerefFixed");
+		  BinaryDocValues dvBytesDerefVar = MultiDocValues.getBinaryValues(reader, "dvBytesDerefVar");
+		  SortedDocValues dvBytesSortedFixed = MultiDocValues.getSortedValues(reader, "dvBytesSortedFixed");
+		  SortedDocValues dvBytesSortedVar = MultiDocValues.getSortedValues(reader, "dvBytesSortedVar");
+		  BinaryDocValues dvBytesStraightFixed = MultiDocValues.getBinaryValues(reader, "dvBytesStraightFixed");
+		  BinaryDocValues dvBytesStraightVar = MultiDocValues.getBinaryValues(reader, "dvBytesStraightVar");
+		  NumericDocValues dvDouble = MultiDocValues.getNumericValues(reader, "dvDouble");
+		  NumericDocValues dvFloat = MultiDocValues.getNumericValues(reader, "dvFloat");
+		  NumericDocValues dvInt = MultiDocValues.getNumericValues(reader, "dvInt");
+		  NumericDocValues dvLong = MultiDocValues.getNumericValues(reader, "dvLong");
+		  NumericDocValues dvPacked = MultiDocValues.getNumericValues(reader, "dvPacked");
+		  NumericDocValues dvShort = MultiDocValues.getNumericValues(reader, "dvShort");
+		  SortedSetDocValues dvSortedSet = null;
+		  if (is42Index)
+		  {
+			dvSortedSet = MultiDocValues.getSortedSetValues(reader, "dvSortedSet");
+		  }
+
+		  for (int i = 0;i < 35;i++)
+		  {
+			int id = Convert.ToInt32(reader.document(i).get("id"));
+			Assert.AreEqual(id, dvByte.get(i));
+
+			sbyte[] bytes = new sbyte[] {(sbyte)((int)((uint)id >> 24)), (sbyte)((int)((uint)id >> 16)),(sbyte)((int)((uint)id >> 8)),(sbyte)id};
+			BytesRef expectedRef = new BytesRef(bytes);
+			BytesRef scratch = new BytesRef();
+
+			dvBytesDerefFixed.get(i, scratch);
+			Assert.AreEqual(expectedRef, scratch);
+			dvBytesDerefVar.get(i, scratch);
+			Assert.AreEqual(expectedRef, scratch);
+			dvBytesSortedFixed.get(i, scratch);
+			Assert.AreEqual(expectedRef, scratch);
+			dvBytesSortedVar.get(i, scratch);
+			Assert.AreEqual(expectedRef, scratch);
+			dvBytesStraightFixed.get(i, scratch);
+			Assert.AreEqual(expectedRef, scratch);
+			dvBytesStraightVar.get(i, scratch);
+			Assert.AreEqual(expectedRef, scratch);
+
+			Assert.AreEqual((double)id, double.longBitsToDouble(dvDouble.get(i)), 0D);
+			Assert.AreEqual((float)id, float.intBitsToFloat((int)dvFloat.get(i)), 0F);
+			Assert.AreEqual(id, dvInt.get(i));
+			Assert.AreEqual(id, dvLong.get(i));
+			Assert.AreEqual(id, dvPacked.get(i));
+			Assert.AreEqual(id, dvShort.get(i));
+			if (is42Index)
+			{
+			  dvSortedSet.Document = i;
+			  long ord = dvSortedSet.nextOrd();
+			  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dvSortedSet.nextOrd());
+			  dvSortedSet.lookupOrd(ord, scratch);
+			  Assert.AreEqual(expectedRef, scratch);
+			}
+		  }
+		}
+
+		ScoreDoc[] hits = searcher.search(new TermQuery(new Term(new string("content"), "aaa")), null, 1000).scoreDocs;
+
+		// First document should be #0
+		Document d = searcher.IndexReader.document(hits[0].doc);
+		Assert.AreEqual("didn't get the right document first", "0", d.get("id"));
+
+		DoTestHits(hits, 34, searcher.IndexReader);
+
+		if (is40Index)
+		{
+		  hits = searcher.search(new TermQuery(new Term(new string("content5"), "aaa")), null, 1000).scoreDocs;
+
+		  DoTestHits(hits, 34, searcher.IndexReader);
+
+		  hits = searcher.search(new TermQuery(new Term(new string("content6"), "aaa")), null, 1000).scoreDocs;
+
+		  DoTestHits(hits, 34, searcher.IndexReader);
+		}
+
+		hits = searcher.search(new TermQuery(new Term("utf8", "\u0000")), null, 1000).scoreDocs;
+		Assert.AreEqual(34, hits.Length);
+		hits = searcher.search(new TermQuery(new Term(new string("utf8"), "lu\uD834\uDD1Ece\uD834\uDD60ne")), null, 1000).scoreDocs;
+		Assert.AreEqual(34, hits.Length);
+		hits = searcher.search(new TermQuery(new Term("utf8", "ab\ud917\udc17cd")), null, 1000).scoreDocs;
+		Assert.AreEqual(34, hits.Length);
+
+		reader.close();
+	  }
+
+	  private int Compare(string name, string v)
+	  {
+		int v0 = Convert.ToInt32(name.Substring(0, 2));
+		int v1 = Convert.ToInt32(v);
+		return v0 - v1;
+	  }
+
+	  public virtual void ChangeIndexWithAdds(Random random, Directory dir, string origOldName)
+	  {
+		// open writer
+		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setOpenMode(OpenMode.APPEND).setMergePolicy(newLogMergePolicy()));
+		// add 10 docs
+		for (int i = 0;i < 10;i++)
+		{
+		  AddDoc(writer, 35 + i);
+		}
+
+		// make sure writer sees right total -- writer seems not to know about deletes in .del?
+		int expected;
+		if (Compare(origOldName, "24") < 0)
+		{
+		  expected = 44;
+		}
+		else
+		{
+		  expected = 45;
+		}
+		Assert.AreEqual("wrong doc count", expected, writer.numDocs());
+		writer.close();
+
+		// make sure searching sees right # hits
+		IndexReader reader = DirectoryReader.open(dir);
+		IndexSearcher searcher = newSearcher(reader);
+		ScoreDoc[] hits = searcher.search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+		Document d = searcher.IndexReader.document(hits[0].doc);
+		Assert.AreEqual("wrong first document", "0", d.get("id"));
+		DoTestHits(hits, 44, searcher.IndexReader);
+		reader.close();
+
+		// fully merge
+		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setOpenMode(OpenMode.APPEND).setMergePolicy(newLogMergePolicy()));
+		writer.forceMerge(1);
+		writer.close();
+
+		reader = DirectoryReader.open(dir);
+		searcher = newSearcher(reader);
+		hits = searcher.search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+		Assert.AreEqual("wrong number of hits", 44, hits.Length);
+		d = searcher.doc(hits[0].doc);
+		DoTestHits(hits, 44, searcher.IndexReader);
+		Assert.AreEqual("wrong first document", "0", d.get("id"));
+		reader.close();
+	  }
+
+	  public virtual void ChangeIndexNoAdds(Random random, Directory dir)
+	  {
+		// make sure searching sees right # hits
+		DirectoryReader reader = DirectoryReader.open(dir);
+		IndexSearcher searcher = newSearcher(reader);
+		ScoreDoc[] hits = searcher.search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+		Assert.AreEqual("wrong number of hits", 34, hits.Length);
+		Document d = searcher.doc(hits[0].doc);
+		Assert.AreEqual("wrong first document", "0", d.get("id"));
+		reader.close();
+
+		// fully merge
+		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setOpenMode(OpenMode.APPEND));
+		writer.forceMerge(1);
+		writer.close();
+
+		reader = DirectoryReader.open(dir);
+		searcher = newSearcher(reader);
+		hits = searcher.search(new TermQuery(new Term("content", "aaa")), null, 1000).scoreDocs;
+		Assert.AreEqual("wrong number of hits", 34, hits.Length);
+		DoTestHits(hits, 34, searcher.IndexReader);
+		reader.close();
+	  }
+
+	  public virtual File CreateIndex(string dirName, bool doCFS, bool fullyMerged)
+	  {
+		// we use a real directory name that is not cleaned up, because this method is only used to create backwards indexes:
+		File indexDir = new File("/tmp/idx", dirName);
+		TestUtil.rm(indexDir);
+		Directory dir = newFSDirectory(indexDir);
+		LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
+		mp.NoCFSRatio = doCFS ? 1.0 : 0.0;
+		mp.MaxCFSSegmentSizeMB = double.PositiveInfinity;
+		// TODO: remove randomness
+		IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setUseCompoundFile(doCFS).setMaxBufferedDocs(10).setMergePolicy(mp);
+		IndexWriter writer = new IndexWriter(dir, conf);
+
+		for (int i = 0;i < 35;i++)
+		{
+		  AddDoc(writer, i);
+		}
+		Assert.AreEqual("wrong doc count", 35, writer.maxDoc());
+		if (fullyMerged)
+		{
+		  writer.forceMerge(1);
+		}
+		writer.close();
+
+		if (!fullyMerged)
+		{
+		  // open fresh writer so we get no prx file in the added segment
+		  mp = new LogByteSizeMergePolicy();
+		  mp.NoCFSRatio = doCFS ? 1.0 : 0.0;
+		  // TODO: remove randomness
+		  conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setUseCompoundFile(doCFS).setMaxBufferedDocs(10).setMergePolicy(mp);
+		  writer = new IndexWriter(dir, conf);
+		  AddNoProxDoc(writer);
+		  writer.close();
+
+		  conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setUseCompoundFile(doCFS).setMaxBufferedDocs(10).setMergePolicy(doCFS ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES);
+		  writer = new IndexWriter(dir, conf);
+		  Term searchTerm = new Term("id", "7");
+		  writer.deleteDocuments(searchTerm);
+		  writer.close();
+		}
+
+		dir.close();
+
+		return indexDir;
+	  }
+
+	  private void AddDoc(IndexWriter writer, int id)
+	  {
+		Document doc = new Document();
+		doc.add(new TextField("content", "aaa", Field.Store.NO));
+		doc.add(new StringField("id", Convert.ToString(id), Field.Store.YES));
+		FieldType customType2 = new FieldType(TextField.TYPE_STORED);
+		customType2.StoreTermVectors = true;
+		customType2.StoreTermVectorPositions = true;
+		customType2.StoreTermVectorOffsets = true;
+		doc.add(new Field("autf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", customType2));
+		doc.add(new Field("utf8", "Lu\uD834\uDD1Ece\uD834\uDD60ne \u0000 \u2620 ab\ud917\udc17cd", customType2));
+		doc.add(new Field("content2", "here is more content with aaa aaa aaa", customType2));
+		doc.add(new Field("fie\u2C77ld", "field with non-ascii name", customType2));
+		// add numeric fields, to test if flex preserves encoding
+		doc.add(new IntField("trieInt", id, Field.Store.NO));
+		doc.add(new LongField("trieLong", (long) id, Field.Store.NO));
+		// add docvalues fields
+		doc.add(new NumericDocValuesField("dvByte", (sbyte) id));
+		sbyte[] bytes = new sbyte[] {(sbyte)((int)((uint)id >> 24)), (sbyte)((int)((uint)id >> 16)),(sbyte)((int)((uint)id >> 8)),(sbyte)id};
+		BytesRef @ref = new BytesRef(bytes);
+		doc.add(new BinaryDocValuesField("dvBytesDerefFixed", @ref));
+		doc.add(new BinaryDocValuesField("dvBytesDerefVar", @ref));
+		doc.add(new SortedDocValuesField("dvBytesSortedFixed", @ref));
+		doc.add(new SortedDocValuesField("dvBytesSortedVar", @ref));
+		doc.add(new BinaryDocValuesField("dvBytesStraightFixed", @ref));
+		doc.add(new BinaryDocValuesField("dvBytesStraightVar", @ref));
+		doc.add(new DoubleDocValuesField("dvDouble", (double)id));
+		doc.add(new FloatDocValuesField("dvFloat", (float)id));
+		doc.add(new NumericDocValuesField("dvInt", id));
+		doc.add(new NumericDocValuesField("dvLong", id));
+		doc.add(new NumericDocValuesField("dvPacked", id));
+		doc.add(new NumericDocValuesField("dvShort", (short)id));
+		doc.add(new SortedSetDocValuesField("dvSortedSet", @ref));
+		// a field with both offsets and term vectors for a cross-check
+		FieldType customType3 = new FieldType(TextField.TYPE_STORED);
+		customType3.StoreTermVectors = true;
+		customType3.StoreTermVectorPositions = true;
+		customType3.StoreTermVectorOffsets = true;
+		customType3.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		doc.add(new Field("content5", "here is more content with aaa aaa aaa", customType3));
+		// a field that omits only positions
+		FieldType customType4 = new FieldType(TextField.TYPE_STORED);
+		customType4.StoreTermVectors = true;
+		customType4.StoreTermVectorPositions = false;
+		customType4.StoreTermVectorOffsets = true;
+		customType4.IndexOptions = IndexOptions.DOCS_AND_FREQS;
+		doc.add(new Field("content6", "here is more content with aaa aaa aaa", customType4));
+		// TODO: 
+		//   index different norms types via similarity (we use a random one currently?!)
+		//   remove any analyzer randomness, explicitly add payloads for certain fields.
+		writer.addDocument(doc);
+	  }
+
+	  private void AddNoProxDoc(IndexWriter writer)
+	  {
+		Document doc = new Document();
+		FieldType customType = new FieldType(TextField.TYPE_STORED);
+		customType.IndexOptions = IndexOptions.DOCS_ONLY;
+		Field f = new Field("content3", "aaa", customType);
+		doc.add(f);
+		FieldType customType2 = new FieldType();
+		customType2.Stored = true;
+		customType2.IndexOptions = IndexOptions.DOCS_ONLY;
+		f = new Field("content4", "aaa", customType2);
+		doc.add(f);
+		writer.addDocument(doc);
+	  }
+
+	  private int CountDocs(DocsEnum docs)
+	  {
+		int count = 0;
+		while ((docs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		{
+		  count++;
+		}
+		return count;
+	  }
+
+	  // flex: test basics of TermsEnum api on non-flex index
+	  public virtual void TestNextIntoWrongField()
+	  {
+		foreach (string name in OldNames)
+		{
+		  Directory dir = OldIndexDirs[name];
+		  IndexReader r = DirectoryReader.open(dir);
+		  TermsEnum terms = MultiFields.getFields(r).terms("content").iterator(null);
+		  BytesRef t = terms.next();
+		  Assert.IsNotNull(t);
+
+		  // content field only has term aaa:
+		  Assert.AreEqual("aaa", t.utf8ToString());
+		  assertNull(terms.next());
+
+		  BytesRef aaaTerm = new BytesRef("aaa");
+
+		  // should be found exactly
+		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.seekCeil(aaaTerm));
+		  Assert.AreEqual(35, CountDocs(TestUtil.docs(random(), terms, null, null, DocsEnum.FLAG_NONE)));
+		  assertNull(terms.next());
+
+		  // should hit end of field
+		  Assert.AreEqual(TermsEnum.SeekStatus.END, terms.seekCeil(new BytesRef("bbb")));
+		  assertNull(terms.next());
+
+		  // should seek to aaa
+		  Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, terms.seekCeil(new BytesRef("a")));
+		  Assert.IsTrue(terms.term().bytesEquals(aaaTerm));
+		  Assert.AreEqual(35, CountDocs(TestUtil.docs(random(), terms, null, null, DocsEnum.FLAG_NONE)));
+		  assertNull(terms.next());
+
+		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.seekCeil(aaaTerm));
+		  Assert.AreEqual(35, CountDocs(TestUtil.docs(random(), terms, null, null, DocsEnum.FLAG_NONE)));
+		  assertNull(terms.next());
+
+		  r.close();
+		}
+	  }
+
+	  /// <summary>
+	  /// Test that we didn't forget to bump the current Constants.LUCENE_MAIN_VERSION.
+	  /// this is important so that we can determine which version of lucene wrote the segment.
+	  /// </summary>
+	  public virtual void TestOldVersions()
+	  {
+		// first create a little index with the current code and get the version
+		Directory currentDir = newDirectory();
+		RandomIndexWriter riw = new RandomIndexWriter(random(), currentDir);
+		riw.addDocument(new Document());
+		riw.close();
+		DirectoryReader ir = DirectoryReader.open(currentDir);
+		SegmentReader air = (SegmentReader)ir.leaves().get(0).reader();
+		string currentVersion = air.SegmentInfo.info.Version;
+		Assert.IsNotNull(currentVersion); // only 3.0 segments can have a null version
+		ir.close();
+		currentDir.close();
+
+		IComparer<string> comparator = StringHelper.VersionComparator;
+
+		// now check all the old indexes, their version should be < the current version
+		foreach (string name in OldNames)
+		{
+		  Directory dir = OldIndexDirs[name];
+		  DirectoryReader r = DirectoryReader.open(dir);
+		  foreach (AtomicReaderContext context in r.leaves())
+		  {
+			air = (SegmentReader) context.reader();
+			string oldVersion = air.SegmentInfo.info.Version;
+			Assert.IsNotNull(oldVersion); // only 3.0 segments can have a null version
+			Assert.IsTrue("current Constants.LUCENE_MAIN_VERSION is <= an old index: did you forget to bump it?!", comparator.Compare(oldVersion, currentVersion) < 0);
+		  }
+		  r.close();
+		}
+	  }
+
+	  public virtual void TestNumericFields()
+	  {
+		foreach (string name in OldNames)
+		{
+
+		  Directory dir = OldIndexDirs[name];
+		  IndexReader reader = DirectoryReader.open(dir);
+		  IndexSearcher searcher = newSearcher(reader);
+
+		  for (int id = 10; id < 15; id++)
+		  {
+			ScoreDoc[] hits = searcher.search(NumericRangeQuery.newIntRange("trieInt", 4, Convert.ToInt32(id), Convert.ToInt32(id), true, true), 100).scoreDocs;
+			Assert.AreEqual("wrong number of hits", 1, hits.Length);
+			Document d = searcher.doc(hits[0].doc);
+			Assert.AreEqual(Convert.ToString(id), d.get("id"));
+
+			hits = searcher.search(NumericRangeQuery.newLongRange("trieLong", 4, Convert.ToInt64(id), Convert.ToInt64(id), true, true), 100).scoreDocs;
+			Assert.AreEqual("wrong number of hits", 1, hits.Length);
+			d = searcher.doc(hits[0].doc);
+			Assert.AreEqual(Convert.ToString(id), d.get("id"));
+		  }
+
+		  // check that also lower-precision fields are ok
+		  ScoreDoc[] hits = searcher.search(NumericRangeQuery.newIntRange("trieInt", 4, int.MinValue, int.MaxValue, false, false), 100).scoreDocs;
+		  Assert.AreEqual("wrong number of hits", 34, hits.Length);
+
+		  hits = searcher.search(NumericRangeQuery.newLongRange("trieLong", 4, long.MinValue, long.MaxValue, false, false), 100).scoreDocs;
+		  Assert.AreEqual("wrong number of hits", 34, hits.Length);
+
+		  // check decoding into field cache
+		  FieldCache.Ints fci = FieldCache.DEFAULT.getInts(SlowCompositeReaderWrapper.wrap(searcher.IndexReader), "trieInt", false);
+		  int maxDoc = searcher.IndexReader.maxDoc();
+		  for (int doc = 0;doc < maxDoc;doc++)
+		  {
+			int val = fci.get(doc);
+			Assert.IsTrue("value in id bounds", val >= 0 && val < 35);
+		  }
+
+		  FieldCache.Longs fcl = FieldCache.DEFAULT.getLongs(SlowCompositeReaderWrapper.wrap(searcher.IndexReader), "trieLong", false);
+		  for (int doc = 0;doc < maxDoc;doc++)
+		  {
+			long val = fcl.get(doc);
+			Assert.IsTrue("value in id bounds", val >= 0L && val < 35L);
+		  }
+
+		  reader.close();
+		}
+	  }
+
+	  private int CheckAllSegmentsUpgraded(Directory dir)
+	  {
+		SegmentInfos infos = new SegmentInfos();
+		infos.read(dir);
+		if (VERBOSE)
+		{
+		  Console.WriteLine("checkAllSegmentsUpgraded: " + infos);
+		}
+		foreach (SegmentCommitInfo si in infos)
+		{
+		  Assert.AreEqual(Constants.LUCENE_MAIN_VERSION, si.info.Version);
+		}
+		return infos.size();
+	  }
+
+	  private int GetNumberOfSegments(Directory dir)
+	  {
+		SegmentInfos infos = new SegmentInfos();
+		infos.read(dir);
+		return infos.size();
+	  }
+
+	  public virtual void TestUpgradeOldIndex()
+	  {
+		IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
+		names.AddRange(Arrays.asList(OldNames));
+		names.AddRange(Arrays.asList(OldSingleSegmentNames));
+		foreach (string name in names)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("testUpgradeOldIndex: index=" + name);
+		  }
+		  Directory dir = newDirectory(OldIndexDirs[name]);
+
+		  NewIndexUpgrader(dir).upgrade();
+
+		  CheckAllSegmentsUpgraded(dir);
+
+		  dir.close();
+		}
+	  }
+
+	  public virtual void TestCommandLineArgs()
+	  {
+
+		foreach (string name in OldIndexDirs.Keys)
+		{
+		  File dir = createTempDir(name);
+		  File dataFile = new File(typeof(TestBackwardsCompatibility).getResource("index." + name + ".zip").toURI());
+		  TestUtil.unzip(dataFile, dir);
+
+		  string path = dir.AbsolutePath;
+
+		  IList<string> args = new List<string>();
+		  if (random().nextBoolean())
+		  {
+			args.Add("-verbose");
+		  }
+		  if (random().nextBoolean())
+		  {
+			args.Add("-delete-prior-commits");
+		  }
+		  if (random().nextBoolean())
+		  {
+			// TODO: need to better randomize this, but ...
+			//  - LuceneTestCase.FS_DIRECTORIES is private
+			//  - newFSDirectory returns BaseDirectoryWrapper
+			//  - BaseDirectoryWrapper doesn't expose delegate
+			Type dirImpl = random().nextBoolean() ? typeof(SimpleFSDirectory) : typeof(NIOFSDirectory);
+
+			args.Add("-dir-impl");
+			args.Add(dirImpl.Name);
+		  }
+		  args.Add(path);
+
+		  IndexUpgrader upgrader = null;
+		  try
+		  {
+			upgrader = IndexUpgrader.parseArgs(args.ToArray());
+		  }
+		  catch (Exception e)
+		  {
+			throw new Exception("unable to parse args: " + args, e);
+		  }
+		  upgrader.upgrade();
+
+		  Directory upgradedDir = newFSDirectory(dir);
+		  try
+		  {
+			CheckAllSegmentsUpgraded(upgradedDir);
+		  }
+		  finally
+		  {
+			upgradedDir.close();
+		  }
+		}
+	  }
+
+	  public virtual void TestUpgradeOldSingleSegmentIndexWithAdditions()
+	  {
+		foreach (string name in OldSingleSegmentNames)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("testUpgradeOldSingleSegmentIndexWithAdditions: index=" + name);
+		  }
+		  Directory dir = newDirectory(OldIndexDirs[name]);
+
+		  Assert.AreEqual("Original index must be single segment", 1, GetNumberOfSegments(dir));
+
+		  // create a bunch of dummy segments
+		  int id = 40;
+		  RAMDirectory ramDir = new RAMDirectory();
+		  for (int i = 0; i < 3; i++)
+		  {
+			// only use Log- or TieredMergePolicy, to make document addition predictable and not suddenly merge:
+			MergePolicy mp = random().nextBoolean() ? newLogMergePolicy() : newTieredMergePolicy();
+			IndexWriterConfig iwc = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setMergePolicy(mp);
+			IndexWriter w = new IndexWriter(ramDir, iwc);
+			// add few more docs:
+			for (int j = 0; j < RANDOM_MULTIPLIER * random().Next(30); j++)
+			{
+			  AddDoc(w, id++);
+			}
+			w.close(false);
+		  }
+
+		  // add dummy segments (which are all in current
+		  // version) to single segment index
+		  MergePolicy mp = random().nextBoolean() ? newLogMergePolicy() : newTieredMergePolicy();
+		  IndexWriterConfig iwc = (new IndexWriterConfig(TEST_VERSION_CURRENT, null)).setMergePolicy(mp);
+		  IndexWriter w = new IndexWriter(dir, iwc);
+		  w.addIndexes(ramDir);
+		  w.close(false);
+
+		  // determine count of segments in modified index
+		  int origSegCount = GetNumberOfSegments(dir);
+
+		  NewIndexUpgrader(dir).upgrade();
+
+		  int segCount = CheckAllSegmentsUpgraded(dir);
+		  Assert.AreEqual("Index must still contain the same number of segments, as only one segment was upgraded and nothing else merged", origSegCount, segCount);
+
+		  dir.close();
+		}
+	  }
+
+	  public const string MoreTermsIndex = "moreterms.40.zip";
+
+	  public virtual void TestMoreTerms()
+	  {
+		File oldIndexDir = createTempDir("moreterms");
+		TestUtil.unzip(getDataFile(MoreTermsIndex), oldIndexDir);
+		Directory dir = newFSDirectory(oldIndexDir);
+		// TODO: more tests
+		TestUtil.checkIndex(dir);
+		dir.close();
+	  }
+	}
+
 }

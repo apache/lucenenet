@@ -1,340 +1,747 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Directory = Lucene.Net.Store.Directory;
+using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
-    
-    /// <summary> <p/>Expert: a MergePolicy determines the sequence of
-    /// primitive merge operations to be used for overall merge
-    /// and optimize operations.<p/>
-    /// 
-    /// <p/>Whenever the segments in an index have been altered by
-    /// <see cref="IndexWriter" />, either the addition of a newly
-    /// flushed segment, addition of many segments from
-    /// addIndexes* calls, or a previous merge that may now need
-    /// to cascade, <see cref="IndexWriter" /> invokes <see cref="FindMerges" />
-    /// to give the MergePolicy a chance to pick
-    /// merges that are now required.  This method returns a
-    /// <see cref="MergeSpecification" /> instance describing the set of
-    /// merges that should be done, or null if no merges are
-    /// necessary.  When IndexWriter.optimize is called, it calls
-    /// <see cref="FindMergesForOptimize" /> and the MergePolicy should
-    /// then return the necessary merges.<p/>
-    /// 
-    /// <p/>Note that the policy can return more than one merge at
-    /// a time.  In this case, if the writer is using <see cref="SerialMergeScheduler" />
-    ///, the merges will be run
-    /// sequentially but if it is using <see cref="ConcurrentMergeScheduler" />
-    /// they will be run concurrently.<p/>
-    /// 
-    /// <p/>The default MergePolicy is <see cref="LogByteSizeMergePolicy" />
-    ///.<p/>
-    /// 
-    /// <p/><b>NOTE:</b> This API is new and still experimental
-    /// (subject to change suddenly in the next release)<p/>
-    /// 
-    /// <p/><b>NOTE</b>: This class typically requires access to
-    /// package-private APIs (e.g. <c>SegmentInfos</c>) to do its job;
-    /// if you implement your own MergePolicy, you'll need to put
-    /// it in package Lucene.Net.Index in order to use
-    /// these APIs.
-    /// </summary>
-    
-    public abstract class MergePolicy : IDisposable
-    {
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using Directory = Lucene.Net.Store.Directory;
+	using MergeInfo = Lucene.Net.Store.MergeInfo;
+	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+	using Lucene.Net.Util;
+	using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
+
+
+	/// <summary>
+	/// <p>Expert: a MergePolicy determines the sequence of
+	/// primitive merge operations.</p>
+	/// 
+	/// <p>Whenever the segments in an index have been altered by
+	/// <seealso cref="IndexWriter"/>, either the addition of a newly
+	/// flushed segment, addition of many segments from
+	/// addIndexes* calls, or a previous merge that may now need
+	/// to cascade, <seealso cref="IndexWriter"/> invokes {@link
+	/// #findMerges} to give the MergePolicy a chance to pick
+	/// merges that are now required.  this method returns a
+	/// <seealso cref="MergeSpecification"/> instance describing the set of
+	/// merges that should be done, or null if no merges are
+	/// necessary.  When IndexWriter.forceMerge is called, it calls
+	/// <seealso cref="#findForcedMerges(SegmentInfos,int,Map)"/> and the MergePolicy should
+	/// then return the necessary merges.</p>
+	/// 
+	/// <p>Note that the policy can return more than one merge at
+	/// a time.  In this case, if the writer is using {@link
+	/// SerialMergeScheduler}, the merges will be run
+	/// sequentially but if it is using {@link
+	/// ConcurrentMergeScheduler} they will be run concurrently.</p>
+	/// 
+	/// <p>The default MergePolicy is {@link
+	/// TieredMergePolicy}.</p>
+	/// 
+	/// @lucene.experimental
+	/// </summary>
+	public abstract class MergePolicy : java.io.IDisposable, ICloneable
+	{
+
+	  /// <summary>
+	  /// A map of doc IDs. </summary>
+	  public abstract class DocMap
+	  {
+		/// <summary>
+		/// Sole constructor, typically invoked from sub-classes constructors. </summary>
+		protected internal DocMap()
+		{
+		}
+
+		/// <summary>
+		/// Return the new doc ID according to its old value. </summary>
+		public abstract int Map(int old);
+
+		/// <summary>
+		/// Useful from an assert. </summary>
+		internal virtual bool IsConsistent(int maxDoc)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet targets = new Lucene.Net.Util.FixedBitSet(maxDoc);
+		  FixedBitSet targets = new FixedBitSet(maxDoc);
+		  for (int i = 0; i < maxDoc; ++i)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int target = map(i);
+			int target = Map(i);
+			if (target < 0 || target >= maxDoc)
+			{
+			  Debug.Assert(false, "out of range: " + target + " not in [0-" + maxDoc + "[");
+			  return false;
+			}
+			else if (targets.Get(target))
+			{
+			  Debug.Assert(false, target + " is already taken (" + i + ")");
+			  return false;
+			}
+		  }
+		  return true;
+		}
+	  }
+
+	  /// <summary>
+	  /// OneMerge provides the information necessary to perform
+	  ///  an individual primitive merge operation, resulting in
+	  ///  a single new segment.  The merge spec includes the
+	  ///  subset of segments to be merged as well as whether the
+	  ///  new segment should use the compound file format. 
+	  /// </summary>
+
+	  public class OneMerge
+	  {
+
+		internal SegmentCommitInfo Info_Renamed; // used by IndexWriter
+		internal bool RegisterDone; // used by IndexWriter
+		internal long MergeGen; // used by IndexWriter
+		internal bool IsExternal; // used by IndexWriter
+		internal int MaxNumSegments = -1; // used by IndexWriter
+
+		/// <summary>
+		/// Estimated size in bytes of the merged segment. </summary>
+		public volatile long EstimatedMergeBytes; // used by IndexWriter
+
+		// Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
+		internal volatile long TotalMergeBytes;
+
+		internal IList<SegmentReader> Readers; // used by IndexWriter
+
+		/// <summary>
+		/// Segments to be merged. </summary>
+		public readonly IList<SegmentCommitInfo> Segments;
+
+		/// <summary>
+		/// Number of documents in the merged segment. </summary>
+		public readonly int TotalDocCount;
+		internal bool Aborted_Renamed;
+		internal Exception Error;
+		internal bool Paused;
+
+		/// <summary>
+		/// Sole constructor. </summary>
+		/// <param name="segments"> List of <seealso cref="SegmentCommitInfo"/>s
+		///        to be merged.  </param>
+		public OneMerge(IList<SegmentCommitInfo> segments)
+		{
+		  if (0 == segments.Count)
+		  {
+			throw new Exception("segments must include at least one segment");
+		  }
+		  // clone the list, as the in list may be based off original SegmentInfos and may be modified
+		  this.Segments = new List<>(segments);
+		  int count = 0;
+		  foreach (SegmentCommitInfo info in segments)
+		  {
+			count += info.Info.DocCount;
+		  }
+		  TotalDocCount = count;
+		}
+
+		/// <summary>
+		/// Expert: Get the list of readers to merge. Note that this list does not
+		///  necessarily match the list of segments to merge and should only be used
+		///  to feed SegmentMerger to initialize a merge. When a <seealso cref="OneMerge"/>
+		///  reorders doc IDs, it must override <seealso cref="#getDocMap"/> too so that
+		///  deletes that happened during the merge can be applied to the newly
+		///  merged segment. 
+		/// </summary>
+		public virtual IList<AtomicReader> MergeReaders
+		{
+			get
+			{
+			  if (Readers == null)
+			  {
+				throw new IllegalStateException("IndexWriter has not initialized readers from the segment infos yet");
+			  }
+	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+	//ORIGINAL LINE: final java.util.List<AtomicReader> readers = new java.util.ArrayList<>(this.readers.size());
+			  IList<AtomicReader> readers = new List<AtomicReader>(this.Readers.Count);
+			  foreach (AtomicReader reader in this.Readers)
+			  {
+				if (reader.NumDocs() > 0)
+				{
+				  readers.Add(reader);
+				}
+			  }
+			  return Collections.unmodifiableList(readers);
+			}
+		}
+
+		/// <summary>
+		/// Expert: Sets the <seealso cref="SegmentCommitInfo"/> of this <seealso cref="OneMerge"/>.
+		/// Allows sub-classes to e.g. set diagnostics properties.
+		/// </summary>
+		public virtual SegmentCommitInfo Info
+		{
+			set
+			{
+			  this.Info_Renamed = value;
+			}
+		}
+
+		/// <summary>
+		/// Expert: If <seealso cref="#getMergeReaders()"/> reorders document IDs, this method
+		///  must be overridden to return a mapping from the <i>natural</i> doc ID
+		///  (the doc ID that would result from a natural merge) to the actual doc
+		///  ID. this mapping is used to apply deletions that happened during the
+		///  merge to the new segment. 
+		/// </summary>
+		public virtual DocMap GetDocMap(MergeState mergeState)
+		{
+		  return new DocMapAnonymousInnerClassHelper(this);
+		}
+
+		private class DocMapAnonymousInnerClassHelper : DocMap
+		{
+			private readonly OneMerge OuterInstance;
+
+			public DocMapAnonymousInnerClassHelper(OneMerge outerInstance)
+			{
+				this.OuterInstance = outerInstance;
+			}
+
+			public override int Map(int docID)
+			{
+			  return docID;
+			}
+		}
+
+		/// <summary>
+		/// Record that an exception occurred while executing
+		///  this merge 
+		/// </summary>
+		internal virtual Exception Exception
+		{
+			set
+			{
+				lock (this)
+				{
+				  this.Error = value;
+				}
+			}
+			get
+			{
+				lock (this)
+				{
+				  return Error;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Mark this merge as aborted.  If this is called
+		///  before the merge is committed then the merge will
+		///  not be committed. 
+		/// </summary>
+		internal virtual void Abort()
+		{
+			lock (this)
+			{
+			  Aborted_Renamed = true;
+			  Monitor.PulseAll(this);
+			}
+		}
+
+		/// <summary>
+		/// Returns true if this merge was aborted. </summary>
+		internal virtual bool Aborted
+		{
+			get
+			{
+				lock (this)
+				{
+				  return Aborted_Renamed;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Called periodically by <seealso cref="IndexWriter"/> while
+		///  merging to see if the merge is aborted. 
+		/// </summary>
+		public virtual void CheckAborted(Directory dir)
+		{
+			lock (this)
+			{
+			  if (Aborted_Renamed)
+			  {
+				throw new MergeAbortedException("merge is aborted: " + SegString(dir));
+			  }
         
-        /// <summary>OneMerge provides the information necessary to perform
-        /// an individual primitive merge operation, resulting in
-        /// a single new segment.  The merge spec includes the
-        /// subset of segments to be merged as well as whether the
-        /// new segment should use the compound file format. 
-        /// </summary>
-        
-        public class OneMerge
-        {
-            
-            internal SegmentInfo info;              // used by IndexWriter
-            internal bool mergeDocStores;           // used by IndexWriter
-            internal bool optimize;                 // used by IndexWriter
-            internal bool registerDone;             // used by IndexWriter
-            internal long mergeGen;                 // used by IndexWriter
-            internal bool isExternal;               // used by IndexWriter
-            internal int maxNumSegmentsOptimize;    // used by IndexWriter
-            internal SegmentReader[] readers;       // used by IndexWriter
-            internal SegmentReader[] readersClone;  // used by IndexWriter
-            internal SegmentInfos segments;
-            internal bool useCompoundFile;
-            internal bool aborted;
-            internal System.Exception error;
-            
-            public OneMerge(SegmentInfos segments, bool useCompoundFile)
-            {
-                if (0 == segments.Count)
-                    throw new ArgumentException("segments must include at least one segment", "segments");
-                this.segments = segments;
-                this.useCompoundFile = useCompoundFile;
-            }
-            
-            /// <summary>Record that an exception occurred while executing
-            /// this merge 
-            /// </summary>
-            internal virtual void  SetException(System.Exception error)
-            {
-                lock (this)
-                {
-                    this.error = error;
-                }
-            }
-            
-            /// <summary>Retrieve previous exception set by <see cref="SetException" />
-            ///. 
-            /// </summary>
-            internal virtual System.Exception GetException()
-            {
-                lock (this)
-                {
-                    return error;
-                }
-            }
-            
-            /// <summary>Mark this merge as aborted.  If this is called
-            /// before the merge is committed then the merge will
-            /// not be committed. 
-            /// </summary>
-            internal virtual void  Abort()
-            {
-                lock (this)
-                {
-                    aborted = true;
-                }
-            }
-            
-            /// <summary>Returns true if this merge was aborted. </summary>
-            internal virtual bool IsAborted()
-            {
-                lock (this)
-                {
-                    return aborted;
-                }
-            }
-            
-            internal virtual void  CheckAborted(Directory dir)
-            {
-                lock (this)
-                {
-                    if (aborted)
-                        throw new MergeAbortedException("merge is aborted: " + SegString(dir));
-                }
-            }
-            
-            internal virtual String SegString(Directory dir)
-            {
-                var b = new System.Text.StringBuilder();
-                int numSegments = segments.Count;
-                for (int i = 0; i < numSegments; i++)
-                {
-                    if (i > 0)
-                        b.Append(' ');
-                    b.Append(segments.Info(i).SegString(dir));
-                }
-                if (info != null)
-                    b.Append(" into ").Append(info.name);
-                if (optimize)
-                    b.Append(" [optimize]");
-                if (mergeDocStores)
-                {
-                    b.Append(" [mergeDocStores]");
-                }
-                return b.ToString();
-            }
+			  while (Paused)
+			  {
+				try
+				{
+				  // In theory we could wait() indefinitely, but we
+				  // do 1000 msec, defensively
+				  Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+				}
+				catch (InterruptedException ie)
+				{
+				  throw new Exception(ie);
+				}
+				if (Aborted_Renamed)
+				{
+				  throw new MergeAbortedException("merge is aborted: " + SegString(dir));
+				}
+			  }
+			}
+		}
 
-            public SegmentInfos segments_ForNUnit
-            {
-                get { return segments; }
-            }
-        }
-        
-        /// <summary> A MergeSpecification instance provides the information
-        /// necessary to perform multiple merges.  It simply
-        /// contains a list of <see cref="OneMerge" /> instances.
-        /// </summary>
-        
-        public class MergeSpecification
-        {
-            
-            /// <summary> The subset of segments to be included in the primitive merge.</summary>
-            
-            public IList<OneMerge> merges = new List<OneMerge>();
-            
-            public virtual void  Add(OneMerge merge)
-            {
-                merges.Add(merge);
-            }
-            
-            public virtual String SegString(Directory dir)
-            {
-                var b = new System.Text.StringBuilder();
-                b.Append("MergeSpec:\n");
-                int count = merges.Count;
-                for (int i = 0; i < count; i++)
-                    b.Append("  ").Append(1 + i).Append(": ").Append(merges[i].SegString(dir));
-                return b.ToString();
-            }
-        }
-        
-        /// <summary>Exception thrown if there are any problems while
-        /// executing a merge. 
-        /// </summary>
-        [Serializable]
-        public class MergeException:System.SystemException
-        {
-            private readonly Directory dir;
+		/// <summary>
+		/// Set or clear whether this merge is paused paused (for example
+		///  <seealso cref="ConcurrentMergeScheduler"/> will pause merges
+		///  if too many are running). 
+		/// </summary>
+		public virtual bool Pause
+		{
+			set
+			{
+				lock (this)
+				{
+				  this.Paused = value;
+				  if (!value)
+				  {
+					// Wakeup merge thread, if it's waiting
+					Monitor.PulseAll(this);
+				  }
+				}
+			}
+			get
+			{
+				lock (this)
+				{
+				  return Paused;
+				}
+			}
+		}
 
-            public MergeException(System.String message, Directory dir):base(message)
-            {
-                this.dir = dir;
-            }
 
-            public MergeException(System.Exception exc, Directory dir):base(null, exc)
-            {
-                this.dir = dir;
-            }
+		/// <summary>
+		/// Returns a readable description of the current merge
+		///  state. 
+		/// </summary>
+		public virtual string SegString(Directory dir)
+		{
+		  StringBuilder b = new StringBuilder();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numSegments = segments.size();
+		  int numSegments = Segments.Count;
+		  for (int i = 0;i < numSegments;i++)
+		  {
+			if (i > 0)
+			{
+				b.Append(' ');
+			}
+			b.Append(Segments[i].ToString(dir, 0));
+		  }
+		  if (Info_Renamed != null)
+		  {
+			b.Append(" into ").Append(Info_Renamed.Info.name);
+		  }
+		  if (MaxNumSegments != -1)
+		  {
+			b.Append(" [maxNumSegments=" + MaxNumSegments + "]");
+		  }
+		  if (Aborted_Renamed)
+		  {
+			b.Append(" [ABORTED]");
+		  }
+		  return b.ToString();
+		}
 
-            public MergeException()
-            {
-            }
+		/// <summary>
+		/// Returns the total size in bytes of this merge. Note that this does not
+		/// indicate the size of the merged segment, but the
+		/// input total size. this is only set once the merge is
+		/// initialized by IndexWriter.
+		/// </summary>
+		public virtual long TotalBytesSize()
+		{
+		  return TotalMergeBytes;
+		}
 
-            public MergeException(string message) : base(message)
-            {
-            }
+		/// <summary>
+		/// Returns the total number of documents that are included with this merge.
+		/// Note that this does not indicate the number of documents after the merge.
+		/// 
+		/// </summary>
+		public virtual int TotalNumDocs()
+		{
+		  int total = 0;
+		  foreach (SegmentCommitInfo info in Segments)
+		  {
+			total += info.Info.DocCount;
+		  }
+		  return total;
+		}
 
-            public MergeException(string message, Exception ex) : base(message, ex)
-            {
-            }
+		/// <summary>
+		/// Return <seealso cref="MergeInfo"/> describing this merge. </summary>
+		public virtual MergeInfo MergeInfo
+		{
+			get
+			{
+			  return new MergeInfo(TotalDocCount, EstimatedMergeBytes, IsExternal, MaxNumSegments);
+			}
+		}
+	  }
 
-            protected MergeException(
-                    SerializationInfo info,
-                    StreamingContext context) : base(info, context)
-            {
-            }
+	  /// <summary>
+	  /// A MergeSpecification instance provides the information
+	  /// necessary to perform multiple merges.  It simply
+	  /// contains a list of <seealso cref="OneMerge"/> instances.
+	  /// </summary>
 
-            /// <summary>Returns the <see cref="Directory" /> of the index that hit
-            /// the exception. 
-            /// </summary>
-            public virtual Directory Directory
-            {
-                get { return dir; }
-            }
-        }
+	  public class MergeSpecification
+	  {
 
-        [Serializable]
-        public class MergeAbortedException : System.IO.IOException
-        {
-            public MergeAbortedException()
-                : base("merge is aborted")
-            {
-            }
+		/// <summary>
+		/// The subset of segments to be included in the primitive merge.
+		/// </summary>
 
-            public MergeAbortedException(string message) : base(message)
-            {
-            }
+		public readonly IList<OneMerge> Merges = new List<OneMerge>();
 
-            public MergeAbortedException(string message, Exception inner) : base(message, inner)
-            {
-            }
+		/// <summary>
+		/// Sole constructor.  Use {@link
+		///  #add(MergePolicy.OneMerge)} to add merges. 
+		/// </summary>
+		public MergeSpecification()
+		{
+		}
 
-            protected MergeAbortedException(
-                    SerializationInfo info,
-                    StreamingContext context) : base(info, context)
-            {
-            }
-        }
-        
-        protected internal IndexWriter writer;
+		/// <summary>
+		/// Adds the provided <seealso cref="OneMerge"/> to this
+		///  specification. 
+		/// </summary>
+		public virtual void Add(OneMerge merge)
+		{
+		  Merges.Add(merge);
+		}
 
-        protected MergePolicy(IndexWriter writer)
-        {
-            this.writer = writer;
-        }
-        
-        /// <summary> Determine what set of merge operations are now necessary on the index.
-        /// <see cref="IndexWriter" /> calls this whenever there is a change to the segments.
-        /// This call is always synchronized on the <see cref="IndexWriter" /> instance so
-        /// only one thread at a time will call this method.
-        /// 
-        /// </summary>
-        /// <param name="segmentInfos">the total set of segments in the index
-        /// </param>
-        public abstract MergeSpecification FindMerges(SegmentInfos segmentInfos);
+		/// <summary>
+		/// Returns a description of the merges in this
+		///  specification. 
+		/// </summary>
+		public virtual string SegString(Directory dir)
+		{
+		  StringBuilder b = new StringBuilder();
+		  b.Append("MergeSpec:\n");
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int count = merges.size();
+		  int count = Merges.Count;
+		  for (int i = 0;i < count;i++)
+		  {
+			b.Append("  ").Append(1 + i).Append(": ").Append(Merges[i].SegString(dir));
+		  }
+		  return b.ToString();
+		}
+	  }
 
-        /// <summary> Determine what set of merge operations is necessary in order to optimize
-        /// the index. <see cref="IndexWriter" /> calls this when its
-        /// <see cref="IndexWriter.Optimize()" /> method is called. This call is always
-        /// synchronized on the <see cref="IndexWriter" /> instance so only one thread at a
-        /// time will call this method.
-        /// 
-        /// </summary>
-        /// <param name="segmentInfos">the total set of segments in the index
-        /// </param>
-        /// <param name="maxSegmentCount">requested maximum number of segments in the index (currently this
-        /// is always 1)
-        /// </param>
-        /// <param name="segmentsToOptimize">contains the specific SegmentInfo instances that must be merged
-        /// away. This may be a subset of all SegmentInfos.
-        /// </param>
-        public abstract MergeSpecification FindMergesForOptimize(SegmentInfos segmentInfos, int maxSegmentCount,
-                                                                 ISet<SegmentInfo> segmentsToOptimize);
-        
-        /// <summary> Determine what set of merge operations is necessary in order to expunge all
-        /// deletes from the index.
-        /// 
-        /// </summary>
-        /// <param name="segmentInfos">the total set of segments in the index
-        /// </param>
-        public abstract MergeSpecification FindMergesToExpungeDeletes(SegmentInfos segmentInfos);
+	  /// <summary>
+	  /// Exception thrown if there are any problems while
+	  ///  executing a merge. 
+	  /// </summary>
+	  public class MergeException : Exception
+	  {
+		internal Directory Dir;
 
-        /// <summary> Release all resources for the policy.</summary>
-        [Obsolete("Use Dispose() instead")]
-        public void Close()
-        {
-            Dispose();
-        }
+		/// <summary>
+		/// Create a {@code MergeException}. </summary>
+		public MergeException(string message, Directory dir) : base(message)
+		{
+		  this.Dir = dir;
+		}
 
-        /// <summary> Release all resources for the policy.</summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+		/// <summary>
+		/// Create a {@code MergeException}. </summary>
+		public MergeException(Exception exc, Directory dir) : base(exc)
+		{
+		  this.Dir = dir;
+		}
 
-        protected abstract void Dispose(bool disposing);
-        
-        /// <summary> Returns true if a newly flushed (not from merge)
-        /// segment should use the compound file format.
-        /// </summary>
-        public abstract bool UseCompoundFile(SegmentInfos segments, SegmentInfo newSegment);
-        
-        /// <summary> Returns true if the doc store files should use the
-        /// compound file format.
-        /// </summary>
-        public abstract bool UseCompoundDocStore(SegmentInfos segments);
-    }
+		/// <summary>
+		/// Returns the <seealso cref="Directory"/> of the index that hit
+		///  the exception. 
+		/// </summary>
+		public virtual Directory Directory
+		{
+			get
+			{
+			  return Dir;
+			}
+		}
+	  }
+
+	  /// <summary>
+	  /// Thrown when a merge was explicity aborted because
+	  ///  <seealso cref="IndexWriter#close(boolean)"/> was called with
+	  ///  <code>false</code>.  Normally this exception is
+	  ///  privately caught and suppresed by <seealso cref="IndexWriter"/>.  
+	  /// </summary>
+	  public class MergeAbortedException : IOException
+	  {
+		/// <summary>
+		/// Create a <seealso cref="MergeAbortedException"/>. </summary>
+		public MergeAbortedException() : base("merge is aborted")
+		{
+		}
+
+		/// <summary>
+		/// Create a <seealso cref="MergeAbortedException"/> with a
+		///  specified message. 
+		/// </summary>
+		public MergeAbortedException(string message) : base(message)
+		{
+		}
+	  }
+
+	  /// <summary>
+	  /// Default ratio for compound file system usage. Set to <tt>1.0</tt>, always use 
+	  /// compound file system.
+	  /// </summary>
+	  protected internal const double DEFAULT_NO_CFS_RATIO = 1.0;
+
+	  /// <summary>
+	  /// Default max segment size in order to use compound file system. Set to <seealso cref="Long#MAX_VALUE"/>.
+	  /// </summary>
+	  protected internal static readonly long DEFAULT_MAX_CFS_SEGMENT_SIZE = long.MaxValue;
+
+	  /// <summary>
+	  /// <seealso cref="IndexWriter"/> that contains this instance. </summary>
+	  protected internal SetOnce<IndexWriter> Writer;
+
+	  /// <summary>
+	  /// If the size of the merge segment exceeds this ratio of
+	  ///  the total index size then it will remain in
+	  ///  non-compound format 
+	  /// </summary>
+	  protected internal double NoCFSRatio_Renamed = DEFAULT_NO_CFS_RATIO;
+
+	  /// <summary>
+	  /// If the size of the merged segment exceeds
+	  ///  this value then it will not use compound file format. 
+	  /// </summary>
+	  protected internal long MaxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
+
+	  public override MergePolicy Clone()
+	  {
+		MergePolicy clone;
+		try
+		{
+		  clone = (MergePolicy) base.Clone();
+		}
+		catch (CloneNotSupportedException e)
+		{
+		  // should not happen
+		  throw new Exception(e);
+		}
+		clone.Writer = new SetOnce<>();
+		return clone;
+	  }
+
+	  /// <summary>
+	  /// Creates a new merge policy instance. Note that if you intend to use it
+	  /// without passing it to <seealso cref="IndexWriter"/>, you should call
+	  /// <seealso cref="#setIndexWriter(IndexWriter)"/>.
+	  /// </summary>
+	  public MergePolicy() : this(DEFAULT_NO_CFS_RATIO, DEFAULT_MAX_CFS_SEGMENT_SIZE)
+	  {
+	  }
+
+	  /// <summary>
+	  /// Creates a new merge policy instance with default settings for noCFSRatio
+	  /// and maxCFSSegmentSize. this ctor should be used by subclasses using different
+	  /// defaults than the <seealso cref="MergePolicy"/>
+	  /// </summary>
+	  protected internal MergePolicy(double defaultNoCFSRatio, long defaultMaxCFSSegmentSize)
+	  {
+		Writer = new SetOnce<>();
+		this.NoCFSRatio_Renamed = defaultNoCFSRatio;
+		this.MaxCFSSegmentSize = defaultMaxCFSSegmentSize;
+	  }
+
+	  /// <summary>
+	  /// Sets the <seealso cref="IndexWriter"/> to use by this merge policy. this method is
+	  /// allowed to be called only once, and is usually set by IndexWriter. If it is
+	  /// called more than once, <seealso cref="AlreadySetException"/> is thrown.
+	  /// </summary>
+	  /// <seealso cref= SetOnce </seealso>
+	  public virtual IndexWriter IndexWriter
+	  {
+		  set
+		  {
+			this.Writer.Set(value);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Determine what set of merge operations are now necessary on the index.
+	  /// <seealso cref="IndexWriter"/> calls this whenever there is a change to the segments.
+	  /// this call is always synchronized on the <seealso cref="IndexWriter"/> instance so
+	  /// only one thread at a time will call this method. </summary>
+	  /// <param name="mergeTrigger"> the event that triggered the merge </param>
+	  /// <param name="segmentInfos">
+	  ///          the total set of segments in the index </param>
+	  public abstract MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos);
+
+	  /// <summary>
+	  /// Determine what set of merge operations is necessary in
+	  /// order to merge to <= the specified segment count. <seealso cref="IndexWriter"/> calls this when its
+	  /// <seealso cref="IndexWriter#forceMerge"/> method is called. this call is always
+	  /// synchronized on the <seealso cref="IndexWriter"/> instance so only one thread at a
+	  /// time will call this method.
+	  /// </summary>
+	  /// <param name="segmentInfos">
+	  ///          the total set of segments in the index </param>
+	  /// <param name="maxSegmentCount">
+	  ///          requested maximum number of segments in the index (currently this
+	  ///          is always 1) </param>
+	  /// <param name="segmentsToMerge">
+	  ///          contains the specific SegmentInfo instances that must be merged
+	  ///          away. this may be a subset of all
+	  ///          SegmentInfos.  If the value is True for a
+	  ///          given SegmentInfo, that means this segment was
+	  ///          an original segment present in the
+	  ///          to-be-merged index; else, it was a segment
+	  ///          produced by a cascaded merge. </param>
+	  public abstract MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge);
+
+	  /// <summary>
+	  /// Determine what set of merge operations is necessary in order to expunge all
+	  /// deletes from the index.
+	  /// </summary>
+	  /// <param name="segmentInfos">
+	  ///          the total set of segments in the index </param>
+	  public abstract MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos);
+
+	  /// <summary>
+	  /// Release all resources for the policy.
+	  /// </summary>
+	  public override abstract void Close();
+
+	  /// <summary>
+	  /// Returns true if a new segment (regardless of its origin) should use the
+	  /// compound file format. The default implementation returns <code>true</code>
+	  /// iff the size of the given mergedInfo is less or equal to
+	  /// <seealso cref="#getMaxCFSSegmentSizeMB()"/> and the size is less or equal to the
+	  /// TotalIndexSize * <seealso cref="#getNoCFSRatio()"/> otherwise <code>false</code>.
+	  /// </summary>
+	  public virtual bool UseCompoundFile(SegmentInfos infos, SegmentCommitInfo mergedInfo)
+	  {
+		if (NoCFSRatio == 0.0)
+		{
+		  return false;
+		}
+		long mergedInfoSize = Size(mergedInfo);
+		if (mergedInfoSize > MaxCFSSegmentSize)
+		{
+		  return false;
+		}
+		if (NoCFSRatio >= 1.0)
+		{
+		  return true;
+		}
+		long totalSize = 0;
+		foreach (SegmentCommitInfo info in infos)
+		{
+		  totalSize += Size(info);
+		}
+		return mergedInfoSize <= NoCFSRatio * totalSize;
+	  }
+
+	  /// <summary>
+	  /// Return the byte size of the provided {@link
+	  ///  SegmentCommitInfo}, pro-rated by percentage of
+	  ///  non-deleted documents is set. 
+	  /// </summary>
+	  protected internal virtual long Size(SegmentCommitInfo info)
+	  {
+		long byteSize = info.SizeInBytes();
+		int delCount = Writer.Get().numDeletedDocs(info);
+		double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
+		Debug.Assert(delRatio <= 1.0);
+		return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
+	  }
+
+	  /// <summary>
+	  /// Returns true if this single info is already fully merged (has no
+	  ///  pending deletes, is in the same dir as the
+	  ///  writer, and matches the current compound file setting 
+	  /// </summary>
+	  protected internal bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
+	  {
+		IndexWriter w = Writer.Get();
+		Debug.Assert(w != null);
+		bool hasDeletions = w.NumDeletedDocs(info) > 0;
+		return !hasDeletions && !info.Info.hasSeparateNorms() && info.Info.dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
+	  }
+
+	  /// <summary>
+	  /// Returns current {@code noCFSRatio}.
+	  /// </summary>
+	  ///  <seealso cref= #setNoCFSRatio  </seealso>
+	  public double NoCFSRatio
+	  {
+		  get
+		  {
+			return NoCFSRatio_Renamed;
+		  }
+		  set
+		  {
+			if (value < 0.0 || value > 1.0)
+			{
+			  throw new System.ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
+			}
+			this.NoCFSRatio_Renamed = value;
+		  }
+	  }
+
+
+	  /// <summary>
+	  /// Returns the largest size allowed for a compound file segment </summary>
+	  public double MaxCFSSegmentSizeMB
+	  {
+		  get
+		  {
+			return MaxCFSSegmentSize / 1024 / 1024.0;
+		  }
+		  set
+		  {
+			if (value < 0.0)
+			{
+			  throw new System.ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
+			}
+			value *= 1024 * 1024;
+			this.MaxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long) value;
+		  }
+	  }
+
+
+	}
+
 }

@@ -1,112 +1,78 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-
 namespace Lucene.Net.Search
 {
-    
-    /// <summary> A DocIdSet contains a set of doc ids. Implementing classes must
-    /// only implement <see cref="Iterator" /> to provide access to the set. 
-    /// </summary>
-    [Serializable]
-    public abstract class DocIdSet
-    {
-        public class AnonymousClassDocIdSet:DocIdSet
-        {
-            public AnonymousClassDocIdSet()
-            {
-                InitBlock();
-            }
-            public class AnonymousClassDocIdSetIterator:DocIdSetIterator
-            {
-                public AnonymousClassDocIdSetIterator(AnonymousClassDocIdSet enclosingInstance)
-                {
-                    InitBlock(enclosingInstance);
-                }
-                private void  InitBlock(AnonymousClassDocIdSet enclosingInstance)
-                {
-                    this.enclosingInstance = enclosingInstance;
-                }
-                private AnonymousClassDocIdSet enclosingInstance;
-                public AnonymousClassDocIdSet Enclosing_Instance
-                {
-                    get
-                    {
-                        return enclosingInstance;
-                    }
-                    
-                }
-                public override int Advance(int target)
-                {
-                    return NO_MORE_DOCS;
-                }
-                public override int DocID()
-                {
-                    return NO_MORE_DOCS;
-                }
-                public override int NextDoc()
-                {
-                    return NO_MORE_DOCS;
-                }
-            }
-            private void  InitBlock()
-            {
-                iterator = new AnonymousClassDocIdSetIterator(this);
-            }
-            
-            private DocIdSetIterator iterator;
-            
-            public override DocIdSetIterator Iterator()
-            {
-                return iterator;
-            }
 
-            public override bool IsCacheable
-            {
-                get { return true; }
-            }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        /// <summary>An empty <see cref="DocIdSet"/> instance for easy use, e.g. in Filters that hit no documents. </summary>
-        [NonSerialized]
-        public static readonly DocIdSet EMPTY_DOCIDSET;
-        
-        /// <summary>Provides a <see cref="DocIdSetIterator" /> to access the set.
-        /// This implementation can return <c>null</c> or
-        /// <c>EMPTY_DOCIDSET.Iterator()</c> if there
-        /// are no docs that match. 
-        /// </summary>
-        public abstract DocIdSetIterator Iterator();
+	using Bits = Lucene.Net.Util.Bits;
 
-        /// <summary>This method is a hint for <see cref="CachingWrapperFilter" />, if this <c>DocIdSet</c>
-        /// should be cached without copying it into a BitSet. The default is to return
-        /// <c>false</c>. If you have an own <c>DocIdSet</c> implementation
-        /// that does its iteration very effective and fast without doing disk I/O,
-        /// override this method and return true.
-        /// </summary>
-        public virtual bool IsCacheable
-        {
-            get { return false; }
-        }
+	/// <summary>
+	/// A DocIdSet contains a set of doc ids. Implementing classes must
+	/// only implement <seealso cref="#iterator"/> to provide access to the set. 
+	/// </summary>
+	public abstract class DocIdSet
+	{
 
-        static DocIdSet()
-        {
-            EMPTY_DOCIDSET = new AnonymousClassDocIdSet();
-        }
-    }
+	  /// <summary>
+	  /// Provides a <seealso cref="DocIdSetIterator"/> to access the set.
+	  /// this implementation can return <code>null</code> if there
+	  /// are no docs that match. 
+	  /// </summary>
+	  public abstract DocIdSetIterator Iterator();
+
+	  // TODO: somehow this class should express the cost of
+	  // iteration vs the cost of random access Bits; for
+	  // expensive Filters (e.g. distance < 1 km) we should use
+	  // bits() after all other Query/Filters have matched, but
+	  // this is the opposite of what bits() is for now
+	  // (down-low filtering using e.g. FixedBitSet)
+
+	  /// <summary>
+	  /// Optionally provides a <seealso cref="Bits"/> interface for random access
+	  /// to matching documents. </summary>
+	  /// <returns> {@code null}, if this {@code DocIdSet} does not support random access.
+	  /// In contrast to <seealso cref="#iterator()"/>, a return value of {@code null}
+	  /// <b>does not</b> imply that no documents match the filter!
+	  /// The default implementation does not provide random access, so you
+	  /// only need to implement this method if your DocIdSet can
+	  /// guarantee random access to every docid in O(1) time without
+	  /// external disk access (as <seealso cref="Bits"/> interface cannot throw
+	  /// <seealso cref="IOException"/>). this is generally true for bit sets
+	  /// like <seealso cref="Lucene.Net.Util.FixedBitSet"/>, which return
+	  /// itself if they are used as {@code DocIdSet}. </returns>
+	  public virtual Bits Bits()
+	  {
+		return null;
+	  }
+
+	  /// <summary>
+	  /// this method is a hint for <seealso cref="CachingWrapperFilter"/>, if this <code>DocIdSet</code>
+	  /// should be cached without copying it. The default is to return
+	  /// <code>false</code>. If you have an own <code>DocIdSet</code> implementation
+	  /// that does its iteration very effective and fast without doing disk I/O,
+	  /// override this method and return <code>true</code>.
+	  /// </summary>
+	  public virtual bool Cacheable
+	  {
+		  get
+		  {
+			return false;
+		  }
+	  }
+	}
+
 }

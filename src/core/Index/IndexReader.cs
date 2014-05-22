@@ -1,1374 +1,666 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
-using Document = Lucene.Net.Documents.Document;
-using FieldSelector = Lucene.Net.Documents.FieldSelector;
-using Lucene.Net.Store;
-using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Index
 {
-    
-    /// <summary>IndexReader is an abstract class, providing an interface for accessing an
-    /// index.  Search of an index is done entirely through this abstract interface,
-    /// so that any subclass which implements it is searchable.
-    /// <p/> Concrete subclasses of IndexReader are usually constructed with a call to
-    /// one of the static <c>open()</c> methods, e.g. <see cref="Open(Lucene.Net.Store.Directory, bool)" />
-    ///.
-    /// <p/> For efficiency, in this API documents are often referred to via
-    /// <i>document numbers</i>, non-negative integers which each name a unique
-    /// document in the index.  These document numbers are ephemeral--they may change
-    /// as documents are added to and deleted from an index.  Clients should thus not
-    /// rely on a given document having the same number between sessions.
-    /// <p/> An IndexReader can be opened on a directory for which an IndexWriter is
-    /// opened already, but it cannot be used to delete documents from the index then.
-    /// <p/>
-    /// <b>NOTE</b>: for backwards API compatibility, several methods are not listed 
-    /// as abstract, but have no useful implementations in this base class and 
-    /// instead always throw UnsupportedOperationException.  Subclasses are 
-    /// strongly encouraged to override these methods, but in many cases may not 
-    /// need to.
-    /// <p/>
-    /// <p/>
-    /// <b>NOTE</b>: as of 2.4, it's possible to open a read-only
-    /// IndexReader using the static open methods that accepts the
-    /// boolean readOnly parameter.  Such a reader has better
-    /// better concurrency as it's not necessary to synchronize on the
-    /// isDeleted method.  You must explicitly specify false
-    /// if you want to make changes with the resulting IndexReader.
-    /// <p/>
-    /// <a name="thread-safety"></a><p/><b>NOTE</b>: <see cref="IndexReader" />
-    /// instances are completely thread
-    /// safe, meaning multiple threads can call any of its methods,
-    /// concurrently.  If your application requires external
-    /// synchronization, you should <b>not</b> synchronize on the
-    /// <c>IndexReader</c> instance; use your own
-    /// (non-Lucene) objects instead.
-    /// </summary>
-    public abstract class IndexReader : System.ICloneable, System.IDisposable
-    {
-        private class AnonymousClassFindSegmentsFile : SegmentInfos.FindSegmentsFile
-        {
-            private void  InitBlock(Lucene.Net.Store.Directory directory2)
-            {
-                this.directory2 = directory2;
-            }
-            private Lucene.Net.Store.Directory directory2;
-            internal AnonymousClassFindSegmentsFile(Lucene.Net.Store.Directory directory2, Lucene.Net.Store.Directory Param1):base(Param1)
-            {
-                InitBlock(directory2);
-            }
-            public override System.Object DoBody(System.String segmentFileName)
-            {
-                return (long) directory2.FileModified(segmentFileName);
-            }
-        }
-        
-        /// <summary> Constants describing field properties, for example used for
-        /// <see cref="IndexReader.GetFieldNames(FieldOption)" />.
-        /// </summary>
-        public sealed class FieldOption
-        {
-            private readonly System.String option;
-            internal FieldOption()
-            {
-            }
-            internal FieldOption(System.String option)
-            {
-                this.option = option;
-            }
-            public override System.String ToString()
-            {
-                return this.option;
-            }
-            /// <summary>All fields </summary>
-            public static readonly FieldOption ALL = new FieldOption("ALL");
-            /// <summary>All indexed fields </summary>
-            public static readonly FieldOption INDEXED = new FieldOption("INDEXED");
-            /// <summary>All fields that store payloads </summary>
-            public static readonly FieldOption STORES_PAYLOADS = new FieldOption("STORES_PAYLOADS");
-            /// <summary>All fields that omit tf </summary>
-            public static readonly FieldOption OMIT_TERM_FREQ_AND_POSITIONS = new FieldOption("OMIT_TERM_FREQ_AND_POSITIONS");
-            /// <summary>All fields which are not indexed </summary>
-            public static readonly FieldOption UNINDEXED = new FieldOption("UNINDEXED");
-            /// <summary>All fields which are indexed with termvectors enabled </summary>
-            public static readonly FieldOption INDEXED_WITH_TERMVECTOR = new FieldOption("INDEXED_WITH_TERMVECTOR");
-            /// <summary>All fields which are indexed but don't have termvectors enabled </summary>
-            public static readonly FieldOption INDEXED_NO_TERMVECTOR = new FieldOption("INDEXED_NO_TERMVECTOR");
-            /// <summary>All fields with termvectors enabled. Please note that only standard termvector fields are returned </summary>
-            public static readonly FieldOption TERMVECTOR = new FieldOption("TERMVECTOR");
-            /// <summary>All fields with termvectors with position values enabled </summary>
-            public static readonly FieldOption TERMVECTOR_WITH_POSITION = new FieldOption("TERMVECTOR_WITH_POSITION");
-            /// <summary>All fields with termvectors with offset values enabled </summary>
-            public static readonly FieldOption TERMVECTOR_WITH_OFFSET = new FieldOption("TERMVECTOR_WITH_OFFSET");
-            /// <summary>All fields with termvectors with offset values and position values enabled </summary>
-            public static readonly FieldOption TERMVECTOR_WITH_POSITION_OFFSET = new FieldOption("TERMVECTOR_WITH_POSITION_OFFSET");
-        }
-        
-        private bool closed;
-        protected internal bool hasChanges;
-        
-        private int refCount;
-        
-        protected internal static int DEFAULT_TERMS_INDEX_DIVISOR = 1;
 
-        /// <summary>Expert: returns the current refCount for this reader </summary>
-        public virtual int RefCount
-        {
-            get
-            {
-                lock (this)
-                {
-                    return refCount;
-                }
-            }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        /// <summary> Expert: increments the refCount of this IndexReader
-        /// instance.  RefCounts are used to determine when a
-        /// reader can be closed safely, i.e. as soon as there are
-        /// no more references.  Be sure to always call a
-        /// corresponding <see cref="DecRef" />, in a finally clause;
-        /// otherwise the reader may never be closed.  Note that
-        /// <see cref="Close" /> simply calls decRef(), which means that
-        /// the IndexReader will not really be closed until <see cref="DecRef" />
-        /// has been called for all outstanding
-        /// references.
-        /// 
-        /// </summary>
-        /// <seealso cref="DecRef">
-        /// </seealso>
-        public virtual void  IncRef()
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(refCount > 0);
-                EnsureOpen();
-                refCount++;
-            }
-        }
-        
-        /// <summary> Expert: decreases the refCount of this IndexReader
-        /// instance.  If the refCount drops to 0, then pending
-        /// changes (if any) are committed to the index and this
-        /// reader is closed.
-        /// 
-        /// </summary>
-        /// <throws>  IOException in case an IOException occurs in commit() or doClose() </throws>
-        /// <summary> 
-        /// </summary>
-        /// <seealso cref="IncRef">
-        /// </seealso>
-        public virtual void  DecRef()
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(refCount > 0);
-                EnsureOpen();
-                if (refCount == 1)
-                {
-                    Commit();
-                    DoClose();
-                }
-                refCount--;
-            }
-        }
-        
-        protected internal IndexReader()
-        {
-            refCount = 1;
-        }
-        
-        /// <throws>  AlreadyClosedException if this IndexReader is closed </throws>
-        protected internal void EnsureOpen()
-        {
-            if (refCount <= 0)
-            {
-                throw new AlreadyClosedException("this IndexReader is closed");
-            }
-        }
-        
-        /// <summary>Returns an IndexReader reading the index in the given
-        /// Directory.  You should pass readOnly=true, since it
-        /// gives much better concurrent performance, unless you
-        /// intend to do write operations (delete documents or
-        /// change norms) with the reader.
-        /// </summary>
-        /// <param name="directory">the index directory</param>
-        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader</param>
-        /// <exception cref="CorruptIndexException">CorruptIndexException if the index is corrupt</exception>
-        /// <exception cref="System.IO.IOException">IOException if there is a low-level IO error</exception>
-        public static IndexReader Open(Directory directory, bool readOnly)
-        {
-            return Open(directory, null, null, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-        }
-        
-        /// <summary>Expert: returns an IndexReader reading the index in the given
-        /// <see cref="IndexCommit" />.  You should pass readOnly=true, since it
-        /// gives much better concurrent performance, unless you
-        /// intend to do write operations (delete documents or
-        /// change norms) with the reader.
-        /// </summary>
-        /// <param name="commit">the commit point to open
-        /// </param>
-        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static IndexReader Open(IndexCommit commit, bool readOnly)
-        {
-            return Open(commit.Directory, null, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-        }
-        
-        /// <summary>Expert: returns an IndexReader reading the index in
-        /// the given Directory, with a custom <see cref="IndexDeletionPolicy" />
-        ///.  You should pass readOnly=true,
-        /// since it gives much better concurrent performance,
-        /// unless you intend to do write operations (delete
-        /// documents or change norms) with the reader.
-        /// </summary>
-        /// <param name="directory">the index directory
-        /// </param>
-        /// <param name="deletionPolicy">a custom deletion policy (only used
-        /// if you use this reader to perform deletes or to set
-        /// norms); see <see cref="IndexWriter" /> for details.
-        /// </param>
-        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, bool readOnly)
-        {
-            return Open(directory, deletionPolicy, null, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-        }
+	using Document = Lucene.Net.Document.Document;
+	using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
+	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+	using Directory = Lucene.Net.Store.Directory;
+	using Bits = Lucene.Net.Util.Bits;
+	using IOUtils = Lucene.Net.Util.IOUtils;
 
-        /// <summary>Expert: returns an IndexReader reading the index in
-        /// the given Directory, with a custom <see cref="IndexDeletionPolicy" />
-        ///.  You should pass readOnly=true,
-        /// since it gives much better concurrent performance,
-        /// unless you intend to do write operations (delete
-        /// documents or change norms) with the reader.
-        /// </summary>
-        /// <param name="directory">the index directory
-        /// </param>
-        /// <param name="deletionPolicy">a custom deletion policy (only used
-        /// if you use this reader to perform deletes or to set
-        /// norms); see <see cref="IndexWriter" /> for details.
-        /// </param>
-        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
-        /// </param>
-        /// <param name="termInfosIndexDivisor">Subsamples which indexed
-        /// terms are loaded into RAM. This has the same effect as <see>
-        ///                                                          <cref>IndexWriter.SetTermIndexInterval</cref>
-        ///                                                        </see> except that setting
-        /// must be done at indexing time while this setting can be
-        /// set per reader.  When set to N, then one in every
-        /// N*termIndexInterval terms in the index is loaded into
-        /// memory.  By setting this to a value > 1 you can reduce
-        /// memory usage, at the expense of higher latency when
-        /// loading a TermInfo.  The default value is 1.  Set this
-        /// to -1 to skip loading the terms index entirely.
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
-        {
-            return Open(directory, deletionPolicy, null, readOnly, termInfosIndexDivisor);
-        }
-        
-        /// <summary>Expert: returns an IndexReader reading the index in
-        /// the given Directory, using a specific commit and with
-        /// a custom <see cref="IndexDeletionPolicy" />.  You should pass
-        /// readOnly=true, since it gives much better concurrent
-        /// performance, unless you intend to do write operations
-        /// (delete documents or change norms) with the reader.
-        /// </summary>
-        /// <param name="commit">the specific <see cref="IndexCommit" /> to open;
-        /// see <see cref="IndexReader.ListCommits" /> to list all commits
-        /// in a directory
-        /// </param>
-        /// <param name="deletionPolicy">a custom deletion policy (only used
-        /// if you use this reader to perform deletes or to set
-        /// norms); see <see cref="IndexWriter" /> for details.
-        /// </param>
-        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static IndexReader Open(IndexCommit commit, IndexDeletionPolicy deletionPolicy, bool readOnly)
-        {
-            return Open(commit.Directory, deletionPolicy, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
-        }
+	// javadocs
 
-        /// <summary>Expert: returns an IndexReader reading the index in
-        /// the given Directory, using a specific commit and with
-        /// a custom <see cref="IndexDeletionPolicy" />.  You should pass
-        /// readOnly=true, since it gives much better concurrent
-        /// performance, unless you intend to do write operations
-        /// (delete documents or change norms) with the reader.
-        /// </summary>
-        /// <param name="commit">the specific <see cref="IndexCommit" /> to open;
-        /// see <see cref="IndexReader.ListCommits" /> to list all commits
-        /// in a directory
-        /// </param>
-        /// <param name="deletionPolicy">a custom deletion policy (only used
-        /// if you use this reader to perform deletes or to set
-        /// norms); see <see cref="IndexWriter" /> for details.
-        /// </param>
-        /// <param name="readOnly">true if no changes (deletions, norms) will be made with this IndexReader
-        /// </param>
-        /// <param name="termInfosIndexDivisor">Subsambles which indexed
-        /// terms are loaded into RAM. This has the same effect as <see>
-        ///                                                          <cref>IndexWriter.SetTermIndexInterval</cref>
-        ///                                                        </see> except that setting
-        /// must be done at indexing time while this setting can be
-        /// set per reader.  When set to N, then one in every
-        /// N*termIndexInterval terms in the index is loaded into
-        /// memory.  By setting this to a value > 1 you can reduce
-        /// memory usage, at the expense of higher latency when
-        /// loading a TermInfo.  The default value is 1.  Set this
-        /// to -1 to skip loading the terms index entirely.
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static IndexReader Open(IndexCommit commit, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
-        {
-            return Open(commit.Directory, deletionPolicy, commit, readOnly, termInfosIndexDivisor);
-        }
-        
-        private static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, IndexCommit commit, bool readOnly, int termInfosIndexDivisor)
-        {
-            return DirectoryReader.Open(directory, deletionPolicy, commit, readOnly, termInfosIndexDivisor);
-        }
-        
-        /// <summary> Refreshes an IndexReader if the index has changed since this instance 
-        /// was (re)opened. 
-        /// <p/>
-        /// Opening an IndexReader is an expensive operation. This method can be used
-        /// to refresh an existing IndexReader to reduce these costs. This method 
-        /// tries to only load segments that have changed or were created after the 
-        /// IndexReader was (re)opened.
-        /// <p/>
-        /// If the index has not changed since this instance was (re)opened, then this
-        /// call is a NOOP and returns this instance. Otherwise, a new instance is 
-        /// returned. The old instance is <b>not</b> closed and remains usable.<br/>
-        /// <p/>   
-        /// If the reader is reopened, even though they share
-        /// resources internally, it's safe to make changes
-        /// (deletions, norms) with the new reader.  All shared
-        /// mutable state obeys "copy on write" semantics to ensure
-        /// the changes are not seen by other readers.
-        /// <p/>
-        /// You can determine whether a reader was actually reopened by comparing the
-        /// old instance with the instance returned by this method: 
-        /// <code>
-        /// IndexReader reader = ... 
-        /// ...
-        /// IndexReader newReader = r.reopen();
-        /// if (newReader != reader) {
-        /// ...     // reader was reopened
-        /// reader.close(); 
-        /// }
-        /// reader = newReader;
-        /// ...
-        /// </code>
-        /// 
-        /// Be sure to synchronize that code so that other threads,
-        /// if present, can never use reader after it has been
-        /// closed and before it's switched to newReader.
-        /// 
-        /// <p/><b>NOTE</b>: If this reader is a near real-time
-        /// reader (obtained from <see cref="IndexWriter.GetReader()" />,
-        /// reopen() will simply call writer.getReader() again for
-        /// you, though this may change in the future.
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual IndexReader Reopen()
-        {
-            lock (this)
-            {
-                throw new NotSupportedException("This reader does not support reopen().");
-            }
-        }
-        
-        
-        /// <summary>Just like <see cref="Reopen()" />, except you can change the
-        /// readOnly of the original reader.  If the index is
-        /// unchanged but readOnly is different then a new reader
-        /// will be returned. 
-        /// </summary>
-        public virtual IndexReader Reopen(bool openReadOnly)
-        {
-            lock (this)
-            {
-                throw new NotSupportedException("This reader does not support reopen().");
-            }
-        }
-        
-        /// <summary>Expert: reopen this reader on a specific commit point.
-        /// This always returns a readOnly reader.  If the
-        /// specified commit point matches what this reader is
-        /// already on, and this reader is already readOnly, then
-        /// this same instance is returned; if it is not already
-        /// readOnly, a readOnly clone is returned. 
-        /// </summary>
-        public virtual IndexReader Reopen(IndexCommit commit)
-        {
-            lock (this)
-            {
-                throw new NotSupportedException("This reader does not support reopen(IndexCommit).");
-            }
-        }
-        
-        /// <summary> Efficiently clones the IndexReader (sharing most
-        /// internal state).
-        /// <p/>
-        /// On cloning a reader with pending changes (deletions,
-        /// norms), the original reader transfers its write lock to
-        /// the cloned reader.  This means only the cloned reader
-        /// may make further changes to the index, and commit the
-        /// changes to the index on close, but the old reader still
-        /// reflects all changes made up until it was cloned.
-        /// <p/>
-        /// Like <see cref="Reopen()" />, it's safe to make changes to
-        /// either the original or the cloned reader: all shared
-        /// mutable state obeys "copy on write" semantics to ensure
-        /// the changes are not seen by other readers.
-        /// <p/>
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual System.Object Clone()
-        {
-            throw new System.NotSupportedException("This reader does not implement clone()");
-        }
-        
-        /// <summary> Clones the IndexReader and optionally changes readOnly.  A readOnly 
-        /// reader cannot open a writeable reader.  
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual IndexReader Clone(bool openReadOnly)
-        {
-            lock (this)
-            {
-                throw new System.NotSupportedException("This reader does not implement clone()");
-            }
-        }
-        
-        /// <summary> Returns the directory associated with this index.  The Default 
-        /// implementation returns the directory specified by subclasses when 
-        /// delegating to the IndexReader(Directory) constructor, or throws an 
-        /// UnsupportedOperationException if one was not specified.
-        /// </summary>
-        /// <throws>  UnsupportedOperationException if no directory </throws>
-        public virtual Directory Directory()
-        {
-            EnsureOpen();
-            throw new NotSupportedException("This reader does not support this method.");
-        }
-        
-        /// <summary> Returns the time the index in the named directory was last modified. 
-        /// Do not use this to check whether the reader is still up-to-date, use
-        /// <see cref="IsCurrent()" /> instead. 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static long LastModified(Directory directory2)
-        {
-            return (long) ((System.Int64) new AnonymousClassFindSegmentsFile(directory2, directory2).Run());
-        }
-        
-        /// <summary> Reads version number from segments files. The version number is
-        /// initialized with a timestamp and then increased by one for each change of
-        /// the index.
-        /// 
-        /// </summary>
-        /// <param name="directory">where the index resides.
-        /// </param>
-        /// <returns> version number.
-        /// </returns>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public static long GetCurrentVersion(Directory directory)
-        {
-            return SegmentInfos.ReadCurrentVersion(directory);
-        }
+	/// <summary>
+	/// IndexReader is an abstract class, providing an interface for accessing an
+	/// index.  Search of an index is done entirely through this abstract interface,
+	/// so that any subclass which implements it is searchable.
+	/// 
+	/// <p>There are two different types of IndexReaders:
+	/// <ul>
+	///  <li><seealso cref="AtomicReader"/>: These indexes do not consist of several sub-readers,
+	///  they are atomic. They support retrieval of stored fields, doc values, terms,
+	///  and postings.
+	///  <li><seealso cref="CompositeReader"/>: Instances (like <seealso cref="DirectoryReader"/>)
+	///  of this reader can only
+	///  be used to get stored fields from the underlying AtomicReaders,
+	///  but it is not possible to directly retrieve postings. To do that, get
+	///  the sub-readers via <seealso cref="CompositeReader#getSequentialSubReaders"/>.
+	///  Alternatively, you can mimic an <seealso cref="AtomicReader"/> (with a serious slowdown),
+	///  by wrapping composite readers with <seealso cref="SlowCompositeReaderWrapper"/>.
+	/// </ul>
+	/// 
+	/// <p>IndexReader instances for indexes on disk are usually constructed
+	/// with a call to one of the static <code>DirectoryReader.open()</code> methods,
+	/// e.g. <seealso cref="DirectoryReader#open(Lucene.Net.Store.Directory)"/>. <seealso cref="DirectoryReader"/> implements
+	/// the <seealso cref="CompositeReader"/> interface, it is not possible to directly get postings.
+	/// 
+	/// <p> For efficiency, in this API documents are often referred to via
+	/// <i>document numbers</i>, non-negative integers which each name a unique
+	/// document in the index.  These document numbers are ephemeral -- they may change
+	/// as documents are added to and deleted from an index.  Clients should thus not
+	/// rely on a given document having the same number between sessions.
+	/// 
+	/// <p>
+	/// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
+	/// IndexReader} instances are completely thread
+	/// safe, meaning multiple threads can call any of its methods,
+	/// concurrently.  If your application requires external
+	/// synchronization, you should <b>not</b> synchronize on the
+	/// <code>IndexReader</code> instance; use your own
+	/// (non-Lucene) objects instead.
+	/// </summary>
+	public abstract class IndexReader : IDisposable
+	{
 
-        /// <summary> Reads commitUserData, previously passed to 
-        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />,
-        /// from current index segments file.  This will return null if 
-        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
-        /// has never been called for this index.
-        /// </summary>
-        /// <param name="directory">where the index resides.
-        /// </param>
-        /// <returns> commit userData.
-        /// </returns>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        /// <summary> 
-        /// </summary>
-        /// <seealso cref="GetCommitUserData(Store.Directory)">
-        /// </seealso>
-        public static System.Collections.Generic.IDictionary<string, string> GetCommitUserData(Directory directory)
-        {
-            return SegmentInfos.ReadCurrentUserData(directory);
-        }
+	  private bool Closed = false;
+	  private bool ClosedByChild = false;
+	  private readonly AtomicInteger RefCount_Renamed = new AtomicInteger(1);
 
-        /// <summary> Version number when this IndexReader was opened. Not implemented in the
-        /// IndexReader base class.
-        /// 
-        /// <p/>
-        /// If this reader is based on a Directory (ie, was created by calling
-        /// <see cref="Open(Lucene.Net.Store.Directory, bool)" />, or <see cref="Reopen()" /> 
-        /// on a reader based on a Directory), then
-        /// this method returns the version recorded in the commit that the reader
-        /// opened. This version is advanced every time <see cref="IndexWriter.Commit()" /> is
-        /// called.
-        /// <p/>
-        /// 
-        /// <p/>
-        /// If instead this reader is a near real-time reader (ie, obtained by a call
-        /// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
-        /// real-time reader), then this method returns the version of the last
-        /// commit done by the writer. Note that even as further changes are made
-        /// with the writer, the version will not changed until a commit is
-        /// completed. Thus, you should not rely on this method to determine when a
-        /// near real-time reader should be opened. Use <see cref="IsCurrent" /> instead.
-        /// <p/>
-        /// 
-        /// </summary>
-        /// <throws>  UnsupportedOperationException </throws>
-        /// <summary>             unless overridden in subclass
-        /// </summary>
-        public virtual long Version
-        {
-            get { throw new System.NotSupportedException("This reader does not support this method."); }
-        }
+	  internal IndexReader()
+	  {
+		if (!(this is CompositeReader || this is AtomicReader))
+		{
+		  throw new Exception("IndexReader should never be directly extended, subclass AtomicReader or CompositeReader instead.");
+		}
+	  }
 
-        /// <summary> Retrieve the String userData optionally passed to
-        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />.  
-        /// This will return null if 
-        /// <see cref="IndexWriter.Commit(System.Collections.Generic.IDictionary{string, string})" />
-        /// has never been called for this index.
-        /// </summary>
-        /// <seealso cref="GetCommitUserData(Store.Directory)">
-        /// </seealso>
-        public virtual IDictionary<string, string> CommitUserData
-        {
-            get { throw new System.NotSupportedException("This reader does not support this method."); }
-        }
+	  /// <summary>
+	  /// A custom listener that's invoked when the IndexReader
+	  /// is closed.
+	  /// 
+	  /// @lucene.experimental
+	  /// </summary>
+	  public interface ReaderClosedListener
+	  {
+		/// <summary>
+		/// Invoked when the <seealso cref="IndexReader"/> is closed. </summary>
+		void OnClose(IndexReader reader);
+	  }
 
-        /// <summary> Check whether any new changes have occurred to the index since this
-        /// reader was opened.
-        /// 
-        /// <p/>
-        /// If this reader is based on a Directory (ie, was created by calling
-        /// <see>
-        ///   <cref>Open(Store.Directory)</cref>
-        /// </see> , or <see cref="Reopen()" /> on a reader based on a Directory), then
-        /// this method checks if any further commits (see <see cref="IndexWriter.Commit()" />
-        /// have occurred in that directory).
-        /// <p/>
-        /// 
-        /// <p/>
-        /// If instead this reader is a near real-time reader (ie, obtained by a call
-        /// to <see cref="IndexWriter.GetReader()" />, or by calling <see cref="Reopen()" /> on a near
-        /// real-time reader), then this method checks if either a new commmit has
-        /// occurred, or any new uncommitted changes have taken place via the writer.
-        /// Note that even if the writer has only performed merging, this method will
-        /// still return false.
-        /// <p/>
-        /// 
-        /// <p/>
-        /// In any event, if this returns false, you should call <see cref="Reopen()" /> to
-        /// get a new reader that sees the changes.
-        /// <p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-        public virtual bool IsCurrent()
-        {
-            throw new NotSupportedException("This reader does not support this method.");
-        }
+	  private readonly Set<ReaderClosedListener> ReaderClosedListeners = Collections.synchronizedSet(new LinkedHashSet<ReaderClosedListener>());
 
-        /// <summary> Checks is the index is optimized (if it has a single segment and 
-        /// no deletions).  Not implemented in the IndexReader base class.
-        /// </summary>
-        /// <returns> &amp;lt;c&amp;gt;true&amp;lt;/c&amp;gt; if the index is optimized; &amp;lt;c&amp;gt;false&amp;lt;/c&amp;gt; otherwise </returns>
-        /// <throws>  UnsupportedOperationException unless overridden in subclass </throws>
-        public virtual bool IsOptimized()
-        {
-            throw new NotSupportedException("This reader does not support this method.");
-        }
+	  private readonly Set<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
 
-        /// <summary> Return an array of term frequency vectors for the specified document.
-        /// The array contains a vector for each vectorized field in the document.
-        /// Each vector contains terms and frequencies for all terms in a given vectorized field.
-        /// If no such fields existed, the method returns null. The term vectors that are
-        /// returned may either be of type <see cref="ITermFreqVector" />
-        /// or of type <see cref="TermPositionVector" /> if
-        /// positions or offsets have been stored.
-        /// 
-        /// </summary>
-        /// <param name="docNumber">document for which term frequency vectors are returned
-        /// </param>
-        /// <returns> array of term frequency vectors. May be null if no term vectors have been
-        /// stored for the specified document.
-        /// </returns>
-        /// <throws>  IOException if index cannot be accessed </throws>
-        /// <seealso cref="Lucene.Net.Documents.Field.TermVector">
-        /// </seealso>
-        abstract public ITermFreqVector[] GetTermFreqVectors(int docNumber);
-        
-        
-        /// <summary> Return a term frequency vector for the specified document and field. The
-        /// returned vector contains terms and frequencies for the terms in
-        /// the specified field of this document, if the field had the storeTermVector
-        /// flag set. If termvectors had been stored with positions or offsets, a 
-        /// <see cref="TermPositionVector" /> is returned.
-        /// 
-        /// </summary>
-        /// <param name="docNumber">document for which the term frequency vector is returned
-        /// </param>
-        /// <param name="field">field for which the term frequency vector is returned.
-        /// </param>
-        /// <returns> term frequency vector May be null if field does not exist in the specified
-        /// document or term vector was not stored.
-        /// </returns>
-        /// <throws>  IOException if index cannot be accessed </throws>
-        /// <seealso cref="Lucene.Net.Documents.Field.TermVector">
-        /// </seealso>
-        abstract public ITermFreqVector GetTermFreqVector(int docNumber, String field);
-        
-        /// <summary> Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays of
-        /// the <see cref="ITermFreqVector" />.
-        /// </summary>
-        /// <param name="docNumber">The number of the document to load the vector for
-        /// </param>
-        /// <param name="field">The name of the field to load
-        /// </param>
-        /// <param name="mapper">The <see cref="TermVectorMapper" /> to process the vector.  Must not be null
-        /// </param>
-        /// <throws>  IOException if term vectors cannot be accessed or if they do not exist on the field and doc. specified. </throws>
-        /// <summary> 
-        /// </summary>
-        abstract public void  GetTermFreqVector(int docNumber, String field, TermVectorMapper mapper);
-        
-        /// <summary> Map all the term vectors for all fields in a Document</summary>
-        /// <param name="docNumber">The number of the document to load the vector for
-        /// </param>
-        /// <param name="mapper">The <see cref="TermVectorMapper" /> to process the vector.  Must not be null
-        /// </param>
-        /// <throws>  IOException if term vectors cannot be accessed or if they do not exist on the field and doc. specified. </throws>
-        abstract public void  GetTermFreqVector(int docNumber, TermVectorMapper mapper);
-        
-        /// <summary> Returns <c>true</c> if an index exists at the specified directory.
-        /// If the directory does not exist or if there is no index in it.
-        /// </summary>
-        /// <param name="directory">the directory to check for an index
-        /// </param>
-        /// <returns> <c>true</c> if an index exists; <c>false</c> otherwise
-        /// </returns>
-        /// <throws>  IOException if there is a problem with accessing the index </throws>
-        public static bool IndexExists(Directory directory)
-        {
-            return SegmentInfos.GetCurrentSegmentGeneration(directory) != - 1;
-        }
+	  /// <summary>
+	  /// Expert: adds a <seealso cref="ReaderClosedListener"/>.  The
+	  /// provided listener will be invoked when this reader is closed.
+	  /// 
+	  /// @lucene.experimental 
+	  /// </summary>
+	  public void AddReaderClosedListener(ReaderClosedListener listener)
+	  {
+		EnsureOpen();
+		ReaderClosedListeners.add(listener);
+	  }
 
-        /// <summary>Returns the number of documents in this index. </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public abstract int NumDocs();
+	  /// <summary>
+	  /// Expert: remove a previously added <seealso cref="ReaderClosedListener"/>.
+	  /// 
+	  /// @lucene.experimental 
+	  /// </summary>
+	  public void RemoveReaderClosedListener(ReaderClosedListener listener)
+	  {
+		EnsureOpen();
+		ReaderClosedListeners.remove(listener);
+	  }
 
-        /// <summary>Returns one greater than the largest possible document number.
-        /// This may be used to, e.g., determine how big to allocate an array which
-        /// will have an element for every document number in an index.
-        /// </summary>
-        public abstract int MaxDoc { get; }
+	  /// <summary>
+	  /// Expert: this method is called by {@code IndexReader}s which wrap other readers
+	  /// (e.g. <seealso cref="CompositeReader"/> or <seealso cref="FilterAtomicReader"/>) to register the parent
+	  /// at the child (this reader) on construction of the parent. When this reader is closed,
+	  /// it will mark all registered parents as closed, too. The references to parent readers
+	  /// are weak only, so they can be GCed once they are no longer in use.
+	  /// @lucene.experimental 
+	  /// </summary>
+	  public void RegisterParentReader(IndexReader reader)
+	  {
+		EnsureOpen();
+		ParentReaders.add(reader);
+	  }
 
-        /// <summary>Returns the number of deleted documents. </summary>
-        public virtual int NumDeletedDocs
-        {
-            get { return MaxDoc - NumDocs(); }
-        }
+	  private void NotifyReaderClosedListeners(Exception th)
+	  {
+		lock (ReaderClosedListeners)
+		{
+		  foreach (ReaderClosedListener listener in ReaderClosedListeners)
+		  {
+			try
+			{
+			  listener.OnClose(this);
+			}
+			catch (Exception t)
+			{
+			  if (th == null)
+			  {
+				th = t;
+			  }
+			  else
+			  {
+				th.addSuppressed(t);
+			  }
+			}
+		  }
+		  IOUtils.ReThrowUnchecked(th);
+		}
+	  }
 
-        /// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
-        /// <c>Document</c> in this index.
-        /// <p/>
-        /// <b>NOTE:</b> for performance reasons, this method does not check if the
-        /// requested document is deleted, and therefore asking for a deleted document
-        /// may yield unspecified results. Usually this is not required, however you
-        /// can call <see cref="IsDeleted(int)" /> with the requested document ID to verify
-        /// the document is not deleted.
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual Document Document(int n)
-        {
-            EnsureOpen();
-            return Document(n, null);
-        }
+	  private void ReportCloseToParentReaders()
+	  {
+		lock (ParentReaders)
+		{
+		  foreach (IndexReader parent in ParentReaders)
+		  {
+			parent.ClosedByChild = true;
+			// cross memory barrier by a fake write:
+			parent.RefCount_Renamed.addAndGet(0);
+			// recurse:
+			parent.ReportCloseToParentReaders();
+		  }
+		}
+	  }
 
-        /// <summary> Returns the stored fields of the <c>n</c><sup>th</sup>
-        /// <c>Document</c> in this index.
-        /// <p/>
-        /// <b>NOTE:</b> for performance reasons, this method does not check if the
-        /// requested document is deleted, and therefore asking for a deleted document
-        /// may yield unspecified results. Usually this is not required, however you
-        /// can call <see cref="IsDeleted(int)" /> with the requested document ID to verify
-        /// the document is not deleted.
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public Document this[int doc]
-        {
-            get { return Document(doc); }
-        }
-        
-        /// <summary> Get the <see cref="Lucene.Net.Documents.Document" /> at the <c>n</c>
-        /// <sup>th</sup> position. The <see cref="FieldSelector" /> may be used to determine
-        /// what <see cref="Lucene.Net.Documents.Field" />s to load and how they should
-        /// be loaded. <b>NOTE:</b> If this Reader (more specifically, the underlying
-        /// <c>FieldsReader</c>) is closed before the lazy
-        /// <see cref="Lucene.Net.Documents.Field" /> is loaded an exception may be
-        /// thrown. If you want the value of a lazy
-        /// <see cref="Lucene.Net.Documents.Field" /> to be available after closing you
-        /// must explicitly load it or fetch the Document again with a new loader.
-        /// <p/>
-        /// <b>NOTE:</b> for performance reasons, this method does not check if the
-        /// requested document is deleted, and therefore asking for a deleted document
-        /// may yield unspecified results. Usually this is not required, however you
-        /// can call <see cref="IsDeleted(int)" /> with the requested document ID to verify
-        /// the document is not deleted.
-        /// 
-        /// </summary>
-        /// <param name="n">Get the document at the <c>n</c><sup>th</sup> position
-        /// </param>
-        /// <param name="fieldSelector">The <see cref="FieldSelector" /> to use to determine what
-        /// Fields should be loaded on the Document. May be null, in which case
-        /// all Fields will be loaded.
-        /// </param>
-        /// <returns> The stored fields of the
-        /// <see cref="Lucene.Net.Documents.Document" /> at the nth position
-        /// </returns>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        /// <seealso cref="IFieldable">
-        /// </seealso>
-        /// <seealso cref="Lucene.Net.Documents.FieldSelector">
-        /// </seealso>
-        /// <seealso cref="Lucene.Net.Documents.SetBasedFieldSelector">
-        /// </seealso>
-        /// <seealso cref="Lucene.Net.Documents.LoadFirstFieldSelector">
-        /// </seealso>
-        // TODO (1.5): When we convert to JDK 1.5 make this Set<String>
-        public abstract Document Document(int n, FieldSelector fieldSelector);
-        
-        /// <summary>Returns true if document <i>n</i> has been deleted </summary>
-        public abstract bool IsDeleted(int n);
+	  /// <summary>
+	  /// Expert: returns the current refCount for this reader </summary>
+	  public int RefCount
+	  {
+		  get
+		  {
+			// NOTE: don't ensureOpen, so that callers can see
+			// refCount is 0 (reader is closed)
+			return RefCount_Renamed.get();
+		  }
+	  }
 
-        /// <summary>Returns true if any documents have been deleted </summary>
-        public abstract bool HasDeletions { get; }
+	  /// <summary>
+	  /// Expert: increments the refCount of this IndexReader
+	  /// instance.  RefCounts are used to determine when a
+	  /// reader can be closed safely, i.e. as soon as there are
+	  /// no more references.  Be sure to always call a
+	  /// corresponding <seealso cref="#decRef"/>, in a finally clause;
+	  /// otherwise the reader may never be closed.  Note that
+	  /// <seealso cref="#close"/> simply calls decRef(), which means that
+	  /// the IndexReader will not really be closed until {@link
+	  /// #decRef} has been called for all outstanding
+	  /// references.
+	  /// </summary>
+	  /// <seealso cref= #decRef </seealso>
+	  /// <seealso cref= #tryIncRef </seealso>
+	  public void IncRef()
+	  {
+		if (!TryIncRef())
+		{
+		   EnsureOpen();
+		}
+	  }
 
-        /// <summary>Returns true if there are norms stored for this field. </summary>
-        public virtual bool HasNorms(System.String field)
-        {
-            // backward compatible implementation.
-            // SegmentReader has an efficient implementation.
-            EnsureOpen();
-            return Norms(field) != null;
-        }
+	  /// <summary>
+	  /// Expert: increments the refCount of this IndexReader
+	  /// instance only if the IndexReader has not been closed yet
+	  /// and returns <code>true</code> iff the refCount was
+	  /// successfully incremented, otherwise <code>false</code>.
+	  /// If this method returns <code>false</code> the reader is either
+	  /// already closed or is currently being closed. Either way this
+	  /// reader instance shouldn't be used by an application unless
+	  /// <code>true</code> is returned.
+	  /// <p>
+	  /// RefCounts are used to determine when a
+	  /// reader can be closed safely, i.e. as soon as there are
+	  /// no more references.  Be sure to always call a
+	  /// corresponding <seealso cref="#decRef"/>, in a finally clause;
+	  /// otherwise the reader may never be closed.  Note that
+	  /// <seealso cref="#close"/> simply calls decRef(), which means that
+	  /// the IndexReader will not really be closed until {@link
+	  /// #decRef} has been called for all outstanding
+	  /// references.
+	  /// </summary>
+	  /// <seealso cref= #decRef </seealso>
+	  /// <seealso cref= #incRef </seealso>
+	  public bool TryIncRef()
+	  {
+		int count;
+		while ((count = RefCount_Renamed.get()) > 0)
+		{
+		  if (RefCount_Renamed.compareAndSet(count, count + 1))
+		  {
+			return true;
+		  }
+		}
+		return false;
+	  }
 
-        /// <summary>
-        /// Returns the byte-encoded normalization factor for the named field of
-        /// every document.  This is used by the search code to score documents.
-        /// </summary>
-        /// <seealso cref="Lucene.Net.Documents.AbstractField.Boost" />
-        public abstract byte[] Norms(System.String field);
-        
-        /// <summary>
-        /// Reads the byte-encoded normalization factor for the named field of every
-        /// document.  This is used by the search code to score documents.
-        /// </summary>
-        /// <seealso cref="Lucene.Net.Documents.AbstractField.Boost" />
-        public abstract void  Norms(System.String field, byte[] bytes, int offset);
-        
-        /// <summary>Expert: Resets the normalization factor for the named field of the named
-        /// document.  The norm represents the product of the field's <see cref="IFieldable.Boost">boost</see>
-        /// and its <see cref="Similarity.LengthNorm(String,int)">length normalization</see>.  Thus, to preserve the length normalization
-        /// values when resetting this, one should base the new value upon the old.
-        /// 
-        /// <b>NOTE:</b> If this field does not store norms, then
-        /// this method call will silently do nothing.
-        /// </summary>
-        /// <seealso cref="Norms(String)" />
-        /// <seealso cref="Similarity.DecodeNorm(byte)" />
-        /// <exception cref="StaleReaderException">
-        /// If the index has changed since this reader was opened
-        /// </exception>
-        /// <exception cref="CorruptIndexException">
-        /// If the index is corrupt
-        /// </exception>
-        /// <exception cref="LockObtainFailedException">
-        /// If another writer has this index open (<c>write.lock</c> could not be obtained)
-        /// </exception>
-        /// <exception cref="System.IO.IOException">
-        /// If there is a low-level IO error
-        /// </exception>
-        public virtual void  SetNorm(int doc, String field, byte value)
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                AcquireWriteLock();
-                hasChanges = true;
-                DoSetNorm(doc, field, value);
-            }
-        }
-        
-        /// <summary>Implements setNorm in subclass.</summary>
-        protected internal abstract void  DoSetNorm(int doc, System.String field, byte value_Renamed);
-        
-        /// <summary>
-        /// Expert: Resets the normalization factor for the named field of the named document.
-        /// </summary>
-        /// <seealso cref="Norms(String)" />
-        /// <seealso cref="Similarity.DecodeNorm(byte)" />
-        /// <exception cref="StaleReaderException">
-        /// If the index has changed since this reader was opened
-        /// </exception>
-        /// <exception cref="CorruptIndexException">
-        /// If the index is corrupt
-        /// </exception>
-        /// <exception cref="LockObtainFailedException">
-        /// If another writer has this index open (<c>write.lock</c> could not be obtained)
-        /// </exception>
-        /// <exception cref="System.IO.IOException">
-        /// If there is a low-level IO error
-        /// </exception>
-        public virtual void  SetNorm(int doc, System.String field, float value)
-        {
-            EnsureOpen();
-            SetNorm(doc, field, Similarity.EncodeNorm(value));
-        }
-        
-        /// <summary>Returns an enumeration of all the terms in the index. The
-        /// enumeration is ordered by Term.compareTo(). Each term is greater
-        /// than all that precede it in the enumeration. Note that after
-        /// calling terms(), <see cref="TermEnum.Next()" /> must be called
-        /// on the resulting enumeration before calling other methods such as
-        /// <see cref="TermEnum.Term" />.
-        /// </summary>
-        /// <exception cref="System.IO.IOException">
-        /// If there is a low-level IO error 
-        /// </exception>
-        public abstract TermEnum Terms();
-        
-        /// <summary>Returns an enumeration of all terms starting at a given term. If
-        /// the given term does not exist, the enumeration is positioned at the
-        /// first term greater than the supplied term. The enumeration is
-        /// ordered by Term.compareTo(). Each term is greater than all that
-        /// precede it in the enumeration.
-        /// </summary>
-        /// <exception cref="System.IO.IOException">
-        /// If there is a low-level IO error
-        /// </exception>
-        public abstract TermEnum Terms(Term t);
+	  /// <summary>
+	  /// Expert: decreases the refCount of this IndexReader
+	  /// instance.  If the refCount drops to 0, then this
+	  /// reader is closed.  If an exception is hit, the refCount
+	  /// is unchanged.
+	  /// </summary>
+	  /// <exception cref="IOException"> in case an IOException occurs in  doClose()
+	  /// </exception>
+	  /// <seealso cref= #incRef </seealso>
+	  public void DecRef()
+	  {
+		// only check refcount here (don't call ensureOpen()), so we can
+		// still close the reader if it was made invalid by a child:
+		if (RefCount_Renamed.get() <= 0)
+		{
+		  throw new AlreadyClosedException("this IndexReader is closed");
+		}
 
-        /// <summary>Returns the number of documents containing the term <c>t</c>.</summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public abstract int DocFreq(Term t);
-        
-        /// <summary>Returns an enumeration of all the documents which contain
-        /// <c>term</c>. For each document, the document number, the frequency of
-        /// the term in that document is also provided, for use in
-        /// search scoring.  If term is null, then all non-deleted
-        /// docs are returned with freq=1.
-        /// Thus, this method implements the mapping:
-        /// <p/><list>
-        /// Term &#160;&#160; =&gt; &#160;&#160; &lt;docNum, freq&gt;<sup>*</sup>
-        /// </list>
-        /// <p/>The enumeration is ordered by document number.  Each document number
-        /// is greater than all that precede it in the enumeration.
-        /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual TermDocs TermDocs(Term term)
-        {
-            EnsureOpen();
-            TermDocs termDocs = TermDocs();
-            termDocs.Seek(term);
-            return termDocs;
-        }
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int rc = refCount.decrementAndGet();
+		int rc = RefCount_Renamed.decrementAndGet();
+		if (rc == 0)
+		{
+		  Closed = true;
+		  Exception throwable = null;
+		  try
+		  {
+			DoClose();
+		  }
+		  catch (Exception th)
+		  {
+			throwable = th;
+		  }
+		  finally
+		  {
+			try
+			{
+			  ReportCloseToParentReaders();
+			}
+			finally
+			{
+			  NotifyReaderClosedListeners(throwable);
+			}
+		  }
+		}
+		else if (rc < 0)
+		{
+		  throw new IllegalStateException("too many decRef calls: refCount is " + rc + " after decrement");
+		}
+	  }
 
-        /// <summary>Returns an unpositioned <see cref="Lucene.Net.Index.TermDocs" /> enumerator.</summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public abstract TermDocs TermDocs();
-        
-        /// <summary>Returns an enumeration of all the documents which contain
-        /// <c>term</c>.  For each document, in addition to the document number
-        /// and frequency of the term in that document, a list of all of the ordinal
-        /// positions of the term in the document is available.  Thus, this method
-        /// implements the mapping:
-        /// 
-        /// <p/><list>
-        /// Term &#160;&#160; =&gt; &#160;&#160; &lt;docNum, freq,
-        /// &lt;pos<sub>1</sub>, pos<sub>2</sub>, ...
-        /// pos<sub>freq-1</sub>&gt;
-        /// &gt;<sup>*</sup>
-        /// </list>
-        /// <p/> This positional information facilitates phrase and proximity searching.
-        /// <p/>The enumeration is ordered by document number.  Each document number is
-        /// greater than all that precede it in the enumeration.
-        /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual TermPositions TermPositions(Term term)
-        {
-            EnsureOpen();
-            TermPositions termPositions = TermPositions();
-            termPositions.Seek(term);
-            return termPositions;
-        }
+	  /// <summary>
+	  /// Throws AlreadyClosedException if this IndexReader or any
+	  /// of its child readers is closed, otherwise returns.
+	  /// </summary>
+	  protected internal void EnsureOpen()
+	  {
+		if (RefCount_Renamed.get() <= 0)
+		{
+		  throw new AlreadyClosedException("this IndexReader is closed");
+		}
+		// the happens before rule on reading the refCount, which must be after the fake write,
+		// ensures that we see the value:
+		if (ClosedByChild)
+		{
+		  throw new AlreadyClosedException("this IndexReader cannot be used anymore as one of its child readers was closed");
+		}
+	  }
 
-        /// <summary>Returns an unpositioned <see cref="Lucene.Net.Index.TermPositions" /> enumerator.</summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public abstract TermPositions TermPositions();
-        
-        
-        
-        /// <summary>
-        /// Deletes the document numbered <c>docNum</c>.  Once a document is
-        /// deleted it will not appear in TermDocs or TermPostitions enumerations.
-        /// Attempts to read its field with the <see cref="Document(int)" />
-        /// method will result in an error.  The presence of this document may still be
-        /// reflected in the <see cref="DocFreq" /> statistic, though
-        /// this will be corrected eventually as the index is further modified.
-        /// </summary>
-        /// <exception cref="StaleReaderException">
-        /// If the index has changed since this reader was opened
-        /// </exception>
-        /// <exception cref="CorruptIndexException">If the index is corrupt</exception>
-        /// <exception cref="LockObtainFailedException">
-        /// If another writer has this index open (<c>write.lock</c> could not be obtained)
-        /// </exception>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual void  DeleteDocument(int docNum)
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                AcquireWriteLock();
-                hasChanges = true;
-                DoDelete(docNum);
-            }
-        }
-        
-        
-        /// <summary>Implements deletion of the document numbered <c>docNum</c>.
-        /// Applications should call <see cref="DeleteDocument(int)" /> or <see cref="DeleteDocuments(Term)" />.
-        /// </summary>
-        protected internal abstract void  DoDelete(int docNum);
-        
-        
-        /// <summary>
-        /// Deletes all documents that have a given <c>term</c> indexed.
-        /// This is useful if one uses a document field to hold a unique ID string for
-        /// the document.  Then to delete such a document, one merely constructs a
-        /// term with the appropriate field and the unique ID string as its text and
-        /// passes it to this method.
-        /// See <see cref="DeleteDocument(int)" /> for information about when this deletion will 
-        /// become effective.
-        /// </summary>
-        /// <returns>The number of documents deleted</returns>
-        /// <exception cref="StaleReaderException">
-        /// If the index has changed since this reader was opened
-        /// </exception>
-        /// <exception cref="CorruptIndexException">If the index is corrupt</exception>
-        /// <exception cref="LockObtainFailedException">
-        /// If another writer has this index open (<c>write.lock</c> could not be obtained)
-        /// </exception>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual int DeleteDocuments(Term term)
-        {
-            EnsureOpen();
-            TermDocs docs = TermDocs(term);
-            if (docs == null)
-                return 0;
-            int n = 0;
-            try
-            {
-                while (docs.Next())
-                {
-                    DeleteDocument(docs.Doc);
-                    n++;
-                }
-            }
-            finally
-            {
-                docs.Close();
-            }
-            return n;
-        }
-        
-        /// <summary>Undeletes all documents currently marked as deleted in this index.
-        /// 
-        /// </summary>
-        /// <exception cref="StaleReaderException">
-        /// If the index has changed since this reader was opened
-        /// </exception>
-        /// <exception cref="CorruptIndexException">If the index is corrupt</exception>
-        /// <exception cref="LockObtainFailedException">
-        /// If another writer has this index open (<c>write.lock</c> could not be obtained)
-        /// </exception>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public virtual void  UndeleteAll()
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                AcquireWriteLock();
-                hasChanges = true;
-                DoUndeleteAll();
-            }
-        }
-        
-        /// <summary>Implements actual undeleteAll() in subclass. </summary>
-        protected internal abstract void  DoUndeleteAll();
-        
-        /// <summary>
-        /// Does nothing by default. Subclasses that require a write lock for
-        /// index modifications must implement this method. 
-        /// </summary>
-        protected internal virtual void  AcquireWriteLock()
-        {
-            lock (this)
-            {
-                /* NOOP */
-            }
-        }
-        
-        /// <summary> </summary>
-        /// <exception cref="System.IO.IOException" />
-        public void  Flush()
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                Commit();
-            }
-        }
-        
-        /// <param name="commitUserData">Opaque Map (String -> String)
-        /// that's recorded into the segments file in the index,
-        /// and retrievable by <see cref="IndexReader.GetCommitUserData" />
-        /// </param>
-        /// <exception cref="System.IO.IOException" />
-        public void Flush(IDictionary<string, string> commitUserData)
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                Commit(commitUserData);
-            }
-        }
-        
-        /// <summary> Commit changes resulting from delete, undeleteAll, or
-        /// setNorm operations
-        /// 
-        /// If an exception is hit, then either no changes or all
-        /// changes will have been committed to the index
-        /// (transactional semantics).
-        /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public /*protected internal*/ void  Commit()
-        {
-            lock (this)
-            {
-                Commit(null);
-            }
-        }
-        
-        /// <summary> Commit changes resulting from delete, undeleteAll, or
-        /// setNorm operations
-        /// 
-        /// If an exception is hit, then either no changes or all
-        /// changes will have been committed to the index
-        /// (transactional semantics).
-        /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public void Commit(IDictionary<string, string> commitUserData)
-        {
-            lock (this)
-            {
-                if (hasChanges)
-                {
-                    DoCommit(commitUserData);
-                }
-                hasChanges = false;
-            }
-        }
-        
-        /// <summary>Implements commit.</summary>
-        protected internal abstract void DoCommit(IDictionary<string, string> commitUserData);
+	  /// <summary>
+	  /// {@inheritDoc}
+	  /// <p>For caching purposes, {@code IndexReader} subclasses are not allowed
+	  /// to implement equals/hashCode, so methods are declared final.
+	  /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and 
+	  /// <seealso cref="#getCombinedCoreAndDeletesKey"/>.
+	  /// </summary>
+	  public override sealed bool Equals(object obj)
+	  {
+		return (this == obj);
+	  }
 
-        [Obsolete("Use Dispose() instead")]
-        public void Close()
-        {
-            Dispose();
-        }
+	  /// <summary>
+	  /// {@inheritDoc}
+	  /// <p>For caching purposes, {@code IndexReader} subclasses are not allowed
+	  /// to implement equals/hashCode, so methods are declared final.
+	  /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and 
+	  /// <seealso cref="#getCombinedCoreAndDeletesKey"/>.
+	  /// </summary>
+	  public override sealed int HashCode()
+	  {
+		return System.identityHashCode(this);
+	  }
 
-        /// <summary> Closes files associated with this index.
-        /// Also saves any new deletions to disk.
-        /// No other methods should be called after this has been called.
-        /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+	  /// <summary>
+	  /// Returns a IndexReader reading the index in the given
+	  ///  Directory </summary>
+	  /// <param name="directory"> the index directory </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// @deprecated Use <seealso cref="DirectoryReader#open(Directory)"/> 
+	  [Obsolete("Use <seealso cref="DirectoryReader#open(Lucene.Net.Store.Directory)"/>")]
+	  public static DirectoryReader Open(Directory directory)
+	  {
+		return DirectoryReader.Open(directory);
+	  }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                lock (this)
-                {
-                    if (!closed)
-                    {
-                        DecRef();
-                        closed = true;
-                    }
-                }
-            }
-        }
-        
-        /// <summary>Implements close. </summary>
-        protected internal abstract void  DoClose();
-        
-        
-        /// <summary> Get a list of unique field names that exist in this index and have the specified
-        /// field option information.
-        /// </summary>
-        /// <param name="fldOption">specifies which field option should be available for the returned fields
-        /// </param>
-        /// <returns> Collection of Strings indicating the names of the fields.
-        /// </returns>
-        /// <seealso cref="IndexReader.FieldOption">
-        /// </seealso>
-        public abstract ICollection<string> GetFieldNames(FieldOption fldOption);
+	  /// <summary>
+	  /// Expert: Returns a IndexReader reading the index in the given
+	  ///  Directory with the given termInfosIndexDivisor. </summary>
+	  /// <param name="directory"> the index directory </param>
+	  /// <param name="termInfosIndexDivisor"> Subsamples which indexed
+	  ///  terms are loaded into RAM. this has the same effect as {@link
+	  ///  IndexWriterConfig#setTermIndexInterval} except that setting
+	  ///  must be done at indexing time while this setting can be
+	  ///  set per reader.  When set to N, then one in every
+	  ///  N*termIndexInterval terms in the index is loaded into
+	  ///  memory.  By setting this to a value > 1 you can reduce
+	  ///  memory usage, at the expense of higher latency when
+	  ///  loading a TermInfo.  The default value is 1.  Set this
+	  ///  to -1 to skip loading the terms index entirely. </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// @deprecated Use <seealso cref="DirectoryReader#open(Directory,int)"/> 
+	  [Obsolete("Use <seealso cref="DirectoryReader#open(Lucene.Net.Store.Directory,int)"/>")]
+	  public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
+	  {
+		return DirectoryReader.Open(directory, termInfosIndexDivisor);
+	  }
 
-        /// <summary> Expert: return the IndexCommit that this reader has
-        /// opened.  This method is only implemented by those
-        /// readers that correspond to a Directory with its own
-        /// segments_N file.
-        /// 
-        /// <p/><b>WARNING</b>: this API is new and experimental and
-        /// may suddenly change.<p/>
-        /// </summary>
-        public virtual IndexCommit IndexCommit
-        {
-            get { throw new NotSupportedException("This reader does not support this method."); }
-        }
+	  /// <summary>
+	  /// Open a near real time IndexReader from the <seealso cref="Lucene.Net.Index.IndexWriter"/>.
+	  /// </summary>
+	  /// <param name="writer"> The IndexWriter to open from </param>
+	  /// <param name="applyAllDeletes"> If true, all buffered deletes will
+	  /// be applied (made visible) in the returned reader.  If
+	  /// false, the deletes are not applied but remain buffered
+	  /// (in IndexWriter) so that they will be applied in the
+	  /// future.  Applying deletes can be costly, so if your app
+	  /// can tolerate deleted documents being returned you might
+	  /// gain some performance by passing false. </param>
+	  /// <returns> The new IndexReader </returns>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// </exception>
+	  /// <seealso cref= DirectoryReader#openIfChanged(DirectoryReader,IndexWriter,boolean)
+	  /// 
+	  /// @lucene.experimental </seealso>
+	  /// @deprecated Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/> 
+	  [Obsolete("Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/>")]
+	  public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
+	  {
+		return DirectoryReader.Open(writer, applyAllDeletes);
+	  }
 
-        /// <summary> Prints the filename and size of each file within a given compound file.
-        /// Add the -extract flag to extract files to the current working directory.
-        /// In order to make the extracted version of the index work, you have to copy
-        /// the segments file from the compound index into the directory where the extracted files are stored.
-        /// </summary>
-        /// <param name="args">Usage: Lucene.Net.Index.IndexReader [-extract] &lt;cfsfile&gt;
-        /// </param>
-        [STAThread]
-        public static void  Main(String[] args)
-        {
-            System.String filename = null;
-            bool extract = false;
-            
-            foreach (string t in args)
-            {
-                if (t.Equals("-extract"))
-                {
-                    extract = true;
-                }
-                else if (filename == null)
-                {
-                    filename = t;
-                }
-            }
+	  /// <summary>
+	  /// Expert: returns an IndexReader reading the index in the given
+	  ///  <seealso cref="IndexCommit"/>. </summary>
+	  /// <param name="commit"> the commit point to open </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit)"/> 
+	  [Obsolete("Use <seealso cref="DirectoryReader#open(IndexCommit)"/>")]
+	  public static DirectoryReader Open(IndexCommit commit)
+	  {
+		return DirectoryReader.Open(commit);
+	  }
 
-            if (filename == null)
-            {
-                System.Console.Out.WriteLine("Usage: Lucene.Net.Index.IndexReader [-extract] <cfsfile>");
-                return ;
-            }
-            
-            Directory dir = null;
-            CompoundFileReader cfr = null;
-            
-            try
-            {
-                var file = new System.IO.FileInfo(filename);
-                System.String dirname = new System.IO.FileInfo(file.FullName).DirectoryName;
-                filename = file.Name;
-                dir = FSDirectory.Open(new System.IO.DirectoryInfo(dirname));
-                cfr = new CompoundFileReader(dir, filename);
-                
-                System.String[] files = cfr.ListAll();
-                System.Array.Sort(files); // sort the array of filename so that the output is more readable
-                
-                foreach (string t in files)
-                {
-                    long len = cfr.FileLength(t);
-                    
-                    if (extract)
-                    {
-                        System.Console.Out.WriteLine("extract " + t + " with " + len + " bytes to local directory...");
-                        IndexInput ii = cfr.OpenInput(t);
-                        
-                        var f = new System.IO.FileStream(t, System.IO.FileMode.Create);
-                        
-                        // read and write with a small buffer, which is more effectiv than reading byte by byte
-                        var buffer = new byte[1024];
-                        int chunk = buffer.Length;
-                        while (len > 0)
-                        {
-                            var bufLen = (int) System.Math.Min(chunk, len);
-                            ii.ReadBytes(buffer, 0, bufLen);
-                            f.Write(buffer, 0, bufLen);
-                            len -= bufLen;
-                        }
-                        
-                        f.Close();
-                        ii.Close();
-                    }
-                    else
-                        System.Console.Out.WriteLine(t + ": " + len + " bytes");
-                }
-            }
-            catch (System.IO.IOException ioe)
-            {
-                System.Console.Error.WriteLine(ioe.StackTrace);
-            }
-            finally
-            {
-                try
-                {
-                    if (dir != null)
-                        dir.Close();
-                    if (cfr != null)
-                        cfr.Close();
-                }
-                catch (System.IO.IOException ioe)
-                {
-                    System.Console.Error.WriteLine(ioe.StackTrace);
-                }
-            }
-        }
-        
-        /// <summary>Returns all commit points that exist in the Directory.
-        /// Normally, because the default is <see cref="KeepOnlyLastCommitDeletionPolicy" />
-        ///, there would be only
-        /// one commit point.  But if you're using a custom <see cref="IndexDeletionPolicy" />
-        /// then there could be many commits.
-        /// Once you have a given commit, you can open a reader on
-        /// it by calling <see cref="IndexReader.Open(IndexCommit,bool)" />
-        /// There must be at least one commit in
-        /// the Directory, else this method throws <see cref="System.IO.IOException" />.  
-        /// Note that if a commit is in
-        /// progress while this method is running, that commit
-        /// may or may not be returned array.  
-        /// </summary>
-        public static System.Collections.Generic.ICollection<IndexCommit> ListCommits(Directory dir)
-        {
-            return DirectoryReader.ListCommits(dir);
-        }
 
-        /// <summary>Expert: returns the sequential sub readers that this
-        /// reader is logically composed of.  For example,
-        /// IndexSearcher uses this API to drive searching by one
-        /// sub reader at a time.  If this reader is not composed
-        /// of sequential child readers, it should return null.
-        /// If this method returns an empty array, that means this
-        /// reader is a null reader (for example a MultiReader
-        /// that has no sub readers).
-        /// <p/>
-        /// NOTE: You should not try using sub-readers returned by
-        /// this method to make any changes (setNorm, deleteDocument,
-        /// etc.). While this might succeed for one composite reader
-        /// (like MultiReader), it will most likely lead to index
-        /// corruption for other readers (like DirectoryReader obtained
-        /// through <see cref="IndexReader.Open(Lucene.Net.Store.Directory,bool)" />. Use the parent reader directly. 
-        /// </summary>
-        public virtual IndexReader[] GetSequentialSubReaders()
-        {
-            return null;
-        }
+	  /// <summary>
+	  /// Expert: returns an IndexReader reading the index in the given
+	  ///  <seealso cref="IndexCommit"/> and termInfosIndexDivisor. </summary>
+	  /// <param name="commit"> the commit point to open </param>
+	  /// <param name="termInfosIndexDivisor"> Subsamples which indexed
+	  ///  terms are loaded into RAM. this has the same effect as {@link
+	  ///  IndexWriterConfig#setTermIndexInterval} except that setting
+	  ///  must be done at indexing time while this setting can be
+	  ///  set per reader.  When set to N, then one in every
+	  ///  N*termIndexInterval terms in the index is loaded into
+	  ///  memory.  By setting this to a value > 1 you can reduce
+	  ///  memory usage, at the expense of higher latency when
+	  ///  loading a TermInfo.  The default value is 1.  Set this
+	  ///  to -1 to skip loading the terms index entirely. </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/> 
+	  [Obsolete("Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/>")]
+	  public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
+	  {
+		return DirectoryReader.Open(commit, termInfosIndexDivisor);
+	  }
 
-        /// <summary>Expert</summary>
-        public virtual object FieldCacheKey
-        {
-            get { return this; }
-        }
+	  /// <summary>
+	  /// Retrieve term vectors for this document, or null if
+	  ///  term vectors were not indexed.  The returned Fields
+	  ///  instance acts like a single-document inverted index
+	  ///  (the docID will be 0). 
+	  /// </summary>
+	  public abstract Fields GetTermVectors(int docID);
 
-        /* Expert.  Warning: this returns null if the reader has
-          *  no deletions 
-          */
+	  /// <summary>
+	  /// Retrieve term vector for this document and field, or
+	  ///  null if term vectors were not indexed.  The returned
+	  ///  Fields instance acts like a single-document inverted
+	  ///  index (the docID will be 0). 
+	  /// </summary>
+	  public Terms GetTermVector(int docID, string field)
+	  {
+		Fields vectors = GetTermVectors(docID);
+		if (vectors == null)
+		{
+		  return null;
+		}
+		return vectors.Terms(field);
+	  }
 
-        public virtual object DeletesCacheKey
-        {
-            get { return this; }
-        }
+	  /// <summary>
+	  /// Returns the number of documents in this index. </summary>
+	  public abstract int NumDocs();
 
-        /// <summary>Returns the number of unique terms (across all fields)
-        /// in this reader.
-        /// 
-        /// This method returns long, even though internally
-        /// Lucene cannot handle more than 2^31 unique terms, for
-        /// a possible future when this limitation is removed.
-        /// 
-        /// </summary>
-        /// <throws>  UnsupportedOperationException if this count </throws>
-        /// <summary>  cannot be easily determined (eg Multi*Readers).
-        /// Instead, you should call <see cref="GetSequentialSubReaders" />
-        /// and ask each sub reader for
-        /// its unique term count. 
-        /// </summary>
-        public virtual long UniqueTermCount
-        {
-            get { throw new System.NotSupportedException("this reader does not implement getUniqueTermCount()"); }
-        }
+	  /// <summary>
+	  /// Returns one greater than the largest possible document number.
+	  /// this may be used to, e.g., determine how big to allocate an array which
+	  /// will have an element for every document number in an index.
+	  /// </summary>
+	  public abstract int MaxDoc();
 
-        /// <summary>
-        /// For IndexReader implementations that use
-        /// TermInfosReader to read terms, this returns the
-        /// current indexDivisor as specified when the reader was
-        /// opened.
-        /// </summary>
-        public virtual int TermInfosIndexDivisor
-        {
-            get { throw new NotSupportedException("This reader does not support this method."); }
-        }
-    }
+	  /// <summary>
+	  /// Returns the number of deleted documents. </summary>
+	  public int NumDeletedDocs()
+	  {
+		return MaxDoc() - NumDocs();
+	  }
+
+	  /// <summary>
+	  /// Expert: visits the fields of a stored document, for
+	  ///  custom processing/loading of each field.  If you
+	  ///  simply want to load all fields, use {@link
+	  ///  #document(int)}.  If you want to load a subset, use
+	  ///  <seealso cref="DocumentStoredFieldVisitor"/>.  
+	  /// </summary>
+	  public abstract void Document(int docID, StoredFieldVisitor visitor);
+
+	  /// <summary>
+	  /// Returns the stored fields of the <code>n</code><sup>th</sup>
+	  /// <code>Document</code> in this index.  this is just
+	  /// sugar for using <seealso cref="DocumentStoredFieldVisitor"/>.
+	  /// <p>
+	  /// <b>NOTE:</b> for performance reasons, this method does not check if the
+	  /// requested document is deleted, and therefore asking for a deleted document
+	  /// may yield unspecified results. Usually this is not required, however you
+	  /// can test if the doc is deleted by checking the {@link
+	  /// Bits} returned from <seealso cref="MultiFields#getLiveDocs"/>.
+	  /// 
+	  /// <b>NOTE:</b> only the content of a field is returned,
+	  /// if that field was stored during indexing.  Metadata
+	  /// like boost, omitNorm, IndexOptions, tokenized, etc.,
+	  /// are not preserved.
+	  /// </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  // TODO: we need a separate StoredField, so that the
+	  // Document returned here contains that class not
+	  // IndexableField
+	  public Document Document(int docID)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Document.DocumentStoredFieldVisitor visitor = new Lucene.Net.Document.DocumentStoredFieldVisitor();
+		DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor();
+		Document(docID, visitor);
+		return visitor.Document;
+	  }
+
+	  /// <summary>
+	  /// Like <seealso cref="#document(int)"/> but only loads the specified
+	  /// fields.  Note that this is simply sugar for {@link
+	  /// DocumentStoredFieldVisitor#DocumentStoredFieldVisitor(Set)}.
+	  /// </summary>
+	  public Document Document(int docID, Set<string> fieldsToLoad)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Document.DocumentStoredFieldVisitor visitor = new Lucene.Net.Document.DocumentStoredFieldVisitor(fieldsToLoad);
+		DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(fieldsToLoad);
+		Document(docID, visitor);
+		return visitor.Document;
+	  }
+
+	  /// <summary>
+	  /// Returns true if any documents have been deleted. Implementers should
+	  ///  consider overriding this method if <seealso cref="#maxDoc()"/> or <seealso cref="#numDocs()"/>
+	  ///  are not constant-time operations. 
+	  /// </summary>
+	  public virtual bool HasDeletions()
+	  {
+		return NumDeletedDocs() > 0;
+	  }
+
+	  /// <summary>
+	  /// Closes files associated with this index.
+	  /// Also saves any new deletions to disk.
+	  /// No other methods should be called after this has been called. </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public override void Close()
+	  {
+		  lock (this)
+		  {
+			if (!Closed)
+			{
+			  DecRef();
+			  Closed = true;
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Implements close. </summary>
+	  protected internal abstract void DoClose();
+
+	  /// <summary>
+	  /// Expert: Returns the root <seealso cref="IndexReaderContext"/> for this
+	  /// <seealso cref="IndexReader"/>'s sub-reader tree. 
+	  /// <p>
+	  /// Iff this reader is composed of sub
+	  /// readers, i.e. this reader being a composite reader, this method returns a
+	  /// <seealso cref="CompositeReaderContext"/> holding the reader's direct children as well as a
+	  /// view of the reader tree's atomic leaf contexts. All sub-
+	  /// <seealso cref="IndexReaderContext"/> instances referenced from this readers top-level
+	  /// context are private to this reader and are not shared with another context
+	  /// tree. For example, IndexSearcher uses this API to drive searching by one
+	  /// atomic leaf reader at a time. If this reader is not composed of child
+	  /// readers, this method returns an <seealso cref="AtomicReaderContext"/>.
+	  /// <p>
+	  /// Note: Any of the sub-<seealso cref="CompositeReaderContext"/> instances referenced
+	  /// from this top-level context do not support <seealso cref="CompositeReaderContext#leaves()"/>.
+	  /// Only the top-level context maintains the convenience leaf-view
+	  /// for performance reasons.
+	  /// </summary>
+	  public abstract IndexReaderContext Context {get;}
+
+	  /// <summary>
+	  /// Returns the reader's leaves, or itself if this reader is atomic.
+	  /// this is a convenience method calling {@code this.getContext().leaves()}. </summary>
+	  /// <seealso cref= IndexReaderContext#leaves() </seealso>
+	  public IList<AtomicReaderContext> Leaves()
+	  {
+		return Context.Leaves();
+	  }
+
+	  /// <summary>
+	  /// Expert: Returns a key for this IndexReader, so FieldCache/CachingWrapperFilter can find
+	  /// it again.
+	  /// this key must not have equals()/hashCode() methods, so &quot;equals&quot; means &quot;identical&quot;. 
+	  /// </summary>
+	  public virtual object CoreCacheKey
+	  {
+		  get
+		  {
+			// Don't call ensureOpen since FC calls this (to evict)
+			// on close
+			return this;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: Returns a key for this IndexReader that also includes deletions,
+	  /// so FieldCache/CachingWrapperFilter can find it again.
+	  /// this key must not have equals()/hashCode() methods, so &quot;equals&quot; means &quot;identical&quot;. 
+	  /// </summary>
+	  public virtual object CombinedCoreAndDeletesKey
+	  {
+		  get
+		  {
+			// Don't call ensureOpen since FC calls this (to evict)
+			// on close
+			return this;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns the number of documents containing the 
+	  /// <code>term</code>.  this method returns 0 if the term or
+	  /// field does not exists.  this method does not take into
+	  /// account deleted documents that have not yet been merged
+	  /// away. </summary>
+	  /// <seealso cref= TermsEnum#docFreq() </seealso>
+	  public abstract int DocFreq(Term term);
+
+	  /// <summary>
+	  /// Returns the total number of occurrences of {@code term} across all
+	  /// documents (the sum of the freq() for each doc that has this term). this
+	  /// will be -1 if the codec doesn't support this measure. Note that, like other
+	  /// term measures, this measure does not take deleted documents into account.
+	  /// </summary>
+	  public abstract long TotalTermFreq(Term term);
+
+	  /// <summary>
+	  /// Returns the sum of <seealso cref="TermsEnum#docFreq()"/> for all terms in this field,
+	  /// or -1 if this measure isn't stored by the codec. Note that, just like other
+	  /// term measures, this measure does not take deleted documents into account.
+	  /// </summary>
+	  /// <seealso cref= Terms#getSumDocFreq() </seealso>
+	  public abstract long GetSumDocFreq(string field);
+
+	  /// <summary>
+	  /// Returns the number of documents that have at least one term for this field,
+	  /// or -1 if this measure isn't stored by the codec. Note that, just like other
+	  /// term measures, this measure does not take deleted documents into account.
+	  /// </summary>
+	  /// <seealso cref= Terms#getDocCount() </seealso>
+	  public abstract int GetDocCount(string field);
+
+	  /// <summary>
+	  /// Returns the sum of <seealso cref="TermsEnum#totalTermFreq"/> for all terms in this
+	  /// field, or -1 if this measure isn't stored by the codec (or if this fields
+	  /// omits term freq and positions). Note that, just like other term measures,
+	  /// this measure does not take deleted documents into account.
+	  /// </summary>
+	  /// <seealso cref= Terms#getSumTotalTermFreq() </seealso>
+	  public abstract long GetSumTotalTermFreq(string field);
+
+	}
+
 }

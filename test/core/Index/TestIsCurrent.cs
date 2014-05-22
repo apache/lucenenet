@@ -1,120 +1,111 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-
-using Lucene.Net.Index;
-using Lucene.Net.Analysis;
-using Lucene.Net.Documents;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
-
-using NUnit.Framework;
-
 namespace Lucene.Net.Index
 {
-    [TestFixture]
-    public class TestIsCurrent : LuceneTestCase
-    {
 
-        private IndexWriter writer;
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        private Directory directory;
+	using Document = Lucene.Net.Document.Document;
+	using Field = Lucene.Net.Document.Field;
+	using Lucene.Net.Util;
+	using Lucene.Net.Store;
 
-        private Random rand;
+	using Test = org.junit.Test;
 
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
+	public class TestIsCurrent : LuceneTestCase
+	{
 
-            // initialize directory
-            directory = new MockRAMDirectory();
-            writer = new IndexWriter(directory, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+	  private RandomIndexWriter Writer;
 
-            // write document
-            Document doc = new Document();
-            doc.Add(new Field("UUID", "1", Field.Store.YES, Field.Index.ANALYZED));
-            writer.AddDocument(doc);
-            writer.Commit();
-        }
+	  private Directory Directory;
 
-        [TearDown]
-        public override void TearDown()
-        {
-            base.TearDown();
-            writer.Close();
-            directory.Close();
-        }
+	  public override void SetUp()
+	  {
+		base.setUp();
 
-        /*
-         * Failing testcase showing the trouble
-         * 
-         * @throws IOException
-         */
-        [Test]
-        public void TestDeleteByTermIsCurrent()
-        {
+		// initialize directory
+		Directory = newDirectory();
+		Writer = new RandomIndexWriter(random(), Directory);
 
-            // get reader
-            IndexReader reader = writer.GetReader();
+		// write document
+		Document doc = new Document();
+		doc.add(newTextField("UUID", "1", Field.Store.YES));
+		Writer.addDocument(doc);
+		Writer.commit();
+	  }
 
-            // assert index has a document and reader is up2date 
-            Assert.AreEqual(1, writer.NumDocs(), "One document should be in the index");
-            Assert.IsTrue(reader.IsCurrent(), "Document added, reader should be stale ");
+	  public override void TearDown()
+	  {
+		base.tearDown();
+		Writer.close();
+		Directory.close();
+	  }
 
-            // remove document
-            Term idTerm = new Term("UUID", "1");
-            writer.DeleteDocuments(idTerm);
-            writer.Commit();
+	  /// <summary>
+	  /// Failing testcase showing the trouble
+	  /// </summary>
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @Test public void testDeleteByTermIsCurrent() throws java.io.IOException
+	  public virtual void TestDeleteByTermIsCurrent()
+	  {
 
-            // assert document has been deleted (index changed), reader is stale
-            Assert.AreEqual(0, writer.NumDocs(), "Document should be removed");
-            Assert.IsFalse(reader.IsCurrent(), "Reader should be stale");
+		// get reader
+		DirectoryReader reader = Writer.Reader;
 
-            reader.Close();
-        }
+		// assert index has a document and reader is up2date 
+		Assert.AreEqual("One document should be in the index", 1, Writer.numDocs());
+		Assert.IsTrue("One document added, reader should be current", reader.Current);
 
-        /*
-         * Testcase for example to show that writer.deleteAll() is working as expected
-         * 
-         * @throws IOException
-         */
-        [Test]
-        public void TestDeleteAllIsCurrent()
-        {
+		// remove document
+		Term idTerm = new Term("UUID", "1");
+		Writer.deleteDocuments(idTerm);
+		Writer.commit();
 
-            // get reader
-            IndexReader reader = writer.GetReader();
+		// assert document has been deleted (index changed), reader is stale
+		Assert.AreEqual("Document should be removed", 0, Writer.numDocs());
+		Assert.IsFalse("Reader should be stale", reader.Current);
 
-            // assert index has a document and reader is up2date 
-            Assert.AreEqual(1, writer.NumDocs(), "One document should be in the index");
-            Assert.IsTrue(reader.IsCurrent(), "Document added, reader should be stale ");
+		reader.close();
+	  }
 
-            // remove all documents
-            writer.DeleteAll();
-            writer.Commit();
+	  /// <summary>
+	  /// Testcase for example to show that writer.deleteAll() is working as expected
+	  /// </summary>
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @Test public void testDeleteAllIsCurrent() throws java.io.IOException
+	  public virtual void TestDeleteAllIsCurrent()
+	  {
 
-            // assert document has been deleted (index changed), reader is stale
-            Assert.AreEqual(0, writer.NumDocs(), "Document should be removed");
-            Assert.IsFalse(reader.IsCurrent(), "Reader should be stale");
+		// get reader
+		DirectoryReader reader = Writer.Reader;
 
-            reader.Close();
-        }
-    }
+		// assert index has a document and reader is up2date 
+		Assert.AreEqual("One document should be in the index", 1, Writer.numDocs());
+		Assert.IsTrue("Document added, reader should be stale ", reader.Current);
+
+		// remove all documents
+		Writer.deleteAll();
+		Writer.commit();
+
+		// assert document has been deleted (index changed), reader is stale
+		Assert.AreEqual("Document should be removed", 0, Writer.numDocs());
+		Assert.IsFalse("Reader should be stale", reader.Current);
+
+		reader.close();
+	  }
+	}
 
 }

@@ -1,137 +1,117 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using Lucene.Net.Support;
-using NUnit.Framework;
-
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
-    
-    [TestFixture]
-    public class TestWindowsMMap:LuceneTestCase
-    {
-        
-        private const System.String alphabet = "abcdefghijklmnopqrstuvwzyz";
-        private System.Random random;
-        
-        [SetUp]
-        public override void  SetUp()
-        {
-            base.SetUp();
-            random = NewRandom();
-        }
-        
-        private System.String RandomToken()
-        {
-            int tl = 1 + random.Next(7);
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            for (int cx = 0; cx < tl; cx++)
-            {
-                int c = random.Next(25);
-                sb.Append(alphabet.Substring(c, (c + 1) - (c)));
-            }
-            return sb.ToString();
-        }
-        
-        private System.String RandomField()
-        {
-            int fl = 1 + random.Next(3);
-            System.Text.StringBuilder fb = new System.Text.StringBuilder();
-            for (int fx = 0; fx < fl; fx++)
-            {
-                fb.Append(RandomToken());
-                fb.Append(" ");
-            }
-            return fb.ToString();
-        }
-        
-        private static readonly System.String storePathname = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testLuceneMmap")).FullName;
-        
-        [Test]
-        public virtual void  TestMmapIndex()
-        {
-            Assert.Ignore("Need to port tests, but we don't really support MMapDirectories anyway");
 
-            FSDirectory storeDirectory;
-            storeDirectory = new MMapDirectory(new System.IO.DirectoryInfo(storePathname), null);
-            
-            // plan to add a set of useful stopwords, consider changing some of the
-            // interior filters.
-            StandardAnalyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT, Support.Compatibility.SetFactory.CreateHashSet<string>());
-            // TODO: something about lock timeouts and leftover locks.
-            IndexWriter writer = new IndexWriter(storeDirectory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            IndexSearcher searcher = new IndexSearcher(storeDirectory, true);
-            
-            for (int dx = 0; dx < 1000; dx++)
-            {
-                System.String f = RandomField();
-                Document doc = new Document();
-                doc.Add(new Field("data", f, Field.Store.YES, Field.Index.ANALYZED));
-                writer.AddDocument(doc);
-            }
-            
-            searcher.Close();
-            writer.Close();
-            RmDir(new System.IO.FileInfo(storePathname));
-        }
-        
-        private void  RmDir(System.IO.FileInfo dir)
-        {
-            System.IO.FileInfo[] files = FileSupport.GetFiles(dir);
-            for (int i = 0; i < files.Length; i++)
-            {
-                bool tmpBool;
-                if (System.IO.File.Exists(files[i].FullName))
-                {
-                    System.IO.File.Delete(files[i].FullName);
-                    tmpBool = true;
-                }
-                else if (System.IO.Directory.Exists(files[i].FullName))
-                {
-                    System.IO.Directory.Delete(files[i].FullName);
-                    tmpBool = true;
-                }
-                else
-                    tmpBool = false;
-                bool generatedAux = tmpBool;
-            }
-            bool tmpBool2;
-            if (System.IO.File.Exists(dir.FullName))
-            {
-                System.IO.File.Delete(dir.FullName);
-                tmpBool2 = true;
-            }
-            else if (System.IO.Directory.Exists(dir.FullName))
-            {
-                System.IO.Directory.Delete(dir.FullName);
-                tmpBool2 = true;
-            }
-            else
-                tmpBool2 = false;
-            bool generatedAux2 = tmpBool2;
-        }
-    }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using Field = Lucene.Net.Document.Field;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+	using TestUtil = Lucene.Net.Util.TestUtil;
+
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using Document = Lucene.Net.Document.Document;
+	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using IndexWriter = Lucene.Net.Index.IndexWriter;
+	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+
+	public class TestWindowsMMap : LuceneTestCase
+	{
+
+	  private const string Alphabet = "abcdefghijklmnopqrstuvwzyz";
+
+	  public override void SetUp()
+	  {
+		base.setUp();
+	  }
+
+	  private string RandomToken()
+	  {
+		int tl = 1 + random().Next(7);
+		StringBuilder sb = new StringBuilder();
+		for (int cx = 0; cx < tl; cx++)
+		{
+		  int c = random().Next(25);
+		  sb.Append(Alphabet.Substring(c, 1));
+		}
+		return sb.ToString();
+	  }
+
+	  private string RandomField()
+	  {
+		int fl = 1 + random().Next(3);
+		StringBuilder fb = new StringBuilder();
+		for (int fx = 0; fx < fl; fx++)
+		{
+		  fb.Append(RandomToken());
+		  fb.Append(" ");
+		}
+		return fb.ToString();
+	  }
+
+	  public virtual void TestMmapIndex()
+	  {
+		// sometimes the directory is not cleaned by rmDir, because on Windows it
+		// may take some time until the files are finally dereferenced. So clean the
+		// directory up front, or otherwise new IndexWriter will fail.
+		File dirPath = createTempDir("testLuceneMmap");
+		RmDir(dirPath);
+		MMapDirectory dir = new MMapDirectory(dirPath, null);
+
+		// plan to add a set of useful stopwords, consider changing some of the
+		// interior filters.
+		MockAnalyzer analyzer = new MockAnalyzer(random());
+		// TODO: something about lock timeouts and leftover locks.
+		IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
+		   .setOpenMode(IndexWriterConfig.OpenMode.CREATE));
+		writer.commit();
+		IndexReader reader = DirectoryReader.open(dir);
+		IndexSearcher searcher = newSearcher(reader);
+
+		int num = atLeast(1000);
+		for (int dx = 0; dx < num; dx++)
+		{
+		  string f = RandomField();
+		  Document doc = new Document();
+		  doc.add(newTextField("data", f, Field.Store.YES));
+		  writer.addDocument(doc);
+		}
+
+		reader.close();
+		writer.close();
+		RmDir(dirPath);
+	  }
+
+	  private void RmDir(File dir)
+	  {
+		if (!dir.exists())
+		{
+		  return;
+		}
+		foreach (File file in dir.listFiles())
+		{
+		  file.delete();
+		}
+		dir.delete();
+	  }
+	}
+
 }

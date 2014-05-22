@@ -1,89 +1,61 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using Lucene.Net.Support;
-
 namespace Lucene.Net.Store
 {
-    
-    /// <summary>Writes bytes through to a primary IndexOutput, computing
-    /// checksum as it goes. Note that you cannot use seek(). 
-    /// </summary>
-    public class ChecksumIndexInput : IndexInput
-    {
-        internal IndexInput main;
-        internal IChecksum digest;
 
-        private bool isDisposed;
-        
-        public ChecksumIndexInput(IndexInput main)
-        {
-            this.main = main;
-            digest = new CRC32();
-        }
-        
-        public override byte ReadByte()
-        {
-            byte b = main.ReadByte();
-            digest.Update(b);
-            return b;
-        }
-        
-        public override void  ReadBytes(byte[] b, int offset, int len)
-        {
-            main.ReadBytes(b, offset, len);
-            digest.Update(b, offset, len);
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        public virtual long Checksum
-        {
-            get { return digest.Value; }
-        }
+	/// <summary>
+	/// Extension of IndexInput, computing checksum as it goes. 
+	/// Callers can retrieve the checksum via <seealso cref="#getChecksum()"/>.
+	/// </summary>
+	public abstract class ChecksumIndexInput : IndexInput
+	{
 
-        protected override void Dispose(bool disposing)
-        {
-            if (isDisposed) return;
+	  /// <summary>
+	  /// resourceDescription should be a non-null, opaque string
+	  ///  describing this resource; it's returned from
+	  ///  <seealso cref="#toString"/>. 
+	  /// </summary>
+	  protected internal ChecksumIndexInput(string resourceDescription) : base(resourceDescription)
+	  {
+	  }
 
-            if (disposing)
-            {
-                if (main != null)
-                {
-                    main.Dispose();
-                }
-            }
+	  /// <summary>
+	  /// Returns the current checksum value </summary>
+	  public abstract long Checksum {get;}
 
-            main = null;
-            isDisposed = true;
-        }
+	  /// <summary>
+	  /// {@inheritDoc}
+	  /// 
+	  /// <seealso cref="ChecksumIndexInput"/> can only seek forward and seeks are expensive
+	  /// since they imply to read bytes in-between the current position and the
+	  /// target position in order to update the checksum.
+	  /// </summary>
+	  public override void Seek(long pos)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long skip = pos - getFilePointer();
+		long skip = pos - FilePointer;
+		if (skip < 0)
+		{
+		  throw new IllegalStateException(this.GetType() + " cannot seek backwards");
+		}
+		SkipBytes(skip);
+	  }
+	}
 
-        public override long FilePointer
-        {
-            get { return main.FilePointer; }
-        }
-
-        public override void  Seek(long pos)
-        {
-            throw new System.SystemException("not allowed");
-        }
-        
-        public override long Length()
-        {
-            return main.Length();
-        }
-    }
 }

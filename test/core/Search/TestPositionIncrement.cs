@@ -1,426 +1,321 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Tokenattributes;
-using Lucene.Net.Util;
-using NUnit.Framework;
-
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using LowerCaseTokenizer = Lucene.Net.Analysis.LowerCaseTokenizer;
-using StopFilter = Lucene.Net.Analysis.StopFilter;
-using TokenFilter = Lucene.Net.Analysis.TokenFilter;
-using TokenStream = Lucene.Net.Analysis.TokenStream;
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Payload = Lucene.Net.Index.Payload;
-using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
-using Directory = Lucene.Net.Store.Directory;
-using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
-using BaseTokenStreamTestCase = Lucene.Net.Test.Analysis.BaseTokenStreamTestCase;
-using PayloadSpanUtil = Lucene.Net.Search.Payloads.PayloadSpanUtil;
-using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
-using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
-using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 
 namespace Lucene.Net.Search
 {
-    
-    /// <summary>Term position unit test.</summary>
-    public class TestPositionIncrement : LuceneTestCase
-    {
-        private class AnonymousClassAnalyzer:Analyzer
-        {
-            public AnonymousClassAnalyzer(TestPositionIncrement enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private class AnonymousClassTokenStream:TokenStream
-            {
-                public AnonymousClassTokenStream(AnonymousClassAnalyzer enclosingInstance)
-                {
-                    InitBlock(enclosingInstance);
-                }
-                private void  InitBlock(AnonymousClassAnalyzer enclosingInstance)
-                {
-                    this.enclosingInstance = enclosingInstance;
-                    posIncrAtt =  AddAttribute<IPositionIncrementAttribute>();
-                    termAtt =  AddAttribute<ITermAttribute>();
-                    offsetAtt =  AddAttribute<IOffsetAttribute>();
-                }
-                private AnonymousClassAnalyzer enclosingInstance;
-                public AnonymousClassAnalyzer Enclosing_Instance
-                {
-                    get
-                    {
-                        return enclosingInstance;
-                    }
-                    
-                }
-                private System.String[] TOKENS = new System.String[]{"1", "2", "3", "4", "5"};
-                private int[] INCREMENTS = new int[]{0, 2, 1, 0, 1};
-                private int i = 0;
-                
-                internal IPositionIncrementAttribute posIncrAtt;
-                internal ITermAttribute termAtt;
-                internal IOffsetAttribute offsetAtt;
 
-                protected override void Dispose(bool disposing)
-                {
-                    // do nothing
-                }
-
-                public override bool IncrementToken()
-                {
-                    if (i == TOKENS.Length)
-                        return false;
-                    ClearAttributes();
-                    termAtt.SetTermBuffer(TOKENS[i]);
-                    offsetAtt.SetOffset(i, i);
-                    posIncrAtt.PositionIncrement = INCREMENTS[i];
-                    i++;
-                    return true;
-                }
-            }
-            private void  InitBlock(TestPositionIncrement enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestPositionIncrement enclosingInstance;
-            public TestPositionIncrement Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-            {
-                return new AnonymousClassTokenStream(this);
-            }
-        }
-        
-        [Test]
-        public virtual void  TestSetPosition()
-        {
-            Analyzer analyzer = new AnonymousClassAnalyzer(this);
-            Directory store = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(store, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            Document d = new Document();
-            d.Add(new Field("field", "bogus", Field.Store.YES, Field.Index.ANALYZED));
-            writer.AddDocument(d);
-            writer.Optimize();
-            writer.Close();
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
 
-            IndexSearcher searcher = new IndexSearcher(store, true);
-            
-            TermPositions pos = searcher.IndexReader.TermPositions(new Term("field", "1"));
-            pos.Next();
-            // first token should be at position 0
-            Assert.AreEqual(0, pos.NextPosition());
-            
-            pos = searcher.IndexReader.TermPositions(new Term("field", "2"));
-            pos.Next();
-            // second token should be at position 2
-            Assert.AreEqual(2, pos.NextPosition());
-            
-            PhraseQuery q;
-            ScoreDoc[] hits;
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "1"));
-            q.Add(new Term("field", "2"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // same as previous, just specify positions explicitely.
-            q = new PhraseQuery();
-            q.Add(new Term("field", "1"), 0);
-            q.Add(new Term("field", "2"), 1);
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // specifying correct positions should find the phrase.
-            q = new PhraseQuery();
-            q.Add(new Term("field", "1"), 0);
-            q.Add(new Term("field", "2"), 2);
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "2"));
-            q.Add(new Term("field", "3"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "3"));
-            q.Add(new Term("field", "4"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // phrase query would find it when correct positions are specified. 
-            q = new PhraseQuery();
-            q.Add(new Term("field", "3"), 0);
-            q.Add(new Term("field", "4"), 0);
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            // phrase query should fail for non existing searched term 
-            // even if there exist another searched terms in the same searched position. 
-            q = new PhraseQuery();
-            q.Add(new Term("field", "3"), 0);
-            q.Add(new Term("field", "9"), 0);
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // multi-phrase query should succed for non existing searched term
-            // because there exist another searched terms in the same searched position. 
-            MultiPhraseQuery mq = new MultiPhraseQuery();
-            mq.Add(new Term[]{new Term("field", "3"), new Term("field", "9")}, 0);
-            hits = searcher.Search(mq, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "2"));
-            q.Add(new Term("field", "4"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "3"));
-            q.Add(new Term("field", "5"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "4"));
-            q.Add(new Term("field", "5"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            
-            q = new PhraseQuery();
-            q.Add(new Term("field", "2"));
-            q.Add(new Term("field", "5"));
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // should not find "1 2" because there is a gap of 1 in the index
-            QueryParser qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(false));
-            q = (PhraseQuery) qp.Parse("\"1 2\"");
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // omitted stop word cannot help because stop filter swallows the increments. 
-            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // query parser alone won't help, because stop filter swallows the increments. 
-            qp.EnablePositionIncrements = true;
-            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // stop filter alone won't help, because query parser swallows the increments. 
-            qp.EnablePositionIncrements = false;
-            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(0, hits.Length);
-            
-            // when both qp qnd stopFilter propagate increments, we should find the doc.
-            qp = new QueryParser(Util.Version.LUCENE_CURRENT, "field", new StopWhitespaceAnalyzer(true));
-            qp.EnablePositionIncrements = true;
-            q = (PhraseQuery) qp.Parse("\"1 stop 2\"");
-            hits = searcher.Search(q, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-        }
-        
-        private class StopWhitespaceAnalyzer:Analyzer
-        {
-            internal bool enablePositionIncrements;
-            internal WhitespaceAnalyzer a = new WhitespaceAnalyzer();
-            public StopWhitespaceAnalyzer(bool enablePositionIncrements)
-            {
-                this.enablePositionIncrements = enablePositionIncrements;
-            }
-            public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-            {
-                TokenStream ts = a.TokenStream(fieldName, reader);
-                return new StopFilter(enablePositionIncrements, ts, new CharArraySet(new List<string> {"stop"}, true));
-            }
-        }
+	using Lucene.Net.Analysis;
+	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+	using Document = Lucene.Net.Document.Document;
+	using Field = Lucene.Net.Document.Field;
+	using TextField = Lucene.Net.Document.TextField;
+	using AtomicReader = Lucene.Net.Index.AtomicReader;
+	using MultiFields = Lucene.Net.Index.MultiFields;
+	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+	using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
+	using Term = Lucene.Net.Index.Term;
+	using Directory = Lucene.Net.Store.Directory;
+	using PayloadSpanUtil = Lucene.Net.Search.Payloads.PayloadSpanUtil;
+	using MultiSpansWrapper = Lucene.Net.Search.Spans.MultiSpansWrapper;
+	using SpanNearQuery = Lucene.Net.Search.Spans.SpanNearQuery;
+	using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
+	using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
+	using Spans = Lucene.Net.Search.Spans.Spans;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+	using BytesRef = Lucene.Net.Util.BytesRef;
 
-        [Test]
-        public virtual void TestPayloadsPos0()
-        {
-            Directory dir = new MockRAMDirectory();
-            IndexWriter writer = new IndexWriter(dir, new TestPayloadAnalyzer(), true,
-                                                 IndexWriter.MaxFieldLength.LIMITED);
-            Document doc = new Document();
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            System.IO.StreamWriter sw = new System.IO.StreamWriter(ms);
-            sw.Write("a a b c d e a f g h i j a b k k");
-            // flush to stream & reset it's position so it can be read
-            sw.Flush();
-            ms.Position = 0;
-            doc.Add(new Field("content", new System.IO.StreamReader(ms)));
-            writer.AddDocument(doc);
+	/// <summary>
+	/// Term position unit test.
+	/// 
+	/// 
+	/// </summary>
+	public class TestPositionIncrement : LuceneTestCase
+	{
 
-            IndexReader r = writer.GetReader();
+	  internal const bool VERBOSE = false;
 
-            TermPositions tp = r.TermPositions(new Term("content", "a"));
-            int count = 0;
-            Assert.IsTrue(tp.Next());
-            // "a" occurs 4 times
-            Assert.AreEqual(4, tp.Freq);
-            int expected = 0;
-            Assert.AreEqual(expected, tp.NextPosition());
-            Assert.AreEqual(1, tp.NextPosition());
-            Assert.AreEqual(3, tp.NextPosition());
-            Assert.AreEqual(6, tp.NextPosition());
+	  public virtual void TestSetPosition()
+	  {
+		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+		Directory store = newDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(random(), store, analyzer);
+		Document d = new Document();
+		d.add(newTextField("field", "bogus", Field.Store.YES));
+		writer.addDocument(d);
+		IndexReader reader = writer.Reader;
+		writer.close();
 
-            // only one doc has "a"
-            Assert.IsFalse(tp.Next());
 
-            IndexSearcher is_Renamed = new IndexSearcher(r);
+		IndexSearcher searcher = newSearcher(reader);
 
-            SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
-            SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
-            SpanQuery[] sqs = new SpanQuery[] {stq1, stq2};
-            SpanNearQuery snq = new SpanNearQuery(sqs, 30, false);
+		DocsAndPositionsEnum pos = MultiFields.getTermPositionsEnum(searcher.IndexReader, MultiFields.getLiveDocs(searcher.IndexReader), "field", new BytesRef("1"));
+		pos.nextDoc();
+		// first token should be at position 0
+		Assert.AreEqual(0, pos.nextPosition());
 
-            count = 0;
-            bool sawZero = false;
-            //System.out.println("\ngetPayloadSpans test");
-            Lucene.Net.Search.Spans.Spans pspans = snq.GetSpans(is_Renamed.IndexReader);
-            while (pspans.Next())
-            {
-                //System.out.println(pspans.doc() + " - " + pspans.start() + " - "+ pspans.end());
-                System.Collections.Generic.ICollection<byte[]> payloads = pspans.GetPayload();
-                sawZero |= pspans.Start() == 0;
-                for (System.Collections.IEnumerator it = payloads.GetEnumerator(); it.MoveNext();)
-                {
-                    count++;
-                    System.Object generatedAux2 = it.Current;
-                    //System.out.println(new String((byte[]) it.next()));
-                }
-            }
-            Assert.AreEqual(5, count);
-            Assert.IsTrue(sawZero);
+		pos = MultiFields.getTermPositionsEnum(searcher.IndexReader, MultiFields.getLiveDocs(searcher.IndexReader), "field", new BytesRef("2"));
+		pos.nextDoc();
+		// second token should be at position 2
+		Assert.AreEqual(2, pos.nextPosition());
 
-            //System.out.println("\ngetSpans test");
-            Lucene.Net.Search.Spans.Spans spans = snq.GetSpans(is_Renamed.IndexReader);
-            count = 0;
-            sawZero = false;
-            while (spans.Next())
-            {
-                count++;
-                sawZero |= spans.Start() == 0;
-                //System.out.println(spans.doc() + " - " + spans.start() + " - " + spans.end());
-            }
-            Assert.AreEqual(4, count);
-            Assert.IsTrue(sawZero);
+		PhraseQuery q;
+		ScoreDoc[] hits;
 
-            //System.out.println("\nPayloadSpanUtil test");
+		q = new PhraseQuery();
+		q.add(new Term("field", "1"));
+		q.add(new Term("field", "2"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(0, hits.Length);
 
-            sawZero = false;
-            PayloadSpanUtil psu = new PayloadSpanUtil(is_Renamed.IndexReader);
-            System.Collections.Generic.ICollection<byte[]> pls = psu.GetPayloadsForQuery(snq);
-            count = pls.Count;
-            for (System.Collections.IEnumerator it = pls.GetEnumerator(); it.MoveNext();)
-            {
-                System.String s = new System.String(System.Text.UTF8Encoding.UTF8.GetChars((byte[]) it.Current));
-                //System.out.println(s);
-                sawZero |= s.Equals("pos: 0");
-            }
-            Assert.AreEqual(5, count);
-            Assert.IsTrue(sawZero);
-            writer.Close();
-            is_Renamed.IndexReader.Close();
-            dir.Close();
-        }
-    }
-    
-    class TestPayloadAnalyzer:Analyzer
-    {
-        
-        public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-        {
-            TokenStream result = new LowerCaseTokenizer(reader);
-            return new PayloadFilter(result, fieldName);
-        }
-    }
-    
-    class PayloadFilter:TokenFilter
-    {
-        internal System.String fieldName;
-        
-        internal int pos;
-        
-        internal int i;
-        
-        internal IPositionIncrementAttribute posIncrAttr;
-        internal IPayloadAttribute payloadAttr;
-        internal ITermAttribute termAttr;
-        
-        public PayloadFilter(TokenStream input, System.String fieldName):base(input)
-        {
-            this.fieldName = fieldName;
-            pos = 0;
-            i = 0;
-            posIncrAttr =  input.AddAttribute<IPositionIncrementAttribute>();
-            payloadAttr =  input.AddAttribute<IPayloadAttribute>();
-            termAttr =  input.AddAttribute<ITermAttribute>();
-        }
-        
-        public override bool IncrementToken()
-        {
-            if (input.IncrementToken())
-            {
-                payloadAttr.Payload = new Payload(System.Text.UTF8Encoding.UTF8.GetBytes("pos: " + pos));
-                int posIncr;
-                if (i % 2 == 1)
-                {
-                    posIncr = 1;
-                }
-                else
-                {
-                    posIncr = 0;
-                }
-                posIncrAttr.PositionIncrement = posIncr;
-                pos += posIncr;
-                // System.out.println("term=" + termAttr.term() + " pos=" + pos);
-                i++;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
+		// same as previous, just specify positions explicitely.
+		q = new PhraseQuery();
+		q.add(new Term("field", "1"),0);
+		q.add(new Term("field", "2"),1);
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(0, hits.Length);
+
+		// specifying correct positions should find the phrase.
+		q = new PhraseQuery();
+		q.add(new Term("field", "1"),0);
+		q.add(new Term("field", "2"),2);
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		q = new PhraseQuery();
+		q.add(new Term("field", "2"));
+		q.add(new Term("field", "3"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		q = new PhraseQuery();
+		q.add(new Term("field", "3"));
+		q.add(new Term("field", "4"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(0, hits.Length);
+
+		// phrase query would find it when correct positions are specified. 
+		q = new PhraseQuery();
+		q.add(new Term("field", "3"),0);
+		q.add(new Term("field", "4"),0);
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		// phrase query should fail for non existing searched term 
+		// even if there exist another searched terms in the same searched position. 
+		q = new PhraseQuery();
+		q.add(new Term("field", "3"),0);
+		q.add(new Term("field", "9"),0);
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(0, hits.Length);
+
+		// multi-phrase query should succed for non existing searched term
+		// because there exist another searched terms in the same searched position. 
+		MultiPhraseQuery mq = new MultiPhraseQuery();
+		mq.add(new Term[]{new Term("field", "3"),new Term("field", "9")},0);
+		hits = searcher.search(mq, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		q = new PhraseQuery();
+		q.add(new Term("field", "2"));
+		q.add(new Term("field", "4"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		q = new PhraseQuery();
+		q.add(new Term("field", "3"));
+		q.add(new Term("field", "5"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		q = new PhraseQuery();
+		q.add(new Term("field", "4"));
+		q.add(new Term("field", "5"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(1, hits.Length);
+
+		q = new PhraseQuery();
+		q.add(new Term("field", "2"));
+		q.add(new Term("field", "5"));
+		hits = searcher.search(q, null, 1000).scoreDocs;
+		Assert.AreEqual(0, hits.Length);
+
+		reader.close();
+		store.close();
+	  }
+
+	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
+	  {
+		  private readonly TestPositionIncrement OuterInstance;
+
+		  public AnalyzerAnonymousInnerClassHelper(TestPositionIncrement outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  {
+			return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(this, reader));
+		  }
+
+		  private class TokenizerAnonymousInnerClassHelper : Tokenizer
+		  {
+			  private readonly AnalyzerAnonymousInnerClassHelper OuterInstance;
+
+			  public TokenizerAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper outerInstance, Reader reader) : base(reader)
+			  {
+				  this.outerInstance = outerInstance;
+				  TOKENS = {"1", "2", "3", "4", "5"};
+				  INCREMENTS = {1, 2, 1, 0, 1};
+				  i = 0;
+				  posIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
+				  termAtt = addAttribute(typeof(CharTermAttribute));
+				  offsetAtt = addAttribute(typeof(OffsetAttribute));
+			  }
+
+					// TODO: use CannedTokenStream
+			  private readonly string[] TOKENS;
+			  private readonly int[] INCREMENTS;
+			  private int i;
+
+			  internal PositionIncrementAttribute posIncrAtt;
+			  internal CharTermAttribute termAtt;
+			  internal OffsetAttribute offsetAtt;
+
+			  public override bool IncrementToken()
+			  {
+				if (i == TOKENS.length)
+				{
+				  return false;
+				}
+				ClearAttributes();
+				termAtt.append(TOKENS[i]);
+				offsetAtt.SetOffset(i,i);
+				posIncrAtt.PositionIncrement = INCREMENTS[i];
+				i++;
+				return true;
+			  }
+
+			  public override void Reset()
+			  {
+				base.reset();
+				this.i = 0;
+			  }
+		  }
+	  }
+
+	  public virtual void TestPayloadsPos0()
+	  {
+		Directory dir = newDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, new MockPayloadAnalyzer());
+		Document doc = new Document();
+		doc.add(new TextField("content", new StringReader("a a b c d e a f g h i j a b k k")));
+		writer.addDocument(doc);
+
+		IndexReader readerFromWriter = writer.Reader;
+		AtomicReader r = SlowCompositeReaderWrapper.wrap(readerFromWriter);
+
+		DocsAndPositionsEnum tp = r.termPositionsEnum(new Term("content", "a"));
+
+		int count = 0;
+		Assert.IsTrue(tp.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		// "a" occurs 4 times
+		Assert.AreEqual(4, tp.freq());
+		Assert.AreEqual(0, tp.nextPosition());
+		Assert.AreEqual(1, tp.nextPosition());
+		Assert.AreEqual(3, tp.nextPosition());
+		Assert.AreEqual(6, tp.nextPosition());
+
+		// only one doc has "a"
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, tp.nextDoc());
+
+		IndexSearcher @is = newSearcher(readerFromWriter);
+
+		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
+		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
+		SpanQuery[] sqs = new SpanQuery[] {stq1, stq2};
+		SpanNearQuery snq = new SpanNearQuery(sqs, 30, false);
+
+		count = 0;
+		bool sawZero = false;
+		if (VERBOSE)
+		{
+		  Console.WriteLine("\ngetPayloadSpans test");
+		}
+		Spans pspans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
+		while (pspans.next())
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine("doc " + pspans.doc() + ": span " + pspans.start() + " to " + pspans.end());
+		  }
+		  ICollection<sbyte[]> payloads = pspans.Payload;
+		  sawZero |= pspans.start() == 0;
+		  foreach (sbyte[] bytes in payloads)
+		  {
+			count++;
+			if (VERBOSE)
+			{
+			  Console.WriteLine("  payload: " + new string(bytes, StandardCharsets.UTF_8));
+			}
+		  }
+		}
+		Assert.IsTrue(sawZero);
+		Assert.AreEqual(5, count);
+
+		// System.out.println("\ngetSpans test");
+		Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
+		count = 0;
+		sawZero = false;
+		while (spans.next())
+		{
+		  count++;
+		  sawZero |= spans.start() == 0;
+		  // System.out.println(spans.doc() + " - " + spans.start() + " - " +
+		  // spans.end());
+		}
+		Assert.AreEqual(4, count);
+		Assert.IsTrue(sawZero);
+
+		// System.out.println("\nPayloadSpanUtil test");
+
+		sawZero = false;
+		PayloadSpanUtil psu = new PayloadSpanUtil(@is.TopReaderContext);
+		ICollection<sbyte[]> pls = psu.getPayloadsForQuery(snq);
+		count = pls.Count;
+		foreach (sbyte[] bytes in pls)
+		{
+		  string s = new string(bytes, StandardCharsets.UTF_8);
+		  //System.out.println(s);
+		  sawZero |= s.Equals("pos: 0");
+		}
+		Assert.AreEqual(5, count);
+		Assert.IsTrue(sawZero);
+		writer.close();
+		@is.IndexReader.close();
+		dir.close();
+	  }
+	}
+
 }

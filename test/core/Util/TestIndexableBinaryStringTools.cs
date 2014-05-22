@@ -1,182 +1,205 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-using System.Collections.Generic;
-
-using NUnit.Framework;
+using System.Text;
 
 namespace Lucene.Net.Util
 {
-    
-    [TestFixture]
-    public class TestIndexableBinaryStringTools:LuceneTestCase
-    {
-        private const int NUM_RANDOM_TESTS = 20000;
-        private const int MAX_RANDOM_BINARY_LENGTH = 300;
-        
-        [Test]
-        public virtual void  TestSingleBinaryRoundTrip()
-        {
-            byte[] binary = new byte[] {(byte)0x23, (byte)0x98, (byte)0x13, (byte)0xE4, (byte)0x76, (byte)0x41, (byte)0xB2, (byte)0xC9, (byte)0x7F, (byte)0x0A, (byte)0xA6, (byte)0xD8 };
 
-            List<byte> binaryBuf = new List<byte>(binary);
-            List<char> encoded = IndexableBinaryStringTools.Encode(binaryBuf);
-            List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
-            Assert.AreEqual(binaryBuf, decoded, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + " encoded: " + CharArrayDump(encoded) + System.Environment.NewLine + " decoded: " + BinaryDump(decoded));
+	using BeforeClass = org.junit.BeforeClass;
 
-        }
-        
-        [Test]
-        public virtual void  TestEncodedSortability()
-        {
-            System.Random random = NewRandom();
-            byte[] originalArray1 = new byte[MAX_RANDOM_BINARY_LENGTH];
-            List<byte> originalBuf1 = new List<byte>(originalArray1);
-            char[] originalString1 = new char[MAX_RANDOM_BINARY_LENGTH];
-            List<char> originalStringBuf1 = new List<char>(originalString1);
-            char[] encoded1 = new char[IndexableBinaryStringTools.GetEncodedLength(originalBuf1)];
-            List<char> encodedBuf1 = new List<char>(encoded1);
-            byte[] original2 = new byte[MAX_RANDOM_BINARY_LENGTH];
-            List<byte> originalBuf2 = new List<byte>(original2);
-            char[] originalString2 = new char[MAX_RANDOM_BINARY_LENGTH];
-            List<char> originalStringBuf2 = new List<char>(originalString2);
-            char[] encoded2 = new char[IndexableBinaryStringTools.GetEncodedLength(originalBuf2)];
-            List<char> encodedBuf2 = new List<char>(encoded2);
-            for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
-            {
-                int numBytes1 = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-                
-                for (int byteNum = 0; byteNum < numBytes1; ++byteNum)
-                {
-                    int randomInt = random.Next(0x100);
-                    originalArray1[byteNum] = (byte) randomInt;
-                    originalString1[byteNum] = (char) randomInt;
-                }
-                
-                int numBytes2 = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-                for (int byteNum = 0; byteNum < numBytes2; ++byteNum)
-                {
-                    int randomInt = random.Next(0x100);
-                    original2[byteNum] = (byte) randomInt;
-                    originalString2[byteNum] = (char) randomInt;
-                }
-                // put in strings to compare ordinals
-                string orgStrBuf1 = new string(originalStringBuf1.ToArray());
-                string orgStrBuf2 = new string(originalStringBuf2.ToArray());
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-                int originalComparison = string.CompareOrdinal(orgStrBuf1, orgStrBuf2);
-                originalComparison = originalComparison < 0 ? -1 : (originalComparison > 0 ? 1 : 0);
-                
-                IndexableBinaryStringTools.Encode(originalBuf1, encodedBuf1);
-                IndexableBinaryStringTools.Encode(originalBuf2, encodedBuf2);
+	/// @deprecated Remove when IndexableBinaryStringTools is removed. 
+	[Obsolete("Remove when IndexableBinaryStringTools is removed.")]
+	public class TestIndexableBinaryStringTools : LuceneTestCase
+	{
+	  private static int NUM_RANDOM_TESTS;
+	  private static int MAX_RANDOM_BINARY_LENGTH;
 
-                // put in strings to compare ordinals
-                string encBuf1 = new string(encodedBuf1.ToArray());
-                string encBuf2 = new string(encodedBuf2.ToArray());
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
+	  public static void BeforeClass()
+	  {
+		NUM_RANDOM_TESTS = atLeast(200);
+		MAX_RANDOM_BINARY_LENGTH = atLeast(300);
+	  }
 
-                int encodedComparison = string.CompareOrdinal(encBuf1, encBuf2);
-                encodedComparison = encodedComparison < 0?- 1:(encodedComparison > 0?1:0);
-                
-                Assert.AreEqual(originalComparison, encodedComparison, "Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + System.Environment.NewLine + " binary 1: " + BinaryDump(originalBuf1) + System.Environment.NewLine + " binary 2: " + BinaryDump(originalBuf2) + System.Environment.NewLine + "encoded 1: " + CharArrayDump(encodedBuf1) + System.Environment.NewLine + "encoded 2: " + CharArrayDump(encodedBuf2) + System.Environment.NewLine);
-            }
-        }
-        
-        [Test]
-        public virtual void  TestEmptyInput()
-        {
-            byte[] binary = new byte[0];
-            List<char> encoded = IndexableBinaryStringTools.Encode(new List<byte>(binary));
-            List<byte> decoded = IndexableBinaryStringTools.Decode(encoded);
-            Assert.IsNotNull(decoded, "decode() returned null");
-            Assert.AreEqual(decoded.Capacity, 0, "decoded empty input was not empty");
-        }
-        
-        [Test]
-        public virtual void  TestAllNullInput()
-        {
-            byte[] binary = new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-            List<byte> binaryBuf = new List<byte>(binary);
-            List<char> encoded = IndexableBinaryStringTools.Encode(binaryBuf);
-            Assert.IsNotNull(encoded, "encode() returned null");
-            List<byte> decodedBuf = IndexableBinaryStringTools.Decode(encoded);
-            Assert.IsNotNull(decodedBuf, "decode() returned null");
-            Assert.AreEqual(binaryBuf, decodedBuf, "Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
-        }
-        
-        [Test]
-        public virtual void  TestRandomBinaryRoundTrip()
-        {
-            System.Random random = NewRandom();
-            byte[] binary = new byte[MAX_RANDOM_BINARY_LENGTH];
-            List<byte> binaryBuf = new List<byte>(binary);
-            char[] encoded = new char[IndexableBinaryStringTools.GetEncodedLength(binaryBuf)];
-            List<char> encodedBuf = new List<char>(encoded);
-            byte[] decoded = new byte[MAX_RANDOM_BINARY_LENGTH];
-            List<byte> decodedBuf = new List<byte>(decoded);
-            for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
-            {
-                int numBytes = random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
-                for (int byteNum = 0; byteNum < numBytes; ++byteNum)
-                {
-                    binary[byteNum] = (byte) random.Next(0x100);
-                }
-                IndexableBinaryStringTools.Encode(binaryBuf, encodedBuf);
-                IndexableBinaryStringTools.Decode(encodedBuf, decodedBuf);
-                Assert.AreEqual(binaryBuf, decodedBuf, "Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + System.Environment.NewLine + "  original: " + BinaryDump(binaryBuf) + System.Environment.NewLine + "encodedBuf: " + CharArrayDump(encodedBuf) + System.Environment.NewLine + "decodedBuf: " + BinaryDump(decodedBuf));
-            }
-        }
-        
-        public virtual System.String BinaryDump(List<byte> binaryBuf)
-        {
-            System.Text.StringBuilder buf = new System.Text.StringBuilder();
-            for (int byteNum = 0; byteNum < binaryBuf.Count; ++byteNum)
-            {
-                System.String hex = System.Convert.ToString((int) binaryBuf[byteNum] & 0xFF, 16);
-                if (hex.Length == 1)
-                {
-                    buf.Append('0');
-                }
-                buf.Append(hex.ToUpper());
-                if (byteNum < binaryBuf.Count - 1)
-                {
-                    buf.Append(' ');
-                }
-            }
-            return buf.ToString();
-        }
-        
-        public virtual System.String CharArrayDump(List<char> charBuf)
-        {
-            System.Text.StringBuilder buf = new System.Text.StringBuilder();
-            for (int charNum = 0; charNum < charBuf.Count; ++charNum)
-            {
-                System.String hex = System.Convert.ToString((int) charBuf[charNum], 16);
-                for (int digit = 0; digit < 4 - hex.Length; ++digit)
-                {
-                    buf.Append('0');
-                }
-                buf.Append(hex.ToUpper());
-                if (charNum < charBuf.Count - 1)
-                {
-                    buf.Append(' ');
-                }
-            }
-            return buf.ToString();
-        }
-    }
+	  public virtual void TestSingleBinaryRoundTrip()
+	  {
+		sbyte[] binary = new sbyte[] {(sbyte) 0x23, unchecked((sbyte) 0x98), (sbyte) 0x13, unchecked((sbyte) 0xE4), (sbyte) 0x76, (sbyte) 0x41, unchecked((sbyte) 0xB2), unchecked((sbyte) 0xC9), (sbyte) 0x7F, (sbyte) 0x0A, unchecked((sbyte) 0xA6), unchecked((sbyte) 0xD8)};
+
+		int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, binary.Length);
+		char[] encoded = new char[encodedLen];
+		IndexableBinaryStringTools.encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
+
+		int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encoded.Length);
+		sbyte[] decoded = new sbyte[decodedLen];
+		IndexableBinaryStringTools.decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
+
+		Assert.AreEqual("Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "original: " + BinaryDump(binary, binary.Length) + System.getProperty("line.separator") + " encoded: " + CharArrayDump(encoded, encoded.Length) + System.getProperty("line.separator") + " decoded: " + BinaryDump(decoded, decoded.Length), BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length));
+	  }
+
+	  public virtual void TestEncodedSortability()
+	  {
+		sbyte[] originalArray1 = new sbyte[MAX_RANDOM_BINARY_LENGTH];
+		char[] originalString1 = new char[MAX_RANDOM_BINARY_LENGTH];
+		char[] encoded1 = new char[MAX_RANDOM_BINARY_LENGTH * 10];
+		sbyte[] original2 = new sbyte[MAX_RANDOM_BINARY_LENGTH];
+		char[] originalString2 = new char[MAX_RANDOM_BINARY_LENGTH];
+		char[] encoded2 = new char[MAX_RANDOM_BINARY_LENGTH * 10];
+
+		for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
+		{
+		  int numBytes1 = random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+
+		  for (int byteNum = 0; byteNum < numBytes1; ++byteNum)
+		  {
+			int randomInt = random().Next(0x100);
+			originalArray1[byteNum] = (sbyte) randomInt;
+			originalString1[byteNum] = (char) randomInt;
+		  }
+
+		  int numBytes2 = random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+
+		  for (int byteNum = 0; byteNum < numBytes2; ++byteNum)
+		  {
+			int randomInt = random().Next(0x100);
+			original2[byteNum] = (sbyte) randomInt;
+			originalString2[byteNum] = (char) randomInt;
+		  }
+		  int originalComparison = (new string(originalString1, 0, numBytes1)).CompareTo(new string(originalString2, 0, numBytes2));
+		  originalComparison = originalComparison < 0 ? - 1 : originalComparison > 0 ? 1 : 0;
+
+		  int encodedLen1 = IndexableBinaryStringTools.getEncodedLength(originalArray1, 0, numBytes1);
+		  if (encodedLen1 > encoded1.Length)
+		  {
+			encoded1 = new char[ArrayUtil.oversize(encodedLen1, RamUsageEstimator.NUM_BYTES_CHAR)];
+		  }
+		  IndexableBinaryStringTools.encode(originalArray1, 0, numBytes1, encoded1, 0, encodedLen1);
+
+		  int encodedLen2 = IndexableBinaryStringTools.getEncodedLength(original2, 0, numBytes2);
+		  if (encodedLen2 > encoded2.Length)
+		  {
+			encoded2 = new char[ArrayUtil.oversize(encodedLen2, RamUsageEstimator.NUM_BYTES_CHAR)];
+		  }
+		  IndexableBinaryStringTools.encode(original2, 0, numBytes2, encoded2, 0, encodedLen2);
+
+		  int encodedComparison = (new string(encoded1, 0, encodedLen1)).CompareTo(new string(encoded2, 0, encodedLen2));
+		  encodedComparison = encodedComparison < 0 ? - 1 : encodedComparison > 0 ? 1 : 0;
+
+		  Assert.AreEqual("Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + System.getProperty("line.separator") + " binary 1: " + BinaryDump(originalArray1, numBytes1) + System.getProperty("line.separator") + " binary 2: " + BinaryDump(original2, numBytes2) + System.getProperty("line.separator") + "encoded 1: " + CharArrayDump(encoded1, encodedLen1) + System.getProperty("line.separator") + "encoded 2: " + CharArrayDump(encoded2, encodedLen2) + System.getProperty("line.separator"), originalComparison, encodedComparison);
+		}
+	  }
+
+	  public virtual void TestEmptyInput()
+	  {
+		sbyte[] binary = new sbyte[0];
+
+		int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, binary.Length);
+		char[] encoded = new char[encodedLen];
+		IndexableBinaryStringTools.encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
+
+		int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encoded.Length);
+		sbyte[] decoded = new sbyte[decodedLen];
+		IndexableBinaryStringTools.decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
+
+		Assert.AreEqual("decoded empty input was not empty", decoded.Length, 0);
+	  }
+
+	  public virtual void TestAllNullInput()
+	  {
+		sbyte[] binary = new sbyte[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+		int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, binary.Length);
+		char[] encoded = new char[encodedLen];
+		IndexableBinaryStringTools.encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
+
+		int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encoded.Length);
+		sbyte[] decoded = new sbyte[decodedLen];
+		IndexableBinaryStringTools.decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
+
+		Assert.AreEqual("Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "  original: " + BinaryDump(binary, binary.Length) + System.getProperty("line.separator") + "decodedBuf: " + BinaryDump(decoded, decoded.Length), BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length));
+	  }
+
+	  public virtual void TestRandomBinaryRoundTrip()
+	  {
+		sbyte[] binary = new sbyte[MAX_RANDOM_BINARY_LENGTH];
+		char[] encoded = new char[MAX_RANDOM_BINARY_LENGTH * 10];
+		sbyte[] decoded = new sbyte[MAX_RANDOM_BINARY_LENGTH];
+		for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
+		{
+		  int numBytes = random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+
+		  for (int byteNum = 0; byteNum < numBytes; ++byteNum)
+		  {
+			binary[byteNum] = (sbyte) random().Next(0x100);
+		  }
+
+		  int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, numBytes);
+		  if (encoded.Length < encodedLen)
+		  {
+			encoded = new char[ArrayUtil.oversize(encodedLen, RamUsageEstimator.NUM_BYTES_CHAR)];
+		  }
+		  IndexableBinaryStringTools.encode(binary, 0, numBytes, encoded, 0, encodedLen);
+
+		  int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encodedLen);
+		  IndexableBinaryStringTools.decode(encoded, 0, encodedLen, decoded, 0, decodedLen);
+
+		  Assert.AreEqual("Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "  original: " + BinaryDump(binary, numBytes) + System.getProperty("line.separator") + "encodedBuf: " + CharArrayDump(encoded, encodedLen) + System.getProperty("line.separator") + "decodedBuf: " + BinaryDump(decoded, decodedLen), BinaryDump(binary, numBytes), BinaryDump(decoded, decodedLen));
+		}
+	  }
+
+	  public virtual string BinaryDump(sbyte[] binary, int numBytes)
+	  {
+		StringBuilder buf = new StringBuilder();
+		for (int byteNum = 0 ; byteNum < numBytes ; ++byteNum)
+		{
+		  string hex = binary[byteNum] & 0xFF.ToString("x");
+		  if (hex.Length == 1)
+		  {
+			buf.Append('0');
+		  }
+		  buf.Append(hex.ToUpper(Locale.ROOT));
+		  if (byteNum < numBytes - 1)
+		  {
+			buf.Append(' ');
+		  }
+		}
+		return buf.ToString();
+	  }
+
+	  public virtual string CharArrayDump(char[] charArray, int numBytes)
+	  {
+		StringBuilder buf = new StringBuilder();
+		for (int charNum = 0 ; charNum < numBytes ; ++charNum)
+		{
+		  string hex = charArray[charNum].ToString("x");
+		  for (int digit = 0 ; digit < 4 - hex.Length ; ++digit)
+		  {
+			buf.Append('0');
+		  }
+		  buf.Append(hex.ToUpper(Locale.ROOT));
+		  if (charNum < numBytes - 1)
+		  {
+			buf.Append(' ');
+		  }
+		}
+		return buf.ToString();
+	  }
+	}
+
 }

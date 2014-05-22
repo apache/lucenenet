@@ -1,95 +1,90 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
-    
-    /// <summary> Subclasses of CharFilter can be chained to filter CharStream.
-    /// They can be used as <see cref="System.IO.TextReader" /> with additional offset
-    /// correction. <see cref="Tokenizer" />s will automatically use <see cref="CorrectOffset" />
-    /// if a CharFilter/CharStream subclass is used.
-    /// 
-    /// </summary>
-    /// <version>  $Id$
-    /// 
-    /// </version>
-    public abstract class CharFilter : CharStream
-    {
-        private long currentPosition = -1;
-        private bool isDisposed;
-        protected internal CharStream input;
-        
-        protected internal CharFilter(CharStream in_Renamed) : base(in_Renamed)
-        {
-            input = in_Renamed;
-        }
-        
-        /// <summary>Subclass may want to override to correct the current offset.</summary>
-        /// <param name="currentOff">current offset</param>
-        /// <returns>corrected offset</returns>
-        protected internal virtual int Correct(int currentOff)
-        {
-            return currentOff;
-        }
-        
-        /// <summary> Chains the corrected offset through the input
-        /// CharFilter.
-        /// </summary>
-        public override int CorrectOffset(int currentOff)
-        {
-            return input.CorrectOffset(Correct(currentOff));
-        }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (isDisposed) return;
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            if (disposing)
-            {
-                if (input != null)
-                {
-                    input.Close();
-                }
-            }
 
-            input = null;
-            isDisposed = true;
-            base.Dispose(disposing);
-        }
-        
-        public override int Read(System.Char[] cbuf, int off, int len)
-        {
-            return input.Read(cbuf, off, len);
-        }
-        
-        public bool MarkSupported()
-        {
-            return input.BaseStream.CanSeek;
-        }
-        
-        public void Mark(int readAheadLimit)
-        {
-            currentPosition = input.BaseStream.Position;
-            input.BaseStream.Position = readAheadLimit;
-        }
-        
-        public void Reset()
-        {
-            input.BaseStream.Position = currentPosition;
-        }
-    }
+	/// <summary>
+	/// Subclasses of CharFilter can be chained to filter a Reader
+	/// They can be used as <seealso cref="java.io.Reader"/> with additional offset
+	/// correction. <seealso cref="Tokenizer"/>s will automatically use <seealso cref="#correctOffset"/>
+	/// if a CharFilter subclass is used.
+	/// <p>
+	/// this class is abstract: at a minimum you must implement <seealso cref="#read(char[], int, int)"/>,
+	/// transforming the input in some way from <seealso cref="#input"/>, and <seealso cref="#correct(int)"/>
+	/// to adjust the offsets to match the originals.
+	/// <p>
+	/// You can optionally provide more efficient implementations of additional methods 
+	/// like <seealso cref="#read()"/>, <seealso cref="#read(char[])"/>, <seealso cref="#read(java.nio.CharBuffer)"/>,
+	/// but this is not required.
+	/// <p>
+	/// For examples and integration with <seealso cref="Analyzer"/>, see the 
+	/// <seealso cref="Lucene.Net.Analysis Analysis package documentation"/>.
+	/// </summary>
+	// the way java.io.FilterReader should work!
+	public abstract class CharFilter : StreamReader
+	{
+	  /// <summary>
+	  /// The underlying character-input stream. 
+	  /// </summary>
+      protected internal readonly StreamReader Input;
+
+	  /// <summary>
+	  /// Create a new CharFilter wrapping the provided reader. </summary>
+	  /// <param name="input"> a Reader, can also be a CharFilter for chaining. </param>
+      public CharFilter(StreamReader input)
+            : base(input.BaseStream)
+	  {
+		this.Input = input;
+	  }
+
+	  /// <summary>
+	  /// Closes the underlying input stream.
+	  /// <p>
+	  /// <b>NOTE:</b> 
+	  /// The default implementation closes the input Reader, so
+	  /// be sure to call <code>super.close()</code> when overriding this method.
+	  /// </summary>
+	  public override void Close()
+	  {
+		Input.Close();
+	  }
+
+	  /// <summary>
+	  /// Subclasses override to correct the current offset.
+	  /// </summary>
+	  /// <param name="currentOff"> current offset </param>
+	  /// <returns> corrected offset </returns>
+	  protected internal abstract int Correct(int currentOff);
+
+	  /// <summary>
+	  /// Chains the corrected offset through the input
+	  /// CharFilter(s).
+	  /// </summary>
+	  public int CorrectOffset(int currentOff)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int corrected = correct(currentOff);
+		int corrected = Correct(currentOff);
+		return (Input is CharFilter) ? ((CharFilter) Input).CorrectOffset(corrected) : corrected;
+	  }
+	}
+
 }

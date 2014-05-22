@@ -73,7 +73,7 @@ namespace Lucene.Net.Support
 
         /// <summary>Compares the counts of two <see cref="System.Collections.Generic.IEnumerable{T}"/>
         /// implementations.</summary>
-        /// <remarks>This uses a trick in LINQ, sniffing types for implementations
+        /// <remarks>this uses a trick in LINQ, sniffing types for implementations
         /// of interfaces that might supply shortcuts when trying to make comparisons.
         /// In this case, that is the <see cref="System.Collections.Generic.ICollection{T}"/> and
         /// <see cref="ICollection"/> interfaces, either of which can provide a count
@@ -83,7 +83,7 @@ namespace Lucene.Net.Support
         /// comparison to check the count of.</param>
         /// <param name="y">The <see cref="System.Collections.Generic.IEnumerable{T}"/> from the right hand side of the
         /// comparison to check the count of.</param>
-        /// <returns>Null if the result is indeterminate.  This occurs when either <paramref name="x"/>
+        /// <returns>Null if the result is indeterminate.  this occurs when either <paramref name="x"/>
         /// or <paramref name="y"/> doesn't implement <see cref="ICollection"/> or <see cref="System.Collections.Generic.ICollection{T}"/>.
         /// Otherwise, it will get the count from each and return true if they are equal, false otherwise.</returns>
         private static bool? EnumerableCountsEqual(System.Collections.Generic.IEnumerable<T> x, System.Collections.Generic.IEnumerable<T> y)
@@ -141,7 +141,7 @@ namespace Lucene.Net.Support
             }
 
             // Check to see if the counts on the IEnumerable implementations are equal.
-            // This is a shortcut, if they are not equal, then the lists are not equal.
+            // this is a shortcut, if they are not equal, then the lists are not equal.
             // If the result is indeterminate, then get out.
             bool? enumerableCountsEqual = EnumerableCountsEqual(x, y);
 
@@ -249,7 +249,7 @@ namespace Lucene.Net.Support
             if (source == null) return 0;
 
             // Seed the hash code with the hash code of the type.
-            // This is done so that you don't have a lot of collisions of empty
+            // this is done so that you don't have a lot of collisions of empty
             // ComparableList instances when placed in dictionaries
             // and things that rely on hashcodes.
             int hashCode = typeof(T).GetHashCode();
@@ -325,7 +325,7 @@ namespace Lucene.Net.Support
         #region ICloneable Members
 
         /// <summary>Clones the <see cref="EquatableList{T}"/>.</summary>
-        /// <remarks>This is a shallow clone.</remarks>
+        /// <remarks>this is a shallow clone.</remarks>
         /// <returns>A new shallow clone of this
         /// <see cref="EquatableList{T}"/>.</returns>
         public object Clone()

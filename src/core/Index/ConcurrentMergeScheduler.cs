@@ -1,504 +1,793 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.Support;
-using Directory = Lucene.Net.Store.Directory;
+using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
-    
-    /// <summary>A <see cref="MergeScheduler" /> that runs each merge using a
-    /// separate thread, up until a maximum number of threads
-    /// (<see cref="MaxThreadCount" />) at which when a merge is
-    /// needed, the thread(s) that are updating the index will
-    /// pause until one or more merges completes.  This is a
-    /// simple way to use concurrency in the indexing process
-    /// without having to create and manage application level
-    /// threads. 
-    /// </summary>
-    
-    public class ConcurrentMergeScheduler:MergeScheduler
-    {
-        
-        private int mergeThreadPriority = - 1;
 
-        protected internal IList<MergeThread> mergeThreads = new List<MergeThread>();
-        
-        // Max number of threads allowed to be merging at once
-        private int _maxThreadCount = 1;
-        
-        protected internal Directory dir;
-        
-        private bool closed;
-        protected internal IndexWriter writer;
-        protected internal int mergeThreadCount;
-        
-        public ConcurrentMergeScheduler()
-        {
-            if (allInstances != null)
-            {
-                // Only for testing
-                AddMyself();
-            }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        /// <summary>Gets or sets the max # simultaneous threads that may be
-        /// running.  If a merge is necessary yet we already have
-        /// this many threads running, the incoming thread (that
-        /// is calling add/updateDocument) will block until
-        /// a merge thread has completed. 
-        /// </summary>
-        public virtual int MaxThreadCount
-        {
-            set
-            {
-                if (value < 1)
-                    throw new System.ArgumentException("count should be at least 1");
-                _maxThreadCount = value;
-            }
-            get { return _maxThreadCount; }
-        }
+	using Directory = Lucene.Net.Store.Directory;
+	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+	using CollectionUtil = Lucene.Net.Util.CollectionUtil;
 
-        /// <summary>Return the priority that merge threads run at.  By
-        /// default the priority is 1 plus the priority of (ie,
-        /// slightly higher priority than) the first thread that
-        /// calls merge. 
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual int GetMergeThreadPriority()
-        {
-            lock (this)
-            {
-                InitMergeThreadPriority();
-                return mergeThreadPriority;
-            }
-        }
-        
-        /// <summary>Set the priority that merge threads run at. </summary>
-        public virtual void  SetMergeThreadPriority(int pri)
-        {
-            lock (this)
-            {
-                if (pri > (int) System.Threading.ThreadPriority.Highest || pri < (int) System.Threading.ThreadPriority.Lowest)
-                    throw new System.ArgumentException("priority must be in range " + (int) System.Threading.ThreadPriority.Lowest + " .. " + (int) System.Threading.ThreadPriority.Highest + " inclusive");
-                mergeThreadPriority = pri;
-                
-                int numThreads = MergeThreadCount();
-                for (int i = 0; i < numThreads; i++)
-                {
-                    MergeThread merge = mergeThreads[i];
-                    merge.SetThreadPriority(pri);
-                }
-            }
-        }
-        
-        private bool Verbose()
-        {
-            return writer != null && writer.Verbose;
-        }
-        
-        private void  Message(System.String message)
-        {
-            if (Verbose())
-                writer.Message("CMS: " + message);
-        }
-        
-        private void  InitMergeThreadPriority()
-        {
-            lock (this)
-            {
-                if (mergeThreadPriority == - 1)
-                {
-                    // Default to slightly higher priority than our
-                    // calling thread
-                    mergeThreadPriority = 1 + (System.Int32) ThreadClass.Current().Priority;
-                    if (mergeThreadPriority > (int) System.Threading.ThreadPriority.Highest)
-                        mergeThreadPriority = (int) System.Threading.ThreadPriority.Highest;
-                }
-            }
-        }
-        
-        protected override void Dispose(bool disposing)
-        {
-            //if (disposing)
-            //{
-                closed = true;
-            //}
-        }
-        
-        public virtual void  Sync()
-        {
-            lock (this)
-            {
-                while (MergeThreadCount() > 0)
-                {
-                    if (Verbose())
-                        Message("now wait for threads; currently " + mergeThreads.Count + " still running");
-                    int count = mergeThreads.Count;
-                    if (Verbose())
-                    {
-                        for (int i = 0; i < count; i++)
-                            Message("    " + i + ": " + mergeThreads[i]);
-                    }
-                    
-                    System.Threading.Monitor.Wait(this);
-                    
-                }
-            }
-        }
-        
-        private int MergeThreadCount()
-        {
-            lock (this)
-            {
-                int count = 0;
-                int numThreads = mergeThreads.Count;
-                for (int i = 0; i < numThreads; i++)
-                {
-                    if (mergeThreads[i].IsAlive)
-                    {
-                            count++;
-                    }
-                }
-                return count;
-            }
-        }
-        
-        public override void  Merge(IndexWriter writer)
-        {
-            // TODO: .NET doesn't support this
-            // assert !Thread.holdsLock(writer);
-            
-            this.writer = writer;
-            
-            InitMergeThreadPriority();
-            
-            dir = writer.Directory;
-            
-            // First, quickly run through the newly proposed merges
-            // and add any orthogonal merges (ie a merge not
-            // involving segments already pending to be merged) to
-            // the queue.  If we are way behind on merging, many of
-            // these newly proposed merges will likely already be
-            // registered.
-            
-            if (Verbose())
-            {
-                Message("now merge");
-                Message("  index: " + writer.SegString());
-            }
-            
-            // Iterate, pulling from the IndexWriter's queue of
-            // pending merges, until it's empty:
-            while (true)
-            {
-                // TODO: we could be careful about which merges to do in
-                // the BG (eg maybe the "biggest" ones) vs FG, which
-                // merges to do first (the easiest ones?), etc.
-                
-                MergePolicy.OneMerge merge = writer.GetNextMerge();
-                if (merge == null)
-                {
-                    if (Verbose())
-                        Message("  no more merges pending; now return");
-                    return ;
-                }
-                
-                // We do this w/ the primary thread to keep
-                // deterministic assignment of segment names
-                writer.MergeInit(merge);
-                
-                bool success = false;
-                try
-                {
-                    lock (this)
-                    {
-                        while (MergeThreadCount() >= _maxThreadCount)
-                        {
-                            if (Verbose())
-                                Message("    too many merge threads running; stalling...");
-                            
-                            System.Threading.Monitor.Wait(this);
-                            
-                            
-                        }
-                        
-                        if (Verbose())
-                            Message("  consider merge " + merge.SegString(dir));
 
-                        System.Diagnostics.Debug.Assert(MergeThreadCount() < _maxThreadCount);
-                                                
-                        // OK to spawn a new merge thread to handle this
-                        // merge:
-                        MergeThread merger = GetMergeThread(writer, merge);
-                        mergeThreads.Add(merger);
-                        if (Verbose())
-                            Message("    launch new thread [" + merger.Name + "]");
-                        
-                        merger.Start();
-                        success = true;
-                    }
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        writer.MergeFinish(merge);
-                    }
-                }
-            }
-        }
-        
-        /// <summary>Does the actual merge, by calling <see cref="IndexWriter.Merge" /> </summary>
-        protected internal virtual void  DoMerge(MergePolicy.OneMerge merge)
-        {
-            writer.Merge(merge);
-        }
-        
-        /// <summary>Create and return a new MergeThread </summary>
-        protected internal virtual MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                var thread = new MergeThread(this, writer, merge);
-                thread.SetThreadPriority(mergeThreadPriority);
-                thread.IsBackground = true;
-                thread.Name = "Lucene Merge Thread #" + mergeThreadCount++;
-                return thread;
-            }
-        }
-        
-        public /*protected internal*/ class MergeThread:ThreadClass
-        {
-            private void  InitBlock(ConcurrentMergeScheduler enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private ConcurrentMergeScheduler enclosingInstance;
-            public ConcurrentMergeScheduler Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            
-            internal IndexWriter writer;
-            internal MergePolicy.OneMerge startMerge;
-            internal MergePolicy.OneMerge runningMerge;
-            
-            public MergeThread(ConcurrentMergeScheduler enclosingInstance, IndexWriter writer, MergePolicy.OneMerge startMerge)
-            {
-                InitBlock(enclosingInstance);
-                this.writer = writer;
-                this.startMerge = startMerge;
-            }
-            
-            public virtual void  SetRunningMerge(MergePolicy.OneMerge merge)
-            {
-                lock (this)
-                {
-                    runningMerge = merge;
-                }
-            }
+	/// <summary>
+	/// A <seealso cref="MergeScheduler"/> that runs each merge using a
+	///  separate thread.
+	/// 
+	///  <p>Specify the max number of threads that may run at
+	///  once, and the maximum number of simultaneous merges
+	///  with <seealso cref="#setMaxMergesAndThreads"/>.</p>
+	/// 
+	///  <p>If the number of merges exceeds the max number of threads 
+	///  then the largest merges are paused until one of the smaller
+	///  merges completes.</p>
+	/// 
+	///  <p>If more than <seealso cref="#getMaxMergeCount"/> merges are
+	///  requested then this class will forcefully throttle the
+	///  incoming threads by pausing until one more more merges
+	///  complete.</p>
+	/// </summary>
+	public class ConcurrentMergeScheduler : MergeScheduler
+	{
 
-            public virtual MergePolicy.OneMerge RunningMerge
-            {
-                get
-                {
-                    lock (this)
-                    {
-                        return runningMerge;
-                    }
-                }
-            }
+	  private int MergeThreadPriority_Renamed = -1;
 
-            public virtual void  SetThreadPriority(int pri)
-            {
-                try
-                {
-                    Priority = (System.Threading.ThreadPriority) pri;
-                }
-                catch (System.NullReferenceException)
-                {
-                    // Strangely, Sun's JDK 1.5 on Linux sometimes
-                    // throws NPE out of here...
-                }
-                catch (System.Security.SecurityException)
-                {
-                    // Ignore this because we will still run fine with
-                    // normal thread priority
-                }
-            }
-            
-            override public void  Run()
-            {
-                
-                // First time through the while loop we do the merge
-                // that we were started with:
-                MergePolicy.OneMerge merge = this.startMerge;
-                
-                try
-                {
-                    
-                    if (Enclosing_Instance.Verbose())
-                        Enclosing_Instance.Message("  merge thread: start");
-                    
-                    while (true)
-                    {
-                        SetRunningMerge(merge);
-                        Enclosing_Instance.DoMerge(merge);
-                        
-                        // Subsequent times through the loop we do any new
-                        // merge that writer says is necessary:
-                        merge = writer.GetNextMerge();
-                        if (merge != null)
-                        {
-                            writer.MergeInit(merge);
-                            if (Enclosing_Instance.Verbose())
-                                Enclosing_Instance.Message("  merge thread: do another merge " + merge.SegString(Enclosing_Instance.dir));
-                        }
-                        else
-                            break;
-                    }
-                    
-                    if (Enclosing_Instance.Verbose())
-                        Enclosing_Instance.Message("  merge thread: done");
-                }
-                catch (System.Exception exc)
-                {
-                    // Ignore the exception if it was due to abort:
-                    if (!(exc is MergePolicy.MergeAbortedException))
-                    {
-                        if (!Enclosing_Instance.suppressExceptions)
-                        {
-                            // suppressExceptions is normally only set during
-                            // testing.
-                            Lucene.Net.Index.ConcurrentMergeScheduler.anyExceptions = true;
-                            Enclosing_Instance.HandleMergeException(exc);
-                        }
-                    }
-                }
-                finally
-                {
-                    lock (Enclosing_Instance)
-                    {
-                        System.Threading.Monitor.PulseAll(Enclosing_Instance);
-                        Enclosing_Instance.mergeThreads.Remove(this);
-                        bool removed = !Enclosing_Instance.mergeThreads.Contains(this);
-                        System.Diagnostics.Debug.Assert(removed);
-                    }
-                }
-            }
-            
-            public override System.String ToString()
-            {
-                MergePolicy.OneMerge merge = RunningMerge ?? startMerge;
-                return "merge thread: " + merge.SegString(Enclosing_Instance.dir);
-            }
-        }
+	  /// <summary>
+	  /// List of currently active <seealso cref="MergeThread"/>s. </summary>
+	  protected internal IList<MergeThread> MergeThreads = new List<MergeThread>();
+
+	  /// <summary>
+	  /// Default {@code maxThreadCount}.
+	  /// We default to 1: tests on spinning-magnet drives showed slower
+	  /// indexing performance if more than one merge thread runs at
+	  /// once (though on an SSD it was faster)
+	  /// </summary>
+	  public const int DEFAULT_MAX_THREAD_COUNT = 1;
+
+	  /// <summary>
+	  /// Default {@code maxMergeCount}. </summary>
+	  public const int DEFAULT_MAX_MERGE_COUNT = 2;
+
+	  // Max number of merge threads allowed to be running at
+	  // once.  When there are more merges then this, we
+	  // forcefully pause the larger ones, letting the smaller
+	  // ones run, up until maxMergeCount merges at which point
+	  // we forcefully pause incoming threads (that presumably
+	  // are the ones causing so much merging).
+	  private int MaxThreadCount_Renamed = DEFAULT_MAX_THREAD_COUNT;
+
+	  // Max number of merges we accept before forcefully
+	  // throttling the incoming threads
+	  private int MaxMergeCount_Renamed = DEFAULT_MAX_MERGE_COUNT;
+
+	  /// <summary>
+	  /// <seealso cref="Directory"/> that holds the index. </summary>
+	  protected internal Directory Dir;
+
+	  /// <summary>
+	  /// <seealso cref="IndexWriter"/> that owns this instance. </summary>
+	  protected internal IndexWriter Writer;
+
+	  /// <summary>
+	  /// How many <seealso cref="MergeThread"/>s have kicked off (this is use
+	  ///  to name them). 
+	  /// </summary>
+	  protected internal int MergeThreadCount_Renamed;
+
+	  /// <summary>
+	  /// Sole constructor, with all settings set to default
+	  ///  values. 
+	  /// </summary>
+	  public ConcurrentMergeScheduler()
+	  {
+	  }
+
+	  /// <summary>
+	  /// Sets the maximum number of merge threads and simultaneous merges allowed.
+	  /// </summary>
+	  /// <param name="maxMergeCount"> the max # simultaneous merges that are allowed.
+	  ///       If a merge is necessary yet we already have this many
+	  ///       threads running, the incoming thread (that is calling
+	  ///       add/updateDocument) will block until a merge thread
+	  ///       has completed.  Note that we will only run the
+	  ///       smallest <code>maxThreadCount</code> merges at a time. </param>
+	  /// <param name="maxThreadCount"> the max # simultaneous merge threads that should
+	  ///       be running at once.  this must be &lt;= <code>maxMergeCount</code> </param>
+	  public virtual void SetMaxMergesAndThreads(int maxMergeCount, int maxThreadCount)
+	  {
+		if (maxThreadCount < 1)
+		{
+		  throw new System.ArgumentException("maxThreadCount should be at least 1");
+		}
+		if (maxMergeCount < 1)
+		{
+		  throw new System.ArgumentException("maxMergeCount should be at least 1");
+		}
+		if (maxThreadCount > maxMergeCount)
+		{
+		  throw new System.ArgumentException("maxThreadCount should be <= maxMergeCount (= " + maxMergeCount + ")");
+		}
+		this.MaxThreadCount_Renamed = maxThreadCount;
+		this.MaxMergeCount_Renamed = maxMergeCount;
+	  }
+
+	  /// <summary>
+	  /// Returns {@code maxThreadCount}.
+	  /// </summary>
+	  /// <seealso cref= #setMaxMergesAndThreads(int, int)  </seealso>
+	  public virtual int MaxThreadCount
+	  {
+		  get
+		  {
+			return MaxThreadCount_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// See <seealso cref="#setMaxMergesAndThreads"/>. </summary>
+	  public virtual int MaxMergeCount
+	  {
+		  get
+		  {
+			return MaxMergeCount_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Return the priority that merge threads run at.  By
+	  ///  default the priority is 1 plus the priority of (ie,
+	  ///  slightly higher priority than) the first thread that
+	  ///  calls merge. 
+	  /// </summary>
+	  public virtual int MergeThreadPriority
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				InitMergeThreadPriority();
+				return MergeThreadPriority_Renamed;
+			  }
+		  }
+		  set
+		  {
+			  lock (this)
+			  {
+				if (value > Thread.MAX_PRIORITY || value < Thread.MIN_PRIORITY)
+				{
+				  throw new System.ArgumentException("priority must be in range " + Thread.MIN_PRIORITY + " .. " + Thread.MAX_PRIORITY + " inclusive");
+				}
+				MergeThreadPriority_Renamed = value;
+				UpdateMergeThreads();
+			  }
+		  }
+	  }
+
+
+	  /// <summary>
+	  /// Sorts <seealso cref="MergeThread"/>s; larger merges come first. </summary>
+	  protected internal static readonly IComparer<MergeThread> compareByMergeDocCount = new ComparatorAnonymousInnerClassHelper();
+
+	  private class ComparatorAnonymousInnerClassHelper : IComparer<MergeThread>
+	  {
+		  public ComparatorAnonymousInnerClassHelper()
+		  {
+		  }
+
+		  public virtual int Compare(MergeThread t1, MergeThread t2)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.OneMerge m1 = t1.getCurrentMerge();
+			MergePolicy.OneMerge m1 = t1.CurrentMerge;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.OneMerge m2 = t2.getCurrentMerge();
+			MergePolicy.OneMerge m2 = t2.CurrentMerge;
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c1 = m1 == null ? Integer.MAX_VALUE : m1.totalDocCount;
+			int c1 = m1 == null ? int.MaxValue : m1.TotalDocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c2 = m2 == null ? Integer.MAX_VALUE : m2.totalDocCount;
+			int c2 = m2 == null ? int.MaxValue : m2.TotalDocCount;
+
+			return c2 - c1;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Called whenever the running merges have changed, to pause & unpause
+	  /// threads. this method sorts the merge threads by their merge size in
+	  /// descending order and then pauses/unpauses threads from first to last --
+	  /// that way, smaller merges are guaranteed to run before larger ones.
+	  /// </summary>
+	  protected internal virtual void UpdateMergeThreads()
+	  {
+		  lock (this)
+		  {
         
-        /// <summary>Called when an exception is hit in a background merge
-        /// thread 
-        /// </summary>
-        protected internal virtual void  HandleMergeException(System.Exception exc)
-        {
-            // When an exception is hit during merge, IndexWriter
-            // removes any partial files and then allows another
-            // merge to run.  If whatever caused the error is not
-            // transient then the exception will keep happening,
-            // so, we sleep here to avoid saturating CPU in such
-            // cases:
-            System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * 250));
-            
-            throw new MergePolicy.MergeException(exc, dir);
-        }
+			// Only look at threads that are alive & not in the
+			// process of stopping (ie have an active merge):
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.List<MergeThread> activeMerges = new java.util.ArrayList<>();
+			IList<MergeThread> activeMerges = new List<MergeThread>();
         
-        internal static bool anyExceptions = false;
+			int threadIdx = 0;
+			while (threadIdx < MergeThreads.Count)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergeThread mergeThread = mergeThreads.get(threadIdx);
+			  MergeThread mergeThread = MergeThreads[threadIdx];
+			  if (!mergeThread.IsAlive)
+			  {
+				// Prune any dead threads
+				MergeThreads.RemoveAt(threadIdx);
+				continue;
+			  }
+			  if (mergeThread.CurrentMerge != null)
+			  {
+				activeMerges.Add(mergeThread);
+			  }
+			  threadIdx++;
+			}
         
-        /// <summary>Used for testing </summary>
-        public static bool AnyUnhandledExceptions()
-        {
-            if (allInstances == null)
-            {
-                throw new System.SystemException("setTestMode() was not called; often this is because your test case's setUp method fails to call super.setUp in LuceneTestCase");
-            }
-            lock (allInstances)
-            {
-                int count = allInstances.Count;
-                // Make sure all outstanding threads are done so we see
-                // any exceptions they may produce:
-                for (int i = 0; i < count; i++)
-                    allInstances[i].Sync();
-                bool v = anyExceptions;
-                anyExceptions = false;
-                return v;
-            }
-        }
+			// Sort the merge threads in descending order.
+			CollectionUtil.TimSort(activeMerges, compareByMergeDocCount);
         
-        public static void  ClearUnhandledExceptions()
-        {
-            lock (allInstances)
-            {
-                anyExceptions = false;
-            }
-        }
+			int pri = MergeThreadPriority_Renamed;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int activeMergeCount = activeMerges.size();
+			int activeMergeCount = activeMerges.Count;
+			for (threadIdx = 0;threadIdx < activeMergeCount;threadIdx++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergeThread mergeThread = activeMerges.get(threadIdx);
+			  MergeThread mergeThread = activeMerges[threadIdx];
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.OneMerge merge = mergeThread.getCurrentMerge();
+			  MergePolicy.OneMerge merge = mergeThread.CurrentMerge;
+			  if (merge == null)
+			  {
+				continue;
+			  }
         
-        /// <summary>Used for testing </summary>
-        private void  AddMyself()
-        {
-            lock (allInstances)
-            {
-                int size = allInstances.Count;
-                int upto = 0;
-                for (int i = 0; i < size; i++)
-                {
-                    ConcurrentMergeScheduler other = allInstances[i];
-                    if (!(other.closed && 0 == other.MergeThreadCount()))
-                    // Keep this one for now: it still has threads or
-                    // may spawn new threads
-                        allInstances[upto++] = other;
-                }
-                allInstances.RemoveRange(upto, allInstances.Count - upto);
-                allInstances.Add(this);
-            }
-        }
+			  // pause the thread if maxThreadCount is smaller than the number of merge threads.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final boolean doPause = threadIdx < activeMergeCount - maxThreadCount;
+			  bool doPause = threadIdx < activeMergeCount - MaxThreadCount_Renamed;
         
-        private bool suppressExceptions;
+			  if (Verbose())
+			  {
+				if (doPause != merge.Pause)
+				{
+				  if (doPause)
+				  {
+					Message("pause thread " + mergeThread.Name);
+				  }
+				  else
+				  {
+					Message("unpause thread " + mergeThread.Name);
+				  }
+				}
+			  }
+			  if (doPause != merge.Pause)
+			  {
+				merge.Pause = doPause;
+			  }
         
-        /// <summary>Used for testing </summary>
-        public /*internal*/ virtual void  SetSuppressExceptions()
-        {
-            suppressExceptions = true;
-        }
+			  if (!doPause)
+			  {
+				if (Verbose())
+				{
+				  Message("set priority of merge thread " + mergeThread.Name + " to " + pri);
+				}
+				mergeThread.ThreadPriority = pri;
+				pri = Math.Min(Thread.MAX_PRIORITY, 1 + pri);
+			  }
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns true if verbosing is enabled. this method is usually used in
+	  /// conjunction with <seealso cref="#message(String)"/>, like that:
+	  /// 
+	  /// <pre class="prettyprint">
+	  /// if (verbose()) {
+	  ///   message(&quot;your message&quot;);
+	  /// }
+	  /// </pre>
+	  /// </summary>
+	  protected internal virtual bool Verbose()
+	  {
+		return Writer != null && Writer.InfoStream.isEnabled("CMS");
+	  }
+
+	  /// <summary>
+	  /// Outputs the given message - this method assumes <seealso cref="#verbose()"/> was
+	  /// called and returned true.
+	  /// </summary>
+	  protected internal virtual void Message(string message)
+	  {
+		Writer.InfoStream.message("CMS", message);
+	  }
+
+	  private void InitMergeThreadPriority()
+	  {
+		  lock (this)
+		  {
+			if (MergeThreadPriority_Renamed == -1)
+			{
+			  // Default to slightly higher priority than our
+			  // calling thread
+			  MergeThreadPriority_Renamed = 1 + Thread.CurrentThread.Priority;
+			  if (MergeThreadPriority_Renamed > Thread.MAX_PRIORITY)
+			  {
+				MergeThreadPriority_Renamed = Thread.MAX_PRIORITY;
+			  }
+			}
+		  }
+	  }
+
+	  public override void Close()
+	  {
+		Sync();
+	  }
+
+	  /// <summary>
+	  /// Wait for any running merge threads to finish. this call is not interruptible as used by <seealso cref="#close()"/>. </summary>
+	  public virtual void Sync()
+	  {
+		bool interrupted = false;
+		try
+		{
+		  while (true)
+		  {
+			MergeThread toSync = null;
+			lock (this)
+			{
+			  foreach (MergeThread t in MergeThreads)
+			  {
+				if (t.IsAlive)
+				{
+				  toSync = t;
+				  break;
+				}
+			  }
+			}
+			if (toSync != null)
+			{
+			  try
+			  {
+				toSync.Join();
+			  }
+			  catch (InterruptedException ie)
+			  {
+				// ignore this Exception, we will retry until all threads are dead
+				interrupted = true;
+			  }
+			}
+			else
+			{
+			  break;
+			}
+		  }
+		}
+		finally
+		{
+		  // finally, restore interrupt status:
+		  if (interrupted)
+		  {
+			  Thread.CurrentThread.Interrupt();
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Returns the number of merge threads that are alive. Note that this number
+	  /// is &le; <seealso cref="#mergeThreads"/> size.
+	  /// </summary>
+	  protected internal virtual int MergeThreadCount()
+	  {
+		  lock (this)
+		  {
+			int count = 0;
+			foreach (MergeThread mt in MergeThreads)
+			{
+			  if (mt.IsAlive && mt.CurrentMerge != null)
+			  {
+				count++;
+			  }
+			}
+			return count;
+		  }
+	  }
+
+	  public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
+	  {
+		  lock (this)
+		  {
         
-        /// <summary>Used for testing </summary>
-        public /*internal*/ virtual void  ClearSuppressExceptions()
-        {
-            suppressExceptions = false;
-        }
+			Debug.Assert(!Thread.holdsLock(writer));
         
-        /// <summary>Used for testing </summary>
-        private static List<ConcurrentMergeScheduler> allInstances;
-        public static void  SetTestMode()
-        {
-            allInstances = new List<ConcurrentMergeScheduler>();
-        }
-    }
+			this.Writer = writer;
+        
+			InitMergeThreadPriority();
+        
+			Dir = writer.Directory;
+        
+			// First, quickly run through the newly proposed merges
+			// and add any orthogonal merges (ie a merge not
+			// involving segments already pending to be merged) to
+			// the queue.  If we are way behind on merging, many of
+			// these newly proposed merges will likely already be
+			// registered.
+        
+			if (Verbose())
+			{
+			  Message("now merge");
+			  Message("  index: " + writer.SegString());
+			}
+        
+			// Iterate, pulling from the IndexWriter's queue of
+			// pending merges, until it's empty:
+			while (true)
+			{
+        
+			  long startStallTime = 0;
+			  while (writer.HasPendingMerges() && MergeThreadCount() >= MaxMergeCount_Renamed)
+			  {
+				// this means merging has fallen too far behind: we
+				// have already created maxMergeCount threads, and
+				// now there's at least one more merge pending.
+				// Note that only maxThreadCount of
+				// those created merge threads will actually be
+				// running; the rest will be paused (see
+				// updateMergeThreads).  We stall this producer
+				// thread to prevent creation of new segments,
+				// until merging has caught up:
+				startStallTime = System.currentTimeMillis();
+				if (Verbose())
+				{
+				  Message("    too many merges; stalling...");
+				}
+				try
+				{
+				  Monitor.Wait(this);
+				}
+				catch (InterruptedException ie)
+				{
+				  throw new ThreadInterruptedException(ie);
+				}
+			  }
+        
+			  if (Verbose())
+			  {
+				if (startStallTime != 0)
+				{
+				  Message("  stalled for " + (System.currentTimeMillis() - startStallTime) + " msec");
+				}
+			  }
+        
+			  MergePolicy.OneMerge merge = writer.NextMerge;
+			  if (merge == null)
+			  {
+				if (Verbose())
+				{
+				  Message("  no more merges pending; now return");
+				}
+				return;
+			  }
+        
+			  bool success = false;
+			  try
+			  {
+				if (Verbose())
+				{
+				  Message("  consider merge " + writer.SegString(merge.Segments));
+				}
+        
+				// OK to spawn a new merge thread to handle this
+				// merge:
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergeThread merger = getMergeThread(writer, merge);
+				MergeThread merger = GetMergeThread(writer, merge);
+				MergeThreads.Add(merger);
+				if (Verbose())
+				{
+				  Message("    launch new thread [" + merger.Name + "]");
+				}
+        
+				merger.Start();
+        
+				// Must call this after starting the thread else
+				// the new thread is removed from mergeThreads
+				// (since it's not alive yet):
+				UpdateMergeThreads();
+        
+				success = true;
+			  }
+			  finally
+			  {
+				if (!success)
+				{
+				  writer.MergeFinish(merge);
+				}
+			  }
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Does the actual merge, by calling <seealso cref="IndexWriter#merge"/> </summary>
+	  protected internal virtual void DoMerge(MergePolicy.OneMerge merge)
+	  {
+		Writer.Merge(merge);
+	  }
+
+	  /// <summary>
+	  /// Create and return a new MergeThread </summary>
+	  protected internal virtual MergeThread GetMergeThread(IndexWriter writer, MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergeThread thread = new MergeThread(writer, merge);
+			MergeThread thread = new MergeThread(this, writer, merge);
+			thread.ThreadPriority = MergeThreadPriority_Renamed;
+			thread.Daemon = true;
+			thread.Name = "Lucene Merge Thread #" + MergeThreadCount_Renamed++;
+			return thread;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Runs a merge thread, which may run one or more merges
+	  ///  in sequence. 
+	  /// </summary>
+	  protected internal class MergeThread : System.Threading.Thread
+	  {
+		  private readonly ConcurrentMergeScheduler OuterInstance;
+
+
+		internal IndexWriter TWriter;
+		internal MergePolicy.OneMerge StartMerge;
+		internal MergePolicy.OneMerge RunningMerge_Renamed;
+		internal volatile bool Done;
+
+		/// <summary>
+		/// Sole constructor. </summary>
+		public MergeThread(ConcurrentMergeScheduler outerInstance, IndexWriter writer, MergePolicy.OneMerge startMerge)
+		{
+			this.OuterInstance = outerInstance;
+		  this.TWriter = writer;
+		  this.StartMerge = startMerge;
+		}
+
+		/// <summary>
+		/// Record the currently running merge. </summary>
+		public virtual MergePolicy.OneMerge RunningMerge
+		{
+			set
+			{
+				lock (this)
+				{
+				  RunningMerge_Renamed = value;
+				}
+			}
+			get
+			{
+				lock (this)
+				{
+				  return RunningMerge_Renamed;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Return the current merge, or null if this {@code
+		///  MergeThread} is done. 
+		/// </summary>
+		public virtual MergePolicy.OneMerge CurrentMerge
+		{
+			get
+			{
+				lock (this)
+				{
+				  if (Done)
+				  {
+					return null;
+				  }
+				  else if (RunningMerge_Renamed != null)
+				  {
+					return RunningMerge_Renamed;
+				  }
+				  else
+				  {
+					return StartMerge;
+				  }
+				}
+			}
+		}
+
+		/// <summary>
+		/// Set the priority of this thread. </summary>
+		public virtual int ThreadPriority
+		{
+			set
+			{
+			  try
+			  {
+				Priority = value;
+			  }
+			  catch (System.NullReferenceException npe)
+			  {
+				// Strangely, Sun's JDK 1.5 on Linux sometimes
+				// throws NPE out of here...
+			  }
+			  catch (SecurityException se)
+			  {
+				// Ignore this because we will still run fine with
+				// normal thread priority
+			  }
+			}
+		}
+
+		public override void Run()
+		{
+
+		  // First time through the while loop we do the merge
+		  // that we were started with:
+		  MergePolicy.OneMerge merge = this.StartMerge;
+
+		  try
+		  {
+
+			if (outerInstance.Verbose())
+			{
+			  outerInstance.Message("  merge thread: start");
+			}
+
+			while (true)
+			{
+			  RunningMerge = merge;
+			  outerInstance.DoMerge(merge);
+
+			  // Subsequent times through the loop we do any new
+			  // merge that writer says is necessary:
+			  merge = TWriter.NextMerge;
+
+			  // Notify here in case any threads were stalled;
+			  // they will notice that the pending merge has
+			  // been pulled and possibly resume:
+			  lock (OuterInstance)
+			  {
+				Monitor.PulseAll(OuterInstance);
+			  }
+
+			  if (merge != null)
+			  {
+				outerInstance.UpdateMergeThreads();
+				if (outerInstance.Verbose())
+				{
+				  outerInstance.Message("  merge thread: do another merge " + TWriter.SegString(merge.Segments));
+				}
+			  }
+			  else
+			  {
+				break;
+			  }
+			}
+
+			if (outerInstance.Verbose())
+			{
+			  outerInstance.Message("  merge thread: done");
+			}
+
+		  }
+		  catch (Exception exc)
+		  {
+
+			// Ignore the exception if it was due to abort:
+			if (!(exc is MergePolicy.MergeAbortedException))
+			{
+			  //System.out.println(Thread.currentThread().getName() + ": CMS: exc");
+			  //exc.printStackTrace(System.out);
+			  if (!outerInstance.SuppressExceptions)
+			  {
+				// suppressExceptions is normally only set during
+				// testing.
+				outerInstance.HandleMergeException(exc);
+			  }
+			}
+		  }
+		  finally
+		  {
+			Done = true;
+			lock (OuterInstance)
+			{
+			  outerInstance.UpdateMergeThreads();
+			  Monitor.PulseAll(OuterInstance);
+			}
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Called when an exception is hit in a background merge
+	  ///  thread 
+	  /// </summary>
+	  protected internal virtual void HandleMergeException(Exception exc)
+	  {
+		try
+		{
+		  // When an exception is hit during merge, IndexWriter
+		  // removes any partial files and then allows another
+		  // merge to run.  If whatever caused the error is not
+		  // transient then the exception will keep happening,
+		  // so, we sleep here to avoid saturating CPU in such
+		  // cases:
+		  Thread.Sleep(250);
+		}
+		catch (InterruptedException ie)
+		{
+		  throw new ThreadInterruptedException(ie);
+		}
+		throw new MergePolicy.MergeException(exc, Dir);
+	  }
+
+	  private bool SuppressExceptions;
+
+	  /// <summary>
+	  /// Used for testing </summary>
+	  internal virtual void SetSuppressExceptions()
+	  {
+		SuppressExceptions = true;
+	  }
+
+	  /// <summary>
+	  /// Used for testing </summary>
+	  internal virtual void ClearSuppressExceptions()
+	  {
+		SuppressExceptions = false;
+	  }
+
+	  public override string ToString()
+	  {
+		StringBuilder sb = new StringBuilder(this.GetType().SimpleName + ": ");
+		sb.Append("maxThreadCount=").Append(MaxThreadCount_Renamed).Append(", ");
+		sb.Append("maxMergeCount=").Append(MaxMergeCount_Renamed).Append(", ");
+		sb.Append("mergeThreadPriority=").Append(MergeThreadPriority_Renamed);
+		return sb.ToString();
+	  }
+
+	  public override MergeScheduler Clone()
+	  {
+		ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler) base.Clone();
+		clone.Writer = null;
+		clone.Dir = null;
+		clone.MergeThreads = new List<>();
+		return clone;
+	  }
+	}
+
 }

@@ -26,7 +26,7 @@
     <owners>The Apache Software Foundation</owners>
     <iconUrl>http://incubator.apache.org/lucene.net/media/lucene-net-ico-128x128.png</iconUrl>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
-    <projectUrl>http://lucenenet.apache.org/</projectUrl>
+    <projectUrl>http://incubator.apache.org/lucene.net/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.
 

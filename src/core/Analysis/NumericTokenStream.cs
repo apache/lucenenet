@@ -1,270 +1,402 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using Lucene.Net.Analysis.Tokenattributes;
+using System;
+using System.Diagnostics;
+using Lucene.Net.Util;
 using Lucene.Net.Search;
-using AttributeSource = Lucene.Net.Util.AttributeSource;
-using NumericUtils = Lucene.Net.Util.NumericUtils;
-using NumericField = Lucene.Net.Documents.NumericField;
-// javadocs
 
 namespace Lucene.Net.Analysis
 {
-    
-    /// <summary> <b>Expert:</b> This class provides a <see cref="TokenStream" />
-    /// for indexing numeric values that can be used by <see cref="NumericRangeQuery{T}" />
-    /// or <see cref="NumericRangeFilter{T}" />.
-    /// 
-    /// <p/>Note that for simple usage, <see cref="NumericField" /> is
-    /// recommended.  <see cref="NumericField" /> disables norms and
-    /// term freqs, as they are not usually needed during
-    /// searching.  If you need to change these settings, you
-    /// should use this class.
-    /// 
-    /// <p/>See <see cref="NumericField" /> for capabilities of fields
-    /// indexed numerically.<p/>
-    /// 
-    /// <p/>Here's an example usage, for an <c>int</c> field:
-    /// 
-    /// <code>
-    ///  Field field = new Field(name, new NumericTokenStream(precisionStep).setIntValue(value));
-    ///  field.setOmitNorms(true);
-    ///  field.setOmitTermFreqAndPositions(true);
-    ///  document.add(field);
-    /// </code>
-    /// 
-    /// <p/>For optimal performance, re-use the TokenStream and Field instance
-    /// for more than one document:
-    /// 
-    /// <code>
-    ///  NumericTokenStream stream = new NumericTokenStream(precisionStep);
-    ///  Field field = new Field(name, stream);
-    ///  field.setOmitNorms(true);
-    ///  field.setOmitTermFreqAndPositions(true);
-    ///  Document document = new Document();
-    ///  document.add(field);
-    /// 
-    ///  for(all documents) {
-    ///    stream.setIntValue(value)
-    ///    writer.addDocument(document);
-    ///  }
-    /// </code>
-    /// 
-    /// <p/>This stream is not intended to be used in analyzers;
-    /// it's more for iterating the different precisions during
-    /// indexing a specific numeric value.<p/>
-    /// 
-    /// <p/><b>NOTE</b>: as token streams are only consumed once
-    /// the document is added to the index, if you index more
-    /// than one numeric field, use a separate <c>NumericTokenStream</c>
-    /// instance for each.<p/>
-    /// 
-    /// <p/>See <see cref="NumericRangeQuery{T}" /> for more details on the
-    /// <a href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
-    /// parameter as well as how numeric fields work under the hood.<p/>
-    /// 
-    /// <p/><font color="red"><b>NOTE:</b> This API is experimental and
-    /// might change in incompatible ways in the next release.</font>
-    ///   Since 2.9
-    /// </summary>
-    public sealed class NumericTokenStream : TokenStream
-    {
-        private void  InitBlock()
-        {
-            termAtt = AddAttribute<ITermAttribute>();
-            typeAtt = AddAttribute<ITypeAttribute>();
-            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-        }
-        
-        /// <summary>The full precision token gets this token type assigned. </summary>
-        public const System.String TOKEN_TYPE_FULL_PREC = "fullPrecNumeric";
-        
-        /// <summary>The lower precision tokens gets this token type assigned. </summary>
-        public const System.String TOKEN_TYPE_LOWER_PREC = "lowerPrecNumeric";
-        
-        /// <summary> Creates a token stream for numeric values using the default <c>precisionStep</c>
-        /// <see cref="NumericUtils.PRECISION_STEP_DEFAULT" /> (4). The stream is not yet initialized,
-        /// before using set a value using the various set<em>???</em>Value() methods.
-        /// </summary>
-        public NumericTokenStream():this(NumericUtils.PRECISION_STEP_DEFAULT)
-        {
-        }
-        
-        /// <summary> Creates a token stream for numeric values with the specified
-        /// <c>precisionStep</c>. The stream is not yet initialized,
-        /// before using set a value using the various set<em>???</em>Value() methods.
-        /// </summary>
-        public NumericTokenStream(int precisionStep):base()
-        {
-            InitBlock();
-            this.precisionStep = precisionStep;
-            if (precisionStep < 1)
-                throw new System.ArgumentException("precisionStep must be >=1");
-        }
-        
-        /// <summary> Expert: Creates a token stream for numeric values with the specified
-        /// <c>precisionStep</c> using the given <see cref="AttributeSource" />.
-        /// The stream is not yet initialized,
-        /// before using set a value using the various set<em>???</em>Value() methods.
-        /// </summary>
-        public NumericTokenStream(AttributeSource source, int precisionStep):base(source)
-        {
-            InitBlock();
-            this.precisionStep = precisionStep;
-            if (precisionStep < 1)
-                throw new System.ArgumentException("precisionStep must be >=1");
-        }
-        
-        /// <summary> Expert: Creates a token stream for numeric values with the specified
-        /// <c>precisionStep</c> using the given
-        /// <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory" />.
-        /// The stream is not yet initialized,
-        /// before using set a value using the various set<em>???</em>Value() methods.
-        /// </summary>
-        public NumericTokenStream(AttributeFactory factory, int precisionStep):base(factory)
-        {
-            InitBlock();
-            this.precisionStep = precisionStep;
-            if (precisionStep < 1)
-                throw new System.ArgumentException("precisionStep must be >=1");
-        }
-        
-        /// <summary> Initializes the token stream with the supplied <c>long</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
-        /// </param>
-        /// <returns> this instance, because of this you can use it the following way:
-        /// <c>new Field(name, new NumericTokenStream(precisionStep).SetLongValue(value))</c>
-        /// </returns>
-        public NumericTokenStream SetLongValue(long value_Renamed)
-        {
-            this.value_Renamed = value_Renamed;
-            valSize = 64;
-            shift = 0;
-            return this;
-        }
-        
-        /// <summary> Initializes the token stream with the supplied <c>int</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
-        /// </param>
-        /// <returns> this instance, because of this you can use it the following way:
-        /// <c>new Field(name, new NumericTokenStream(precisionStep).SetIntValue(value))</c>
-        /// </returns>
-        public NumericTokenStream SetIntValue(int value_Renamed)
-        {
-            this.value_Renamed = (long) value_Renamed;
-            valSize = 32;
-            shift = 0;
-            return this;
-        }
-        
-        /// <summary> Initializes the token stream with the supplied <c>double</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
-        /// </param>
-        /// <returns> this instance, because of this you can use it the following way:
-        /// <c>new Field(name, new NumericTokenStream(precisionStep).SetDoubleValue(value))</c>
-        /// </returns>
-        public NumericTokenStream SetDoubleValue(double value_Renamed)
-        {
-            this.value_Renamed = NumericUtils.DoubleToSortableLong(value_Renamed);
-            valSize = 64;
-            shift = 0;
-            return this;
-        }
-        
-        /// <summary> Initializes the token stream with the supplied <c>float</c> value.</summary>
-        /// <param name="value_Renamed">the value, for which this TokenStream should enumerate tokens.
-        /// </param>
-        /// <returns> this instance, because of this you can use it the following way:
-        /// <c>new Field(name, new NumericTokenStream(precisionStep).SetFloatValue(value))</c>
-        /// </returns>
-        public NumericTokenStream SetFloatValue(float value_Renamed)
-        {
-            this.value_Renamed = (long) NumericUtils.FloatToSortableInt(value_Renamed);
-            valSize = 32;
-            shift = 0;
-            return this;
-        }
-        
-        // @Override
-        public override void  Reset()
-        {
-            if (valSize == 0)
-                throw new System.SystemException("call set???Value() before usage");
-            shift = 0;
-        }
 
-        protected override void Dispose(bool disposing)
-        {
-            // Do nothing.
-        }
-        
-        // @Override
-        public override bool IncrementToken()
-        {
-            if (valSize == 0)
-                throw new System.SystemException("call set???Value() before usage");
-            if (shift >= valSize)
-                return false;
-            
-            ClearAttributes();
-            char[] buffer;
-            switch (valSize)
-            {
-                
-                case 64: 
-                    buffer = termAtt.ResizeTermBuffer(NumericUtils.BUF_SIZE_LONG);
-                    termAtt.SetTermLength(NumericUtils.LongToPrefixCoded(value_Renamed, shift, buffer));
-                    break;
-                
-                
-                case 32: 
-                    buffer = termAtt.ResizeTermBuffer(NumericUtils.BUF_SIZE_INT);
-                    termAtt.SetTermLength(NumericUtils.IntToPrefixCoded((int) value_Renamed, shift, buffer));
-                    break;
-                
-                
-                default: 
-                    // should not happen
-                    throw new System.ArgumentException("valSize must be 32 or 64");
-                
-            }
-            
-            typeAtt.Type = (shift == 0)?TOKEN_TYPE_FULL_PREC:TOKEN_TYPE_LOWER_PREC;
-            posIncrAtt.PositionIncrement = (shift == 0)?1:0;
-            shift += precisionStep;
-            return true;
-        }
-        
-        // @Override
-        public override System.String ToString()
-        {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder("(numeric,valSize=").Append(valSize);
-            sb.Append(",precisionStep=").Append(precisionStep).Append(')');
-            return sb.ToString();
-        }
-        
-        // members
-        private ITermAttribute termAtt;
-        private ITypeAttribute typeAtt;
-        private IPositionIncrementAttribute posIncrAtt;
-        
-        private int shift = 0, valSize = 0; // valSize==0 means not initialized
-        private readonly int precisionStep;
-        
-        private long value_Renamed = 0L;
-    }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
+    using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
+    using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
+    using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
+	using DoubleField = Lucene.Net.Document.DoubleField; // for javadocs
+    using FloatField = Lucene.Net.Document.FloatField; // for javadocs
+    using IntField = Lucene.Net.Document.IntField; // for javadocs
+    using LongField = Lucene.Net.Document.LongField; // for javadocs
+
+	/// <summary>
+	/// <b>Expert:</b> this class provides a <seealso cref="TokenStream"/>
+	/// for indexing numeric values that can be used by {@link
+	/// NumericRangeQuery} or <seealso cref="NumericRangeFilter"/>.
+	/// 
+	/// <p>Note that for simple usage, <seealso cref="IntField"/>, {@link
+	/// LongField}, <seealso cref="FloatField"/> or <seealso cref="DoubleField"/> is
+	/// recommended.  These fields disable norms and
+	/// term freqs, as they are not usually needed during
+	/// searching.  If you need to change these settings, you
+	/// should use this class.
+	/// 
+	/// <p>Here's an example usage, for an <code>int</code> field:
+	/// 
+	/// <pre class="prettyprint">
+	///  FieldType fieldType = new FieldType(TextField.TYPE_NOT_STORED);
+	///  fieldType.setOmitNorms(true);
+	///  fieldType.setIndexOptions(IndexOptions.DOCS_ONLY);
+	///  Field field = new Field(name, new NumericTokenStream(precisionStep).setIntValue(value), fieldType);
+	///  document.add(field);
+	/// </pre>
+	/// 
+	/// <p>For optimal performance, re-use the TokenStream and Field instance
+	/// for more than one document:
+	/// 
+	/// <pre class="prettyprint">
+	///  NumericTokenStream stream = new NumericTokenStream(precisionStep);
+	///  FieldType fieldType = new FieldType(TextField.TYPE_NOT_STORED);
+	///  fieldType.setOmitNorms(true);
+	///  fieldType.setIndexOptions(IndexOptions.DOCS_ONLY);
+	///  Field field = new Field(name, stream, fieldType);
+	///  Document document = new Document();
+	///  document.add(field);
+	/// 
+	///  for(all documents) {
+	///    stream.setIntValue(value)
+	///    writer.addDocument(document);
+	///  }
+	/// </pre>
+	/// 
+	/// <p>this stream is not intended to be used in analyzers;
+	/// it's more for iterating the different precisions during
+	/// indexing a specific numeric value.</p>
+	/// 
+	/// <p><b>NOTE</b>: as token streams are only consumed once
+	/// the document is added to the index, if you index more
+	/// than one numeric field, use a separate <code>NumericTokenStream</code>
+	/// instance for each.</p>
+	/// 
+	/// <p>See <seealso cref="NumericRangeQuery"/> for more details on the
+	/// <a
+	/// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
+	/// parameter as well as how numeric fields work under the hood.</p>
+	/// 
+	/// @since 2.9
+	/// </summary>
+	public sealed class NumericTokenStream : TokenStream, Lucene.Net.Util.Attribute
+	{
+		private bool InstanceFieldsInitialized = false;
+
+		private void InitializeInstanceFields()
+		{
+			NumericAtt = AddAttribute<NumericTermAttribute>();
+			TypeAtt = AddAttribute<TypeAttribute>();
+			PosIncrAtt = AddAttribute<PositionIncrementAttribute>();
+		}
+
+
+	  /// <summary>
+	  /// The full precision token gets this token type assigned. </summary>
+	  public const string TOKEN_TYPE_FULL_PREC = "fullPrecNumeric";
+
+	  /// <summary>
+	  /// The lower precision tokens gets this token type assigned. </summary>
+	  public const string TOKEN_TYPE_LOWER_PREC = "lowerPrecNumeric";
+
+	  /// <summary>
+	  /// <b>Expert:</b> Use this attribute to get the details of the currently generated token.
+	  /// @lucene.experimental
+	  /// @since 4.0
+	  /// </summary>
+	  public interface NumericTermAttribute : Lucene.Net.Util.Attribute
+	  {
+		/// <summary>
+		/// Returns current shift value, undefined before first token </summary>
+		int Shift {get;set;}
+		/// <summary>
+		/// Returns current token's raw value as {@code long} with all <seealso cref="#getShift"/> applied, undefined before first token </summary>
+		long RawValue {get;}
+		/// <summary>
+		/// Returns value size in bits (32 for {@code float}, {@code int}; 64 for {@code double}, {@code long}) </summary>
+		int ValueSize {get;}
+
+		/// <summary>
+		/// <em>Don't call this method!</em>
+		/// @lucene.internal 
+		/// </summary>
+		void Init(long value, int valSize, int precisionStep, int shift);
+
+
+		/// <summary>
+		/// <em>Don't call this method!</em>
+		/// @lucene.internal 
+		/// </summary>
+		int IncShift();
+	  }
+
+	  // just a wrapper to prevent adding CTA
+	  private sealed class NumericAttributeFactory : AttributeSource.AttributeFactory
+	  {
+          internal readonly AttributeSource.AttributeFactory @delegate;
+
+          internal NumericAttributeFactory(AttributeSource.AttributeFactory @delegate)
+		  {
+		    this.@delegate = @delegate;
+		  }
+
+		public override AttributeImpl CreateAttributeInstance(Type attClass)
+		{
+		  if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
+		  {
+			throw new System.ArgumentException("NumericTokenStream does not support CharTermAttribute.");
+		  }
+		  return @delegate.CreateAttributeInstance(attClass);
+		}
+	  }
+
+	  /// <summary>
+	  /// Implementation of <seealso cref="NumericTermAttribute"/>.
+	  /// @lucene.internal
+	  /// @since 4.0
+	  /// </summary>
+	  public sealed class NumericTermAttributeImpl : AttributeImpl, NumericTermAttribute, TermToBytesRefAttribute
+	  {
+		internal long Value = 0L;
+		internal int ValueSize_Renamed = 0, Shift_Renamed = 0, PrecisionStep = 0;
+		internal BytesRef Bytes = new BytesRef();
+
+		/// <summary>
+		/// Creates, but does not yet initialize this attribute instance </summary>
+		/// <seealso cref= #init(long, int, int, int) </seealso>
+		public NumericTermAttributeImpl()
+		{
+		}
+
+		public override BytesRef BytesRef
+		{
+			get
+			{
+			  return Bytes;
+			}
+		}
+
+		public override void FillBytesRef()
+		{
+		  Debug.Assert(ValueSize_Renamed == 64 || ValueSize_Renamed == 32);
+		  if (ValueSize_Renamed == 64)
+		  {
+			NumericUtils.LongToPrefixCoded(Value, Shift_Renamed, Bytes);
+		  }
+		  else
+		  {
+			NumericUtils.IntToPrefixCoded((int) Value, Shift_Renamed, Bytes);
+		  }
+		}
+
+		public override int Shift
+		{
+			get
+			{
+				return Shift_Renamed;
+			}
+			set
+			{
+				this.Shift_Renamed = value;
+			}
+		}
+		public override int IncShift()
+		{
+		  return (Shift_Renamed += PrecisionStep);
+		}
+
+		public override long RawValue
+		{
+			get
+			{
+				return Value & ~((1L << Shift_Renamed) - 1L);
+			}
+		}
+		public override int ValueSize
+		{
+			get
+			{
+				return ValueSize_Renamed;
+			}
+		}
+		public override void Init(long value, int valueSize, int precisionStep, int shift)
+		{
+		  this.Value = value;
+		  this.ValueSize_Renamed = valueSize;
+		  this.PrecisionStep = precisionStep;
+		  this.Shift_Renamed = shift;
+		}
+
+		public override void Clear()
+		{
+		  // this attribute has no contents to clear!
+		  // we keep it untouched as it's fully controlled by outer class.
+		}
+
+		public override void ReflectWith(AttributeReflector reflector)
+		{
+		  FillBytesRef();
+		  reflector.Reflect(typeof(TermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
+		  reflector.Reflect(typeof(NumericTermAttribute), "shift", Shift_Renamed);
+		  reflector.Reflect(typeof(NumericTermAttribute), "rawValue", RawValue);
+		  reflector.Reflect(typeof(NumericTermAttribute), "valueSize", ValueSize_Renamed);
+		}
+
+		public override void CopyTo(AttributeImpl target)
+		{
+		  NumericTermAttribute a = (NumericTermAttribute) target;
+		  a.Init(Value, ValueSize_Renamed, PrecisionStep, Shift_Renamed);
+		}
+	  }
+
+	  /// <summary>
+	  /// Creates a token stream for numeric values using the default <code>precisionStep</code>
+	  /// <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4). The stream is not yet initialized,
+	  /// before using set a value using the various set<em>???</em>Value() methods.
+	  /// </summary>
+      public NumericTokenStream()
+          : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, NumericUtils.PRECISION_STEP_DEFAULT)
+	  {
+		  if (!InstanceFieldsInitialized)
+		  {
+			  InitializeInstanceFields();
+			  InstanceFieldsInitialized = true;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Creates a token stream for numeric values with the specified
+	  /// <code>precisionStep</code>. The stream is not yet initialized,
+	  /// before using set a value using the various set<em>???</em>Value() methods.
+	  /// </summary>
+      public NumericTokenStream(int precisionStep)
+          : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, precisionStep)
+	  {
+		  if (!InstanceFieldsInitialized)
+		  {
+			  InitializeInstanceFields();
+			  InstanceFieldsInitialized = true;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: Creates a token stream for numeric values with the specified
+	  /// <code>precisionStep</code> using the given
+	  /// <seealso cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>.
+	  /// The stream is not yet initialized,
+	  /// before using set a value using the various set<em>???</em>Value() methods.
+	  /// </summary>
+      public NumericTokenStream(AttributeSource.AttributeFactory factory, int precisionStep)
+          : base(new NumericAttributeFactory(factory))
+	  {
+		  if (!InstanceFieldsInitialized)
+		  {
+			  InitializeInstanceFields();
+			  InstanceFieldsInitialized = true;
+		  }
+		if (precisionStep < 1)
+		{
+		  throw new System.ArgumentException("precisionStep must be >=1");
+		}
+		this.PrecisionStep_Renamed = precisionStep;
+		NumericAtt.Shift = -precisionStep;
+	  }
+
+	  /// <summary>
+	  /// Initializes the token stream with the supplied <code>long</code> value. </summary>
+	  /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
+	  /// <returns> this instance, because of this you can use it the following way:
+	  /// <code>new Field(name, new NumericTokenStream(precisionStep).setLongValue(value))</code> </returns>
+	  public NumericTokenStream SetLongValue(long value)
+	  {
+		NumericAtt.Init(value, ValSize = 64, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+		return this;
+	  }
+
+	  /// <summary>
+	  /// Initializes the token stream with the supplied <code>int</code> value. </summary>
+	  /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
+	  /// <returns> this instance, because of this you can use it the following way:
+	  /// <code>new Field(name, new NumericTokenStream(precisionStep).setIntValue(value))</code> </returns>
+	  public NumericTokenStream SetIntValue(int value)
+	  {
+		NumericAtt.Init(value, ValSize = 32, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+		return this;
+	  }
+
+	  /// <summary>
+	  /// Initializes the token stream with the supplied <code>double</code> value. </summary>
+	  /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
+	  /// <returns> this instance, because of this you can use it the following way:
+	  /// <code>new Field(name, new NumericTokenStream(precisionStep).setDoubleValue(value))</code> </returns>
+	  public NumericTokenStream SetDoubleValue(double value)
+	  {
+		NumericAtt.Init(NumericUtils.DoubleToSortableLong(value), ValSize = 64, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+		return this;
+	  }
+
+	  /// <summary>
+	  /// Initializes the token stream with the supplied <code>float</code> value. </summary>
+	  /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
+	  /// <returns> this instance, because of this you can use it the following way:
+	  /// <code>new Field(name, new NumericTokenStream(precisionStep).setFloatValue(value))</code> </returns>
+	  public NumericTokenStream SetFloatValue(float value)
+	  {
+		NumericAtt.Init(NumericUtils.FloatToSortableInt(value), ValSize = 32, PrecisionStep_Renamed, -PrecisionStep_Renamed);
+		return this;
+	  }
+
+	  public override void Reset()
+	  {
+		if (ValSize == 0)
+		{
+		  throw new Exception("call set???Value() before usage");
+		}
+		NumericAtt.Shift = -PrecisionStep_Renamed;
+	  }
+
+	  public override bool IncrementToken()
+	  {
+		if (ValSize == 0)
+		{
+		  throw new Exception("call set???Value() before usage");
+		}
+
+		// this will only clear all other attributes in this TokenStream
+		ClearAttributes();
+
+		int shift = NumericAtt.IncShift();
+		TypeAtt.type = (shift == 0) ? TOKEN_TYPE_FULL_PREC : TOKEN_TYPE_LOWER_PREC;
+		PosIncrAtt.PositionIncrement = (shift == 0) ? 1 : 0;
+		return (shift < ValSize);
+	  }
+
+	  /// <summary>
+	  /// Returns the precision step. </summary>
+	  public int PrecisionStep
+	  {
+		  get
+		  {
+			return PrecisionStep_Renamed;
+		  }
+	  }
+
+	  // members
+	  private NumericTermAttribute NumericAtt;
+	  private TypeAttribute TypeAtt;
+	  private PositionIncrementAttribute PosIncrAtt;
+
+	  private int ValSize = 0; // valSize==0 means not initialized
+	  private readonly int PrecisionStep_Renamed;
+	}
+
 }

@@ -18,6 +18,6 @@ Please join the Lucene-User mailing list by visiting this site:
 Please post suggestions, questions, corrections or additions to this
 document to the lucene-net-user mailing list.
 
-This file was originally written by George Aroush <george@aroush.net>.
+this file was originally written by George Aroush <george@aroush.net>.
 
 Copyright (c) 2006 - 2012 The Apache Software Foundation.  All rights reserved.

@@ -22,7 +22,7 @@
 namespace Lucene.Net.Support
 {
     /// <summary>
-    /// This class provides supporting methods of java.util.BitSet
+    /// this class provides supporting methods of java.util.BitSet
     /// that are not present in System.Collections.BitArray.
     /// </summary>
     public class BitSetSupport

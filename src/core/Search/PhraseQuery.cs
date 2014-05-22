@@ -1,370 +1,536 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-using Lucene.Net.Support;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using IDFExplanation = Lucene.Net.Search.Explanation.IDFExplanation;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
-    
-    /// <summary>A Query that matches documents containing a particular sequence of terms.
-    /// A PhraseQuery is built by QueryParser for input like <c>"new york"</c>.
-    /// 
-    /// <p/>This query may be combined with other terms or queries with a <see cref="BooleanQuery" />.
-    /// </summary>
-    [Serializable]
-    public class PhraseQuery:Query
-    {
-        private System.String field;
-        private EquatableList<Term> terms = new EquatableList<Term>(4);
-        private EquatableList<int> positions = new EquatableList<int>(4);
-        private int maxPosition = 0;
-        private int slop = 0;
-        
-        /// <summary>Constructs an empty phrase query. </summary>
-        public PhraseQuery()
-        {
-        }
 
-        /// <summary>Sets the number of other words permitted between words in query phrase.
-        /// If zero, then this is an exact phrase search.  For larger values this works
-        /// like a <c>WITHIN</c> or <c>NEAR</c> operator.
-        /// <p/>The slop is in fact an edit-distance, where the units correspond to
-        /// moves of terms in the query phrase out of position.  For example, to switch
-        /// the order of two words requires two moves (the first move places the words
-        /// atop one another), so to permit re-orderings of phrases, the slop must be
-        /// at least two.
-        /// <p/>More exact matches are scored higher than sloppier matches, thus search
-        /// results are sorted by exactness.
-        /// <p/>The slop is zero by default, requiring exact matches.
-        /// </summary>
-        public virtual int Slop
-        {
-            get { return slop; }
-            set { slop = value; }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        /// <summary> Adds a term to the end of the query phrase.
-        /// The relative position of the term is the one immediately after the last term added.
-        /// </summary>
-        public virtual void  Add(Term term)
-        {
-            int position = 0;
-            if (positions.Count > 0)
-                position = positions[positions.Count - 1] + 1;
-            
-            Add(term, position);
-        }
-        
-        /// <summary> Adds a term to the end of the query phrase.
-        /// The relative position of the term within the phrase is specified explicitly.
-        /// This allows e.g. phrases with more than one term at the same position
-        /// or phrases with gaps (e.g. in connection with stopwords).
-        /// 
-        /// </summary>
-        /// <param name="term">
-        /// </param>
-        /// <param name="position">
-        /// </param>
-        public virtual void  Add(Term term, int position)
-        {
-            if (terms.Count == 0)
-                field = term.Field;
-            else if ((System.Object) term.Field != (System.Object) field)
-            {
-                throw new System.ArgumentException("All phrase terms must be in the same field: " + term);
-            }
-            
-            terms.Add(term);
-            positions.Add(position);
-            if (position > maxPosition)
-                maxPosition = position;
-        }
-        
-        /// <summary>Returns the set of terms in this phrase. </summary>
-        public virtual Term[] GetTerms()
-        {
-            return terms.ToArray();
-        }
-        
-        /// <summary> Returns the relative positions of terms in this phrase.</summary>
-        public virtual int[] GetPositions()
-        {
-            int[] result = new int[positions.Count];
-            for (int i = 0; i < positions.Count; i++)
-                result[i] = positions[i];
-            return result;
-        }
-        
-        [Serializable]
-        private class PhraseWeight:Weight
-        {
-            private void  InitBlock(PhraseQuery enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private PhraseQuery enclosingInstance;
-            public PhraseQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Similarity similarity;
-            private float value_Renamed;
-            private float idf;
-            private float queryNorm;
-            private float queryWeight;
-            private IDFExplanation idfExp;
-            
-            public PhraseWeight(PhraseQuery enclosingInstance, Searcher searcher)
-            {
-                InitBlock(enclosingInstance);
-                this.similarity = Enclosing_Instance.GetSimilarity(searcher);
-                
-                idfExp = similarity.IdfExplain(Enclosing_Instance.terms, searcher);
-                idf = idfExp.Idf;
-            }
-            
-            public override System.String ToString()
-            {
-                return "weight(" + Enclosing_Instance + ")";
-            }
 
-            public override Query Query
-            {
-                get { return Enclosing_Instance; }
-            }
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+	using DocsEnum = Lucene.Net.Index.DocsEnum;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using AtomicReader = Lucene.Net.Index.AtomicReader;
+	using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
+	using Term = Lucene.Net.Index.Term;
+	using TermContext = Lucene.Net.Index.TermContext;
+	using TermState = Lucene.Net.Index.TermState;
+	using Terms = Lucene.Net.Index.Terms;
+	using TermsEnum = Lucene.Net.Index.TermsEnum;
+	using SimScorer = Lucene.Net.Search.Similarities.Similarity.SimScorer;
+	using Similarity = Lucene.Net.Search.Similarities.Similarity;
+	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+	using Bits = Lucene.Net.Util.Bits;
+	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
-            public override float Value
-            {
-                get { return value_Renamed; }
-            }
+	/// <summary>
+	/// A Query that matches documents containing a particular sequence of terms.
+	/// A PhraseQuery is built by QueryParser for input like <code>"new york"</code>.
+	/// 
+	/// <p>this query may be combined with other terms or queries with a <seealso cref="BooleanQuery"/>.
+	/// </summary>
+	public class PhraseQuery : Query
+	{
+	  private string Field;
+	  private List<Term> Terms_Renamed = new List<Term>(4);
+	  private List<int?> Positions_Renamed = new List<int?>(4);
+	  private int MaxPosition = 0;
+	  private int Slop_Renamed = 0;
 
-            public override float GetSumOfSquaredWeights()
-            {
-                queryWeight = idf*Enclosing_Instance.Boost; // compute query weight
-                return queryWeight*queryWeight; // square it
-            }
+	  /// <summary>
+	  /// Constructs an empty phrase query. </summary>
+	  public PhraseQuery()
+	  {
+	  }
 
-            public override void  Normalize(float queryNorm)
-            {
-                this.queryNorm = queryNorm;
-                queryWeight *= queryNorm; // normalize query weight
-                value_Renamed = queryWeight * idf; // idf for document 
-            }
-            
-            public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-            {
-                if (Enclosing_Instance.terms.Count == 0)
-                // optimize zero-term case
-                    return null;
-                
-                TermPositions[] tps = new TermPositions[Enclosing_Instance.terms.Count];
-                for (int i = 0; i < Enclosing_Instance.terms.Count; i++)
-                {
-                    TermPositions p = reader.TermPositions(Enclosing_Instance.terms[i]);
-                    if (p == null)
-                        return null;
-                    tps[i] = p;
-                }
-                
-                if (Enclosing_Instance.slop == 0)
-                // optimize exact case
-                    return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, reader.Norms(Enclosing_Instance.field));
-                else
-                    return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
-            }
-            
-            public override Explanation Explain(IndexReader reader, int doc)
-            {
-                
-                Explanation result = new Explanation();
-                result.Description = "weight(" + Query + " in " + doc + "), product of:";
-                
-                System.Text.StringBuilder docFreqs = new System.Text.StringBuilder();
-                System.Text.StringBuilder query = new System.Text.StringBuilder();
-                query.Append('\"');
-                docFreqs.Append(idfExp.Explain());
-                for (int i = 0; i < Enclosing_Instance.terms.Count; i++)
-                {
-                    if (i != 0)
-                    {
-                        query.Append(" ");
-                    }
-                    
-                    Term term = Enclosing_Instance.terms[i];
-                    
-                    query.Append(term.Text);
-                }
-                query.Append('\"');
-                
-                Explanation idfExpl = new Explanation(idf, "idf(" + Enclosing_Instance.field + ":" + docFreqs + ")");
-                
-                // explain query weight
-                Explanation queryExpl = new Explanation();
-                queryExpl.Description = "queryWeight(" + Query + "), product of:";
-                
-                Explanation boostExpl = new Explanation(Enclosing_Instance.Boost, "boost");
-                if (Enclosing_Instance.Boost != 1.0f)
-                    queryExpl.AddDetail(boostExpl);
-                queryExpl.AddDetail(idfExpl);
-                
-                Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
-                queryExpl.AddDetail(queryNormExpl);
-                
-                queryExpl.Value = boostExpl.Value * idfExpl.Value * queryNormExpl.Value;
-                
-                result.AddDetail(queryExpl);
-                
-                // explain field weight
-                Explanation fieldExpl = new Explanation();
-                fieldExpl.Description = "fieldWeight(" + Enclosing_Instance.field + ":" + query + " in " + doc + "), product of:";
-                
-                PhraseScorer scorer = (PhraseScorer)Scorer(reader, true, false);
-                if (scorer == null)
-                {
-                    return new Explanation(0.0f, "no matching docs");
-                }
-                Explanation tfExplanation = new Explanation();
-                int d = scorer.Advance(doc);
-                float phraseFreq = (d == doc) ? scorer.CurrentFreq() : 0.0f;
-                tfExplanation.Value = similarity.Tf(phraseFreq);
-                tfExplanation.Description = "tf(phraseFreq=" + phraseFreq + ")";
+	  /// <summary>
+	  /// Sets the number of other words permitted between words in query phrase.
+	  ///  If zero, then this is an exact phrase search.  For larger values this works
+	  ///  like a <code>WITHIN</code> or <code>NEAR</code> operator.
+	  /// 
+	  ///  <p>The slop is in fact an edit-distance, where the units correspond to
+	  ///  moves of terms in the query phrase out of position.  For example, to switch
+	  ///  the order of two words requires two moves (the first move places the words
+	  ///  atop one another), so to permit re-orderings of phrases, the slop must be
+	  ///  at least two.
+	  /// 
+	  ///  <p>More exact matches are scored higher than sloppier matches, thus search
+	  ///  results are sorted by exactness.
+	  /// 
+	  ///  <p>The slop is zero by default, requiring exact matches.
+	  /// </summary>
+	  public virtual int Slop
+	  {
+		  set
+		  {
+			if (value < 0)
+			{
+			  throw new System.ArgumentException("slop value cannot be negative");
+			}
+			Slop_Renamed = value;
+		  }
+		  get
+		  {
+			  return Slop_Renamed;
+		  }
+	  }
 
-                fieldExpl.AddDetail(tfExplanation);
-                fieldExpl.AddDetail(idfExpl);
-                
-                Explanation fieldNormExpl = new Explanation();
-                byte[] fieldNorms = reader.Norms(Enclosing_Instance.field);
-                float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):1.0f;
-                fieldNormExpl.Value = fieldNorm;
-                fieldNormExpl.Description = "fieldNorm(field=" + Enclosing_Instance.field + ", doc=" + doc + ")";
-                fieldExpl.AddDetail(fieldNormExpl);
+	  /// <summary>
+	  /// Adds a term to the end of the query phrase.
+	  /// The relative position of the term is the one immediately after the last term added.
+	  /// </summary>
+	  public virtual void Add(Term term)
+	  {
+		int position = 0;
+		if (Positions_Renamed.Count > 0)
+		{
+			position = (int)Positions_Renamed[Positions_Renamed.Count - 1] + 1;
+		}
 
-                fieldExpl.Value = tfExplanation.Value * idfExpl.Value * fieldNormExpl.Value;
-                
-                result.AddDetail(fieldExpl);
-                
-                // combine them
-                result.Value = queryExpl.Value * fieldExpl.Value;
-                
-                if (queryExpl.Value == 1.0f)
-                    return fieldExpl;
-                
-                return result;
-            }
-        }
-        
-        public override Weight CreateWeight(Searcher searcher)
-        {
-            if (terms.Count == 1)
-            {
-                // optimize one-term case
-                Term term = terms[0];
-                Query termQuery = new TermQuery(term);
-                termQuery.Boost = Boost;
-                return termQuery.CreateWeight(searcher);
-            }
-            return new PhraseWeight(this, searcher);
-        }
-        
-        /// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(System.Collections.Generic.ISet{Term})">
-        /// </seealso>
-        public override void ExtractTerms(System.Collections.Generic.ISet<Term> queryTerms)
-        {
-            queryTerms.UnionWith(terms);
-        }
-        
-        /// <summary>Prints a user-readable version of this query. </summary>
-        public override System.String ToString(System.String f)
-        {
-            System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-            if (field != null && !field.Equals(f))
-            {
-                buffer.Append(field);
-                buffer.Append(":");
-            }
-            
-            buffer.Append("\"");
-            System.String[] pieces = new System.String[maxPosition + 1];
-            for (int i = 0; i < terms.Count; i++)
-            {
-                int pos = positions[i];
-                System.String s = pieces[pos];
-                if (s == null)
-                {
-                    s = terms[i].Text;
-                }
-                else
-                {
-                    s = s + "|" + terms[i].Text;
-                }
-                pieces[pos] = s;
-            }
-            for (int i = 0; i < pieces.Length; i++)
-            {
-                if (i > 0)
-                {
-                    buffer.Append(' ');
-                }
-                System.String s = pieces[i];
-                if (s == null)
-                {
-                    buffer.Append('?');
-                }
-                else
-                {
-                    buffer.Append(s);
-                }
-            }
-            buffer.Append("\"");
-            
-            if (slop != 0)
-            {
-                buffer.Append("~");
-                buffer.Append(slop);
-            }
-            
-            buffer.Append(ToStringUtils.Boost(Boost));
-            
-            return buffer.ToString();
-        }
-        
-        /// <summary>Returns true iff <c>o</c> is equal to this. </summary>
-        public  override bool Equals(System.Object o)
-        {
-            if (!(o is PhraseQuery))
-                return false;
-            PhraseQuery other = (PhraseQuery) o;
-            return (this.Boost == other.Boost) && (this.slop == other.slop) && this.terms.Equals(other.terms) && this.positions.Equals(other.positions);
-        }
-        
-        /// <summary>Returns a hash code value for this object.</summary>
-        public override int GetHashCode()
-        {
-            return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ slop ^ terms.GetHashCode() ^ positions.GetHashCode();
-        }
-    }
+		Add(term, position);
+	  }
+
+	  /// <summary>
+	  /// Adds a term to the end of the query phrase.
+	  /// The relative position of the term within the phrase is specified explicitly.
+	  /// this allows e.g. phrases with more than one term at the same position
+	  /// or phrases with gaps (e.g. in connection with stopwords).
+	  /// 
+	  /// </summary>
+	  public virtual void Add(Term term, int position)
+	  {
+		if (Terms_Renamed.Count == 0)
+		{
+		  Field = term.Field();
+		}
+		else if (!term.Field().Equals(Field))
+		{
+		  throw new System.ArgumentException("All phrase terms must be in the same field: " + term);
+		}
+
+		Terms_Renamed.Add(term);
+		Positions_Renamed.Add(Convert.ToInt32(position));
+		if (position > MaxPosition)
+		{
+			MaxPosition = position;
+		}
+	  }
+
+	  /// <summary>
+	  /// Returns the set of terms in this phrase. </summary>
+	  public virtual Term[] Terms
+	  {
+		  get
+		  {
+			return Terms_Renamed.ToArray();
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns the relative positions of terms in this phrase.
+	  /// </summary>
+	  public virtual int[] Positions
+	  {
+		  get
+		  {
+			  int[] result = new int[Positions_Renamed.Count];
+			  for (int i = 0; i < Positions_Renamed.Count; i++)
+			  {
+				  result[i] = (int)Positions_Renamed[i];
+			  }
+			  return result;
+		  }
+	  }
+
+	  public override Query Rewrite(IndexReader reader)
+	  {
+		if (Terms_Renamed.Count == 0)
+		{
+		  BooleanQuery bq = new BooleanQuery();
+		  bq.Boost = Boost;
+		  return bq;
+		}
+		else if (Terms_Renamed.Count == 1)
+		{
+		  TermQuery tq = new TermQuery(Terms_Renamed[0]);
+		  tq.Boost = Boost;
+		  return tq;
+		}
+		else
+		{
+		  return base.Rewrite(reader);
+		}
+	  }
+
+	  internal class PostingsAndFreq : IComparable<PostingsAndFreq>
+	  {
+		internal readonly DocsAndPositionsEnum Postings;
+		internal readonly int DocFreq;
+		internal readonly int Position;
+		internal readonly Term[] Terms;
+		internal readonly int NTerms; // for faster comparisons
+
+		public PostingsAndFreq(DocsAndPositionsEnum postings, int docFreq, int position, params Term[] terms)
+		{
+		  this.Postings = postings;
+		  this.DocFreq = docFreq;
+		  this.Position = position;
+		  NTerms = terms == null ? 0 : terms.Length;
+		  if (NTerms > 0)
+		  {
+			if (terms.Length == 1)
+			{
+			  this.Terms = terms;
+			}
+			else
+			{
+			  Term[] terms2 = new Term[terms.Length];
+			  Array.Copy(terms, 0, terms2, 0, terms.Length);
+			  Arrays.sort(terms2);
+			  this.Terms = terms2;
+			}
+		  }
+		  else
+		  {
+			this.Terms = null;
+		  }
+		}
+
+		public virtual int CompareTo(PostingsAndFreq other)
+		{
+		  if (DocFreq != other.DocFreq)
+		  {
+			return DocFreq - other.DocFreq;
+		  }
+		  if (Position != other.Position)
+		  {
+			return Position - other.Position;
+		  }
+		  if (NTerms != other.NTerms)
+		  {
+			return NTerms - other.NTerms;
+		  }
+		  if (NTerms == 0)
+		  {
+			return 0;
+		  }
+		  for (int i = 0; i < Terms.Length; i++)
+		  {
+			int res = Terms[i].CompareTo(other.Terms[i]);
+			if (res != 0)
+			{
+				return res;
+			}
+		  }
+		  return 0;
+		}
+
+		public override int HashCode()
+		{
+		  const int prime = 31;
+		  int result = 1;
+		  result = prime * result + DocFreq;
+		  result = prime * result + Position;
+		  for (int i = 0; i < NTerms; i++)
+		  {
+			result = prime * result + Terms[i].HashCode();
+		  }
+		  return result;
+		}
+
+		public override bool Equals(object obj)
+		{
+		  if (this == obj)
+		  {
+			  return true;
+		  }
+		  if (obj == null)
+		  {
+			  return false;
+		  }
+		  if (this.GetType() != obj.GetType())
+		  {
+			  return false;
+		  }
+		  PostingsAndFreq other = (PostingsAndFreq) obj;
+		  if (DocFreq != other.DocFreq)
+		  {
+			  return false;
+		  }
+		  if (Position != other.Position)
+		  {
+			  return false;
+		  }
+		  if (Terms == null)
+		  {
+			  return other.Terms == null;
+		  }
+		  return Arrays.Equals(Terms, other.Terms);
+		}
+	  }
+
+	  private class PhraseWeight : Weight
+	  {
+		  private readonly PhraseQuery OuterInstance;
+
+		internal readonly Similarity Similarity;
+		internal readonly Similarity.SimWeight Stats;
+		[NonSerialized]
+		internal TermContext[] States;
+
+		public PhraseWeight(PhraseQuery outerInstance, IndexSearcher searcher)
+		{
+			this.OuterInstance = outerInstance;
+		  this.Similarity = searcher.Similarity;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.IndexReaderContext context = searcher.getTopReaderContext();
+		  IndexReaderContext context = searcher.TopReaderContext;
+		  States = new TermContext[outerInstance.Terms_Renamed.Count];
+		  TermStatistics[] termStats = new TermStatistics[outerInstance.Terms_Renamed.Count];
+		  for (int i = 0; i < outerInstance.Terms_Renamed.Count; i++)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.Term term = terms.get(i);
+			Term term = outerInstance.Terms_Renamed[i];
+			States[i] = TermContext.Build(context, term);
+			termStats[i] = searcher.TermStatistics(term, States[i]);
+		  }
+		  Stats = Similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.Field), termStats);
+		}
+
+		public override string ToString()
+		{
+			return "weight(" + OuterInstance + ")";
+		}
+		public override Query Query
+		{
+			get
+			{
+				return OuterInstance;
+			}
+		}
+		public override float ValueForNormalization
+		{
+			get
+			{
+			  return Stats.ValueForNormalization;
+			}
+		}
+
+		public override void Normalize(float queryNorm, float topLevelBoost)
+		{
+		  Stats.Normalize(queryNorm, topLevelBoost);
+		}
+
+		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+		{
+		  Debug.Assert(outerInstance.Terms_Renamed.Count > 0);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.AtomicReader reader = context.reader();
+		  AtomicReader reader = context.Reader();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = acceptDocs;
+		  Bits liveDocs = acceptDocs;
+		  PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.Terms_Renamed.Count];
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.Terms fieldTerms = reader.terms(field);
+		  Terms fieldTerms = reader.Terms(outerInstance.Field);
+		  if (fieldTerms == null)
+		  {
+			return null;
+		  }
+
+		  // Reuse single TermsEnum below:
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum te = fieldTerms.iterator(null);
+		  TermsEnum te = fieldTerms.Iterator(null);
+
+		  for (int i = 0; i < outerInstance.Terms_Renamed.Count; i++)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.Term t = terms.get(i);
+			Term t = outerInstance.Terms_Renamed[i];
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.TermState state = states[i].get(context.ord);
+			TermState state = States[i].Get(context.Ord);
+			if (state == null) // term doesnt exist in this segment
+			{
+			  Debug.Assert(TermNotInReader(reader, t), "no termstate found but term exists in reader");
+			  return null;
+			}
+			te.SeekExact(t.Bytes(), state);
+			DocsAndPositionsEnum postingsEnum = te.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
+
+			// PhraseQuery on a field that did not index
+			// positions.
+			if (postingsEnum == null)
+			{
+			  Debug.Assert(te.SeekExact(t.Bytes()), "termstate found but no term exists in reader");
+			  // term does exist, but has no positions
+			  throw new IllegalStateException("field \"" + t.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
+			}
+			postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)outerInstance.Positions_Renamed[i], t);
+		  }
+
+		  // sort by increasing docFreq order
+		  if (outerInstance.Slop_Renamed == 0)
+		  {
+			ArrayUtil.TimSort(postingsFreqs);
+		  }
+
+		  if (outerInstance.Slop_Renamed == 0) // optimize exact case
+		  {
+			ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.SimScorer(Stats, context));
+			if (s.NoDocs)
+			{
+			  return null;
+			}
+			else
+			{
+			  return s;
+			}
+		  }
+		  else
+		  {
+			return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.Slop_Renamed, Similarity.SimScorer(Stats, context));
+		  }
+		}
+
+		// only called from assert
+		internal virtual bool TermNotInReader(AtomicReader reader, Term term)
+		{
+		  return reader.DocFreq(term) == 0;
+		}
+
+		public override Explanation Explain(AtomicReaderContext context, int doc)
+		{
+		  Scorer scorer = Scorer(context, context.Reader().LiveDocs);
+		  if (scorer != null)
+		  {
+			int newDoc = scorer.Advance(doc);
+			if (newDoc == doc)
+			{
+			  float freq = outerInstance.Slop_Renamed == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
+			  SimScorer docScorer = Similarity.SimScorer(Stats, context);
+			  ComplexExplanation result = new ComplexExplanation();
+			  result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
+			  Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
+			  result.AddDetail(scoreExplanation);
+			  result.Value = scoreExplanation.Value;
+			  result.Match = true;
+			  return result;
+			}
+		  }
+
+		  return new ComplexExplanation(false, 0.0f, "no matching term");
+		}
+	  }
+
+	  public override Weight CreateWeight(IndexSearcher searcher)
+	  {
+		return new PhraseWeight(this, searcher);
+	  }
+
+	  /// <seealso cref= Lucene.Net.Search.Query#extractTerms(Set) </seealso>
+	  public override void ExtractTerms(Set<Term> queryTerms)
+	  {
+		queryTerms.addAll(Terms_Renamed);
+	  }
+
+	  /// <summary>
+	  /// Prints a user-readable version of this query. </summary>
+	  public override string ToString(string f)
+	  {
+		StringBuilder buffer = new StringBuilder();
+		if (Field != null && !Field.Equals(f))
+		{
+		  buffer.Append(Field);
+		  buffer.Append(":");
+		}
+
+		buffer.Append("\"");
+		string[] pieces = new string[MaxPosition + 1];
+		for (int i = 0; i < Terms_Renamed.Count; i++)
+		{
+		  int pos = (int)Positions_Renamed[i];
+		  string s = pieces[pos];
+		  if (s == null)
+		  {
+			s = (Terms_Renamed[i]).Text();
+		  }
+		  else
+		  {
+			s = s + "|" + (Terms_Renamed[i]).Text();
+		  }
+		  pieces[pos] = s;
+		}
+		for (int i = 0; i < pieces.Length; i++)
+		{
+		  if (i > 0)
+		  {
+			buffer.Append(' ');
+		  }
+		  string s = pieces[i];
+		  if (s == null)
+		  {
+			buffer.Append('?');
+		  }
+		  else
+		  {
+			buffer.Append(s);
+		  }
+		}
+		buffer.Append("\"");
+
+		if (Slop_Renamed != 0)
+		{
+		  buffer.Append("~");
+		  buffer.Append(Slop_Renamed);
+		}
+
+		buffer.Append(ToStringUtils.Boost(Boost));
+
+		return buffer.ToString();
+	  }
+
+	  /// <summary>
+	  /// Returns true iff <code>o</code> is equal to this. </summary>
+	  public override bool Equals(object o)
+	  {
+		if (!(o is PhraseQuery))
+		{
+		  return false;
+		}
+		PhraseQuery other = (PhraseQuery)o;
+		return (this.Boost == other.Boost) && (this.Slop_Renamed == other.Slop_Renamed) && this.Terms_Renamed.Equals(other.Terms_Renamed) && this.Positions_Renamed.Equals(other.Positions_Renamed);
+	  }
+
+	  /// <summary>
+	  /// Returns a hash code value for this object. </summary>
+	  public override int HashCode()
+	  {
+		return float.floatToIntBits(Boost) ^ Slop_Renamed ^ Terms_Renamed.HashCode() ^ Positions_Renamed.HashCode();
+	  }
+
+	}
+
 }

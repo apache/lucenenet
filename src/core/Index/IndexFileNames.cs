@@ -1,165 +1,256 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-using Lucene.Net.Support;
+using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
-    
-    /// <summary>Useful constants representing filenames and extensions used by lucene</summary>
-    public sealed class IndexFileNames
-    {
-        
-        /// <summary>Name of the index segment file </summary>
-        public /*internal*/ const System.String SEGMENTS = "segments";
-        
-        /// <summary>Name of the generation reference file name </summary>
-        public /*internal*/ const System.String SEGMENTS_GEN = "segments.gen";
-        
-        /// <summary>Name of the index deletable file (only used in
-        /// pre-lockless indices) 
-        /// </summary>
-        public /*internal*/ const System.String DELETABLE = "deletable";
-        
-        /// <summary>Extension of norms file </summary>
-        public /*internal*/ const System.String NORMS_EXTENSION = "nrm";
-        
-        /// <summary>Extension of freq postings file </summary>
-        public /*internal*/ const System.String FREQ_EXTENSION = "frq";
-        
-        /// <summary>Extension of prox postings file </summary>
-        public /*internal*/ const System.String PROX_EXTENSION = "prx";
-        
-        /// <summary>Extension of terms file </summary>
-        public /*internal*/ const System.String TERMS_EXTENSION = "tis";
-        
-        /// <summary>Extension of terms index file </summary>
-        public /*internal*/ const System.String TERMS_INDEX_EXTENSION = "tii";
-        
-        /// <summary>Extension of stored fields index file </summary>
-        public /*internal*/ const System.String FIELDS_INDEX_EXTENSION = "fdx";
-        
-        /// <summary>Extension of stored fields file </summary>
-        public /*internal*/ const System.String FIELDS_EXTENSION = "fdt";
-        
-        /// <summary>Extension of vectors fields file </summary>
-        public /*internal*/ const System.String VECTORS_FIELDS_EXTENSION = "tvf";
-        
-        /// <summary>Extension of vectors documents file </summary>
-        public /*internal*/ const System.String VECTORS_DOCUMENTS_EXTENSION = "tvd";
-        
-        /// <summary>Extension of vectors index file </summary>
-        public /*internal*/ const System.String VECTORS_INDEX_EXTENSION = "tvx";
-        
-        /// <summary>Extension of compound file </summary>
-        public /*internal*/ const System.String COMPOUND_FILE_EXTENSION = "cfs";
-        
-        /// <summary>Extension of compound file for doc store files</summary>
-        public /*internal*/ const System.String COMPOUND_FILE_STORE_EXTENSION = "cfx";
-        
-        /// <summary>Extension of deletes </summary>
-        internal const System.String DELETES_EXTENSION = "del";
-        
-        /// <summary>Extension of field infos </summary>
-        public /*internal*/ const System.String FIELD_INFOS_EXTENSION = "fnm";
-        
-        /// <summary>Extension of plain norms </summary>
-        public /*internal*/ const System.String PLAIN_NORMS_EXTENSION = "f";
-        
-        /// <summary>Extension of separate norms </summary>
-        public /*internal*/ const System.String SEPARATE_NORMS_EXTENSION = "s";
-        
-        /// <summary>Extension of gen file </summary>
-        public /*internal*/ const System.String GEN_EXTENSION = "gen";
-        
-        /// <summary> This array contains all filename extensions used by
-        /// Lucene's index files, with two exceptions, namely the
-        /// extension made up from <c>.f</c> + a number and
-        /// from <c>.s</c> + a number.  Also note that
-        /// Lucene's <c>segments_N</c> files do not have any
-        /// filename extension.
-        /// </summary>
-        public /*internal*/ static readonly System.String[] INDEX_EXTENSIONS = new System.String[]{COMPOUND_FILE_EXTENSION, FIELD_INFOS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, DELETES_EXTENSION, VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION, GEN_EXTENSION, NORMS_EXTENSION, COMPOUND_FILE_STORE_EXTENSION};
-        
-        /// <summary>File extensions that are added to a compound file
-        /// (same as above, minus "del", "gen", "cfs"). 
-        /// </summary>
-        public /*internal*/ static readonly System.String[] INDEX_EXTENSIONS_IN_COMPOUND_FILE = new System.String[]{FIELD_INFOS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION, NORMS_EXTENSION};
-        
-        public /*internal*/ static readonly System.String[] STORE_INDEX_EXTENSIONS = new System.String[]{VECTORS_INDEX_EXTENSION, VECTORS_FIELDS_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION};
-        
-        public /*internal*/ static readonly System.String[] NON_STORE_INDEX_EXTENSIONS = new System.String[]{FIELD_INFOS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, TERMS_EXTENSION, TERMS_INDEX_EXTENSION, NORMS_EXTENSION};
-        
-        /// <summary>File extensions of old-style index files </summary>
-        public /*internal*/ static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{FIELD_INFOS_EXTENSION, FREQ_EXTENSION, PROX_EXTENSION, FIELDS_INDEX_EXTENSION, FIELDS_EXTENSION, TERMS_INDEX_EXTENSION, TERMS_EXTENSION};
-        
-        /// <summary>File extensions for term vector support </summary>
-        public /*internal*/ static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{VECTORS_INDEX_EXTENSION, VECTORS_DOCUMENTS_EXTENSION, VECTORS_FIELDS_EXTENSION};
-        
-        /// <summary> Computes the full file name from base, extension and
-        /// generation.  If the generation is -1, the file name is
-        /// null.  If it's 0, the file name is 
-        /// If it's > 0, the file name is 
-        /// 
-        /// </summary>
-        /// <param name="base_Renamed">-- main part of the file name
-        /// </param>
-        /// <param name="extension">-- extension of the filename (including .)
-        /// </param>
-        /// <param name="gen">-- generation
-        /// </param>
-        public /*internal*/ static System.String FileNameFromGeneration(System.String base_Renamed, System.String extension, long gen)
-        {
-            if (gen == SegmentInfo.NO)
-            {
-                return null;
-            }
-            else if (gen == SegmentInfo.WITHOUT_GEN)
-            {
-                return base_Renamed + extension;
-            }
-            else
-            {
-#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
-                return base_Renamed + "_" + Number.ToString(gen) + extension;
-#else
-                return base_Renamed + "_" + System.Convert.ToString(gen, 16) + extension;
-#endif
-            }
-        }
-        
-        /// <summary> Returns true if the provided filename is one of the doc
-        /// store files (ends with an extension in
-        /// STORE_INDEX_EXTENSIONS).
-        /// </summary>
-        internal static bool IsDocStoreFile(System.String fileName)
-        {
-            if (fileName.EndsWith(COMPOUND_FILE_STORE_EXTENSION))
-                return true;
-            for (int i = 0; i < STORE_INDEX_EXTENSIONS.Length; i++)
-                if (fileName.EndsWith(STORE_INDEX_EXTENSIONS[i]))
-                    return true;
-            return false;
-        }
-        
-        internal static System.String SegmentFileName(System.String segmentName, System.String ext)
-        {
-            return segmentName + "." + ext;
-        }
-    }
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using Codec = Lucene.Net.Codecs.Codec;
+
+	// TODO: put all files under codec and remove all the static extensions here
+
+	/// <summary>
+	/// this class contains useful constants representing filenames and extensions
+	/// used by lucene, as well as convenience methods for querying whether a file
+	/// name matches an extension ({@link #matchesExtension(String, String)
+	/// matchesExtension}), as well as generating file names from a segment name,
+	/// generation and extension (
+	/// <seealso cref="#fileNameFromGeneration(String, String, long) fileNameFromGeneration"/>,
+	/// <seealso cref="#segmentFileName(String, String, String) segmentFileName"/>).
+	/// 
+	/// <p><b>NOTE</b>: extensions used by codecs are not
+	/// listed here.  You must interact with the <seealso cref="Codec"/>
+	/// directly.
+	/// 
+	/// @lucene.internal
+	/// </summary>
+
+	public sealed class IndexFileNames
+	{
+
+	  /// <summary>
+	  /// No instance </summary>
+	  private IndexFileNames()
+	  {
+	  }
+
+	  /// <summary>
+	  /// Name of the index segment file </summary>
+	  public const string SEGMENTS = "segments";
+
+	  /// <summary>
+	  /// Extension of gen file </summary>
+	  public const string GEN_EXTENSION = "gen";
+
+	  /// <summary>
+	  /// Name of the generation reference file name </summary>
+	  public static readonly string SEGMENTS_GEN = "segments." + GEN_EXTENSION;
+
+	  /// <summary>
+	  /// Extension of compound file </summary>
+	  public const string COMPOUND_FILE_EXTENSION = "cfs";
+
+	  /// <summary>
+	  /// Extension of compound file entries </summary>
+	  public const string COMPOUND_FILE_ENTRIES_EXTENSION = "cfe";
+
+	  /// <summary>
+	  /// this array contains all filename extensions used by
+	  /// Lucene's index files, with one exception, namely the
+	  /// extension made up from  <code>.s</code> + a number.
+	  /// Also note that Lucene's <code>segments_N</code> files
+	  /// do not have any filename extension.
+	  /// </summary>
+	  public static readonly string[] INDEX_EXTENSIONS = new string[] {COMPOUND_FILE_EXTENSION, COMPOUND_FILE_ENTRIES_EXTENSION, GEN_EXTENSION};
+
+	  /// <summary>
+	  /// Computes the full file name from base, extension and generation. If the
+	  /// generation is -1, the file name is null. If it's 0, the file name is
+	  /// &lt;base&gt;.&lt;ext&gt;. If it's > 0, the file name is
+	  /// &lt;base&gt;_&lt;gen&gt;.&lt;ext&gt;.<br>
+	  /// <b>NOTE:</b> .&lt;ext&gt; is added to the name only if <code>ext</code> is
+	  /// not an empty string.
+	  /// </summary>
+	  /// <param name="base"> main part of the file name </param>
+	  /// <param name="ext"> extension of the filename </param>
+	  /// <param name="gen"> generation </param>
+	  public static string FileNameFromGeneration(string @base, string ext, long gen)
+	  {
+		if (gen == -1)
+		{
+		  return null;
+		}
+		else if (gen == 0)
+		{
+		  return SegmentFileName(@base, "", ext);
+		}
+		else
+		{
+		  Debug.Assert(gen > 0);
+		  // The '6' part in the length is: 1 for '.', 1 for '_' and 4 as estimate
+		  // to the gen length as string (hopefully an upper limit so SB won't
+		  // expand in the middle.
+		  StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length)).Append(@base).Append('_').Append(Convert.ToString(gen, char.MAX_RADIX));
+		  if (ext.Length > 0)
+		  {
+			res.Append('.').Append(ext);
+		  }
+		  return res.ToString();
+		}
+	  }
+
+	  /// <summary>
+	  /// Returns a file name that includes the given segment name, your own custom
+	  /// name and extension. The format of the filename is:
+	  /// &lt;segmentName&gt;(_&lt;name&gt;)(.&lt;ext&gt;).
+	  /// <p>
+	  /// <b>NOTE:</b> .&lt;ext&gt; is added to the result file name only if
+	  /// <code>ext</code> is not empty.
+	  /// <p>
+	  /// <b>NOTE:</b> _&lt;segmentSuffix&gt; is added to the result file name only if
+	  /// it's not the empty string
+	  /// <p>
+	  /// <b>NOTE:</b> all custom files should be named using this method, or
+	  /// otherwise some structures may fail to handle them properly (such as if they
+	  /// are added to compound files).
+	  /// </summary>
+	  public static string SegmentFileName(string segmentName, string segmentSuffix, string ext)
+	  {
+		if (ext.Length > 0 || segmentSuffix.Length > 0)
+		{
+		  Debug.Assert(!ext.StartsWith("."));
+		  StringBuilder sb = new StringBuilder(segmentName.Length + 2 + segmentSuffix.Length + ext.Length);
+		  sb.Append(segmentName);
+		  if (segmentSuffix.Length > 0)
+		  {
+			sb.Append('_').Append(segmentSuffix);
+		  }
+		  if (ext.Length > 0)
+		  {
+			sb.Append('.').Append(ext);
+		  }
+		  return sb.ToString();
+		}
+		else
+		{
+		  return segmentName;
+		}
+	  }
+
+	  /// <summary>
+	  /// Returns true if the given filename ends with the given extension. One
+	  /// should provide a <i>pure</i> extension, without '.'.
+	  /// </summary>
+	  public static bool MatchesExtension(string filename, string ext)
+	  {
+		// It doesn't make a difference whether we allocate a StringBuilder ourself
+		// or not, since there's only 1 '+' operator.
+		return filename.EndsWith("." + ext);
+	  }
+
+	  /// <summary>
+	  /// locates the boundary of the segment name, or -1 </summary>
+	  private static int IndexOfSegmentName(string filename)
+	  {
+		// If it is a .del file, there's an '_' after the first character
+		int idx = filename.IndexOf('_', 1);
+		if (idx == -1)
+		{
+		  // If it's not, strip everything that's before the '.'
+		  idx = filename.IndexOf('.');
+		}
+		return idx;
+	  }
+
+	  /// <summary>
+	  /// Strips the segment name out of the given file name. If you used
+	  /// <seealso cref="#segmentFileName"/> or <seealso cref="#fileNameFromGeneration"/> to create your
+	  /// files, then this method simply removes whatever comes before the first '.',
+	  /// or the second '_' (excluding both).
+	  /// </summary>
+	  /// <returns> the filename with the segment name removed, or the given filename
+	  ///         if it does not contain a '.' and '_'. </returns>
+	  public static string StripSegmentName(string filename)
+	  {
+		int idx = IndexOfSegmentName(filename);
+		if (idx != -1)
+		{
+		  filename = filename.Substring(idx);
+		}
+		return filename;
+	  }
+
+	  /// <summary>
+	  /// Parses the segment name out of the given file name.
+	  /// </summary>
+	  /// <returns> the segment name only, or filename
+	  ///         if it does not contain a '.' and '_'. </returns>
+	  public static string ParseSegmentName(string filename)
+	  {
+		int idx = IndexOfSegmentName(filename);
+		if (idx != -1)
+		{
+		  filename = filename.Substring(0, idx);
+		}
+		return filename;
+	  }
+
+	  /// <summary>
+	  /// Removes the extension (anything after the first '.'),
+	  /// otherwise returns the original filename.
+	  /// </summary>
+	  public static string StripExtension(string filename)
+	  {
+		int idx = filename.IndexOf('.');
+		if (idx != -1)
+		{
+		  filename = filename.Substring(0, idx);
+		}
+		return filename;
+	  }
+
+	  /// <summary>
+	  /// Return the extension (anything after the first '.'),
+	  /// or null if there is no '.' in the file name.
+	  /// </summary>
+	  public static string GetExtension(string filename)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int idx = filename.indexOf('.');
+		int idx = filename.IndexOf('.');
+		if (idx == -1)
+		{
+		  return null;
+		}
+		else
+		{
+		  return filename.Substring(idx + 1, filename.Length - (idx + 1));
+		}
+	  }
+
+	  /// <summary>
+	  /// All files created by codecs much match this pattern (checked in
+	  /// SegmentInfo).
+	  /// </summary>
+	  public static readonly Pattern CODEC_FILE_PATTERN = Pattern.compile("_[a-z0-9]+(_.*)?\\..*");
+
+	}
+
 }

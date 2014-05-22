@@ -1,345 +1,365 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Index;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-using Query = Lucene.Net.Search.Query;
+using System.Text;
 
 namespace Lucene.Net.Search.Spans
 {
-    
-    /// <summary>Matches the union of its clauses.</summary>
-    [Serializable]
-    public class SpanOrQuery : SpanQuery, System.ICloneable
-    {
-        private class AnonymousClassSpans : Spans
-        {
-            public AnonymousClassSpans(Lucene.Net.Index.IndexReader reader, SpanOrQuery enclosingInstance)
-            {
-                InitBlock(reader, enclosingInstance);
-            }
-            private void  InitBlock(Lucene.Net.Index.IndexReader reader, SpanOrQuery enclosingInstance)
-            {
-                this.reader = reader;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private Lucene.Net.Index.IndexReader reader;
-            private SpanOrQuery enclosingInstance;
-            public SpanOrQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private SpanQueue queue = null;
-            
-            private bool InitSpanQueue(int target)
-            {
-                queue = new SpanQueue(enclosingInstance, Enclosing_Instance.clauses.Count);
-                System.Collections.Generic.IEnumerator<SpanQuery> i = Enclosing_Instance.clauses.GetEnumerator();
-                while (i.MoveNext())
-                {
-                    Spans spans = i.Current.GetSpans(reader);
-                    if (((target == - 1) && spans.Next()) || ((target != - 1) && spans.SkipTo(target)))
-                    {
-                        queue.Add(spans);
-                    }
-                }
-                return queue.Size() != 0;
-            }
-            
-            public override bool Next()
-            {
-                if (queue == null)
-                {
-                    return InitSpanQueue(- 1);
-                }
-                
-                if (queue.Size() == 0)
-                {
-                    // all done
-                    return false;
-                }
-                
-                if (Top().Next())
-                {
-                    // move to next
-                    queue.UpdateTop();
-                    return true;
-                }
-                
-                queue.Pop(); // exhausted a clause
-                return queue.Size() != 0;
-            }
-            
-            private Spans Top()
-            {
-                return queue.Top();
-            }
-            
-            public override bool SkipTo(int target)
-            {
-                if (queue == null)
-                {
-                    return InitSpanQueue(target);
-                }
-                
-                bool skipCalled = false;
-                while (queue.Size() != 0 && Top().Doc() < target)
-                {
-                    if (Top().SkipTo(target))
-                    {
-                        queue.UpdateTop();
-                    }
-                    else
-                    {
-                        queue.Pop();
-                    }
-                    skipCalled = true;
-                }
-                
-                if (skipCalled)
-                {
-                    return queue.Size() != 0;
-                }
-                return Next();
-            }
-            
-            public override int Doc()
-            {
-                return Top().Doc();
-            }
-            public override int Start()
-            {
-                return Top().Start();
-            }
-            public override int End()
-            {
-                return Top().End();
-            }
 
-            public override ICollection<byte[]> GetPayload()
-            {
-                System.Collections.Generic.ICollection<byte[]> result = null;
-                Spans theTop = Top();
-                if (theTop != null && theTop.IsPayloadAvailable())
-                {
-                    result = theTop.GetPayload();
-                }
-                return result;
-            }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            public override bool IsPayloadAvailable()
-            {
-                Spans top = Top();
-                return top != null && top.IsPayloadAvailable();
-            }
 
-            public override System.String ToString()
-            {
-                return "spans(" + Enclosing_Instance + ")@" + ((queue == null)?"START":(queue.Size() > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
-            }
-        }
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using Term = Lucene.Net.Index.Term;
+	using TermContext = Lucene.Net.Index.TermContext;
+	using Bits = Lucene.Net.Util.Bits;
+	using Lucene.Net.Util;
+	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
-        private EquatableList<SpanQuery> clauses;
-        private System.String field;
-        
-        /// <summary>Construct a SpanOrQuery merging the provided clauses. </summary>
-        public SpanOrQuery(params SpanQuery[] clauses)
-        {
-            
-            // copy clauses array into an ArrayList
-            this.clauses = new EquatableList<SpanQuery>(clauses.Length);
-            for (int i = 0; i < clauses.Length; i++)
-            {
-                SpanQuery clause = clauses[i];
-                if (i == 0)
-                {
-                    // check field
-                    field = clause.Field;
-                }
-                else if (!clause.Field.Equals(field))
-                {
-                    throw new System.ArgumentException("Clauses must have same field.");
-                }
-                this.clauses.Add(clause);
-            }
-        }
-        
-        /// <summary>Return the clauses whose spans are matched. </summary>
-        public virtual SpanQuery[] GetClauses()
-        {
-            return clauses.ToArray();
-        }
+	/// <summary>
+	/// Matches the union of its clauses. </summary>
+	public class SpanOrQuery : SpanQuery, ICloneable
+	{
+	  private IList<SpanQuery> Clauses_Renamed;
+	  private string Field_Renamed;
 
-        public override string Field
-        {
-            get { return field; }
-        }
+	  /// <summary>
+	  /// Construct a SpanOrQuery merging the provided clauses. </summary>
+	  public SpanOrQuery(params SpanQuery[] clauses)
+	  {
 
-        public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
-        {
-            foreach(SpanQuery clause in clauses)
-            {
-                clause.ExtractTerms(terms);
-            }
-        }
-        
-        public override System.Object Clone()
-        {
-            int sz = clauses.Count;
-            SpanQuery[] newClauses = new SpanQuery[sz];
-            
-            for (int i = 0; i < sz; i++)
-            {
-                newClauses[i] = (SpanQuery) clauses[i].Clone();
-            }
-            SpanOrQuery soq = new SpanOrQuery(newClauses);
-            soq.Boost = Boost;
-            return soq;
-        }
-        
-        public override Query Rewrite(IndexReader reader)
-        {
-            SpanOrQuery clone = null;
-            for (int i = 0; i < clauses.Count; i++)
-            {
-                SpanQuery c = clauses[i];
-                SpanQuery query = (SpanQuery) c.Rewrite(reader);
-                if (query != c)
-                {
-                    // clause rewrote: must clone
-                    if (clone == null)
-                        clone = (SpanOrQuery) this.Clone();
-                    clone.clauses[i] = query;
-                }
-            }
-            if (clone != null)
-            {
-                return clone; // some clauses rewrote
-            }
-            else
-            {
-                return this; // no clauses rewrote
-            }
-        }
-        
-        public override System.String ToString(System.String field)
-        {
-            System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-            buffer.Append("spanOr([");
-            System.Collections.Generic.IEnumerator<SpanQuery> i = clauses.GetEnumerator();
-            int j = 0;
-            while (i.MoveNext())
-            {
-                j++;
-                SpanQuery clause = i.Current;
-                buffer.Append(clause.ToString(field));
-                if (j < clauses.Count)
-                {
-                    buffer.Append(", ");
-                }
-            }
-            buffer.Append("])");
-            buffer.Append(ToStringUtils.Boost(Boost));
-            return buffer.ToString();
-        }
-        
-        public  override bool Equals(System.Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || GetType() != o.GetType())
-                return false;
-            
-            SpanOrQuery that = (SpanOrQuery) o;
-            
-            if (!clauses.Equals(that.clauses))
-                return false;
-            if (!(clauses.Count == 0) && !field.Equals(that.field))
-                return false;
-            
-            return Boost == that.Boost;
-        }
-        
-        public override int GetHashCode()
-        {
-            int h = clauses.GetHashCode();
-            h ^= ((h << 10) | (Number.URShift(h, 23)));
-            h ^= System.Convert.ToInt32(Boost);
-            return h;
-        }
-        
-        
-        private class SpanQueue : PriorityQueue<Spans>
-        {
-            private void  InitBlock(SpanOrQuery enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private SpanOrQuery enclosingInstance;
-            public SpanOrQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            public SpanQueue(SpanOrQuery enclosingInstance, int size)
-            {
-                InitBlock(enclosingInstance);
-                Initialize(size);
-            }
+		// copy clauses array into an ArrayList
+		this.Clauses_Renamed = new List<>(clauses.Length);
+		for (int i = 0; i < clauses.Length; i++)
+		{
+		  AddClause(clauses[i]);
+		}
+	  }
 
-            public override bool LessThan(Spans spans1, Spans spans2)
-            {
-                if (spans1.Doc() == spans2.Doc())
-                {
-                    if (spans1.Start() == spans2.Start())
-                    {
-                        return spans1.End() < spans2.End();
-                    }
-                    else
-                    {
-                        return spans1.Start() < spans2.Start();
-                    }
-                }
-                else
-                {
-                    return spans1.Doc() < spans2.Doc();
-                }
-            }
-        }
-        
-        public override Spans GetSpans(IndexReader reader)
-        {
-            if (clauses.Count == 1)
-            // optimize 1-clause case
-                return (clauses[0]).GetSpans(reader);
-            
-            return new AnonymousClassSpans(reader, this);
-        }
-    }
+	  /// <summary>
+	  /// Adds a clause to this query </summary>
+	  public void AddClause(SpanQuery clause)
+	  {
+		if (Field_Renamed == null)
+		{
+		  Field_Renamed = clause.Field;
+		}
+		else if (clause.Field != null && !clause.Field.Equals(Field_Renamed))
+		{
+		  throw new System.ArgumentException("Clauses must have same field.");
+		}
+		this.Clauses_Renamed.Add(clause);
+	  }
+
+	  /// <summary>
+	  /// Return the clauses whose spans are matched. </summary>
+	  public virtual SpanQuery[] Clauses
+	  {
+		  get
+		  {
+			return Clauses_Renamed.ToArray();
+		  }
+	  }
+
+	  public override string Field
+	  {
+		  get
+		  {
+			  return Field_Renamed;
+		  }
+	  }
+	  public override void ExtractTerms(Set<Term> terms)
+	  {
+		foreach (SpanQuery clause in Clauses_Renamed)
+		{
+		  clause.extractTerms(terms);
+		}
+	  }
+
+	  public override SpanOrQuery Clone()
+	  {
+		int sz = Clauses_Renamed.Count;
+		SpanQuery[] newClauses = new SpanQuery[sz];
+
+		for (int i = 0; i < sz; i++)
+		{
+		  newClauses[i] = (SpanQuery) Clauses_Renamed[i].Clone();
+		}
+		SpanOrQuery soq = new SpanOrQuery(newClauses);
+		soq.Boost = Boost;
+		return soq;
+	  }
+
+	  public override Query Rewrite(IndexReader reader)
+	  {
+		SpanOrQuery clone = null;
+		for (int i = 0 ; i < Clauses_Renamed.Count; i++)
+		{
+		  SpanQuery c = Clauses_Renamed[i];
+		  SpanQuery query = (SpanQuery) c.Rewrite(reader);
+		  if (query != c) // clause rewrote: must clone
+		  {
+			if (clone == null)
+			{
+			  clone = this.Clone();
+			}
+			clone.Clauses_Renamed[i] = query;
+		  }
+		}
+		if (clone != null)
+		{
+		  return clone; // some clauses rewrote
+		}
+		else
+		{
+		  return this; // no clauses rewrote
+		}
+	  }
+
+	  public override string ToString(string field)
+	  {
+		StringBuilder buffer = new StringBuilder();
+		buffer.Append("spanOr([");
+		IEnumerator<SpanQuery> i = Clauses_Renamed.GetEnumerator();
+		while (i.MoveNext())
+		{
+		  SpanQuery clause = i.Current;
+		  buffer.Append(clause.ToString(field));
+//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
+		  if (i.hasNext())
+		  {
+			buffer.Append(", ");
+		  }
+		}
+		buffer.Append("])");
+		buffer.Append(ToStringUtils.Boost(Boost));
+		return buffer.ToString();
+	  }
+
+	  public override bool Equals(object o)
+	  {
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || this.GetType() != o.GetType())
+		{
+			return false;
+		}
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SpanOrQuery that = (SpanOrQuery) o;
+		SpanOrQuery that = (SpanOrQuery) o;
+
+		if (!Clauses_Renamed.Equals(that.Clauses_Renamed))
+		{
+			return false;
+		}
+
+		return Boost == that.Boost;
+	  }
+
+	  public override int HashCode()
+	  {
+		int h = Clauses_Renamed.HashCode();
+		h ^= (h << 10) | ((int)((uint)h >> 23));
+		h ^= float.floatToRawIntBits(Boost);
+		return h;
+	  }
+
+
+	  private class SpanQueue : PriorityQueue<Spans>
+	  {
+		  private readonly SpanOrQuery OuterInstance;
+
+		public SpanQueue(SpanOrQuery outerInstance, int size) : base(size)
+		{
+			this.OuterInstance = outerInstance;
+		}
+
+		protected internal override bool LessThan(Spans spans1, Spans spans2)
+		{
+		  if (spans1.Doc() == spans2.Doc())
+		  {
+			if (spans1.Start() == spans2.Start())
+			{
+			  return spans1.End() < spans2.End();
+			}
+			else
+			{
+			  return spans1.Start() < spans2.Start();
+			}
+		  }
+		  else
+		  {
+			return spans1.Doc() < spans2.Doc();
+		  }
+		}
+	  }
+
+	  public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+	  {
+		if (Clauses_Renamed.Count == 1) // optimize 1-clause case
+		{
+		  return (Clauses_Renamed[0]).GetSpans(context, acceptDocs, termContexts);
+		}
+
+		return new SpansAnonymousInnerClassHelper(this, context, acceptDocs, termContexts);
+	  }
+
+	  private class SpansAnonymousInnerClassHelper : Spans
+	  {
+		  private readonly SpanOrQuery OuterInstance;
+
+		  private AtomicReaderContext Context;
+		  private Bits AcceptDocs;
+		  private IDictionary<Term, TermContext> TermContexts;
+
+		  public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Context = context;
+			  this.AcceptDocs = acceptDocs;
+			  this.TermContexts = termContexts;
+			  queue = null;
+		  }
+
+		  private SpanQueue queue;
+		  private long cost;
+
+		  private bool InitSpanQueue(int target)
+		  {
+			queue = new SpanQueue(OuterInstance, OuterInstance.Clauses_Renamed.Count);
+			IEnumerator<SpanQuery> i = OuterInstance.Clauses_Renamed.GetEnumerator();
+			while (i.MoveNext())
+			{
+			  Spans spans = i.Current.getSpans(Context, AcceptDocs, TermContexts);
+			  cost += spans.Cost();
+			  if (((target == -1) && spans.Next()) || ((target != -1) && spans.SkipTo(target)))
+			  {
+				queue.add(spans);
+			  }
+			}
+			return queue.size() != 0;
+		  }
+
+		  public override bool Next()
+		  {
+			if (queue == null)
+			{
+			  return initSpanQueue(-1);
+			}
+
+			if (queue.size() == 0) // all done
+			{
+			  return false;
+			}
+
+			if (top().next()) // move to next
+			{
+			  queue.updateTop();
+			  return true;
+			}
+
+			queue.pop(); // exhausted a clause
+			return queue.size() != 0;
+		  }
+
+		  private Spans Top()
+		  {
+			  return queue.top();
+		  }
+
+		  public override bool SkipTo(int target)
+		  {
+			if (queue == null)
+			{
+			  return initSpanQueue(target);
+			}
+
+			bool skipCalled = false;
+			while (queue.size() != 0 && top().doc() < target)
+			{
+			  if (top().skipTo(target))
+			  {
+				queue.updateTop();
+			  }
+			  else
+			  {
+				queue.pop();
+			  }
+			  skipCalled = true;
+			}
+
+			if (skipCalled)
+			{
+			  return queue.size() != 0;
+			}
+			return next();
+		  }
+
+		  public override int Doc()
+		  {
+			  return top().doc();
+		  }
+		  public override int Start()
+		  {
+			  return top().start();
+		  }
+		  public override int End()
+		  {
+			  return top().end();
+		  }
+		  public override ICollection<sbyte[]> Payload
+		  {
+			  get
+			  {
+			  List<sbyte[]> result = null;
+			  Spans theTop = top();
+			  if (theTop != null && theTop.PayloadAvailable)
+			  {
+				result = new List<>(theTop.Payload);
+			  }
+			  return result;
+			  }
+		  }
+
+		public override bool PayloadAvailable
+		{
+			get
+			{
+			  Spans top = top();
+			  return top != null && top.PayloadAvailable;
+			}
+		}
+
+		public override string ToString()
+		{
+			return "spans(" + OuterInstance + ")@" + ((queue == null)?"START" :(queue.size() > 0?(doc() + ":" + start() + "-" + end()):"END"));
+		}
+
+		public override long Cost()
+		{
+		  return cost;
+		}
+
+	  }
+
+	}
+
 }

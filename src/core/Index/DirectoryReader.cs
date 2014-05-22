@@ -1,1548 +1,486 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using System.Linq;
-using Lucene.Net.Support;
-using Document = Lucene.Net.Documents.Document;
-using FieldSelector = Lucene.Net.Documents.FieldSelector;
-using Directory = Lucene.Net.Store.Directory;
-using Lock = Lucene.Net.Store.Lock;
-using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 
 namespace Lucene.Net.Index
 {
-    
-    /// <summary> An IndexReader which reads indexes with multiple segments.</summary>
-    public class DirectoryReader:IndexReader
-    {
-        /*new*/ private class AnonymousClassFindSegmentsFile:SegmentInfos.FindSegmentsFile
-        {
-            private void  InitBlock(bool readOnly, IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor)
-            {
-                this.readOnly = readOnly;
-                this.deletionPolicy = deletionPolicy;
-                this.termInfosIndexDivisor = termInfosIndexDivisor;
-            }
-            private bool readOnly;
-            private IndexDeletionPolicy deletionPolicy;
-            private int termInfosIndexDivisor;
-            internal AnonymousClassFindSegmentsFile(bool readOnly, Lucene.Net.Index.IndexDeletionPolicy deletionPolicy, int termInfosIndexDivisor, Lucene.Net.Store.Directory Param1):base(Param1)
-            {
-                InitBlock(readOnly, deletionPolicy, termInfosIndexDivisor);
-            }
-            public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-            {
-                var infos = new SegmentInfos();
-                infos.Read(directory, segmentFileName);
-                if (readOnly)
-                    return new ReadOnlyDirectoryReader(directory, infos, deletionPolicy, termInfosIndexDivisor);
-                else
-                    return new DirectoryReader(directory, infos, deletionPolicy, false, termInfosIndexDivisor);
-            }
-        }
-        private class AnonymousClassFindSegmentsFile1:SegmentInfos.FindSegmentsFile
-        {
-            private void  InitBlock(bool openReadOnly, DirectoryReader enclosingInstance)
-            {
-                this.openReadOnly = openReadOnly;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private bool openReadOnly;
-            private DirectoryReader enclosingInstance;
-            public DirectoryReader Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal AnonymousClassFindSegmentsFile1(bool openReadOnly, DirectoryReader enclosingInstance, Lucene.Net.Store.Directory Param1):base(Param1)
-            {
-                InitBlock(openReadOnly, enclosingInstance);
-            }
-            public /*protected internal*/ override System.Object DoBody(System.String segmentFileName)
-            {
-                var infos = new SegmentInfos();
-                infos.Read(directory, segmentFileName);
-                return Enclosing_Instance.DoReopen(infos, false, openReadOnly);
-            }
-        }
-        protected internal Directory internalDirectory;
-        protected internal bool readOnly;
-        
-        internal IndexWriter writer;
-        
-        private IndexDeletionPolicy deletionPolicy;
-        private readonly HashSet<string> synced = new HashSet<string>();
-        private Lock writeLock;
-        private readonly SegmentInfos segmentInfos;
-        private readonly SegmentInfos segmentInfosStart;
-        private bool stale;
-        private readonly int termInfosIndexDivisor;
-        
-        private bool rollbackHasChanges;
-                
-        private SegmentReader[] subReaders;
-        private int[] starts; // 1st docno for each segment
-        private System.Collections.Generic.IDictionary<string, byte[]> normsCache = new HashMap<string, byte[]>();
-        private int maxDoc = 0;
-        private int numDocs = - 1;
-        private bool hasDeletions = false;
-        
-        // Max version in index as of when we opened; this can be
-        // > our current segmentInfos version in case we were
-        // opened on a past IndexCommit:
-        private long maxIndexVersion;
-        
-        internal static IndexReader Open(Directory directory, IndexDeletionPolicy deletionPolicy, IndexCommit commit, bool readOnly, int termInfosIndexDivisor)
-        {
-            return (IndexReader) new AnonymousClassFindSegmentsFile(readOnly, deletionPolicy, termInfosIndexDivisor, directory).Run(commit);
-        }
-        
-        /// <summary>Construct reading the named set of readers. </summary>
-        internal DirectoryReader(Directory directory, SegmentInfos sis, IndexDeletionPolicy deletionPolicy, bool readOnly, int termInfosIndexDivisor)
-        {
-            internalDirectory = directory;
-            this.readOnly = readOnly;
-            this.segmentInfos = sis;
-            this.deletionPolicy = deletionPolicy;
-            this.termInfosIndexDivisor = termInfosIndexDivisor;
-            
-            if (!readOnly)
-            {
-                // We assume that this segments_N was previously
-                // properly sync'd:
-                synced.UnionWith(sis.Files(directory, true));
-            }
-            
-            // To reduce the chance of hitting FileNotFound
-            // (and having to retry), we open segments in
-            // reverse because IndexWriter merges & deletes
-            // the newest segments first.
-            
-            var readers = new SegmentReader[sis.Count];
-            for (int i = sis.Count - 1; i >= 0; i--)
-            {
-                bool success = false;
-                try
-                {
-                    readers[i] = SegmentReader.Get(readOnly, sis.Info(i), termInfosIndexDivisor);
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        // Close all readers we had opened:
-                        for (i++; i < sis.Count; i++)
-                        {
-                            try
-                            {
-                                readers[i].Close();
-                            }
-                            catch (System.Exception)
-                            {
-                                // keep going - we want to clean up as much as possible
-                            }
-                        }
-                    }
-                }
-            }
-            
-            Initialize(readers);
-        }
-        
-        // Used by near real-time search
-        internal DirectoryReader(IndexWriter writer, SegmentInfos infos, int termInfosIndexDivisor)
-        {
-            this.internalDirectory = writer.Directory;
-            this.readOnly = true;
-            segmentInfos = infos;
-            segmentInfosStart = (SegmentInfos) infos.Clone();
-            this.termInfosIndexDivisor = termInfosIndexDivisor;
-            if (!readOnly)
-            {
-                // We assume that this segments_N was previously
-                // properly sync'd:
-                synced.UnionWith(infos.Files(internalDirectory, true));
-            }
-            
-            // IndexWriter synchronizes externally before calling
-            // us, which ensures infos will not change; so there's
-            // no need to process segments in reverse order
-            int numSegments = infos.Count;
-            var readers = new SegmentReader[numSegments];
-            Directory dir = writer.Directory;
-            int upto = 0;
-            
-            for (int i = 0; i < numSegments; i++)
-            {
-                bool success = false;
-                try
-                {
-                    SegmentInfo info = infos.Info(i);
-                    if (info.dir == dir)
-                    {
-                        readers[upto++] = writer.readerPool.GetReadOnlyClone(info, true, termInfosIndexDivisor);
-                    }
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        // Close all readers we had opened:
-                        for (upto--; upto >= 0; upto--)
-                        {
-                            try
-                            {
-                                readers[upto].Close();
-                            }
-                            catch (System.Exception)
-                            {
-                                // keep going - we want to clean up as much as possible
-                            }
-                        }
-                    }
-                }
-            }
-            
-            this.writer = writer;
-            
-            if (upto < readers.Length)
-            {
-                // This means some segments were in a foreign Directory
-                var newReaders = new SegmentReader[upto];
-                Array.Copy(readers, 0, newReaders, 0, upto);
-                readers = newReaders;
-            }
-            
-            Initialize(readers);
-        }
-        
-        /// <summary>This constructor is only used for <see cref="Reopen()" /> </summary>
-        internal DirectoryReader(Directory directory, SegmentInfos infos, SegmentReader[] oldReaders, int[] oldStarts,
-                                 IEnumerable<KeyValuePair<string, byte[]>> oldNormsCache, bool readOnly, bool doClone, int termInfosIndexDivisor)
-        {
-            this.internalDirectory = directory;
-            this.readOnly = readOnly;
-            this.segmentInfos = infos;
-            this.termInfosIndexDivisor = termInfosIndexDivisor;
-            if (!readOnly)
-            {
-                // We assume that this segments_N was previously
-                // properly sync'd:
-                synced.UnionWith(infos.Files(directory, true));
-            }
-            
-            // we put the old SegmentReaders in a map, that allows us
-            // to lookup a reader using its segment name
-            IDictionary<string, int> segmentReaders = new HashMap<string, int>();
-            
-            if (oldReaders != null)
-            {
-                // create a Map SegmentName->SegmentReader
-                for (int i = 0; i < oldReaders.Length; i++)
-                {
-                    segmentReaders[oldReaders[i].SegmentName] = i;
-                }
-            }
-            
-            var newReaders = new SegmentReader[infos.Count];
-            
-            // remember which readers are shared between the old and the re-opened
-            // DirectoryReader - we have to incRef those readers
-            var readerShared = new bool[infos.Count];
-            
-            for (int i = infos.Count - 1; i >= 0; i--)
-            {
-                // find SegmentReader for this segment
-                if (!segmentReaders.ContainsKey(infos.Info(i).name))
-                {
-                    // this is a new segment, no old SegmentReader can be reused
-                    newReaders[i] = null;
-                }
-                else
-                {
-                    // there is an old reader for this segment - we'll try to reopen it
-                    newReaders[i] = oldReaders[segmentReaders[infos.Info(i).name]];
-                }
-                
-                bool success = false;
-                try
-                {
-                    SegmentReader newReader;
-                    if (newReaders[i] == null || infos.Info(i).GetUseCompoundFile() != newReaders[i].SegmentInfo.GetUseCompoundFile())
-                    {
-                        
-                        // We should never see a totally new segment during cloning
-                        System.Diagnostics.Debug.Assert(!doClone);
-                        
-                        // this is a new reader; in case we hit an exception we can close it safely
-                        newReader = SegmentReader.Get(readOnly, infos.Info(i), termInfosIndexDivisor);
-                    }
-                    else
-                    {
-                        newReader = newReaders[i].ReopenSegment(infos.Info(i), doClone, readOnly);
-                    }
-                    if (newReader == newReaders[i])
-                    {
-                        // this reader will be shared between the old and the new one,
-                        // so we must incRef it
-                        readerShared[i] = true;
-                        newReader.IncRef();
-                    }
-                    else
-                    {
-                        readerShared[i] = false;
-                        newReaders[i] = newReader;
-                    }
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        for (i++; i < infos.Count; i++)
-                        {
-                            if (newReaders[i] != null)
-                            {
-                                try
-                                {
-                                    if (!readerShared[i])
-                                    {
-                                        // this is a new subReader that is not used by the old one,
-                                        // we can close it
-                                        newReaders[i].Close();
-                                    }
-                                    else
-                                    {
-                                        // this subReader is also used by the old reader, so instead
-                                        // closing we must decRef it
-                                        newReaders[i].DecRef();
-                                    }
-                                }
-                                catch (System.IO.IOException)
-                                {
-                                    // keep going - we want to clean up as much as possible
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // initialize the readers to calculate maxDoc before we try to reuse the old normsCache
-            Initialize(newReaders);
-            
-            // try to copy unchanged norms from the old normsCache to the new one
-            if (oldNormsCache != null)
-            {
-                foreach(var entry in oldNormsCache)
-                {
-                    String field = entry.Key;
-                    if (!HasNorms(field))
-                    {
-                        continue;
-                    }
-                    
-                    byte[] oldBytes = entry.Value;
-                    
-                    var bytes = new byte[MaxDoc];
-                    
-                    for (int i = 0; i < subReaders.Length; i++)
-                    {
-                        int oldReaderIndex = segmentReaders[subReaders[i].SegmentName];
-                        
-                        // this SegmentReader was not re-opened, we can copy all of its norms 
-                        if (segmentReaders.ContainsKey(subReaders[i].SegmentName) &&
-                             (oldReaders[oldReaderIndex] == subReaders[i]
-                               || oldReaders[oldReaderIndex].norms[field] == subReaders[i].norms[field]))
-                        {
-                            // we don't have to synchronize here: either this constructor is called from a SegmentReader,
-                            // in which case no old norms cache is present, or it is called from MultiReader.reopen(),
-                            // which is synchronized
-                            Array.Copy(oldBytes, oldStarts[oldReaderIndex], bytes, starts[i], starts[i + 1] - starts[i]);
-                        }
-                        else
-                        {
-                            subReaders[i].Norms(field, bytes, starts[i]);
-                        }
-                    }
-                    
-                    normsCache[field] = bytes; // update cache
-                }
-            }
-        }
-        
-        private void  Initialize(SegmentReader[] subReaders)
-        {
-            this.subReaders = subReaders;
-            starts = new int[subReaders.Length + 1]; // build starts array
-            for (int i = 0; i < subReaders.Length; i++)
-            {
-                starts[i] = maxDoc;
-                maxDoc += subReaders[i].MaxDoc; // compute maxDocs
-                
-                if (subReaders[i].HasDeletions)
-                    hasDeletions = true;
-            }
-            starts[subReaders.Length] = maxDoc;
 
-            if (!readOnly)
-            {
-                maxIndexVersion = SegmentInfos.ReadCurrentVersion(internalDirectory);
-            }
-        }
-        
-        public override Object Clone()
-        {
-            lock (this)
-            {
-                try
-                {
-                    return Clone(readOnly); // Preserve current readOnly
-                }
-                catch (Exception ex)
-                {
-                    throw new SystemException(ex.Message, ex); // TODO: why rethrow this way?
-                }
-            }
-        }
-        
-        public override IndexReader Clone(bool openReadOnly)
-        {
-            lock (this)
-            {
-                DirectoryReader newReader = DoReopen((SegmentInfos) segmentInfos.Clone(), true, openReadOnly);
-                
-                if (this != newReader)
-                {
-                    newReader.deletionPolicy = deletionPolicy;
-                }
-                newReader.writer = writer;
-                // If we're cloning a non-readOnly reader, move the
-                // writeLock (if there is one) to the new reader:
-                if (!openReadOnly && writeLock != null)
-                {
-                    // In near real-time search, reader is always readonly
-                    System.Diagnostics.Debug.Assert(writer == null);
-                    newReader.writeLock = writeLock;
-                    newReader.hasChanges = hasChanges;
-                    newReader.hasDeletions = hasDeletions;
-                    writeLock = null;
-                    hasChanges = false;
-                }
-                
-                return newReader;
-            }
-        }
-        
-        public override IndexReader Reopen()
-        {
-            // Preserve current readOnly
-            return DoReopen(readOnly, null);
-        }
-        
-        public override IndexReader Reopen(bool openReadOnly)
-        {
-            return DoReopen(openReadOnly, null);
-        }
-        
-        public override IndexReader Reopen(IndexCommit commit)
-        {
-            return DoReopen(true, commit);
-        }
-
-        private IndexReader DoReopenFromWriter(bool openReadOnly, IndexCommit commit)
-        {
-            System.Diagnostics.Debug.Assert(readOnly);
-
-            if (!openReadOnly)
-            {
-                throw new System.ArgumentException("a reader obtained from IndexWriter.getReader() can only be reopened with openReadOnly=true (got false)");
-            }
-
-            if (commit != null)
-            {
-                throw new System.ArgumentException("a reader obtained from IndexWriter.getReader() cannot currently accept a commit");
-            }
-
-            // TODO: right now we *always* make a new reader; in
-            // the future we could have write make some effort to
-            // detect that no changes have occurred
-            return writer.GetReader();
-        }
-
-        internal virtual IndexReader DoReopen(bool openReadOnly, IndexCommit commit)
-        {
-            EnsureOpen();
-
-            System.Diagnostics.Debug.Assert(commit == null || openReadOnly);
-
-            // If we were obtained by writer.getReader(), re-ask the
-            // writer to get a new reader.
-            if (writer != null)
-            {
-                return DoReopenFromWriter(openReadOnly, commit);
-            }
-            else
-            {
-                return DoReopenNoWriter(openReadOnly, commit);
-            }
-        }
-                
-        private IndexReader DoReopenNoWriter(bool openReadOnly, IndexCommit commit)
-        {
-            lock (this)
-            {
-                if (commit == null)
-                {
-                    if (hasChanges)
-                    {
-                        // We have changes, which means we are not readOnly:
-                        System.Diagnostics.Debug.Assert(readOnly == false);
-                        // and we hold the write lock:
-                        System.Diagnostics.Debug.Assert(writeLock != null);
-                        // so no other writer holds the write lock, which
-                        // means no changes could have been done to the index:
-                        System.Diagnostics.Debug.Assert(IsCurrent());
-
-                        if (openReadOnly)
-                        {
-                            return Clone(openReadOnly);
-                        }
-                        else
-                        {
-                            return this;
-                        }
-                    }
-                    else if (IsCurrent())
-                    {
-                        if (openReadOnly != readOnly)
-                        {
-                            // Just fallback to clone
-                            return Clone(openReadOnly);
-                        }
-                        else
-                        {
-                            return this;
-                        }
-                    }
-                }
-                else
-                {
-                    if (internalDirectory != commit.Directory)
-                        throw new System.IO.IOException("the specified commit does not match the specified Directory");
-                    if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetCurrentSegmentFileName()))
-                    {
-                        if (readOnly != openReadOnly)
-                        {
-                            // Just fallback to clone
-                            return Clone(openReadOnly);
-                        }
-                        else
-                        {
-                            return this;
-                        }
-                    }
-                }
-
-                return (IndexReader)new AnonymousFindSegmentsFile(internalDirectory, openReadOnly, this).Run(commit);
-            }
-        }
-
-        class AnonymousFindSegmentsFile : SegmentInfos.FindSegmentsFile
-        {
-            readonly DirectoryReader enclosingInstance;
-            readonly bool openReadOnly;
-            readonly Directory dir;
-            public AnonymousFindSegmentsFile(Directory directory, bool openReadOnly, DirectoryReader dirReader) : base(directory)
-            {
-                this.dir = directory;
-                this.openReadOnly = openReadOnly;
-                enclosingInstance = dirReader;
-            }
-
-            public override object DoBody(string segmentFileName)
-            {
-                var infos = new SegmentInfos();
-                infos.Read(dir, segmentFileName);
-                return enclosingInstance.DoReopen(infos, false, openReadOnly);
-            }
-        }
-
-        private DirectoryReader DoReopen(SegmentInfos infos, bool doClone, bool openReadOnly)
-        {
-            lock (this)
-            {
-                DirectoryReader reader;
-                if (openReadOnly)
-                {
-                    reader = new ReadOnlyDirectoryReader(internalDirectory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor);
-                }
-                else
-                {
-                    reader = new DirectoryReader(internalDirectory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor);
-                }
-                return reader;
-            }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
 
-        /// <summary>Version number when this IndexReader was opened. </summary>
-        public override long Version
-        {
-            get
-            {
-                EnsureOpen();
-                return segmentInfos.Version;
-            }
-        }
+	using SearcherManager = Lucene.Net.Search.SearcherManager; // javadocs
+	using Directory = Lucene.Net.Store.Directory;
+	using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
 
-        public override ITermFreqVector[] GetTermFreqVectors(int n)
-        {
-            EnsureOpen();
-            int i = ReaderIndex(n); // find segment num
-            return subReaders[i].GetTermFreqVectors(n - starts[i]); // dispatch to segment
-        }
-        
-        public override ITermFreqVector GetTermFreqVector(int n, System.String field)
-        {
-            EnsureOpen();
-            int i = ReaderIndex(n); // find segment num
-            return subReaders[i].GetTermFreqVector(n - starts[i], field);
-        }
-        
-        
-        public override void  GetTermFreqVector(int docNumber, System.String field, TermVectorMapper mapper)
-        {
-            EnsureOpen();
-            int i = ReaderIndex(docNumber); // find segment num
-            subReaders[i].GetTermFreqVector(docNumber - starts[i], field, mapper);
-        }
-        
-        public override void  GetTermFreqVector(int docNumber, TermVectorMapper mapper)
-        {
-            EnsureOpen();
-            int i = ReaderIndex(docNumber); // find segment num
-            subReaders[i].GetTermFreqVector(docNumber - starts[i], mapper);
-        }
+	/// <summary>
+	/// DirectoryReader is an implementation of <seealso cref="CompositeReader"/>
+	/// that can read indexes in a <seealso cref="Directory"/>. 
+	/// 
+	/// <p>DirectoryReader instances are usually constructed with a call to
+	/// one of the static <code>open()</code> methods, e.g. {@link
+	/// #open(Directory)}.
+	/// 
+	/// <p> For efficiency, in this API documents are often referred to via
+	/// <i>document numbers</i>, non-negative integers which each name a unique
+	/// document in the index.  These document numbers are ephemeral -- they may change
+	/// as documents are added to and deleted from an index.  Clients should thus not
+	/// rely on a given document having the same number between sessions.
+	/// 
+	/// <p>
+	/// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
+	/// IndexReader} instances are completely thread
+	/// safe, meaning multiple threads can call any of its methods,
+	/// concurrently.  If your application requires external
+	/// synchronization, you should <b>not</b> synchronize on the
+	/// <code>IndexReader</code> instance; use your own
+	/// (non-Lucene) objects instead.
+	/// </summary>
+	public abstract class DirectoryReader : BaseCompositeReader<AtomicReader>
+	{
 
-        /// <summary> Checks is the index is optimized (if it has a single segment and no deletions)</summary>
-        /// <returns> &amp;lt;c&amp;gt;true&amp;lt;/c&amp;gt; if the index is optimized; &amp;lt;c&amp;gt;false&amp;lt;/c&amp;gt; otherwise </returns>
-        public override bool IsOptimized()
-        {
-            EnsureOpen();
-            return segmentInfos.Count == 1 && !HasDeletions;
-        }
+	  /// <summary>
+	  /// Default termInfosIndexDivisor. </summary>
+	  public const int DEFAULT_TERMS_INDEX_DIVISOR = 1;
 
-        public override int NumDocs()
-        {
-            // Don't call ensureOpen() here (it could affect performance)
-            // NOTE: multiple threads may wind up init'ing
-            // numDocs... but that's harmless
-            if (numDocs == - 1)
-            {
-                // check cache
-                int n = subReaders.Sum(t => t.NumDocs()); // cache miss--recompute
-                numDocs = n;
-            }
-            return numDocs;
-        }
+	  /// <summary>
+	  /// The index directory. </summary>
+	  protected internal readonly Directory Directory_Renamed;
 
-        public override int MaxDoc
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return maxDoc;
-            }
-        }
+	  /// <summary>
+	  /// Returns a IndexReader reading the index in the given
+	  ///  Directory </summary>
+	  /// <param name="directory"> the index directory </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public static DirectoryReader Open(Directory directory)
+	  {
+		return StandardDirectoryReader.Open(directory, null, DEFAULT_TERMS_INDEX_DIVISOR);
+	  }
 
-        // inherit javadoc
-        public override Document Document(int n, FieldSelector fieldSelector)
-        {
-            EnsureOpen();
-            int i = ReaderIndex(n); // find segment num
-            return subReaders[i].Document(n - starts[i], fieldSelector); // dispatch to segment reader
-        }
-        
-        public override bool IsDeleted(int n)
-        {
-            // Don't call ensureOpen() here (it could affect performance)
-            int i = ReaderIndex(n); // find segment num
-            return subReaders[i].IsDeleted(n - starts[i]); // dispatch to segment reader
-        }
+	  /// <summary>
+	  /// Expert: Returns a IndexReader reading the index in the given
+	  ///  Directory with the given termInfosIndexDivisor. </summary>
+	  /// <param name="directory"> the index directory </param>
+	  /// <param name="termInfosIndexDivisor"> Subsamples which indexed
+	  ///  terms are loaded into RAM. this has the same effect as {@link
+	  ///  IndexWriterConfig#setTermIndexInterval} except that setting
+	  ///  must be done at indexing time while this setting can be
+	  ///  set per reader.  When set to N, then one in every
+	  ///  N*termIndexInterval terms in the index is loaded into
+	  ///  memory.  By setting this to a value > 1 you can reduce
+	  ///  memory usage, at the expense of higher latency when
+	  ///  loading a TermInfo.  The default value is 1.  Set this
+	  ///  to -1 to skip loading the terms index entirely.
+	  ///  <b>NOTE:</b> divisor settings &gt; 1 do not apply to all PostingsFormat
+	  ///  implementations, including the default one in this release. It only makes
+	  ///  sense for terms indexes that can efficiently re-sample terms at load time. </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
+	  {
+		return StandardDirectoryReader.Open(directory, null, termInfosIndexDivisor);
+	  }
 
-        public override bool HasDeletions
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return hasDeletions;
-            }
-        }
+	  /// <summary>
+	  /// Open a near real time IndexReader from the <seealso cref="Lucene.Net.Index.IndexWriter"/>.
+	  /// </summary>
+	  /// <param name="writer"> The IndexWriter to open from </param>
+	  /// <param name="applyAllDeletes"> If true, all buffered deletes will
+	  /// be applied (made visible) in the returned reader.  If
+	  /// false, the deletes are not applied but remain buffered
+	  /// (in IndexWriter) so that they will be applied in the
+	  /// future.  Applying deletes can be costly, so if your app
+	  /// can tolerate deleted documents being returned you might
+	  /// gain some performance by passing false. </param>
+	  /// <returns> The new IndexReader </returns>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// </exception>
+	  /// <seealso cref= #openIfChanged(DirectoryReader,IndexWriter,boolean)
+	  /// 
+	  /// @lucene.experimental </seealso>
+	  public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
+	  {
+		return writer.GetReader(applyAllDeletes);
+	  }
 
-        protected internal override void  DoDelete(int n)
-        {
-            numDocs = - 1; // invalidate cache
-            int i = ReaderIndex(n); // find segment num
-            subReaders[i].DeleteDocument(n - starts[i]); // dispatch to segment reader
-            hasDeletions = true;
-        }
-        
-        protected internal override void  DoUndeleteAll()
-        {
-            foreach (SegmentReader t in subReaders)
-                t.UndeleteAll();
+	  /// <summary>
+	  /// Expert: returns an IndexReader reading the index in the given
+	  ///  <seealso cref="IndexCommit"/>. </summary>
+	  /// <param name="commit"> the commit point to open </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public static DirectoryReader Open(IndexCommit commit)
+	  {
+		return StandardDirectoryReader.Open(commit.Directory, commit, DEFAULT_TERMS_INDEX_DIVISOR);
+	  }
 
-            hasDeletions = false;
-            numDocs = - 1; // invalidate cache
-        }
-        
-        private int ReaderIndex(int n)
-        {
-            // find reader for doc n:
-            return ReaderIndex(n, this.starts, this.subReaders.Length);
-        }
-        
-        internal static int ReaderIndex(int n, int[] starts, int numSubReaders)
-        {
-            // find reader for doc n:
-            int lo = 0; // search starts array
-            int hi = numSubReaders - 1; // for first element less
-            
-            while (hi >= lo)
-            {
-                int mid = Number.URShift((lo + hi), 1);
-                int midValue = starts[mid];
-                if (n < midValue)
-                    hi = mid - 1;
-                else if (n > midValue)
-                    lo = mid + 1;
-                else
-                {
-                    // found a match
-                    while (mid + 1 < numSubReaders && starts[mid + 1] == midValue)
-                    {
-                        mid++; // scan to last match
-                    }
-                    return mid;
-                }
-            }
-            return hi;
-        }
-        
-        public override bool HasNorms(System.String field)
-        {
-            EnsureOpen();
-            return subReaders.Any(t => t.HasNorms(field));
-        }
-        
-        public override byte[] Norms(System.String field)
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                byte[] bytes = normsCache[field];
-                if (bytes != null)
-                    return bytes; // cache hit
-                if (!HasNorms(field))
-                    return null;
-                
-                bytes = new byte[MaxDoc];
-                for (int i = 0; i < subReaders.Length; i++)
-                    subReaders[i].Norms(field, bytes, starts[i]);
-                normsCache[field] = bytes; // update cache
-                return bytes;
-            }
-        }
-        
-        public override void  Norms(System.String field, byte[] result, int offset)
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                byte[] bytes = normsCache[field];
-                if (bytes == null && !HasNorms(field))
-                {
-                    byte val = DefaultSimilarity.EncodeNorm(1.0f);
-                    for (int index = offset; index < result.Length; index++)
-                        result.SetValue(val, index);
-                }
-                else if (bytes != null)
-                {
-                    // cache hit
-                    Array.Copy(bytes, 0, result, offset, MaxDoc);
-                }
-                else
-                {
-                    for (int i = 0; i < subReaders.Length; i++)
-                    {
-                        // read from segments
-                        subReaders[i].Norms(field, result, offset + starts[i]);
-                    }
-                }
-            }
-        }
-        
-        protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
-        {
-            lock (normsCache)
-            {
-                normsCache.Remove(field); // clear cache      
-            }
-            int i = ReaderIndex(n); // find segment num
-            subReaders[i].SetNorm(n - starts[i], field, value_Renamed); // dispatch
-        }
-        
-        public override TermEnum Terms()
-        {
-            EnsureOpen();
-            return new MultiTermEnum(this, subReaders, starts, null);
-        }
-        
-        public override TermEnum Terms(Term term)
-        {
-            EnsureOpen();
-            return new MultiTermEnum(this, subReaders, starts, term);
-        }
-        
-        public override int DocFreq(Term t)
-        {
-            EnsureOpen();
-            int total = 0; // sum freqs in segments
-            for (int i = 0; i < subReaders.Length; i++)
-                total += subReaders[i].DocFreq(t);
-            return total;
-        }
-        
-        public override TermDocs TermDocs()
-        {
-            EnsureOpen();
-            return new MultiTermDocs(this, subReaders, starts);
-        }
-        
-        public override TermPositions TermPositions()
-        {
-            EnsureOpen();
-            return new MultiTermPositions(this, subReaders, starts);
-        }
-        
-        /// <summary> Tries to acquire the WriteLock on this directory. this method is only valid if this IndexReader is directory
-        /// owner.
-        /// 
-        /// </summary>
-        /// <throws>  StaleReaderException  if the index has changed since this reader was opened </throws>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  Lucene.Net.Store.LockObtainFailedException </throws>
-        /// <summary>                               if another writer has this index open (<c>write.lock</c> could not be
-        /// obtained)
-        /// </summary>
-        /// <throws>  IOException           if there is a low-level IO error </throws>
-        protected internal override void  AcquireWriteLock()
-        {
-            
-            if (readOnly)
-            {
-                // NOTE: we should not reach this code w/ the core
-                // IndexReader classes; however, an external subclass
-                // of IndexReader could reach this.
-                ReadOnlySegmentReader.NoWrite();
-            }
-            
-            if (segmentInfos != null)
-            {
-                EnsureOpen();
-                if (stale)
-                    throw new StaleReaderException("IndexReader out of date and no longer valid for delete, undelete, or setNorm operations");
-                
-                if (this.writeLock == null)
-                {
-                    Lock writeLock = internalDirectory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-                    if (!writeLock.Obtain(IndexWriter.WRITE_LOCK_TIMEOUT))
-                    // obtain write lock
-                    {
-                        throw new LockObtainFailedException("Index locked for write: " + writeLock);
-                    }
-                    this.writeLock = writeLock;
-                    
-                    // we have to check whether index has changed since this reader was opened.
-                    // if so, this reader is no longer valid for
-                    // deletion
-                    if (SegmentInfos.ReadCurrentVersion(internalDirectory) > maxIndexVersion)
-                    {
-                        stale = true;
-                        this.writeLock.Release();
-                        this.writeLock = null;
-                        throw new StaleReaderException("IndexReader out of date and no longer valid for delete, undelete, or setNorm operations");
-                    }
-                }
-            }
-        }
-        
-        /// <summary> Commit changes resulting from delete, undeleteAll, or setNorm operations
-        /// <p/>
-        /// If an exception is hit, then either no changes or all changes will have been committed to the index (transactional
-        /// semantics).
-        /// 
-        /// </summary>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        protected internal override void DoCommit(IDictionary<string, string> commitUserData)
-        {
-            if (hasChanges)
-            {
-                segmentInfos.UserData = commitUserData;
-                // Default deleter (for backwards compatibility) is
-                // KeepOnlyLastCommitDeleter:
-                var deleter = new IndexFileDeleter(internalDirectory, deletionPolicy ?? new KeepOnlyLastCommitDeletionPolicy(), segmentInfos, null, null, synced);
+	  /// <summary>
+	  /// Expert: returns an IndexReader reading the index in the given
+	  ///  <seealso cref="IndexCommit"/> and termInfosIndexDivisor. </summary>
+	  /// <param name="commit"> the commit point to open </param>
+	  /// <param name="termInfosIndexDivisor"> Subsamples which indexed
+	  ///  terms are loaded into RAM. this has the same effect as {@link
+	  ///  IndexWriterConfig#setTermIndexInterval} except that setting
+	  ///  must be done at indexing time while this setting can be
+	  ///  set per reader.  When set to N, then one in every
+	  ///  N*termIndexInterval terms in the index is loaded into
+	  ///  memory.  By setting this to a value > 1 you can reduce
+	  ///  memory usage, at the expense of higher latency when
+	  ///  loading a TermInfo.  The default value is 1.  Set this
+	  ///  to -1 to skip loading the terms index entirely.
+	  ///  <b>NOTE:</b> divisor settings &gt; 1 do not apply to all PostingsFormat
+	  ///  implementations, including the default one in this release. It only makes
+	  ///  sense for terms indexes that can efficiently re-sample terms at load time. </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
+	  {
+		return StandardDirectoryReader.Open(commit.Directory, commit, termInfosIndexDivisor);
+	  }
 
-                segmentInfos.UpdateGeneration(deleter.LastSegmentInfos);
+	  /// <summary>
+	  /// If the index has changed since the provided reader was
+	  /// opened, open and return a new reader; else, return
+	  /// null.  The new reader, if not null, will be the same
+	  /// type of reader as the previous one, ie an NRT reader
+	  /// will open a new NRT reader, a MultiReader will open a
+	  /// new MultiReader,  etc.
+	  /// 
+	  /// <p>this method is typically far less costly than opening a
+	  /// fully new <code>DirectoryReader</code> as it shares
+	  /// resources (for example sub-readers) with the provided
+	  /// <code>DirectoryReader</code>, when possible.
+	  /// 
+	  /// <p>The provided reader is not closed (you are responsible
+	  /// for doing so); if a new reader is returned you also
+	  /// must eventually close it.  Be sure to never close a
+	  /// reader while other threads are still using it; see
+	  /// <seealso cref="SearcherManager"/> to simplify managing this.
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// <returns> null if there are no changes; else, a new
+	  /// DirectoryReader instance which you must eventually close </returns>
+	  public static DirectoryReader OpenIfChanged(DirectoryReader oldReader)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final DirectoryReader newReader = oldReader.doOpenIfChanged();
+		DirectoryReader newReader = oldReader.DoOpenIfChanged();
+		Debug.Assert(newReader != oldReader);
+		return newReader;
+	  }
 
-                // Checkpoint the state we are about to change, in
-                // case we have to roll back:
-                StartCommit();
-                
-                bool success = false;
-                try
-                {
-                    foreach (SegmentReader t in subReaders)
-                        t.Commit();
+	  /// <summary>
+	  /// If the IndexCommit differs from what the
+	  /// provided reader is searching, open and return a new
+	  /// reader; else, return null.
+	  /// </summary>
+	  /// <seealso cref= #openIfChanged(DirectoryReader) </seealso>
+	  public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexCommit commit)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final DirectoryReader newReader = oldReader.doOpenIfChanged(commit);
+		DirectoryReader newReader = oldReader.DoOpenIfChanged(commit);
+		Debug.Assert(newReader != oldReader);
+		return newReader;
+	  }
 
-                    // Sync all files we just wrote
-                    foreach(string fileName in segmentInfos.Files(internalDirectory, false))
-                    {
-                        if(!synced.Contains(fileName))
-                        {
-                            System.Diagnostics.Debug.Assert(internalDirectory.FileExists(fileName));
-                            internalDirectory.Sync(fileName);
-                            synced.Add(fileName);
-                        }   
-                    }
-                    
-                    segmentInfos.Commit(internalDirectory);
-                    success = true;
-                }
-                finally
-                {
-                    
-                    if (!success)
-                    {
-                        
-                        // Rollback changes that were made to
-                        // SegmentInfos but failed to get [fully]
-                        // committed.  This way this reader instance
-                        // remains consistent (matched to what's
-                        // actually in the index):
-                        RollbackCommit();
-                        
-                        // Recompute deletable files & remove them (so
-                        // partially written .del files, etc, are
-                        // removed):
-                        deleter.Refresh();
-                    }
-                }
-                
-                // Have the deleter remove any now unreferenced
-                // files due to this commit:
-                deleter.Checkpoint(segmentInfos, true);
-                deleter.Dispose();
+	  /// <summary>
+	  /// Expert: If there changes (committed or not) in the
+	  /// <seealso cref="IndexWriter"/> versus what the provided reader is
+	  /// searching, then open and return a new
+	  /// IndexReader searching both committed and uncommitted
+	  /// changes from the writer; else, return null (though, the
+	  /// current implementation never returns null).
+	  /// 
+	  /// <p>this provides "near real-time" searching, in that
+	  /// changes made during an <seealso cref="IndexWriter"/> session can be
+	  /// quickly made available for searching without closing
+	  /// the writer nor calling <seealso cref="IndexWriter#commit"/>.
+	  /// 
+	  /// <p>It's <i>near</i> real-time because there is no hard
+	  /// guarantee on how quickly you can get a new reader after
+	  /// making changes with IndexWriter.  You'll have to
+	  /// experiment in your situation to determine if it's
+	  /// fast enough.  As this is a new and experimental
+	  /// feature, please report back on your findings so we can
+	  /// learn, improve and iterate.</p>
+	  /// 
+	  /// <p>The very first time this method is called, this
+	  /// writer instance will make every effort to pool the
+	  /// readers that it opens for doing merges, applying
+	  /// deletes, etc.  this means additional resources (RAM,
+	  /// file descriptors, CPU time) will be consumed.</p>
+	  /// 
+	  /// <p>For lower latency on reopening a reader, you should
+	  /// call <seealso cref="IndexWriterConfig#setMergedSegmentWarmer"/> to
+	  /// pre-warm a newly merged segment before it's committed
+	  /// to the index.  this is important for minimizing
+	  /// index-to-search delay after a large merge.  </p>
+	  /// 
+	  /// <p>If an addIndexes* call is running in another thread,
+	  /// then this reader will only search those segments from
+	  /// the foreign index that have been successfully copied
+	  /// over, so far.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: Once the writer is closed, any
+	  /// outstanding readers may continue to be used.  However,
+	  /// if you attempt to reopen any of those readers, you'll
+	  /// hit an <seealso cref="Lucene.Net.Store.AlreadyClosedException"/>.</p>
+	  /// </summary>
+	  /// <returns> DirectoryReader that covers entire index plus all
+	  /// changes made so far by this IndexWriter instance, or
+	  /// null if there are no new changes
+	  /// </returns>
+	  /// <param name="writer"> The IndexWriter to open from
+	  /// </param>
+	  /// <param name="applyAllDeletes"> If true, all buffered deletes will
+	  /// be applied (made visible) in the returned reader.  If
+	  /// false, the deletes are not applied but remain buffered
+	  /// (in IndexWriter) so that they will be applied in the
+	  /// future.  Applying deletes can be costly, so if your app
+	  /// can tolerate deleted documents being returned you might
+	  /// gain some performance by passing false.
+	  /// </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// 
+	  /// @lucene.experimental </exception>
+	  public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexWriter writer, bool applyAllDeletes)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final DirectoryReader newReader = oldReader.doOpenIfChanged(writer, applyAllDeletes);
+		DirectoryReader newReader = oldReader.DoOpenIfChanged(writer, applyAllDeletes);
+		Debug.Assert(newReader != oldReader);
+		return newReader;
+	  }
 
-                maxIndexVersion = segmentInfos.Version;
-                
-                if (writeLock != null)
-                {
-                    writeLock.Release(); // release write lock
-                    writeLock = null;
-                }
-            }
-            hasChanges = false;
-        }
-        
-        internal virtual void  StartCommit()
-        {
-            rollbackHasChanges = hasChanges;
-            foreach (SegmentReader t in subReaders)
-            {
-                t.StartCommit();
-            }
-        }
+	  /// <summary>
+	  /// Returns all commit points that exist in the Directory.
+	  ///  Normally, because the default is {@link
+	  ///  KeepOnlyLastCommitDeletionPolicy}, there would be only
+	  ///  one commit point.  But if you're using a custom {@link
+	  ///  IndexDeletionPolicy} then there could be many commits.
+	  ///  Once you have a given commit, you can open a reader on
+	  ///  it by calling <seealso cref="DirectoryReader#open(IndexCommit)"/>
+	  ///  There must be at least one commit in
+	  ///  the Directory, else this method throws {@link
+	  ///  IndexNotFoundException}.  Note that if a commit is in
+	  ///  progress while this method is running, that commit
+	  ///  may or may not be returned.
+	  /// </summary>
+	  ///  <returns> a sorted list of <seealso cref="IndexCommit"/>s, from oldest 
+	  ///  to latest.  </returns>
+	  public static IList<IndexCommit> ListCommits(Directory dir)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String[] files = dir.listAll();
+		string[] files = dir.ListAll();
 
-        internal virtual void  RollbackCommit()
-        {
-            hasChanges = rollbackHasChanges;
-            foreach (SegmentReader t in subReaders)
-            {
-                t.RollbackCommit();
-            }
-        }
+		IList<IndexCommit> commits = new List<IndexCommit>();
 
-        public override IDictionary<string, string> CommitUserData
-        {
-            get
-            {
-                EnsureOpen();
-                return segmentInfos.UserData;
-            }
-        }
+		SegmentInfos latest = new SegmentInfos();
+		latest.Read(dir);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long currentGen = latest.getGeneration();
+		long currentGen = latest.Generation;
 
-        public override bool IsCurrent()
-        {
-            EnsureOpen();
-            if (writer == null || writer.IsClosed())
-            {
-                // we loaded SegmentInfos from the directory
-                return SegmentInfos.ReadCurrentVersion(internalDirectory) == segmentInfos.Version;
-            }
-            else
-            {
-                return writer.NrtIsCurrent(segmentInfosStart);
-            }
-        }
+		commits.Add(new StandardDirectoryReader.ReaderCommit(latest, dir));
 
-        protected internal override void  DoClose()
-        {
-            lock (this)
-            {
-                System.IO.IOException ioe = null;
-                normsCache = null;
-                foreach (SegmentReader t in subReaders)
-                {
-                    // try to close each reader, even if an exception is thrown
-                    try
-                    {
-                        t.DecRef();
-                    }
-                    catch (System.IO.IOException e)
-                    {
-                        if (ioe == null)
-                            ioe = e;
-                    }
-                }
+		for (int i = 0;i < files.Length;i++)
+		{
 
-                // NOTE: only needed in case someone had asked for
-                // FieldCache for top-level reader (which is generally
-                // not a good idea):
-                Search.FieldCache_Fields.DEFAULT.Purge(this);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String fileName = files[i];
+		  string fileName = files[i];
 
-                // throw the first exception
-                if (ioe != null)
-                    throw ioe;
-            }
-        }
+		  if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
+		  {
 
-        public override ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames)
-        {
-            EnsureOpen();
-            return GetFieldNames(fieldNames, this.subReaders);
-        }
+			SegmentInfos sis = new SegmentInfos();
+			try
+			{
+			  // IOException allowed to throw there, in case
+			  // segments_N is corrupt
+			  sis.Read(dir, fileName);
+			}
+//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
+			catch (FileNotFoundException | NoSuchFileException fnfe)
+			{
+			  // LUCENE-948: on NFS (and maybe others), if
+			  // you have writers switching back and forth
+			  // between machines, it's very likely that the
+			  // dir listing will be stale and will claim a
+			  // file segments_X exists when in fact it
+			  // doesn't.  So, we catch this and handle it
+			  // as if the file does not exist
+			  sis = null;
+			}
 
-        internal static ICollection<string> GetFieldNames(IndexReader.FieldOption fieldNames, IndexReader[] subReaders)
-        {
-            // maintain a unique set of field names
-            ISet<string> fieldSet = Support.Compatibility.SetFactory.CreateHashSet<string>();
-            foreach (IndexReader reader in subReaders)
-            {
-                fieldSet.UnionWith(reader.GetFieldNames(fieldNames));
-            }
-            return fieldSet;
-        }
+			if (sis != null)
+			{
+			  commits.Add(new StandardDirectoryReader.ReaderCommit(sis, dir));
+			}
+		  }
+		}
 
-        public override IndexReader[] GetSequentialSubReaders()
-        {
-            return subReaders;
-        }
+		// Ensure that the commit points are sorted in ascending order.
+		commits.Sort();
 
-        /// <summary>Returns the directory this index resides in. </summary>
-        public override Directory Directory()
-        {
-            // Don't ensureOpen here -- in certain cases, when a
-            // cloned/reopened reader needs to commit, it may call
-            // this method on the closed original reader
-            return internalDirectory;
-        }
+		return commits;
+	  }
 
-        public override int TermInfosIndexDivisor
-        {
-            get { return termInfosIndexDivisor; }
-        }
+	  /// <summary>
+	  /// Returns <code>true</code> if an index likely exists at
+	  /// the specified directory.  Note that if a corrupt index
+	  /// exists, or if an index in the process of committing </summary>
+	  /// <param name="directory"> the directory to check for an index </param>
+	  /// <returns> <code>true</code> if an index exists; <code>false</code> otherwise </returns>
+	  public static bool IndexExists(Directory directory)
+	  {
+		// LUCENE-2812, LUCENE-2727, LUCENE-4738: this logic will
+		// return true in cases that should arguably be false,
+		// such as only IW.prepareCommit has been called, or a
+		// corrupt first commit, but it's too deadly to make
+		// this logic "smarter" and risk accidentally returning
+		// false due to various cases like file description
+		// exhaustion, access denied, etc., because in that
+		// case IndexWriter may delete the entire index.  It's
+		// safer to err towards "index exists" than try to be
+		// smart about detecting not-yet-fully-committed or
+		// corrupt indices.  this means that IndexWriter will
+		// throw an exception on such indices and the app must
+		// resolve the situation manually:
+		string[] files;
+		try
+		{
+		  files = directory.ListAll();
+		}
+		catch (NoSuchDirectoryException nsde)
+		{
+		  // Directory does not exist --> no index exists
+		  return false;
+		}
 
-        /// <summary> Expert: return the IndexCommit that this reader has opened.
-        /// <p/>
-        /// <p/><b>WARNING</b>: this API is new and experimental and may suddenly change.<p/>
-        /// </summary>
-        public override IndexCommit IndexCommit
-        {
-            get { return new ReaderCommit(segmentInfos, internalDirectory); }
-        }
+		// Defensive: maybe a Directory impl returns null
+		// instead of throwing NoSuchDirectoryException:
+		if (files != null)
+		{
+		  string prefix = IndexFileNames.SEGMENTS + "_";
+		  foreach (string file in files)
+		  {
+			if (file.StartsWith(prefix) || file.Equals(IndexFileNames.SEGMENTS_GEN))
+			{
+			  return true;
+			}
+		  }
+		}
+		return false;
+	  }
 
-        /// <seealso cref="Lucene.Net.Index.IndexReader.ListCommits">
-        /// </seealso>
-        public static new ICollection<IndexCommit> ListCommits(Directory dir)
-        {
-            String[] files = dir.ListAll();
+	  /// <summary>
+	  /// Expert: Constructs a {@code DirectoryReader} on the given subReaders. </summary>
+	  /// <param name="segmentReaders"> the wrapped atomic index segment readers. this array is
+	  /// returned by <seealso cref="#getSequentialSubReaders"/> and used to resolve the correct
+	  /// subreader for docID-based methods. <b>Please note:</b> this array is <b>not</b>
+	  /// cloned and not protected for modification outside of this reader.
+	  /// Subclasses of {@code DirectoryReader} should take care to not allow
+	  /// modification of this internal array, e.g. <seealso cref="#doOpenIfChanged()"/>. </param>
+	  protected internal DirectoryReader(Directory directory, AtomicReader[] segmentReaders) : base(segmentReaders)
+	  {
+		this.Directory_Renamed = directory;
+	  }
 
-            ICollection<IndexCommit> commits = new  List<IndexCommit>();
-            
-            var latest = new SegmentInfos();
-            latest.Read(dir);
-            long currentGen = latest.Generation;
-            
-            commits.Add(new ReaderCommit(latest, dir));
-            
-            foreach (string fileName in files)
-            {
-                if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
-                {
-                    
-                    var sis = new SegmentInfos();
-                    try
-                    {
-                        // IOException allowed to throw there, in case
-                        // segments_N is corrupt
-                        sis.Read(dir, fileName);
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                        // LUCENE-948: on NFS (and maybe others), if
-                        // you have writers switching back and forth
-                        // between machines, it's very likely that the
-                        // dir listing will be stale and will claim a
-                        // file segments_X exists when in fact it
-                        // doesn't.  So, we catch this and handle it
-                        // as if the file does not exist
-                        sis = null;
-                    }
-                    
-                    if (sis != null)
-                        commits.Add(new ReaderCommit(sis, dir));
-                }
-            }
-            
-            return commits;
-        }
-        
-        private sealed class ReaderCommit:IndexCommit
-        {
-            private readonly String segmentsFileName;
-            private readonly ICollection<string> files;
-            private readonly Directory dir;
-            private readonly long generation;
-            private readonly long version;
-            private readonly bool isOptimized;
-            private readonly IDictionary<string, string> userData;
-            
-            internal ReaderCommit(SegmentInfos infos, Directory dir)
-            {
-                segmentsFileName = infos.GetCurrentSegmentFileName();
-                this.dir = dir;
-                userData = infos.UserData;
-                files = infos.Files(dir, true);
-                version = infos.Version;
-                generation = infos.Generation;
-                isOptimized = infos.Count == 1 && !infos.Info(0).HasDeletions();
-            }
-            public override string ToString()
-            {
-                return "DirectoryReader.ReaderCommit(" + segmentsFileName + ")";
-            }
+	  /// <summary>
+	  /// Returns the directory this index resides in. </summary>
+	  public Directory Directory()
+	  {
+		// Don't ensureOpen here -- in certain cases, when a
+		// cloned/reopened reader needs to commit, it may call
+		// this method on the closed original reader
+		return Directory_Renamed;
+	  }
 
-            public override bool IsOptimized
-            {
-                get { return isOptimized; }
-            }
+	  /// <summary>
+	  /// Implement this method to support <seealso cref="#openIfChanged(DirectoryReader)"/>.
+	  /// If this reader does not support reopen, return {@code null}, so
+	  /// client code is happy. this should be consistent with <seealso cref="#isCurrent"/>
+	  /// (should always return {@code true}) if reopen is not supported. </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// <returns> null if there are no changes; else, a new
+	  /// DirectoryReader instance. </returns>
+	  protected internal abstract DirectoryReader DoOpenIfChanged();
 
-            public override string SegmentsFileName
-            {
-                get { return segmentsFileName; }
-            }
+	  /// <summary>
+	  /// Implement this method to support <seealso cref="#openIfChanged(DirectoryReader,IndexCommit)"/>.
+	  /// If this reader does not support reopen from a specific <seealso cref="IndexCommit"/>,
+	  /// throw <seealso cref="UnsupportedOperationException"/>. </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// <returns> null if there are no changes; else, a new
+	  /// DirectoryReader instance. </returns>
+	  protected internal abstract DirectoryReader DoOpenIfChanged(IndexCommit commit);
 
-            public override ICollection<string> FileNames
-            {
-                get { return files; }
-            }
+	  /// <summary>
+	  /// Implement this method to support <seealso cref="#openIfChanged(DirectoryReader,IndexWriter,boolean)"/>.
+	  /// If this reader does not support reopen from <seealso cref="IndexWriter"/>,
+	  /// throw <seealso cref="UnsupportedOperationException"/>. </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// <returns> null if there are no changes; else, a new
+	  /// DirectoryReader instance. </returns>
+	  protected internal abstract DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes);
 
-            public override Directory Directory
-            {
-                get { return dir; }
-            }
+	  /// <summary>
+	  /// Version number when this IndexReader was opened.
+	  /// 
+	  /// <p>this method
+	  /// returns the version recorded in the commit that the
+	  /// reader opened.  this version is advanced every time
+	  /// a change is made with <seealso cref="IndexWriter"/>.</p>
+	  /// </summary>
+	  public abstract long Version {get;}
 
-            public override long Version
-            {
-                get { return version; }
-            }
+	  /// <summary>
+	  /// Check whether any new changes have occurred to the
+	  /// index since this reader was opened.
+	  /// 
+	  /// <p>If this reader was created by calling <seealso cref="#open"/>,  
+	  /// then this method checks if any further commits 
+	  /// (see <seealso cref="IndexWriter#commit"/>) have occurred in the 
+	  /// directory.</p>
+	  /// 
+	  /// <p>If instead this reader is a near real-time reader
+	  /// (ie, obtained by a call to {@link
+	  /// DirectoryReader#open(IndexWriter,boolean)}, or by calling <seealso cref="#openIfChanged"/>
+	  /// on a near real-time reader), then this method checks if
+	  /// either a new commit has occurred, or any new
+	  /// uncommitted changes have taken place via the writer.
+	  /// Note that even if the writer has only performed
+	  /// merging, this method will still return false.</p>
+	  /// 
+	  /// <p>In any event, if this returns false, you should call
+	  /// <seealso cref="#openIfChanged"/> to get a new reader that sees the
+	  /// changes.</p>
+	  /// </summary>
+	  /// <exception cref="IOException">           if there is a low-level IO error </exception>
+	  public abstract bool Current {get;}
 
-            public override long Generation
-            {
-                get { return generation; }
-            }
+	  /// <summary>
+	  /// Expert: return the IndexCommit that this reader has opened.
+	  /// <p/>
+	  /// @lucene.experimental
+	  /// </summary>
+	  public abstract IndexCommit IndexCommit {get;}
 
-            public override bool IsDeleted
-            {
-                get { return false; }
-            }
+	}
 
-            public override IDictionary<string, string> UserData
-            {
-                get { return userData; }
-            }
-
-            public override void Delete()
-            {
-                throw new System.NotSupportedException("This IndexCommit does not support deletions");
-            }
-        }
-        
-        internal class MultiTermEnum:TermEnum
-        {
-            internal IndexReader topReader; // used for matching TermEnum to TermDocs
-            private readonly SegmentMergeQueue queue;
-            
-            private Term term;
-            private int docFreq;
-            internal SegmentMergeInfo[] matchingSegments; // null terminated array of matching segments
-            
-            public MultiTermEnum(IndexReader topReader, IndexReader[] readers, int[] starts, Term t)
-            {
-                this.topReader = topReader;
-                queue = new SegmentMergeQueue(readers.Length);
-                matchingSegments = new SegmentMergeInfo[readers.Length + 1];
-                for (int i = 0; i < readers.Length; i++)
-                {
-                    IndexReader reader = readers[i];
-
-                    TermEnum termEnum = t != null ? reader.Terms(t) : reader.Terms();
-
-                    var smi = new SegmentMergeInfo(starts[i], termEnum, reader) {ord = i};
-                    if (t == null?smi.Next():termEnum.Term != null)
-                        queue.Add(smi);
-                    // initialize queue
-                    else
-                        smi.Dispose();
-                }
-                
-                if (t != null && queue.Size() > 0)
-                {
-                    Next();
-                }
-            }
-            
-            public override bool Next()
-            {
-                foreach (SegmentMergeInfo smi in matchingSegments)
-                {
-                    if (smi == null)
-                        break;
-                    if (smi.Next())
-                        queue.Add(smi);
-                    else
-                        smi.Dispose(); // done with segment
-                }
-                
-                int numMatchingSegments = 0;
-                matchingSegments[0] = null;
-                
-                SegmentMergeInfo top = queue.Top();
-                
-                if (top == null)
-                {
-                    term = null;
-                    return false;
-                }
-                
-                term = top.term;
-                docFreq = 0;
-                
-                while (top != null && term.CompareTo(top.term) == 0)
-                {
-                    matchingSegments[numMatchingSegments++] = top;
-                    queue.Pop();
-                    docFreq += top.termEnum.DocFreq(); // increment freq
-                    top = queue.Top();
-                }
-                
-                matchingSegments[numMatchingSegments] = null;
-                return true;
-            }
-
-            public override Term Term
-            {
-                get { return term; }
-            }
-
-            public override int DocFreq()
-            {
-                return docFreq;
-            }
-            
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    queue.Dispose();
-                }
-            }
-        }
-        
-        internal class MultiTermDocs : TermDocs
-        {
-            internal IndexReader topReader; // used for matching TermEnum to TermDocs
-            protected internal IndexReader[] readers;
-            protected internal int[] starts;
-            protected internal Term term;
-            
-            protected internal int base_Renamed = 0;
-            protected internal int pointer = 0;
-            
-            private readonly TermDocs[] readerTermDocs;
-            protected internal TermDocs current; // == readerTermDocs[pointer]
-            
-            private MultiTermEnum tenum; // the term enum used for seeking... can be null
-            internal int matchingSegmentPos; // position into the matching segments from tenum
-            internal SegmentMergeInfo smi; // current segment mere info... can be null
-            
-            public MultiTermDocs(IndexReader topReader, IndexReader[] r, int[] s)
-            {
-                this.topReader = topReader;
-                readers = r;
-                starts = s;
-                
-                readerTermDocs = new TermDocs[r.Length];
-            }
-
-            public virtual int Doc
-            {
-                get { return base_Renamed + current.Doc; }
-            }
-
-            public virtual int Freq
-            {
-                get { return current.Freq; }
-            }
-
-            public virtual void  Seek(Term term)
-            {
-                this.term = term;
-                this.base_Renamed = 0;
-                this.pointer = 0;
-                this.current = null;
-                this.tenum = null;
-                this.smi = null;
-                this.matchingSegmentPos = 0;
-            }
-            
-            public virtual void  Seek(TermEnum termEnum)
-            {
-                Seek(termEnum.Term);
-                var multiTermEnum = termEnum as MultiTermEnum;
-                if (multiTermEnum != null)
-                {
-                    tenum = multiTermEnum;
-                    if (topReader != tenum.topReader)
-                        tenum = null;
-                }
-            }
-            
-            public virtual bool Next()
-            {
-                for (; ; )
-                {
-                    if (current != null && current.Next())
-                    {
-                        return true;
-                    }
-                    else if (pointer < readers.Length)
-                    {
-                        if (tenum != null)
-                        {
-                            smi = tenum.matchingSegments[matchingSegmentPos++];
-                            if (smi == null)
-                            {
-                                pointer = readers.Length;
-                                return false;
-                            }
-                            pointer = smi.ord;
-                        }
-                        base_Renamed = starts[pointer];
-                        current = TermDocs(pointer++);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            
-            /// <summary>Optimized implementation. </summary>
-            public virtual int Read(int[] docs, int[] freqs)
-            {
-                while (true)
-                {
-                    while (current == null)
-                    {
-                        if (pointer < readers.Length)
-                        {
-                            // try next segment
-                            if (tenum != null)
-                            {
-                                smi = tenum.matchingSegments[matchingSegmentPos++];
-                                if (smi == null)
-                                {
-                                    pointer = readers.Length;
-                                    return 0;
-                                }
-                                pointer = smi.ord;
-                            }
-                            base_Renamed = starts[pointer];
-                            current = TermDocs(pointer++);
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    }
-                    int end = current.Read(docs, freqs);
-                    if (end == 0)
-                    {
-                        // none left in segment
-                        current = null;
-                    }
-                    else
-                    {
-                        // got some
-                        int b = base_Renamed; // adjust doc numbers
-                        for (int i = 0; i < end; i++)
-                            docs[i] += b;
-                        return end;
-                    }
-                }
-            }
-            
-            /* A Possible future optimization could skip entire segments */
-            public virtual bool SkipTo(int target)
-            {
-                for (; ; )
-                {
-                    if (current != null && current.SkipTo(target - base_Renamed))
-                    {
-                        return true;
-                    }
-                    else if (pointer < readers.Length)
-                    {
-                        if (tenum != null)
-                        {
-                            SegmentMergeInfo smi = tenum.matchingSegments[matchingSegmentPos++];
-                            if (smi == null)
-                            {
-                                pointer = readers.Length;
-                                return false;
-                            }
-                            pointer = smi.ord;
-                        }
-                        base_Renamed = starts[pointer];
-                        current = TermDocs(pointer++);
-                    }
-                    else
-                        return false;
-                }
-            }
-            
-            private TermDocs TermDocs(int i)
-            {
-                TermDocs result = readerTermDocs[i] ?? (readerTermDocs[i] = TermDocs(readers[i]));
-                if (smi != null)
-                {
-                    System.Diagnostics.Debug.Assert((smi.ord == i));
-                    System.Diagnostics.Debug.Assert((smi.termEnum.Term.Equals(term)));
-                    result.Seek(smi.termEnum);
-                }
-                else
-                {
-                    result.Seek(term);
-                }
-                return result;
-            }
-            
-            protected internal virtual TermDocs TermDocs(IndexReader reader)
-            {
-                return term == null ? reader.TermDocs(null):reader.TermDocs();
-            }
-            
-            public virtual void  Close()
-            {
-                Dispose();
-            }
-
-            public virtual void Dispose()
-            {
-                Dispose(true);
-            }
-
-            protected virtual void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    foreach (TermDocs t in readerTermDocs)
-                    {
-                        if (t != null)
-                            t.Close();
-                    }
-                }
-            }
-        }
-        
-        internal class MultiTermPositions:MultiTermDocs, TermPositions
-        {
-            public MultiTermPositions(IndexReader topReader, IndexReader[] r, int[] s):base(topReader, r, s)
-            {
-            }
-            
-            protected internal override TermDocs TermDocs(IndexReader reader)
-            {
-                return reader.TermPositions();
-            }
-            
-            public virtual int NextPosition()
-            {
-                return ((TermPositions) current).NextPosition();
-            }
-
-            public virtual int PayloadLength
-            {
-                get { return ((TermPositions) current).PayloadLength; }
-            }
-
-            public virtual byte[] GetPayload(byte[] data, int offset)
-            {
-                return ((TermPositions) current).GetPayload(data, offset);
-            }
-            
-            
-            // TODO: Remove warning after API has been finalized
-
-            public virtual bool IsPayloadAvailable
-            {
-                get { return ((TermPositions) current).IsPayloadAvailable; }
-            }
-        }
-    }
 }

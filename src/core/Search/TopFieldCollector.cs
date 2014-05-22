@@ -1,1137 +1,1531 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using Lucene.Net.Util;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
+using System.Collections;
 
 namespace Lucene.Net.Search
 {
-    
-    /// <summary> A <see cref="Collector" /> that sorts by <see cref="SortField" /> using
-    /// <see cref="FieldComparator" />s.
-    /// <p/>
-    /// See the <see cref="Create" /> method
-    /// for instantiating a TopFieldCollector.
-    /// 
-    /// <p/><b>NOTE:</b> This API is experimental and might change in
-    /// incompatible ways in the next release.<p/>
-    /// </summary>
-    public abstract class TopFieldCollector : TopDocsCollector<Entry>
-    {
-        // TODO: one optimization we could do is to pre-fill
-        // the queue with sentinel value that guaranteed to
-        // always compare lower than a real hit; this would
-        // save having to check queueFull on each insert
-        
-        //
-        // Implements a TopFieldCollector over one SortField criteria, without
-        // tracking document scores and maxScore.
-        //
-        private class OneComparatorNonScoringCollector : TopFieldCollector
-        {
-            internal FieldComparator comparator;
-            internal int reverseMul;
-            
-            public OneComparatorNonScoringCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-                comparator = queue.GetComparators()[0];
-                reverseMul = queue.GetReverseMul()[0];
-            }
-            
-            internal void UpdateBottom(int doc)
-            {
-                // bottom.score is already set to Float.NaN in add().
-                bottom.Doc = docBase + doc;
-                bottom = pq.UpdateTop();
-            }
-            
-            public override void Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
-                    {
-                        // since docs are visited in doc Id order, if compare is 0, it means
-                        // this document is largest than anything else in the queue, and
-                        // therefore not competitive.
-                        return ;
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.slot, doc);
-                    UpdateBottom(doc);
-                    comparator.SetBottom(bottom.slot);
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    comparator.Copy(slot, doc);
-                    Add(slot, doc, System.Single.NaN);
-                    if (queueFull)
-                    {
-                        comparator.SetBottom(bottom.slot);
-                    }
-                }
-            }
-            
-            public override void SetNextReader(IndexReader reader, int docBase)
-            {
-                this.docBase = docBase;
-                comparator.SetNextReader(reader, docBase);
-            }
-            
-            public override void SetScorer(Scorer scorer)
-            {
-                comparator.SetScorer(scorer);
-            }
-        }
-        
-        //
-        // Implements a TopFieldCollector over one SortField criteria, without
-        // tracking document scores and maxScore, and assumes out of orderness in doc
-        // Ids collection.
-        //
-        private class OutOfOrderOneComparatorNonScoringCollector:OneComparatorNonScoringCollector
-        {
-            
-            public OutOfOrderOneComparatorNonScoringCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            public override void Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    int cmp = reverseMul * comparator.CompareBottom(doc);
-                    if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
-                    {
-                        return ;
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.slot, doc);
-                    UpdateBottom(doc);
-                    comparator.SetBottom(bottom.slot);
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    comparator.Copy(slot, doc);
-                    Add(slot, doc, System.Single.NaN);
-                    if (queueFull)
-                    {
-                        comparator.SetBottom(bottom.slot);
-                    }
-                }
-            }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over one SortField criteria, while tracking
-        * document scores but no maxScore.
-        */
-        private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
-        {
-            
-            internal Scorer scorer;
-            
-            public OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            internal void UpdateBottom(int doc, float score)
-            {
-                bottom.Doc = docBase + doc;
-                bottom.Score = score;
-                bottom = pq.UpdateTop();
-            }
-            
-            public override void Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
-                    {
-                        // since docs are visited in doc Id order, if compare is 0, it means
-                        // this document is largest than anything else in the queue, and
-                        // therefore not competitive.
-                        return ;
-                    }
-                    
-                    // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.slot, doc);
-                    UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.slot);
-                }
-                else
-                {
-                    // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
-                    
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    comparator.Copy(slot, doc);
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        comparator.SetBottom(bottom.slot);
-                    }
-                }
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-                comparator.SetScorer(scorer);
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over one SortField criteria, while tracking
-        * document scores but no maxScore, and assumes out of orderness in doc Ids
-        * collection.
-        */
-        private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
-        {
-            
-            public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            public override void  Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    int cmp = reverseMul * comparator.CompareBottom(doc);
-                    if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
-                    {
-                        return ;
-                    }
-                    
-                    // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.slot, doc);
-                    UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.slot);
-                }
-                else
-                {
-                    // Compute the score only if the hit is competitive.
-                    float score = scorer.Score();
-                    
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    comparator.Copy(slot, doc);
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        comparator.SetBottom(bottom.slot);
-                    }
-                }
-            }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        //
-        // Implements a TopFieldCollector over one SortField criteria, with tracking
-        // document scores and maxScore.
-        //
-        private class OneComparatorScoringMaxScoreCollector:OneComparatorNonScoringCollector
-        {
-            
-            internal Scorer scorer;
-            
-            public OneComparatorScoringMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-                // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
-                maxScore = System.Single.NegativeInfinity;
-            }
-            
-            internal void  UpdateBottom(int doc, float score)
-            {
-                bottom.Doc = docBase + doc;
-                bottom.Score = score;
-                bottom = pq.UpdateTop();
-            }
-            
-            public override void  Collect(int doc)
-            {
-                float score = scorer.Score();
-                if (score > maxScore)
-                {
-                    maxScore = score;
-                }
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    if ((reverseMul * comparator.CompareBottom(doc)) <= 0)
-                    {
-                        // since docs are visited in doc Id order, if compare is 0, it means
-                        // this document is largest than anything else in the queue, and
-                        // therefore not competitive.
-                        return ;
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.slot, doc);
-                    UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.slot);
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    comparator.Copy(slot, doc);
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        comparator.SetBottom(bottom.slot);
-                    }
-                }
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-                base.SetScorer(scorer);
-            }
-        }
-        
-        //
-        // Implements a TopFieldCollector over one SortField criteria, with tracking
-        // document scores and maxScore, and assumes out of orderness in doc Ids
-        // collection.
-        //
-        private class OutOfOrderOneComparatorScoringMaxScoreCollector : OneComparatorScoringMaxScoreCollector
-        {
-            
-            public OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            public override void  Collect(int doc)
-            {
-                float score = scorer.Score();
-                if (score > maxScore)
-                {
-                    maxScore = score;
-                }
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    int cmp = reverseMul * comparator.CompareBottom(doc);
-                    if (cmp < 0 || (cmp == 0 && doc + docBase > bottom.Doc))
-                    {
-                        return ;
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    comparator.Copy(bottom.slot, doc);
-                    UpdateBottom(doc, score);
-                    comparator.SetBottom(bottom.slot);
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    comparator.Copy(slot, doc);
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        comparator.SetBottom(bottom.slot);
-                    }
-                }
-            }
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
+	using Lucene.Net.Util;
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over multiple SortField criteria, without
-        * tracking document scores and maxScore.
-        */
-        private class MultiComparatorNonScoringCollector:TopFieldCollector
-        {
-            internal FieldComparator[] comparators;
-            internal int[] reverseMul;
-            
-            public MultiComparatorNonScoringCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-                comparators = queue.GetComparators();
-                reverseMul = queue.GetReverseMul();
-            }
-            
-            internal void  UpdateBottom(int doc)
-            {
-                // bottom.score is already set to Float.NaN in add().
-                bottom.Doc = docBase + doc;
-                bottom = pq.UpdateTop();
-            }
-            
-            public override void  Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    for (int i = 0; ; i++)
-                    {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
-                        if (c < 0)
-                        {
-                            // Definitely not competitive.
-                            return ;
-                        }
-                        else if (c > 0)
-                        {
-                            // Definitely competitive.
-                            break;
-                        }
-                        else if (i == comparators.Length - 1)
-                        {
-                            // Here c=0. If we're at the last comparator, this doc is not
-                            // competitive, since docs are visited in doc Id order, which means
-                            // this doc cannot compete with any other document in the queue.
-                            return ;
-                        }
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(bottom.slot, doc);
-                    }
-                    
-                    UpdateBottom(doc);
-                    
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].SetBottom(bottom.slot);
-                    }
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(slot, doc);
-                    }
-                    Add(slot, doc, System.Single.NaN);
-                    if (queueFull)
-                    {
-                        for (int i = 0; i < comparators.Length; i++)
-                        {
-                            comparators[i].SetBottom(bottom.slot);
-                        }
-                    }
-                }
-            }
-            
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                this.docBase = docBase;
-                for (int i = 0; i < comparators.Length; i++)
-                {
-                    comparators[i].SetNextReader(reader, docBase);
-                }
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                // set the scorer on all comparators
-                for (int i = 0; i < comparators.Length; i++)
-                {
-                    comparators[i].SetScorer(scorer);
-                }
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over multiple SortField criteria, without
-        * tracking document scores and maxScore, and assumes out of orderness in doc
-        * Ids collection.
-        */
-        private class OutOfOrderMultiComparatorNonScoringCollector:MultiComparatorNonScoringCollector
-        {
-            
-            public OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            public override void  Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    for (int i = 0; ; i++)
-                    {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
-                        if (c < 0)
-                        {
-                            // Definitely not competitive.
-                            return ;
-                        }
-                        else if (c > 0)
-                        {
-                            // Definitely competitive.
-                            break;
-                        }
-                        else if (i == comparators.Length - 1)
-                        {
-                            // This is the equals case.
-                            if (doc + docBase > bottom.Doc)
-                            {
-                                // Definitely not competitive
-                                return ;
-                            }
-                            break;
-                        }
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(bottom.slot, doc);
-                    }
-                    
-                    UpdateBottom(doc);
-                    
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].SetBottom(bottom.slot);
-                    }
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(slot, doc);
-                    }
-                    Add(slot, doc, System.Single.NaN);
-                    if (queueFull)
-                    {
-                        for (int i = 0; i < comparators.Length; i++)
-                        {
-                            comparators[i].SetBottom(bottom.slot);
-                        }
-                    }
-                }
-            }
+	/// <summary>
+	/// A <seealso cref="Collector"/> that sorts by <seealso cref="SortField"/> using
+	/// <seealso cref="FieldComparator"/>s.
+	/// <p/>
+	/// See the <seealso cref="#create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)"/> method
+	/// for instantiating a TopFieldCollector.
+	/// 
+	/// @lucene.experimental
+	/// </summary>
+	public abstract class TopFieldCollector : TopDocsCollector<Entry>
+	{
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over multiple SortField criteria, with
-        * tracking document scores and maxScore.
-        */
-        private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
-        {
-            
-            internal Scorer scorer;
-            
-            public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-                // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
-                maxScore = System.Single.NegativeInfinity;
-            }
-            
-            internal void  UpdateBottom(int doc, float score)
-            {
-                bottom.Doc = docBase + doc;
-                bottom.Score = score;
-                bottom = pq.UpdateTop();
-            }
-            
-            public override void  Collect(int doc)
-            {
-                float score = scorer.Score();
-                if (score > maxScore)
-                {
-                    maxScore = score;
-                }
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    for (int i = 0; ; i++)
-                    {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
-                        if (c < 0)
-                        {
-                            // Definitely not competitive.
-                            return ;
-                        }
-                        else if (c > 0)
-                        {
-                            // Definitely competitive.
-                            break;
-                        }
-                        else if (i == comparators.Length - 1)
-                        {
-                            // Here c=0. If we're at the last comparator, this doc is not
-                            // competitive, since docs are visited in doc Id order, which means
-                            // this doc cannot compete with any other document in the queue.
-                            return ;
-                        }
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(bottom.slot, doc);
-                    }
-                    
-                    UpdateBottom(doc, score);
-                    
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].SetBottom(bottom.slot);
-                    }
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(slot, doc);
-                    }
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        for (int i = 0; i < comparators.Length; i++)
-                        {
-                            comparators[i].SetBottom(bottom.slot);
-                        }
-                    }
-                }
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-                base.SetScorer(scorer);
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over multiple SortField criteria, with
-        * tracking document scores and maxScore, and assumes out of orderness in doc
-        * Ids collection.
-        */
-        private sealed class OutOfOrderMultiComparatorScoringMaxScoreCollector:MultiComparatorScoringMaxScoreCollector
-        {
-            
-            public OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            public override void  Collect(int doc)
-            {
-                float score = scorer.Score();
-                if (score > maxScore)
-                {
-                    maxScore = score;
-                }
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    for (int i = 0; ; i++)
-                    {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
-                        if (c < 0)
-                        {
-                            // Definitely not competitive.
-                            return ;
-                        }
-                        else if (c > 0)
-                        {
-                            // Definitely competitive.
-                            break;
-                        }
-                        else if (i == comparators.Length - 1)
-                        {
-                            // This is the equals case.
-                            if (doc + docBase > bottom.Doc)
-                            {
-                                // Definitely not competitive
-                                return ;
-                            }
-                            break;
-                        }
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(bottom.slot, doc);
-                    }
-                    
-                    UpdateBottom(doc, score);
-                    
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].SetBottom(bottom.slot);
-                    }
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(slot, doc);
-                    }
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        for (int i = 0; i < comparators.Length; i++)
-                        {
-                            comparators[i].SetBottom(bottom.slot);
-                        }
-                    }
-                }
-            }
+	  // TODO: one optimization we could do is to pre-fill
+	  // the queue with sentinel value that guaranteed to
+	  // always compare lower than a real hit; this would
+	  // save having to check queueFull on each insert
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over multiple SortField criteria, with
-        * tracking document scores and maxScore.
-        */
-        private class MultiComparatorScoringNoMaxScoreCollector:MultiComparatorNonScoringCollector
-        {
-            
-            internal Scorer scorer;
-            
-            public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            internal void  UpdateBottom(int doc, float score)
-            {
-                bottom.Doc = docBase + doc;
-                bottom.Score = score;
-                bottom = pq.UpdateTop();
-            }
-            
-            public override void  Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    for (int i = 0; ; i++)
-                    {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
-                        if (c < 0)
-                        {
-                            // Definitely not competitive.
-                            return ;
-                        }
-                        else if (c > 0)
-                        {
-                            // Definitely competitive.
-                            break;
-                        }
-                        else if (i == comparators.Length - 1)
-                        {
-                            // Here c=0. If we're at the last comparator, this doc is not
-                            // competitive, since docs are visited in doc Id order, which means
-                            // this doc cannot compete with any other document in the queue.
-                            return ;
-                        }
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(bottom.slot, doc);
-                    }
-                    
-                    // Compute score only if it is competitive.
-                    float score = scorer.Score();
-                    UpdateBottom(doc, score);
-                    
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].SetBottom(bottom.slot);
-                    }
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(slot, doc);
-                    }
-                    
-                    // Compute score only if it is competitive.
-                    float score = scorer.Score();
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        for (int i = 0; i < comparators.Length; i++)
-                        {
-                            comparators[i].SetBottom(bottom.slot);
-                        }
-                    }
-                }
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-                base.SetScorer(scorer);
-            }
-        }
-        
-        /*
-        * Implements a TopFieldCollector over multiple SortField criteria, with
-        * tracking document scores and maxScore, and assumes out of orderness in doc
-        * Ids collection.
-        */
-        private sealed class OutOfOrderMultiComparatorScoringNoMaxScoreCollector:MultiComparatorScoringNoMaxScoreCollector
-        {
-            
-            public OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue queue, int numHits, bool fillFields):base(queue, numHits, fillFields)
-            {
-            }
-            
-            public override void  Collect(int doc)
-            {
-                ++internalTotalHits;
-                if (queueFull)
-                {
-                    // Fastmatch: return if this hit is not competitive
-                    for (int i = 0; ; i++)
-                    {
-                        int c = reverseMul[i] * comparators[i].CompareBottom(doc);
-                        if (c < 0)
-                        {
-                            // Definitely not competitive.
-                            return ;
-                        }
-                        else if (c > 0)
-                        {
-                            // Definitely competitive.
-                            break;
-                        }
-                        else if (i == comparators.Length - 1)
-                        {
-                            // This is the equals case.
-                            if (doc + docBase > bottom.Doc)
-                            {
-                                // Definitely not competitive
-                                return ;
-                            }
-                            break;
-                        }
-                    }
-                    
-                    // This hit is competitive - replace bottom element in queue & adjustTop
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(bottom.slot, doc);
-                    }
-                    
-                    // Compute score only if it is competitive.
-                    float score = scorer.Score();
-                    UpdateBottom(doc, score);
-                    
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].SetBottom(bottom.slot);
-                    }
-                }
-                else
-                {
-                    // Startup transient: queue hasn't gathered numHits yet
-                    int slot = internalTotalHits - 1;
-                    // Copy hit into queue
-                    for (int i = 0; i < comparators.Length; i++)
-                    {
-                        comparators[i].Copy(slot, doc);
-                    }
-                    
-                    // Compute score only if it is competitive.
-                    float score = scorer.Score();
-                    Add(slot, doc, score);
-                    if (queueFull)
-                    {
-                        for (int i = 0; i < comparators.Length; i++)
-                        {
-                            comparators[i].SetBottom(bottom.slot);
-                        }
-                    }
-                }
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-                base.SetScorer(scorer);
-            }
+	  /*
+	   * Implements a TopFieldCollector over one SortField criteria, without
+	   * tracking document scores and maxScore.
+	   */
+	  private class OneComparatorNonScoringCollector : TopFieldCollector
+	  {
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        private static readonly ScoreDoc[] EMPTY_SCOREDOCS = new ScoreDoc[0];
-        
-        private bool fillFields;
-        
-        /*
-        * Stores the maximum score value encountered, needed for normalizing. If
-        * document scores are not tracked, this value is initialized to NaN.
-        */
-        internal float maxScore = System.Single.NaN;
-        
-        internal int numHits;
-        internal FieldValueHitQueue.Entry bottom = null;
-        internal bool queueFull;
-        internal int docBase;
-        
-        // Declaring the constructor private prevents extending this class by anyone
-        // else. Note that the class cannot be final since it's extended by the
-        // internal versions. If someone will define a constructor with any other
-        // visibility, then anyone will be able to extend the class, which is not what
-        // we want.
-        private TopFieldCollector(PriorityQueue<Entry> pq, int numHits, bool fillFields)
-            : base(pq)
-        {
-            this.numHits = numHits;
-            this.fillFields = fillFields;
-        }
-        
-        /// <summary> Creates a new <see cref="TopFieldCollector" /> from the given
-        /// arguments.
-        /// 
-        /// <p/><b>NOTE</b>: The instances returned by this method
-        /// pre-allocate a full array of length
-        /// <c>numHits</c>.
-        /// 
-        /// </summary>
-        /// <param name="sort">the sort criteria (SortFields).
-        /// </param>
-        /// <param name="numHits">the number of results to collect.
-        /// </param>
-        /// <param name="fillFields">specifies whether the actual field values should be returned on
-        /// the results (FieldDoc).
-        /// </param>
-        /// <param name="trackDocScores">specifies whether document scores should be tracked and set on the
-        /// results. Note that if set to false, then the results' scores will
-        /// be set to Float.NaN. Setting this to true affects performance, as
-        /// it incurs the score computation on each competitive result.
-        /// Therefore if document scores are not required by the application,
-        /// it is recommended to set it to false.
-        /// </param>
-        /// <param name="trackMaxScore">specifies whether the query's maxScore should be tracked and set
-        /// on the resulting <see cref="TopDocs" />. Note that if set to false,
-        /// <see cref="TopDocs.MaxScore" /> returns Float.NaN. Setting this to
-        /// true affects performance as it incurs the score computation on
-        /// each result. Also, setting this true automatically sets
-        /// <c>trackDocScores</c> to true as well.
-        /// </param>
-        /// <param name="docsScoredInOrder">specifies whether documents are scored in doc Id order or not by
-        /// the given <see cref="Scorer" /> in <see cref="Collector.SetScorer(Scorer)" />.
-        /// </param>
-        /// <returns> a <see cref="TopFieldCollector" /> instance which will sort the results by
-        /// the sort criteria.
-        /// </returns>
-        /// <throws>  IOException </throws>
-        public static TopFieldCollector Create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
-        {
-            if (sort.fields.Length == 0)
-            {
-                throw new System.ArgumentException("Sort must contain at least one field");
-            }
-            
-            FieldValueHitQueue queue = FieldValueHitQueue.Create(sort.fields, numHits);
-            if (queue.GetComparators().Length == 1)
-            {
-                if (docsScoredInOrder)
-                {
-                    if (trackMaxScore)
-                    {
-                        return new OneComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
-                    }
-                    else if (trackDocScores)
-                    {
-                        return new OneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
-                    }
-                    else
-                    {
-                        return new OneComparatorNonScoringCollector(queue, numHits, fillFields);
-                    }
-                }
-                else
-                {
-                    if (trackMaxScore)
-                    {
-                        return new OutOfOrderOneComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
-                    }
-                    else if (trackDocScores)
-                    {
-                        return new OutOfOrderOneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
-                    }
-                    else
-                    {
-                        return new OutOfOrderOneComparatorNonScoringCollector(queue, numHits, fillFields);
-                    }
-                }
-            }
-            
-            // multiple comparators.
-            if (docsScoredInOrder)
-            {
-                if (trackMaxScore)
-                {
-                    return new MultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
-                }
-                else if (trackDocScores)
-                {
-                    return new MultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
-                }
-                else
-                {
-                    return new MultiComparatorNonScoringCollector(queue, numHits, fillFields);
-                }
-            }
-            else
-            {
-                if (trackMaxScore)
-                {
-                    return new OutOfOrderMultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
-                }
-                else if (trackDocScores)
-                {
-                    return new OutOfOrderMultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
-                }
-                else
-                {
-                    return new OutOfOrderMultiComparatorNonScoringCollector(queue, numHits, fillFields);
-                }
-            }
-        }
-        
-        internal void  Add(int slot, int doc, float score)
-        {
-            bottom = pq.Add(new Entry(slot, docBase + doc, score));
-            queueFull = internalTotalHits == numHits;
-        }
-        
-        /*
-        * Only the following callback methods need to be overridden since
-        * topDocs(int, int) calls them to return the results.
-        */
-        
-        protected internal override void  PopulateResults(ScoreDoc[] results, int howMany)
-        {
-            if (fillFields)
-            {
-                // avoid casting if unnecessary.
-                FieldValueHitQueue queue = (FieldValueHitQueue) pq;
-                for (int i = howMany - 1; i >= 0; i--)
-                {
-                    results[i] = queue.FillFields(queue.Pop());
-                }
-            }
-            else
-            {
-                for (int i = howMany - 1; i >= 0; i--)
-                {
-                    Entry entry = pq.Pop();
-                    results[i] = new FieldDoc(entry.Doc, entry.Score);
-                }
-            }
-        }
-        
-        public /*protected internal*/ override TopDocs NewTopDocs(ScoreDoc[] results, int start)
-        {
-            if (results == null)
-            {
-                results = EMPTY_SCOREDOCS;
-                // Set maxScore to NaN, in case this is a maxScore tracking collector.
-                maxScore = System.Single.NaN;
-            }
-            
-            // If this is a maxScoring tracking collector and there were no results, 
-            return new TopFieldDocs(internalTotalHits, results, ((FieldValueHitQueue) pq).GetFields(), maxScore);
-        }
+//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
+//ORIGINAL LINE: FieldComparator<?> comparator;
+		internal FieldComparator<?> Comparator;
+		internal readonly int ReverseMul;
+		internal readonly FieldValueHitQueue<Entry> Queue;
 
-        public override bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
-    }
+		public OneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		  this.Queue = queue;
+		  Comparator = queue.Comparators[0];
+		  ReverseMul = queue.ReverseMul[0];
+		}
+
+		internal void UpdateBottom(int doc)
+		{
+		  // bottom.score is already set to Float.NaN in add().
+		  Bottom.Doc = DocBase + doc;
+		  Bottom = Pq.UpdateTop();
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			if ((ReverseMul * Comparator.CompareBottom(doc)) <= 0)
+			{
+			  // since docs are visited in doc Id order, if compare is 0, it means
+			  // this document is larger than anything else in the queue, and
+			  // therefore not competitive.
+			  return;
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			Comparator.Copy(Bottom.Slot, doc);
+			UpdateBottom(doc);
+			Comparator.Bottom = Bottom.Slot;
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			Comparator.Copy(slot, doc);
+			Add(slot, doc, float.NaN);
+			if (QueueFull)
+			{
+			  Comparator.Bottom = Bottom.Slot;
+			}
+		  }
+		}
+
+		public override AtomicReaderContext NextReader
+		{
+			set
+			{
+			  this.DocBase = value.DocBase;
+			  Queue.SetComparator(0, Comparator.setNextReader(value));
+			  Comparator = Queue.FirstComparator;
+			}
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  Comparator.Scorer = value;
+			}
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over one SortField criteria, without
+	   * tracking document scores and maxScore, and assumes out of orderness in doc
+	   * Ids collection.
+	   */
+	  private class OutOfOrderOneComparatorNonScoringCollector : OneComparatorNonScoringCollector
+	  {
+
+		public OutOfOrderOneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int cmp = reverseMul * comparator.compareBottom(doc);
+			int cmp = ReverseMul * Comparator.CompareBottom(doc);
+			if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
+			{
+			  return;
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			Comparator.Copy(Bottom.Slot, doc);
+			UpdateBottom(doc);
+			Comparator.Bottom = Bottom.Slot;
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			Comparator.Copy(slot, doc);
+			Add(slot, doc, float.NaN);
+			if (QueueFull)
+			{
+			  Comparator.Bottom = Bottom.Slot;
+			}
+		  }
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over one SortField criteria, while tracking
+	   * document scores but no maxScore.
+	   */
+	  private class OneComparatorScoringNoMaxScoreCollector : OneComparatorNonScoringCollector
+	  {
+
+		internal Scorer Scorer_Renamed;
+
+		public OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		internal void UpdateBottom(int doc, float score)
+		{
+		  Bottom.Doc = DocBase + doc;
+		  Bottom.Score = score;
+		  Bottom = Pq.UpdateTop();
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			if ((ReverseMul * Comparator.CompareBottom(doc)) <= 0)
+			{
+			  // since docs are visited in doc Id order, if compare is 0, it means
+			  // this document is largest than anything else in the queue, and
+			  // therefore not competitive.
+			  return;
+			}
+
+			// Compute the score only if the hit is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			Comparator.Copy(Bottom.Slot, doc);
+			UpdateBottom(doc, score);
+			Comparator.Bottom = Bottom.Slot;
+		  }
+		  else
+		  {
+			// Compute the score only if the hit is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			Comparator.Copy(slot, doc);
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  Comparator.Bottom = Bottom.Slot;
+			}
+		  }
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  this.Scorer_Renamed = value;
+			  Comparator.Scorer = value;
+			}
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over one SortField criteria, while tracking
+	   * document scores but no maxScore, and assumes out of orderness in doc Ids
+	   * collection.
+	   */
+	  private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
+	  {
+
+		public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int cmp = reverseMul * comparator.compareBottom(doc);
+			int cmp = ReverseMul * Comparator.CompareBottom(doc);
+			if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
+			{
+			  return;
+			}
+
+			// Compute the score only if the hit is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			Comparator.Copy(Bottom.Slot, doc);
+			UpdateBottom(doc, score);
+			Comparator.Bottom = Bottom.Slot;
+		  }
+		  else
+		  {
+			// Compute the score only if the hit is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			Comparator.Copy(slot, doc);
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  Comparator.Bottom = Bottom.Slot;
+			}
+		  }
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over one SortField criteria, with tracking
+	   * document scores and maxScore.
+	   */
+	  private class OneComparatorScoringMaxScoreCollector : OneComparatorNonScoringCollector
+	  {
+
+		internal Scorer Scorer_Renamed;
+
+		public OneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		  // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
+		  MaxScore = float.NegativeInfinity;
+		}
+
+		internal void UpdateBottom(int doc, float score)
+		{
+		  Bottom.Doc = DocBase + doc;
+		  Bottom.Score = score;
+		  Bottom = Pq.UpdateTop();
+		}
+
+		public override void Collect(int doc)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+		  float score = Scorer_Renamed.Score();
+		  if (score > MaxScore)
+		  {
+			MaxScore = score;
+		  }
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			if ((ReverseMul * Comparator.CompareBottom(doc)) <= 0)
+			{
+			  // since docs are visited in doc Id order, if compare is 0, it means
+			  // this document is largest than anything else in the queue, and
+			  // therefore not competitive.
+			  return;
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			Comparator.Copy(Bottom.Slot, doc);
+			UpdateBottom(doc, score);
+			Comparator.Bottom = Bottom.Slot;
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			Comparator.Copy(slot, doc);
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  Comparator.Bottom = Bottom.Slot;
+			}
+		  }
+
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  this.Scorer_Renamed = value;
+			  base.Scorer = value;
+			}
+		}
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over one SortField criteria, with tracking
+	   * document scores and maxScore, and assumes out of orderness in doc Ids
+	   * collection.
+	   */
+	  private class OutOfOrderOneComparatorScoringMaxScoreCollector : OneComparatorScoringMaxScoreCollector
+	  {
+
+		public OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+		  float score = Scorer_Renamed.Score();
+		  if (score > MaxScore)
+		  {
+			MaxScore = score;
+		  }
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int cmp = reverseMul * comparator.compareBottom(doc);
+			int cmp = ReverseMul * Comparator.CompareBottom(doc);
+			if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
+			{
+			  return;
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			Comparator.Copy(Bottom.Slot, doc);
+			UpdateBottom(doc, score);
+			Comparator.Bottom = Bottom.Slot;
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			Comparator.Copy(slot, doc);
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  Comparator.Bottom = Bottom.Slot;
+			}
+		  }
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over multiple SortField criteria, without
+	   * tracking document scores and maxScore.
+	   */
+	  private class MultiComparatorNonScoringCollector : TopFieldCollector
+	  {
+
+//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
+//ORIGINAL LINE: final FieldComparator<?>[] comparators;
+		internal readonly FieldComparator<?>[] Comparators;
+		internal readonly int[] ReverseMul;
+		internal readonly FieldValueHitQueue<Entry> Queue;
+		public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		  this.Queue = queue;
+		  Comparators = queue.Comparators;
+		  ReverseMul = queue.ReverseMul;
+		}
+
+		internal void UpdateBottom(int doc)
+		{
+		  // bottom.score is already set to Float.NaN in add().
+		  Bottom.Doc = DocBase + doc;
+		  Bottom = Pq.UpdateTop();
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// Here c=0. If we're at the last comparator, this doc is not
+				// competitive, since docs are visited in doc Id order, which means
+				// this doc cannot compete with any other document in the queue.
+				return;
+			  }
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			UpdateBottom(doc);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+			Add(slot, doc, float.NaN);
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override AtomicReaderContext NextReader
+		{
+			set
+			{
+			  DocBase = value.DocBase;
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Queue.SetComparator(i, Comparators[i].setNextReader(value));
+			  }
+			}
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  // set the value on all comparators
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Scorer = value;
+			  }
+			}
+		}
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over multiple SortField criteria, without
+	   * tracking document scores and maxScore, and assumes out of orderness in doc
+	   * Ids collection.
+	   */
+	  private class OutOfOrderMultiComparatorNonScoringCollector : MultiComparatorNonScoringCollector
+	  {
+
+		public OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// this is the equals case.
+				if (doc + DocBase > Bottom.Doc)
+				{
+				  // Definitely not competitive
+				  return;
+				}
+				break;
+			  }
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			UpdateBottom(doc);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+			Add(slot, doc, float.NaN);
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over multiple SortField criteria, with
+	   * tracking document scores and maxScore.
+	   */
+	  private class MultiComparatorScoringMaxScoreCollector : MultiComparatorNonScoringCollector
+	  {
+
+		internal Scorer Scorer_Renamed;
+
+		public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		  // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
+		  MaxScore = float.NegativeInfinity;
+		}
+
+		internal void UpdateBottom(int doc, float score)
+		{
+		  Bottom.Doc = DocBase + doc;
+		  Bottom.Score = score;
+		  Bottom = Pq.UpdateTop();
+		}
+
+		public override void Collect(int doc)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+		  float score = Scorer_Renamed.Score();
+		  if (score > MaxScore)
+		  {
+			MaxScore = score;
+		  }
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// Here c=0. If we're at the last comparator, this doc is not
+				// competitive, since docs are visited in doc Id order, which means
+				// this doc cannot compete with any other document in the queue.
+				return;
+			  }
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			UpdateBottom(doc, score);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  this.Scorer_Renamed = value;
+			  base.Scorer = value;
+			}
+		}
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over multiple SortField criteria, with
+	   * tracking document scores and maxScore, and assumes out of orderness in doc
+	   * Ids collection.
+	   */
+	  private sealed class OutOfOrderMultiComparatorScoringMaxScoreCollector : MultiComparatorScoringMaxScoreCollector
+	  {
+
+		public OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+		  float score = Scorer_Renamed.Score();
+		  if (score > MaxScore)
+		  {
+			MaxScore = score;
+		  }
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// this is the equals case.
+				if (doc + DocBase > Bottom.Doc)
+				{
+				  // Definitely not competitive
+				  return;
+				}
+				break;
+			  }
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			UpdateBottom(doc, score);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over multiple SortField criteria, with
+	   * tracking document scores and maxScore.
+	   */
+	  private class MultiComparatorScoringNoMaxScoreCollector : MultiComparatorNonScoringCollector
+	  {
+
+		internal Scorer Scorer_Renamed;
+
+		public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		internal void UpdateBottom(int doc, float score)
+		{
+		  Bottom.Doc = DocBase + doc;
+		  Bottom.Score = score;
+		  Bottom = Pq.UpdateTop();
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// Here c=0. If we're at the last comparator, this doc is not
+				// competitive, since docs are visited in doc Id order, which means
+				// this doc cannot compete with any other document in the queue.
+				return;
+			  }
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			// Compute score only if it is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+			UpdateBottom(doc, score);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+
+			// Compute score only if it is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  this.Scorer_Renamed = value;
+			  base.Scorer = value;
+			}
+		}
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector over multiple SortField criteria, with
+	   * tracking document scores and maxScore, and assumes out of orderness in doc
+	   * Ids collection.
+	   */
+	  private sealed class OutOfOrderMultiComparatorScoringNoMaxScoreCollector : MultiComparatorScoringNoMaxScoreCollector
+	  {
+
+		public OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+		  ++TotalHits_Renamed;
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is not competitive
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// this is the equals case.
+				if (doc + DocBase > Bottom.Doc)
+				{
+				  // Definitely not competitive
+				  return;
+				}
+				break;
+			  }
+			}
+
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			// Compute score only if it is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+			UpdateBottom(doc, score);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = totalHits - 1;
+			int slot = TotalHits_Renamed - 1;
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+
+			// Compute score only if it is competitive.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final float score = scorer.score();
+			float score = Scorer_Renamed.Score();
+			Add(slot, doc, score);
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  this.Scorer_Renamed = value;
+			  base.Scorer = value;
+			}
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+	  }
+
+	  /*
+	   * Implements a TopFieldCollector when after != null.
+	   */
+	  private sealed class PagingFieldCollector : TopFieldCollector
+	  {
+
+		internal Scorer Scorer_Renamed;
+		internal int CollectedHits;
+//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
+//ORIGINAL LINE: final FieldComparator<?>[] comparators;
+		internal readonly FieldComparator<?>[] Comparators;
+		internal readonly int[] ReverseMul;
+		internal readonly FieldValueHitQueue<Entry> Queue;
+		internal readonly bool TrackDocScores;
+		internal readonly bool TrackMaxScore;
+		internal readonly FieldDoc After;
+		internal int AfterDoc;
+
+		public PagingFieldCollector(FieldValueHitQueue<Entry> queue, FieldDoc after, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore) : base(queue, numHits, fillFields)
+		{
+		  this.Queue = queue;
+		  this.TrackDocScores = trackDocScores;
+		  this.TrackMaxScore = trackMaxScore;
+		  this.After = after;
+		  Comparators = queue.Comparators;
+		  ReverseMul = queue.ReverseMul;
+
+		  // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
+		  MaxScore = float.NegativeInfinity;
+
+		  // Tell all comparators their top value:
+		  for (int i = 0;i < Comparators.Length;i++)
+		  {
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @SuppressWarnings("unchecked") FieldComparator<Object> comparator = (FieldComparator<Object>) comparators[i];
+			FieldComparator<object> comparator = (FieldComparator<object>) Comparators[i];
+			comparator.TopValue = after.Fields[i];
+		  }
+		}
+
+		internal void UpdateBottom(int doc, float score)
+		{
+		  Bottom.Doc = DocBase + doc;
+		  Bottom.Score = score;
+		  Bottom = Pq.UpdateTop();
+		}
+
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @SuppressWarnings({"unchecked", "rawtypes"}) @Override public void collect(int doc) throws java.io.IOException
+		public override void Collect(int doc)
+		{
+		  //System.out.println("  collect doc=" + doc);
+
+		  TotalHits_Renamed++;
+
+		  float score = float.NaN;
+		  if (TrackMaxScore)
+		  {
+			score = Scorer_Renamed.Score();
+			if (score > MaxScore)
+			{
+			  MaxScore = score;
+			}
+		  }
+
+		  if (QueueFull)
+		  {
+			// Fastmatch: return if this hit is no better than
+			// the worst hit currently in the queue:
+			for (int i = 0;; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
+			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  if (c < 0)
+			  {
+				// Definitely not competitive.
+				return;
+			  }
+			  else if (c > 0)
+			  {
+				// Definitely competitive.
+				break;
+			  }
+			  else if (i == Comparators.Length - 1)
+			  {
+				// this is the equals case.
+				if (doc + DocBase > Bottom.Doc)
+				{
+				  // Definitely not competitive
+				  return;
+				}
+				break;
+			  }
+			}
+		  }
+
+		  // Check if this hit was already collected on a
+		  // previous page:
+		  bool sameValues = true;
+		  for (int compIDX = 0;compIDX < Comparators.Length;compIDX++)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final FieldComparator comp = comparators[compIDX];
+			FieldComparator comp = Comparators[compIDX];
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int cmp = reverseMul[compIDX] * comp.compareTop(doc);
+			int cmp = ReverseMul[compIDX] * comp.compareTop(doc);
+			if (cmp > 0)
+			{
+			  // Already collected on a previous page
+			  //System.out.println("    skip: before");
+			  return;
+			}
+			else if (cmp < 0)
+			{
+			  // Not yet collected
+			  sameValues = false;
+			  //System.out.println("    keep: after; reverseMul=" + reverseMul[compIDX]);
+			  break;
+			}
+		  }
+
+		  // Tie-break by docID:
+		  if (sameValues && doc <= AfterDoc)
+		  {
+			// Already collected on a previous page
+			//System.out.println("    skip: tie-break");
+			return;
+		  }
+
+		  if (QueueFull)
+		  {
+			// this hit is competitive - replace bottom element in queue & adjustTop
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(Bottom.Slot, doc);
+			}
+
+			// Compute score only if it is competitive.
+			if (TrackDocScores && !TrackMaxScore)
+			{
+			  score = Scorer_Renamed.Score();
+			}
+			UpdateBottom(doc, score);
+
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Bottom = Bottom.Slot;
+			}
+		  }
+		  else
+		  {
+			CollectedHits++;
+
+			// Startup transient: queue hasn't gathered numHits yet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int slot = collectedHits - 1;
+			int slot = CollectedHits - 1;
+			//System.out.println("    slot=" + slot);
+			// Copy hit into queue
+			for (int i = 0; i < Comparators.Length; i++)
+			{
+			  Comparators[i].Copy(slot, doc);
+			}
+
+			// Compute score only if it is competitive.
+			if (TrackDocScores && !TrackMaxScore)
+			{
+			  score = Scorer_Renamed.Score();
+			}
+			Bottom = Pq.Add(new Entry(slot, DocBase + doc, score));
+			QueueFull = CollectedHits == NumHits;
+			if (QueueFull)
+			{
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Bottom = Bottom.Slot;
+			  }
+			}
+		  }
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  this.Scorer_Renamed = value;
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Comparators[i].Scorer = value;
+			  }
+			}
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+
+		public override AtomicReaderContext NextReader
+		{
+			set
+			{
+			  DocBase = value.DocBase;
+			  AfterDoc = After.Doc - DocBase;
+			  for (int i = 0; i < Comparators.Length; i++)
+			  {
+				Queue.SetComparator(i, Comparators[i].setNextReader(value));
+			  }
+			}
+		}
+	  }
+
+	  private static readonly ScoreDoc[] EMPTY_SCOREDOCS = new ScoreDoc[0];
+
+	  private readonly bool FillFields;
+
+	  /*
+	   * Stores the maximum score value encountered, needed for normalizing. If
+	   * document scores are not tracked, this value is initialized to NaN.
+	   */
+	  internal float MaxScore = float.NaN;
+
+	  internal readonly int NumHits;
+	  internal FieldValueHitQueue.Entry Bottom = null;
+	  internal bool QueueFull;
+	  internal int DocBase;
+
+	  // Declaring the constructor private prevents extending this class by anyone
+	  // else. Note that the class cannot be final since it's extended by the
+	  // internal versions. If someone will define a constructor with any other
+	  // visibility, then anyone will be able to extend the class, which is not what
+	  // we want.
+	  private TopFieldCollector(PriorityQueue<Entry> pq, int numHits, bool fillFields) : base(pq)
+	  {
+		this.NumHits = numHits;
+		this.FillFields = fillFields;
+	  }
+
+	  /// <summary>
+	  /// Creates a new <seealso cref="TopFieldCollector"/> from the given
+	  /// arguments.
+	  /// 
+	  /// <p><b>NOTE</b>: The instances returned by this method
+	  /// pre-allocate a full array of length
+	  /// <code>numHits</code>.
+	  /// </summary>
+	  /// <param name="sort">
+	  ///          the sort criteria (SortFields). </param>
+	  /// <param name="numHits">
+	  ///          the number of results to collect. </param>
+	  /// <param name="fillFields">
+	  ///          specifies whether the actual field values should be returned on
+	  ///          the results (FieldDoc). </param>
+	  /// <param name="trackDocScores">
+	  ///          specifies whether document scores should be tracked and set on the
+	  ///          results. Note that if set to false, then the results' scores will
+	  ///          be set to Float.NaN. Setting this to true affects performance, as
+	  ///          it incurs the score computation on each competitive result.
+	  ///          Therefore if document scores are not required by the application,
+	  ///          it is recommended to set it to false. </param>
+	  /// <param name="trackMaxScore">
+	  ///          specifies whether the query's maxScore should be tracked and set
+	  ///          on the resulting <seealso cref="TopDocs"/>. Note that if set to false,
+	  ///          <seealso cref="TopDocs#getMaxScore()"/> returns Float.NaN. Setting this to
+	  ///          true affects performance as it incurs the score computation on
+	  ///          each result. Also, setting this true automatically sets
+	  ///          <code>trackDocScores</code> to true as well. </param>
+	  /// <param name="docsScoredInOrder">
+	  ///          specifies whether documents are scored in doc Id order or not by
+	  ///          the given <seealso cref="Scorer"/> in <seealso cref="#setScorer(Scorer)"/>. </param>
+	  /// <returns> a <seealso cref="TopFieldCollector"/> instance which will sort the results by
+	  ///         the sort criteria. </returns>
+	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+	  public static TopFieldCollector Create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
+	  {
+		return Create(sort, numHits, null, fillFields, trackDocScores, trackMaxScore, docsScoredInOrder);
+	  }
+
+	  /// <summary>
+	  /// Creates a new <seealso cref="TopFieldCollector"/> from the given
+	  /// arguments.
+	  /// 
+	  /// <p><b>NOTE</b>: The instances returned by this method
+	  /// pre-allocate a full array of length
+	  /// <code>numHits</code>.
+	  /// </summary>
+	  /// <param name="sort">
+	  ///          the sort criteria (SortFields). </param>
+	  /// <param name="numHits">
+	  ///          the number of results to collect. </param>
+	  /// <param name="after">
+	  ///          only hits after this FieldDoc will be collected </param>
+	  /// <param name="fillFields">
+	  ///          specifies whether the actual field values should be returned on
+	  ///          the results (FieldDoc). </param>
+	  /// <param name="trackDocScores">
+	  ///          specifies whether document scores should be tracked and set on the
+	  ///          results. Note that if set to false, then the results' scores will
+	  ///          be set to Float.NaN. Setting this to true affects performance, as
+	  ///          it incurs the score computation on each competitive result.
+	  ///          Therefore if document scores are not required by the application,
+	  ///          it is recommended to set it to false. </param>
+	  /// <param name="trackMaxScore">
+	  ///          specifies whether the query's maxScore should be tracked and set
+	  ///          on the resulting <seealso cref="TopDocs"/>. Note that if set to false,
+	  ///          <seealso cref="TopDocs#getMaxScore()"/> returns Float.NaN. Setting this to
+	  ///          true affects performance as it incurs the score computation on
+	  ///          each result. Also, setting this true automatically sets
+	  ///          <code>trackDocScores</code> to true as well. </param>
+	  /// <param name="docsScoredInOrder">
+	  ///          specifies whether documents are scored in doc Id order or not by
+	  ///          the given <seealso cref="Scorer"/> in <seealso cref="#setScorer(Scorer)"/>. </param>
+	  /// <returns> a <seealso cref="TopFieldCollector"/> instance which will sort the results by
+	  ///         the sort criteria. </returns>
+	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+	  public static TopFieldCollector Create(Sort sort, int numHits, FieldDoc after, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
+	  {
+
+		if (sort.Fields.Length == 0)
+		{
+		  throw new System.ArgumentException("Sort must contain at least one field");
+		}
+
+		if (numHits <= 0)
+		{
+		  throw new System.ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
+		}
+
+		FieldValueHitQueue<Entry> queue = FieldValueHitQueue.Create(sort.Fields, numHits);
+
+		if (after == null)
+		{
+		  if (queue.Comparators.Length == 1)
+		  {
+			if (docsScoredInOrder)
+			{
+			  if (trackMaxScore)
+			  {
+				return new OneComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+			  }
+			  else if (trackDocScores)
+			  {
+				return new OneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+			  }
+			  else
+			  {
+				return new OneComparatorNonScoringCollector(queue, numHits, fillFields);
+			  }
+			}
+			else
+			{
+			  if (trackMaxScore)
+			  {
+				return new OutOfOrderOneComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+			  }
+			  else if (trackDocScores)
+			  {
+				return new OutOfOrderOneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+			  }
+			  else
+			  {
+				return new OutOfOrderOneComparatorNonScoringCollector(queue, numHits, fillFields);
+			  }
+			}
+		  }
+
+		  // multiple comparators.
+		  if (docsScoredInOrder)
+		  {
+			if (trackMaxScore)
+			{
+			  return new MultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+			}
+			else if (trackDocScores)
+			{
+			  return new MultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+			}
+			else
+			{
+			  return new MultiComparatorNonScoringCollector(queue, numHits, fillFields);
+			}
+		  }
+		  else
+		  {
+			if (trackMaxScore)
+			{
+			  return new OutOfOrderMultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields);
+			}
+			else if (trackDocScores)
+			{
+			  return new OutOfOrderMultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields);
+			}
+			else
+			{
+			  return new OutOfOrderMultiComparatorNonScoringCollector(queue, numHits, fillFields);
+			}
+		  }
+		}
+		else
+		{
+		  if (after.Fields == null)
+		  {
+			throw new System.ArgumentException("after.fields wasn't set; you must pass fillFields=true for the previous search");
+		  }
+
+		  if (after.Fields.Length != sort.Sort.Length)
+		  {
+			throw new System.ArgumentException("after.fields has " + after.Fields.Length + " values but sort has " + sort.Sort.Length);
+		  }
+
+		  return new PagingFieldCollector(queue, after, numHits, fillFields, trackDocScores, trackMaxScore);
+		}
+	  }
+
+	  internal void Add(int slot, int doc, float score)
+	  {
+		Bottom = Pq.Add(new Entry(slot, DocBase + doc, score));
+		QueueFull = TotalHits_Renamed == NumHits;
+	  }
+
+	  /*
+	   * Only the following callback methods need to be overridden since
+	   * topDocs(int, int) calls them to return the results.
+	   */
+
+	  protected internal override void PopulateResults(ScoreDoc[] results, int howMany)
+	  {
+		if (FillFields)
+		{
+		  // avoid casting if unnecessary.
+		  FieldValueHitQueue<Entry> queue = (FieldValueHitQueue<Entry>) Pq;
+		  for (int i = howMany - 1; i >= 0; i--)
+		  {
+			results[i] = queue.FillFields(queue.pop());
+		  }
+		}
+		else
+		{
+		  for (int i = howMany - 1; i >= 0; i--)
+		  {
+			Entry entry = Pq.Pop();
+			results[i] = new FieldDoc(entry.Doc, entry.Score);
+		  }
+		}
+	  }
+
+	  protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+	  {
+		if (results == null)
+		{
+		  results = EMPTY_SCOREDOCS;
+		  // Set maxScore to NaN, in case this is a maxScore tracking collector.
+		  MaxScore = float.NaN;
+		}
+
+		// If this is a maxScoring tracking collector and there were no results, 
+		return new TopFieldDocs(TotalHits_Renamed, results, ((FieldValueHitQueue<Entry>) Pq).Fields, MaxScore);
+	  }
+
+	  public override bool AcceptsDocsOutOfOrder()
+	  {
+		return false;
+	  }
+	}
+
 }

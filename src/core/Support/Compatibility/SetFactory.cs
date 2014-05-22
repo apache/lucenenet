@@ -1,4 +1,4 @@
-/* 
+﻿/* 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ namespace Lucene.Net.Support.Compatibility
 {
     public static class SetFactory
     {
-        public static ISet<T> CreateHashSet<T>()
+        public static ISet<T> GetSet<T>()
         {
 #if NET35
                 return new WrappedHashSet<T>();
@@ -30,7 +30,7 @@ namespace Lucene.Net.Support.Compatibility
 #endif
         }
 
-        public static ISet<T> CreateHashSet<T>(IEnumerable<T> other)
+        public static ISet<T> GetSet<T>(IEnumerable<T> other)
         {
 #if NET35
                 return new WrappedHashSet<T>(other);

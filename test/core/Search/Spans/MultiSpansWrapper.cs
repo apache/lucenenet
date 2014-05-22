@@ -1,0 +1,212 @@
+using System.Diagnostics;
+using System.Collections.Generic;
+
+namespace Lucene.Net.Search.Spans
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
+	using ReaderUtil = Lucene.Net.Index.ReaderUtil;
+	using Term = Lucene.Net.Index.Term;
+	using TermContext = Lucene.Net.Index.TermContext;
+
+	/// 
+	/// <summary>
+	/// A wrapper to perform span operations on a non-leaf reader context
+	/// <p>
+	/// NOTE: this should be used for testing purposes only
+	/// @lucene.internal
+	/// </summary>
+	public class MultiSpansWrapper : Spans // can't be package private due to payloads
+	{
+
+	  private SpanQuery Query;
+	  private IList<AtomicReaderContext> Leaves;
+	  private int LeafOrd = 0;
+	  private Spans Current;
+	  private IDictionary<Term, TermContext> TermContexts;
+	  private readonly int NumLeaves;
+
+	  private MultiSpansWrapper(IList<AtomicReaderContext> leaves, SpanQuery query, IDictionary<Term, TermContext> termContexts)
+	  {
+		this.Query = query;
+		this.Leaves = leaves;
+		this.NumLeaves = leaves.Count;
+		this.TermContexts = termContexts;
+	  }
+
+	  public static Spans Wrap(IndexReaderContext topLevelReaderContext, SpanQuery query)
+	  {
+		IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
+		SortedSet<Term> terms = new SortedSet<Term>();
+		query.extractTerms(terms);
+		foreach (Term term in terms)
+		{
+		  termContexts[term] = TermContext.build(topLevelReaderContext, term);
+		}
+		IList<AtomicReaderContext> leaves = topLevelReaderContext.leaves();
+		if (leaves.Count == 1)
+		{
+		  AtomicReaderContext ctx = leaves[0];
+		  return query.getSpans(ctx, ctx.reader().LiveDocs, termContexts);
+		}
+		return new MultiSpansWrapper(leaves, query, termContexts);
+	  }
+
+	  public override bool Next()
+	  {
+		if (LeafOrd >= NumLeaves)
+		{
+		  return false;
+		}
+		if (Current == null)
+		{
+		  AtomicReaderContext ctx = Leaves[LeafOrd];
+		  Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		}
+		while (true)
+		{
+		  if (Current.next())
+		  {
+			return true;
+		  }
+		  if (++LeafOrd < NumLeaves)
+		  {
+			AtomicReaderContext ctx = Leaves[LeafOrd];
+			Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		  }
+		  else
+		  {
+			Current = null;
+			break;
+		  }
+		}
+		return false;
+	  }
+
+	  public override bool SkipTo(int target)
+	  {
+		if (LeafOrd >= NumLeaves)
+		{
+		  return false;
+		}
+
+		int subIndex = ReaderUtil.subIndex(target, Leaves);
+		Debug.Assert(subIndex >= LeafOrd);
+		if (subIndex != LeafOrd)
+		{
+		  AtomicReaderContext ctx = Leaves[subIndex];
+		  Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		  LeafOrd = subIndex;
+		}
+		else if (Current == null)
+		{
+		  AtomicReaderContext ctx = Leaves[LeafOrd];
+		  Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		}
+		while (true)
+		{
+		  if (target < Leaves[LeafOrd].docBase)
+		  {
+			// target was in the previous slice
+			if (Current.next())
+			{
+			  return true;
+			}
+		  }
+		  else if (Current.skipTo(target - Leaves[LeafOrd].docBase))
+		  {
+			return true;
+		  }
+		  if (++LeafOrd < NumLeaves)
+		  {
+			AtomicReaderContext ctx = Leaves[LeafOrd];
+			Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		  }
+		  else
+		  {
+			Current = null;
+			break;
+		  }
+		}
+
+		return false;
+	  }
+
+	  public override int Doc()
+	  {
+		if (Current == null)
+		{
+		  return DocIdSetIterator.NO_MORE_DOCS;
+		}
+		return Current.doc() + Leaves[LeafOrd].docBase;
+	  }
+
+	  public override int Start()
+	  {
+		if (Current == null)
+		{
+		  return DocIdSetIterator.NO_MORE_DOCS;
+		}
+		return Current.start();
+	  }
+
+	  public override int End()
+	  {
+		if (Current == null)
+		{
+		  return DocIdSetIterator.NO_MORE_DOCS;
+		}
+		return Current.end();
+	  }
+
+	  public override ICollection<sbyte[]> Payload
+	  {
+		  get
+		  {
+			if (Current == null)
+			{
+			  return Collections.emptyList();
+			}
+			return Current.Payload;
+		  }
+	  }
+
+	  public override bool PayloadAvailable
+	  {
+		  get
+		  {
+			if (Current == null)
+			{
+			  return false;
+			}
+			return Current.PayloadAvailable;
+		  }
+	  }
+
+	  public override long Cost()
+	  {
+		return int.MaxValue; // just for tests
+	  }
+
+	}
+
+}

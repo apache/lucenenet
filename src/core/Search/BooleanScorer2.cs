@@ -1,417 +1,390 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-    
-    /* See the description in BooleanScorer.java, comparing
-    * BooleanScorer & BooleanScorer2 */
-    
-    /// <summary>An alternative to BooleanScorer that also allows a minimum number
-    /// of optional scorers that should match.
-    /// <br/>Implements skipTo(), and has no limitations on the numbers of added scorers.
-    /// <br/>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
-    /// </summary>
-    class BooleanScorer2 : Scorer
-    {
-        private class AnonymousClassDisjunctionSumScorer:DisjunctionSumScorer
-        {
-            private void  InitBlock(BooleanScorer2 enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private BooleanScorer2 enclosingInstance;
-            public BooleanScorer2 Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal AnonymousClassDisjunctionSumScorer(BooleanScorer2 enclosingInstance, System.Collections.Generic.IList<Scorer> scorers, int minNrShouldMatch)
-                : base(scorers, minNrShouldMatch)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private int lastScoredDoc = - 1;
-            // Save the score of lastScoredDoc, so that we don't compute it more than
-            // once in score().
-            private float lastDocScore = System.Single.NaN;
-            public override float Score()
-            {
-                int doc = DocID();
-                if (doc >= lastScoredDoc)
-                {
-                    if (doc > lastScoredDoc)
-                    {
-                        lastDocScore = base.Score();
-                        lastScoredDoc = doc;
-                    }
-                    Enclosing_Instance.coordinator.nrMatchers += base.nrMatchers;
-                }
-                return lastDocScore;
-            }
-        }
-        private class AnonymousClassConjunctionScorer:ConjunctionScorer
-        {
-            private void  InitBlock(int requiredNrMatchers, BooleanScorer2 enclosingInstance)
-            {
-                this.requiredNrMatchers = requiredNrMatchers;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private int requiredNrMatchers;
-            private BooleanScorer2 enclosingInstance;
-            public BooleanScorer2 Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal AnonymousClassConjunctionScorer(int requiredNrMatchers, BooleanScorer2 enclosingInstance, Lucene.Net.Search.Similarity defaultSimilarity, System.Collections.Generic.IList<Scorer> requiredScorers)
-                : base(defaultSimilarity, requiredScorers)
-            {
-                InitBlock(requiredNrMatchers, enclosingInstance);
-            }
-            private int lastScoredDoc = - 1;
-            // Save the score of lastScoredDoc, so that we don't compute it more than
-            // once in score().
-            private float lastDocScore = System.Single.NaN;
-            public override float Score()
-            {
-                int doc = DocID();
-                if (doc >= lastScoredDoc)
-                {
-                    if (doc > lastScoredDoc)
-                    {
-                        lastDocScore = base.Score();
-                        lastScoredDoc = doc;
-                    }
-                    Enclosing_Instance.coordinator.nrMatchers += requiredNrMatchers;
-                }
-                // All scorers match, so defaultSimilarity super.score() always has 1 as
-                // the coordination factor.
-                // Therefore the sum of the scores of the requiredScorers
-                // is used as score.
-                return lastDocScore;
-            }
-        }
 
-        private System.Collections.Generic.List<Scorer> requiredScorers;
-        private System.Collections.Generic.List<Scorer> optionalScorers;
-        private System.Collections.Generic.List<Scorer> prohibitedScorers;
-        
-        private class Coordinator
-        {
-            public Coordinator(BooleanScorer2 enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(BooleanScorer2 enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private BooleanScorer2 enclosingInstance;
-            public BooleanScorer2 Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal float[] coordFactors = null;
-            internal int maxCoord = 0; // to be increased for each non prohibited scorer
-            internal int nrMatchers; // to be increased by score() of match counting scorers.
-            
-            internal virtual void  Init()
-            {
-                // use after all scorers have been added.
-                coordFactors = new float[maxCoord + 1];
-                Similarity sim = Enclosing_Instance.Similarity;
-                for (int i = 0; i <= maxCoord; i++)
-                {
-                    coordFactors[i] = sim.Coord(i, maxCoord);
-                }
-            }
-        }
-        
-        private Coordinator coordinator;
-        
-        /// <summary>The scorer to which all scoring will be delegated,
-        /// except for computing and using the coordination factor.
-        /// </summary>
-        private Scorer countingSumScorer;
-        
-        /// <summary>The number of optionalScorers that need to match (if there are any) </summary>
-        private int minNrShouldMatch;
-        
-        private int doc = - 1;
-        
-        /// <summary> Creates a <see cref="Scorer" /> with the given similarity and lists of required,
-        /// prohibited and optional scorers. In no required scorers are added, at least
-        /// one of the optional scorers will have to match during the search.
-        /// 
-        /// </summary>
-        /// <param name="similarity">The similarity to be used.
-        /// </param>
-        /// <param name="minNrShouldMatch">The minimum number of optional added scorers that should match
-        /// during the search. In case no required scorers are added, at least
-        /// one of the optional scorers will have to match during the search.
-        /// </param>
-        /// <param name="required">the list of required scorers.
-        /// </param>
-        /// <param name="prohibited">the list of prohibited scorers.
-        /// </param>
-        /// <param name="optional">the list of optional scorers.
-        /// </param>
-        public BooleanScorer2(Similarity similarity, int minNrShouldMatch, 
-                                System.Collections.Generic.List<Scorer> required,
-                                System.Collections.Generic.List<Scorer> prohibited,
-                                System.Collections.Generic.List<Scorer> optional)
-            : base(similarity)
-        {
-            if (minNrShouldMatch < 0)
-            {
-                throw new System.ArgumentException("Minimum number of optional scorers should not be negative");
-            }
-            coordinator = new Coordinator(this);
-            this.minNrShouldMatch = minNrShouldMatch;
-            
-            optionalScorers = optional;
-            coordinator.maxCoord += optional.Count;
-            
-            requiredScorers = required;
-            coordinator.maxCoord += required.Count;
-            
-            prohibitedScorers = prohibited;
-            
-            coordinator.Init();
-            countingSumScorer = MakeCountingSumScorer();
-        }
-        
-        /// <summary>Count a scorer as a single match. </summary>
-        private class SingleMatchScorer:Scorer
-        {
-            private void  InitBlock(BooleanScorer2 enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private BooleanScorer2 enclosingInstance;
-            public BooleanScorer2 Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Scorer scorer;
-            private int lastScoredDoc = - 1;
-            // Save the score of lastScoredDoc, so that we don't compute it more than
-            // once in score().
-            private float lastDocScore = System.Single.NaN;
-            
-            internal SingleMatchScorer(BooleanScorer2 enclosingInstance, Scorer scorer):base(scorer.Similarity)
-            {
-                InitBlock(enclosingInstance);
-                this.scorer = scorer;
-            }
-            public override float Score()
-            {
-                int doc = DocID();
-                if (doc >= lastScoredDoc)
-                {
-                    if (doc > lastScoredDoc)
-                    {
-                        lastDocScore = scorer.Score();
-                        lastScoredDoc = doc;
-                    }
-                    Enclosing_Instance.coordinator.nrMatchers++;
-                }
-                return lastDocScore;
-            }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            public override int DocID()
-            {
-                return scorer.DocID();
-            }
 
-            public override int NextDoc()
-            {
-                return scorer.NextDoc();
-            }
+	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
+	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
-            public override int Advance(int target)
-            {
-                return scorer.Advance(target);
-            }
-        }
-        
-        private Scorer CountingDisjunctionSumScorer(System.Collections.Generic.List<Scorer> scorers, int minNrShouldMatch)
-        {
-            // each scorer from the list counted as a single matcher
-            return new AnonymousClassDisjunctionSumScorer(this, scorers, minNrShouldMatch);
-        }
-        
-        private static readonly Similarity defaultSimilarity;
-        
-        private Scorer CountingConjunctionSumScorer(System.Collections.Generic.List<Scorer> requiredScorers)
-        {
-            // each scorer from the list counted as a single matcher
-            int requiredNrMatchers = requiredScorers.Count;
-            return new AnonymousClassConjunctionScorer(requiredNrMatchers, this, defaultSimilarity, requiredScorers);
-        }
-        
-        private Scorer DualConjunctionSumScorer(Scorer req1, Scorer req2)
-        {
-            // non counting.
-            return new ConjunctionScorer(defaultSimilarity, new Scorer[]{req1, req2});
-            // All scorers match, so defaultSimilarity always has 1 as
-            // the coordination factor.
-            // Therefore the sum of the scores of two scorers
-            // is used as score.
-        }
-        
-        /// <summary>Returns the scorer to be used for match counting and score summing.
-        /// Uses requiredScorers, optionalScorers and prohibitedScorers.
-        /// </summary>
-        private Scorer MakeCountingSumScorer()
-        {
-            // each scorer counted as a single matcher
-            return (requiredScorers.Count == 0)?MakeCountingSumScorerNoReq():MakeCountingSumScorerSomeReq();
-        }
-        
-        private Scorer MakeCountingSumScorerNoReq()
-        {
-            // No required scorers
-            // minNrShouldMatch optional scorers are required, but at least 1
-            int nrOptRequired = (minNrShouldMatch < 1)?1:minNrShouldMatch;
-            Scorer requiredCountingSumScorer;
-            if (optionalScorers.Count > nrOptRequired)
-                requiredCountingSumScorer = CountingDisjunctionSumScorer(optionalScorers, nrOptRequired);
-            else if (optionalScorers.Count == 1)
-                requiredCountingSumScorer = new SingleMatchScorer(this, optionalScorers[0]);
-            else
-                requiredCountingSumScorer = CountingConjunctionSumScorer(optionalScorers);
-            return AddProhibitedScorers(requiredCountingSumScorer);
-        }
-        
-        private Scorer MakeCountingSumScorerSomeReq()
-        {
-            // At least one required scorer.
-            if (optionalScorers.Count == minNrShouldMatch)
-            {
-                // all optional scorers also required.
-                var allReq = new System.Collections.Generic.List<Scorer>(requiredScorers);
-                allReq.AddRange(optionalScorers);
-                return AddProhibitedScorers(CountingConjunctionSumScorer(allReq));
-            }
-            else
-            {
-                // optionalScorers.size() > minNrShouldMatch, and at least one required scorer
-                Scorer requiredCountingSumScorer = 
-                                    requiredScorers.Count == 1
-                                    ? new SingleMatchScorer(this, requiredScorers[0])
-                                    : CountingConjunctionSumScorer(requiredScorers);
-                if (minNrShouldMatch > 0)
-                {
-                    // use a required disjunction scorer over the optional scorers
-                    return AddProhibitedScorers(DualConjunctionSumScorer(requiredCountingSumScorer, CountingDisjunctionSumScorer(optionalScorers, minNrShouldMatch)));
-                }
-                else
-                {
-                    // minNrShouldMatch == 0
-                    return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), 
-                                               optionalScorers.Count == 1
-                                               ? new SingleMatchScorer(this, optionalScorers[0])
-                                               : CountingDisjunctionSumScorer(optionalScorers, 1));
-                }
-            }
-        }
-        
-        /// <summary>Returns the scorer to be used for match counting and score summing.
-        /// Uses the given required scorer and the prohibitedScorers.
-        /// </summary>
-        /// <param name="requiredCountingSumScorer">A required scorer already built.
-        /// </param>
-        private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
-        {
-            return (prohibitedScorers.Count == 0) 
-                   ? requiredCountingSumScorer
-                   : new ReqExclScorer(requiredCountingSumScorer, 
-                                       ((prohibitedScorers.Count == 1)
-                                        ? prohibitedScorers[0]
-                                        : new DisjunctionSumScorer(prohibitedScorers)));
-        }
-        
-        /// <summary>Scores and collects all matching documents.</summary>
-        /// <param name="collector">The collector to which all matching documents are passed through.
-        /// </param>
-        public override void  Score(Collector collector)
-        {
-            collector.SetScorer(this);
-            while ((doc = countingSumScorer.NextDoc()) != NO_MORE_DOCS)
-            {
-                collector.Collect(doc);
-            }
-        }
-        
-        public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
-        {
-            doc = firstDocID;
-            collector.SetScorer(this);
-            while (doc < max)
-            {
-                collector.Collect(doc);
-                doc = countingSumScorer.NextDoc();
-            }
-            return doc != NO_MORE_DOCS;
-        }
-        
-        public override int DocID()
-        {
-            return doc;
-        }
-        
-        public override int NextDoc()
-        {
-            return doc = countingSumScorer.NextDoc();
-        }
-        
-        public override float Score()
-        {
-            coordinator.nrMatchers = 0;
-            float sum = countingSumScorer.Score();
-            return sum * coordinator.coordFactors[coordinator.nrMatchers];
-        }
-        
-        public override int Advance(int target)
-        {
-            return doc = countingSumScorer.Advance(target);
-        }
-        
-        static BooleanScorer2()
-        {
-            defaultSimilarity = Search.Similarity.Default;
-        }
-    }
+	/* See the description in BooleanScorer.java, comparing
+	 * BooleanScorer & BooleanScorer2 */
+
+	/// <summary>
+	/// An alternative to BooleanScorer that also allows a minimum number
+	/// of optional scorers that should match.
+	/// <br>Implements skipTo(), and has no limitations on the numbers of added scorers.
+	/// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
+	/// </summary>
+	internal class BooleanScorer2 : Scorer
+	{
+
+	  private readonly IList<Scorer> RequiredScorers;
+	  private readonly IList<Scorer> OptionalScorers;
+	  private readonly IList<Scorer> ProhibitedScorers;
+
+	  private class Coordinator
+	  {
+		  private readonly BooleanScorer2 OuterInstance;
+
+		internal readonly float[] CoordFactors;
+
+		internal Coordinator(BooleanScorer2 outerInstance, int maxCoord, bool disableCoord)
+		{
+			this.OuterInstance = outerInstance;
+		  CoordFactors = new float[outerInstance.OptionalScorers.Count + outerInstance.RequiredScorers.Count + 1];
+		  for (int i = 0; i < CoordFactors.Length; i++)
+		  {
+			CoordFactors[i] = disableCoord ? 1.0f : ((BooleanWeight)outerInstance.Weight_Renamed).Coord(i, maxCoord);
+		  }
+		}
+
+		internal int NrMatchers; // to be increased by score() of match counting scorers.
+	  }
+
+	  private readonly Coordinator Coordinator;
+
+	  /// <summary>
+	  /// The scorer to which all scoring will be delegated,
+	  /// except for computing and using the coordination factor.
+	  /// </summary>
+	  private readonly Scorer CountingSumScorer;
+
+	  /// <summary>
+	  /// The number of optionalScorers that need to match (if there are any) </summary>
+	  private readonly int MinNrShouldMatch;
+
+	  private int Doc = -1;
+
+	  /// <summary>
+	  /// Creates a <seealso cref="Scorer"/> with the given similarity and lists of required,
+	  /// prohibited and optional scorers. In no required scorers are added, at least
+	  /// one of the optional scorers will have to match during the search.
+	  /// </summary>
+	  /// <param name="weight">
+	  ///          The BooleanWeight to be used. </param>
+	  /// <param name="disableCoord">
+	  ///          If this parameter is true, coordination level matching 
+	  ///          (<seealso cref="Similarity#coord(int, int)"/>) is not used. </param>
+	  /// <param name="minNrShouldMatch">
+	  ///          The minimum number of optional added scorers that should match
+	  ///          during the search. In case no required scorers are added, at least
+	  ///          one of the optional scorers will have to match during the search. </param>
+	  /// <param name="required">
+	  ///          the list of required scorers. </param>
+	  /// <param name="prohibited">
+	  ///          the list of prohibited scorers. </param>
+	  /// <param name="optional">
+	  ///          the list of optional scorers. </param>
+	  public BooleanScorer2(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<Scorer> required, IList<Scorer> prohibited, IList<Scorer> optional, int maxCoord) : base(weight)
+	  {
+		if (minNrShouldMatch < 0)
+		{
+		  throw new System.ArgumentException("Minimum number of optional scorers should not be negative");
+		}
+		this.MinNrShouldMatch = minNrShouldMatch;
+
+		OptionalScorers = optional;
+		RequiredScorers = required;
+		ProhibitedScorers = prohibited;
+		Coordinator = new Coordinator(this, maxCoord, disableCoord);
+
+		CountingSumScorer = MakeCountingSumScorer(disableCoord);
+	  }
+
+	  /// <summary>
+	  /// Count a scorer as a single match. </summary>
+	  private class SingleMatchScorer : Scorer
+	  {
+		  private readonly BooleanScorer2 OuterInstance;
+
+		internal Scorer Scorer;
+		internal int LastScoredDoc = -1;
+		// Save the score of lastScoredDoc, so that we don't compute it more than
+		// once in score().
+		internal float LastDocScore = float.NaN;
+
+		internal SingleMatchScorer(BooleanScorer2 outerInstance, Scorer scorer) : base(scorer.Weight_Renamed)
+		{
+			this.OuterInstance = outerInstance;
+		  this.Scorer = scorer;
+		}
+
+		public override float Score()
+		{
+		  int doc = DocID();
+		  if (doc >= LastScoredDoc)
+		  {
+			if (doc > LastScoredDoc)
+			{
+			  LastDocScore = Scorer.Score();
+			  LastScoredDoc = doc;
+			}
+			outerInstance.Coordinator.NrMatchers++;
+		  }
+		  return LastDocScore;
+		}
+
+		public override int Freq()
+		{
+		  return 1;
+		}
+
+		public override int DocID()
+		{
+		  return Scorer.DocID();
+		}
+
+		public override int NextDoc()
+		{
+		  return Scorer.NextDoc();
+		}
+
+		public override int Advance(int target)
+		{
+		  return Scorer.Advance(target);
+		}
+
+		public override long Cost()
+		{
+		  return Scorer.Cost();
+		}
+	  }
+
+	  private Scorer CountingDisjunctionSumScorer(IList<Scorer> scorers, int minNrShouldMatch)
+	  {
+		// each scorer from the list counted as a single matcher
+		if (minNrShouldMatch > 1)
+		{
+		  return new MinShouldMatchSumScorerAnonymousInnerClassHelper(this, Weight_Renamed, scorers, minNrShouldMatch);
+		}
+		else
+		{
+		  // we pass null for coord[] since we coordinate ourselves and override score()
+		  return new DisjunctionSumScorerAnonymousInnerClassHelper(this, Weight_Renamed, scorers.ToArray());
+		}
+	  }
+
+	  private class MinShouldMatchSumScorerAnonymousInnerClassHelper : MinShouldMatchSumScorer
+	  {
+		  private readonly BooleanScorer2 OuterInstance;
+
+		  public MinShouldMatchSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Lucene.Net.Search.Weight weight, IList<Scorer> scorers, int minNrShouldMatch) : base(weight, scorers, minNrShouldMatch)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  public override float Score()
+		  {
+			OuterInstance.Coordinator.NrMatchers += base.nrMatchers;
+			return base.Score();
+		  }
+	  }
+
+	  private class DisjunctionSumScorerAnonymousInnerClassHelper : DisjunctionSumScorer
+	  {
+		  private readonly BooleanScorer2 OuterInstance;
+
+		  public DisjunctionSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Lucene.Net.Search.Weight weight, UnknownType toArray) : base(weight, toArray, null)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  public override float Score()
+		  {
+			OuterInstance.Coordinator.NrMatchers += base.nrMatchers;
+			return (float) base.score;
+		  }
+	  }
+
+	  private Scorer CountingConjunctionSumScorer(bool disableCoord, IList<Scorer> requiredScorers)
+	  {
+		// each scorer from the list counted as a single matcher
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int requiredNrMatchers = requiredScorers.size();
+		int requiredNrMatchers = requiredScorers.Count;
+		return new ConjunctionScorerAnonymousInnerClassHelper(this, Weight_Renamed, requiredScorers.ToArray(), requiredNrMatchers);
+	  }
+
+	  private class ConjunctionScorerAnonymousInnerClassHelper : ConjunctionScorer
+	  {
+		  private readonly BooleanScorer2 OuterInstance;
+
+		  private int RequiredNrMatchers;
+
+		  public ConjunctionScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Lucene.Net.Search.Weight weight, UnknownType toArray, int requiredNrMatchers) : base(weight, toArray)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.RequiredNrMatchers = requiredNrMatchers;
+			  lastScoredDoc = -1;
+			  lastDocScore = float.NaN;
+		  }
+
+		  private int lastScoredDoc;
+		  // Save the score of lastScoredDoc, so that we don't compute it more than
+		  // once in score().
+		  private float lastDocScore;
+		  public override float Score()
+		  {
+			int doc = outerInstance.DocID();
+			if (doc >= lastScoredDoc)
+			{
+			  if (doc > lastScoredDoc)
+			  {
+				lastDocScore = base.Score();
+				lastScoredDoc = doc;
+			  }
+			  OuterInstance.Coordinator.NrMatchers += RequiredNrMatchers;
+			}
+			// All scorers match, so defaultSimilarity super.score() always has 1 as
+			// the coordination factor.
+			// Therefore the sum of the scores of the requiredScorers
+			// is used as score.
+			return lastDocScore;
+		  }
+	  }
+
+	  private Scorer DualConjunctionSumScorer(bool disableCoord, Scorer req1, Scorer req2) // non counting.
+	  {
+		return new ConjunctionScorer(Weight_Renamed, new Scorer[] {req1, req2});
+		// All scorers match, so defaultSimilarity always has 1 as
+		// the coordination factor.
+		// Therefore the sum of the scores of two scorers
+		// is used as score.
+	  }
+
+	  /// <summary>
+	  /// Returns the scorer to be used for match counting and score summing.
+	  /// Uses requiredScorers, optionalScorers and prohibitedScorers.
+	  /// </summary>
+	  private Scorer MakeCountingSumScorer(bool disableCoord) // each scorer counted as a single matcher
+	  {
+		return (RequiredScorers.Count == 0) ? MakeCountingSumScorerNoReq(disableCoord) : MakeCountingSumScorerSomeReq(disableCoord);
+	  }
+
+	  private Scorer MakeCountingSumScorerNoReq(bool disableCoord) // No required scorers
+	  {
+		// minNrShouldMatch optional scorers are required, but at least 1
+		int nrOptRequired = (MinNrShouldMatch < 1) ? 1 : MinNrShouldMatch;
+		Scorer requiredCountingSumScorer;
+		if (OptionalScorers.Count > nrOptRequired)
+		{
+		  requiredCountingSumScorer = CountingDisjunctionSumScorer(OptionalScorers, nrOptRequired);
+		}
+		else if (OptionalScorers.Count == 1)
+		{
+		  requiredCountingSumScorer = new SingleMatchScorer(this, OptionalScorers[0]);
+		}
+		else
+		{
+		  requiredCountingSumScorer = CountingConjunctionSumScorer(disableCoord, OptionalScorers);
+		}
+		return AddProhibitedScorers(requiredCountingSumScorer);
+	  }
+
+	  private Scorer MakeCountingSumScorerSomeReq(bool disableCoord) // At least one required scorer.
+	  {
+		if (OptionalScorers.Count == MinNrShouldMatch) // all optional scorers also required.
+		{
+		  List<Scorer> allReq = new List<Scorer>(RequiredScorers);
+		  allReq.AddRange(OptionalScorers);
+		  return AddProhibitedScorers(CountingConjunctionSumScorer(disableCoord, allReq));
+		} // optionalScorers.size() > minNrShouldMatch, and at least one required scorer
+		else
+		{
+		  Scorer requiredCountingSumScorer = RequiredScorers.Count == 1 ? new SingleMatchScorer(this, RequiredScorers[0]) : CountingConjunctionSumScorer(disableCoord, RequiredScorers);
+		  if (MinNrShouldMatch > 0) // use a required disjunction scorer over the optional scorers
+		  {
+			return AddProhibitedScorers(DualConjunctionSumScorer(disableCoord, requiredCountingSumScorer, CountingDisjunctionSumScorer(OptionalScorers, MinNrShouldMatch))); // non counting
+		  } // minNrShouldMatch == 0
+		  else
+		  {
+			return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), OptionalScorers.Count == 1 ? new SingleMatchScorer(this, OptionalScorers[0])
+							// require 1 in combined, optional scorer.
+							: CountingDisjunctionSumScorer(OptionalScorers, 1));
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Returns the scorer to be used for match counting and score summing.
+	  /// Uses the given required scorer and the prohibitedScorers. </summary>
+	  /// <param name="requiredCountingSumScorer"> A required scorer already built. </param>
+	  private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
+	  {
+		return (ProhibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((ProhibitedScorers.Count == 1) ? ProhibitedScorers[0] : new MinShouldMatchSumScorer(Weight_Renamed, ProhibitedScorers))); // no prohibited
+	  }
+
+	  public override int DocID()
+	  {
+		return Doc;
+	  }
+
+	  public override int NextDoc()
+	  {
+		return Doc = CountingSumScorer.NextDoc();
+	  }
+
+	  public override float Score()
+	  {
+		Coordinator.NrMatchers = 0;
+		float sum = CountingSumScorer.Score();
+		return sum * Coordinator.CoordFactors[Coordinator.NrMatchers];
+	  }
+
+	  public override int Freq()
+	  {
+		return CountingSumScorer.Freq();
+	  }
+
+	  public override int Advance(int target)
+	  {
+		return Doc = CountingSumScorer.Advance(target);
+	  }
+
+	  public override long Cost()
+	  {
+		return CountingSumScorer.Cost();
+	  }
+
+	  public override ICollection<ChildScorer> Children
+	  {
+		  get
+		  {
+			List<ChildScorer> children = new List<ChildScorer>();
+			foreach (Scorer s in OptionalScorers)
+			{
+			  children.Add(new ChildScorer(s, "SHOULD"));
+			}
+			foreach (Scorer s in ProhibitedScorers)
+			{
+			  children.Add(new ChildScorer(s, "MUST_NOT"));
+			}
+			foreach (Scorer s in RequiredScorers)
+			{
+			  children.Add(new ChildScorer(s, "MUST"));
+			}
+			return children;
+		  }
+	  }
+	}
+
 }

@@ -1,126 +1,122 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-
-using NUnit.Framework;
-
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Lucene.Net.Documents;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Search
 {
-    
-    /// <summary>Document boost unit test.
-    /// 
-    /// 
-    /// </summary>
-    /// <version>  $Revision: 787772 $
-    /// </version>
-    [TestFixture]
-    public class TestDocBoost:LuceneTestCase
-    {
-        private class AnonymousClassCollector:Collector
-        {
-            public AnonymousClassCollector(float[] scores, TestDocBoost enclosingInstance)
-            {
-                InitBlock(scores, enclosingInstance);
-            }
-            private void  InitBlock(float[] scores, TestDocBoost enclosingInstance)
-            {
-                this.scores = scores;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private float[] scores;
-            private TestDocBoost enclosingInstance;
-            public TestDocBoost Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private int base_Renamed = 0;
-            private Scorer scorer;
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
-            public override void  Collect(int doc)
-            {
-                scores[doc + base_Renamed] = scorer.Score();
-            }
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                base_Renamed = docBase;
-            }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        
-        [Test]
-        public virtual void  TestDocBoost_Renamed()
-        {
-            RAMDirectory store = new RAMDirectory();
-            IndexWriter writer = new IndexWriter(store, new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            
-            IFieldable f1 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-            IFieldable f2 = new Field("field", "word", Field.Store.YES, Field.Index.ANALYZED);
-            f2.Boost = 2.0f;
-            
-            Document d1 = new Document();
-            Document d2 = new Document();
-            Document d3 = new Document();
-            Document d4 = new Document();
-            d3.Boost = 3.0f;
-            d4.Boost = 2.0f;
-            
-            d1.Add(f1); // boost = 1
-            d2.Add(f2); // boost = 2
-            d3.Add(f1); // boost = 3
-            d4.Add(f2); // boost = 4
-            
-            writer.AddDocument(d1);
-            writer.AddDocument(d2);
-            writer.AddDocument(d3);
-            writer.AddDocument(d4);
-            writer.Optimize();
-            writer.Close();
-            
-            float[] scores = new float[4];
-            
-            new IndexSearcher(store, true).Search(new TermQuery(new Term("field", "word")), new AnonymousClassCollector(scores, this));
-            
-            float lastScore = 0.0f;
-            
-            for (int i = 0; i < 4; i++)
-            {
-                Assert.IsTrue(scores[i] > lastScore);
-                lastScore = scores[i];
-            }
-        }
-    }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using Lucene.Net.Document;
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+	using Term = Lucene.Net.Index.Term;
+	using Directory = Lucene.Net.Store.Directory;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+	/// <summary>
+	/// Document boost unit test.
+	/// 
+	/// 
+	/// </summary>
+	public class TestDocBoost : LuceneTestCase
+	{
+
+	  public virtual void TestDocBoost()
+	  {
+		Directory store = newDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(random(), store, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+
+		Field f1 = newTextField("field", "word", Field.Store.YES);
+		Field f2 = newTextField("field", "word", Field.Store.YES);
+		f2.Boost = 2.0f;
+
+		Document d1 = new Document();
+		Document d2 = new Document();
+
+		d1.add(f1); // boost = 1
+		d2.add(f2); // boost = 2
+
+		writer.addDocument(d1);
+		writer.addDocument(d2);
+
+		IndexReader reader = writer.Reader;
+		writer.close();
+
+		float[] scores = new float[4];
+
+		IndexSearcher searcher = newSearcher(reader);
+		searcher.search(new TermQuery(new Term("field", "word")), new CollectorAnonymousInnerClassHelper(this, scores));
+
+		float lastScore = 0.0f;
+
+		for (int i = 0; i < 2; i++)
+		{
+		  if (VERBOSE)
+		  {
+			Console.WriteLine(searcher.explain(new TermQuery(new Term("field", "word")), i));
+		  }
+		  Assert.IsTrue("score: " + scores[i] + " should be > lastScore: " + lastScore, scores[i] > lastScore);
+		  lastScore = scores[i];
+		}
+
+		reader.close();
+		store.close();
+	  }
+
+	  private class CollectorAnonymousInnerClassHelper : Collector
+	  {
+		  private readonly TestDocBoost OuterInstance;
+
+		  private float[] Scores;
+
+		  public CollectorAnonymousInnerClassHelper(TestDocBoost outerInstance, float[] scores)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Scores = scores;
+			  @base = 0;
+		  }
+
+		  private int @base;
+		  private Scorer scorer;
+		  public override Scorer Scorer
+		  {
+			  set
+			  {
+			   this.scorer = value;
+			  }
+		  }
+		  public override void Collect(int doc)
+		  {
+			Scores[doc + @base] = scorer.score();
+		  }
+		  public override AtomicReaderContext NextReader
+		  {
+			  set
+			  {
+				@base = value.docBase;
+			  }
+		  }
+		  public override bool AcceptsDocsOutOfOrder()
+		  {
+			return true;
+		  }
+	  }
+	}
+
 }

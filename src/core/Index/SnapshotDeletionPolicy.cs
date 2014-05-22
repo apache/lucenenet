@@ -1,203 +1,377 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
 {
-    
-    /// <summary>A <see cref="IndexDeletionPolicy" /> that wraps around any other
-    /// <see cref="IndexDeletionPolicy" /> and adds the ability to hold and
-    /// later release a single "snapshot" of an index.  While
-    /// the snapshot is held, the <see cref="IndexWriter" /> will not
-    /// remove any files associated with it even if the index is
-    /// otherwise being actively, arbitrarily changed.  Because
-    /// we wrap another arbitrary <see cref="IndexDeletionPolicy" />, this
-    /// gives you the freedom to continue using whatever <see cref="IndexDeletionPolicy" />
-    /// you would normally want to use with your
-    /// index.  Note that you can re-use a single instance of
-    /// SnapshotDeletionPolicy across multiple writers as long
-    /// as they are against the same index Directory.  Any
-    /// snapshot held when a writer is closed will "survive"
-    /// when the next writer is opened.
-    /// 
-    /// <p/><b>WARNING</b>: This API is a new and experimental and
-    /// may suddenly change.<p/> 
-    /// </summary>
-    
-    public class SnapshotDeletionPolicy : IndexDeletionPolicy
-    {
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using Directory = Lucene.Net.Store.Directory;
+
+	/// <summary>
+	/// An <seealso cref="IndexDeletionPolicy"/> that wraps any other
+	/// <seealso cref="IndexDeletionPolicy"/> and adds the ability to hold and later release
+	/// snapshots of an index. While a snapshot is held, the <seealso cref="IndexWriter"/> will
+	/// not remove any files associated with it even if the index is otherwise being
+	/// actively, arbitrarily changed. Because we wrap another arbitrary
+	/// <seealso cref="IndexDeletionPolicy"/>, this gives you the freedom to continue using
+	/// whatever <seealso cref="IndexDeletionPolicy"/> you would normally want to use with your
+	/// index.
+	/// 
+	/// <p>
+	/// this class maintains all snapshots in-memory, and so the information is not
+	/// persisted and not protected against system failures. If persistence is
+	/// important, you can use <seealso cref="PersistentSnapshotDeletionPolicy"/>.
+	/// 
+	/// @lucene.experimental
+	/// </summary>
+	public class SnapshotDeletionPolicy : IndexDeletionPolicy
+	{
+
+	  /// <summary>
+	  /// Records how many snapshots are held against each
+	  ///  commit generation 
+	  /// </summary>
+	  protected internal IDictionary<long?, int?> RefCounts = new Dictionary<long?, int?>();
+
+	  /// <summary>
+	  /// Used to map gen to IndexCommit. </summary>
+	  protected internal IDictionary<long?, IndexCommit> IndexCommits = new Dictionary<long?, IndexCommit>();
+
+	  /// <summary>
+	  /// Wrapped <seealso cref="IndexDeletionPolicy"/> </summary>
+	  private IndexDeletionPolicy Primary;
+
+	  /// <summary>
+	  /// Most recently committed <seealso cref="IndexCommit"/>. </summary>
+	  protected internal IndexCommit LastCommit;
+
+	  /// <summary>
+	  /// Used to detect misuse </summary>
+	  private bool InitCalled;
+
+	  /// <summary>
+	  /// Sole constructor, taking the incoming {@link
+	  ///  IndexDeletionPolicy} to wrap. 
+	  /// </summary>
+	  public SnapshotDeletionPolicy(IndexDeletionPolicy primary)
+	  {
+		this.Primary = primary;
+	  }
+
+	  public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+	  {
+		  lock (this)
+		  {
+			Primary.OnCommit(WrapCommits(commits));
+			LastCommit = commits[commits.Count - 1];
+		  }
+	  }
+
+	  public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
+	  {
+		  lock (this)
+		  {
+			InitCalled = true;
+			Primary.OnInit(WrapCommits(commits));
+			foreach (IndexCommit commit in commits)
+			{
+			  if (RefCounts.ContainsKey(commit.Generation))
+			  {
+				IndexCommits[commit.Generation] = commit;
+			  }
+			}
+			if (commits.Count > 0)
+			{
+			  LastCommit = commits[commits.Count - 1];
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Release a snapshotted commit.
+	  /// </summary>
+	  /// <param name="commit">
+	  ///          the commit previously returned by <seealso cref="#snapshot"/> </param>
+	  public virtual void Release(IndexCommit commit)
+	  {
+		  lock (this)
+		  {
+			long gen = commit.Generation;
+			ReleaseGen(gen);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Release a snapshot by generation. </summary>
+	  protected internal virtual void ReleaseGen(long gen)
+	  {
+		if (!InitCalled)
+		{
+		  throw new IllegalStateException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
+		}
+		int? refCount = RefCounts[gen];
+		if (refCount == null)
+		{
+		  throw new System.ArgumentException("commit gen=" + gen + " is not currently snapshotted");
+		}
+		int refCountInt = (int)refCount;
+		Debug.Assert(refCountInt > 0);
+		refCountInt--;
+		if (refCountInt == 0)
+		{
+		  RefCounts.Remove(gen);
+		  IndexCommits.Remove(gen);
+		}
+		else
+		{
+		  RefCounts[gen] = refCountInt;
+		}
+	  }
+
+	  /// <summary>
+	  /// Increments the refCount for this <seealso cref="IndexCommit"/>. </summary>
+	  protected internal virtual void IncRef(IndexCommit ic)
+	  {
+		  lock (this)
+		  {
+			long gen = ic.Generation;
+			int? refCount = RefCounts[gen];
+			int refCountInt;
+			if (refCount == null)
+			{
+			  IndexCommits[gen] = LastCommit;
+			  refCountInt = 0;
+			}
+			else
+			{
+			  refCountInt = (int)refCount;
+			}
+			RefCounts[gen] = refCountInt + 1;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Snapshots the last commit and returns it. Once a commit is 'snapshotted,' it is protected
+	  /// from deletion (as long as this <seealso cref="IndexDeletionPolicy"/> is used). The
+	  /// snapshot can be removed by calling <seealso cref="#release(IndexCommit)"/> followed
+	  /// by a call to <seealso cref="IndexWriter#deleteUnusedFiles()"/>.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> while the snapshot is held, the files it references will not
+	  /// be deleted, which will consume additional disk space in your index. If you
+	  /// take a snapshot at a particularly bad time (say just before you call
+	  /// forceMerge) then in the worst case this could consume an extra 1X of your
+	  /// total index size, until you release the snapshot.
+	  /// </summary>
+	  /// <exception cref="IllegalStateException">
+	  ///           if this index does not have any commits yet </exception>
+	  /// <returns> the <seealso cref="IndexCommit"/> that was snapshotted. </returns>
+	  public virtual IndexCommit Snapshot()
+	  {
+		  lock (this)
+		  {
+			if (!InitCalled)
+			{
+			  throw new IllegalStateException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
+			}
+			if (LastCommit == null)
+			{
+			  // No commit yet, eg this is a new IndexWriter:
+			  throw new IllegalStateException("No index commit to snapshot");
+			}
         
-        private IndexCommit lastCommit;
-        private IndexDeletionPolicy primary;
-        private System.String snapshot;
+			IncRef(LastCommit);
         
-        public SnapshotDeletionPolicy(IndexDeletionPolicy primary)
-        {
-            this.primary = primary;
-        }
-        
-        public virtual void  OnInit<T>(IList<T> commits) where T : IndexCommit
-        {
-            lock (this)
-            {
-                primary.OnInit(WrapCommits(commits));
-                lastCommit = commits[commits.Count - 1];
-            }
-        }
-        
-        public virtual void  OnCommit<T>(IList<T> commits) where T : IndexCommit
-        {
-            lock (this)
-            {
-                primary.OnCommit(WrapCommits(commits));
-                lastCommit = commits[commits.Count - 1];
-            }
-        }
-        
-        /// <summary>Take a snapshot of the most recent commit to the
-        /// index.  You must call release() to free this snapshot.
-        /// Note that while the snapshot is held, the files it
-        /// references will not be deleted, which will consume
-        /// additional disk space in your index. If you take a
-        /// snapshot at a particularly bad time (say just before
-        /// you call optimize()) then in the worst case this could
-        /// consume an extra 1X of your total index size, until
-        /// you release the snapshot. 
-        /// </summary>
-        public virtual IndexCommit Snapshot()
-        {
-            lock (this)
-            {
-                if (lastCommit == null)
-                {
-                    throw new System.SystemException("no index commits to snapshot !");
-                }
+			return LastCommit;
+		  }
+	  }
 
-                if (snapshot == null)
-                    snapshot = lastCommit.SegmentsFileName;
-                else
-                    throw new System.SystemException("snapshot is already set; please call release() first");
-                return lastCommit;
-            }
-        }
-        
-        /// <summary>Release the currently held snapshot. </summary>
-        public virtual void  Release()
-        {
-            lock (this)
-            {
-                if (snapshot != null)
-                    snapshot = null;
-                else
-                    throw new System.SystemException("snapshot was not set; please call snapshot() first");
-            }
-        }
-        
-        private class MyCommitPoint : IndexCommit
-        {
-            private void  InitBlock(SnapshotDeletionPolicy enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private SnapshotDeletionPolicy enclosingInstance;
-            public SnapshotDeletionPolicy Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal IndexCommit cp;
-            internal MyCommitPoint(SnapshotDeletionPolicy enclosingInstance, IndexCommit cp)
-            {
-                InitBlock(enclosingInstance);
-                this.cp = cp;
-            }
+	  /// <summary>
+	  /// Returns all IndexCommits held by at least one snapshot. </summary>
+	  public virtual IList<IndexCommit> Snapshots
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				return new List<>(IndexCommits.Values);
+			  }
+		  }
+	  }
 
-            public override string ToString()
-            {
-                return "SnapshotDeletionPolicy.SnapshotCommitPoint(" + cp + ")";
-            }
+	  /// <summary>
+	  /// Returns the total number of snapshots currently held. </summary>
+	  public virtual int SnapshotCount
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				int total = 0;
+				foreach (int? refCount in RefCounts.Values)
+				{
+				  total += (int)refCount;
+				}
+            
+				return total;
+			  }
+		  }
+	  }
 
-            public override string SegmentsFileName
-            {
-                get { return cp.SegmentsFileName; }
-            }
+	  /// <summary>
+	  /// Retrieve an <seealso cref="IndexCommit"/> from its generation;
+	  ///  returns null if this IndexCommit is not currently
+	  ///  snapshotted  
+	  /// </summary>
+	  public virtual IndexCommit GetIndexCommit(long gen)
+	  {
+		  lock (this)
+		  {
+			return IndexCommits[gen];
+		  }
+	  }
 
-            public override ICollection<string> FileNames
-            {
-                get { return cp.FileNames; }
-            }
+	  public override IndexDeletionPolicy Clone()
+	  {
+		  lock (this)
+		  {
+			SnapshotDeletionPolicy other = (SnapshotDeletionPolicy) base.Clone();
+			other.Primary = this.Primary.Clone();
+			other.LastCommit = null;
+			other.RefCounts = new Dictionary<>(RefCounts);
+			other.IndexCommits = new Dictionary<>(IndexCommits);
+			return other;
+		  }
+	  }
 
-            public override Directory Directory
-            {
-                get { return cp.Directory; }
-            }
+	  /// <summary>
+	  /// Wraps each <seealso cref="IndexCommit"/> as a {@link
+	  ///  SnapshotCommitPoint}. 
+	  /// </summary>
+	  private IList<IndexCommit> WrapCommits(IList<T1> commits) where T1 : IndexCommit
+	  {
+		IList<IndexCommit> wrappedCommits = new List<IndexCommit>(commits.Count);
+		foreach (IndexCommit ic in commits)
+		{
+		  wrappedCommits.Add(new SnapshotCommitPoint(this, ic));
+		}
+		return wrappedCommits;
+	  }
 
-            public override void  Delete()
-            {
-                lock (Enclosing_Instance)
-                {
-                    // Suppress the delete request if this commit point is
-                    // our current snapshot.
-                    if (Enclosing_Instance.snapshot == null || !Enclosing_Instance.snapshot.Equals(SegmentsFileName))
-                        cp.Delete();
-                }
-            }
+	  /// <summary>
+	  /// Wraps a provided <seealso cref="IndexCommit"/> and prevents it
+	  ///  from being deleted. 
+	  /// </summary>
+	  private class SnapshotCommitPoint : IndexCommit
+	  {
+		  private readonly SnapshotDeletionPolicy OuterInstance;
 
-            public override bool IsDeleted
-            {
-                get { return cp.IsDeleted; }
-            }
 
-            public override long Version
-            {
-                get { return cp.Version; }
-            }
+		/// <summary>
+		/// The <seealso cref="IndexCommit"/> we are preventing from deletion. </summary>
+		protected internal IndexCommit Cp;
 
-            public override long Generation
-            {
-                get { return cp.Generation; }
-            }
+		/// <summary>
+		/// Creates a {@code SnapshotCommitPoint} wrapping the provided
+		///  <seealso cref="IndexCommit"/>. 
+		/// </summary>
+		protected internal SnapshotCommitPoint(SnapshotDeletionPolicy outerInstance, IndexCommit cp)
+		{
+			this.OuterInstance = outerInstance;
+		  this.Cp = cp;
+		}
 
-            public override IDictionary<string, string> UserData
-            {
-                get { return cp.UserData; }
-            }
+		public override string ToString()
+		{
+		  return "SnapshotDeletionPolicy.SnapshotCommitPoint(" + Cp + ")";
+		}
 
-            public override bool IsOptimized
-            {
-                get { return cp.IsOptimized; }
-            }
-        }
-        
-        private IList<IndexCommit> WrapCommits<T>(IList<T> commits) where T : IndexCommit
-        {
-            int count = commits.Count;
-            var myCommits = new List<IndexCommit>(count);
-            for (int i = 0; i < count; i++)
-            {
-                myCommits.Add(new MyCommitPoint(this, commits[i]));
-            }
-            return myCommits;
-        }
-    }
+		public override void Delete()
+		{
+		  lock (OuterInstance)
+		  {
+			// Suppress the delete request if this commit point is
+			// currently snapshotted.
+			if (!outerInstance.RefCounts.ContainsKey(Cp.Generation))
+			{
+			  Cp.Delete();
+			}
+		  }
+		}
+
+		public override Directory Directory
+		{
+			get
+			{
+			  return Cp.Directory;
+			}
+		}
+
+		public override ICollection<string> FileNames
+		{
+			get
+			{
+			  return Cp.FileNames;
+			}
+		}
+
+		public override long Generation
+		{
+			get
+			{
+			  return Cp.Generation;
+			}
+		}
+
+		public override string SegmentsFileName
+		{
+			get
+			{
+			  return Cp.SegmentsFileName;
+			}
+		}
+
+		public override IDictionary<string, string> UserData
+		{
+			get
+			{
+			  return Cp.UserData;
+			}
+		}
+
+		public override bool Deleted
+		{
+			get
+			{
+			  return Cp.Deleted;
+			}
+		}
+
+		public override int SegmentCount
+		{
+			get
+			{
+			  return Cp.SegmentCount;
+			}
+		}
+	  }
+	}
+
 }

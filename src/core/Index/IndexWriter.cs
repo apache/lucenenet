@@ -1,5928 +1,6070 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Support;
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using Document = Lucene.Net.Documents.Document;
-using IndexingChain = Lucene.Net.Index.DocumentsWriter.IndexingChain;
-using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
-using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
-using Directory = Lucene.Net.Store.Directory;
-using Lock = Lucene.Net.Store.Lock;
-using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
-using Constants = Lucene.Net.Util.Constants;
-using Query = Lucene.Net.Search.Query;
-using Similarity = Lucene.Net.Search.Similarity;
+using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using Analyzer = Lucene.Net.Analysis.Analyzer;
+	using Codec = Lucene.Net.Codecs.Codec;
+	using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
+	using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using CheckAbort = Lucene.Net.Index.MergeState.CheckAbort;
+	using Query = Lucene.Net.Search.Query;
+	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+	using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
+	using Directory = Lucene.Net.Store.Directory;
+	using IOContext = Lucene.Net.Store.IOContext;
+	using Lock = Lucene.Net.Store.Lock;
+	using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
+	using MergeInfo = Lucene.Net.Store.MergeInfo;
+	using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
+	using Bits = Lucene.Net.Util.Bits;
+	using BytesRef = Lucene.Net.Util.BytesRef;
+	using Constants = Lucene.Net.Util.Constants;
+	using IOUtils = Lucene.Net.Util.IOUtils;
+	using InfoStream = Lucene.Net.Util.InfoStream;
+	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+
+	/// <summary>
+	///  An <code>IndexWriter</code> creates and maintains an index.
+	/// 
+	///  <p>The <seealso cref="OpenMode"/> option on 
+	///  <seealso cref="IndexWriterConfig#setOpenMode(OpenMode)"/> determines 
+	///  whether a new index is created, or whether an existing index is
+	///  opened. Note that you can open an index with <seealso cref="OpenMode#CREATE"/>
+	///  even while readers are using the index. The old readers will 
+	///  continue to search the "point in time" snapshot they had opened, 
+	///  and won't see the newly created index until they re-open. If 
+	///  <seealso cref="OpenMode#CREATE_OR_APPEND"/> is used IndexWriter will create a 
+	///  new index if there is not already an index at the provided path
+	///  and otherwise open the existing index.</p>
+	/// 
+	///  <p>In either case, documents are added with {@link #addDocument(Iterable)
+	///  addDocument} and removed with <seealso cref="#deleteDocuments(Term)"/> or {@link
+	///  #deleteDocuments(Query)}. A document can be updated with {@link
+	///  #updateDocument(Term, Iterable) updateDocument} (which just deletes
+	///  and then adds the entire document). When finished adding, deleting 
+	///  and updating documents, <seealso cref="#close() close"/> should be called.</p>
+	/// 
+	///  <a name="flush"></a>
+	///  <p>These changes are buffered in memory and periodically
+	///  flushed to the <seealso cref="Directory"/> (during the above method
+	///  calls). A flush is triggered when there are enough added documents
+	///  since the last flush. Flushing is triggered either by RAM usage of the
+	///  documents (see <seealso cref="IndexWriterConfig#setRAMBufferSizeMB"/>) or the
+	///  number of added documents (see <seealso cref="IndexWriterConfig#setMaxBufferedDocs(int)"/>).
+	///  The default is to flush when RAM usage hits
+	///  <seealso cref="IndexWriterConfig#DEFAULT_RAM_BUFFER_SIZE_MB"/> MB. For
+	///  best indexing speed you should flush by RAM usage with a
+	///  large RAM buffer. Additionally, if IndexWriter reaches the configured number of
+	///  buffered deletes (see <seealso cref="IndexWriterConfig#setMaxBufferedDeleteTerms"/>)
+	///  the deleted terms and queries are flushed and applied to existing segments.
+	///  In contrast to the other flush options <seealso cref="IndexWriterConfig#setRAMBufferSizeMB"/> and 
+	///  <seealso cref="IndexWriterConfig#setMaxBufferedDocs(int)"/>, deleted terms
+	///  won't trigger a segment flush. Note that flushing just moves the
+	///  internal buffered state in IndexWriter into the index, but
+	///  these changes are not visible to IndexReader until either
+	///  <seealso cref="#commit()"/> or <seealso cref="#close"/> is called.  A flush may
+	///  also trigger one or more segment merges which by default
+	///  run with a background thread so as not to block the
+	///  addDocument calls (see <a href="#mergePolicy">below</a>
+	///  for changing the <seealso cref="MergeScheduler"/>).</p>
+	/// 
+	///  <p>Opening an <code>IndexWriter</code> creates a lock file for the directory in use. Trying to open
+	///  another <code>IndexWriter</code> on the same directory will lead to a
+	///  <seealso cref="LockObtainFailedException"/>. The <seealso cref="LockObtainFailedException"/>
+	///  is also thrown if an IndexReader on the same directory is used to delete documents
+	///  from the index.</p>
+	///  
+	///  <a name="deletionPolicy"></a>
+	///  <p>Expert: <code>IndexWriter</code> allows an optional
+	///  <seealso cref="IndexDeletionPolicy"/> implementation to be
+	///  specified.  You can use this to control when prior commits
+	///  are deleted from the index.  The default policy is {@link
+	///  KeepOnlyLastCommitDeletionPolicy} which removes all prior
+	///  commits as soon as a new commit is done (this matches
+	///  behavior before 2.2).  Creating your own policy can allow
+	///  you to explicitly keep previous "point in time" commits
+	///  alive in the index for some time, to allow readers to
+	///  refresh to the new commit without having the old commit
+	///  deleted out from under them.  this is necessary on
+	///  filesystems like NFS that do not support "delete on last
+	///  close" semantics, which Lucene's "point in time" search
+	///  normally relies on. </p>
+	/// 
+	///  <a name="mergePolicy"></a> <p>Expert:
+	///  <code>IndexWriter</code> allows you to separately change
+	///  the <seealso cref="MergePolicy"/> and the <seealso cref="MergeScheduler"/>.
+	///  The <seealso cref="MergePolicy"/> is invoked whenever there are
+	///  changes to the segments in the index.  Its role is to
+	///  select which merges to do, if any, and return a {@link
+	///  MergePolicy.MergeSpecification} describing the merges.
+	///  The default is <seealso cref="LogByteSizeMergePolicy"/>.  Then, the {@link
+	///  MergeScheduler} is invoked with the requested merges and
+	///  it decides when and how to run the merges.  The default is
+	///  <seealso cref="ConcurrentMergeScheduler"/>. </p>
+	/// 
+	///  <a name="OOME"></a><p><b>NOTE</b>: if you hit an
+	///  OutOfMemoryError then IndexWriter will quietly record this
+	///  fact and block all future segment commits.  this is a
+	///  defensive measure in case any internal state (buffered
+	///  documents and deletions) were corrupted.  Any subsequent
+	///  calls to <seealso cref="#commit()"/> will throw an
+	///  IllegalStateException.  The only course of action is to
+	///  call <seealso cref="#close()"/>, which internally will call {@link
+	///  #rollback()}, to undo any changes to the index since the
+	///  last commit.  You can also just call <seealso cref="#rollback()"/>
+	///  directly.</p>
+	/// 
+	///  <a name="thread-safety"></a><p><b>NOTE</b>: {@link
+	///  IndexWriter} instances are completely thread
+	///  safe, meaning multiple threads can call any of its
+	///  methods, concurrently.  If your application requires
+	///  external synchronization, you should <b>not</b>
+	///  synchronize on the <code>IndexWriter</code> instance as
+	///  this may cause deadlock; use your own (non-Lucene) objects
+	///  instead. </p>
+	///  
+	///  <p><b>NOTE</b>: If you call
+	///  <code>Thread.interrupt()</code> on a thread that's within
+	///  IndexWriter, IndexWriter will try to catch this (eg, if
+	///  it's in a wait() or Thread.sleep()), and will then throw
+	///  the unchecked exception <seealso cref="ThreadInterruptedException"/>
+	///  and <b>clear</b> the interrupt status on the thread.</p>
+	/// </summary>
+
+	/*
+	 * Clarification: Check Points (and commits)
+	 * IndexWriter writes new index files to the directory without writing a new segments_N
+	 * file which references these new files. It also means that the state of
+	 * the in memory SegmentInfos object is different than the most recent
+	 * segments_N file written to the directory.
+	 *
+	 * Each time the SegmentInfos is changed, and matches the (possibly
+	 * modified) directory files, we have a new "check point".
+	 * If the modified/new SegmentInfos is written to disk - as a new
+	 * (generation of) segments_N file - this check point is also an
+	 * IndexCommit.
+	 *
+	 * A new checkpoint always replaces the previous checkpoint and
+	 * becomes the new "front" of the index. this allows the IndexFileDeleter
+	 * to delete files that are referenced only by stale checkpoints.
+	 * (files that were created since the last commit, but are no longer
+	 * referenced by the "front" of the index). For this, IndexFileDeleter
+	 * keeps track of the last non commit checkpoint.
+	 */
+	public class IndexWriter : IDisposable, TwoPhaseCommit
+	{
+		private bool InstanceFieldsInitialized = false;
+
+		private void InitializeInstanceFields()
+		{
+			ReaderPool = new ReaderPool(this);
+		}
+
+
+	  private const int UNBOUNDED_MAX_MERGE_SEGMENTS = -1;
+
+	  /// <summary>
+	  /// Name of the write lock in the index.
+	  /// </summary>
+	  public const string WRITE_LOCK_NAME = "write.lock";
+
+	  /// <summary>
+	  /// Key for the source of a segment in the <seealso cref="SegmentInfo#getDiagnostics() diagnostics"/>. </summary>
+	  public const string SOURCE = "source";
+	  /// <summary>
+	  /// Source of a segment which results from a merge of other segments. </summary>
+	  public const string SOURCE_MERGE = "merge";
+	  /// <summary>
+	  /// Source of a segment which results from a flush. </summary>
+	  public const string SOURCE_FLUSH = "flush";
+	  /// <summary>
+	  /// Source of a segment which results from a call to <seealso cref="#addIndexes(IndexReader...)"/>. </summary>
+	  public const string SOURCE_ADDINDEXES_READERS = "addIndexes(IndexReader...)";
+
+	  /// <summary>
+	  /// Absolute hard maximum length for a term, in bytes once
+	  /// encoded as UTF8.  If a term arrives from the analyzer
+	  /// longer than this length, an
+	  /// <code>IllegalArgumentException</code>  is thrown
+	  /// and a message is printed to infoStream, if set (see {@link
+	  /// IndexWriterConfig#setInfoStream(InfoStream)}).
+	  /// </summary>
+	  public static readonly int MAX_TERM_LENGTH = DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8;
+	  volatile private bool HitOOM;
+
+	  private readonly Directory Directory_Renamed; // where this index resides
+	  private readonly Analyzer Analyzer_Renamed; // how to analyze text
+
+	  private volatile long ChangeCount; // increments every time a change is completed
+	  private volatile long LastCommitChangeCount; // last changeCount that was committed
+
+	  private IList<SegmentCommitInfo> RollbackSegments; // list of segmentInfo we will fallback to if the commit fails
+
+	  internal volatile SegmentInfos PendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
+	  internal volatile long PendingCommitChangeCount;
+
+	  private ICollection<string> FilesToCommit;
+
+	  internal readonly SegmentInfos SegmentInfos; // the segments
+	  internal readonly FieldNumbers GlobalFieldNumberMap;
+
+	  private readonly DocumentsWriter DocWriter;
+	  private readonly LinkedList<Event> EventQueue;
+	  internal readonly IndexFileDeleter Deleter;
+
+	  // used by forceMerge to note those needing merging
+	  private IDictionary<SegmentCommitInfo, bool?> SegmentsToMerge = new Dictionary<SegmentCommitInfo, bool?>();
+	  private int MergeMaxNumSegments;
+
+	  private Lock WriteLock;
+
+	  private volatile bool Closed_Renamed;
+	  private volatile bool Closing;
+
+	  // Holds all SegmentInfo instances currently involved in
+	  // merges
+	  private HashSet<SegmentCommitInfo> MergingSegments_Renamed = new HashSet<SegmentCommitInfo>();
+
+	  private MergePolicy MergePolicy;
+	  private readonly MergeScheduler MergeScheduler;
+	  private LinkedList<MergePolicy.OneMerge> PendingMerges = new LinkedList<MergePolicy.OneMerge>();
+	  private Set<MergePolicy.OneMerge> RunningMerges = new HashSet<MergePolicy.OneMerge>();
+	  private IList<MergePolicy.OneMerge> MergeExceptions = new List<MergePolicy.OneMerge>();
+	  private long MergeGen;
+	  private bool StopMerges;
+
+	  internal readonly AtomicInteger FlushCount_Renamed = new AtomicInteger();
+	  internal readonly AtomicInteger FlushDeletesCount_Renamed = new AtomicInteger();
+
+	  internal ReaderPool ReaderPool;
+	  internal readonly BufferedUpdatesStream BufferedUpdatesStream;
+
+	  // this is a "write once" variable (like the organic dye
+	  // on a DVD-R that may or may not be heated by a laser and
+	  // then cooled to permanently record the event): it's
+	  // false, until getReader() is called for the first time,
+	  // at which point it's switched to true and never changes
+	  // back to false.  Once this is true, we hold open and
+	  // reuse SegmentReader instances internally for applying
+	  // deletes, doing merges, and reopening near real-time
+	  // readers.
+	  private volatile bool PoolReaders;
+
+	  // The instance that was passed to the constructor. It is saved only in order
+	  // to allow users to query an IndexWriter settings.
+	  private readonly LiveIndexWriterConfig Config_Renamed;
+
+	  internal virtual DirectoryReader Reader
+	  {
+		  get
+		  {
+			return GetReader(true);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: returns a readonly reader, covering all
+	  /// committed as well as un-committed changes to the index.
+	  /// this provides "near real-time" searching, in that
+	  /// changes made during an IndexWriter session can be
+	  /// quickly made available for searching without closing
+	  /// the writer nor calling <seealso cref="#commit"/>.
+	  /// 
+	  /// <p>Note that this is functionally equivalent to calling
+	  /// {#flush} and then opening a new reader.  But the turnaround time of this
+	  /// method should be faster since it avoids the potentially
+	  /// costly <seealso cref="#commit"/>.</p>
+	  /// 
+	  /// <p>You must close the <seealso cref="IndexReader"/> returned by
+	  /// this method once you are done using it.</p>
+	  /// 
+	  /// <p>It's <i>near</i> real-time because there is no hard
+	  /// guarantee on how quickly you can get a new reader after
+	  /// making changes with IndexWriter.  You'll have to
+	  /// experiment in your situation to determine if it's
+	  /// fast enough.  As this is a new and experimental
+	  /// feature, please report back on your findings so we can
+	  /// learn, improve and iterate.</p>
+	  /// 
+	  /// <p>The resulting reader supports {@link
+	  /// DirectoryReader#openIfChanged}, but that call will simply forward
+	  /// back to this method (though this may change in the
+	  /// future).</p>
+	  /// 
+	  /// <p>The very first time this method is called, this
+	  /// writer instance will make every effort to pool the
+	  /// readers that it opens for doing merges, applying
+	  /// deletes, etc.  this means additional resources (RAM,
+	  /// file descriptors, CPU time) will be consumed.</p>
+	  /// 
+	  /// <p>For lower latency on reopening a reader, you should
+	  /// call <seealso cref="IndexWriterConfig#setMergedSegmentWarmer"/> to
+	  /// pre-warm a newly merged segment before it's committed
+	  /// to the index.  this is important for minimizing
+	  /// index-to-search delay after a large merge.  </p>
+	  /// 
+	  /// <p>If an addIndexes* call is running in another thread,
+	  /// then this reader will only search those segments from
+	  /// the foreign index that have been successfully copied
+	  /// over, so far</p>.
+	  /// 
+	  /// <p><b>NOTE</b>: Once the writer is closed, any
+	  /// outstanding readers may continue to be used.  However,
+	  /// if you attempt to reopen any of those readers, you'll
+	  /// hit an <seealso cref="AlreadyClosedException"/>.</p>
+	  /// 
+	  /// @lucene.experimental
+	  /// </summary>
+	  /// <returns> IndexReader that covers entire index plus all
+	  /// changes made so far by this IndexWriter instance
+	  /// </returns>
+	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+	  internal virtual DirectoryReader GetReader(bool applyAllDeletes)
+	  {
+		EnsureOpen();
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long tStart = System.currentTimeMillis();
+		long tStart = System.currentTimeMillis();
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "flush at getReader");
+		}
+		// Do this up front before flushing so that the readers
+		// obtained during this flush are pooled, the first time
+		// this method is called:
+		PoolReaders = true;
+		DirectoryReader r = null;
+		DoBeforeFlush();
+		bool anySegmentFlushed = false;
+		/*
+		 * for releasing a NRT reader we must ensure that 
+		 * DW doesn't add any segments or deletes until we are
+		 * done with creating the NRT DirectoryReader. 
+		 * We release the two stage full flush after we are done opening the
+		 * directory reader!
+		 */
+		bool success2 = false;
+		try
+		{
+		  lock (FullFlushLock)
+		  {
+			bool success = false;
+			try
+			{
+			  anySegmentFlushed = DocWriter.FlushAllThreads(this);
+			  if (!anySegmentFlushed)
+			  {
+				// prevent double increment since docWriter#doFlush increments the flushcount
+				// if we flushed anything.
+				FlushCount_Renamed.incrementAndGet();
+			  }
+			  success = true;
+			  // Prevent segmentInfos from changing while opening the
+			  // reader; in theory we could instead do similar retry logic,
+			  // just like we do when loading segments_N
+			  lock (this)
+			  {
+				MaybeApplyDeletes(applyAllDeletes);
+				r = StandardDirectoryReader.Open(this, SegmentInfos, applyAllDeletes);
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "return reader version=" + r.Version + " reader=" + r);
+				}
+			  }
+			}
+			catch (System.OutOfMemoryException oom)
+			{
+			  HandleOOM(oom, "getReader");
+			  // never reached but javac disagrees:
+			  return null;
+			}
+			finally
+			{
+			  if (!success)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "hit exception during NRT reader");
+				}
+			  }
+			  // Done: finish the full flush!
+			  DocWriter.FinishFullFlush(success);
+			  ProcessEvents(false, true);
+			  DoAfterFlush();
+			}
+		  }
+		  if (anySegmentFlushed)
+		  {
+			MaybeMerge(MergeTrigger.FULL_FLUSH, UNBOUNDED_MAX_MERGE_SEGMENTS);
+		  }
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "getReader took " + (System.currentTimeMillis() - tStart) + " msec");
+		  }
+		  success2 = true;
+		}
+		finally
+		{
+		  if (!success2)
+		  {
+			IOUtils.CloseWhileHandlingException(r);
+		  }
+		}
+		return r;
+	  }
+
+	  /// <summary>
+	  /// Holds shared SegmentReader instances. IndexWriter uses
+	  ///  SegmentReaders for 1) applying deletes, 2) doing
+	  ///  merges, 3) handing out a real-time reader.  this pool
+	  ///  reuses instances of the SegmentReaders in all these
+	  ///  places if it is in "near real-time mode" (getReader()
+	  ///  has been called on this instance). 
+	  /// </summary>
+
+	  internal class ReaderPool : IDisposable
+	  {
+		  private readonly IndexWriter OuterInstance;
+
+		  public ReaderPool(IndexWriter outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+
+		internal readonly IDictionary<SegmentCommitInfo, ReadersAndUpdates> ReaderMap = new Dictionary<SegmentCommitInfo, ReadersAndUpdates>();
+
+		// used only by asserts
+		public virtual bool InfoIsLive(SegmentCommitInfo info)
+		{
+			lock (this)
+			{
+			  int idx = outerInstance.SegmentInfos.IndexOf(info);
+			  Debug.Assert(idx != -1, "info=" + info + " isn't live");
+			  Debug.Assert(outerInstance.SegmentInfos.Info(idx) == info, "info=" + info + " doesn't match live info in segmentInfos");
+			  return true;
+			}
+		}
+
+		public virtual void Drop(SegmentCommitInfo info)
+		{
+			lock (this)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerMap.get(info);
+			  ReadersAndUpdates rld = ReaderMap[info];
+			  if (rld != null)
+			  {
+				Debug.Assert(info == rld.Info);
+		//        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.drop: " + info);
+				ReaderMap.Remove(info);
+				rld.DropReaders();
+			  }
+			}
+		}
+
+		public virtual bool AnyPendingDeletes()
+		{
+			lock (this)
+			{
+			  foreach (ReadersAndUpdates rld in ReaderMap.Values)
+			  {
+				if (rld.PendingDeleteCount != 0)
+				{
+				  return true;
+				}
+			  }
+        
+			  return false;
+			}
+		}
+
+		public virtual void Release(ReadersAndUpdates rld)
+		{
+			lock (this)
+			{
+			  Release(rld, true);
+			}
+		}
+
+		public virtual void Release(ReadersAndUpdates rld, bool assertInfoLive)
+		{
+			lock (this)
+			{
+        
+			  // Matches incRef in get:
+			  rld.DecRef();
+        
+			  // Pool still holds a ref:
+			  Debug.Assert(rld.RefCount() >= 1);
+        
+			  if (!outerInstance.PoolReaders && rld.RefCount() == 1)
+			  {
+				// this is the last ref to this RLD, and we're not
+				// pooling, so remove it:
+		//        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.release: " + rld.info);
+				if (rld.WriteLiveDocs(outerInstance.Directory_Renamed))
+				{
+				  // Make sure we only write del docs for a live segment:
+				  Debug.Assert(assertInfoLive == false || InfoIsLive(rld.Info));
+				  // Must checkpoint because we just
+				  // created new _X_N.del and field updates files;
+				  // don't call IW.checkpoint because that also
+				  // increments SIS.version, which we do not want to
+				  // do here: it was done previously (after we
+				  // invoked BDS.applyDeletes), whereas here all we
+				  // did was move the state to disk:
+				  outerInstance.CheckpointNoSIS();
+				}
+				//System.out.println("IW: done writeLiveDocs for info=" + rld.info);
+        
+		//        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.release: drop readers " + rld.info);
+				rld.DropReaders();
+				ReaderMap.Remove(rld.Info);
+			  }
+			}
+		}
+
+		public override void Close()
+		{
+		  DropAll(false);
+		}
+
+		/// <summary>
+		/// Remove all our references to readers, and commits
+		///  any pending changes. 
+		/// </summary>
+		internal virtual void DropAll(bool doSave)
+		{
+			lock (this)
+			{
+			  Exception priorE = null;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Iterator<java.util.Map.Entry<SegmentCommitInfo,ReadersAndUpdates>> it = readerMap.entrySet().iterator();
+			  IEnumerator<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>> it = ReaderMap.GetEnumerator();
+			  while (it.MoveNext())
+			  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = it.Current.getValue();
+				ReadersAndUpdates rld = it.Current.Value;
+        
+				try
+				{
+				  if (doSave && rld.WriteLiveDocs(outerInstance.Directory_Renamed))
+				  {
+					// Make sure we only write del docs and field updates for a live segment:
+					Debug.Assert(InfoIsLive(rld.Info));
+					// Must checkpoint because we just
+					// created new _X_N.del and field updates files;
+					// don't call IW.checkpoint because that also
+					// increments SIS.version, which we do not want to
+					// do here: it was done previously (after we
+					// invoked BDS.applyDeletes), whereas here all we
+					// did was move the state to disk:
+					outerInstance.CheckpointNoSIS();
+				  }
+				}
+				catch (Exception t)
+				{
+				  if (doSave)
+				  {
+					IOUtils.ReThrow(t);
+				  }
+				  else if (priorE == null)
+				  {
+					priorE = t;
+				  }
+				}
+        
+				// Important to remove as-we-go, not with .clear()
+				// in the end, in case we hit an exception;
+				// otherwise we could over-decref if close() is
+				// called again:
+				it.remove();
+        
+				// NOTE: it is allowed that these decRefs do not
+				// actually close the SRs; this happens when a
+				// near real-time reader is kept open after the
+				// IndexWriter instance is closed:
+				try
+				{
+				  rld.DropReaders();
+				}
+				catch (Exception t)
+				{
+				  if (doSave)
+				  {
+					IOUtils.ReThrow(t);
+				  }
+				  else if (priorE == null)
+				  {
+					priorE = t;
+				  }
+				}
+			  }
+			  Debug.Assert(ReaderMap.Count == 0);
+			  IOUtils.ReThrow(priorE);
+			}
+		}
+
+		/// <summary>
+		/// Commit live docs changes for the segment readers for
+		/// the provided infos.
+		/// </summary>
+		/// <exception cref="IOException"> If there is a low-level I/O error </exception>
+		public virtual void Commit(SegmentInfos infos)
+		{
+			lock (this)
+			{
+			  foreach (SegmentCommitInfo info in infos)
+			  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerMap.get(info);
+				ReadersAndUpdates rld = ReaderMap[info];
+				if (rld != null)
+				{
+				  Debug.Assert(rld.Info == info);
+				  if (rld.WriteLiveDocs(outerInstance.Directory_Renamed))
+				  {
+					// Make sure we only write del docs for a live segment:
+					Debug.Assert(InfoIsLive(info));
+					// Must checkpoint because we just
+					// created new _X_N.del and field updates files;
+					// don't call IW.checkpoint because that also
+					// increments SIS.version, which we do not want to
+					// do here: it was done previously (after we
+					// invoked BDS.applyDeletes), whereas here all we
+					// did was move the state to disk:
+					outerInstance.CheckpointNoSIS();
+				  }
+				}
+			  }
+			}
+		}
+
+		/// <summary>
+		/// Obtain a ReadersAndLiveDocs instance from the
+		/// readerPool.  If create is true, you must later call
+		/// <seealso cref="#release(ReadersAndUpdates)"/>.
+		/// </summary>
+		public virtual ReadersAndUpdates Get(SegmentCommitInfo info, bool create)
+		{
+			lock (this)
+			{
+        
+			  Debug.Assert(info.Info.dir == outerInstance.Directory_Renamed, "info.dir=" + info.Info.dir + " vs " + outerInstance.Directory_Renamed);
+        
+			  ReadersAndUpdates rld = ReaderMap[info];
+			  if (rld == null)
+			  {
+				if (!create)
+				{
+				  return null;
+				}
+				rld = new ReadersAndUpdates(OuterInstance, info);
+				// Steal initial reference:
+				ReaderMap[info] = rld;
+			  }
+			  else
+			  {
+				Debug.Assert(rld.Info == info, "rld.info=" + rld.Info + " info=" + info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
+			  }
+        
+			  if (create)
+			  {
+				// Return ref to caller:
+				rld.IncRef();
+			  }
+        
+			  Debug.Assert(NoDups());
+        
+			  return rld;
+			}
+		}
+
+		// Make sure that every segment appears only once in the
+		// pool:
+		internal virtual bool NoDups()
+		{
+		  Set<string> seen = new HashSet<string>();
+		  foreach (SegmentCommitInfo info in ReaderMap.Keys)
+		  {
+			Debug.Assert(!seen.contains(info.Info.name));
+			seen.add(info.Info.name);
+		  }
+		  return true;
+		}
+	  }
+
+	  /// <summary>
+	  /// Obtain the number of deleted docs for a pooled reader.
+	  /// If the reader isn't being pooled, the segmentInfo's 
+	  /// delCount is returned.
+	  /// </summary>
+	  public virtual int NumDeletedDocs(SegmentCommitInfo info)
+	  {
+		EnsureOpen(false);
+		int delCount = info.DelCount;
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, false);
+		ReadersAndUpdates rld = ReaderPool.Get(info, false);
+		if (rld != null)
+		{
+		  delCount += rld.PendingDeleteCount;
+		}
+		return delCount;
+	  }
+
+	  /// <summary>
+	  /// Used internally to throw an <seealso cref="AlreadyClosedException"/> if this
+	  /// IndexWriter has been closed or is in the process of closing.
+	  /// </summary>
+	  /// <param name="failIfClosing">
+	  ///          if true, also fail when {@code IndexWriter} is in the process of
+	  ///          closing ({@code closing=true}) but not yet done closing (
+	  ///          {@code closed=false}) </param>
+	  /// <exception cref="AlreadyClosedException">
+	  ///           if this IndexWriter is closed or in the process of closing </exception>
+	  protected internal void EnsureOpen(bool failIfClosing)
+	  {
+		if (Closed_Renamed || (failIfClosing && Closing))
+		{
+		  throw new AlreadyClosedException("this IndexWriter is closed");
+		}
+	  }
+
+	  /// <summary>
+	  /// Used internally to throw an {@link
+	  /// AlreadyClosedException} if this IndexWriter has been
+	  /// closed ({@code closed=true}) or is in the process of
+	  /// closing ({@code closing=true}).
+	  /// <p>
+	  /// Calls <seealso cref="#ensureOpen(boolean) ensureOpen(true)"/>. </summary>
+	  /// <exception cref="AlreadyClosedException"> if this IndexWriter is closed </exception>
+	  protected internal void EnsureOpen()
+	  {
+		EnsureOpen(true);
+	  }
+
+	  internal readonly Codec Codec; // for writing new segments
+
+	  /// <summary>
+	  /// Constructs a new IndexWriter per the settings given in <code>conf</code>.
+	  /// If you want to make "live" changes to this writer instance, use
+	  /// <seealso cref="#getConfig()"/>.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> after ths writer is created, the given configuration instance
+	  /// cannot be passed to another writer. If you intend to do so, you should
+	  /// <seealso cref="IndexWriterConfig#clone() clone"/> it beforehand.
+	  /// </summary>
+	  /// <param name="d">
+	  ///          the index directory. The index is either created or appended
+	  ///          according <code>conf.getOpenMode()</code>. </param>
+	  /// <param name="conf">
+	  ///          the configuration settings according to which IndexWriter should
+	  ///          be initialized. </param>
+	  /// <exception cref="IOException">
+	  ///           if the directory cannot be read/written to, or if it does not
+	  ///           exist and <code>conf.getOpenMode()</code> is
+	  ///           <code>OpenMode.APPEND</code> or if there is any other low-level
+	  ///           IO error </exception>
+	  public IndexWriter(Directory d, IndexWriterConfig conf)
+	  {
+		  if (!InstanceFieldsInitialized)
+		  {
+			  InitializeInstanceFields();
+			  InstanceFieldsInitialized = true;
+		  }
+		conf.IndexWriter = this; // prevent reuse by other instances
+		Config_Renamed = new LiveIndexWriterConfig(conf);
+		Directory_Renamed = d;
+		Analyzer_Renamed = Config_Renamed.Analyzer;
+		InfoStream = Config_Renamed.InfoStream;
+		MergePolicy = Config_Renamed.MergePolicy;
+		MergePolicy.IndexWriter = this;
+		MergeScheduler = Config_Renamed.MergeScheduler;
+		Codec = Config_Renamed.Codec;
+
+		BufferedUpdatesStream = new BufferedUpdatesStream(InfoStream);
+		PoolReaders = Config_Renamed.ReaderPooling;
+
+		WriteLock = Directory_Renamed.MakeLock(WRITE_LOCK_NAME);
+
+		if (!WriteLock.Obtain(Config_Renamed.WriteLockTimeout)) // obtain write lock
+		{
+		  throw new LockObtainFailedException("Index locked for write: " + WriteLock);
+		}
+
+		bool success = false;
+		try
+		{
+		  OpenMode mode = Config_Renamed.OpenMode;
+		  bool create;
+		  if (mode == OpenMode.CREATE)
+		  {
+			create = true;
+		  }
+		  else if (mode == OpenMode.APPEND)
+		  {
+			create = false;
+		  }
+		  else
+		  {
+			// CREATE_OR_APPEND - create only if an index does not exist
+			create = !DirectoryReader.IndexExists(Directory_Renamed);
+		  }
+
+		  // If index is too old, reading the segments will throw
+		  // IndexFormatTooOldException.
+		  SegmentInfos = new SegmentInfos();
+
+		  bool initialIndexExists = true;
+
+		  if (create)
+		  {
+			// Try to read first.  this is to allow create
+			// against an index that's currently open for
+			// searching.  In this case we write the next
+			// segments_N file with no segments:
+			try
+			{
+			  SegmentInfos.Read(Directory_Renamed);
+			  SegmentInfos.Clear();
+			}
+			catch (IOException e)
+			{
+			  // Likely this means it's a fresh directory
+			  initialIndexExists = false;
+			}
+
+			// Record that we have a change (zero out all
+			// segments) pending:
+			Changed();
+		  }
+		  else
+		  {
+			SegmentInfos.Read(Directory_Renamed);
+
+			IndexCommit commit = Config_Renamed.IndexCommit;
+			if (commit != null)
+			{
+			  // Swap out all segments, but, keep metadata in
+			  // SegmentInfos, like version & generation, to
+			  // preserve write-once.  this is important if
+			  // readers are open against the future commit
+			  // points.
+			  if (commit.Directory != Directory_Renamed)
+			  {
+				throw new System.ArgumentException("IndexCommit's directory doesn't match my directory");
+			  }
+			  SegmentInfos oldInfos = new SegmentInfos();
+			  oldInfos.Read(Directory_Renamed, commit.SegmentsFileName);
+			  SegmentInfos.Replace(oldInfos);
+			  Changed();
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "init: loaded commit \"" + commit.SegmentsFileName + "\"");
+			  }
+			}
+		  }
+
+		  RollbackSegments = SegmentInfos.CreateBackupSegmentInfos();
+
+		  // start with previous field numbers, but new FieldInfos
+		  GlobalFieldNumberMap = FieldNumberMap;
+		  Config_Renamed.FlushPolicy.Init(Config_Renamed);
+		  DocWriter = new DocumentsWriter(this, Config_Renamed, Directory_Renamed);
+		  EventQueue = DocWriter.EventQueue();
+
+		  // Default deleter (for backwards compatibility) is
+		  // KeepOnlyLastCommitDeleter:
+		  lock (this)
+		  {
+			Deleter = new IndexFileDeleter(Directory_Renamed, Config_Renamed.IndexDeletionPolicy, SegmentInfos, InfoStream, this, initialIndexExists);
+		  }
+
+		  if (Deleter.StartingCommitDeleted)
+		  {
+			// Deletion policy deleted the "head" commit point.
+			// We have to mark ourself as changed so that if we
+			// are closed w/o any further changes we write a new
+			// segments_N file.
+			Changed();
+		  }
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "init: create=" + create);
+			MessageState();
+		  }
+
+		  success = true;
+
+		}
+		finally
+		{
+		  if (!success)
+		  {
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "init: hit exception on init; releasing write lock");
+			}
+			IOUtils.CloseWhileHandlingException(WriteLock);
+			WriteLock = null;
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Loads or returns the already loaded the global field number map for this <seealso cref="SegmentInfos"/>.
+	  /// If this <seealso cref="SegmentInfos"/> has no global field number map the returned instance is empty
+	  /// </summary>
+	  private FieldNumbers FieldNumberMap
+	  {
+		  get
+		  {
+	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+	//ORIGINAL LINE: final Lucene.Net.Index.FieldInfos.FieldNumbers map = new Lucene.Net.Index.FieldInfos.FieldNumbers();
+			FieldNumbers map = new FieldNumbers();
     
-    /// <summary>An <c>IndexWriter</c> creates and maintains an index.
-    /// <p/>The <c>create</c> argument to the 
-    /// <see cref="IndexWriter(Directory, Analyzer, bool, MaxFieldLength)">constructor</see> determines 
-    /// whether a new index is created, or whether an existing index is
-    /// opened.  Note that you can open an index with <c>create=true</c>
-    /// even while readers are using the index.  The old readers will 
-    /// continue to search the "point in time" snapshot they had opened, 
-    /// and won't see the newly created index until they re-open.  There are
-    /// also <see cref="IndexWriter(Directory, Analyzer, MaxFieldLength)">constructors</see>
-    /// with no <c>create</c> argument which will create a new index
-    /// if there is not already an index at the provided path and otherwise 
-    /// open the existing index.<p/>
-    /// <p/>In either case, documents are added with <see cref="AddDocument(Document)" />
-    /// and removed with <see cref="DeleteDocuments(Term)" /> or
-    /// <see cref="DeleteDocuments(Query)" />. A document can be updated with
-    /// <see cref="UpdateDocument(Term, Document)" /> (which just deletes
-    /// and then adds the entire document). When finished adding, deleting 
-    /// and updating documents, <see cref="Close()" /> should be called.<p/>
-    /// <a name="flush"></a>
-    /// <p/>These changes are buffered in memory and periodically
-    /// flushed to the <see cref="Directory" /> (during the above method
-    /// calls).  A flush is triggered when there are enough
-    /// buffered deletes (see <see cref="SetMaxBufferedDeleteTerms" />)
-    /// or enough added documents since the last flush, whichever
-    /// is sooner.  For the added documents, flushing is triggered
-    /// either by RAM usage of the documents (see 
-    /// <see cref="SetRAMBufferSizeMB" />) or the number of added documents.
-    /// The default is to flush when RAM usage hits 16 MB.  For
-    /// best indexing speed you should flush by RAM usage with a
-    /// large RAM buffer.  Note that flushing just moves the
-    /// internal buffered state in IndexWriter into the index, but
-    /// these changes are not visible to IndexReader until either
-    /// <see cref="Commit()" /> or <see cref="Close()" /> is called.  A flush may
-    /// also trigger one or more segment merges which by default
-    /// run with a background thread so as not to block the
-    /// addDocument calls (see <a href="#mergePolicy">below</a>
-    /// for changing the <see cref="MergeScheduler" />).
-    /// <p/>
-    /// If an index will not have more documents added for a while and optimal search
-    /// performance is desired, then either the full <see cref="Optimize()" />
-    /// method or partial <see cref="Optimize(int)" /> method should be
-    /// called before the index is closed.
-    /// <p/>
-    /// Opening an <c>IndexWriter</c> creates a lock file for the directory in use. Trying to open
-    /// another <c>IndexWriter</c> on the same directory will lead to a
-    /// <see cref="LockObtainFailedException" />. The <see cref="LockObtainFailedException" />
-    /// is also thrown if an IndexReader on the same directory is used to delete documents
-    /// from the index.<p/>
-    /// </summary>
-    /// <summary><a name="deletionPolicy"></a>
-    /// <p/>Expert: <c>IndexWriter</c> allows an optional
-    /// <see cref="IndexDeletionPolicy" /> implementation to be
-    /// specified.  You can use this to control when prior commits
-    /// are deleted from the index.  The default policy is <see cref="KeepOnlyLastCommitDeletionPolicy" />
-    /// which removes all prior
-    /// commits as soon as a new commit is done (this matches
-    /// behavior before 2.2).  Creating your own policy can allow
-    /// you to explicitly keep previous "point in time" commits
-    /// alive in the index for some time, to allow readers to
-    /// refresh to the new commit without having the old commit
-    /// deleted out from under them.  This is necessary on
-    /// filesystems like NFS that do not support "delete on last
-    /// close" semantics, which Lucene's "point in time" search
-    /// normally relies on. <p/>
-    /// <a name="mergePolicy"></a> <p/>Expert:
-    /// <c>IndexWriter</c> allows you to separately change
-    /// the <see cref="MergePolicy" /> and the <see cref="MergeScheduler" />.
-    /// The <see cref="MergePolicy" /> is invoked whenever there are
-    /// changes to the segments in the index.  Its role is to
-    /// select which merges to do, if any, and return a <see cref="Index.MergePolicy.MergeSpecification" />
-    /// describing the merges.  It
-    /// also selects merges to do for optimize().  (The default is
-    /// <see cref="LogByteSizeMergePolicy" />.  Then, the <see cref="MergeScheduler" />
-    /// is invoked with the requested merges and
-    /// it decides when and how to run the merges.  The default is
-    /// <see cref="ConcurrentMergeScheduler" />. <p/>
-    /// <a name="OOME"></a><p/><b>NOTE</b>: if you hit an
-    /// OutOfMemoryError then IndexWriter will quietly record this
-    /// fact and block all future segment commits.  This is a
-    /// defensive measure in case any internal state (buffered
-    /// documents and deletions) were corrupted.  Any subsequent
-    /// calls to <see cref="Commit()" /> will throw an
-    /// IllegalStateException.  The only course of action is to
-    /// call <see cref="Close()" />, which internally will call <see cref="Rollback()" />
-    ///, to undo any changes to the index since the
-    /// last commit.  You can also just call <see cref="Rollback()" />
-    /// directly.<p/>
-    /// <a name="thread-safety"></a><p/><b>NOTE</b>: 
-    /// <see cref="IndexWriter" /> instances are completely thread
-    /// safe, meaning multiple threads can call any of its
-    /// methods, concurrently.  If your application requires
-    /// external synchronization, you should <b>not</b>
-    /// synchronize on the <c>IndexWriter</c> instance as
-    /// this may cause deadlock; use your own (non-Lucene) objects
-    /// instead. <p/>
-    /// <b>NOTE:</b> if you call
-    /// <c>Thread.Interrupt()</c> on a thread that's within
-    /// IndexWriter, IndexWriter will try to catch this (eg, if
-    /// it's in a Wait() or Thread.Sleep()), and will then throw
-    /// the unchecked exception <see cref="System.Threading.ThreadInterruptedException"/>
-    /// and <b>clear</b> the interrupt status on the thread<p/>
-    /// </summary>
-
-    /*
-    * Clarification: Check Points (and commits)
-    * IndexWriter writes new index files to the directory without writing a new segments_N
-    * file which references these new files. It also means that the state of 
-    * the in memory SegmentInfos object is different than the most recent
-    * segments_N file written to the directory.
-    * 
-    * Each time the SegmentInfos is changed, and matches the (possibly 
-    * modified) directory files, we have a new "check point". 
-    * If the modified/new SegmentInfos is written to disk - as a new 
-    * (generation of) segments_N file - this check point is also an 
-    * IndexCommit.
-    * 
-    * A new checkpoint always replaces the previous checkpoint and 
-    * becomes the new "front" of the index. This allows the IndexFileDeleter 
-    * to delete files that are referenced only by stale checkpoints.
-    * (files that were created since the last commit, but are no longer
-    * referenced by the "front" of the index). For this, IndexFileDeleter 
-    * keeps track of the last non commit checkpoint.
-    */
-    public class IndexWriter : System.IDisposable
-    {
-        private void  InitBlock()
-        {
-            similarity = Search.Similarity.Default;
-            mergePolicy = new LogByteSizeMergePolicy(this);
-            readerPool = new ReaderPool(this);
-        }
-        
-        /// <summary> Default value for the write lock timeout (1,000).</summary>
-        /// <seealso cref="DefaultWriteLockTimeout">
-        /// </seealso>
-        public static long WRITE_LOCK_TIMEOUT = 1000;
-        
-        private long writeLockTimeout = WRITE_LOCK_TIMEOUT;
-        
-        /// <summary> Name of the write lock in the index.</summary>
-        public const System.String WRITE_LOCK_NAME = "write.lock";
-        
-        /// <summary> Value to denote a flush trigger is disabled</summary>
-        public const int DISABLE_AUTO_FLUSH = - 1;
-        
-        /// <summary> Disabled by default (because IndexWriter flushes by RAM usage
-        /// by default). Change using <see cref="SetMaxBufferedDocs(int)" />.
-        /// </summary>
-        public static readonly int DEFAULT_MAX_BUFFERED_DOCS = DISABLE_AUTO_FLUSH;
-        
-        /// <summary> Default value is 16 MB (which means flush when buffered
-        /// docs consume 16 MB RAM).  Change using <see cref="SetRAMBufferSizeMB" />.
-        /// </summary>
-        public const double DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
-        
-        /// <summary> Disabled by default (because IndexWriter flushes by RAM usage
-        /// by default). Change using <see cref="SetMaxBufferedDeleteTerms(int)" />.
-        /// </summary>
-        public static readonly int DEFAULT_MAX_BUFFERED_DELETE_TERMS = DISABLE_AUTO_FLUSH;
-        
-        /// <summary> Default value is 10,000. Change using <see cref="SetMaxFieldLength(int)" />.</summary>
-        public const int DEFAULT_MAX_FIELD_LENGTH = 10000;
-        
-        /// <summary> Default value is 128. Change using <see cref="TermIndexInterval" />.</summary>
-        public const int DEFAULT_TERM_INDEX_INTERVAL = 128;
-        
-        /// <summary> Absolute hard maximum length for a term.  If a term
-        /// arrives from the analyzer longer than this length, it
-        /// is skipped and a message is printed to infoStream, if
-        /// set (see <see cref="SetInfoStream" />).
-        /// </summary>
-        public static readonly int MAX_TERM_LENGTH;
-        
-        // The normal read buffer size defaults to 1024, but
-        // increasing this during merging seems to yield
-        // performance gains.  However we don't want to increase
-        // it too much because there are quite a few
-        // BufferedIndexInputs created during merging.  See
-        // LUCENE-888 for details.
-        private const int MERGE_READ_BUFFER_SIZE = 4096;
-        
-        // Used for printing messages
-        private static System.Object MESSAGE_ID_LOCK = new System.Object();
-        private static int MESSAGE_ID = 0;
-        private int messageID = - 1;
-        private volatile bool hitOOM;
-        
-        private Directory directory; // where this index resides
-        private Analyzer analyzer; // how to analyze text
-        
-        private Similarity similarity; // how to normalize
-        
-        private volatile uint changeCount; // increments every time a change is completed
-        private long lastCommitChangeCount; // last changeCount that was committed
-        
-        private SegmentInfos rollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-        private HashMap<SegmentInfo, int?> rollbackSegments;
-        
-        internal volatile SegmentInfos pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
-        internal volatile uint pendingCommitChangeCount;
-        
-        private SegmentInfos localRollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-        private int localFlushedDocCount; // saved docWriter.getFlushedDocCount during local transaction
-        
-        private SegmentInfos segmentInfos = new SegmentInfos(); // the segments
-        private int optimizeMaxNumSegments;
-
-        private DocumentsWriter docWriter;
-        private IndexFileDeleter deleter;
-
-        private ISet<SegmentInfo> segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<SegmentInfo>(); // used by optimize to note those needing optimization
-        
-        private Lock writeLock;
-        
-        private int termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
-        
-        private bool closed;
-        private bool closing;
-        
-        // Holds all SegmentInfo instances currently involved in
-        // merges
-        private HashSet<SegmentInfo> mergingSegments = new HashSet<SegmentInfo>();
-        
-        private MergePolicy mergePolicy;
-        private MergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
-        private LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
-        private ISet<MergePolicy.OneMerge> runningMerges = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<MergePolicy.OneMerge>();
-        private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
-        private long mergeGen;
-        private bool stopMerges;
-        
-        private int flushCount;
-        private int flushDeletesCount;
-        
-        // Used to only allow one addIndexes to proceed at once
-        // TODO: use ReadWriteLock once we are on 5.0
-        private int readCount; // count of how many threads are holding read lock
-        private ThreadClass writeThread; // non-null if any thread holds write lock
-        internal ReaderPool readerPool;
-        private int upgradeCount;
-
-        private int readerTermsIndexDivisor = IndexReader.DEFAULT_TERMS_INDEX_DIVISOR;
-        
-        // This is a "write once" variable (like the organic dye
-        // on a DVD-R that may or may not be heated by a laser and
-        // then cooled to permanently record the event): it's
-        // false, until getReader() is called for the first time,
-        // at which point it's switched to true and never changes
-        // back to false.  Once this is true, we hold open and
-        // reuse SegmentReader instances internally for applying
-        // deletes, doing merges, and reopening near real-time
-        // readers.
-        private volatile bool poolReaders;
-        
-        /// <summary> Expert: returns a readonly reader, covering all committed as well as
-        /// un-committed changes to the index. This provides "near real-time"
-        /// searching, in that changes made during an IndexWriter session can be
-        /// quickly made available for searching without closing the writer nor
-        /// calling <see cref="Commit()" />.
-        /// 
-        /// <p/>
-        /// Note that this is functionally equivalent to calling {#commit} and then
-        /// using <see cref="IndexReader.Open(Lucene.Net.Store.Directory, bool)" /> to open a new reader. But the turarnound
-        /// time of this method should be faster since it avoids the potentially
-        /// costly <see cref="Commit()" />.
-        /// <p/>
-        /// 
-        /// You must close the <see cref="IndexReader" /> returned by  this method once you are done using it.
-        /// 
-        /// <p/>
-        /// It's <i>near</i> real-time because there is no hard
-        /// guarantee on how quickly you can get a new reader after
-        /// making changes with IndexWriter.  You'll have to
-        /// experiment in your situation to determine if it's
-        /// faster enough.  As this is a new and experimental
-        /// feature, please report back on your findings so we can
-        /// learn, improve and iterate.<p/>
-        /// 
-        /// <p/>The resulting reader suppports <see cref="IndexReader.Reopen()" />
-        ///, but that call will simply forward
-        /// back to this method (though this may change in the
-        /// future).<p/>
-        /// 
-        /// <p/>The very first time this method is called, this
-        /// writer instance will make every effort to pool the
-        /// readers that it opens for doing merges, applying
-        /// deletes, etc.  This means additional resources (RAM,
-        /// file descriptors, CPU time) will be consumed.<p/>
-        /// 
-        /// <p/>For lower latency on reopening a reader, you should call <see cref="MergedSegmentWarmer" /> 
-        /// to call <see cref="MergedSegmentWarmer" /> to
-        /// pre-warm a newly merged segment before it's committed
-        /// to the index. This is important for minimizing index-to-search 
-        /// delay after a large merge.
-        /// 
-        /// <p/>If an addIndexes* call is running in another thread,
-        /// then this reader will only search those segments from
-        /// the foreign index that have been successfully copied
-        /// over, so far<p/>.
-        /// 
-        /// <p/><b>NOTE</b>: Once the writer is closed, any
-        /// outstanding readers may continue to be used.  However,
-        /// if you attempt to reopen any of those readers, you'll
-        /// hit an <see cref="AlreadyClosedException" />.<p/>
-        /// 
-        /// <p/><b>NOTE:</b> This API is experimental and might
-        /// change in incompatible ways in the next release.<p/>
-        /// 
-        /// </summary>
-        /// <returns> IndexReader that covers entire index plus all
-        /// changes made so far by this IndexWriter instance
-        /// 
-        /// </returns>
-        /// <throws>  IOException </throws>
-        public virtual IndexReader GetReader()
-        {
-            return GetReader(readerTermsIndexDivisor);
-        }
-        
-        /// <summary>Expert: like <see cref="GetReader()" />, except you can
-        /// specify which termInfosIndexDivisor should be used for
-        /// any newly opened readers.
-        /// </summary>
-        /// <param name="termInfosIndexDivisor">Subsambles which indexed
-        /// terms are loaded into RAM. This has the same effect as <see cref="IndexWriter.TermIndexInterval" />
-        /// except that setting
-        /// must be done at indexing time while this setting can be
-        /// set per reader.  When set to N, then one in every
-        /// N*termIndexInterval terms in the index is loaded into
-        /// memory.  By setting this to a value > 1 you can reduce
-        /// memory usage, at the expense of higher latency when
-        /// loading a TermInfo.  The default value is 1.  Set this
-        /// to -1 to skip loading the terms index entirely. 
-        /// </param>
-        public virtual IndexReader GetReader(int termInfosIndexDivisor)
-        {
-            EnsureOpen();
-
-            if (infoStream != null)
-            {
-                Message("flush at getReader");
-            }
-            
-            // Do this up front before flushing so that the readers
-            // obtained during this flush are pooled, the first time
-            // this method is called:
-            poolReaders = true;
-            
-            // Prevent segmentInfos from changing while opening the
-            // reader; in theory we could do similar retry logic,
-            // just like we do when loading segments_N
-            IndexReader r;
-            lock (this)
-            {
-                Flush(false, true, true);
-                r = new ReadOnlyDirectoryReader(this, segmentInfos, termInfosIndexDivisor);
-            }
-            MaybeMerge();
-            return r;
-        }
-        
-        /// <summary>Holds shared SegmentReader instances. IndexWriter uses
-        /// SegmentReaders for 1) applying deletes, 2) doing
-        /// merges, 3) handing out a real-time reader.  This pool
-        /// reuses instances of the SegmentReaders in all these
-        /// places if it is in "near real-time mode" (getReader()
-        /// has been called on this instance). 
-        /// </summary>
-        
-        internal class ReaderPool : IDisposable
-        {
-            public ReaderPool(IndexWriter enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(IndexWriter enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private IndexWriter enclosingInstance;
-            public IndexWriter Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-
-            private IDictionary<SegmentInfo, SegmentReader> readerMap = new HashMap<SegmentInfo, SegmentReader>();
-            
-            /// <summary>Forcefully clear changes for the specifed segments,
-            /// and remove from the pool.   This is called on succesful merge. 
-            /// </summary>
-            internal virtual void  Clear(SegmentInfos infos)
-            {
-                lock (this)
-                {
-                    if (infos == null)
-                    {
-                        foreach(KeyValuePair<SegmentInfo, SegmentReader> ent in readerMap)
-                        {
-                            ent.Value.hasChanges = false;
-                        }
-                    }
-                    else
-                    {
-                        foreach(SegmentInfo info in infos)
-                        {
-                            if (readerMap.ContainsKey(info))
-                            {
-                                readerMap[info].hasChanges = false;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // used only by asserts
-            public virtual bool InfoIsLive(SegmentInfo info)
-            {
-                lock (this)
-                {
-                    int idx = Enclosing_Instance.segmentInfos.IndexOf(info);
-                    System.Diagnostics.Debug.Assert(idx != -1);
-                    System.Diagnostics.Debug.Assert(Enclosing_Instance.segmentInfos[idx] == info);
-                    return true;
-                }
-            }
-            
-            public virtual SegmentInfo MapToLive(SegmentInfo info)
-            {
-                lock (this)
-                {
-                    int idx = Enclosing_Instance.segmentInfos.IndexOf(info);
-                    if (idx != - 1)
-                    {
-                        info = Enclosing_Instance.segmentInfos[idx];
-                    }
-                    return info;
-                }
-            }
-            
-            /// <summary> Release the segment reader (i.e. decRef it and close if there
-            /// are no more references.
-            /// </summary>
-            /// <param name="sr">
-            /// </param>
-            /// <throws>  IOException </throws>
-            public virtual void  Release(SegmentReader sr)
-            {
-                lock (this)
-                {
-                    Release(sr, false);
-                }
-            }
-
-            /// <summary> Release the segment reader (i.e. decRef it and close if there
-            /// are no more references.
-            /// </summary>
-            /// <param name="sr">
-            /// </param>
-            /// <param name="drop"></param>
-            /// <throws>  IOException </throws>
-            public virtual void  Release(SegmentReader sr, bool drop)
-            {
-                lock (this)
-                {
-                    
-                    bool pooled = readerMap.ContainsKey(sr.SegmentInfo);
-
-                    System.Diagnostics.Debug.Assert(!pooled || readerMap[sr.SegmentInfo] == sr);
-
-                    // Drop caller's ref; for an external reader (not
-                    // pooled), this decRef will close it
-                    sr.DecRef();
-                    
-                    if (pooled && (drop || (!Enclosing_Instance.poolReaders && sr.RefCount == 1)))
-                    {
-
-                        // We invoke deleter.checkpoint below, so we must be
-                        // sync'd on IW if there are changes:
-                        
-                        // TODO: Java 1.5 has this, .NET can't.
-                        // System.Diagnostics.Debug.Assert(!sr.hasChanges || Thread.holdsLock(enclosingInstance));
-
-                        // Discard (don't save) changes when we are dropping
-                        // the reader; this is used only on the sub-readers
-                        // after a successful merge.
-                        sr.hasChanges &= !drop;
-
-                        bool hasChanges = sr.hasChanges;
-                        
-                        // Drop our ref -- this will commit any pending
-                        // changes to the dir
-                        sr.Close();
-
-                        // We are the last ref to this reader; since we're
-                        // not pooling readers, we release it:
-                        readerMap.Remove(sr.SegmentInfo);
-
-                        if (hasChanges)
-                        {
-                            // Must checkpoint w/ deleter, because this
-                            // segment reader will have created new _X_N.del
-                            // file.
-                            enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
-                        }
-                    }
-                }
-            }
-
-            /// <summary>Remove all our references to readers, and commits
-            /// any pending changes. 
-            /// </summary>
-            public void Dispose()
-            {
-                Dispose(true);
-            }
-
-            protected void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    // We invoke deleter.checkpoint below, so we must be
-                    // sync'd on IW:
-                    // TODO: assert Thread.holdsLock(IndexWriter.this);
-                    // TODO: Should this class have bool _isDisposed?
-                    lock (this)
-                    {
-                        //var toRemove = new List<SegmentInfo>();
-                        foreach (var ent in readerMap)
-                        {
-                            SegmentReader sr = ent.Value;
-                            if (sr.hasChanges)
-                            {
-                                System.Diagnostics.Debug.Assert(InfoIsLive(sr.SegmentInfo));
-                                sr.DoCommit(null);
-                                // Must checkpoint w/ deleter, because this
-                                // segment reader will have created new _X_N.del
-                                // file.
-                                enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
-                            }
-
-                            //toRemove.Add(ent.Key);
-
-                            // NOTE: it is allowed that this decRef does not
-                            // actually close the SR; this can happen when a
-                            // near real-time reader is kept open after the
-                            // IndexWriter instance is closed
-                            sr.DecRef();
-                        }
-
-                        //foreach (var key in toRemove)
-                        //    readerMap.Remove(key);
-                        readerMap.Clear();
-                    }
-                }
-            }
-            
-            /// <summary> Commit all segment reader in the pool.</summary>
-            /// <throws>  IOException </throws>
-            internal virtual void  Commit()
-            {
-                // We invoke deleter.checkpoint below, so we must be
-                // sync'd on IW:
-                // TODO: assert Thread.holdsLock(IndexWriter.this);
-                lock (this)
-                {
-                    foreach(KeyValuePair<SegmentInfo,SegmentReader> ent in readerMap)
-                    {
-                        SegmentReader sr = ent.Value;
-                        if (sr.hasChanges)
-                        {
-                            System.Diagnostics.Debug.Assert(InfoIsLive(sr.SegmentInfo));
-                            sr.DoCommit(null);
-                            // Must checkpoint w/ deleter, because this
-                            // segment reader will have created new _X_N.del
-                            // file.
-                            enclosingInstance.deleter.Checkpoint(enclosingInstance.segmentInfos, false);
-                        }
-                    }
-                }
-            }
-            
-            /// <summary> Returns a ref to a clone.  NOTE: this clone is not
-            /// enrolled in the pool, so you should simply close()
-            /// it when you're done (ie, do not call release()).
-            /// </summary>
-            public virtual SegmentReader GetReadOnlyClone(SegmentInfo info, bool doOpenStores, int termInfosIndexDivisor)
-            {
-                lock (this)
-                {
-                    SegmentReader sr = Get(info, doOpenStores, BufferedIndexInput.BUFFER_SIZE, termInfosIndexDivisor);
-                    try
-                    {
-                        return (SegmentReader) sr.Clone(true);
-                    }
-                    finally
-                    {
-                        sr.DecRef();
-                    }
-                }
-            }
-            
-            /// <summary> Obtain a SegmentReader from the readerPool.  The reader
-            /// must be returned by calling <see cref="Release(SegmentReader)" />
-            /// </summary>
-            /// <seealso cref="Release(SegmentReader)">
-            /// </seealso>
-            /// <param name="info">
-            /// </param>
-            /// <param name="doOpenStores">
-            /// </param>
-            /// <throws>  IOException </throws>
-            public virtual SegmentReader Get(SegmentInfo info, bool doOpenStores)
-            {
-                lock (this)
-                {
-                    return Get(info, doOpenStores, BufferedIndexInput.BUFFER_SIZE, enclosingInstance.readerTermsIndexDivisor);
-                }
-            }
-            /// <summary> Obtain a SegmentReader from the readerPool.  The reader
-            /// must be returned by calling <see cref="Release(SegmentReader)" />
-            /// 
-            /// </summary>
-            /// <seealso cref="Release(SegmentReader)">
-            /// </seealso>
-            /// <param name="info">
-            /// </param>
-            /// <param name="doOpenStores">
-            /// </param>
-            /// <param name="readBufferSize">
-            /// </param>
-            /// <param name="termsIndexDivisor">
-            /// </param>
-            /// <throws>  IOException </throws>
-            public virtual SegmentReader Get(SegmentInfo info, bool doOpenStores, int readBufferSize, int termsIndexDivisor)
-            {
-                lock (this)
-                {
-                    if (Enclosing_Instance.poolReaders)
-                    {
-                        readBufferSize = BufferedIndexInput.BUFFER_SIZE;
-                    }
-                    
-                    SegmentReader sr = readerMap[info];
-                    if (sr == null)
-                    {
-                        // TODO: we may want to avoid doing this while
-                        // synchronized
-                        // Returns a ref, which we xfer to readerMap:
-                        sr = SegmentReader.Get(false, info.dir, info, readBufferSize, doOpenStores, termsIndexDivisor);
-                        if (info.dir == enclosingInstance.directory)
-                        {
-                            // Only pool if reader is not external
-                            readerMap[info]=sr;
-                        }
-                    }
-                    else
-                    {
-                        if (doOpenStores)
-                        {
-                            sr.OpenDocStores();
-                        }
-                        if (termsIndexDivisor != - 1 && !sr.TermsIndexLoaded())
-                        {
-                            // If this reader was originally opened because we
-                            // needed to merge it, we didn't load the terms
-                            // index.  But now, if the caller wants the terms
-                            // index (eg because it's doing deletes, or an NRT
-                            // reader is being opened) we ask the reader to
-                            // load its terms index.
-                            sr.LoadTermsIndex(termsIndexDivisor);
-                        }
-                    }
-                    
-                    // Return a ref to our caller
-                    if (info.dir == enclosingInstance.directory)
-                    {
-                        // Only incRef if we pooled (reader is not external)
-                        sr.IncRef();
-                    }
-                    return sr;
-                }
-            }
-            
-            // Returns a ref
-            public virtual SegmentReader GetIfExists(SegmentInfo info)
-            {
-                lock (this)
-                {
-                    SegmentReader sr = readerMap[info];
-                    if (sr != null)
-                    {
-                        sr.IncRef();
-                    }
-                    return sr;
-                }
-            }
-        }
-        
-        /// <summary> Obtain the number of deleted docs for a pooled reader.
-        /// If the reader isn't being pooled, the segmentInfo's 
-        /// delCount is returned.
-        /// </summary>
-        public virtual int NumDeletedDocs(SegmentInfo info)
-        {
-            SegmentReader reader = readerPool.GetIfExists(info);
-            try
-            {
-                if (reader != null)
-                {
-                    return reader.NumDeletedDocs;
-                }
-                else
-                {
-                    return info.GetDelCount();
-                }
-            }
-            finally
-            {
-                if (reader != null)
-                {
-                    readerPool.Release(reader);
-                }
-            }
-        }
-        
-        internal virtual void  AcquireWrite()
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(writeThread != ThreadClass.Current());
-                while (writeThread != null || readCount > 0)
-                    DoWait();
-                
-                // We could have been closed while we were waiting:
-                EnsureOpen();
-                
-                writeThread = ThreadClass.Current();
-            }
-        }
-        
-        internal virtual void  ReleaseWrite()
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(ThreadClass.Current() == writeThread);
-                writeThread = null;
-                System.Threading.Monitor.PulseAll(this);
-            }
-        }
-        
-        internal virtual void  AcquireRead()
-        {
-            lock (this)
-            {
-                ThreadClass current = ThreadClass.Current();
-                while (writeThread != null && writeThread != current)
-                    DoWait();
-                
-                readCount++;
-            }
-        }
-        
-        // Allows one readLock to upgrade to a writeLock even if
-        // there are other readLocks as long as all other
-        // readLocks are also blocked in this method:
-        internal virtual void  UpgradeReadToWrite()
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(readCount > 0);
-                upgradeCount++;
-                while (readCount > upgradeCount || writeThread != null)
-                {
-                    DoWait();
-                }
-                
-                writeThread = ThreadClass.Current();
-                readCount--;
-                upgradeCount--;
-            }
-        }
-        
-        internal virtual void  ReleaseRead()
-        {
-            lock (this)
-            {
-                readCount--;
-                System.Diagnostics.Debug.Assert(readCount >= 0);
-                System.Threading.Monitor.PulseAll(this);
-            }
-        }
-        
-        internal bool IsOpen(bool includePendingClose)
-        {
-            lock (this)
-            {
-                return !(closed || (includePendingClose && closing));
-            }
-        }
-        
-        /// <summary> Used internally to throw an <see cref="AlreadyClosedException" />
-        /// if this IndexWriter has been
-        /// closed.
-        /// </summary>
-        /// <throws>  AlreadyClosedException if this IndexWriter is </throws>
-        protected internal void  EnsureOpen(bool includePendingClose)
-        {
-            lock (this)
-            {
-                if (!IsOpen(includePendingClose))
-                {
-                    throw new AlreadyClosedException("this IndexWriter is closed");
-                }
-            }
-        }
-        
-        protected internal void  EnsureOpen()
-        {
-            lock (this)
-            {
-                EnsureOpen(true);
-            }
-        }
-        
-        /// <summary> Prints a message to the infoStream (if non-null),
-        /// prefixed with the identifying information for this
-        /// writer and the thread that's calling it.
-        /// </summary>
-        public virtual void  Message(System.String message)
-        {
-            if (infoStream != null)
-                infoStream.WriteLine("IW " + messageID + " [" + DateTime.Now.ToString() + "; " + ThreadClass.Current().Name + "]: " + message);
-        }
-        
-        private void  SetMessageID(System.IO.StreamWriter infoStream)
-        {
-            lock (this)
-            {
-                if (infoStream != null && messageID == - 1)
-                {
-                    lock (MESSAGE_ID_LOCK)
-                    {
-                        messageID = MESSAGE_ID++;
-                    }
-                }
-                this.infoStream = infoStream;
-            }
-        }
-
-        /// <summary> Casts current mergePolicy to LogMergePolicy, and throws
-        /// an exception if the mergePolicy is not a LogMergePolicy.
-        /// </summary>
-        private LogMergePolicy LogMergePolicy
-        {
-            get
-            {
-                if (mergePolicy is LogMergePolicy)
-                    return (LogMergePolicy) mergePolicy;
-
-                throw new System.ArgumentException(
-                    "this method can only be called when the merge policy is the default LogMergePolicy");
-            }
-        }
-
-        /// <summary><p/>Gets or sets the current setting of whether newly flushed
-        /// segments will use the compound file format.  Note that
-        /// this just returns the value previously set with
-        /// setUseCompoundFile(boolean), or the default value
-        /// (true).  You cannot use this to query the status of
-        /// previously flushed segments.<p/>
-        /// 
-        /// <p/>Note that this method is a convenience method: it
-        /// just calls mergePolicy.getUseCompoundFile as long as
-        /// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-        /// Otherwise an IllegalArgumentException is thrown.<p/>
-        /// 
-        /// </summary>
-        public virtual bool UseCompoundFile
-        {
-            get { return LogMergePolicy.GetUseCompoundFile(); }
-            set
-            {
-                LogMergePolicy.SetUseCompoundFile(value);
-                LogMergePolicy.SetUseCompoundDocStore(value);
-            }
-        }
-
-        /// <summary>Expert: Set the Similarity implementation used by this IndexWriter.
-        /// </summary>
-        public virtual void  SetSimilarity(Similarity similarity)
-        {
-            EnsureOpen();
-            this.similarity = similarity;
-            docWriter.SetSimilarity(similarity);
-        }
-
-        /// <summary>Expert: Return the Similarity implementation used by this IndexWriter.
-        /// 
-        /// <p/>This defaults to the current value of <see cref="Search.Similarity.Default" />.
-        /// </summary>
-        public virtual Similarity Similarity
-        {
-            get
-            {
-                EnsureOpen();
-                return this.similarity;
-            }
-        }
-
-
-        /// <summary>Expert: Gets or sets the interval between indexed terms.  Large values cause less
-        /// memory to be used by IndexReader, but slow random-access to terms.  Small
-        /// values cause more memory to be used by an IndexReader, and speed
-        /// random-access to terms.
-        /// 
-        /// This parameter determines the amount of computation required per query
-        /// term, regardless of the number of documents that contain that term.  In
-        /// particular, it is the maximum number of other terms that must be
-        /// scanned before a term is located and its frequency and position information
-        /// may be processed.  In a large index with user-entered query terms, query
-        /// processing time is likely to be dominated not by term lookup but rather
-        /// by the processing of frequency and positional data.  In a small index
-        /// or when many uncommon query terms are generated (e.g., by wildcard
-        /// queries) term lookup may become a dominant cost.
-        /// 
-        /// In particular, <c>numUniqueTerms/interval</c> terms are read into
-        /// memory by an IndexReader, and, on average, <c>interval/2</c> terms
-        /// must be scanned for each random term access.
-        /// 
-        /// </summary>
-        /// <seealso cref="DEFAULT_TERM_INDEX_INTERVAL">
-        /// </seealso>
-        public virtual int TermIndexInterval
-        {
-            get
-            {
-                // We pass false because this method is called by SegmentMerger while we are in the process of closing
-                EnsureOpen(false);
-                return termIndexInterval;
-            }
-            set
-            {
-                EnsureOpen();
-                this.termIndexInterval = value;
-            }
-        }
-
-        /// <summary> Constructs an IndexWriter for the index in <c>d</c>.
-        /// Text will be analyzed with <c>a</c>.  If <c>create</c>
-        /// is true, then a new, empty index will be created in
-        /// <c>d</c>, replacing the index already there, if any.
-        /// 
-        /// </summary>
-        /// <param name="d">the index directory
-        /// </param>
-        /// <param name="a">the analyzer to use
-        /// </param>
-        /// <param name="create"><c>true</c> to create the index or overwrite
-        /// the existing one; <c>false</c> to append to the existing
-        /// index
-        /// </param>
-        /// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
-        /// via the MaxFieldLength constructor.
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  LockObtainFailedException if another writer </throws>
-        /// <summary>  has this index open (<c>write.lock</c> could not
-        /// be obtained)
-        /// </summary>
-        /// <throws>  IOException if the directory cannot be read/written to, or </throws>
-        /// <summary>  if it does not exist and <c>create</c> is
-        /// <c>false</c> or if there is any other low-level
-        /// IO error
-        /// </summary>
-        public IndexWriter(Directory d, Analyzer a, bool create, MaxFieldLength mfl)
-        {
-            InitBlock();
-            Init(d, a, create, null, mfl.Limit, null, null);
-        }
-        
-        /// <summary> Constructs an IndexWriter for the index in
-        /// <c>d</c>, first creating it if it does not
-        /// already exist.  
-        /// 
-        /// </summary>
-        /// <param name="d">the index directory
-        /// </param>
-        /// <param name="a">the analyzer to use
-        /// </param>
-        /// <param name="mfl">Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified
-        /// via the MaxFieldLength constructor.
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  LockObtainFailedException if another writer </throws>
-        /// <summary>  has this index open (<c>write.lock</c> could not
-        /// be obtained)
-        /// </summary>
-        /// <throws>  IOException if the directory cannot be </throws>
-        /// <summary>  read/written to or if there is any other low-level
-        /// IO error
-        /// </summary>
-        public IndexWriter(Directory d, Analyzer a, MaxFieldLength mfl)
-        {
-            InitBlock();
-            Init(d, a, null, mfl.Limit, null, null);
-        }
-        
-        /// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
-        ///, for the index in <c>d</c>,
-        /// first creating it if it does not already exist.  Text
-        /// will be analyzed with <c>a</c>.
-        /// 
-        /// </summary>
-        /// <param name="d">the index directory
-        /// </param>
-        /// <param name="a">the analyzer to use
-        /// </param>
-        /// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
-        /// </param>
-        /// <param name="mfl">whether or not to limit field lengths
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  LockObtainFailedException if another writer </throws>
-        /// <summary>  has this index open (<c>write.lock</c> could not
-        /// be obtained)
-        /// </summary>
-        /// <throws>  IOException if the directory cannot be </throws>
-        /// <summary>  read/written to or if there is any other low-level
-        /// IO error
-        /// </summary>
-        public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
-        {
-            InitBlock();
-            Init(d, a, deletionPolicy, mfl.Limit, null, null);
-        }
-        
-        /// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
-        ///, for the index in <c>d</c>.
-        /// Text will be analyzed with <c>a</c>.  If
-        /// <c>create</c> is true, then a new, empty index
-        /// will be created in <c>d</c>, replacing the index
-        /// already there, if any.
-        /// 
-        /// </summary>
-        /// <param name="d">the index directory
-        /// </param>
-        /// <param name="a">the analyzer to use
-        /// </param>
-        /// <param name="create"><c>true</c> to create the index or overwrite
-        /// the existing one; <c>false</c> to append to the existing
-        /// index
-        /// </param>
-        /// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
-        /// </param>
-        /// <param name="mfl"><see cref="Lucene.Net.Index.IndexWriter.MaxFieldLength" />, whether or not to limit field lengths.  Value is in number of terms/tokens
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  LockObtainFailedException if another writer </throws>
-        /// <summary>  has this index open (<c>write.lock</c> could not
-        /// be obtained)
-        /// </summary>
-        /// <throws>  IOException if the directory cannot be read/written to, or </throws>
-        /// <summary>  if it does not exist and <c>create</c> is
-        /// <c>false</c> or if there is any other low-level
-        /// IO error
-        /// </summary>
-        public IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl)
-        {
-            InitBlock();
-            Init(d, a, create, deletionPolicy, mfl.Limit, null, null);
-        }
-        
-        /// <summary> Expert: constructs an IndexWriter with a custom <see cref="IndexDeletionPolicy" />
-        /// and <see cref="IndexingChain" />, 
-        /// for the index in <c>d</c>.
-        /// Text will be analyzed with <c>a</c>.  If
-        /// <c>create</c> is true, then a new, empty index
-        /// will be created in <c>d</c>, replacing the index
-        /// already there, if any.
-        /// 
-        /// </summary>
-        /// <param name="d">the index directory
-        /// </param>
-        /// <param name="a">the analyzer to use
-        /// </param>
-        /// <param name="create"><c>true</c> to create the index or overwrite
-        /// the existing one; <c>false</c> to append to the existing
-        /// index
-        /// </param>
-        /// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
-        /// </param>
-        /// <param name="mfl">whether or not to limit field lengths, value is in number of terms/tokens.  See <see cref="Lucene.Net.Index.IndexWriter.MaxFieldLength" />.
-        /// </param>
-        /// <param name="indexingChain">the <see cref="DocConsumer" /> chain to be used to 
-        /// process documents
-        /// </param>
-        /// <param name="commit">which commit to open
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  LockObtainFailedException if another writer </throws>
-        /// <summary>  has this index open (<c>write.lock</c> could not
-        /// be obtained)
-        /// </summary>
-        /// <throws>  IOException if the directory cannot be read/written to, or </throws>
-        /// <summary>  if it does not exist and <c>create</c> is
-        /// <c>false</c> or if there is any other low-level
-        /// IO error
-        /// </summary>
-        internal IndexWriter(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexingChain indexingChain, IndexCommit commit)
-        {
-            InitBlock();
-            Init(d, a, create, deletionPolicy, mfl.Limit, indexingChain, commit);
-        }
-        
-        /// <summary> Expert: constructs an IndexWriter on specific commit
-        /// point, with a custom <see cref="IndexDeletionPolicy" />, for
-        /// the index in <c>d</c>.  Text will be analyzed
-        /// with <c>a</c>.
-        /// 
-        /// <p/> This is only meaningful if you've used a <see cref="IndexDeletionPolicy" />
-        /// in that past that keeps more than
-        /// just the last commit.
-        /// 
-        /// <p/>This operation is similar to <see cref="Rollback()" />,
-        /// except that method can only rollback what's been done
-        /// with the current instance of IndexWriter since its last
-        /// commit, whereas this method can rollback to an
-        /// arbitrary commit point from the past, assuming the
-        /// <see cref="IndexDeletionPolicy" /> has preserved past
-        /// commits.
-        /// 
-        /// </summary>
-        /// <param name="d">the index directory
-        /// </param>
-        /// <param name="a">the analyzer to use
-        /// </param>
-        /// <param name="deletionPolicy">see <a href="#deletionPolicy">above</a>
-        /// </param>
-        /// <param name="mfl">whether or not to limit field lengths, value is in number of terms/tokens.  See <see cref="Lucene.Net.Index.IndexWriter.MaxFieldLength" />.
-        /// </param>
-        /// <param name="commit">which commit to open
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  LockObtainFailedException if another writer </throws>
-        /// <summary>  has this index open (<c>write.lock</c> could not
-        /// be obtained)
-        /// </summary>
-        /// <throws>  IOException if the directory cannot be read/written to, or </throws>
-        /// <summary>  if it does not exist and <c>create</c> is
-        /// <c>false</c> or if there is any other low-level
-        /// IO error
-        /// </summary>
-        public IndexWriter(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, MaxFieldLength mfl, IndexCommit commit)
-        {
-            InitBlock();
-            Init(d, a, false, deletionPolicy, mfl.Limit, null, commit);
-        }
-        
-        private void  Init(Directory d, Analyzer a, IndexDeletionPolicy deletionPolicy, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
-        {
-            if (IndexReader.IndexExists(d))
-            {
-                Init(d, a, false, deletionPolicy, maxFieldLength, indexingChain, commit);
-            }
-            else
-            {
-                Init(d, a, true, deletionPolicy, maxFieldLength, indexingChain, commit);
-            }
-        }
-        
-        private void  Init(Directory d, Analyzer a, bool create, IndexDeletionPolicy deletionPolicy, int maxFieldLength, IndexingChain indexingChain, IndexCommit commit)
-        {
-            directory = d;
-            analyzer = a;
-            SetMessageID(defaultInfoStream);
-            this.maxFieldLength = maxFieldLength;
-            
-            if (indexingChain == null)
-                indexingChain = DocumentsWriter.DefaultIndexingChain;
-            
-            if (create)
-            {
-                // Clear the write lock in case it's leftover:
-                directory.ClearLock(WRITE_LOCK_NAME);
-            }
-            
-            Lock writeLock = directory.MakeLock(WRITE_LOCK_NAME);
-            if (!writeLock.Obtain(writeLockTimeout))
-            // obtain write lock
-            {
-                throw new LockObtainFailedException("Index locked for write: " + writeLock);
-            }
-            this.writeLock = writeLock; // save it
-
-            bool success = false;
-            try
-            {
-                if (create)
-                {
-                    // Try to read first.  This is to allow create
-                    // against an index that's currently open for
-                    // searching.  In this case we write the next
-                    // segments_N file with no segments:
-                    bool doCommit;
-                    try
-                    {
-                        segmentInfos.Read(directory);
-                        segmentInfos.Clear();
-                        doCommit = false;
-                    }
-                    catch (System.IO.IOException)
-                    {
-                        // Likely this means it's a fresh directory
-                        doCommit = true;
-                    }
-                    
-                    if (doCommit)
-                    {
-                        // Only commit if there is no segments file 
-                        // in this dir already.
-                        segmentInfos.Commit(directory);
-                        synced.UnionWith(segmentInfos.Files(directory, true));
-                    }
-                    else
-                    {
-                        // Record that we have a change (zero out all
-                        // segments) pending:
-                        changeCount++;
-                    }
-                }
-                else
-                {
-                    segmentInfos.Read(directory);
-                    
-                    if (commit != null)
-                    {
-                        // Swap out all segments, but, keep metadata in
-                        // SegmentInfos, like version & generation, to
-                        // preserve write-once.  This is important if
-                        // readers are open against the future commit
-                        // points.
-                        if (commit.Directory != directory)
-                            throw new System.ArgumentException("IndexCommit's directory doesn't match my directory");
-                        SegmentInfos oldInfos = new SegmentInfos();
-                        oldInfos.Read(directory, commit.SegmentsFileName);
-                        segmentInfos.Replace(oldInfos);
-                        changeCount++;
-                        if (infoStream != null)
-                            Message("init: loaded commit \"" + commit.SegmentsFileName + "\"");
-                    }
-                    
-                    // We assume that this segments_N was previously
-                    // properly sync'd:
-                    synced.UnionWith(segmentInfos.Files(directory, true));
-                }
-                
-                SetRollbackSegmentInfos(segmentInfos);
-                
-                docWriter = new DocumentsWriter(directory, this, indexingChain);
-                docWriter.SetInfoStream(infoStream);
-                docWriter.SetMaxFieldLength(maxFieldLength);
-                
-                // Default deleter (for backwards compatibility) is
-                // KeepOnlyLastCommitDeleter:
-                deleter = new IndexFileDeleter(directory, deletionPolicy == null?new KeepOnlyLastCommitDeletionPolicy():deletionPolicy, segmentInfos, infoStream, docWriter, synced);
-                
-                if (deleter.startingCommitDeleted)
-                // Deletion policy deleted the "head" commit point.
-                // We have to mark ourself as changed so that if we
-                // are closed w/o any further changes we write a new
-                // segments_N file.
-                    changeCount++;
-                
-                PushMaxBufferedDocs();
-                
-                if (infoStream != null)
-                {
-                    Message("init: create=" + create);
-                    MessageState();
-                }
-
-                success = true;
-            }
-            finally
-            {
-                if (!success)
-                {
-                    if (infoStream != null)
-                    {
-                        Message("init: hit exception on init; releasing write lock");
-                    }
-                    try
-                    {
-                        writeLock.Release();
-                    }
-                    catch (Exception)
-                    {
-                        // don't mask the original exception
-                    }
-                    writeLock = null;
-                }
-            }
-        }
-        
-        private void  SetRollbackSegmentInfos(SegmentInfos infos)
-        {
-            lock (this)
-            {
-                rollbackSegmentInfos = (SegmentInfos) infos.Clone();
-                System.Diagnostics.Debug.Assert(!rollbackSegmentInfos.HasExternalSegments(directory));
-                rollbackSegments = new HashMap<SegmentInfo, int?>();
-                int size = rollbackSegmentInfos.Count;
-                for (int i = 0; i < size; i++)
-                    rollbackSegments[rollbackSegmentInfos.Info(i)] = i;
-            }
-        }
-        
-        /// <summary> Expert: set the merge policy used by this writer.</summary>
-        public virtual void  SetMergePolicy(MergePolicy mp)
-        {
-            EnsureOpen();
-            if (mp == null)
-                throw new System.NullReferenceException("MergePolicy must be non-null");
-            
-            if (mergePolicy != mp)
-                mergePolicy.Close();
-            mergePolicy = mp;
-            PushMaxBufferedDocs();
-            if (infoStream != null)
-            {
-                Message("setMergePolicy " + mp);
-            }
-        }
-
-        /// <summary> Expert: returns the current MergePolicy in use by this writer.</summary>
-        /// <seealso cref="SetMergePolicy">
-        /// </seealso>
-        public virtual MergePolicy MergePolicy
-        {
-            get
-            {
-                EnsureOpen();
-                return mergePolicy;
-            }
-        }
-
-        /// <summary> Expert: set the merge scheduler used by this writer.</summary>
-        public virtual void  SetMergeScheduler(MergeScheduler mergeScheduler)
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                if (mergeScheduler == null)
-                    throw new System.NullReferenceException("MergeScheduler must be non-null");
-                
-                if (this.mergeScheduler != mergeScheduler)
-                {
-                    FinishMerges(true);
-                    this.mergeScheduler.Close();
-                }
-                this.mergeScheduler = mergeScheduler;
-                if (infoStream != null)
-                {
-                    Message("setMergeScheduler " + mergeScheduler);
-                }
-            }
-        }
-
-        /// <summary> Expert: returns the current MergePolicy in use by this
-        /// writer.
-        /// </summary>
-        /// <seealso cref="SetMergePolicy">
-        /// </seealso>
-        public virtual MergeScheduler MergeScheduler
-        {
-            get
-            {
-                EnsureOpen();
-                return mergeScheduler;
-            }
-        }
-
-        /// <summary> <p/>Gets or sets the largest segment (measured by document
-        /// count) that may be merged with other segments.
-        /// <p/> 
-        /// Small values (e.g., less than 10,000) are best for
-        /// interactive indexing, as this limits the length of
-        /// pauses while indexing to a few seconds.  Larger values
-        /// are best for batched indexing and speedier
-        /// searches.
-        /// <p/>
-        /// The default value is <see cref="int.MaxValue" />.
-        /// <p/>
-        /// Note that this method is a convenience method: it
-        /// just calls mergePolicy.getMaxMergeDocs as long as
-        /// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-        /// Otherwise an IllegalArgumentException is thrown.<p/>
-        /// 
-        /// The default merge policy (<see cref="LogByteSizeMergePolicy" />)
-        /// also allows you to set this
-        /// limit by net size (in MB) of the segment, using 
-        /// <see cref="LogByteSizeMergePolicy.MaxMergeMB" />.<p/>
-        /// </summary>
-        /// <seealso cref="MaxMergeDocs">
-        /// </seealso>
-        public virtual int MaxMergeDocs
-        {
-            get { return LogMergePolicy.MaxMergeDocs; }
-            set { LogMergePolicy.MaxMergeDocs = value; }
-        }
-
-        /// <summary> The maximum number of terms that will be indexed for a single field in a
-        /// document.  This limits the amount of memory required for indexing, so that
-        /// collections with very large files will not crash the indexing process by
-        /// running out of memory.  This setting refers to the number of running terms,
-        /// not to the number of different terms.<p/>
-        /// <strong>Note:</strong> this silently truncates large documents, excluding from the
-        /// index all terms that occur further in the document.  If you know your source
-        /// documents are large, be sure to set this value high enough to accomodate
-        /// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
-        /// is your memory, but you should anticipate an OutOfMemoryError.<p/>
-        /// By default, no more than <see cref="DEFAULT_MAX_FIELD_LENGTH" /> terms
-        /// will be indexed for a field.
-        /// </summary>
-        public virtual void  SetMaxFieldLength(int maxFieldLength)
-        {
-            EnsureOpen();
-            this.maxFieldLength = maxFieldLength;
-            docWriter.SetMaxFieldLength(maxFieldLength);
-            if (infoStream != null)
-                Message("setMaxFieldLength " + maxFieldLength);
-        }
-        
-        /// <summary> Returns the maximum number of terms that will be
-        /// indexed for a single field in a document.
-        /// </summary>
-        /// <seealso cref="SetMaxFieldLength">
-        /// </seealso>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual int GetMaxFieldLength()
-        {
-            EnsureOpen();
-            return maxFieldLength;
-        }
-
-        /// Gets or sets the termsIndexDivisor passed to any readers that
-        /// IndexWriter opens, for example when applying deletes
-        /// or creating a near-real-time reader in 
-        /// <see cref="GetReader()"/>.  Default value is 
-        /// <see cref="IndexReader.DEFAULT_TERMS_INDEX_DIVISOR"/>.
-        public int ReaderTermsIndexDivisor
-        {
-            get
-            {
-                EnsureOpen();
-                return readerTermsIndexDivisor;
-            }
-            set
-            {
-                EnsureOpen();
-                if (value <= 0)
-                {
-                    throw new ArgumentException("divisor must be >= 1 (got " + value + ")");
-                }
-                readerTermsIndexDivisor = value;
-                if (infoStream != null)
-                {
-                    Message("setReaderTermsIndexDivisor " + readerTermsIndexDivisor);
-                }
-            }
-        }
-
-        /// <summary>Determines the minimal number of documents required
-        /// before the buffered in-memory documents are flushed as
-        /// a new Segment.  Large values generally gives faster
-        /// indexing.
-        /// 
-        /// <p/>When this is set, the writer will flush every
-        /// maxBufferedDocs added documents.  Pass in <see cref="DISABLE_AUTO_FLUSH" />
-        /// to prevent triggering a flush due
-        /// to number of buffered documents.  Note that if flushing
-        /// by RAM usage is also enabled, then the flush will be
-        /// triggered by whichever comes first.<p/>
-        /// 
-        /// <p/>Disabled by default (writer flushes by RAM usage).<p/>
-        /// 
-        /// </summary>
-        /// <throws>  IllegalArgumentException if maxBufferedDocs is </throws>
-        /// <summary> enabled but smaller than 2, or it disables maxBufferedDocs
-        /// when ramBufferSize is already disabled
-        /// </summary>
-        /// <seealso cref="SetRAMBufferSizeMB">
-        /// </seealso>
-        public virtual void  SetMaxBufferedDocs(int maxBufferedDocs)
-        {
-            EnsureOpen();
-            if (maxBufferedDocs != DISABLE_AUTO_FLUSH && maxBufferedDocs < 2)
-                throw new ArgumentException("maxBufferedDocs must at least be 2 when enabled");
-
-            if (maxBufferedDocs == DISABLE_AUTO_FLUSH && (int)GetRAMBufferSizeMB() == DISABLE_AUTO_FLUSH)
-                throw new ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
-
-            docWriter.MaxBufferedDocs = maxBufferedDocs;
-            PushMaxBufferedDocs();
-            if (infoStream != null)
-                Message("setMaxBufferedDocs " + maxBufferedDocs);
-        }
-        
-        /// <summary> If we are flushing by doc count (not by RAM usage), and
-        /// using LogDocMergePolicy then push maxBufferedDocs down
-        /// as its minMergeDocs, to keep backwards compatibility.
-        /// </summary>
-        private void  PushMaxBufferedDocs()
-        {
-            if (docWriter.MaxBufferedDocs != DISABLE_AUTO_FLUSH)
-            {
-                MergePolicy mp = mergePolicy;
-                if (mp is LogDocMergePolicy)
-                {
-                    LogDocMergePolicy lmp = (LogDocMergePolicy) mp;
-                    int maxBufferedDocs = docWriter.MaxBufferedDocs;
-                    if (lmp.MinMergeDocs != maxBufferedDocs)
-                    {
-                        if (infoStream != null)
-                            Message("now push maxBufferedDocs " + maxBufferedDocs + " to LogDocMergePolicy");
-                        lmp.MinMergeDocs = maxBufferedDocs;
-                    }
-                }
-            }
-        }
-        
-        /// <summary> Returns the number of buffered added documents that will
-        /// trigger a flush if enabled.
-        /// </summary>
-        /// <seealso cref="SetMaxBufferedDocs">
-        /// </seealso>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual int GetMaxBufferedDocs()
-        {
-            EnsureOpen();
-            return docWriter.MaxBufferedDocs;
-        }
-        
-        /// <summary>Determines the amount of RAM that may be used for
-        /// buffering added documents and deletions before they are
-        /// flushed to the Directory.  Generally for faster
-        /// indexing performance it's best to flush by RAM usage
-        /// instead of document count and use as large a RAM buffer
-        /// as you can.
-        /// 
-        /// <p/>When this is set, the writer will flush whenever
-        /// buffered documents and deletions use this much RAM.
-        /// Pass in <see cref="DISABLE_AUTO_FLUSH" /> to prevent
-        /// triggering a flush due to RAM usage.  Note that if
-        /// flushing by document count is also enabled, then the
-        /// flush will be triggered by whichever comes first.<p/>
-        /// 
-        /// <p/> <b>NOTE</b>: the account of RAM usage for pending
-        /// deletions is only approximate.  Specifically, if you
-        /// delete by Query, Lucene currently has no way to measure
-        /// the RAM usage if individual Queries so the accounting
-        /// will under-estimate and you should compensate by either
-        /// calling commit() periodically yourself, or by using
-        /// <see cref="SetMaxBufferedDeleteTerms" /> to flush by count
-        /// instead of RAM usage (each buffered delete Query counts
-        /// as one).
-        /// 
-        /// <p/>
-        /// <b>NOTE</b>: because IndexWriter uses <c>int</c>s when managing its
-        /// internal storage, the absolute maximum value for this setting is somewhat
-        /// less than 2048 MB. The precise limit depends on various factors, such as
-        /// how large your documents are, how many fields have norms, etc., so it's
-        /// best to set this value comfortably under 2048.
-        /// <p/>
-        /// 
-        /// <p/> The default value is <see cref="DEFAULT_RAM_BUFFER_SIZE_MB" />.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  IllegalArgumentException if ramBufferSize is </throws>
-        /// <summary> enabled but non-positive, or it disables ramBufferSize
-        /// when maxBufferedDocs is already disabled
-        /// </summary>
-        public virtual void  SetRAMBufferSizeMB(double mb)
-        {
-            if (mb > 2048.0)
-            {
-                throw new System.ArgumentException("ramBufferSize " + mb + " is too large; should be comfortably less than 2048");
-            }
-            if (mb != DISABLE_AUTO_FLUSH && mb <= 0.0)
-                throw new System.ArgumentException("ramBufferSize should be > 0.0 MB when enabled");
-            if (mb == DISABLE_AUTO_FLUSH && GetMaxBufferedDocs() == DISABLE_AUTO_FLUSH)
-                throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
-            docWriter.SetRAMBufferSizeMB(mb);
-            if (infoStream != null)
-                Message("setRAMBufferSizeMB " + mb);
-        }
-        
-        /// <summary> Returns the value set by <see cref="SetRAMBufferSizeMB" /> if enabled.</summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual double GetRAMBufferSizeMB()
-        {
-            return docWriter.GetRAMBufferSizeMB();
-        }
-        
-        /// <summary> <p/>Determines the minimal number of delete terms required before the buffered
-        /// in-memory delete terms are applied and flushed. If there are documents
-        /// buffered in memory at the time, they are merged and a new segment is
-        /// created.<p/>
-        /// <p/>Disabled by default (writer flushes by RAM usage).<p/>
-        /// 
-        /// </summary>
-        /// <throws>  IllegalArgumentException if maxBufferedDeleteTerms </throws>
-        /// <summary> is enabled but smaller than 1
-        /// </summary>
-        /// <seealso cref="SetRAMBufferSizeMB">
-        /// </seealso>
-        public virtual void  SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
-        {
-            EnsureOpen();
-            if (maxBufferedDeleteTerms != DISABLE_AUTO_FLUSH && maxBufferedDeleteTerms < 1)
-                throw new System.ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
-            docWriter.MaxBufferedDeleteTerms = maxBufferedDeleteTerms;
-            if (infoStream != null)
-                Message("setMaxBufferedDeleteTerms " + maxBufferedDeleteTerms);
-        }
-        
-        /// <summary> Returns the number of buffered deleted terms that will
-        /// trigger a flush if enabled.
-        /// </summary>
-        /// <seealso cref="SetMaxBufferedDeleteTerms">
-        /// </seealso>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        public virtual int GetMaxBufferedDeleteTerms()
-        {
-            EnsureOpen();
-            return docWriter.MaxBufferedDeleteTerms;
-        }
-
-        /// <summary>Gets or sets the number of segments that are merged at
-        /// once and also controls the total number of segments
-        /// allowed to accumulate in the index.
-        /// <p/>Determines how often segment indices are merged by addDocument().  With
-        /// smaller values, less RAM is used while indexing, and searches on
-        /// unoptimized indices are faster, but indexing speed is slower.  With larger
-        /// values, more RAM is used during indexing, and while searches on unoptimized
-        /// indices are slower, indexing is faster.  Thus larger values (> 10) are best
-        /// for batch index creation, and smaller values (&lt; 10) for indices that are
-        /// interactively maintained.
-        /// 
-        /// <p/>Note that this method is a convenience method: it
-        /// just calls mergePolicy.setMergeFactor as long as
-        /// mergePolicy is an instance of <see cref="LogMergePolicy" />.
-        /// Otherwise an IllegalArgumentException is thrown.<p/>
-        /// 
-        /// <p/>This must never be less than 2.  The default value is 10.
-        /// </summary>
-        public virtual int MergeFactor
-        {
-            set { LogMergePolicy.MergeFactor = value; }
-            get { return LogMergePolicy.MergeFactor; }
-        }
-
-        /// <summary>Gets or sets the default info stream.
-        /// If non-null, this will be the default infoStream used
-        /// by a newly instantiated IndexWriter.
-        /// </summary>
-        /// <seealso cref="SetInfoStream">
-        /// </seealso>
-        public static StreamWriter DefaultInfoStream
-        {
-            set { IndexWriter.defaultInfoStream = value; }
-            get { return IndexWriter.defaultInfoStream; }
-        }
-
-        /// <summary>If non-null, information about merges, deletes and a
-        /// message when maxFieldLength is reached will be printed
-        /// to this.
-        /// </summary>
-        public virtual void  SetInfoStream(System.IO.StreamWriter infoStream)
-        {
-            EnsureOpen();
-            SetMessageID(infoStream);
-            docWriter.SetInfoStream(infoStream);
-            deleter.SetInfoStream(infoStream);
-            if (infoStream != null)
-                MessageState();
-        }
-        
-        private void  MessageState()
-        {
-            Message("setInfoStream: dir=" + directory + 
-                    " mergePolicy=" + mergePolicy + 
-                    " mergeScheduler=" + mergeScheduler +
-                    " ramBufferSizeMB=" + docWriter.GetRAMBufferSizeMB() + 
-                    " maxBufferedDocs=" +  docWriter.MaxBufferedDocs +
-                    " maxBuffereDeleteTerms=" + docWriter.MaxBufferedDeleteTerms +
-                    " maxFieldLength=" + maxFieldLength + 
-                    " index=" + SegString());
-        }
-
-        /// <summary> Returns the current infoStream in use by this writer.</summary>
-        /// <seealso cref="SetInfoStream">
-        /// </seealso>
-        public virtual StreamWriter InfoStream
-        {
-            get
-            {
-                EnsureOpen();
-                return infoStream;
-            }
-        }
-
-        /// <summary>Returns true if verbosing is enabled (i.e., infoStream != null). </summary>
-        public virtual bool Verbose
-        {
-            get { return infoStream != null; }
-        }
-
-        /// <summary>Gets or sets allowed timeout when acquiring the write lock.</summary>
-        public virtual long WriteLockTimeout
-        {
-            get
-            {
-                EnsureOpen();
-                return writeLockTimeout;
-            }
-            set
-            {
-                EnsureOpen();
-                this.writeLockTimeout = value;
-            }
-        }
-
-        /// <summary> Gets or sets the default (for any instance of IndexWriter) maximum time to wait for a write lock (in
-        /// milliseconds).
-        /// </summary>
-        public static long DefaultWriteLockTimeout
-        {
-            set { IndexWriter.WRITE_LOCK_TIMEOUT = value; }
-            get { return IndexWriter.WRITE_LOCK_TIMEOUT; }
-        }
-
-        /// <summary> Commits all changes to an index and closes all
-        /// associated files.  Note that this may be a costly
-        /// operation, so, try to re-use a single writer instead of
-        /// closing and opening a new one.  See <see cref="Commit()" /> for
-        /// caveats about write caching done by some IO devices.
-        /// 
-        /// <p/> If an Exception is hit during close, eg due to disk
-        /// full or some other reason, then both the on-disk index
-        /// and the internal state of the IndexWriter instance will
-        /// be consistent.  However, the close will not be complete
-        /// even though part of it (flushing buffered documents)
-        /// may have succeeded, so the write lock will still be
-        /// held.<p/>
-        /// 
-        /// <p/> If you can correct the underlying cause (eg free up
-        /// some disk space) then you can call close() again.
-        /// Failing that, if you want to force the write lock to be
-        /// released (dangerous, because you may then lose buffered
-        /// docs in the IndexWriter instance) then you can do
-        /// something like this:<p/>
-        /// 
-        /// <code>
-        /// try {
-        ///     writer.close();
-        /// } finally {
-        ///     if (IndexWriter.isLocked(directory)) {
-        ///         IndexWriter.unlock(directory);
-        ///     }
-        /// }
-        /// </code>
-        /// 
-        /// after which, you must be certain not to use the writer
-        /// instance anymore.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer, again.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        [Obsolete("Use Dispose() instead")]
-        public void Close()
-        {
-            Dispose(true);
-        }
-
-        /// <summary> Commits all changes to an index and closes all
-        /// associated files.  Note that this may be a costly
-        /// operation, so, try to re-use a single writer instead of
-        /// closing and opening a new one.  See <see cref="Commit()" /> for
-        /// caveats about write caching done by some IO devices.
-        /// 
-        /// <p/> If an Exception is hit during close, eg due to disk
-        /// full or some other reason, then both the on-disk index
-        /// and the internal state of the IndexWriter instance will
-        /// be consistent.  However, the close will not be complete
-        /// even though part of it (flushing buffered documents)
-        /// may have succeeded, so the write lock will still be
-        /// held.<p/>
-        /// 
-        /// <p/> If you can correct the underlying cause (eg free up
-        /// some disk space) then you can call close() again.
-        /// Failing that, if you want to force the write lock to be
-        /// released (dangerous, because you may then lose buffered
-        /// docs in the IndexWriter instance) then you can do
-        /// something like this:<p/>
-        /// 
-        /// <code>
-        /// try {
-        ///     writer.close();
-        /// } finally {
-        ///     if (IndexWriter.isLocked(directory)) {
-        ///         IndexWriter.unlock(directory);
-        ///     }
-        /// }
-        /// </code>
-        /// 
-        /// after which, you must be certain not to use the writer
-        /// instance anymore.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer, again.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void Dispose()
-        {
-            Dispose(true);
-        }
-
-        /// <summary> Closes the index with or without waiting for currently
-        /// running merges to finish.  This is only meaningful when
-        /// using a MergeScheduler that runs merges in background
-        /// threads.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer, again.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: it is dangerous to always call
-        /// close(false), especially when IndexWriter is not open
-        /// for very long, because this can result in "merge
-        /// starvation" whereby long merges will never have a
-        /// chance to finish.  This will cause too many segments in
-        /// your index over time.<p/>
-        /// 
-        /// </summary>
-        /// <param name="waitForMerges">if true, this call will block
-        /// until all merges complete; else, it will ask all
-        /// running merges to abort, wait until those merges have
-        /// finished (which should be at most a few seconds), and
-        /// then return.
-        /// </param>
-        public virtual void Dispose(bool waitForMerges)
-        {
-            Dispose(true, waitForMerges);
-        }
-
-        protected virtual void Dispose(bool disposing, bool waitForMerges)
-        {
-            if (disposing)
-            {
-                // Ensure that only one thread actually gets to do the closing:
-                if (ShouldClose())
-                {
-                    // If any methods have hit OutOfMemoryError, then abort
-                    // on close, in case the internal state of IndexWriter
-                    // or DocumentsWriter is corrupt
-                    if (hitOOM)
-                        RollbackInternal();
-                    else
-                        CloseInternal(waitForMerges);
-                }
-            }
-        }
-        
-        /// <summary> Closes the index with or without waiting for currently
-        /// running merges to finish.  This is only meaningful when
-        /// using a MergeScheduler that runs merges in background
-        /// threads.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer, again.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: it is dangerous to always call
-        /// close(false), especially when IndexWriter is not open
-        /// for very long, because this can result in "merge
-        /// starvation" whereby long merges will never have a
-        /// chance to finish.  This will cause too many segments in
-        /// your index over time.<p/>
-        /// 
-        /// </summary>
-        /// <param name="waitForMerges">if true, this call will block
-        /// until all merges complete; else, it will ask all
-        /// running merges to abort, wait until those merges have
-        /// finished (which should be at most a few seconds), and
-        /// then return.
-        /// </param>
-        [Obsolete("Use Dispose(bool) instead")]
-        public virtual void Close(bool waitForMerges)
-        {
-            Dispose(waitForMerges);
-        }
-        
-        // Returns true if this thread should attempt to close, or
-        // false if IndexWriter is now closed; else, waits until
-        // another thread finishes closing
-        private bool ShouldClose()
-        {
-            lock (this)
-            {
-                while (true)
-                {
-                    if (!closed)
-                    {
-                        if (!closing)
-                        {
-                            closing = true;
-                            return true;
-                        }
-                        else
-                        {
-                            // Another thread is presently trying to close;
-                            // wait until it finishes one way (closes
-                            // successfully) or another (fails to close)
-                            DoWait();
-                        }
-                    }
-                    else
-                        return false;
-                }
-            }
-        }
-        
-        private void CloseInternal(bool waitForMerges)
-        {
-            
-            docWriter.PauseAllThreads();
-            
-            try
-            {
-                if (infoStream != null)
-                    Message("now flush at close");
-                
-                docWriter.Dispose();
-                
-                // Only allow a new merge to be triggered if we are
-                // going to wait for merges:
-                if (!hitOOM)
-                {
-                    Flush(waitForMerges, true, true);
-                }
-                
-                if (waitForMerges)
-                // Give merge scheduler last chance to run, in case
-                // any pending merges are waiting:
-                    mergeScheduler.Merge(this);
-                
-                mergePolicy.Close();
-                
-                FinishMerges(waitForMerges);
-                stopMerges = true;
-                
-                mergeScheduler.Close();
-                
-                if (infoStream != null)
-                    Message("now call final commit()");
-                
-                if (!hitOOM)
-                {
-                    Commit(0);
-                }
-                
-                if (infoStream != null)
-                    Message("at close: " + SegString());
-                
-                lock (this)
-                {
-                    readerPool.Dispose();
-                    docWriter = null;
-                    deleter.Dispose();
-                }
-                
-                if (writeLock != null)
-                {
-                    writeLock.Release(); // release write lock
-                    writeLock = null;
-                }
-                lock (this)
-                {
-                    closed = true;
-                }
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "closeInternal");
-            }
-            finally
-            {
-                lock (this)
-                {
-                    closing = false;
-                    System.Threading.Monitor.PulseAll(this);
-                    if (!closed)
-                    {
-                        if (docWriter != null)
-                            docWriter.ResumeAllThreads();
-                        if (infoStream != null)
-                            Message("hit exception while closing");
-                    }
-                }
-            }
-        }
-        
-        /// <summary>Tells the docWriter to close its currently open shared
-        /// doc stores (stored fields &amp; vectors files).
-        /// Return value specifices whether new doc store files are compound or not.
-        /// </summary>
-        private bool FlushDocStores()
-        {
-            lock (this)
-            {
-                if (infoStream != null)
-                {
-                    Message("flushDocStores segment=" + docWriter.DocStoreSegment);
-                }
-
-                bool useCompoundDocStore = false;
-                if (infoStream != null)
-                {
-                    Message("closeDocStores segment=" + docWriter.DocStoreSegment);
-                }
-
-                System.String docStoreSegment;
-                
-                bool success = false;
-                try
-                {
-                    docStoreSegment = docWriter.CloseDocStore();
-                    success = true;
-                }
-                finally
-                {
-                    if (!success && infoStream != null)
-                    {
-                        Message("hit exception closing doc store segment");
-                    }
-                }
-
-                if (infoStream != null)
-                {
-                    Message("flushDocStores files=" + docWriter.ClosedFiles());
-                }
-
-                useCompoundDocStore = mergePolicy.UseCompoundDocStore(segmentInfos);
-                
-                if (useCompoundDocStore && docStoreSegment != null && docWriter.ClosedFiles().Count != 0)
-                {
-                    // Now build compound doc store file
-                    
-                    if (infoStream != null)
-                    {
-                        Message("create compound file " + docStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION);
-                    }
-                    
-                    success = false;
-                    
-                    int numSegments = segmentInfos.Count;
-                    System.String compoundFileName = docStoreSegment + "." + IndexFileNames.COMPOUND_FILE_STORE_EXTENSION;
-                    
-                    try
-                    {
-                        CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, compoundFileName);
-                        foreach(string file in docWriter.closedFiles)
-                        {
-                            cfsWriter.AddFile(file);
-                        }
-                        
-                        // Perform the merge
-                        cfsWriter.Close();
-                        success = true;
-                    }
-                    finally
-                    {
-                        if (!success)
-                        {
-                            if (infoStream != null)
-                                Message("hit exception building compound file doc store for segment " + docStoreSegment);
-                            deleter.DeleteFile(compoundFileName);
-                            docWriter.Abort();
-                        }
-                    }
-                    
-                    for (int i = 0; i < numSegments; i++)
-                    {
-                        SegmentInfo si = segmentInfos.Info(i);
-                        if (si.DocStoreOffset != - 1 && si.DocStoreSegment.Equals(docStoreSegment))
-                            si.DocStoreIsCompoundFile = true;
-                    }
-                    
-                    Checkpoint();
-                    
-                    // In case the files we just merged into a CFS were
-                    // not previously checkpointed:
-                    deleter.DeleteNewFiles(docWriter.ClosedFiles());
-                }
-                
-                return useCompoundDocStore;
-            }
-        }
-
-        /// <summary>Returns the Directory used by this index. </summary>
-        public virtual Directory Directory
-        {
-            get
-            {
-                // Pass false because the flush during closing calls getDirectory
-                EnsureOpen(false);
-                return directory;
-            }
-        }
-
-        /// <summary>Returns the analyzer used by this index. </summary>
-        public virtual Analyzer Analyzer
-        {
-            get
-            {
-                EnsureOpen();
-                return analyzer;
-            }
-        }
-
-        /// <summary>Returns total number of docs in this index, including
-        /// docs not yet flushed (still in the RAM buffer),
-        /// not counting deletions.
-        /// </summary>
-        /// <seealso cref="NumDocs">
-        /// </seealso>
-        public virtual int MaxDoc()
-        {
-            lock (this)
-            {
-                int count;
-                if (docWriter != null)
-                    count = docWriter.NumDocsInRAM;
-                else
-                    count = 0;
-
-                for (int i = 0; i < segmentInfos.Count; i++)
-                    count += segmentInfos.Info(i).docCount;
-                return count;
-            }
-        }
-
-        /// <summary>Returns total number of docs in this index, including
-        /// docs not yet flushed (still in the RAM buffer), and
-        /// including deletions.  <b>NOTE:</b> buffered deletions
-        /// are not counted.  If you really need these to be
-        /// counted you should call <see cref="Commit()" /> first.
-        /// </summary>
-        /// <seealso cref="NumDocs">
-        /// </seealso>
-        public virtual int NumDocs()
-        {
-            lock (this)
-            {
-                int count;
-                if (docWriter != null)
-                    count = docWriter.NumDocsInRAM;
-                else
-                    count = 0;
-                
-                for (int i = 0; i < segmentInfos.Count; i++)
-                {
-                    SegmentInfo info = segmentInfos.Info(i);
-                    count += info.docCount - info.GetDelCount();
-                }
-                return count;
-            }
-        }
-        
-        public virtual bool HasDeletions()
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                if (docWriter.HasDeletes())
-                    return true;
-                for (int i = 0; i < segmentInfos.Count; i++)
-                    if (segmentInfos.Info(i).HasDeletions())
-                        return true;
-                return false;
-            }
-        }
-        
-        /// <summary> The maximum number of terms that will be indexed for a single field in a
-        /// document.  This limits the amount of memory required for indexing, so that
-        /// collections with very large files will not crash the indexing process by
-        /// running out of memory.<p/>
-        /// Note that this effectively truncates large documents, excluding from the
-        /// index terms that occur further in the document.  If you know your source
-        /// documents are large, be sure to set this value high enough to accomodate
-        /// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
-        /// is your memory, but you should anticipate an OutOfMemoryError.<p/>
-        /// By default, no more than 10,000 terms will be indexed for a field.
-        /// 
-        /// </summary>
-        /// <seealso cref="MaxFieldLength">
-        /// </seealso>
-        private int maxFieldLength;
-        
-        /// <summary> Adds a document to this index.  If the document contains more than
-        /// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
-        /// discarded.
-        /// 
-        /// <p/> Note that if an Exception is hit (for example disk full)
-        /// then the index will be consistent, but this document
-        /// may not have been added.  Furthermore, it's possible
-        /// the index will have one segment in non-compound format
-        /// even when using compound files (when a merge has
-        /// partially succeeded).<p/>
-        /// 
-        /// <p/> This method periodically flushes pending documents
-        /// to the Directory (see <a href="#flush">above</a>), and
-        /// also periodically triggers segment merges in the index
-        /// according to the <see cref="MergePolicy" /> in use.<p/>
-        /// 
-        /// <p/>Merges temporarily consume space in the
-        /// directory. The amount of space required is up to 1X the
-        /// size of all segments being merged, when no
-        /// readers/searchers are open against the index, and up to
-        /// 2X the size of all segments being merged when
-        /// readers/searchers are open against the index (see
-        /// <see cref="Optimize()" /> for details). The sequence of
-        /// primitive merge operations performed is governed by the
-        /// merge policy.
-        /// 
-        /// <p/>Note that each term in the document can be no longer
-        /// than 16383 characters, otherwise an
-        /// IllegalArgumentException will be thrown.<p/>
-        /// 
-        /// <p/>Note that it's possible to create an invalid Unicode
-        /// string in java if a UTF16 surrogate pair is malformed.
-        /// In this case, the invalid characters are silently
-        /// replaced with the Unicode replacement character
-        /// U+FFFD.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  AddDocument(Document doc)
-        {
-            AddDocument(doc, analyzer);
-        }
-        
-        /// <summary> Adds a document to this index, using the provided analyzer instead of the
-        /// value of <see cref="Analyzer" />.  If the document contains more than
-        /// <see cref="SetMaxFieldLength(int)" /> terms for a given field, the remainder are
-        /// discarded.
-        /// 
-        /// <p/>See <see cref="AddDocument(Document)" /> for details on
-        /// index and IndexWriter state after an Exception, and
-        /// flushing/merging temporary free space requirements.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  AddDocument(Document doc, Analyzer analyzer)
-        {
-            EnsureOpen();
-            bool doFlush = false;
-            bool success = false;
-            try
-            {
-                try
-                {
-                    doFlush = docWriter.AddDocument(doc, analyzer);
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        
-                        if (infoStream != null)
-                            Message("hit exception adding document");
-                        
-                        lock (this)
-                        {
-                            // If docWriter has some aborted files that were
-                            // never incref'd, then we clean them up here
-                            if (docWriter != null)
-                            {
-                                ICollection<string> files = docWriter.AbortedFiles();
-                                if (files != null)
-                                    deleter.DeleteNewFiles(files);
-                            }
-                        }
-                    }
-                }
-                if (doFlush)
-                    Flush(true, false, false);
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "addDocument");
-            }
-        }
-        
-        /// <summary> Deletes the document(s) containing <c>term</c>.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="term">the term to identify the documents to be deleted
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  DeleteDocuments(Term term)
-        {
-            EnsureOpen();
-            try
-            {
-                bool doFlush = docWriter.BufferDeleteTerm(term);
-                if (doFlush)
-                    Flush(true, false, false);
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "deleteDocuments(Term)");
-            }
-        }
-        
-        /// <summary> Deletes the document(s) containing any of the
-        /// terms. All deletes are flushed at the same time.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="terms">array of terms to identify the documents
-        /// to be deleted
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  DeleteDocuments(params Term[] terms)
-        {
-            EnsureOpen();
-            try
-            {
-                bool doFlush = docWriter.BufferDeleteTerms(terms);
-                if (doFlush)
-                    Flush(true, false, false);
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "deleteDocuments(params Term[])");
-            }
-        }
-        
-        /// <summary> Deletes the document(s) matching the provided query.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="query">the query to identify the documents to be deleted
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  DeleteDocuments(Query query)
-        {
-            EnsureOpen();
-            bool doFlush = docWriter.BufferDeleteQuery(query);
-            if (doFlush)
-                Flush(true, false, false);
-        }
-        
-        /// <summary> Deletes the document(s) matching any of the provided queries.
-        /// All deletes are flushed at the same time.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="queries">array of queries to identify the documents
-        /// to be deleted
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  DeleteDocuments(params Query[] queries)
-        {
-            EnsureOpen();
-            bool doFlush = docWriter.BufferDeleteQueries(queries);
-            if (doFlush)
-                Flush(true, false, false);
-        }
-        
-        /// <summary> Updates a document by first deleting the document(s)
-        /// containing <c>term</c> and then adding the new
-        /// document.  The delete and then add are atomic as seen
-        /// by a reader on the same index (flush may happen only after
-        /// the add).
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="term">the term to identify the document(s) to be
-        /// deleted
-        /// </param>
-        /// <param name="doc">the document to be added
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  UpdateDocument(Term term, Document doc)
-        {
-            EnsureOpen();
-            UpdateDocument(term, doc, Analyzer);
-        }
-        
-        /// <summary> Updates a document by first deleting the document(s)
-        /// containing <c>term</c> and then adding the new
-        /// document.  The delete and then add are atomic as seen
-        /// by a reader on the same index (flush may happen only after
-        /// the add).
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="term">the term to identify the document(s) to be
-        /// deleted
-        /// </param>
-        /// <param name="doc">the document to be added
-        /// </param>
-        /// <param name="analyzer">the analyzer to use when analyzing the document
-        /// </param>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  UpdateDocument(Term term, Document doc, Analyzer analyzer)
-        {
-            EnsureOpen();
-            try
-            {
-                bool doFlush = false;
-                bool success = false;
-                try
-                {
-                    doFlush = docWriter.UpdateDocument(term, doc, analyzer);
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        
-                        if (infoStream != null)
-                            Message("hit exception updating document");
-                        
-                        lock (this)
-                        {
-                            // If docWriter has some aborted files that were
-                            // never incref'd, then we clean them up here
-                            ICollection<string> files = docWriter.AbortedFiles();
-                            if (files != null)
-                                deleter.DeleteNewFiles(files);
-                        }
-                    }
-                }
-                if (doFlush)
-                    Flush(true, false, false);
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "updateDocument");
-            }
-        }
-        
-        // for test purpose
-        internal int GetSegmentCount()
-        {
-            lock (this)
-            {
-                return segmentInfos.Count;
-            }
-        }
-        
-        // for test purpose
-        internal int GetNumBufferedDocuments()
-        {
-            lock (this)
-            {
-                return docWriter.NumDocsInRAM;
-            }
-        }
-        
-        // for test purpose
-        public /*internal*/ int GetDocCount(int i)
-        {
-            lock (this)
-            {
-                if (i >= 0 && i < segmentInfos.Count)
-                {
-                    return segmentInfos.Info(i).docCount;
-                }
-                else
-                {
-                    return - 1;
-                }
-            }
-        }
-        
-        // for test purpose
-        internal int GetFlushCount()
-        {
-            lock (this)
-            {
-                return flushCount;
-            }
-        }
-        
-        // for test purpose
-        internal int GetFlushDeletesCount()
-        {
-            lock (this)
-            {
-                return flushDeletesCount;
-            }
-        }
-        
-        internal System.String NewSegmentName()
-        {
-            // Cannot synchronize on IndexWriter because that causes
-            // deadlock
-            lock (segmentInfos)
-            {
-                // Important to increment changeCount so that the
-                // segmentInfos is written on close.  Otherwise we
-                // could close, re-open and re-return the same segment
-                // name that was previously returned which can cause
-                // problems at least with ConcurrentMergeScheduler.
-                changeCount++;
-                return "_" + Number.ToString(segmentInfos.counter++);
-            }
-        }
-        
-        /// <summary>If non-null, information about merges will be printed to this.</summary>
-        private System.IO.StreamWriter infoStream = null;
-        private static System.IO.StreamWriter defaultInfoStream = null;
-        
-        /// <summary> Requests an "optimize" operation on an index, priming the index
-        /// for the fastest available search. Traditionally this has meant
-        /// merging all segments into a single segment as is done in the
-        /// default merge policy, but individaul merge policies may implement
-        /// optimize in different ways.
-        /// 
-        /// <p/>It is recommended that this method be called upon completion of indexing.  In
-        /// environments with frequent updates, optimize is best done during low volume times, if at all. 
-        /// 
-        /// <p/>
-        /// <p/>See http://www.gossamer-threads.com/lists/lucene/java-dev/47895 for more discussion. <p/>
-        /// 
-        /// <p/>Note that optimize requires 2X the index size free
-        /// space in your Directory (3X if you're using compound
-        /// file format).  For example, if your index
-        /// size is 10 MB then you need 20 MB free for optimize to
-        /// complete (30 MB if you're using compound fiel format).<p/>
-        /// 
-        /// <p/>If some but not all readers re-open while an
-        /// optimize is underway, this will cause > 2X temporary
-        /// space to be consumed as those new readers will then
-        /// hold open the partially optimized segments at that
-        /// time.  It is best not to re-open readers while optimize
-        /// is running.<p/>
-        /// 
-        /// <p/>The actual temporary usage could be much less than
-        /// these figures (it depends on many factors).<p/>
-        /// 
-        /// <p/>In general, once the optimize completes, the total size of the
-        /// index will be less than the size of the starting index.
-        /// It could be quite a bit smaller (if there were many
-        /// pending deletes) or just slightly smaller.<p/>
-        /// 
-        /// <p/>If an Exception is hit during optimize(), for example
-        /// due to disk full, the index will not be corrupt and no
-        /// documents will have been lost.  However, it may have
-        /// been partially optimized (some segments were merged but
-        /// not all), and it's possible that one of the segments in
-        /// the index will be in non-compound format even when
-        /// using compound file format.  This will occur when the
-        /// Exception is hit during conversion of the segment into
-        /// compound format.<p/>
-        /// 
-        /// <p/>This call will optimize those segments present in
-        /// the index when the call started.  If other threads are
-        /// still adding documents and flushing segments, those
-        /// newly created segments will not be optimized unless you
-        /// call optimize again.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        /// <seealso cref="Index.LogMergePolicy.FindMergesForOptimize">
-        /// </seealso>
-        public virtual void  Optimize()
-        {
-            Optimize(true);
-        }
-
-        /// <summary> Optimize the index down to &lt;= maxNumSegments.  If
-        /// maxNumSegments==1 then this is the same as <see cref="Optimize()" />
-        ///.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="maxNumSegments">maximum number of segments left
-        /// in the index after optimization finishes
-        /// </param>
-        public virtual void  Optimize(int maxNumSegments)
-        {
-            Optimize(maxNumSegments, true);
-        }
-        
-        /// <summary>Just like <see cref="Optimize()" />, except you can specify
-        /// whether the call should block until the optimize
-        /// completes.  This is only meaningful with a
-        /// <see cref="MergeScheduler" /> that is able to run merges in
-        /// background threads.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// </summary>
-        public virtual void  Optimize(bool doWait)
-        {
-            Optimize(1, doWait);
-        }
-        
-        /// <summary>Just like <see cref="Optimize(int)" />, except you can
-        /// specify whether the call should block until the
-        /// optimize completes.  This is only meaningful with a
-        /// <see cref="MergeScheduler" /> that is able to run merges in
-        /// background threads.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// </summary>
-        public virtual void  Optimize(int maxNumSegments, bool doWait)
-        {
-            EnsureOpen();
-            
-            if (maxNumSegments < 1)
-                throw new System.ArgumentException("maxNumSegments must be >= 1; got " + maxNumSegments);
-            
-            if (infoStream != null)
-                Message("optimize: index now " + SegString());
-            
-            Flush(true, false, true);
-            
-            lock (this)
-            {
-                ResetMergeExceptions();
-                segmentsToOptimize = Lucene.Net.Support.Compatibility.SetFactory.CreateHashSet<SegmentInfo>();
-                optimizeMaxNumSegments = maxNumSegments;
-                int numSegments = segmentInfos.Count;
-                for (int i = 0; i < numSegments; i++)
-                    segmentsToOptimize.Add(segmentInfos.Info(i));
-                
-                // Now mark all pending & running merges as optimize
-                // merge:
-                foreach(MergePolicy.OneMerge merge in pendingMerges)
-                {
-                    merge.optimize = true;
-                    merge.maxNumSegmentsOptimize = maxNumSegments;
-                }
-                
-                foreach(MergePolicy.OneMerge merge in runningMerges)
-                {
-                    merge.optimize = true;
-                    merge.maxNumSegmentsOptimize = maxNumSegments;
-                }
-            }
-            
-            MaybeMerge(maxNumSegments, true);
-            
-            if (doWait)
-            {
-                lock (this)
-                {
-                    while (true)
-                    {
-                        
-                        if (hitOOM)
-                        {
-                            throw new System.SystemException("this writer hit an OutOfMemoryError; cannot complete optimize");
-                        }
-                        
-                        if (mergeExceptions.Count > 0)
-                        {
-                            // Forward any exceptions in background merge
-                            // threads to the current thread:
-                            int size = mergeExceptions.Count;
-                            for (int i = 0; i < size; i++)
-                            {
-                                MergePolicy.OneMerge merge = mergeExceptions[i];
-                                if (merge.optimize)
-                                {
-                                    System.IO.IOException err;
-                                    System.Exception t = merge.GetException();
-                                    if (t != null)
-                                        err = new System.IO.IOException("background merge hit exception: " + merge.SegString(directory), t);
-                                    else
-                                        err = new System.IO.IOException("background merge hit exception: " + merge.SegString(directory));
-                                    throw err;
-                                }
-                            }
-                        }
-                        
-                        if (OptimizeMergesPending())
-                            DoWait();
-                        else
-                            break;
-                    }
-                }
-                
-                // If close is called while we are still
-                // running, throw an exception so the calling
-                // thread will know the optimize did not
-                // complete
-                EnsureOpen();
-            }
-            
-            // NOTE: in the ConcurrentMergeScheduler case, when
-            // doWait is false, we can return immediately while
-            // background threads accomplish the optimization
-        }
-        
-        /// <summary>Returns true if any merges in pendingMerges or
-        /// runningMerges are optimization merges. 
-        /// </summary>
-        private bool OptimizeMergesPending()
-        {
-            lock (this)
-            {
-                foreach (MergePolicy.OneMerge merge in pendingMerges)
-                {
-                    if (merge.optimize) return true;
-                }
-
-                foreach(MergePolicy.OneMerge merge in runningMerges)
-                {
-                    if (merge.optimize) return true;
-                }
-                
-                return false;
-            }
-        }
-        
-        /// <summary>Just like <see cref="ExpungeDeletes()" />, except you can
-        /// specify whether the call should block until the
-        /// operation completes.  This is only meaningful with a
-        /// <see cref="MergeScheduler" /> that is able to run merges in
-        /// background threads.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// </summary>
-        public virtual void  ExpungeDeletes(bool doWait)
-        {
-            EnsureOpen();
-            
-            if (infoStream != null)
-                Message("expungeDeletes: index now " + SegString());
-            
-            MergePolicy.MergeSpecification spec;
-            
-            lock (this)
-            {
-                spec = mergePolicy.FindMergesToExpungeDeletes(segmentInfos);
-                if (spec != null)
-                {
-                    int numMerges = spec.merges.Count;
-                    for (int i = 0; i < numMerges; i++)
-                        RegisterMerge(spec.merges[i]);
-                }
-            }
-            
-            mergeScheduler.Merge(this);
-            
-            if (spec != null && doWait)
-            {
-                int numMerges = spec.merges.Count;
-                lock (this)
-                {
-                    bool running = true;
-                    while (running)
-                    {
-                        
-                        if (hitOOM)
-                        {
-                            throw new System.SystemException("this writer hit an OutOfMemoryError; cannot complete expungeDeletes");
-                        }
-                        
-                        // Check each merge that MergePolicy asked us to
-                        // do, to see if any of them are still running and
-                        // if any of them have hit an exception.
-                        running = false;
-                        for (int i = 0; i < numMerges; i++)
-                        {
-                            MergePolicy.OneMerge merge = spec.merges[i];
-                            if (pendingMerges.Contains(merge) || runningMerges.Contains(merge))
-                                running = true;
-                            System.Exception t = merge.GetException();
-                            if (t != null)
-                            {
-                                System.IO.IOException ioe = new System.IO.IOException("background merge hit exception: " + merge.SegString(directory), t);
-                                throw ioe;
-                            }
-                        }
-                        
-                        // If any of our merges are still running, wait:
-                        if (running)
-                            DoWait();
-                    }
-                }
-            }
-            
-            // NOTE: in the ConcurrentMergeScheduler case, when
-            // doWait is false, we can return immediately while
-            // background threads accomplish the optimization
-        }
-        
-        
-        /// <summary>Expunges all deletes from the index.  When an index
-        /// has many document deletions (or updates to existing
-        /// documents), it's best to either call optimize or
-        /// expungeDeletes to remove all unused data in the index
-        /// associated with the deleted documents.  To see how
-        /// many deletions you have pending in your index, call
-        /// <see cref="IndexReader.NumDeletedDocs" />
-        /// This saves disk space and memory usage while
-        /// searching.  expungeDeletes should be somewhat faster
-        /// than optimize since it does not insist on reducing the
-        /// index to a single segment (though, this depends on the
-        /// <see cref="MergePolicy" />; see <see cref="Index.MergePolicy.FindMergesToExpungeDeletes" />.). Note that
-        /// this call does not first commit any buffered
-        /// documents, so you must do so yourself if necessary.
-        /// See also <seealso cref="ExpungeDeletes(bool)" />
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// </summary>
-        public virtual void  ExpungeDeletes()
-        {
-            ExpungeDeletes(true);
-        }
-        
-        /// <summary> Expert: asks the mergePolicy whether any merges are
-        /// necessary now and if so, runs the requested merges and
-        /// then iterate (test again if merges are needed) until no
-        /// more merges are returned by the mergePolicy.
-        /// 
-        /// Explicit calls to maybeMerge() are usually not
-        /// necessary. The most common case is when merge policy
-        /// parameters have changed.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// </summary>
-        public void  MaybeMerge()
-        {
-            MaybeMerge(false);
-        }
-        
-        private void  MaybeMerge(bool optimize)
-        {
-            MaybeMerge(1, optimize);
-        }
-        
-        private void  MaybeMerge(int maxNumSegmentsOptimize, bool optimize)
-        {
-            UpdatePendingMerges(maxNumSegmentsOptimize, optimize);
-            mergeScheduler.Merge(this);
-        }
-        
-        private void  UpdatePendingMerges(int maxNumSegmentsOptimize, bool optimize)
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(!optimize || maxNumSegmentsOptimize > 0);
-
-                if (stopMerges)
-                {
-                    return;
-                }
-                
-                // Do not start new merges if we've hit OOME
-                if (hitOOM)
-                {
-                    return ;
-                }
-                
-                MergePolicy.MergeSpecification spec;
-                if (optimize)
-                {
-                    spec = mergePolicy.FindMergesForOptimize(segmentInfos, maxNumSegmentsOptimize, segmentsToOptimize);
-
-                    if (spec != null)
-                    {
-                        int numMerges = spec.merges.Count;
-                        for (int i = 0; i < numMerges; i++)
-                        {
-                            MergePolicy.OneMerge merge = spec.merges[i];
-                            merge.optimize = true;
-                            merge.maxNumSegmentsOptimize = maxNumSegmentsOptimize;
-                        }
-                    }
-                }
-                else
-                {
-                    spec = mergePolicy.FindMerges(segmentInfos);
-                }
-
-                if (spec != null)
-                {
-                    int numMerges = spec.merges.Count;
-                    for (int i = 0; i < numMerges; i++)
-                        RegisterMerge(spec.merges[i]);
-                }
-            }
-        }
-        
-        /// <summary>Expert: the <see cref="MergeScheduler" /> calls this method
-        /// to retrieve the next merge requested by the
-        /// MergePolicy 
-        /// </summary>
-        internal virtual MergePolicy.OneMerge GetNextMerge()
-        {
-            lock (this)
-            {
-                if (pendingMerges.Count == 0)
-                    return null;
-                else
-                {
-                    // Advance the merge from pending to running
-                    MergePolicy.OneMerge merge = pendingMerges.First.Value;
-                    pendingMerges.RemoveFirst();
-                    runningMerges.Add(merge);
-                    return merge;
-                }
-            }
-        }
-        
-        /// <summary>Like getNextMerge() except only returns a merge if it's
-        /// external. 
-        /// </summary>
-        private MergePolicy.OneMerge GetNextExternalMerge()
-        {
-            lock (this)
-            {
-                if (pendingMerges.Count == 0)
-                    return null;
-                else
-                {
-                    var it = pendingMerges.GetEnumerator();
-                    while (it.MoveNext())
-                    {
-                        MergePolicy.OneMerge merge = it.Current;
-                        if (merge.isExternal)
-                        {
-                            // Advance the merge from pending to running
-                            pendingMerges.Remove(merge);  // {{Aroush-2.9}} From Mike Garski: this is an O(n) op... is that an issue?
-                            runningMerges.Add(merge);
-                            return merge;
-                        }
-                    }
-                    
-                    // All existing merges do not involve external segments
-                    return null;
-                }
-            }
-        }
-        
-        /*
-        * Begin a transaction.  During a transaction, any segment
-        * merges that happen (or ram segments flushed) will not
-        * write a new segments file and will not remove any files
-        * that were present at the start of the transaction.  You
-        * must make a matched (try/finally) call to
-        * commitTransaction() or rollbackTransaction() to finish
-        * the transaction.
-        *
-        * Note that buffered documents and delete terms are not handled
-        * within the transactions, so they must be flushed before the
-        * transaction is started.
-        */
-        private void  StartTransaction(bool haveReadLock)
-        {
-            lock (this)
-            {
-                
-                bool success = false;
-                try
-                {
-                    if (infoStream != null)
-                        Message("now start transaction");
-                    
-                    System.Diagnostics.Debug.Assert(docWriter.GetNumBufferedDeleteTerms() == 0 , 
-                        "calling startTransaction with buffered delete terms not supported: numBufferedDeleteTerms=" + docWriter.GetNumBufferedDeleteTerms());
-                    System.Diagnostics.Debug.Assert(docWriter.NumDocsInRAM == 0 , 
-                        "calling startTransaction with buffered documents not supported: numDocsInRAM=" + docWriter.NumDocsInRAM);
-                    
-                    EnsureOpen();
-                    
-                    // If a transaction is trying to roll back (because
-                    // addIndexes hit an exception) then wait here until
-                    // that's done:
-                    lock (this)
-                    {
-                        while (stopMerges)
-                            DoWait();
-                    }
-                    success = true;
-                }
-                finally
-                {
-                    // Release the write lock if our caller held it, on
-                    // hitting an exception
-                    if (!success && haveReadLock)
-                        ReleaseRead();
-                }
-                
-                if (haveReadLock)
-                {
-                    UpgradeReadToWrite();
-                }
-                else
-                {
-                    AcquireWrite();
-                }
-                
-                success = false;
-                try
-                {
-                    localRollbackSegmentInfos = (SegmentInfos) segmentInfos.Clone();
-                    
-                    System.Diagnostics.Debug.Assert(!HasExternalSegments());
-                    
-                    localFlushedDocCount = docWriter.GetFlushedDocCount();
-
-                    // Remove the incRef we did in startTransaction:
-                    deleter.IncRef(segmentInfos, false);
-                    
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                        FinishAddIndexes();
-                }
-            }
-        }
-        
-        /*
-        * Rolls back the transaction and restores state to where
-        * we were at the start.
-        */
-        private void  RollbackTransaction()
-        {
-            lock (this)
-            {
-                
-                if (infoStream != null)
-                    Message("now rollback transaction");
-                
-                if (docWriter != null)
-                {
-                    docWriter.SetFlushedDocCount(localFlushedDocCount);
-                }
-                
-                // Must finish merges before rolling back segmentInfos
-                // so merges don't hit exceptions on trying to commit
-                // themselves, don't get files deleted out from under
-                // them, etc:
-                FinishMerges(false);
-                
-                // Keep the same segmentInfos instance but replace all
-                // of its SegmentInfo instances.  This is so the next
-                // attempt to commit using this instance of IndexWriter
-                // will always write to a new generation ("write once").
-                segmentInfos.Clear();
-                segmentInfos.AddRange(localRollbackSegmentInfos);
-                localRollbackSegmentInfos = null;
-                
-                // This must come after we rollback segmentInfos, so
-                // that if a commit() kicks off it does not see the
-                // segmentInfos with external segments
-                FinishAddIndexes();
-                
-                // Ask deleter to locate unreferenced files we had
-                // created & remove them:
-                deleter.Checkpoint(segmentInfos, false);
-
-                // Remove the incRef we did in startTransaction:
-                deleter.DecRef(segmentInfos);
-                
-                // Also ask deleter to remove any newly created files
-                // that were never incref'd; this "garbage" is created
-                // when a merge kicks off but aborts part way through
-                // before it had a chance to incRef the files it had
-                // partially created
-                deleter.Refresh();
-                
-                System.Threading.Monitor.PulseAll(this);
-                
-                System.Diagnostics.Debug.Assert(!HasExternalSegments());
-            }
-        }
-        
-        /*
-        * Commits the transaction.  This will write the new
-        * segments file and remove and pending deletions we have
-        * accumulated during the transaction
-        */
-        private void  CommitTransaction()
-        {
-            lock (this)
-            {
-                
-                if (infoStream != null)
-                    Message("now commit transaction");
-                
-                // Give deleter a chance to remove files now:
-                Checkpoint();
-                
-                // Remove the incRef we did in startTransaction.
-                deleter.DecRef(localRollbackSegmentInfos);
-                
-                localRollbackSegmentInfos = null;
-                
-                System.Diagnostics.Debug.Assert(!HasExternalSegments());
-                
-                FinishAddIndexes();
-            }
-        }
-        
-        /// <summary> Close the <c>IndexWriter</c> without committing
-        /// any changes that have occurred since the last commit
-        /// (or since it was opened, if commit hasn't been called).
-        /// This removes any temporary files that had been created,
-        /// after which the state of the index will be the same as
-        /// it was when commit() was last called or when this
-        /// writer was first opened.  This also clears a previous 
-        /// call to <see cref="PrepareCommit()" />.
-        /// </summary>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  Rollback()
-        {
-            EnsureOpen();
-            
-            // Ensure that only one thread actually gets to do the closing:
-            if (ShouldClose())
-                RollbackInternal();
-        }
-        
-        private void  RollbackInternal()
-        {
-            
-            bool success = false;
-
-            if (infoStream != null)
-            {
-                Message("rollback");
-            }
-            
-            docWriter.PauseAllThreads();
-            
-            try
-            {
-                FinishMerges(false);
-                
-                // Must pre-close these two, in case they increment
-                // changeCount so that we can then set it to false
-                // before calling closeInternal
-                mergePolicy.Close();
-                mergeScheduler.Close();
-                
-                lock (this)
-                {
-                    
-                    if (pendingCommit != null)
-                    {
-                        pendingCommit.RollbackCommit(directory);
-                        deleter.DecRef(pendingCommit);
-                        pendingCommit = null;
-                        System.Threading.Monitor.PulseAll(this);
-                    }
-                    
-                    // Keep the same segmentInfos instance but replace all
-                    // of its SegmentInfo instances.  This is so the next
-                    // attempt to commit using this instance of IndexWriter
-                    // will always write to a new generation ("write
-                    // once").
-                    segmentInfos.Clear();
-                    segmentInfos.AddRange(rollbackSegmentInfos);
-                    
-                    System.Diagnostics.Debug.Assert(!HasExternalSegments());
-                    
-                    docWriter.Abort();
-                    
-                    System.Diagnostics.Debug.Assert(TestPoint("rollback before checkpoint"));
-                    
-                    // Ask deleter to locate unreferenced files & remove
-                    // them:
-                    deleter.Checkpoint(segmentInfos, false);
-                    deleter.Refresh();
-                }
-                
-                // Don't bother saving any changes in our segmentInfos
-                readerPool.Clear(null);
-                
-                lastCommitChangeCount = changeCount;
-                
-                success = true;
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "rollbackInternal");
-            }
-            finally
-            {
-                lock (this)
-                {
-                    if (!success)
-                    {
-                        docWriter.ResumeAllThreads();
-                        closing = false;
-                        System.Threading.Monitor.PulseAll(this);
-                        if (infoStream != null)
-                            Message("hit exception during rollback");
-                    }
-                }
-            }
-            
-            CloseInternal(false);
-        }
-        
-        /// <summary> Delete all documents in the index.
-        /// 
-        /// <p/>This method will drop all buffered documents and will 
-        /// remove all segments from the index. This change will not be
-        /// visible until a <see cref="Commit()" /> has been called. This method
-        /// can be rolled back using <see cref="Rollback()" />.<p/>
-        /// 
-        /// <p/>NOTE: this method is much faster than using deleteDocuments( new MatchAllDocsQuery() ).<p/>
-        /// 
-        /// <p/>NOTE: this method will forcefully abort all merges
-        /// in progress.  If other threads are running <see cref="Optimize()" />
-        /// or any of the addIndexes methods, they
-        /// will receive <see cref="Index.MergePolicy.MergeAbortedException" />s.
-        /// </summary>
-        public virtual void  DeleteAll()
-        {
-            lock (this)
-            {
-                docWriter.PauseAllThreads();
-                try
-                {
-                    
-                    // Abort any running merges
-                    FinishMerges(false);
-                    
-                    // Remove any buffered docs
-                    docWriter.Abort();
-                    docWriter.SetFlushedDocCount(0);
-                    
-                    // Remove all segments
-                    segmentInfos.Clear();
-                    
-                    // Ask deleter to locate unreferenced files & remove them:
-                    deleter.Checkpoint(segmentInfos, false);
-                    deleter.Refresh();
-                    
-                    // Don't bother saving any changes in our segmentInfos
-                    readerPool.Clear(null);
-                    
-                    // Mark that the index has changed
-                    ++changeCount;
-                }
-                catch (System.OutOfMemoryException oom)
-                {
-                    HandleOOM(oom, "deleteAll");
-                }
-                finally
-                {
-                    docWriter.ResumeAllThreads();
-                    if (infoStream != null)
-                    {
-                        Message("hit exception during deleteAll");
-                    }
-                }
-            }
-        }
-        
-        private void  FinishMerges(bool waitForMerges)
-        {
-            lock (this)
-            {
-                if (!waitForMerges)
-                {
-                    
-                    stopMerges = true;
-                    
-                    // Abort all pending & running merges:
-                    foreach(MergePolicy.OneMerge merge in pendingMerges)
-                    {
-                        if (infoStream != null)
-                            Message("now abort pending merge " + merge.SegString(directory));
-                        merge.Abort();
-                        MergeFinish(merge);
-                    }
-                    pendingMerges.Clear();
-                    
-                    foreach(MergePolicy.OneMerge merge in runningMerges)
-                    {
-                        if (infoStream != null)
-                            Message("now abort running merge " + merge.SegString(directory));
-                        merge.Abort();
-                    }
-                    
-                    // Ensure any running addIndexes finishes.  It's fine
-                    // if a new one attempts to start because its merges
-                    // will quickly see the stopMerges == true and abort.
-                    AcquireRead();
-                    ReleaseRead();
-                    
-                    // These merges periodically check whether they have
-                    // been aborted, and stop if so.  We wait here to make
-                    // sure they all stop.  It should not take very long
-                    // because the merge threads periodically check if
-                    // they are aborted.
-                    while (runningMerges.Count > 0)
-                    {
-                        if (infoStream != null)
-                            Message("now wait for " + runningMerges.Count + " running merge to abort");
-                        DoWait();
-                    }
-                    
-                    stopMerges = false;
-                    System.Threading.Monitor.PulseAll(this);
-                    
-                    System.Diagnostics.Debug.Assert(0 == mergingSegments.Count);
-                    
-                    if (infoStream != null)
-                        Message("all running merges have aborted");
-                }
-                else
-                {
-                    // waitForMerges() will ensure any running addIndexes finishes.  
-                    // It's fine if a new one attempts to start because from our
-                    // caller above the call will see that we are in the
-                    // process of closing, and will throw an
-                    // AlreadyClosedException.
-                    WaitForMerges();
-                }
-            }
-        }
-        
-        /// <summary> Wait for any currently outstanding merges to finish.
-        /// 
-        /// <p/>It is guaranteed that any merges started prior to calling this method 
-        /// will have completed once this method completes.<p/>
-        /// </summary>
-        public virtual void  WaitForMerges()
-        {
-            lock (this)
-            {
-                // Ensure any running addIndexes finishes.
-                AcquireRead();
-                ReleaseRead();
-                
-                while (pendingMerges.Count > 0 || runningMerges.Count > 0)
-                {
-                    DoWait();
-                }
-                
-                // sanity check
-                System.Diagnostics.Debug.Assert(0 == mergingSegments.Count);
-            }
-        }
-        
-        /*
-        * Called whenever the SegmentInfos has been updated and
-        * the index files referenced exist (correctly) in the
-        * index directory.
-        */
-        private void  Checkpoint()
-        {
-            lock (this)
-            {
-                changeCount++;
-                deleter.Checkpoint(segmentInfos, false);
-            }
-        }
-        
-        private void  FinishAddIndexes()
-        {
-            ReleaseWrite();
-        }
-        
-        private void  BlockAddIndexes(bool includePendingClose)
-        {
-            
-            AcquireRead();
-            
-            bool success = false;
-            try
-            {
-                
-                // Make sure we are still open since we could have
-                // waited quite a while for last addIndexes to finish
-                EnsureOpen(includePendingClose);
-                success = true;
-            }
-            finally
-            {
-                if (!success)
-                    ReleaseRead();
-            }
-        }
-        
-        private void  ResumeAddIndexes()
-        {
-            ReleaseRead();
-        }
-        
-        private void  ResetMergeExceptions()
-        {
-            lock (this)
-            {
-                mergeExceptions = new List<MergePolicy.OneMerge>();
-                mergeGen++;
-            }
-        }
-        
-        private void  NoDupDirs(Directory[] dirs)
-        {
-            HashSet<Directory> dups = new HashSet<Directory>();
-            for (int i = 0; i < dirs.Length; i++)
-            {
-                if (dups.Contains(dirs[i]))
-                {
-                    throw new System.ArgumentException("Directory " + dirs[i] + " appears more than once");
-                }
-                if (dirs[i] == directory)
-                    throw new System.ArgumentException("Cannot add directory to itself");
-                dups.Add(dirs[i]);
-            }
-        }
-        
-        /// <summary> Merges all segments from an array of indexes into this
-        /// index.
-        /// 
-        /// <p/>This may be used to parallelize batch indexing.  A large document
-        /// collection can be broken into sub-collections.  Each sub-collection can be
-        /// indexed in parallel, on a different thread, process or machine.  The
-        /// complete index can then be created by merging sub-collection indexes
-        /// with this method.
-        /// 
-        /// <p/><b>NOTE:</b> the index in each Directory must not be
-        /// changed (opened by a writer) while this method is
-        /// running.  This method does not acquire a write lock in
-        /// each input Directory, so it is up to the caller to
-        /// enforce this.
-        /// 
-        /// <p/><b>NOTE:</b> while this is running, any attempts to
-        /// add or delete documents (with another thread) will be
-        /// paused until this method completes.
-        /// 
-        /// <p/>This method is transactional in how Exceptions are
-        /// handled: it does not commit a new segments_N file until
-        /// all indexes are added.  This means if an Exception
-        /// occurs (for example disk full), then either no indexes
-        /// will have been added or they all will have been.<p/>
-        /// 
-        /// <p/>Note that this requires temporary free space in the
-        /// Directory up to 2X the sum of all input indexes
-        /// (including the starting index).  If readers/searchers
-        /// are open against the starting index, then temporary
-        /// free space required will be higher by the size of the
-        /// starting index (see <see cref="Optimize()" /> for details).
-        /// <p/>
-        /// 
-        /// <p/>Once this completes, the final size of the index
-        /// will be less than the sum of all input index sizes
-        /// (including the starting index).  It could be quite a
-        /// bit smaller (if there were many pending deletes) or
-        /// just slightly smaller.<p/>
-        /// 
-        /// <p/>
-        /// This requires this index not be among those to be added.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  AddIndexesNoOptimize(params Directory[] dirs)
-        {
-            
-            EnsureOpen();
-            
-            NoDupDirs(dirs);
-            
-            // Do not allow add docs or deletes while we are running:
-            docWriter.PauseAllThreads();
-            
-            try
-            {
-                if (infoStream != null)
-                    Message("flush at addIndexesNoOptimize");
-                Flush(true, false, true);
-                
-                bool success = false;
-                
-                StartTransaction(false);
-                
-                try
-                {
-                    
-                    int docCount = 0;
-                    lock (this)
-                    {
-                        EnsureOpen();
-                        
-                        for (int i = 0; i < dirs.Length; i++)
-                        {
-                            if (directory == dirs[i])
-                            {
-                                // cannot add this index: segments may be deleted in merge before added
-                                throw new System.ArgumentException("Cannot add this index to itself");
-                            }
-                            
-                            SegmentInfos sis = new SegmentInfos(); // read infos from dir
-                            sis.Read(dirs[i]);
-                            for (int j = 0; j < sis.Count; j++)
-                            {
-                                SegmentInfo info = sis.Info(j);
-                                System.Diagnostics.Debug.Assert(!segmentInfos.Contains(info), "dup info dir=" + info.dir + " name=" + info.name);
-                                docCount += info.docCount;
-                                segmentInfos.Add(info); // add each info
-                            }
-                        }
-                    }
-                    
-                    // Notify DocumentsWriter that the flushed count just increased
-                    docWriter.UpdateFlushedDocCount(docCount);
-                    
-                    MaybeMerge();
-                    
-                    EnsureOpen();
-                    
-                    // If after merging there remain segments in the index
-                    // that are in a different directory, just copy these
-                    // over into our index.  This is necessary (before
-                    // finishing the transaction) to avoid leaving the
-                    // index in an unusable (inconsistent) state.
-                    ResolveExternalSegments();
-                    
-                    EnsureOpen();
-                    
-                    success = true;
-                }
-                finally
-                {
-                    if (success)
-                    {
-                        CommitTransaction();
-                    }
-                    else
-                    {
-                        RollbackTransaction();
-                    }
-                }
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "addIndexesNoOptimize");
-            }
-            finally
-            {
-                if (docWriter != null)
-                {
-                    docWriter.ResumeAllThreads();
-                }
-            }
-        }
-        
-        private bool HasExternalSegments()
-        {
-            return segmentInfos.HasExternalSegments(directory);
-        }
-        
-        /* If any of our segments are using a directory != ours
-        * then we have to either copy them over one by one, merge
-        * them (if merge policy has chosen to) or wait until
-        * currently running merges (in the background) complete.
-        * We don't return until the SegmentInfos has no more
-        * external segments.  Currently this is only used by
-        * addIndexesNoOptimize(). */
-        private void  ResolveExternalSegments()
-        {
-            
-            bool any = false;
-            
-            bool done = false;
-            
-            while (!done)
-            {
-                SegmentInfo info = null;
-                MergePolicy.OneMerge merge = null;
-                lock (this)
-                {
-                    
-                    if (stopMerges)
-                        throw new MergePolicy.MergeAbortedException("rollback() was called or addIndexes* hit an unhandled exception");
-                    
-                    int numSegments = segmentInfos.Count;
-                    
-                    done = true;
-                    for (int i = 0; i < numSegments; i++)
-                    {
-                        info = segmentInfos.Info(i);
-                        if (info.dir != directory)
-                        {
-                            done = false;
-                            MergePolicy.OneMerge newMerge = new MergePolicy.OneMerge(segmentInfos.Range(i, 1 + i), mergePolicy is LogMergePolicy && UseCompoundFile);
-                            
-                            // Returns true if no running merge conflicts
-                            // with this one (and, records this merge as
-                            // pending), ie, this segment is not currently
-                            // being merged:
-                            if (RegisterMerge(newMerge))
-                            {
-                                merge = newMerge;
-                                
-                                // If this segment is not currently being
-                                // merged, then advance it to running & run
-                                // the merge ourself (below):
-                                pendingMerges.Remove(merge);    // {{Aroush-2.9}} From Mike Garski: this is an O(n) op... is that an issue?
-                                runningMerges.Add(merge);
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (!done && merge == null)
-                    // We are not yet done (external segments still
-                    // exist in segmentInfos), yet, all such segments
-                    // are currently "covered" by a pending or running
-                    // merge.  We now try to grab any pending merge
-                    // that involves external segments:
-                        merge = GetNextExternalMerge();
-                    
-                    if (!done && merge == null)
-                    // We are not yet done, and, all external segments
-                    // fall under merges that the merge scheduler is
-                    // currently running.  So, we now wait and check
-                    // back to see if the merge has completed.
-                        DoWait();
-                }
-                
-                if (merge != null)
-                {
-                    any = true;
-                    Merge(merge);
-                }
-            }
-            
-            if (any)
-            // Sometimes, on copying an external segment over,
-            // more merges may become necessary:
-                mergeScheduler.Merge(this);
-        }
-        
-        /// <summary>Merges the provided indexes into this index.
-        /// <p/>After this completes, the index is optimized. <p/>
-        /// <p/>The provided IndexReaders are not closed.<p/>
-        /// 
-        /// <p/><b>NOTE:</b> while this is running, any attempts to
-        /// add or delete documents (with another thread) will be
-        /// paused until this method completes.
-        /// 
-        /// <p/>See <see cref="AddIndexesNoOptimize(Directory[])" /> for
-        /// details on transactional semantics, temporary free
-        /// space required in the Directory, and non-CFS segments
-        /// on an Exception.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public virtual void  AddIndexes(params IndexReader[] readers)
-        {
-            
-            EnsureOpen();
-            
-            // Do not allow add docs or deletes while we are running:
-            docWriter.PauseAllThreads();
-            
-            // We must pre-acquire a read lock here (and upgrade to
-            // write lock in startTransaction below) so that no
-            // other addIndexes is allowed to start up after we have
-            // flushed & optimized but before we then start our
-            // transaction.  This is because the merging below
-            // requires that only one segment is present in the
-            // index:
-            AcquireRead();
-            
-            try
-            {
-                
-                SegmentInfo info = null;
-                System.String mergedName = null;
-                SegmentMerger merger = null;
-                
-                bool success = false;
-                
-                try
-                {
-                    Flush(true, false, true);
-                    Optimize(); // start with zero or 1 seg
-                    success = true;
-                }
-                finally
-                {
-                    // Take care to release the read lock if we hit an
-                    // exception before starting the transaction
-                    if (!success)
-                        ReleaseRead();
-                }
-                
-                // true means we already have a read lock; if this
-                // call hits an exception it will release the write
-                // lock:
-                StartTransaction(true);
-                
-                try
-                {
-                    mergedName = NewSegmentName();
-                    merger = new SegmentMerger(this, mergedName, null);
-                    
-                    SegmentReader sReader = null;
-                    lock (this)
-                    {
-                        if (segmentInfos.Count == 1)
-                        {
-                            // add existing index, if any
-                            sReader = readerPool.Get(segmentInfos.Info(0), true, BufferedIndexInput.BUFFER_SIZE, - 1);
-                        }
-                    }
-                    
-                    success = false;
-                    
-                    try
-                    {
-                        if (sReader != null)
-                            merger.Add(sReader);
-                        
-                        for (int i = 0; i < readers.Length; i++)
-                        // add new indexes
-                            merger.Add(readers[i]);
-                        
-                        int docCount = merger.Merge(); // merge 'em
-                        
-                        lock (this)
-                        {
-                            segmentInfos.Clear(); // pop old infos & add new
-                            info = new SegmentInfo(mergedName, docCount, directory, false, true, - 1, null, false, merger.HasProx());
-                            SetDiagnostics(info, "addIndexes(params IndexReader[])");
-                            segmentInfos.Add(info);
-                        }
-                        
-                        // Notify DocumentsWriter that the flushed count just increased
-                        docWriter.UpdateFlushedDocCount(docCount);
-                        
-                        success = true;
-                    }
-                    finally
-                    {
-                        if (sReader != null)
-                        {
-                            readerPool.Release(sReader);
-                        }
-                    }
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        if (infoStream != null)
-                            Message("hit exception in addIndexes during merge");
-                        RollbackTransaction();
-                    }
-                    else
-                    {
-                        CommitTransaction();
-                    }
-                }
-                
-                if (mergePolicy is LogMergePolicy && UseCompoundFile)
-                {
-                    
-                    IList<string> files = null;
-                    
-                    lock (this)
-                    {
-                        // Must incRef our files so that if another thread
-                        // is running merge/optimize, it doesn't delete our
-                        // segment's files before we have a change to
-                        // finish making the compound file.
-                        if (segmentInfos.Contains(info))
-                        {
-                            files = info.Files();
-                            deleter.IncRef(files);
-                        }
-                    }
-                    
-                    if (files != null)
-                    {
-                        
-                        success = false;
-                        
-                        StartTransaction(false);
-                        
-                        try
-                        {
-                            merger.CreateCompoundFile(mergedName + ".cfs");
-                            lock (this)
-                            {
-                                info.SetUseCompoundFile(true);
-                            }
-                            
-                            success = true;
-                        }
-                        finally
-                        {
-                            lock (this)
-                            {
-                                deleter.DecRef(files);
-                            }
-                                                        
-                            if (!success)
-                            {
-                                if (infoStream != null)
-                                    Message("hit exception building compound file in addIndexes during merge");
-                                
-                                RollbackTransaction();
-                            }
-                            else
-                            {
-                                CommitTransaction();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "addIndexes(params IndexReader[])");
-            }
-            finally
-            {
-                if (docWriter != null)
-                {
-                    docWriter.ResumeAllThreads();
-                }
-            }
-        }
-
-        ///<summary>
-        /// A hook for extending classes to execute operations after pending added and
-        /// deleted documents have been flushed to the Directory but before the change
-        /// is committed (new segments_N file written).
-        ///</summary>   
-        protected  virtual void  DoAfterFlush()
-        {
-        }
-
-        ///<summary>
-        /// A hook for extending classes to execute operations before pending added and
-        /// deleted documents are flushed to the Directory.
-        ///</summary>
-        protected virtual void DoBeforeFlush() 
-        {
-        }
-        
-        /// <summary>Expert: prepare for commit.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <seealso cref="PrepareCommit(IDictionary{string,string})">
-        /// </seealso>
-        public void  PrepareCommit()
-        {
-            EnsureOpen();
-            PrepareCommit(null);
-        }
-        
-        /// <summary><p/>Expert: prepare for commit, specifying
-        /// commitUserData Map (String -> String).  This does the
-        /// first phase of 2-phase commit. This method does all steps
-        /// necessary to commit changes since this writer was
-        /// opened: flushes pending added and deleted docs, syncs
-        /// the index files, writes most of next segments_N file.
-        /// After calling this you must call either <see cref="Commit()" />
-        /// to finish the commit, or <see cref="Rollback()" />
-        /// to revert the commit and undo all changes
-        /// done since the writer was opened.<p/>
-        /// 
-        /// You can also just call <see cref="Commit(IDictionary{string,string})" /> directly
-        /// without prepareCommit first in which case that method
-        /// will internally call prepareCommit.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <param name="commitUserData">Opaque Map (String->String)
-        /// that's recorded into the segments file in the index,
-        /// and retrievable by <see cref="IndexReader.GetCommitUserData" />.
-        /// Note that when IndexWriter commits itself, during <see cref="Close()" />, the
-        /// commitUserData is unchanged (just carried over from
-        /// the prior commit).  If this is null then the previous
-        /// commitUserData is kept.  Also, the commitUserData will
-        /// only "stick" if there are actually changes in the
-        /// index to commit.
-        /// </param>
-        private void PrepareCommit(IDictionary<string, string> commitUserData)
-        {
-            if (hitOOM)
-            {
-                throw new System.SystemException("this writer hit an OutOfMemoryError; cannot commit");
-            }
-            
-            if (pendingCommit != null)
-                throw new System.SystemException("prepareCommit was already called with no corresponding call to commit");
-            
-            if (infoStream != null)
-                Message("prepareCommit: flush");
-            
-            Flush(true, true, true);
-            
-            StartCommit(0, commitUserData);
-        }
-        
-        // Used only by commit, below; lock order is commitLock -> IW
-        private Object commitLock = new Object();
-
-        private void  Commit(long sizeInBytes)
-        {
-            lock(commitLock) {
-                StartCommit(sizeInBytes, null);
-                FinishCommit();
-            }
-        }
-        
-        /// <summary> <p/>Commits all pending changes (added &amp; deleted
-        /// documents, optimizations, segment merges, added
-        /// indexes, etc.) to the index, and syncs all referenced
-        /// index files, such that a reader will see the changes
-        /// and the index updates will survive an OS or machine
-        /// crash or power loss.  Note that this does not wait for
-        /// any running background merges to finish.  This may be a
-        /// costly operation, so you should test the cost in your
-        /// application and do it only when really necessary.<p/>
-        /// 
-        /// <p/> Note that this operation calls Directory.sync on
-        /// the index files.  That call should not return until the
-        /// file contents &amp; metadata are on stable storage.  For
-        /// FSDirectory, this calls the OS's fsync.  But, beware:
-        /// some hardware devices may in fact cache writes even
-        /// during fsync, and return before the bits are actually
-        /// on stable storage, to give the appearance of faster
-        /// performance.  If you have such a device, and it does
-        /// not have a battery backup (for example) then on power
-        /// loss it may still lose data.  Lucene cannot guarantee
-        /// consistency on such devices.  <p/>
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// 
-        /// </summary>
-        /// <seealso cref="PrepareCommit()">
-        /// </seealso>
-        /// <seealso cref="Commit(IDictionary{string,string})">
-        /// </seealso>
-        public void  Commit()
-        {
-            Commit(null);
-        }
-        
-        /// <summary>Commits all changes to the index, specifying a
-        /// commitUserData Map (String -> String).  This just
-        /// calls <see cref="PrepareCommit(IDictionary{string, string})" /> (if you didn't
-        /// already call it) and then <see cref="FinishCommit" />.
-        /// 
-        /// <p/><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.<p/>
-        /// </summary>
-        public void Commit(IDictionary<string, string> commitUserData)
-        {
-            EnsureOpen();
-
-            if (infoStream != null)
-            {
-                Message("commit: start");
-            }
-
-            lock (commitLock)
-            {
-                if (infoStream != null)
-                {
-                    Message("commit: enter lock");
-                }
-                if (pendingCommit == null)
-                {
-                    if (infoStream != null)
-                    {
-                        Message("commit: now prepare");
-                    }
-                    PrepareCommit(commitUserData);
-                }
-                else if (infoStream != null)
-                {
-                    Message("commit: already prepared");
-                }
-
-                FinishCommit();
-            }
-        }
-        
-        private void  FinishCommit()
-        {
-            lock (this)
-            {
-                
-                if (pendingCommit != null)
-                {
-                    try
-                    {
-                        if (infoStream != null)
-                            Message("commit: pendingCommit != null");
-                        pendingCommit.FinishCommit(directory);
-                        if (infoStream != null)
-                            Message("commit: wrote segments file \"" + pendingCommit.GetCurrentSegmentFileName() + "\"");
-                        lastCommitChangeCount = pendingCommitChangeCount;
-                        segmentInfos.UpdateGeneration(pendingCommit);
-                        segmentInfos.UserData = pendingCommit.UserData;
-                        SetRollbackSegmentInfos(pendingCommit);
-                        deleter.Checkpoint(pendingCommit, true);
-                    }
-                    finally
-                    {
-                        deleter.DecRef(pendingCommit);
-                        pendingCommit = null;
-                        System.Threading.Monitor.PulseAll(this);
-                    }
-                }
-                else if (infoStream != null)
-                {
-                    Message("commit: pendingCommit == null; skip");
-                }
-
-                if (infoStream != null)
-                {
-                    Message("commit: done");
-                }
-            }
-        }
-        
-        /// <summary> Flush all in-memory buffered udpates (adds and deletes)
-        /// to the Directory.
-        /// </summary>
-        /// <param name="triggerMerge">if true, we may merge segments (if
-        /// deletes or docs were flushed) if necessary
-        /// </param>
-        /// <param name="flushDocStores">if false we are allowed to keep
-        /// doc stores open to share with the next segment
-        /// </param>
-        /// <param name="flushDeletes">whether pending deletes should also
-        /// be flushed
-        /// </param>
-        public /*protected internal*/ void  Flush(bool triggerMerge, bool flushDocStores, bool flushDeletes)
-        {
-            // We can be called during close, when closing==true, so we must pass false to ensureOpen:
-            EnsureOpen(false);
-            if (DoFlush(flushDocStores, flushDeletes) && triggerMerge)
-                MaybeMerge();
-        }
-        
-        // TODO: this method should not have to be entirely
-        // synchronized, ie, merges should be allowed to commit
-        // even while a flush is happening
-        private bool DoFlush(bool flushDocStores, bool flushDeletes)
-        {
-            lock (this)
-            {
-                try
-                {
-                    try
-                    {
-                        return DoFlushInternal(flushDocStores, flushDeletes);
-                    }
-                    finally
-                    {
-                        if (docWriter.DoBalanceRAM())
-                        {
-                            docWriter.BalanceRAM();
-                        }
-                    }
-                }
-                finally
-                {
-                    docWriter.ClearFlushPending();
-                }
-            }
-        }
-        
-        // TODO: this method should not have to be entirely
-        // synchronized, ie, merges should be allowed to commit
-        // even while a flush is happening
-        private bool DoFlushInternal(bool flushDocStores, bool flushDeletes)
-        {
-            lock (this)
-            {
-                if (hitOOM)
-                {
-                    throw new System.SystemException("this writer hit an OutOfMemoryError; cannot flush");
-                }
-                
-                EnsureOpen(false);
-                
-                System.Diagnostics.Debug.Assert(TestPoint("startDoFlush"));
-
-                DoBeforeFlush();
-                
-                flushCount++;
-                
-                // If we are flushing because too many deletes
-                // accumulated, then we should apply the deletes to free
-                // RAM:
-                flushDeletes |= docWriter.DoApplyDeletes();
-                
-                // Make sure no threads are actively adding a document.
-                // Returns true if docWriter is currently aborting, in
-                // which case we skip flushing this segment
-                if (infoStream != null)
-                {
-                    Message("flush: now pause all indexing threads");
-                }
-                if (docWriter.PauseAllThreads())
-                {
-                    docWriter.ResumeAllThreads();
-                    return false;
-                }
-                
-                try
-                {
-                    
-                    SegmentInfo newSegment = null;
-                    
-                    int numDocs = docWriter.NumDocsInRAM;
-                    
-                    // Always flush docs if there are any
-                    bool flushDocs = numDocs > 0;
-                    
-                    System.String docStoreSegment = docWriter.DocStoreSegment;
-
-                    System.Diagnostics.Debug.Assert(docStoreSegment != null || numDocs == 0, "dss=" + docStoreSegment + " numDocs=" + numDocs);
-                    
-                    if (docStoreSegment == null)
-                        flushDocStores = false;
-                    
-                    int docStoreOffset = docWriter.DocStoreOffset;
-                    
-                    bool docStoreIsCompoundFile = false;
-                    
-                    if (infoStream != null)
-                    {
-                        Message("  flush: segment=" + docWriter.Segment + " docStoreSegment=" + docWriter.DocStoreSegment + " docStoreOffset=" + docStoreOffset + " flushDocs=" + flushDocs + " flushDeletes=" + flushDeletes + " flushDocStores=" + flushDocStores + " numDocs=" + numDocs + " numBufDelTerms=" + docWriter.GetNumBufferedDeleteTerms());
-                        Message("  index before flush " + SegString());
-                    }
-                    
-                    // Check if the doc stores must be separately flushed
-                    // because other segments, besides the one we are about
-                    // to flush, reference it
-                    if (flushDocStores && (!flushDocs || !docWriter.Segment.Equals(docWriter.DocStoreSegment)))
-                    {
-                        // We must separately flush the doc store
-                        if (infoStream != null)
-                            Message("  flush shared docStore segment " + docStoreSegment);
-                        
-                        docStoreIsCompoundFile = FlushDocStores();
-                        flushDocStores = false;
-                    }
-                    
-                    System.String segment = docWriter.Segment;
-                    
-                    // If we are flushing docs, segment must not be null:
-                    System.Diagnostics.Debug.Assert(segment != null || !flushDocs);
-                    
-                    if (flushDocs)
-                    {
-                        
-                        bool success = false;
-                        int flushedDocCount;
-                        
-                        try
-                        {
-                            flushedDocCount = docWriter.Flush(flushDocStores);
-                            if (infoStream != null)
-                            {
-                                Message("flushedFiles=" + docWriter.GetFlushedFiles());
-                            }
-                            success = true;
-                        }
-                        finally
-                        {
-                            if (!success)
-                            {
-                                if (infoStream != null)
-                                    Message("hit exception flushing segment " + segment);
-                                deleter.Refresh(segment);
-                            }
-                        }
-                        
-                        if (0 == docStoreOffset && flushDocStores)
-                        {
-                            // This means we are flushing private doc stores
-                            // with this segment, so it will not be shared
-                            // with other segments
-                            System.Diagnostics.Debug.Assert(docStoreSegment != null);
-                            System.Diagnostics.Debug.Assert(docStoreSegment.Equals(segment));
-                            docStoreOffset = - 1;
-                            docStoreIsCompoundFile = false;
-                            docStoreSegment = null;
-                        }
-                        
-                        // Create new SegmentInfo, but do not add to our
-                        // segmentInfos until deletes are flushed
-                        // successfully.
-                        newSegment = new SegmentInfo(segment, flushedDocCount, directory, false, true, docStoreOffset, docStoreSegment, docStoreIsCompoundFile, docWriter.HasProx());
-                        SetDiagnostics(newSegment, "flush");
-                    }
-                    
-                    docWriter.PushDeletes();
-                    
-                    if (flushDocs)
-                    {
-                        segmentInfos.Add(newSegment);
-                        Checkpoint();
-                    }
-                    
-                    if (flushDocs && mergePolicy.UseCompoundFile(segmentInfos, newSegment))
-                    {
-                        // Now build compound file
-                        bool success = false;
-                        try
-                        {
-                            docWriter.CreateCompoundFile(segment);
-                            success = true;
-                        }
-                        finally
-                        {
-                            if (!success)
-                            {
-                                if (infoStream != null)
-                                    Message("hit exception creating compound file for newly flushed segment " + segment);
-                                deleter.DeleteFile(segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
-                            }
-                        }
-                        
-                        newSegment.SetUseCompoundFile(true);
-                        Checkpoint();
-                    }
-                    
-                    if (flushDeletes)
-                    {
-                        ApplyDeletes();
-                    }
-                    
-                    if (flushDocs)
-                        Checkpoint();
-                    
-                    DoAfterFlush();
-                    
-                    return flushDocs;
-                }
-                catch (System.OutOfMemoryException oom)
-                {
-                    HandleOOM(oom, "doFlush");
-                    // never hit
-                    return false;
-                }
-                finally
-                {
-                    docWriter.ResumeAllThreads();
-                }
-            }
-        }
-        
-        /// <summary>Expert:  Return the total size of all index files currently cached in memory.
-        /// Useful for size management with flushRamDocs()
-        /// </summary>
-        public long RamSizeInBytes()
-        {
-            EnsureOpen();
-            return docWriter.GetRAMUsed();
-        }
-        
-        /// <summary>Expert:  Return the number of documents currently
-        /// buffered in RAM. 
-        /// </summary>
-        public int NumRamDocs()
-        {
-            lock (this)
-            {
-                EnsureOpen();
-                return docWriter.NumDocsInRAM;
-            }
-        }
-        
-        private int EnsureContiguousMerge(MergePolicy.OneMerge merge)
-        {
-            
-            int first = segmentInfos.IndexOf(merge.segments.Info(0));
-            if (first == - 1)
-                throw new MergePolicy.MergeException("could not find segment " + merge.segments.Info(0).name + " in current index " + SegString(), directory);
-            
-            int numSegments = segmentInfos.Count;
-            
-            int numSegmentsToMerge = merge.segments.Count;
-            for (int i = 0; i < numSegmentsToMerge; i++)
-            {
-                SegmentInfo info = merge.segments.Info(i);
-                
-                if (first + i >= numSegments || !segmentInfos.Info(first + i).Equals(info))
-                {
-                    if (segmentInfos.IndexOf(info) == - 1)
-                        throw new MergePolicy.MergeException("MergePolicy selected a segment (" + info.name + ") that is not in the current index " + SegString(), directory);
-                    else
-                        throw new MergePolicy.MergeException("MergePolicy selected non-contiguous segments to merge (" + merge.SegString(directory) + " vs " + SegString() + "), which IndexWriter (currently) cannot handle", directory);
-                }
-            }
-            
-            return first;
-        }
-        
-        /// <summary>Carefully merges deletes for the segments we just
-        /// merged.  This is tricky because, although merging will
-        /// clear all deletes (compacts the documents), new
-        /// deletes may have been flushed to the segments since
-        /// the merge was started.  This method "carries over"
-        /// such new deletes onto the newly merged segment, and
-        /// saves the resulting deletes file (incrementing the
-        /// delete generation for merge.info).  If no deletes were
-        /// flushed, no new deletes file is saved. 
-        /// </summary>
-        private void  CommitMergedDeletes(MergePolicy.OneMerge merge, SegmentReader mergeReader)
-        {
-            lock (this)
-            {
-                
-                System.Diagnostics.Debug.Assert(TestPoint("startCommitMergeDeletes"));
-                
-                SegmentInfos sourceSegments = merge.segments;
-                
-                if (infoStream != null)
-                    Message("commitMergeDeletes " + merge.SegString(directory));
-                
-                // Carefully merge deletes that occurred after we
-                // started merging:
-                int docUpto = 0;
-                int delCount = 0;
-                
-                for (int i = 0; i < sourceSegments.Count; i++)
-                {
-                    SegmentInfo info = sourceSegments.Info(i);
-                    int docCount = info.docCount;
-                    SegmentReader previousReader = merge.readersClone[i];
-                    SegmentReader currentReader = merge.readers[i];
-                    if (previousReader.HasDeletions)
-                    {
-                        
-                        // There were deletes on this segment when the merge
-                        // started.  The merge has collapsed away those
-                        // deletes, but, if new deletes were flushed since
-                        // the merge started, we must now carefully keep any
-                        // newly flushed deletes but mapping them to the new
-                        // docIDs.
-                        
-                        if (currentReader.NumDeletedDocs > previousReader.NumDeletedDocs)
-                        {
-                            // This means this segment has had new deletes
-                            // committed since we started the merge, so we
-                            // must merge them:
-                            for (int j = 0; j < docCount; j++)
-                            {
-                                if (previousReader.IsDeleted(j))
-                                {
-                                    System.Diagnostics.Debug.Assert(currentReader.IsDeleted(j));
-                                }
-                                else
-                                {
-                                    if (currentReader.IsDeleted(j))
-                                    {
-                                        mergeReader.DoDelete(docUpto);
-                                        delCount++;
-                                    }
-                                    docUpto++;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            docUpto += docCount - previousReader.NumDeletedDocs;
-                        }
-                    }
-                    else if (currentReader.HasDeletions)
-                    {
-                        // This segment had no deletes before but now it
-                        // does:
-                        for (int j = 0; j < docCount; j++)
-                        {
-                            if (currentReader.IsDeleted(j))
-                            {
-                                mergeReader.DoDelete(docUpto);
-                                delCount++;
-                            }
-                            docUpto++;
-                        }
-                    }
-                    // No deletes before or after
-                    else
-                        docUpto += info.docCount;
-                }
-                
-                System.Diagnostics.Debug.Assert(mergeReader.NumDeletedDocs == delCount);
-                
-                mergeReader.hasChanges = delCount > 0;
-            }
-        }
-        
-        /* FIXME if we want to support non-contiguous segment merges */
-        private bool CommitMerge(MergePolicy.OneMerge merge, SegmentMerger merger, int mergedDocCount, SegmentReader mergedReader)
-        {
-            lock (this)
-            {
-                
-                System.Diagnostics.Debug.Assert(TestPoint("startCommitMerge"));
-                
-                if (hitOOM)
-                {
-                    throw new System.SystemException("this writer hit an OutOfMemoryError; cannot complete merge");
-                }
-                
-                if (infoStream != null)
-                    Message("commitMerge: " + merge.SegString(directory) + " index=" + SegString());
-                
-                System.Diagnostics.Debug.Assert(merge.registerDone);
-                
-                // If merge was explicitly aborted, or, if rollback() or
-                // rollbackTransaction() had been called since our merge
-                // started (which results in an unqualified
-                // deleter.refresh() call that will remove any index
-                // file that current segments does not reference), we
-                // abort this merge
-                if (merge.IsAborted())
-                {
-                    if (infoStream != null)
-                        Message("commitMerge: skipping merge " + merge.SegString(directory) + ": it was aborted");
-                    
-                    return false;
-                }
-                
-                int start = EnsureContiguousMerge(merge);
-                
-                CommitMergedDeletes(merge, mergedReader);
-                docWriter.RemapDeletes(segmentInfos, merger.GetDocMaps(), merger.GetDelCounts(), merge, mergedDocCount);
-
-                // If the doc store we are using has been closed and
-                // is in now compound format (but wasn't when we
-                // started), then we will switch to the compound
-                // format as well:
-                SetMergeDocStoreIsCompoundFile(merge);
-                
-                merge.info.HasProx = merger.HasProx();
-                
-                segmentInfos.RemoveRange(start, start + merge.segments.Count - start);
-                System.Diagnostics.Debug.Assert(!segmentInfos.Contains(merge.info));
-                segmentInfos.Insert(start, merge.info);
-
-                CloseMergeReaders(merge, false);
-                
-                // Must note the change to segmentInfos so any commits
-                // in-flight don't lose it:
-                Checkpoint();
-                
-                // If the merged segments had pending changes, clear
-                // them so that they don't bother writing them to
-                // disk, updating SegmentInfo, etc.:
-                readerPool.Clear(merge.segments);
-
-                if (merge.optimize)
-                {
-                    // cascade the optimize:
-                    segmentsToOptimize.Add(merge.info);
-                }
-                return true;
-            }
-        }
-        
-        private void  HandleMergeException(System.Exception t, MergePolicy.OneMerge merge)
-        {
-            
-            if (infoStream != null)
-            {
-                Message("handleMergeException: merge=" + merge.SegString(directory) + " exc=" + t);
-            }
-            
-            // Set the exception on the merge, so if
-            // optimize() is waiting on us it sees the root
-            // cause exception:
-            merge.SetException(t);
-            AddMergeException(merge);
-            
-            if (t is MergePolicy.MergeAbortedException)
-            {
-                // We can ignore this exception (it happens when
-                // close(false) or rollback is called), unless the
-                // merge involves segments from external directories,
-                // in which case we must throw it so, for example, the
-                // rollbackTransaction code in addIndexes* is
-                // executed.
-                if (merge.isExternal)
-                    throw t;
-            }
-            else if (t is System.IO.IOException || t is System.SystemException || t is System.ApplicationException)
-            {
-                throw t;
-            }
-            else
-            {
-                // Should not get here
-                System.Diagnostics.Debug.Fail("Exception is not expected type!");
-                throw new System.SystemException(null, t);
-            }
-        }
-        
-        public void Merge_ForNUnit(MergePolicy.OneMerge merge)
-        {
-            Merge(merge);
-        }
-        /// <summary> Merges the indicated segments, replacing them in the stack with a
-        /// single segment.
-        /// </summary>
-        internal void  Merge(MergePolicy.OneMerge merge)
-        {
-            
-            bool success = false;
-            
-            try
-            {
-                try
-                {
-                    try
-                    {
-                        MergeInit(merge);
-                        
-                        if (infoStream != null)
-                        {
-                            Message("now merge\n  merge=" + merge.SegString(directory) + "\n  merge=" + merge + "\n  index=" + SegString());
-                        }
-                        
-                        MergeMiddle(merge);
-                        MergeSuccess(merge);
-                        success = true;
-                    }
-                    catch (System.Exception t)
-                    {
-                        HandleMergeException(t, merge);
-                    }
-                }
-                finally
-                {
-                    lock (this)
-                    {
-                        MergeFinish(merge);
-                        
-                        if (!success)
-                        {
-                            if (infoStream != null)
-                                Message("hit exception during merge");
-                            if (merge.info != null && !segmentInfos.Contains(merge.info))
-                                deleter.Refresh(merge.info.name);
-                        }
-                        
-                        // This merge (and, generally, any change to the
-                        // segments) may now enable new merges, so we call
-                        // merge policy & update pending merges.
-                        if (success && !merge.IsAborted() && !closed && !closing)
-                            UpdatePendingMerges(merge.maxNumSegmentsOptimize, merge.optimize);
-                    }
-                }
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "merge");
-            }
-        }
-        
-        /// <summary>Hook that's called when the specified merge is complete. </summary>
-        internal virtual void  MergeSuccess(MergePolicy.OneMerge merge)
-        {
-        }
-        
-        /// <summary>Checks whether this merge involves any segments
-        /// already participating in a merge.  If not, this merge
-        /// is "registered", meaning we record that its segments
-        /// are now participating in a merge, and true is
-        /// returned.  Else (the merge conflicts) false is
-        /// returned. 
-        /// </summary>
-        internal bool RegisterMerge(MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                
-                if (merge.registerDone)
-                    return true;
-                
-                if (stopMerges)
-                {
-                    merge.Abort();
-                    throw new MergePolicy.MergeAbortedException("merge is aborted: " + merge.SegString(directory));
-                }
-                
-                int count = merge.segments.Count;
-                bool isExternal = false;
-                for (int i = 0; i < count; i++)
-                {
-                    SegmentInfo info = merge.segments.Info(i);
-                    if (mergingSegments.Contains(info))
-                    {
-                        return false;
-                    }
-                    if (segmentInfos.IndexOf(info) == -1)
-                    {
-                        return false;
-                    }
-                    if (info.dir != directory)
-                    {
-                        isExternal = true;
-                    }
-                    if (segmentsToOptimize.Contains(info))
-                    {
-                        merge.optimize = true;
-                        merge.maxNumSegmentsOptimize = optimizeMaxNumSegments;
-                    }
-                }
-                
-                EnsureContiguousMerge(merge);
-                
-                pendingMerges.AddLast(merge);
-                
-                if (infoStream != null)
-                    Message("add merge to pendingMerges: " + merge.SegString(directory) + " [total " + pendingMerges.Count + " pending]");
-                
-                merge.mergeGen = mergeGen;
-                merge.isExternal = isExternal;
-                
-                // OK it does not conflict; now record that this merge
-                // is running (while synchronized) to avoid race
-                // condition where two conflicting merges from different
-                // threads, start
-                for (int i = 0; i < count; i++)
-                {
-                    SegmentInfo si = merge.segments.Info(i);
-                    mergingSegments.Add(si);
-                }
-                
-                // Merge is now registered
-                merge.registerDone = true;
-                return true;
-            }
-        }
-        
-        /// <summary>Does initial setup for a merge, which is fast but holds
-        /// the synchronized lock on IndexWriter instance.  
-        /// </summary>
-        internal void  MergeInit(MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                bool success = false;
-                try
-                {
-                    _MergeInit(merge);
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        MergeFinish(merge);
-                    }
-                }
-            }
-        }
-        
-        private void  _MergeInit(MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                
-                System.Diagnostics.Debug.Assert(TestPoint("startMergeInit"));
-                
-                System.Diagnostics.Debug.Assert(merge.registerDone);
-                System.Diagnostics.Debug.Assert(!merge.optimize || merge.maxNumSegmentsOptimize > 0);
-                
-                if (hitOOM)
-                {
-                    throw new System.SystemException("this writer hit an OutOfMemoryError; cannot merge");
-                }
-                
-                if (merge.info != null)
-                // mergeInit already done
-                    return ;
-                
-                if (merge.IsAborted())
-                    return ;
-                
-                ApplyDeletes();
-                
-                SegmentInfos sourceSegments = merge.segments;
-                int end = sourceSegments.Count;
-                
-                // Check whether this merge will allow us to skip
-                // merging the doc stores (stored field & vectors).
-                // This is a very substantial optimization (saves tons
-                // of IO).
-                
-                Directory lastDir = directory;
-                System.String lastDocStoreSegment = null;
-                int next = - 1;
-                
-                bool mergeDocStores = false;
-                bool doFlushDocStore = false;
-                System.String currentDocStoreSegment = docWriter.DocStoreSegment;
-                
-                // Test each segment to be merged: check if we need to
-                // flush/merge doc stores
-                for (int i = 0; i < end; i++)
-                {
-                    SegmentInfo si = sourceSegments.Info(i);
-                    
-                    // If it has deletions we must merge the doc stores
-                    if (si.HasDeletions())
-                        mergeDocStores = true;
-                    
-                    // If it has its own (private) doc stores we must
-                    // merge the doc stores
-                    if (- 1 == si.DocStoreOffset)
-                        mergeDocStores = true;
-                    
-                    // If it has a different doc store segment than
-                    // previous segments, we must merge the doc stores
-                    System.String docStoreSegment = si.DocStoreSegment;
-                    if (docStoreSegment == null)
-                        mergeDocStores = true;
-                    else if (lastDocStoreSegment == null)
-                        lastDocStoreSegment = docStoreSegment;
-                    else if (!lastDocStoreSegment.Equals(docStoreSegment))
-                        mergeDocStores = true;
-                    
-                    // Segments' docScoreOffsets must be in-order,
-                    // contiguous.  For the default merge policy now
-                    // this will always be the case but for an arbitrary
-                    // merge policy this may not be the case
-                    if (- 1 == next)
-                        next = si.DocStoreOffset + si.docCount;
-                    else if (next != si.DocStoreOffset)
-                        mergeDocStores = true;
-                    else
-                        next = si.DocStoreOffset + si.docCount;
-                    
-                    // If the segment comes from a different directory
-                    // we must merge
-                    if (lastDir != si.dir)
-                        mergeDocStores = true;
-                    
-                    // If the segment is referencing the current "live"
-                    // doc store outputs then we must merge
-                    if (si.DocStoreOffset != - 1 && currentDocStoreSegment != null && si.DocStoreSegment.Equals(currentDocStoreSegment))
-                    {
-                        doFlushDocStore = true;
-                    }
-                }
-
-                // if a mergedSegmentWarmer is installed, we must merge
-                // the doc stores because we will open a full
-                // SegmentReader on the merged segment:
-                if (!mergeDocStores && mergedSegmentWarmer != null && currentDocStoreSegment != null && lastDocStoreSegment != null && lastDocStoreSegment.Equals(currentDocStoreSegment))
-                {
-                    mergeDocStores = true;
-                }
-
-                int docStoreOffset;
-                System.String docStoreSegment2;
-                bool docStoreIsCompoundFile;
-                
-                if (mergeDocStores)
-                {
-                    docStoreOffset = - 1;
-                    docStoreSegment2 = null;
-                    docStoreIsCompoundFile = false;
-                }
-                else
-                {
-                    SegmentInfo si = sourceSegments.Info(0);
-                    docStoreOffset = si.DocStoreOffset;
-                    docStoreSegment2 = si.DocStoreSegment;
-                    docStoreIsCompoundFile = si.DocStoreIsCompoundFile;
-                }
-                
-                if (mergeDocStores && doFlushDocStore)
-                {
-                    // SegmentMerger intends to merge the doc stores
-                    // (stored fields, vectors), and at least one of the
-                    // segments to be merged refers to the currently
-                    // live doc stores.
-                    
-                    // TODO: if we know we are about to merge away these
-                    // newly flushed doc store files then we should not
-                    // make compound file out of them...
-                    if (infoStream != null)
-                        Message("now flush at merge");
-                    DoFlush(true, false);
-                }
-                
-                merge.mergeDocStores = mergeDocStores;
-                
-                // Bind a new segment name here so even with
-                // ConcurrentMergePolicy we keep deterministic segment
-                // names.
-                merge.info = new SegmentInfo(NewSegmentName(), 0, directory, false, true, docStoreOffset, docStoreSegment2, docStoreIsCompoundFile, false);
-
-
-                IDictionary<string, string> details = new Dictionary<string, string>();
-                details["optimize"] = merge.optimize + "";
-                details["mergeFactor"] = end + "";
-                details["mergeDocStores"] = mergeDocStores + "";
-                SetDiagnostics(merge.info, "merge", details);
-                
-                // Also enroll the merged segment into mergingSegments;
-                // this prevents it from getting selected for a merge
-                // after our merge is done but while we are building the
-                // CFS:
-                mergingSegments.Add(merge.info);
-            }
-        }
-        
-        private void  SetDiagnostics(SegmentInfo info, System.String source)
-        {
-            SetDiagnostics(info, source, null);
-        }
-
-        private void SetDiagnostics(SegmentInfo info, System.String source, IDictionary<string, string> details)
-        {
-            IDictionary<string, string> diagnostics = new Dictionary<string,string>();
-            diagnostics["source"] = source;
-            diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
-            diagnostics["os"] = Constants.OS_NAME + "";
-            diagnostics["os.arch"] = Constants.OS_ARCH + "";
-            diagnostics["os.version"] = Constants.OS_VERSION + "";
-            diagnostics["java.version"] = Constants.JAVA_VERSION + "";
-            diagnostics["java.vendor"] = Constants.JAVA_VENDOR + "";
-            if (details != null)
-            {
-                //System.Collections.ArrayList keys = new System.Collections.ArrayList(details.Keys);
-                //System.Collections.ArrayList values = new System.Collections.ArrayList(details.Values);
-                foreach (string key in details.Keys)
-                {
-                    diagnostics[key] = details[key];
-                }
-            }
-            info.Diagnostics = diagnostics;
-        }
-
-        /// <summary>Does fininishing for a merge, which is fast but holds
-        /// the synchronized lock on IndexWriter instance. 
-        /// </summary>
-        internal void  MergeFinish(MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                
-                // Optimize, addIndexes or finishMerges may be waiting
-                // on merges to finish.
-                System.Threading.Monitor.PulseAll(this);
-                
-                // It's possible we are called twice, eg if there was an
-                // exception inside mergeInit
-                if (merge.registerDone)
-                {
-                    SegmentInfos sourceSegments = merge.segments;
-                    int end = sourceSegments.Count;
-                    for (int i = 0; i < end; i++)
-                        mergingSegments.Remove(sourceSegments.Info(i));
-                    if(merge.info != null)
-                        mergingSegments.Remove(merge.info);
-                    merge.registerDone = false;
-                }
-                
-                runningMerges.Remove(merge);
-            }
-        }
-        
-        private void SetMergeDocStoreIsCompoundFile(MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                string mergeDocStoreSegment = merge.info.DocStoreSegment;
-                if (mergeDocStoreSegment != null && !merge.info.DocStoreIsCompoundFile)
-                {
-                    int size = segmentInfos.Count;
-                    for (int i = 0; i < size; i++)
-                    {
-                        SegmentInfo info = segmentInfos.Info(i);
-                        string docStoreSegment = info.DocStoreSegment;
-                        if (docStoreSegment != null &&
-                            docStoreSegment.Equals(mergeDocStoreSegment) &&
-                            info.DocStoreIsCompoundFile)
-                        {
-                            merge.info.DocStoreIsCompoundFile = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void CloseMergeReaders(MergePolicy.OneMerge merge, bool suppressExceptions)
-        {
-            lock (this)
-            {
-                int numSegments = merge.segments.Count;
-                if (suppressExceptions)
-                {
-                    // Suppress any new exceptions so we throw the
-                    // original cause
-                    for (int i = 0; i < numSegments; i++)
-                    {
-                        if (merge.readers[i] != null)
-                        {
-                            try
-                            {
-                                readerPool.Release(merge.readers[i], false);
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            merge.readers[i] = null;
-                        }
-
-                        if (merge.readersClone[i] != null)
-                        {
-                            try
-                            {
-                                merge.readersClone[i].Close();
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            // This was a private clone and we had the
-                            // only reference
-                            System.Diagnostics.Debug.Assert(merge.readersClone[i].RefCount == 0); //: "refCount should be 0 but is " + merge.readersClone[i].getRefCount();
-                            merge.readersClone[i] = null;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < numSegments; i++)
-                    {
-                        if (merge.readers[i] != null)
-                        {
-                            readerPool.Release(merge.readers[i], true);
-                            merge.readers[i] = null;
-                        }
-
-                        if (merge.readersClone[i] != null)
-                        {
-                            merge.readersClone[i].Close();
-                            // This was a private clone and we had the only reference
-                            System.Diagnostics.Debug.Assert(merge.readersClone[i].RefCount == 0);
-                            merge.readersClone[i] = null;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        /// <summary>Does the actual (time-consuming) work of the merge,
-        /// but without holding synchronized lock on IndexWriter
-        /// instance 
-        /// </summary>
-        private int MergeMiddle(MergePolicy.OneMerge merge)
-        {
-            
-            merge.CheckAborted(directory);
-            
-            System.String mergedName = merge.info.name;
-            
-            SegmentMerger merger = null;
-            
-            int mergedDocCount = 0;
-            
-            SegmentInfos sourceSegments = merge.segments;
-            int numSegments = sourceSegments.Count;
-            
-            if (infoStream != null)
-                Message("merging " + merge.SegString(directory));
-            
-            merger = new SegmentMerger(this, mergedName, merge);
-            
-            merge.readers = new SegmentReader[numSegments];
-            merge.readersClone = new SegmentReader[numSegments];
-            
-            bool mergeDocStores = false;
-
-            String currentDocStoreSegment;
-            lock(this) {
-                currentDocStoreSegment = docWriter.DocStoreSegment;
-            }
-            bool currentDSSMerged = false;
-
-            // This is try/finally to make sure merger's readers are
-            // closed:
-            bool success = false;
-            try
-            {
-                int totDocCount = 0;
-
-                for (int i = 0; i < numSegments; i++)
-                {
-
-                    SegmentInfo info = sourceSegments.Info(i);
-
-                    // Hold onto the "live" reader; we will use this to
-                    // commit merged deletes
-                    SegmentReader reader = merge.readers[i] = readerPool.Get(info, merge.mergeDocStores, MERGE_READ_BUFFER_SIZE, -1);
-
-                    // We clone the segment readers because other
-                    // deletes may come in while we're merging so we
-                    // need readers that will not change
-                    SegmentReader clone = merge.readersClone[i] = (SegmentReader)reader.Clone(true);
-                    merger.Add(clone);
-
-                    if (clone.HasDeletions)
-                    {
-                        mergeDocStores = true;
-                    }
-
-                    if (info.DocStoreOffset != -1 && currentDocStoreSegment != null)
-                    {
-                        currentDSSMerged |= currentDocStoreSegment.Equals(info.DocStoreSegment);
-                    }
-
-                    totDocCount += clone.NumDocs();
-                }
-
-                if (infoStream != null)
-                {
-                    Message("merge: total " + totDocCount + " docs");
-                }
-
-                merge.CheckAborted(directory);
-
-                // If deletions have arrived and it has now become
-                // necessary to merge doc stores, go and open them:
-                if (mergeDocStores && !merge.mergeDocStores)
-                {
-                    merge.mergeDocStores = true;
-                    lock (this)
-                    {
-                        if (currentDSSMerged)
-                        {
-                            if (infoStream != null)
-                            {
-                                Message("now flush at mergeMiddle");
-                            }
-                            DoFlush(true, false);
-                        }
-                    }
-
-                    for (int i = 0; i < numSegments; i++)
-                    {
-                        merge.readersClone[i].OpenDocStores();
-                    }
-
-                    // Clear DSS
-                    merge.info.SetDocStore(-1, null, false);
-
-                }
-
-                // This is where all the work happens:
-                mergedDocCount = merge.info.docCount = merger.Merge(merge.mergeDocStores);
-
-                System.Diagnostics.Debug.Assert(mergedDocCount == totDocCount);
-
-                if (merge.useCompoundFile)
-                {
-
-                    success = false;
-                    string compoundFileName = IndexFileNames.SegmentFileName(mergedName, IndexFileNames.COMPOUND_FILE_EXTENSION);
-
-                    try
-                    {
-                        if (infoStream != null)
-                        {
-                            Message("create compound file " + compoundFileName);
-                        }
-                        merger.CreateCompoundFile(compoundFileName);
-                        success = true;
-                    }
-                    catch (System.IO.IOException ioe)
-                    {
-                        lock (this)
-                        {
-                            if (merge.IsAborted())
-                            {
-                                // This can happen if rollback or close(false)
-                                // is called -- fall through to logic below to
-                                // remove the partially created CFS:
-                            }
-                            else
-                            {
-                                HandleMergeException(ioe, merge);
-                            }
-                        }
-                    }
-                    catch (Exception t)
-                    {
-                        HandleMergeException(t, merge);
-                    }
-                    finally
-                    {
-                        if (!success)
-                        {
-                            if (infoStream != null)
-                            {
-                                Message("hit exception creating compound file during merge");
-                            }
-
-                            lock (this)
-                            {
-                                deleter.DeleteFile(compoundFileName);
-                                deleter.DeleteNewFiles(merger.GetMergedFiles());
-                            }
-                        }
-                    }
-
-                    success = false;
-
-                    lock (this)
-                    {
-
-                        // delete new non cfs files directly: they were never
-                        // registered with IFD
-                        deleter.DeleteNewFiles(merger.GetMergedFiles());
-
-                        if (merge.IsAborted())
-                        {
-                            if (infoStream != null)
-                            {
-                                Message("abort merge after building CFS");
-                            }
-                            deleter.DeleteFile(compoundFileName);
-                            return 0;
-                        }
-                    }
-
-                    merge.info.SetUseCompoundFile(true);
-                }
-
-                int termsIndexDivisor;
-                bool loadDocStores;
-
-                // if the merged segment warmer was not installed when
-                // this merge was started, causing us to not force
-                // the docStores to close, we can't warm it now
-                bool canWarm = merge.info.DocStoreSegment == null || currentDocStoreSegment == null || !merge.info.DocStoreSegment.Equals(currentDocStoreSegment);
-
-                if (poolReaders && mergedSegmentWarmer != null && canWarm)
-                {
-                    // Load terms index & doc stores so the segment
-                    // warmer can run searches, load documents/term
-                    // vectors
-                    termsIndexDivisor = readerTermsIndexDivisor;
-                    loadDocStores = true;
-                }
-                else
-                {
-                    termsIndexDivisor = -1;
-                    loadDocStores = false;
-                }
-
-                // TODO: in the non-realtime case, we may want to only
-                // keep deletes (it's costly to open entire reader
-                // when we just need deletes)
-
-                SegmentReader mergedReader = readerPool.Get(merge.info, loadDocStores, BufferedIndexInput.BUFFER_SIZE, termsIndexDivisor);
-                try
-                {
-                    if (poolReaders && mergedSegmentWarmer != null)
-                    {
-                        mergedSegmentWarmer.Warm(mergedReader);
-                    }
-                    if (!CommitMerge(merge, merger, mergedDocCount, mergedReader))
-                    {
-                        // commitMerge will return false if this merge was aborted
-                        return 0;
-                    }
-                }
-                finally
-                {
-                    lock (this)
-                    {
-                        readerPool.Release(mergedReader);
-                    }
-                }
-
-                success = true;
-            }
-            finally
-            {
-                // Readers are already closed in commitMerge if we didn't hit
-                // an exc:
-                if (!success)
-                {
-                    CloseMergeReaders(merge, true);
-                }
-            }
-
-            return mergedDocCount;
-        }
-        
-        internal virtual void  AddMergeException(MergePolicy.OneMerge merge)
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(merge.GetException() != null);
-                if (!mergeExceptions.Contains(merge) && mergeGen == merge.mergeGen)
-                    mergeExceptions.Add(merge);
-            }
-        }
-        
-        // Apply buffered deletes to all segments.
-        private bool ApplyDeletes()
-        {
-            lock (this)
-            {
-                System.Diagnostics.Debug.Assert(TestPoint("startApplyDeletes"));
-                flushDeletesCount++;
-                
-                bool success = false;
-                bool changed;
-                try
-                {
-                    changed = docWriter.ApplyDeletes(segmentInfos);
-                    success = true;
-                }
-                finally
-                {
-                    if (!success && infoStream != null)
-                    {
-                        Message("hit exception flushing deletes");
-                    }
-                }
-                
-                if (changed)
-                    Checkpoint();
-                return changed;
-            }
-        }
-        
-        // For test purposes.
-        internal int GetBufferedDeleteTermsSize()
-        {
-            lock (this)
-            {
-                return docWriter.GetBufferedDeleteTerms().Count;
-            }
-        }
-        
-        // For test purposes.
-        internal int GetNumBufferedDeleteTerms()
-        {
-            lock (this)
-            {
-                return docWriter.GetNumBufferedDeleteTerms();
-            }
-        }
-        
-        // utility routines for tests
-        public /*internal*/ virtual SegmentInfo NewestSegment()
-        {
-            return segmentInfos.Count > 0 ? segmentInfos.Info(segmentInfos.Count - 1) : null;
-        }
-        
-        public virtual System.String SegString()
-        {
-            lock (this)
-            {
-                return SegString(segmentInfos);
-            }
-        }
-        
-        private System.String SegString(SegmentInfos infos)
-        {
-            lock (this)
-            {
-                System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-                int count = infos.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    if (i > 0)
-                    {
-                        buffer.Append(' ');
-                    }
-                    SegmentInfo info = infos.Info(i);
-                    buffer.Append(info.SegString(directory));
-                    if (info.dir != directory)
-                        buffer.Append("**");
-                }
-                return buffer.ToString();
-            }
-        }
-        
-        // Files that have been sync'd already
-        private HashSet<string> synced = new HashSet<string>();
-        
-        // Files that are now being sync'd
-        private HashSet<string> syncing = new HashSet<string>();
-        
-        private bool StartSync(System.String fileName, ICollection<string> pending)
-        {
-            lock (synced)
-            {
-                if (!synced.Contains(fileName))
-                {
-                    if (!syncing.Contains(fileName))
-                    {
-                        syncing.Add(fileName);
-                        return true;
-                    }
-                    else
-                    {
-                        pending.Add(fileName);
-                        return false;
-                    }
-                }
-                else
-                    return false;
-            }
-        }
-        
-        private void  FinishSync(System.String fileName, bool success)
-        {
-            lock (synced)
-            {
-                System.Diagnostics.Debug.Assert(syncing.Contains(fileName));
-                syncing.Remove(fileName);
-                if (success)
-                    synced.Add(fileName);
-                System.Threading.Monitor.PulseAll(synced);
-            }
-        }
-        
-        /// <summary>Blocks until all files in syncing are sync'd </summary>
-        private bool WaitForAllSynced(ICollection<System.String> syncing)
-        {
-            lock (synced)
-            {
-                IEnumerator<string> it = syncing.GetEnumerator();
-                while (it.MoveNext())
-                {
-                    System.String fileName = it.Current;
-                    while (!synced.Contains(fileName))
-                    {
-                        if (!syncing.Contains(fileName))
-                        // There was an error because a file that was
-                        // previously syncing failed to appear in synced
-                            return false;
-                        else
-                            System.Threading.Monitor.Wait(synced);
-                            
-                    }
-                }
-                return true;
-            }
-        }
-        
-        private void  DoWait()
-        {
-            lock (this)
-            {
-                // NOTE: the callers of this method should in theory
-                // be able to do simply wait(), but, as a defense
-                // against thread timing hazards where notifyAll()
-                // falls to be called, we wait for at most 1 second
-                // and then return so caller can check if wait
-                // conditions are satisified:
-                System.Threading.Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-                
-            }
-        }
-        
-        /// <summary>Walk through all files referenced by the current
-        /// segmentInfos and ask the Directory to sync each file,
-        /// if it wasn't already.  If that succeeds, then we
-        /// prepare a new segments_N file but do not fully commit
-        /// it. 
-        /// </summary>
-        private void StartCommit(long sizeInBytes, IDictionary<string, string> commitUserData)
-        {
-            
-            System.Diagnostics.Debug.Assert(TestPoint("startStartCommit"));
-
-            // TODO: as of LUCENE-2095, we can simplify this method,
-            // since only 1 thread can be in here at once
-            
-            if (hitOOM)
-            {
-                throw new System.SystemException("this writer hit an OutOfMemoryError; cannot commit");
-            }
-            
-            try
-            {
-                
-                if (infoStream != null)
-                    Message("startCommit(): start sizeInBytes=" + sizeInBytes);
-                
-                SegmentInfos toSync = null;
-                long myChangeCount;
-                
-                lock (this)
-                {
-                    // Wait for any running addIndexes to complete
-                    // first, then block any from running until we've
-                    // copied the segmentInfos we intend to sync:
-                    BlockAddIndexes(false);
-                    
-                    // On commit the segmentInfos must never
-                    // reference a segment in another directory:
-                    System.Diagnostics.Debug.Assert(!HasExternalSegments());
-                    
-                    try
-                    {
-                        
-                        System.Diagnostics.Debug.Assert(lastCommitChangeCount <= changeCount);
-                        myChangeCount = changeCount;
-                        
-                        if (changeCount == lastCommitChangeCount)
-                        {
-                            if (infoStream != null)
-                                Message("  skip startCommit(): no changes pending");
-                            return ;
-                        }
-                        
-                        // First, we clone & incref the segmentInfos we intend
-                        // to sync, then, without locking, we sync() each file
-                        // referenced by toSync, in the background.  Multiple
-                        // threads can be doing this at once, if say a large
-                        // merge and a small merge finish at the same time:
-                        
-                        if (infoStream != null)
-                            Message("startCommit index=" + SegString(segmentInfos) + " changeCount=" + changeCount);
-
-                        readerPool.Commit();
-                        
-                        // It's possible another flush (that did not close
-                        // the open do stores) snuck in after the flush we
-                        // just did, so we remove any tail segments
-                        // referencing the open doc store from the
-                        // SegmentInfos we are about to sync (the main
-                        // SegmentInfos will keep them):
-                        toSync = (SegmentInfos) segmentInfos.Clone();
-                        string dss = docWriter.DocStoreSegment;
-                        if (dss != null)
-                        {
-                            while (true)
-                            {
-                                String dss2 = toSync.Info(toSync.Count - 1).DocStoreSegment;
-                                if (dss2 == null || !dss2.Equals(dss))
-                                {
-                                    break;
-                                }
-                                toSync.RemoveAt(toSync.Count - 1);
-                                changeCount++;
-                            }
-                        }
-                        
-                        if (commitUserData != null)
-                            toSync.UserData = commitUserData;
-                        
-                        deleter.IncRef(toSync, false);
-                                                
-                        ICollection<string> files = toSync.Files(directory, false);
-                        foreach(string fileName in files)
-                        {
-                            System.Diagnostics.Debug.Assert(directory.FileExists(fileName), "file " + fileName + " does not exist");
-                            // If this trips it means we are missing a call to
-                            // .checkpoint somewhere, because by the time we
-                            // are called, deleter should know about every
-                            // file referenced by the current head
-                            // segmentInfos:
-                            System.Diagnostics.Debug.Assert(deleter.Exists(fileName));
-                        }
-                    }
-                    finally
-                    {
-                        ResumeAddIndexes();
-                    }
-                }
-                
-                System.Diagnostics.Debug.Assert(TestPoint("midStartCommit"));
-                
-                bool setPending = false;
-                
-                try
-                {
-                    // Loop until all files toSync references are sync'd:
-                    while (true)
-                    {
-                        ICollection<string> pending = new List<string>();
-                        
-                        IEnumerator<string> it = toSync.Files(directory, false).GetEnumerator();
-                        while (it.MoveNext())
-                        {
-                            string fileName = it.Current;
-                            if (StartSync(fileName, pending))
-                            {
-                                bool success = false;
-                                try
-                                {
-                                    // Because we incRef'd this commit point, above,
-                                    // the file had better exist:
-                                    System.Diagnostics.Debug.Assert(directory.FileExists(fileName), "file '" + fileName + "' does not exist dir=" + directory);
-                                    if (infoStream != null)
-                                        Message("now sync " + fileName);
-                                    directory.Sync(fileName);
-                                    success = true;
-                                }
-                                finally
-                                {
-                                    FinishSync(fileName, success);
-                                }
-                            }
-                        }
-                        
-                        // All files that I require are either synced or being
-                        // synced by other threads.  If they are being synced,
-                        // we must at this point block until they are done.
-                        // If this returns false, that means an error in
-                        // another thread resulted in failing to actually
-                        // sync one of our files, so we repeat:
-                        if (WaitForAllSynced(pending))
-                            break;
-                    }
-                    
-                    System.Diagnostics.Debug.Assert(TestPoint("midStartCommit2"));
-                    
-                    lock (this)
-                    {
-                        // If someone saved a newer version of segments file
-                        // since I first started syncing my version, I can
-                        // safely skip saving myself since I've been
-                        // superseded:
-                        
-                        while (true)
-                        {
-                            if (myChangeCount <= lastCommitChangeCount)
-                            {
-                                if (infoStream != null)
-                                {
-                                    Message("sync superseded by newer infos");
-                                }
-                                break;
-                            }
-                            else if (pendingCommit == null)
-                            {
-                                // My turn to commit
-                                
-                                if (segmentInfos.Generation > toSync.Generation)
-                                    toSync.UpdateGeneration(segmentInfos);
-                                
-                                bool success = false;
-                                try
-                                {
-                                    
-                                    // Exception here means nothing is prepared
-                                    // (this method unwinds everything it did on
-                                    // an exception)
-                                    try
-                                    {
-                                        toSync.PrepareCommit(directory);
-                                    }
-                                    finally
-                                    {
-                                        // Have our master segmentInfos record the
-                                        // generations we just prepared.  We do this
-                                        // on error or success so we don't
-                                        // double-write a segments_N file.
-                                        segmentInfos.UpdateGeneration(toSync);
-                                    }
-                                    
-                                    System.Diagnostics.Debug.Assert(pendingCommit == null);
-                                    setPending = true;
-                                    pendingCommit = toSync;
-                                    pendingCommitChangeCount = (uint) myChangeCount;
-                                    success = true;
-                                }
-                                finally
-                                {
-                                    if (!success && infoStream != null)
-                                        Message("hit exception committing segments file");
-                                }
-                                break;
-                            }
-                            else
-                            {
-                                // Must wait for other commit to complete
-                                DoWait();
-                            }
-                        }
-                    }
-                    
-                    if (infoStream != null)
-                        Message("done all syncs");
-                    
-                    System.Diagnostics.Debug.Assert(TestPoint("midStartCommitSuccess"));
-                }
-                finally
-                {
-                    lock (this)
-                    {
-                        if (!setPending)
-                            deleter.DecRef(toSync);
-                    }
-                }
-            }
-            catch (System.OutOfMemoryException oom)
-            {
-                HandleOOM(oom, "startCommit");
-            }
-            System.Diagnostics.Debug.Assert(TestPoint("finishStartCommit"));
-        }
-        
-        /// <summary> Returns <c>true</c> iff the index in the named directory is
-        /// currently locked.
-        /// </summary>
-        /// <param name="directory">the directory to check for a lock
-        /// </param>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public static bool IsLocked(Directory directory)
-        {
-            return directory.MakeLock(WRITE_LOCK_NAME).IsLocked();
-        }
-        
-        /// <summary> Forcibly unlocks the index in the named directory.
-        /// <p/>
-        /// Caution: this should only be used by failure recovery code,
-        /// when it is known that no other process nor thread is in fact
-        /// currently accessing this index.
-        /// </summary>
-        public static void  Unlock(Directory directory)
-        {
-            directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
-        }
-        
-        /// <summary> Specifies maximum field length (in number of tokens/terms) in <see cref="IndexWriter" /> constructors.
-        /// <see cref="SetMaxFieldLength(int)" /> overrides the value set by
-        /// the constructor.
-        /// </summary>
-        public sealed class MaxFieldLength
-        {
-            
-            private int limit;
-            private System.String name;
-            
-            /// <summary> Private type-safe-enum-pattern constructor.
-            /// 
-            /// </summary>
-            /// <param name="name">instance name
-            /// </param>
-            /// <param name="limit">maximum field length
-            /// </param>
-            internal MaxFieldLength(System.String name, int limit)
-            {
-                this.name = name;
-                this.limit = limit;
-            }
-            
-            /// <summary> Public constructor to allow users to specify the maximum field size limit.
-            /// 
-            /// </summary>
-            /// <param name="limit">The maximum field length
-            /// </param>
-            public MaxFieldLength(int limit):this("User-specified", limit)
-            {
-            }
-
-            public int Limit
-            {
-                get { return limit; }
-            }
-
-            public override System.String ToString()
-            {
-                return name + ":" + limit;
-            }
-            
-            /// <summary>Sets the maximum field length to <see cref="int.MaxValue" />. </summary>
-            public static readonly MaxFieldLength UNLIMITED = new MaxFieldLength("UNLIMITED", System.Int32.MaxValue);
-            
-            /// <summary>  Sets the maximum field length to 
-            /// <see cref="DEFAULT_MAX_FIELD_LENGTH" /> 
-            /// 
-            /// </summary>
-            public static readonly MaxFieldLength LIMITED;
-            static MaxFieldLength()
-            {
-                LIMITED = new MaxFieldLength("LIMITED", Lucene.Net.Index.IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
-            }
-        }
-        
-        /// <summary>If <see cref="GetReader()" /> has been called (ie, this writer
-        /// is in near real-time mode), then after a merge
-        /// completes, this class can be invoked to warm the
-        /// reader on the newly merged segment, before the merge
-        /// commits.  This is not required for near real-time
-        /// search, but will reduce search latency on opening a
-        /// new near real-time reader after a merge completes.
-        /// 
-        /// <p/><b>NOTE:</b> This API is experimental and might
-        /// change in incompatible ways in the next release.<p/>
-        /// 
-        /// <p/><b>NOTE</b>: warm is called before any deletes have
-        /// been carried over to the merged segment. 
-        /// </summary>
-        public abstract class IndexReaderWarmer
-        {
-            public abstract void  Warm(IndexReader reader);
-        }
-        
-        private IndexReaderWarmer mergedSegmentWarmer;
-
-        /// <summary>Gets or sets the merged segment warmer.  See <see cref="IndexReaderWarmer" />
-        ///. 
-        /// </summary>
-        public virtual IndexReaderWarmer MergedSegmentWarmer
-        {
-            set { mergedSegmentWarmer = value; }
-            get { return mergedSegmentWarmer; }
-        }
-
-        private void  HandleOOM(System.OutOfMemoryException oom, System.String location)
-        {
-            if (infoStream != null)
-            {
-                Message("hit OutOfMemoryError inside " + location);
-            }
-            hitOOM = true;
-            throw oom;
-        }
-        
-        // Used only by assert for testing.  Current points:
-        //   startDoFlush
-        //   startCommitMerge
-        //   startStartCommit
-        //   midStartCommit
-        //   midStartCommit2
-        //   midStartCommitSuccess
-        //   finishStartCommit
-        //   startCommitMergeDeletes
-        //   startMergeInit
-        //   startApplyDeletes
-        //   DocumentsWriter.ThreadState.init start
-        public /*internal*/ virtual bool TestPoint(System.String name)
-        {
-            return true;
-        }
-        
-        internal virtual bool NrtIsCurrent(SegmentInfos infos)
-        {
-            lock (this)
-            {
-                if (!infos.Equals(segmentInfos))
-                {
-                    // if any structural changes (new segments), we are
-                    // stale
-                    return false;
-                }
-                else if (infos.Generation != segmentInfos.Generation)
-                {
-                    // if any commit took place since we were opened, we
-                    // are stale
-                    return false;
-                }
-                else
-                {
-                    return !docWriter.AnyChanges;
-                }
-            }
-        }
-        
-        internal virtual bool IsClosed()
-        {
-            lock (this)
-            {
-                return closed;
-            }
-        }
-
-        static IndexWriter()
-        {
-            MAX_TERM_LENGTH = DocumentsWriter.MAX_TERM_LENGTH;
-        }
-    }
+			foreach (SegmentCommitInfo info in SegmentInfos)
+			{
+			  foreach (FieldInfo fi in SegmentReader.ReadFieldInfos(info))
+			  {
+				map.AddOrGet(fi.Name, fi.Number, fi.DocValuesType);
+			  }
+			}
+    
+			return map;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns a <seealso cref="LiveIndexWriterConfig"/>, which can be used to query the IndexWriter
+	  /// current settings, as well as modify "live" ones.
+	  /// </summary>
+	  public virtual LiveIndexWriterConfig Config
+	  {
+		  get
+		  {
+			EnsureOpen(false);
+			return Config_Renamed;
+		  }
+	  }
+
+	  private void MessageState()
+	  {
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "\ndir=" + Directory_Renamed + "\n" + "index=" + SegString() + "\n" + "version=" + Constants.LUCENE_VERSION + "\n" + Config_Renamed.ToString());
+		}
+	  }
+
+	  /// <summary>
+	  /// Commits all changes to an index, waits for pending merges
+	  /// to complete, and closes all associated files.  
+	  /// <p>
+	  /// this is a "slow graceful shutdown" which may take a long time
+	  /// especially if a big merge is pending: If you only want to close
+	  /// resources use <seealso cref="#rollback()"/>. If you only want to commit
+	  /// pending changes and close resources see <seealso cref="#close(boolean)"/>.
+	  /// <p>
+	  /// Note that this may be a costly
+	  /// operation, so, try to re-use a single writer instead of
+	  /// closing and opening a new one.  See <seealso cref="#commit()"/> for
+	  /// caveats about write caching done by some IO devices.
+	  /// 
+	  /// <p> If an Exception is hit during close, eg due to disk
+	  /// full or some other reason, then both the on-disk index
+	  /// and the internal state of the IndexWriter instance will
+	  /// be consistent.  However, the close will not be complete
+	  /// even though part of it (flushing buffered documents)
+	  /// may have succeeded, so the write lock will still be
+	  /// held.</p>
+	  /// 
+	  /// <p> If you can correct the underlying cause (eg free up
+	  /// some disk space) then you can call close() again.
+	  /// Failing that, if you want to force the write lock to be
+	  /// released (dangerous, because you may then lose buffered
+	  /// docs in the IndexWriter instance) then you can do
+	  /// something like this:</p>
+	  /// 
+	  /// <pre class="prettyprint">
+	  /// try {
+	  ///   writer.close();
+	  /// } finally {
+	  ///   if (IndexWriter.isLocked(directory)) {
+	  ///     IndexWriter.unlock(directory);
+	  ///   }
+	  /// }
+	  /// </pre>
+	  /// 
+	  /// after which, you must be certain not to use the writer
+	  /// instance anymore.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer, again.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public override void Close()
+	  {
+		Close(true);
+	  }
+
+	  /// <summary>
+	  /// Closes the index with or without waiting for currently
+	  /// running merges to finish.  this is only meaningful when
+	  /// using a MergeScheduler that runs merges in background
+	  /// threads.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer, again.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: it is dangerous to always call
+	  /// close(false), especially when IndexWriter is not open
+	  /// for very long, because this can result in "merge
+	  /// starvation" whereby long merges will never have a
+	  /// chance to finish.  this will cause too many segments in
+	  /// your index over time.</p>
+	  /// </summary>
+	  /// <param name="waitForMerges"> if true, this call will block
+	  /// until all merges complete; else, it will ask all
+	  /// running merges to abort, wait until those merges have
+	  /// finished (which should be at most a few seconds), and
+	  /// then return. </param>
+	  public virtual void Close(bool waitForMerges)
+	  {
+
+		// Ensure that only one thread actually gets to do the
+		// closing, and make sure no commit is also in progress:
+		lock (CommitLock)
+		{
+		  if (ShouldClose())
+		  {
+			// If any methods have hit OutOfMemoryError, then abort
+			// on close, in case the internal state of IndexWriter
+			// or DocumentsWriter is corrupt
+			if (HitOOM)
+			{
+			  RollbackInternal();
+			}
+			else
+			{
+			  CloseInternal(waitForMerges, true);
+			  Debug.Assert(AssertEventQueueAfterClose());
+			}
+		  }
+		}
+	  }
+
+	  private bool AssertEventQueueAfterClose()
+	  {
+		if (EventQueue.Count == 0)
+		{
+		  return true;
+		}
+		foreach (Event e in EventQueue)
+		{
+		  Debug.Assert(e is DocumentsWriter.MergePendingEvent, e);
+		}
+		return true;
+	  }
+
+	  // Returns true if this thread should attempt to close, or
+	  // false if IndexWriter is now closed; else, waits until
+	  // another thread finishes closing
+	  private bool ShouldClose()
+	  {
+		  lock (this)
+		  {
+			while (true)
+			{
+			  if (!Closed_Renamed)
+			  {
+				if (!Closing)
+				{
+				  Closing = true;
+				  return true;
+				}
+				else
+				{
+				  // Another thread is presently trying to close;
+				  // wait until it finishes one way (closes
+				  // successfully) or another (fails to close)
+				  DoWait();
+				}
+			  }
+			  else
+			  {
+				return false;
+			  }
+			}
+		  }
+	  }
+
+	  private void CloseInternal(bool waitForMerges, bool doFlush)
+	  {
+		bool interrupted = false;
+		try
+		{
+
+		  if (PendingCommit != null)
+		  {
+			throw new IllegalStateException("cannot close: prepareCommit was already called with no corresponding call to commit");
+		  }
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
+		  }
+
+		  DocWriter.Close();
+
+		  try
+		  {
+			// Only allow a new merge to be triggered if we are
+			// going to wait for merges:
+			if (doFlush)
+			{
+			  Flush(waitForMerges, true);
+			}
+			else
+			{
+			  DocWriter.Abort(this); // already closed -- never sync on IW
+			}
+
+		  }
+		  finally
+		  {
+			try
+			{
+			  // clean up merge scheduler in all cases, although flushing may have failed:
+			  interrupted = Thread.interrupted();
+
+			  if (waitForMerges)
+			  {
+				try
+				{
+				  // Give merge scheduler last chance to run, in case
+				  // any pending merges are waiting:
+				  MergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
+				}
+				catch (ThreadInterruptedException tie)
+				{
+				  // ignore any interruption, does not matter
+				  interrupted = true;
+				  if (InfoStream.IsEnabled("IW"))
+				  {
+					InfoStream.Message("IW", "interrupted while waiting for final merges");
+				  }
+				}
+			  }
+
+			  lock (this)
+			  {
+				for (;;)
+				{
+				  try
+				  {
+					FinishMerges(waitForMerges && !interrupted);
+					break;
+				  }
+				  catch (ThreadInterruptedException tie)
+				  {
+					// by setting the interrupted status, the
+					// next call to finishMerges will pass false,
+					// so it will not wait
+					interrupted = true;
+					if (InfoStream.IsEnabled("IW"))
+					{
+					  InfoStream.Message("IW", "interrupted while waiting for merges to finish");
+					}
+				  }
+				}
+				StopMerges = true;
+			  }
+
+			}
+			finally
+			{
+			  // shutdown policy, scheduler and all threads (this call is not interruptible):
+			  IOUtils.CloseWhileHandlingException(MergePolicy, MergeScheduler);
+			}
+		  }
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "now call final commit()");
+		  }
+
+		  if (doFlush)
+		  {
+			CommitInternal();
+		  }
+		  ProcessEvents(false, true);
+		  lock (this)
+		  {
+			// commitInternal calls ReaderPool.commit, which
+			// writes any pending liveDocs from ReaderPool, so
+			// it's safe to drop all readers now:
+			ReaderPool.DropAll(true);
+			Deleter.Close();
+		  }
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "at close: " + SegString());
+		  }
+
+		  if (WriteLock != null)
+		  {
+			WriteLock.Close(); // release write lock
+			WriteLock = null;
+		  }
+		  lock (this)
+		  {
+			Closed_Renamed = true;
+		  }
+		  Debug.Assert(DocWriter.PerThreadPool.numDeactivatedThreadStates() == DocWriter.PerThreadPool.MaxThreadStates, "" + DocWriter.PerThreadPool.numDeactivatedThreadStates() + " " + DocWriter.PerThreadPool.MaxThreadStates);
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "closeInternal");
+		}
+		finally
+		{
+		  lock (this)
+		  {
+			Closing = false;
+			Monitor.PulseAll(this);
+			if (!Closed_Renamed)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "hit exception while closing");
+			  }
+			}
+		  }
+		  // finally, restore interrupt status:
+		  if (interrupted)
+		  {
+			  Thread.CurrentThread.Interrupt();
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Returns the Directory used by this index. </summary>
+	  public virtual Directory Directory
+	  {
+		  get
+		  {
+			return Directory_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns the analyzer used by this index. </summary>
+	  public virtual Analyzer Analyzer
+	  {
+		  get
+		  {
+			EnsureOpen();
+			return Analyzer_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns total number of docs in this index, including
+	  ///  docs not yet flushed (still in the RAM buffer),
+	  ///  not counting deletions. </summary>
+	  ///  <seealso cref= #numDocs  </seealso>
+	  public virtual int MaxDoc()
+	  {
+		  lock (this)
+		  {
+			EnsureOpen();
+			return DocWriter.NumDocs + SegmentInfos.TotalDocCount();
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns total number of docs in this index, including
+	  ///  docs not yet flushed (still in the RAM buffer), and
+	  ///  including deletions.  <b>NOTE:</b> buffered deletions
+	  ///  are not counted.  If you really need these to be
+	  ///  counted you should call <seealso cref="#commit()"/> first. </summary>
+	  ///  <seealso cref= #numDocs  </seealso>
+	  public virtual int NumDocs()
+	  {
+		  lock (this)
+		  {
+			EnsureOpen();
+			int count = DocWriter.NumDocs;
+			foreach (SegmentCommitInfo info in SegmentInfos)
+			{
+			  count += info.info.DocCount - NumDeletedDocs(info);
+			}
+			return count;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns true if this index has deletions (including
+	  /// buffered deletions).  Note that this will return true
+	  /// if there are buffered Term/Query deletions, even if it
+	  /// turns out those buffered deletions don't match any
+	  /// documents.
+	  /// </summary>
+	  public virtual bool HasDeletions()
+	  {
+		  lock (this)
+		  {
+			EnsureOpen();
+			if (BufferedUpdatesStream.Any())
+			{
+			  return true;
+			}
+			if (DocWriter.AnyDeletions())
+			{
+			  return true;
+			}
+			if (ReaderPool.AnyPendingDeletes())
+			{
+			  return true;
+			}
+			foreach (SegmentCommitInfo info in SegmentInfos)
+			{
+			  if (info.hasDeletions())
+			  {
+				return true;
+			  }
+			}
+			return false;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Adds a document to this index.
+	  /// 
+	  /// <p> Note that if an Exception is hit (for example disk full)
+	  /// then the index will be consistent, but this document
+	  /// may not have been added.  Furthermore, it's possible
+	  /// the index will have one segment in non-compound format
+	  /// even when using compound files (when a merge has
+	  /// partially succeeded).</p>
+	  /// 
+	  /// <p> this method periodically flushes pending documents
+	  /// to the Directory (see <a href="#flush">above</a>), and
+	  /// also periodically triggers segment merges in the index
+	  /// according to the <seealso cref="MergePolicy"/> in use.</p>
+	  /// 
+	  /// <p>Merges temporarily consume space in the
+	  /// directory. The amount of space required is up to 1X the
+	  /// size of all segments being merged, when no
+	  /// readers/searchers are open against the index, and up to
+	  /// 2X the size of all segments being merged when
+	  /// readers/searchers are open against the index (see
+	  /// <seealso cref="#forceMerge(int)"/> for details). The sequence of
+	  /// primitive merge operations performed is governed by the
+	  /// merge policy.
+	  /// 
+	  /// <p>Note that each term in the document can be no longer
+	  /// than <seealso cref="#MAX_TERM_LENGTH"/> in bytes, otherwise an
+	  /// IllegalArgumentException will be thrown.</p>
+	  /// 
+	  /// <p>Note that it's possible to create an invalid Unicode
+	  /// string in java if a UTF16 surrogate pair is malformed.
+	  /// In this case, the invalid characters are silently
+	  /// replaced with the Unicode replacement character
+	  /// U+FFFD.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void addDocument<T1>(IEnumerable<T1> doc) where T1 : IndexableField
+	  {
+		AddDocument(doc, Analyzer_Renamed);
+	  }
+
+	  /// <summary>
+	  /// Adds a document to this index, using the provided analyzer instead of the
+	  /// value of <seealso cref="#getAnalyzer()"/>.
+	  /// 
+	  /// <p>See <seealso cref="#addDocument(Iterable)"/> for details on
+	  /// index and IndexWriter state after an Exception, and
+	  /// flushing/merging temporary free space requirements.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void addDocument<T1>(IEnumerable<T1> doc, Analyzer analyzer) where T1 : IndexableField
+	  {
+		UpdateDocument(null, doc, analyzer);
+	  }
+
+	  /// <summary>
+	  /// Atomically adds a block of documents with sequentially
+	  /// assigned document IDs, such that an external reader
+	  /// will see all or none of the documents.
+	  /// 
+	  /// <p><b>WARNING</b>: the index does not currently record
+	  /// which documents were added as a block.  Today this is
+	  /// fine, because merging will preserve a block. The order of
+	  /// documents within a segment will be preserved, even when child
+	  /// documents within a block are deleted. Most search features
+	  /// (like result grouping and block joining) require you to
+	  /// mark documents; when these documents are deleted these
+	  /// search features will not work as expected. Obviously adding
+	  /// documents to an existing block will require you the reindex
+	  /// the entire block.
+	  /// 
+	  /// <p>However it's possible that in the future Lucene may
+	  /// merge more aggressively re-order documents (for example,
+	  /// perhaps to obtain better index compression), in which case
+	  /// you may need to fully re-index your documents at that time.
+	  /// 
+	  /// <p>See <seealso cref="#addDocument(Iterable)"/> for details on
+	  /// index and IndexWriter state after an Exception, and
+	  /// flushing/merging temporary free space requirements.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: tools that do offline splitting of an index
+	  /// (for example, IndexSplitter in contrib) or
+	  /// re-sorting of documents (for example, IndexSorter in
+	  /// contrib) are not aware of these atomically added documents
+	  /// and will likely break them up.  Use such tools at your
+	  /// own risk!
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// 
+	  /// @lucene.experimental </exception>
+	  public virtual void addDocuments<T1>(IEnumerable<T1> docs) where T1 : Iterable<T1 extends IndexableField>
+	  {
+		AddDocuments(docs, Analyzer_Renamed);
+	  }
+
+	  /// <summary>
+	  /// Atomically adds a block of documents, analyzed using the
+	  /// provided analyzer, with sequentially assigned document
+	  /// IDs, such that an external reader will see all or none
+	  /// of the documents. 
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// 
+	  /// @lucene.experimental </exception>
+	  public virtual void addDocuments<T1>(IEnumerable<T1> docs, Analyzer analyzer) where T1 : Iterable<T1 extends IndexableField>
+	  {
+		UpdateDocuments(null, docs, analyzer);
+	  }
+
+	  /// <summary>
+	  /// Atomically deletes documents matching the provided
+	  /// delTerm and adds a block of documents with sequentially
+	  /// assigned document IDs, such that an external reader
+	  /// will see all or none of the documents. 
+	  /// 
+	  /// See <seealso cref="#addDocuments(Iterable)"/>.
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// 
+	  /// @lucene.experimental </exception>
+	  public virtual void updateDocuments<T1>(Term delTerm, IEnumerable<T1> docs) where T1 : Iterable<T1 extends IndexableField>
+	  {
+		UpdateDocuments(delTerm, docs, Analyzer_Renamed);
+	  }
+
+	  /// <summary>
+	  /// Atomically deletes documents matching the provided
+	  /// delTerm and adds a block of documents, analyzed  using
+	  /// the provided analyzer, with sequentially
+	  /// assigned document IDs, such that an external reader
+	  /// will see all or none of the documents. 
+	  /// 
+	  /// See <seealso cref="#addDocuments(Iterable)"/>.
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error
+	  /// 
+	  /// @lucene.experimental </exception>
+	  public virtual void updateDocuments<T1>(Term delTerm, IEnumerable<T1> docs, Analyzer analyzer) where T1 : Iterable<T1 extends IndexableField>
+	  {
+		EnsureOpen();
+		try
+		{
+		  bool success = false;
+		  try
+		  {
+			if (DocWriter.UpdateDocuments(docs, analyzer, delTerm))
+			{
+			  ProcessEvents(true, false);
+			}
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "hit exception updating document");
+			  }
+			}
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "updateDocuments");
+		}
+	  }
+
+	  /// <summary>
+	  /// Deletes the document(s) containing <code>term</code>.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <param name="term"> the term to identify the documents to be deleted </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void DeleteDocuments(Term term)
+	  {
+		EnsureOpen();
+		try
+		{
+		  if (DocWriter.DeleteTerms(term))
+		  {
+			ProcessEvents(true, false);
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "deleteDocuments(Term)");
+		}
+	  }
+
+	  /// <summary>
+	  /// Expert: attempts to delete by document ID, as long as
+	  ///  the provided reader is a near-real-time reader (from {@link
+	  ///  DirectoryReader#open(IndexWriter,boolean)}).  If the
+	  ///  provided reader is an NRT reader obtained from this
+	  ///  writer, and its segment has not been merged away, then
+	  ///  the delete succeeds and this method returns true; else, it
+	  ///  returns false the caller must then separately delete by
+	  ///  Term or Query.
+	  /// 
+	  ///  <b>NOTE</b>: this method can only delete documents
+	  ///  visible to the currently open NRT reader.  If you need
+	  ///  to delete documents indexed after opening the NRT
+	  ///  reader you must use the other deleteDocument methods
+	  ///  (e.g., <seealso cref="#deleteDocuments(Term)"/>). 
+	  /// </summary>
+	  public virtual bool TryDeleteDocument(IndexReader readerIn, int docID)
+	  {
+		  lock (this)
+		  {
+        
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final AtomicReader reader;
+			AtomicReader reader;
+			if (readerIn is AtomicReader)
+			{
+			  // Reader is already atomic: use the incoming docID:
+			  reader = (AtomicReader) readerIn;
+			}
+			else
+			{
+			  // Composite reader: lookup sub-reader and re-base docID:
+			  IList<AtomicReaderContext> leaves = readerIn.Leaves();
+			  int subIndex = ReaderUtil.SubIndex(docID, leaves);
+			  reader = leaves[subIndex].Reader();
+			  docID -= leaves[subIndex].DocBase;
+			  Debug.Assert(docID >= 0);
+			  Debug.Assert(docID < reader.MaxDoc());
+			}
+        
+			if (!(reader is SegmentReader))
+			{
+			  throw new System.ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
+			}
+        
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SegmentCommitInfo info = ((SegmentReader) reader).getSegmentInfo();
+			SegmentCommitInfo info = ((SegmentReader) reader).SegmentInfo;
+        
+			// TODO: this is a slow linear search, but, number of
+			// segments should be contained unless something is
+			// seriously wrong w/ the index, so it should be a minor
+			// cost:
+        
+			if (SegmentInfos.IndexOf(info) != -1)
+			{
+			  ReadersAndUpdates rld = ReaderPool.Get(info, false);
+			  if (rld != null)
+			  {
+				lock (BufferedUpdatesStream)
+				{
+				  rld.InitWritableLiveDocs();
+				  if (rld.Delete(docID))
+				  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int fullDelCount = rld.info.getDelCount() + rld.getPendingDeleteCount();
+					int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
+					if (fullDelCount == rld.Info.info.DocCount)
+					{
+					  // If a merge has already registered for this
+					  // segment, we leave it in the readerPool; the
+					  // merge will skip merging it and will then drop
+					  // it once it's done:
+					  if (!MergingSegments_Renamed.Contains(rld.Info))
+					  {
+						SegmentInfos.Remove(rld.Info);
+						ReaderPool.Drop(rld.Info);
+						Checkpoint();
+					  }
+					}
+        
+					// Must bump changeCount so if no other changes
+					// happened, we still commit this change:
+					Changed();
+				  }
+				  //System.out.println("  yes " + info.info.name + " " + docID);
+				  return true;
+				}
+			  }
+			  else
+			  {
+				//System.out.println("  no rld " + info.info.name + " " + docID);
+			  }
+			}
+			else
+			{
+			  //System.out.println("  no seg " + info.info.name + " " + docID);
+			}
+			return false;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Deletes the document(s) containing any of the
+	  /// terms. All given deletes are applied and flushed atomically
+	  /// at the same time.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <param name="terms"> array of terms to identify the documents
+	  /// to be deleted </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void DeleteDocuments(params Term[] terms)
+	  {
+		EnsureOpen();
+		try
+		{
+		  if (DocWriter.DeleteTerms(terms))
+		  {
+			ProcessEvents(true, false);
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "deleteDocuments(Term..)");
+		}
+	  }
+
+	  /// <summary>
+	  /// Deletes the document(s) matching the provided query.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <param name="query"> the query to identify the documents to be deleted </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void DeleteDocuments(Query query)
+	  {
+		EnsureOpen();
+		try
+		{
+		  if (DocWriter.DeleteQueries(query))
+		  {
+			ProcessEvents(true, false);
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "deleteDocuments(Query)");
+		}
+	  }
+
+	  /// <summary>
+	  /// Deletes the document(s) matching any of the provided queries.
+	  /// All given deletes are applied and flushed atomically at the same time.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <param name="queries"> array of queries to identify the documents
+	  /// to be deleted </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void DeleteDocuments(params Query[] queries)
+	  {
+		EnsureOpen();
+		try
+		{
+		  if (DocWriter.DeleteQueries(queries))
+		  {
+			ProcessEvents(true, false);
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "deleteDocuments(Query..)");
+		}
+	  }
+
+	  /// <summary>
+	  /// Updates a document by first deleting the document(s)
+	  /// containing <code>term</code> and then adding the new
+	  /// document.  The delete and then add are atomic as seen
+	  /// by a reader on the same index (flush may happen only after
+	  /// the add).
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <param name="term"> the term to identify the document(s) to be
+	  /// deleted </param>
+	  /// <param name="doc"> the document to be added </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void updateDocument<T1>(Term term, IEnumerable<T1> doc) where T1 : IndexableField
+	  {
+		EnsureOpen();
+		UpdateDocument(term, doc, Analyzer_Renamed);
+	  }
+
+	  /// <summary>
+	  /// Updates a document by first deleting the document(s)
+	  /// containing <code>term</code> and then adding the new
+	  /// document.  The delete and then add are atomic as seen
+	  /// by a reader on the same index (flush may happen only after
+	  /// the add).
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <param name="term"> the term to identify the document(s) to be
+	  /// deleted </param>
+	  /// <param name="doc"> the document to be added </param>
+	  /// <param name="analyzer"> the analyzer to use when analyzing the document </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public virtual void updateDocument<T1>(Term term, IEnumerable<T1> doc, Analyzer analyzer) where T1 : IndexableField
+	  {
+		EnsureOpen();
+		try
+		{
+		  bool success = false;
+		  try
+		  {
+			if (DocWriter.UpdateDocument(doc, analyzer, term))
+			{
+			  ProcessEvents(true, false);
+			}
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "hit exception updating document");
+			  }
+			}
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "updateDocument");
+		}
+	  }
+
+	  /// <summary>
+	  /// Updates a document's <seealso cref="NumericDocValues"/> for <code>field</code> to the
+	  /// given <code>value</code>. this method can be used to 'unset' a document's
+	  /// value by passing {@code null} as the new value. Also, you can only update
+	  /// fields that already exist in the index, not add new fields through this
+	  /// method.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE</b>: if this method hits an OutOfMemoryError you should immediately
+	  /// close the writer. See <a href="#OOME">above</a> for details.
+	  /// </p>
+	  /// </summary>
+	  /// <param name="term">
+	  ///          the term to identify the document(s) to be updated </param>
+	  /// <param name="field">
+	  ///          field name of the <seealso cref="NumericDocValues"/> field </param>
+	  /// <param name="value">
+	  ///          new value for the field </param>
+	  /// <exception cref="CorruptIndexException">
+	  ///           if the index is corrupt </exception>
+	  /// <exception cref="IOException">
+	  ///           if there is a low-level IO error </exception>
+	  public virtual void UpdateNumericDocValue(Term term, string field, long? value)
+	  {
+		EnsureOpen();
+		if (!GlobalFieldNumberMap.Contains(field, DocValuesType.NUMERIC))
+		{
+		  throw new System.ArgumentException("can only update existing numeric-docvalues fields!");
+		}
+		try
+		{
+		  if (DocWriter.UpdateNumericDocValue(term, field, value))
+		  {
+			ProcessEvents(true, false);
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "updateNumericDocValue");
+		}
+	  }
+
+	  /// <summary>
+	  /// Updates a document's <seealso cref="BinaryDocValues"/> for <code>field</code> to the
+	  /// given <code>value</code>. this method can be used to 'unset' a document's
+	  /// value by passing {@code null} as the new value. Also, you can only update
+	  /// fields that already exist in the index, not add new fields through this
+	  /// method.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> this method currently replaces the existing value of all
+	  /// affected documents with the new value.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> if this method hits an OutOfMemoryError you should immediately
+	  /// close the writer. See <a href="#OOME">above</a> for details.
+	  /// </p>
+	  /// </summary>
+	  /// <param name="term">
+	  ///          the term to identify the document(s) to be updated </param>
+	  /// <param name="field">
+	  ///          field name of the <seealso cref="BinaryDocValues"/> field </param>
+	  /// <param name="value">
+	  ///          new value for the field </param>
+	  /// <exception cref="CorruptIndexException">
+	  ///           if the index is corrupt </exception>
+	  /// <exception cref="IOException">
+	  ///           if there is a low-level IO error </exception>
+	  public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
+	  {
+		EnsureOpen();
+		if (!GlobalFieldNumberMap.Contains(field, DocValuesType.BINARY))
+		{
+		  throw new System.ArgumentException("can only update existing binary-docvalues fields!");
+		}
+		try
+		{
+		  if (DocWriter.UpdateBinaryDocValue(term, field, value))
+		  {
+			ProcessEvents(true, false);
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "updateBinaryDocValue");
+		}
+	  }
+
+	  // for test purpose
+	  internal int SegmentCount
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				return SegmentInfos.Size();
+			  }
+		  }
+	  }
+
+	  // for test purpose
+	  internal int NumBufferedDocuments
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				return DocWriter.NumDocs;
+			  }
+		  }
+	  }
+
+	  // for test purpose
+	  internal ICollection<string> IndexFileNames
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				return SegmentInfos.Files(Directory_Renamed, true);
+			  }
+		  }
+	  }
+
+	  // for test purpose
+	  internal int GetDocCount(int i)
+	  {
+		  lock (this)
+		  {
+			if (i >= 0 && i < SegmentInfos.Size())
+			{
+			  return SegmentInfos.Info(i).Info.DocCount;
+			}
+			else
+			{
+			  return -1;
+			}
+		  }
+	  }
+
+	  // for test purpose
+	  internal int FlushCount
+	  {
+		  get
+		  {
+			return FlushCount_Renamed.get();
+		  }
+	  }
+
+	  // for test purpose
+	  internal int FlushDeletesCount
+	  {
+		  get
+		  {
+			return FlushDeletesCount_Renamed.get();
+		  }
+	  }
+
+	  internal string NewSegmentName()
+	  {
+		// Cannot synchronize on IndexWriter because that causes
+		// deadlock
+		lock (SegmentInfos)
+		{
+		  // Important to increment changeCount so that the
+		  // segmentInfos is written on close.  Otherwise we
+		  // could close, re-open and re-return the same segment
+		  // name that was previously returned which can cause
+		  // problems at least with ConcurrentMergeScheduler.
+		  ChangeCount++;
+		  SegmentInfos.Changed();
+		  return "_" + Convert.ToString(SegmentInfos.Counter++, char.MAX_RADIX);
+		}
+	  }
+
+	  /// <summary>
+	  /// If non-null, information about merges will be printed to this.
+	  /// </summary>
+	  internal readonly InfoStream InfoStream;
+
+	  /// <summary>
+	  /// Forces merge policy to merge segments until there are <=
+	  /// maxNumSegments.  The actual merges to be
+	  /// executed are determined by the <seealso cref="MergePolicy"/>.
+	  /// 
+	  /// <p>this is a horribly costly operation, especially when
+	  /// you pass a small {@code maxNumSegments}; usually you
+	  /// should only call this if the index is static (will no
+	  /// longer be changed).</p>
+	  /// 
+	  /// <p>Note that this requires up to 2X the index size free
+	  /// space in your Directory (3X if you're using compound
+	  /// file format).  For example, if your index size is 10 MB
+	  /// then you need up to 20 MB free for this to complete (30
+	  /// MB if you're using compound file format).  Also,
+	  /// it's best to call <seealso cref="#commit()"/> afterwards,
+	  /// to allow IndexWriter to free up disk space.</p>
+	  /// 
+	  /// <p>If some but not all readers re-open while merging
+	  /// is underway, this will cause > 2X temporary
+	  /// space to be consumed as those new readers will then
+	  /// hold open the temporary segments at that time.  It is
+	  /// best not to re-open readers while merging is running.</p>
+	  /// 
+	  /// <p>The actual temporary usage could be much less than
+	  /// these figures (it depends on many factors).</p>
+	  /// 
+	  /// <p>In general, once this completes, the total size of the
+	  /// index will be less than the size of the starting index.
+	  /// It could be quite a bit smaller (if there were many
+	  /// pending deletes) or just slightly smaller.</p>
+	  /// 
+	  /// <p>If an Exception is hit, for example
+	  /// due to disk full, the index will not be corrupted and no
+	  /// documents will be lost.  However, it may have
+	  /// been partially merged (some segments were merged but
+	  /// not all), and it's possible that one of the segments in
+	  /// the index will be in non-compound format even when
+	  /// using compound file format.  this will occur when the
+	  /// Exception is hit during conversion of the segment into
+	  /// compound format.</p>
+	  /// 
+	  /// <p>this call will merge those segments present in
+	  /// the index when the call started.  If other threads are
+	  /// still adding documents and flushing segments, those
+	  /// newly created segments will not be merged unless you
+	  /// call forceMerge again.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: if you call <seealso cref="#close(boolean)"/>
+	  /// with <tt>false</tt>, which aborts all running merges,
+	  /// then any thread still running this method might hit a
+	  /// <seealso cref="MergePolicy.MergeAbortedException"/>.
+	  /// </summary>
+	  /// <param name="maxNumSegments"> maximum number of segments left
+	  /// in the index after merging finishes
+	  /// </param>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// <seealso cref= MergePolicy#findMerges
+	  ///  </seealso>
+	  public virtual void ForceMerge(int maxNumSegments)
+	  {
+		ForceMerge(maxNumSegments, true);
+	  }
+
+	  /// <summary>
+	  /// Just like <seealso cref="#forceMerge(int)"/>, except you can
+	  ///  specify whether the call should block until
+	  ///  all merging completes.  this is only meaningful with a
+	  ///  <seealso cref="MergeScheduler"/> that is able to run merges in
+	  ///  background threads.
+	  /// 
+	  ///  <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  ///  you should immediately close the writer.  See <a
+	  ///  href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  public virtual void ForceMerge(int maxNumSegments, bool doWait)
+	  {
+		EnsureOpen();
+
+		if (maxNumSegments < 1)
+		{
+		  throw new System.ArgumentException("maxNumSegments must be >= 1; got " + maxNumSegments);
+		}
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "forceMerge: index now " + SegString());
+		  InfoStream.Message("IW", "now flush at forceMerge");
+		}
+
+		Flush(true, true);
+
+		lock (this)
+		{
+		  ResetMergeExceptions();
+		  SegmentsToMerge.Clear();
+		  foreach (SegmentCommitInfo info in SegmentInfos)
+		  {
+			SegmentsToMerge[info] = true;
+		  }
+		  MergeMaxNumSegments = maxNumSegments;
+
+		  // Now mark all pending & running merges for forced
+		  // merge:
+		  foreach (MergePolicy.OneMerge merge in PendingMerges)
+		  {
+			merge.maxNumSegments = maxNumSegments;
+			SegmentsToMerge[merge.info] = true;
+		  }
+
+		  foreach (MergePolicy.OneMerge merge in RunningMerges)
+		  {
+			merge.maxNumSegments = maxNumSegments;
+			SegmentsToMerge[merge.info] = true;
+		  }
+		}
+
+		MaybeMerge(MergeTrigger.EXPLICIT, maxNumSegments);
+
+		if (doWait)
+		{
+		  lock (this)
+		  {
+			while (true)
+			{
+
+			  if (HitOOM)
+			  {
+				throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot complete forceMerge");
+			  }
+
+			  if (MergeExceptions.Count > 0)
+			  {
+				// Forward any exceptions in background merge
+				// threads to the current thread:
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int size = mergeExceptions.size();
+				int size = MergeExceptions.Count;
+				for (int i = 0;i < size;i++)
+				{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.OneMerge merge = mergeExceptions.get(i);
+				  MergePolicy.OneMerge merge = MergeExceptions[i];
+				  if (merge.MaxNumSegments != -1)
+				  {
+					IOException err = new IOException("background merge hit exception: " + merge.SegString(Directory_Renamed));
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Throwable t = merge.getException();
+					Exception t = merge.Exception;
+					if (t != null)
+					{
+					  err.initCause(t);
+					}
+					throw err;
+				  }
+				}
+			  }
+
+			  if (MaxNumSegmentsMergesPending())
+			  {
+				DoWait();
+			  }
+			  else
+			  {
+				break;
+			  }
+			}
+		  }
+
+		  // If close is called while we are still
+		  // running, throw an exception so the calling
+		  // thread will know merging did not
+		  // complete
+		  EnsureOpen();
+		}
+		// NOTE: in the ConcurrentMergeScheduler case, when
+		// doWait is false, we can return immediately while
+		// background threads accomplish the merging
+	  }
+
+	  /// <summary>
+	  /// Returns true if any merges in pendingMerges or
+	  ///  runningMerges are maxNumSegments merges. 
+	  /// </summary>
+	  private bool MaxNumSegmentsMergesPending()
+	  {
+		  lock (this)
+		  {
+			foreach (MergePolicy.OneMerge merge in PendingMerges)
+			{
+			  if (merge.maxNumSegments != -1)
+			  {
+				return true;
+			  }
+			}
+        
+			foreach (MergePolicy.OneMerge merge in RunningMerges)
+			{
+			  if (merge.maxNumSegments != -1)
+			  {
+				return true;
+			  }
+			}
+        
+			return false;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Just like <seealso cref="#forceMergeDeletes()"/>, except you can
+	  ///  specify whether the call should block until the
+	  ///  operation completes.  this is only meaningful with a
+	  ///  <seealso cref="MergeScheduler"/> that is able to run merges in
+	  ///  background threads.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// 
+	  /// <p><b>NOTE</b>: if you call <seealso cref="#close(boolean)"/>
+	  /// with <tt>false</tt>, which aborts all running merges,
+	  /// then any thread still running this method might hit a
+	  /// <seealso cref="MergePolicy.MergeAbortedException"/>.
+	  /// </summary>
+	  public virtual void ForceMergeDeletes(bool doWait)
+	  {
+		EnsureOpen();
+
+		Flush(true, true);
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "forceMergeDeletes: index now " + SegString());
+		}
+
+		MergePolicy.MergeSpecification spec;
+		bool newMergesFound = false;
+		lock (this)
+		{
+		  spec = MergePolicy.FindForcedDeletesMerges(SegmentInfos);
+		  newMergesFound = spec != null;
+		  if (newMergesFound)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numMerges = spec.merges.size();
+			int numMerges = spec.Merges.Count;
+			for (int i = 0;i < numMerges;i++)
+			{
+			  RegisterMerge(spec.Merges[i]);
+			}
+		  }
+		}
+
+		MergeScheduler.Merge(this, MergeTrigger.EXPLICIT, newMergesFound);
+
+		if (spec != null && doWait)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numMerges = spec.merges.size();
+		  int numMerges = spec.Merges.Count;
+		  lock (this)
+		  {
+			bool running = true;
+			while (running)
+			{
+
+			  if (HitOOM)
+			  {
+				throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot complete forceMergeDeletes");
+			  }
+
+			  // Check each merge that MergePolicy asked us to
+			  // do, to see if any of them are still running and
+			  // if any of them have hit an exception.
+			  running = false;
+			  for (int i = 0;i < numMerges;i++)
+			  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.OneMerge merge = spec.merges.get(i);
+				MergePolicy.OneMerge merge = spec.Merges[i];
+				if (PendingMerges.Contains(merge) || RunningMerges.contains(merge))
+				{
+				  running = true;
+				}
+				Exception t = merge.Exception;
+				if (t != null)
+				{
+				  IOException ioe = new IOException("background merge hit exception: " + merge.SegString(Directory_Renamed));
+				  ioe.initCause(t);
+				  throw ioe;
+				}
+			  }
+
+			  // If any of our merges are still running, wait:
+			  if (running)
+			  {
+				DoWait();
+			  }
+			}
+		  }
+		}
+
+		// NOTE: in the ConcurrentMergeScheduler case, when
+		// doWait is false, we can return immediately while
+		// background threads accomplish the merging
+	  }
+
+
+	  /// <summary>
+	  ///  Forces merging of all segments that have deleted
+	  ///  documents.  The actual merges to be executed are
+	  ///  determined by the <seealso cref="MergePolicy"/>.  For example,
+	  ///  the default <seealso cref="TieredMergePolicy"/> will only
+	  ///  pick a segment if the percentage of
+	  ///  deleted docs is over 10%.
+	  /// 
+	  ///  <p>this is often a horribly costly operation; rarely
+	  ///  is it warranted.</p>
+	  /// 
+	  ///  <p>To see how
+	  ///  many deletions you have pending in your index, call
+	  ///  <seealso cref="IndexReader#numDeletedDocs"/>.</p>
+	  /// 
+	  ///  <p><b>NOTE</b>: this method first flushes a new
+	  ///  segment (if there are indexed documents), and applies
+	  ///  all buffered deletes.
+	  /// 
+	  ///  <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  ///  you should immediately close the writer.  See <a
+	  ///  href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  public virtual void ForceMergeDeletes()
+	  {
+		ForceMergeDeletes(true);
+	  }
+
+	  /// <summary>
+	  /// Expert: asks the mergePolicy whether any merges are
+	  /// necessary now and if so, runs the requested merges and
+	  /// then iterate (test again if merges are needed) until no
+	  /// more merges are returned by the mergePolicy.
+	  /// 
+	  /// Explicit calls to maybeMerge() are usually not
+	  /// necessary. The most common case is when merge policy
+	  /// parameters have changed.
+	  /// 
+	  /// this method will call the <seealso cref="MergePolicy"/> with
+	  /// <seealso cref="MergeTrigger#EXPLICIT"/>.
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  public void MaybeMerge()
+	  {
+		MaybeMerge(MergeTrigger.EXPLICIT, UNBOUNDED_MAX_MERGE_SEGMENTS);
+	  }
+
+	  private void MaybeMerge(MergeTrigger trigger, int maxNumSegments)
+	  {
+		EnsureOpen(false);
+		bool newMergesFound = UpdatePendingMerges(trigger, maxNumSegments);
+		MergeScheduler.Merge(this, trigger, newMergesFound);
+	  }
+
+	  private bool UpdatePendingMerges(MergeTrigger trigger, int maxNumSegments)
+	  {
+		  lock (this)
+		  {
+			Debug.Assert(maxNumSegments == -1 || maxNumSegments > 0);
+			Debug.Assert(trigger != null);
+			if (StopMerges)
+			{
+			  return false;
+			}
+        
+			// Do not start new merges if we've hit OOME
+			if (HitOOM)
+			{
+			  return false;
+			}
+			bool newMergesFound = false;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.MergeSpecification spec;
+			MergePolicy.MergeSpecification spec;
+			if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
+			{
+			  Debug.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: " + trigger.name());
+			  spec = MergePolicy.FindForcedMerges(SegmentInfos, maxNumSegments, Collections.unmodifiableMap(SegmentsToMerge));
+			  newMergesFound = spec != null;
+			  if (newMergesFound)
+			  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numMerges = spec.merges.size();
+				int numMerges = spec.Merges.Count;
+				for (int i = 0;i < numMerges;i++)
+				{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergePolicy.OneMerge merge = spec.merges.get(i);
+				  MergePolicy.OneMerge merge = spec.Merges[i];
+				  merge.MaxNumSegments = maxNumSegments;
+				}
+			  }
+			}
+			else
+			{
+			  spec = MergePolicy.FindMerges(trigger, SegmentInfos);
+			}
+			newMergesFound = spec != null;
+			if (newMergesFound)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numMerges = spec.merges.size();
+			  int numMerges = spec.Merges.Count;
+			  for (int i = 0;i < numMerges;i++)
+			  {
+				RegisterMerge(spec.Merges[i]);
+			  }
+			}
+			return newMergesFound;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: to be used by a <seealso cref="MergePolicy"/> to avoid
+	  ///  selecting merges for segments already being merged.
+	  ///  The returned collection is not cloned, and thus is
+	  ///  only safe to access if you hold IndexWriter's lock
+	  ///  (which you do when IndexWriter invokes the
+	  ///  MergePolicy).
+	  /// 
+	  ///  <p>Do not alter the returned collection! 
+	  /// </summary>
+	  public virtual ICollection<SegmentCommitInfo> MergingSegments
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				return MergingSegments_Renamed;
+			  }
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: the <seealso cref="MergeScheduler"/> calls this method to retrieve the next
+	  /// merge requested by the MergePolicy
+	  /// 
+	  /// @lucene.experimental
+	  /// </summary>
+	  public virtual MergePolicy.OneMerge NextMerge
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				if (PendingMerges.Count == 0)
+				{
+				  return null;
+				}
+				else
+				{
+				  // Advance the merge from pending to running
+				  MergePolicy.OneMerge merge = PendingMerges.RemoveFirst();
+				  RunningMerges.add(merge);
+				  return merge;
+				}
+			  }
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: returns true if there are merges waiting to be scheduled.
+	  /// 
+	  /// @lucene.experimental
+	  /// </summary>
+	  public virtual bool HasPendingMerges()
+	  {
+		  lock (this)
+		  {
+			return PendingMerges.Count != 0;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Close the <code>IndexWriter</code> without committing
+	  /// any changes that have occurred since the last commit
+	  /// (or since it was opened, if commit hasn't been called).
+	  /// this removes any temporary files that had been created,
+	  /// after which the state of the index will be the same as
+	  /// it was when commit() was last called or when this
+	  /// writer was first opened.  this also clears a previous
+	  /// call to <seealso cref="#prepareCommit"/>. </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public override void Rollback()
+	  {
+		// don't call ensureOpen here: this acts like "close()" in closeable.
+
+		// Ensure that only one thread actually gets to do the
+		// closing, and make sure no commit is also in progress:
+		lock (CommitLock)
+		{
+		  if (ShouldClose())
+		  {
+			RollbackInternal();
+		  }
+		}
+	  }
+
+	  private void RollbackInternal()
+	  {
+
+		bool success = false;
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "rollback");
+		}
+
+		try
+		{
+		  lock (this)
+		  {
+			FinishMerges(false);
+			StopMerges = true;
+		  }
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "rollback: done finish merges");
+		  }
+
+		  // Must pre-close these two, in case they increment
+		  // changeCount so that we can then set it to false
+		  // before calling closeInternal
+		  MergePolicy.Close();
+		  MergeScheduler.Close();
+
+		  BufferedUpdatesStream.Clear();
+		  DocWriter.Close(); // mark it as closed first to prevent subsequent indexing actions/flushes
+		  DocWriter.Abort(this); // don't sync on IW here
+		  lock (this)
+		  {
+
+			if (PendingCommit != null)
+			{
+			  PendingCommit.RollbackCommit(Directory_Renamed);
+			  Deleter.DecRef(PendingCommit);
+			  PendingCommit = null;
+			  Monitor.PulseAll(this);
+			}
+
+			// Don't bother saving any changes in our segmentInfos
+			ReaderPool.DropAll(false);
+
+			// Keep the same segmentInfos instance but replace all
+			// of its SegmentInfo instances.  this is so the next
+			// attempt to commit using this instance of IndexWriter
+			// will always write to a new generation ("write
+			// once").
+			SegmentInfos.RollbackSegmentInfos(RollbackSegments);
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "rollback: infos=" + SegString(SegmentInfos));
+			}
+
+			Debug.Assert(TestPoint("rollback before checkpoint"));
+
+			// Ask deleter to locate unreferenced files & remove
+			// them:
+			Deleter.Checkpoint(SegmentInfos, false);
+			Deleter.Refresh();
+
+			LastCommitChangeCount = ChangeCount;
+
+			Deleter.Refresh();
+			Deleter.Close();
+
+			IOUtils.Close(WriteLock); // release write lock
+			WriteLock = null;
+
+			Debug.Assert(DocWriter.PerThreadPool.numDeactivatedThreadStates() == DocWriter.PerThreadPool.MaxThreadStates, "" + DocWriter.PerThreadPool.numDeactivatedThreadStates() + " " + DocWriter.PerThreadPool.MaxThreadStates);
+		  }
+
+		  success = true;
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "rollbackInternal");
+		}
+		finally
+		{
+		  if (!success)
+		  {
+			// Must not hold IW's lock while closing
+			// mergePolicy/Scheduler: this can lead to deadlock,
+			// e.g. TestIW.testThreadInterruptDeadlock
+			IOUtils.CloseWhileHandlingException(MergePolicy, MergeScheduler);
+		  }
+		  lock (this)
+		  {
+			if (!success)
+			{
+			  // we tried to be nice about it: do the minimum
+
+			  // don't leak a segments_N file if there is a pending commit
+			  if (PendingCommit != null)
+			  {
+				try
+				{
+				  PendingCommit.RollbackCommit(Directory_Renamed);
+				  Deleter.DecRef(PendingCommit);
+				}
+				catch (Exception t)
+				{
+				}
+			  }
+
+			  // close all the closeables we can (but important is readerPool and writeLock to prevent leaks)
+			  IOUtils.closeWhileHandlingException(ReaderPool, Deleter, WriteLock);
+			  WriteLock = null;
+			}
+			Closed_Renamed = true;
+			Closing = false;
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Delete all documents in the index.
+	  /// 
+	  /// <p>this method will drop all buffered documents and will
+	  ///    remove all segments from the index. this change will not be
+	  ///    visible until a <seealso cref="#commit()"/> has been called. this method
+	  ///    can be rolled back using <seealso cref="#rollback()"/>.</p>
+	  /// 
+	  /// <p>NOTE: this method is much faster than using deleteDocuments( new MatchAllDocsQuery() ). 
+	  ///    Yet, this method also has different semantics compared to <seealso cref="#deleteDocuments(Query)"/> 
+	  ///    / <seealso cref="#deleteDocuments(Query...)"/> since internal data-structures are cleared as well 
+	  ///    as all segment information is forcefully dropped anti-viral semantics like omitting norms
+	  ///    are reset or doc value types are cleared. Essentially a call to <seealso cref="#deleteAll()"/> is equivalent
+	  ///    to creating a new <seealso cref="IndexWriter"/> with <seealso cref="OpenMode#CREATE"/> which a delete query only marks
+	  ///    documents as deleted.</p>
+	  /// 
+	  /// <p>NOTE: this method will forcefully abort all merges
+	  ///    in progress.  If other threads are running {@link
+	  ///    #forceMerge}, <seealso cref="#addIndexes(IndexReader[])"/> or
+	  ///    <seealso cref="#forceMergeDeletes"/> methods, they may receive
+	  ///    <seealso cref="MergePolicy.MergeAbortedException"/>s.
+	  /// </summary>
+	  public virtual void DeleteAll()
+	  {
+		EnsureOpen();
+		// Remove any buffered docs
+		bool success = false;
+		/* hold the full flush lock to prevent concurrency commits / NRT reopens to
+		 * get in our way and do unnecessary work. -- if we don't lock this here we might
+		 * get in trouble if */
+		lock (FullFlushLock)
+		{
+			/*
+			 * We first abort and trash everything we have in-memory
+			 * and keep the thread-states locked, the lockAndAbortAll operation
+			 * also guarantees "point in time semantics" ie. the checkpoint that we need in terms
+			 * of logical happens-before relationship in the DW. So we do
+			 * abort all in memory structures 
+			 * We also drop global field numbering before during abort to make
+			 * sure it's just like a fresh index.
+			 */
+		  try
+		  {
+			DocWriter.LockAndAbortAll(this);
+			ProcessEvents(false, true);
+			lock (this)
+			{
+			  try
+			  {
+				// Abort any running merges
+				FinishMerges(false);
+				// Remove all segments
+				SegmentInfos.Clear();
+				// Ask deleter to locate unreferenced files & remove them:
+				Deleter.Checkpoint(SegmentInfos, false);
+				/* don't refresh the deleter here since there might
+				 * be concurrent indexing requests coming in opening
+				 * files on the directory after we called DW#abort()
+				 * if we do so these indexing requests might hit FNF exceptions.
+				 * We will remove the files incrementally as we go...
+				 */
+				// Don't bother saving any changes in our segmentInfos
+				ReaderPool.DropAll(false);
+				// Mark that the index has changed
+				++ChangeCount;
+				SegmentInfos.Changed();
+				GlobalFieldNumberMap.Clear();
+				success = true;
+			  }
+			  catch (System.OutOfMemoryException oom)
+			  {
+				HandleOOM(oom, "deleteAll");
+			  }
+			  finally
+			  {
+				if (!success)
+				{
+				  if (InfoStream.IsEnabled("IW"))
+				  {
+					InfoStream.Message("IW", "hit exception during deleteAll");
+				  }
+				}
+			  }
+			}
+		  }
+		  finally
+		  {
+			DocWriter.UnlockAllAfterAbortAll(this);
+		  }
+		}
+	  }
+
+	  private void FinishMerges(bool waitForMerges)
+	  {
+		  lock (this)
+		  {
+			if (!waitForMerges)
+			{
+        
+			  StopMerges = true;
+        
+			  // Abort all pending & running merges:
+			  foreach (MergePolicy.OneMerge merge in PendingMerges)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "now abort pending merge " + SegString(merge.segments));
+				}
+				merge.abort();
+				MergeFinish(merge);
+			  }
+			  PendingMerges.Clear();
+        
+			  foreach (MergePolicy.OneMerge merge in RunningMerges)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "now abort running merge " + SegString(merge.segments));
+				}
+				merge.abort();
+			  }
+        
+			  // These merges periodically check whether they have
+			  // been aborted, and stop if so.  We wait here to make
+			  // sure they all stop.  It should not take very long
+			  // because the merge threads periodically check if
+			  // they are aborted.
+			  while (RunningMerges.size() > 0)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "now wait for " + RunningMerges.size() + " running merge/s to abort");
+				}
+				DoWait();
+			  }
+        
+			  StopMerges = false;
+			  Monitor.PulseAll(this);
+        
+			  Debug.Assert(0 == MergingSegments_Renamed.Count);
+        
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "all running merges have aborted");
+			  }
+        
+			}
+			else
+			{
+			  // waitForMerges() will ensure any running addIndexes finishes.
+			  // It's fine if a new one attempts to start because from our
+			  // caller above the call will see that we are in the
+			  // process of closing, and will throw an
+			  // AlreadyClosedException.
+			  WaitForMerges();
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Wait for any currently outstanding merges to finish.
+	  /// 
+	  /// <p>It is guaranteed that any merges started prior to calling this method
+	  ///    will have completed once this method completes.</p>
+	  /// </summary>
+	  public virtual void WaitForMerges()
+	  {
+		  lock (this)
+		  {
+			EnsureOpen(false);
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "waitForMerges");
+			}
+			while (PendingMerges.Count > 0 || RunningMerges.size() > 0)
+			{
+			  DoWait();
+			}
+        
+			// sanity check
+			Debug.Assert(0 == MergingSegments_Renamed.Count);
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "waitForMerges done");
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Called whenever the SegmentInfos has been updated and
+	  /// the index files referenced exist (correctly) in the
+	  /// index directory.
+	  /// </summary>
+	  internal virtual void Checkpoint()
+	  {
+		  lock (this)
+		  {
+			Changed();
+			Deleter.Checkpoint(SegmentInfos, false);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Checkpoints with IndexFileDeleter, so it's aware of
+	  ///  new files, and increments changeCount, so on
+	  ///  close/commit we will write a new segments file, but
+	  ///  does NOT bump segmentInfos.version. 
+	  /// </summary>
+	  internal virtual void CheckpointNoSIS()
+	  {
+		  lock (this)
+		  {
+			ChangeCount++;
+			Deleter.Checkpoint(SegmentInfos, false);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Called internally if any index state has changed. </summary>
+	  internal virtual void Changed()
+	  {
+		  lock (this)
+		  {
+			ChangeCount++;
+			SegmentInfos.Changed();
+		  }
+	  }
+
+	  internal virtual void PublishFrozenUpdates(FrozenBufferedUpdates packet)
+	  {
+		  lock (this)
+		  {
+			Debug.Assert(packet != null && packet.Any());
+			lock (BufferedUpdatesStream)
+			{
+			  BufferedUpdatesStream.Push(packet);
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Atomically adds the segment private delete packet and publishes the flushed
+	  /// segments SegmentInfo to the index writer.
+	  /// </summary>
+	  internal virtual void PublishFlushedSegment(SegmentCommitInfo newSegment, FrozenBufferedUpdates packet, FrozenBufferedUpdates globalPacket)
+	  {
+		try
+		{
+		  lock (this)
+		  {
+			// Lock order IW -> BDS
+			lock (BufferedUpdatesStream)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "publishFlushedSegment");
+			  }
+
+			  if (globalPacket != null && globalPacket.Any())
+			  {
+				BufferedUpdatesStream.Push(globalPacket);
+			  }
+			  // Publishing the segment must be synched on IW -> BDS to make the sure
+			  // that no merge prunes away the seg. private delete packet
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long nextGen;
+			  long nextGen;
+			  if (packet != null && packet.Any())
+			  {
+				nextGen = BufferedUpdatesStream.Push(packet);
+			  }
+			  else
+			  {
+				// Since we don't have a delete packet to apply we can get a new
+				// generation right away
+				nextGen = BufferedUpdatesStream.NextGen;
+			  }
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "publish sets newSegment delGen=" + nextGen + " seg=" + SegString(newSegment));
+			  }
+			  newSegment.BufferedDeletesGen = nextGen;
+			  SegmentInfos.Add(newSegment);
+			  Checkpoint();
+			}
+		  }
+		}
+		finally
+		{
+		  FlushCount_Renamed.incrementAndGet();
+		  DoAfterFlush();
+		}
+	  }
+
+	  private void ResetMergeExceptions()
+	  {
+		  lock (this)
+		  {
+			MergeExceptions = new List<>();
+			MergeGen++;
+		  }
+	  }
+
+	  private void NoDupDirs(params Directory[] dirs)
+	  {
+		HashSet<Directory> dups = new HashSet<Directory>();
+		for (int i = 0;i < dirs.Length;i++)
+		{
+		  if (dups.Contains(dirs[i]))
+		  {
+			throw new System.ArgumentException("Directory " + dirs[i] + " appears more than once");
+		  }
+		  if (dirs[i] == Directory_Renamed)
+		  {
+			throw new System.ArgumentException("Cannot add directory to itself");
+		  }
+		  dups.Add(dirs[i]);
+		}
+	  }
+
+	  /// <summary>
+	  /// Acquires write locks on all the directories; be sure
+	  ///  to match with a call to <seealso cref="IOUtils#close"/> in a
+	  ///  finally clause. 
+	  /// </summary>
+	  private IList<Lock> AcquireWriteLocks(params Directory[] dirs)
+	  {
+		IList<Lock> locks = new List<Lock>();
+		for (int i = 0;i < dirs.Length;i++)
+		{
+		  bool success = false;
+		  try
+		  {
+			Lock @lock = dirs[i].MakeLock(WRITE_LOCK_NAME);
+			locks.Add(@lock);
+			@lock.Obtain(Config_Renamed.WriteLockTimeout);
+			success = true;
+		  }
+		  finally
+		  {
+			if (success == false)
+			{
+			  // Release all previously acquired locks:
+			  IOUtils.CloseWhileHandlingException(locks);
+			}
+		  }
+		}
+		return locks;
+	  }
+
+	  /// <summary>
+	  /// Adds all segments from an array of indexes into this index.
+	  /// 
+	  /// <p>this may be used to parallelize batch indexing. A large document
+	  /// collection can be broken into sub-collections. Each sub-collection can be
+	  /// indexed in parallel, on a different thread, process or machine. The
+	  /// complete index can then be created by merging sub-collection indexes
+	  /// with this method.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> this method acquires the write lock in
+	  /// each directory, to ensure that no {@code IndexWriter}
+	  /// is currently open or tries to open while this is
+	  /// running.
+	  /// 
+	  /// <p>this method is transactional in how Exceptions are
+	  /// handled: it does not commit a new segments_N file until
+	  /// all indexes are added.  this means if an Exception
+	  /// occurs (for example disk full), then either no indexes
+	  /// will have been added or they all will have been.
+	  /// 
+	  /// <p>Note that this requires temporary free space in the
+	  /// <seealso cref="Directory"/> up to 2X the sum of all input indexes
+	  /// (including the starting index). If readers/searchers
+	  /// are open against the starting index, then temporary
+	  /// free space required will be higher by the size of the
+	  /// starting index (see <seealso cref="#forceMerge(int)"/> for details).
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> this method only copies the segments of the incoming indexes
+	  /// and does not merge them. Therefore deleted documents are not removed and
+	  /// the new segments are not merged with the existing ones.
+	  /// 
+	  /// <p>this requires this index not be among those to be added.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer. See <a
+	  /// href="#OOME">above</a> for details.
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  /// <exception cref="LockObtainFailedException"> if we were unable to
+	  ///   acquire the write lock in at least one directory </exception>
+	  public virtual void AddIndexes(params Directory[] dirs)
+	  {
+		EnsureOpen();
+
+		NoDupDirs(dirs);
+
+		IList<Lock> locks = AcquireWriteLocks(dirs);
+
+		bool successTop = false;
+
+		try
+		{
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "flush at addIndexes(Directory...)");
+		  }
+
+		  Flush(false, true);
+
+		  IList<SegmentCommitInfo> infos = new List<SegmentCommitInfo>();
+		  bool success = false;
+		  try
+		  {
+			foreach (Directory dir in dirs)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "addIndexes: process directory " + dir);
+			  }
+			  SegmentInfos sis = new SegmentInfos(); // read infos from dir
+			  sis.Read(dir);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Set<String> dsFilesCopied = new java.util.HashSet<>();
+			  Set<string> dsFilesCopied = new HashSet<string>();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Map<String, String> dsNames = new java.util.HashMap<>();
+			  IDictionary<string, string> dsNames = new Dictionary<string, string>();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Set<String> copiedFiles = new java.util.HashSet<>();
+			  Set<string> copiedFiles = new HashSet<string>();
+			  foreach (SegmentCommitInfo info in sis)
+			  {
+				Debug.Assert(!infos.Contains(info), "dup info dir=" + info.Info.dir + " name=" + info.Info.name);
+
+				string newSegName = NewSegmentName();
+
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "addIndexes: process segment origName=" + info.Info.name + " newName=" + newSegName + " info=" + info);
+				}
+
+				IOContext context = new IOContext(new MergeInfo(info.Info.DocCount, info.SizeInBytes(), true, -1));
+
+				foreach (FieldInfo fi in SegmentReader.ReadFieldInfos(info))
+				{
+				  GlobalFieldNumberMap.AddOrGet(fi.Name, fi.Number, fi.DocValuesType);
+				}
+				infos.Add(CopySegmentAsIs(info, newSegName, dsNames, dsFilesCopied, context, copiedFiles));
+			  }
+			}
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  foreach (SegmentCommitInfo sipc in infos)
+			  {
+				foreach (string file in sipc.Files())
+				{
+				  try
+				  {
+					Directory_Renamed.DeleteFile(file);
+				  }
+				  catch (Exception t)
+				  {
+				  }
+				}
+			  }
+			}
+		  }
+
+		  lock (this)
+		  {
+			success = false;
+			try
+			{
+			  EnsureOpen();
+			  success = true;
+			}
+			finally
+			{
+			  if (!success)
+			  {
+				foreach (SegmentCommitInfo sipc in infos)
+				{
+				  foreach (string file in sipc.Files())
+				  {
+					try
+					{
+					  Directory_Renamed.DeleteFile(file);
+					}
+					catch (Exception t)
+					{
+					}
+				  }
+				}
+			  }
+			}
+			SegmentInfos.AddAll(infos);
+			Checkpoint();
+		  }
+
+		  successTop = true;
+
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "addIndexes(Directory...)");
+		}
+		finally
+		{
+		  if (successTop)
+		  {
+			IOUtils.Close(locks);
+		  }
+		  else
+		  {
+			IOUtils.CloseWhileHandlingException(locks);
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Merges the provided indexes into this index.
+	  /// 
+	  /// <p>
+	  /// The provided IndexReaders are not closed.
+	  /// 
+	  /// <p>
+	  /// See <seealso cref="#addIndexes"/> for details on transactional semantics, temporary
+	  /// free space required in the Directory, and non-CFS segments on an Exception.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE</b>: if this method hits an OutOfMemoryError you should immediately
+	  /// close the writer. See <a href="#OOME">above</a> for details.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> empty segments are dropped by this method and not added to this
+	  /// index.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE:</b> this method merges all given <seealso cref="IndexReader"/>s in one
+	  /// merge. If you intend to merge a large number of readers, it may be better
+	  /// to call this method multiple times, each time with a small set of readers.
+	  /// In principle, if you use a merge policy with a {@code mergeFactor} or
+	  /// {@code maxMergeAtOnce} parameter, you should pass that many readers in one
+	  /// call. Also, if the given readers are <seealso cref="DirectoryReader"/>s, they can be
+	  /// opened with {@code termIndexInterval=-1} to save RAM, since during merge
+	  /// the in-memory structure is not used. See
+	  /// <seealso cref="DirectoryReader#open(Directory, int)"/>.
+	  /// 
+	  /// <p>
+	  /// <b>NOTE</b>: if you call <seealso cref="#close(boolean)"/> with <tt>false</tt>, which
+	  /// aborts all running merges, then any thread still running this method might
+	  /// hit a <seealso cref="MergePolicy.MergeAbortedException"/>.
+	  /// </summary>
+	  /// <exception cref="CorruptIndexException">
+	  ///           if the index is corrupt </exception>
+	  /// <exception cref="IOException">
+	  ///           if there is a low-level IO error </exception>
+	  public virtual void AddIndexes(params IndexReader[] readers)
+	  {
+		EnsureOpen();
+		int numDocs = 0;
+
+		try
+		{
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "flush at addIndexes(IndexReader...)");
+		  }
+		  Flush(false, true);
+
+		  string mergedName = NewSegmentName();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.List<AtomicReader> mergeReaders = new java.util.ArrayList<>();
+		  IList<AtomicReader> mergeReaders = new List<AtomicReader>();
+		  foreach (IndexReader indexReader in readers)
+		  {
+			numDocs += indexReader.NumDocs();
+			foreach (AtomicReaderContext ctx in indexReader.Leaves())
+			{
+			  mergeReaders.Add(ctx.Reader());
+			}
+		  }
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Store.IOContext context = new Lucene.Net.Store.IOContext(new Lucene.Net.Store.MergeInfo(numDocs, -1, true, -1));
+		  IOContext context = new IOContext(new MergeInfo(numDocs, -1, true, -1));
+
+		  // TODO: somehow we should fix this merge so it's
+		  // abortable so that IW.close(false) is able to stop it
+		  TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(Directory_Renamed);
+
+		  SegmentInfo info = new SegmentInfo(Directory_Renamed, Constants.LUCENE_MAIN_VERSION, mergedName, -1, false, Codec, null);
+
+		  SegmentMerger merger = new SegmentMerger(mergeReaders, info, InfoStream, trackingDir, Config_Renamed.TermIndexInterval, MergeState.CheckAbort.NONE, GlobalFieldNumberMap, context, Config_Renamed.CheckIntegrityAtMerge);
+
+		  if (!merger.ShouldMerge())
+		  {
+			return;
+		  }
+
+		  MergeState mergeState;
+		  bool success = false;
+		  try
+		  {
+			mergeState = merger.Merge(); // merge 'em
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  lock (this)
+			  {
+				Deleter.Refresh(info.Name);
+			  }
+			}
+		  }
+
+		  SegmentCommitInfo infoPerCommit = new SegmentCommitInfo(info, 0, -1L, -1L);
+
+		  info.Files = new HashSet<>(trackingDir.CreatedFiles);
+		  trackingDir.CreatedFiles.clear();
+
+		  SetDiagnostics(info, SOURCE_ADDINDEXES_READERS);
+
+		  bool useCompoundFile;
+		  lock (this) // Guard segmentInfos
+		  {
+			if (StopMerges)
+			{
+			  Deleter.DeleteNewFiles(infoPerCommit.Files());
+			  return;
+			}
+			EnsureOpen();
+			useCompoundFile = MergePolicy.UseCompoundFile(SegmentInfos, infoPerCommit);
+		  }
+
+		  // Now create the compound file if needed
+		  if (useCompoundFile)
+		  {
+			ICollection<string> filesToDelete = infoPerCommit.Files();
+			try
+			{
+			  CreateCompoundFile(InfoStream, Directory_Renamed, MergeState.CheckAbort.NONE, info, context);
+			}
+			finally
+			{
+			  // delete new non cfs files directly: they were never
+			  // registered with IFD
+			  lock (this)
+			  {
+				Deleter.DeleteNewFiles(filesToDelete);
+			  }
+			}
+			info.UseCompoundFile = true;
+		  }
+
+		  // Have codec write SegmentInfo.  Must do this after
+		  // creating CFS so that 1) .si isn't slurped into CFS,
+		  // and 2) .si reflects useCompoundFile=true change
+		  // above:
+		  success = false;
+		  try
+		  {
+			Codec.SegmentInfoFormat().SegmentInfoWriter.write(trackingDir, info, mergeState.FieldInfos, context);
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  lock (this)
+			  {
+				Deleter.Refresh(info.Name);
+			  }
+			}
+		  }
+
+		  info.AddFiles(trackingDir.CreatedFiles);
+
+		  // Register the new segment
+		  lock (this)
+		  {
+			if (StopMerges)
+			{
+			  Deleter.DeleteNewFiles(info.Files());
+			  return;
+			}
+			EnsureOpen();
+			SegmentInfos.Add(infoPerCommit);
+			Checkpoint();
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "addIndexes(IndexReader...)");
+		}
+	  }
+
+	  /// <summary>
+	  /// Copies the segment files as-is into the IndexWriter's directory. </summary>
+	  private SegmentCommitInfo CopySegmentAsIs(SegmentCommitInfo info, string segName, IDictionary<string, string> dsNames, Set<string> dsFilesCopied, IOContext context, Set<string> copiedFiles)
+	  {
+		// Determine if the doc store of this segment needs to be copied. It's
+		// only relevant for segments that share doc store with others,
+		// because the DS might have been copied already, in which case we
+		// just want to update the DS name of this SegmentInfo.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String dsName = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat.getDocStoreSegment(info.info);
+		string dsName = Lucene3xSegmentInfoFormat.GetDocStoreSegment(info.Info);
+		Debug.Assert(dsName != null);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String newDsName;
+		string newDsName;
+		if (dsNames.ContainsKey(dsName))
+		{
+		  newDsName = dsNames[dsName];
+		}
+		else
+		{
+		  dsNames[dsName] = segName;
+		  newDsName = segName;
+		}
+
+		// note: we don't really need this fis (its copied), but we load it up
+		// so we don't pass a null value to the si writer
+		FieldInfos fis = SegmentReader.ReadFieldInfos(info);
+
+		Set<string> docStoreFiles3xOnly = Lucene3xCodec.GetDocStoreFiles(info.Info);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Map<String,String> attributes;
+		IDictionary<string, string> attributes;
+		// copy the attributes map, we might modify it below.
+		// also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
+		if (info.Info.attributes() == null)
+		{
+		  attributes = new Dictionary<>();
+		}
+		else
+		{
+		  attributes = new Dictionary<>(info.Info.attributes());
+		}
+		if (docStoreFiles3xOnly != null)
+		{
+		  // only violate the codec this way if it's preflex &
+		  // shares doc stores
+		  // change docStoreSegment to newDsName
+		  attributes[Lucene3xSegmentInfoFormat.DS_NAME_KEY] = newDsName;
+		}
+
+		//System.out.println("copy seg=" + info.info.name + " version=" + info.info.getVersion());
+		// Same SI as before but we change directory, name and docStoreSegment:
+		SegmentInfo newInfo = new SegmentInfo(Directory_Renamed, info.Info.Version, segName, info.Info.DocCount, info.Info.UseCompoundFile, info.Info.Codec, info.Info.Diagnostics, attributes);
+		SegmentCommitInfo newInfoPerCommit = new SegmentCommitInfo(newInfo, info.DelCount, info.DelGen, info.FieldInfosGen);
+
+		Set<string> segFiles = new HashSet<string>();
+
+		// Build up new segment's file names.  Must do this
+		// before writing SegmentInfo:
+		foreach (string file in info.Files())
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String newFileName;
+		  string newFileName;
+		  if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.contains(file))
+		  {
+			newFileName = newDsName + IndexFileNames.StripSegmentName(file);
+		  }
+		  else
+		  {
+			newFileName = segName + IndexFileNames.StripSegmentName(file);
+		  }
+		  segFiles.add(newFileName);
+		}
+		newInfo.Files = segFiles;
+
+		// We must rewrite the SI file because it references
+		// segment name (its own name, if its 3.x, and doc
+		// store segment name):
+		TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(Directory_Renamed);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Codecs.Codec currentCodec = newInfo.getCodec();
+		Codec currentCodec = newInfo.Codec;
+		try
+		{
+		  currentCodec.SegmentInfoFormat().SegmentInfoWriter.write(trackingDir, newInfo, fis, context);
+		}
+		catch (System.NotSupportedException uoe)
+		{
+		  if (currentCodec is Lucene3xCodec)
+		  {
+			// OK: 3x codec cannot write a new SI file;
+			// SegmentInfos will write this on commit
+		  }
+		  else
+		  {
+			throw uoe;
+		  }
+		}
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Collection<String> siFiles = trackingDir.getCreatedFiles();
+		ICollection<string> siFiles = trackingDir.CreatedFiles;
+
+		bool success = false;
+		try
+		{
+
+		  // Copy the segment's files
+		  foreach (string file in info.Files())
+		  {
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String newFileName;
+			string newFileName;
+			if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.contains(file))
+			{
+			  newFileName = newDsName + IndexFileNames.StripSegmentName(file);
+			  if (dsFilesCopied.contains(newFileName))
+			  {
+				continue;
+			  }
+			  dsFilesCopied.add(newFileName);
+			}
+			else
+			{
+			  newFileName = segName + IndexFileNames.StripSegmentName(file);
+			}
+
+			if (siFiles.Contains(newFileName))
+			{
+			  // We already rewrote this above
+			  continue;
+			}
+
+			Debug.Assert(!SlowFileExists(Directory_Renamed, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + siFiles);
+			Debug.Assert(!copiedFiles.contains(file), "file \"" + file + "\" is being copied more than once");
+			copiedFiles.add(file);
+			info.Info.dir.copy(Directory_Renamed, file, newFileName, context);
+		  }
+		  success = true;
+		}
+		finally
+		{
+		  if (!success)
+		  {
+			foreach (string file in newInfo.Files())
+			{
+			  try
+			  {
+				Directory_Renamed.DeleteFile(file);
+			  }
+			  catch (Exception t)
+			  {
+			  }
+			}
+		  }
+		}
+
+		return newInfoPerCommit;
+	  }
+
+	  /// <summary>
+	  /// A hook for extending classes to execute operations after pending added and
+	  /// deleted documents have been flushed to the Directory but before the change
+	  /// is committed (new segments_N file written).
+	  /// </summary>
+	  protected internal virtual void DoAfterFlush()
+	  {
+	  }
+
+	  /// <summary>
+	  /// A hook for extending classes to execute operations before pending added and
+	  /// deleted documents are flushed to the Directory.
+	  /// </summary>
+	  protected internal virtual void DoBeforeFlush()
+	  {
+	  }
+
+	  /// <summary>
+	  /// <p>Expert: prepare for commit.  this does the
+	  ///  first phase of 2-phase commit. this method does all
+	  ///  steps necessary to commit changes since this writer
+	  ///  was opened: flushes pending added and deleted docs,
+	  ///  syncs the index files, writes most of next segments_N
+	  ///  file.  After calling this you must call either {@link
+	  ///  #commit()} to finish the commit, or {@link
+	  ///  #rollback()} to revert the commit and undo all changes
+	  ///  done since the writer was opened.</p>
+	  /// 
+	  /// <p>You can also just call <seealso cref="#commit()"/> directly
+	  ///  without prepareCommit first in which case that method
+	  ///  will internally call prepareCommit.
+	  /// 
+	  ///  <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  ///  you should immediately close the writer.  See <a
+	  ///  href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  public override void PrepareCommit()
+	  {
+		EnsureOpen();
+		PrepareCommitInternal();
+	  }
+
+	  private void PrepareCommitInternal()
+	  {
+		lock (CommitLock)
+		{
+		  EnsureOpen(false);
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "prepareCommit: flush");
+			InfoStream.Message("IW", "  index before flush " + SegString());
+		  }
+
+		  if (HitOOM)
+		  {
+			throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot commit");
+		  }
+
+		  if (PendingCommit != null)
+		  {
+			throw new IllegalStateException("prepareCommit was already called with no corresponding call to commit");
+		  }
+
+		  DoBeforeFlush();
+		  Debug.Assert(TestPoint("startDoFlush"));
+		  SegmentInfos toCommit = null;
+		  bool anySegmentsFlushed = false;
+
+		  // this is copied from doFlush, except it's modified to
+		  // clone & incRef the flushed SegmentInfos inside the
+		  // sync block:
+
+		  try
+		  {
+
+			lock (FullFlushLock)
+			{
+			  bool flushSuccess = false;
+			  bool success = false;
+			  try
+			  {
+				anySegmentsFlushed = DocWriter.FlushAllThreads(this);
+				if (!anySegmentsFlushed)
+				{
+				  // prevent double increment since docWriter#doFlush increments the flushcount
+				  // if we flushed anything.
+				  FlushCount_Renamed.incrementAndGet();
+				}
+				ProcessEvents(false, true);
+				flushSuccess = true;
+
+				lock (this)
+				{
+				  MaybeApplyDeletes(true);
+
+				  ReaderPool.Commit(SegmentInfos);
+
+				  // Must clone the segmentInfos while we still
+				  // hold fullFlushLock and while sync'd so that
+				  // no partial changes (eg a delete w/o
+				  // corresponding add from an updateDocument) can
+				  // sneak into the commit point:
+				  toCommit = SegmentInfos.Clone();
+
+				  PendingCommitChangeCount = ChangeCount;
+
+				  // this protects the segmentInfos we are now going
+				  // to commit.  this is important in case, eg, while
+				  // we are trying to sync all referenced files, a
+				  // merge completes which would otherwise have
+				  // removed the files we are now syncing.    
+				  FilesToCommit = toCommit.Files(Directory_Renamed, false);
+				  Deleter.IncRef(FilesToCommit);
+				}
+				success = true;
+			  }
+			  finally
+			  {
+				if (!success)
+				{
+				  if (InfoStream.IsEnabled("IW"))
+				  {
+					InfoStream.Message("IW", "hit exception during prepareCommit");
+				  }
+				}
+				// Done: finish the full flush!
+				DocWriter.FinishFullFlush(flushSuccess);
+				DoAfterFlush();
+			  }
+			}
+		  }
+		  catch (System.OutOfMemoryException oom)
+		  {
+			HandleOOM(oom, "prepareCommit");
+		  }
+
+		  bool success = false;
+		  try
+		  {
+			if (anySegmentsFlushed)
+			{
+			  MaybeMerge(MergeTrigger.FULL_FLUSH, UNBOUNDED_MAX_MERGE_SEGMENTS);
+			}
+			StartCommit(toCommit);
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  lock (this)
+			  {
+				if (FilesToCommit != null)
+				{
+				  Deleter.DecRef(FilesToCommit);
+				  FilesToCommit = null;
+				}
+			  }
+			}
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Sets the commit user data map. That method is considered a transaction by
+	  /// <seealso cref="IndexWriter"/> and will be <seealso cref="#commit() committed"/> even if no other
+	  /// changes were made to the writer instance. Note that you must call this method
+	  /// before <seealso cref="#prepareCommit()"/>, or otherwise it won't be included in the
+	  /// follow-on <seealso cref="#commit()"/>.
+	  /// <p>
+	  /// <b>NOTE:</b> the map is cloned internally, therefore altering the map's
+	  /// contents after calling this method has no effect.
+	  /// </summary>
+	  public IDictionary<string, string> CommitData
+	  {
+		  set
+		  {
+			  lock (this)
+			  {
+				SegmentInfos.UserData = new Dictionary<>(value);
+				++ChangeCount;
+			  }
+		  }
+		  get
+		  {
+			  lock (this)
+			  {
+				return SegmentInfos.UserData;
+			  }
+		  }
+	  }
+
+
+	  // Used only by commit and prepareCommit, below; lock
+	  // order is commitLock -> IW
+	  private readonly object CommitLock = new object();
+
+	  /// <summary>
+	  /// <p>Commits all pending changes (added & deleted
+	  /// documents, segment merges, added
+	  /// indexes, etc.) to the index, and syncs all referenced
+	  /// index files, such that a reader will see the changes
+	  /// and the index updates will survive an OS or machine
+	  /// crash or power loss.  Note that this does not wait for
+	  /// any running background merges to finish.  this may be a
+	  /// costly operation, so you should test the cost in your
+	  /// application and do it only when really necessary.</p>
+	  /// 
+	  /// <p> Note that this operation calls Directory.sync on
+	  /// the index files.  That call should not return until the
+	  /// file contents & metadata are on stable storage.  For
+	  /// FSDirectory, this calls the OS's fsync.  But, beware:
+	  /// some hardware devices may in fact cache writes even
+	  /// during fsync, and return before the bits are actually
+	  /// on stable storage, to give the appearance of faster
+	  /// performance.  If you have such a device, and it does
+	  /// not have a battery backup (for example) then on power
+	  /// loss it may still lose data.  Lucene cannot guarantee
+	  /// consistency on such devices.  </p>
+	  /// 
+	  /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
+	  /// you should immediately close the writer.  See <a
+	  /// href="#OOME">above</a> for details.</p>
+	  /// </summary>
+	  /// <seealso cref= #prepareCommit </seealso>
+	  public override void Commit()
+	  {
+		EnsureOpen();
+		CommitInternal();
+	  }
+
+	  /// <summary>
+	  /// Returns true if there may be changes that have not been
+	  ///  committed.  There are cases where this may return true
+	  ///  when there are no actual "real" changes to the index,
+	  ///  for example if you've deleted by Term or Query but
+	  ///  that Term or Query does not match any documents.
+	  ///  Also, if a merge kicked off as a result of flushing a
+	  ///  new segment during <seealso cref="#commit"/>, or a concurrent
+	  ///  merged finished, this method may return true right
+	  ///  after you had just called <seealso cref="#commit"/>. 
+	  /// </summary>
+	  public bool HasUncommittedChanges()
+	  {
+		return ChangeCount != LastCommitChangeCount || DocWriter.AnyChanges() || BufferedUpdatesStream.Any();
+	  }
+
+	  private void CommitInternal()
+	  {
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "commit: start");
+		}
+
+		lock (CommitLock)
+		{
+		  EnsureOpen(false);
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "commit: enter lock");
+		  }
+
+		  if (PendingCommit == null)
+		  {
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "commit: now prepare");
+			}
+			PrepareCommitInternal();
+		  }
+		  else
+		  {
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "commit: already prepared");
+			}
+		  }
+
+		  FinishCommit();
+		}
+	  }
+
+	  private void FinishCommit()
+	  {
+		  lock (this)
+		  {
+        
+			if (PendingCommit != null)
+			{
+			  try
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "commit: pendingCommit != null");
+				}
+				PendingCommit.FinishCommit(Directory_Renamed);
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "commit: wrote segments file \"" + PendingCommit.SegmentsFileName + "\"");
+				}
+				SegmentInfos.UpdateGeneration(PendingCommit);
+				LastCommitChangeCount = PendingCommitChangeCount;
+				RollbackSegments = PendingCommit.CreateBackupSegmentInfos();
+				// NOTE: don't use this.checkpoint() here, because
+				// we do not want to increment changeCount:
+				Deleter.Checkpoint(PendingCommit, true);
+			  }
+			  finally
+			  {
+				// Matches the incRef done in prepareCommit:
+				Deleter.DecRef(FilesToCommit);
+				FilesToCommit = null;
+				PendingCommit = null;
+				Monitor.PulseAll(this);
+			  }
+        
+			}
+			else
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "commit: pendingCommit == null; skip");
+			  }
+			}
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "commit: done");
+			}
+		  }
+	  }
+
+	  // Ensures only one flush() is actually flushing segments
+	  // at a time:
+	  private readonly object FullFlushLock = new object();
+
+	  // for assert
+	  internal virtual bool HoldsFullFlushLock()
+	  {
+		return Thread.holdsLock(FullFlushLock);
+	  }
+
+	  /// <summary>
+	  /// Flush all in-memory buffered updates (adds and deletes)
+	  /// to the Directory. </summary>
+	  /// <param name="triggerMerge"> if true, we may merge segments (if
+	  ///  deletes or docs were flushed) if necessary </param>
+	  /// <param name="applyAllDeletes"> whether pending deletes should also </param>
+	  protected internal void Flush(bool triggerMerge, bool applyAllDeletes)
+	  {
+
+		// NOTE: this method cannot be sync'd because
+		// maybeMerge() in turn calls mergeScheduler.merge which
+		// in turn can take a long time to run and we don't want
+		// to hold the lock for that.  In the case of
+		// ConcurrentMergeScheduler this can lead to deadlock
+		// when it stalls due to too many running merges.
+
+		// We can be called during close, when closing==true, so we must pass false to ensureOpen:
+		EnsureOpen(false);
+		if (DoFlush(applyAllDeletes) && triggerMerge)
+		{
+		  MaybeMerge(MergeTrigger.FULL_FLUSH, UNBOUNDED_MAX_MERGE_SEGMENTS);
+		}
+	  }
+
+	  private bool DoFlush(bool applyAllDeletes)
+	  {
+		if (HitOOM)
+		{
+		  throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot flush");
+		}
+
+		DoBeforeFlush();
+		Debug.Assert(TestPoint("startDoFlush"));
+		bool success = false;
+		try
+		{
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "  start flush: applyAllDeletes=" + applyAllDeletes);
+			InfoStream.Message("IW", "  index before flush " + SegString());
+		  }
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final boolean anySegmentFlushed;
+		  bool anySegmentFlushed;
+
+		  lock (FullFlushLock)
+		  {
+		  bool flushSuccess = false;
+			try
+			{
+			  anySegmentFlushed = DocWriter.FlushAllThreads(this);
+			  flushSuccess = true;
+			}
+			finally
+			{
+			  DocWriter.FinishFullFlush(flushSuccess);
+			  ProcessEvents(false, true);
+			}
+		  }
+		  lock (this)
+		  {
+			MaybeApplyDeletes(applyAllDeletes);
+			DoAfterFlush();
+			if (!anySegmentFlushed)
+			{
+			  // flushCount is incremented in flushAllThreads
+			  FlushCount_Renamed.incrementAndGet();
+			}
+			success = true;
+			return anySegmentFlushed;
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "doFlush");
+		  // never hit
+		  return false;
+		}
+		finally
+		{
+		  if (!success)
+		  {
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "hit exception during flush");
+			}
+		  }
+		}
+	  }
+
+	  internal void MaybeApplyDeletes(bool applyAllDeletes)
+	  {
+		  lock (this)
+		  {
+			if (applyAllDeletes)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "apply all deletes during flush");
+			  }
+			  ApplyAllDeletesAndUpdates();
+			}
+			else if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "don't apply deletes now delTermCount=" + BufferedUpdatesStream.NumTerms() + " bytesUsed=" + BufferedUpdatesStream.BytesUsed());
+			}
+		  }
+	  }
+
+	  internal void ApplyAllDeletesAndUpdates()
+	  {
+		  lock (this)
+		  {
+			FlushDeletesCount_Renamed.incrementAndGet();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final BufferedUpdatesStream.ApplyDeletesResult result;
+			BufferedUpdatesStream.ApplyDeletesResult result;
+			result = BufferedUpdatesStream.ApplyDeletesAndUpdates(ReaderPool, SegmentInfos.AsList());
+			if (result.AnyDeletes)
+			{
+			  Checkpoint();
+			}
+			if (!KeepFullyDeletedSegments_Renamed && result.AllDeleted != null)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "drop 100% deleted segments: " + SegString(result.AllDeleted));
+			  }
+			  foreach (SegmentCommitInfo info in result.AllDeleted)
+			  {
+				// If a merge has already registered for this
+				// segment, we leave it in the readerPool; the
+				// merge will skip merging it and will then drop
+				// it once it's done:
+				if (!MergingSegments_Renamed.Contains(info))
+				{
+				  SegmentInfos.Remove(info);
+				  ReaderPool.Drop(info);
+				}
+			  }
+			  Checkpoint();
+			}
+			BufferedUpdatesStream.Prune(SegmentInfos);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert:  Return the total size of all index files currently cached in memory.
+	  /// Useful for size management with flushRamDocs()
+	  /// </summary>
+	  public long RamSizeInBytes()
+	  {
+		EnsureOpen();
+		return DocWriter.FlushControl.netBytes() + BufferedUpdatesStream.BytesUsed();
+	  }
+
+	  // for testing only
+	  internal virtual DocumentsWriter DocsWriter
+	  {
+		  get
+		  {
+			bool test = false;
+			Debug.Assert(test = true);
+			return test ? DocWriter : null;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert:  Return the number of documents currently
+	  ///  buffered in RAM. 
+	  /// </summary>
+	  public int NumRamDocs()
+	  {
+		  lock (this)
+		  {
+			EnsureOpen();
+			return DocWriter.NumDocs;
+		  }
+	  }
+
+	  private void EnsureValidMerge(MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+			foreach (SegmentCommitInfo info in merge.Segments)
+			{
+			  if (!SegmentInfos.Contains(info))
+			  {
+				throw new MergePolicy.MergeException("MergePolicy selected a segment (" + info.Info.name + ") that is not in the current index " + SegString(), Directory_Renamed);
+			  }
+			}
+		  }
+	  }
+
+	  private void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
+	  {
+		foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
+		{
+		  if (iter.Doc() == deletedDoc)
+		  {
+			iter.NextDoc();
+		  }
+		  // when entering the method, all iterators must already be beyond the
+		  // deleted document, or right on it, in which case we advance them over
+		  // and they must be beyond it now.
+		  Debug.Assert(iter.Doc() > deletedDoc, "updateDoc=" + iter.Doc() + " deletedDoc=" + deletedDoc);
+		}
+	  }
+
+	  private class MergedDeletesAndUpdates
+	  {
+		internal ReadersAndUpdates MergedDeletesAndUpdates_Renamed = null;
+		internal MergePolicy.DocMap DocMap = null;
+		internal bool InitializedWritableLiveDocs = false;
+
+		internal MergedDeletesAndUpdates()
+		{
+		}
+
+		internal void Init(ReaderPool readerPool, MergePolicy.OneMerge merge, MergeState mergeState, bool initWritableLiveDocs)
+		{
+		  if (MergedDeletesAndUpdates_Renamed == null)
+		  {
+			MergedDeletesAndUpdates_Renamed = readerPool.Get(merge.Info_Renamed, true);
+			DocMap = merge.GetDocMap(mergeState);
+			Debug.Assert(DocMap.IsConsistent(merge.Info_Renamed.info.DocCount));
+		  }
+		  if (initWritableLiveDocs && !InitializedWritableLiveDocs)
+		  {
+			MergedDeletesAndUpdates_Renamed.InitWritableLiveDocs();
+			this.InitializedWritableLiveDocs = true;
+		  }
+		}
+
+	  }
+
+	  private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
+	  {
+		int newDoc = -1;
+		for (int idx = 0; idx < mergingFields.Length; idx++)
+		{
+		  DocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
+		  if (updatesIter.Doc() == curDoc) // document has an update
+		  {
+			if (holder.MergedDeletesAndUpdates_Renamed == null)
+			{
+			  holder.Init(ReaderPool, merge, mergeState, false);
+			}
+			if (newDoc == -1) // map once per all field updates, but only if there are any updates
+			{
+			  newDoc = holder.DocMap.map(docUpto);
+			}
+			DocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
+			dvUpdates.Add(newDoc, updatesIter.Value());
+			updatesIter.NextDoc(); // advance to next document
+		  }
+		  else
+		  {
+			Debug.Assert(updatesIter.Doc() > curDoc, "field=" + mergingFields[idx] + " updateDoc=" + updatesIter.Doc() + " curDoc=" + curDoc);
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Carefully merges deletes and updates for the segments we just merged. this
+	  /// is tricky because, although merging will clear all deletes (compacts the
+	  /// documents) and compact all the updates, new deletes and updates may have
+	  /// been flushed to the segments since the merge was started. this method
+	  /// "carries over" such new deletes and updates onto the newly merged segment,
+	  /// and saves the resulting deletes and updates files (incrementing the delete
+	  /// and DV generations for merge.info). If no deletes were flushed, no new
+	  /// deletes file is saved.
+	  /// </summary>
+	  private ReadersAndUpdates CommitMergedDeletesAndUpdates(MergePolicy.OneMerge merge, MergeState mergeState)
+	  {
+		  lock (this)
+		  {
+        
+			Debug.Assert(TestPoint("startCommitMergeDeletes"));
+        
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> sourceSegments = merge.segments;
+			IList<SegmentCommitInfo> sourceSegments = merge.Segments;
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "commitMergeDeletes " + SegString(merge.Segments));
+			}
+        
+			// Carefully merge deletes that occurred after we
+			// started merging:
+			int docUpto = 0;
+			long minGen = long.MaxValue;
+        
+			// Lazy init (only when we find a delete to carry over):
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergedDeletesAndUpdates holder = new MergedDeletesAndUpdates();
+			MergedDeletesAndUpdates holder = new MergedDeletesAndUpdates();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final DocValuesFieldUpdates.Container mergedDVUpdates = new DocValuesFieldUpdates.Container();
+			DocValuesFieldUpdates.Container mergedDVUpdates = new DocValuesFieldUpdates.Container();
+        
+			for (int i = 0; i < sourceSegments.Count; i++)
+			{
+			  SegmentCommitInfo info = sourceSegments[i];
+			  minGen = Math.Min(info.BufferedDeletesGen, minGen);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int docCount = info.info.getDocCount();
+			  int docCount = info.Info.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Bits prevLiveDocs = merge.readers.get(i).getLiveDocs();
+			  Bits prevLiveDocs = merge.Readers[i].LiveDocs;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, false);
+			  ReadersAndUpdates rld = ReaderPool.Get(info, false);
+			  // We hold a ref so it should still be in the pool:
+			  Debug.Assert(rld != null, "seg=" + info.Info.name);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Bits currentLiveDocs = rld.getLiveDocs();
+			  Bits currentLiveDocs = rld.LiveDocs;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Map<String,DocValuesFieldUpdates> mergingFieldUpdates = rld.getMergingFieldUpdates();
+			  IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String[] mergingFields;
+			  string[] mergingFields;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final DocValuesFieldUpdates[] dvFieldUpdates;
+			  DocValuesFieldUpdates[] dvFieldUpdates;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final DocValuesFieldUpdates.Iterator[] updatesIters;
+			  DocValuesFieldUpdates.Iterator[] updatesIters;
+			  if (mergingFieldUpdates.Count == 0)
+			  {
+				mergingFields = null;
+				updatesIters = null;
+				dvFieldUpdates = null;
+			  }
+			  else
+			  {
+				mergingFields = new string[mergingFieldUpdates.Count];
+				dvFieldUpdates = new DocValuesFieldUpdates[mergingFieldUpdates.Count];
+				updatesIters = new DocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
+				int idx = 0;
+				foreach (KeyValuePair<string, DocValuesFieldUpdates> e in mergingFieldUpdates)
+				{
+				  string field = e.Key;
+				  DocValuesFieldUpdates updates = e.Value;
+				  mergingFields[idx] = field;
+				  dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.Type);
+				  if (dvFieldUpdates[idx] == null)
+				  {
+					dvFieldUpdates[idx] = mergedDVUpdates.NewUpdates(field, updates.Type, mergeState.SegmentInfo.DocCount);
+				  }
+				  updatesIters[idx] = updates.Iterator();
+				  updatesIters[idx].NextDoc(); // advance to first update doc
+				  ++idx;
+				}
+			  }
+		//      System.out.println("[" + Thread.currentThread().getName() + "] IW.commitMergedDeletes: info=" + info + ", mergingUpdates=" + mergingUpdates);
+        
+			  if (prevLiveDocs != null)
+			  {
+        
+				// If we had deletions on starting the merge we must
+				// still have deletions now:
+				Debug.Assert(currentLiveDocs != null);
+				Debug.Assert(prevLiveDocs.Length() == docCount);
+				Debug.Assert(currentLiveDocs.Length() == docCount);
+        
+				// There were deletes on this segment when the merge
+				// started.  The merge has collapsed away those
+				// deletes, but, if new deletes were flushed since
+				// the merge started, we must now carefully keep any
+				// newly flushed deletes but mapping them to the new
+				// docIDs.
+        
+				// Since we copy-on-write, if any new deletes were
+				// applied after merging has started, we can just
+				// check if the before/after liveDocs have changed.
+				// If so, we must carefully merge the liveDocs one
+				// doc at a time:
+				if (currentLiveDocs != prevLiveDocs)
+				{
+				  // this means this segment received new deletes
+				  // since we started the merge, so we
+				  // must merge them:
+				  for (int j = 0; j < docCount; j++)
+				  {
+					if (!prevLiveDocs.Get(j))
+					{
+					  Debug.Assert(!currentLiveDocs.Get(j));
+					}
+					else
+					{
+					  if (!currentLiveDocs.Get(j))
+					  {
+						if (holder.MergedDeletesAndUpdates_Renamed == null || !holder.InitializedWritableLiveDocs)
+						{
+						  holder.Init(ReaderPool, merge, mergeState, true);
+						}
+						holder.MergedDeletesAndUpdates_Renamed.delete(holder.DocMap.map(docUpto));
+						if (mergingFields != null) // advance all iters beyond the deleted document
+						{
+						  SkipDeletedDoc(updatesIters, j);
+						}
+					  }
+					  else if (mergingFields != null)
+					  {
+						MaybeApplyMergedDVUpdates(merge, mergeState, docUpto, holder, mergingFields, dvFieldUpdates, updatesIters, j);
+					  }
+					  docUpto++;
+					}
+				  }
+				}
+				else if (mergingFields != null)
+				{
+				  // need to check each non-deleted document if it has any updates
+				  for (int j = 0; j < docCount; j++)
+				  {
+					if (prevLiveDocs.Get(j))
+					{
+					  // document isn't deleted, check if any of the fields have an update to it
+					  MaybeApplyMergedDVUpdates(merge, mergeState, docUpto, holder, mergingFields, dvFieldUpdates, updatesIters, j);
+					  // advance docUpto for every non-deleted document
+					  docUpto++;
+					}
+					else
+					{
+					  // advance all iters beyond the deleted document
+					  SkipDeletedDoc(updatesIters, j);
+					}
+				  }
+				}
+				else
+				{
+				  docUpto += info.Info.DocCount - info.DelCount - rld.PendingDeleteCount;
+				}
+			  }
+			  else if (currentLiveDocs != null)
+			  {
+				Debug.Assert(currentLiveDocs.Length() == docCount);
+				// this segment had no deletes before but now it
+				// does:
+				for (int j = 0; j < docCount; j++)
+				{
+				  if (!currentLiveDocs.Get(j))
+				  {
+					if (holder.MergedDeletesAndUpdates_Renamed == null || !holder.InitializedWritableLiveDocs)
+					{
+					  holder.Init(ReaderPool, merge, mergeState, true);
+					}
+					holder.MergedDeletesAndUpdates_Renamed.delete(holder.DocMap.map(docUpto));
+					if (mergingFields != null) // advance all iters beyond the deleted document
+					{
+					  SkipDeletedDoc(updatesIters, j);
+					}
+				  }
+				  else if (mergingFields != null)
+				  {
+					MaybeApplyMergedDVUpdates(merge, mergeState, docUpto, holder, mergingFields, dvFieldUpdates, updatesIters, j);
+				  }
+				  docUpto++;
+				}
+			  }
+			  else if (mergingFields != null)
+			  {
+				// no deletions before or after, but there were updates
+				for (int j = 0; j < docCount; j++)
+				{
+				  MaybeApplyMergedDVUpdates(merge, mergeState, docUpto, holder, mergingFields, dvFieldUpdates, updatesIters, j);
+				  // advance docUpto for every non-deleted document
+				  docUpto++;
+				}
+			  }
+			  else
+			  {
+				// No deletes or updates before or after
+				docUpto += info.Info.DocCount;
+			  }
+			}
+        
+			Debug.Assert(docUpto == merge.Info_Renamed.info.DocCount);
+        
+			if (mergedDVUpdates.Any())
+			{
+		//      System.out.println("[" + Thread.currentThread().getName() + "] IW.commitMergedDeletes: mergedDeletes.info=" + mergedDeletes.info + ", mergedFieldUpdates=" + mergedFieldUpdates);
+			  bool success = false;
+			  try
+			  {
+				// if any error occurs while writing the field updates we should release
+				// the info, otherwise it stays in the pool but is considered not "live"
+				// which later causes false exceptions in pool.dropAll().
+				// NOTE: currently this is the only place which throws a true
+				// IOException. If this ever changes, we need to extend that try/finally
+				// block to the rest of the method too.
+				holder.MergedDeletesAndUpdates_Renamed.writeFieldUpdates(Directory_Renamed, mergedDVUpdates);
+				success = true;
+			  }
+			  finally
+			  {
+				if (!success)
+				{
+				  holder.MergedDeletesAndUpdates_Renamed.dropChanges();
+				  ReaderPool.Drop(merge.Info_Renamed);
+				}
+			  }
+			}
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  if (holder.MergedDeletesAndUpdates_Renamed == null)
+			  {
+				InfoStream.Message("IW", "no new deletes or field updates since merge started");
+			  }
+			  else
+			  {
+				string msg = holder.MergedDeletesAndUpdates_Renamed.PendingDeleteCount + " new deletes";
+				if (mergedDVUpdates.Any())
+				{
+				  msg += " and " + mergedDVUpdates.Size() + " new field updates";
+				}
+				msg += " since merge started";
+				InfoStream.Message("IW", msg);
+			  }
+			}
+        
+			merge.Info_Renamed.BufferedDeletesGen = minGen;
+        
+			return holder.MergedDeletesAndUpdates_Renamed;
+		  }
+	  }
+
+	  private bool CommitMerge(MergePolicy.OneMerge merge, MergeState mergeState)
+	  {
+		  lock (this)
+		  {
+        
+			Debug.Assert(TestPoint("startCommitMerge"));
+        
+			if (HitOOM)
+			{
+			  throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot complete merge");
+			}
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "commitMerge: " + SegString(merge.Segments) + " index=" + SegString());
+			}
+        
+			Debug.Assert(merge.RegisterDone);
+        
+			// If merge was explicitly aborted, or, if rollback() or
+			// rollbackTransaction() had been called since our merge
+			// started (which results in an unqualified
+			// deleter.refresh() call that will remove any index
+			// file that current segments does not reference), we
+			// abort this merge
+			if (merge.Aborted)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "commitMerge: skip: it was aborted");
+			  }
+			  // In case we opened and pooled a reader for this
+			  // segment, drop it now.  this ensures that we close
+			  // the reader before trying to delete any of its
+			  // files.  this is not a very big deal, since this
+			  // reader will never be used by any NRT reader, and
+			  // another thread is currently running close(false)
+			  // so it will be dropped shortly anyway, but not
+			  // doing this  makes  MockDirWrapper angry in
+			  // TestNRTThreads (LUCENE-5434):
+			  ReaderPool.Drop(merge.Info_Renamed);
+			  Deleter.DeleteNewFiles(merge.Info_Renamed.files());
+			  return false;
+			}
+        
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates mergedUpdates = merge.info.info.getDocCount() == 0 ? null : commitMergedDeletesAndUpdates(merge, mergeState);
+			ReadersAndUpdates mergedUpdates = merge.Info_Renamed.info.DocCount == 0 ? null : CommitMergedDeletesAndUpdates(merge, mergeState);
+		//    System.out.println("[" + Thread.currentThread().getName() + "] IW.commitMerge: mergedDeletes=" + mergedDeletes);
+        
+			// If the doc store we are using has been closed and
+			// is in now compound format (but wasn't when we
+			// started), then we will switch to the compound
+			// format as well:
+        
+			Debug.Assert(!SegmentInfos.Contains(merge.Info_Renamed));
+        
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final boolean allDeleted = merge.segments.size() == 0 || merge.info.info.getDocCount() == 0 || (mergedUpdates != null && mergedUpdates.getPendingDeleteCount() == merge.info.info.getDocCount());
+			bool allDeleted = merge.Segments.Count == 0 || merge.Info_Renamed.info.DocCount == 0 || (mergedUpdates != null && mergedUpdates.PendingDeleteCount == merge.Info_Renamed.info.DocCount);
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  if (allDeleted)
+			  {
+				InfoStream.Message("IW", "merged segment " + merge.Info_Renamed + " is 100% deleted" + (KeepFullyDeletedSegments_Renamed ? "" : "; skipping insert"));
+			  }
+			}
+        
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final boolean dropSegment = allDeleted && !keepFullyDeletedSegments;
+			bool dropSegment = allDeleted && !KeepFullyDeletedSegments_Renamed;
+        
+			// If we merged no segments then we better be dropping
+			// the new segment:
+			Debug.Assert(merge.Segments.Count > 0 || dropSegment);
+        
+			Debug.Assert(merge.Info_Renamed.info.DocCount != 0 || KeepFullyDeletedSegments_Renamed || dropSegment);
+        
+			if (mergedUpdates != null)
+			{
+			  bool success = false;
+			  try
+			  {
+				if (dropSegment)
+				{
+				  mergedUpdates.DropChanges();
+				}
+				// Pass false for assertInfoLive because the merged
+				// segment is not yet live (only below do we commit it
+				// to the segmentInfos):
+				ReaderPool.Release(mergedUpdates, false);
+				success = true;
+			  }
+			  finally
+			  {
+				if (!success)
+				{
+				  mergedUpdates.DropChanges();
+				  ReaderPool.Drop(merge.Info_Renamed);
+				}
+			  }
+			}
+        
+			// Must do this after readerPool.release, in case an
+			// exception is hit e.g. writing the live docs for the
+			// merge segment, in which case we need to abort the
+			// merge:
+			SegmentInfos.ApplyMergeChanges(merge, dropSegment);
+        
+			if (dropSegment)
+			{
+			  Debug.Assert(!SegmentInfos.Contains(merge.Info_Renamed));
+			  ReaderPool.Drop(merge.Info_Renamed);
+			  Deleter.DeleteNewFiles(merge.Info_Renamed.files());
+			}
+        
+			bool success = false;
+			try
+			{
+			  // Must close before checkpoint, otherwise IFD won't be
+			  // able to delete the held-open files from the merge
+			  // readers:
+			  CloseMergeReaders(merge, false);
+			  success = true;
+			}
+			finally
+			{
+			  // Must note the change to segmentInfos so any commits
+			  // in-flight don't lose it (IFD will incRef/protect the
+			  // new files we created):
+			  if (success)
+			  {
+				Checkpoint();
+			  }
+			  else
+			  {
+				try
+				{
+				  Checkpoint();
+				}
+				catch (Exception t)
+				{
+				  // Ignore so we keep throwing original exception.
+				}
+			  }
+			}
+        
+			Deleter.DeletePendingFiles();
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "after commitMerge: " + SegString());
+			}
+        
+			if (merge.MaxNumSegments != -1 && !dropSegment)
+			{
+			  // cascade the forceMerge:
+			  if (!SegmentsToMerge.ContainsKey(merge.Info_Renamed))
+			  {
+				SegmentsToMerge[merge.Info_Renamed] = false;
+			  }
+			}
+        
+			return true;
+		  }
+	  }
+
+	  private void HandleMergeException(Exception t, MergePolicy.OneMerge merge)
+	  {
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "handleMergeException: merge=" + SegString(merge.Segments) + " exc=" + t);
+		}
+
+		// Set the exception on the merge, so if
+		// forceMerge is waiting on us it sees the root
+		// cause exception:
+		merge.Exception = t;
+		AddMergeException(merge);
+
+		if (t is MergePolicy.MergeAbortedException)
+		{
+		  // We can ignore this exception (it happens when
+		  // close(false) or rollback is called), unless the
+		  // merge involves segments from external directories,
+		  // in which case we must throw it so, for example, the
+		  // rollbackTransaction code in addIndexes* is
+		  // executed.
+		  if (merge.IsExternal)
+		  {
+			throw (MergePolicy.MergeAbortedException) t;
+		  }
+		}
+		else
+		{
+		  IOUtils.ReThrow(t);
+		}
+	  }
+
+	  /// <summary>
+	  /// Merges the indicated segments, replacing them in the stack with a
+	  /// single segment.
+	  /// 
+	  /// @lucene.experimental
+	  /// </summary>
+	  public virtual void Merge(MergePolicy.OneMerge merge)
+	  {
+
+		bool success = false;
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long t0 = System.currentTimeMillis();
+		long t0 = System.currentTimeMillis();
+
+		try
+		{
+		  try
+		  {
+			try
+			{
+			  MergeInit(merge);
+			  //if (merge.info != null) {
+			  //System.out.println("MERGE: " + merge.info.info.name);
+			  //}
+
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "now merge\n  merge=" + SegString(merge.Segments) + "\n  index=" + SegString());
+			  }
+
+			  MergeMiddle(merge);
+			  MergeSuccess(merge);
+			  success = true;
+			}
+			catch (Exception t)
+			{
+			  HandleMergeException(t, merge);
+			}
+		  }
+		  finally
+		  {
+			lock (this)
+			{
+			  MergeFinish(merge);
+
+			  if (!success)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "hit exception during merge");
+				}
+				if (merge.Info_Renamed != null && !SegmentInfos.Contains(merge.Info_Renamed))
+				{
+				  Deleter.Refresh(merge.Info_Renamed.info.name);
+				}
+			  }
+
+			  // this merge (and, generally, any change to the
+			  // segments) may now enable new merges, so we call
+			  // merge policy & update pending merges.
+			  if (success && !merge.Aborted && (merge.MaxNumSegments != -1 || (!Closed_Renamed && !Closing)))
+			  {
+				UpdatePendingMerges(MergeTrigger.MERGE_FINISHED, merge.MaxNumSegments);
+			  }
+			}
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "merge");
+		}
+		if (merge.Info_Renamed != null && !merge.Aborted)
+		{
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "merge time " + (System.currentTimeMillis() - t0) + " msec for " + merge.Info_Renamed.info.DocCount + " docs");
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Hook that's called when the specified merge is complete. </summary>
+	  internal virtual void MergeSuccess(MergePolicy.OneMerge merge)
+	  {
+	  }
+
+	  /// <summary>
+	  /// Checks whether this merge involves any segments
+	  ///  already participating in a merge.  If not, this merge
+	  ///  is "registered", meaning we record that its segments
+	  ///  are now participating in a merge, and true is
+	  ///  returned.  Else (the merge conflicts) false is
+	  ///  returned. 
+	  /// </summary>
+	  internal bool RegisterMerge(MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+        
+			if (merge.RegisterDone)
+			{
+			  return true;
+			}
+			Debug.Assert(merge.Segments.Count > 0);
+        
+			if (StopMerges)
+			{
+			  merge.Abort();
+			  throw new MergePolicy.MergeAbortedException("merge is aborted: " + SegString(merge.Segments));
+			}
+        
+			bool isExternal = false;
+			foreach (SegmentCommitInfo info in merge.Segments)
+			{
+			  if (MergingSegments_Renamed.Contains(info))
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "reject merge " + SegString(merge.Segments) + ": segment " + SegString(info) + " is already marked for merge");
+				}
+				return false;
+			  }
+			  if (!SegmentInfos.Contains(info))
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "reject merge " + SegString(merge.Segments) + ": segment " + SegString(info) + " does not exist in live infos");
+				}
+				return false;
+			  }
+			  if (info.Info.dir != Directory_Renamed)
+			  {
+				isExternal = true;
+			  }
+			  if (SegmentsToMerge.ContainsKey(info))
+			  {
+				merge.MaxNumSegments = MergeMaxNumSegments;
+			  }
+			}
+        
+			EnsureValidMerge(merge);
+        
+			PendingMerges.AddLast(merge);
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "add merge to pendingMerges: " + SegString(merge.Segments) + " [total " + PendingMerges.Count + " pending]");
+			}
+        
+			merge.MergeGen = MergeGen;
+			merge.IsExternal = isExternal;
+        
+			// OK it does not conflict; now record that this merge
+			// is running (while synchronized) to avoid race
+			// condition where two conflicting merges from different
+			// threads, start
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  StringBuilder builder = new StringBuilder("registerMerge merging= [");
+			  foreach (SegmentCommitInfo info in MergingSegments_Renamed)
+			  {
+				builder.Append(info.Info.name).Append(", ");
+			  }
+			  builder.Append("]");
+			  // don't call mergingSegments.toString() could lead to ConcurrentModException
+			  // since merge updates the segments FieldInfos
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", builder.ToString());
+			  }
+			}
+			foreach (SegmentCommitInfo info in merge.Segments)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "registerMerge info=" + SegString(info));
+			  }
+			  MergingSegments_Renamed.Add(info);
+			}
+        
+			Debug.Assert(merge.EstimatedMergeBytes == 0);
+			Debug.Assert(merge.TotalMergeBytes == 0);
+			foreach (SegmentCommitInfo info in merge.Segments)
+			{
+			  if (info.Info.DocCount > 0)
+			  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int delCount = numDeletedDocs(info);
+				int delCount = NumDeletedDocs(info);
+				Debug.Assert(delCount <= info.Info.DocCount);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final double delRatio = ((double) delCount)/info.info.getDocCount();
+				double delRatio = ((double) delCount) / info.Info.DocCount;
+				merge.EstimatedMergeBytes += (long)(info.SizeInBytes() * (1.0 - delRatio));
+				merge.TotalMergeBytes += info.SizeInBytes();
+			  }
+			}
+        
+			// Merge is now registered
+			merge.RegisterDone = true;
+        
+			return true;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Does initial setup for a merge, which is fast but holds
+	  ///  the synchronized lock on IndexWriter instance.  
+	  /// </summary>
+	  internal void MergeInit(MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+			bool success = false;
+			try
+			{
+			  _mergeInit(merge);
+			  success = true;
+			}
+			finally
+			{
+			  if (!success)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "hit exception in mergeInit");
+				}
+				MergeFinish(merge);
+			  }
+			}
+		  }
+	  }
+
+	  private void _mergeInit(MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+        
+			Debug.Assert(TestPoint("startMergeInit"));
+        
+			Debug.Assert(merge.RegisterDone);
+			Debug.Assert(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
+        
+			if (HitOOM)
+			{
+			  throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot merge");
+			}
+        
+			if (merge.Info_Renamed != null)
+			{
+			  // mergeInit already done
+			  return;
+			}
+        
+			if (merge.Aborted)
+			{
+			  return;
+			}
+        
+			// TODO: in the non-pool'd case this is somewhat
+			// wasteful, because we open these readers, close them,
+			// and then open them again for merging.  Maybe  we
+			// could pre-pool them somehow in that case...
+        
+			// Lock order: IW -> BD
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final BufferedUpdatesStream.ApplyDeletesResult result = bufferedUpdatesStream.applyDeletesAndUpdates(readerPool, merge.segments);
+			BufferedUpdatesStream.ApplyDeletesResult result = BufferedUpdatesStream.ApplyDeletesAndUpdates(ReaderPool, merge.Segments);
+        
+			if (result.AnyDeletes)
+			{
+			  Checkpoint();
+			}
+        
+			if (!KeepFullyDeletedSegments_Renamed && result.AllDeleted != null)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "drop 100% deleted segments: " + result.AllDeleted);
+			  }
+			  foreach (SegmentCommitInfo info in result.AllDeleted)
+			  {
+				SegmentInfos.Remove(info);
+				if (merge.Segments.Contains(info))
+				{
+				  MergingSegments_Renamed.Remove(info);
+				  merge.Segments.Remove(info);
+				}
+				ReaderPool.Drop(info);
+			  }
+			  Checkpoint();
+			}
+        
+			// Bind a new segment name here so even with
+			// ConcurrentMergePolicy we keep deterministic segment
+			// names.
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String mergeSegmentName = newSegmentName();
+			string mergeSegmentName = NewSegmentName();
+			SegmentInfo si = new SegmentInfo(Directory_Renamed, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, Codec, null);
+			IDictionary<string, string> details = new Dictionary<string, string>();
+			details["mergeMaxNumSegments"] = "" + merge.MaxNumSegments;
+			details["mergeFactor"] = Convert.ToString(merge.Segments.Count);
+			SetDiagnostics(si, SOURCE_MERGE, details);
+			merge.Info = new SegmentCommitInfo(si, 0, -1L, -1L);
+        
+		//    System.out.println("[" + Thread.currentThread().getName() + "] IW._mergeInit: " + segString(merge.segments) + " into " + si);
+        
+			// Lock order: IW -> BD
+			BufferedUpdatesStream.Prune(SegmentInfos);
+        
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "merge seg=" + merge.Info_Renamed.info.name + " " + SegString(merge.Segments));
+			}
+		  }
+	  }
+
+	  internal static void SetDiagnostics(SegmentInfo info, string source)
+	  {
+		SetDiagnostics(info, source, null);
+	  }
+
+	  private static void SetDiagnostics(SegmentInfo info, string source, IDictionary<string, string> details)
+	  {
+		IDictionary<string, string> diagnostics = new Dictionary<string, string>();
+		diagnostics["source"] = source;
+		diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
+		diagnostics["os"] = Constants.OS_NAME;
+		diagnostics["os.arch"] = Constants.OS_ARCH;
+		diagnostics["os.version"] = Constants.OS_VERSION;
+		diagnostics["java.version"] = Constants.JAVA_VERSION;
+		diagnostics["java.vendor"] = Constants.JAVA_VENDOR;
+		diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
+		if (details != null)
+		{
+//JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
+		  diagnostics.putAll(details);
+		}
+		info.Diagnostics = diagnostics;
+	  }
+
+	  /// <summary>
+	  /// Does fininishing for a merge, which is fast but holds
+	  ///  the synchronized lock on IndexWriter instance. 
+	  /// </summary>
+	  internal void MergeFinish(MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+        
+			// forceMerge, addIndexes or finishMerges may be waiting
+			// on merges to finish.
+			Monitor.PulseAll(this);
+        
+			// It's possible we are called twice, eg if there was an
+			// exception inside mergeInit
+			if (merge.RegisterDone)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> sourceSegments = merge.segments;
+			  IList<SegmentCommitInfo> sourceSegments = merge.Segments;
+			  foreach (SegmentCommitInfo info in sourceSegments)
+			  {
+				MergingSegments_Renamed.Remove(info);
+			  }
+			  merge.RegisterDone = false;
+			}
+        
+			RunningMerges.remove(merge);
+		  }
+	  }
+
+	  private void CloseMergeReaders(MergePolicy.OneMerge merge, bool suppressExceptions)
+	  {
+		  lock (this)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numSegments = merge.readers.size();
+			int numSegments = merge.Readers.Count;
+			Exception th = null;
+        
+			bool drop = !suppressExceptions;
+        
+			for (int i = 0; i < numSegments; i++)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SegmentReader sr = merge.readers.get(i);
+			  SegmentReader sr = merge.Readers[i];
+			  if (sr != null)
+			  {
+				try
+				{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(sr.getSegmentInfo(), false);
+				  ReadersAndUpdates rld = ReaderPool.Get(sr.SegmentInfo, false);
+				  // We still hold a ref so it should not have been removed:
+				  Debug.Assert(rld != null);
+				  if (drop)
+				  {
+					rld.DropChanges();
+				  }
+				  else
+				  {
+					rld.DropMergingUpdates();
+				  }
+				  rld.Release(sr);
+				  ReaderPool.Release(rld);
+				  if (drop)
+				  {
+					ReaderPool.Drop(rld.Info);
+				  }
+				}
+				catch (Exception t)
+				{
+				  if (th == null)
+				  {
+					th = t;
+				  }
+				}
+				merge.Readers[i] = null;
+			  }
+			}
+        
+			// If any error occured, throw it.
+			if (!suppressExceptions)
+			{
+			  IOUtils.ReThrow(th);
+			}
+		  }
+	  }
+
+	  /// <summary>
+	  /// Does the actual (time-consuming) work of the merge,
+	  ///  but without holding synchronized lock on IndexWriter
+	  ///  instance 
+	  /// </summary>
+	  private int MergeMiddle(MergePolicy.OneMerge merge)
+	  {
+
+		merge.CheckAborted(Directory_Renamed);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String mergedName = merge.info.info.name;
+		string mergedName = merge.Info_Renamed.info.name;
+
+		IList<SegmentCommitInfo> sourceSegments = merge.Segments;
+
+		IOContext context = new IOContext(merge.MergeInfo);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final MergeState.CheckAbort checkAbort = new MergeState.CheckAbort(merge, directory);
+		MergeState.CheckAbort checkAbort = new MergeState.CheckAbort(merge, Directory_Renamed);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Store.TrackingDirectoryWrapper dirWrapper = new Lucene.Net.Store.TrackingDirectoryWrapper(directory);
+		TrackingDirectoryWrapper dirWrapper = new TrackingDirectoryWrapper(Directory_Renamed);
+
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "merging " + SegString(merge.Segments));
+		}
+
+		merge.Readers = new List<>();
+
+		// this is try/finally to make sure merger's readers are
+		// closed:
+		bool success = false;
+		try
+		{
+		  int segUpto = 0;
+		  while (segUpto < sourceSegments.Count)
+		  {
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SegmentCommitInfo info = sourceSegments.get(segUpto);
+			SegmentCommitInfo info = sourceSegments[segUpto];
+
+			// Hold onto the "live" reader; we will use this to
+			// commit merged deletes
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, true);
+			ReadersAndUpdates rld = ReaderPool.Get(info, true);
+
+			// Carefully pull the most recent live docs and reader
+			SegmentReader reader;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs;
+			Bits liveDocs;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int delCount;
+			int delCount;
+
+			lock (this)
+			{
+			  // Must sync to ensure BufferedDeletesStream cannot change liveDocs,
+			  // pendingDeleteCount and field updates while we pull a copy:
+			  reader = rld.GetReaderForMerge(context);
+			  liveDocs = rld.ReadOnlyLiveDocs;
+			  delCount = rld.PendingDeleteCount + info.DelCount;
+
+			  Debug.Assert(reader != null);
+			  Debug.Assert(rld.VerifyDocCounts());
+
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				if (rld.PendingDeleteCount != 0)
+				{
+				  InfoStream.Message("IW", "seg=" + SegString(info) + " delCount=" + info.DelCount + " pendingDelCount=" + rld.PendingDeleteCount);
+				}
+				else if (info.DelCount != 0)
+				{
+				  InfoStream.Message("IW", "seg=" + SegString(info) + " delCount=" + info.DelCount);
+				}
+				else
+				{
+				  InfoStream.Message("IW", "seg=" + SegString(info) + " no deletes");
+				}
+			  }
+			}
+
+			// Deletes might have happened after we pulled the merge reader and
+			// before we got a read-only copy of the segment's actual live docs
+			// (taking pending deletes into account). In that case we need to
+			// make a new reader with updated live docs and del count.
+			if (reader.NumDeletedDocs() != delCount)
+			{
+			  // fix the reader's live docs and del count
+			  Debug.Assert(delCount > reader.NumDeletedDocs()); // beware of zombies
+
+			  SegmentReader newReader = new SegmentReader(info, reader, liveDocs, info.Info.DocCount - delCount);
+			  bool released = false;
+			  try
+			  {
+				rld.Release(reader);
+				released = true;
+			  }
+			  finally
+			  {
+				if (!released)
+				{
+				  newReader.DecRef();
+				}
+			  }
+
+			  reader = newReader;
+			}
+
+			merge.Readers.Add(reader);
+			Debug.Assert(delCount <= info.Info.DocCount, "delCount=" + delCount + " info.docCount=" + info.Info.DocCount + " rld.pendingDeleteCount=" + rld.PendingDeleteCount + " info.getDelCount()=" + info.DelCount);
+			segUpto++;
+		  }
+
+	//      System.out.println("[" + Thread.currentThread().getName() + "] IW.mergeMiddle: merging " + merge.getMergeReaders());
+
+		  // we pass merge.getMergeReaders() instead of merge.readers to allow the
+		  // OneMerge to return a view over the actual segments to merge
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SegmentMerger merger = new SegmentMerger(merge.getMergeReaders(), merge.info.info, infoStream, dirWrapper, config.getTermIndexInterval(), checkAbort, globalFieldNumberMap, context, config.getCheckIntegrityAtMerge());
+		  SegmentMerger merger = new SegmentMerger(merge.MergeReaders, merge.Info_Renamed.info, InfoStream, dirWrapper, Config_Renamed.TermIndexInterval, checkAbort, GlobalFieldNumberMap, context, Config_Renamed.CheckIntegrityAtMerge);
+
+		  merge.CheckAborted(Directory_Renamed);
+
+		  // this is where all the work happens:
+		  MergeState mergeState;
+		  bool success3 = false;
+		  try
+		  {
+			if (!merger.ShouldMerge())
+			{
+			  // would result in a 0 document segment: nothing to merge!
+			  mergeState = new MergeState(new List<AtomicReader>(), merge.Info_Renamed.info, InfoStream, checkAbort);
+			}
+			else
+			{
+			  mergeState = merger.Merge();
+			}
+			success3 = true;
+		  }
+		  finally
+		  {
+			if (!success3)
+			{
+			  lock (this)
+			  {
+				Deleter.Refresh(merge.Info_Renamed.info.name);
+			  }
+			}
+		  }
+		  Debug.Assert(mergeState.SegmentInfo == merge.Info_Renamed.info);
+		  merge.Info_Renamed.info.Files = new HashSet<>(dirWrapper.CreatedFiles);
+
+		  // Record which codec was used to write the segment
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			if (merge.Info_Renamed.info.DocCount == 0)
+			{
+			  InfoStream.Message("IW", "merge away fully deleted segments");
+			}
+			else
+			{
+			  InfoStream.Message("IW", "merge codec=" + Codec + " docCount=" + merge.Info_Renamed.info.DocCount + "; merged segment has " + (mergeState.FieldInfos.hasVectors() ? "vectors" : "no vectors") + "; " + (mergeState.FieldInfos.hasNorms() ? "norms" : "no norms") + "; " + (mergeState.FieldInfos.hasDocValues() ? "docValues" : "no docValues") + "; " + (mergeState.FieldInfos.hasProx() ? "prox" : "no prox") + "; " + (mergeState.FieldInfos.hasProx() ? "freqs" : "no freqs"));
+			}
+		  }
+
+		  // Very important to do this before opening the reader
+		  // because codec must know if prox was written for
+		  // this segment:
+		  //System.out.println("merger set hasProx=" + merger.hasProx() + " seg=" + merge.info.name);
+		  bool useCompoundFile;
+		  lock (this) // Guard segmentInfos
+		  {
+			useCompoundFile = MergePolicy.UseCompoundFile(SegmentInfos, merge.Info_Renamed);
+		  }
+
+		  if (useCompoundFile)
+		  {
+			success = false;
+
+			ICollection<string> filesToRemove = merge.Info_Renamed.files();
+
+			try
+			{
+			  filesToRemove = CreateCompoundFile(InfoStream, Directory_Renamed, checkAbort, merge.Info_Renamed.info, context);
+			  success = true;
+			}
+			catch (IOException ioe)
+			{
+			  lock (this)
+			  {
+				if (merge.Aborted)
+				{
+				  // this can happen if rollback or close(false)
+				  // is called -- fall through to logic below to
+				  // remove the partially created CFS:
+				}
+				else
+				{
+				  HandleMergeException(ioe, merge);
+				}
+			  }
+			}
+			catch (Exception t)
+			{
+			  HandleMergeException(t, merge);
+			}
+			finally
+			{
+			  if (!success)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "hit exception creating compound file during merge");
+				}
+
+				lock (this)
+				{
+				  Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_EXTENSION));
+				  Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+				  Deleter.DeleteNewFiles(merge.Info_Renamed.files());
+				}
+			  }
+			}
+
+			// So that, if we hit exc in deleteNewFiles (next)
+			// or in commitMerge (later), we close the
+			// per-segment readers in the finally clause below:
+			success = false;
+
+			lock (this)
+			{
+
+			  // delete new non cfs files directly: they were never
+			  // registered with IFD
+			  Deleter.DeleteNewFiles(filesToRemove);
+
+			  if (merge.Aborted)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "abort merge after building CFS");
+				}
+				Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_EXTENSION));
+				Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+				return 0;
+			  }
+			}
+
+			merge.Info_Renamed.info.UseCompoundFile = true;
+		  }
+		  else
+		  {
+			// So that, if we hit exc in commitMerge (later),
+			// we close the per-segment readers in the finally
+			// clause below:
+			success = false;
+		  }
+
+		  // Have codec write SegmentInfo.  Must do this after
+		  // creating CFS so that 1) .si isn't slurped into CFS,
+		  // and 2) .si reflects useCompoundFile=true change
+		  // above:
+		  bool success2 = false;
+		  try
+		  {
+			Codec.SegmentInfoFormat().SegmentInfoWriter.write(Directory_Renamed, merge.Info_Renamed.info, mergeState.FieldInfos, context);
+			success2 = true;
+		  }
+		  finally
+		  {
+			if (!success2)
+			{
+			  lock (this)
+			  {
+				Deleter.DeleteNewFiles(merge.Info_Renamed.files());
+			  }
+			}
+		  }
+
+		  // TODO: ideally we would freeze merge.info here!!
+		  // because any changes after writing the .si will be
+		  // lost... 
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", string.format(Locale.ROOT, "merged segment size=%.3f MB vs estimate=%.3f MB", merge.Info_Renamed.sizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
+		  }
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final IndexReaderWarmer mergedSegmentWarmer = config.getMergedSegmentWarmer();
+		  IndexReaderWarmer mergedSegmentWarmer = Config_Renamed.MergedSegmentWarmer;
+		  if (PoolReaders && mergedSegmentWarmer != null && merge.Info_Renamed.info.DocCount != 0)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(merge.info, true);
+			ReadersAndUpdates rld = ReaderPool.Get(merge.Info_Renamed, true);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SegmentReader sr = rld.getReader(Lucene.Net.Store.IOContext.READ);
+			SegmentReader sr = rld.GetReader(IOContext.READ);
+			try
+			{
+			  mergedSegmentWarmer.Warm(sr);
+			}
+			finally
+			{
+			  lock (this)
+			  {
+				rld.Release(sr);
+				ReaderPool.Release(rld);
+			  }
+			}
+		  }
+
+		  // Force READ context because we merge deletes onto
+		  // this reader:
+		  if (!CommitMerge(merge, mergeState))
+		  {
+			// commitMerge will return false if this merge was
+			// aborted
+			return 0;
+		  }
+
+		  success = true;
+
+		}
+		finally
+		{
+		  // Readers are already closed in commitMerge if we didn't hit
+		  // an exc:
+		  if (!success)
+		  {
+			CloseMergeReaders(merge, true);
+		  }
+		}
+
+		return merge.Info_Renamed.info.DocCount;
+	  }
+
+	  internal virtual void AddMergeException(MergePolicy.OneMerge merge)
+	  {
+		  lock (this)
+		  {
+			Debug.Assert(merge.Exception != null);
+			if (!MergeExceptions.Contains(merge) && MergeGen == merge.MergeGen)
+			{
+			  MergeExceptions.Add(merge);
+			}
+		  }
+	  }
+
+	  // For test purposes.
+	  internal int BufferedDeleteTermsSize
+	  {
+		  get
+		  {
+			return DocWriter.BufferedDeleteTermsSize;
+		  }
+	  }
+
+	  // For test purposes.
+	  internal int NumBufferedDeleteTerms
+	  {
+		  get
+		  {
+			return DocWriter.NumBufferedDeleteTerms;
+		  }
+	  }
+
+	  // utility routines for tests
+	  internal virtual SegmentCommitInfo NewestSegment()
+	  {
+		  lock (this)
+		  {
+			return SegmentInfos.Size() > 0 ? SegmentInfos.Info(SegmentInfos.Size() - 1) : null;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns a string description of all segments, for
+	  ///  debugging.
+	  /// 
+	  /// @lucene.internal 
+	  /// </summary>
+	  public virtual string SegString()
+	  {
+		  lock (this)
+		  {
+			return SegString(SegmentInfos);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns a string description of the specified
+	  ///  segments, for debugging.
+	  /// 
+	  /// @lucene.internal 
+	  /// </summary>
+	  public virtual string SegString(IEnumerable<SegmentCommitInfo> infos)
+	  {
+		  lock (this)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final StringBuilder buffer = new StringBuilder();
+			StringBuilder buffer = new StringBuilder();
+			foreach (SegmentCommitInfo info in infos)
+			{
+			  if (buffer.Length > 0)
+			  {
+				buffer.Append(' ');
+			  }
+			  buffer.Append(SegString(info));
+			}
+			return buffer.ToString();
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns a string description of the specified
+	  ///  segment, for debugging.
+	  /// 
+	  /// @lucene.internal 
+	  /// </summary>
+	  public virtual string SegString(SegmentCommitInfo info)
+	  {
+		  lock (this)
+		  {
+			return info.ToString(info.Info.dir, NumDeletedDocs(info) - info.DelCount);
+		  }
+	  }
+
+	  private void DoWait()
+	  {
+		  lock (this)
+		  {
+			// NOTE: the callers of this method should in theory
+			// be able to do simply wait(), but, as a defense
+			// against thread timing hazards where notifyAll()
+			// fails to be called, we wait for at most 1 second
+			// and then return so caller can check if wait
+			// conditions are satisfied:
+			try
+			{
+			  Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
+			}
+			catch (InterruptedException ie)
+			{
+			  throw new ThreadInterruptedException(ie);
+			}
+		  }
+	  }
+
+	  private bool KeepFullyDeletedSegments_Renamed;
+
+	  /// <summary>
+	  /// Only for testing.
+	  /// 
+	  /// @lucene.internal 
+	  /// </summary>
+	  internal virtual bool KeepFullyDeletedSegments
+	  {
+		  set
+		  {
+			KeepFullyDeletedSegments_Renamed = value;
+		  }
+		  get
+		  {
+			return KeepFullyDeletedSegments_Renamed;
+		  }
+	  }
+
+
+	  // called only from assert
+	  private bool FilesExist(SegmentInfos toSync)
+	  {
+
+		ICollection<string> files = toSync.Files(Directory_Renamed, false);
+		foreach (String fileName in files)
+		{
+		  Debug.Assert(SlowFileExists(Directory_Renamed, fileName), "file " + fileName + " does not exist; files=" + Arrays.ToString(Directory_Renamed.ListAll()));
+		  // If this trips it means we are missing a call to
+		  // .checkpoint somewhere, because by the time we
+		  // are called, deleter should know about every
+		  // file referenced by the current head
+		  // segmentInfos:
+		  Debug.Assert(Deleter.Exists(fileName), "IndexFileDeleter doesn't know about file " + fileName);
+		}
+		return true;
+	  }
+
+	  // For infoStream output
+	  internal virtual SegmentInfos ToLiveInfos(SegmentInfos sis)
+	  {
+		  lock (this)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final SegmentInfos newSIS = new SegmentInfos();
+			SegmentInfos newSIS = new SegmentInfos();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Map<SegmentCommitInfo,SegmentCommitInfo> liveSIS = new java.util.HashMap<>();
+			IDictionary<SegmentCommitInfo, SegmentCommitInfo> liveSIS = new Dictionary<SegmentCommitInfo, SegmentCommitInfo>();
+			foreach (SegmentCommitInfo info in SegmentInfos)
+			{
+			  liveSIS[info] = info;
+			}
+			foreach (SegmentCommitInfo info in sis)
+			{
+			  SegmentCommitInfo liveInfo = liveSIS[info];
+			  if (liveInfo != null)
+			  {
+				info = liveInfo;
+			  }
+			  newSIS.Add(info);
+			}
+        
+			return newSIS;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Walk through all files referenced by the current
+	  ///  segmentInfos and ask the Directory to sync each file,
+	  ///  if it wasn't already.  If that succeeds, then we
+	  ///  prepare a new segments_N file but do not fully commit
+	  ///  it. 
+	  /// </summary>
+	  private void StartCommit(SegmentInfos toSync)
+	  {
+
+		Debug.Assert(TestPoint("startStartCommit"));
+		Debug.Assert(PendingCommit == null);
+
+		if (HitOOM)
+		{
+		  throw new IllegalStateException("this writer hit an OutOfMemoryError; cannot commit");
+		}
+
+		try
+		{
+
+		  if (InfoStream.IsEnabled("IW"))
+		  {
+			InfoStream.Message("IW", "startCommit(): start");
+		  }
+
+		  lock (this)
+		  {
+
+			Debug.Assert(LastCommitChangeCount <= ChangeCount, "lastCommitChangeCount=" + LastCommitChangeCount + " changeCount=" + ChangeCount);
+
+			if (PendingCommitChangeCount == LastCommitChangeCount)
+			{
+			  if (InfoStream.IsEnabled("IW"))
+			  {
+				InfoStream.Message("IW", "  skip startCommit(): no changes pending");
+			  }
+			  Deleter.DecRef(FilesToCommit);
+			  FilesToCommit = null;
+			  return;
+			}
+
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync)) + " changeCount=" + ChangeCount);
+			}
+
+			Debug.Assert(FilesExist(toSync));
+		  }
+
+		  Debug.Assert(TestPoint("midStartCommit"));
+
+		  bool pendingCommitSet = false;
+
+		  try
+		  {
+
+			Debug.Assert(TestPoint("midStartCommit2"));
+
+			lock (this)
+			{
+
+			  Debug.Assert(PendingCommit == null);
+
+			  Debug.Assert(SegmentInfos.Generation == toSync.Generation);
+
+			  // Exception here means nothing is prepared
+			  // (this method unwinds everything it did on
+			  // an exception)
+			  toSync.PrepareCommit(Directory_Renamed);
+			  //System.out.println("DONE prepareCommit");
+
+			  pendingCommitSet = true;
+			  PendingCommit = toSync;
+			}
+
+			// this call can take a long time -- 10s of seconds
+			// or more.  We do it without syncing on this:
+			bool success = false;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.util.Collection<String> filesToSync;
+			ICollection<string> filesToSync;
+			try
+			{
+			  filesToSync = toSync.Files(Directory_Renamed, false);
+			  Directory_Renamed.Sync(filesToSync);
+			  success = true;
+			}
+			finally
+			{
+			  if (!success)
+			  {
+				pendingCommitSet = false;
+				PendingCommit = null;
+				toSync.RollbackCommit(Directory_Renamed);
+			  }
+			}
+
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "done all syncs: " + filesToSync);
+			}
+
+			Debug.Assert(TestPoint("midStartCommitSuccess"));
+
+		  }
+		  finally
+		  {
+			lock (this)
+			{
+			  // Have our master segmentInfos record the
+			  // generations we just prepared.  We do this
+			  // on error or success so we don't
+			  // double-write a segments_N file.
+			  SegmentInfos.UpdateGeneration(toSync);
+
+			  if (!pendingCommitSet)
+			  {
+				if (InfoStream.IsEnabled("IW"))
+				{
+				  InfoStream.Message("IW", "hit exception committing segments file");
+				}
+
+				// Hit exception
+				Deleter.DecRef(FilesToCommit);
+				FilesToCommit = null;
+			  }
+			}
+		  }
+		}
+		catch (System.OutOfMemoryException oom)
+		{
+		  HandleOOM(oom, "startCommit");
+		}
+		Debug.Assert(TestPoint("finishStartCommit"));
+	  }
+
+	  /// <summary>
+	  /// Returns <code>true</code> iff the index in the named directory is
+	  /// currently locked. </summary>
+	  /// <param name="directory"> the directory to check for a lock </param>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public static bool IsLocked(Directory directory)
+	  {
+		return directory.MakeLock(WRITE_LOCK_NAME).Locked;
+	  }
+
+	  /// <summary>
+	  /// Forcibly unlocks the index in the named directory.
+	  /// <P>
+	  /// Caution: this should only be used by failure recovery code,
+	  /// when it is known that no other process nor thread is in fact
+	  /// currently accessing this index.
+	  /// </summary>
+	  public static void Unlock(Directory directory)
+	  {
+		directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).close();
+	  }
+
+	  /// <summary>
+	  /// If <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/> has
+	  ///  been called (ie, this writer is in near real-time
+	  ///  mode), then after a merge completes, this class can be
+	  ///  invoked to warm the reader on the newly merged
+	  ///  segment, before the merge commits.  this is not
+	  ///  required for near real-time search, but will reduce
+	  ///  search latency on opening a new near real-time reader
+	  ///  after a merge completes.
+	  /// 
+	  /// @lucene.experimental
+	  /// 
+	  /// <p><b>NOTE</b>: warm is called before any deletes have
+	  /// been carried over to the merged segment. 
+	  /// </summary>
+	  public abstract class IndexReaderWarmer
+	  {
+
+		/// <summary>
+		/// Sole constructor. (For invocation by subclass 
+		///  constructors, typically implicit.) 
+		/// </summary>
+		protected internal IndexReaderWarmer()
+		{
+		}
+
+		/// <summary>
+		/// Invoked on the <seealso cref="AtomicReader"/> for the newly
+		///  merged segment, before that segment is made visible
+		///  to near-real-time readers. 
+		/// </summary>
+		public abstract void Warm(AtomicReader reader);
+	  }
+
+	  private void HandleOOM(System.OutOfMemoryException oom, string location)
+	  {
+		if (InfoStream.IsEnabled("IW"))
+		{
+		  InfoStream.Message("IW", "hit OutOfMemoryError inside " + location);
+		}
+		HitOOM = true;
+		throw oom;
+	  }
+
+	  // Used only by assert for testing.  Current points:
+	  //   startDoFlush
+	  //   startCommitMerge
+	  //   startStartCommit
+	  //   midStartCommit
+	  //   midStartCommit2
+	  //   midStartCommitSuccess
+	  //   finishStartCommit
+	  //   startCommitMergeDeletes
+	  //   startMergeInit
+	  //   DocumentsWriter.ThreadState.init start
+	  private bool TestPoint(string message)
+	  {
+		if (InfoStream.IsEnabled("TP"))
+		{
+		  InfoStream.Message("TP", message);
+		}
+		return true;
+	  }
+
+	  internal virtual bool NrtIsCurrent(SegmentInfos infos)
+	  {
+		  lock (this)
+		  {
+			//System.out.println("IW.nrtIsCurrent " + (infos.version == segmentInfos.version && !docWriter.anyChanges() && !bufferedDeletesStream.any()));
+			EnsureOpen();
+			if (InfoStream.IsEnabled("IW"))
+			{
+			  InfoStream.Message("IW", "nrtIsCurrent: infoVersion matches: " + (infos.Version_Renamed == SegmentInfos.Version_Renamed) + "; DW changes: " + DocWriter.AnyChanges() + "; BD changes: " + BufferedUpdatesStream.Any());
+			}
+			return infos.Version_Renamed == SegmentInfos.Version_Renamed && !DocWriter.AnyChanges() && !BufferedUpdatesStream.Any();
+		  }
+	  }
+
+	  internal virtual bool Closed
+	  {
+		  get
+		  {
+			  lock (this)
+			  {
+				return Closed_Renamed;
+			  }
+		  }
+	  }
+
+	  /// <summary>
+	  /// Expert: remove any index files that are no longer
+	  ///  used.
+	  /// 
+	  ///  <p> IndexWriter normally deletes unused files itself,
+	  ///  during indexing.  However, on Windows, which disallows
+	  ///  deletion of open files, if there is a reader open on
+	  ///  the index then those files cannot be deleted.  this is
+	  ///  fine, because IndexWriter will periodically retry
+	  ///  the deletion.</p>
+	  /// 
+	  ///  <p> However, IndexWriter doesn't try that often: only
+	  ///  on open, close, flushing a new segment, and finishing
+	  ///  a merge.  If you don't do any of these actions with your
+	  ///  IndexWriter, you'll see the unused files linger.  If
+	  ///  that's a problem, call this method to delete them
+	  ///  (once you've closed the open readers that were
+	  ///  preventing their deletion). 
+	  ///  
+	  ///  <p> In addition, you can call this method to delete 
+	  ///  unreferenced index commits. this might be useful if you 
+	  ///  are using an <seealso cref="IndexDeletionPolicy"/> which holds
+	  ///  onto index commits until some criteria are met, but those
+	  ///  commits are no longer needed. Otherwise, those commits will
+	  ///  be deleted the next time commit() is called.
+	  /// </summary>
+	  public virtual void DeleteUnusedFiles()
+	  {
+		  lock (this)
+		  {
+			EnsureOpen(false);
+			Deleter.DeletePendingFiles();
+			Deleter.RevisitPolicy();
+		  }
+	  }
+
+	  private void DeletePendingFiles()
+	  {
+		  lock (this)
+		  {
+			Deleter.DeletePendingFiles();
+		  }
+	  }
+
+	  /// <summary>
+	  /// NOTE: this method creates a compound file for all files returned by
+	  /// info.files(). While, generally, this may include separate norms and
+	  /// deletion files, this SegmentInfo must not reference such files when this
+	  /// method is called, because they are not allowed within a compound file.
+	  /// </summary>
+	  internal static ICollection<string> CreateCompoundFile(InfoStream infoStream, Directory directory, CheckAbort checkAbort, SegmentInfo info, IOContext context)
+	  {
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String fileName = IndexFileNames.segmentFileName(info.name, "", IndexFileNames.COMPOUND_FILE_EXTENSION);
+		string fileName = IndexFileNames.SegmentFileName(info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION);
+		if (infoStream.IsEnabled("IW"))
+		{
+		  infoStream.Message("IW", "create compound file " + fileName);
+		}
+		Debug.Assert(Lucene3xSegmentInfoFormat.GetDocStoreOffset(info) == -1);
+		// Now merge all added files
+		ICollection<string> files = info.Files();
+		CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);
+		IOException prior = null;
+		try
+		{
+		  foreach (string file in files)
+		  {
+			directory.Copy(cfsDir, file, file, context);
+			checkAbort.Work(directory.FileLength(file));
+		  }
+		}
+		catch (IOException ex)
+		{
+		  prior = ex;
+		}
+		finally
+		{
+		  bool success = false;
+		  try
+		  {
+			IOUtils.CloseWhileHandlingException(prior, cfsDir);
+			success = true;
+		  }
+		  finally
+		  {
+			if (!success)
+			{
+			  try
+			  {
+				directory.DeleteFile(fileName);
+			  }
+			  catch (Exception t)
+			  {
+			  }
+			  try
+			  {
+				directory.DeleteFile(IndexFileNames.SegmentFileName(info.Name, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+			  }
+			  catch (Exception t)
+			  {
+			  }
+			}
+		  }
+		}
+
+		// Replace all previous files with the CFS/CFE files:
+		Set<string> siFiles = new HashSet<string>();
+		siFiles.add(fileName);
+		siFiles.add(IndexFileNames.SegmentFileName(info.Name, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+		info.Files = siFiles;
+
+		return files;
+	  }
+
+	  /// <summary>
+	  /// Tries to delete the given files if unreferenced </summary>
+	  /// <param name="files"> the files to delete </param>
+	  /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
+	  /// <seealso cref= IndexFileDeleter#deleteNewFiles(Collection) </seealso>
+	  internal void DeleteNewFiles(ICollection<string> files)
+	  {
+		  lock (this)
+		  {
+			Deleter.DeleteNewFiles(files);
+		  }
+	  }
+
+	  /// <summary>
+	  /// Cleans up residuals from a segment that could not be entirely flushed due to an error </summary>
+	  /// <seealso cref= IndexFileDeleter#refresh(String)  </seealso>
+	  internal void FlushFailed(SegmentInfo info)
+	  {
+		  lock (this)
+		  {
+			Deleter.Refresh(info.Name);
+		  }
+	  }
+
+	  internal int Purge(bool forced)
+	  {
+		return DocWriter.PurgeBuffer(this, forced);
+	  }
+
+	  internal void ApplyDeletesAndPurge(bool forcePurge)
+	  {
+		try
+		{
+		  Purge(forcePurge);
+		}
+		finally
+		{
+		  ApplyAllDeletesAndUpdates();
+		  FlushCount_Renamed.incrementAndGet();
+		}
+	  }
+	  internal void DoAfterSegmentFlushed(bool triggerMerge, bool forcePurge)
+	  {
+		try
+		{
+		  Purge(forcePurge);
+		}
+		finally
+		{
+		  if (triggerMerge)
+		  {
+			MaybeMerge(MergeTrigger.SEGMENT_FLUSH, UNBOUNDED_MAX_MERGE_SEGMENTS);
+		  }
+		}
+
+	  }
+
+	  internal virtual void IncRefDeleter(SegmentInfos segmentInfos)
+	  {
+		  lock (this)
+		  {
+			EnsureOpen();
+			Deleter.IncRef(segmentInfos, false);
+		  }
+	  }
+
+	  internal virtual void DecRefDeleter(SegmentInfos segmentInfos)
+	  {
+		  lock (this)
+		  {
+			EnsureOpen();
+			Deleter.DecRef(segmentInfos);
+		  }
+	  }
+
+	  private bool ProcessEvents(bool triggerMerge, bool forcePurge)
+	  {
+		return ProcessEvents(EventQueue, triggerMerge, forcePurge);
+	  }
+
+	  private bool ProcessEvents(LinkedList<Event> queue, bool triggerMerge, bool forcePurge)
+	  {
+		Event @event;
+		bool processed = false;
+		while ((@event = queue.RemoveFirst()) != null)
+		{
+		  processed = true;
+		  @event.Process(this, triggerMerge, forcePurge);
+		}
+		return processed;
+	  }
+
+	  /// <summary>
+	  /// Interface for internal atomic events. See <seealso cref="DocumentsWriter"/> for details. Events are executed concurrently and no order is guaranteed.
+	  /// Each event should only rely on the serializeability within it's process method. All actions that must happen before or after a certain action must be
+	  /// encoded inside the <seealso cref="#process(IndexWriter, boolean, boolean)"/> method.
+	  /// 
+	  /// </summary>
+	  internal interface Event
+	  {
+
+		/// <summary>
+		/// Processes the event. this method is called by the <seealso cref="IndexWriter"/>
+		/// passed as the first argument.
+		/// </summary>
+		/// <param name="writer">
+		///          the <seealso cref="IndexWriter"/> that executes the event. </param>
+		/// <param name="triggerMerge">
+		///          <code>false</code> iff this event should not trigger any segment merges </param>
+		/// <param name="clearBuffers">
+		///          <code>true</code> iff this event should clear all buffers associated with the event. </param>
+		/// <exception cref="IOException">
+		///           if an <seealso cref="IOException"/> occurs </exception>
+		void Process(IndexWriter writer, bool triggerMerge, bool clearBuffers);
+	  }
+
+	  /// <summary>
+	  /// Used only by asserts: returns true if the file exists
+	  ///  (can be opened), false if it cannot be opened, and
+	  ///  (unlike Java's File.exists) throws IOException if
+	  ///  there's some unexpected error. 
+	  /// </summary>
+	  private static bool SlowFileExists(Directory dir, string fileName)
+	  {
+		try
+		{
+		  dir.OpenInput(fileName, IOContext.DEFAULT).close();
+		  return true;
+		}
+//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
+		catch (NoSuchFileException | FileNotFoundException e)
+		{
+		  return false;
+		}
+	  }
+	}
+
 }

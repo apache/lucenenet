@@ -1,176 +1,211 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-
-using NUnit.Framework;
-
-using SimpleAnalyzer = Lucene.Net.Analysis.SimpleAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
-    
-    [TestFixture]
-    public class BaseTestRangeFilter:LuceneTestCase
-    {
-        private void  InitBlock()
-        {
-            signedIndex = new TestIndex(this, System.Int32.MaxValue, System.Int32.MinValue, true);
-            unsignedIndex = new TestIndex(this, System.Int32.MaxValue, 0, false);
-        }
-        
-        public const bool F = false;
-        public const bool T = true;
-        
-        protected internal System.Random rand;
-        
-        /// <summary> Collation interacts badly with hyphens -- collation produces different
-        /// ordering than Unicode code-point ordering -- so two indexes are created:
-        /// one which can't have negative random integers, for testing collated 
-        /// ranges, and the other which can have negative random integers, for all
-        /// other tests. 
-        /// </summary>
-        internal class TestIndex
-        {
-            private void  InitBlock(BaseTestRangeFilter enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private BaseTestRangeFilter enclosingInstance;
-            public BaseTestRangeFilter Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal int maxR;
-            internal int minR;
-            internal bool allowNegativeRandomInts;
-            internal RAMDirectory index = new RAMDirectory();
-            
-            internal TestIndex(BaseTestRangeFilter enclosingInstance, int minR, int maxR, bool allowNegativeRandomInts)
-            {
-                InitBlock(enclosingInstance);
-                this.minR = minR;
-                this.maxR = maxR;
-                this.allowNegativeRandomInts = allowNegativeRandomInts;
-            }
-        }
-        internal TestIndex signedIndex;
-        internal TestIndex unsignedIndex;
-        
-        internal int minId = 0;
-        internal int maxId = 10000;
-        
-        internal static readonly int intLength = System.Convert.ToString(System.Int32.MaxValue).Length;
-        
-        /// <summary> a simple padding function that should work with any int</summary>
-        public static System.String Pad(int n)
-        {
-            System.Text.StringBuilder b = new System.Text.StringBuilder(40);
-            System.String p = "0";
-            if (n < 0)
-            {
-                p = "-";
-                n = System.Int32.MaxValue + n + 1;
-            }
-            b.Append(p);
-            System.String s = System.Convert.ToString(n);
-            for (int i = s.Length; i <= intLength; i++)
-            {
-                b.Append("0");
-            }
-            b.Append(s);
-            
-            return b.ToString();
-        }
-        
-        public BaseTestRangeFilter(System.String name):base(name)
-        {
-            InitBlock();
-            rand = NewRandom();
-            Build(signedIndex);
-            Build(unsignedIndex);
-        }
-        public BaseTestRangeFilter()
-        {
-            InitBlock();
-            rand = NewRandom();
-            Build(signedIndex);
-            Build(unsignedIndex);
-        }
-        
-        private void  Build(TestIndex index)
-        {
-            try
-            {
-                
-                /* build an index */
-                IndexWriter writer = new IndexWriter(index.index, new SimpleAnalyzer(), T, IndexWriter.MaxFieldLength.LIMITED);
-                
-                for (int d = minId; d <= maxId; d++)
-                {
-                    Document doc = new Document();
-                    doc.Add(new Field("id", Pad(d), Field.Store.YES, Field.Index.NOT_ANALYZED));
-                    int r = index.allowNegativeRandomInts ? rand.Next() : rand.Next(System.Int32.MaxValue);
-                    if (index.maxR < r)
-                    {
-                        index.maxR = r;
-                    }
-                    if (r < index.minR)
-                    {
-                        index.minR = r;
-                    }
-                    doc.Add(new Field("rand", Pad(r), Field.Store.YES, Field.Index.NOT_ANALYZED));
-                    doc.Add(new Field("body", "body", Field.Store.YES, Field.Index.NOT_ANALYZED));
-                    writer.AddDocument(doc);
-                }
-                
-                writer.Optimize();
-                writer.Close();
-            }
-            catch (System.Exception e)
-            {
-                throw new System.SystemException("can't build index", e);
-            }
-        }
-        
-        [Test]
-        public virtual void  TestPad()
-        {
-            
-            int[] tests = new int[]{- 9999999, - 99560, - 100, - 3, - 1, 0, 3, 9, 10, 1000, 999999999};
-            for (int i = 0; i < tests.Length - 1; i++)
-            {
-                int a = tests[i];
-                int b = tests[i + 1];
-                System.String aa = Pad(a);
-                System.String bb = Pad(b);
-                System.String label = a + ":" + aa + " vs " + b + ":" + bb;
-                Assert.AreEqual(aa.Length, bb.Length, "length of " + label);
-                Assert.IsTrue(String.CompareOrdinal(aa, bb) < 0, "compare less than " + label);
-            }
-        }
-    }
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using Document = Lucene.Net.Document.Document;
+	using Field = Lucene.Net.Document.Field;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+	using Directory = Lucene.Net.Store.Directory;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+	using TestUtil = Lucene.Net.Util.TestUtil;
+	using AfterClass = org.junit.AfterClass;
+	using BeforeClass = org.junit.BeforeClass;
+	using Test = org.junit.Test;
+
+	public class BaseTestRangeFilter : LuceneTestCase
+	{
+
+	  public const bool F = false;
+	  public const bool T = true;
+
+	  /// <summary>
+	  /// Collation interacts badly with hyphens -- collation produces different
+	  /// ordering than Unicode code-point ordering -- so two indexes are created:
+	  /// one which can't have negative random integers, for testing collated ranges,
+	  /// and the other which can have negative random integers, for all other tests.
+	  /// </summary>
+	  internal class TestIndex
+	  {
+		internal int MaxR;
+		internal int MinR;
+		internal bool AllowNegativeRandomInts;
+		internal Directory Index;
+
+		internal TestIndex(Random random, int minR, int maxR, bool allowNegativeRandomInts)
+		{
+		  this.MinR = minR;
+		  this.MaxR = maxR;
+		  this.AllowNegativeRandomInts = allowNegativeRandomInts;
+		  Index = newDirectory(random);
+		}
+	  }
+
+	  internal static IndexReader SignedIndexReader;
+	  internal static IndexReader UnsignedIndexReader;
+
+	  internal static TestIndex SignedIndexDir;
+	  internal static TestIndex UnsignedIndexDir;
+
+	  internal static int MinId = 0;
+	  internal static int MaxId;
+
+	  internal static readonly int IntLength = Convert.ToString(int.MaxValue).length();
+
+	  /// <summary>
+	  /// a simple padding function that should work with any int
+	  /// </summary>
+	  public static string Pad(int n)
+	  {
+		StringBuilder b = new StringBuilder(40);
+		string p = "0";
+		if (n < 0)
+		{
+		  p = "-";
+		  n = int.MaxValue + n + 1;
+		}
+		b.Append(p);
+		string s = Convert.ToString(n);
+		for (int i = s.Length; i <= IntLength; i++)
+		{
+		  b.Append("0");
+		}
+		b.Append(s);
+
+		return b.ToString();
+	  }
+
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @BeforeClass public static void beforeClassBaseTestRangeFilter() throws Exception
+	  public static void BeforeClassBaseTestRangeFilter()
+	  {
+		MaxId = atLeast(500);
+		SignedIndexDir = new TestIndex(random(), int.MaxValue, int.MinValue, true);
+		UnsignedIndexDir = new TestIndex(random(), int.MaxValue, 0, false);
+		SignedIndexReader = Build(random(), SignedIndexDir);
+		UnsignedIndexReader = Build(random(), UnsignedIndexDir);
+	  }
+
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @AfterClass public static void afterClassBaseTestRangeFilter() throws Exception
+	  public static void AfterClassBaseTestRangeFilter()
+	  {
+		SignedIndexReader.close();
+		UnsignedIndexReader.close();
+		SignedIndexDir.Index.close();
+		UnsignedIndexDir.Index.close();
+		SignedIndexReader = null;
+		UnsignedIndexReader = null;
+		SignedIndexDir = null;
+		UnsignedIndexDir = null;
+	  }
+
+	  private static IndexReader Build(Random random, TestIndex index)
+	  {
+		/* build an index */
+
+		Document doc = new Document();
+		Field idField = newStringField(random, "id", "", Field.Store.YES);
+		Field randField = newStringField(random, "rand", "", Field.Store.YES);
+		Field bodyField = newStringField(random, "body", "", Field.Store.NO);
+		doc.add(idField);
+		doc.add(randField);
+		doc.add(bodyField);
+
+		RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(TestUtil.Next(random, 50, 1000)).setMergePolicy(newLogMergePolicy()));
+		TestUtil.reduceOpenFiles(writer.w);
+
+		while (true)
+		{
+
+		  int minCount = 0;
+		  int maxCount = 0;
+
+		  for (int d = MinId; d <= MaxId; d++)
+		  {
+			idField.StringValue = Pad(d);
+			int r = index.AllowNegativeRandomInts ? random.Next() : random.Next(int.MaxValue);
+			if (index.MaxR < r)
+			{
+			  index.MaxR = r;
+			  maxCount = 1;
+			}
+			else if (index.MaxR == r)
+			{
+			  maxCount++;
+			}
+
+			if (r < index.MinR)
+			{
+			  index.MinR = r;
+			  minCount = 1;
+			}
+			else if (r == index.MinR)
+			{
+			  minCount++;
+			}
+			randField.StringValue = Pad(r);
+			bodyField.StringValue = "body";
+			writer.addDocument(doc);
+		  }
+
+		  if (minCount == 1 && maxCount == 1)
+		  {
+			// our subclasses rely on only 1 doc having the min or
+			// max, so, we loop until we satisfy that.  it should be
+			// exceedingly rare (Yonik calculates 1 in ~429,000)
+			// times) that this loop requires more than one try:
+			IndexReader ir = writer.Reader;
+			writer.close();
+			return ir;
+		  }
+
+		  // try again
+		  writer.deleteAll();
+		}
+	  }
+
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @Test public void testPad()
+	  public virtual void TestPad()
+	  {
+
+		int[] tests = new int[] {-9999999, -99560, -100, -3, -1, 0, 3, 9, 10, 1000, 999999999};
+		for (int i = 0; i < tests.Length - 1; i++)
+		{
+		  int a = tests[i];
+		  int b = tests[i + 1];
+		  string aa = Pad(a);
+		  string bb = Pad(b);
+		  string label = a + ":" + aa + " vs " + b + ":" + bb;
+		  Assert.AreEqual("length of " + label, aa.Length, bb.Length);
+		  Assert.IsTrue("compare less than " + label, aa.CompareTo(bb) < 0);
+		}
+
+	  }
+
+	}
+
 }

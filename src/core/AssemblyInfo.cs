@@ -18,7 +18,6 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Security;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -58,7 +57,6 @@ using System.Security;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("3.0.3")]
-[assembly: AllowPartiallyTrustedCallers]
 
 
 //
@@ -86,6 +84,6 @@ using System.Security;
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
-//[assembly: AssemblyKeyName("")]
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("")]
+[assembly: AssemblyKeyName("")]

@@ -1,808 +1,860 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-* 
-* http://www.apache.org/licenses/LICENSE-2.0
-* 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-using System;
+using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.Support;
-using Directory = Lucene.Net.Store.Directory;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
 
-    /// <summary>
-    /// <para>This class keeps track of each SegmentInfos instance that
-    /// is still "live", either because it corresponds to a
-    /// segments_N file in the Directory (a "commit", i.e. a
-    /// committed SegmentInfos) or because it's an in-memory
-    /// SegmentInfos that a writer is actively updating but has
-    /// not yet committed.  This class uses simple reference
-    /// counting to map the live SegmentInfos instances to
-    /// individual files in the Directory.</para>
-    /// 
-    /// <para>The same directory file may be referenced by more than
-    /// one IndexCommit, i.e. more than one SegmentInfos.
-    /// Therefore we count how many commits reference each file.
-    /// When all the commits referencing a certain file have been
-    /// deleted, the refcount for that file becomes zero, and the
-    /// file is deleted.</para>
-    ///
-    /// <para>A separate deletion policy interface
-    /// (IndexDeletionPolicy) is consulted on creation (onInit)
-    /// and once per commit (onCommit), to decide when a commit
-    /// should be removed.</para>
-    /// 
-    /// <para>It is the business of the IndexDeletionPolicy to choose
-    /// when to delete commit points.  The actual mechanics of
-    /// file deletion, retrying, etc, derived from the deletion
-    /// of commit points is the business of the IndexFileDeleter.</para>
-    /// 
-    /// <para>The current default deletion policy is
-    /// <see cref="KeepOnlyLastCommitDeletionPolicy"/>, which removes all
-    /// prior commits when a new commit has completed.  This
-    /// matches the behavior before 2.2.</para>
-    ///
-    /// <para>Note that you must hold the write.lock before
-    /// instantiating this class.  It opens segments_N file(s)
-    /// directly with no retry logic.</para>
-    /// </summary>
-    
-    public sealed class IndexFileDeleter : IDisposable
-    {
-        
-        //// Files that we tried to delete but failed (likely
-        /// because they are open and we are running on Windows),
-        /// so we will retry them again later: ////
-        private IList<string> deletable;
-        
-        //// Reference count for all files in the index.  
-        /// Counts how many existing commits reference a file.
-        /// Maps String to RefCount (class below) instances: ////
-        private IDictionary<string, RefCount> refCounts = new HashMap<string, RefCount>();
-        
-        //// Holds all commits (segments_N) currently in the index.
-        /// This will have just 1 commit if you are using the
-        /// default delete policy (KeepOnlyLastCommitDeletionPolicy).
-        /// Other policies may leave commit points live for longer
-        /// in which case this list would be longer than 1: ////
-        private List<CommitPoint> commits = new List<CommitPoint>();
-        
-        //// Holds files we had incref'd from the previous
-        /// non-commit checkpoint: ////
-        private List<ICollection<string>> lastFiles = new List<ICollection<string>>();
-        
-        //// Commits that the IndexDeletionPolicy have decided to delete: ////
-        private List<CommitPoint> commitsToDelete = new List<CommitPoint>();
-        
-        private System.IO.StreamWriter infoStream;
-        private Directory directory;
-        private IndexDeletionPolicy policy;
-        private DocumentsWriter docWriter;
-        
-        internal bool startingCommitDeleted;
-        private SegmentInfos lastSegmentInfos;
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        private HashSet<string> synced;
-        
-        /// <summary>Change to true to see details of reference counts when
-        /// infoStream != null 
-        /// </summary>
-        public static bool VERBOSE_REF_COUNTS = false;
-        
-        internal void  SetInfoStream(System.IO.StreamWriter infoStream)
-        {
-            this.infoStream = infoStream;
-            if (infoStream != null)
-            {
-                Message("setInfoStream deletionPolicy=" + policy);
-            }
-        }
-        
-        private void  Message(System.String message)
-        {
-            infoStream.WriteLine("IFD [" + new DateTime().ToString() + "; " + ThreadClass.Current().Name + "]: " + message);
-        }
-        
-        /// <summary> Initialize the deleter: find all previous commits in
-        /// the Directory, incref the files they reference, call
-        /// the policy to let it delete commits.  This will remove
-        /// any files not referenced by any of the commits.
-        /// </summary>
-        /// <throws>  CorruptIndexException if the index is corrupt </throws>
-        /// <throws>  IOException if there is a low-level IO error </throws>
-        public IndexFileDeleter(Directory directory, IndexDeletionPolicy policy, SegmentInfos segmentInfos, System.IO.StreamWriter infoStream, DocumentsWriter docWriter, HashSet<string> synced)
-        {
-            
-            this.docWriter = docWriter;
-            this.infoStream = infoStream;
-            this.synced = synced;
-            
-            if (infoStream != null)
-            {
-                Message("init: current segments file is \"" + segmentInfos.GetCurrentSegmentFileName() + "\"; deletionPolicy=" + policy);
-            }
-            
-            this.policy = policy;
-            this.directory = directory;
-            
-            // First pass: walk the files and initialize our ref
-            // counts:
-            long currentGen = segmentInfos.Generation;
-            IndexFileNameFilter filter = IndexFileNameFilter.Filter;
-            
-            System.String[] files = directory.ListAll();
-            
-            CommitPoint currentCommitPoint = null;
-            
-            for (int i = 0; i < files.Length; i++)
-            {
-                
-                System.String fileName = files[i];
-                
-                if (filter.Accept(null, fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN))
-                {
-                    
-                    // Add this file to refCounts with initial count 0:
-                    GetRefCount(fileName);
-                    
-                    if (fileName.StartsWith(IndexFileNames.SEGMENTS))
-                    {
-                        
-                        // This is a commit (segments or segments_N), and
-                        // it's valid (<= the max gen).  Load it, then
-                        // incref all files it refers to:
-                        if (infoStream != null)
-                        {
-                            Message("init: load commit \"" + fileName + "\"");
-                        }
-                        SegmentInfos sis = new SegmentInfos();
-                        try
-                        {
-                            sis.Read(directory, fileName);
-                        }
-                        catch (System.IO.FileNotFoundException)
-                        {
-                            // LUCENE-948: on NFS (and maybe others), if
-                            // you have writers switching back and forth
-                            // between machines, it's very likely that the
-                            // dir listing will be stale and will claim a
-                            // file segments_X exists when in fact it
-                            // doesn't.  So, we catch this and handle it
-                            // as if the file does not exist
-                            if (infoStream != null)
-                            {
-                                Message("init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
-                            }
-                            sis = null;
-                        }
-                        catch (System.IO.IOException)
-                        {
-                            if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen)
-                            {
-                                throw;
-                            }
-                            else
-                            {
-                                // Most likely we are opening an index that
-                                // has an aborted "future" commit, so suppress
-                                // exc in this case
-                                sis = null;
-                            }
-                        }
-                        if (sis != null)
-                        {
-                            CommitPoint commitPoint = new CommitPoint(this, commitsToDelete, directory, sis);
-                            if (sis.Generation == segmentInfos.Generation)
-                            {
-                                currentCommitPoint = commitPoint;
-                            }
-                            commits.Add(commitPoint);
-                            IncRef(sis, true);
 
-                            if (lastSegmentInfos == null || sis.Generation > lastSegmentInfos.Generation)
-                            {
-                                lastSegmentInfos = sis;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            if (currentCommitPoint == null)
-            {
-                // We did not in fact see the segments_N file
-                // corresponding to the segmentInfos that was passed
-                // in.  Yet, it must exist, because our caller holds
-                // the write lock.  This can happen when the directory
-                // listing was stale (eg when index accessed via NFS
-                // client with stale directory listing cache).  So we
-                // try now to explicitly open this commit point:
-                SegmentInfos sis = new SegmentInfos();
-                try
-                {
-                    sis.Read(directory, segmentInfos.GetCurrentSegmentFileName());
-                }
-                catch (System.IO.IOException)
-                {
-                    throw new CorruptIndexException("failed to locate current segments_N file");
-                }
-                if (infoStream != null)
-                    Message("forced open of current segments file " + segmentInfos.GetCurrentSegmentFileName());
-                currentCommitPoint = new CommitPoint(this, commitsToDelete, directory, sis);
-                commits.Add(currentCommitPoint);
-                IncRef(sis, true);
-            }
-            
-            // We keep commits list in sorted order (oldest to newest):
-            commits.Sort();
-            
-            // Now delete anything with ref count at 0.  These are
-            // presumably abandoned files eg due to crash of
-            // IndexWriter.
-            foreach(KeyValuePair<string, RefCount> entry in refCounts)
-            {
-                string fileName = entry.Key;
-                RefCount rc = refCounts[fileName];
-                if (0 == rc.count)
-                {
-                    if (infoStream != null)
-                    {
-                        Message("init: removing unreferenced file \"" + fileName + "\"");
-                    }
-                    DeleteFile(fileName);
-                }
-            }
-            
-            // Finally, give policy a chance to remove things on
-            // startup:
-            policy.OnInit(commits);
-            
-            // Always protect the incoming segmentInfos since
-            // sometime it may not be the most recent commit
-            Checkpoint(segmentInfos, false);
-            
-            startingCommitDeleted = currentCommitPoint.IsDeleted;
-            
-            DeleteCommits();
-        }
+	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+	using Directory = Lucene.Net.Store.Directory;
+	using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
+	using CollectionUtil = Lucene.Net.Util.CollectionUtil;
+	using InfoStream = Lucene.Net.Util.InfoStream;
 
-        public SegmentInfos LastSegmentInfos
-        {
-            get { return lastSegmentInfos; }
-        }
+	/*
+	 * this class keeps track of each SegmentInfos instance that
+	 * is still "live", either because it corresponds to a
+	 * segments_N file in the Directory (a "commit", i.e. a
+	 * committed SegmentInfos) or because it's an in-memory
+	 * SegmentInfos that a writer is actively updating but has
+	 * not yet committed.  this class uses simple reference
+	 * counting to map the live SegmentInfos instances to
+	 * individual files in the Directory.
+	 *
+	 * The same directory file may be referenced by more than
+	 * one IndexCommit, i.e. more than one SegmentInfos.
+	 * Therefore we count how many commits reference each file.
+	 * When all the commits referencing a certain file have been
+	 * deleted, the refcount for that file becomes zero, and the
+	 * file is deleted.
+	 *
+	 * A separate deletion policy interface
+	 * (IndexDeletionPolicy) is consulted on creation (onInit)
+	 * and once per commit (onCommit), to decide when a commit
+	 * should be removed.
+	 *
+	 * It is the business of the IndexDeletionPolicy to choose
+	 * when to delete commit points.  The actual mechanics of
+	 * file deletion, retrying, etc, derived from the deletion
+	 * of commit points is the business of the IndexFileDeleter.
+	 *
+	 * The current default deletion policy is {@link
+	 * KeepOnlyLastCommitDeletionPolicy}, which removes all
+	 * prior commits when a new commit has completed.  this
+	 * matches the behavior before 2.2.
+	 *
+	 * Note that you must hold the write.lock before
+	 * instantiating this class.  It opens segments_N file(s)
+	 * directly with no retry logic.
+	 */
 
-        /// <summary> Remove the CommitPoints in the commitsToDelete List by
-        /// DecRef'ing all files from each SegmentInfos.
-        /// </summary>
-        private void  DeleteCommits()
-        {
-            
-            int size = commitsToDelete.Count;
-            
-            if (size > 0)
-            {
-                
-                // First decref all files that had been referred to by
-                // the now-deleted commits:
-                for (int i = 0; i < size; i++)
-                {
-                    CommitPoint commit = commitsToDelete[i];
-                    if (infoStream != null)
-                    {
-                        Message("deleteCommits: now decRef commit \"" + commit.SegmentsFileName + "\"");
-                    }
-                    foreach(string file in commit.files)
-                    {
-                        DecRef(file);
-                    }
-                }
-                commitsToDelete.Clear();
-                
-                // Now compact commits to remove deleted ones (preserving the sort):
-                size = commits.Count;
-                int readFrom = 0;
-                int writeTo = 0;
-                while (readFrom < size)
-                {
-                    CommitPoint commit = commits[readFrom];
-                    if (!commit.deleted)
-                    {
-                        if (writeTo != readFrom)
-                        {
-                            commits[writeTo] = commits[readFrom];
-                        }
-                        writeTo++;
-                    }
-                    readFrom++;
-                }
-                
-                while (size > writeTo)
-                {
-                    commits.RemoveAt(size - 1);
-                    size--;
-                }
-            }
-        }
-        
-        /// <summary> Writer calls this when it has hit an error and had to
-        /// roll back, to tell us that there may now be
-        /// unreferenced files in the filesystem.  So we re-list
-        /// the filesystem and delete such files.  If segmentName
-        /// is non-null, we will only delete files corresponding to
-        /// that segment.
-        /// </summary>
-        public void  Refresh(System.String segmentName)
-        {
-            System.String[] files = directory.ListAll();
-            IndexFileNameFilter filter = IndexFileNameFilter.Filter;
-            System.String segmentPrefix1;
-            System.String segmentPrefix2;
-            if (segmentName != null)
-            {
-                segmentPrefix1 = segmentName + ".";
-                segmentPrefix2 = segmentName + "_";
-            }
-            else
-            {
-                segmentPrefix1 = null;
-                segmentPrefix2 = null;
-            }
-            
-            for (int i = 0; i < files.Length; i++)
-            {
-                System.String fileName = files[i];
-                if (filter.Accept(null, fileName) && (segmentName == null || fileName.StartsWith(segmentPrefix1) || fileName.StartsWith(segmentPrefix2)) && !refCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN))
-                {
-                    // Unreferenced file, so remove it
-                    if (infoStream != null)
-                    {
-                        Message("refresh [prefix=" + segmentName + "]: removing newly created unreferenced file \"" + fileName + "\"");
-                    }
-                    DeleteFile(fileName);
-                }
-            }
-        }
-        
-        public void  Refresh()
-        {
-            Refresh(null);
-        }
-        
-        public void Dispose()
-        {
-            // Move to protected method if class becomes unsealed
-            // DecRef old files from the last checkpoint, if any:
-            int size = lastFiles.Count;
-            if (size > 0)
-            {
-                for (int i = 0; i < size; i++)
-                    DecRef(lastFiles[i]);
-                lastFiles.Clear();
-            }
-            
-            DeletePendingFiles();
-        }
-        
-        private void  DeletePendingFiles()
-        {
-            if (deletable != null)
-            {
-                IList<string> oldDeletable = deletable;
-                deletable = null;
-                int size = oldDeletable.Count;
-                for (int i = 0; i < size; i++)
-                {
-                    if (infoStream != null)
-                    {
-                        Message("delete pending file " + oldDeletable[i]);
-                    }
-                    DeleteFile(oldDeletable[i]);
-                }
-            }
-        }
-        
-        /// <summary> For definition of "check point" see IndexWriter comments:
-        /// "Clarification: Check Points (and commits)".
-        /// 
-        /// Writer calls this when it has made a "consistent
-        /// change" to the index, meaning new files are written to
-        /// the index and the in-memory SegmentInfos have been
-        /// modified to point to those files.
-        /// 
-        /// This may or may not be a commit (segments_N may or may
-        /// not have been written).
-        /// 
-        /// We simply incref the files referenced by the new
-        /// SegmentInfos and decref the files we had previously
-        /// seen (if any).
-        /// 
-        /// If this is a commit, we also call the policy to give it
-        /// a chance to remove other commits.  If any commits are
-        /// removed, we decref their files as well.
-        /// </summary>
-        public void  Checkpoint(SegmentInfos segmentInfos, bool isCommit)
-        {
-            
-            if (infoStream != null)
-            {
-                Message("now checkpoint \"" + segmentInfos.GetCurrentSegmentFileName() + "\" [" + segmentInfos.Count + " segments " + "; isCommit = " + isCommit + "]");
-            }
-            
-            // Try again now to delete any previously un-deletable
-            // files (because they were in use, on Windows):
-            DeletePendingFiles();
-            
-            // Incref the files:
-            IncRef(segmentInfos, isCommit);
-            
-            if (isCommit)
-            {
-                // Append to our commits list:
-                commits.Add(new CommitPoint(this, commitsToDelete, directory, segmentInfos));
-                
-                // Tell policy so it can remove commits:
-                policy.OnCommit(commits);
-                
-                // Decref files for commits that were deleted by the policy:
-                DeleteCommits();
-            }
-            else
-            {
-                
-                IList<string> docWriterFiles;
-                if (docWriter != null)
-                {
-                    docWriterFiles = docWriter.OpenFiles();
-                    if (docWriterFiles != null)
-                    // We must incRef these files before decRef'ing
-                    // last files to make sure we don't accidentally
-                    // delete them:
-                        IncRef(docWriterFiles);
-                }
-                else
-                    docWriterFiles = null;
-                
-                // DecRef old files from the last checkpoint, if any:
-                int size = lastFiles.Count;
-                if (size > 0)
-                {
-                    for (int i = 0; i < size; i++)
-                        DecRef(lastFiles[i]);
-                    lastFiles.Clear();
-                }
-                
-                // Save files so we can decr on next checkpoint/commit:
-                lastFiles.Add(segmentInfos.Files(directory, false));
-                
-                if (docWriterFiles != null)
-                {
-                    lastFiles.Add(docWriterFiles);
-                }
-            }
-        }
-        
-        internal void  IncRef(SegmentInfos segmentInfos, bool isCommit)
-        {
-            // If this is a commit point, also incRef the
-            // segments_N file:
-            foreach(string fileName in segmentInfos.Files(directory, isCommit))
-            {
-                IncRef(fileName);
-            }
-        }
+	internal sealed class IndexFileDeleter : IDisposable
+	{
 
-        internal void IncRef(ICollection<string> files)
-        {
-            foreach(string file in files)
-            {
-                IncRef(file);
-            }
-        }
-        
-        internal void  IncRef(string fileName)
-        {
-            RefCount rc = GetRefCount(fileName);
-            if (infoStream != null && VERBOSE_REF_COUNTS)
-            {
-                Message("  IncRef \"" + fileName + "\": pre-incr count is " + rc.count);
-            }
-            rc.IncRef();
-        }
-        
-        internal void  DecRef(ICollection<string> files)
-        {
-            foreach(string file in files)
-            {
-                DecRef(file);
-            }
-        }
-        
-        internal void  DecRef(System.String fileName)
-        {
-            RefCount rc = GetRefCount(fileName);
-            if (infoStream != null && VERBOSE_REF_COUNTS)
-            {
-                Message("  DecRef \"" + fileName + "\": pre-decr count is " + rc.count);
-            }
-            if (0 == rc.DecRef())
-            {
-                // This file is no longer referenced by any past
-                // commit points nor by the in-memory SegmentInfos:
-                DeleteFile(fileName);
-                refCounts.Remove(fileName);
+	  /* Files that we tried to delete but failed (likely
+	   * because they are open and we are running on Windows),
+	   * so we will retry them again later: */
+	  private IList<string> Deletable;
 
-                if (synced != null) {
-                    lock(synced) 
-                    {
-                      synced.Remove(fileName);
-                    }
-                }
-            }
-        }
-        
-        internal void  DecRef(SegmentInfos segmentInfos)
-        {
-            foreach(string file in segmentInfos.Files(directory, false))
-            {
-                DecRef(file);
-            }
-        }
+	  /* Reference count for all files in the index.
+	   * Counts how many existing commits reference a file.
+	   **/
+	  private IDictionary<string, RefCount> RefCounts = new Dictionary<string, RefCount>();
 
-        public bool Exists(String fileName)
-        {
-            if (!refCounts.ContainsKey(fileName))
-            {
-                return false;
-            }
-            else
-            {
-                return GetRefCount(fileName).count > 0;
-            }
-        }
-        
-        private RefCount GetRefCount(System.String fileName)
-        {
-            RefCount rc;
-            if (!refCounts.ContainsKey(fileName))
-            {
-                rc = new RefCount(fileName);
-                refCounts[fileName] = rc;
-            }
-            else
-            {
-                rc = refCounts[fileName];
-            }
-            return rc;
-        }
-        
-        internal void  DeleteFiles(System.Collections.Generic.IList<string> files)
-        {
-            foreach(string file in files)
-                DeleteFile(file);
-        }
-        
-        /// <summary>Deletes the specified files, but only if they are new
-        /// (have not yet been incref'd). 
-        /// </summary>
-        internal void DeleteNewFiles(System.Collections.Generic.ICollection<string> files)
-        {
-            foreach(string fileName in files)
-            {
-                if (!refCounts.ContainsKey(fileName))
-                {
-                    if (infoStream != null)
-                    {
-                        Message("delete new file \"" + fileName + "\"");
-                    }
-                    DeleteFile(fileName);
-                }
-            }
-        }
-        
-        internal void  DeleteFile(System.String fileName)
-        {
-            try
-            {
-                if (infoStream != null)
-                {
-                    Message("delete \"" + fileName + "\"");
-                }
-                directory.DeleteFile(fileName);
-            }
-            catch (System.IO.IOException e)
-            {
-                // if delete fails
-                if (directory.FileExists(fileName))
-                {
-                    
-                    // Some operating systems (e.g. Windows) don't
-                    // permit a file to be deleted while it is opened
-                    // for read (e.g. by another process or thread). So
-                    // we assume that when a delete fails it is because
-                    // the file is open in another process, and queue
-                    // the file for subsequent deletion.
-                    
-                    if (infoStream != null)
-                    {
-                        Message("IndexFileDeleter: unable to remove file \"" + fileName + "\": " + e.ToString() + "; Will re-try later.");
-                    }
-                    if (deletable == null)
-                    {
-                        deletable = new List<string>();
-                    }
-                    deletable.Add(fileName); // add to deletable
-                }
-            }
-        }
-        
-        /// <summary> Tracks the reference count for a single index file:</summary>
-        sealed private class RefCount
-        {
-            
-            // fileName used only for better assert error messages
-            internal System.String fileName;
-            internal bool initDone;
-            internal RefCount(System.String fileName)
-            {
-                this.fileName = fileName;
-            }
-            
-            internal int count;
-            
-            public int IncRef()
-            {
-                if (!initDone)
-                {
-                    initDone = true;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.Assert(count > 0, "RefCount is 0 pre-increment for file " + fileName);
-                }
-                return ++count;
-            }
-            
-            public int DecRef()
-            {
-                System.Diagnostics.Debug.Assert(count > 0, "RefCount is 0 pre-decrement for file " + fileName);
-                return --count;
-            }
-        }
-        
-        /// <summary> Holds details for each commit point.  This class is
-        /// also passed to the deletion policy.  Note: this class
-        /// has a natural ordering that is inconsistent with
-        /// equals.
-        /// </summary>
-        
-        sealed private class CommitPoint:IndexCommit, System.IComparable<CommitPoint>
-        {
-            private void InitBlock(IndexFileDeleter enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private IndexFileDeleter enclosingInstance;
-            public IndexFileDeleter Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
+	  /* Holds all commits (segments_N) currently in the index.
+	   * this will have just 1 commit if you are using the
+	   * default delete policy (KeepOnlyLastCommitDeletionPolicy).
+	   * Other policies may leave commit points live for longer
+	   * in which case this list would be longer than 1: */
+	  private IList<CommitPoint> Commits = new List<CommitPoint>();
 
-            }
-            
-            internal long gen;
-            internal ICollection<string> files;
-            internal string segmentsFileName;
-            internal bool deleted;
-            internal Directory directory;
-            internal ICollection<CommitPoint> commitsToDelete;
-            internal long version;
-            internal long generation;
-            internal bool isOptimized;
-            internal IDictionary<string, string> userData;
-            
-            public CommitPoint(IndexFileDeleter enclosingInstance, ICollection<CommitPoint> commitsToDelete, Directory directory, SegmentInfos segmentInfos)
-            {
-                InitBlock(enclosingInstance);
-                this.directory = directory;
-                this.commitsToDelete = commitsToDelete;
-                userData = segmentInfos.UserData;
-                segmentsFileName = segmentInfos.GetCurrentSegmentFileName();
-                version = segmentInfos.Version;
-                generation = segmentInfos.Generation;
-                files = segmentInfos.Files(directory, true);
-                gen = segmentInfos.Generation;
-                isOptimized = segmentInfos.Count == 1 && !segmentInfos.Info(0).HasDeletions();
-                
-                System.Diagnostics.Debug.Assert(!segmentInfos.HasExternalSegments(directory));
-            }
+	  /* Holds files we had incref'd from the previous
+	   * non-commit checkpoint: */
+	  private readonly IList<string> LastFiles = new List<string>();
 
-            public override string ToString()
-            {
-                return "IndexFileDeleter.CommitPoint(" + segmentsFileName + ")";
-            }
+	  /* Commits that the IndexDeletionPolicy have decided to delete: */
+	  private IList<CommitPoint> CommitsToDelete = new List<CommitPoint>();
 
-            public override bool IsOptimized
-            {
-                get { return isOptimized; }
-            }
+	  private readonly InfoStream InfoStream;
+	  private Directory Directory;
+	  private IndexDeletionPolicy Policy;
 
-            public override string SegmentsFileName
-            {
-                get { return segmentsFileName; }
-            }
+	  internal readonly bool StartingCommitDeleted;
+	  private SegmentInfos LastSegmentInfos_Renamed;
 
-            public override ICollection<string> FileNames
-            {
-                get { return files; }
-            }
+	  /// <summary>
+	  /// Change to true to see details of reference counts when
+	  ///  infoStream is enabled 
+	  /// </summary>
+	  public static bool VERBOSE_REF_COUNTS = false;
 
-            public override Directory Directory
-            {
-                get { return directory; }
-            }
+	  // Used only for assert
+	  private readonly IndexWriter Writer;
 
-            public override long Version
-            {
-                get { return version; }
-            }
+	  // called only from assert
+	  private bool Locked()
+	  {
+		return Writer == null || Thread.holdsLock(Writer);
+	  }
 
-            public override long Generation
-            {
-                get { return generation; }
-            }
+	  /// <summary>
+	  /// Initialize the deleter: find all previous commits in
+	  /// the Directory, incref the files they reference, call
+	  /// the policy to let it delete commits.  this will remove
+	  /// any files not referenced by any of the commits. </summary>
+	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
+	  public IndexFileDeleter(Directory directory, IndexDeletionPolicy policy, SegmentInfos segmentInfos, InfoStream infoStream, IndexWriter writer, bool initialIndexExists)
+	  {
+		this.InfoStream = infoStream;
+		this.Writer = writer;
 
-            public override IDictionary<string, string> UserData
-            {
-                get { return userData; }
-            }
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String currentSegmentsFile = segmentInfos.getSegmentsFileName();
+		string currentSegmentsFile = segmentInfos.SegmentsFileName;
 
-            /// <summary> Called only be the deletion policy, to remove this
-            /// commit point from the index.
-            /// </summary>
-            public override void  Delete()
-            {
-                if (!deleted)
-                {
-                    deleted = true;
-                    Enclosing_Instance.commitsToDelete.Add(this);
-                }
-            }
+		if (infoStream.IsEnabled("IFD"))
+		{
+		  infoStream.Message("IFD", "init: current segments file is \"" + currentSegmentsFile + "\"; deletionPolicy=" + policy);
+		}
 
-            public override bool IsDeleted
-            {
-                get { return deleted; }
-            }
+		this.Policy = policy;
+		this.Directory = directory;
 
-            public int CompareTo(CommitPoint commit)
-            {
-                if (gen < commit.gen)
-                {
-                    return - 1;
-                }
-                else if (gen > commit.gen)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-    }
+		// First pass: walk the files and initialize our ref
+		// counts:
+		long currentGen = segmentInfos.Generation;
+
+		CommitPoint currentCommitPoint = null;
+		string[] files = null;
+		try
+		{
+		  files = directory.ListAll();
+		}
+		catch (NoSuchDirectoryException e)
+		{
+		  // it means the directory is empty, so ignore it.
+		  files = new string[0];
+		}
+
+		if (currentSegmentsFile != null)
+		{
+		  Matcher m = IndexFileNames.CODEC_FILE_PATTERN.matcher("");
+		  foreach (string fileName in files)
+		  {
+			m.reset(fileName);
+			if (!fileName.EndsWith("write.lock") && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && (m.matches() || fileName.StartsWith(IndexFileNames.SEGMENTS)))
+			{
+
+			  // Add this file to refCounts with initial count 0:
+			  GetRefCount(fileName);
+
+			  if (fileName.StartsWith(IndexFileNames.SEGMENTS))
+			  {
+
+				// this is a commit (segments or segments_N), and
+				// it's valid (<= the max gen).  Load it, then
+				// incref all files it refers to:
+				if (infoStream.IsEnabled("IFD"))
+				{
+				  infoStream.Message("IFD", "init: load commit \"" + fileName + "\"");
+				}
+				SegmentInfos sis = new SegmentInfos();
+				try
+				{
+				  sis.Read(directory, fileName);
+				}
+//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
+				catch (FileNotFoundException | NoSuchFileException e)
+				{
+				  // LUCENE-948: on NFS (and maybe others), if
+				  // you have writers switching back and forth
+				  // between machines, it's very likely that the
+				  // dir listing will be stale and will claim a
+				  // file segments_X exists when in fact it
+				  // doesn't.  So, we catch this and handle it
+				  // as if the file does not exist
+				  if (infoStream.IsEnabled("IFD"))
+				  {
+					infoStream.Message("IFD", "init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
+				  }
+				  sis = null;
+				}
+				catch (IOException e)
+				{
+				  if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen && directory.FileLength(fileName) > 0)
+				  {
+					throw e;
+				  }
+				  else
+				  {
+					// Most likely we are opening an index that
+					// has an aborted "future" commit, so suppress
+					// exc in this case
+					sis = null;
+				  }
+				}
+				if (sis != null)
+				{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final CommitPoint commitPoint = new CommitPoint(commitsToDelete, directory, sis);
+				  CommitPoint commitPoint = new CommitPoint(CommitsToDelete, directory, sis);
+				  if (sis.Generation == segmentInfos.Generation)
+				  {
+					currentCommitPoint = commitPoint;
+				  }
+				  Commits.Add(commitPoint);
+				  IncRef(sis, true);
+
+				  if (LastSegmentInfos_Renamed == null || sis.Generation > LastSegmentInfos_Renamed.Generation)
+				  {
+					LastSegmentInfos_Renamed = sis;
+				  }
+				}
+			  }
+			}
+		  }
+		}
+
+		if (currentCommitPoint == null && currentSegmentsFile != null && initialIndexExists)
+		{
+		  // We did not in fact see the segments_N file
+		  // corresponding to the segmentInfos that was passed
+		  // in.  Yet, it must exist, because our caller holds
+		  // the write lock.  this can happen when the directory
+		  // listing was stale (eg when index accessed via NFS
+		  // client with stale directory listing cache).  So we
+		  // try now to explicitly open this commit point:
+		  SegmentInfos sis = new SegmentInfos();
+		  try
+		  {
+			sis.Read(directory, currentSegmentsFile);
+		  }
+		  catch (IOException e)
+		  {
+			throw new CorruptIndexException("failed to locate current segments_N file \"" + currentSegmentsFile + "\"");
+		  }
+		  if (infoStream.IsEnabled("IFD"))
+		  {
+			infoStream.Message("IFD", "forced open of current segments file " + segmentInfos.SegmentsFileName);
+		  }
+		  currentCommitPoint = new CommitPoint(CommitsToDelete, directory, sis);
+		  Commits.Add(currentCommitPoint);
+		  IncRef(sis, true);
+		}
+
+		// We keep commits list in sorted order (oldest to newest):
+		CollectionUtil.TimSort(Commits);
+
+		// Now delete anything with ref count at 0.  These are
+		// presumably abandoned files eg due to crash of
+		// IndexWriter.
+		foreach (KeyValuePair<string, RefCount> entry in RefCounts)
+		{
+		  RefCount rc = entry.Value;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String fileName = entry.getKey();
+		  string fileName = entry.Key;
+		  if (0 == rc.Count)
+		  {
+			if (infoStream.IsEnabled("IFD"))
+			{
+			  infoStream.Message("IFD", "init: removing unreferenced file \"" + fileName + "\"");
+			}
+			DeleteFile(fileName);
+		  }
+		}
+
+		// Finally, give policy a chance to remove things on
+		// startup:
+		policy.OnInit(Commits);
+
+		// Always protect the incoming segmentInfos since
+		// sometime it may not be the most recent commit
+		Checkpoint(segmentInfos, false);
+
+		StartingCommitDeleted = currentCommitPoint == null ? false : currentCommitPoint.Deleted;
+
+		DeleteCommits();
+	  }
+
+	  private void EnsureOpen()
+	  {
+		if (Writer == null)
+		{
+		  throw new AlreadyClosedException("this IndexWriter is closed");
+		}
+		else
+		{
+		  Writer.EnsureOpen(false);
+		}
+	  }
+
+	  public SegmentInfos LastSegmentInfos
+	  {
+		  get
+		  {
+			return LastSegmentInfos_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Remove the CommitPoints in the commitsToDelete List by
+	  /// DecRef'ing all files from each SegmentInfos.
+	  /// </summary>
+	  private void DeleteCommits()
+	  {
+
+		int size = CommitsToDelete.Count;
+
+		if (size > 0)
+		{
+
+		  // First decref all files that had been referred to by
+		  // the now-deleted commits:
+		  for (int i = 0;i < size;i++)
+		  {
+			CommitPoint commit = CommitsToDelete[i];
+			if (InfoStream.IsEnabled("IFD"))
+			{
+			  InfoStream.Message("IFD", "deleteCommits: now decRef commit \"" + commit.SegmentsFileName + "\"");
+			}
+			foreach (String file in commit.Files)
+			{
+			  DecRef(file);
+			}
+		  }
+		  CommitsToDelete.Clear();
+
+		  // Now compact commits to remove deleted ones (preserving the sort):
+		  size = Commits.Count;
+		  int readFrom = 0;
+		  int writeTo = 0;
+		  while (readFrom < size)
+		  {
+			CommitPoint commit = Commits[readFrom];
+			if (!commit.Deleted_Renamed)
+			{
+			  if (writeTo != readFrom)
+			  {
+				Commits[writeTo] = Commits[readFrom];
+			  }
+			  writeTo++;
+			}
+			readFrom++;
+		  }
+
+		  while (size > writeTo)
+		  {
+			Commits.RemoveAt(size-1);
+			size--;
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// Writer calls this when it has hit an error and had to
+	  /// roll back, to tell us that there may now be
+	  /// unreferenced files in the filesystem.  So we re-list
+	  /// the filesystem and delete such files.  If segmentName
+	  /// is non-null, we will only delete files corresponding to
+	  /// that segment.
+	  /// </summary>
+	  public void Refresh(string segmentName)
+	  {
+		Debug.Assert(Locked());
+
+		string[] files = Directory.ListAll();
+		string segmentPrefix1;
+		string segmentPrefix2;
+		if (segmentName != null)
+		{
+		  segmentPrefix1 = segmentName + ".";
+		  segmentPrefix2 = segmentName + "_";
+		}
+		else
+		{
+		  segmentPrefix1 = null;
+		  segmentPrefix2 = null;
+		}
+
+		Matcher m = IndexFileNames.CODEC_FILE_PATTERN.matcher("");
+
+		for (int i = 0;i < files.Length;i++)
+		{
+		  string fileName = files[i];
+		  m.reset(fileName);
+		  if ((segmentName == null || fileName.StartsWith(segmentPrefix1) || fileName.StartsWith(segmentPrefix2)) && !fileName.EndsWith("write.lock") && !RefCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && (m.matches() || fileName.StartsWith(IndexFileNames.SEGMENTS)))
+		  {
+			// Unreferenced file, so remove it
+			if (InfoStream.IsEnabled("IFD"))
+			{
+			  InfoStream.Message("IFD", "refresh [prefix=" + segmentName + "]: removing newly created unreferenced file \"" + fileName + "\"");
+			}
+			DeleteFile(fileName);
+		  }
+		}
+	  }
+
+	  public void Refresh()
+	  {
+		// Set to null so that we regenerate the list of pending
+		// files; else we can accumulate same file more than
+		// once
+		Debug.Assert(Locked());
+		Deletable = null;
+		Refresh(null);
+	  }
+
+	  public override void Close()
+	  {
+		// DecRef old files from the last checkpoint, if any:
+		Debug.Assert(Locked());
+
+		if (LastFiles.Count > 0)
+		{
+		  DecRef(LastFiles);
+		  LastFiles.Clear();
+		}
+
+		DeletePendingFiles();
+	  }
+
+	  /// <summary>
+	  /// Revisits the <seealso cref="IndexDeletionPolicy"/> by calling its
+	  /// <seealso cref="IndexDeletionPolicy#onCommit(List)"/> again with the known commits.
+	  /// this is useful in cases where a deletion policy which holds onto index
+	  /// commits is used. The application may know that some commits are not held by
+	  /// the deletion policy anymore and call
+	  /// <seealso cref="IndexWriter#deleteUnusedFiles()"/>, which will attempt to delete the
+	  /// unused commits again.
+	  /// </summary>
+	  internal void RevisitPolicy()
+	  {
+		Debug.Assert(Locked());
+		if (InfoStream.IsEnabled("IFD"))
+		{
+		  InfoStream.Message("IFD", "now revisitPolicy");
+		}
+
+		if (Commits.Count > 0)
+		{
+		  Policy.OnCommit(Commits);
+		  DeleteCommits();
+		}
+	  }
+
+	  public void DeletePendingFiles()
+	  {
+		Debug.Assert(Locked());
+		if (Deletable != null)
+		{
+		  IList<string> oldDeletable = Deletable;
+		  Deletable = null;
+		  int size = oldDeletable.Count;
+		  for (int i = 0;i < size;i++)
+		  {
+			if (InfoStream.IsEnabled("IFD"))
+			{
+			  InfoStream.Message("IFD", "delete pending file " + oldDeletable[i]);
+			}
+			DeleteFile(oldDeletable[i]);
+		  }
+		}
+	  }
+
+	  /// <summary>
+	  /// For definition of "check point" see IndexWriter comments:
+	  /// "Clarification: Check Points (and commits)".
+	  /// 
+	  /// Writer calls this when it has made a "consistent
+	  /// change" to the index, meaning new files are written to
+	  /// the index and the in-memory SegmentInfos have been
+	  /// modified to point to those files.
+	  /// 
+	  /// this may or may not be a commit (segments_N may or may
+	  /// not have been written).
+	  /// 
+	  /// We simply incref the files referenced by the new
+	  /// SegmentInfos and decref the files we had previously
+	  /// seen (if any).
+	  /// 
+	  /// If this is a commit, we also call the policy to give it
+	  /// a chance to remove other commits.  If any commits are
+	  /// removed, we decref their files as well.
+	  /// </summary>
+	  public void Checkpoint(SegmentInfos segmentInfos, bool isCommit)
+	  {
+		Debug.Assert(Locked());
+
+		Debug.Assert(Thread.holdsLock(Writer));
+		long t0 = 0;
+		if (InfoStream.IsEnabled("IFD"))
+		{
+		  t0 = System.nanoTime();
+		  InfoStream.Message("IFD", "now checkpoint \"" + Writer.SegString(Writer.ToLiveInfos(segmentInfos)) + "\" [" + segmentInfos.Size() + " segments " + "; isCommit = " + isCommit + "]");
+		}
+
+		// Try again now to delete any previously un-deletable
+		// files (because they were in use, on Windows):
+		DeletePendingFiles();
+
+		// Incref the files:
+		IncRef(segmentInfos, isCommit);
+
+		if (isCommit)
+		{
+		  // Append to our commits list:
+		  Commits.Add(new CommitPoint(CommitsToDelete, Directory, segmentInfos));
+
+		  // Tell policy so it can remove commits:
+		  Policy.OnCommit(Commits);
+
+		  // Decref files for commits that were deleted by the policy:
+		  DeleteCommits();
+		}
+		else
+		{
+		  // DecRef old files from the last checkpoint, if any:
+		  DecRef(LastFiles);
+		  LastFiles.Clear();
+
+		  // Save files so we can decr on next checkpoint/commit:
+		  LastFiles.AddRange(segmentInfos.Files(Directory, false));
+		}
+		if (InfoStream.IsEnabled("IFD"))
+		{
+		  long t1 = System.nanoTime();
+		  InfoStream.Message("IFD", ((t1 - t0) / 1000000) + " msec to checkpoint");
+		}
+	  }
+
+	  internal void IncRef(SegmentInfos segmentInfos, bool isCommit)
+	  {
+		Debug.Assert(Locked());
+		// If this is a commit point, also incRef the
+		// segments_N file:
+		foreach (String fileName in segmentInfos.Files(Directory, isCommit))
+		{
+		  IncRef(fileName);
+		}
+	  }
+
+	  internal void IncRef(ICollection<string> files)
+	  {
+		Debug.Assert(Locked());
+		foreach (String file in files)
+		{
+		  IncRef(file);
+		}
+	  }
+
+	  internal void IncRef(string fileName)
+	  {
+		Debug.Assert(Locked());
+		RefCount rc = GetRefCount(fileName);
+		if (InfoStream.IsEnabled("IFD"))
+		{
+		  if (VERBOSE_REF_COUNTS)
+		  {
+			InfoStream.Message("IFD", "  IncRef \"" + fileName + "\": pre-incr count is " + rc.Count);
+		  }
+		}
+		rc.IncRef();
+	  }
+
+	  internal void DecRef(ICollection<string> files)
+	  {
+		Debug.Assert(Locked());
+		foreach (String file in files)
+		{
+		  DecRef(file);
+		}
+	  }
+
+	  internal void DecRef(string fileName)
+	  {
+		Debug.Assert(Locked());
+		RefCount rc = GetRefCount(fileName);
+		if (InfoStream.IsEnabled("IFD"))
+		{
+		  if (VERBOSE_REF_COUNTS)
+		  {
+			InfoStream.Message("IFD", "  DecRef \"" + fileName + "\": pre-decr count is " + rc.Count);
+		  }
+		}
+		if (0 == rc.DecRef())
+		{
+		  // this file is no longer referenced by any past
+		  // commit points nor by the in-memory SegmentInfos:
+		  DeleteFile(fileName);
+		  RefCounts.Remove(fileName);
+		}
+	  }
+
+	  internal void DecRef(SegmentInfos segmentInfos)
+	  {
+		Debug.Assert(Locked());
+		foreach (String file in segmentInfos.Files(Directory, false))
+		{
+		  DecRef(file);
+		}
+	  }
+
+	  public bool Exists(string fileName)
+	  {
+		Debug.Assert(Locked());
+		if (!RefCounts.ContainsKey(fileName))
+		{
+		  return false;
+		}
+		else
+		{
+		  return GetRefCount(fileName).Count > 0;
+		}
+	  }
+
+	  private RefCount GetRefCount(string fileName)
+	  {
+		Debug.Assert(Locked());
+		RefCount rc;
+		if (!RefCounts.ContainsKey(fileName))
+		{
+		  rc = new RefCount(fileName);
+		  RefCounts[fileName] = rc;
+		}
+		else
+		{
+		  rc = RefCounts[fileName];
+		}
+		return rc;
+	  }
+
+	  internal void DeleteFiles(IList<string> files)
+	  {
+		Debug.Assert(Locked());
+		foreach (String file in files)
+		{
+		  DeleteFile(file);
+		}
+	  }
+
+	  /// <summary>
+	  /// Deletes the specified files, but only if they are new
+	  ///  (have not yet been incref'd). 
+	  /// </summary>
+	  internal void DeleteNewFiles(ICollection<string> files)
+	  {
+		Debug.Assert(Locked());
+		foreach (String fileName in files)
+		{
+		  // NOTE: it's very unusual yet possible for the
+		  // refCount to be present and 0: it can happen if you
+		  // open IW on a crashed index, and it removes a bunch
+		  // of unref'd files, and then you add new docs / do
+		  // merging, and it reuses that segment name.
+		  // TestCrash.testCrashAfterReopen can hit this:
+		  if (!RefCounts.ContainsKey(fileName) || RefCounts[fileName].Count == 0)
+		  {
+			if (InfoStream.IsEnabled("IFD"))
+			{
+			  InfoStream.Message("IFD", "delete new file \"" + fileName + "\"");
+			}
+			DeleteFile(fileName);
+		  }
+		}
+	  }
+
+	  internal void DeleteFile(string fileName)
+	  {
+		Debug.Assert(Locked());
+		EnsureOpen();
+		try
+		{
+		  if (InfoStream.IsEnabled("IFD"))
+		  {
+			InfoStream.Message("IFD", "delete \"" + fileName + "\"");
+		  }
+		  Directory.DeleteFile(fileName);
+		} // if delete fails
+		catch (IOException e)
+		{
+		  // Some operating systems (e.g. Windows) don't
+		  // permit a file to be deleted while it is opened
+		  // for read (e.g. by another process or thread). So
+		  // we assume that when a delete fails it is because
+		  // the file is open in another process, and queue
+		  // the file for subsequent deletion.
+
+		  if (InfoStream.IsEnabled("IFD"))
+		  {
+			InfoStream.Message("IFD", "unable to remove file \"" + fileName + "\": " + e.ToString() + "; Will re-try later.");
+		  }
+		  if (Deletable == null)
+		  {
+			Deletable = new List<>();
+		  }
+		  Deletable.Add(fileName); // add to deletable
+		}
+	  }
+
+	  /// <summary>
+	  /// Tracks the reference count for a single index file:
+	  /// </summary>
+	  private sealed class RefCount
+	  {
+
+		// fileName used only for better assert error messages
+		internal readonly string FileName;
+		internal bool InitDone;
+		internal RefCount(string fileName)
+		{
+		  this.FileName = fileName;
+		}
+
+		internal int Count;
+
+		public int IncRef()
+		{
+		  if (!InitDone)
+		  {
+			InitDone = true;
+		  }
+		  else
+		  {
+			Debug.Assert(Count > 0, Thread.CurrentThread.Name + ": RefCount is 0 pre-increment for file \"" + FileName + "\"");
+		  }
+		  return ++Count;
+		}
+
+		public int DecRef()
+		{
+		  Debug.Assert(Count > 0, Thread.CurrentThread.Name + ": RefCount is 0 pre-decrement for file \"" + FileName + "\"");
+		  return --Count;
+		}
+	  }
+
+	  /// <summary>
+	  /// Holds details for each commit point.  this class is
+	  /// also passed to the deletion policy.  Note: this class
+	  /// has a natural ordering that is inconsistent with
+	  /// equals.
+	  /// </summary>
+
+	  private sealed class CommitPoint : IndexCommit
+	  {
+
+		internal ICollection<string> Files;
+		internal string SegmentsFileName_Renamed;
+		internal bool Deleted_Renamed;
+		internal Directory Directory_Renamed;
+		internal ICollection<CommitPoint> CommitsToDelete;
+		internal long Generation_Renamed;
+		internal readonly IDictionary<string, string> UserData_Renamed;
+		internal readonly int SegmentCount_Renamed;
+
+		public CommitPoint(ICollection<CommitPoint> commitsToDelete, Directory directory, SegmentInfos segmentInfos)
+		{
+		  this.Directory_Renamed = directory;
+		  this.CommitsToDelete = commitsToDelete;
+		  UserData_Renamed = segmentInfos.UserData;
+		  SegmentsFileName_Renamed = segmentInfos.SegmentsFileName;
+		  Generation_Renamed = segmentInfos.Generation;
+		  Files = Collections.unmodifiableCollection(segmentInfos.Files(directory, true));
+		  SegmentCount_Renamed = segmentInfos.Size();
+		}
+
+		public override string ToString()
+		{
+		  return "IndexFileDeleter.CommitPoint(" + SegmentsFileName_Renamed + ")";
+		}
+
+		public override int SegmentCount
+		{
+			get
+			{
+			  return SegmentCount_Renamed;
+			}
+		}
+
+		public override string SegmentsFileName
+		{
+			get
+			{
+			  return SegmentsFileName_Renamed;
+			}
+		}
+
+		public override ICollection<string> FileNames
+		{
+			get
+			{
+			  return Files;
+			}
+		}
+
+		public override Directory Directory
+		{
+			get
+			{
+			  return Directory_Renamed;
+			}
+		}
+
+		public override long Generation
+		{
+			get
+			{
+			  return Generation_Renamed;
+			}
+		}
+
+		public override IDictionary<string, string> UserData
+		{
+			get
+			{
+			  return UserData_Renamed;
+			}
+		}
+
+		/// <summary>
+		/// Called only be the deletion policy, to remove this
+		/// commit point from the index.
+		/// </summary>
+		public override void Delete()
+		{
+		  if (!Deleted_Renamed)
+		  {
+			Deleted_Renamed = true;
+			CommitsToDelete.Add(this);
+		  }
+		}
+
+		public override bool Deleted
+		{
+			get
+			{
+			  return Deleted_Renamed;
+			}
+		}
+	  }
+	}
+
 }

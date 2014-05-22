@@ -1,205 +1,170 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using Lucene.Net.Support;
-
-#if NET35
-using Lucene.Net.Support.Compatibility;
-#endif
 
 namespace Lucene.Net.Util
 {
 
-    /// <summary>Java's builtin ThreadLocal has a serious flaw:
-    /// it can take an arbitrarily long amount of time to
-    /// dereference the things you had stored in it, even once the
-    /// ThreadLocal instance itself is no longer referenced.
-    /// This is because there is single, master map stored for
-    /// each thread, which all ThreadLocals share, and that
-    /// master map only periodically purges "stale" entries.
-    /// 
-    /// While not technically a memory leak, because eventually
-    /// the memory will be reclaimed, it can take a long time
-    /// and you can easily hit OutOfMemoryError because from the
-    /// GC's standpoint the stale entries are not reclaimaible.
-    /// 
-    /// This class works around that, by only enrolling
-    /// WeakReference values into the ThreadLocal, and
-    /// separately holding a hard reference to each stored
-    /// value.  When you call <see cref="Close" />, these hard
-    /// references are cleared and then GC is freely able to
-    /// reclaim space by objects stored in it. 
-    /// </summary>
-    /// 
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-    public class CloseableThreadLocal<T> : IDisposable where T : class
-    {
-        // NOTE: Java has WeakReference<T>.  This isn't available for .Net until 4.5 (according to msdn docs)
-        private ThreadLocal<WeakReference> t = new ThreadLocal<WeakReference>();
 
-        private IDictionary<Thread, T> hardRefs = new HashMap<Thread, T>();
+	/// <summary>
+	/// Java's builtin ThreadLocal has a serious flaw:
+	///  it can take an arbitrarily long amount of time to
+	///  dereference the things you had stored in it, even once the
+	///  ThreadLocal instance itself is no longer referenced.
+	///  this is because there is single, master map stored for
+	///  each thread, which all ThreadLocals share, and that
+	///  master map only periodically purges "stale" entries.
+	/// 
+	///  While not technically a memory leak, because eventually
+	///  the memory will be reclaimed, it can take a long time
+	///  and you can easily hit OutOfMemoryError because from the
+	///  GC's standpoint the stale entries are not reclaimable.
+	/// 
+	///  this class works around that, by only enrolling
+	///  WeakReference values into the ThreadLocal, and
+	///  separately holding a hard reference to each stored
+	///  value.  When you call <seealso cref="#close"/>, these hard
+	///  references are cleared and then GC is freely able to
+	///  reclaim space by objects stored in it.
+	/// 
+	///  We can not rely on <seealso cref="ThreadLocal#remove()"/> as it
+	///  only removes the value for the caller thread, whereas
+	///  <seealso cref="#close"/> takes care of all
+	///  threads.  You should not call <seealso cref="#close"/> until all
+	///  threads are done using the instance.
+	/// 
+	/// @lucene.internal
+	/// </summary>
 
-        private bool isDisposed;
+	public class IDisposableThreadLocal<T> : IDisposable
+	{
 
-        public virtual T InitialValue()
-        {
-            return null;
-        }
+	  private ThreadLocal<WeakReference> t = new ThreadLocal<WeakReference>();
 
-        public virtual T Get()
-        {
-            WeakReference weakRef = t.Get();
-            if (weakRef == null)
-            {
-                T iv = InitialValue();
-                if (iv != null)
-                {
-                    Set(iv);
-                    return iv;
-                }
-                else
-                    return null;
-            }
-            else
-            {
-                return (T)weakRef.Get();
-            }
-        }
+	  // Use a WeakHashMap so that if a Thread exits and is
+	  // GC'able, its entry may be removed:
+	  private IDictionary<Thread, T> HardRefs = new HashMap<Thread, T>();
 
-        public virtual void Set(T @object)
-        {
-            //+-- For Debuging
-            if (CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler == true)
-            {
-                lock (CloseableThreadLocalProfiler.Instances)
-                {
-                    CloseableThreadLocalProfiler.Instances.Add(new WeakReference(@object));
-                }
-            }
-            //+--
+	  // Increase this to decrease frequency of purging in get:
+	  private static int PURGE_MULTIPLIER = 20;
 
-            t.Set(new WeakReference(@object));
+	  // On each get or set we decrement this; when it hits 0 we
+	  // purge.  After purge, we set this to
+	  // PURGE_MULTIPLIER * stillAliveCount.  this keeps
+	  // amortized cost of purging linear.
+	  private readonly AtomicInteger CountUntilPurge = new AtomicInteger(PURGE_MULTIPLIER);
 
-            lock (hardRefs)
-            {
-                //hardRefs[Thread.CurrentThread] = @object;
-                hardRefs.Add(Thread.CurrentThread, @object);
-                
-                // Java's iterator can remove, .NET's cannot
-                var threadsToRemove = hardRefs.Keys.Where(thread => !thread.IsAlive).ToList();
-                // Purge dead threads
-                foreach (var thread in threadsToRemove)
-                {
-                    hardRefs.Remove(thread);
-                }
-            }
-        }
+	  protected internal virtual T InitialValue()
+	  {
+		return default(T);
+	  }
 
-        [Obsolete("Use Dispose() instead")]
-        public virtual void Close()
-        {
-            Dispose();
-        }
+	  public virtual T Get()
+	  {
+		WeakReference weakRef = t.Value;
+		if (weakRef == null)
+		{
+		  T iv = InitialValue();
+		  if (iv != null)
+		  {
+			Set(iv);
+			return iv;
+		  }
+		  else
+		  {
+			return default(T);
+		  }
+		}
+		else
+		{
+		  MaybePurge();
+		  return weakRef.Get();
+		}
+	  }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+	  public virtual void Set(T @object)
+	  {
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (isDisposed) return;
+		t.Value = new WeakReference(@object);
 
-            if (disposing)
-            {
-                // Clear the hard refs; then, the only remaining refs to
-                // all values we were storing are weak (unless somewhere
-                // else is still using them) and so GC may reclaim them:
-                hardRefs = null;
-                // Take care of the current thread right now; others will be
-                // taken care of via the WeakReferences.
-                if (t != null)
-                {
-                    t.Remove();
-                }
-                t = null;
-            }
+		lock (HardRefs)
+		{
+		  HardRefs[Thread.CurrentThread] = @object;
+		  MaybePurge();
+		}
+	  }
 
-            isDisposed = true;
-        }
-    }
+	  private void MaybePurge()
+	  {
+		if (CountUntilPurge.AndDecrement == 0)
+		{
+		  Purge();
+		}
+	  }
 
-    internal static class CloseableThreadLocalExtensions
-    {
-        public static void Set<T>(this ThreadLocal<T> t, T val)
-        {
-            t.Value = val;
-        }
+	  // Purge dead threads
+	  private void Purge()
+	  {
+		lock (HardRefs)
+		{
+		  int stillAliveCount = 0;
+		  for (IEnumerator<Thread> it = HardRefs.Keys.GetEnumerator(); it.MoveNext();)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Thread t = it.Current;
+			Thread t = it.Current;
+			if (!t.IsAlive)
+			{
+			  it.remove();
+			}
+			else
+			{
+			  stillAliveCount++;
+			}
+		  }
+		  int nextCount = (1 + stillAliveCount) * PURGE_MULTIPLIER;
+		  if (nextCount <= 0)
+		  {
+			// defensive: int overflow!
+			nextCount = 1000000;
+		  }
 
-        public static T Get<T>(this ThreadLocal<T> t)
-        {
-            return t.Value;
-        }
+		  CountUntilPurge.set(nextCount);
+		}
+	  }
 
-        public static void Remove<T>(this ThreadLocal<T> t)
-        {
-            t.Dispose();
-        }
+	  public override void Close()
+	  {
+		// Clear the hard refs; then, the only remaining refs to
+		// all values we were storing are weak (unless somewhere
+		// else is still using them) and so GC may reclaim them:
+		HardRefs = null;
+		// Take care of the current thread right now; others will be
+		// taken care of via the WeakReferences.
+		if (t != null)
+		{
+		  t.Dispose();
+		}
+		t = null;
+	  }
+	}
 
-        public static object Get(this WeakReference w)
-        {
-            return w.Target;
-        }
-    }
-
-    //// {{DIGY}}
-    //// To compile against Framework 2.0
-    //// Uncomment below class
-    //public class ThreadLocal<T> : IDisposable
-    //{
-    //    [ThreadStatic]
-    //    static SupportClass.WeakHashTable slots;
-
-    //    void Init()
-    //    {
-    //        if (slots == null) slots = new SupportClass.WeakHashTable();
-    //    }
-
-    //    public T Value
-    //    {
-    //        set
-    //        {
-    //            Init();
-    //            slots.Add(this, value);
-    //        }
-    //        get
-    //        {
-    //            Init();
-    //            return (T)slots[this];
-    //        }
-    //    }
-
-    //    public void Dispose()
-    //    {
-    //        if (slots != null) slots.Remove(this);
-    //    }
-    //}
 }

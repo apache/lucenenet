@@ -1,0 +1,729 @@
+using Lucene.Net.Codecs.Lucene40;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Packed;
+using System;
+using System.Diagnostics;
+
+namespace Lucene.Net.Codecs.Compressing
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.BYTE_ARR;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.CODEC_SFX_DAT;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.CODEC_SFX_IDX;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_DOUBLE;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_FLOAT;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_INT;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_LONG;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.STRING;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.TYPE_BITS;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.TYPE_MASK;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_CHECKSUM;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_CURRENT;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_START;
+//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
+
+
+	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+	using FieldInfo = Lucene.Net.Index.FieldInfo;
+	using FieldInfos = Lucene.Net.Index.FieldInfos;
+	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+	using SegmentInfo = Lucene.Net.Index.SegmentInfo;
+	using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
+	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+	using BufferedChecksumIndexInput = Lucene.Net.Store.BufferedChecksumIndexInput;
+	using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
+	using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
+	using DataInput = Lucene.Net.Store.DataInput;
+	using DataOutput = Lucene.Net.Store.DataOutput;
+	using Directory = Lucene.Net.Store.Directory;
+	using IOContext = Lucene.Net.Store.IOContext;
+	using IndexInput = Lucene.Net.Store.IndexInput;
+	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+	using BytesRef = Lucene.Net.Util.BytesRef;
+	using IOUtils = Lucene.Net.Util.IOUtils;
+	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+
+	/// <summary>
+	/// <seealso cref="StoredFieldsReader"/> impl for <seealso cref="CompressingStoredFieldsFormat"/>.
+	/// @lucene.experimental
+	/// </summary>
+	public sealed class CompressingStoredFieldsReader : StoredFieldsReader
+	{
+
+	  // Do not reuse the decompression buffer when there is more than 32kb to decompress
+	  private static readonly int BUFFER_REUSE_THRESHOLD = 1 << 15;
+
+	  private readonly int Version_Renamed;
+	  private readonly FieldInfos FieldInfos;
+	  private readonly CompressingStoredFieldsIndexReader IndexReader;
+	  private readonly long MaxPointer;
+	  private readonly IndexInput FieldsStream;
+	  private readonly int ChunkSize_Renamed;
+	  private readonly int PackedIntsVersion;
+	  private readonly CompressionMode CompressionMode_Renamed;
+	  private readonly Decompressor Decompressor;
+	  private readonly BytesRef Bytes;
+	  private readonly int NumDocs;
+	  private bool Closed;
+
+	  // used by clone
+	  private CompressingStoredFieldsReader(CompressingStoredFieldsReader reader)
+	  {
+		this.Version_Renamed = reader.Version_Renamed;
+		this.FieldInfos = reader.FieldInfos;
+		this.FieldsStream = reader.FieldsStream.Clone();
+		this.IndexReader = reader.IndexReader.Clone();
+		this.MaxPointer = reader.MaxPointer;
+		this.ChunkSize_Renamed = reader.ChunkSize_Renamed;
+		this.PackedIntsVersion = reader.PackedIntsVersion;
+		this.CompressionMode_Renamed = reader.CompressionMode_Renamed;
+		this.Decompressor = reader.Decompressor.Clone();
+		this.NumDocs = reader.NumDocs;
+		this.Bytes = new BytesRef(reader.Bytes.Bytes.Length);
+		this.Closed = false;
+	  }
+
+	  /// <summary>
+	  /// Sole constructor. </summary>
+	  public CompressingStoredFieldsReader(Directory d, SegmentInfo si, string segmentSuffix, FieldInfos fn, IOContext context, string formatName, CompressionMode compressionMode)
+	  {
+		this.CompressionMode_Renamed = compressionMode;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String segment = si.name;
+		string segment = si.Name;
+		bool success = false;
+		FieldInfos = fn;
+		NumDocs = si.DocCount;
+		ChecksumIndexInput indexStream = null;
+		try
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String indexStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_INDEX_EXTENSION);
+		  string indexStreamFN = IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String fieldsStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_EXTENSION);
+		  string fieldsStreamFN = IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
+		  // Load the index into memory
+		  indexStream = d.OpenChecksumInput(indexStreamFN, context);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String codecNameIdx = formatName + CODEC_SFX_IDX;
+		  string codecNameIdx = formatName + CompressingStoredFieldsWriter.CODEC_SFX_IDX;
+		  Version_Renamed = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
+		  Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
+		  IndexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
+
+		  long maxPointer = -1;
+
+		  if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
+		  {
+			maxPointer = indexStream.ReadVLong();
+			CodecUtil.CheckFooter(indexStream);
+		  }
+		  else
+		  {
+			CodecUtil.CheckEOF(indexStream);
+		  }
+		  indexStream.Close();
+		  indexStream = null;
+
+		  // Open the data file and read metadata
+		  FieldsStream = d.OpenInput(fieldsStreamFN, context);
+		  if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
+		  {
+			if (maxPointer + CodecUtil.FooterLength() != FieldsStream.Length())
+			{
+			  throw new CorruptIndexException("Invalid fieldsStream maxPointer (file truncated?): maxPointer=" + maxPointer + ", length=" + FieldsStream.Length());
+			}
+		  }
+		  else
+		  {
+			maxPointer = FieldsStream.Length();
+		  }
+		  this.MaxPointer = maxPointer;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String codecNameDat = formatName + CODEC_SFX_DAT;
+		  string codecNameDat = formatName + CompressingStoredFieldsWriter.CODEC_SFX_DAT;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int fieldsVersion = Lucene.Net.Codecs.CodecUtil.checkHeader(fieldsStream, codecNameDat, VERSION_START, VERSION_CURRENT);
+		  int fieldsVersion = CodecUtil.CheckHeader(FieldsStream, codecNameDat, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
+		  if (Version_Renamed != fieldsVersion)
+		  {
+			throw new CorruptIndexException("Version mismatch between stored fields index and data: " + Version_Renamed + " != " + fieldsVersion);
+		  }
+		  Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == FieldsStream.FilePointer);
+
+		  if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS)
+		  {
+			ChunkSize_Renamed = FieldsStream.ReadVInt();
+		  }
+		  else
+		  {
+			ChunkSize_Renamed = -1;
+		  }
+		  PackedIntsVersion = FieldsStream.ReadVInt();
+		  Decompressor = compressionMode.NewDecompressor();
+		  this.Bytes = new BytesRef();
+
+		  success = true;
+		}
+		finally
+		{
+		  if (!success)
+		  {
+			IOUtils.CloseWhileHandlingException(this, indexStream);
+		  }
+		}
+	  }
+
+	  /// <exception cref="AlreadyClosedException"> if this FieldsReader is closed </exception>
+	  private void EnsureOpen()
+	  {
+		if (Closed)
+		{
+		  throw new Exception("this FieldsReader is closed");
+		}
+	  }
+
+	  /// <summary>
+	  /// Close the underlying <seealso cref="IndexInput"/>s.
+	  /// </summary>
+	  public override void Close()
+	  {
+		if (!Closed)
+		{
+		  IOUtils.Close(FieldsStream);
+		  Closed = true;
+		}
+	  }
+
+	  private static void ReadField(DataInput @in, StoredFieldVisitor visitor, FieldInfo info, int bits)
+	  {
+		switch (bits & CompressingStoredFieldsWriter.TYPE_MASK)
+		{
+		  case BYTE_ARR:
+			int length = @in.ReadVInt();
+			sbyte[] data = new sbyte[length];
+			@in.ReadBytes(data, 0, length);
+			visitor.BinaryField(info, data);
+			break;
+		  case STRING:
+			length = @in.ReadVInt();
+			data = new sbyte[length];
+			@in.ReadBytes(data, 0, length);
+			visitor.StringField(info, new string(data, StandardCharsets.UTF_8));
+			break;
+		  case NUMERIC_INT:
+			visitor.IntField(info, @in.ReadInt());
+			break;
+		  case NUMERIC_FLOAT:
+			visitor.FloatField(info, float.intBitsToFloat(@in.ReadInt()));
+			break;
+		  case NUMERIC_LONG:
+			visitor.LongField(info, @in.ReadLong());
+			break;
+		  case NUMERIC_DOUBLE:
+			visitor.DoubleField(info, double.longBitsToDouble(@in.ReadLong()));
+			break;
+		  default:
+			throw new AssertionError("Unknown type flag: " + bits.ToString("x"));
+		}
+	  }
+
+	  private static void SkipField(DataInput @in, int bits)
+	  {
+		switch (bits & CompressingStoredFieldsWriter.TYPE_MASK)
+		{
+		  case BYTE_ARR:
+		  case STRING:
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int length = in.readVInt();
+			int length = @in.ReadVInt();
+			@in.SkipBytes(length);
+			break;
+		  case NUMERIC_INT:
+		  case NUMERIC_FLOAT:
+			@in.ReadInt();
+			break;
+		  case NUMERIC_LONG:
+		  case NUMERIC_DOUBLE:
+			@in.ReadLong();
+			break;
+		  default:
+			throw new AssertionError("Unknown type flag: " + bits.ToString("x"));
+		}
+	  }
+
+	  public override void VisitDocument(int docID, StoredFieldVisitor visitor)
+	  {
+		FieldsStream.Seek(IndexReader.GetStartPointer(docID));
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int docBase = fieldsStream.readVInt();
+		int docBase = FieldsStream.ReadVInt();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int chunkDocs = fieldsStream.readVInt();
+		int chunkDocs = FieldsStream.ReadVInt();
+		if (docID < docBase || docID >= docBase + chunkDocs || docBase + chunkDocs > NumDocs)
+		{
+		  throw new CorruptIndexException("Corrupted: docID=" + docID + ", docBase=" + docBase + ", chunkDocs=" + chunkDocs + ", numDocs=" + NumDocs + " (resource=" + FieldsStream + ")");
+		}
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numStoredFields, offset, length, totalLength;
+		int numStoredFields, offset, length, totalLength;
+		if (chunkDocs == 1)
+		{
+		  numStoredFields = FieldsStream.ReadVInt();
+		  offset = 0;
+		  length = FieldsStream.ReadVInt();
+		  totalLength = length;
+		}
+		else
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int bitsPerStoredFields = fieldsStream.readVInt();
+		  int bitsPerStoredFields = FieldsStream.ReadVInt();
+		  if (bitsPerStoredFields == 0)
+		  {
+			numStoredFields = FieldsStream.ReadVInt();
+		  }
+		  else if (bitsPerStoredFields > 31)
+		  {
+			throw new CorruptIndexException("bitsPerStoredFields=" + bitsPerStoredFields + " (resource=" + FieldsStream + ")");
+		  }
+		  else
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long filePointer = fieldsStream.getFilePointer();
+			long filePointer = FieldsStream.FilePointer;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getDirectReaderNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields);
+			PackedInts.Reader reader = PackedInts.GetDirectReaderNoHeader(FieldsStream, PackedInts.Format.PACKED, PackedIntsVersion, chunkDocs, bitsPerStoredFields);
+			numStoredFields = (int)(reader.Get(docID - docBase));
+			FieldsStream.Seek(filePointer + PackedInts.Format.PACKED.ByteCount(PackedIntsVersion, chunkDocs, bitsPerStoredFields));
+		  }
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int bitsPerLength = fieldsStream.readVInt();
+		  int bitsPerLength = FieldsStream.ReadVInt();
+		  if (bitsPerLength == 0)
+		  {
+			length = FieldsStream.ReadVInt();
+			offset = (docID - docBase) * length;
+			totalLength = chunkDocs * length;
+		  }
+		  else if (bitsPerStoredFields > 31)
+		  {
+			throw new CorruptIndexException("bitsPerLength=" + bitsPerLength + " (resource=" + FieldsStream + ")");
+		  }
+		  else
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.ReaderIterator it = Lucene.Net.Util.Packed.PackedInts.getReaderIteratorNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerLength, 1);
+			PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, PackedIntsVersion, chunkDocs, bitsPerLength, 1);
+			int off = 0;
+			for (int i = 0; i < docID - docBase; ++i)
+			{
+			  off += (int)it.Next();
+			}
+			offset = off;
+			length = (int) it.Next();
+			off += length;
+			for (int i = docID - docBase + 1; i < chunkDocs; ++i)
+			{
+			  off += (int)it.Next();
+			}
+			totalLength = off;
+		  }
+		}
+
+		if ((length == 0) != (numStoredFields == 0))
+		{
+		  throw new CorruptIndexException("length=" + length + ", numStoredFields=" + numStoredFields + " (resource=" + FieldsStream + ")");
+		}
+		if (numStoredFields == 0)
+		{
+		  // nothing to do
+		  return;
+		}
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Store.DataInput documentInput;
+		DataInput documentInput;
+		if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS && totalLength >= 2 * ChunkSize_Renamed)
+		{
+		  Debug.Assert(ChunkSize_Renamed > 0);
+		  Debug.Assert(offset < ChunkSize_Renamed);
+
+		  Decompressor.Decompress(FieldsStream, ChunkSize_Renamed, offset, Math.Min(length, ChunkSize_Renamed - offset), Bytes);
+		  documentInput = new DataInputAnonymousInnerClassHelper(this, offset, length);
+		}
+		else
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.bytes : new Lucene.Net.Util.BytesRef();
+		  BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.Bytes : new BytesRef();
+		  Decompressor.Decompress(FieldsStream, totalLength, offset, length, bytes);
+		  Debug.Assert(bytes.Length == length);
+		  documentInput = new ByteArrayDataInput(bytes.Bytes, bytes.Offset, bytes.Length);
+		}
+
+		for (int fieldIDX = 0; fieldIDX < numStoredFields; fieldIDX++)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long infoAndBits = documentInput.readVLong();
+		  long infoAndBits = documentInput.ReadVLong();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int fieldNumber = (int)(infoAndBits >>> TYPE_BITS);
+		  int fieldNumber = (int)((long)((ulong)infoAndBits >> CompressingStoredFieldsWriter.TYPE_BITS));
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = fieldInfos.fieldInfo(fieldNumber);
+		  FieldInfo fieldInfo = FieldInfos.FieldInfo(fieldNumber);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int bits = (int)(infoAndBits & TYPE_MASK);
+		  int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);
+		  Debug.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE, "bits=" + bits.ToString("x"));
+
+		  switch (visitor.NeedsField(fieldInfo))
+		  {
+			case YES:
+			  ReadField(documentInput, visitor, fieldInfo, bits);
+			  break;
+			case NO:
+			  SkipField(documentInput, bits);
+			  break;
+			case STOP:
+			  return;
+		  }
+		}
+	  }
+
+	  private class DataInputAnonymousInnerClassHelper : DataInput
+	  {
+		  private readonly CompressingStoredFieldsReader OuterInstance;
+
+		  private int Offset;
+		  private int Length;
+
+		  public DataInputAnonymousInnerClassHelper(CompressingStoredFieldsReader outerInstance, int offset, int length)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Offset = offset;
+			  this.Length = length;
+			  decompressed = outerInstance.Bytes.Length;
+		  }
+
+
+		  internal int decompressed;
+
+		  internal virtual void FillBuffer()
+		  {
+			Debug.Assert(decompressed <= Length);
+			if (decompressed == Length)
+			{
+			  throw new Exception();
+			}
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int toDecompress = Math.min(length - decompressed, chunkSize);
+			int toDecompress = Math.Min(Length - decompressed, OuterInstance.ChunkSize_Renamed);
+			OuterInstance.Decompressor.Decompress(OuterInstance.FieldsStream, toDecompress, 0, toDecompress, OuterInstance.Bytes);
+			decompressed += toDecompress;
+		  }
+
+		  public override sbyte ReadByte()
+		  {
+			if (OuterInstance.Bytes.Length == 0)
+			{
+			  FillBuffer();
+			}
+			--OuterInstance.Bytes.Length;
+			return OuterInstance.Bytes.Bytes[OuterInstance.Bytes.Offset++];
+		  }
+
+		  public override void ReadBytes(sbyte[] b, int offset, int len)
+		  {
+			while (len > OuterInstance.Bytes.Length)
+			{
+			  Array.Copy(OuterInstance.Bytes.Bytes, OuterInstance.Bytes.Offset, b, offset, OuterInstance.Bytes.Length);
+			  len -= OuterInstance.Bytes.Length;
+			  offset += OuterInstance.Bytes.Length;
+			  FillBuffer();
+			}
+			Array.Copy(OuterInstance.Bytes.Bytes, OuterInstance.Bytes.Offset, b, offset, len);
+			OuterInstance.Bytes.Offset += len;
+			OuterInstance.Bytes.Length -= len;
+		  }
+
+	  }
+
+	  public override StoredFieldsReader Clone()
+	  {
+		EnsureOpen();
+		return new CompressingStoredFieldsReader(this);
+	  }
+
+	  internal int Version
+	  {
+		  get
+		  {
+			return Version_Renamed;
+		  }
+	  }
+
+	  internal CompressionMode CompressionMode
+	  {
+		  get
+		  {
+			return CompressionMode_Renamed;
+		  }
+	  }
+
+	  internal int ChunkSize
+	  {
+		  get
+		  {
+			return ChunkSize_Renamed;
+		  }
+	  }
+
+	  internal ChunkIterator ChunkIterator(int startDocID)
+	  {
+		EnsureOpen();
+		return new ChunkIterator(this, startDocID);
+	  }
+
+	  internal sealed class ChunkIterator
+	  {
+		  private readonly CompressingStoredFieldsReader OuterInstance;
+
+
+		internal readonly ChecksumIndexInput FieldsStream;
+		internal readonly BytesRef Spare;
+		internal readonly BytesRef Bytes;
+		internal int DocBase;
+		internal int ChunkDocs;
+		internal int[] NumStoredFields;
+		internal int[] Lengths;
+
+		internal ChunkIterator(CompressingStoredFieldsReader outerInstance, int startDocId)
+		{
+			this.OuterInstance = outerInstance;
+		  this.DocBase = -1;
+		  Bytes = new BytesRef();
+		  Spare = new BytesRef();
+		  NumStoredFields = new int[1];
+		  Lengths = new int[1];
+
+		  IndexInput @in = outerInstance.FieldsStream;
+		  @in.Seek(0);
+		  FieldsStream = new BufferedChecksumIndexInput(@in);
+		  FieldsStream.Seek(outerInstance.IndexReader.GetStartPointer(startDocId));
+		}
+
+		/// <summary>
+		/// Return the decompressed size of the chunk
+		/// </summary>
+		internal int ChunkSize()
+		{
+		  int sum = 0;
+		  for (int i = 0; i < ChunkDocs; ++i)
+		  {
+			sum += Lengths[i];
+		  }
+		  return sum;
+		}
+
+		/// <summary>
+		/// Go to the chunk containing the provided doc ID.
+		/// </summary>
+		internal void Next(int doc)
+		{
+		  Debug.Assert(doc >= DocBase + ChunkDocs, doc + " " + DocBase + " " + ChunkDocs);
+		  FieldsStream.Seek(OuterInstance.IndexReader.GetStartPointer(doc));
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int docBase = fieldsStream.readVInt();
+		  int docBase = FieldsStream.ReadVInt();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int chunkDocs = fieldsStream.readVInt();
+		  int chunkDocs = FieldsStream.ReadVInt();
+		  if (docBase < this.DocBase + this.ChunkDocs || docBase + chunkDocs > OuterInstance.NumDocs)
+		  {
+			throw new CorruptIndexException("Corrupted: current docBase=" + this.DocBase + ", current numDocs=" + this.ChunkDocs + ", new docBase=" + docBase + ", new numDocs=" + chunkDocs + " (resource=" + FieldsStream + ")");
+		  }
+		  this.DocBase = docBase;
+		  this.ChunkDocs = chunkDocs;
+
+		  if (chunkDocs > NumStoredFields.Length)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int newLength = Lucene.Net.Util.ArrayUtil.oversize(chunkDocs, 4);
+			int newLength = ArrayUtil.Oversize(chunkDocs, 4);
+			NumStoredFields = new int[newLength];
+			Lengths = new int[newLength];
+		  }
+
+		  if (chunkDocs == 1)
+		  {
+			NumStoredFields[0] = FieldsStream.ReadVInt();
+			Lengths[0] = FieldsStream.ReadVInt();
+		  }
+		  else
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int bitsPerStoredFields = fieldsStream.readVInt();
+			int bitsPerStoredFields = FieldsStream.ReadVInt();
+			if (bitsPerStoredFields == 0)
+			{
+			  Arrays.fill(NumStoredFields, 0, chunkDocs, FieldsStream.ReadVInt());
+			}
+			else if (bitsPerStoredFields > 31)
+			{
+			  throw new CorruptIndexException("bitsPerStoredFields=" + bitsPerStoredFields + " (resource=" + FieldsStream + ")");
+			}
+			else
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.ReaderIterator it = Lucene.Net.Util.Packed.PackedInts.getReaderIteratorNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
+			  PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
+			  for (int i = 0; i < chunkDocs; ++i)
+			  {
+				NumStoredFields[i] = (int) it.Next();
+			  }
+			}
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int bitsPerLength = fieldsStream.readVInt();
+			int bitsPerLength = FieldsStream.ReadVInt();
+			if (bitsPerLength == 0)
+			{
+			  Arrays.fill(Lengths, 0, chunkDocs, FieldsStream.ReadVInt());
+			}
+			else if (bitsPerLength > 31)
+			{
+			  throw new CorruptIndexException("bitsPerLength=" + bitsPerLength);
+			}
+			else
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.ReaderIterator it = Lucene.Net.Util.Packed.PackedInts.getReaderIteratorNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerLength, 1);
+			  PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerLength, 1);
+			  for (int i = 0; i < chunkDocs; ++i)
+			  {
+				Lengths[i] = (int) it.Next();
+			  }
+			}
+		  }
+		}
+
+		/// <summary>
+		/// Decompress the chunk.
+		/// </summary>
+		internal void Decompress()
+		{
+		  // decompress data
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int chunkSize = chunkSize();
+		  int chunkSize = ChunkSize();
+		  if (OuterInstance.Version_Renamed >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS && chunkSize >= 2 * OuterInstance.ChunkSize_Renamed)
+		  {
+			Bytes.Offset = Bytes.Length = 0;
+			for (int decompressed = 0; decompressed < chunkSize;)
+			{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int toDecompress = Math.min(chunkSize - decompressed, CompressingStoredFieldsReader.this.chunkSize);
+			  int toDecompress = Math.Min(chunkSize - decompressed, OuterInstance.ChunkSize_Renamed);
+			  OuterInstance.Decompressor.Decompress(FieldsStream, toDecompress, 0, toDecompress, Spare);
+			  Bytes.Bytes = ArrayUtil.Grow(Bytes.Bytes, Bytes.Length + Spare.Length);
+			  Array.Copy(Spare.Bytes, Spare.Offset, Bytes.Bytes, Bytes.Length, Spare.Length);
+			  Bytes.Length += Spare.Length;
+			  decompressed += toDecompress;
+			}
+		  }
+		  else
+		  {
+			OuterInstance.Decompressor.Decompress(FieldsStream, chunkSize, 0, chunkSize, Bytes);
+		  }
+		  if (Bytes.Length != chunkSize)
+		  {
+			throw new CorruptIndexException("Corrupted: expected chunk size = " + ChunkSize() + ", got " + Bytes.Length + " (resource=" + FieldsStream + ")");
+		  }
+		}
+
+		/// <summary>
+		/// Copy compressed data.
+		/// </summary>
+		internal void CopyCompressedData(DataOutput @out)
+		{
+		  Debug.Assert(OuterInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long chunkEnd = docBase + chunkDocs == numDocs ? maxPointer : indexReader.getStartPointer(docBase + chunkDocs);
+		  long chunkEnd = DocBase + ChunkDocs == OuterInstance.NumDocs ? OuterInstance.MaxPointer : OuterInstance.IndexReader.GetStartPointer(DocBase + ChunkDocs);
+		  @out.CopyBytes(FieldsStream, chunkEnd - FieldsStream.FilePointer);
+		}
+
+		/// <summary>
+		/// Check integrity of the data. The iterator is not usable after this method has been called.
+		/// </summary>
+		internal void CheckIntegrity()
+		{
+		  if (OuterInstance.Version_Renamed >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
+		  {
+			FieldsStream.Seek(FieldsStream.Length() - CodecUtil.FooterLength());
+			CodecUtil.CheckFooter(FieldsStream);
+		  }
+		}
+
+	  }
+
+	  public override long RamBytesUsed()
+	  {
+		return IndexReader.RamBytesUsed();
+	  }
+
+	  public override void CheckIntegrity()
+	  {
+		if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
+		{
+		  CodecUtil.ChecksumEntireFile(FieldsStream);
+		}
+	  }
+
+	}
+
+}

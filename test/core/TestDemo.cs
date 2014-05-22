@@ -1,84 +1,84 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using System.IO;
-using Lucene.Net.Store;
-using NUnit.Framework;
-
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using ParseException = Lucene.Net.QueryParsers.ParseException;
-using QueryParser = Lucene.Net.QueryParsers.QueryParser;
-using Directory = Lucene.Net.Store.Directory;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using Version = Lucene.Net.Util.Version;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Query = Lucene.Net.Search.Query;
-using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using _TestUtil = Lucene.Net.Util._TestUtil;
-
-namespace Lucene.Net
+namespace org.apache.lucene
 {
-    
-    /// <summary> A very simple demo used in the API documentation (src/java/overview.html).
-    /// 
-    /// Please try to keep src/java/overview.html up-to-date when making changes
-    /// to this class.
-    /// </summary>
-    [TestFixture]
-    public class TestDemo:LuceneTestCase
-    {
-        [Test]
-        public virtual void  TestDemo_Renamed()
-        {
-            
-            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
-            
-            // Store the index in memory:
-            Directory directory = new RAMDirectory();
-            // To store an index on disk, use this instead:
-            //Directory directory = FSDirectory.open("/tmp/testindex");
-            IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(25000));
-            Document doc = new Document();
-            System.String text = "This is the text to be indexed.";
-            doc.Add(new Field("fieldname", text, Field.Store.YES, Field.Index.ANALYZED));
-            iwriter.AddDocument(doc);
-            iwriter.Close();
-            
-            // Now search the index:
-            IndexSearcher isearcher = new IndexSearcher(directory, true); // read-only=true
-            // Parse a simple query that searches for "text":
-            QueryParser parser = new QueryParser(Util.Version.LUCENE_CURRENT, "fieldname", analyzer);
-            Query query = parser.Parse("text");
-            ScoreDoc[] hits = isearcher.Search(query, null, 1000).ScoreDocs;
-            Assert.AreEqual(1, hits.Length);
-            // Iterate through the results:
-            for (int i = 0; i < hits.Length; i++)
-            {
-                Document hitDoc = isearcher.Doc(hits[i].Doc);
-                Assert.AreEqual(hitDoc.Get("fieldname"), "This is the text to be indexed.");
-            }
-            isearcher.Close();
-            directory.Close();
-        }
-    }
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using Analyzer = Lucene.Net.Analysis.Analyzer;
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using Document = Lucene.Net.Document.Document;
+	using Field = Lucene.Net.Document.Field;
+	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using Term = Lucene.Net.Index.Term;
+	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+	using Lucene.Net.Search;
+	using Directory = Lucene.Net.Store.Directory;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+	/// <summary>
+	/// A very simple demo used in the API documentation (src/java/overview.html).
+	/// 
+	/// Please try to keep src/java/overview.html up-to-date when making changes
+	/// to this class.
+	/// </summary>
+	public class TestDemo : LuceneTestCase
+	{
+
+	  public virtual void TestDemo()
+	  {
+		Analyzer analyzer = new MockAnalyzer(random());
+
+		// Store the index in memory:
+		Directory directory = newDirectory();
+		// To store an index on disk, use this instead:
+		// Directory directory = FSDirectory.open(new File("/tmp/testindex"));
+		RandomIndexWriter iwriter = new RandomIndexWriter(random(), directory, analyzer);
+		Document doc = new Document();
+		string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
+		string text = "this is the text to be indexed. " + longTerm;
+		doc.add(newTextField("fieldname", text, Field.Store.YES));
+		iwriter.addDocument(doc);
+		iwriter.close();
+
+		// Now search the index:
+		IndexReader ireader = DirectoryReader.open(directory); // read-only=true
+		IndexSearcher isearcher = newSearcher(ireader);
+
+		Assert.AreEqual(1, isearcher.search(new TermQuery(new Term("fieldname", longTerm)), 1).totalHits);
+		Query query = new TermQuery(new Term("fieldname", "text"));
+		TopDocs hits = isearcher.search(query, null, 1);
+		Assert.AreEqual(1, hits.totalHits);
+		// Iterate through the results:
+		for (int i = 0; i < hits.scoreDocs.length; i++)
+		{
+		  Document hitDoc = isearcher.doc(hits.scoreDocs[i].doc);
+		  Assert.AreEqual(text, hitDoc.get("fieldname"));
+		}
+
+		// Test simple phrase query
+		PhraseQuery phraseQuery = new PhraseQuery();
+		phraseQuery.add(new Term("fieldname", "to"));
+		phraseQuery.add(new Term("fieldname", "be"));
+		Assert.AreEqual(1, isearcher.search(phraseQuery, null, 1).totalHits);
+
+		ireader.close();
+		directory.close();
+	  }
+	}
+
 }

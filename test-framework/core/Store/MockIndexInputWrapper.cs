@@ -1,0 +1,189 @@
+using System;
+using System.Collections.Generic;
+
+namespace Lucene.Net.Store
+{
+
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	/// <summary>
+	/// Used by MockDirectoryWrapper to create an input stream that
+	/// keeps track of when it's been closed.
+	/// </summary>
+
+	public class MockIndexInputWrapper : IndexInput
+	{
+	  private MockDirectoryWrapper Dir;
+	  internal readonly string Name;
+	  private IndexInput @delegate;
+	  private bool IsClone;
+	  private bool Closed;
+
+	  /// <summary>
+	  /// Construct an empty output buffer. </summary>
+	  public MockIndexInputWrapper(MockDirectoryWrapper dir, string name, IndexInput @delegate) : base("MockIndexInputWrapper(name=" + name + " delegate=" + @delegate + ")")
+	  {
+		this.Name = name;
+		this.Dir = dir;
+		this.@delegate = @delegate;
+	  }
+
+	  public override void Close()
+	  {
+		try
+		{
+		  // turn on the following to look for leaks closing inputs,
+		  // after fixing TestTransactions
+		  // dir.maybeThrowDeterministicException();
+		}
+		finally
+		{
+		  Closed = true;
+		  @delegate.close();
+		  // Pending resolution on LUCENE-686 we may want to
+		  // remove the conditional check so we also track that
+		  // all clones get closed:
+		  if (!IsClone)
+		  {
+			Dir.RemoveIndexInput(this, Name);
+		  }
+		}
+	  }
+
+	  private void EnsureOpen()
+	  {
+		if (Closed)
+		{
+		  throw new Exception("Abusing closed IndexInput!");
+		}
+	  }
+
+	  public override MockIndexInputWrapper Clone()
+	  {
+		EnsureOpen();
+		Dir.InputCloneCount_Renamed.incrementAndGet();
+		IndexInput iiclone = @delegate.clone();
+		MockIndexInputWrapper clone = new MockIndexInputWrapper(Dir, Name, iiclone);
+		clone.IsClone = true;
+		// Pending resolution on LUCENE-686 we may want to
+		// uncomment this code so that we also track that all
+		// clones get closed:
+		/*
+		synchronized(dir.openFiles) {
+		  if (dir.openFiles.containsKey(name)) {
+		    Integer v = (Integer) dir.openFiles.get(name);
+		    v = Integer.valueOf(v.intValue()+1);
+		    dir.openFiles.put(name, v);
+		  } else {
+		    throw new RuntimeException("BUG: cloned file was not open?");
+		  }
+		}
+		*/
+		return clone;
+	  }
+
+	  public override long FilePointer
+	  {
+		  get
+		  {
+			EnsureOpen();
+			return @delegate.FilePointer;
+		  }
+	  }
+
+	  public override void Seek(long pos)
+	  {
+		EnsureOpen();
+		@delegate.seek(pos);
+	  }
+
+	  public override long Length()
+	  {
+		EnsureOpen();
+		return @delegate.length();
+	  }
+
+	  public override sbyte ReadByte()
+	  {
+		EnsureOpen();
+		return @delegate.readByte();
+	  }
+
+	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  {
+		EnsureOpen();
+		@delegate.readBytes(b, offset, len);
+	  }
+
+	  public override void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
+	  {
+		EnsureOpen();
+		@delegate.readBytes(b, offset, len, useBuffer);
+	  }
+
+	  public override short ReadShort()
+	  {
+		EnsureOpen();
+		return @delegate.readShort();
+	  }
+
+	  public override int ReadInt()
+	  {
+		EnsureOpen();
+		return @delegate.readInt();
+	  }
+
+	  public override long ReadLong()
+	  {
+		EnsureOpen();
+		return @delegate.readLong();
+	  }
+
+	  public override string ReadString()
+	  {
+		EnsureOpen();
+		return @delegate.readString();
+	  }
+
+	  public override IDictionary<string, string> ReadStringStringMap()
+	  {
+		EnsureOpen();
+		return @delegate.readStringStringMap();
+	  }
+
+	  public override int ReadVInt()
+	  {
+		EnsureOpen();
+		return @delegate.readVInt();
+	  }
+
+	  public override long ReadVLong()
+	  {
+		EnsureOpen();
+		return @delegate.readVLong();
+	  }
+
+	  public override string ToString()
+	  {
+		return "MockIndexInputWrapper(" + @delegate + ")";
+	  }
+	}
+
+
+}

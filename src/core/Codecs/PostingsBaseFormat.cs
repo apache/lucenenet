@@ -1,0 +1,66 @@
+namespace Lucene.Net.Codecs
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
+	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
+
+	/// <summary>
+	/// Provides a <seealso cref="PostingsReaderBase"/> and {@link
+	/// PostingsWriterBase}.
+	/// 
+	/// @lucene.experimental 
+	/// </summary>
+
+	// TODO: find a better name; this defines the API that the
+	// terms dict impls use to talk to a postings impl.
+	// TermsDict + PostingsReader/WriterBase == PostingsConsumer/Producer
+
+	// can we clean this up and do this some other way? 
+	// refactor some of these classes and use covariant return?
+	public abstract class PostingsBaseFormat
+	{
+
+	  /// <summary>
+	  /// Unique name that's used to retrieve this codec when
+	  ///  reading the index 
+	  /// </summary>
+	  public readonly string Name;
+
+	  /// <summary>
+	  /// Sole constructor. </summary>
+	  protected internal PostingsBaseFormat(string name)
+	  {
+		this.Name = name;
+	  }
+
+	  /// <summary>
+	  /// Creates the <seealso cref="PostingsReaderBase"/> for this
+	  ///  format. 
+	  /// </summary>
+	  public abstract PostingsReaderBase PostingsReaderBase(SegmentReadState state);
+
+	  /// <summary>
+	  /// Creates the <seealso cref="PostingsWriterBase"/> for this
+	  ///  format. 
+	  /// </summary>
+	  public abstract PostingsWriterBase PostingsWriterBase(SegmentWriteState state);
+	}
+
+}

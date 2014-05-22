@@ -1,185 +1,174 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-
-using IndexInput = Lucene.Net.Store.IndexInput;
-using IndexOutput = Lucene.Net.Store.IndexOutput;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
-    
-    /* IndexInput that knows how to read the byte slices written
-    * by Posting and PostingVector.  We read the bytes in
-    * each slice until we hit the end of that slice at which
-    * point we read the forwarding address of the next slice
-    * and then jump to it.*/
-    public sealed class ByteSliceReader : IndexInput
-    {
-        internal ByteBlockPool pool;
-        internal int bufferUpto;
-        internal byte[] buffer;
-        public int upto;
-        internal int limit;
-        internal int level;
-        public int bufferOffset;
-        
-        public int endIndex;
-        
-        public void  Init(ByteBlockPool pool, int startIndex, int endIndex)
-        {
-            
-            System.Diagnostics.Debug.Assert(endIndex - startIndex >= 0);
-            System.Diagnostics.Debug.Assert(startIndex >= 0);
-            System.Diagnostics.Debug.Assert(endIndex >= 0);
-            
-            this.pool = pool;
-            this.endIndex = endIndex;
-            
-            level = 0;
-            bufferUpto = startIndex / DocumentsWriter.BYTE_BLOCK_SIZE;
-            bufferOffset = bufferUpto * DocumentsWriter.BYTE_BLOCK_SIZE;
-            buffer = pool.buffers[bufferUpto];
-            upto = startIndex & DocumentsWriter.BYTE_BLOCK_MASK;
-            
-            int firstSize = ByteBlockPool.levelSizeArray[0];
-            
-            if (startIndex + firstSize >= endIndex)
-            {
-                // There is only this one slice to read
-                limit = endIndex & DocumentsWriter.BYTE_BLOCK_MASK;
-            }
-            else
-                limit = upto + firstSize - 4;
-        }
-        
-        public bool Eof()
-        {
-            System.Diagnostics.Debug.Assert(upto + bufferOffset <= endIndex);
-            return upto + bufferOffset == endIndex;
-        }
-        
-        public override byte ReadByte()
-        {
-            System.Diagnostics.Debug.Assert(!Eof());
-            System.Diagnostics.Debug.Assert(upto <= limit);
-            if (upto == limit)
-                NextSlice();
-            return buffer[upto++];
-        }
-        
-        public long WriteTo(IndexOutput @out)
-        {
-            long size = 0;
-            while (true)
-            {
-                if (limit + bufferOffset == endIndex)
-                {
-                    System.Diagnostics.Debug.Assert(endIndex - bufferOffset >= upto);
-                    @out.WriteBytes(buffer, upto, limit - upto);
-                    size += limit - upto;
-                    break;
-                }
-                else
-                {
-                    @out.WriteBytes(buffer, upto, limit - upto);
-                    size += limit - upto;
-                    NextSlice();
-                }
-            }
-            
-            return size;
-        }
-        
-        public void  NextSlice()
-        {
-            
-            // Skip to our next slice
-            int nextIndex = ((buffer[limit] & 0xff) << 24) + ((buffer[1 + limit] & 0xff) << 16) + ((buffer[2 + limit] & 0xff) << 8) + (buffer[3 + limit] & 0xff);
-            
-            level = ByteBlockPool.nextLevelArray[level];
-            int newSize = ByteBlockPool.levelSizeArray[level];
-            
-            bufferUpto = nextIndex / DocumentsWriter.BYTE_BLOCK_SIZE;
-            bufferOffset = bufferUpto * DocumentsWriter.BYTE_BLOCK_SIZE;
-            
-            buffer = pool.buffers[bufferUpto];
-            upto = nextIndex & DocumentsWriter.BYTE_BLOCK_MASK;
-            
-            if (nextIndex + newSize >= endIndex)
-            {
-                // We are advancing to the final slice
-                System.Diagnostics.Debug.Assert(endIndex - nextIndex > 0);
-                limit = endIndex - bufferOffset;
-            }
-            else
-            {
-                // This is not the final slice (subtract 4 for the
-                // forwarding address at the end of this new slice)
-                limit = upto + newSize - 4;
-            }
-        }
-        
-        public override void  ReadBytes(byte[] b, int offset, int len)
-        {
-            while (len > 0)
-            {
-                int numLeft = limit - upto;
-                if (numLeft < len)
-                {
-                    // Read entire slice
-                    Array.Copy(buffer, upto, b, offset, numLeft);
-                    offset += numLeft;
-                    len -= numLeft;
-                    NextSlice();
-                }
-                else
-                {
-                    // This slice is the last one
-                    Array.Copy(buffer, upto, b, offset, len);
-                    upto += len;
-                    break;
-                }
-            }
-        }
 
-        public override long FilePointer
-        {
-            get { throw new NotImplementedException(); }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        public override long Length()
-        {
-            throw new NotImplementedException();
-        }
-        public override void  Seek(long pos)
-        {
-            throw new NotImplementedException();
-        }
+	using DataInput = Lucene.Net.Store.DataInput;
+	using DataOutput = Lucene.Net.Store.DataOutput;
+	using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
 
-        protected override void Dispose(bool disposing)
-        {
-            // Do nothing...
-        }
-        
-        override public Object Clone()
-        {
-            System.Diagnostics.Debug.Fail("Port issue:", "Let see if we need this ByteSliceReader.Clone()"); // {{Aroush-2.9}}
-            return null;
-        }
-    }
+	/* IndexInput that knows how to read the byte slices written
+	 * by Posting and PostingVector.  We read the bytes in
+	 * each slice until we hit the end of that slice at which
+	 * point we read the forwarding address of the next slice
+	 * and then jump to it.*/
+	internal sealed class ByteSliceReader : DataInput
+	{
+	  internal ByteBlockPool Pool;
+	  internal int BufferUpto;
+	  internal sbyte[] Buffer;
+	  public int Upto;
+	  internal int Limit;
+	  internal int Level;
+	  public int BufferOffset;
+
+	  public int EndIndex;
+
+	  public void Init(ByteBlockPool pool, int startIndex, int endIndex)
+	  {
+
+		Debug.Assert(endIndex - startIndex >= 0);
+		Debug.Assert(startIndex >= 0);
+		Debug.Assert(endIndex >= 0);
+
+		this.Pool = pool;
+		this.EndIndex = endIndex;
+
+		Level = 0;
+		BufferUpto = startIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
+		BufferOffset = BufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
+		Buffer = pool.Buffers[BufferUpto];
+		Upto = startIndex & ByteBlockPool.BYTE_BLOCK_MASK;
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int firstSize = Lucene.Net.Util.ByteBlockPool.LEVEL_SIZE_ARRAY[0];
+		int firstSize = ByteBlockPool.LEVEL_SIZE_ARRAY[0];
+
+		if (startIndex + firstSize >= endIndex)
+		{
+		  // There is only this one slice to read
+		  Limit = endIndex & ByteBlockPool.BYTE_BLOCK_MASK;
+		}
+		else
+		{
+		  Limit = Upto + firstSize-4;
+		}
+	  }
+
+	  public bool Eof()
+	  {
+		Debug.Assert(Upto + BufferOffset <= EndIndex);
+		return Upto + BufferOffset == EndIndex;
+	  }
+
+	  public override sbyte ReadByte()
+	  {
+		Debug.Assert(!Eof());
+		Debug.Assert(Upto <= Limit);
+		if (Upto == Limit)
+		{
+		  NextSlice();
+		}
+		return Buffer[Upto++];
+	  }
+
+	  public long WriteTo(DataOutput @out)
+	  {
+		long size = 0;
+		while (true)
+		{
+		  if (Limit + BufferOffset == EndIndex)
+		  {
+			Debug.Assert(EndIndex - BufferOffset >= Upto);
+			@out.WriteBytes(Buffer, Upto, Limit - Upto);
+			size += Limit - Upto;
+			break;
+		  }
+		  else
+		  {
+			@out.WriteBytes(Buffer, Upto, Limit - Upto);
+			size += Limit - Upto;
+			NextSlice();
+		  }
+		}
+
+		return size;
+	  }
+
+	  public void NextSlice()
+	  {
+
+		// Skip to our next slice
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int nextIndex = ((buffer[limit]&0xff)<<24) + ((buffer[1+limit]&0xff)<<16) + ((buffer[2+limit]&0xff)<<8) + (buffer[3+limit]&0xff);
+		int nextIndex = ((Buffer[Limit] & 0xff) << 24) + ((Buffer[1 + Limit] & 0xff) << 16) + ((Buffer[2 + Limit] & 0xff) << 8) + (Buffer[3 + Limit] & 0xff);
+
+		Level = ByteBlockPool.NEXT_LEVEL_ARRAY[Level];
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int newSize = Lucene.Net.Util.ByteBlockPool.LEVEL_SIZE_ARRAY[level];
+		int newSize = ByteBlockPool.LEVEL_SIZE_ARRAY[Level];
+
+		BufferUpto = nextIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
+		BufferOffset = BufferUpto * ByteBlockPool.BYTE_BLOCK_SIZE;
+
+		Buffer = Pool.Buffers[BufferUpto];
+		Upto = nextIndex & ByteBlockPool.BYTE_BLOCK_MASK;
+
+		if (nextIndex + newSize >= EndIndex)
+		{
+		  // We are advancing to the final slice
+		  Debug.Assert(EndIndex - nextIndex > 0);
+		  Limit = EndIndex - BufferOffset;
+		}
+		else
+		{
+		  // this is not the final slice (subtract 4 for the
+		  // forwarding address at the end of this new slice)
+		  Limit = Upto + newSize-4;
+		}
+	  }
+
+	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  {
+		while (len > 0)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int numLeft = limit-upto;
+		  int numLeft = Limit - Upto;
+		  if (numLeft < len)
+		  {
+			// Read entire slice
+			Array.Copy(Buffer, Upto, b, offset, numLeft);
+			offset += numLeft;
+			len -= numLeft;
+			NextSlice();
+		  }
+		  else
+		  {
+			// this slice is the last one
+			Array.Copy(Buffer, Upto, b, offset, len);
+			Upto += len;
+			break;
+		  }
+		}
+	  }
+	}
 }

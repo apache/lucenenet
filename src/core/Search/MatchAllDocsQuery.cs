@@ -1,198 +1,187 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using Lucene.Net.Index;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using TermDocs = Lucene.Net.Index.TermDocs;
-using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
-    
-    /// <summary> A query that matches all documents.
-    /// 
-    /// </summary>
-    [Serializable]
-    public class MatchAllDocsQuery:Query
-    {
-        
-        public MatchAllDocsQuery():this(null)
-        {
-        }
-        
-        private System.String normsField;
-        
-        /// <param name="normsField">Field used for normalization factor (document boost). Null if nothing.
-        /// </param>
-        public MatchAllDocsQuery(System.String normsField)
-        {
-            this.normsField = normsField;
-        }
-        
-        private class MatchAllScorer:Scorer
-        {
-            private void  InitBlock(MatchAllDocsQuery enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private MatchAllDocsQuery enclosingInstance;
-            public MatchAllDocsQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            internal TermDocs termDocs;
-            internal float score;
-            internal byte[] norms;
-            private int doc = - 1;
-            
-            internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity, Weight w, byte[] norms):base(similarity)
-            {
-                InitBlock(enclosingInstance);
-                this.termDocs = reader.TermDocs(null);
-                score = w.Value;
-                this.norms = norms;
-            }
-            
-            public override int DocID()
-            {
-                return doc;
-            }
-            
-            public override int NextDoc()
-            {
-                return doc = termDocs.Next()?termDocs.Doc:NO_MORE_DOCS;
-            }
-            
-            public override float Score()
-            {
-                return norms == null?score:score * Similarity.DecodeNorm(norms[DocID()]);
-            }
-            
-            public override int Advance(int target)
-            {
-                return doc = termDocs.SkipTo(target)?termDocs.Doc:NO_MORE_DOCS;
-            }
-        }
-        
-        [Serializable]
-        private class MatchAllDocsWeight:Weight
-        {
-            private void  InitBlock(MatchAllDocsQuery enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private MatchAllDocsQuery enclosingInstance;
-            public MatchAllDocsQuery Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Similarity similarity;
-            private float queryWeight;
-            private float queryNorm;
-            
-            public MatchAllDocsWeight(MatchAllDocsQuery enclosingInstance, Searcher searcher)
-            {
-                InitBlock(enclosingInstance);
-                this.similarity = searcher.Similarity;
-            }
-            
-            public override System.String ToString()
-            {
-                return "weight(" + Enclosing_Instance + ")";
-            }
 
-            public override Query Query
-            {
-                get { return Enclosing_Instance; }
-            }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            public override float Value
-            {
-                get { return queryWeight; }
-            }
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using Term = Lucene.Net.Index.Term;
+	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+	using Bits = Lucene.Net.Util.Bits;
 
-            public override float GetSumOfSquaredWeights()
-            {
-                queryWeight = Enclosing_Instance.Boost;
-                return queryWeight*queryWeight;
-            }
 
-            public override void  Normalize(float queryNorm)
-            {
-                this.queryNorm = queryNorm;
-                queryWeight *= this.queryNorm;
-            }
-            
-            public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-            {
-                return new MatchAllScorer(enclosingInstance, reader, similarity, this, Enclosing_Instance.normsField != null?reader.Norms(Enclosing_Instance.normsField):null);
-            }
-            
-            public override Explanation Explain(IndexReader reader, int doc)
-            {
-                // explain query weight
-                Explanation queryExpl = new ComplexExplanation(true, Value, "MatchAllDocsQuery, product of:");
-                if (Enclosing_Instance.Boost != 1.0f)
-                {
-                    queryExpl.AddDetail(new Explanation(Enclosing_Instance.Boost, "boost"));
-                }
-                queryExpl.AddDetail(new Explanation(queryNorm, "queryNorm"));
-                
-                return queryExpl;
-            }
-        }
-        
-        public override Weight CreateWeight(Searcher searcher)
-        {
-            return new MatchAllDocsWeight(this, searcher);
-        }
-        
-        public override void  ExtractTerms(System.Collections.Generic.ISet<Term> terms)
-        {
-        }
-        
-        public override System.String ToString(System.String field)
-        {
-            System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-            buffer.Append("*:*");
-            buffer.Append(ToStringUtils.Boost(Boost));
-            return buffer.ToString();
-        }
-        
-        public  override bool Equals(System.Object o)
-        {
-            if (!(o is MatchAllDocsQuery))
-                return false;
-            MatchAllDocsQuery other = (MatchAllDocsQuery) o;
-            return this.Boost == other.Boost;
-        }
-        
-        public override int GetHashCode()
-        {
-            return BitConverter.ToInt32(BitConverter.GetBytes(Boost), 0) ^ 0x1AA71190;
-        }
-    }
+	/// <summary>
+	/// A query that matches all documents.
+	/// 
+	/// </summary>
+	public class MatchAllDocsQuery : Query
+	{
+
+	  private class MatchAllScorer : Scorer
+	  {
+		  private readonly MatchAllDocsQuery OuterInstance;
+
+		internal readonly float Score_Renamed;
+		internal int Doc = -1;
+		internal readonly int MaxDoc;
+		internal readonly Bits LiveDocs;
+
+		internal MatchAllScorer(MatchAllDocsQuery outerInstance, IndexReader reader, Bits liveDocs, Weight w, float score) : base(w)
+		{
+			this.OuterInstance = outerInstance;
+		  this.LiveDocs = liveDocs;
+		  this.Score_Renamed = score;
+		  MaxDoc = reader.MaxDoc();
+		}
+
+		public override int DocID()
+		{
+		  return Doc;
+		}
+
+		public override int NextDoc()
+		{
+		  Doc++;
+		  while (LiveDocs != null && Doc < MaxDoc && !LiveDocs.Get(Doc))
+		  {
+			Doc++;
+		  }
+		  if (Doc == MaxDoc)
+		  {
+			Doc = NO_MORE_DOCS;
+		  }
+		  return Doc;
+		}
+
+		public override float Score()
+		{
+		  return Score_Renamed;
+		}
+
+		public override int Freq()
+		{
+		  return 1;
+		}
+
+		public override int Advance(int target)
+		{
+		  Doc = target - 1;
+		  return NextDoc();
+		}
+
+		public override long Cost()
+		{
+		  return MaxDoc;
+		}
+	  }
+
+	  private class MatchAllDocsWeight : Weight
+	  {
+		  private readonly MatchAllDocsQuery OuterInstance;
+
+		internal float QueryWeight;
+		internal float QueryNorm;
+
+		public MatchAllDocsWeight(MatchAllDocsQuery outerInstance, IndexSearcher searcher)
+		{
+			this.OuterInstance = outerInstance;
+		}
+
+		public override string ToString()
+		{
+		  return "weight(" + OuterInstance + ")";
+		}
+
+		public override Query Query
+		{
+			get
+			{
+			  return OuterInstance;
+			}
+		}
+
+		public override float ValueForNormalization
+		{
+			get
+			{
+			  QueryWeight = outerInstance.Boost;
+			  return QueryWeight * QueryWeight;
+			}
+		}
+
+		public override void Normalize(float queryNorm, float topLevelBoost)
+		{
+		  this.QueryNorm = queryNorm * topLevelBoost;
+		  QueryWeight *= this.QueryNorm;
+		}
+
+		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+		{
+		  return new MatchAllScorer(OuterInstance, context.Reader(), acceptDocs, this, QueryWeight);
+		}
+
+		public override Explanation Explain(AtomicReaderContext context, int doc)
+		{
+		  // explain query weight
+		  Explanation queryExpl = new ComplexExplanation(true, QueryWeight, "MatchAllDocsQuery, product of:");
+		  if (outerInstance.Boost != 1.0f)
+		  {
+			queryExpl.AddDetail(new Explanation(outerInstance.Boost,"boost"));
+		  }
+		  queryExpl.AddDetail(new Explanation(QueryNorm,"queryNorm"));
+
+		  return queryExpl;
+		}
+	  }
+
+	  public override Weight CreateWeight(IndexSearcher searcher)
+	  {
+		return new MatchAllDocsWeight(this, searcher);
+	  }
+
+	  public override void ExtractTerms(Set<Term> terms)
+	  {
+	  }
+
+	  public override string ToString(string field)
+	  {
+		StringBuilder buffer = new StringBuilder();
+		buffer.Append("*:*");
+		buffer.Append(ToStringUtils.Boost(Boost));
+		return buffer.ToString();
+	  }
+
+	  public override bool Equals(object o)
+	  {
+		if (!(o is MatchAllDocsQuery))
+		{
+		  return false;
+		}
+		MatchAllDocsQuery other = (MatchAllDocsQuery) o;
+		return this.Boost == other.Boost;
+	  }
+
+	  public override int HashCode()
+	  {
+		return float.floatToIntBits(Boost) ^ 0x1AA71190;
+	  }
+	}
+
 }

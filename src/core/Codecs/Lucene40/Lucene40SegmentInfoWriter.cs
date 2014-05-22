@@ -1,0 +1,90 @@
+using System;
+
+namespace Lucene.Net.Codecs.Lucene40
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using FieldInfos = Lucene.Net.Index.FieldInfos;
+	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+	using SegmentInfo = Lucene.Net.Index.SegmentInfo;
+	using Directory = Lucene.Net.Store.Directory;
+	using IOContext = Lucene.Net.Store.IOContext;
+	using IndexOutput = Lucene.Net.Store.IndexOutput;
+	using IOUtils = Lucene.Net.Util.IOUtils;
+
+	/// <summary>
+	/// Lucene 4.0 implementation of <seealso cref="SegmentInfoWriter"/>.
+	/// </summary>
+	/// <seealso cref= Lucene40SegmentInfoFormat
+	/// @lucene.experimental </seealso>
+	[Obsolete]
+	public class Lucene40SegmentInfoWriter : SegmentInfoWriter
+	{
+
+	  /// <summary>
+	  /// Sole constructor. </summary>
+	  public Lucene40SegmentInfoWriter()
+	  {
+	  }
+
+	  /// <summary>
+	  /// Save a single segment's info. </summary>
+	  public override void Write(Directory dir, SegmentInfo si, FieldInfos fis, IOContext ioContext)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(si.name, "", Lucene40SegmentInfoFormat.SI_EXTENSION);
+		string fileName = IndexFileNames.SegmentFileName(si.Name, "", Lucene40SegmentInfoFormat.SI_EXTENSION);
+		si.AddFile(fileName);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Store.IndexOutput output = dir.createOutput(fileName, ioContext);
+		IndexOutput output = dir.CreateOutput(fileName, ioContext);
+
+		bool success = false;
+		try
+		{
+		  CodecUtil.WriteHeader(output, Lucene40SegmentInfoFormat.CODEC_NAME, Lucene40SegmentInfoFormat.VERSION_CURRENT);
+		  // Write the Lucene version that created this segment, since 3.1
+		  output.WriteString(si.Version);
+		  output.WriteInt(si.DocCount);
+
+		  output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
+		  output.WriteStringStringMap(si.Diagnostics);
+		  output.WriteStringStringMap(Collections.emptyMap<string, string>());
+		  output.WriteStringSet(si.Files());
+
+		  success = true;
+		}
+		finally
+		{
+		  if (!success)
+		  {
+			IOUtils.CloseWhileHandlingException(output);
+			si.Dir.deleteFile(fileName);
+		  }
+		  else
+		  {
+			output.Close();
+		  }
+		}
+	  }
+	}
+
+}

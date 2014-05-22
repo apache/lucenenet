@@ -1,0 +1,156 @@
+using System;
+using System.Diagnostics;
+using System.Collections.Generic;
+
+namespace Lucene.Net.Search
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
+
+	/// <summary>
+	/// Wraps a Scorer with additional checks </summary>
+	public class AssertingScorer : Scorer
+	{
+
+	  // we need to track scorers using a weak hash map because otherwise we
+	  // could loose references because of eg.
+	  // AssertingScorer.score(Collector) which needs to delegate to work correctly
+	  private static IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = Collections.synchronizedMap(new WeakHashMap<Scorer, WeakReference<AssertingScorer>>());
+
+	  public static Scorer Wrap(Random random, Scorer other)
+	  {
+		if (other == null || other is AssertingScorer)
+		{
+		  return other;
+		}
+		AssertingScorer assertScorer = new AssertingScorer(random, other);
+		ASSERTING_INSTANCES[other] = new WeakReference<>(assertScorer);
+		return assertScorer;
+	  }
+
+	  internal static Scorer GetAssertingScorer(Random random, Scorer other)
+	  {
+		if (other == null || other is AssertingScorer)
+		{
+		  return other;
+		}
+		WeakReference<AssertingScorer> assertingScorerRef = ASSERTING_INSTANCES[other];
+		AssertingScorer assertingScorer = assertingScorerRef == null ? null : assertingScorerRef.get();
+		if (assertingScorer == null)
+		{
+		  // can happen in case of memory pressure or if
+		  // scorer1.score(collector) calls
+		  // collector.setScorer(scorer2) with scorer1 != scorer2, such as
+		  // BooleanScorer. In that case we can't enable all assertions
+		  return new AssertingScorer(random, other);
+		}
+		else
+		{
+		  return assertingScorer;
+		}
+	  }
+
+	  internal readonly Random Random;
+	  internal readonly Scorer @in;
+	  internal readonly AssertingAtomicReader.AssertingDocsEnum DocsEnumIn;
+
+	  private AssertingScorer(Random random, Scorer @in) : base(@in.weight)
+	  {
+		this.Random = random;
+		this.@in = @in;
+		this.DocsEnumIn = new AssertingAtomicReader.AssertingDocsEnum(@in);
+	  }
+
+	  public virtual Scorer In
+	  {
+		  get
+		  {
+			return @in;
+		  }
+	  }
+
+	  internal virtual bool Iterating()
+	  {
+		switch (DocID())
+		{
+		case -1:
+		case NO_MORE_DOCS:
+		  return false;
+		default:
+		  return true;
+		}
+	  }
+
+	  public override float Score()
+	  {
+		Debug.Assert(Iterating());
+		float score = @in.score();
+		Debug.Assert(!float.IsNaN(score));
+		Debug.Assert(!float.IsNaN(score));
+		return score;
+	  }
+
+	  public override ICollection<ChildScorer> Children
+	  {
+		  get
+		  {
+			// We cannot hide that we hold a single child, else
+			// collectors (e.g. ToParentBlockJoinCollector) that
+			// need to walk the scorer tree will miss/skip the
+			// Scorer we wrap:
+			return Collections.singletonList(new ChildScorer(@in, "SHOULD"));
+		  }
+	  }
+
+	  public override int Freq()
+	  {
+		Debug.Assert(Iterating());
+		return @in.freq();
+	  }
+
+	  public override int DocID()
+	  {
+		return @in.docID();
+	  }
+
+	  public override int NextDoc()
+	  {
+		return DocsEnumIn.NextDoc();
+	  }
+
+	  public override int Advance(int target)
+	  {
+		return DocsEnumIn.Advance(target);
+	  }
+
+	  public override long Cost()
+	  {
+		return @in.cost();
+	  }
+
+	  public override string ToString()
+	  {
+		return "AssertingScorer(" + @in + ")";
+	  }
+	}
+
+
+}

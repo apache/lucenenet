@@ -1,0 +1,989 @@
+using System;
+using System.Collections.Generic;
+
+namespace Lucene.Net.Codecs.Lucene40
+{
+
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
+	using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
+	using FieldInfo = Lucene.Net.Index.FieldInfo;
+	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
+	using NumericDocValues = Lucene.Net.Index.NumericDocValues;
+	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
+	using SortedDocValues = Lucene.Net.Index.SortedDocValues;
+	using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
+	using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
+	using Directory = Lucene.Net.Store.Directory;
+	using IndexInput = Lucene.Net.Store.IndexInput;
+	using Bits = Lucene.Net.Util.Bits;
+	using BytesRef = Lucene.Net.Util.BytesRef;
+	using IOUtils = Lucene.Net.Util.IOUtils;
+	using PagedBytes = Lucene.Net.Util.PagedBytes;
+	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+
+	/// <summary>
+	/// Reads the 4.0 format of norms/docvalues
+	/// @lucene.experimental </summary>
+	/// @deprecated Only for reading old 4.0 and 4.1 segments 
+	[Obsolete("Only for reading old 4.0 and 4.1 segments")]
+	internal sealed class Lucene40DocValuesReader : DocValuesProducer
+	{
+	  private readonly Directory Dir;
+	  private readonly SegmentReadState State;
+	  private readonly string LegacyKey;
+	  private const string SegmentSuffix = "dv";
+
+	  // ram instances we have already loaded
+	  private readonly IDictionary<int?, NumericDocValues> NumericInstances = new Dictionary<int?, NumericDocValues>();
+	  private readonly IDictionary<int?, BinaryDocValues> BinaryInstances = new Dictionary<int?, BinaryDocValues>();
+	  private readonly IDictionary<int?, SortedDocValues> SortedInstances = new Dictionary<int?, SortedDocValues>();
+
+	  private readonly AtomicLong RamBytesUsed_Renamed;
+
+	  internal Lucene40DocValuesReader(SegmentReadState state, string filename, string legacyKey)
+	  {
+		this.State = state;
+		this.LegacyKey = legacyKey;
+		this.Dir = new CompoundFileDirectory(state.Directory, filename, state.Context, false);
+		RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOf(this.GetType()));
+	  }
+
+	  public override NumericDocValues GetNumeric(FieldInfo field)
+	  {
+		  lock (this)
+		  {
+			NumericDocValues instance = NumericInstances[field.Number];
+			if (instance == null)
+			{
+			  string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+			  IndexInput input = Dir.OpenInput(fileName, State.Context);
+			  bool success = false;
+			  try
+			  {
+				switch (Enum.Parse(typeof(LegacyDocValuesType), field.GetAttribute(LegacyKey)))
+				{
+				  case VAR_INTS:
+					instance = LoadVarIntsField(field, input);
+					break;
+				  case FIXED_INTS_8:
+					instance = LoadByteField(field, input);
+					break;
+				  case FIXED_INTS_16:
+					instance = LoadShortField(field, input);
+					break;
+				  case FIXED_INTS_32:
+					instance = LoadIntField(field, input);
+					break;
+				  case FIXED_INTS_64:
+					instance = LoadLongField(field, input);
+					break;
+				  case FLOAT_32:
+					instance = LoadFloatField(field, input);
+					break;
+				  case FLOAT_64:
+					instance = LoadDoubleField(field, input);
+					break;
+				  default:
+					throw new AssertionError();
+				}
+				CodecUtil.CheckEOF(input);
+				success = true;
+			  }
+			  finally
+			  {
+				if (success)
+				{
+				  IOUtils.Close(input);
+				}
+				else
+				{
+				  IOUtils.CloseWhileHandlingException(input);
+				}
+			  }
+			  NumericInstances[field.Number] = instance;
+			}
+			return instance;
+		  }
+	  }
+
+	  private NumericDocValues LoadVarIntsField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.VAR_INTS_CODEC_NAME, Lucene40DocValuesFormat.VAR_INTS_VERSION_START, Lucene40DocValuesFormat.VAR_INTS_VERSION_CURRENT);
+		sbyte header = input.ReadByte();
+		if (header == Lucene40DocValuesFormat.VAR_INTS_FIXED_64)
+		{
+		  int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long values[] = new long[maxDoc];
+		  long[] values = new long[maxDoc];
+		  for (int i = 0; i < values.Length; i++)
+		  {
+			values[i] = input.ReadLong();
+		  }
+		  RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		  return new NumericDocValuesAnonymousInnerClassHelper(this, values);
+		}
+		else if (header == Lucene40DocValuesFormat.VAR_INTS_PACKED)
+		{
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long minValue = input.readLong();
+		  long minValue = input.ReadLong();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long defaultValue = input.readLong();
+		  long defaultValue = input.ReadLong();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getReader(input);
+		  PackedInts.Reader reader = PackedInts.GetReader(input);
+		  RamBytesUsed_Renamed.addAndGet(reader.RamBytesUsed());
+		  return new NumericDocValuesAnonymousInnerClassHelper2(this, minValue, defaultValue, reader);
+		}
+		else
+		{
+		  throw new CorruptIndexException("invalid VAR_INTS header byte: " + header + " (resource=" + input + ")");
+		}
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private long[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper(Lucene40DocValuesReader outerInstance, long[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private long MinValue;
+		  private long DefaultValue;
+		  private PackedInts.Reader Reader;
+
+		  public NumericDocValuesAnonymousInnerClassHelper2(Lucene40DocValuesReader outerInstance, long minValue, long defaultValue, PackedInts.Reader reader)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.MinValue = minValue;
+			  this.DefaultValue = defaultValue;
+			  this.Reader = reader;
+		  }
+
+		  public override long Get(int docID)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long value = reader.get(docID);
+			long value = Reader.Get(docID);
+			if (value == DefaultValue)
+			{
+			  return 0;
+			}
+			else
+			{
+			  return MinValue + value;
+			}
+		  }
+	  }
+
+	  private NumericDocValues LoadByteField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
+		int valueSize = input.ReadInt();
+		if (valueSize != 1)
+		{
+		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
+		}
+		int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final byte values[] = new byte[maxDoc];
+		sbyte[] values = new sbyte[maxDoc];
+		input.ReadBytes(values, 0, values.Length);
+		RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		return new NumericDocValuesAnonymousInnerClassHelper3(this, values);
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper3 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private sbyte[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper3(Lucene40DocValuesReader outerInstance, sbyte[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  private NumericDocValues LoadShortField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
+		int valueSize = input.ReadInt();
+		if (valueSize != 2)
+		{
+		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
+		}
+		int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final short values[] = new short[maxDoc];
+		short[] values = new short[maxDoc];
+		for (int i = 0; i < values.Length; i++)
+		{
+		  values[i] = input.ReadShort();
+		}
+		RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		return new NumericDocValuesAnonymousInnerClassHelper4(this, values);
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper4 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private short[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper4(Lucene40DocValuesReader outerInstance, short[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  private NumericDocValues LoadIntField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
+		int valueSize = input.ReadInt();
+		if (valueSize != 4)
+		{
+		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
+		}
+		int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int values[] = new int[maxDoc];
+		int[] values = new int[maxDoc];
+		for (int i = 0; i < values.Length; i++)
+		{
+		  values[i] = input.ReadInt();
+		}
+		RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		return new NumericDocValuesAnonymousInnerClassHelper5(this, values);
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper5 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private int[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper5(Lucene40DocValuesReader outerInstance, int[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  private NumericDocValues LoadLongField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
+		int valueSize = input.ReadInt();
+		if (valueSize != 8)
+		{
+		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
+		}
+		int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long values[] = new long[maxDoc];
+		long[] values = new long[maxDoc];
+		for (int i = 0; i < values.Length; i++)
+		{
+		  values[i] = input.ReadLong();
+		}
+		RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		return new NumericDocValuesAnonymousInnerClassHelper6(this, values);
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper6 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private long[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper6(Lucene40DocValuesReader outerInstance, long[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  private NumericDocValues LoadFloatField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.FLOATS_CODEC_NAME, Lucene40DocValuesFormat.FLOATS_VERSION_START, Lucene40DocValuesFormat.FLOATS_VERSION_CURRENT);
+		int valueSize = input.ReadInt();
+		if (valueSize != 4)
+		{
+		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
+		}
+		int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int values[] = new int[maxDoc];
+		int[] values = new int[maxDoc];
+		for (int i = 0; i < values.Length; i++)
+		{
+		  values[i] = input.ReadInt();
+		}
+		RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		return new NumericDocValuesAnonymousInnerClassHelper7(this, values);
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper7 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private int[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper7(Lucene40DocValuesReader outerInstance, int[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  private NumericDocValues LoadDoubleField(FieldInfo field, IndexInput input)
+	  {
+		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.FLOATS_CODEC_NAME, Lucene40DocValuesFormat.FLOATS_VERSION_START, Lucene40DocValuesFormat.FLOATS_VERSION_CURRENT);
+		int valueSize = input.ReadInt();
+		if (valueSize != 8)
+		{
+		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
+		}
+		int maxDoc = State.SegmentInfo.DocCount;
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long values[] = new long[maxDoc];
+		long[] values = new long[maxDoc];
+		for (int i = 0; i < values.Length; i++)
+		{
+		  values[i] = input.ReadLong();
+		}
+		RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+		return new NumericDocValuesAnonymousInnerClassHelper8(this, values);
+	  }
+
+	  private class NumericDocValuesAnonymousInnerClassHelper8 : NumericDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private long[] Values;
+
+		  public NumericDocValuesAnonymousInnerClassHelper8(Lucene40DocValuesReader outerInstance, long[] values)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Values = values;
+		  }
+
+		  public override long Get(int docID)
+		  {
+			return Values[docID];
+		  }
+	  }
+
+	  public override BinaryDocValues GetBinary(FieldInfo field)
+	  {
+		  lock (this)
+		  {
+			BinaryDocValues instance = BinaryInstances[field.Number];
+			if (instance == null)
+			{
+			  switch (Enum.Parse(typeof(LegacyDocValuesType), field.GetAttribute(LegacyKey)))
+			  {
+				case BYTES_FIXED_STRAIGHT:
+				  instance = LoadBytesFixedStraight(field);
+				  break;
+				case BYTES_VAR_STRAIGHT:
+				  instance = LoadBytesVarStraight(field);
+				  break;
+				case BYTES_FIXED_DEREF:
+				  instance = LoadBytesFixedDeref(field);
+				  break;
+				case BYTES_VAR_DEREF:
+				  instance = LoadBytesVarDeref(field);
+				  break;
+				default:
+				  throw new AssertionError();
+			  }
+			  BinaryInstances[field.Number] = instance;
+			}
+			return instance;
+		  }
+	  }
+
+	  private BinaryDocValues LoadBytesFixedStraight(FieldInfo field)
+	  {
+		string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+		IndexInput input = Dir.OpenInput(fileName, State.Context);
+		bool success = false;
+		try
+		{
+		  CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_CODEC_NAME, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_CURRENT);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int fixedLength = input.readInt();
+		  int fixedLength = input.ReadInt();
+		  PagedBytes bytes = new PagedBytes(16);
+		  bytes.Copy(input, fixedLength * (long)State.SegmentInfo.DocCount);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+		  PagedBytes.Reader bytesReader = bytes.Freeze(true);
+		  CodecUtil.CheckEOF(input);
+		  success = true;
+		  RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed());
+		  return new BinaryDocValuesAnonymousInnerClassHelper(this, fixedLength, bytesReader);
+		}
+		finally
+		{
+		  if (success)
+		  {
+			IOUtils.Close(input);
+		  }
+		  else
+		  {
+			IOUtils.CloseWhileHandlingException(input);
+		  }
+		}
+	  }
+
+	  private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private int FixedLength;
+		  private PagedBytes.Reader BytesReader;
+
+		  public BinaryDocValuesAnonymousInnerClassHelper(Lucene40DocValuesReader outerInstance, int fixedLength, PagedBytes.Reader bytesReader)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.FixedLength = fixedLength;
+			  this.BytesReader = bytesReader;
+		  }
+
+		  public override void Get(int docID, BytesRef result)
+		  {
+			BytesReader.FillSlice(result, FixedLength * (long)docID, FixedLength);
+		  }
+	  }
+
+	  private BinaryDocValues LoadBytesVarStraight(FieldInfo field)
+	  {
+		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+		IndexInput data = null;
+		IndexInput index = null;
+		bool success = false;
+		try
+		{
+		  data = Dir.OpenInput(dataName, State.Context);
+		  CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_CURRENT);
+		  index = Dir.OpenInput(indexName, State.Context);
+		  CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_CURRENT);
+		  long totalBytes = index.ReadVLong();
+		  PagedBytes bytes = new PagedBytes(16);
+		  bytes.Copy(data, totalBytes);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+		  PagedBytes.Reader bytesReader = bytes.Freeze(true);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getReader(index);
+		  PackedInts.Reader reader = PackedInts.GetReader(index);
+		  CodecUtil.CheckEOF(data);
+		  CodecUtil.CheckEOF(index);
+		  success = true;
+		  RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+		  return new BinaryDocValuesAnonymousInnerClassHelper2(this, bytesReader, reader);
+		}
+		finally
+		{
+		  if (success)
+		  {
+			IOUtils.close(data, index);
+		  }
+		  else
+		  {
+			IOUtils.CloseWhileHandlingException(data, index);
+		  }
+		}
+	  }
+
+	  private class BinaryDocValuesAnonymousInnerClassHelper2 : BinaryDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private PagedBytes.Reader BytesReader;
+		  private PackedInts.Reader Reader;
+
+		  public BinaryDocValuesAnonymousInnerClassHelper2(Lucene40DocValuesReader outerInstance, PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.BytesReader = bytesReader;
+			  this.Reader = reader;
+		  }
+
+		  public override void Get(int docID, BytesRef result)
+		  {
+			long startAddress = Reader.Get(docID);
+			long endAddress = Reader.Get(docID + 1);
+			BytesReader.FillSlice(result, startAddress, (int)(endAddress - startAddress));
+		  }
+	  }
+
+	  private BinaryDocValues LoadBytesFixedDeref(FieldInfo field)
+	  {
+		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+		IndexInput data = null;
+		IndexInput index = null;
+		bool success = false;
+		try
+		{
+		  data = Dir.OpenInput(dataName, State.Context);
+		  CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_CURRENT);
+		  index = Dir.OpenInput(indexName, State.Context);
+		  CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_CURRENT);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int fixedLength = data.readInt();
+		  int fixedLength = data.ReadInt();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int valueCount = index.readInt();
+		  int valueCount = index.ReadInt();
+		  PagedBytes bytes = new PagedBytes(16);
+		  bytes.Copy(data, fixedLength * (long) valueCount);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+		  PagedBytes.Reader bytesReader = bytes.Freeze(true);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getReader(index);
+		  PackedInts.Reader reader = PackedInts.GetReader(index);
+		  CodecUtil.CheckEOF(data);
+		  CodecUtil.CheckEOF(index);
+		  RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+		  success = true;
+		  return new BinaryDocValuesAnonymousInnerClassHelper3(this, fixedLength, bytesReader, reader);
+		}
+		finally
+		{
+		  if (success)
+		  {
+			IOUtils.close(data, index);
+		  }
+		  else
+		  {
+			IOUtils.CloseWhileHandlingException(data, index);
+		  }
+		}
+	  }
+
+	  private class BinaryDocValuesAnonymousInnerClassHelper3 : BinaryDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private int FixedLength;
+		  private PagedBytes.Reader BytesReader;
+		  private PackedInts.Reader Reader;
+
+		  public BinaryDocValuesAnonymousInnerClassHelper3(Lucene40DocValuesReader outerInstance, int fixedLength, PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.FixedLength = fixedLength;
+			  this.BytesReader = bytesReader;
+			  this.Reader = reader;
+		  }
+
+		  public override void Get(int docID, BytesRef result)
+		  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long offset = fixedLength * reader.get(docID);
+			long offset = FixedLength * Reader.Get(docID);
+			BytesReader.FillSlice(result, offset, FixedLength);
+		  }
+	  }
+
+	  private BinaryDocValues LoadBytesVarDeref(FieldInfo field)
+	  {
+		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+		IndexInput data = null;
+		IndexInput index = null;
+		bool success = false;
+		try
+		{
+		  data = Dir.OpenInput(dataName, State.Context);
+		  CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_VAR_DEREF_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_CURRENT);
+		  index = Dir.OpenInput(indexName, State.Context);
+		  CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_VAR_DEREF_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_CURRENT);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final long totalBytes = index.readLong();
+		  long totalBytes = index.ReadLong();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes bytes = new Lucene.Net.Util.PagedBytes(16);
+		  PagedBytes bytes = new PagedBytes(16);
+		  bytes.Copy(data, totalBytes);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+		  PagedBytes.Reader bytesReader = bytes.Freeze(true);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getReader(index);
+		  PackedInts.Reader reader = PackedInts.GetReader(index);
+		  CodecUtil.CheckEOF(data);
+		  CodecUtil.CheckEOF(index);
+		  RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+		  success = true;
+		  return new BinaryDocValuesAnonymousInnerClassHelper4(this, bytesReader, reader);
+		}
+		finally
+		{
+		  if (success)
+		  {
+			IOUtils.close(data, index);
+		  }
+		  else
+		  {
+			IOUtils.CloseWhileHandlingException(data, index);
+		  }
+		}
+	  }
+
+	  private class BinaryDocValuesAnonymousInnerClassHelper4 : BinaryDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private PagedBytes.Reader BytesReader;
+		  private PackedInts.Reader Reader;
+
+		  public BinaryDocValuesAnonymousInnerClassHelper4(Lucene40DocValuesReader outerInstance, PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.BytesReader = bytesReader;
+			  this.Reader = reader;
+		  }
+
+		  public override void Get(int docID, BytesRef result)
+		  {
+			long startAddress = Reader.Get(docID);
+			BytesRef lengthBytes = new BytesRef();
+			BytesReader.FillSlice(lengthBytes, startAddress, 1);
+			sbyte code = lengthBytes.Bytes[lengthBytes.Offset];
+			if ((code & 128) == 0)
+			{
+			  // length is 1 byte
+			  BytesReader.FillSlice(result, startAddress + 1, (int) code);
+			}
+			else
+			{
+			  BytesReader.FillSlice(lengthBytes, startAddress + 1, 1);
+			  int length = ((code & 0x7f) << 8) | (lengthBytes.Bytes[lengthBytes.Offset] & 0xff);
+			  BytesReader.FillSlice(result, startAddress + 2, length);
+			}
+		  }
+	  }
+
+	  public override SortedDocValues GetSorted(FieldInfo field)
+	  {
+		  lock (this)
+		  {
+			SortedDocValues instance = SortedInstances[field.Number];
+			if (instance == null)
+			{
+			  string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+			  string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+			  IndexInput data = null;
+			  IndexInput index = null;
+			  bool success = false;
+			  try
+			  {
+				data = Dir.OpenInput(dataName, State.Context);
+				index = Dir.OpenInput(indexName, State.Context);
+				switch (Enum.Parse(typeof(LegacyDocValuesType), field.GetAttribute(LegacyKey)))
+				{
+				  case BYTES_FIXED_SORTED:
+					instance = LoadBytesFixedSorted(field, data, index);
+					break;
+				  case BYTES_VAR_SORTED:
+					instance = LoadBytesVarSorted(field, data, index);
+					break;
+				  default:
+					throw new AssertionError();
+				}
+				CodecUtil.CheckEOF(data);
+				CodecUtil.CheckEOF(index);
+				success = true;
+			  }
+			  finally
+			  {
+				if (success)
+				{
+				  IOUtils.close(data, index);
+				}
+				else
+				{
+				  IOUtils.CloseWhileHandlingException(data, index);
+				}
+			  }
+			  SortedInstances[field.Number] = instance;
+			}
+			return instance;
+		  }
+	  }
+
+	  private SortedDocValues LoadBytesFixedSorted(FieldInfo field, IndexInput data, IndexInput index)
+	  {
+		CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_CURRENT);
+		CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_CURRENT);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int fixedLength = data.readInt();
+		int fixedLength = data.ReadInt();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int valueCount = index.readInt();
+		int valueCount = index.ReadInt();
+
+		PagedBytes bytes = new PagedBytes(16);
+		bytes.Copy(data, fixedLength * (long) valueCount);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+		PagedBytes.Reader bytesReader = bytes.Freeze(true);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getReader(index);
+		PackedInts.Reader reader = PackedInts.GetReader(index);
+		RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+
+		return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper(this, fixedLength, valueCount, bytesReader, reader));
+	  }
+
+	  private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private int FixedLength;
+		  private int ValueCount;
+		  private PagedBytes.Reader BytesReader;
+		  private PackedInts.Reader Reader;
+
+		  public SortedDocValuesAnonymousInnerClassHelper(Lucene40DocValuesReader outerInstance, int fixedLength, int valueCount, PagedBytes.Reader bytesReader, PackedInts.Reader reader)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.FixedLength = fixedLength;
+			  this.ValueCount = valueCount;
+			  this.BytesReader = bytesReader;
+			  this.Reader = reader;
+		  }
+
+		  public override int GetOrd(int docID)
+		  {
+			return (int) Reader.Get(docID);
+		  }
+
+		  public override void LookupOrd(int ord, BytesRef result)
+		  {
+			BytesReader.FillSlice(result, FixedLength * (long) ord, FixedLength);
+		  }
+
+		  public override int ValueCount
+		  {
+			  get
+			  {
+				return ValueCount;
+			  }
+		  }
+	  }
+
+	  private SortedDocValues LoadBytesVarSorted(FieldInfo field, IndexInput data, IndexInput index)
+	  {
+		CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_VAR_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_CURRENT);
+		CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_VAR_SORTED_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_CURRENT);
+
+		long maxAddress = index.ReadLong();
+		PagedBytes bytes = new PagedBytes(16);
+		bytes.Copy(data, maxAddress);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes.Reader bytesReader = bytes.freeze(true);
+		PagedBytes.Reader bytesReader = bytes.Freeze(true);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader addressReader = Lucene.Net.Util.Packed.PackedInts.getReader(index);
+		PackedInts.Reader addressReader = PackedInts.GetReader(index);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader ordsReader = Lucene.Net.Util.Packed.PackedInts.getReader(index);
+		PackedInts.Reader ordsReader = PackedInts.GetReader(index);
+
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int valueCount = addressReader.size() - 1;
+		int valueCount = addressReader.Size() - 1;
+		RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + addressReader.RamBytesUsed() + ordsReader.RamBytesUsed());
+
+		return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper2(this, bytesReader, addressReader, ordsReader, valueCount));
+	  }
+
+	  private class SortedDocValuesAnonymousInnerClassHelper2 : SortedDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private PagedBytes.Reader BytesReader;
+		  private PackedInts.Reader AddressReader;
+		  private PackedInts.Reader OrdsReader;
+		  private int ValueCount;
+
+		  public SortedDocValuesAnonymousInnerClassHelper2(Lucene40DocValuesReader outerInstance, PagedBytes.Reader bytesReader, PackedInts.Reader addressReader, PackedInts.Reader ordsReader, int valueCount)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.BytesReader = bytesReader;
+			  this.AddressReader = addressReader;
+			  this.OrdsReader = ordsReader;
+			  this.ValueCount = valueCount;
+		  }
+
+		  public override int GetOrd(int docID)
+		  {
+			return (int)OrdsReader.Get(docID);
+		  }
+
+		  public override void LookupOrd(int ord, BytesRef result)
+		  {
+			long startAddress = AddressReader.Get(ord);
+			long endAddress = AddressReader.Get(ord + 1);
+			BytesReader.FillSlice(result, startAddress, (int)(endAddress - startAddress));
+		  }
+
+		  public override int ValueCount
+		  {
+			  get
+			  {
+				return ValueCount;
+			  }
+		  }
+	  }
+
+	  // detects and corrects LUCENE-4717 in old indexes
+	  private SortedDocValues CorrectBuggyOrds(SortedDocValues @in)
+	  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int maxDoc = state.segmentInfo.getDocCount();
+		int maxDoc = State.SegmentInfo.DocCount;
+		for (int i = 0; i < maxDoc; i++)
+		{
+		  if (@in.GetOrd(i) == 0)
+		  {
+			return @in; // ok
+		  }
+		}
+
+		// we had ord holes, return an ord-shifting-impl that corrects the bug
+		return new SortedDocValuesAnonymousInnerClassHelper3(this, @in);
+	  }
+
+	  private class SortedDocValuesAnonymousInnerClassHelper3 : SortedDocValues
+	  {
+		  private readonly Lucene40DocValuesReader OuterInstance;
+
+		  private SortedDocValues @in;
+
+		  public SortedDocValuesAnonymousInnerClassHelper3(Lucene40DocValuesReader outerInstance, SortedDocValues @in)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.@in = @in;
+		  }
+
+		  public override int GetOrd(int docID)
+		  {
+			return @in.GetOrd(docID) - 1;
+		  }
+
+		  public override void LookupOrd(int ord, BytesRef result)
+		  {
+			@in.LookupOrd(ord + 1, result);
+		  }
+
+		  public override int ValueCount
+		  {
+			  get
+			  {
+				return @in.ValueCount - 1;
+			  }
+		  }
+	  }
+
+	  public override SortedSetDocValues GetSortedSet(FieldInfo field)
+	  {
+		throw new IllegalStateException("Lucene 4.0 does not support SortedSet: how did you pull this off?");
+	  }
+
+	  public override Bits GetDocsWithField(FieldInfo field)
+	  {
+		return new Lucene.Net.Util.Bits_MatchAllBits(State.SegmentInfo.DocCount);
+	  }
+
+	  public override void Close()
+	  {
+		Dir.Close();
+	  }
+
+	  public override long RamBytesUsed()
+	  {
+		return RamBytesUsed_Renamed.get();
+	  }
+
+	  public override void CheckIntegrity()
+	  {
+	  }
+	}
+
+}

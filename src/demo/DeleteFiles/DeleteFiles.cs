@@ -16,52 +16,58 @@
  */
 
 using System;
-using Lucene.Net.Index;
+
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
+using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
 
 namespace Lucene.Net.Demo
 {
-    /// <summary>Deletes documents from an index that do not contain a term. </summary>
-    public static class DeleteFiles
-    {
-        
-        /// <summary>Deletes documents from an index that do not contain a term. </summary>
-        [STAThread]
-        public static void Main(System.String[] args)
-        {
-            var usage = typeof(DeleteFiles) + " <unique_term>";
-            if (args.Length == 0)
-            {
-                Console.Error.WriteLine("Usage: " + usage);
-                Environment.Exit(1);
-            }
-
-            try
-            {
-                // We don't want a read-only reader because we are about to delete.
-                using (var directory = FSDirectory.Open("index"))
-                using (var reader = IndexReader.Open(directory, false))
-                {
-                    var term = new Term("path", args[0]);
-                    var deleted = reader.DeleteDocuments(term);
-
-                    Console.Out.WriteLine("deleted " + deleted + " documents containing " + term);
-
-                    // one can also delete documents by their internal id:
-                    /*
-                    for (int i = 0; i < reader.MaxDoc; i++) {
-                        Console.Out.WriteLine("Deleting document with id " + i);
-                        reader.DeleteDocument(i);
-                    }
-                    */
-
-                    reader.Commit();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
-            }
-        }
-    }
+	
+	
+	/// <summary>Deletes documents from an index that do not contain a term. </summary>
+	public class DeleteFiles
+	{
+		
+		private DeleteFiles()
+		{
+		} // singleton
+		
+		/// <summary>Deletes documents from an index that do not contain a term. </summary>
+		[STAThread]
+		public static void  Main(System.String[] args)
+		{
+			System.String usage = typeof(DeleteFiles) + " <unique_term>";
+			if (args.Length == 0)
+			{
+				System.Console.Error.WriteLine("Usage: " + usage);
+				System.Environment.Exit(1);
+			}
+			try
+			{
+				Directory directory = FSDirectory.Open("index");
+				IndexReader reader = IndexReader.Open(directory, false); // we don't want read-only because we are about to delete
+				
+				Term term = new Term("path", args[0]);
+				int deleted = reader.DeleteDocuments(term);
+				
+				System.Console.Out.WriteLine("deleted " + deleted + " documents containing " + term);
+				
+				// one can also delete documents by their internal id:
+				/*
+				for (int i = 0; i < reader.maxDoc(); i++) {
+				System.out.println("Deleting document with id " + i);
+				reader.delete(i);
+				}*/
+				
+				reader.Close();
+				directory.Close();
+			}
+			catch (System.Exception e)
+			{
+				System.Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
+			}
+		}
+	}
 }

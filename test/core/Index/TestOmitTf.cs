@@ -1,560 +1,587 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
-using Lucene.Net.Search;
-using NUnit.Framework;
-
-using Analyzer = Lucene.Net.Analysis.Analyzer;
-using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using Directory = Lucene.Net.Store.Directory;
-using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
-using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-using Collector = Lucene.Net.Search.Collector;
-using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-using Scorer = Lucene.Net.Search.Scorer;
-using Searcher = Lucene.Net.Search.Searcher;
-using Similarity = Lucene.Net.Search.Similarity;
-using TermQuery = Lucene.Net.Search.TermQuery;
-using Occur = Lucene.Net.Search.Occur;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using _TestUtil = Lucene.Net.Util._TestUtil;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
-    [TestFixture]
-    public class TestOmitTf:LuceneTestCase
-    {
-        private class AnonymousClassCountingHitCollector:CountingHitCollector
-        {
-            public AnonymousClassCountingHitCollector(TestOmitTf enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(TestOmitTf enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestOmitTf enclosingInstance;
-            public TestOmitTf Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Scorer scorer;
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
-            public override void  Collect(int doc)
-            {
-                //System.out.println("Q1: Doc=" + doc + " score=" + score);
-                float score = scorer.Score();
-                Assert.IsTrue(score == 1.0f);
-                base.Collect(doc);
-            }
-        }
-        
-        private class AnonymousClassCountingHitCollector1:CountingHitCollector
-        {
-            public AnonymousClassCountingHitCollector1(TestOmitTf enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(TestOmitTf enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestOmitTf enclosingInstance;
-            public TestOmitTf Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Scorer scorer;
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
-            public override void  Collect(int doc)
-            {
-                //System.out.println("Q2: Doc=" + doc + " score=" + score);
-                float score = scorer.Score();
-                Assert.IsTrue(score == 1.0f + doc);
-                base.Collect(doc);
-            }
-        }
-        
-        private class AnonymousClassCountingHitCollector2:CountingHitCollector
-        {
-            public AnonymousClassCountingHitCollector2(TestOmitTf enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(TestOmitTf enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestOmitTf enclosingInstance;
-            public TestOmitTf Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Scorer scorer;
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
-            public override void  Collect(int doc)
-            {
-                //System.out.println("Q1: Doc=" + doc + " score=" + score);
-                float score = scorer.Score();
-                Assert.IsTrue(score == 1.0f);
-                Assert.IsFalse(doc % 2 == 0);
-                base.Collect(doc);
-            }
-        }
-        
-        private class AnonymousClassCountingHitCollector3:CountingHitCollector
-        {
-            public AnonymousClassCountingHitCollector3(TestOmitTf enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(TestOmitTf enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestOmitTf enclosingInstance;
-            public TestOmitTf Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private Scorer scorer;
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
-            public override void  Collect(int doc)
-            {
-                float score = scorer.Score();
-                //System.out.println("Q1: Doc=" + doc + " score=" + score);
-                Assert.IsTrue(score == 1.0f);
-                Assert.IsTrue(doc % 2 == 0);
-                base.Collect(doc);
-            }
-        }
-        
-        private class AnonymousClassCountingHitCollector4:CountingHitCollector
-        {
-            public AnonymousClassCountingHitCollector4(TestOmitTf enclosingInstance)
-            {
-                InitBlock(enclosingInstance);
-            }
-            private void  InitBlock(TestOmitTf enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestOmitTf enclosingInstance;
-            public TestOmitTf Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            public override void  Collect(int doc)
-            {
-                //System.out.println("BQ: Doc=" + doc + " score=" + score);
-                base.Collect(doc);
-            }
-        }
-        
-        private class AnonymousIDFExplanation : Explanation.IDFExplanation
-        {
-            public override float Idf
-            {
-                get { return 1.0f; }
-            }
 
-            public override string Explain()
-            {
-                return "Inexplicable";
-            }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        [Serializable]
-        public class SimpleSimilarity:Similarity
-        {
-            public override float LengthNorm(System.String field, int numTerms)
-            {
-                return 1.0f;
-            }
-            public override float QueryNorm(float sumOfSquaredWeights)
-            {
-                return 1.0f;
-            }
-            
-            public override float Tf(float freq)
-            {
-                return freq;
-            }
-            
-            public override float SloppyFreq(int distance)
-            {
-                return 2.0f;
-            }
-            public override float Idf(int docFreq, int numDocs)
-            {
-                return 1.0f;
-            }
-            public override float Coord(int overlap, int maxOverlap)
-            {
-                return 1.0f;
-            }
-            public override Search.Explanation.IDFExplanation IdfExplain(System.Collections.Generic.ICollection<Term> terms, Searcher searcher)
-            {
-                return new AnonymousIDFExplanation();
-            }
-        }
-        
-        
-        // Tests whether the DocumentWriter correctly enable the
-        // omitTermFreqAndPositions bit in the FieldInfo
-        public virtual void  TestOmitTermFreqAndPositions()
-        {
-            Directory ram = new MockRAMDirectory();
-            Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
-            IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            Document d = new Document();
-            
-            // this field will have Tf
-            Field f1 = new Field("f1", "This field has term freqs", Field.Store.NO, Field.Index.ANALYZED);
-            d.Add(f1);
-            
-            // this field will NOT have Tf
-            Field f2 = new Field("f2", "This field has NO Tf in all docs", Field.Store.NO, Field.Index.ANALYZED);
-            f2.OmitTermFreqAndPositions = true;
-            d.Add(f2);
-            
-            writer.AddDocument(d);
-            writer.Optimize();
-            // now we add another document which has term freq for field f2 and not for f1 and verify if the SegmentMerger
-            // keep things constant
-            d = new Document();
-            
-            // Reverese
-            f1.OmitTermFreqAndPositions = true;
-            d.Add(f1);
-            
-            f2.OmitTermFreqAndPositions = false;
-            d.Add(f2);
-            
-            writer.AddDocument(d);
-            // force merge
-            writer.Optimize();
-            // flush
-            writer.Close();
-            _TestUtil.CheckIndex(ram);
-            
-            SegmentReader reader = SegmentReader.GetOnlySegmentReader(ram);
-            FieldInfos fi = reader.FieldInfos();
-            Assert.IsTrue(fi.FieldInfo("f1").omitTermFreqAndPositions_ForNUnit, "OmitTermFreqAndPositions field bit should be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").omitTermFreqAndPositions_ForNUnit, "OmitTermFreqAndPositions field bit should be set.");
-            
-            reader.Close();
-            ram.Close();
-        }
-        
-        // Tests whether merging of docs that have different
-        // omitTermFreqAndPositions for the same field works
-        [Test]
-        public virtual void  TestMixedMerge()
-        {
-            Directory ram = new MockRAMDirectory();
-            Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
-            IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.SetMaxBufferedDocs(3);
-            writer.MergeFactor = 2;
-            Document d = new Document();
-            
-            // this field will have Tf
-            Field f1 = new Field("f1", "This field has term freqs", Field.Store.NO, Field.Index.ANALYZED);
-            d.Add(f1);
-            
-            // this field will NOT have Tf
-            Field f2 = new Field("f2", "This field has NO Tf in all docs", Field.Store.NO, Field.Index.ANALYZED);
-            f2.OmitTermFreqAndPositions = true;
-            d.Add(f2);
-            
-            for (int i = 0; i < 30; i++)
-                writer.AddDocument(d);
-            
-            // now we add another document which has term freq for field f2 and not for f1 and verify if the SegmentMerger
-            // keep things constant
-            d = new Document();
-            
-            // Reverese
-            f1.OmitTermFreqAndPositions = true;
-            d.Add(f1);
-            
-            f2.OmitTermFreqAndPositions = false;
-            d.Add(f2);
-            
-            for (int i = 0; i < 30; i++)
-                writer.AddDocument(d);
-            
-            // force merge
-            writer.Optimize();
-            // flush
-            writer.Close();
-            
-            _TestUtil.CheckIndex(ram);
-            
-            SegmentReader reader = SegmentReader.GetOnlySegmentReader(ram);
-            FieldInfos fi = reader.FieldInfos();
-            Assert.IsTrue(fi.FieldInfo("f1").omitTermFreqAndPositions_ForNUnit, "OmitTermFreqAndPositions field bit should be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").omitTermFreqAndPositions_ForNUnit, "OmitTermFreqAndPositions field bit should be set.");
-            
-            reader.Close();
-            ram.Close();
-        }
-        
-        // Make sure first adding docs that do not omitTermFreqAndPositions for
-        // field X, then adding docs that do omitTermFreqAndPositions for that same
-        // field, 
-        [Test]
-        public virtual void  TestMixedRAM()
-        {
-            Directory ram = new MockRAMDirectory();
-            Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
-            IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.SetMaxBufferedDocs(10);
-            writer.MergeFactor = 2;
-            Document d = new Document();
-            
-            // this field will have Tf
-            Field f1 = new Field("f1", "This field has term freqs", Field.Store.NO, Field.Index.ANALYZED);
-            d.Add(f1);
-            
-            // this field will NOT have Tf
-            Field f2 = new Field("f2", "This field has NO Tf in all docs", Field.Store.NO, Field.Index.ANALYZED);
-            d.Add(f2);
-            
-            for (int i = 0; i < 5; i++)
-                writer.AddDocument(d);
-            
-            f2.OmitTermFreqAndPositions = true;
-            
-            for (int i = 0; i < 20; i++)
-                writer.AddDocument(d);
-            
-            // force merge
-            writer.Optimize();
-            
-            // flush
-            writer.Close();
-            
-            _TestUtil.CheckIndex(ram);
-            
-            SegmentReader reader = SegmentReader.GetOnlySegmentReader(ram);
-            FieldInfos fi = reader.FieldInfos();
-            Assert.IsTrue(!fi.FieldInfo("f1").omitTermFreqAndPositions_ForNUnit, "OmitTermFreqAndPositions field bit should not be set.");
-            Assert.IsTrue(fi.FieldInfo("f2").omitTermFreqAndPositions_ForNUnit, "OmitTermFreqAndPositions field bit should be set.");
-            
-            reader.Close();
-            ram.Close();
-        }
-        
-        private void  AssertNoPrx(Directory dir)
-        {
-            System.String[] files = dir.ListAll();
-            for (int i = 0; i < files.Length; i++)
-                Assert.IsFalse(files[i].EndsWith(".prx"));
-        }
-        
-        // Verifies no *.prx exists when all fields omit term freq:
-        [Test]
-        public virtual void  TestNoPrxFile()
-        {
-            Directory ram = new MockRAMDirectory();
-            Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
-            IndexWriter writer = new IndexWriter(ram, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.SetMaxBufferedDocs(3);
-            writer.MergeFactor = 2;
-            writer.UseCompoundFile = false;
-            Document d = new Document();
-            
-            Field f1 = new Field("f1", "This field has term freqs", Field.Store.NO, Field.Index.ANALYZED);
-            f1.OmitTermFreqAndPositions = true;
-            d.Add(f1);
-            
-            for (int i = 0; i < 30; i++)
-                writer.AddDocument(d);
-            
-            writer.Commit();
-            
-            AssertNoPrx(ram);
-            
-            // force merge
-            writer.Optimize();
-            // flush
-            writer.Close();
-            
-            AssertNoPrx(ram);
-            _TestUtil.CheckIndex(ram);
-            ram.Close();
-        }
-        
-        // Test scores with one field with Term Freqs and one without, otherwise with equal content 
-        [Test]
-        public virtual void  TestBasic()
-        {
-            Directory dir = new MockRAMDirectory();
-            Analyzer analyzer = new StandardAnalyzer(Util.Version.LUCENE_CURRENT);
-            IndexWriter writer = new IndexWriter(dir, analyzer, true, IndexWriter.MaxFieldLength.LIMITED);
-            writer.MergeFactor = 2;
-            writer.SetMaxBufferedDocs(2);
-            writer.SetSimilarity(new SimpleSimilarity());
-            
-            
-            System.Text.StringBuilder sb = new System.Text.StringBuilder(265);
-            System.String term = "term";
-            for (int i = 0; i < 30; i++)
-            {
-                Document d = new Document();
-                sb.Append(term).Append(" ");
-                System.String content = sb.ToString();
-                Field noTf = new Field("noTf", content + (i % 2 == 0?"":" notf"), Field.Store.NO, Field.Index.ANALYZED);
-                noTf.OmitTermFreqAndPositions = true;
-                d.Add(noTf);
-                
-                Field tf = new Field("tf", content + (i % 2 == 0?" tf":""), Field.Store.NO, Field.Index.ANALYZED);
-                d.Add(tf);
-                
-                writer.AddDocument(d);
-                //System.out.println(d);
-            }
-            
-            writer.Optimize();
-            // flush
-            writer.Close();
-            _TestUtil.CheckIndex(dir);
-            
-            /*
-            * Verify the index
-            */
-            Searcher searcher = new IndexSearcher(dir, true);
-            searcher.Similarity = new SimpleSimilarity();
-            
-            Term a = new Term("noTf", term);
-            Term b = new Term("tf", term);
-            Term c = new Term("noTf", "notf");
-            Term d2 = new Term("tf", "tf");
-            TermQuery q1 = new TermQuery(a);
-            TermQuery q2 = new TermQuery(b);
-            TermQuery q3 = new TermQuery(c);
-            TermQuery q4 = new TermQuery(d2);
-            
-            
-            searcher.Search(q1, new AnonymousClassCountingHitCollector(this));
-            //System.out.println(CountingHitCollector.getCount());
-            
-            
-            searcher.Search(q2, new AnonymousClassCountingHitCollector1(this));
-            //System.out.println(CountingHitCollector.getCount());
-            
-            
-            
-            
-            
-            searcher.Search(q3, new AnonymousClassCountingHitCollector2(this));
-            //System.out.println(CountingHitCollector.getCount());
-            
-            
-            searcher.Search(q4, new AnonymousClassCountingHitCollector3(this));
-            //System.out.println(CountingHitCollector.getCount());
-            
-            
-            
-            BooleanQuery bq = new BooleanQuery();
-            bq.Add(q1, Occur.MUST);
-            bq.Add(q4, Occur.MUST);
-            
-            searcher.Search(bq, new AnonymousClassCountingHitCollector4(this));
-            Assert.IsTrue(15 == CountingHitCollector.GetCount());
-            
-            searcher.Close();
-            dir.Close();
-        }
-        
-        public class CountingHitCollector:Collector
-        {
-            internal static int count = 0;
-            internal static int sum = 0;
-            private int docBase = - 1;
-            internal CountingHitCollector()
-            {
-                count = 0; sum = 0;
-            }
-            public override void  SetScorer(Scorer scorer)
-            {
-            }
-            public override void  Collect(int doc)
-            {
-                count++;
-                sum += doc + docBase; // use it to avoid any possibility of being optimized away
-            }
-            
-            public static int GetCount()
-            {
-                return count;
-            }
-            public static int GetSum()
-            {
-                return sum;
-            }
-            
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                this.docBase = docBase;
-            }
+	using Analyzer = Lucene.Net.Analysis.Analyzer;
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using Document = Lucene.Net.Document.Document;
+	using Field = Lucene.Net.Document.Field;
+	using FieldType = Lucene.Net.Document.FieldType;
+	using TextField = Lucene.Net.Document.TextField;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using BooleanQuery = Lucene.Net.Search.BooleanQuery;
+	using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
+	using Collector = Lucene.Net.Search.Collector;
+	using Explanation = Lucene.Net.Search.Explanation;
+	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+	using PhraseQuery = Lucene.Net.Search.PhraseQuery;
+	using Scorer = Lucene.Net.Search.Scorer;
+	using TermQuery = Lucene.Net.Search.TermQuery;
+	using TermStatistics = Lucene.Net.Search.TermStatistics;
+	using TFIDFSimilarity = Lucene.Net.Search.Similarities.TFIDFSimilarity;
+	using Directory = Lucene.Net.Store.Directory;
+	using BytesRef = Lucene.Net.Util.BytesRef;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-    }
+
+	public class TestOmitTf : LuceneTestCase
+	{
+
+	  public class SimpleSimilarity : TFIDFSimilarity
+	  {
+		public override float DecodeNormValue(long norm)
+		{
+			return norm;
+		}
+		public override long EncodeNormValue(float f)
+		{
+			return (long) f;
+		}
+		public override float QueryNorm(float sumOfSquaredWeights)
+		{
+			return 1.0f;
+		}
+		public override float Coord(int overlap, int maxOverlap)
+		{
+			return 1.0f;
+		}
+		public override float LengthNorm(FieldInvertState state)
+		{
+			return state.Boost;
+		}
+		public override float Tf(float freq)
+		{
+			return freq;
+		}
+		public override float SloppyFreq(int distance)
+		{
+			return 2.0f;
+		}
+		public override float Idf(long docFreq, long numDocs)
+		{
+			return 1.0f;
+		}
+		public override Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
+		{
+		  return new Explanation(1.0f, "Inexplicable");
+		}
+		public override float ScorePayload(int doc, int start, int end, BytesRef payload)
+		{
+			return 1.0f;
+		}
+	  }
+
+	  private static readonly FieldType OmitType = new FieldType(TextField.TYPE_NOT_STORED);
+	  private static readonly FieldType NormalType = new FieldType(TextField.TYPE_NOT_STORED);
+
+	  static TestOmitTf()
+	  {
+		OmitType.IndexOptions = IndexOptions.DOCS_ONLY;
+	  }
+
+	  // Tests whether the DocumentWriter correctly enable the
+	  // omitTermFreqAndPositions bit in the FieldInfo
+	  public virtual void TestOmitTermFreqAndPositions()
+	  {
+		Directory ram = newDirectory();
+		Analyzer analyzer = new MockAnalyzer(random());
+		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		Document d = new Document();
+
+		// this field will have Tf
+		Field f1 = newField("f1", "this field has term freqs", NormalType);
+		d.add(f1);
+
+		// this field will NOT have Tf
+		Field f2 = newField("f2", "this field has NO Tf in all docs", OmitType);
+		d.add(f2);
+
+		writer.addDocument(d);
+		writer.forceMerge(1);
+		// now we add another document which has term freq for field f2 and not for f1 and verify if the SegmentMerger
+		// keep things constant
+		d = new Document();
+
+		// Reverse
+		f1 = newField("f1", "this field has term freqs", OmitType);
+		d.add(f1);
+
+		f2 = newField("f2", "this field has NO Tf in all docs", NormalType);
+		d.add(f2);
+
+		writer.addDocument(d);
+
+		// force merge
+		writer.forceMerge(1);
+		// flush
+		writer.close();
+
+		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		FieldInfos fi = reader.FieldInfos;
+		Assert.AreEqual("OmitTermFreqAndPositions field bit should be set.", IndexOptions.DOCS_ONLY, fi.fieldInfo("f1").IndexOptions);
+		Assert.AreEqual("OmitTermFreqAndPositions field bit should be set.", IndexOptions.DOCS_ONLY, fi.fieldInfo("f2").IndexOptions);
+
+		reader.close();
+		ram.close();
+	  }
+
+	  // Tests whether merging of docs that have different
+	  // omitTermFreqAndPositions for the same field works
+	  public virtual void TestMixedMerge()
+	  {
+		Directory ram = newDirectory();
+		Analyzer analyzer = new MockAnalyzer(random());
+		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(3).setMergePolicy(newLogMergePolicy(2)));
+		Document d = new Document();
+
+		// this field will have Tf
+		Field f1 = newField("f1", "this field has term freqs", NormalType);
+		d.add(f1);
+
+		// this field will NOT have Tf
+		Field f2 = newField("f2", "this field has NO Tf in all docs", OmitType);
+		d.add(f2);
+
+		for (int i = 0;i < 30;i++)
+		{
+		  writer.addDocument(d);
+		}
+
+		// now we add another document which has term freq for field f2 and not for f1 and verify if the SegmentMerger
+		// keep things constant
+		d = new Document();
+
+		// Reverese
+		f1 = newField("f1", "this field has term freqs", OmitType);
+		d.add(f1);
+
+		f2 = newField("f2", "this field has NO Tf in all docs", NormalType);
+		d.add(f2);
+
+		for (int i = 0;i < 30;i++)
+		{
+		  writer.addDocument(d);
+		}
+
+		// force merge
+		writer.forceMerge(1);
+		// flush
+		writer.close();
+
+		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		FieldInfos fi = reader.FieldInfos;
+		Assert.AreEqual("OmitTermFreqAndPositions field bit should be set.", IndexOptions.DOCS_ONLY, fi.fieldInfo("f1").IndexOptions);
+		Assert.AreEqual("OmitTermFreqAndPositions field bit should be set.", IndexOptions.DOCS_ONLY, fi.fieldInfo("f2").IndexOptions);
+
+		reader.close();
+		ram.close();
+	  }
+
+	  // Make sure first adding docs that do not omitTermFreqAndPositions for
+	  // field X, then adding docs that do omitTermFreqAndPositions for that same
+	  // field, 
+	  public virtual void TestMixedRAM()
+	  {
+		Directory ram = newDirectory();
+		Analyzer analyzer = new MockAnalyzer(random());
+		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy(2)));
+		Document d = new Document();
+
+		// this field will have Tf
+		Field f1 = newField("f1", "this field has term freqs", NormalType);
+		d.add(f1);
+
+		// this field will NOT have Tf
+		Field f2 = newField("f2", "this field has NO Tf in all docs", OmitType);
+		d.add(f2);
+
+		for (int i = 0;i < 5;i++)
+		{
+		  writer.addDocument(d);
+		}
+
+		for (int i = 0;i < 20;i++)
+		{
+		  writer.addDocument(d);
+		}
+
+		// force merge
+		writer.forceMerge(1);
+
+		// flush
+		writer.close();
+
+		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		FieldInfos fi = reader.FieldInfos;
+		Assert.AreEqual("OmitTermFreqAndPositions field bit should not be set.", IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.fieldInfo("f1").IndexOptions);
+		Assert.AreEqual("OmitTermFreqAndPositions field bit should be set.", IndexOptions.DOCS_ONLY, fi.fieldInfo("f2").IndexOptions);
+
+		reader.close();
+		ram.close();
+	  }
+
+	  private void AssertNoPrx(Directory dir)
+	  {
+		string[] files = dir.listAll();
+		for (int i = 0;i < files.Length;i++)
+		{
+		  Assert.IsFalse(files[i].EndsWith(".prx"));
+		  Assert.IsFalse(files[i].EndsWith(".pos"));
+		}
+	  }
+
+	  // Verifies no *.prx exists when all fields omit term freq:
+	  public virtual void TestNoPrxFile()
+	  {
+		Directory ram = newDirectory();
+		Analyzer analyzer = new MockAnalyzer(random());
+		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(3).setMergePolicy(newLogMergePolicy()));
+		LogMergePolicy lmp = (LogMergePolicy) writer.Config.MergePolicy;
+		lmp.MergeFactor = 2;
+		lmp.NoCFSRatio = 0.0;
+		Document d = new Document();
+
+		Field f1 = newField("f1", "this field has term freqs", OmitType);
+		d.add(f1);
+
+		for (int i = 0;i < 30;i++)
+		{
+		  writer.addDocument(d);
+		}
+
+		writer.commit();
+
+		AssertNoPrx(ram);
+
+		// now add some documents with positions, and check
+		// there is no prox after full merge
+		d = new Document();
+		f1 = newTextField("f1", "this field has positions", Field.Store.NO);
+		d.add(f1);
+
+		for (int i = 0;i < 30;i++)
+		{
+		  writer.addDocument(d);
+		}
+
+		// force merge
+		writer.forceMerge(1);
+		// flush
+		writer.close();
+
+		AssertNoPrx(ram);
+		ram.close();
+	  }
+
+	  // Test scores with one field with Term Freqs and one without, otherwise with equal content 
+	  public virtual void TestBasic()
+	  {
+		Directory dir = newDirectory();
+		Analyzer analyzer = new MockAnalyzer(random());
+		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(2).setSimilarity(new SimpleSimilarity()).setMergePolicy(newLogMergePolicy(2)));
+
+		StringBuilder sb = new StringBuilder(265);
+		string term = "term";
+		for (int i = 0; i < 30; i++)
+		{
+		  Document d = new Document();
+		  sb.Append(term).Append(" ");
+		  string content = sb.ToString();
+		  Field noTf = newField("noTf", content + (i % 2 == 0 ? "" : " notf"), OmitType);
+		  d.add(noTf);
+
+		  Field tf = newField("tf", content + (i % 2 == 0 ? " tf" : ""), NormalType);
+		  d.add(tf);
+
+		  writer.addDocument(d);
+		  //System.out.println(d);
+		}
+
+		writer.forceMerge(1);
+		// flush
+		writer.close();
+
+		/*
+		 * Verify the index
+		 */         
+		IndexReader reader = DirectoryReader.open(dir);
+		IndexSearcher searcher = newSearcher(reader);
+		searcher.Similarity = new SimpleSimilarity();
+
+		Term a = new Term("noTf", term);
+		Term b = new Term("tf", term);
+		Term c = new Term("noTf", "notf");
+		Term d = new Term("tf", "tf");
+		TermQuery q1 = new TermQuery(a);
+		TermQuery q2 = new TermQuery(b);
+		TermQuery q3 = new TermQuery(c);
+		TermQuery q4 = new TermQuery(d);
+
+		PhraseQuery pq = new PhraseQuery();
+		pq.add(a);
+		pq.add(c);
+		try
+		{
+		  searcher.search(pq, 10);
+		  Assert.Fail("did not hit expected exception");
+		}
+		catch (Exception e)
+		{
+		  Exception cause = e;
+		  // If the searcher uses an executor service, the IAE is wrapped into other exceptions
+		  while (cause.InnerException != null)
+		  {
+			cause = cause.InnerException;
+		  }
+		  if (!(cause is IllegalStateException))
+		  {
+			throw new AssertionError("Expected an IAE", e);
+		  } // else OK because positions are not indexed
+		}
+
+		searcher.search(q1, new CountingHitCollectorAnonymousInnerClassHelper(this));
+		//System.out.println(CountingHitCollector.getCount());
+
+
+		searcher.search(q2, new CountingHitCollectorAnonymousInnerClassHelper2(this));
+		//System.out.println(CountingHitCollector.getCount());
+
+
+
+
+
+		searcher.search(q3, new CountingHitCollectorAnonymousInnerClassHelper3(this));
+		//System.out.println(CountingHitCollector.getCount());
+
+
+		searcher.search(q4, new CountingHitCollectorAnonymousInnerClassHelper4(this));
+		//System.out.println(CountingHitCollector.getCount());
+
+
+
+		BooleanQuery bq = new BooleanQuery();
+		bq.add(q1,Occur.MUST);
+		bq.add(q4,Occur.MUST);
+
+		searcher.search(bq, new CountingHitCollectorAnonymousInnerClassHelper5(this));
+		Assert.AreEqual(15, CountingHitCollector.Count);
+
+		reader.close();
+		dir.close();
+	  }
+
+	  private class CountingHitCollectorAnonymousInnerClassHelper : CountingHitCollector
+	  {
+		  private readonly TestOmitTf OuterInstance;
+
+		  public CountingHitCollectorAnonymousInnerClassHelper(TestOmitTf outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  private Scorer scorer;
+		  public override sealed Scorer Scorer
+		  {
+			  set
+			  {
+				this.scorer = value;
+			  }
+		  }
+		  public override sealed void Collect(int doc)
+		  {
+			//System.out.println("Q1: Doc=" + doc + " score=" + score);
+			float score = scorer.score();
+			Assert.IsTrue("got score=" + score, score == 1.0f);
+			base.collect(doc);
+		  }
+	  }
+
+	  private class CountingHitCollectorAnonymousInnerClassHelper2 : CountingHitCollector
+	  {
+		  private readonly TestOmitTf OuterInstance;
+
+		  public CountingHitCollectorAnonymousInnerClassHelper2(TestOmitTf outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  private Scorer scorer;
+		  public override sealed Scorer Scorer
+		  {
+			  set
+			  {
+				this.scorer = value;
+			  }
+		  }
+		  public override sealed void Collect(int doc)
+		  {
+			//System.out.println("Q2: Doc=" + doc + " score=" + score);
+			float score = scorer.score();
+			Assert.AreEqual(1.0f + doc, score, 0.00001f);
+			base.collect(doc);
+		  }
+	  }
+
+	  private class CountingHitCollectorAnonymousInnerClassHelper3 : CountingHitCollector
+	  {
+		  private readonly TestOmitTf OuterInstance;
+
+		  public CountingHitCollectorAnonymousInnerClassHelper3(TestOmitTf outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  private Scorer scorer;
+		  public override sealed Scorer Scorer
+		  {
+			  set
+			  {
+				this.scorer = value;
+			  }
+		  }
+		  public override sealed void Collect(int doc)
+		  {
+			//System.out.println("Q1: Doc=" + doc + " score=" + score);
+			float score = scorer.score();
+			Assert.IsTrue(score == 1.0f);
+			Assert.IsFalse(doc % 2 == 0);
+			base.collect(doc);
+		  }
+	  }
+
+	  private class CountingHitCollectorAnonymousInnerClassHelper4 : CountingHitCollector
+	  {
+		  private readonly TestOmitTf OuterInstance;
+
+		  public CountingHitCollectorAnonymousInnerClassHelper4(TestOmitTf outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  private Scorer scorer;
+		  public override sealed Scorer Scorer
+		  {
+			  set
+			  {
+				this.scorer = value;
+			  }
+		  }
+		  public override sealed void Collect(int doc)
+		  {
+			float score = scorer.score();
+			//System.out.println("Q1: Doc=" + doc + " score=" + score);
+			Assert.IsTrue(score == 1.0f);
+			Assert.IsTrue(doc % 2 == 0);
+			base.collect(doc);
+		  }
+	  }
+
+	  private class CountingHitCollectorAnonymousInnerClassHelper5 : CountingHitCollector
+	  {
+		  private readonly TestOmitTf OuterInstance;
+
+		  public CountingHitCollectorAnonymousInnerClassHelper5(TestOmitTf outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+		  }
+
+		  public override sealed void Collect(int doc)
+		  {
+			//System.out.println("BQ: Doc=" + doc + " score=" + score);
+			base.collect(doc);
+		  }
+	  }
+
+	  public class CountingHitCollector : Collector
+	  {
+		internal static int Count_Renamed = 0;
+		internal static int Sum_Renamed = 0;
+		internal int DocBase = -1;
+		internal CountingHitCollector()
+		{
+			Count_Renamed = 0;
+			Sum_Renamed = 0;
+		}
+		public override Scorer Scorer
+		{
+			set
+			{
+			}
+		}
+		public override void Collect(int doc)
+		{
+		  Count_Renamed++;
+		  Sum_Renamed += doc + DocBase; // use it to avoid any possibility of being merged away
+		}
+
+		public static int Count
+		{
+			get
+			{
+				return Count_Renamed;
+			}
+		}
+		public static int Sum
+		{
+			get
+			{
+				return Sum_Renamed;
+			}
+		}
+
+		public override AtomicReaderContext NextReader
+		{
+			set
+			{
+			  DocBase = value.docBase;
+			}
+		}
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  return true;
+		}
+	  }
+
+	  /// <summary>
+	  /// test that when freqs are omitted, that totalTermFreq and sumTotalTermFreq are -1 </summary>
+	  public virtual void TestStats()
+	  {
+		Directory dir = newDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Document doc = new Document();
+		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+		ft.IndexOptions = IndexOptions.DOCS_ONLY;
+		ft.freeze();
+		Field f = newField("foo", "bar", ft);
+		doc.add(f);
+		iw.addDocument(doc);
+		IndexReader ir = iw.Reader;
+		iw.close();
+		Assert.AreEqual(-1, ir.totalTermFreq(new Term("foo", new BytesRef("bar"))));
+		Assert.AreEqual(-1, ir.getSumTotalTermFreq("foo"));
+		ir.close();
+		dir.close();
+	  }
+	}
+
 }

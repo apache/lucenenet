@@ -1,136 +1,405 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    
-    public sealed class FieldInfo : System.ICloneable
-    {
-        internal System.String name;
-        internal bool isIndexed;
-        internal int number;
-        
-        // true if term vector for this field should be stored
-        internal bool storeTermVector;
-        internal bool storeOffsetWithTermVector;
-        internal bool storePositionWithTermVector;
-        
-        internal bool omitNorms; // omit norms associated with indexed fields  
-        internal bool omitTermFreqAndPositions;
-        
-        internal bool storePayloads; // whether this field stores payloads together with term positions
-        
-        internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
-        {
-            name = na;
-            isIndexed = tk;
-            number = nu;
-            if (isIndexed)
-            {
-                this.storeTermVector = storeTermVector;
-                this.storeOffsetWithTermVector = storeOffsetWithTermVector;
-                this.storePositionWithTermVector = storePositionWithTermVector;
-                this.storePayloads = storePayloads;
-                this.omitNorms = omitNorms;
-                this.omitTermFreqAndPositions = omitTermFreqAndPositions;
-            }
-            else
-            {
-                // for non-indexed fields, leave defaults
-                this.storeTermVector = false;
-                this.storeOffsetWithTermVector = false;
-                this.storePositionWithTermVector = false;
-                this.storePayloads = false;
-                this.omitNorms = true;
-                this.omitTermFreqAndPositions = false;
-            }
-        }
-        
-        public System.Object Clone()
-        {
-            return new FieldInfo(name, isIndexed, number, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
-        }
-        
-        internal void  Update(bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
-        {
-            if (this.isIndexed != isIndexed)
-            {
-                this.isIndexed = true; // once indexed, always index
-            }
-            if (isIndexed)
-            {
-                // if updated field data is not for indexing, leave the updates out
-                if (this.storeTermVector != storeTermVector)
-                {
-                    this.storeTermVector = true; // once vector, always vector
-                }
-                if (this.storePositionWithTermVector != storePositionWithTermVector)
-                {
-                    this.storePositionWithTermVector = true; // once vector, always vector
-                }
-                if (this.storeOffsetWithTermVector != storeOffsetWithTermVector)
-                {
-                    this.storeOffsetWithTermVector = true; // once vector, always vector
-                }
-                if (this.storePayloads != storePayloads)
-                {
-                    this.storePayloads = true;
-                }
-                if (this.omitNorms != omitNorms)
-                {
-                    this.omitNorms = false; // once norms are stored, always store
-                }
-                if (this.omitTermFreqAndPositions != omitTermFreqAndPositions)
-                {
-                    this.omitTermFreqAndPositions = true; // if one require omitTermFreqAndPositions at least once, it remains off for life
-                }
-            }
-        }
 
-        public bool storePayloads_ForNUnit
-        {
-            get { return storePayloads; }
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        public System.String name_ForNUnit
-        {
-            get { return name; }
-        }
 
-        public bool isIndexed_ForNUnit
-        {
-            get { return isIndexed; }
-        }
+	/// <summary>
+	///  Access to the Field Info file that describes document fields and whether or
+	///  not they are indexed. Each segment has a separate Field Info file. Objects
+	///  of this class are thread-safe for multiple readers, but only one thread can
+	///  be adding documents at a time, with no other reader or writer threads
+	///  accessing this object.
+	/// 
+	/// </summary>
 
-        public bool omitNorms_ForNUnit
-        {
-            get { return omitNorms; }
-        }
+	public sealed class FieldInfo
+	{
+	  /// <summary>
+	  /// Field's name </summary>
+	  public readonly string Name;
+	  /// <summary>
+	  /// Internal field number </summary>
+	  public readonly int Number;
 
-        public bool omitTermFreqAndPositions_ForNUnit
-        {
-            get { return omitTermFreqAndPositions; }
-        }
+	  private bool Indexed_Renamed;
+	  private DocValuesType DocValueType;
 
-        public bool storeTermVector_ForNUnit
-        {
-            get { return storeTermVector; }
-        }
-    }
+	  // True if any document indexed term vectors
+	  private bool StoreTermVector;
+
+	  private DocValuesType NormType_Renamed;
+	  private bool OmitNorms; // omit norms associated with indexed fields
+	  private IndexOptions IndexOptions_Renamed;
+	  private bool StorePayloads; // whether this field stores payloads together with term positions
+
+	  private IDictionary<string, string> Attributes_Renamed;
+
+	  private long DvGen = -1; // the DocValues generation of this field
+
+	  /// <summary>
+	  /// Controls how much information is stored in the postings lists.
+	  /// @lucene.experimental
+	  /// </summary>
+	  public enum IndexOptions
+	  {
+		// NOTE: order is important here; FieldInfo uses this
+		// order to merge two conflicting IndexOptions (always
+		// "downgrades" by picking the lowest).
+		/// <summary>
+		/// Only documents are indexed: term frequencies and positions are omitted.
+		/// Phrase and other positional queries on the field will throw an exception, and scoring
+		/// will behave as if any term in the document appears only once.
+		/// </summary>
+		// TODO: maybe rename to just DOCS?
+		DOCS_ONLY,
+		/// <summary>
+		/// Only documents and term frequencies are indexed: positions are omitted. 
+		/// this enables normal scoring, except Phrase and other positional queries
+		/// will throw an exception.
+		/// </summary>
+		DOCS_AND_FREQS,
+		/// <summary>
+		/// Indexes documents, frequencies and positions.
+		/// this is a typical default for full-text search: full scoring is enabled
+		/// and positional queries are supported.
+		/// </summary>
+		DOCS_AND_FREQS_AND_POSITIONS,
+		/// <summary>
+		/// Indexes documents, frequencies, positions and offsets.
+		/// Character offsets are encoded alongside the positions. 
+		/// </summary>
+		DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+	  }
+
+	  /// <summary>
+	  /// DocValues types.
+	  /// Note that DocValues is strongly typed, so a field cannot have different types
+	  /// across different documents.
+	  /// </summary>
+	  public enum DocValuesType
+	  {
+		/// <summary>
+		/// A per-document Number
+		/// </summary>
+		NUMERIC,
+		/// <summary>
+		/// A per-document byte[].  Values may be larger than
+		/// 32766 bytes, but different codecs may enforce their own limits.
+		/// </summary>
+		BINARY,
+		/// <summary>
+		/// A pre-sorted byte[]. Fields with this type only store distinct byte values 
+		/// and store an additional offset pointer per document to dereference the shared 
+		/// byte[]. The stored byte[] is presorted and allows access via document id, 
+		/// ordinal and by-value.  Values must be <= 32766 bytes.
+		/// </summary>
+		SORTED,
+		/// <summary>
+		/// A pre-sorted Set&lt;byte[]&gt;. Fields with this type only store distinct byte values 
+		/// and store additional offset pointers per document to dereference the shared 
+		/// byte[]s. The stored byte[] is presorted and allows access via document id, 
+		/// ordinal and by-value.  Values must be <= 32766 bytes.
+		/// </summary>
+		SORTED_SET
+	  }
+
+	  /// <summary>
+	  /// Sole Constructor.
+	  /// 
+	  /// @lucene.experimental
+	  /// </summary>
+	  public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normsType, IDictionary<string, string> attributes)
+	  {
+		this.Name = name;
+		this.Indexed_Renamed = indexed;
+		this.Number = number;
+		this.DocValueType = docValues;
+		if (indexed)
+		{
+		  this.StoreTermVector = storeTermVector;
+		  this.StorePayloads = storePayloads;
+		  this.OmitNorms = omitNorms;
+		  this.IndexOptions_Renamed = indexOptions;
+		  this.NormType_Renamed = !omitNorms ? normsType : null;
+		} // for non-indexed fields, leave defaults
+		else
+		{
+		  this.StoreTermVector = false;
+		  this.StorePayloads = false;
+		  this.OmitNorms = false;
+		  this.IndexOptions_Renamed = null;
+		  this.NormType_Renamed = null;
+		}
+		this.Attributes_Renamed = attributes;
+		Debug.Assert(CheckConsistency());
+	  }
+
+	  private bool CheckConsistency()
+	  {
+		if (!Indexed_Renamed)
+		{
+		  Debug.Assert(!StoreTermVector);
+		  Debug.Assert(!StorePayloads);
+		  Debug.Assert(!OmitNorms);
+		  Debug.Assert(NormType_Renamed == null);
+		  Debug.Assert(IndexOptions_Renamed == null);
+		}
+		else
+		{
+		  Debug.Assert(IndexOptions_Renamed != null);
+		  if (OmitNorms)
+		  {
+			Debug.Assert(NormType_Renamed == null);
+		  }
+		  // Cannot store payloads unless positions are indexed:
+		  Debug.Assert(IndexOptions_Renamed.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.StorePayloads);
+		}
+
+		return true;
+	  }
+
+	  internal void Update(IndexableFieldType ft)
+	  {
+		Update(ft.Indexed(), false, ft.OmitNorms(), false, ft.IndexOptions());
+	  }
+
+	  // should only be called by FieldInfos#addOrUpdate
+	  internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions)
+	  {
+		//System.out.println("FI.update field=" + name + " indexed=" + indexed + " omitNorms=" + omitNorms + " this.omitNorms=" + this.omitNorms);
+		if (this.Indexed_Renamed != indexed)
+		{
+		  this.Indexed_Renamed = true; // once indexed, always index
+		}
+		if (indexed) // if updated field data is not for indexing, leave the updates out
+		{
+		  if (this.StoreTermVector != storeTermVector)
+		  {
+			this.StoreTermVector = true; // once vector, always vector
+		  }
+		  if (this.StorePayloads != storePayloads)
+		  {
+			this.StorePayloads = true;
+		  }
+		  if (this.OmitNorms != omitNorms)
+		  {
+			this.OmitNorms = true; // if one require omitNorms at least once, it remains off for life
+			this.NormType_Renamed = null;
+		  }
+		  if (this.IndexOptions_Renamed != indexOptions)
+		  {
+			if (this.IndexOptions_Renamed == null)
+			{
+			  this.IndexOptions_Renamed = indexOptions;
+			}
+			else
+			{
+			  // downgrade
+			  this.IndexOptions_Renamed = this.IndexOptions_Renamed.compareTo(indexOptions) < 0 ? this.IndexOptions_Renamed : indexOptions;
+			}
+			if (this.IndexOptions_Renamed.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+			{
+			  // cannot store payloads if we don't store positions:
+			  this.StorePayloads = false;
+			}
+		  }
+		}
+		Debug.Assert(CheckConsistency());
+	  }
+
+	  internal DocValuesType DocValuesType
+	  {
+		  set
+		  {
+			if (DocValueType != null && DocValueType != value)
+			{
+			  throw new System.ArgumentException("cannot change DocValues type from " + DocValueType + " to " + value + " for field \"" + Name + "\"");
+			}
+			DocValueType = value;
+			Debug.Assert(CheckConsistency());
+		  }
+		  get
+		  {
+			return DocValueType;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
+	  public IndexOptions IndexOptions
+	  {
+		  get
+		  {
+			return IndexOptions_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns true if this field has any docValues.
+	  /// </summary>
+	  public bool HasDocValues()
+	  {
+		return DocValueType != null;
+	  }
+
+
+	  /// <summary>
+	  /// Sets the docValues generation of this field. </summary>
+	  public long DocValuesGen
+	  {
+		  set
+		  {
+			this.DvGen = value;
+		  }
+		  get
+		  {
+			return DvGen;
+		  }
+	  }
+
+
+	  /// <summary>
+	  /// Returns <seealso cref="DocValuesType"/> of the norm. this may be null if the field has no norms.
+	  /// </summary>
+	  public DocValuesType NormType
+	  {
+		  get
+		  {
+			return NormType_Renamed;
+		  }
+	  }
+
+	  internal void SetStoreTermVectors()
+	  {
+		StoreTermVector = true;
+		Debug.Assert(CheckConsistency());
+	  }
+
+	  internal void SetStorePayloads()
+	  {
+		if (Indexed_Renamed && IndexOptions_Renamed.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+		{
+		  StorePayloads = true;
+		}
+		Debug.Assert(CheckConsistency());
+	  }
+
+	  internal DocValuesType NormValueType
+	  {
+		  set
+		  {
+			if (NormType_Renamed != null && NormType_Renamed != value)
+			{
+			  throw new System.ArgumentException("cannot change Norm type from " + NormType_Renamed + " to " + value + " for field \"" + Name + "\"");
+			}
+			NormType_Renamed = value;
+			Debug.Assert(CheckConsistency());
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns true if norms are explicitly omitted for this field
+	  /// </summary>
+	  public bool OmitsNorms()
+	  {
+		return OmitNorms;
+	  }
+
+	  /// <summary>
+	  /// Returns true if this field actually has any norms.
+	  /// </summary>
+	  public bool HasNorms()
+	  {
+		return NormType_Renamed != null;
+	  }
+
+	  /// <summary>
+	  /// Returns true if this field is indexed.
+	  /// </summary>
+	  public bool Indexed
+	  {
+		  get
+		  {
+			return Indexed_Renamed;
+		  }
+	  }
+
+	  /// <summary>
+	  /// Returns true if any payloads exist for this field.
+	  /// </summary>
+	  public bool HasPayloads()
+	  {
+		return StorePayloads;
+	  }
+
+	  /// <summary>
+	  /// Returns true if any term vectors exist for this field.
+	  /// </summary>
+	  public bool HasVectors()
+	  {
+		return StoreTermVector;
+	  }
+
+	  /// <summary>
+	  /// Get a codec attribute value, or null if it does not exist
+	  /// </summary>
+	  public string GetAttribute(string key)
+	  {
+		if (Attributes_Renamed == null)
+		{
+		  return null;
+		}
+		else
+		{
+		  return Attributes_Renamed[key];
+		}
+	  }
+
+	  /// <summary>
+	  /// Puts a codec attribute value.
+	  /// <p>
+	  /// this is a key-value mapping for the field that the codec can use
+	  /// to store additional metadata, and will be available to the codec
+	  /// when reading the segment via <seealso cref="#getAttribute(String)"/>
+	  /// <p>
+	  /// If a value already exists for the field, it will be replaced with 
+	  /// the new value.
+	  /// </summary>
+	  public string PutAttribute(string key, string value)
+	  {
+		if (Attributes_Renamed == null)
+		{
+		  Attributes_Renamed = new Dictionary<>();
+		}
+		return Attributes_Renamed[key] = value;
+	  }
+
+	  /// <summary>
+	  /// Returns internal codec attributes map. May be null if no mappings exist.
+	  /// </summary>
+	  public IDictionary<string, string> Attributes()
+	  {
+		return Attributes_Renamed;
+	  }
+	}
+
 }

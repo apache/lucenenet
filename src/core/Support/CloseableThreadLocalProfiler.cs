@@ -26,17 +26,17 @@ namespace Lucene.Net.Support
     /// <summary>
     /// For Debuging purposes.
     /// </summary>
-    public class CloseableThreadLocalProfiler
+    public class IDisposableThreadLocalProfiler
     {
-        private static bool _enableCloseableThreadLocalProfiler = false;
+        private static bool _enableIDisposableThreadLocalProfiler = false;
         public static System.Collections.Generic.List<WeakReference> Instances = new System.Collections.Generic.List<WeakReference>();
 
-        public static bool EnableCloseableThreadLocalProfiler
+        public static bool EnableIDisposableThreadLocalProfiler
         {
-            get { return _enableCloseableThreadLocalProfiler; }
+            get { return _enableIDisposableThreadLocalProfiler; }
             set
             {
-                _enableCloseableThreadLocalProfiler = value;
+                _enableIDisposableThreadLocalProfiler = value;
                 lock (Instances)
                     Instances.Clear();
             }

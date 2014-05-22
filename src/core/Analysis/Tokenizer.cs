@@ -1,112 +1,151 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using AttributeSource = Lucene.Net.Util.AttributeSource;
+using System;
+using System.IO;
+using System.Diagnostics;
 
 namespace Lucene.Net.Analysis
 {
-    
-    /// <summary> A Tokenizer is a TokenStream whose input is a Reader.
-    /// <p/>
-    /// This is an abstract class; subclasses must override <see cref="TokenStream.IncrementToken()" />
-    /// <p/>
-    /// NOTE: Subclasses overriding <see cref="TokenStream.IncrementToken()" /> must call
-    /// <see cref="AttributeSource.ClearAttributes()" /> before setting attributes.
-    /// </summary>
-    
-    public abstract class Tokenizer:TokenStream
-    {
-        /// <summary>The text source for this Tokenizer. </summary>
-        protected internal System.IO.TextReader input;
 
-        private bool isDisposed;
-        
-        /// <summary>Construct a tokenizer with null input. </summary>
-        protected internal Tokenizer()
-        {
-        }
-        
-        /// <summary>Construct a token stream processing the given input. </summary>
-        protected internal Tokenizer(System.IO.TextReader input)
-        {
-            this.input = CharReader.Get(input);
-        }
-        
-        /// <summary>Construct a tokenizer with null input using the given AttributeFactory. </summary>
-        protected internal Tokenizer(AttributeFactory factory):base(factory)
-        {
-        }
-        
-        /// <summary>Construct a token stream processing the given input using the given AttributeFactory. </summary>
-        protected internal Tokenizer(AttributeFactory factory, System.IO.TextReader input):base(factory)
-        {
-            this.input = CharReader.Get(input);
-        }
-        
-        /// <summary>Construct a token stream processing the given input using the given AttributeSource. </summary>
-        protected internal Tokenizer(AttributeSource source):base(source)
-        {
-        }
-        
-        /// <summary>Construct a token stream processing the given input using the given AttributeSource. </summary>
-        protected internal Tokenizer(AttributeSource source, System.IO.TextReader input):base(source)
-        {
-            this.input = CharReader.Get(input);
-        }
-        
-        protected override void Dispose(bool disposing)
-        {
-            if (isDisposed) return;
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            if (disposing)
-            {
-                if (input != null)
-                {
-                    input.Close();
-                }
-            }
+	using AttributeSource = Lucene.Net.Util.AttributeSource;
 
-            // LUCENE-2387: don't hold onto Reader after close, so
-            // GC can reclaim
-            input = null;
-            isDisposed = true;
-        }
-  
-        /// <summary>Return the corrected offset. If <see cref="input" /> is a <see cref="CharStream" /> subclass
-        /// this method calls <see cref="CharStream.CorrectOffset" />, else returns <c>currentOff</c>.
-        /// </summary>
-        /// <param name="currentOff">offset as seen in the output
-        /// </param>
-        /// <returns> corrected offset based on the input
-        /// </returns>
-        /// <seealso cref="CharStream.CorrectOffset">
-        /// </seealso>
-        protected internal int CorrectOffset(int currentOff)
-        {
-            return (input is CharStream)?((CharStream) input).CorrectOffset(currentOff):currentOff;
-        }
-        
-        /// <summary>Expert: Reset the tokenizer to a new reader.  Typically, an
-        /// analyzer (in its reusableTokenStream method) will use
-        /// this to re-use a previously created tokenizer. 
-        /// </summary>
-        public virtual void  Reset(System.IO.TextReader input)
-        {
-            this.input = input;
-        }
-    }
+
+	/// <summary>
+	/// A Tokenizer is a TokenStream whose input is a Reader.
+	///  <p>
+	///  this is an abstract class; subclasses must override <seealso cref="#IncrementToken()"/>
+	///  <p>
+	///  NOTE: Subclasses overriding <seealso cref="#IncrementToken()"/> must
+	///  call <seealso cref="AttributeSource#ClearAttributes()"/> before
+	///  setting attributes.
+	/// </summary>
+	public abstract class Tokenizer : TokenStream
+	{
+	  /// <summary>
+	  /// The text source for this Tokenizer. </summary>
+	  protected internal TextReader Input = ILLEGAL_STATE_READER;
+
+	  /// <summary>
+	  /// Pending reader: not actually assigned to input until reset() </summary>
+      private TextReader InputPending = ILLEGAL_STATE_READER;
+
+	  /// <summary>
+	  /// Construct a token stream processing the given input. </summary>
+      protected internal Tokenizer(TextReader input)
+	  {
+		if (input == null)
+		{
+		  throw new System.NullReferenceException("input must not be null");
+		}
+		this.InputPending = input;
+	  }
+
+	  /// <summary>
+	  /// Construct a token stream processing the given input using the given AttributeFactory. </summary>
+      protected internal Tokenizer(AttributeFactory factory, TextReader input)
+          : base(factory)
+	  {
+		if (input == null)
+		{
+		  throw new System.NullReferenceException("input must not be null");
+		}
+		this.InputPending = input;
+	  }
+
+	  /// <summary>
+	  /// {@inheritDoc}
+	  /// <p>
+	  /// <b>NOTE:</b> 
+	  /// The default implementation closes the input Reader, so
+	  /// be sure to call <code>super.close()</code> when overriding this method.
+	  /// </summary>
+	  public override void Close()
+	  {
+		Input.Close();
+		// LUCENE-2387: don't hold onto Reader after close, so
+		// GC can reclaim
+		InputPending = Input = ILLEGAL_STATE_READER;
+	  }
+
+	  /// <summary>
+	  /// Return the corrected offset. If <seealso cref="#input"/> is a <seealso cref="CharFilter"/> subclass
+	  /// this method calls <seealso cref="CharFilter#correctOffset"/>, else returns <code>currentOff</code>. </summary>
+	  /// <param name="currentOff"> offset as seen in the output </param>
+	  /// <returns> corrected offset based on the input </returns>
+	  /// <seealso cref= CharFilter#correctOffset </seealso>
+	  protected internal int CorrectOffset(int currentOff)
+	  {
+		return (Input is CharFilter) ? ((CharFilter) Input).CorrectOffset(currentOff) : currentOff;
+	  }
+
+	  /// <summary>
+	  /// Expert: Set a new reader on the Tokenizer.  Typically, an
+	  ///  analyzer (in its tokenStream method) will use
+	  ///  this to re-use a previously created tokenizer. 
+	  /// </summary>
+      public TextReader Reader
+	  {
+		  set
+		  {
+			if (value == null)
+			{
+			  throw new System.NullReferenceException("input must not be null");
+			}
+			else if (this.Input != ILLEGAL_STATE_READER)
+			{
+			  throw new Exception("TokenStream contract violation: close() call missing");
+			}
+			this.InputPending = value;
+			Debug.Assert(SetReaderTestPoint());
+		  }
+	  }
+
+	  public override void Reset()
+	  {
+		base.Reset();
+		Input = InputPending;
+		InputPending = ILLEGAL_STATE_READER;
+	  }
+
+	  // only used by assert, for testing
+	  internal virtual bool SetReaderTestPoint()
+	  {
+		return true;
+	  }
+
+      private static readonly TextReader ILLEGAL_STATE_READER = new ReaderAnonymousInnerClassHelper();
+
+      private class ReaderAnonymousInnerClassHelper : TextReader
+	  {
+		  public ReaderAnonymousInnerClassHelper()
+		  {
+		  }
+
+		  public override int Read(char[] cbuf, int off, int len)
+		  {
+			throw new Exception("TokenStream contract violation: reset()/close() call missing, " + "reset() called multiple times, or subclass does not call super.reset(). " + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
+		  }
+
+		  public override void Close()
+		  {
+		  }
+	  }
+	}
+
+
 }

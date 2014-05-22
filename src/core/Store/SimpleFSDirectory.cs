@@ -1,319 +1,235 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-    
-    /// <summary>A straightforward implementation of <see cref="FSDirectory" />
-    /// using java.io.RandomAccessFile.  However, this class has
-    /// poor concurrent performance (multiple threads will
-    /// bottleneck) as it synchronizes when multiple threads
-    /// read from the same file.  It's usually better to use
-    /// <see cref="NIOFSDirectory" /> or <see cref="MMapDirectory" /> instead. 
-    /// </summary>
-    public class SimpleFSDirectory : FSDirectory
-    {
-        /// <summary>Create a new SimpleFSDirectory for the named location.
-        /// 
-        /// </summary>
-        /// <param name="path">the path of the directory
-        /// </param>
-        /// <param name="lockFactory">the lock factory to use, or null for the default.
-        /// </param>
-        /// <throws>  IOException </throws>
-        public SimpleFSDirectory(System.IO.DirectoryInfo path, LockFactory lockFactory)
-            : base(path, lockFactory)
-        {
-        }
 
-        /// <summary>Create a new SimpleFSDirectory for the named location and the default lock factory.
-        /// 
-        /// </summary>
-        /// <param name="path">the path of the directory
-        /// </param>
-        /// <throws>  IOException </throws>
-        public SimpleFSDirectory(System.IO.DirectoryInfo path) : base(path, null)
-        {
-        }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-        /// <summary>Creates an IndexOutput for the file with the given name. </summary>
-        public override IndexOutput CreateOutput(System.String name)
-        {
-            InitOutput(name);
-            return new SimpleFSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(internalDirectory.FullName, name)));
-        }
-        
-        /// <summary>Creates an IndexInput for the file with the given name. </summary>
-        public override IndexInput OpenInput(System.String name, int bufferSize)
-        {
-            EnsureOpen();
 
-            Exception e = null;
-            for (var i = 0; i < 10; i++)
-            {
-                try
-                {
-                    return new SimpleFSIndexInput(new System.IO.FileInfo(
-                        System.IO.Path.Combine(internalDirectory.FullName, name)), bufferSize, ReadChunkSize);
-                }
-                catch (System.UnauthorizedAccessException ex)
-                {
-                    e = ex;
-                    System.Threading.Thread.Sleep(1);
-                }
-            }
+	/// <summary>
+	/// A straightforward implementation of <seealso cref="FSDirectory"/>
+	///  using java.io.RandomAccessFile.  However, this class has
+	///  poor concurrent performance (multiple threads will
+	///  bottleneck) as it synchronizes when multiple threads
+	///  read from the same file.  It's usually better to use
+	///  <seealso cref="NIOFSDirectory"/> or <seealso cref="MMapDirectory"/> instead. 
+	/// </summary>
+	public class SimpleFSDirectory : FSDirectory
+	{
 
-            throw e;
-        }
-        
-        protected internal class SimpleFSIndexInput : BufferedIndexInput
-        {
-            // TODO: This is a bad way to handle memory and disposing
-            protected internal class Descriptor : System.IO.BinaryReader
-            {
-                // remember if the file is open, so that we don't try to close it
-                // more than once
-                protected internal volatile bool isOpen;
-                internal long position;
-                internal long length;
+	  /// <summary>
+	  /// Create a new SimpleFSDirectory for the named location.
+	  /// </summary>
+	  /// <param name="path"> the path of the directory </param>
+	  /// <param name="lockFactory"> the lock factory to use, or null for the default
+	  /// (<seealso cref="NativeFSLockFactory"/>); </param>
+	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+	  public SimpleFSDirectory(File path, LockFactory lockFactory) : base(path, lockFactory)
+	  {
+	  }
 
-                private bool isDisposed;
-                
-                public Descriptor(/*FSIndexInput enclosingInstance,*/ System.IO.FileInfo file, System.IO.FileAccess mode) 
-                    : base(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, mode, System.IO.FileShare.ReadWrite))
-                {
-                    isOpen = true;
-                    length = file.Length;
-                }
+	  /// <summary>
+	  /// Create a new SimpleFSDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
+	  /// </summary>
+	  /// <param name="path"> the path of the directory </param>
+	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+	  public SimpleFSDirectory(File path) : base(path, null)
+	  {
+	  }
 
-                protected override void Dispose(bool disposing)
-                {
-                    if (isDisposed) return;
+	  /// <summary>
+	  /// Creates an IndexInput for the file with the given name. </summary>
+	  public override IndexInput OpenInput(string name, IOContext context)
+	  {
+		EnsureOpen();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.io.File path = new java.io.File(directory, name);
+		File path = new File(Directory_Renamed, name);
+		RandomAccessFile raf = new RandomAccessFile(path, "r");
+		return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.Path + "\")", raf, context);
+	  }
 
-                    if (disposing)
-                    {
-                        if (isOpen)
-                        {
-                            isOpen = false;
-                        }
-                    }
+	  public override IndexInputSlicer CreateSlicer(string name, IOContext context)
+	  {
+		EnsureOpen();
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.io.File file = new java.io.File(getDirectory(), name);
+		File file = new File(Directory, name);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final java.io.RandomAccessFile descriptor = new java.io.RandomAccessFile(file, "r");
+		RandomAccessFile descriptor = new RandomAccessFile(file, "r");
+		return new IndexInputSlicerAnonymousInnerClassHelper(this, context, file, descriptor);
+	  }
 
-                    isDisposed = true;
-                    base.Dispose(disposing);
-                }
-            
-                ~Descriptor()
-                {
-                    try
-                    {
-                        Dispose(false);
-                    }
-                    finally
-                    {
-                    }
-                }
-            }
-            
-            protected internal Descriptor file;
-            internal bool isClone;
-            private bool isDisposed;
-            //  LUCENE-1566 - maximum read length on a 32bit JVM to prevent incorrect OOM 
-            protected internal int chunkSize;
+	  private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
+	  {
+		  private readonly SimpleFSDirectory OuterInstance;
 
-            public SimpleFSIndexInput(System.IO.FileInfo path, int bufferSize, int chunkSize)
-                : base(bufferSize)
-            {
-                file = new Descriptor(path, System.IO.FileAccess.Read);
-                this.chunkSize = chunkSize;
-            }
+		  private Lucene.Net.Store.IOContext Context;
+		  private File File;
+		  private RandomAccessFile Descriptor;
 
-            /// <summary>IndexInput methods </summary>
-            public override void  ReadInternal(byte[] b, int offset, int len)
-            {
-                lock (file)
-                {
-                    long position = FilePointer;
-                    if (position != file.position)
-                    {
-                        file.BaseStream.Seek(position, System.IO.SeekOrigin.Begin);
-                        file.position = position;
-                    }
-                    int total = 0;
-                    
-                    try
-                    {
-                        do 
-                        {
-                            int readLength;
-                            if (total + chunkSize > len)
-                            {
-                                readLength = len - total;
-                            }
-                            else
-                            {
-                                // LUCENE-1566 - work around JVM Bug by breaking very large reads into chunks
-                                readLength = chunkSize;
-                            }
-                            int i = file.Read(b, offset + total, readLength);
-                            if (i == - 1)
-                            {
-                                throw new System.IO.IOException("read past EOF");
-                            }
-                            file.position += i;
-                            total += i;
-                        }
-                        while (total < len);
-                    }
-                    catch (System.OutOfMemoryException e)
-                    {
-                        // propagate OOM up and add a hint for 32bit VM Users hitting the bug
-                        // with a large chunk size in the fast path.
-                        System.OutOfMemoryException outOfMemoryError = new System.OutOfMemoryException("OutOfMemoryError likely caused by the Sun VM Bug described in " + "https://issues.apache.org/jira/browse/LUCENE-1566; try calling FSDirectory.setReadChunkSize " + "with a a value smaller than the current chunks size (" + chunkSize + ")", e);
-                        throw outOfMemoryError;
-                    }
-                }
-            }
+		  public IndexInputSlicerAnonymousInnerClassHelper(SimpleFSDirectory outerInstance, Lucene.Net.Store.IOContext context, File file, RandomAccessFile descriptor) : base(outerInstance)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Context = context;
+			  this.File = file;
+			  this.Descriptor = descriptor;
+		  }
 
-            protected override void Dispose(bool disposing)
-            {
-                if (isDisposed) return;
-                if (disposing)
-                {
-                    // only close the file if this is not a clone
-                    if (!isClone && file != null)
-                    {
-                        file.Close();
-                        file = null;
-                    }
-                }
 
-                isDisposed = true;
-            }
+		  public override void Close()
+		  {
+			Descriptor.close();
+		  }
 
-            public override void  SeekInternal(long position)
-            {
-            }
-            
-            public override long Length()
-            {
-                return file.length;
-            }
-            
-            public override System.Object Clone()
-            {
-                SimpleFSIndexInput clone = (SimpleFSIndexInput) base.Clone();
-                clone.isClone = true;
-                return clone;
-            }
-            
-            /// <summary>Method used for testing. Returns true if the underlying
-            /// file descriptor is valid.
-            /// </summary>
-            public /*internal*/ virtual bool IsFDValid()
-            {
-                return file.BaseStream != null;
-            }
+		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
+		  {
+			return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + File.Path + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.BufferSize(Context));
+		  }
 
-            public bool isClone_ForNUnit
-            {
-                get { return isClone; }
-            }
-        }
-        
-        /*protected internal*/ public class SimpleFSIndexOutput:BufferedIndexOutput
-        {
-            internal System.IO.FileStream file = null;
-            
-            // remember if the file is open, so that we don't try to close it
-            // more than once
-            private volatile bool isOpen;
+		  public override IndexInput OpenFullSlice()
+		  {
+			try
+			{
+			  return openSlice("full-slice", 0, Descriptor.length());
+			}
+			catch (IOException ex)
+			{
+			  throw new Exception(ex);
+			}
+		  }
+	  }
 
-            public SimpleFSIndexOutput(System.IO.FileInfo path)
-            {
-                file = new System.IO.FileStream(path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
-                isOpen = true;
-            }
-            
-            /// <summary>output methods: </summary>
-            public override void  FlushBuffer(byte[] b, int offset, int size)
-            {
-                file.Write(b, offset, size);
-                // {{dougsale-2.4.0}}
-                // FSIndexOutput.Flush
-                // When writing frequently with small amounts of data, the data isn't flushed to disk.
-                // Thus, attempting to read the data soon after this method is invoked leads to
-                // BufferedIndexInput.Refill() throwing an IOException for reading past EOF.
-                // Test\Index\TestDoc.cs demonstrates such a situation.
-                // Forcing a flush here prevents said issue.
-                // {{DIGY 2.9.0}}
-                // This code is not available in Lucene.Java 2.9.X.
-                // Can there be a indexing-performance problem?
-                file.Flush();
-            }
+	  /// <summary>
+	  /// Reads bytes with <seealso cref="RandomAccessFile#seek(long)"/> followed by
+	  /// <seealso cref="RandomAccessFile#read(byte[], int, int)"/>.  
+	  /// </summary>
+	  protected internal class SimpleFSIndexInput : BufferedIndexInput
+	  {
+		/// <summary>
+		/// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
+		/// a native buffer outside of stack if the read buffer size is larger.
+		/// </summary>
+		internal const int CHUNK_SIZE = 8192;
 
-            protected override void Dispose(bool disposing)
-            {
-                // only close the file if it has not been closed yet
-                if (isOpen)
-                {
-                    bool success = false;
-                    try
-                    {
-                        base.Dispose(disposing);
-                        success = true;
-                    }
-                    finally
-                    {
-                        isOpen = false;
-                        if (!success)
-                        {
-                            try
-                            {
-                                file.Dispose();
-                            }
-                            catch (System.Exception)
-                            {
-                                // Suppress so we don't mask original exception
-                            }
-                        }
-                        else
-                            file.Dispose();
-                    }
-                }
-            }
-            
-            /// <summary>Random-access methods </summary>
-            public override void  Seek(long pos)
-            {
-                base.Seek(pos);
-                file.Seek(pos, System.IO.SeekOrigin.Begin);
-            }
+		/// <summary>
+		/// the file channel we will read from </summary>
+		protected internal readonly RandomAccessFile File;
+		/// <summary>
+		/// is this instance a clone and hence does not own the file to close it </summary>
+		internal bool IsClone = false;
+		/// <summary>
+		/// start offset: non-zero in the slice case </summary>
+		protected internal readonly long Off;
+		/// <summary>
+		/// end offset (start+length) </summary>
+		protected internal readonly long End;
 
-            public override long Length
-            {
-                get { return file.Length; }
-            }
+		public SimpleFSIndexInput(string resourceDesc, RandomAccessFile file, IOContext context) : base(resourceDesc, context)
+		{
+		  this.File = file;
+		  this.Off = 0L;
+		  this.End = file.length();
+		}
 
-            public override void  SetLength(long length)
-            {
-                file.SetLength(length);
-            }
-        }
-    }
+		public SimpleFSIndexInput(string resourceDesc, RandomAccessFile file, long off, long length, int bufferSize) : base(resourceDesc, bufferSize)
+		{
+		  this.File = file;
+		  this.Off = off;
+		  this.End = off + length;
+		  this.IsClone = true;
+		}
+
+		public override void Close()
+		{
+		  if (!IsClone)
+		  {
+			File.close();
+		  }
+		}
+
+		public override SimpleFSIndexInput Clone()
+		{
+		  SimpleFSIndexInput clone = (SimpleFSIndexInput)base.Clone();
+		  clone.IsClone = true;
+		  return clone;
+		}
+
+		public override sealed long Length()
+		{
+		  return End - Off;
+		}
+
+		/// <summary>
+		/// IndexInput methods </summary>
+		protected internal override void ReadInternal(sbyte[] b, int offset, int len)
+		{
+		  lock (File)
+		  {
+			long position = Off + FilePointer;
+			File.seek(position);
+			int total = 0;
+
+			if (position + len > End)
+			{
+			  throw new EOFException("read past EOF: " + this);
+			}
+
+			try
+			{
+			  while (total < len)
+			  {
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int toRead = Math.min(CHUNK_SIZE, len - total);
+				int toRead = Math.Min(CHUNK_SIZE, len - total);
+//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+//ORIGINAL LINE: final int i = file.read(b, offset + total, toRead);
+				int i = File.read(b, offset + total, toRead);
+				if (i < 0) // be defensive here, even though we checked before hand, something could have changed
+				{
+				 throw new EOFException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + End);
+				}
+				Debug.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
+				total += i;
+			  }
+			  Debug.Assert(total == len);
+			}
+			catch (IOException ioe)
+			{
+			  throw new IOException(ioe.Message + ": " + this, ioe);
+			}
+		  }
+		}
+
+		protected internal override void SeekInternal(long position)
+		{
+		}
+
+		internal virtual bool FDValid
+		{
+			get
+			{
+			  return File.FD.valid();
+			}
+		}
+	  }
+	}
+
 }

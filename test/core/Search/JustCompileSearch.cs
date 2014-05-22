@@ -1,486 +1,397 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-using Lucene.Net.Util;
-using NUnit.Framework;
-
-using Document = Lucene.Net.Documents.Document;
-using FieldSelector = Lucene.Net.Documents.FieldSelector;
-using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using Term = Lucene.Net.Index.Term;
-using TermPositions = Lucene.Net.Index.TermPositions;
-
 namespace Lucene.Net.Search
 {
-    
-    /// <summary> Holds all implementations of classes in the o.a.l.search package as a
-    /// back-compatibility test. It does not run any tests per-se, however if 
-    /// someone adds a method to an interface or abstract method to an abstract
-    /// class, one of the implementations here will fail to compile and so we know
-    /// back-compat policy was violated.
-    /// </summary>
-    sealed class JustCompileSearch
-    {
-        
-        private const System.String UNSUPPORTED_MSG = "unsupported: used for back-compat testing only !";
-        
-        internal sealed class JustCompileSearcher:Searcher
-        {
-            
-            public /*protected internal*/ override Weight CreateWeight(Query query)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
 
-            protected override void Dispose(bool disposing)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override Document Doc(int i)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int[] DocFreqs(Term[] terms)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override Explanation Explain(Query query, int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
-            public override Similarity Similarity
-            {
-                get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-                set { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-            }
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using Terms = Lucene.Net.Index.Terms;
+	using TermsEnum = Lucene.Net.Index.TermsEnum;
+	using Similarity = Lucene.Net.Search.Similarities.Similarity;
+	using Bits = Lucene.Net.Util.Bits;
+	using BytesRef = Lucene.Net.Util.BytesRef;
+	using FieldInvertState = Lucene.Net.Index.FieldInvertState;
+	using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
-            public override void  Search(Query query, Collector results)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  Search(Query query, Filter filter, Collector results)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override TopDocs Search(Query query, Filter filter, int n)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override TopDocs Search(Query query, int n)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	/// <summary>
+	/// Holds all implementations of classes in the o.a.l.search package as a
+	/// back-compatibility test. It does not run any tests per-se, however if 
+	/// someone adds a method to an interface or abstract method to an abstract
+	/// class, one of the implementations here will fail to compile and so we know
+	/// back-compat policy was violated.
+	/// </summary>
+	internal sealed class JustCompileSearch
+	{
 
-            public override int DocFreq(Term term)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override Explanation Explain(Weight weight, int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int MaxDoc
-            {
-                get
-                {
-                    throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-                }
-            }
-            
-            public override Query Rewrite(Query query)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  Search(Weight weight, Filter filter, Collector results)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override TopDocs Search(Weight weight, Filter filter, int n)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override Document Doc(int n, FieldSelector fieldSelector)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        internal sealed class JustCompileCollector:Collector
-        {
-            
-            public override void  Collect(int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	  private const string UNSUPPORTED_MSG = "unsupported: used for back-compat testing only !";
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-            }
-        }
-        
-        internal sealed class JustCompileDocIdSet:DocIdSet
-        {
-            
-            public override DocIdSetIterator Iterator()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        internal sealed class JustCompileDocIdSetIterator:DocIdSetIterator
-        {
-            public override int DocID()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int NextDoc()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int Advance(int target)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileExtendedFieldCacheLongParser : Lucene.Net.Search.LongParser
-        {
-            
-            public long ParseLong(System.String string_Renamed)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileExtendedFieldCacheDoubleParser : Lucene.Net.Search.DoubleParser
-        {
-            
-            public double ParseDouble(System.String string_Renamed)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        internal sealed class JustCompileFieldComparator:FieldComparator
-        {
-            
-            public override int Compare(int slot1, int slot2)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int CompareBottom(int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  Copy(int slot, int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  SetBottom(int slot)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	  internal sealed class JustCompileCollector : Collector
+	  {
 
-            public override IComparable this[int slot]
-            {
-                get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileFieldComparatorSource:FieldComparatorSource
-        {
-            
-            public override FieldComparator NewComparator(System.String fieldname, int numHits, int sortPos, bool reversed)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileFilter:Filter
-        {
-            // Filter is just an abstract class with no abstract methods. However it is
-            // still added here in case someone will add abstract methods in the future.
-            public override DocIdSet GetDocIdSet(IndexReader reader)
-            {
-                return null;
-            }
-        }
-        
-        internal sealed class JustCompileFilteredDocIdSet:FilteredDocIdSet
-        {
-            
-            public JustCompileFilteredDocIdSet(DocIdSet innerSet):base(innerSet)
-            {
-            }
-            
-            public /*protected internal*/ override bool Match(int docid)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        internal sealed class JustCompileFilteredDocIdSetIterator:FilteredDocIdSetIterator
-        {
-            
-            public JustCompileFilteredDocIdSetIterator(DocIdSetIterator innerIter):base(innerIter)
-            {
-            }
-            
-            public /*protected internal*/ override bool Match(int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        internal sealed class JustCompileFilteredTermEnum:FilteredTermEnum
-        {
-            
-            public override float Difference()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override bool EndEnum()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+		public override void Collect(int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
 
-            /*protected internal*/ protected internal override bool TermCompare(Term term)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        /*internal sealed class JustCompilePhraseScorer : Lucene.Net.Search.PhraseScorer    // {{Not needed for Lucene.Net}}
-        {
+		public override AtomicReaderContext NextReader
+		{
+			set
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
 
-            internal JustCompilePhraseScorer(Weight weight, TermPositions[] tps, int[] offsets, Similarity similarity, byte[] norms)
-                : base(weight, tps, offsets, similarity, norms)
-            {
-            }
+		public override Scorer Scorer
+		{
+			set
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
 
-            protected internal override float PhraseFreq()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }*/
-        
-        [Serializable]
-        internal sealed class JustCompileQuery:Query
-        {
-            
-            public override System.String ToString(System.String field)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        internal sealed class JustCompileScorer:Scorer
-        {
-            
-            internal JustCompileScorer(Similarity similarity):base(similarity)
-            {
-            }
-            
-            public /*protected internal*/ override bool Score(Collector collector, int max, int firstDocID)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override float Score()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int DocID()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int NextDoc()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override int Advance(int target)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileSimilarity:Similarity
-        {
-            
-            public override float Coord(int overlap, int maxOverlap)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override float Idf(int docFreq, int numDocs)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override float LengthNorm(System.String fieldName, int numTokens)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override float QueryNorm(float sumOfSquaredWeights)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override float SloppyFreq(int distance)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override float Tf(float freq)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileSpanFilter:SpanFilter
-        {
-            public override SpanFilterResult BitSpans(IndexReader reader)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            public override DocIdSet GetDocIdSet(IndexReader reader)
-            {
-                return null;
-            }
-        }
-        
-        internal sealed class JustCompileTopDocsCollector : TopDocsCollector<ScoreDoc>
-        {
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
 
-            internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq)
-                : base(pq)
-            {
-            }
-            
-            public override void  Collect(int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-            
-            public override void  SetScorer(Scorer scorer)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	  }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-            }
-        }
-        
-        [Serializable]
-        internal sealed class JustCompileWeight:Weight
-        {
-            
-            public override Explanation Explain(IndexReader reader, int doc)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	  internal sealed class JustCompileDocIdSet : DocIdSet
+	  {
 
-            public override Query Query
-            {
-                get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-            }
+		public override DocIdSetIterator Iterator()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
 
-            public override float Value
-            {
-                get { throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG); }
-            }
+	  }
 
-            public override void  Normalize(float norm)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+	  internal sealed class JustCompileDocIdSetIterator : DocIdSetIterator
+	  {
 
-            public override float GetSumOfSquaredWeights()
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
+		public override int DocID()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
 
-            public override Scorer Scorer(IndexReader reader, bool scoreDocsInOrder, bool topScorer)
-            {
-                throw new System.NotSupportedException(Lucene.Net.Search.JustCompileSearch.UNSUPPORTED_MSG);
-            }
-        }
-    }
+		public override int NextDoc()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int Advance(int target)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override long Cost()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+	  }
+
+	  internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache.LongParser
+	  {
+
+		public override long ParseLong(BytesRef @string)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override TermsEnum TermsEnum(Terms terms)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	  internal sealed class JustCompileExtendedFieldCacheDoubleParser : FieldCache.DoubleParser
+	  {
+
+		public override double ParseDouble(BytesRef term)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override TermsEnum TermsEnum(Terms terms)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	  internal sealed class JustCompileFieldComparator : FieldComparator<object>
+	  {
+
+		public override int Compare(int slot1, int slot2)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int CompareBottom(int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override void Copy(int slot, int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int Bottom
+		{
+			set
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
+
+		public override object TopValue
+		{
+			set
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
+
+		public override FieldComparator<object> SetNextReader(AtomicReaderContext context)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override object Value(int slot)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int CompareTop(int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+	  }
+
+	  internal sealed class JustCompileFieldComparatorSource : FieldComparatorSource
+	  {
+
+//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
+//ORIGINAL LINE: @Override public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed)
+		public override FieldComparator<?> NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	  internal sealed class JustCompileFilter : Filter
+	  {
+		// Filter is just an abstract class with no abstract methods. However it is
+		// still added here in case someone will add abstract methods in the future.
+
+		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
+		{
+		  return null;
+		}
+	  }
+
+	  internal sealed class JustCompileFilteredDocIdSet : FilteredDocIdSet
+	  {
+
+		public JustCompileFilteredDocIdSet(DocIdSet innerSet) : base(innerSet)
+		{
+		}
+
+		protected internal override bool Match(int docid)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	  internal sealed class JustCompileFilteredDocIdSetIterator : FilteredDocIdSetIterator
+	  {
+
+		public JustCompileFilteredDocIdSetIterator(DocIdSetIterator innerIter) : base(innerIter)
+		{
+		}
+
+		protected internal override bool Match(int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override long Cost()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+	  }
+
+	  internal sealed class JustCompileQuery : Query
+	  {
+
+		public override string ToString(string field)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	  internal sealed class JustCompileScorer : Scorer
+	  {
+
+		protected internal JustCompileScorer(Weight weight) : base(weight)
+		{
+		}
+
+		public override float Score()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int Freq()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int DocID()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int NextDoc()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override int Advance(int target)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override long Cost()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+	  }
+
+	  internal sealed class JustCompileSimilarity : Similarity
+	  {
+
+		public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override long ComputeNorm(FieldInvertState state)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+	  }
+
+	  internal sealed class JustCompileTopDocsCollector : TopDocsCollector<ScoreDoc>
+	  {
+
+		protected internal JustCompileTopDocsCollector(PriorityQueue<ScoreDoc> pq) : base(pq)
+		{
+		}
+
+		public override void Collect(int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override AtomicReaderContext NextReader
+		{
+			set
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
+
+		public override Scorer Scorer
+		{
+			set
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
+
+		public override bool AcceptsDocsOutOfOrder()
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override TopDocs TopDocs()
+		{
+			throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override TopDocs TopDocs(int start)
+		{
+			throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override TopDocs TopDocs(int start, int end)
+		{
+			throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	  internal sealed class JustCompileWeight : Weight
+	  {
+
+		public override Explanation Explain(AtomicReaderContext context, int doc)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override Query Query
+		{
+			get
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
+
+		public override void Normalize(float norm, float topLevelBoost)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+		public override float ValueForNormalization
+		{
+			get
+			{
+			  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+			}
+		}
+
+		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
+		{
+		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
+		}
+
+	  }
+
+	}
+
 }

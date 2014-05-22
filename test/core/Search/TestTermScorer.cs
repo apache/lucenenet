@@ -1,214 +1,206 @@
-/* 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-using System;
-
-using NUnit.Framework;
-
-using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using IndexReader = Lucene.Net.Index.IndexReader;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
-using Term = Lucene.Net.Index.Term;
-using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-    
-    [TestFixture]
-    public class TestTermScorer:LuceneTestCase
-    {
-        private class AnonymousClassCollector:Collector
-        {
-            public AnonymousClassCollector(System.Collections.IList docs, TestTermScorer enclosingInstance)
-            {
-                InitBlock(docs, enclosingInstance);
-            }
-            private void  InitBlock(System.Collections.IList docs, TestTermScorer enclosingInstance)
-            {
-                this.docs = docs;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private System.Collections.IList docs;
-            private TestTermScorer enclosingInstance;
-            public TestTermScorer Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            private int base_Renamed = 0;
-            private Scorer scorer;
-            public override void  SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
-            
-            public override void  Collect(int doc)
-            {
-                float score = scorer.Score();
-                doc = doc + base_Renamed;
-                docs.Add(new TestHit(enclosingInstance, doc, score));
-                Assert.IsTrue(score > 0, "score " + score + " is not greater than 0");
-                Assert.IsTrue(doc == 0 || doc == 5, "Doc: " + doc + " does not equal 0 or doc does not equal 5");
-            }
-            public override void  SetNextReader(IndexReader reader, int docBase)
-            {
-                base_Renamed = docBase;
-            }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
-        protected internal RAMDirectory directory;
-        private const System.String FIELD = "field";
-        
-        protected internal System.String[] values = new System.String[]{"all", "dogs dogs", "like", "playing", "fetch", "all"};
-        protected internal IndexSearcher indexSearcher;
-        protected internal IndexReader indexReader;
-        
-                
-        [SetUp]
-        public override void  SetUp()
-        {
-            base.SetUp();
-            directory = new RAMDirectory();
-            
-            
-            IndexWriter writer = new IndexWriter(directory, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.LIMITED);
-            for (int i = 0; i < values.Length; i++)
-            {
-                Document doc = new Document();
-                doc.Add(new Field(FIELD, values[i], Field.Store.YES, Field.Index.ANALYZED));
-                writer.AddDocument(doc);
-            }
-            writer.Close();
-            indexSearcher = new IndexSearcher(directory, false);
-            indexReader = indexSearcher.IndexReader;
-        }
-        
-        [Test]
-        public virtual void  Test()
-        {
-            
-            Term allTerm = new Term(FIELD, "all");
-            TermQuery termQuery = new TermQuery(allTerm);
-            
-            Weight weight = termQuery.Weight(indexSearcher);
-            
-            TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
-            //we have 2 documents with the term all in them, one document for all the other values
-            System.Collections.IList docs = new System.Collections.ArrayList();
-            //must call next first
-            
-            
-            ts.Score(new AnonymousClassCollector(docs, this));
-            Assert.IsTrue(docs.Count == 2, "docs Size: " + docs.Count + " is not: " + 2);
-            TestHit doc0 = (TestHit) docs[0];
-            TestHit doc5 = (TestHit) docs[1];
-            //The scores should be the same
-            Assert.IsTrue(doc0.score == doc5.score, doc0.score + " does not equal: " + doc5.score);
-            /*
-            Score should be (based on Default Sim.:
-            All floats are approximate
-            tf = 1
-            numDocs = 6
-            docFreq(all) = 2
-            idf = ln(6/3) + 1 = 1.693147
-            idf ^ 2 = 2.8667
-            boost = 1
-            lengthNorm = 1 //there is 1 term in every document
-            coord = 1
-            sumOfSquaredWeights = (idf * boost) ^ 2 = 1.693147 ^ 2 = 2.8667
-            queryNorm = 1 / (sumOfSquaredWeights)^0.5 = 1 /(1.693147) = 0.590
-            
-            score = 1 * 2.8667 * 1 * 1 * 0.590 = 1.69
-            
-            */
-            Assert.IsTrue(doc0.score == 1.6931472f, doc0.score + " does not equal: " + 1.6931472f);
-        }
-        
-        [Test]
-        public virtual void  TestNext()
-        {
-            
-            Term allTerm = new Term(FIELD, "all");
-            TermQuery termQuery = new TermQuery(allTerm);
-            
-            Weight weight = termQuery.Weight(indexSearcher);
-            
-            TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
-            Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
-            Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
-            Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
-            Assert.IsTrue(ts.Score() == 1.6931472f, "score is not correct");
-            Assert.IsTrue(ts.NextDoc() == DocIdSetIterator.NO_MORE_DOCS, "next returned a doc and it should not have");
-        }
-        
-        [Test]
-        public virtual void  TestSkipTo()
-        {
-            
-            Term allTerm = new Term(FIELD, "all");
-            TermQuery termQuery = new TermQuery(allTerm);
-            
-            Weight weight = termQuery.Weight(indexSearcher);
-            
-            TermScorer ts = new TermScorer(weight, indexReader.TermDocs(allTerm), indexSearcher.Similarity, indexReader.Norms(FIELD));
-            Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
-            //The next doc should be doc 5
-            Assert.IsTrue(ts.DocID() == 5, "doc should be number 5");
-        }
-        
-        private class TestHit
-        {
-            private void  InitBlock(TestTermScorer enclosingInstance)
-            {
-                this.enclosingInstance = enclosingInstance;
-            }
-            private TestTermScorer enclosingInstance;
-            public TestTermScorer Enclosing_Instance
-            {
-                get
-                {
-                    return enclosingInstance;
-                }
-                
-            }
-            public int doc;
-            public float score;
-            
-            public TestHit(TestTermScorer enclosingInstance, int doc, float score)
-            {
-                InitBlock(enclosingInstance);
-                this.doc = doc;
-                this.score = score;
-            }
-            
-            public override System.String ToString()
-            {
-                return "TestHit{" + "doc=" + doc + ", score=" + score + "}";
-            }
-        }
-    }
+	/*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+
+	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+	using Document = Lucene.Net.Document.Document;
+	using Field = Lucene.Net.Document.Field;
+	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+	using IndexReader = Lucene.Net.Index.IndexReader;
+	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+	using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
+	using Term = Lucene.Net.Index.Term;
+	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+	using Directory = Lucene.Net.Store.Directory;
+	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+
+	public class TestTermScorer : LuceneTestCase
+	{
+	  protected internal Directory Directory;
+	  private const string FIELD = "field";
+
+	  protected internal string[] Values = new string[] {"all", "dogs dogs", "like", "playing", "fetch", "all"};
+	  protected internal IndexSearcher IndexSearcher;
+	  protected internal IndexReader IndexReader;
+
+	  public override void SetUp()
+	  {
+		base.setUp();
+		Directory = newDirectory();
+
+		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()).setSimilarity(new DefaultSimilarity()));
+		for (int i = 0; i < Values.Length; i++)
+		{
+		  Document doc = new Document();
+		  doc.add(newTextField(FIELD, Values[i], Field.Store.YES));
+		  writer.addDocument(doc);
+		}
+		IndexReader = SlowCompositeReaderWrapper.wrap(writer.Reader);
+		writer.close();
+		IndexSearcher = newSearcher(IndexReader);
+		IndexSearcher.Similarity = new DefaultSimilarity();
+	  }
+
+	  public override void TearDown()
+	  {
+		IndexReader.close();
+		Directory.close();
+		base.tearDown();
+	  }
+
+	  public virtual void Test()
+	  {
+
+		Term allTerm = new Term(FIELD, "all");
+		TermQuery termQuery = new TermQuery(allTerm);
+
+		Weight weight = IndexSearcher.createNormalizedWeight(termQuery);
+		Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
+		AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
+		BulkScorer ts = weight.bulkScorer(context, true, context.reader().LiveDocs);
+		// we have 2 documents with the term all in them, one document for all the
+		// other values
+		IList<TestHit> docs = new List<TestHit>();
+		// must call next first
+
+		ts.score(new CollectorAnonymousInnerClassHelper(this, context, docs));
+		Assert.IsTrue("docs Size: " + docs.Count + " is not: " + 2, docs.Count == 2);
+		TestHit doc0 = docs[0];
+		TestHit doc5 = docs[1];
+		// The scores should be the same
+		Assert.IsTrue(doc0.Score + " does not equal: " + doc5.Score, doc0.Score == doc5.Score);
+		/*
+		 * Score should be (based on Default Sim.: All floats are approximate tf = 1
+		 * numDocs = 6 docFreq(all) = 2 idf = ln(6/3) + 1 = 1.693147 idf ^ 2 =
+		 * 2.8667 boost = 1 lengthNorm = 1 //there is 1 term in every document coord
+		 * = 1 sumOfSquaredWeights = (idf * boost) ^ 2 = 1.693147 ^ 2 = 2.8667
+		 * queryNorm = 1 / (sumOfSquaredWeights)^0.5 = 1 /(1.693147) = 0.590
+		 * 
+		 * score = 1 * 2.8667 * 1 * 1 * 0.590 = 1.69
+		 */
+		Assert.IsTrue(doc0.Score + " does not equal: " + 1.6931472f, doc0.Score == 1.6931472f);
+	  }
+
+	  private class CollectorAnonymousInnerClassHelper : Collector
+	  {
+		  private readonly TestTermScorer OuterInstance;
+
+		  private AtomicReaderContext Context;
+		  private IList<TestHit> Docs;
+
+		  public CollectorAnonymousInnerClassHelper(TestTermScorer outerInstance, AtomicReaderContext context, IList<TestHit> docs)
+		  {
+			  this.OuterInstance = outerInstance;
+			  this.Context = context;
+			  this.Docs = docs;
+			  @base = 0;
+		  }
+
+		  private int @base;
+		  private Scorer scorer;
+
+		  public override Scorer Scorer
+		  {
+			  set
+			  {
+				this.scorer = value;
+			  }
+		  }
+
+		  public override void Collect(int doc)
+		  {
+			float score = scorer.score();
+			doc = doc + @base;
+			Docs.Add(new TestHit(OuterInstance, doc, score));
+			Assert.IsTrue("score " + score + " is not greater than 0", score > 0);
+			Assert.IsTrue("Doc: " + doc + " does not equal 0 or doc does not equal 5", doc == 0 || doc == 5);
+		  }
+
+		  public override AtomicReaderContext NextReader
+		  {
+			  set
+			  {
+				@base = value.docBase;
+			  }
+		  }
+
+		  public override bool AcceptsDocsOutOfOrder()
+		  {
+			return true;
+		  }
+	  }
+
+	  public virtual void TestNext()
+	  {
+
+		Term allTerm = new Term(FIELD, "all");
+		TermQuery termQuery = new TermQuery(allTerm);
+
+		Weight weight = IndexSearcher.createNormalizedWeight(termQuery);
+		Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
+		AtomicReaderContext context = (AtomicReaderContext) IndexSearcher.TopReaderContext;
+		Scorer ts = weight.scorer(context, context.reader().LiveDocs);
+		Assert.IsTrue("next did not return a doc", ts.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue("score is not correct", ts.score() == 1.6931472f);
+		Assert.IsTrue("next did not return a doc", ts.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue("score is not correct", ts.score() == 1.6931472f);
+		Assert.IsTrue("next returned a doc and it should not have", ts.nextDoc() == DocIdSetIterator.NO_MORE_DOCS);
+	  }
+
+	  public virtual void TestAdvance()
+	  {
+
+		Term allTerm = new Term(FIELD, "all");
+		TermQuery termQuery = new TermQuery(allTerm);
+
+		Weight weight = IndexSearcher.createNormalizedWeight(termQuery);
+		Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
+		AtomicReaderContext context = (AtomicReaderContext) IndexSearcher.TopReaderContext;
+		Scorer ts = weight.scorer(context, context.reader().LiveDocs);
+		Assert.IsTrue("Didn't skip", ts.advance(3) != DocIdSetIterator.NO_MORE_DOCS);
+		// The next doc should be doc 5
+		Assert.IsTrue("doc should be number 5", ts.docID() == 5);
+	  }
+
+	  private class TestHit
+	  {
+		  private readonly TestTermScorer OuterInstance;
+
+		public int Doc;
+		public float Score;
+
+		public TestHit(TestTermScorer outerInstance, int doc, float score)
+		{
+			this.OuterInstance = outerInstance;
+		  this.Doc = doc;
+		  this.Score = score;
+		}
+
+		public override string ToString()
+		{
+		  return "TestHit{" + "doc=" + Doc + ", score=" + Score + "}";
+		}
+	  }
+
+	}
+
 }
