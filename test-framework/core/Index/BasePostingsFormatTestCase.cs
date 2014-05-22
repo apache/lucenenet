@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using Directory = Lucene.Net.Store.Directory;
 	using FlushInfo = Lucene.Net.Store.FlushInfo;

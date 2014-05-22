@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using DataOutput = Lucene.Net.Store.DataOutput;
 	using SmallFloat = Lucene.Net.Util.SmallFloat;
 	using Lucene.Net.Util.Fst;

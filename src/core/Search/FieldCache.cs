@@ -182,7 +182,6 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  [Obsolete("(4.4) Index as a numeric field using <seealso cref="Lucene.Net.Document.IntField"/> and then use <seealso cref="#getInts(Lucene.Net.Index.AtomicReader, String, boolean)"/> instead.")]
 	  FieldCache_Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
@@ -198,7 +197,6 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  [Obsolete("(4.4) Index as a numeric field using <seealso cref="Lucene.Net.Document.IntField"/> and then use <seealso cref="#getInts(Lucene.Net.Index.AtomicReader, String, boolean)"/> instead.")]
 	  FieldCache_Bytes GetBytes(AtomicReader reader, string field, FieldCache_ByteParser parser, bool setDocsWithField);
 
 	  /// <summary>
@@ -213,7 +211,6 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  [Obsolete("(4.4) Index as a numeric field using <seealso cref="Lucene.Net.Document.IntField"/> and then use <seealso cref="#getInts(Lucene.Net.Index.AtomicReader, String, boolean)"/> instead.")]
 	  FieldCache_Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
@@ -229,7 +226,6 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  [Obsolete("(4.4) Index as a numeric field using <seealso cref="Lucene.Net.Document.IntField"/> and then use <seealso cref="#getInts(Lucene.Net.Index.AtomicReader, String, boolean)"/> instead.")]
 	  FieldCache_Shorts GetShorts(AtomicReader reader, string field, FieldCache_ShortParser parser, bool setDocsWithField);
 
 	  /// <summary>
@@ -996,7 +992,7 @@ namespace Lucene.Net.Search
 	  b.Append("'").Append(FieldName).Append("',");
 	  b.Append(CacheType).Append(",").Append(Custom);
 	  b.Append("=>").Append(Value.GetType().Name).Append("#");
-	  b.Append(System.identityHashCode(Value));
+	  b.Append(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Value));
 
 	  string s = EstimatedSize;
 	  if (null != s)

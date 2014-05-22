@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
@@ -31,7 +32,8 @@ namespace Lucene.Net.Analysis
 	  internal readonly int Remainder;
 
 	  // for testing only
-	  public MockCharFilter(Reader @in, int remainder) : base(@in)
+      public MockCharFilter(StreamReader @in, int remainder)
+          : base(@in)
 	  {
 		// TODO: instead of fixed remainder... maybe a fixed
 		// random seed?
@@ -43,7 +45,8 @@ namespace Lucene.Net.Analysis
 	  }
 
 	  // for testing only, uses a remainder of 0
-	  public MockCharFilter(Reader @in) : this(@in, 0)
+      public MockCharFilter(StreamReader @in)
+          : this(@in, 0)
 	  {
 	  }
 
@@ -66,21 +69,21 @@ namespace Lucene.Net.Analysis
 		}
 
 		// otherwise actually read one    
-		int ch = input.read();
-		if (ch < 0)
+		int c = Input.Read();
+		if (c < 0)
 		{
-		  return ch;
+		  return c;
 		}
 
 		CurrentOffset++;
-		if ((ch % 10) != Remainder || char.IsHighSurrogate((char)ch) || char.IsLowSurrogate((char)ch))
+		if ((c % 10) != Remainder || char.IsHighSurrogate((char)c) || char.IsLowSurrogate((char)c))
 		{
-		  return ch;
+		  return c;
 		}
 
 		// we will double this character, so buffer it.
-		BufferedCh = ch;
-		return ch;
+		BufferedCh = c;
+		return c;
 	  }
 
 	  public override int Read(char[] cbuf, int off, int len)
@@ -101,7 +104,7 @@ namespace Lucene.Net.Analysis
 
 	  public override int Correct(int currentOff)
 	  {
-		KeyValuePair<int?, int?> lastEntry = Corrections.lowerEntry(currentOff + 1);
+		KeyValuePair<int, int> lastEntry = Corrections.lowerEntry(currentOff + 1);
 		int ret = lastEntry == null ? currentOff : currentOff + lastEntry.Value;
 		Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
 		return ret;

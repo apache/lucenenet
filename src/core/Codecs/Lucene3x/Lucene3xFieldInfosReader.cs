@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			{
 			  storePayloads = false;
 			}
-			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, isIndexed && !omitNorms? FieldInfo.DocValuesType.NUMERIC : null, Collections.emptyMap<string, string>());
+			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, isIndexed && !omitNorms? FieldInfo.DocValuesType_e.NUMERIC : null, Collections.emptyMap<string, string>());
 		  }
 
 		  if (input.FilePointer != input.Length())

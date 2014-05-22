@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
 				// create new fields or update existing ones to have BinaryDV type
 				foreach (string f in dvUpdates.BinaryDVUpdates.Keys)
 				{
-				  builder.AddOrUpdate(f, BinaryDocValuesField.TYPE);
+				  builder.AddOrUpdate(f, BinaryDocValuesField.fType);
 				}
         
 				fieldInfos = builder.Finish();

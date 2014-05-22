@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using BooleanClause = Lucene.Net.Search.BooleanClause;
 	using BooleanQuery = Lucene.Net.Search.BooleanQuery;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;

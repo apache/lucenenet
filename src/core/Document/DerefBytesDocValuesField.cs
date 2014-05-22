@@ -46,12 +46,12 @@ namespace Lucene.Net.Document
 	  /// <summary>
 	  /// Type for bytes DocValues: all with the same length
 	  /// </summary>
-	  public static readonly FieldType TYPE_FIXED_LEN = BinaryDocValuesField.TYPE;
+	  public static readonly FieldType TYPE_FIXED_LEN = BinaryDocValuesField.fType;
 
 	  /// <summary>
 	  /// Type for bytes DocValues: can have variable lengths
 	  /// </summary>
-	  public static readonly FieldType TYPE_VAR_LEN = BinaryDocValuesField.TYPE;
+	  public static readonly FieldType TYPE_VAR_LEN = BinaryDocValuesField.fType;
 
 	  /// <summary>
 	  /// Create a new fixed or variable-length DocValues field. </summary>

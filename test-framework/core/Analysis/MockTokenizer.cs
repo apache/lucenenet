@@ -28,6 +28,7 @@ namespace Lucene.Net.Analysis
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
 
 	using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
+    using System.IO;
 
 	/// <summary>
 	/// Tokenizer for testing.
@@ -45,16 +46,16 @@ namespace Lucene.Net.Analysis
 	{
 	  /// <summary>
 	  /// Acts Similar to WhitespaceTokenizer </summary>
-	  public static readonly CharacterRunAutomaton WHITESPACE = new CharacterRunAutomaton(new RegExp("[^ \t\r\n]+").toAutomaton());
+	  public static readonly CharacterRunAutomaton WHITESPACE = new CharacterRunAutomaton(new RegExp("[^ \t\r\n]+").ToAutomaton());
 	  /// <summary>
 	  /// Acts Similar to KeywordTokenizer.
 	  /// TODO: Keyword returns an "empty" token for an empty reader... 
 	  /// </summary>
-	  public static readonly CharacterRunAutomaton KEYWORD = new CharacterRunAutomaton(new RegExp(".*").toAutomaton());
+	  public static readonly CharacterRunAutomaton KEYWORD = new CharacterRunAutomaton(new RegExp(".*").ToAutomaton());
 	  /// <summary>
 	  /// Acts like LetterTokenizer. </summary>
 	  // the ugly regex below is incomplete Unicode 5.2 [:Letter:]
-	  public static readonly CharacterRunAutomaton SIMPLE = new CharacterRunAutomaton(new RegExp("[A-Za-zªµºÀ-ÖØ-öø-ˁ一-鿌]+").toAutomaton());
+	  public static readonly CharacterRunAutomaton SIMPLE = new CharacterRunAutomaton(new RegExp("[A-Za-zªµºÀ-ÖØ-öø-ˁ一-鿌]+").ToAutomaton());
 
 	  private readonly CharacterRunAutomaton RunAutomaton;
 	  private readonly bool LowerCase;
@@ -91,7 +92,8 @@ namespace Lucene.Net.Analysis
 	  // evil: but we don't change the behavior with this random, we only switch up how we read
 	  private readonly Random Random = new Random(RandomizedContext.current().Random.nextLong());
 
-	  public MockTokenizer(AttributeFactory factory, Reader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength) : base(factory, input)
+      public MockTokenizer(AttributeFactory factory, StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength) 
+          : base(factory, input)
 	  {
 		this.RunAutomaton = runAutomaton;
 		this.LowerCase = lowerCase;
@@ -100,20 +102,24 @@ namespace Lucene.Net.Analysis
 		this.MaxTokenLength = maxTokenLength;
 	  }
 
-	  public MockTokenizer(Reader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength) : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, runAutomaton, lowerCase, maxTokenLength)
+      public MockTokenizer(StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
+          : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, runAutomaton, lowerCase, maxTokenLength)
 	  {
 	  }
 
-	  public MockTokenizer(Reader input, CharacterRunAutomaton runAutomaton, bool lowerCase) : this(input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
+      public MockTokenizer(StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase)
+          : this(input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
 	  {
 	  }
 	  /// <summary>
 	  /// Calls <seealso cref="#MockTokenizer(Reader, CharacterRunAutomaton, boolean) MockTokenizer(Reader, WHITESPACE, true)"/> </summary>
-	  public MockTokenizer(Reader input) : this(input, WHITESPACE, true)
+      public MockTokenizer(StreamReader input)
+          : this(input, WHITESPACE, true)
 	  {
 	  }
 
-	  public MockTokenizer(AttributeFactory factory, Reader input, CharacterRunAutomaton runAutomaton, bool lowerCase) : this(factory, input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
+      public MockTokenizer(AttributeFactory factory, StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase)
+          : this(factory, input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
 	  {
 	  }
 
@@ -121,7 +127,8 @@ namespace Lucene.Net.Analysis
 	  /// Calls {@link #MockTokenizer(Lucene.Net.Util.AttributeSource.AttributeFactory,Reader,CharacterRunAutomaton,boolean)
 	  ///                MockTokenizer(AttributeFactory, Reader, WHITESPACE, true)} 
 	  /// </summary>
-	  public MockTokenizer(AttributeFactory factory, Reader input) : this(input, WHITESPACE, true)
+      public MockTokenizer(AttributeFactory factory, StreamReader input)
+          : this(input, WHITESPACE, true)
 	  {
 	  }
 
@@ -248,7 +255,7 @@ namespace Lucene.Net.Analysis
 		  {
 			// read(CharBuffer)
 			char[] c = new char[1];
-			CharBuffer cb = CharBuffer.wrap(c);
+			CharBuffer cb = CharBuffer.Wrap(c);
 			int ret = Input.Read(cb);
 			return ret < 0 ? ret : c[0];
 		  }

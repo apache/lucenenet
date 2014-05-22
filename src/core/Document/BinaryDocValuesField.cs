@@ -46,11 +46,11 @@ namespace Lucene.Net.Document
 	  /// <summary>
 	  /// Type for straight bytes DocValues.
 	  /// </summary>
-	  public static readonly FieldType TYPE = new FieldType();
+	  public static readonly FieldType fType = new FieldType();
 	  static BinaryDocValuesField()
 	  {
-		TYPE.DocValueType = FieldInfo.DocValuesType.BINARY;
-		TYPE.Freeze();
+		fType.DocValueType = FieldInfo.DocValuesType_e.BINARY;
+		fType.Freeze();
 	  }
 
 	  /// <summary>
@@ -58,7 +58,7 @@ namespace Lucene.Net.Document
 	  /// <param name="name"> field name </param>
 	  /// <param name="value"> binary content </param>
 	  /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
-	  public BinaryDocValuesField(string name, BytesRef value) : base(name, TYPE)
+	  public BinaryDocValuesField(string name, BytesRef value) : base(name, fType)
 	  {
 		FieldsData = value;
 	  }

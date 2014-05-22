@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 
 	using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
 	using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Counter = Lucene.Net.Util.Counter;
 	using IOUtils = Lucene.Net.Util.IOUtils;
@@ -56,10 +56,10 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType dvType = field.fieldType().docValueType();
-		DocValuesType dvType = field.FieldType().docValueType();
+		DocValuesType_e dvType = field.FieldType().docValueType();
 		if (dvType != null)
 		{
-		  fieldInfo.DocValuesType = dvType;
+		  fieldInfo.DocValuesType_e = dvType;
 		  if (dvType == DocValuesType.BINARY)
 		  {
 			AddBinaryField(fieldInfo, docID, field.BinaryValue());

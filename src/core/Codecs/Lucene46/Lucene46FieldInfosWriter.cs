@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Lucene46
 	 * limitations under the License.
 	 */
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene46
 			// pack the DV types in one byte
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte dv = docValuesByte(fi.getDocValuesType());
-			sbyte dv = DocValuesByte(fi.DocValuesType);
+			sbyte dv = DocValuesByte(fi.DocValuesType_e);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte nrm = docValuesByte(fi.getNormType());
 			sbyte nrm = DocValuesByte(fi.NormType);

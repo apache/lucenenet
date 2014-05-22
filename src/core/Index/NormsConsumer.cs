@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 
 	using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
 	using NormsFormat = Lucene.Net.Codecs.NormsFormat;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 
 	// TODO FI: norms could actually be stored as doc store

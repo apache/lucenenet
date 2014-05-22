@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;

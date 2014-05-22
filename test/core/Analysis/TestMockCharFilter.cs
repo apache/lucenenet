@@ -1,3 +1,4 @@
+using System.IO;
 namespace Lucene.Net.Analysis
 {
 
@@ -43,13 +44,13 @@ namespace Lucene.Net.Analysis
 		  }
 
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+          protected internal override TokenStreamComponents CreateComponents(string fieldName, StreamReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			return new TokenStreamComponents(tokenizer, tokenizer);
 		  }
 
-		  protected internal override Reader InitReader(string fieldName, Reader reader)
+          protected internal override StreamReader InitReader(string fieldName, StreamReader reader)
 		  {
 			return new MockCharFilter(reader, 7);
 		  }

@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	using Codec = Lucene.Net.Codecs.Codec;
 	using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
 	using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using PerFieldDocValuesFormat = Lucene.Net.Codecs.Perfield.PerFieldDocValuesFormat;
 	using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
 	using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 	using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexableField = Lucene.Net.Index.IndexableField;
@@ -68,7 +68,6 @@ namespace Lucene.Net.Util
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 	using TopDocs = Lucene.Net.Search.TopDocs;
 	using Directory = Lucene.Net.Store.Directory;
-	using Assert = org.junit.Assert;
 
 	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
@@ -98,7 +97,7 @@ namespace Lucene.Net.Util
 		  {
 			b.Append("   ").Append(f.AbsolutePath).Append("\n");
 		  }
-		  throw new IOException(b.ToString());
+		  throw new System.IO.IOException(b.ToString());
 		}
 	  }
 
@@ -943,7 +942,7 @@ namespace Lucene.Net.Util
 		{
 		  Field field1 = (Field) f;
 		  Field field2;
-		  DocValuesType dvType = field1.fieldType().docValueType();
+		  DocValuesType_e dvType = field1.fieldType().docValueType();
 		  NumericType numType = field1.fieldType().numericType();
 		  if (dvType != null)
 		  {

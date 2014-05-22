@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	using Codec = Lucene.Net.Codecs.Codec;
 	using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
 	using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
 	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 	using CheckAbort = Lucene.Net.Index.MergeState.CheckAbort;
@@ -961,7 +961,7 @@ namespace Lucene.Net.Index
 			{
 			  foreach (FieldInfo fi in SegmentReader.ReadFieldInfos(info))
 			  {
-				map.AddOrGet(fi.Name, fi.Number, fi.DocValuesType);
+				map.AddOrGet(fi.Name, fi.Number, fi.DocValuesType_e);
 			  }
 			}
     

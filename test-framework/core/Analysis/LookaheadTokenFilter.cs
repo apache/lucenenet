@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
 	  private const bool DEBUG = false;
 
-	  protected internal readonly PositionIncrementAttribute PosIncAtt = addAttribute(typeof(PositionIncrementAttribute));
+	  protected internal readonly PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute>();
 	  protected internal readonly PositionLengthAttribute PosLenAtt = addAttribute(typeof(PositionLengthAttribute));
 	  protected internal readonly OffsetAttribute OffsetAtt = addAttribute(typeof(OffsetAttribute));
 

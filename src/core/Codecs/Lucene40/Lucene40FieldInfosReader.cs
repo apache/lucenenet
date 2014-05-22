@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			}
 			if (oldNormsType.mapping != null)
 			{
-			  if (oldNormsType.mapping != FieldInfo.DocValuesType.NUMERIC)
+			  if (oldNormsType.mapping != FieldInfo.DocValuesType_e.NUMERIC)
 			  {
 				throw new CorruptIndexException("invalid norm type: " + oldNormsType + " (resource=" + input + ")");
 			  }
@@ -159,19 +159,19 @@ namespace Lucene.Net.Codecs.Lucene40
 	  internal enum LegacyDocValuesType
 	  {
 		NONE = null,
-		VAR_INTS = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		FLOAT_32 = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		FLOAT_64 = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		BYTES_FIXED_STRAIGHT = Lucene.Net.Index.FieldInfo.DocValuesType.BINARY,
-		BYTES_FIXED_DEREF = Lucene.Net.Index.FieldInfo.DocValuesType.BINARY,
-		BYTES_VAR_STRAIGHT = Lucene.Net.Index.FieldInfo.DocValuesType.BINARY,
-		BYTES_VAR_DEREF = Lucene.Net.Index.FieldInfo.DocValuesType.BINARY,
-		FIXED_INTS_16 = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		FIXED_INTS_32 = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		FIXED_INTS_64 = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		FIXED_INTS_8 = Lucene.Net.Index.FieldInfo.DocValuesType.NUMERIC,
-		BYTES_FIXED_SORTED = Lucene.Net.Index.FieldInfo.DocValuesType.SORTED,
-		BYTES_VAR_SORTED = Lucene.Net.Index.FieldInfo.DocValuesType.SORTED
+		VAR_INTS = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		FLOAT_32 = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		FLOAT_64 = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		BYTES_FIXED_STRAIGHT = Lucene.Net.Index.FieldInfo.DocValuesType_e.BINARY,
+		BYTES_FIXED_DEREF = Lucene.Net.Index.FieldInfo.DocValuesType_e.BINARY,
+		BYTES_VAR_STRAIGHT = Lucene.Net.Index.FieldInfo.DocValuesType_e.BINARY,
+		BYTES_VAR_DEREF = Lucene.Net.Index.FieldInfo.DocValuesType_e.BINARY,
+		FIXED_INTS_16 = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		FIXED_INTS_32 = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		FIXED_INTS_64 = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		FIXED_INTS_8 = Lucene.Net.Index.FieldInfo.DocValuesType_e.NUMERIC,
+		BYTES_FIXED_SORTED = Lucene.Net.Index.FieldInfo.DocValuesType_e.SORTED,
+		BYTES_VAR_SORTED = Lucene.Net.Index.FieldInfo.DocValuesType_e.SORTED
 
 //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain fields in .NET:
 //		final Lucene.Net.Index.FieldInfo.DocValuesType mapping;

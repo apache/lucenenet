@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
 	using StoredFieldsWriter = Lucene.Net.Codecs.StoredFieldsWriter;
 	using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using Bits = Lucene.Net.Util.Bits;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
 		{
 		  foreach (FieldInfo field in MergeState.FieldInfos)
 		  {
-			DocValuesType type = field.DocValuesType;
+			DocValuesType_e type = field.DocValuesType_e;
 			if (type != null)
 			{
 			  if (type == DocValuesType.NUMERIC)

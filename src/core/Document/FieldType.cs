@@ -21,7 +21,7 @@ namespace Lucene.Net.Document
 	 */
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
 	using Lucene.Net.Search; // javadocs
@@ -471,10 +471,10 @@ namespace Lucene.Net.Document
 	  /// <p>
 	  /// The default is <code>null</code> (no docValues) </summary>
 	  /// <seealso cref= #setDocValueType(Lucene.Net.Index.FieldInfo.DocValuesType) </seealso>
-	  public override DocValuesType DocValueType()
+	  /*public override DocValuesType DocValueType()
 	  {
 		return DocValueType_Renamed;
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Set's the field's DocValuesType </summary>
@@ -484,7 +484,12 @@ namespace Lucene.Net.Document
 	  /// <seealso cref= #docValueType() </seealso>
 	  public virtual DocValuesType DocValueType
 	  {
-		  set
+          get
+          {
+              return DocValueType_Renamed;
+          }
+          
+          set
 		  {
 			CheckIfFrozen();
 			DocValueType_Renamed = value;

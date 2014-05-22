@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	 * limitations under the License.
 	 */
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene42
 			output.writeByte(bits);
 
 			// pack the DV types in one byte
-			sbyte dv = DocValuesByte(fi.DocValuesType);
+			sbyte dv = DocValuesByte(fi.DocValuesType_e);
 			sbyte nrm = DocValuesByte(fi.NormType);
 			assert(dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0;
 			sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));

@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
@@ -105,10 +105,10 @@ namespace Lucene.Net.Codecs.Lucene42
 			sbyte val = input.ReadByte();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType docValuesType = getDocValuesType(input, (byte)(val & 0x0F));
-			FieldInfo.DocValuesType docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
+			FieldInfo.DocValuesType_e docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType normsType = getDocValuesType(input, (byte)((val >>> 4) & 0x0F));
-			FieldInfo.DocValuesType normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
+			FieldInfo.DocValuesType_e normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Map<String,String> attributes = input.readStringStringMap();
 			IDictionary<string, string> attributes = input.ReadStringStringMap();
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		}
 	  }
 
-	  private static FieldInfo.DocValuesType GetDocValuesType(IndexInput input, sbyte b)
+	  private static FieldInfo.DocValuesType_e GetDocValuesType(IndexInput input, sbyte b)
 	  {
 		if (b == 0)
 		{
@@ -141,19 +141,19 @@ namespace Lucene.Net.Codecs.Lucene42
 		}
 		else if (b == 1)
 		{
-		  return FieldInfo.DocValuesType.NUMERIC;
+		  return FieldInfo.DocValuesType_e.NUMERIC;
 		}
 		else if (b == 2)
 		{
-		  return FieldInfo.DocValuesType.BINARY;
+		  return FieldInfo.DocValuesType_e.BINARY;
 		}
 		else if (b == 3)
 		{
-		  return FieldInfo.DocValuesType.SORTED;
+		  return FieldInfo.DocValuesType_e.SORTED;
 		}
 		else if (b == 4)
 		{
-		  return FieldInfo.DocValuesType.SORTED_SET;
+		  return FieldInfo.DocValuesType_e.SORTED_SET;
 		}
 		else
 		{

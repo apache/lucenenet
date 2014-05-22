@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
 	using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;
 	using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using FieldCache = Lucene.Net.Search.FieldCache;
 	using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 	using Directory = Lucene.Net.Store.Directory;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
 			IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
 			foreach (FieldInfo fi in FieldInfos_Renamed)
 			{
-			  if (fi.DocValuesType == null)
+			  if (fi.DocValuesType_e == null)
 			  {
 				continue;
 			  }
@@ -502,12 +502,12 @@ namespace Lucene.Net.Index
 		  // Field does not exist
 		  return null;
 		}
-		if (fi.DocValuesType == null)
+		if (fi.DocValuesType_e == null)
 		{
 		  // Field was not indexed with doc values
 		  return null;
 		}
-		if (fi.DocValuesType != type)
+		if (fi.DocValuesType_e != type)
 		{
 		  // Field DocValues are different than requested type
 		  return null;
@@ -548,7 +548,7 @@ namespace Lucene.Net.Index
 		  // Field does not exist
 		  return null;
 		}
-		if (fi.DocValuesType == null)
+		if (fi.DocValuesType_e == null)
 		{
 		  // Field was not indexed with doc values
 		  return null;

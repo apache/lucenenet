@@ -2017,7 +2017,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length() + ",expected: " + reader.MaxDoc());
 		}
-		switch (fi.DocValuesType)
+		switch (fi.DocValuesType_e)
 		{
 		  case SORTED:
 			status.TotalSortedFields++;

@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	 */
 
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 
 	/// <summary>
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
 			int fieldNumber = GlobalFieldNumbers.AddOrGet(name, preferredFieldNumber, docValues);
 			fi = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValues, normType, null);
 			Debug.Assert(!ByName.ContainsKey(fi.Name));
-			Debug.Assert(GlobalFieldNumbers.ContainsConsistent(Convert.ToInt32(fi.Number), fi.Name, fi.DocValuesType));
+			Debug.Assert(GlobalFieldNumbers.ContainsConsistent(Convert.ToInt32(fi.Number), fi.Name, fi.DocValuesType_e));
 			ByName[fi.Name] = fi;
 		  }
 		  else
@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
 			{
 			  // only pay the synchronization cost if fi does not already have a DVType
 			  bool updateGlobal = !fi.HasDocValues();
-			  fi.DocValuesType = docValues; // this will also perform the consistency check.
+			  fi.DocValuesType_e = docValues; // this will also perform the consistency check.
 			  if (updateGlobal)
 			  {
 				// must also update docValuesType map so it's
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
 		public FieldInfo Add(FieldInfo fi)
 		{
 		  // IMPORTANT - reuse the field number if possible for consistent field numbers across segments
-		  return AddOrUpdateInternal(fi.Name, fi.Number, fi.Indexed, fi.HasVectors(), fi.OmitsNorms(), fi.HasPayloads(), fi.IndexOptions, fi.DocValuesType, fi.NormType);
+		  return AddOrUpdateInternal(fi.Name, fi.Number, fi.Indexed, fi.HasVectors(), fi.OmitsNorms(), fi.HasPayloads(), fi.IndexOptions, fi.DocValuesType_e, fi.NormType);
 		}
 
 		public FieldInfo FieldInfo(string fieldName)

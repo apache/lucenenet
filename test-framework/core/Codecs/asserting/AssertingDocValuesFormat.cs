@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override NumericDocValues GetNumeric(FieldInfo field)
 		{
-		  Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType.NUMERIC || field.NormType == FieldInfo.DocValuesType.NUMERIC);
+		  Debug.Assert(field.DocValuesType_e == FieldInfo.DocValuesType_e.NUMERIC || field.NormType == FieldInfo.DocValuesType_e.NUMERIC);
 		  NumericDocValues values = @in.getNumeric(field);
 		  Debug.Assert(values != null);
 		  return new AssertingAtomicReader.AssertingNumericDocValues(values, MaxDoc);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override BinaryDocValues GetBinary(FieldInfo field)
 		{
-		  Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType.BINARY);
+		  Debug.Assert(field.DocValuesType_e == FieldInfo.DocValuesType_e.BINARY);
 		  BinaryDocValues values = @in.getBinary(field);
 		  Debug.Assert(values != null);
 		  return new AssertingAtomicReader.AssertingBinaryDocValues(values, MaxDoc);
@@ -303,7 +303,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override SortedDocValues GetSorted(FieldInfo field)
 		{
-		  Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType.SORTED);
+		  Debug.Assert(field.DocValuesType_e == FieldInfo.DocValuesType_e.SORTED);
 		  SortedDocValues values = @in.getSorted(field);
 		  Debug.Assert(values != null);
 		  return new AssertingAtomicReader.AssertingSortedDocValues(values, MaxDoc);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override SortedSetDocValues GetSortedSet(FieldInfo field)
 		{
-		  Debug.Assert(field.DocValuesType == FieldInfo.DocValuesType.SORTED_SET);
+		  Debug.Assert(field.DocValuesType_e == FieldInfo.DocValuesType_e.SORTED_SET);
 		  SortedSetDocValues values = @in.getSortedSet(field);
 		  Debug.Assert(values != null);
 		  return new AssertingAtomicReader.AssertingSortedSetDocValues(values, MaxDoc);
@@ -319,7 +319,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override Bits GetDocsWithField(FieldInfo field)
 		{
-		  Debug.Assert(field.DocValuesType != null);
+		  Debug.Assert(field.DocValuesType_e != null);
 		  Bits bits = @in.getDocsWithField(field);
 		  Debug.Assert(bits != null);
 		  Debug.Assert(bits.length() == MaxDoc);

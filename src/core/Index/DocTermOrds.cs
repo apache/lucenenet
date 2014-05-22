@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
 		FieldInfo info = reader.FieldInfos.FieldInfo(Field);
 		if (info != null && info.HasDocValues())
 		{
-		  throw new IllegalStateException("Type mismatch: " + Field + " was indexed as " + info.DocValuesType);
+		  throw new IllegalStateException("Type mismatch: " + Field + " was indexed as " + info.DocValuesType_e);
 		}
 		//System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':

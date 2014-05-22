@@ -943,7 +943,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  public override Bits GetDocsWithField(FieldInfo field)
 	  {
-		switch (field.DocValuesType)
+		switch (field.DocValuesType_e)
 		{
 		  case SORTED_SET:
 			return DocValues.DocsWithValue(GetSortedSet(field), MaxDoc);

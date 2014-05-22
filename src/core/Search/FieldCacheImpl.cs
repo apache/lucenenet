@@ -524,7 +524,7 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -667,7 +667,7 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -807,7 +807,7 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -1286,7 +1286,7 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -1469,7 +1469,7 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -1674,7 +1674,7 @@ namespace Lucene.Net.Search
 		  {
 			// we don't try to build a sorted instance from numeric/binary doc
 			// values because dedup can be very costly
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -1864,7 +1864,7 @@ namespace Lucene.Net.Search
 		}
 		else if (info.HasDocValues())
 		{
-		  throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+		  throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		}
 		else if (!info.Indexed)
 		{
@@ -2042,7 +2042,7 @@ namespace Lucene.Net.Search
 		}
 		else if (info.HasDocValues())
 		{
-		  throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
+		  throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
 		}
 		else if (!info.Indexed)
 		{

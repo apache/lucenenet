@@ -19,16 +19,12 @@ namespace Lucene.Net.Analysis
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.Automaton.BasicAutomata.makeEmpty;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.Automaton.BasicAutomata.makeString;
-
-
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
 	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 	using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
 	using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+    using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
+    using System;
 
 	/// <summary>
 	/// A tokenfilter for testing that removes terms accepted by a DFA.
@@ -42,11 +38,11 @@ namespace Lucene.Net.Analysis
 	{
 	  /// <summary>
 	  /// Empty set of stopwords </summary>
-	  public static readonly CharacterRunAutomaton EMPTY_STOPSET = new CharacterRunAutomaton(makeEmpty());
+	  public static readonly CharacterRunAutomaton EMPTY_STOPSET = new CharacterRunAutomaton(BasicAutomata.MakeEmpty());
 
 	  /// <summary>
 	  /// Set of common english stopwords </summary>
-	  public static readonly CharacterRunAutomaton ENGLISH_STOPSET = new CharacterRunAutomaton(BasicOperations.union(Arrays.asList(makeString("a"), makeString("an"), makeString("and"), makeString("are"), makeString("as"), makeString("at"), makeString("be"), makeString("but"), makeString("by"), makeString("for"), makeString("if"), makeString("in"), makeString("into"), makeString("is"), makeString("it"), makeString("no"), makeString("not"), makeString("of"), makeString("on"), makeString("or"), makeString("such"), makeString("that"), makeString("the"), makeString("their"), makeString("then"), makeString("there"), makeString("these"), makeString("they"), makeString("this"), makeString("to"), makeString("was"), makeString("will"), makeString("with"))));
+      public static readonly CharacterRunAutomaton ENGLISH_STOPSET = new CharacterRunAutomaton(BasicOperations.Union(Array.ToList(BasicAutomata.MakeString("a"), BasicAutomata.MakeString("an"), BasicAutomata.MakeString("and"), BasicAutomata.MakeString("are"), BasicAutomata.MakeString("as"), BasicAutomata.MakeString("at"), BasicAutomata.MakeString("be"), BasicAutomata.MakeString("but"), BasicAutomata.MakeString("by"), BasicAutomata.MakeString("for"), BasicAutomata.MakeString("if"), BasicAutomata.MakeString("in"), BasicAutomata.MakeString("into"), BasicAutomata.MakeString("is"), BasicAutomata.MakeString("it"), BasicAutomata.MakeString("no"), BasicAutomata.MakeString("not"), BasicAutomata.MakeString("of"), BasicAutomata.MakeString("on"), BasicAutomata.MakeString("or"), BasicAutomata.MakeString("such"), BasicAutomata.MakeString("that"), BasicAutomata.MakeString("the"), BasicAutomata.MakeString("their"), BasicAutomata.MakeString("then"), BasicAutomata.MakeString("there"), BasicAutomata.MakeString("these"), BasicAutomata.MakeString("they"), BasicAutomata.MakeString("this"), BasicAutomata.MakeString("to"), BasicAutomata.MakeString("was"), BasicAutomata.MakeString("will"), BasicAutomata.MakeString("with"))));
 
 	  private readonly CharacterRunAutomaton Filter;
 
@@ -73,7 +69,7 @@ namespace Lucene.Net.Analysis
 		SkippedPositions = 0;
 		while (Input.IncrementToken())
 		{
-		  if (!Filter.run(TermAtt.Buffer(), 0, TermAtt.Length))
+		  if (!Filter.Run(TermAtt.Buffer(), 0, TermAtt.Length))
 		  {
 			PosIncrAtt.PositionIncrement = PosIncrAtt.PositionIncrement + SkippedPositions;
 			return true;

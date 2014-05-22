@@ -41,12 +41,12 @@ namespace Lucene.Net.Index
 	  public readonly int Number;
 
 	  private bool Indexed_Renamed;
-	  private DocValuesType DocValueType;
+	  private DocValuesType_e DocValueType;
 
 	  // True if any document indexed term vectors
 	  private bool StoreTermVector;
 
-	  private DocValuesType NormType_Renamed;
+	  private DocValuesType_e NormType_Renamed;
 	  private bool OmitNorms; // omit norms associated with indexed fields
 	  private IndexOptions IndexOptions_Renamed;
 	  private bool StorePayloads; // whether this field stores payloads together with term positions
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 	  /// Note that DocValues is strongly typed, so a field cannot have different types
 	  /// across different documents.
 	  /// </summary>
-	  public enum DocValuesType
+	  public enum DocValuesType_e
 	  {
 		/// <summary>
 		/// A per-document Number
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// @lucene.experimental
 	  /// </summary>
-	  public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normsType, IDictionary<string, string> attributes)
+	  public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType_e docValues, DocValuesType_e normsType, IDictionary<string, string> attributes)
 	  {
 		this.Name = name;
 		this.Indexed_Renamed = indexed;
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(CheckConsistency());
 	  }
 
-	  internal DocValuesType DocValuesType
+	  internal DocValuesType_e DocValuesType
 	  {
 		  set
 		  {
@@ -278,9 +278,9 @@ namespace Lucene.Net.Index
 
 
 	  /// <summary>
-	  /// Returns <seealso cref="DocValuesType"/> of the norm. this may be null if the field has no norms.
+	  /// Returns <seealso cref="DocValuesType_e"/> of the norm. this may be null if the field has no norms.
 	  /// </summary>
-	  public DocValuesType NormType
+	  public DocValuesType_e NormType
 	  {
 		  get
 		  {
@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(CheckConsistency());
 	  }
 
-	  internal DocValuesType NormValueType
+	  internal DocValuesType_e NormValueType
 	  {
 		  set
 		  {

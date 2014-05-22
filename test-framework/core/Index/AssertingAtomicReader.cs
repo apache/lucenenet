@@ -616,12 +616,12 @@ namespace Lucene.Net.Index
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType.NUMERIC);
+		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.NUMERIC);
 		  return new AssertingNumericDocValues(dv, maxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType.NUMERIC);
+		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.NUMERIC);
 		  return null;
 		}
 	  }
@@ -633,12 +633,12 @@ namespace Lucene.Net.Index
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType.BINARY);
+		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.BINARY);
 		  return new AssertingBinaryDocValues(dv, maxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType.BINARY);
+		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.BINARY);
 		  return null;
 		}
 	  }
@@ -650,12 +650,12 @@ namespace Lucene.Net.Index
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType.SORTED);
+		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.SORTED);
 		  return new AssertingSortedDocValues(dv, maxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType.SORTED);
+		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.SORTED);
 		  return null;
 		}
 	  }
@@ -667,12 +667,12 @@ namespace Lucene.Net.Index
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType.SORTED_SET);
+		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.SORTED_SET);
 		  return new AssertingSortedSetDocValues(dv, maxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType.SORTED_SET);
+		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.SORTED_SET);
 		  return null;
 		}
 	  }

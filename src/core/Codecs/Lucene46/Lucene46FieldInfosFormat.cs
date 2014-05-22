@@ -18,7 +18,7 @@ namespace Lucene.Net.Codecs.Lucene46
 	 * limitations under the License.
 	 */
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using DataOutput = Lucene.Net.Store.DataOutput;
 
 	/// <summary>

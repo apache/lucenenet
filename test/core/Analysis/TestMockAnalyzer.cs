@@ -44,12 +44,13 @@ namespace Lucene.Net.Analysis
     using System.IO;
     using NUnit.Framework;
 
-
+    [TestFixture]
 	public class TestMockAnalyzer : BaseTokenStreamTestCase
 	{
 
 	  /// <summary>
 	  /// Test a configuration that behaves a lot like WhitespaceAnalyzer </summary>
+      [Test]
 	  public virtual void TestWhitespace()
 	  {
 		Analyzer a = new MockAnalyzer(new Random());
@@ -60,7 +61,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration that behaves a lot like SimpleAnalyzer </summary>
-	  public virtual void TestSimple()
+      [Test]
+      public virtual void TestSimple()
 	  {
 		Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.SIMPLE, true);
 		AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ", new string[] {"a", "bc", "defg", "hijklmn", "opqrstuv", "wxy", "z"});
@@ -70,7 +72,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration that behaves a lot like KeywordAnalyzer </summary>
-	  public virtual void TestKeyword()
+      [Test]
+      public virtual void TestKeyword()
 	  {
 		Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.KEYWORD, false);
 		AssertAnalyzesTo(a, "a-bc123 defg+hijklmn567opqrstuv78wxy_z ", new string[] {"a-bc123 defg+hijklmn567opqrstuv78wxy_z "});
@@ -84,7 +87,8 @@ namespace Lucene.Net.Analysis
 	  // Test some regular expressions as tokenization patterns
 	  /// <summary>
 	  /// Test a configuration where each character is a term </summary>
-	  public virtual void TestSingleChar()
+      [Test]
+      public virtual void TestSingleChar()
 	  {
 		CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp(".")).ToAutomaton());
         Analyzer a = new MockAnalyzer(new Random(), single, false);
@@ -94,7 +98,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration where two characters makes a term </summary>
-	  public virtual void TestTwoChars()
+      [Test]
+      public virtual void TestTwoChars()
 	  {
 		CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("..")).ToAutomaton());
         Analyzer a = new MockAnalyzer(new Random(), single, false);
@@ -107,7 +112,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration where three characters makes a term </summary>
-	  public virtual void TestThreeChars()
+      [Test]
+      public virtual void TestThreeChars()
 	  {
 		CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("...")).ToAutomaton());
         Analyzer a = new MockAnalyzer(new Random(), single, false);
@@ -120,7 +126,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration where word starts with one uppercase </summary>
-	  public virtual void TestUppercase()
+      [Test]
+      public virtual void TestUppercase()
 	  {
 		CharacterRunAutomaton single = new CharacterRunAutomaton((new RegExp("[A-Z][a-z]*")).ToAutomaton());
         Analyzer a = new MockAnalyzer(new Random(), single, false);
@@ -131,7 +138,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration that behaves a lot like StopAnalyzer </summary>
-	  public virtual void TestStop()
+      [Test]
+      public virtual void TestStop()
 	  {
           Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
 		AssertAnalyzesTo(a, "the quick brown a fox", new string[] {"quick", "brown", "fox"}, new int[] {2, 1, 2});
@@ -139,7 +147,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration that behaves a lot like KeepWordFilter </summary>
-	  public virtual void TestKeep()
+      [Test]
+      public virtual void TestKeep()
 	  {
 		CharacterRunAutomaton keepWords = new CharacterRunAutomaton(BasicOperations.Complement(Automaton.Union(Arrays.asList(BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar")))));
         Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.SIMPLE, true, keepWords);
@@ -148,7 +157,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test a configuration that behaves a lot like LengthFilter </summary>
-	  public virtual void TestLength()
+      [Test]
+      public virtual void TestLength()
 	  {
 		CharacterRunAutomaton length5 = new CharacterRunAutomaton((new RegExp(".{5,}")).ToAutomaton());
         Analyzer a = new MockAnalyzer(new Random(), MockTokenizer.WHITESPACE, true, length5);
@@ -157,7 +167,8 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Test MockTokenizer encountering a too long token </summary>
-	  public virtual void TestTooLongToken()
+      [Test]
+      public virtual void TestTooLongToken()
 	  {
 		Analyzer whitespace = new AnalyzerAnonymousInnerClassHelper(this);
 
@@ -182,7 +193,8 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
-	  public virtual void TestLUCENE_3042()
+      [Test]
+      public virtual void TestLUCENE_3042()
 	  {
 		string testString = "t";
 
@@ -212,14 +224,16 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// blast some random strings through the analyzer </summary>
-	  public virtual void TestRandomStrings()
+      [Test]
+      public virtual void TestRandomStrings()
 	  {
           CheckRandomData(new Random(), new MockAnalyzer(new Random()), atLeast(1000));
 	  }
 
 	  /// <summary>
 	  /// blast some random strings through differently configured tokenizers </summary>
-	  public virtual void TestRandomRegexps()
+      [Test]
+      public virtual void TestRandomRegexps()
 	  {
 		int iters = atLeast(30);
 		for (int i = 0; i < iters; i++)
@@ -256,7 +270,8 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
-	  public virtual void TestForwardOffsets()
+      [Test]
+      public virtual void TestForwardOffsets()
 	  {
 		int num = atLeast(10000);
 		for (int i = 0; i < num; i++)
@@ -287,7 +302,8 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
-	  public virtual void TestWrapReader()
+      [Test]
+      public virtual void TestWrapReader()
 	  {
 		// LUCENE-5153: test that wrapping an analyzer's reader is allowed
           Random random = new Random();
@@ -327,7 +343,8 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
-	  public virtual void TestChangeGaps()
+      [Test]
+      public virtual void TestChangeGaps()
 	  {
 		// LUCENE-5324: check that it is possible to change the wrapper's gaps
 		int positionGap = Random().Next(1000);

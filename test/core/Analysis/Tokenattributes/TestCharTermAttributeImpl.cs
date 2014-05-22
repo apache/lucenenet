@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		for (int i = 0; i < 2000; i++)
 		{
 		  t.ResizeBuffer(i);
-		  Assert.IsTrue(i <= t.Buffer().length);
+		  Assert.IsTrue(i <= t.Buffer().Length);
 		  Assert.AreEqual("hello", t.ToString());
 		}
 	  }

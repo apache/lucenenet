@@ -475,14 +475,14 @@ namespace Lucene.Net.Analysis
 			Assert.Fail("didn't get expected exception when reset() not called");
 		  }
 		}
-		catch (AssertionError expected)
+		catch (ApplicationException expected)
 		{
 		  // ok: MockTokenizer
-		  Assert.IsTrue(expected.Message, expected.Message != null && expected.Message.contains("wrong state"));
+		  Assert.IsTrue(expected.Message != null && expected.Message.Contains("wrong state"), expected.Message);
 		}
 		catch (Exception unexpected)
 		{
-		  unexpected.printStackTrace(System.err);
+		  //unexpected.printStackTrace(System.err);
 		  Assert.Fail("got wrong exception when reset() not called: " + unexpected);
 		}
 		finally
@@ -497,7 +497,7 @@ namespace Lucene.Net.Analysis
 		}
 
 		// check for a missing Close()
-		ts = a.TokenStream("bogus", new StringReader(input)));
+		ts = a.TokenStream("bogus", new StringReader(input));
 		ts.Reset();
 		while (ts.IncrementToken())
 		{
@@ -505,7 +505,7 @@ namespace Lucene.Net.Analysis
 		ts.End();
 		try
 		{
-		  ts = a.TokenStream("bogus", new StringReader(input)));
+		  ts = a.TokenStream("bogus", new StringReader(input));
 		  Assert.Fail("didn't get expected exception when Close() not called");
 		}
 		catch (Exception expected)
@@ -557,14 +557,14 @@ namespace Lucene.Net.Analysis
 		internal readonly bool Simple;
 		internal readonly bool OffsetsAreCorrect;
 		internal readonly RandomIndexWriter Iw;
-		internal readonly CountDownLatch Latch;
+		//internal readonly CountDownLatch Latch;
 
 		// NOTE: not volatile because we don't want the tests to
 		// add memory barriers (ie alter how threads
 		// interact)... so this is just "best effort":
 		public bool Failed;
 
-		internal AnalysisThread(long seed, CountDownLatch latch, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
+		internal AnalysisThread(long seed, /*CountDownLatch latch,*/ Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
 		{
 		  this.Seed = seed;
 		  this.a = a;
@@ -574,7 +574,7 @@ namespace Lucene.Net.Analysis
 		  this.Simple = simple;
 		  this.OffsetsAreCorrect = offsetsAreCorrect;
 		  this.Iw = iw;
-		  this.Latch = latch;
+		  //this.Latch = latch;
 		}
 
 		public override void Run()
@@ -582,7 +582,7 @@ namespace Lucene.Net.Analysis
 		  bool success = false;
 		  try
 		  {
-			Latch.@await();
+			//Latch.@await();
 			// see the part in checkRandomData where it replays the same text again
 			// to verify reproducability/reuse: hopefully this would catch thread hazards.
 			CheckRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
@@ -625,26 +625,26 @@ namespace Lucene.Net.Analysis
 		  // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
 		  // so this should only really fail from another thread if its an actual thread problem
 		  int numThreads = TestUtil.NextInt(random, 2, 4);
-		  CountDownLatch startingGun = new CountDownLatch(1);
+		  //CountDownLatch startingGun = new CountDownLatch(1);
 		  AnalysisThread[] threads = new AnalysisThread[numThreads];
 		  for (int i = 0; i < threads.Length; i++)
 		  {
-			threads[i] = new AnalysisThread(seed, startingGun, a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
+			threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
 		  }
 		  for (int i = 0; i < threads.Length; i++)
 		  {
 			threads[i].Start();
 		  }
-		  startingGun.countDown();
+		  //startingGun.countDown();
 		  for (int i = 0; i < threads.Length; i++)
 		  {
 			try
 			{
 			  threads[i].Join();
 			}
-			catch (InterruptedException e)
+			catch (ThreadInterruptedException e)
 			{
-			  throw new Exception(e);
+			  throw e;
 			}
 		  }
 		  for (int i = 0; i < threads.Length; i++)
@@ -919,7 +919,7 @@ namespace Lucene.Net.Analysis
 			  }
 			  // Throw an errant exception from the Reader:
 
-			  MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
+			  MockReaderWrapper evilReader = new MockReaderWrapper(random, new StreamReader(text));
 			  evilReader.ThrowExcAfterChar(random.Next(text.Length + 1));
 			  reader = evilReader;
 
@@ -1074,7 +1074,7 @@ namespace Lucene.Net.Analysis
 	  protected internal virtual string ToDot(Analyzer a, string inputText)
 	  {
 		StringWriter sw = new StringWriter();
-		TokenStream ts = a.TokenStream("field", inputText);
+		TokenStream ts = a.TokenStream("field", new StringReader(inputText));
 		ts.Reset();
 		(new TokenStreamToDot(inputText, ts, new PrintWriter(sw))).ToDot();
 		return sw.ToString();

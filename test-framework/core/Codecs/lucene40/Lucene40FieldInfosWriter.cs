@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	 */
 
 	using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			output.writeByte(bits);
 
 			// pack the DV types in one byte
-			sbyte dv = DocValuesByte(fi.DocValuesType, fi.getAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
+			sbyte dv = DocValuesByte(fi.DocValuesType_e, fi.getAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
 			sbyte nrm = DocValuesByte(fi.NormType, fi.getAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
 			assert(dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0;
 			sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));

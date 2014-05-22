@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
 	 */
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
 
 	/// <summary>

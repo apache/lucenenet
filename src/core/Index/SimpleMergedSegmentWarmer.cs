@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 
 		  if (info.HasDocValues())
 		  {
-			switch (info.DocValuesType)
+			switch (info.DocValuesType_e)
 			{
 			  case NUMERIC:
 				reader.GetNumericDocValues(info.Name);

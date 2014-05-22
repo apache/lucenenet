@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 
 	using Bits = Lucene.Net.Util.Bits;
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType;
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using MultiSortedDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedDocValues;
 	using MultiSortedSetDocValues = Lucene.Net.Index.MultiDocValues.MultiSortedSetDocValues;
 	using OrdinalMap = Lucene.Net.Index.MultiDocValues.OrdinalMap;
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		// cached ordinal map
-		if (FieldInfos.FieldInfo(field).DocValuesType != DocValuesType.SORTED)
+		if (FieldInfos.FieldInfo(field).DocValuesType_e != DocValuesType.SORTED)
 		{
 		  return null;
 		}
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		// cached ordinal map
-		if (FieldInfos.FieldInfo(field).DocValuesType != DocValuesType.SORTED_SET)
+		if (FieldInfos.FieldInfo(field).DocValuesType_e != DocValuesType.SORTED_SET)
 		{
 		  return null;
 		}

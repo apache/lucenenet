@@ -4,42 +4,43 @@ using System.Diagnostics;
 namespace Lucene.Net.Analysis
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System.IO;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
 	/// <summary>
 	/// Wraps a Reader, and can throw random or fixed
 	///  exceptions, and spoon feed read chars. 
 	/// </summary>
 
-	public class MockReaderWrapper : Reader
+	public class MockReaderWrapper : StreamReader
 	{
 
-	  private readonly Reader @in;
+      private readonly StreamReader @in;
 	  private readonly Random Random;
 
 	  private int ExcAtChar = -1;
 	  private int ReadSoFar;
 	  private bool ThrowExcNext_Renamed;
 
-	  public MockReaderWrapper(Random random, Reader @in)
+      public MockReaderWrapper(Random random, StreamReader @in)
 	  {
 		this.@in = @in;
 		this.Random = random;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis
 
 	  public override void Close()
 	  {
-		@in.close();
+		@in.Close();
 	  }
 
 	  public override int Read(char[] cbuf, int off, int len)
@@ -86,13 +87,13 @@ namespace Lucene.Net.Analysis
 		{
 		  int left = ExcAtChar - ReadSoFar;
 		  Debug.Assert(left != 0);
-		  read = @in.read(cbuf, off, Math.Min(realLen, left));
+		  read = @in.Read(cbuf, off, Math.Min(realLen, left));
 		  Debug.Assert(read != -1);
 		  ReadSoFar += read;
 		}
 		else
 		{
-		  read = @in.read(cbuf, off, realLen);
+		  read = @in.Read(cbuf, off, realLen);
 		}
 		return read;
 	  }

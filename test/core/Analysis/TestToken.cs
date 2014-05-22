@@ -252,9 +252,10 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
+      [Test]
 	  public virtual void TestTokenAttributeFactory()
 	  {
-		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
+		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
 
 		Assert.IsTrue( ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 
@@ -266,14 +267,14 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue( ts.AddAttribute<TypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
 	  }
 
+      [Test]
 	  public virtual void TestAttributeReflection()
 	  {
 		Token t = new Token("foobar", 6, 22, 8);
 		TestUtil.assertAttributeReflection(t, new Dictionary<string, object>() {{put(typeof(CharTermAttribute).Name + "#term", "foobar"); put(typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar")); put(typeof(OffsetAttribute).Name + "#startOffset", 6); put(typeof(OffsetAttribute).Name + "#endOffset", 22); put(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1); put(typeof(PayloadAttribute).Name + "#payload", null); put(typeof(TypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE); put(typeof(FlagsAttribute).Name + "#flags", 8);}});
 	  }
 
-
-	  public static T assertCloneIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl
+      public static T AssertCloneIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl
 	  {
 		T clone = (T) att.Clone();
 		Assert.AreEqual(att, clone, "Clone must be equal");
@@ -281,9 +282,9 @@ namespace Lucene.Net.Analysis
 		return clone;
 	  }
 
-	  public static T assertCopyIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl
+	  public static T AssertCopyIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl
 	  {
-		T copy = (T) att.GetType().newInstance();
+        T copy = (T)System.Activator.CreateInstance(att.GetType());
 		att.CopyTo(copy);
 		Assert.AreEqual(att, copy, "Copied instance must be equal");
         Assert.AreEqual(att.GetHashCode(), copy.GetHashCode(), "Copied instance's hashcode must be equal");

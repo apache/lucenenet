@@ -26,9 +26,9 @@ namespace Lucene.Net.Util
 	 */
 
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static com.carrotsearch.randomizedtesting.RandomizedTest.systemPropertyAsBoolean;
+	//import static com.carrotsearch.randomizedtesting.RandomizedTest.systemPropertyAsBoolean;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static com.carrotsearch.randomizedtesting.RandomizedTest.systemPropertyAsInt;
+	//import static com.carrotsearch.randomizedtesting.RandomizedTest.systemPropertyAsInt;
 
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
 	using AssertingIndexSearcher = Lucene.Net.Search.AssertingIndexSearcher;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using FieldCache = Lucene.Net.Search.FieldCache;
-	using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
+	//using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
 	using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
 	using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
-	using After = org.junit.After;
+	/*using After = org.junit.After;
 	using AfterClass = org.junit.AfterClass;
 	using Assert = org.junit.Assert;
 	using Before = org.junit.Before;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
 	using StaticFieldsInvariantRule = com.carrotsearch.randomizedtesting.rules.StaticFieldsInvariantRule;
 	using SystemPropertiesInvariantRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesInvariantRule;
 	using TestRuleAdapter = com.carrotsearch.randomizedtesting.rules.TestRuleAdapter;
-
+    */
 	/// <summary>
 	/// Base class for all Lucene unit tests, Junit3 or Junit4 variant.
 	/// 
@@ -188,22 +188,15 @@ namespace Lucene.Net.Util
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @RunWith(RandomizedRunner.class) @TestMethodProviders({ LuceneJUnit3MethodProvider.class, JUnit4MethodProvider.class }) @Listeners({ RunListenerPrintReproduceInfo.class, FailureMarker.class }) @SeedDecorators({MixWithSuiteName.class}) @ThreadLeakScope(Scope.SUITE) @ThreadLeakGroup(Group.MAIN) @ThreadLeakAction({Action.WARN, Action.INTERRUPT}) @ThreadLeakLingering(linger = 20000) @ThreadLeakZombies(Consequence.IGNORE_REMAINING_TESTS) @TimeoutSuite(millis = 2 * TimeUnits.HOUR) @ThreadLeakFilters(defaultFilters = true, filters = { QuickPatchThreadsFilter.class }) public abstract class LuceneTestCase : org.junit.Assert
-	public abstract class LuceneTestCase : Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
+	[TestFixture]
+    public abstract class LuceneTestCase : Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
 	{
-		private bool InstanceFieldsInitialized = false;
-
+        public static  System.IO.FileInfo TEMP_DIR;
 		public LuceneTestCase()
 		{
-			if (!InstanceFieldsInitialized)
-			{
-				InitializeInstanceFields();
-				InstanceFieldsInitialized = true;
-			}
-		}
+			String directory = Paths.TempDirectory;
 
-		private void InitializeInstanceFields()
-		{
-			RuleChain = RuleChain.outerRule(TestFailureMarker).around(IgnoreAfterMaxFailures).around(ThreadAndTestNameRule).around(new SystemPropertiesInvariantRule(IGNORED_INVARIANT_PROPERTIES)).around(new TestRuleSetupAndRestoreInstanceEnv()).around(new TestRuleFieldCacheSanity()).around(ParentChainCallRule);
+            TEMP_DIR = new System.IO.FileInfo(directory);
 		}
 
 
@@ -291,8 +284,6 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  {
 	  }
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Documented @Inherited @Retention(RetentionPolicy.RUNTIME) @TestGroup(enabled = false, sysProperty = SYSPROP_BADAPPLES) public class BadApple : System.Attribute
 	  public class BadApple : System.Attribute
 	  {
 		/// <summary>
@@ -304,9 +295,7 @@ namespace Lucene.Net.Util
 	  /// Annotation for test classes that should avoid certain codec types
 	  /// (because they are expensive, for example).
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Documented @Inherited @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public class SuppressCodecs : System.Attribute
-	  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true]
+	  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	  public class SuppressCodecs : System.Attribute
 	  {
 		string[] value();
@@ -319,9 +308,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  /// <seealso cref= LuceneTestCase#createTempDir() </seealso>
 	  /// <seealso cref= LuceneTestCase#createTempFile(String, String) </seealso>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Documented @Inherited @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) public class SuppressTempFileChecks : System.Attribute
-	  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true]
+	  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	  public class SuppressTempFileChecks : System.Attribute
 	  {
 		/// <summary>
@@ -524,8 +511,6 @@ namespace Lucene.Net.Util
 	  /// in <seealso cref="LuceneTestCase"/> are executed in proper order if they depend on each 
 	  /// other.
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @ClassRule public static org.junit.rules.TestRule classRules = org.junit.rules.RuleChain.outerRule(new TestRuleIgnoreTestSuites()).around(ignoreAfterMaxFailures).around(suiteFailureMarker = new TestRuleMarkFailure()).around(new TestRuleAssertionsRequired()).around(new TemporaryFilesCleanupRule()).around(new com.carrotsearch.randomizedtesting.rules.StaticFieldsInvariantRule(STATIC_LEAK_THRESHOLD, true) { @Override protected boolean accept(java.lang.reflect.Field field) { if(STATIC_LEAK_IGNORED_TYPES.contains(field.getType().getName())) { return false; } if(field.getDeclaringClass() == LuceneTestCase.class) { return false; } return base.accept(field); } }).around(new com.carrotsearch.randomizedtesting.rules.NoClassHooksShadowingRule()).around(new com.carrotsearch.randomizedtesting.rules.NoInstanceHooksOverridesRule() { @Override protected boolean verify(Method key) { String name = key.getName(); return !(name.equals("setUp") || name.equals("tearDown")); } }).around(new com.carrotsearch.randomizedtesting.rules.SystemPropertiesInvariantRule(IGNORED_INVARIANT_PROPERTIES)).around(classNameRule = new TestRuleStoreClassName()).around(classEnvRule = new TestRuleSetupAndRestoreClassEnv());
 	  public static TestRule ClassRules = RuleChain.outerRule(new TestRuleIgnoreTestSuites()).around(IgnoreAfterMaxFailures).around(SuiteFailureMarker = new TestRuleMarkFailure()).around(new TestRuleAssertionsRequired()).around(new TemporaryFilesCleanupRule()).around(new StaticFieldsInvariantRule(STATIC_LEAK_THRESHOLD, true) {@Override protected bool accept(System.Reflection.FieldInfo field) {if (STATIC_LEAK_IGNORED_TYPES.contains(field.Type.Name)) {return false;} if (field.DeclaringClass == typeof(LuceneTestCase)) {return false;} return base.accept(field);}}).around(new NoClassHooksShadowingRule()).around(new NoInstanceHooksOverridesRule() {@Override protected bool verify(Method key) {string name = key.Name; return !(name.Equals("setUp") || name.Equals("tearDown"));}}).around(new SystemPropertiesInvariantRule(IGNORED_INVARIANT_PROPERTIES)).around(ClassNameRule = new TestRuleStoreClassName()).around(ClassEnvRule = new TestRuleSetupAndRestoreClassEnv());
 			// Don't count known classes that consume memory once.
 			// Don't count references from ourselves, we're top-level.
@@ -662,7 +647,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  protected bool TestThread
 	  {
-		Assert.IsNotNull("Test case thread not set?", ThreadAndTestNameRule.TestCaseThread);
+		Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
 		return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;
 	  }
 

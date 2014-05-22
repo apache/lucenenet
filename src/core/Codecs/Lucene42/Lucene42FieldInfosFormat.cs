@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	 * limitations under the License.
 	 */
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType; // javadoc
+	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e; // javadoc
 	using DataOutput = Lucene.Net.Store.DataOutput; // javadoc
 
 	/// <summary>

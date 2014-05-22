@@ -46,7 +46,7 @@ namespace Lucene.Net.Document
 	  public static readonly FieldType TYPE = new FieldType();
 	  static NumericDocValuesField()
 	  {
-		TYPE.DocValueType = FieldInfo.DocValuesType.NUMERIC;
+		TYPE.DocValueType = FieldInfo.DocValuesType_e.NUMERIC;
 		TYPE.Freeze();
 	  }
 
