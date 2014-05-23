@@ -26,6 +26,11 @@ namespace Lucene.Net.Document
 	using Lucene.Net.Search; // javadocs
 	using Lucene.Net.Search; // javadocs
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using Lucene.Net.Index;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
 	/// <summary>
 	/// <p>
@@ -128,14 +133,14 @@ namespace Lucene.Net.Document
 		TYPE_NOT_STORED.Indexed = true;
 		TYPE_NOT_STORED.Tokenized = true;
 		TYPE_NOT_STORED.OmitNorms = true;
-		TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-		TYPE_NOT_STORED.NumericType = FieldType.NumericType.INT;
+		TYPE_NOT_STORED.IndexOptionsValue = IndexOptions.DOCS_ONLY;
+        TYPE_NOT_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.INT;
 		TYPE_NOT_STORED.Freeze();
 		TYPE_STORED.Indexed = true;
 		TYPE_STORED.Tokenized = true;
 		TYPE_STORED.OmitNorms = true;
-		TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-		TYPE_STORED.NumericType = FieldType.NumericType.INT;
+		TYPE_STORED.IndexOptionsValue = IndexOptions.DOCS_ONLY;
+		TYPE_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.INT;
 		TYPE_STORED.Stored = true;
 		TYPE_STORED.Freeze();
 	  }
@@ -170,7 +175,7 @@ namespace Lucene.Net.Document
 	  ///          if the field type does not have a INT numericType() </exception>
 	  public IntField(string name, int value, FieldType type) : base(name, type)
 	  {
-		if (type.NumericType() != FieldType.NumericType.INT)
+          if (type.NumericTypeValue != Lucene.Net.Document.FieldType.NumericType.INT)
 		{
 		  throw new System.ArgumentException("type.numericType() must be INT but got " + type.NumericType());
 		}

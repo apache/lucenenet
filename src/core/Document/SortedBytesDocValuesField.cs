@@ -40,7 +40,6 @@ namespace Lucene.Net.Document
 	/// <seealso cref= SortedDocValues </seealso>
 	/// @deprecated Use <seealso cref="SortedDocValuesField"/> instead.
 	///  
-	[Obsolete("Use <seealso cref="SortedDocValuesField"/> instead.")]
 	public class SortedBytesDocValuesField : SortedDocValuesField
 	{
 

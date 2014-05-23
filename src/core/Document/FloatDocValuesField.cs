@@ -20,6 +20,10 @@ namespace Lucene.Net.Document
 
 	using AtomicReader = Lucene.Net.Index.AtomicReader; // javadocs
 	using FieldCache = Lucene.Net.Search.FieldCache; // javadocs
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
 	/// <summary>
 	/// Syntactic sugar for encoding floats as NumericDocValues
@@ -40,7 +44,8 @@ namespace Lucene.Net.Document
 	  /// <param name="name"> field name </param>
 	  /// <param name="value"> 32-bit float value </param>
 	  /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
-	  public FloatDocValuesField(string name, float value) : base(name, float.floatToRawIntBits(value))
+        public FloatDocValuesField(string name, float value)
+            : base(name, Support.Single.FloatToIntBits(value))
 	  {
 	  }
 
@@ -48,7 +53,7 @@ namespace Lucene.Net.Document
 	  {
 		  set
 		  {
-			base.LongValue = float.floatToRawIntBits(value);
+              base.LongValue = Support.Single.FloatToIntBits(value);
 		  }
 	  }
 

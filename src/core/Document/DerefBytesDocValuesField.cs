@@ -39,7 +39,7 @@ namespace Lucene.Net.Document
 	/// <seealso cref= BinaryDocValues </seealso>
 	/// @deprecated Use <seealso cref="BinaryDocValuesField"/> instead.
 	///  
-	[Obsolete("Use <seealso cref="BinaryDocValuesField"/> instead.")]
+	///[Obsolete("Use <seealso cref="BinaryDocValuesField"/> instead.")]
 	public class DerefBytesDocValuesField : BinaryDocValuesField
 	{
 

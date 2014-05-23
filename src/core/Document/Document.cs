@@ -26,6 +26,10 @@ namespace Lucene.Net.Document
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher; // for javadoc
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc; // for javadoc
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using System.Collections.Generic;
+    using Lucene.Net.Util;
+    using Lucene.Net.Index;
+    using System.Text;
 
 	/// <summary>
 	/// Documents are the unit of indexing and search.
@@ -84,16 +88,16 @@ namespace Lucene.Net.Document
 	  /// </summary>
 	  public void RemoveField(string name)
 	  {
-		IEnumerator<IndexableField> it = Fields_Renamed.GetEnumerator();
-		while (it.MoveNext())
-		{
-		  IndexableField field = it.Current;
-		  if (field.Name().Equals(name))
-		  {
-			it.remove();
-			return;
-		  }
-		}
+          for (int i = Fields_Renamed.Count - 1; i >= 0; i--)
+          {
+              IndexableField field = Fields_Renamed[i];
+
+              if (field.Name().Equals(name))
+              {
+                  Fields_Renamed.RemoveAt(i);
+                  return;
+              }
+          }
 	  }
 
 	  /// <summary>
@@ -107,15 +111,15 @@ namespace Lucene.Net.Document
 	  /// </summary>
 	  public void RemoveFields(string name)
 	  {
-		IEnumerator<IndexableField> it = Fields_Renamed.GetEnumerator();
-		while (it.MoveNext())
-		{
-		  IndexableField field = it.Current;
-		  if (field.Name().Equals(name))
-		  {
-			it.remove();
-		  }
-		}
+          for (int i = Fields_Renamed.Count - 1; i >= 0; i--)
+          {
+              IndexableField field = Fields_Renamed[i];
+
+              if (field.Name().Equals(name))
+              {
+                  Fields_Renamed.RemoveAt(i);
+              }
+          }
 	  }
 
 
@@ -129,16 +133,14 @@ namespace Lucene.Net.Document
 	  /// <returns> a <code>BytesRef[]</code> of binary field values </returns>
 	  public BytesRef[] GetBinaryValues(string name)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final List<Lucene.Net.Util.BytesRef> result = new ArrayList<>();
-		IList<BytesRef> result = new List<BytesRef>();
+		List<BytesRef> result = new List<BytesRef>();
+
 		foreach (IndexableField field in Fields_Renamed)
 		{
 		  if (field.Name().Equals(name))
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes = field.binaryValue();
 			BytesRef bytes = field.BinaryValue();
+
 			if (bytes != null)
 			{
 			  result.Add(bytes);
@@ -163,8 +165,6 @@ namespace Lucene.Net.Document
 		{
 		  if (field.Name().Equals(name))
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes = field.binaryValue();
 			BytesRef bytes = field.BinaryValue();
 			if (bytes != null)
 			{
@@ -201,7 +201,7 @@ namespace Lucene.Net.Document
 	  /// <returns> a <code>IndexableField[]</code> array </returns>
 	  public IndexableField[] GetFields(string name)
 	  {
-		IList<IndexableField> result = new List<IndexableField>();
+		List<IndexableField> result = new List<IndexableField>();
 		foreach (IndexableField field in Fields_Renamed)
 		{
 		  if (field.Name().Equals(name))
@@ -241,7 +241,7 @@ namespace Lucene.Net.Document
 	  /// <returns> a <code>String[]</code> of field values </returns>
 	  public string[] GetValues(string name)
 	  {
-		IList<string> result = new List<string>();
+		List<string> result = new List<string>();
 		foreach (IndexableField field in Fields_Renamed)
 		{
 		  if (field.Name().Equals(name) && field.StringValue() != null)

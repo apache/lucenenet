@@ -19,6 +19,12 @@ namespace Lucene.Net.Document
 	 */
 
 	using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using Lucene.Net.Analysis;
 
 	/// <summary>
 	/// A field that is indexed and tokenized, without term
@@ -57,7 +63,7 @@ namespace Lucene.Net.Document
 	  /// <param name="reader"> reader value </param>
 	  /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
 	  /// <exception cref="NullPointerException"> if the reader is null </exception>
-	  public TextField(string name, Reader reader) : base(name, reader, TYPE_NOT_STORED)
+	  public TextField(string name, TextReader reader) : base(name, reader, TYPE_NOT_STORED)
 	  {
 	  }
 

@@ -1,27 +1,31 @@
 namespace Lucene.Net.Document
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System.IO;
+    using System.IO.Compression;
+    using Lucene.Net.Support;
+    using Lucene.Net.Util;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
-
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using CharsRef = Lucene.Net.Util.CharsRef;
-	using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using CharsRef = Lucene.Net.Util.CharsRef;
+    using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using System;
 
 	/// <summary>
 	/// Simple utility class providing static methods to
@@ -43,58 +47,57 @@ namespace Lucene.Net.Document
 	  ///  specified compressionLevel (constants are defined in
 	  ///  java.util.zip.Deflater). 
 	  /// </summary>
-	  public static sbyte[] Compress(sbyte[] value, int offset, int length, int compressionLevel)
+	  public static byte[] Compress(sbyte[] value, int offset, int length, int compressionLevel)
 	  {
 
 		/* Create an expandable byte array to hold the compressed data.
 		 * You cannot use an array that's the same size as the orginal because
 		 * there is no guarantee that the compressed data will be smaller than
 		 * the uncompressed data. */
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+        MemoryStream bos = new MemoryStream(length);
 
-		Deflater compressor = new Deflater();
+        Deflater compressor = SharpZipLib.CreateDeflater();
 
 		try
 		{
-		  compressor.Level = compressionLevel;
-		  compressor.setInput(value, offset, length);
-		  compressor.finish();
+		  compressor.SetLevel(compressionLevel);
+          compressor.SetInput((byte[]) (Array)value, offset, length);
+		  compressor.Finish();
 
 		  // Compress the data
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte[] buf = new byte[1024];
-		  sbyte[] buf = new sbyte[1024];
-		  while (!compressor.finished())
+		  byte[] buf = new byte[1024];
+		  while (!compressor.IsFinished)
 		  {
-			int count = compressor.deflate(buf);
-			bos.write(buf, 0, count);
+			int count = compressor.Deflate(buf);
+			bos.Write(buf, 0, count);
 		  }
 		}
 		finally
 		{
-		  compressor.end();
 		}
 
-		return bos.toByteArray();
+		return bos.ToArray();
 	  }
 
 	  /// <summary>
 	  /// Compresses the specified byte range, with default BEST_COMPRESSION level </summary>
-	  public static sbyte[] Compress(sbyte[] value, int offset, int length)
+	  public static byte[] Compress(sbyte[] value, int offset, int length)
 	  {
 		return Compress(value, offset, length, Deflater.BEST_COMPRESSION);
 	  }
 
 	  /// <summary>
 	  /// Compresses all bytes in the array, with default BEST_COMPRESSION level </summary>
-	  public static sbyte[] Compress(sbyte[] value)
+	  public static byte[] Compress(sbyte[] value)
 	  {
 		return Compress(value, 0, value.Length, Deflater.BEST_COMPRESSION);
 	  }
 
 	  /// <summary>
 	  /// Compresses the String value, with default BEST_COMPRESSION level </summary>
-	  public static sbyte[] CompressString(string value)
+	  public static byte[] CompressString(string value)
 	  {
 		return CompressString(value, Deflater.BEST_COMPRESSION);
 	  }
@@ -104,10 +107,10 @@ namespace Lucene.Net.Document
 	  ///  compressionLevel (constants are defined in
 	  ///  java.util.zip.Deflater). 
 	  /// </summary>
-	  public static sbyte[] CompressString(string value, int compressionLevel)
+	  public static byte[] CompressString(string value, int compressionLevel)
 	  {
-		BytesRef result = new BytesRef();
-		UnicodeUtil.UTF16toUTF8(value, 0, value.Length, result);
+        BytesRef result = new BytesRef();
+        UnicodeUtil.UTF16toUTF8(value, 0, value.Length, result);
 		return Compress(result.Bytes, 0, result.Length, compressionLevel);
 	  }
 
@@ -115,7 +118,7 @@ namespace Lucene.Net.Document
 	  /// Decompress the byte array previously returned by
 	  ///  compress (referenced by the provided BytesRef) 
 	  /// </summary>
-	  public static sbyte[] Decompress(BytesRef bytes)
+	  public static byte[] Decompress(BytesRef bytes)
 	  {
 		return Decompress(bytes.Bytes, bytes.Offset, bytes.Length);
 	  }
@@ -124,7 +127,7 @@ namespace Lucene.Net.Document
 	  /// Decompress the byte array previously returned by
 	  ///  compress 
 	  /// </summary>
-	  public static sbyte[] Decompress(sbyte[] value)
+	  public static byte[] Decompress(sbyte[] value)
 	  {
 		return Decompress(value, 0, value.Length);
 	  }
@@ -133,33 +136,30 @@ namespace Lucene.Net.Document
 	  /// Decompress the byte array previously returned by
 	  ///  compress 
 	  /// </summary>
-	  public static sbyte[] Decompress(sbyte[] value, int offset, int length)
+	  public static byte[] Decompress(sbyte[] value, int offset, int length)
 	  {
 		// Create an expandable byte array to hold the decompressed data
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+        MemoryStream bos = new MemoryStream(length);
 
-		Inflater decompressor = new Inflater();
+        Inflater decompressor = SharpZipLib.CreateInflater();
 
 		try
 		{
-		  decompressor.setInput(value, offset, length);
+          decompressor.SetInput((byte[])(Array)value);
 
 		  // Decompress the data
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] buf = new byte[1024];
-		  sbyte[] buf = new sbyte[1024];
-		  while (!decompressor.finished())
+		  byte[] buf = new byte[1024];
+		  while (!decompressor.IsFinished)
 		  {
-			int count = decompressor.inflate(buf);
-			bos.write(buf, 0, count);
+			int count = decompressor.Inflate(buf);
+			bos.Write(buf, 0, count);
 		  }
 		}
 		finally
 		{
-		  decompressor.end();
 		}
 
-		return bos.toByteArray();
+		return bos.ToArray();
 	  }
 
 	  /// <summary>
@@ -177,11 +177,9 @@ namespace Lucene.Net.Document
 	  /// </summary>
 	  public static string DecompressString(sbyte[] value, int offset, int length)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = decompress(value, offset, length);
-		sbyte[] bytes = Decompress(value, offset, length);
+		byte[] bytes = Decompress(value, offset, length);
 		CharsRef result = new CharsRef(bytes.Length);
-		UnicodeUtil.UTF8toUTF16(bytes, 0, bytes.Length, result);
+		UnicodeUtil.UTF8toUTF16((sbyte[]) (Array)bytes, 0, bytes.Length, result);
 		return new string(result.Chars, 0, result.Length_Renamed);
 	  }
 
