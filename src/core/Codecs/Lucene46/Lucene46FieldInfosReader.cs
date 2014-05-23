@@ -26,12 +26,13 @@ namespace Lucene.Net.Codecs.Lucene46
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using ChecksumIndexInput = Lucene.Net.Store.ChecksumIndexInput;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Lucene 4.6 FieldInfos reader.
@@ -77,43 +78,35 @@ namespace Lucene.Net.Codecs.Lucene46
 			bool storePayloads = (bits & Lucene46FieldInfosFormat.STORE_PAYLOADS) != 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions indexOptions;
-			FieldInfo.IndexOptions indexOptions;
+			FieldInfo.IndexOptions_e indexOptions;
 			if (!isIndexed)
 			{
-			  indexOptions = null;
+			  indexOptions = default(FieldInfo.IndexOptions_e);
 			}
 			else if ((bits & Lucene46FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_ONLY;
 			}
 			else if ((bits & Lucene46FieldInfosFormat.OMIT_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS;
 			}
 			else if ((bits & Lucene46FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			}
 			else
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
 
 			// DV Types are packed in one byte
 			sbyte val = input.ReadByte();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType docValuesType = getDocValuesType(input, (byte)(val & 0x0F));
 			FieldInfo.DocValuesType_e docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType normsType = getDocValuesType(input, (byte)((val >>> 4) & 0x0F));
 			FieldInfo.DocValuesType_e normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long dvGen = input.readLong();
 			long dvGen = input.ReadLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> attributes = input.readStringStringMap();
 			IDictionary<string, string> attributes = input.ReadStringStringMap();
-			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.unmodifiableMap(attributes));
+			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, CollectionsHelper.UnmodifiableMap(attributes));
 			infos[i].DocValuesGen = dvGen;
 		  }
 
@@ -142,11 +135,11 @@ namespace Lucene.Net.Codecs.Lucene46
 		}
 	  }
 
-	  private static FieldInfo.DocValuesType_e GetDocValuesType(IndexInput input, sbyte b)
+      private static FieldInfo.DocValuesType_e GetDocValuesType(IndexInput input, sbyte b)
 	  {
 		if (b == 0)
 		{
-		  return null;
+		  return default(FieldInfo.DocValuesType_e);
 		}
 		else if (b == 1)
 		{

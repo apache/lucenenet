@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override DocValuesProducer NormsProducer(SegmentReadState state)
 	  {
-		string filename = IndexFileNames.SegmentFileName(state.SegmentInfo.name, "nrm", IndexFileNames.COMPOUND_FILE_EXTENSION);
+		string filename = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, "nrm", IndexFileNames.COMPOUND_FILE_EXTENSION);
 		return new Lucene40DocValuesReader(state, filename, Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY);
 	  }
 	}

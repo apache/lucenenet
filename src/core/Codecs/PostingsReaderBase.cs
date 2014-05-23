@@ -25,6 +25,7 @@ namespace Lucene.Net.Codecs
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using DataInput = Lucene.Net.Store.DataInput;
 	using Bits = Lucene.Net.Util.Bits;
+    using System;
 
 	/// <summary>
 	/// The core terms dictionaries (BlockTermsReader,

@@ -26,6 +26,7 @@ namespace Lucene.Net.Codecs.Compressing
 	using DataOutput = Lucene.Net.Store.DataOutput;
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// A compression mode. Tells how much effort should be spent on compression and
@@ -164,8 +165,6 @@ namespace Lucene.Net.Codecs.Compressing
 			{
 			  bytes.Bytes = new sbyte[ArrayUtil.Oversize(originalLength + 7, 1)];
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int decompressedLength = LZ4.decompress(in, offset + length, bytes.bytes, 0);
 			int decompressedLength = LZ4.Decompress(@in, offset + length, bytes.Bytes, 0);
 			if (decompressedLength > originalLength)
 			{
@@ -219,12 +218,12 @@ namespace Lucene.Net.Codecs.Compressing
 	  private sealed class DeflateDecompressor : Decompressor
 	  {
 
-		internal readonly Inflater Decompressor;
+		internal readonly Inflater decompressor;
 		internal sbyte[] Compressed;
 
 		internal DeflateDecompressor()
 		{
-		  Decompressor = new Inflater();
+		  decompressor = SharpZipLib.CreateInflater();
 		  Compressed = new sbyte[0];
 		}
 
@@ -236,8 +235,6 @@ namespace Lucene.Net.Codecs.Compressing
 			bytes.Length = 0;
 			return;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int compressedLength = in.readVInt();
 		  int compressedLength = @in.ReadVInt();
 		  if (compressedLength > Compressed.Length)
 		  {
@@ -245,28 +242,24 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  @in.ReadBytes(Compressed, 0, compressedLength);
 
-		  Decompressor.reset();
-		  Decompressor.setInput(Compressed, 0, compressedLength);
+		  decompressor.Reset();
+		  decompressor.setInput(Compressed, 0, compressedLength);
 
 		  bytes.Offset = bytes.Length = 0;
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count;
 			int count;
 			try
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int remaining = bytes.bytes.length - bytes.length;
 			  int remaining = bytes.Bytes.Length - bytes.Length;
-			  count = Decompressor.inflate(bytes.Bytes, bytes.Length, remaining);
+			  count = decompressor.Inflate(bytes.Bytes, bytes.Length, remaining);
 			}
-			catch (DataFormatException e)
+			catch (System.FormatException e)
 			{
-			  throw new IOException(e);
+			  throw new System.IO.IOException("See inner", e);
 			}
 			bytes.Length += count;
-			if (Decompressor.finished())
+			if (decompressor.finished())
 			{
 			  break;
 			}
@@ -311,7 +304,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  if (Compressor.needsInput())
 		  {
 			// no output
-			Debug.Assert(len == 0, len);
+			Debug.Assert(len == 0, len.ToString());
 			@out.WriteVInt(0);
 			return;
 		  }
@@ -319,9 +312,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  int totalCount = 0;
 		  for (;;)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = compressor.deflate(compressed, totalCount, compressed.length - totalCount);
-			int count = Compressor.deflate(Compressed, totalCount, Compressed.Length - totalCount);
+			int count = Compressor.Deflate(Compressed, totalCount, Compressed.Length - totalCount);
 			totalCount += count;
 			Debug.Assert(totalCount <= Compressed.Length);
 			if (Compressor.finished())

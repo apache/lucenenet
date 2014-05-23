@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs
 	using DataOutput = Lucene.Net.Store.DataOutput;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using System;
 
 	/// <summary>
 	/// Extension of <seealso cref="PostingsConsumer"/> to support pluggable term dictionaries.

@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	 */
 
 	using DocsEnum = Lucene.Net.Index.DocsEnum; // javadocs
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions; // javadocs
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e; // javadocs
 	using FieldInfos = Lucene.Net.Index.FieldInfos; // javadocs
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;

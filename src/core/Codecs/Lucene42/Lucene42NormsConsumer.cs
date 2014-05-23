@@ -33,9 +33,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
 	using FormatAndBits = Lucene.Net.Util.Packed.PackedInts.FormatAndBits;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.VERSION_CURRENT;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Writer for <seealso cref="Lucene42NormsFormat"/>
@@ -62,12 +60,12 @@ namespace Lucene.Net.Codecs.Lucene42
 		bool success = false;
 		try
 		{
-		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, dataExtension);
-		  Data = state.Directory.createOutput(dataName, state.Context);
-		  CodecUtil.WriteHeader(Data, dataCodec, VERSION_CURRENT);
-		  string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, metaExtension);
-		  Meta = state.Directory.createOutput(metaName, state.Context);
-		  CodecUtil.WriteHeader(Meta, metaCodec, VERSION_CURRENT);
+		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
+		  Data = state.Directory.CreateOutput(dataName, state.Context);
+		  CodecUtil.WriteHeader(Data, dataCodec, Lucene42DocValuesProducer.VERSION_CURRENT);
+		  string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
+		  Meta = state.Directory.CreateOutput(metaName, state.Context);
+		  CodecUtil.WriteHeader(Meta, metaCodec, Lucene42DocValuesProducer.VERSION_CURRENT);
 		  success = true;
 		}
 		finally
@@ -88,17 +86,15 @@ namespace Lucene.Net.Codecs.Lucene42
 		long maxValue = long.MinValue;
 		long gcd = 0;
 		// TODO: more efficient?
-		HashSet<long?> uniqueValues = null;
+		HashSet<long> uniqueValues = null;
 		if (true)
 		{
-		  uniqueValues = new HashSet<>();
+		  uniqueValues = new HashSet<long>();
 
 		  long count = 0;
 		  foreach (Number nv in values)
 		  {
 			Debug.Assert(nv != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long v = nv.longValue();
 			long v = (long)nv;
 
 			if (gcd != 1)
@@ -234,7 +230,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		{
 		  if (success)
 		  {
-			IOUtils.close(Data, Meta);
+			IOUtils.Close(Data, Meta);
 		  }
 		  else
 		  {

@@ -25,15 +25,10 @@ namespace Lucene.Net.Codecs.Lucene41
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.ForUtil.MAX_DATA_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.ForUtil.MAX_ENCODED_SIZE;
-
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 	using TermState = Lucene.Net.Index.TermState;
@@ -127,7 +122,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  public Lucene41PostingsWriter(SegmentWriteState state, float acceptableOverheadRatio) : base()
 	  {
 
-		DocOut = state.Directory.createOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.DOC_EXTENSION), state.Context);
+		DocOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.DOC_EXTENSION), state.Context);
 		IndexOutput posOut = null;
 		IndexOutput payOut = null;
 		bool success = false;
@@ -138,7 +133,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  if (state.FieldInfos.HasProx())
 		  {
 			PosDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
-			posOut = state.Directory.createOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.POS_EXTENSION), state.Context);
+			posOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.POS_EXTENSION), state.Context);
 			CodecUtil.WriteHeader(posOut, POS_CODEC, VERSION_CURRENT);
 
 			if (state.FieldInfos.HasPayloads())
@@ -165,7 +160,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
 			if (state.FieldInfos.HasPayloads() || state.FieldInfos.HasOffsets())
 			{
-			  payOut = state.Directory.createOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.PAY_EXTENSION), state.Context);
+			  payOut = state.Directory.CreateOutput(IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene41PostingsFormat.PAY_EXTENSION), state.Context);
 			  CodecUtil.WriteHeader(payOut, PAY_CODEC, VERSION_CURRENT);
 			}
 		  }
@@ -254,10 +249,10 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  public override int SetField(FieldInfo fieldInfo)
 	  {
-		FieldInfo.IndexOptions indexOptions = fieldInfo.IndexOptions;
-		FieldHasFreqs = indexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
-		FieldHasPositions = indexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		FieldHasOffsets = indexOptions.CompareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		FieldInfo.IndexOptions_e indexOptions = fieldInfo.IndexOptions;
+		FieldHasFreqs = indexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS) >= 0;
+		FieldHasPositions = indexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		FieldHasOffsets = indexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		FieldHasPayloads = fieldInfo.HasPayloads();
 		SkipWriter.SetField(FieldHasPositions, FieldHasOffsets, FieldHasPayloads);
 		LastState = EmptyState;

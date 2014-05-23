@@ -28,6 +28,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Lucene 4.0 implementation of <seealso cref="SegmentInfoWriter"/>.
@@ -67,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		  output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
 		  output.WriteStringStringMap(si.Diagnostics);
-		  output.WriteStringStringMap(Collections.emptyMap<string, string>());
+		  output.WriteStringStringMap(CollectionsHelper.EmptyMap<string, string>());
 		  output.WriteStringSet(si.Files());
 
 		  success = true;
@@ -77,7 +78,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  if (!success)
 		  {
 			IOUtils.CloseWhileHandlingException(output);
-			si.Dir.deleteFile(fileName);
+			si.Dir.DeleteFile(fileName);
 		  }
 		  else
 		  {

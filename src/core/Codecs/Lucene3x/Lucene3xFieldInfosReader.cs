@@ -28,11 +28,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
 	using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// @lucene.experimental </summary>
@@ -55,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  internal const sbyte OMIT_NORMS = 0x10;
 	  internal const sbyte STORE_PAYLOADS = 0x20;
 	  internal const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
-	  internal const sbyte OMIT_POSITIONS = -unchecked((sbyte)128);
+	  internal const sbyte OMIT_POSITIONS = -128;
 
 	  public override FieldInfos Read(Directory directory, string segmentName, string segmentSuffix, IOContext iocontext)
 	  {
@@ -98,20 +99,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 			bool storePayloads = (bits & STORE_PAYLOADS) != 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions indexOptions;
-			FieldInfo.IndexOptions indexOptions;
+			FieldInfo.IndexOptions_e indexOptions;
 			if (!isIndexed)
 			{
-			  indexOptions = null;
+                indexOptions = default(FieldInfo.IndexOptions_e);
 			}
 			else if ((bits & OMIT_TERM_FREQ_AND_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_ONLY;
 			}
 			else if ((bits & OMIT_POSITIONS) != 0)
 			{
 			  if (format <= FORMAT_OMIT_POSITIONS)
 			  {
-				indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+				indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS;
 			  }
 			  else
 			  {
@@ -120,17 +121,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 			}
 			else
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
 
 			// LUCENE-3027: past indices were able to write
 			// storePayloads=true when omitTFAP is also true,
 			// which is invalid.  We correct that, here:
-			if (indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+			if (indexOptions != FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 			{
 			  storePayloads = false;
 			}
-			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, isIndexed && !omitNorms? FieldInfo.DocValuesType_e.NUMERIC : null, Collections.emptyMap<string, string>());
+            // LUCENE TO-DO
+            infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, isIndexed && !omitNorms ? FieldInfo.DocValuesType_e.NUMERIC : default(FieldInfo.DocValuesType_e), CollectionsHelper.EmptyMap<string, string>());
 		  }
 
 		  if (input.FilePointer != input.Length())

@@ -3,29 +3,30 @@ using System.Diagnostics;
 namespace Lucene.Net.Codecs
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using Fields = Lucene.Net.Index.Fields;
-	using MergeState = Lucene.Net.Index.MergeState;
-	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState; // javadocs
-	using Terms = Lucene.Net.Index.Terms;
+    using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using Fields = Lucene.Net.Index.Fields;
+    using MergeState = Lucene.Net.Index.MergeState;
+    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState; // javadocs
+    using Terms = Lucene.Net.Index.Terms;
 
 	/// <summary>
 	/// Abstract API that consumes terms, doc, freq, prox, offset and
@@ -74,7 +75,7 @@ namespace Lucene.Net.Codecs
 	  {
 		foreach (string field in fields)
 		{
-		  FieldInfo info = mergeState.FieldInfos.fieldInfo(field);
+		  FieldInfo info = mergeState.FieldInfos.FieldInfo(field);
 		  Debug.Assert(info != null, "FieldInfo for field is null: " + field);
 		  Terms terms = fields.Terms(field);
 		  if (terms != null)

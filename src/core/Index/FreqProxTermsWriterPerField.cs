@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
 	using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
 	using TermStats = Lucene.Net.Codecs.TermStats;
 	using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 		this.FieldInfo = fieldInfo;
 		DocState = termsHashPerField.DocState;
 		FieldState = termsHashPerField.FieldState;
-		IndexOptions = fieldInfo.IndexOptions;
+		IndexOptions = fieldInfo.IndexOptions_e;
 	  }
 
 	  internal override int StreamCount
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 	  {
 		// Record, up front, whether our in-RAM format will be
 		// with or without term freqs:
-		IndexOptions = FieldInfo.IndexOptions;
+		IndexOptions = FieldInfo.IndexOptions_e;
 		PayloadAttribute = null;
 	  }
 
@@ -114,9 +114,9 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  HasFreq = value.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-			  HasProx = value.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-			  HasOffsets = value.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+			  HasFreq = value.compareTo(IndexOptions_e.DOCS_AND_FREQS) >= 0;
+			  HasProx = value.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+			  HasOffsets = value.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 			}
 		  }
 	  }
@@ -428,18 +428,18 @@ namespace Lucene.Net.Index
 		// currentFieldIndexOptions:
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions currentFieldIndexOptions = fieldInfo.getIndexOptions();
-		IndexOptions currentFieldIndexOptions = FieldInfo.IndexOptions;
+		IndexOptions currentFieldIndexOptions = FieldInfo.IndexOptions_e;
 		Debug.Assert(currentFieldIndexOptions != null);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean writeTermFreq = currentFieldIndexOptions.compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
-		bool writeTermFreq = currentFieldIndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		bool writeTermFreq = currentFieldIndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS) >= 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean writePositions = currentFieldIndexOptions.compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		bool writePositions = currentFieldIndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		bool writePositions = currentFieldIndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean writeOffsets = currentFieldIndexOptions.compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-		bool writeOffsets = currentFieldIndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool writeOffsets = currentFieldIndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean readTermFreq = this.hasFreq;

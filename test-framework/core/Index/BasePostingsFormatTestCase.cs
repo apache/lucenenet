@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using FlushInfo = Lucene.Net.Store.FlushInfo;
 	using IOContext = Lucene.Net.Store.IOContext;
@@ -536,7 +536,7 @@ namespace Lucene.Net.Index
 
 		  // Randomly picked the IndexOptions to index this
 		  // field with:
-		  IndexOptions indexOptions = IndexOptions.values()[alwaysTestMax ? fieldMaxIndexOption : Random().Next(1 + fieldMaxIndexOption)];
+		  IndexOptions_e indexOptions = IndexOptions.values()[alwaysTestMax ? fieldMaxIndexOption : Random().Next(1 + fieldMaxIndexOption)];
 		  bool doPayloads = indexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
 		  newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.name, true, fieldUpto, false, false, doPayloads, indexOptions, null, DocValuesType.NUMERIC, null);
@@ -558,7 +558,7 @@ namespace Lucene.Net.Index
 
 		  FieldInfo fieldInfo = newFieldInfos.fieldInfo(field);
 
-		  IndexOptions indexOptions = fieldInfo.IndexOptions;
+		  IndexOptions_e indexOptions = fieldInfo.IndexOptions_e;
 
 		  if (VERBOSE)
 		  {
@@ -699,13 +699,13 @@ namespace Lucene.Net.Index
 		SeedPostings expected = GetSeedPostings(term.utf8ToString(), Fields[field][term], useLiveDocs, maxIndexOptions);
 		Assert.AreEqual(expected.DocFreq, termsEnum.docFreq());
 
-		bool allowFreqs = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && maxTestOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		bool allowFreqs = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && maxTestOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 		bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random().Next(3) <= 2);
 
-		bool allowPositions = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && maxTestOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		bool allowPositions = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && maxTestOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		bool doCheckPositions = allowPositions && (alwaysTestMax || Random().Next(3) <= 2);
 
-		bool allowOffsets = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0 && maxTestOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool allowOffsets = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0 && maxTestOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random().Next(3) <= 2);
 
 		bool doCheckPayloads = options.contains(Option.PAYLOADS) && allowPositions && fieldInfo.hasPayloads() && (alwaysTestMax || Random().Next(3) <= 2);
@@ -1033,7 +1033,7 @@ namespace Lucene.Net.Index
 				  }
 				}
 			  }
-			  else if (fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
+			  else if (fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
 			  {
 				if (VERBOSE)
 				{
@@ -1244,7 +1244,7 @@ namespace Lucene.Net.Index
 
 		TestFields(fieldsProducer);
 
-		IndexOptions[] allOptions = IndexOptions.values();
+		IndexOptions_e[] allOptions = IndexOptions.values();
 		int maxIndexOption = Arrays.asList(allOptions).IndexOf(options);
 
 		for (int i = 0;i <= maxIndexOption;i++)
@@ -1322,7 +1322,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override void AddRandomFields(Document doc)
 	  {
-		foreach (IndexOptions opts in IndexOptions.values())
+		foreach (IndexOptions_e opts in IndexOptions.values())
 		{
 		  string field = "f_" + opts;
 		  string pf = TestUtil.GetPostingsFormat(Codec.Default, field);

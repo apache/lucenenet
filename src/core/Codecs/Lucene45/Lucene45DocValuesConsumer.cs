@@ -35,6 +35,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
 	using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// writer for <seealso cref="Lucene45DocValuesFormat"/> </summary>
@@ -86,11 +87,11 @@ namespace Lucene.Net.Codecs.Lucene45
 		bool success = false;
 		try
 		{
-		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, dataExtension);
-		  Data = state.Directory.createOutput(dataName, state.Context);
+		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
+		  Data = state.Directory.CreateOutput(dataName, state.Context);
 		  CodecUtil.WriteHeader(Data, dataCodec, Lucene45DocValuesFormat.VERSION_CURRENT);
-		  string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, metaExtension);
-		  Meta = state.Directory.createOutput(metaName, state.Context);
+		  string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
+		  Meta = state.Directory.CreateOutput(metaName, state.Context);
 		  CodecUtil.WriteHeader(Meta, metaCodec, Lucene45DocValuesFormat.VERSION_CURRENT);
 		  MaxDoc = state.SegmentInfo.DocCount;
 		  success = true;
@@ -117,10 +118,10 @@ namespace Lucene.Net.Codecs.Lucene45
 		long gcd = 0;
 		bool missing = false;
 		// TODO: more efficient?
-		HashSet<long?> uniqueValues = null;
+		HashSet<long> uniqueValues = null;
 		if (optimizeStorage)
 		{
-		  uniqueValues = new HashSet<>();
+		  uniqueValues = new HashSet<long>();
 
 		  foreach (Number nv in values)
 		  {
@@ -171,7 +172,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 		else
 		{
-		  for (@SuppressWarnings("unused") Number nv : values)
+          foreach (Number nv in values)
 		  {
 			++count;
 		  }
@@ -218,8 +219,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		  case GCD_COMPRESSED:
 			Meta.WriteLong(minValue);
 			Meta.WriteLong(gcd);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedWriter quotientWriter = new Lucene.Net.Util.Packed.BlockPackedWriter(data, BLOCK_SIZE);
 			BlockPackedWriter quotientWriter = new BlockPackedWriter(Data, BLOCK_SIZE);
 			foreach (Number nv in values)
 			{
@@ -229,8 +228,6 @@ namespace Lucene.Net.Codecs.Lucene45
 			quotientWriter.Finish();
 			break;
 		  case DELTA_COMPRESSED:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedWriter writer = new Lucene.Net.Util.Packed.BlockPackedWriter(data, BLOCK_SIZE);
 			BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
 			foreach (Number nv in values)
 			{
@@ -239,23 +236,15 @@ namespace Lucene.Net.Codecs.Lucene45
 			writer.Finish();
 			break;
 		  case TABLE_COMPRESSED:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Long[] decode = uniqueValues.toArray(new Long[uniqueValues.size()]);
-			long?[] decode = uniqueValues.toArray(new long?[uniqueValues.Count]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.HashMap<Long,Integer> encode = new java.util.HashMap<>();
-			Dictionary<long?, int?> encode = new Dictionary<long?, int?>();
+			long[] decode = uniqueValues.toArray(new long[uniqueValues.Count]);
+			Dictionary<long, int> encode = new Dictionary<long, int>();
 			Meta.WriteVInt(decode.Length);
 			for (int i = 0; i < decode.Length; i++)
 			{
 			  Meta.WriteLong(decode[i]);
 			  encode[decode[i]] = i;
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsRequired = Lucene.Net.Util.Packed.PackedInts.bitsRequired(uniqueValues.size() - 1);
 			int bitsRequired = PackedInts.BitsRequired(uniqueValues.Count - 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer ordsWriter = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(data, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, (int) count, bitsRequired, Lucene.Net.Util.Packed.PackedInts.DEFAULT_BUFFER_SIZE);
 			PackedInts.Writer ordsWriter = PackedInts.GetWriterNoHeader(Data, PackedInts.Format.PACKED, (int) count, bitsRequired, PackedInts.DEFAULT_BUFFER_SIZE);
 			foreach (Number nv in values)
 			{
@@ -264,7 +253,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			ordsWriter.Finish();
 			break;
 		  default:
-			throw new AssertionError();
+			throw new InvalidOperationException();
 		}
 	  }
 
@@ -301,15 +290,11 @@ namespace Lucene.Net.Codecs.Lucene45
 		Meta.WriteByte(Lucene45DocValuesFormat.BINARY);
 		int minLength = int.MaxValue;
 		int maxLength = int.MinValue;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startFP = data.getFilePointer();
 		long startFP = Data.FilePointer;
 		long count = 0;
 		bool missing = false;
 		foreach (BytesRef v in values)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length;
 		  int length;
 		  if (v == null)
 		  {
@@ -351,8 +336,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		  Meta.WriteVInt(PackedInts.VERSION_CURRENT);
 		  Meta.WriteVInt(BLOCK_SIZE);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedWriter writer = new Lucene.Net.Util.Packed.MonotonicBlockPackedWriter(data, BLOCK_SIZE);
 		  MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
 		  long addr = 0;
 		  foreach (BytesRef v in values)
@@ -392,8 +375,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		  Meta.WriteVInt(BINARY_PREFIX_COMPRESSED);
 		  Meta.WriteLong(-1L);
 		  // now write the bytes: sharing prefixes within a block
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startFP = data.getFilePointer();
 		  long startFP = Data.FilePointer;
 		  // currently, we have to store the delta from expected for every 1/nth term
 		  // we could avoid this, but its not much and less overall RAM than the previous approach!
@@ -489,8 +470,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		Meta.WriteVLong(MaxDoc);
 		Meta.WriteVInt(BLOCK_SIZE);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedWriter writer = new Lucene.Net.Util.Packed.MonotonicBlockPackedWriter(data, BLOCK_SIZE);
 		MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
 		long addr = 0;
 		foreach (Number v in docToOrdCount)
@@ -518,11 +497,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 		  public virtual IEnumerator<Number> GetEnumerator()
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Iterator<Number> docToOrdCountIt = docToOrdCount.iterator();
 			IEnumerator<Number> docToOrdCountIt = DocToOrdCount.GetEnumerator();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Iterator<Number> ordsIt = ords.iterator();
 			IEnumerator<Number> ordsIt = Ords.GetEnumerator();
 			return new IteratorAnonymousInnerClassHelper(this, docToOrdCountIt, ordsIt);
 		  }
@@ -536,7 +511,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, IEnumerator<Number> docToOrdCountIt, IEnumerator<Number> ordsIt)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  this.DocToOrdCountIt = docToOrdCountIt;
 				  this.OrdsIt = ordsIt;
 			  }
@@ -552,9 +527,6 @@ namespace Lucene.Net.Codecs.Lucene45
 
 			  public virtual Number Next()
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Number ordCount = docToOrdCountIt.next();
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 				Number ordCount = DocToOrdCountIt.next();
 				if ((long)ordCount == 0)
 				{
@@ -597,7 +569,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		{
 		  if (success)
 		  {
-			IOUtils.close(Data, Meta);
+			IOUtils.Close(Data, Meta);
 		  }
 		  else
 		  {

@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  output.writeVInt(infos.size());
 		  foreach (FieldInfo fi in infos)
 		  {
-			IndexOptions indexOptions = fi.IndexOptions;
+			IndexOptions_e indexOptions = fi.IndexOptions_e;
 			sbyte bits = 0x0;
 			if (fi.hasVectors())
 			{

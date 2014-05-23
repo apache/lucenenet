@@ -21,6 +21,8 @@ namespace Lucene.Net.Codecs
 
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig; // javadocs
 	using Lucene.Net.Util;
+    using System.Collections.Generic;
+    using System;
 
 	/// <summary>
 	/// Encodes/decodes an inverted index segment.
@@ -34,7 +36,7 @@ namespace Lucene.Net.Codecs
 	/// If you implement your own codec, make sure that it has a no-arg constructor
 	/// so SPI can load it. </summary>
 	/// <seealso cref= ServiceLoader </seealso>
-	public abstract class Codec : NamedSPILoader.NamedSPI
+    public abstract class Codec : NamedSPILoader<Codec>.NamedSPI
 	{
 
 	  private static readonly NamedSPILoader<Codec> Loader = new NamedSPILoader<Codec>(typeof(Codec));
@@ -50,7 +52,7 @@ namespace Lucene.Net.Codecs
 	  /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
 	  protected internal Codec(string name)
 	  {
-		NamedSPILoader.CheckServiceName(name);
+		NamedSPILoader<Codec>.CheckServiceName(name);
 		this.Name_Renamed = name;
 	  }
 
@@ -102,18 +104,18 @@ namespace Lucene.Net.Codecs
 	  {
 		if (Loader == null)
 		{
-		  throw new IllegalStateException("You called Codec.forName() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
+            throw new InvalidOperationException("You called Codec.forName() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
 		}
 		return Loader.Lookup(name);
 	  }
 
 	  /// <summary>
 	  /// returns a list of all available codec names </summary>
-	  public static Set<string> AvailableCodecs()
+	  public static ISet<string> AvailableCodecs()
 	  {
 		if (Loader == null)
 		{
-		  throw new IllegalStateException("You called Codec.availableCodecs() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
+		  throw new InvalidOperationException("You called Codec.availableCodecs() before all Codecs could be initialized. " + "this likely happens if you call it from a Codec's ctor.");
 		}
 		return Loader.AvailableServices();
 	  }
@@ -129,9 +131,9 @@ namespace Lucene.Net.Codecs
 	  /// <p><em>this method is expensive and should only be called for discovery
 	  /// of new codecs on the given classpath/classloader!</em>
 	  /// </summary>
-	  public static void ReloadCodecs(ClassLoader classloader)
+	  public static void ReloadCodecs()
 	  {
-		Loader.Reload(classloader);
+		Loader.Reload();
 	  }
 
 	  private static Codec DefaultCodec = Codec.ForName("Lucene46");

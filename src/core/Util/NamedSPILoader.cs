@@ -1,10 +1,11 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Lucene.Net.Util
 {
-
+    //LUCENE TO-DO Whole file
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -27,28 +28,19 @@ namespace Lucene.Net.Util
 	/// Helper class for loading named SPIs from classpath (e.g. Codec, PostingsFormat).
 	/// @lucene.internal
 	/// </summary>
-	public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader.NamedSPI
+	public sealed class NamedSPILoader<S> : IEnumerable<S> where S : NamedSPILoader<S>.NamedSPI
 	{
 
-	  private volatile IDictionary<string, S> Services = Collections.emptyMap();
+	  private volatile IDictionary<string, S> Services = CollectionsHelper.EmptyMap<string, S>();
 	  private readonly Type Clazz;
 
-	  public NamedSPILoader(Type clazz) : this(clazz, Thread.CurrentThread.ContextClassLoader)
-	  {
-	  }
 
-	  public NamedSPILoader(Type clazz, ClassLoader classloader)
+	  public NamedSPILoader(Type clazz)
 	  {
 		this.Clazz = clazz;
 		// if clazz' classloader is not a parent of the given one, we scan clazz's classloader, too:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ClassLoader clazzClassloader = clazz.getClassLoader();
-		ClassLoader clazzClassloader = clazz.ClassLoader;
-		if (clazzClassloader != null && !SPIClassIterator.IsParentClassLoader(clazzClassloader, classloader))
-		{
-		  Reload(clazzClassloader);
-		}
-		Reload(classloader);
+
+		Reload();
 	  }
 
 	  /// <summary>
@@ -62,44 +54,34 @@ namespace Lucene.Net.Util
 	  /// <p><em>this method is expensive and should only be called for discovery
 	  /// of new service providers on the given classpath/classloader!</em>
 	  /// </summary>
-	  public void Reload(ClassLoader classloader)
+	  public void Reload()
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.LinkedHashMap<String,S> services = new java.util.LinkedHashMap<>(this.services);
-			LinkedHashMap<string, S> services = new LinkedHashMap<string, S>(this.Services);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SPIClassIterator<S> loader = SPIClassIterator.get(clazz, classloader);
-			SPIClassIterator<S> loader = SPIClassIterator.Get(Clazz, classloader);
+			IDictionary<string, S> services = new Dictionary<string, S>(this.Services);
+			SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 			while (loader.HasNext())
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Class c = loader.next();
 			  Type c = loader.Next();
 			  try
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final S service = c.newInstance();
-				S service = c.newInstance();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String name = service.getName();
+				S service = (S)Activator.CreateInstance(c);
 				string name = service.Name;
 				// only add the first one for each name, later services will be ignored
 				// this allows to place services before others in classpath to make 
 				// them used instead of others
-				if (!services.containsKey(name))
+				if (!services.ContainsKey(name))
 				{
 				  CheckServiceName(name);
-				  services.put(name, service);
+				  services[name] = service;
 				}
 			  }
 			  catch (Exception e)
 			  {
-				throw new ServiceConfigurationError("Cannot instantiate SPI class: " + c.Name, e);
+                  throw new InvalidOperationException("Cannot instantiate SPI class: " + c.Name, e);
 			  }
 			}
-			this.Services = Collections.unmodifiableMap(services);
+			this.Services = CollectionsHelper.UnmodifiableMap(services);
 		  }
 	  }
 
@@ -143,9 +125,9 @@ namespace Lucene.Net.Util
 		throw new System.ArgumentException("A SPI class of type " + Clazz.Name + " with name '" + name + "' does not exist. " + "You need to add the corresponding JAR file supporting this SPI to your classpath." + "The current classpath supports the following names: " + AvailableServices());
 	  }
 
-	  public Set<string> AvailableServices()
+	  public ISet<string> AvailableServices()
 	  {
-		return Services.Keys;
+		return (ISet<string>)Services.Keys;
 	  }
 
 	  public IEnumerator<S> GetEnumerator()

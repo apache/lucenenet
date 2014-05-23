@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs
 	using DataInput = Lucene.Net.Store.DataInput;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using System;
 
 	/// <summary>
 	/// Codec API for writing term vectors:
@@ -251,7 +252,7 @@ namespace Lucene.Net.Codecs
 			Fields vectors = reader.GetTermVectors(docID);
 			AddAllDocVectors(vectors, mergeState);
 			docCount++;
-			mergeState.CheckAbort.work(300);
+			mergeState.checkAbort.Work(300);
 		  }
 		}
 		Finish(mergeState.FieldInfos, docCount);
@@ -276,9 +277,9 @@ namespace Lucene.Net.Codecs
 		{
 		  // count manually! TODO: Maybe enforce that Fields.size() returns something valid?
 		  numFields = 0;
-		  for (final IEnumerator<string> it = vectors.Iterator(); it.hasNext();)
-		  {
-			it.next();
+		  //for (IEnumerator<string> it = vectors.Iterator(); it.hasNext();)
+		  foreach (string it in vectors)
+          {
 			numFields++;
 		  }
 		}
@@ -293,15 +294,11 @@ namespace Lucene.Net.Codecs
 		foreach (string fieldName in vectors)
 		{
 		  fieldCount++;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = mergeState.fieldInfos.fieldInfo(fieldName);
-		  FieldInfo fieldInfo = mergeState.FieldInfos.fieldInfo(fieldName);
+		  FieldInfo fieldInfo = mergeState.FieldInfos.FieldInfo(fieldName);
 
 		  Debug.Assert(lastFieldName == null || fieldName.CompareTo(lastFieldName) > 0, "lastFieldName=" + lastFieldName + " fieldName=" + fieldName);
 		  lastFieldName = fieldName;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Terms terms = vectors.terms(fieldName);
 		  Terms terms = vectors.Terms(fieldName);
 		  if (terms == null)
 		  {
@@ -309,14 +306,8 @@ namespace Lucene.Net.Codecs
 			continue;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasPositions = terms.hasPositions();
 		  bool hasPositions = terms.HasPositions();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasOffsets = terms.hasOffsets();
 		  bool hasOffsets = terms.HasOffsets();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasPayloads = terms.hasPayloads();
 		  bool hasPayloads = terms.HasPayloads();
 		  Debug.Assert(!hasPayloads || hasPositions);
 
@@ -340,8 +331,6 @@ namespace Lucene.Net.Codecs
 		  {
 			termCount++;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = (int) termsEnum.totalTermFreq();
 			int freq = (int) termsEnum.TotalTermFreq();
 
 			StartTerm(termsEnum.Term(), freq);
@@ -351,26 +340,16 @@ namespace Lucene.Net.Codecs
 			  docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
 			  Debug.Assert(docsAndPositionsEnum != null);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docsAndPositionsEnum.nextDoc();
 			  int docID = docsAndPositionsEnum.NextDoc();
 			  Debug.Assert(docID != DocIdSetIterator.NO_MORE_DOCS);
 			  Debug.Assert(docsAndPositionsEnum.Freq() == freq);
 
 			  for (int posUpto = 0; posUpto < freq; posUpto++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = docsAndPositionsEnum.nextPosition();
 				int pos = docsAndPositionsEnum.NextPosition();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startOffset = docsAndPositionsEnum.StartOffset();
 				int startOffset = docsAndPositionsEnum.StartOffset();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int endOffset = docsAndPositionsEnum.EndOffset();
 				int endOffset = docsAndPositionsEnum.EndOffset();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef payload = docsAndPositionsEnum.getPayload();
 				BytesRef payload = docsAndPositionsEnum.Payload;
 
 				Debug.Assert(!hasPositions || pos >= 0);

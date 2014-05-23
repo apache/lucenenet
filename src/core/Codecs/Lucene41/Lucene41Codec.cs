@@ -20,8 +20,8 @@ namespace Lucene.Net.Codecs.Lucene41
 	 * limitations under the License.
 	 */
 
-	using CompressingStoredFieldsFormat = Lucene.Net.Codecs.compressing.CompressingStoredFieldsFormat;
-	using CompressionMode = Lucene.Net.Codecs.compressing.CompressionMode;
+	using CompressingStoredFieldsFormat = Lucene.Net.Codecs.Compressing.CompressingStoredFieldsFormat;
+	using CompressionMode = Lucene.Net.Codecs.Compressing.CompressionMode;
 	using Lucene40DocValuesFormat = Lucene.Net.Codecs.Lucene40.Lucene40DocValuesFormat;
 	using Lucene40FieldInfosFormat = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosFormat;
 	using Lucene40LiveDocsFormat = Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat;

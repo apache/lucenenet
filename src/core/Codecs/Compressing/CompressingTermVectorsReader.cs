@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Store;
 using Lucene.Net.Index;
 using Lucene.Net.Util.Packed;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -307,7 +308,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  int sum = 0;
 		  for (int i = 0; i < totalFields; ++i)
 		  {
-			sum += numTerms.Get(i);
+			sum += (int)numTerms.Get(i);
 		  }
 		  totalTerms = sum;
 		}
@@ -323,7 +324,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  int toSkip = 0;
 		  for (int i = 0; i < skip; ++i)
 		  {
-			toSkip += numTerms.Get(i);
+              toSkip += (int)numTerms.Get(i);
 		  }
 		  Reader.Skip(toSkip);
 		  // read prefix lengths
@@ -435,7 +436,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  float[] charsPerTerm = new float[fieldNums.Length];
 		  for (int i = 0; i < charsPerTerm.Length; ++i)
 		  {
-			charsPerTerm[i] = float.intBitsToFloat(VectorsStream_Renamed.ReadInt());
+			charsPerTerm[i] = Number.IntBitsToFloat(VectorsStream_Renamed.ReadInt());
 		  }
           startOffsets = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
           lengths = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
@@ -579,10 +580,10 @@ namespace Lucene.Net.Codecs.Compressing
 		suffixBytes.Length = docLen;
 		BytesRef payloadBytes = new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + docLen, payloadLen);
 
-		int[] fieldFlags = new int[numFields];
+		int[] FieldFlags = new int[numFields];
 		for (int i = 0; i < numFields; ++i)
 		{
-		  fieldFlags[i] = (int) flags.Get(skip + i);
+		  FieldFlags[i] = (int) flags.Get(skip + i);
 		}
 
 		int[] fieldNumTerms = new int[numFields];
@@ -596,7 +597,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  int termIdx = 0;
 		  for (int i = 0; i < skip; ++i)
 		  {
-			termIdx += numTerms.Get(i);
+			termIdx += (int)numTerms.Get(i);
 		  }
 		  for (int i = 0; i < numFields; ++i)
 		  {
@@ -611,7 +612,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 		Debug.Assert(Sum(fieldLengths) == docLen, Sum(fieldLengths) + " != " + docLen);
 
-		return new TVFields(this, fieldNums, fieldFlags, fieldNumOffs, fieldNumTerms, fieldLengths, prefixLengths, suffixLengths, fieldTermFreqs, positionIndex, positions, startOffsets, lengths, payloadBytes, payloadIndex, suffixBytes);
+		return new TVFields(this, fieldNums, FieldFlags, fieldNumOffs, fieldNumTerms, fieldLengths, prefixLengths, suffixLengths, fieldTermFreqs, positionIndex, positions, startOffsets, lengths, payloadBytes, payloadIndex, suffixBytes);
 	  }
 
 	  // field -> term index -> position index
@@ -937,7 +938,7 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  if (Ord_Renamed == NumTerms - 1)
 		  {
-			return BytesRefIterator_Fields.Null;
+			return null;
 		  }
 		  else
 		  {
@@ -983,7 +984,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  while (true)
 		  {
 			BytesRef term = Next();
-			if (term == BytesRefIterator_Fields.Null)
+			if (term == null)
 			{
 			  return TermsEnum.SeekStatus.END;
 			}
@@ -1027,7 +1028,7 @@ namespace Lucene.Net.Codecs.Compressing
 		public override sealed DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
 		{
 		  TVDocsEnum docsEnum;
-		  if (reuse != BytesRefIterator_Fields.Null && reuse is TVDocsEnum)
+		  if (reuse != null && reuse is TVDocsEnum)
 		  {
 			docsEnum = (TVDocsEnum) reuse;
 		  }
@@ -1042,9 +1043,9 @@ namespace Lucene.Net.Codecs.Compressing
 
 		public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		{
-		  if (Positions == BytesRefIterator_Fields.Null && StartOffsets == BytesRefIterator_Fields.Null)
+		  if (Positions == null && StartOffsets == null)
 		  {
-			return BytesRefIterator_Fields.Null;
+			return null;
 		  }
 		  // TODO: slightly sheisty
 		  return (DocsAndPositionsEnum) Docs(liveDocs, reuse, flags);
@@ -1090,7 +1091,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 		internal virtual void CheckDoc()
 		{
-            if (Doc == CompressingTermVectorsWriter.NO_MORE_DOCS)
+          if (Doc == NO_MORE_DOCS)
 		  {
 			throw new Exception("DocsEnum exhausted");
 		  }

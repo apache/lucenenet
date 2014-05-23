@@ -78,15 +78,11 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public static DocMap Build(AtomicReader reader)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
 		  if (!reader.HasDeletions())
 		  {
 			return new NoDelDocMap(maxDoc);
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
 		  Bits liveDocs = reader.LiveDocs;
 		  return Build(maxDoc, liveDocs);
 		}
@@ -94,8 +90,6 @@ namespace Lucene.Net.Index
 		internal static DocMap Build(int maxDoc, Bits liveDocs)
 		{
 		  Debug.Assert(liveDocs != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer docMap = new Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer();
 		  MonotonicAppendingLongBuffer docMap = new MonotonicAppendingLongBuffer();
 		  int del = 0;
 		  for (int i = 0; i < maxDoc; ++i)
@@ -107,8 +101,6 @@ namespace Lucene.Net.Index
 			}
 		  }
 		  docMap.Freeze();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numDeletedDocs = del;
 		  int numDeletedDocs = del;
 		  Debug.Assert(docMap.Size() == maxDoc);
 		  return new DocMapAnonymousInnerClassHelper(maxDoc, liveDocs, docMap, numDeletedDocs);
@@ -203,7 +195,7 @@ namespace Lucene.Net.Index
 	  /// Holds the CheckAbort instance, which is invoked
 	  ///  periodically to see if the merge has been aborted. 
 	  /// </summary>
-	  public readonly CheckAbort CheckAbort;
+	  public readonly CheckAbort checkAbort;
 
 	  /// <summary>
 	  /// InfoStream for debugging messages. </summary>
@@ -225,12 +217,12 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Sole constructor. </summary>
-	  internal MergeState(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, CheckAbort checkAbort)
+	  internal MergeState(IList<AtomicReader> readers, SegmentInfo segmentInfo, InfoStream infoStream, CheckAbort checkAbort_)
 	  {
 		this.Readers = readers;
 		this.SegmentInfo = segmentInfo;
 		this.InfoStream = infoStream;
-		this.CheckAbort = checkAbort;
+		this.checkAbort = checkAbort_;
 	  }
 
 	  /// <summary>

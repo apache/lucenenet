@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
 
 	  private DocValuesType_e NormType_Renamed;
 	  private bool OmitNorms; // omit norms associated with indexed fields
-	  private IndexOptions IndexOptions_Renamed;
+	  private IndexOptions_e IndexOptions_Renamed;
 	  private bool StorePayloads; // whether this field stores payloads together with term positions
 
 	  private IDictionary<string, string> Attributes_Renamed;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 	  /// Controls how much information is stored in the postings lists.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public enum IndexOptions
+	  public enum IndexOptions_e
 	  {
 		// NOTE: order is important here; FieldInfo uses this
 		// order to merge two conflicting IndexOptions (always
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// @lucene.experimental
 	  /// </summary>
-	  public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType_e docValues, DocValuesType_e normsType, IDictionary<string, string> attributes)
+	  public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e indexOptions, DocValuesType_e docValues, DocValuesType_e normsType, IDictionary<string, string> attributes)
 	  {
 		this.Name = name;
 		this.Indexed_Renamed = indexed;
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
 			Debug.Assert(NormType_Renamed == null);
 		  }
 		  // Cannot store payloads unless positions are indexed:
-		  Debug.Assert(IndexOptions_Renamed.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.StorePayloads);
+		  Debug.Assert(IndexOptions_Renamed.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.StorePayloads);
 		}
 
 		return true;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // should only be called by FieldInfos#addOrUpdate
-	  internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions)
+	  internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e indexOptions)
 	  {
 		//System.out.println("FI.update field=" + name + " indexed=" + indexed + " omitNorms=" + omitNorms + " this.omitNorms=" + this.omitNorms);
 		if (this.Indexed_Renamed != indexed)
@@ -214,9 +214,9 @@ namespace Lucene.Net.Index
 			else
 			{
 			  // downgrade
-			  this.IndexOptions_Renamed = this.IndexOptions_Renamed.compareTo(indexOptions) < 0 ? this.IndexOptions_Renamed : indexOptions;
+			  this.IndexOptions_Renamed = this.IndexOptions_Renamed.CompareTo(indexOptions) < 0 ? this.IndexOptions_Renamed : indexOptions;
 			}
-			if (this.IndexOptions_Renamed.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+			if (this.IndexOptions_Renamed.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) < 0)
 			{
 			  // cannot store payloads if we don't store positions:
 			  this.StorePayloads = false;
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
-	  public IndexOptions IndexOptions
+	  public IndexOptions_e IndexOptions
 	  {
 		  get
 		  {
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
 
 	  internal void SetStorePayloads()
 	  {
-		if (Indexed_Renamed && IndexOptions_Renamed.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+		if (Indexed_Renamed && IndexOptions_Renamed.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
 		{
 		  StorePayloads = true;
 		}
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
 	  {
 		if (Attributes_Renamed == null)
 		{
-		  Attributes_Renamed = new Dictionary<>();
+		  Attributes_Renamed = new Dictionary<string, string>();
 		}
 		return Attributes_Renamed[key] = value;
 	  }

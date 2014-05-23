@@ -46,6 +46,7 @@ namespace Lucene.Net.Codecs.Compressing
 	using StringHelper = Lucene.Net.Util.StringHelper;
 	using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// <seealso cref="TermVectorsWriter"/> for <seealso cref="CompressingTermVectorsFormat"/>.
@@ -91,43 +92,33 @@ namespace Lucene.Net.Codecs.Compressing
 		  private readonly CompressingTermVectorsWriter OuterInstance;
 
 		internal readonly int NumFields;
-		internal readonly Deque<FieldData> Fields;
+		internal readonly LinkedList<FieldData> Fields;
 		internal readonly int PosStart, OffStart, PayStart;
-		internal DocData(CompressingTermVectorsWriter outerInstance, int numFields, int posStart, int offStart, int payStart)
+		internal DocData(CompressingTermVectorsWriter OuterInstance, int numFields, int posStart, int offStart, int payStart)
 		{
-			this.OuterInstance = outerInstance;
+		  this.OuterInstance = OuterInstance;
 		  this.NumFields = numFields;
-		  this.Fields = new ArrayDeque<>(numFields);
+          this.Fields = new LinkedList<FieldData>();
 		  this.PosStart = posStart;
 		  this.OffStart = offStart;
 		  this.PayStart = payStart;
 		}
 		internal virtual FieldData AddField(int fieldNum, int numTerms, bool positions, bool offsets, bool payloads)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldData field;
 		  FieldData field;
-		  if (Fields.Empty)
+		  if (Fields.Count == 0)
 		  {
 			field = new FieldData(OuterInstance, fieldNum, numTerms, positions, offsets, payloads, PosStart, OffStart, PayStart);
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldData last = fields.getLast();
-			FieldData last = Fields.Last;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posStart = last.posStart + (last.hasPositions ? last.totalPositions : 0);
+			FieldData last = Fields.Last.Value;
 			int posStart = last.PosStart + (last.HasPositions ? last.TotalPositions : 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offStart = last.offStart + (last.hasOffsets ? last.totalPositions : 0);
 			int offStart = last.OffStart + (last.HasOffsets ? last.TotalPositions : 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int payStart = last.payStart + (last.hasPayloads ? last.totalPositions : 0);
 			int payStart = last.PayStart + (last.HasPayloads ? last.TotalPositions : 0);
 			field = new FieldData(OuterInstance, fieldNum, numTerms, positions, offsets, payloads, posStart, offStart, payStart);
 		  }
-		  Fields.add(field);
+		  Fields.AddLast(field);
 		  return field;
 		}
 	  }
@@ -135,39 +126,30 @@ namespace Lucene.Net.Codecs.Compressing
 	  private DocData AddDocData(int numVectorFields)
 	  {
 		FieldData last = null;
-		for (IEnumerator<DocData> it = PendingDocs.descendingIterator(); it.MoveNext();)
+		//for (IEnumerator<DocData> it = PendingDocs.Reverse(); it.MoveNext();)
+        foreach (DocData doc in PendingDocs.Reverse())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocData doc = it.Current;
 		  DocData doc = it.Current;
-		  if (!doc.Fields.Empty)
+		  if (!(doc.Fields.Count == 0))
 		  {
-			last = doc.Fields.Last;
+			last = doc.Fields.Last.Value;
 			break;
 		  }
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocData doc;
-		DocData doc;
+		DocData newDoc;
 		if (last == null)
 		{
-		  doc = new DocData(this, numVectorFields, 0, 0, 0);
+		  newDoc = new DocData(this, numVectorFields, 0, 0, 0);
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posStart = last.posStart + (last.hasPositions ? last.totalPositions : 0);
 		  int posStart = last.PosStart + (last.HasPositions ? last.TotalPositions : 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offStart = last.offStart + (last.hasOffsets ? last.totalPositions : 0);
 		  int offStart = last.OffStart + (last.HasOffsets ? last.TotalPositions : 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int payStart = last.payStart + (last.hasPayloads ? last.totalPositions : 0);
 		  int payStart = last.PayStart + (last.HasPayloads ? last.TotalPositions : 0);
-		  doc = new DocData(this, numVectorFields, posStart, offStart, payStart);
+		  newDoc = new DocData(this, numVectorFields, posStart, offStart, payStart);
 		}
-		PendingDocs.add(doc);
-		return doc;
+		PendingDocs.AddLast(newDoc);
+		return newDoc;
 	  }
 
 	  /// <summary>
@@ -182,9 +164,9 @@ namespace Lucene.Net.Codecs.Compressing
 		internal readonly int PosStart, OffStart, PayStart;
 		internal int TotalPositions;
 		internal int Ord;
-		internal FieldData(CompressingTermVectorsWriter outerInstance, int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart)
+		internal FieldData(CompressingTermVectorsWriter OuterInstance, int fieldNum, int numTerms, bool positions, bool offsets, bool payloads, int posStart, int offStart, int payStart)
 		{
-			this.OuterInstance = outerInstance;
+			this.OuterInstance = OuterInstance;
 		  this.FieldNum = fieldNum;
 		  this.NumTerms = numTerms;
 		  this.HasPositions = positions;
@@ -211,39 +193,37 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  if (HasPositions)
 		  {
-			if (PosStart + TotalPositions == outerInstance.PositionsBuf.Length)
+			if (PosStart + TotalPositions == OuterInstance.PositionsBuf.Length)
 			{
-			  outerInstance.PositionsBuf = ArrayUtil.Grow(outerInstance.PositionsBuf);
+			  OuterInstance.PositionsBuf = ArrayUtil.Grow(OuterInstance.PositionsBuf);
 			}
-			outerInstance.PositionsBuf[PosStart + TotalPositions] = position;
+			OuterInstance.PositionsBuf[PosStart + TotalPositions] = position;
 		  }
 		  if (HasOffsets)
 		  {
-			if (OffStart + TotalPositions == outerInstance.StartOffsetsBuf.Length)
+			if (OffStart + TotalPositions == OuterInstance.StartOffsetsBuf.Length)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLength = Lucene.Net.Util.ArrayUtil.oversize(offStart + totalPositions, 4);
 			  int newLength = ArrayUtil.Oversize(OffStart + TotalPositions, 4);
-			  outerInstance.StartOffsetsBuf = Arrays.copyOf(outerInstance.StartOffsetsBuf, newLength);
-			  outerInstance.LengthsBuf = Arrays.copyOf(outerInstance.LengthsBuf, newLength);
+			  OuterInstance.StartOffsetsBuf = Arrays.CopyOf(OuterInstance.StartOffsetsBuf, newLength);
+			  OuterInstance.LengthsBuf = Arrays.CopyOf(OuterInstance.LengthsBuf, newLength);
 			}
-			outerInstance.StartOffsetsBuf[OffStart + TotalPositions] = startOffset;
-			outerInstance.LengthsBuf[OffStart + TotalPositions] = length;
+			OuterInstance.StartOffsetsBuf[OffStart + TotalPositions] = startOffset;
+			OuterInstance.LengthsBuf[OffStart + TotalPositions] = length;
 		  }
 		  if (HasPayloads)
 		  {
-			if (PayStart + TotalPositions == outerInstance.PayloadLengthsBuf.Length)
+			if (PayStart + TotalPositions == OuterInstance.PayloadLengthsBuf.Length)
 			{
-			  outerInstance.PayloadLengthsBuf = ArrayUtil.Grow(outerInstance.PayloadLengthsBuf);
+			  OuterInstance.PayloadLengthsBuf = ArrayUtil.Grow(OuterInstance.PayloadLengthsBuf);
 			}
-			outerInstance.PayloadLengthsBuf[PayStart + TotalPositions] = payloadLength;
+			OuterInstance.PayloadLengthsBuf[PayStart + TotalPositions] = payloadLength;
 		  }
 		  ++TotalPositions;
 		}
 	  }
 
 	  private int NumDocs; // total number of docs seen
-	  private readonly Deque<DocData> PendingDocs; // pending docs
+	  private readonly LinkedList<DocData> PendingDocs; // pending docs
 	  private DocData CurDoc; // current document
 	  private FieldData CurField; // current field
 	  private readonly BytesRef LastTerm;
@@ -265,7 +245,7 @@ namespace Lucene.Net.Codecs.Compressing
 		this.ChunkSize = chunkSize;
 
 		NumDocs = 0;
-		PendingDocs = new ArrayDeque<>();
+		PendingDocs = new LinkedList<DocData>();
 		TermSuffixes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(chunkSize, 1));
 		PayloadBytes = new GrowableByteArrayDataOutput(ArrayUtil.Oversize(1, 1));
 		LastTerm = new BytesRef(ArrayUtil.Oversize(30, 1));
@@ -276,11 +256,7 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  VectorsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(Segment, segmentSuffix, VECTORS_EXTENSION), context);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String codecNameIdx = formatName + CODEC_SFX_IDX;
 		  string codecNameIdx = formatName + CODEC_SFX_IDX;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String codecNameDat = formatName + CODEC_SFX_DAT;
 		  string codecNameDat = formatName + CODEC_SFX_DAT;
 		  CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
 		  CodecUtil.WriteHeader(VectorsStream, codecNameDat, VERSION_CURRENT);
@@ -315,7 +291,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		try
 		{
-		  IOUtils.close(VectorsStream, IndexWriter);
+		  IOUtils.Close(VectorsStream, IndexWriter);
 		}
 		finally
 		{
@@ -327,7 +303,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public override void Abort()
 	  {
 		IOUtils.CloseWhileHandlingException(this);
-		IOUtils.deleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, SegmentSuffix, VECTORS_EXTENSION), IndexFileNames.SegmentFileName(Segment, SegmentSuffix, VECTORS_INDEX_EXTENSION));
+		IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, SegmentSuffix, VECTORS_EXTENSION), IndexFileNames.SegmentFileName(Segment, SegmentSuffix, VECTORS_INDEX_EXTENSION));
 	  }
 
 	  public override void StartDocument(int numVectorFields)
@@ -362,8 +338,6 @@ namespace Lucene.Net.Codecs.Compressing
 	  public override void StartTerm(BytesRef term, int freq)
 	  {
 		Debug.Assert(freq >= 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int prefix = Lucene.Net.Util.StringHelper.bytesDifference(lastTerm, term);
 		int prefix = StringHelper.BytesDifference(LastTerm, term);
 		CurField.AddTerm(freq, prefix, term.Length - prefix);
 		TermSuffixes.WriteBytes(term.Bytes, term.Offset + prefix, term.Length - prefix);
@@ -389,35 +363,27 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  private bool TriggerFlush()
 	  {
-		return TermSuffixes.Length >= ChunkSize || PendingDocs.size() >= MAX_DOCUMENTS_PER_CHUNK;
+		return TermSuffixes.Length >= ChunkSize || PendingDocs.Count >= MAX_DOCUMENTS_PER_CHUNK;
 	  }
 
 	  private void Flush()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chunkDocs = pendingDocs.size();
-		int chunkDocs = PendingDocs.size();
-		Debug.Assert(chunkDocs > 0, chunkDocs);
+		int chunkDocs = PendingDocs.Count;
+		Debug.Assert(chunkDocs > 0, chunkDocs.ToString());
 
 		// write the index file
 		IndexWriter.WriteIndex(chunkDocs, VectorsStream.FilePointer);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docBase = numDocs - chunkDocs;
 		int docBase = NumDocs - chunkDocs;
 		VectorsStream.WriteVInt(docBase);
 		VectorsStream.WriteVInt(chunkDocs);
 
 		// total number of fields of the chunk
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int totalFields = flushNumFields(chunkDocs);
 		int totalFields = FlushNumFields(chunkDocs);
 
 		if (totalFields > 0)
 		{
 		  // unique field numbers (sorted)
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] fieldNums = flushFieldNums();
 		  int[] fieldNums = FlushFieldNums();
 		  // offsets in the array of unique field numbers
 		  FlushFields(totalFields, fieldNums);
@@ -441,7 +407,7 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 
 		// reset
-		PendingDocs.clear();
+		PendingDocs.Clear();
 		CurDoc = null;
 		CurField = null;
 		TermSuffixes.Length = 0;
@@ -451,9 +417,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		if (chunkDocs == 1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numFields = pendingDocs.getFirst().numFields;
-		  int numFields = PendingDocs.First.numFields;
+		  int numFields = PendingDocs.First.Value.NumFields;
 		  VectorsStream.WriteVInt(numFields);
 		  return numFields;
 		}
@@ -475,42 +439,34 @@ namespace Lucene.Net.Codecs.Compressing
 	  /// Returns a sorted array containing unique field numbers </summary>
 	  private int[] FlushFieldNums()
 	  {
-		SortedSet<int?> fieldNums = new SortedSet<int?>();
+		SortedSet<int> fieldNums = new SortedSet<int>();
 		foreach (DocData dd in PendingDocs)
 		{
 		  foreach (FieldData fd in dd.Fields)
 		  {
-			fieldNums.add(fd.FieldNum);
+			fieldNums.Add(fd.FieldNum);
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numDistinctFields = fieldNums.size();
-		int numDistinctFields = fieldNums.size();
+		int numDistinctFields = fieldNums.Count;
 		Debug.Assert(numDistinctFields > 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsRequired = Lucene.Net.Util.Packed.PackedInts.bitsRequired(fieldNums.last());
-		int bitsRequired = PackedInts.BitsRequired(fieldNums.last());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int token = (Math.min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
+		int bitsRequired = PackedInts.BitsRequired(fieldNums.Last());
 		int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
 		VectorsStream.WriteByte((sbyte) token);
 		if (numDistinctFields - 1 >= 0x07)
 		{
 		  VectorsStream.WriteVInt(numDistinctFields - 1 - 0x07);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer writer = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(vectorsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, fieldNums.size(), bitsRequired, 1);
-		PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, fieldNums.size(), bitsRequired, 1);
-		foreach (int? fieldNum in fieldNums)
+		PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, fieldNums.Count, bitsRequired, 1);
+		foreach (int fieldNum in fieldNums)
 		{
 		  writer.Add(fieldNum);
 		}
 		writer.Finish();
 
-		int[] fns = new int[fieldNums.size()];
+		int[] fns = new int[fieldNums.Count];
 		int i = 0;
-		foreach (int? key in fieldNums)
+		foreach (int key in fieldNums)
 		{
 		  fns[i++] = key;
 		}
@@ -519,16 +475,12 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  private void FlushFields(int totalFields, int[] fieldNums)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer writer = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(vectorsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, totalFields, Lucene.Net.Util.Packed.PackedInts.bitsRequired(fieldNums.length - 1), 1);
 		PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, totalFields, PackedInts.BitsRequired(fieldNums.Length - 1), 1);
 		foreach (DocData dd in PendingDocs)
 		{
 		  foreach (FieldData fd in dd.Fields)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fieldNumIndex = java.util.Arrays.binarySearch(fieldNums, fd.fieldNum);
-			int fieldNumIndex = Arrays.binarySearch(fieldNums, fd.FieldNum);
+			int fieldNumIndex = Array.BinarySearch(fieldNums, fd.FieldNum);
 			Debug.Assert(fieldNumIndex >= 0);
 			writer.Add(fieldNumIndex);
 		  }
@@ -541,14 +493,14 @@ namespace Lucene.Net.Codecs.Compressing
 		// check if fields always have the same flags
 		bool nonChangingFlags = true;
 		int[] fieldFlags = new int[fieldNums.Length];
-		Arrays.fill(fieldFlags, -1);
+		Arrays.Fill(fieldFlags, -1);
+        bool breakOuterLoop;
 		foreach (DocData dd in PendingDocs)
 		{
+          breakOuterLoop = false;
 		  foreach (FieldData fd in dd.Fields)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fieldNumOff = java.util.Arrays.binarySearch(fieldNums, fd.fieldNum);
-			int fieldNumOff = Arrays.binarySearch(fieldNums, fd.FieldNum);
+			int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
 			Debug.Assert(fieldNumOff >= 0);
 			if (fieldFlags[fieldNumOff] == -1)
 			{
@@ -557,19 +509,17 @@ namespace Lucene.Net.Codecs.Compressing
 			else if (fieldFlags[fieldNumOff] != fd.Flags)
 			{
 			  nonChangingFlags = false;
-			  goto outerBreak;
+              breakOuterLoop = true;
 			}
 		  }
-			outerContinue:;
+          if (breakOuterLoop)
+              break;
 		}
-		outerBreak:
 
 		if (nonChangingFlags)
 		{
 		  // write one flag per field num
 		  VectorsStream.WriteVInt(0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer writer = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(vectorsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, fieldFlags.length, FLAGS_BITS, 1);
 		  PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
 		  foreach (int flags in fieldFlags)
 		  {
@@ -583,8 +533,6 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  // write one flag for every field instance
 		  VectorsStream.WriteVInt(1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer writer = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(vectorsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
 		  PackedInts.Writer writer = PackedInts.GetWriterNoHeader(VectorsStream, PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
 		  foreach (DocData dd in PendingDocs)
 		  {
@@ -713,7 +661,7 @@ namespace Lucene.Net.Codecs.Compressing
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int fieldNumOff = java.util.Arrays.binarySearch(fieldNums, fd.fieldNum);
-			  int fieldNumOff = Arrays.binarySearch(fieldNums, fd.FieldNum);
+			  int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
 			  int pos = 0;
 			  for (int i = 0; i < fd.NumTerms; ++i)
 			  {
@@ -756,7 +704,7 @@ namespace Lucene.Net.Codecs.Compressing
 		// start offsets
 		for (int i = 0; i < fieldNums.Length; ++i)
 		{
-		  VectorsStream.WriteInt(float.floatToRawIntBits(charsPerTerm[i]));
+		  VectorsStream.WriteInt(Number.FloatToIntBits(charsPerTerm[i]));
 		}
 
 		Writer.Reset(VectorsStream);
@@ -768,7 +716,7 @@ namespace Lucene.Net.Codecs.Compressing
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int fieldNumOff = java.util.Arrays.binarySearch(fieldNums, fd.fieldNum);
-			  int fieldNumOff = Arrays.binarySearch(fieldNums, fd.FieldNum);
+			  int fieldNumOff = Array.BinarySearch(fieldNums, fd.FieldNum);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final float cpt = charsPerTerm[fieldNumOff];
 			  float cpt = charsPerTerm[fieldNumOff];
@@ -840,7 +788,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public override void Finish(FieldInfos fis, int numDocs)
 	  {
-		if (!PendingDocs.Empty)
+		if (!(PendingDocs.Count == 0))
 		{
 		  Flush();
 		}
@@ -862,13 +810,11 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public override void AddProx(int numProx, DataInput positions, DataInput offsets)
 	  {
-		assert(CurField.HasPositions) == (positions != null);
-		assert(CurField.HasOffsets) == (offsets != null);
+		Debug.Assert((CurField.HasPositions) == (positions != null));
+        Debug.Assert((CurField.HasOffsets) == (offsets != null));
 
 		if (CurField.HasPositions)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posStart = curField.posStart + curField.totalPositions;
 		  int posStart = CurField.PosStart + CurField.TotalPositions;
 		  if (posStart + numProx > PositionsBuf.Length)
 		  {
@@ -877,8 +823,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  int position = 0;
 		  if (CurField.HasPayloads)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int payStart = curField.payStart + curField.totalPositions;
 			int payStart = CurField.PayStart + CurField.TotalPositions;
 			if (payStart + numProx > PayloadLengthsBuf.Length)
 			{
@@ -886,14 +830,10 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 			for (int i = 0; i < numProx; ++i)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int code = positions.readVInt();
 			  int code = positions.ReadVInt();
 			  if ((code & 1) != 0)
 			  {
 				// this position has a payload
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int payloadLength = positions.readVInt();
 				int payloadLength = positions.ReadVInt();
 				PayloadLengthsBuf[payStart + i] = payloadLength;
 				PayloadBytes.CopyBytes(positions, payloadLength);
@@ -918,16 +858,12 @@ namespace Lucene.Net.Codecs.Compressing
 
 		if (CurField.HasOffsets)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offStart = curField.offStart + curField.totalPositions;
 		  int offStart = CurField.OffStart + CurField.TotalPositions;
 		  if (offStart + numProx > StartOffsetsBuf.Length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLength = Lucene.Net.Util.ArrayUtil.oversize(offStart + numProx, 4);
 			int newLength = ArrayUtil.Oversize(offStart + numProx, 4);
-			StartOffsetsBuf = Arrays.copyOf(StartOffsetsBuf, newLength);
-			LengthsBuf = Arrays.copyOf(LengthsBuf, newLength);
+			StartOffsetsBuf = Arrays.CopyOf(StartOffsetsBuf, newLength);
+			LengthsBuf = Arrays.CopyOf(LengthsBuf, newLength);
 		  }
 		  int lastOffset = 0, startOffset , endOffset ;
 		  for (int i = 0; i < numProx; ++i)
@@ -950,14 +886,10 @@ namespace Lucene.Net.Codecs.Compressing
 
 		foreach (AtomicReader reader in mergeState.Readers)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SegmentReader matchingSegmentReader = mergeState.matchingSegmentReaders[idx++];
 		  SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
 		  CompressingTermVectorsReader matchingVectorsReader = null;
 		  if (matchingSegmentReader != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.TermVectorsReader vectorsReader = matchingSegmentReader.getTermVectorsReader();
 			TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
 			// we can only bulk-copy if the matching reader is also a CompressingTermVectorsReader
 			if (vectorsReader != null && vectorsReader is CompressingTermVectorsReader)
@@ -966,11 +898,7 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
 		  Bits liveDocs = reader.LiveDocs;
 
 		  if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != CompressionMode || matchingVectorsReader.ChunkSize != ChunkSize || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT)
@@ -978,54 +906,36 @@ namespace Lucene.Net.Codecs.Compressing
 			// naive merge...
 			for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Fields vectors = reader.getTermVectors(i);
 			  Fields vectors = reader.GetTermVectors(i);
 			  AddAllDocVectors(vectors, mergeState);
 			  ++docCount;
-			  mergeState.CheckAbort.work(300);
+			  mergeState.checkAbort.Work(300);
 			}
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CompressingStoredFieldsIndexReader index = matchingVectorsReader.getIndex();
 			CompressingStoredFieldsIndexReader index = matchingVectorsReader.Index;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput vectorsStreamOrig = matchingVectorsReader.getVectorsStream();
 			IndexInput vectorsStreamOrig = matchingVectorsReader.VectorsStream;
 			vectorsStreamOrig.Seek(0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.ChecksumIndexInput vectorsStream = new Lucene.Net.Store.BufferedChecksumIndexInput(vectorsStreamOrig.clone());
 			ChecksumIndexInput vectorsStream = new BufferedChecksumIndexInput(vectorsStreamOrig.Clone());
 
 			for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc;)
 			{
 			  // We make sure to move the checksum input in any case, otherwise the final
 			  // integrity check might need to read the whole file a second time
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startPointer = index.getStartPointer(i);
 			  long startPointer = index.GetStartPointer(i);
 			  if (startPointer > vectorsStream.FilePointer)
 			  {
 				vectorsStream.Seek(startPointer);
 			  }
-			  if (PendingDocs.Empty && (i == 0 || index.GetStartPointer(i - 1) < startPointer)) // start of a chunk
+			  if ((PendingDocs.Count == 0) && (i == 0 || index.GetStartPointer(i - 1) < startPointer)) // start of a chunk
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docBase = vectorsStream.readVInt();
 				int docBase = vectorsStream.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chunkDocs = vectorsStream.readVInt();
 				int chunkDocs = vectorsStream.ReadVInt();
 				Debug.Assert(docBase + chunkDocs <= matchingSegmentReader.MaxDoc());
 				if (docBase + chunkDocs < matchingSegmentReader.MaxDoc() && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long chunkEnd = index.getStartPointer(docBase + chunkDocs);
 				  long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long chunkLength = chunkEnd - vectorsStream.getFilePointer();
 				  long chunkLength = chunkEnd - vectorsStream.FilePointer;
 				  IndexWriter.WriteIndex(chunkDocs, this.VectorsStream.FilePointer);
 				  this.VectorsStream.WriteVInt(docCount);
@@ -1033,30 +943,26 @@ namespace Lucene.Net.Codecs.Compressing
 				  this.VectorsStream.CopyBytes(vectorsStream, chunkLength);
 				  docCount += chunkDocs;
 				  this.NumDocs += chunkDocs;
-				  mergeState.CheckAbort.work(300 * chunkDocs);
+				  mergeState.checkAbort.Work(300 * chunkDocs);
 				  i = NextLiveDoc(docBase + chunkDocs, liveDocs, maxDoc);
 				}
 				else
 				{
 				  for (; i < docBase + chunkDocs; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Fields vectors = reader.getTermVectors(i);
 					Fields vectors = reader.GetTermVectors(i);
 					AddAllDocVectors(vectors, mergeState);
 					++docCount;
-					mergeState.CheckAbort.work(300);
+                    mergeState.checkAbort.Work(300);
 				  }
 				}
 			  }
 			  else
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Fields vectors = reader.getTermVectors(i);
 				Fields vectors = reader.GetTermVectors(i);
 				AddAllDocVectors(vectors, mergeState);
 				++docCount;
-				mergeState.CheckAbort.work(300);
+                mergeState.checkAbort.Work(300);
 				i = NextLiveDoc(i + 1, liveDocs, maxDoc);
 			  }
 			}

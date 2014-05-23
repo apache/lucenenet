@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Analysis;
 	using Lucene.Net.Analysis.Tokenattributes;
 	using Lucene.Net.Document;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Ignore = org.junit.Ignore;
 
 
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Analysis.Tokenattributes;
 	using Codec = Lucene.Net.Codecs.Codec;
 	using Lucene.Net.Document;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Lucene.Net.Search;
 	using Lucene.Net.Store;
 	using Lucene.Net.Util;

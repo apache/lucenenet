@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	 */
 
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 	using DataOutput = Lucene.Net.Store.DataOutput;

@@ -23,8 +23,8 @@ namespace Lucene.Net.Codecs
 
 
 	using FieldInfo = Lucene.Net.Index.FieldInfo; // javadocs
-	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
 	using MergeState = Lucene.Net.Index.MergeState;
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// Default merge impl </summary>
-	  public virtual void Merge(MergeState mergeState, FieldInfo.IndexOptions indexOptions, TermsEnum termsEnum)
+	  public virtual void Merge(MergeState mergeState, FieldInfo.IndexOptions_e indexOptions, TermsEnum termsEnum)
 	  {
 
 		BytesRef term;
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs
 		long sumDFsinceLastAbortCheck = 0;
 		FixedBitSet visitedDocs = new FixedBitSet(mergeState.SegmentInfo.DocCount);
 
-		if (indexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+		if (indexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		{
 		  if (DocsEnum == null)
 		  {
@@ -122,15 +122,11 @@ namespace Lucene.Net.Codecs
 		  {
 			// We can pass null for liveDocs, because the
 			// mapping enum will skip the non-live docs:
-			docsEnumIn = (MultiDocsEnum) termsEnum.Docs(null, docsEnumIn, DocsEnum.FLAG_NONE);
+			docsEnumIn = (MultiDocsEnum) termsEnum.Docs(null, docsEnumIn, Index.DocsEnum.FLAG_NONE);
 			if (docsEnumIn != null)
 			{
 			  DocsEnum.Reset(docsEnumIn);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PostingsConsumer postingsConsumer = startTerm(term);
 			  PostingsConsumer postingsConsumer = StartTerm(term);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermStats stats = postingsConsumer.merge(mergeState, indexOptions, docsEnum, visitedDocs);
 			  TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, DocsEnum, visitedDocs);
 			  if (stats.DocFreq > 0)
 			  {
@@ -140,14 +136,14 @@ namespace Lucene.Net.Codecs
 				sumDocFreq += stats.DocFreq;
 				if (sumDFsinceLastAbortCheck > 60000)
 				{
-				  mergeState.CheckAbort.work(sumDFsinceLastAbortCheck / 5.0);
+				  mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
 				  sumDFsinceLastAbortCheck = 0;
 				}
 			  }
 			}
 		  }
 		}
-		else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS)
+		else if (indexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS)
 		{
 		  if (DocsAndFreqsEnum == null)
 		  {
@@ -164,11 +160,7 @@ namespace Lucene.Net.Codecs
 			docsAndFreqsEnumIn = (MultiDocsEnum) termsEnum.Docs(null, docsAndFreqsEnumIn);
 			Debug.Assert(docsAndFreqsEnumIn != null);
 			DocsAndFreqsEnum.Reset(docsAndFreqsEnumIn);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PostingsConsumer postingsConsumer = startTerm(term);
 			PostingsConsumer postingsConsumer = StartTerm(term);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermStats stats = postingsConsumer.merge(mergeState, indexOptions, docsAndFreqsEnum, visitedDocs);
 			TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, DocsAndFreqsEnum, visitedDocs);
 			if (stats.DocFreq > 0)
 			{
@@ -178,13 +170,13 @@ namespace Lucene.Net.Codecs
 			  sumDocFreq += stats.DocFreq;
 			  if (sumDFsinceLastAbortCheck > 60000)
 			  {
-				mergeState.CheckAbort.work(sumDFsinceLastAbortCheck / 5.0);
+				mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
 				sumDFsinceLastAbortCheck = 0;
 			  }
 			}
 		  }
 		}
-		else if (indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+		else if (indexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 		{
 		  if (PostingsEnum == null)
 		  {
@@ -200,11 +192,7 @@ namespace Lucene.Net.Codecs
 			Debug.Assert(postingsEnumIn != null);
 			PostingsEnum.Reset(postingsEnumIn);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PostingsConsumer postingsConsumer = startTerm(term);
 			PostingsConsumer postingsConsumer = StartTerm(term);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermStats stats = postingsConsumer.merge(mergeState, indexOptions, postingsEnum, visitedDocs);
 			TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, PostingsEnum, visitedDocs);
 			if (stats.DocFreq > 0)
 			{
@@ -214,7 +202,7 @@ namespace Lucene.Net.Codecs
 			  sumDocFreq += stats.DocFreq;
 			  if (sumDFsinceLastAbortCheck > 60000)
 			  {
-				mergeState.CheckAbort.work(sumDFsinceLastAbortCheck / 5.0);
+				mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
 				sumDFsinceLastAbortCheck = 0;
 			  }
 			}
@@ -222,7 +210,7 @@ namespace Lucene.Net.Codecs
 		}
 		else
 		{
-		  Debug.Assert(indexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+		  Debug.Assert(indexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 		  if (PostingsEnum == null)
 		  {
 			PostingsEnum = new MappingMultiDocsAndPositionsEnum();
@@ -237,11 +225,7 @@ namespace Lucene.Net.Codecs
 			Debug.Assert(postingsEnumIn != null);
 			PostingsEnum.Reset(postingsEnumIn);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PostingsConsumer postingsConsumer = startTerm(term);
 			PostingsConsumer postingsConsumer = StartTerm(term);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermStats stats = postingsConsumer.merge(mergeState, indexOptions, postingsEnum, visitedDocs);
 			TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, PostingsEnum, visitedDocs);
 			if (stats.DocFreq > 0)
 			{
@@ -251,13 +235,13 @@ namespace Lucene.Net.Codecs
 			  sumDocFreq += stats.DocFreq;
 			  if (sumDFsinceLastAbortCheck > 60000)
 			  {
-				mergeState.CheckAbort.work(sumDFsinceLastAbortCheck / 5.0);
+				mergeState.checkAbort.Work(sumDFsinceLastAbortCheck / 5.0);
 				sumDFsinceLastAbortCheck = 0;
 			  }
 			}
 		  }
 		}
-		Finish(indexOptions == FieldInfo.IndexOptions.DOCS_ONLY ? - 1 : sumTotalTermFreq, sumDocFreq, visitedDocs.Cardinality());
+		Finish(indexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY ? - 1 : sumTotalTermFreq, sumDocFreq, visitedDocs.Cardinality());
 	  }
 	}
 

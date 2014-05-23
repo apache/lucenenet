@@ -105,9 +105,9 @@ namespace Lucene.Net.Index
 			  return false;
 			}
 
-			public override FieldInfo.IndexOptions IndexOptions()
+			public override FieldInfo.IndexOptions_e IndexOptions()
 			{
-			  return FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+			  return FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
 
 			public override DocValuesType DocValueType()

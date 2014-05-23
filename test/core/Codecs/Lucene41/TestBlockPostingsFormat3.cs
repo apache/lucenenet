@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	using TextField = Lucene.Net.Document.TextField;
 	using AtomicReader = Lucene.Net.Index.AtomicReader;
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 	using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;

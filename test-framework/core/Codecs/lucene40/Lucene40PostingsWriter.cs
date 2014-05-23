@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
@@ -187,9 +187,9 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		*/
 		this.FieldInfo = fieldInfo;
-		IndexOptions = fieldInfo.IndexOptions;
+		IndexOptions = fieldInfo.IndexOptions_e;
 
-		StoreOffsets = IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		StoreOffsets = IndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		StorePayloads = fieldInfo.hasPayloads();
 		LastState = EmptyState;
 		//System.out.println("  set init blockFreqStart=" + freqStart);
@@ -220,7 +220,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		Debug.Assert(docID < TotalNumDocs, "docID=" + docID + " totalNumDocs=" + TotalNumDocs);
 
 		LastDocID = docID;
-		if (IndexOptions == IndexOptions.DOCS_ONLY)
+		if (IndexOptions == IndexOptions_e.DOCS_ONLY)
 		{
 		  FreqOut.writeVInt(delta);
 		}
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
 	  {
 		//if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-		Debug.Assert(IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: " + IndexOptions);
+		Debug.Assert(IndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: " + IndexOptions);
 		Debug.Assert(ProxOut != null);
 
 		int delta = position - LastPosition;
@@ -349,7 +349,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  Debug.Assert(state.SkipOffset > 0);
 		  @out.writeVLong(state.SkipOffset);
 		}
-		if (IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+		if (IndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
 		{
 		  @out.writeVLong(state.ProxStart - LastState.ProxStart);
 		}

@@ -4,27 +4,28 @@ using System.Diagnostics;
 namespace Lucene.Net.Codecs.Compressing
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using DataInput = Lucene.Net.Store.DataInput;
-	using DataOutput = Lucene.Net.Store.DataOutput;
-	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using DataInput = Lucene.Net.Store.DataInput;
+    using DataOutput = Lucene.Net.Store.DataOutput;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
 	/// <summary>
 	/// LZ4 compression and decompression routines.
@@ -50,7 +51,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  private static int Hash(int i, int hashBits)
 	  {
-		(int)((uint)return (i * -1640531535) >> (32 - hashBits));
+		return Number.URShift((i * -1640531535), (32 - hashBits));
 	  }
 
 	  private static int HashHC(int i)
@@ -241,7 +242,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  int bitsPerOffset = PackedInts.BitsRequired(len - LAST_LITERALS);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int bitsPerOffsetLog = 32 - Integer.numberOfLeadingZeros(bitsPerOffset - 1);
-		  int bitsPerOffsetLog = 32 - int.numberOfLeadingZeros(bitsPerOffset - 1);
+		  int bitsPerOffsetLog = 32 - Number.NumberOfLeadingZeros(bitsPerOffset - 1);
 		  HashLog = MEMORY_USAGE + 3 - bitsPerOffsetLog;
 		  if (HashTable == null || HashTable.Size() < 1 << HashLog || HashTable.BitsPerValue < bitsPerOffset)
 		  {
@@ -379,8 +380,8 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  this.@base = @base;
 		  NextToUpdate = @base;
-		  Arrays.fill(HashTable, -1);
-		  Arrays.fill(ChainTable, (short) 0);
+		  CollectionsHelper.Fill(HashTable, -1);
+          CollectionsHelper.Fill(ChainTable, (short)0);
 		}
 
 		internal int HashPointer(sbyte[] bytes, int off)
@@ -408,7 +409,7 @@ namespace Lucene.Net.Codecs.Compressing
 //ORIGINAL LINE: final int h = hashHC(v);
 		  int h = HashHC(v);
 		  int delta = off - HashTable[h];
-		  Debug.Assert(delta > 0, delta);
+		  Debug.Assert(delta > 0, delta.ToString());
 		  if (delta >= MAX_DISTANCE)
 		  {
 			delta = MAX_DISTANCE - 1;

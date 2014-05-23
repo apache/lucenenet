@@ -36,6 +36,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Class responsible for writing stored document fields.
@@ -54,10 +55,10 @@ namespace Lucene.Net.Codecs.Lucene40
 	  private const int _NUMERIC_BIT_SHIFT = 3;
 	  internal static readonly int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
 
-	  internal static readonly int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
-	  internal static readonly int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;
-	  internal static readonly int FIELD_IS_NUMERIC_FLOAT = 3 << _NUMERIC_BIT_SHIFT;
-	  internal static readonly int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
+	  internal const int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
+	  internal const int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;
+	  internal const int FIELD_IS_NUMERIC_FLOAT = 3 << _NUMERIC_BIT_SHIFT;
+	  internal const int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
 
 	  // the next possible bits are: 1 << 6; 1 << 7
 	  // currently unused: static final int FIELD_IS_NUMERIC_SHORT = 5 << _NUMERIC_BIT_SHIFT;
@@ -128,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		try
 		{
-		  IOUtils.close(FieldsStream, IndexStream);
+		  IOUtils.Close(FieldsStream, IndexStream);
 		}
 		finally
 		{
@@ -142,43 +143,39 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  Close();
 		}
-		catch (Exception ignored)
+		catch (Exception)
 		{
 		}
-		IOUtils.deleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", FIELDS_INDEX_EXTENSION));
+		IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", FIELDS_INDEX_EXTENSION));
 	  }
 
 	  public override void WriteField(FieldInfo info, IndexableField field)
 	  {
 		FieldsStream.WriteVInt(info.Number);
 		int bits = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes;
 		BytesRef bytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String string;
 		string @string;
 		// TODO: maybe a field should serialize itself?
 		// this way we don't bake into indexer all these
 		// specific encodings for different fields?  and apps
 		// can customize...
 
-		Number number = field.NumericValue();
+		object number = (object)field.NumericValue();
 		if (number != null)
 		{
-		  if (number is sbyte? || number is short? || number is int?)
+		  if (number is sbyte || number is short || number is int)
 		  {
 			bits |= FIELD_IS_NUMERIC_INT;
 		  }
-		  else if (number is long?)
+		  else if (number is long)
 		  {
 			bits |= FIELD_IS_NUMERIC_LONG;
 		  }
-		  else if (number is float?)
+		  else if (number is float)
 		  {
 			bits |= FIELD_IS_NUMERIC_FLOAT;
 		  }
-		  else if (number is double?)
+		  else if (number is double)
 		  {
 			bits |= FIELD_IS_NUMERIC_DOUBLE;
 		  }
@@ -220,25 +217,25 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		else
 		{
-		  if (number is sbyte? || number is short? || number is int?)
+		  if (number is sbyte || number is short || number is int)
 		  {
 			FieldsStream.WriteInt((int)number);
 		  }
-		  else if (number is long?)
+		  else if (number is long)
 		  {
 			FieldsStream.WriteLong((long)number);
 		  }
-		  else if (number is float?)
+		  else if (number is float)
 		  {
-			FieldsStream.WriteInt(float.floatToIntBits((float)number));
+			FieldsStream.WriteInt(Number.FloatToIntBits((float)number));
 		  }
-		  else if (number is double?)
+		  else if (number is double)
 		  {
-			FieldsStream.WriteLong(double.doubleToLongBits((double)number));
+			FieldsStream.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
 		  }
 		  else
 		  {
-			throw new AssertionError("Cannot get here");
+              throw new InvalidOperationException("Cannot get here");
 		  }
 		}
 	  }
@@ -362,7 +359,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, start, numDocs);
 			AddRawDocuments(stream, rawDocLengths, numDocs);
 			docCount += numDocs;
-			mergeState.CheckAbort.work(300 * numDocs);
+			mergeState.checkAbort.Work(300 * numDocs);
 		  }
 		}
 		else
@@ -383,7 +380,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			Document doc = reader.Document(j);
 			AddDocument(doc, mergeState.FieldInfos);
 			docCount++;
-			mergeState.CheckAbort.work(300);
+			mergeState.checkAbort.Work(300);
 		  }
 		}
 		return docCount;
@@ -404,7 +401,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			IndexInput stream = matchingFieldsReader.RawDocs(rawDocLengths, docCount, len);
 			AddRawDocuments(stream, rawDocLengths, len);
 			docCount += len;
-			mergeState.CheckAbort.work(300 * len);
+			mergeState.checkAbort.Work(300 * len);
 		  }
 		}
 		else
@@ -415,7 +412,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			// fieldsWriter.addDocument; see LUCENE-1282
 			Document doc = reader.Document(docCount);
 			AddDocument(doc, mergeState.FieldInfos);
-			mergeState.CheckAbort.work(300);
+			mergeState.checkAbort.Work(300);
 		  }
 		}
 		return docCount;

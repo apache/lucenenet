@@ -38,6 +38,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Lucene 4.0 Term Vectors reader.
@@ -202,8 +203,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		if (Tvx == null)
 		{
-		  Arrays.fill(tvdLengths, 0);
-		  Arrays.fill(tvfLengths, 0);
+            CollectionsHelper.Fill(tvdLengths, 0);
+            CollectionsHelper.Fill(tvfLengths, 0);
 		  return;
 		}
 
@@ -246,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override void Close()
 	  {
-		IOUtils.close(Tvx, Tvd, Tvf);
+		IOUtils.Close(Tvx, Tvd, Tvf);
 	  }
 
 	  /// 
@@ -262,7 +263,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		internal readonly int[] FieldNumbers;
 		internal readonly long[] FieldFPs;
-		internal readonly IDictionary<int?, int?> FieldNumberToIndex = new Dictionary<int?, int?>();
+		internal readonly IDictionary<int, int> FieldNumberToIndex = new Dictionary<int, int>();
 
 		public TVFields(Lucene40TermVectorsReader outerInstance, int docID)
 		{
@@ -325,7 +326,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			{
 			  if (OuterInstance.FieldNumbers != null && fieldUpto < OuterInstance.FieldNumbers.Length)
 			  {
-				return outerInstance.outerInstance.FieldInfos.fieldInfo(OuterInstance.FieldNumbers[fieldUpto++]).name;
+				return OuterInstance.OuterInstance.FieldInfos.FieldInfo(OuterInstance.FieldNumbers[fieldUpto++]).Name;
 			  }
 			  else
 			  {
@@ -348,7 +349,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
-		  FieldInfo fieldInfo = outerInstance.FieldInfos.FieldInfo(field);
+          FieldInfo fieldInfo = OuterInstance.FieldInfos.FieldInfo(field);
 		  if (fieldInfo == null)
 		  {
 			// No such field
@@ -357,7 +358,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Integer fieldIndex = fieldNumberToIndex.get(fieldInfo.number);
-		  int? fieldIndex = FieldNumberToIndex[fieldInfo.Number];
+		  int fieldIndex = FieldNumberToIndex[fieldInfo.Number];
 		  if (fieldIndex == null)
 		  {
 			// Term vectors were not indexed for this field
@@ -410,7 +411,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  if (reuse is TVTermsEnum)
 		  {
 			termsEnum = (TVTermsEnum) reuse;
-			if (!termsEnum.CanReuse(outerInstance.Tvf))
+            if (!termsEnum.CanReuse(OuterInstance.Tvf))
 			{
 			  termsEnum = new TVTermsEnum(OuterInstance);
 			}
@@ -857,7 +858,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		public override int NextPosition()
 		{
-		  assert(Positions != null && NextPos < Positions.Length) || StartOffsets != null && NextPos < StartOffsets.Length;
+		  Debug.Assert((Positions != null && NextPos < Positions.Length) || StartOffsets != null && NextPos < StartOffsets.Length);
 
 		  if (Positions != null)
 		  {

@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
 	using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
 	using Directory = Lucene.Net.Store.Directory;
 	using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Information about a segment such as it's name, directory, and files related
@@ -174,7 +175,7 @@ namespace Lucene.Net.Index
 		  {
 			if (this.DocCount_Renamed == -1)
 			{
-			  throw new IllegalStateException("docCount isn't set yet");
+                throw new InvalidOperationException("docCount isn't set yet");
 			}
 			return DocCount_Renamed;
 		  }
@@ -182,7 +183,7 @@ namespace Lucene.Net.Index
 		  {
 			if (this.DocCount_Renamed != -1)
 			{
-			  throw new IllegalStateException("docCount was already set");
+                throw new InvalidOperationException("docCount was already set");
 			}
 			this.DocCount_Renamed = value;
 		  }
@@ -192,14 +193,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Return all files referenced by this SegmentInfo. </summary>
-	  public Set<string> Files()
-	  {
-		if (SetFiles == null)
-		{
-		  throw new IllegalStateException("files were not computed yet");
-		}
-		return Collections.unmodifiableSet(SetFiles);
-	  }
+	  
 
 	  public override string ToString()
 	  {
@@ -252,8 +246,6 @@ namespace Lucene.Net.Index
 		}
 		if (obj is SegmentInfo)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentInfo other = (SegmentInfo) obj;
 		  SegmentInfo other = (SegmentInfo) obj;
 		  return other.Dir == Dir && other.Name.Equals(Name);
 		}
@@ -265,7 +257,7 @@ namespace Lucene.Net.Index
 
 	  public override int HashCode()
 	  {
-		return Dir.HashCode() + Name.HashCode();
+		return Dir.GetHashCode() + Name.GetHashCode();
 	  }
 
 	  /// <summary>
@@ -292,13 +284,22 @@ namespace Lucene.Net.Index
 	  }
 
 
-	  private Set<string> SetFiles;
+	  private ISet<string> SetFiles;
 
 	  /// <summary>
 	  /// Sets the files written for this segment. </summary>
-	  public Set<string> Files
+	  public ISet<string> Files
 	  {
-		  set
+          get
+          { 
+		        if (SetFiles == null)
+		        {
+                    throw new InvalidOperationException("files were not computed yet");
+		        }
+		        return CollectionsHelper.UnmodifiableSet(SetFiles);
+          }
+          
+          set
 		  {
 			CheckFileNames(value);
 			SetFiles = value;
@@ -321,8 +322,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public void AddFile(string file)
 	  {
-		CheckFileNames(Collections.singleton(file));
-		SetFiles.add(file);
+		CheckFileNames(Collections.Singleton(file));
+		SetFiles.Add(file);
 	  }
 
 	  private void CheckFileNames(ICollection<string> files)
@@ -371,7 +372,7 @@ namespace Lucene.Net.Index
 	  {
 		if (Attributes_Renamed == null)
 		{
-		  Attributes_Renamed = new Dictionary<>();
+		  Attributes_Renamed = new Dictionary<string, string>();
 		}
 		return Attributes_Renamed[key] = value;
 	  }

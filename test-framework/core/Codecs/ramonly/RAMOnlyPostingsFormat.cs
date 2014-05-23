@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
@@ -211,17 +211,17 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override bool HasFreqs()
 		{
-		  return Info.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return Info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 		}
 
 		public override bool HasOffsets()
 		{
-		  return Info.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  return Info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		}
 
 		public override bool HasPositions()
 		{
-		  return Info.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return Info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		}
 
 		public override bool HasPayloads()
@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override TermsConsumer AddField(FieldInfo field)
 		{
-		  if (field.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+		  if (field.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
 		  {
 			throw new System.NotSupportedException("this codec cannot index offsets");
 		  }

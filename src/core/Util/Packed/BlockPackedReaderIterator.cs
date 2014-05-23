@@ -1,3 +1,4 @@
+using Lucene.Net.Store;
 using System;
 using System.Diagnostics;
 
@@ -176,7 +177,7 @@ namespace Lucene.Net.Util.Packed
 		  int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
 		  if (bitsPerValue > 64)
 		  {
-			throw new IOException("Corrupted");
+			throw new System.IO.IOException("Corrupted");
 		  }
 		  if ((token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) == 0)
 		  {
@@ -184,7 +185,7 @@ namespace Lucene.Net.Util.Packed
 		  }
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long blockBytes = PackedInts.Format.PACKED.byteCount(packedIntsVersion, blockSize, bitsPerValue);
-		  long blockBytes = PackedInts.Format.PACKED.byteCount(PackedIntsVersion, BlockSize, bitsPerValue);
+		  long blockBytes = PackedInts.Format.PACKED.ByteCount(PackedIntsVersion, BlockSize, bitsPerValue);
 		  SkipBytes(blockBytes);
 		  Ord_Renamed += BlockSize;
 		  count -= BlockSize;
@@ -284,7 +285,7 @@ namespace Lucene.Net.Util.Packed
 		int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
 		if (bitsPerValue > 64)
 		{
-		  throw new IOException("Corrupted");
+		  throw new System.IO.IOException("Corrupted");
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long minValue = minEquals0 ? 0L : zigZagDecode(1L + readVLong(in));
@@ -297,26 +298,16 @@ namespace Lucene.Net.Util.Packed
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PackedInts.Decoder decoder = PackedInts.getDecoder(PackedInts.Format.PACKED, packedIntsVersion, bitsPerValue);
 		  PackedInts.Decoder decoder = PackedInts.GetDecoder(PackedInts.Format.PACKED, PackedIntsVersion, bitsPerValue);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int iterations = blockSize / decoder.byteValueCount();
 		  int iterations = BlockSize / decoder.ByteValueCount();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blocksSize = iterations * decoder.byteBlockCount();
 		  int blocksSize = iterations * decoder.ByteBlockCount();
 		  if (Blocks == null || Blocks.Length < blocksSize)
 		  {
 			Blocks = new sbyte[blocksSize];
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int valueCount = (int) Math.min(this.valueCount - ord, blockSize);
 		  int valueCount = (int) Math.Min(this.ValueCount - Ord_Renamed, BlockSize);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blocksCount = (int) PackedInts.Format.PACKED.byteCount(packedIntsVersion, valueCount, bitsPerValue);
-		  int blocksCount = (int) PackedInts.Format.PACKED.byteCount(PackedIntsVersion, valueCount, bitsPerValue);
+		  int blocksCount = (int) PackedInts.Format.PACKED.ByteCount(PackedIntsVersion, valueCount, bitsPerValue);
 		  @in.ReadBytes(Blocks, 0, blocksCount);
 
 		  decoder.Decode(Blocks, 0, Values, 0, iterations);

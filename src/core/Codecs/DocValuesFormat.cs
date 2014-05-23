@@ -22,6 +22,8 @@ namespace Lucene.Net.Codecs
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 	using Lucene.Net.Util;
+    using System;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// Encodes/decodes per-document values.
@@ -36,7 +38,7 @@ namespace Lucene.Net.Codecs
 	/// so SPI can load it. </summary>
 	/// <seealso cref= ServiceLoader
 	/// @lucene.experimental  </seealso>
-	public abstract class DocValuesFormat : NamedSPILoader.NamedSPI
+	public abstract class DocValuesFormat : NamedSPILoader<DocValuesFormat>.NamedSPI
 	{
 
 	  private static readonly NamedSPILoader<DocValuesFormat> Loader = new NamedSPILoader<DocValuesFormat>(typeof(DocValuesFormat));
@@ -57,7 +59,7 @@ namespace Lucene.Net.Codecs
 	  /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
 	  protected internal DocValuesFormat(string name)
 	  {
-		NamedSPILoader.CheckServiceName(name);
+        NamedSPILoader<DocValuesFormat>.CheckServiceName(name);
 		this.Name_Renamed = name;
 	  }
 
@@ -98,18 +100,18 @@ namespace Lucene.Net.Codecs
 	  {
 		if (Loader == null)
 		{
-		  throw new IllegalStateException("You called DocValuesFormat.forName() before all formats could be initialized. " + "this likely happens if you call it from a DocValuesFormat's ctor.");
+            throw new InvalidOperationException("You called DocValuesFormat.forName() before all formats could be initialized. " + "this likely happens if you call it from a DocValuesFormat's ctor.");
 		}
 		return Loader.Lookup(name);
 	  }
 
 	  /// <summary>
 	  /// returns a list of all available format names </summary>
-	  public static Set<string> AvailableDocValuesFormats()
+	  public static ISet<string> AvailableDocValuesFormats()
 	  {
 		if (Loader == null)
 		{
-		  throw new IllegalStateException("You called DocValuesFormat.availableDocValuesFormats() before all formats could be initialized. " + "this likely happens if you call it from a DocValuesFormat's ctor.");
+		  throw new InvalidOperationException("You called DocValuesFormat.availableDocValuesFormats() before all formats could be initialized. " + "this likely happens if you call it from a DocValuesFormat's ctor.");
 		}
 		return Loader.AvailableServices();
 	  }
@@ -125,9 +127,9 @@ namespace Lucene.Net.Codecs
 	  /// <p><em>this method is expensive and should only be called for discovery
 	  /// of new docvalues formats on the given classpath/classloader!</em>
 	  /// </summary>
-	  public static void ReloadDocValuesFormats(ClassLoader classloader)
+	  public static void ReloadDocValuesFormats()
 	  {
-		Loader.Reload(classloader);
+		Loader.Reload();
 	  }
 	}
 

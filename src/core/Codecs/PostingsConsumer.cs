@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
 	using MergeState = Lucene.Net.Index.MergeState;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;

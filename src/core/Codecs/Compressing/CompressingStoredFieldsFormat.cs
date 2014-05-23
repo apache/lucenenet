@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public override string ToString()
 	  {
-		return this.GetType().SimpleName + "(compressionMode=" + CompressionMode + ", chunkSize=" + ChunkSize + ")";
+		return this.GetType().Name + "(compressionMode=" + CompressionMode + ", chunkSize=" + ChunkSize + ")";
 	  }
 
 	}

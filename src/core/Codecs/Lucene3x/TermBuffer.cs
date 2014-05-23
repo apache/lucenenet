@@ -22,14 +22,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_SIZE;
-
-
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Term = Lucene.Net.Index.Term;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using Lucene.Net.Util.ByteBlockPool;
+    using Lucene.Net.Util;
 
 	/// <summary>
 	/// @lucene.experimental </summary>
@@ -70,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		NewSuffixStart = input.ReadVInt();
 		int length = input.ReadVInt();
 		int totalLength = NewSuffixStart + length;
-		Debug.Assert(totalLength <= BYTE_BLOCK_SIZE-2, "termLength=" + totalLength + ",resource=" + input);
+        Debug.Assert(totalLength <= ByteBlockPool.BYTE_BLOCK_SIZE - 2, "termLength=" + totalLength + ",resource=" + input);
 		if (Bytes.Bytes.Length < totalLength)
 		{
 		  Bytes.Grow(totalLength);
@@ -90,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		  else
 		  {
-			Debug.Assert(fieldInfos.FieldInfo(CurrentFieldNumber) != null, CurrentFieldNumber);
+			Debug.Assert(fieldInfos.FieldInfo(CurrentFieldNumber) != null, CurrentFieldNumber.ToString());
 			Field = fieldInfos.FieldInfo(CurrentFieldNumber).Name.intern();
 		  }
 		}

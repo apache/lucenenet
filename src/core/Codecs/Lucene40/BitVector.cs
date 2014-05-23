@@ -32,6 +32,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using BitUtil = Lucene.Net.Util.BitUtil;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using MutableBits = Lucene.Net.Util.MutableBits;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Optimized implementation of a vector of bits.  this is more-or-less like
@@ -143,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		if (bit >= Size_Renamed)
 		{
-		  throw new System.IndexOutOfRangeException(bit);
+		  throw new System.IndexOutOfRangeException(bit.ToString());
 		}
 		Bits[bit >> 3] &= (sbyte)(~(1 << (bit & 7)));
 		Count_Renamed = -1;
@@ -153,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		if (bit >= Size_Renamed)
 		{
-		  throw new System.IndexOutOfRangeException(bit);
+            throw new System.IndexOutOfRangeException(bit.ToString());
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int pos = bit >> 3;
@@ -342,7 +343,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Set all bits </summary>
 	  public void SetAll()
 	  {
-		Arrays.fill(Bits, unchecked((sbyte) 0xff));
+		CollectionsHelpeCollectionsHelper.Fillr.Fill(Bits, unchecked((sbyte) 0xff));
 		ClearUnusedBits();
 		Count_Renamed = Size_Renamed;
 	  }
@@ -547,7 +548,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		Size_Renamed = input.ReadInt(); // (re)read size
 		Count_Renamed = input.ReadInt(); // read count
 		Bits = new sbyte[GetNumBytes(Size_Renamed)]; // allocate bits
-		Arrays.fill(Bits, unchecked((sbyte) 0xff));
+        CollectionsHelper.Fill(Bits, unchecked((sbyte)0xff));
 		ClearUnusedBits();
 		int last = 0;
 		int numCleared = Size() - Count();

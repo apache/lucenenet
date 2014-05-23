@@ -21,7 +21,7 @@ namespace Lucene.Net.Document
 	 */
 
 	using NumericTokenStream = Lucene.Net.Analysis.NumericTokenStream; // javadocs
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldCache = Lucene.Net.Search.FieldCache; // javadocs
 	using Lucene.Net.Search; // javadocs
 	using Lucene.Net.Search; // javadocs

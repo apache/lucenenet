@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	using IntField = Lucene.Net.Document.IntField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using FieldCache = Lucene.Net.Search.FieldCache;
 	using Directory = Lucene.Net.Store.Directory;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		ft.IndexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		if (random().nextBoolean())
 		{
 		  ft.StoreTermVectors = true;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 		RandomIndexWriter w = new RandomIndexWriter(random(), dir, Iwc);
 
 		FieldType ft = new FieldType(TextField.TYPE_STORED);
-		ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		ft.IndexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		if (random().nextBoolean())
 		{
 		  ft.StoreTermVectors = true;
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
 
 		// TODO: randomize what IndexOptions we use; also test
 		// changing this up in one IW buffered segment...:
-		ft.IndexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		ft.IndexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		if (random().nextBoolean())
 		{
 		  ft.StoreTermVectors = true;

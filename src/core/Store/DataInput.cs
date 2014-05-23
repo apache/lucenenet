@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Store
 {
@@ -148,7 +149,7 @@ namespace Lucene.Net.Store
 		{
 			return i;
 		}
-		throw new IOException("Invalid vInt detected (too many bits)");
+		throw new System.IO.IOException("Invalid vInt detected (too many bits)");
 	  }
 
 	  /// <summary>
@@ -234,7 +235,7 @@ namespace Lucene.Net.Store
 		{
 			return i;
 		}
-		throw new IOException("Invalid vLong detected (negative values disallowed)");
+		throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
 	  }
 
 	  /// <summary>
@@ -247,7 +248,7 @@ namespace Lucene.Net.Store
 //ORIGINAL LINE: final byte[] bytes = new byte[length];
 		sbyte[] bytes = new sbyte[length];
 		ReadBytes(bytes, 0, length);
-		return new string(bytes, 0, length, StandardCharsets.UTF_8);
+		return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
 	  }
 
 	  /// <summary>
@@ -278,19 +279,11 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  public virtual IDictionary<string, string> ReadStringStringMap()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> map = new java.util.HashMap<>();
 		IDictionary<string, string> map = new Dictionary<string, string>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = readInt();
 		int count = ReadInt();
 		for (int i = 0;i < count;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String key = readString();
 		  string key = ReadString();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String val = readString();
 		  string val = ReadString();
 		  map[key] = val;
 		}
@@ -302,17 +295,13 @@ namespace Lucene.Net.Store
 	  /// Reads a Set&lt;String&gt; previously written
 	  ///  with <seealso cref="DataOutput#writeStringSet(Set)"/>. 
 	  /// </summary>
-	  public virtual Set<string> ReadStringSet()
+	  public virtual ISet<string> ReadStringSet()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> set = new java.util.HashSet<>();
-		Set<string> set = new HashSet<string>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = readInt();
+		ISet<string> set = new HashSet<string>();
 		int count = ReadInt();
 		for (int i = 0;i < count;i++)
 		{
-		  set.add(ReadString());
+		  set.Add(ReadString());
 		}
 
 		return set;

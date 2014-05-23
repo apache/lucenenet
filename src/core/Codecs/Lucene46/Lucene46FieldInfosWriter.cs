@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Lucene46
 	 */
 
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.Lucene46
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using System;
 
 	/// <summary>
 	/// Lucene 4.6 FieldInfos writer.
@@ -57,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		  output.WriteVInt(infos.Size());
 		  foreach (FieldInfo fi in infos)
 		  {
-			IndexOptions indexOptions = fi.IndexOptions;
+			FieldInfo.IndexOptions_e indexOptions = fi.IndexOptions;
 			sbyte bits = 0x0;
 			if (fi.HasVectors())
 			{
@@ -74,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene46
 			if (fi.Indexed)
 			{
 			  bits |= Lucene46FieldInfosFormat.IS_INDEXED;
-			  Debug.Assert(indexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads());
+			  Debug.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads());
 			  if (indexOptions == IndexOptions.DOCS_ONLY)
 			  {
 				bits |= Lucene46FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
@@ -95,11 +96,11 @@ namespace Lucene.Net.Codecs.Lucene46
 			// pack the DV types in one byte
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte dv = docValuesByte(fi.getDocValuesType());
-			sbyte dv = DocValuesByte(fi.DocValuesType_e);
+			sbyte dv = DocValuesByte(fi.DocValuesType);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte nrm = docValuesByte(fi.getNormType());
 			sbyte nrm = DocValuesByte(fi.NormType);
-			assert(dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0;
+			Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
 			sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
 			output.WriteByte(val);
 			output.WriteLong(fi.DocValuesGen);
@@ -145,7 +146,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		}
 		else
 		{
-		  throw new AssertionError();
+            throw new InvalidOperationException();
 		}
 	  }
 	}

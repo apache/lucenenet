@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.Perfield
 	using Terms = Lucene.Net.Index.Terms;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Enables per field postings support.
@@ -55,13 +56,13 @@ namespace Lucene.Net.Codecs.Perfield
 	  /// <seealso cref="FieldInfo"/> attribute name used to store the
 	  ///  format name for each field. 
 	  /// </summary>
-	  public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldPostingsFormat).SimpleName + ".format";
+	  public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldPostingsFormat).Name + ".format";
 
 	  /// <summary>
 	  /// <seealso cref="FieldInfo"/> attribute name used to store the
 	  ///  segment suffix name for each field. 
 	  /// </summary>
-	  public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldPostingsFormat).SimpleName + ".suffix";
+	  public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldPostingsFormat).Name + ".suffix";
 
 
 	  /// <summary>
@@ -92,33 +93,29 @@ namespace Lucene.Net.Codecs.Perfield
 
 
 		internal readonly IDictionary<PostingsFormat, FieldsConsumerAndSuffix> Formats = new Dictionary<PostingsFormat, FieldsConsumerAndSuffix>();
-		internal readonly IDictionary<string, int?> Suffixes = new Dictionary<string, int?>();
+		internal readonly IDictionary<string, int> Suffixes = new Dictionary<string, int>();
 
 		internal readonly SegmentWriteState SegmentWriteState;
 
 		public FieldsWriter(PerFieldPostingsFormat outerInstance, SegmentWriteState state)
 		{
 			this.OuterInstance = outerInstance;
-		  SegmentWriteState = state;
+		    SegmentWriteState = state;
 		}
 
 		public override TermsConsumer AddField(FieldInfo field)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.PostingsFormat format = getPostingsFormatForField(field.name);
-		  PostingsFormat format = outerInstance.GetPostingsFormatForField(field.Name);
+		  PostingsFormat format = OuterInstance.GetPostingsFormatForField(field.Name);
 		  if (format == null)
 		  {
-			throw new IllegalStateException("invalid null PostingsFormat for field=\"" + field.Name + "\"");
+              throw new InvalidOperationException("invalid null PostingsFormat for field=\"" + field.Name + "\"");
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String formatName = format.getName();
 		  string formatName = format.Name;
 
 		  string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
 		  Debug.Assert(previousValue == null);
 
-		  int? suffix;
+		  int suffix;
 
 		  FieldsConsumerAndSuffix consumer = Formats[format];
 		  if (consumer == null)
@@ -137,8 +134,6 @@ namespace Lucene.Net.Codecs.Perfield
 			}
 			Suffixes[formatName] = suffix;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentSuffix = getFullSegmentSuffix(field.name, segmentWriteState.segmentSuffix, getSuffix(formatName, Integer.toString(suffix)));
 			string segmentSuffix = GetFullSegmentSuffix(field.Name, SegmentWriteState.SegmentSuffix, GetSuffix(formatName, Convert.ToString(suffix)));
 			consumer = new FieldsConsumerAndSuffix();
 			consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(SegmentWriteState, segmentSuffix));
@@ -160,13 +155,13 @@ namespace Lucene.Net.Codecs.Perfield
 		  // .hasProx could work correctly?
 		  // NOTE: .hasProx is already broken in the same way for the non-perfield case,
 		  // if there is a fieldinfo with prox that has no postings, you get a 0 byte file.
-		  return consumer.Consumer.addField(field);
+		  return consumer.Consumer.AddField(field);
 		}
 
 		public override void Close()
 		{
 		  // Close all subs
-		  IOUtils.Close(Formats.Values);
+		  IOUtils.Close(Formats.Values.ToArray());
 		}
 	  }
 
@@ -186,7 +181,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  // TODO: support embedding; I think it should work but
 		  // we need a test confirm to confirm
 		  // return outerSegmentSuffix + "_" + segmentSuffix;
-		  throw new IllegalStateException("cannot embed PerFieldPostingsFormat inside itself (field \"" + fieldName + "\" returned PerFieldPostingsFormat)");
+		  throw new InvalidOperationException("cannot embed PerFieldPostingsFormat inside itself (field \"" + fieldName + "\" returned PerFieldPostingsFormat)");
 		}
 	  }
 
@@ -211,17 +206,11 @@ namespace Lucene.Net.Codecs.Perfield
 			{
 			  if (fi.Indexed)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fieldName = fi.name;
 				string fieldName = fi.Name;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String formatName = fi.getAttribute(PER_FIELD_FORMAT_KEY);
 				string formatName = fi.GetAttribute(PER_FIELD_FORMAT_KEY);
 				if (formatName != null)
 				{
 				  // null formatName means the field is in fieldInfos, but has no postings!
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String suffix = fi.getAttribute(PER_FIELD_SUFFIX_KEY);
 				  string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
 				  Debug.Assert(suffix != null);
 				  PostingsFormat format = PostingsFormat.ForName(formatName);
@@ -247,7 +236,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 		public override IEnumerator<string> Iterator()
 		{
-		  return Collections.unmodifiableSet(Fields.Keys).GetEnumerator();
+		  return Fields.Keys.GetEnumerator();
 		}
 
 		public override Terms Terms(string field)
@@ -263,7 +252,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 		public override void Close()
 		{
-		  IOUtils.Close(Formats.Values);
+		  IOUtils.Close(Formats.Values.ToArray());
 		}
 
 		public override long RamBytesUsed()
@@ -271,8 +260,8 @@ namespace Lucene.Net.Codecs.Perfield
 		  long sizeInBytes = 0;
 		  foreach (KeyValuePair<string, FieldsProducer> entry in Formats)
 		  {
-			sizeInBytes += entry.Key.length() * RamUsageEstimator.NUM_BYTES_CHAR;
-			sizeInBytes += entry.Value.ramBytesUsed();
+			sizeInBytes += entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR;
+			sizeInBytes += entry.Value.RamBytesUsed();
 		  }
 		  return sizeInBytes;
 		}

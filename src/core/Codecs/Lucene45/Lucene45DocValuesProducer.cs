@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    /*
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.TABLE_COMPRESSED;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat.VERSION_SORTED_SET_SINGLE_VALUE_OPTIMIZED;
-
+    */
 
 	using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -75,19 +75,19 @@ namespace Lucene.Net.Codecs.Lucene45
 	/// reader for <seealso cref="Lucene45DocValuesFormat"/> </summary>
 	public class Lucene45DocValuesProducer : DocValuesProducer, IDisposable
 	{
-	  private readonly IDictionary<int?, NumericEntry> Numerics;
-	  private readonly IDictionary<int?, BinaryEntry> Binaries;
-	  private readonly IDictionary<int?, SortedSetEntry> SortedSets;
-	  private readonly IDictionary<int?, NumericEntry> Ords;
-	  private readonly IDictionary<int?, NumericEntry> OrdIndexes;
+	  private readonly IDictionary<int, NumericEntry> Numerics;
+	  private readonly IDictionary<int, BinaryEntry> Binaries;
+	  private readonly IDictionary<int, SortedSetEntry> SortedSets;
+	  private readonly IDictionary<int, NumericEntry> Ords;
+	  private readonly IDictionary<int, NumericEntry> OrdIndexes;
 	  private readonly AtomicLong RamBytesUsed_Renamed;
 	  private readonly IndexInput Data;
 	  private readonly int MaxDoc;
 	  private readonly int Version;
 
 	  // memory-resident structures
-	  private readonly IDictionary<int?, MonotonicBlockPackedReader> AddressInstances = new Dictionary<int?, MonotonicBlockPackedReader>();
-	  private readonly IDictionary<int?, MonotonicBlockPackedReader> OrdIndexInstances = new Dictionary<int?, MonotonicBlockPackedReader>();
+	  private readonly IDictionary<int, MonotonicBlockPackedReader> AddressInstances = new Dictionary<int, MonotonicBlockPackedReader>();
+	  private readonly IDictionary<int, MonotonicBlockPackedReader> OrdIndexInstances = new Dictionary<int, MonotonicBlockPackedReader>();
 
 	  /// <summary>
 	  /// expert: instantiates a new reader </summary>
@@ -95,17 +95,17 @@ namespace Lucene.Net.Codecs.Lucene45
 	  {
 		string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
 		// read in the entries from the metadata file.
-		ChecksumIndexInput @in = state.Directory.openChecksumInput(metaName, state.Context);
+		ChecksumIndexInput @in = state.Directory.OpenChecksumInput(metaName, state.Context);
 		this.MaxDoc = state.SegmentInfo.DocCount;
 		bool success = false;
 		try
 		{
 		  Version = CodecUtil.CheckHeader(@in, metaCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
-		  Numerics = new Dictionary<int?, NumericEntry>();
-		  Ords = new Dictionary<int?, NumericEntry>();
-		  OrdIndexes = new Dictionary<int?, NumericEntry>();
-		  Binaries = new Dictionary<int?, BinaryEntry>();
-		  SortedSets = new Dictionary<int?, SortedSetEntry>();
+		  Numerics = new Dictionary<int, NumericEntry>();
+		  Ords = new Dictionary<int, NumericEntry>();
+		  OrdIndexes = new Dictionary<int, NumericEntry>();
+		  Binaries = new Dictionary<int, BinaryEntry>();
+		  SortedSets = new Dictionary<int, SortedSetEntry>();
 		  ReadFields(@in, state.FieldInfos);
 
 		  if (Version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
@@ -134,10 +134,8 @@ namespace Lucene.Net.Codecs.Lucene45
 		success = false;
 		try
 		{
-		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, dataExtension);
-		  Data = state.Directory.openInput(dataName, state.Context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int version2 = Lucene.Net.Codecs.CodecUtil.checkHeader(data, dataCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
+		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
+		  Data = state.Directory.OpenInput(dataName, state.Context);
 		  int version2 = CodecUtil.CheckHeader(Data, dataCodec, Lucene45DocValuesFormat.VERSION_START, Lucene45DocValuesFormat.VERSION_CURRENT);
 		  if (Version != version2)
 		  {
@@ -722,7 +720,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			}
 			else
 			{
-			return base.lookupTerm(key);
+			return base.LookupTerm(key);
 			}
 		  }
 
@@ -865,7 +863,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			}
 			else
 			{
-			  return base.lookupTerm(key);
+			  return base.LookupTerm(key);
 			}
 		  }
 
@@ -943,20 +941,20 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  public override Bits GetDocsWithField(FieldInfo field)
 	  {
-		switch (field.DocValuesType_e)
+		switch (field.DocValuesType)
 		{
-		  case SORTED_SET:
+		  case FieldInfo.DocValuesType_e.SORTED_SET:
 			return DocValues.DocsWithValue(GetSortedSet(field), MaxDoc);
-		  case SORTED:
+          case FieldInfo.DocValuesType_e.SORTED:
 			return DocValues.DocsWithValue(GetSorted(field), MaxDoc);
-		  case BINARY:
+          case FieldInfo.DocValuesType_e.BINARY:
 			BinaryEntry be = Binaries[field.Number];
 			return GetMissingBits(be.MissingOffset);
-		  case NUMERIC:
+          case FieldInfo.DocValuesType_e.NUMERIC:
 			NumericEntry ne = Numerics[field.Number];
 			return GetMissingBits(ne.MissingOffset);
 		  default:
-			throw new AssertionError();
+			throw new InvalidOperationException();
 		}
 	  }
 

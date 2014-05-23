@@ -85,7 +85,6 @@ namespace Lucene.Net.Index
 	  /// Returns true if there are norms stored for this field. </summary>
 	  /// @deprecated (4.0) use <seealso cref="#getFieldInfos()"/> and check <seealso cref="FieldInfo#hasNorms()"/> 
 	  ///                   for the field instead. 
-	  [Obsolete("(4.0) use <seealso cref="#getFieldInfos()"/> and check <seealso cref="FieldInfo#hasNorms()"/>")]
 	  public bool HasNorms(string field)
 	  {
 		EnsureOpen();
@@ -103,22 +102,16 @@ namespace Lucene.Net.Index
 
 	  public override sealed int DocFreq(Term term)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = fields();
 		Fields fields = Fields();
 		if (fields == null)
 		{
 		  return 0;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(term.field());
 		Terms terms = fields.Terms(term.Field());
 		if (terms == null)
 		{
 		  return 0;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 		TermsEnum termsEnum = terms.Iterator(null);
 		if (termsEnum.SeekExact(term.Bytes()))
 		{
@@ -139,22 +132,16 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public override sealed long TotalTermFreq(Term term)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = fields();
 		Fields fields = Fields();
 		if (fields == null)
 		{
 		  return 0;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(term.field());
 		Terms terms = fields.Terms(term.Field());
 		if (terms == null)
 		{
 		  return 0;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 		TermsEnum termsEnum = terms.Iterator(null);
 		if (termsEnum.SeekExact(term.Bytes()))
 		{
@@ -168,8 +155,6 @@ namespace Lucene.Net.Index
 
 	  public override sealed long GetSumDocFreq(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = terms(field);
 		Terms terms = Terms(field);
 		if (terms == null)
 		{
@@ -180,8 +165,6 @@ namespace Lucene.Net.Index
 
 	  public override sealed int GetDocCount(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = terms(field);
 		Terms terms = Terms(field);
 		if (terms == null)
 		{
@@ -192,8 +175,6 @@ namespace Lucene.Net.Index
 
 	  public override sealed long GetSumTotalTermFreq(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = terms(field);
 		Terms terms = Terms(field);
 		if (terms == null)
 		{
@@ -206,8 +187,6 @@ namespace Lucene.Net.Index
 	  /// this may return null if the field does not exist. </summary>
 	  public Terms Terms(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = fields();
 		Fields fields = Fields();
 		if (fields == null)
 		{
@@ -225,18 +204,12 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(term.Field() != null);
 		Debug.Assert(term.Bytes() != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = fields();
 		Fields fields = Fields();
 		if (fields != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(term.field());
 		  Terms terms = fields.Terms(term.Field());
 		  if (terms != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 			TermsEnum termsEnum = terms.Iterator(null);
 			if (termsEnum.SeekExact(term.Bytes()))
 			{
@@ -256,18 +229,12 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(term.Field() != null);
 		Debug.Assert(term.Bytes() != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = fields();
 		Fields fields = Fields();
 		if (fields != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(term.field());
 		  Terms terms = fields.Terms(term.Field());
 		  if (terms != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 			TermsEnum termsEnum = terms.Iterator(null);
 			if (termsEnum.SeekExact(term.Bytes()))
 			{

@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.asserting
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
 	using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 	using Terms = Lucene.Net.Index.Terms;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(stats.docFreq > 0); // otherwise, this method should not be called.
 		  Debug.Assert(stats.docFreq == LastPostingsConsumer.DocFreq);
 		  SumDocFreq += stats.docFreq;
-		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		  {
 			Debug.Assert(stats.totalTermFreq == -1);
 		  }
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(docCount == VisitedDocs.cardinality());
 		  Debug.Assert(sumDocFreq >= docCount);
 		  Debug.Assert(sumDocFreq == this.SumDocFreq);
-		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		  {
 			Debug.Assert(sumTotalTermFreq == -1);
 		  }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(State == PostingsConsumerState.INITIAL);
 		  State = PostingsConsumerState.START;
 		  Debug.Assert(docID >= 0);
-		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY)
+		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		  {
 			Debug.Assert(freq == -1);
 			this.Freq = 0; // we don't expect any positions here
@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs.asserting
 		  PositionCount++;
 		  Debug.Assert(position >= LastPosition || position == -1); // we still allow -1 from old 3.x indexes
 		  LastPosition = position;
-		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
 		  {
 			Debug.Assert(startOffset >= 0);
 			Debug.Assert(startOffset >= LastStartOffset);
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(State == PostingsConsumerState.START);
 		  State = PostingsConsumerState.INITIAL;
-		  if (FieldInfo.IndexOptions.compareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+		  if (FieldInfo.IndexOptions_e.compareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) < 0)
 		  {
 			Debug.Assert(PositionCount == 0); // we should not have fed any positions!
 		  }

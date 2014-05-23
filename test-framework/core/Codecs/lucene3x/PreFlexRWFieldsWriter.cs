@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  public override TermsConsumer AddField(FieldInfo field)
 	  {
 		Debug.Assert(field.number != -1);
-		if (field.IndexOptions.compareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+		if (field.IndexOptions_e.compareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
 		{
 		  throw new System.NotSupportedException("this codec cannot index offsets");
 		}
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 				InstanceFieldsInitialized = true;
 			}
 		  this.FieldInfo = fieldInfo;
-		  OmitTF = fieldInfo.IndexOptions == FieldInfo.IndexOptions.DOCS_ONLY;
+		  OmitTF = fieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY;
 		  StorePayloads = fieldInfo.hasPayloads();
 		}
 

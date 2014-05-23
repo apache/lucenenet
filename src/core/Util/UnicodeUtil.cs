@@ -137,13 +137,9 @@ namespace Lucene.Net.Util
 
 		int upto = 0;
 		int i = offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		int end = offset + length;
 		sbyte[] @out = result.Bytes;
 		// Pre-allocate for worst case 4-for-1
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxLen = length * 4;
 		int maxLen = length * 4;
 		if (@out.Length < maxLen)
 		{
@@ -154,8 +150,6 @@ namespace Lucene.Net.Util
 		while (i < end)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int code = (int) source[i++];
 		  int code = (int) source[i++];
 
 		  if (code < 0x80)
@@ -208,17 +202,13 @@ namespace Lucene.Net.Util
 	  ///  for length characters. After encoding, result.offset will always be 0.
 	  /// </summary>
 	  // TODO: broken if incoming result.offset != 0
-	  public static void UTF16toUTF8(CharSequence s, int offset, int length, BytesRef result)
+	  public static void UTF16toUTF8(CharsRef s, int offset, int length, BytesRef result)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		int end = offset + length;
 
 		sbyte[] @out = result.Bytes;
 		result.Offset = 0;
 		// Pre-allocate for worst case 4-for-1
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxLen = length * 4;
 		int maxLen = length * 4;
 		if (@out.Length < maxLen)
 		{
@@ -228,8 +218,6 @@ namespace Lucene.Net.Util
 		int upto = 0;
 		for (int i = offset;i < end;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int code = (int) s.charAt(i);
 		  int code = (int) s[i];
 
 		  if (code < 0x80)
@@ -332,11 +320,9 @@ namespace Lucene.Net.Util
 	    }
 	  }
 	  */
-	  public static bool ValidUTF16String(CharSequence s)
+	  public static bool ValidUTF16String(CharsRef s)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = s.length();
-		int size = s.length();
+		int size = s.Length();
 		for (int i = 0;i < size;i++)
 		{
 		  char ch = s[i];
@@ -418,8 +404,6 @@ namespace Lucene.Net.Util
 	  internal static readonly int[] Utf8CodeLength;
 	  static UnicodeUtil()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = Integer.MIN_VALUE;
 		int v = int.MinValue;
 		Utf8CodeLength = new int [] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, v, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4};
 	  }
@@ -437,11 +421,7 @@ namespace Lucene.Net.Util
 	  public static int CodePointCount(BytesRef utf8)
 	  {
 		int pos = utf8.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = pos + utf8.length;
 		int limit = pos + utf8.Length;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = utf8.bytes;
 		sbyte[] bytes = utf8.Bytes;
 
 		int codePointCount = 0;
@@ -505,19 +485,11 @@ namespace Lucene.Net.Util
 		}
 		int utf32Count = 0;
 		int utf8Upto = utf8.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ints = utf32.ints;
 		int[] ints = utf32.Ints;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = utf8.bytes;
 		sbyte[] bytes = utf8.Bytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int utf8Limit = utf8.offset + utf8.length;
 		int utf8Limit = utf8.Offset + utf8.Length;
 		while (utf8Upto < utf8Limit)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBytes = utf8CodeLength[bytes[utf8Upto] & 0xFF];
 		  int numBytes = Utf8CodeLength[bytes[utf8Upto] & 0xFF];
 		  int v = 0;
 		  switch (numBytes)
@@ -542,8 +514,6 @@ namespace Lucene.Net.Util
 		  }
 
 		  // TODO: this may read past utf8's limit.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = utf8Upto + numBytes-1;
 		  int limit = utf8Upto + numBytes - 1;
 		  while (utf8Upto < limit)
 		  {
@@ -683,11 +653,7 @@ namespace Lucene.Net.Util
 	  public static void UTF8toUTF16(sbyte[] utf8, int offset, int length, CharsRef chars)
 	  {
 		int out_offset = chars.Offset = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] out = chars.chars = ArrayUtil.grow(chars.chars, length);
 		char[] @out = chars.Chars = ArrayUtil.Grow(chars.Chars, length);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = offset + length;
 		int limit = offset + length;
 		while (offset < limit)
 		{

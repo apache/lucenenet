@@ -23,6 +23,8 @@ namespace Lucene.Net.Codecs
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 	using Lucene.Net.Util;
+    using System;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// Encodes/decodes terms, postings, and proximity data.
@@ -37,7 +39,7 @@ namespace Lucene.Net.Codecs
 	/// so SPI can load it. </summary>
 	/// <seealso cref= ServiceLoader
 	/// @lucene.experimental  </seealso>
-	public abstract class PostingsFormat : NamedSPILoader.NamedSPI
+    public abstract class PostingsFormat : NamedSPILoader<PostingsFormat>.NamedSPI
 	{
 
 	  private static readonly NamedSPILoader<PostingsFormat> Loader = new NamedSPILoader<PostingsFormat>(typeof(PostingsFormat));
@@ -62,7 +64,7 @@ namespace Lucene.Net.Codecs
 	  /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
 	  protected internal PostingsFormat(string name)
 	  {
-		NamedSPILoader.CheckServiceName(name);
+        NamedSPILoader<PostingsFormat>.CheckServiceName(name);
 		this.Name_Renamed = name;
 	  }
 
@@ -104,18 +106,18 @@ namespace Lucene.Net.Codecs
 	  {
 		if (Loader == null)
 		{
-		  throw new IllegalStateException("You called PostingsFormat.forName() before all formats could be initialized. " + "this likely happens if you call it from a PostingsFormat's ctor.");
+		  throw new InvalidOperationException("You called PostingsFormat.forName() before all formats could be initialized. " + "this likely happens if you call it from a PostingsFormat's ctor.");
 		}
 		return Loader.Lookup(name);
 	  }
 
 	  /// <summary>
 	  /// returns a list of all available format names </summary>
-	  public static Set<string> AvailablePostingsFormats()
+	  public static ISet<string> AvailablePostingsFormats()
 	  {
 		if (Loader == null)
 		{
-		  throw new IllegalStateException("You called PostingsFormat.availablePostingsFormats() before all formats could be initialized. " + "this likely happens if you call it from a PostingsFormat's ctor.");
+		  throw new InvalidOperationException("You called PostingsFormat.availablePostingsFormats() before all formats could be initialized. " + "this likely happens if you call it from a PostingsFormat's ctor.");
 		}
 		return Loader.AvailableServices();
 	  }
@@ -131,9 +133,9 @@ namespace Lucene.Net.Codecs
 	  /// <p><em>this method is expensive and should only be called for discovery
 	  /// of new postings formats on the given classpath/classloader!</em>
 	  /// </summary>
-	  public static void ReloadPostingsFormats(ClassLoader classloader)
+	  public static void ReloadPostingsFormats()
 	  {
-		Loader.Reload(classloader);
+		Loader.Reload();
 	  }
 	}
 

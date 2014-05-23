@@ -27,6 +27,7 @@ namespace Lucene.Net.Codecs.Compressing
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Random-access reader for <seealso cref="CompressingStoredFieldsIndexWriter"/>.
@@ -60,16 +61,12 @@ namespace Lucene.Net.Codecs.Compressing
 		PackedInts.Reader[] docBasesDeltas = new PackedInts.Reader[16];
 		PackedInts.Reader[] startPointersDeltas = new PackedInts.Reader[16];
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int packedIntsVersion = fieldsIndexIn.readVInt();
 		int packedIntsVersion = fieldsIndexIn.ReadVInt();
 
 		int blockCount = 0;
 
 		for (;;)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numChunks = fieldsIndexIn.readVInt();
 		  int numChunks = fieldsIndexIn.ReadVInt();
 		  if (numChunks == 0)
 		  {
@@ -77,22 +74,18 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  if (blockCount == docBases.Length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = Lucene.Net.Util.ArrayUtil.oversize(blockCount + 1, 8);
 			int newSize = ArrayUtil.Oversize(blockCount + 1, 8);
-			docBases = Arrays.copyOf(docBases, newSize);
-			startPointers = Arrays.copyOf(startPointers, newSize);
-			avgChunkDocs = Arrays.copyOf(avgChunkDocs, newSize);
-			avgChunkSizes = Arrays.copyOf(avgChunkSizes, newSize);
-			docBasesDeltas = Arrays.copyOf(docBasesDeltas, newSize);
-			startPointersDeltas = Arrays.copyOf(startPointersDeltas, newSize);
+			docBases = Arrays.CopyOf(docBases, newSize);
+            startPointers = Arrays.CopyOf(startPointers, newSize);
+            avgChunkDocs = Arrays.CopyOf(avgChunkDocs, newSize);
+            avgChunkSizes = Arrays.CopyOf(avgChunkSizes, newSize);
+            docBasesDeltas = Arrays.CopyOf(docBasesDeltas, newSize);
+            startPointersDeltas = Arrays.CopyOf(startPointersDeltas, newSize);
 		  }
 
 		  // doc bases
 		  docBases[blockCount] = fieldsIndexIn.ReadVInt();
 		  avgChunkDocs[blockCount] = fieldsIndexIn.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerDocBase = fieldsIndexIn.readVInt();
 		  int bitsPerDocBase = fieldsIndexIn.ReadVInt();
 		  if (bitsPerDocBase > 32)
 		  {
@@ -103,8 +96,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  // start pointers
 		  startPointers[blockCount] = fieldsIndexIn.ReadVLong();
 		  avgChunkSizes[blockCount] = fieldsIndexIn.ReadVLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerStartPointer = fieldsIndexIn.readVInt();
 		  int bitsPerStartPointer = fieldsIndexIn.ReadVInt();
 		  if (bitsPerStartPointer > 64)
 		  {
@@ -115,12 +106,12 @@ namespace Lucene.Net.Codecs.Compressing
 		  ++blockCount;
 		}
 
-		this.DocBases = Arrays.copyOf(docBases, blockCount);
-		this.StartPointers = Arrays.copyOf(startPointers, blockCount);
-		this.AvgChunkDocs = Arrays.copyOf(avgChunkDocs, blockCount);
-		this.AvgChunkSizes = Arrays.copyOf(avgChunkSizes, blockCount);
-		this.DocBasesDeltas = Arrays.copyOf(docBasesDeltas, blockCount);
-		this.StartPointersDeltas = Arrays.copyOf(startPointersDeltas, blockCount);
+        this.DocBases = Arrays.CopyOf(docBases, blockCount);
+        this.StartPointers = Arrays.CopyOf(startPointers, blockCount);
+        this.AvgChunkDocs = Arrays.CopyOf(avgChunkDocs, blockCount);
+        this.AvgChunkSizes = Arrays.CopyOf(avgChunkSizes, blockCount);
+        this.DocBasesDeltas = Arrays.CopyOf(docBasesDeltas, blockCount);
+        this.StartPointersDeltas = Arrays.CopyOf(startPointersDeltas, blockCount);
 	  }
 
 	  private int Block(int docID)
@@ -128,11 +119,7 @@ namespace Lucene.Net.Codecs.Compressing
 		int lo = 0, hi = DocBases.Length - 1;
 		while (lo <= hi)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mid = (lo + hi) >>> 1;
 		  int mid = (int)((uint)(lo + hi) >> 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int midValue = docBases[mid];
 		  int midValue = DocBases[mid];
 		  if (midValue == docID)
 		  {
@@ -152,22 +139,14 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  private int RelativeDocBase(int block, int relativeChunk)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int expected = avgChunkDocs[block] * relativeChunk;
 		int expected = AvgChunkDocs[block] * relativeChunk;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delta = moveLowOrderBitToSign(docBasesDeltas[block].get(relativeChunk));
 		long delta = MoveLowOrderBitToSign(DocBasesDeltas[block].Get(relativeChunk));
 		return expected + (int) delta;
 	  }
 
 	  private long RelativeStartPointer(int block, int relativeChunk)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long expected = avgChunkSizes[block] * relativeChunk;
 		long expected = AvgChunkSizes[block] * relativeChunk;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delta = moveLowOrderBitToSign(startPointersDeltas[block].get(relativeChunk));
 		long delta = MoveLowOrderBitToSign(StartPointersDeltas[block].Get(relativeChunk));
 		return expected + delta;
 	  }
@@ -177,11 +156,7 @@ namespace Lucene.Net.Codecs.Compressing
 		int lo = 0, hi = DocBasesDeltas[block].Size() - 1;
 		while (lo <= hi)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mid = (lo + hi) >>> 1;
 		  int mid = (int)((uint)(lo + hi) >> 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int midValue = relativeDocBase(block, mid);
 		  int midValue = RelativeDocBase(block, mid);
 		  if (midValue == relativeDoc)
 		  {
@@ -205,11 +180,7 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  throw new System.ArgumentException("docID out of range [0-" + MaxDoc + "]: " + docID);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int block = block(docID);
 		int block = Block(docID);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int relativeChunk = relativeChunk(block, docID - docBases[block]);
 		int relativeChunk = RelativeChunk(block, docID - DocBases[block]);
 		return StartPointers[block] + RelativeStartPointer(block, relativeChunk);
 	  }

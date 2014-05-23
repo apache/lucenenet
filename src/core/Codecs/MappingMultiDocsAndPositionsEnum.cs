@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs
 			  Upto++;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int reader = subs[upto].slice.readerIndex;
-			  int reader = Subs_Renamed[Upto].Slice.readerIndex;
+			  int reader = Subs_Renamed[Upto].Slice.ReaderIndex;
 			  Current = Subs_Renamed[Upto].DocsAndPositionsEnum;
 			  CurrentBase = MergeState_Renamed.DocBase[reader];
 			  CurrentMap = MergeState_Renamed.DocMaps[reader];
@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs
 		long cost = 0;
 		foreach (MultiDocsAndPositionsEnum.EnumWithSlice enumWithSlice in Subs_Renamed)
 		{
-		  cost += enumWithSlice.DocsAndPositionsEnum.cost();
+		  cost += enumWithSlice.DocsAndPositionsEnum.Cost();
 		}
 		return cost;
 	  }

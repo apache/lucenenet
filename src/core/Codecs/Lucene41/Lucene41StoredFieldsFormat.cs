@@ -18,9 +18,9 @@ namespace Lucene.Net.Codecs.Lucene41
 	 * limitations under the License.
 	 */
 
-	using CompressingStoredFieldsFormat = Lucene.Net.Codecs.compressing.CompressingStoredFieldsFormat;
-	using CompressingStoredFieldsIndexWriter = Lucene.Net.Codecs.compressing.CompressingStoredFieldsIndexWriter;
-	using CompressionMode = Lucene.Net.Codecs.compressing.CompressionMode;
+	using CompressingStoredFieldsFormat = Lucene.Net.Codecs.Compressing.CompressingStoredFieldsFormat;
+    using CompressingStoredFieldsIndexWriter = Lucene.Net.Codecs.Compressing.CompressingStoredFieldsIndexWriter;
+    using CompressionMode = Lucene.Net.Codecs.Compressing.CompressionMode;
 	using Lucene40StoredFieldsFormat = Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsFormat;
 	using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
 	using DataOutput = Lucene.Net.Store.DataOutput;

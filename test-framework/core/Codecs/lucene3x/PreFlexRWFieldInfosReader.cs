@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
 	using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
 	using SegmentInfo = Lucene.Net.Index.SegmentInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
@@ -68,20 +68,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 			bool storeTermVector = (bits & PreFlexRWFieldInfosWriter.STORE_TERMVECTOR) != 0;
 			bool omitNorms = (bits & PreFlexRWFieldInfosWriter.OMIT_NORMS) != 0;
 			bool storePayloads = (bits & PreFlexRWFieldInfosWriter.STORE_PAYLOADS) != 0;
-			FieldInfo.IndexOptions indexOptions;
+			FieldInfo.IndexOptions_e indexOptions;
 			if (!isIndexed)
 			{
 			  indexOptions = null;
 			}
 			else if ((bits & PreFlexRWFieldInfosWriter.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_ONLY;
 			}
 			else if ((bits & PreFlexRWFieldInfosWriter.OMIT_POSITIONS) != 0)
 			{
 			  if (format <= PreFlexRWFieldInfosWriter.FORMAT_OMIT_POSITIONS)
 			  {
-				indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+				indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS;
 			  }
 			  else
 			  {
@@ -90,13 +90,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 			}
 			else
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
 
 			// LUCENE-3027: past indices were able to write
 			// storePayloads=true when omitTFAP is also true,
 			// which is invalid.  We correct that, here:
-			if (indexOptions != FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+			if (indexOptions != FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 			{
 			  storePayloads = false;
 			}

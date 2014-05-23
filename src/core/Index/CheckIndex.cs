@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
 	using Document = Lucene.Net.Document.Document;
 	using DocValuesStatus = Lucene.Net.Index.CheckIndex.Status.DocValuesStatus;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Directory = Lucene.Net.Store.Directory;
 	using FSDirectory = Lucene.Net.Store.FSDirectory;
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Index
 		  // term vectors cannot omit TF:
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean expectedHasFreqs = (isVectors || fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0);
-		  bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0);
+		  bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0);
 
 		  if (hasFreqs != expectedHasFreqs)
 		  {
@@ -1037,7 +1037,7 @@ namespace Lucene.Net.Index
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean expectedHasPositions = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-			bool expectedHasPositions = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+			bool expectedHasPositions = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 			if (hasPositions != expectedHasPositions)
 			{
 			  throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
@@ -1053,7 +1053,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean expectedHasOffsets = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-			bool expectedHasOffsets = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+			bool expectedHasOffsets = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 			if (hasOffsets != expectedHasOffsets)
 			{
 			  throw new Exception("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
@@ -2176,7 +2176,7 @@ namespace Lucene.Net.Index
 				  termsEnum = terms.Iterator(termsEnum);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean postingsHasFreq = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
-				  bool postingsHasFreq = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+				  bool postingsHasFreq = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean postingsHasPayload = fieldInfo.hasPayloads();
 				  bool postingsHasPayload = fieldInfo.HasPayloads();

@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 		  buffer.Append(Term.Field());
 		  buffer.Append(":");
 		}
-		buffer.Append(this.GetType().SimpleName);
+		buffer.Append(this.GetType().Name);
 		buffer.Append(" {");
 		buffer.Append('\n');
 		buffer.Append(Automaton_Renamed.ToString());

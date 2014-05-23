@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		  if (!success)
 		  {
 			IOUtils.CloseWhileHandlingException(output);
-			si.Dir.deleteFile(fileName);
+			si.Dir.DeleteFile(fileName);
 		  }
 		  else
 		  {

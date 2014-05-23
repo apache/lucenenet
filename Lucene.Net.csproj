@@ -9137,6 +9137,7 @@
     <Compile Include="src\core\Codecs\FieldsProducer.cs" />
     <Compile Include="src\core\Codecs\FilterCodec.cs" />
     <Compile Include="src\core\Codecs\LiveDocsFormat.cs" />
+    <Compile Include="src\core\Codecs\Lucene3x\InvalidOperationError.cs" />
     <Compile Include="src\core\Codecs\Lucene3x\Lucene3xCodec.cs" />
     <Compile Include="src\core\Codecs\Lucene3x\Lucene3xFieldInfosFormat.cs" />
     <Compile Include="src\core\Codecs\Lucene3x\Lucene3xFieldInfosReader.cs" />
@@ -9630,6 +9631,7 @@
     <Compile Include="src\core\Support\BitSetSupport.cs" />
     <Compile Include="src\core\Support\BuildType.cs" />
     <Compile Include="src\core\Support\Character.cs" />
+    <Compile Include="src\core\Support\UnmodifiableDictionary.cs" />
     <Compile Include="src\core\Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="src\core\Support\CollectionsHelper.cs" />
     <Compile Include="src\core\Support\Compare.cs" />

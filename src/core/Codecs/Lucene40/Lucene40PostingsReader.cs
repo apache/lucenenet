@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -39,6 +39,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Concrete class that reads the 4.0 frq/prox
@@ -210,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  // undefined
 		}
 
-		if (fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+		if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
 		{
 		  termState.ProxOffset += @in.ReadVLong();
 		  // if (DEBUG) System.out.println("  proxFP=" + termState.proxOffset);
@@ -259,7 +260,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 	  {
 
-		bool hasOffsets = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool hasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
 		// TODO: can we optimize if FLAG_PAYLOADS / FLAG_OFFSETS
 		// isn't passed?
@@ -356,7 +357,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  IndexOmitsTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
 		  StorePayloads = fieldInfo.HasPayloads();
-		  StoreOffsets = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  StoreOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		  FreqOffset = termState.FreqOffset;
 		  SkipOffset = termState.SkipOffset;
 
@@ -377,7 +378,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  Freq_Renamed = 1;
 		  if (IndexOmitsTF)
 		  {
-			Arrays.fill(Freqs, 1);
+              CollectionsHelper.Fill(Freqs, 1);
 		  }
 		  MaxBufferedDocId = -1;
 		  return this;
@@ -530,7 +531,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		internal int SkipTo(int target)
 		{
-		  if ((target - outerInstance.SkipInterval) >= Accum && Limit >= outerInstance.SkipMinimum)
+		  if ((target - OuterInstance.SkipInterval) >= Accum && Limit >= OuterInstance.SkipMinimum)
 		  {
 
 			// There are enough docs in the posting to have
@@ -539,7 +540,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			if (Skipper == null)
 			{
 			  // this is the first time this enum has ever been used for skipping -- do lazy init
-			  Skipper = new Lucene40SkipListReader(FreqIn.Clone(), outerInstance.MaxSkipLevels, outerInstance.SkipInterval);
+                Skipper = new Lucene40SkipListReader(FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
 			}
 
 			if (!Skipped)
@@ -946,7 +947,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		  //System.out.println("StandardR.D&PE advance target=" + target);
 
-		  if ((target - outerInstance.SkipInterval) >= Doc && Limit >= outerInstance.SkipMinimum)
+            if ((target - OuterInstance.SkipInterval) >= Doc && Limit >= OuterInstance.SkipMinimum)
 		  {
 
 			// There are enough docs in the posting to have
@@ -955,7 +956,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			if (Skipper == null)
 			{
 			  // this is the first time this enum has ever been used for skipping -- do lazy init
-			  Skipper = new Lucene40SkipListReader(FreqIn.Clone(), outerInstance.MaxSkipLevels, outerInstance.SkipInterval);
+                Skipper = new Lucene40SkipListReader(FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
 			}
 
 			if (!Skipped)
@@ -1101,9 +1102,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
 		{
-		  StoreOffsets = fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  StoreOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		  StorePayloads = fieldInfo.HasPayloads();
-		  Debug.Assert(fieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
+		  Debug.Assert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
 		  Debug.Assert(StorePayloads || StoreOffsets);
 		  if (Payload_Renamed == null)
 		  {
@@ -1194,7 +1195,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		  //System.out.println("StandardR.D&PE advance seg=" + segment + " target=" + target + " this=" + this);
 
-		  if ((target - outerInstance.SkipInterval) >= Doc && Limit >= outerInstance.SkipMinimum)
+            if ((target - OuterInstance.SkipInterval) >= Doc && Limit >= OuterInstance.SkipMinimum)
 		  {
 
 			// There are enough docs in the posting to have
@@ -1203,7 +1204,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			if (Skipper == null)
 			{
 			  // this is the first time this enum has ever been used for skipping -- do lazy init
-			  Skipper = new Lucene40SkipListReader(FreqIn.Clone(), outerInstance.MaxSkipLevels, outerInstance.SkipInterval);
+                Skipper = new Lucene40SkipListReader(FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
 			}
 
 			if (!Skipped)
@@ -1309,10 +1310,10 @@ namespace Lucene.Net.Codecs.Lucene40
 			ProxIn.Seek(ProxIn.FilePointer + PayloadLength);
 		  }
 
-		  int code = ProxIn.ReadVInt();
+		  int code_ = ProxIn.ReadVInt();
 		  if (StorePayloads)
 		  {
-			if ((code & 1) != 0)
+			if ((code_ & 1) != 0)
 			{
 			  // new payload length
 			  PayloadLength = ProxIn.ReadVInt();
@@ -1321,9 +1322,9 @@ namespace Lucene.Net.Codecs.Lucene40
 			Debug.Assert(PayloadLength != -1);
 
 			PayloadPending = true;
-			code = (int)((uint)code >> 1);
+			code_ = (int)((uint)code_ >> 1);
 		  }
-		  Position += code;
+		  Position += code_;
 
 		  if (StoreOffsets)
 		  {

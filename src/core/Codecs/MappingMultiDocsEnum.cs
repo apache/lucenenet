@@ -121,11 +121,11 @@ namespace Lucene.Net.Codecs
 			  Upto++;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int reader = subs[upto].slice.readerIndex;
-			  int reader = Subs_Renamed[Upto].Slice.readerIndex;
+			  int reader = Subs_Renamed[Upto].Slice.ReaderIndex;
 			  Current = Subs_Renamed[Upto].DocsEnum;
 			  CurrentBase = MergeState_Renamed.DocBase[reader];
 			  CurrentMap = MergeState_Renamed.DocMaps[reader];
-			  Debug.Assert(CurrentMap.MaxDoc() == Subs_Renamed[Upto].Slice.length, "readerIndex=" + reader + " subs.len=" + Subs_Renamed.Length + " len1=" + CurrentMap.MaxDoc() + " vs " + Subs_Renamed[Upto].Slice.length);
+			  Debug.Assert(CurrentMap.MaxDoc() == Subs_Renamed[Upto].Slice.Length, "readerIndex=" + reader + " subs.len=" + Subs_Renamed.Length + " len1=" + CurrentMap.MaxDoc() + " vs " + Subs_Renamed[Upto].Slice.Length);
 			}
 		  }
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs
 		long cost = 0;
 		foreach (MultiDocsEnum.EnumWithSlice enumWithSlice in Subs_Renamed)
 		{
-		  cost += enumWithSlice.DocsEnum.cost();
+		  cost += enumWithSlice.DocsEnum.Cost();
 		}
 		return cost;
 	  }

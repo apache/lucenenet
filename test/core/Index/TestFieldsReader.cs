@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
 	using Field = Lucene.Net.Document.Field;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
 	using BaseDirectory = Lucene.Net.Store.BaseDirectory;
 	using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;

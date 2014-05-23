@@ -31,6 +31,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using PagedBytes = Lucene.Net.Util.PagedBytes;
 	using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// this stores a monotonically increasing set of <Term, TermInfo> pairs in an
@@ -127,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  private static int EstimatePageBits(long estSize)
 	  {
-		return Math.Max(Math.Min(64 - long.numberOfLeadingZeros(estSize), MAX_PAGE_BITS), 4);
+		return Math.Max(Math.Min(64 - Number.NumberOfLeadingZeros(estSize), MAX_PAGE_BITS), 4);
 	  }
 
 	  internal virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)

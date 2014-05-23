@@ -18,7 +18,7 @@ namespace Lucene.Net.Document
 	 * limitations under the License.
 	 */
 
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 
 	/// <summary>
 	/// A field that is indexed but not tokenized: the entire

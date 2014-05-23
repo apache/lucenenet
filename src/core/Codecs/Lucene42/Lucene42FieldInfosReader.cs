@@ -27,11 +27,12 @@ namespace Lucene.Net.Codecs.Lucene42
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Lucene 4.2 FieldInfos reader.
@@ -79,26 +80,26 @@ namespace Lucene.Net.Codecs.Lucene42
 			bool storePayloads = (bits & Lucene42FieldInfosFormat.STORE_PAYLOADS) != 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions indexOptions;
-			FieldInfo.IndexOptions indexOptions;
+			FieldInfo.IndexOptions_e indexOptions;
 			if (!isIndexed)
 			{
-			  indexOptions = null;
+			  indexOptions = default(FieldInfo.IndexOptions_e);
 			}
 			else if ((bits & Lucene42FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_ONLY;
 			}
 			else if ((bits & Lucene42FieldInfosFormat.OMIT_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS;
 			}
 			else if ((bits & Lucene42FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			}
 			else
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
 
 			// DV Types are packed in one byte
@@ -112,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene42
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Map<String,String> attributes = input.readStringStringMap();
 			IDictionary<string, string> attributes = input.ReadStringStringMap();
-			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.unmodifiableMap(attributes));
+			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, CollectionsHelper.UnmodifiableMap(attributes));
 		  }
 
 		  CodecUtil.CheckEOF(input);
@@ -137,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	  {
 		if (b == 0)
 		{
-		  return null;
+		  return default(FieldInfo.DocValuesType_e);
 		}
 		else if (b == 1)
 		{

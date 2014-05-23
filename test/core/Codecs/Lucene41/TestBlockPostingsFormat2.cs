@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
 	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  private Document NewDocument()
 	  {
 		Document doc = new Document();
-		foreach (FieldInfo.IndexOptions option in FieldInfo.IndexOptions.values())
+		foreach (FieldInfo.IndexOptions_e option in FieldInfo.IndexOptions_e.values())
 		{
 		  FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		  // turn on tvs for a cross-check, since we rely upon checkindex in this test (for now)

@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs.Perfield
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Enables per field docvalues support.
@@ -60,13 +61,13 @@ namespace Lucene.Net.Codecs.Perfield
 	  /// <seealso cref="FieldInfo"/> attribute name used to store the
 	  ///  format name for each field. 
 	  /// </summary>
-	  public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldDocValuesFormat).SimpleName + ".format";
+	  public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldDocValuesFormat).Name + ".format";
 
 	  /// <summary>
 	  /// <seealso cref="FieldInfo"/> attribute name used to store the
 	  ///  segment suffix name for each field. 
 	  /// </summary>
-	  public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldDocValuesFormat).SimpleName + ".suffix";
+	  public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldDocValuesFormat).Name + ".suffix";
 
 
 	  /// <summary>
@@ -87,7 +88,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 		public override void Close()
 		{
-		  Consumer.close();
+		  Consumer.Close();
 		}
 	  }
 
@@ -97,7 +98,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 
 		internal readonly IDictionary<DocValuesFormat, ConsumerAndSuffix> Formats = new Dictionary<DocValuesFormat, ConsumerAndSuffix>();
-		internal readonly IDictionary<string, int?> Suffixes = new Dictionary<string, int?>();
+		internal readonly IDictionary<string, int> Suffixes = new Dictionary<string, int>();
 
 		internal readonly SegmentWriteState SegmentWriteState;
 
@@ -132,8 +133,6 @@ namespace Lucene.Net.Codecs.Perfield
 		  DocValuesFormat format = null;
 		  if (field.DocValuesGen != -1)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String formatName = field.getAttribute(PER_FIELD_FORMAT_KEY);
 			string formatName = field.GetAttribute(PER_FIELD_FORMAT_KEY);
 			// this means the field never existed in that segment, yet is applied updates
 			if (formatName != null)
@@ -143,20 +142,18 @@ namespace Lucene.Net.Codecs.Perfield
 		  }
 		  if (format == null)
 		  {
-			format = outerInstance.GetDocValuesFormatForField(field.Name);
+			format = OuterInstance.GetDocValuesFormatForField(field.Name);
 		  }
 		  if (format == null)
 		  {
-			throw new IllegalStateException("invalid null DocValuesFormat for field=\"" + field.Name + "\"");
+			throw new InvalidOperationException("invalid null DocValuesFormat for field=\"" + field.Name + "\"");
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String formatName = format.getName();
-		  string formatName = format.Name;
+		  string formatName_ = format.Name;
 
-		  string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
-		  Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName + " prevValue=" + previousValue);
+		  string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
+		  Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName_ + " prevValue=" + previousValue);
 
-		  int? suffix = null;
+		  int suffix = default(int);
 
 		  ConsumerAndSuffix consumer = Formats[format];
 		  if (consumer == null)
@@ -165,8 +162,6 @@ namespace Lucene.Net.Codecs.Perfield
 
 			if (field.DocValuesGen != -1)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String suffixAtt = field.getAttribute(PER_FIELD_SUFFIX_KEY);
 			  string suffixAtt = field.GetAttribute(PER_FIELD_SUFFIX_KEY);
 			  // even when dvGen is != -1, it can still be a new field, that never
 			  // existed in the segment, and therefore doesn't have the recorded
@@ -180,7 +175,7 @@ namespace Lucene.Net.Codecs.Perfield
 			if (suffix == null)
 			{
 			  // bump the suffix
-			  suffix = Suffixes[formatName];
+			  suffix = Suffixes[formatName_];
 			  if (suffix == null)
 			  {
 				suffix = 0;
@@ -190,11 +185,11 @@ namespace Lucene.Net.Codecs.Perfield
 				suffix = suffix + 1;
 			  }
 			}
-			Suffixes[formatName] = suffix;
+			Suffixes[formatName_] = suffix;
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String segmentSuffix = getFullSegmentSuffix(segmentWriteState.segmentSuffix, getSuffix(formatName, Integer.toString(suffix)));
-			string segmentSuffix = GetFullSegmentSuffix(SegmentWriteState.SegmentSuffix, GetSuffix(formatName, Convert.ToString(suffix)));
+			string segmentSuffix = GetFullSegmentSuffix(SegmentWriteState.SegmentSuffix, GetSuffix(formatName_, Convert.ToString(suffix)));
 			consumer = new ConsumerAndSuffix();
 			consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(SegmentWriteState, segmentSuffix));
 			consumer.Suffix = suffix;
@@ -203,7 +198,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  else
 		  {
 			// we've already seen this format, so just grab its suffix
-			Debug.Assert(Suffixes.ContainsKey(formatName));
+			Debug.Assert(Suffixes.ContainsKey(formatName_));
 			suffix = consumer.Suffix;
 		  }
 
@@ -218,7 +213,7 @@ namespace Lucene.Net.Codecs.Perfield
 		public override void Close()
 		{
 		  // Close all subs
-		  IOUtils.Close(Formats.Values);
+		  IOUtils.Close(Formats.Values.ToArray());
 		}
 	  }
 
@@ -260,17 +255,11 @@ namespace Lucene.Net.Codecs.Perfield
 			{
 			  if (fi.HasDocValues())
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fieldName = fi.name;
 				string fieldName = fi.Name;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String formatName = fi.getAttribute(PER_FIELD_FORMAT_KEY);
 				string formatName = fi.GetAttribute(PER_FIELD_FORMAT_KEY);
 				if (formatName != null)
 				{
 				  // null formatName means the field is in fieldInfos, but has no docvalues!
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String suffix = fi.getAttribute(PER_FIELD_SUFFIX_KEY);
 				  string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
 				  Debug.Assert(suffix != null);
 				  DocValuesFormat format = DocValuesFormat.ForName(formatName);
@@ -289,7 +278,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  {
 			if (!success)
 			{
-			  IOUtils.CloseWhileHandlingException(Formats.Values);
+			  IOUtils.CloseWhileHandlingException(Formats.Values.ToArray());
 			}
 		  }
 		}
@@ -298,7 +287,7 @@ namespace Lucene.Net.Codecs.Perfield
 		{
 			this.OuterInstance = outerInstance;
 
-		  IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new IdentityHashMap<DocValuesProducer, DocValuesProducer>();
+		  IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new HashMap<DocValuesProducer, DocValuesProducer>();
 		  // First clone all formats
 		  foreach (KeyValuePair<string, DocValuesProducer> ent in other.Formats)
 		  {
@@ -348,7 +337,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 		public override void Close()
 		{
-		  IOUtils.Close(Formats.Values);
+		  IOUtils.Close(Formats.Values.ToArray());
 		}
 
 		public override DocValuesProducer Clone()
@@ -361,7 +350,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  long size = 0;
 		  foreach (KeyValuePair<string, DocValuesProducer> entry in Formats)
 		  {
-			size += (entry.Key.length() * RamUsageEstimator.NUM_BYTES_CHAR) + entry.Value.ramBytesUsed();
+			size += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR) + entry.Value.RamBytesUsed();
 		  }
 		  return size;
 		}

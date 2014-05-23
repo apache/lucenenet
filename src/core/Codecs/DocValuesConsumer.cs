@@ -114,12 +114,53 @@ namespace Lucene.Net.Codecs
 	  /// The default implementation calls <seealso cref="#addNumericField"/>, passing
 	  /// an Iterable that merges and filters deleted documents on the fly.
 	  /// </summary>
-	  public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<Bits> docsWithField)
+      // LUCENE TO-DO This is a bit wacky
+	  public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge/*, IList<Bits> docsWithField*/)
 	  {
 
-		AddNumericField(fieldInfo, new IterableAnonymousInnerClassHelper(this, mergeState, toMerge, docsWithField));
+		AddNumericField(fieldInfo, new GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge));
 	  }
 
+      private IEnumerable<long> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge)
+      {
+            
+            int readerUpto = -1;
+            int docIDUpto = 0;
+            AtomicReader currentReader = null;
+            NumericDocValues currentValues = null;
+            Bits currentLiveDocs = null;
+
+            while (true)
+			{
+				if (readerUpto == toMerge.Count)
+				{
+				    yield break;
+				}
+
+				if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+				{
+				    readerUpto++;
+				    if (readerUpto < toMerge.Count)
+				    {
+					    currentReader = mergeState.Readers.get(readerUpto);
+					    currentValues = toMerge[readerUpto];
+					    currentLiveDocs = currentReader.LiveDocs;
+				    }
+				    docIDUpto = 0;
+				    continue;
+				}
+
+				if (currentLiveDocs == null || currentLiveDocs[docIDUpto])
+                {
+                    docIDUpto++;
+                    yield return currentValues.Get(docIDUpto);
+                    continue;
+                }
+
+                docIDUpto++;
+			}
+      }
+        /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
 	  {
 		  private readonly DocValuesConsumer OuterInstance;
@@ -223,7 +264,7 @@ namespace Lucene.Net.Codecs
 				}
 			  }
 		  }
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Merges the binary docvalues from <code>toMerge</code>.
@@ -231,7 +272,7 @@ namespace Lucene.Net.Codecs
 	  /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
 	  /// an Iterable that merges and filters deleted documents on the fly.
 	  /// </summary>
-	  public virtual void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+	  public void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
 	  {
 
 		AddBinaryField(fieldInfo, new IterableAnonymousInnerClassHelper2(this, mergeState, toMerge, docsWithField));
@@ -890,7 +931,7 @@ namespace Lucene.Net.Codecs
 
 		internal BitsFilteredTermsEnum(TermsEnum @in, LongBitSet liveTerms) : base(@in, false)
 		{
-		  Debug.Assert(liveTerms != BytesRefIterator_Fields.Null);
+		  Debug.Assert(liveTerms != null);
 		  this.LiveTerms = liveTerms;
 		}
 
@@ -906,6 +947,13 @@ namespace Lucene.Net.Codecs
 		  }
 		}
 	  }
+
+      public void Close()
+      {
+          //Dispose(true);
+          // LUCENE TO-DO
+          GC.SuppressFinalize(this);
+      }
 	}
 
 }

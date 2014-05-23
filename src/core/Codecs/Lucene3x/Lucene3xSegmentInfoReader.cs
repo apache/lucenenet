@@ -34,6 +34,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Lucene 3x implementation of <seealso cref="SegmentInfoReader"/>.
@@ -130,11 +131,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-	  private static void AddIfExists(Directory dir, Set<string> files, string fileName)
+	  private static void AddIfExists(Directory dir, ISet<string> files, string fileName)
 	  {
 		if (dir.FileExists(fileName))
 		{
-		  files.add(fileName);
+		  files.Add(fileName);
 		}
 	  }
 
@@ -151,8 +152,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  throw new IndexFormatTooNewException(input, format, Lucene3xSegmentInfoFormat.FORMAT_DIAGNOSTICS, Lucene3xSegmentInfoFormat.FORMAT_3_1);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String version;
 		string version;
 		if (format <= Lucene3xSegmentInfoFormat.FORMAT_3_1)
 		{
@@ -163,30 +162,16 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  version = null;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String name = input.readString();
 		string name = input.ReadString();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount = input.readInt();
 		int docCount = input.ReadInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delGen = input.readLong();
 		long delGen = input.ReadLong();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docStoreOffset = input.readInt();
 		int docStoreOffset = input.ReadInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> attributes = new java.util.HashMap<>();
 		IDictionary<string, string> attributes = new Dictionary<string, string>();
 
 		// parse the docstore stuff and shove it into attributes
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String docStoreSegment;
 		string docStoreSegment;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean docStoreIsCompoundFile;
 		bool docStoreIsCompoundFile;
 		if (docStoreOffset != -1)
 		{
@@ -208,56 +193,40 @@ namespace Lucene.Net.Codecs.Lucene3x
 		//System.out.println("version=" + version + " name=" + name + " docCount=" + docCount + " delGen=" + delGen + " dso=" + docStoreOffset + " dss=" + docStoreSegment + " dssCFs=" + docStoreIsCompoundFile + " b=" + b + " format=" + format);
 
 		Debug.Assert(1 == b, "expected 1 but was: " + b + " format: " + format);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numNormGen = input.readInt();
 		int numNormGen = input.ReadInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Integer,Long> normGen;
-		IDictionary<int?, long?> normGen;
+		IDictionary<int, long> normGen;
 		if (numNormGen == SegmentInfo.NO)
 		{
 		  normGen = null;
 		}
 		else
 		{
-		  normGen = new Dictionary<>();
+		  normGen = new Dictionary<int, long>();
 		  for (int j = 0;j < numNormGen;j++)
 		  {
 			normGen[j] = input.ReadLong();
 		  }
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isCompoundFile = input.readByte() == Lucene.Net.Index.SegmentInfo.YES;
 		bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delCount = input.readInt();
 		int delCount = input.ReadInt();
 		Debug.Assert(delCount <= docCount);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasProx = input.readByte() == 1;
 		bool hasProx = input.ReadByte() == 1;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> diagnostics = input.readStringStringMap();
 		IDictionary<string, string> diagnostics = input.ReadStringStringMap();
 
 		if (format <= Lucene3xSegmentInfoFormat.FORMAT_HAS_VECTORS)
 		{
 		  // NOTE: unused
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int hasVectors = input.readByte();
 		  int hasVectors = input.ReadByte();
 		}
 
 		// Replicate logic from 3.x's SegmentInfo.files():
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> files = new java.util.HashSet<>();
-		Set<string> files = new HashSet<string>();
+		ISet<string> files = new HashSet<string>();
 		if (isCompoundFile)
 		{
-		  files.add(IndexFileNames.SegmentFileName(name, "", IndexFileNames.COMPOUND_FILE_EXTENSION));
+		  files.Add(IndexFileNames.SegmentFileName(name, "", IndexFileNames.COMPOUND_FILE_EXTENSION));
 		}
 		else
 		{
@@ -273,12 +242,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (docStoreIsCompoundFile)
 		  {
-			files.add(IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION));
 		  }
 		  else
 		  {
-			files.add(IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
-			files.add(IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION));
 			AddIfExists(dir, files, IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION));
 			AddIfExists(dir, files, IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
 			AddIfExists(dir, files, IndexFileNames.SegmentFileName(docStoreSegment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION));
@@ -286,8 +255,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else if (!isCompoundFile)
 		{
-		  files.add(IndexFileNames.SegmentFileName(name, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
-		  files.add(IndexFileNames.SegmentFileName(name, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION));
+		  files.Add(IndexFileNames.SegmentFileName(name, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+		  files.Add(IndexFileNames.SegmentFileName(name, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION));
 		  AddIfExists(dir, files, IndexFileNames.SegmentFileName(name, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION));
 		  AddIfExists(dir, files, IndexFileNames.SegmentFileName(name, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
 		  AddIfExists(dir, files, IndexFileNames.SegmentFileName(name, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION));
@@ -297,13 +266,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 		if (normGen != null)
 		{
 		  attributes[Lucene3xSegmentInfoFormat.NORMGEN_KEY] = Convert.ToString(numNormGen);
-		  foreach (KeyValuePair<int?, long?> ent in normGen)
+		  foreach (KeyValuePair<int, long> ent in normGen)
 		  {
 			long gen = ent.Value;
 			if (gen >= SegmentInfo.YES)
 			{
 			  // Definitely a separate norm file, with generation:
-			  files.add(IndexFileNames.FileNameFromGeneration(name, "s" + ent.Key, gen));
+			  files.Add(IndexFileNames.FileNameFromGeneration(name, "s" + ent.Key, gen));
 			  attributes[Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + ent.Key] = Convert.ToString(gen);
 			}
 			else if (gen == SegmentInfo.NO)
@@ -318,7 +287,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		}
 
-		SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, Collections.unmodifiableMap(attributes));
+		SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, CollectionsHelper.UnmodifiableMap(attributes));
 		info.Files = files;
 
 		SegmentCommitInfo infoPerCommit = new SegmentCommitInfo(info, delCount, delGen, -1);
@@ -328,31 +297,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private SegmentInfo ReadUpgradedSegmentInfo(string name, Directory dir, IndexInput input)
 	  {
 		CodecUtil.CheckHeader(input, Lucene3xSegmentInfoFormat.UPGRADED_SI_CODEC_NAME, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_START, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String version = input.readString();
 		string version = input.ReadString();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount = input.readInt();
 		int docCount = input.ReadInt();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> attributes = input.readStringStringMap();
 		IDictionary<string, string> attributes = input.ReadStringStringMap();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isCompoundFile = input.readByte() == Lucene.Net.Index.SegmentInfo.YES;
 		bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> diagnostics = input.readStringStringMap();
 		IDictionary<string, string> diagnostics = input.ReadStringStringMap();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> files = input.readStringSet();
-		Set<string> files = input.ReadStringSet();
+		ISet<string> files = input.ReadStringSet();
 
-		SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, Collections.unmodifiableMap(attributes));
+		SegmentInfo info = new SegmentInfo(dir, version, name, docCount, isCompoundFile, null, diagnostics, CollectionsHelper.UnmodifiableMap(attributes));
 		info.Files = files;
 		return info;
 	  }

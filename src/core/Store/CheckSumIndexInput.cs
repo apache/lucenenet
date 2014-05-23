@@ -1,3 +1,4 @@
+using System;
 namespace Lucene.Net.Store
 {
 
@@ -47,12 +48,10 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  public override void Seek(long pos)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long skip = pos - getFilePointer();
 		long skip = pos - FilePointer;
 		if (skip < 0)
 		{
-		  throw new IllegalStateException(this.GetType() + " cannot seek backwards");
+		  throw new InvalidOperationException(this.GetType() + " cannot seek backwards");
 		}
 		SkipBytes(skip);
 	  }

@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-
+    using Document = Lucene.Net.Document.Document;
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		try
 		{
-		  IOUtils.close(FieldsStream, IndexWriter);
+		  IOUtils.Close(FieldsStream, IndexWriter);
 		}
 		finally
 		{
@@ -142,8 +142,8 @@ namespace Lucene.Net.Codecs.Compressing
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int newLength = Lucene.Net.Util.ArrayUtil.oversize(numBufferedDocs + 1, 4);
 		  int newLength = ArrayUtil.Oversize(NumBufferedDocs + 1, 4);
-		  this.NumStoredFields = Arrays.copyOf(this.NumStoredFields, newLength);
-		  EndOffsets = Arrays.copyOf(EndOffsets, newLength);
+		  this.NumStoredFields = Arrays.CopyOf(this.NumStoredFields, newLength);
+		  EndOffsets = Arrays.CopyOf(EndOffsets, newLength);
 		}
 		this.NumStoredFields[NumBufferedDocs] = numStoredFields;
 		++NumBufferedDocs;
@@ -188,12 +188,8 @@ namespace Lucene.Net.Codecs.Compressing
 			{
 			  max |= values[i];
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsRequired = Lucene.Net.Util.Packed.PackedInts.bitsRequired(max);
 			int bitsRequired = PackedInts.BitsRequired(max);
 			@out.WriteVInt(bitsRequired);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer w = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(out, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, length, bitsRequired, 1);
 			PackedInts.Writer w = PackedInts.GetWriterNoHeader(@out, PackedInts.Format.PACKED, length, bitsRequired, 1);
 			for (int i = 0; i < length; ++i)
 			{
@@ -260,14 +256,10 @@ namespace Lucene.Net.Codecs.Compressing
 	  public override void WriteField(FieldInfo info, IndexableField field)
 	  {
 		int bits = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes;
 		BytesRef bytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String string;
 		string @string;
 
-		Number number = field.NumericValue();
+		object number = (object)field.NumericValue();
 		if (number != null)
 		{
 		  if (number is sbyte? || number is short? || number is int?)
@@ -312,8 +304,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long infoAndBits = (((long) info.number) << TYPE_BITS) | bits;
 		long infoAndBits = (((long) info.Number) << TYPE_BITS) | bits;
 		BufferedDocs.WriteVLong(infoAndBits);
 
@@ -328,21 +318,21 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 		else
 		{
-		  if (number is sbyte? || number is short? || number is int?)
+		  if (number is sbyte || number is short || number is int)
 		  {
 			BufferedDocs.WriteInt((int)number);
 		  }
-		  else if (number is long?)
+		  else if (number is long)
 		  {
 			BufferedDocs.WriteLong((long)number);
 		  }
-		  else if (number is float?)
+		  else if (number is float)
 		  {
-			BufferedDocs.WriteInt(float.floatToIntBits((float)number));
+			BufferedDocs.WriteInt(Number.FloatToIntBits((float)number));
 		  }
-		  else if (number is double?)
+		  else if (number is double)
 		  {
-			BufferedDocs.WriteLong(double.doubleToLongBits((double)number));
+			BufferedDocs.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
 		  }
 		  else
 		  {
@@ -354,7 +344,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public override void Abort()
 	  {
 		IOUtils.CloseWhileHandlingException(this);
-		IOUtils.deleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, SegmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, SegmentSuffix, FIELDS_INDEX_EXTENSION));
+        IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, SegmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, SegmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION));
 	  }
 
 	  public override void Finish(FieldInfos fis, int numDocs)
@@ -383,14 +373,10 @@ namespace Lucene.Net.Codecs.Compressing
 
 		foreach (AtomicReader reader in mergeState.Readers)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SegmentReader matchingSegmentReader = mergeState.matchingSegmentReaders[idx++];
 		  SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
 		  CompressingStoredFieldsReader matchingFieldsReader = null;
 		  if (matchingSegmentReader != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.StoredFieldsReader fieldsReader = matchingSegmentReader.getFieldsReader();
 			StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
 			// we can only bulk-copy if the matching reader is also a CompressingStoredFieldsReader
 			if (fieldsReader != null && fieldsReader is CompressingStoredFieldsReader)
@@ -399,11 +385,7 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
 		  Bits liveDocs = reader.LiveDocs;
 
 		  if (matchingFieldsReader == null || matchingFieldsReader.Version != VERSION_CURRENT || matchingFieldsReader.CompressionMode != CompressionMode || matchingFieldsReader.ChunkSize != ChunkSize) // the way data is decompressed depends on the chunk size -  means reader version is not the same as the writer version
@@ -414,7 +396,7 @@ namespace Lucene.Net.Codecs.Compressing
 			  Document doc = reader.Document(i);
 			  AddDocument(doc, mergeState.FieldInfos);
 			  ++docCount;
-			  mergeState.CheckAbort.work(300);
+			  mergeState.checkAbort.Work(300);
 			}
 		  }
 		  else
@@ -423,8 +405,6 @@ namespace Lucene.Net.Codecs.Compressing
 			if (docID < maxDoc)
 			{
 			  // not all docs were deleted
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.compressing.CompressingStoredFieldsReader.ChunkIterator it = matchingFieldsReader.chunkIterator(docID);
 			  CompressingStoredFieldsReader.ChunkIterator it = matchingFieldsReader.ChunkIterator(docID);
 			  int[] startOffsets = new int[0];
 			  do
@@ -452,15 +432,15 @@ namespace Lucene.Net.Codecs.Compressing
 				  this.DocBase += it.ChunkDocs;
 				  docID = NextLiveDoc(it.DocBase + it.ChunkDocs, liveDocs, maxDoc);
 				  docCount += it.ChunkDocs;
-				  mergeState.CheckAbort.work(300 * it.ChunkDocs);
+				  mergeState.checkAbort.Work(300 * it.ChunkDocs);
 				}
 				else
 				{
 				  // decompress
 				  it.Decompress();
-				  if (startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] != it.Bytes.length)
+				  if (startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] != it.Bytes.Length)
 				  {
-					throw new CorruptIndexException("Corrupted: expected chunk size=" + startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] + ", got " + it.Bytes.length);
+					throw new CorruptIndexException("Corrupted: expected chunk size=" + startOffsets[it.ChunkDocs - 1] + it.Lengths[it.ChunkDocs - 1] + ", got " + it.Bytes.Length);
 				  }
 				  // copy non-deleted docs
 				  for (; docID < it.DocBase + it.ChunkDocs; docID = NextLiveDoc(docID + 1, liveDocs, maxDoc))
@@ -469,10 +449,10 @@ namespace Lucene.Net.Codecs.Compressing
 //ORIGINAL LINE: final int diff = docID - it.docBase;
 					int diff = docID - it.DocBase;
 					StartDocument(it.NumStoredFields[diff]);
-					BufferedDocs.WriteBytes(it.Bytes.bytes, it.Bytes.offset + startOffsets[diff], it.Lengths[diff]);
+					BufferedDocs.WriteBytes(it.Bytes.Bytes, it.Bytes.Offset + startOffsets[diff], it.Lengths[diff]);
 					FinishDocument();
 					++docCount;
-					mergeState.CheckAbort.work(300);
+					mergeState.checkAbort.Work(300);
 				  }
 				}
 			  } while (docID < maxDoc);

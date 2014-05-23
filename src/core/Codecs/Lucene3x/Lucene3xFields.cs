@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private readonly FieldInfos FieldInfos;
 	  private readonly SegmentInfo Si;
 	  internal readonly SortedDictionary<string, FieldInfo> Fields = new SortedDictionary<string, FieldInfo>();
-	  internal readonly IDictionary<string, Terms> PreTerms = new Dictionary<string, Terms>();
+	  internal readonly IDictionary<string, Terms> PreTerms_ = new Dictionary<string, Terms>();
 	  private readonly Directory Dir;
 	  private readonly IOContext Context;
 	  private Directory CfsReader;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			if (fi.Indexed)
 			{
 			  Fields[fi.Name] = fi;
-			  PreTerms[fi.Name] = new PreTerms(this, fi);
+			  PreTerms_[fi.Name] = new PreTerms(this, fi);
 			  if (fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 			  {
 				anyProx = true;
@@ -154,12 +154,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override Terms Terms(string field)
 	  {
-		return PreTerms[field];
+		return PreTerms_[field];
 	  }
 
 	  public override int Size()
 	  {
-		Debug.Assert(PreTerms.Count == Fields.Count);
+		Debug.Assert(PreTerms_.Count == Fields.Count);
 		return Fields.Count;
 	  }
 
@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		  get
 		  {
-			return TermsDict.size();
+			return TermsDict.Size();
 		  }
 	  }
 
@@ -191,7 +191,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override void Close()
 	  {
-		IOUtils.close(Tis, TisNoIndex, CfsReader, FreqStream, ProxStream);
+		IOUtils.Close(Tis, TisNoIndex, CfsReader, FreqStream, ProxStream);
 	  }
 
 	  private class PreTerms : Terms
@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			{
 			  // Pre-flex indexes always sorted in UTF16 order, but
 			  // we remap on-the-fly to unicode order
-			  if (outerInstance.SortTermsByUnicode())
+			  if (OuterInstance.SortTermsByUnicode())
 			  {
 				return BytesRef.UTF8SortedAsUnicodeComparator;
 			  }
@@ -260,19 +260,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		public override bool HasFreqs()
 		{
-		  return FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 		}
 
 		public override bool HasOffsets()
 		{
 		  // preflex doesn't support this
-		  Debug.Assert(FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
+		  Debug.Assert(FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
 		  return false;
 		}
 
 		public override bool HasPositions()
 		{
-		  return FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		}
 
 		public override bool HasPayloads()
@@ -363,7 +363,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 
 		  // Seek "back":
-		  outerInstance.TermsDict.seekEnum(te, new Term(FieldInfo.Name, term), true);
+		  OuterInstance.TermsDict.SeekEnum(te, new Term(FieldInfo.Name, term), true);
 
 		  // Test if the term we seek'd to in fact found a
 		  // surrogate pair at the same position as the E:
@@ -449,10 +449,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  if (SeekToNonBMP(SeekTermEnum, PrevTerm, downTo))
 			  {
 				// TODO: more efficient seek?
-				outerInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), true);
+				OuterInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), true);
 				//newSuffixStart = downTo+4;
 				NewSuffixStart = downTo;
-				ScratchTerm.CopyBytes(TermEnum.Term().bytes());
+				ScratchTerm.CopyBytes(TermEnum.Term().Bytes());
 				didSeek = true;
 				if (DEBUG_SURROGATES)
 				{
@@ -512,7 +512,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 			// TODO: more efficient seek?  can we simply swap
 			// the enums?
-			outerInstance.TermsDict.seekEnum(TermEnum, new Term(FieldInfo.Name, ScratchTerm), true);
+			OuterInstance.TermsDict.seekEnum(TermEnum, new Term(FieldInfo.Name, ScratchTerm), true);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.Term t2 = termEnum.term();
@@ -614,13 +614,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  // current term.
 
 		  // TODO: can we avoid this copy?
-		  if (TermEnum.Term() == Lucene.Net.Util.BytesRefIterator_Fields.Null || TermEnum.Term().field() != InternedFieldName)
+		  if (TermEnum.Term() == Lucene.Net.Util.BytesRefIterator_Fields.Null || TermEnum.Term().Field() != InternedFieldName)
 		  {
 			ScratchTerm.Length = 0;
 		  }
 		  else
 		  {
-			ScratchTerm.CopyBytes(TermEnum.Term().bytes());
+			ScratchTerm.CopyBytes(TermEnum.Term().Bytes());
 		  }
 
 		  if (DEBUG_SURROGATES)
@@ -779,9 +779,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 				// OK seek "back"
 				// TODO: more efficient seek?
-				outerInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), true);
+				OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), true);
 
-				ScratchTerm.CopyBytes(SeekTermEnum.Term().bytes());
+				ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes());
 
 				// +3 because we don't need to check the char
 				// at upTo: we know it's > BMP
@@ -817,17 +817,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  Term term = new Term(InternedFieldName);
 		  if (TermEnum == Lucene.Net.Util.BytesRefIterator_Fields.Null)
 		  {
-			TermEnum = outerInstance.TermsDict.terms(term);
-			SeekTermEnum = outerInstance.TermsDict.terms(term);
+			TermEnum = OuterInstance.TermsDict.Terms(term);
+            SeekTermEnum = OuterInstance.TermsDict.Terms(term);
 			//System.out.println("  term=" + termEnum.term());
 		  }
 		  else
 		  {
-			outerInstance.TermsDict.seekEnum(TermEnum, term, true);
+              OuterInstance.TermsDict.SeekEnum(TermEnum, term, true);
 		  }
 		  SkipNext = true;
 
-		  UnicodeSortOrder = outerInstance.SortTermsByUnicode();
+          UnicodeSortOrder = OuterInstance.SortTermsByUnicode();
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
@@ -876,7 +876,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  SkipNext = false;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final TermInfosReader tis = getTermsDict();
-		  TermInfosReader tis = outerInstance.TermsDict;
+          TermInfosReader tis = OuterInstance.TermsDict;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.Term t0 = new Lucene.Net.Index.Term(fieldInfo.name, term);
 		  Term t0 = new Term(FieldInfo.Name, term);
@@ -929,8 +929,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 				if (SeekToNonBMP(SeekTermEnum, ScratchTerm, i))
 				{
 
-				  ScratchTerm.CopyBytes(SeekTermEnum.Term().bytes());
-				  outerInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), false);
+				  ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes());
+                  OuterInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), false);
 
 				  NewSuffixStart = 1 + i;
 
@@ -938,7 +938,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 				  // Found a match
 				  // TODO: faster seek?
-				  Current = TermEnum.Term().bytes();
+				  Current = TermEnum.Term().Bytes();
 				  return SeekStatus.NOT_FOUND;
 				}
 			  }
@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
 			// PreFlex codec interns field names:
 			}
-			else if (TermEnum.Term().field() != InternedFieldName)
+			else if (TermEnum.Term().Field() != InternedFieldName)
 			{
 			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
 			}
@@ -1051,9 +1051,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 
 		  // TODO: can we use STE's prevBuffer here?
-		  PrevTerm.CopyBytes(TermEnum.Term().bytes());
+		  PrevTerm.CopyBytes(TermEnum.Term().Bytes());
 
-		  if (TermEnum.Next() && TermEnum.Term().field() == InternedFieldName)
+		  if (TermEnum.Next() && TermEnum.Term().Field() == InternedFieldName)
 		  {
 			NewSuffixStart = TermEnum.NewSuffixStart;
 			if (DEBUG_SURROGATES)
@@ -1130,7 +1130,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  else
 		  {
 			docsEnum = (PreDocsEnum) reuse;
-			if (docsEnum.FreqStream != outerInstance.FreqStream)
+            if (docsEnum.FreqStream != OuterInstance.FreqStream)
 			{
 			  docsEnum = new PreDocsEnum(OuterInstance);
 			}
@@ -1152,7 +1152,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  else
 		  {
 			docsPosEnum = (PreDocsAndPositionsEnum) reuse;
-			if (docsPosEnum.FreqStream != outerInstance.FreqStream)
+            if (docsPosEnum.FreqStream != OuterInstance.FreqStream)
 			{
 			  docsPosEnum = new PreDocsAndPositionsEnum(OuterInstance);
 			}
@@ -1177,7 +1177,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 			get
 			{
-			  return outerInstance.FreqStream;
+                return OuterInstance.FreqStream;
 			}
 		}
 
@@ -1246,7 +1246,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 			get
 			{
-			  return outerInstance.FreqStream;
+                return OuterInstance.FreqStream;
 			}
 		}
 

@@ -470,7 +470,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private BinaryDocValues LoadBytesFixedStraight(FieldInfo field)
 	  {
-		string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+		string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
 		IndexInput input = Dir.OpenInput(fileName, State.Context);
 		bool success = false;
 		try
@@ -524,8 +524,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private BinaryDocValues LoadBytesVarStraight(FieldInfo field)
 	  {
-		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
 		IndexInput data = null;
 		IndexInput index = null;
 		bool success = false;
@@ -554,7 +554,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (success)
 		  {
-			IOUtils.close(data, index);
+			IOUtils.Close(data, index);
 		  }
 		  else
 		  {
@@ -587,8 +587,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private BinaryDocValues LoadBytesFixedDeref(FieldInfo field)
 	  {
-		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+        string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
 		IndexInput data = null;
 		IndexInput index = null;
 		bool success = false;
@@ -623,7 +623,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (success)
 		  {
-			IOUtils.close(data, index);
+			IOUtils.Close(data, index);
 		  }
 		  else
 		  {
@@ -659,8 +659,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private BinaryDocValues LoadBytesVarDeref(FieldInfo field)
 	  {
-		string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-		string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+          string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+          string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
 		IndexInput data = null;
 		IndexInput index = null;
 		bool success = false;
@@ -694,7 +694,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (success)
 		  {
-			IOUtils.close(data, index);
+			IOUtils.Close(data, index);
 		  }
 		  else
 		  {
@@ -744,8 +744,8 @@ namespace Lucene.Net.Codecs.Lucene40
 			SortedDocValues instance = SortedInstances[field.Number];
 			if (instance == null)
 			{
-			  string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-			  string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+                string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+                string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
 			  IndexInput data = null;
 			  IndexInput index = null;
 			  bool success = false;
@@ -772,7 +772,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			  {
 				if (success)
 				{
-				  IOUtils.close(data, index);
+				  IOUtils.Close(data, index);
 				}
 				else
 				{

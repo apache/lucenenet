@@ -121,25 +121,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// Returns file names for shared doc stores, if any, else
 	  /// null. 
 	  /// </summary>
-	  public static Set<string> GetDocStoreFiles(SegmentInfo info)
+	  public static ISet<string> GetDocStoreFiles(SegmentInfo info)
 	  {
 		if (Lucene3xSegmentInfoFormat.GetDocStoreOffset(info) != -1)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String dsName = Lucene3xSegmentInfoFormat.getDocStoreSegment(info);
 		  string dsName = Lucene3xSegmentInfoFormat.GetDocStoreSegment(info);
-		  Set<string> files = new HashSet<string>();
+		  ISet<string> files = new HashSet<string>();
 		  if (Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(info))
 		  {
-			files.add(IndexFileNames.SegmentFileName(dsName, "", COMPOUND_FILE_STORE_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(dsName, "", COMPOUND_FILE_STORE_EXTENSION));
 		  }
 		  else
 		  {
-			files.add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
-			files.add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION));
-			files.add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION));
-			files.add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
-			files.add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
+			files.Add(IndexFileNames.SegmentFileName(dsName, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION));
 		  }
 		  return files;
 		}

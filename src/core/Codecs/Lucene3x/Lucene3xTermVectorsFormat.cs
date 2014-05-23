@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		if (Lucene3xSegmentInfoFormat.GetDocStoreOffset(segmentInfo) != -1 && Lucene3xSegmentInfoFormat.GetDocStoreIsCompoundFile(segmentInfo))
 		{
 		  string cfxFileName = IndexFileNames.SegmentFileName(Lucene3xSegmentInfoFormat.GetDocStoreSegment(segmentInfo), "", Lucene3xCodec.COMPOUND_FILE_STORE_EXTENSION);
-		  if (segmentInfo.Dir.fileExists(cfxFileName))
+		  if (segmentInfo.Dir.FileExists(cfxFileName))
 		  {
 			Directory cfsDir = new CompoundFileDirectory(segmentInfo.Dir, cfxFileName, context, false);
 			try

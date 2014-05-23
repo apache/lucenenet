@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using FieldType = Lucene.Net.Document.FieldType;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Directory = Lucene.Net.Store.Directory;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;

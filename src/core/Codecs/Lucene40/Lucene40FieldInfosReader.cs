@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
@@ -79,45 +79,39 @@ namespace Lucene.Net.Codecs.Lucene40
 			bool storePayloads = (bits & Lucene40FieldInfosFormat.STORE_PAYLOADS) != 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions indexOptions;
-			FieldInfo.IndexOptions indexOptions;
+			FieldInfo.IndexOptions_e indexOptions;
 			if (!isIndexed)
 			{
-			  indexOptions = null;
+                indexOptions = default(FieldInfo.IndexOptions_e);
 			}
 			else if ((bits & Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_ONLY;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_ONLY;
 			}
 			else if ((bits & Lucene40FieldInfosFormat.OMIT_POSITIONS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS;
 			}
 			else if ((bits & Lucene40FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS) != 0)
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			}
 			else
 			{
-			  indexOptions = FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+			  indexOptions = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
 
 			// LUCENE-3027: past indices were able to write
 			// storePayloads=true when omitTFAP is also true,
 			// which is invalid.  We correct that, here:
-			if (isIndexed && indexOptions.compareTo(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+			if (isIndexed && indexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) < 0)
 			{
 			  storePayloads = false;
 			}
 			// DV Types are packed in one byte
 			sbyte val = input.ReadByte();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final LegacyDocValuesType oldValuesType = getDocValuesType((byte)(val & 0x0F));
 			LegacyDocValuesType oldValuesType = GetDocValuesType((sbyte)(val & 0x0F));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final LegacyDocValuesType oldNormsType = getDocValuesType((byte)((val >>> 4) & 0x0F));
 			LegacyDocValuesType oldNormsType = GetDocValuesType((sbyte)(((int)((uint)val >> 4)) & 0x0F));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> attributes = input.readStringStringMap();
 			IDictionary<string, string> attributes = input.ReadStringStringMap();
 			if (oldValuesType.mapping != null)
 			{
@@ -152,8 +146,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 	  }
 
-	  internal static readonly string LEGACY_DV_TYPE_KEY = typeof(Lucene40FieldInfosReader).SimpleName + ".dvtype";
-	  internal static readonly string LEGACY_NORM_TYPE_KEY = typeof(Lucene40FieldInfosReader).SimpleName + ".normtype";
+	  internal static readonly string LEGACY_DV_TYPE_KEY = typeof(Lucene40FieldInfosReader).Name + ".dvtype";
+	  internal static readonly string LEGACY_NORM_TYPE_KEY = typeof(Lucene40FieldInfosReader).Name + ".normtype";
 
 	  // mapping of 4.0 types -> 4.2 types
 	  internal enum LegacyDocValuesType

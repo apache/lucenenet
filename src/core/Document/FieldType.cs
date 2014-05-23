@@ -22,7 +22,7 @@ namespace Lucene.Net.Document
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
 	using Lucene.Net.Search; // javadocs
 	using NumericUtils = Lucene.Net.Util.NumericUtils;

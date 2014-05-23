@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs
 	 */
 
 
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -42,6 +42,7 @@ namespace Lucene.Net.Codecs
 	using NoOutputs = Lucene.Net.Util.Fst.NoOutputs;
 	using Util = Lucene.Net.Util.Fst.Util;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/*
 	  TODO:
@@ -294,10 +295,8 @@ namespace Lucene.Net.Codecs
 		  throw new System.ArgumentException("maxItemsInBlock must be at least 2*(minItemsInBlock-1); got maxItemsInBlock=" + maxItemsInBlock + " minItemsInBlock=" + minItemsInBlock);
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsFileName = Lucene.Net.Index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, TERMS_EXTENSION);
-		string termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, TERMS_EXTENSION);
-		@out = state.Directory.createOutput(termsFileName, state.Context);
+		string termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_EXTENSION);
+		@out = state.Directory.CreateOutput(termsFileName, state.Context);
 		bool success = false;
 		IndexOutput indexOut = null;
 		try
@@ -309,10 +308,8 @@ namespace Lucene.Net.Codecs
 
 		  //DEBUG = state.segmentName.equals("_4a");
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String termsIndexFileName = Lucene.Net.Index.IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, TERMS_INDEX_EXTENSION);
-		  string termsIndexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.name, state.SegmentSuffix, TERMS_INDEX_EXTENSION);
-		  indexOut = state.Directory.createOutput(termsIndexFileName, state.Context);
+		  string termsIndexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_INDEX_EXTENSION);
+		  indexOut = state.Directory.CreateOutput(termsIndexFileName, state.Context);
 		  WriteIndexHeader(indexOut);
 
 		  CurrentField = null;
@@ -434,7 +431,7 @@ namespace Lucene.Net.Codecs
 		public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
 		{
 
-		  assert(IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null): "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks;
+		  Debug.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks);
 
 		  Debug.Assert(scratchBytes.FilePointer == 0);
 
@@ -457,18 +454,8 @@ namespace Lucene.Net.Codecs
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.ByteSequenceOutputs outputs = Lucene.Net.Util.Fst.ByteSequenceOutputs.getSingleton();
 		  ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.Builder<Lucene.Net.Util.BytesRef> indexBuilder = new Lucene.Net.Util.Fst.Builder<>(Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE1, 0, 0, true, false, Integer.MAX_VALUE, outputs, null, false, Lucene.Net.Util.Packed.PackedInts.COMPACT, true, 15);
 		  Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15);
-		  //if (DEBUG) {
-		  //  System.out.println("  compile index for prefix=" + prefix);
-		  //}
-		  //indexBuilder.DEBUG = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = new byte[(int) scratchBytes.getFilePointer()];
 		  sbyte[] bytes = new sbyte[(int) scratchBytes.FilePointer];
 		  Debug.Assert(bytes.Length > 0);
 		  scratchBytes.WriteTo(bytes, 0);
@@ -516,10 +503,8 @@ namespace Lucene.Net.Codecs
 		// FST.
 		internal void Append(Builder<BytesRef> builder, FST<BytesRef> subIndex)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.BytesRefFSTEnum<Lucene.Net.Util.BytesRef> subIndexEnum = new Lucene.Net.Util.Fst.BytesRefFSTEnum<>(subIndex);
 		  BytesRefFSTEnum<BytesRef> subIndexEnum = new BytesRefFSTEnum<BytesRef>(subIndex);
-		  BytesRefFSTEnum.InputOutput<BytesRef> indexEnt;
+          BytesRefFSTEnum<BytesRef>.InputOutput<BytesRef> indexEnt;
 		  while ((indexEnt = subIndexEnum.Next()) != null)
 		  {
 			//if (DEBUG) {
@@ -565,7 +550,7 @@ namespace Lucene.Net.Codecs
 		// this class assigns terms to blocks "naturally", ie,
 		// according to the number of terms under a given prefix
 		// that we encounter:
-		private class FindBlocks : Builder.FreezeTail<object>
+		private class FindBlocks : Builder<object>.FreezeTail<object>
 		{
 			private readonly BlockTreeTermsWriter.TermsWriter OuterInstance;
 
@@ -575,16 +560,14 @@ namespace Lucene.Net.Codecs
 			}
 
 
-		  public override void Freeze(Builder.UnCompiledNode<object>[] frontier, int prefixLenPlus1, IntsRef lastInput)
+		  public override void Freeze(Builder<object>.UnCompiledNode<object>[] frontier, int prefixLenPlus1, IntsRef lastInput)
 		  {
 
 			//if (DEBUG) System.out.println("  freeze prefixLenPlus1=" + prefixLenPlus1);
 
 			for (int idx = lastInput.Length; idx >= prefixLenPlus1; idx--)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.Builder.UnCompiledNode<Object> node = frontier[idx];
-			  Builder.UnCompiledNode<object> node = frontier[idx];
+			  Builder<object>.UnCompiledNode<object> node = frontier[idx];
 
 			  long totCount = 0;
 
@@ -598,14 +581,14 @@ namespace Lucene.Net.Codecs
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("unchecked") final Lucene.Net.Util.Fst.Builder.UnCompiledNode<Object> target = (Lucene.Net.Util.Fst.Builder.UnCompiledNode<Object>) node.arcs[arcIdx].target;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-				Builder.UnCompiledNode<object> target = (Builder.UnCompiledNode<object>) node.Arcs[arcIdx].target;
+				Builder<object>.UnCompiledNode<object> target = (Builder<object>.UnCompiledNode<object>) node.Arcs[arcIdx].Target;
 				totCount += target.InputCount;
 				target.Clear();
-				node.Arcs[arcIdx].target = null;
+				node.Arcs[arcIdx].Target = null;
 			  }
 			  node.NumArcs = 0;
 
-			  if (totCount >= outerInstance.OuterInstance.MinItemsInBlock || idx == 0)
+			  if (totCount >= OuterInstance.OuterInstance.MinItemsInBlock || idx == 0)
 			  {
 				// We are on a prefix node that has enough
 				// entries (terms or sub-blocks) under it to let
@@ -616,7 +599,7 @@ namespace Lucene.Net.Codecs
 				//    System.out.println("  force block has terms");
 				//  }
 				//}
-				outerInstance.WriteBlocks(lastInput, idx, (int) totCount);
+				OuterInstance.WriteBlocks(lastInput, idx, (int) totCount);
 				node.InputCount = 1;
 			  }
 			  else
@@ -624,7 +607,7 @@ namespace Lucene.Net.Codecs
 				// stragglers!  carry count upwards
 				node.InputCount = totCount;
 			  }
-			  frontier[idx] = new Builder.UnCompiledNode<>(outerInstance.BlockBuilder, idx);
+			  frontier[idx] = new Builder<object>.UnCompiledNode<object>(OuterInstance.BlockBuilder, idx);
 			}
 		  }
 		}
@@ -638,7 +621,7 @@ namespace Lucene.Net.Codecs
 
 		internal virtual void WriteBlocks(IntsRef prevTerm, int prefixLength, int count)
 		{
-		  if (prefixLength == 0 || count <= outerInstance.MaxItemsInBlock)
+		  if (prefixLength == 0 || count <= OuterInstance.MaxItemsInBlock)
 		  {
 			// Easy case: not floor block.  Eg, prefix is "foo",
 			// and we found 30 terms/sub-blocks starting w/ that
@@ -647,7 +630,7 @@ namespace Lucene.Net.Codecs
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final PendingBlock nonFloorBlock = writeBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
 			PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
-			nonFloorBlock.CompileIndex(null, outerInstance.ScratchBytes);
+            nonFloorBlock.CompileIndex(null, OuterInstance.ScratchBytes);
 			Pending.Add(nonFloorBlock);
 		  }
 		  else
@@ -672,8 +655,6 @@ namespace Lucene.Net.Codecs
 			//}
 			//System.out.println("\nwbs count=" + count);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int savLabel = prevTerm.ints[prevTerm.offset + prefixLength];
 			int savLabel = prevTerm.Ints[prevTerm.Offset + prefixLength];
 
 			// Count up how many items fall under
@@ -683,9 +664,7 @@ namespace Lucene.Net.Codecs
 			// already done this (partitioned these sub-terms
 			// according to their leading prefix byte)
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<PendingEntry> slice = pending.subList(pending.size()-count, pending.size());
-			IList<PendingEntry> slice = Pending.subList(Pending.Count - count, Pending.Count);
+            IList<PendingEntry> slice = ListExtensions.SubList<PendingEntry>(Pending, Pending.Count - count, Pending.Count);
 			int lastSuffixLeadLabel = -1;
 			int termCount = 0;
 			int subCount = 0;
@@ -695,13 +674,11 @@ namespace Lucene.Net.Codecs
 			{
 
 			  // First byte in the suffix of this term
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int suffixLeadLabel;
 			  int suffixLeadLabel;
 			  if (ent.IsTerm)
 			  {
 				PendingTerm term = (PendingTerm) ent;
-				if (term.Term.length == prefixLength)
+				if (term.Term.Length == prefixLength)
 				{
 				  // Suffix is 0, ie prefix 'foo' and term is
 				  // 'foo' so the term has empty string suffix
@@ -712,14 +689,14 @@ namespace Lucene.Net.Codecs
 				}
 				else
 				{
-				  suffixLeadLabel = term.Term.bytes[term.Term.offset + prefixLength] & 0xff;
+				  suffixLeadLabel = term.Term.Bytes[term.Term.Offset + prefixLength] & 0xff;
 				}
 			  }
 			  else
 			  {
 				PendingBlock block = (PendingBlock) ent;
-				Debug.Assert(block.Prefix.length > prefixLength);
-				suffixLeadLabel = block.Prefix.bytes[block.Prefix.offset + prefixLength] & 0xff;
+				Debug.Assert(block.Prefix.Length > prefixLength);
+				suffixLeadLabel = block.Prefix.Bytes[block.Prefix.Offset + prefixLength] & 0xff;
 			  }
 
 			  if (suffixLeadLabel != lastSuffixLeadLabel && (termCount + subCount) != 0)
@@ -814,7 +791,7 @@ namespace Lucene.Net.Codecs
 
 			  // Greedily make a floor block as soon as we've
 			  // crossed the min count
-			  if (pendingCount >= outerInstance.MinItemsInBlock)
+              if (pendingCount >= OuterInstance.MinItemsInBlock)
 			  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int curPrefixLength;
@@ -845,7 +822,7 @@ namespace Lucene.Net.Codecs
 				//System.out.println("    = " + pendingCount);
 				pendingCount = 0;
 
-				Debug.Assert(outerInstance.MinItemsInBlock == 1 || subCount > 1, "minItemsInBlock=" + outerInstance.MinItemsInBlock + " subCount=" + subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + SubTermCountSums[sub] + " subSubCount=" + SubSubCounts[sub] + " depth=" + prefixLength);
+                Debug.Assert(OuterInstance.MinItemsInBlock == 1 || subCount > 1, "minItemsInBlock=" + OuterInstance.MinItemsInBlock + " subCount=" + subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + SubTermCountSums[sub] + " subSubCount=" + SubSubCounts[sub] + " depth=" + prefixLength);
 				subCount = 0;
 				startLabel = SubBytes[sub + 1];
 
@@ -854,7 +831,7 @@ namespace Lucene.Net.Codecs
 				  break;
 				}
 
-				if (curStart <= outerInstance.MaxItemsInBlock)
+                if (curStart <= OuterInstance.MaxItemsInBlock)
 				{
 				  // remainder is small enough to fit into a
 				  // block.  NOTE that this may be too small (<
@@ -882,7 +859,7 @@ namespace Lucene.Net.Codecs
 			prevTerm.Ints[prevTerm.Offset + prefixLength] = savLabel;
 
 			Debug.Assert(firstBlock != null);
-			firstBlock.CompileIndex(floorBlocks, outerInstance.ScratchBytes);
+            firstBlock.CompileIndex(floorBlocks, OuterInstance.ScratchBytes);
 
 			Pending.Add(firstBlock);
 			//if (DEBUG) System.out.println("  done pending.size()=" + pending.size());
@@ -899,7 +876,7 @@ namespace Lucene.Net.Codecs
 		  {
 			return b.Utf8ToString() + " " + b;
 		  }
-		  catch (Exception t)
+		  catch (Exception)
 		  {
 			// If BytesRef isn't actually UTF8, or it's eg a
 			// prefix of UTF8 that ends mid-unicode-char, we
@@ -915,22 +892,14 @@ namespace Lucene.Net.Codecs
 
 		  Debug.Assert(length > 0);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = pending.size()-startBackwards;
 		  int start = Pending.Count - startBackwards;
 
 		  Debug.Assert(start >= 0, "pending.size()=" + Pending.Count + " startBackwards=" + startBackwards + " length=" + length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<PendingEntry> slice = pending.subList(start, start + length);
-		  IList<PendingEntry> slice = Pending.subList(start, start + length);
+		  IList<PendingEntry> slice = Pending.SubList(start, start + length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startFP = out.getFilePointer();
-		  long startFP = outerInstance.@out.FilePointer;
+		  long startFP = OuterInstance.@out.FilePointer;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef prefix = new Lucene.Net.Util.BytesRef(indexPrefixLength);
 		  BytesRef prefix = new BytesRef(indexPrefixLength);
 		  for (int m = 0;m < indexPrefixLength;m++)
 		  {
@@ -939,17 +908,10 @@ namespace Lucene.Net.Codecs
 		  prefix.Length = indexPrefixLength;
 
 		  // Write block header:
-		  outerInstance.@out.WriteVInt((length << 1) | (isLastInFloor ? 1:0));
-
-		  // if (DEBUG) {
-		  //   System.out.println("  writeBlock " + (isFloor ? "(floor) " : "") + "seg=" + segment + " pending.size()=" + pending.size() + " prefixLength=" + prefixLength + " indexPrefix=" + toString(prefix) + " entCount=" + length + " startFP=" + startFP + " futureTermCount=" + futureTermCount + (isFloor ? (" floorLeadByte=" + Integer.toHexString(floorLeadByte&0xff)) : "") + " isLastInFloor=" + isLastInFloor);
-		  // }
+		  OuterInstance.@out.WriteVInt((length << 1) | (isLastInFloor ? 1:0));
 
 		  // 1st pass: pack term suffix bytes into byte[] blob
 		  // TODO: cutover to bulk int codec... simple64?
-
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isLeafBlock;
 		  bool isLeafBlock;
 		  if (LastBlockIndex < start)
 		  {
@@ -979,8 +941,6 @@ namespace Lucene.Net.Codecs
 			isLeafBlock = v;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Util.Fst.FST<Lucene.Net.Util.BytesRef>> subIndices;
 		  IList<FST<BytesRef>> subIndices;
 
 		  int termCount;
@@ -996,9 +956,7 @@ namespace Lucene.Net.Codecs
 			  Debug.Assert(ent.IsTerm);
 			  PendingTerm term = (PendingTerm) ent;
 			  BlockTermState state = term.State;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int suffix = term.term.length - prefixLength;
-			  int suffix = term.Term.length - prefixLength;
+			  int suffix = term.Term.Length - prefixLength;
 			  // if (DEBUG) {
 			  //   BytesRef suffixBytes = new BytesRef(suffix);
 			  //   System.arraycopy(term.term.bytes, prefixLength, suffixBytes.bytes, 0, suffix);
@@ -1007,7 +965,7 @@ namespace Lucene.Net.Codecs
 			  // }
 			  // For leaf block we write suffix straight
 			  SuffixWriter.WriteVInt(suffix);
-			  SuffixWriter.WriteBytes(term.Term.bytes, prefixLength, suffix);
+			  SuffixWriter.WriteBytes(term.Term.Bytes, prefixLength, suffix);
 
 			  // Write term stats, to separate byte[] blob:
 			  StatsWriter.WriteVInt(state.DocFreq);
@@ -1018,7 +976,7 @@ namespace Lucene.Net.Codecs
 			  }
 
 			  // Write term meta data
-			  outerInstance.PostingsWriter.EncodeTerm(longs, BytesWriter, FieldInfo, state, absolute);
+			  OuterInstance.PostingsWriter.EncodeTerm(longs, BytesWriter, FieldInfo, state, absolute);
 			  for (int pos = 0; pos < LongsSize; pos++)
 			  {
 				Debug.Assert(longs[pos] >= 0);
@@ -1032,7 +990,7 @@ namespace Lucene.Net.Codecs
 		  }
 		  else
 		  {
-			subIndices = new List<>();
+            subIndices = new List<FST<BytesRef>>();
 			termCount = 0;
 			foreach (PendingEntry ent in slice)
 			{
@@ -1042,7 +1000,7 @@ namespace Lucene.Net.Codecs
 				BlockTermState state = term.State;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int suffix = term.term.length - prefixLength;
-				int suffix = term.Term.length - prefixLength;
+				int suffix = term.Term.Length - prefixLength;
 				// if (DEBUG) {
 				//   BytesRef suffixBytes = new BytesRef(suffix);
 				//   System.arraycopy(term.term.bytes, prefixLength, suffixBytes.bytes, 0, suffix);
@@ -1052,7 +1010,7 @@ namespace Lucene.Net.Codecs
 				// For non-leaf block we borrow 1 bit to record
 				// if entry is term or sub-block
 				SuffixWriter.WriteVInt(suffix << 1);
-				SuffixWriter.WriteBytes(term.Term.bytes, prefixLength, suffix);
+				SuffixWriter.WriteBytes(term.Term.Bytes, prefixLength, suffix);
 
 				// Write term stats, to separate byte[] blob:
 				StatsWriter.WriteVInt(state.DocFreq);
@@ -1071,7 +1029,7 @@ namespace Lucene.Net.Codecs
 				// separate anymore:
 
 				// Write term meta data
-				outerInstance.PostingsWriter.EncodeTerm(longs, BytesWriter, FieldInfo, state, absolute);
+				OuterInstance.PostingsWriter.EncodeTerm(longs, BytesWriter, FieldInfo, state, absolute);
 				for (int pos = 0; pos < LongsSize; pos++)
 				{
 				  Debug.Assert(longs[pos] >= 0);
@@ -1088,14 +1046,14 @@ namespace Lucene.Net.Codecs
 				PendingBlock block = (PendingBlock) ent;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int suffix = block.prefix.length - prefixLength;
-				int suffix = block.Prefix.length - prefixLength;
+				int suffix = block.Prefix.Length - prefixLength;
 
 				Debug.Assert(suffix > 0);
 
 				// For non-leaf block we borrow 1 bit to record
 				// if entry is term or sub-block
 				SuffixWriter.WriteVInt((suffix << 1) | 1);
-				SuffixWriter.WriteBytes(block.Prefix.bytes, prefixLength, suffix);
+				SuffixWriter.WriteBytes(block.Prefix.Bytes, prefixLength, suffix);
 				Debug.Assert(block.Fp < startFP);
 
 				// if (DEBUG) {
@@ -1118,18 +1076,18 @@ namespace Lucene.Net.Codecs
 		  // search on lookup
 
 		  // Write suffixes byte[] blob to terms dict output:
-		  outerInstance.@out.WriteVInt((int)(SuffixWriter.FilePointer << 1) | (isLeafBlock ? 1:0));
-		  SuffixWriter.WriteTo(outerInstance.@out);
+		  OuterInstance.@out.WriteVInt((int)(SuffixWriter.FilePointer << 1) | (isLeafBlock ? 1:0));
+		  SuffixWriter.WriteTo(OuterInstance.@out);
 		  SuffixWriter.Reset();
 
 		  // Write term stats byte[] blob
-		  outerInstance.@out.WriteVInt((int) StatsWriter.FilePointer);
-		  StatsWriter.WriteTo(outerInstance.@out);
+		  OuterInstance.@out.WriteVInt((int) StatsWriter.FilePointer);
+		  StatsWriter.WriteTo(OuterInstance.@out);
 		  StatsWriter.Reset();
 
 		  // Write term meta data byte[] blob
-		  outerInstance.@out.WriteVInt((int) MetaWriter.FilePointer);
-		  MetaWriter.WriteTo(outerInstance.@out);
+		  OuterInstance.@out.WriteVInt((int) MetaWriter.FilePointer);
+		  MetaWriter.WriteTo(OuterInstance.@out);
 		  MetaWriter.Reset();
 
 		  // Remove slice replaced by block:
@@ -1156,7 +1114,7 @@ namespace Lucene.Net.Codecs
 
 		internal TermsWriter(BlockTreeTermsWriter outerInstance, FieldInfo fieldInfo)
 		{
-			this.OuterInstance = outerInstance;
+	      this.OuterInstance = outerInstance;
 		  this.FieldInfo = fieldInfo;
 
 		  NoOutputs = NoOutputs.Singleton;
@@ -1164,9 +1122,9 @@ namespace Lucene.Net.Codecs
 		  // this Builder is just used transiently to fragment
 		  // terms into "good" blocks; we don't save the
 		  // resulting FST:
-		  BlockBuilder = new Builder<>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, NoOutputs, new FindBlocks(this), false, PackedInts.COMPACT, true, 15);
+		  BlockBuilder = new Builder<object>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, NoOutputs, new FindBlocks(this), false, PackedInts.COMPACT, true, 15);
 
-		  this.LongsSize = outerInstance.PostingsWriter.setField(fieldInfo);
+		  this.LongsSize = outerInstance.PostingsWriter.SetField(fieldInfo);
 		}
 
 		public override IComparer<BytesRef> Comparator
@@ -1180,7 +1138,7 @@ namespace Lucene.Net.Codecs
 		public override PostingsConsumer StartTerm(BytesRef text)
 		{
 		  //if (DEBUG) System.out.println("\nBTTW.startTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment);
-		  outerInstance.PostingsWriter.StartTerm();
+            OuterInstance.PostingsWriter.StartTerm();
 		  /*
 		  if (fieldInfo.name.equals("id")) {
 		    postingsWriter.termID = Integer.parseInt(text.utf8ToString());
@@ -1188,7 +1146,7 @@ namespace Lucene.Net.Codecs
 		    postingsWriter.termID = -1;
 		  }
 		  */
-		  return outerInstance.PostingsWriter;
+            return OuterInstance.PostingsWriter;
 		}
 
 		internal readonly IntsRef ScratchIntsRef = new IntsRef();
@@ -1200,10 +1158,10 @@ namespace Lucene.Net.Codecs
 		  //if (DEBUG) System.out.println("BTTW.finishTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment + " df=" + stats.docFreq);
 
 		  BlockBuilder.Add(Util.ToIntsRef(text, ScratchIntsRef), NoOutputs.NoOutput);
-		  BlockTermState state = outerInstance.PostingsWriter.NewTermState();
+          BlockTermState state = OuterInstance.PostingsWriter.NewTermState();
 		  state.DocFreq = stats.DocFreq;
 		  state.TotalTermFreq = stats.TotalTermFreq;
-		  outerInstance.PostingsWriter.FinishTerm(state);
+          OuterInstance.PostingsWriter.FinishTerm(state);
 
 		  PendingTerm term = new PendingTerm(BytesRef.DeepCopyOf(text), state);
 		  Pending.Add(term);
@@ -1222,7 +1180,7 @@ namespace Lucene.Net.Codecs
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final PendingBlock root = (PendingBlock) pending.get(0);
 			PendingBlock root = (PendingBlock) Pending[0];
-			Debug.Assert(root.Prefix.length == 0);
+			Debug.Assert(root.Prefix.Length == 0);
 			Debug.Assert(root.Index.EmptyOutput != null);
 
 			this.SumTotalTermFreq = sumTotalTermFreq;
@@ -1230,8 +1188,8 @@ namespace Lucene.Net.Codecs
 			this.DocCount = docCount;
 
 			// Write FST to index
-			IndexStartFP = outerInstance.IndexOut.FilePointer;
-			root.Index.save(outerInstance.IndexOut);
+            IndexStartFP = OuterInstance.IndexOut.FilePointer;
+            root.Index.Save(OuterInstance.IndexOut);
 			//System.out.println("  write FST " + indexStartFP + " field=" + fieldInfo.name);
 
 			// if (SAVE_DOT_FILES || DEBUG) {
@@ -1242,7 +1200,7 @@ namespace Lucene.Net.Codecs
 			//   w.close();
 			// }
 
-			outerInstance.Fields.Add(new FieldMetaData(FieldInfo, ((PendingBlock) Pending[0]).Index.EmptyOutput, NumTerms, IndexStartFP, sumTotalTermFreq, sumDocFreq, docCount, LongsSize));
+            OuterInstance.Fields.Add(new FieldMetaData(FieldInfo, ((PendingBlock)Pending[0]).Index.EmptyOutput, NumTerms, IndexStartFP, sumTotalTermFreq, sumDocFreq, docCount, LongsSize));
 		  }
 		  else
 		  {
@@ -1261,7 +1219,7 @@ namespace Lucene.Net.Codecs
 	  public override void Close()
 	  {
 
-		IOException ioe = null;
+		System.IO.IOException ioe = null;
 		try
 		{
 
@@ -1277,10 +1235,10 @@ namespace Lucene.Net.Codecs
 		  foreach (FieldMetaData field in Fields)
 		  {
 			//System.out.println("  field " + field.fieldInfo.name + " " + field.numTerms + " terms");
-			@out.WriteVInt(field.FieldInfo.number);
+			@out.WriteVInt(field.FieldInfo.Number);
 			@out.WriteVLong(field.NumTerms);
-			@out.WriteVInt(field.RootCode.length);
-			@out.WriteBytes(field.RootCode.bytes, field.RootCode.offset, field.RootCode.length);
+			@out.WriteVInt(field.RootCode.Length);
+			@out.WriteBytes(field.RootCode.Bytes, field.RootCode.Offset, field.RootCode.Length);
 			if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
 			{
 			  @out.WriteVLong(field.SumTotalTermFreq);
@@ -1295,7 +1253,7 @@ namespace Lucene.Net.Codecs
 		  WriteIndexTrailer(IndexOut, indexDirStart);
 		  CodecUtil.WriteFooter(IndexOut);
 		}
-		catch (IOException ioe2)
+		catch (System.IO.IOException ioe2)
 		{
 		  ioe = ioe2;
 		}

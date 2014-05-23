@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs
 	 */
 
 
-	using OffsetAttribute = Lucene.Net.Analysis.tokenattributes.OffsetAttribute; // javadocs
+	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute; // javadocs
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum; // javadocs
 	using Fields = Lucene.Net.Index.Fields;
 

@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  public const int MERGE_BUFFER_SIZE = 4096;
 
-	  private int BufferSize_Renamed = BUFFER_SIZE;
+	  private int bufferSize = BUFFER_SIZE;
 
 	  protected internal sbyte[] Buffer;
 
@@ -72,31 +72,27 @@ namespace Lucene.Net.Store
 	  public BufferedIndexInput(string resourceDesc, int bufferSize) : base(resourceDesc)
 	  {
 		CheckBufferSize(bufferSize);
-		this.BufferSize_Renamed = bufferSize;
+		this.bufferSize = bufferSize;
 	  }
 
 	  /// <summary>
 	  /// Change the buffer size used by this IndexInput </summary>
-	  public int BufferSize
+	  public int BufferSize_
 	  {
 		  set
 		  {
-			Debug.Assert(Buffer == null || BufferSize_Renamed == Buffer.Length, "buffer=" + Buffer + " bufferSize=" + BufferSize_Renamed + " buffer.length=" + (Buffer != null ? Buffer.Length : 0));
-			if (value != BufferSize_Renamed)
+			Debug.Assert(Buffer == null || bufferSize == Buffer.Length, "buffer=" + Buffer + " bufferSize=" + bufferSize + " buffer.length=" + (Buffer != null ? Buffer.Length : 0));
+			if (value != bufferSize)
 			{
 			  CheckBufferSize(value);
-			  BufferSize_Renamed = value;
+			  bufferSize = value;
 			  if (Buffer != null)
 			  {
 				// Resize the existing buffer and carefully save as
 				// many bytes as possible starting from the current
 				// bufferPosition
 				sbyte[] newBuffer = new sbyte[value];
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final int leftInBuffer = bufferLength-bufferPosition;
 				int leftInBuffer = BufferLength - BufferPosition;
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final int numToCopy;
 				int numToCopy;
 				if (leftInBuffer > value)
 				{
@@ -116,7 +112,7 @@ namespace Lucene.Net.Store
 		  }
 		  get
 		  {
-			return BufferSize_Renamed;
+			return bufferSize;
 		  }
 	  }
 
@@ -163,7 +159,7 @@ namespace Lucene.Net.Store
 			BufferPosition += available;
 		  }
 		  // and now, read the remaining 'len' bytes:
-		  if (useBuffer && len < BufferSize_Renamed)
+		  if (useBuffer && len < bufferSize)
 		  {
 			// If the amount left to read is small enough, and
 			// we are allowed to use our buffer, do it in the usual
@@ -231,11 +227,7 @@ namespace Lucene.Net.Store
 	  {
 		if (8 <= (BufferLength - BufferPosition))
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i1 = ((buffer[bufferPosition++] & 0xff) << 24) | ((buffer[bufferPosition++] & 0xff) << 16) | ((buffer[bufferPosition++] & 0xff) << 8) | (buffer[bufferPosition++] & 0xff);
 		  int i1 = ((Buffer[BufferPosition++] & 0xff) << 24) | ((Buffer[BufferPosition++] & 0xff) << 16) | ((Buffer[BufferPosition++] & 0xff) << 8) | (Buffer[BufferPosition++] & 0xff);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i2 = ((buffer[bufferPosition++] & 0xff) << 24) | ((buffer[bufferPosition++] & 0xff) << 16) | ((buffer[bufferPosition++] & 0xff) << 8) | (buffer[bufferPosition++] & 0xff);
 		  int i2 = ((Buffer[BufferPosition++] & 0xff) << 24) | ((Buffer[BufferPosition++] & 0xff) << 16) | ((Buffer[BufferPosition++] & 0xff) << 8) | (Buffer[BufferPosition++] & 0xff);
 		  return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
 		}
@@ -280,7 +272,7 @@ namespace Lucene.Net.Store
 		  {
 			  return i;
 		  }
-		  throw new IOException("Invalid vInt detected (too many bits)");
+		  throw new System.IO.IOException("Invalid vInt detected (too many bits)");
 		}
 		else
 		{
@@ -346,7 +338,7 @@ namespace Lucene.Net.Store
 		  {
 			  return i;
 		  }
-		  throw new IOException("Invalid vLong detected (negative values disallowed)");
+		  throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
 		}
 		else
 		{
@@ -357,7 +349,7 @@ namespace Lucene.Net.Store
 	  private void Refill()
 	  {
 		long start = BufferStart + BufferPosition;
-		long end = start + BufferSize_Renamed;
+		long end = start + bufferSize;
 		if (end > Length()) // don't read past EOF
 		{
 		  end = Length();
@@ -370,7 +362,7 @@ namespace Lucene.Net.Store
 
 		if (Buffer == null)
 		{
-		  NewBuffer(new sbyte[BufferSize_Renamed]); // allocate buffer lazily
+		  NewBuffer(new sbyte[bufferSize]); // allocate buffer lazily
 		  SeekInternal(BufferStart);
 		}
 		ReadInternal(Buffer, 0, newLength);

@@ -99,6 +99,18 @@ namespace Lucene.Net.Util
 		CopyChars(text);
 	  }
 
+      /// <summary>
+      /// Initialize the byte[] from the UTF8 bytes
+      /// for the provided String.  
+      /// </summary>
+      /// <param name="text"> this must be well-formed
+      /// unicode text, with no unpaired surrogates. </param>
+      public BytesRef(string text)
+          : this()
+      {
+          CopyChars(text);
+      }
+
 	  /// <summary>
 	  /// Copies the UTF8 bytes for this string.
 	  /// </summary>
@@ -107,8 +119,19 @@ namespace Lucene.Net.Util
 	  public void CopyChars(CharsRef text)
 	  {
 		Debug.Assert(Offset == 0); // TODO broken if offset != 0
-		UnicodeUtil.UTF16toUTF8(text, 0, text.length(), this);
+		UnicodeUtil.UTF16toUTF8(text, 0, text.Length(), this);
 	  }
+
+      /// <summary>
+      /// Copies the UTF8 bytes for this string.
+      /// </summary>
+      /// <param name="text"> Must be well-formed unicode text, with no
+      /// unpaired surrogates or invalid UTF16 code units. </param>
+      public void CopyChars(string text)
+      {
+          Debug.Assert(Offset == 0); // TODO broken if offset != 0
+          UnicodeUtil.UTF16toUTF8(text.ToCharArray(0, text.Length), 0, text.Length, this);
+      }
 
 	  /// <summary>
 	  /// Expert: compares the bytes against another BytesRef,
@@ -122,11 +145,7 @@ namespace Lucene.Net.Util
 		if (Length == other.Length)
 		{
 		  int otherUpto = other.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] otherBytes = other.bytes;
 		  sbyte[] otherBytes = other.Bytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		  int end = Offset + Length;
 		  for (int upto = Offset;upto < end;upto++,otherUpto++)
 		  {
@@ -185,8 +204,6 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public string Utf8ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CharsRef ref = new CharsRef(length);
 		CharsRef @ref = new CharsRef(Length);
 		UnicodeUtil.UTF8toUTF16(Bytes, Offset, Length, @ref);
 		return @ref.ToString();
@@ -198,8 +215,6 @@ namespace Lucene.Net.Util
 	  {
 		StringBuilder sb = new StringBuilder();
 		sb.Append('[');
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		int end = Offset + Length;
 		for (int i = Offset;i < end;i++)
 		{
@@ -207,7 +222,7 @@ namespace Lucene.Net.Util
 		  {
 			sb.Append(' ');
 		  }
-		  sb.Append(Bytes[i] & 0xff.ToString("x"));
+		  sb.Append((Bytes[i] & 0xff).ToString("x"));
 		}
 		sb.Append(']');
 		return sb.ToString();

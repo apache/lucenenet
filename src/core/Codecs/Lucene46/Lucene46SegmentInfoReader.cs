@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		  IDictionary<string, string> diagnostics = input.ReadStringStringMap();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<String> files = input.readStringSet();
-		  Set<string> files = input.ReadStringSet();
+		  ISet<string> files = input.ReadStringSet();
 
 		  if (codecVersion >= Lucene46SegmentInfoFormat.VERSION_CHECKSUM)
 		  {
@@ -84,8 +84,6 @@ namespace Lucene.Net.Codecs.Lucene46
 			CodecUtil.CheckEOF(input);
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SegmentInfo si = new Lucene.Net.Index.SegmentInfo(dir, version, segment, docCount, isCompoundFile, null, diagnostics);
 		  SegmentInfo si = new SegmentInfo(dir, version, segment, docCount, isCompoundFile, null, diagnostics);
 		  si.Files = files;
 

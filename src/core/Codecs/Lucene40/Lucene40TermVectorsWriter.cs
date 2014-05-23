@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using StringHelper = Lucene.Net.Util.StringHelper;
 
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene40.Lucene40TermVectorsReader.*;
+	//import static Lucene.Net.Codecs.Lucene40.Lucene40TermVectorsReader.*;
 
 
 	// TODO: make a new 4.0 TV format that encodes better
@@ -76,14 +76,14 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  // Open files for TermVector storage
 		  Tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), context);
-		  CodecUtil.WriteHeader(Tvx, CODEC_NAME_INDEX, VERSION_CURRENT);
+          CodecUtil.WriteHeader(Tvx, Lucene40TermVectorsReader.CODEC_NAME_INDEX, Lucene40TermVectorsReader.VERSION_CURRENT);
 		  Tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
-		  CodecUtil.WriteHeader(Tvd, CODEC_NAME_DOCS, VERSION_CURRENT);
+          CodecUtil.WriteHeader(Tvd, Lucene40TermVectorsReader.CODEC_NAME_DOCS, Lucene40TermVectorsReader.VERSION_CURRENT);
 		  Tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
-		  CodecUtil.WriteHeader(Tvf, CODEC_NAME_FIELDS, VERSION_CURRENT);
-		  Debug.Assert(HEADER_LENGTH_INDEX == Tvx.FilePointer);
-		  Debug.Assert(HEADER_LENGTH_DOCS == Tvd.FilePointer);
-		  Debug.Assert(HEADER_LENGTH_FIELDS == Tvf.FilePointer);
+          CodecUtil.WriteHeader(Tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
+          Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == Tvx.FilePointer);
+          Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == Tvd.FilePointer);
+          Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == Tvf.FilePointer);
 		  success = true;
 		}
 		finally
@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		catch (Exception ignored)
 		{
 		}
-		IOUtils.deleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
+		IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION));
 	  }
 
 	  /// <summary>
@@ -447,7 +447,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, start, numDocs);
 			AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, numDocs);
 			totalNumDocs += numDocs;
-			mergeState.CheckAbort.work(300 * numDocs);
+			mergeState.checkAbort.Work(300 * numDocs);
 		  }
 		}
 		else
@@ -465,7 +465,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			Fields vectors = reader.GetTermVectors(docNum);
 			AddAllDocVectors(vectors, mergeState);
 			totalNumDocs++;
-			mergeState.CheckAbort.work(300);
+			mergeState.checkAbort.Work(300);
 		  }
 		}
 		return totalNumDocs;
@@ -486,7 +486,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			matchingVectorsReader.RawDocs(rawDocLengths, rawDocLengths2, docCount, len);
 			AddRawDocuments(matchingVectorsReader, rawDocLengths, rawDocLengths2, len);
 			docCount += len;
-			mergeState.CheckAbort.work(300 * len);
+			mergeState.checkAbort.Work(300 * len);
 		  }
 		}
 		else
@@ -497,7 +497,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			// termVectorsWriter.addAllDocVectors; see LUCENE-1282
 			Fields vectors = reader.GetTermVectors(docNum);
 			AddAllDocVectors(vectors, mergeState);
-			mergeState.CheckAbort.work(300);
+			mergeState.checkAbort.Work(300);
 		  }
 		}
 		return maxDoc;
@@ -505,7 +505,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override void Finish(FieldInfos fis, int numDocs)
 	  {
-		if (HEADER_LENGTH_INDEX + ((long) numDocs) * 16 != Tvx.FilePointer)
+        if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != Tvx.FilePointer)
 		  // this is most likely a bug in Sun JRE 1.6.0_04/_05;
 		  // we detect that the bug has struck, here, and
 		  // throw an exception to prevent the corruption from
@@ -522,7 +522,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		// make an effort to close all streams we can but remember and re-throw
 		// the first exception encountered in this process
-		IOUtils.close(Tvx, Tvd, Tvf);
+		IOUtils.Close(Tvx, Tvd, Tvf);
 		Tvx = Tvd = Tvf = null;
 	  }
 

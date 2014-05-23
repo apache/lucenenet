@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util.Packed;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -66,13 +67,13 @@ namespace Lucene.Net.Codecs.Lucene41
 		  {
 			for (int bpv = 1; bpv <= 32; ++bpv)
 			{
-			  if (!format.isSupported(bpv))
+			  if (!format.IsSupported(bpv))
 			  {
 				continue;
 			  }
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Decoder decoder = Lucene.Net.Util.Packed.PackedInts.getDecoder(format, version, bpv);
-			  Decoder decoder = PackedInts.GetDecoder(format, version, bpv);
+			  PackedInts.Decoder decoder = PackedInts.GetDecoder(format, version, bpv);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int iterations = computeIterations(decoder);
 			  int iterations = ComputeIterations(decoder);
@@ -87,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// Compute the number of iterations required to decode <code>BLOCK_SIZE</code>
 	  /// values with the provided <seealso cref="Decoder"/>.
 	  /// </summary>
-	  private static int ComputeIterations(Decoder decoder)
+      private static int ComputeIterations(PackedInts.Decoder decoder)
 	  {
 		return (int) Math.Ceiling((float) Lucene41PostingsFormat.BLOCK_SIZE / decoder.ByteValueCount());
 	  }
@@ -100,14 +101,14 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long byteCount = format.byteCount(packedIntsVersion, BLOCK_SIZE, bitsPerValue);
-		long byteCount = format.byteCount(packedIntsVersion, Lucene41PostingsFormat.BLOCK_SIZE, bitsPerValue);
-		Debug.Assert(byteCount >= 0 && byteCount <= int.MaxValue, byteCount);
+		long byteCount = format.ByteCount(packedIntsVersion, Lucene41PostingsFormat.BLOCK_SIZE, bitsPerValue);
+		Debug.Assert(byteCount >= 0 && byteCount <= int.MaxValue, byteCount.ToString());
 		return (int) byteCount;
 	  }
 
 	  private readonly int[] EncodedSizes;
 	  private readonly PackedInts.Encoder[] Encoders;
-	  private readonly Decoder[] Decoders;
+      private readonly PackedInts.Decoder[] Decoders;
 	  private readonly int[] Iterations;
 
 	  /// <summary>
@@ -118,14 +119,14 @@ namespace Lucene.Net.Codecs.Lucene41
 		@out.WriteVInt(PackedInts.VERSION_CURRENT);
 		EncodedSizes = new int[33];
 		Encoders = new PackedInts.Encoder[33];
-		Decoders = new Decoder[33];
+        Decoders = new PackedInts.Decoder[33];
 		Iterations = new int[33];
 
 		for (int bpv = 1; bpv <= 32; ++bpv)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.FormatAndBits formatAndBits = Lucene.Net.Util.Packed.PackedInts.fastestFormatAndBits(BLOCK_SIZE, bpv, acceptableOverheadRatio);
-		  FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(Lucene41PostingsFormat.BLOCK_SIZE, bpv, acceptableOverheadRatio);
+		  PackedInts.FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(Lucene41PostingsFormat.BLOCK_SIZE, bpv, acceptableOverheadRatio);
 		  Debug.Assert(formatAndBits.Format.isSupported(formatAndBits.BitsPerValue));
 		  Debug.Assert(formatAndBits.BitsPerValue <= 32);
 		  EncodedSizes[bpv] = EncodedSize(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
@@ -146,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		PackedInts.CheckVersion(packedIntsVersion);
 		EncodedSizes = new int[33];
 		Encoders = new PackedInts.Encoder[33];
-		Decoders = new Decoder[33];
+        Decoders = new PackedInts.Decoder[33];
 		Iterations = new int[33];
 
 		for (int bpv = 1; bpv <= 32; ++bpv)
@@ -163,8 +164,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Format format = Lucene.Net.Util.Packed.PackedInts.Format.byId(formatId);
-		  PackedInts.Format format = PackedInts.Format.byId(formatId);
-		  Debug.Assert(format.isSupported(bitsPerValue));
+		  PackedInts.Format format = PackedInts.Format.ById(formatId);
+		  Debug.Assert(format.IsSupported(bitsPerValue));
 		  EncodedSizes[bpv] = EncodedSize(format, packedIntsVersion, bitsPerValue);
 		  Encoders[bpv] = PackedInts.GetEncoder(format, packedIntsVersion, bitsPerValue);
 		  Decoders[bpv] = PackedInts.GetDecoder(format, packedIntsVersion, bitsPerValue);
@@ -191,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene41
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numBits = bitsRequired(data);
 		int numBits = BitsRequired(data);
-		Debug.Assert(numBits > 0 && numBits <= 32, numBits);
+		Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Encoder encoder = encoders[numBits];
 		PackedInts.Encoder encoder = Encoders[numBits];
@@ -222,14 +223,14 @@ namespace Lucene.Net.Codecs.Lucene41
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numBits = in.readByte();
 		int numBits = @in.ReadByte();
-		Debug.Assert(numBits <= 32, numBits);
+		Debug.Assert(numBits <= 32, numBits.ToString());
 
 		if (numBits == ALL_VALUES_EQUAL)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int value = in.readVInt();
 		  int value = @in.ReadVInt();
-		  Arrays.fill(decoded, 0, Lucene41PostingsFormat.BLOCK_SIZE, value);
+          CollectionsHelper.Fill(decoded, 0, Lucene41PostingsFormat.BLOCK_SIZE, value);
 		  return;
 		}
 
@@ -240,11 +241,11 @@ namespace Lucene.Net.Codecs.Lucene41
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Decoder decoder = decoders[numBits];
-		Decoder decoder = Decoders[numBits];
+        PackedInts.Decoder decoder = Decoders[numBits];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int iters = iterations[numBits];
 		int iters = Iterations[numBits];
-		Debug.Assert(iters * decoder.ByteValueCount() >= BLOCK_SIZE);
+        Debug.Assert(iters * decoder.ByteValueCount() >= Lucene41PostingsFormat.BLOCK_SIZE);
 
 		decoder.Decode(encoded, 0, decoded, 0, iters);
 	  }
@@ -264,7 +265,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  @in.ReadVInt();
 		  return;
 		}
-		Debug.Assert(numBits > 0 && numBits <= 32, numBits);
+		Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int encodedSize = encodedSizes[numBits];
 		int encodedSize = EncodedSizes[numBits];

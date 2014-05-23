@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  input.ReadStringStringMap(); // read deprecated attributes
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<String> files = input.readStringSet();
-		  Set<string> files = input.ReadStringSet();
+		  ISet<string> files = input.ReadStringSet();
 
 		  CodecUtil.CheckEOF(input);
 

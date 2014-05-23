@@ -25,6 +25,8 @@ namespace Lucene.Net.Codecs
 	using IndexableField = Lucene.Net.Index.IndexableField;
 	using MergeState = Lucene.Net.Index.MergeState;
 	using Bits = Lucene.Net.Util.Bits;
+    using System;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// Codec API for writing stored fields:
@@ -101,11 +103,7 @@ namespace Lucene.Net.Codecs
 		int docCount = 0;
 		foreach (AtomicReader reader in mergeState.Readers)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
 		  Bits liveDocs = reader.LiveDocs;
 		  for (int i = 0; i < maxDoc; i++)
 		  {
@@ -123,7 +121,7 @@ namespace Lucene.Net.Codecs
 			Document doc = reader.Document(i);
 			AddDocument(doc, mergeState.FieldInfos);
 			docCount++;
-			mergeState.CheckAbort.work(300);
+			mergeState.checkAbort.Work(300);
 		  }
 		}
 		Finish(mergeState.FieldInfos, docCount);
@@ -132,12 +130,12 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// sugar method for startDocument() + writeField() for every stored field in the document </summary>
-	  protected internal void addDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IndexableField
+	  protected internal void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IndexableField
 	  {
 		int storedCount = 0;
 		foreach (IndexableField field in doc)
 		{
-		  if (field.FieldType().stored())
+		  if (field.FieldType().Stored())
 		  {
 			storedCount++;
 		  }
@@ -147,7 +145,7 @@ namespace Lucene.Net.Codecs
 
 		foreach (IndexableField field in doc)
 		{
-		  if (field.FieldType().stored())
+		  if (field.FieldType().Stored())
 		  {
 		  WriteField(fieldInfos.FieldInfo(field.Name()), field);
 		  }

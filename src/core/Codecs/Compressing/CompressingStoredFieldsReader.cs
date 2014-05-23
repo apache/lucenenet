@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Compressing
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    /*
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.BYTE_ARR;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Compressing
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_START;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-
+    */
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
@@ -76,6 +76,8 @@ namespace Lucene.Net.Codecs.Compressing
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Codecs.Compressing.CompressingStoredFieldsWriter;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// <seealso cref="StoredFieldsReader"/> impl for <seealso cref="CompressingStoredFieldsFormat"/>.
@@ -234,32 +236,32 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		switch (bits & CompressingStoredFieldsWriter.TYPE_MASK)
 		{
-		  case BYTE_ARR:
+          case CompressingStoredFieldsWriter.BYTE_ARR:
 			int length = @in.ReadVInt();
 			sbyte[] data = new sbyte[length];
 			@in.ReadBytes(data, 0, length);
 			visitor.BinaryField(info, data);
 			break;
-		  case STRING:
+          case CompressingStoredFieldsWriter.STRING:
 			length = @in.ReadVInt();
 			data = new sbyte[length];
 			@in.ReadBytes(data, 0, length);
-			visitor.StringField(info, new string(data, StandardCharsets.UTF_8));
+			visitor.StringField(info, new string(data, IOUtils.CHARSET_UTF_8));
 			break;
-		  case NUMERIC_INT:
+          case CompressingStoredFieldsWriter.NUMERIC_INT:
 			visitor.IntField(info, @in.ReadInt());
 			break;
-		  case NUMERIC_FLOAT:
-			visitor.FloatField(info, float.intBitsToFloat(@in.ReadInt()));
+          case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
+			visitor.FloatField(info, Number.IntBitsToFloat(@in.ReadInt()));
 			break;
-		  case NUMERIC_LONG:
+          case CompressingStoredFieldsWriter.NUMERIC_LONG:
 			visitor.LongField(info, @in.ReadLong());
 			break;
-		  case NUMERIC_DOUBLE:
-			visitor.DoubleField(info, double.longBitsToDouble(@in.ReadLong()));
+          case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
+			visitor.DoubleField(info, BitConverter.Int64BitsToDouble(@in.ReadLong()));
 			break;
 		  default:
-			throw new AssertionError("Unknown type flag: " + bits.ToString("x"));
+			throw new InvalidOperationException("Unknown type flag: " + bits.ToString("x"));
 		}
 	  }
 
@@ -267,23 +269,23 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		switch (bits & CompressingStoredFieldsWriter.TYPE_MASK)
 		{
-		  case BYTE_ARR:
-		  case STRING:
+          case CompressingStoredFieldsWriter.BYTE_ARR:
+          case CompressingStoredFieldsWriter.STRING:
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int length = in.readVInt();
 			int length = @in.ReadVInt();
 			@in.SkipBytes(length);
 			break;
-		  case NUMERIC_INT:
-		  case NUMERIC_FLOAT:
+          case CompressingStoredFieldsWriter.NUMERIC_INT:
+          case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
 			@in.ReadInt();
 			break;
-		  case NUMERIC_LONG:
-		  case NUMERIC_DOUBLE:
+          case CompressingStoredFieldsWriter.NUMERIC_LONG:
+          case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
 			@in.ReadLong();
 			break;
 		  default:
-			throw new AssertionError("Unknown type flag: " + bits.ToString("x"));
+			throw new InvalidOperationException("Unknown type flag: " + bits.ToString("x"));
 		}
 	  }
 
@@ -421,13 +423,13 @@ namespace Lucene.Net.Codecs.Compressing
 
 		  switch (visitor.NeedsField(fieldInfo))
 		  {
-			case YES:
+			case StoredFieldVisitor.Status.YES:
 			  ReadField(documentInput, visitor, fieldInfo, bits);
 			  break;
-			case NO:
+            case StoredFieldVisitor.Status.NO:
 			  SkipField(documentInput, bits);
 			  break;
-			case STOP:
+            case StoredFieldVisitor.Status.STOP:
 			  return;
 		  }
 		}
@@ -605,12 +607,10 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerStoredFields = fieldsStream.readVInt();
 			int bitsPerStoredFields = FieldsStream.ReadVInt();
 			if (bitsPerStoredFields == 0)
 			{
-			  Arrays.fill(NumStoredFields, 0, chunkDocs, FieldsStream.ReadVInt());
+                CollectionsHelper.Fill(NumStoredFields, 0, chunkDocs, FieldsStream.ReadVInt());
 			}
 			else if (bitsPerStoredFields > 31)
 			{
@@ -618,8 +618,6 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 			else
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.ReaderIterator it = Lucene.Net.Util.Packed.PackedInts.getReaderIteratorNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
 			  PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerStoredFields, 1);
 			  for (int i = 0; i < chunkDocs; ++i)
 			  {
@@ -627,12 +625,10 @@ namespace Lucene.Net.Codecs.Compressing
 			  }
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerLength = fieldsStream.readVInt();
 			int bitsPerLength = FieldsStream.ReadVInt();
 			if (bitsPerLength == 0)
 			{
-			  Arrays.fill(Lengths, 0, chunkDocs, FieldsStream.ReadVInt());
+			  CollectionsHelper.Fill(Lengths, 0, chunkDocs, FieldsStream.ReadVInt());
 			}
 			else if (bitsPerLength > 31)
 			{
@@ -640,8 +636,6 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 			else
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.ReaderIterator it = Lucene.Net.Util.Packed.PackedInts.getReaderIteratorNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerLength, 1);
 			  PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, OuterInstance.PackedIntsVersion, chunkDocs, bitsPerLength, 1);
 			  for (int i = 0; i < chunkDocs; ++i)
 			  {
@@ -657,16 +651,12 @@ namespace Lucene.Net.Codecs.Compressing
 		internal void Decompress()
 		{
 		  // decompress data
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chunkSize = chunkSize();
 		  int chunkSize = ChunkSize();
 		  if (OuterInstance.Version_Renamed >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS && chunkSize >= 2 * OuterInstance.ChunkSize_Renamed)
 		  {
 			Bytes.Offset = Bytes.Length = 0;
 			for (int decompressed = 0; decompressed < chunkSize;)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toDecompress = Math.min(chunkSize - decompressed, CompressingStoredFieldsReader.this.chunkSize);
 			  int toDecompress = Math.Min(chunkSize - decompressed, OuterInstance.ChunkSize_Renamed);
 			  OuterInstance.Decompressor.Decompress(FieldsStream, toDecompress, 0, toDecompress, Spare);
 			  Bytes.Bytes = ArrayUtil.Grow(Bytes.Bytes, Bytes.Length + Spare.Length);
@@ -691,8 +681,6 @@ namespace Lucene.Net.Codecs.Compressing
 		internal void CopyCompressedData(DataOutput @out)
 		{
 		  Debug.Assert(OuterInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long chunkEnd = docBase + chunkDocs == numDocs ? maxPointer : indexReader.getStartPointer(docBase + chunkDocs);
 		  long chunkEnd = DocBase + ChunkDocs == OuterInstance.NumDocs ? OuterInstance.MaxPointer : OuterInstance.IndexReader.GetStartPointer(DocBase + ChunkDocs);
 		  @out.CopyBytes(FieldsStream, chunkEnd - FieldsStream.FilePointer);
 		}

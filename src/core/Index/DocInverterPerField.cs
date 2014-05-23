@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 	using TokenStream = Lucene.Net.Analysis.TokenStream;
 	using OffsetAttribute = Lucene.Net.Analysis.tokenattributes.OffsetAttribute;
 	using PositionIncrementAttribute = Lucene.Net.Analysis.tokenattributes.PositionIncrementAttribute;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 
 	/// <summary>

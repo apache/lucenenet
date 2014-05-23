@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using Term = Lucene.Net.Index.Term;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 

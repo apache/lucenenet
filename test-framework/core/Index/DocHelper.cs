@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	using StoredField = Lucene.Net.Document.StoredField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using Directory = Lucene.Net.Store.Directory;

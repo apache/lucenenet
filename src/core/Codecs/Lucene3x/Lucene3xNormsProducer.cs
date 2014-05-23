@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.src.core.Codecs.Lucene3x;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -62,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  internal readonly IDictionary<string, NormsDocValues> Norms = new Dictionary<string, NormsDocValues>();
 	  // any .nrm or .sNN files we have open at any time.
 	  // TODO: just a list, and double-close() separate norms files?
-	  internal readonly Set<IndexInput> OpenFiles = Collections.newSetFromMap(new IdentityHashMap<IndexInput, bool?>());
+	  internal readonly ISet<IndexInput> OpenFiles = Collections.newSetFromMap(new IdentityHashMap<IndexInput, bool?>());
 	  // points to a singleNormFile
 	  internal IndexInput SingleNormStream;
 	  internal readonly int Maxdoc;
@@ -98,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 				if (SingleNormStream == null)
 				{
 				  SingleNormStream = d.OpenInput(fileName, context);
-				  OpenFiles.add(SingleNormStream);
+				  OpenFiles.Add(SingleNormStream);
 				}
 				// All norms in the .nrm file can share a single IndexInput since
 				// they are only used in a synchronized context.
@@ -108,14 +109,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  else
 			  {
 				normInput = d.OpenInput(fileName, context);
-				OpenFiles.add(normInput);
+				OpenFiles.Add(normInput);
 				// if the segment was created in 3.2 or after, we wrote the header for sure,
 				// and don't need to do the sketchy file size check. otherwise, we check 
 				// if the size is exactly equal to maxDoc to detect a headerless file.
 				// NOTE: remove this check in Lucene 5.0!
 				string version = info.Version;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isUnversioned = (version == null || Lucene.Net.Util.StringHelper.getVersionComparator().compare(version, "3.2") < 0) && normInput.length() == maxdoc;
 				bool isUnversioned = (version == null || StringHelper.VersionComparator.Compare(version, "3.2") < 0) && normInput.Length() == Maxdoc;
 				if (isUnversioned)
 				{
@@ -154,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		finally
 		{
 		  Norms.Clear();
-		  OpenFiles.clear();
+		  OpenFiles.Clear();
 		}
 	  }
 
@@ -213,7 +212,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 				  {
 	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 	//ORIGINAL LINE: final byte[] bytes = new byte[maxdoc];
-					sbyte[] bytes = new sbyte[outerInstance.Maxdoc];
+					sbyte[] bytes = new sbyte[OuterInstance.Maxdoc];
 					// some norms share fds
 					lock (File)
 					{
@@ -221,12 +220,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 					  File.ReadBytes(bytes, 0, bytes.Length, false);
 					}
 					// we are done with this file
-					if (File != outerInstance.SingleNormStream)
+                    if (File != OuterInstance.SingleNormStream)
 					{
-					  outerInstance.OpenFiles.remove(File);
-					  File.Close();
+                        OuterInstance.OpenFiles.Remove(File);
+					    File.Close();
 					}
-					outerInstance.RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(bytes));
+                    OuterInstance.RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(bytes));
 					Instance_Renamed = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
 				  }
 				  return Instance_Renamed;
@@ -262,22 +261,22 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override BinaryDocValues GetBinary(FieldInfo field)
 	  {
-		throw new AssertionError();
+		throw new InvalidOperationError();
 	  }
 
 	  public override SortedDocValues GetSorted(FieldInfo field)
 	  {
-		throw new AssertionError();
+          throw new InvalidOperationError();
 	  }
 
 	  public override SortedSetDocValues GetSortedSet(FieldInfo field)
 	  {
-		throw new AssertionError();
+          throw new InvalidOperationError();
 	  }
 
 	  public override Bits GetDocsWithField(FieldInfo field)
 	  {
-		throw new AssertionError();
+          throw new InvalidOperationError();
 	  }
 
 	  public override long RamBytesUsed()

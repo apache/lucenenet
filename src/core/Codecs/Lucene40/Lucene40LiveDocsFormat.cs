@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
 	  {
-		string filename = IndexFileNames.FileNameFromGeneration(info.Info.name, DELETES_EXTENSION, info.DelGen);
+		string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.DelGen);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BitVector liveDocs = new BitVector(dir, filename, context);
 		BitVector liveDocs = new BitVector(dir, filename, context);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override void WriteLiveDocs(MutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context)
 	  {
-		string filename = IndexFileNames.FileNameFromGeneration(info.Info.name, DELETES_EXTENSION, info.NextDelGen);
+          string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.NextDelGen);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BitVector liveDocs = (BitVector) bits;
 		BitVector liveDocs = (BitVector) bits;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		if (info.HasDeletions())
 		{
-		  files.Add(IndexFileNames.FileNameFromGeneration(info.Info.name, DELETES_EXTENSION, info.DelGen));
+            files.Add(IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.DelGen));
 		}
 	  }
 	}

@@ -32,10 +32,11 @@ namespace Lucene.Net.Codecs.Lucene40
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsWriter.*;
+	//import static Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsWriter.*;
 
 	/// <summary>
 	/// Class responsible for access to stored document fields.
@@ -81,26 +82,20 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Sole constructor. </summary>
 	  public Lucene40StoredFieldsReader(Directory d, SegmentInfo si, FieldInfos fn, IOContext context)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segment = si.name;
 		string segment = si.Name;
 		bool success = false;
 		FieldInfos = fn;
 		try
 		{
-		  FieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String indexStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
-		  string indexStreamFN = IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
+		  FieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene40StoredFieldsWriter.FIELDS_EXTENSION), context);
+          string indexStreamFN = IndexFileNames.SegmentFileName(segment, "", Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
 		  IndexStream = d.OpenInput(indexStreamFN, context);
 
-		  CodecUtil.CheckHeader(IndexStream, CODEC_NAME_IDX, VERSION_START, VERSION_CURRENT);
-		  CodecUtil.CheckHeader(FieldsStream, CODEC_NAME_DAT, VERSION_START, VERSION_CURRENT);
-		  Debug.Assert(HEADER_LENGTH_DAT == FieldsStream.FilePointer);
-		  Debug.Assert(HEADER_LENGTH_IDX == IndexStream.FilePointer);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long indexSize = indexStream.length() - HEADER_LENGTH_IDX;
-		  long indexSize = IndexStream.Length() - HEADER_LENGTH_IDX;
+          CodecUtil.CheckHeader(IndexStream, Lucene40StoredFieldsWriter.CODEC_NAME_IDX, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
+          CodecUtil.CheckHeader(FieldsStream, Lucene40StoredFieldsWriter.CODEC_NAME_DAT, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
+          Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == FieldsStream.FilePointer);
+          Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == IndexStream.FilePointer);
+          long indexSize = IndexStream.Length() - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
 		  this.Size_Renamed = (int)(indexSize >> 3);
 		  // Verify two sources of "maxDoc" agree:
 		  if (this.Size_Renamed != si.DocCount)
@@ -148,7 +143,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		if (!Closed)
 		{
-		  IOUtils.close(FieldsStream, IndexStream);
+		  IOUtils.Close(FieldsStream, IndexStream);
 		  Closed = true;
 		}
 	  }
@@ -162,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void SeekIndex(int docID)
 	  {
-		IndexStream.Seek(HEADER_LENGTH_IDX + docID * 8L);
+		IndexStream.Seek(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX + docID * 8L);
 	  }
 
 	  public override void VisitDocument(int n, StoredFieldVisitor visitor)
@@ -170,8 +165,6 @@ namespace Lucene.Net.Codecs.Lucene40
 		SeekIndex(n);
 		FieldsStream.Seek(IndexStream.ReadLong());
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numFields = fieldsStream.readVInt();
 		int numFields = FieldsStream.ReadVInt();
 		for (int fieldIDX = 0; fieldIDX < numFields; fieldIDX++)
 		{
@@ -179,17 +172,17 @@ namespace Lucene.Net.Codecs.Lucene40
 		  FieldInfo fieldInfo = FieldInfos.FieldInfo(fieldNumber);
 
 		  int bits = FieldsStream.ReadByte() & 0xFF;
-		  Debug.Assert(bits <= (FIELD_IS_NUMERIC_MASK | FIELD_IS_BINARY), "bits=" + bits.ToString("x"));
+          Debug.Assert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), "bits=" + bits.ToString("x"));
 
 		  switch (visitor.NeedsField(fieldInfo))
 		  {
-			case YES:
+			case StoredFieldVisitor.Status.YES:
 			  ReadField(visitor, fieldInfo, bits);
 			  break;
-			case NO:
+            case StoredFieldVisitor.Status.NO:
 			  SkipField(bits);
 			  break;
-			case STOP:
+            case StoredFieldVisitor.Status.STOP:
 			  return;
 		  }
 		}
@@ -197,24 +190,22 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void ReadField(StoredFieldVisitor visitor, FieldInfo info, int bits)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numeric = bits & FIELD_IS_NUMERIC_MASK;
-		int numeric = bits & FIELD_IS_NUMERIC_MASK;
+		int numeric = bits & Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK;
 		if (numeric != 0)
 		{
 		  switch (numeric)
 		  {
-			case FIELD_IS_NUMERIC_INT:
+			case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_INT:
 			  visitor.IntField(info, FieldsStream.ReadInt());
 			  return;
-			case FIELD_IS_NUMERIC_LONG:
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_LONG:
 			  visitor.LongField(info, FieldsStream.ReadLong());
 			  return;
-			case FIELD_IS_NUMERIC_FLOAT:
-			  visitor.FloatField(info, float.intBitsToFloat(FieldsStream.ReadInt()));
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_FLOAT:
+			  visitor.FloatField(info, Number.IntBitsToFloat(FieldsStream.ReadInt()));
 			  return;
-			case FIELD_IS_NUMERIC_DOUBLE:
-			  visitor.DoubleField(info, double.longBitsToDouble(FieldsStream.ReadLong()));
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_DOUBLE:
+			  visitor.DoubleField(info, BitConverter.Int64BitsToDouble(FieldsStream.ReadLong()));
 			  return;
 			default:
 			  throw new CorruptIndexException("Invalid numeric type: " + numeric.ToString("x"));
@@ -222,18 +213,16 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = fieldsStream.readVInt();
 		  int length = FieldsStream.ReadVInt();
 		  sbyte[] bytes = new sbyte[length];
 		  FieldsStream.ReadBytes(bytes, 0, length);
-		  if ((bits & FIELD_IS_BINARY) != 0)
+          if ((bits & Lucene40StoredFieldsWriter.FIELD_IS_BINARY) != 0)
 		  {
 			visitor.BinaryField(info, bytes);
 		  }
 		  else
 		  {
-			visitor.StringField(info, new string(bytes, 0, bytes.Length, StandardCharsets.UTF_8));
+			visitor.StringField(info, new string(bytes, 0, bytes.Length, IOUtils.CHARSET_UTF_8));
 		  }
 		}
 	  }
@@ -242,17 +231,17 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numeric = bits & FIELD_IS_NUMERIC_MASK;
-		int numeric = bits & FIELD_IS_NUMERIC_MASK;
+		int numeric = bits & Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK;
 		if (numeric != 0)
 		{
 		  switch (numeric)
 		  {
-			case FIELD_IS_NUMERIC_INT:
-			case FIELD_IS_NUMERIC_FLOAT:
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_INT:
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_FLOAT:
 			  FieldsStream.ReadInt();
 			  return;
-			case FIELD_IS_NUMERIC_LONG:
-			case FIELD_IS_NUMERIC_DOUBLE:
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_LONG:
+            case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_DOUBLE:
 			  FieldsStream.ReadLong();
 			  return;
 			default:
@@ -261,8 +250,6 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = fieldsStream.readVInt();
 		  int length = FieldsStream.ReadVInt();
 		  FieldsStream.Seek(FieldsStream.FilePointer + length);
 		}
@@ -282,11 +269,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		int count = 0;
 		while (count < numDocs)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long offset;
 		  long offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = startDocID + count + 1;
 		  int docID = startDocID + count + 1;
 		  Debug.Assert(docID <= NumTotalDocs);
 		  if (docID < NumTotalDocs)

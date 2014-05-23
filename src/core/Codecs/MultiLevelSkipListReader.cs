@@ -246,9 +246,9 @@ namespace Lucene.Net.Codecs
 		this.SkipPointer[0] = skipPointer;
 		this.DocCount = df;
 		Debug.Assert(skipPointer >= 0 && skipPointer <= SkipStream[0].Length(), "invalid skip pointer: " + skipPointer + ", length=" + SkipStream[0].Length());
-		Arrays.fill(SkipDoc, 0);
-		Arrays.fill(NumSkipped, 0);
-		Arrays.fill(ChildPointer, 0);
+        Array.Clear(SkipDoc, 0, SkipDoc.Length);
+        Array.Clear(NumSkipped, 0, NumSkipped.Length);
+        Array.Clear(ChildPointer, 0, ChildPointer.Length);
 
 		HaveSkipped = false;
 		for (int i = 1; i < NumberOfSkipLevels; i++)
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs
 			SkipStream[i] = SkipStream[0].Clone();
 			if (InputIsBuffered && length < BufferedIndexInput.BUFFER_SIZE)
 			{
-			  ((BufferedIndexInput) SkipStream[i]).BufferSize = (int) length;
+			  ((BufferedIndexInput) SkipStream[i]).BufferSize_ = (int) length;
 			}
 
 			// move base stream beyond the current level

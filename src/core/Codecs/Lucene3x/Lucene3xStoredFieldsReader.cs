@@ -36,6 +36,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -79,10 +80,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private const int _NUMERIC_BIT_SHIFT = 3;
 	  internal static readonly int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
 
-	  public static readonly int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
-	  public static readonly int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;
-	  public static readonly int FIELD_IS_NUMERIC_FLOAT = 3 << _NUMERIC_BIT_SHIFT;
-	  public static readonly int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
+	  public const int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
+      public const int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;
+      public const int FIELD_IS_NUMERIC_FLOAT = 3 << _NUMERIC_BIT_SHIFT;
+      public const int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
 
 	  private readonly FieldInfos FieldInfos;
 	  private readonly IndexInput FieldsStream;
@@ -117,8 +118,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// Verifies that the code version which wrote the segment is supported. </summary>
 	  public static void CheckCodeVersion(Directory dir, string segment)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String indexStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
 		string indexStreamFN = IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
 		IndexInput idxStream = dir.OpenInput(indexStreamFN, IOContext.DEFAULT);
 
@@ -155,14 +154,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public Lucene3xStoredFieldsReader(Directory d, SegmentInfo si, FieldInfos fn, IOContext context)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segment = Lucene3xSegmentInfoFormat.getDocStoreSegment(si);
 		string segment = Lucene3xSegmentInfoFormat.GetDocStoreSegment(si);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docStoreOffset = Lucene3xSegmentInfoFormat.getDocStoreOffset(si);
 		int docStoreOffset = Lucene3xSegmentInfoFormat.GetDocStoreOffset(si);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = si.getDocCount();
 		int size = si.DocCount;
 		bool success = false;
 		FieldInfos = fn;
@@ -177,8 +170,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 			StoreCFSReader = null;
 		  }
 		  FieldsStream = d.OpenInput(IndexFileNames.SegmentFileName(segment, "", FIELDS_EXTENSION), context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String indexStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
 		  string indexStreamFN = IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
 		  IndexStream = d.OpenInput(indexStreamFN, context);
 
@@ -193,8 +184,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 			throw new IndexFormatTooNewException(IndexStream, Format, FORMAT_MINIMUM, FORMAT_CURRENT);
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long indexSize = indexStream.length() - FORMAT_SIZE;
 		  long indexSize = IndexStream.Length() - FORMAT_SIZE;
 
 		  if (docStoreOffset != -1)
@@ -205,7 +194,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 			// Verify the file is long enough to hold all of our
 			// docs
-			assert((int)(indexSize / 8)) >= size + this.DocStoreOffset: "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset;
+			Debug.Assert(((int)(indexSize / 8)) >= size + this.DocStoreOffset, "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset);
 		  }
 		  else
 		  {
@@ -258,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		if (!Closed)
 		{
-		  IOUtils.close(FieldsStream, IndexStream, StoreCFSReader);
+		  IOUtils.Close(FieldsStream, IndexStream, StoreCFSReader);
 		  Closed = true;
 		}
 	  }
@@ -273,8 +262,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 		SeekIndex(n);
 		FieldsStream.Seek(IndexStream.ReadLong());
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numFields = fieldsStream.readVInt();
 		int numFields = FieldsStream.ReadVInt();
 		for (int fieldIDX = 0; fieldIDX < numFields; fieldIDX++)
 		{
@@ -286,13 +273,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		  switch (visitor.NeedsField(fieldInfo))
 		  {
-			case YES:
+			case StoredFieldVisitor.Status.YES:
 			  ReadField(visitor, fieldInfo, bits);
 			  break;
-			case NO:
+            case StoredFieldVisitor.Status.NO:
 			  SkipField(bits);
 			  break;
-			case STOP:
+            case StoredFieldVisitor.Status.STOP:
 			  return;
 		  }
 		}
@@ -300,8 +287,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  private void ReadField(StoredFieldVisitor visitor, FieldInfo info, int bits)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numeric = bits & FIELD_IS_NUMERIC_MASK;
 		int numeric = bits & FIELD_IS_NUMERIC_MASK;
 		if (numeric != 0)
 		{
@@ -314,10 +299,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  visitor.LongField(info, FieldsStream.ReadLong());
 			  return;
 			case FIELD_IS_NUMERIC_FLOAT:
-			  visitor.FloatField(info, float.intBitsToFloat(FieldsStream.ReadInt()));
+			  visitor.FloatField(info, Number.IntBitsToFloat(FieldsStream.ReadInt()));
 			  return;
 			case FIELD_IS_NUMERIC_DOUBLE:
-			  visitor.DoubleField(info, double.longBitsToDouble(FieldsStream.ReadLong()));
+			  visitor.DoubleField(info, BitConverter.Int64BitsToDouble(FieldsStream.ReadLong()));
 			  return;
 			default:
 			  throw new CorruptIndexException("Invalid numeric type: " + numeric.ToString("x"));
@@ -325,8 +310,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = fieldsStream.readVInt();
 		  int length = FieldsStream.ReadVInt();
 		  sbyte[] bytes = new sbyte[length];
 		  FieldsStream.ReadBytes(bytes, 0, length);
@@ -336,15 +319,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		  else
 		  {
-			visitor.StringField(info, new string(bytes, 0, bytes.Length, StandardCharsets.UTF_8));
+			visitor.StringField(info, new string(bytes, 0, bytes.Length, IOUtils.CHARSET_UTF_8));
 		  }
 		}
 	  }
 
 	  private void SkipField(int bits)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numeric = bits & FIELD_IS_NUMERIC_MASK;
 		int numeric = bits & FIELD_IS_NUMERIC_MASK;
 		if (numeric != 0)
 		{
@@ -364,8 +345,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = fieldsStream.readVInt();
 		  int length = FieldsStream.ReadVInt();
 		  FieldsStream.Seek(FieldsStream.FilePointer + length);
 		}

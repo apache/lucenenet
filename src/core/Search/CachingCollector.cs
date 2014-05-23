@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
 		{
 
 		  CachedScorer = new CachedScorer();
-		  CachedScores = new List<>();
+		  CachedScores = new List<float[]>();
 		  CurScores = new float[INITIAL_ARRAY_SIZE];
 		  CachedScores.Add(CurScores);
 		}
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 		{
 
 		  CachedScorer = new CachedScorer();
-		  CachedScores = new List<>();
+		  CachedScores = new List<float[]>();
 		  CurScores = new float[INITIAL_ARRAY_SIZE];
 		  CachedScores.Add(CurScores);
 		}
@@ -454,7 +454,7 @@ namespace Lucene.Net.Search
 	  {
 		this.Other = other;
 
-		CachedDocs = new List<>();
+		CachedDocs = new List<int[]>();
 		CurDocs = new int[INITIAL_ARRAY_SIZE];
 		CachedDocs.Add(CurDocs);
 
@@ -470,7 +470,7 @@ namespace Lucene.Net.Search
 	  {
 		this.Other = other;
 
-		CachedDocs = new List<>();
+		CachedDocs = new List<int[]>();
 		CurDocs = new int[INITIAL_ARRAY_SIZE];
 		CachedDocs.Add(CurDocs);
 		this.MaxDocsToCache = maxDocsToCache;

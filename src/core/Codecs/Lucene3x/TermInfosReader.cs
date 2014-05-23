@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private readonly string Segment;
 	  private readonly FieldInfos FieldInfos;
 
-	  private readonly IDisposableThreadLocal<ThreadResources> ThreadResources_Renamed = new IDisposableThreadLocal<ThreadResources>();
+	  private readonly IDisposableThreadLocal<ThreadResources> threadResources = new IDisposableThreadLocal<ThreadResources>();
 	  private readonly SegmentTermEnum OrigEnum;
 	  private readonly long Size_Renamed;
 
@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public void Close()
 	  {
-		IOUtils.close(OrigEnum, ThreadResources_Renamed);
+		IOUtils.Close(OrigEnum, threadResources);
 	  }
 
 	  /// <summary>
@@ -201,12 +201,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		  get
 		  {
-			ThreadResources resources = ThreadResources_Renamed.Get();
+			ThreadResources resources = threadResources.Get();
 			if (resources == null)
 			{
 			  resources = new ThreadResources();
 			  resources.TermEnum = Terms();
-			  ThreadResources_Renamed.Set(resources);
+			  threadResources.Set(resources);
 			}
 			return resources;
 		  }
@@ -315,7 +315,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 				else
 				{
 				  Debug.Assert(SameTermInfo(ti, tiOrd, enumerator));
-				  assert(int) enumerator.position == tiOrd.TermOrd;
+                  Debug.Assert(enumerator.Position == tiOrd.TermOrd);
 				}
 			  }
 			}
@@ -346,29 +346,29 @@ namespace Lucene.Net.Codecs.Lucene3x
 		enumerator.ScanTo(term);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final TermInfo ti;
-		TermInfo ti;
+		TermInfo ti_;
 
 		if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)
 		{
-		  ti = enumerator.TermInfo_Renamed;
+		  ti_ = enumerator.TermInfo_Renamed;
 		  if (tiOrd == null)
 		  {
 			if (useCache)
 			{
-			  TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti, enumerator.Position));
+			  TermsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti_, enumerator.Position));
 			}
 		  }
 		  else
 		  {
-			Debug.Assert(SameTermInfo(ti, tiOrd, enumerator));
+			Debug.Assert(SameTermInfo(ti_, tiOrd, enumerator));
 			Debug.Assert(enumerator.Position == tiOrd.TermOrd);
 		  }
 		}
 		else
 		{
-		  ti = null;
+		  ti_ = null;
 		}
-		return ti;
+		return ti_;
 	  }
 
 	  // called only from asserts
@@ -398,7 +398,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		if (Index == null)
 		{
-		  throw new IllegalStateException("terms index was not loaded when this reader was created");
+		  throw new InvalidOperationException("terms index was not loaded when this reader was created");
 		}
 	  }
 

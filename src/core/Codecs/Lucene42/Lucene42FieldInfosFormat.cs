@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	  internal const sbyte OMIT_NORMS = 0x10;
 	  internal const sbyte STORE_PAYLOADS = 0x20;
 	  internal const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
-	  internal const sbyte OMIT_POSITIONS = -unchecked((sbyte)128);
+	  internal const sbyte OMIT_POSITIONS = -128;
 	}
 
 }

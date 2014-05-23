@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed Fields GetTermVectors(int docID)
 	  {
-		ensureOpen();
+		EnsureOpen();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int i = readerIndex(docID);
 		int i = ReaderIndex(docID); // find subreader num
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed void Document(int docID, StoredFieldVisitor visitor)
 	  {
-		ensureOpen();
+		EnsureOpen();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int i = readerIndex(docID);
 		int i = ReaderIndex(docID); // find subreader num
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed int DocFreq(Term term)
 	  {
-		ensureOpen();
+		EnsureOpen();
 		int total = 0; // sum freqs in subreaders
 		for (int i = 0; i < SubReaders.Length; i++)
 		{
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed long TotalTermFreq(Term term)
 	  {
-		ensureOpen();
+		EnsureOpen();
 		long total = 0; // sum freqs in subreaders
 		for (int i = 0; i < SubReaders.Length; i++)
 		{
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed long GetSumDocFreq(string field)
 	  {
-		ensureOpen();
+		EnsureOpen();
 		long total = 0; // sum doc freqs in subreaders
 		foreach (R reader in SubReaders)
 		{
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed int GetDocCount(string field)
 	  {
-		ensureOpen();
+		EnsureOpen();
 		int total = 0; // sum doc counts in subreaders
 		foreach (R reader in SubReaders)
 		{
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
 
 	  public override sealed long GetSumTotalTermFreq(string field)
 	  {
-		ensureOpen();
+		EnsureOpen();
 		long total = 0; // sum doc total term freqs in subreaders
 		foreach (R reader in SubReaders)
 		{
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Override protected final java.util.List<? extends R> getSequentialSubReaders()
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 //ORIGINAL LINE: @Override protected final java.util.List<? extends R> getSequentialSubReaders()
-	  protected internal override sealed IList<?> SequentialSubReaders where ? : R
+	  protected internal override sealed IList<R> SequentialSubReaders
 	  {
 		  get
 		  {

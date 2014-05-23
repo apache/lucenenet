@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System;
 
 namespace Lucene.Net.Util
@@ -55,7 +56,7 @@ namespace Lucene.Net.Util
 	  {
 		Assert.AreEqual(original.Length, sorted.Length);
 		Entry[] actuallySorted = Arrays.copyOf(original, original.Length);
-		Arrays.sort(actuallySorted);
+		Array.Sort(actuallySorted);
 		for (int i = 0; i < original.Length; ++i)
 		{
 		  Assert.AreEqual(actuallySorted[i].Value, sorted[i].Value);
@@ -72,53 +73,21 @@ namespace Lucene.Net.Util
 		Entry[] toSort = new Entry[o + arr.Length + random().Next(3)];
 		Array.Copy(arr, 0, toSort, o, arr.Length);
 		Sorter sorter = NewSorter(toSort);
-		sorter.sort(o, o + arr.Length);
+		sorter.Sort(o, o + arr.Length);
 		AssertSorted(arr, Arrays.copyOfRange(toSort, o, o + arr.Length));
 	  }
 
 	  internal enum Strategy
 	  {
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		RANDOM
-		{
-		},
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		RANDOM_LOW_CARDINALITY
-		{
-		},
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		ASCENDING
-		{
-		},
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		DESCENDING
-		{
-		},
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		STRICTLY_DESCENDING
-		{
-		},
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
-		ASCENDING_SEQUENCES
-		{
-		},
-//JAVA TO C# CONVERTER TODO TASK: The following line could not be converted:
+		RANDOM,
+		RANDOM_LOW_CARDINALITY,
+		ASCENDING,
+		DESCENDING,
+		STRICTLY_DESCENDING,
+		ASCENDING_SEQUENCES,
 		MOSTLY_ASCENDING
-		{
-		}
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		public abstract void set(Entry[] arr, int i);
-	  }
-
-
-
-
-
-
-
-
-
-
+      }
+	  public abstract void set(Entry[] arr, int i);
 
 	}
 

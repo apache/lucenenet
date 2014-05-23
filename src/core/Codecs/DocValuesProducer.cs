@@ -25,6 +25,7 @@ namespace Lucene.Net.Codecs
 	using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 	using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 	using Bits = Lucene.Net.Util.Bits;
+    using System;
 
 	/// <summary>
 	/// Abstract API that produces numeric, binary and

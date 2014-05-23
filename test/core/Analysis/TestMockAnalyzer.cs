@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	using FieldType = Lucene.Net.Document.FieldType;
 	using AtomicReader = Lucene.Net.Index.AtomicReader;
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Fields = Lucene.Net.Index.Fields;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Terms = Lucene.Net.Index.Terms;

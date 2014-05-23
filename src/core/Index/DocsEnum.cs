@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
 	using Bits = Lucene.Net.Util.Bits; // javadocs

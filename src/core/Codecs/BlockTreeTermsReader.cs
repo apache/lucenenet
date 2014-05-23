@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions;
+	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -52,6 +52,8 @@ namespace Lucene.Net.Codecs
 	using Lucene.Net.Util.Fst;
 	using Lucene.Net.Util.Fst;
 	using Util = Lucene.Net.Util.Fst.Util;
+    using Lucene.Net.Support;
+    using System.Text;
 
 	/// <summary>
 	/// A block-based terms index and dictionary that assigns
@@ -174,36 +176,18 @@ namespace Lucene.Net.Codecs
 
 		  for (int i = 0;i < numFields;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int field = in.readVInt();
 			int field = @in.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long numTerms = in.readVLong();
 			long numTerms = @in.ReadVLong();
 			Debug.Assert(numTerms >= 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBytes = in.readVInt();
 			int numBytes = @in.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef rootCode = new Lucene.Net.Util.BytesRef(new byte[numBytes]);
 			BytesRef rootCode = new BytesRef(new sbyte[numBytes]);
 			@in.ReadBytes(rootCode.Bytes, 0, numBytes);
 			rootCode.Length = numBytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
 			FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
 			Debug.Assert(fieldInfo != null, "field=" + field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long sumTotalTermFreq = fieldInfo.getIndexOptions() == Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_ONLY ? -1 : in.readVLong();
 			long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? - 1 : @in.ReadVLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long sumDocFreq = in.readVLong();
 			long sumDocFreq = @in.ReadVLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount = in.readVInt();
 			int docCount = @in.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int longsSize = version >= BlockTreeTermsWriter.VERSION_META_ARRAY ? in.readVInt() : 0;
 			int longsSize = Version >= BlockTreeTermsWriter.VERSION_META_ARRAY ? @in.ReadVInt() : 0;
 			if (docCount < 0 || docCount > info.DocCount) // #docs with field must be <= #docs
 			{
@@ -217,8 +201,6 @@ namespace Lucene.Net.Codecs
 			{
 			  throw new CorruptIndexException("invalid sumTotalTermFreq: " + sumTotalTermFreq + " sumDocFreq: " + sumDocFreq + " (resource=" + @in + ")");
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long indexStartFP = indexDivisor != -1 ? indexIn.readVLong() : 0;
 			long indexStartFP = indexDivisor != -1 ? indexIn.ReadVLong() : 0;
 			FieldReader previous = Fields[fieldInfo.Name] = new FieldReader(this, fieldInfo, numTerms, rootCode, sumTotalTermFreq, sumDocFreq, docCount, indexStartFP, longsSize, indexIn);
 			if (previous != null)
@@ -293,7 +275,7 @@ namespace Lucene.Net.Codecs
 	  {
 		try
 		{
-		  IOUtils.close(@in, PostingsReader);
+		  IOUtils.Close(@in, PostingsReader);
 		}
 		finally
 		{
@@ -305,7 +287,7 @@ namespace Lucene.Net.Codecs
 
 	  public override IEnumerator<string> Iterator()
 	  {
-		return Collections.unmodifiableSet(Fields.Keys).GetEnumerator();
+          return Fields.Keys.GetEnumerator();
 	  }
 
 	  public override Terms Terms(string field)
@@ -463,17 +445,13 @@ namespace Lucene.Net.Codecs
 		  }
 		  BlockCountByPrefixLen[frame.Prefix]++;
 		  StartBlockCount++;
-		  TotalBlockSuffixBytes += frame.SuffixesReader.length();
-		  TotalBlockStatsBytes += frame.StatsReader.length();
+		  TotalBlockSuffixBytes += frame.SuffixesReader.Length();
+		  TotalBlockStatsBytes += frame.StatsReader.Length();
 		}
 
 		internal virtual void EndBlock(FieldReader.SegmentTermsEnum.Frame frame)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termCount = frame.isLeafBlock ? frame.entCount : frame.state.termBlockOrd;
-		  int termCount = frame.IsLeafBlock ? frame.EntCount : frame.State.termBlockOrd;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subBlockCount = frame.entCount - termCount;
+		  int termCount = frame.IsLeafBlock ? frame.EntCount : frame.State.TermBlockOrd;
 		  int subBlockCount = frame.EntCount - termCount;
 		  TotalTermCount += termCount;
 		  if (termCount != 0 && subBlockCount != 0)
@@ -490,12 +468,10 @@ namespace Lucene.Net.Codecs
 		  }
 		  else
 		  {
-			throw new IllegalStateException();
+			throw new InvalidOperationException();
 		  }
 		  EndBlockCount++;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long otherBytes = frame.fpEnd - frame.fp - frame.suffixesReader.length() - frame.statsReader.length();
-		  long otherBytes = frame.FpEnd - frame.Fp - frame.SuffixesReader.length() - frame.StatsReader.length();
+		  long otherBytes = frame.FpEnd - frame.Fp - frame.SuffixesReader.Length() - frame.StatsReader.Length();
 		  Debug.Assert(otherBytes > 0, "otherBytes=" + otherBytes + " frame.fp=" + frame.Fp + " frame.fpEnd=" + frame.FpEnd);
 		  TotalBlockOtherBytes += otherBytes;
 		}
@@ -514,55 +490,53 @@ namespace Lucene.Net.Codecs
 
 		public override string ToString()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream(1024);
-		  ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-		  PrintStream @out;
-		  try
+		  StringBuilder @out = new StringBuilder();
+		  
+          /* LUCENE TO-DO I don't think this is neccesary 
+          try
 		  {
 			@out = new PrintStream(bos, false, IOUtils.UTF_8);
 		  }
 		  catch (UnsupportedEncodingException bogus)
 		  {
 			throw new Exception(bogus);
-		  }
+		  }*/
 
-		  @out.println("  index FST:");
-		  @out.println("    " + IndexNodeCount + " nodes");
-		  @out.println("    " + IndexArcCount + " arcs");
-		  @out.println("    " + IndexNumBytes + " bytes");
-		  @out.println("  terms:");
-		  @out.println("    " + TotalTermCount + " terms");
-		  @out.println("    " + TotalTermBytes + " bytes" + (TotalTermCount != 0 ? " (" + string.format(Locale.ROOT, "%.1f", ((double) TotalTermBytes) / TotalTermCount) + " bytes/term)" : ""));
-		  @out.println("  blocks:");
-		  @out.println("    " + TotalBlockCount + " blocks");
-		  @out.println("    " + TermsOnlyBlockCount + " terms-only blocks");
-		  @out.println("    " + SubBlocksOnlyBlockCount + " sub-block-only blocks");
-		  @out.println("    " + MixedBlockCount + " mixed blocks");
-		  @out.println("    " + FloorBlockCount + " floor blocks");
-		  @out.println("    " + (TotalBlockCount - FloorSubBlockCount) + " non-floor blocks");
-		  @out.println("    " + FloorSubBlockCount + " floor sub-blocks");
-		  @out.println("    " + TotalBlockSuffixBytes + " term suffix bytes" + (TotalBlockCount != 0 ? " (" + string.format(Locale.ROOT, "%.1f", ((double) TotalBlockSuffixBytes) / TotalBlockCount) + " suffix-bytes/block)" : ""));
-		  @out.println("    " + TotalBlockStatsBytes + " term stats bytes" + (TotalBlockCount != 0 ? " (" + string.format(Locale.ROOT, "%.1f", ((double) TotalBlockStatsBytes) / TotalBlockCount) + " stats-bytes/block)" : ""));
-		  @out.println("    " + TotalBlockOtherBytes + " other bytes" + (TotalBlockCount != 0 ? " (" + string.format(Locale.ROOT, "%.1f", ((double) TotalBlockOtherBytes) / TotalBlockCount) + " other-bytes/block)" : ""));
+		  @out.AppendLine("  index FST:");
+		  @out.AppendLine("    " + IndexNodeCount + " nodes");
+		  @out.AppendLine("    " + IndexArcCount + " arcs");
+		  @out.AppendLine("    " + IndexNumBytes + " bytes");
+		  @out.AppendLine("  terms:");
+		  @out.AppendLine("    " + TotalTermCount + " terms");
+		  @out.AppendLine("    " + TotalTermBytes + " bytes" + (TotalTermCount != 0 ? " (" + ((double) TotalTermBytes / TotalTermCount).ToString("0.0") + " bytes/term)" : ""));
+		  @out.AppendLine("  blocks:");
+		  @out.AppendLine("    " + TotalBlockCount + " blocks");
+		  @out.AppendLine("    " + TermsOnlyBlockCount + " terms-only blocks");
+		  @out.AppendLine("    " + SubBlocksOnlyBlockCount + " sub-block-only blocks");
+		  @out.AppendLine("    " + MixedBlockCount + " mixed blocks");
+		  @out.AppendLine("    " + FloorBlockCount + " floor blocks");
+		  @out.AppendLine("    " + (TotalBlockCount - FloorSubBlockCount) + " non-floor blocks");
+		  @out.AppendLine("    " + FloorSubBlockCount + " floor sub-blocks");
+          @out.AppendLine("    " + TotalBlockSuffixBytes + " term suffix bytes" + (TotalBlockCount != 0 ? " (" + ((double)TotalBlockSuffixBytes / TotalBlockCount).ToString("0.0") + " suffix-bytes/block)" : ""));
+          @out.AppendLine("    " + TotalBlockStatsBytes + " term stats bytes" + (TotalBlockCount != 0 ? " (" + ((double)TotalBlockStatsBytes / TotalBlockCount).ToString("0.0") + " stats-bytes/block)" : ""));
+          @out.AppendLine("    " + TotalBlockOtherBytes + " other bytes" + (TotalBlockCount != 0 ? " (" + ((double)TotalBlockOtherBytes / TotalBlockCount).ToString("0.0") + " other-bytes/block)" : ""));
 		  if (TotalBlockCount != 0)
 		  {
-			@out.println("    by prefix length:");
+			@out.AppendLine("    by prefix length:");
 			int total = 0;
 			for (int prefix = 0;prefix < BlockCountByPrefixLen.Length;prefix++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blockCount = blockCountByPrefixLen[prefix];
 			  int blockCount = BlockCountByPrefixLen[prefix];
 			  total += blockCount;
 			  if (blockCount != 0)
 			  {
-				@out.println("      " + string.format(Locale.ROOT, "%2d", prefix) + ": " + blockCount);
+                  @out.AppendLine("      " + prefix.ToString().PadLeft(2, ' ') + ": " + blockCount);
 			  }
 			}
 			Debug.Assert(TotalBlockCount == total);
 		  }
-
+          return @out.ToString();
+          /* LUCENE TO-DO I dont think this is neccesary
 		  try
 		  {
 			return bos.ToString(IOUtils.UTF_8);
@@ -570,7 +544,7 @@ namespace Lucene.Net.Codecs
 		  catch (UnsupportedEncodingException bogus)
 		  {
 			throw new Exception(bogus);
-		  }
+		  }*/
 		}
 	  }
 
@@ -622,7 +596,7 @@ namespace Lucene.Net.Codecs
 			IndexInput clone = indexIn.Clone();
 			//System.out.println("start=" + indexStartFP + " field=" + fieldInfo.name);
 			clone.Seek(indexStartFP);
-			Index = new FST<>(clone, ByteSequenceOutputs.Singleton);
+			Index = new FST<BytesRef>(clone, ByteSequenceOutputs.Singleton);
 
 			/*
 			if (false) {
@@ -658,17 +632,17 @@ namespace Lucene.Net.Codecs
 
 		public override bool HasFreqs()
 		{
-		  return FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 		}
 
 		public override bool HasOffsets()
 		{
-		  return FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		}
 
 		public override bool HasPositions()
 		{
-		  return FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		}
 
 		public override bool HasPayloads()
@@ -737,7 +711,7 @@ namespace Lucene.Net.Codecs
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef>[] arcs = new Lucene.Net.Util.Fst.FST.Arc[5];
-		  internal FST.Arc<BytesRef>[] Arcs = new FST.Arc[5];
+          internal FST<BytesRef>.Arc<BytesRef>[] Arcs = new FST<BytesRef>.Arc<BytesRef>[5];
 
 		  internal readonly RunAutomaton RunAutomaton;
 		  internal readonly CompiledAutomaton CompiledAutomaton;
@@ -746,7 +720,7 @@ namespace Lucene.Net.Codecs
 
 		  internal readonly BytesRef Term_Renamed = new BytesRef();
 
-		  internal readonly FST.BytesReader FstReader;
+          internal readonly FST<BytesRef>.BytesReader FstReader;
 
 		  // TODO: can we share this with the frame in STE?
 		  private sealed class Frame
@@ -796,7 +770,7 @@ namespace Lucene.Net.Codecs
 			internal int CurTransitionMax;
 			internal int TransitionIndex;
 
-			internal FST.Arc<BytesRef> Arc;
+            internal FST<BytesRef>.Arc<BytesRef> Arc;
 
 			internal readonly BlockTermState TermState;
 
@@ -816,7 +790,7 @@ namespace Lucene.Net.Codecs
 			{
 				this.OuterInstance = outerInstance;
 			  this.Ord = ord;
-			  this.TermState = outerInstance.OuterInstance.OuterInstance.PostingsReader.newTermState();
+			  this.TermState = outerInstance.OuterInstance.OuterInstance.PostingsReader.NewTermState();
 			  this.TermState.TotalTermFreq = -1;
 			  this.Longs = new long[outerInstance.OuterInstance.LongsSize];
 			}
@@ -842,7 +816,7 @@ namespace Lucene.Net.Codecs
 				// if (DEBUG) System.out.println("    nextFloorLabel=" + (char) nextFloorLabel);
 			  } while (NumFollowFloorBlocks != 0 && NextFloorLabel <= Transitions[TransitionIndex].Min);
 
-			  Load(Lucene.Net.Util.BytesRefIterator_Fields.Null);
+			  Load(null);
 			}
 
 			public int State
@@ -851,7 +825,7 @@ namespace Lucene.Net.Codecs
 				{
 				  this.State_Renamed = value;
 				  TransitionIndex = 0;
-				  Transitions = outerInstance.CompiledAutomaton.SortedTransitions[value];
+				  Transitions = OuterInstance.CompiledAutomaton.SortedTransitions[value];
 				  if (Transitions.Length != 0)
 				  {
 					CurTransitionMax = Transitions[0].Max;
@@ -878,7 +852,7 @@ namespace Lucene.Net.Codecs
 
 			  // if (DEBUG) System.out.println("    load fp=" + fp + " fpOrig=" + fpOrig + " frameIndexData=" + frameIndexData + " trans=" + (transitions.length != 0 ? transitions[0] : "n/a" + " state=" + state));
 
-			  if (frameIndexData != Lucene.Net.Util.BytesRefIterator_Fields.Null && Transitions.Length != 0)
+			  if (frameIndexData != null && Transitions.Length != 0)
 			  {
 				// Floor frame
 				if (FloorData.Length < frameIndexData.Length)
@@ -900,7 +874,7 @@ namespace Lucene.Net.Codecs
 
 				  // If current state is accept, we must process
 				  // first block in case it has empty suffix:
-				  if (!outerInstance.RunAutomaton.IsAccept(State_Renamed))
+				  if (OuterInstance.RunAutomaton.IsAccept(State_Renamed))
 				  {
 					// Maybe skip floor blocks:
 					while (NumFollowFloorBlocks != 0 && NextFloorLabel <= Transitions[0].Min)
@@ -921,31 +895,31 @@ namespace Lucene.Net.Codecs
 				}
 			  }
 
-			  outerInstance.@in.Seek(Fp);
-			  int code = outerInstance.@in.ReadVInt();
-			  EntCount = (int)((uint)code >> 1);
+              OuterInstance.@in.Seek(Fp);
+              int code_ = OuterInstance.@in.ReadVInt();
+			  EntCount = (int)((uint)code_ >> 1);
 			  Debug.Assert(EntCount > 0);
-			  IsLastInFloor = (code & 1) != 0;
+			  IsLastInFloor = (code_ & 1) != 0;
 
 			  // term suffixes:
-			  code = outerInstance.@in.ReadVInt();
-			  IsLeafBlock = (code & 1) != 0;
-			  int numBytes = (int)((uint)code >> 1);
+              code_ = OuterInstance.@in.ReadVInt();
+			  IsLeafBlock = (code_ & 1) != 0;
+			  int numBytes = (int)((uint)code_ >> 1);
 			  // if (DEBUG) System.out.println("      entCount=" + entCount + " lastInFloor?=" + isLastInFloor + " leafBlock?=" + isLeafBlock + " numSuffixBytes=" + numBytes);
 			  if (SuffixBytes.Length < numBytes)
 			  {
 				SuffixBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
-			  outerInstance.@in.ReadBytes(SuffixBytes, 0, numBytes);
+              OuterInstance.@in.ReadBytes(SuffixBytes, 0, numBytes);
 			  SuffixesReader.Reset(SuffixBytes, 0, numBytes);
 
 			  // stats
-			  numBytes = outerInstance.@in.ReadVInt();
+              numBytes = OuterInstance.@in.ReadVInt();
 			  if (StatBytes.Length < numBytes)
 			  {
 				StatBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
-			  outerInstance.@in.ReadBytes(StatBytes, 0, numBytes);
+              OuterInstance.@in.ReadBytes(StatBytes, 0, numBytes);
 			  StatsReader.Reset(StatBytes, 0, numBytes);
 			  MetaDataUpto = 0;
 
@@ -953,8 +927,8 @@ namespace Lucene.Net.Codecs
 			  NextEnt = 0;
 
 			  // metadata
-			  numBytes = outerInstance.@in.ReadVInt();
-			  if (Bytes == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+              numBytes = OuterInstance.@in.ReadVInt();
+			  if (Bytes == null)
 			  {
 				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 				BytesReader = new ByteArrayDataInput();
@@ -963,14 +937,14 @@ namespace Lucene.Net.Codecs
 			  {
 				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
-			  outerInstance.@in.ReadBytes(Bytes, 0, numBytes);
+              OuterInstance.@in.ReadBytes(Bytes, 0, numBytes);
 			  BytesReader.Reset(Bytes, 0, numBytes);
 
 			  if (!IsLastInFloor)
 			  {
 				// Sub-blocks of a single floor block are always
 				// written one after another -- tail recurse:
-				FpEnd = outerInstance.@in.FilePointer;
+				FpEnd = OuterInstance.@in.FilePointer;
 			  }
 			}
 
@@ -1030,8 +1004,6 @@ namespace Lucene.Net.Codecs
 			{
 
 			  // lazily catch up on metadata decode:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = getTermBlockOrd();
 			  int limit = TermBlockOrd;
 			  bool absolute = MetaDataUpto == 0;
 			  Debug.Assert(limit > 0);
@@ -1052,17 +1024,17 @@ namespace Lucene.Net.Codecs
 				// stats
 				TermState.DocFreq = StatsReader.ReadVInt();
 				//if (DEBUG) System.out.println("    dF=" + state.docFreq);
-				if (outerInstance.OuterInstance.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                if (OuterInstance.OuterInstance.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
 				{
 				  TermState.TotalTermFreq = TermState.DocFreq + StatsReader.ReadVLong();
 				  //if (DEBUG) System.out.println("    totTF=" + state.totalTermFreq);
 				}
 				// metadata 
-				for (int i = 0; i < outerInstance.OuterInstance.LongsSize; i++)
+                for (int i = 0; i < OuterInstance.OuterInstance.LongsSize; i++)
 				{
 				  Longs[i] = BytesReader.ReadVLong();
 				}
-				outerInstance.OuterInstance.OuterInstance.PostingsReader.decodeTerm(Longs, BytesReader, outerInstance.OuterInstance.FieldInfo, TermState, absolute);
+                OuterInstance.OuterInstance.OuterInstance.PostingsReader.DecodeTerm(Longs, BytesReader, OuterInstance.OuterInstance.FieldInfo, TermState, absolute);
 
 				MetaDataUpto++;
 				absolute = false;
@@ -1091,12 +1063,12 @@ namespace Lucene.Net.Codecs
 			}
 			for (int arcIdx = 0;arcIdx < Arcs.Length;arcIdx++)
 			{
-			  Arcs[arcIdx] = new FST.Arc<>();
+                Arcs[arcIdx] = new FST<BytesRef>.Arc<BytesRef>();
 			}
 
-			if (outerInstance.Index == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (outerInstance.Index == null)
 			{
-			  FstReader = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  FstReader = null;
 			}
 			else
 			{
@@ -1110,15 +1082,11 @@ namespace Lucene.Net.Codecs
 			// Else the seek cost of loading the frames will be
 			// too costly.
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef> arc = index.getFirstArc(arcs[0]);
-			FST.Arc<BytesRef> arc = outerInstance.Index.getFirstArc(Arcs[0]);
+            FST<BytesRef>.Arc<BytesRef> arc = outerInstance.Index.GetFirstArc(Arcs[0]);
 			// Empty string prefix must have an output in the index!
 			Debug.Assert(arc.Final);
 
 			// Special pushFrame since it's the first one:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame f = stack[0];
 			Frame f = Stack[0];
 			f.Fp = f.FpOrig = outerInstance.RootBlockFP;
 			f.Prefix = 0;
@@ -1128,10 +1096,10 @@ namespace Lucene.Net.Codecs
 			f.Load(outerInstance.RootCode);
 
 			// for assert:
-			Debug.Assert(setSavedStartTerm(startTerm));
+			Debug.Assert(SetSavedStartTerm(startTerm));
 
 			CurrentFrame = f;
-			if (startTerm != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (startTerm != null)
 			{
 			  SeekToStartTerm(startTerm);
 			}
@@ -1140,22 +1108,20 @@ namespace Lucene.Net.Codecs
 		  // only for assert:
 		  internal bool SetSavedStartTerm(BytesRef startTerm)
 		  {
-			SavedStartTerm_Renamed = startTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null ? Lucene.Net.Util.BytesRefIterator_Fields.Null : BytesRef.DeepCopyOf(startTerm);
+			SavedStartTerm_Renamed = startTerm == null ? null : BytesRef.DeepCopyOf(startTerm);
 			return true;
 		  }
 
 		  public override TermState TermState()
 		  {
 			CurrentFrame.DecodeMetaData();
-			return CurrentFrame.TermState.clone();
+			return CurrentFrame.TermState.Clone();
 		  }
 
 		  internal Frame GetFrame(int ord)
 		  {
 			if (ord >= Stack.Length)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame[] next = new Frame[Lucene.Net.Util.ArrayUtil.oversize(1+ord, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Frame[] next = new Frame[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Array.Copy(Stack, 0, next, 0, Stack.Length);
 			  for (int stackOrd = Stack.Length;stackOrd < next.Length;stackOrd++)
@@ -1168,18 +1134,15 @@ namespace Lucene.Net.Codecs
 			return Stack[ord];
 		  }
 
-		  internal FST.Arc<BytesRef> GetArc(int ord)
+		  internal FST<BytesRef>.Arc<BytesRef> GetArc(int ord)
 		  {
 			if (ord >= Arcs.Length)
 			{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef>[] next = new Lucene.Net.Util.Fst.FST.Arc[Lucene.Net.Util.ArrayUtil.oversize(1+ord, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-			  FST.Arc<BytesRef>[] next = new FST.Arc[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+			  FST<BytesRef>.Arc<BytesRef>[] next = new FST<BytesRef>.Arc<BytesRef>[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Array.Copy(Arcs, 0, next, 0, Arcs.Length);
 			  for (int arcOrd = Arcs.Length;arcOrd < next.Length;arcOrd++)
 			  {
-				next[arcOrd] = new FST.Arc<>();
+                  next[arcOrd] = new FST<BytesRef>.Arc<BytesRef>();
 			  }
 			  Arcs = next;
 			}
@@ -1188,9 +1151,7 @@ namespace Lucene.Net.Codecs
 
 		  internal Frame PushFrame(int state)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame f = getFrame(currentFrame == Lucene.Net.Util.BytesRefIterator_Fields.null ? 0 : 1+currentFrame.ord);
-			Frame f = GetFrame(CurrentFrame == Lucene.Net.Util.BytesRefIterator_Fields.Null ? 0 : 1 + CurrentFrame.Ord);
+			Frame f = GetFrame(CurrentFrame == null ? 0 : 1 + CurrentFrame.Ord);
 
 			f.Fp = f.FpOrig = CurrentFrame.LastSubFP;
 			f.Prefix = CurrentFrame.Prefix + CurrentFrame.Suffix;
@@ -1201,28 +1162,26 @@ namespace Lucene.Net.Codecs
 			// "bother" with this so we can get the floor data
 			// from the index and skip floor blocks when
 			// possible:
-			FST.Arc<BytesRef> arc = CurrentFrame.Arc;
+            FST<BytesRef>.Arc<BytesRef> arc = CurrentFrame.Arc;
 			int idx = CurrentFrame.Prefix;
 			Debug.Assert(CurrentFrame.Suffix > 0);
 			BytesRef output = CurrentFrame.OutputPrefix;
 			while (idx < f.Prefix)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int target = term.bytes[idx] & 0xff;
 			  int target = Term_Renamed.Bytes[idx] & 0xff;
 			  // TODO: we could be more efficient for the next()
 			  // case by using current arc as starting point,
 			  // passed to findTargetArc
-			  arc = outerInstance.Index.findTargetArc(target, arc, GetArc(1 + idx), FstReader);
-			  Debug.Assert(arc != Lucene.Net.Util.BytesRefIterator_Fields.Null);
-			  output = outerInstance.OuterInstance.FstOutputs.add(output, arc.Output);
+              arc = OuterInstance.Index.FindTargetArc(target, arc, GetArc(1 + idx), FstReader);
+			  Debug.Assert(arc != null);
+              output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
 			  idx++;
 			}
 
 			f.Arc = arc;
 			f.OutputPrefix = output;
 			Debug.Assert(arc.Final);
-			f.Load(outerInstance.OuterInstance.FstOutputs.add(output, arc.NextFinalOutput));
+            f.Load(OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput));
 			return f;
 		  }
 
@@ -1236,33 +1195,32 @@ namespace Lucene.Net.Codecs
 			//if (DEBUG) System.out.println("BTIR.docFreq");
 			CurrentFrame.DecodeMetaData();
 			//if (DEBUG) System.out.println("  return " + currentFrame.termState.docFreq);
-			return CurrentFrame.TermState.docFreq;
+			return CurrentFrame.TermState.DocFreq;
 		  }
 
 		  public override long TotalTermFreq()
 		  {
 			CurrentFrame.DecodeMetaData();
-			return CurrentFrame.TermState.totalTermFreq;
+			return CurrentFrame.TermState.TotalTermFreq;
 		  }
 
 		  public override DocsEnum Docs(Bits skipDocs, DocsEnum reuse, int flags)
 		  {
 			CurrentFrame.DecodeMetaData();
-			return outerInstance.OuterInstance.PostingsReader.docs(outerInstance.FieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
+            return OuterInstance.OuterInstance.PostingsReader.Docs(OuterInstance.FieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
 		  }
 
 		  public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-			if (outerInstance.FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+            if (OuterInstance.FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
 			{
 			  // Positions were not indexed:
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			}
 
 			CurrentFrame.DecodeMetaData();
-			return outerInstance.OuterInstance.PostingsReader.docsAndPositions(outerInstance.FieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
+            return OuterInstance.OuterInstance.PostingsReader.DocsAndPositions(OuterInstance.FieldInfo, CurrentFrame.TermState, skipDocs, reuse, flags);
 		  }
-
 
 		  // NOTE: specialized to only doing the first-time
 		  // seek, but we could generalize it to allow
@@ -1276,7 +1234,7 @@ namespace Lucene.Net.Codecs
 			{
 			  Term_Renamed.Bytes = ArrayUtil.Grow(Term_Renamed.Bytes, target.Length);
 			}
-			FST.Arc<BytesRef> arc = Arcs[0];
+            FST<BytesRef>.Arc<BytesRef> arc = Arcs[0];
 			Debug.Assert(arc == CurrentFrame.Arc);
 
 			for (int idx = 0;idx <= target.Length;idx++)
@@ -1284,24 +1242,12 @@ namespace Lucene.Net.Codecs
 
 			  while (true)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int savePos = currentFrame.suffixesReader.getPosition();
 				int savePos = CurrentFrame.SuffixesReader.Position;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int saveStartBytePos = currentFrame.startBytePos;
 				int saveStartBytePos = CurrentFrame.StartBytePos;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int saveSuffix = currentFrame.suffix;
 				int saveSuffix = CurrentFrame.Suffix;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long saveLastSubFP = currentFrame.lastSubFP;
 				long saveLastSubFP = CurrentFrame.LastSubFP;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int saveTermBlockOrd = currentFrame.termState.termBlockOrd;
-				int saveTermBlockOrd = CurrentFrame.TermState.termBlockOrd;
+				int saveTermBlockOrd = CurrentFrame.TermState.TermBlockOrd;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isSubBlock = currentFrame.next();
 				bool isSubBlock = CurrentFrame.Next();
 
 				//if (DEBUG) System.out.println("    cycle ent=" + currentFrame.nextEnt + " (of " + currentFrame.entCount + ") prefix=" + currentFrame.prefix + " suffix=" + currentFrame.suffix + " isBlock=" + isSubBlock + " firstLabel=" + (currentFrame.suffix == 0 ? "" : (currentFrame.suffixBytes[currentFrame.startBytePos])&0xff));
@@ -1315,14 +1261,11 @@ namespace Lucene.Net.Codecs
 				if (isSubBlock && StringHelper.StartsWith(target, Term_Renamed))
 				{
 				  // Recurse
-				  //if (DEBUG) System.out.println("      recurse!");
 				  CurrentFrame = PushFrame(State);
 				  break;
 				}
 				else
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = term.compareTo(target);
 				  int cmp = Term_Renamed.CompareTo(target);
 				  if (cmp < 0)
 				  {
@@ -1358,7 +1301,7 @@ namespace Lucene.Net.Codecs
 					CurrentFrame.StartBytePos = saveStartBytePos;
 					CurrentFrame.Suffix = saveSuffix;
 					CurrentFrame.SuffixesReader.Position = savePos;
-					CurrentFrame.TermState.termBlockOrd = saveTermBlockOrd;
+					CurrentFrame.TermState.TermBlockOrd = saveTermBlockOrd;
 					Array.Copy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
 					Term_Renamed.Length = CurrentFrame.Prefix + CurrentFrame.Suffix;
 					// If the last entry was a block we don't
@@ -1398,10 +1341,8 @@ namespace Lucene.Net.Codecs
 				  //if (DEBUG) System.out.println("  pop frame");
 				  if (CurrentFrame.Ord == 0)
 				  {
-					return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+					return null;
 				  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long lastFP = currentFrame.fpOrig;
 				  long lastFP = CurrentFrame.FpOrig;
 				  CurrentFrame = Stack[CurrentFrame.Ord - 1];
 				  Debug.Assert(CurrentFrame.LastSubFP == lastFP);
@@ -1409,8 +1350,6 @@ namespace Lucene.Net.Codecs
 				}
 			  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isSubBlock = currentFrame.next();
 			  bool isSubBlock = CurrentFrame.Next();
 			  // if (DEBUG) {
 			  //   final BytesRef suffixRef = new BytesRef();
@@ -1422,8 +1361,6 @@ namespace Lucene.Net.Codecs
 
 			  if (CurrentFrame.Suffix != 0)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int label = currentFrame.suffixBytes[currentFrame.startBytePos] & 0xff;
 				int label = CurrentFrame.SuffixBytes[CurrentFrame.StartBytePos] & 0xff;
 				while (label > CurrentFrame.CurTransitionMax)
 				{
@@ -1446,12 +1383,10 @@ namespace Lucene.Net.Codecs
 			  }
 
 			  // First test the common suffix, if set:
-			  if (CompiledAutomaton.CommonSuffixRef != Lucene.Net.Util.BytesRefIterator_Fields.Null && !isSubBlock)
+			  if (CompiledAutomaton.CommonSuffixRef != null && !isSubBlock)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termLen = currentFrame.prefix + currentFrame.suffix;
 				int termLen = CurrentFrame.Prefix + CurrentFrame.Suffix;
-				if (termLen < CompiledAutomaton.CommonSuffixRef.length)
+				if (termLen < CompiledAutomaton.CommonSuffixRef.Length)
 				{
 				  // No match
 				  // if (DEBUG) {
@@ -1460,17 +1395,11 @@ namespace Lucene.Net.Codecs
 				  goto nextTermContinue;
 				}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] suffixBytes = currentFrame.suffixBytes;
 				sbyte[] suffixBytes = CurrentFrame.SuffixBytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] commonSuffixBytes = compiledAutomaton.commonSuffixRef.bytes;
-				sbyte[] commonSuffixBytes = CompiledAutomaton.CommonSuffixRef.bytes;
+				sbyte[] commonSuffixBytes = CompiledAutomaton.CommonSuffixRef.Bytes;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int lenInPrefix = compiledAutomaton.commonSuffixRef.length - currentFrame.suffix;
-				int lenInPrefix = CompiledAutomaton.CommonSuffixRef.length - CurrentFrame.Suffix;
-				Debug.Assert(CompiledAutomaton.CommonSuffixRef.offset == 0);
+				int lenInPrefix = CompiledAutomaton.CommonSuffixRef.Length - CurrentFrame.Suffix;
+				Debug.Assert(CompiledAutomaton.CommonSuffixRef.Offset == 0);
 				int suffixBytesPos;
 				int commonSuffixBytesPos = 0;
 
@@ -1479,13 +1408,9 @@ namespace Lucene.Net.Codecs
 				  // A prefix of the common suffix overlaps with
 				  // the suffix of the block prefix so we first
 				  // test whether the prefix part matches:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] termBytes = term.bytes;
 				  sbyte[] termBytes = Term_Renamed.Bytes;
 				  int termBytesPos = CurrentFrame.Prefix - lenInPrefix;
 				  Debug.Assert(termBytesPos >= 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termBytesPosEnd = currentFrame.prefix;
 				  int termBytesPosEnd = CurrentFrame.Prefix;
 				  while (termBytesPos < termBytesPosEnd)
 				  {
@@ -1501,13 +1426,11 @@ namespace Lucene.Net.Codecs
 				}
 				else
 				{
-				  suffixBytesPos = CurrentFrame.StartBytePos + CurrentFrame.Suffix - CompiledAutomaton.CommonSuffixRef.length;
+				  suffixBytesPos = CurrentFrame.StartBytePos + CurrentFrame.Suffix - CompiledAutomaton.CommonSuffixRef.Length;
 				}
 
 				// Test overlapping suffix part:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int commonSuffixBytesPosEnd = compiledAutomaton.commonSuffixRef.length;
-				int commonSuffixBytesPosEnd = CompiledAutomaton.CommonSuffixRef.length;
+				int commonSuffixBytesPosEnd = CompiledAutomaton.CommonSuffixRef.Length;
 				while (commonSuffixBytesPos < commonSuffixBytesPosEnd)
 				{
 				  if (suffixBytes[suffixBytesPos++] != commonSuffixBytes[commonSuffixBytesPos++])
@@ -1555,7 +1478,7 @@ namespace Lucene.Net.Codecs
 			  {
 				CopyTerm();
 				//if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
-				Debug.Assert(SavedStartTerm_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null || Term_Renamed.CompareTo(SavedStartTerm_Renamed) > 0, "saveStartTerm=" + SavedStartTerm_Renamed.Utf8ToString() + " term=" + Term_Renamed.Utf8ToString());
+				Debug.Assert(SavedStartTerm_Renamed == null || Term_Renamed.CompareTo(SavedStartTerm_Renamed) > 0, "saveStartTerm=" + SavedStartTerm_Renamed.Utf8ToString() + " term=" + Term_Renamed.Utf8ToString());
 				return Term_Renamed;
 			  }
 			  else
@@ -1569,9 +1492,6 @@ namespace Lucene.Net.Codecs
 
 		  internal void CopyTerm()
 		  {
-			//System.out.println("      copyTerm cur.prefix=" + currentFrame.prefix + " cur.suffix=" + currentFrame.suffix + " first=" + (char) currentFrame.suffixBytes[currentFrame.startBytePos]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len = currentFrame.prefix + currentFrame.suffix;
 			int len = CurrentFrame.Prefix + CurrentFrame.Suffix;
 			if (Term_Renamed.Bytes.Length < len)
 			{
@@ -1611,7 +1531,7 @@ namespace Lucene.Net.Codecs
 		}
 
 		// Iterates through terms in this field
-		private sealed class SegmentTermsEnum : TermsEnum
+		internal sealed class SegmentTermsEnum : TermsEnum
 		{
 			private readonly BlockTreeTermsReader.FieldReader OuterInstance;
 
@@ -1633,11 +1553,9 @@ namespace Lucene.Net.Codecs
 		  internal bool Eof;
 
 		  internal readonly BytesRef Term_Renamed = new BytesRef();
-		  internal readonly FST.BytesReader FstReader;
+		  internal readonly FST<BytesRef>.BytesReader FstReader;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef>[] arcs = new Lucene.Net.Util.Fst.FST.Arc[1];
-		  internal FST.Arc<BytesRef>[] Arcs = new FST.Arc[1];
+          internal FST<BytesRef>.Arc<BytesRef>[] Arcs = new FST<BytesRef>.Arc<BytesRef>[1];
 
 		  public SegmentTermsEnum(BlockTreeTermsReader.FieldReader outerInstance)
 		  {
@@ -1648,35 +1566,33 @@ namespace Lucene.Net.Codecs
 			// Used to hold seek by TermState, or cached seek
 			StaticFrame = new Frame(this, -1);
 
-			if (outerInstance.Index == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (outerInstance.Index == null)
 			{
-			  FstReader = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  FstReader = null;
 			}
 			else
 			{
-			  FstReader = outerInstance.Index.BytesReader;
+			  FstReader = OuterInstance.Index.BytesReader;
 			}
 
 			// Init w/ root block; don't use index since it may
 			// not (and need not) have been loaded
 			for (int arcIdx = 0;arcIdx < Arcs.Length;arcIdx++)
 			{
-			  Arcs[arcIdx] = new FST.Arc<>();
+                Arcs[arcIdx] = new FST<BytesRef>.Arc<BytesRef>();
 			}
 
 			CurrentFrame = StaticFrame;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef> arc;
-			FST.Arc<BytesRef> arc;
-			if (outerInstance.Index != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+            FST<BytesRef>.Arc<BytesRef> arc;
+			if (outerInstance.Index != null)
 			{
-			  arc = outerInstance.Index.getFirstArc(Arcs[0]);
+			  arc = outerInstance.Index.GetFirstArc(Arcs[0]);
 			  // Empty string prefix must have an output in the index!
 			  Debug.Assert(arc.Final);
 			}
 			else
 			{
-			  arc = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  arc = null;
 			}
 			CurrentFrame = StaticFrame;
 			//currentFrame = pushFrame(arc, rootCode, 0);
@@ -1694,7 +1610,7 @@ namespace Lucene.Net.Codecs
 		  // Not private to avoid synthetic access$NNN methods
 		  internal void InitIndexInput()
 		  {
-			if (this.@in == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (this.@in == null)
 			{
 			  this.@in = OuterInstance.OuterInstance.@in.Clone();
 			}
@@ -1707,35 +1623,35 @@ namespace Lucene.Net.Codecs
 		  public Stats ComputeBlockStats()
 		  {
 
-			Stats stats = new Stats(outerInstance.OuterInstance.Segment, outerInstance.FieldInfo.Name);
-			if (outerInstance.Index != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			Stats stats = new Stats(OuterInstance.OuterInstance.Segment, OuterInstance.FieldInfo.Name);
+            if (OuterInstance.Index != null)
 			{
-			  stats.IndexNodeCount = outerInstance.Index.NodeCount;
-			  stats.IndexArcCount = outerInstance.Index.ArcCount;
-			  stats.IndexNumBytes = outerInstance.Index.sizeInBytes();
+                stats.IndexNodeCount = OuterInstance.Index.NodeCount;
+                stats.IndexArcCount = OuterInstance.Index.ArcCount;
+                stats.IndexNumBytes = OuterInstance.Index.SizeInBytes();
 			}
 
 			CurrentFrame = StaticFrame;
-			FST.Arc<BytesRef> arc;
-			if (outerInstance.Index != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+            FST<BytesRef>.Arc<BytesRef> arc;
+            if (OuterInstance.Index != null)
 			{
-			  arc = outerInstance.Index.getFirstArc(Arcs[0]);
+                arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 			  // Empty string prefix must have an output in the index!
 			  Debug.Assert(arc.Final);
 			}
 			else
 			{
-			  arc = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  arc = null;
 			}
 
 			// Empty string prefix must have an output in the
 			// index!
-			CurrentFrame = PushFrame(arc, outerInstance.RootCode, 0);
+            CurrentFrame = PushFrame(arc, OuterInstance.RootCode, 0);
 			CurrentFrame.FpOrig = CurrentFrame.Fp;
 			CurrentFrame.LoadBlock();
 			ValidIndexPrefix = 0;
 
-			stats.StartBlock(CurrentFrame, !CurrentFrame.IsLastInFloor);
+			stats.StartBlock(CurrentFrame, !(CurrentFrame.IsLastInFloor));
 
 			while (true)
 			{
@@ -1755,8 +1671,6 @@ namespace Lucene.Net.Codecs
 				  {
 					goto allTermsBreak;
 				  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long lastFP = currentFrame.fpOrig;
 				  long lastFP = CurrentFrame.FpOrig;
 				  CurrentFrame = Stack[CurrentFrame.Ord - 1];
 				  Debug.Assert(lastFP == CurrentFrame.LastSubFP);
@@ -1771,7 +1685,7 @@ namespace Lucene.Net.Codecs
 				if (CurrentFrame.Next())
 				{
 				  // Push to new block:
-				  CurrentFrame = PushFrame(Lucene.Net.Util.BytesRefIterator_Fields.Null, CurrentFrame.LastSubFP, Term_Renamed.Length);
+				  CurrentFrame = PushFrame(null, CurrentFrame.LastSubFP, Term_Renamed.Length);
 				  CurrentFrame.FpOrig = CurrentFrame.Fp;
 				  // this is a "next" frame -- even if it's
 				  // floor'd we must pretend it isn't so we don't
@@ -1795,17 +1709,17 @@ namespace Lucene.Net.Codecs
 
 			// Put root frame back:
 			CurrentFrame = StaticFrame;
-			if (outerInstance.Index != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+            if (OuterInstance.Index != null)
 			{
-			  arc = outerInstance.Index.getFirstArc(Arcs[0]);
+                arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 			  // Empty string prefix must have an output in the index!
 			  Debug.Assert(arc.Final);
 			}
 			else
 			{
-			  arc = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  arc = null;
 			}
-			CurrentFrame = PushFrame(arc, outerInstance.RootCode, 0);
+            CurrentFrame = PushFrame(arc, OuterInstance.RootCode, 0);
 			CurrentFrame.Rewind();
 			CurrentFrame.LoadBlock();
 			ValidIndexPrefix = 0;
@@ -1818,8 +1732,6 @@ namespace Lucene.Net.Codecs
 		  {
 			if (ord >= Stack.Length)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame[] next = new Frame[Lucene.Net.Util.ArrayUtil.oversize(1+ord, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Frame[] next = new Frame[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Array.Copy(Stack, 0, next, 0, Stack.Length);
 			  for (int stackOrd = Stack.Length;stackOrd < next.Length;stackOrd++)
@@ -1832,18 +1744,15 @@ namespace Lucene.Net.Codecs
 			return Stack[ord];
 		  }
 
-		  internal FST.Arc<BytesRef> GetArc(int ord)
+		  internal FST<BytesRef>.Arc<BytesRef> GetArc(int ord)
 		  {
 			if (ord >= Arcs.Length)
 			{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef>[] next = new Lucene.Net.Util.Fst.FST.Arc[Lucene.Net.Util.ArrayUtil.oversize(1+ord, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-			  FST.Arc<BytesRef>[] next = new FST.Arc[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+			  FST<BytesRef>.Arc<BytesRef>[] next = new FST<BytesRef>.Arc<BytesRef>[ArrayUtil.Oversize(1 + ord, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			  Array.Copy(Arcs, 0, next, 0, Arcs.Length);
 			  for (int arcOrd = Arcs.Length;arcOrd < next.Length;arcOrd++)
 			  {
-				next[arcOrd] = new FST.Arc<>();
+                  next[arcOrd] = new FST<BytesRef>.Arc<BytesRef>();
 			  }
 			  Arcs = next;
 			}
@@ -1859,17 +1768,11 @@ namespace Lucene.Net.Codecs
 		  }
 
 		  // Pushes a frame we seek'd to
-		  internal Frame PushFrame(FST.Arc<BytesRef> arc, BytesRef frameData, int length)
+          internal Frame PushFrame(FST<BytesRef>.Arc<BytesRef> arc, BytesRef frameData, int length)
 		  {
 			ScratchReader.Reset(frameData.Bytes, frameData.Offset, frameData.Length);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long code = scratchReader.readVLong();
 			long code = ScratchReader.ReadVLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long fpSeek = code >>> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS;
 			long fpSeek = (long)((ulong)code >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame f = getFrame(1+currentFrame.ord);
 			Frame f = GetFrame(1 + CurrentFrame.Ord);
 			f.HasTerms = (code & BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS) != 0;
 			f.HasTermsOrig = f.HasTerms;
@@ -1885,10 +1788,8 @@ namespace Lucene.Net.Codecs
 
 		  // Pushes next'd frame or seek'd frame; we later
 		  // lazy-load the frame only when needed
-		  internal Frame PushFrame(FST.Arc<BytesRef> arc, long fp, int length)
+          internal Frame PushFrame(FST<BytesRef>.Arc<BytesRef> arc, long fp, int length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Frame f = getFrame(1+currentFrame.ord);
 			Frame f = GetFrame(1 + CurrentFrame.Ord);
 			f.Arc = arc;
 			if (f.FpOrig == fp && f.NextEnt != -1)
@@ -1910,7 +1811,7 @@ namespace Lucene.Net.Codecs
 			{
 			  f.NextEnt = -1;
 			  f.Prefix = length;
-			  f.State.termBlockOrd = 0;
+			  f.State.TermBlockOrd = 0;
 			  f.FpOrig = f.Fp = fp;
 			  f.LastSubFP = -1;
 			  // if (DEBUG) {
@@ -1941,9 +1842,9 @@ namespace Lucene.Net.Codecs
 		  public override bool SeekExact(BytesRef target)
 		  {
 
-			if (outerInstance.Index == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (OuterInstance.Index == null)
 			{
-			  throw new IllegalStateException("terms index was not loaded");
+			  throw new InvalidOperationException("terms index was not loaded");
 			}
 
 			if (Term_Renamed.Bytes.Length <= target.Length)
@@ -1953,12 +1854,7 @@ namespace Lucene.Net.Codecs
 
 			Debug.Assert(ClearEOF());
 
-			// if (DEBUG) {
-			//   System.out.println("\nBTTR.seekExact seg=" + segment + " target=" + fieldInfo.name + ":" + brToString(target) + " current=" + brToString(term) + " (exists?=" + termExists + ") validIndexPrefix=" + validIndexPrefix);
-			//   printSeekState();
-			// }
-
-			FST.Arc<BytesRef> arc;
+            FST<BytesRef>.Arc<BytesRef> arc;
 			int targetUpto;
 			BytesRef output;
 
@@ -1986,8 +1882,6 @@ namespace Lucene.Net.Codecs
 			  Frame lastFrame = Stack[0];
 			  Debug.Assert(ValidIndexPrefix <= Term_Renamed.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLimit = Math.min(target.length, validIndexPrefix);
 			  int targetLimit = Math.Min(target.Length, ValidIndexPrefix);
 
 			  int cmp = 0;
@@ -2011,9 +1905,9 @@ namespace Lucene.Net.Codecs
 				//System.out.println("FAIL: arc.label=" + (char) arc.label + " targetLabel=" + (char) (target.bytes[target.offset + targetUpto] & 0xFF));
 				//}
 				Debug.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), "arc.label=" + (char) arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
-				if (arc.Output != outerInstance.OuterInstance.NO_OUTPUT)
+                if (arc.Output != OuterInstance.OuterInstance.NO_OUTPUT)
 				{
-				  output = outerInstance.OuterInstance.FstOutputs.add(output, arc.Output);
+                    output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
 				}
 				if (arc.Final)
 				{
@@ -2024,16 +1918,12 @@ namespace Lucene.Net.Codecs
 
 			  if (cmp == 0)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetUptoMid = targetUpto;
 				int targetUptoMid = targetUpto;
 
 				// Second compare the rest of the term, but
 				// don't save arc/output/frame; we only do this
 				// to find out if the target term is before,
 				// equal or after the current term
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLimit2 = Math.min(target.length, term.length);
 				int targetLimit2 = Math.Min(target.Length, Term_Renamed.Length);
 				while (targetUpto < targetLimit2)
 				{
@@ -2106,11 +1996,11 @@ namespace Lucene.Net.Codecs
 			{
 
 			  TargetBeforeCurrentLength = -1;
-			  arc = outerInstance.Index.getFirstArc(Arcs[0]);
+			  arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 
 			  // Empty string prefix must have an output (block) in the index!
 			  Debug.Assert(arc.Final);
-			  Debug.Assert(arc.Output != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+			  Debug.Assert(arc.Output != null);
 
 			  // if (DEBUG) {
 			  //   System.out.println("    no seek state; push root frame");
@@ -2122,7 +2012,7 @@ namespace Lucene.Net.Codecs
 
 			  //term.length = 0;
 			  targetUpto = 0;
-			  CurrentFrame = PushFrame(arc, outerInstance.OuterInstance.FstOutputs.add(output, arc.NextFinalOutput), 0);
+			  CurrentFrame = PushFrame(arc, OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput), 0);
 			}
 
 			// if (DEBUG) {
@@ -2132,15 +2022,11 @@ namespace Lucene.Net.Codecs
 			while (targetUpto < target.Length)
 			{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLabel = target.bytes[target.offset + targetUpto] & 0xFF;
 			  int targetLabel = target.Bytes[target.Offset + targetUpto] & 0xFF;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef> nextArc = index.findTargetArc(targetLabel, arc, getArc(1+targetUpto), fstReader);
-			  FST.Arc<BytesRef> nextArc = outerInstance.Index.findTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
+              FST<BytesRef>.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
 
-			  if (nextArc == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			  if (nextArc == null)
 			  {
 
 				// Index is exhausted
@@ -2166,8 +2052,6 @@ namespace Lucene.Net.Codecs
 
 				CurrentFrame.LoadBlock();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SeekStatus result = currentFrame.scanToTerm(target, true);
 				SeekStatus result = CurrentFrame.ScanToTerm(target, true);
 				if (result == SeekStatus.FOUND)
 				{
@@ -2190,10 +2074,10 @@ namespace Lucene.Net.Codecs
 				arc = nextArc;
 				Term_Renamed.Bytes[targetUpto] = (sbyte) targetLabel;
 				// Aggregate output as we go:
-				Debug.Assert(arc.Output != Lucene.Net.Util.BytesRefIterator_Fields.Null);
-				if (arc.Output != outerInstance.OuterInstance.NO_OUTPUT)
+				Debug.Assert(arc.Output != null);
+				if (arc.Output != OuterInstance.OuterInstance.NO_OUTPUT)
 				{
-				  output = outerInstance.OuterInstance.FstOutputs.add(output, arc.Output);
+				  output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
 				}
 
 				// if (DEBUG) {
@@ -2204,7 +2088,7 @@ namespace Lucene.Net.Codecs
 				if (arc.Final)
 				{
 				  //if (DEBUG) System.out.println("    arc is final!");
-				  CurrentFrame = PushFrame(arc, outerInstance.OuterInstance.FstOutputs.add(output, arc.NextFinalOutput), targetUpto);
+				  CurrentFrame = PushFrame(arc, OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
 				  //if (DEBUG) System.out.println("    curFrame.ord=" + currentFrame.ord + " hasTerms=" + currentFrame.hasTerms);
 				}
 			  }
@@ -2228,10 +2112,8 @@ namespace Lucene.Net.Codecs
 
 			CurrentFrame.LoadBlock();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SeekStatus result = currentFrame.scanToTerm(target, true);
-			SeekStatus result = CurrentFrame.ScanToTerm(target, true);
-			if (result == SeekStatus.FOUND)
+			SeekStatus result_ = CurrentFrame.ScanToTerm(target, true);
+			if (result_ == SeekStatus.FOUND)
 			{
 			  // if (DEBUG) {
 			  //   System.out.println("  return FOUND term=" + term.utf8ToString() + " " + term);
@@ -2250,9 +2132,9 @@ namespace Lucene.Net.Codecs
 
 		  public override SeekStatus SeekCeil(BytesRef target)
 		  {
-			if (outerInstance.Index == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (OuterInstance.Index == null)
 			{
-			  throw new IllegalStateException("terms index was not loaded");
+			  throw new InvalidOperationException("terms index was not loaded");
 			}
 
 			if (Term_Renamed.Bytes.Length <= target.Length)
@@ -2267,7 +2149,7 @@ namespace Lucene.Net.Codecs
 			//printSeekState();
 			//}
 
-			FST.Arc<BytesRef> arc;
+            FST<BytesRef>.Arc<BytesRef> arc;
 			int targetUpto;
 			BytesRef output;
 
@@ -2295,8 +2177,6 @@ namespace Lucene.Net.Codecs
 			  Frame lastFrame = Stack[0];
 			  Debug.Assert(ValidIndexPrefix <= Term_Renamed.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLimit = Math.min(target.length, validIndexPrefix);
 			  int targetLimit = Math.Min(target.Length, ValidIndexPrefix);
 
 			  int cmp = 0;
@@ -2322,9 +2202,9 @@ namespace Lucene.Net.Codecs
 				// seek; but, often the FST doesn't have any
 				// shared bytes (but this could change if we
 				// reverse vLong byte order)
-				if (arc.Output != outerInstance.OuterInstance.NO_OUTPUT)
+				if (arc.Output != OuterInstance.OuterInstance.NO_OUTPUT)
 				{
-				  output = outerInstance.OuterInstance.FstOutputs.add(output, arc.Output);
+				  output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
 				}
 				if (arc.Final)
 				{
@@ -2336,13 +2216,9 @@ namespace Lucene.Net.Codecs
 
 			  if (cmp == 0)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetUptoMid = targetUpto;
 				int targetUptoMid = targetUpto;
 				// Second compare the rest of the term, but
 				// don't save arc/output/frame:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLimit2 = Math.min(target.length, term.length);
 				int targetLimit2 = Math.Min(target.Length, Term_Renamed.Length);
 				while (targetUpto < targetLimit2)
 				{
@@ -2412,11 +2288,11 @@ namespace Lucene.Net.Codecs
 			{
 
 			  TargetBeforeCurrentLength = -1;
-			  arc = outerInstance.Index.getFirstArc(Arcs[0]);
+			  arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 
 			  // Empty string prefix must have an output (block) in the index!
 			  Debug.Assert(arc.Final);
-			  Debug.Assert(arc.Output != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+			  Debug.Assert(arc.Output != null);
 
 			  //if (DEBUG) {
 			  //System.out.println("    no seek state; push root frame");
@@ -2428,7 +2304,7 @@ namespace Lucene.Net.Codecs
 
 			  //term.length = 0;
 			  targetUpto = 0;
-			  CurrentFrame = PushFrame(arc, outerInstance.OuterInstance.FstOutputs.add(output, arc.NextFinalOutput), 0);
+			  CurrentFrame = PushFrame(arc, OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput), 0);
 			}
 
 			//if (DEBUG) {
@@ -2438,15 +2314,11 @@ namespace Lucene.Net.Codecs
 			while (targetUpto < target.Length)
 			{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetLabel = target.bytes[target.offset + targetUpto] & 0xFF;
 			  int targetLabel = target.Bytes[target.Offset + targetUpto] & 0xFF;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef> nextArc = index.findTargetArc(targetLabel, arc, getArc(1+targetUpto), fstReader);
-			  FST.Arc<BytesRef> nextArc = outerInstance.Index.findTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
+              FST<BytesRef>.Arc<BytesRef> nextArc = OuterInstance.Index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), FstReader);
 
-			  if (nextArc == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			  if (nextArc == null)
 			  {
 
 				// Index is exhausted
@@ -2461,15 +2333,13 @@ namespace Lucene.Net.Codecs
 
 				CurrentFrame.LoadBlock();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SeekStatus result = currentFrame.scanToTerm(target, false);
 				SeekStatus result = CurrentFrame.ScanToTerm(target, false);
 				if (result == SeekStatus.END)
 				{
 				  Term_Renamed.CopyBytes(target);
 				  TermExists = false;
 
-				  if (Next() != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+				  if (Next() != null)
 				  {
 					//if (DEBUG) {
 					//System.out.println("  return NOT_FOUND term=" + brToString(term) + " " + term);
@@ -2498,10 +2368,10 @@ namespace Lucene.Net.Codecs
 				Term_Renamed.Bytes[targetUpto] = (sbyte) targetLabel;
 				arc = nextArc;
 				// Aggregate output as we go:
-				Debug.Assert(arc.Output != Lucene.Net.Util.BytesRefIterator_Fields.Null);
-				if (arc.Output != outerInstance.OuterInstance.NO_OUTPUT)
+				Debug.Assert(arc.Output != null);
+				if (arc.Output != OuterInstance.OuterInstance.NO_OUTPUT)
 				{
-				  output = outerInstance.OuterInstance.FstOutputs.add(output, arc.Output);
+				  output = OuterInstance.OuterInstance.FstOutputs.Add(output, arc.Output);
 				}
 
 				//if (DEBUG) {
@@ -2512,7 +2382,7 @@ namespace Lucene.Net.Codecs
 				if (arc.Final)
 				{
 				  //if (DEBUG) System.out.println("    arc is final!");
-				  CurrentFrame = PushFrame(arc, outerInstance.OuterInstance.FstOutputs.add(output, arc.NextFinalOutput), targetUpto);
+				  CurrentFrame = PushFrame(arc, OuterInstance.OuterInstance.FstOutputs.Add(output, arc.NextFinalOutput), targetUpto);
 				  //if (DEBUG) System.out.println("    curFrame.ord=" + currentFrame.ord + " hasTerms=" + currentFrame.hasTerms);
 				}
 			  }
@@ -2525,15 +2395,13 @@ namespace Lucene.Net.Codecs
 
 			CurrentFrame.LoadBlock();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SeekStatus result = currentFrame.scanToTerm(target, false);
-			SeekStatus result = CurrentFrame.ScanToTerm(target, false);
+			SeekStatus result_ = CurrentFrame.ScanToTerm(target, false);
 
-			if (result == SeekStatus.END)
+			if (result_ == SeekStatus.END)
 			{
 			  Term_Renamed.CopyBytes(target);
 			  TermExists = false;
-			  if (Next() != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			  if (Next() != null)
 			  {
 				//if (DEBUG) {
 				//System.out.println("  return NOT_FOUND term=" + term.utf8ToString() + " " + term);
@@ -2550,12 +2418,11 @@ namespace Lucene.Net.Codecs
 			}
 			else
 			{
-			  return result;
+			  return result_;
 			}
 		  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unused") private void printSeekState(java.io.PrintStream out) throws java.io.IOException
+          /*LUCENE TO-DO Not in use
 		  internal void PrintSeekState(PrintStream @out)
 		  {
 			if (CurrentFrame == StaticFrame)
@@ -2570,9 +2437,7 @@ namespace Lucene.Net.Codecs
 			  while (true)
 			  {
 				Frame f = GetFrame(ord);
-				Debug.Assert(f != Lucene.Net.Util.BytesRefIterator_Fields.Null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef prefix = new Lucene.Net.Util.BytesRef(term.bytes, 0, f.prefix);
+				Debug.Assert(f != null);
 				BytesRef prefix = new BytesRef(Term_Renamed.Bytes, 0, f.Prefix);
 				if (f.NextEnt == -1)
 				{
@@ -2582,30 +2447,24 @@ namespace Lucene.Net.Codecs
 				{
 				  @out.println("    frame " + (isSeekFrame ? "(seek, loaded)" : "(next, loaded)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + " nextEnt=" + f.NextEnt + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS:0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR:0)) + " lastSubFP=" + f.LastSubFP + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
 				}
-				if (outerInstance.Index != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+				if (OuterInstance.Index != null)
 				{
-				  Debug.Assert(!isSeekFrame || f.Arc != Lucene.Net.Util.BytesRefIterator_Fields.Null, "isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
-				  if (f.Prefix > 0 && isSeekFrame && f.Arc.label != (Term_Renamed.Bytes[f.Prefix - 1] & 0xFF))
+				  Debug.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
+				  if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (Term_Renamed.Bytes[f.Prefix - 1] & 0xFF))
 				  {
-					@out.println("      broken seek state: arc.label=" + (char) f.Arc.label + " vs term byte=" + (char)(Term_Renamed.Bytes[f.Prefix - 1] & 0xFF));
+					@out.println("      broken seek state: arc.label=" + (char) f.Arc.Label + " vs term byte=" + (char)(Term_Renamed.Bytes[f.Prefix - 1] & 0xFF));
 					throw new Exception("seek state is broken");
 				  }
-				  BytesRef output = Util.Get(outerInstance.Index, prefix);
-				  if (output == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+				  BytesRef output = Util.Get(OuterInstance.Index, prefix);
+				  if (output == null)
 				  {
 					@out.println("      broken seek state: prefix is not final in index");
 					throw new Exception("seek state is broken");
 				  }
 				  else if (isSeekFrame && !f.IsFloor)
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.ByteArrayDataInput reader = new Lucene.Net.Store.ByteArrayDataInput(output.bytes, output.offset, output.length);
 					ByteArrayDataInput reader = new ByteArrayDataInput(output.Bytes, output.Offset, output.Length);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long codeOrig = reader.readVLong();
 					long codeOrig = reader.ReadVLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long code = (f.fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) | (f.hasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS:0) | (f.isFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR:0);
 					long code = (f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) | (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS:0) | (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR:0);
 					if (codeOrig != code)
 					{
@@ -2625,7 +2484,7 @@ namespace Lucene.Net.Codecs
 				ord++;
 			  }
 			}
-		  }
+		  }*/
 
 		  /* Decodes only the term bytes of the next term.  If caller then asks for
 		     metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)
@@ -2633,23 +2492,23 @@ namespace Lucene.Net.Codecs
 		  public override BytesRef Next()
 		  {
 
-			if (@in == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (@in == null)
 			{
 			  // Fresh TermsEnum; seek to first term:
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef> arc;
-			  FST.Arc<BytesRef> arc;
-			  if (outerInstance.Index != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			  FST<BytesRef>.Arc<BytesRef> arc;
+			  if (OuterInstance.Index != null)
 			  {
-				arc = outerInstance.Index.getFirstArc(Arcs[0]);
+				arc = OuterInstance.Index.GetFirstArc(Arcs[0]);
 				// Empty string prefix must have an output in the index!
 				Debug.Assert(arc.Final);
 			  }
 			  else
 			  {
-				arc = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+				arc = null;
 			  }
-			  CurrentFrame = PushFrame(arc, outerInstance.RootCode, 0);
+			  CurrentFrame = PushFrame(arc, OuterInstance.RootCode, 0);
 			  CurrentFrame.LoadBlock();
 			}
 
@@ -2694,7 +2553,7 @@ namespace Lucene.Net.Codecs
 				  ValidIndexPrefix = 0;
 				  CurrentFrame.Rewind();
 				  TermExists = false;
-				  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+				  return null;
 				}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long lastFP = currentFrame.fpOrig;
@@ -2725,7 +2584,7 @@ namespace Lucene.Net.Codecs
 			  {
 				// Push to new block:
 				//if (DEBUG) System.out.println("  push frame");
-				CurrentFrame = PushFrame(Lucene.Net.Util.BytesRefIterator_Fields.Null, CurrentFrame.LastSubFP, Term_Renamed.Length);
+				CurrentFrame = PushFrame(null, CurrentFrame.LastSubFP, Term_Renamed.Length);
 				// this is a "next" frame -- even if it's
 				// floor'd we must pretend it isn't so we don't
 				// try to scan to the right floor frame:
@@ -2753,14 +2612,14 @@ namespace Lucene.Net.Codecs
 			//if (DEBUG) System.out.println("BTR.docFreq");
 			CurrentFrame.DecodeMetaData();
 			//if (DEBUG) System.out.println("  return " + currentFrame.state.docFreq);
-			return CurrentFrame.State.docFreq;
+			return CurrentFrame.State.DocFreq;
 		  }
 
 		  public override long TotalTermFreq()
 		  {
 			Debug.Assert(!Eof);
 			CurrentFrame.DecodeMetaData();
-			return CurrentFrame.State.totalTermFreq;
+			return CurrentFrame.State.TotalTermFreq;
 		  }
 
 		  public override DocsEnum Docs(Bits skipDocs, DocsEnum reuse, int flags)
@@ -2773,20 +2632,20 @@ namespace Lucene.Net.Codecs
 			//if (DEBUG) {
 			//System.out.println("  state=" + currentFrame.state);
 			//}
-			return outerInstance.OuterInstance.PostingsReader.docs(outerInstance.FieldInfo, CurrentFrame.State, skipDocs, reuse, flags);
+			return OuterInstance.OuterInstance.PostingsReader.Docs(OuterInstance.FieldInfo, CurrentFrame.State, skipDocs, reuse, flags);
 		  }
 
 		  public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-			if (outerInstance.FieldInfo.IndexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+			if (OuterInstance.FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
 			{
 			  // Positions were not indexed:
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			}
 
 			Debug.Assert(!Eof);
 			CurrentFrame.DecodeMetaData();
-			return outerInstance.OuterInstance.PostingsReader.docsAndPositions(outerInstance.FieldInfo, CurrentFrame.State, skipDocs, reuse, flags);
+			return OuterInstance.OuterInstance.PostingsReader.DocsAndPositions(OuterInstance.FieldInfo, CurrentFrame.State, skipDocs, reuse, flags);
 		  }
 
 		  public override void SeekExact(BytesRef target, TermState otherState)
@@ -2797,9 +2656,9 @@ namespace Lucene.Net.Codecs
 			Debug.Assert(ClearEOF());
 			if (target.CompareTo(Term_Renamed) != 0 || !TermExists)
 			{
-			  Debug.Assert(otherState != Lucene.Net.Util.BytesRefIterator_Fields.Null && otherState is BlockTermState);
+			  Debug.Assert(otherState != null && otherState is BlockTermState);
 			  CurrentFrame = StaticFrame;
-			  CurrentFrame.State.copyFrom(otherState);
+			  CurrentFrame.State.CopyFrom(otherState);
 			  Term_Renamed.CopyBytes(target);
 			  CurrentFrame.MetaDataUpto = CurrentFrame.TermBlockOrd;
 			  Debug.Assert(CurrentFrame.MetaDataUpto > 0);
@@ -2817,7 +2676,7 @@ namespace Lucene.Net.Codecs
 		  {
 			Debug.Assert(!Eof);
 			CurrentFrame.DecodeMetaData();
-			TermState ts = CurrentFrame.State.clone();
+			TermState ts = CurrentFrame.State.Clone();
 			//if (DEBUG) System.out.println("BTTR.termState seg=" + segment + " state=" + ts);
 			return ts;
 		  }
@@ -2834,7 +2693,7 @@ namespace Lucene.Net.Codecs
 
 		  // Not static -- references term, postingsReader,
 		  // fieldInfo, in
-		  private sealed class Frame
+		  internal sealed class Frame
 		  {
 			  private readonly BlockTreeTermsReader.FieldReader.SegmentTermsEnum OuterInstance;
 
@@ -2845,7 +2704,7 @@ namespace Lucene.Net.Codecs
 			internal bool HasTermsOrig;
 			internal bool IsFloor;
 
-			internal FST.Arc<BytesRef> Arc;
+            internal FST<BytesRef>.Arc<BytesRef> Arc;
 
 			// File pointer where this block was loaded from
 			internal long Fp;
@@ -2902,7 +2761,7 @@ namespace Lucene.Net.Codecs
 			{
 				this.OuterInstance = outerInstance;
 			  this.Ord = ord;
-			  this.State = outerInstance.OuterInstance.OuterInstance.PostingsReader.newTermState();
+			  this.State = outerInstance.OuterInstance.OuterInstance.PostingsReader.NewTermState();
 			  this.State.TotalTermFreq = -1;
 			  this.Longs = new long[outerInstance.OuterInstance.LongsSize];
 			}
@@ -2938,7 +2797,7 @@ namespace Lucene.Net.Codecs
 			  //if (DEBUG) {
 			  //System.out.println("    loadNextFloorBlock fp=" + fp + " fpEnd=" + fpEnd);
 			  //}
-			  Debug.Assert(Arc == Lucene.Net.Util.BytesRefIterator_Fields.Null || IsFloor, "arc=" + Arc + " isFloor=" + IsFloor);
+			  Debug.Assert(Arc == null || IsFloor, "arc=" + Arc + " isFloor=" + IsFloor);
 			  Fp = FpEnd;
 			  NextEnt = -1;
 			  LoadBlock();
@@ -2959,7 +2818,7 @@ namespace Lucene.Net.Codecs
 			  // Clone the IndexInput lazily, so that consumers
 			  // that just pull a TermsEnum to
 			  // seekExact(TermState) don't pay this cost:
-			  outerInstance.InitIndexInput();
+			  OuterInstance.InitIndexInput();
 
 			  if (NextEnt != -1)
 			  {
@@ -2968,12 +2827,12 @@ namespace Lucene.Net.Codecs
 			  }
 			  //System.out.println("blc=" + blockLoadCount);
 
-			  outerInstance.@in.Seek(Fp);
-			  int code = outerInstance.@in.ReadVInt();
+			  OuterInstance.@in.Seek(Fp);
+			  int code = OuterInstance.@in.ReadVInt();
 			  EntCount = (int)((uint)code >> 1);
 			  Debug.Assert(EntCount > 0);
 			  IsLastInFloor = (code & 1) != 0;
-			  Debug.Assert(Arc == Lucene.Net.Util.BytesRefIterator_Fields.Null || (IsLastInFloor || IsFloor));
+			  Debug.Assert(Arc == null || (IsLastInFloor || IsFloor));
 
 			  // TODO: if suffixes were stored in random-access
 			  // array structure, then we could do binary search
@@ -2981,14 +2840,14 @@ namespace Lucene.Net.Codecs
 			  // we could have simple array of offsets
 
 			  // term suffixes:
-			  code = outerInstance.@in.ReadVInt();
+			  code = OuterInstance.@in.ReadVInt();
 			  IsLeafBlock = (code & 1) != 0;
 			  int numBytes = (int)((uint)code >> 1);
 			  if (SuffixBytes.Length < numBytes)
 			  {
 				SuffixBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
-			  outerInstance.@in.ReadBytes(SuffixBytes, 0, numBytes);
+			  OuterInstance.@in.ReadBytes(SuffixBytes, 0, numBytes);
 			  SuffixesReader.Reset(SuffixBytes, 0, numBytes);
 
 			  /*if (DEBUG) {
@@ -3000,12 +2859,12 @@ namespace Lucene.Net.Codecs
 			    }*/
 
 			  // stats
-			  numBytes = outerInstance.@in.ReadVInt();
+			  numBytes = OuterInstance.@in.ReadVInt();
 			  if (StatBytes.Length < numBytes)
 			  {
 				StatBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
-			  outerInstance.@in.ReadBytes(StatBytes, 0, numBytes);
+			  OuterInstance.@in.ReadBytes(StatBytes, 0, numBytes);
 			  StatsReader.Reset(StatBytes, 0, numBytes);
 			  MetaDataUpto = 0;
 
@@ -3016,8 +2875,8 @@ namespace Lucene.Net.Codecs
 			  // TODO: we could skip this if !hasTerms; but
 			  // that's rare so won't help much
 			  // metadata
-			  numBytes = outerInstance.@in.ReadVInt();
-			  if (Bytes == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			  numBytes = OuterInstance.@in.ReadVInt();
+			  if (Bytes == null)
 			  {
 				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 				BytesReader = new ByteArrayDataInput();
@@ -3026,13 +2885,13 @@ namespace Lucene.Net.Codecs
 			  {
 				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
-			  outerInstance.@in.ReadBytes(Bytes, 0, numBytes);
+			  OuterInstance.@in.ReadBytes(Bytes, 0, numBytes);
 			  BytesReader.Reset(Bytes, 0, numBytes);
 
 
 			  // Sub-blocks of a single floor block are always
 			  // written one after another -- tail recurse:
-			  FpEnd = outerInstance.@in.FilePointer;
+			  FpEnd = OuterInstance.@in.FilePointer;
 			  // if (DEBUG) {
 			  //   System.out.println("      fpEnd=" + fpEnd);
 			  // }
@@ -3100,14 +2959,14 @@ namespace Lucene.Net.Codecs
 			  NextEnt++;
 			  Suffix = SuffixesReader.ReadVInt();
 			  StartBytePos = SuffixesReader.Position;
-			  outerInstance.Term_Renamed.Length = Prefix + Suffix;
-			  if (outerInstance.Term_Renamed.Bytes.Length < outerInstance.Term_Renamed.Length)
+			  OuterInstance.Term_Renamed.Length = Prefix + Suffix;
+              if (OuterInstance.Term_Renamed.Bytes.Length < OuterInstance.Term_Renamed.Length)
 			  {
-				outerInstance.Term_Renamed.Grow(outerInstance.Term_Renamed.Length);
+                  OuterInstance.Term_Renamed.Grow(OuterInstance.Term_Renamed.Length);
 			  }
-			  SuffixesReader.ReadBytes(outerInstance.Term_Renamed.Bytes, Prefix, Suffix);
+              SuffixesReader.ReadBytes(OuterInstance.Term_Renamed.Bytes, Prefix, Suffix);
 			  // A normal term
-			  outerInstance.TermExists = true;
+              OuterInstance.TermExists = true;
 			  return false;
 			}
 
@@ -3121,16 +2980,16 @@ namespace Lucene.Net.Codecs
 			  int code = SuffixesReader.ReadVInt();
 			  Suffix = (int)((uint)code >> 1);
 			  StartBytePos = SuffixesReader.Position;
-			  outerInstance.Term_Renamed.Length = Prefix + Suffix;
-			  if (outerInstance.Term_Renamed.Bytes.Length < outerInstance.Term_Renamed.Length)
+              OuterInstance.Term_Renamed.Length = Prefix + Suffix;
+              if (OuterInstance.Term_Renamed.Bytes.Length < OuterInstance.Term_Renamed.Length)
 			  {
-				outerInstance.Term_Renamed.Grow(outerInstance.Term_Renamed.Length);
+                  OuterInstance.Term_Renamed.Grow(OuterInstance.Term_Renamed.Length);
 			  }
-			  SuffixesReader.ReadBytes(outerInstance.Term_Renamed.Bytes, Prefix, Suffix);
+              SuffixesReader.ReadBytes(OuterInstance.Term_Renamed.Bytes, Prefix, Suffix);
 			  if ((code & 1) == 0)
 			  {
 				// A normal term
-				outerInstance.TermExists = true;
+                  OuterInstance.TermExists = true;
 				SubCode = 0;
 				State.TermBlockOrd++;
 				return false;
@@ -3138,7 +2997,7 @@ namespace Lucene.Net.Codecs
 			  else
 			  {
 				// A sub-block; make sub-FP absolute:
-				outerInstance.TermExists = false;
+                  OuterInstance.TermExists = false;
 				SubCode = SuffixesReader.ReadVLong();
 				LastSubFP = Fp - SubCode;
 				//if (DEBUG) {
@@ -3261,17 +3120,17 @@ namespace Lucene.Net.Codecs
 				// stats
 				State.DocFreq = StatsReader.ReadVInt();
 				//if (DEBUG) System.out.println("    dF=" + state.docFreq);
-				if (outerInstance.OuterInstance.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                if (OuterInstance.OuterInstance.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
 				{
 				  State.TotalTermFreq = State.DocFreq + StatsReader.ReadVLong();
 				  //if (DEBUG) System.out.println("    totTF=" + state.totalTermFreq);
 				}
 				// metadata 
-				for (int i = 0; i < outerInstance.OuterInstance.LongsSize; i++)
+                for (int i = 0; i < OuterInstance.OuterInstance.LongsSize; i++)
 				{
 				  Longs[i] = BytesReader.ReadVLong();
 				}
-				outerInstance.OuterInstance.OuterInstance.PostingsReader.decodeTerm(Longs, BytesReader, outerInstance.OuterInstance.FieldInfo, State, absolute);
+                OuterInstance.OuterInstance.OuterInstance.PostingsReader.DecodeTerm(Longs, BytesReader, OuterInstance.OuterInstance.FieldInfo, State, absolute);
 
 				MetaDataUpto++;
 				absolute = false;
@@ -3284,7 +3143,7 @@ namespace Lucene.Net.Codecs
 			{
 			  for (int bytePos = 0;bytePos < Prefix;bytePos++)
 			  {
-				if (target.Bytes[target.Offset + bytePos] != outerInstance.Term_Renamed.Bytes[bytePos])
+                  if (target.Bytes[target.Offset + bytePos] != OuterInstance.Term_Renamed.Bytes[bytePos])
 				{
 				  return false;
 				}
@@ -3359,7 +3218,7 @@ namespace Lucene.Net.Codecs
 
 			  Debug.Assert(NextEnt != -1);
 
-			  outerInstance.TermExists = true;
+              OuterInstance.TermExists = true;
 			  SubCode = 0;
 
 			  if (NextEnt == EntCount)
@@ -3449,18 +3308,18 @@ namespace Lucene.Net.Codecs
 					// return NOT_FOUND:
 					FillTerm();
 
-					if (!exactOnly && !outerInstance.TermExists)
+                    if (!exactOnly && !OuterInstance.TermExists)
 					{
 					  // We are on a sub-block, and caller wants
 					  // us to position to the next term after
 					  // the target, so we must recurse into the
 					  // sub-frame(s):
-					  outerInstance.CurrentFrame = outerInstance.PushFrame(Lucene.Net.Util.BytesRefIterator_Fields.Null, outerInstance.CurrentFrame.LastSubFP, termLen);
-					  outerInstance.CurrentFrame.LoadBlock();
-					  while (outerInstance.CurrentFrame.Next())
+                      OuterInstance.CurrentFrame = OuterInstance.PushFrame(null, OuterInstance.CurrentFrame.LastSubFP, termLen);
+                      OuterInstance.CurrentFrame.LoadBlock();
+                      while (OuterInstance.CurrentFrame.Next())
 					  {
-						outerInstance.CurrentFrame = outerInstance.PushFrame(Lucene.Net.Util.BytesRefIterator_Fields.Null, outerInstance.CurrentFrame.LastSubFP, outerInstance.Term_Renamed.Length);
-						outerInstance.CurrentFrame.LoadBlock();
+                          OuterInstance.CurrentFrame = OuterInstance.PushFrame(null, OuterInstance.CurrentFrame.LastSubFP, OuterInstance.Term_Renamed.Length);
+                          OuterInstance.CurrentFrame.LoadBlock();
 					  }
 					}
 
@@ -3475,7 +3334,7 @@ namespace Lucene.Net.Codecs
 					// would have followed the index to this
 					// sub-block from the start:
 
-					Debug.Assert(outerInstance.TermExists);
+                      Debug.Assert(OuterInstance.TermExists);
 					FillTerm();
 					//if (DEBUG) System.out.println("        found!");
 					return SeekStatus.FOUND;
@@ -3520,7 +3379,7 @@ namespace Lucene.Net.Codecs
 				if (exactOnly)
 				{
 				  FillTerm();
-				  outerInstance.TermExists = SubCode == 0;
+                  OuterInstance.TermExists = SubCode == 0;
 				}
 				return SeekStatus.END;
 			  }
@@ -3545,13 +3404,13 @@ namespace Lucene.Net.Codecs
 				//   System.out.println("      cycle: " + ((code&1)==1 ? "sub-block" : "term") + " " + (nextEnt-1) + " (of " + entCount + ") suffix=" + brToString(suffixBytesRef));
 				// }
 
-				outerInstance.TermExists = (code & 1) == 0;
+                OuterInstance.TermExists = (code & 1) == 0;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int termLen = prefix + suffix;
 				int termLen = Prefix + Suffix;
 				StartBytePos = SuffixesReader.Position;
 				SuffixesReader.SkipBytes(Suffix);
-				if (outerInstance.TermExists)
+                if (OuterInstance.TermExists)
 				{
 				  State.TermBlockOrd++;
 				  SubCode = 0;
@@ -3617,18 +3476,18 @@ namespace Lucene.Net.Codecs
 					// return NOT_FOUND:
 					FillTerm();
 
-					if (!exactOnly && !outerInstance.TermExists)
+                    if (!exactOnly && !OuterInstance.TermExists)
 					{
 					  // We are on a sub-block, and caller wants
 					  // us to position to the next term after
 					  // the target, so we must recurse into the
 					  // sub-frame(s):
-					  outerInstance.CurrentFrame = outerInstance.PushFrame(Lucene.Net.Util.BytesRefIterator_Fields.Null, outerInstance.CurrentFrame.LastSubFP, termLen);
-					  outerInstance.CurrentFrame.LoadBlock();
-					  while (outerInstance.CurrentFrame.Next())
+                        OuterInstance.CurrentFrame = OuterInstance.PushFrame(null, OuterInstance.CurrentFrame.LastSubFP, termLen);
+                        OuterInstance.CurrentFrame.LoadBlock();
+                      while (OuterInstance.CurrentFrame.Next())
 					  {
-						outerInstance.CurrentFrame = outerInstance.PushFrame(Lucene.Net.Util.BytesRefIterator_Fields.Null, outerInstance.CurrentFrame.LastSubFP, outerInstance.Term_Renamed.Length);
-						outerInstance.CurrentFrame.LoadBlock();
+                          OuterInstance.CurrentFrame = OuterInstance.PushFrame(null, OuterInstance.CurrentFrame.LastSubFP, OuterInstance.Term_Renamed.Length);
+                          OuterInstance.CurrentFrame.LoadBlock();
 					  }
 					}
 
@@ -3643,7 +3502,7 @@ namespace Lucene.Net.Codecs
 					// would have followed the index to this
 					// sub-block from the start:
 
-					Debug.Assert(outerInstance.TermExists);
+                      Debug.Assert(OuterInstance.TermExists);
 					FillTerm();
 					//if (DEBUG) System.out.println("        found!");
 					return SeekStatus.FOUND;
@@ -3679,12 +3538,12 @@ namespace Lucene.Net.Codecs
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int termLength = prefix + suffix;
 			  int termLength = Prefix + Suffix;
-			  outerInstance.Term_Renamed.Length = Prefix + Suffix;
-			  if (outerInstance.Term_Renamed.Bytes.Length < termLength)
+              OuterInstance.Term_Renamed.Length = Prefix + Suffix;
+              if (OuterInstance.Term_Renamed.Bytes.Length < termLength)
 			  {
-				outerInstance.Term_Renamed.Grow(termLength);
+                  OuterInstance.Term_Renamed.Grow(termLength);
 			  }
-			  Array.Copy(SuffixBytes, StartBytePos, outerInstance.Term_Renamed.Bytes, Prefix, Suffix);
+              Array.Copy(SuffixBytes, StartBytePos, OuterInstance.Term_Renamed.Bytes, Prefix, Suffix);
 			}
 		  }
 		}
