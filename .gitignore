@@ -15,3 +15,4 @@ build/artifacts
 build/bin
 _ReSharper*
 *.orig
+*.cache
