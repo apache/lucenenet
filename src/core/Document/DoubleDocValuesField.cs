@@ -20,6 +20,11 @@ namespace Lucene.Net.Document
 
 	using AtomicReader = Lucene.Net.Index.AtomicReader; // javadocs
 	using FieldCache = Lucene.Net.Search.FieldCache; // javadocs
+    using Lucene.Net.Support;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
 	/// <summary>
 	/// Syntactic sugar for encoding doubles as NumericDocValues
@@ -40,7 +45,8 @@ namespace Lucene.Net.Document
 	  /// <param name="name"> field name </param>
 	  /// <param name="value"> 64-bit double value </param>
 	  /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
-	  public DoubleDocValuesField(string name, double value) : base(name, double.doubleToRawLongBits(value))
+        public DoubleDocValuesField(string name, double value)
+            : base(name, BitConverter.DoubleToInt64Bits(value))
 	  {
 	  }
 
@@ -48,7 +54,7 @@ namespace Lucene.Net.Document
 	  {
 		  set
 		  {
-			base.LongValue = double.doubleToRawLongBits(value);
+              base.LongValue = BitConverter.DoubleToInt64Bits(value);
 		  }
 	  }
 

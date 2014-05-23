@@ -39,12 +39,12 @@ namespace Lucene.Net.Document
 	public class DocumentStoredFieldVisitor : StoredFieldVisitor
 	{
 	  private readonly Document Doc = new Document();
-	  private readonly Set<string> FieldsToAdd;
+	  private readonly ISet<string> FieldsToAdd;
 
 	  /// <summary>
 	  /// Load only fields named in the provided <code>Set&lt;String&gt;</code>. </summary>
 	  /// <param name="fieldsToAdd"> Set of fields to load, or <code>null</code> (all fields). </param>
-	  public DocumentStoredFieldVisitor(Set<string> fieldsToAdd)
+	  public DocumentStoredFieldVisitor(ISet<string> fieldsToAdd)
 	  {
 		this.FieldsToAdd = fieldsToAdd;
 	  }
@@ -53,10 +53,10 @@ namespace Lucene.Net.Document
 	  /// Load only fields named in the provided fields. </summary>
 	  public DocumentStoredFieldVisitor(params string[] fields)
 	  {
-		FieldsToAdd = new HashSet<>(fields.Length);
+		FieldsToAdd = new HashSet<string>();
 		foreach (string field in fields)
 		{
-		  FieldsToAdd.add(field);
+		  FieldsToAdd.Add(field);
 		}
 	  }
 
@@ -74,13 +74,11 @@ namespace Lucene.Net.Document
 
 	  public override void StringField(FieldInfo fieldInfo, string value)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldType ft = new FieldType(TextField.TYPE_STORED);
 		FieldType ft = new FieldType(TextField.TYPE_STORED);
-		ft.StoreTermVectors = fieldInfo.HasVectors();
+        ft.StoreTermVectors = fieldInfo.HasVectors();
 		ft.Indexed = fieldInfo.Indexed;
 		ft.OmitNorms = fieldInfo.OmitsNorms();
-		ft.IndexOptions = fieldInfo.IndexOptions_e;
+		ft.IndexOptionsValue = fieldInfo.IndexOptions;
 		Doc.Add(new Field(fieldInfo.Name, value, ft));
 	  }
 
@@ -106,7 +104,7 @@ namespace Lucene.Net.Document
 
 	  public override Status NeedsField(FieldInfo fieldInfo)
 	  {
-		return FieldsToAdd == null || FieldsToAdd.contains(fieldInfo.Name) ? Status.YES : Status.NO;
+		return FieldsToAdd == null || FieldsToAdd.Contains(fieldInfo.Name) ? Status.YES : Status.NO;
 	  }
 
 	  /// <summary>

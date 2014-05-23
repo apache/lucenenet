@@ -47,13 +47,13 @@ namespace Lucene.Net.Document
 	  {
 		TYPE_NOT_STORED.Indexed = true;
 		TYPE_NOT_STORED.OmitNorms = true;
-		TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
+		TYPE_NOT_STORED.IndexOptionsValue = IndexOptions.DOCS_ONLY;
 		TYPE_NOT_STORED.Tokenized = false;
 		TYPE_NOT_STORED.Freeze();
 
 		TYPE_STORED.Indexed = true;
 		TYPE_STORED.OmitNorms = true;
-		TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
+		TYPE_STORED.IndexOptionsValue = IndexOptions.DOCS_ONLY;
 		TYPE_STORED.Stored = true;
 		TYPE_STORED.Tokenized = false;
 		TYPE_STORED.Freeze();

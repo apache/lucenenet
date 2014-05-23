@@ -20,6 +20,7 @@ namespace Lucene.Net.Document
 	 * limitations under the License.
 	 */
 
+    using System;
 	using Lucene.Net.Search; // for javadocs
 	using PrefixQuery = Lucene.Net.Search.PrefixQuery;
 	using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
@@ -45,49 +46,18 @@ namespace Lucene.Net.Document
 	/// index this as a numeric value with <seealso cref="LongField"/>
 	/// and use <seealso cref="NumericRangeQuery"/> to query it.
 	/// </summary>
-	public class DateTools
+	public static class DateTools
 	{
 
-	  internal static readonly TimeZone GMT = TimeZone.getTimeZone("GMT");
+        private static readonly String YEAR_FORMAT = "yyyy";
+        private static readonly String MONTH_FORMAT = "yyyyMM";
+        private static readonly String DAY_FORMAT = "yyyyMMdd";
+        private static readonly String HOUR_FORMAT = "yyyyMMddHH";
+        private static readonly String MINUTE_FORMAT = "yyyyMMddHHmm";
+        private static readonly String SECOND_FORMAT = "yyyyMMddHHmmss";
+        private static readonly String MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
 
-	  private static readonly ThreadLocal<DateTime> TL_CAL = new ThreadLocalAnonymousInnerClassHelper();
-
-	  private class ThreadLocalAnonymousInnerClassHelper : ThreadLocal<DateTime>
-	  {
-		  public ThreadLocalAnonymousInnerClassHelper()
-		  {
-		  }
-
-		  protected internal override DateTime InitialValue()
-		  {
-			return DateTime.getInstance(GMT, Locale.ROOT);
-		  }
-	  }
-
-	  //indexed by format length
-	  private static readonly ThreadLocal<SimpleDateFormat[]> TL_FORMATS = new ThreadLocalAnonymousInnerClassHelper2();
-
-	  private class ThreadLocalAnonymousInnerClassHelper2 : ThreadLocal<SimpleDateFormat[]>
-	  {
-		  public ThreadLocalAnonymousInnerClassHelper2()
-		  {
-		  }
-
-		  protected internal override SimpleDateFormat[] InitialValue()
-		  {
-			SimpleDateFormat[] arr = new SimpleDateFormat[Resolution.MILLISECOND.formatLen + 1];
-			foreach (Resolution resolution in Enum.GetValues(typeof(Resolution)))
-			{
-			  arr[resolution.formatLen] = (SimpleDateFormat)resolution.format.clone();
-			}
-			return arr;
-		  }
-	  }
-
-	  // cannot create, the class has static methods only
-	  private DateTools()
-	  {
-	  }
+        private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();
 
 	  /// <summary>
 	  /// Converts a Date to a string suitable for indexing.
@@ -99,7 +69,7 @@ namespace Lucene.Net.Document
 	  ///  depending on <code>resolution</code>; using GMT as timezone  </returns>
 	  public static string DateToString(DateTime date, Resolution resolution)
 	  {
-		return TimeToString(date, resolution);
+          return TimeToString(date.Ticks / TimeSpan.TicksPerMillisecond, resolution);
 	  }
 
 	  /// <summary>
@@ -112,10 +82,38 @@ namespace Lucene.Net.Document
 	  ///  depending on <code>resolution</code>; using GMT as timezone </returns>
 	  public static string TimeToString(long time, Resolution resolution)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Date date = new java.util.Date(round(time, resolution));
-		DateTime date = new DateTime(Round(time, resolution));
-		return TL_FORMATS.get()[resolution.formatLen].format(date);
+          DateTime date = new DateTime(Round(time, resolution));
+
+          if (resolution == Resolution.YEAR)
+          {
+              return date.ToString(YEAR_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else if (resolution == Resolution.MONTH)
+          {
+              return date.ToString(MONTH_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else if (resolution == Resolution.DAY)
+          {
+              return date.ToString(DAY_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else if (resolution == Resolution.HOUR)
+          {
+              return date.ToString(HOUR_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else if (resolution == Resolution.MINUTE)
+          {
+              return date.ToString(MINUTE_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else if (resolution == Resolution.SECOND)
+          {
+              return date.ToString(SECOND_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else if (resolution == Resolution.MILLISECOND)
+          {
+              return date.ToString(MILLISECOND_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+          }
+
+          throw new ArgumentException("unknown resolution " + resolution);
 	  }
 
 	  /// <summary>
@@ -129,7 +127,7 @@ namespace Lucene.Net.Document
 	  ///  expected format  </exception>
 	  public static long StringToTime(string dateString)
 	  {
-		return StringToDate(dateString);
+          return StringToDate(dateString).Ticks;
 	  }
 
 	  /// <summary>
@@ -143,14 +141,67 @@ namespace Lucene.Net.Document
 	  ///  expected format  </exception>
 	  public static DateTime StringToDate(string dateString)
 	  {
-		try
-		{
-		  return TL_FORMATS.get()[dateString.Length].parse(dateString);
-		}
-		catch (Exception e)
-		{
-		  throw new ParseException("Input is not a valid date string: " + dateString, 0);
-		}
+          DateTime date;
+          if (dateString.Length == 4)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  1, 1, 0, 0, 0, 0);
+          }
+          else if (dateString.Length == 6)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  Convert.ToInt16(dateString.Substring(4, 2)),
+                  1, 0, 0, 0, 0);
+          }
+          else if (dateString.Length == 8)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  Convert.ToInt16(dateString.Substring(4, 2)),
+                  Convert.ToInt16(dateString.Substring(6, 2)),
+                  0, 0, 0, 0);
+          }
+          else if (dateString.Length == 10)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  Convert.ToInt16(dateString.Substring(4, 2)),
+                  Convert.ToInt16(dateString.Substring(6, 2)),
+                  Convert.ToInt16(dateString.Substring(8, 2)),
+                  0, 0, 0);
+          }
+          else if (dateString.Length == 12)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  Convert.ToInt16(dateString.Substring(4, 2)),
+                  Convert.ToInt16(dateString.Substring(6, 2)),
+                  Convert.ToInt16(dateString.Substring(8, 2)),
+                  Convert.ToInt16(dateString.Substring(10, 2)),
+                  0, 0);
+          }
+          else if (dateString.Length == 14)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  Convert.ToInt16(dateString.Substring(4, 2)),
+                  Convert.ToInt16(dateString.Substring(6, 2)),
+                  Convert.ToInt16(dateString.Substring(8, 2)),
+                  Convert.ToInt16(dateString.Substring(10, 2)),
+                  Convert.ToInt16(dateString.Substring(12, 2)),
+                  0);
+          }
+          else if (dateString.Length == 17)
+          {
+              date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                  Convert.ToInt16(dateString.Substring(4, 2)),
+                  Convert.ToInt16(dateString.Substring(6, 2)),
+                  Convert.ToInt16(dateString.Substring(8, 2)),
+                  Convert.ToInt16(dateString.Substring(10, 2)),
+                  Convert.ToInt16(dateString.Substring(12, 2)),
+                  Convert.ToInt16(dateString.Substring(14, 3)));
+          }
+          else
+          {
+              throw new FormatException("Input is not valid date string: " + dateString);
+          }
+          return date;
 	  }
 
 	  /// <summary>
@@ -163,7 +214,7 @@ namespace Lucene.Net.Document
 	  ///  set to 0 or 1 </returns>
 	  public static DateTime Round(DateTime date, Resolution resolution)
 	  {
-		return new DateTime(Round(date, resolution));
+          return new DateTime(Round(date.Ticks / TimeSpan.TicksPerMillisecond, resolution));
 	  }
 
 	  /// <summary>
@@ -181,37 +232,56 @@ namespace Lucene.Net.Document
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Calendar calInstance = TL_CAL.get();
-		DateTime calInstance = TL_CAL.get();
-		calInstance.TimeInMillis = time;
+          DateTime dt = new DateTime(time * TimeSpan.TicksPerMillisecond);
 
-		switch (resolution)
-		{
-		  //NOTE: switch statement fall-through is deliberate
-		  case Lucene.Net.Document.DateTools.Resolution.YEAR:
-			calInstance.set(DateTime.MONTH, 0);
-			  goto case MONTH;
-		  case Lucene.Net.Document.DateTools.Resolution.MONTH:
-			calInstance.set(DateTime.DAY_OF_MONTH, 1);
-			  goto case DAY;
-		  case Lucene.Net.Document.DateTools.Resolution.DAY:
-			calInstance.set(DateTime.HOUR_OF_DAY, 0);
-			  goto case HOUR;
-		  case Lucene.Net.Document.DateTools.Resolution.HOUR:
-			calInstance.set(DateTime.MINUTE, 0);
-			  goto case MINUTE;
-		  case Lucene.Net.Document.DateTools.Resolution.MINUTE:
-			calInstance.set(DateTime.SECOND, 0);
-			  goto case SECOND;
-		  case Lucene.Net.Document.DateTools.Resolution.SECOND:
-			calInstance.set(DateTime.MILLISECOND, 0);
-			  goto case MILLISECOND;
-		  case Lucene.Net.Document.DateTools.Resolution.MILLISECOND:
-			// don't cut off anything
-			break;
-		  default:
-			throw new System.ArgumentException("unknown resolution " + resolution);
-		}
-		return calInstance.TimeInMillis;
+          if (resolution == Resolution.YEAR)
+          {
+              dt = dt.AddMonths(1 - dt.Month);
+              dt = dt.AddDays(1 - dt.Day);
+              dt = dt.AddHours(0 - dt.Hour);
+              dt = dt.AddMinutes(0 - dt.Minute);
+              dt = dt.AddSeconds(0 - dt.Second);
+              dt = dt.AddMilliseconds(0 - dt.Millisecond);
+          }
+          else if (resolution == Resolution.MONTH)
+          {
+              dt = dt.AddDays(1 - dt.Day);
+              dt = dt.AddHours(0 - dt.Hour);
+              dt = dt.AddMinutes(0 - dt.Minute);
+              dt = dt.AddSeconds(0 - dt.Second);
+              dt = dt.AddMilliseconds(0 - dt.Millisecond);
+          }
+          else if (resolution == Resolution.DAY)
+          {
+              dt = dt.AddHours(0 - dt.Hour);
+              dt = dt.AddMinutes(0 - dt.Minute);
+              dt = dt.AddSeconds(0 - dt.Second);
+              dt = dt.AddMilliseconds(0 - dt.Millisecond);
+          }
+          else if (resolution == Resolution.HOUR)
+          {
+              dt = dt.AddMinutes(0 - dt.Minute);
+              dt = dt.AddSeconds(0 - dt.Second);
+              dt = dt.AddMilliseconds(0 - dt.Millisecond);
+          }
+          else if (resolution == Resolution.MINUTE)
+          {
+              dt = dt.AddSeconds(0 - dt.Second);
+              dt = dt.AddMilliseconds(0 - dt.Millisecond);
+          }
+          else if (resolution == Resolution.SECOND)
+          {
+              dt = dt.AddMilliseconds(0 - dt.Millisecond);
+          }
+          else if (resolution == Resolution.MILLISECOND)
+          {
+              // don't cut off anything
+          }
+          else
+          {
+              throw new System.ArgumentException("unknown resolution " + resolution);
+          }
+          return dt.Ticks;
 	  }
 
 	  /// <summary>
@@ -262,13 +332,15 @@ namespace Lucene.Net.Document
 		/// </summary>
 
 	  }
+
+        /*
 	public static partial class EnumExtensionMethods
 	{
 		public override static string ToString(this Resolution instance)
 		{
 		  return base.ToString().ToLower(Locale.ROOT);
 		}
-	}
+	}*/
 
 	}
 

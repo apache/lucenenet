@@ -37,7 +37,6 @@ namespace Lucene.Net.Document
 	/// <seealso cref= NumericDocValues </seealso>
 	/// @deprecated use <seealso cref="NumericDocValuesField"/> instead.
 	///  
-	[Obsolete("use <seealso cref="NumericDocValuesField"/> instead.")]
 	public class LongDocValuesField : NumericDocValuesField
 	{
 

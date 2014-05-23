@@ -26,6 +26,12 @@ namespace Lucene.Net.Document
 	using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
 	using Lucene.Net.Search; // javadocs
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Lucene.Net.Util;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// Describes the properties of a field.
@@ -61,7 +67,7 @@ namespace Lucene.Net.Document
 	  private bool StoreTermVectorPositions_Renamed;
 	  private bool StoreTermVectorPayloads_Renamed;
 	  private bool OmitNorms_Renamed;
-	  private IndexOptions IndexOptions_Renamed = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+      private FieldInfo.IndexOptions_e IndexOptions_Renamed = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 	  private NumericType NumericType_Renamed;
 	  private bool Frozen;
 	  private int NumericPrecisionStep_Renamed = NumericUtils.PRECISION_STEP_DEFAULT;
@@ -72,17 +78,17 @@ namespace Lucene.Net.Document
 	  /// </summary>
 	  public FieldType(FieldType @ref)
 	  {
-		this.Indexed_Renamed = @ref.Indexed();
-		this.Stored_Renamed = @ref.Stored();
-		this.Tokenized_Renamed = @ref.Tokenized();
-		this.StoreTermVectors_Renamed = @ref.StoreTermVectors();
-		this.StoreTermVectorOffsets_Renamed = @ref.StoreTermVectorOffsets();
-		this.StoreTermVectorPositions_Renamed = @ref.StoreTermVectorPositions();
-		this.StoreTermVectorPayloads_Renamed = @ref.StoreTermVectorPayloads();
-		this.OmitNorms_Renamed = @ref.OmitNorms();
-		this.IndexOptions_Renamed = @ref.IndexOptions();
-		this.DocValueType_Renamed = @ref.DocValueType();
-		this.NumericType_Renamed = @ref.NumericType();
+		this.Indexed_Renamed = @ref.Indexed;
+		this.Stored_Renamed = @ref.Stored;
+		this.Tokenized_Renamed = @ref.Tokenized;
+		this.StoreTermVectors_Renamed = @ref.StoreTermVectors;
+		this.StoreTermVectorOffsets_Renamed = @ref.StoreTermVectorOffsets;
+		this.StoreTermVectorPositions_Renamed = @ref.StoreTermVectorPositions;
+		this.StoreTermVectorPayloads_Renamed = @ref.StoreTermVectorPayloads;
+		this.OmitNorms_Renamed = @ref.OmitNorms;
+		this.IndexOptions_Renamed = @ref.IndexOptionsValue;
+		this.DocValueType_Renamed = @ref.DocValueType;
+		this.NumericType_Renamed = @ref.NumericTypeValue;
 		// Do not copy frozen!
 	  }
 
@@ -97,7 +103,7 @@ namespace Lucene.Net.Document
 	  {
 		if (Frozen)
 		{
-		  throw new IllegalStateException("this FieldType is already frozen and cannot be changed");
+		  throw new Exception("this FieldType is already frozen and cannot be changed");
 		}
 	  }
 
@@ -112,23 +118,14 @@ namespace Lucene.Net.Document
 	  }
 
 	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setIndexed(boolean) </seealso>
-	  public override bool Indexed()
-	  {
-		return this.Indexed_Renamed;
-	  }
-
-	  /// <summary>
 	  /// Set to <code>true</code> to index (invert) this field. </summary>
 	  /// <param name="value"> true if this field should be indexed. </param>
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #indexed() </seealso>
-	  public virtual bool Indexed
+	  public bool Indexed
 	  {
+          get { return this.Indexed_Renamed; }
 		  set
 		  {
 			CheckIfFrozen();
@@ -137,38 +134,22 @@ namespace Lucene.Net.Document
 	  }
 
 	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setStored(boolean) </seealso>
-	  public override bool Stored()
-	  {
-		return this.Stored_Renamed;
-	  }
-
-	  /// <summary>
 	  /// Set to <code>true</code> to store this field. </summary>
 	  /// <param name="value"> true if this field should be stored. </param>
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #stored() </seealso>
-	  public virtual bool Stored
+	  public bool Stored
 	  {
+          get
+          {
+              return this.Stored_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
 			this.Stored_Renamed = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>true</code>. </summary>
-	  /// <seealso cref= #setTokenized(boolean) </seealso>
-	  public override bool Tokenized()
-	  {
-		return this.Tokenized_Renamed;
 	  }
 
 	  /// <summary>
@@ -180,21 +161,15 @@ namespace Lucene.Net.Document
 	  /// <seealso cref= #tokenized() </seealso>
 	  public virtual bool Tokenized
 	  {
+          get
+          {
+              return this.Tokenized_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
 			this.Tokenized_Renamed = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setStoreTermVectors(boolean) </seealso>
-	  public override bool StoreTermVectors()
-	  {
-		return this.StoreTermVectors_Renamed;
 	  }
 
 	  /// <summary>
@@ -204,23 +179,15 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #storeTermVectors() </seealso>
-	  public virtual bool StoreTermVectors
+	  public bool StoreTermVectors
 	  {
+          get { return this.StoreTermVectors_Renamed;  }
+
 		  set
 		  {
 			CheckIfFrozen();
-			this.StoreTermVectors_Renamed = value;
+			this.StoreTermVectors = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setStoreTermVectorOffsets(boolean) </seealso>
-	  public override bool StoreTermVectorOffsets()
-	  {
-		return this.StoreTermVectorOffsets_Renamed;
 	  }
 
 	  /// <summary>
@@ -232,21 +199,15 @@ namespace Lucene.Net.Document
 	  /// <seealso cref= #storeTermVectorOffsets() </seealso>
 	  public virtual bool StoreTermVectorOffsets
 	  {
+          get
+          {
+              return this.StoreTermVectorOffsets_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
 			this.StoreTermVectorOffsets_Renamed = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setStoreTermVectorPositions(boolean) </seealso>
-	  public override bool StoreTermVectorPositions()
-	  {
-		return this.StoreTermVectorPositions_Renamed;
 	  }
 
 	  /// <summary>
@@ -258,21 +219,15 @@ namespace Lucene.Net.Document
 	  /// <seealso cref= #storeTermVectorPositions() </seealso>
 	  public virtual bool StoreTermVectorPositions
 	  {
+          get
+          {
+              return this.StoreTermVectorPositions_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
 			this.StoreTermVectorPositions_Renamed = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setStoreTermVectorPayloads(boolean)  </seealso>
-	  public override bool StoreTermVectorPayloads()
-	  {
-		return this.StoreTermVectorPayloads_Renamed;
 	  }
 
 	  /// <summary>
@@ -284,6 +239,10 @@ namespace Lucene.Net.Document
 	  /// <seealso cref= #storeTermVectorPayloads() </seealso>
 	  public virtual bool StoreTermVectorPayloads
 	  {
+          get
+          {
+              return this.StoreTermVectorPayloads_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
@@ -291,15 +250,6 @@ namespace Lucene.Net.Document
 		  }
 	  }
 
-	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <code>false</code>. </summary>
-	  /// <seealso cref= #setOmitNorms(boolean) </seealso>
-	  public override bool OmitNorms()
-	  {
-		return this.OmitNorms_Renamed;
-	  }
 
 	  /// <summary>
 	  /// Set to <code>true</code> to omit normalization values for the field. </summary>
@@ -307,8 +257,9 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #omitNorms() </seealso>
-	  public virtual bool OmitNorms
+	  public bool OmitNorms
 	  {
+          get { return this.OmitNorms_Renamed; }
 		  set
 		  {
 			CheckIfFrozen();
@@ -317,23 +268,17 @@ namespace Lucene.Net.Document
 	  }
 
 	  /// <summary>
-	  /// {@inheritDoc}
-	  /// <p>
-	  /// The default is <seealso cref="IndexOptions#DOCS_AND_FREQS_AND_POSITIONS"/>. </summary>
-	  /// <seealso cref= #setIndexOptions(Lucene.Net.Index.FieldInfo.IndexOptions) </seealso>
-	  public override IndexOptions IndexOptions()
-	  {
-		return this.IndexOptions_Renamed;
-	  }
-
-	  /// <summary>
 	  /// Sets the indexing options for the field: </summary>
 	  /// <param name="value"> indexing options </param>
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #indexOptions() </seealso>
-	  public virtual IndexOptions IndexOptions
+	  public virtual IndexOptions IndexOptionsValue
 	  {
+          get
+          {
+              return this.IndexOptions_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
@@ -347,25 +292,17 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #numericType() </seealso>
-	  public virtual NumericType NumericType
+	  public NumericType NumericTypeValue
 	  {
+          get
+          {
+              return this.NumericType_Renamed;
+          }
 		  set
 		  {
 			CheckIfFrozen();
 			NumericType_Renamed = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// NumericType: if non-null then the field's value will be indexed
-	  /// numerically so that <seealso cref="NumericRangeQuery"/> can be used at 
-	  /// search time. 
-	  /// <p>
-	  /// The default is <code>null</code> (no numeric type) </summary>
-	  /// <seealso cref= #setNumericType(NumericType) </seealso>
-	  public virtual NumericType NumericType()
-	  {
-		return NumericType_Renamed;
 	  }
 
 	  /// <summary>
@@ -391,7 +328,7 @@ namespace Lucene.Net.Document
 	  /// <summary>
 	  /// Precision step for numeric field. 
 	  /// <p>
-	  /// this has no effect if <seealso cref="#numericType()"/> returns null.
+	  /// this has no effect if <seealso cref=/> returns null.
 	  /// <p>
 	  /// The default is <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> </summary>
 	  /// <seealso cref= #setNumericPrecisionStep(int) </seealso>
@@ -405,38 +342,38 @@ namespace Lucene.Net.Document
 	  public override sealed string ToString()
 	  {
 		StringBuilder result = new StringBuilder();
-		if (Stored())
+		if (Stored)
 		{
 		  result.Append("stored");
 		}
-		if (Indexed())
+		if (Indexed)
 		{
 		  if (result.Length > 0)
 		  {
 			result.Append(",");
 		  }
 		  result.Append("indexed");
-		  if (Tokenized())
+		  if (Tokenized)
 		  {
 			result.Append(",tokenized");
 		  }
-		  if (StoreTermVectors())
+		  if (StoreTermVectors)
 		  {
 			result.Append(",termVector");
 		  }
-		  if (StoreTermVectorOffsets())
+		  if (StoreTermVectorOffsets)
 		  {
 			result.Append(",termVectorOffsets");
 		  }
-		  if (StoreTermVectorPositions())
+		  if (StoreTermVectorPositions)
 		  {
 			result.Append(",termVectorPosition");
-			if (StoreTermVectorPayloads())
+			if (StoreTermVectorPayloads)
 			{
 			  result.Append(",termVectorPayloads");
 			}
 		  }
-		  if (OmitNorms())
+		  if (OmitNorms)
 		  {
 			result.Append(",omitNorms");
 		  }
@@ -482,7 +419,7 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #docValueType() </seealso>
-	  public virtual DocValuesType DocValueType
+	  public DocValuesType DocValueType
 	  {
           get
           {
@@ -496,5 +433,4 @@ namespace Lucene.Net.Document
 		  }
 	  }
 	}
-
 }

@@ -138,14 +138,14 @@ namespace Lucene.Net.Document
 		TYPE_NOT_STORED.Indexed = true;
 		TYPE_NOT_STORED.Tokenized = true;
 		TYPE_NOT_STORED.OmitNorms = true;
-		TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-		TYPE_NOT_STORED.NumericType = FieldType.NumericType.LONG;
+		TYPE_NOT_STORED.IndexOptionsValue = IndexOptions.DOCS_ONLY;
+        TYPE_NOT_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.LONG;
 		TYPE_NOT_STORED.Freeze();
 		TYPE_STORED.Indexed = true;
 		TYPE_STORED.Tokenized = true;
 		TYPE_STORED.OmitNorms = true;
-		TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-		TYPE_STORED.NumericType = FieldType.NumericType.LONG;
+		TYPE_STORED.IndexOptionsValue = IndexOptions.DOCS_ONLY;
+        TYPE_STORED.NumericTypeValue = Lucene.Net.Document.FieldType.NumericType.LONG;
 		TYPE_STORED.Stored = true;
 		TYPE_STORED.Freeze();
 	  }
@@ -180,9 +180,9 @@ namespace Lucene.Net.Document
 	  ///          if the field type does not have a LONG numericType() </exception>
 	  public LongField(string name, long value, FieldType type) : base(name, type)
 	  {
-		if (type.NumericType() != FieldType.NumericType.LONG)
+        if (type.NumericTypeValue != Lucene.Net.Document.FieldType.NumericType.LONG)
 		{
-		  throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericType());
+		  throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericTypeValue);
 		}
 		FieldsData = Convert.ToInt64(value);
 	  }
