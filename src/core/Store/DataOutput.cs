@@ -190,7 +190,7 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  /// <param name="i"> Smaller values take fewer bytes.  Negative numbers are
 	  /// supported, but should be avoided. </param>
-	  /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
+	  /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
 	  /// <seealso cref= DataInput#readVInt() </seealso>
 	  public void WriteVInt(int i)
 	  {
@@ -244,7 +244,7 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef utf8Result = new Lucene.Net.Util.BytesRef(10);
 		BytesRef utf8Result = new BytesRef(10);
-		UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
+		UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8Result);
 		WriteVInt(utf8Result.Length);
 		WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
 	  }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Store
 	  /// <seealso cref="#writeString(String) String"/>.
 	  /// </summary>
 	  /// <param name="set"> Input set. May be null (equivalent to an empty set) </param>
-	  public virtual void WriteStringSet(Set<string> set)
+	  public virtual void WriteStringSet(ISet<string> set)
 	  {
 		if (set == null)
 		{
@@ -322,7 +322,7 @@ namespace Lucene.Net.Store
 		}
 		else
 		{
-		  WriteInt(set.size());
+		  WriteInt(set.Count);
 		  foreach (string value in set)
 		  {
 			WriteString(value);

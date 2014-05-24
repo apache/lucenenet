@@ -78,7 +78,7 @@ namespace Lucene.Net.Store
 	  /// <exception cref="LockObtainFailedException"> if lock wait times out </exception>
 	  /// <exception cref="IllegalArgumentException"> if lockWaitTimeout is
 	  ///         out of bounds </exception>
-	  /// <exception cref="IOException"> if obtain() throws IOException </exception>
+	  /// <exception cref="System.IO.IOException"> if obtain() throws System.IO.IOException </exception>
 	  public bool Obtain(long lockWaitTimeout)
 	  {
 		FailureReason = null;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Store
 		/// <seealso cref="#doBody"/> exits. </summary>
 		/// <exception cref="LockObtainFailedException"> if lock could not
 		/// be obtained </exception>
-		/// <exception cref="IOException"> if <seealso cref="Lock#obtain"/> throws IOException </exception>
+		/// <exception cref="System.IO.IOException"> if <seealso cref="Lock#obtain"/> throws System.IO.IOException </exception>
 		public virtual object Run()
 		{
 		  bool locked = false;

@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public sealed class MockFixedLengthPayloadFilter : TokenFilter
 	{
-	  private readonly PayloadAttribute PayloadAtt = addAttribute(typeof(PayloadAttribute));
+	  private readonly PayloadAttribute PayloadAtt;// = addAttribute(typeof(PayloadAttribute));
 	  private readonly Random Random;
 	  private readonly sbyte[] Bytes;
 	  private readonly BytesRef Payload;

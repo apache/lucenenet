@@ -127,7 +127,7 @@ namespace Lucene.Net.Store
 
 	  public override string ToString()
 	  {
-		return this.GetType().SimpleName + "(" + @in.ToString() + ")";
+		return this.GetType().Name + "(" + @in.ToString() + ")";
 	  }
 
 	}

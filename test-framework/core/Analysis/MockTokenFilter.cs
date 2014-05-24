@@ -46,8 +46,8 @@ namespace Lucene.Net.Analysis
 
 	  private readonly CharacterRunAutomaton Filter;
 
-	  private readonly CharTermAttribute TermAtt = AddAttribute<CharTermAttribute>();
-	  private readonly PositionIncrementAttribute PosIncrAtt = AddAttribute<PositionIncrementAttribute>();
+	  private readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+	  private readonly PositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
 	  private int SkippedPositions;
 
 	  /// <summary>

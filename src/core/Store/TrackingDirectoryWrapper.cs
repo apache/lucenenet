@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
 	public sealed class TrackingDirectoryWrapper : FilterDirectory
 	{
 
-	  private readonly Set<string> CreatedFileNames = Collections.synchronizedSet(new HashSet<string>());
+	  private readonly ISet<string> CreatedFileNames = new HashSet<string>();
 
 	  public TrackingDirectoryWrapper(Directory @in) : base(@in)
 	  {
@@ -36,19 +36,19 @@ namespace Lucene.Net.Store
 
 	  public override void DeleteFile(string name)
 	  {
-		CreatedFileNames.remove(name);
+		CreatedFileNames.Remove(name);
 		@in.DeleteFile(name);
 	  }
 
 	  public override IndexOutput CreateOutput(string name, IOContext context)
 	  {
-		CreatedFileNames.add(name);
+		CreatedFileNames.Add(name);
 		return @in.CreateOutput(name, context);
 	  }
 
 	  public override void Copy(Directory to, string src, string dest, IOContext context)
 	  {
-		CreatedFileNames.add(dest);
+		CreatedFileNames.Add(dest);
 		@in.Copy(to, src, dest, context);
 	  }
 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
 
 	  // maybe clone before returning.... all callers are
 	  // cloning anyway....
-	  public Set<string> CreatedFiles
+	  public ISet<string> CreatedFiles
 	  {
 		  get
 		  {

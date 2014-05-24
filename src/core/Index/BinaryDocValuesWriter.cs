@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
 		{
 		  BytesOut.WriteBytes(value.Bytes, value.Offset, value.Length);
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  // Should never happen!
 		  throw new Exception(ioe);
@@ -164,9 +164,9 @@ namespace Lucene.Net.Index
 
 		  internal virtual void InitializeInstanceFields()
 		  {
-			  LengthsIterator = outerInstance.Lengths.Iterator();
-			  BytesIterator_Renamed = outerInstance.Bytes.DataInput;
-			  Size = (int) outerInstance.Lengths.Size();
+			  LengthsIterator = OuterInstance.Lengths.Iterator();
+              BytesIterator_Renamed = OuterInstance.Bytes.DataInput;
+              Size = (int)OuterInstance.Lengths.Size();
 		  }
 
 		  private readonly BinaryDocValuesWriter OuterInstance;
@@ -213,12 +213,12 @@ namespace Lucene.Net.Index
 			{
 			  BytesIterator_Renamed.ReadBytes(Value.Bytes, Value.Offset, Value.Length);
 			}
-			catch (IOException ioe)
+			catch (System.IO.IOException ioe)
 			{
 			  // Should never happen!
-			  throw new Exception(ioe);
+			  throw new Exception(ioe.ToString(), ioe);
 			}
-			if (outerInstance.DocsWithField.Get(Upto))
+            if (OuterInstance.DocsWithField.Get(Upto))
 			{
 			  v = Value;
 			}

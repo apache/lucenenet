@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 namespace Lucene.Net.Store
 {
 
@@ -28,7 +30,7 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// Directory for the lock files.
 	  /// </summary>
-	  protected internal File LockDir_Renamed = null;
+	  protected internal DirectoryInfo LockDir_Renamed = null;
 
 	  /// <summary>
 	  /// Set the lock directory. this method can be only called
@@ -37,13 +39,13 @@ namespace Lucene.Net.Store
 	  /// Subclasses can also use this method to set the directory
 	  /// in the constructor.
 	  /// </summary>
-	  protected internal File LockDir
+      protected internal DirectoryInfo LockDir
 	  {
 		  set
 		  {
 			if (this.LockDir_Renamed != null)
 			{
-			  throw new IllegalStateException("You can set the lock directory for this factory only once.");
+			  throw new InvalidOperationException("You can set the lock directory for this factory only once.");
 			}
 			this.LockDir_Renamed = value;
 		  }

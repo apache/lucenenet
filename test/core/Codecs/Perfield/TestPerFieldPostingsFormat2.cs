@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
 	using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
 	using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;
@@ -45,7 +45,8 @@ namespace Lucene.Net.Codecs.Perfield
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
+	//using Test = org.junit.Test;
 
 	/// 
 	/// 
@@ -71,7 +72,7 @@ namespace Lucene.Net.Codecs.Perfield
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("content", "aaa", Field.Store.NO));
+		  doc.Add(newTextField("content", "aaa", Field.Store.NO));
 		  writer.addDocument(doc);
 		}
 	  }
@@ -81,7 +82,7 @@ namespace Lucene.Net.Codecs.Perfield
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("content", "bbb", Field.Store.NO));
+		  doc.Add(newTextField("content", "bbb", Field.Store.NO));
 		  writer.addDocument(doc);
 		}
 	  }
@@ -91,8 +92,8 @@ namespace Lucene.Net.Codecs.Perfield
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("content", "ccc", Field.Store.NO));
-		  doc.add(newStringField("id", "" + i, Field.Store.YES));
+		  doc.Add(newTextField("content", "ccc", Field.Store.NO));
+		  doc.Add(newStringField("id", "" + i, Field.Store.YES));
 		  writer.addDocument(doc);
 		}
 	  }
@@ -100,8 +101,6 @@ namespace Lucene.Net.Codecs.Perfield
 	  /*
 	   * Test that heterogeneous index segments are merge successfully
 	   */
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testMergeUnusedPerFieldCodec() throws java.io.IOException
 	  public virtual void TestMergeUnusedPerFieldCodec()
 	  {
 		Directory dir = newDirectory();
@@ -113,12 +112,12 @@ namespace Lucene.Net.Codecs.Perfield
 		writer.commit();
 		AddDocs2(writer, 10);
 		writer.commit();
-		Assert.AreEqual(30, writer.maxDoc());
-		TestUtil.checkIndex(dir);
+		Assert.AreEqual(30, writer.MaxDoc());
+		TestUtil.CheckIndex(dir);
 		writer.forceMerge(1);
-		Assert.AreEqual(30, writer.maxDoc());
-		writer.close();
-		dir.close();
+		Assert.AreEqual(30, writer.MaxDoc());
+		writer.Close();
+		dir.Close();
 	  }
 
 	  /*
@@ -148,7 +147,7 @@ namespace Lucene.Net.Codecs.Perfield
 		}
 		AddDocs3(writer, 10);
 		writer.commit();
-		writer.close();
+		writer.Close();
 
 		AssertQuery(new Term("content", "ccc"), dir, 10);
 		AssertQuery(new Term("content", "aaa"), dir, 10);
@@ -169,7 +168,7 @@ namespace Lucene.Net.Codecs.Perfield
 		AddDocs2(writer, 10);
 		writer.commit();
 		codec = iwconf.Codec;
-		Assert.AreEqual(30, writer.maxDoc());
+		Assert.AreEqual(30, writer.MaxDoc());
 		AssertQuery(new Term("content", "bbb"), dir, 10);
 		AssertQuery(new Term("content", "ccc"), dir, 10); ////
 		AssertQuery(new Term("content", "aaa"), dir, 10);
@@ -183,20 +182,20 @@ namespace Lucene.Net.Codecs.Perfield
 		AssertQuery(new Term("content", "ccc"), dir, 10);
 		AssertQuery(new Term("content", "bbb"), dir, 20);
 		AssertQuery(new Term("content", "aaa"), dir, 10);
-		Assert.AreEqual(40, writer.maxDoc());
+		Assert.AreEqual(40, writer.MaxDoc());
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: now optimize");
 		}
 		writer.forceMerge(1);
-		Assert.AreEqual(40, writer.maxDoc());
-		writer.close();
+		Assert.AreEqual(40, writer.MaxDoc());
+		writer.Close();
 		AssertQuery(new Term("content", "ccc"), dir, 10);
 		AssertQuery(new Term("content", "bbb"), dir, 20);
 		AssertQuery(new Term("content", "aaa"), dir, 10);
 
-		dir.close();
+		dir.Close();
 	  }
 
 	  public virtual void AssertQuery(Term t, Directory dir, int num)
@@ -205,11 +204,11 @@ namespace Lucene.Net.Codecs.Perfield
 		{
 		  Console.WriteLine("\nTEST: assertQuery " + t);
 		}
-		IndexReader reader = DirectoryReader.open(dir, 1);
+		IndexReader reader = DirectoryReader.Open(dir, 1);
 		IndexSearcher searcher = newSearcher(reader);
-		TopDocs search = searcher.search(new TermQuery(t), num + 10);
-		Assert.AreEqual(num, search.totalHits);
-		reader.close();
+		TopDocs search = searcher.Search(new TermQuery(t), num + 10);
+		Assert.AreEqual(num, search.TotalHits);
+		reader.Close();
 
 	  }
 
@@ -257,8 +256,6 @@ namespace Lucene.Net.Codecs.Perfield
 	  /*
 	   * Test per field codec support - adding fields with random codecs
 	   */
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testStressPerFieldCodec() throws java.io.IOException
 	  public virtual void TestStressPerFieldCodec()
 	  {
 		Directory dir = newDirectory(random());
@@ -279,7 +276,7 @@ namespace Lucene.Net.Codecs.Perfield
 			  customType.Tokenized = random().nextBoolean();
 			  customType.OmitNorms = random().nextBoolean();
 			  Field field = newField("" + k, TestUtil.randomRealisticUnicodeString(random(), 128), customType);
-			  doc.add(field);
+			  doc.Add(field);
 			}
 			writer.addDocument(doc);
 		  }
@@ -288,10 +285,10 @@ namespace Lucene.Net.Codecs.Perfield
 			writer.forceMerge(1);
 		  }
 		  writer.commit();
-		  Assert.AreEqual((i + 1) * docsPerRound, writer.maxDoc());
-		  writer.close();
+		  Assert.AreEqual((i + 1) * docsPerRound, writer.MaxDoc());
+		  writer.Close();
 		}
-		dir.close();
+		dir.Close();
 	  }
 
 	  public virtual void TestSameCodecDifferentInstance()
@@ -321,7 +318,7 @@ namespace Lucene.Net.Codecs.Perfield
 			}
 			else
 			{
-			  return base.getPostingsFormatForField(field);
+			  return base.GetPostingsFormatForField(field);
 			}
 		  }
 	  }
@@ -353,7 +350,7 @@ namespace Lucene.Net.Codecs.Perfield
 			}
 			else
 			{
-			  return base.getPostingsFormatForField(field);
+			  return base.GetPostingsFormatForField(field);
 			}
 		  }
 	  }
@@ -372,16 +369,16 @@ namespace Lucene.Net.Codecs.Perfield
 		ft.StoreTermVectorPositions = true;
 		Field idField = new Field("id", "", ft);
 		Field dateField = new Field("date", "", ft);
-		doc.add(idField);
-		doc.add(dateField);
+		doc.Add(idField);
+		doc.Add(dateField);
 		for (int i = 0; i < 100; i++)
 		{
 		  idField.StringValue = Convert.ToString(random().Next(50));
 		  dateField.StringValue = Convert.ToString(random().Next(100));
 		  iw.addDocument(doc);
 		}
-		iw.close();
-		dir.close(); // checkindex
+		iw.Close();
+		dir.Close(); // checkindex
 	  }
 	}
 

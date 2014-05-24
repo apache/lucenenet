@@ -18,7 +18,7 @@ namespace Lucene.Net.Codecs.asserting
 	 * limitations under the License.
 	 */
 
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 
 	/// <summary>
 	/// Acts like <seealso cref="Lucene46Codec"/> but with additional asserts.

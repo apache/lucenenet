@@ -22,6 +22,8 @@ namespace Lucene.Net.Analysis
 	using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Util;
+    using System.IO;
 
 
 
@@ -34,7 +36,7 @@ namespace Lucene.Net.Analysis
 	public sealed class MockPayloadAnalyzer : Analyzer
 	{
 
-	  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+	  public override TokenStreamComponents CreateComponents(string fieldName, StreamReader reader)
 	  {
 		Tokenizer result = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
 		return new TokenStreamComponents(result, new MockPayloadFilter(result, fieldName));
@@ -61,16 +63,16 @@ namespace Lucene.Net.Analysis
 		this.FieldName = fieldName;
 		Pos = 0;
 		i = 0;
-		PosIncrAttr = input.addAttribute(typeof(PositionIncrementAttribute));
-		PayloadAttr = input.addAttribute(typeof(PayloadAttribute));
-		TermAttr = input.addAttribute(typeof(CharTermAttribute));
+		PosIncrAttr = input.AddAttribute<PositionIncrementAttribute>();
+		PayloadAttr = input.AddAttribute<PayloadAttribute>();
+		TermAttr = input.AddAttribute<CharTermAttribute>();
 	  }
 
 	  public override bool IncrementToken()
 	  {
 		if (input.IncrementToken())
 		{
-		  PayloadAttr.Payload = new BytesRef(("pos: " + Pos).getBytes(StandardCharsets.UTF_8));
+		  PayloadAttr.Payload = new BytesRef(("pos: " + Pos).getBytes(IOUtils.CHARSET_UTF_8));
 		  int posIncr;
 		  if (Pos == 0 || i % 2 == 1)
 		  {
@@ -93,7 +95,7 @@ namespace Lucene.Net.Analysis
 
 	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		i = 0;
 		Pos = 0;
 	  }

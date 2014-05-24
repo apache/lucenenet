@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene46
 
 		  output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
 		  output.WriteStringStringMap(si.Diagnostics);
-		  output.WriteStringSet(si.Files());
+		  output.WriteStringSet(si.Files);
 		  CodecUtil.WriteFooter(output);
 		  success = true;
 		}

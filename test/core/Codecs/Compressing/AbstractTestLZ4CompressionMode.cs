@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -21,7 +23,7 @@ namespace Lucene.Net.Codecs.Compressing
 	 */
 
 
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 
 	public abstract class AbstractTestLZ4CompressionMode : AbstractTestCompressionMode
 	{
@@ -53,13 +55,13 @@ namespace Lucene.Net.Codecs.Compressing
 		  if (off == compressed.Length)
 		  {
 			Assert.AreEqual(decompressed.Length, decompressedOff);
-			Assert.IsTrue("lastLiterals=" + literalLen + ", bytes=" + decompressed.Length, literalLen >= LZ4.LAST_LITERALS || literalLen == decompressed.Length);
+			Assert.IsTrue(literalLen >= LZ4.LAST_LITERALS || literalLen == decompressed.Length, "lastLiterals=" + literalLen + ", bytes=" + decompressed.Length);
 			break;
 		  }
 
 		  int matchDec = (compressed[off++] & 0xFF) | ((compressed[off++] & 0xFF) << 8);
 		  // check that match dec is not 0
-		  Assert.IsTrue(matchDec + " " + decompressedOff, matchDec > 0 && matchDec <= decompressedOff);
+		  Assert.IsTrue(matchDec > 0 && matchDec <= decompressedOff, matchDec + " " + decompressedOff);
 
 		  int matchLen = token & 0x0F;
 		  if (matchLen == 0x0F)
@@ -91,7 +93,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public virtual void TestShortLiteralsAndMatchs()
 	  {
 		// literals and matchs lengths <= 15
-		sbyte[] decompressed = "1234562345673456745678910123".getBytes(StandardCharsets.UTF_8);
+		sbyte[] decompressed = "1234562345673456745678910123".GetBytes(IOUtils.CHARSET_UTF_8);
 		Test(decompressed);
 	  }
 

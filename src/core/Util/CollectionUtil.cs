@@ -42,14 +42,9 @@ namespace Lucene.Net.Util
 
 		internal T Pivot_Renamed;
 		internal readonly IList<T> List;
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: final java.util.Comparator<? base T> comp;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		internal readonly IComparer<?> Comp;
+		internal readonly IComparer<T> Comp;
 
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: ListIntroSorter(java.util.List<T> list, java.util.Comparator<? base T> comp)
-		internal ListIntroSorter<T1>(IList<T> list, IComparer<T1> comp) : base()
+		internal ListIntroSorter<T>(IList<T> list, IComparer<T> comp) : base()
 		{
 		  if (!(list is RandomAccess))
 		  {
@@ -88,15 +83,9 @@ namespace Lucene.Net.Util
 	  {
 
 		internal readonly IList<T> List;
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: final java.util.Comparator<? base T> comp;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 		internal readonly IComparer<?> Comp;
 		internal readonly T[] Tmp;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") ListTimSorter(java.util.List<T> list, java.util.Comparator<? base T> comp, int maxTempSlots)
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
 		internal ListTimSorter<T1>(IList<T> list, IComparer<T1> comp, int maxTempSlots) : base(maxTempSlots)
 		{
 		  if (!(list is RandomAccess))

@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
 	  private long BufferStart;
 	  private int BufferLength;
 
-	  private Checksum Crc = new BufferedChecksum(new CRC32());
+	  //private Checksum Crc = new BufferedChecksum(new CRC32());
 
 	  /// <summary>
 	  /// Construct an empty output buffer. </summary>
@@ -63,8 +63,6 @@ namespace Lucene.Net.Store
 	  public virtual void WriteTo(DataOutput @out)
 	  {
 		Flush();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long end = file.length;
 		long end = File.Length_Renamed;
 		long pos = 0;
 		int buffer = 0;
@@ -88,8 +86,6 @@ namespace Lucene.Net.Store
 	  public virtual void WriteTo(sbyte[] bytes, int offset)
 	  {
 		Flush();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long end = file.length;
 		long end = File.Length_Renamed;
 		long pos = 0;
 		int buffer = 0;
@@ -118,7 +114,7 @@ namespace Lucene.Net.Store
 		BufferStart = 0;
 		BufferLength = 0;
 		File.Length = 0;
-		Crc.reset();
+		//Crc.reset();
 	  }
 
 	  public override void Close()
@@ -152,14 +148,14 @@ namespace Lucene.Net.Store
 		  CurrentBufferIndex++;
 		  SwitchCurrentBuffer();
 		}
-		Crc.update(b);
+		//Crc.update(b);
 		CurrentBuffer[BufferPosition++] = b;
 	  }
 
 	  public override void WriteBytes(sbyte[] b, int offset, int len)
 	  {
 		Debug.Assert(b != null);
-		Crc.update(b, offset, len);
+		//Crc.update(b, offset, len);
 		while (len > 0)
 		{
 		  if (BufferPosition == BufferLength)
@@ -221,13 +217,13 @@ namespace Lucene.Net.Store
 		return (long) File.NumBuffers() * (long) BUFFER_SIZE;
 	  }
 
-	  public override long Checksum
+	  /*public override long Checksum
 	  {
 		  get
 		  {
 			return Crc.Value;
 		  }
-	  }
+	  }*/
 	}
 
 }

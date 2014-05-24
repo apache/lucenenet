@@ -1,3 +1,4 @@
+using System;
 namespace Lucene.Net.Store
 {
 
@@ -53,18 +54,16 @@ namespace Lucene.Net.Store
 
 		internal virtual void Verify(sbyte message)
 		{
-		  outerInstance.@out.write(message);
-		  outerInstance.@out.flush();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ret = in.read();
-		  int ret = outerInstance.@in.read();
+          OuterInstance.@out.write(message);
+		  OuterInstance.@out.flush();
+		  int ret = OuterInstance.@in.read();
 		  if (ret < 0)
 		  {
-			throw new IllegalStateException("Lock server died because of locking error.");
+			throw new InvalidOperationException("Lock server died because of locking error.");
 		  }
 		  if (ret != message)
 		  {
-			throw new IOException("Protocol violation.");
+			throw new System.IO.IOException("Protocol violation.");
 		  }
 		}
 

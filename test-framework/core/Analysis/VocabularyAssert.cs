@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+using NUnit.Framework;
 namespace Lucene.Net.Analysis
 {
 
@@ -32,7 +34,7 @@ namespace Lucene.Net.Analysis
 		while ((inputWord = vocReader.readLine()) != null)
 		{
 		  string expectedWord = outputReader.readLine();
-		  Assert.Assert.IsNotNull(expectedWord);
+		  Assert.IsNotNull(expectedWord);
 		  BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
 		}
 	  }
@@ -41,7 +43,7 @@ namespace Lucene.Net.Analysis
 	  /// Run a vocabulary test against one file: tab separated. </summary>
 	  public static void AssertVocabulary(Analyzer a, InputStream vocOut)
 	  {
-		BufferedReader vocReader = new BufferedReader(new InputStreamReader(vocOut, StandardCharsets.UTF_8));
+		BufferedReader vocReader = new BufferedReader(new InputStreamReader(vocOut, IOUtils.CHARSET_UTF_8));
 		string inputLine = null;
 		while ((inputLine = vocReader.readLine()) != null)
 		{

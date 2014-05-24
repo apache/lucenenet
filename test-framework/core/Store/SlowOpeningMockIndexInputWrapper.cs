@@ -36,13 +36,13 @@ namespace Lucene.Net.Store
 		{
 		  Thread.Sleep(50);
 		}
-		catch (InterruptedException ie)
+		catch (ThreadInterruptedException ie)
 		{
 		  try
 		  {
 			base.Close();
 		  } // we didnt open successfully
-		  catch (Exception ignore)
+		  catch (Exception)
 		  {
 		  }
 		  throw new ThreadInterruptedException(ie);

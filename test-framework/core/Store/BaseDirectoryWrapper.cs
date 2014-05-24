@@ -41,11 +41,11 @@ namespace Lucene.Net.Store
 	  public override void Close()
 	  {
 		IsOpen = false;
-		if (CheckIndexOnClose_Renamed && DirectoryReader.indexExists(this))
+		if (CheckIndexOnClose_Renamed && DirectoryReader.IndexExists(this))
 		{
 		  TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose_Renamed);
 		}
-		base.close();
+		base.Close();
 	  }
 
 	  public virtual bool Open
@@ -88,12 +88,12 @@ namespace Lucene.Net.Store
 
 	  public override void Copy(Directory to, string src, string dest, IOContext context)
 	  {
-		@in.copy(to, src, dest, context);
+		@in.Copy(to, src, dest, context);
 	  }
 
 	  public override IndexInputSlicer CreateSlicer(string name, IOContext context)
 	  {
-		return @in.createSlicer(name, context);
+		return @in.CreateSlicer(name, context);
 	  }
 	}
 

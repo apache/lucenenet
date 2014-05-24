@@ -48,13 +48,13 @@ namespace Lucene.Net.Store
 
 	  public override Lock MakeLock(string lockName)
 	  {
-		return new MockLock(this, @delegate.makeLock(lockName), lockName);
+		return new MockLock(this, @delegate.MakeLock(lockName), lockName);
 	  }
 
 	  public override void ClearLock(string lockName)
 	  {
-		@delegate.clearLock(lockName);
-		Dir.OpenLocks.remove(lockName);
+		@delegate.ClearLock(lockName);
+		Dir.OpenLocks.Remove(lockName);
 	  }
 
 	  public override string ToString()
@@ -78,9 +78,9 @@ namespace Lucene.Net.Store
 
 		public override bool Obtain()
 		{
-		  if (DelegateLock.obtain())
+		  if (DelegateLock.Obtain())
 		  {
-			outerInstance.Dir.OpenLocks.add(Name);
+			OuterInstance.Dir.OpenLocks.Add(Name);
 			return true;
 		  }
 		  else
@@ -91,8 +91,8 @@ namespace Lucene.Net.Store
 
 		public override void Close()
 		{
-		  DelegateLock.close();
-		  outerInstance.Dir.OpenLocks.remove(Name);
+		  DelegateLock.Close();
+		  OuterInstance.Dir.OpenLocks.Remove(Name);
 		}
 
 		public override bool Locked

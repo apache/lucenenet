@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.nestedpulsing
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(docsWriter, pulsingWriterInner, pulsingWriter);
+			IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriterInner, pulsingWriter);
 		  }
 		}
 	  }
@@ -74,10 +74,10 @@ namespace Lucene.Net.Codecs.nestedpulsing
 		bool success = false;
 		try
 		{
-		  docsReader = new Lucene41PostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, state.segmentSuffix);
+		  docsReader = new Lucene41PostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
 		  pulsingReaderInner = new PulsingPostingsReader(state, docsReader);
 		  pulsingReader = new PulsingPostingsReader(state, pulsingReaderInner);
-		  FieldsProducer ret = new BlockTreeTermsReader(state.directory, state.fieldInfos, state.segmentInfo, pulsingReader, state.context, state.segmentSuffix, state.termsIndexDivisor);
+		  FieldsProducer ret = new BlockTreeTermsReader(state.Directory, state.FieldInfos, state.SegmentInfo, pulsingReader, state.Context, state.SegmentSuffix, state.TermsIndexDivisor);
 		  success = true;
 		  return ret;
 		}
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.nestedpulsing
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(docsReader, pulsingReaderInner, pulsingReader);
+			IOUtils.CloseWhileHandlingException(docsReader, pulsingReaderInner, pulsingReader);
 		  }
 		}
 	  }

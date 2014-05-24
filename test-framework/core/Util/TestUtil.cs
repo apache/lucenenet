@@ -69,8 +69,10 @@ namespace Lucene.Net.Util
 	using TopDocs = Lucene.Net.Search.TopDocs;
 	using Directory = Lucene.Net.Store.Directory;
 
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
+	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+	//using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// General utility methods for Lucene unit tests. 
@@ -180,7 +182,7 @@ namespace Lucene.Net.Util
 	  {
 		if (ms is ConcurrentMergeScheduler)
 		{
-		  ((ConcurrentMergeScheduler) ms).sync();
+		  ((ConcurrentMergeScheduler) ms).Sync();
 		}
 	  }
 
@@ -199,9 +201,9 @@ namespace Lucene.Net.Util
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		CheckIndex checker = new CheckIndex(dir);
 		checker.CrossCheckTermVectors = crossCheckTermVectors;
-		checker.setInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
-		CheckIndex.Status indexStatus = checker.checkIndex(null);
-		if (indexStatus == null || indexStatus.clean == false)
+		checker.SetInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
+		CheckIndex.Status indexStatus = checker.CheckIndex(null);
+		if (indexStatus == null || indexStatus.Clean == false)
 		{
 		  Console.WriteLine("CheckIndex failed");
 		  Console.WriteLine(bos.ToString(IOUtils.UTF_8));
@@ -223,7 +225,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static void CheckReader(IndexReader reader)
 	  {
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
 		  CheckReader(context.reader(), true);
 		}
@@ -234,7 +236,7 @@ namespace Lucene.Net.Util
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		PrintStream infoStream = new PrintStream(bos, false, IOUtils.UTF_8);
 
-		reader.checkIntegrity();
+		reader.CheckIntegrity();
 		CheckIndex.Status.FieldNormStatus fieldNormStatus = CheckIndex.testFieldNorms(reader, infoStream);
 		CheckIndex.Status.TermIndexStatus termIndexStatus = CheckIndex.testPostings(reader, infoStream);
 		CheckIndex.Status.StoredFieldStatus storedFieldStatus = CheckIndex.testStoredFields(reader, infoStream);
@@ -405,7 +407,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Operators for <seealso cref="#randomRegexpishString(Random, int)"/>.
 	  /// </summary>
-	  private static readonly IList<string> Ops = Arrays.asList(".", "?", "{0," + MaxRecursionBound + "}", "{1," + MaxRecursionBound + "}", "(", ")", "-", "[", "]", "|"); // bounded replacement for '+' -  bounded replacement for '*'
+	  private static readonly IList<string> Ops = Arrays.AsList(".", "?", "{0," + MaxRecursionBound + "}", "{1," + MaxRecursionBound + "}", "(", ")", "-", "[", "]", "|"); // bounded replacement for '+' -  bounded replacement for '*'
 
 	  /// <summary>
 	  /// Returns a String thats "regexpish" (contains lots of operators typically found in regular expressions)
@@ -801,10 +803,10 @@ namespace Lucene.Net.Util
 
 	  public static string GetPostingsFormat(Codec codec, string field)
 	  {
-		PostingsFormat p = codec.postingsFormat();
+		PostingsFormat p = codec.PostingsFormat();
 		if (p is PerFieldPostingsFormat)
 		{
-		  return ((PerFieldPostingsFormat)p).getPostingsFormatForField(field).Name;
+		  return ((PerFieldPostingsFormat)p).GetPostingsFormatForField(field).Name;
 		}
 		else
 		{
@@ -819,10 +821,10 @@ namespace Lucene.Net.Util
 
 	  public static string GetDocValuesFormat(Codec codec, string field)
 	  {
-		DocValuesFormat f = codec.docValuesFormat();
+		DocValuesFormat f = codec.DocValuesFormat();
 		if (f is PerFieldDocValuesFormat)
 		{
-		  return ((PerFieldDocValuesFormat) f).getDocValuesFormatForField(field).Name;
+		  return ((PerFieldDocValuesFormat) f).GetDocValuesFormatForField(field).Name;
 		}
 		else
 		{
@@ -843,7 +845,7 @@ namespace Lucene.Net.Util
 
 	  public static bool AnyFilesExceptWriteLock(Directory dir)
 	  {
-		string[] files = dir.listAll();
+		string[] files = dir.ListAll();
 		if (files.Length > 1 || (files.Length == 1 && !files[0].Equals("write.lock")))
 		{
 		  return true;
@@ -879,7 +881,7 @@ namespace Lucene.Net.Util
 		if (ms is ConcurrentMergeScheduler)
 		{
 		  // wtf... shouldnt it be even lower since its 1 by default?!?!
-		  ((ConcurrentMergeScheduler) ms).setMaxMergesAndThreads(3, 2);
+		  ((ConcurrentMergeScheduler) ms).SetMaxMergesAndThreads(3, 2);
 		}
 	  }
 
@@ -889,8 +891,8 @@ namespace Lucene.Net.Util
 	  public static void assertAttributeReflection<T>(AttributeImpl att, IDictionary<string, T> reflectedValues)
 	  {
 		IDictionary<string, object> map = new Dictionary<string, object>();
-		att.reflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
-		Assert.Assert.AreEqual("Reflection does not produce same map", reflectedValues, map);
+		att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
+		Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
 	  }
 
 	  private class AttributeReflectorAnonymousInnerClassHelper : AttributeReflector
@@ -910,23 +912,23 @@ namespace Lucene.Net.Util
 
 	  public static void AssertEquals(TopDocs expected, TopDocs actual)
 	  {
-		Assert.Assert.AreEqual("wrong total hits", expected.totalHits, actual.totalHits);
-		Assert.Assert.AreEqual("wrong maxScore", expected.MaxScore, actual.MaxScore, 0.0);
-		Assert.Assert.AreEqual("wrong hit count", expected.scoreDocs.length, actual.scoreDocs.length);
-		for (int hitIDX = 0;hitIDX < expected.scoreDocs.length;hitIDX++)
+		Assert.AreEqual(expected.TotalHits, actual.TotalHits, "wrong total hits", );
+		Assert.AreEqual(expected.MaxScore, actual.MaxScore, "wrong maxScore");
+		Assert.AreEqual(expected.ScoreDocs.Length, actual.ScoreDocs.Length, "wrong hit count", );
+		for (int hitIDX = 0;hitIDX < expected.ScoreDocs.Length;hitIDX++)
 		{
-		  ScoreDoc expectedSD = expected.scoreDocs[hitIDX];
-		  ScoreDoc actualSD = actual.scoreDocs[hitIDX];
-		  Assert.Assert.AreEqual("wrong hit docID", expectedSD.doc, actualSD.doc);
-		  Assert.Assert.AreEqual("wrong hit score", expectedSD.score, actualSD.score, 0.0);
+		  ScoreDoc expectedSD = expected.ScoreDocs[hitIDX];
+		  ScoreDoc actualSD = actual.ScoreDocs[hitIDX];
+		  Assert.AreEqual(expectedSD.Doc, actualSD.Doc, "wrong hit docID");
+		  Assert.AreEqual(expectedSD.Score, actualSD.Score, "wrong hit score");
 		  if (expectedSD is FieldDoc)
 		  {
-			Assert.Assert.IsTrue(actualSD is FieldDoc);
-			Assert.assertArrayEquals("wrong sort field values", ((FieldDoc) expectedSD).fields, ((FieldDoc) actualSD).fields);
+			Assert.IsTrue(actualSD is FieldDoc);
+			AssertArrayEquals(((FieldDoc) expectedSD).Fields, ((FieldDoc) actualSD).Fields, "wrong sort field values");
 		  }
 		  else
 		  {
-			Assert.Assert.IsFalse(actualSD is FieldDoc);
+			Assert.IsFalse(actualSD is FieldDoc);
 		  }
 		}
 	  }
@@ -1170,7 +1172,7 @@ namespace Lucene.Net.Util
 		  int offset = NextInt(r, 0, WHITESPACE_CHARACTERS.Length - 1);
 		  char c = WHITESPACE_CHARACTERS[offset];
 		  // sanity check
-		  Assert.Assert.IsTrue("Not really whitespace? (@" + offset + "): " + c, char.IsWhiteSpace(c));
+		  Assert.IsTrue("Not really whitespace? (@" + offset + "): " + c, char.IsWhiteSpace(c));
 		  @out.Append(c);
 		}
 		return @out.ToString();

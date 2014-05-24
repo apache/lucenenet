@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
 	{
 	  private const int MAXLENGTH = 129;
 
-	  private readonly PayloadAttribute PayloadAtt = AddAttribute<PayloadAttribute>();
+	  private readonly PayloadAttribute PayloadAtt;// = AddAttribute<PayloadAttribute>();
 	  private readonly Random Random;
 	  private readonly sbyte[] Bytes = new sbyte[MAXLENGTH];
 	  private readonly BytesRef Payload;
@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
 	  {
 		if (Input.IncrementToken())
 		{
-		  Random.nextBytes(Bytes);
+		  Random.NextBytes(Bytes);
 		  Payload.Length = Random.Next(MAXLENGTH);
 		  PayloadAtt.Payload = Payload;
 		  return true;

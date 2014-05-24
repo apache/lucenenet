@@ -39,10 +39,10 @@ namespace Lucene.Net.Store
 	{
 	  private readonly Directory SecondaryDir_Renamed;
 	  private readonly Directory PrimaryDir_Renamed;
-	  private readonly Set<string> PrimaryExtensions;
+	  private readonly ISet<string> PrimaryExtensions;
 	  private bool DoClose;
 
-	  public FileSwitchDirectory(Set<string> primaryExtensions, Directory primaryDir, Directory secondaryDir, bool doClose)
+	  public FileSwitchDirectory(ISet<string> primaryExtensions, Directory primaryDir, Directory secondaryDir, bool doClose)
 	  {
 		this.PrimaryExtensions = primaryExtensions;
 		this.PrimaryDir_Renamed = primaryDir;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
 
 	  public override string[] ListAll()
 	  {
-		Set<string> files = new HashSet<string>();
+		ISet<string> files = new HashSet<string>();
 		// LUCENE-3380: either or both of our dirs could be FSDirs,
 		// but if one underlying delegate is an FSDir and mkdirs() has not
 		// yet been called, because so far everything is written to the other,
@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
 		{
 		  foreach (string f in PrimaryDir_Renamed.ListAll())
 		  {
-			files.add(f);
+			files.Add(f);
 		  }
 		}
 		catch (NoSuchDirectoryException e)
@@ -110,7 +110,7 @@ namespace Lucene.Net.Store
 		{
 		  foreach (string f in SecondaryDir_Renamed.ListAll())
 		  {
-			files.add(f);
+			files.Add(f);
 		  }
 		}
 		catch (NoSuchDirectoryException e)
@@ -123,18 +123,18 @@ namespace Lucene.Net.Store
 		  }
 		  // we got NoSuchDirectoryException from the secondary,
 		  // and the primary is empty.
-		  if (files.Empty)
+		  if (files.Count == 0)
 		  {
 			throw e;
 		  }
 		}
 		// we got NoSuchDirectoryException from the primary,
 		// and the secondary is empty.
-		if (exc != null && files.Empty)
+		if (exc != null && files.Count == 0)
 		{
 		  throw exc;
 		}
-		return files.toArray(new string[files.size()]);
+		return files.ToArray(new string[files.Count]);
 	  }
 
 	  /// <summary>
@@ -152,7 +152,7 @@ namespace Lucene.Net.Store
 	  private Directory GetDirectory(string name)
 	  {
 		string ext = GetExtension(name);
-		if (PrimaryExtensions.contains(ext))
+		if (PrimaryExtensions.Contains(ext))
 		{
 		  return PrimaryDir_Renamed;
 		}
@@ -189,7 +189,7 @@ namespace Lucene.Net.Store
 
 		foreach (string name in names)
 		{
-		  if (PrimaryExtensions.contains(GetExtension(name)))
+		  if (PrimaryExtensions.Contains(GetExtension(name)))
 		  {
 			primaryNames.Add(name);
 		  }

@@ -86,12 +86,12 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) @Override public java.util.Iterator<Term> iterator()
 		  public virtual IEnumerator<Term> GetEnumerator()
 		  {
-			IEnumerator<Term>[] subs = new IEnumerator[OuterInstance.Iterables.Count];
+			IEnumerator<Term>[] subs = new IEnumerator<Term>[OuterInstance.Iterables.Count];
 			for (int i = 0; i < OuterInstance.Iterables.Count; i++)
 			{
 			  subs[i] = OuterInstance.Iterables[i].GetEnumerator();
 			}
-			return new MergedIterator<>(subs);
+            return new MergedIterator<Term>(subs);
 		  }
 	  }
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  iter = outerInstance.OuterInstance.Queries.GetEnumerator();
 			  }
 
@@ -134,8 +134,6 @@ namespace Lucene.Net.Index
 
 			  public virtual QueryAndLimit Next()
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map.Entry<Lucene.Net.Search.Query,Integer> ent = iter.next();
 				KeyValuePair<Query, int?> ent = iter.next();
 				return new QueryAndLimit(ent.Key, ent.Value);
 			  }

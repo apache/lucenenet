@@ -137,7 +137,7 @@ namespace Lucene.Net.Store
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<String> files = new java.util.HashSet<>();
-			Set<string> files = new HashSet<string>();
+			ISet<string> files = new HashSet<string>();
 			foreach (string f in Cache.ListAll())
 			{
 			  files.add(f);
@@ -160,12 +160,12 @@ namespace Lucene.Net.Store
 			{
 			  // however, if there are no cached files, then the directory truly
 			  // does not "exist"
-			  if (files.Empty)
+			  if (files.Count == 0)
 			  {
 				throw ex;
 			  }
 			}
-			return files.toArray(new string[files.size()]);
+			return files.ToArray(new string[files.Count]);
 		  }
 	  }
 
@@ -241,7 +241,7 @@ namespace Lucene.Net.Store
 		  {
 			@delegate.DeleteFile(name);
 		  }
-		  catch (IOException ioe)
+		  catch (System.IO.IOException ioe)
 		  {
 			// this is fine: file may not exist
 		  }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Store
 		  {
 			Cache.DeleteFile(name);
 		  }
-		  catch (IOException ioe)
+		  catch (System.IO.IOException ioe)
 		  {
 			// this is fine: file may not exist
 		  }
@@ -351,11 +351,11 @@ namespace Lucene.Net.Store
 		long bytes = 0;
 		if (context.MergeInfo != null)
 		{
-		  bytes = context.MergeInfo.estimatedMergeBytes;
+		  bytes = context.MergeInfo.EstimatedMergeBytes;
 		}
 		else if (context.FlushInfo != null)
 		{
-		  bytes = context.FlushInfo.estimatedSegmentSize;
+		  bytes = context.FlushInfo.EstimatedSegmentSize;
 		}
 
 		return !name.Equals(IndexFileNames.SEGMENTS_GEN) && (bytes <= MaxMergeSizeBytes) && (bytes + Cache.SizeInBytes()) <= MaxCachedBytes;
@@ -378,11 +378,7 @@ namespace Lucene.Net.Store
 			// Another thread beat us...
 			return;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IOContext context = IOContext.DEFAULT;
 		  IOContext context = IOContext.DEFAULT;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexOutput out = delegate.createOutput(fileName, context);
 		  IndexOutput @out = @delegate.CreateOutput(fileName, context);
 		  IndexInput @in = null;
 		  try
@@ -392,7 +388,7 @@ namespace Lucene.Net.Store
 		  }
 		  finally
 		  {
-			IOUtils.close(@in, @out);
+			IOUtils.Close(@in, @out);
 		  }
 
 		  // Lock order: uncacheLock -> this

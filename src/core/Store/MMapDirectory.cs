@@ -4,26 +4,28 @@ using System.Diagnostics;
 namespace Lucene.Net.Store
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    using System.IO;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
 
 
-	using Constants = Lucene.Net.Util.Constants;
+    using Constants = Lucene.Net.Util.Constants;
 
 	/// <summary>
 	/// File-based <seealso cref="Directory"/> implementation that uses
@@ -85,8 +87,9 @@ namespace Lucene.Net.Store
 	  /// <param name="path"> the path of the directory </param>
 	  /// <param name="lockFactory"> the lock factory to use, or null for the default
 	  /// (<seealso cref="NativeFSLockFactory"/>); </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  public MMapDirectory(File path, LockFactory lockFactory) : this(path, lockFactory, DEFAULT_MAX_BUFF)
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+      public MMapDirectory(DirectoryInfo path, LockFactory lockFactory)
+          : this(path, lockFactory, DEFAULT_MAX_BUFF)
 	  {
 	  }
 
@@ -94,8 +97,9 @@ namespace Lucene.Net.Store
 	  /// Create a new MMapDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
 	  /// </summary>
 	  /// <param name="path"> the path of the directory </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  public MMapDirectory(File path) : this(path, null)
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+      public MMapDirectory(DirectoryInfo path)
+          : this(path, null)
 	  {
 	  }
 
@@ -117,14 +121,15 @@ namespace Lucene.Net.Store
 	  /// be {@code 1 << 30}, as the address space is big enough.
 	  /// <p>
 	  /// <b>Please note:</b> The chunk size is always rounded down to a power of 2. </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  public MMapDirectory(File path, LockFactory lockFactory, int maxChunkSize) : base(path, lockFactory)
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+      public MMapDirectory(DirectoryInfo path, LockFactory lockFactory, int maxChunkSize)
+          : base(path, lockFactory)
 	  {
 		if (maxChunkSize <= 0)
 		{
 		  throw new System.ArgumentException("Maximum chunk size for mmap must be >0");
 		}
-		this.ChunkSizePower = 31 - int.numberOfLeadingZeros(maxChunkSize);
+		this.ChunkSizePower = 31 - Number.NumberOfLeadingZeros(maxChunkSize);
 		Debug.Assert(this.ChunkSizePower >= 0 && this.ChunkSizePower <= 30);
 	  }
 
@@ -138,7 +143,7 @@ namespace Lucene.Net.Store
 		try
 		{
 		  Type.GetType("sun.misc.Cleaner");
-		  Type.GetType("java.nio.DirectByteBuffer").getMethod("cleaner");
+		  Type.GetType("java.nio.DirectByteBuffer").GetMethod("cleaner");
 		  v = true;
 		}
 		catch (Exception e)
@@ -201,8 +206,6 @@ namespace Lucene.Net.Store
 
 	  public override IndexInputSlicer CreateSlicer(string name, IOContext context)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MMapIndexInput full = (MMapIndexInput) openInput(name, context);
 		MMapIndexInput full = (MMapIndexInput) OpenInput(name, context);
 		return new IndexInputSlicerAnonymousInnerClassHelper(this, full);
 	  }
@@ -221,13 +224,13 @@ namespace Lucene.Net.Store
 
 		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
 		  {
-			outerInstance.EnsureOpen();
+			OuterInstance.EnsureOpen();
 			return Full.Slice(sliceDescription, offset, length);
 		  }
 
 		  public override IndexInput OpenFullSlice()
 		  {
-			outerInstance.EnsureOpen();
+			OuterInstance.EnsureOpen();
 			return Full.Clone();
 		  }
 
@@ -264,9 +267,7 @@ namespace Lucene.Net.Store
 			}
 			catch (PrivilegedActionException e)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.IOException ioe = new java.io.IOException("unable to unmap the mapped buffer");
-			  IOException ioe = new IOException("unable to unmap the mapped buffer");
+			  System.IO.IOException ioe = new System.IO.IOException("unable to unmap the mapped buffer");
 			  ioe.initCause(e.InnerException);
 			  throw ioe;
 			}
@@ -285,20 +286,16 @@ namespace Lucene.Net.Store
 				this.Buffer = buffer;
 			}
 
-			public override Void Run()
+			public override void Run()
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Method getCleanerMethod = buffer.getClass().getMethod("cleaner");
 			  Method getCleanerMethod = Buffer.GetType().GetMethod("cleaner");
 			  getCleanerMethod.Accessible = true;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object cleaner = getCleanerMethod.invoke(buffer);
 			  object cleaner = getCleanerMethod.invoke(Buffer);
 			  if (cleaner != null)
 			  {
 				cleaner.GetType().GetMethod("clean").invoke(cleaner);
 			  }
-			  return null;
+			  //return null;
 			}
 		}
 	  }
@@ -312,13 +309,9 @@ namespace Lucene.Net.Store
 		  throw new System.ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long chunkSize = 1L << chunkSizePower;
 		long chunkSize = 1L << ChunkSizePower;
 
 		// we always allocate one more buffer, the last one may be a 0 byte one
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int nrBuffers = (int)(length >>> chunkSizePower) + 1;
 		int nrBuffers = (int)((long)((ulong)length >> ChunkSizePower)) + 1;
 
 		ByteBuffer[] buffers = new ByteBuffer[nrBuffers];

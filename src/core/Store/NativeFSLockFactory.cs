@@ -140,13 +140,13 @@ namespace Lucene.Net.Store
 			{
 			  if (!LockDir.mkdirs())
 			  {
-				throw new IOException("Cannot create directory: " + LockDir.AbsolutePath);
+				throw new System.IO.IOException("Cannot create directory: " + LockDir.AbsolutePath);
 			  }
 			}
 			else if (!LockDir.Directory)
 			{
 			  // TODO: NoSuchDirectoryException instead?
-			  throw new IOException("Found regular file where directory expected: " + LockDir.AbsolutePath);
+			  throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.AbsolutePath);
 			}
         
 			Channel = FileChannel.open(Path.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
@@ -157,12 +157,12 @@ namespace Lucene.Net.Store
 			  success = @lock != null;
 			}
 //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-			catch (IOException | OverlappingFileLockException e)
+			catch (System.IO.IOException | OverlappingFileLockException e)
 			{
 			  // At least on OS X, we will sometimes get an
-			  // intermittent "Permission Denied" IOException,
+			  // intermittent "Permission Denied" System.IO.IOException,
 			  // which seems to simply mean "you failed to get
-			  // the lock".  But other IOExceptions could be
+			  // the lock".  But other System.IO.IOExceptions could be
 			  // "permanent" (eg, locking is not supported via
 			  // the filesystem).  So, we record the failure
 			  // reason here; the timeout obtain (usually the
@@ -241,7 +241,7 @@ namespace Lucene.Net.Store
 				  }
 				  return !obtained;
 				}
-				catch (IOException ioe)
+				catch (System.IO.IOException ioe)
 				{
 				  return false;
 				}

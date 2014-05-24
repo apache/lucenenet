@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis
 	{
 	  private const bool DEBUG = false;
 
-	  private readonly CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
+      private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
 	  private readonly Random random;
 	  private readonly long Seed;
 

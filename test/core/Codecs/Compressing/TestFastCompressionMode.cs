@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		Mode = CompressionMode.FAST;
 	  }
 

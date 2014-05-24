@@ -104,11 +104,7 @@ namespace Lucene.Net.Store
 
 		  // TODO: this is purely instantaneous rate; maybe we
 		  // should also offer decayed recent history one?
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long targetNS = lastNS = lastNS + ((long)(bytes * nsPerByte));
 		  long targetNS = LastNS = LastNS + ((long)(bytes * NsPerByte));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startNS;
 		  long startNS;
 		  long curNS = startNS = System.nanoTime();
 		  if (LastNS < curNS)
@@ -120,8 +116,6 @@ namespace Lucene.Net.Store
 		  // enough:
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long pauseNS = targetNS - curNS;
 			long pauseNS = targetNS - curNS;
 			if (pauseNS > 0)
 			{

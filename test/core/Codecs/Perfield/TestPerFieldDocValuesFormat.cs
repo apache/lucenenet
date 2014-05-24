@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
@@ -46,6 +46,8 @@ namespace Lucene.Net.Codecs.Perfield
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Basic tests of PerFieldDocValuesFormat
@@ -56,8 +58,8 @@ namespace Lucene.Net.Codecs.Perfield
 
 	  public override void SetUp()
 	  {
-		Codec_Renamed = new RandomCodec(new Random(random().nextLong()), Collections.emptySet<string>());
-		base.setUp();
+		Codec_Renamed = new RandomCodec(new Random(random().nextLong()), CollectionsHelper.EmptySet<string>());
+		base.SetUp();
 	  }
 
 	  protected internal override Codec Codec
@@ -70,7 +72,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 	  protected internal override bool CodecAcceptsHugeBinaryValues(string field)
 	  {
-		return TestUtil.fieldSupportsHugeBinaryDocValues(field);
+		return TestUtil.FieldSupportsHugeBinaryDocValues(field);
 	  }
 
 	  // just a simple trivial test
@@ -83,43 +85,43 @@ namespace Lucene.Net.Codecs.Perfield
 		Directory directory = newDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
 		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		DocValuesFormat fast = DocValuesFormat.forName("Lucene45");
-		DocValuesFormat slow = DocValuesFormat.forName("SimpleText");
+		DocValuesFormat fast = DocValuesFormat.ForName("Lucene45");
+		DocValuesFormat slow = DocValuesFormat.ForName("SimpleText");
 		iwc.Codec = new Lucene46CodecAnonymousInnerClassHelper(this, fast, slow);
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
 		string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
 		string text = "this is the text to be indexed. " + longTerm;
-		doc.add(newTextField("fieldname", text, Field.Store.YES));
-		doc.add(new NumericDocValuesField("dv1", 5));
-		doc.add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
+		doc.Add(newTextField("fieldname", text, Field.Store.YES));
+		doc.Add(new NumericDocValuesField("dv1", 5));
+		doc.Add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
 		iwriter.addDocument(doc);
-		iwriter.close();
+		iwriter.Close();
 
 		// Now search the index:
-		IndexReader ireader = DirectoryReader.open(directory); // read-only=true
+		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		IndexSearcher isearcher = newSearcher(ireader);
 
-		Assert.AreEqual(1, isearcher.search(new TermQuery(new Term("fieldname", longTerm)), 1).totalHits);
+		Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
 		Query query = new TermQuery(new Term("fieldname", "text"));
-		TopDocs hits = isearcher.search(query, null, 1);
-		Assert.AreEqual(1, hits.totalHits);
+		TopDocs hits = isearcher.Search(query, null, 1);
+		Assert.AreEqual(1, hits.TotalHits);
 		BytesRef scratch = new BytesRef();
 		// Iterate through the results:
-		for (int i = 0; i < hits.scoreDocs.length; i++)
+		for (int i = 0; i < hits.ScoreDocs.Length; i++)
 		{
-		  Document hitDoc = isearcher.doc(hits.scoreDocs[i].doc);
-		  Assert.AreEqual(text, hitDoc.get("fieldname"));
-		  Debug.Assert(ireader.leaves().size() == 1);
-		  NumericDocValues dv = ireader.leaves().get(0).reader().getNumericDocValues("dv1");
-		  Assert.AreEqual(5, dv.get(hits.scoreDocs[i].doc));
-		  BinaryDocValues dv2 = ireader.leaves().get(0).reader().getBinaryDocValues("dv2");
-		  dv2.get(hits.scoreDocs[i].doc, scratch);
+		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+		  Assert.AreEqual(text, hitDoc.Get("fieldname"));
+		  Debug.Assert(ireader.Leaves().Count == 1);
+		  NumericDocValues dv = ireader.Leaves()[0].Reader().GetNumericDocValues("dv1");
+		  Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+		  BinaryDocValues dv2 = ireader.Leaves()[0].Reader().GetBinaryDocValues("dv2");
+		  dv2.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.AreEqual(new BytesRef("hello world"), scratch);
 		}
 
-		ireader.close();
-		directory.close();
+		ireader.Close();
+		directory.Close();
 	  }
 
 	  private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec

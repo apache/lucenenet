@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 	//	}
 	  }
 
-	  protected internal virtual Set<Options> ValidOptions()
+	  protected internal virtual ISet<Options> ValidOptions()
 	  {
 		return EnumSet.allOf(typeof(Options));
 	  }

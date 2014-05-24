@@ -45,12 +45,12 @@ namespace Lucene.Net.Codecs.asserting
 
 	  public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
 	  {
-		return new AssertingFieldsConsumer(@in.fieldsConsumer(state));
+		return new AssertingFieldsConsumer(@in.FieldsConsumer(state));
 	  }
 
 	  public override FieldsProducer FieldsProducer(SegmentReadState state)
 	  {
-		return new AssertingFieldsProducer(@in.fieldsProducer(state));
+		return new AssertingFieldsProducer(@in.FieldsProducer(state));
 	  }
 
 	  internal class AssertingFieldsProducer : FieldsProducer
@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.close();
+		  @in.Close();
 		}
 
 		public override IEnumerator<string> Iterator()
@@ -76,13 +76,13 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override Terms Terms(string field)
 		{
-		  Terms terms = @in.terms(field);
+		  Terms terms = @in.Terms(field);
 		  return terms == null ? null : new AssertingAtomicReader.AssertingTerms(terms);
 		}
 
 		public override int Size()
 		{
-		  return @in.size();
+		  return @in.Size();
 		}
 
 		public override long UniqueTermCount
@@ -95,12 +95,12 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override long RamBytesUsed()
 		{
-		  return @in.ramBytesUsed();
+		  return @in.RamBytesUsed();
 		}
 
 		public override void CheckIntegrity()
 		{
-		  @in.checkIntegrity();
+		  @in.CheckIntegrity();
 		}
 	  }
 
@@ -115,14 +115,14 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override TermsConsumer AddField(FieldInfo field)
 		{
-		  TermsConsumer consumer = @in.addField(field);
+		  TermsConsumer consumer = @in.AddField(field);
 		  Debug.Assert(consumer != null);
 		  return new AssertingTermsConsumer(consumer, field);
 		}
 
 		public override void Close()
 		{
-		  @in.close();
+		  @in.Close();
 		}
 	  }
 
@@ -153,9 +153,9 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(State == TermsConsumerState.INITIAL || State == TermsConsumerState.START && LastPostingsConsumer.DocFreq == 0);
 		  State = TermsConsumerState.START;
-		  Debug.Assert(LastTerm == null || @in.Comparator.compare(text, LastTerm) > 0);
-		  LastTerm = BytesRef.deepCopyOf(text);
-		  return LastPostingsConsumer = new AssertingPostingsConsumer(@in.startTerm(text), FieldInfo, VisitedDocs);
+		  Debug.Assert(LastTerm == null || @in.Comparator.Compare(text, LastTerm) > 0);
+		  LastTerm = BytesRef.DeepCopyOf(text);
+		  return LastPostingsConsumer = new AssertingPostingsConsumer(@in.StartTerm(text), FieldInfo, VisitedDocs);
 		}
 
 		public override void FinishTerm(BytesRef text, TermStats stats)
@@ -163,19 +163,19 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(State == TermsConsumerState.START);
 		  State = TermsConsumerState.INITIAL;
 		  Debug.Assert(text.Equals(LastTerm));
-		  Debug.Assert(stats.docFreq > 0); // otherwise, this method should not be called.
-		  Debug.Assert(stats.docFreq == LastPostingsConsumer.DocFreq);
-		  SumDocFreq += stats.docFreq;
-		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
+		  Debug.Assert(stats.DocFreq > 0); // otherwise, this method should not be called.
+		  Debug.Assert(stats.DocFreq == LastPostingsConsumer.DocFreq);
+		  SumDocFreq += stats.DocFreq;
+		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		  {
-			Debug.Assert(stats.totalTermFreq == -1);
+			Debug.Assert(stats.TotalTermFreq == -1);
 		  }
 		  else
 		  {
-			Debug.Assert(stats.totalTermFreq == LastPostingsConsumer.TotalTermFreq);
-			SumTotalTermFreq += stats.totalTermFreq;
+			Debug.Assert(stats.TotalTermFreq == LastPostingsConsumer.TotalTermFreq);
+			SumTotalTermFreq += stats.TotalTermFreq;
 		  }
-		  @in.finishTerm(text, stats);
+		  @in.FinishTerm(text, stats);
 		}
 
 		public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
@@ -183,10 +183,10 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(State == TermsConsumerState.INITIAL || State == TermsConsumerState.START && LastPostingsConsumer.DocFreq == 0);
 		  State = TermsConsumerState.FINISHED;
 		  Debug.Assert(docCount >= 0);
-		  Debug.Assert(docCount == VisitedDocs.cardinality());
+		  Debug.Assert(docCount == VisitedDocs.Cardinality());
 		  Debug.Assert(sumDocFreq >= docCount);
 		  Debug.Assert(sumDocFreq == this.SumDocFreq);
-		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
+		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		  {
 			Debug.Assert(sumTotalTermFreq == -1);
 		  }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.asserting
 			Debug.Assert(sumTotalTermFreq >= sumDocFreq);
 			Debug.Assert(sumTotalTermFreq == this.SumTotalTermFreq);
 		  }
-		  @in.finish(sumTotalTermFreq, sumDocFreq, docCount);
+		  @in.Finish(sumTotalTermFreq, sumDocFreq, docCount);
 		}
 
 		public override IComparer<BytesRef> Comparator
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(State == PostingsConsumerState.INITIAL);
 		  State = PostingsConsumerState.START;
 		  Debug.Assert(docID >= 0);
-		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
+		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
 		  {
 			Debug.Assert(freq == -1);
 			this.Freq = 0; // we don't expect any positions here
@@ -252,8 +252,8 @@ namespace Lucene.Net.Codecs.asserting
 		  this.LastPosition = 0;
 		  this.LastStartOffset = 0;
 		  DocFreq++;
-		  VisitedDocs.set(docID);
-		  @in.startDoc(docID, freq);
+		  VisitedDocs.Set(docID);
+		  @in.StartDoc(docID, freq);
 		}
 
 		public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs.asserting
 		  PositionCount++;
 		  Debug.Assert(position >= LastPosition || position == -1); // we still allow -1 from old 3.x indexes
 		  LastPosition = position;
-		  if (FieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+		  if (FieldInfo.IndexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
 		  {
 			Debug.Assert(startOffset >= 0);
 			Debug.Assert(startOffset >= LastStartOffset);
@@ -277,16 +277,16 @@ namespace Lucene.Net.Codecs.asserting
 		  }
 		  if (payload != null)
 		  {
-			Debug.Assert(FieldInfo.hasPayloads());
+			Debug.Assert(FieldInfo.HasPayloads());
 		  }
-		  @in.addPosition(position, payload, startOffset, endOffset);
+		  @in.AddPosition(position, payload, startOffset, endOffset);
 		}
 
 		public override void FinishDoc()
 		{
 		  Debug.Assert(State == PostingsConsumerState.START);
 		  State = PostingsConsumerState.INITIAL;
-		  if (FieldInfo.IndexOptions_e.compareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+		  if (FieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) < 0)
 		  {
 			Debug.Assert(PositionCount == 0); // we should not have fed any positions!
 		  }
@@ -294,7 +294,7 @@ namespace Lucene.Net.Codecs.asserting
 		  {
 			Debug.Assert(PositionCount == Freq);
 		  }
-		  @in.finishDoc();
+		  @in.FinishDoc();
 		}
 	  }
 	}

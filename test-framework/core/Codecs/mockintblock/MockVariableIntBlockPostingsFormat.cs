@@ -83,8 +83,8 @@ namespace Lucene.Net.Codecs.mockintblock
 
 		public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
 		{
-		  IndexInput @in = dir.openInput(fileName, context);
-		  int baseBlockSize = @in.readInt();
+		  IndexInput @in = dir.OpenInput(fileName, context);
+		  int baseBlockSize = @in.ReadInt();
 		  return new VariableIntBlockIndexInputAnonymousInnerClassHelper(this, @in, baseBlockSize);
 		}
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.mockintblock
 
 				public BlockReaderAnonymousInnerClassHelper(VariableIntBlockIndexInputAnonymousInnerClassHelper outerInstance, IndexInput @in, int[] buffer)
 				{
-					this.outerInstance = outerInstance;
+					this.OuterInstance = outerInstance;
 					this.@in = @in;
 					this.Buffer = buffer;
 				}
@@ -127,12 +127,12 @@ namespace Lucene.Net.Codecs.mockintblock
 				}
 				public override int ReadBlock()
 				{
-				  Buffer[0] = @in.readVInt();
+				  Buffer[0] = @in.ReadVInt();
 				  int count = Buffer[0] <= 3 ? OuterInstance.BaseBlockSize-1 : 2 * OuterInstance.BaseBlockSize-1;
 				  Debug.Assert(Buffer.Length >= count, "buffer.length=" + Buffer.Length + " count=" + count);
 				  for (int i = 0;i < count;i++)
 				  {
-					Buffer[i + 1] = @in.readVInt();
+					Buffer[i + 1] = @in.ReadVInt();
 				  }
 				  return 1 + count;
 				}
@@ -141,11 +141,11 @@ namespace Lucene.Net.Codecs.mockintblock
 
 		public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
 		{
-		  IndexOutput @out = dir.createOutput(fileName, context);
+		  IndexOutput @out = dir.CreateOutput(fileName, context);
 		  bool success = false;
 		  try
 		  {
-			@out.writeInt(BaseBlockSize);
+			@out.WriteInt(BaseBlockSize);
 			VariableIntBlockIndexOutput ret = new VariableIntBlockIndexOutputAnonymousInnerClassHelper(this, @out, 2 * BaseBlockSize);
 			success = true;
 			return ret;
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.mockintblock
 		  {
 			if (!success)
 			{
-			  IOUtils.closeWhileHandlingException(@out);
+			  IOUtils.CloseWhileHandlingException(@out);
 			}
 		  }
 		}
@@ -165,7 +165,8 @@ namespace Lucene.Net.Codecs.mockintblock
 
 			private IndexOutput @out;
 
-			public VariableIntBlockIndexOutputAnonymousInnerClassHelper(MockIntFactory outerInstance, IndexOutput @out, int 2 * baseBlockSize) : base(@out, 2 * outerInstance.BaseBlockSize)
+			public VariableIntBlockIndexOutputAnonymousInnerClassHelper(MockIntFactory outerInstance, IndexOutput @out, int 2 * baseBlockSize) 
+                : base(@out, 2 * outerInstance.BaseBlockSize)
 			{
 				this.OuterInstance = outerInstance;
 				this.@out = @out;
@@ -246,13 +247,13 @@ namespace Lucene.Net.Codecs.mockintblock
 
 	  public override FieldsProducer FieldsProducer(SegmentReadState state)
 	  {
-		PostingsReaderBase postingsReader = new SepPostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, new MockIntFactory(BaseBlockSize), state.segmentSuffix);
+		PostingsReaderBase postingsReader = new SepPostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, new MockIntFactory(BaseBlockSize), state.SegmentSuffix);
 
 		TermsIndexReaderBase indexReader;
 		bool success = false;
 		try
 		{
-		  indexReader = new FixedGapTermsIndexReader(state.directory, state.fieldInfos, state.segmentInfo.name, state.termsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.segmentSuffix, state.context);
+		  indexReader = new FixedGapTermsIndexReader(state.Directory, state.FieldInfos, state.SegmentInfo.name, state.TermsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.SegmentSuffix, state.Context);
 		  success = true;
 		}
 		finally
@@ -266,7 +267,7 @@ namespace Lucene.Net.Codecs.mockintblock
 		success = false;
 		try
 		{
-		  FieldsProducer ret = new BlockTermsReader(indexReader, state.directory, state.fieldInfos, state.segmentInfo, postingsReader, state.context, state.segmentSuffix);
+		  FieldsProducer ret = new BlockTermsReader(indexReader, state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix);
 		  success = true;
 		  return ret;
 		}

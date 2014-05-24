@@ -32,6 +32,7 @@ namespace Lucene.Net.Store
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using ThrottledIndexOutput = Lucene.Net.Util.ThrottledIndexOutput;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// this is a Directory Wrapper that adds methods
@@ -65,10 +66,10 @@ namespace Lucene.Net.Store
 	  internal bool WrapLockFactory_Renamed = true;
 	  internal bool AllowRandomFileNotFoundException_Renamed = true;
 	  internal bool AllowReadingFilesStillOpenForWrite_Renamed = false;
-	  private Set<string> UnSyncedFiles;
-	  private Set<string> CreatedFiles;
-	  private Set<string> OpenFilesForWrite = new HashSet<string>();
-	  internal Set<string> OpenLocks = Collections.synchronizedSet(new HashSet<string>());
+	  private ISet<string> UnSyncedFiles;
+	  private ISet<string> CreatedFiles;
+	  private ISet<string> OpenFilesForWrite = new HashSet<string>();
+	  internal ISet<string> OpenLocks = Collections.synchronizedSet(new HashSet<string>());
 	  internal volatile bool Crashed;
 	  private ThrottledIndexOutput ThrottledOutput;
 	  private Throttling Throttling_Renamed = Throttling.SOMETIMES;
@@ -78,17 +79,17 @@ namespace Lucene.Net.Store
 
 	  // use this for tracking files for crash.
 	  // additionally: provides debugging information in case you leave one open
-	  private IDictionary<IDisposable, Exception> OpenFileHandles = Collections.synchronizedMap(new IdentityHashMap<IDisposable, Exception>());
+	  private IDictionary<IDisposable, Exception> OpenFileHandles = new HashMap<IDisposable, Exception>();
 
 	  // NOTE: we cannot initialize the Map here due to the
 	  // order in which our constructor actually does this
 	  // member initialization vs when it calls super.  It seems
 	  // like super is called, then our members are initialized:
-	  private IDictionary<string, int?> OpenFiles;
+	  private IDictionary<string, int> OpenFiles;
 
 	  // Only tracked if noDeleteOpenFile is true: if an attempt
 	  // is made to delete an open file, we enroll it here.
-	  private Set<string> OpenFilesDeleted;
+	  private ISet<string> OpenFilesDeleted;
 
 	  private void Init()
 	  {
@@ -96,17 +97,17 @@ namespace Lucene.Net.Store
 		  {
 			if (OpenFiles == null)
 			{
-			  OpenFiles = new Dictionary<>();
-			  OpenFilesDeleted = new HashSet<>();
+			  OpenFiles = new Dictionary<string, int>();
+			  OpenFilesDeleted = new HashSet<string>();
 			}
         
 			if (CreatedFiles == null)
 			{
-			  CreatedFiles = new HashSet<>();
+			  CreatedFiles = new HashSet<string>();
 			}
 			if (UnSyncedFiles == null)
 			{
-			  UnSyncedFiles = new HashSet<>();
+                UnSyncedFiles = new HashSet<string>();
 			}
 		  }
 	  }
@@ -140,7 +141,7 @@ namespace Lucene.Net.Store
 	  }
 
 	  /// <summary>
-	  /// If set to true, we throw an IOException if the same
+	  /// If set to true, we throw anSystem.IO.IOException if the same
 	  ///  file is opened by createOutput, ever. 
 	  /// </summary>
 	  public virtual bool PreventDoubleWrite
@@ -153,7 +154,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// If set to true (the default), when we throw random
-	  ///  IOException on openInput or createOutput, we may
+	  /// System.IO.IOException on openInput or createOutput, we may
 	  ///  sometimes throw FileNotFoundException or
 	  ///  NoSuchFileException. 
 	  /// </summary>
@@ -228,7 +229,7 @@ namespace Lucene.Net.Store
 			MaybeThrowDeterministicException();
 			if (Crashed)
 			{
-			  throw new IOException("cannot sync after crash");
+			  throw new System.IO.IOException("cannot sync after crash");
 			}
 			// don't wear out our hardware so much in tests.
 			if (LuceneTestCase.Rarely(RandomState) || MustSync())
@@ -237,8 +238,8 @@ namespace Lucene.Net.Store
 			  {
 				// randomly fail with IOE on any file
 				MaybeThrowIOException(name);
-				@in.sync(Collections.singleton(name));
-				UnSyncedFiles.remove(name);
+				@in.Sync(Collections.singleton(name));
+				UnSyncedFiles.Remove(name);
 			  }
 			}
 			else
@@ -254,15 +255,15 @@ namespace Lucene.Net.Store
 		  {
 			if (@in is RAMDirectory)
 			{
-			  return ((RAMDirectory) @in).sizeInBytes();
+			  return ((RAMDirectory) @in).SizeInBytes();
 			}
 			else
 			{
 			  // hack
 			  long size = 0;
-			  foreach (string file in @in.listAll())
+			  foreach (string file in @in.ListAll())
 			  {
-				size += @in.fileLength(file);
+				size += @in.FileLength(file);
 			  }
 			  return size;
 			}
@@ -278,19 +279,19 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			Crashed = true;
-			OpenFiles = new Dictionary<>();
-			OpenFilesForWrite = new HashSet<>();
-			OpenFilesDeleted = new HashSet<>();
+			OpenFiles = new Dictionary<string, int>();
+			OpenFilesForWrite = new HashSet<string>();
+			OpenFilesDeleted = new HashSet<string>();
 			IEnumerator<string> it = UnSyncedFiles.GetEnumerator();
-			UnSyncedFiles = new HashSet<>();
+            UnSyncedFiles = new HashSet<string>();
 			// first force-close all files, so we can corrupt on windows etc.
 			// clone the file map, as these guys want to remove themselves on close.
-			IDictionary<IDisposable, Exception> m = new IdentityHashMap<IDisposable, Exception>(OpenFileHandles);
+			IDictionary<IDisposable, Exception> m = new HashMap<IDisposable, Exception>(OpenFileHandles);
 			foreach (IDisposable f in m.Keys)
 			{
 			  try
 			  {
-				f.close();
+				f.Dispose();
 			  }
 			  catch (Exception ignored)
 			  {
@@ -315,14 +316,14 @@ namespace Lucene.Net.Store
 				long length = FileLength(name);
 				sbyte[] zeroes = new sbyte[256];
 				long upto = 0;
-				IndexOutput @out = @in.createOutput(name, LuceneTestCase.NewIOContext(RandomState));
+				IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
 				while (upto < length)
 				{
 				  int limit = (int) Math.Min(length - upto, zeroes.Length);
-				  @out.writeBytes(zeroes, 0, limit);
+				  @out.WriteBytes(zeroes, 0, limit);
 				  upto += limit;
 				}
-				@out.close();
+				@out.Close();
 			  }
 			  else if (damage == 2)
 			  {
@@ -340,20 +341,20 @@ namespace Lucene.Net.Store
 					break;
 				  }
 				}
-				IndexOutput tempOut = @in.createOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
-				IndexInput ii = @in.openInput(name, LuceneTestCase.NewIOContext(RandomState));
-				tempOut.copyBytes(ii, ii.length() / 2);
-				tempOut.close();
-				ii.close();
+				IndexOutput tempOut = @in.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
+				IndexInput ii = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState));
+				tempOut.CopyBytes(ii, ii.Length() / 2);
+				tempOut.Close();
+				ii.Close();
         
 				// Delete original and copy bytes back:
 				DeleteFile(name, true);
         
-				IndexOutput @out = @in.createOutput(name, LuceneTestCase.NewIOContext(RandomState));
-				ii = @in.openInput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
-				@out.copyBytes(ii, ii.length());
-				@out.close();
-				ii.close();
+				IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
+				ii = @in.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
+				@out.CopyBytes(ii, ii.Length());
+				@out.Close();
+				ii.Close();
 				DeleteFile(tempFileName, true);
 			  }
 			  else if (damage == 3)
@@ -366,9 +367,9 @@ namespace Lucene.Net.Store
 				action = "fully truncated";
 				// Totally truncate the file to zero bytes
 				DeleteFile(name, true);
-				IndexOutput @out = @in.createOutput(name, LuceneTestCase.NewIOContext(RandomState));
+				IndexOutput @out = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
 				@out.Length = 0;
-				@out.close();
+				@out.Close();
 			  }
 			  if (LuceneTestCase.VERBOSE)
 			  {
@@ -383,7 +384,7 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			Crashed = false;
-			OpenLocks.clear();
+			OpenLocks.Clear();
 		  }
 	  }
 
@@ -417,7 +418,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Emulate windows whereby deleting an open file is not
-	  /// allowed (raise IOException).
+	  /// allowed (raiseSystem.IO.IOException).
 	  /// </summary>
 	  public virtual bool NoDeleteOpenFile
 	  {
@@ -452,7 +453,7 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// If 0.0, no exceptions will be thrown.  Else this should
 	  /// be a double 0.0 - 1.0.  We will randomly throw an
-	  /// IOException on the first write to an OutputStream based
+	  ///System.IO.IOException on the first write to an OutputStream based
 	  /// on this probability.
 	  /// </summary>
 	  public virtual double RandomIOExceptionRate
@@ -472,7 +473,7 @@ namespace Lucene.Net.Store
 	  /// If 0.0, no exceptions will be thrown during openInput
 	  /// and createOutput.  Else this should
 	  /// be a double 0.0 - 1.0 and we will randomly throw an
-	  /// IOException in openInput and createOutput with
+	  ///System.IO.IOException in openInput and createOutput with
 	  /// this probability.
 	  /// </summary>
 	  public virtual double RandomIOExceptionRateOnOpen
@@ -492,12 +493,12 @@ namespace Lucene.Net.Store
 	  {
 		if (RandomState.NextDouble() < RandomIOExceptionRate_Renamed)
 		{
-		  if (LuceneTestCase.VERBOSE)
+		  /*if (LuceneTestCase.VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
 			(new Exception()).printStackTrace(System.out);
-		  }
-		  throw new IOException("a random IOException" + (message == null ? "" : " (" + message + ")"));
+		  }*/
+		  throw new System.IO.IOException("a randomSystem.IO.IOException" + (message == null ? "" : " (" + message + ")"));
 		}
 	  }
 
@@ -505,18 +506,18 @@ namespace Lucene.Net.Store
 	  {
 		if (RandomState.NextDouble() < RandomIOExceptionRateOnOpen_Renamed)
 		{
-		  if (LuceneTestCase.VERBOSE)
+		  /*if (LuceneTestCase.VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
 			(new Exception()).printStackTrace(System.out);
-		  }
+		  }*/
 		  if (AllowRandomFileNotFoundException_Renamed == false || RandomState.nextBoolean())
 		  {
-			throw new IOException("a random IOException (" + name + ")");
+			throw new System.IO.IOException("a randomSystem.IO.IOException (" + name + ")");
 		  }
 		  else
 		  {
-			throw RandomState.nextBoolean() ? new FileNotFoundException("a random IOException (" + name + ")") : new NoSuchFileException("a random IOException (" + name + ")");
+			throw RandomState.nextBoolean() ? new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new NoSuchFileException("a randomSystem.IO.IOException (" + name + ")");
 		  }
 		}
 	  }
@@ -557,7 +558,7 @@ namespace Lucene.Net.Store
 	  {
 		if (RandomState.nextBoolean())
 		{
-		  Thread.@yield();
+		  Thread.@Yield();
 		}
 	  }
 
@@ -571,44 +572,44 @@ namespace Lucene.Net.Store
         
 			if (Crashed && !forced)
 			{
-			  throw new IOException("cannot delete after crash");
+			  throw new System.IO.IOException("cannot delete after crash");
 			}
         
-			if (UnSyncedFiles.contains(name))
+			if (UnSyncedFiles.Contains(name))
 			{
-			  UnSyncedFiles.remove(name);
+			  UnSyncedFiles.Remove(name);
 			}
 			if (!forced && (NoDeleteOpenFile_Renamed || AssertNoDeleteOpenFile_Renamed))
 			{
 			  if (OpenFiles.ContainsKey(name))
 			  {
-				OpenFilesDeleted.add(name);
+				OpenFilesDeleted.Add(name);
         
 				if (!AssertNoDeleteOpenFile_Renamed)
 				{
-				  throw (IOException) FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+				  throw (System.IO.IOException) FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
 				}
 				else
 				{
-				  throw (AssertionError) FillOpenTrace(new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                    throw (InvalidOperationException)FillOpenTrace(new InvalidOperationException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
 				}
 			  }
 			  else
 			  {
-				OpenFilesDeleted.remove(name);
+				OpenFilesDeleted.Remove(name);
 			  }
 			}
-			@in.deleteFile(name);
+			@in.DeleteFile(name);
 		  }
 	  }
 
-	  public virtual Set<string> OpenDeletedFiles
+	  public virtual ISet<string> OpenDeletedFiles
 	  {
 		  get
 		  {
 			  lock (this)
 			  {
-				return new HashSet<>(OpenFilesDeleted);
+				return new HashSet<string>(OpenFilesDeleted);
 			  }
 		  }
 	  }
@@ -636,58 +637,58 @@ namespace Lucene.Net.Store
 			}
 			if (Crashed)
 			{
-			  throw new IOException("cannot createOutput after crash");
+			  throw new System.IO.IOException("cannot createOutput after crash");
 			}
 			Init();
 			lock (this)
 			{
-			  if (PreventDoubleWrite_Renamed && CreatedFiles.contains(name) && !name.Equals("segments.gen"))
+			  if (PreventDoubleWrite_Renamed && CreatedFiles.Contains(name) && !name.Equals("segments.gen"))
 			  {
-				throw new IOException("file \"" + name + "\" was already written to");
+				throw new System.IO.IOException("file \"" + name + "\" was already written to");
 			  }
 			}
 			if ((NoDeleteOpenFile_Renamed || AssertNoDeleteOpenFile_Renamed) && OpenFiles.ContainsKey(name))
 			{
 			  if (!AssertNoDeleteOpenFile_Renamed)
 			  {
-				throw new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
+				throw new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
 			  }
 			  else
 			  {
-				throw new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
+                  throw new InvalidOperationException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
 			  }
 			}
         
 			if (Crashed)
 			{
-			  throw new IOException("cannot createOutput after crash");
+			  throw new System.IO.IOException("cannot createOutput after crash");
 			}
-			UnSyncedFiles.add(name);
-			CreatedFiles.add(name);
+			UnSyncedFiles.Add(name);
+			CreatedFiles.Add(name);
         
 			if (@in is RAMDirectory)
 			{
 			  RAMDirectory ramdir = (RAMDirectory) @in;
 			  RAMFile file = new RAMFile(ramdir);
-			  RAMFile existing = ramdir.fileMap.get(name);
+			  RAMFile existing = ramdir.FileMap.get(name);
         
 			  // Enforce write once:
 			  if (existing != null && !name.Equals("segments.gen") && PreventDoubleWrite_Renamed)
 			  {
-				throw new IOException("file " + name + " already exists");
+				throw new System.IO.IOException("file " + name + " already exists");
 			  }
 			  else
 			  {
 				if (existing != null)
 				{
-				  ramdir.sizeInBytes.getAndAdd(-existing.sizeInBytes);
-				  existing.directory = null;
+				  ramdir.sizeInBytes.getAndAdd(-existing.SizeInBytes);
+				  existing.Directory = null;
 				}
-				ramdir.fileMap.put(name, file);
+				ramdir.FileMap[name] = file;
 			  }
 			}
 			//System.out.println(Thread.currentThread().getName() + ": MDW: create " + name);
-			IndexOutput delegateOutput = @in.createOutput(name, LuceneTestCase.NewIOContext(RandomState, context));
+			IndexOutput delegateOutput = @in.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState, context));
 			if (RandomState.Next(10) == 0)
 			{
 			  // once in a while wrap the IO in a Buffered IO with random buffer sizes
@@ -695,7 +696,7 @@ namespace Lucene.Net.Store
 			}
 			IndexOutput io = new MockIndexOutputWrapper(this, delegateOutput, name);
 			AddFileHandle(io, name, Handle.Output);
-			OpenFilesForWrite.add(name);
+			OpenFilesForWrite.Add(name);
         
 			// throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
 			if (Throttling_Renamed == Throttling.ALWAYS || (Throttling_Renamed == Throttling.SOMETIMES && RandomState.Next(50) == 0) && !(@in is RateLimitedDirectoryWrapper))
@@ -724,7 +725,7 @@ namespace Lucene.Net.Store
 	  {
 		  lock (this)
 		  {
-			int? v = OpenFiles[name];
+			int v = OpenFiles[name];
 			if (v != null)
 			{
 			  v = Convert.ToInt32((int)v + 1);
@@ -735,7 +736,7 @@ namespace Lucene.Net.Store
 			  OpenFiles[name] = Convert.ToInt32(1);
 			}
         
-			OpenFileHandles[c] = new Exception("unclosed Index" + handle.name() + ": " + name);
+			OpenFileHandles[c] = new Exception("unclosed Index" + handle.Name + ": " + name);
 		  }
 	  }
 
@@ -767,12 +768,12 @@ namespace Lucene.Net.Store
         
 			// cannot open a file for input if it's still open for
 			// output, except for segments.gen and segments_N
-			if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.contains(name) && !name.StartsWith("segments"))
+			if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
 			{
-			  throw (IOException) FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                throw (System.IO.IOException)FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
 			}
         
-			IndexInput delegateInput = @in.openInput(name, LuceneTestCase.NewIOContext(RandomState, context));
+			IndexInput delegateInput = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
         
 			IndexInput ii;
 			int randomInt = RandomState.Next(500);
@@ -814,7 +815,7 @@ namespace Lucene.Net.Store
 				  return SizeInBytes();
 				}
 				long size = 0;
-				foreach (RAMFile file in ((RAMDirectory)@in).fileMap.values())
+				foreach (RAMFile file in ((RAMDirectory)@in).FileMap.Values)
 				{
 				  size += file.SizeInBytes;
 				}
@@ -841,9 +842,9 @@ namespace Lucene.Net.Store
 				  return SizeInBytes();
 				}
 				long size = 0;
-				foreach (RAMFile file in ((RAMDirectory)@in).fileMap.values())
+				foreach (RAMFile file in ((RAMDirectory)@in).FileMap.Values)
 				{
-				  size += file.length;
+				  size += file.Length;
 				}
 				return size;
 			  }
@@ -884,12 +885,12 @@ namespace Lucene.Net.Store
 		  {
 			// files that we tried to delete, but couldn't because readers were open.
 			// all that matters is that we tried! (they will eventually go away)
-			Set<string> pendingDeletions = new HashSet<string>(OpenFilesDeleted);
+			ISet<string> pendingDeletions = new HashSet<string>(OpenFilesDeleted);
 			MaybeYield();
 			if (OpenFiles == null)
 			{
-			  OpenFiles = new Dictionary<>();
-			  OpenFilesDeleted = new HashSet<>();
+			  OpenFiles = new Dictionary<string, int>();
+			  OpenFilesDeleted = new HashSet<string>();
 			}
 			if (OpenFiles.Count > 0)
 			{
@@ -902,11 +903,11 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 				cause = stacktraces.next();
 			  }
-			  // RuntimeException instead of IOException because
-			  // super() does not throw IOException currently:
+			  // RuntimeException instead ofSystem.IO.IOException because
+			  // super() does not throwSystem.IO.IOException currently:
 			  throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: " + OpenFiles, cause);
 			}
-			if (OpenLocks.size() > 0)
+			if (OpenLocks.Count > 0)
 			{
 			  throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: " + OpenLocks);
 			}
@@ -916,7 +917,7 @@ namespace Lucene.Net.Store
 			{
 			  RandomIOExceptionRate_Renamed = 0.0;
 			  RandomIOExceptionRateOnOpen_Renamed = 0.0;
-			  if (DirectoryReader.indexExists(this))
+			  if (DirectoryReader.IndexExists(this))
 			  {
 				if (LuceneTestCase.VERBOSE)
 				{
@@ -933,22 +934,22 @@ namespace Lucene.Net.Store
 				if (AssertNoUnreferencedFilesOnClose)
 				{
 				  // now look for unreferenced files: discount ones that we tried to delete but could not
-				  Set<string> allFiles = new HashSet<string>(Arrays.asList(ListAll()));
+				  ISet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
 				  allFiles.removeAll(pendingDeletions);
 				  string[] startFiles = allFiles.toArray(new string[0]);
 				  IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
 				  iwc.IndexDeletionPolicy = NoDeletionPolicy.INSTANCE;
 				  (new IndexWriter(@in, iwc)).rollback();
-				  string[] endFiles = @in.listAll();
+				  string[] endFiles = @in.ListAll();
+
+                  ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles));
+                  ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles));
         
-				  Set<string> startSet = new SortedSet<string>(Arrays.asList(startFiles));
-				  Set<string> endSet = new SortedSet<string>(Arrays.asList(endFiles));
-        
-				  if (pendingDeletions.contains("segments.gen") && endSet.contains("segments.gen"))
+				  if (pendingDeletions.Contains("segments.gen") && endSet.Contains("segments.gen"))
 				  {
 					// this is possible if we hit an exception while writing segments.gen, we try to delete it
 					// and it ends out in pendingDeletions (but IFD wont remove this).
-					startSet.add("segments.gen");
+					startSet.Add("segments.gen");
 					if (LuceneTestCase.VERBOSE)
 					{
 					  Console.WriteLine("MDW: Unreferenced check: Ignoring segments.gen that we could not delete.");
@@ -962,7 +963,7 @@ namespace Lucene.Net.Store
 				  {
 					if (file.StartsWith("segments") && !file.Equals("segments.gen") && endSet.contains(file))
 					{
-					  startSet.add(file);
+					  startSet.Add(file);
 					  if (LuceneTestCase.VERBOSE)
 					  {
 						Console.WriteLine("MDW: Unreferenced check: Ignoring segments file: " + file + " that we could not delete.");
@@ -970,26 +971,26 @@ namespace Lucene.Net.Store
 					  SegmentInfos sis = new SegmentInfos();
 					  try
 					  {
-						sis.read(@in, file);
+						sis.Read(@in, file);
 					  }
-					  catch (IOException ioe)
+					  catch (System.IO.IOException ioe)
 					  {
 						// OK: likely some of the .si files were deleted
 					  }
         
 					  try
 					  {
-						Set<string> ghosts = new HashSet<string>(sis.files(@in, false));
+						ISet<string> ghosts = new HashSet<string>(sis.Files(@in, false));
 						foreach (string s in ghosts)
 						{
-						  if (endSet.contains(s) && !startSet.contains(s))
+						  if (endSet.Contains(s) && !startSet.Contains(s))
 						  {
-							Debug.Assert(pendingDeletions.contains(s));
+							Debug.Assert(pendingDeletions.Contains(s));
 							if (LuceneTestCase.VERBOSE)
 							{
 							  Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + "from " + file + " that we could not delete.");
 							}
-							startSet.add(s);
+							startSet.Add(s);
 						  }
 						}
 					  }
@@ -1002,15 +1003,15 @@ namespace Lucene.Net.Store
 					}
 				  }
         
-				  startFiles = startSet.toArray(new string[0]);
-				  endFiles = endSet.toArray(new string[0]);
+				  startFiles = startSet.ToArray(new string[0]);
+				  endFiles = endSet.ToArray(new string[0]);
         
 				  if (!Arrays.Equals(startFiles, endFiles))
 				  {
 					IList<string> removed = new List<string>();
 					foreach (string fileName in startFiles)
 					{
-					  if (!endSet.contains(fileName))
+					  if (!endSet.Contains(fileName))
 					  {
 						removed.Add(fileName);
 					  }
@@ -1019,7 +1020,7 @@ namespace Lucene.Net.Store
 					IList<string> added = new List<string>();
 					foreach (string fileName in endFiles)
 					{
-					  if (!startSet.contains(fileName))
+					  if (!startSet.Contains(fileName))
 					  {
 						added.Add(fileName);
 					  }
@@ -1040,7 +1041,7 @@ namespace Lucene.Net.Store
 					  extras += "\n\nThese files were added (waaaaaaaaaat!): " + added;
 					}
         
-					if (pendingDeletions.size() != 0)
+					if (pendingDeletions.Count != 0)
 					{
 					  extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
 					}
@@ -1048,18 +1049,18 @@ namespace Lucene.Net.Store
 					Debug.Assert(false, "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
 				  }
         
-				  DirectoryReader ir1 = DirectoryReader.open(this);
-				  int numDocs1 = ir1.numDocs();
-				  ir1.close();
-				  (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).close();
-				  DirectoryReader ir2 = DirectoryReader.open(this);
-				  int numDocs2 = ir2.numDocs();
-				  ir2.close();
+				  DirectoryReader ir1 = DirectoryReader.Open(this);
+				  int numDocs1 = ir1.NumDocs();
+				  ir1.Close();
+				  (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).Close();
+				  DirectoryReader ir2 = DirectoryReader.Open(this);
+				  int numDocs2 = ir2.NumDocs();
+				  ir2.Close();
 				  Debug.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
 				}
 			  }
 			}
-			@in.close();
+			@in.Close();
 		  }
 	  }
 
@@ -1067,7 +1068,7 @@ namespace Lucene.Net.Store
 	  {
 		  lock (this)
 		  {
-			int? v = OpenFiles[name];
+			int v = OpenFiles[name];
 			// Could be null when crash() was called
 			if (v != null)
 			{
@@ -1090,7 +1091,7 @@ namespace Lucene.Net.Store
 	  {
 		  lock (this)
 		  {
-			OpenFilesForWrite.remove(name);
+			OpenFilesForWrite.Remove(name);
 			RemoveOpenFile(@out, name);
 		  }
 	  }
@@ -1107,7 +1108,7 @@ namespace Lucene.Net.Store
 	  /// Objects that represent fail-able conditions. Objects of a derived
 	  /// class are created and registered with the mock directory. After
 	  /// register, each object will be invoked once for each first write
-	  /// of a file, giving the object a chance to throw an IOException.
+	  /// of a file, giving the object a chance to throw anSystem.IO.IOException.
 	  /// </summary>
 	  public class Failure
 	  {
@@ -1161,7 +1162,7 @@ namespace Lucene.Net.Store
 		  {
 			if (Failures == null)
 			{
-			  Failures = new List<>();
+			  Failures = new List<Failure>();
 			}
 			Failures.Add(fail);
 		  }
@@ -1190,7 +1191,7 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			MaybeYield();
-			return @in.listAll();
+			return @in.ListAll();
 		  }
 	  }
 
@@ -1199,7 +1200,7 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			MaybeYield();
-			return @in.fileExists(name);
+			return @in.FileExists(name);
 		  }
 	  }
 
@@ -1208,7 +1209,7 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			MaybeYield();
-			return @in.fileLength(name);
+			return @in.FileLength(name);
 		  }
 	  }
 
@@ -1217,7 +1218,7 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			MaybeYield();
-			return LockFactory.makeLock(name);
+			return LockFactory.MakeLock(name);
 		  }
 	  }
 
@@ -1226,7 +1227,7 @@ namespace Lucene.Net.Store
 		  lock (this)
 		  {
 			MaybeYield();
-			LockFactory.clearLock(name);
+			LockFactory.ClearLock(name);
 		  }
 	  }
 
@@ -1280,7 +1281,7 @@ namespace Lucene.Net.Store
 		  {
 			MaybeYield();
 			// randomize the IOContext here?
-			@in.copy(to, src, dest, context);
+			@in.Copy(to, src, dest, context);
 		  }
 	  }
 
@@ -1293,12 +1294,12 @@ namespace Lucene.Net.Store
 		}
 		// cannot open a file for input if it's still open for
 		// output, except for segments.gen and segments_N
-		if (OpenFilesForWrite.contains(name) && !name.StartsWith("segments"))
+		if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
 		{
-		  throw (IOException) FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+            throw (System.IO.IOException)FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
 		}
 
-		IndexInputSlicer delegateHandle = @in.createSlicer(name, context);
+		IndexInputSlicer delegateHandle = @in.CreateSlicer(name, context);
 		IndexInputSlicer handle = new IndexInputSlicerAnonymousInnerClassHelper(this, name, delegateHandle);
 		AddFileHandle(handle, name, Handle.Slice);
 		return handle;
@@ -1324,7 +1325,7 @@ namespace Lucene.Net.Store
 		  {
 			if (!isClosed)
 			{
-			  DelegateHandle.close();
+			  DelegateHandle.Close();
 			  OuterInstance.RemoveOpenFile(this, Name);
 			  isClosed = true;
 			}
@@ -1332,17 +1333,17 @@ namespace Lucene.Net.Store
 
 		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
 		  {
-			outerInstance.MaybeYield();
-			IndexInput ii = new MockIndexInputWrapper(OuterInstance, Name, DelegateHandle.openSlice(sliceDescription, offset, length));
-			outerInstance.AddFileHandle(ii, Name, Handle.Input);
+			OuterInstance.MaybeYield();
+			IndexInput ii = new MockIndexInputWrapper(OuterInstance, Name, DelegateHandle.OpenSlice(sliceDescription, offset, length));
+            OuterInstance.AddFileHandle(ii, Name, Handle.Input);
 			return ii;
 		  }
 
 		  public override IndexInput OpenFullSlice()
 		  {
-			outerInstance.MaybeYield();
-			IndexInput ii = new MockIndexInputWrapper(OuterInstance, Name, DelegateHandle.openFullSlice());
-			outerInstance.AddFileHandle(ii, Name, Handle.Input);
+			OuterInstance.MaybeYield();
+			IndexInput ii = new MockIndexInputWrapper(OuterInstance, Name, DelegateHandle.OpenFullSlice());
+            OuterInstance.AddFileHandle(ii, Name, Handle.Input);
 			return ii;
 		  }
 
@@ -1362,29 +1363,29 @@ namespace Lucene.Net.Store
 
 		public override long Length()
 		{
-		  return Io.length();
+		  return Io.Length;
 		}
 
 		protected internal override void FlushBuffer(sbyte[] b, int offset, int len)
 		{
-		  Io.writeBytes(b, offset, len);
+		  Io.WriteBytes(b, offset, len);
 		}
 
 		public override void Seek(long pos)
 		{
 		  Flush();
-		  Io.seek(pos);
+		  Io.Seek(pos);
 		}
 
 		public override void Flush()
 		{
 		  try
 		  {
-			base.flush();
+			base.Flush();
 		  }
 		  finally
 		  {
-			Io.flush();
+			Io.Flush();
 		  }
 		}
 
@@ -1392,20 +1393,20 @@ namespace Lucene.Net.Store
 		{
 		  try
 		  {
-			base.close();
+			base.Close();
 		  }
 		  finally
 		  {
-			Io.close();
+			Io.Close();
 		  }
 		}
 	  }
 
 	  /// <summary>
-	  /// Use this when throwing fake {@code IOException},
+	  /// Use this when throwing fake {@codeSystem.IO.IOException},
 	  ///  e.g. from <seealso cref="MockDirectoryWrapper.Failure"/>. 
 	  /// </summary>
-	  public class FakeIOException : IOException
+	  public class FakeIOException :System.IO.IOException
 	  {
 	  }
 

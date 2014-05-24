@@ -27,6 +27,8 @@ namespace Lucene.Net.Store
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+using Lucene.Net.Support;
+using System;
 
 
 	/// <summary>
@@ -85,7 +87,7 @@ namespace Lucene.Net.Store
 	  protected internal readonly int ReadBufferSize;
 	  private readonly IDictionary<string, FileEntry> Entries;
 	  private readonly bool OpenForWrite;
-	  private static readonly IDictionary<string, FileEntry> SENTINEL = Collections.emptyMap();
+	  private static readonly IDictionary<string, FileEntry> SENTINEL = CollectionsHelper.EmptyMap<string, FileEntry>();
 	  private readonly CompoundFileWriter Writer;
 	  private readonly IndexInputSlicer Handle;
 
@@ -137,19 +139,15 @@ namespace Lucene.Net.Store
 	  /// Helper method that reads CFS entries from an input stream </summary>
 	  private static IDictionary<string, FileEntry> ReadEntries(IndexInputSlicer handle, Directory dir, string name)
 	  {
-		IOException priorE = null;
+		System.IO.IOException priorE = null;
 		IndexInput stream = null;
 		ChecksumIndexInput entriesStream = null;
 		// read the first VInt. If it is negative, it's the version number
 		// otherwise it's the count (pre-3.1 indexes)
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,FileEntry> mapping;
 		  IDictionary<string, FileEntry> mapping;
 		  stream = handle.OpenFullSlice();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int firstInt = stream.readVInt();
 		  int firstInt = stream.ReadVInt();
 		  // impossible for 3.0 to have 63 files in a .cfs, CFS writer was not visible
 		  // and separate norms/etc are outside of cfs.
@@ -163,22 +161,14 @@ namespace Lucene.Net.Store
 			  throw new CorruptIndexException("Illegal/impossible header for CFS file: " + secondByte + "," + thirdByte + "," + fourthByte);
 			}
 			int version = CodecUtil.CheckHeaderNoMagic(stream, CompoundFileWriter.DATA_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String entriesFileName = Lucene.Net.Index.IndexFileNames.segmentFileName(Lucene.Net.Index.IndexFileNames.stripExtension(name), "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
 			string entriesFileName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
 			entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READONCE);
 			CodecUtil.CheckHeader(entriesStream, CompoundFileWriter.ENTRY_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numEntries = entriesStream.readVInt();
 			int numEntries = entriesStream.ReadVInt();
-			mapping = new Dictionary<>(numEntries);
+			mapping = new Dictionary<string, FileEntry>(numEntries);
 			for (int i = 0; i < numEntries; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FileEntry fileEntry = new FileEntry();
 			  FileEntry fileEntry = new FileEntry();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String id = entriesStream.readString();
 			  string id = entriesStream.ReadString();
 			  FileEntry previous = mapping[id] = fileEntry;
 			  if (previous != null)
@@ -204,7 +194,7 @@ namespace Lucene.Net.Store
 		  }
 		  return mapping;
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  priorE = ioe;
 		}
@@ -213,19 +203,13 @@ namespace Lucene.Net.Store
 		  IOUtils.closeWhileHandlingException(priorE, stream, entriesStream);
 		}
 		// this is needed until Java 7's real try-with-resources:
-		throw new AssertionError("impossible to get here");
+		throw new InvalidOperationException("impossible to get here");
 	  }
 
 	  private static IDictionary<string, FileEntry> ReadLegacyEntries(IndexInput stream, int firstInt)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,FileEntry> entries = new java.util.HashMap<>();
 		IDictionary<string, FileEntry> entries = new Dictionary<string, FileEntry>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count;
 		int count;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean stripSegmentName;
 		bool stripSegmentName;
 		if (firstInt < CompoundFileWriter.FORMAT_PRE_VERSION)
 		{
@@ -357,7 +341,7 @@ namespace Lucene.Net.Store
 		}
 		else
 		{
-		  res = Entries.Keys.toArray(new string[Entries.Count]);
+		  res = Entries.Keys.ToArray(new string[Entries.Count]);
 		  // Add the segment name
 		  string seg = IndexFileNames.ParseSegmentName(FileName);
 		  for (int i = 0; i < res.Length; i++)
@@ -398,7 +382,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Returns the length of a file in the directory. </summary>
-	  /// <exception cref="IOException"> if the file does not exist  </exception>
+	  /// <exception cref="System.IO.IOException"> if the file does not exist  </exception>
 	  public override long FileLength(string name)
 	  {
 		EnsureOpen();
@@ -473,7 +457,7 @@ namespace Lucene.Net.Store
 
 		  public override IndexInput OpenFullSlice()
 		  {
-			return openSlice("full-slice", 0, Entry.Length);
+			return OpenSlice("full-slice", 0, Entry.Length);
 		  }
 	  }
 

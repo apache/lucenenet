@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  /// <exception cref="NoSuchDirectoryException"> if the directory is not prepared for any
 	  ///         write operations (such as <seealso cref="#createOutput(String, IOContext)"/>). </exception>
-	  /// <exception cref="IOException"> in case of other IO errors </exception>
+	  /// <exception cref="System.IO.IOException"> in case of other IO errors </exception>
 	  public abstract string[] ListAll();
 
 	  /// <summary>
@@ -74,7 +74,7 @@ namespace Lucene.Net.Store
 	  /// </ul>
 	  /// </summary>
 	  /// <param name="name"> the name of the file for which to return the length. </param>
-	  /// <exception cref="IOException"> if there was an IO error while retrieving the file's
+	  /// <exception cref="System.IO.IOException"> if there was an IO error while retrieving the file's
 	  ///         length. </exception>
 	  public abstract long FileLength(string name);
 
@@ -186,14 +186,14 @@ namespace Lucene.Net.Store
 	  {
 		IndexOutput os = null;
 		IndexInput @is = null;
-		IOException priorException = null;
+		System.IO.IOException priorException = null;
 		try
 		{
 		  os = to.CreateOutput(dest, context);
 		  @is = OpenInput(src, context);
 		  os.CopyBytes(@is, @is.Length());
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  priorException = ioe;
 		}
@@ -230,8 +230,8 @@ namespace Lucene.Net.Store
 	  /// <p>Throws <seealso cref="FileNotFoundException"/> or <seealso cref="NoSuchFileException"/>
 	  /// if the file does not exist.
 	  /// </summary>
-	  /// <exception cref="IOException">
-	  ///           if an <seealso cref="IOException"/> occurs
+	  /// <exception cref="System.IO.IOException">
+	  ///           if an <seealso cref="System.IO.IOException"/> occurs
 	  /// @lucene.internal
 	  /// @lucene.experimental </exception>
 	  public virtual IndexInputSlicer CreateSlicer(string name, IOContext context)

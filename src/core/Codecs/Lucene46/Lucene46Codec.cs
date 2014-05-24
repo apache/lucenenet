@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene46
 
 		  public override PostingsFormat GetPostingsFormatForField(string field)
 		  {
-			return outerInstance.getPostingsFormatForField(field);
+			return outerInstance.GetPostingsFormatForField(field);
 		  }
 	  }
 

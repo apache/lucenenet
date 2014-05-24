@@ -21,9 +21,9 @@ namespace Lucene.Net.Codecs.Compressing
 	 */
 
 	using DummyCompressingCodec = Lucene.Net.Codecs.Compressing.dummy.DummyCompressingCodec;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 
 	/// <summary>
 	/// A codec that uses <seealso cref="CompressingStoredFieldsFormat"/> for its stored
@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Compressing
 		case 3:
 		  return new DummyCompressingCodec(chunkSize, withSegmentSuffix);
 		default:
-		  throw new AssertionError();
+		  throw new InvalidOperationException();
 		}
 	  }
 

@@ -40,18 +40,18 @@ namespace Lucene.Net.Codecs.mocksep
 
 	  public MockSingleIntIndexInput(Directory dir, string fileName, IOContext context)
 	  {
-		@in = dir.openInput(fileName, context);
-		CodecUtil.checkHeader(@in, MockSingleIntIndexOutput.CODEC, MockSingleIntIndexOutput.VERSION_START, MockSingleIntIndexOutput.VERSION_START);
+		@in = dir.OpenInput(fileName, context);
+		CodecUtil.CheckHeader(@in, MockSingleIntIndexOutput.CODEC, MockSingleIntIndexOutput.VERSION_START, MockSingleIntIndexOutput.VERSION_START);
 	  }
 
 	  public override Reader Reader()
 	  {
-		return new Reader(@in.clone());
+		return new Reader(@in.Clone());
 	  }
 
 	  public override void Close()
 	  {
-		@in.close();
+		@in.Close();
 	  }
 
 	  /// <summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.mocksep
 		public override int Next()
 		{
 		  //System.out.println("msii.next() fp=" + in.getFilePointer() + " vs " + in.length());
-		  return @in.readVInt();
+		  return @in.ReadVInt();
 		}
 	  }
 
@@ -91,11 +91,11 @@ namespace Lucene.Net.Codecs.mocksep
 		{
 		  if (absolute)
 		  {
-			Fp = indexIn.readVLong();
+			Fp = indexIn.ReadVLong();
 		  }
 		  else
 		  {
-			Fp += indexIn.readVLong();
+			Fp += indexIn.ReadVLong();
 		  }
 		}
 

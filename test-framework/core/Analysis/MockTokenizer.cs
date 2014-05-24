@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
 
-	using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
+	//using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
     using System.IO;
 
 	/// <summary>
