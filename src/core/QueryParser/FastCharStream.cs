@@ -46,14 +46,27 @@ namespace Lucene.Net.QueryParsers
             input = r;
         }
         
+		/// <summary>
+		/// Read a single character from the stream.
+		/// </summary>
+		/// <returns>If the end of the stream has been reached then <see cref="Char.MinValue"/>; otherwise the next character in the stream.</returns>
         public char ReadChar()
         {
-            if (bufferPosition >= bufferLength)
-                Refill();
+			if (bufferPosition >= bufferLength)
+			{
+				if (!Refill())
+				{
+					return Char.MinValue;
+				}
+			}
             return buffer[bufferPosition++];
         }
         
-        private void  Refill()
+		/// <summary>
+		/// Refills the stream.
+		/// </summary>
+		/// <returns>False if the end of the stream has been reached; otherwise true;</returns>
+        private bool Refill()
         {
             int newPosition = bufferLength - tokenStart;
             
@@ -85,10 +98,14 @@ namespace Lucene.Net.QueryParsers
             tokenStart = 0;
             
             int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
-            if (charsRead <= 0)
-                throw new System.IO.IOException("read past eof");
-            else
-                bufferLength += charsRead;
+			if (charsRead <= 0)
+			{
+				return false;
+			}
+	        
+			bufferLength += charsRead;
+
+	        return true;
         }
         
         public char BeginToken()
@@ -97,7 +114,7 @@ namespace Lucene.Net.QueryParsers
             return ReadChar();
         }
         
-        public void  Backup(int amount)
+        public void Backup(int amount)
         {
             bufferPosition -= amount;
         }

@@ -267,9 +267,9 @@ namespace Lucene.Net.Search
     [Serializable]
     class AnonymousClassLongParser : LongParser
     {
-        public virtual long ParseLong(System.String value_Renamed)
+        public virtual bool TryParseLong(System.String stringValue, out long value)
         {
-            return System.Int64.Parse(value_Renamed);
+			return Int64.TryParse(stringValue, out value);
         }
         protected internal virtual System.Object ReadResolve()
         {
@@ -337,13 +337,15 @@ namespace Lucene.Net.Search
     [Serializable]
     class AnonymousClassLongParser1 : LongParser
     {
-        public virtual long ParseLong(System.String val)
-        {
-            int shift = val[0] - NumericUtils.SHIFT_START_LONG;
-            if (shift > 0 && shift <= 63)
-                throw new FieldCacheImpl.StopFillCacheException();
-            return NumericUtils.PrefixCodedToLong(val);
-        }
+		public virtual bool TryParseLong(System.String input, out long value)
+		{
+			int shift = input[0] - NumericUtils.SHIFT_START_LONG;
+			if (shift > 0 && shift <= 63)
+				throw new FieldCacheImpl.StopFillCacheException();
+			value = NumericUtils.PrefixCodedToLong(input);
+
+			return true;
+		}
         protected internal virtual System.Object ReadResolve()
         {
             return Lucene.Net.Search.FieldCache_Fields.NUMERIC_UTILS_LONG_PARSER;
@@ -692,7 +694,7 @@ namespace Lucene.Net.Search
     public interface LongParser : Parser
     {
         /// <summary>Return an long representation of this field's value. </summary>
-        long ParseLong(System.String string_Renamed);
+        bool TryParseLong(System.String string_Renamed, out long value);
     }
 
     /// <summary>Interface to parse doubles from document fields.</summary>
