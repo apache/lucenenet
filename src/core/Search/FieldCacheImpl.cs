@@ -655,7 +655,13 @@ namespace Lucene.Net.Search
                         Term term = termEnum.Term;
                         if (term == null || (System.Object) term.Field != (System.Object) field)
                             break;
-                        long termval = parser.ParseLong(term.Text);
+
+						long termval;
+						if (!parser.TryParseLong(term.Text, out termval))
+						{
+							break;
+						}
+
                         if (retArray == null)
                         // late init
                             retArray = new long[reader.MaxDoc];
