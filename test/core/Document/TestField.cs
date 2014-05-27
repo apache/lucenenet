@@ -49,7 +49,7 @@ namespace Lucene.Net.Document
 		  TrySetStringValue(field);
 		  TrySetTokenStreamValue(field);
 
-		  Assert.AreEqual(6d, (double)field.numericValue(), 0.0d);
+		  Assert.AreEqual(6d, (double)field.NumericValue(), 0.0d);
 		}
 	  }
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.Document
 		TrySetStringValue(field);
 		TrySetTokenStreamValue(field);
 
-		Assert.AreEqual(6d, double.longBitsToDouble((long)field.numericValue()), 0.0d);
+		Assert.AreEqual(6d, double.longBitsToDouble((long)field.NumericValue()), 0.0d);
 	  }
 
 	  public virtual void TestFloatDocValuesField()

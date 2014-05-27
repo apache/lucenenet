@@ -8,6 +8,8 @@ namespace Lucene.Net.Document
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
+    using System;
+    using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -39,7 +41,7 @@ namespace Lucene.Net.Document
 	  {
 		FieldType ft = new FieldType();
 		ft.Stored = true;
-		IndexableField binaryFldStored = new StoredField("binaryStored", BinaryValStored.getBytes(StandardCharsets.UTF_8));
+        IndexableField binaryFldStored = new StoredField("binaryStored", (sbyte[]) (Array) System.Text.UTF8Encoding.UTF8.GetBytes(BinaryValStored));
 		IndexableField stringFldStored = new Field("stringStored", BinaryValStored, ft);
 
 		Document doc = new Document();
@@ -50,17 +52,18 @@ namespace Lucene.Net.Document
 
 		/// <summary>
 		/// test for field count </summary>
-		Assert.AreEqual(2, doc.Fields.size());
+		Assert.AreEqual(2, doc.Fields.Count);
 
 		/// <summary>
 		/// add the doc to a ram index </summary>
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+        Directory dir = new Directory();
+        Random r = new Random();
+		RandomIndexWriter writer = new RandomIndexWriter(r, dir);
 		writer.addDocument(doc);
 
 		/// <summary>
 		/// open a reader and fetch the document </summary>
-		IndexReader reader = writer.Reader;
+		IndexReader reader = writer.reader;
 		Document docFromReader = reader.document(0);
 		Assert.IsTrue(docFromReader != null);
 
