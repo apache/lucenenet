@@ -70,13 +70,13 @@ namespace Lucene.Net.Codecs.Compressing.dummy
 		  public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
 		  {
 			Debug.Assert(offset + length <= originalLength);
-			if (bytes.bytes.length < originalLength)
+			if (bytes.Bytes.Length < originalLength)
 			{
-			  bytes.bytes = new sbyte[ArrayUtil.oversize(originalLength, 1)];
+			  bytes.Bytes = new sbyte[ArrayUtil.Oversize(originalLength, 1)];
 			}
-			@in.readBytes(bytes.bytes, 0, offset + length);
-			bytes.offset = offset;
-			bytes.length = length;
+			@in.ReadBytes(bytes.Bytes, 0, offset + length);
+			bytes.Offset = offset;
+			bytes.Length = length;
 		  }
 
 		  public override Decompressor Clone()
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Compressing.dummy
 
 		  public override void Compress(sbyte[] bytes, int off, int len, DataOutput @out)
 		  {
-			@out.writeBytes(bytes, off, len);
+			@out.WriteBytes(bytes, off, len);
 		  }
 
 	  }

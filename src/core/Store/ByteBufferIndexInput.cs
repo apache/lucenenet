@@ -239,7 +239,7 @@ namespace Lucene.Net.Store
 		{
 		  clone.Seek(FilePointer);
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  throw new Exception("Should never happen: " + this, ioe);
 		}
@@ -254,7 +254,7 @@ namespace Lucene.Net.Store
 	  {
 		if (IsClone) // well we could, but this is stupid
 		{
-		  throw new IllegalStateException("cannot slice() " + sliceDescription + " from a cloned IndexInput: " + this);
+		  throw new InvalidOperationException("cannot slice() " + sliceDescription + " from a cloned IndexInput: " + this);
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final ByteBufferIndexInput clone = buildSlice(offset, length);
@@ -264,7 +264,7 @@ namespace Lucene.Net.Store
 		{
 		  clone.Seek(0L);
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  throw new Exception("Should never happen: " + this, ioe);
 		}

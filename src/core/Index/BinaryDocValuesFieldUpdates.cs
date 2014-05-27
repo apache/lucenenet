@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
 		// TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
 		if (Size == int.MaxValue)
 		{
-		  throw new IllegalStateException("cannot support more than Integer.MAX_VALUE doc/value entries");
+		  throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries");
 		}
 
 		BytesRef val = (BytesRef) value;
@@ -187,8 +187,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet docsWithField = this.docsWithField;
 		FixedBitSet docsWithField = this.DocsWithField;
-		new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, offsets, lengths, docsWithField)
-		.sort(0, Size);
+		new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, offsets, lengths, docsWithField).Sort(0, Size);
 
 		return new Iterator(Size, offsets, lengths, docs, values, docsWithField);
 	  }
@@ -258,7 +257,7 @@ namespace Lucene.Net.Index
 		int newSize = Size + otherUpdates.Size;
 		if (newSize > int.MaxValue)
 		{
-		  throw new IllegalStateException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + Size + " other.size=" + otherUpdates.Size);
+		  throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + Size + " other.size=" + otherUpdates.Size);
 		}
 		Docs = Docs.Grow(newSize);
 		Offsets = Offsets.Grow(newSize);

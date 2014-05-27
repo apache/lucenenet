@@ -42,18 +42,18 @@ namespace Lucene.Net.Codecs.mocksep
 
 	  public MockSingleIntIndexOutput(Directory dir, string fileName, IOContext context)
 	  {
-		@out = dir.createOutput(fileName, context);
+		@out = dir.CreateOutput(fileName, context);
 		bool success = false;
 		try
 		{
-		  CodecUtil.writeHeader(@out, CODEC, VERSION_CURRENT);
+		  CodecUtil.WriteHeader(@out, CODEC, VERSION_CURRENT);
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(@out);
+			IOUtils.CloseWhileHandlingException(@out);
 		  }
 		}
 	  }
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.mocksep
 	  /// Write an int to the primary file </summary>
 	  public override void Write(int v)
 	  {
-		@out.writeVInt(v);
+		@out.WriteVInt(v);
 	  }
 
 	  public override Index Index()
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.mocksep
 
 	  public override void Close()
 	  {
-		@out.close();
+		@out.Close();
 	  }
 
 	  public override string ToString()
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.mocksep
 		internal long LastFP;
 		public override void Mark()
 		{
-		  Fp = outerInstance.@out.FilePointer;
+		  Fp = OuterInstance.@out.FilePointer;
 		}
 		public override void CopyFrom(IntIndexOutput.Index other, bool copyLast)
 		{
@@ -107,11 +107,11 @@ namespace Lucene.Net.Codecs.mocksep
 		{
 		  if (absolute)
 		  {
-			indexOut.writeVLong(Fp);
+			indexOut.WriteVLong(Fp);
 		  }
 		  else
 		  {
-			indexOut.writeVLong(Fp - LastFP);
+			indexOut.WriteVLong(Fp - LastFP);
 		  }
 		  LastFP = Fp;
 		}

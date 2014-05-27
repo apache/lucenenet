@@ -613,11 +613,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	  /// </summary>
 	  protected internal virtual MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedReader addresses;
 		MonotonicBlockPackedReader addresses;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long interval = bytes.addressInterval;
 		long interval = bytes.AddressInterval;
 		lock (AddressInstances)
 		{
@@ -625,8 +621,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		  if (addrInstance == null)
 		  {
 			data.Seek(bytes.AddressesOffset);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long size;
 			long size;
 			if (bytes.Count % interval == 0)
 			{
@@ -648,12 +642,8 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput data = this.data.clone();
 		IndexInput data = this.Data.Clone();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedReader addresses = getIntervalInstance(data, field, bytes);
 		MonotonicBlockPackedReader addresses = GetIntervalInstance(data, field, bytes);
 
 		return new CompressedBinaryDocValues(bytes, addresses, data);
@@ -661,17 +651,11 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  public override SortedDocValues GetSorted(FieldInfo field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int valueCount = (int) binaries.get(field.number).count;
 		int valueCount = (int) Binaries[field.Number].Count;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.BinaryDocValues binary = getBinary(field);
 		BinaryDocValues binary = GetBinary(field);
 		NumericEntry entry = Ords[field.Number];
 		IndexInput data = this.Data.Clone();
 		data.Seek(entry.Offset);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedReader ordinals = new Lucene.Net.Util.Packed.BlockPackedReader(data, entry.packedIntsVersion, entry.blockSize, entry.count, true);
 		BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
 
 		return new SortedDocValuesAnonymousInnerClassHelper(this, valueCount, binary, ordinals);
@@ -743,8 +727,6 @@ namespace Lucene.Net.Codecs.Lucene45
 	  /// </summary>
 	  protected internal virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedReader ordIndex;
 		MonotonicBlockPackedReader ordIndex;
 		lock (OrdIndexInstances)
 		{
@@ -766,8 +748,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		SortedSetEntry ss = SortedSets[field.Number];
 		if (ss.Format == Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SortedDocValues values = getSorted(field);
 		  SortedDocValues values = GetSorted(field);
 		  return DocValues.Singleton(values);
 		}
@@ -776,22 +756,12 @@ namespace Lucene.Net.Codecs.Lucene45
 		  throw new Exception();
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput data = this.data.clone();
 		IndexInput data = this.Data.Clone();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long valueCount = binaries.get(field.number).count;
 		long valueCount = Binaries[field.Number].Count;
 		// we keep the byte[]s and list of ords on disk, these could be large
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final LongBinaryDocValues binary = (LongBinaryDocValues) getBinary(field);
 		LongBinaryDocValues binary = (LongBinaryDocValues) GetBinary(field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.LongValues ordinals = getNumeric(ords.get(field.number));
 		LongValues ordinals = GetNumeric(Ords[field.Number]);
 		// but the addresses to the ord stream are in RAM
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedReader ordIndex = getOrdIndexInstance(data, field, ordIndexes.get(field.number));
 		MonotonicBlockPackedReader ordIndex = GetOrdIndexInstance(data, field, OrdIndexes[field.Number]);
 
 		return new RandomAccessOrdsAnonymousInnerClassHelper(this, valueCount, binary, ordinals, ordIndex);
@@ -898,8 +868,6 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput in = data.clone();
 		  IndexInput @in = Data.Clone();
 		  return new BitsAnonymousInnerClassHelper(this, offset, @in);
 		}
@@ -1155,9 +1123,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
 			public override BytesRef Next()
 			{
-			  if (DoNext() == BytesRefIterator_Fields.Null)
+			  if (DoNext() == null)
 			  {
-				return BytesRefIterator_Fields.Null;
+				return null;
 			  }
 			  else
 			  {
@@ -1170,7 +1138,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			{
 			  if (++currentOrd >= OuterInstance.NumValues)
 			  {
-				return BytesRefIterator_Fields.Null;
+				return null;
 			  }
 			  else
 			  {
@@ -1220,7 +1188,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			  long block = low - 1;
 			  DoSeek(block < 0 ? - 1 : block * OuterInstance.Interval);
 
-			  while (DoNext() != BytesRefIterator_Fields.Null)
+			  while (DoNext() != null)
 			  {
 				int cmp = termBuffer.CompareTo(text);
 				if (cmp == 0)

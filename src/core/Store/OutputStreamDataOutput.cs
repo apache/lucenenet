@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 namespace Lucene.Net.Store
 {
 
@@ -23,26 +25,26 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class OutputStreamDataOutput : DataOutput, IDisposable
 	{
-	  private readonly OutputStream Os;
+	  private readonly Stream Os;
 
-	  public OutputStreamDataOutput(OutputStream os)
+      public OutputStreamDataOutput(Stream os)
 	  {
 		this.Os = os;
 	  }
 
 	  public override void WriteByte(sbyte b)
 	  {
-		Os.write(b);
+		Os.WriteByte(unchecked((byte)b));
 	  }
 
 	  public override void WriteBytes(sbyte[] b, int offset, int length)
 	  {
-		Os.write(b, offset, length);
+		Os.Write(b, offset, length);
 	  }
 
 	  public override void Close()
 	  {
-		Os.close();
+		Os.Close();
 	  }
 	}
 

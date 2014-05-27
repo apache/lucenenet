@@ -125,8 +125,6 @@ namespace Lucene.Net.Codecs.Lucene45
 
 		  foreach (Number nv in values)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long v;
 			long v;
 			if (nv == null)
 			{
@@ -178,12 +176,8 @@ namespace Lucene.Net.Codecs.Lucene45
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delta = maxValue - minValue;
 		long delta = maxValue - minValue;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int format;
 		int format;
 		if (uniqueValues != null && (delta < 0L || PackedInts.BitsRequired(uniqueValues.Count - 1) < PackedInts.BitsRequired(delta)) && count <= int.MaxValue)
 		{
@@ -236,7 +230,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			writer.Finish();
 			break;
 		  case TABLE_COMPRESSED:
-			long[] decode = uniqueValues.toArray(new long[uniqueValues.Count]);
+			long[] decode = uniqueValues.ToArray(new long[uniqueValues.Count]);
 			Dictionary<long, int> encode = new Dictionary<long, int>();
 			Meta.WriteVInt(decode.Length);
 			for (int i = 0; i < decode.Length; i++)
@@ -520,7 +514,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			  public virtual bool HasNext()
 			  {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				Debug.Assert(OrdsIt.hasNext() ? DocToOrdCountIt.hasNext(), true);
+				//Debug.Assert(OrdsIt.hasNext() ? DocToOrdCountIt.hasNext() : true);
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 				return DocToOrdCountIt.hasNext();
 			  }

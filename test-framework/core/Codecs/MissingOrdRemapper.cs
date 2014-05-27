@@ -3,7 +3,8 @@ using System.Collections.Generic;
 namespace Lucene.Net.Codecs
 {
 
-	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Support;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -56,7 +57,7 @@ namespace Lucene.Net.Codecs
 
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  seenEmpty = false;
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
@@ -116,7 +117,7 @@ namespace Lucene.Net.Codecs
 
 			  public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 
@@ -174,7 +175,7 @@ namespace Lucene.Net.Codecs
 
 			  public IteratorAnonymousInnerClassHelper3(IterableAnonymousInnerClassHelper3 outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 

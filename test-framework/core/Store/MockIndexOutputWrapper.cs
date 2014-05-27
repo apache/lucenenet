@@ -25,9 +25,9 @@ namespace Lucene.Net.Store
 
 	/// <summary>
 	/// Used by MockRAMDirectory to create an output stream that
-	/// will throw an IOException on fake disk full, track max
+	/// will throw anSystem.IO.IOException on fake disk full, track max
 	/// disk space actually used, and maybe throw random
-	/// IOExceptions.
+	///System.IO.IOExceptions.
 	/// </summary>
 
 	public class MockIndexOutputWrapper : IndexOutput
@@ -53,7 +53,7 @@ namespace Lucene.Net.Store
 		// If MockRAMDir crashed since we were opened, then don't write anything
 		if (Dir.Crashed)
 		{
-		  throw new IOException("MockRAMDirectory was crashed; cannot write to " + Name);
+		  throw new System.IO.IOException("MockRAMDirectory was crashed; cannot write to " + Name);
 		}
 	  }
 
@@ -78,29 +78,29 @@ namespace Lucene.Net.Store
 			realUsage += freeSpace;
 			if (b != null)
 			{
-			  @delegate.writeBytes(b, offset, (int) freeSpace);
+			  @delegate.WriteBytes(b, offset, (int) freeSpace);
 			}
 			else
 			{
-			  @delegate.copyBytes(@in, len);
+			  @delegate.CopyBytes(@in, len);
 			}
 		  }
 		  if (realUsage > Dir.MaxUsedSize)
 		  {
 			Dir.MaxUsedSize = realUsage;
 		  }
-		  string message = "fake disk full at " + Dir.RecomputedActualSizeInBytes + " bytes when writing " + Name + " (file length=" + @delegate.length();
+		  string message = "fake disk full at " + Dir.RecomputedActualSizeInBytes + " bytes when writing " + Name + " (file length=" + @delegate.Length;
 		  if (freeSpace > 0)
 		  {
 			message += "; wrote " + freeSpace + " of " + len + " bytes";
 		  }
 		  message += ")";
-		  if (LuceneTestCase.VERBOSE)
+		  /*if (LuceneTestCase.VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
 			(new Exception()).printStackTrace(System.out);
-		  }
-		  throw new IOException(message);
+		  }*/
+		  throw new System.IO.IOException(message);
 		}
 	  }
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  @delegate.close();
+		  @delegate.Close();
 		  if (Dir.TrackDiskUsage_Renamed)
 		  {
 			// Now compute actual disk usage & track the maxUsedSize
@@ -130,7 +130,7 @@ namespace Lucene.Net.Store
 	  public override void Flush()
 	  {
 		Dir.MaybeThrowDeterministicException();
-		@delegate.flush();
+		@delegate.Flush();
 	  }
 
 	  public override void WriteByte(sbyte b)
@@ -147,13 +147,13 @@ namespace Lucene.Net.Store
 		if (Dir.RandomState.Next(200) == 0)
 		{
 		  int half = len / 2;
-		  @delegate.writeBytes(b, offset, half);
-		  Thread.@yield();
-		  @delegate.writeBytes(b, offset + half, len - half);
+		  @delegate.WriteBytes(b, offset, half);
+		  Thread.@Yield();
+		  @delegate.WriteBytes(b, offset + half, len - half);
 		}
 		else
 		{
-		  @delegate.writeBytes(b, offset, len);
+		  @delegate.WriteBytes(b, offset, len);
 		}
 
 		Dir.MaybeThrowDeterministicException();
@@ -177,19 +177,19 @@ namespace Lucene.Net.Store
 
 	  public override void Seek(long pos)
 	  {
-		@delegate.seek(pos);
-	  }
-
-	  public override long Length()
-	  {
-		return @delegate.length();
+		@delegate.Seek(pos);
 	  }
 
 	  public override long Length
 	  {
-		  set
+          get
+          {
+              return @delegate.Length;
+          }
+          
+          set
 		  {
-			@delegate.Length = value;
+			 @delegate.Length = value;
 		  }
 	  }
 
@@ -198,7 +198,7 @@ namespace Lucene.Net.Store
 		CheckCrashed();
 		CheckDiskFull(null, 0, input, numBytes);
 
-		@delegate.copyBytes(input, numBytes);
+		@delegate.CopyBytes(input, numBytes);
 		Dir.MaybeThrowDeterministicException();
 	  }
 

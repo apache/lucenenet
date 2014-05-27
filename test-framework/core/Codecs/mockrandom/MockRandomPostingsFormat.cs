@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs.mockrandom
 
 		  protected internal override int Next(int arg0)
 		  {
-			throw new IllegalStateException("Please use MockRandomPostingsFormat(Random)");
+			throw new InvalidOperationException("Please use MockRandomPostingsFormat(Random)");
 		  }
 	  }
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  return fileName.Substring(idx);
 		}
 
-		public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
+		public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext Context)
 		{
 		  // Must only use extension, because IW.addIndexes can
 		  // rename segment!
@@ -133,24 +133,24 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			Console.WriteLine("MockRandomCodec: read using int factory " + f + " from fileName=" + fileName);
 		  }
-		  return f.openInput(dir, fileName, context);
+		  return f.openInput(dir, fileName, Context);
 		}
 
-		public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
+		public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext Context)
 		{
 		  IntStreamFactory f = Delegates[(Math.Abs(Salt ^ GetExtension(fileName).GetHashCode())) % Delegates.Count];
 		  if (LuceneTestCase.VERBOSE)
 		  {
 			Console.WriteLine("MockRandomCodec: write using int factory " + f + " to fileName=" + fileName);
 		  }
-		  return f.createOutput(dir, fileName, context);
+		  return f.CreateOutput(dir, fileName, Context);
 		}
 	  }
 
 	  public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
 	  {
 		int minSkipInterval;
-		if (state.segmentInfo.DocCount > 1000000)
+		if (state.SegmentInfo.DocCount > 1000000)
 		{
 		  // Test2BPostings can OOME otherwise:
 		  minSkipInterval = 3;
@@ -173,21 +173,21 @@ namespace Lucene.Net.Codecs.mockrandom
 
 		if (LuceneTestCase.VERBOSE)
 		{
-		  Console.WriteLine("MockRandomCodec: writing to seg=" + state.segmentInfo.name + " formatID=" + state.segmentSuffix + " seed=" + seed);
+		  Console.WriteLine("MockRandomCodec: writing to seg=" + state.SegmentInfo.Name + " formatID=" + state.SegmentSuffix + " seed=" + seed);
 		}
 
-		string seedFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, SEED_EXT);
-		IndexOutput @out = state.directory.createOutput(seedFileName, state.context);
+		string seedFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, SEED_EXT);
+		IndexOutput @out = state.Directory.CreateOutput(seedFileName, state.Context);
 		try
 		{
-		  @out.writeLong(seed);
+		  @out.WriteLong(seed);
 		}
 		finally
 		{
-		  @out.close();
+		  @out.Close();
 		}
 
-		Random random = new Random(seed);
+		Random random = new Random((int)seed);
 
 		random.Next(); // consume a random for buffersize
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsWriter.close();
+			  postingsWriter.Close();
 			}
 		  }
 		}
@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsWriter.close();
+			  postingsWriter.Close();
 			}
 		  }
 		}
@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsWriter.close();
+			  postingsWriter.Close();
 			}
 		  }
 		}
@@ -294,10 +294,10 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (random.nextBoolean())
 			{
-			  state.termIndexInterval = TestUtil.NextInt(random, 1, 100);
+			  state.TermIndexInterval = TestUtil.NextInt(random, 1, 100);
 			  if (LuceneTestCase.VERBOSE)
 			  {
-				Console.WriteLine("MockRandomCodec: fixed-gap terms index (tii=" + state.termIndexInterval + ")");
+				Console.WriteLine("MockRandomCodec: fixed-gap terms index (tii=" + state.TermIndexInterval + ")");
 			  }
 			  indexWriter = new FixedGapTermsIndexWriter(state);
 			}
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsWriter.close();
+			  postingsWriter.Close();
 			}
 		  }
 
@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.mockrandom
 			{
 			  try
 			  {
-				postingsWriter.close();
+				postingsWriter.Close();
 			  }
 			  finally
 			  {
@@ -379,7 +379,7 @@ namespace Lucene.Net.Codecs.mockrandom
 			  this.OuterInstance = outerInstance;
 			  this.Seed2 = seed2;
 			  this.Gap = gap;
-			  rand = new Random(seed2);
+			  rand = new Random((int)seed2);
 		  }
 
 		  internal readonly Random rand;
@@ -397,16 +397,16 @@ namespace Lucene.Net.Codecs.mockrandom
 	  public override FieldsProducer FieldsProducer(SegmentReadState state)
 	  {
 
-		string seedFileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, SEED_EXT);
-		IndexInput @in = state.directory.openInput(seedFileName, state.context);
-		long seed = @in.readLong();
+		string seedFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, SEED_EXT);
+		IndexInput @in = state.Directory.OpenInput(seedFileName, state.Context);
+		long seed = @in.ReadLong();
 		if (LuceneTestCase.VERBOSE)
 		{
-		  Console.WriteLine("MockRandomCodec: reading from seg=" + state.segmentInfo.name + " formatID=" + state.segmentSuffix + " seed=" + seed);
+		  Console.WriteLine("MockRandomCodec: reading from seg=" + state.SegmentInfo.Name + " formatID=" + state.SegmentSuffix + " seed=" + seed);
 		}
-		@in.close();
+		@in.Close();
 
-		Random random = new Random(seed);
+		Random random = new Random((int)seed);
 
 		int readBufferSize = TestUtil.NextInt(random, 1, 4096);
 		if (LuceneTestCase.VERBOSE)
@@ -422,7 +422,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			Console.WriteLine("MockRandomCodec: reading Sep postings");
 		  }
-		  postingsReader = new SepPostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, new MockIntStreamFactory(random), state.segmentSuffix);
+		  postingsReader = new SepPostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, new MockIntStreamFactory(random), state.SegmentSuffix);
 		}
 		else
 		{
@@ -430,7 +430,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			Console.WriteLine("MockRandomCodec: reading Standard postings");
 		  }
-		  postingsReader = new Lucene41PostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, state.segmentSuffix);
+		  postingsReader = new Lucene41PostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
 		}
 
 		if (random.nextBoolean())
@@ -457,7 +457,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsReader.close();
+			  postingsReader.Close();
 			}
 		  }
 		}
@@ -473,7 +473,7 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsReader.close();
+			  postingsReader.Close();
 			}
 		  }
 		}
@@ -488,14 +488,14 @@ namespace Lucene.Net.Codecs.mockrandom
 		  bool success = false;
 		  try
 		  {
-			fields = new BlockTreeTermsReader(state.directory, state.fieldInfos, state.segmentInfo, postingsReader, state.context, state.segmentSuffix, state.termsIndexDivisor);
+			fields = new BlockTreeTermsReader(state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix, state.TermsIndexDivisor);
 			success = true;
 		  }
 		  finally
 		  {
 			if (!success)
 			{
-			  postingsReader.close();
+			  postingsReader.Close();
 			}
 		  }
 		}
@@ -513,20 +513,20 @@ namespace Lucene.Net.Codecs.mockrandom
 			bool doFixedGap = random.nextBoolean();
 
 			// randomness diverges from writer, here:
-			if (state.termsIndexDivisor != -1)
+			if (state.TermsIndexDivisor != -1)
 			{
-			  state.termsIndexDivisor = TestUtil.NextInt(random, 1, 10);
+			  state.TermsIndexDivisor = TestUtil.NextInt(random, 1, 10);
 			}
 
 			if (doFixedGap)
 			{
-			  // if termsIndexDivisor is set to -1, we should not touch it. It means a
+			  // if TermsIndexDivisor is set to -1, we should not touch it. It means a
 			  // test explicitly instructed not to load the terms index.
 			  if (LuceneTestCase.VERBOSE)
 			  {
-				Console.WriteLine("MockRandomCodec: fixed-gap terms index (divisor=" + state.termsIndexDivisor + ")");
+				Console.WriteLine("MockRandomCodec: fixed-gap terms index (divisor=" + state.TermsIndexDivisor + ")");
 			  }
-			  indexReader = new FixedGapTermsIndexReader(state.directory, state.fieldInfos, state.segmentInfo.name, state.termsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.segmentSuffix, state.context);
+			  indexReader = new FixedGapTermsIndexReader(state.Directory, state.FieldInfos, state.SegmentInfo.Name, state.TermsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.SegmentSuffix, state.Context);
 			}
 			else
 			{
@@ -541,9 +541,9 @@ namespace Lucene.Net.Codecs.mockrandom
 			  }
 			  if (LuceneTestCase.VERBOSE)
 			  {
-				Console.WriteLine("MockRandomCodec: variable-gap terms index (divisor=" + state.termsIndexDivisor + ")");
+				Console.WriteLine("MockRandomCodec: variable-gap terms index (divisor=" + state.TermsIndexDivisor + ")");
 			  }
-			  indexReader = new VariableGapTermsIndexReader(state.directory, state.fieldInfos, state.segmentInfo.name, state.termsIndexDivisor, state.segmentSuffix, state.context);
+			  indexReader = new VariableGapTermsIndexReader(state.Directory, state.FieldInfos, state.SegmentInfo.Name, state.TermsIndexDivisor, state.SegmentSuffix, state.Context);
 
 			}
 
@@ -553,14 +553,14 @@ namespace Lucene.Net.Codecs.mockrandom
 		  {
 			if (!success)
 			{
-			  postingsReader.close();
+			  postingsReader.Close();
 			}
 		  }
 
 		  success = false;
 		  try
 		  {
-			fields = new BlockTermsReader(indexReader, state.directory, state.fieldInfos, state.segmentInfo, postingsReader, state.context, state.segmentSuffix);
+			fields = new BlockTermsReader(indexReader, state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix);
 			success = true;
 		  }
 		  finally
@@ -569,7 +569,7 @@ namespace Lucene.Net.Codecs.mockrandom
 			{
 			  try
 			  {
-				postingsReader.close();
+				postingsReader.Close();
 			  }
 			  finally
 			  {

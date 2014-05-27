@@ -33,6 +33,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using System.Diagnostics;
 
 	public class TestBooleanScorer : LuceneTestCase
 	{
@@ -83,11 +84,11 @@ namespace Lucene.Net.Search
 		writer.close();
 		IndexSearcher searcher = newSearcher(ir);
 		BooleanWeight weight = (BooleanWeight) (new BooleanQuery()).createWeight(searcher);
-		BulkScorer[] scorers = new BulkScorer[] {new BulkScorer() {private int doc = -1; public bool score(Collector c, int maxDoc) throws IOException {assert doc == -1; doc = 3000; FakeScorer fs = new FakeScorer(); fs.doc = doc; fs.score = 1.0f; c.setScorer(fs); c.collect(3000); return false;}}};
+		BulkScorer[] scorers = new BulkScorer[] {new BulkScorer() {private int doc = -1; public bool score(Collector c, int maxDoc) {Debug.Assert(doc == -1); doc = 3000; FakeScorer fs = new FakeScorer(); fs.doc = doc; fs.score = 1.0f; c.setScorer(fs); c.collect(3000); return false;}}};
 
 		BooleanScorer bs = new BooleanScorer(weight, false, 1, Arrays.asList(scorers), Collections.emptyList<BulkScorer>(), scorers.Length);
 
-		IList<int?> hits = new List<int?>();
+		IList<int?> hits = new List<int>();
 		bs.score(new CollectorAnonymousInnerClassHelper(this, hits));
 
 		Assert.AreEqual("should have only 1 hit", 1, hits.Count);

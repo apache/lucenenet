@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 namespace Lucene.Net.Store
 {
 
@@ -24,19 +26,19 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class InputStreamDataInput : DataInput, IDisposable
 	{
-	  private readonly InputStream @is;
+	  private readonly Stream @is;
 
-	  public InputStreamDataInput(InputStream @is)
+	  public InputStreamDataInput(Stream @is)
 	  {
 		this.@is = @is;
 	  }
 
 	  public override sbyte ReadByte()
 	  {
-		int v = @is.read();
+		int v = @is.ReadByte();
 		if (v == -1)
 		{
-			throw new EOFException();
+			throw new EndOfStreamException();
 		}
 		return (sbyte) v;
 	  }
@@ -45,13 +47,11 @@ namespace Lucene.Net.Store
 	  {
 		while (len > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cnt = is.read(b, offset, len);
-		  int cnt = @is.read(b, offset, len);
+		  int cnt = @is.Read(b, offset, len);
 		  if (cnt < 0)
 		  {
 			  // Partially read the input, but no more data available in the stream.
-			  throw new EOFException();
+              throw new EndOfStreamException();
 		  }
 		  len -= cnt;
 		  offset += cnt;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
 
 	  public override void Close()
 	  {
-		@is.close();
+		@is.Close();
 	  }
 	}
 

@@ -45,34 +45,20 @@ namespace Lucene.Net.Codecs.Lucene46
 
 	  public override SegmentInfo Read(Directory dir, string segment, IOContext context)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, "", Lucene46SegmentInfoFormat.SI_EXTENSION);
 		string fileName = IndexFileNames.SegmentFileName(segment, "", Lucene46SegmentInfoFormat.SI_EXTENSION);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.ChecksumIndexInput input = dir.openChecksumInput(fileName, context);
 		ChecksumIndexInput input = dir.OpenChecksumInput(fileName, context);
 		bool success = false;
 		try
 		{
 		  int codecVersion = CodecUtil.CheckHeader(input, Lucene46SegmentInfoFormat.CODEC_NAME, Lucene46SegmentInfoFormat.VERSION_START, Lucene46SegmentInfoFormat.VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String version = input.readString();
 		  string version = input.ReadString();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount = input.readInt();
 		  int docCount = input.ReadInt();
 		  if (docCount < 0)
 		  {
 			throw new CorruptIndexException("invalid docCount: " + docCount + " (resource=" + input + ")");
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isCompoundFile = input.readByte() == Lucene.Net.Index.SegmentInfo.YES;
 		  bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> diagnostics = input.readStringStringMap();
 		  IDictionary<string, string> diagnostics = input.ReadStringStringMap();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> files = input.readStringSet();
 		  ISet<string> files = input.ReadStringSet();
 
 		  if (codecVersion >= Lucene46SegmentInfoFormat.VERSION_CHECKSUM)

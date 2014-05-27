@@ -255,7 +255,7 @@ namespace Lucene.Net.Analysis
       [Test]
 	  public virtual void TestTokenAttributeFactory()
 	  {
-		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
+		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StreamReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
 
 		Assert.IsTrue( ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 
@@ -271,7 +271,17 @@ namespace Lucene.Net.Analysis
 	  public virtual void TestAttributeReflection()
 	  {
 		Token t = new Token("foobar", 6, 22, 8);
-		TestUtil.assertAttributeReflection(t, new Dictionary<string, object>() {{put(typeof(CharTermAttribute).Name + "#term", "foobar"); put(typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar")); put(typeof(OffsetAttribute).Name + "#startOffset", 6); put(typeof(OffsetAttribute).Name + "#endOffset", 22); put(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1); put(typeof(PayloadAttribute).Name + "#payload", null); put(typeof(TypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE); put(typeof(FlagsAttribute).Name + "#flags", 8);}});
+		TestUtil.assertAttributeReflection(t, new Dictionary<string, object>() {
+            {   put(typeof(CharTermAttribute).Name + "#term", "foobar"); 
+                put(typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar")); 
+                put(typeof(OffsetAttribute).Name + "#startOffset", 6); 
+                put(typeof(OffsetAttribute).Name + "#endOffset", 22); 
+                put(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1); 
+                put(typeof(PayloadAttribute).Name + "#payload", null); 
+                put(typeof(TypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE); 
+                put(typeof(FlagsAttribute).Name + "#flags", 8);
+            }
+        });
 	  }
 
       public static T AssertCloneIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl

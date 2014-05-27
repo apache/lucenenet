@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
 		{
 		  LockFactory = new SingleInstanceLockFactory();
 		}
-		catch (IOException e)
+		catch (System.IO.IOException e)
 		{
 		  // Cannot happen
 		}
@@ -87,7 +87,7 @@ namespace Lucene.Net.Store
 	  /// <code>RAMDirectory</code> instance.
 	  /// </summary>
 	  /// <param name="dir"> a <code>Directory</code> value </param>
-	  /// <exception cref="IOException"> if an error occurs </exception>
+	  /// <exception cref="System.IO.IOException"> if an error occurs </exception>
 	  public RAMDirectory(Directory dir, IOContext context) : this(dir, false, context)
 	  {
 	  }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Returns the length in bytes of a file in the directory. </summary>
-	  /// <exception cref="IOException"> if the file does not exist </exception>
+	  /// <exception cref="System.IO.IOException"> if the file does not exist </exception>
 	  public override sealed long FileLength(string name)
 	  {
 		EnsureOpen();
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Removes an existing file in the directory. </summary>
-	  /// <exception cref="IOException"> if the file does not exist </exception>
+	  /// <exception cref="System.IO.IOException"> if the file does not exist </exception>
 	  public override void DeleteFile(string name)
 	  {
 		EnsureOpen();

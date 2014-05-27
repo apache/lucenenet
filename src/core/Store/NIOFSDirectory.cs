@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 	  /// <param name="path"> the path of the directory </param>
 	  /// <param name="lockFactory"> the lock factory to use, or null for the default
 	  /// (<seealso cref="NativeFSLockFactory"/>); </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
 	  public NIOFSDirectory(File path, LockFactory lockFactory) : base(path, lockFactory)
 	  {
 	  }
@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
 	  /// Create a new NIOFSDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
 	  /// </summary>
 	  /// <param name="path"> the path of the directory </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
 	  public NIOFSDirectory(File path) : base(path, null)
 	  {
 	  }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Store
 			{
 			  return openSlice("full-slice", 0, Descriptor.size());
 			}
-			catch (IOException ex)
+			catch (System.IO.IOException ex)
 			{
 			  throw new Exception(ex);
 			}
@@ -247,9 +247,9 @@ namespace Lucene.Net.Store
 			}
 			Debug.Assert(readLength == 0);
 		  }
-		  catch (IOException ioe)
+		  catch (System.IO.IOException ioe)
 		  {
-			throw new IOException(ioe.Message + ": " + this, ioe);
+			throw new System.IO.IOException(ioe.Message + ": " + this, ioe);
 		  }
 		}
 

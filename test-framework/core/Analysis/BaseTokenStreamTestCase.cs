@@ -685,7 +685,7 @@ namespace Lucene.Net.Analysis
 			ft.StoreTermVectors = true;
 			ft.StoreTermVectorOffsets = random.nextBoolean();
 			ft.StoreTermVectorPositions = random.nextBoolean();
-			if (ft.storeTermVectorPositions() && !OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+			if (ft.StoreTermVectorPositions && !OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
 			{
 			  ft.StoreTermVectorPayloads = random.nextBoolean();
 			}
@@ -699,22 +699,22 @@ namespace Lucene.Net.Analysis
 		  switch (random.Next(4))
 		  {
 			case 0:
-				ft.IndexOptions = IndexOptions.DOCS_ONLY;
+				ft.IndexOptionsValue = IndexOptions.DOCS_ONLY;
 				break;
 			case 1:
-				ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
+                ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS;
 				break;
 			case 2:
-				ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 				break;
 			default:
 					if (supportsOffsets && offsetsAreCorrect)
 					{
-					  ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                        ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 					}
 					else
 					{
-					  ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                        ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 					}
 				break;
 		  }
@@ -731,7 +731,7 @@ namespace Lucene.Net.Analysis
 			if (random.Next(10) == 7)
 			{
 			  // real data from linedocs
-			  text = docs.NextDoc().get("body");
+			  text = docs.NextDoc().Get("body");
 			  if (text.Length > maxWordLength)
 			  {
 
@@ -773,7 +773,7 @@ namespace Lucene.Net.Analysis
 				else
 				{
 				  iw.AddDocument(doc);
-				  if (doc.Fields.size() > 1)
+				  if (doc.Fields.Count > 1)
 				  {
 					// back to 1 field
 					currentField = field;
@@ -859,19 +859,19 @@ namespace Lucene.Net.Analysis
 		}
 
 		int remainder = random.Next(10);
-		Reader reader = new StringReader(text);
+		StreamReader reader = new StreamReader(text);
 		TokenStream ts = a.TokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
-		CharTermAttribute termAtt = ts.HasAttribute(typeof(CharTermAttribute)) ? ts.getAttribute(typeof(CharTermAttribute)) : null;
-		OffsetAttribute offsetAtt = ts.HasAttribute(typeof(OffsetAttribute)) ? ts.getAttribute(typeof(OffsetAttribute)) : null;
-		PositionIncrementAttribute posIncAtt = ts.HasAttribute(typeof(PositionIncrementAttribute)) ? ts.getAttribute(typeof(PositionIncrementAttribute)) : null;
-		PositionLengthAttribute posLengthAtt = ts.HasAttribute(typeof(PositionLengthAttribute)) ? ts.getAttribute(typeof(PositionLengthAttribute)) : null;
-		TypeAttribute typeAtt = ts.HasAttribute(typeof(TypeAttribute)) ? ts.getAttribute(typeof(TypeAttribute)) : null;
+		CharTermAttribute termAtt = ts.HasAttribute(typeof(CharTermAttribute)) ? ts.GetAttribute<CharTermAttribute>() : null;
+		OffsetAttribute offsetAtt = ts.HasAttribute(typeof(OffsetAttribute)) ? ts.GetAttribute<OffsetAttribute>() : null;
+		PositionIncrementAttribute posIncAtt = ts.HasAttribute(typeof(PositionIncrementAttribute)) ? ts.GetAttribute<PositionIncrementAttribute>() : null;
+		PositionLengthAttribute posLengthAtt = ts.HasAttribute(typeof(PositionLengthAttribute)) ? ts.GetAttribute<PositionLengthAttribute>() : null;
+		TypeAttribute typeAtt = ts.HasAttribute(typeof(TypeAttribute)) ? ts.GetAttribute<TypeAttribute>() : null;
 		IList<string> tokens = new List<string>();
 		IList<string> types = new List<string>();
-		IList<int?> positions = new List<int?>();
-		IList<int?> positionLengths = new List<int?>();
-		IList<int?> startOffsets = new List<int?>();
-		IList<int?> endOffsets = new List<int?>();
+		IList<int> positions = new List<int>();
+		IList<int> positionLengths = new List<int>();
+		IList<int> startOffsets = new List<int>();
+		IList<int> endOffsets = new List<int>();
 		ts.Reset();
 
 		// First pass: save away "correct" tokens
@@ -947,7 +947,7 @@ namespace Lucene.Net.Analysis
 			  {
 				ts.End();
 			  }
-			  catch (AssertionError ae)
+			  catch (InvalidOperationException ae)
 			  {
 				// Catch & ignore MockTokenizer's
 				// anger...
@@ -971,7 +971,7 @@ namespace Lucene.Net.Analysis
 				Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis, only consuming " + numTokensToRead + " of " + tokens.Count + " tokens");
 			  }
 
-			  reader = new StringReader(text);
+			  reader = new StreamReader(text);
 			  ts = a.TokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
 			  ts.Reset();
 			  for (int tokenCount = 0;tokenCount < numTokensToRead;tokenCount++)
@@ -982,7 +982,7 @@ namespace Lucene.Net.Analysis
 			  {
 				ts.End();
 			  }
-			  catch (AssertionError ae)
+			  catch (InvalidOperationException ae)
 			  {
 				// Catch & ignore MockTokenizer's
 				// anger...
@@ -1007,7 +1007,7 @@ namespace Lucene.Net.Analysis
 		{
 		  Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis; " + tokens.Count + " tokens");
 		}
-		reader = new StringReader(text);
+		reader = new StreamReader(text);
 
 		long seed = random.Next();
 		random = new Random((int)seed);
@@ -1055,7 +1055,7 @@ namespace Lucene.Net.Analysis
 
 		if (field != null)
 		{
-		  reader = new StringReader(text);
+		  reader = new StreamReader(text);
 		  random = new Random((int)seed);
 		  if (random.Next(30) == 7)
 		  {
@@ -1082,8 +1082,8 @@ namespace Lucene.Net.Analysis
 
 	  protected internal virtual void ToDotFile(Analyzer a, string inputText, string localFileName)
 	  {
-		Writer w = new OutputStreamWriter(new FileOutputStream(localFileName), StandardCharsets.UTF_8);
-		TokenStream ts = a.TokenStream("field", inputText);
+		StreamWriter w = new StreamWriter(new FileOutputStream(localFileName), IOUtils.CHARSET_UTF_8);
+		TokenStream ts = a.TokenStream("field", new StreamReader(inputText));
 		ts.Reset();
 		(new TokenStreamToDot(inputText, ts, new PrintWriter(w))).ToDot();
 		w.Close();

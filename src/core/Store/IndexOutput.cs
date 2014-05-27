@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// The number of bytes in the file. </summary>
-	  public abstract long Length();
+	  //public abstract long Length();
 
 	  /// <summary>
 	  /// Set the file length. By default, this method does
@@ -72,12 +72,11 @@ namespace Lucene.Net.Store
 	  /// current file length, the bytes added to the file are
 	  /// undefined.  Otherwise the file is truncated. </seealso>
 	  /// <param name="length"> file length </param>
-	  public virtual long Length
-	  {
-		  set
-		  {
-		  }
-	  }
+      public virtual long Length
+      {
+          get;
+          set;
+      }
 
 	}
 

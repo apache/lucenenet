@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Store
 		Length_Renamed = File.Length_Renamed;
 		if (Length_Renamed / BUFFER_SIZE >= int.MaxValue)
 		{
-		  throw new IOException("RAMInputStream too large length=" + Length_Renamed + ": " + name);
+		  throw new System.IO.IOException("RAMInputStream too large length=" + Length_Renamed + ": " + name);
 		}
 
 		// make sure that we switch to the
@@ -102,7 +103,7 @@ namespace Lucene.Net.Store
 		  // end of file reached, no more buffers left
 		  if (enforceEOF)
 		  {
-			throw new EOFException("read past EOF: " + this);
+			throw new EndOfStreamException("read past EOF: " + this);
 		  }
 		  else
 		  {

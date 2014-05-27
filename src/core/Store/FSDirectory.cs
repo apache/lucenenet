@@ -24,6 +24,7 @@ namespace Lucene.Net.Store
 
 	using Constants = Lucene.Net.Util.Constants;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using System.IO;
 
 
 	/// <summary>
@@ -112,14 +113,16 @@ namespace Lucene.Net.Store
 	  [Obsolete("this constant is no longer used since Lucene 4.5.")]
 	  public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
-	  protected internal readonly File Directory_Renamed; // The underlying filesystem directory
-	  protected internal readonly Set<string> StaleFiles = synchronizedSet(new HashSet<string>()); // Files written, but not yet sync'ed
+      protected internal readonly DirectoryInfo Directory_Renamed; // The underlying filesystem directory
+	  protected internal readonly ISet<string> StaleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
 	  private int ChunkSize = DEFAULT_READ_CHUNK_SIZE;
 
 	  // returns the canonical version of the directory, creating it if it doesn't exist.
-	  private static File GetCanonicalPath(File file)
+	  private static DirectoryInfo GetCanonicalPath(DirectoryInfo file)
 	  {
-		return new File(file.CanonicalPath);
+          if (!file.Exists)
+              file.Create();
+          return file;
 	  }
 
 	  /// <summary>
@@ -127,8 +130,8 @@ namespace Lucene.Net.Store
 	  /// <param name="path"> the path of the directory </param>
 	  /// <param name="lockFactory"> the lock factory to use, or null for the default
 	  /// (<seealso cref="NativeFSLockFactory"/>); </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  protected internal FSDirectory(File path, LockFactory lockFactory)
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+	  protected internal FSDirectory(DirectoryInfo path, LockFactory lockFactory)
 	  {
 		// new ctors use always NativeFSLockFactory as default:
 		if (lockFactory == null)
@@ -137,7 +140,7 @@ namespace Lucene.Net.Store
 		}
 		Directory_Renamed = GetCanonicalPath(path);
 
-		if (Directory_Renamed.exists() && !Directory_Renamed.Directory)
+		if (Directory_Renamed.Exists && !Directory_Renamed.Directory)
 		{
 		  throw new NoSuchDirectoryException("file '" + Directory_Renamed + "' exists but is not a directory");
 		}
@@ -177,7 +180,7 @@ namespace Lucene.Net.Store
 	  /// Just like <seealso cref="#open(File)"/>, but allows you to
 	  ///  also specify a custom <seealso cref="LockFactory"/>. 
 	  /// </summary>
-	  public static FSDirectory Open(File path, LockFactory lockFactory)
+	  public static FSDirectory Open(DirectoryInfo path, LockFactory lockFactory)
 	  {
 		if ((Constants.WINDOWS || Constants.SUN_OS || Constants.LINUX) && Constants.JRE_IS_64BIT && MMapDirectory.UNMAP_SUPPORTED)
 		{
@@ -203,12 +206,8 @@ namespace Lucene.Net.Store
 			// in index dir. If no index dir is given, set ourselves
 			if (value is FSLockFactory)
 			{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final FSLockFactory lf = (FSLockFactory) value;
 			  FSLockFactory lf = (FSLockFactory) value;
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final java.io.File dir = lf.getLockDir();
-			  File dir = lf.LockDir;
+			  DirectoryInfo dir = lf.LockDir;
 			  // if the lock factory has no lockDir set, use the this directory as lockDir
 			  if (dir == null)
 			  {
@@ -227,15 +226,15 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// Lists all files (not subdirectories) in the
 	  ///  directory.  this method never returns null (throws
-	  ///  <seealso cref="IOException"/> instead).
+	  ///  <seealso cref="System.IO.IOException"/> instead).
 	  /// </summary>
 	  ///  <exception cref="NoSuchDirectoryException"> if the directory
 	  ///   does not exist, or does exist but is not a
 	  ///   directory. </exception>
-	  ///  <exception cref="IOException"> if list() returns null  </exception>
+	  ///  <exception cref="System.IO.IOException"> if list() returns null  </exception>
 	  public static string[] ListAll(File dir)
 	  {
-		if (!dir.exists())
+		if (!dir.Exists)
 		{
 		  throw new NoSuchDirectoryException("directory '" + dir + "' does not exist");
 		}
@@ -249,7 +248,7 @@ namespace Lucene.Net.Store
 
 		if (result == null)
 		{
-		  throw new IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
+		  throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
 		}
 
 		return result;
@@ -264,9 +263,9 @@ namespace Lucene.Net.Store
 			  this.Dir = dir;
 		  }
 
-		  public override bool Accept(File dir, string file)
+		  public override bool Accept(DirectoryInfo dir, string file)
 		  {
-			return !(new File(dir, file)).Directory;
+			return !(new DirectoryInfo(Path.Combine(dir.FullName, file))).Directory;
 		  }
 	  }
 
@@ -316,7 +315,7 @@ namespace Lucene.Net.Store
 		File file = new File(Directory_Renamed, name);
 		if (!file.delete())
 		{
-		  throw new IOException("Cannot delete " + file);
+		  throw new System.IO.IOException("Cannot delete " + file);
 		}
 		StaleFiles.remove(name);
 	  }
@@ -337,14 +336,14 @@ namespace Lucene.Net.Store
 		{
 		  if (!Directory_Renamed.mkdirs())
 		  {
-			throw new IOException("Cannot create directory: " + Directory_Renamed);
+			throw new System.IO.IOException("Cannot create directory: " + Directory_Renamed);
 		  }
 		}
 
 		File file = new File(Directory_Renamed, name);
 		if (file.exists() && !file.delete()) // delete existing, if any
 		{
-		  throw new IOException("Cannot overwrite: " + file);
+		  throw new System.IO.IOException("Cannot overwrite: " + file);
 		}
 	  }
 
@@ -384,7 +383,7 @@ namespace Lucene.Net.Store
 			{
 			  dirName = Directory_Renamed.CanonicalPath;
 			}
-			catch (IOException e)
+			catch (System.IO.IOException e)
 			{
 			  throw new Exception(e.ToString(), e);
 			}
@@ -494,12 +493,12 @@ namespace Lucene.Net.Store
 		  // only close the file if it has not been closed yet
 		  if (IsOpen)
 		  {
-			IOException priorE = null;
+			System.IO.IOException priorE = null;
 			try
 			{
 			  base.Close();
 			}
-			catch (IOException ioe)
+			catch (System.IO.IOException ioe)
 			{
 			  priorE = ioe;
 			}

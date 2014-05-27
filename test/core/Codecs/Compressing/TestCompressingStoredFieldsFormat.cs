@@ -28,10 +28,11 @@ namespace Lucene.Net.Codecs.Compressing
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
+	//using Test = org.junit.Test;
 
-	using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+	//using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
+	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Repeat(iterations=5) public class TestCompressingStoredFieldsFormat extends Lucene.Net.Index.BaseStoredFieldsFormatTestCase
@@ -59,7 +60,7 @@ namespace Lucene.Net.Codecs.Compressing
 		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwConf);
 
 		Document validDoc = new Document();
-		validDoc.add(new IntField("id", 0, Field.Store.YES));
+		validDoc.Add(new IntField("id", 0, Field.Store.YES));
 		iw.addDocument(validDoc);
 		iw.commit();
 
@@ -67,7 +68,7 @@ namespace Lucene.Net.Codecs.Compressing
 		Document invalidDoc = new Document();
 		FieldType fieldType = new FieldType();
 		fieldType.Stored = true;
-		invalidDoc.add(new FieldAnonymousInnerClassHelper(this, fieldType));
+		invalidDoc.Add(new FieldAnonymousInnerClassHelper(this, fieldType));
 
 		try
 		{
@@ -77,7 +78,7 @@ namespace Lucene.Net.Codecs.Compressing
 		finally
 		{
 		  int counter = 0;
-		  foreach (string fileName in dir.listAll())
+		  foreach (string fileName in dir.ListAll())
 		  {
 			if (fileName.EndsWith(".fdt") || fileName.EndsWith(".fdx"))
 			{
@@ -86,8 +87,8 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  // Only one .fdt and one .fdx files must have been found
 		  Assert.AreEqual(2, counter);
-		  iw.close();
-		  dir.close();
+		  iw.Close();
+		  dir.Close();
 		}
 	  }
 

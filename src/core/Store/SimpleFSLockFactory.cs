@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 namespace Lucene.Net.Store
 {
 
@@ -66,14 +68,15 @@ namespace Lucene.Net.Store
 	  /// directory itself. Be sure to create one instance for each directory
 	  /// your create!
 	  /// </summary>
-	  public SimpleFSLockFactory() : this((File) null)
+        public SimpleFSLockFactory()
+            : this((DirectoryInfo)null)
 	  {
 	  }
 
 	  /// <summary>
 	  /// Instantiate using the provided directory (as a File instance). </summary>
 	  /// <param name="lockDir"> where lock files should be created. </param>
-	  public SimpleFSLockFactory(File lockDir)
+      public SimpleFSLockFactory(DirectoryInfo lockDir)
 	  {
 		LockDir = lockDir;
 	  }
@@ -83,7 +86,7 @@ namespace Lucene.Net.Store
 	  /// <param name="lockDirName"> where lock files should be created. </param>
 	  public SimpleFSLockFactory(string lockDirName)
 	  {
-		LockDir = new File(lockDirName);
+          LockDir = new DirectoryInfo(lockDirName);
 	  }
 
 	  public override Lock MakeLock(string lockName)
@@ -97,16 +100,16 @@ namespace Lucene.Net.Store
 
 	  public override void ClearLock(string lockName)
 	  {
-		if (LockDir_Renamed.exists())
+		if (LockDir_Renamed.Exists)
 		{
 		  if (LockPrefix_Renamed != null)
 		  {
 			lockName = LockPrefix_Renamed + "-" + lockName;
 		  }
-		  File lockFile = new File(LockDir_Renamed, lockName);
-		  if (lockFile.exists() && !lockFile.delete())
+          FileInfo lockFile = new FileInfo(Path.Combine(LockDir_Renamed.FullName, lockName));
+		  if (lockFile.Exists && !lockFile.delete())
 		  {
-			throw new IOException("Cannot delete " + lockFile);
+			throw new System.IO.IOException("Cannot delete " + lockFile);
 		  }
 		}
 	  }
@@ -115,37 +118,37 @@ namespace Lucene.Net.Store
 	internal class SimpleFSLock : Lock
 	{
 
-	  internal File LockFile;
-	  internal File LockDir;
+	  internal FileInfo LockFile;
+	  internal DirectoryInfo LockDir;
 
-	  public SimpleFSLock(File lockDir, string lockFileName)
+	  public SimpleFSLock(DirectoryInfo lockDir, string lockFileName)
 	  {
 		this.LockDir = lockDir;
-		LockFile = new File(lockDir, lockFileName);
+		LockFile = new FileInfo(Path.Combine(lockDir.FullName, lockFileName));
 	  }
 
 	  public override bool Obtain()
 	  {
 
 		// Ensure that lockDir exists and is a directory:
-		if (!LockDir.exists())
+		if (!LockDir.Exists)
 		{
 		  if (!LockDir.mkdirs())
 		  {
-			throw new IOException("Cannot create directory: " + LockDir.AbsolutePath);
+			throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
 		  }
 		}
 		else if (!LockDir.Directory)
 		{
 		  // TODO: NoSuchDirectoryException instead?
-		  throw new IOException("Found regular file where directory expected: " + LockDir.AbsolutePath);
+            throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.FullName);
 		}
 
 		try
 		{
 		  return LockFile.createNewFile();
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  // On Windows, on concurrent createNewFile, the 2nd process gets "access denied".
 		  // In that case, the lock was not aquired successfully, so return false.
@@ -157,18 +160,25 @@ namespace Lucene.Net.Store
 	  }
 
 	  public override void Close()
-	  {
-		if (LockFile.exists() && !LockFile.delete())
-		{
-		  throw new LockReleaseFailedException("failed to delete " + LockFile);
-		}
+	  {//LUCENE TO-DO
+
+          try
+          {
+              LockFile.Delete();
+              
+          }
+          catch (Exception e)
+          {
+              if (LockFile.Exists) // Delete failed and lockFile exists
+                throw new LockReleaseFailedException("failed to delete " + LockFile);
+          }
 	  }
 
 	  public override bool Locked
 	  {
 		  get
 		  {
-			return LockFile.exists();
+			return LockFile.Exists;
 		  }
 	  }
 

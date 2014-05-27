@@ -645,7 +645,7 @@ namespace Lucene.Net.Index
 		public virtual void TestNullLockFactory()
 		{
 
-		  final class MyRAMDirectory extends MockDirectoryWrapper
+		  public class MyRAMDirectory : MockDirectoryWrapper
 		  {
 			private LockFactory myLockFactory;
 			MyRAMDirectory(Directory @delegate)

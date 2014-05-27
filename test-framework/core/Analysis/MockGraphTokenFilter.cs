@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
 
 	  private static bool DEBUG = false;
 
-	  private readonly CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
+      private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
 
 	  private readonly long Seed;
 	  private Random Random;

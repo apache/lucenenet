@@ -13,8 +13,9 @@ namespace Lucene.Net.Codecs.Compressing
 	using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using NUnit.Framework;
 
-	using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
+	//using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -53,16 +54,16 @@ namespace Lucene.Net.Codecs.Compressing
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.StoreTermVectors = true;
-		doc.add(new Field("foo", "this is a test", ft));
+		doc.Add(new Field("foo", "this is a test", ft));
 		iw.addDocument(doc);
 		AtomicReader ir = getOnlySegmentReader(iw.Reader);
 		Terms terms = ir.getTermVector(0, "foo");
 		Assert.IsNotNull(terms);
 		TermsEnum termsEnum = terms.iterator(null);
-		Assert.AreEqual(TermsEnum.SeekStatus.FOUND, termsEnum.seekCeil(new BytesRef("this")));
+		Assert.AreEqual(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("this")));
 		try
 		{
-		  termsEnum.ord();
+		  termsEnum.Ord();
 		  Assert.Fail();
 		}
 		catch (System.NotSupportedException expected)
@@ -72,16 +73,16 @@ namespace Lucene.Net.Codecs.Compressing
 
 		try
 		{
-		  termsEnum.seekExact(0);
+		  termsEnum.SeekExact(0);
 		  Assert.Fail();
 		}
 		catch (System.NotSupportedException expected)
 		{
 		  // expected exception
 		}
-		ir.close();
-		iw.close();
-		dir.close();
+		ir.Close();
+		iw.Close();
+		dir.Close();
 	  }
 	}
 

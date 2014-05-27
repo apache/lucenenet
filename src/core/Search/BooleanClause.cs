@@ -30,9 +30,13 @@ namespace Lucene.Net.Search
 
 		/// <summary>
 		/// Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
-		MUST { public String toString() { return "+"
-	  }
-	},
+		MUST 
+        { 
+            public string toString() 
+            { 
+                return "+";
+	        }
+	    },
 
 		/// <summary>
 		/// Use this operator for clauses that <i>should</i> appear in the 
@@ -61,7 +65,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-}
+      }
 
 	  /// <summary>
 	  /// The query whose matching documents are combined by the boolean query.

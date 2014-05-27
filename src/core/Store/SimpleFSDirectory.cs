@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -39,8 +40,8 @@ namespace Lucene.Net.Store
 	  /// <param name="path"> the path of the directory </param>
 	  /// <param name="lockFactory"> the lock factory to use, or null for the default
 	  /// (<seealso cref="NativeFSLockFactory"/>); </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  public SimpleFSDirectory(File path, LockFactory lockFactory) : base(path, lockFactory)
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+	  public SimpleFSDirectory(DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
 	  {
 	  }
 
@@ -48,8 +49,9 @@ namespace Lucene.Net.Store
 	  /// Create a new SimpleFSDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
 	  /// </summary>
 	  /// <param name="path"> the path of the directory </param>
-	  /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-	  public SimpleFSDirectory(File path) : base(path, null)
+	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+      public SimpleFSDirectory(DirectoryInfo path)
+          : base(path, null)
 	  {
 	  }
 
@@ -58,22 +60,16 @@ namespace Lucene.Net.Store
 	  public override IndexInput OpenInput(string name, IOContext context)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.File path = new java.io.File(directory, name);
-		File path = new File(Directory_Renamed, name);
-		RandomAccessFile raf = new RandomAccessFile(path, "r");
-		return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.Path + "\")", raf, context);
+        FileInfo path = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
+        FileStream raf = new FileStream(path, "r");
+		return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.FullName + "\")", raf, context);
 	  }
 
 	  public override IndexInputSlicer CreateSlicer(string name, IOContext context)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.File file = new java.io.File(getDirectory(), name);
-		File file = new File(Directory, name);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.RandomAccessFile descriptor = new java.io.RandomAccessFile(file, "r");
-		RandomAccessFile descriptor = new RandomAccessFile(file, "r");
+		FileInfo file = new FileInfo(Directory, name);
+		FileStream descriptor = new RandomAccessFile(file, "r");
 		return new IndexInputSlicerAnonymousInnerClassHelper(this, context, file, descriptor);
 	  }
 
@@ -81,11 +77,11 @@ namespace Lucene.Net.Store
 	  {
 		  private readonly SimpleFSDirectory OuterInstance;
 
-		  private Lucene.Net.Store.IOContext Context;
-		  private File File;
-		  private RandomAccessFile Descriptor;
+		  private IOContext Context;
+		  private FileInfo File;
+		  private FileStream Descriptor;
 
-		  public IndexInputSlicerAnonymousInnerClassHelper(SimpleFSDirectory outerInstance, Lucene.Net.Store.IOContext context, File file, RandomAccessFile descriptor) : base(outerInstance)
+		  public IndexInputSlicerAnonymousInnerClassHelper(SimpleFSDirectory outerInstance, IOContext context, FileInfo file, FileStream descriptor) : base(outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Context = context;
@@ -96,23 +92,23 @@ namespace Lucene.Net.Store
 
 		  public override void Close()
 		  {
-			Descriptor.close();
+			Descriptor.Close();
 		  }
 
 		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
 		  {
-			return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + File.Path + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.BufferSize(Context));
+			return new SimpleFSIndexInput("SimpleFSIndexInput(" + sliceDescription + " in path=\"" + File.FullName + "\" slice=" + offset + ":" + (offset + length) + ")", Descriptor, offset, length, BufferedIndexInput.BufferSize(Context));
 		  }
 
 		  public override IndexInput OpenFullSlice()
 		  {
 			try
 			{
-			  return openSlice("full-slice", 0, Descriptor.length());
+			  return OpenSlice("full-slice", 0, Descriptor.Length);
 			}
-			catch (IOException ex)
+			catch (System.IO.IOException ex)
 			{
-			  throw new Exception(ex);
+			  throw new Exception(ex.ToString(), ex);
 			}
 		  }
 	  }
@@ -131,7 +127,7 @@ namespace Lucene.Net.Store
 
 		/// <summary>
 		/// the file channel we will read from </summary>
-		protected internal readonly RandomAccessFile File;
+		protected internal readonly FileStream File;
 		/// <summary>
 		/// is this instance a clone and hence does not own the file to close it </summary>
 		internal bool IsClone = false;
@@ -142,14 +138,16 @@ namespace Lucene.Net.Store
 		/// end offset (start+length) </summary>
 		protected internal readonly long End;
 
-		public SimpleFSIndexInput(string resourceDesc, RandomAccessFile file, IOContext context) : base(resourceDesc, context)
+        public SimpleFSIndexInput(string resourceDesc, FileStream file, IOContext context)
+            : base(resourceDesc, context)
 		{
 		  this.File = file;
 		  this.Off = 0L;
-		  this.End = file.length();
+		  this.End = file.Length;
 		}
 
-		public SimpleFSIndexInput(string resourceDesc, RandomAccessFile file, long off, long length, int bufferSize) : base(resourceDesc, bufferSize)
+        public SimpleFSIndexInput(string resourceDesc, FileStream file, long off, long length, int bufferSize)
+            : base(resourceDesc, bufferSize)
 		{
 		  this.File = file;
 		  this.Off = off;
@@ -161,7 +159,7 @@ namespace Lucene.Net.Store
 		{
 		  if (!IsClone)
 		  {
-			File.close();
+			File.Close();
 		  }
 		}
 
@@ -184,36 +182,32 @@ namespace Lucene.Net.Store
 		  lock (File)
 		  {
 			long position = Off + FilePointer;
-			File.seek(position);
+			File.Seek(position, SeekOrigin.Begin);
 			int total = 0;
 
 			if (position + len > End)
 			{
-			  throw new EOFException("read past EOF: " + this);
+                throw new EndOfStreamException("read past EOF: " + this);
 			}
 
 			try
 			{
 			  while (total < len)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toRead = Math.min(CHUNK_SIZE, len - total);
 				int toRead = Math.Min(CHUNK_SIZE, len - total);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i = file.read(b, offset + total, toRead);
-				int i = File.read(b, offset + total, toRead);
+				int i = File.Read(b, offset + total, toRead);
 				if (i < 0) // be defensive here, even though we checked before hand, something could have changed
 				{
-				 throw new EOFException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + End);
+                    throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + End);
 				}
 				Debug.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
 				total += i;
 			  }
 			  Debug.Assert(total == len);
 			}
-			catch (IOException ioe)
+			catch (System.IO.IOException ioe)
 			{
-			  throw new IOException(ioe.Message + ": " + this, ioe);
+			  throw new System.IO.IOException(ioe.Message + ": " + this, ioe);
 			}
 		  }
 		}

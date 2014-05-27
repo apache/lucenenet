@@ -260,12 +260,15 @@ namespace Lucene.Net.Support
         }
 
         [ThreadStatic]
-        static ThreadClass this = null;
+        //static ThreadClass this = null;
 
         // named as the Java version
-        public static ThreadClass CurrentThread()
+        public static ThreadClass CurrentThread
         {
-            return Current();
+            get
+            {
+                return Current();
+            }
         }
 
         public static void Sleep(long ms)

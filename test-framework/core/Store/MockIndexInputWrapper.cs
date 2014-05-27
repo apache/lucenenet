@@ -55,7 +55,7 @@ namespace Lucene.Net.Store
 		finally
 		{
 		  Closed = true;
-		  @delegate.close();
+		  @delegate.Close();
 		  // Pending resolution on LUCENE-686 we may want to
 		  // remove the conditional check so we also track that
 		  // all clones get closed:
@@ -78,7 +78,7 @@ namespace Lucene.Net.Store
 	  {
 		EnsureOpen();
 		Dir.InputCloneCount_Renamed.incrementAndGet();
-		IndexInput iiclone = @delegate.clone();
+		IndexInput iiclone = @delegate.Clone();
 		MockIndexInputWrapper clone = new MockIndexInputWrapper(Dir, Name, iiclone);
 		clone.IsClone = true;
 		// Pending resolution on LUCENE-686 we may want to
@@ -110,73 +110,73 @@ namespace Lucene.Net.Store
 	  public override void Seek(long pos)
 	  {
 		EnsureOpen();
-		@delegate.seek(pos);
+		@delegate.Seek(pos);
 	  }
 
 	  public override long Length()
 	  {
 		EnsureOpen();
-		return @delegate.length();
+		return @delegate.Length();
 	  }
 
 	  public override sbyte ReadByte()
 	  {
 		EnsureOpen();
-		return @delegate.readByte();
+		return @delegate.ReadByte();
 	  }
 
 	  public override void ReadBytes(sbyte[] b, int offset, int len)
 	  {
 		EnsureOpen();
-		@delegate.readBytes(b, offset, len);
+		@delegate.ReadBytes(b, offset, len);
 	  }
 
 	  public override void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
 	  {
 		EnsureOpen();
-		@delegate.readBytes(b, offset, len, useBuffer);
+		@delegate.ReadBytes(b, offset, len, useBuffer);
 	  }
 
 	  public override short ReadShort()
 	  {
 		EnsureOpen();
-		return @delegate.readShort();
+		return @delegate.ReadShort();
 	  }
 
 	  public override int ReadInt()
 	  {
 		EnsureOpen();
-		return @delegate.readInt();
+		return @delegate.ReadInt();
 	  }
 
 	  public override long ReadLong()
 	  {
 		EnsureOpen();
-		return @delegate.readLong();
+		return @delegate.ReadLong();
 	  }
 
 	  public override string ReadString()
 	  {
 		EnsureOpen();
-		return @delegate.readString();
+		return @delegate.ReadString();
 	  }
 
 	  public override IDictionary<string, string> ReadStringStringMap()
 	  {
 		EnsureOpen();
-		return @delegate.readStringStringMap();
+		return @delegate.ReadStringStringMap();
 	  }
 
 	  public override int ReadVInt()
 	  {
 		EnsureOpen();
-		return @delegate.readVInt();
+		return @delegate.ReadVInt();
 	  }
 
 	  public override long ReadVLong()
 	  {
 		EnsureOpen();
-		return @delegate.readVLong();
+		return @delegate.ReadVLong();
 	  }
 
 	  public override string ToString()

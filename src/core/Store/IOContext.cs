@@ -33,7 +33,7 @@ namespace Lucene.Net.Store
 	  /// Context is a enumerator which specifies the context in which the Directory
 	  /// is being used for.
 	  /// </summary>
-	  public enum Context
+	  public enum Context_e
 	  {
 		MERGE,
 		READ,
@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// An object of a enumerator Context type
 	  /// </summary>
-	  public readonly Context Context;
+	  public readonly Context_e Context;
 
 	  public readonly MergeInfo MergeInfo;
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
 
 	  public readonly bool ReadOnce;
 
-	  public static readonly IOContext DEFAULT = new IOContext(Context.DEFAULT);
+	  public static readonly IOContext DEFAULT = new IOContext(Context_e.DEFAULT);
 
 	  public static readonly IOContext READONCE = new IOContext(true);
 
@@ -65,32 +65,32 @@ namespace Lucene.Net.Store
 	  public IOContext(FlushInfo flushInfo)
 	  {
 		Debug.Assert(flushInfo != null);
-		this.Context = Context.FLUSH;
+		this.Context = Context_e.FLUSH;
 		this.MergeInfo = null;
 		this.ReadOnce = false;
 		this.FlushInfo = flushInfo;
 	  }
 
-	  public IOContext(Context context) : this(context, null)
+	  public IOContext(Context_e context) : this(context, null)
 	  {
 	  }
 
 	  private IOContext(bool readOnce)
 	  {
-		this.Context = Context.READ;
+		this.Context = Context_e.READ;
 		this.MergeInfo = null;
 		this.ReadOnce = readOnce;
 		this.FlushInfo = null;
 	  }
 
-	  public IOContext(MergeInfo mergeInfo) : this(Context.MERGE, mergeInfo)
+	  public IOContext(MergeInfo mergeInfo) : this(Context_e.MERGE, mergeInfo)
 	  {
 	  }
 
-	  private IOContext(Context context, MergeInfo mergeInfo)
+	  private IOContext(Context_e context, MergeInfo mergeInfo)
 	  {
-		Debug.Assert(context != Context.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
-		Debug.Assert(context != Context.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");
+		Debug.Assert(context != Context_e.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
+		Debug.Assert(context != Context_e.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");
 		this.Context = context;
 		this.ReadOnce = false;
 		this.MergeInfo = mergeInfo;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + ((Context == null) ? 0 : Context.HashCode());
+		result = prime * result + ((Context == null) ? 0 : Context.GetHashCode());
 		result = prime * result + ((FlushInfo == null) ? 0 : FlushInfo.HashCode());
 		result = prime * result + ((MergeInfo == null) ? 0 : MergeInfo.HashCode());
 		result = prime * result + (ReadOnce ? 1231 : 1237);

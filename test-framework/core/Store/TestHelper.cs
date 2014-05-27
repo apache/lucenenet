@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
 		{
 			if (IsSimpleFSIndexInput(@is))
 			{
-				return ((SimpleFSIndexInput) @is).isClone;
+				return ((SimpleFSIndexInput) @is).IsClone;
 			}
 			else
 			{

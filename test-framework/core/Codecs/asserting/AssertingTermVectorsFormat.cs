@@ -41,12 +41,12 @@ namespace Lucene.Net.Codecs.asserting
 
 	  public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
 	  {
-		return new AssertingTermVectorsReader(@in.vectorsReader(directory, segmentInfo, fieldInfos, context));
+		return new AssertingTermVectorsReader(@in.VectorsReader(directory, segmentInfo, fieldInfos, context));
 	  }
 
 	  public override TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
 	  {
-		return new AssertingTermVectorsWriter(@in.vectorsWriter(directory, segmentInfo, context));
+		return new AssertingTermVectorsWriter(@in.VectorsWriter(directory, segmentInfo, context));
 	  }
 
 	  internal class AssertingTermVectorsReader : TermVectorsReader
@@ -60,28 +60,28 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.close();
+		  @in.Close();
 		}
 
 		public override Fields Get(int doc)
 		{
-		  Fields fields = @in.get(doc);
+		  Fields fields = @in.Get(doc);
 		  return fields == null ? null : new AssertingAtomicReader.AssertingFields(fields);
 		}
 
 		public override TermVectorsReader Clone()
 		{
-		  return new AssertingTermVectorsReader(@in.clone());
+		  return new AssertingTermVectorsReader(@in.Clone());
 		}
 
 		public override long RamBytesUsed()
 		{
-		  return @in.ramBytesUsed();
+		  return @in.RamBytesUsed();
 		}
 
 		public override void CheckIntegrity()
 		{
-		  @in.checkIntegrity();
+		  @in.CheckIntegrity();
 		}
 	  }
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(FieldCount == 0);
 		  Debug.Assert(DocStatus != Status.STARTED);
-		  @in.startDocument(numVectorFields);
+		  @in.StartDocument(numVectorFields);
 		  DocStatus = Status.STARTED;
 		  FieldCount = numVectorFields;
 		  DocCount++;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(FieldCount == 0);
 		  Debug.Assert(DocStatus == Status.STARTED);
-		  @in.finishDocument();
+		  @in.FinishDocument();
 		  DocStatus = Status.FINISHED;
 		}
 
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(TermCount == 0);
 		  Debug.Assert(DocStatus == Status.STARTED);
 		  Debug.Assert(FieldStatus != Status.STARTED);
-		  @in.startField(info, numTerms, positions, offsets, payloads);
+		  @in.StartField(info, numTerms, positions, offsets, payloads);
 		  FieldStatus = Status.STARTED;
 		  TermCount = numTerms;
 		  HasPositions = positions || offsets || payloads;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(TermCount == 0);
 		  Debug.Assert(FieldStatus == Status.STARTED);
-		  @in.finishField();
+		  @in.FinishField();
 		  FieldStatus = Status.FINISHED;
 		  --FieldCount;
 		}
@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(DocStatus == Status.STARTED);
 		  Debug.Assert(FieldStatus == Status.STARTED);
 		  Debug.Assert(TermStatus != Status.STARTED);
-		  @in.startTerm(term, freq);
+		  @in.StartTerm(term, freq);
 		  TermStatus = Status.STARTED;
 		  PositionCount = HasPositions ? freq : 0;
 		}
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(DocStatus == Status.STARTED);
 		  Debug.Assert(FieldStatus == Status.STARTED);
 		  Debug.Assert(TermStatus == Status.STARTED);
-		  @in.finishTerm();
+		  @in.FinishTerm();
 		  TermStatus = Status.FINISHED;
 		  --TermCount;
 		}
@@ -172,22 +172,22 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(DocStatus == Status.STARTED);
 		  Debug.Assert(FieldStatus == Status.STARTED);
 		  Debug.Assert(TermStatus == Status.STARTED);
-		  @in.addPosition(position, startOffset, endOffset, payload);
+		  @in.AddPosition(position, startOffset, endOffset, payload);
 		  --PositionCount;
 		}
 
 		public override void Abort()
 		{
-		  @in.abort();
+		  @in.Abort();
 		}
 
 		public override void Finish(FieldInfos fis, int numDocs)
 		{
 		  Debug.Assert(DocCount == numDocs);
-		  Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED, Status.UNDEFINED));
+		  Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
 		  Debug.Assert(FieldStatus != Status.STARTED);
 		  Debug.Assert(TermStatus != Status.STARTED);
-		  @in.finish(fis, numDocs);
+		  @in.Finish(fis, numDocs);
 		}
 
 		public override IComparer<BytesRef> Comparator
@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.close();
+		  @in.Close();
 		}
 
 	  }

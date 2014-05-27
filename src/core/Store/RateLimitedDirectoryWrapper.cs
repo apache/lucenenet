@@ -2,24 +2,25 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using Context = Lucene.Net.Store.IOContext.Context;
+    using Context_e = Lucene.Net.Store.IOContext.Context_e;
 
 	/// 
 	/// <summary>
@@ -33,7 +34,7 @@ namespace Lucene.Net.Store
 
 	  // we need to be volatile here to make sure we see all the values that are set
 	  // / modified concurrently
-	  private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context)).length];
+	  private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
 
 	  public RateLimitedDirectoryWrapper(Directory wrapped) : base(wrapped)
 	  {
@@ -42,11 +43,7 @@ namespace Lucene.Net.Store
 	  public override IndexOutput CreateOutput(string name, IOContext context)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexOutput output = base.createOutput(name, context);
 		IndexOutput output = base.CreateOutput(name, context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final RateLimiter limiter = getRateLimiter(context.context);
 		RateLimiter limiter = GetRateLimiter(context.Context);
 		if (limiter != null)
 		{
@@ -67,7 +64,7 @@ namespace Lucene.Net.Store
 		@in.Copy(to, src, dest, context);
 	  }
 
-	  private RateLimiter GetRateLimiter(IOContext.Context context)
+	  private RateLimiter GetRateLimiter(IOContext.Context_e context)
 	  {
 		Debug.Assert(context != null);
 		return ContextRateLimiters[context.ordinal()];
@@ -91,18 +88,14 @@ namespace Lucene.Net.Store
 	  ///           if context is <code>null</code> </exception>
 	  /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
 	  /// @lucene.experimental </exception>
-	  public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.Context context)
+	  public void SetMaxWriteMBPerSec(double mbPerSec, IOContext.Context_e context)
 	  {
 		EnsureOpen();
 		if (context == null)
 		{
 		  throw new System.ArgumentException("Context must not be null");
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ord = context.ordinal();
 		int ord = context.ordinal();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final RateLimiter limiter = contextRateLimiters[ord];
 		RateLimiter limiter = ContextRateLimiters[ord];
 		if (mbPerSec == null)
 		{
@@ -155,7 +148,7 @@ namespace Lucene.Net.Store
 	  ///           if context is <code>null</code> </exception>
 	  /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
 	  /// @lucene.experimental </exception>
-	  public double? GetMaxWriteMBPerSec(IOContext.Context context)
+	  public double GetMaxWriteMBPerSec(IOContext.Context_e context)
 	  {
 		EnsureOpen();
 		if (context == null)
@@ -163,7 +156,7 @@ namespace Lucene.Net.Store
 		  throw new System.ArgumentException("Context must not be null");
 		}
 		RateLimiter limiter = GetRateLimiter(context);
-		return limiter == null ? null : limiter.MbPerSec;
+		return limiter == null ? 0 : limiter.MbPerSec;
 	  }
 
 	}

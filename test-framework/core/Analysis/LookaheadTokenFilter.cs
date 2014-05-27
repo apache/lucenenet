@@ -44,9 +44,9 @@ namespace Lucene.Net.Analysis
 
 	  private const bool DEBUG = false;
 
-	  protected internal readonly PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute>();
-	  protected internal readonly PositionLengthAttribute PosLenAtt = addAttribute(typeof(PositionLengthAttribute));
-	  protected internal readonly OffsetAttribute OffsetAtt = addAttribute(typeof(OffsetAttribute));
+	  protected internal readonly PositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute>();
+      protected internal readonly PositionLengthAttribute PosLenAtt;// = addAttribute(typeof(PositionLengthAttribute));
+      protected internal readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
 	  // Position of last read input token:
 	  protected internal int InputPos;
@@ -131,9 +131,9 @@ namespace Lucene.Net.Analysis
 
 	  protected internal abstract T NewPosition();
 
-	  protected internal readonly RollingBuffer<T> positions = new RollingBufferAnonymousInnerClassHelper();
+	  protected internal readonly RollingBuffer positions = new RollingBufferAnonymousInnerClassHelper();
 
-	  private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<T>
+	  private class RollingBufferAnonymousInnerClassHelper : RollingBuffer
 	  {
 		  public RollingBufferAnonymousInnerClassHelper()
 		  {

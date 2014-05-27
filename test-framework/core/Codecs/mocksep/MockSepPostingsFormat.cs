@@ -59,7 +59,7 @@ namespace Lucene.Net.Codecs.mocksep
 		{
 		  if (!success)
 		  {
-			postingsWriter.close();
+			postingsWriter.Close();
 		  }
 		}
 
@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.mocksep
 		  {
 			try
 			{
-			  postingsWriter.close();
+			  postingsWriter.Close();
 			}
 			finally
 			{
@@ -89,27 +89,27 @@ namespace Lucene.Net.Codecs.mocksep
 	  public override FieldsProducer FieldsProducer(SegmentReadState state)
 	  {
 
-		PostingsReaderBase postingsReader = new SepPostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, new MockSingleIntFactory(), state.segmentSuffix);
+		PostingsReaderBase postingsReader = new SepPostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, new MockSingleIntFactory(), state.SegmentSuffix);
 
 		TermsIndexReaderBase indexReader;
 		bool success = false;
 		try
 		{
-		  indexReader = new FixedGapTermsIndexReader(state.directory, state.fieldInfos, state.segmentInfo.name, state.termsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.segmentSuffix, state.context);
+		  indexReader = new FixedGapTermsIndexReader(state.Directory, state.FieldInfos, state.SegmentInfo.Name, state.TermsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.SegmentSuffix, state.Context);
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			postingsReader.close();
+			postingsReader.Close();
 		  }
 		}
 
 		success = false;
 		try
 		{
-		  FieldsProducer ret = new BlockTermsReader(indexReader, state.directory, state.fieldInfos, state.segmentInfo, postingsReader, state.context, state.segmentSuffix);
+		  FieldsProducer ret = new BlockTermsReader(indexReader, state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix);
 		  success = true;
 		  return ret;
 		}
@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.mocksep
 		  {
 			try
 			{
-			  postingsReader.close();
+			  postingsReader.Close();
 			}
 			finally
 			{

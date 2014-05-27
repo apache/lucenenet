@@ -1,31 +1,33 @@
 namespace Lucene.Net.Codecs.Compressing
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    using NUnit.Framework;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
 
-	using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
-	using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
+    using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 
 	public abstract class AbstractTestCompressionMode : LuceneTestCase
 	{
@@ -51,7 +53,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  internal virtual sbyte[] Compress(sbyte[] decompressed, int off, int len)
 	  {
-		Compressor compressor = Mode.newCompressor();
+		Compressor compressor = Mode.NewCompressor();
 		return Compress(compressor, decompressed, off, len);
 	  }
 
@@ -59,30 +61,30 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		sbyte[] compressed = new sbyte[len * 2 + 16]; // should be enough
 		ByteArrayDataOutput @out = new ByteArrayDataOutput(compressed);
-		compressor.compress(decompressed, off, len, @out);
+		compressor.Compress(decompressed, off, len, @out);
 		int compressedLen = @out.Position;
-		return Arrays.copyOf(compressed, compressedLen);
+		return Arrays.CopyOf(compressed, compressedLen);
 	  }
 
 	  internal virtual sbyte[] Decompress(sbyte[] compressed, int originalLength)
 	  {
-		Decompressor decompressor = Mode.newDecompressor();
+		Decompressor decompressor = Mode.NewDecompressor();
 		return Decompress(decompressor, compressed, originalLength);
 	  }
 
 	  internal static sbyte[] Decompress(Decompressor decompressor, sbyte[] compressed, int originalLength)
 	  {
 		BytesRef bytes = new BytesRef();
-		decompressor.decompress(new ByteArrayDataInput(compressed), originalLength, 0, originalLength, bytes);
-		return Arrays.copyOfRange(bytes.bytes, bytes.offset, bytes.offset + bytes.length);
+		decompressor.Decompress(new ByteArrayDataInput(compressed), originalLength, 0, originalLength, bytes);
+		return Arrays.copyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
 	  }
 
 	  internal virtual sbyte[] Decompress(sbyte[] compressed, int originalLength, int offset, int length)
 	  {
-		Decompressor decompressor = Mode.newDecompressor();
+		Decompressor decompressor = Mode.NewDecompressor();
 		BytesRef bytes = new BytesRef();
-		decompressor.decompress(new ByteArrayDataInput(compressed), originalLength, offset, length, bytes);
-		return Arrays.copyOfRange(bytes.bytes, bytes.offset, bytes.offset + bytes.length);
+		decompressor.Decompress(new ByteArrayDataInput(compressed), originalLength, offset, length, bytes);
+		return Arrays.copyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
 	  }
 
 	  public virtual void TestDecompress()
@@ -157,7 +159,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public virtual void TestConstant()
 	  {
 		sbyte[] decompressed = new sbyte[TestUtil.Next(random(), 1, 10000)];
-		Arrays.fill(decompressed, (sbyte) random().Next());
+		Arrays.Fill(decompressed, (sbyte) random().Next());
 		Test(decompressed);
 	  }
 

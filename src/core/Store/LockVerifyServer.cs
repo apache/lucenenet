@@ -132,7 +132,7 @@ namespace Lucene.Net.Store
 				  int id = @in.read();
 				  if (id < 0)
 				  {
-					throw new IOException("Client closed connection before communication started.");
+					throw new System.IO.IOException("Client closed connection before communication started.");
 				  }
 
 				  StartingGun.@await();
@@ -165,7 +165,7 @@ namespace Lucene.Net.Store
 						  if (currentLock != -1)
 						  {
 							LockedID[0] = -2;
-							throw new IllegalStateException("id " + id + " got lock, but " + currentLock + " already holds the lock");
+							throw new InvalidOperationException("id " + id + " got lock, but " + currentLock + " already holds the lock");
 						  }
 						  LockedID[0] = id;
 						  break;
@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
 						  if (currentLock != id)
 						  {
 							LockedID[0] = -2;
-							throw new IllegalStateException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
+							throw new InvalidOperationException("id " + id + " released the lock, but " + currentLock + " is the one holding the lock");
 						  }
 						  LockedID[0] = -1;
 						  break;

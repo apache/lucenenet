@@ -31,11 +31,11 @@ namespace Lucene.Net.Analysis
 	{
 	  private readonly Token[] Tokens;
 	  private int Upto = 0;
-	  private readonly CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly PositionIncrementAttribute PosIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly PositionLengthAttribute PosLengthAtt = addAttribute(typeof(PositionLengthAttribute));
-	  private readonly OffsetAttribute OffsetAtt = addAttribute(typeof(OffsetAttribute));
-	  private readonly PayloadAttribute PayloadAtt = addAttribute(typeof(PayloadAttribute));
+	  private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
+	  private readonly PositionIncrementAttribute PosIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
+	  private readonly PositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+	  private readonly PayloadAttribute PayloadAtt;// = addAttribute(typeof(PayloadAttribute));
 	  private readonly int FinalOffset;
 	  private readonly int FinalPosInc;
 

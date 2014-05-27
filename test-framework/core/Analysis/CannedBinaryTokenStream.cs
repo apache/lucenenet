@@ -59,10 +59,10 @@ namespace Lucene.Net.Analysis
 
 	  private readonly BinaryToken[] Tokens;
 	  private int Upto = 0;
-	  private readonly BinaryTermAttribute TermAtt = AddAttribute<BinaryTermAttribute>();
-	  private readonly PositionIncrementAttribute PosIncrAtt = AddAttribute<PositionIncrementAttribute>();
-	  private readonly PositionLengthAttribute PosLengthAtt = addAttribute(typeof(PositionLengthAttribute));
-	  private readonly OffsetAttribute OffsetAtt = addAttribute(typeof(OffsetAttribute));
+	  private readonly BinaryTermAttribute TermAtt;// = AddAttribute<BinaryTermAttribute>();
+	  private readonly PositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
+	  private readonly PositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
 	  /// <summary>
 	  /// An attribute extending {@link

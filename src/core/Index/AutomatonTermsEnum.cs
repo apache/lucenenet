@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal override AcceptStatus Accept(BytesRef term)
 	  {
-		if (CommonSuffixRef == Lucene.Net.Util.BytesRefIterator_Fields.Null || StringHelper.EndsWith(term, CommonSuffixRef))
+		if (CommonSuffixRef == null || StringHelper.EndsWith(term, CommonSuffixRef))
 		{
 		  if (RunAutomaton.Run(term.Bytes, term.Offset, term.Length))
 		  {
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 	  protected internal override BytesRef NextSeekTerm(BytesRef term)
 	  {
 		//System.out.println("ATE.nextSeekTerm term=" + term);
-		if (term == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (term == null)
 		{
 		  Debug.Assert(SeekBytesRef.Length == 0);
 		  // return the empty term, as its valid
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  return Lucene.Net.Util.BytesRefIterator_Fields.Null; // no more possible strings can match
+		  return null; // no more possible strings can match
 		}
 	  }
 

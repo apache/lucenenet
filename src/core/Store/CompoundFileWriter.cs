@@ -25,6 +25,7 @@ namespace Lucene.Net.Store
 	using CodecUtil = Lucene.Net.Codecs.CodecUtil;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using System;
 
 	/// <summary>
 	/// Combines multiple files into a single compound file.
@@ -65,7 +66,7 @@ namespace Lucene.Net.Store
 
 	  private readonly Directory Directory_Renamed;
 	  private readonly IDictionary<string, FileEntry> Entries = new Dictionary<string, FileEntry>();
-	  private readonly Set<string> SeenIDs = new HashSet<string>();
+	  private readonly ISet<string> SeenIDs = new HashSet<string>();
 	  // all entries that are written to a sep. file but not yet moved into CFS
 	  private readonly LinkedList<FileEntry> PendingEntries = new LinkedList<FileEntry>();
 	  private bool Closed = false;
@@ -147,7 +148,7 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// Closes all resources and writes the entry table
 	  /// </summary>
-	  /// <exception cref="IllegalStateException">
+	  /// <exception cref="InvalidOperationException">
 	  ///           if close() had been called before or if no file has been added to
 	  ///           this object </exception>
 	  public override void Close()
@@ -156,7 +157,7 @@ namespace Lucene.Net.Store
 		{
 		  return;
 		}
-		IOException priorException = null;
+		System.IO.IOException priorException = null;
 		IndexOutput entryTableOut = null;
 		// TODO this code should clean up after itself
 		// (remove partial .cfs/.cfe)
@@ -164,7 +165,7 @@ namespace Lucene.Net.Store
 		{
 		  if (PendingEntries.Count > 0 || OutputTaken.get())
 		  {
-			throw new IllegalStateException("CFS has pending open files");
+			throw new InvalidOperationException("CFS has pending open files");
 		  }
 		  Closed = true;
 		  // open the compound stream
@@ -172,7 +173,7 @@ namespace Lucene.Net.Store
 		  Debug.Assert(DataOut != null);
 		  CodecUtil.WriteFooter(DataOut);
 		}
-		catch (IOException e)
+		catch (System.IO.IOException e)
 		{
 		  priorException = e;
 		}
@@ -185,7 +186,7 @@ namespace Lucene.Net.Store
 		  entryTableOut = Directory_Renamed.CreateOutput(EntryTableName, IOContext.DEFAULT);
 		  WriteEntryTable(Entries.Values, entryTableOut);
 		}
-		catch (IOException e)
+		catch (System.IO.IOException e)
 		{
 		  priorException = e;
 		}
@@ -211,7 +212,7 @@ namespace Lucene.Net.Store
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final IndexInput is = fileEntry.dir.openInput(fileEntry.file, IOContext.READONCE);
-		IndexInput @is = fileEntry.Dir.openInput(fileEntry.File, IOContext.READONCE);
+		IndexInput @is = fileEntry.Dir.OpenInput(fileEntry.File, IOContext.READONCE);
 		bool success = false;
 		try
 		{
@@ -227,7 +228,7 @@ namespace Lucene.Net.Store
 		  long diff = endPtr - startPtr;
 		  if (diff != length)
 		  {
-			throw new IOException("Difference in the output file offsets " + diff + " does not match the original file length " + length);
+			throw new System.IO.IOException("Difference in the output file offsets " + diff + " does not match the original file length " + length);
 		  }
 		  fileEntry.Offset = startPtr;
 		  success = true;
@@ -239,7 +240,7 @@ namespace Lucene.Net.Store
 		  {
 			IOUtils.Close(@is);
 			// copy successful - delete file
-			fileEntry.Dir.deleteFile(fileEntry.File);
+			fileEntry.Dir.DeleteFile(fileEntry.File);
 		  }
 		  else
 		  {
@@ -281,8 +282,8 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String id = Lucene.Net.Index.IndexFileNames.stripSegmentName(name);
 		  string id = IndexFileNames.StripSegmentName(name);
-		  Debug.Assert(!SeenIDs.contains(id), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
-		  SeenIDs.add(id);
+		  Debug.Assert(!SeenIDs.Contains(id), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
+		  SeenIDs.Add(id);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final DirectCFSIndexOutput out;
 		  DirectCFSIndexOutput @out;
@@ -359,7 +360,7 @@ namespace Lucene.Net.Store
 
 	  internal string[] ListAll()
 	  {
-		return Entries.Keys.toArray(new string[0]);
+		return Entries.Keys.ToArray(new string[0]);
 	  }
 
 	  private sealed class DirectCFSIndexOutput : IndexOutput
@@ -398,15 +399,15 @@ namespace Lucene.Net.Store
 			{
 			  @delegate.Close();
 			  // we are a separate file - push into the pending entries
-			  outerInstance.PendingEntries.AddLast(Entry);
+			  OuterInstance.PendingEntries.AddLast(Entry);
 			}
 			else
 			{
 			  // we have been written into the CFS directly - release the lock
-			  outerInstance.ReleaseOutputLock();
+                OuterInstance.ReleaseOutputLock();
 			}
 			// now prune all pending entries and push them into the CFS
-			outerInstance.PrunePendingEntries();
+            OuterInstance.PrunePendingEntries();
 		  }
 		}
 

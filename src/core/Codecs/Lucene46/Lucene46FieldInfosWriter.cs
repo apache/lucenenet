@@ -94,11 +94,7 @@ namespace Lucene.Net.Codecs.Lucene46
 			output.WriteByte(bits);
 
 			// pack the DV types in one byte
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte dv = docValuesByte(fi.getDocValuesType());
 			sbyte dv = DocValuesByte(fi.DocValuesType);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte nrm = docValuesByte(fi.getNormType());
 			sbyte nrm = DocValuesByte(fi.NormType);
 			Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
 			sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));

@@ -38,6 +38,7 @@ namespace Lucene.Net.Codecs.ramonly
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Stores all postings data in RAM, but writes a small
@@ -63,18 +64,18 @@ namespace Lucene.Net.Codecs.ramonly
 
 		  public virtual int Compare(BytesRef t1, BytesRef t2)
 		  {
-			sbyte[] b1 = t1.bytes;
-			sbyte[] b2 = t2.bytes;
+			sbyte[] b1 = t1.Bytes;
+			sbyte[] b2 = t2.Bytes;
 			int b1Stop;
-			int b1Upto = t1.offset;
-			int b2Upto = t2.offset;
-			if (t1.length < t2.length)
+			int b1Upto = t1.Offset;
+			int b2Upto = t2.Offset;
+			if (t1.Length < t2.Length)
 			{
-			  b1Stop = t1.offset + t1.length;
+			  b1Stop = t1.Offset + t1.Length;
 			}
 			else
 			{
-			  b1Stop = t1.offset + t2.length;
+			  b1Stop = t1.Offset + t2.Length;
 			}
 			while (b1Upto < b1Stop)
 			{
@@ -88,7 +89,7 @@ namespace Lucene.Net.Codecs.ramonly
 			}
 
 			// One is prefix of another, or they are equal
-			return t2.length - t1.length;
+			return t2.Length - t1.Length;
 		  }
 
 		  public override bool Equals(object other)
@@ -118,7 +119,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override IEnumerator<string> Iterator()
 		{
-		  return Collections.unmodifiableSet(FieldToTerms.Keys).GetEnumerator();
+		  return CollectionsHelper.UnmodifiableSet(FieldToTerms.Keys).GetEnumerator();
 		}
 
 		public override void Close()
@@ -211,22 +212,22 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override bool HasFreqs()
 		{
-		  return Info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 		}
 
 		public override bool HasOffsets()
 		{
-		  return Info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		}
 
 		public override bool HasPositions()
 		{
-		  return Info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		}
 
 		public override bool HasPayloads()
 		{
-		  return Info.hasPayloads();
+		  return Info.HasPayloads();
 		}
 	  }
 
@@ -270,13 +271,13 @@ namespace Lucene.Net.Codecs.ramonly
 		public virtual long RamBytesUsed()
 		{
 		  long sizeInBytes = 0;
-		  sizeInBytes += (Positions != null) ? RamUsageEstimator.sizeOf(Positions) : 0;
+		  sizeInBytes += (Positions != null) ? RamUsageEstimator.SizeOf(Positions) : 0;
 
 		  if (Payloads != null)
 		  {
 			foreach (sbyte[] payload in Payloads)
 			{
-			  sizeInBytes += (payload != null) ? RamUsageEstimator.sizeOf(payload) : 0;
+			  sizeInBytes += (payload != null) ? RamUsageEstimator.SizeOf(payload) : 0;
 			}
 		  }
 		  return sizeInBytes;
@@ -297,12 +298,12 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override TermsConsumer AddField(FieldInfo field)
 		{
-		  if (field.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+		  if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
 		  {
 			throw new System.NotSupportedException("this codec cannot index offsets");
 		  }
-		  RAMField ramField = new RAMField(field.name, field);
-		  Postings.FieldToTerms[field.name] = ramField;
+		  RAMField ramField = new RAMField(field.Name, field);
+		  Postings.FieldToTerms[field.Name] = ramField;
 		  TermsConsumer.Reset(ramField);
 		  return TermsConsumer;
 		}
@@ -343,9 +344,9 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override void FinishTerm(BytesRef text, TermStats stats)
 		{
-		  Debug.Assert(stats.docFreq > 0);
-		  Debug.Assert(stats.docFreq == Current.Docs.Count);
-		  Current.TotalTermFreq = stats.totalTermFreq;
+		  Debug.Assert(stats.DocFreq > 0);
+		  Debug.Assert(stats.DocFreq == Current.Docs.Count);
+		  Current.TotalTermFreq = stats.TotalTermFreq;
 		  Field.TermToDocs.put(Current.Term, Current);
 		}
 
@@ -380,14 +381,14 @@ namespace Lucene.Net.Codecs.ramonly
 		  Debug.Assert(startOffset == -1);
 		  Debug.Assert(endOffset == -1);
 		  Current.Positions[PosUpto] = position;
-		  if (payload != null && payload.length > 0)
+		  if (payload != null && payload.Length > 0)
 		  {
 			if (Current.Payloads == null)
 			{
 			  Current.Payloads = new sbyte[Current.Positions.Length][];
 			}
-			sbyte[] bytes = Current.Payloads[PosUpto] = new sbyte[payload.length];
-			Array.Copy(payload.bytes, payload.offset, bytes, 0, payload.length);
+			sbyte[] bytes = Current.Payloads[PosUpto] = new sbyte[payload.Length];
+			Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
 		  }
 		  PosUpto++;
 		}
@@ -517,7 +518,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override int Advance(int targetDocID)
 		{
-		  return slowAdvance(targetDocID);
+		  return SlowAdvance(targetDocID);
 		}
 
 		// TODO: override bulk read, for better perf
@@ -529,7 +530,7 @@ namespace Lucene.Net.Codecs.ramonly
 			if (Upto < RamTerm.Docs.Count)
 			{
 			  Current = RamTerm.Docs[Upto];
-			  if (LiveDocs == null || LiveDocs.get(Current.DocID))
+			  if (LiveDocs == null || LiveDocs.Get(Current.DocID))
 			  {
 				PosUpto = 0;
 				return Current.DocID;
@@ -574,7 +575,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override int Advance(int targetDocID)
 		{
-		  return slowAdvance(targetDocID);
+		  return SlowAdvance(targetDocID);
 		}
 
 		// TODO: override bulk read, for better perf
@@ -586,7 +587,7 @@ namespace Lucene.Net.Codecs.ramonly
 			if (Upto < RamTerm.Docs.Count)
 			{
 			  Current = RamTerm.Docs[Upto];
-			  if (LiveDocs == null || LiveDocs.get(Current.DocID))
+			  if (LiveDocs == null || LiveDocs.Get(Current.DocID))
 			  {
 				PosUpto = 0;
 				return Current.DocID;
@@ -663,24 +664,24 @@ namespace Lucene.Net.Codecs.ramonly
 		// TODO -- ok to do this up front instead of
 		// on close....?  should be ok?
 		// Write our ID:
-		string idFileName = IndexFileNames.segmentFileName(writeState.segmentInfo.name, writeState.segmentSuffix, ID_EXTENSION);
-		IndexOutput @out = writeState.directory.createOutput(idFileName, writeState.context);
+		string idFileName = IndexFileNames.SegmentFileName(writeState.SegmentInfo.Name, writeState.SegmentSuffix, ID_EXTENSION);
+		IndexOutput @out = writeState.Directory.CreateOutput(idFileName, writeState.Context);
 		bool success = false;
 		try
 		{
-		  CodecUtil.writeHeader(@out, RAM_ONLY_NAME, VERSION_LATEST);
-		  @out.writeVInt(id);
+		  CodecUtil.WriteHeader(@out, RAM_ONLY_NAME, VERSION_LATEST);
+		  @out.WriteVInt(id);
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(@out);
+			IOUtils.CloseWhileHandlingException(@out);
 		  }
 		  else
 		  {
-			IOUtils.close(@out);
+			IOUtils.Close(@out);
 		  }
 		}
 
@@ -698,25 +699,25 @@ namespace Lucene.Net.Codecs.ramonly
 	  {
 
 		// Load our ID:
-		string idFileName = IndexFileNames.segmentFileName(readState.segmentInfo.name, readState.segmentSuffix, ID_EXTENSION);
-		IndexInput @in = readState.directory.openInput(idFileName, readState.context);
+		string idFileName = IndexFileNames.SegmentFileName(readState.SegmentInfo.Name, readState.SegmentSuffix, ID_EXTENSION);
+		IndexInput @in = readState.Directory.OpenInput(idFileName, readState.Context);
 		bool success = false;
 		int id;
 		try
 		{
-		  CodecUtil.checkHeader(@in, RAM_ONLY_NAME, VERSION_START, VERSION_LATEST);
-		  id = @in.readVInt();
+		  CodecUtil.CheckHeader(@in, RAM_ONLY_NAME, VERSION_START, VERSION_LATEST);
+		  id = @in.ReadVInt();
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(@in);
+			IOUtils.CloseWhileHandlingException(@in);
 		  }
 		  else
 		  {
-			IOUtils.close(@in);
+			IOUtils.Close(@in);
 		  }
 		}
 

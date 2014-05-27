@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.mockintblock
 
 		public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
 		{
-		  return new FixedIntBlockIndexInputAnonymousInnerClassHelper(this, dir.openInput(fileName, context));
+		  return new FixedIntBlockIndexInputAnonymousInnerClassHelper(this, dir.OpenInput(fileName, context));
 		}
 
 		private class FixedIntBlockIndexInputAnonymousInnerClassHelper : FixedIntBlockIndexInput
@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.mockintblock
 
 				public BlockReaderAnonymousInnerClassHelper(FixedIntBlockIndexInputAnonymousInnerClassHelper outerInstance, IndexInput @in, int[] buffer)
 				{
-					this.outerInstance = outerInstance;
+					this.OuterInstance = outerInstance;
 					this.@in = @in;
 					this.Buffer = buffer;
 				}
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.mockintblock
 				{
 				  for (int i = 0;i < Buffer.Length;i++)
 				  {
-					Buffer[i] = @in.readVInt();
+					Buffer[i] = @in.ReadVInt();
 				  }
 				}
 			}
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.mockintblock
 
 		public override IntIndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
 		{
-		  IndexOutput @out = dir.createOutput(fileName, context);
+		  IndexOutput @out = dir.CreateOutput(fileName, context);
 		  bool success = false;
 		  try
 		  {
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.mockintblock
 		  {
 			if (!success)
 			{
-			  IOUtils.closeWhileHandlingException(@out);
+			  IOUtils.CloseWhileHandlingException(@out);
 			}
 		  }
 		}
@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs.mockintblock
 			{
 			  for (int i = 0;i < buffer.length;i++)
 			  {
-				@out.writeVInt(buffer[i]);
+				@out.WriteVInt(buffer[i]);
 			  }
 			}
 		}
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.mockintblock
 		{
 		  if (!success)
 		  {
-			postingsWriter.close();
+			postingsWriter.Close();
 		  }
 		}
 
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.mockintblock
 		  {
 			try
 			{
-			  postingsWriter.close();
+			  postingsWriter.Close();
 			}
 			finally
 			{
@@ -215,27 +215,27 @@ namespace Lucene.Net.Codecs.mockintblock
 
 	  public override FieldsProducer FieldsProducer(SegmentReadState state)
 	  {
-		PostingsReaderBase postingsReader = new SepPostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, new MockIntFactory(BlockSize), state.segmentSuffix);
+		PostingsReaderBase postingsReader = new SepPostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, new MockIntFactory(BlockSize), state.SegmentSuffix);
 
 		TermsIndexReaderBase indexReader;
 		bool success = false;
 		try
 		{
-		  indexReader = new FixedGapTermsIndexReader(state.directory, state.fieldInfos, state.segmentInfo.name, state.termsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.segmentSuffix, IOContext.DEFAULT);
+		  indexReader = new FixedGapTermsIndexReader(state.Directory, state.FieldInfos, state.SegmentInfo.Name, state.TermsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.SegmentSuffix, IOContext.DEFAULT);
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			postingsReader.close();
+			postingsReader.Close();
 		  }
 		}
 
 		success = false;
 		try
 		{
-		  FieldsProducer ret = new BlockTermsReader(indexReader, state.directory, state.fieldInfos, state.segmentInfo, postingsReader, state.context, state.segmentSuffix);
+		  FieldsProducer ret = new BlockTermsReader(indexReader, state.Directory, state.FieldInfos, state.SegmentInfo, postingsReader, state.Context, state.SegmentSuffix);
 		  success = true;
 		  return ret;
 		}
@@ -245,7 +245,7 @@ namespace Lucene.Net.Codecs.mockintblock
 		  {
 			try
 			{
-			  postingsReader.close();
+			  postingsReader.Close();
 			}
 			finally
 			{

@@ -38,12 +38,12 @@ namespace Lucene.Net.Codecs.asserting
 
 	  public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)
 	  {
-		return new AssertingStoredFieldsReader(@in.fieldsReader(directory, si, fn, context), si.DocCount);
+		return new AssertingStoredFieldsReader(@in.FieldsReader(directory, si, fn, context), si.DocCount);
 	  }
 
 	  public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context)
 	  {
-		return new AssertingStoredFieldsWriter(@in.fieldsWriter(directory, si, context));
+		return new AssertingStoredFieldsWriter(@in.FieldsWriter(directory, si, context));
 	  }
 
 	  internal class AssertingStoredFieldsReader : StoredFieldsReader
@@ -59,28 +59,28 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.close();
+		  @in.Close();
 		}
 
 		public override void VisitDocument(int n, StoredFieldVisitor visitor)
 		{
 		  Debug.Assert(n >= 0 && n < MaxDoc);
-		  @in.visitDocument(n, visitor);
+		  @in.VisitDocument(n, visitor);
 		}
 
 		public override StoredFieldsReader Clone()
 		{
-		  return new AssertingStoredFieldsReader(@in.clone(), MaxDoc);
+		  return new AssertingStoredFieldsReader(@in.Clone(), MaxDoc);
 		}
 
 		public override long RamBytesUsed()
 		{
-		  return @in.ramBytesUsed();
+		  return @in.RamBytesUsed();
 		}
 
 		public override void CheckIntegrity()
 		{
-		  @in.checkIntegrity();
+		  @in.CheckIntegrity();
 		}
 	  }
 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.asserting
 		public override void StartDocument(int numStoredFields)
 		{
 		  Debug.Assert(DocStatus != Status.STARTED);
-		  @in.startDocument(numStoredFields);
+		  @in.StartDocument(numStoredFields);
 		  Debug.Assert(FieldCount == 0);
 		  FieldCount = numStoredFields;
 		  NumWritten++;
@@ -118,34 +118,34 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(DocStatus == Status.STARTED);
 		  Debug.Assert(FieldCount == 0);
-		  @in.finishDocument();
+		  @in.FinishDocument();
 		  DocStatus = Status.FINISHED;
 		}
 
 		public override void WriteField(FieldInfo info, IndexableField field)
 		{
 		  Debug.Assert(DocStatus == Status.STARTED);
-		  @in.writeField(info, field);
+		  @in.WriteField(info, field);
 		  Debug.Assert(FieldCount > 0);
 		  FieldCount--;
 		}
 
 		public override void Abort()
 		{
-		  @in.abort();
+		  @in.Abort();
 		}
 
 		public override void Finish(FieldInfos fis, int numDocs)
 		{
-		  Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED, Status.UNDEFINED));
-		  @in.finish(fis, numDocs);
+		  Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
+		  @in.Finish(fis, numDocs);
 		  Debug.Assert(FieldCount == 0);
 		  Debug.Assert(numDocs == NumWritten);
 		}
 
 		public override void Close()
 		{
-		  @in.close();
+		  @in.Close();
 		}
 	  }
 	}

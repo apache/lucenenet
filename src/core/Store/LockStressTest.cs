@@ -80,7 +80,7 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
 		catch (IllegalAccessException | InstantiationException | System.InvalidCastException | ClassNotFoundException e)
 		{
-		  throw new IOException("Cannot instantiate lock factory " + lockFactoryClassName);
+		  throw new System.IO.IOException("Cannot instantiate lock factory " + lockFactoryClassName);
 		}
 
 		File lockDir = new File(lockDirName);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Store
 		  // wait for starting gun
 		  if (@in.read() != 43)
 		  {
-			throw new IOException("Protocol violation");
+			throw new System.IO.IOException("Protocol violation");
 		  }
 
 		  for (int i = 0; i < count; i++)

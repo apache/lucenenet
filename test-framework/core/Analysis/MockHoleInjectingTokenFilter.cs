@@ -38,20 +38,20 @@ namespace Lucene.Net.Analysis
 
 	  private readonly long RandomSeed;
 	  private Random Random;
-	  private readonly PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute));
-	  private readonly PositionLengthAttribute PosLenAtt = addAttribute(typeof(PositionLengthAttribute));
+      private readonly PositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute));
+      private readonly PositionLengthAttribute PosLenAtt;// = addAttribute(typeof(PositionLengthAttribute));
 	  private int MaxPos;
 	  private int Pos;
 
 	  public MockHoleInjectingTokenFilter(Random random, TokenStream @in) : base(@in)
 	  {
-		RandomSeed = random.nextLong();
+		RandomSeed = random.NextLong();
 	  }
 
 	  public override void Reset()
 	  {
-		base.reset();
-		Random = new Random(RandomSeed);
+		base.Reset();
+		Random = new Random((int)RandomSeed);
 		MaxPos = -1;
 		Pos = -1;
 	  }

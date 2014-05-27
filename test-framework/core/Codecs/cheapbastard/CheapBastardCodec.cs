@@ -18,12 +18,12 @@ namespace Lucene.Net.Codecs.cheapbastard
 	 * limitations under the License.
 	 */
 
-	using DiskDocValuesFormat = Lucene.Net.Codecs.diskdv.DiskDocValuesFormat;
-	using DiskNormsFormat = Lucene.Net.Codecs.diskdv.DiskNormsFormat;
+	using DiskDocValuesFormat = Lucene.Net.Codecs.Diskdv.DiskDocValuesFormat;
+	using DiskNormsFormat = Lucene.Net.Codecs.Diskdv.DiskNormsFormat;
 	using Lucene40StoredFieldsFormat = Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsFormat;
 	using Lucene40TermVectorsFormat = Lucene.Net.Codecs.Lucene40.Lucene40TermVectorsFormat;
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 
 	/// <summary>
 	/// Codec that tries to use as little ram as possible because he spent all his money on beer </summary>
