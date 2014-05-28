@@ -129,11 +129,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			// Load terms index
 			TotalIndexInterval = OrigEnum.IndexInterval * indexDivisor;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String indexFileName = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
 			string indexFileName = IndexFileNames.SegmentFileName(Segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentTermEnum indexEnum = new SegmentTermEnum(directory.openInput(indexFileName, context), fieldInfos, true);
 			SegmentTermEnum indexEnum = new SegmentTermEnum(Directory.OpenInput(indexFileName, context), FieldInfos, true);
 
 			try
@@ -197,7 +193,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		return Size_Renamed;
 	  }
 
-	  private ThreadResources ThreadResources
+	  private ThreadResources GetThreadResources
 	  {
 		  get
 		  {
@@ -244,7 +240,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		EnsureIndexIsRead();
 		TermInfoAndOrd tiOrd = TermsCache.Get(new CloneableTerm(term));
-		ThreadResources resources = ThreadResources;
+		ThreadResources resources = GetThreadResources;
 
 		if (!mustSeekEnum && tiOrd != null)
 		{
@@ -414,7 +410,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		EnsureIndexIsRead();
 		int indexOffset = Index.GetIndexOffset(term);
 
-		SegmentTermEnum enumerator = ThreadResources.TermEnum;
+		SegmentTermEnum enumerator = GetThreadResources.TermEnum;
 		Index.SeekEnum(enumerator, indexOffset);
 
 		while (CompareAsUTF16(term, enumerator.Term()) > 0 && enumerator.Next())
@@ -443,7 +439,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  public SegmentTermEnum Terms(Term term)
 	  {
 		Get(term, true);
-		return ThreadResources.TermEnum.clone();
+		return GetThreadResources.TermEnum.Clone();
 	  }
 
 	  internal long RamBytesUsed()

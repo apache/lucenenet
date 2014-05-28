@@ -21,7 +21,7 @@ namespace Lucene.Net.Util.Fst
 	 * limitations under the License.
 	 */
 
-	using INPUT_TYPE = Lucene.Net.Util.Fst.FST.INPUT_TYPE; // javadoc
+	//using INPUT_TYPE = Lucene.Net.Util.Fst.FST.INPUT_TYPE; // javadoc
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
 	// TODO: could we somehow stream an FST to disk while we
@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Fst
 	  /// boolean, int, Outputs, FreezeTail, boolean, float,
 	  /// boolean, int)} with pruning options turned off.
 	  /// </summary>
-	  public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs) : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
+	  public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs) : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
 	  {
 	  }
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Util.Fst
 	  ///    byte[] block in the BytesStore; if you know the FST
 	  ///    will be large then make this larger.  For example 15
 	  ///    bits = 32768 byte pages. </param>
-	  public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs, FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs, int bytesPageBits)
+	  public Builder(FST<T>.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, bool doShareNonSingletonNodes, int shareMaxTailLength, Outputs<T> outputs, FreezeTail<T> freezeTail, bool doPackFST, float acceptableOverheadRatio, bool allowArrayArcs, int bytesPageBits)
 	  {
 		this.MinSuffixCount1 = minSuffixCount1;
 		this.MinSuffixCount2 = minSuffixCount2;
@@ -160,10 +160,10 @@ namespace Lucene.Net.Util.Fst
 		this.ShareMaxTailLength = shareMaxTailLength;
 		this.DoPackFST = doPackFST;
 		this.AcceptableOverheadRatio = acceptableOverheadRatio;
-		Fst = new FST<>(inputType, outputs, doPackFST, acceptableOverheadRatio, allowArrayArcs, bytesPageBits);
+		Fst = new FST<T>(inputType, outputs, doPackFST, acceptableOverheadRatio, allowArrayArcs, bytesPageBits);
 		if (doShareSuffix)
 		{
-		  DedupHash = new NodeHash<>(Fst, Fst.Bytes.getReverseReader(false));
+		  DedupHash = new NodeHash<T>(Fst, Fst.Bytes.GetReverseReader(false));
 		}
 		else
 		{
@@ -171,14 +171,11 @@ namespace Lucene.Net.Util.Fst
 		}
 		NO_OUTPUT = outputs.NoOutput;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final UnCompiledNode<T>[] f = (UnCompiledNode<T>[]) new UnCompiledNode[10];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		UnCompiledNode<T>[] f = (UnCompiledNode<T>[]) new UnCompiledNode[10];
+		UnCompiledNode<T>[] f = (UnCompiledNode<T>[]) new UnCompiledNode<T>[10];
 		Frontier = f;
 		for (int idx = 0;idx < Frontier.Length;idx++)
 		{
-		  Frontier[idx] = new UnCompiledNode<>(this, idx);
+		  Frontier[idx] = new UnCompiledNode<T>(this, idx);
 		}
 	  }
 
@@ -186,7 +183,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		  get
 		  {
-			return Fst.NodeCount_Renamed;
+			return Fst.nodeCount;
 		  }
 	  }
 
@@ -202,14 +199,12 @@ namespace Lucene.Net.Util.Fst
 	  {
 		  get
 		  {
-			return DedupHash == null ? 0 : Fst.NodeCount_Renamed;
+			return DedupHash == null ? 0 : Fst.nodeCount;
 		  }
 	  }
 
 	  private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long node;
 		long node;
 		if (DedupHash != null && (DoShareNonSingletonNodes || nodeIn.NumArcs <= 1) && tailLength <= ShareMaxTailLength)
 		{
@@ -230,8 +225,6 @@ namespace Lucene.Net.Util.Fst
 
 		nodeIn.Clear();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CompiledNode fn = new CompiledNode();
 		CompiledNode fn = new CompiledNode();
 		fn.Node = node;
 		return fn;
@@ -310,7 +303,7 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final UnCompiledNode<T> target = (UnCompiledNode<T>) node.arcs[arcIdx].target;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-				UnCompiledNode<T> target = (UnCompiledNode<T>) node.Arcs[arcIdx].target;
+				UnCompiledNode<T> target = (UnCompiledNode<T>) node.Arcs[arcIdx].Target;
 				target.Clear();
 			  }
 			  node.NumArcs = 0;
@@ -358,7 +351,7 @@ namespace Lucene.Net.Util.Fst
 				// undecided on whether to prune it.  later, it
 				// will be either compiled or pruned, so we must
 				// allocate a new node:
-				Frontier[idx] = new UnCompiledNode<>(this, idx);
+				Frontier[idx] = new UnCompiledNode<T>(this, idx);
 			  }
 			}
 		  }
@@ -452,11 +445,11 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final UnCompiledNode<T>[] next = new UnCompiledNode[Lucene.Net.Util.ArrayUtil.oversize(input.length+1, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		  UnCompiledNode<T>[] next = new UnCompiledNode[ArrayUtil.Oversize(input.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+		  UnCompiledNode<T>[] next = new UnCompiledNode<T>[ArrayUtil.Oversize(input.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  Array.Copy(Frontier, 0, next, 0, Frontier.Length);
 		  for (int idx = Frontier.Length;idx < next.Length;idx++)
 		  {
-			next[idx] = new UnCompiledNode<>(this, idx);
+			next[idx] = new UnCompiledNode<T>(this, idx);
 		  }
 		  Frontier = next;
 		}
@@ -506,9 +499,9 @@ namespace Lucene.Net.Util.Fst
 
 		  if (lastOutput != NO_OUTPUT)
 		  {
-			commonOutputPrefix = Fst.Outputs.common(output, lastOutput);
+			commonOutputPrefix = Fst.Outputs.Common(output, lastOutput);
 			Debug.Assert(ValidOutput(commonOutputPrefix));
-			wordSuffix = Fst.Outputs.subtract(lastOutput, commonOutputPrefix);
+			wordSuffix = Fst.Outputs.Subtract(lastOutput, commonOutputPrefix);
 			Debug.Assert(ValidOutput(wordSuffix));
 			parentNode.SetLastOutput(input.Ints[input.Offset + idx - 1], commonOutputPrefix);
 			node.PrependOutput(wordSuffix);
@@ -518,7 +511,7 @@ namespace Lucene.Net.Util.Fst
 			commonOutputPrefix = wordSuffix = NO_OUTPUT;
 		  }
 
-		  output = Fst.Outputs.subtract(output, commonOutputPrefix);
+		  output = Fst.Outputs.Subtract(output, commonOutputPrefix);
 		  Debug.Assert(ValidOutput(output));
 		}
 
@@ -526,7 +519,7 @@ namespace Lucene.Net.Util.Fst
 		{
 		  // same input more than 1 time in a row, mapping to
 		  // multiple outputs
-		  lastNode.Output = Fst.Outputs.merge(lastNode.Output, output);
+		  lastNode.Output = Fst.Outputs.Merge(lastNode.Output, output);
 		}
 		else
 		{
@@ -561,7 +554,7 @@ namespace Lucene.Net.Util.Fst
 		FreezeTail(0);
 		if (root.InputCount < MinSuffixCount1 || root.InputCount < MinSuffixCount2 || root.NumArcs == 0)
 		{
-		  if (Fst.EmptyOutput_Renamed == null)
+		  if (Fst.emptyOutput == null)
 		  {
 			return null;
 		  }
@@ -680,8 +673,8 @@ namespace Lucene.Net.Util.Fst
 		public UnCompiledNode(Builder<T> owner, int depth)
 		{
 		  this.Owner = owner;
-		  Arcs = (Arc<T>[]) new Arc[1];
-		  Arcs[0] = new Arc<>();
+		  Arcs = (Arc<T>[]) new Arc<T>[1];
+		  Arcs[0] = new Arc<T>();
 		  Output = owner.NO_OUTPUT;
 		  this.Depth = depth;
 		}
@@ -721,11 +714,11 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final Arc<T>[] newArcs = new Arc[Lucene.Net.Util.ArrayUtil.oversize(numArcs+1, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-			Arc<T>[] newArcs = new Arc[ArrayUtil.Oversize(NumArcs + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+			Arc<T>[] newArcs = new Arc<T>[ArrayUtil.Oversize(NumArcs + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			Array.Copy(Arcs, 0, newArcs, 0, Arcs.Length);
 			for (int arcIdx = NumArcs;arcIdx < newArcs.Length;arcIdx++)
 			{
-			  newArcs[arcIdx] = new Arc<>();
+			  newArcs[arcIdx] = new Arc<T>();
 			}
 			Arcs = newArcs;
 		  }
@@ -777,13 +770,13 @@ namespace Lucene.Net.Util.Fst
 
 		  for (int arcIdx = 0;arcIdx < NumArcs;arcIdx++)
 		  {
-			Arcs[arcIdx].Output = Owner.Fst.Outputs.add(outputPrefix, Arcs[arcIdx].Output);
+			Arcs[arcIdx].Output = Owner.Fst.Outputs.Add(outputPrefix, Arcs[arcIdx].Output);
 			Debug.Assert(Owner.ValidOutput(Arcs[arcIdx].Output));
 		  }
 
 		  if (IsFinal)
 		  {
-			Output = Owner.Fst.Outputs.add(outputPrefix, Output);
+			Output = Owner.Fst.Outputs.Add(outputPrefix, Output);
 			Debug.Assert(Owner.ValidOutput(Output));
 		  }
 		}

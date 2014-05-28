@@ -43,6 +43,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using System.Collections;
 
 	/// @deprecated Only for reading existing 3.x indexes 
 	[Obsolete("Only for reading existing 3.x indexes")]
@@ -297,7 +298,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  }
 			  else
 			  {
-				throw new NoSuchElementException();
+                  //LUCENE TO-DO NoSuchElementException
+				throw new InvalidOperationException();
 			  }
 			}
 
@@ -579,7 +581,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		// NOTE: slow!  (linear scan)
 		public override SeekStatus SeekCeil(BytesRef text)
 		{
-		  IComparer<BytesRef> comparator = IComparer;
+		  IComparer<BytesRef> comparator = Comparator;
 		  for (int i = 0; i < NumTerms; i++)
 		  {
 			int cmp = comparator.Compare(text, TermAndPostings[i].Term);
@@ -607,7 +609,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (++CurrentTerm >= NumTerms)
 		  {
-			return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			return null;
 		  }
 		  return Term();
 		}
@@ -635,7 +637,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags) // ignored
 		{
 		  TVDocsEnum docsEnum;
-		  if (reuse != Lucene.Net.Util.BytesRefIterator_Fields.Null && reuse is TVDocsEnum)
+		  if (reuse != null && reuse is TVDocsEnum)
 		  {
 			docsEnum = (TVDocsEnum) reuse;
 		  }
@@ -651,11 +653,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (!StorePositions && !StoreOffsets)
 		  {
-			return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			return null;
 		  }
 
 		  TVDocsAndPositionsEnum docsAndPositionsEnum;
-		  if (reuse != Lucene.Net.Util.BytesRefIterator_Fields.Null && reuse is TVDocsAndPositionsEnum)
+		  if (reuse != null && reuse is TVDocsAndPositionsEnum)
 		  {
 			docsAndPositionsEnum = (TVDocsAndPositionsEnum) reuse;
 		  }

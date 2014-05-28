@@ -140,6 +140,7 @@ namespace Lucene.Net.Support
         }
 
 
+
         public static System.String CollectionToString(System.Collections.Generic.IDictionary<string, string> c)
         {
             Hashtable t = new Hashtable();

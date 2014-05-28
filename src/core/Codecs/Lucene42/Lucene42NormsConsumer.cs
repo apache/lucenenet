@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -77,7 +78,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		}
 	  }
 
-	  public override void AddNumericField(FieldInfo field, IEnumerable<Number> values)
+	  public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
 	  {
 		Meta.WriteVInt(field.Number);
 		Meta.WriteByte(NUMBER);
@@ -92,10 +93,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		  uniqueValues = new HashSet<long>();
 
 		  long count = 0;
-		  foreach (Number nv in values)
+		  foreach (long nv in values)
 		  {
 			Debug.Assert(nv != null);
-			long v = (long)nv;
+			long v = nv;
 
 			if (gcd != 1)
 			{
@@ -134,25 +135,22 @@ namespace Lucene.Net.Codecs.Lucene42
 		if (uniqueValues != null)
 		{
 		  // small number of unique values
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerValue = Lucene.Net.Util.Packed.PackedInts.bitsRequired(uniqueValues.size()-1);
 		  int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
 		  FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(MaxDoc, bitsPerValue, AcceptableOverheadRatio);
-		  if (formatAndBits.BitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
+		  if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
 		  {
 			Meta.WriteByte(UNCOMPRESSED); // uncompressed
-			foreach (Number nv in values)
+			foreach (long nv in values)
 			{
-			  Data.WriteByte(nv == null ? 0 : (long)(sbyte) nv);
+			  Data.WriteByte((sbyte) nv);
 			}
 		  }
 		  else
 		  {
 			Meta.WriteByte(TABLE_COMPRESSED); // table-compressed
-			long?[] decode = uniqueValues.toArray(new long?[uniqueValues.Count]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.HashMap<Long,Integer> encode = new java.util.HashMap<>();
-			Dictionary<long?, int?> encode = new Dictionary<long?, int?>();
+			//LUCENE TO-DO, ToArray had a parameter to start
+            long[] decode = uniqueValues.ToArray();
+			Dictionary<long, int> encode = new Dictionary<long, int>();
 			Data.WriteVInt(decode.Length);
 			for (int i = 0; i < decode.Length; i++)
 			{
@@ -161,15 +159,13 @@ namespace Lucene.Net.Codecs.Lucene42
 			}
 
 			Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-			Data.WriteVInt(formatAndBits.Format.Id);
-			Data.WriteVInt(formatAndBits.BitsPerValue);
+			Data.WriteVInt(formatAndBits.format.id);
+			Data.WriteVInt(formatAndBits.bitsPerValue);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Writer writer = Lucene.Net.Util.Packed.PackedInts.getWriterNoHeader(data, formatAndBits.format, maxDoc, formatAndBits.bitsPerValue, Lucene.Net.Util.Packed.PackedInts.DEFAULT_BUFFER_SIZE);
-			PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.Format, MaxDoc, formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
-			foreach (Number nv in values)
+			PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.format, MaxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+			foreach (long nv in values)
 			{
-			  writer.Add(encode[nv == null ? 0 : (long)nv]);
+			  writer.Add(encode[nv == null ? 0 : nv]);
 			}
 			writer.Finish();
 		  }
@@ -182,12 +178,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		  Data.WriteLong(gcd);
 		  Data.WriteVInt(BLOCK_SIZE);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedWriter writer = new Lucene.Net.Util.Packed.BlockPackedWriter(data, BLOCK_SIZE);
 		  BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-		  foreach (Number nv in values)
+		  foreach (long nv in values)
 		  {
-			long value = nv == null ? 0 : (long)nv;
+			long value = nv;
 			writer.Add((value - minValue) / gcd);
 		  }
 		  writer.Finish();
@@ -199,12 +193,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		  Meta.WriteVInt(PackedInts.VERSION_CURRENT);
 		  Data.WriteVInt(BLOCK_SIZE);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedWriter writer = new Lucene.Net.Util.Packed.BlockPackedWriter(data, BLOCK_SIZE);
 		  BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-		  foreach (Number nv in values)
+		  foreach (long nv in values)
 		  {
-			writer.Add(nv == null ? 0 : (long)nv);
+			writer.Add(nv);
 		  }
 		  writer.Finish();
 		}

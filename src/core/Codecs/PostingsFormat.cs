@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs
 	  /// Unique name that's used to retrieve this format when
 	  ///  reading the index.
 	  /// </summary>
-	  private readonly string Name_Renamed;
+	  private readonly string name;
 
 	  /// <summary>
 	  /// Creates a new postings format.
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs
 	  protected internal PostingsFormat(string name)
 	  {
         NamedSPILoader<PostingsFormat>.CheckServiceName(name);
-		this.Name_Renamed = name;
+		this.name = name;
 	  }
 
 	  /// <summary>
@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs
 	  {
 		  get
 		  {
-			return Name_Renamed;
+			return name;
 		  }
 	  }
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs
 
 	  public override string ToString()
 	  {
-		return "PostingsFormat(name=" + Name_Renamed + ")";
+		return "PostingsFormat(name=" + name + ")";
 	  }
 
 	  /// <summary>

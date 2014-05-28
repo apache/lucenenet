@@ -31,12 +31,12 @@ namespace Lucene.Net.Util.Fst
 	/// @lucene.experimental
 	/// </summary>
 
-	public sealed class PositiveIntOutputs : Outputs<long?>
+	public sealed class PositiveIntOutputs : Outputs<long>
 	{
 
-	  private static readonly long? NO_OUTPUT = new long?(0);
+	  private static readonly long NO_OUTPUT = new long();
 
-	  private static readonly PositiveIntOutputs Singleton_Renamed = new PositiveIntOutputs();
+	  private static readonly PositiveIntOutputs singleton = new PositiveIntOutputs();
 
 	  private PositiveIntOutputs()
 	  {
@@ -46,11 +46,11 @@ namespace Lucene.Net.Util.Fst
 	  {
 		  get
 		  {
-			return Singleton_Renamed;
+			return singleton;
 		  }
 	  }
 
-	  public override long? Common(long? output1, long? output2)
+	  public override long Common(long output1, long output2)
 	  {
 		Debug.Assert(Valid(output1));
 		Debug.Assert(Valid(output2));
@@ -66,7 +66,7 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  public override long? Subtract(long? output, long? inc)
+	  public override long Subtract(long output, long inc)
 	  {
 		Debug.Assert(Valid(output));
 		Debug.Assert(Valid(inc));
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  public override long? Add(long? prefix, long? output)
+	  public override long Add(long prefix, long output)
 	  {
 		Debug.Assert(Valid(prefix));
 		Debug.Assert(Valid(output));
@@ -104,13 +104,13 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  public override void Write(long? output, DataOutput @out)
+	  public override void Write(long output, DataOutput @out)
 	  {
 		Debug.Assert(Valid(output));
 		@out.WriteVLong(output);
 	  }
 
-	  public override long? Read(DataInput @in)
+	  public override long Read(DataInput @in)
 	  {
 		long v = @in.ReadVLong();
 		if (v == 0)
@@ -123,14 +123,14 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  private bool Valid(long? o)
+	  private bool Valid(long o)
 	  {
 		Debug.Assert(o != null);
 		Debug.Assert(o == NO_OUTPUT || o > 0, "o=" + o);
 		return true;
 	  }
 
-	  public override long? NoOutput
+	  public override long NoOutput
 	  {
 		  get
 		  {

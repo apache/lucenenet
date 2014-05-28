@@ -145,4 +145,13 @@ namespace Lucene.Net.Util
 	  }
 	}
 
+    // .NET Port: non-generic base class to hold nested type
+    public abstract class DoubleBarrelLRUCache
+    {
+        public abstract class CloneableKey
+        {
+            public abstract CloneableKey Clone();
+        }
+    }
+
 }

@@ -293,11 +293,7 @@ namespace Lucene.Net.Util.Automaton
 			if (NumberedStates_Renamed == null)
 			{
 			  ExpandSingleton();
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final java.util.Set<State> visited = new java.util.HashSet<>();
 			  Set<State> visited = new HashSet<State>();
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final java.util.LinkedList<State> worklist = new java.util.LinkedList<>();
 			  LinkedList<State> worklist = new LinkedList<State>();
 			  State[] states = new State[4];
 			  int upto = 0;
@@ -311,8 +307,6 @@ namespace Lucene.Net.Util.Automaton
 				State s = worklist.RemoveFirst();
 				for (int i = 0;i < s.NumTransitions_Renamed;i++)
 				{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Transition t = s.transitionsArray[i];
 				  Transition t = s.TransitionsArray[i];
 				  if (!visited.contains(t.To))
 				  {
@@ -321,8 +315,6 @@ namespace Lucene.Net.Util.Automaton
 					t.To.number = upto;
 					if (upto == states.Length)
 					{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final State[] newArray = new State[Lucene.Net.Util.ArrayUtil.oversize(1+upto, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 					  State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 					  Array.Copy(states, 0, newArray, 0, upto);
 					  states = newArray;
@@ -334,8 +326,6 @@ namespace Lucene.Net.Util.Automaton
 			  }
 			  if (states.Length != upto)
 			  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final State[] newArray = new State[upto];
 				State[] newArray = new State[upto];
 				Array.Copy(states, 0, newArray, 0, upto);
 				states = newArray;
@@ -358,8 +348,6 @@ namespace Lucene.Net.Util.Automaton
 		// TODO: maybe we can eventually allow for oversizing here...
 		if (count < states.Length)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] newArray = new State[count];
 		  State[] newArray = new State[count];
 		  Array.Copy(states, 0, newArray, 0, count);
 		  NumberedStates_Renamed = newArray;
@@ -379,7 +367,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// Returns the set of reachable accept states.
 	  /// </summary>
 	  /// <returns> set of <seealso cref="State"/> objects </returns>
-	  public virtual Set<State> AcceptStates
+	  public virtual ISet<State> AcceptStates
 	  {
 		  get
 		  {

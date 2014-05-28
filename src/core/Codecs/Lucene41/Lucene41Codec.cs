@@ -46,11 +46,12 @@ namespace Lucene.Net.Codecs.Lucene41
 	public class Lucene41Codec : Codec
 	{
 	  // TODO: slightly evil
-	  private readonly StoredFieldsFormat fieldsFormat = new CompressingStoredFieldsFormatAnonymousInnerClassHelper(CompressionMode.FAST, 1 << 14);
+	  private readonly StoredFieldsFormat fieldsFormat = new CompressingStoredFieldsFormatAnonymousInnerClassHelper("Lucene41StoredFields", CompressionMode.FAST, 1 << 14);
 
 	  private class CompressingStoredFieldsFormatAnonymousInnerClassHelper : CompressingStoredFieldsFormat
 	  {
-		  public CompressingStoredFieldsFormatAnonymousInnerClassHelper(UnknownType FAST, int 1 << 14) : base("Lucene41StoredFields", FAST, 1 << 14)
+		  public CompressingStoredFieldsFormatAnonymousInnerClassHelper(string formatName, CompressionMode compressionMode, int chunkSize) 
+              : base(formatName, compressionMode, chunkSize)
 		  {
 		  }
 
@@ -64,17 +65,19 @@ namespace Lucene.Net.Codecs.Lucene41
 	  private readonly SegmentInfoFormat InfosFormat = new Lucene40SegmentInfoFormat();
 	  private readonly LiveDocsFormat LiveDocsFormat_Renamed = new Lucene40LiveDocsFormat();
 
-	  private readonly PostingsFormat postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper();
+	  private readonly PostingsFormat postingsFormat;
 
 	  private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
 	  {
-		  public PerFieldPostingsFormatAnonymousInnerClassHelper()
+		  private readonly Lucene41Codec OuterInstance;
+          public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene41Codec outerInstance)
 		  {
+              this.OuterInstance = outerInstance;
 		  }
 
 		  public override PostingsFormat GetPostingsFormatForField(string field)
 		  {
-			return outerInstance.getPostingsFormatForField(field);
+			return OuterInstance.GetPostingsFormatForField(field);
 		  }
 	  }
 
@@ -82,37 +85,38 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// Sole constructor. </summary>
 	  public Lucene41Codec() : base("Lucene41")
 	  {
+          postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
 	  }
 
 	  // TODO: slightly evil
-	  public override StoredFieldsFormat StoredFieldsFormat()
+	  public override StoredFieldsFormat StoredFieldsFormat
 	  {
-		return fieldsFormat;
+		get { return fieldsFormat; }
 	  }
 
-	  public override sealed TermVectorsFormat TermVectorsFormat()
+	  public override sealed TermVectorsFormat TermVectorsFormat
 	  {
-		return VectorsFormat;
+		get { return VectorsFormat; }
 	  }
 
-	  public override sealed PostingsFormat PostingsFormat()
+	  public override sealed PostingsFormat PostingsFormat
 	  {
-		return postingsFormat;
+          get { return postingsFormat; }
 	  }
 
-	  public override FieldInfosFormat FieldInfosFormat()
+	  public override FieldInfosFormat FieldInfosFormat
 	  {
-		return FieldInfosFormat_Renamed;
+		get { return FieldInfosFormat_Renamed; }
 	  }
 
-	  public override SegmentInfoFormat SegmentInfoFormat()
+	  public override SegmentInfoFormat SegmentInfoFormat
 	  {
-		return InfosFormat;
+		get { return InfosFormat; }
 	  }
 
-	  public override sealed LiveDocsFormat LiveDocsFormat()
+	  public override sealed LiveDocsFormat LiveDocsFormat
 	  {
-		return LiveDocsFormat_Renamed;
+          get { return LiveDocsFormat_Renamed; }
 	  }
 
 	  /// <summary>
@@ -126,12 +130,13 @@ namespace Lucene.Net.Codecs.Lucene41
 		return DefaultFormat;
 	  }
 
-	  public override DocValuesFormat DocValuesFormat()
+	  public override DocValuesFormat DocValuesFormat
 	  {
-		return DvFormat;
+		  get { return DvFormat; }
 	  }
 
-	  private readonly PostingsFormat DefaultFormat = PostingsFormat.ForName("Lucene41");
+
+      private readonly PostingsFormat DefaultFormat = PostingsFormat.ForName("Lucene41");
 	  private readonly DocValuesFormat DvFormat = new Lucene40DocValuesFormat();
 	  private readonly NormsFormat NormsFormat_Renamed = new Lucene40NormsFormat();
 

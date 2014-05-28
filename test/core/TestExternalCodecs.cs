@@ -22,7 +22,7 @@ namespace org.apache.lucene
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -33,6 +33,7 @@ namespace org.apache.lucene
 	using TermQuery = Lucene.Net.Search.TermQuery;
 	using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 
 	/* Intentionally outside of oal.index to verify fully
@@ -44,9 +45,9 @@ namespace org.apache.lucene
 	  private sealed class CustomPerFieldCodec : Lucene46Codec
 	  {
 
-		internal readonly PostingsFormat RamFormat = PostingsFormat.forName("RAMOnly");
-		internal readonly PostingsFormat DefaultFormat = PostingsFormat.forName("Lucene41");
-		internal readonly PostingsFormat PulsingFormat = PostingsFormat.forName("Pulsing41");
+		internal readonly PostingsFormat RamFormat = PostingsFormat.ForName("RAMOnly");
+		internal readonly PostingsFormat DefaultFormat = PostingsFormat.ForName("Lucene41");
+		internal readonly PostingsFormat PulsingFormat = PostingsFormat.ForName("Pulsing41");
 
 		public override PostingsFormat GetPostingsFormatForField(string field)
 		{
@@ -82,14 +83,14 @@ namespace org.apache.lucene
 		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(new CustomPerFieldCodec()).setMergePolicy(newLogMergePolicy(3)));
 		Document doc = new Document();
 		// uses default codec:
-		doc.add(newTextField("field1", "this field uses the standard codec as the test", Field.Store.NO));
+		doc.Add(newTextField("field1", "this field uses the standard codec as the test", Field.Store.NO));
 		// uses pulsing codec:
 		Field field2 = newTextField("field2", "this field uses the pulsing codec as the test", Field.Store.NO);
-		doc.add(field2);
+		doc.Add(field2);
 
 		Field idField = newStringField("id", "", Field.Store.NO);
 
-		doc.add(idField);
+		doc.Add(idField);
 		for (int i = 0;i < NUM_DOCS;i++)
 		{
 		  idField.StringValue = "" + i;
@@ -105,13 +106,13 @@ namespace org.apache.lucene
 		}
 		w.deleteDocuments(new Term("id", "77"));
 
-		IndexReader r = DirectoryReader.open(w, true);
+		IndexReader r = DirectoryReader.Open(w, true);
 
-		Assert.AreEqual(NUM_DOCS - 1, r.numDocs());
+		Assert.AreEqual(NUM_DOCS - 1, r.NumDocs());
 		IndexSearcher s = newSearcher(r);
-		Assert.AreEqual(NUM_DOCS - 1, s.search(new TermQuery(new Term("field1", "standard")), 1).totalHits);
-		Assert.AreEqual(NUM_DOCS - 1, s.search(new TermQuery(new Term("field2", "pulsing")), 1).totalHits);
-		r.close();
+		Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field1", "standard")), 1).TotalHits);
+		Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
+		r.Close();
 
 		if (VERBOSE)
 		{
@@ -128,25 +129,25 @@ namespace org.apache.lucene
 		{
 		  Console.WriteLine("\nTEST: now open reader");
 		}
-		r = DirectoryReader.open(w, true);
-		Assert.AreEqual(NUM_DOCS - 2, r.maxDoc());
-		Assert.AreEqual(NUM_DOCS - 2, r.numDocs());
+		r = DirectoryReader.Open(w, true);
+		Assert.AreEqual(NUM_DOCS - 2, r.MaxDoc());
+		Assert.AreEqual(NUM_DOCS - 2, r.NumDocs());
 		s = newSearcher(r);
-		Assert.AreEqual(NUM_DOCS - 2, s.search(new TermQuery(new Term("field1", "standard")), 1).totalHits);
-		Assert.AreEqual(NUM_DOCS - 2, s.search(new TermQuery(new Term("field2", "pulsing")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("id", "76")), 1).totalHits);
-		Assert.AreEqual(0, s.search(new TermQuery(new Term("id", "77")), 1).totalHits);
-		Assert.AreEqual(0, s.search(new TermQuery(new Term("id", "44")), 1).totalHits);
+		Assert.AreEqual(NUM_DOCS - 2, s.Search(new TermQuery(new Term("field1", "standard")), 1).TotalHits);
+		Assert.AreEqual(NUM_DOCS - 2, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("id", "76")), 1).TotalHits);
+		Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "77")), 1).TotalHits);
+		Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "44")), 1).TotalHits);
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("\nTEST: now close NRT reader");
 		}
-		r.close();
+		r.Close();
 
-		w.close();
+		w.Close();
 
-		dir.close();
+		dir.Close();
 	  }
 	}
 

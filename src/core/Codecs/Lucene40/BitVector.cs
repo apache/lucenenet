@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Set all bits </summary>
 	  public void SetAll()
 	  {
-		CollectionsHelpeCollectionsHelper.Fillr.Fill(Bits, unchecked((sbyte) 0xff));
+		Arrays.Fill(Bits, unchecked((sbyte) 0xff));
 		ClearUnusedBits();
 		Count_Renamed = Size_Renamed;
 	  }

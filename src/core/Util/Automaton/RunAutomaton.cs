@@ -155,10 +155,8 @@ namespace Lucene.Net.Util.Automaton
 		this.MaxInterval = maxInterval;
 		a.Determinize();
 		Points = a.StartPoints;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] states = a.getNumberedStates();
 		State[] states = a.NumberedStates;
-		Initial = a.Initial.number;
+		Initial = a.Initial.Number;
 		Size_Renamed = states.Length;
 		Accept = new bool[Size_Renamed];
 		Transitions = new int[Size_Renamed * Points.Length];

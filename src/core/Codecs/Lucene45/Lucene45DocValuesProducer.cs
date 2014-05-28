@@ -24,26 +24,6 @@ namespace Lucene.Net.Codecs.Lucene45
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-    /*
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.BINARY_PREFIX_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.BINARY_VARIABLE_UNCOMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.DELTA_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.GCD_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesConsumer.TABLE_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat.VERSION_SORTED_SET_SINGLE_VALUE_OPTIMIZED;
-    */
 
 	using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
@@ -80,7 +60,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	  private readonly IDictionary<int, SortedSetEntry> SortedSets;
 	  private readonly IDictionary<int, NumericEntry> Ords;
 	  private readonly IDictionary<int, NumericEntry> OrdIndexes;
-	  private readonly AtomicLong RamBytesUsed_Renamed;
+	  //private readonly AtomicLong RamBytesUsed_Renamed;
 	  private readonly IndexInput Data;
 	  private readonly int MaxDoc;
 	  private readonly int Version;
@@ -152,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  }
 		}
 
-		RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+		//RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
 	  }
 
 	  private void ReadSortedField(int fieldNumber, IndexInput meta, FieldInfos infos)
@@ -298,8 +278,6 @@ namespace Lucene.Net.Codecs.Lucene45
 			{
 			  throw new Exception("Cannot use TABLE_COMPRESSED with more than MAX_VALUE values, input=" + meta);
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int uniqueValues = meta.readVInt();
 			int uniqueValues = meta.ReadVInt();
 			if (uniqueValues > 256)
 			{
@@ -373,10 +351,10 @@ namespace Lucene.Net.Codecs.Lucene45
 		return GetNumeric(entry);
 	  }
 
-	  public override long RamBytesUsed()
+	  /*public override long RamBytesUsed()
 	  {
 		return RamBytesUsed_Renamed.get();
-	  }
+	  }*/
 
 	  public override void CheckIntegrity()
 	  {
@@ -388,38 +366,22 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  internal virtual LongValues GetNumeric(NumericEntry entry)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput data = this.data.clone();
 		IndexInput data = this.Data.Clone();
 		data.Seek(entry.Offset);
 
 		switch (entry.Format)
 		{
 		  case Lucene45DocValuesConsumer.DELTA_COMPRESSED:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedReader reader = new Lucene.Net.Util.Packed.BlockPackedReader(data, entry.packedIntsVersion, entry.blockSize, entry.count, true);
 			BlockPackedReader reader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
 			return reader;
 		  case Lucene45DocValuesConsumer.GCD_COMPRESSED:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long min = entry.minValue;
 			long min = entry.MinValue;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long mult = entry.gcd;
 			long mult = entry.Gcd;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.BlockPackedReader quotientReader = new Lucene.Net.Util.Packed.BlockPackedReader(data, entry.packedIntsVersion, entry.blockSize, entry.count, true);
 			BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
 			return new LongValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
 		  case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long table[] = entry.table;
 			long[] table = entry.Table;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsRequired = Lucene.Net.Util.Packed.PackedInts.bitsRequired(table.length - 1);
 			int bitsRequired = PackedInts.BitsRequired(table.Length - 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader ords = Lucene.Net.Util.Packed.PackedInts.getDirectReaderNoHeader(data, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, entry.packedIntsVersion, (int) entry.count, bitsRequired);
 			PackedInts.Reader ords = PackedInts.GetDirectReaderNoHeader(data, PackedInts.Format.PACKED, entry.PackedIntsVersion, (int) entry.Count, bitsRequired);
 			return new LongValuesAnonymousInnerClassHelper2(this, table, ords);
 		  default:
@@ -548,7 +510,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			data.Seek(bytes.AddressesOffset);
 			addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, bytes.Count, false);
 			AddressInstances[field.Number] = addrInstance;
-			RamBytesUsed_Renamed.addAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+			//RamBytesUsed_Renamed.addAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
 		  }
 		  addresses = addrInstance;
 		}
@@ -632,7 +594,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			}
 			addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, size, false);
 			AddressInstances[field.Number] = addrInstance;
-			RamBytesUsed_Renamed.addAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+			//RamBytesUsed_Renamed.addAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
 		  }
 		  addresses = addrInstance;
 		}
@@ -736,7 +698,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			data.Seek(entry.Offset);
 			ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, false);
 			OrdIndexInstances[field.Number] = ordIndexInstance;
-			RamBytesUsed_Renamed.addAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+			//RamBytesUsed_Renamed.addAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
 		  }
 		  ordIndex = ordIndexInstance;
 		}

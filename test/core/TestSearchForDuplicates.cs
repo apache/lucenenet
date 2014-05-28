@@ -27,6 +27,7 @@ namespace org.apache.lucene
 	using Lucene.Net.Index;
 	using Lucene.Net.Search;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestSearchForDuplicates : LuceneTestCase
 	{
@@ -85,14 +86,14 @@ namespace org.apache.lucene
 		  for (int j = 0; j < MAX_DOCS; j++)
 		  {
 			Document d = new Document();
-			d.add(newTextField(PRIORITY_FIELD, HIGH_PRIORITY, Field.Store.YES));
-			d.add(newTextField(ID_FIELD, Convert.ToString(j), Field.Store.YES));
+			d.Add(newTextField(PRIORITY_FIELD, HIGH_PRIORITY, Field.Store.YES));
+			d.Add(newTextField(ID_FIELD, Convert.ToString(j), Field.Store.YES));
 			writer.addDocument(d);
 		  }
-		  writer.close();
+		  writer.Close();
 
 		  // try a search without OR
-		  IndexReader reader = DirectoryReader.open(directory);
+		  IndexReader reader = DirectoryReader.Open(directory);
 		  IndexSearcher searcher = newSearcher(reader);
 
 		  Query query = new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY));
@@ -104,7 +105,7 @@ namespace org.apache.lucene
 
 		  Sort sort = new Sort(SortField.FIELD_SCORE, new SortField(ID_FIELD, SortField.Type.INT));
 
-		  ScoreDoc[] hits = searcher.search(query, null, MAX_DOCS, sort).scoreDocs;
+		  ScoreDoc[] hits = searcher.Search(query, null, MAX_DOCS, sort).scoreDocs;
 		  PrintHits(@out, hits, searcher);
 		  CheckHits(hits, MAX_DOCS, searcher);
 
@@ -113,16 +114,16 @@ namespace org.apache.lucene
 		  hits = null;
 
 		  BooleanQuery booleanQuery = new BooleanQuery();
-		  booleanQuery.add(new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY)), BooleanClause.Occur.SHOULD);
-		  booleanQuery.add(new TermQuery(new Term(PRIORITY_FIELD, MED_PRIORITY)), BooleanClause.Occur.SHOULD);
+		  booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY)), BooleanClause.Occur.SHOULD);
+		  booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, MED_PRIORITY)), BooleanClause.Occur.SHOULD);
 		  @out.println("Query: " + booleanQuery.ToString(PRIORITY_FIELD));
 
 		  hits = searcher.search(booleanQuery, null, MAX_DOCS, sort).scoreDocs;
 		  PrintHits(@out, hits, searcher);
 		  CheckHits(hits, MAX_DOCS, searcher);
 
-		  reader.close();
-		  directory.close();
+		  reader.Close();
+		  directory.Close();
 	  }
 
 
@@ -133,21 +134,21 @@ namespace org.apache.lucene
 		{
 		  if (i < 10 || (i > 94 && i < 105))
 		  {
-			Document d = searcher.doc(hits[i].doc);
-			@out.println(i + " " + d.get(ID_FIELD));
+			Document d = searcher.Doc(hits[i].Doc);
+			@out.println(i + " " + d.Get(ID_FIELD));
 		  }
 		}
 	  }
 
 	  private void CheckHits(ScoreDoc[] hits, int expectedCount, IndexSearcher searcher)
 	  {
-		Assert.AreEqual("total results", expectedCount, hits.Length);
+		Assert.AreEqual(expectedCount, hits.Length, "total results");
 		for (int i = 0 ; i < hits.Length; i++)
 		{
 		  if (i < 10 || (i > 94 && i < 105))
 		  {
-			Document d = searcher.doc(hits[i].doc);
-			Assert.AreEqual("check " + i, Convert.ToString(i), d.get(ID_FIELD));
+			Document d = searcher.Doc(hits[i].Doc);
+			Assert.AreEqual(Convert.ToString(i), d.Get(ID_FIELD), "check " + i);
 		  }
 		}
 	  }

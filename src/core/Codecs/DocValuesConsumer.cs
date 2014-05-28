@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs
 	  /// <param name="values"> Iterable of numeric values (one for each document). {@code null} indicates
 	  ///               a missing value. </param>
 	  /// <exception cref="IOException"> if an I/O error occurred. </exception>
-	  public abstract void AddNumericField(FieldInfo field, IEnumerable<Number> values);
+	  public abstract void AddNumericField(FieldInfo field, IEnumerable<long> values);
 
 	  /// <summary>
 	  /// Writes binary docvalues for a field. </summary>
@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs
 	  /// <param name="docToOrd"> Iterable of ordinals (one for each document). {@code -1} indicates
 	  ///                 a missing value. </param>
 	  /// <exception cref="IOException"> if an I/O error occurred. </exception>
-	  public abstract void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd);
+	  public abstract void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrd);
 
 	  /// <summary>
 	  /// Writes pre-sorted set docvalues for a field </summary>
@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs
 	  ///                      count indicates a missing value. </param>
 	  /// <param name="ords"> Iterable of ordinal occurrences (docToOrdCount*maxDoc total). </param>
 	  /// <exception cref="IOException"> if an I/O error occurred. </exception>
-	  public abstract void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords);
+	  public abstract void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrdCount, IEnumerable<long> ords);
 
 	  /// <summary>
 	  /// Merges the numeric docvalues from <code>toMerge</code>.
@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs
 	  public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge/*, IList<Bits> docsWithField*/)
 	  {
 
-		AddNumericField(fieldInfo, new GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge));
+		AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge));
 	  }
 
       private IEnumerable<long> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge)
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs
 				    readerUpto++;
 				    if (readerUpto < toMerge.Count)
 				    {
-					    currentReader = mergeState.Readers.get(readerUpto);
+					    currentReader = mergeState.Readers[readerUpto];
 					    currentValues = toMerge[readerUpto];
 					    currentLiveDocs = currentReader.LiveDocs;
 				    }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs
 				    continue;
 				}
 
-				if (currentLiveDocs == null || currentLiveDocs[docIDUpto])
+				if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
                     docIDUpto++;
                     yield return currentValues.Get(docIDUpto);
@@ -272,12 +272,52 @@ namespace Lucene.Net.Codecs
 	  /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
 	  /// an Iterable that merges and filters deleted documents on the fly.
 	  /// </summary>
-	  public void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<Bits> docsWithField)
+	  public void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge/*, IList<Bits> docsWithField*/)
 	  {
-
-		AddBinaryField(fieldInfo, new IterableAnonymousInnerClassHelper2(this, mergeState, toMerge, docsWithField));
+          AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(fieldInfo, mergeState, toMerge/*, docsWithField*/));
 	  }
 
+      private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge)
+      {
+          int readerUpto = -1;
+          int docIDUpto = 0;
+          AtomicReader currentReader = null;
+          BinaryDocValues currentValues = null;
+          Bits currentLiveDocs = null;
+          BytesRef nextValue = new BytesRef();
+          
+          while (true)
+			{
+				if (readerUpto == toMerge.Count)
+				{
+                    yield break;
+				}
+
+				if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+				{
+				    readerUpto++;
+				    if (readerUpto < toMerge.Count)
+				    {
+					    currentReader = mergeState.Readers[readerUpto];
+					    currentValues = toMerge[readerUpto];
+					    currentLiveDocs = currentReader.LiveDocs;
+				    }
+				    docIDUpto = 0;
+				    continue;
+				}
+
+				if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+				{
+                    currentValues.Get(docIDUpto, nextValue);
+                    docIDUpto++;
+                    yield return nextValue;
+                    continue;
+				}
+
+				docIDUpto++;
+			}
+      }
+      /*
 	  private class IterableAnonymousInnerClassHelper2 : IEnumerable<BytesRef>
 	  {
 		  private readonly DocValuesConsumer OuterInstance;
@@ -355,7 +395,7 @@ namespace Lucene.Net.Codecs
 					readerUpto++;
 					if (readerUpto < OuterInstance.ToMerge.Count)
 					{
-					  currentReader = OuterInstance.MergeState.Readers.get(readerUpto);
+					  currentReader = OuterInstance.MergeState.Readers[readerUpto];
 					  currentValues = OuterInstance.ToMerge[readerUpto];
 					  currentDocsWithField = OuterInstance.DocsWithField[readerUpto];
 					  currentLiveDocs = currentReader.LiveDocs;
@@ -364,12 +404,12 @@ namespace Lucene.Net.Codecs
 					continue;
 				  }
 
-				  if (currentLiveDocs == null || currentLiveDocs.get(docIDUpto))
+				  if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
 				  {
 					nextIsSet = true;
-					if (currentDocsWithField.get(docIDUpto))
+					if (currentDocsWithField.Get(docIDUpto))
 					{
-					  currentValues.get(docIDUpto, nextValue);
+					  currentValues.Get(docIDUpto, nextValue);
 					  nextPointer = nextValue;
 					}
 					else
@@ -384,7 +424,7 @@ namespace Lucene.Net.Codecs
 				}
 			  }
 		  }
-	  }
+	  }*/
 
 
 	  /// <summary>
@@ -395,7 +435,7 @@ namespace Lucene.Net.Codecs
 	  /// </summary>
 	  public virtual void MergeSortedField(FieldInfo fieldInfo, MergeState mergeState, IList<SortedDocValues> toMerge)
 	  {
-		AtomicReader[] readers = mergeState.Readers.ToArray();
+        AtomicReader[] readers = mergeState.Readers.ToArray();
 		SortedDocValues[] dvs = toMerge.ToArray();
 
 		// step 1: iterate thru each sub and mark terms still in use
@@ -428,18 +468,70 @@ namespace Lucene.Net.Codecs
 		}
 
 		// step 2: create ordinal map (this conceptually does the "merging")
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.MultiDocValues.OrdinalMap map = new Lucene.Net.Index.MultiDocValues.OrdinalMap(this, liveTerms);
 		OrdinalMap map = new OrdinalMap(this, liveTerms);
 
 		// step 3: add field
-		AddSortedField(fieldInfo, new IterableAnonymousInnerClassHelper3(this, dvs, map),
+        AddSortedField(fieldInfo, GetMergeSortValuesEnumerable(map, dvs),
 			// doc -> ord
-			new IterableAnonymousInnerClassHelper4(this, readers, dvs, map)
+            GetMergeSortedFieldDocToOrdEnumerable(readers, dvs, map)
 	   );
 	  }
 
-	  private class IterableAnonymousInnerClassHelper3 : IEnumerable<BytesRef>
+
+      private IEnumerable<BytesRef> GetMergeSortValuesEnumerable(OrdinalMap map, SortedDocValues[] dvs)
+      {
+          BytesRef scratch = new BytesRef();
+          int currentOrd = 0;
+
+          while (currentOrd < map.ValueCount)
+          {
+              int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
+              int segmentOrd = (int)map.GetFirstSegmentOrd(currentOrd);
+              dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
+              currentOrd++;
+              yield return scratch;
+          }
+      }
+
+      private IEnumerable<int> GetMergeSortedFieldDocToOrdEnumerable(AtomicReader[] readers, SortedDocValues[] dvs, OrdinalMap map)
+      {
+          int readerUpTo = -1;
+          int docIDUpTo = 0;
+          AtomicReader currentReader = null;
+          Bits currentLiveDocs = null;
+
+          while (true)
+          {
+              if (readerUpTo == readers.Length)
+              {
+                  yield break;
+              }
+
+              if (currentReader == null || docIDUpTo == currentReader.MaxDoc())
+              {
+                  readerUpTo++;
+                  if (readerUpTo < readers.Length)
+                  {
+                      currentReader = readers[readerUpTo];
+                      currentLiveDocs = currentReader.LiveDocs;
+                  }
+                  docIDUpTo = 0;
+                  continue;
+              }
+
+              if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpTo))
+              {
+                  int segOrd = dvs[readerUpTo].GetOrd(docIDUpTo);
+                  docIDUpTo++;
+                  yield return (int)map.GetGlobalOrd(readerUpTo, segOrd);
+                  continue;
+              }
+
+              docIDUpTo++;
+          }
+      }
+      /*
+      private class IterableAnonymousInnerClassHelper3 : IEnumerable<BytesRef>
 	  {
 		  private readonly DocValuesConsumer OuterInstance;
 
@@ -591,7 +683,7 @@ namespace Lucene.Net.Codecs
 				}
 			  }
 		  }
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Merges the sortedset docvalues from <code>toMerge</code>.
@@ -635,20 +727,134 @@ namespace Lucene.Net.Codecs
 		}
 
 		// step 2: create ordinal map (this conceptually does the "merging")
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.MultiDocValues.OrdinalMap map = new Lucene.Net.Index.MultiDocValues.OrdinalMap(this, liveTerms);
 		OrdinalMap map = new OrdinalMap(this, liveTerms);
 
 		// step 3: add field
-		AddSortedSetField(fieldInfo, new IterableAnonymousInnerClassHelper5(this, dvs, map),
+        AddSortedSetField(fieldInfo, GetMergeSortedSetValuesEnumerable(map, dvs),
 			// doc -> ord count
-			new IterableAnonymousInnerClassHelper6(this, readers, dvs),
+            GetMergeSortedSetDocToOrdCountEnumerable(readers, dvs),
 			// ords
-			new IterableAnonymousInnerClassHelper7(this, readers, dvs, map)
+            GetMergeSortedSetOrdsEnumerable(readers, dvs, map)
 		);
 	  }
+      private IEnumerable<BytesRef> GetMergeSortedSetValuesEnumerable(OrdinalMap map, SortedSetDocValues[] dvs)
+      {
+          BytesRef scratch = new BytesRef();
+          long currentOrd = 0;
 
-	  private class IterableAnonymousInnerClassHelper5 : IEnumerable<BytesRef>
+          while (currentOrd < map.ValueCount)
+          {
+              int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
+              long segmentOrd = map.GetFirstSegmentOrd(currentOrd);
+              dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
+              currentOrd++;
+              yield return scratch;
+          }
+      }
+      private IEnumerable<int> GetMergeSortedSetDocToOrdCountEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs)
+      {
+          int readerUpto = -1;
+		  int docIDUpto = 0;
+		  AtomicReader currentReader = null;
+		  Bits currentLiveDocs = null;
+          
+          while (true)
+          {
+              if (readerUpto == readers.Length)
+              {
+                  yield break;
+              }
+
+              if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+              {
+                  readerUpto++;
+                  if (readerUpto < readers.Length)
+                  {
+                      currentReader = readers[readerUpto];
+                      currentLiveDocs = currentReader.LiveDocs;
+                  }
+                  docIDUpto = 0;
+                  continue;
+              }
+
+              if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+              {
+                  SortedSetDocValues dv = dvs[readerUpto];
+                  dv.Document = docIDUpto;
+                  int value = 0;
+                  while (dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS)
+                  {
+                      value++;
+                  }
+                  docIDUpto++;
+                  yield return value;
+                  continue;
+              }
+
+              docIDUpto++;
+          }
+      }
+      private IEnumerable<long> GetMergeSortedSetOrdsEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs, OrdinalMap map)
+      {
+          int readerUpto = -1;
+          int docIDUpto = 0;
+          AtomicReader currentReader = null;
+          Bits currentLiveDocs = null;
+          long[] ords = new long[8];
+          int ordUpto = 0;
+          int ordLength = 0;
+          
+          while (true)
+          {
+              if (readerUpto == readers.Length)
+              {
+                  yield break;
+              }
+
+              if (ordUpto < ordLength)
+              {
+                  ordUpto++;
+                  yield return ords[ordUpto];
+                  continue;
+              }
+
+              if (currentReader == null || docIDUpto == currentReader.MaxDoc())
+              {
+                  readerUpto++;
+                  if (readerUpto < readers.Length)
+                  {
+                      currentReader = readers[readerUpto];
+                      currentLiveDocs = currentReader.LiveDocs;
+                  }
+                  docIDUpto = 0;
+                  continue;
+              }
+
+              if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
+              {
+                  Debug.Assert(docIDUpto < currentReader.MaxDoc());
+                  SortedSetDocValues dv = dvs[readerUpto];
+                  dv.Document = docIDUpto;
+                  ordUpto = ordLength = 0;
+                  long ord;
+                  while ((ord = dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+                  {
+                      if (ordLength == ords.Length)
+                      {
+                          ords = ArrayUtil.Grow(ords, ordLength + 1);
+                      }
+                      ords[ordLength] = map.GetGlobalOrd(readerUpto, ord);
+                      ordLength++;
+                  }
+                  docIDUpto++;
+                  continue;
+              }
+
+              docIDUpto++;
+          }
+      }
+	  /*
+      private class IterableAnonymousInnerClassHelper5 : IEnumerable<BytesRef>
 	  {
 		  private readonly DocValuesConsumer OuterInstance;
 
@@ -922,7 +1128,7 @@ namespace Lucene.Net.Codecs
 				}
 			  }
 		  }
-	  }
+	  }*/
 
 	  // TODO: seek-by-ord to nextSetBit
 	  internal class BitsFilteredTermsEnum : FilteredTermsEnum

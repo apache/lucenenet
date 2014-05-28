@@ -27,6 +27,7 @@ namespace Lucene.Net.Codecs
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// Abstract API that consumes postings for an individual term.
@@ -86,7 +87,7 @@ namespace Lucene.Net.Codecs
 	  /// Default merge impl: append documents, mapping around
 	  ///  deletes 
 	  /// </summary>
-	  public virtual TermStats Merge(MergeState mergeState, IndexOptions indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
+	  public virtual TermStats Merge(MergeState mergeState, FieldInfo.IndexOptions_e? indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
 	  {
 
 		int df = 0;
@@ -96,8 +97,6 @@ namespace Lucene.Net.Codecs
 		{
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = postings.nextDoc();
 			int doc = postings.NextDoc();
 			if (doc == DocIdSetIterator.NO_MORE_DOCS)
 			{
@@ -114,16 +113,12 @@ namespace Lucene.Net.Codecs
 		{
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = postings.nextDoc();
 			int doc = postings.NextDoc();
 			if (doc == DocIdSetIterator.NO_MORE_DOCS)
 			{
 			  break;
 			}
 			visitedDocs.Set(doc);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = postings.freq();
 			int freq = postings.Freq();
 			this.StartDoc(doc, freq);
 			this.FinishDoc();
@@ -133,31 +128,21 @@ namespace Lucene.Net.Codecs
 		}
 		else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocsAndPositionsEnum postingsEnum = (Lucene.Net.Index.DocsAndPositionsEnum) postings;
 		  DocsAndPositionsEnum postingsEnum = (DocsAndPositionsEnum) postings;
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = postingsEnum.nextDoc();
 			int doc = postingsEnum.NextDoc();
 			if (doc == DocIdSetIterator.NO_MORE_DOCS)
 			{
 			  break;
 			}
 			visitedDocs.Set(doc);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = postingsEnum.freq();
 			int freq = postingsEnum.Freq();
 			this.StartDoc(doc, freq);
 			totTF += freq;
 			for (int i = 0;i < freq;i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int position = postingsEnum.nextPosition();
 			  int position = postingsEnum.NextPosition();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef payload = postingsEnum.getPayload();
 			  BytesRef payload = postingsEnum.Payload;
 			  this.AddPosition(position, payload, -1, -1);
 			}
@@ -168,31 +153,21 @@ namespace Lucene.Net.Codecs
 		else
 		{
 		  Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocsAndPositionsEnum postingsEnum = (Lucene.Net.Index.DocsAndPositionsEnum) postings;
 		  DocsAndPositionsEnum postingsEnum = (DocsAndPositionsEnum) postings;
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = postingsEnum.nextDoc();
 			int doc = postingsEnum.NextDoc();
 			if (doc == DocIdSetIterator.NO_MORE_DOCS)
 			{
 			  break;
 			}
 			visitedDocs.Set(doc);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = postingsEnum.freq();
 			int freq = postingsEnum.Freq();
 			this.StartDoc(doc, freq);
 			totTF += freq;
 			for (int i = 0;i < freq;i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int position = postingsEnum.nextPosition();
 			  int position = postingsEnum.NextPosition();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef payload = postingsEnum.getPayload();
 			  BytesRef payload = postingsEnum.Payload;
 			  this.AddPosition(position, payload, postingsEnum.StartOffset(), postingsEnum.EndOffset());
 			}

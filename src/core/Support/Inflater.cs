@@ -28,10 +28,16 @@ namespace Lucene.Net.Support
         delegate void SetInputDelegate(byte[] buffer);
         delegate bool GetIsFinishedDelegate();
         delegate int InflateDelegate(byte[] buffer);
+        delegate void ResetDelegate();
+        delegate void SetInputDelegate3(byte[] buffer, int index, int count);
+        delegate int InflateDelegate3(byte[] buffer, int offset, int count);
 
         SetInputDelegate setInputMethod;
         GetIsFinishedDelegate getIsFinishedMethod;
         InflateDelegate inflateMethod;
+        ResetDelegate resetMethod;
+        SetInputDelegate3 setInput3Method;
+        InflateDelegate3 inflate3Method;
 
         internal Inflater(object inflaterInstance)
         {
@@ -51,11 +57,31 @@ namespace Lucene.Net.Support
                 typeof(InflateDelegate),
                 inflaterInstance,
                 type.GetMethod("Inflate", new Type[] { typeof(byte[]) }));
+
+            resetMethod = (ResetDelegate)Delegate.CreateDelegate(
+                typeof(ResetDelegate),
+                inflaterInstance,
+                type.GetMethod("Reset", Type.EmptyTypes));
+
+            setInput3Method = (SetInputDelegate3)Delegate.CreateDelegate(
+                typeof(SetInputDelegate3),
+                inflaterInstance,
+                type.GetMethod("SetInput", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
+
+            inflate3Method = (InflateDelegate3)Delegate.CreateDelegate(
+                typeof(InflateDelegate3),
+                inflaterInstance,
+                type.GetMethod("Inflate", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
         }
 
         public void SetInput(byte[] buffer)
         {
             setInputMethod(buffer);
+        }
+
+        public void SetInput(byte[] buffer, int index, int count)
+        {
+            setInput3Method(buffer, index, count);
         }
 
         public bool IsFinished
@@ -66,6 +92,21 @@ namespace Lucene.Net.Support
         public int Inflate(byte[] buffer)
         {
             return inflateMethod(buffer);
+        }
+
+        public int Inflate(byte[] buffer)
+        {
+            return inflateMethod(buffer);
+        }
+
+        public int Inflate(byte[] buffer, int offset, int count)
+        {
+            return inflate3Method(buffer, offset, count);
+        }
+
+        public void Reset()
+        {
+            resetMethod();
         }
     }
 }

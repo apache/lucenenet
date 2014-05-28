@@ -114,9 +114,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		SegmentTermEnum clone = null;
 		try
 		{
-		  clone = (SegmentTermEnum) base.Clone();
+		  clone = (SegmentTermEnum) base.MemberwiseClone();
 		}
-		catch (CloneNotSupportedException e)
+		catch (InvalidOperationException e)
 		{
 		}
 

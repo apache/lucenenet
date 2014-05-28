@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override IEnumerator<string> Iterator()
 	  {
-		return Collections.unmodifiableSet(Fields.Keys).GetEnumerator();
+		return Fields.Keys.GetEnumerator();
 	  }
 
 	  public override Terms Terms(string field)
@@ -260,19 +260,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		public override bool HasFreqs()
 		{
-		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return FieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
 		}
 
 		public override bool HasOffsets()
 		{
 		  // preflex doesn't support this
-		  Debug.Assert(FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
+		  Debug.Assert(FieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
 		  return false;
 		}
 
 		public override bool HasPositions()
 		{
-		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return FieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 		}
 
 		public override bool HasPayloads()
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  // Cannot be null (or move to next field) because at
 		  // "worst" it'd seek to the same term we are on now,
 		  // unless we are being called from seek
-		  if (t2 == Lucene.Net.Util.BytesRefIterator_Fields.Null || t2.Field() != InternedFieldName)
+		  if (t2 == null || t2.Field() != InternedFieldName)
 		  {
 			return false;
 		  }
@@ -431,8 +431,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		  bool didSeek = false;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = Math.min(newSuffixStart, scratchTerm.length-1);
 		  int limit = Math.Min(NewSuffixStart, ScratchTerm.Length - 1);
 
 		  while (downTo > limit)
@@ -449,7 +447,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  if (SeekToNonBMP(SeekTermEnum, PrevTerm, downTo))
 			  {
 				// TODO: more efficient seek?
-				OuterInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), true);
+				OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), true);
 				//newSuffixStart = downTo+4;
 				NewSuffixStart = downTo;
 				ScratchTerm.CopyBytes(TermEnum.Term().Bytes());
@@ -512,15 +510,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 			// TODO: more efficient seek?  can we simply swap
 			// the enums?
-			OuterInstance.TermsDict.seekEnum(TermEnum, new Term(FieldInfo.Name, ScratchTerm), true);
+			OuterInstance.TermsDict.SeekEnum(TermEnum, new Term(FieldInfo.Name, ScratchTerm), true);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term t2 = termEnum.term();
 			Term t2 = TermEnum.Term();
 
 			// We could hit EOF or different field since this
 			// was a seek "forward":
-			if (t2 != Lucene.Net.Util.BytesRefIterator_Fields.Null && t2.Field() == InternedFieldName)
+			if (t2 != null && t2.Field() == InternedFieldName)
 			{
 
 			  if (DEBUG_SURROGATES)
@@ -528,8 +524,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 				Console.WriteLine("      got term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + t2.Bytes());
 			  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef b2 = t2.bytes();
 			  BytesRef b2 = t2.Bytes();
 			  Debug.Assert(b2.Offset == 0);
 
@@ -614,7 +608,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  // current term.
 
 		  // TODO: can we avoid this copy?
-		  if (TermEnum.Term() == Lucene.Net.Util.BytesRefIterator_Fields.Null || TermEnum.Term().Field() != InternedFieldName)
+		  if (TermEnum.Term() == null || TermEnum.Term().Field() != InternedFieldName)
 		  {
 			ScratchTerm.Length = 0;
 		  }
@@ -693,8 +687,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  // A non-BMP char (4 bytes UTF8) starts here:
 			  Debug.Assert(ScratchTerm.Length >= upTo + 4);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int savLength = scratchTerm.length;
 			  int savLength = ScratchTerm.Length;
 			  Scratch[0] = ScratchTerm.Bytes[upTo];
 			  Scratch[1] = ScratchTerm.Bytes[upTo + 1];
@@ -712,7 +704,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 			  // Seek "forward":
 			  // TODO: more efficient seek?
-			  outerInstance.TermsDict.seekEnum(SeekTermEnum, new Term(FieldInfo.Name, ScratchTerm), true);
+			  OuterInstance.TermsDict.SeekEnum(SeekTermEnum, new Term(FieldInfo.Name, ScratchTerm), true);
 
 			  ScratchTerm.Bytes[upTo] = Scratch[0];
 			  ScratchTerm.Bytes[upTo + 1] = Scratch[1];
@@ -720,19 +712,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  ScratchTerm.Length = savLength;
 
 			  // Did we find a match?
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term t2 = seekTermEnum.term();
 			  Term t2 = SeekTermEnum.Term();
 
 			  if (DEBUG_SURROGATES)
 			  {
-				if (t2 == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+				if (t2 == null)
 				{
 				  Console.WriteLine("      hit term=null");
 				}
 				else
 				{
-				  Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2 == Lucene.Net.Util.BytesRefIterator_Fields.Null? Lucene.Net.Util.BytesRefIterator_Fields.Null:t2.Bytes()));
+				  Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2 == null? null:t2.Bytes()));
 				}
 			  }
 
@@ -740,7 +730,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  // EOF or a different field:
 			  bool matches;
 
-			  if (t2 != Lucene.Net.Util.BytesRefIterator_Fields.Null && t2.Field() == InternedFieldName)
+			  if (t2 != null && t2.Field() == InternedFieldName)
 			  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef b2 = t2.bytes();
@@ -811,11 +801,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  //System.out.println("pff.reset te=" + termEnum);
 		  this.FieldInfo = fieldInfo;
-		  InternedFieldName = fieldInfo.Name.intern();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = new Lucene.Net.Index.Term(internedFieldName);
+		  InternedFieldName = String.Intern(fieldInfo.Name);
 		  Term term = new Term(InternedFieldName);
-		  if (TermEnum == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  if (TermEnum == null)
 		  {
 			TermEnum = OuterInstance.TermsDict.Terms(term);
             SeekTermEnum = OuterInstance.TermsDict.Terms(term);
@@ -829,10 +817,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
           UnicodeSortOrder = OuterInstance.SortTermsByUnicode();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
 		  Term t = TermEnum.Term();
-		  if (t != Lucene.Net.Util.BytesRefIterator_Fields.Null && t.Field() == InternedFieldName)
+		  if (t != null && t.Field() == InternedFieldName)
 		  {
 			NewSuffixStart = 0;
 			PrevTerm.Length = 0;
@@ -881,7 +867,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 //ORIGINAL LINE: final Lucene.Net.Index.Term t0 = new Lucene.Net.Index.Term(fieldInfo.name, term);
 		  Term t0 = new Term(FieldInfo.Name, term);
 
-		  Debug.Assert(TermEnum != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+		  Debug.Assert(TermEnum != null);
 
 		  tis.SeekEnum(TermEnum, t0, false);
 
@@ -889,7 +875,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
 		  Term t = TermEnum.Term();
 
-		  if (t != Lucene.Net.Util.BytesRefIterator_Fields.Null && t.Field() == InternedFieldName && term.BytesEquals(t.Bytes()))
+		  if (t != null && t.Field() == InternedFieldName && term.BytesEquals(t.Bytes()))
 		  {
 			// If we found an exact match, no need to do the
 			// surrogate dance
@@ -900,7 +886,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			Current = t.Bytes();
 			return SeekStatus.FOUND;
 		  }
-		  else if (t == Lucene.Net.Util.BytesRefIterator_Fields.Null || t.Field() != InternedFieldName)
+		  else if (t == null || t.Field() != InternedFieldName)
 		  {
 
 			// TODO: maybe we can handle this like the next()
@@ -930,7 +916,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 				{
 
 				  ScratchTerm.CopyBytes(SeekTermEnum.Term().Bytes());
-                  OuterInstance.TermsDict.seekEnum(TermEnum, SeekTermEnum.Term(), false);
+                  OuterInstance.TermsDict.SeekEnum(TermEnum, SeekTermEnum.Term(), false);
 
 				  NewSuffixStart = 1 + i;
 
@@ -949,7 +935,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  Console.WriteLine("  seek END");
 			}
 
-			Current = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			Current = null;
 			return SeekStatus.END;
 		  }
 		  else
@@ -965,8 +951,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  Console.WriteLine("  seek hit non-exact term=" + UnicodeUtil.ToHexString(t.Text()));
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef br = t.bytes();
 			BytesRef br = t.Bytes();
 			Debug.Assert(br.Offset == 0);
 
@@ -974,14 +958,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 			SurrogateDance();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term t2 = termEnum.term();
 			Term t2 = TermEnum.Term();
-			if (t2 == Lucene.Net.Util.BytesRefIterator_Fields.Null || t2.Field() != InternedFieldName)
+			if (t2 == null || t2.Field() != InternedFieldName)
 			{
 			  // PreFlex codec interns field names; verify:
-			  Debug.Assert(t2 == Lucene.Net.Util.BytesRefIterator_Fields.Null || !t2.Field().Equals(InternedFieldName));
-			  Current = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  Debug.Assert(t2 == null || !t2.Field().Equals(InternedFieldName));
+			  Current = null;
 			  return SeekStatus.END;
 			}
 			else
@@ -995,8 +977,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		internal virtual void SetNewSuffixStart(BytesRef br1, BytesRef br2)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = Math.min(br1.length, br2.length);
 		  int limit = Math.Min(br1.Length, br2.Length);
 		  int lastStart = 0;
 		  for (int i = 0;i < limit;i++)
@@ -1035,18 +1015,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  Console.WriteLine("  skipNext=true");
 			}
 			SkipNext = false;
-			if (TermEnum.Term() == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (TermEnum.Term() == null)
 			{
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			// PreFlex codec interns field names:
 			}
 			else if (TermEnum.Term().Field() != InternedFieldName)
 			{
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			}
 			else
 			{
-			  return Current = TermEnum.Term().bytes();
+			  return Current = TermEnum.Term().Bytes();
 			}
 		  }
 
@@ -1064,11 +1044,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
 			Term t = TermEnum.Term();
-			if (t == Lucene.Net.Util.BytesRefIterator_Fields.Null || t.Field() != InternedFieldName)
+			if (t == null || t.Field() != InternedFieldName)
 			{
 			  // PreFlex codec interns field names; verify:
-			  Debug.Assert(t == Lucene.Net.Util.BytesRefIterator_Fields.Null || !t.Field().Equals(InternedFieldName));
-			  Current = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  Debug.Assert(t == null || !t.Field().Equals(InternedFieldName));
+			  Current = null;
 			}
 			else
 			{
@@ -1091,11 +1071,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.Term t = termEnum.term();
 			Term t = TermEnum.Term();
-			if (t == Lucene.Net.Util.BytesRefIterator_Fields.Null || t.Field() != InternedFieldName)
+			if (t == null || t.Field() != InternedFieldName)
 			{
 			  // PreFlex codec interns field names; verify:
-			  Debug.Assert(t == Lucene.Net.Util.BytesRefIterator_Fields.Null || !t.Field().Equals(InternedFieldName));
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  Debug.Assert(t == null || !t.Field().Equals(InternedFieldName));
+			  return null;
 			}
 			else
 			{
@@ -1123,7 +1103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
 		{
 		  PreDocsEnum docsEnum;
-		  if (reuse == Lucene.Net.Util.BytesRefIterator_Fields.Null || !(reuse is PreDocsEnum))
+		  if (reuse == null || !(reuse is PreDocsEnum))
 		  {
 			docsEnum = new PreDocsEnum(OuterInstance);
 		  }
@@ -1143,9 +1123,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  PreDocsAndPositionsEnum docsPosEnum;
 		  if (FieldInfo.IndexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 		  {
-			return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			return null;
 		  }
-		  else if (reuse == Lucene.Net.Util.BytesRefIterator_Fields.Null || !(reuse is PreDocsAndPositionsEnum))
+		  else if (reuse == null || !(reuse is PreDocsAndPositionsEnum))
 		  {
 			docsPosEnum = new PreDocsAndPositionsEnum(OuterInstance);
 		  }

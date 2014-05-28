@@ -30,12 +30,18 @@ namespace Lucene.Net.Support
         delegate void FinishDelegate();
         delegate bool GetIsFinishedDelegate();
         delegate int DeflateDelegate(byte[] output);
+        delegate void ResetDelegate();
+        delegate bool GetIsNeedingInputDelegate();
+        delegate int DeflateDelegate3(byte[] output, int offset, int length);
 
         SetLevelDelegate setLevelMethod;
         SetInputDelegate setInputMethod;
         FinishDelegate finishMethod;
         GetIsFinishedDelegate getIsFinishedMethod;
         DeflateDelegate deflateMethod;
+        ResetDelegate resetMethod;
+        GetIsNeedingInputDelegate getIsNeedingInputMethod;
+        DeflateDelegate3 deflate3Method;
 
         public const int BEST_COMPRESSION = 9;
 
@@ -67,6 +73,21 @@ namespace Lucene.Net.Support
                 typeof(DeflateDelegate),
                 deflaterInstance,
                 type.GetMethod("Deflate", new Type[] { typeof(byte[]) }));
+            
+            resetMethod = (ResetDelegate)Delegate.CreateDelegate(
+                typeof(ResetDelegate),
+                deflaterInstance,
+                type.GetMethod("Reset", Type.EmptyTypes));
+
+            getIsNeedingInputMethod = (GetIsNeedingInputDelegate)Delegate.CreateDelegate(
+                typeof(GetIsNeedingInputDelegate),
+                deflaterInstance,
+                type.GetMethod("get_IsNeedingInput", Type.EmptyTypes));
+
+            deflate3Method = (DeflateDelegate3)Delegate.CreateDelegate(
+                typeof(DeflateDelegate3),
+                deflaterInstance,
+                type.GetMethod("Deflate", new Type[] { typeof(byte[]), typeof(int), typeof(int) }));
         }
 
         public void SetLevel(int level)
@@ -92,6 +113,21 @@ namespace Lucene.Net.Support
         public int Deflate(byte[] output)
         {
             return deflateMethod(output);
+        }
+
+        public int Deflate(byte[] output, int offset, int length)
+        {
+            return deflate3Method(output, offset, length);
+        }
+
+        public void Reset()
+        {
+            resetMethod();
+        }
+
+        public bool NeedsInput
+        {
+            get { return getIsNeedingInputMethod(); }
         }
     }
 }

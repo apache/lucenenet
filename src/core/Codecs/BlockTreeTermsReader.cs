@@ -632,17 +632,17 @@ namespace Lucene.Net.Codecs
 
 		public override bool HasFreqs()
 		{
-		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+		  return FieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
 		}
 
 		public override bool HasOffsets()
 		{
-		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  return FieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		}
 
 		public override bool HasPositions()
 		{
-		  return FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+		  return FieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 		}
 
 		public override bool HasPayloads()
@@ -713,7 +713,7 @@ namespace Lucene.Net.Codecs
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef>[] arcs = new Lucene.Net.Util.Fst.FST.Arc[5];
           internal FST<BytesRef>.Arc<BytesRef>[] Arcs = new FST<BytesRef>.Arc<BytesRef>[5];
 
-		  internal readonly RunAutomaton RunAutomaton;
+		  internal readonly RunAutomaton runAutomaton;
 		  internal readonly CompiledAutomaton CompiledAutomaton;
 
 		  internal Frame CurrentFrame;
@@ -725,7 +725,7 @@ namespace Lucene.Net.Codecs
 		  // TODO: can we share this with the frame in STE?
 		  private sealed class Frame
 		  {
-			  private readonly BlockTreeTermsReader.FieldReader.IntersectEnum OuterInstance;
+			private readonly BlockTreeTermsReader.FieldReader.IntersectEnum OuterInstance;
 
 			internal readonly int Ord;
 			internal long Fp;
@@ -734,7 +734,7 @@ namespace Lucene.Net.Codecs
 			internal long LastSubFP;
 
 			// State in automaton
-			internal int State_Renamed;
+			internal int state;
 
 			internal int MetaDataUpto;
 
@@ -789,10 +789,10 @@ namespace Lucene.Net.Codecs
 			public Frame(BlockTreeTermsReader.FieldReader.IntersectEnum outerInstance, int ord)
 			{
 				this.OuterInstance = outerInstance;
-			  this.Ord = ord;
-			  this.TermState = outerInstance.OuterInstance.OuterInstance.PostingsReader.NewTermState();
-			  this.TermState.TotalTermFreq = -1;
-			  this.Longs = new long[outerInstance.OuterInstance.LongsSize];
+			    this.Ord = ord;
+			    this.TermState = outerInstance.OuterInstance.OuterInstance.PostingsReader.NewTermState();
+			    this.TermState.TotalTermFreq = -1;
+			    this.Longs = new long[outerInstance.OuterInstance.LongsSize];
 			}
 
 			internal void LoadNextFloorBlock()
@@ -823,7 +823,7 @@ namespace Lucene.Net.Codecs
 			{
 				set
 				{
-				  this.State_Renamed = value;
+				  this.state = value;
 				  TransitionIndex = 0;
 				  Transitions = OuterInstance.CompiledAutomaton.SortedTransitions[value];
 				  if (Transitions.Length != 0)
@@ -837,13 +837,13 @@ namespace Lucene.Net.Codecs
 				}
 				get
 				{
-				int state = CurrentFrame.State_Renamed;
-				for (int idx = 0;idx < CurrentFrame.Suffix;idx++)
-				{
-				  state = RunAutomaton.Step(state, CurrentFrame.SuffixBytes[CurrentFrame.StartBytePos + idx] & 0xff);
-				  Debug.Assert(state != -1);
-				}
-				return state;
+				    int state = OuterInstance.CurrentFrame.state;
+                    for (int idx = 0; idx < OuterInstance.CurrentFrame.Suffix; idx++)
+				    {
+                        state = OuterInstance.runAutomaton.Step(state, OuterInstance.CurrentFrame.SuffixBytes[OuterInstance.CurrentFrame.StartBytePos + idx] & 0xff);
+				        Debug.Assert(state != -1);
+				    }
+				    return state;
 				}
 			}
 
@@ -874,7 +874,7 @@ namespace Lucene.Net.Codecs
 
 				  // If current state is accept, we must process
 				  // first block in case it has empty suffix:
-				  if (OuterInstance.RunAutomaton.IsAccept(State_Renamed))
+				  if (OuterInstance.runAutomaton.IsAccept(state))
 				  {
 					// Maybe skip floor blocks:
 					while (NumFollowFloorBlocks != 0 && NextFloorLabel <= Transitions[0].Min)
@@ -1053,7 +1053,7 @@ namespace Lucene.Net.Codecs
 			// if (DEBUG) {
 			//   System.out.println("\nintEnum.init seg=" + segment + " commonSuffix=" + brToString(compiled.commonSuffixRef));
 			// }
-			RunAutomaton = compiled.RunAutomaton;
+			runAutomaton = compiled.RunAutomaton;
 			CompiledAutomaton = compiled;
 			@in = outerInstance.OuterInstance.@in.Clone();
 			Stack = new Frame[5];
@@ -1072,7 +1072,7 @@ namespace Lucene.Net.Codecs
 			}
 			else
 			{
-			  FstReader = outerInstance.Index.BytesReader;
+			  FstReader = outerInstance.Index.GetBytesReader;
 			}
 
 			// TODO: if the automaton is "smallish" we really
@@ -1090,7 +1090,7 @@ namespace Lucene.Net.Codecs
 			Frame f = Stack[0];
 			f.Fp = f.FpOrig = outerInstance.RootBlockFP;
 			f.Prefix = 0;
-			f.State = RunAutomaton.InitialState;
+			f.State = runAutomaton.InitialState;
 			f.Arc = arc;
 			f.OutputPrefix = arc.Output;
 			f.Load(outerInstance.RootCode);
@@ -1212,7 +1212,7 @@ namespace Lucene.Net.Codecs
 
 		  public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-            if (OuterInstance.FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+            if (OuterInstance.FieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 			{
 			  // Positions were not indexed:
 			  return null;
@@ -1261,7 +1261,7 @@ namespace Lucene.Net.Codecs
 				if (isSubBlock && StringHelper.StartsWith(target, Term_Renamed))
 				{
 				  // Recurse
-				  CurrentFrame = PushFrame(State);
+				  CurrentFrame = PushFrame(CurrentFrame.State);
 				  break;
 				}
 				else
@@ -1450,10 +1450,10 @@ namespace Lucene.Net.Codecs
 			  // until the limit
 
 			  // See if the term prefix matches the automaton:
-			  int state = CurrentFrame.State_Renamed;
+			  int state = CurrentFrame.state;
 			  for (int idx = 0;idx < CurrentFrame.Suffix;idx++)
 			  {
-				state = RunAutomaton.Step(state, CurrentFrame.SuffixBytes[CurrentFrame.StartBytePos + idx] & 0xff);
+				state = runAutomaton.Step(state, CurrentFrame.SuffixBytes[CurrentFrame.StartBytePos + idx] & 0xff);
 				if (state == -1)
 				{
 				  // No match
@@ -1474,7 +1474,7 @@ namespace Lucene.Net.Codecs
 				CurrentFrame = PushFrame(state);
 				//if (DEBUG) System.out.println("\n  frame ord=" + currentFrame.ord + " prefix=" + brToString(new BytesRef(term.bytes, term.offset, currentFrame.prefix)) + " state=" + currentFrame.state + " lastInFloor?=" + currentFrame.isLastInFloor + " fp=" + currentFrame.fp + " trans=" + (currentFrame.transitions.length == 0 ? "n/a" : currentFrame.transitions[currentFrame.transitionIndex]) + " outputPrefix=" + currentFrame.outputPrefix);
 			  }
-			  else if (RunAutomaton.IsAccept(state))
+			  else if (runAutomaton.IsAccept(state))
 			  {
 				CopyTerm();
 				//if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
@@ -1572,7 +1572,7 @@ namespace Lucene.Net.Codecs
 			}
 			else
 			{
-			  FstReader = OuterInstance.Index.BytesReader;
+			  FstReader = OuterInstance.Index.GetBytesReader;
 			}
 
 			// Init w/ root block; don't use index since it may
@@ -2495,8 +2495,6 @@ namespace Lucene.Net.Codecs
 			if (@in == null)
 			{
 			  // Fresh TermsEnum; seek to first term:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef> arc;
 			  FST<BytesRef>.Arc<BytesRef> arc;
 			  if (OuterInstance.Index != null)
 			  {
@@ -2637,7 +2635,7 @@ namespace Lucene.Net.Codecs
 
 		  public override DocsAndPositionsEnum DocsAndPositions(Bits skipDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-			if (OuterInstance.FieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+			if (OuterInstance.FieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
 			{
 			  // Positions were not indexed:
 			  return null;

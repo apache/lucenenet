@@ -26,6 +26,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// @lucene.experimental </summary>
@@ -87,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public int NextPosition()
 	  {
-		if (IndexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+		if (IndexOptions != FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 		  // this field does not store positions, payloads
 		{
 		  return 0;
@@ -162,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  private void SkipPositions(int n)
 	  {
-		Debug.Assert(IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+		Debug.Assert(IndexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS);
 		for (int f = n; f > 0; f--) // skip unread positions
 		{
 		  ReadDeltaPosition();

@@ -27,6 +27,7 @@ namespace Lucene.Net.Codecs.Compressing
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using BytesRef = Lucene.Net.Util.BytesRef;
     using Lucene.Net.Support;
+    using System;
 
 	/// <summary>
 	/// A compression mode. Tells how much effort should be spent on compression and
@@ -243,7 +244,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  @in.ReadBytes(Compressed, 0, compressedLength);
 
 		  decompressor.Reset();
-		  decompressor.setInput(Compressed, 0, compressedLength);
+		  decompressor.SetInput((byte[])(Array)Compressed, 0, compressedLength);
 
 		  bytes.Offset = bytes.Length = 0;
 		  while (true)
@@ -252,14 +253,14 @@ namespace Lucene.Net.Codecs.Compressing
 			try
 			{
 			  int remaining = bytes.Bytes.Length - bytes.Length;
-			  count = decompressor.Inflate(bytes.Bytes, bytes.Length, remaining);
+              count = decompressor.Inflate((byte[])(Array)(bytes.Bytes), bytes.Length, remaining);
 			}
 			catch (System.FormatException e)
 			{
 			  throw new System.IO.IOException("See inner", e);
 			}
 			bytes.Length += count;
-			if (decompressor.finished())
+			if (decompressor.IsFinished)
 			{
 			  break;
 			}
@@ -297,11 +298,11 @@ namespace Lucene.Net.Codecs.Compressing
 
 		public override void Compress(sbyte[] bytes, int off, int len, DataOutput @out)
 		{
-		  Compressor.reset();
-		  Compressor.setInput(bytes, off, len);
-		  Compressor.finish();
+		  Compressor.Reset();
+          Compressor.SetInput((byte[])(Array)bytes, off, len);
+		  Compressor.Finish();
 
-		  if (Compressor.needsInput())
+		  if (Compressor.NeedsInput)
 		  {
 			// no output
 			Debug.Assert(len == 0, len.ToString());
@@ -312,10 +313,10 @@ namespace Lucene.Net.Codecs.Compressing
 		  int totalCount = 0;
 		  for (;;)
 		  {
-			int count = Compressor.Deflate(Compressed, totalCount, Compressed.Length - totalCount);
+            int count = Compressor.Deflate((byte[])(Array)Compressed, totalCount, Compressed.Length - totalCount);
 			totalCount += count;
 			Debug.Assert(totalCount <= Compressed.Length);
-			if (Compressor.finished())
+			if (Compressor.IsFinished)
 			{
 			  break;
 			}

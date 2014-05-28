@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// Default merge impl </summary>
-	  public virtual void Merge(MergeState mergeState, FieldInfo.IndexOptions_e indexOptions, TermsEnum termsEnum)
+	  public virtual void Merge(MergeState mergeState, FieldInfo.IndexOptions_e? indexOptions, TermsEnum termsEnum)
 	  {
 
 		BytesRef term;

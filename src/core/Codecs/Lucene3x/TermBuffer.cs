@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  else
 		  {
 			Debug.Assert(fieldInfos.FieldInfo(CurrentFieldNumber) != null, CurrentFieldNumber.ToString());
-			Field = fieldInfos.FieldInfo(CurrentFieldNumber).Name.intern();
+			Field = String.Intern(fieldInfos.FieldInfo(CurrentFieldNumber).Name);
 		  }
 		}
 		else
@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  return;
 		}
 		Bytes.CopyBytes(term.Bytes());
-		Field = term.Field().intern();
+		Field = String.Intern(term.Field());
 		CurrentFieldNumber = -1;
 		this.Term = term;
 	  }
@@ -148,9 +148,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		TermBuffer clone = null;
 		try
 		{
-		  clone = (TermBuffer)base.Clone();
+		  clone = (TermBuffer)base.MemberwiseClone();
 		}
-		catch (CloneNotSupportedException e)
+		catch (InvalidOperationException e)
 		{
 		}
 		clone.Bytes = BytesRef.DeepCopyOf(Bytes);

@@ -151,8 +151,8 @@ namespace Lucene.Net.Codecs.Lucene41
 	  public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute)
 	  {
 		Lucene41PostingsWriter.IntBlockTermState termState = (Lucene41PostingsWriter.IntBlockTermState) _termState;
-		bool fieldHasPositions = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		bool fieldHasOffsets = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool fieldHasPositions = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+		bool fieldHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		bool fieldHasPayloads = fieldInfo.HasPayloads();
 
 		if (absolute)
@@ -205,8 +205,8 @@ namespace Lucene.Net.Codecs.Lucene41
 	  }
 	  private void _decodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.IntBlockTermState termState)
 	  {
-		bool fieldHasPositions = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		bool fieldHasOffsets = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool fieldHasPositions = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+		bool fieldHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		bool fieldHasPayloads = fieldInfo.HasPayloads();
 		if (termState.DocFreq == 1)
 		{
@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 	  {
 
-		bool indexHasOffsets = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool indexHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		bool indexHasPayloads = fieldInfo.HasPayloads();
 
 		if ((!indexHasOffsets || (flags & DocsAndPositionsEnum.FLAG_OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsEnum.FLAG_PAYLOADS) == 0))
@@ -356,16 +356,16 @@ namespace Lucene.Net.Codecs.Lucene41
 			this.OuterInstance = outerInstance;
 		  this.StartDocIn = outerInstance.DocIn;
 		  this.DocIn = null;
-		  IndexHasFreq = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS) >= 0;
-		  IndexHasPos = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		  IndexHasOffsets = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  IndexHasFreq = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS;
+		  IndexHasPos = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+		  IndexHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		  IndexHasPayloads = fieldInfo.HasPayloads();
 		  Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
 		}
 
 		public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
 		{
-		  return docIn == StartDocIn && IndexHasFreq == (fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS) >= 0) && IndexHasPos == (fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0) && IndexHasPayloads == fieldInfo.HasPayloads();
+		  return docIn == StartDocIn && IndexHasFreq == (fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS) && IndexHasPos == (fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) && IndexHasPayloads == fieldInfo.HasPayloads();
 		}
 
         public DocsEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
@@ -425,7 +425,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			// if (DEBUG) {
 			//   System.out.println("    fill doc block from fp=" + docIn.getFilePointer());
 			// }
-			OuterInstance.ForUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
+			OuterInstance.forUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
 
 			if (IndexHasFreq)
 			{
@@ -434,11 +434,11 @@ namespace Lucene.Net.Codecs.Lucene41
 			  // }
 			  if (NeedsFreq)
 			  {
-				outerInstance.ForUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
+				OuterInstance.forUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
 			  }
 			  else
 			  {
-				outerInstance.ForUtil.SkipBlock(DocIn); // skip over freqs
+				OuterInstance.forUtil.SkipBlock(DocIn); // skip over freqs
 			  }
 			}
 		  }
@@ -688,13 +688,13 @@ namespace Lucene.Net.Codecs.Lucene41
 		  this.DocIn = null;
 		  this.PosIn = outerInstance.PosIn.Clone();
 		  Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
-		  IndexHasOffsets = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  IndexHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		  IndexHasPayloads = fieldInfo.HasPayloads();
 		}
 
 		public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
 		{
-		  return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && IndexHasPayloads == fieldInfo.HasPayloads();
+		  return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads();
 		}
 
         public DocsAndPositionsEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState)
@@ -765,11 +765,11 @@ namespace Lucene.Net.Codecs.Lucene41
 			// if (DEBUG) {
 			//   System.out.println("    fill doc block from fp=" + docIn.getFilePointer());
 			// }
-			outerInstance.ForUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
+			OuterInstance.forUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
 			// if (DEBUG) {
 			//   System.out.println("    fill freq block from fp=" + docIn.getFilePointer());
 			// }
-			outerInstance.ForUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
+            OuterInstance.forUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
 		  }
 		  else if (DocFreq == 1)
 		  {
@@ -835,7 +835,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			// if (DEBUG) {
 			//   System.out.println("        bulk pos block @ fp=" + posIn.getFilePointer());
 			// }
-			outerInstance.ForUtil.ReadBlock(PosIn, Encoded, PosDeltaBuffer);
+              OuterInstance.forUtil.ReadBlock(PosIn, Encoded, PosDeltaBuffer);
 		  }
 		}
 
@@ -1017,7 +1017,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
 			  // }
 			  Debug.Assert(PosIn.FilePointer != LastPosBlockFP);
-			  outerInstance.ForUtil.SkipBlock(PosIn);
+              OuterInstance.forUtil.SkipBlock(PosIn);
               toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
 			}
 			RefillPositions();
@@ -1186,7 +1186,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  this.PosIn = outerInstance.PosIn.Clone();
 		  this.PayIn = outerInstance.PayIn.Clone();
 		  Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
-		  IndexHasOffsets = fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  IndexHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		  if (IndexHasOffsets)
 		  {
 			OffsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -1217,7 +1217,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
 		public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
 		{
-		  return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && IndexHasPayloads == fieldInfo.HasPayloads();
+		  return docIn == StartDocIn && IndexHasOffsets == (fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && IndexHasPayloads == fieldInfo.HasPayloads();
 		}
 
         public EverythingEnum Reset(Bits liveDocs, Lucene41PostingsWriter.IntBlockTermState termState, int flags)
@@ -1292,11 +1292,11 @@ namespace Lucene.Net.Codecs.Lucene41
 			// if (DEBUG) {
 			//   System.out.println("    fill doc block from fp=" + docIn.getFilePointer());
 			// }
-			outerInstance.ForUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
+              OuterInstance.forUtil.ReadBlock(DocIn, Encoded, DocDeltaBuffer);
 			// if (DEBUG) {
 			//   System.out.println("    fill freq block from fp=" + docIn.getFilePointer());
 			// }
-			outerInstance.ForUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
+              OuterInstance.forUtil.ReadBlock(DocIn, Encoded, FreqBuffer);
 		  }
 		  else if (DocFreq == 1)
 		  {
@@ -1383,7 +1383,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			// if (DEBUG) {
 			//   System.out.println("        bulk pos block @ fp=" + posIn.getFilePointer());
 			// }
-			outerInstance.ForUtil.ReadBlock(PosIn, Encoded, PosDeltaBuffer);
+              OuterInstance.forUtil.ReadBlock(PosIn, Encoded, PosDeltaBuffer);
 
 			if (IndexHasPayloads)
 			{
@@ -1392,7 +1392,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  // }
 			  if (NeedsPayloads)
 			  {
-				outerInstance.ForUtil.ReadBlock(PayIn, Encoded, PayloadLengthBuffer);
+                  OuterInstance.forUtil.ReadBlock(PayIn, Encoded, PayloadLengthBuffer);
 				int numBytes = PayIn.ReadVInt();
 				// if (DEBUG) {
 				//   System.out.println("        " + numBytes + " payload bytes @ pay.fp=" + payIn.getFilePointer());
@@ -1406,7 +1406,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  else
 			  {
 				// this works, because when writing a vint block we always force the first length to be written
-				outerInstance.ForUtil.SkipBlock(PayIn); // skip over lengths
+                  OuterInstance.forUtil.SkipBlock(PayIn); // skip over lengths
 				int numBytes = PayIn.ReadVInt(); // read length of payloadBytes
 				PayIn.Seek(PayIn.FilePointer + numBytes); // skip over payloadBytes
 			  }
@@ -1420,14 +1420,14 @@ namespace Lucene.Net.Codecs.Lucene41
 			  // }
 			  if (NeedsOffsets)
 			  {
-				outerInstance.ForUtil.ReadBlock(PayIn, Encoded, OffsetStartDeltaBuffer);
-				outerInstance.ForUtil.ReadBlock(PayIn, Encoded, OffsetLengthBuffer);
+                  OuterInstance.forUtil.ReadBlock(PayIn, Encoded, OffsetStartDeltaBuffer);
+                  OuterInstance.forUtil.ReadBlock(PayIn, Encoded, OffsetLengthBuffer);
 			  }
 			  else
 			  {
 				// this works, because when writing a vint block we always force the first length to be written
-				outerInstance.ForUtil.SkipBlock(PayIn); // skip over starts
-				outerInstance.ForUtil.SkipBlock(PayIn); // skip over lengths
+                  OuterInstance.forUtil.SkipBlock(PayIn); // skip over starts
+                  OuterInstance.forUtil.SkipBlock(PayIn); // skip over lengths
 			  }
 			}
 		  }
@@ -1625,12 +1625,12 @@ namespace Lucene.Net.Codecs.Lucene41
 			  //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
 			  // }
 			  Debug.Assert(PosIn.FilePointer != LastPosBlockFP);
-			  outerInstance.ForUtil.SkipBlock(PosIn);
+              OuterInstance.forUtil.SkipBlock(PosIn);
 
 			  if (IndexHasPayloads)
 			  {
 				// Skip payloadLength block:
-				outerInstance.ForUtil.SkipBlock(PayIn);
+                  OuterInstance.forUtil.SkipBlock(PayIn);
 
 				// Skip payloadBytes block:
 				int numBytes = PayIn.ReadVInt();
@@ -1639,8 +1639,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
 			  if (IndexHasOffsets)
 			  {
-				outerInstance.ForUtil.SkipBlock(PayIn);
-				outerInstance.ForUtil.SkipBlock(PayIn);
+                  OuterInstance.forUtil.SkipBlock(PayIn);
+                  OuterInstance.forUtil.SkipBlock(PayIn);
 			  }
               toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
 			}

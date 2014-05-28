@@ -5,10 +5,10 @@ namespace org.apache.lucene
 {
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using Ignore = org.junit.Ignore;
+	//using Ignore = org.junit.Ignore;
 
-	using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;
-	using Timeout = com.carrotsearch.randomizedtesting.annotations.Timeout;
+	//using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;
+	//using Timeout = com.carrotsearch.randomizedtesting.annotations.Timeout;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,13 +38,13 @@ namespace org.apache.lucene
 
 		while (!t.IsAlive)
 		{
-		  Thread.@yield();
+		  Thread.@Yield();
 		}
 
 		// once alive, leave it to run outside of the test scope.
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : Thread
 	  {
 		  private readonly TestWorstCaseTestBehavior OuterInstance;
 

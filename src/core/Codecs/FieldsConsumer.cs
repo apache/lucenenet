@@ -80,8 +80,6 @@ namespace Lucene.Net.Codecs
 		  Terms terms = fields.Terms(field);
 		  if (terms != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsConsumer termsConsumer = addField(info);
 			TermsConsumer termsConsumer = AddField(info);
 			termsConsumer.Merge(mergeState, info.IndexOptions, terms.Iterator(null));
 		  }

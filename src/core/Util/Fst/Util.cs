@@ -1,7 +1,10 @@
 using System;
+using System.IO;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -22,10 +25,10 @@ namespace Lucene.Net.Util.Fst
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    /*
 	using Lucene.Net.Util.Fst.FST;
 	using BytesReader = Lucene.Net.Util.Fst.FST.BytesReader;
-
+    */
 
 	/// <summary>
 	/// Static helper methods.
@@ -46,13 +49,9 @@ namespace Lucene.Net.Util.Fst
 	  {
 
 		// TODO: would be nice not to alloc this on every lookup
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FST.Arc<T> arc = fst.getFirstArc(new FST.Arc<T>());
-		FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
+          FST<long>.Arc<T> arc = fst.GetFirstArc(new FST<long>.Arc<T>());
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.BytesReader fstReader = fst.getBytesReader();
-		BytesReader fstReader = fst.BytesReader;
+		var fstReader = fst.GetBytesReader;
 
 		// Accumulate output as we go
 		T output = fst.Outputs.NoOutput;
@@ -60,18 +59,18 @@ namespace Lucene.Net.Util.Fst
 		{
 		  if (fst.FindTargetArc(input.Ints[input.Offset + i], arc, arc, fstReader) == null)
 		  {
-			return null;
+			return default(T);
 		  }
-		  output = fst.Outputs.add(output, arc.Output);
+		  output = fst.Outputs.Add(output, arc.Output);
 		}
 
 		if (arc.Final)
 		{
-		  return fst.Outputs.add(output, arc.NextFinalOutput);
+		  return fst.Outputs.Add(output, arc.NextFinalOutput);
 		}
 		else
 		{
-		  return null;
+            return default(T);
 		}
 	  }
 
@@ -83,16 +82,12 @@ namespace Lucene.Net.Util.Fst
 	  /// </summary>
 	  public static T get<T>(FST<T> fst, BytesRef input)
 	  {
-		Debug.Assert(fst.InputType_Renamed == FST.INPUT_TYPE.BYTE1);
+          Debug.Assert(fst.inputType == FST<long>.INPUT_TYPE.BYTE1);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.BytesReader fstReader = fst.getBytesReader();
-		BytesReader fstReader = fst.BytesReader;
+		var fstReader = fst.GetBytesReader;
 
 		// TODO: would be nice not to alloc this on every lookup
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FST.Arc<T> arc = fst.getFirstArc(new FST.Arc<T>());
-		FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
+        FST<long>.Arc<T> arc = fst.GetFirstArc(new FST<long>.Arc<T>());
 
 		// Accumulate output as we go
 		T output = fst.Outputs.NoOutput;
@@ -100,18 +95,18 @@ namespace Lucene.Net.Util.Fst
 		{
 		  if (fst.FindTargetArc(input.Bytes[i + input.Offset] & 0xFF, arc, arc, fstReader) == null)
 		  {
-			return null;
+			return default(T);
 		  }
-		  output = fst.Outputs.add(output, arc.Output);
+		  output = fst.Outputs.Add(output, arc.Output);
 		}
 
 		if (arc.Final)
 		{
-		  return fst.Outputs.add(output, arc.NextFinalOutput);
+		  return fst.Outputs.Add(output, arc.NextFinalOutput);
 		}
 		else
 		{
-		  return null;
+            return default(T);
 		}
 	  }
 
@@ -129,20 +124,16 @@ namespace Lucene.Net.Util.Fst
 	  ///  2, ...), or file offets (when appending to a file)
 	  ///  fit this. 
 	  /// </summary>
-	  public static IntsRef GetByOutput(FST<long?> fst, long targetOutput)
+	  public static IntsRef GetByOutput(FST<long> fst, long targetOutput)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.BytesReader in = fst.getBytesReader();
-		BytesReader @in = fst.BytesReader;
+		var @in = fst.GetBytesReader;
 
 		// TODO: would be nice not to alloc this on every lookup
-		FST.Arc<long?> arc = fst.GetFirstArc(new FST.Arc<long?>());
+        FST<long>.Arc<long> arc = fst.GetFirstArc(new FST<long>.Arc<long>());
 
-		FST.Arc<long?> scratchArc = new FST.Arc<long?>();
+        FST<long>.Arc<long> scratchArc = new FST<long>.Arc<long>();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.IntsRef result = new Lucene.Net.Util.IntsRef();
 		IntsRef result = new IntsRef();
 
 		return GetByOutput(fst, targetOutput, @in, arc, scratchArc, result);
@@ -152,7 +143,7 @@ namespace Lucene.Net.Util.Fst
 	  /// Expert: like <seealso cref="Util#getByOutput(FST, long)"/> except reusing 
 	  /// BytesReader, initial and scratch Arc, and result.
 	  /// </summary>
-	  public static IntsRef GetByOutput(FST<long?> fst, long targetOutput, BytesReader @in, Arc<long?> arc, Arc<long?> scratchArc, IntsRef result)
+	  public static IntsRef GetByOutput(FST<long> fst, long targetOutput, FST<long>.BytesReader @in, FST<long>.Arc<long> arc, FST<long>.Arc<long> scratchArc, IntsRef result)
 	  {
 		long output = arc.Output;
 		int upto = 0;
@@ -164,8 +155,6 @@ namespace Lucene.Net.Util.Fst
 		  //System.out.println("loop: output=" + output + " upto=" + upto + " arc=" + arc);
 		  if (arc.Final)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long finalOutput = output + arc.nextFinalOutput;
 			long finalOutput = output + arc.NextFinalOutput;
 			//System.out.println("  isFinal finalOutput=" + finalOutput);
 			if (finalOutput == targetOutput)
@@ -181,7 +170,7 @@ namespace Lucene.Net.Util.Fst
 			}
 		  }
 
-		  if (FST.TargetHasArcs(arc))
+          if (FST<long>.TargetHasArcs(arc))
 		  {
 			//System.out.println("  targetHasArcs");
 			if (result.Ints.Length == upto)
@@ -204,25 +193,18 @@ namespace Lucene.Net.Util.Fst
 				mid = (int)((uint)(low + high) >> 1);
 				@in.Position = arc.PosArcsStart;
 				@in.SkipBytes(arc.BytesPerArc * mid);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte flags = in.readByte();
 				sbyte flags = @in.ReadByte();
 				fst.ReadLabel(@in);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long minArcOutput;
 				long minArcOutput;
-				if ((flags & FST.BIT_ARC_HAS_OUTPUT) != 0)
+                if ((flags & FST<long>.BIT_ARC_HAS_OUTPUT) != 0)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long arcOutput = fst.outputs.read(in);
-				  long arcOutput = fst.Outputs.read(@in);
+				  long arcOutput = fst.Outputs.Read(@in);
 				  minArcOutput = output + arcOutput;
 				}
 				else
 				{
 				  minArcOutput = output;
 				}
-				//System.out.println("  cycle mid=" + mid + " label=" + (char) label + " output=" + minArcOutput);
 				if (minArcOutput == targetOutput)
 				{
 				  exact = true;
@@ -259,7 +241,7 @@ namespace Lucene.Net.Util.Fst
 			else
 			{
 
-			  FST.Arc<long?> prevArc = null;
+                FST<long>.Arc<long> prevArc = null;
 
 			  while (true)
 			  {
@@ -330,15 +312,15 @@ namespace Lucene.Net.Util.Fst
 	  /// </summary>
 	  public class FSTPath<T>
 	  {
-		public FST.Arc<T> Arc;
+		public FST<T>.Arc<T> Arc;
 		public T Cost;
 		public readonly IntsRef Input;
 
 		/// <summary>
 		/// Sole constructor </summary>
-		public FSTPath(T cost, FST.Arc<T> arc, IntsRef input)
+		public FSTPath(T cost, FST<T>.Arc<T> arc, IntsRef input)
 		{
-		  this.Arc = (new FST.Arc<T>()).CopyFrom(arc);
+		  this.Arc = (new FST<T>.Arc<T>()).CopyFrom(arc);
 		  this.Cost = cost;
 		  this.Input = input;
 		}
@@ -353,7 +335,7 @@ namespace Lucene.Net.Util.Fst
 	  /// Compares first by the provided comparator, and then
 	  ///  tie breaks by path.input. 
 	  /// </summary>
-	  private class TieBreakByInputComparator<T> : Comparator<FSTPath<T>>
+	  private class TieBreakByInputComparator<T> : IComparer<FSTPath<T>>
 	  {
 		internal readonly IComparer<T> Comparator;
 		public TieBreakByInputComparator(IComparer<T> comparator)
@@ -383,11 +365,11 @@ namespace Lucene.Net.Util.Fst
 	  {
 
 		internal readonly FST<T> Fst;
-		internal readonly BytesReader BytesReader;
+		internal readonly FST<T>.BytesReader BytesReader;
 		internal readonly int TopN;
 		internal readonly int MaxQueueDepth;
 
-		internal readonly FST.Arc<T> ScratchArc = new FST.Arc<T>();
+		internal readonly FST<T>.Arc<T> ScratchArc = new FST<T>.Arc<T>();
 
 		internal readonly IComparer<T> Comparator;
 
@@ -402,12 +384,12 @@ namespace Lucene.Net.Util.Fst
 		public TopNSearcher(FST<T> fst, int topN, int maxQueueDepth, IComparer<T> comparator)
 		{
 		  this.Fst = fst;
-		  this.BytesReader = fst.BytesReader;
+		  this.BytesReader = fst.GetBytesReader;
 		  this.TopN = topN;
 		  this.MaxQueueDepth = maxQueueDepth;
 		  this.Comparator = comparator;
 
-		  Queue = new SortedSet<>(new TieBreakByInputComparator<>(comparator));
+		  Queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparator<T>(comparator));
 		}
 
 		// If back plus this arc is competitive then add to queue:
@@ -416,7 +398,7 @@ namespace Lucene.Net.Util.Fst
 
 		  Debug.Assert(Queue != null);
 
-		  T cost = Fst.Outputs.add(path.Cost, path.Arc.output);
+		  T cost = Fst.Outputs.Add(path.Cost, path.Arc.Output);
 		  //System.out.println("  addIfCompetitive queue.size()=" + queue.size() + " path=" + path + " + label=" + path.arc.label);
 
 		  if (Queue.Count == MaxQueueDepth)
@@ -431,12 +413,10 @@ namespace Lucene.Net.Util.Fst
 			else if (comp == 0)
 			{
 			  // Tie break by alpha sort on the input:
-			  path.Input.grow(path.Input.length + 1);
-			  path.Input.ints[path.Input.length++] = path.Arc.label;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = bottom.input.compareTo(path.input);
+			  path.Input.Grow(path.Input.Length + 1);
+			  path.Input.Ints[path.Input.Length++] = path.Arc.Label;
 			  int cmp = bottom.Input.CompareTo(path.Input);
-			  path.Input.length--;
+			  path.Input.Length--;
 
 			  // We should never see dups:
 			  Debug.Assert(cmp != 0);
@@ -456,9 +436,9 @@ namespace Lucene.Net.Util.Fst
 
 		  // copy over the current input to the new input
 		  // and add the arc.label to the end
-		  IntsRef newInput = new IntsRef(path.Input.length + 1);
-		  Array.Copy(path.Input.ints, 0, newInput.Ints, 0, path.Input.length);
-		  newInput.Ints[path.Input.length] = path.Arc.label;
+		  IntsRef newInput = new IntsRef(path.Input.Length + 1);
+		  Array.Copy(path.Input.Ints, 0, newInput.Ints, 0, path.Input.Length);
+		  newInput.Ints[path.Input.Length] = path.Arc.Label;
 		  newInput.Length = path.Input.Length + 1;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FSTPath<T> newPath = new FSTPath<>(cost, path.arc, newInput);
@@ -476,7 +456,7 @@ namespace Lucene.Net.Util.Fst
 		/// Adds all leaving arcs, including 'finished' arc, if
 		///  the node is final, from this node into the queue.  
 		/// </summary>
-		public virtual void AddStartPaths(FST.Arc<T> node, T startOutput, bool allowEmptyString, IntsRef input)
+		public virtual void AddStartPaths(FST<T>.Arc<T> node, T startOutput, bool allowEmptyString, IntsRef input)
 		{
 
 		  // De-dup NO_OUTPUT since it must be a singleton:
@@ -493,7 +473,7 @@ namespace Lucene.Net.Util.Fst
 		  // Bootstrap: find the min starting arc
 		  while (true)
 		  {
-			if (allowEmptyString || path.Arc.label != FST.END_LABEL)
+			if (allowEmptyString || path.Arc.Label != FST<T>.END_LABEL)
 			{
 			  AddIfCompetitive(path);
 			}
@@ -508,17 +488,11 @@ namespace Lucene.Net.Util.Fst
 		public virtual TopResults<T> Search()
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Result<T>> results = new java.util.ArrayList<>();
 		  IList<Result<T>> results = new List<Result<T>>();
 
 		  //System.out.println("search topN=" + topN);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.BytesReader fstReader = fst.getBytesReader();
-		  BytesReader fstReader = Fst.BytesReader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T NO_OUTPUT = fst.outputs.getNoOutput();
+		  var fstReader = Fst.GetBytesReader;
 		  T NO_OUTPUT = Fst.Outputs.NoOutput;
 
 		  // TODO: we could enable FST to sorting arcs by weight
@@ -554,12 +528,12 @@ namespace Lucene.Net.Util.Fst
 			  break;
 			}
 
-			if (path.Arc.label == FST.END_LABEL)
+			if (path.Arc.Label == FST<T>.END_LABEL)
 			{
 			  //System.out.println("    empty string!  cost=" + path.cost);
 			  // Empty string!
-			  path.Input.length--;
-			  results.Add(new Result<>(path.Input, path.Cost));
+			  path.Input.Length--;
+			  results.Add(new Result<T>(path.Input, path.Cost));
 			  continue;
 			}
 
@@ -591,7 +565,7 @@ namespace Lucene.Net.Util.Fst
 				//System.out.println("      arc=" + (char) path.arc.label + " cost=" + path.arc.output);
 				// tricky: instead of comparing output == 0, we must
 				// express it via the comparator compare(output, 0) == 0
-				if (Comparator.Compare(NO_OUTPUT, path.Arc.output) == 0)
+				if (Comparator.Compare(NO_OUTPUT, path.Arc.Output) == 0)
 				{
 				  if (Queue == null)
 				  {
@@ -627,18 +601,18 @@ namespace Lucene.Net.Util.Fst
 				// are more clever above... eg on finding the
 				// first NO_OUTPUT arc we'd switch to using
 				// scratchArc
-				path.Arc.copyFrom(ScratchArc);
+				path.Arc.CopyFrom(ScratchArc);
 			  }
 
-			  if (path.Arc.label == FST.END_LABEL)
+			  if (path.Arc.Label == FST<T>.END_LABEL)
 			  {
 				// Add final output:
 				//System.out.println("    done!: " + path);
-				T finalOutput = Fst.Outputs.add(path.Cost, path.Arc.output);
+				T finalOutput = Fst.Outputs.Add(path.Cost, path.Arc.Output);
 				if (AcceptResult(path.Input, finalOutput))
 				{
 				  //System.out.println("    add result: " + path);
-				  results.Add(new Result<>(path.Input, finalOutput));
+				  results.Add(new Result<T>(path.Input, finalOutput));
 				}
 				else
 				{
@@ -648,14 +622,14 @@ namespace Lucene.Net.Util.Fst
 			  }
 			  else
 			  {
-				path.Input.grow(1 + path.Input.length);
-				path.Input.ints[path.Input.length] = path.Arc.label;
-				path.Input.length++;
-				path.Cost = Fst.Outputs.add(path.Cost, path.Arc.output);
+				path.Input.Grow(1 + path.Input.Length);
+				path.Input.Ints[path.Input.Length] = path.Arc.Label;
+				path.Input.Length++;
+				path.Cost = Fst.Outputs.Add(path.Cost, path.Arc.Output);
 			  }
 			}
 		  }
-		  return new TopResults<>(rejectCount + TopN <= MaxQueueDepth, results);
+		  return new TopResults<T>(rejectCount + TopN <= MaxQueueDepth, results);
 		}
 
 		protected internal virtual bool AcceptResult(IntsRef input, T output)
@@ -714,7 +688,7 @@ namespace Lucene.Net.Util.Fst
 	  /// Starting from node, find the top N min cost 
 	  ///  completions to a final node. 
 	  /// </summary>
-	  public static TopResults<T> shortestPaths<T>(FST<T> fst, FST.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
+	  public static TopResults<T> shortestPaths<T>(FST<T> fst, FST<T>.Arc<T> fromNode, T startOutput, IComparer<T> comparator, int topN, bool allowEmptyString)
 	  {
 
 		// All paths are kept, so we can pass topN for
@@ -764,30 +738,20 @@ namespace Lucene.Net.Util.Fst
 
 		// this is the start arc in the automaton (from the epsilon state to the first state 
 		// with outgoing transitions.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FST.Arc<T> startArc = fst.getFirstArc(new FST.Arc<T>());
-		FST.Arc<T> startArc = fst.GetFirstArc(new FST.Arc<T>());
+        FST<T>.Arc<T> startArc = fst.GetFirstArc(new FST<T>.Arc<T>());
 
 		// A queue of transitions to consider for the next level.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<FST.Arc<T>> thisLevelQueue = new java.util.ArrayList<>();
-		IList<FST.Arc<T>> thisLevelQueue = new List<FST.Arc<T>>();
+        IList<FST<T>.Arc<T>> thisLevelQueue = new List<FST<T>.Arc<T>>();
 
 		// A queue of transitions to consider when processing the next level.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<FST.Arc<T>> nextLevelQueue = new java.util.ArrayList<>();
-		IList<FST.Arc<T>> nextLevelQueue = new List<FST.Arc<T>>();
+        IList<FST<T>.Arc<T>> nextLevelQueue = new List<FST<T>.Arc<T>>();
 		nextLevelQueue.Add(startArc);
 		//System.out.println("toDot: startArc: " + startArc);
 
 		// A list of states on the same level (for ranking).
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Integer> sameLevelStates = new java.util.ArrayList<>();
 		IList<int?> sameLevelStates = new List<int?>();
 
 		// A bitset of already seen states (target offset).
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.BitSet seen = new java.util.BitSet();
 		BitArray seen = new BitArray();
 		seen.Set((int) startArc.Target, true);
 
@@ -806,18 +770,12 @@ namespace Lucene.Net.Util.Fst
 
 		EmitDotState(@out, "initial", "point", "white", "");
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T NO_OUTPUT = fst.outputs.getNoOutput();
 		T NO_OUTPUT = fst.Outputs.NoOutput;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Fst.FST.BytesReader r = fst.getBytesReader();
-		BytesReader r = fst.BytesReader;
+		var r = fst.GetBytesReader;
 
 		// final FST.Arc<T> scratchArc = new FST.Arc<>();
 
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String stateColor;
 		  string stateColor;
 		  if (fst.IsExpandedTarget(startArc, r))
 		  {
@@ -828,11 +786,7 @@ namespace Lucene.Net.Util.Fst
 			stateColor = null;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isFinal;
 		  bool isFinal;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T finalOutput;
 		  T finalOutput;
 		  if (startArc.Final)
 		  {
@@ -842,10 +796,10 @@ namespace Lucene.Net.Util.Fst
 		  else
 		  {
 			isFinal = false;
-			finalOutput = null;
+			finalOutput = default(T);
 		  }
 
-		  EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.outputToString(finalOutput));
+		  EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
 		}
 
 		@out.write("  initial -> " + startArc.Target + "\n");
@@ -863,17 +817,13 @@ namespace Lucene.Net.Util.Fst
 		  @out.write("\n  // Transitions and states at level: " + level + "\n");
 		  while (thisLevelQueue.Count > 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FST.Arc<T> arc = thisLevelQueue.remove(thisLevelQueue.size() - 1);
-			FST.Arc<T> arc = thisLevelQueue.Remove(thisLevelQueue.Count - 1);
+			FST<T>.Arc<T> arc = thisLevelQueue.Remove(thisLevelQueue.Count - 1);
 			//System.out.println("  pop: " + arc);
-			if (FST.TargetHasArcs(arc))
+			if (FST<T>.TargetHasArcs(arc))
 			{
 			  // scan all target arcs
 			  //System.out.println("  readFirstTarget...");
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long node = arc.target;
 			  long node = arc.Target;
 
 			  fst.ReadFirstRealTargetArc(arc.Target, arc, r);
@@ -899,8 +849,6 @@ namespace Lucene.Net.Util.Fst
 				    System.out.println("dot hit final label=" + (char) scratchArc.label);
 				  }
 				  */
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String stateColor;
 				  string stateColor;
 				  if (fst.IsExpandedTarget(arc, r))
 				  {
@@ -911,12 +859,10 @@ namespace Lucene.Net.Util.Fst
 					stateColor = null;
 				  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String finalOutput;
 				  string finalOutput;
 				  if (arc.NextFinalOutput != null && arc.NextFinalOutput != NO_OUTPUT)
 				  {
-					finalOutput = fst.Outputs.outputToString(arc.NextFinalOutput);
+					finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
 				  }
 				  else
 				  {
@@ -927,21 +873,21 @@ namespace Lucene.Net.Util.Fst
 				  // To see the node address, use this instead:
 				  //emitDotState(out, Integer.toString(arc.target), stateShape, stateColor, String.valueOf(arc.target));
 				  seen.Set((int) arc.Target, true);
-				  nextLevelQueue.Add((new FST.Arc<T>()).CopyFrom(arc));
+				  nextLevelQueue.Add((new FST<T>.Arc<T>()).CopyFrom(arc));
 				  sameLevelStates.Add((int) arc.Target);
 				}
 
 				string outs;
 				if (arc.Output != NO_OUTPUT)
 				{
-				  outs = "/" + fst.Outputs.outputToString(arc.Output);
+				  outs = "/" + fst.Outputs.OutputToString(arc.Output);
 				}
 				else
 				{
 				  outs = "";
 				}
 
-				if (!FST.TargetHasArcs(arc) && arc.Final && arc.NextFinalOutput != NO_OUTPUT)
+				if (!FST<T>.TargetHasArcs(arc) && arc.Final && arc.NextFinalOutput != NO_OUTPUT)
 				{
 				  // Tricky special case: sometimes, due to
 				  // pruning, the builder can [sillily] produce
@@ -949,13 +895,11 @@ namespace Lucene.Net.Util.Fst
 				  // (-1) but also with a next final output; in
 				  // this case we pull that output up onto this
 				  // arc
-				  outs = outs + "/[" + fst.Outputs.outputToString(arc.NextFinalOutput) + "]";
+				  outs = outs + "/[" + fst.Outputs.OutputToString(arc.NextFinalOutput) + "]";
 				}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String arcColor;
 				string arcColor;
-				if (arc.Flag(FST.BIT_TARGET_NEXT))
+				if (arc.Flag(FST<T>.BIT_TARGET_NEXT))
 				{
 				  arcColor = "red";
 				}
@@ -964,7 +908,7 @@ namespace Lucene.Net.Util.Fst
 				  arcColor = "black";
 				}
 
-				Debug.Assert(arc.Label != FST.END_LABEL);
+				Debug.Assert(arc.Label != FST<T>.END_LABEL);
 				@out.write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.Final ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
 
 				// Break the loop if we're on the last arc of this state.
@@ -1049,14 +993,10 @@ namespace Lucene.Net.Util.Fst
 	  {
 		int charIdx = 0;
 		int intIdx = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int charLimit = s.length();
 		int charLimit = s.length();
 		while (charIdx < charLimit)
 		{
 		  scratch.Grow(intIdx + 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int utf32 = Character.codePointAt(s, charIdx);
 		  int utf32 = char.codePointAt(s, charIdx);
 		  scratch.Ints[intIdx] = utf32;
 		  charIdx += char.charCount(utf32);
@@ -1075,14 +1015,10 @@ namespace Lucene.Net.Util.Fst
 	  {
 		int charIdx = offset;
 		int intIdx = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int charLimit = offset + length;
 		int charLimit = offset + length;
 		while (charIdx < charLimit)
 		{
 		  scratch.Grow(intIdx + 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int utf32 = Character.codePointAt(s, charIdx, charLimit);
 		  int utf32 = char.codePointAt(s, charIdx, charLimit);
 		  scratch.Ints[intIdx] = utf32;
 		  charIdx += char.charCount(utf32);
@@ -1144,16 +1080,16 @@ namespace Lucene.Net.Util.Fst
 	  /// <param name="follow"> the arc to follow reading the label from </param>
 	  /// <param name="arc"> the arc to read into in place </param>
 	  /// <param name="in"> the fst's <seealso cref="BytesReader"/> </param>
-	  public static Arc<T> readCeilArc<T>(int label, FST<T> fst, Arc<T> follow, Arc<T> arc, BytesReader @in)
+      public static FST<T>.Arc<T> readCeilArc<T>(int label, FST<T> fst, FST<T>.Arc<T> follow, FST<T>.Arc<T> arc, FST<T>.BytesReader @in)
 	  {
 		// TODO maybe this is a useful in the FST class - we could simplify some other code like FSTEnum?
-		if (label == FST.END_LABEL)
+		if (label == FST<T>.END_LABEL)
 		{
 		  if (follow.Final)
 		  {
 			if (follow.Target <= 0)
 			{
-			  arc.Flags = FST.BIT_LAST_ARC;
+			  arc.Flags = FST<T>.BIT_LAST_ARC;
 			}
 			else
 			{
@@ -1163,7 +1099,7 @@ namespace Lucene.Net.Util.Fst
 			  arc.Node = follow.Target;
 			}
 			arc.Output = follow.NextFinalOutput;
-			arc.Label = FST.END_LABEL;
+			arc.Label = FST<T>.END_LABEL;
 			return arc;
 		  }
 		  else
@@ -1172,12 +1108,12 @@ namespace Lucene.Net.Util.Fst
 		  }
 		}
 
-		if (!FST.TargetHasArcs(follow))
+		if (!FST<T>.TargetHasArcs(follow))
 		{
 		  return null;
 		}
 		fst.ReadFirstTargetArc(follow, arc, @in);
-		if (arc.BytesPerArc != 0 && arc.Label != FST.END_LABEL)
+		if (arc.BytesPerArc != 0 && arc.Label != FST<T>.END_LABEL)
 		{
 		  // Arcs are fixed array -- use binary search to find
 		  // the target.

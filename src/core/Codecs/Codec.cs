@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs
 
 	  private static readonly NamedSPILoader<Codec> Loader = new NamedSPILoader<Codec>(typeof(Codec));
 
-	  private readonly string Name_Renamed;
+	  private readonly string name;
 
 	  /// <summary>
 	  /// Creates a new codec.
@@ -50,10 +50,10 @@ namespace Lucene.Net.Codecs
 	  /// for the segment to be read this class should be registered with Java's
 	  /// SPI mechanism (registered in META-INF/ of your jar file, etc). </summary>
 	  /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
-	  protected internal Codec(string name)
+	  protected internal Codec(string name_)
 	  {
-		NamedSPILoader<Codec>.CheckServiceName(name);
-		this.Name_Renamed = name;
+		NamedSPILoader<Codec>.CheckServiceName(name_);
+		this.name = name_;
 	  }
 
 	  /// <summary>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs
 	  {
 		  get
 		  {
-			return Name_Renamed;
+			return name;
 		  }
 	  }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs
 	  /// </summary>
 	  public override string ToString()
 	  {
-		return Name_Renamed;
+		return name;
 	  }
 	}
 

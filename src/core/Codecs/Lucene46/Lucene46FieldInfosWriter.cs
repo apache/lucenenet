@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		  output.WriteVInt(infos.Size());
 		  foreach (FieldInfo fi in infos)
 		  {
-			FieldInfo.IndexOptions_e indexOptions = fi.IndexOptions;
+			FieldInfo.IndexOptions_e? indexOptions = fi.IndexOptions;
 			sbyte bits = 0x0;
 			if (fi.HasVectors())
 			{
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene46
 			if (fi.Indexed)
 			{
 			  bits |= Lucene46FieldInfosFormat.IS_INDEXED;
-			  Debug.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads());
+			  Debug.Assert(indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
 			  if (indexOptions == IndexOptions.DOCS_ONLY)
 			  {
 				bits |= Lucene46FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		}
 	  }
 
-	  private static sbyte DocValuesByte(DocValuesType type)
+	  private static sbyte DocValuesByte(DocValuesType? type)
 	  {
 		if (type == null)
 		{

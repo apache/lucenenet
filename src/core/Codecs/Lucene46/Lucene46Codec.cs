@@ -45,31 +45,35 @@ namespace Lucene.Net.Codecs.Lucene46
 	  private readonly SegmentInfoFormat SegmentInfosFormat = new Lucene46SegmentInfoFormat();
 	  private readonly LiveDocsFormat LiveDocsFormat_Renamed = new Lucene40LiveDocsFormat();
 
-	  private readonly PostingsFormat postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper();
+	  private readonly PostingsFormat postingsFormat;
 
 	  private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
 	  {
-		  public PerFieldPostingsFormatAnonymousInnerClassHelper()
+          private readonly Lucene46Codec OuterInstance;
+          public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene46Codec outerInstance)
 		  {
+              this.OuterInstance = outerInstance;
 		  }
 
 		  public override PostingsFormat GetPostingsFormatForField(string field)
 		  {
-			return outerInstance.GetPostingsFormatForField(field);
+			return OuterInstance.GetPostingsFormatForField(field);
 		  }
 	  }
 
-	  private readonly DocValuesFormat docValuesFormat = new PerFieldDocValuesFormatAnonymousInnerClassHelper();
+	  private readonly DocValuesFormat docValuesFormat;
 
 	  private class PerFieldDocValuesFormatAnonymousInnerClassHelper : PerFieldDocValuesFormat
 	  {
-		  public PerFieldDocValuesFormatAnonymousInnerClassHelper()
+          private readonly Lucene46Codec OuterInstance;
+          public PerFieldDocValuesFormatAnonymousInnerClassHelper(Lucene46Codec outerInstance)
 		  {
-		  }
+              this.OuterInstance = outerInstance;
+          }
 
 		  public override DocValuesFormat GetDocValuesFormatForField(string field)
 		  {
-			return outerInstance.getDocValuesFormatForField(field);
+			return OuterInstance.GetDocValuesFormatForField(field);
 		  }
 	  }
 
@@ -77,6 +81,8 @@ namespace Lucene.Net.Codecs.Lucene46
 	  /// Sole constructor. </summary>
 	  public Lucene46Codec() : base("Lucene46")
 	  {
+          postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
+          docValuesFormat = new PerFieldDocValuesFormatAnonymousInnerClassHelper(this);
 	  }
 
 	  public override sealed StoredFieldsFormat StoredFieldsFormat

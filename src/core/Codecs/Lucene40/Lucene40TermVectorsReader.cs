@@ -330,7 +330,8 @@ namespace Lucene.Net.Codecs.Lucene40
 			  }
 			  else
 			  {
-				throw new NoSuchElementException();
+                  //LUCENE TO-DO NoSuchElementException
+				throw new InvalidOperationException();
 			  }
 			}
 
@@ -347,8 +348,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		public override Terms Terms(string field)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
           FieldInfo fieldInfo = OuterInstance.FieldInfos.FieldInfo(field);
 		  if (fieldInfo == null)
 		  {
@@ -356,8 +355,6 @@ namespace Lucene.Net.Codecs.Lucene40
 			return null;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer fieldIndex = fieldNumberToIndex.get(fieldInfo.number);
 		  int fieldIndex = FieldNumberToIndex[fieldInfo.Number];
 		  if (fieldIndex == null)
 		  {
@@ -532,11 +529,11 @@ namespace Lucene.Net.Codecs.Lucene40
 		  NextTerm = 0;
 		  Tvf.Seek(tvfFPStart);
 		  TvfFP = tvfFPStart;
-		  Positions = Lucene.Net.Util.BytesRefIterator_Fields.Null;
-		  StartOffsets = Lucene.Net.Util.BytesRefIterator_Fields.Null;
-		  EndOffsets = Lucene.Net.Util.BytesRefIterator_Fields.Null;
-		  PayloadOffsets = Lucene.Net.Util.BytesRefIterator_Fields.Null;
-		  PayloadData = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  Positions = null;
+          StartOffsets = null;
+          EndOffsets = null;
+          PayloadOffsets = null;
+          PayloadData = null;
 		  LastPayloadLength = -1;
 		}
 
@@ -545,8 +542,6 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (NextTerm != 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = text.compareTo(term);
 			int cmp = text.CompareTo(Term_Renamed);
 			if (cmp < 0)
 			{
@@ -559,10 +554,8 @@ namespace Lucene.Net.Codecs.Lucene40
 			}
 		  }
 
-		  while (Next() != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+          while (Next() != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = text.compareTo(term);
 			int cmp = text.CompareTo(Term_Renamed);
 			if (cmp < 0)
 			{
@@ -586,14 +579,10 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (NextTerm >= NumTerms)
 		  {
-			return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			return null;
 		  }
 		  Term_Renamed.CopyBytes(LastTerm);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = tvf.readVInt();
 		  int start = Tvf.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int deltaLen = tvf.readVInt();
 		  int deltaLen = Tvf.ReadVInt();
 		  Term_Renamed.Length = start + deltaLen;
 		  Term_Renamed.Grow(Term_Renamed.Length);
@@ -677,7 +666,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags) // ignored
 		{
 		  TVDocsEnum docsEnum;
-		  if (reuse != Lucene.Net.Util.BytesRefIterator_Fields.Null && reuse is TVDocsEnum)
+		  if (reuse != null && reuse is TVDocsEnum)
 		  {
 			docsEnum = (TVDocsEnum) reuse;
 		  }
@@ -694,11 +683,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		  if (!StorePositions && !StoreOffsets)
 		  {
-			return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			return null;
 		  }
 
 		  TVDocsAndPositionsEnum docsAndPositionsEnum;
-		  if (reuse != Lucene.Net.Util.BytesRefIterator_Fields.Null && reuse is TVDocsAndPositionsEnum)
+		  if (reuse != null && reuse is TVDocsAndPositionsEnum)
 		  {
 			docsAndPositionsEnum = (TVDocsAndPositionsEnum) reuse;
 		  }

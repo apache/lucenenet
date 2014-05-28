@@ -42,12 +42,14 @@ namespace Lucene.Net.Codecs.Lucene40
 	  private readonly SegmentInfoFormat InfosFormat = new Lucene40SegmentInfoFormat();
 	  private readonly LiveDocsFormat LiveDocsFormat_Renamed = new Lucene40LiveDocsFormat();
 
-	  private readonly PostingsFormat postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper();
+	  private readonly PostingsFormat postingsFormat;
 
 	  private class PerFieldPostingsFormatAnonymousInnerClassHelper : PerFieldPostingsFormat
 	  {
-		  public PerFieldPostingsFormatAnonymousInnerClassHelper()
+          private readonly Lucene40Codec OuterInstance;
+          public PerFieldPostingsFormatAnonymousInnerClassHelper(Lucene40Codec outerInstance)
 		  {
+              this.OuterInstance = outerInstance;
 		  }
 
 		  public override PostingsFormat GetPostingsFormatForField(string field)
@@ -60,6 +62,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Sole constructor. </summary>
 	  public Lucene40Codec() : base("Lucene40")
 	  {
+          postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
 	  }
 
 	  public override sealed StoredFieldsFormat StoredFieldsFormat

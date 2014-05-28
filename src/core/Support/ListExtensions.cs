@@ -34,6 +34,17 @@ namespace Lucene.Net.Support
 
             return new SubList<T>(list, fromIndex, toIndex);
         }
+
+        public static T[] ToArray<T>(this IList<T> list)
+        {
+            if (list is Array) return (T[])list;
+
+            T[] retval = new T[list.Count];
+            for (int i = 0; i < retval.Length; i++)
+                retval[i] = list[i];
+
+            return retval;
+        } 
     }
 
     public sealed class SubList<T> : IList<T>

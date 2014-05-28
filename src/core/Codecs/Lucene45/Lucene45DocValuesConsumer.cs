@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene45
@@ -36,6 +38,8 @@ namespace Lucene.Net.Codecs.Lucene45
 	using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using Lucene.Net.Support;
+    using Lucene.Net.Store;
+    using Lucene.Net.Util;
 
 	/// <summary>
 	/// writer for <seealso cref="Lucene45DocValuesFormat"/> </summary>
@@ -44,7 +48,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  internal const int BLOCK_SIZE = 16384;
 	  internal const int ADDRESS_INTERVAL = 16;
-	  internal static readonly Number MISSING_ORD = Convert.ToInt64(-1);
+	  internal static readonly long MISSING_ORD = BitConverter.DoubleToInt64Bits(-1);
 
 	  /// <summary>
 	  /// Compressed using packed blocks of ints. </summary>
@@ -105,12 +109,12 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 	  }
 
-	  public override void AddNumericField(FieldInfo field, IEnumerable<Number> values)
+	  public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
 	  {
 		AddNumericField(field, values, true);
 	  }
 
-	  internal virtual void AddNumericField(FieldInfo field, IEnumerable<Number> values, bool optimizeStorage)
+	  internal virtual void AddNumericField(FieldInfo field, IEnumerable<long> values, bool optimizeStorage)
 	  {
 		long count = 0;
 		long minValue = long.MaxValue;
@@ -123,7 +127,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		{
 		  uniqueValues = new HashSet<long>();
 
-		  foreach (Number nv in values)
+		  foreach (long nv in values)
 		  {
 			long v;
 			if (nv == null)
@@ -133,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			}
 			else
 			{
-			  v = (long)nv;
+			  v = nv;
 			}
 
 			if (gcd != 1)
@@ -170,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 		else
 		{
-          foreach (Number nv in values)
+          foreach (long nv in values)
 		  {
 			++count;
 		  }
@@ -197,7 +201,8 @@ namespace Lucene.Net.Codecs.Lucene45
 		if (missing)
 		{
 		  Meta.WriteLong(Data.FilePointer);
-		  WriteMissingBitset(values);
+          //LUCENE TO-DO
+		  //WriteMissingBitset(values);
 		}
 		else
 		{
@@ -214,23 +219,23 @@ namespace Lucene.Net.Codecs.Lucene45
 			Meta.WriteLong(minValue);
 			Meta.WriteLong(gcd);
 			BlockPackedWriter quotientWriter = new BlockPackedWriter(Data, BLOCK_SIZE);
-			foreach (Number nv in values)
+			foreach (long nv in values)
 			{
-			  long value = nv == null ? 0 : (long)nv;
+			  long value = nv == null ? 0 : nv;
 			  quotientWriter.Add((value - minValue) / gcd);
 			}
 			quotientWriter.Finish();
 			break;
 		  case DELTA_COMPRESSED:
 			BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-			foreach (Number nv in values)
+			foreach (long nv in values)
 			{
-			  writer.Add(nv == null ? 0 : (long)nv);
+			  writer.Add(nv == null ? 0 : nv);
 			}
 			writer.Finish();
 			break;
 		  case TABLE_COMPRESSED:
-			long[] decode = uniqueValues.ToArray(new long[uniqueValues.Count]);
+			long[] decode = uniqueValues.ToArray();//LUCENE TO-DO Hadd oparamerter before
 			Dictionary<long, int> encode = new Dictionary<long, int>();
 			Meta.WriteVInt(decode.Length);
 			for (int i = 0; i < decode.Length; i++)
@@ -240,9 +245,9 @@ namespace Lucene.Net.Codecs.Lucene45
 			}
 			int bitsRequired = PackedInts.BitsRequired(uniqueValues.Count - 1);
 			PackedInts.Writer ordsWriter = PackedInts.GetWriterNoHeader(Data, PackedInts.Format.PACKED, (int) count, bitsRequired, PackedInts.DEFAULT_BUFFER_SIZE);
-			foreach (Number nv in values)
+			foreach (long nv in values)
 			{
-			  ordsWriter.Add(encode[nv == null ? 0 : (long)nv]);
+			  ordsWriter.Add(encode[nv == null ? 0 : nv]);
 			}
 			ordsWriter.Finish();
 			break;
@@ -311,7 +316,8 @@ namespace Lucene.Net.Codecs.Lucene45
 		if (missing)
 		{
 		  Meta.WriteLong(Data.FilePointer);
-		  WriteMissingBitset(values);
+          //LUCENE TO-DO
+          //WriteMissingBitset(values);
 		}
 		else
 		{
@@ -393,8 +399,6 @@ namespace Lucene.Net.Codecs.Lucene45
 			lastTerm.CopyBytes(v);
 			count++;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long indexStartFP = data.getFilePointer();
 		  long indexStartFP = Data.FilePointer;
 		  // write addresses of indexed terms
 		  termAddresses.Finish();
@@ -412,7 +416,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 	  }
 
-	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
+	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 	  {
 		Meta.WriteVInt(field.Number);
 		Meta.WriteByte(Lucene45DocValuesFormat.SORTED);
@@ -420,9 +424,9 @@ namespace Lucene.Net.Codecs.Lucene45
 		AddNumericField(field, docToOrd, false);
 	  }
 
-	  private static bool IsSingleValued(IEnumerable<Number> docToOrdCount)
+	  private static bool IsSingleValued(IEnumerable<int> docToOrdCount)
 	  {
-		foreach (Number ordCount in docToOrdCount)
+		foreach (int ordCount in docToOrdCount)
 		{
 		  if ((long)ordCount > 1)
 		  {
@@ -432,7 +436,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		return true;
 	  }
 
-	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrdCount, IEnumerable<long> ords)
 	  {
 		Meta.WriteVInt(field.Number);
 		Meta.WriteByte(Lucene45DocValuesFormat.SORTED_SET);
@@ -441,7 +445,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		{
 		  Meta.WriteVInt(SORTED_SET_SINGLE_VALUED_SORTED);
 		  // The field is single-valued, we can encode it as SORTED
-		  AddSortedField(field, values, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
+		  AddSortedField(field, values, new IterableAnonymousInnerClassHelper(docToOrdCount, ords));
 		  return;
 		}
 
@@ -466,7 +470,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 		MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
 		long addr = 0;
-		foreach (Number v in docToOrdCount)
+		foreach (int v in docToOrdCount)
 		{
 		  addr += (long)v;
 		  writer.Add(addr);
@@ -474,29 +478,109 @@ namespace Lucene.Net.Codecs.Lucene45
 		writer.Finish();
 	  }
 
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
+      private class IterableAnonymousInnerClassHelper : IEnumerable<long>
 	  {
 		  private readonly Lucene45DocValuesConsumer OuterInstance;
 
-		  private IEnumerable<Number> DocToOrdCount;
-		  private IEnumerable<Number> Ords;
+		  private IEnumerable<int> DocToOrdCount;
+		  private IEnumerable<long> Ords;
 
-		  public IterableAnonymousInnerClassHelper(Lucene45DocValuesConsumer outerInstance, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+		  public IterableAnonymousInnerClassHelper(IEnumerable<int> docToOrdCount, IEnumerable<long> ords)
 		  {
-			  this.OuterInstance = outerInstance;
+			  //this.OuterInstance = outerInstance;
 			  this.DocToOrdCount = docToOrdCount;
 			  this.Ords = ords;
 		  }
 
 
-		  public virtual IEnumerator<Number> GetEnumerator()
+		  public virtual IEnumerator<BytesRef> GetEnumerator()
 		  {
-			IEnumerator<Number> docToOrdCountIt = DocToOrdCount.GetEnumerator();
+			/*IEnumerator<Number> docToOrdCountIt = DocToOrdCount.GetEnumerator();
 			IEnumerator<Number> ordsIt = Ords.GetEnumerator();
-			return new IteratorAnonymousInnerClassHelper(this, docToOrdCountIt, ordsIt);
+			return new IteratorAnonymousInnerClassHelper(this, docToOrdCountIt, ordsIt);*/
+            return new SortedSetIterator(DocToOrdCount.GetEnumerator(), Ords.GetEnumerator());
 		  }
 
-		  private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
+          private class SortedSetIterator : IEnumerator<BytesRef>
+          {
+              internal byte[] buffer = new byte[10]; //Initial size, will grow if needed
+              internal ByteArrayDataOutput output = new ByteArrayDataOutput();
+              internal BytesRef bytesRef = new BytesRef();
+
+              internal IEnumerator<int> counts;
+              internal IEnumerator<long> ords;
+
+              internal SortedSetIterator(IEnumerator<int> counts, IEnumerator<long> ords)
+              {
+                  this.counts = counts;
+                  this.ords = ords;
+              }
+
+              public BytesRef Current
+              {
+                  get
+                  {
+                      return bytesRef;
+                  }
+              }
+
+              public void Dispose()
+              {
+                  counts.Dispose();
+                  ords.Dispose();
+              }
+
+              object System.Collections.IEnumerator.Current
+              {
+                  get { return bytesRef;  }
+              }
+
+              public bool MoveNext()
+              {
+                  if (!counts.MoveNext())
+                      return false;
+
+                  int count = counts.Current;
+                  int maxSize = count * 9;//worst case
+                  if (maxSize > buffer.Length)
+                      buffer = ArrayUtil.Grow(buffer, maxSize);
+
+                  try
+                  {
+                      EncodeValues(count);
+                  }
+                  catch (System.IO.IOException)
+                  {
+                      throw;
+                  }
+
+                  bytesRef.Bytes = (sbyte[])(Array)buffer;
+                  bytesRef.Offset = 0;
+                  bytesRef.Length = output.Position;
+
+                  return true;
+              }
+
+              private void EncodeValues(int count)
+              {
+                  output.Reset((sbyte[])(Array)buffer);
+                  long lastOrd = 0;
+                  for (int i = 0; i < count; i++)
+                  {
+                      ords.MoveNext();
+                      long ord = ords.Current;
+                      output.WriteVLong(ord - lastOrd);
+                      lastOrd = ord;
+                  }
+              }
+
+              public void Reset()
+              {
+                  throw new NotImplementedException();
+              }
+          }
+
+		  /*private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
 		  {
 			  private readonly IterableAnonymousInnerClassHelper OuterInstance;
 
@@ -513,10 +597,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 			  public virtual bool HasNext()
 			  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				//Debug.Assert(OrdsIt.hasNext() ? DocToOrdCountIt.hasNext() : true);
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				return DocToOrdCountIt.hasNext();
+				return DocToOrdCountIt.HasNext();
 			  }
 
 			  public virtual Number Next()
@@ -529,7 +610,6 @@ namespace Lucene.Net.Codecs.Lucene45
 				else
 				{
 				  Debug.Assert((long)ordCount == 1);
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 				  return OrdsIt.next();
 				}
 			  }
@@ -539,7 +619,7 @@ namespace Lucene.Net.Codecs.Lucene45
 				throw new System.NotSupportedException();
 			  }
 
-		  }
+		  }*/
 
 	  }
 

@@ -1,7 +1,8 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
-using Lucene.Net.src.core.Codecs.Lucene3x;
+using Lucene.Net.Codecs.Lucene3x;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -39,6 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using StringHelper = Lucene.Net.Util.StringHelper;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Reads Lucene 3.x norms format and exposes it via DocValues API
@@ -50,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// norms header placeholder </summary>
-	  internal static readonly sbyte[] NORMS_HEADER = new sbyte[]{'N','R','M',-1};
+      internal static readonly sbyte[] NORMS_HEADER = new sbyte[] { (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
 
 	  /// <summary>
 	  /// Extension of norms file </summary>
@@ -63,12 +65,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  internal readonly IDictionary<string, NormsDocValues> Norms = new Dictionary<string, NormsDocValues>();
 	  // any .nrm or .sNN files we have open at any time.
 	  // TODO: just a list, and double-close() separate norms files?
-	  internal readonly ISet<IndexInput> OpenFiles = Collections.newSetFromMap(new IdentityHashMap<IndexInput, bool?>());
+      internal readonly ISet<IndexInput> OpenFiles = new IdentityHashSet<IndexInput>();
 	  // points to a singleNormFile
 	  internal IndexInput SingleNormStream;
 	  internal readonly int Maxdoc;
 
-	  private readonly AtomicLong RamBytesUsed_Renamed;
+	  //private readonly AtomicLong RamBytesUsed_Renamed;
 
 	  // note: just like segmentreader in 3.x, we open up all the files here (including separate norms) up front.
 	  // but we just don't do any seeks or reading yet.
@@ -138,17 +140,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (!success)
 		  {
-			IOUtils.CloseWhileHandlingException(OpenFiles);
+			IOUtils.CloseWhileHandlingException(OpenFiles.ToArray());
 		  }
 		}
-		RamBytesUsed_Renamed = new AtomicLong();
+		//RamBytesUsed_Renamed = new AtomicLong();
 	  }
 
 	  public override void Close()
 	  {
 		try
 		{
-		  IOUtils.Close(OpenFiles);
+		  IOUtils.Close(OpenFiles.ToArray());
 		}
 		finally
 		{
@@ -225,7 +227,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         OuterInstance.OpenFiles.Remove(File);
 					    File.Close();
 					}
-                    OuterInstance.RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(bytes));
+                    //OuterInstance.RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(bytes));
 					Instance_Renamed = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
 				  }
 				  return Instance_Renamed;
@@ -261,28 +263,28 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override BinaryDocValues GetBinary(FieldInfo field)
 	  {
-		throw new InvalidOperationError();
+		throw new InvalidOperationException();
 	  }
 
 	  public override SortedDocValues GetSorted(FieldInfo field)
 	  {
-          throw new InvalidOperationError();
+          throw new InvalidOperationException();
 	  }
 
 	  public override SortedSetDocValues GetSortedSet(FieldInfo field)
 	  {
-          throw new InvalidOperationError();
+          throw new InvalidOperationException();
 	  }
 
 	  public override Bits GetDocsWithField(FieldInfo field)
 	  {
-          throw new InvalidOperationError();
+          throw new InvalidOperationException();
 	  }
 
-	  public override long RamBytesUsed()
+	  /*public override long RamBytesUsed()
 	  {
 		return RamBytesUsed_Renamed.get();
-	  }
+	  }*/
 
 	  public override void CheckIntegrity()
 	  {

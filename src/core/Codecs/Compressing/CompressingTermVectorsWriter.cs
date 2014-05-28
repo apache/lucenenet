@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -128,8 +129,7 @@ namespace Lucene.Net.Codecs.Compressing
 		FieldData last = null;
 		//for (IEnumerator<DocData> it = PendingDocs.Reverse(); it.MoveNext();)
         foreach (DocData doc in PendingDocs.Reverse())
-		{
-		  DocData doc = it.Current;
+        {
 		  if (!(doc.Fields.Count == 0))
 		  {
 			last = doc.Fields.Last.Value;

@@ -440,6 +440,21 @@ namespace Lucene.Net.Util
 		}
 	  }
 
+      public static byte[] Grow(byte[] array, int minSize)
+      {
+          Debug.Assert(minSize >= 0, "size must be positive (got " + minSize + "): likely integer overflow?");
+          if (array.Length < minSize)
+          {
+              byte[] newArray = new byte[Oversize(minSize, 1)];
+              Array.Copy(array, 0, newArray, 0, array.Length);
+              return newArray;
+          }
+          else
+          {
+              return array;
+          }
+      }
+
 	  public static sbyte[] Grow(sbyte[] array)
 	  {
 		return Grow(array, 1 + array.Length);
