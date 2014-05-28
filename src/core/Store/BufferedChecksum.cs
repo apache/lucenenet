@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Store
@@ -24,9 +25,9 @@ namespace Lucene.Net.Store
 	/// Wraps another <seealso cref="Checksum"/> with an internal buffer
 	/// to speed up checksum calculations.
 	/// </summary>
-	public class BufferedChecksum : Checksum
+    public class BufferedChecksum : IChecksum
 	{
-	  private readonly Checksum @in;
+      private readonly IChecksum @in;
 	  private readonly sbyte[] Buffer;
 	  private int Upto;
 	  /// <summary>
@@ -35,13 +36,13 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Create a new BufferedChecksum with <seealso cref="#DEFAULT_BUFFERSIZE"/> </summary>
-	  public BufferedChecksum(Checksum @in) : this(@in, DEFAULT_BUFFERSIZE)
+	  public BufferedChecksum(IChecksum @in) : this(@in, DEFAULT_BUFFERSIZE)
 	  {
 	  }
 
 	  /// <summary>
 	  /// Create a new BufferedChecksum with the specified bufferSize </summary>
-	  public BufferedChecksum(Checksum @in, int bufferSize)
+      public BufferedChecksum(IChecksum @in, int bufferSize)
 	  {
 		this.@in = @in;
 		this.Buffer = new sbyte[bufferSize];
@@ -61,7 +62,7 @@ namespace Lucene.Net.Store
 		if (len >= Buffer.Length)
 		{
 		  Flush();
-		  @in.update(b, off, len);
+          @in.Update((byte[])(Array) b, off, len);
 		}
 		else
 		{
@@ -86,14 +87,14 @@ namespace Lucene.Net.Store
 	  public override void Reset()
 	  {
 		Upto = 0;
-		@in.reset();
+		@in.Reset();
 	  }
 
 	  private void Flush()
 	  {
 		if (Upto > 0)
 		{
-		  @in.update(Buffer, 0, Upto);
+            @in.Update((byte[])(Array) Buffer, 0, Upto);
 		}
 		Upto = 0;
 	  }

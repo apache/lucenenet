@@ -4,12 +4,13 @@ namespace Lucene.Net.Document
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexableField = Lucene.Net.Index.IndexableField;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
     using System;
-    using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
+    using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory; //could be RAMDirectory
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -71,7 +72,7 @@ namespace Lucene.Net.Document
 		/// fetch the binary stored field and compare it's content with the original one </summary>
 		BytesRef bytes = docFromReader.getBinaryValue("binaryStored");
 		Assert.IsNotNull(bytes);
-		string binaryFldStoredTest = new string(bytes.bytes, bytes.offset, bytes.length, StandardCharsets.UTF_8);
+		string binaryFldStoredTest = new string(bytes.Bytes, bytes.Offset, bytes.Length, StandardCharsets.UTF_8);
 		Assert.IsTrue(binaryFldStoredTest.Equals(BinaryValStored));
 
 		/// <summary>

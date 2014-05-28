@@ -1,6 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -21,9 +27,6 @@ namespace Lucene.Net.Store
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-
-	using Lucene.Net.Util;
 
 	/// <summary>
 	/// Base IndexInput implementation that uses an array

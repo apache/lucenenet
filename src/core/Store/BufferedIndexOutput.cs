@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -92,7 +93,7 @@ namespace Lucene.Net.Store
 			  Flush();
 			}
 			// and write data at once
-			Crc.update(b, offset, length);
+            Crc.Update((byte[])(Array) b, offset, length);
 			FlushBuffer(b, offset, length);
 			BufferStart += length;
 		  }
@@ -121,7 +122,7 @@ namespace Lucene.Net.Store
 
 	  public override void Flush()
 	  {
-		Crc.update(Buffer, 0, BufferPosition);
+        Crc.Update((byte[])(Array) Buffer, 0, BufferPosition);
 		FlushBuffer(Buffer, BufferPosition);
 		BufferStart += BufferPosition;
 		BufferPosition = 0;

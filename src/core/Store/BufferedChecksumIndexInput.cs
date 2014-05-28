@@ -1,3 +1,6 @@
+using Lucene.Net.Support;
+using System;
+
 namespace Lucene.Net.Store
 {
 
@@ -26,7 +29,7 @@ namespace Lucene.Net.Store
 	public class BufferedChecksumIndexInput : ChecksumIndexInput
 	{
 	  internal readonly IndexInput Main;
-	  internal readonly Checksum Digest;
+      internal readonly IChecksum Digest;
 
 	  /// <summary>
 	  /// Creates a new BufferedChecksumIndexInput </summary>
@@ -41,14 +44,14 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte b = main.readByte();
 		sbyte b = Main.ReadByte();
-		Digest.update(b);
+		Digest.Update(b);
 		return b;
 	  }
 
 	  public override void ReadBytes(sbyte[] b, int offset, int len)
 	  {
 		Main.ReadBytes(b, offset, len);
-		Digest.update(b, offset, len);
+        Digest.Update((byte[])(Array) b, offset, len);
 	  }
 
 	  public override long Checksum
