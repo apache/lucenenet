@@ -26,6 +26,7 @@ namespace Lucene.Net.Store
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IOUtils = Lucene.Net.Util.IOUtils;
     using System;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Combines multiple files into a single compound file.

@@ -323,7 +323,7 @@ using System;
 			FileEntry entry = Entries[id];
 			if (entry == null)
 			{
-			  throw new FileNotFoundException("No sub-file with id " + id + " found (fileName=" + name + " files: " + Entries.Keys + ")");
+			  throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Entries.Keys + ")");
 			}
 			return Handle.OpenSlice(name, entry.Offset, entry.Length);
 		  }
@@ -393,7 +393,7 @@ using System;
 		FileEntry e = Entries[IndexFileNames.StripSegmentName(name)];
 		if (e == null)
 		{
-		  throw new FileNotFoundException(name);
+		  throw new Exception(name);
 		}
 		return e.Length;
 	  }
@@ -429,7 +429,7 @@ using System;
 		FileEntry entry = Entries[id];
 		if (entry == null)
 		{
-		  throw new FileNotFoundException("No sub-file with id " + id + " found (fileName=" + name + " files: " + Entries.Keys + ")");
+		  throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Entries.Keys + ")");
 		}
 		return new IndexInputSlicerAnonymousInnerClassHelper(this, entry);
 	  }
