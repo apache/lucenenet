@@ -26,7 +26,9 @@ namespace Lucene.Net.Util
 	using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using Lucene.Net.Search;
-	using Lucene.Net.Search; // for javadocs
+	using Lucene.Net.Search;
+    using System;
+    using Lucene.Net.Support; // for javadocs
 
 	/// <summary>
 	/// this is a helper class to generate prefix-encoded representations for numerical values
@@ -148,14 +150,14 @@ namespace Lucene.Net.Util
 		  bytes.Bytes = new sbyte[NumericUtils.BUF_SIZE_LONG]; // use the max
 		}
 		bytes.Bytes[0] = (sbyte)(SHIFT_START_LONG + shift);
-		long sortableBits = val ^ 0x8000000000000000L;
-		sortableBits = (long)((ulong)sortableBits >> shift);
+        ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L;
+		sortableBits = sortableBits >> shift;
 		while (nChars > 0)
 		{
 		  // Store 7 bits per byte for compatibility
 		  // with UTF-8 encoding of terms
 		  bytes.Bytes[nChars--] = (sbyte)(sortableBits & 0x7f);
-		  sortableBits = (long)((ulong)sortableBits >> 7);
+		  sortableBits = sortableBits >> 7;
 		}
 	  }
 
@@ -181,8 +183,8 @@ namespace Lucene.Net.Util
 		  bytes.Bytes = new sbyte[NumericUtils.BUF_SIZE_LONG]; // use the max
 		}
 		bytes.Bytes[0] = (sbyte)(SHIFT_START_INT + shift);
-		int sortableBits = val ^ 0x80000000;
-		sortableBits = (int)((uint)sortableBits >> shift);
+        int sortableBits = val ^ unchecked((int)0x80000000);
+        sortableBits = Number.URShift(sortableBits, shift);
 		while (nChars > 0)
 		{
 		  // Store 7 bits per byte for compatibility
@@ -204,7 +206,7 @@ namespace Lucene.Net.Util
 		int shift = val.Bytes[val.Offset] - SHIFT_START_LONG;
 		if (shift > 63 || shift < 0)
 		{
-		  throw new NumberFormatException("Invalid shift value (" + shift + ") in prefixCoded bytes (is encoded value really an INT?)");
+            throw new System.FormatException("Invalid shift value (" + shift + ") in prefixCoded bytes (is encoded value really an INT?)");
 		}
 		return shift;
 	  }
@@ -220,7 +222,7 @@ namespace Lucene.Net.Util
 		int shift = val.Bytes[val.Offset] - SHIFT_START_INT;
 		if (shift > 31 || shift < 0)
 		{
-		  throw new NumberFormatException("Invalid shift value in prefixCoded bytes (is encoded value really an INT?)");
+            throw new System.FormatException("Invalid shift value in prefixCoded bytes (is encoded value really an INT?)");
 		}
 		return shift;
 	  }
@@ -238,16 +240,14 @@ namespace Lucene.Net.Util
 		for (int i = val.Offset + 1, limit = val.Offset + val.Length; i < limit; i++)
 		{
 		  sortableBits <<= 7;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte b = val.bytes[i];
 		  sbyte b = val.Bytes[i];
 		  if (b < 0)
 		  {
-			throw new NumberFormatException("Invalid prefixCoded numerical value representation (byte " + b & 0xff.ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
+              throw new System.FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
 		  }
-		  sortableBits |= b;
+		  sortableBits |= (byte)b;
 		}
-		return (sortableBits << GetPrefixCodedLongShift(val)) ^ 0x8000000000000000L;
+		return (long)((ulong)(sortableBits << GetPrefixCodedLongShift(val)) ^ 0x8000000000000000L);
 	  }
 
 	  /// <summary>
@@ -263,16 +263,14 @@ namespace Lucene.Net.Util
 		for (int i = val.Offset + 1, limit = val.Offset + val.Length; i < limit; i++)
 		{
 		  sortableBits <<= 7;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte b = val.bytes[i];
 		  sbyte b = val.Bytes[i];
 		  if (b < 0)
 		  {
-			throw new NumberFormatException("Invalid prefixCoded numerical value representation (byte " + b & 0xff.ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
+              throw new System.FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
 		  }
-		  sortableBits |= b;
+		  sortableBits |= (byte)b;
 		}
-		return (sortableBits << GetPrefixCodedIntShift(val)) ^ 0x80000000;
+        return (int)((uint)(sortableBits << GetPrefixCodedLongShift(val)) ^ 0x8000000000000000L);
 	  }
 
 	  /// <summary>
@@ -285,7 +283,7 @@ namespace Lucene.Net.Util
 	  /// <seealso cref= #sortableLongToDouble </seealso>
 	  public static long DoubleToSortableLong(double val)
 	  {
-		long f = double.doubleToLongBits(val);
+          long f = BitConverter.DoubleToInt64Bits(val);
 		if (f < 0)
 		{
 			f ^= 0x7fffffffffffffffL;
@@ -302,7 +300,7 @@ namespace Lucene.Net.Util
 		{
 			val ^= 0x7fffffffffffffffL;
 		}
-		return double.longBitsToDouble(val);
+        return BitConverter.Int64BitsToDouble(val);
 	  }
 
 	  /// <summary>
@@ -315,7 +313,7 @@ namespace Lucene.Net.Util
 	  /// <seealso cref= #sortableIntToFloat </seealso>
 	  public static int FloatToSortableInt(float val)
 	  {
-		int f = float.floatToIntBits(val);
+          int f = Number.FloatToIntBits(val);
 		if (f < 0)
 		{
 			f ^= 0x7fffffff;
@@ -332,7 +330,7 @@ namespace Lucene.Net.Util
 		{
 			val ^= 0x7fffffff;
 		}
-		return float.intBitsToFloat(val);
+        return Number.IntBitsToFloat(val);
 	  }
 
 	  /// <summary>
@@ -376,10 +374,10 @@ namespace Lucene.Net.Util
 		for (int shift = 0; ; shift += precisionStep)
 		{
 		  // calculate new bounds for inner precision
-		  const long diff = 1L << (shift + precisionStep), mask = ((1L << precisionStep) - 1L) << shift;
-		  const bool hasLower = (minBound & mask) != 0L, hasUpper = (maxBound & mask) != mask;
-		  const long nextMinBound = (hasLower ? (minBound + diff) : minBound) & ~mask, nextMaxBound = (hasUpper ? (maxBound - diff) : maxBound) & ~mask;
-		  const bool lowerWrapped = nextMinBound < minBound, upperWrapped = nextMaxBound > maxBound;
+		  long diff = 1L << (shift + precisionStep), mask = ((1L << precisionStep) - 1L) << shift;
+		  bool hasLower = (minBound & mask) != 0L, hasUpper = (maxBound & mask) != mask;
+		  long nextMinBound = (hasLower ? (minBound + diff) : minBound) & ~mask, nextMaxBound = (hasUpper ? (maxBound - diff) : maxBound) & ~mask;
+		  bool lowerWrapped = nextMinBound < minBound, upperWrapped = nextMaxBound > maxBound;
 
 		  if (shift + precisionStep >= valSize || nextMinBound > nextMaxBound || lowerWrapped || upperWrapped)
 		  {
@@ -452,7 +450,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public virtual void AddRange(long min, long max, int shift)
 		{
-		  const BytesRef minBytes = new BytesRef(BUF_SIZE_LONG), maxBytes = new BytesRef(BUF_SIZE_LONG);
+		  BytesRef minBytes = new BytesRef(BUF_SIZE_LONG), maxBytes = new BytesRef(BUF_SIZE_LONG);
 		  LongToPrefixCodedBytes(min, shift, minBytes);
 		  LongToPrefixCodedBytes(max, shift, maxBytes);
 		  AddRange(minBytes, maxBytes);
@@ -484,7 +482,7 @@ namespace Lucene.Net.Util
 		/// </summary>
 		public virtual void AddRange(int min, int max, int shift)
 		{
-		  const BytesRef minBytes = new BytesRef(BUF_SIZE_INT), maxBytes = new BytesRef(BUF_SIZE_INT);
+		  BytesRef minBytes = new BytesRef(BUF_SIZE_INT), maxBytes = new BytesRef(BUF_SIZE_INT);
 		  IntToPrefixCodedBytes(min, shift, minBytes);
 		  IntToPrefixCodedBytes(max, shift, maxBytes);
 		  AddRange(minBytes, maxBytes);

@@ -19,7 +19,7 @@ namespace Lucene.Net.Search
 	 */
 
 	using Term = Lucene.Net.Index.Term;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 	using Lucene.Net.Search.Spans;
 

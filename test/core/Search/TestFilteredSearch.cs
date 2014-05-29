@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 		writer.close();
 
 		BooleanQuery booleanQuery = new BooleanQuery();
-		booleanQuery.add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur.SHOULD);
+		booleanQuery.add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur_e.SHOULD);
 
 
 		IndexReader reader = DirectoryReader.open(directory);

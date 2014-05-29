@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Util
@@ -31,16 +32,17 @@ namespace Lucene.Net.Util
 	public class PrintStreamInfoStream : InfoStream
 	{
 	  // Used for printing messages
-	  private static readonly AtomicInteger MESSAGE_ID = new AtomicInteger();
+	  private static int MESSAGE_ID = 0;
 	  protected internal readonly int MessageID;
 
-	  protected internal readonly PrintStream Stream;
+	  protected internal readonly TextWriter Stream;
 
-	  public PrintStreamInfoStream(PrintStream stream) : this(stream, MESSAGE_ID.AndIncrement)
+      public PrintStreamInfoStream(TextWriter stream)
+          : this(stream, Interlocked.Increment(ref MESSAGE_ID))
 	  {
 	  }
 
-	  public PrintStreamInfoStream(PrintStream stream, int messageID)
+      public PrintStreamInfoStream(TextWriter stream, int messageID)
 	  {
 		this.Stream = stream;
 		this.MessageID = messageID;
@@ -48,7 +50,7 @@ namespace Lucene.Net.Util
 
 	  public override void Message(string component, string message)
 	  {
-		Stream.println(component + " " + MessageID + " [" + DateTime.Now + "; " + Thread.CurrentThread.Name + "]: " + message);
+		Stream.Write(component + " " + MessageID + " [" + DateTime.Now + "; " + Thread.CurrentThread.Name + "]: " + message);
 	  }
 
 	  public override bool IsEnabled(string component)
@@ -60,7 +62,7 @@ namespace Lucene.Net.Util
 	  {
 		if (!SystemStream)
 		{
-		  Stream.close();
+		  Stream.Close();
 		}
 	  }
 
@@ -68,7 +70,7 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return Stream == System.out || Stream == System.err;
+              return Stream == Console.Out || Stream == Console.Error;
 		  }
 	  }
 	}

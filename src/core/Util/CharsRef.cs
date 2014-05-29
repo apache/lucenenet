@@ -263,7 +263,7 @@ namespace Lucene.Net.Util
 		return Chars[Offset + index];
 	  }
 
-	  public override CharSequence SubSequence(int start, int end)
+	  public override ICharSequence SubSequence(int start, int end)
 	  {
 		// NOTE: must do a real check here to meet the specs of CharSequence
 		if (start < 0 || end > Length_Renamed || start > end)
@@ -326,23 +326,23 @@ namespace Lucene.Net.Util
 
 			  /* aChar != bChar, fix up each one if they're both in or above the surrogate range, then compare them */
 			  if (aChar >= 0xd800 && bChar >= 0xd800)
-			  {
+			  {//LUCENE TO-DO possible truncation or is char 16bit?
 				if (aChar >= 0xe000)
 				{
-				  aChar -= 0x800;
+				  aChar -= (char)0x800;
 				}
 				else
 				{
-				  aChar += 0x2000;
+				  aChar += (char)0x2000;
 				}
 
 				if (bChar >= 0xe000)
 				{
-				  bChar -= 0x800;
+				  bChar -= (char)0x800;
 				}
 				else
 				{
-				  bChar += 0x2000;
+				  bChar += (char)0x2000;
 				}
 			  }
 
@@ -372,7 +372,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Performs internal consistency checks.
-	  /// Always returns true (or throws IllegalStateException) 
+	  /// Always returns true (or throws InvalidOperationException) 
 	  /// </summary>
 	  public bool Valid
 	  {
@@ -380,31 +380,31 @@ namespace Lucene.Net.Util
 		  {
 			if (Chars == null)
 			{
-			  throw new IllegalStateException("chars is null");
+			  throw new InvalidOperationException("chars is null");
 			}
 			if (Length_Renamed < 0)
 			{
-			  throw new IllegalStateException("length is negative: " + Length_Renamed);
+			  throw new InvalidOperationException("length is negative: " + Length_Renamed);
 			}
 			if (Length_Renamed > Chars.Length)
 			{
-			  throw new IllegalStateException("length is out of bounds: " + Length_Renamed + ",chars.length=" + Chars.Length);
+			  throw new InvalidOperationException("length is out of bounds: " + Length_Renamed + ",chars.length=" + Chars.Length);
 			}
 			if (Offset < 0)
 			{
-			  throw new IllegalStateException("offset is negative: " + Offset);
+			  throw new InvalidOperationException("offset is negative: " + Offset);
 			}
 			if (Offset > Chars.Length)
 			{
-			  throw new IllegalStateException("offset out of bounds: " + Offset + ",chars.length=" + Chars.Length);
+			  throw new InvalidOperationException("offset out of bounds: " + Offset + ",chars.length=" + Chars.Length);
 			}
 			if (Offset + Length_Renamed < 0)
 			{
-			  throw new IllegalStateException("offset+length is negative: offset=" + Offset + ",length=" + Length_Renamed);
+			  throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length_Renamed);
 			}
 			if (Offset + Length_Renamed > Chars.Length)
 			{
-			  throw new IllegalStateException("offset+length out of bounds: offset=" + Offset + ",length=" + Length_Renamed + ",chars.length=" + Chars.Length);
+			  throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length_Renamed + ",chars.length=" + Chars.Length);
 			}
 			return true;
 		  }

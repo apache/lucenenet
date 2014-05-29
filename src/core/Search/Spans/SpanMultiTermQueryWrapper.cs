@@ -28,7 +28,7 @@ namespace Lucene.Net.Search.Spans
 	using TermContext = Lucene.Net.Index.TermContext;
 	using Lucene.Net.Search;
 	using Lucene.Net.Search;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur; // javadocs only
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e; // javadocs only
 	using Bits = Lucene.Net.Util.Bits;
 
 	/// <summary>

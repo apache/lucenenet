@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: final TermQuery tq = new TermQuery(term, states);
 		  TermQuery tq = new TermQuery(term, states);
 		  tq.Boost = boost;
-		  topLevel.Add(tq, BooleanClause.Occur.SHOULD);
+		  topLevel.Add(tq, BooleanClause.Occur_e.SHOULD);
 		}
 	  }
 
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: final Query q = new ConstantScoreQuery(new TermQuery(term, states));
 		  Query q = new ConstantScoreQuery(new TermQuery(term, states));
 		  q.Boost = boost;
-		  topLevel.Add(q, BooleanClause.Occur.SHOULD);
+		  topLevel.Add(q, BooleanClause.Occur_e.SHOULD);
 		}
 	  }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -34,15 +35,16 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Thrown when <seealso cref="SetOnce#set(Object)"/> is called more than once. </summary>
-	  public sealed class AlreadySetException : IllegalStateException
+	  public sealed class AlreadySetException : InvalidOperationException
 	  {
-		public AlreadySetException() : base("The object cannot be set twice!")
+		public AlreadySetException() 
+            : base("The object cannot be set twice!")
 		{
 		}
 	  }
 
-	  private volatile T Obj = null;
-	  private readonly AtomicBoolean Set_Renamed;
+	  private volatile T Obj = default(T);
+	  private int set;
 
 	  /// <summary>
 	  /// A default constructor which does not set the internal object, and allows
@@ -50,7 +52,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public SetOnce()
 	  {
-		Set_Renamed = new AtomicBoolean(false);
+          set = 0;
 	  }
 
 	  /// <summary>
@@ -63,14 +65,15 @@ namespace Lucene.Net.Util
 	  public SetOnce(T obj)
 	  {
 		this.Obj = obj;
-		Set_Renamed = new AtomicBoolean(true);
+        set = 1;
 	  }
 
 	  /// <summary>
 	  /// Sets the given object. If the object has already been set, an exception is thrown. </summary>
 	  public void Set(T obj)
 	  {
-		if (Set_Renamed.compareAndSet(false, true))
+        //if (set.compareAndSet(false, true))
+        if (Interlocked.CompareExchange(ref set, 1, 0) == 0)
 		{
 		  this.Obj = obj;
 		}
@@ -89,7 +92,7 @@ namespace Lucene.Net.Util
 
 	  public override SetOnce<T> Clone()
 	  {
-		return Obj == null ? new SetOnce<T>() : new SetOnce<>(Obj);
+		return Obj == null ? new SetOnce<T>() : new SetOnce<T>(Obj);
 	  }
 
 	}

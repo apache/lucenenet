@@ -1,3 +1,4 @@
+using System;
 namespace Lucene.Net.Util
 {
 
@@ -26,7 +27,7 @@ namespace Lucene.Net.Util
 	public class RefCount<T>
 	{
 
-	  private readonly AtomicInteger RefCount_Renamed = new AtomicInteger(1);
+	  private readonly AtomicInteger refCount = new AtomicInteger(1);
 
 	  protected internal readonly T @object;
 
@@ -50,9 +51,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public void DecRef()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int rc = refCount.decrementAndGet();
-		int rc = RefCount_Renamed.decrementAndGet();
+		int rc = refCount.decrementAndGet();
 		if (rc == 0)
 		{
 		  bool success = false;
@@ -66,13 +65,13 @@ namespace Lucene.Net.Util
 			if (!success)
 			{
 			  // Put reference back on failure
-			  RefCount_Renamed.incrementAndGet();
+			  refCount.incrementAndGet();
 			}
 		  }
 		}
 		else if (rc < 0)
 		{
-		  throw new IllegalStateException("too many decRef calls: refCount is " + rc + " after decrement");
+		  throw new InvalidOperationException("too many decRef calls: refCount is " + rc + " after decrement");
 		}
 	  }
 
@@ -87,7 +86,7 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return RefCount_Renamed.get();
+			return refCount.get();
 		  }
 	  }
 
@@ -97,7 +96,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public void IncRef()
 	  {
-		RefCount_Renamed.incrementAndGet();
+		refCount.incrementAndGet();
 	  }
 
 	}

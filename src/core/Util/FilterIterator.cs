@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-
-
+    //LUCENE TO-DO: Iterators are not needed. System.Linq uses enumerators plenty well
+    /*
 	/// <summary>
 	/// Licensed to the Apache Software Foundation (ASF) under one or more
 	/// contributor license agreements. See the NOTICE file distributed with this
@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
 	{
 
 	  private readonly IEnumerator<T> Iterator;
-	  private T Next_Renamed = null;
+	  private T next = default(T);
 	  private bool NextIsSet = false;
 
 	  /// <summary>
@@ -55,12 +55,12 @@ namespace Lucene.Net.Util
 		Debug.Assert(NextIsSet);
 		try
 		{
-		  return Next_Renamed;
+		  return next;
 		}
 		finally
 		{
 		  NextIsSet = false;
-		  Next_Renamed = null;
+		  next = default(T);
 		}
 	  }
 
@@ -73,12 +73,10 @@ namespace Lucene.Net.Util
 	  {
 		while (Iterator.MoveNext())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T object = iterator.Current;
 		  T @object = Iterator.Current;
 		  if (PredicateFunction(@object))
 		  {
-			Next_Renamed = @object;
+			next = @object;
 			NextIsSet = true;
 			return true;
 		  }
@@ -86,5 +84,5 @@ namespace Lucene.Net.Util
 		return false;
 	  }
 	}
-
+    */
 }

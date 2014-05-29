@@ -1,4 +1,7 @@
+using System.Linq;
 using System.Collections.Generic;
+using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Util
 {
@@ -40,63 +43,66 @@ namespace Lucene.Net.Util
 	  private sealed class ListIntroSorter<T> : IntroSorter
 	  {
 
-		internal T Pivot_Renamed;
-		internal readonly IList<T> List;
+		internal T pivot;
+		internal IList<T> list;
 		internal readonly IComparer<T> Comp;
 
-		internal ListIntroSorter<T>(IList<T> list, IComparer<T> comp) : base()
+		internal ListIntroSorter(IList<T> list, IComparer<T> comp) : base()
 		{
-		  if (!(list is RandomAccess))
-		  {
-			throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
-		  }
-		  this.List = list;
-		  this.Comp = comp;
-		}
+            /* LUCENE TO-DO I believe all ILists are RA
+            if (!(list is RandomAccess))
+            {
+              throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
+            }*/
+            this.list = list;
+            this.Comp = comp;
+          }
 
-		protected internal override int Pivot
-		{
-			set
-			{
-			  Pivot_Renamed = List[value];
-			}
-		}
+          protected internal override int Pivot
+          {
+              set
+              {
+                pivot = list[value];
+              }
+          }
 
-		protected internal override void Swap(int i, int j)
-		{
-		  Collections.swap(List, i, j);
-		}
+          protected internal override void Swap(int i, int j)
+          {
+              list = list.Swap(i, j);
+          }
 
-		protected internal override int Compare(int i, int j)
-		{
-		  return Comp.Compare(List[i], List[j]);
-		}
+          protected internal override int Compare(int i, int j)
+          {
+            return Comp.Compare(list[i], list[j]);
+          }
 
-		protected internal override int ComparePivot(int j)
-		{
-		  return Comp.Compare(Pivot_Renamed, List[j]);
-		}
+          protected internal override int ComparePivot(int j)
+          {
+            return Comp.Compare(pivot, list[j]);
+          }
 
-	  }
+        }
 
-	  private sealed class ListTimSorter<T> : TimSorter
-	  {
+        private sealed class ListTimSorter<T> : TimSorter
+        {
 
-		internal readonly IList<T> List;
-		internal readonly IComparer<?> Comp;
-		internal readonly T[] Tmp;
+          internal IList<T> List;
+          internal readonly IComparer<T> Comp;
+          internal readonly T[] Tmp;
 
-		internal ListTimSorter<T1>(IList<T> list, IComparer<T1> comp, int maxTempSlots) : base(maxTempSlots)
-		{
-		  if (!(list is RandomAccess))
-		  {
-			throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
-		  }
+          internal ListTimSorter(IList<T> list, IComparer<T> comp, int maxTempSlots) 
+              : base(maxTempSlots)
+          {
+            /* LUCENE TO-DO I believe all ILists are RA
+            if (!(list is RandomAccess))
+            {
+              throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
+            }*/
 		  this.List = list;
 		  this.Comp = comp;
 		  if (maxTempSlots > 0)
 		  {
-			this.Tmp = (T[]) new object[maxTempSlots];
+			this.Tmp = new T[maxTempSlots];
 		  }
 		  else
 		  {
@@ -106,7 +112,7 @@ namespace Lucene.Net.Util
 
 		protected internal override void Swap(int i, int j)
 		{
-		  Collections.swap(List, i, j);
+            List = List.Swap(i, j);
 		}
 
 		protected internal override void Copy(int src, int dest)
@@ -144,18 +150,14 @@ namespace Lucene.Net.Util
 	  /// The list must implement <seealso cref="RandomAccess"/>. this method uses the intro sort
 	  /// algorithm, but falls back to insertion sort for small lists. </summary>
 	  /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: public static <T> void introSort(java.util.List<T> list, java.util.Comparator<? base T> comp)
-	  public static void introSort<T, T1>(IList<T> list, IComparer<T1> comp)
+	  public static void IntroSort<T>(IList<T> list, IComparer<T> comp)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = list.size();
 		int size = list.Count;
 		if (size <= 1)
 		{
 			return;
 		}
-		(new ListIntroSorter<>(list, comp)).Sort(0, size);
+		(new ListIntroSorter<T>(list, comp)).Sort(0, size);
 	  }
 
 	  /// <summary>
@@ -163,18 +165,15 @@ namespace Lucene.Net.Util
 	  /// The list must implement <seealso cref="RandomAccess"/>. this method uses the intro sort
 	  /// algorithm, but falls back to insertion sort for small lists. </summary>
 	  /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: public static <T extends Comparable<? base T>> void introSort(java.util.List<T> list)
-	  public static void introSort<T>(IList<T> list) where T : Comparable<? base T>
+	  public static void IntroSort<T>(IList<T> list)
+          where T : IComparable<T>
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = list.size();
 		int size = list.Count;
 		if (size <= 1)
 		{
 			return;
 		}
-		IntroSort(list, ArrayUtil.NaturalComparator<T>());
+		IntroSort(list, ArrayUtil.naturalComparator<T>());
 	  }
 
 	  // Tim sorts:
@@ -184,18 +183,14 @@ namespace Lucene.Net.Util
 	  /// The list must implement <seealso cref="RandomAccess"/>. this method uses the Tim sort
 	  /// algorithm, but falls back to binary sort for small lists. </summary>
 	  /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: public static <T> void timSort(java.util.List<T> list, java.util.Comparator<? base T> comp)
-	  public static void timSort<T, T1>(IList<T> list, IComparer<T1> comp)
+	  public static void TimSort<T>(IList<T> list, IComparer<T> comp)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = list.size();
 		int size = list.Count;
 		if (size <= 1)
 		{
 			return;
 		}
-		(new ListTimSorter<>(list, comp, list.Count / 64)).Sort(0, size);
+		(new ListTimSorter<T>(list, comp, list.Count / 64)).Sort(0, size);
 	  }
 
 	  /// <summary>
@@ -203,18 +198,15 @@ namespace Lucene.Net.Util
 	  /// The list must implement <seealso cref="RandomAccess"/>. this method uses the Tim sort
 	  /// algorithm, but falls back to binary sort for small lists. </summary>
 	  /// <exception cref="IllegalArgumentException"> if list is e.g. a linked list without random access. </exception>
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: public static <T extends Comparable<? base T>> void timSort(java.util.List<T> list)
-	  public static void timSort<T>(IList<T> list) where T : Comparable<? base T>
+	  public static void TimSort<T>(IList<T> list)
+          where T : IComparable<T>
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = list.size();
 		int size = list.Count;
 		if (size <= 1)
 		{
 			return;
 		}
-		TimSort(list, ArrayUtil.NaturalComparator<T>());
+		TimSort(list, ArrayUtil.naturalComparator<T>());
 	  }
 
 	}

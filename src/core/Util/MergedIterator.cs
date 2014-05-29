@@ -24,6 +24,9 @@ namespace Lucene.Net.Util
 
 
 	using Lucene.Net.Util;
+    using System;
+
+    //LUCENE TO-DO Rewrote class
 
 	/// <summary>
 	/// Provides a merged sorted view from several sorted iterators.
@@ -47,9 +50,40 @@ namespace Lucene.Net.Util
 	/// </ul>
 	/// @lucene.internal
 	/// </summary>
-	public sealed class MergedIterator<T> : IEnumerator<T> where T : Comparable<T>
+	public sealed class MergedIterator<T> : IEnumerator<T> where T : IComparable<T>
 	{
-	  private T Current;
+        private readonly TermMergeQueue<T> Queue;
+        private readonly SubIterator<T>[] Top;
+        private readonly bool RemoveDuplicates;
+        private int NumTop;
+        
+        public MergedIterator(params IEnumerator<T>[] iterators)
+            : this(true, iterators)
+        {
+        }
+
+        public MergedIterator(bool removeDuplicates, params IEnumerator<T>[] iterators)
+        {
+            this.RemoveDuplicates = removeDuplicates;
+            Queue = new TermMergeQueue<T>(iterators.Length);
+            Top = new SubIterator<T>[iterators.Length];
+            int index = 0;
+            foreach (IEnumerator<T> iter in iterators)
+            {
+                // If hasNext
+                if (iter.MoveNext())
+                {
+                    SubIterator<T> sub = new SubIterator<T>();
+                    sub.Current = iter.Current;
+                    sub.Iterator = iter;
+                    sub.Index = index++;
+                    Queue.Add(sub);
+                }
+            }
+        }
+
+
+	  /*private T Current;
 	  private readonly TermMergeQueue<T> Queue;
 	  private readonly SubIterator<T>[] Top;
 	  private readonly bool RemoveDuplicates;
@@ -66,27 +100,27 @@ namespace Lucene.Net.Util
 	  public MergedIterator(bool removeDuplicates, params IEnumerator<T>[] iterators)
 	  {
 		this.RemoveDuplicates = removeDuplicates;
-		Queue = new TermMergeQueue<>(iterators.Length);
+		Queue = new TermMergeQueue<T>(iterators.Length);
 		Top = new SubIterator[iterators.Length];
 		int index = 0;
 		foreach (IEnumerator<T> iterator in iterators)
 		{
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  if (iterator.hasNext())
+		  if (iterator.HasNext())
 		  {
 			SubIterator<T> sub = new SubIterator<T>();
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 			sub.Current = iterator.next();
 			sub.Iterator = iterator;
 			sub.Index = index++;
-			Queue.add(sub);
+			Queue.Add(sub);
 		  }
 		}
 	  }
 
 	  public override bool HasNext()
 	  {
-		if (Queue.size() > 0)
+		if (Queue.Size() > 0)
 		{
 		  return true;
 		}
@@ -108,13 +142,13 @@ namespace Lucene.Net.Util
 		PushTop();
 
 		// gather equal top elements
-		if (Queue.size() > 0)
+		if (Queue.Size() > 0)
 		{
 		  PullTop();
 		}
 		else
 		{
-		  Current = null;
+		  Current = default(T);
 		}
 		if (Current == null)
 		{
@@ -131,13 +165,13 @@ namespace Lucene.Net.Util
 	  private void PullTop()
 	  {
 		Debug.Assert(NumTop == 0);
-		Top[NumTop++] = Queue.pop();
+		Top[NumTop++] = Queue.Pop();
 		if (RemoveDuplicates)
 		{
 		  // extract all subs from the queue that have the same top element
-		  while (Queue.size() != 0 && Queue.top().current.Equals(Top[0].Current))
+		  while (Queue.Size() != 0 && Queue.Top().Current.Equals(Top[0].Current))
 		  {
-			Top[NumTop++] = Queue.pop();
+			Top[NumTop++] = Queue.Pop();
 		  }
 		}
 		Current = Top[0].Current;
@@ -153,35 +187,34 @@ namespace Lucene.Net.Util
 		  {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 			Top[i].Current = Top[i].Iterator.next();
-			Queue.add(Top[i]);
+			Queue.Add(Top[i]);
 		  }
 		  else
 		  {
 			// no more elements
-			Top[i].Current = null;
+			Top[i].Current = default(T);
 		  }
 		}
 		NumTop = 0;
-	  }
+	  }*/
 
-	  private class SubIterator<I> where I : Comparable<I>
+	  private class SubIterator<I> where I : IComparable<I>
 	  {
 		internal IEnumerator<I> Iterator;
 		internal I Current;
 		internal int Index;
 	  }
 
-	  private class TermMergeQueue<C> : PriorityQueue<SubIterator<C>> where C : Comparable<C>
+	  private class TermMergeQueue<C> : PriorityQueue<SubIterator<C>> where C : IComparable<C>
 	  {
-		internal TermMergeQueue(int size) : base(size)
+		internal TermMergeQueue(int size) 
+            : base(size)
 		{
 		}
 
 		protected internal override bool LessThan(SubIterator<C> a, SubIterator<C> b)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = a.current.compareTo(b.current);
-		  int cmp = a.Current.compareTo(b.Current);
+		  int cmp = a.Current.CompareTo(b.Current);
 		  if (cmp != 0)
 		  {
 			return cmp < 0;

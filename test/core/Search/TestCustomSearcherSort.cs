@@ -211,16 +211,16 @@ namespace Lucene.Net.Search
 		public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
 		{
 		  BooleanQuery bq = new BooleanQuery();
-		  bq.add(query, BooleanClause.Occur.MUST);
-		  bq.add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur.MUST);
+		  bq.add(query, BooleanClause.Occur_e.MUST);
+		  bq.add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur_e.MUST);
 		  return base.search(bq, filter, nDocs, sort);
 		}
 
 		public override TopDocs Search(Query query, Filter filter, int nDocs)
 		{
 		  BooleanQuery bq = new BooleanQuery();
-		  bq.add(query, BooleanClause.Occur.MUST);
-		  bq.add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur.MUST);
+		  bq.add(query, BooleanClause.Occur_e.MUST);
+		  bq.add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur_e.MUST);
 		  return base.search(bq, filter, nDocs);
 		}
 	  }

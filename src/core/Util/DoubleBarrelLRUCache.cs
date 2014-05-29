@@ -63,8 +63,8 @@ namespace Lucene.Net.Util
 	  {
 		this.MaxSize = maxSize;
 		Countdown = new AtomicInteger(maxSize);
-		Cache1 = new ConcurrentDictionary<>();
-		Cache2 = new ConcurrentDictionary<>();
+		Cache1 = new ConcurrentDictionary<K,V>();
+        Cache2 = new ConcurrentDictionary<K, V>();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

@@ -21,7 +21,7 @@ namespace Lucene.Net.Search
 	 */
 
 
-	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 	using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 

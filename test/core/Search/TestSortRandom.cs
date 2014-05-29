@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;

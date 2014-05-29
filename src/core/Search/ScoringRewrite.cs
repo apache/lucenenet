@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: final TermQuery tq = new TermQuery(term, states);
 			TermQuery tq = new TermQuery(term, states);
 			tq.Boost = boost;
-			topLevel.Add(tq, BooleanClause.Occur.SHOULD);
+			topLevel.Add(tq, BooleanClause.Occur_e.SHOULD);
 		  }
 
 		  protected internal override void CheckMaxClauseCount(int count)

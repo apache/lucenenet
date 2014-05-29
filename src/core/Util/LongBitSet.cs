@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -186,7 +187,7 @@ namespace Lucene.Net.Util
 
 		if (word != 0)
 		{
-		  return index + long.numberOfTrailingZeros(word);
+		  return index + Number.NumberOfTrailingZeros(word);
 		}
 
 		while (++i < NumWords)
@@ -194,7 +195,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			return (i << 6) + long.numberOfTrailingZeros(word);
+			return (i << 6) + Number.NumberOfTrailingZeros(word);
 		  }
 		}
 
@@ -216,7 +217,7 @@ namespace Lucene.Net.Util
 
 		if (word != 0)
 		{
-		  return (i << 6) + subIndex - long.numberOfLeadingZeros(word); // See LUCENE-3197
+		  return (i << 6) + subIndex - Number.NumberOfLeadingZeros(word); // See LUCENE-3197
 		}
 
 		while (--i >= 0)
@@ -224,7 +225,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			return (i << 6) + 63 - long.numberOfLeadingZeros(word);
+			return (i << 6) + 63 - Number.NumberOfLeadingZeros(word);
 		  }
 		}
 
@@ -281,7 +282,7 @@ namespace Lucene.Net.Util
 		}
 		if (NumWords > other.NumWords)
 		{
-		  Arrays.fill(Bits_Renamed, other.NumWords, NumWords, 0L);
+		  Arrays.Fill(Bits_Renamed, other.NumWords, NumWords, 0L);
 		}
 	  }
 
@@ -372,7 +373,7 @@ namespace Lucene.Net.Util
 		}
 
 		Bits_Renamed[startWord] |= startmask;
-		Arrays.fill(Bits_Renamed, startWord + 1, endWord, -1L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, -1L);
 		Bits_Renamed[endWord] |= endmask;
 	  }
 
@@ -407,7 +408,7 @@ namespace Lucene.Net.Util
 		}
 
 		Bits_Renamed[startWord] &= startmask;
-		Arrays.fill(Bits_Renamed, startWord + 1, endWord, 0L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, 0L);
 		Bits_Renamed[endWord] &= endmask;
 	  }
 

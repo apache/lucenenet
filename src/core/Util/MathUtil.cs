@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Util
@@ -79,21 +80,17 @@ namespace Lucene.Net.Util
 		{
 		  return a;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int commonTrailingZeros = Long.numberOfTrailingZeros(a | b);
-		int commonTrailingZeros = long.numberOfTrailingZeros(a | b);
-		a = (long)((ulong)a >> long.numberOfTrailingZeros(a));
+		int commonTrailingZeros = Number.NumberOfTrailingZeros(a | b);
+		a = (long)((ulong)a >> Number.NumberOfTrailingZeros(a));
 		while (true)
 		{
-		  b = (long)((ulong)b >> long.numberOfTrailingZeros(b));
+		  b = (long)((ulong)b >> Number.NumberOfTrailingZeros(b));
 		  if (a == b)
 		  {
 			break;
 		  } // MIN_VALUE is treated as 2^64
 		  else if (a > b || a == long.MinValue)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long tmp = a;
 			long tmp = a;
 			a = b;
 			b = tmp;
@@ -120,8 +117,6 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static double Asinh(double a)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double sign;
 		double sign;
 		// check the sign bit of the raw representation to handle -0
 		if (double.doubleToRawLongBits(a) < 0)
@@ -167,8 +162,6 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static double Atanh(double a)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double mult;
 		double mult;
 		// check the sign bit of the raw representation to handle -0
 		if (double.doubleToRawLongBits(a) < 0)

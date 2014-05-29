@@ -255,8 +255,6 @@ namespace Lucene.Net.Util
 
 	  public static int GetShrinkSize(int currentSize, int targetSize, int bytesPerElement)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = oversize(targetSize, bytesPerElement);
 		int newSize = Oversize(targetSize, bytesPerElement);
 		// Only reallocate if we are "substantially" smaller.
 		// this saves us from "running hot" (constantly making a
@@ -334,8 +332,6 @@ namespace Lucene.Net.Util
 	  public static short[] Shrink(short[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, RamUsageEstimator.NUM_BYTES_SHORT);
 		int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_SHORT);
 		if (newSize != array.Length)
 		{
@@ -372,8 +368,6 @@ namespace Lucene.Net.Util
 	  public static int[] Shrink(int[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, RamUsageEstimator.NUM_BYTES_INT);
 		int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_INT);
 		if (newSize != array.Length)
 		{
@@ -410,8 +404,6 @@ namespace Lucene.Net.Util
 	  public static long[] Shrink(long[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, RamUsageEstimator.NUM_BYTES_LONG);
 		int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_LONG);
 		if (newSize != array.Length)
 		{
@@ -463,8 +455,6 @@ namespace Lucene.Net.Util
 	  public static sbyte[] Shrink(sbyte[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, 1);
 		int newSize = GetShrinkSize(array.Length, targetSize, 1);
 		if (newSize != array.Length)
 		{
@@ -501,8 +491,6 @@ namespace Lucene.Net.Util
 	  public static bool[] Shrink(bool[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, 1);
 		int newSize = GetShrinkSize(array.Length, targetSize, 1);
 		if (newSize != array.Length)
 		{
@@ -539,8 +527,6 @@ namespace Lucene.Net.Util
 	  public static char[] Shrink(char[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, RamUsageEstimator.NUM_BYTES_CHAR);
 		int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_CHAR);
 		if (newSize != array.Length)
 		{
@@ -577,8 +563,6 @@ namespace Lucene.Net.Util
 	  public static int[][] Shrink(int[][] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
 		int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
 		if (newSize != array.Length)
 		{
@@ -615,8 +599,6 @@ namespace Lucene.Net.Util
 	  public static float[][] Shrink(float[][] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = getShrinkSize(array.length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
 		int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
 		if (newSize != array.Length)
 		{
@@ -804,7 +786,8 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Get the natural <seealso cref="Comparator"/> for the provided object class. </summary>
-	  public static IComparer<T> naturalComparator<T>() where T : IComparable<T>
+	  public static IComparer<T> naturalComparator<T>() 
+          where T : IComparable<T>
 	  {
 		return (IComparer<T>) new NaturalComparator<T>();
 	  }

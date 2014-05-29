@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -114,31 +115,19 @@ namespace Lucene.Net.Util
 		}
 
 		// the indirect mapping lets MapOfSet dedup identical valIds for us
-		//
 		// maps the (valId) identityhashCode of cache values to 
 		// sets of CacheEntry instances
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MapOfSets<Integer, Lucene.Net.Search.FieldCache_CacheEntry> valIdToItems = new MapOfSets<>(new java.util.HashMap<Integer, java.util.Set<Lucene.Net.Search.FieldCache_CacheEntry>>(17));
-		MapOfSets<int?, FieldCache_CacheEntry> valIdToItems = new MapOfSets<int?, FieldCache_CacheEntry>(new Dictionary<int?, Set<FieldCache_CacheEntry>>(17));
+		MapOfSets<int, FieldCache_CacheEntry> valIdToItems = new MapOfSets<int, FieldCache_CacheEntry>(new Dictionary<int, HashSet<FieldCache_CacheEntry>>(17));
 		// maps ReaderField keys to Sets of ValueIds
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MapOfSets<ReaderField, Integer> readerFieldToValIds = new MapOfSets<>(new java.util.HashMap<ReaderField, java.util.Set<Integer>>(17));
-		MapOfSets<ReaderField, int?> readerFieldToValIds = new MapOfSets<ReaderField, int?>(new Dictionary<ReaderField, Set<int?>>(17));
-		//
+		MapOfSets<ReaderField, int> readerFieldToValIds = new MapOfSets<ReaderField, int>(new Dictionary<ReaderField, HashSet<int>>(17));
 
 		// any keys that we know result in more then one valId
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<ReaderField> valMismatchKeys = new java.util.HashSet<>();
-		Set<ReaderField> valMismatchKeys = new HashSet<ReaderField>();
+		ISet<ReaderField> valMismatchKeys = new HashSet<ReaderField>();
 
 		// iterate over all the cacheEntries to get the mappings we'll need
 		for (int i = 0; i < cacheEntries.Length; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.FieldCache_CacheEntry item = cacheEntries[i];
 		  FieldCache_CacheEntry item = cacheEntries[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object val = item.getValue();
 		  object val = item.Value;
 
 		  // It's OK to have dup entries, where one is eg
@@ -154,25 +143,19 @@ namespace Lucene.Net.Util
 			continue;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReaderField rf = new ReaderField(item.getReaderKey(), item.getFieldName());
 		  ReaderField rf = new ReaderField(item.ReaderKey, item.FieldName);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer valId = Integer.valueOf(System.identityHashCode(val));
-		  int? valId = Convert.ToInt32(System.identityHashCode(val));
+		  int valId = val.GetHashCode();
 
 		  // indirect mapping, so the MapOfSet will dedup identical valIds for us
 		  valIdToItems.Put(valId, item);
 		  if (1 < readerFieldToValIds.Put(rf, valId))
 		  {
-			valMismatchKeys.add(rf);
+			valMismatchKeys.Add(rf);
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Insanity> insanity = new java.util.ArrayList<>(valMismatchKeys.size() * 3);
-		IList<Insanity> insanity = new List<Insanity>(valMismatchKeys.size() * 3);
+		List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 
 		insanity.AddRange(CheckValueMismatch(valIdToItems, readerFieldToValIds, valMismatchKeys));
 		insanity.AddRange(CheckSubreaders(valIdToItems, readerFieldToValIds));
@@ -186,29 +169,21 @@ namespace Lucene.Net.Util
 	  /// instances accordingly.  The MapOfSets are used to populate 
 	  /// the Insanity objects. </summary>
 	  /// <seealso cref= InsanityType#VALUEMISMATCH </seealso>
-	  private ICollection<Insanity> CheckValueMismatch(MapOfSets<int?, FieldCache_CacheEntry> valIdToItems, MapOfSets<ReaderField, int?> readerFieldToValIds, Set<ReaderField> valMismatchKeys)
+	  private ICollection<Insanity> CheckValueMismatch(MapOfSets<int, FieldCache_CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds, ISet<ReaderField> valMismatchKeys)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Insanity> insanity = new java.util.ArrayList<>(valMismatchKeys.size() * 3);
-		IList<Insanity> insanity = new List<Insanity>(valMismatchKeys.size() * 3);
+		List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 
-		if (!valMismatchKeys.Empty)
+		if (valMismatchKeys.Count != 0)
 		{
 		  // we have multiple values for some ReaderFields
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<ReaderField, java.util.Set<Integer>> rfMap = readerFieldToValIds.getMap();
-		  IDictionary<ReaderField, Set<int?>> rfMap = readerFieldToValIds.Map;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Integer, java.util.Set<Lucene.Net.Search.FieldCache_CacheEntry>> valMap = valIdToItems.getMap();
-		  IDictionary<int?, Set<FieldCache_CacheEntry>> valMap = valIdToItems.Map;
+		  IDictionary<ReaderField, HashSet<int>> rfMap = readerFieldToValIds.Map;
+		  IDictionary<int, HashSet<FieldCache_CacheEntry>> valMap = valIdToItems.Map;
 		  foreach (ReaderField rf in valMismatchKeys)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Search.FieldCache_CacheEntry> badEntries = new java.util.ArrayList<>(valMismatchKeys.size() * 2);
-			IList<FieldCache_CacheEntry> badEntries = new List<FieldCache_CacheEntry>(valMismatchKeys.size() * 2);
-			foreach (Integer value in rfMap[rf])
+			IList<FieldCache_CacheEntry> badEntries = new List<FieldCache_CacheEntry>(valMismatchKeys.Count * 2);
+			foreach (int value in rfMap[rf])
 			{
 			  foreach (FieldCache_CacheEntry cacheEntry in valMap[value])
 			  {
@@ -217,7 +192,7 @@ namespace Lucene.Net.Util
 			}
 
 			FieldCache_CacheEntry[] badness = new FieldCache_CacheEntry[badEntries.Count];
-			badness = badEntries.toArray(badness);
+			badness = badEntries.ToArray(); //LUCENE TO-DO had param of badness before
 
 			insanity.Add(new Insanity(InsanityType.VALUEMISMATCH, "Multiple distinct value objects for " + rf.ToString(), badness));
 		  }
@@ -232,34 +207,32 @@ namespace Lucene.Net.Util
 	  /// found that have an ancestry relationships.  
 	  /// </summary>
 	  /// <seealso cref= InsanityType#SUBREADER </seealso>
-	  private ICollection<Insanity> CheckSubreaders(MapOfSets<int?, FieldCache_CacheEntry> valIdToItems, MapOfSets<ReaderField, int?> readerFieldToValIds)
+	  private ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache_CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Insanity> insanity = new java.util.ArrayList<>(23);
-		IList<Insanity> insanity = new List<Insanity>(23);
+		List<Insanity> insanity = new List<Insanity>(23);
 
-		IDictionary<ReaderField, Set<ReaderField>> badChildren = new Dictionary<ReaderField, Set<ReaderField>>(17);
+		Dictionary<ReaderField, HashSet<ReaderField>> badChildren = new Dictionary<ReaderField, HashSet<ReaderField>>(17);
 		MapOfSets<ReaderField, ReaderField> badKids = new MapOfSets<ReaderField, ReaderField>(badChildren); // wrapper
 
-		IDictionary<int?, Set<FieldCache_CacheEntry>> viToItemSets = valIdToItems.Map;
-		IDictionary<ReaderField, Set<int?>> rfToValIdSets = readerFieldToValIds.Map;
+		IDictionary<int, HashSet<FieldCache_CacheEntry>> viToItemSets = valIdToItems.Map;
+		IDictionary<ReaderField, HashSet<int>> rfToValIdSets = readerFieldToValIds.Map;
 
-		Set<ReaderField> seen = new HashSet<ReaderField>(17);
+        HashSet<ReaderField> seen = new HashSet<ReaderField>();
 
-		IDictionary<ReaderField, Set<int?>>.KeyCollection readerFields = rfToValIdSets.Keys;
-		foreach (ReaderField rf in readerFields)
+		//IDictionary<ReaderField, ISet<int>>.KeyCollection readerFields = rfToValIdSets.Keys;
+        foreach (ReaderField rf in rfToValIdSets.Keys)
 		{
 
-		  if (seen.contains(rf))
+		  if (seen.Contains(rf))
 		  {
 			  continue;
 		  }
 
-		  IList<object> kids = GetAllDescendantReaderKeys(rf.readerKey);
+		  IList<object> kids = GetAllDescendantReaderKeys(rf.ReaderKey);
 		  foreach (object kidKey in kids)
 		  {
-			ReaderField kid = new ReaderField(kidKey, rf.fieldName);
+			ReaderField kid = new ReaderField(kidKey, rf.FieldName);
 
 			if (badChildren.ContainsKey(kid))
 			{
@@ -275,21 +248,21 @@ namespace Lucene.Net.Util
 			  // we have cache entries for the kid
 			  badKids.Put(rf, kid);
 			}
-			seen.add(kid);
+			seen.Add(kid);
 		  }
-		  seen.add(rf);
+		  seen.Add(rf);
 		}
 
 		// every mapping in badKids represents an Insanity
 		foreach (ReaderField parent in badChildren.Keys)
 		{
-		  Set<ReaderField> kids = badChildren[parent];
+		  HashSet<ReaderField> kids = badChildren[parent];
 
-		  IList<FieldCache_CacheEntry> badEntries = new List<FieldCache_CacheEntry>(kids.size() * 2);
+		  List<FieldCache_CacheEntry> badEntries = new List<FieldCache_CacheEntry>(kids.Count * 2);
 
 		  // put parent entr(ies) in first
 		  {
-			foreach (Integer value in rfToValIdSets[parent])
+			foreach (int value in rfToValIdSets[parent])
 			{
 			  badEntries.AddRange(viToItemSets[value]);
 			}
@@ -298,14 +271,14 @@ namespace Lucene.Net.Util
 		  // now the entries for the descendants
 		  foreach (ReaderField kid in kids)
 		  {
-			foreach (Integer value in rfToValIdSets[kid])
+			foreach (int value in rfToValIdSets[kid])
 			{
 			  badEntries.AddRange(viToItemSets[value]);
 			}
 		  }
 
 		  FieldCache_CacheEntry[] badness = new FieldCache_CacheEntry[badEntries.Count];
-		  badness = badEntries.toArray(badness);
+		  badness = badEntries.ToArray();//LUCENE TO-DO had param of badness first
 
 		  insanity.Add(new Insanity(InsanityType.SUBREADER, "Found caches for descendants of " + parent.ToString(), badness));
 		}
@@ -321,12 +294,10 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  private IList<object> GetAllDescendantReaderKeys(object seed)
 	  {
-		IList<object> all = new List<object>(17); // will grow as we iter
+		List<object> all = new List<object>(17); // will grow as we iter
 		all.Add(seed);
 		for (int i = 0; i < all.Count; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object obj = all.get(i);
 		  object obj = all[i];
 		  // TODO: We don't check closed readers here (as getTopReaderContext
 		  // throws AlreadyClosedException), what should we do? Reflection?
@@ -334,25 +305,23 @@ namespace Lucene.Net.Util
 		  {
 			try
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Index.IndexReaderContext> childs = ((Lucene.Net.Index.IndexReader) obj).getContext().children();
 			  IList<IndexReaderContext> childs = ((IndexReader) obj).Context.Children();
 			  if (childs != null) // it is composite reader
 			  {
 				foreach (IndexReaderContext ctx in childs)
 				{
-				  all.Add(ctx.reader().CoreCacheKey);
+				  all.Add(ctx.Reader().CoreCacheKey);
 				}
 			  }
 			}
-			catch (AlreadyClosedException ace)
+			catch (AlreadyClosedException)
 			{
 			  // ignore this reader
 			}
 		  }
 		}
 		// need to skip the first, because it was the seed
-		return all.subList(1, all.Count);
+		return all.GetRange(1, all.Count);
 	  }
 
 	  /// <summary>
@@ -367,9 +336,9 @@ namespace Lucene.Net.Util
 		  this.ReaderKey = readerKey;
 		  this.FieldName = fieldName;
 		}
-		public override int HashCode()
+		public override int GetHashCode()
 		{
-		  return System.identityHashCode(ReaderKey) * FieldName.HashCode();
+		  return ReaderKey.GetHashCode() * FieldName.GetHashCode();
 		}
 		public override bool Equals(object that)
 		{

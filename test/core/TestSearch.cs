@@ -168,8 +168,8 @@ namespace org.apache.lucene
 		IList<Query> queries = new List<Query>();
 
 		BooleanQuery booleanAB = new BooleanQuery();
-		booleanAB.add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur.SHOULD);
-		booleanAB.add(new TermQuery(new Term("contents", "b")), BooleanClause.Occur.SHOULD);
+		booleanAB.add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur_e.SHOULD);
+		booleanAB.add(new TermQuery(new Term("contents", "b")), BooleanClause.Occur_e.SHOULD);
 		queries.Add(booleanAB);
 
 		PhraseQuery phraseAB = new PhraseQuery();
@@ -184,8 +184,8 @@ namespace org.apache.lucene
 		queries.Add(phraseABC);
 
 		BooleanQuery booleanAC = new BooleanQuery();
-		booleanAC.add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur.SHOULD);
-		booleanAC.add(new TermQuery(new Term("contents", "c")), BooleanClause.Occur.SHOULD);
+		booleanAC.add(new TermQuery(new Term("contents", "a")), BooleanClause.Occur_e.SHOULD);
+		booleanAC.add(new TermQuery(new Term("contents", "c")), BooleanClause.Occur_e.SHOULD);
 		queries.Add(booleanAC);
 
 		PhraseQuery phraseAC = new PhraseQuery();

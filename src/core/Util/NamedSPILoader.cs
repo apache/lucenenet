@@ -60,9 +60,9 @@ namespace Lucene.Net.Util
 		  {
 			IDictionary<string, S> services = new Dictionary<string, S>(this.Services);
 			SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
-			while (loader.HasNext())
-			{
-			  Type c = loader.Next();
+			
+            foreach (Type c in loader)
+            {
 			  try
 			  {
 				S service = (S)Activator.CreateInstance(c);
@@ -115,8 +115,6 @@ namespace Lucene.Net.Util
 
 	  public S Lookup(string name)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final S service = services.get(name);
 		S service = Services[name];
 		if (service != null)
 		{

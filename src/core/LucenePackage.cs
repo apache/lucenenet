@@ -1,4 +1,4 @@
-namespace org.apache.lucene
+namespace Lucene.Net
 {
 
 	/*
@@ -26,7 +26,7 @@ namespace org.apache.lucene
 	  private LucenePackage() // can't construct
 	  {
 	  }
-
+/*
 	  /// <summary>
 	  /// Return Lucene's package, including version information. </summary>
 	  public static Package Get()
@@ -34,5 +34,5 @@ namespace org.apache.lucene
 		return typeof(LucenePackage).Assembly;
 	  }
 	}
-
+*/
 }

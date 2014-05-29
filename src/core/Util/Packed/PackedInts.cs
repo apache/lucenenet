@@ -27,6 +27,7 @@ namespace Lucene.Net.Util.Packed
     using DataOutput = Lucene.Net.Store.DataOutput;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using System.Collections.Generic;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Simplistic compression for array of unsigned long values.
@@ -89,8 +90,8 @@ namespace Lucene.Net.Util.Packed
 	  /// 
 	  /// @lucene.internal
 	  /// </summary>
-	  public enum Format
-	  {
+	  //public enum Format
+	  //{
 		/// <summary>
 		/// Compact format, all bits are written contiguously.
 		/// </summary>
@@ -154,7 +155,7 @@ namespace Lucene.Net.Util.Packed
 		/// <summary>
 		/// Returns the overhead ratio (<code>overhead per value / bits per value</code>).
 		/// </summary>
-	  }
+	  //}
 /*	public static partial class EnumExtensionMethods
 	{
 		internal PACKED(this Format instance, 0)
@@ -244,7 +245,10 @@ namespace Lucene.Net.Util.Packed
 
       private sealed class PackedFormat : Format 
       {
-          public PackedFormat(): base(0){}
+          public PackedFormat()
+              : base(0)
+          {
+          }
 
           public override long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
           {
@@ -629,15 +633,15 @@ namespace Lucene.Net.Util.Packed
 		public virtual int Get(int index, long[] arr, int off, int len)
 		{
 		  Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		  Debug.Assert(index >= 0 && index < size());
+		  Debug.Assert(index >= 0 && index < Size());
 		  Debug.Assert(off + len <= arr.Length);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int gets = Math.min(size() - index, len);
-		  int gets = Math.Min(size() - index, len);
+		  int gets = Math.Min(Size() - index, len);
 		  for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
 		  {
-			arr[o] = get(i);
+			arr[o] = Get(i);
 		  }
 		  return gets;
 		}
@@ -669,7 +673,7 @@ namespace Lucene.Net.Util.Packed
 		{
 			get
 			{
-			  Debug.Assert(!hasArray());
+			  Debug.Assert(!HasArray());
 			  return null;
 			}
 		}
@@ -726,7 +730,7 @@ namespace Lucene.Net.Util.Packed
 
 		public override long Next()
 		{
-		  LongsRef nextValues = next(1);
+		  LongsRef nextValues = Next(1);
 		  Debug.Assert(nextValues.Length > 0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long result = nextValues.longs[nextValues.offset];
@@ -772,13 +776,13 @@ namespace Lucene.Net.Util.Packed
 		public virtual int Set(int index, long[] arr, int off, int len)
 		{
 		  Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		  Debug.Assert(index >= 0 && index < size());
-		  len = Math.Min(len, size() - index);
+		  Debug.Assert(index >= 0 && index < Size());
+		  len = Math.Min(len, Size() - index);
 		  Debug.Assert(off + len <= arr.Length);
 
 		  for (int i = index, o = off, end = index + len; i < end; ++i, ++o)
 		  {
-			set(i, arr[o]);
+			Set(i, arr[o]);
 		  }
 		  return len;
 		}
@@ -793,7 +797,7 @@ namespace Lucene.Net.Util.Packed
 		  Debug.Assert(fromIndex <= toIndex);
 		  for (int i = fromIndex; i < toIndex; ++i)
 		  {
-			set(i, val);
+			Set(i, val);
 		  }
 		}
 
@@ -802,7 +806,7 @@ namespace Lucene.Net.Util.Packed
 		/// </summary>
 		public virtual void Clear()
 		{
-		  fill(0, size(), 0);
+		  Fill(0, Size(), 0);
 		}
 
 		/// <summary>
@@ -812,11 +816,11 @@ namespace Lucene.Net.Util.Packed
 		/// </summary>
 		public virtual void Save(DataOutput @out)
 		{
-		  Writer writer = GetWriterNoHeader(@out, Format, size(), BitsPerValue, DEFAULT_BUFFER_SIZE);
+		  Writer writer = GetWriterNoHeader(@out, Format, Size(), BitsPerValue, DEFAULT_BUFFER_SIZE);
 		  writer.WriteHeader();
-		  for (int i = 0; i < size(); ++i)
+		  for (int i = 0; i < Size(); ++i)
 		  {
-			writer.Add(get(i));
+			writer.Add(Set(i));
 		  }
 		  writer.Finish();
 		}
@@ -918,7 +922,7 @@ namespace Lucene.Net.Util.Packed
 		  Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
 		  Debug.Assert(index >= 0 && index < valueCount);
 		  len = Math.Min(len, valueCount - index);
-		  Arrays.fill(arr, off, off + len, 0);
+		  Arrays.Fill(arr, off, off + len, 0);
 		  return len;
 		}
 
@@ -967,7 +971,7 @@ namespace Lucene.Net.Util.Packed
 		  CodecUtil.WriteHeader(@out, CODEC_NAME, VERSION_CURRENT);
 		  @out.WriteVInt(bitsPerValue);
 		  @out.WriteVInt(valueCount);
-		  @out.WriteVInt(Format.Id);
+		  @out.WriteVInt(Format.id);
 		}
 
 		/// <summary>
@@ -1087,7 +1091,7 @@ namespace Lucene.Net.Util.Packed
 	  /// @lucene.internal </seealso>
 	  public static Reader GetReaderNoHeader(DataInput @in, Header header)
 	  {
-		return GetReaderNoHeader(@in, header.Format, header.Version, header.ValueCount, header.BitsPerValue);
+		return GetReaderNoHeader(@in, header.format, header.version, header.valueCount, header.bitsPerValue);
 	  }
 
 	  /// <summary>
@@ -1111,7 +1115,7 @@ namespace Lucene.Net.Util.Packed
 		int valueCount = @in.ReadVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
-		Format format = Format.byId(@in.ReadVInt());
+		Format format = Format.ById(@in.ReadVInt());
 
 		return GetReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
 	  }
@@ -1158,7 +1162,7 @@ namespace Lucene.Net.Util.Packed
 		int valueCount = @in.ReadVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
-		Format format = Format.byId(@in.ReadVInt());
+		Format format = Format.ById(@in.ReadVInt());
 		return GetReaderIteratorNoHeader(@in, format, version, valueCount, bitsPerValue, mem);
 	  }
 
@@ -1228,16 +1232,16 @@ namespace Lucene.Net.Util.Packed
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long result = base.get(index);
-			long result = base.get(index);
+			long result = base.Get(index);
 			if (index == ValueCount - 1)
 			{
 			  try
 			  {
 				@in.Seek(EndPointer);
 			  }
-			  catch (IOException e)
+			  catch (System.IO.IOException e)
 			  {
-				throw new IllegalStateException("failed", e);
+				throw new InvalidOperationException("failed", e);
 			  }
 			}
 			return result;
@@ -1258,7 +1262,7 @@ namespace Lucene.Net.Util.Packed
 	  /// @lucene.internal </seealso>
 	  public static Reader GetDirectReaderNoHeader(IndexInput @in, Header header)
 	  {
-		return GetDirectReaderNoHeader(@in, header.Format, header.Version, header.ValueCount, header.BitsPerValue);
+		return GetDirectReaderNoHeader(@in, header.format, header.version, header.valueCount, header.bitsPerValue);
 	  }
 
 	  /// <summary>
@@ -1287,7 +1291,7 @@ namespace Lucene.Net.Util.Packed
 		int valueCount = @in.ReadVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
-		Format format = Format.byId(@in.ReadVInt());
+		Format format = Format.ById(@in.ReadVInt());
 		return GetDirectReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
 	  }
 
@@ -1314,7 +1318,7 @@ namespace Lucene.Net.Util.Packed
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FormatAndBits formatAndBits = fastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
 		FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
-		return GetMutable(valueCount, formatAndBits.BitsPerValue, formatAndBits.Format);
+		return GetMutable(valueCount, formatAndBits.bitsPerValue, formatAndBits.format);
 	  }
 
 	  /// <summary>
@@ -1447,7 +1451,7 @@ namespace Lucene.Net.Util.Packed
 		FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Writer writer = getWriterNoHeader(out, formatAndBits.format, valueCount, formatAndBits.bitsPerValue, DEFAULT_BUFFER_SIZE);
-		Writer writer = GetWriterNoHeader(@out, formatAndBits.Format, valueCount, formatAndBits.BitsPerValue, DEFAULT_BUFFER_SIZE);
+		Writer writer = GetWriterNoHeader(@out, formatAndBits.format, valueCount, formatAndBits.bitsPerValue, DEFAULT_BUFFER_SIZE);
 		writer.WriteHeader();
 		return writer;
 	  }
@@ -1464,7 +1468,7 @@ namespace Lucene.Net.Util.Packed
 		{
 		  throw new System.ArgumentException("maxValue must be non-negative (got: " + maxValue + ")");
 		}
-		return Math.Max(1, 64 - long.numberOfLeadingZeros(maxValue));
+		return Math.Max(1, 64 - Number.NumberOfLeadingZeros(maxValue));
 	  }
 
 	  /// <summary>
@@ -1568,7 +1572,7 @@ namespace Lucene.Net.Util.Packed
 		int valueCount = @in.ReadVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
-		Format format = Format.byId(@in.ReadVInt());
+		Format format = Format.ById(@in.ReadVInt());
 		return new Header(format, valueCount, bitsPerValue, version);
 	  }
 
@@ -1605,7 +1609,7 @@ namespace Lucene.Net.Util.Packed
 		{
 		  throw new System.ArgumentException("blockSize must be a power of two, got " + blockSize);
 		}
-		return int.numberOfTrailingZeros(blockSize);
+		return Number.NumberOfTrailingZeros(blockSize);
 	  }
 
 	  /// <summary>

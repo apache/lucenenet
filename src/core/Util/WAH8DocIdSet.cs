@@ -29,6 +29,7 @@ namespace Lucene.Net.Util
 	using DataInput = Lucene.Net.Store.DataInput;
 	using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// <seealso cref="DocIdSet"/> implementation based on word-aligned hybrid encoding on
@@ -130,27 +131,21 @@ namespace Lucene.Net.Util
 		  case 0:
 			throw new System.ArgumentException("There must be at least one set to intersect");
 		  case 1:
-			return docIdSets.GetEnumerator().next();
+			var iter = docIdSets.GetEnumerator();
+            iter.MoveNext();
+            return iter.Current;
 		}
 		// The logic below is similar to ConjunctionScorer
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSets = docIdSets.size();
 		int numSets = docIdSets.Count;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Iterator[] iterators = new Iterator[numSets];
 		Iterator[] iterators = new Iterator[numSets];
 		int i = 0;
 		foreach (WAH8DocIdSet set in docIdSets)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Iterator it = set.iterator();
 		  Iterator it = set.Iterator();
 		  iterators[i++] = it;
 		}
-		Arrays.sort(iterators, SERIALIZED_LENGTH_COMPARATOR);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final WordBuilder builder = new WordBuilder().setIndexInterval(indexInterval);
-		WordBuilder builder = (new WordBuilder()).setIndexInterval(indexInterval);
+		Array.Sort(iterators, SERIALIZED_LENGTH_COMPARATOR);
+		WordBuilder builder = (new WordBuilder()).SetIndexInterval(indexInterval);
 		int wordNum = 0;
 		while (true)
 		{
@@ -210,14 +205,12 @@ namespace Lucene.Net.Util
 		  case 0:
 			return EMPTY;
 		  case 1:
-			return docIdSets.GetEnumerator().next();
+			var iter = docIdSets.GetEnumerator();
+            iter.MoveNext();
+            return iter.Current;
 		}
 		// The logic below is very similar to DisjunctionScorer
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSets = docIdSets.size();
 		int numSets = docIdSets.Count;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PriorityQueue<Iterator> iterators = new PriorityQueue<WAH8DocIdSet.Iterator>(numSets)
 		PriorityQueue<Iterator> iterators = new PriorityQueueAnonymousInnerClassHelper(numSets);
 		foreach (WAH8DocIdSet set in docIdSets)
 		{
@@ -233,9 +226,7 @@ namespace Lucene.Net.Util
 		}
 		int wordNum = top.WordNum;
 		sbyte word = top.Word;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final WordBuilder builder = new WordBuilder().setIndexInterval(indexInterval);
-		WordBuilder builder = (new WordBuilder()).setIndexInterval(indexInterval);
+		WordBuilder builder = (new WordBuilder()).SetIndexInterval(indexInterval);
 		while (true)
 		{
 		  top.NextWord();
@@ -369,9 +360,9 @@ namespace Lucene.Net.Util
 		  {
 			WriteHeader(Reverse, Clean, DirtyWords.Length);
 		  }
-		  catch (IOException cannotHappen)
+		  catch (System.IO.IOException cannotHappen)
 		  {
-			throw new AssertionError(cannotHappen);
+			throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen);
 		  }
 		  @out.WriteBytes(DirtyWords.Bytes, 0, DirtyWords.Length);
 		  DirtyWords.Length = 0;
@@ -473,16 +464,10 @@ namespace Lucene.Net.Util
 			return EMPTY;
 		  }
 		  WriteSequence();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] data = java.util.Arrays.copyOf(out.bytes, out.length);
-		  sbyte[] data = Arrays.copyOf(@out.Bytes, @out.Length);
+		  sbyte[] data = Arrays.CopyOf(@out.Bytes, @out.Length);
 
 		  // Now build the index
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int valueCount = (numSequences - 1) / indexInterval + 1;
 		  int valueCount = (NumSequences - 1) / IndexInterval_Renamed + 1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer indexPositions, indexWordNums;
 		  MonotonicAppendingLongBuffer indexPositions, indexWordNums;
 		  if (valueCount <= 1)
 		  {
@@ -599,7 +584,7 @@ namespace Lucene.Net.Util
 
 		public override Builder SetIndexInterval(int indexInterval)
 		{
-		  return (Builder) base.setIndexInterval(indexInterval);
+		  return (Builder) base.SetIndexInterval(indexInterval);
 		}
 
 		public override WAH8DocIdSet Build()

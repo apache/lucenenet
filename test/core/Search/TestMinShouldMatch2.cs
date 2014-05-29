@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
 		BooleanQuery bq = new BooleanQuery();
 		foreach (string value in values)
 		{
-		  bq.add(new TermQuery(new Term("field", value)), BooleanClause.Occur.SHOULD);
+		  bq.add(new TermQuery(new Term("field", value)), BooleanClause.Occur_e.SHOULD);
 		}
 		bq.MinimumNumberShouldMatch = minShouldMatch;
 

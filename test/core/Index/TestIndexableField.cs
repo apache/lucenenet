@@ -315,15 +315,15 @@ namespace Lucene.Net.Index
 			  }
 
 			  BooleanQuery bq = new BooleanQuery();
-			  bq.add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur.MUST);
-			  bq.add(new TermQuery(new Term(name, "text")), BooleanClause.Occur.MUST);
+			  bq.add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
+			  bq.add(new TermQuery(new Term(name, "text")), BooleanClause.Occur_e.MUST);
 			  TopDocs hits2 = s.search(bq, 1);
 			  Assert.AreEqual(1, hits2.totalHits);
 			  Assert.AreEqual(docID, hits2.scoreDocs[0].doc);
 
 			  bq = new BooleanQuery();
-			  bq.add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur.MUST);
-			  bq.add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur.MUST);
+			  bq.add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
+			  bq.add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur_e.MUST);
 			  TopDocs hits3 = s.search(bq, 1);
 			  Assert.AreEqual(1, hits3.totalHits);
 			  Assert.AreEqual(docID, hits3.scoreDocs[0].doc);

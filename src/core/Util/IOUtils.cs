@@ -4,24 +4,28 @@ using System.Threading;
 namespace Lucene.Net.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Text;
+    /*
+                     * Licensed to the Apache Software Foundation (ASF) under one or more
+                     * contributor license agreements.  See the NOTICE file distributed with
+                     * this work for additional information regarding copyright ownership.
+                     * The ASF licenses this file to You under the Apache License, Version 2.0
+                     * (the "License"); you may not use this file except in compliance with
+                     * the License.  You may obtain a copy of the License at
+                     *
+                     *     http://www.apache.org/licenses/LICENSE-2.0
+                     *
+                     * Unless required by applicable law or agreed to in writing, software
+                     * distributed under the License is distributed on an "AS IS" BASIS,
+                     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                     * See the License for the specific language governing permissions and
+                     * limitations under the License.
+                     */
 
-	using Directory = Lucene.Net.Store.Directory;
+    using Directory = Lucene.Net.Store.Directory;
 
 
 	/// <summary>
@@ -36,15 +40,15 @@ namespace Lucene.Net.Util
 	  /// UTF-8 <seealso cref="Charset"/> instance to prevent repeated
 	  /// <seealso cref="Charset#forName(String)"/> lookups </summary>
 	  /// @deprecated Use <seealso cref="StandardCharsets#UTF_8"/> instead. 
-	  [Obsolete("Use <seealso cref="StandardCharsets#UTF_8"/> instead.")]
-	  public static readonly Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
+	  [Obsolete("Use <seealso cref=StandardCharsets_UTF_8/> instead.")]
+	  public static readonly Encoding CHARSET_UTF_8 = Encoding.UTF8;
 
 	  /// <summary>
 	  /// UTF-8 charset string.
 	  /// <p>Where possible, use <seealso cref="StandardCharsets#UTF_8"/> instead,
 	  /// as using the String constant may slow things down. </summary>
 	  /// <seealso cref= StandardCharsets#UTF_8 </seealso>
-	  public static readonly string UTF_8 = StandardCharsets.UTF_8.name();
+      public static readonly string UTF_8 = "UTF-8";
 
 	  private IOUtils() // no instance
 	  {
@@ -80,7 +84,7 @@ namespace Lucene.Net.Util
 		  {
 			if (@object != null)
 			{
-			  @object.close();
+			  @object.Dispose();
 			}
 		  }
 		  catch (Exception t)
@@ -106,7 +110,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Closes all given <tt>IDisposable</tt>s, suppressing all thrown exceptions. </summary>
 	  /// <seealso cref= #closeWhileHandlingException(Exception, IDisposable...)  </seealso>
-	  public static void closeWhileHandlingException<E, T1>(E priorException, IEnumerable<T1> objects) where E : Exception where T1 : java.io.IDisposable
+	  public static void closeWhileHandlingException<E, T1>(E priorException, IEnumerable<T1> objects) where E : Exception where T1 : IDisposable
 	  {
 		Exception th = null;
 
@@ -116,7 +120,7 @@ namespace Lucene.Net.Util
 		  {
 			if (@object != null)
 			{
-			  @object.close();
+			  @object.Dispose();
 			}
 		  }
 		  catch (Exception t)
@@ -158,7 +162,7 @@ namespace Lucene.Net.Util
 		  {
 			if (@object != null)
 			{
-			  @object.close();
+			  @object.Dispose();
 			}
 		  }
 		  catch (Exception t)
@@ -177,7 +181,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Closes all given <tt>IDisposable</tt>s. </summary>
 	  /// <seealso cref= #close(IDisposable...) </seealso>
-	  public static void close<T1>(IEnumerable<T1> objects) where T1 : java.io.IDisposable
+	  public static void close<T1>(IEnumerable<T1> objects) where T1 : IDisposable
 	  {
 		Exception th = null;
 
@@ -187,7 +191,7 @@ namespace Lucene.Net.Util
 		  {
 			if (@object != null)
 			{
-			  @object.close();
+			  @object.Dispose();
 			}
 		  }
 		  catch (Exception t)
@@ -217,11 +221,12 @@ namespace Lucene.Net.Util
 		  {
 			if (@object != null)
 			{
-			  @object.close();
+			  @object.Dispose();
 			}
 		  }
-		  catch (Exception t)
+		  catch (Exception)
 		  {
+              //eat it
 		  }
 		}
 	  }
@@ -229,7 +234,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Closes all given <tt>IDisposable</tt>s, suppressing all thrown exceptions. </summary>
 	  /// <seealso cref= #closeWhileHandlingException(IDisposable...) </seealso>
-	  public static void closeWhileHandlingException<T1>(IEnumerable<T1> objects) where T1 : java.io.IDisposable
+	  public static void closeWhileHandlingException<T1>(IEnumerable<T1> objects) where T1 : IDisposable
 	  {
 		foreach (IDisposable @object in objects)
 		{
@@ -237,11 +242,12 @@ namespace Lucene.Net.Util
 		  {
 			if (@object != null)
 			{
-			  @object.close();
+			  @object.Dispose();
 			}
 		  }
-		  catch (Exception t)
+		  catch (Exception)
 		  {
+              //eat it
 		  }
 		}
 	  }
@@ -252,10 +258,11 @@ namespace Lucene.Net.Util
 	  /// <param name="suppressed"> the suppressed exception </param>
 	  private static void AddSuppressed(Exception exception, Exception suppressed)
 	  {
-		if (exception != null && suppressed != null)
+        //LUCENE TO-DO I don't think there is a .NET equivalent
+		/*if (exception != null && suppressed != null)
 		{
-		  exception.addSuppressed(suppressed);
-		}
+		  exception.AddSuppressed(suppressed);
+		}*/
 	  }
 
 	  /// <summary>
@@ -270,12 +277,9 @@ namespace Lucene.Net.Util
 	  /// <param name="stream"> the stream to wrap in a reader </param>
 	  /// <param name="charSet"> the expected charset </param>
 	  /// <returns> a wrapping reader </returns>
-	  public static Reader GetDecodingReader(InputStream stream, Charset charSet)
+	  public static TextReader GetDecodingReader(Stream stream, Encoding charSet)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.nio.charset.CharsetDecoder charSetDecoder = charSet.newDecoder().onMalformedInput(java.nio.charset.CodingErrorAction.REPORT).onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT);
-		CharsetDecoder charSetDecoder = charSet.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
-		return new BufferedReader(new InputStreamReader(stream, charSetDecoder));
+        return new StreamReader(new BufferedStream(stream), charSet);
 	  }
 
 	  /// <summary>
@@ -289,16 +293,14 @@ namespace Lucene.Net.Util
 	  /// <param name="file"> the file to open a reader on </param>
 	  /// <param name="charSet"> the expected charset </param>
 	  /// <returns> a reader to read the given file </returns>
-	  public static Reader GetDecodingReader(File file, Charset charSet)
+	  public static TextReader GetDecodingReader(FileInfo file, Encoding charSet)
 	  {
-		FileInputStream stream = null;
+		FileStream stream = null;
 		bool success = false;
 		try
 		{
-		  stream = new FileInputStream(file);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.Reader reader = getDecodingReader(stream, charSet);
-		  Reader reader = GetDecodingReader(stream, charSet);
+          stream = file.OpenRead();
+		  TextReader reader = GetDecodingReader(stream, charSet);
 		  success = true;
 		  return reader;
 
@@ -325,16 +327,14 @@ namespace Lucene.Net.Util
 	  /// <param name="charSet"> the expected charset </param>
 	  /// <returns> a reader to read the given file
 	  ///  </returns>
-	  public static Reader GetDecodingReader(Type clazz, string resource, Charset charSet)
+	  public static TextReader GetDecodingReader(Type clazz, string resource, Encoding charSet)
 	  {
-		InputStream stream = null;
+		Stream stream = null;
 		bool success = false;
 		try
 		{
-		  stream = clazz.getResourceAsStream(resource);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.Reader reader = getDecodingReader(stream, charSet);
-		  Reader reader = GetDecodingReader(stream, charSet);
+          stream = clazz.Assembly.GetManifestResourceStream(resource);
+		  TextReader reader = GetDecodingReader(stream, charSet);
 		  success = true;
 		  return reader;
 		}
@@ -371,14 +371,14 @@ namespace Lucene.Net.Util
 	  /// Copy one file's contents to another file. The target will be overwritten
 	  /// if it exists. The source must exist.
 	  /// </summary>
-	  public static void Copy(File source, File target)
+	  public static void Copy(FileInfo source, FileInfo target)
 	  {
-		FileInputStream fis = null;
-		FileOutputStream fos = null;
+		FileStream fis = null;
+        FileStream fos = null;
 		try
 		{
-		  fis = new FileInputStream(source);
-		  fos = new FileOutputStream(target);
+          fis = source.OpenRead();
+          fos = target.OpenWrite();
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte [] buffer = new byte [1024 * 8];
@@ -391,7 +391,7 @@ namespace Lucene.Net.Util
 		}
 		finally
 		{
-		  close(fis, fos);
+		  Close(fis, fos);
 		}
 	  }
 
@@ -405,9 +405,9 @@ namespace Lucene.Net.Util
 	  {
 		if (th != null)
 		{
-		  if (th is IOException)
+		  if (th is System.IO.IOException)
 		  {
-			throw (IOException) th;
+			throw (System.IO.IOException) th;
 		  }
 		  ReThrowUnchecked(th);
 		}
@@ -430,7 +430,7 @@ namespace Lucene.Net.Util
 		  {
 			throw (Exception) th;
 		  }
-		  throw new Exception(th);
+		  throw new Exception(th.ToString(), th);
 		}
 	  }
 
@@ -439,16 +439,15 @@ namespace Lucene.Net.Util
 	  /// <param name="fileToSync"> the file to fsync </param>
 	  /// <param name="isDir"> if true, the given file is a directory (we open for read and ignore IOExceptions,
 	  ///  because not all file systems and operating systems allow to fsync on a directory) </param>
-	  public static void Fsync(File fileToSync, bool isDir)
+	  public static void Fsync(FileInfo fileToSync, bool isDir)
 	  {
-		IOException exc = null;
+		System.IO.IOException exc = null;
 
 		// If the file is a directory we have to open read-only, for regular files we must open r/w for the fsync to have an effect.
 		// See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
-		using (final FileChannel file = FileChannel.open(fileToSync.toPath(), isDir ? StandardOpenOption.READ : StandardOpenOption.WRITE))
-		{
-				try
-				{
+		  try
+		  {
+              FileChannel file = FileChannel.open(fileToSync.toPath(), isDir ? StandardOpenOption.READ : StandardOpenOption.WRITE);
 			  for (int retry = 0; retry < 5; retry++)
 			  {
 				try
@@ -456,7 +455,7 @@ namespace Lucene.Net.Util
 				  file.force(true);
 				  return;
 				}
-				catch (IOException ioe)
+				catch (System.IO.IOException ioe)
 				{
 				  if (exc == null)
 				  {
@@ -465,30 +464,29 @@ namespace Lucene.Net.Util
 				  try
 				  {
 					// Pause 5 msec
-					Thread.Sleep(5L);
+					Thread.Sleep(5);
 				  }
-				  catch (InterruptedException ie)
+				  catch (ThreadInterruptedException ie)
 				  {
 					ThreadInterruptedException ex = new ThreadInterruptedException(ie);
-					ex.addSuppressed(exc);
+					//ex.addSuppressed(exc);
 					throw ex;
 				  }
 				}
 			  }
-				}
-			catch (IOException ioe)
+			}
+			catch (System.IO.IOException ioe)
 			{
 			  if (exc == null)
 			  {
 				exc = ioe;
 			  }
 			}
-		}
+		//}
 
 		if (isDir)
 		{
-		  assert(Constants.LINUX || Constants.MAC_OS_X) == false : "On Linux and MacOSX fsyncing a directory should not throw IOException, " + "we just don't want to rely on that in production (undocumented). Got: " + exc;
-		  // Ignore exception if it is a directory
+		  Debug.Assert((Constants.LINUX || Constants.MAC_OS_X) == false, "On Linux and MacOSX fsyncing a directory should not throw IOException, " + "we just don't want to rely on that in production (undocumented). Got: " + exc);		  // Ignore exception if it is a directory
 		  return;
 		}
 

@@ -225,8 +225,8 @@ namespace Lucene.Net.Search
 	  public virtual Query OptB(Query q)
 	  {
 		BooleanQuery bq = new BooleanQuery(true);
-		bq.add(q, BooleanClause.Occur.SHOULD);
-		bq.add(new TermQuery(new Term("NEVER","MATCH")), BooleanClause.Occur.MUST_NOT);
+		bq.add(q, BooleanClause.Occur_e.SHOULD);
+		bq.add(new TermQuery(new Term("NEVER","MATCH")), BooleanClause.Occur_e.MUST_NOT);
 		return bq;
 	  }
 
@@ -237,8 +237,8 @@ namespace Lucene.Net.Search
 	  public virtual Query ReqB(Query q)
 	  {
 		BooleanQuery bq = new BooleanQuery(true);
-		bq.add(q, BooleanClause.Occur.MUST);
-		bq.add(new TermQuery(new Term(FIELD,"w1")), BooleanClause.Occur.SHOULD);
+		bq.add(q, BooleanClause.Occur_e.MUST);
+		bq.add(new TermQuery(new Term(FIELD,"w1")), BooleanClause.Occur_e.SHOULD);
 		return bq;
 	  }
 

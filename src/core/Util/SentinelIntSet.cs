@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -73,7 +74,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void Clear()
 	  {
-		Arrays.fill(Keys, EmptyVal);
+		Arrays.Fill(Keys, EmptyVal);
 		Count = 0;
 	  }
 
@@ -184,7 +185,7 @@ namespace Lucene.Net.Util
 		Keys = new int[newSize];
 		if (EmptyVal != 0)
 		{
-			Arrays.fill(Keys, EmptyVal);
+			Arrays.Fill(Keys, EmptyVal);
 		}
 
 		foreach (int key in oldKeys)

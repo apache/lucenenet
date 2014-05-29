@@ -59,7 +59,7 @@ namespace Lucene.Net.Util
 	public sealed class VirtualMethod<C>
 	{
 
-	  private static readonly Set<Method> SingletonSet = Collections.synchronizedSet(new HashSet<Method>());
+	  private static readonly ISet<Method> SingletonSet = Collections.synchronizedSet(new HashSet<Method>());
 
 	  private readonly Type BaseClass;
 	  private readonly string Method;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
 		this.Parameters = parameters;
 		try
 		{
-		  if (!SingletonSet.add(baseClass.getDeclaredMethod(method, parameters)))
+		  if (!SingletonSet.Add(baseClass.getDeclaredMethod(method, parameters)))
 		  {
 			throw new System.NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
 		  }
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
 	  /// </ul> </returns>
 	  public static int compareImplementationDistance<C>(Type clazz, VirtualMethod<C> m1, VirtualMethod<C> m2)
 	  {
-		return Convert.ToInt32(m1.GetImplementationDistance(clazz)).compareTo(m2.GetImplementationDistance(clazz));
+		return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
 	  }
 
 	}

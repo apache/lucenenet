@@ -110,23 +110,13 @@ namespace Lucene.Net.Util
 		  Runtime rt = Runtime.Runtime;
 
 		  // take sizes in "conservative" order
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long max = rt.maxMemory();
 		  long max = rt.maxMemory(); // max allocated
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long total = rt.totalMemory();
 		  long total = rt.totalMemory(); // currently allocated
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long free = rt.freeMemory();
 		  long free = rt.freeMemory(); // unused portion of currently allocated
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long totalAvailableBytes = max - total + free;
 		  long totalAvailableBytes = max - total + free;
 
 		  // by free mem (attempting to not grow the heap for this)
 		  long sortBufferByteSize = free / 2;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long minBufferSizeBytes = MIN_BUFFER_SIZE_MB*MB;
 		  long minBufferSizeBytes = MIN_BUFFER_SIZE_MB * MB;
 		  if (sortBufferByteSize < minBufferSizeBytes || totalAvailableBytes > 10 * minBufferSizeBytes) // lets see if we need/should to grow the heap
 		  {
@@ -153,7 +143,7 @@ namespace Lucene.Net.Util
 
 		  internal virtual void InitializeInstanceFields()
 		  {
-			  BufferSize = outerInstance.RamBufferSize.Bytes;
+			  BufferSize = OuterInstance.RamBufferSize.Bytes;
 		  }
 
 		  private readonly OfflineSorter OuterInstance;
@@ -372,13 +362,13 @@ namespace Lucene.Net.Util
 		string tempDirPath = System.getProperty("java.io.tmpdir");
 		if (tempDirPath == null)
 		{
-		  throw new IOException("Java has no temporary folder property (java.io.tmpdir)?");
+		  throw new System.IO.IOException("Java has no temporary folder property (java.io.tmpdir)?");
 		}
 
 		File tempDirectory = new File(tempDirPath);
 		if (!tempDirectory.exists() || !tempDirectory.canWrite())
 		{
-		  throw new IOException("Java's temporary folder not present or writeable?: " + tempDirectory.AbsolutePath);
+		  throw new System.IO.IOException("Java's temporary folder not present or writeable?: " + tempDirectory.AbsolutePath);
 		}
 		return tempDirectory;
 	  }

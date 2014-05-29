@@ -24,13 +24,7 @@ namespace Lucene.Net.Util
 
 
 	using DirectAllocator = Lucene.Net.Util.ByteBlockPool.DirectAllocator;
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_MASK;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_SHIFT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_SIZE;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// <seealso cref="BytesRefHash"/> is a special purpose hash-map like data-structure
@@ -58,14 +52,14 @@ namespace Lucene.Net.Util
 	  internal readonly ByteBlockPool Pool;
 	  internal int[] BytesStart;
 
-	  private readonly BytesRef Scratch1 = new BytesRef();
+	  private BytesRef Scratch1 = new BytesRef();
 	  private int HashSize;
 	  private int HashHalfSize;
 	  private int HashMask;
 	  private int Count;
 	  private int LastCount = -1;
 	  private int[] Ids;
-	  private readonly BytesStartArray BytesStartArray;
+	  private readonly BytesStartArray bytesStartArray;
 	  private Counter BytesUsed;
 
 	  /// <summary>
@@ -93,8 +87,8 @@ namespace Lucene.Net.Util
 		HashMask = HashSize - 1;
 		this.Pool = pool;
 		Ids = new int[HashSize];
-		Arrays.fill(Ids, -1);
-		this.BytesStartArray = bytesStartArray;
+		Arrays.Fill(Ids, -1);
+		this.bytesStartArray = bytesStartArray;
 		BytesStart = bytesStartArray.Init();
 		BytesUsed = bytesStartArray.BytesUsed() == null? Counter.NewCounter() : bytesStartArray.BytesUsed();
 		BytesUsed.AddAndGet(HashSize * RamUsageEstimator.NUM_BYTES_INT);
@@ -172,17 +166,14 @@ namespace Lucene.Net.Util
 	  ///          the <seealso cref="Comparator"/> used for sorting </param>
 	  public int[] Sort(IComparer<BytesRef> comp)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] compact = compact();
 		int[] compact = Compact();
-		new IntroSorterAnonymousInnerClassHelper(this, comp, compact)
-		.sort(0, Count);
+		new IntroSorterAnonymousInnerClassHelper(this, comp, compact).Sort(0, Count);
 		return compact;
 	  }
 
 	  private class IntroSorterAnonymousInnerClassHelper : IntroSorter
 	  {
-		  private readonly BytesRefHash OuterInstance;
+		  private BytesRefHash OuterInstance;
 
 		  private IComparer<BytesRef> Comp;
 		  private int[] Compact;
@@ -192,13 +183,13 @@ namespace Lucene.Net.Util
 			  this.OuterInstance = outerInstance;
 			  this.Comp = comp;
 			  this.Compact = compact;
-			  pivot = new BytesRef(), outerInstance.Scratch1 = new BytesRef(), scratch2 = new BytesRef();
+			  pivot = new BytesRef();
+              OuterInstance.Scratch1 = new BytesRef();
+              Scratch2 = new BytesRef();
 		  }
 
 		  protected internal override void Swap(int i, int j)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int o = compact[i];
 			int o = Compact[i];
 			Compact[i] = Compact[j];
 			Compact[j] = o;
@@ -206,7 +197,7 @@ namespace Lucene.Net.Util
 
 		  protected internal override int Compare(int i, int j)
 		  {
-			const int id1 = Compact[i], id2 = Compact[j];
+			int id1 = Compact[i], id2 = Compact[j];
 			Debug.Assert(OuterInstance.BytesStart.Length > id1 && OuterInstance.BytesStart.Length > id2);
 			OuterInstance.Pool.SetBytesRef(OuterInstance.Scratch1, OuterInstance.BytesStart[id1]);
 			OuterInstance.Pool.SetBytesRef(scratch2, OuterInstance.BytesStart[id2]);
@@ -217,8 +208,6 @@ namespace Lucene.Net.Util
 		  {
 			  set
 			  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final int id = compact[value];
 				int id = Compact[value];
 				Debug.Assert(OuterInstance.BytesStart.Length > id);
 				OuterInstance.Pool.SetBytesRef(pivot, OuterInstance.BytesStart[id]);
@@ -227,8 +216,6 @@ namespace Lucene.Net.Util
 
 		  protected internal override int ComparePivot(int j)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int id = compact[j];
 			int id = Compact[j];
 			Debug.Assert(OuterInstance.BytesStart.Length > id);
 			OuterInstance.Pool.SetBytesRef(scratch2, OuterInstance.BytesStart[id]);
@@ -258,7 +245,7 @@ namespace Lucene.Net.Util
 		  BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -(HashSize - newSize));
 		  HashSize = newSize;
 		  Ids = new int[HashSize];
-		  Arrays.fill(Ids, -1);
+		  Arrays.Fill(Ids, -1);
 		  HashHalfSize = newSize / 2;
 		  HashMask = newSize - 1;
 		  return true;
@@ -280,13 +267,13 @@ namespace Lucene.Net.Util
 		{
 		  Pool.Reset(false, false); // we don't need to 0-fill the buffers
 		}
-		BytesStart = BytesStartArray.Clear();
+		BytesStart = bytesStartArray.Clear();
 		if (LastCount != -1 && Shrink(LastCount))
 		{
 		  // shrink clears the hash entries
 		  return;
 		}
-		Arrays.fill(Ids, -1);
+		Arrays.Fill(Ids, -1);
 	  }
 
 	  public void Clear()
@@ -335,11 +322,11 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int len2 = 2 + bytes.length;
 		  int len2 = 2 + bytes.Length;
-		  if (len2 + Pool.ByteUpto > BYTE_BLOCK_SIZE)
+		  if (len2 + Pool.ByteUpto > ByteBlockPool.BYTE_BLOCK_SIZE)
 		  {
-			if (len2 > BYTE_BLOCK_SIZE)
+			if (len2 > ByteBlockPool.BYTE_BLOCK_SIZE)
 			{
-			  throw new MaxBytesLengthExceededException("bytes can be at most " + (BYTE_BLOCK_SIZE - 2) + " in length; got " + bytes.Length);
+                throw new MaxBytesLengthExceededException("bytes can be at most " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2) + " in length; got " + bytes.Length);
 			}
 			Pool.NextBuffer();
 		  }
@@ -351,7 +338,7 @@ namespace Lucene.Net.Util
 		  int bufferUpto = Pool.ByteUpto;
 		  if (Count >= BytesStart.Length)
 		  {
-			BytesStart = BytesStartArray.Grow();
+			BytesStart = bytesStartArray.Grow();
 			Debug.Assert(Count < BytesStart.Length + 1, "count: " + Count + " len: " + BytesStart.Length);
 		  }
 		  e = Count++;
@@ -458,7 +445,7 @@ namespace Lucene.Net.Util
 		  // new entry
 		  if (Count >= BytesStart.Length)
 		  {
-			BytesStart = BytesStartArray.Grow();
+			BytesStart = bytesStartArray.Grow();
 			Debug.Assert(Count < BytesStart.Length + 1, "count: " + Count + " len: " + BytesStart.Length);
 		  }
 		  e = Count++;
@@ -488,7 +475,7 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int[] newHash = new int[newSize];
 		int[] newHash = new int[newSize];
-		Arrays.fill(newHash, -1);
+		Arrays.Fill(newHash, -1);
 		for (int i = 0; i < HashSize; i++)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -504,10 +491,10 @@ namespace Lucene.Net.Util
 			  int off = BytesStart[e0];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int start = off & BYTE_BLOCK_MASK;
-			  int start = off & BYTE_BLOCK_MASK;
+              int start = off & ByteBlockPool.BYTE_BLOCK_MASK;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte[] bytes = pool.buffers[off >> BYTE_BLOCK_SHIFT];
-			  sbyte[] bytes = Pool.Buffers[off >> BYTE_BLOCK_SHIFT];
+              sbyte[] bytes = Pool.Buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int len;
 			  int len;
@@ -568,7 +555,7 @@ namespace Lucene.Net.Util
 	  {
 		if (BytesStart == null)
 		{
-		  BytesStart = BytesStartArray.Init();
+		  BytesStart = bytesStartArray.Init();
 		}
 
 		if (Ids == null)
@@ -589,7 +576,7 @@ namespace Lucene.Net.Util
 	  public int ByteStart(int bytesID)
 	  {
 		Debug.Assert(BytesStart != null, "bytesStart is null - not initialized");
-		Debug.Assert(bytesID >= 0 && bytesID < Count, bytesID);
+		Debug.Assert(bytesID >= 0 && bytesID < Count, bytesID.ToString());
 		return BytesStart[bytesID];
 	  }
 

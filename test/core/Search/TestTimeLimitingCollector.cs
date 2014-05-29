@@ -87,14 +87,14 @@ namespace Lucene.Net.Search
 		Searcher = newSearcher(Reader);
 
 		BooleanQuery booleanQuery = new BooleanQuery();
-		booleanQuery.add(new TermQuery(new Term(FIELD_NAME, "one")), BooleanClause.Occur.SHOULD);
+		booleanQuery.add(new TermQuery(new Term(FIELD_NAME, "one")), BooleanClause.Occur_e.SHOULD);
 		// start from 1, so that the 0th doc never matches
 		for (int i = 1; i < docText.Length; i++)
 		{
 		  string[] docTextParts = docText[i].Split("\\s+", true);
 		  foreach (string docTextPart in docTextParts) // large query so that search will be longer
 		  {
-			booleanQuery.add(new TermQuery(new Term(FIELD_NAME, docTextPart)), BooleanClause.Occur.SHOULD);
+			booleanQuery.add(new TermQuery(new Term(FIELD_NAME, docTextPart)), BooleanClause.Occur_e.SHOULD);
 		  }
 		}
 

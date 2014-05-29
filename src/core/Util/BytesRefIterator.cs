@@ -20,6 +20,73 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
+    // LUCENE TO-DO rewrote entire class
+
+    public interface BytesRefIterator
+    {
+        /// <summary>
+        /// Increments the iteration to the next <seealso cref="BytesRef"/> in the iterator.
+        /// Returns the resulting <seealso cref="BytesRef"/> or <code>null</code> if the end of
+        /// the iterator is reached. The returned BytesRef may be re-used across calls
+        /// to next. After this method returns null, do not call it again: the results
+        /// are undefined.
+        /// </summary>
+        /// <returns> the next <seealso cref="BytesRef"/> in the iterator or <code>null</code> if
+        ///         the end of the iterator is reached. </returns>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        public BytesRef Next();
+
+        /// <summary>
+	    /// Return the <seealso cref="BytesRef"/> Comparator used to sort terms provided by the
+	    /// iterator. this may return null if there are no items or the iterator is not
+	    /// sorted. Callers may invoke this method many times, so it's best to cache a
+	    /// single instance & reuse it.
+	    /// </summary>
+        public IComparer<BytesRef> Comparator
+        {
+            get;
+        }
+
+        
+        public static BytesRefIteratorHelper EMPTY = BytesRefIteratorHelper.CreateBytesRefIteratorHelper();
+
+        
+        /// <summary>
+	    /// Singleton BytesRefIterator that iterates over 0 BytesRefs. </summary>
+        public class BytesRefIteratorHelper : BytesRefIterator{
+            private BytesRefIteratorHelper() 
+            {
+                me = null;
+            }
+            private static BytesRefIteratorHelper me;
+            public static BytesRefIteratorHelper CreateBytesRefIteratorHelper() {
+                if (BytesRefIteratorHelper.me == null)
+                    return new BytesRefIteratorHelper();
+                return me;
+            }
+
+            public override BytesRef Next()
+            {
+                return null;
+            }
+
+            public override IComparer<BytesRef> Comparator
+            {
+                get;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+    /*
+
 
 	/// <summary>
 	/// A simple iterator interface for <seealso cref="BytesRef"/> iteration.
@@ -54,7 +121,7 @@ namespace Lucene.Net.Util
 
 	public static class BytesRefIterator_Fields
 	{
-		  public static readonly return Null;
+		  //public static readonly return Null;
 
 		  private class BytesRefIteratorAnonymousInnerClassHelper : BytesRefIterator
 		  {
@@ -74,7 +141,7 @@ namespace Lucene.Net.Util
 				  }
 			  }
 		  }
-		  public static readonly return Null;
+		  //public static readonly return Null;
 	}
-
+    */
 }

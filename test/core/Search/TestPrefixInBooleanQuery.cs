@@ -103,16 +103,16 @@ namespace Lucene.Net.Search
 	  public virtual void TestTermBooleanQuery()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(FIELD, "tangfulin")), BooleanClause.Occur.SHOULD);
-		query.add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur.SHOULD);
+		query.add(new TermQuery(new Term(FIELD, "tangfulin")), BooleanClause.Occur_e.SHOULD);
+		query.add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur_e.SHOULD);
 		Assert.AreEqual("Number of matched documents", 2, Searcher.search(query, null, 1000).totalHits);
 
 	  }
 	  public virtual void TestPrefixBooleanQuery()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new PrefixQuery(new Term(FIELD, "tang")), BooleanClause.Occur.SHOULD);
-		query.add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur.SHOULD);
+		query.add(new PrefixQuery(new Term(FIELD, "tang")), BooleanClause.Occur_e.SHOULD);
+		query.add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur_e.SHOULD);
 		Assert.AreEqual("Number of matched documents", 2, Searcher.search(query, null, 1000).totalHits);
 	  }
 	}

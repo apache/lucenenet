@@ -222,7 +222,7 @@ namespace Lucene.Net.Util
 	      /// <summary>
 	      /// A handle to <code>sun.misc.Unsafe#fieldOffset(Field)</code>.
 	      /// </summary>
-	      private static readonly Method ObjectFieldOffsetMethod;
+	      //private static readonly Method ObjectFieldOffsetMethod;
 
 	      /// <summary>
 	      /// Cached information about a given class.   
@@ -846,6 +846,7 @@ namespace Lucene.Net.Util
 			    }
 		    }
 
+            /*LUCENE TO-DO Get enumerator is already handled by default
 		    public IEnumerator<KType> GetEnumerator()
 		    {
 		      return new IteratorAnonymousInnerClassHelper(this);
@@ -857,7 +858,7 @@ namespace Lucene.Net.Util
 
 			    public IteratorAnonymousInnerClassHelper(IdentityHashSet outerInstance)
 			    {
-				    this.outerInstance = outerInstance;
+				    this.OuterInstance = outerInstance;
 				    pos = -1;
 				    nextElement = fetchNext();
 			    }
@@ -896,7 +897,7 @@ namespace Lucene.Net.Util
 			    {
 			      throw new System.NotSupportedException();
 			    }
-		    }
+		    }*/
 	      }
 	}
 

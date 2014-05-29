@@ -234,11 +234,11 @@ namespace Lucene.Net.Search
 		IndexSearcher searcher = newSearcher(reader);
 		// this query will be equivalent to +body:pie +body:"blue*"
 		BooleanQuery q = new BooleanQuery();
-		q.add(new TermQuery(new Term("body", "pie")), BooleanClause.Occur.MUST);
+		q.add(new TermQuery(new Term("body", "pie")), BooleanClause.Occur_e.MUST);
 
 		MultiPhraseQuery trouble = new MultiPhraseQuery();
 		trouble.add(new Term[] {new Term("body", "blueberry"), new Term("body", "blue")});
-		q.add(trouble, BooleanClause.Occur.MUST);
+		q.add(trouble, BooleanClause.Occur_e.MUST);
 
 		// exception will be thrown here without fix
 		ScoreDoc[] hits = searcher.search(q, null, 1000).scoreDocs;
@@ -265,12 +265,12 @@ namespace Lucene.Net.Search
 
 		// this query will be equivalent to +type:note +body:"a t*"
 		BooleanQuery q = new BooleanQuery();
-		q.add(new TermQuery(new Term("type", "note")), BooleanClause.Occur.MUST);
+		q.add(new TermQuery(new Term("type", "note")), BooleanClause.Occur_e.MUST);
 
 		MultiPhraseQuery trouble = new MultiPhraseQuery();
 		trouble.add(new Term("body", "a"));
 		trouble.add(new Term[] {new Term("body", "test"), new Term("body", "this")});
-		q.add(trouble, BooleanClause.Occur.MUST);
+		q.add(trouble, BooleanClause.Occur_e.MUST);
 
 		// exception will be thrown here without fix for #35626:
 		ScoreDoc[] hits = searcher.search(q, null, 1000).scoreDocs;

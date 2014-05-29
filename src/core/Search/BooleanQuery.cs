@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using Term = Lucene.Net.Index.Term;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  /// <exception cref="TooManyClauses"> if the new number of clauses exceeds the maximum clause number </exception>
 	  /// <seealso cref= #getMaxClauseCount() </seealso>
-	  public virtual void Add(Query query, BooleanClause.Occur occur)
+	  public virtual void Add(Query query, BooleanClause.Occur_e occur)
 	  {
 		Add(new BooleanClause(query, occur));
 	  }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
 				sumExpl.AddDetail(r);
 				fail = true;
 			  }
-			  if (c.Occur == Occur.SHOULD)
+			  if (c.Occur_e == Occur.SHOULD)
 			  {
 				shouldMatchCount++;
 			  }
@@ -546,7 +546,7 @@ namespace Lucene.Net.Search
 			  // initialized already).  If nothing differs, the clone isn't needlessly created
 			  clone = this.Clone();
 			}
-			clone.Clauses_Renamed[i] = new BooleanClause(query, c.Occur);
+			clone.Clauses_Renamed[i] = new BooleanClause(query, c.Occur_e);
 		  }
 		}
 		if (clone != null)
@@ -564,7 +564,7 @@ namespace Lucene.Net.Search
 	  {
 		foreach (BooleanClause clause in Clauses_Renamed)
 		{
-		  if (clause.Occur != Occur.MUST_NOT)
+		  if (clause.Occur_e != Occur.MUST_NOT)
 		  {
 			clause.Query.extractTerms(terms);
 		  }

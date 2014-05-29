@@ -114,8 +114,8 @@ namespace org.apache.lucene
 		  hits = null;
 
 		  BooleanQuery booleanQuery = new BooleanQuery();
-		  booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY)), BooleanClause.Occur.SHOULD);
-		  booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, MED_PRIORITY)), BooleanClause.Occur.SHOULD);
+		  booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY)), BooleanClause.Occur_e.SHOULD);
+		  booleanQuery.Add(new TermQuery(new Term(PRIORITY_FIELD, MED_PRIORITY)), BooleanClause.Occur_e.SHOULD);
 		  @out.println("Query: " + booleanQuery.ToString(PRIORITY_FIELD));
 
 		  hits = searcher.search(booleanQuery, null, MAX_DOCS, sort).scoreDocs;

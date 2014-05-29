@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
 	{
 	  public static bool OnOrAfter(this Version instance, Version other)
 	  {
-		return compareTo(other) >= 0;
+		return other >= 0;
 	  }
 	}
 

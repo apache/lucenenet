@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Lucene.Net.Document;
 	using Lucene.Net.Index;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 	using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
 	using Lucene.Net.Store;
 	using Lucene.Net.Util;

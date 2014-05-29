@@ -324,7 +324,7 @@ namespace Lucene.Net.Search
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 		  q1.add(Tq("hed", "albino"));
 		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur.MUST); // true,false);
+		  q.add(q1, BooleanClause.Occur_e.MUST); // true,false);
 		  QueryUtils.check(random(), q1, s);
 
 		}
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 		  q2.add(Tq("hed", "elephant"));
 		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur.MUST); // true,false);
+		  q.add(q2, BooleanClause.Occur_e.MUST); // true,false);
 		  QueryUtils.check(random(), q2, s);
 		}
 
@@ -364,13 +364,13 @@ namespace Lucene.Net.Search
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
 		  q1.add(Tq("hed", "albino"));
 		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur.SHOULD); // false,false);
+		  q.add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
 		  q2.add(Tq("hed", "elephant"));
 		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur.SHOULD); // false,false);
+		  q.add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		QueryUtils.check(random(), q, s);
 
@@ -403,13 +403,13 @@ namespace Lucene.Net.Search
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
 		  q1.add(Tq("hed", "albino"));
 		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur.SHOULD); // false,false);
+		  q.add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
 		  q2.add(Tq("hed", "elephant"));
 		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur.SHOULD); // false,false);
+		  q.add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		QueryUtils.check(random(), q, s);
 
@@ -456,13 +456,13 @@ namespace Lucene.Net.Search
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
 		  q1.add(Tq("hed", "albino", 1.5f));
 		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur.SHOULD); // false,false);
+		  q.add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
 		  q2.add(Tq("hed", "elephant", 1.5f));
 		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur.SHOULD); // false,false);
+		  q.add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		QueryUtils.check(random(), q, s);
 

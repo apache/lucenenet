@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -40,15 +41,9 @@ namespace Lucene.Net.Util
 	  public static int BytesDifference(BytesRef left, BytesRef right)
 	  {
 		int len = left.Length < right.Length ? left.Length : right.Length;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytesLeft = left.bytes;
 		sbyte[] bytesLeft = left.Bytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offLeft = left.offset;
 		int offLeft = left.Offset;
 		sbyte[] bytesRight = right.Bytes;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offRight = right.offset;
 		int offRight = right.Offset;
 		for (int i = 0; i < len; i++)
 		{
@@ -87,12 +82,12 @@ namespace Lucene.Net.Util
 			StringTokenizer aTokens = new StringTokenizer(a, ".");
 			StringTokenizer bTokens = new StringTokenizer(b, ".");
 
-			while (aTokens.hasMoreTokens())
+			while (aTokens.HasMoreTokens())
 			{
-			  int aToken = Convert.ToInt32(aTokens.nextToken());
-			  if (bTokens.hasMoreTokens())
+			  int aToken = Convert.ToInt32(aTokens.NextToken());
+			  if (bTokens.HasMoreTokens())
 			  {
-				int bToken = Convert.ToInt32(bTokens.nextToken());
+				int bToken = Convert.ToInt32(bTokens.NextToken());
 				if (aToken != bToken)
 				{
 				  return aToken < bToken ? - 1 : 1;
@@ -109,9 +104,9 @@ namespace Lucene.Net.Util
 			}
 
 			// b has some extra trailing tokens. if these are all zeroes, thats ok.
-			while (bTokens.hasMoreTokens())
+			while (bTokens.HasMoreTokens())
 			{
-			  if (Convert.ToInt32(bTokens.nextToken()) != 0)
+			  if (Convert.ToInt32(bTokens.NextToken()) != 0)
 			  {
 				return -1;
 			  }
@@ -171,8 +166,6 @@ namespace Lucene.Net.Util
 		}
 		int i = sliceToTest.Offset + pos;
 		int j = other.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int k = other.offset + other.length;
 		int k = other.Offset + other.Length;
 
 		while (j < k)
@@ -189,16 +182,10 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Pass this as the seed to <seealso cref="#murmurhash3_x86_32"/>. </summary>
 
-	  // Poached from Guava: set a different salt/seed
-	  // for each JVM instance, to frustrate hash key collision
-	  // denial of service attacks, and to catch any places that
-	  // somehow rely on hash function/order across JVM
-	  // instances:
-	  public static readonly int GOOD_FAST_HASH_SEED;
-
 	  static StringHelper()
 	  {
-		string prop = System.getProperty("tests.seed");
+		/* LUCENE TO-DO Literally none of this is used
+        string prop = System.getProperty("tests.seed");
 		if (prop != null)
 		{
 		  // So if there is a test failure that relied on hash
@@ -212,15 +199,13 @@ namespace Lucene.Net.Util
 		else
 		{
 		  GOOD_FAST_HASH_SEED = (int) System.currentTimeMillis();
-		}
+		}*/
 	  }
 
 	  /// <summary>
 	  /// Returns the MurmurHash3_x86_32 hash.
 	  /// Original source/tests at https://github.com/yonik/java_util/
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("fallthrough") public static int murmurhash3_x86_32(byte[] data, int offset, int len, int seed)
 	  public static int Murmurhash3_x86_32(sbyte[] data, int offset, int len, int seed)
 	  {
 
@@ -235,33 +220,33 @@ namespace Lucene.Net.Util
 		  // little endian load order
 		  int k1 = (data[i] & 0xff) | ((data[i + 1] & 0xff) << 8) | ((data[i + 2] & 0xff) << 16) | (data[i + 3] << 24);
 		  k1 *= c1;
-		  k1 = int.rotateLeft(k1, 15);
+          k1 = Number.RotateLeft(k1, 15);
 		  k1 *= c2;
 
 		  h1 ^= k1;
-		  h1 = int.rotateLeft(h1, 13);
+          h1 = Number.RotateLeft(h1, 13);
 		  h1 = h1 * 5 + unchecked((int)0xe6546b64);
 		}
 
 		// tail
-		int k1 = 0;
+		int k2 = 0;
 
 		switch (len & 0x03)
 		{
 		  case 3:
-			k1 = (data[roundedEnd + 2] & 0xff) << 16;
+			k2 = (data[roundedEnd + 2] & 0xff) << 16;
 			// fallthrough
 			  goto case 2;
 		  case 2:
-			k1 |= (data[roundedEnd + 1] & 0xff) << 8;
+			k2 |= (data[roundedEnd + 1] & 0xff) << 8;
 			// fallthrough
 			  goto case 1;
 		  case 1:
-			k1 |= (data[roundedEnd] & 0xff);
-			k1 *= c1;
-			k1 = int.rotateLeft(k1, 15);
-			k1 *= c2;
-			h1 ^= k1;
+			k2 |= (data[roundedEnd] & 0xff);
+			k2 *= c1;
+            k2 = Number.RotateLeft(k2, 15);
+			k2 *= c2;
+			h1 ^= k2;
 		break;
 		}
 

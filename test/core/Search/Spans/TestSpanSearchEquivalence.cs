@@ -19,7 +19,7 @@ namespace Lucene.Net.Search.Spans
 	 */
 
 	using Term = Lucene.Net.Index.Term;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur;
+	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 
 	/// <summary>
 	/// Basic equivalence tests for span queries

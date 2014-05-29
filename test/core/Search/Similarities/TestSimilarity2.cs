@@ -111,8 +111,8 @@ namespace Lucene.Net.Search.Similarities
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
-		  query.add(new TermQuery(new Term("bar", "baz")), BooleanClause.Occur.SHOULD);
+		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  query.add(new TermQuery(new Term("bar", "baz")), BooleanClause.Occur_e.SHOULD);
 		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
 		}
 		ir.close();
@@ -136,8 +136,8 @@ namespace Lucene.Net.Search.Similarities
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
-		  query.add(new TermQuery(new Term("foo", "baz")), BooleanClause.Occur.SHOULD);
+		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  query.add(new TermQuery(new Term("foo", "baz")), BooleanClause.Occur_e.SHOULD);
 		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
 		}
 		ir.close();
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Similarities
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
+		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
 		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
 		}
 		ir.close();
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Similarities
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
+		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
 		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
 		}
 		ir.close();
@@ -221,7 +221,7 @@ namespace Lucene.Net.Search.Similarities
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur.SHOULD);
+		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
 		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
 		}
 		ir.close();

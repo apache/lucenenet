@@ -156,8 +156,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries01()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST);
 		int[] expDocNrs = new int[] {2,3};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -167,8 +167,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries02()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.SHOULD);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.SHOULD);
 		int[] expDocNrs = new int[] {2,3,1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -178,8 +178,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries03()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.SHOULD);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.SHOULD);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.SHOULD);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.SHOULD);
 		int[] expDocNrs = new int[] {2,3,1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -189,8 +189,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries04()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.SHOULD);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.SHOULD);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -200,8 +200,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries05()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -211,9 +211,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries06()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST_NOT);
-		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {1};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -223,9 +223,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries07()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST_NOT);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST_NOT);
-		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -235,9 +235,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries08()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.SHOULD);
-		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur.MUST_NOT);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.SHOULD);
+		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {2,3,1};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -247,10 +247,10 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries09()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "w2")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "zz")), BooleanClause.Occur.SHOULD);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "w2")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "zz")), BooleanClause.Occur_e.SHOULD);
 		int[] expDocNrs = new int[] {2, 3};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -260,10 +260,10 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries10()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "w2")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(Field, "zz")), BooleanClause.Occur.SHOULD);
+		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "w2")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(Field, "zz")), BooleanClause.Occur_e.SHOULD);
 
 		int[] expDocNrs = new int[] {2, 3};
 		Similarity oldSimilarity = Searcher.Similarity;
@@ -341,8 +341,8 @@ namespace Lucene.Net.Search
 			CheckHits.checkEqual(q1, hits1, hits2);
 
 			BooleanQuery q3 = new BooleanQuery();
-			q3.add(q1, BooleanClause.Occur.SHOULD);
-			q3.add(new PrefixQuery(new Term("field2", "b")), BooleanClause.Occur.SHOULD);
+			q3.add(q1, BooleanClause.Occur_e.SHOULD);
+			q3.add(new PrefixQuery(new Term("field2", "b")), BooleanClause.Occur_e.SHOULD);
 			TopDocs hits4 = BigSearcher.search(q3, 1);
 			Assert.AreEqual(MulFactor * collector.totalHits + NUM_EXTRA_DOCS / 2, hits4.totalHits);
 		  }
@@ -403,25 +403,25 @@ namespace Lucene.Net.Search
 		  }
 
 		  int r = rnd.Next(10);
-		  BooleanClause.Occur occur;
+		  BooleanClause.Occur_e occur;
 		  if (r < 2)
 		  {
-			occur = BooleanClause.Occur.MUST_NOT;
+			occur = BooleanClause.Occur_e.MUST_NOT;
 		  }
 		  else if (r < 5)
 		  {
 			if (allowMust)
 			{
-			  occur = BooleanClause.Occur.MUST;
+			  occur = BooleanClause.Occur_e.MUST;
 			}
 			else
 			{
-			  occur = BooleanClause.Occur.SHOULD;
+			  occur = BooleanClause.Occur_e.SHOULD;
 			}
 		  }
 		  else
 		  {
-			occur = BooleanClause.Occur.SHOULD;
+			occur = BooleanClause.Occur_e.SHOULD;
 		  }
 
 		  current.add(q, occur);

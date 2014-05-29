@@ -98,8 +98,8 @@ namespace Lucene.Net.Search.Spans
 		Query spanQuery1 = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
 		Query spanQuery2 = new SpanTermQuery(new Term(FIELD_TEXT, "we"));
 		BooleanQuery query = new BooleanQuery();
-		query.add(spanQuery1, BooleanClause.Occur.MUST);
-		query.add(spanQuery2, BooleanClause.Occur.MUST);
+		query.add(spanQuery1, BooleanClause.Occur_e.MUST);
+		query.add(spanQuery2, BooleanClause.Occur_e.MUST);
 		string[] expectedIds = new string[] {"D", "A"};
 		// these values were pre LUCENE-413
 		// final float[] expectedScores = new float[] { 0.93163157f, 0.20698164f };

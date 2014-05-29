@@ -233,9 +233,9 @@ namespace Lucene.Net.Util
 		  {
 			if (pos < Size)
 			{
-			  return OuterInstance.Get(Spare, Indices == BytesRefIterator_Fields.Null ? pos++: Indices[pos++]);
+			  return OuterInstance.Get(Spare, Indices == null ? pos++: Indices[pos++]);
 			}
-			return BytesRefIterator_Fields.Null;
+			return null;
 		  }
 
 		  public virtual IComparer<BytesRef> Comparator

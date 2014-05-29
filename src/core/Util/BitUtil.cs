@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 {
 
@@ -86,7 +87,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 		long popCount = 0;
 		for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
 		{
-		  popCount += long.bitCount(arr[i]);
+		  popCount += Number.BitCount(arr[i]);
 		}
 		return popCount;
 	  }
@@ -100,7 +101,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 		long popCount = 0;
 		for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
 		{
-		  popCount += long.bitCount(arr1[i] & arr2[i]);
+            popCount += Number.BitCount(arr1[i] & arr2[i]);
 		}
 		return popCount;
 	  }
@@ -114,7 +115,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 		 long popCount = 0;
 		 for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
 		 {
-		   popCount += long.bitCount(arr1[i] | arr2[i]);
+             popCount += Number.BitCount(arr1[i] | arr2[i]);
 		 }
 		 return popCount;
 	   }
@@ -128,7 +129,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 		long popCount = 0;
 		for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
 		{
-		  popCount += long.bitCount(arr1[i] & ~arr2[i]);
+            popCount += Number.BitCount(arr1[i] & ~arr2[i]);
 		}
 		return popCount;
 	  }
@@ -142,7 +143,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 		long popCount = 0;
 		for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
 		{
-		  popCount += long.bitCount(arr1[i] ^ arr2[i]);
+            popCount += Number.BitCount(arr1[i] ^ arr2[i]);
 		}
 		return popCount;
 	  }

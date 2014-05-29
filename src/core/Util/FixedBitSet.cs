@@ -22,8 +22,9 @@ namespace Lucene.Net.Util
 {
 
 
-	using DocIdSet = Lucene.Net.Search.DocIdSet;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Lucene.Net.Support;
+    using DocIdSet = Lucene.Net.Search.DocIdSet;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
 	/// <summary>
 	/// BitSet of fixed length (numBits), backed by accessible (<seealso cref="#getBits"/>)
@@ -69,14 +70,12 @@ namespace Lucene.Net.Util
 			return Doc = NO_MORE_DOCS;
 		  }
 		  int i = Doc >> 6;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subIndex = doc & 0x3f;
 		  int subIndex = Doc & 0x3f; // index within the word
 		  long word = Bits[i] >> subIndex; // skip all the bits to the right of index
 
 		  if (word != 0)
 		  {
-			return Doc = Doc + long.numberOfTrailingZeros(word);
+			return Doc = Doc + Number.NumberOfTrailingZeros(word);
 		  }
 
 		  while (++i < NumWords)
@@ -84,7 +83,7 @@ namespace Lucene.Net.Util
 			word = Bits[i];
 			if (word != 0)
 			{
-			  return Doc = (i << 6) + long.numberOfTrailingZeros(word);
+			  return Doc = (i << 6) + Number.NumberOfTrailingZeros(word);
 			}
 		  }
 
@@ -108,14 +107,12 @@ namespace Lucene.Net.Util
 			return Doc = NO_MORE_DOCS;
 		  }
 		  int i = target >> 6;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subIndex = target & 0x3f;
 		  int subIndex = target & 0x3f; // index within the word
 		  long word = Bits[i] >> subIndex; // skip all the bits to the right of index
 
 		  if (word != 0)
 		  {
-			return Doc = target + long.numberOfTrailingZeros(word);
+			return Doc = target + Number.NumberOfTrailingZeros(word);
 		  }
 
 		  while (++i < NumWords)
@@ -123,7 +120,7 @@ namespace Lucene.Net.Util
 			word = Bits[i];
 			if (word != 0)
 			{
-			  return Doc = (i << 6) + long.numberOfTrailingZeros(word);
+			  return Doc = (i << 6) + Number.NumberOfTrailingZeros(word);
 			}
 		  }
 
@@ -338,14 +335,12 @@ namespace Lucene.Net.Util
 	  {
 		Debug.Assert(index >= 0 && index < NumBits, "index=" + index + ", numBits=" + NumBits);
 		int i = index >> 6;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subIndex = index & 0x3f;
 		int subIndex = index & 0x3f; // index within the word
 		long word = Bits_Renamed[i] >> subIndex; // skip all the bits to the right of index
 
 		if (word != 0)
 		{
-		  return index + long.numberOfTrailingZeros(word);
+		  return index + Number.NumberOfTrailingZeros(word);
 		}
 
 		while (++i < NumWords)
@@ -353,7 +348,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			return (i << 6) + long.numberOfTrailingZeros(word);
+			return (i << 6) + Number.NumberOfTrailingZeros(word);
 		  }
 		}
 
@@ -368,14 +363,12 @@ namespace Lucene.Net.Util
 	  {
 		Debug.Assert(index >= 0 && index < NumBits, "index=" + index + " numBits=" + NumBits);
 		int i = index >> 6;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subIndex = index & 0x3f;
 		int subIndex = index & 0x3f; // index within the word
 		long word = (Bits_Renamed[i] << (63 - subIndex)); // skip all the bits to the left of index
 
 		if (word != 0)
 		{
-		  return (i << 6) + subIndex - long.numberOfLeadingZeros(word); // See LUCENE-3197
+		  return (i << 6) + subIndex - Number.NumberOfLeadingZeros(word); // See LUCENE-3197
 		}
 
 		while (--i >= 0)
@@ -383,7 +376,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			return (i << 6) + 63 - long.numberOfLeadingZeros(word);
+			return (i << 6) + 63 - Number.NumberOfLeadingZeros(word);
 		  }
 		}
 
@@ -398,8 +391,6 @@ namespace Lucene.Net.Util
 	  {
 		if (iter is OpenBitSetIterator && iter.DocID() == -1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OpenBitSetIterator obs = (OpenBitSetIterator) iter;
 		  OpenBitSetIterator obs = (OpenBitSetIterator) iter;
 		  Or(obs.Arr, obs.Words);
 		  // advance after last doc that would be accepted if standard
@@ -408,8 +399,6 @@ namespace Lucene.Net.Util
 		}
 		else if (iter is FixedBitSetIterator && iter.DocID() == -1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FixedBitSetIterator fbs = (FixedBitSetIterator) iter;
 		  FixedBitSetIterator fbs = (FixedBitSetIterator) iter;
 		  Or(fbs.Bits, fbs.NumWords);
 		  // advance after last doc that would be accepted if standard
@@ -436,8 +425,6 @@ namespace Lucene.Net.Util
 	  private void Or(long[] otherArr, int otherNumWords)
 	  {
 		Debug.Assert(otherNumWords <= NumWords, "numWords=" + NumWords + ", otherNumWords=" + otherNumWords);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] thisArr = this.bits;
 		long[] thisArr = this.Bits_Renamed;
 		int pos = Math.Min(NumWords, otherNumWords);
 		while (--pos >= 0)
@@ -451,11 +438,7 @@ namespace Lucene.Net.Util
 	  public void Xor(FixedBitSet other)
 	  {
 		Debug.Assert(other.NumWords <= NumWords, "numWords=" + NumWords + ", other.numWords=" + other.NumWords);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] thisBits = this.bits;
 		long[] thisBits = this.Bits_Renamed;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] otherBits = other.bits;
 		long[] otherBits = other.Bits_Renamed;
 		int pos = Math.Min(NumWords, other.NumWords);
 		while (--pos >= 0)
@@ -483,8 +466,6 @@ namespace Lucene.Net.Util
 	  {
 		if (iter is OpenBitSetIterator && iter.DocID() == -1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OpenBitSetIterator obs = (OpenBitSetIterator) iter;
 		  OpenBitSetIterator obs = (OpenBitSetIterator) iter;
 		  And(obs.Arr, obs.Words);
 		  // advance after last doc that would be accepted if standard
@@ -493,8 +474,6 @@ namespace Lucene.Net.Util
 		}
 		else if (iter is FixedBitSetIterator && iter.DocID() == -1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FixedBitSetIterator fbs = (FixedBitSetIterator) iter;
 		  FixedBitSetIterator fbs = (FixedBitSetIterator) iter;
 		  And(fbs.Bits, fbs.NumWords);
 		  // advance after last doc that would be accepted if standard
@@ -545,8 +524,6 @@ namespace Lucene.Net.Util
 
 	  private void And(long[] otherArr, int otherNumWords)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] thisArr = this.bits;
 		long[] thisArr = this.Bits_Renamed;
 		int pos = Math.Min(this.NumWords, otherNumWords);
 		while (--pos >= 0)
@@ -555,7 +532,7 @@ namespace Lucene.Net.Util
 		}
 		if (this.NumWords > otherNumWords)
 		{
-		  Arrays.fill(thisArr, otherNumWords, this.NumWords, 0L);
+		  Arrays.Fill(thisArr, otherNumWords, this.NumWords, 0L);
 		}
 	  }
 
@@ -567,8 +544,6 @@ namespace Lucene.Net.Util
 	  {
 		if (iter is OpenBitSetIterator && iter.DocID() == -1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OpenBitSetIterator obs = (OpenBitSetIterator) iter;
 		  OpenBitSetIterator obs = (OpenBitSetIterator) iter;
 		  AndNot(obs.Arr, obs.Words);
 		  // advance after last doc that would be accepted if standard
@@ -577,8 +552,6 @@ namespace Lucene.Net.Util
 		}
 		else if (iter is FixedBitSetIterator && iter.DocID() == -1)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FixedBitSetIterator fbs = (FixedBitSetIterator) iter;
 		  FixedBitSetIterator fbs = (FixedBitSetIterator) iter;
 		  AndNot(fbs.Bits, fbs.NumWords);
 		  // advance after last doc that would be accepted if standard
@@ -604,8 +577,6 @@ namespace Lucene.Net.Util
 
 	  private void AndNot(long[] otherArr, int otherNumWords)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] thisArr = this.bits;
 		long[] thisArr = this.Bits_Renamed;
 		int pos = Math.Min(this.NumWords, otherNumWords);
 		while (--pos >= 0)
@@ -690,7 +661,7 @@ namespace Lucene.Net.Util
 		}
 
 		Bits_Renamed[startWord] |= startmask;
-		Arrays.fill(Bits_Renamed, startWord + 1, endWord, -1L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, -1L);
 		Bits_Renamed[endWord] |= endmask;
 	  }
 
@@ -725,7 +696,7 @@ namespace Lucene.Net.Util
 		}
 
 		Bits_Renamed[startWord] &= startmask;
-		Arrays.fill(Bits_Renamed, startWord + 1, endWord, 0L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, 0L);
 		Bits_Renamed[endWord] &= endmask;
 	  }
 

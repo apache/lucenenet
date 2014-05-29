@@ -3,24 +3,25 @@ using System;
 namespace Lucene.Net.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System.Diagnostics; // javadoc
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.tokenattributes.TermToBytesRefAttribute; // javadoc
+    using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 
 	/// <summary>
 	/// Provides support for converting byte sequences to Strings and back again.
@@ -43,7 +44,7 @@ namespace Lucene.Net.Util
 	/// @lucene.experimental </summary>
 	/// @deprecated Implement <seealso cref="TermToBytesRefAttribute"/> and store bytes directly
 	/// instead. this class will be removed in Lucene 5.0 
-	[Obsolete("Implement <seealso cref="TermToBytesRefAttribute"/> and store bytes directly")]
+	[Obsolete("Implement <seealso cref=TermToBytesRefAttribute/> and store bytes directly")]
 	public sealed class IndexableBinaryStringTools
 	{
 
@@ -76,8 +77,6 @@ namespace Lucene.Net.Util
 	  /// <returns> The number of bytes required to decode the given char sequence </returns>
 	  public static int GetDecodedLength(char[] encoded, int offset, int length)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numChars = length - 1;
 		int numChars = length - 1;
 		if (numChars <= 0)
 		{
@@ -86,11 +85,7 @@ namespace Lucene.Net.Util
 		else
 		{
 		  // Use long for intermediaries to protect against overflow
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long numFullBytesInFinalChar = encoded[offset + length - 1];
 		  long numFullBytesInFinalChar = encoded[offset + length - 1];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long numEncodedChars = numChars - 1;
 		  long numEncodedChars = numChars - 1;
 		  return (int)((numEncodedChars * 15L + 7L) / 8L + numFullBytesInFinalChar);
 		}
@@ -109,7 +104,7 @@ namespace Lucene.Net.Util
 	  /// <param name="outputLength"> length of output, must be getEncodedLength </param>
 	  public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
 	  {
-		assert(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
+		Debug.Assert(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
 		if (inputLength > 0)
 		{
 		  int inputByteNum = inputOffset;
@@ -170,12 +165,8 @@ namespace Lucene.Net.Util
 	  ///        getDecodedLength(inputArray, inputOffset, inputLength) </param>
 	  public static void Decode(char[] inputArray, int inputOffset, int inputLength, sbyte[] outputArray, int outputOffset, int outputLength)
 	  {
-		assert(outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numInputChars = inputLength - 1;
+		Debug.Assert(outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
 		int numInputChars = inputLength - 1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numOutputBytes = outputLength;
 		int numOutputBytes = outputLength;
 
 		if (numOutputBytes > 0)
@@ -221,8 +212,6 @@ namespace Lucene.Net.Util
 			outputArray[outputByteNum] = 0;
 		  }
 		  outputArray[outputByteNum] += (sbyte)((short)((ushort)inputChar >> codingCase.InitialShift));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bytesLeft = numOutputBytes - outputByteNum;
 		  int bytesLeft = numOutputBytes - outputByteNum;
 		  if (bytesLeft > 1)
 		  {

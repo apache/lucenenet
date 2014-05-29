@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
 	{
 	  private readonly IList<sbyte[]> Blocks = new List<sbyte[]>();
 	  // TODO: these are unused?
-	  private readonly IList<int?> BlockEnd = new List<int?>();
+	  private readonly IList<int> BlockEnd = new List<int>();
 	  private readonly int BlockSize;
 	  private readonly int BlockBits;
 	  private readonly int BlockMask;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public PagedBytes(int blockBits)
 	  {
-		Debug.Assert(blockBits > 0 && blockBits <= 31, blockBits);
+		Debug.Assert(blockBits > 0 && blockBits <= 31, blockBits.ToString());
 		this.BlockSize = 1 << blockBits;
 		this.BlockBits = blockBits;
 		BlockMask = BlockSize-1;
@@ -253,11 +253,11 @@ namespace Lucene.Net.Util
 	  {
 		if (Frozen)
 		{
-		  throw new IllegalStateException("already frozen");
+		  throw new InvalidOperationException("already frozen");
 		}
 		if (DidSkipBytes)
 		{
-		  throw new IllegalStateException("cannot freeze when copy(BytesRef, BytesRef) was used");
+		  throw new InvalidOperationException("cannot freeze when copy(BytesRef, BytesRef) was used");
 		}
 		if (trim && Upto < BlockSize)
 		{
@@ -362,7 +362,7 @@ namespace Lucene.Net.Util
 
 		public override PagedBytesDataInput Clone()
 		{
-		  PagedBytesDataInput clone = outerInstance.DataInput;
+		  PagedBytesDataInput clone = OuterInstance.DataInput;
 		  clone.Position = Position;
 		  return clone;
 		}
@@ -373,20 +373,20 @@ namespace Lucene.Net.Util
 		{
 			get
 			{
-			  return (long) CurrentBlockIndex * outerInstance.BlockSize + CurrentBlockUpto;
+                return (long)CurrentBlockIndex * OuterInstance.BlockSize + CurrentBlockUpto;
 			}
 			set
 			{
-			  CurrentBlockIndex = (int)(value >> outerInstance.BlockBits);
-			  CurrentBlock = outerInstance.Blocks[CurrentBlockIndex];
-			  CurrentBlockUpto = (int)(value & outerInstance.BlockMask);
+                CurrentBlockIndex = (int)(value >> OuterInstance.BlockBits);
+                CurrentBlock = OuterInstance.Blocks[CurrentBlockIndex];
+                CurrentBlockUpto = (int)(value & OuterInstance.BlockMask);
 			}
 		}
 
 
 		public override sbyte ReadByte()
 		{
-		  if (CurrentBlockUpto == outerInstance.BlockSize)
+            if (CurrentBlockUpto == OuterInstance.BlockSize)
 		  {
 			NextBlock();
 		  }
@@ -396,16 +396,10 @@ namespace Lucene.Net.Util
 		public override void ReadBytes(sbyte[] b, int offset, int len)
 		{
 		  Debug.Assert(b.Length >= offset + len);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offsetEnd = offset + len;
 		  int offsetEnd = offset + len;
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blockLeft = blockSize - currentBlockUpto;
-			int blockLeft = outerInstance.BlockSize - CurrentBlockUpto;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int left = offsetEnd - offset;
+            int blockLeft = OuterInstance.BlockSize - CurrentBlockUpto;
 			int left = offsetEnd - offset;
 			if (blockLeft < left)
 			{
@@ -427,7 +421,7 @@ namespace Lucene.Net.Util
 		{
 		  CurrentBlockIndex++;
 		  CurrentBlockUpto = 0;
-		  CurrentBlock = outerInstance.Blocks[CurrentBlockIndex];
+          CurrentBlock = OuterInstance.Blocks[CurrentBlockIndex];
 		}
 	  }
 
@@ -442,17 +436,17 @@ namespace Lucene.Net.Util
 
 		public override void WriteByte(sbyte b)
 		{
-		  if (outerInstance.Upto == outerInstance.BlockSize)
+          if (OuterInstance.Upto == OuterInstance.BlockSize)
 		  {
-			if (outerInstance.CurrentBlock != null)
+            if (OuterInstance.CurrentBlock != null)
 			{
-			  outerInstance.Blocks.Add(outerInstance.CurrentBlock);
-			  outerInstance.BlockEnd.Add(outerInstance.Upto);
+                OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
+                OuterInstance.BlockEnd.Add(OuterInstance.Upto);
 			}
-			outerInstance.CurrentBlock = new sbyte[outerInstance.BlockSize];
-			outerInstance.Upto = 0;
+            OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+            OuterInstance.Upto = 0;
 		  }
-		  outerInstance.CurrentBlock[outerInstance.Upto++] = b;
+          OuterInstance.CurrentBlock[OuterInstance.Upto++] = b;
 		}
 
 		public override void WriteBytes(sbyte[] b, int offset, int length)
@@ -463,15 +457,15 @@ namespace Lucene.Net.Util
 			return;
 		  }
 
-		  if (outerInstance.Upto == outerInstance.BlockSize)
+		  if (OuterInstance.Upto == OuterInstance.BlockSize)
 		  {
-			if (outerInstance.CurrentBlock != null)
+			if (OuterInstance.CurrentBlock != null)
 			{
-			  outerInstance.Blocks.Add(outerInstance.CurrentBlock);
-			  outerInstance.BlockEnd.Add(outerInstance.Upto);
+			  OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
+			  OuterInstance.BlockEnd.Add(OuterInstance.Upto);
 			}
-			outerInstance.CurrentBlock = new sbyte[outerInstance.BlockSize];
-			outerInstance.Upto = 0;
+			OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+			OuterInstance.Upto = 0;
 		  }
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -484,21 +478,21 @@ namespace Lucene.Net.Util
 			int left = offsetEnd - offset;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int blockLeft = blockSize - upto;
-			int blockLeft = outerInstance.BlockSize - outerInstance.Upto;
+			int blockLeft = OuterInstance.BlockSize - OuterInstance.Upto;
 			if (blockLeft < left)
 			{
-			  Array.Copy(b, offset, outerInstance.CurrentBlock, outerInstance.Upto, blockLeft);
-			  outerInstance.Blocks.Add(outerInstance.CurrentBlock);
-			  outerInstance.BlockEnd.Add(outerInstance.BlockSize);
-			  outerInstance.CurrentBlock = new sbyte[outerInstance.BlockSize];
-			  outerInstance.Upto = 0;
+			  Array.Copy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, blockLeft);
+			  OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
+			  OuterInstance.BlockEnd.Add(OuterInstance.BlockSize);
+			  OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+			  OuterInstance.Upto = 0;
 			  offset += blockLeft;
 			}
 			else
 			{
 			  // Last block
-			  Array.Copy(b, offset, outerInstance.CurrentBlock, outerInstance.Upto, left);
-			  outerInstance.Upto += left;
+			  Array.Copy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, left);
+              OuterInstance.Upto += left;
 			  break;
 			}
 		  }
@@ -510,7 +504,7 @@ namespace Lucene.Net.Util
 		{
 			get
 			{
-			  return outerInstance.Pointer;
+			  return OuterInstance.Pointer;
 			}
 		}
 	  }
@@ -525,7 +519,7 @@ namespace Lucene.Net.Util
 		  {
 			if (!Frozen)
 			{
-			  throw new IllegalStateException("must call freeze() before getDataInput");
+			  throw new InvalidOperationException("must call freeze() before getDataInput");
 			}
 			return new PagedBytesDataInput(this);
 		  }
@@ -543,7 +537,7 @@ namespace Lucene.Net.Util
 		  {
 			if (Frozen)
 			{
-			  throw new IllegalStateException("cannot get DataOutput after freeze()");
+			  throw new InvalidOperationException("cannot get DataOutput after freeze()");
 			}
 			return new PagedBytesDataOutput(this);
 		  }

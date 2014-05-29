@@ -96,11 +96,11 @@ namespace Lucene.Net.Util
 	  {
 		try
 		{
-		  return (InfoStream) base.Clone();
+		  return (InfoStream) base.MemberwiseClone();
 		}
-		catch (CloneNotSupportedException e)
+		catch (InvalidOperationException e)
 		{
-		  throw new Exception(e);
+		  throw new Exception(e.ToString(), e);
 		}
 	  }
 

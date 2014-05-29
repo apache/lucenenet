@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 namespace Lucene.Net.Util
 {
 
@@ -32,7 +33,8 @@ namespace Lucene.Net.Util
 
 	  internal static int CeilLog2(int n)
 	  {
-		return int.SIZE - int.numberOfLeadingZeros(n - 1);
+          //8bits in a byte
+          return sizeof(int)*8 - Number.NumberOfLeadingZeros(n - 1);
 	  }
 
 	  /// <summary>

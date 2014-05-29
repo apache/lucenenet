@@ -56,12 +56,12 @@ using System.Diagnostics;
 		writer.close();
 
 		BooleanQuery booleanQuery1 = new BooleanQuery();
-		booleanQuery1.add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur.SHOULD);
-		booleanQuery1.add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur.SHOULD);
+		booleanQuery1.add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur_e.SHOULD);
+		booleanQuery1.add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur_e.SHOULD);
 
 		BooleanQuery query = new BooleanQuery();
-		query.add(booleanQuery1, BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur.MUST_NOT);
+		query.add(booleanQuery1, BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur_e.MUST_NOT);
 
 		IndexSearcher indexSearcher = newSearcher(ir);
 		ScoreDoc[] hits = indexSearcher.search(query, null, 1000).scoreDocs;

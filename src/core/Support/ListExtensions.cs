@@ -44,7 +44,15 @@ namespace Lucene.Net.Support
                 retval[i] = list[i];
 
             return retval;
-        } 
+        }
+
+        public static IList<T> Swap<T>(this IList<T> list, int indexA, int indexB)
+        {
+            T tmp = list[indexA];
+            list[indexA] = list[indexB];
+            list[indexB] = tmp;
+            return list;
+        }
     }
 
     public sealed class SubList<T> : IList<T>

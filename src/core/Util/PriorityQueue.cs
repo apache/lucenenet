@@ -1,3 +1,4 @@
+using System;
 namespace Lucene.Net.Util
 {
 
@@ -76,7 +77,7 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("unchecked") final T[] h = (T[]) new Object[heapSize];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		T[] h = (T[]) new object[heapSize];
+		T[] h = new T[heapSize];
 		this.Heap = h;
 		this.MaxSize = maxSize;
 
@@ -145,7 +146,7 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return null;
+			return default(T);
 		  }
 	  }
 
@@ -178,7 +179,7 @@ namespace Lucene.Net.Util
 		if (Size_Renamed < MaxSize)
 		{
 		  Add(element);
-		  return null;
+		  return default(T);
 		}
 		else if (Size_Renamed > 0 && !LessThan(element, Heap[1]))
 		{
@@ -213,14 +214,14 @@ namespace Lucene.Net.Util
 		{
 		  T result = Heap[1]; // save first value
 		  Heap[1] = Heap[Size_Renamed]; // move last to first
-		  Heap[Size_Renamed] = null; // permit GC of objects
+          Heap[Size_Renamed] = default(T); // permit GC of objects
 		  Size_Renamed--;
 		  DownHeap(); // adjust heap
 		  return result;
 		}
 		else
 		{
-		  return null;
+            return default(T);
 		}
 	  }
 
@@ -261,7 +262,7 @@ namespace Lucene.Net.Util
 	  {
 		for (int i = 0; i <= Size_Renamed; i++)
 		{
-		  Heap[i] = null;
+            Heap[i] = default(T);
 		}
 		Size_Renamed = 0;
 	  }
@@ -312,7 +313,7 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return (object[]) Heap;
+			return (object[])(Array)Heap;
 		  }
 	  }
 	}

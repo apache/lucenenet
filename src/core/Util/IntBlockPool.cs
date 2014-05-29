@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -89,7 +90,7 @@ namespace Lucene.Net.Util
 	  /// Current head offset </summary>
 	  public int IntOffset = -INT_BLOCK_SIZE;
 
-	  private readonly Allocator Allocator;
+	  private readonly Allocator allocator;
 
 	  /// <summary>
 	  /// Creates a new <seealso cref="IntBlockPool"/> with a default <seealso cref="Allocator"/>. </summary>
@@ -103,7 +104,7 @@ namespace Lucene.Net.Util
 	  /// <seealso cref= IntBlockPool#nextBuffer() </seealso>
 	  public IntBlockPool(Allocator allocator)
 	  {
-		this.Allocator = allocator;
+		this.allocator = allocator;
 	  }
 
 	  /// <summary>
@@ -134,10 +135,10 @@ namespace Lucene.Net.Util
 			for (int i = 0;i < BufferUpto;i++)
 			{
 			  // Fully zero fill buffers that we fully used
-			  Arrays.fill(Buffers[i], 0);
+			  Arrays.Fill(Buffers[i], 0);
 			}
 			// Partial zero fill the final buffer
-			Arrays.fill(Buffers[BufferUpto], 0, IntUpto, 0);
+			Arrays.Fill(Buffers[BufferUpto], 0, IntUpto, 0);
 		  }
 
 		  if (BufferUpto > 0 || !reuseFirst)
@@ -146,8 +147,8 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: final int offset = reuseFirst ? 1 : 0;
 			int offset = reuseFirst ? 1 : 0;
 			// Recycle all but the first buffer
-			Allocator.RecycleIntBlocks(Buffers, offset, 1 + BufferUpto);
-			Arrays.fill(Buffers, offset, BufferUpto + 1, null);
+			allocator.RecycleIntBlocks(Buffers, offset, 1 + BufferUpto);
+			Arrays.Fill(Buffers, offset, BufferUpto + 1, null);
 		  }
 		  if (reuseFirst)
 		  {
@@ -181,7 +182,7 @@ namespace Lucene.Net.Util
 		  Array.Copy(Buffers, 0, newBuffers, 0, Buffers.Length);
 		  Buffers = newBuffers;
 		}
-		Buffer = Buffers[1 + BufferUpto] = Allocator.IntBlock;
+		Buffer = Buffers[1 + BufferUpto] = allocator.IntBlock;
 		BufferUpto++;
 
 		IntUpto = 0;

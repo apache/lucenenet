@@ -333,6 +333,41 @@ namespace Lucene.Net.Support
             return count;
         }
 
+        // Returns the number of 1-bits in the number
+        public static int BitCount(long num)
+        {
+            long bitcount = 0;
+            while (num > 0)
+            {
+                bitcount += (num & 1);
+                num >>= 1;
+            }
+            return (int)bitcount;
+        }
+
+        // Returns the number of 1-bits in the number
+        public static int BitCount(int num)
+        {
+            int bitcount = 0;
+            while (num > 0)
+            {
+                bitcount += (num & 1);
+                num >>= 1;
+            }
+            return bitcount;
+        }
+
+        public static int RotateLeft(int i, int reps)
+        {
+            uint val = (uint)i;
+            return (int)((val << reps) | (val >> (32 - reps)));
+        }
+        public static int RotateRight(int i, int reps)
+        {
+            uint val = (uint)i;
+            return (int)((val >> reps) | (val << (32 - reps)));
+        }
+
         public static string ToBinaryString(int value)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

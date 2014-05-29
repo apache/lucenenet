@@ -1,3 +1,4 @@
+using System;
 namespace Lucene.Net.Util
 {
 	/// <summary>
@@ -47,7 +48,7 @@ namespace Lucene.Net.Util
 		// Adjustment from a float zero exponent to our zero exponent,
 		// shifted over to our exponent position.
 		int fzero = (63 - zeroExp) << numMantissaBits;
-		int bits = float.floatToRawIntBits(f);
+        int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
 		int smallfloat = bits >> (24 - numMantissaBits);
 		if (smallfloat <= fzero)
 		{
@@ -75,7 +76,7 @@ namespace Lucene.Net.Util
 		}
 		int bits = (b & 0xff) << (24 - numMantissaBits);
 		bits += (63 - zeroExp) << 24;
-		return float.intBitsToFloat(bits);
+        return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
 	  }
 
 
@@ -93,7 +94,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static sbyte FloatToByte315(float f)
 	  {
-		int bits = float.floatToRawIntBits(f);
+		int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
 		int smallfloat = bits >> (24 - 3);
 		if (smallfloat <= ((63 - 15) << 3))
 		{
@@ -118,7 +119,7 @@ namespace Lucene.Net.Util
 		}
 		int bits = (b & 0xff) << (24 - 3);
 		bits += (63 - 15) << 24;
-		return float.intBitsToFloat(bits);
+        return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
 	  }
 
 
@@ -130,7 +131,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static sbyte FloatToByte52(float f)
 	  {
-		int bits = float.floatToRawIntBits(f);
+		int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
 		int smallfloat = bits >> (24 - 5);
 		if (smallfloat <= (63 - 2) << 5)
 		{
@@ -155,7 +156,7 @@ namespace Lucene.Net.Util
 		}
 		int bits = (b & 0xff) << (24 - 5);
 		bits += (63 - 2) << 24;
-		return float.intBitsToFloat(bits);
+        return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
 	  }
 	}
 

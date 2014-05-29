@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+using System.Globalization;
 using System.Threading;
 
 namespace Lucene.Net.Util
@@ -29,9 +31,8 @@ namespace Lucene.Net.Util
 	/// </summary>
 	public class NamedThreadFactory : ThreadFactory
 	{
-	  private static readonly AtomicInteger ThreadPoolNumber = new AtomicInteger(1);
-	  private readonly ThreadGroup Group;
-	  private readonly AtomicInteger ThreadNumber = new AtomicInteger(1);
+	  private static int ThreadPoolNumber = 1;
+	  private int ThreadNumber = 1;
 	  private const string NAME_PATTERN = "%s-%d-thread";
 	  private readonly string ThreadNamePrefix;
 
@@ -41,11 +42,8 @@ namespace Lucene.Net.Util
 	  /// <param name="threadNamePrefix"> the name prefix assigned to each thread created. </param>
 	  public NamedThreadFactory(string threadNamePrefix)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SecurityManager s = System.getSecurityManager();
-		SecurityManager s = System.SecurityManager;
-		Group = (s != null) ? s.ThreadGroup : Thread.CurrentThread.ThreadGroup;
-		this.ThreadNamePrefix = string.format(Locale.ROOT, NAME_PATTERN, CheckPrefix(threadNamePrefix), ThreadPoolNumber.AndIncrement);
+        this.ThreadNamePrefix = string.Format(CultureInfo.InvariantCulture, NAME_PATTERN,
+             CheckPrefix(threadNamePrefix), Interlocked.Increment(ref ThreadPoolNumber));
 	  }
 
 	  private static string CheckPrefix(string prefix)
@@ -57,13 +55,14 @@ namespace Lucene.Net.Util
 	  /// Creates a new <seealso cref="Thread"/>
 	  /// </summary>
 	  /// <seealso cref= java.util.concurrent.ThreadFactory#newThread(java.lang.Runnable) </seealso>
-	  public override Thread NewThread(Runnable r)
+	  public override Thread NewThread(IThreadRunnable r)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Thread t = new Thread(group, r, String.format(java.util.Locale.ROOT, "%s-%d", this.threadNamePrefix, threadNumber.getAndIncrement()), 0);
-		Thread t = new Thread(Group, r, string.format(Locale.ROOT, "%s-%d", this.ThreadNamePrefix, ThreadNumber.AndIncrement), 0);
-		t.Daemon = false;
-		t.Priority = Thread.NORM_PRIORITY;
+		Thread t = new Thread(r.Run) {
+            Name = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", this.ThreadNamePrefix, Interlocked.Increment(ref ThreadNumber)),
+            IsBackground = false,
+            Priority = ThreadPriority.Normal
+        };
+            
 		return t;
 	  }
 

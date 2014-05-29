@@ -1,4 +1,6 @@
 using System;
+using Lucene.Net.Support;
+using LucenePackage = Lucene.Net.LucenePackage;
 
 namespace Lucene.Net.Util
 {
@@ -33,18 +35,13 @@ namespace Lucene.Net.Util
 	  }
 
 	  /// <summary>
-	  /// JVM vendor info. </summary>
-	  public static readonly string JVM_VENDOR = System.getProperty("java.vm.vendor");
-	  public static readonly string JVM_VERSION = System.getProperty("java.vm.version");
-	  public static readonly string JVM_NAME = System.getProperty("java.vm.name");
-
-	  /// <summary>
 	  /// The value of <tt>System.getProperty("java.version")</tt>. * </summary>
-	  public static readonly string JAVA_VERSION = System.getProperty("java.version");
+      public static readonly string JAVA_VERSION = AppSettings.Get("java.version", "");
+      public static readonly string JAVA_VENDOR = AppSettings.Get("java.vendor", "");
 
 	  /// <summary>
 	  /// The value of <tt>System.getProperty("os.name")</tt>. * </summary>
-	  public static readonly string OS_NAME = System.getProperty("os.name");
+      public static readonly string OS_NAME = GetEnvironmentVariable("OS", "Windows_NT") ?? "Linux";
 	  /// <summary>
 	  /// True iff running on Linux. </summary>
 	  public static readonly bool LINUX = OS_NAME.StartsWith("Linux");
@@ -61,9 +58,8 @@ namespace Lucene.Net.Util
 	  /// True iff running on FreeBSD </summary>
 	  public static readonly bool FREE_BSD = OS_NAME.StartsWith("FreeBSD");
 
-	  public static readonly string OS_ARCH = System.getProperty("os.arch");
-	  public static readonly string OS_VERSION = System.getProperty("os.version");
-	  public static readonly string JAVA_VENDOR = System.getProperty("java.vendor");
+      public static readonly string OS_ARCH = GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", "x86");
+      public static readonly string OS_VERSION = GetEnvironmentVariable("OS_VERSION", "?");
 
 	  /// @deprecated With Lucene 4.0, we are always on Java 6 
 	  [Obsolete("With Lucene 4.0, we are always on Java 6")]
@@ -84,26 +80,15 @@ namespace Lucene.Net.Util
 		bool is64Bit = false;
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Class unsafeClass = Class.forName("sun.misc.Unsafe");
 		  Type unsafeClass = Type.GetType("sun.misc.Unsafe");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
 		  Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
 		  unsafeField.Accessible = true;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object unsafe = unsafeField.get(null);
 		  object @unsafe = unsafeField.get(null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int addressSize = ((Number) unsafeClass.getMethod("addressSize").invoke(unsafe)).intValue();
 		  int addressSize = (int)((Number) unsafeClass.GetMethod("addressSize").invoke(@unsafe));
-		  //System.out.println("Address size: " + addressSize);
 		  is64Bit = addressSize >= 8;
 		}
 		catch (Exception e)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String x = System.getProperty("sun.arch.data.model");
 		  string x = System.getProperty("sun.arch.data.model");
 		  if (x != null)
 		  {
@@ -172,8 +157,6 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  internal static string MainVersionWithoutAlphaBeta()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String parts[] = LUCENE_MAIN_VERSION.split("\\.");
 		string[] parts = LUCENE_MAIN_VERSION.Split("\\.", true);
 		if (parts.Length == 4 && "0".Equals(parts[2]))
 		{
@@ -181,6 +164,23 @@ namespace Lucene.Net.Util
 		}
 		return LUCENE_MAIN_VERSION;
 	  }
+
+      #region MEDIUM-TRUST Support
+      static string GetEnvironmentVariable(string variable, string defaultValueOnSecurityException)
+      {
+          try
+          {
+              if (variable == "OS_VERSION") return System.Environment.OSVersion.ToString();
+
+              return System.Environment.GetEnvironmentVariable(variable);
+          }
+          catch (System.Security.SecurityException)
+          {
+              return defaultValueOnSecurityException;
+          }
+
+      }
+      #endregion
 	}
 
 }

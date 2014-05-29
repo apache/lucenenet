@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -71,7 +72,7 @@ namespace Lucene.Net.Index
 			return null;
 		  case 1:
 			// already an atomic reader / reader with one leave
-			return leaves[0].Reader().fields();
+			return leaves[0].Reader().Fields();
 		  default:
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.List<Fields> fields = new java.util.ArrayList<>();
@@ -83,14 +84,14 @@ namespace Lucene.Net.Index
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final AtomicReader r = ctx.reader();
-			  AtomicReader r = ctx.reader();
+			  AtomicReader r = ctx.Reader();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Fields f = r.fields();
 			  Fields f = r.Fields();
 			  if (f != null)
 			  {
 				fields.Add(f);
-				slices.Add(new ReaderSlice(ctx.docBase, r.MaxDoc(), fields.Count - 1));
+				slices.Add(new ReaderSlice(ctx.DocBase, r.MaxDoc(), fields.Count - 1));
 			  }
 			}
 			if (fields.Count == 0)
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  return new MultiFields(fields.toArray(Fields.EMPTY_ARRAY), slices.toArray(ReaderSlice.EMPTY_ARRAY));
+			  return new MultiFields(fields.ToArray(Fields.EMPTY_ARRAY), slices.ToArray(ReaderSlice.EMPTY_ARRAY));
 			}
 		}
 	  }
@@ -267,12 +268,12 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) @Override public java.util.Iterator<String> iterator()
 	  public override IEnumerator<string> Iterator()
 	  {
-		IEnumerator<string>[] subIterators = new IEnumerator[Subs.Length];
+		IEnumerator<string>[] subIterators = new IEnumerator<string>[Subs.Length];
 		for (int i = 0;i < Subs.Length;i++)
 		{
 		  subIterators[i] = Subs[i].Iterator();
 		}
-		return new MergedIterator<>(subIterators);
+		return new MergedIterator<string>(subIterators);
 	  }
 
 	  public override Terms Terms(string field)
@@ -313,7 +314,7 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  result = new MultiTerms(subs2.toArray(Terms.EMPTY_ARRAY), slices2.toArray(ReaderSlice.EMPTY_ARRAY));
+		  result = new MultiTerms(subs2.ToArray(Terms.EMPTY_ARRAY), slices2.ToArray(ReaderSlice.EMPTY_ARRAY));
 		  Terms_Renamed[field] = result;
 		}
 
@@ -341,7 +342,7 @@ namespace Lucene.Net.Index
 		FieldInfos.Builder builder = new FieldInfos.Builder();
 		foreach (AtomicReaderContext ctx in reader.Leaves())
 		{
-		  builder.Add(ctx.reader().FieldInfos);
+		  builder.Add(ctx.Reader().FieldInfos);
 		}
 		return builder.Finish();
 	  }
@@ -364,7 +365,7 @@ namespace Lucene.Net.Index
 		{
 		  if (fieldInfo.Indexed)
 		  {
-			fields.Add(fieldInfo.name);
+			fields.Add(fieldInfo.Name);
 		  }
 		}
 		return fields;

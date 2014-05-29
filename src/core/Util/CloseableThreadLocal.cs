@@ -96,7 +96,7 @@ namespace Lucene.Net.Util
 		else
 		{
 		  MaybePurge();
-		  return weakRef.Get();
+		  return (T)weakRef.Target;
 		}
 	  }
 
@@ -128,12 +128,11 @@ namespace Lucene.Net.Util
 		  int stillAliveCount = 0;
 		  for (IEnumerator<Thread> it = HardRefs.Keys.GetEnumerator(); it.MoveNext();)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Thread t = it.Current;
 			Thread t = it.Current;
 			if (!t.IsAlive)
 			{
-			  it.remove();
+                //LUCENE TO-DO
+              HardRefs.Remove(t);
 			}
 			else
 			{

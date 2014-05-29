@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -33,7 +34,90 @@ namespace Lucene.Net.Util
 	/// 
 	/// @lucene.internal
 	/// </summary>
-	public sealed class SPIClassIterator<S> : IEnumerator<Type>
+    /// 
+
+    public class SPIClassIterator<S> : IEnumerable<Type>
+    {
+        private static HashSet<Type> types;
+
+        static SPIClassIterator()
+        {
+            types = new HashSet<Type>();
+
+            // .NET Port Hack: We do a 2-level deep check here because if the assembly you're
+            // hoping would be loaded hasn't been loaded yet into the app domain,
+            // it is unavailable. So we go to the next level on each and check each referenced
+            // assembly.
+
+            foreach (var loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    foreach (var type in loadedAssembly.GetTypes())
+                    {
+                        try
+                        {
+                            if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                                types.Add(type);
+                        }
+                        catch
+                        {
+                            // swallow
+                        }
+                    }
+                }
+                catch
+                {
+                    // swallow
+                }
+
+                foreach (var assemblyName in loadedAssembly.GetReferencedAssemblies())
+                {                    
+                    try
+                    {
+                        var assembly = Assembly.Load(assemblyName);
+
+                        foreach (var type in assembly.GetTypes())
+                        {
+                            try
+                            {
+                                if (typeof(S).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface && type.GetConstructor(Type.EmptyTypes) != null)
+                                    types.Add(type);
+                            }
+                            catch
+                            {
+                                // swallow
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // swallow
+                    }
+                }
+            }
+        }
+
+        public static SPIClassIterator<S> Get()
+        {
+            return new SPIClassIterator<S>();
+        }
+
+        public IEnumerator<Type> GetEnumerator()
+        {
+            return types.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+
+
+	/* Being Re-written
+    public sealed class SPIClassIterator<S> : IEnumerator<Type>
 	{
 	  private const string META_INF_SERVICES = "META-INF/services/";
 
@@ -42,14 +126,14 @@ namespace Lucene.Net.Util
 	  private readonly IEnumerator<URL> ProfilesEnum;
 	  private IEnumerator<string> LinesIterator;
 
-	  public static SPIClassIterator<S> get<S>(Type clazz)
+	  public static SPIClassIterator<S> Get<S>(Type clazz)
 	  {
-		return new SPIClassIterator<>(clazz, Thread.CurrentThread.ContextClassLoader);
+		return new SPIClassIterator<S>(clazz, Thread.CurrentThread.ContextClassLoader);
 	  }
 
-	  public static SPIClassIterator<S> get<S>(Type clazz, ClassLoader loader)
+	  public static SPIClassIterator<S> Get<S>(Type clazz, ClassLoader loader)
 	  {
-		return new SPIClassIterator<>(clazz, loader);
+		return new SPIClassIterator<S>(clazz, loader);
 	  }
 
 	  /// <summary>
@@ -74,12 +158,10 @@ namespace Lucene.Net.Util
 		this.Clazz = clazz;
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fullName = META_INF_SERVICES + clazz.getName();
 		  string fullName = META_INF_SERVICES + clazz.Name;
 		  this.ProfilesEnum = (loader == null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
 		  throw new ServiceConfigurationError("Error loading SPI profiles for type " + clazz.Name + " from classpath", ioe);
 		}
@@ -98,27 +180,19 @@ namespace Lucene.Net.Util
 		  }
 		  else
 		  {
-			lines = new List<>();
+			lines = new List<string>();
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.net.URL url = profilesEnum.Current;
 		  URL url = ProfilesEnum.Current;
 		  try
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.InputStream in = url.openStream();
 			InputStream @in = url.openStream();
-			IOException priorE = null;
+			System.IO.IOException priorE = null;
 			try
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8));
-			  BufferedReader reader = new BufferedReader(new InputStreamReader(@in, StandardCharsets.UTF_8));
+			  BufferedReader reader = new BufferedReader(new InputStreamReader(@in, IOUtils.CHARSET_UTF_8));
 			  string line;
 			  while ((line = reader.readLine()) != null)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = line.indexOf('#');
 				int pos = line.IndexOf('#');
 				if (pos >= 0)
 				{
@@ -131,7 +205,7 @@ namespace Lucene.Net.Util
 				}
 			  }
 			}
-			catch (IOException ioe)
+			catch (System.IO.IOException ioe)
 			{
 			  priorE = ioe;
 			}
@@ -140,7 +214,7 @@ namespace Lucene.Net.Util
 			  IOUtils.CloseWhileHandlingException(priorE, @in);
 			}
 		  }
-		  catch (IOException ioe)
+		  catch (System.IO.IOException ioe)
 		  {
 			throw new ServiceConfigurationError("Error loading SPI class list from URL: " + url, ioe);
 		  }
@@ -188,6 +262,6 @@ namespace Lucene.Net.Util
 		throw new System.NotSupportedException();
 	  }
 
-	}
+	}*/
 
 }

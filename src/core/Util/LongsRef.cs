@@ -238,7 +238,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Performs internal consistency checks.
-	  /// Always returns true (or throws IllegalStateException) 
+	  /// Always returns true (or throws InvalidOperationException) 
 	  /// </summary>
 	  public bool Valid
 	  {
@@ -246,31 +246,31 @@ namespace Lucene.Net.Util
 		  {
 			if (Longs == null)
 			{
-			  throw new IllegalStateException("longs is null");
+			  throw new InvalidOperationException("longs is null");
 			}
 			if (Length < 0)
 			{
-			  throw new IllegalStateException("length is negative: " + Length);
+			  throw new InvalidOperationException("length is negative: " + Length);
 			}
 			if (Length > Longs.Length)
 			{
-			  throw new IllegalStateException("length is out of bounds: " + Length + ",longs.length=" + Longs.Length);
+			  throw new InvalidOperationException("length is out of bounds: " + Length + ",longs.length=" + Longs.Length);
 			}
 			if (Offset < 0)
 			{
-			  throw new IllegalStateException("offset is negative: " + Offset);
+			  throw new InvalidOperationException("offset is negative: " + Offset);
 			}
 			if (Offset > Longs.Length)
 			{
-			  throw new IllegalStateException("offset out of bounds: " + Offset + ",longs.length=" + Longs.Length);
+			  throw new InvalidOperationException("offset out of bounds: " + Offset + ",longs.length=" + Longs.Length);
 			}
 			if (Offset + Length < 0)
 			{
-			  throw new IllegalStateException("offset+length is negative: offset=" + Offset + ",length=" + Length);
+			  throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
 			}
 			if (Offset + Length > Longs.Length)
 			{
-			  throw new IllegalStateException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",longs.length=" + Longs.Length);
+			  throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",longs.length=" + Longs.Length);
 			}
 			return true;
 		  }

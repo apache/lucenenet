@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util
@@ -49,7 +50,7 @@ namespace Lucene.Net.Util
 	  internal static int BitCount(long x)
 	  {
 		// Step 0 leaves in each pair of bits the number of ones originally contained in that pair:
-		x = x - ((int)((uint)(x & 0xAAAAAAAAAAAAAAAAL) >> 1));
+		x = x - ((int)((uint)(x & unchecked((long)0xAAAAAAAAAAAAAAAAL)) >> 1));
 		// Step 1, idem for each nibble:
 		x = (x & 0x3333333333333333L) + (((long)((ulong)x >> 2)) & 0x3333333333333333L);
 		// Step 2, idem for each byte:
@@ -63,7 +64,7 @@ namespace Lucene.Net.Util
 	  /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
 	  public static int Select(long x, int r)
 	  {
-		long s = x - ((int)((uint)(x & 0xAAAAAAAAAAAAAAAAL) >> 1)); // Step 0, pairwise bitsums
+		long s = x - ((int)((uint)(x & unchecked((long)0xAAAAAAAAAAAAAAAAL)) >> 1)); // Step 0, pairwise bitsums
 
 		// Correct a small mistake in algorithm 2:
 		// Use s instead of x the second time in right shift 2, compare to Algorithm 1 in rank9 above.
@@ -73,12 +74,12 @@ namespace Lucene.Net.Util
 
 		long b = (int)((uint)(((int)((uint)SmallerUpTo7_8(s, (r * L8_L)) >> 7)) * L8_L) >> 53); // & (~7L); // Step 3, side ways addition for byte number times 8
 
-		long l = r - (((int)((uint)(s << 8) >> b)) & 0xFFL); // Step 4, byte wise rank, subtract the rank with byte at b-8, or zero for b=0;
+		long l = r - (((int)((uint)(s << 8) >> (int)b)) & 0xFFL); // Step 4, byte wise rank, subtract the rank with byte at b-8, or zero for b=0;
 		Debug.Assert(0L <= 1);
 		//assert l < 8 : l; //fails when bit r is not available.
 
 		// Select bit l from byte (x >>> b):
-		long spr = ((((long)((ulong)x >> b)) & 0xFFL) * L8_L) & L9_L; // spread the 8 bits of the byte at b over the long at L9 positions
+		long spr = ((((long)((ulong)x >> (int)b)) & 0xFFL) * L8_L) & L9_L; // spread the 8 bits of the byte at b over the long at L9 positions
 
 		// long spr_bigger8_zero = smaller8(0L, spr); // inlined smaller8 with 0L argument:
 		// FIXME: replace by biggerequal8_one formula from article page 6, line 9. four operators instead of five here.
@@ -134,7 +135,7 @@ namespace Lucene.Net.Util
 	  ///  The suffix _L indicates the long implementation.
 	  /// </summary>
 	  public const long L8_L = 0x0101010101010101L;
-	  public const long L9_L = 0x8040201008040201L;
+	  public const long L9_L = (long)0x8040201008040201L;
 	  public const long L16_L = 0x0001000100010001L;
 
 	  /// <summary>
@@ -155,7 +156,7 @@ namespace Lucene.Net.Util
 		int s = -1;
 		while ((x != 0L) && (r > 0))
 		{
-		  int ntz = long.numberOfTrailingZeros(x);
+		  int ntz = Number.NumberOfTrailingZeros(x);
 		  x = (long)((ulong)x >> (ntz + 1));
 		  s += (ntz + 1);
 		  r -= 1;

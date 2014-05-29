@@ -433,7 +433,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Performs internal consistency checks.
-	  /// Always returns true (or throws IllegalStateException) 
+	  /// Always returns true (or throws InvalidOperationException) 
 	  /// </summary>
 	  public bool Valid
 	  {

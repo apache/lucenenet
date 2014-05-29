@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
 	  /// <returns> a new counter. </returns>
 	  public static Counter NewCounter(bool threadSafe)
 	  {
-		return threadSafe ? new AtomicCounter() : new SerialCounter();
+		return threadSafe ? (Counter)new AtomicCounter() : (Counter)new SerialCounter();
 	  }
 
 	  private sealed class SerialCounter : Counter

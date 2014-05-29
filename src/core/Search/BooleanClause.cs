@@ -25,9 +25,9 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Specifies how clauses are to occur in matching documents. </summary>
-	  public enum Occur
+	  public enum Occur_e
 	  {
-
+            MUST, SHOULD, MUST_NOT;/*
 		/// <summary>
 		/// Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
 		MUST 
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
 			{
 				return "-";
 			}
-		}
+		}*/
 
       }
 
@@ -72,25 +72,25 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  private Query query;
 
-	  private Occur occur;
+	  private Occur_e occur;
 
 
 	  /// <summary>
 	  /// Constructs a BooleanClause.
 	  /// </summary>
-	  public BooleanClause(Query query, Occur occur)
+	  public BooleanClause(Query query, Occur_e occur)
 	  {
 		this.query = query;
 		this.occur = occur;
 
 	  }
 
-	  public Occur Occur
+	  public Occur_e Occur
 	  {
 		return occur;
 	  }
 
-	  public void setOccur(Occur occur)
+	  public void setOccur(Occur_e occur)
 	  {
 		this.occur = occur;
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 	  /// Returns a hash code value for this object. </summary>
 	  public int GetHashCode()
 	  {
-		return query.HashCode() ^ (Occur.MUST == occur?1:0) ^ (Occur.MUST_NOT == occur?2:0);
+		return query.HashCode() ^ (Occur_e.MUST == occur?1:0) ^ (Occur_e.MUST_NOT == occur?2:0);
 	  }
 
 

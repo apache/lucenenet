@@ -119,20 +119,21 @@ namespace Lucene.Net.Util
 	  public const int UNI_SUR_LOW_START = 0xDC00;
 	  public const int UNI_SUR_LOW_END = 0xDFFF;
 	  public const int UNI_REPLACEMENT_CHAR = 0xFFFD;
+      private const int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
 
 	  private const long UNI_MAX_BMP = 0x0000FFFF;
 
 	  private const long HALF_SHIFT = 10;
 	  private const long HALF_MASK = 0x3FFL;
 
-	  private static readonly int SURROGATE_OFFSET = char.MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << HALF_SHIFT) - UNI_SUR_LOW_START;
+      private static readonly int SURROGATE_OFFSET = MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
 	  /// <summary>
 	  /// Encode characters from a char[] source, starting at
 	  ///  offset for length chars. After encoding, result.offset will always be 0.
 	  /// </summary>
 	  // TODO: broken if incoming result.offset != 0
-	  public static void UTF16toUTF8(char[] source, int offset, int length, BytesRef result)
+	  public static void UTF16toUTF8(CharsRef source, int offset, int length, BytesRef result)
 	  {
 
 		int upto = 0;
@@ -150,7 +151,7 @@ namespace Lucene.Net.Util
 		while (i < end)
 		{
 
-		  int code = (int) source[i++];
+		  int code = (int) source.CharAt(i++);
 
 		  if (code < 0x80)
 		  {
@@ -173,7 +174,7 @@ namespace Lucene.Net.Util
 			// confirm valid high surrogate
 			if (code < 0xDC00 && i < end)
 			{
-			  int utf32 = (int) source[i];
+			  int utf32 = (int) source.CharAt(i);
 			  // confirm valid low surrogate and write pair
 			  if (utf32 >= 0xDC00 && utf32 <= 0xDFFF)
 			  {
@@ -202,7 +203,7 @@ namespace Lucene.Net.Util
 	  ///  for length characters. After encoding, result.offset will always be 0.
 	  /// </summary>
 	  // TODO: broken if incoming result.offset != 0
-	  public static void UTF16toUTF8(CharsRef s, int offset, int length, BytesRef result)
+	  public static void UTF16toUTF8(char[] s, int offset, int length, BytesRef result)
 	  {
 		int end = offset + length;
 
@@ -320,9 +321,9 @@ namespace Lucene.Net.Util
 	    }
 	  }
 	  */
-	  public static bool ValidUTF16String(CharsRef s)
+	  public static bool ValidUTF16String(char[] s)
 	  {
-		int size = s.Length();
+		int size = s.Length;
 		for (int i = 0;i < size;i++)
 		{
 		  char ch = s[i];
@@ -586,7 +587,7 @@ namespace Lucene.Net.Util
 					  }
 					  break;
 				  }
-				  catch (System.IndexOutOfRangeException ex)
+				  catch (System.IndexOutOfRangeException)
 				  {
 					  int newlen = (int)(Math.Ceiling((double) codePoints.Length * (w + 2) / (r - offset + 1)));
 					  char[] temp = new char[newlen];
@@ -635,7 +636,7 @@ namespace Lucene.Net.Util
 			  }
 			}
 
-			sb.Append("0x" + ch.ToString("x"));
+            sb.Append("0x" + ((short)ch).ToString("X"));
 		  }
 		}
 		return sb.ToString();

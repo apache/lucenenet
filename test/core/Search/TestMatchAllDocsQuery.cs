@@ -64,14 +64,14 @@ namespace Lucene.Net.Search
 		// some artificial queries to trigger the use of skipTo():
 
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
-		bq.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
+		bq.add(new MatchAllDocsQuery(), BooleanClause.Occur_e.MUST);
+		bq.add(new MatchAllDocsQuery(), BooleanClause.Occur_e.MUST);
 		hits = @is.search(bq, null, 1000).scoreDocs;
 		Assert.AreEqual(3, hits.Length);
 
 		bq = new BooleanQuery();
-		bq.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
-		bq.add(new TermQuery(new Term("key", "three")), BooleanClause.Occur.MUST);
+		bq.add(new MatchAllDocsQuery(), BooleanClause.Occur_e.MUST);
+		bq.add(new TermQuery(new Term("key", "three")), BooleanClause.Occur_e.MUST);
 		hits = @is.search(bq, null, 1000).scoreDocs;
 		Assert.AreEqual(1, hits.Length);
 

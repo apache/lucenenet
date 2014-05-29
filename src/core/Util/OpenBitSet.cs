@@ -21,8 +21,9 @@ using System.Diagnostics;
 namespace Lucene.Net.Util
 {
 
-	using DocIdSet = Lucene.Net.Search.DocIdSet;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Lucene.Net.Support;
+    using DocIdSet = Lucene.Net.Search.DocIdSet;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
 	/// <summary>
 	/// An "open" BitSet implementation that allows direct access to the array of words
@@ -358,7 +359,7 @@ namespace Lucene.Net.Util
 		}
 
 		Bits_Renamed[startWord] |= startmask;
-		Arrays.fill(Bits_Renamed, startWord + 1, endWord, -1L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, -1L);
 		Bits_Renamed[endWord] |= endmask;
 	  }
 
@@ -457,7 +458,7 @@ namespace Lucene.Net.Util
 		Bits_Renamed[startWord] &= startmask;
 
 		int middle = Math.Min(Wlen, endWord);
-		Arrays.fill(Bits_Renamed, startWord + 1, middle, 0L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, middle, 0L);
 		if (endWord < Wlen)
 		{
 		  Bits_Renamed[endWord] &= endmask;
@@ -503,7 +504,7 @@ namespace Lucene.Net.Util
 		Bits_Renamed[startWord] &= startmask;
 
 		int middle = Math.Min(Wlen, endWord);
-		Arrays.fill(Bits_Renamed, startWord + 1, middle, 0L);
+		Arrays.Fill(Bits_Renamed, startWord + 1, middle, 0L);
 		if (endWord < Wlen)
 		{
 		  Bits_Renamed[endWord] &= endmask;
@@ -758,7 +759,7 @@ namespace Lucene.Net.Util
 
 		if (word != 0)
 		{
-		  return (i << 6) + subIndex + long.numberOfTrailingZeros(word);
+		  return (i << 6) + subIndex + Number.NumberOfTrailingZeros(word);
 		}
 
 		while (++i < Wlen)
@@ -766,7 +767,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			  return (i << 6) + long.numberOfTrailingZeros(word);
+              return (i << 6) + Number.NumberOfTrailingZeros(word);
 		  }
 		}
 
@@ -789,7 +790,7 @@ namespace Lucene.Net.Util
 
 		if (word != 0)
 		{
-		  return (((long)i) << 6) + (subIndex + long.numberOfTrailingZeros(word));
+            return (((long)i) << 6) + (subIndex + Number.NumberOfTrailingZeros(word));
 		}
 
 		while (++i < Wlen)
@@ -797,7 +798,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			  return (((long)i) << 6) + long.numberOfTrailingZeros(word);
+              return (((long)i) << 6) + Number.NumberOfTrailingZeros(word);
 		  }
 		}
 
@@ -839,7 +840,7 @@ namespace Lucene.Net.Util
 
 		if (word != 0)
 		{
-		  return (i << 6) + subIndex - long.numberOfLeadingZeros(word); // See LUCENE-3197
+            return (i << 6) + subIndex - Number.NumberOfLeadingZeros(word); // See LUCENE-3197
 		}
 
 		while (--i >= 0)
@@ -847,7 +848,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			return (i << 6) + 63 - long.numberOfLeadingZeros(word);
+              return (i << 6) + 63 - Number.NumberOfLeadingZeros(word);
 		  }
 		}
 
@@ -888,7 +889,7 @@ namespace Lucene.Net.Util
 
 		if (word != 0)
 		{
-		  return (((long)i) << 6) + subIndex - long.numberOfLeadingZeros(word); // See LUCENE-3197
+            return (((long)i) << 6) + subIndex - Number.NumberOfLeadingZeros(word); // See LUCENE-3197
 		}
 
 		while (--i >= 0)
@@ -896,7 +897,7 @@ namespace Lucene.Net.Util
 		  word = Bits_Renamed[i];
 		  if (word != 0)
 		  {
-			return (((long)i) << 6) + 63 - long.numberOfLeadingZeros(word);
+              return (((long)i) << 6) + 63 - Number.NumberOfLeadingZeros(word);
 		  }
 		}
 
@@ -933,7 +934,7 @@ namespace Lucene.Net.Util
 		if (this.Wlen > newLen)
 		{
 		  // fill zeros from the new shorter length to the old length
-		  Arrays.fill(Bits_Renamed,newLen,this.Wlen,0);
+		  Arrays.Fill(Bits_Renamed,newLen,this.Wlen,0);
 		}
 		this.Wlen = newLen;
 	  }
@@ -944,7 +945,7 @@ namespace Lucene.Net.Util
 	  {
 		int newLen = Math.Max(Wlen,other.Wlen);
 		EnsureCapacityWords(newLen);
-		assert(NumBits = Math.Max(other.NumBits, NumBits)) >= 0;
+		Debug.Assert((NumBits = Math.Max(other.NumBits, NumBits)) >= 0);
 
 		long[] thisArr = this.Bits_Renamed;
 		long[] otherArr = other.Bits_Renamed;
@@ -980,7 +981,7 @@ namespace Lucene.Net.Util
 	  {
 		int newLen = Math.Max(Wlen,other.Wlen);
 		EnsureCapacityWords(newLen);
-		assert(NumBits = Math.Max(other.NumBits, NumBits)) >= 0;
+		Debug.Assert((NumBits = Math.Max(other.NumBits, NumBits)) >= 0);
 
 		long[] thisArr = this.Bits_Renamed;
 		long[] otherArr = other.Bits_Renamed;
@@ -1040,7 +1041,7 @@ namespace Lucene.Net.Util
 	  {
 		Bits_Renamed = ArrayUtil.Grow(Bits_Renamed, numWords);
 		Wlen = numWords;
-		assert(this.NumBits = Math.Max(this.NumBits, numWords << 6)) >= 0;
+		Debug.Assert((this.NumBits = Math.Max(this.NumBits, numWords << 6)) >= 0);
 	  }
 
 	  /// <summary>
@@ -1052,7 +1053,7 @@ namespace Lucene.Net.Util
 		EnsureCapacityWords(Bits2words(numBits));
 		// ensureCapacityWords sets numBits to a multiple of 64, but we want to set
 		// it to exactly what the app asked.
-		assert(this.NumBits = Math.Max(this.NumBits, numBits)) >= 0;
+		Debug.Assert((this.NumBits = Math.Max(this.NumBits, numBits)) >= 0);
 	  }
 
 	  /// <summary>

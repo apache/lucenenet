@@ -4,28 +4,29 @@ using System.Diagnostics;
 namespace Lucene.Net.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using DocIdSet = Lucene.Net.Search.DocIdSet;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
-	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using DocIdSet = Lucene.Net.Search.DocIdSet;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
+    using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
 	/// <summary>
 	/// <seealso cref="DocIdSet"/> implementation based on pfor-delta encoding.
@@ -144,20 +145,20 @@ namespace Lucene.Net.Util
 
 		internal virtual void ComputeFreqs()
 		{
-		  Arrays.fill(Freqs, 0);
+		  Arrays.Fill(Freqs, 0);
 		  for (int i = 0; i < BufferSize; ++i)
 		  {
-			++Freqs[32 - int.numberOfLeadingZeros(Buffer[i])];
+			++Freqs[32 - Number.NumberOfLeadingZeros(Buffer[i])];
 		  }
 		}
 
 		internal virtual int PforBlockSize(int bitsPerValue, int numExceptions, int bitsPerException)
 		{
-		  const PackedInts.Format format = PackedInts.Format.PACKED;
-		  long blockSize = 1 + format.byteCount(PackedInts.VERSION_CURRENT, BLOCK_SIZE, bitsPerValue); // header: number of bits per value
+		  PackedInts.Format format = PackedInts.Format.PACKED;
+		  long blockSize = 1 + format.ByteCount(PackedInts.VERSION_CURRENT, BLOCK_SIZE, bitsPerValue); // header: number of bits per value
 		  if (numExceptions > 0)
 		  {
-			blockSize += 2 + numExceptions + format.byteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException); // indices of the exceptions -  2 additional bytes in case of exceptions: numExceptions and bitsPerException
+			blockSize += 2 + numExceptions + format.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException); // indices of the exceptions -  2 additional bytes in case of exceptions: numExceptions and bitsPerException
 		  }
 		  if (BufferSize < BLOCK_SIZE)
 		  {
@@ -191,21 +192,17 @@ namespace Lucene.Net.Util
 		  {
 			--BitsPerValue;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int actualBitsPerValue = bitsPerValue;
 		  int actualBitsPerValue = BitsPerValue;
 		  int blockSize = PforBlockSize(BitsPerValue, NumExceptions, BitsPerException);
 
 		  // Now try different values for bitsPerValue and pick the best one
-		  for (int bitsPerValue = this.BitsPerValue - 1, NumExceptions = Freqs[this.BitsPerValue]; bitsPerValue >= 0 && NumExceptions <= MAX_EXCEPTIONS; NumExceptions += Freqs[bitsPerValue--])
+		  for (int bitsPerValue = this.BitsPerValue - 1, numExceptions = Freqs[this.BitsPerValue]; bitsPerValue >= 0 && numExceptions <= MAX_EXCEPTIONS; numExceptions += Freqs[bitsPerValue--])
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newBlockSize = pforBlockSize(bitsPerValue, numExceptions, actualBitsPerValue - bitsPerValue);
-			int newBlockSize = PforBlockSize(bitsPerValue, NumExceptions, actualBitsPerValue - bitsPerValue);
+			int newBlockSize = PforBlockSize(bitsPerValue, numExceptions, actualBitsPerValue - bitsPerValue);
 			if (newBlockSize < blockSize)
 			{
 			  this.BitsPerValue = bitsPerValue;
-			  this.NumExceptions = NumExceptions;
+			  this.NumExceptions = numExceptions;
 			  blockSize = newBlockSize;
 			}
 		  }
@@ -218,8 +215,6 @@ namespace Lucene.Net.Util
 		{
 		  if (NumExceptions > 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mask = (1 << bitsPerValue) - 1;
 			int mask = (1 << BitsPerValue) - 1;
 			int ex = 0;
 			for (int i = 0; i < BufferSize; ++i)
@@ -232,16 +227,12 @@ namespace Lucene.Net.Util
 			  }
 			}
 			Debug.Assert(ex == NumExceptions);
-			Arrays.fill(Exceptions, NumExceptions, BLOCK_SIZE, 0);
+			Arrays.Fill(Exceptions, NumExceptions, BLOCK_SIZE, 0);
 		  }
 
 		  if (BitsPerValue > 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Encoder encoder = Lucene.Net.Util.Packed.PackedInts.getEncoder(Lucene.Net.Util.Packed.PackedInts.Format.PACKED, Lucene.Net.Util.Packed.PackedInts.VERSION_CURRENT, bitsPerValue);
 			PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerValue);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numIterations = ITERATIONS[bitsPerValue];
 			int numIterations = ITERATIONS[BitsPerValue];
 			encoder.Encode(Buffer, 0, Data.Bytes, Data.Length, numIterations);
 			Data.Length += encoder.ByteBlockCount() * numIterations;
@@ -252,14 +243,10 @@ namespace Lucene.Net.Util
 			Debug.Assert(BitsPerException > 0);
 			Data.WriteByte((sbyte) NumExceptions);
 			Data.WriteByte((sbyte) BitsPerException);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Encoder encoder = Lucene.Net.Util.Packed.PackedInts.getEncoder(Lucene.Net.Util.Packed.PackedInts.Format.PACKED, Lucene.Net.Util.Packed.PackedInts.VERSION_CURRENT, bitsPerException);
 			PackedInts.Encoder encoder = PackedInts.GetEncoder(PackedInts.Format.PACKED, PackedInts.VERSION_CURRENT, BitsPerException);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numIterations = (numExceptions + encoder.byteValueCount() - 1) / encoder.byteValueCount();
 			int numIterations = (NumExceptions + encoder.ByteValueCount() - 1) / encoder.ByteValueCount();
 			encoder.Encode(Exceptions, 0, Data.Bytes, Data.Length, numIterations);
-			Data.Length += PackedInts.Format.PACKED.byteCount(PackedInts.VERSION_CURRENT, NumExceptions, BitsPerException);
+			Data.Length += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, NumExceptions, BitsPerException);
 			for (int i = 0; i < NumExceptions; ++i)
 			{
 			  Data.WriteByte((sbyte) ExceptionIndices[i]);
@@ -289,18 +276,10 @@ namespace Lucene.Net.Util
 
 		internal virtual void EncodeBlock()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int originalLength = data.length;
 		  int originalLength = Data.Length;
-		  Arrays.fill(Buffer, BufferSize, BLOCK_SIZE, 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int unaryBlockSize = unaryBlockSize();
+		  Arrays.Fill(Buffer, BufferSize, BLOCK_SIZE, 0);
 		  int unaryBlockSize = UnaryBlockSize();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pforBlockSize = computeOptimalNumberOfBits();
 		  int pforBlockSize = ComputeOptimalNumberOfBits();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blockSize;
 		  int blockSize;
 		  if (pforBlockSize <= unaryBlockSize)
 		  {
@@ -320,8 +299,6 @@ namespace Lucene.Net.Util
 		  {
 			// use unary
 			blockSize = unaryBlockSize;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int token = UNARY | (bufferSize < BLOCK_SIZE ? LAST_BLOCK : 0);
 			int token = UNARY | (BufferSize < BLOCK_SIZE ? LAST_BLOCK : 0);
 			Data.WriteByte((sbyte) token);
 			UnaryEncode();
@@ -350,15 +327,9 @@ namespace Lucene.Net.Util
 		  }
 
 		  EncodeBlock();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] dataArr = java.util.Arrays.copyOf(data.bytes, data.length + MAX_BYTE_BLOCK_COUNT);
-		  sbyte[] dataArr = Arrays.copyOf(Data.Bytes, Data.Length + MAX_BYTE_BLOCK_COUNT);
+		  sbyte[] dataArr = Arrays.CopyOf(Data.Bytes, Data.Length + MAX_BYTE_BLOCK_COUNT);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int indexSize = (numBlocks - 1) / indexInterval + 1;
 		  int indexSize = (NumBlocks - 1) / IndexInterval_Renamed + 1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer docIDs, offsets;
 		  MonotonicAppendingLongBuffer docIDs, offsets;
 		  if (indexSize <= 1)
 		  {
@@ -367,14 +338,10 @@ namespace Lucene.Net.Util
 		  else
 		  {
 			const int pageSize = 128;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int initialPageCount = (indexSize + pageSize - 1) / pageSize;
 			int initialPageCount = (indexSize + pageSize - 1) / pageSize;
 			docIDs = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
 			offsets = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
 			// Now build the index
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Iterator it = new Iterator(dataArr, cardinality, Integer.MAX_VALUE, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 			Iterator it = new Iterator(dataArr, Cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 			for (int k = 0; k < indexSize; ++k)
 			{
@@ -461,7 +428,7 @@ namespace Lucene.Net.Util
 		  this.Offsets = offsets;
 		  Offset = 0;
 		  NextDocs = new int[BLOCK_SIZE];
-		  Arrays.fill(NextDocs, -1);
+		  Arrays.Fill(NextDocs, -1);
 		  i = BLOCK_SIZE;
 		  NextExceptions = new int[BLOCK_SIZE];
 		  BlockIdx = -1;
@@ -475,12 +442,10 @@ namespace Lucene.Net.Util
 
 		internal virtual void PforDecompress(sbyte token)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerValue = token & 0x1F;
 		  int bitsPerValue = token & 0x1F;
 		  if (bitsPerValue == 0)
 		  {
-			Arrays.fill(NextDocs, 0);
+			Arrays.Fill(NextDocs, 0);
 		  }
 		  else
 		  {
@@ -490,17 +455,11 @@ namespace Lucene.Net.Util
 		  if ((token & HAS_EXCEPTIONS) != 0)
 		  {
 			// there are exceptions
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numExceptions = data[offset++];
 			int numExceptions = Data[Offset++];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerException = data[offset++];
 			int bitsPerException = Data[Offset++];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numIterations = (numExceptions + DECODERS[bitsPerException].byteValueCount() - 1) / DECODERS[bitsPerException].byteValueCount();
 			int numIterations = (numExceptions + DECODERS[bitsPerException].ByteValueCount() - 1) / DECODERS[bitsPerException].ByteValueCount();
 			DECODERS[bitsPerException].Decode(Data, Offset, NextExceptions, 0, numIterations);
-			Offset += PackedInts.Format.PACKED.byteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
+			Offset += (int)PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, numExceptions, bitsPerException);
 			for (int i = 0; i < numExceptions; ++i)
 			{
 			  NextDocs[Data[Offset++]] |= NextExceptions[i] << bitsPerValue;
@@ -508,8 +467,6 @@ namespace Lucene.Net.Util
 		  }
 		  for (int previousDoc = DocID_Renamed, i = 0; i < BLOCK_SIZE; ++i)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = previousDoc + 1 + nextDocs[i];
 			int doc = previousDoc + 1 + NextDocs[i];
 			previousDoc = NextDocs[i] = doc;
 		  }
@@ -517,12 +474,10 @@ namespace Lucene.Net.Util
 
 		internal virtual void UnaryDecompress(sbyte token)
 		{
-		  assert(token & HAS_EXCEPTIONS) == 0;
+		  Debug.Assert((token & HAS_EXCEPTIONS) == 0);
 		  int docID = this.DocID_Renamed;
 		  for (int i = 0; i < BLOCK_SIZE;)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte b = data[offset++];
 			sbyte b = Data[Offset++];
 			for (int bitList = BitUtil.BitList(b); bitList != 0; ++i, bitList = (int)((uint)bitList >> 4))
 			{
@@ -534,8 +489,6 @@ namespace Lucene.Net.Util
 
 		internal virtual void DecompressBlock()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte token = data[offset++];
 		  sbyte token = Data[Offset++];
 
 		  if ((token & UNARY) != 0)
@@ -552,7 +505,7 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int blockSize = data[offset++];
 			int blockSize = Data[Offset++];
-			Arrays.fill(NextDocs, blockSize, BLOCK_SIZE, NO_MORE_DOCS);
+			Arrays.Fill(NextDocs, blockSize, BLOCK_SIZE, NO_MORE_DOCS);
 		  }
 		  ++BlockIdx;
 		}

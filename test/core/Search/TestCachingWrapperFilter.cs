@@ -103,8 +103,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestEmpty2()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term("id", "0")), BooleanClause.Occur.MUST);
-		query.add(new TermQuery(new Term("id", "0")), BooleanClause.Occur.MUST_NOT);
+		query.add(new TermQuery(new Term("id", "0")), BooleanClause.Occur_e.MUST);
+		query.add(new TermQuery(new Term("id", "0")), BooleanClause.Occur_e.MUST_NOT);
 		Filter expected = new QueryWrapperFilter(query);
 		Filter actual = new CachingWrapperFilter(expected);
 		AssertFilterEquals(expected, actual);

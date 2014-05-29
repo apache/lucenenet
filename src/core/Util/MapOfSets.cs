@@ -29,16 +29,16 @@ namespace Lucene.Net.Util
 	public class MapOfSets<K, V>
 	{
 
-	  private readonly IDictionary<K, Set<V>> TheMap;
+	  private readonly IDictionary<K, HashSet<V>> TheMap;
 
 	  /// <param name="m"> the backing store for this object </param>
-	  public MapOfSets(IDictionary<K, Set<V>> m)
+	  public MapOfSets(IDictionary<K, HashSet<V>> m)
 	  {
 		TheMap = m;
 	  }
 
 	  /// <returns> direct access to the map backing this object. </returns>
-	  public virtual IDictionary<K, Set<V>> Map
+      public virtual IDictionary<K, HashSet<V>> Map
 	  {
 		  get
 		  {
@@ -52,42 +52,38 @@ namespace Lucene.Net.Util
 	  /// <returns> the size of the Set associated with key once val is added to it. </returns>
 	  public virtual int Put(K key, V val)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<V> theSet;
-		Set<V> theSet;
+		HashSet<V> theSet;
 		if (TheMap.ContainsKey(key))
 		{
 		  theSet = TheMap[key];
 		}
 		else
 		{
-		  theSet = new HashSet<>(23);
+		  theSet = new HashSet<V>();
 		  TheMap[key] = theSet;
 		}
-		theSet.add(val);
-		return theSet.size();
+		theSet.Add(val);
+		return theSet.Count;
 	  }
 	   /// <summary>
 	   /// Adds multiple vals to the Set associated with key in the Map.  
 	   /// If key is not 
 	   /// already in the map, a new Set will first be created. </summary>
 	   /// <returns> the size of the Set associated with key once val is added to it. </returns>
-	  public virtual int putAll<T1>(K key, ICollection<T1> vals) where T1 : V
+	  public virtual int PutAll(K key, IEnumerable<V> vals)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<V> theSet;
-		Set<V> theSet;
+		HashSet<V> theSet;
 		if (TheMap.ContainsKey(key))
 		{
 		  theSet = TheMap[key];
 		}
 		else
 		{
-		  theSet = new HashSet<>(23);
+		  theSet = new HashSet<V>();
 		  TheMap[key] = theSet;
 		}
-		theSet.addAll(vals);
-		return theSet.size();
+		theSet.UnionWith(vals);
+		return theSet.Count;
 	  }
 
 	}

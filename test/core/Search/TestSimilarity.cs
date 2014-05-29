@@ -97,8 +97,8 @@ namespace Lucene.Net.Search
 		searcher.search(new TermQuery(b), new CollectorAnonymousInnerClassHelper(this));
 
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(a), BooleanClause.Occur.SHOULD);
-		bq.add(new TermQuery(b), BooleanClause.Occur.SHOULD);
+		bq.add(new TermQuery(a), BooleanClause.Occur_e.SHOULD);
+		bq.add(new TermQuery(b), BooleanClause.Occur_e.SHOULD);
 		//System.out.println(bq.toString("field"));
 		searcher.search(bq, new CollectorAnonymousInnerClassHelper2(this));
 
