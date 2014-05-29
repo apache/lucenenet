@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -63,33 +64,33 @@ namespace Lucene.Net.Store
 		this.Length_Renamed = length;
 		this.ChunkSizePower = chunkSizePower;
 		this.ChunkSizeMask = (1L << chunkSizePower) - 1L;
-		this.Clones = trackClones ? WeakIdentityMap.NewConcurrentHashMap<ByteBufferIndexInput, bool?>() : null;
+        this.Clones = trackClones ? WeakIdentityMap<ByteBufferIndexInput, bool?>.NewConcurrentHashMap() : null;
 
 		Debug.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-		assert((long)((ulong)length >> chunkSizePower)) < int.MaxValue;
+		//assert((long)((ulong)length >> chunkSizePower)) < int.MaxValue;
 
 		Seek(0L);
 	  }
 
-	  public override sealed sbyte ReadByte()
+	  public override sealed byte ReadByte()
 	  {
 		try
 		{
-		  return CurBuf.get();
+		  return CurBuf.Get();
 		}
-		catch (BufferUnderflowException e)
+		catch (BufferUnderflowException)
 		{
 		  do
 		  {
 			CurBufIndex++;
 			if (CurBufIndex >= Buffers.Length)
 			{
-			  throw new EOFException("read past EOF: " + this);
+			  throw new System.IO.EndOfStreamException("read past EOF: " + this);
 			}
 			CurBuf = Buffers[CurBufIndex];
-			CurBuf.position(0);
-		  } while (!CurBuf.hasRemaining());
-		  return CurBuf.get();
+			CurBuf.Position = 0;
+		  } while (!CurBuf.HasRemaining);
+		  return CurBuf.Get();
 		}
 		catch (System.NullReferenceException npe)
 		{
@@ -97,30 +98,30 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override sealed void ReadBytes(sbyte[] b, int offset, int len)
+	  public override sealed void ReadBytes(byte[] b, int offset, int len)
 	  {
 		try
 		{
-		  CurBuf.get(b, offset, len);
+		  CurBuf.Get(b, offset, len);
 		}
 		catch (BufferUnderflowException e)
 		{
-		  int curAvail = CurBuf.remaining();
+		  int curAvail = CurBuf.Remaining();
 		  while (len > curAvail)
 		  {
-			CurBuf.get(b, offset, curAvail);
+			CurBuf.Get(b, offset, curAvail);
 			len -= curAvail;
 			offset += curAvail;
 			CurBufIndex++;
 			if (CurBufIndex >= Buffers.Length)
 			{
-			  throw new EOFException("read past EOF: " + this);
+			  throw new System.IO.EndOfStreamException("read past EOF: " + this);
 			}
 			CurBuf = Buffers[CurBufIndex];
-			CurBuf.position(0);
-			curAvail = CurBuf.remaining();
+			CurBuf.Position = 0;
+			curAvail = CurBuf.Remaining();
 		  }
-		  CurBuf.get(b, offset, len);
+		  CurBuf.Get(b, offset, len);
 		}
 		catch (System.NullReferenceException npe)
 		{
@@ -132,7 +133,7 @@ namespace Lucene.Net.Store
 	  {
 		try
 		{
-		  return CurBuf.Short;
+		  return CurBuf.GetShort();
 		}
 		catch (BufferUnderflowException e)
 		{
@@ -148,7 +149,7 @@ namespace Lucene.Net.Store
 	  {
 		try
 		{
-		  return CurBuf.Int;
+		  return CurBuf.GetInt();
 		}
 		catch (BufferUnderflowException e)
 		{
@@ -164,7 +165,7 @@ namespace Lucene.Net.Store
 	  {
 		try
 		{
-		  return CurBuf.Long;
+		  return CurBuf.GetLong();
 		}
 		catch (BufferUnderflowException e)
 		{
@@ -182,7 +183,7 @@ namespace Lucene.Net.Store
 		  {
 			try
 			{
-			  return (((long) CurBufIndex) << ChunkSizePower) + CurBuf.position() - Offset;
+			  return (((long) CurBufIndex) << ChunkSizePower) + CurBuf.Position - Offset;
 			}
 			catch (System.NullReferenceException npe)
 			{
@@ -209,18 +210,18 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.nio.ByteBuffer b = buffers[bi];
 		  ByteBuffer b = Buffers[bi];
-		  b.position((int)(pos & ChunkSizeMask));
+		  b.Position = ((int)(pos & ChunkSizeMask));
 		  // write values, on exception all is unchanged
 		  this.CurBufIndex = bi;
 		  this.CurBuf = b;
 		}
 		catch (System.IndexOutOfRangeException aioobe)
 		{
-		  throw new EOFException("seek past EOF: " + this);
+		  throw new System.IO.EndOfStreamException("seek past EOF: " + this);
 		}
 		catch (System.ArgumentException iae)
 		{
-		  throw new EOFException("seek past EOF: " + this);
+		  throw new System.IO.EndOfStreamException("seek past EOF: " + this);
 		}
 		catch (System.NullReferenceException npe)
 		{
@@ -333,11 +334,11 @@ namespace Lucene.Net.Store
 
 		for (int i = 0; i < slices.Length; i++)
 		{
-		  slices[i] = buffers[startIndex + i].duplicate();
+		  slices[i] = buffers[startIndex + i].Duplicate();
 		}
 
 		// set the last buffer's limit for the sliced view.
-		slices[slices.Length - 1].limit((int)(sliceEnd & ChunkSizeMask));
+		slices[slices.Length - 1].Limit((int)(sliceEnd & ChunkSizeMask));
 
 		return slices;
 	  }

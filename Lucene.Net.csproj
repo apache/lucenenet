@@ -9582,6 +9582,7 @@
     <Compile Include="src\core\Store\BufferedIndexOutput.cs" />
     <Compile Include="src\core\Store\ByteArrayDataInput.cs" />
     <Compile Include="src\core\Store\ByteArrayDataOutput.cs" />
+    <Compile Include="src\core\Store\ByteBuffer.cs" />
     <Compile Include="src\core\Store\ByteBufferIndexInput.cs" />
     <Compile Include="src\core\Store\ChecksumIndexInput.cs" />
     <Compile Include="src\core\Store\CompoundFileDirectory.cs" />
