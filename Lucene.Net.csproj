@@ -9629,8 +9629,6 @@
     <Compile Include="src\core\Support\AtomicBoolean.cs" />
     <Compile Include="src\core\Support\AtomicInteger.cs" />
     <Compile Include="src\core\Support\AtomicLong.cs" />
-    <Compile Include="src\core\Support\AttributeImplItem.cs" />
-    <Compile Include="src\core\Support\BitSetSupport.cs" />
     <Compile Include="src\core\Support\Buffer.cs" />
     <Compile Include="src\core\Support\AttributeImplItem.cs" />
     <Compile Include="src\core\Support\BitSetSupport.cs" />
