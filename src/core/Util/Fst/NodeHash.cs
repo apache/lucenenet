@@ -31,10 +31,10 @@ namespace Lucene.Net.Util.Fst
 	  private long Count;
 	  private long Mask;
 	  private readonly FST<T> Fst;
-	  private readonly FST.Arc<T> ScratchArc = new FST.Arc<T>();
-	  private readonly FST.BytesReader @in;
+      private readonly FST<T>.Arc<T> ScratchArc = new FST<T>.Arc<T>();
+      private readonly FST.BytesReader @in;
 
-	  public NodeHash(FST<T> fst, FST.BytesReader @in)
+      public NodeHash(FST<T> fst, FST.BytesReader @in)
 	  {
 		Table = new PagedGrowableWriter(16, 1 << 30, 8, PackedInts.COMPACT);
 		Mask = 15;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util.Fst
 		this.@in = @in;
 	  }
 
-	  private bool NodesEqual(Builder.UnCompiledNode<T> node, long address)
+      private bool NodesEqual(Builder<T>.UnCompiledNode<T> node, long address)
 	  {
 		Fst.ReadFirstRealTargetArc(address, ScratchArc, @in);
 		if (ScratchArc.BytesPerArc != 0 && node.NumArcs != ScratchArc.NumArcs)
@@ -51,10 +51,8 @@ namespace Lucene.Net.Util.Fst
 		}
 		for (int arcUpto = 0;arcUpto < node.NumArcs;arcUpto++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Builder.Arc<T> arc = node.arcs[arcUpto];
-		  Builder.Arc<T> arc = node.Arcs[arcUpto];
-		  if (arc.Label != ScratchArc.Label || !arc.Output.Equals(ScratchArc.Output) || ((Builder.CompiledNode) arc.Target).Node != ScratchArc.Target || !arc.NextFinalOutput.Equals(ScratchArc.NextFinalOutput) || arc.IsFinal != ScratchArc.Final)
+		  Builder<T>.Arc<T> arc = node.Arcs[arcUpto];
+          if (arc.Label != ScratchArc.Label || !arc.Output.Equals(ScratchArc.Output) || ((Builder<T>.CompiledNode)arc.Target).Node != ScratchArc.Target || !arc.NextFinalOutput.Equals(ScratchArc.NextFinalOutput) || arc.IsFinal != ScratchArc.Final)
 		  {
 			return false;
 		  }
@@ -78,7 +76,7 @@ namespace Lucene.Net.Util.Fst
 
 	  // hash code for an unfrozen node.  this must be identical
 	  // to the frozen case (below)!!
-	  private long Hash(Builder.UnCompiledNode<T> node)
+      private long Hash(Builder<T>.UnCompiledNode<T> node)
 	  {
 		const int PRIME = 31;
 		//System.out.println("hash unfrozen");
@@ -86,15 +84,12 @@ namespace Lucene.Net.Util.Fst
 		// TODO: maybe if number of arcs is high we can safely subsample?
 		for (int arcIdx = 0;arcIdx < node.NumArcs;arcIdx++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Builder.Arc<T> arc = node.arcs[arcIdx];
-		  Builder.Arc<T> arc = node.Arcs[arcIdx];
-		  //System.out.println("  label=" + arc.label + " target=" + ((Builder.CompiledNode) arc.target).node + " h=" + h + " output=" + fst.outputs.outputToString(arc.output) + " isFinal?=" + arc.isFinal);
+		  Builder<T>.Arc<T> arc = node.Arcs[arcIdx];
 		  h = PRIME * h + arc.Label;
-		  long n = ((Builder.CompiledNode) arc.Target).Node;
+          long n = ((Builder<T>.CompiledNode)arc.Target).Node;
 		  h = PRIME * h + (int)(n ^ (n >> 32));
-		  h = PRIME * h + arc.Output.HashCode();
-		  h = PRIME * h + arc.NextFinalOutput.HashCode();
+		  h = PRIME * h + arc.Output.GetHashCode();
+		  h = PRIME * h + arc.NextFinalOutput.GetHashCode();
 		  if (arc.IsFinal)
 		  {
 			h += 17;
@@ -116,8 +111,8 @@ namespace Lucene.Net.Util.Fst
 		  //System.out.println("  label=" + scratchArc.label + " target=" + scratchArc.target + " h=" + h + " output=" + fst.outputs.outputToString(scratchArc.output) + " next?=" + scratchArc.flag(4) + " final?=" + scratchArc.isFinal() + " pos=" + in.getPosition());
 		  h = PRIME * h + ScratchArc.Label;
 		  h = PRIME * h + (int)(ScratchArc.Target ^ (ScratchArc.Target >> 32));
-		  h = PRIME * h + ScratchArc.Output.HashCode();
-		  h = PRIME * h + ScratchArc.NextFinalOutput.HashCode();
+		  h = PRIME * h + ScratchArc.Output.GetHashCode();
+		  h = PRIME * h + ScratchArc.NextFinalOutput.GetHashCode();
 		  if (ScratchArc.Final)
 		  {
 			h += 17;
@@ -132,24 +127,18 @@ namespace Lucene.Net.Util.Fst
 		return h & long.MaxValue;
 	  }
 
-	  public long Add(Builder.UnCompiledNode<T> nodeIn)
+      public long Add(Builder<T>.UnCompiledNode<T> nodeIn)
 	  {
 		//System.out.println("hash: add count=" + count + " vs " + table.size() + " mask=" + mask);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long h = hash(nodeIn);
 		long h = Hash(nodeIn);
 		long pos = h & Mask;
 		int c = 0;
 		while (true)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long v = table.get(pos);
 		  long v = Table.Get(pos);
 		  if (v == 0)
 		  {
 			// freeze & add
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long node = fst.addNode(nodeIn);
 			long node = Fst.AddNode(nodeIn);
 			//System.out.println("  now freeze node=" + node);
 			Debug.Assert(Hash(node) == h, "frozenHash=" + Hash(node) + " vs h=" + h);
@@ -193,16 +182,12 @@ namespace Lucene.Net.Util.Fst
 
 	  private void Rehash()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PagedGrowableWriter oldTable = table;
 		PagedGrowableWriter oldTable = Table;
 
 		Table = new PagedGrowableWriter(2 * oldTable.Size(), 1 << 30, PackedInts.BitsRequired(Count), PackedInts.COMPACT);
 		Mask = Table.Size() - 1;
 		for (long idx = 0;idx < oldTable.Size();idx++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long address = oldTable.get(idx);
 		  long address = oldTable.Get(idx);
 		  if (address != 0)
 		  {

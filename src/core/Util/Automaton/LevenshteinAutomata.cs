@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -54,7 +55,8 @@ namespace Lucene.Net.Util.Automaton
 	  /// Create a new LevenshteinAutomata for some input String.
 	  /// Optionally count transpositions as a primitive edit.
 	  /// </summary>
-	  public LevenshteinAutomata(string input, bool withTranspositions) : this(CodePoints(input), char.MAX_CODE_POINT, withTranspositions)
+	  public LevenshteinAutomata(string input, bool withTranspositions) 
+          : this(CodePoints(input), Character.MAX_CODE_POINT, withTranspositions)
 	  {
 	  }
 
@@ -68,7 +70,7 @@ namespace Lucene.Net.Util.Automaton
 		this.AlphaMax = alphaMax;
 
 		// calculate the alphabet
-		SortedSet<int?> set = new SortedSet<int?>();
+		SortedSet<int> set = new SortedSet<int>();
 		for (int i = 0; i < word.Length; i++)
 		{
 		  int v = word[i];
@@ -76,14 +78,14 @@ namespace Lucene.Net.Util.Automaton
 		  {
 			throw new System.ArgumentException("alphaMax exceeded by symbol " + v + " in word");
 		  }
-		  set.add(v);
+		  set.Add(v);
 		}
-		Alphabet = new int[set.size()];
-		IEnumerator<int?> iterator = set.GetEnumerator();
+		Alphabet = new int[set.Count];
+		IEnumerator<int> iterator = set.GetEnumerator();
 		for (int i = 0; i < Alphabet.Length; i++)
 		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Alphabet[i] = iterator.next();
+            iterator.MoveNext();
+            Alphabet[i] = iterator.Current;
 		}
 
 		RangeLower = new int[Alphabet.Length + 2];
@@ -110,16 +112,21 @@ namespace Lucene.Net.Util.Automaton
 		  NumRanges++;
 		}
 
-		Descriptions = new ParametricDescription[] {null, withTranspositions ? new Lev1TParametricDescription(word.Length) : new Lev1ParametricDescription(word.Length), withTranspositions ? new Lev2TParametricDescription(word.Length) : new Lev2ParametricDescription(word.Length)};
+		Descriptions = new ParametricDescription[] {
+            null, 
+            withTranspositions ? (ParametricDescription)new Lev1TParametricDescription(word.Length) : new Lev1ParametricDescription(word.Length), 
+            withTranspositions ? (ParametricDescription)new Lev2TParametricDescription(word.Length) : new Lev2ParametricDescription(word.Length)
+        };
 	  }
 
 	  private static int[] CodePoints(string input)
 	  {
-		int length = char.codePointCount(input, 0, input.Length);
+		//int length = char.codePointCount(input, 0, input.Length);
+		int length = input.Length;
 		int[] word = new int[length];
-		for (int i = 0, j = 0, cp = 0; i < input.Length; i += char.charCount(cp))
+        for (int i = 0, j = 0, cp = 0; i < input.Length; i += Character.CharCount(cp))
 		{
-		  word[j++] = cp = input.codePointAt(i);
+		  word[j++] = cp = input[i]/*.codePointAt(i)*/;
 		}
 		return word;
 	  }
@@ -147,8 +154,6 @@ namespace Lucene.Net.Util.Automaton
 		  return null;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int range = 2*n+1;
 		int range = 2 * n + 1;
 		ParametricDescription description = Descriptions[n];
 		// the number of states is based on the length of the word and n
@@ -157,31 +162,23 @@ namespace Lucene.Net.Util.Automaton
 		for (int i = 0; i < states.Length; i++)
 		{
 		  states[i] = new State();
-		  states[i].Number_Renamed = i;
+		  states[i].number = i;
 		  states[i].Accept = description.IsAccept(i);
 		}
 		// create transitions from state to state
 		for (int k = 0; k < states.Length; k++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int xpos = description.getPosition(k);
 		  int xpos = description.GetPosition(k);
 		  if (xpos < 0)
 		  {
 			continue;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = xpos + Math.min(word.length - xpos, range);
 		  int end = xpos + Math.Min(Word.Length - xpos, range);
 
 		  for (int x = 0; x < Alphabet.Length; x++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int ch = alphabet[x];
 			int ch = Alphabet[x];
 			// get the characteristic vector at this position wrt ch
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cvec = getVector(ch, xpos, end);
 			int cvec = GetVector(ch, xpos, end);
 			int dest = description.Transition(k, xpos, cvec);
 			if (dest >= 0)
@@ -192,12 +189,12 @@ namespace Lucene.Net.Util.Automaton
 		  // add transitions for all other chars in unicode
 		  // by definition, their characteristic vectors are always 0,
 		  // because they do not exist in the input string.
-		  int dest = description.Transition(k, xpos, 0); // by definition
-		  if (dest >= 0)
+		  int dest_ = description.Transition(k, xpos, 0); // by definition
+		  if (dest_ >= 0)
 		  {
 			for (int r = 0; r < NumRanges; r++)
 			{
-			  states[k].AddTransition(new Transition(RangeLower[r], RangeUpper[r], states[dest]));
+			  states[k].AddTransition(new Transition(RangeLower[r], RangeUpper[r], states[dest_]));
 			}
 		  }
 		}
@@ -297,16 +294,9 @@ namespace Lucene.Net.Util.Automaton
 
 		protected internal virtual int Unpack(long[] data, int index, int bitsPerValue)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long bitLoc = bitsPerValue * index;
 		  long bitLoc = bitsPerValue * index;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int dataLoc = (int)(bitLoc >> 6);
 		  int dataLoc = (int)(bitLoc >> 6);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitStart = (int)(bitLoc & 63);
 		  int bitStart = (int)(bitLoc & 63);
-		  //System.out.println("index=" + index + " dataLoc=" + dataLoc + " bitStart=" + bitStart + " bitsPerV=" + bitsPerValue);
 		  if (bitStart + bitsPerValue <= 64)
 		  {
 			// not split
@@ -315,8 +305,6 @@ namespace Lucene.Net.Util.Automaton
 		  else
 		  {
 			// split
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int part = 64-bitStart;
 			int part = 64 - bitStart;
 			return (int)(((data[dataLoc] >> bitStart) & MASKS[part - 1]) + ((data[1 + dataLoc] & MASKS[bitsPerValue - part - 1]) << part));
 		  }

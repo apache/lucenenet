@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -139,7 +140,7 @@ namespace Lucene.Net.Util.Automaton
 			{
 			  b.Append(' ');
 			}
-			b.Append(int.toBinaryString(Bytes[i].Value));
+			b.Append(Number.ToBinaryString(Bytes[i].Value));
 		  }
 		  return b.ToString();
 		}
@@ -212,8 +213,6 @@ namespace Lucene.Net.Util.Automaton
 
 		  // possibly middle, spanning multiple num bytes
 		  int byteCount = 1 + startUTF8.Len - upto;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = endUTF8.len-upto;
 		  int limit = endUTF8.Len - upto;
 		  while (byteCount < limit)
 		  {
@@ -259,8 +258,6 @@ namespace Lucene.Net.Util.Automaton
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startCode;
 		  int startCode;
 		  if (utf8.NumBits(upto) == 5)
 		  {
@@ -316,13 +313,13 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public Automaton Convert(Automaton utf32)
 	  {
-		if (utf32.Singleton)
+		if (utf32.IsSingleton)
 		{
 		  utf32 = utf32.CloneExpanded();
 		}
 
 		State[] map = new State[utf32.NumberedStates.Length];
-		IList<State> pending = new List<State>();
+		List<State> pending = new List<State>();
 		State utf32State = utf32.InitialState;
 		pending.Add(utf32State);
 		Automaton utf8 = new Automaton();
@@ -332,32 +329,29 @@ namespace Lucene.Net.Util.Automaton
 
 		Utf8States = new State[5];
 		Utf8StateCount = 0;
-		utf8State.Number_Renamed = Utf8StateCount;
+		utf8State.number = Utf8StateCount;
 		Utf8States[Utf8StateCount] = utf8State;
 		Utf8StateCount++;
 
 		utf8State.Accept = utf32State.Accept;
 
-		map[utf32State.Number_Renamed] = utf8State;
+		map[utf32State.number] = utf8State;
 
 		while (pending.Count != 0)
 		{
-		  utf32State = pending.Remove(pending.Count - 1);
-		  utf8State = map[utf32State.Number_Renamed];
-		  for (int i = 0;i < utf32State.NumTransitions_Renamed;i++)
+          utf32State = pending[pending.Count - 1];
+          pending.RemoveAt(pending.Count - 1);
+		  utf8State = map[utf32State.number];
+		  for (int i = 0;i < utf32State.numTransitions;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = utf32State.transitionsArray[i];
 			Transition t = utf32State.TransitionsArray[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State destUTF32 = t.to;
 			State destUTF32 = t.To;
-			State destUTF8 = map[destUTF32.Number_Renamed];
+			State destUTF8 = map[destUTF32.number];
 			if (destUTF8 == null)
 			{
 			  destUTF8 = NewUTF8State();
-			  destUTF8.Accept_Renamed = destUTF32.Accept_Renamed;
-			  map[destUTF32.Number_Renamed] = destUTF8;
+			  destUTF8.accept = destUTF32.accept;
+			  map[destUTF32.number] = destUTF8;
 			  pending.Add(destUTF32);
 			}
 			ConvertOneEdge(utf8State, destUTF8, t.Min_Renamed, t.Max_Renamed);
@@ -374,14 +368,12 @@ namespace Lucene.Net.Util.Automaton
 		State s = new State();
 		if (Utf8StateCount == Utf8States.Length)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] newArray = new State[Lucene.Net.Util.ArrayUtil.oversize(1+utf8StateCount, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  State[] newArray = new State[ArrayUtil.Oversize(1 + Utf8StateCount, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  Array.Copy(Utf8States, 0, newArray, 0, Utf8StateCount);
 		  Utf8States = newArray;
 		}
 		Utf8States[Utf8StateCount] = s;
-		s.Number_Renamed = Utf8StateCount;
+		s.number = Utf8StateCount;
 		Utf8StateCount++;
 		return s;
 	  }

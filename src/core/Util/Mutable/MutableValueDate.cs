@@ -27,14 +27,14 @@ namespace Lucene.Net.Util.Mutable
 	{
 	  public override object ToObject()
 	  {
-		return Exists_Renamed ? new DateTime(Value) : null;
+		return Exists ? new DateTime(Value) as object : null;
 	  }
 
 	  public override MutableValue Duplicate()
 	  {
 		MutableValueDate v = new MutableValueDate();
 		v.Value = this.Value;
-		v.Exists_Renamed = this.Exists_Renamed;
+		v.Exists = this.Exists;
 		return v;
 	  }
 	}

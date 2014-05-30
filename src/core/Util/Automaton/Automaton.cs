@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
 
 /*
  * dk.brics.automaton
@@ -93,12 +95,12 @@ namespace Lucene.Net.Util.Automaton
 	  /// If true, then this automaton is definitely deterministic (i.e., there are
 	  /// no choices for any run, but a run may crash).
 	  /// </summary>
-	  internal bool Deterministic_Renamed;
+	  internal bool deterministic;
 
 	  /// <summary>
 	  /// Extra data associated with this automaton. </summary>
 	  [NonSerialized]
-	  internal object Info_Renamed;
+	  internal object info;
 
 	  /// <summary>
 	  /// Hash code. Recomputed by <seealso cref="MinimizationOperations#minimize(Automaton)"/>
@@ -107,7 +109,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  /// <summary>
 	  /// Singleton string. Null if not applicable. </summary>
-	  internal string Singleton_Renamed;
+	  internal string singleton;
 
 	  /// <summary>
 	  /// Minimize always flag. </summary>
@@ -129,11 +131,12 @@ namespace Lucene.Net.Util.Automaton
 	  public Automaton(State initial)
 	  {
 		this.Initial = initial;
-		Deterministic_Renamed = true;
-		Singleton_Renamed = null;
+		deterministic = true;
+		singleton = null;
 	  }
 
-	  public Automaton() : this(new State())
+	  public Automaton() 
+          : this(new State())
 	  {
 	  }
 
@@ -192,6 +195,10 @@ namespace Lucene.Net.Util.Automaton
 		  {
 			return Allow_mutation;
 		  }
+          set
+          {
+              Allow_mutation = value;
+          }
 	  }
 
 	  internal virtual void CheckMinimizeAlways()
@@ -202,11 +209,11 @@ namespace Lucene.Net.Util.Automaton
 		}
 	  }
 
-	  internal virtual bool Singleton
+	  internal virtual bool IsSingleton
 	  {
 		  get
 		  {
-			return Singleton_Renamed != null;
+			return singleton != null;
 		  }
 	  }
 
@@ -220,7 +227,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-			return Singleton_Renamed;
+			return singleton;
 		  }
 	  }
 
@@ -257,11 +264,11 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-			return Deterministic_Renamed;
+			return deterministic;
 		  }
 		  set
 		  {
-			this.Deterministic_Renamed = value;
+			this.deterministic = value;
 		  }
 	  }
 
@@ -274,11 +281,11 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  set
 		  {
-			this.Info_Renamed = value;
+			this.info = value;
 		  }
 		  get
 		  {
-			return Info_Renamed;
+			return info;
 		  }
 	  }
 
@@ -293,26 +300,27 @@ namespace Lucene.Net.Util.Automaton
 			if (NumberedStates_Renamed == null)
 			{
 			  ExpandSingleton();
-			  Set<State> visited = new HashSet<State>();
+			  HashSet<State> visited = new HashSet<State>();
 			  LinkedList<State> worklist = new LinkedList<State>();
 			  State[] states = new State[4];
 			  int upto = 0;
 			  worklist.AddLast(Initial);
-			  visited.add(Initial);
-			  Initial.Number_Renamed = upto;
+			  visited.Add(Initial);
+			  Initial.number = upto;
 			  states[upto] = Initial;
 			  upto++;
 			  while (worklist.Count > 0)
 			  {
-				State s = worklist.RemoveFirst();
-				for (int i = 0;i < s.NumTransitions_Renamed;i++)
+                State s = worklist.First.Value;
+                worklist.RemoveFirst();
+				for (int i = 0;i < s.numTransitions;i++)
 				{
 				  Transition t = s.TransitionsArray[i];
-				  if (!visited.contains(t.To))
+				  if (!visited.Contains(t.To))
 				  {
-					visited.add(t.To);
+					visited.Add(t.To);
 					worklist.AddLast(t.To);
-					t.To.number = upto;
+					t.To.Number = upto;
 					if (upto == states.Length)
 					{
 					  State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
@@ -379,8 +387,9 @@ namespace Lucene.Net.Util.Automaton
 			visited.Add(Initial);
 			while (worklist.Count > 0)
 			{
-			  State s = worklist.RemoveFirst();
-			  if (s.Accept_Renamed)
+                State s = worklist.First.Value;
+                worklist.RemoveFirst();
+			  if (s.accept)
 			  {
 				  accepts.Add(s);
 			  }
@@ -404,10 +413,10 @@ namespace Lucene.Net.Util.Automaton
 	  internal virtual void Totalize()
 	  {
 		State s = new State();
-		s.AddTransition(new Transition(char.MIN_CODE_POINT, char.MAX_CODE_POINT, s));
+		s.AddTransition(new Transition(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT, s));
 		foreach (State p in NumberedStates)
 		{
-		  int maxi = char.MIN_CODE_POINT;
+		  int maxi = Character.MIN_CODE_POINT;
 		  p.SortTransitions(Transition.CompareByMinMaxThenDest);
 		  foreach (Transition t in p.Transitions)
 		  {
@@ -420,9 +429,9 @@ namespace Lucene.Net.Util.Automaton
 				maxi = t.Max_Renamed + 1;
 			}
 		  }
-		  if (maxi <= char.MAX_CODE_POINT)
+          if (maxi <= Character.MAX_CODE_POINT)
 		  {
-			  p.AddTransition(new Transition(maxi, char.MAX_CODE_POINT, s));
+              p.AddTransition(new Transition(maxi, Character.MAX_CODE_POINT, s));
 		  }
 		}
 		ClearNumberedStates();
@@ -448,7 +457,7 @@ namespace Lucene.Net.Util.Automaton
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final State[] states = getNumberedStates();
 		State[] states = NumberedStates;
-		if (Singleton)
+		if (IsSingleton)
 		{
 			return;
 		}
@@ -465,29 +474,27 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final State[] states = getNumberedStates();
 			State[] states = NumberedStates;
-			Set<int?> pointset = new HashSet<int?>();
-			pointset.add(char.MIN_CODE_POINT);
+			HashSet<int> pointset = new HashSet<int>();
+            pointset.Add(Character.MIN_CODE_POINT);
 			foreach (State s in states)
 			{
 			  foreach (Transition t in s.Transitions)
 			  {
-				pointset.add(t.Min_Renamed);
-				if (t.Max_Renamed < char.MAX_CODE_POINT)
+				pointset.Add(t.Min_Renamed);
+                if (t.Max_Renamed < Character.MAX_CODE_POINT)
 				{
-					pointset.add((t.Max_Renamed + 1));
+					pointset.Add((t.Max_Renamed + 1));
 				}
 			  }
 			}
-			int[] points = new int[pointset.size()];
+			int[] points = new int[pointset.Count];
 			int n = 0;
-			foreach (int? m in pointset)
+			foreach (int m in pointset)
 			{
 			  points[n++] = m;
 			}
-			Arrays.sort(points);
+			Array.Sort(points);
 			return points;
 		  }
 	  }
@@ -501,47 +508,46 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final State[] states = getNumberedStates();
 			State[] states = NumberedStates;
-			Set<State> live = new HashSet<State>();
+			HashSet<State> live = new HashSet<State>();
 			foreach (State q in states)
 			{
 			  if (q.Accept)
 			  {
-				live.add(q);
+				live.Add(q);
 			  }
 			}
 			// map<state, set<state>>
 	//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 	//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) java.util.Set<State> map[] = new java.util.Set[states.length];
-			Set<State>[] map = new Set[states.Length];
+			ISet<State>[] map = new HashSet<State>[states.Length];
 			for (int i = 0; i < map.Length; i++)
 			{
-			  map[i] = new HashSet<>();
+			  map[i] = new HashSet<State>();
 			}
 			foreach (State s in states)
 			{
-			  for (int i = 0;i < s.NumTransitions_Renamed;i++)
+			  for (int i = 0;i < s.numTransitions;i++)
 			  {
-				map[s.TransitionsArray[i].to.number].add(s);
+				map[s.TransitionsArray[i].To.Number].Add(s);
 			  }
 			}
 			LinkedList<State> worklist = new LinkedList<State>(live);
 			while (worklist.Count > 0)
 			{
-			  State s = worklist.RemoveFirst();
-			  foreach (State p in map[s.Number_Renamed])
+                State s = worklist.First.Value;
+                worklist.RemoveFirst();
+			  foreach (State p in map[s.number])
 			  {
-				if (!live.contains(p))
+				if (!live.Contains(p))
 				{
-				  live.add(p);
+				  live.Add(p);
 				  worklist.AddLast(p);
 				}
 			  }
 			}
     
-			return live.toArray(new State[live.size()]);
+			return live.ToArray(/*new State[live.Count]*/);
 		  }
 	  }
 
@@ -556,7 +562,7 @@ namespace Lucene.Net.Util.Automaton
 //ORIGINAL LINE: final State[] states = getNumberedStates();
 		State[] states = NumberedStates;
 		//clearHashCode();
-		if (Singleton)
+		if (IsSingleton)
 		{
 			return;
 		}
@@ -565,28 +571,28 @@ namespace Lucene.Net.Util.Automaton
 		BitArray liveSet = new BitArray(states.Length);
 		foreach (State s in live)
 		{
-		  liveSet.Set(s.Number_Renamed, true);
+		  liveSet.Set(s.number, true);
 		}
 
 		foreach (State s in states)
 		{
 		  // filter out transitions to dead states:
 		  int upto = 0;
-		  for (int i = 0;i < s.NumTransitions_Renamed;i++)
+		  for (int i = 0;i < s.numTransitions;i++)
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Transition t = s.transitionsArray[i];
 			Transition t = s.TransitionsArray[i];
-			if (liveSet.Get(t.To.number))
+			if (liveSet.Get(t.To.Number))
 			{
 			  s.TransitionsArray[upto++] = s.TransitionsArray[i];
 			}
 		  }
-		  s.NumTransitions_Renamed = upto;
+		  s.numTransitions = upto;
 		}
 		for (int i = 0;i < live.Length;i++)
 		{
-		  live[i].Number_Renamed = i;
+		  live[i].number = i;
 		}
 		if (live.Length > 0)
 		{
@@ -616,7 +622,7 @@ namespace Lucene.Net.Util.Automaton
 			{
 			  s.SortTransitions(Transition.CompareByMinMaxThenDest);
 			  s.TrimTransitionsArray();
-			  transitions[s.Number_Renamed] = s.TransitionsArray;
+			  transitions[s.number] = s.TransitionsArray;
 			  Debug.Assert(s.TransitionsArray != null);
 			}
 			return transitions;
@@ -629,19 +635,19 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public virtual void ExpandSingleton()
 	  {
-		if (Singleton)
+		if (IsSingleton)
 		{
 		  State p = new State();
 		  Initial = p;
-		  for (int i = 0, cp = 0; i < Singleton_Renamed.Length; i += char.charCount(cp))
+		  for (int i = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
 		  {
 			State q = new State();
-			p.AddTransition(new Transition(cp = Singleton_Renamed.codePointAt(i), q));
+			p.AddTransition(new Transition(cp = singleton[i], q));
 			p = q;
 		  }
-		  p.Accept_Renamed = true;
-		  Deterministic_Renamed = true;
-		  Singleton_Renamed = null;
+		  p.accept = true;
+		  deterministic = true;
+		  singleton = null;
 		}
 	  }
 
@@ -652,9 +658,9 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-			if (Singleton)
+			if (IsSingleton)
 			{
-				return Singleton_Renamed.codePointCount(0, Singleton_Renamed.Length) + 1;
+                return singleton.Length;// codePointCount(0, singleton.Length) + 1;
 			}
 			return NumberedStates.Length;
 		  }
@@ -668,9 +674,9 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-			if (Singleton)
+			if (IsSingleton)
 			{
-				return Singleton_Renamed.codePointCount(0, Singleton_Renamed.Length);
+                return singleton.Length;// codePointCount(0, singleton.Length);
 			}
 			int c = 0;
 			foreach (State s in NumberedStates)
@@ -706,14 +712,14 @@ namespace Lucene.Net.Util.Automaton
 	  public override string ToString()
 	  {
 		StringBuilder b = new StringBuilder();
-		if (Singleton)
+		if (IsSingleton)
 		{
 		  b.Append("singleton: ");
-		  int length = Singleton_Renamed.codePointCount(0, Singleton_Renamed.Length);
+          int length = singleton.Length;// codePointCount(0, singleton.Length);
 		  int[] codepoints = new int[length];
-		  for (int i = 0, j = 0, cp = 0; i < Singleton_Renamed.Length; i += char.charCount(cp))
+		  for (int i = 0, j = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
 		  {
-			codepoints[j++] = cp = Singleton_Renamed.codePointAt(i);
+			codepoints[j++] = cp = singleton[i];
 		  }
 		  foreach (int c in codepoints)
 		  {
@@ -724,7 +730,7 @@ namespace Lucene.Net.Util.Automaton
 		else
 		{
 		  State[] states = NumberedStates;
-		  b.Append("initial state: ").Append(Initial.Number_Renamed).Append("\n");
+		  b.Append("initial state: ").Append(Initial.number).Append("\n");
 		  foreach (State s in states)
 		  {
 			b.Append(s.ToString());
@@ -744,8 +750,8 @@ namespace Lucene.Net.Util.Automaton
 		State[] states = NumberedStates;
 		foreach (State s in states)
 		{
-		  b.Append("  ").Append(s.Number_Renamed);
-		  if (s.Accept_Renamed)
+		  b.Append("  ").Append(s.number);
+		  if (s.accept)
 		  {
 			  b.Append(" [shape=doublecircle,label=\"\"];\n");
 		  }
@@ -756,11 +762,11 @@ namespace Lucene.Net.Util.Automaton
 		  if (s == Initial)
 		  {
 			b.Append("  initial [shape=plaintext,label=\"\"];\n");
-			b.Append("  initial -> ").Append(s.Number_Renamed).Append("\n");
+			b.Append("  initial -> ").Append(s.number).Append("\n");
 		  }
 		  foreach (Transition t in s.Transitions)
 		  {
-			b.Append("  ").Append(s.Number_Renamed);
+			b.Append("  ").Append(s.number);
 			t.AppendDot(b);
 		  }
 		}
@@ -799,10 +805,8 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public override Automaton Clone()
 	  {
-		try
-		{
-		  Automaton a = (Automaton) base.Clone();
-		  if (!Singleton)
+		  Automaton a = (Automaton) base.MemberwiseClone();
+		  if (!IsSingleton)
 		  {
 			Dictionary<State, State> m = new Dictionary<State, State>();
 			State[] states = NumberedStates;
@@ -813,7 +817,7 @@ namespace Lucene.Net.Util.Automaton
 			foreach (State s in states)
 			{
 			  State p = m[s];
-			  p.Accept_Renamed = s.Accept_Renamed;
+			  p.accept = s.accept;
 			  if (s == Initial)
 			  {
 				  a.Initial = p;
@@ -826,11 +830,7 @@ namespace Lucene.Net.Util.Automaton
 		  }
 		  a.ClearNumberedStates();
 		  return a;
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception(e);
-		}
+		
 	  }
 
 	  /// <summary>

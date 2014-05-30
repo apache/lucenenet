@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		this.Target = target;
 		TargetLength = target.Length;
-		base.doSeekCeil();
+		base.DoSeekCeil();
 		return SetResult();
 	  }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		this.Target = target;
 		TargetLength = target.Length;
-		base.doSeekFloor();
+		base.DoSeekFloor();
 		return SetResult();
 	  }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		this.Target = target;
 		TargetLength = target.Length;
-		if (base.doSeekExact())
+		if (base.DoSeekExact())
 		{
 		  Debug.Assert(Upto == 1 + target.Length);
 		  return SetResult();
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util.Fst
 		  {
 			if (Upto - 1 == Target.Length)
 			{
-			  return FST.END_LABEL;
+			  return FST<T>.END_LABEL;
 			}
 			else
 			{

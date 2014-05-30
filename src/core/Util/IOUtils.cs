@@ -360,7 +360,7 @@ namespace Lucene.Net.Util
 		  {
 			dir.DeleteFile(name);
 		  }
-		  catch (Exception ignored)
+		  catch (Exception)
 		  {
 			// ignore
 		  }
@@ -384,9 +384,9 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: final byte [] buffer = new byte [1024 * 8];
 		  sbyte[] buffer = new sbyte [1024 * 8];
 		  int len;
-		  while ((len = fis.read(buffer)) > 0)
+          while ((len = fis.Read((byte[])(Array)buffer, 0, buffer.Length)) > 0)
 		  {
-			fos.write(buffer, 0, len);
+			fos.Write((byte[])(Array)buffer, 0, len);
 		  }
 		}
 		finally
@@ -447,13 +447,15 @@ namespace Lucene.Net.Util
 		// See http://blog.httrack.com/blog/2013/11/15/everything-you-always-wanted-to-know-about-fsync/
 		  try
 		  {
-              FileChannel file = FileChannel.open(fileToSync.toPath(), isDir ? StandardOpenOption.READ : StandardOpenOption.WRITE);
+              //FileChannel file = FileChannel.open(fileToSync.toPath(), isDir ? StandardOpenOption.READ : StandardOpenOption.WRITE);
+              FileStream fs = new FileStream(fileToSync.DirectoryName, FileMode.Open, isDir ? FileAccess.Read : FileAccess.Write);
 			  for (int retry = 0; retry < 5; retry++)
 			  {
 				try
 				{
-				  file.force(true);
-				  return;
+                    //LUCENE TO-DO I believe this is the equivalent of forcing the stream to disk
+                    fs.Flush(true);
+				    return;
 				}
 				catch (System.IO.IOException ioe)
 				{

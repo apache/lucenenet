@@ -70,7 +70,8 @@ namespace Lucene.Net.Util
 	  // purge.  After purge, we set this to
 	  // PURGE_MULTIPLIER * stillAliveCount.  this keeps
 	  // amortized cost of purging linear.
-	  private readonly AtomicInteger CountUntilPurge = new AtomicInteger(PURGE_MULTIPLIER);
+      //private readonly AtomicInteger CountUntilPurge = new AtomicInteger(PURGE_MULTIPLIER);
+      private int CountUntilPurge = PURGE_MULTIPLIER;
 
 	  protected internal virtual T InitialValue()
 	  {
@@ -114,7 +115,7 @@ namespace Lucene.Net.Util
 
 	  private void MaybePurge()
 	  {
-		if (CountUntilPurge.AndDecrement == 0)
+		if (Interlocked.Decrement(ref CountUntilPurge) == 0)
 		{
 		  Purge();
 		}
@@ -146,7 +147,7 @@ namespace Lucene.Net.Util
 			nextCount = 1000000;
 		  }
 
-		  CountUntilPurge.set(nextCount);
+          Interlocked.Exchange(ref CountUntilPurge, nextCount);
 		}
 	  }
 

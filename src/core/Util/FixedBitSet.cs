@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
 
 		/// <summary>
 		/// Creates an iterator over the given <seealso cref="FixedBitSet"/>. </summary>
-		public FixedBitSetIterator(FixedBitSet bits) : this(bits.Bits_Renamed, bits.NumBits, bits.NumWords)
+		public FixedBitSetIterator(FixedBitSet bits) : this(bits.bits, bits.NumBits, bits.NumWords)
 		{
 		}
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static long IntersectionCount(FixedBitSet a, FixedBitSet b)
 	  {
-		return BitUtil.Pop_intersect(a.Bits_Renamed, b.Bits_Renamed, 0, Math.Min(a.NumWords, b.NumWords));
+		return BitUtil.Pop_intersect(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
 	  }
 
 	  /// <summary>
@@ -183,14 +183,14 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static long UnionCount(FixedBitSet a, FixedBitSet b)
 	  {
-		long tot = BitUtil.Pop_union(a.Bits_Renamed, b.Bits_Renamed, 0, Math.Min(a.NumWords, b.NumWords));
+		long tot = BitUtil.Pop_union(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
 		if (a.NumWords < b.NumWords)
 		{
-		  tot += BitUtil.Pop_array(b.Bits_Renamed, a.NumWords, b.NumWords - a.NumWords);
+		  tot += BitUtil.Pop_array(b.bits, a.NumWords, b.NumWords - a.NumWords);
 		}
 		else if (a.NumWords > b.NumWords)
 		{
-		  tot += BitUtil.Pop_array(a.Bits_Renamed, b.NumWords, a.NumWords - b.NumWords);
+		  tot += BitUtil.Pop_array(a.bits, b.NumWords, a.NumWords - b.NumWords);
 		}
 		return tot;
 	  }
@@ -201,23 +201,23 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static long AndNotCount(FixedBitSet a, FixedBitSet b)
 	  {
-		long tot = BitUtil.Pop_andnot(a.Bits_Renamed, b.Bits_Renamed, 0, Math.Min(a.NumWords, b.NumWords));
+		long tot = BitUtil.Pop_andnot(a.bits, b.bits, 0, Math.Min(a.NumWords, b.NumWords));
 		if (a.NumWords > b.NumWords)
 		{
-		  tot += BitUtil.Pop_array(a.Bits_Renamed, b.NumWords, a.NumWords - b.NumWords);
+		  tot += BitUtil.Pop_array(a.bits, b.NumWords, a.NumWords - b.NumWords);
 		}
 		return tot;
 	  }
 
-	  internal readonly long[] Bits_Renamed;
+	  internal readonly long[] bits;
 	  internal readonly int NumBits;
 	  internal readonly int NumWords;
 
 	  public FixedBitSet(int numBits)
 	  {
 		this.NumBits = numBits;
-		Bits_Renamed = new long[Bits2words(numBits)];
-		NumWords = Bits_Renamed.Length;
+		bits = new long[Bits2words(numBits)];
+		NumWords = bits.Length;
 	  }
 
 	  public FixedBitSet(long[] storedBits, int numBits)
@@ -228,12 +228,12 @@ namespace Lucene.Net.Util
 		  throw new System.ArgumentException("The given long array is too small  to hold " + numBits + " bits");
 		}
 		this.NumBits = numBits;
-		this.Bits_Renamed = storedBits;
+		this.bits = storedBits;
 	  }
 
 	  public override DocIdSetIterator Iterator()
 	  {
-		return new FixedBitSetIterator(Bits_Renamed, NumBits, NumWords);
+		return new FixedBitSetIterator(bits, NumBits, NumWords);
 	  }
 
 	  public override Bits Bits()
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return Bits_Renamed;
+			return bits;
 		  }
 	  }
 
@@ -273,7 +273,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public int Cardinality()
 	  {
-		return (int) BitUtil.Pop_array(Bits_Renamed, 0, Bits_Renamed.Length);
+		return (int) BitUtil.Pop_array(bits, 0, bits.Length);
 	  }
 
 	  public override bool Get(int index)
@@ -284,7 +284,7 @@ namespace Lucene.Net.Util
 		// array-index-out-of-bounds-exception, removing the need for an explicit check.
 		int bit = index & 0x3f; // mod 64
 		long bitmask = 1L << bit;
-		return (Bits_Renamed[i] & bitmask) != 0;
+		return (bits[i] & bitmask) != 0;
 	  }
 
 	  public void Set(int index)
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util
 		int wordNum = index >> 6; // div 64
 		int bit = index & 0x3f; // mod 64
 		long bitmask = 1L << bit;
-		Bits_Renamed[wordNum] |= bitmask;
+		bits[wordNum] |= bitmask;
 	  }
 
 	  public bool GetAndSet(int index)
@@ -302,8 +302,8 @@ namespace Lucene.Net.Util
 		int wordNum = index >> 6; // div 64
 		int bit = index & 0x3f; // mod 64
 		long bitmask = 1L << bit;
-		bool val = (Bits_Renamed[wordNum] & bitmask) != 0;
-		Bits_Renamed[wordNum] |= bitmask;
+		bool val = (bits[wordNum] & bitmask) != 0;
+		bits[wordNum] |= bitmask;
 		return val;
 	  }
 
@@ -313,7 +313,7 @@ namespace Lucene.Net.Util
 		int wordNum = index >> 6;
 		int bit = index & 0x03f;
 		long bitmask = 1L << bit;
-		Bits_Renamed[wordNum] &= ~bitmask;
+		bits[wordNum] &= ~bitmask;
 	  }
 
 	  public bool GetAndClear(int index)
@@ -322,8 +322,8 @@ namespace Lucene.Net.Util
 		int wordNum = index >> 6; // div 64
 		int bit = index & 0x3f; // mod 64
 		long bitmask = 1L << bit;
-		bool val = (Bits_Renamed[wordNum] & bitmask) != 0;
-		Bits_Renamed[wordNum] &= ~bitmask;
+		bool val = (bits[wordNum] & bitmask) != 0;
+		bits[wordNum] &= ~bitmask;
 		return val;
 	  }
 
@@ -336,7 +336,7 @@ namespace Lucene.Net.Util
 		Debug.Assert(index >= 0 && index < NumBits, "index=" + index + ", numBits=" + NumBits);
 		int i = index >> 6;
 		int subIndex = index & 0x3f; // index within the word
-		long word = Bits_Renamed[i] >> subIndex; // skip all the bits to the right of index
+		long word = bits[i] >> subIndex; // skip all the bits to the right of index
 
 		if (word != 0)
 		{
@@ -345,7 +345,7 @@ namespace Lucene.Net.Util
 
 		while (++i < NumWords)
 		{
-		  word = Bits_Renamed[i];
+		  word = bits[i];
 		  if (word != 0)
 		  {
 			return (i << 6) + Number.NumberOfTrailingZeros(word);
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util
 		Debug.Assert(index >= 0 && index < NumBits, "index=" + index + " numBits=" + NumBits);
 		int i = index >> 6;
 		int subIndex = index & 0x3f; // index within the word
-		long word = (Bits_Renamed[i] << (63 - subIndex)); // skip all the bits to the left of index
+		long word = (bits[i] << (63 - subIndex)); // skip all the bits to the left of index
 
 		if (word != 0)
 		{
@@ -373,7 +373,7 @@ namespace Lucene.Net.Util
 
 		while (--i >= 0)
 		{
-		  word = Bits_Renamed[i];
+		  word = bits[i];
 		  if (word != 0)
 		  {
 			return (i << 6) + 63 - Number.NumberOfLeadingZeros(word);
@@ -419,13 +419,13 @@ namespace Lucene.Net.Util
 	  /// this = this OR other </summary>
 	  public void Or(FixedBitSet other)
 	  {
-		Or(other.Bits_Renamed, other.NumWords);
+		Or(other.bits, other.NumWords);
 	  }
 
 	  private void Or(long[] otherArr, int otherNumWords)
 	  {
 		Debug.Assert(otherNumWords <= NumWords, "numWords=" + NumWords + ", otherNumWords=" + otherNumWords);
-		long[] thisArr = this.Bits_Renamed;
+		long[] thisArr = this.bits;
 		int pos = Math.Min(NumWords, otherNumWords);
 		while (--pos >= 0)
 		{
@@ -438,8 +438,8 @@ namespace Lucene.Net.Util
 	  public void Xor(FixedBitSet other)
 	  {
 		Debug.Assert(other.NumWords <= NumWords, "numWords=" + NumWords + ", other.numWords=" + other.NumWords);
-		long[] thisBits = this.Bits_Renamed;
-		long[] otherBits = other.Bits_Renamed;
+		long[] thisBits = this.bits;
+		long[] otherBits = other.bits;
 		int pos = Math.Min(NumWords, other.NumWords);
 		while (--pos >= 0)
 		{
@@ -507,7 +507,7 @@ namespace Lucene.Net.Util
 		int pos = Math.Min(NumWords, other.NumWords);
 		while (--pos >= 0)
 		{
-		  if ((Bits_Renamed[pos] & other.Bits_Renamed[pos]) != 0)
+		  if ((bits[pos] & other.bits[pos]) != 0)
 		  {
 			  return true;
 		  }
@@ -519,12 +519,12 @@ namespace Lucene.Net.Util
 	  /// this = this AND other </summary>
 	  public void And(FixedBitSet other)
 	  {
-		And(other.Bits_Renamed, other.NumWords);
+		And(other.bits, other.NumWords);
 	  }
 
 	  private void And(long[] otherArr, int otherNumWords)
 	  {
-		long[] thisArr = this.Bits_Renamed;
+		long[] thisArr = this.bits;
 		int pos = Math.Min(this.NumWords, otherNumWords);
 		while (--pos >= 0)
 		{
@@ -572,12 +572,12 @@ namespace Lucene.Net.Util
 	  /// this = this AND NOT other </summary>
 	  public void AndNot(FixedBitSet other)
 	  {
-		AndNot(other.Bits_Renamed, other.Bits_Renamed.Length);
+		AndNot(other.bits, other.bits.Length);
 	  }
 
 	  private void AndNot(long[] otherArr, int otherNumWords)
 	  {
-		long[] thisArr = this.Bits_Renamed;
+		long[] thisArr = this.bits;
 		int pos = Math.Min(this.NumWords, otherNumWords);
 		while (--pos >= 0)
 		{
@@ -620,18 +620,18 @@ namespace Lucene.Net.Util
 
 		if (startWord == endWord)
 		{
-		  Bits_Renamed[startWord] ^= (startmask & endmask);
+		  bits[startWord] ^= (startmask & endmask);
 		  return;
 		}
 
-		Bits_Renamed[startWord] ^= startmask;
+		bits[startWord] ^= startmask;
 
 		for (int i = startWord + 1; i < endWord; i++)
 		{
-		  Bits_Renamed[i] = ~Bits_Renamed[i];
+		  bits[i] = ~bits[i];
 		}
 
-		Bits_Renamed[endWord] ^= endmask;
+		bits[endWord] ^= endmask;
 	  }
 
 	  /// <summary>
@@ -656,13 +656,13 @@ namespace Lucene.Net.Util
 
 		if (startWord == endWord)
 		{
-		  Bits_Renamed[startWord] |= (startmask & endmask);
+		  bits[startWord] |= (startmask & endmask);
 		  return;
 		}
 
-		Bits_Renamed[startWord] |= startmask;
-		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, -1L);
-		Bits_Renamed[endWord] |= endmask;
+		bits[startWord] |= startmask;
+		Arrays.Fill(bits, startWord + 1, endWord, -1L);
+		bits[endWord] |= endmask;
 	  }
 
 	  /// <summary>
@@ -691,19 +691,19 @@ namespace Lucene.Net.Util
 
 		if (startWord == endWord)
 		{
-		  Bits_Renamed[startWord] &= (startmask | endmask);
+		  bits[startWord] &= (startmask | endmask);
 		  return;
 		}
 
-		Bits_Renamed[startWord] &= startmask;
-		Arrays.Fill(Bits_Renamed, startWord + 1, endWord, 0L);
-		Bits_Renamed[endWord] &= endmask;
+		bits[startWord] &= startmask;
+		Arrays.Fill(bits, startWord + 1, endWord, 0L);
+		bits[endWord] &= endmask;
 	  }
 
 	  public override FixedBitSet Clone()
 	  {
-		long[] bits = new long[this.Bits_Renamed.Length];
-		Array.Copy(this.Bits_Renamed, 0, bits, 0, bits.Length);
+		long[] bits = new long[this.bits.Length];
+		Array.Copy(this.bits, 0, bits, 0, bits.Length);
 		return new FixedBitSet(bits, NumBits);
 	  }
 
@@ -724,7 +724,7 @@ namespace Lucene.Net.Util
 		{
 		  return false;
 		}
-		return Arrays.Equals(Bits_Renamed, other.Bits_Renamed);
+		return Arrays.Equals(bits, other.bits);
 	  }
 
 	  public override int HashCode()
@@ -732,7 +732,7 @@ namespace Lucene.Net.Util
 		long h = 0;
 		for (int i = NumWords; --i >= 0;)
 		{
-		  h ^= Bits_Renamed[i];
+		  h ^= bits[i];
 		  h = (h << 1) | ((long)((ulong)h >> 63)); // rotate left
 		}
 		// fold leftmost bits into right and add a constant to prevent

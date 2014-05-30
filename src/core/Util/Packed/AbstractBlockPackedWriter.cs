@@ -3,25 +3,26 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Packed
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    using System;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
-    using CheckBlockSize = Lucene.Net.Util.Packed.PackedInts.CheckBlockSize;
-	using DataOutput = Lucene.Net.Store.DataOutput;
+    using DataOutput = Lucene.Net.Store.DataOutput;
 
 	internal abstract class AbstractBlockPackedWriter
 	{
@@ -60,7 +61,7 @@ namespace Lucene.Net.Util.Packed
 	  /// <param name="blockSize"> the number of values of a single block, must be a multiple of <tt>64</tt> </param>
 	  public AbstractBlockPackedWriter(DataOutput @out, int blockSize)
 	  {
-		checkBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
+          PackedInts.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
 		Reset(@out);
 		Values = new long[blockSize];
 	  }
@@ -80,7 +81,7 @@ namespace Lucene.Net.Util.Packed
 	  {
 		if (Finished)
 		{
-		  throw new IllegalStateException("Already finished");
+		  throw new InvalidOperationException("Already finished");
 		}
 	  }
 
@@ -103,13 +104,13 @@ namespace Lucene.Net.Util.Packed
 		CheckNotFinished();
 		if (Off != 0 && Off != Values.Length)
 		{
-		  throw new IllegalStateException("" + Off);
+		  throw new InvalidOperationException("" + Off);
 		}
 		if (Off == Values.Length)
 		{
 		  Flush();
 		}
-		Arrays.fill(Values, 0);
+		Arrays.Fill(Values, 0);
 		Off = Values.Length;
 		Ord_Renamed += Values.Length;
 	  }
@@ -155,12 +156,12 @@ namespace Lucene.Net.Util.Packed
 		}
 		if (Off < Values.Length)
 		{
-		  Arrays.fill(Values, Off, Values.Length, 0L);
+		  Arrays.Fill(Values, Off, Values.Length, 0L);
 		}
 		encoder.Encode(Values, 0, Blocks, 0, iterations);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int blockCount = (int) PackedInts.Format.PACKED.byteCount(PackedInts.VERSION_CURRENT, off, bitsRequired);
-		int blockCount = (int) PackedInts.Format.PACKED.byteCount(PackedInts.VERSION_CURRENT, Off, bitsRequired);
+		int blockCount = (int) PackedInts.Format.PACKED.ByteCount(PackedInts.VERSION_CURRENT, Off, bitsRequired);
 		@out.WriteBytes(Blocks, blockCount);
 	  }
 

@@ -32,10 +32,10 @@ namespace Lucene.Net.Util.Fst
 	internal class BytesStore : DataOutput
 	{
 
-	  private readonly IList<sbyte[]> Blocks = new List<sbyte[]>();
+	  private readonly List<sbyte[]> Blocks = new List<sbyte[]>();
 
 	  private readonly int BlockSize;
-	  private readonly int BlockBits_Renamed;
+	  private readonly int blockBits;
 	  private readonly int BlockMask;
 
 	  private sbyte[] Current;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Fst
 
 	  public BytesStore(int blockBits)
 	  {
-		this.BlockBits_Renamed = blockBits;
+		this.blockBits = blockBits;
 		BlockSize = 1 << blockBits;
 		BlockMask = BlockSize-1;
 		NextWrite = BlockSize;
@@ -60,14 +60,12 @@ namespace Lucene.Net.Util.Fst
 		  blockSize *= 2;
 		  blockBits++;
 		}
-		this.BlockBits_Renamed = blockBits;
+		this.blockBits = blockBits;
 		this.BlockSize = blockSize;
 		this.BlockMask = blockSize-1;
 		long left = numBytes;
 		while (left > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chunk = (int) Math.min(blockSize, left);
 		  int chunk = (int) Math.Min(blockSize, left);
 		  sbyte[] block = new sbyte[chunk];
 		  @in.ReadBytes(block, 0, block.Length);
@@ -85,7 +83,7 @@ namespace Lucene.Net.Util.Fst
 	  /// </summary>
 	  public virtual void WriteByte(int dest, sbyte b)
 	  {
-		int blockIndex = dest >> BlockBits_Renamed;
+		int blockIndex = dest >> blockBits;
 		sbyte[] block = Blocks[blockIndex];
 		block[dest & BlockMask] = b;
 	  }
@@ -131,7 +129,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		  get
 		  {
-			return BlockBits_Renamed;
+			return blockBits;
 		  }
 	  }
 
@@ -171,10 +169,8 @@ namespace Lucene.Net.Util.Fst
 		}
 		*/
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long end = dest + len;
 		long end = dest + len;
-		int blockIndex = (int)(end >> BlockBits_Renamed);
+		int blockIndex = (int)(end >> blockBits);
 		int downTo = (int)(end & BlockMask);
 		if (downTo == 0)
 		{
@@ -242,7 +238,7 @@ namespace Lucene.Net.Util.Fst
 
 		long end = src + len;
 
-		int blockIndex = (int)(end >> BlockBits_Renamed);
+		int blockIndex = (int)(end >> blockBits);
 		int downTo = (int)(end & BlockMask);
 		if (downTo == 0)
 		{
@@ -278,7 +274,7 @@ namespace Lucene.Net.Util.Fst
 	  /// </summary>
 	  public virtual void WriteInt(long pos, int value)
 	  {
-		int blockIndex = (int)(pos >> BlockBits_Renamed);
+		int blockIndex = (int)(pos >> blockBits);
 		int upto = (int)(pos & BlockMask);
 		sbyte[] block = Blocks[blockIndex];
 		int shift = 24;
@@ -303,11 +299,11 @@ namespace Lucene.Net.Util.Fst
 		Debug.Assert(destPos < Position);
 		//System.out.println("reverse src=" + srcPos + " dest=" + destPos);
 
-		int srcBlockIndex = (int)(srcPos >> BlockBits_Renamed);
+		int srcBlockIndex = (int)(srcPos >> blockBits);
 		int src = (int)(srcPos & BlockMask);
 		sbyte[] srcBlock = Blocks[srcBlockIndex];
 
-		int destBlockIndex = (int)(destPos >> BlockBits_Renamed);
+		int destBlockIndex = (int)(destPos >> blockBits);
 		int dest = (int)(destPos & BlockMask);
 		sbyte[] destBlock = Blocks[destBlockIndex];
 		//System.out.println("  srcBlock=" + srcBlockIndex + " destBlock=" + destBlockIndex);
@@ -365,14 +361,7 @@ namespace Lucene.Net.Util.Fst
 		  {
 			return ((long) Blocks.Count - 1) * BlockSize + NextWrite;
 		  }
-		  set
-		  {
-				int bufferIndex = (int)(value >> OuterInstance.BlockBits_Renamed);
-				nextBuffer = bufferIndex + 1;
-				OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
-				nextRead = (int)(value & OuterInstance.BlockMask);
-				Debug.Assert(outerInstance.Position == value);
-		  }
+		  
 	  }
 
 	  /// <summary>
@@ -383,14 +372,14 @@ namespace Lucene.Net.Util.Fst
 	  {
 		Debug.Assert(newLen <= Position);
 		Debug.Assert(newLen >= 0);
-		int blockIndex = (int)(newLen >> BlockBits_Renamed);
+		int blockIndex = (int)(newLen >> blockBits);
 		NextWrite = (int)(newLen & BlockMask);
 		if (NextWrite == 0)
 		{
 		  blockIndex--;
 		  NextWrite = BlockSize;
 		}
-		Blocks.subList(blockIndex + 1, Blocks.Count).clear();
+		Blocks.GetRange(blockIndex + 1, Blocks.Count).Clear();
 		if (newLen == 0)
 		{
 		  Current = null;
@@ -431,21 +420,21 @@ namespace Lucene.Net.Util.Fst
 			{
 			  return new ForwardBytesReader(Blocks[0]);
 			}
-			return new BytesReaderAnonymousInnerClassHelper(this);
+			return new ForwardBytesReaderAnonymousInner(this);
 		  }
 	  }
 
-	  private class BytesReaderAnonymousInnerClassHelper : FST.BytesReader
+	  private class ForwardBytesReaderAnonymousInner : FST.BytesReader
 	  {
 		  private readonly BytesStore OuterInstance;
 
-		  public BytesReaderAnonymousInnerClassHelper(BytesStore outerInstance)
+		  public ForwardBytesReaderAnonymousInner(BytesStore outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 			  nextRead = outerInstance.BlockSize;
 		  }
 
-		  private sbyte[] OuterInstance.Current;
+		  private sbyte[] Current;
 		  private int nextBuffer;
 		  private int nextRead;
 
@@ -461,7 +450,7 @@ namespace Lucene.Net.Util.Fst
 
 		  public override void SkipBytes(int count)
 		  {
-			Position = outerInstance.Position + count;
+			Position = OuterInstance.Position + count;
 		  }
 
 		  public override void ReadBytes(sbyte[] b, int offset, int len)
@@ -501,11 +490,11 @@ namespace Lucene.Net.Util.Fst
 				// setPosition(0), the next byte you read is
 				// bytes[0] ... but I would expect bytes[-1] (ie,
 				// EOF)...?
-				int bufferIndex = (int)(value >> OuterInstance.BlockBits_Renamed);
+				int bufferIndex = (int)(value >> OuterInstance.blockBits);
 				nextBuffer = bufferIndex - 1;
 				OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
 				nextRead = (int)(value & OuterInstance.BlockMask);
-				Debug.Assert(outerInstance.Position == value, "pos=" + value + " getPos()=" + outerInstance.Position);
+				Debug.Assert(OuterInstance.Position == value, "pos=" + value + " getPos()=" + OuterInstance.Position);
 			  }
 		  }
 
@@ -530,14 +519,14 @@ namespace Lucene.Net.Util.Fst
 		{
 		  return new ReverseBytesReader(Blocks[0]);
 		}
-		return new BytesReaderAnonymousInnerClassHelper2(this);
+		return new ReverseBytesReaderAnonymousInner(this);
 	  }
 
-	  private class BytesReaderAnonymousInnerClassHelper2 : FST.BytesReader
+	  private class ReverseBytesReaderAnonymousInner : FST.BytesReader
 	  {
 		  private readonly BytesStore OuterInstance;
 
-		  public BytesReaderAnonymousInnerClassHelper2(BytesStore outerInstance)
+		  public ReverseBytesReaderAnonymousInner(BytesStore outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 			  outerInstance.Current = outerInstance.Blocks.Count == 0 ? null : outerInstance.Blocks[0];
@@ -545,7 +534,7 @@ namespace Lucene.Net.Util.Fst
 			  nextRead = 0;
 		  }
 
-		  private sbyte[] OuterInstance.Current;
+		  private sbyte[] Current;
 		  private int nextBuffer;
 		  private int nextRead;
 
@@ -561,14 +550,14 @@ namespace Lucene.Net.Util.Fst
 
 		  public override void SkipBytes(int count)
 		  {
-			Position = outerInstance.Position - count;
+			Position = OuterInstance.Position - count;
 		  }
 
 		  public override void ReadBytes(sbyte[] b, int offset, int len)
 		  {
 			for (int i = 0;i < len;i++)
 			{
-			  b[offset + i] = readByte();
+			  b[offset + i] = ReadByte();
 			}
 		  }
 
@@ -578,6 +567,14 @@ namespace Lucene.Net.Util.Fst
 			  {
 				return ((long) nextBuffer + 1) * OuterInstance.BlockSize + nextRead;
 			  }
+              set
+              {
+                  int bufferIndex = (int)(value >> OuterInstance.blockBits);
+                  nextBuffer = bufferIndex + 1;
+                  OuterInstance.Current = OuterInstance.Blocks[bufferIndex];
+                  nextRead = (int)(value & OuterInstance.BlockMask);
+                  Debug.Assert(OuterInstance.Position == value);
+              }
 		  }
 
 

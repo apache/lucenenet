@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -71,8 +72,6 @@ namespace Lucene.Net.Util.Automaton
 		/// </summary>
 		internal State GetState(int label)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int index = Arrays.binarySearch(labels, label);
 		  int index = Array.BinarySearch(Labels, label);
 		  return index >= 0 ? States[index] : null;
 		}
@@ -88,8 +87,6 @@ namespace Lucene.Net.Util.Automaton
 		/// </summary>
 		public override bool Equals(object obj)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State other = (State) obj;
 		  State other = (State) obj;
 		  return Is_final == other.Is_final && Array.Equals(this.Labels, other.Labels) && ReferenceEquals(this.States, other.States);
 		}
@@ -97,7 +94,7 @@ namespace Lucene.Net.Util.Automaton
 		/// <summary>
 		/// Compute the hash code of the <i>current</i> status of this state.
 		/// </summary>
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  int hash = Is_final ? 1 : 0;
 
@@ -115,7 +112,7 @@ namespace Lucene.Net.Util.Automaton
 		   */
 		  foreach (State s in this.States)
 		  {
-			hash ^= System.identityHashCode(s);
+              hash ^= s.GetHashCode();
 		  }
 
 		  return hash;
@@ -138,9 +135,9 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  Debug.Assert(Array.BinarySearch(Labels, label) < 0, "State already has transition labeled: " + label);
 
-		  labels = new int[labels.length + 1];
+		  Labels = new int[Labels.Length + 1];
 		  Array.Copy(Labels, Labels, Labels.Length + 1);
-		  states = new Lucene.Net.Util.Automaton.DaciukMihovAutomatonBuilder.State[states.length + 1];
+		  States = new Lucene.Net.Util.Automaton.DaciukMihovAutomatonBuilder.State[States.Length + 1];
 		  Array.Copy(States, States, States.Length + 1);
 
 		  Labels[Labels.Length - 1] = label;
@@ -162,8 +159,6 @@ namespace Lucene.Net.Util.Automaton
 		/// </summary>
 		internal State LastChild(int label)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int index = labels.length - 1;
 		  int index = Labels.Length - 1;
 		  State s = null;
 		  if (index >= 0 && Labels[index] == label)
@@ -237,16 +232,16 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		Debug.Assert(StateRegistry != null, "Automaton already built.");
 		Debug.Assert(Previous_Renamed == null || Comparator.Compare(Previous_Renamed, current) <= 0, "Input must be in sorted UTF-8 order: " + Previous_Renamed + " >= " + current);
-		Debug.Assert(setPrevious(current));
+		Debug.Assert(SetPrevious(current));
 
 		// Descend in the automaton (find matching prefix).
 		int pos = 0, max = current.Length();
 		State next , state = Root;
-		while (pos < max && (next = state.LastChild(char.codePointAt(current, pos))) != null)
+		while (pos < max && (next = state.LastChild(current.CharAt(pos))) != null)
 		{
 		  state = next;
 		  // todo, optimize me
-		  pos += char.charCount(char.codePointAt(current, pos));
+          pos += Character.CharCount(current.CharAt(pos));
 		}
 
 		if (state.HasChildren())
@@ -266,7 +261,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		if (this.StateRegistry == null)
 		{
-			throw new IllegalStateException();
+			throw new InvalidOperationException();
 		}
 
 		if (Root.HasChildren())
@@ -283,7 +278,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  private static Lucene.Net.Util.Automaton.State Convert(State s, IdentityHashMap<State, Lucene.Net.Util.Automaton.State> visited)
 	  {
-		Lucene.Net.Util.Automaton.State converted = visited.get(s);
+		Lucene.Net.Util.Automaton.State converted = visited[s];
 		if (converted != null)
 		{
 			return converted;
@@ -292,7 +287,7 @@ namespace Lucene.Net.Util.Automaton
 		converted = new Lucene.Net.Util.Automaton.State();
 		converted.Accept = s.Is_final;
 
-		visited.put(s, converted);
+		visited[s] = converted;
 		int i = 0;
 		int[] labels = s.Labels;
 		foreach (DaciukMihovAutomatonBuilder.State target in s.States)
@@ -309,8 +304,6 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static Automaton Build(ICollection<BytesRef> input)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DaciukMihovAutomatonBuilder builder = new DaciukMihovAutomatonBuilder();
 		DaciukMihovAutomatonBuilder builder = new DaciukMihovAutomatonBuilder();
 
 		CharsRef scratch = new CharsRef();
@@ -322,7 +315,7 @@ namespace Lucene.Net.Util.Automaton
 
 		Automaton a = new Automaton();
 		a.Initial = Convert(builder.Complete(), new IdentityHashMap<State, Lucene.Net.Util.Automaton.State>());
-		a.Deterministic_Renamed = true;
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -343,8 +336,6 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  private void ReplaceOrRegister(State state)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State child = state.lastChild();
 		State child = state.LastChild();
 
 		if (child.HasChildren())
@@ -352,8 +343,6 @@ namespace Lucene.Net.Util.Automaton
 			ReplaceOrRegister(child);
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State registered = stateRegistry.get(child);
 		State registered = StateRegistry[child];
 		if (registered != null)
 		{
@@ -369,16 +358,14 @@ namespace Lucene.Net.Util.Automaton
 	  /// Add a suffix of <code>current</code> starting at <code>fromIndex</code>
 	  /// (inclusive) to state <code>state</code>.
 	  /// </summary>
-	  private void AddSuffix(State state, CharSequence current, int fromIndex)
+	  private void AddSuffix(State state, ICharSequence current, int fromIndex)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len = current.length();
-		int len = current.length();
+		int len = current.Length;
 		while (fromIndex < len)
 		{
-		  int cp = char.codePointAt(current, fromIndex);
+          int cp = current.CharAt(fromIndex);// char.codePointAt(current, fromIndex);
 		  state = state.NewState(cp);
-		  fromIndex += char.charCount(cp);
+		  fromIndex += Character.CharCount(cp);
 		}
 		state.Is_final = true;
 	  }

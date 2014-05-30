@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Lucene.Net.Support;
+using System;
 namespace Lucene.Net.Util.Mutable
 {
 
@@ -27,28 +29,28 @@ namespace Lucene.Net.Util.Mutable
 
 	  public override object ToObject()
 	  {
-		return Exists_Renamed ? Value : null;
+		return Exists ? (object)Value : null;
 	  }
 
 	  public override void Copy(MutableValue source)
 	  {
 		MutableValueDouble s = (MutableValueDouble) source;
 		Value = s.Value;
-		Exists_Renamed = s.Exists_Renamed;
+		Exists = s.Exists;
 	  }
 
 	  public override MutableValue Duplicate()
 	  {
 		MutableValueDouble v = new MutableValueDouble();
 		v.Value = this.Value;
-		v.Exists_Renamed = this.Exists_Renamed;
+		v.Exists = this.Exists;
 		return v;
 	  }
 
 	  public override bool EqualsSameType(object other)
 	  {
 		MutableValueDouble b = (MutableValueDouble)other;
-		return Value == b.Value && Exists_Renamed == b.Exists_Renamed;
+		return Value == b.Value && Exists == b.Exists;
 	  }
 
 	  public override int CompareSameType(object other)
@@ -59,11 +61,11 @@ namespace Lucene.Net.Util.Mutable
 		{
 			return c;
 		}
-		if (!Exists_Renamed)
+		if (!Exists)
 		{
 			return -1;
 		}
-		if (!b.Exists_Renamed)
+		if (!b.Exists)
 		{
 			return 1;
 		}
@@ -72,7 +74,7 @@ namespace Lucene.Net.Util.Mutable
 
 	  public override int HashCode()
 	  {
-		long x = double.doubleToLongBits(Value);
+		long x = BitConverter.DoubleToInt64Bits(Value);
 		return (int)x + (int)((long)((ulong)x >> 32));
 	  }
 	}

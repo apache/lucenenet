@@ -34,15 +34,15 @@ namespace Lucene.Net.Util.Fst
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) protected FST.Arc<T>[] arcs = new FST.Arc[10];
-	  protected internal FST.Arc<T>[] Arcs = new FST.Arc[10];
+      protected internal FST<T>.Arc<T>[] Arcs = new FST<T>.Arc<T>[10];
 	  // outputs are cumulative
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) protected T[] output = (T[]) new Object[10];
-	  protected internal T[] Output = (T[]) new object[10];
+	  protected internal T[] Output = new T[10];
 
 	  protected internal readonly T NO_OUTPUT;
-	  protected internal readonly FST.BytesReader FstReader;
-	  protected internal readonly FST.Arc<T> ScratchArc = new FST.Arc<T>();
+      protected internal readonly FST<T>.BytesReader FstReader;
+      protected internal readonly FST<T>.Arc<T> ScratchArc = new FST<T>.Arc<T>();
 
 	  protected internal int Upto;
 	  protected internal int TargetLength;
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util.Fst
 	  protected internal FSTEnum(FST<T> fst)
 	  {
 		this.Fst = fst;
-		FstReader = fst.BytesReader;
+		FstReader = fst.GetBytesReader;
 		NO_OUTPUT = fst.Outputs.NoOutput;
 		fst.GetFirstArc(GetArc(0));
 		Output[0] = NO_OUTPUT;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Util.Fst
 			// seek backwards -- reset this arc to the first arc
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.Arc<T> arc = getArc(upto);
-			FST.Arc<T> arc = GetArc(Upto);
+			FST<T>.Arc<T> arc = GetArc(Upto);
 			Fst.ReadFirstTargetArc(GetArc(Upto - 1), arc, FstReader);
 			//System.out.println("    seek first arc");
 			break;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Fst
 		RewindPrefix();
 		//System.out.println("  after rewind upto=" + upto);
 
-		FST.Arc<T> arc = GetArc(Upto);
+        FST<T>.Arc<T> arc = GetArc(Upto);
 		int targetLabel = TargetLabel;
 		//System.out.println("  init targetLabel=" + targetLabel);
 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util.Fst
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.BytesReader in = fst.getBytesReader();
-			FST.BytesReader @in = Fst.BytesReader;
+			FST<T>.BytesReader @in = Fst.GetBytesReader;
 			int low = arc.ArcIdx;
 			int high = arc.NumArcs - 1;
 			int mid = 0;
@@ -221,8 +221,8 @@ namespace Lucene.Net.Util.Fst
 			  Fst.ReadNextRealArc(arc, @in);
 			  Debug.Assert(arc.ArcIdx == mid);
 			  Debug.Assert(arc.Label == targetLabel, "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
-			  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], arc.Output);
-			  if (targetLabel == FST.END_LABEL)
+			  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], arc.Output);
+              if (targetLabel == FST<T>.END_LABEL)
 			  {
 				return;
 			  }
@@ -249,7 +249,7 @@ namespace Lucene.Net.Util.Fst
 				}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.Arc<T> prevArc = getArc(upto);
-				FST.Arc<T> prevArc = GetArc(Upto);
+                FST<T>.Arc<T> prevArc = GetArc(Upto);
 				//System.out.println("  rollback upto=" + upto + " arc.label=" + prevArc.label + " isLast?=" + prevArc.isLast());
 				if (!prevArc.Last)
 				{
@@ -275,8 +275,8 @@ namespace Lucene.Net.Util.Fst
 			if (arc.Label == targetLabel)
 			{
 			  // recurse
-			  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], arc.Output);
-			  if (targetLabel == FST.END_LABEL)
+			  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], arc.Output);
+              if (targetLabel == FST<T>.END_LABEL)
 			  {
 				return;
 			  }
@@ -303,7 +303,7 @@ namespace Lucene.Net.Util.Fst
 				}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.Arc<T> prevArc = getArc(upto);
-				FST.Arc<T> prevArc = GetArc(Upto);
+                FST<T>.Arc<T> prevArc = GetArc(Upto);
 				//System.out.println("  rollback upto=" + upto + " arc.label=" + prevArc.label + " isLast?=" + prevArc.isLast());
 				if (!prevArc.Last)
 				{
@@ -343,7 +343,7 @@ namespace Lucene.Net.Util.Fst
 
 		//System.out.println("FE: after rewind upto=" + upto);
 
-		FST.Arc<T> arc = GetArc(Upto);
+        FST<T>.Arc<T> arc = GetArc(Upto);
 		int targetLabel = TargetLabel;
 
 		//System.out.println("FE: init targetLabel=" + targetLabel);
@@ -353,14 +353,14 @@ namespace Lucene.Net.Util.Fst
 		{
 		  //System.out.println("  cycle upto=" + upto + " arc.label=" + arc.label + " (" + (char) arc.label + ") targetLabel=" + targetLabel + " isLast?=" + arc.isLast() + " bba=" + arc.bytesPerArc);
 
-		  if (arc.BytesPerArc != 0 && arc.Label != FST.END_LABEL)
+          if (arc.BytesPerArc != 0 && arc.Label != FST<T>.END_LABEL)
 		  {
 			// Arcs are fixed array -- use binary search to find
 			// the target.
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.BytesReader in = fst.getBytesReader();
-			FST.BytesReader @in = Fst.BytesReader;
+            FST<T>.BytesReader @in = Fst.GetBytesReader;
 			int low = arc.ArcIdx;
 			int high = arc.NumArcs - 1;
 			int mid = 0;
@@ -403,8 +403,8 @@ namespace Lucene.Net.Util.Fst
 			  Fst.ReadNextRealArc(arc, @in);
 			  Debug.Assert(arc.ArcIdx == mid);
 			  Debug.Assert(arc.Label == targetLabel, "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
-			  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], arc.Output);
-			  if (targetLabel == FST.END_LABEL)
+			  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], arc.Output);
+              if (targetLabel == FST<T>.END_LABEL)
 			  {
 				return;
 			  }
@@ -465,8 +465,8 @@ namespace Lucene.Net.Util.Fst
 			if (arc.Label == targetLabel)
 			{
 			  // Match -- recurse
-			  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], arc.Output);
-			  if (targetLabel == FST.END_LABEL)
+			  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], arc.Output);
+              if (targetLabel == FST<T>.END_LABEL)
 			  {
 				return;
 			  }
@@ -546,19 +546,19 @@ namespace Lucene.Net.Util.Fst
 		RewindPrefix();
 
 		//System.out.println("FE: after rewind upto=" + upto);
-		FST.Arc<T> arc = GetArc(Upto - 1);
+        FST<T>.Arc<T> arc = GetArc(Upto - 1);
 		int targetLabel = TargetLabel;
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.BytesReader fstReader = fst.getBytesReader();
-		FST.BytesReader fstReader = Fst.BytesReader;
+        FST<T>.BytesReader fstReader = Fst.GetBytesReader;
 
 		while (true)
 		{
 		  //System.out.println("  cycle target=" + (targetLabel == -1 ? "-1" : (char) targetLabel));
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.Arc<T> nextArc = fst.findTargetArc(targetLabel, arc, getArc(upto), fstReader);
-		  FST.Arc<T> nextArc = Fst.FindTargetArc(targetLabel, arc, GetArc(Upto), fstReader);
+		  FST<T>.Arc<T> nextArc = Fst.FindTargetArc(targetLabel, arc, GetArc(Upto), fstReader);
 		  if (nextArc == null)
 		  {
 			// short circuit
@@ -569,8 +569,8 @@ namespace Lucene.Net.Util.Fst
 			return false;
 		  }
 		  // Match -- recurse:
-		  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], nextArc.Output);
-		  if (targetLabel == FST.END_LABEL)
+		  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], nextArc.Output);
+          if (targetLabel == FST<T>.END_LABEL)
 		  {
 			//System.out.println("  return found; upto=" + upto + " output=" + output[upto] + " nextArc=" + nextArc.isLast());
 			return true;
@@ -591,7 +591,7 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final FST.Arc<T>[] newArcs = new FST.Arc[Lucene.Net.Util.ArrayUtil.oversize(1+upto, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		  FST.Arc<T>[] newArcs = new FST.Arc[ArrayUtil.Oversize(1 + Upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+            FST<T>.Arc<T>[] newArcs = new FST<T>.Arc<T>[ArrayUtil.Oversize(1 + Upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  Array.Copy(Arcs, 0, newArcs, 0, Arcs.Length);
 		  Arcs = newArcs;
 		}
@@ -600,7 +600,7 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final T[] newOutput = (T[]) new Object[Lucene.Net.Util.ArrayUtil.oversize(1+upto, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		  T[] newOutput = (T[]) new object[ArrayUtil.Oversize(1 + Upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+		  T[] newOutput = new T[ArrayUtil.Oversize(1 + Upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  Array.Copy(Output, 0, newOutput, 0, Output.Length);
 		  Output = newOutput;
 		}
@@ -611,13 +611,13 @@ namespace Lucene.Net.Util.Fst
 	  private void PushFirst()
 	  {
 
-		FST.Arc<T> arc = Arcs[Upto];
+		FST<T>.Arc<T> arc = Arcs[Upto];
 		Debug.Assert(arc != null);
 
 		while (true)
 		{
-		  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], arc.Output);
-		  if (arc.Label == FST.END_LABEL)
+		  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], arc.Output);
+          if (arc.Label == FST<T>.END_LABEL)
 		  {
 			// Final node
 			break;
@@ -628,7 +628,7 @@ namespace Lucene.Net.Util.Fst
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FST.Arc<T> nextArc = getArc(upto);
-		  FST.Arc<T> nextArc = GetArc(Upto);
+          FST<T>.Arc<T> nextArc = GetArc(Upto);
 		  Fst.ReadFirstTargetArc(arc, nextArc, FstReader);
 		  arc = nextArc;
 		}
@@ -639,14 +639,14 @@ namespace Lucene.Net.Util.Fst
 	  private void PushLast()
 	  {
 
-		FST.Arc<T> arc = Arcs[Upto];
+		FST<T>.Arc<T> arc = Arcs[Upto];
 		Debug.Assert(arc != null);
 
 		while (true)
 		{
 		  CurrentLabel = arc.Label;
-		  Output[Upto] = Fst.Outputs.add(Output[Upto - 1], arc.Output);
-		  if (arc.Label == FST.END_LABEL)
+		  Output[Upto] = Fst.Outputs.Add(Output[Upto - 1], arc.Output);
+		  if (arc.Label == FST<T>.END_LABEL)
 		  {
 			// Final node
 			break;
@@ -657,11 +657,11 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  private FST.Arc<T> GetArc(int idx)
+	  private FST<T>.Arc<T> GetArc(int idx)
 	  {
 		if (Arcs[idx] == null)
 		{
-		  Arcs[idx] = new FST.Arc<>();
+            Arcs[idx] = new FST<T>.Arc<T>();
 		}
 		return Arcs[idx];
 	  }

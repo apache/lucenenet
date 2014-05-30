@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 
 // this file has been automatically generated, DO NOT EDIT
@@ -6,25 +7,26 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Packed
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements. See the NOTICE file distributed with this
-	 * work for additional information regarding copyright ownership. The ASF
-	 * licenses this file to You under the Apache License, Version 2.0 (the
-	 * "License"); you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-	 * License for the specific language governing permissions and limitations under
-	 * the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with this
+         * work for additional information regarding copyright ownership. The ASF
+         * licenses this file to You under the Apache License, Version 2.0 (the
+         * "License"); you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         *
+         * http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+         * License for the specific language governing permissions and limitations under
+         * the License.
+         */
 
 
-	using DataInput = Lucene.Net.Store.DataInput;
+    using DataInput = Lucene.Net.Store.DataInput;
 
 	/// <summary>
 	/// this class is similar to <seealso cref="Packed64"/> except that it trades space for
@@ -39,7 +41,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public static bool IsSupported(int bitsPerValue)
 	  {
-		return Arrays.binarySearch(SUPPORTED_BITS_PER_VALUE, bitsPerValue) >= 0;
+        return SUPPORTED_BITS_PER_VALUE.ToList().BinarySearch(bitsPerValue) >= 0;
 	  }
 
 	  private static int RequiredCapacity(int valueCount, int valuesPerBlock)
@@ -60,7 +62,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public override void Clear()
 	  {
-		Arrays.fill(Blocks, 0L);
+		Arrays.Fill(Blocks, 0L);
 	  }
 
 	  public override long RamBytesUsed()
@@ -71,8 +73,8 @@ namespace Lucene.Net.Util.Packed
 	  public override int Get(int index, long[] arr, int off, int len)
 	  {
 		Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		Debug.Assert(index >= 0 && index < ValueCount);
-		len = Math.Min(len, ValueCount - index);
+		Debug.Assert(index >= 0 && index < valueCount);
+        len = Math.Min(len, valueCount - index);
 		Debug.Assert(off + len <= arr.Length);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -82,7 +84,7 @@ namespace Lucene.Net.Util.Packed
 		// go to the next block boundary
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int valuesPerBlock = 64 / bitsPerValue;
-		int valuesPerBlock = 64 / BitsPerValue_Renamed;
+		int valuesPerBlock = 64 / bitsPerValue;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int offsetInBlock = index % valuesPerBlock;
 		int offsetInBlock = index % valuesPerBlock;
@@ -103,7 +105,7 @@ namespace Lucene.Net.Util.Packed
 		Debug.Assert(index % valuesPerBlock == 0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final PackedInts.Decoder decoder = BulkOperation.of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
-		PackedInts.Decoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, BitsPerValue_Renamed);
+        PackedInts.Decoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
 		Debug.Assert(decoder.LongBlockCount() == 1);
 		Debug.Assert(decoder.LongValueCount() == valuesPerBlock);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -136,8 +138,8 @@ namespace Lucene.Net.Util.Packed
 	  public override int Set(int index, long[] arr, int off, int len)
 	  {
 		Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		Debug.Assert(index >= 0 && index < ValueCount);
-		len = Math.Min(len, ValueCount - index);
+		Debug.Assert(index >= 0 && index < valueCount);
+		len = Math.Min(len, valueCount - index);
 		Debug.Assert(off + len <= arr.Length);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -147,7 +149,7 @@ namespace Lucene.Net.Util.Packed
 		// go to the next block boundary
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int valuesPerBlock = 64 / bitsPerValue;
-		int valuesPerBlock = 64 / BitsPerValue_Renamed;
+        int valuesPerBlock = 64 / bitsPerValue;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int offsetInBlock = index % valuesPerBlock;
 		int offsetInBlock = index % valuesPerBlock;
@@ -168,7 +170,7 @@ namespace Lucene.Net.Util.Packed
 		Debug.Assert(index % valuesPerBlock == 0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BulkOperation op = BulkOperation.of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
-		BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, BitsPerValue_Renamed);
+        BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, bitsPerValue);
 		Debug.Assert(op.LongBlockCount() == 1);
 		Debug.Assert(op.LongValueCount() == valuesPerBlock);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -202,11 +204,11 @@ namespace Lucene.Net.Util.Packed
 	  {
 		Debug.Assert(fromIndex >= 0);
 		Debug.Assert(fromIndex <= toIndex);
-		Debug.Assert(PackedInts.BitsRequired(val) <= BitsPerValue_Renamed);
+        Debug.Assert(PackedInts.BitsRequired(val) <= bitsPerValue);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int valuesPerBlock = 64 / bitsPerValue;
-		int valuesPerBlock = 64 / BitsPerValue_Renamed;
+        int valuesPerBlock = 64 / bitsPerValue;
 		if (toIndex - fromIndex <= valuesPerBlock << 1)
 		{
 		  // there needs to be at least one full block to set for the block
@@ -238,9 +240,9 @@ namespace Lucene.Net.Util.Packed
 		long blockValue = 0L;
 		for (int i = 0; i < valuesPerBlock; ++i)
 		{
-		  blockValue = blockValue | (val << (i * BitsPerValue_Renamed));
+            blockValue = blockValue | (val << (i * bitsPerValue));
 		}
-		Arrays.fill(Blocks, fromBlock, toBlock, blockValue);
+		Arrays.Fill(Blocks, fromBlock, toBlock, blockValue);
 
 		// fill the gap
 		for (int i = valuesPerBlock * toBlock; i < toIndex; ++i)
@@ -259,7 +261,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public override string ToString()
 	  {
-		return this.GetType().SimpleName + "(bitsPerValue=" + BitsPerValue_Renamed + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
+          return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
 	  }
 
 	  public static Packed64SingleBlock Create(DataInput @in, int valueCount, int bitsPerValue)

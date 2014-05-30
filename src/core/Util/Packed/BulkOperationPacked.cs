@@ -262,7 +262,7 @@ namespace Lucene.Net.Util.Packed
 		  if (BitsPerValue < bitsLeft)
 		  {
 			// just buffer
-			nextBlock |= v << (bitsLeft - BitsPerValue);
+			nextBlock |= (int)(v << (bitsLeft - BitsPerValue));
 			bitsLeft -= BitsPerValue;
 		  }
 		  else

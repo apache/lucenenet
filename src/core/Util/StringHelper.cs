@@ -182,25 +182,35 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Pass this as the seed to <seealso cref="#murmurhash3_x86_32"/>. </summary>
 
-	  static StringHelper()
-	  {
-		/* LUCENE TO-DO Literally none of this is used
-        string prop = System.getProperty("tests.seed");
-		if (prop != null)
-		{
-		  // So if there is a test failure that relied on hash
-		  // order, we remain reproducible based on the test seed:
-		  if (prop.Length > 8)
-		  {
-			prop = prop.Substring(prop.Length - 8);
-		  }
-		  GOOD_FAST_HASH_SEED = (int) Convert.ToInt64(prop, 16);
-		}
-		else
-		{
-		  GOOD_FAST_HASH_SEED = (int) System.currentTimeMillis();
-		}*/
-	  }
+      //Singleton-esque member. Only created once
+      private static int good_fast_hash_seed;
+      public static int GOOD_FAST_HASH_SEED
+      {
+          get
+          {
+              if (good_fast_hash_seed == 0)
+              {
+                  //LUCENE TO-DO No idea if this works
+                  string prop = AppSettings.Get("tests.seed", "");
+                  if (prop != null)
+                  {
+                      // So if there is a test failure that relied on hash
+                      // order, we remain reproducible based on the test seed:
+                      if (prop.Length > 8)
+                      {
+                          prop = prop.Substring(prop.Length - 8);
+                      }
+                      good_fast_hash_seed = (int)Convert.ToInt64(prop, 16);
+                  }
+                  else
+                  {
+                      good_fast_hash_seed = (int)DateTime.Now.Millisecond;
+                  }
+              }
+              return good_fast_hash_seed;
+              
+          }
+      }
 
 	  /// <summary>
 	  /// Returns the MurmurHash3_x86_32 hash.

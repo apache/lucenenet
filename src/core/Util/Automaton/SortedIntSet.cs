@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Automaton
 	  // O(N^2) linear ops to O(N log(N)) TreeMap
 	  private const int TREE_MAP_CUTOVER = 30;
 
-	  private readonly IDictionary<int?, int?> Map = new SortedDictionary<int?, int?>();
+	  private readonly IDictionary<int, int> Map = new SortedDictionary<int, int>();
 
 	  private bool UseTreeMap;
 
@@ -55,10 +55,8 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		if (UseTreeMap)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer key = num;
-		  int? key = num;
-		  int? val = Map[key];
+		  int key = num;
+		  int val = Map[key];
 		  if (val == null)
 		  {
 			Map[key] = 1;
@@ -121,8 +119,6 @@ namespace Lucene.Net.Util.Automaton
 
 		if (UseTreeMap)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = map.get(num);
 		  int count = Map[num];
 		  if (count == 1)
 		  {
@@ -148,8 +144,6 @@ namespace Lucene.Net.Util.Automaton
 			Counts[i]--;
 			if (Counts[i] == 0)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = upto-1;
 			  int limit = Upto - 1;
 			  while (i < limit)
 			  {
@@ -171,8 +165,6 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  if (Map.Count > Values.Length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = Lucene.Net.Util.ArrayUtil.oversize(map.size(), Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_INT);
 			int size = ArrayUtil.Oversize(Map.Count, RamUsageEstimator.NUM_BYTES_INT);
 			Values = new int[size];
 			Counts = new int[size];
@@ -197,8 +189,6 @@ namespace Lucene.Net.Util.Automaton
 
 	  public FrozenIntSet Freeze(State state)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] c = new int[upto];
 		int[] c = new int[Upto];
 		Array.Copy(Values, 0, c, 0, Upto);
 		return new FrozenIntSet(c, HashCode_Renamed, state);

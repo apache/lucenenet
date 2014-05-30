@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 namespace Lucene.Net.Util
 {
 
@@ -27,7 +28,8 @@ namespace Lucene.Net.Util
 	public class RefCount<T>
 	{
 
-	  private readonly AtomicInteger refCount = new AtomicInteger(1);
+	  //private readonly AtomicInteger refCount = new AtomicInteger(1);
+	  private int refCount = 1;
 
 	  protected internal readonly T @object;
 
@@ -51,7 +53,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public void DecRef()
 	  {
-		int rc = refCount.decrementAndGet();
+		int rc = Interlocked.Decrement(ref refCount);
 		if (rc == 0)
 		{
 		  bool success = false;
@@ -65,7 +67,7 @@ namespace Lucene.Net.Util
 			if (!success)
 			{
 			  // Put reference back on failure
-			  refCount.incrementAndGet();
+              Interlocked.Increment(ref refCount);
 			}
 		  }
 		}
@@ -86,7 +88,14 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return refCount.get();
+              //LUCENE TO-DO read operations atomic in 64 bit
+              /*if (IntPtr.Size == 4)
+              {
+                  long refCount_ = 0;
+                  Interlocked.Exchange(ref refCount_, (long)refCount);
+                  return (int)Interlocked.Read(ref refCount_);
+              }*/
+			  return refCount;
 		  }
 	  }
 
@@ -96,7 +105,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public void IncRef()
 	  {
-		refCount.incrementAndGet();
+          Interlocked.Increment(ref refCount);
 	  }
 
 	}

@@ -1,24 +1,25 @@
 namespace Lucene.Net.Util.Packed
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using IndexInput = Lucene.Net.Store.IndexInput;
+    using IndexInput = Lucene.Net.Store.IndexInput;
 
 	/* Reads directly from disk on each get */
 	internal class DirectPackedReader : PackedInts.ReaderImpl
@@ -46,7 +47,7 @@ namespace Lucene.Net.Util.Packed
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long majorBitPos = (long)index * bitsPerValue;
-		long majorBitPos = (long)index * BitsPerValue_Renamed;
+		long majorBitPos = (long)index * bitsPerValue;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long elementPos = majorBitPos >>> 3;
 		long elementPos = (long)((ulong)majorBitPos >> 3);
@@ -60,9 +61,9 @@ namespace Lucene.Net.Util.Packed
 		  // round up bits to a multiple of 8 to find total bytes needed to read
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int roundedBits = ((bitPos + bitsPerValue + 7) & ~7);
-		  int roundedBits = ((bitPos + BitsPerValue_Renamed + 7) & ~7);
+          int roundedBits = ((bitPos + bitsPerValue + 7) & ~7);
 		  // the number of extra bits read at the end to shift out
-		  int shiftRightBits = roundedBits - bitPos - BitsPerValue_Renamed;
+          int shiftRightBits = roundedBits - bitPos - bitsPerValue;
 
 		  long rawValue;
 		  switch ((int)((uint)roundedBits >> 3))
@@ -98,14 +99,14 @@ namespace Lucene.Net.Util.Packed
 			  shiftRightBits = 0;
 			  break;
 			default:
-			  throw new AssertionError("bitsPerValue too large: " + BitsPerValue_Renamed);
+              throw new InvalidOperationException("bitsPerValue too large: " + bitsPerValue);
 		  }
 		  return ((long)((ulong)rawValue >> shiftRightBits)) & ValueMask;
 
 		}
-		catch (IOException ioe)
+		catch (System.IO.IOException ioe)
 		{
-		  throw new IllegalStateException("failed", ioe);
+		  throw new InvalidOperationException("failed", ioe);
 		}
 	  }
 

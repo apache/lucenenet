@@ -38,6 +38,9 @@ namespace Lucene.Net.Support
         /// </summary>
         public const int MAX_RADIX = 36;
 
+        /*public const int CHAR_MIN_CODE_POINT = 
+        public const int CHAR_MAX_CODE_POINT = */
+
         private const System.String digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 

@@ -152,21 +152,14 @@ namespace Lucene.Net.Util.Automaton
 	  /// <returns> clone with same character interval and destination state </returns>
 	  public override Transition Clone()
 	  {
-		try
-		{
-		  return (Transition) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception(e);
-		}
+		  return (Transition) base.MemberwiseClone();
 	  }
 
 	  internal static void AppendCharString(int c, StringBuilder b)
 	  {
 		if (c >= 0x21 && c <= 0x7e && c != '\\' && c != '"')
 		{
-			b.appendCodePoint(c);
+			b.Append(c);
 		}
 		else
 		{
@@ -220,13 +213,13 @@ namespace Lucene.Net.Util.Automaton
 		  b.Append("-");
 		  AppendCharString(Max_Renamed, b);
 		}
-		b.Append(" -> ").Append(To.Number_Renamed);
+		b.Append(" -> ").Append(To.number);
 		return b.ToString();
 	  }
 
 	  internal virtual void AppendDot(StringBuilder b)
 	  {
-		b.Append(" -> ").Append(To.Number_Renamed).Append(" [label=\"");
+		b.Append(" -> ").Append(To.number).Append(" [label=\"");
 		AppendCharString(Min_Renamed, b);
 		if (Min_Renamed != Max_Renamed)
 		{
@@ -242,11 +235,11 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  if (t1.To != t2.To)
 		  {
-			if (t1.To.Number_Renamed < t2.To.Number_Renamed)
+			if (t1.To.number < t2.To.number)
 			{
 				return -1;
 			}
-			else if (t1.To.Number_Renamed > t2.To.Number_Renamed)
+			else if (t1.To.number > t2.To.number)
 			{
 				return 1;
 			}
@@ -295,11 +288,11 @@ namespace Lucene.Net.Util.Automaton
 		  }
 		  if (t1.To != t2.To)
 		  {
-			if (t1.To.Number_Renamed < t2.To.Number_Renamed)
+			if (t1.To.number < t2.To.number)
 			{
 				return -1;
 			}
-			if (t1.To.Number_Renamed > t2.To.Number_Renamed)
+			if (t1.To.number > t2.To.number)
 			{
 				return 1;
 			}

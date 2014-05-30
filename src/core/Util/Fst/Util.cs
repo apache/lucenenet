@@ -448,7 +448,7 @@ namespace Lucene.Net.Util.Fst
 
 		  if (Queue.Count == MaxQueueDepth + 1)
 		  {
-			Queue.pollLast();
+			Queue.Last();
 		  }
 		}
 
@@ -519,7 +519,7 @@ namespace Lucene.Net.Util.Fst
 
 			// Remove top path since we are now going to
 			// pursue it:
-			path = Queue.pollFirst();
+			path = Queue.First();
 
 			if (path == null)
 			{
@@ -732,7 +732,7 @@ namespace Lucene.Net.Util.Fst
 	  ///          binary format. Expands the graph considerably. 
 	  /// </param>
 	  /// <seealso cref= "http://www.graphviz.org/" </seealso>
-	  public static void toDot<T>(FST<T> fst, Writer @out, bool sameRank, bool labelStates)
+	  public static void toDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
 	  {
 		const string expandedNodeColor = "blue";
 
@@ -752,7 +752,7 @@ namespace Lucene.Net.Util.Fst
 		IList<int?> sameLevelStates = new List<int?>();
 
 		// A bitset of already seen states (target offset).
-		BitArray seen = new BitArray();
+		BitArray seen = new BitArray(32);
 		seen.Set((int) startArc.Target, true);
 
 		// Shape for states.
@@ -760,12 +760,12 @@ namespace Lucene.Net.Util.Fst
 		const string finalStateShape = "doublecircle";
 
 		// Emit DOT prologue.
-		@out.write("digraph FST {\n");
-		@out.write("  rankdir = LR; splines=true; concentrate=true; ordering=out; ranksep=2.5; \n");
+		@out.Write("digraph FST {\n");
+        @out.Write("  rankdir = LR; splines=true; concentrate=true; ordering=out; ranksep=2.5; \n");
 
 		if (!labelStates)
 		{
-		  @out.write("  node [shape=circle, width=.2, height=.2, style=filled]\n");
+            @out.Write("  node [shape=circle, width=.2, height=.2, style=filled]\n");
 		}
 
 		EmitDotState(@out, "initial", "point", "white", "");
@@ -791,7 +791,7 @@ namespace Lucene.Net.Util.Fst
 		  if (startArc.Final)
 		  {
 			isFinal = true;
-			finalOutput = startArc.NextFinalOutput == NO_OUTPUT ? null : startArc.NextFinalOutput;
+            finalOutput = (object)startArc.NextFinalOutput == (object)NO_OUTPUT ? default(T) : startArc.NextFinalOutput;
 		  }
 		  else
 		  {
@@ -802,7 +802,7 @@ namespace Lucene.Net.Util.Fst
 		  EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
 		}
 
-		@out.write("  initial -> " + startArc.Target + "\n");
+        @out.Write("  initial -> " + startArc.Target + "\n");
 
 		int level = 0;
 
@@ -814,10 +814,11 @@ namespace Lucene.Net.Util.Fst
 		  nextLevelQueue.Clear();
 
 		  level++;
-		  @out.write("\n  // Transitions and states at level: " + level + "\n");
+          @out.Write("\n  // Transitions and states at level: " + level + "\n");
 		  while (thisLevelQueue.Count > 0)
 		  {
-			FST<T>.Arc<T> arc = thisLevelQueue.Remove(thisLevelQueue.Count - 1);
+            FST<T>.Arc<T> arc = thisLevelQueue[thisLevelQueue.Count - 1];
+            thisLevelQueue.RemoveAt(thisLevelQueue.Count - 1);
 			//System.out.println("  pop: " + arc);
 			if (FST<T>.TargetHasArcs(arc))
 			{
@@ -860,7 +861,7 @@ namespace Lucene.Net.Util.Fst
 				  }
 
 				  string finalOutput;
-				  if (arc.NextFinalOutput != null && arc.NextFinalOutput != NO_OUTPUT)
+                  if (arc.NextFinalOutput != null && (object)arc.NextFinalOutput != (object)NO_OUTPUT)
 				  {
 					finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
 				  }
@@ -878,7 +879,7 @@ namespace Lucene.Net.Util.Fst
 				}
 
 				string outs;
-				if (arc.Output != NO_OUTPUT)
+                if ((object)arc.Output != (object)NO_OUTPUT)
 				{
 				  outs = "/" + fst.Outputs.OutputToString(arc.Output);
 				}
@@ -887,7 +888,7 @@ namespace Lucene.Net.Util.Fst
 				  outs = "";
 				}
 
-				if (!FST<T>.TargetHasArcs(arc) && arc.Final && arc.NextFinalOutput != NO_OUTPUT)
+                if (!FST<T>.TargetHasArcs(arc) && arc.Final && (object)arc.NextFinalOutput != (object)NO_OUTPUT)
 				{
 				  // Tricky special case: sometimes, due to
 				  // pruning, the builder can [sillily] produce
@@ -909,7 +910,7 @@ namespace Lucene.Net.Util.Fst
 				}
 
 				Debug.Assert(arc.Label != FST<T>.END_LABEL);
-				@out.write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.Final ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
+                @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.Final ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
 
 				// Break the loop if we're on the last arc of this state.
 				if (arc.Last)
@@ -925,30 +926,30 @@ namespace Lucene.Net.Util.Fst
 		  // Emit state ranking information.
 		  if (sameRank && sameLevelStates.Count > 1)
 		  {
-			@out.write("  {rank=same; ");
+              @out.Write("  {rank=same; ");
 			foreach (int state in sameLevelStates)
 			{
-			  @out.write(state + "; ");
+                @out.Write(state + "; ");
 			}
-			@out.write(" }\n");
+            @out.Write(" }\n");
 		  }
 		  sameLevelStates.Clear();
 		}
 
 		// Emit terminating state (always there anyway).
-		@out.write("  -1 [style=filled, color=black, shape=doublecircle, label=\"\"]\n\n");
-		@out.write("  {rank=sink; -1 }\n");
+        @out.Write("  -1 [style=filled, color=black, shape=doublecircle, label=\"\"]\n\n");
+        @out.Write("  {rank=sink; -1 }\n");
 
-		@out.write("}\n");
-		@out.flush();
+        @out.Write("}\n");
+		@out.Flush();
 	  }
 
 	  /// <summary>
 	  /// Emit a single state in the <code>dot</code> language. 
 	  /// </summary>
-	  private static void EmitDotState(Writer @out, string name, string shape, string color, string label)
+	  private static void EmitDotState(TextWriter @out, string name, string shape, string color, string label)
 	  {
-		@out.write("  " + name + " [" + (shape != null ? "shape=" + shape : "") + " " + (color != null ? "color=" + color : "") + " " + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " " + "]\n");
+		@out.Write("  " + name + " [" + (shape != null ? "shape=" + shape : "") + " " + (color != null ? "color=" + color : "") + " " + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " " + "]\n");
 	  }
 
 	  /// <summary>
@@ -969,11 +970,11 @@ namespace Lucene.Net.Util.Fst
 	  /// Just maps each UTF16 unit (char) to the ints in an
 	  ///  IntsRef. 
 	  /// </summary>
-	  public static IntsRef ToUTF16(CharSequence s, IntsRef scratch)
+	  public static IntsRef ToUTF16(string s, IntsRef scratch)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int charLimit = s.length();
-		int charLimit = s.length();
+		int charLimit = s.Length;
 		scratch.Offset = 0;
 		scratch.Length = charLimit;
 		scratch.Grow(charLimit);
@@ -989,9 +990,11 @@ namespace Lucene.Net.Util.Fst
 	  ///  CharSequence and places them in the provided scratch
 	  ///  IntsRef, which must not be null, returning it. 
 	  /// </summary>
-	  public static IntsRef ToUTF32(CharSequence s, IntsRef scratch)
+	  public static IntsRef ToUTF32(string s, IntsRef scratch)
 	  {
-		int charIdx = 0;
+          throw new NotImplementedException(".NET does not support UTF32 native strings.");
+
+		/*int charIdx = 0;
 		int intIdx = 0;
 		int charLimit = s.length();
 		while (charIdx < charLimit)
@@ -1003,9 +1006,9 @@ namespace Lucene.Net.Util.Fst
 		  intIdx++;
 		}
 		scratch.Length = intIdx;
-		return scratch;
+		return scratch;*/
 	  }
-
+      /*LUCENE TO-DO Not in use
 	  /// <summary>
 	  /// Decodes the Unicode codepoints from the provided
 	  ///  char[] and places them in the provided scratch
@@ -1021,12 +1024,12 @@ namespace Lucene.Net.Util.Fst
 		  scratch.Grow(intIdx + 1);
 		  int utf32 = char.codePointAt(s, charIdx, charLimit);
 		  scratch.Ints[intIdx] = utf32;
-		  charIdx += char.charCount(utf32);
+		  charIdx += Character.CharCount(utf32);
 		  intIdx++;
 		}
 		scratch.Length = intIdx;
 		return scratch;
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Just takes unsigned byte values from the BytesRef and
@@ -1089,7 +1092,7 @@ namespace Lucene.Net.Util.Fst
 		  {
 			if (follow.Target <= 0)
 			{
-			  arc.Flags = FST<T>.BIT_LAST_ARC;
+			  arc.Flags = (sbyte)FST<T>.BIT_LAST_ARC;
 			}
 			else
 			{

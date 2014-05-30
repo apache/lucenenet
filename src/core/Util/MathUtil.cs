@@ -104,6 +104,7 @@ namespace Lucene.Net.Util
 		return a << commonTrailingZeros;
 	  }
 
+      /*Lucene TO-DO Commented for now, never actually used
 
 	  /// <summary>
 	  /// Calculates inverse hyperbolic sine of a {@code double} value.
@@ -175,7 +176,7 @@ namespace Lucene.Net.Util
 		}
 		return mult * Math.Log((1.0d + a) / (1.0d - a));
 	  }
-
+      */
 
 	}
 

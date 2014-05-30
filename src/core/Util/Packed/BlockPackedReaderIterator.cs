@@ -5,22 +5,23 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Packed
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
     /*
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.Packed.AbstractBlockPackedWriter.BPV_SHIFT;
@@ -31,11 +32,11 @@ namespace Lucene.Net.Util.Packed
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.Packed.AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-*/	import static Lucene.Net.Util.Packed.PackedInts.checkBlockSize;
+	import static Lucene.Net.Util.Packed.PackedInts.checkBlockSize;*/
 
 
-	using DataInput = Lucene.Net.Store.DataInput;
-	using IndexInput = Lucene.Net.Store.IndexInput;
+    using DataInput = Lucene.Net.Store.DataInput;
+    using IndexInput = Lucene.Net.Store.IndexInput;
 
 	/// <summary>
 	/// Reader for sequences of longs written with <seealso cref="BlockPackedWriter"/>. </summary>
@@ -122,7 +123,7 @@ namespace Lucene.Net.Util.Packed
 	  ///                  been used to write the stream </param>
 	  public BlockPackedReaderIterator(DataInput @in, int packedIntsVersion, int blockSize, long valueCount)
 	  {
-		checkBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
+		PackedInts.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
 		this.PackedIntsVersion = packedIntsVersion;
 		this.BlockSize = blockSize;
 		this.Values = new long[blockSize];
@@ -150,7 +151,7 @@ namespace Lucene.Net.Util.Packed
 		Debug.Assert(count >= 0);
 		if (Ord_Renamed + count > ValueCount || Ord_Renamed + count < 0)
 		{
-		  throw new EOFException();
+		  throw new System.IO.EndOfStreamException();
 		}
 
 		// 1. skip buffered values
@@ -235,7 +236,7 @@ namespace Lucene.Net.Util.Packed
 	  {
 		if (Ord_Renamed == ValueCount)
 		{
-		  throw new EOFException();
+		  throw new System.IO.EndOfStreamException();
 		}
 		if (Off == BlockSize)
 		{
@@ -255,7 +256,7 @@ namespace Lucene.Net.Util.Packed
 		Debug.Assert(count > 0);
 		if (Ord_Renamed == ValueCount)
 		{
-		  throw new EOFException();
+            throw new System.IO.EndOfStreamException();
 		}
 		if (Off == BlockSize)
 		{
@@ -294,7 +295,7 @@ namespace Lucene.Net.Util.Packed
 
 		if (bitsPerValue == 0)
 		{
-		  Arrays.fill(Values, minValue);
+		  Arrays.Fill(Values, minValue);
 		}
 		else
 		{

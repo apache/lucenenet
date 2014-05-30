@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 /*
@@ -133,7 +134,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-			return Points.clone();
+			return (int[])(Array)Points.Clone();
 		  }
 	  }
 
@@ -166,14 +167,14 @@ namespace Lucene.Net.Util.Automaton
 		}
 		foreach (State s in states)
 		{
-		  int n = s.Number_Renamed;
-		  Accept[n] = s.Accept_Renamed;
+		  int n = s.number;
+		  Accept[n] = s.accept;
 		  for (int c = 0; c < Points.Length; c++)
 		  {
 			State q = s.Step(Points[c]);
 			if (q != null)
 			{
-				Transitions[n * Points.Length + c] = q.Number_Renamed;
+				Transitions[n * Points.Length + c] = q.number;
 			}
 		  }
 		}
@@ -256,15 +257,15 @@ namespace Lucene.Net.Util.Automaton
 		{
 			return false;
 		}
-		if (!Arrays.Equals(Points, other.Points))
+		if (!Array.Equals(Points, other.Points))
 		{
 			return false;
 		}
-		if (!Arrays.Equals(Accept, other.Accept))
+		if (!Array.Equals(Accept, other.Accept))
 		{
 			return false;
 		}
-		if (!Arrays.Equals(Transitions, other.Transitions))
+		if (!Array.Equals(Transitions, other.Transitions))
 		{
 			return false;
 		}

@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 namespace Lucene.Net.Util
 {
 
@@ -78,16 +80,24 @@ namespace Lucene.Net.Util
 
 	  private sealed class AtomicCounter : Counter
 	  {
-		internal readonly AtomicLong Count = new AtomicLong();
+		//internal readonly AtomicLong Count = new AtomicLong();
+		internal long Count;
 
 		public override long AddAndGet(long delta)
 		{
-		  return Count.addAndGet(delta);
+            return Interlocked.Add(ref Count, delta);
 		}
 
 		public override long Get()
 		{
-		  return Count.get();
+            //LUCENE TO-DO read operations atomic in 64 bit
+            /*if (IntPtr.Size == 4)
+            {
+                long Count_ = 0;
+                Interlocked.Exchange(ref Count_, (long)Count);
+                return (int)Interlocked.Read(ref Count_);
+            }*/
+            return Count;
 		}
 
 	  }

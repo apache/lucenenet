@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
 	  internal readonly ByteBlockPool Pool;
 	  internal int[] BytesStart;
 
-	  private BytesRef Scratch1 = new BytesRef();
+	  private readonly BytesRef Scratch1 = new BytesRef();
 	  private int HashSize;
 	  private int HashHalfSize;
 	  private int HashMask;
@@ -177,15 +177,13 @@ namespace Lucene.Net.Util
 
 		  private IComparer<BytesRef> Comp;
 		  private int[] Compact;
+          private readonly BytesRef pivot = new BytesRef(), scratch1 = new BytesRef(), scratch2 = new BytesRef();
 
 		  public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Comp = comp;
 			  this.Compact = compact;
-			  pivot = new BytesRef();
-              OuterInstance.Scratch1 = new BytesRef();
-              Scratch2 = new BytesRef();
 		  }
 
 		  protected internal override void Swap(int i, int j)
@@ -222,7 +220,6 @@ namespace Lucene.Net.Util
 			return Comp.Compare(pivot, scratch2);
 		  }
 
-		  private readonly BytesRef pivot;
 	  }
 
 	  private bool Equals(int id, BytesRef b)
@@ -307,20 +304,14 @@ namespace Lucene.Net.Util
 	  public int Add(BytesRef bytes)
 	  {
 		Debug.Assert(BytesStart != null, "Bytesstart is null - not initialized");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = bytes.length;
 		int length = bytes.Length;
 		// final position
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int hashPos = findHash(bytes);
 		int hashPos = FindHash(bytes);
 		int e = Ids[hashPos];
 
 		if (e == -1)
 		{
 		  // new entry
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len2 = 2 + bytes.length;
 		  int len2 = 2 + bytes.Length;
 		  if (len2 + Pool.ByteUpto > ByteBlockPool.BYTE_BLOCK_SIZE)
 		  {
@@ -330,11 +321,7 @@ namespace Lucene.Net.Util
 			}
 			Pool.NextBuffer();
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] buffer = pool.buffer;
 		  sbyte[] buffer = Pool.Buffer;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bufferUpto = pool.byteUpto;
 		  int bufferUpto = Pool.ByteUpto;
 		  if (Count >= BytesStart.Length)
 		  {
@@ -468,35 +455,21 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  private void Rehash(int newSize, bool hashOnData)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newMask = newSize - 1;
 		int newMask = newSize - 1;
 		BytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (newSize));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] newHash = new int[newSize];
 		int[] newHash = new int[newSize];
 		Arrays.Fill(newHash, -1);
 		for (int i = 0; i < HashSize; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int e0 = ids[i];
 		  int e0 = Ids[i];
 		  if (e0 != -1)
 		  {
 			int code;
 			if (hashOnData)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int off = bytesStart[e0];
 			  int off = BytesStart[e0];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int start = off & BYTE_BLOCK_MASK;
               int start = off & ByteBlockPool.BYTE_BLOCK_MASK;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = pool.buffers[off >> BYTE_BLOCK_SHIFT];
               sbyte[] bytes = Pool.Buffers[off >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len;
 			  int len;
 			  int pos;
 			  if ((bytes[start] & 0x80) == 0)
@@ -584,8 +557,6 @@ namespace Lucene.Net.Util
 	  /// Thrown if a <seealso cref="BytesRef"/> exceeds the <seealso cref="BytesRefHash"/> limit of
 	  /// <seealso cref="ByteBlockPool#BYTE_BLOCK_SIZE"/>-2.
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("serial") public static class MaxBytesLengthExceededException extends RuntimeException
 	  public class MaxBytesLengthExceededException : Exception
 	  {
 		internal MaxBytesLengthExceededException(string message) : base(message)

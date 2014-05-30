@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -91,7 +93,7 @@ namespace Lucene.Net.Util.Packed
 	  internal readonly long LowerBitsMask;
 	  internal readonly long[] UpperLongs;
 	  internal readonly long[] LowerLongs;
-	  private static readonly int LOG2_LONG_SIZE = long.numberOfTrailingZeros(long.SIZE);
+	  private static readonly int LOG2_LONG_SIZE = Number.NumberOfTrailingZeros(sizeof(long) * 8);
 
 	  internal long NumEncoded = 0L;
 	  internal long LastEncoded = 0L;
@@ -155,11 +157,11 @@ namespace Lucene.Net.Util.Packed
 		  long lowBitsFac = this.UpperBound / this.NumValues;
 		  if (lowBitsFac > 0)
 		  {
-			nLowBits = 63 - long.numberOfLeadingZeros(lowBitsFac); // see Long.numberOfLeadingZeros javadocs
+			nLowBits = 63 - Number.NumberOfLeadingZeros(lowBitsFac); // see Long.numberOfLeadingZeros javadocs
 		  }
 		}
 		this.NumLowBits = nLowBits;
-		this.LowerBitsMask = (int)((uint)long.MaxValue >> (long.SIZE - 1 - this.NumLowBits));
+		this.LowerBitsMask = (int)(unchecked((uint)long.MaxValue) >> (sizeof(long) * 8 - 1 - this.NumLowBits));
 
 		long numLongsForLowBits = NumLongsForBits(numValues * NumLowBits);
 		if (numLongsForLowBits > int.MaxValue)
@@ -187,7 +189,7 @@ namespace Lucene.Net.Util.Packed
 		long nIndexEntries = maxHighValue / indexInterval; // no zero value index entry
 		this.NumIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
 		long maxIndexEntry = maxHighValue + numValues - 1; // clear upper bits, set upper bits, start at zero
-		this.NIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - long.numberOfLeadingZeros(maxIndexEntry));
+		this.NIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - Number.NumberOfLeadingZeros(maxIndexEntry));
 		long numLongsForIndexBits = NumLongsForBits(NumIndexEntries * NIndexEntryBits);
 		if (numLongsForIndexBits > int.MaxValue)
 		{
@@ -207,8 +209,8 @@ namespace Lucene.Net.Util.Packed
 
 	  private static long NumLongsForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
 	  {
-		Debug.Assert(numBits >= 0, numBits);
-		(int)((uint)return (numBits + (long.SIZE-1)) >> LOG2_LONG_SIZE);
+		Debug.Assert(numBits >= 0, numBits.ToString());
+        return (int)((uint)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_LONG_SIZE);
 	  }
 
 	  /// <summary>
@@ -224,7 +226,7 @@ namespace Lucene.Net.Util.Packed
 	  {
 		if (NumEncoded >= NumValues)
 		{
-		  throw new IllegalStateException("encodeNext called more than " + NumValues + " times.");
+		  throw new InvalidOperationException("encodeNext called more than " + NumValues + " times.");
 		}
 		if (LastEncoded > x)
 		{
@@ -253,7 +255,7 @@ namespace Lucene.Net.Util.Packed
 	  private void EncodeUpperBits(long highValue)
 	  {
 		long nextHighBitNum = NumEncoded + highValue; // sequence of unary gaps
-		UpperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_LONG_SIZE))] |= (1L << (nextHighBitNum & (long.SIZE-1)));
+		UpperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_LONG_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8)-1)));
 	  }
 
 	  private void EncodeLowerBits(long lowValue)
@@ -267,11 +269,11 @@ namespace Lucene.Net.Util.Packed
 		{
 		  long bitPos = numBits * packIndex;
 		  int index = (int)((long)((ulong)bitPos >> LOG2_LONG_SIZE));
-		  int bitPosAtIndex = (int)(bitPos & (long.SIZE-1));
+		  int bitPosAtIndex = (int)(bitPos & ((sizeof(long) * 8)-1));
 		  longArray[index] |= (value << bitPosAtIndex);
-		  if ((bitPosAtIndex + numBits) > long.SIZE)
+		  if ((bitPosAtIndex + numBits) > (sizeof(long) * 8))
 		  {
-			longArray[index + 1] = ((long)((ulong)value >> (long.SIZE - bitPosAtIndex)));
+			longArray[index + 1] = ((long)((ulong)value >> ((sizeof(long) * 8) - bitPosAtIndex)));
 		  }
 		}
 	  }
@@ -297,7 +299,7 @@ namespace Lucene.Net.Util.Packed
 		 * For intersecting two EliasFano sequences without index on the upper bits,
 		 * all (2 * 3 * numValues) upper bits are accessed.
 		 */
-		return (upperBound > (4 * long.SIZE)) && (upperBound / 7) > numValues; // 6 + 1 to allow some room for the index. -  prefer a bit set when it takes no more than 4 longs.
+		return (upperBound > (4 * (sizeof(long) * 8))) && (upperBound / 7) > numValues; // 6 + 1 to allow some room for the index. -  prefer a bit set when it takes no more than 4 longs.
 	  }
 
 	  /// <summary>

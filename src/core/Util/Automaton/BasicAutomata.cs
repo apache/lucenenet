@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -55,7 +56,7 @@ namespace Lucene.Net.Util.Automaton
 		Automaton a = new Automaton();
 		State s = new State();
 		a.Initial = s;
-		a.Deterministic_Renamed = true;
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -65,8 +66,8 @@ namespace Lucene.Net.Util.Automaton
 	  public static Automaton MakeEmptyString()
 	  {
 		Automaton a = new Automaton();
-		a.Singleton_Renamed = "";
-		a.Deterministic_Renamed = true;
+		a.singleton = "";
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -78,9 +79,9 @@ namespace Lucene.Net.Util.Automaton
 		Automaton a = new Automaton();
 		State s = new State();
 		a.Initial = s;
-		s.Accept_Renamed = true;
-		s.AddTransition(new Transition(char.MIN_CODE_POINT, char.MAX_CODE_POINT, s));
-		a.Deterministic_Renamed = true;
+		s.accept = true;
+        s.AddTransition(new Transition(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT, s));
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -89,7 +90,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static Automaton MakeAnyChar()
 	  {
-		return MakeCharRange(char.MIN_CODE_POINT, char.MAX_CODE_POINT);
+          return MakeCharRange(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT);
 	  }
 
 	  /// <summary>
@@ -99,8 +100,8 @@ namespace Lucene.Net.Util.Automaton
 	  public static Automaton MakeChar(int c)
 	  {
 		Automaton a = new Automaton();
-		a.Singleton_Renamed = new string(char.toChars(c));
-		a.Deterministic_Renamed = true;
+        a.singleton = new string(Character.ToChars(c));
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -118,12 +119,12 @@ namespace Lucene.Net.Util.Automaton
 		State s1 = new State();
 		State s2 = new State();
 		a.Initial = s1;
-		s2.Accept_Renamed = true;
+		s2.accept = true;
 		if (min <= max)
 		{
 			s1.AddTransition(new Transition(min, max, s2));
 		}
-		a.Deterministic_Renamed = true;
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -290,12 +291,12 @@ namespace Lucene.Net.Util.Automaton
 			}
 		  }
 		  BasicOperations.AddEpsilons(a, pairs);
-		  a.Initial.addTransition(new Transition('0', a.Initial));
-		  a.Deterministic_Renamed = false;
+		  a.Initial.AddTransition(new Transition('0', a.Initial));
+		  a.deterministic = false;
 		}
 		else
 		{
-			a.Deterministic_Renamed = true;
+			a.deterministic = true;
 		}
 		a.CheckMinimizeAlways();
 		return a;
@@ -308,8 +309,8 @@ namespace Lucene.Net.Util.Automaton
 	  public static Automaton MakeString(string s)
 	  {
 		Automaton a = new Automaton();
-		a.Singleton_Renamed = s;
-		a.Deterministic_Renamed = true;
+		a.singleton = s;
+		a.deterministic = true;
 		return a;
 	  }
 
@@ -325,7 +326,7 @@ namespace Lucene.Net.Util.Automaton
 		  s.AddTransition(new Transition(word[i], s2));
 		  s = s2;
 		}
-		s.Accept_Renamed = true;
+		s.accept = true;
 		return a;
 	  }
 

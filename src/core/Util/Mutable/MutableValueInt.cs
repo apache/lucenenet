@@ -27,28 +27,28 @@ namespace Lucene.Net.Util.Mutable
 
 	  public override object ToObject()
 	  {
-		return Exists_Renamed ? Value : null;
+		return Exists ? (object)Value : null;
 	  }
 
 	  public override void Copy(MutableValue source)
 	  {
 		MutableValueInt s = (MutableValueInt) source;
 		Value = s.Value;
-		Exists_Renamed = s.Exists_Renamed;
+		Exists = s.Exists;
 	  }
 
 	  public override MutableValue Duplicate()
 	  {
 		MutableValueInt v = new MutableValueInt();
 		v.Value = this.Value;
-		v.Exists_Renamed = this.Exists_Renamed;
+		v.Exists = this.Exists;
 		return v;
 	  }
 
 	  public override bool EqualsSameType(object other)
 	  {
 		MutableValueInt b = (MutableValueInt)other;
-		return Value == b.Value && Exists_Renamed == b.Exists_Renamed;
+		return Value == b.Value && Exists == b.Exists;
 	  }
 
 	  public override int CompareSameType(object other)
@@ -65,11 +65,11 @@ namespace Lucene.Net.Util.Mutable
 			return 1;
 		}
 
-		if (Exists_Renamed == b.Exists_Renamed)
+		if (Exists == b.Exists)
 		{
 			return 0;
 		}
-		return Exists_Renamed ? 1 : -1;
+		return Exists ? 1 : -1;
 	  }
 
 

@@ -49,17 +49,20 @@ namespace Lucene.Net.Util.Packed
 
 	  public static BulkOperation Of(PackedInts.Format format, int bitsPerValue)
 	  {
-		switch (format)
-		{
-		case Lucene.Net.Util.Packed.PackedInts.Format.PACKED:
-		  Debug.Assert(PackedBulkOps[bitsPerValue - 1] != null);
-		  return PackedBulkOps[bitsPerValue - 1];
-		case Lucene.Net.Util.Packed.PackedInts.Format.PACKED_SINGLE_BLOCK:
-		  Debug.Assert(PackedSingleBlockBulkOps[bitsPerValue - 1] != null);
-		  return PackedSingleBlockBulkOps[bitsPerValue - 1];
-		default:
-		  throw new AssertionError();
-		}
+          if (format == PackedInts.Format.PACKED)
+          {
+              Debug.Assert(PackedBulkOps[bitsPerValue - 1] != null);
+              return PackedBulkOps[bitsPerValue - 1];
+          }
+          else if (format == PackedInts.Format.PACKED_SINGLE_BLOCK) 
+          {
+              Debug.Assert(PackedSingleBlockBulkOps[bitsPerValue - 1] != null);
+              return PackedSingleBlockBulkOps[bitsPerValue - 1];
+          }
+          else 
+          {
+              throw new InvalidOperationException();
+          }
 	  }
 
 	  protected internal virtual int WriteLong(long block, sbyte[] blocks, int blocksOffset)

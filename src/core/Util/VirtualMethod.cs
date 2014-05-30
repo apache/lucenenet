@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-
+    /*LUCENE TO-DO I don't think this class is needed
 	/// <summary>
 	/// A utility for keeping backwards compatibility on previously abstract methods
 	/// (or similar replacements).
@@ -159,6 +159,6 @@ namespace Lucene.Net.Util
 		return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
 	  }
 
-	}
+	}*/
 
 }

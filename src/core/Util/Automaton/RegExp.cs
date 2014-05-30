@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -379,7 +380,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  private static bool Allow_mutation = false;
 
-	  internal Kind Kind;
+	  internal Kind kind;
 	  internal RegExp Exp1, Exp2;
 	  internal string s;
 	  internal int c;
@@ -430,7 +431,7 @@ namespace Lucene.Net.Util.Automaton
 			  throw new System.ArgumentException("end-of-string expected at position " + Pos);
 		  }
 		}
-		Kind = e.Kind;
+		kind = e.kind;
 		Exp1 = e.Exp1;
 		Exp2 = e.Exp2;
 		this.s = e.s;
@@ -498,7 +499,7 @@ namespace Lucene.Net.Util.Automaton
 		bool b = false;
 		if (Allow_mutation) // thread unsafe
 		{
-			b = Automaton.setAllowMutate(true);
+			b = Automaton.SetAllowMutate(true);
 		}
 		Automaton a = ToAutomaton(automata, automaton_provider);
 		if (Allow_mutation)
@@ -512,65 +513,65 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		IList<Automaton> list;
 		Automaton a = null;
-		switch (Kind)
+		switch (kind)
 		{
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_UNION:
-			list = new List<>();
+		  case Kind.REGEXP_UNION:
+			list = new List<Automaton>();
 			FindLeaves(Exp1, Kind.REGEXP_UNION, list, automata, automaton_provider);
 			FindLeaves(Exp2, Kind.REGEXP_UNION, list, automata, automaton_provider);
 			a = BasicOperations.Union(list);
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CONCATENATION:
-			list = new List<>();
+		  case Kind.REGEXP_CONCATENATION:
+            list = new List<Automaton>();
 			FindLeaves(Exp1, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
 			FindLeaves(Exp2, Kind.REGEXP_CONCATENATION, list, automata, automaton_provider);
 			a = BasicOperations.Concatenate(list);
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_INTERSECTION:
+		  case Kind.REGEXP_INTERSECTION:
 			a = Exp1.ToAutomaton(automata, automaton_provider).Intersection(Exp2.ToAutomaton(automata, automaton_provider));
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_OPTIONAL:
+		  case Kind.REGEXP_OPTIONAL:
 			a = Exp1.ToAutomaton(automata, automaton_provider).Optional();
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT:
+		  case Kind.REGEXP_REPEAT:
 			a = Exp1.ToAutomaton(automata, automaton_provider).Repeat();
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT_MIN:
+		  case Kind.REGEXP_REPEAT_MIN:
 			a = Exp1.ToAutomaton(automata, automaton_provider).Repeat(Min);
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT_MINMAX:
+		  case Kind.REGEXP_REPEAT_MINMAX:
 			a = Exp1.ToAutomaton(automata, automaton_provider).Repeat(Min, Max);
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_COMPLEMENT:
+		  case Kind.REGEXP_COMPLEMENT:
 			a = Exp1.ToAutomaton(automata, automaton_provider).Complement();
 			MinimizationOperations.Minimize(a);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CHAR:
+		  case Kind.REGEXP_CHAR:
 			a = BasicAutomata.MakeChar(c);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CHAR_RANGE:
+		  case Kind.REGEXP_CHAR_RANGE:
 			a = BasicAutomata.MakeCharRange(From, To);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_ANYCHAR:
+		  case Kind.REGEXP_ANYCHAR:
 			a = BasicAutomata.MakeAnyChar();
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_EMPTY:
+		  case Kind.REGEXP_EMPTY:
 			a = BasicAutomata.MakeEmpty();
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_STRING:
+		  case Kind.REGEXP_STRING:
 			a = BasicAutomata.MakeString(s);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_ANYSTRING:
+		  case Kind.REGEXP_ANYSTRING:
 			a = BasicAutomata.MakeAnyString();
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_AUTOMATON:
+		  case Kind.REGEXP_AUTOMATON:
 			Automaton aa = null;
 			if (automata != null)
 			{
@@ -582,9 +583,9 @@ namespace Lucene.Net.Util.Automaton
 				{
 			  aa = automaton_provider.GetAutomaton(s);
 				}
-			catch (IOException e)
+			catch (System.IO.IOException e)
 			{
-			  throw new System.ArgumentException(e);
+			  throw new System.ArgumentException(e.Message, e);
 			}
 			}
 			if (aa == null)
@@ -593,7 +594,7 @@ namespace Lucene.Net.Util.Automaton
 			}
 			a = aa.Clone(); // always clone here (ignore allow_mutate)
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_INTERVAL:
+		  case Kind.REGEXP_INTERVAL:
 			a = BasicAutomata.MakeInterval(Min, Max, Digits);
 			break;
 		}
@@ -602,7 +603,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  private void FindLeaves(RegExp exp, Kind kind, IList<Automaton> list, IDictionary<string, Automaton> automata, AutomatonProvider automaton_provider)
 	  {
-		if (exp.Kind == kind)
+		if (exp.kind == kind)
 		{
 		  FindLeaves(exp.Exp1, kind, list, automata, automaton_provider);
 		  FindLeaves(exp.Exp2, kind, list, automata, automaton_provider);
@@ -623,73 +624,73 @@ namespace Lucene.Net.Util.Automaton
 
 	  internal virtual StringBuilder ToStringBuilder(StringBuilder b)
 	  {
-		switch (Kind)
+		switch (kind)
 		{
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_UNION:
+		  case Kind.REGEXP_UNION:
 			b.Append("(");
 			Exp1.ToStringBuilder(b);
 			b.Append("|");
 			Exp2.ToStringBuilder(b);
 			b.Append(")");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CONCATENATION:
+		  case Kind.REGEXP_CONCATENATION:
 			Exp1.ToStringBuilder(b);
 			Exp2.ToStringBuilder(b);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_INTERSECTION:
+		  case Kind.REGEXP_INTERSECTION:
 			b.Append("(");
 			Exp1.ToStringBuilder(b);
 			b.Append("&");
 			Exp2.ToStringBuilder(b);
 			b.Append(")");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_OPTIONAL:
+		  case Kind.REGEXP_OPTIONAL:
 			b.Append("(");
 			Exp1.ToStringBuilder(b);
 			b.Append(")?");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT:
+		  case Kind.REGEXP_REPEAT:
 			b.Append("(");
 			Exp1.ToStringBuilder(b);
 			b.Append(")*");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT_MIN:
+		  case Kind.REGEXP_REPEAT_MIN:
 			b.Append("(");
 			Exp1.ToStringBuilder(b);
 			b.Append("){").Append(Min).Append(",}");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT_MINMAX:
+		  case Kind.REGEXP_REPEAT_MINMAX:
 			b.Append("(");
 			Exp1.ToStringBuilder(b);
 			b.Append("){").Append(Min).Append(",").Append(Max).Append("}");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_COMPLEMENT:
+		  case Kind.REGEXP_COMPLEMENT:
 			b.Append("~(");
 			Exp1.ToStringBuilder(b);
 			b.Append(")");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CHAR:
-			b.Append("\\").appendCodePoint(c);
+		  case Kind.REGEXP_CHAR:
+			b.Append("\\").Append(c);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CHAR_RANGE:
-			b.Append("[\\").appendCodePoint(From).append("-\\").appendCodePoint(To).append("]");
+		  case Kind.REGEXP_CHAR_RANGE:
+			b.Append("[\\").Append(From).Append("-\\").Append(To).Append("]");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_ANYCHAR:
+		  case Kind.REGEXP_ANYCHAR:
 			b.Append(".");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_EMPTY:
+		  case Kind.REGEXP_EMPTY:
 			b.Append("#");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_STRING:
+		  case Kind.REGEXP_STRING:
 			b.Append("\"").Append(s).Append("\"");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_ANYSTRING:
+		  case Kind.REGEXP_ANYSTRING:
 			b.Append("@");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_AUTOMATON:
+		  case Kind.REGEXP_AUTOMATON:
 			b.Append("<").Append(s).Append(">");
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_INTERVAL:
+		  case Kind.REGEXP_INTERVAL:
 			string s1 = Convert.ToString(Min);
 			string s2 = Convert.ToString(Max);
 			b.Append("<");
@@ -717,7 +718,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// <summary>
 	  /// Returns set of automaton identifiers that occur in this regular expression.
 	  /// </summary>
-	  public virtual Set<string> Identifiers
+	  public virtual ISet<string> Identifiers
 	  {
 		  get
 		  {
@@ -727,25 +728,25 @@ namespace Lucene.Net.Util.Automaton
 		  }
 	  }
 
-	  internal virtual void GetIdentifiers(Set<string> set)
+	  internal virtual void GetIdentifiers(ISet<string> set)
 	  {
-		switch (Kind)
+		switch (kind)
 		{
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_UNION:
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_CONCATENATION:
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_INTERSECTION:
+		  case Kind.REGEXP_UNION:
+		  case Kind.REGEXP_CONCATENATION:
+		  case Kind.REGEXP_INTERSECTION:
 			Exp1.GetIdentifiers(set);
 			Exp2.GetIdentifiers(set);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_OPTIONAL:
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT:
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT_MIN:
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_REPEAT_MINMAX:
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_COMPLEMENT:
+		  case Kind.REGEXP_OPTIONAL:
+		  case Kind.REGEXP_REPEAT:
+		  case Kind.REGEXP_REPEAT_MIN:
+		  case Kind.REGEXP_REPEAT_MINMAX:
+		  case Kind.REGEXP_COMPLEMENT:
 			Exp1.GetIdentifiers(set);
 			break;
-		  case Lucene.Net.Util.Automaton.RegExp.Kind.REGEXP_AUTOMATON:
-			set.add(s);
+		  case Kind.REGEXP_AUTOMATON:
+			set.Add(s);
 			break;
 		  default:
 	  break;
@@ -755,7 +756,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeUnion(RegExp exp1, RegExp exp2)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_UNION;
+        r.kind = Kind.REGEXP_UNION;
 		r.Exp1 = exp1;
 		r.Exp2 = exp2;
 		return r;
@@ -763,18 +764,18 @@ namespace Lucene.Net.Util.Automaton
 
 	  internal static RegExp MakeConcatenation(RegExp exp1, RegExp exp2)
 	  {
-		if ((exp1.Kind == Kind.REGEXP_CHAR || exp1.Kind == Kind.REGEXP_STRING) && (exp2.Kind == Kind.REGEXP_CHAR || exp2.Kind == Kind.REGEXP_STRING))
+        if ((exp1.kind == Kind.REGEXP_CHAR || exp1.kind == Kind.REGEXP_STRING) && (exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
 		{
 			return MakeString(exp1, exp2);
 		}
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_CONCATENATION;
-		if (exp1.Kind == Kind.REGEXP_CONCATENATION && (exp1.Exp2.Kind == Kind.REGEXP_CHAR || exp1.Exp2.Kind == Kind.REGEXP_STRING) && (exp2.Kind == Kind.REGEXP_CHAR || exp2.Kind == Kind.REGEXP_STRING))
+        r.kind = Kind.REGEXP_CONCATENATION;
+        if (exp1.kind == Kind.REGEXP_CONCATENATION && (exp1.Exp2.kind == Kind.REGEXP_CHAR || exp1.Exp2.kind == Kind.REGEXP_STRING) && (exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
 		{
 		  r.Exp1 = exp1.Exp1;
 		  r.Exp2 = MakeString(exp1.Exp2, exp2);
 		}
-		else if ((exp1.Kind == Kind.REGEXP_CHAR || exp1.Kind == Kind.REGEXP_STRING) && exp2.Kind == Kind.REGEXP_CONCATENATION && (exp2.Exp1.Kind == Kind.REGEXP_CHAR || exp2.Exp1.Kind == Kind.REGEXP_STRING))
+        else if ((exp1.kind == Kind.REGEXP_CHAR || exp1.kind == Kind.REGEXP_STRING) && exp2.kind == Kind.REGEXP_CONCATENATION && (exp2.Exp1.kind == Kind.REGEXP_CHAR || exp2.Exp1.kind == Kind.REGEXP_STRING))
 		{
 		  r.Exp1 = MakeString(exp1, exp2.Exp1);
 		  r.Exp2 = exp2.Exp2;
@@ -790,21 +791,21 @@ namespace Lucene.Net.Util.Automaton
 	  private static RegExp MakeString(RegExp exp1, RegExp exp2)
 	  {
 		StringBuilder b = new StringBuilder();
-		if (exp1.Kind == Kind.REGEXP_STRING)
+        if (exp1.kind == Kind.REGEXP_STRING)
 		{
 			b.Append(exp1.s);
 		}
 		else
 		{
-			b.appendCodePoint(exp1.c);
+			b.Append(exp1.c);
 		}
-		if (exp2.Kind == Kind.REGEXP_STRING)
+		if (exp2.kind == Kind.REGEXP_STRING)
 		{
 			b.Append(exp2.s);
 		}
 		else
 		{
-			b.appendCodePoint(exp2.c);
+            b.Append(exp2.c);
 		}
 		return MakeString(b.ToString());
 	  }
@@ -812,7 +813,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeIntersection(RegExp exp1, RegExp exp2)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_INTERSECTION;
+        r.kind = Kind.REGEXP_INTERSECTION;
 		r.Exp1 = exp1;
 		r.Exp2 = exp2;
 		return r;
@@ -821,7 +822,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeOptional(RegExp exp)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_OPTIONAL;
+        r.kind = Kind.REGEXP_OPTIONAL;
 		r.Exp1 = exp;
 		return r;
 	  }
@@ -829,7 +830,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeRepeat(RegExp exp)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_REPEAT;
+        r.kind = Kind.REGEXP_REPEAT;
 		r.Exp1 = exp;
 		return r;
 	  }
@@ -837,7 +838,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeRepeat(RegExp exp, int min)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_REPEAT_MIN;
+        r.kind = Kind.REGEXP_REPEAT_MIN;
 		r.Exp1 = exp;
 		r.Min = min;
 		return r;
@@ -846,7 +847,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeRepeat(RegExp exp, int min, int max)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_REPEAT_MINMAX;
+        r.kind = Kind.REGEXP_REPEAT_MINMAX;
 		r.Exp1 = exp;
 		r.Min = min;
 		r.Max = max;
@@ -856,7 +857,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeComplement(RegExp exp)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_COMPLEMENT;
+        r.kind = Kind.REGEXP_COMPLEMENT;
 		r.Exp1 = exp;
 		return r;
 	  }
@@ -864,7 +865,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeChar(int c)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_CHAR;
+        r.kind = Kind.REGEXP_CHAR;
 		r.c = c;
 		return r;
 	  }
@@ -876,7 +877,7 @@ namespace Lucene.Net.Util.Automaton
 		  throw new System.ArgumentException("invalid range: from (" + from + ") cannot be > to (" + to + ")");
 		}
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_CHAR_RANGE;
+        r.kind = Kind.REGEXP_CHAR_RANGE;
 		r.From = from;
 		r.To = to;
 		return r;
@@ -885,21 +886,21 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeAnyChar()
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_ANYCHAR;
+        r.kind = Kind.REGEXP_ANYCHAR;
 		return r;
 	  }
 
 	  internal static RegExp MakeEmpty()
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_EMPTY;
+        r.kind = Kind.REGEXP_EMPTY;
 		return r;
 	  }
 
 	  internal static RegExp MakeString(string s)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_STRING;
+        r.kind = Kind.REGEXP_STRING;
 		r.s = s;
 		return r;
 	  }
@@ -907,14 +908,14 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeAnyString()
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_ANYSTRING;
+        r.kind = Kind.REGEXP_ANYSTRING;
 		return r;
 	  }
 
 	  internal static RegExp MakeAutomaton(string s)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_AUTOMATON;
+        r.kind = Kind.REGEXP_AUTOMATON;
 		r.s = s;
 		return r;
 	  }
@@ -922,7 +923,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal static RegExp MakeInterval(int min, int max, int digits)
 	  {
 		RegExp r = new RegExp();
-		r.Kind = Kind.REGEXP_INTERVAL;
+        r.kind = Kind.REGEXP_INTERVAL;
 		r.Min = min;
 		r.Max = max;
 		r.Digits = digits;
@@ -931,7 +932,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  private bool Peek(string s)
 	  {
-		return More() && s.IndexOf(b.codePointAt(Pos)) != -1;
+		return More() && s.IndexOf(b[Pos]) != -1;
 	  }
 
 	  private bool Match(int c)
@@ -940,9 +941,9 @@ namespace Lucene.Net.Util.Automaton
 		{
 			return false;
 		}
-		if (b.codePointAt(Pos) == c)
+		if (b[Pos] == c)
 		{
-		  Pos += char.charCount(c);
+		  Pos += Character.CharCount(c);
 		  return true;
 		}
 		return false;
@@ -959,8 +960,8 @@ namespace Lucene.Net.Util.Automaton
 		{
 			throw new System.ArgumentException("unexpected end-of-string");
 		}
-		int ch = b.codePointAt(Pos);
-		Pos += char.charCount(ch);
+		int ch = b[Pos];
+		Pos += Character.CharCount(ch);
 		return ch;
 	  }
 
@@ -1194,7 +1195,7 @@ namespace Lucene.Net.Util.Automaton
 			{
 			  if (i == 0 || i == s.Length - 1 || i != s.LastIndexOf('-'))
 			  {
-				  throw new NumberFormatException();
+				  throw new System.FormatException();
 			  }
 			  string smin = s.Substring(0, i);
 			  string smax = s.Substring(i + 1, s.Length - (i + 1));
@@ -1217,7 +1218,7 @@ namespace Lucene.Net.Util.Automaton
 			  }
 			  return MakeInterval(imin, imax, digits);
 			}
-			catch (NumberFormatException e)
+            catch (System.FormatException e)
 			{
 			  throw new System.ArgumentException("interval syntax error at position " + (Pos - 1));
 			}

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -55,14 +56,15 @@ namespace Lucene.Net.Util
 
 	  private readonly IDictionary<K, V> Cache1;
 	  private readonly IDictionary<K, V> Cache2;
-	  private readonly AtomicInteger Countdown;
+      //private readonly AtomicInteger Countdown;
+      private int Countdown;
 	  private volatile bool Swapped;
 	  private readonly int MaxSize;
 
 	  public DoubleBarrelLRUCache(int maxSize)
 	  {
 		this.MaxSize = maxSize;
-		Countdown = new AtomicInteger(maxSize);
+        Interlocked.Exchange(ref Countdown, maxSize);
 		Cache1 = new ConcurrentDictionary<K,V>();
         Cache2 = new ConcurrentDictionary<K, V>();
 	  }
@@ -123,7 +125,7 @@ namespace Lucene.Net.Util
 		}
 		primary[key] = value;
 
-		if (Countdown.decrementAndGet() == 0)
+		if (Interlocked.Decrement(ref Countdown) == 0)
 		{
 		  // Time to swap
 
@@ -140,7 +142,7 @@ namespace Lucene.Net.Util
 		  Swapped = !Swapped;
 
 		  // Third, reset countdown
-		  Countdown.set(MaxSize);
+          Interlocked.Exchange(ref Countdown, MaxSize);
 		}
 	  }
 	}

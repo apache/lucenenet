@@ -327,8 +327,9 @@ namespace Lucene.Net.Util
 		/// **
 		/// </summary>
 
-		long startmask = -1L << startIndex;
-		long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+        //LUCENE TO-DO
+		long startmask = -1L << (int)startIndex;
+		long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
 		if (startWord == endWord)
 		{
@@ -363,8 +364,9 @@ namespace Lucene.Net.Util
 		int startWord = (int)(startIndex >> 6);
 		int endWord = (int)((endIndex - 1) >> 6);
 
-		long startmask = -1L << startIndex;
-		long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+        //LUCENE TO-DO
+        long startmask = -1L << (int)startIndex;
+		long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
 		if (startWord == endWord)
 		{
@@ -394,8 +396,9 @@ namespace Lucene.Net.Util
 		int startWord = (int)(startIndex >> 6);
 		int endWord = (int)((endIndex - 1) >> 6);
 
-		long startmask = -1L << startIndex;
-		long endmask = -(int)((uint)1L >> -endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
+        //LUCENE TO-DO
+        long startmask = -1L << (int)startIndex;
+		long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
 		// invert masks since we are clearing
 		startmask = ~startmask;

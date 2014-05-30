@@ -303,17 +303,11 @@ namespace Lucene.Net.Util
 
 		public virtual int Compare(BytesRef a, BytesRef b)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] aBytes = a.bytes;
 		  sbyte[] aBytes = a.Bytes;
 		  int aUpto = a.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bBytes = b.bytes;
 		  sbyte[] bBytes = b.Bytes;
 		  int bUpto = b.Offset;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int aStop = aUpto + Math.min(a.length, b.length);
 		  int aStop = aUpto + Math.Min(a.Length, b.Length);
 		  while (aUpto < aStop)
 		  {
@@ -358,17 +352,11 @@ namespace Lucene.Net.Util
 		public virtual int Compare(BytesRef a, BytesRef b)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] aBytes = a.bytes;
 		  sbyte[] aBytes = a.Bytes;
 		  int aUpto = a.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bBytes = b.bytes;
 		  sbyte[] bBytes = b.Bytes;
 		  int bUpto = b.Offset;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int aStop;
 		  int aStop;
 		  if (a.Length < b.Length)
 		  {

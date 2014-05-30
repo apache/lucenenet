@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Util.Packed
@@ -141,7 +142,7 @@ namespace Lucene.Net.Util.Packed
 	  internal override void Grow(int newBlockCount)
 	  {
 		base.Grow(newBlockCount);
-		this.MinValues = Arrays.copyOf(MinValues, newBlockCount);
+		this.MinValues = Arrays.CopyOf(MinValues, newBlockCount);
 	  }
 
 	  internal override long BaseRamBytesUsed()

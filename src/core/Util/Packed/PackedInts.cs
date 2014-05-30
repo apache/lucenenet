@@ -732,13 +732,13 @@ namespace Lucene.Net.Util.Packed
 		{
 		  LongsRef nextValues = Next(1);
 		  Debug.Assert(nextValues.Length > 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long result = nextValues.longs[nextValues.offset];
 		  long result = nextValues.Longs[nextValues.Offset];
 		  ++nextValues.Offset;
 		  --nextValues.Length;
 		  return result;
 		}
+
+        public abstract LongsRef Next(int count);
 
 		public override int BitsPerValue
 		{
@@ -820,7 +820,7 @@ namespace Lucene.Net.Util.Packed
 		  writer.WriteHeader();
 		  for (int i = 0; i < Size(); ++i)
 		  {
-			writer.Add(Set(i));
+			writer.Add(Get(i));
 		  }
 		  writer.Finish();
 		}
@@ -1043,39 +1043,43 @@ namespace Lucene.Net.Util.Packed
 	  /// @lucene.internal </seealso>
 	  public static Reader GetReaderNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue)
 	  {
-		CheckVersion(version);
-		switch (format)
-		{
-		  case Lucene.Net.Util.Packed.PackedInts.Format.PACKED_SINGLE_BLOCK:
-			return Packed64SingleBlock.Create(@in, valueCount, bitsPerValue);
-		  case Lucene.Net.Util.Packed.PackedInts.Format.PACKED:
-			switch (bitsPerValue)
-			{
-			  case 8:
-				return new Direct8(version, @in, valueCount);
-			  case 16:
-				return new Direct16(version, @in, valueCount);
-			  case 32:
-				return new Direct32(version, @in, valueCount);
-			  case 64:
-				return new Direct64(version, @in, valueCount);
-			  case 24:
-				if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
-				{
-				  return new Packed8ThreeBlocks(version, @in, valueCount);
-				}
-				break;
-			  case 48:
-				if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
-				{
-				  return new Packed16ThreeBlocks(version, @in, valueCount);
-				}
-				break;
-			}
-			return new Packed64(version, @in, valueCount, bitsPerValue);
-		  default:
-			throw new AssertionError("Unknown Writer format: " + format);
-		}
+		  CheckVersion(version);
+
+          if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+          {
+              return Packed64SingleBlock.Create(@in, valueCount, bitsPerValue);
+          }
+          else if (format == PackedInts.Format.PACKED)
+          {
+              switch (bitsPerValue)
+              {
+                  case 8:
+                      return new Direct8(version, @in, valueCount);
+                  case 16:
+                      return new Direct16(version, @in, valueCount);
+                  case 32:
+                      return new Direct32(version, @in, valueCount);
+                  case 64:
+                      return new Direct64(version, @in, valueCount);
+                  case 24:
+                      if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
+                      {
+                          return new Packed8ThreeBlocks(version, @in, valueCount);
+                      }
+                      break;
+                  case 48:
+                      if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
+                      {
+                          return new Packed16ThreeBlocks(version, @in, valueCount);
+                      }
+                      break;
+              }
+              return new Packed64(version, @in, valueCount, bitsPerValue);
+          }
+          else
+          {
+              throw new InvalidOperationException("Unknown Writer format: " + format);
+          }
 	  }
 
 	  /// <summary>
@@ -1184,35 +1188,35 @@ namespace Lucene.Net.Util.Packed
 	  /// @lucene.internal </returns>
 	  public static Reader GetDirectReaderNoHeader(IndexInput @in, Format format, int version, int valueCount, int bitsPerValue)
 	  {
-		CheckVersion(version);
-		switch (format)
-		{
-		  case Lucene.Net.Util.Packed.PackedInts.Format.PACKED:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long byteCount = format.byteCount(version, valueCount, bitsPerValue);
-			long byteCount = format.byteCount(version, valueCount, bitsPerValue);
-			if (byteCount != format.byteCount(VERSION_CURRENT, valueCount, bitsPerValue))
-			{
-			  Debug.Assert(version == VERSION_START);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long endPointer = in.getFilePointer() + byteCount;
-			  long endPointer = @in.FilePointer + byteCount;
-			  // Some consumers of direct readers assume that reading the last value
-			  // will make the underlying IndexInput go to the end of the packed
-			  // stream, but this is not true because packed ints storage used to be
-			  // long-aligned and is now byte-aligned, hence this additional
-			  // condition when reading the last value
-			  return new DirectPackedReaderAnonymousInnerClassHelper(bitsPerValue, valueCount, @in, endPointer);
-			}
-			else
-			{
-			  return new DirectPackedReader(bitsPerValue, valueCount, @in);
-			}
-		  case Lucene.Net.Util.Packed.PackedInts.Format.PACKED_SINGLE_BLOCK:
-			return new DirectPacked64SingleBlockReader(bitsPerValue, valueCount, @in);
-		  default:
-			throw new AssertionError("Unknwown format: " + format);
-		}
+		  CheckVersion(version);
+
+          if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+          {
+              return new DirectPacked64SingleBlockReader(bitsPerValue, valueCount, @in);
+          }
+          else if (format == PackedInts.Format.PACKED)
+          {
+              long byteCount = format.ByteCount(version, valueCount, bitsPerValue);
+              if (byteCount != format.ByteCount(VERSION_CURRENT, valueCount, bitsPerValue))
+              {
+                  Debug.Assert(version == VERSION_START);
+                  long endPointer = @in.FilePointer + byteCount;
+                  // Some consumers of direct readers assume that reading the last value
+                  // will make the underlying IndexInput go to the end of the packed
+                  // stream, but this is not true because packed ints storage used to be
+                  // long-aligned and is now byte-aligned, hence this additional
+                  // condition when reading the last value
+                  return new DirectPackedReaderAnonymousInnerClassHelper(bitsPerValue, valueCount, @in, endPointer);
+              }
+              else
+              {
+                  return new DirectPackedReader(bitsPerValue, valueCount, @in);
+              }
+          }
+          else
+          {
+              throw new InvalidOperationException("Unknwown format: " + format);
+          }
 	  }
 
 	  private class DirectPackedReaderAnonymousInnerClassHelper : DirectPackedReader
@@ -1328,39 +1332,43 @@ namespace Lucene.Net.Util.Packed
 	  /// </summary>
 	  public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInts.Format format)
 	  {
-		Debug.Assert(valueCount >= 0);
-		switch (format)
-		{
-		  case Lucene.Net.Util.Packed.PackedInts.Format.PACKED_SINGLE_BLOCK:
-			return Packed64SingleBlock.Create(valueCount, bitsPerValue);
-		  case Lucene.Net.Util.Packed.PackedInts.Format.PACKED:
-			switch (bitsPerValue)
-			{
-			  case 8:
-				return new Direct8(valueCount);
-			  case 16:
-				return new Direct16(valueCount);
-			  case 32:
-				return new Direct32(valueCount);
-			  case 64:
-				return new Direct64(valueCount);
-			  case 24:
-				if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
-				{
-				  return new Packed8ThreeBlocks(valueCount);
-				}
-				break;
-			  case 48:
-				if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
-				{
-				  return new Packed16ThreeBlocks(valueCount);
-				}
-				break;
-			}
-			return new Packed64(valueCount, bitsPerValue);
-		  default:
-			throw new AssertionError();
-		}
+		  Debug.Assert(valueCount >= 0);
+
+          if (format == PackedInts.Format.PACKED_SINGLE_BLOCK)
+          {
+              return Packed64SingleBlock.Create(valueCount, bitsPerValue);
+          }
+          else if (format == PackedInts.Format.PACKED)
+          {
+              switch (bitsPerValue)
+              {
+                  case 8:
+                      return new Direct8(valueCount);
+                  case 16:
+                      return new Direct16(valueCount);
+                  case 32:
+                      return new Direct32(valueCount);
+                  case 64:
+                      return new Direct64(valueCount);
+                  case 24:
+                      if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
+                      {
+                          return new Packed8ThreeBlocks(valueCount);
+                      }
+                      break;
+                  case 48:
+                      if (valueCount <= Packed16ThreeBlocks.MAX_SIZE)
+                      {
+                          return new Packed16ThreeBlocks(valueCount);
+                      }
+                      break;
+              }
+              return new Packed64(valueCount, bitsPerValue);
+          }
+          else
+          {
+              throw new InvalidOperationException();
+          }
 	  }
 
 	  /// <summary>

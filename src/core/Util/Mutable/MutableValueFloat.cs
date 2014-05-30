@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Lucene.Net.Support;
 namespace Lucene.Net.Util.Mutable
 {
 
@@ -27,28 +28,28 @@ namespace Lucene.Net.Util.Mutable
 
 	  public override object ToObject()
 	  {
-		return Exists_Renamed ? Value : null;
+		return Exists ? (object)Value : null;
 	  }
 
 	  public override void Copy(MutableValue source)
 	  {
 		MutableValueFloat s = (MutableValueFloat) source;
 		Value = s.Value;
-		Exists_Renamed = s.Exists_Renamed;
+		Exists = s.Exists;
 	  }
 
 	  public override MutableValue Duplicate()
 	  {
 		MutableValueFloat v = new MutableValueFloat();
 		v.Value = this.Value;
-		v.Exists_Renamed = this.Exists_Renamed;
+		v.Exists = this.Exists;
 		return v;
 	  }
 
 	  public override bool EqualsSameType(object other)
 	  {
 		MutableValueFloat b = (MutableValueFloat)other;
-		return Value == b.Value && Exists_Renamed == b.Exists_Renamed;
+		return Value == b.Value && Exists == b.Exists;
 	  }
 
 	  public override int CompareSameType(object other)
@@ -59,16 +60,16 @@ namespace Lucene.Net.Util.Mutable
 		{
 			return c;
 		}
-		if (Exists_Renamed == b.Exists_Renamed)
+		if (Exists == b.Exists)
 		{
 			return 0;
 		}
-		return Exists_Renamed ? 1 : -1;
+		return Exists ? 1 : -1;
 	  }
 
 	  public override int HashCode()
 	  {
-		return float.floatToIntBits(Value);
+		return Number.FloatToIntBits(Value);
 	  }
 	}
 

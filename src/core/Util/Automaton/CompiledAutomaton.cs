@@ -131,11 +131,7 @@ namespace Lucene.Net.Util.Automaton
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String commonPrefix;
 			string commonPrefix;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String singleton;
 			string singleton;
 			if (automaton.Singleton == null)
 			{
@@ -192,7 +188,7 @@ namespace Lucene.Net.Util.Automaton
 		  this.Finite = finite;
 		}
 		Automaton utf8 = (new UTF32ToUTF8()).Convert(automaton);
-		if (this.Finite)
+		if (this.Finite == true)
 		{
 		  CommonSuffixRef = null;
 		}
@@ -331,7 +327,7 @@ namespace Lucene.Net.Util.Automaton
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.List<Integer> stack = new java.util.ArrayList<>();
-		IList<int?> stack = new List<int?>();
+		IList<int> stack = new List<int>();
 
 		int idx = 0;
 		while (true)
@@ -392,7 +388,8 @@ namespace Lucene.Net.Util.Automaton
 				}
 				else
 				{
-				  state = stack.Remove(stack.Count - 1);
+                  state = stack[stack.Count - 1];
+				  stack.RemoveAt(stack.Count - 1);
 				  idx--;
 				  //if (DEBUG) System.out.println("  pop ord=" + (idx+1) + " label=" + (char) label + " first trans.min=" + (char) transitions[0].min);
 				  label = input.Bytes[input.Offset + idx] & 0xff;
@@ -455,13 +452,13 @@ namespace Lucene.Net.Util.Automaton
 		return b.Append("}\n").ToString();
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;
 		result = prime * result + ((RunAutomaton == null) ? 0 : RunAutomaton.HashCode());
-		result = prime * result + ((Term == null) ? 0 : Term.HashCode());
-		result = prime * result + ((Type == null) ? 0 : Type.HashCode());
+		result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
+		result = prime * result + ((Type == null) ? 0 : Type.GetHashCode());
 		return result;
 	  }
 

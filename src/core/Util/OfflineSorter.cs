@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Store;
 
 namespace Lucene.Net.Util
 {
@@ -22,7 +24,7 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-
+    /* LUCENE TO-DO Commenting out until use is proven
 	/// <summary>
 	/// On-disk sorting of byte arrays. Each byte array (entry) is a composed of the following
 	/// fields:
@@ -188,18 +190,18 @@ namespace Lucene.Net.Util
 
 		public override string ToString()
 		{
-		  return string.format(Locale.ROOT, "time=%.2f sec. total (%.2f reading, %.2f sorting, %.2f merging), lines=%d, temp files=%d, merges=%d, soft ram limit=%.2f MB", TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, Lines, TempMergeFiles, MergeRounds, (double) BufferSize / MB);
+		  return string.Format(Locale.ROOT, "time=%.2f sec. total (%.2f reading, %.2f sorting, %.2f merging), lines=%d, temp files=%d, merges=%d, soft ram limit=%.2f MB", TotalTime / 1000.0d, ReadTime / 1000.0d, SortTime / 1000.0d, MergeTime / 1000.0d, Lines, TempMergeFiles, MergeRounds, (double) BufferSize / MB);
 		}
 	  }
 
 	  private readonly BufferSize RamBufferSize;
-	  private readonly File TempDirectory;
+	  private readonly DirectoryInfo TempDirectory;
 
 	  private readonly Counter BufferBytesUsed = Counter.NewCounter();
 	  private BytesRefArray Buffer;
-	  private SortInfo SortInfo;
+	  private SortInfo sortInfo;
 	  private int MaxTempFiles;
-	  private readonly IComparer<BytesRef> Comparator_Renamed;
+	  private readonly IComparer<BytesRef> comparator;
 
 	  /// <summary>
 	  /// Default comparator: sorts in binary (codepoint) order </summary>
@@ -210,7 +212,8 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  /// <seealso cref= #defaultTempDir() </seealso>
 	  /// <seealso cref= BufferSize#automatic() </seealso>
-	  public OfflineSorter() : this(DEFAULT_COMPARATOR, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
+	  public OfflineSorter() 
+          : this(DEFAULT_COMPARATOR, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
 	  {
 		  if (!InstanceFieldsInitialized)
 		  {
@@ -236,7 +239,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// All-details constructor.
 	  /// </summary>
-	  public OfflineSorter(IComparer<BytesRef> comparator, BufferSize ramBufferSize, File tempDirectory, int maxTempfiles)
+	  public OfflineSorter(IComparer<BytesRef> comparator, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
 	  {
 		  if (!InstanceFieldsInitialized)
 		  {
@@ -256,21 +259,21 @@ namespace Lucene.Net.Util
 		this.RamBufferSize = ramBufferSize;
 		this.TempDirectory = tempDirectory;
 		this.MaxTempFiles = maxTempfiles;
-		this.Comparator_Renamed = comparator;
+		this.comparator = comparator;
 	  }
 
 	  /// <summary>
 	  /// Sort input to output, explicit hint for the buffer size. The amount of allocated
 	  /// memory may deviate from the hint (may be smaller or larger).  
 	  /// </summary>
-	  public SortInfo Sort(File input, File output)
+	  public SortInfo Sort(FileInfo input, FileInfo output)
 	  {
-		SortInfo = new SortInfo(this);
-		SortInfo.TotalTime = System.currentTimeMillis();
+		sortInfo = new SortInfo(this);
+		sortInfo.TotalTime = DateTime.Now.Millisecond;
 
-		output.delete();
+		output.Delete();
 
-		List<File> merges = new List<File>();
+		List<FileInfo> merges = new List<FileInfo>();
 		bool success2 = false;
 		try
 		{
@@ -282,27 +285,27 @@ namespace Lucene.Net.Util
 			while ((lines = ReadPartition(@is)) > 0)
 			{
 			  merges.Add(SortPartition(lines));
-			  SortInfo.TempMergeFiles++;
-			  SortInfo.Lines += lines;
+			  sortInfo.TempMergeFiles++;
+			  sortInfo.Lines += lines;
 
 			  // Handle intermediate merges.
 			  if (merges.Count == MaxTempFiles)
 			  {
-				File intermediate = File.createTempFile("sort", "intermediate", TempDirectory);
+				FileInfo intermediate = FileInfo.createTempFile("sort", "intermediate", TempDirectory);
 				try
 				{
 				  MergePartitions(merges, intermediate);
 				}
 				finally
 				{
-				  foreach (File file in merges)
+				  foreach (FileInfo file in merges)
 				  {
-					file.delete();
+					file.Delete();
 				  }
 				  merges.Clear();
 				  merges.Add(intermediate);
 				}
-				SortInfo.TempMergeFiles++;
+				sortInfo.TempMergeFiles++;
 			  }
 			}
 			success = true;
@@ -322,10 +325,10 @@ namespace Lucene.Net.Util
 		  // One partition, try to rename or copy if unsuccessful.
 		  if (merges.Count == 1)
 		  {
-			File single = merges[0];
+			FileInfo single = merges[0];
 			// If simple rename doesn't work this means the output is
 			// on a different volume or something. Copy the input then.
-			if (!single.renameTo(output))
+			if (!single.RenameTo(output))
 			{
 			  Copy(single, output);
 			}
@@ -339,25 +342,25 @@ namespace Lucene.Net.Util
 		}
 		finally
 		{
-		  foreach (File file in merges)
+		  foreach (FileInfo file in merges)
 		  {
-			file.delete();
+			file.Delete();
 		  }
 		  if (!success2)
 		  {
-			output.delete();
+			output.Delete();
 		  }
 		}
 
-		SortInfo.TotalTime = (System.currentTimeMillis() - SortInfo.TotalTime);
-		return SortInfo;
+		sortInfo.TotalTime = (DateTime.Now.Millisecond - sortInfo.TotalTime);
+		return sortInfo;
 	  }
 
 	  /// <summary>
 	  /// Returns the default temporary directory. By default, java.io.tmpdir. If not accessible
 	  /// or not available, an IOException is thrown
 	  /// </summary>
-	  public static File DefaultTempDir()
+	  public static DirectoryInfo DefaultTempDir()
 	  {
 		string tempDirPath = System.getProperty("java.io.tmpdir");
 		if (tempDirPath == null)
@@ -365,8 +368,8 @@ namespace Lucene.Net.Util
 		  throw new System.IO.IOException("Java has no temporary folder property (java.io.tmpdir)?");
 		}
 
-		File tempDirectory = new File(tempDirPath);
-		if (!tempDirectory.exists() || !tempDirectory.canWrite())
+        DirectoryInfo tempDirectory = new DirectoryInfo(tempDirPath);
+		if (!tempDirectory.Exists || !tempDirectory.CanWrite())
 		{
 		  throw new System.IO.IOException("Java's temporary folder not present or writeable?: " + tempDirectory.AbsolutePath);
 		}
@@ -376,7 +379,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Copies one file to another.
 	  /// </summary>
-	  private static void Copy(File file, File output)
+	  private static void Copy(FileInfo file, FileInfo output)
 	  {
 		// 64kb copy buffer (empirical pick).
 		sbyte[] buffer = new sbyte [16 * 1024];
@@ -400,21 +403,19 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Sort a single partition in-memory. </summary>
-	  protected internal File SortPartition(int len)
+	  protected internal FileInfo SortPartition(int len)
 	  {
 		BytesRefArray data = this.Buffer;
-		File tempFile = File.createTempFile("sort", "partition", TempDirectory);
+        FileInfo tempFile = FileInfo.createTempFile("sort", "partition", TempDirectory);
 
-		long start = System.currentTimeMillis();
-		SortInfo.SortTime += (System.currentTimeMillis() - start);
+		long start = DateTime.Now.Millisecond;
+        sortInfo.SortTime += (DateTime.Now.Millisecond - start);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ByteSequencesWriter out = new ByteSequencesWriter(tempFile);
 		ByteSequencesWriter @out = new ByteSequencesWriter(tempFile);
 		BytesRef spare;
 		try
 		{
-		  BytesRefIterator iter = Buffer.Iterator(Comparator_Renamed);
+		  BytesRefIterator iter = Buffer.Iterator(comparator);
 		  while ((spare = iter.Next()) != null)
 		  {
 			Debug.Assert(spare.Length <= short.MaxValue);
@@ -435,9 +436,9 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Merge a list of sorted temporary files (partitions) into an output file </summary>
-	  internal void MergePartitions(IList<File> merges, File outputFile)
+	  internal void MergePartitions(IList<FileInfo> merges, FileInfo outputFile)
 	  {
-		long start = System.currentTimeMillis();
+		long start = DateTime.Now.Millisecond;
 
 		ByteSequencesWriter @out = new ByteSequencesWriter(outputFile);
 
@@ -497,14 +498,14 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly OfflineSorter OuterInstance;
 
-		  public PriorityQueueAnonymousInnerClassHelper(OfflineSorter outerInstance, UnknownType size) : base(size)
+		  public PriorityQueueAnonymousInnerClassHelper(OfflineSorter outerInstance, int size) : base(size)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
 		  protected internal override bool LessThan(FileAndTop a, FileAndTop b)
 		  {
-			return OuterInstance.Comparator_Renamed.Compare(a.Current, b.Current) < 0;
+			return OuterInstance.comparator.Compare(a.Current, b.Current) < 0;
 		  }
 	  }
 
@@ -512,7 +513,7 @@ namespace Lucene.Net.Util
 	  /// Read in a single partition of data </summary>
 	  internal int ReadPartition(ByteSequencesReader reader)
 	  {
-		long start = System.currentTimeMillis();
+		long start = DateTime.Now.Millisecond;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BytesRef scratch = new BytesRef();
 		BytesRef scratch = new BytesRef();
@@ -527,7 +528,7 @@ namespace Lucene.Net.Util
 			break;
 		  }
 		}
-		SortInfo.ReadTime += (System.currentTimeMillis() - start);
+        sortInfo.ReadTime += (DateTime.Now.Millisecond - start);
 		return Buffer.Size();
 	  }
 
@@ -553,7 +554,8 @@ namespace Lucene.Net.Util
 
 		/// <summary>
 		/// Constructs a ByteSequencesWriter to the provided File </summary>
-		public ByteSequencesWriter(File file) : this(new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
+		public ByteSequencesWriter(FileInfo file) 
+            : this(new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file))))
 		{
 		}
 
@@ -603,7 +605,7 @@ namespace Lucene.Net.Util
 		{
 		  if (Os is IDisposable)
 		  {
-			((IDisposable) Os).close();
+			((IDisposable) Os).Dispose();
 		  }
 		}
 	  }
@@ -618,7 +620,8 @@ namespace Lucene.Net.Util
 
 		/// <summary>
 		/// Constructs a ByteSequencesReader from the provided File </summary>
-		public ByteSequencesReader(File file) : this(new DataInputStream(new BufferedInputStream(new FileInputStream(file))))
+		public ByteSequencesReader(FileInfo file) 
+            : this(new DataInputStream(new BufferedInputStream(new FileInputStream(file))))
 		{
 		}
 
@@ -643,7 +646,7 @@ namespace Lucene.Net.Util
 		  {
 			length = @is.readShort();
 		  }
-		  catch (EOFException e)
+		  catch (EOFException)
 		  {
 			return false;
 		  }
@@ -688,7 +691,7 @@ namespace Lucene.Net.Util
 		{
 		  if (@is is IDisposable)
 		  {
-			((IDisposable) @is).close();
+			((IDisposable) @is).Dispose();
 		  }
 		}
 	  }
@@ -699,9 +702,9 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return Comparator_Renamed;
+			return comparator;
 		  }
 	  }
-	}
+	}*/
 
 }

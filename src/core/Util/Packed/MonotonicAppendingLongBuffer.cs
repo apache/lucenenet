@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -129,8 +130,8 @@ namespace Lucene.Net.Util.Packed
 	  internal override void Grow(int newBlockCount)
 	  {
 		base.Grow(newBlockCount);
-		this.Averages = Arrays.copyOf(Averages, newBlockCount);
-		this.MinValues = Arrays.copyOf(MinValues, newBlockCount);
+		this.Averages = Arrays.CopyOf(Averages, newBlockCount);
+		this.MinValues = Arrays.CopyOf(MinValues, newBlockCount);
 	  }
 
 	  internal override void PackPendingValues()

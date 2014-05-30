@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 namespace Lucene.Net.Util.Automaton
 {
 
@@ -24,7 +25,7 @@ namespace Lucene.Net.Util.Automaton
 	public class CharacterRunAutomaton : RunAutomaton
 	{
 
-	  public CharacterRunAutomaton(Automaton a) : base(a, char.MAX_CODE_POINT, false)
+	  public CharacterRunAutomaton(Automaton a) : base(a, Character.MAX_CODE_POINT, false)
 	  {
 	  }
 
@@ -35,9 +36,9 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		int p = Initial;
 		int l = s.Length;
-		for (int i = 0, cp = 0; i < l; i += char.charCount(cp))
+        for (int i = 0, cp = 0; i < l; i += Character.CharCount(cp))
 		{
-		  p = Step(p, cp = s.codePointAt(i));
+		  p = Step(p, cp = s[i]);
 		  if (p == -1)
 		  {
 			  return false;
@@ -53,9 +54,9 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		int p = Initial;
 		int l = offset + length;
-		for (int i = offset, cp = 0; i < l; i += char.charCount(cp))
+        for (int i = offset, cp = 0; i < l; i += Character.CharCount(cp))
 		{
-		  p = Step(p, cp = char.codePointAt(s, i, l));
+		  p = Step(p, cp = s[i] /*char.codePointAt(s, i, l)*/);
 		  if (p == -1)
 		  {
 			  return false;

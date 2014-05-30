@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 	  {
 		const int prime = 31;
 		int result = base.HashCode();
-		result = prime * result + Compiled.HashCode();
+		result = prime * result + Compiled.GetHashCode();
 		result = prime * result + ((Term == null) ? 0 : Term.HashCode());
 		return result;
 	  }

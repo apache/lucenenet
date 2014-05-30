@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Fst
 	/// @lucene.experimental
 	/// </summary>
 
-	public class PairOutputs<A, B> : Outputs<PairOutputs.Pair<A, B>>
+    public class PairOutputs<A, B> : Outputs<PairOutputs<A, B>.Pair<A, B>>
 	{
 
 	  private readonly Pair<A, B> NO_OUTPUT;
@@ -58,9 +58,9 @@ namespace Lucene.Net.Util.Fst
 		  {
 			return true;
 		  }
-		  else if (other is Pair)
+          else if (other is Pair<A, B>)
 		  {
-			Pair pair = (Pair) other;
+			Pair<A, B> pair = (Pair<A, B>) other;
 			return Output1.Equals(pair.Output1) && Output2.Equals(pair.Output2);
 		  }
 		  else
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Fst
 
 		public override int HashCode()
 		{
-		  return Output1.HashCode() + Output2.HashCode();
+		  return Output1.GetHashCode() + Output2.GetHashCode();
 		}
 	  }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		this.Outputs1 = outputs1;
 		this.Outputs2 = outputs2;
-		NO_OUTPUT = new Pair<>(outputs1.NoOutput, outputs2.NoOutput);
+        NO_OUTPUT = new Pair<A, B>(outputs1.NoOutput, outputs2.NoOutput);
 	  }
 
 	  /// <summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util.Fst
 		  b = Outputs2.NoOutput;
 		}
 
-		if (a == Outputs1.NoOutput && b == Outputs2.NoOutput)
+        if ((object)a == (object)Outputs1.NoOutput && (object)b == (object)Outputs2.NoOutput)
 		{
 		  return NO_OUTPUT;
 		}
@@ -119,12 +119,12 @@ namespace Lucene.Net.Util.Fst
 //ORIGINAL LINE: final boolean noOutput2 = pair.output2.equals(outputs2.getNoOutput());
 		bool noOutput2 = pair.Output2.Equals(Outputs2.NoOutput);
 
-		if (noOutput1 && pair.Output1 != Outputs1.NoOutput)
+        if (noOutput1 && (object)pair.Output1 != (object)Outputs1.NoOutput)
 		{
 		  return false;
 		}
 
-		if (noOutput2 && pair.Output2 != Outputs2.NoOutput)
+        if (noOutput2 && (object)pair.Output2 != (object)Outputs2.NoOutput)
 		{
 		  return false;
 		}

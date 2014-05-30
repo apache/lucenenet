@@ -6,24 +6,25 @@ using System.Diagnostics;
 namespace Lucene.Net.Util.Packed
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using DataInput = Lucene.Net.Store.DataInput;
+    using DataInput = Lucene.Net.Store.DataInput;
 
 
 	/// <summary>
@@ -54,7 +55,7 @@ namespace Lucene.Net.Util.Packed
 		// because packed ints have not always been byte-aligned
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int remaining = (int)(PackedInts.Format.PACKED.byteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
-		int remaining = (int)(PackedInts.Format.PACKED.byteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
+		int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
 		for (int i = 0; i < remaining; ++i)
 		{
 		   @in.ReadByte();
@@ -72,12 +73,12 @@ namespace Lucene.Net.Util.Packed
 	  public override int Get(int index, long[] arr, int off, int len)
 	  {
 		Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		Debug.Assert(index >= 0 && index < ValueCount);
+		Debug.Assert(index >= 0 && index < valueCount);
 		Debug.Assert(off + len <= arr.Length);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int gets = Math.min(valueCount - index, len);
-		int gets = Math.Min(ValueCount - index, len);
+		int gets = Math.Min(valueCount - index, len);
 		for (int i = index * 3, end = (index + gets) * 3; i < end; i += 3)
 		{
 		  arr[off++] = (Blocks[i] & 0xFFFFL) << 32 | (Blocks[i + 1] & 0xFFFFL) << 16 | (Blocks[i + 2] & 0xFFFFL);
@@ -98,12 +99,12 @@ namespace Lucene.Net.Util.Packed
 	  public override int Set(int index, long[] arr, int off, int len)
 	  {
 		Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		Debug.Assert(index >= 0 && index < ValueCount);
+		Debug.Assert(index >= 0 && index < valueCount);
 		Debug.Assert(off + len <= arr.Length);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int sets = Math.min(valueCount - index, len);
-		int sets = Math.Min(ValueCount - index, len);
+		int sets = Math.Min(valueCount - index, len);
 		for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -137,7 +138,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public override void Clear()
 	  {
-		Arrays.fill(Blocks, (short) 0);
+		Arrays.Fill(Blocks, (short) 0);
 	  }
 
 	  public override long RamBytesUsed()
@@ -147,7 +148,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public override string ToString()
 	  {
-		return this.GetType().SimpleName + "(bitsPerValue=" + BitsPerValue_Renamed + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
+          return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
 	  }
 	}
 

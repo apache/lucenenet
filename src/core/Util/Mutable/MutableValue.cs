@@ -26,7 +26,18 @@ namespace Lucene.Net.Util.Mutable
 	/// </summary>
 	public abstract class MutableValue : IComparable<MutableValue>
 	{
-	  public bool Exists_Renamed = true;
+        private bool exists = true;
+        public bool Exists
+        {
+            get
+            {
+                return exists;
+            }
+            set
+            {
+                exists = value;
+            }
+        }
 
 	  public abstract void Copy(MutableValue source);
 	  public abstract MutableValue Duplicate();
@@ -34,10 +45,10 @@ namespace Lucene.Net.Util.Mutable
 	  public abstract int CompareSameType(object other);
 	  public abstract object ToObject();
 
-	  public virtual bool Exists()
+	  /*public virtual bool Exists()
 	  {
-		return Exists_Renamed;
-	  }
+		return exists;
+	  }*/
 
 	  public virtual int CompareTo(MutableValue other)
 	  {
@@ -45,10 +56,11 @@ namespace Lucene.Net.Util.Mutable
 		Type c2 = other.GetType();
 		if (c1 != c2)
 		{
-		  int c = c1.HashCode() - c2.HashCode();
+		  int c = c1.GetHashCode() - c2.GetHashCode();
 		  if (c == 0)
 		  {
-			c = c1.CanonicalName.compareTo(c2.CanonicalName);
+			//c = c1.CanonicalName.CompareTo(c2.CanonicalName);
+            c = String.Compare(c1.Name, c2.Name, StringComparison.Ordinal);
 		  }
 		  return c;
 		}
@@ -64,7 +76,7 @@ namespace Lucene.Net.Util.Mutable
 
 	  public override string ToString()
 	  {
-		return Exists() ? ToObject().ToString() : "(null)";
+		return Exists ? ToObject().ToString() : "(null)";
 	  }
 	}
 

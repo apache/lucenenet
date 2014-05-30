@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Packed
 		FillPages();
 	  }
 
-	  internal PagedMutable(long size, int pageSize, PackedInts.FormatAndBits formatAndBits) : this(size, pageSize, formatAndBits.BitsPerValue, formatAndBits.Format)
+	  internal PagedMutable(long size, int pageSize, PackedInts.FormatAndBits formatAndBits) : this(size, pageSize, formatAndBits.bitsPerValue, formatAndBits.format)
 	  {
 	  }
 
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Packed
 
 	  protected internal override long BaseRamBytesUsed()
 	  {
-		return base.baseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+		return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 	  }
 
 	}

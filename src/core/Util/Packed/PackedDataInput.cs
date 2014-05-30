@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
 	  /// </summary>
 	  public long ReadLong(int bitsPerValue)
 	  {
-		Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue);
+		Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue.ToString());
 		long r = 0;
 		while (bitsPerValue > 0)
 		{

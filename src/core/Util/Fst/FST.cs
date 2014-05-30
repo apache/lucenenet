@@ -34,6 +34,7 @@ namespace Lucene.Net.Util.Fst
 	using Lucene.Net.Util;
 	using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using System.IO;
 	//import java.io.Writer;
 	//import java.io.OutputStreamWriter;
 
@@ -61,7 +62,7 @@ namespace Lucene.Net.Util.Fst
 	/// 
 	/// @lucene.experimental
 	/// </summary>
-	public sealed class FST<T>
+	public sealed class FST<T> : FST
 	{
 	  /// <summary>
 	  /// Specifies allowed range of each int input label for
@@ -224,7 +225,7 @@ namespace Lucene.Net.Util.Fst
 
 		internal bool Flag(int flag)
 		{
-		  return FST.Flag(Flags, flag);
+		  return FST<T>.Flag(Flags, flag);
 		}
 
 		public bool Last
@@ -281,7 +282,7 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  private static bool Flag(int flags, int bit)
+	  internal static bool Flag(int flags, int bit)
 	  {
 		return (flags & bit) != 0;
 	  }
@@ -319,7 +320,7 @@ namespace Lucene.Net.Util.Fst
 		  InCounts = null;
 		}
 
-		emptyOutput = null;
+		emptyOutput = default(T);
 		Packed = false;
 		NodeRefToAddress = null;
 	  }
@@ -378,7 +379,7 @@ namespace Lucene.Net.Util.Fst
 		}
 		else
 		{
-		  emptyOutput = null;
+		  emptyOutput = default(T);
 		}
 		sbyte t = @in.ReadByte();
 		switch (t)
@@ -501,7 +502,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		Arc<T> arc = new Arc<T>();
 		GetFirstArc(arc);
-		BytesReader @in = BytesReader;
+		BytesReader @in = GetBytesReader;
 		if (TargetHasArcs(arc))
 		{
 		  ReadFirstRealTargetArc(arc.Target, arc, @in);
@@ -673,24 +674,24 @@ namespace Lucene.Net.Util.Fst
 	  /// <summary>
 	  /// Writes an automaton to a file. 
 	  /// </summary>
-	  public void Save(File file)
+	  public void Save(FileInfo file)
 	  {
 		bool success = false;
-		OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+		var bs = new BufferedStream(file.OpenWrite());
 		try
 		{
-		  Save(new OutputStreamDataOutput(os));
+		  Save(new OutputStreamDataOutput(bs));
 		  success = true;
 		}
 		finally
 		{
 		  if (success)
 		  {
-			IOUtils.Close(os);
+			IOUtils.Close(bs);
 		  }
 		  else
 		  {
-			IOUtils.CloseWhileHandlingException(os);
+			IOUtils.CloseWhileHandlingException(bs);
 		  }
 		}
 	  }
@@ -698,13 +699,13 @@ namespace Lucene.Net.Util.Fst
 	  /// <summary>
 	  /// Reads an automaton from a file. 
 	  /// </summary>
-	  public static FST<T> read<T>(File file, Outputs<T> outputs)
+	  public static FST<T> read<T>(FileInfo file, Outputs<T> outputs)
 	  {
-		InputStream @is = new BufferedInputStream(new FileInputStream(file));
+		var bs = new BufferedStream(file.OpenRead());
 		bool success = false;
 		try
 		{
-		  FST<T> fst = new FST<T>(new InputStreamDataInput(@is), outputs);
+		  FST<T> fst = new FST<T>(new InputStreamDataInput(bs), outputs);
 		  success = true;
 		  return fst;
 		}
@@ -712,11 +713,11 @@ namespace Lucene.Net.Util.Fst
 		{
 		  if (success)
 		  {
-			IOUtils.Close(@is);
+			IOUtils.Close(bs);
 		  }
 		  else
 		  {
-			IOUtils.CloseWhileHandlingException(@is);
+			IOUtils.CloseWhileHandlingException(bs);
 		  }
 		}
 	  }
@@ -764,14 +765,14 @@ namespace Lucene.Net.Util.Fst
 	  /// returns true if the node at this address has any
 	  ///  outgoing arcs 
 	  /// </summary>
-	  public static bool targetHasArcs<T>(Arc<T> arc)
+	  public static bool TargetHasArcs(Arc<T> arc)
 	  {
 		return arc.Target > 0;
 	  }
 
 	  // serializes new node by appending its bytes to the end
 	  // of the current byte[]
-	  internal long AddNode(Builder.UnCompiledNode<T> nodeIn)
+      internal long AddNode(Builder<T>.UnCompiledNode<T> nodeIn)
 	  {
 
 		//System.out.println("FST.addNode pos=" + bytes.getPosition() + " numArcs=" + nodeIn.numArcs);
@@ -808,8 +809,8 @@ namespace Lucene.Net.Util.Fst
 		int maxBytesPerArc = 0;
 		for (int arcIdx = 0;arcIdx < nodeIn.NumArcs;arcIdx++)
 		{
-		  Builder.Arc<T> arc = nodeIn.Arcs[arcIdx];
-		  Builder.CompiledNode target = (Builder.CompiledNode) arc.Target;
+		  Builder<T>.Arc<T> arc = nodeIn.Arcs[arcIdx];
+		  Builder<T>.CompiledNode target = (Builder<T>.CompiledNode) arc.Target;
 		  int flags = 0;
 		  //System.out.println("  arc " + arcIdx + " label=" + arc.label + " -> target=" + target.node);
 
@@ -829,14 +830,14 @@ namespace Lucene.Net.Util.Fst
 		  if (arc.IsFinal)
 		  {
 			flags += BIT_FINAL_ARC;
-			if (arc.NextFinalOutput != NO_OUTPUT)
+            if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
 			{
 			  flags += BIT_ARC_HAS_FINAL_OUTPUT;
 			}
 		  }
 		  else
 		  {
-			Debug.Assert(arc.NextFinalOutput == NO_OUTPUT);
+              Debug.Assert((object)arc.NextFinalOutput == (object)NO_OUTPUT);
 		  }
 
 		  bool targetHasArcs = target.Node > 0;
@@ -850,7 +851,7 @@ namespace Lucene.Net.Util.Fst
 			InCounts.Set((int) target.Node, InCounts.Get((int) target.Node) + 1);
 		  }
 
-		  if (arc.Output != NO_OUTPUT)
+          if ((object)arc.Output != (object)NO_OUTPUT)
 		  {
 			flags += BIT_ARC_HAS_OUTPUT;
 		  }
@@ -860,14 +861,14 @@ namespace Lucene.Net.Util.Fst
 
 		  // System.out.println("  write arc: label=" + (char) arc.label + " flags=" + flags + " target=" + target.node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.output));
 
-		  if (arc.Output != NO_OUTPUT)
+          if ((object)arc.Output != (object)NO_OUTPUT)
 		  {
 			Outputs.Write(arc.Output, Bytes);
 			//System.out.println("    write output");
 			arcWithOutputCount++;
 		  }
 
-		  if (arc.NextFinalOutput != NO_OUTPUT)
+          if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
 		  {
 			//System.out.println("    write final output");
 			Outputs.WriteFinalOutput(arc.NextFinalOutput, Bytes);
@@ -1002,16 +1003,16 @@ namespace Lucene.Net.Util.Fst
 
 		if (emptyOutput != null)
 		{
-		  arc.Flags = BIT_FINAL_ARC | BIT_LAST_ARC;
+		  arc.Flags = (sbyte)(BIT_FINAL_ARC | BIT_LAST_ARC);
 		  arc.NextFinalOutput = emptyOutput;
-		  if (emptyOutput != NO_OUTPUT)
+          if ((object)emptyOutput != (object)NO_OUTPUT)
 		  {
 			arc.Flags |= (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
 		  }
 		}
 		else
 		{
-		  arc.Flags = BIT_LAST_ARC;
+		  arc.Flags = (sbyte)BIT_LAST_ARC;
 		  arc.NextFinalOutput = NO_OUTPUT;
 		}
 		arc.Output = NO_OUTPUT;
@@ -1029,7 +1030,7 @@ namespace Lucene.Net.Util.Fst
 	  /// </summary>
 	  /// <returns> Returns the second argument
 	  /// (<code>arc</code>).  </returns>
-	  public Arc<T> ReadLastTargetArc(Arc<T> follow, Arc<T> arc, BytesReader @in)
+	  public Arc<T> ReadLastTargetArc(Arc<T> follow, Arc<T> arc, FST.BytesReader @in)
 	  {
 		//System.out.println("readLast");
 		if (!TargetHasArcs(follow))
@@ -1039,7 +1040,7 @@ namespace Lucene.Net.Util.Fst
 		  arc.Label = END_LABEL;
 		  arc.Target = FINAL_END_NODE;
 		  arc.Output = follow.NextFinalOutput;
-		  arc.Flags = BIT_LAST_ARC;
+		  arc.Flags = (sbyte)BIT_LAST_ARC;
 		  return arc;
 		}
 		else
@@ -1127,7 +1128,7 @@ namespace Lucene.Net.Util.Fst
 	  /// it.
 	  /// </summary>
 	  /// <returns> Returns the second argument (<code>arc</code>). </returns>
-	  public Arc<T> ReadFirstTargetArc(Arc<T> follow, Arc<T> arc, BytesReader @in)
+	  public Arc<T> ReadFirstTargetArc(Arc<T> follow, Arc<T> arc, FST.BytesReader @in)
 	  {
 		//int pos = address;
 		//System.out.println("    readFirstTarget follow.target=" + follow.target + " isFinal=" + follow.isFinal());
@@ -1136,7 +1137,7 @@ namespace Lucene.Net.Util.Fst
 		  // Insert "fake" final first arc:
 		  arc.Label = END_LABEL;
 		  arc.Output = follow.NextFinalOutput;
-		  arc.Flags = BIT_FINAL_ARC;
+		  arc.Flags = (sbyte)BIT_FINAL_ARC;
 		  if (follow.Target <= 0)
 		  {
 			arc.Flags |= (sbyte)BIT_LAST_ARC;
@@ -1157,7 +1158,7 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  public Arc<T> ReadFirstRealTargetArc(long node, Arc<T> arc, BytesReader @in)
+	  public Arc<T> ReadFirstRealTargetArc(long node, Arc<T> arc, FST.BytesReader @in)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long address = getNodeAddress(node);
@@ -1215,7 +1216,7 @@ namespace Lucene.Net.Util.Fst
 
 	  /// <summary>
 	  /// In-place read; returns the arc. </summary>
-	  public Arc<T> ReadNextArc(Arc<T> arc, BytesReader @in)
+	  public Arc<T> ReadNextArc(Arc<T> arc, FST.BytesReader @in)
 	  {
 		if (arc.Label == END_LABEL)
 		{
@@ -1294,7 +1295,7 @@ namespace Lucene.Net.Util.Fst
 	  /// Never returns null, but you should never call this if
 	  ///  arc.isLast() is true. 
 	  /// </summary>
-	  public Arc<T> ReadNextRealArc(Arc<T> arc, BytesReader @in)
+	  public Arc<T> ReadNextRealArc(Arc<T> arc, FST.BytesReader @in)
 	  {
 
 		// TODO: can't assert this because we call from readFirstArc
@@ -1416,7 +1417,7 @@ namespace Lucene.Net.Util.Fst
 	  /// Finds an arc leaving the incoming arc, replacing the arc in place.
 	  ///  this returns null if the arc was not found, else the incoming arc. 
 	  /// </summary>
-	  public Arc<T> FindTargetArc(int labelToMatch, Arc<T> follow, Arc<T> arc, BytesReader @in)
+	  public Arc<T> FindTargetArc(int labelToMatch, Arc<T> follow, Arc<T> arc, FST.BytesReader @in)
 	  {
 
 		if (labelToMatch == END_LABEL)
@@ -1425,7 +1426,7 @@ namespace Lucene.Net.Util.Fst
 		  {
 			if (follow.Target <= 0)
 			{
-			  arc.Flags = BIT_LAST_ARC;
+			  arc.Flags = (sbyte)BIT_LAST_ARC;
 			}
 			else
 			{
@@ -1545,7 +1546,7 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  private void SeekToNextNode(BytesReader @in)
+	  private void SeekToNextNode(FST.BytesReader @in)
 	  {
 
 		while (true)
@@ -1622,7 +1623,7 @@ namespace Lucene.Net.Util.Fst
 	  /// </returns>
 	  /// <seealso cref= #FIXED_ARRAY_NUM_ARCS_DEEP </seealso>
 	  /// <seealso cref= Builder.UnCompiledNode#depth </seealso>
-	  private bool ShouldExpand(UnCompiledNode<T> node)
+	  private bool ShouldExpand(Builder<T>.UnCompiledNode<T> node)
 	  {
 		return AllowArrayArcs && ((node.Depth <= FIXED_ARRAY_SHALLOW_DISTANCE && node.NumArcs >= FIXED_ARRAY_NUM_ARCS_SHALLOW) || node.NumArcs >= FIXED_ARRAY_NUM_ARCS_DEEP);
 	  }
@@ -1631,11 +1632,11 @@ namespace Lucene.Net.Util.Fst
 	  /// Returns a <seealso cref="BytesReader"/> for this FST, positioned at
 	  ///  position 0. 
 	  /// </summary>
-	  public BytesReader GetBytesReader
+      public FST.BytesReader GetBytesReader
 	  {
 		  get
 		  {
-			BytesReader @in;
+            FST.BytesReader @in;
 			if (Packed)
 			{
 			  @in = Bytes.ForwardReader;
@@ -1647,7 +1648,7 @@ namespace Lucene.Net.Util.Fst
 			return @in;
 		  }
 	  }
-
+/*
 	  /// <summary>
 	  /// Reads bytes stored in an FST. </summary>
 	  public abstract class BytesReader : DataInput
@@ -1666,7 +1667,7 @@ namespace Lucene.Net.Util.Fst
 		/// <summary>
 		/// Skips bytes. </summary>
 		public abstract void SkipBytes(int count);
-	  }
+	  }*/
 
 	  private class ArcAndState<T>
 	  {
@@ -1878,7 +1879,7 @@ namespace Lucene.Net.Util.Fst
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Map<Integer,Integer> topNodeMap = new java.util.HashMap<>();
-		IDictionary<int?, int?> topNodeMap = new Dictionary<int?, int?>();
+		IDictionary<int, int> topNodeMap = new Dictionary<int, int>();
 		for (int downTo = q.Size() - 1;downTo >= 0;downTo--)
 		{
 		  NodeAndInCount n = q.Pop();
@@ -1914,7 +1915,7 @@ namespace Lucene.Net.Util.Fst
 		  // for assert:
 		  bool negDelta = false;
 
-		  fst = new FST<>(inputType, Outputs, Bytes.BlockBits);
+		  fst = new FST<T>(inputType, Outputs, Bytes.BlockBits);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BytesStore writer = fst.bytes;
@@ -2020,21 +2021,21 @@ namespace Lucene.Net.Util.Fst
 				if (arc.Final)
 				{
 				  flags += (sbyte)BIT_FINAL_ARC;
-				  if (arc.NextFinalOutput != NO_OUTPUT)
+                  if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
 				  {
 					flags += (sbyte)BIT_ARC_HAS_FINAL_OUTPUT;
 				  }
 				}
 				else
 				{
-				  Debug.Assert(arc.NextFinalOutput == NO_OUTPUT);
+                    Debug.Assert((object)arc.NextFinalOutput == (object)NO_OUTPUT);
 				}
 				if (!TargetHasArcs(arc))
 				{
 				  flags += (sbyte)BIT_STOP_NODE;
 				}
 
-				if (arc.Output != NO_OUTPUT)
+                if ((object)arc.Output != (object)NO_OUTPUT)
 				{
 				  flags += (sbyte)BIT_ARC_HAS_OUTPUT;
 				}
@@ -2050,7 +2051,7 @@ namespace Lucene.Net.Util.Fst
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Integer ptr = topNodeMap.get(arc.target);
-				  int? ptr = topNodeMap[arc.Target];
+				  int ptr = topNodeMap[(int)arc.Target];
 				  if (ptr != null)
 				  {
 					absPtr = ptr;
@@ -2083,7 +2084,7 @@ namespace Lucene.Net.Util.Fst
 
 				fst.WriteLabel(writer, arc.Label);
 
-				if (arc.Output != NO_OUTPUT)
+                if ((object)arc.Output != (object)NO_OUTPUT)
 				{
 				  Outputs.Write(arc.Output, writer);
 				  if (!retry)
@@ -2091,7 +2092,7 @@ namespace Lucene.Net.Util.Fst
 					fst.arcWithOutputCount++;
 				  }
 				}
-				if (arc.NextFinalOutput != NO_OUTPUT)
+                if ((object)arc.NextFinalOutput != (object)NO_OUTPUT)
 				{
 				  Outputs.WriteFinalOutput(arc.NextFinalOutput, writer);
 				}
@@ -2218,7 +2219,7 @@ namespace Lucene.Net.Util.Fst
 		}
 
 		PackedInts.Mutable nodeRefToAddressIn = PackedInts.GetMutable(topNodeMap.Count, PackedInts.BitsRequired(maxAddress), acceptableOverheadRatio);
-		foreach (KeyValuePair<int?, int?> ent in topNodeMap)
+		foreach (KeyValuePair<int, int> ent in topNodeMap)
 		{
 		  nodeRefToAddressIn.Set(ent.Value, newNodeAddress.Get(ent.Key));
 		}
@@ -2290,5 +2291,253 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 	}
+
+    /// <summary>
+    /// .NET Port: This new base class is to mimic Java's ability to use nested types without specifying
+    /// a type parameter. i.e. FST.BytesReader instead of FST&lt;BytesRef&gt;.BytesReader
+    /// </summary>
+    public class FST
+    {
+        internal const int BIT_FINAL_ARC = 1 << 0;
+        internal const int BIT_LAST_ARC = 1 << 1;
+        internal const int BIT_TARGET_NEXT = 1 << 2;
+
+        // TODO: we can free up a bit if we can nuke this:
+        internal const int BIT_STOP_NODE = 1 << 3;
+        internal const int BIT_ARC_HAS_OUTPUT = 1 << 4;
+        internal const int BIT_ARC_HAS_FINAL_OUTPUT = 1 << 5;
+
+        // Arcs are stored as fixed-size (per entry) array, so
+        // that we can find an arc using binary search.  We do
+        // this when number of arcs is > NUM_ARCS_ARRAY:
+
+        // If set, thie target node is delta coded vs current position:
+        internal const int BIT_TARGET_DELTA = 1 << 6;
+
+        // We use this as a marker (because this one flag is
+        // illegal by itself ...):
+        internal const sbyte ARCS_AS_FIXED_ARRAY = BIT_ARC_HAS_FINAL_OUTPUT;
+
+        /// <summary>
+        /// <see cref="UnCompiledNode"/>
+        /// </summary>
+        internal const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
+
+        /// <summary>
+        /// <see cref="UnCompiledNode"/>
+        /// </summary>
+        internal const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
+
+        /// <summary>
+        /// <see cref="UnCompiledNode"/>
+        /// </summary>
+        internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
+
+        // Increment version to change it
+        internal const string FILE_FORMAT_NAME = "FST";
+        internal const int VERSION_START = 0;
+
+        /// <summary>
+        /// Changed numBytesPerArc for array'd case from byte to int.
+        /// </summary>
+        internal const int VERSION_INT_NUM_BYTES_PER_ARC = 1;
+
+        /// <summary>
+        /// Write BYTE2 labels as 2-byte short, not vInt.
+        /// </summary>
+        internal const int VERSION_SHORT_BYTE2_LABELS = 2;
+
+        /// <summary>
+        /// Added optional packed format.
+        /// </summary>
+        internal const int VERSION_PACKED = 3;
+
+        /// <summary>
+        /// Changed from int to vInt for encoding arc targets.
+        /// Also changed maxBytesPerArc from int to vInt in the array case.
+        /// </summary>
+        internal const int VERSION_VINT_TARGET = 4;
+
+        internal const int VERSION_CURRENT = VERSION_VINT_TARGET;
+
+        // Never serialized; just used to represent the virtual
+        // final node w/ no arcs:
+        internal const long FINAL_END_NODE = -1;
+
+        // Never serialized; just used to represent the virtual
+        // non-final node w/ no arcs:
+        internal const long NON_FINAL_END_NODE = 0;
+
+        /// <summary>
+        /// Reads bytes stored in an FST.
+        /// </summary>
+        public abstract class BytesReader : DataInput
+        {
+            /// <summary>
+            /// Current read position
+            /// </summary>
+            public abstract long Position { get; set; }
+
+            /// <summary>
+            /// Returns true if this reader uses reversed bytes 
+            /// under-the-hood.
+            /// </summary>
+            /// <returns></returns>
+            public abstract bool Reversed();
+
+            /// <summary>
+            /// Skips bytes.
+            /// </summary>
+            /// <param name="count"></param>
+            public abstract void SkipBytes(int count);
+        }
+
+        /// <summary>
+        /// Specifies allowed range of each int input label for this FST.
+        /// </summary>
+        public enum INPUT_TYPE { BYTE1, BYTE2, BYTE4 }
+
+        /// <summary>
+        /// Represents a single arc.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public sealed class Arc<T>
+        {
+            public int Label { get; set; }
+            public T Output { get; set; }
+
+            // From node (ord or address); currently only used when
+            // building an FST w/ willPackFST=true:
+            internal long Node { get; set; }
+
+            /// <summary>
+            /// To node (ord or address)
+            /// </summary>
+            public long Target { get; set; }
+
+            internal sbyte Flags { get; set; }
+            public T NextFinalOutput { get; set; }
+
+            // address (into the byte[]), or ord/address if label == END_LABEL
+            internal long NextArc { get; set; }
+
+            // This is non-zero if current arcs are fixed array:
+            internal long PosArcsStart { get; set; }
+            internal int BytesPerArc { get; set; }
+            internal int ArcIdx { get; set; }
+            internal int NumArcs { get; set; }
+
+            /// <summary>
+            /// Return this
+            /// </summary>
+            /// <param name="other"></param>
+            /// <returns></returns>
+            public Arc<T> CopyFrom(Arc<T> other)
+            {
+                Node = other.Node;
+                Label = other.Label;
+                Target = other.Target;
+                Flags = other.Flags;
+                Output = other.Output;
+                NextFinalOutput = other.Output;
+                NextFinalOutput = other.NextFinalOutput;
+                NextArc = other.NextArc;
+                BytesPerArc = other.BytesPerArc;
+                if (BytesPerArc != 0)
+                {
+                    PosArcsStart = other.PosArcsStart;
+                    ArcIdx = other.ArcIdx;
+                    NumArcs = other.NumArcs;
+                }
+                return this;
+            }
+
+            internal bool Flag(int flag)
+            {
+                return FST<T>.Flag(Flags, flag);
+            }
+
+            public bool IsLast()
+            {
+                return Flag(BIT_LAST_ARC);
+            }
+
+            public bool IsFinal()
+            {
+                return Flag(BIT_FINAL_ARC);
+            }
+
+            public override string ToString()
+            {
+                var b = new StringBuilder();
+                b.Append("node=" + Node);
+                b.Append(" target=" + Target);
+                b.Append(" label=" + Label);
+                if (Flag(BIT_LAST_ARC)) b.Append(" last");
+                if (Flag(BIT_FINAL_ARC)) b.Append(" final");
+                if (Flag(BIT_TARGET_NEXT)) b.Append(" targetNext");
+                if (Flag(BIT_ARC_HAS_OUTPUT)) b.Append(" output=" + Output);
+                if (Flag(BIT_ARC_HAS_FINAL_OUTPUT)) b.Append(" nextFinalOutput=" + NextFinalOutput);
+                if (BytesPerArc != 0) b.Append(" arcArray(idx=" + ArcIdx + " of " + NumArcs + ")");
+                return b.ToString();
+            }
+        }
+
+        internal class ArcAndState<T>
+            where T : class
+        {
+            private readonly Arc<T> _arc;
+            public Arc<T> Arc { get { return _arc; } }
+
+            private readonly IntsRef _chain;
+            public IntsRef Chain { get { return _chain; } }
+
+            public ArcAndState(Arc<T> arc, IntsRef chain)
+            {
+                _arc = arc;
+                _chain = chain;
+            }
+        }
+
+        internal class NodeAndInCount : IComparable<NodeAndInCount>
+        {
+            private readonly int _node;
+            public int Node { get { return _node; } }
+
+            private readonly int _count;
+            public int Count { get { return _count; } }
+
+            public NodeAndInCount(int node, int count)
+            {
+                _node = node;
+                _count = count;
+            }
+
+            public int CompareTo(NodeAndInCount other)
+            {
+                if (Count > other.Count)
+                    return 1;
+                if (Count < other.Count)
+                    return -1;
+                // Tie-break: smaller node compares as greater than
+                return other.Node - Node;
+            }
+        }
+
+        internal class NodeQueue : PriorityQueue<NodeAndInCount>
+        {
+            public NodeQueue(int topN)
+                : base(topN, false)
+            {
+            }
+
+            public override bool LessThan(NodeAndInCount a, NodeAndInCount b)
+            {
+                var cmp = a.CompareTo(b);
+                // assert cmp != 0;
+                return cmp < 0;
+            }
+        }
+    }
 
 }

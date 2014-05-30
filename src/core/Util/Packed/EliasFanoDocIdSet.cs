@@ -106,17 +106,17 @@ namespace Lucene.Net.Util.Packed
 
 		  public override int NextDoc()
 		  {
-			return setCurDocID(efDecoder.nextValue());
+			return SetCurDocID(efDecoder.NextValue());
 		  }
 
 		  public override int Advance(int target)
 		  {
-			return setCurDocID(efDecoder.advanceToValue(target));
+			return SetCurDocID(efDecoder.AdvanceToValue(target));
 		  }
 
 		  public override long Cost()
 		  {
-			return efDecoder.numEncoded();
+			return efDecoder.NumEncoded();
 		  }
 	  }
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public override int HashCode()
 	  {
-		return EfEncoder.HashCode() ^ this.GetType().HashCode();
+		return EfEncoder.HashCode() ^ this.GetType().GetHashCode();
 	  }
 	}
 

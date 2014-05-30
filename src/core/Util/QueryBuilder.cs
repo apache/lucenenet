@@ -245,7 +245,7 @@ namespace Lucene.Net.Util
 				hasMoreTokens = buffer.IncrementToken();
 			  }
 			}
-			catch (System.IO.IOException e)
+			catch (System.IO.IOException)
 			{
 			  // ignore
 			}
@@ -277,7 +277,7 @@ namespace Lucene.Net.Util
 			Debug.Assert(hasNext == true);
 			termAtt.FillBytesRef();
 		  }
-		  catch (System.IO.IOException e)
+		  catch (System.IO.IOException)
 		  {
 			// safe to ignore, because we know the number of tokens
 		  }
@@ -303,7 +303,7 @@ namespace Lucene.Net.Util
 					Debug.Assert(hasNext == true);
 					termAtt.FillBytesRef();
 				  }
-				  catch (System.IO.IOException e)
+				  catch (System.IO.IOException)
 				  {
 					// safe to ignore, because we know the number of tokens
 				  }
@@ -325,7 +325,7 @@ namespace Lucene.Net.Util
 					Debug.Assert(hasNext == true);
 					termAtt.FillBytesRef();
 				  }
-				  catch (System.IO.IOException e)
+				  catch (System.IO.IOException)
 				  {
 					// safe to ignore, because we know the number of tokens
 				  }
@@ -372,7 +372,7 @@ namespace Lucene.Net.Util
 					positionIncrement = posIncrAtt.PositionIncrement;
 				  }
 				}
-				catch (System.IO.IOException e)
+				catch (System.IO.IOException)
 				{
 				  // safe to ignore, because we know the number of tokens
 				}
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util
 				  positionIncrement = posIncrAtt.PositionIncrement;
 				}
 			  }
-			  catch (System.IO.IOException e)
+			  catch (System.IO.IOException)
 			  {
 				// safe to ignore, because we know the number of tokens
 			  }

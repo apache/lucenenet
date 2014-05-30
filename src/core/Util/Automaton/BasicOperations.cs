@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
 
 /*
  * dk.brics.automaton
@@ -58,9 +59,9 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static Automaton Concatenate(Automaton a1, Automaton a2)
 	  {
-		if (a1.Singleton && a2.Singleton)
+		if (a1.IsSingleton && a2.IsSingleton)
 		{
-			return BasicAutomata.MakeString(a1.Singleton_Renamed + a2.Singleton_Renamed);
+			return BasicAutomata.MakeString(a1.singleton + a2.singleton);
 		}
 		if (IsEmpty(a1) || IsEmpty(a2))
 		{
@@ -69,7 +70,7 @@ namespace Lucene.Net.Util.Automaton
 		// adding epsilon transitions with the NFA concatenation algorithm
 		// in this case always produces a resulting DFA, preventing expensive
 		// redundant determinize() calls for this common case.
-		bool deterministic = a1.Singleton && a2.Deterministic;
+		bool deterministic = a1.IsSingleton && a2.Deterministic;
 		if (a1 == a2)
 		{
 		  a1 = a1.CloneExpanded();
@@ -82,10 +83,10 @@ namespace Lucene.Net.Util.Automaton
 		}
 		foreach (State s in a1.AcceptStates)
 		{
-		  s.Accept_Renamed = false;
+		  s.accept = false;
 		  s.AddEpsilon(a2.Initial);
 		}
-		a1.Deterministic_Renamed = deterministic;
+		a1.deterministic = deterministic;
 		//a1.clearHashCode();
 		a1.ClearNumberedStates();
 		a1.CheckMinimizeAlways();
@@ -107,7 +108,7 @@ namespace Lucene.Net.Util.Automaton
 		bool all_singleton = true;
 		foreach (Automaton a in l)
 		{
-		  if (!a.Singleton)
+		  if (!a.IsSingleton)
 		  {
 			all_singleton = false;
 			break;
@@ -118,7 +119,7 @@ namespace Lucene.Net.Util.Automaton
 		  StringBuilder b = new StringBuilder();
 		  foreach (Automaton a in l)
 		  {
-			b.Append(a.Singleton_Renamed);
+			b.Append(a.singleton);
 		  }
 		  return BasicAutomata.MakeString(b.ToString());
 		}
@@ -131,12 +132,12 @@ namespace Lucene.Net.Util.Automaton
 				return BasicAutomata.MakeEmpty();
 			}
 		  }
-		  Set<int?> ids = new HashSet<int?>();
+		  HashSet<int> ids = new HashSet<int>();
 		  foreach (Automaton a in l)
 		  {
-			ids.add(System.identityHashCode(a));
+			ids.Add(a.GetHashCode());
 		  }
-		  bool has_aliases = ids.size() != l.Count;
+		  bool has_aliases = ids.Count != l.Count;
 		  Automaton b = l[0];
 		  if (has_aliases)
 		  {
@@ -146,7 +147,7 @@ namespace Lucene.Net.Util.Automaton
 		  {
 			  b = b.CloneExpandedIfRequired();
 		  }
-		  Set<State> ac = b.AcceptStates;
+		  ISet<State> ac = b.AcceptStates;
 		  bool first = true;
 		  foreach (Automaton a in l)
 		  {
@@ -169,20 +170,20 @@ namespace Lucene.Net.Util.Automaton
 			  {
 				  aa = aa.CloneExpandedIfRequired();
 			  }
-			  Set<State> ns = aa.AcceptStates;
+			  ISet<State> ns = aa.AcceptStates;
 			  foreach (State s in ac)
 			  {
-				s.Accept_Renamed = false;
+				s.accept = false;
 				s.AddEpsilon(aa.Initial);
-				if (s.Accept_Renamed)
+				if (s.accept)
 				{
-					ns.add(s);
+					ns.Add(s);
 				}
 			  }
 			  ac = ns;
 			}
 		  }
-		  b.Deterministic_Renamed = false;
+		  b.deterministic = false;
 		  //b.clearHashCode();
 		  b.ClearNumberedStates();
 		  b.CheckMinimizeAlways();
@@ -201,9 +202,9 @@ namespace Lucene.Net.Util.Automaton
 		a = a.CloneExpandedIfRequired();
 		State s = new State();
 		s.AddEpsilon(a.Initial);
-		s.Accept_Renamed = true;
+		s.accept = true;
 		a.Initial = s;
-		a.Deterministic_Renamed = false;
+		a.deterministic = false;
 		//a.clearHashCode();
 		a.ClearNumberedStates();
 		a.CheckMinimizeAlways();
@@ -221,14 +222,14 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		a = a.CloneExpanded();
 		State s = new State();
-		s.Accept_Renamed = true;
+		s.accept = true;
 		s.AddEpsilon(a.Initial);
 		foreach (State p in a.AcceptStates)
 		{
 		  p.AddEpsilon(s);
 		}
 		a.Initial = s;
-		a.Deterministic_Renamed = false;
+		a.deterministic = false;
 		//a.clearHashCode();
 		a.ClearNumberedStates();
 		a.CheckMinimizeAlways();
@@ -306,7 +307,7 @@ namespace Lucene.Net.Util.Automaton
 		  {
 			p.AddEpsilon(d.Initial);
 		  }
-		  b.Deterministic_Renamed = false;
+		  b.deterministic = false;
 		  //b.clearHashCode();
 		  b.ClearNumberedStates();
 		  b.CheckMinimizeAlways();
@@ -327,7 +328,7 @@ namespace Lucene.Net.Util.Automaton
 		a.Totalize();
 		foreach (State p in a.NumberedStates)
 		{
-		  p.Accept_Renamed = !p.Accept_Renamed;
+		  p.accept = !p.accept;
 		}
 		a.RemoveDeadTransitions();
 		return a;
@@ -351,9 +352,9 @@ namespace Lucene.Net.Util.Automaton
 		{
 			return a1.CloneIfRequired();
 		}
-		if (a1.Singleton)
+		if (a1.IsSingleton)
 		{
-		  if (BasicOperations.Run(a2, a1.Singleton_Renamed))
+		  if (BasicOperations.Run(a2, a1.singleton))
 		  {
 			  return BasicAutomata.MakeEmpty();
 		  }
@@ -373,9 +374,9 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static Automaton Intersection(Automaton a1, Automaton a2)
 	  {
-		if (a1.Singleton)
+		if (a1.IsSingleton)
 		{
-		  if (BasicOperations.Run(a2, a1.Singleton_Renamed))
+		  if (BasicOperations.Run(a2, a1.singleton))
 		  {
 			  return a1.CloneIfRequired();
 		  }
@@ -384,9 +385,9 @@ namespace Lucene.Net.Util.Automaton
 			  return BasicAutomata.MakeEmpty();
 		  }
 		}
-		if (a2.Singleton)
+        if (a2.IsSingleton)
 		{
-		  if (BasicOperations.Run(a1, a2.Singleton_Renamed))
+		  if (BasicOperations.Run(a1, a2.singleton))
 		  {
 			  return a2.CloneIfRequired();
 		  }
@@ -409,8 +410,9 @@ namespace Lucene.Net.Util.Automaton
 		newstates[p] = p;
 		while (worklist.Count > 0)
 		{
-		  p = worklist.RemoveFirst();
-		  p.s.Accept_Renamed = p.S1.Accept_Renamed && p.S2.Accept_Renamed;
+          p = worklist.First.Value;
+          worklist.RemoveFirst();
+		  p.s.accept = p.S1.accept && p.S2.accept;
 		  Transition[] t1 = transitions1[p.S1.number];
 		  Transition[] t2 = transitions2[p.S2.number];
 		  for (int n1 = 0, b2 = 0; n1 < t1.Length; n1++)
@@ -439,7 +441,7 @@ namespace Lucene.Net.Util.Automaton
 			}
 		  }
 		}
-		c.Deterministic_Renamed = a1.Deterministic_Renamed && a2.Deterministic_Renamed;
+		c.deterministic = a1.deterministic && a2.deterministic;
 		c.RemoveDeadTransitions();
 		c.CheckMinimizeAlways();
 		return c;
@@ -457,11 +459,11 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  return true;
 		}
-		if (a1.Singleton && a2.Singleton)
+        if (a1.IsSingleton && a2.IsSingleton)
 		{
-		  return a1.Singleton_Renamed.Equals(a2.Singleton_Renamed);
+		  return a1.singleton.Equals(a2.singleton);
 		}
-		else if (a1.Singleton)
+        else if (a1.IsSingleton)
 		{
 		  // subsetOf is faster if the first automaton is a singleton
 		  return SubsetOf(a1, a2) && SubsetOf(a2, a1);
@@ -485,13 +487,13 @@ namespace Lucene.Net.Util.Automaton
 		{
 			return true;
 		}
-		if (a1.Singleton)
+        if (a1.IsSingleton)
 		{
-		  if (a2.Singleton)
+            if (a2.IsSingleton)
 		  {
-			  return a1.Singleton_Renamed.Equals(a2.Singleton_Renamed);
+			  return a1.singleton.Equals(a2.singleton);
 		  }
-		  return BasicOperations.Run(a2, a1.Singleton_Renamed);
+		  return BasicOperations.Run(a2, a1.singleton);
 		}
 		a2.Determinize();
 		Transition[][] transitions1 = a1.SortedTransitions;
@@ -503,8 +505,9 @@ namespace Lucene.Net.Util.Automaton
 		visited.Add(p);
 		while (worklist.Count > 0)
 		{
-		  p = worklist.RemoveFirst();
-		  if (p.S1.accept && !p.S2.Accept_Renamed)
+		  p = worklist.First.Value;
+          worklist.RemoveFirst();
+		  if (p.S1.accept && !p.S2.accept)
 		  {
 			return false;
 		  }
@@ -524,14 +527,14 @@ namespace Lucene.Net.Util.Automaton
 			  {
 				return false;
 			  }
-			  if (t2[n2].Max_Renamed < char.MAX_CODE_POINT)
+			  if (t2[n2].Max_Renamed < Character.MAX_CODE_POINT)
 			  {
 				  min1 = t2[n2].Max_Renamed + 1;
 			  }
 			  else
 			  {
-				min1 = char.MAX_CODE_POINT;
-				max1 = char.MIN_CODE_POINT;
+                  min1 = Character.MAX_CODE_POINT;
+                  max1 = Character.MIN_CODE_POINT;
 			  }
 			  StatePair q = new StatePair(t1[n1].To, t2[n2].To);
 			  if (!visited.Contains(q))
@@ -557,7 +560,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static Automaton Union(Automaton a1, Automaton a2)
 	  {
-		if ((a1.Singleton && a2.Singleton && a1.Singleton_Renamed.Equals(a2.Singleton_Renamed)) || a1 == a2)
+		if ((a1.IsSingleton && a2.IsSingleton && a1.singleton.Equals(a2.singleton)) || a1 == a2)
 		{
 			return a1.CloneIfRequired();
 		}
@@ -575,7 +578,7 @@ namespace Lucene.Net.Util.Automaton
 		s.AddEpsilon(a1.Initial);
 		s.AddEpsilon(a2.Initial);
 		a1.Initial = s;
-		a1.Deterministic_Renamed = false;
+		a1.deterministic = false;
 		//a1.clearHashCode();
 		a1.ClearNumberedStates();
 		a1.CheckMinimizeAlways();
@@ -590,12 +593,12 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static Automaton Union(ICollection<Automaton> l)
 	  {
-		Set<int?> ids = new HashSet<int?>();
+		HashSet<int> ids = new HashSet<int>();
 		foreach (Automaton a in l)
 		{
-		  ids.add(System.identityHashCode(a));
+		  ids.Add(a.GetHashCode());
 		}
-		bool has_aliases = ids.size() != l.Count;
+		bool has_aliases = ids.Count != l.Count;
 		State s = new State();
 		foreach (Automaton b in l)
 		{
@@ -614,13 +617,13 @@ namespace Lucene.Net.Util.Automaton
 		  }
 		  s.AddEpsilon(bb.Initial);
 		}
-		Automaton a = new Automaton();
-		a.Initial = s;
-		a.Deterministic_Renamed = false;
+		Automaton a_ = new Automaton();
+		a_.Initial = s;
+		a_.deterministic = false;
 		//a.clearHashCode();
-		a.ClearNumberedStates();
-		a.CheckMinimizeAlways();
-		return a;
+		a_.ClearNumberedStates();
+		a_.CheckMinimizeAlways();
+		return a_;
 	  }
 
 	  // Simple custom ArrayList<Transition>
@@ -764,8 +767,8 @@ namespace Lucene.Net.Util.Automaton
 
 		public void Add(Transition t)
 		{
-		  Find(t.Min_Renamed).Starts.add(t);
-		  Find(1 + t.Max_Renamed).Ends.add(t);
+		  Find(t.Min_Renamed).Starts.Add(t);
+		  Find(1 + t.Max_Renamed).Ends.Add(t);
 		}
 
 		public override string ToString()
@@ -777,7 +780,7 @@ namespace Lucene.Net.Util.Automaton
 			{
 			  s.Append(' ');
 			}
-			s.Append(Points[i].Point).Append(':').Append(Points[i].Starts.count).Append(',').Append(Points[i].Ends.Count);
+			s.Append(Points[i].Point).Append(':').Append(Points[i].Starts.Count).Append(',').Append(Points[i].Ends.Count);
 		  }
 		  return s.ToString();
 		}
@@ -790,7 +793,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static void Determinize(Automaton a)
 	  {
-		if (a.Deterministic_Renamed || a.Singleton)
+		if (a.Deterministic || a.IsSingleton)
 		{
 		  return;
 		}
@@ -835,7 +838,8 @@ namespace Lucene.Net.Util.Automaton
 
 		while (worklist.Count > 0)
 		{
-		  SortedIntSet.FrozenIntSet s = worklist.RemoveFirst();
+		  SortedIntSet.FrozenIntSet s = worklist.First.Value;
+          worklist.RemoveFirst();
 
 		  // Collate all outgoing transitions by min/1+max:
 		  for (int i = 0;i < s.Values.Length;i++)
@@ -843,7 +847,7 @@ namespace Lucene.Net.Util.Automaton
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final State s0 = allStates[s.values[i]];
 			State s0 = allStates[s.Values[i]];
-			for (int j = 0;j < s0.NumTransitions_Renamed;j++)
+			for (int j = 0;j < s0.numTransitions;j++)
 			{
 			  points.Add(s0.TransitionsArray[j]);
 			}
@@ -868,7 +872,7 @@ namespace Lucene.Net.Util.Automaton
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int point = points.points[i].point;
-			int point = points.Points[i].point;
+			int point = points.Points[i].Point;
 
 			if (statesSet.Upto > 0)
 			{
@@ -876,10 +880,10 @@ namespace Lucene.Net.Util.Automaton
 
 			  statesSet.ComputeHash();
 
-			  State q = newstate[statesSet];
+			  /*State q = newstate[statesSet];
 			  if (q == null)
-			  {
-				q = new State();
+			  {*/
+				State q = new State();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final SortedIntSet.FrozenIntSet p = statesSet.freeze(q);
 				SortedIntSet.FrozenIntSet p = statesSet.Freeze(q);
@@ -893,23 +897,23 @@ namespace Lucene.Net.Util.Automaton
 				  newStatesArray = newArray;
 				}
 				newStatesArray[newStateUpto] = q;
-				q.Number_Renamed = newStateUpto;
+				q.number = newStateUpto;
 				newStateUpto++;
-				q.Accept_Renamed = accCount > 0;
+				q.accept = accCount > 0;
 				newstate[p] = q;
-			  }
+			  /*}
 			  else
 			  {
-				assert(accCount > 0 ? true:false) == q.Accept_Renamed: "accCount=" + accCount + " vs existing accept=" + q.Accept_Renamed + " states=" + statesSet;
-			  }
+				Debug.Assert((accCount > 0 ? true:false) == q.accept, "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
+			  }*/
 
 			  r.AddTransition(new Transition(lastPoint, point - 1, q));
 			}
 
 			// process transitions that end on this point
 			// (closes an overlapping interval)
-			Transition[] transitions = points.Points[i].ends.transitions;
-			int limit = points.Points[i].ends.count;
+			Transition[] transitions = points.Points[i].Ends.Transitions;
+			int limit = points.Points[i].Ends.Count;
 			for (int j = 0;j < limit;j++)
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -917,16 +921,16 @@ namespace Lucene.Net.Util.Automaton
 			  Transition t = transitions[j];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Integer num = t.to.number;
-			  int? num = t.To.number;
+			  int num = t.To.number;
 			  statesSet.Decr(num);
 			  accCount -= t.To.accept ? 1:0;
 			}
-			points.Points[i].ends.count = 0;
+			points.Points[i].Ends.Count = 0;
 
 			// process transitions that start on this point
 			// (opens a new interval)
-			transitions = points.Points[i].starts.transitions;
-			limit = points.Points[i].starts.count;
+			transitions = points.Points[i].Starts.Transitions;
+			limit = points.Points[i].Starts.Count;
 			for (int j = 0;j < limit;j++)
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -934,17 +938,17 @@ namespace Lucene.Net.Util.Automaton
 			  Transition t = transitions[j];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Integer num = t.to.number;
-			  int? num = t.To.number;
+			  int num = t.To.number;
 			  statesSet.Incr(num);
 			  accCount += t.To.accept ? 1:0;
 			}
 			lastPoint = point;
-			points.Points[i].starts.count = 0;
+			points.Points[i].Starts.Count = 0;
 		  }
 		  points.Reset();
 		  Debug.Assert(statesSet.Upto == 0, "upto=" + statesSet.Upto);
 		}
-		a.Deterministic_Renamed = true;
+		a.deterministic = true;
 		a.SetNumberedStates(newStatesArray, newStateUpto);
 	  }
 
@@ -966,14 +970,14 @@ namespace Lucene.Net.Util.Automaton
 		  HashSet<State> to = forward[p.S1];
 		  if (to == null)
 		  {
-			to = new HashSet<>();
+			to = new HashSet<State>();
 			forward[p.S1] = to;
 		  }
 		  to.Add(p.S2);
 		  HashSet<State> from = back[p.S2];
 		  if (from == null)
 		  {
-			from = new HashSet<>();
+              from = new HashSet<State>();
 			back[p.S2] = from;
 		  }
 		  from.Add(p.S1);
@@ -983,7 +987,8 @@ namespace Lucene.Net.Util.Automaton
 		HashSet<StatePair> workset = new HashSet<StatePair>(pairs);
 		while (worklist.Count > 0)
 		{
-		  StatePair p = worklist.RemoveFirst();
+		  StatePair p = worklist.First.Value;
+          worklist.RemoveFirst();
 		  workset.Remove(p);
 		  HashSet<State> to = forward[p.S2];
 		  HashSet<State> from = back[p.S1];
@@ -1018,9 +1023,9 @@ namespace Lucene.Net.Util.Automaton
 		// add transitions
 		foreach (StatePair p in pairs)
 		{
-		  p.S1.addEpsilon(p.S2);
+		  p.S1.AddEpsilon(p.S2);
 		}
-		a.Deterministic_Renamed = false;
+		a.deterministic = false;
 		//a.clearHashCode();
 		a.ClearNumberedStates();
 		a.CheckMinimizeAlways();
@@ -1032,13 +1037,13 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static bool IsEmptyString(Automaton a)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
-			return a.Singleton_Renamed.Length == 0;
+			return a.singleton.Length == 0;
 		}
 		else
 		{
-			return a.Initial.accept && a.Initial.numTransitions() == 0;
+			return a.Initial.accept && a.Initial.NumTransitions() == 0;
 		}
 	  }
 
@@ -1047,11 +1052,11 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static bool IsEmpty(Automaton a)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
 			return false;
 		}
-		return !a.Initial.accept && a.Initial.numTransitions() == 0;
+		return !a.Initial.accept && a.Initial.NumTransitions() == 0;
 	  }
 
 	  /// <summary>
@@ -1059,14 +1064,16 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static bool IsTotal(Automaton a)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
 			return false;
 		}
-		if (a.Initial.accept && a.Initial.numTransitions() == 1)
+		if (a.Initial.accept && a.Initial.NumTransitions() == 1)
 		{
-		  Transition t = a.Initial.Transitions.GetEnumerator().next();
-		  return t.To == a.Initial && t.Min_Renamed == char.MIN_CODE_POINT && t.Max_Renamed == char.MAX_CODE_POINT;
+            var iter = a.Initial.Transitions.GetEnumerator();
+            iter.MoveNext();
+            Transition t = iter.Current; ;
+            return t.To == a.Initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT;
 		}
 		return false;
 	  }
@@ -1080,23 +1087,23 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static bool Run(Automaton a, string s)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
-			return s.Equals(a.Singleton_Renamed);
+			return s.Equals(a.singleton);
 		}
-		if (a.Deterministic_Renamed)
+		if (a.deterministic)
 		{
 		  State p = a.Initial;
-		  for (int i = 0, cp = 0; i < s.Length; i += char.charCount(cp))
+          for (int i = 0, cp = 0; i < s.Length; i += Character.CharCount(cp))
 		  {
-			State q = p.Step(cp = s.codePointAt(i));
+			State q = p.Step(cp = s[i]);
 			if (q == null)
 			{
 				return false;
 			}
 			p = q;
 		  }
-		  return p.Accept_Renamed;
+		  return p.accept;
 		}
 		else
 		{
@@ -1108,9 +1115,9 @@ namespace Lucene.Net.Util.Automaton
 		  pp.AddLast(a.Initial);
 		  List<State> dest = new List<State>();
 		  bool accept = a.Initial.accept;
-		  for (int i = 0, c = 0; i < s.Length; i += char.charCount(c))
+          for (int i = 0, c = 0; i < s.Length; i += Character.CharCount(c))
 		  {
-			c = s.codePointAt(i);
+			c = s[i];
 			accept = false;
 			pp_other.Clear();
 			bb_other.SetAll(false);
@@ -1120,13 +1127,13 @@ namespace Lucene.Net.Util.Automaton
 			  p.Step(c, dest);
 			  foreach (State q in dest)
 			  {
-				if (q.Accept_Renamed)
+				if (q.accept)
 				{
 					accept = true;
 				}
-				if (!bb_other.Get(q.Number_Renamed))
+				if (!bb_other.Get(q.number))
 				{
-				  bb_other.Set(q.Number_Renamed, true);
+				  bb_other.Set(q.number, true);
 				  pp_other.AddLast(q);
 				}
 			  }

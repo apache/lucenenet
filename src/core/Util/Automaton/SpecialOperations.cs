@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using Lucene.Net.Support;
 
 /*
  * dk.brics.automaton
@@ -81,7 +83,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static bool IsFinite(Automaton a)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
 			return true;
 		}
@@ -96,7 +98,7 @@ namespace Lucene.Net.Util.Automaton
 	  // large automata could exceed java's stack
 	  private static bool IsFinite(State s, BitArray path, BitArray visited)
 	  {
-		path.Set(s.Number_Renamed, true);
+		path.Set(s.number, true);
 		foreach (Transition t in s.Transitions)
 		{
 		  if (path.Get(t.To.number) || (!visited.Get(t.To.number) && !IsFinite(t.To, path, visited)))
@@ -104,8 +106,8 @@ namespace Lucene.Net.Util.Automaton
 			  return false;
 		  }
 		}
-		path.Set(s.Number_Renamed, false);
-		visited.Set(s.Number_Renamed, true);
+		path.Set(s.number, false);
+		visited.Set(s.number, true);
 		return true;
 	  }
 
@@ -116,9 +118,9 @@ namespace Lucene.Net.Util.Automaton
 	  /// <returns> common prefix </returns>
 	  public static string GetCommonPrefix(Automaton a)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
-			return a.Singleton_Renamed;
+			return a.singleton;
 		}
 		StringBuilder b = new StringBuilder();
 		HashSet<State> visited = new HashSet<State>();
@@ -128,12 +130,15 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  done = true;
 		  visited.Add(s);
-		  if (!s.Accept_Renamed && s.NumTransitions() == 1)
+		  if (!s.accept && s.NumTransitions() == 1)
 		  {
-			Transition t = s.Transitions.GetEnumerator().next();
+            var iter = s.Transitions.GetEnumerator();
+            iter.MoveNext();
+			Transition t = iter.Current;
 			if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
 			{
-			  b.appendCodePoint(t.Min_Renamed);
+                //b.appendCodePoint(t.Min_Renamed);
+                b.Append(t.Min_Renamed);
 			  s = t.To;
 			  done = false;
 			}
@@ -147,9 +152,9 @@ namespace Lucene.Net.Util.Automaton
 	  // NFA instead.  it'd still be fail fast.
 	  public static BytesRef GetCommonPrefixBytesRef(Automaton a)
 	  {
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
-			return new BytesRef(a.Singleton_Renamed);
+			return new BytesRef(a.singleton);
 		}
 		BytesRef @ref = new BytesRef(10);
 		HashSet<State> visited = new HashSet<State>();
@@ -159,10 +164,13 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  done = true;
 		  visited.Add(s);
-		  if (!s.Accept_Renamed && s.NumTransitions() == 1)
+		  if (!s.accept && s.NumTransitions() == 1)
 		  {
-			Transition t = s.Transitions.GetEnumerator().next();
-			if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
+            var iter = s.Transitions.GetEnumerator();
+            iter.MoveNext();
+            Transition t = iter.Current;
+			
+            if (t.Min_Renamed == t.Max_Renamed && !visited.Contains(t.To))
 			{
 			  @ref.Grow(++@ref.Length);
 			  @ref.Bytes[@ref.Length - 1] = (sbyte)t.Min_Renamed;
@@ -181,9 +189,9 @@ namespace Lucene.Net.Util.Automaton
 	  /// <returns> common suffix </returns>
 	  public static string GetCommonSuffix(Automaton a)
 	  {
-		if (a.Singleton) // if singleton, the suffix is the string itself.
+		if (a.IsSingleton) // if singleton, the suffix is the string itself.
 		{
-		  return a.Singleton_Renamed;
+		  return a.singleton;
 		}
 
 		// reverse the language of the automaton, then reverse its common prefix.
@@ -191,14 +199,14 @@ namespace Lucene.Net.Util.Automaton
 		Reverse(r);
 		r.Determinize();
 //JAVA TO C# CONVERTER TODO TASK: There is no .NET StringBuilder equivalent to the Java 'reverse' method:
-		return (new StringBuilder(SpecialOperations.GetCommonPrefix(r))).reverse().ToString();
+		return (new StringBuilder(SpecialOperations.GetCommonPrefix(r))).Reverse().ToString();
 	  }
 
 	  public static BytesRef GetCommonSuffixBytesRef(Automaton a)
 	  {
-		if (a.Singleton) // if singleton, the suffix is the string itself.
+		if (a.IsSingleton) // if singleton, the suffix is the string itself.
 		{
-		  return new BytesRef(a.Singleton_Renamed);
+		  return new BytesRef(a.singleton);
 		}
 
 		// reverse the language of the automaton, then reverse its common prefix.
@@ -229,24 +237,24 @@ namespace Lucene.Net.Util.Automaton
 	  /// Reverses the language of the given (non-singleton) automaton while returning
 	  /// the set of new initial states.
 	  /// </summary>
-	  public static Set<State> Reverse(Automaton a)
+	  public static ISet<State> Reverse(Automaton a)
 	  {
 		a.ExpandSingleton();
 		// reverse all edges
 		Dictionary<State, HashSet<Transition>> m = new Dictionary<State, HashSet<Transition>>();
 		State[] states = a.NumberedStates;
-		Set<State> accept = new HashSet<State>();
+		HashSet<State> accept = new HashSet<State>();
 		foreach (State s in states)
 		{
 		  if (s.Accept)
 		  {
-			accept.add(s);
+			accept.Add(s);
 		  }
 		}
 		foreach (State r in states)
 		{
 		  m[r] = new HashSet<Transition>();
-		  r.Accept_Renamed = false;
+		  r.accept = false;
 		}
 		foreach (State r in states)
 		{
@@ -257,17 +265,17 @@ namespace Lucene.Net.Util.Automaton
 		}
 		foreach (State r in states)
 		{
-		  Set<Transition> tr = m[r];
-		  r.Transitions = tr.toArray(new Transition[tr.size()]);
+		  HashSet<Transition> tr = m[r];
+		  r.Transitions = tr.ToArray(/*new Transition[tr.Count]*/);
 		}
 		// make new initial+final states
 		a.Initial.accept = true;
 		a.Initial = new State();
 		foreach (State r in accept)
 		{
-		  a.Initial.addEpsilon(r); // ensures that all initial states are reachable
+		  a.Initial.AddEpsilon(r); // ensures that all initial states are reachable
 		}
-		a.Deterministic_Renamed = false;
+		a.deterministic = false;
 		a.ClearNumberedStates();
 		return accept;
 	  }
@@ -282,14 +290,14 @@ namespace Lucene.Net.Util.Automaton
 	  /// strings are accepted, the first limit strings found are returned. If <code>limit</code>&lt;0, then 
 	  /// the limit is infinite.
 	  /// </summary>
-	  public static Set<IntsRef> GetFiniteStrings(Automaton a, int limit)
+	  public static ISet<IntsRef> GetFiniteStrings(Automaton a, int limit)
 	  {
 		HashSet<IntsRef> strings = new HashSet<IntsRef>();
-		if (a.Singleton)
+		if (a.IsSingleton)
 		{
 		  if (limit > 0)
 		  {
-			strings.Add(Util.ToUTF32(a.Singleton_Renamed, new IntsRef()));
+			strings.Add(Util.ToUTF32(a.Singleton, new IntsRef()));
 		  }
 		}
 		else if (!GetFiniteStrings(a.Initial, new HashSet<State>(), strings, new IntsRef(), limit))

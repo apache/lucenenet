@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// <seealso cref= Automaton#setMinimization(int) </seealso>
 	  public static void Minimize(Automaton a)
 	  {
-		if (!a.Singleton)
+		if (!a.IsSingleton)
 		{
 		  MinimizeHopcroft(a);
 		}
@@ -70,8 +71,8 @@ namespace Lucene.Net.Util.Automaton
 		a.Determinize();
 		if (a.Initial.numTransitions == 1)
 		{
-		  Transition t = a.Initial.transitionsArray[0];
-		  if (t.To == a.Initial && t.Min_Renamed == char.MIN_CODE_POINT && t.Max_Renamed == char.MAX_CODE_POINT)
+		  Transition t = a.Initial.TransitionsArray[0];
+		  if (t.To == a.Initial && t.Min_Renamed == Character.MIN_CODE_POINT && t.Max_Renamed == Character.MAX_CODE_POINT)
 		  {
 			  return;
 		  }
@@ -79,77 +80,43 @@ namespace Lucene.Net.Util.Automaton
 		a.Totalize();
 
 		// initialize data structures
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] sigma = a.getStartPoints();
 		int[] sigma = a.StartPoints;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] states = a.getNumberedStates();
 		State[] states = a.NumberedStates;
-		const int sigmaLen = sigma.Length, statesLen = states.Length;
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final java.util.ArrayList<State>[][] reverse = (java.util.ArrayList<State>[][]) new java.util.ArrayList[statesLen][sigmaLen];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: ArrayList<State>[][] reverse = (ArrayList<State>[][]) new ArrayList[statesLen][sigmaLen];
-		List<State>[][] reverse = (List<State>[][]) RectangularArrays.ReturnRectangularArrayListArray(statesLen, sigmaLen);
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final java.util.HashSet<State>[] partition = (java.util.HashSet<State>[]) new java.util.HashSet[statesLen];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		HashSet<State>[] partition = (HashSet<State>[]) new HashSet[statesLen];
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final java.util.ArrayList<State>[] splitblock = (java.util.ArrayList<State>[]) new java.util.ArrayList[statesLen];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-		List<State>[] splitblock = (List<State>[]) new ArrayList[statesLen];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] block = new int[statesLen];
+		int sigmaLen = sigma.Length, statesLen = states.Length;
+        List<State>[,] reverse = new List<State>[statesLen, sigmaLen];
+		HashSet<State>[] partition = new HashSet<State>[statesLen];
+		List<State>[] splitblock = new List<State>[statesLen];
 		int[] block = new int[statesLen];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StateList[][] active = new StateList[statesLen][sigmaLen];
-//JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: StateList[][] active = new StateList[statesLen][sigmaLen];
-		StateList[][] active = RectangularArrays.ReturnRectangularStateListArray(statesLen, sigmaLen);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StateListNode[][] active2 = new StateListNode[statesLen][sigmaLen];
-//JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: StateListNode[][] active2 = new StateListNode[statesLen][sigmaLen];
-		StateListNode[][] active2 = RectangularArrays.ReturnRectangularStateListNodeArray(statesLen, sigmaLen);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.LinkedList<IntPair> pending = new java.util.LinkedList<>();
+        StateList[,] active = new StateList[statesLen, sigmaLen];
+        StateListNode[,] active2 = new StateListNode[statesLen, sigmaLen];
 		LinkedList<IntPair> pending = new LinkedList<IntPair>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.BitSet pending2 = new java.util.BitSet(sigmaLen*statesLen);
 		BitArray pending2 = new BitArray(sigmaLen * statesLen);
-		const BitArray split = new BitArray(statesLen), refine = new BitArray(statesLen), refine2 = new BitArray(statesLen);
+		BitArray split = new BitArray(statesLen), refine = new BitArray(statesLen), refine2 = new BitArray(statesLen);
 		for (int q = 0; q < statesLen; q++)
 		{
-		  splitblock[q] = new List<>();
-		  partition[q] = new HashSet<>();
+		  splitblock[q] = new List<State>();
+		  partition[q] = new HashSet<State>();
 		  for (int x = 0; x < sigmaLen; x++)
 		  {
-			active[q][x] = new StateList();
+			active[q,x] = new StateList();
 		  }
 		}
 		// find initial partition and reverse edges
 		for (int q = 0; q < statesLen; q++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State qq = states[q];
 		  State qq = states[q];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int j = qq.accept ? 0 : 1;
-		  int j = qq.Accept_Renamed ? 0 : 1;
+		  int j = qq.accept ? 0 : 1;
 		  partition[j].Add(qq);
 		  block[q] = j;
 		  for (int x = 0; x < sigmaLen; x++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.ArrayList<State>[] r = reverse[qq.step(sigma[x]).number];
-			List<State>[] r = reverse[qq.Step(sigma[x]).Number_Renamed];
-			if (r[x] == null)
+			//List<State>[] r = reverse[qq.Step(sigma[x]).number];
+            var r = qq.Step(sigma[x]).number;
+			if (reverse[r, x] == null)
 			{
-			  r[x] = new List<>();
+                reverse[r, x] = new List<State>();
 			}
-			r[x].Add(qq);
+            reverse[r, x].Add(qq);
 		  }
 		}
 		// initialize active sets
@@ -159,9 +126,9 @@ namespace Lucene.Net.Util.Automaton
 		  {
 			foreach (State qq in partition[j])
 			{
-			  if (reverse[qq.number][x] != null)
+			  if (reverse[qq.number,x] != null)
 			  {
-				active2[qq.number][x] = active[j][x].Add(qq);
+				active2[qq.number,x] = active[j,x].Add(qq);
 			  }
 			}
 		  }
@@ -169,9 +136,7 @@ namespace Lucene.Net.Util.Automaton
 		// initialize pending
 		for (int x = 0; x < sigmaLen; x++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int j = (active[0][x].size <= active[1][x].size) ? 0 : 1;
-		  int j = (active[0][x].Size <= active[1][x].Size) ? 0 : 1;
+		  int j = (active[0,x].Size <= active[1,x].Size) ? 0 : 1;
 		  pending.AddLast(new IntPair(j, x));
 		  pending2.Set(x * statesLen + j, true);
 		}
@@ -179,34 +144,23 @@ namespace Lucene.Net.Util.Automaton
 		int k = 2;
 		while (pending.Count > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IntPair ip = pending.removeFirst();
-		  IntPair ip = pending.RemoveFirst();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int p = ip.n1;
+          IntPair ip = pending.First.Value;
+          pending.RemoveFirst();
 		  int p = ip.N1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int x = ip.n2;
 		  int x = ip.N2;
 		  pending2.Set(x * statesLen + p, false);
 		  // find states that need to be split off their blocks
-		  for (StateListNode m = active[p][x].First; m != null; m = m.Next)
+		  for (StateListNode m = active[p,x].First; m != null; m = m.Next)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.ArrayList<State> r = reverse[m.q.number][x];
-			List<State> r = reverse[m.q.Number_Renamed][x];
+			List<State> r = reverse[m.q.number,x];
 			if (r != null)
 			{
 				foreach (State s in r)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i = s.number;
 			  int i = s.number;
 			  if (!split.Get(i))
 			  {
 				split.Set(i, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int j = block[i];
 				int j = block[i];
 				splitblock[j].Add(s);
 				if (!refine2.Get(j))
@@ -219,18 +173,12 @@ namespace Lucene.Net.Util.Automaton
 			}
 		  }
 		  // refine blocks
-		  for (int j = refine.nextSetBit(0); j >= 0; j = refine.nextSetBit(j + 1))
+          for (int j = Number.NextSetBit(refine, 0); j >= 0; j = Number.NextSetBit(refine, j + 1))
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.ArrayList<State> sb = splitblock[j];
 			List<State> sb = splitblock[j];
 			if (sb.Count < partition[j].Count)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.HashSet<State> b1 = partition[j];
 			  HashSet<State> b1 = partition[j];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.HashSet<State> b2 = partition[k];
 			  HashSet<State> b2 = partition[k];
 			  foreach (State s in sb)
 			  {
@@ -239,20 +187,18 @@ namespace Lucene.Net.Util.Automaton
 				block[s.number] = k;
 				for (int c = 0; c < sigmaLen; c++)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StateListNode sn = active2[s.number][c];
-				  StateListNode sn = active2[s.number][c];
-				  if (sn != null && sn.Sl == active[j][c])
+				  StateListNode sn = active2[s.number,c];
+				  if (sn != null && sn.Sl == active[j,c])
 				  {
 					sn.Remove();
-					active2[s.number][c] = active[k][c].Add(s);
+					active2[s.number,c] = active[k,c].Add(s);
 				  }
 				}
 			  }
 			  // update pending
 			  for (int c = 0; c < sigmaLen; c++)
 			  {
-				const int aj = active[j][c].Size, ak = active[k][c].Size, ofs = c * statesLen;
+				int aj = active[j,c].Size, ak = active[k,c].Size, ofs = c * statesLen;
 				if (!pending2.Get(ofs + j) && 0 < aj && aj <= ak)
 				{
 				  pending2.Set(ofs + j, true);
@@ -279,8 +225,6 @@ namespace Lucene.Net.Util.Automaton
 		State[] newstates = new State[k];
 		for (int n = 0; n < newstates.Length; n++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State s = new State();
 		  State s = new State();
 		  newstates[n] = s;
 		  foreach (State q in partition[n])
@@ -289,19 +233,17 @@ namespace Lucene.Net.Util.Automaton
 			{
 				a.Initial = s;
 			}
-			s.Accept_Renamed = q.Accept_Renamed;
-			s.Number_Renamed = q.Number_Renamed; // select representative
-			q.Number_Renamed = n;
+			s.accept = q.accept;
+			s.number = q.number; // select representative
+			q.number = n;
 		  }
 		}
 		// build transitions and set acceptance
 		for (int n = 0; n < newstates.Length; n++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State s = newstates[n];
 		  State s = newstates[n];
-		  s.Accept_Renamed = states[s.Number_Renamed].Accept_Renamed;
-		  foreach (Transition t in states[s.Number_Renamed].Transitions)
+		  s.accept = states[s.number].accept;
+		  foreach (Transition t in states[s.number].Transitions)
 		  {
 			s.AddTransition(new Transition(t.Min_Renamed, t.Max_Renamed, newstates[t.To.number]));
 		  }

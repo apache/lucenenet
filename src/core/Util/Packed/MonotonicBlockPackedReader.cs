@@ -1,4 +1,5 @@
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -52,7 +53,7 @@ namespace Lucene.Net.Util.Packed
 		for (int i = 0; i < numBlocks; ++i)
 		{
 		  MinValues[i] = @in.ReadVLong();
-		  Averages[i] = float.intBitsToFloat(@in.ReadInt());
+		  Averages[i] = Number.IntBitsToFloat(@in.ReadInt());
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int bitsPerValue = in.readVInt();
 		  int bitsPerValue = @in.ReadVInt();

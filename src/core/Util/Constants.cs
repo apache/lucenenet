@@ -38,6 +38,9 @@ namespace Lucene.Net.Util
 	  /// The value of <tt>System.getProperty("java.version")</tt>. * </summary>
       public static readonly string JAVA_VERSION = AppSettings.Get("java.version", "");
       public static readonly string JAVA_VENDOR = AppSettings.Get("java.vendor", "");
+      public static readonly string JVM_VENDOR = AppSettings.Get("java.vm.vendor", "");
+      public static readonly string JVM_VERSION = AppSettings.Get("java.vm.version", "");
+      public static readonly string JVM_NAME = AppSettings.Get("java.vm.name", "");
 
 	  /// <summary>
 	  /// The value of <tt>System.getProperty("os.name")</tt>. * </summary>
@@ -77,7 +80,24 @@ namespace Lucene.Net.Util
 
 	  static Constants()
 	  {
-		bool is64Bit = false;
+          if (IntPtr.Size == 8)
+          {
+              JRE_IS_64BIT = true;// 64 bit machine
+          }
+          else if (IntPtr.Size == 4)
+          {
+              JRE_IS_64BIT = false;// 32 bit machine
+          }
+
+          try
+          {
+              LUCENE_VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+          }
+          catch (System.Security.SecurityException) //Ignore in medium trust.
+          {
+          }
+		/* LUCENE TO-DO Well that was all over the top to check architechture
+        bool is64Bit = false;
 		try
 		{
 		  Type unsafeClass = Type.GetType("sun.misc.Unsafe");
@@ -125,7 +145,7 @@ namespace Lucene.Net.Util
 		{
 		  v = MainVersionWithoutAlphaBeta() + "-SNAPSHOT";
 		}
-		LUCENE_VERSION = Ident(v);
+		LUCENE_VERSION = Ident(v);*/
 	  }
 
 	  // this method prevents inlining the final version constant in compiled classes,

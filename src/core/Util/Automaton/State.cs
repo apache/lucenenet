@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
@@ -44,11 +45,11 @@ namespace Lucene.Net.Util.Automaton
 	public class State : IComparable<State>
 	{
 
-	  internal bool Accept_Renamed;
+	  internal bool accept;
 	  public Transition[] TransitionsArray;
-	  public int NumTransitions_Renamed;
+	  public int numTransitions;
 
-	  internal int Number_Renamed;
+	  internal int number;
 
 	  internal int Id;
 	  internal static int Next_id;
@@ -68,7 +69,7 @@ namespace Lucene.Net.Util.Automaton
 	  internal void ResetTransitions()
 	  {
 		TransitionsArray = new Transition[0];
-		NumTransitions_Renamed = 0;
+		numTransitions = 0;
 	  }
 
 	  private class TransitionsIterable : IEnumerable<Transition>
@@ -97,11 +98,11 @@ namespace Lucene.Net.Util.Automaton
 			internal int upto;
 			public virtual bool HasNext()
 			{
-			  return upto < outerInstance.outerInstance.NumTransitions_Renamed;
+			  return upto < OuterInstance.OuterInstance.numTransitions;
 			}
 			public virtual Transition Next()
 			{
-			  return outerInstance.outerInstance.TransitionsArray[upto++];
+			  return OuterInstance.OuterInstance.TransitionsArray[upto++];
 			}
 			public virtual void Remove()
 			{
@@ -123,14 +124,14 @@ namespace Lucene.Net.Util.Automaton
 		  }
 		  set
 		  {
-			this.NumTransitions_Renamed = value.Length;
-			this.TransitionsArray = value;
+              this.TransitionsArray = value.ToArray();
+              this.numTransitions = value.ToArray().Length;
 		  }
 	  }
 
 	  public virtual int NumTransitions()
 	  {
-		return NumTransitions_Renamed;
+		return numTransitions;
 	  }
 
 
@@ -140,15 +141,13 @@ namespace Lucene.Net.Util.Automaton
 	  /// <param name="t"> transition </param>
 	  public virtual void AddTransition(Transition t)
 	  {
-		if (NumTransitions_Renamed == TransitionsArray.Length)
+		if (numTransitions == TransitionsArray.Length)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition[] newArray = new Transition[Lucene.Net.Util.ArrayUtil.oversize(1+numTransitions, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-		  Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + NumTransitions_Renamed, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-		  Array.Copy(TransitionsArray, 0, newArray, 0, NumTransitions_Renamed);
+		  Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + numTransitions, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+		  Array.Copy(TransitionsArray, 0, newArray, 0, numTransitions);
 		  TransitionsArray = newArray;
 		}
-		TransitionsArray[NumTransitions_Renamed++] = t;
+		TransitionsArray[numTransitions++] = t;
 	  }
 
 	  /// <summary>
@@ -159,11 +158,11 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  set
 		  {
-			this.Accept_Renamed = value;
+			this.accept = value;
 		  }
 		  get
 		  {
-			return Accept_Renamed;
+			return accept;
 		  }
 	  }
 
@@ -177,10 +176,8 @@ namespace Lucene.Net.Util.Automaton
 	  public virtual State Step(int c)
 	  {
 		Debug.Assert(c >= 0);
-		for (int i = 0;i < NumTransitions_Renamed;i++)
+		for (int i = 0;i < numTransitions;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = transitionsArray[i];
 		  Transition t = TransitionsArray[i];
 		  if (t.Min_Renamed <= c && c <= t.Max_Renamed)
 		  {
@@ -198,10 +195,8 @@ namespace Lucene.Net.Util.Automaton
 	  /// <seealso cref= #step(int) </seealso>
 	  public virtual void Step(int c, ICollection<State> dest)
 	  {
-		for (int i = 0;i < NumTransitions_Renamed;i++)
+		for (int i = 0;i < numTransitions;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = transitionsArray[i];
 		  Transition t = TransitionsArray[i];
 		  if (t.Min_Renamed <= c && c <= t.Max_Renamed)
 		  {
@@ -218,9 +213,9 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  internal virtual void AddEpsilon(State to)
 	  {
-		if (to.Accept_Renamed)
+		if (to.accept)
 		{
-			Accept_Renamed = true;
+			accept = true;
 		}
 		foreach (Transition t in to.Transitions)
 		{
@@ -232,12 +227,10 @@ namespace Lucene.Net.Util.Automaton
 	  /// Downsizes transitionArray to numTransitions </summary>
 	  public virtual void TrimTransitionsArray()
 	  {
-		if (NumTransitions_Renamed < TransitionsArray.Length)
+		if (numTransitions < TransitionsArray.Length)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition[] newArray = new Transition[numTransitions];
-		  Transition[] newArray = new Transition[NumTransitions_Renamed];
-		  Array.Copy(TransitionsArray, 0, newArray, 0, NumTransitions_Renamed);
+		  Transition[] newArray = new Transition[numTransitions];
+		  Array.Copy(TransitionsArray, 0, newArray, 0, numTransitions);
 		  TransitionsArray = newArray;
 		}
 	  }
@@ -248,7 +241,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public virtual void Reduce()
 	  {
-		if (NumTransitions_Renamed <= 1)
+		if (numTransitions <= 1)
 		{
 		  return;
 		}
@@ -256,10 +249,8 @@ namespace Lucene.Net.Util.Automaton
 		State p = null;
 		int min = -1, max = -1;
 		int upto = 0;
-		for (int i = 0;i < NumTransitions_Renamed;i++)
+		for (int i = 0;i < numTransitions;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = transitionsArray[i];
 		  Transition t = TransitionsArray[i];
 		  if (p == t.To)
 		  {
@@ -296,7 +287,7 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  TransitionsArray[upto++] = new Transition(min, max, p);
 		}
-		NumTransitions_Renamed = upto;
+		numTransitions = upto;
 	  }
 
 	  /// <summary>
@@ -311,9 +302,9 @@ namespace Lucene.Net.Util.Automaton
 	  public virtual void SortTransitions(IComparer<Transition> comparator)
 	  {
 		// mergesort seems to perform better on already sorted arrays:
-		if (NumTransitions_Renamed > 1)
+		if (numTransitions > 1)
 		{
-			ArrayUtil.TimSort(TransitionsArray, 0, NumTransitions_Renamed, comparator);
+			ArrayUtil.TimSort(TransitionsArray, 0, numTransitions, comparator);
 		}
 	  }
 
@@ -327,8 +318,12 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-			return Number_Renamed;
+			return number;
 		  }
+          set
+          {
+              number = value;
+          }
 	  }
 
 	  /// <summary>
@@ -338,8 +333,8 @@ namespace Lucene.Net.Util.Automaton
 	  public override string ToString()
 	  {
 		StringBuilder b = new StringBuilder();
-		b.Append("state ").Append(Number_Renamed);
-		if (Accept_Renamed)
+		b.Append("state ").Append(number);
+		if (accept)
 		{
 			b.Append(" [accept]");
 		}

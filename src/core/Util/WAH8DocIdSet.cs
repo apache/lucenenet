@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
 		  Debug.Assert(word != 0);
 		  builder.AddWord(wordNum, word);
 		  ++wordNum;
-			mainContinue:;
+		  mainContinue:;
 		}
 		mainBreak:
 		return builder.Build();
@@ -915,7 +915,7 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int targetWordNum = wordNum(target);
 		  int targetWordNum = WordNum(target);
-		  if (targetWordNum > WordNum)
+		  if (targetWordNum > this.WordNum)
 		  {
 			AdvanceWord(targetWordNum);
 			BitList = BitUtil.BitList(Word);
