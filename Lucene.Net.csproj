@@ -9632,6 +9632,8 @@
     <Compile Include="src\core\Support\AttributeImplItem.cs" />
     <Compile Include="src\core\Support\BitSetSupport.cs" />
     <Compile Include="src\core\Support\Buffer.cs" />
+    <Compile Include="src\core\Support\AttributeImplItem.cs" />
+    <Compile Include="src\core\Support\BitSetSupport.cs" />
     <Compile Include="src\core\Support\BufferUnderflowException.cs" />
     <Compile Include="src\core\Support\BuildType.cs" />
     <Compile Include="src\core\Support\ByteBuffer.cs" />

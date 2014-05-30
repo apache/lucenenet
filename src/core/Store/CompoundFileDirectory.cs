@@ -1,5 +1,12 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Codecs;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Linq;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -27,8 +34,8 @@ namespace Lucene.Net.Store
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IOUtils = Lucene.Net.Util.IOUtils;
-using Lucene.Net.Support;
-using System;
+    using Lucene.Net.Support;
+    using System;
 
 
 	/// <summary>
@@ -130,10 +137,10 @@ using System;
 		}
 	  }
 
-	  private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)(CodecUtil.CODEC_MAGIC >> > 24);
-	  private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)(CodecUtil.CODEC_MAGIC >> > 16);
-	  private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)(CodecUtil.CODEC_MAGIC >> > 8);
-	  private static readonly sbyte CODEC_MAGIC_BYTE4 = (sbyte) CodecUtil.CODEC_MAGIC;
+	  private static readonly byte CODEC_MAGIC_BYTE1 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 24);
+	  private static readonly byte CODEC_MAGIC_BYTE2 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 16);
+      private static readonly byte CODEC_MAGIC_BYTE3 = (byte)Number.URShift(CodecUtil.CODEC_MAGIC, 8);
+      private static readonly byte CODEC_MAGIC_BYTE4 = unchecked((byte)CodecUtil.CODEC_MAGIC);
 
 	  /// <summary>
 	  /// Helper method that reads CFS entries from an input stream </summary>
@@ -341,7 +348,7 @@ using System;
 		}
 		else
 		{
-		  res = Entries.Keys.ToArray(new string[Entries.Count]);
+            res = Entries.Keys.ToArray();
 		  // Add the segment name
 		  string seg = IndexFileNames.ParseSegmentName(FileName);
 		  for (int i = 0; i < res.Length; i++)

@@ -89,7 +89,7 @@ namespace Lucene.Net.Store
 			}
 			CurBuf = Buffers[CurBufIndex];
 			CurBuf.Position = 0;
-		  } while (!CurBuf.HasRemaining);
+		  } while (!CurBuf.HasRemaining());
 		  return CurBuf.Get();
 		}
 		catch (System.NullReferenceException npe)
@@ -377,12 +377,8 @@ namespace Lucene.Net.Store
 		  // for extra safety unset also all clones' buffers:
 		  if (Clones != null)
 		  {
-			for (IEnumerator<ByteBufferIndexInput> it = this.Clones.KeyIterator(); it.MoveNext();)
+			for (ByteBufferIndexInput clone in Clones.Keys)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ByteBufferIndexInput clone = it.Current;
-			  ByteBufferIndexInput clone = it.Current;
-			  Debug.Assert(clone.IsClone);
 			  clone.UnsetBuffers();
 			}
 			this.Clones.Clear();

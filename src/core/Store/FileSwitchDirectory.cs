@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace Lucene.Net.Store
 {
@@ -95,24 +97,26 @@ namespace Lucene.Net.Store
 		// yet been called, because so far everything is written to the other,
 		// in this case, we don't want to throw a NoSuchDirectoryException
 		NoSuchDirectoryException exc = null;
-		try
-		{
+		//try
+		//{
 		  foreach (string f in PrimaryDir_Renamed.ListAll())
 		  {
 			files.Add(f);
 		  }
-		}
+		//}
+            /*
 		catch (NoSuchDirectoryException e)
 		{
 		  exc = e;
-		}
-		try
-		{
+		}*/
+		//try
+		//{
 		  foreach (string f in SecondaryDir_Renamed.ListAll())
 		  {
 			files.Add(f);
 		  }
-		}
+		//}
+    /*
 		catch (NoSuchDirectoryException e)
 		{
 		  // we got NoSuchDirectoryException from both dirs
@@ -128,13 +132,15 @@ namespace Lucene.Net.Store
 			throw e;
 		  }
 		}
+     * */
 		// we got NoSuchDirectoryException from the primary,
 		// and the secondary is empty.
+ 
 		if (exc != null && files.Count == 0)
 		{
-		  throw exc;
+		  //throw exc;
 		}
-		return files.ToArray(new string[files.Count]);
+		return files.ToArray();
 	  }
 
 	  /// <summary>

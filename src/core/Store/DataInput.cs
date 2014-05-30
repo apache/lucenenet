@@ -248,7 +248,9 @@ namespace Lucene.Net.Store
 //ORIGINAL LINE: final byte[] bytes = new byte[length];
 		sbyte[] bytes = new sbyte[length];
 		ReadBytes(bytes, 0, length);
-		return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
+
+		//return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
+        return IOUtils.CHARSET_UTF_8.GetString((byte[]) (Array)bytes);
 	  }
 
 	  /// <summary>
@@ -263,14 +265,7 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  public override DataInput Clone()
 	  {
-		try
-		{
-		  return (DataInput) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception("this cannot happen: Failing to clone DataInput");
-		}
+		  return (DataInput) base.MemberwiseClone();
 	  }
 
 	  /// <summary>

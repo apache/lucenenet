@@ -1,5 +1,13 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Codecs;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using System;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -164,13 +172,13 @@ namespace Lucene.Net.Store
 		// (remove partial .cfs/.cfe)
 		try
 		{
-		  if (PendingEntries.Count > 0 || OutputTaken.get())
+		  if (PendingEntries.Count > 0 || OutputTaken.Get())
 		  {
 			throw new InvalidOperationException("CFS has pending open files");
 		  }
 		  Closed = true;
 		  // open the compound stream
-		  Output;
+		  GetOutput();
 		  Debug.Assert(DataOut != null);
 		  CodecUtil.WriteFooter(DataOut);
 		}
@@ -180,7 +188,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  IOUtils.CloseWhileHandlingException(priorException, DataOut);
+		  IOUtils.closeWhileHandlingException(priorException, DataOut);
 		}
 		try
 		{
@@ -193,7 +201,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  IOUtils.CloseWhileHandlingException(priorException, entryTableOut);
+		  IOUtils.closeWhileHandlingException(priorException, entryTableOut);
 		}
 	  }
 
@@ -289,7 +297,7 @@ namespace Lucene.Net.Store
 //ORIGINAL LINE: final DirectCFSIndexOutput out;
 		  DirectCFSIndexOutput @out;
 
-		  if ((outputLocked = OutputTaken.compareAndSet(false, true)))
+		  if ((outputLocked = OutputTaken.CompareAndSet(false, true)))
 		  {
 			@out = new DirectCFSIndexOutput(this, Output, entry, false);
 		  }
@@ -308,28 +316,55 @@ namespace Lucene.Net.Store
 			Entries.Remove(name);
 			if (outputLocked) // release the output lock if not successful
 			{
-			  Debug.Assert(OutputTaken.get());
+			  Debug.Assert(OutputTaken.Get());
 			  ReleaseOutputLock();
 			}
 		  }
 		}
 	  }
 
+      private IndexOutput GetOutput()
+      {
+          lock (this)
+          {
+              if (DataOut == null)
+              {
+                  bool success = false;
+                  try
+                  {
+                      DataOut = Directory.CreateOutput(DataFileName, IOContext.DEFAULT);
+                      CodecUtil.WriteHeader(DataOut, DATA_CODEC, VERSION_CURRENT);
+                      success = true;
+                  }
+                  finally
+                  {
+                      if (!success)
+                      {
+                          IOUtils.CloseWhileHandlingException((IDisposable)DataOut);
+                      }
+                  }
+              }
+              return DataOut;
+          }
+      }
+
 	  internal void ReleaseOutputLock()
 	  {
-		OutputTaken.compareAndSet(true, false);
+		OutputTaken.CompareAndSet(true, false);
 	  }
 
 	  private void PrunePendingEntries()
 	  {
 		// claim the output and copy all pending files in
-		if (OutputTaken.compareAndSet(false, true))
+		if (OutputTaken.CompareAndSet(false, true))
 		{
 		  try
 		  {
 			while (PendingEntries.Count > 0)
 			{
-			  FileEntry entry = PendingEntries.RemoveFirst();
+
+              FileEntry entry = PendingEntries.First();
+              PendingEntries.RemoveFirst();;
 			  CopyFileEntry(Output, entry);
 			  Entries[entry.File] = entry;
 			}
@@ -338,7 +373,7 @@ namespace Lucene.Net.Store
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean compareAndSet = outputTaken.compareAndSet(true, false);
-			bool compareAndSet = OutputTaken.compareAndSet(true, false);
+			bool compareAndSet = OutputTaken.CompareAndSet(true, false);
 			Debug.Assert(compareAndSet);
 		  }
 		}
@@ -349,7 +384,7 @@ namespace Lucene.Net.Store
 		FileEntry fileEntry = Entries[name];
 		if (fileEntry == null)
 		{
-		  throw new FileNotFoundException(name + " does not exist");
+		  throw new Exception (name + " does not exist");
 		}
 		return fileEntry.Length;
 	  }
@@ -361,7 +396,7 @@ namespace Lucene.Net.Store
 
 	  internal string[] ListAll()
 	  {
-		return Entries.Keys.ToArray(new string[0]);
+		return Entries.Keys.ToArray();
 	  }
 
 	  private sealed class DirectCFSIndexOutput : IndexOutput
@@ -429,7 +464,7 @@ namespace Lucene.Net.Store
 		public override long Length()
 		{
 		  Debug.Assert(!Closed);
-		  return @delegate.Length() - Offset;
+		  return @delegate.Length - Offset;
 		}
 
 		public override void WriteByte(sbyte b)
