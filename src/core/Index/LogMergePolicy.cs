@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final IndexWriter w = writer.get();
 		IndexWriter w = Writer.Get();
-		return w != null && w.InfoStream.isEnabled("LMP");
+		return w != null && w.infoStream.IsEnabled("LMP");
 	  }
 
 	  /// <summary>
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 	  {
 		if (Verbose())
 		{
-		  Writer.Get().infoStream.message("LMP", message);
+		  Writer.Get().infoStream.Message("LMP", message);
 		}
 	  }
 
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
 	  {
 		if (CalibrateSizeByDeletes_Renamed)
 		{
-		  int delCount = Writer.Get().numDeletedDocs(info);
+		  int delCount = Writer.Get().NumDeletedDocs(info);
 		  Debug.Assert(delCount <= info.Info.DocCount);
 		  return (info.Info.DocCount - (long)delCount);
 		}
@@ -227,19 +227,13 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual bool IsMerged(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = infos.size();
 		int numSegments = infos.Size();
 		int numToMerge = 0;
 		SegmentCommitInfo mergeInfo = null;
-		bool segmentIsOriginal = false;
+		bool? segmentIsOriginal = false;
 		for (int i = 0;i < numSegments && numToMerge <= maxNumSegments;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = infos.info(i);
 		  SegmentCommitInfo info = infos.Info(i);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Boolean isOriginal = segmentsToMerge.get(info);
 		  bool? isOriginal = segmentsToMerge[info];
 		  if (isOriginal != null)
 		  {
@@ -249,7 +243,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		return numToMerge <= maxNumSegments && (numToMerge != 1 || !segmentIsOriginal || IsMerged(infos, mergeInfo));
+		return numToMerge <= maxNumSegments && (numToMerge != 1 || segmentIsOriginal != false || IsMerged(infos, mergeInfo));
 	  }
 
 	  /// <summary>
@@ -502,7 +496,7 @@ namespace Lucene.Net.Index
 		  {
 			if (Verbose())
 			{
-			  Message("  segment " + info.Info.name + " has deletions");
+			  Message("  segment " + info.Info.Name + " has deletions");
 			}
 			if (firstSegmentWithDeletions == -1)
 			{
@@ -796,7 +790,7 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-		StringBuilder sb = new StringBuilder("[" + this.GetType().SimpleName + ": ");
+		StringBuilder sb = new StringBuilder("[" + this.GetType().Name + ": ");
 		sb.Append("minMergeSize=").Append(MinMergeSize).Append(", ");
 		sb.Append("mergeFactor=").Append(MergeFactor_Renamed).Append(", ");
 		sb.Append("maxMergeSize=").Append(MaxMergeSize).Append(", ");

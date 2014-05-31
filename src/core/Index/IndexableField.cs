@@ -24,6 +24,7 @@ namespace Lucene.Net.Index
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity; // javadocs
 	using Similarity = Lucene.Net.Search.Similarities.Similarity; // javadocs
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using System.IO;
 
 	// TODO: how to handle versioning here...?
 
@@ -76,15 +77,15 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Non-null if this field has a string value </summary>
-	  string StringValue();
+	  string StringValue{get;}
 
 	  /// <summary>
 	  /// Non-null if this field has a Reader value </summary>
-	  Reader ReaderValue();
+	  TextReader ReaderValue{get;}
 
 	  /// <summary>
 	  /// Non-null if this field has a numeric value </summary>
-	  Number NumericValue();
+	  object NumericValue{get;}
 
 	  /// <summary>
 	  /// Creates the TokenStream used for indexing this field.  If appropriate,

@@ -33,7 +33,7 @@ namespace Lucene.Net.Index
 	internal abstract class DocValuesFieldUpdates
 	{
 
-	  internal enum Type
+	  internal enum Type_e
 	  {
 		  NUMERIC,
 		  BINARY
@@ -102,29 +102,29 @@ namespace Lucene.Net.Index
 		  return NumericDVUpdates.Count + BinaryDVUpdates.Count;
 		}
 
-		internal virtual DocValuesFieldUpdates GetUpdates(string field, Type type)
+		internal virtual DocValuesFieldUpdates GetUpdates(string field, Type_e type)
 		{
 		  switch (type)
 		  {
-			case Lucene.Net.Index.DocValuesFieldUpdates.Type.NUMERIC:
+			case Type_e.NUMERIC:
 			  return NumericDVUpdates[field];
-			case Lucene.Net.Index.DocValuesFieldUpdates.Type.BINARY:
+            case Type_e.BINARY:
 			  return BinaryDVUpdates[field];
 			default:
 			  throw new System.ArgumentException("unsupported type: " + type);
 		  }
 		}
 
-		internal virtual DocValuesFieldUpdates NewUpdates(string field, Type type, int maxDoc)
+		internal virtual DocValuesFieldUpdates NewUpdates(string field, Type_e type, int maxDoc)
 		{
 		  switch (type)
 		  {
-			case Lucene.Net.Index.DocValuesFieldUpdates.Type.NUMERIC:
+			case Type_e.NUMERIC:
 			  Debug.Assert(NumericDVUpdates[field] == null);
 			  NumericDocValuesFieldUpdates numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
 			  NumericDVUpdates[field] = numericUpdates;
 			  return numericUpdates;
-			case Lucene.Net.Index.DocValuesFieldUpdates.Type.BINARY:
+            case Type_e.BINARY:
 			  Debug.Assert(BinaryDVUpdates[field] == null);
 			  BinaryDocValuesFieldUpdates binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
 			  BinaryDVUpdates[field] = binaryUpdates;
@@ -141,9 +141,9 @@ namespace Lucene.Net.Index
 	  }
 
 	  internal readonly string Field;
-	  internal readonly Type Type;
+	  internal readonly Type_e Type;
 
-	  protected internal DocValuesFieldUpdates(string field, Type type)
+	  protected internal DocValuesFieldUpdates(string field, Type_e type)
 	  {
 		this.Field = field;
 		this.Type = type;

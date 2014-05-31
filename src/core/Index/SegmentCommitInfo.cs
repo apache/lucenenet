@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 	  private long NextWriteFieldInfosGen;
 
 	  // Track the per-generation updates files
-	  private readonly IDictionary<long?, Set<string>> GenUpdatesFiles_Renamed = new Dictionary<long?, Set<string>>();
+	  private readonly IDictionary<long?, ISet<string>> GenUpdatesFiles_Renamed = new Dictionary<long?, ISet<string>>();
 
 	  private volatile long SizeInBytes_Renamed = -1;
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Returns the per generation updates files. </summary>
-	  public virtual IDictionary<long?, Set<string>> UpdatesFiles
+	  public virtual IDictionary<long?, ISet<string>> UpdatesFiles
 	  {
 		  get
 		  {
@@ -108,13 +108,13 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Sets the updates file names per generation. Does not deep clone the map. </summary>
-	  public virtual IDictionary<long?, Set<string>> GenUpdatesFiles
+	  public virtual IDictionary<long?, ISet<string>> GenUpdatesFiles
 	  {
 		  set
 		  {
 			this.GenUpdatesFiles_Renamed.Clear();
 	//JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
-			this.GenUpdatesFiles_Renamed.putAll(value);
+			this.GenUpdatesFiles_Renamed.PutAll(value);
 		  }
 	  }
 
@@ -166,9 +166,9 @@ namespace Lucene.Net.Index
 		if (SizeInBytes_Renamed == -1)
 		{
 		  long sum = 0;
-		  foreach (String fileName in Files())
+		  foreach (string fileName in Files())
 		  {
-			sum += Info.Dir.fileLength(fileName);
+			sum += Info.Dir.FileLength(fileName);
 		  }
 		  SizeInBytes_Renamed = sum;
 		}
@@ -181,18 +181,18 @@ namespace Lucene.Net.Index
 	  public virtual ICollection<string> Files()
 	  {
 		// Start from the wrapped info's files:
-		ICollection<string> files = new HashSet<string>(Info.Files());
+		ICollection<string> files = new HashSet<string>(Info.Files);
 
 		// TODO we could rely on TrackingDir.getCreatedFiles() (like we do for
 		// updates) and then maybe even be able to remove LiveDocsFormat.files().
 
 		// Must separately add any live docs files:
-		Info.Codec.LiveDocsFormat().files(this, files);
+		Info.Codec.LiveDocsFormat().Files(this, files);
 
 		// Must separately add any field updates files
-		foreach (Set<string> updateFiles in GenUpdatesFiles_Renamed.Values)
+		foreach (ISet<string> updateFiles in GenUpdatesFiles_Renamed.Values)
 		{
-		  files.addAll(updateFiles);
+		  files.AddAll(updateFiles);
 		}
 
 		return files;
@@ -330,9 +330,9 @@ namespace Lucene.Net.Index
 		other.NextWriteFieldInfosGen = NextWriteFieldInfosGen;
 
 		// deep clone
-		foreach (KeyValuePair<long?, Set<string>> e in GenUpdatesFiles_Renamed)
+		foreach (KeyValuePair<long?, ISet<string>> e in GenUpdatesFiles_Renamed)
 		{
-		  other.GenUpdatesFiles_Renamed[e.Key] = new HashSet<>(e.Value);
+		  other.GenUpdatesFiles_Renamed[e.Key] = new HashSet<string>(e.Value);
 		}
 
 		return other;

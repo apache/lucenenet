@@ -35,6 +35,7 @@ namespace Lucene.Net.Index
 	using Bits = Lucene.Net.Util.Bits;
 	using Lucene.Net.Util;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -68,7 +69,7 @@ namespace Lucene.Net.Index
 
 		  protected internal override IDictionary<string, object> InitialValue()
 		  {
-			return new Dictionary<>();
+              return new Dictionary<string, object>();
 		  }
 	  }
 
@@ -82,12 +83,12 @@ namespace Lucene.Net.Index
 
 		  protected internal override IDictionary<string, Bits> InitialValue()
 		  {
-			return new Dictionary<>();
+              return new Dictionary<string, Bits>();
 		  }
 	  }
 
 	  internal readonly IDictionary<string, DocValuesProducer> DvProducersByField = new Dictionary<string, DocValuesProducer>();
-	  internal readonly Set<DocValuesProducer> DvProducers = Collections.newSetFromMap(new IdentityHashMap<DocValuesProducer, bool?>());
+	  internal readonly ISet<DocValuesProducer> DvProducers = Collections.newSetFromMap(new IdentityHashMap<DocValuesProducer, bool?>());
 
 	  internal readonly FieldInfos FieldInfos_Renamed;
 
@@ -108,7 +109,7 @@ namespace Lucene.Net.Index
 		// Best if we could somehow read FieldInfos in SCR but not keep it there, but
 		// constructors don't allow returning two things...
 		FieldInfos_Renamed = ReadFieldInfos(si);
-		Core = new SegmentCoreReaders(this, si.Info.dir, si, context, termInfosIndexDivisor);
+		Core = new SegmentCoreReaders(this, si.Info.Dir, si, context, termInfosIndexDivisor);
 		SegDocValues = new SegmentDocValues();
 
 		bool success = false;
@@ -120,7 +121,7 @@ namespace Lucene.Net.Index
 		  if (si.HasDeletions())
 		  {
 			// NOTE: the bitvector is stored using the regular directory, not cfs
-			LiveDocs_Renamed = codec.LiveDocsFormat().readLiveDocs(Directory(), si, IOContext.READONCE);
+			LiveDocs_Renamed = codec.LiveDocsFormat().ReadLiveDocs(Directory(), si, IOContext.READONCE);
 		  }
 		  else
 		  {
@@ -155,7 +156,7 @@ namespace Lucene.Net.Index
 	  ///  SegmentReader and loading new live docs from a new
 	  ///  deletes file.  Used by openIfChanged. 
 	  /// </summary>
-	  internal SegmentReader(SegmentCommitInfo si, SegmentReader sr) : this(si, sr, si.Info.Codec.liveDocsFormat().readLiveDocs(si.Info.dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
+	  internal SegmentReader(SegmentCommitInfo si, SegmentReader sr) : this(si, sr, si.Info.Codec.LiveDocsFormat().readLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
 	  {
 	  }
 
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Store.Directory dir = core.cfsReader != null ? core.cfsReader : si.info.dir;
-		Directory dir = Core.CfsReader != null ? Core.CfsReader : Si.Info.dir;
+		Directory dir = Core.CfsReader != null ? Core.CfsReader : Si.Info.Dir;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Codecs.DocValuesFormat dvFormat = codec.docValuesFormat();
 		DocValuesFormat dvFormat = codec.DocValuesFormat();
@@ -232,7 +233,7 @@ namespace Lucene.Net.Index
 		  foreach (FieldInfo fi in infos)
 		  {
 			DvProducersByField[fi.Name] = dvp;
-			DvProducers.add(dvp);
+			DvProducers.Add(dvp);
 		  }
 		}
 
@@ -255,13 +256,13 @@ namespace Lucene.Net.Index
 		if (info.FieldInfosGen == -1 && info.Info.UseCompoundFile)
 		{
 		  // no fieldInfos gen and segment uses a compound file
-		  dir = new CompoundFileDirectory(info.Info.dir, IndexFileNames.SegmentFileName(info.Info.name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), IOContext.READONCE, false);
+		  dir = new CompoundFileDirectory(info.Info.Dir, IndexFileNames.SegmentFileName(info.Info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), IOContext.READONCE, false);
 		  closeDir = true;
 		}
 		else
 		{
 		  // gen'd FIS are read outside CFS, or the segment doesn't use a compound file
-		  dir = info.Info.dir;
+		  dir = info.Info.Dir;
 		  closeDir = false;
 		}
 
@@ -269,8 +270,8 @@ namespace Lucene.Net.Index
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String segmentSuffix = info.getFieldInfosGen() == -1 ? "" : Long.toString(info.getFieldInfosGen(), Character.MAX_RADIX);
-		  string segmentSuffix = info.FieldInfosGen == -1 ? "" : Convert.ToString(info.FieldInfosGen, char.MAX_RADIX);
-		  return info.Info.Codec.fieldInfosFormat().FieldInfosReader.read(dir, info.Info.name, segmentSuffix, IOContext.READONCE);
+		  string segmentSuffix = info.FieldInfosGen == -1 ? "" : Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX);
+		  return info.Info.Codec.FieldInfosFormat().FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READONCE);
 		}
 		finally
 		{
@@ -291,7 +292,7 @@ namespace Lucene.Net.Index
 			IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
 			foreach (FieldInfo fi in FieldInfos_Renamed)
 			{
-			  if (fi.DocValuesType_e == null)
+			  if (fi.DocValuesType == null)
 			  {
 				continue;
 			  }
@@ -299,7 +300,7 @@ namespace Lucene.Net.Index
 			  IList<FieldInfo> infos = genInfos[gen];
 			  if (infos == null)
 			  {
-				infos = new List<>();
+				infos = new List<FieldInfo>();
 				genInfos[gen] = infos;
 			  }
 			  infos.Add(fi);
@@ -329,7 +330,7 @@ namespace Lucene.Net.Index
 		  DvProducersByField.Clear();
 		  try
 		  {
-			IOUtils.close(docValuesLocal, docsWithFieldLocal);
+			IOUtils.Close(docValuesLocal, docsWithFieldLocal);
 		  }
 		  finally
 		  {
@@ -357,7 +358,7 @@ namespace Lucene.Net.Index
 		  get
 		  {
 			EnsureOpen();
-			return Core.fieldsReaderLocal.get();
+			return Core.fieldsReaderLocal.Get();
 		  }
 	  }
 
@@ -395,7 +396,7 @@ namespace Lucene.Net.Index
 		  get
 		  {
 			EnsureOpen();
-			return Core.termVectorsLocal.get();
+			return Core.termVectorsLocal.Get();
 		  }
 	  }
 
@@ -422,7 +423,7 @@ namespace Lucene.Net.Index
 	  {
 		// SegmentInfo.toString takes dir and number of
 		// *pending* deletions; so we reverse compute that here:
-		return Si.ToString(Si.Info.dir, Si.Info.DocCount - NumDocs_Renamed - Si.DelCount);
+		return Si.ToString(Si.Info.Dir, Si.Info.DocCount - NumDocs_Renamed - Si.DelCount);
 	  }
 
 	  /// <summary>
@@ -432,7 +433,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Si.Info.name;
+			return Si.Info.Name;
 		  }
 	  }
 
@@ -454,7 +455,7 @@ namespace Lucene.Net.Index
 		// Don't ensureOpen here -- in certain cases, when a
 		// cloned/reopened reader needs to commit, it may call
 		// this method on the closed original reader
-		return Si.Info.dir;
+		return Si.Info.Dir;
 	  }
 
 	  // this is necessary so that cloned SegmentReaders (which
@@ -502,12 +503,12 @@ namespace Lucene.Net.Index
 		  // Field does not exist
 		  return null;
 		}
-		if (fi.DocValuesType_e == null)
+		if (fi.DocValuesType == null)
 		{
 		  // Field was not indexed with doc values
 		  return null;
 		}
-		if (fi.DocValuesType_e != type)
+		if (fi.DocValuesType != type)
 		{
 		  // Field DocValues are different than requested type
 		  return null;
@@ -525,7 +526,7 @@ namespace Lucene.Net.Index
 		  return null;
 		}
 
-		IDictionary<string, object> dvFields = docValuesLocal.get();
+		IDictionary<string, object> dvFields = docValuesLocal.Get();
 
 		NumericDocValues dvs = (NumericDocValues) dvFields[field];
 		if (dvs == null)
@@ -548,13 +549,13 @@ namespace Lucene.Net.Index
 		  // Field does not exist
 		  return null;
 		}
-		if (fi.DocValuesType_e == null)
+		if (fi.DocValuesType == null)
 		{
 		  // Field was not indexed with doc values
 		  return null;
 		}
 
-		IDictionary<string, Bits> dvFields = docsWithFieldLocal.get();
+		IDictionary<string, Bits> dvFields = docsWithFieldLocal.Get();
 
 		Bits dvs = dvFields[field];
 		if (dvs == null)
@@ -577,7 +578,7 @@ namespace Lucene.Net.Index
 		  return null;
 		}
 
-		IDictionary<string, object> dvFields = docValuesLocal.get();
+		IDictionary<string, object> dvFields = docValuesLocal.Get();
 
 		BinaryDocValues dvs = (BinaryDocValues) dvFields[field];
 		if (dvs == null)
@@ -600,7 +601,7 @@ namespace Lucene.Net.Index
 		  return null;
 		}
 
-		IDictionary<string, object> dvFields = docValuesLocal.get();
+		IDictionary<string, object> dvFields = docValuesLocal.Get();
 
 		SortedDocValues dvs = (SortedDocValues) dvFields[field];
 		if (dvs == null)
@@ -623,7 +624,7 @@ namespace Lucene.Net.Index
 		  return null;
 		}
 
-		IDictionary<string, object> dvFields = docValuesLocal.get();
+		IDictionary<string, object> dvFields = docValuesLocal.Get();
 
 		SortedSetDocValues dvs = (SortedSetDocValues) dvFields[field];
 		if (dvs == null)
@@ -724,13 +725,13 @@ namespace Lucene.Net.Index
 		// terms/postings
 		if (Core.Fields != null)
 		{
-		  Core.Fields.checkIntegrity();
+		  Core.Fields.CheckIntegrity();
 		}
 
 		// norms
 		if (Core.NormsProducer != null)
 		{
-		  Core.NormsProducer.checkIntegrity();
+		  Core.NormsProducer.CheckIntegrity();
 		}
 
 		// docvalues

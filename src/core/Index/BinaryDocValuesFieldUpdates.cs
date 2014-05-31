@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
 	  private BytesRef Values;
 	  private int Size;
 
-	  public BinaryDocValuesFieldUpdates(string field, int maxDoc) : base(field, Type.BINARY)
+	  public BinaryDocValuesFieldUpdates(string field, int maxDoc) : base(field, Type_e.BINARY)
 	  {
 		DocsWithField = new FixedBitSet(64);
 		Docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);

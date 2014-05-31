@@ -103,7 +103,8 @@ namespace Lucene.Net.Index
 	  /// using the supplied SubReaderWrapper to wrap its subreader. </summary>
 	  /// <param name="in"> the DirectoryReader to filter </param>
 	  /// <param name="wrapper"> the SubReaderWrapper to use to wrap subreaders </param>
-	  public FilterDirectoryReader(DirectoryReader @in, SubReaderWrapper wrapper) : base(@in.Directory(), wrapper.Wrap(@in.SequentialSubReaders))
+	  public FilterDirectoryReader(DirectoryReader @in, SubReaderWrapper wrapper) 
+          : base(@in.Directory(), wrapper.Wrap(@in.GetSequentialSubReaders()))
 	  {
 		this.@in = @in;
 	  }
@@ -164,7 +165,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override void DoClose()
 	  {
-		@in.doClose();
+		@in.DoClose();
 	  }
 
 	}

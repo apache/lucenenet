@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using Store = Lucene.Net.Document.Field.Store;
 	using StringField = Lucene.Net.Document.StringField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using ReferenceManager = Lucene.Net.Search.ReferenceManager;
 	using SearcherFactory = Lucene.Net.Search.SearcherFactory;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		MergePolicy policy = new LogByteSizeMergePolicy();
 		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
 		conf.MergePolicy = policy;
-		conf.OpenMode = OpenMode.CREATE_OR_APPEND;
+		conf.OpenMode_e = OpenMode.CREATE_OR_APPEND;
 
 		IndexWriter writer = new IndexWriter(directory, conf);
 

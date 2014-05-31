@@ -23,12 +23,13 @@ namespace Lucene.Net.Index
 
 
 	using CodecUtil = Lucene.Net.Codecs.CodecUtil;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using System.IO;
 
 	/// <summary>
 	/// A <seealso cref="SnapshotDeletionPolicy"/> which adds a persistence layer so that
@@ -109,7 +110,7 @@ namespace Lucene.Net.Index
 
 		if (mode == OpenMode.APPEND && NextWriteGen == 0)
 		{
-		  throw new IllegalStateException("no snapshots stored in this directory");
+		  throw new InvalidOperationException("no snapshots stored in this directory");
 		}
 	  }
 

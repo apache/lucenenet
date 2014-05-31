@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 
 	  public override int HashCode()
 	  {
-		return Directory.HashCode() + Convert.ToInt64(Generation).HashCode();
+		return Directory.GetHashCode() + Convert.ToInt64(Generation).GetHashCode();
 	  }
 
 	  /// <summary>
@@ -136,7 +136,18 @@ namespace Lucene.Net.Index
 
 		long gen = Generation;
 		long comgen = commit.Generation;
-		return long.compare(gen, comgen);
+        if (gen < comgen)
+        {
+            return -1;
+        }
+        else if (gen > comgen)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
 	  }
 	}
 

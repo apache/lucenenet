@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
@@ -51,8 +52,7 @@ namespace Lucene.Net.Index
 	  /// called from DirectoryReader.open(...) methods </summary>
 	  internal static DirectoryReader Open(Directory directory, IndexCommit commit, int termInfosIndexDivisor)
 	  {
-		return (DirectoryReader) new FindSegmentsFileAnonymousInnerClassHelper(directory, termInfosIndexDivisor)
-		.run(commit);
+		return (DirectoryReader) new FindSegmentsFileAnonymousInnerClassHelper(directory, termInfosIndexDivisor).Run(commit);
 	  }
 
 	  private class FindSegmentsFileAnonymousInnerClassHelper : SegmentInfos.FindSegmentsFile
@@ -70,19 +70,17 @@ namespace Lucene.Net.Index
 		  {
 			SegmentInfos sis = new SegmentInfos();
 			sis.Read(Directory, segmentFileName);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader[] readers = new SegmentReader[sis.size()];
 			SegmentReader[] readers = new SegmentReader[sis.Size()];
 			for (int i = sis.Size() - 1; i >= 0; i--)
 			{
-			  IOException prior = null;
+			  System.IO.IOException prior = null;
 			  bool success = false;
 			  try
 			  {
 				readers[i] = new SegmentReader(sis.Info(i), TermInfosIndexDivisor, IOContext.READ);
 				success = true;
 			  }
-			  catch (IOException ex)
+              catch (System.IO.IOException ex)
 			  {
 				prior = ex;
 			  }
@@ -105,17 +103,11 @@ namespace Lucene.Net.Index
 		// IndexWriter synchronizes externally before calling
 		// us, which ensures infos will not change; so there's
 		// no need to process segments in reverse order
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = infos.size();
 		int numSegments = infos.Size();
 
 		IList<SegmentReader> readers = new List<SegmentReader>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.Directory dir = writer.getDirectory();
 		Directory dir = writer.Directory;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentInfos segmentInfos = infos.clone();
 		SegmentInfos segmentInfos = infos.Clone();
 		int infosUpto = 0;
 		bool success = false;
@@ -127,17 +119,11 @@ namespace Lucene.Net.Index
 			// segmentInfos here, so that we are passing the
 			// actual instance of SegmentInfoPerCommit in
 			// IndexWriter's segmentInfos:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = infos.info(i);
 			SegmentCommitInfo info = infos.Info(i);
-			Debug.Assert(info.Info.dir == dir);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = writer.readerPool.get(info, true);
-			ReadersAndUpdates rld = writer.ReaderPool.get(info, true);
+			Debug.Assert(info.Info.Dir == dir);
+			ReadersAndUpdates rld = writer.readerPool.Get(info, true);
 			try
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader reader = rld.getReadOnlyClone(Lucene.Net.Store.IOContext.READ);
 			  SegmentReader reader = rld.GetReadOnlyClone(IOContext.READ);
 			  if (reader.NumDocs() > 0 || writer.KeepFullyDeletedSegments)
 			  {
@@ -153,7 +139,7 @@ namespace Lucene.Net.Index
 			}
 			finally
 			{
-			  writer.ReaderPool.release(rld);
+                writer.readerPool.Release(rld);
 			}
 		  }
 
@@ -185,13 +171,11 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// this constructor is only used for <seealso cref="#doOpenIfChanged(SegmentInfos)"/> </summary>
-	  private static DirectoryReader open<T1>(Directory directory, SegmentInfos infos, IList<T1> oldReaders, int termInfosIndexDivisor) where T1 : AtomicReader
+      private static DirectoryReader Open(Directory directory, SegmentInfos infos, IList<AtomicReader> oldReaders, int termInfosIndexDivisor)
 	  {
 
 		// we put the old SegmentReaders in a map, that allows us
 		// to lookup a reader using its segment name
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,Integer> segmentReaders = new java.util.HashMap<>();
 		IDictionary<string, int?> segmentReaders = new Dictionary<string, int?>();
 
 		if (oldReaders != null)
@@ -199,8 +183,6 @@ namespace Lucene.Net.Index
 		  // create a Map SegmentName->SegmentReader
 		  for (int i = 0, c = oldReaders.Count; i < c; i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader sr = (SegmentReader) oldReaders.get(i);
 			SegmentReader sr = (SegmentReader) oldReaders[i];
 			segmentReaders[sr.SegmentName] = Convert.ToInt32(i);
 		  }
@@ -215,7 +197,7 @@ namespace Lucene.Net.Index
 		for (int i = infos.Size() - 1; i >= 0; i--)
 		{
 		  // find SegmentReader for this segment
-		  int? oldReaderIndex = segmentReaders[infos.Info(i).Info.name];
+		  int? oldReaderIndex = segmentReaders[infos.Info(i).Info.Name];
 		  if (oldReaderIndex == null)
 		  {
 			// this is a new segment, no old SegmentReader can be reused
@@ -255,8 +237,8 @@ namespace Lucene.Net.Index
 				// there are changes to the reader, either liveDocs or DV updates
 				readerShared[i] = false;
 				// Steal the ref returned by SegmentReader ctor:
-				Debug.Assert(infos.Info(i).Info.dir == newReaders[i].SegmentInfo.Info.dir);
-				Debug.Assert(infos.Info(i).hasDeletions() || infos.Info(i).hasFieldUpdates());
+				Debug.Assert(infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
+				Debug.Assert(infos.Info(i).HasDeletions() || infos.Info(i).HasFieldUpdates());
 				if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen)
 				{
 				  // only DV updates
@@ -320,7 +302,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final StringBuilder buffer = new StringBuilder();
 		StringBuilder buffer = new StringBuilder();
-		buffer.Append(this.GetType().SimpleName);
+		buffer.Append(this.GetType().Name);
 		buffer.Append('(');
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String segmentsFile = segmentInfos.getSegmentsFileName();
@@ -349,7 +331,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override DirectoryReader DoOpenIfChanged(IndexCommit commit)
 	  {
-		ensureOpen();
+		EnsureOpen();
 
 		// If we were obtained by writer.getReader(), re-ask the
 		// writer to get a new reader.
@@ -365,7 +347,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override DirectoryReader DoOpenIfChanged(IndexWriter writer, bool applyAllDeletes)
 	  {
-		ensureOpen();
+		EnsureOpen();
 		if (writer == this.Writer && applyAllDeletes == this.ApplyAllDeletes)
 		{
 		  return DoOpenFromWriter(null);
@@ -393,7 +375,7 @@ namespace Lucene.Net.Index
 		// If in fact no changes took place, return null:
 		if (reader.Version == SegmentInfos.Version)
 		{
-		  reader.decRef();
+		  reader.DecRef();
 		  return null;
 		}
 
@@ -414,7 +396,7 @@ namespace Lucene.Net.Index
 		{
 		  if (Directory_Renamed != commit.Directory)
 		  {
-			throw new IOException("the specified commit does not match the specified Directory");
+			throw new System.IO.IOException("the specified commit does not match the specified Directory");
 		  }
 		  if (SegmentInfos != null && commit.SegmentsFileName.Equals(SegmentInfos.SegmentsFileName))
 		  {
@@ -427,8 +409,7 @@ namespace Lucene.Net.Index
 
 	  private DirectoryReader DoOpenFromCommit(IndexCommit commit)
 	  {
-		return (DirectoryReader) new FindSegmentsFileAnonymousInnerClassHelper2(this, Directory_Renamed)
-		.run(commit);
+		return (DirectoryReader) new FindSegmentsFileAnonymousInnerClassHelper2(this, Directory_Renamed).Run(commit);
 	  }
 
 	  private class FindSegmentsFileAnonymousInnerClassHelper2 : SegmentInfos.FindSegmentsFile
@@ -446,7 +427,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: final SegmentInfos infos = new SegmentInfos();
 			SegmentInfos infos = new SegmentInfos();
 			infos.Read(OuterInstance.Directory_Renamed, segmentFileName);
-			return outerInstance.DoOpenIfChanged(infos);
+			return OuterInstance.DoOpenIfChanged(infos);
 		  }
 	  }
 
@@ -459,7 +440,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			ensureOpen();
+			EnsureOpen();
 			return SegmentInfos.Version;
 		  }
 	  }
@@ -468,7 +449,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			ensureOpen();
+			EnsureOpen();
 			if (Writer == null || Writer.Closed)
 			{
 			  // Fully read the segments file: this ensures that it's
@@ -497,7 +478,7 @@ namespace Lucene.Net.Index
 		  // try to close each reader, even if an exception is thrown
 		  try
 		  {
-			r.decRef();
+			r.DecRef();
 		  }
 		  catch (Exception t)
 		  {
@@ -532,7 +513,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			ensureOpen();
+			EnsureOpen();
 			return new ReaderCommit(SegmentInfos, Directory_Renamed);
 		  }
 	  }

@@ -46,25 +46,19 @@ namespace Lucene.Net.Index
 
 		foreach (TermsHashConsumerPerField f in fieldsToFlush.Values)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField) f;
 		  FreqProxTermsWriterPerField perField = (FreqProxTermsWriterPerField) f;
-		  if (perField.TermsHashPerField.bytesHash.size() > 0)
+		  if (perField.TermsHashPerField.BytesHash.Size() > 0)
 		  {
 			allFields.Add(perField);
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numAllFields = allFields.size();
 		int numAllFields = allFields.Count;
 
 		// Sort by field name
 		CollectionUtil.IntroSort(allFields);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.FieldsConsumer consumer = state.segmentInfo.getCodec().postingsFormat().fieldsConsumer(state);
-		FieldsConsumer consumer = state.SegmentInfo.Codec.postingsFormat().fieldsConsumer(state);
+		FieldsConsumer consumer = state.SegmentInfo.Codec.PostingsFormat().FieldsConsumer(state);
 
 		bool success = false;
 
@@ -86,12 +80,8 @@ namespace Lucene.Net.Index
 
 		  for (int fieldNumber = 0; fieldNumber < numAllFields; fieldNumber++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfo fieldInfo = allFields.get(fieldNumber).fieldInfo;
-			FieldInfo fieldInfo = allFields[fieldNumber].FieldInfo;
+			FieldInfo fieldInfo = allFields[fieldNumber].fieldInfo;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FreqProxTermsWriterPerField fieldWriter = allFields.get(fieldNumber);
 			FreqProxTermsWriterPerField fieldWriter = allFields[fieldNumber];
 
 			// If this field has postings then add them to the
@@ -101,7 +91,7 @@ namespace Lucene.Net.Index
 			TermsHashPerField perField = fieldWriter.TermsHashPerField;
 			Debug.Assert(termsHash == null || termsHash == perField.TermsHash);
 			termsHash = perField.TermsHash;
-			int numPostings = perField.BytesHash.size();
+			int numPostings = perField.BytesHash.Size();
 			perField.Reset();
 			perField.ShrinkHash(numPostings);
 			fieldWriter.Reset();

@@ -5,24 +5,26 @@ using System.Text;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    using System.Text.RegularExpressions;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
-	using Codec = Lucene.Net.Codecs.Codec;
+    using Codec = Lucene.Net.Codecs.Codec;
 
 	// TODO: put all files under codec and remove all the static extensions here
 
@@ -107,7 +109,7 @@ namespace Lucene.Net.Index
 		  // The '6' part in the length is: 1 for '.', 1 for '_' and 4 as estimate
 		  // to the gen length as string (hopefully an upper limit so SB won't
 		  // expand in the middle.
-		  StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length)).Append(@base).Append('_').Append(Convert.ToString(gen, char.MAX_RADIX));
+		  StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length)).Append(@base).Append('_').Append(Convert.ToString(gen, Character.MAX_RADIX));
 		  if (ext.Length > 0)
 		  {
 			res.Append('.').Append(ext);
@@ -249,7 +251,7 @@ namespace Lucene.Net.Index
 	  /// All files created by codecs much match this pattern (checked in
 	  /// SegmentInfo).
 	  /// </summary>
-	  public static readonly Pattern CODEC_FILE_PATTERN = Pattern.compile("_[a-z0-9]+(_.*)?\\..*");
+      public static readonly Regex CODEC_FILE_PATTERN = new Regex("_[a-z0-9]+(_.*)?\\..*", RegexOptions.Compiled);
 
 	}
 

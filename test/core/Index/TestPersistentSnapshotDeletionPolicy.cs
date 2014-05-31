@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 	 */
 
 	using Document = Lucene.Net.Document.Document;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using After = org.junit.After;

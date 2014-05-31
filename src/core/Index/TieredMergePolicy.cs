@@ -313,10 +313,10 @@ namespace Lucene.Net.Index
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long sz1 = size(o1);
-			long sz1 = outerInstance.Size(o1);
+			long sz1 = OuterInstance.Size(o1);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long sz2 = size(o2);
-			long sz2 = outerInstance.Size(o2);
+            long sz2 = OuterInstance.Size(o2);
 			if (sz1 > sz2)
 			{
 			  return -1;
@@ -327,12 +327,12 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  return o1.Info.name.compareTo(o2.Info.name);
+			  return o1.Info.Name.CompareTo(o2.Info.Name);
 			}
 		  }
-		  catch (IOException ioe)
+		  catch (System.IO.IOException ioe)
 		  {
-			throw new Exception(ioe);
+			throw new Exception(ioe.Message, ioe);
 		  }
 		}
 	  }
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.List<SegmentCommitInfo> infosSorted = new java.util.ArrayList<>(infos.asList());
-		IList<SegmentCommitInfo> infosSorted = new List<SegmentCommitInfo>(infos.AsList());
+		List<SegmentCommitInfo> infosSorted = new List<SegmentCommitInfo>(infos.AsList());
 		infosSorted.Sort(new SegmentByteSizeDescending(this));
 
 		// Compute total index bytes & print details about the index
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index
 		  Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + Writer.Get().segString(infos) + " segmentsToMerge=" + segmentsToMerge);
 		}
 
-		IList<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
+		List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
 		bool forceMergeRunning = false;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Collection<SegmentCommitInfo> merging = writer.get().getMergingSegments();
@@ -782,13 +782,13 @@ namespace Lucene.Net.Index
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.List<SegmentCommitInfo> eligible = new java.util.ArrayList<>();
-		IList<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
+		List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Collection<SegmentCommitInfo> merging = writer.get().getMergingSegments();
 		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
 		foreach (SegmentCommitInfo info in infos)
 		{
-		  double pctDeletes = 100.0 * ((double) Writer.Get().numDeletedDocs(info)) / info.Info.DocCount;
+		  double pctDeletes = 100.0 * ((double) Writer.Get().NumDeletedDocs(info)) / info.Info.DocCount;
 		  if (pctDeletes > ForceMergeDeletesPctAllowed_Renamed && !merging.Contains(info))
 		  {
 			eligible.Add(info);
@@ -851,17 +851,17 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final IndexWriter w = writer.get();
 		IndexWriter w = Writer.Get();
-		return w != null && w.InfoStream.isEnabled("TMP");
+		return w != null && w.infoStream.IsEnabled("TMP");
 	  }
 
 	  private void Message(string message)
 	  {
-		Writer.Get().infoStream.message("TMP", message);
+		Writer.Get().infoStream.Message("TMP", message);
 	  }
 
 	  public override string ToString()
 	  {
-		StringBuilder sb = new StringBuilder("[" + this.GetType().SimpleName + ": ");
+		StringBuilder sb = new StringBuilder("[" + this.GetType().Name + ": ");
 		sb.Append("maxMergeAtOnce=").Append(MaxMergeAtOnce_Renamed).Append(", ");
 		sb.Append("maxMergeAtOnceExplicit=").Append(MaxMergeAtOnceExplicit_Renamed).Append(", ");
 		sb.Append("maxMergedSegmentMB=").Append(MaxMergedSegmentBytes / 1024 / 1024.0).Append(", ");

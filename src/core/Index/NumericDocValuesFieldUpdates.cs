@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
 	  private PagedGrowableWriter Values;
 	  private int Size;
 
-	  public NumericDocValuesFieldUpdates(string field, int maxDoc) : base(field, Type.NUMERIC)
+	  public NumericDocValuesFieldUpdates(string field, int maxDoc) : base(field, Type_e.NUMERIC)
 	  {
 		DocsWithField = new FixedBitSet(64);
 		Docs = new PagedMutable(1, 1024, PackedInts.BitsRequired(maxDoc - 1), PackedInts.COMPACT);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
 		// TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
 		if (Size == int.MaxValue)
 		{
-		  throw new IllegalStateException("cannot support more than Integer.MAX_VALUE doc/value entries");
+		  throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries");
 		}
 
 		long? val = (long?) value;
@@ -157,8 +157,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet docsWithField = this.docsWithField;
 		FixedBitSet docsWithField = this.DocsWithField;
-		new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, values, docsWithField)
-		.sort(0, Size);
+		new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, values, docsWithField).Sort(0, Size);
 
 		return new Iterator(Size, values, docsWithField, docs);
 	  }
@@ -222,7 +221,7 @@ namespace Lucene.Net.Index
 		NumericDocValuesFieldUpdates otherUpdates = (NumericDocValuesFieldUpdates) other;
 		if (Size + otherUpdates.Size > int.MaxValue)
 		{
-		  throw new IllegalStateException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + Size + " other.size=" + otherUpdates.Size);
+		  throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + Size + " other.size=" + otherUpdates.Size);
 		}
 		Docs = Docs.Grow(Size + otherUpdates.Size);
 		Values = Values.Grow(Size + otherUpdates.Size);

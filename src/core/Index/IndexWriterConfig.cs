@@ -29,8 +29,9 @@ namespace Lucene.Net.Index
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
 	using Lucene.Net.Util;
-	using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
+	using AlreadySetException = Lucene.Net.Util.AlreadySetException;
 	using Version = Lucene.Net.Util.Version;
+    using System.IO;
 
 	/// <summary>
 	/// Holds all the configuration that is used to create an <seealso cref="IndexWriter"/>.
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Specifies the open mode for <seealso cref="IndexWriter"/>.
 	  /// </summary>
-	  public enum OpenMode
+	  public enum OpenMode_e
 	  {
 		/// <summary>
 		/// Creates a new index or overwrites an existing one. 
@@ -197,13 +198,13 @@ namespace Lucene.Net.Index
 		  // certain objects that have state that cannot be shared
 		  // across IW instances:
 		  clone.DelPolicy = DelPolicy.Clone();
-		  clone.FlushPolicy_Renamed = FlushPolicy_Renamed.Clone();
-		  clone.IndexerThreadPool_Renamed = IndexerThreadPool_Renamed.Clone();
+		  clone.flushPolicy = flushPolicy.Clone();
+		  clone.indexerThreadPool = indexerThreadPool.Clone();
 		  // we clone the infoStream because some impls might have state variables
 		  // such as line numbers, message throughput, ...
-		  clone.InfoStream_Renamed = InfoStream_Renamed.Clone();
-		  clone.MergePolicy_Renamed = MergePolicy_Renamed.Clone();
-		  clone.MergeScheduler_Renamed = MergeScheduler_Renamed.Clone();
+		  clone.infoStream = infoStream.Clone();
+		  clone.mergePolicy = mergePolicy.Clone();
+		  clone.mergeScheduler = mergeScheduler.Clone();
 
 		  return clone;
 		}
@@ -218,21 +219,21 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// <p>Only takes effect when IndexWriter is first created. 
 	  /// </summary>
-	  public IndexWriterConfig SetOpenMode(OpenMode openMode)
+	  public IndexWriterConfig SetOpenMode(OpenMode_e openMode)
 	  {
 		if (openMode == null)
 		{
 		  throw new System.ArgumentException("openMode must not be null");
 		}
-		this.OpenMode_Renamed = openMode;
+		this.openMode = openMode;
 		return this;
 	  }
 
-	  public override OpenMode OpenMode
+	  public override OpenMode_e OpenMode
 	  {
 		  get
 		  {
-			return OpenMode_Renamed;
+			return openMode;
 		  }
 	  }
 
@@ -303,7 +304,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("similarity must not be null");
 		}
-		this.Similarity_Renamed = similarity;
+		this.similarity = similarity;
 		return this;
 	  }
 
@@ -311,7 +312,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Similarity_Renamed;
+			return similarity;
 		  }
 	  }
 
@@ -329,7 +330,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("mergeScheduler must not be null");
 		}
-		this.MergeScheduler_Renamed = mergeScheduler;
+		this.mergeScheduler = mergeScheduler;
 		return this;
 	  }
 
@@ -337,7 +338,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return MergeScheduler_Renamed;
+			return mergeScheduler;
 		  }
 	  }
 
@@ -350,7 +351,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public IndexWriterConfig SetWriteLockTimeout(long writeLockTimeout)
 	  {
-		this.WriteLockTimeout_Renamed = writeLockTimeout;
+		this.writeLockTimeout = writeLockTimeout;
 		return this;
 	  }
 
@@ -358,7 +359,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return WriteLockTimeout_Renamed;
+			return writeLockTimeout;
 		  }
 	  }
 
@@ -376,7 +377,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("mergePolicy must not be null");
 		}
-		this.MergePolicy_Renamed = mergePolicy;
+		this.mergePolicy = mergePolicy;
 		return this;
 	  }
 
@@ -392,7 +393,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("codec must not be null");
 		}
-		this.Codec_Renamed = codec;
+		this.codec = codec;
 		return this;
 	  }
 
@@ -400,16 +401,15 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Codec_Renamed;
+			return codec;
 		  }
 	  }
-
 
 	  public override MergePolicy MergePolicy
 	  {
 		  get
 		  {
-			return MergePolicy_Renamed;
+			return mergePolicy;
 		  }
 	  }
 
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("threadPool must not be null");
 		}
-		this.IndexerThreadPool_Renamed = threadPool;
+		this.indexerThreadPool = threadPool;
 		return this;
 	  }
 
@@ -443,7 +443,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return IndexerThreadPool_Renamed;
+			return indexerThreadPool;
 		  }
 	  }
 
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public IndexWriterConfig SetMaxThreadStates(int maxThreadStates)
 	  {
-		this.IndexerThreadPool_Renamed = new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates);
+		this.indexerThreadPool = new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates);
 		return this;
 	  }
 
@@ -467,11 +467,11 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  return ((ThreadAffinityDocumentsWriterThreadPool) IndexerThreadPool_Renamed).MaxThreadStates;
+			  return ((ThreadAffinityDocumentsWriterThreadPool) indexerThreadPool).MaxThreadStates;
 			}
 			catch (System.InvalidCastException cce)
 			{
-			  throw new IllegalStateException(cce);
+			  throw new InvalidOperationException(cce.Message, cce);
 			}
 		  }
 	  }
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public IndexWriterConfig SetReaderPooling(bool readerPooling)
 	  {
-		this.ReaderPooling_Renamed = readerPooling;
+		this.readerPooling = readerPooling;
 		return this;
 	  }
 
@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return ReaderPooling_Renamed;
+			return readerPooling;
 		  }
 	  }
 
@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("indexingChain must not be null");
 		}
-		this.IndexingChain_Renamed = indexingChain;
+		this.indexingChain = indexingChain;
 		return this;
 	  }
 
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return IndexingChain_Renamed;
+              return indexingChain;
 		  }
 	  }
 
@@ -538,7 +538,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("flushPolicy must not be null");
 		}
-		this.FlushPolicy_Renamed = flushPolicy;
+		this.flushPolicy = flushPolicy;
 		return this;
 	  }
 
@@ -574,7 +574,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return FlushPolicy_Renamed;
+			return flushPolicy;
 		  }
 	  }
 
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return InfoStream_Renamed;
+			return infoStream;
 		  }
 	  }
 
@@ -654,55 +654,55 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("Cannot set InfoStream implementation to null. " + "To disable logging use InfoStream.NO_OUTPUT");
 		}
-		this.InfoStream_Renamed = infoStream;
+		this.infoStream = infoStream;
 		return this;
 	  }
 
 	  /// <summary>
 	  /// Convenience method that uses <seealso cref="PrintStreamInfoStream"/>.  Must not be null.
 	  /// </summary>
-	  public IndexWriterConfig SetInfoStream(PrintStream printStream)
+	  public IndexWriterConfig SetInfoStream(TextWriter printStream)
 	  {
 		if (printStream == null)
 		{
 		  throw new System.ArgumentException("printStream must not be null");
 		}
-		return setInfoStream(new PrintStreamInfoStream(printStream));
+		return SetInfoStream(new PrintStreamInfoStream(printStream));
 	  }
 
 	  public override IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
 	  {
-		return (IndexWriterConfig) base.setMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
+		return (IndexWriterConfig) base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
 	  }
 
 	  public override IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
 	  {
-		return (IndexWriterConfig) base.setMaxBufferedDocs(maxBufferedDocs);
+		return (IndexWriterConfig) base.SetMaxBufferedDocs(maxBufferedDocs);
 	  }
 
 	  public override IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
 	  {
-		return (IndexWriterConfig) base.setMergedSegmentWarmer(mergeSegmentWarmer);
+		return (IndexWriterConfig) base.SetMergedSegmentWarmer(mergeSegmentWarmer);
 	  }
 
 	  public override IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
 	  {
-		return (IndexWriterConfig) base.setRAMBufferSizeMB(ramBufferSizeMB);
+		return (IndexWriterConfig) base.SetRAMBufferSizeMB(ramBufferSizeMB);
 	  }
 
 	  public override IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
 	  {
-		return (IndexWriterConfig) base.setReaderTermsIndexDivisor(divisor);
+		return (IndexWriterConfig) base.SetReaderTermsIndexDivisor(divisor);
 	  }
 
 	  public override IndexWriterConfig SetTermIndexInterval(int interval)
 	  {
-		return (IndexWriterConfig) base.setTermIndexInterval(interval);
+		return (IndexWriterConfig) base.SetTermIndexInterval(interval);
 	  }
 
 	  public override IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
 	  {
-		return (IndexWriterConfig) base.setUseCompoundFile(useCompoundFile);
+		return (IndexWriterConfig) base.SetUseCompoundFile(useCompoundFile);
 	  }
 
 	  public override string ToString()

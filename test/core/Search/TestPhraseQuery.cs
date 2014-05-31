@@ -27,7 +27,7 @@ namespace Lucene.Net.Search
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
 	using Lucene.Net.Document;
 	using Lucene.Net.Index;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 	using Directory = Lucene.Net.Store.Directory;
 	using Lucene.Net.Util;

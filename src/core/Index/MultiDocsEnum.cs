@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -143,7 +144,7 @@ namespace Lucene.Net.Index
 		  {
 			Upto++;
 			Current = Subs_Renamed[Upto].DocsEnum;
-			CurrentBase = Subs_Renamed[Upto].Slice.start;
+			CurrentBase = Subs_Renamed[Upto].Slice.Start;
 		  }
 		}
 	  }
@@ -162,7 +163,7 @@ namespace Lucene.Net.Index
 			{
 			  Upto++;
 			  Current = Subs_Renamed[Upto].DocsEnum;
-			  CurrentBase = Subs_Renamed[Upto].Slice.start;
+			  CurrentBase = Subs_Renamed[Upto].Slice.Start;
 			}
 		  }
 
@@ -185,7 +186,7 @@ namespace Lucene.Net.Index
 		long cost = 0;
 		for (int i = 0; i < NumSubs_Renamed; i++)
 		{
-		  cost += Subs_Renamed[i].DocsEnum.cost();
+		  cost += Subs_Renamed[i].DocsEnum.Cost();
 		}
 		return cost;
 	  }

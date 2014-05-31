@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -47,7 +48,7 @@ namespace Lucene.Net.Index
 
 	  // Parallel array of deleted query, and the docIDUpto for each
 	  internal readonly Query[] Queries;
-	  internal readonly int[] QueryLimits;
+	  internal readonly int?[] QueryLimits;
 
 	  // numeric DV update term and their updates
 	  internal readonly NumericDocValuesUpdate[] NumericDVUpdates;
@@ -67,7 +68,7 @@ namespace Lucene.Net.Index
 	  {
 		this.IsSegmentPrivate = isSegmentPrivate;
 		Debug.Assert(!isSegmentPrivate || deletes.Terms.Count == 0, "segment private package should only have del queries");
-		Term[] termsArray = deletes.Terms.Keys.toArray(new Term[deletes.Terms.Count]);
+		Term[] termsArray = deletes.Terms.Keys.ToArray(/*new Term[deletes.Terms.Count]*/);
 		TermCount = termsArray.Length;
 		ArrayUtil.TimSort(termsArray);
 		PrefixCodedTerms.Builder builder = new PrefixCodedTerms.Builder();
@@ -78,7 +79,7 @@ namespace Lucene.Net.Index
 		Terms = builder.Finish();
 
 		Queries = new Query[deletes.Queries.Count];
-		QueryLimits = new int[deletes.Queries.Count];
+		QueryLimits = new int?[deletes.Queries.Count];
 		int upto = 0;
 		foreach (KeyValuePair<Query, int?> ent in deletes.Queries)
 		{
@@ -121,7 +122,7 @@ namespace Lucene.Net.Index
 
 		BytesUsed = (int) Terms.SizeInBytes + Queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + NumericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + BinaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
-		NumTermDeletes = deletes.NumTermDeletes.get();
+		NumTermDeletes = deletes.NumTermDeletes.Get();
 	  }
 
 	  public virtual long DelGen
@@ -184,7 +185,7 @@ namespace Lucene.Net.Index
 
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 			  }
 
 			  private int upto;

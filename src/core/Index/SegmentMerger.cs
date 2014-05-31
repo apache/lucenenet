@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -28,12 +29,13 @@ namespace Lucene.Net.Index
 	using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
 	using StoredFieldsWriter = Lucene.Net.Codecs.StoredFieldsWriter;
 	using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using Bits = Lucene.Net.Util.Bits;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using InfoStream = Lucene.Net.Util.InfoStream;
+    using System;
 
 	/// <summary>
 	/// The SegmentMerger class combines two or more Segments, represented by an
@@ -89,7 +91,7 @@ namespace Lucene.Net.Index
 	  {
 		if (!ShouldMerge())
 		{
-		  throw new IllegalStateException("Merge would result in 0 document segment");
+		  throw new InvalidOperationException("Merge would result in 0 document segment");
 		}
 		// NOTE: it's important to add calls to
 		// checkAbort.work(...) if you make any changes to this
@@ -100,94 +102,94 @@ namespace Lucene.Net.Index
 		MergeFieldInfos();
 		SetMatchingSegmentReaders();
 		long t0 = 0;
-		if (MergeState.InfoStream.isEnabled("SM"))
+		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
 		  t0 = System.nanoTime();
 		}
 		int numMerged = MergeFields();
-		if (MergeState.InfoStream.isEnabled("SM"))
+		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
 		  long t1 = System.nanoTime();
-		  MergeState.InfoStream.message("SM", ((t1 - t0) / 1000000) + " msec to merge stored fields [" + numMerged + " docs]");
+		  MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge stored fields [" + numMerged + " docs]");
 		}
 		Debug.Assert(numMerged == MergeState.SegmentInfo.DocCount);
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final SegmentWriteState segmentWriteState = new SegmentWriteState(mergeState.infoStream, directory, mergeState.segmentInfo, mergeState.fieldInfos, termIndexInterval, null, context);
 		SegmentWriteState segmentWriteState = new SegmentWriteState(MergeState.InfoStream, Directory, MergeState.SegmentInfo, MergeState.FieldInfos, TermIndexInterval, null, Context);
-		if (MergeState.InfoStream.isEnabled("SM"))
+		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
 		  t0 = System.nanoTime();
 		}
 		MergeTerms(segmentWriteState);
-		if (MergeState.InfoStream.isEnabled("SM"))
+		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
 		  long t1 = System.nanoTime();
-		  MergeState.InfoStream.message("SM", ((t1 - t0) / 1000000) + " msec to merge postings [" + numMerged + " docs]");
+		  MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge postings [" + numMerged + " docs]");
 		}
 
-		if (MergeState.InfoStream.isEnabled("SM"))
+        if (MergeState.InfoStream.IsEnabled("SM"))
 		{
 		  t0 = System.nanoTime();
 		}
-		if (MergeState.FieldInfos.hasDocValues())
+		if (MergeState.FieldInfos.HasDocValues())
 		{
 		  MergeDocValues(segmentWriteState);
 		}
-		if (MergeState.InfoStream.isEnabled("SM"))
+        if (MergeState.InfoStream.IsEnabled("SM"))
 		{
 		  long t1 = System.nanoTime();
-		  MergeState.InfoStream.message("SM", ((t1 - t0) / 1000000) + " msec to merge doc values [" + numMerged + " docs]");
+          MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge doc values [" + numMerged + " docs]");
 		}
 
-		if (MergeState.FieldInfos.hasNorms())
+		if (MergeState.FieldInfos.HasNorms())
 		{
-		  if (MergeState.InfoStream.isEnabled("SM"))
+		  if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
 			t0 = System.nanoTime();
 		  }
 		  MergeNorms(segmentWriteState);
-		  if (MergeState.InfoStream.isEnabled("SM"))
+		  if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
 			long t1 = System.nanoTime();
-			MergeState.InfoStream.message("SM", ((t1 - t0) / 1000000) + " msec to merge norms [" + numMerged + " docs]");
+			MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge norms [" + numMerged + " docs]");
 		  }
 		}
 
-		if (MergeState.FieldInfos.hasVectors())
+		if (MergeState.FieldInfos.HasVectors())
 		{
-		  if (MergeState.InfoStream.isEnabled("SM"))
+		  if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
 			t0 = System.nanoTime();
 		  }
 		  numMerged = MergeVectors();
-		  if (MergeState.InfoStream.isEnabled("SM"))
+          if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
 			long t1 = System.nanoTime();
-			MergeState.InfoStream.message("SM", ((t1 - t0) / 1000000) + " msec to merge vectors [" + numMerged + " docs]");
+            MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge vectors [" + numMerged + " docs]");
 		  }
 		  Debug.Assert(numMerged == MergeState.SegmentInfo.DocCount);
 		}
 
 		// write the merged infos
 		FieldInfosWriter fieldInfosWriter = Codec.FieldInfosFormat().FieldInfosWriter;
-		fieldInfosWriter.Write(Directory, MergeState.SegmentInfo.name, "", MergeState.FieldInfos, Context);
+		fieldInfosWriter.Write(Directory, MergeState.SegmentInfo.Name, "", MergeState.FieldInfos, Context);
 
 		return MergeState;
 	  }
 
 	  private void MergeDocValues(SegmentWriteState segmentWriteState)
 	  {
-		DocValuesConsumer consumer = Codec.DocValuesFormat().fieldsConsumer(segmentWriteState);
+		DocValuesConsumer consumer = Codec.DocValuesFormat().FieldsConsumer(segmentWriteState);
 		bool success = false;
 		try
 		{
 		  foreach (FieldInfo field in MergeState.FieldInfos)
 		  {
-			DocValuesType_e type = field.DocValuesType_e;
+			DocValuesType_e? type = field.DocValuesType;
 			if (type != null)
 			{
-			  if (type == DocValuesType.NUMERIC)
+			  if (type == DocValuesType_e.NUMERIC)
 			  {
 				IList<NumericDocValues> toMerge = new List<NumericDocValues>();
 				IList<Bits> docsWithField = new List<Bits>();
@@ -205,7 +207,7 @@ namespace Lucene.Net.Index
 				}
 				consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
 			  }
-			  else if (type == DocValuesType.BINARY)
+			  else if (type == DocValuesType_e.BINARY)
 			  {
 				IList<BinaryDocValues> toMerge = new List<BinaryDocValues>();
 				IList<Bits> docsWithField = new List<Bits>();
@@ -223,7 +225,7 @@ namespace Lucene.Net.Index
 				}
 				consumer.MergeBinaryField(field, MergeState, toMerge, docsWithField);
 			  }
-			  else if (type == DocValuesType.SORTED)
+			  else if (type == DocValuesType_e.SORTED)
 			  {
 				IList<SortedDocValues> toMerge = new List<SortedDocValues>();
 				foreach (AtomicReader reader in MergeState.Readers)
@@ -237,7 +239,7 @@ namespace Lucene.Net.Index
 				}
 				consumer.MergeSortedField(field, MergeState, toMerge);
 			  }
-			  else if (type == DocValuesType.SORTED_SET)
+              else if (type == DocValuesType_e.SORTED_SET)
 			  {
 				IList<SortedSetDocValues> toMerge = new List<SortedSetDocValues>();
 				foreach (AtomicReader reader in MergeState.Readers)
@@ -253,7 +255,7 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-				throw new AssertionError("type=" + type);
+				throw new InvalidOperationException("type=" + type);
 			  }
 			}
 		  }
@@ -274,7 +276,7 @@ namespace Lucene.Net.Index
 
 	  private void MergeNorms(SegmentWriteState segmentWriteState)
 	  {
-		DocValuesConsumer consumer = Codec.NormsFormat().normsConsumer(segmentWriteState);
+		DocValuesConsumer consumer = Codec.NormsFormat().NormsConsumer(segmentWriteState);
 		bool success = false;
 		try
 		{
@@ -339,7 +341,7 @@ namespace Lucene.Net.Index
 			FieldInfos segmentFieldInfos = segmentReader.FieldInfos;
 			foreach (FieldInfo fi in segmentFieldInfos)
 			{
-			  FieldInfo other = MergeState.FieldInfos.fieldInfo(fi.Number);
+			  FieldInfo other = MergeState.FieldInfos.FieldInfo(fi.Number);
 			  if (other == null || !other.Name.Equals(fi.Name))
 			  {
 				same = false;
@@ -354,12 +356,12 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		if (MergeState.InfoStream.isEnabled("SM"))
+		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  MergeState.InfoStream.message("SM", "merge store matchedCount=" + MergeState.MatchedCount + " vs " + MergeState.Readers.Count);
+		  MergeState.InfoStream.Message("SM", "merge store matchedCount=" + MergeState.MatchedCount + " vs " + MergeState.Readers.Count);
 		  if (MergeState.MatchedCount != MergeState.Readers.Count)
 		  {
-			MergeState.InfoStream.message("SM", "" + (MergeState.Readers.Count - MergeState.MatchedCount) + " non-bulk merges");
+			MergeState.InfoStream.Message("SM", "" + (MergeState.Readers.Count - MergeState.MatchedCount) + " non-bulk merges");
 		  }
 		}
 	  }
@@ -385,7 +387,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Codecs.StoredFieldsWriter fieldsWriter = codec.storedFieldsFormat().fieldsWriter(directory, mergeState.segmentInfo, context);
-		StoredFieldsWriter fieldsWriter = Codec.StoredFieldsFormat().fieldsWriter(Directory, MergeState.SegmentInfo, Context);
+		StoredFieldsWriter fieldsWriter = Codec.StoredFieldsFormat().FieldsWriter(Directory, MergeState.SegmentInfo, Context);
 
 		try
 		{
@@ -404,7 +406,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Codecs.TermVectorsWriter termVectorsWriter = codec.termVectorsFormat().vectorsWriter(directory, mergeState.segmentInfo, context);
-		TermVectorsWriter termVectorsWriter = Codec.TermVectorsFormat().vectorsWriter(Directory, MergeState.SegmentInfo, Context);
+		TermVectorsWriter termVectorsWriter = Codec.TermVectorsFormat().VectorsWriter(Directory, MergeState.SegmentInfo, Context);
 
 		try
 		{
@@ -483,11 +485,11 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Codecs.FieldsConsumer consumer = codec.postingsFormat().fieldsConsumer(segmentWriteState);
-		FieldsConsumer consumer = Codec.PostingsFormat().fieldsConsumer(segmentWriteState);
+		FieldsConsumer consumer = Codec.PostingsFormat().FieldsConsumer(segmentWriteState);
 		bool success = false;
 		try
 		{
-		  consumer.Merge(MergeState, new MultiFields(fields.toArray(Fields.EMPTY_ARRAY), slices.toArray(ReaderSlice.EMPTY_ARRAY)));
+		  consumer.Merge(MergeState, new MultiFields(fields.ToArray(/*Fields.EMPTY_ARRAY*/), slices.ToArray(/*ReaderSlice.EMPTY_ARRAY*/)));
 		  success = true;
 		}
 		finally

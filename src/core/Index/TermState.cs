@@ -47,15 +47,7 @@ namespace Lucene.Net.Index
 
 	  public override TermState Clone()
 	  {
-		try
-		{
-		  return (TermState)base.Clone();
-		}
-		catch (CloneNotSupportedException cnse)
-		{
-		  // should not happen
-		  throw new Exception(cnse);
-		}
+		  return (TermState)base.MemberwiseClone();
 	  }
 
 	  public override string ToString()

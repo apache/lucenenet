@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -25,6 +26,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
+    using System;
 
 	/// <summary>
 	/// Exposes flex API, merged from flex API of
@@ -75,7 +77,7 @@ namespace Lucene.Net.Index
 			IComparer<BytesRef> subTermComp = subs[i].Comparator;
 			if (subTermComp != null && !subTermComp.Equals(_termComp))
 			{
-			  throw new IllegalStateException("sub-readers have different BytesRef.Comparators; cannot merge");
+			  throw new InvalidOperationException("sub-readers have different BytesRef.Comparators; cannot merge");
 			}
 		  }
 		  _hasFreqs &= subs[i].HasFreqs();
@@ -109,7 +111,7 @@ namespace Lucene.Net.Index
 
 		if (termsEnums.Count > 0)
 		{
-		  return (new MultiTermsEnum(SubSlices)).Reset(termsEnums.toArray(MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY));
+		  return (new MultiTermsEnum(SubSlices)).Reset(termsEnums.ToArray(/*MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY*/));
 		}
 		else
 		{
@@ -136,7 +138,7 @@ namespace Lucene.Net.Index
 
 		if (termsEnums.Count > 0)
 		{
-		  return (new MultiTermsEnum(SubSlices)).Reset(termsEnums.toArray(MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY));
+		  return (new MultiTermsEnum(SubSlices)).Reset(termsEnums.ToArray(/*MultiTermsEnum.TermsEnumIndex.EMPTY_ARRAY*/));
 		}
 		else
 		{

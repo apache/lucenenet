@@ -56,14 +56,7 @@ namespace Lucene.Net.Index
 
 	  public override MergeScheduler Clone()
 	  {
-		try
-		{
-		  return (MergeScheduler) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception(e);
-		}
+		  return (MergeScheduler) base.MemberwiseClone();
 	  }
 	}
 

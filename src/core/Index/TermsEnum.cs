@@ -3,28 +3,29 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using AttributeSource = Lucene.Net.Util.AttributeSource;
-	using Bits = Lucene.Net.Util.Bits;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using BytesRefIterator = Lucene.Net.Util.BytesRefIterator;
+    using AttributeSource = Lucene.Net.Util.AttributeSource;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using BytesRefIterator = Lucene.Net.Util.BytesRefIterator;
 
 	/// <summary>
 	/// Iterator to seek (<seealso cref="#seekCeil(BytesRef)"/>, {@link
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
 		public abstract IComparer<BytesRef> Comparator {get;}
 		public abstract BytesRef Next();
 
-	  private AttributeSource Atts = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+	  private AttributeSource Atts = null;
 
 	  /// <summary>
 	  /// Sole constructor. (For invocation by subclass 
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
 	  /// Returns the related attributes. </summary>
 	  public virtual AttributeSource Attributes()
 	  {
-		if (Atts == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (Atts == null)
 		{
 			Atts = new AttributeSource();
 		}
@@ -287,63 +288,63 @@ namespace Lucene.Net.Index
 		  }
 		  public override BytesRef Term()
 		  {
-			throw new IllegalStateException("this method should never be called");
+			throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override IComparer<BytesRef> Comparator
 		  {
 			  get
 			  {
-				return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+				return null;
 			  }
 		  }
 
 		  public override int DocFreq()
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override long TotalTermFreq()
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override long Ord()
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override BytesRef Next()
 		  {
-			return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			return null;
 		  }
 
 		  public override AttributeSource Attributes() // make it synchronized here, to prevent double lazy init
 		  {
 			  lock (this)
 			  {
-				return base.attributes();
+				return base.Attributes();
 			  }
 		  }
 
 		  public override TermState TermState()
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 
 		  public override void SeekExact(BytesRef term, TermState state)
 		  {
-			throw new IllegalStateException("this method should never be called");
+              throw new InvalidOperationException("this method should never be called");
 		  }
 	  }
 	}

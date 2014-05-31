@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using MultiFields = Lucene.Net.Index.MultiFields;
 	using Terms = Lucene.Net.Index.Terms;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 

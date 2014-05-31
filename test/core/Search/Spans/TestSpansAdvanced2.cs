@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Spans
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Term = Lucene.Net.Index.Term;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Lucene.Net.Search;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 

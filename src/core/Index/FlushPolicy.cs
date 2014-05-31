@@ -125,8 +125,6 @@ namespace Lucene.Net.Index
 		  ThreadState next = activePerThreadsIterator.Current;
 		  if (!next.FlushPending_Renamed)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long nextRam = next.bytesUsed;
 			long nextRam = next.BytesUsed;
 			if (nextRam > maxRamSoFar && next.Dwpt.NumDocsInRAM > 0)
 			{
@@ -151,15 +149,8 @@ namespace Lucene.Net.Index
 	  public override FlushPolicy Clone()
 	  {
 		FlushPolicy clone;
-		try
-		{
-		  clone = (FlushPolicy) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  // should not happen
-		  throw new Exception(e);
-		}
+		
+        clone = (FlushPolicy) base.MemberwiseClone();
 		clone.IndexWriterConfig = null;
 		clone.InfoStream = null;
 		return clone;

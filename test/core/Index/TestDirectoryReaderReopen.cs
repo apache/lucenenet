@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 	using TermQuery = Lucene.Net.Search.TermQuery;
@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
 		public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		}
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		}
 	  }

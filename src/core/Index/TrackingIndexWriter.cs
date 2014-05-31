@@ -24,6 +24,8 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Search; // javadocs
 	using Query = Lucene.Net.Search.Query;
 	using Directory = Lucene.Net.Store.Directory;
+using Lucene.Net.Support;
+using System.Collections.Generic;
 
 	/// <summary>
 	/// Class that tracks changes to a delegated
@@ -58,11 +60,11 @@ namespace Lucene.Net.Index
 	  ///  IndexWriter#updateDocument(Term,Iterable,Analyzer)}
 	  ///  and returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long updateDocument<T1>(Term t, IEnumerable<T1> d, Analyzer a) where T1 : IndexableField
+	  public virtual long UpdateDocument(Term t, IEnumerable<IndexableField> d, Analyzer a)
 	  {
 		Writer.UpdateDocument(t, d, a);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -70,11 +72,11 @@ namespace Lucene.Net.Index
 	  ///  IndexWriter#updateDocument(Term,Iterable)} and
 	  ///  returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long updateDocument<T1>(Term t, IEnumerable<T1> d) where T1 : IndexableField
+	  public virtual long UpdateDocument<T1>(Term t, IEnumerable<IndexableField> d)
 	  {
 		Writer.UpdateDocument(t, d);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -82,11 +84,11 @@ namespace Lucene.Net.Index
 	  ///  IndexWriter#updateDocuments(Term,Iterable,Analyzer)}
 	  ///  and returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long updateDocuments<T1>(Term t, IEnumerable<T1> docs, Analyzer a) where T1 : Iterable<T1 extends IndexableField>
+	  public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IndexableField> docs, Analyzer a)
 	  {
 		Writer.UpdateDocuments(t, docs, a);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -94,11 +96,11 @@ namespace Lucene.Net.Index
 	  ///  IndexWriter#updateDocuments(Term,Iterable)} and returns
 	  ///  the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long updateDocuments<T1>(Term t, IEnumerable<T1> docs) where T1 : Iterable<T1 extends IndexableField>
+	  public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IndexableField> docs)
 	  {
 		Writer.UpdateDocuments(t, docs);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -109,7 +111,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.DeleteDocuments(t);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -120,7 +122,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.DeleteDocuments(terms);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -131,7 +133,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.DeleteDocuments(q);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -142,7 +144,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.DeleteDocuments(queries);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -153,7 +155,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.DeleteAll();
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -161,11 +163,11 @@ namespace Lucene.Net.Index
 	  ///  IndexWriter#addDocument(Iterable,Analyzer)} and
 	  ///  returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long addDocument<T1>(IEnumerable<T1> d, Analyzer a) where T1 : IndexableField
+	  public virtual long AddDocument(IEnumerable<IndexableField> d, Analyzer a)
 	  {
 		Writer.AddDocument(d, a);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -173,33 +175,33 @@ namespace Lucene.Net.Index
 	  ///  IndexWriter#addDocuments(Iterable,Analyzer)} and
 	  ///  returns the generation that reflects this change.  
 	  /// </summary>
-	  public virtual long addDocuments<T1>(IEnumerable<T1> docs, Analyzer a) where T1 : Iterable<T1 extends IndexableField>
+	  public virtual long AddDocuments(IEnumerable<IndexableField> docs, Analyzer a)
 	  {
 		Writer.AddDocuments(docs, a);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+		return IndexingGen.Get();
 	  }
 
 	  /// <summary>
 	  /// Calls <seealso cref="IndexWriter#addDocument(Iterable)"/>
 	  ///  and returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long addDocument<T1>(IEnumerable<T1> d) where T1 : IndexableField
+	  public virtual long AddDocument(IEnumerable<IndexableField> d)
 	  {
 		Writer.AddDocument(d);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+        return IndexingGen.Get();
 	  }
 
 	  /// <summary>
 	  /// Calls <seealso cref="IndexWriter#addDocuments(Iterable)"/> and
 	  ///  returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long addDocuments<T1>(IEnumerable<T1> docs) where T1 : Iterable<T1 extends IndexableField>
+	  public virtual long AddDocuments(IEnumerable<IndexableField> docs)
 	  {
 		Writer.AddDocuments(docs);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+        return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -210,7 +212,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.AddIndexes(dirs);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+        return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -221,7 +223,7 @@ namespace Lucene.Net.Index
 	  {
 		Writer.AddIndexes(readers);
 		// Return gen as of when indexing finished:
-		return IndexingGen.get();
+        return IndexingGen.Get();
 	  }
 
 	  /// <summary>
@@ -230,7 +232,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return IndexingGen.get();
+              return IndexingGen.Get();
 		  }
 	  }
 
@@ -253,7 +255,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return IndexingGen.AndIncrement;
+			return IndexingGen.IncrementAndGet();
 		  }
 	  }
 
@@ -266,7 +268,7 @@ namespace Lucene.Net.Index
 	  {
 		if (Writer.TryDeleteDocument(reader, docID))
 		{
-		  return IndexingGen.get();
+		  return IndexingGen.Get();
 		}
 		else
 		{

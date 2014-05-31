@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
 		  ordMap[sortedValues[ord]] = ord;
 		}
 
-		dvConsumer.addSortedField(FieldInfo, new IterableAnonymousInnerClassHelper(this, valueCount, sortedValues),
+		dvConsumer.AddSortedField(FieldInfo, new IterableAnonymousInnerClassHelper(this, valueCount, sortedValues),
 
 								  // doc -> ord
 								  new IterableAnonymousInnerClassHelper2(this, maxDoc, ordMap));

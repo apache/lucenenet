@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 	  {
 		IndexDeletionPolicy idp = NoDeletionPolicy.INSTANCE;
 		idp.onInit(null);
-		idp.onCommit(null);
+		idp.OnCommit(null);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

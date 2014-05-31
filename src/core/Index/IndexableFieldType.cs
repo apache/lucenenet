@@ -19,8 +19,8 @@ namespace Lucene.Net.Index
 	 */
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 
 	/// <summary>
 	/// Describes the properties of a field.
@@ -96,13 +96,13 @@ namespace Lucene.Net.Index
 	  /// <seealso cref="IndexOptions"/>, describing what should be
 	  /// recorded into the inverted index 
 	  /// </summary>
-	  IndexOptions IndexOptions();
+	  IndexOptions_e? IndexOptions();
 
 	  /// <summary>
 	  /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value
 	  /// will be indexed into docValues.
 	  /// </summary>
-	  DocValuesType DocValueType();
+	  DocValuesType_e? DocValueType();
 	}
 
 }

@@ -25,6 +25,8 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Util;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Bits = Lucene.Net.Util.Bits;
+    using System;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -130,7 +132,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(termsEnumsIndex.Length <= Top.Length);
 		NumSubs = 0;
 		NumTop = 0;
-		TermComp = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		TermComp = null;
 		Queue.Clear();
 		for (int i = 0;i < termsEnumsIndex.Length;i++)
 		{
@@ -138,10 +140,10 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
 		  TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
-		  Debug.Assert(termsEnumIndex != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+		  Debug.Assert(termsEnumIndex != null);
 
 		  // init our term comp
-		  if (TermComp == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  if (TermComp == null)
 		  {
 			Queue.TermComp = TermComp = termsEnumIndex.TermsEnum.Comparator;
 		  }
@@ -152,16 +154,16 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Comparator<Lucene.Net.Util.BytesRef> subTermComp = termsEnumIndex.termsEnum.getComparator();
 			IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparator;
-			if (subTermComp != Lucene.Net.Util.BytesRefIterator_Fields.Null && !subTermComp.Equals(TermComp))
+			if (subTermComp != null && !subTermComp.Equals(TermComp))
 			{
-			  throw new IllegalStateException("sub-readers have different BytesRef.Comparators: " + subTermComp + " vs " + TermComp + "; cannot merge");
+			  throw new InvalidOperationException("sub-readers have different BytesRef.Comparators: " + subTermComp + " vs " + TermComp + "; cannot merge");
 			}
 		  }
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnumIndex.termsEnum.next();
-		  BytesRef term = termsEnumIndex.TermsEnum.next();
-		  if (term != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  BytesRef term = termsEnumIndex.TermsEnum.Next();
+		  if (term != null)
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final TermsEnumWithSlice entry = subs[termsEnumIndex.subIndex];
@@ -192,12 +194,12 @@ namespace Lucene.Net.Index
 		NumTop = 0;
 
 		bool seekOpt = false;
-		if (LastSeek != Lucene.Net.Util.BytesRefIterator_Fields.Null && TermComp.Compare(LastSeek, term) <= 0)
+		if (LastSeek != null && TermComp.Compare(LastSeek, term) <= 0)
 		{
 		  seekOpt = true;
 		}
 
-		LastSeek = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		LastSeek = null;
 		LastSeekExact = true;
 
 		for (int i = 0;i < NumSubs;i++)
@@ -216,7 +218,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef curTerm = currentSubs[i].current;
 			BytesRef curTerm = CurrentSubs[i].Current;
-			if (curTerm != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (curTerm != null)
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int cmp = termComp.compare(term, curTerm);
@@ -231,7 +233,7 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-				status = CurrentSubs[i].Terms.seekExact(term);
+				status = CurrentSubs[i].Terms.SeekExact(term);
 			  }
 			}
 			else
@@ -241,13 +243,13 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			status = CurrentSubs[i].Terms.seekExact(term);
+			status = CurrentSubs[i].Terms.SeekExact(term);
 		  }
 
 		  if (status)
 		  {
 			Top[NumTop++] = CurrentSubs[i];
-			Current = CurrentSubs[i].Current = CurrentSubs[i].Terms.term();
+			Current = CurrentSubs[i].Current = CurrentSubs[i].Terms.Term();
 			Debug.Assert(term.Equals(CurrentSubs[i].Current));
 		  }
 		}
@@ -264,7 +266,7 @@ namespace Lucene.Net.Index
 		LastSeekExact = false;
 
 		bool seekOpt = false;
-		if (LastSeek != Lucene.Net.Util.BytesRefIterator_Fields.Null && TermComp.Compare(LastSeek, term) <= 0)
+		if (LastSeek != null && TermComp.Compare(LastSeek, term) <= 0)
 		{
 		  seekOpt = true;
 		}
@@ -288,7 +290,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef curTerm = currentSubs[i].current;
 			BytesRef curTerm = CurrentSubs[i].Current;
-			if (curTerm != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (curTerm != null)
 			{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int cmp = termComp.compare(term, curTerm);
@@ -303,7 +305,7 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-				status = CurrentSubs[i].Terms.seekCeil(term);
+				status = CurrentSubs[i].Terms.SeekCeil(term);
 			  }
 			}
 			else
@@ -313,26 +315,26 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			status = CurrentSubs[i].Terms.seekCeil(term);
+			status = CurrentSubs[i].Terms.SeekCeil(term);
 		  }
 
 		  if (status == SeekStatus.FOUND)
 		  {
 			Top[NumTop++] = CurrentSubs[i];
-			Current = CurrentSubs[i].Current = CurrentSubs[i].Terms.term();
+			Current = CurrentSubs[i].Current = CurrentSubs[i].Terms.Term();
 		  }
 		  else
 		  {
 			if (status == SeekStatus.NOT_FOUND)
 			{
-			  CurrentSubs[i].Current = CurrentSubs[i].Terms.term();
-			  Debug.Assert(CurrentSubs[i].Current != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+			  CurrentSubs[i].Current = CurrentSubs[i].Terms.Term();
+			  Debug.Assert(CurrentSubs[i].Current != null);
 			  Queue.Add(CurrentSubs[i]);
 			}
 			else
 			{
 			  // enum exhausted
-			  CurrentSubs[i].Current = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  CurrentSubs[i].Current = null;
 			}
 		  }
 		}
@@ -374,7 +376,7 @@ namespace Lucene.Net.Index
 		while (true)
 		{
 		  Top[NumTop++] = Queue.Pop();
-		  if (Queue.Size() == 0 || !(Queue.Top()).Current.bytesEquals(Top[0].Current))
+		  if (Queue.Size() == 0 || !(Queue.Top()).Current.BytesEquals(Top[0].Current))
 		  {
 			break;
 		  }
@@ -387,8 +389,8 @@ namespace Lucene.Net.Index
 		// call next() on each top, and put back into queue
 		for (int i = 0;i < NumTop;i++)
 		{
-		  Top[i].Current = Top[i].Terms.next();
-		  if (Top[i].Current != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  Top[i].Current = Top[i].Terms.Next();
+		  if (Top[i].Current != null)
 		  {
 			Queue.Add(Top[i]);
 		  }
@@ -404,19 +406,19 @@ namespace Lucene.Net.Index
 	  {
 		if (LastSeekExact)
 		{
-		  // Must seekCeil at this point, so those subs that
+		  // Must SeekCeil at this point, so those subs that
 		  // didn't have the term can find the following term.
-		  // NOTE: we could save some CPU by only seekCeil the
+		  // NOTE: we could save some CPU by only SeekCeil the
 		  // subs that didn't match the last exact seek... but
-		  // most impls short-circuit if you seekCeil to term
+		  // most impls short-circuit if you SeekCeil to term
 		  // they are already on.
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SeekStatus status = seekCeil(current);
+//ORIGINAL LINE: final SeekStatus status = SeekCeil(current);
 		  SeekStatus status = SeekCeil(Current);
 		  Debug.Assert(status == SeekStatus.FOUND);
 		  LastSeekExact = false;
 		}
-		LastSeek = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		LastSeek = null;
 
 		// restore queue
 		PushTop();
@@ -428,7 +430,7 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  Current = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  Current = null;
 		}
 
 		return Current;
@@ -439,7 +441,7 @@ namespace Lucene.Net.Index
 		int sum = 0;
 		for (int i = 0;i < NumTop;i++)
 		{
-		  sum += Top[i].Terms.docFreq();
+		  sum += Top[i].Terms.DocFreq();
 		}
 		return sum;
 	  }
@@ -451,7 +453,7 @@ namespace Lucene.Net.Index
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long v = top[i].terms.totalTermFreq();
-		  long v = Top[i].Terms.totalTermFreq();
+		  long v = Top[i].Terms.TotalTermFreq();
 		  if (v == -1)
 		  {
 			return v;
@@ -465,7 +467,7 @@ namespace Lucene.Net.Index
 	  {
 		MultiDocsEnum docsEnum;
 		// Can only reuse if incoming enum is also a MultiDocsEnum
-		if (reuse != Lucene.Net.Util.BytesRefIterator_Fields.Null && reuse is MultiDocsEnum)
+		if (reuse != null && reuse is MultiDocsEnum)
 		{
 		  docsEnum = (MultiDocsEnum) reuse;
 		  // ... and was previously created w/ this MultiTermsEnum:
@@ -488,7 +490,7 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  multiLiveDocs = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  multiLiveDocs = null;
 		}
 
 		int upto = 0;
@@ -504,7 +506,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: final Lucene.Net.Util.Bits b;
 		  Bits b;
 
-		  if (multiLiveDocs != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  if (multiLiveDocs != null)
 		  {
 			// optimize for common case: requested skip docs is a
 			// congruent sub-slice of MultiBits: in this case, we
@@ -525,21 +527,21 @@ namespace Lucene.Net.Index
 			  b = new BitsSlice(liveDocs, entry.SubSlice);
 			}
 		  }
-		  else if (liveDocs != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  else if (liveDocs != null)
 		  {
 			b = new BitsSlice(liveDocs, entry.SubSlice);
 		  }
 		  else
 		  {
 			// no deletions
-			b = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			b = null;
 		  }
 
 		  Debug.Assert(entry.Index < docsEnum.SubDocsEnum.Length, entry.Index + " vs " + docsEnum.SubDocsEnum.Length + "; " + Subs.Length);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final DocsEnum subDocsEnum = entry.terms.docs(b, docsEnum.subDocsEnum[entry.index], flags);
-		  DocsEnum subDocsEnum = entry.Terms.docs(b, docsEnum.SubDocsEnum[entry.Index], flags);
-		  if (subDocsEnum != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.SubDocsEnum[entry.Index], flags);
+		  if (subDocsEnum != null)
 		  {
 			docsEnum.SubDocsEnum[entry.Index] = subDocsEnum;
 			SubDocs[upto].DocsEnum = subDocsEnum;
@@ -555,7 +557,7 @@ namespace Lucene.Net.Index
 
 		if (upto == 0)
 		{
-		  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  return null;
 		}
 		else
 		{
@@ -567,7 +569,7 @@ namespace Lucene.Net.Index
 	  {
 		MultiDocsAndPositionsEnum docsAndPositionsEnum;
 		// Can only reuse if incoming enum is also a MultiDocsAndPositionsEnum
-		if (reuse != Lucene.Net.Util.BytesRefIterator_Fields.Null && reuse is MultiDocsAndPositionsEnum)
+		if (reuse != null && reuse is MultiDocsAndPositionsEnum)
 		{
 		  docsAndPositionsEnum = (MultiDocsAndPositionsEnum) reuse;
 		  // ... and was previously created w/ this MultiTermsEnum:
@@ -590,7 +592,7 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  multiLiveDocs = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  multiLiveDocs = null;
 		}
 
 		int upto = 0;
@@ -606,7 +608,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: final Lucene.Net.Util.Bits b;
 		  Bits b;
 
-		  if (multiLiveDocs != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  if (multiLiveDocs != null)
 		  {
 			// Optimize for common case: requested skip docs is a
 			// congruent sub-slice of MultiBits: in this case, we
@@ -628,22 +630,22 @@ namespace Lucene.Net.Index
 			  b = new BitsSlice(liveDocs, Top[i].SubSlice);
 			}
 		  }
-		  else if (liveDocs != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  else if (liveDocs != null)
 		  {
 			b = new BitsSlice(liveDocs, Top[i].SubSlice);
 		  }
 		  else
 		  {
 			// no deletions
-			b = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			b = null;
 		  }
 
 		  Debug.Assert(entry.Index < docsAndPositionsEnum.SubDocsAndPositionsEnum.Length, entry.Index + " vs " + docsAndPositionsEnum.SubDocsAndPositionsEnum.Length + "; " + Subs.Length);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final DocsAndPositionsEnum subPostings = entry.terms.docsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.index], flags);
-		  DocsAndPositionsEnum subPostings = entry.Terms.docsAndPositions(b, docsAndPositionsEnum.SubDocsAndPositionsEnum[entry.Index], flags);
+		  DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.SubDocsAndPositionsEnum[entry.Index], flags);
 
-		  if (subPostings != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		  if (subPostings != null)
 		  {
 			docsAndPositionsEnum.SubDocsAndPositionsEnum[entry.Index] = subPostings;
 			SubDocsAndPositions[upto].DocsAndPositionsEnum = subPostings;
@@ -652,19 +654,19 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			if (entry.Terms.docs(b, Lucene.Net.Util.BytesRefIterator_Fields.Null, DocsEnum.FLAG_NONE) != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (entry.Terms.Docs(b, null, DocsEnum.FLAG_NONE) != null)
 			{
 			  // At least one of our subs does not store
 			  // offsets or positions -- we can't correctly
 			  // produce a MultiDocsAndPositions enum
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			}
 		  }
 		}
 
 		if (upto == 0)
 		{
-		  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  return null;
 		}
 		else
 		{
@@ -716,7 +718,7 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			return termsA.SubSlice.start < termsB.SubSlice.start;
+			return termsA.SubSlice.Start < termsB.SubSlice.Start;
 		  }
 		}
 	  }

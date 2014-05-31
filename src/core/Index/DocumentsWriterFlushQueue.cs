@@ -23,6 +23,7 @@ namespace Lucene.Net.Index
 	 */
 
 	using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -60,13 +61,13 @@ namespace Lucene.Net.Index
 
 	  private void IncTickets()
 	  {
-		int numTickets = TicketCount_Renamed.incrementAndGet();
+		int numTickets = TicketCount_Renamed.IncrementAndGet();
 		Debug.Assert(numTickets > 0);
 	  }
 
 	  private void DecTickets()
 	  {
-		int numTickets = TicketCount_Renamed.decrementAndGet();
+		int numTickets = TicketCount_Renamed.DecrementAndGet();
 		Debug.Assert(numTickets >= 0);
 	  }
 
@@ -119,21 +120,17 @@ namespace Lucene.Net.Index
 
 	  internal virtual bool HasTickets()
 	  {
-		Debug.Assert(TicketCount_Renamed.get() >= 0, "ticketCount should be >= 0 but was: " + TicketCount_Renamed.get());
-		return TicketCount_Renamed.get() != 0;
+		Debug.Assert(TicketCount_Renamed.Get() >= 0, "ticketCount should be >= 0 but was: " + TicketCount_Renamed.Get());
+		return TicketCount_Renamed.Get() != 0;
 	  }
 
 	  private int InnerPurge(IndexWriter writer)
 	  {
-		Debug.Assert(PurgeLock.HeldByCurrentThread);
+		//Debug.Assert(PurgeLock.HeldByCurrentThread);
 		int numPurged = 0;
 		while (true)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FlushTicket head;
 		  FlushTicket head;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean canPublish;
 		  bool canPublish;
 		  lock (this)
 		  {
@@ -159,10 +156,9 @@ namespace Lucene.Net.Index
 			  lock (this)
 			  {
 				// finally remove the published ticket from the queue
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FlushTicket poll = queue.poll();
-				FlushTicket poll = Queue.RemoveFirst();
-				TicketCount_Renamed.decrementAndGet();
+				FlushTicket poll = Queue.First.Value;
+                Queue.RemoveFirst();
+				TicketCount_Renamed.DecrementAndGet();
 				Debug.Assert(poll == head);
 			  }
 			}
@@ -177,24 +173,24 @@ namespace Lucene.Net.Index
 
 	  internal virtual int ForcePurge(IndexWriter writer)
 	  {
-		Debug.Assert(!Thread.holdsLock(this));
-		Debug.Assert(!Thread.holdsLock(writer));
-		PurgeLock.@lock();
+		//Debug.Assert(!Thread.HoldsLock(this));
+		//Debug.Assert(!Thread.holdsLock(writer));
+		PurgeLock.@Lock();
 		try
 		{
 		  return InnerPurge(writer);
 		}
 		finally
 		{
-		  PurgeLock.unlock();
+		  PurgeLock.Unlock();
 		}
 	  }
 
 	  internal virtual int TryPurge(IndexWriter writer)
 	  {
-		Debug.Assert(!Thread.holdsLock(this));
-		Debug.Assert(!Thread.holdsLock(writer));
-		if (PurgeLock.tryLock())
+		//Debug.Assert(!Thread.holdsLock(this));
+		//Debug.Assert(!Thread.holdsLock(writer));
+		if (PurgeLock.TryLock())
 		{
 		  try
 		  {
@@ -202,7 +198,7 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			PurgeLock.unlock();
+			PurgeLock.Unlock();
 		  }
 		}
 		return 0;
@@ -212,7 +208,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return TicketCount_Renamed.get();
+			return TicketCount_Renamed.Get();
 		  }
 	  }
 
@@ -221,7 +217,7 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 			Queue.Clear();
-			TicketCount_Renamed.set(0);
+			TicketCount_Renamed.Set(0);
 		  }
 	  }
 
@@ -253,14 +249,14 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: final FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
 		  FrozenBufferedUpdates segmentUpdates = newSegment.SegmentUpdates;
 		  //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
-		  if (indexWriter.InfoStream.isEnabled("DW"))
+		  if (indexWriter.infoStream.IsEnabled("DW"))
 		  {
-			  indexWriter.InfoStream.message("DW", "publishFlushedSegment seg-private updates=" + segmentUpdates);
+              indexWriter.infoStream.Message("DW", "publishFlushedSegment seg-private updates=" + segmentUpdates);
 		  }
 
-		  if (segmentUpdates != null && indexWriter.InfoStream.isEnabled("DW"))
+          if (segmentUpdates != null && indexWriter.infoStream.IsEnabled("DW"))
 		  {
-			  indexWriter.InfoStream.message("DW", "flush: push buffered seg private updates: " + segmentUpdates);
+              indexWriter.infoStream.Message("DW", "flush: push buffered seg private updates: " + segmentUpdates);
 		  }
 		  // now publish!
 		  indexWriter.PublishFlushedSegment(newSegment.SegmentInfo, segmentUpdates, globalPacket);
@@ -275,9 +271,9 @@ namespace Lucene.Net.Index
 			  if (bufferedUpdates != null && bufferedUpdates.Any())
 			  {
 				indexWriter.PublishFrozenUpdates(bufferedUpdates);
-				if (indexWriter.InfoStream.isEnabled("DW"))
+                if (indexWriter.infoStream.IsEnabled("DW"))
 				{
-					indexWriter.InfoStream.message("DW", "flush: push buffered updates: " + bufferedUpdates);
+                    indexWriter.infoStream.Message("DW", "flush: push buffered updates: " + bufferedUpdates);
 				}
 			  }
 			}

@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
+	  public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
 	  {
 		return @base.FindMerges(null, segmentInfos);
 	  }
@@ -90,13 +90,9 @@ namespace Lucene.Net.Index
 	  public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
 	  {
 		// first find all old segments
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<SegmentCommitInfo,Boolean> oldSegments = new java.util.HashMap<>();
 		IDictionary<SegmentCommitInfo, bool?> oldSegments = new Dictionary<SegmentCommitInfo, bool?>();
 		foreach (SegmentCommitInfo si in segmentInfos)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Boolean v = segmentsToMerge.get(si);
 		  bool? v = segmentsToMerge[si];
 		  if (v != null && ShouldUpgradeSegment(si))
 		  {
@@ -123,7 +119,10 @@ namespace Lucene.Net.Index
 		  // and will be merged to one additional segment:
 		  foreach (OneMerge om in spec.Merges)
 		  {
-			oldSegments.Keys.removeAll(om.segments);
+              foreach (SegmentCommitInfo sipc in om.Segments)
+              {
+                  oldSegments.Remove(sipc);
+              }
 		  }
 		}
 
@@ -171,20 +170,18 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-		return "[" + this.GetType().SimpleName + "->" + @base + "]";
+		return "[" + this.GetType().Name + "->" + @base + "]";
 	  }
 
 	  private bool Verbose()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexWriter w = writer.get();
 		IndexWriter w = Writer.Get();
-		return w != null && w.InfoStream.isEnabled("UPGMP");
+		return w != null && w.infoStream.IsEnabled("UPGMP");
 	  }
 
 	  private void Message(string message)
 	  {
-		Writer.Get().infoStream.message("UPGMP", message);
+		Writer.Get().infoStream.Message("UPGMP", message);
 	  }
 	}
 

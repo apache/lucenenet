@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
 	   */
         private static readonly int RAW_SIZE_IN_BYTES = 8 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 8 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 8 * RamUsageEstimator.NUM_BYTES_INT;
 
-	  internal readonly DocValuesFieldUpdates.Type Type;
+	  internal readonly DocValuesFieldUpdates.Type_e Type;
 	  internal readonly Term Term;
 	  internal readonly string Field;
 	  internal readonly object Value;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 	  /// <param name="term"> the <seealso cref="Term"/> which determines the documents that will be updated </param>
 	  /// <param name="field"> the <seealso cref="NumericDocValuesField"/> to update </param>
 	  /// <param name="value"> the updated value </param>
-	  protected internal DocValuesUpdate(DocValuesFieldUpdates.Type type, Term term, string field, object value)
+      protected internal DocValuesUpdate(DocValuesFieldUpdates.Type_e type, Term term, string field, object value)
 	  {
 		this.Type = type;
 		this.Term = term;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 	  {
 		int sizeInBytes = RAW_SIZE_IN_BYTES;
         sizeInBytes += Term.Field_Renamed.Length * RamUsageEstimator.NUM_BYTES_CHAR;
-		sizeInBytes += Term.Bytes_Renamed.bytes.length;
+		sizeInBytes += Term.Bytes_Renamed.Bytes.Length;
         sizeInBytes += Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
 		sizeInBytes += (int)ValueSizeInBytes();
 		return sizeInBytes;
@@ -84,7 +84,8 @@ namespace Lucene.Net.Index
 
 		internal static readonly BytesRef MISSING = new BytesRef();
 
-		internal BinaryDocValuesUpdate(Term term, string field, BytesRef value) : base(DocValuesFieldUpdates.Type.BINARY, term, field, value == null ? MISSING : value)
+        internal BinaryDocValuesUpdate(Term term, string field, BytesRef value)
+            : base(DocValuesFieldUpdates.Type_e.BINARY, term, field, value == null ? MISSING : value)
 		{
 		}
 
@@ -102,7 +103,8 @@ namespace Lucene.Net.Index
 
 		internal static readonly long? MISSING = new long?(0);
 
-		internal NumericDocValuesUpdate(Term term, string field, long? value) : base(DocValuesFieldUpdates.Type.NUMERIC, term, field, value == null ? MISSING : value)
+        internal NumericDocValuesUpdate(Term term, string field, long? value)
+            : base(DocValuesFieldUpdates.Type_e.NUMERIC, term, field, value == null ? MISSING : value)
 		{
 		}
 

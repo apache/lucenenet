@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using IndexReader = Lucene.Net.Index.IndexReader;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

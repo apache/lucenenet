@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
 	using Constants = Lucene.Net.Util.Constants;
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using Version = Lucene.Net.Util.Version;
+    using System.IO;
 
 
 	/// <summary>
@@ -42,7 +43,7 @@ namespace Lucene.Net.Index
 	/// refuses to run by default. Specify {@code -delete-prior-commits}
 	/// to override this, allowing the tool to delete all but the last commit.
 	/// From Java code this can be enabled by passing {@code true} to
-	/// <seealso cref="#IndexUpgrader(Directory,Version,PrintStream,boolean)"/>.
+	/// <seealso cref="#IndexUpgrader(Directory,Version,StreamWriter,boolean)"/>.
 	/// <p><b>Warning:</b> this tool may reorder documents if the index was partially
 	/// upgraded before execution (e.g., documents were added). If your application relies
 	/// on &quot;monotonicity&quot; of doc IDs (which means that the order in which the documents
@@ -62,7 +63,7 @@ namespace Lucene.Net.Index
 		Console.Error.WriteLine("reason, if the incoming index has more than one commit, the tool");
 		Console.Error.WriteLine("refuses to run by default. Specify -delete-prior-commits to override");
 		Console.Error.WriteLine("this, allowing the tool to delete all but the last commit.");
-		Console.Error.WriteLine("Specify a " + typeof(FSDirectory).SimpleName + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Assembly.Name + " package will be used.");
+		Console.Error.WriteLine("Specify a " + typeof(FSDirectory).Name + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.");
 		Console.Error.WriteLine("WARNING: this tool may reorder document IDs!");
 		Environment.Exit(1);
 	  }
@@ -81,7 +82,7 @@ namespace Lucene.Net.Index
 	  {
 		string path = null;
 		bool deletePriorCommits = false;
-		PrintStream @out = null;
+		TextWriter @out = null;
 		string dirImpl = null;
 		int i = 0;
 		while (i < args.Length)
@@ -93,7 +94,7 @@ namespace Lucene.Net.Index
 		  }
 		  else if ("-verbose".Equals(arg))
 		  {
-			@out = System.out;
+			@out = Console.Out;
 		  }
 		  else if ("-dir-impl".Equals(arg))
 		  {
@@ -123,11 +124,11 @@ namespace Lucene.Net.Index
 		Directory dir = null;
 		if (dirImpl == null)
 		{
-		  dir = FSDirectory.Open(new File(path));
+		  dir = FSDirectory.Open(new DirectoryInfo(path));
 		}
 		else
 		{
-		  dir = CommandLineUtil.NewFSDirectory(dirImpl, new File(path));
+            dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(path));
 		}
 		return new IndexUpgrader(dir, Version.LUCENE_CURRENT, @out, deletePriorCommits);
 	  }
@@ -149,11 +150,12 @@ namespace Lucene.Net.Index
 	  /// {@code matchVersion}. You have the possibility to upgrade indexes with multiple commit points by removing
 	  /// all older ones. If {@code infoStream} is not {@code null}, all logging output will be sent to this stream. 
 	  /// </summary>
-	  public IndexUpgrader(Directory dir, Version matchVersion, PrintStream infoStream, bool deletePriorCommits) : this(dir, new IndexWriterConfig(matchVersion, null), deletePriorCommits)
+      public IndexUpgrader(Directory dir, Version matchVersion, TextWriter infoStream, bool deletePriorCommits)
+          : this(dir, new IndexWriterConfig(matchVersion, null), deletePriorCommits)
 	  {
 		if (null != infoStream)
 		{
-		  this.Iwc.InfoStream = infoStream;
+            this.Iwc.SetInfoStream(infoStream);
 		}
 	  }
 
@@ -180,8 +182,6 @@ namespace Lucene.Net.Index
 
 		if (!DeletePriorCommits)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<IndexCommit> commits = DirectoryReader.listCommits(dir);
 		  ICollection<IndexCommit> commits = DirectoryReader.ListCommits(Dir);
 		  if (commits.Count > 1)
 		  {
@@ -189,14 +189,10 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexWriterConfig c = iwc.clone();
 		IndexWriterConfig c = Iwc.Clone();
-		c.MergePolicy = new UpgradeIndexMergePolicy(c.MergePolicy);
-		c.IndexDeletionPolicy = new KeepOnlyLastCommitDeletionPolicy();
+		c.SetMergePolicy(new UpgradeIndexMergePolicy(c.MergePolicy));
+		c.SetIndexDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexWriter w = new IndexWriter(dir, c);
 		IndexWriter w = new IndexWriter(Dir, c);
 		try
 		{

@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	  /// Thrown by <seealso cref="TwoPhaseCommitTool#execute(TwoPhaseCommit...)"/> when an
 	  /// object fails to prepareCommit().
 	  /// </summary>
-	  public class PrepareCommitFailException : IOException
+	  public class PrepareCommitFailException : System.IO.IOException
 	  {
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 	  /// Thrown by <seealso cref="TwoPhaseCommitTool#execute(TwoPhaseCommit...)"/> when an
 	  /// object fails to commit().
 	  /// </summary>
-	  public class CommitFailException : IOException
+      public class CommitFailException : System.IO.IOException
 	  {
 
 		/// <summary>

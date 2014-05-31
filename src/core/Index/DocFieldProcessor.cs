@@ -60,9 +60,9 @@ namespace Lucene.Net.Index
 
 	  public DocFieldProcessor(DocumentsWriterPerThread docWriter, DocFieldConsumer consumer, StoredFieldsConsumer storedConsumer)
 	  {
-		this.DocState = docWriter.DocState;
+		this.DocState = docWriter.docState;
 		this.Codec = docWriter.Codec;
-		this.BytesUsed = docWriter.BytesUsed_Renamed;
+		this.BytesUsed = docWriter.bytesUsed;
 		this.Consumer = consumer;
 		this.StoredConsumer = storedConsumer;
 	  }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 		// FreqProxTermsWriter does this with
 		// FieldInfo.storePayload.
 		FieldInfosWriter infosWriter = Codec.FieldInfosFormat().FieldInfosWriter;
-		infosWriter.Write(state.Directory, state.SegmentInfo.name, "", state.FieldInfos, IOContext.DEFAULT);
+		infosWriter.Write(state.Directory, state.SegmentInfo.Name, "", state.FieldInfos, IOContext.DEFAULT);
 	  }
 
 	  public override void Abort()
@@ -96,14 +96,13 @@ namespace Lucene.Net.Index
 
 		foreach (DocFieldProcessorPerField field in FieldHash)
 		{
-		  while (field != null)
+          DocFieldProcessorPerField fieldNext = field;
+          while (fieldNext != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocFieldProcessorPerField next = field.next;
-			DocFieldProcessorPerField next = field.Next;
+			DocFieldProcessorPerField next = fieldNext.Next;
 			try
 			{
-			  field.Abort();
+                fieldNext.Abort();
 			}
 			catch (Exception t)
 			{
@@ -112,7 +111,7 @@ namespace Lucene.Net.Index
 				th = t;
 			  }
 			}
-			field = next;
+            fieldNext = next;
 		  }
 		}
 
@@ -152,7 +151,7 @@ namespace Lucene.Net.Index
 			  throw (Exception) th;
 		  }
 		  // defensive code - we should not hit unchecked exceptions
-		  throw new Exception(th);
+		  throw new Exception(th.Message, th);
 		}
 	  }
 
@@ -174,13 +173,9 @@ namespace Lucene.Net.Index
 
 	  private void Rehash()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newHashSize = (fieldHash.length*2);
 		int newHashSize = (FieldHash.Length * 2);
 		Debug.Assert(newHashSize > FieldHash.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocFieldProcessorPerField newHashArray[] = new DocFieldProcessorPerField[newHashSize];
 		DocFieldProcessorPerField[] newHashArray = new DocFieldProcessorPerField[newHashSize];
 
 		// Rehash
@@ -190,9 +185,7 @@ namespace Lucene.Net.Index
 		  DocFieldProcessorPerField fp0 = FieldHash[j];
 		  while (fp0 != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int hashPos2 = fp0.fieldInfo.name.hashCode() & newHashMask;
-			int hashPos2 = fp0.FieldInfo.name.HashCode() & newHashMask;
+			int hashPos2 = fp0.FieldInfo.Name.GetHashCode() & newHashMask;
 			DocFieldProcessorPerField nextFP0 = fp0.Next;
 			fp0.Next = newHashArray[hashPos2];
 			newHashArray[hashPos2] = fp0;
@@ -230,9 +223,9 @@ namespace Lucene.Net.Index
 		  // Make sure we have a PerField allocated
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int hashPos = fieldName.hashCode() & hashMask;
-		  int hashPos = fieldName.HashCode() & HashMask;
+		  int hashPos = fieldName.GetHashCode() & HashMask;
 		  DocFieldProcessorPerField fp = FieldHash[hashPos];
-		  while (fp != null && !fp.FieldInfo.name.Equals(fieldName))
+		  while (fp != null && !fp.FieldInfo.Name.Equals(fieldName))
 		  {
 			fp = fp.Next;
 		  }
@@ -301,7 +294,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final DocFieldProcessorPerField perField = fields[i];
 		  DocFieldProcessorPerField perField = Fields_Renamed[i];
-		  perField.Consumer.processFields(perField.Fields, perField.FieldCount);
+		  perField.Consumer.ProcessFields(perField.Fields, perField.FieldCount);
 		}
 	  }
 
@@ -315,7 +308,7 @@ namespace Lucene.Net.Index
 
 		  public virtual int Compare(DocFieldProcessorPerField o1, DocFieldProcessorPerField o2)
 		  {
-			return o1.FieldInfo.name.compareTo(o2.FieldInfo.name);
+			return o1.FieldInfo.Name.CompareTo(o2.FieldInfo.Name);
 		  }
 	  }
 

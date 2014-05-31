@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using MergeInfo = Lucene.Net.Store.MergeInfo;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using Lucene.Net.Util;
-	using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
+	//using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
 
 
 	/// <summary>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 	/// 
 	/// @lucene.experimental
 	/// </summary>
-	public abstract class MergePolicy : java.io.IDisposable, ICloneable
+	public abstract class MergePolicy : IDisposable, ICloneable
 	{
 
 	  /// <summary>
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 			throw new Exception("segments must include at least one segment");
 		  }
 		  // clone the list, as the in list may be based off original SegmentInfos and may be modified
-		  this.Segments = new List<>(segments);
+		  this.Segments = new List<SegmentCommitInfo>(segments);
 		  int count = 0;
 		  foreach (SegmentCommitInfo info in segments)
 		  {
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
 			{
 			  if (Readers == null)
 			  {
-				throw new IllegalStateException("IndexWriter has not initialized readers from the segment infos yet");
+				throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
 			  }
 	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 	//ORIGINAL LINE: final java.util.List<AtomicReader> readers = new java.util.ArrayList<>(this.readers.size());
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
 				  readers.Add(reader);
 				}
 			  }
-			  return Collections.unmodifiableList(readers);
+              return readers;
 			}
 		}
 
@@ -300,9 +300,9 @@ namespace Lucene.Net.Index
 				  // do 1000 msec, defensively
 				  Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
 				}
-				catch (InterruptedException ie)
+				catch (ThreadInterruptedException ie)
 				{
-				  throw new Exception(ie);
+				  throw new Exception(ie.Message, ie);
 				}
 				if (Aborted_Renamed)
 				{
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
 		  }
 		  if (Info_Renamed != null)
 		  {
-			b.Append(" into ").Append(Info_Renamed.Info.name);
+			b.Append(" into ").Append(Info_Renamed.Info.Name);
 		  }
 		  if (MaxNumSegments != -1)
 		  {
@@ -479,7 +479,8 @@ namespace Lucene.Net.Index
 
 		/// <summary>
 		/// Create a {@code MergeException}. </summary>
-		public MergeException(Exception exc, Directory dir) : base(exc)
+		public MergeException(Exception exc, Directory dir) 
+            : base(exc.Message)
 		{
 		  this.Dir = dir;
 		}
@@ -503,11 +504,12 @@ namespace Lucene.Net.Index
 	  ///  <code>false</code>.  Normally this exception is
 	  ///  privately caught and suppresed by <seealso cref="IndexWriter"/>.  
 	  /// </summary>
-	  public class MergeAbortedException : IOException
+	  public class MergeAbortedException : System.IO.IOException
 	  {
 		/// <summary>
 		/// Create a <seealso cref="MergeAbortedException"/>. </summary>
-		public MergeAbortedException() : base("merge is aborted")
+		public MergeAbortedException() 
+            : base("merge is aborted")
 		{
 		}
 
@@ -515,7 +517,8 @@ namespace Lucene.Net.Index
 		/// Create a <seealso cref="MergeAbortedException"/> with a
 		///  specified message. 
 		/// </summary>
-		public MergeAbortedException(string message) : base(message)
+		public MergeAbortedException(string message) 
+            : base(message)
 		{
 		}
 	  }
@@ -551,16 +554,9 @@ namespace Lucene.Net.Index
 	  public override MergePolicy Clone()
 	  {
 		MergePolicy clone;
-		try
-		{
-		  clone = (MergePolicy) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  // should not happen
-		  throw new Exception(e);
-		}
-		clone.Writer = new SetOnce<>();
+		clone = (MergePolicy) base.MemberwiseClone();
+
+		clone.Writer = new SetOnce<IndexWriter>();
 		return clone;
 	  }
 
@@ -580,7 +576,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal MergePolicy(double defaultNoCFSRatio, long defaultMaxCFSSegmentSize)
 	  {
-		Writer = new SetOnce<>();
+		Writer = new SetOnce<IndexWriter>();
 		this.NoCFSRatio_Renamed = defaultNoCFSRatio;
 		this.MaxCFSSegmentSize = defaultMaxCFSSegmentSize;
 	  }
@@ -607,7 +603,7 @@ namespace Lucene.Net.Index
 	  /// <param name="mergeTrigger"> the event that triggered the merge </param>
 	  /// <param name="segmentInfos">
 	  ///          the total set of segments in the index </param>
-	  public abstract MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos);
+	  public abstract MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos);
 
 	  /// <summary>
 	  /// Determine what set of merge operations is necessary in
@@ -682,7 +678,7 @@ namespace Lucene.Net.Index
 	  protected internal virtual long Size(SegmentCommitInfo info)
 	  {
 		long byteSize = info.SizeInBytes();
-		int delCount = Writer.Get().numDeletedDocs(info);
+		int delCount = Writer.Get().NumDeletedDocs(info);
 		double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
 		Debug.Assert(delRatio <= 1.0);
 		return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
@@ -698,7 +694,7 @@ namespace Lucene.Net.Index
 		IndexWriter w = Writer.Get();
 		Debug.Assert(w != null);
 		bool hasDeletions = w.NumDeletedDocs(info) > 0;
-		return !hasDeletions && !info.Info.hasSeparateNorms() && info.Info.dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
+		return !hasDeletions && !info.Info.HasSeparateNorms() && info.Info.Dir == w.Directory && UseCompoundFile(infos, info) == info.Info.UseCompoundFile;
 	  }
 
 	  /// <summary>

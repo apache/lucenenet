@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Perfield
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using LogDocMergePolicy = Lucene.Net.Index.LogDocMergePolicy;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Term = Lucene.Net.Index.Term;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Perfield
 	  public virtual void TestMergeUnusedPerFieldCodec()
 	  {
 		Directory dir = newDirectory();
-		IndexWriterConfig iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.CREATE).setCodec(new MockCodec());
+		IndexWriterConfig iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setCodec(new MockCodec());
 		IndexWriter writer = NewWriter(dir, iwconf);
 		AddDocs(writer, 10);
 		writer.commit();
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Perfield
 		{
 		  Console.WriteLine("TEST: make new index");
 		}
-		IndexWriterConfig iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.CREATE).setCodec(new MockCodec());
+		IndexWriterConfig iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setCodec(new MockCodec());
 		iwconf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH;
 		//((LogMergePolicy) iwconf.getMergePolicy()).setMergeFactor(10);
 		IndexWriter writer = NewWriter(dir, iwconf);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Perfield
 		AssertQuery(new Term("content", "aaa"), dir, 10);
 		Codec codec = iwconf.Codec;
 
-		iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.APPEND).setCodec(codec);
+		iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.APPEND).setCodec(codec);
 		//((LogMergePolicy) iwconf.getMergePolicy()).setNoCFSRatio(0.0);
 		//((LogMergePolicy) iwconf.getMergePolicy()).setMergeFactor(10);
 		iwconf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Perfield
 		{
 		  int num = TestUtil.Next(random(), 30, 60);
 		  IndexWriterConfig config = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		  config.OpenMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND;
+		  config.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE_OR_APPEND;
 		  IndexWriter writer = NewWriter(dir, config);
 		  for (int j = 0; j < docsPerRound; j++)
 		  {

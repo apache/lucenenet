@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		// cached ordinal map
-		if (FieldInfos.FieldInfo(field).DocValuesType_e != DocValuesType.SORTED)
+		if (FieldInfos.FieldInfo(field).DocValuesType != DocValuesType.SORTED)
 		{
 		  return null;
 		}
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = @in.Leaves()[i];
-		  SortedDocValues v = context.Reader().getSortedDocValues(field);
+		  SortedDocValues v = context.Reader().GetSortedDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_SORTED;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		// cached ordinal map
-		if (FieldInfos.FieldInfo(field).DocValuesType_e != DocValuesType.SORTED_SET)
+		if (FieldInfos.FieldInfo(field).DocValuesType != DocValuesType.SORTED_SET)
 		{
 		  return null;
 		}
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = @in.Leaves()[i];
-		  SortedSetDocValues v = context.Reader().getSortedSetDocValues(field);
+		  SortedSetDocValues v = context.Reader().GetSortedSetDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_SORTED_SET;
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
 		EnsureOpen();
 		foreach (AtomicReaderContext ctx in @in.Leaves())
 		{
-		  ctx.Reader().checkIntegrity();
+		  ctx.Reader().CheckIntegrity();
 		}
 	  }
 	}

@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using Store = Lucene.Net.Document.Field.Store;
 	using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 	using Directory = Lucene.Net.Store.Directory;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 		assertNull(conf.IndexCommit);
 		Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.IndexDeletionPolicy.GetType());
 		Assert.AreEqual(typeof(ConcurrentMergeScheduler), conf.MergeScheduler.GetType());
-		Assert.AreEqual(OpenMode.CREATE_OR_APPEND, conf.OpenMode);
+		Assert.AreEqual(OpenMode.CREATE_OR_APPEND, conf.OpenMode_e);
 		// we don't need to assert this, it should be unspecified
 		Assert.IsTrue(IndexSearcher.DefaultSimilarity == conf.Similarity);
 		Assert.AreEqual(IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, conf.TermIndexInterval);

@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 		  this.RollbackPoint = rollbackPoint;
 		}
 
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		}
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
 		  }
 
 
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		}
 		public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		}
 		public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit

@@ -25,11 +25,12 @@ namespace Lucene.Net.Index
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat; // javadocs
 	using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
 	using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using Version = Lucene.Net.Util.Version;
+    using System;
 
 	/// <summary>
 	/// Holds all the configuration used by <seealso cref="IndexWriter"/> with few setters for
@@ -40,14 +41,14 @@ namespace Lucene.Net.Index
 	public class LiveIndexWriterConfig
 	{
 
-	  private readonly Analyzer Analyzer_Renamed;
+	  private readonly Analyzer analyzer;
 
-	  private volatile int MaxBufferedDocs_Renamed;
+	  private volatile int maxBufferedDocs;
 	  private volatile double RamBufferSizeMB;
-	  private volatile int MaxBufferedDeleteTerms_Renamed;
-	  private volatile int ReaderTermsIndexDivisor_Renamed;
-	  private volatile IndexReaderWarmer MergedSegmentWarmer_Renamed;
-	  private volatile int TermIndexInterval_Renamed; // TODO: this should be private to the codec, not settable here
+	  private volatile int maxBufferedDeleteTerms;
+	  private volatile int readerTermsIndexDivisor;
+	  private volatile IndexReaderWarmer mergedSegmentWarmer;
+	  private volatile int termIndexInterval; // TODO: this should be private to the codec, not settable here
 
 	  // modified by IndexWriterConfig
 	  /// <summary>
@@ -66,53 +67,53 @@ namespace Lucene.Net.Index
 	  /// <seealso cref="OpenMode"/> that <seealso cref="IndexWriter"/> is opened
 	  ///  with. 
 	  /// </summary>
-	  protected internal volatile OpenMode OpenMode_Renamed;
+	  protected internal volatile OpenMode_e openMode;
 
 	  /// <summary>
 	  /// <seealso cref="Similarity"/> to use when encoding norms. </summary>
-	  protected internal volatile Similarity Similarity_Renamed;
+	  protected internal volatile Similarity similarity;
 
 	  /// <summary>
 	  /// <seealso cref="MergeScheduler"/> to use for running merges. </summary>
-	  protected internal volatile MergeScheduler MergeScheduler_Renamed;
+	  protected internal volatile MergeScheduler mergeScheduler;
 
 	  /// <summary>
 	  /// Timeout when trying to obtain the write lock on init. </summary>
-	  protected internal volatile long WriteLockTimeout_Renamed;
+	  protected internal volatile long writeLockTimeout;
 
 	  /// <summary>
 	  /// <seealso cref="IndexingChain"/> that determines how documents are
 	  ///  indexed. 
 	  /// </summary>
-	  protected internal volatile IndexingChain IndexingChain_Renamed;
+	  protected internal volatile IndexingChain indexingChain;
 
 	  /// <summary>
 	  /// <seealso cref="Codec"/> used to write new segments. </summary>
-	  protected internal volatile Codec Codec_Renamed;
+	  protected internal volatile Codec codec;
 
 	  /// <summary>
 	  /// <seealso cref="InfoStream"/> for debugging messages. </summary>
-	  protected internal volatile InfoStream InfoStream_Renamed;
+	  protected internal volatile InfoStream infoStream;
 
 	  /// <summary>
 	  /// <seealso cref="MergePolicy"/> for selecting merges. </summary>
-	  protected internal volatile MergePolicy MergePolicy_Renamed;
+	  protected internal volatile MergePolicy mergePolicy;
 
 	  /// <summary>
 	  /// {@code DocumentsWriterPerThreadPool} to control how
 	  ///  threads are allocated to {@code DocumentsWriterPerThread}. 
 	  /// </summary>
-	  protected internal volatile DocumentsWriterPerThreadPool IndexerThreadPool_Renamed;
+	  protected internal volatile DocumentsWriterPerThreadPool indexerThreadPool;
 
 	  /// <summary>
 	  /// True if readers should be pooled. </summary>
-	  protected internal volatile bool ReaderPooling_Renamed;
+	  protected internal volatile bool readerPooling;
 
 	  /// <summary>
 	  /// <seealso cref="FlushPolicy"/> to control when segments are
 	  ///  flushed. 
 	  /// </summary>
-	  protected internal volatile FlushPolicy FlushPolicy_Renamed;
+	  protected internal volatile FlushPolicy flushPolicy;
 
 	  /// <summary>
 	  /// Sets the hard upper bound on RAM usage for a single
@@ -126,41 +127,41 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// True if segment flushes should use compound file format </summary>
-	  protected internal volatile bool UseCompoundFile_Renamed = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
+	  protected internal volatile bool useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
 
 	  /// <summary>
 	  /// True if merging should check integrity of segments before merge </summary>
-	  protected internal volatile bool CheckIntegrityAtMerge_Renamed = IndexWriterConfig.DEFAULT_CHECK_INTEGRITY_AT_MERGE;
+	  protected internal volatile bool checkIntegrityAtMerge = IndexWriterConfig.DEFAULT_CHECK_INTEGRITY_AT_MERGE;
 
 	  // used by IndexWriterConfig
 	  internal LiveIndexWriterConfig(Analyzer analyzer, Version matchVersion)
 	  {
-		this.Analyzer_Renamed = analyzer;
+		this.analyzer = analyzer;
 		this.MatchVersion = matchVersion;
 		RamBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
-		MaxBufferedDocs_Renamed = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
-		MaxBufferedDeleteTerms_Renamed = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DELETE_TERMS;
-		ReaderTermsIndexDivisor_Renamed = IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR;
-		MergedSegmentWarmer_Renamed = null;
-		TermIndexInterval_Renamed = IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL; // TODO: this should be private to the codec, not settable here
+		maxBufferedDocs = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS;
+		maxBufferedDeleteTerms = IndexWriterConfig.DEFAULT_MAX_BUFFERED_DELETE_TERMS;
+		readerTermsIndexDivisor = IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR;
+		mergedSegmentWarmer = null;
+		termIndexInterval = IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL; // TODO: this should be private to the codec, not settable here
 		DelPolicy = new KeepOnlyLastCommitDeletionPolicy();
 		Commit = null;
-		UseCompoundFile_Renamed = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
-		OpenMode_Renamed = OpenMode.CREATE_OR_APPEND;
-		Similarity_Renamed = IndexSearcher.DefaultSimilarity;
-		MergeScheduler_Renamed = new ConcurrentMergeScheduler();
-		WriteLockTimeout_Renamed = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
-		IndexingChain_Renamed = DocumentsWriterPerThread.defaultIndexingChain;
-		Codec_Renamed = Codec.Default;
-		if (Codec_Renamed == null)
+		useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
+		openMode = OpenMode_e.CREATE_OR_APPEND;
+		similarity = IndexSearcher.DefaultSimilarity;
+		mergeScheduler = new ConcurrentMergeScheduler();
+		writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
+		indexingChain = DocumentsWriterPerThread.defaultIndexingChain;
+		codec = Codec.Default;
+		if (codec == null)
 		{
 		  throw new System.NullReferenceException();
 		}
-		InfoStream_Renamed = InfoStream.Default;
-		MergePolicy_Renamed = new TieredMergePolicy();
-		FlushPolicy_Renamed = new FlushByRamOrCountsPolicy();
-		ReaderPooling_Renamed = IndexWriterConfig.DEFAULT_READER_POOLING;
-		IndexerThreadPool_Renamed = new ThreadAffinityDocumentsWriterThreadPool(IndexWriterConfig.DEFAULT_MAX_THREAD_STATES);
+		infoStream = InfoStream.Default;
+		mergePolicy = new TieredMergePolicy();
+		flushPolicy = new FlushByRamOrCountsPolicy();
+		readerPooling = IndexWriterConfig.DEFAULT_READER_POOLING;
+		indexerThreadPool = new ThreadAffinityDocumentsWriterThreadPool(IndexWriterConfig.DEFAULT_MAX_THREAD_STATES);
 		PerThreadHardLimitMB = IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB;
 	  }
 
@@ -170,30 +171,30 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  internal LiveIndexWriterConfig(IndexWriterConfig config)
 	  {
-		MaxBufferedDeleteTerms_Renamed = config.MaxBufferedDeleteTerms;
-		MaxBufferedDocs_Renamed = config.MaxBufferedDocs;
-		MergedSegmentWarmer_Renamed = config.MergedSegmentWarmer;
+		maxBufferedDeleteTerms = config.MaxBufferedDeleteTerms;
+		maxBufferedDocs = config.MaxBufferedDocs;
+		mergedSegmentWarmer = config.MergedSegmentWarmer;
 		RamBufferSizeMB = config.RAMBufferSizeMB;
-		ReaderTermsIndexDivisor_Renamed = config.ReaderTermsIndexDivisor;
-		TermIndexInterval_Renamed = config.TermIndexInterval;
+		readerTermsIndexDivisor = config.ReaderTermsIndexDivisor;
+		termIndexInterval = config.TermIndexInterval;
 		MatchVersion = config.MatchVersion;
-		Analyzer_Renamed = config.Analyzer;
+		analyzer = config.Analyzer;
 		DelPolicy = config.IndexDeletionPolicy;
 		Commit = config.IndexCommit;
-		OpenMode_Renamed = config.OpenMode;
-		Similarity_Renamed = config.Similarity;
-		MergeScheduler_Renamed = config.MergeScheduler;
-		WriteLockTimeout_Renamed = config.WriteLockTimeout;
-		IndexingChain_Renamed = config.IndexingChain;
-		Codec_Renamed = config.Codec;
-		InfoStream_Renamed = config.InfoStream;
-		MergePolicy_Renamed = config.MergePolicy;
-		IndexerThreadPool_Renamed = config.IndexerThreadPool;
-		ReaderPooling_Renamed = config.ReaderPooling;
-		FlushPolicy_Renamed = config.FlushPolicy;
+		openMode = config.OpenMode;
+		similarity = config.Similarity;
+		mergeScheduler = config.MergeScheduler;
+		writeLockTimeout = config.WriteLockTimeout;
+        indexingChain = config.IndexingChain;
+		codec = config.Codec;
+		infoStream = config.InfoStream;
+		mergePolicy = config.MergePolicy;
+		indexerThreadPool = config.IndexerThreadPool;
+		readerPooling = config.ReaderPooling;
+		flushPolicy = config.FlushPolicy;
 		PerThreadHardLimitMB = config.RAMPerThreadHardLimitMB;
-		UseCompoundFile_Renamed = config.UseCompoundFile;
-		CheckIntegrityAtMerge_Renamed = config.CheckIntegrityAtMerge;
+		useCompoundFile = config.UseCompoundFile;
+		checkIntegrityAtMerge = config.CheckIntegrityAtMerge;
 	  }
 
 	  /// <summary>
@@ -202,7 +203,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Analyzer_Renamed;
+			return analyzer;
 		  }
 	  }
 
@@ -256,7 +257,7 @@ namespace Lucene.Net.Index
 	  /// <seealso cref= IndexWriterConfig#DEFAULT_TERM_INDEX_INTERVAL </seealso>
 	  public virtual LiveIndexWriterConfig SetTermIndexInterval(int interval) // TODO: this should be private to the codec, not settable here
 	  {
-		this.TermIndexInterval_Renamed = interval;
+		this.termIndexInterval = interval;
 		return this;
 	  }
 
@@ -268,7 +269,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return TermIndexInterval_Renamed;
+			return termIndexInterval;
 		  }
 	  }
 
@@ -296,7 +297,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
 		}
-		this.MaxBufferedDeleteTerms_Renamed = maxBufferedDeleteTerms;
+		this.maxBufferedDeleteTerms = maxBufferedDeleteTerms;
 		return this;
 	  }
 
@@ -309,7 +310,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return MaxBufferedDeleteTerms_Renamed;
+			return maxBufferedDeleteTerms;
 		  }
 	  }
 
@@ -366,7 +367,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("ramBufferSize should be > 0.0 MB when enabled");
 		}
-		if (ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH && MaxBufferedDocs_Renamed == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+		if (ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
 		{
 		  throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
 		}
@@ -417,7 +418,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
 		}
-		this.MaxBufferedDocs_Renamed = maxBufferedDocs;
+		this.maxBufferedDocs = maxBufferedDocs;
 		return this;
 	  }
 
@@ -430,7 +431,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return MaxBufferedDocs_Renamed;
+			return maxBufferedDocs;
 		  }
 	  }
 
@@ -442,7 +443,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual LiveIndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
 	  {
-		this.MergedSegmentWarmer_Renamed = mergeSegmentWarmer;
+		this.mergedSegmentWarmer = mergeSegmentWarmer;
 		return this;
 	  }
 
@@ -452,7 +453,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return MergedSegmentWarmer_Renamed;
+			return mergedSegmentWarmer;
 		  }
 	  }
 
@@ -478,7 +479,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("divisor must be >= 1, or -1 (got " + divisor + ")");
 		}
-		ReaderTermsIndexDivisor_Renamed = divisor;
+		readerTermsIndexDivisor = divisor;
 		return this;
 	  }
 
@@ -490,17 +491,17 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return ReaderTermsIndexDivisor_Renamed;
+			return readerTermsIndexDivisor;
 		  }
 	  }
 
 	  /// <summary>
 	  /// Returns the <seealso cref="OpenMode"/> set by <seealso cref="IndexWriterConfig#setOpenMode(OpenMode)"/>. </summary>
-	  public virtual OpenMode OpenMode
+	  public virtual OpenMode_e OpenMode
 	  {
 		  get
 		  {
-			return OpenMode_Renamed;
+			return openMode;
 		  }
 	  }
 
@@ -538,7 +539,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Similarity_Renamed;
+			return similarity;
 		  }
 	  }
 
@@ -550,7 +551,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return MergeScheduler_Renamed;
+			return mergeScheduler;
 		  }
 	  }
 
@@ -562,7 +563,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return WriteLockTimeout_Renamed;
+			return writeLockTimeout;
 		  }
 	  }
 
@@ -572,7 +573,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Codec_Renamed;
+			return codec;
 		  }
 	  }
 
@@ -584,7 +585,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return MergePolicy_Renamed;
+			return mergePolicy;
 		  }
 	  }
 
@@ -597,7 +598,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return IndexerThreadPool_Renamed;
+			return indexerThreadPool;
 		  }
 	  }
 
@@ -611,11 +612,11 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  return ((ThreadAffinityDocumentsWriterThreadPool) IndexerThreadPool_Renamed).MaxThreadStates;
+			  return ((ThreadAffinityDocumentsWriterThreadPool) indexerThreadPool).MaxThreadStates;
 			}
 			catch (System.InvalidCastException cce)
 			{
-			  throw new IllegalStateException(cce);
+			  throw new InvalidOperationException(cce.Message, cce);
 			}
 		  }
 	  }
@@ -628,7 +629,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return ReaderPooling_Renamed;
+			return readerPooling;
 		  }
 	  }
 
@@ -640,7 +641,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return IndexingChain_Renamed;
+			return indexingChain;
 		  }
 	  }
 
@@ -662,7 +663,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return FlushPolicy_Renamed;
+			return flushPolicy;
 		  }
 	  }
 
@@ -674,8 +675,12 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return InfoStream_Renamed;
+			return infoStream;
 		  }
+          set
+          {
+              infoStream = value;
+          }
 	  }
 
 	  /// <summary>
@@ -694,7 +699,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual LiveIndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
 	  {
-		this.UseCompoundFile_Renamed = useCompoundFile;
+		this.useCompoundFile = useCompoundFile;
 		return this;
 	  }
 
@@ -706,7 +711,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return UseCompoundFile_Renamed;
+			return useCompoundFile;
 		  }
 	  }
 
@@ -721,7 +726,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual LiveIndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
 	  {
-		this.CheckIntegrityAtMerge_Renamed = checkIntegrityAtMerge;
+		this.checkIntegrityAtMerge = checkIntegrityAtMerge;
 		return this;
 	  }
 
@@ -733,7 +738,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return CheckIntegrityAtMerge_Renamed;
+			return checkIntegrityAtMerge;
 		  }
 	  }
 
@@ -741,7 +746,7 @@ namespace Lucene.Net.Index
 	  {
 		StringBuilder sb = new StringBuilder();
 		sb.Append("matchVersion=").Append(MatchVersion).Append("\n");
-		sb.Append("analyzer=").Append(Analyzer_Renamed == null ? "null" : Analyzer_Renamed.GetType().Name).Append("\n");
+		sb.Append("analyzer=").Append(analyzer == null ? "null" : analyzer.GetType().Name).Append("\n");
 		sb.Append("ramBufferSizeMB=").Append(RAMBufferSizeMB).Append("\n");
 		sb.Append("maxBufferedDocs=").Append(MaxBufferedDocs).Append("\n");
 		sb.Append("maxBufferedDeleteTerms=").Append(MaxBufferedDeleteTerms).Append("\n");
@@ -750,7 +755,7 @@ namespace Lucene.Net.Index
 		sb.Append("termIndexInterval=").Append(TermIndexInterval).Append("\n"); // TODO: this should be private to the codec, not settable here
 		sb.Append("delPolicy=").Append(IndexDeletionPolicy.GetType().Name).Append("\n");
 		IndexCommit commit = IndexCommit;
-		sb.Append("commit=").Append(commit == null ? "null" : commit).Append("\n");
+		sb.Append("commit=").Append(commit == null ? "null" : commit.ToString()).Append("\n");
 		sb.Append("openMode=").Append(OpenMode).Append("\n");
 		sb.Append("similarity=").Append(Similarity.GetType().Name).Append("\n");
 		sb.Append("mergeScheduler=").Append(MergeScheduler).Append("\n");

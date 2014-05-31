@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	using StoredField = Lucene.Net.Document.StoredField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using FieldCache = Lucene.Net.Search.FieldCache;
 	using Directory = Lucene.Net.Store.Directory;

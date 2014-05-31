@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// this is a StoredFieldsConsumer that writes stored fields. </summary>
@@ -44,7 +45,7 @@ namespace Lucene.Net.Index
 	  public StoredFieldsProcessor(DocumentsWriterPerThread docWriter)
 	  {
 		this.DocWriter = docWriter;
-		this.DocState = docWriter.DocState;
+		this.DocState = docWriter.docState;
 		this.Codec = docWriter.Codec;
 	  }
 
@@ -55,8 +56,8 @@ namespace Lucene.Net.Index
 	  public void Reset()
 	  {
 		NumStoredFields = 0;
-		Arrays.fill(StoredFields, null);
-		Arrays.fill(FieldInfos, null);
+		Arrays.Fill(StoredFields, null);
+		Arrays.Fill(FieldInfos, null);
 	  }
 
 	  public override void StartDocument()
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
 		  {
 			if (FieldsWriter == null)
 			{
-			  FieldsWriter = Codec.StoredFieldsFormat().fieldsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
+			  FieldsWriter = Codec.StoredFieldsFormat().FieldsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
 			  LastDocID = 0;
 			}
 		  }
@@ -160,7 +161,7 @@ namespace Lucene.Net.Index
 
 	  public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
 	  {
-		if (field.FieldType().stored())
+		if (field.FieldType().Stored())
 		{
 		  if (NumStoredFields == StoredFields.Length)
 		  {

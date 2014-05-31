@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -27,9 +29,9 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public sealed class CompositeReaderContext : IndexReaderContext
 	{
-	  private readonly IList<IndexReaderContext> Children_Renamed;
-	  private readonly IList<AtomicReaderContext> Leaves_Renamed;
-	  private readonly CompositeReader Reader_Renamed;
+	  private readonly IList<IndexReaderContext> children;
+	  private readonly IList<AtomicReaderContext> leaves;
+	  private readonly CompositeReader reader;
 
 	  internal static CompositeReaderContext Create(CompositeReader reader)
 	  {
@@ -53,9 +55,9 @@ namespace Lucene.Net.Index
 
 	  private CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves) : base(parent, ordInParent, docbaseInParent)
 	  {
-		this.Children_Renamed = Collections.unmodifiableList(children);
-		this.Leaves_Renamed = leaves == null ? null : Collections.unmodifiableList(leaves);
-		this.Reader_Renamed = reader;
+		this.children = children.ToArray();
+		this.leaves = leaves == null ? null : leaves;
+		this.reader = reader;
 	  }
 
 	  public override IList<AtomicReaderContext> Leaves()
@@ -64,19 +66,19 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.NotSupportedException("this is not a top-level context.");
 		}
-		Debug.Assert(Leaves_Renamed != null);
-		return Leaves_Renamed;
+		Debug.Assert(leaves != null);
+		return leaves;
 	  }
 
 
 	  public override IList<IndexReaderContext> Children()
 	  {
-		return Children_Renamed;
+		return children;
 	  }
 
 	  public override CompositeReader Reader()
 	  {
-		return Reader_Renamed;
+		return reader;
 	  }
 
 	  private sealed class Builder
@@ -111,18 +113,9 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CompositeReader cr = (CompositeReader) reader;
 			CompositeReader cr = (CompositeReader) reader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<? extends IndexReader> sequentialSubReaders = cr.getSequentialSubReaders();
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-			IList<?> sequentialSubReaders = cr.SequentialSubReaders;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<IndexReaderContext> children = java.util.Arrays.asList(new IndexReaderContext[sequentialSubReaders.size()]);
-			IList<IndexReaderContext> children = Arrays.asList(new IndexReaderContext[sequentialSubReaders.Count]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CompositeReaderContext newParent;
+			var sequentialSubReaders = cr.GetSequentialSubReaders();
+			IList<IndexReaderContext> children = Arrays.AsList(new IndexReaderContext[sequentialSubReaders.Count]);
 			CompositeReaderContext newParent;
 			if (parent == null)
 			{
@@ -135,8 +128,6 @@ namespace Lucene.Net.Index
 			int newDocBase = 0;
 			for (int i = 0, c = sequentialSubReaders.Count; i < c; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReader r = sequentialSubReaders.get(i);
 			  IndexReader r = sequentialSubReaders[i];
 			  children[i] = Build(newParent, r, i, newDocBase);
 			  newDocBase += r.MaxDoc();

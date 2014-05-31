@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using IOContext = Lucene.Net.Store.IOContext;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using InfoStream = Lucene.Net.Util.InfoStream;
+    using Lucene.Net.Support;
 
 	/* Tracks the stream of {@link BufferedDeletes}.
 	 * When DocumentsWriterPerThread flushes, its buffered
@@ -61,8 +62,8 @@ namespace Lucene.Net.Index
 	  private Term LastDeleteTerm;
 
 	  private readonly InfoStream InfoStream;
-	  private readonly AtomicLong BytesUsed_Renamed = new AtomicLong();
-	  private readonly AtomicInteger NumTerms_Renamed = new AtomicInteger();
+	  private readonly AtomicLong bytesUsed = new AtomicLong();
+	  private readonly AtomicInteger numTerms = new AtomicInteger();
 
 	  public BufferedUpdatesStream(InfoStream infoStream)
 	  {
@@ -88,11 +89,11 @@ namespace Lucene.Net.Index
 			Debug.Assert(packet.DelGen() < NextGen_Renamed);
 			Debug.Assert(Updates.Count == 0 || Updates[Updates.Count - 1].DelGen() < packet.DelGen(), "Delete packets must be in order");
 			Updates.Add(packet);
-			NumTerms_Renamed.addAndGet(packet.NumTermDeletes);
-			BytesUsed_Renamed.addAndGet(packet.BytesUsed);
+			numTerms.AddAndGet(packet.NumTermDeletes);
+			bytesUsed.AddAndGet(packet.BytesUsed);
 			if (InfoStream.IsEnabled("BD"))
 			{
-			  InfoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen() + " packetCount=" + Updates.Count + " totBytesUsed=" + BytesUsed_Renamed.get());
+			  InfoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen() + " packetCount=" + Updates.Count + " totBytesUsed=" + bytesUsed.Get());
 			}
 			Debug.Assert(CheckDeleteStats());
 			return packet.DelGen();
@@ -105,24 +106,24 @@ namespace Lucene.Net.Index
 		  {
 			Updates.Clear();
 			NextGen_Renamed = 1;
-			NumTerms_Renamed.set(0);
-			BytesUsed_Renamed.set(0);
+			numTerms.Set(0);
+			bytesUsed.Set(0);
 		  }
 	  }
 
 	  public virtual bool Any()
 	  {
-		return BytesUsed_Renamed.get() != 0;
+		return bytesUsed.Get() != 0;
 	  }
 
 	  public virtual int NumTerms()
 	  {
-		return NumTerms_Renamed.get();
+		return numTerms.Get();
 	  }
 
 	  public virtual long BytesUsed()
 	  {
-		return BytesUsed_Renamed.get();
+		return bytesUsed.Get();
 	  }
 
 	  public class ApplyDeletesResult
@@ -184,8 +185,8 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long t0 = System.currentTimeMillis();
-			long t0 = System.currentTimeMillis();
+//ORIGINAL LINE: final long t0 = DateTime.Now.Millisecond;
+			long t0 = DateTime.Now.Millisecond;
         
 			if (infos.Count == 0)
 			{
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: final long gen = nextGen++;
 			long gen = NextGen_Renamed++;
         
-			IList<SegmentCommitInfo> infos2 = new List<SegmentCommitInfo>();
+			List<SegmentCommitInfo> infos2 = new List<SegmentCommitInfo>();
 			infos2.AddRange(infos);
 			infos2.Sort(sortSegInfoByDelGen);
         
@@ -284,7 +285,7 @@ namespace Lucene.Net.Index
 				  if (coalescedUpdates != null)
 				  {
 					//System.out.println("    del coalesced");
-					delCount += ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
+					delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
 					delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
 					ApplyDocValuesUpdates(coalescedUpdates.NumericDVUpdates, rld, reader, dvUpdates);
 					ApplyDocValuesUpdates(coalescedUpdates.BinaryDVUpdates, rld, reader, dvUpdates);
@@ -293,17 +294,15 @@ namespace Lucene.Net.Index
 				  // Don't delete by Term here; DocumentsWriterPerThread
 				  // already did that on flush:
 				  delCount += (int)ApplyQueryDeletes(packet.QueriesIterable(), rld, reader);
-				  ApplyDocValuesUpdates(Arrays.asList(packet.NumericDVUpdates), rld, reader, dvUpdates);
-				  ApplyDocValuesUpdates(Arrays.asList(packet.BinaryDVUpdates), rld, reader, dvUpdates);
+				  ApplyDocValuesUpdates(Arrays.AsList(packet.NumericDVUpdates), rld, reader, dvUpdates);
+				  ApplyDocValuesUpdates(Arrays.AsList(packet.BinaryDVUpdates), rld, reader, dvUpdates);
 				  if (dvUpdates.Any())
 				  {
-					rld.WriteFieldUpdates(info.Info.dir, dvUpdates);
+					rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
 				  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fullDelCount = rld.info.getDelCount() + rld.getPendingDeleteCount();
 				  int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
-				  Debug.Assert(fullDelCount <= rld.Info.info.DocCount);
-				  segAllDeletes = fullDelCount == rld.Info.info.DocCount;
+				  Debug.Assert(fullDelCount <= rld.Info.Info.DocCount);
+				  segAllDeletes = fullDelCount == rld.Info.Info.DocCount;
 				}
 				finally
 				{
@@ -316,14 +315,14 @@ namespace Lucene.Net.Index
 				{
 				  if (allDeleted == null)
 				  {
-					allDeleted = new List<>();
+					allDeleted = new List<SegmentCommitInfo>();
 				  }
 				  allDeleted.Add(info);
 				}
         
 				if (InfoStream.IsEnabled("BD"))
 				{
-				  InfoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " segDeletes=[" + packet + "]; coalesced deletes=[" + (coalescedUpdates == null ? "null" : coalescedUpdates) + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
+				  InfoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " segDeletes=[" + packet + "]; coalesced deletes=[" + (coalescedUpdates == null ? "null" : coalescedUpdates.ToString()) + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
 				}
         
 				if (coalescedUpdates == null)
@@ -361,20 +360,18 @@ namespace Lucene.Net.Index
 				  bool segAllDeletes;
 				  try
 				  {
-					delCount += ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
+					delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
 					delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
 					DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
 					ApplyDocValuesUpdates(coalescedUpdates.NumericDVUpdates, rld, reader, dvUpdates);
 					ApplyDocValuesUpdates(coalescedUpdates.BinaryDVUpdates, rld, reader, dvUpdates);
 					if (dvUpdates.Any())
 					{
-					  rld.WriteFieldUpdates(info.Info.dir, dvUpdates);
+					  rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
 					}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fullDelCount = rld.info.getDelCount() + rld.getPendingDeleteCount();
 					int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
-					Debug.Assert(fullDelCount <= rld.Info.info.DocCount);
-					segAllDeletes = fullDelCount == rld.Info.info.DocCount;
+					Debug.Assert(fullDelCount <= rld.Info.Info.DocCount);
+					segAllDeletes = fullDelCount == rld.Info.Info.DocCount;
 				  }
 				  finally
 				  {
@@ -387,7 +384,7 @@ namespace Lucene.Net.Index
 				  {
 					if (allDeleted == null)
 					{
-					  allDeleted = new List<>();
+					  allDeleted = new List<SegmentCommitInfo>();
 					}
 					allDeleted.Add(info);
 				  }
@@ -406,7 +403,7 @@ namespace Lucene.Net.Index
 			Debug.Assert(CheckDeleteStats());
 			if (InfoStream.IsEnabled("BD"))
 			{
-			  InfoStream.Message("BD", "applyDeletes took " + (System.currentTimeMillis() - t0) + " msec");
+			  InfoStream.Message("BD", "applyDeletes took " + (DateTime.Now.Millisecond - t0) + " msec");
 			}
 			// assert infos != segmentInfos || !any() : "infos=" + infos + " segmentInfos=" + segmentInfos + " any=" + any;
         
@@ -479,12 +476,12 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FrozenBufferedUpdates packet = updates.get(delIDX);
 				FrozenBufferedUpdates packet = Updates[delIDX];
-				NumTerms_Renamed.addAndGet(-packet.NumTermDeletes);
-				Debug.Assert(NumTerms_Renamed.get() >= 0);
-				BytesUsed_Renamed.addAndGet(-packet.BytesUsed);
-				Debug.Assert(BytesUsed_Renamed.get() >= 0);
+				numTerms.AddAndGet(-packet.NumTermDeletes);
+				Debug.Assert(numTerms.Get() >= 0);
+				bytesUsed.AddAndGet(-packet.BytesUsed);
+				Debug.Assert(bytesUsed.Get() >= 0);
 			  }
-			  Updates.subList(0, count).clear();
+			  Updates.SubList(0, count).Clear();
 			}
 		  }
 	  }
@@ -676,8 +673,8 @@ namespace Lucene.Net.Index
 	  public class QueryAndLimit
 	  {
 		public readonly Query Query;
-		public readonly int Limit;
-		public QueryAndLimit(Query query, int limit)
+		public readonly int? Limit;
+		public QueryAndLimit(Query query, int? limit)
 		{
 		  this.Query = query;
 		  this.Limit = limit;
@@ -695,7 +692,7 @@ namespace Lucene.Net.Index
 		foreach (QueryAndLimit ent in queriesIter)
 		{
 		  Query query = ent.Query;
-		  int limit = ent.Limit;
+		  int? limit = ent.Limit;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Search.DocIdSet docs = new Lucene.Net.Search.QueryWrapperFilter(query).getDocIdSet(readerContext, reader.getLiveDocs());
 		  DocIdSet docs = (new QueryWrapperFilter(query)).GetDocIdSet(readerContext, reader.LiveDocs);
@@ -754,8 +751,8 @@ namespace Lucene.Net.Index
 		  numTerms2 += packet.NumTermDeletes;
 		  bytesUsed2 += packet.BytesUsed;
 		}
-		Debug.Assert(numTerms2 == NumTerms_Renamed.get(), "numTerms2=" + numTerms2 + " vs " + NumTerms_Renamed.get());
-		Debug.Assert(bytesUsed2 == BytesUsed_Renamed.get(), "bytesUsed2=" + bytesUsed2 + " vs " + BytesUsed_Renamed);
+		Debug.Assert(numTerms2 == numTerms.Get(), "numTerms2=" + numTerms2 + " vs " + numTerms.Get());
+		Debug.Assert(bytesUsed2 == bytesUsed.Get(), "bytesUsed2=" + bytesUsed2 + " vs " + bytesUsed);
 		return true;
 	  }
 	}

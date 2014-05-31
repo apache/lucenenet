@@ -3,25 +3,27 @@ using System.Diagnostics;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
-	using InfoStream = Lucene.Net.Util.InfoStream;
+    using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 
 	/// <summary>
 	/// A very simple merged segment warmer that just ensures 
@@ -41,7 +43,7 @@ namespace Lucene.Net.Index
 
 	  public override void Warm(AtomicReader reader)
 	  {
-		long startTime = System.currentTimeMillis();
+		long startTime = DateTime.Now.Millisecond;
 		int indexedCount = 0;
 		int docValuesCount = 0;
 		int normsCount = 0;
@@ -61,18 +63,18 @@ namespace Lucene.Net.Index
 
 		  if (info.HasDocValues())
 		  {
-			switch (info.DocValuesType_e)
+			switch (info.DocValuesType)
 			{
-			  case NUMERIC:
+              case DocValuesType_e.NUMERIC:
 				reader.GetNumericDocValues(info.Name);
 				break;
-			  case BINARY:
+              case DocValuesType_e.BINARY:
 				reader.GetBinaryDocValues(info.Name);
 				break;
-			  case SORTED:
+              case DocValuesType_e.SORTED:
 				reader.GetSortedDocValues(info.Name);
 				break;
-			  case SORTED_SET:
+              case DocValuesType_e.SORTED_SET:
 				reader.GetSortedSetDocValues(info.Name);
 				break;
 			  default:
@@ -88,7 +90,7 @@ namespace Lucene.Net.Index
 
 		if (InfoStream.IsEnabled("SMSW"))
 		{
-		  InfoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (System.currentTimeMillis() - startTime));
+		  InfoStream.Message("SMSW", "Finished warming segment: " + reader + ", indexed=" + indexedCount + ", docValues=" + docValuesCount + ", norms=" + normsCount + ", time=" + (DateTime.Now.Millisecond - startTime));
 		}
 	  }
 	}

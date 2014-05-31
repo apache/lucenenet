@@ -24,6 +24,7 @@ namespace Lucene.Net.Index
 
 	using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Controls the health status of a <seealso cref="DocumentsWriter"/> sessions. this class
@@ -88,7 +89,7 @@ namespace Lucene.Net.Index
 				Monitor.Wait(this);
 				Debug.Assert(DecrWaiters());
 			  }
-			  catch (InterruptedException e)
+			  catch (ThreadInterruptedException e)
 			  {
 				throw new ThreadInterruptedException(e);
 			  }
@@ -106,7 +107,8 @@ namespace Lucene.Net.Index
 	  private bool IncWaiters()
 	  {
 		NumWaiting++;
-		Debug.Assert(Waiting.put(Thread.CurrentThread, true) == null);
+        //LUCENE TO-DO
+		//Debug.Assert(Waiting.Put(Thread.CurrentThread, true) == null);
 
 		return NumWaiting > 0;
 	  }
@@ -114,7 +116,8 @@ namespace Lucene.Net.Index
 	  private bool DecrWaiters()
 	  {
 		NumWaiting--;
-		Debug.Assert(Waiting.Remove(Thread.CurrentThread) != null);
+        //LUCENE TO-DO
+        Debug.Assert(Waiting.Remove(Thread.CurrentThread) != false);
 		return NumWaiting >= 0;
 	  }
 

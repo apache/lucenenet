@@ -1,9 +1,16 @@
-using System.Diagnostics;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
 
-	/*
+	using System.Diagnostics;
+/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements. See the NOTICE file distributed with this
 	 * work for additional information regarding copyright ownership. The ASF
@@ -22,8 +29,8 @@ namespace Lucene.Net.Index
 
 
 	using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
-	using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-	using Query = Lucene.Net.Search.Query;
+using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
+using Query = Lucene.Net.Search.Query;
 
 	/// <summary>
 	/// <seealso cref="DocumentsWriterDeleteQueue"/> is a non-blocking linked pending deletes
@@ -67,15 +74,9 @@ namespace Lucene.Net.Index
 	/// </summary>
 	internal sealed class DocumentsWriterDeleteQueue
 	{
+        private Node Tail; // .NET port: can't use type without specifying type parameter, also not volatile due to Interlocked
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private volatile Node<?> tail;
-	  private volatile Node<?> Tail;
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") private static final java.util.concurrent.atomic.AtomicReferenceFieldUpdater<DocumentsWriterDeleteQueue,Node> tailUpdater = java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater(DocumentsWriterDeleteQueue.class, Node.class, "tail");
-	  private static readonly AtomicReferenceFieldUpdater<DocumentsWriterDeleteQueue, Node> TailUpdater = AtomicReferenceFieldUpdater.newUpdater(typeof(DocumentsWriterDeleteQueue), typeof(Node), "tail");
-
+        // .NET port: no need for AtomicReferenceFieldUpdater, we can use Interlocked instead
 	  private readonly DeleteSlice GlobalSlice;
 	  private readonly BufferedUpdates GlobalBufferedUpdates;
 	  /* only acquired to update the global deletes */
@@ -99,7 +100,7 @@ namespace Lucene.Net.Index
 		 * we use a sentinel instance as our initial tail. No slice will ever try to
 		 * apply this tail since the head is always omitted.
 		 */
-		Tail = new Node<>(null); // sentinel
+		Tail = new Node(null); // sentinel
 		GlobalSlice = new DeleteSlice(Tail);
 	  }
 
@@ -132,10 +133,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  internal void Add(Term term, DeleteSlice slice)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermNode termNode = new TermNode(term);
 		TermNode termNode = new TermNode(term);
-	//    System.out.println(Thread.currentThread().getName() + ": push " + termNode + " this=" + this);
 		Add(termNode);
 		/*
 		 * this is an update request where the term is the updated documents
@@ -153,7 +151,7 @@ namespace Lucene.Net.Index
 		// we can do it just every n times or so?
 	  }
 
-	  internal void add<T1>(Node<T1> item)
+	  internal void Add(Node item)
 	  {
 		/*
 		 * this non-blocking / 'wait-free' linked list add was inspired by Apache
@@ -161,14 +159,8 @@ namespace Lucene.Net.Index
 		 */
 		while (true)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Node<?> currentTail = this.tail;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		  Node<?> currentTail = this.Tail;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Node<?> tailNext = currentTail.next;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		  Node<?> tailNext = currentTail.Next;
+		  Node currentTail = this.Tail;
+		  Node tailNext = currentTail.Next;
 		  if (Tail == currentTail)
 		  {
 			if (tailNext != null)
@@ -178,8 +170,8 @@ namespace Lucene.Net.Index
 			   * advanced but the tail itself might not be updated yet. help to
 			   * advance the tail and try again updating it.
 			   */
-			  TailUpdater.compareAndSet(this, currentTail, tailNext); // can fail
-			}
+                Interlocked.CompareExchange(ref Tail, tailNext, currentTail); // can fail
+            }
 			else
 			{
 			  /*
@@ -194,7 +186,7 @@ namespace Lucene.Net.Index
 				 * thread could have advanced it already so we can ignore the return
 				 * type of this CAS call
 				 */
-				TailUpdater.compareAndSet(this, currentTail, item);
+                Interlocked.CompareExchange(ref Tail, item, currentTail);
 				return;
 			  }
 			}
@@ -204,7 +196,7 @@ namespace Lucene.Net.Index
 
 	  internal bool AnyChanges()
 	  {
-		GlobalBufferLock.@lock();
+		GlobalBufferLock.@Lock();
 		try
 		{
 		  /*
@@ -216,13 +208,13 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  GlobalBufferLock.unlock();
+		  GlobalBufferLock.Unlock();
 		}
 	  }
 
 	  internal void TryApplyGlobalSlice()
 	  {
-		if (GlobalBufferLock.tryLock())
+		if (GlobalBufferLock.TryLock())
 		{
 		  /*
 		   * The global buffer must be locked but we don't need to update them if
@@ -240,23 +232,20 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			GlobalBufferLock.unlock();
+			GlobalBufferLock.Unlock();
 		  }
 		}
 	  }
 
 	  internal FrozenBufferedUpdates FreezeGlobalBuffer(DeleteSlice callerSlice)
 	  {
-		GlobalBufferLock.@lock();
+		GlobalBufferLock.@Lock();
 		/*
 		 * Here we freeze the global buffer so we need to lock it, apply all
 		 * deletes in the queue and reset the global slice to let the GC prune the
 		 * queue.
 		 */
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Node<?> currentTail = tail;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		Node<?> currentTail = Tail; // take the current tail make this local any
+		Node currentTail = Tail; // take the current tail make this local any
 		// Changes after this call are applied later
 		// and not relevant here
 		if (callerSlice != null)
@@ -272,16 +261,13 @@ namespace Lucene.Net.Index
 			GlobalSlice.Apply(GlobalBufferedUpdates, BufferedUpdates.MAX_INT);
 		  }
 
-	//      System.out.println(Thread.currentThread().getName() + ": now freeze global buffer " + globalBufferedDeletes);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FrozenBufferedUpdates packet = new FrozenBufferedUpdates(globalBufferedUpdates, false);
 		  FrozenBufferedUpdates packet = new FrozenBufferedUpdates(GlobalBufferedUpdates, false);
 		  GlobalBufferedUpdates.Clear();
 		  return packet;
 		}
 		finally
 		{
-		  GlobalBufferLock.unlock();
+		  GlobalBufferLock.Unlock();
 		}
 	  }
 
@@ -303,14 +289,10 @@ namespace Lucene.Net.Index
 	  internal class DeleteSlice
 	  {
 		// No need to be volatile, slices are thread captive (only accessed by one thread)!
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: Node<?> sliceHead;
-		internal Node<?> SliceHead; // we don't apply this one
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: Node<?> sliceTail;
-		internal Node<?> SliceTail;
+		internal Node SliceHead; // we don't apply this one
+		internal Node SliceTail;
 
-		internal DeleteSlice<T1>(Node<T1> currentTail)
+		internal DeleteSlice(Node currentTail)
 		{
 		  Debug.Assert(currentTail != null);
 		  /*
@@ -334,9 +316,7 @@ namespace Lucene.Net.Index
 		   * tail in this slice are not equal then there will be at least one more
 		   * non-null node in the slice!
 		   */
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: Node<?> current = sliceHead;
-		  Node<?> current = SliceHead;
+		  Node current = SliceHead;
 		  do
 		  {
 			current = current.Next;
@@ -373,55 +353,53 @@ namespace Lucene.Net.Index
 
 	  public int NumGlobalTermDeletes()
 	  {
-		return GlobalBufferedUpdates.NumTermDeletes.get();
+		return GlobalBufferedUpdates.NumTermDeletes.Get();
 	  }
 
 	  internal void Clear()
 	  {
-		GlobalBufferLock.@lock();
+		GlobalBufferLock.@Lock();
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Node<?> currentTail = tail;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		  Node<?> currentTail = Tail;
+		  Node currentTail = Tail;
 		  GlobalSlice.SliceHead = GlobalSlice.SliceTail = currentTail;
 		  GlobalBufferedUpdates.Clear();
 		}
 		finally
 		{
-		  GlobalBufferLock.unlock();
+		  GlobalBufferLock.Unlock();
 		}
 	  }
 
-	  private class Node<T>
+	  private class Node
 	  {
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: volatile Node<?> next;
-		internal volatile Node<?> Next;
-		internal readonly T Item;
+		internal /*volatile*/ Node Next;
+		internal readonly object Item;
 
-		internal Node(T item)
+		internal Node(object item)
 		{
 		  this.Item = item;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") static final java.util.concurrent.atomic.AtomicReferenceFieldUpdater<Node,Node> nextUpdater = java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater(Node.class, Node.class, "next");
-		internal static readonly AtomicReferenceFieldUpdater<Node, Node> NextUpdater = AtomicReferenceFieldUpdater.newUpdater(typeof(Node), typeof(Node), "next");
+		//internal static readonly AtomicReferenceFieldUpdater<Node, Node> NextUpdater = AtomicReferenceFieldUpdater.newUpdater(typeof(Node), typeof(Node), "next");
 
 		internal virtual void Apply(BufferedUpdates bufferedDeletes, int docIDUpto)
 		{
-		  throw new IllegalStateException("sentinel item must never be applied");
+		  throw new InvalidOperationException("sentinel item must never be applied");
 		}
 
-		internal virtual bool casNext<T1, T2>(Node<T1> cmp, Node<T2> val)
+		internal virtual bool CasNext(Node cmp, Node val)
 		{
-		  return NextUpdater.compareAndSet(this, cmp, val);
+            // .NET port: Interlocked.CompareExchange(location, value, comparand) is backwards from
+            // AtomicReferenceFieldUpdater.compareAndSet(obj, expect, update), so swapping val and cmp.
+            // Also, it doesn't return bool if it was updated, so we need to compare to see if 
+            // original == comparand to determine whether to return true or false here.
+            Node original = Next; 
+            return ReferenceEquals(Interlocked.CompareExchange(ref Next, val, cmp), original);
 		}
 	  }
 
-	  private sealed class TermNode : Node<Term>
+	  private sealed class TermNode : Node
 	  {
 
 		internal TermNode(Term term) : base(term)
@@ -430,7 +408,7 @@ namespace Lucene.Net.Index
 
 		internal override void Apply(BufferedUpdates bufferedDeletes, int docIDUpto)
 		{
-		  bufferedDeletes.AddTerm(Item, docIDUpto);
+		  bufferedDeletes.AddTerm((Term)Item, docIDUpto);
 		}
 
 		public override string ToString()
@@ -439,7 +417,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private sealed class QueryArrayNode : Node<Query[]>
+	  private sealed class QueryArrayNode : Node
 	  {
 		internal QueryArrayNode(Query[] query) : base(query)
 		{
@@ -447,14 +425,14 @@ namespace Lucene.Net.Index
 
 		internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
 		{
-		  foreach (Query query in Item)
+		  foreach (Query query in (Query[])Item)
 		  {
 			bufferedUpdates.AddQuery(query, docIDUpto);
 		  }
 		}
 	  }
 
-	  private sealed class TermArrayNode : Node<Term[]>
+	  private sealed class TermArrayNode : Node
 	  {
 		internal TermArrayNode(Term[] term) : base(term)
 		{
@@ -462,7 +440,7 @@ namespace Lucene.Net.Index
 
 		internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
 		{
-		  foreach (Term term in Item)
+		  foreach (Term term in (Term[])Item)
 		  {
 			bufferedUpdates.AddTerm(term, docIDUpto);
 		  }
@@ -470,11 +448,11 @@ namespace Lucene.Net.Index
 
 		public override string ToString()
 		{
-		  return "dels=" + Arrays.ToString(Item);
+		  return "dels=" + Arrays.ToString((Term[])Item);
 		}
 	  }
 
-	  private sealed class NumericUpdateNode : Node<NumericDocValuesUpdate>
+	  private sealed class NumericUpdateNode : Node
 	  {
 
 		internal NumericUpdateNode(NumericDocValuesUpdate update) : base(update)
@@ -483,7 +461,7 @@ namespace Lucene.Net.Index
 
 		internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
 		{
-		  bufferedUpdates.AddNumericUpdate(Item, docIDUpto);
+		  bufferedUpdates.AddNumericUpdate((NumericDocValuesUpdate)Item, docIDUpto);
 		}
 
 		public override string ToString()
@@ -492,7 +470,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private sealed class BinaryUpdateNode : Node<BinaryDocValuesUpdate>
+	  private sealed class BinaryUpdateNode : Node
 	  {
 
 		internal BinaryUpdateNode(BinaryDocValuesUpdate update) : base(update)
@@ -501,22 +479,19 @@ namespace Lucene.Net.Index
 
 		internal override void Apply(BufferedUpdates bufferedUpdates, int docIDUpto)
 		{
-		  bufferedUpdates.AddBinaryUpdate(Item, docIDUpto);
+		  bufferedUpdates.AddBinaryUpdate((BinaryDocValuesUpdate)Item, docIDUpto);
 		}
 
 		public override string ToString()
 		{
-		  return "update=" + Item;
+		  return "update=" + (BinaryDocValuesUpdate)Item;
 		}
 	  }
 
 	  private bool ForceApplyGlobalSlice()
 	  {
-		GlobalBufferLock.@lock();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Node<?> currentTail = tail;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		Node<?> currentTail = Tail;
+		GlobalBufferLock.@Lock();
+		Node currentTail = Tail;
 		try
 		{
 		  if (GlobalSlice.SliceTail != currentTail)
@@ -528,7 +503,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  GlobalBufferLock.unlock();
+		  GlobalBufferLock.Unlock();
 		}
 	  }
 
@@ -536,7 +511,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			GlobalBufferLock.@lock();
+			GlobalBufferLock.@Lock();
 			try
 			{
 			  ForceApplyGlobalSlice();
@@ -544,14 +519,14 @@ namespace Lucene.Net.Index
 			}
 			finally
 			{
-			  GlobalBufferLock.unlock();
+			  GlobalBufferLock.Unlock();
 			}
 		  }
 	  }
 
 	  public long BytesUsed()
 	  {
-		return GlobalBufferedUpdates.BytesUsed.get();
+		return GlobalBufferedUpdates.BytesUsed.Get();
 	  }
 
 	  public override string ToString()

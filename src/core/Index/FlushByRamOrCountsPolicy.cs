@@ -92,11 +92,7 @@ namespace Lucene.Net.Index
 		} // flush by RAM
 		else if (FlushOnRAM())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long limit = (long)(indexWriterConfig.getRAMBufferSizeMB() * 1024.d * 1024.d);
-		  long limit = (long)(IndexWriterConfig.RAMBufferSizeMB * 1024.d * 1024.d);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long totalRam = control.activeBytes() + control.getDeleteBytesUsed();
+		  long limit = (long)(IndexWriterConfig.RAMBufferSizeMB * 1024d * 1024d);
 		  long totalRam = control.ActiveBytes() + control.DeleteBytesUsed;
 		  if (totalRam >= limit)
 		  {

@@ -28,6 +28,9 @@ namespace Lucene.Net.Index
 	using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
 	using CollectionUtil = Lucene.Net.Util.CollectionUtil;
 	using InfoStream = Lucene.Net.Util.InfoStream;
+    using System;
+    using System.Text.RegularExpressions;
+    using System.IO;
 
 	/*
 	 * this class keeps track of each SegmentInfos instance that
@@ -112,7 +115,8 @@ namespace Lucene.Net.Index
 	  // called only from assert
 	  private bool Locked()
 	  {
-		return Writer == null || Thread.holdsLock(Writer);
+          //LUCENE TO-DO Check this logic
+		return Writer == null /*|| Monitor.IsEntered(Writer)*/;
 	  }
 
 	  /// <summary>
@@ -126,8 +130,6 @@ namespace Lucene.Net.Index
 		this.InfoStream = infoStream;
 		this.Writer = writer;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String currentSegmentsFile = segmentInfos.getSegmentsFileName();
 		string currentSegmentsFile = segmentInfos.SegmentsFileName;
 
 		if (infoStream.IsEnabled("IFD"))
@@ -156,11 +158,11 @@ namespace Lucene.Net.Index
 
 		if (currentSegmentsFile != null)
 		{
-		  Matcher m = IndexFileNames.CODEC_FILE_PATTERN.matcher("");
+		  Regex r = IndexFileNames.CODEC_FILE_PATTERN;
 		  foreach (string fileName in files)
 		  {
-			m.reset(fileName);
-			if (!fileName.EndsWith("write.lock") && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && (m.matches() || fileName.StartsWith(IndexFileNames.SEGMENTS)))
+			if (!fileName.EndsWith("write.lock") && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) 
+                && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS)))
 			{
 
 			  // Add this file to refCounts with initial count 0:
@@ -181,8 +183,7 @@ namespace Lucene.Net.Index
 				{
 				  sis.Read(directory, fileName);
 				}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-				catch (FileNotFoundException | NoSuchFileException e)
+				catch (FileNotFoundException e)
 				{
 				  // LUCENE-948: on NFS (and maybe others), if
 				  // you have writers switching back and forth
@@ -213,8 +214,6 @@ namespace Lucene.Net.Index
 				}
 				if (sis != null)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CommitPoint commitPoint = new CommitPoint(commitsToDelete, directory, sis);
 				  CommitPoint commitPoint = new CommitPoint(CommitsToDelete, directory, sis);
 				  if (sis.Generation == segmentInfos.Generation)
 				  {
@@ -269,8 +268,6 @@ namespace Lucene.Net.Index
 		foreach (KeyValuePair<string, RefCount> entry in RefCounts)
 		{
 		  RefCount rc = entry.Value;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = entry.getKey();
 		  string fileName = entry.Key;
 		  if (0 == rc.Count)
 		  {
@@ -395,13 +392,15 @@ namespace Lucene.Net.Index
 		  segmentPrefix2 = null;
 		}
 
-		Matcher m = IndexFileNames.CODEC_FILE_PATTERN.matcher("");
+		Regex r = IndexFileNames.CODEC_FILE_PATTERN;
 
 		for (int i = 0;i < files.Length;i++)
 		{
 		  string fileName = files[i];
-		  m.reset(fileName);
-		  if ((segmentName == null || fileName.StartsWith(segmentPrefix1) || fileName.StartsWith(segmentPrefix2)) && !fileName.EndsWith("write.lock") && !RefCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && (m.matches() || fileName.StartsWith(IndexFileNames.SEGMENTS)))
+		  //m.reset(fileName);
+		  if ((segmentName == null || fileName.StartsWith(segmentPrefix1) || fileName.StartsWith(segmentPrefix2)) 
+              && !fileName.EndsWith("write.lock") && !RefCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) 
+              && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS)))
 		  {
 			// Unreferenced file, so remove it
 			if (InfoStream.IsEnabled("IFD"))
@@ -709,7 +708,7 @@ namespace Lucene.Net.Index
 		  }
 		  if (Deletable == null)
 		  {
-			Deletable = new List<>();
+			Deletable = new List<string>();
 		  }
 		  Deletable.Add(fileName); // add to deletable
 		}

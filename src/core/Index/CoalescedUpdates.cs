@@ -122,10 +122,10 @@ namespace Lucene.Net.Index
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)
 			  {
 				  this.OuterInstance = outerInstance;
-				  iter = outerInstance.OuterInstance.Queries.GetEnumerator();
+				  iter = OuterInstance.OuterInstance.Queries.GetEnumerator();
 			  }
 
-			  private readonly IEnumerator<KeyValuePair<Query, int?>> iter;
+			  private readonly IEnumerator<KeyValuePair<Query, int>> iter;
 
 			  public virtual bool HasNext()
 			  {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 
 			  public virtual QueryAndLimit Next()
 			  {
-				KeyValuePair<Query, int?> ent = iter.next();
+				KeyValuePair<Query, int> ent = iter.next();
 				return new QueryAndLimit(ent.Key, ent.Value);
 			  }
 

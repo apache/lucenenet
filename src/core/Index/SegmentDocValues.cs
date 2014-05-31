@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -12,6 +13,7 @@ namespace Lucene.Net.Index
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using Lucene.Net.Util;
+    using Lucene.Net.Support;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -45,8 +47,8 @@ namespace Lucene.Net.Index
 		string segmentSuffix = "";
 		if ((long)gen != -1)
 		{
-		  dvDir = si.Info.dir; // gen'd files are written outside CFS, so use SegInfo directory
-		  segmentSuffix = Convert.ToString((long)gen, char.MAX_RADIX);
+		  dvDir = si.Info.Dir; // gen'd files are written outside CFS, so use SegInfo directory
+		  segmentSuffix = Convert.ToString((long)gen, Character.MAX_RADIX);
 		}
 
 		// set SegmentReadState to list only the fields that are relevant to that gen
@@ -70,7 +72,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @SuppressWarnings("synthetic-access") @Override protected void release() throws java.io.IOException
 		  protected internal override void Release()
 		  {
-			@object.close();
+			@object.Close();
 			lock (OuterInstance)
 			{
 			  OuterInstance.GenDVProducers.Remove(Gen);

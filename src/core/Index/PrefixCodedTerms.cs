@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
 	using RAMInputStream = Lucene.Net.Store.RAMInputStream;
 	using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using System.IO;
 
 	/// <summary>
 	/// Prefix codes term instances (prefixes are shared)
@@ -88,7 +89,7 @@ namespace Lucene.Net.Index
 		  }
 		  catch (IOException e)
 		  {
-			throw new Exception(e);
+			throw new Exception(e.Message, e);
 		  }
 		}
 
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
 		  }
 		  catch (IOException e)
 		  {
-			throw new Exception(e);
+			throw new Exception(e.Message, e);
 		  }
 		}
 
@@ -161,7 +162,7 @@ namespace Lucene.Net.Index
 		  try
 		  {
 			int prefix = SharedPrefix(LastTerm.Bytes_Renamed, term.Bytes_Renamed);
-			int suffix = term.Bytes_Renamed.length - prefix;
+			int suffix = term.Bytes_Renamed.Length - prefix;
 			if (term.Field_Renamed.Equals(LastTerm.Field_Renamed))
 			{
 			  Output.WriteVInt(prefix << 1);
@@ -172,13 +173,13 @@ namespace Lucene.Net.Index
 			  Output.WriteString(term.Field_Renamed);
 			}
 			Output.WriteVInt(suffix);
-			Output.WriteBytes(term.Bytes_Renamed.bytes, term.Bytes_Renamed.offset + prefix, suffix);
-			LastTerm.Bytes_Renamed.copyBytes(term.Bytes_Renamed);
+			Output.WriteBytes(term.Bytes_Renamed.Bytes, term.Bytes_Renamed.Offset + prefix, suffix);
+			LastTerm.Bytes_Renamed.CopyBytes(term.Bytes_Renamed);
 			LastTerm.Field_Renamed = term.Field_Renamed;
 		  }
 		  catch (IOException e)
 		  {
-			throw new Exception(e);
+			throw new Exception(e.Message, e);
 		  }
 		}
 
@@ -193,7 +194,7 @@ namespace Lucene.Net.Index
 		  }
 		  catch (IOException e)
 		  {
-			throw new Exception(e);
+              throw new Exception(e.Message, e);
 		  }
 		}
 

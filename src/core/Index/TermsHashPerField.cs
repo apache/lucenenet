@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	 */
 
 
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.tokenattributes.TermToBytesRefAttribute;
+	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 	using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using BytesRefHash = Lucene.Net.Util.BytesRefHash;
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 		this.TermsHash = termsHash;
 		BytesUsed = termsHash.BytesUsed;
 		FieldState = docInverterPerField.FieldState;
-		this.Consumer = termsHash.Consumer.addField(this, fieldInfo);
+		this.Consumer = termsHash.Consumer.AddField(this, fieldInfo);
 		PostingsBytesStartArray byteStarts = new PostingsBytesStartArray(this, BytesUsed);
 		BytesHash = new BytesRefHash(TermBytePool, HASH_INIT_SIZE, byteStarts);
 		StreamCount = Consumer.StreamCount;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 
 	  internal override void Start(IndexableField f)
 	  {
-		TermAtt = FieldState.AttributeSource_Renamed.getAttribute(typeof(TermToBytesRefAttribute));
+		TermAtt = FieldState.AttributeSource_Renamed.GetAttribute<TermToBytesRefAttribute>();
 		TermBytesRef = TermAtt.BytesRef;
 		Consumer.Start(f);
 		if (NextPerField != null)

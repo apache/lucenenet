@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
 	using Term = Lucene.Net.Index.Term;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 	using TermQuery = Lucene.Net.Search.TermQuery;
@@ -263,7 +263,7 @@ namespace Lucene.Net.Store
 		  MockFSDirectory dir = new MockFSDirectory(indexDir, random());
 		  try
 		  {
-			IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode.CREATE).setMergePolicy(newLogMergePolicy(false)));
+			IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setMergePolicy(newLogMergePolicy(false)));
 			for (int i = 0;i < 37;i++)
 			{
 			  Document doc = new Document();

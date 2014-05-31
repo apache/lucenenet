@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader r;
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.CREATE).setMergePolicy(newLogMergePolicy());
+		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setMergePolicy(newLogMergePolicy());
 		iwc.RAMBufferSizeMB = 16.0 + 16.0 * random().NextDouble();
 		iwc.MaxBufferedDocs = -1;
 		RandomIndexWriter riw = new RandomIndexWriter(random(), dir, iwc);
@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
 		IndexReader r;
 		if (true)
 		{
-		  IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.CREATE).setMergePolicy(newLogMergePolicy());
+		  IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setMergePolicy(newLogMergePolicy());
 		  iwc.RAMBufferSizeMB = 16.0 + 16.0 * random().NextDouble();
 		  iwc.MaxBufferedDocs = -1;
 		  RandomIndexWriter riw = new RandomIndexWriter(random(), dir, iwc);

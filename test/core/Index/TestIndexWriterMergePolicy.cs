@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

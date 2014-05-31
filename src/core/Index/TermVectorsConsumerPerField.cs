@@ -21,8 +21,8 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-	using OffsetAttribute = Lucene.Net.Analysis.tokenattributes.OffsetAttribute;
-	using PayloadAttribute = Lucene.Net.Analysis.tokenattributes.PayloadAttribute;
+	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+	using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 	using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 	using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
 	using BytesRef = Lucene.Net.Util.BytesRef;
@@ -75,18 +75,18 @@ namespace Lucene.Net.Index
 		for (int i = 0;i < count;i++)
 		{
 		  IndexableField field = fields[i];
-		  if (field.FieldType().indexed())
+		  if (field.FieldType().Indexed())
 		  {
-			if (field.FieldType().storeTermVectors())
+			if (field.FieldType().StoreTermVectors())
 			{
 			  DoVectors = true;
-			  DoVectorPositions |= field.FieldType().storeTermVectorPositions();
-			  DoVectorOffsets |= field.FieldType().storeTermVectorOffsets();
+			  DoVectorPositions |= field.FieldType().StoreTermVectorPositions();
+			  DoVectorOffsets |= field.FieldType().StoreTermVectorOffsets();
 			  if (DoVectorPositions)
 			  {
-				DoVectorPayloads |= field.FieldType().storeTermVectorPayloads();
+				DoVectorPayloads |= field.FieldType().StoreTermVectorPayloads();
 			  }
-			  else if (field.FieldType().storeTermVectorPayloads())
+			  else if (field.FieldType().StoreTermVectorPayloads())
 			  {
 				// TODO: move this check somewhere else, and impl the other missing ones
 				throw new System.ArgumentException("cannot index term vector payloads without term vector positions (field=\"" + field.Name() + "\")");
@@ -94,15 +94,15 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  if (field.FieldType().storeTermVectorOffsets())
+			  if (field.FieldType().StoreTermVectorOffsets())
 			  {
 				throw new System.ArgumentException("cannot index term vector offsets when term vectors are not indexed (field=\"" + field.Name() + "\")");
 			  }
-			  if (field.FieldType().storeTermVectorPositions())
+			  if (field.FieldType().StoreTermVectorPositions())
 			  {
 				throw new System.ArgumentException("cannot index term vector positions when term vectors are not indexed (field=\"" + field.Name() + "\")");
 			  }
-			  if (field.FieldType().storeTermVectorPayloads())
+			  if (field.FieldType().StoreTermVectorPayloads())
 			  {
 				throw new System.ArgumentException("cannot index term vector payloads when term vectors are not indexed (field=\"" + field.Name() + "\")");
 			  }
@@ -110,19 +110,19 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			if (field.FieldType().storeTermVectors())
+			if (field.FieldType().StoreTermVectors())
 			{
 			  throw new System.ArgumentException("cannot index term vectors when field is not indexed (field=\"" + field.Name() + "\")");
 			}
-			if (field.FieldType().storeTermVectorOffsets())
+			if (field.FieldType().StoreTermVectorOffsets())
 			{
 			  throw new System.ArgumentException("cannot index term vector offsets when field is not indexed (field=\"" + field.Name() + "\")");
 			}
-			if (field.FieldType().storeTermVectorPositions())
+			if (field.FieldType().StoreTermVectorPositions())
 			{
 			  throw new System.ArgumentException("cannot index term vector positions when field is not indexed (field=\"" + field.Name() + "\")");
 			}
-			if (field.FieldType().storeTermVectorPayloads())
+			if (field.FieldType().StoreTermVectorPayloads())
 			{
 			  throw new System.ArgumentException("cannot index term vector payloads when field is not indexed (field=\"" + field.Name() + "\")");
 			}
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 		if (DoVectors)
 		{
 		  TermsWriter.HasVectors = true;
-		  if (TermsHashPerField.BytesHash.size() != 0)
+		  if (TermsHashPerField.BytesHash.Size() != 0)
 		  {
 			// Only necessary if previous doc hit a
 			// non-aborting exception while writing vectors in
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 	  ///  the real term vectors files in the Directory. 	  /// </summary>
 	  internal override void Finish()
 	  {
-		if (!DoVectors || TermsHashPerField.BytesHash.size() == 0)
+		if (!DoVectors || TermsHashPerField.BytesHash.Size() == 0)
 		{
 		  return;
 		}
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numPostings = termsHashPerField.bytesHash.size();
-		int numPostings = TermsHashPerField.BytesHash.size();
+		int numPostings = TermsHashPerField.BytesHash.Size();
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef flushTerm = termsWriter.flushTerm;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
 	  {
 		if (DoVectorOffsets)
 		{
-		  OffsetAttribute = FieldState.AttributeSource_Renamed.addAttribute(typeof(OffsetAttribute));
+		  OffsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<OffsetAttribute>();
 		}
 		else
 		{
@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
 		}
 		if (DoVectorPayloads && FieldState.AttributeSource_Renamed.HasAttribute(typeof(PayloadAttribute)))
 		{
-		  PayloadAttribute = FieldState.AttributeSource_Renamed.getAttribute(typeof(PayloadAttribute));
+		  PayloadAttribute = FieldState.AttributeSource_Renamed.GetAttribute<PayloadAttribute>();
 		}
 		else
 		{

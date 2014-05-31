@@ -39,23 +39,23 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Deletes all commits except the most recent one.
 	  /// </summary>
-	  public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
+	  public override void OnInit(IList<IndexCommit> commits)
 	  {
 		// Note that commits.size() should normally be 1:
-		OnCommit(commits);
+	    OnCommit(commits);
 	  }
 
 	  /// <summary>
 	  /// Deletes all commits except the most recent one.
 	  /// </summary>
-	  public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+	  public override void OnCommit(IList<IndexCommit> commits)
 	  {
 		// Note that commits.size() should normally be 2 (if not
 		// called by onInit above):
 		int size = commits.Count;
 		for (int i = 0;i < size-1;i++)
 		{
-		  commits[i].delete();
+		  commits[i].Delete();
 		}
 	  }
 	}

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -23,8 +24,8 @@ namespace Lucene.Net.Index
 	 */
 
 
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 
 	/// <summary>
 	/// Collection of <seealso cref="FieldInfo"/>s (accessible by number or by name).
@@ -40,7 +41,7 @@ namespace Lucene.Net.Index
 	  private readonly bool HasNorms_Renamed;
 	  private readonly bool HasDocValues_Renamed;
 
-	  private readonly SortedMap<int?, FieldInfo> ByNumber = new SortedDictionary<int?, FieldInfo>();
+      private readonly SortedDictionary<int, FieldInfo> ByNumber = new SortedDictionary<int, FieldInfo>();
 	  private readonly Dictionary<string, FieldInfo> ByName = new Dictionary<string, FieldInfo>();
 	  private readonly ICollection<FieldInfo> Values; // for an unmodifiable iterator
 
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
 		  {
 			throw new System.ArgumentException("illegal field number: " + info.Number + " for field " + info.Name);
 		  }
-		  FieldInfo previous = ByNumber.put(info.Number, info);
+		  FieldInfo previous = ByNumber.Put(info.Number, info);
 		  if (previous != null)
 		  {
 			throw new System.ArgumentException("duplicate field numbers: " + previous.Name + " and " + info.Name + " have: " + info.Number);
@@ -75,9 +76,9 @@ namespace Lucene.Net.Index
 		  }
 
 		  hasVectors |= info.HasVectors();
-		  hasProx |= info.Indexed && info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		  hasFreq |= info.Indexed && info.IndexOptions_e != IndexOptions.DOCS_ONLY;
-		  hasOffsets |= info.Indexed && info.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		  hasProx |= info.Indexed && info.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+		  hasFreq |= info.Indexed && info.IndexOptions != IndexOptions_e.DOCS_ONLY;
+		  hasOffsets |= info.Indexed && info.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		  hasNorms |= info.HasNorms();
 		  hasDocValues |= info.HasDocValues();
 		  hasPayloads |= info.HasPayloads();
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
 		this.HasFreq_Renamed = hasFreq;
 		this.HasNorms_Renamed = hasNorms;
 		this.HasDocValues_Renamed = hasDocValues;
-		this.Values = Collections.unmodifiableCollection(ByNumber.values());
+		this.Values = ByNumber.Values;
 	  }
 
 	  /// <summary>
@@ -146,8 +147,8 @@ namespace Lucene.Net.Index
 	  /// Returns the number of fields </summary>
 	  public virtual int Size()
 	  {
-		Debug.Assert(ByNumber.size() == ByName.Count);
-		return ByNumber.size();
+		Debug.Assert(ByNumber.Count == ByName.Count);
+		return ByNumber.Count;
 	  }
 
 	  /// <summary>
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("Illegal field number: " + fieldNumber);
 		}
-		return ByNumber.get(fieldNumber);
+		return ByNumber[fieldNumber];
 	  }
 
 	  internal sealed class FieldNumbers
@@ -192,7 +193,7 @@ namespace Lucene.Net.Index
 		// We use this to enforce that a given field never
 		// changes DV type, even across segments / IndexWriter
 		// sessions:
-		internal readonly IDictionary<string, DocValuesType> DocValuesType;
+		internal readonly IDictionary<string, DocValuesType_e?> DocValuesType;
 
 		// TODO: we should similarly catch an attempt to turn
 		// norms back on after they were already ommitted; today
@@ -201,9 +202,9 @@ namespace Lucene.Net.Index
 
 		internal FieldNumbers()
 		{
-		  this.NameToNumber = new Dictionary<>();
-		  this.NumberToName = new Dictionary<>();
-		  this.DocValuesType = new Dictionary<>();
+		  this.NameToNumber = new Dictionary<string, int?>();
+		  this.NumberToName = new Dictionary<int?, string>();
+          this.DocValuesType = new Dictionary<string, DocValuesType_e?>();
 		}
 
 		/// <summary>
@@ -212,13 +213,13 @@ namespace Lucene.Net.Index
 		/// number assigned if possible otherwise the first unassigned field number
 		/// is used as the field number.
 		/// </summary>
-		internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType dvType)
+		internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType_e? dvType)
 		{
 			lock (this)
 			{
 			  if (dvType != null)
 			  {
-				DocValuesType currentDVType = DocValuesType[fieldName];
+				DocValuesType_e? currentDVType = DocValuesType[fieldName];
 				if (currentDVType == null)
 				{
 				  DocValuesType[fieldName] = dvType;
@@ -259,7 +260,7 @@ namespace Lucene.Net.Index
 		}
 
 		// used by assert
-		internal bool ContainsConsistent(int? number, string name, DocValuesType dvType)
+		internal bool ContainsConsistent(int? number, string name, DocValuesType_e? dvType)
 		{
 			lock (this)
 			{
@@ -271,7 +272,7 @@ namespace Lucene.Net.Index
 		/// Returns true if the {@code fieldName} exists in the map and is of the
 		/// same {@code dvType}.
 		/// </summary>
-		internal bool Contains(string fieldName, DocValuesType dvType)
+        internal bool Contains(string fieldName, DocValuesType_e dvType)
 		{
 			lock (this)
 			{
@@ -298,7 +299,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-		internal void SetDocValuesType(int number, string name, DocValuesType dvType)
+        internal void SetDocValuesType(int number, string name, DocValuesType_e? dvType)
 		{
 			lock (this)
 			{
@@ -351,7 +352,7 @@ namespace Lucene.Net.Index
 		  return AddOrUpdateInternal(name, -1, fieldType.Indexed(), false, fieldType.OmitNorms(), false, fieldType.IndexOptions(), fieldType.DocValueType(), null);
 		}
 
-		internal FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normType)
+        internal FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normType)
 		{
 		  FieldInfo fi = FieldInfo(name);
 		  if (fi == null)
@@ -361,12 +362,10 @@ namespace Lucene.Net.Index
 			// number for this field.  If the field was seen
 			// before then we'll get the same name and number,
 			// else we'll allocate a new one:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fieldNumber = globalFieldNumbers.addOrGet(name, preferredFieldNumber, docValues);
 			int fieldNumber = GlobalFieldNumbers.AddOrGet(name, preferredFieldNumber, docValues);
 			fi = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValues, normType, null);
 			Debug.Assert(!ByName.ContainsKey(fi.Name));
-			Debug.Assert(GlobalFieldNumbers.ContainsConsistent(Convert.ToInt32(fi.Number), fi.Name, fi.DocValuesType_e));
+			Debug.Assert(GlobalFieldNumbers.ContainsConsistent(Convert.ToInt32(fi.Number), fi.Name, fi.DocValuesType));
 			ByName[fi.Name] = fi;
 		  }
 		  else
@@ -377,7 +376,7 @@ namespace Lucene.Net.Index
 			{
 			  // only pay the synchronization cost if fi does not already have a DVType
 			  bool updateGlobal = !fi.HasDocValues();
-			  fi.DocValuesType_e = docValues; // this will also perform the consistency check.
+			  fi.DocValuesType = docValues; // this will also perform the consistency check.
 			  if (updateGlobal)
 			  {
 				// must also update docValuesType map so it's
@@ -388,7 +387,7 @@ namespace Lucene.Net.Index
 
 			if (!fi.OmitsNorms() && normType != null)
 			{
-			  fi.NormValueType = normType;
+			  fi.NormType = normType;
 			}
 		  }
 		  return fi;
@@ -397,7 +396,7 @@ namespace Lucene.Net.Index
 		public FieldInfo Add(FieldInfo fi)
 		{
 		  // IMPORTANT - reuse the field number if possible for consistent field numbers across segments
-		  return AddOrUpdateInternal(fi.Name, fi.Number, fi.Indexed, fi.HasVectors(), fi.OmitsNorms(), fi.HasPayloads(), fi.IndexOptions_e, fi.DocValuesType_e, fi.NormType);
+		  return AddOrUpdateInternal(fi.Name, fi.Number, fi.Indexed, fi.HasVectors(), fi.OmitsNorms(), fi.HasPayloads(), fi.IndexOptions, fi.DocValuesType, fi.NormType);
 		}
 
 		public FieldInfo FieldInfo(string fieldName)
@@ -407,7 +406,7 @@ namespace Lucene.Net.Index
 
 		internal FieldInfos Finish()
 		{
-		  return new FieldInfos(ByName.Values.toArray(new FieldInfo[ByName.Count]));
+            return new FieldInfos(ByName.Values.ToArray());
 		}
 	  }
 	}

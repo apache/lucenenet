@@ -42,6 +42,9 @@ namespace Lucene.Net.Index
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using LongBitSet = Lucene.Net.Util.LongBitSet;
 	using StringHelper = Lucene.Net.Util.StringHelper;
+    using System.IO;
+    using Lucene.Net.Support;
+    using System.Globalization;
 
 	/// <summary>
 	/// Basic tool and API to check the health of an index and
@@ -57,7 +60,7 @@ namespace Lucene.Net.Index
 	public class CheckIndex
 	{
 
-	  private PrintStream InfoStream_Renamed;
+	  private StreamWriter infoStream;
 	  private Directory Dir;
 
 	  /// <summary>
@@ -401,7 +404,7 @@ namespace Lucene.Net.Index
 	  public CheckIndex(Directory dir)
 	  {
 		this.Dir = dir;
-		InfoStream_Renamed = null;
+		infoStream = null;
 	  }
 
 	  private bool CrossCheckTermVectors_Renamed;
@@ -431,15 +434,15 @@ namespace Lucene.Net.Index
 	  ///  messages are printed.  If verbose is true then more
 	  ///  details are printed. 
 	  /// </summary>
-	  public virtual void SetInfoStream(PrintStream @out, bool verbose)
+	  public virtual void SetInfoStream(StreamWriter @out, bool verbose)
 	  {
-		InfoStream_Renamed = @out;
+		infoStream = @out;
 		this.Verbose = verbose;
 	  }
 
 	  /// <summary>
 	  /// Set infoStream where messages should go. See <seealso cref="#setInfoStream(PrintStream,boolean)"/>. </summary>
-	  public virtual PrintStream InfoStream
+      public virtual StreamWriter InfoStream
 	  {
 		  set
 		  {
@@ -447,11 +450,11 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  private static void Msg(PrintStream @out, string msg)
+      private static void Msg(StreamWriter @out, string msg)
 	  {
 		if (@out != null)
 		{
-		  @out.println(msg);
+		  @out.WriteLine(msg);
 		}
 	  }
 
@@ -486,7 +489,7 @@ namespace Lucene.Net.Index
 	  ///  writer.  </param>
 	  public virtual Status CheckIndex(IList<string> onlySegments)
 	  {
-		NumberFormat nf = NumberFormat.getInstance(Locale.ROOT);
+		NumberFormatInfo nf = CultureInfo.CurrentCulture.NumberFormat;
 		SegmentInfos sis = new SegmentInfos();
 		Status result = new Status();
 		result.Dir = Dir;
@@ -496,11 +499,11 @@ namespace Lucene.Net.Index
 		}
 		catch (Exception t)
 		{
-		  Msg(InfoStream_Renamed, "ERROR: could not read any segments file in directory");
+		  Msg(infoStream, "ERROR: could not read any segments file in directory");
 		  result.MissingSegments = true;
-		  if (InfoStream_Renamed != null)
+		  if (infoStream != null)
 		  {
-			t.printStackTrace(InfoStream_Renamed);
+            infoStream.WriteLine(t.StackTrace);
 		  }
 		  return result;
 		}
@@ -532,11 +535,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = sis.size();
 		int numSegments = sis.Size();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentsFileName = sis.getSegmentsFileName();
 		string segmentsFileName = sis.SegmentsFileName;
 		// note: we only read the format byte (required preamble) here!
 		IndexInput input = null;
@@ -546,10 +545,10 @@ namespace Lucene.Net.Index
 		}
 		catch (Exception t)
 		{
-		  Msg(InfoStream_Renamed, "ERROR: could not open segments file in directory");
-		  if (InfoStream_Renamed != null)
+		  Msg(infoStream, "ERROR: could not open segments file in directory");
+		  if (infoStream != null)
 		  {
-			t.printStackTrace(InfoStream_Renamed);
+            infoStream.WriteLine(t.StackTrace);
 		  }
 		  result.CantOpenSegments = true;
 		  return result;
@@ -561,10 +560,10 @@ namespace Lucene.Net.Index
 		}
 		catch (Exception t)
 		{
-		  Msg(InfoStream_Renamed, "ERROR: could not read segment file version in directory");
-		  if (InfoStream_Renamed != null)
+		  Msg(infoStream, "ERROR: could not read segment file version in directory");
+		  if (infoStream != null)
 		  {
-			t.printStackTrace(InfoStream_Renamed);
+              infoStream.WriteLine(t.StackTrace);
 		  }
 		  result.MissingSegmentVersion = true;
 		  return result;
@@ -610,57 +609,53 @@ namespace Lucene.Net.Index
 		  versionString = oldest.Equals(newest) ? ("version=" + oldest) : ("versions=[" + oldest + " .. " + newest + "]");
 		}
 
-		Msg(InfoStream_Renamed, "Segments file=" + segmentsFileName + " numSegments=" + numSegments + " " + versionString + " format=" + sFormat + userDataString);
+		Msg(infoStream, "Segments file=" + segmentsFileName + " numSegments=" + numSegments + " " + versionString + " format=" + sFormat + userDataString);
 
 		if (onlySegments != null)
 		{
 		  result.Partial = true;
-		  if (InfoStream_Renamed != null)
+		  if (infoStream != null)
 		  {
-			InfoStream_Renamed.print("\nChecking only these segments:");
+			infoStream.Write("\nChecking only these segments:");
 			foreach (string s in onlySegments)
 			{
-			  InfoStream_Renamed.print(" " + s);
+                infoStream.Write(" " + s);
 			}
 		  }
 		  result.SegmentsChecked.AddRange(onlySegments);
-		  Msg(InfoStream_Renamed, ":");
+		  Msg(infoStream, ":");
 		}
 
 		if (skip)
 		{
-		  Msg(InfoStream_Renamed, "\nERROR: this index appears to be created by a newer version of Lucene than this tool was compiled on; please re-compile this tool on the matching version of Lucene; exiting");
+		  Msg(infoStream, "\nERROR: this index appears to be created by a newer version of Lucene than this tool was compiled on; please re-compile this tool on the matching version of Lucene; exiting");
 		  result.ToolOutOfDate = true;
 		  return result;
 		}
 
 
 		result.NewSegments = sis.Clone();
-		result.NewSegments.clear();
+		result.NewSegments.Clear();
 		result.MaxSegmentName = -1;
 
 		for (int i = 0;i < numSegments;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = sis.info(i);
 		  SegmentCommitInfo info = sis.Info(i);
-		  int segmentName = Convert.ToInt32(info.Info.name.Substring(1), char.MAX_RADIX);
+		  int segmentName = Convert.ToInt32(info.Info.Name.Substring(1), Character.MAX_RADIX);
 		  if (segmentName > result.MaxSegmentName)
 		  {
 			result.MaxSegmentName = segmentName;
 		  }
-		  if (onlySegments != null && !onlySegments.Contains(info.Info.name))
+		  if (onlySegments != null && !onlySegments.Contains(info.Info.Name))
 		  {
 			continue;
 		  }
 		  Status.SegmentInfoStatus segInfoStat = new Status.SegmentInfoStatus();
 		  result.SegmentInfos.Add(segInfoStat);
-		  Msg(InfoStream_Renamed, "  " + (1 + i) + " of " + numSegments + ": name=" + info.Info.name + " docCount=" + info.Info.DocCount);
+		  Msg(infoStream, "  " + (1 + i) + " of " + numSegments + ": name=" + info.Info.Name + " docCount=" + info.Info.DocCount);
 		  segInfoStat.Name = info.Info.Name;
 		  segInfoStat.DocCount = info.Info.DocCount;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String version = info.info.getVersion();
 		  string version = info.Info.Version;
 		  if (info.Info.DocCount <= 0 && version != null && versionComparator.Compare(version, "4.5") >= 0)
 		  {
@@ -673,61 +668,57 @@ namespace Lucene.Net.Index
 
 		  try
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.Codec codec = info.info.getCodec();
 			Codec codec = info.Info.Codec;
-			Msg(InfoStream_Renamed, "    codec=" + codec);
+			Msg(infoStream, "    codec=" + codec);
 			segInfoStat.Codec = codec;
-			Msg(InfoStream_Renamed, "    compound=" + info.Info.UseCompoundFile);
+			Msg(infoStream, "    compound=" + info.Info.UseCompoundFile);
 			segInfoStat.Compound = info.Info.UseCompoundFile;
-			Msg(InfoStream_Renamed, "    numFiles=" + info.Files().Count);
+			Msg(infoStream, "    numFiles=" + info.Files().Count);
 			segInfoStat.NumFiles = info.Files().Count;
 			segInfoStat.SizeMB = info.SizeInBytes() / (1024.0 * 1024.0);
-			if (info.Info.getAttribute(Lucene3xSegmentInfoFormat.DS_OFFSET_KEY) == null)
+			if (info.Info.GetAttribute(Lucene3xSegmentInfoFormat.DS_OFFSET_KEY) == null)
 			{
 			  // don't print size in bytes if its a 3.0 segment with shared docstores
-			  Msg(InfoStream_Renamed, "    size (MB)=" + nf.format(segInfoStat.SizeMB));
+                Msg(infoStream, "    size (MB)=" + segInfoStat.SizeMB.ToString(nf));
 			}
 			IDictionary<string, string> diagnostics = info.Info.Diagnostics;
 			segInfoStat.Diagnostics = diagnostics;
 			if (diagnostics.Count > 0)
 			{
-			  Msg(InfoStream_Renamed, "    diagnostics = " + diagnostics);
+			  Msg(infoStream, "    diagnostics = " + diagnostics);
 			}
 
 			if (!info.HasDeletions())
 			{
-			  Msg(InfoStream_Renamed, "    no deletions");
+			  Msg(infoStream, "    no deletions");
 			  segInfoStat.HasDeletions = false;
 			}
 			else
 			{
-			  Msg(InfoStream_Renamed, "    has deletions [delGen=" + info.DelGen + "]");
+			  Msg(infoStream, "    has deletions [delGen=" + info.DelGen + "]");
 			  segInfoStat.HasDeletions = true;
 			  segInfoStat.DeletionsGen = info.DelGen;
 			}
-			if (InfoStream_Renamed != null)
+			if (infoStream != null)
 			{
-			  InfoStream_Renamed.print("    test: open reader.........");
+                infoStream.Write("    test: open reader.........");
 			}
 			reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IOContext.DEFAULT);
-			Msg(InfoStream_Renamed, "OK");
+			Msg(infoStream, "OK");
 
 			segInfoStat.OpenReaderPassed = true;
 
-			if (InfoStream_Renamed != null)
+			if (infoStream != null)
 			{
-			  InfoStream_Renamed.print("    test: check integrity.....");
+                infoStream.Write("    test: check integrity.....");
 			}
 			reader.CheckIntegrity();
-			Msg(InfoStream_Renamed, "OK");
+			Msg(infoStream, "OK");
 
-			if (InfoStream_Renamed != null)
+			if (infoStream != null)
 			{
-			  InfoStream_Renamed.print("    test: check live docs.....");
+                infoStream.Write("    test: check live docs.....");
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numDocs = reader.numDocs();
 			int numDocs = reader.NumDocs();
 			toLoseDocCount = numDocs;
 			if (reader.HasDeletions())
@@ -766,7 +757,7 @@ namespace Lucene.Net.Index
 			  }
 
 			  segInfoStat.NumDeleted = info.Info.DocCount - numDocs;
-			  Msg(InfoStream_Renamed, "OK [" + (segInfoStat.NumDeleted) + " deleted docs]");
+			  Msg(infoStream, "OK [" + (segInfoStat.NumDeleted) + " deleted docs]");
 			}
 			else
 			{
@@ -786,7 +777,7 @@ namespace Lucene.Net.Index
 				  }
 				}
 			  }
-			  Msg(InfoStream_Renamed, "OK");
+			  Msg(infoStream, "OK");
 			}
 			if (reader.MaxDoc() != info.Info.DocCount)
 			{
@@ -794,65 +785,65 @@ namespace Lucene.Net.Index
 			}
 
 			// Test getFieldInfos()
-			if (InfoStream_Renamed != null)
+			if (infoStream != null)
 			{
-			  InfoStream_Renamed.print("    test: fields..............");
+                infoStream.Write("    test: fields..............");
 			}
 			FieldInfos fieldInfos = reader.FieldInfos;
-			Msg(InfoStream_Renamed, "OK [" + fieldInfos.Size() + " fields]");
+			Msg(infoStream, "OK [" + fieldInfos.Size() + " fields]");
 			segInfoStat.NumFields = fieldInfos.Size();
 
 			// Test Field Norms
-			segInfoStat.FieldNormStatus = TestFieldNorms(reader, InfoStream_Renamed);
+			segInfoStat.FieldNormStatus = TestFieldNorms(reader, infoStream);
 
 			// Test the Term Index
-			segInfoStat.TermIndexStatus = TestPostings(reader, InfoStream_Renamed, Verbose);
+			segInfoStat.TermIndexStatus = TestPostings(reader, infoStream, Verbose);
 
 			// Test Stored Fields
-			segInfoStat.StoredFieldStatus = TestStoredFields(reader, InfoStream_Renamed);
+			segInfoStat.StoredFieldStatus = TestStoredFields(reader, infoStream);
 
 			// Test Term Vectors
-			segInfoStat.TermVectorStatus = TestTermVectors(reader, InfoStream_Renamed, Verbose, CrossCheckTermVectors_Renamed);
+			segInfoStat.TermVectorStatus = TestTermVectors(reader, infoStream, Verbose, CrossCheckTermVectors_Renamed);
 
-			segInfoStat.DocValuesStatus = TestDocValues(reader, InfoStream_Renamed);
+			segInfoStat.DocValuesStatus = TestDocValues(reader, infoStream);
 
 			// Rethrow the first exception we encountered
 			//  this will cause stats for failed segments to be incremented properly
-			if (segInfoStat.FieldNormStatus.error != null)
+			if (segInfoStat.FieldNormStatus.Error != null)
 			{
 			  throw new Exception("Field Norm test failed");
 			}
-			else if (segInfoStat.TermIndexStatus.error != null)
+            else if (segInfoStat.TermIndexStatus.Error != null)
 			{
 			  throw new Exception("Term Index test failed");
 			}
-			else if (segInfoStat.StoredFieldStatus.error != null)
+            else if (segInfoStat.StoredFieldStatus.Error != null)
 			{
 			  throw new Exception("Stored Field test failed");
 			}
-			else if (segInfoStat.TermVectorStatus.error != null)
+            else if (segInfoStat.TermVectorStatus.Error != null)
 			{
 			  throw new Exception("Term Vector test failed");
 			}
-			else if (segInfoStat.DocValuesStatus.error != null)
+            else if (segInfoStat.DocValuesStatus.Error != null)
 			{
 			  throw new Exception("DocValues test failed");
 			}
 
-			Msg(InfoStream_Renamed, "");
+			Msg(infoStream, "");
 
 		  }
 		  catch (Exception t)
 		  {
-			Msg(InfoStream_Renamed, "FAILED");
+			Msg(infoStream, "FAILED");
 			string comment;
 			comment = "fixIndex() would remove reference to this segment";
-			Msg(InfoStream_Renamed, "    WARNING: " + comment + "; full exception:");
-			if (InfoStream_Renamed != null)
+			Msg(infoStream, "    WARNING: " + comment + "; full exception:");
+			if (infoStream != null)
 			{
-			  t.printStackTrace(InfoStream_Renamed);
+              infoStream.WriteLine(t.StackTrace);
 			}
-			Msg(InfoStream_Renamed, "");
+			Msg(infoStream, "");
 			result.TotLoseDocCount += toLoseDocCount;
 			result.NumBadSegments++;
 			continue;
@@ -866,7 +857,7 @@ namespace Lucene.Net.Index
 		  }
 
 		  // Keeper
-		  result.NewSegments.add(info.Clone());
+		  result.NewSegments.Add(info.Clone());
 		}
 
 		if (0 == result.NumBadSegments)
@@ -875,19 +866,19 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  Msg(InfoStream_Renamed, "WARNING: " + result.NumBadSegments + " broken segments (containing " + result.TotLoseDocCount + " documents) detected");
+		  Msg(infoStream, "WARNING: " + result.NumBadSegments + " broken segments (containing " + result.TotLoseDocCount + " documents) detected");
 		}
 
 		if (!(result.ValidCounter = (result.MaxSegmentName < sis.Counter)))
 		{
 		  result.Clean = false;
-		  result.NewSegments.counter = result.MaxSegmentName + 1;
-		  Msg(InfoStream_Renamed, "ERROR: Next segment name counter " + sis.Counter + " is not greater than max segment name " + result.MaxSegmentName);
+		  result.NewSegments.Counter = result.MaxSegmentName + 1;
+		  Msg(infoStream, "ERROR: Next segment name counter " + sis.Counter + " is not greater than max segment name " + result.MaxSegmentName);
 		}
 
 		if (result.Clean)
 		{
-		  Msg(InfoStream_Renamed, "No problems were detected with this index.\n");
+		  Msg(infoStream, "No problems were detected with this index.\n");
 		}
 
 		return result;
@@ -897,10 +888,8 @@ namespace Lucene.Net.Index
 	  /// Test field norms.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.FieldNormStatus TestFieldNorms(AtomicReader reader, PrintStream infoStream)
+	  public static Status.FieldNormStatus TestFieldNorms(AtomicReader reader, StreamWriter infoStream)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Status.FieldNormStatus status = new Status.FieldNormStatus();
 		Status.FieldNormStatus status = new Status.FieldNormStatus();
 
 		try
@@ -908,7 +897,7 @@ namespace Lucene.Net.Index
 		  // Test Field Norms
 		  if (infoStream != null)
 		  {
-			infoStream.print("    test: field norms.........");
+              infoStream.Write("    test: field norms.........");
 		  }
 		  foreach (FieldInfo info in reader.FieldInfos)
 		  {
@@ -936,7 +925,7 @@ namespace Lucene.Net.Index
 		  status.Error = e;
 		  if (infoStream != null)
 		  {
-			e.printStackTrace(infoStream);
+              infoStream.WriteLine(e.StackTrace);
 		  }
 		}
 
@@ -947,12 +936,10 @@ namespace Lucene.Net.Index
 	  /// checks Fields api is consistent with itself.
 	  /// searcher is optional, to verify with queries. Can be null.
 	  /// </summary>
-	  private static Status.TermIndexStatus CheckFields(Fields fields, Bits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, PrintStream infoStream, bool verbose)
+	  private static Status.TermIndexStatus CheckFields(Fields fields, Bits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, StreamWriter infoStream, bool verbose)
 	  {
 		// TODO: we should probably return our own stats thing...?!
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Status.TermIndexStatus status = new Status.TermIndexStatus();
 		Status.TermIndexStatus status = new Status.TermIndexStatus();
 		int computedFieldCount = 0;
 
@@ -994,31 +981,19 @@ namespace Lucene.Net.Index
 		  // assert fields.terms(field) != null;
 		  computedFieldCount++;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(field);
 		  Terms terms = fields.Terms(field);
 		  if (terms == null)
 		  {
 			continue;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasFreqs = terms.hasFreqs();
 		  bool hasFreqs = terms.HasFreqs();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasPositions = terms.hasPositions();
 		  bool hasPositions = terms.HasPositions();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasPayloads = terms.hasPayloads();
 		  bool hasPayloads = terms.HasPayloads();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasOffsets = terms.hasOffsets();
 		  bool hasOffsets = terms.HasOffsets();
 
 		  // term vectors cannot omit TF:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean expectedHasFreqs = (isVectors || fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0);
-		  bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0);
+		  bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS);
 
 		  if (hasFreqs != expectedHasFreqs)
 		  {
@@ -1035,38 +1010,28 @@ namespace Lucene.Net.Index
 
 		  if (!isVectors)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean expectedHasPositions = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-			bool expectedHasPositions = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+			bool expectedHasPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 			if (hasPositions != expectedHasPositions)
 			{
 			  throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean expectedHasPayloads = fieldInfo.hasPayloads();
 			bool expectedHasPayloads = fieldInfo.HasPayloads();
 			if (hasPayloads != expectedHasPayloads)
 			{
 			  throw new Exception("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean expectedHasOffsets = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-			bool expectedHasOffsets = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+			bool expectedHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			if (hasOffsets != expectedHasOffsets)
 			{
 			  throw new Exception("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 		  TermsEnum termsEnum = terms.Iterator(null);
 
 		  bool hasOrd = true;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long termCountStart = status.delTermCount + status.termCount;
 		  long termCountStart = status.DelTermCount + status.TermCount;
 
 		  BytesRef lastTerm = null;
@@ -1079,8 +1044,6 @@ namespace Lucene.Net.Index
 		  while (true)
 		  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnum.next();
 			BytesRef term = termsEnum.Next();
 			if (term == null)
 			{
@@ -1104,8 +1067,6 @@ namespace Lucene.Net.Index
 			  lastTerm.CopyBytes(term);
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docFreq = termsEnum.docFreq();
 			int docFreq = termsEnum.DocFreq();
 			if (docFreq <= 0)
 			{
@@ -1138,8 +1099,6 @@ namespace Lucene.Net.Index
 
 			  if (hasOrd)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long ordExpected = status.delTermCount + status.termCount - termCountStart;
 				long ordExpected = status.DelTermCount + status.TermCount - termCountStart;
 				if (ord != ordExpected)
 				{
@@ -1148,8 +1107,6 @@ namespace Lucene.Net.Index
 			  }
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocsEnum docs2;
 			DocsEnum docs2;
 			if (postings != null)
 			{
@@ -1165,8 +1122,6 @@ namespace Lucene.Net.Index
 			long totalTermFreq = 0;
 			while (true)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = docs2.nextDoc();
 			  int doc = docs2.NextDoc();
 			  if (doc == DocIdSetIterator.NO_MORE_DOCS)
 			  {
@@ -1214,8 +1169,6 @@ namespace Lucene.Net.Index
 			  {
 				for (int j = 0;j < freq;j++)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = postings.nextPosition();
 				  int pos = postings.NextPosition();
 
 				  if (pos < 0)
@@ -1276,11 +1229,7 @@ namespace Lucene.Net.Index
 			  status.DelTermCount++;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long totalTermFreq2 = termsEnum.totalTermFreq();
 			long totalTermFreq2 = termsEnum.TotalTermFreq();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasTotalTermFreq = hasFreqs && totalTermFreq2 != -1;
 			bool hasTotalTermFreq = hasFreqs && totalTermFreq2 != -1;
 
 			// Re-count if there are deleted docs:
@@ -1288,8 +1237,6 @@ namespace Lucene.Net.Index
 			{
 			  if (hasFreqs)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocsEnum docsNoDel = termsEnum.docs(null, docsAndFreqs);
 				DocsEnum docsNoDel = termsEnum.Docs(null, docsAndFreqs);
 				docCount = 0;
 				totalTermFreq = 0;
@@ -1302,8 +1249,6 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocsEnum docsNoDel = termsEnum.docs(null, docs, DocsEnum.FLAG_NONE);
 				DocsEnum docsNoDel = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
 				docCount = 0;
 				totalTermFreq = -1;
@@ -1337,12 +1282,8 @@ namespace Lucene.Net.Index
 			{
 			  for (int idx = 0;idx < 7;idx++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int skipDocID = (int)(((idx+1)*(long) maxDoc)/8);
 				int skipDocID = (int)(((idx + 1) * (long) maxDoc) / 8);
 				postings = termsEnum.DocsAndPositions(liveDocs, postings);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = postings.advance(skipDocID);
 				int docID = postings.Advance(skipDocID);
 				if (docID == DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -1354,8 +1295,6 @@ namespace Lucene.Net.Index
 				  {
 					throw new Exception("term " + term + ": advance(docID=" + skipDocID + ") returned docID=" + docID);
 				  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = postings.freq();
 				  int freq = postings.Freq();
 				  if (freq <= 0)
 				  {
@@ -1365,8 +1304,6 @@ namespace Lucene.Net.Index
 				  int lastOffset = 0;
 				  for (int posUpto = 0;posUpto < freq;posUpto++)
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = postings.nextPosition();
 					int pos = postings.NextPosition();
 
 					if (pos < 0)
@@ -1407,8 +1344,6 @@ namespace Lucene.Net.Index
 					}
 				  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int nextDocID = postings.nextDoc();
 				  int nextDocID = postings.NextDoc();
 				  if (nextDocID == DocIdSetIterator.NO_MORE_DOCS)
 				  {
@@ -1425,12 +1360,8 @@ namespace Lucene.Net.Index
 			{
 			  for (int idx = 0;idx < 7;idx++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int skipDocID = (int)(((idx+1)*(long) maxDoc)/8);
 				int skipDocID = (int)(((idx + 1) * (long) maxDoc) / 8);
 				docs = termsEnum.Docs(liveDocs, docs, DocsEnum.FLAG_NONE);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docs.advance(skipDocID);
 				int docID = docs.Advance(skipDocID);
 				if (docID == DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -1442,8 +1373,6 @@ namespace Lucene.Net.Index
 				  {
 					throw new Exception("term " + term + ": advance(docID=" + skipDocID + ") returned docID=" + docID);
 				  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int nextDocID = docs.nextDoc();
 				  int nextDocID = docs.NextDoc();
 				  if (nextDocID == DocIdSetIterator.NO_MORE_DOCS)
 				  {
@@ -1458,8 +1387,6 @@ namespace Lucene.Net.Index
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms fieldTerms = fields.terms(field);
 		  Terms fieldTerms = fields.Terms(field);
 		  if (fieldTerms == null)
 		  {
@@ -1474,21 +1401,17 @@ namespace Lucene.Net.Index
 		  {
 			if (fieldTerms is BlockTreeTermsReader.FieldReader)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.BlockTreeTermsReader.Stats stats = ((Lucene.Net.Codecs.BlockTreeTermsReader.FieldReader) fieldTerms).computeStats();
 			  BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader) fieldTerms).ComputeStats();
 			  Debug.Assert(stats != null);
 			  if (status.BlockTreeStats == null)
 			  {
-				status.BlockTreeStats = new Dictionary<>();
+				status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();
 			  }
 			  status.BlockTreeStats[field] = stats;
 			}
 
 			if (sumTotalTermFreq != 0)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long v = fields.terms(field).getSumTotalTermFreq();
 			  long v = fields.Terms(field).SumTotalTermFreq;
 			  if (v != -1 && sumTotalTermFreq != v)
 			  {
@@ -1498,8 +1421,6 @@ namespace Lucene.Net.Index
 
 			if (sumDocFreq != 0)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long v = fields.terms(field).getSumDocFreq();
 			  long v = fields.Terms(field).SumDocFreq;
 			  if (v != -1 && sumDocFreq != v)
 			  {
@@ -1509,8 +1430,6 @@ namespace Lucene.Net.Index
 
 			if (fieldTerms != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = fieldTerms.getDocCount();
 			  int v = fieldTerms.DocCount;
 			  if (v != -1 && visitedDocs.Cardinality() != v)
 			  {
@@ -1544,7 +1463,7 @@ namespace Lucene.Net.Index
 
 			if ((status.DelTermCount + status.TermCount) - termCountStart > 0)
 			{
-			  termCount = fields.Terms(field).size();
+			  termCount = fields.Terms(field).Size();
 
 			  if (termCount != -1 && termCount != status.DelTermCount + status.TermCount - termCountStart)
 			  {
@@ -1658,8 +1577,8 @@ namespace Lucene.Net.Index
 		{
 		  foreach (KeyValuePair<string, BlockTreeTermsReader.Stats> ent in status.BlockTreeStats)
 		  {
-			infoStream.println("      field \"" + ent.Key + "\":");
-			infoStream.println("      " + ent.Value.ToString().Replace("\n", "\n      "));
+			infoStream.WriteLine("      field \"" + ent.Key + "\":");
+            infoStream.WriteLine("      " + ent.Value.ToString().Replace("\n", "\n      "));
 		  }
 		}
 
@@ -1670,7 +1589,7 @@ namespace Lucene.Net.Index
 	  /// Test the term index.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.TermIndexStatus TestPostings(AtomicReader reader, PrintStream infoStream)
+      public static Status.TermIndexStatus TestPostings(AtomicReader reader, StreamWriter infoStream)
 	  {
 		return TestPostings(reader, infoStream, false);
 	  }
@@ -1679,25 +1598,21 @@ namespace Lucene.Net.Index
 	  /// Test the term index.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.TermIndexStatus TestPostings(AtomicReader reader, PrintStream infoStream, bool verbose)
+      public static Status.TermIndexStatus TestPostings(AtomicReader reader, StreamWriter infoStream, bool verbose)
 	  {
 
 		// TODO: we should go and verify term vectors match, if
 		// crossCheckTermVectors is on...
 
 		Status.TermIndexStatus status;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
 		Bits liveDocs = reader.LiveDocs;
 
 		try
 		{
 		  if (infoStream != null)
 		  {
-			infoStream.print("    test: terms, freq, prox...");
+			infoStream.Write("    test: terms, freq, prox...");
 		  }
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -1711,7 +1626,7 @@ namespace Lucene.Net.Index
 		  {
 			if (infoStream != null)
 			{
-			  infoStream.print("    test (ignoring deletes): terms, freq, prox...");
+                infoStream.Write("    test (ignoring deletes): terms, freq, prox...");
 			}
 			CheckFields(fields, null, maxDoc, fieldInfos, true, false, infoStream, verbose);
 		  }
@@ -1723,7 +1638,7 @@ namespace Lucene.Net.Index
 		  status.Error = e;
 		  if (infoStream != null)
 		  {
-			e.printStackTrace(infoStream);
+            infoStream.WriteLine(e.StackTrace);
 		  }
 		}
 
@@ -1734,7 +1649,7 @@ namespace Lucene.Net.Index
 	  /// Test stored fields.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.StoredFieldStatus TestStoredFields(AtomicReader reader, PrintStream infoStream)
+      public static Status.StoredFieldStatus TestStoredFields(AtomicReader reader, StreamWriter infoStream)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Status.StoredFieldStatus status = new Status.StoredFieldStatus();
@@ -1744,7 +1659,7 @@ namespace Lucene.Net.Index
 		{
 		  if (infoStream != null)
 		  {
-			infoStream.print("    test: stored fields.......");
+              infoStream.Write("    test: stored fields.......");
 		  }
 
 		  // Scan stored fields for all documents
@@ -1763,13 +1678,13 @@ namespace Lucene.Net.Index
 			}
 		  }
 
-		  // Validate docCount
+          // Validate docCount
 		  if (status.DocCount != reader.NumDocs())
 		  {
 			throw new Exception("docCount=" + status.DocCount + " but saw " + status.DocCount + " undeleted docs");
 		  }
 
-		  Msg(infoStream, "OK [" + status.TotFields + " total field count; avg " + NumberFormat.getInstance(Locale.ROOT).format((((float) status.TotFields) / status.DocCount)) + " fields per doc]");
+		  Msg(infoStream, "OK [" + status.TotFields + " total field count; avg " + ((((float)status.TotFields) / status.DocCount)).ToString(CultureInfo.InvariantCulture.NumberFormat) + " fields per doc]");
 		}
 		catch (Exception e)
 		{
@@ -1777,7 +1692,7 @@ namespace Lucene.Net.Index
 		  status.Error = e;
 		  if (infoStream != null)
 		  {
-			e.printStackTrace(infoStream);
+              infoStream.WriteLine(e.StackTrace);
 		  }
 		}
 
@@ -1788,16 +1703,14 @@ namespace Lucene.Net.Index
 	  /// Test docvalues.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.DocValuesStatus TestDocValues(AtomicReader reader, PrintStream infoStream)
+      public static Status.DocValuesStatus TestDocValues(AtomicReader reader, StreamWriter infoStream)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Status.DocValuesStatus status = new Status.DocValuesStatus();
 		Status.DocValuesStatus status = new Status.DocValuesStatus();
 		try
 		{
 		  if (infoStream != null)
 		  {
-			infoStream.print("    test: docvalues...........");
+			infoStream.Write("    test: docvalues...........");
 		  }
 		  foreach (FieldInfo fieldInfo in reader.FieldInfos)
 		  {
@@ -1823,7 +1736,7 @@ namespace Lucene.Net.Index
 		  status.Error = e;
 		  if (infoStream != null)
 		  {
-			e.printStackTrace(infoStream);
+            infoStream.WriteLine(e.StackTrace);
 		  }
 		}
 		return status;
@@ -2006,7 +1919,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private static void CheckDocValues(FieldInfo fi, AtomicReader reader, PrintStream infoStream, DocValuesStatus status)
+	  private static void CheckDocValues(FieldInfo fi, AtomicReader reader, StreamWriter infoStream, DocValuesStatus status)
 	  {
 		Bits docsWithField = reader.GetDocsWithField(fi.Name);
 		if (docsWithField == null)
@@ -2017,9 +1930,9 @@ namespace Lucene.Net.Index
 		{
 		  throw new Exception(fi.Name + " docsWithField has incorrect length: " + docsWithField.Length() + ",expected: " + reader.MaxDoc());
 		}
-		switch (fi.DocValuesType_e)
+		switch (fi.DocValuesType)
 		{
-		  case SORTED:
+		  case FieldInfo.DocValuesType_e.SORTED:
 			status.TotalSortedFields++;
 			CheckSortedDocValues(fi.Name, reader, reader.GetSortedDocValues(fi.Name), docsWithField);
 			if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2027,7 +1940,7 @@ namespace Lucene.Net.Index
 			  throw new Exception(fi.Name + " returns multiple docvalues types!");
 			}
 			break;
-		  case SORTED_SET:
+          case FieldInfo.DocValuesType_e.SORTED_SET:
 			status.TotalSortedSetFields++;
 			CheckSortedSetDocValues(fi.Name, reader, reader.GetSortedSetDocValues(fi.Name), docsWithField);
 			if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null)
@@ -2035,7 +1948,7 @@ namespace Lucene.Net.Index
 			  throw new Exception(fi.Name + " returns multiple docvalues types!");
 			}
 			break;
-		  case BINARY:
+          case FieldInfo.DocValuesType_e.BINARY:
 			status.TotalBinaryFields++;
 			CheckBinaryDocValues(fi.Name, reader, reader.GetBinaryDocValues(fi.Name), docsWithField);
 			if (reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2043,7 +1956,7 @@ namespace Lucene.Net.Index
 			  throw new Exception(fi.Name + " returns multiple docvalues types!");
 			}
 			break;
-		  case NUMERIC:
+          case FieldInfo.DocValuesType_e.NUMERIC:
 			status.TotalNumericFields++;
 			CheckNumericDocValues(fi.Name, reader, reader.GetNumericDocValues(fi.Name), docsWithField);
 			if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
@@ -2052,19 +1965,19 @@ namespace Lucene.Net.Index
 			}
 			break;
 		  default:
-			throw new AssertionError();
+			throw new InvalidOperationException();
 		}
 	  }
 
-	  private static void CheckNorms(FieldInfo fi, AtomicReader reader, PrintStream infoStream)
+	  private static void CheckNorms(FieldInfo fi, AtomicReader reader, StreamWriter infoStream)
 	  {
 		switch (fi.NormType)
 		{
-		  case NUMERIC:
+		  case FieldInfo.DocValuesType_e.NUMERIC:
 			CheckNumericDocValues(fi.Name, reader, reader.GetNormValues(fi.Name), new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc()));
 			break;
 		  default:
-			throw new AssertionError("wtf: " + fi.NormType);
+			throw new InvalidOperationException("wtf: " + fi.NormType);
 		}
 	  }
 
@@ -2072,7 +1985,7 @@ namespace Lucene.Net.Index
 	  /// Test term vectors.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, PrintStream infoStream)
+      public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, StreamWriter infoStream)
 	  {
 		return TestTermVectors(reader, infoStream, false, false);
 	  }
@@ -2081,7 +1994,7 @@ namespace Lucene.Net.Index
 	  /// Test term vectors.
 	  /// @lucene.experimental
 	  /// </summary>
-	  public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, PrintStream infoStream, bool verbose, bool crossCheckTermVectors)
+      public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, StreamWriter infoStream, bool verbose, bool crossCheckTermVectors)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Status.TermVectorStatus status = new Status.TermVectorStatus();
@@ -2097,7 +2010,7 @@ namespace Lucene.Net.Index
 		{
 		  if (infoStream != null)
 		  {
-			infoStream.print("    test: term vectors........");
+			infoStream.Write("    test: term vectors........");
 		  }
 
 		  DocsEnum docs = null;
@@ -2176,7 +2089,7 @@ namespace Lucene.Net.Index
 				  termsEnum = terms.Iterator(termsEnum);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean postingsHasFreq = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
-				  bool postingsHasFreq = fieldInfo.IndexOptions_e.compareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+				  bool postingsHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final boolean postingsHasPayload = fieldInfo.hasPayloads();
 				  bool postingsHasPayload = fieldInfo.HasPayloads();
@@ -2375,7 +2288,7 @@ namespace Lucene.Net.Index
 			}
 		  }
 		  float vectorAvg = status.DocCount == 0 ? 0 : status.TotVectors / (float)status.DocCount;
-		  Msg(infoStream, "OK [" + status.TotVectors + " total vector count; avg " + NumberFormat.getInstance(Locale.ROOT).format(vectorAvg) + " term/freq vector fields per doc]");
+          Msg(infoStream, "OK [" + status.TotVectors + " total vector count; avg " + vectorAvg.ToString(CultureInfo.InvariantCulture.NumberFormat) + " term/freq vector fields per doc]");
 		}
 		catch (Exception e)
 		{
@@ -2383,7 +2296,7 @@ namespace Lucene.Net.Index
 		  status.Error = e;
 		  if (infoStream != null)
 		  {
-			e.printStackTrace(infoStream);
+            infoStream.WriteLine(e.StackTrace);
 		  }
 		}
 
@@ -2411,8 +2324,8 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("can only fix an index that was fully checked (this status checked a subset of segments)");
 		}
-		result.NewSegments.changed();
-		result.NewSegments.commit(result.Dir);
+		result.NewSegments.Changed();
+		result.NewSegments.Commit(result.Dir);
 	  }
 
 	  private static bool AssertsOn_Renamed;
@@ -2522,7 +2435,7 @@ namespace Lucene.Net.Index
 		if (indexPath == null)
 		{
 		  Console.WriteLine("\nERROR: index path not specified");
-		  Console.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "  -crossCheckTermVectors: verifies that term vectors match postings; this IS VERY SLOW!\n" + "  -codec X: when fixing, codec to write the new segments_N file with\n" + "  -verbose: print additional details\n" + "  -segment X: only check the specified segments.  this can be specified multiple\n" + "              times, to check more than one segment, eg '-segment _2 -segment _a'.\n" + "              You can't use this with the -fix option\n" + "  -dir-impl X: use a specific " + typeof(FSDirectory).SimpleName + " implementation. " + "If no package is specified the " + typeof(FSDirectory).Assembly.Name + " package will be used.\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  this means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "this tool exits with exit code 1 if the index cannot be opened or has any\n" + "corruption, else 0.\n");
+		  Console.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "  -crossCheckTermVectors: verifies that term vectors match postings; this IS VERY SLOW!\n" + "  -codec X: when fixing, codec to write the new segments_N file with\n" + "  -verbose: print additional details\n" + "  -segment X: only check the specified segments.  this can be specified multiple\n" + "              times, to check more than one segment, eg '-segment _2 -segment _a'.\n" + "              You can't use this with the -fix option\n" + "  -dir-impl X: use a specific " + typeof(FSDirectory).Name + " implementation. " + "If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  this means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "this tool exits with exit code 1 if the index cannot be opened or has any\n" + "corruption, else 0.\n");
 		  Environment.Exit(1);
 		}
 
@@ -2547,23 +2460,23 @@ namespace Lucene.Net.Index
 		{
 		  if (dirImpl == null)
 		  {
-			dir = FSDirectory.Open(new File(indexPath));
+			dir = FSDirectory.Open(new DirectoryInfo(indexPath));
 		  }
 		  else
 		  {
-			dir = CommandLineUtil.NewFSDirectory(dirImpl, new File(indexPath));
+			dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(indexPath));
 		  }
 		}
 		catch (Exception t)
 		{
 		  Console.WriteLine("ERROR: could not open directory \"" + indexPath + "\"; exiting");
-		  t.printStackTrace(System.out);
+          Console.Out.WriteLine(t.StackTrace);
 		  Environment.Exit(1);
 		}
 
 		CheckIndex checker = new CheckIndex(dir);
 		checker.CrossCheckTermVectors = doCrossCheckTermVectors;
-		checker.SetInfoStream(System.out, verbose);
+        checker.SetInfoStream(new StreamWriter(Console.OpenStandardOutput()), verbose);
 
 		Status result = checker.CheckIndex(onlySegments);
 		if (result.MissingSegments)

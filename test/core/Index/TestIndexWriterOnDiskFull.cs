@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	using FieldType = Lucene.Net.Document.FieldType;
 	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 	using TermQuery = Lucene.Net.Search.TermQuery;

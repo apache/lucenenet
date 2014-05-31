@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 	  // common suffix of the automaton
 	  private readonly BytesRef CommonSuffixRef;
 	  // true if the automaton accepts a finite language
-	  private readonly bool Finite;
+	  private readonly bool? Finite;
 	  // array of sorted transitions for each state, indexed by state number
 	  private readonly Transition[][] AllTransitions;
 	  // for path tracking: each long records gen when we last
@@ -83,14 +83,14 @@ namespace Lucene.Net.Index
 	  {
 		this.Finite = compiled.Finite;
 		this.RunAutomaton = compiled.RunAutomaton;
-		Debug.Assert(this.RunAutomaton != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+		Debug.Assert(this.RunAutomaton != null);
 		this.CommonSuffixRef = compiled.CommonSuffixRef;
 		this.AllTransitions = compiled.SortedTransitions;
 
 		// used for path tracking, where each bit is a numbered state.
 		Visited = new long[RunAutomaton.Size];
 
-		TermComp = IComparer;
+		TermComp = Comparator;
 	  }
 
 	  /// <summary>
@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 			}
 			states[pos + 1] = nextState;
 			// we found a loop, record it for faster enumeration
-			if (!Finite && !Linear_Renamed && Visited[nextState] == CurGen)
+			if ((Finite == false) && !Linear_Renamed && Visited[nextState] == CurGen)
 			{
 			  Linear = pos;
 			}
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
 			/* else advance further */
 			// TODO: paranoia? if we backtrack thru an infinite DFA, the loop detection is important!
 			// for now, restart from scratch for all infinite DFAs 
-			if (!Finite)
+			if (Finite == false)
 			{
 				pos = 0;
 			}
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
 			  SeekBytesRef.Bytes[SeekBytesRef.Length - 1] = (sbyte) transition.Min;
 
 			  // we found a loop, record it for faster enumeration
-			  if (!Finite && !Linear_Renamed && Visited[state] == CurGen)
+			  if ((Finite == false) && !Linear_Renamed && Visited[state] == CurGen)
 			  {
 				Linear = SeekBytesRef.Length - 1;
 			  }

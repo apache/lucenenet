@@ -95,11 +95,11 @@ namespace Lucene.Net.Index
 
 		  protected internal override BytesRef NextSeekTerm(BytesRef term)
 		  {
-			if (term == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (term == null)
 			{
 			  term = StartTerm;
 			}
-			return base.nextSeekTerm(term);
+			return base.NextSeekTerm(term);
 		  }
 	  }
 

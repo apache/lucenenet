@@ -34,15 +34,22 @@ namespace Lucene.Net.Support
             Interlocked.Exchange(ref value, value_);
         }
 
+        public long AddAndGet(long value_)
+        {
+            Interlocked.Add(ref value, value_);
+            return value;
+        }
+
         public long Get()
         {
             //LUCENE TO-DO read operations atomic in 64 bit
             return value;
         }
 
-        public void CompareAndSet(int expect, int update)
+        public bool CompareAndSet(long expect, long update)
         {
-            Interlocked.CompareExchange(ref value, expect, update);
+            long rc = Interlocked.CompareExchange(ref value, update, expect);
+            return rc == expect;
         }
     }
 }

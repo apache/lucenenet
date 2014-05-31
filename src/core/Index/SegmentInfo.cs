@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
     using Lucene.Net.Support;
+    using System.Text.RegularExpressions;
 
 	/// <summary>
 	/// Information about a segment such as it's name, directory, and files related
@@ -328,11 +329,10 @@ namespace Lucene.Net.Index
 
 	  private void CheckFileNames(ICollection<string> files)
 	  {
-		Matcher m = IndexFileNames.CODEC_FILE_PATTERN.matcher("");
+		Regex r = IndexFileNames.CODEC_FILE_PATTERN;
 		foreach (string file in files)
 		{
-		  m.reset(file);
-		  if (!m.matches())
+		  if (!r.IsMatch(file))
 		  {
 			throw new System.ArgumentException("invalid codec filename '" + file + "', must match: " + IndexFileNames.CODEC_FILE_PATTERN.pattern());
 		  }

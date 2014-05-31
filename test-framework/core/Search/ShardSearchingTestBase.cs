@@ -545,7 +545,7 @@ namespace Lucene.Net.Search
 		  MockAnalyzer analyzer = new MockAnalyzer(Random());
 		  analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 		  IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		  iwc.OpenMode = IndexWriterConfig.OpenMode.CREATE;
+		  iwc.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE;
 		  if (VERBOSE)
 		  {
 			iwc.InfoStream = new PrintStreamInfoStream(System.out);

@@ -35,6 +35,7 @@ namespace Lucene.Net.Index
 	using IOContext = Lucene.Net.Store.IOContext;
 	using Lucene.Net.Util;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -103,11 +104,11 @@ namespace Lucene.Net.Index
 
 		  protected internal override IDictionary<string, object> InitialValue()
 		  {
-			return new Dictionary<>();
+			return new Dictionary<string, object>();
 		  }
 	  }
 
-	  private readonly Set<CoreClosedListener> CoreClosedListeners = Collections.synchronizedSet(new LinkedHashSet<CoreClosedListener>());
+	  private readonly ISet<CoreClosedListener> CoreClosedListeners = Collections.synchronizedSet(new LinkedHashSet<CoreClosedListener>());
 
 	  internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
 	  {
@@ -130,7 +131,7 @@ namespace Lucene.Net.Index
 		{
 		  if (si.Info.UseCompoundFile)
 		  {
-			cfsDir = CfsReader = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(si.Info.name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), context, false);
+			cfsDir = CfsReader = new CompoundFileDirectory(dir, IndexFileNames.SegmentFileName(si.Info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION), context, false);
 		  }
 		  else
 		  {
@@ -158,7 +159,7 @@ namespace Lucene.Net.Index
 
 		  if (fieldInfos.HasNorms())
 		  {
-			NormsProducer = codec.NormsFormat().normsProducer(segmentReadState);
+			NormsProducer = codec.NormsFormat().NormsProducer(segmentReadState);
 			Debug.Assert(NormsProducer != null);
 		  }
 		  else
@@ -166,11 +167,11 @@ namespace Lucene.Net.Index
 			NormsProducer = null;
 		  }
 
-		  FieldsReaderOrig = si.Info.Codec.storedFieldsFormat().fieldsReader(cfsDir, si.Info, fieldInfos, context);
+		  FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
 		  if (fieldInfos.HasVectors()) // open term vector files only as needed
 		  {
-			TermVectorsReaderOrig = si.Info.Codec.termVectorsFormat().vectorsReader(cfsDir, si.Info, fieldInfos, context);
+			TermVectorsReaderOrig = si.Info.Codec.TermVectorsFormat().VectorsReader(cfsDir, si.Info, fieldInfos, context);
 		  }
 		  else
 		  {
@@ -192,16 +193,16 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return @ref.get();
+			return @ref.Get();
 		  }
 	  }
 
 	  internal void IncRef()
 	  {
 		int count;
-		while ((count = @ref.get()) > 0)
+		while ((count = @ref.Get()) > 0)
 		{
-		  if (@ref.compareAndSet(count, count + 1))
+		  if (@ref.CompareAndSet(count, count + 1))
 		  {
 			return;
 		  }
@@ -213,7 +214,7 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(NormsProducer != null);
 
-		IDictionary<string, object> normFields = normsLocal.get();
+		IDictionary<string, object> normFields = normsLocal.Get();
 
 		NumericDocValues norms = (NumericDocValues) normFields[fi.Name];
 		if (norms == null)
@@ -227,13 +228,13 @@ namespace Lucene.Net.Index
 
 	  internal void DecRef()
 	  {
-		if (@ref.decrementAndGet() == 0)
+		if (@ref.DecrementAndGet() == 0)
 		{
 	//      System.err.println("--- closing core readers");
 		  Exception th = null;
 		  try
 		  {
-			IOUtils.close(termVectorsLocal, fieldsReaderLocal, normsLocal, Fields, TermVectorsReaderOrig, FieldsReaderOrig, CfsReader, NormsProducer);
+			IOUtils.Close(termVectorsLocal, fieldsReaderLocal, normsLocal, Fields, TermVectorsReaderOrig, FieldsReaderOrig, CfsReader, NormsProducer);
 		  }
 		  catch (Exception throwable)
 		  {
@@ -276,12 +277,12 @@ namespace Lucene.Net.Index
 
 	  internal void AddCoreClosedListener(CoreClosedListener listener)
 	  {
-		CoreClosedListeners.add(listener);
+		CoreClosedListeners.Add(listener);
 	  }
 
 	  internal void RemoveCoreClosedListener(CoreClosedListener listener)
 	  {
-		CoreClosedListeners.remove(listener);
+		CoreClosedListeners.Remove(listener);
 	  }
 
 	  /// <summary>

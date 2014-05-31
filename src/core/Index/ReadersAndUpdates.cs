@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using MutableBits = Lucene.Net.Util.MutableBits;
+    using Lucene.Net.Support;
 
 	// Used by IndexWriter to hold open SegmentReaders (for
 	// searching or merging), plus pending deletes and updates,
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int rc = refCount.incrementAndGet();
-		int rc = RefCount_Renamed.incrementAndGet();
+		int rc = RefCount_Renamed.IncrementAndGet();
 		Debug.Assert(rc > 1);
 	  }
 
@@ -110,7 +111,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int rc = refCount.decrementAndGet();
-		int rc = RefCount_Renamed.decrementAndGet();
+		int rc = RefCount_Renamed.DecrementAndGet();
 		Debug.Assert(rc >= 0);
 	  }
 
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int rc = refCount.get();
-		int rc = RefCount_Renamed.get();
+		int rc = RefCount_Renamed.Get();
 		Debug.Assert(rc >= 0);
 		return rc;
 	  }
@@ -332,7 +333,7 @@ namespace Lucene.Net.Index
 			  // SegmentReader sharing the current liveDocs
 			  // instance; must now make a private clone so we can
 			  // change it:
-			  LiveDocsFormat liveDocsFormat = Info.Info.Codec.liveDocsFormat();
+			  LiveDocsFormat liveDocsFormat = Info.Info.Codec.LiveDocsFormat();
 			  if (LiveDocs_Renamed == null)
 			  {
 				//System.out.println("create BV seg=" + info);
@@ -422,7 +423,7 @@ namespace Lucene.Net.Index
 			try
 			{
 			  Codec codec = Info.Info.Codec;
-			  codec.LiveDocsFormat().writeLiveDocs((MutableBits)LiveDocs_Renamed, trackingDir, Info, PendingDeleteCount_Renamed, IOContext.DEFAULT);
+			  codec.LiveDocsFormat().WriteLiveDocs((MutableBits)LiveDocs_Renamed, trackingDir, Info, PendingDeleteCount_Renamed, IOContext.DEFAULT);
 			  success = true;
 			}
 			finally
@@ -524,7 +525,7 @@ namespace Lucene.Net.Index
 				long nextFieldInfosGen = Info.NextFieldInfosGen;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String segmentSuffix = Long.toString(nextFieldInfosGen, Character.MAX_RADIX);
-				string segmentSuffix = Convert.ToString(nextFieldInfosGen, char.MAX_RADIX);
+				string segmentSuffix = Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final SegmentWriteState state = new SegmentWriteState(null, trackingDir, info.info, fieldInfos, writer.getConfig().getTermIndexInterval(), null, Lucene.Net.Store.IOContext.DEFAULT, segmentSuffix);
 				SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, Writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
@@ -577,14 +578,14 @@ namespace Lucene.Net.Index
 				  fieldsConsumer.AddBinaryField(fieldInfo, new IterableAnonymousInnerClassHelper2(this, reader, field, dvFieldUpdates));
 				}
         
-				  codec.FieldInfosFormat().FieldInfosWriter.write(trackingDir, Info.Info.name, segmentSuffix, fieldInfos, IOContext.DEFAULT);
+				  codec.FieldInfosFormat().FieldInfosWriter.Write(trackingDir, Info.Info.Name, segmentSuffix, fieldInfos, IOContext.DEFAULT);
 				  fieldsConsumerSuccess = true;
 				}
 				finally
 				{
 				  if (fieldsConsumerSuccess)
 				  {
-					fieldsConsumer.close();
+					fieldsConsumer.Close();
 				  }
 				  else
 				  {
@@ -657,8 +658,8 @@ namespace Lucene.Net.Index
 			}
         
 			// create a new map, keeping only the gens that are in use
-			IDictionary<long?, Set<string>> genUpdatesFiles = Info.UpdatesFiles;
-			IDictionary<long?, Set<string>> newGenUpdatesFiles = new Dictionary<long?, Set<string>>();
+			IDictionary<long?, ISet<string>> genUpdatesFiles = Info.UpdatesFiles;
+			IDictionary<long?, ISet<string>> newGenUpdatesFiles = new Dictionary<long?, ISet<string>>();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long fieldInfosGen = info.getFieldInfosGen();
 			long fieldInfosGen = Info.FieldInfosGen;
@@ -731,7 +732,7 @@ namespace Lucene.Net.Index
 		  internal readonly NumericDocValuesFieldUpdates.Iterator updatesIter;
 		  public virtual IEnumerator<Number> GetEnumerator()
 		  {
-			updatesIter.reset();
+			updatesIter.Reset();
 			return new IteratorAnonymousInnerClassHelper(this);
 		  }
 
@@ -741,9 +742,9 @@ namespace Lucene.Net.Index
 
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  curDoc = -1;
-				  updateDoc = updatesIter.nextDoc();
+				  updateDoc = updatesIter.NextDoc();
 			  }
 
 
@@ -771,10 +772,10 @@ namespace Lucene.Net.Index
 				{
 				  // no update for this document
 				  Debug.Assert(curDoc < updateDoc);
-				  if (currentValues != null && docsWithField.get(curDoc))
+				  if (currentValues != null && docsWithField.Get(curDoc))
 				  {
 					// only read the current value if the document had a value before
-					return currentValues.get(curDoc);
+					return currentValues.Get(curDoc);
 				  }
 				  else
 				  {
@@ -816,7 +817,7 @@ namespace Lucene.Net.Index
 		  internal readonly BinaryDocValuesFieldUpdates.Iterator updatesIter;
 		  public virtual IEnumerator<BytesRef> GetEnumerator()
 		  {
-			updatesIter.reset();
+			updatesIter.Reset();
 			return new IteratorAnonymousInnerClassHelper2(this);
 		  }
 
@@ -826,7 +827,7 @@ namespace Lucene.Net.Index
 
 			  public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  curDoc = -1;
 				  updateDoc = updatesIter.nextDoc();
 				  scratch = new BytesRef();

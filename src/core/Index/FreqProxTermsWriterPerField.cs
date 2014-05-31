@@ -23,13 +23,13 @@ namespace Lucene.Net.Index
 	 */
 
 
-	using OffsetAttribute = Lucene.Net.Analysis.tokenattributes.OffsetAttribute;
-	using PayloadAttribute = Lucene.Net.Analysis.tokenattributes.PayloadAttribute;
+	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+	using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
 	using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
 	using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
 	using TermStats = Lucene.Net.Codecs.TermStats;
 	using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 
 	  internal readonly FreqProxTermsWriter Parent;
 	  internal readonly TermsHashPerField TermsHashPerField;
-	  internal readonly FieldInfo FieldInfo;
+	  internal readonly FieldInfo fieldInfo;
 	  internal readonly DocumentsWriterPerThread.DocState DocState;
 	  internal readonly FieldInvertState FieldState;
 	  private bool HasFreq;
@@ -55,10 +55,10 @@ namespace Lucene.Net.Index
 	  {
 		this.TermsHashPerField = termsHashPerField;
 		this.Parent = parent;
-		this.FieldInfo = fieldInfo;
+		this.fieldInfo = fieldInfo;
 		DocState = termsHashPerField.DocState;
 		FieldState = termsHashPerField.FieldState;
-		IndexOptions = fieldInfo.IndexOptions_e;
+		IndexOptions = fieldInfo.IndexOptions;
 	  }
 
 	  internal override int StreamCount
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 	  {
 		if (HasPayloads)
 		{
-		  FieldInfo.SetStorePayloads();
+		  fieldInfo.SetStorePayloads();
 		}
 	  }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 	  }
 	  public int CompareTo(FreqProxTermsWriterPerField other)
 	  {
-		return FieldInfo.Name.CompareTo(other.FieldInfo.Name);
+		return fieldInfo.Name.CompareTo(other.fieldInfo.Name);
 	  }
 
 	  // Called after flush
@@ -99,11 +99,11 @@ namespace Lucene.Net.Index
 	  {
 		// Record, up front, whether our in-RAM format will be
 		// with or without term freqs:
-		IndexOptions = FieldInfo.IndexOptions_e;
+		IndexOptions = fieldInfo.IndexOptions;
 		PayloadAttribute = null;
 	  }
 
-	  private IndexOptions IndexOptions
+	  private IndexOptions_e? IndexOptions
 	  {
 		  set
 		  {
@@ -114,9 +114,9 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  HasFreq = value.compareTo(IndexOptions_e.DOCS_AND_FREQS) >= 0;
-			  HasProx = value.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-			  HasOffsets = value.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+			  HasFreq = value >= IndexOptions_e.DOCS_AND_FREQS;
+			  HasProx = value >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+			  HasOffsets = value >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			}
 		  }
 	  }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0;i < count;i++)
 		{
-		  if (fields[i].FieldType().indexed())
+		  if (fields[i].FieldType().Indexed())
 		  {
 			return true;
 		  }
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 	  {
 		if (FieldState.AttributeSource_Renamed.HasAttribute(typeof(PayloadAttribute)))
 		{
-		  PayloadAttribute = FieldState.AttributeSource_Renamed.getAttribute(typeof(PayloadAttribute));
+		  PayloadAttribute = FieldState.AttributeSource_Renamed.GetAttribute<PayloadAttribute>();
 		}
 		else
 		{
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 		}
 		if (HasOffsets)
 		{
-		  OffsetAttribute = FieldState.AttributeSource_Renamed.addAttribute(typeof(OffsetAttribute));
+		  OffsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<OffsetAttribute>();
 		}
 		else
 		{
@@ -157,8 +157,6 @@ namespace Lucene.Net.Index
 	  {
 		//System.out.println("writeProx termID=" + termID + " proxCode=" + proxCode);
 		Debug.Assert(HasProx);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef payload;
 		BytesRef payload;
 		if (PayloadAttribute == null)
 		{
@@ -188,13 +186,8 @@ namespace Lucene.Net.Index
 	  internal void WriteOffsets(int termID, int offsetAccum)
 	  {
 		Debug.Assert(HasOffsets);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startOffset = offsetAccum + offsetAttribute.StartOffset();
 		int startOffset = offsetAccum + OffsetAttribute.StartOffset();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int endOffset = offsetAccum + offsetAttribute.EndOffset();
 		int endOffset = offsetAccum + OffsetAttribute.EndOffset();
-		//System.out.println("writeOffsets termID=" + termID + " prevOffset=" + prevOffset + " startOff=" + startOffset + " endOff=" + endOffset);
 		FreqProxPostingsArray postings = (FreqProxPostingsArray) TermsHashPerField.PostingsArray;
 		Debug.Assert(startOffset - postings.LastOffsets[termID] >= 0);
 		TermsHashPerField.WriteVInt(1, startOffset - postings.LastOffsets[termID]);
@@ -406,16 +399,12 @@ namespace Lucene.Net.Index
 	  internal void Flush(string fieldName, FieldsConsumer consumer, SegmentWriteState state)
 	  {
 
-		if (!FieldInfo.Indexed)
+		if (!fieldInfo.Indexed)
 		{
 		  return; // nothing to flush, don't bother the codec with the unindexed field
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.TermsConsumer termsConsumer = consumer.addField(fieldInfo);
-		TermsConsumer termsConsumer = consumer.AddField(FieldInfo);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Comparator<Lucene.Net.Util.BytesRef> termComp = termsConsumer.getComparator();
+		TermsConsumer termsConsumer = consumer.AddField(fieldInfo);
 		IComparer<BytesRef> termComp = termsConsumer.Comparator;
 
 		// CONFUSING: this.indexOptions holds the index options
@@ -426,29 +415,15 @@ namespace Lucene.Net.Index
 		// according to this.indexOptions, but then write the
 		// new segment to the directory according to
 		// currentFieldIndexOptions:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.IndexOptions currentFieldIndexOptions = fieldInfo.getIndexOptions();
-		IndexOptions currentFieldIndexOptions = FieldInfo.IndexOptions_e;
+		IndexOptions_e? currentFieldIndexOptions = fieldInfo.IndexOptions;
 		Debug.Assert(currentFieldIndexOptions != null);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean writeTermFreq = currentFieldIndexOptions.compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
-		bool writeTermFreq = currentFieldIndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS) >= 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean writePositions = currentFieldIndexOptions.compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-		bool writePositions = currentFieldIndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean writeOffsets = currentFieldIndexOptions.compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-		bool writeOffsets = currentFieldIndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+		bool writeTermFreq = currentFieldIndexOptions >= IndexOptions_e.DOCS_AND_FREQS;
+		bool writePositions = currentFieldIndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+		bool writeOffsets = currentFieldIndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean readTermFreq = this.hasFreq;
 		bool readTermFreq = this.HasFreq;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean readPositions = this.hasProx;
 		bool readPositions = this.HasProx;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean readOffsets = this.hasOffsets;
 		bool readOffsets = this.HasOffsets;
 
 		//System.out.println("flush readTF=" + readTermFreq + " readPos=" + readPositions + " readOffs=" + readOffsets);
@@ -460,35 +435,21 @@ namespace Lucene.Net.Index
 
 		Debug.Assert(!writeOffsets || writePositions);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Term,Integer> segDeletes;
 		IDictionary<Term, int?> segDeletes;
-		if (state.SegUpdates != null && state.SegUpdates.terms.size() > 0)
+		if (state.SegUpdates != null && state.SegUpdates.Terms.Count > 0)
 		{
-		  segDeletes = state.SegUpdates.terms;
+		  segDeletes = state.SegUpdates.Terms;
 		}
 		else
 		{
 		  segDeletes = null;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] termIDs = termsHashPerField.sortPostings(termComp);
 		int[] termIDs = TermsHashPerField.SortPostings(termComp);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numTerms = termsHashPerField.bytesHash.size();
-		int numTerms = TermsHashPerField.BytesHash.size();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef text = new Lucene.Net.Util.BytesRef();
+		int numTerms = TermsHashPerField.BytesHash.Size();
 		BytesRef text = new BytesRef();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FreqProxPostingsArray postings = (FreqProxPostingsArray) termsHashPerField.postingsArray;
 		FreqProxPostingsArray postings = (FreqProxPostingsArray) TermsHashPerField.PostingsArray;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ByteSliceReader freq = new ByteSliceReader();
 		ByteSliceReader freq = new ByteSliceReader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ByteSliceReader prox = new ByteSliceReader();
 		ByteSliceReader prox = new ByteSliceReader();
 
 		FixedBitSet visitedDocs = new FixedBitSet(state.SegmentInfo.DocCount);
@@ -498,15 +459,10 @@ namespace Lucene.Net.Index
 		Term protoTerm = new Term(fieldName);
 		for (int i = 0; i < numTerms; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termID = termIDs[i];
 		  int termID = termIDs[i];
-		  //System.out.println("term=" + termID);
 		  // Get BytesRef
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int textStart = postings.textStarts[termID];
 		  int textStart = postings.TextStarts[termID];
-		  TermsHashPerField.BytePool.setBytesRef(text, textStart);
+		  TermsHashPerField.BytePool.SetBytesRef(text, textStart);
 
 		  TermsHashPerField.InitReader(freq, termID, 0);
 		  if (readPositions || readOffsets)
@@ -526,7 +482,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int delDocLimit;
-		  int delDocLimit;
+		  int? delDocLimit;
 		  if (segDeletes != null)
 		  {
 			protoTerm.Bytes_Renamed = text;
@@ -633,12 +589,12 @@ namespace Lucene.Net.Index
 			  // TODO: can we do this reach-around in a cleaner way????
 			  if (state.LiveDocs == null)
 			  {
-				state.LiveDocs = DocState.DocWriter.codec.liveDocsFormat().newLiveDocs(state.SegmentInfo.DocCount);
+				state.LiveDocs = DocState.DocWriter.Codec.LiveDocsFormat().NewLiveDocs(state.SegmentInfo.DocCount);
 			  }
-			  if (state.LiveDocs.get(docID))
+			  if (state.LiveDocs.Get(docID))
 			  {
 				state.DelCountOnFlush++;
-				state.LiveDocs.clear(docID);
+				state.LiveDocs.Clear(docID);
 			  }
 			}
 

@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  return new MultiFields(fields.ToArray(Fields.EMPTY_ARRAY), slices.ToArray(ReaderSlice.EMPTY_ARRAY));
+			  return new MultiFields(fields.ToArray(/*Fields.EMPTY_ARRAY*/), slices.ToArray(/*ReaderSlice.EMPTY_ARRAY*/));
 			}
 		}
 	  }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-		  result = new MultiTerms(subs2.ToArray(Terms.EMPTY_ARRAY), slices2.ToArray(ReaderSlice.EMPTY_ARRAY));
+		  result = new MultiTerms(subs2.ToArray(/*Terms.EMPTY_ARRAY*/), slices2.ToArray(/*ReaderSlice.EMPTY_ARRAY*/));
 		  Terms_Renamed[field] = result;
 		}
 

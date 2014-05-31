@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Store;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Lucene.Net.Document;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Lucene.Net.Search;
 
 	public class TestStressIndexing : LuceneTestCase

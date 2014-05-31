@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
 	using Fields = Lucene.Net.Index.Fields;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Term = Lucene.Net.Index.Term;
 	using Terms = Lucene.Net.Index.Terms;

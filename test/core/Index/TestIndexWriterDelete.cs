@@ -1401,7 +1401,7 @@ namespace Lucene.Net.Index
 		w.close();
 
 		iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.OpenMode = IndexWriterConfig.OpenMode.APPEND;
+		iwc.OpenMode_e = IndexWriterConfig.OpenMode_e.APPEND;
 		w = new IndexWriter(d, iwc);
 		IndexReader r = DirectoryReader.open(w, false);
 		Assert.IsTrue(w.tryDeleteDocument(r, 1));

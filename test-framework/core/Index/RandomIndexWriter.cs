@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 		  // (but we need to clone them), and only when
 		  // getReader, commit, etc. are called, we do an
 		  // addDocuments?  Would be better testing.
-		  w.addDocuments(new IterableAnonymousInnerClassHelper(this, doc), a);
+		  w.AddDocuments(new IterableAnonymousInnerClassHelper(this, doc), a);
 		}
 		else
 		{

@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
 		CurrentOrd++;
 		if (CurrentOrd >= Values.ValueCount)
 		{
-		  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  return null;
 		}
 		Values.LookupOrd(CurrentOrd, Term_Renamed);
 		return Term_Renamed;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 
 	  public override void SeekExact(BytesRef term, TermState state)
 	  {
-		Debug.Assert(state != Lucene.Net.Util.BytesRefIterator_Fields.Null && state is OrdTermState);
+		Debug.Assert(state != null && state is OrdTermState);
 		this.SeekExact(((OrdTermState)state).Ord);
 	  }
 

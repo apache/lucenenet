@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
 	using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// this class controls <seealso cref="DocumentsWriterPerThread"/> flushing during
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
 	  private int NumDocsSinceStalled = 0; // only with assert
 	  internal readonly AtomicBoolean FlushDeletes = new AtomicBoolean(false);
 	  private bool FullFlush_Renamed = false;
-	  private readonly LinkedList<DocumentsWriterPerThread> FlushQueue = new LinkedList<DocumentsWriterPerThread>();
+      private readonly Queue<DocumentsWriterPerThread> FlushQueue = new Queue<DocumentsWriterPerThread>();
 	  // only for safety reasons if a DWPT is close to the RAM limit
 	  private readonly LinkedList<BlockedFlush> BlockedFlushes = new LinkedList<BlockedFlush>();
 	  private readonly IdentityHashMap<DocumentsWriterPerThread, long?> FlushingWriters = new IdentityHashMap<DocumentsWriterPerThread, long?>();
@@ -160,7 +161,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long delta = perThread.dwpt.bytesUsed() - perThread.bytesUsed;
-		long delta = perThread.Dwpt.bytesUsed() - perThread.BytesUsed;
+		long delta = perThread.Dwpt.BytesUsed() - perThread.BytesUsed;
 		perThread.BytesUsed += delta;
 		/*
 		 * We need to differentiate here if we are pending since setFlushPending
@@ -266,10 +267,11 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(FlushingWriters.containsKey(dwpt));
+			Debug.Assert(FlushingWriters.ContainsKey(dwpt));
 			try
 			{
-			  long? bytes = FlushingWriters.remove(dwpt);
+              long? bytes = FlushingWriters[dwpt];
+              FlushingWriters.Remove(dwpt);
 			  FlushBytes_Renamed -= (long)bytes;
 			  PerThreadPool.Recycle(dwpt);
 			  Debug.Assert(AssertMemory());
@@ -291,9 +293,7 @@ namespace Lucene.Net.Index
 	  private bool UpdateStallState()
 	  {
 
-		Debug.Assert(Thread.holdsLock(this));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long limit = stallLimitBytes();
+		//Debug.Assert(Thread.holdsLock(this));
 		long limit = StallLimitBytes();
 		/*
 		 * we block indexing threads if net byte grows due to slow flushes
@@ -302,8 +302,6 @@ namespace Lucene.Net.Index
 		 * that we don't stall/block if an ongoing or pending flush can
 		 * not free up enough memory to release the stall lock.
 		 */
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean stall = ((activeBytes + flushBytes) > limit) && (activeBytes < limit) && !closed;
 		bool stall = ((ActiveBytes_Renamed + FlushBytes_Renamed) > limit) && (ActiveBytes_Renamed < limit) && !Closed;
 		StallControl.UpdateStalled(stall);
 		return stall;
@@ -313,13 +311,13 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			while (FlushingWriters.size() != 0)
+			while (FlushingWriters.Count != 0)
 			{
 			  try
 			  {
 				Monitor.Wait(this);
 			  }
-			  catch (InterruptedException e)
+			  catch (ThreadInterruptedException e)
 			  {
 				throw new ThreadInterruptedException(e);
 			  }
@@ -390,7 +388,7 @@ namespace Lucene.Net.Index
 
 	  private void CheckoutAndBlock(ThreadState perThread)
 	  {
-		perThread.@lock();
+		perThread.@Lock();
 		try
 		{
 		  Debug.Assert(perThread.FlushPending_Renamed, "can not block non-pending threadstate");
@@ -407,42 +405,38 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  perThread.unlock();
+		  perThread.Unlock();
 		}
 	  }
 
 	  private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread)
 	  {
-		Debug.Assert(Thread.holdsLock(this));
+		//Debug.Assert(Thread.HoldsLock(this));
 		Debug.Assert(perThread.FlushPending_Renamed);
 		try
 		{
 		  // We are pending so all memory is already moved to flushBytes
-		  if (perThread.tryLock())
+		  if (perThread.TryLock())
 		  {
 			try
 			{
 			  if (perThread.Initialized)
 			  {
-				Debug.Assert(perThread.HeldByCurrentThread);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt;
+				//Debug.Assert(perThread.HeldByCurrentThread);
 				DocumentsWriterPerThread dwpt;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long bytes = perThread.bytesUsed;
 				long bytes = perThread.BytesUsed; // do that before
 															 // replace!
 				dwpt = PerThreadPool.Reset(perThread, Closed);
-				Debug.Assert(!FlushingWriters.containsKey(dwpt), "DWPT is already flushing");
+				Debug.Assert(!FlushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
 				// Record the flushing DWPT to reduce flushBytes in doAfterFlush
-				FlushingWriters.put(dwpt, Convert.ToInt64(bytes));
+				FlushingWriters[dwpt] = Convert.ToInt64(bytes);
 				NumPending--; // write access synced
 				return dwpt;
 			  }
 			}
 			finally
 			{
-			  perThread.unlock();
+			  perThread.Unlock();
 			}
 		  }
 		  return null;
@@ -466,12 +460,12 @@ namespace Lucene.Net.Index
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final DocumentsWriterPerThread poll;
-		  DocumentsWriterPerThread poll;
-		  if ((poll = FlushQueue.RemoveFirst()) != null)
-		  {
-			UpdateStallState();
-			return poll;
-		  }
+            DocumentsWriterPerThread poll;
+            if (FlushQueue.Count > 0 && (poll = FlushQueue.Dequeue()) != null)
+            {
+                UpdateStallState();
+                return poll;
+            }
 		  fullFlush = this.FullFlush_Renamed;
 		  numPending = this.NumPending;
 		}
@@ -575,7 +569,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return DocumentsWriter.DeleteQueue.numGlobalTermDeletes() + BufferedUpdatesStream.NumTerms();
+			return DocumentsWriter.DeleteQueue.NumGlobalTermDeletes() + BufferedUpdatesStream.NumTerms();
 		  }
 	  }
 
@@ -583,7 +577,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return DocumentsWriter.DeleteQueue.bytesUsed() + BufferedUpdatesStream.BytesUsed();
+			return DocumentsWriter.DeleteQueue.BytesUsed() + BufferedUpdatesStream.BytesUsed();
 		  }
 	  }
 
@@ -591,7 +585,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			return FlushingWriters.size();
+			return FlushingWriters.Count;
 		  }
 	  }
 
@@ -599,13 +593,13 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return FlushDeletes.getAndSet(false);
+			return FlushDeletes.GetAndSet(false);
 		  }
 	  }
 
 	  public void SetApplyAllDeletes()
 	  {
-		FlushDeletes.set(true);
+		FlushDeletes.Set(true);
 	  }
 
 	  internal int NumActiveDWPT()
@@ -621,7 +615,7 @@ namespace Lucene.Net.Index
 		bool success = false;
 		try
 		{
-		  if (perThread.Initialized && perThread.Dwpt.deleteQueue != DocumentsWriter.DeleteQueue)
+		  if (perThread.Initialized && perThread.Dwpt.DeleteQueue != DocumentsWriter.DeleteQueue)
 		  {
 			// There is a flush-all in process and this DWPT is
 			// now stale -- enroll it for flush and try for
@@ -636,7 +630,7 @@ namespace Lucene.Net.Index
 		{
 		  if (!success) // make sure we unlock if this fails
 		  {
-			perThread.unlock();
+			perThread.Unlock();
 		  }
 		}
 	  }
@@ -665,7 +659,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState next = perThreadPool.getThreadState(i);
 		  ThreadState next = PerThreadPool.GetThreadState(i);
-		  next.@lock();
+		  next.@Lock();
 		  try
 		  {
 			if (!next.Initialized)
@@ -676,8 +670,8 @@ namespace Lucene.Net.Index
 			  }
 			  continue;
 			}
-			Debug.Assert(next.Dwpt.deleteQueue == flushingQueue || next.Dwpt.deleteQueue == DocumentsWriter.DeleteQueue, " flushingQueue: " + flushingQueue + " currentqueue: " + DocumentsWriter.DeleteQueue + " perThread queue: " + next.Dwpt.deleteQueue + " numDocsInRam: " + next.Dwpt.NumDocsInRAM);
-			if (next.Dwpt.deleteQueue != flushingQueue)
+            Debug.Assert(next.Dwpt.DeleteQueue == flushingQueue || next.Dwpt.DeleteQueue == DocumentsWriter.DeleteQueue, " flushingQueue: " + flushingQueue + " currentqueue: " + DocumentsWriter.DeleteQueue + " perThread queue: " + next.Dwpt.DeleteQueue + " numDocsInRam: " + next.Dwpt.NumDocsInRAM);
+            if (next.Dwpt.DeleteQueue != flushingQueue)
 			{
 			  // this one is already a new DWPT
 			  continue;
@@ -686,7 +680,7 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			next.unlock();
+			next.Unlock();
 		  }
 		}
 		lock (this)
@@ -697,7 +691,11 @@ namespace Lucene.Net.Index
 		   * blocking indexing.*/
 		  PruneBlockedQueue(flushingQueue);
 		  Debug.Assert(AssertBlockedFlushes(DocumentsWriter.DeleteQueue));
-		  FlushQueue.addAll(FullFlushBuffer);
+		  //FlushQueue.AddAll(FullFlushBuffer);
+          foreach (var dwpt in FlushQueue)
+          {
+              FlushQueue.Enqueue(dwpt);
+          }
 		  FullFlushBuffer.Clear();
 		  UpdateStallState();
 		}
@@ -714,14 +712,14 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState next = perThreadPool.getThreadState(i);
 		  ThreadState next = PerThreadPool.GetThreadState(i);
-		  next.@lock();
+		  next.@Lock();
 		  try
 		  {
-			Debug.Assert(!next.Initialized || next.Dwpt.deleteQueue == queue, "isInitialized: " + next.Initialized + " numDocs: " + (next.Initialized ? next.Dwpt.NumDocsInRAM : 0));
+              Debug.Assert(!next.Initialized || next.Dwpt.DeleteQueue == queue, "isInitialized: " + next.Initialized + " numDocs: " + (next.Initialized ? next.Dwpt.NumDocsInRAM : 0));
 		  }
 		  finally
 		  {
-			next.unlock();
+			next.Unlock();
 		  }
 		}
 		return true;
@@ -738,7 +736,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final DocumentsWriterPerThread dwpt = perThread.dwpt;
 		DocumentsWriterPerThread dwpt = perThread.Dwpt;
-		Debug.Assert(perThread.HeldByCurrentThread);
+		//Debug.Assert(perThread.HeldByCurrentThread);
 		Debug.Assert(perThread.Initialized);
 		Debug.Assert(FullFlush_Renamed);
 		Debug.Assert(dwpt.DeleteQueue != DocumentsWriter.DeleteQueue);
@@ -773,14 +771,14 @@ namespace Lucene.Net.Index
 		while (iterator.MoveNext())
 		{
 		  BlockedFlush blockedFlush = iterator.Current;
-		  if (blockedFlush.Dwpt.deleteQueue == flushingQueue)
+          if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
 		  {
-			iterator.remove();
-			Debug.Assert(!FlushingWriters.containsKey(blockedFlush.Dwpt), "DWPT is already flushing");
+              BlockedFlushes.Remove(blockedFlush);
+			Debug.Assert(!FlushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
 			// Record the flushing DWPT to reduce flushBytes in doAfterFlush
-			FlushingWriters.put(blockedFlush.Dwpt, Convert.ToInt64(blockedFlush.Bytes));
+			FlushingWriters[blockedFlush.Dwpt] = Convert.ToInt64(blockedFlush.Bytes);
 			// don't decr pending here - its already done when DWPT is blocked
-			FlushQueue.AddLast(blockedFlush.Dwpt);
+			FlushQueue.Enqueue(blockedFlush.Dwpt);
 		  }
 		}
 	  }
@@ -791,7 +789,7 @@ namespace Lucene.Net.Index
 		  {
 			Debug.Assert(FullFlush_Renamed);
 			Debug.Assert(FlushQueue.Count == 0);
-			Debug.Assert(FlushingWriters.Empty);
+			Debug.Assert(FlushingWriters.Count == 0);
 			try
 			{
 			  if (BlockedFlushes.Count > 0)
@@ -813,12 +811,12 @@ namespace Lucene.Net.Index
 	  {
 		foreach (BlockedFlush blockedFlush in BlockedFlushes)
 		{
-		  Debug.Assert(blockedFlush.Dwpt.deleteQueue == flushingQueue);
+            Debug.Assert(blockedFlush.Dwpt.DeleteQueue == flushingQueue);
 		}
 		return true;
 	  }
 
-	  internal void AbortFullFlushes(Set<string> newFiles)
+	  internal void AbortFullFlushes(ISet<string> newFiles)
 	  {
 		  lock (this)
 		  {
@@ -833,7 +831,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal void AbortPendingFlushes(Set<string> newFiles)
+	  internal void AbortPendingFlushes(ISet<string> newFiles)
 	  {
 		  lock (this)
 		  {
@@ -859,9 +857,9 @@ namespace Lucene.Net.Index
 			  {
 				try
 				{
-				  FlushingWriters.put(blockedFlush.Dwpt, Convert.ToInt64(blockedFlush.Bytes));
+				  FlushingWriters[blockedFlush.Dwpt] = Convert.ToInt64(blockedFlush.Bytes);
 				  DocumentsWriter.SubtractFlushedNumDocs(blockedFlush.Dwpt.NumDocsInRAM);
-				  blockedFlush.Dwpt.abort(newFiles);
+				  blockedFlush.Dwpt.Abort(newFiles);
 				}
 				catch (Exception ex)
 				{

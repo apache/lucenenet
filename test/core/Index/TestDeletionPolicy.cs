@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using Query = Lucene.Net.Search.Query;
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 		  outerInstance.VerifyCommitOrder(commits);
 		  NumOnInit++;
 		}
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		  IndexCommit lastCommit = commits[commits.Count - 1];
 		  DirectoryReader r = DirectoryReader.open(Dir);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 			Assert.IsTrue(commit.Deleted);
 		  }
 		}
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		  outerInstance.VerifyCommitOrder(commits);
 		  int size = commits.Count;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 		  DoDeletes(commits, false);
 		}
 
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		  if (VERBOSE)
 		  {
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
 		  OnCommit(commits);
 		}
 
-		public override void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
 		{
 		  outerInstance.VerifyCommitOrder(commits);
 

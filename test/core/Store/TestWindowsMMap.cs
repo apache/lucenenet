@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 
 	public class TestWindowsMMap : LuceneTestCase
@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
 		MockAnalyzer analyzer = new MockAnalyzer(random());
 		// TODO: something about lock timeouts and leftover locks.
 		IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
-		   .setOpenMode(IndexWriterConfig.OpenMode.CREATE));
+		   .setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 		writer.commit();
 		IndexReader reader = DirectoryReader.open(dir);
 		IndexSearcher searcher = newSearcher(reader);

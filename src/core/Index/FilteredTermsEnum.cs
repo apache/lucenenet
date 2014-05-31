@@ -41,9 +41,9 @@ namespace Lucene.Net.Index
 	public abstract class FilteredTermsEnum : TermsEnum
 	{
 
-	  private BytesRef InitialSeekTerm_Renamed = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+	  private BytesRef InitialSeekTerm_Renamed = null;
 	  private bool DoSeek;
-	  private BytesRef ActualTerm = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+	  private BytesRef ActualTerm = null;
 
 	  private readonly TermsEnum Tenum;
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 	  /// <param name="tenum"> the terms enumeration to filter. </param>
 	  public FilteredTermsEnum(TermsEnum tenum, bool startWithSeek)
 	  {
-		Debug.Assert(tenum != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+		Debug.Assert(tenum != null);
 		this.Tenum = tenum;
 		DoSeek = startWithSeek;
 	  }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.BytesRef t = initialSeekTerm;
 		BytesRef t = InitialSeekTerm_Renamed;
-		InitialSeekTerm_Renamed = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		InitialSeekTerm_Renamed = null;
 		return t;
 	  }
 
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public override TermState TermState()
 	  {
-		Debug.Assert(Tenum != Lucene.Net.Util.BytesRefIterator_Fields.Null);
+		Debug.Assert(Tenum != null);
 		return Tenum.TermState();
 	  }
 
@@ -249,12 +249,12 @@ namespace Lucene.Net.Index
 			BytesRef t = NextSeekTerm(ActualTerm);
 			//System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
 			// Make sure we always seek forward:
-			Debug.Assert(ActualTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null || t == Lucene.Net.Util.BytesRefIterator_Fields.Null || IComparer.Compare(t, ActualTerm) > 0, "curTerm=" + ActualTerm + " seekTerm=" + t);
-			if (t == Lucene.Net.Util.BytesRefIterator_Fields.Null || Tenum.SeekCeil(t) == SeekStatus.END)
+			Debug.Assert(ActualTerm == null || t == null || Comparator.Compare(t, ActualTerm) > 0, "curTerm=" + ActualTerm + " seekTerm=" + t);
+			if (t == null || Tenum.SeekCeil(t) == SeekStatus.END)
 			{
 			  // no more terms to seek to or enum exhausted
 			  //System.out.println("  return null");
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			}
 			ActualTerm = Tenum.Term();
 			//System.out.println("  got term=" + actualTerm.utf8ToString());
@@ -262,30 +262,30 @@ namespace Lucene.Net.Index
 		  else
 		  {
 			ActualTerm = Tenum.Next();
-			if (ActualTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+			if (ActualTerm == null)
 			{
 			  // enum exhausted
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 			}
 		  }
 
 		  // check if term is accepted
 		  switch (Accept(ActualTerm))
 		  {
-			case YES_AND_SEEK:
+            case FilteredTermsEnum.AcceptStatus.YES_AND_SEEK:
 			  DoSeek = true;
 			  // term accepted, but we need to seek so fall-through
-				goto case YES;
-			case YES:
+              goto case FilteredTermsEnum.AcceptStatus.YES;
+            case FilteredTermsEnum.AcceptStatus.YES:
 			  // term accepted
 			  return ActualTerm;
-			case NO_AND_SEEK:
+            case FilteredTermsEnum.AcceptStatus.NO_AND_SEEK:
 			  // invalid term, seek next time
 			  DoSeek = true;
 			  break;
-			case END:
+            case FilteredTermsEnum.AcceptStatus.END:
 			  // we are supposed to end the enum
-			  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+			  return null;
 		  }
 		}
 	  }

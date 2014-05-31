@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 	using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using PhraseQuery = Lucene.Net.Search.PhraseQuery;
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
 			{
 			  if (r.nextBoolean())
 			  {
-				Writer.updateDocuments(idTerm, new DocCopyIterator(doc, TestUtil.Next(r, 1, 20)));
+				Writer.UpdateDocuments(idTerm, new DocCopyIterator(doc, TestUtil.Next(r, 1, 20)));
 			  }
 			  else
 			  {

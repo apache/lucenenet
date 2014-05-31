@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 	  public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
 	  {
 		ThreadState threadState = ThreadBindings[requestingThread];
-		if (threadState != null && threadState.tryLock())
+		if (threadState != null && threadState.TryLock())
 		{
 		  return threadState;
 		}
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
 		 we should somehow prevent this. */
 		// Find the state that has minimum number of threads waiting
 		minThreadState = MinContendedThreadState();
-		if (minThreadState == null || minThreadState.hasQueuedThreads())
+		if (minThreadState == null || minThreadState.HasQueuedThreads())
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState newState = newThreadState();
@@ -83,14 +83,14 @@ namespace Lucene.Net.Index
 		}
 		Debug.Assert(minThreadState != null, "ThreadState is null");
 
-		minThreadState.@lock();
+		minThreadState.@Lock();
 		return minThreadState;
 	  }
 
 	  public override ThreadAffinityDocumentsWriterThreadPool Clone()
 	  {
 		ThreadAffinityDocumentsWriterThreadPool clone = (ThreadAffinityDocumentsWriterThreadPool) base.Clone();
-		clone.ThreadBindings = new ConcurrentDictionary<>();
+		clone.ThreadBindings = new ConcurrentDictionary<Thread, ThreadState>();
 		return clone;
 	  }
 	}

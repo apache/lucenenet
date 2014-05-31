@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -68,14 +69,12 @@ namespace Lucene.Net.Index
 	  protected internal BaseCompositeReader(R[] subReaders)
 	  {
 		this.SubReaders = subReaders;
-		this.SubReadersList = Collections.unmodifiableList(Arrays.asList(subReaders));
+        this.SubReadersList = subReaders.ToList();// Collections.unmodifiableList(Arrays.asList(subReaders));
 		Starts = new int[subReaders.Length + 1]; // build starts array
 		int maxDoc = 0, numDocs = 0;
 		for (int i = 0; i < subReaders.Length; i++)
 		{
 		  Starts[i] = maxDoc;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReader r = subReaders[i];
 		  IndexReader r = subReaders[i];
 		  maxDoc += r.MaxDoc(); // compute maxDocs
 		  if (maxDoc < 0) // overflow
@@ -93,8 +92,6 @@ namespace Lucene.Net.Index
 	  public override sealed Fields GetTermVectors(int docID)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i = readerIndex(docID);
 		int i = ReaderIndex(docID); // find subreader num
 		return SubReaders[i].GetTermVectors(docID - Starts[i]); // dispatch to subreader
 	  }
@@ -114,8 +111,6 @@ namespace Lucene.Net.Index
 	  public override sealed void Document(int docID, StoredFieldVisitor visitor)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i = readerIndex(docID);
 		int i = ReaderIndex(docID); // find subreader num
 		SubReaders[i].Document(docID - Starts[i], visitor); // dispatch to subreader
 	  }
@@ -217,10 +212,6 @@ namespace Lucene.Net.Index
 		return this.Starts[readerIndex];
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override protected final java.util.List<? extends R> getSequentialSubReaders()
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override protected final java.util.List<? extends R> getSequentialSubReaders()
 	  protected internal override sealed IList<R> SequentialSubReaders
 	  {
 		  get

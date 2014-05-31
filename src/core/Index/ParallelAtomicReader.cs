@@ -4,25 +4,26 @@ using System.Text;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System.IO;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using Bits = Lucene.Net.Util.Bits;
+    using Bits = Lucene.Net.Util.Bits;
 
 
 	/// <summary>
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
 	  private readonly FieldInfos FieldInfos_Renamed;
 	  private ParallelFields Fields_Renamed;
 	  private readonly AtomicReader[] ParallelReaders, StoredFieldsReaders;
-	  private readonly Set<AtomicReader> CompleteReaderSet = Collections.newSetFromMap(new IdentityHashMap<AtomicReader, bool?>());
+	  private readonly ISet<AtomicReader> CompleteReaderSet = Collections.newSetFromMap(new IdentityHashMap<AtomicReader, bool?>());
 	  private readonly bool CloseSubReaders;
 	  private readonly int MaxDoc_Renamed, NumDocs_Renamed;
 	  private readonly bool HasDeletions;
@@ -106,8 +107,8 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("There must be at least one main reader if storedFieldsReaders are used.");
 		}
-		this.ParallelReaders = readers.clone();
-		this.StoredFieldsReaders = storedFieldsReaders.clone();
+		this.ParallelReaders = readers.Clone();
+		this.StoredFieldsReaders = storedFieldsReaders.Clone();
 		if (ParallelReaders.Length > 0)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
@@ -163,7 +164,7 @@ namespace Lucene.Net.Index
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Fields readerFields = reader.fields();
-		  Fields readerFields = reader.fields();
+		  Fields readerFields = reader.Fields();
 		  if (readerFields != null)
 		  {
 			foreach (string field in readerFields)
@@ -193,7 +194,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final StringBuilder buffer = new StringBuilder("ParallelAtomicReader(");
 		StringBuilder buffer = new StringBuilder("ParallelAtomicReader(");
-		for (final IEnumerator<AtomicReader> iter = CompleteReaderSet.GetEnumerator(); iter.hasNext();)
+		for (IEnumerator<AtomicReader> iter = CompleteReaderSet.GetEnumerator(); iter.hasNext();)
 		{
 		  buffer.Append(iter.next());
 		  if (iter.hasNext())
@@ -285,7 +286,7 @@ namespace Lucene.Net.Index
 		EnsureOpen();
 		foreach (AtomicReader reader in StoredFieldsReaders)
 		{
-		  reader.document(docID, visitor);
+		  reader.Document(docID, visitor);
 		}
 	  }
 

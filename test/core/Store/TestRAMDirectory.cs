@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using English = Lucene.Net.Util.English;
 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Store
 		IndexDir = createTempDir("RAMDirIndex");
 
 		Directory dir = newFSDirectory(IndexDir);
-		IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
+		IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 		// add some documents
 		Document doc = null;
 		for (int i = 0; i < DocsToAdd; i++)
@@ -109,7 +109,7 @@ namespace Lucene.Net.Store
 		MockDirectoryWrapper ramDir = new MockDirectoryWrapper(random(), new RAMDirectory(dir, newIOContext(random())));
 		dir.close();
 
-		IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode.APPEND));
+		IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
 		writer.forceMerge(1);
 
 		Assert.AreEqual(ramDir.sizeInBytes(), ramDir.RecomputedSizeInBytes);

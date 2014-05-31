@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 	  public readonly int Number;
 
 	  private bool indexed;
-	  private DocValuesType_e? DocValueType;
+	  private DocValuesType_e? docValueType;
 
 	  // True if any document indexed term vectors
 	  private bool StoreTermVector;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 		this.Name = name;
 		this.indexed = indexed;
 		this.Number = number;
-		this.DocValueType = docValues;
+		this.docValueType = docValues;
 		if (indexed)
 		{
 		  this.StoreTermVector = storeTermVector;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // should only be called by FieldInfos#addOrUpdate
-	  internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e indexOptions)
+	  internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e? indexOptions)
 	  {
 		//System.out.println("FI.update field=" + name + " indexed=" + indexed + " omitNorms=" + omitNorms + " this.omitNorms=" + this.omitNorms);
 		if (this.indexed != indexed)
@@ -226,20 +226,20 @@ namespace Lucene.Net.Index
 		Debug.Assert(CheckConsistency());
 	  }
 
-	  internal DocValuesType_e? DocValuesType
+      public DocValuesType_e? DocValuesType
 	  {
 		  set
 		  {
-			if (DocValueType != null && DocValueType != value)
+			if (docValueType != null && docValueType != value)
 			{
-			  throw new System.ArgumentException("cannot change DocValues type from " + DocValueType + " to " + value + " for field \"" + Name + "\"");
+			  throw new System.ArgumentException("cannot change DocValues type from " + docValueType + " to " + value + " for field \"" + Name + "\"");
 			}
-			DocValueType = value;
+			docValueType = value;
 			Debug.Assert(CheckConsistency());
 		  }
 		  get
 		  {
-			return DocValueType;
+			return docValueType;
 		  }
 	  }
 
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public bool HasDocValues()
 	  {
-		return DocValueType != null;
+		return docValueType != null;
 	  }
 
 
@@ -286,6 +286,15 @@ namespace Lucene.Net.Index
 		  {
 			return NormTypeValue;
 		  }
+          set
+          {
+              if (NormTypeValue != null && NormTypeValue != value)
+              {
+                  throw new System.ArgumentException("cannot change Norm type from " + NormTypeValue + " to " + value + " for field \"" + Name + "\"");
+              }
+              NormTypeValue = value;
+              Debug.Assert(CheckConsistency());
+          }
 	  }
 
 	  internal void SetStoreTermVectors()
@@ -301,19 +310,6 @@ namespace Lucene.Net.Index
 		  StorePayloads = true;
 		}
 		Debug.Assert(CheckConsistency());
-	  }
-
-	  internal DocValuesType_e NormValueType
-	  {
-		  set
-		  {
-			if (NormTypeValue != null && NormTypeValue != value)
-			{
-			  throw new System.ArgumentException("cannot change Norm type from " + NormTypeValue + " to " + value + " for field \"" + Name + "\"");
-			}
-			NormTypeValue = value;
-			Debug.Assert(CheckConsistency());
-		  }
 	  }
 
 	  /// <summary>

@@ -1,3 +1,4 @@
+using System.IO;
 namespace Lucene.Net.Index
 {
 
@@ -54,7 +55,8 @@ namespace Lucene.Net.Index
 	  /// <param name="subReaders"> set of (sub)readers; this array will be cloned. </param>
 	  /// <param name="closeSubReaders"> indicates whether the subreaders should be closed
 	  /// when this MultiReader is closed </param>
-	  public MultiReader(IndexReader[] subReaders, bool closeSubReaders) : base(subReaders.clone())
+	  public MultiReader(IndexReader[] subReaders, bool closeSubReaders) 
+          : base(subReaders.Clone())
 	  {
 		this.CloseSubReaders = closeSubReaders;
 		if (!closeSubReaders)
@@ -77,11 +79,11 @@ namespace Lucene.Net.Index
 			  {
 				if (CloseSubReaders)
 				{
-				  r.close();
+				  r.Close();
 				}
 				else
 				{
-				  r.decRef();
+				  r.DecRef();
 				}
 			  }
 			  catch (IOException e)

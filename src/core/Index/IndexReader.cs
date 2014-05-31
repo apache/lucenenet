@@ -27,6 +27,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+using Lucene.Net.Support;
+    using System.Runtime.CompilerServices;
 
 	// javadocs
 
@@ -74,7 +76,7 @@ namespace Lucene.Net.Index
 
 	  private bool Closed = false;
 	  private bool ClosedByChild = false;
-	  private readonly AtomicInteger RefCount_Renamed = new AtomicInteger(1);
+	  private readonly AtomicInteger refCount = new AtomicInteger(1);
 
 	  internal IndexReader()
 	  {
@@ -97,9 +99,9 @@ namespace Lucene.Net.Index
 		void OnClose(IndexReader reader);
 	  }
 
-	  private readonly Set<ReaderClosedListener> ReaderClosedListeners = Collections.synchronizedSet(new LinkedHashSet<ReaderClosedListener>());
+	  private readonly ISet<ReaderClosedListener> ReaderClosedListeners = new ConcurrentHashSet<ReaderClosedListener>();
 
-	  private readonly Set<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
+	  private readonly ISet<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
 
 	  /// <summary>
 	  /// Expert: adds a <seealso cref="ReaderClosedListener"/>.  The
@@ -110,7 +112,7 @@ namespace Lucene.Net.Index
 	  public void AddReaderClosedListener(ReaderClosedListener listener)
 	  {
 		EnsureOpen();
-		ReaderClosedListeners.add(listener);
+		ReaderClosedListeners.Add(listener);
 	  }
 
 	  /// <summary>
@@ -121,7 +123,7 @@ namespace Lucene.Net.Index
 	  public void RemoveReaderClosedListener(ReaderClosedListener listener)
 	  {
 		EnsureOpen();
-		ReaderClosedListeners.remove(listener);
+		ReaderClosedListeners.Remove(listener);
 	  }
 
 	  /// <summary>
@@ -135,7 +137,7 @@ namespace Lucene.Net.Index
 	  public void RegisterParentReader(IndexReader reader)
 	  {
 		EnsureOpen();
-		ParentReaders.add(reader);
+		ParentReaders.Add(reader);
 	  }
 
 	  private void NotifyReaderClosedListeners(Exception th)
@@ -144,10 +146,10 @@ namespace Lucene.Net.Index
 		{
 		  foreach (ReaderClosedListener listener in ReaderClosedListeners)
 		  {
-			try
-			{
+			/*try
+			{*/
 			  listener.OnClose(this);
-			}
+			/*}
 			catch (Exception t)
 			{
 			  if (th == null)
@@ -156,9 +158,9 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-				th.addSuppressed(t);
+				th.AddSuppressed(t);
 			  }
-			}
+			}*/
 		  }
 		  IOUtils.ReThrowUnchecked(th);
 		}
@@ -172,7 +174,7 @@ namespace Lucene.Net.Index
 		  {
 			parent.ClosedByChild = true;
 			// cross memory barrier by a fake write:
-			parent.RefCount_Renamed.addAndGet(0);
+			parent.refCount.AddAndGet(0);
 			// recurse:
 			parent.ReportCloseToParentReaders();
 		  }
@@ -187,7 +189,7 @@ namespace Lucene.Net.Index
 		  {
 			// NOTE: don't ensureOpen, so that callers can see
 			// refCount is 0 (reader is closed)
-			return RefCount_Renamed.get();
+			return refCount.Get();
 		  }
 	  }
 
@@ -238,9 +240,9 @@ namespace Lucene.Net.Index
 	  public bool TryIncRef()
 	  {
 		int count;
-		while ((count = RefCount_Renamed.get()) > 0)
+		while ((count = refCount.Get()) > 0)
 		{
-		  if (RefCount_Renamed.compareAndSet(count, count + 1))
+		  if (refCount.CompareAndSet(count, count + 1))
 		  {
 			return true;
 		  }
@@ -261,14 +263,14 @@ namespace Lucene.Net.Index
 	  {
 		// only check refcount here (don't call ensureOpen()), so we can
 		// still close the reader if it was made invalid by a child:
-		if (RefCount_Renamed.get() <= 0)
+		if (refCount.Get() <= 0)
 		{
 		  throw new AlreadyClosedException("this IndexReader is closed");
 		}
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int rc = refCount.decrementAndGet();
-		int rc = RefCount_Renamed.decrementAndGet();
+		int rc = refCount.DecrementAndGet();
 		if (rc == 0)
 		{
 		  Closed = true;
@@ -295,7 +297,7 @@ namespace Lucene.Net.Index
 		}
 		else if (rc < 0)
 		{
-		  throw new IllegalStateException("too many decRef calls: refCount is " + rc + " after decrement");
+		  throw new InvalidOperationException("too many decRef calls: refCount is " + rc + " after decrement");
 		}
 	  }
 
@@ -305,7 +307,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal void EnsureOpen()
 	  {
-		if (RefCount_Renamed.get() <= 0)
+		if (refCount.Get() <= 0)
 		{
 		  throw new AlreadyClosedException("this IndexReader is closed");
 		}
@@ -336,9 +338,9 @@ namespace Lucene.Net.Index
 	  /// To lookup instances from caches use <seealso cref="#getCoreCacheKey"/> and 
 	  /// <seealso cref="#getCombinedCoreAndDeletesKey"/>.
 	  /// </summary>
-	  public override sealed int HashCode()
+	  public override sealed int GetHashCode()
 	  {
-		return System.identityHashCode(this);
+		return RuntimeHelpers.GetHashCode(this);
 	  }
 
 	  /// <summary>
@@ -347,7 +349,7 @@ namespace Lucene.Net.Index
 	  /// <param name="directory"> the index directory </param>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  /// @deprecated Use <seealso cref="DirectoryReader#open(Directory)"/> 
-	  [Obsolete("Use <seealso cref="DirectoryReader#open(Lucene.Net.Store.Directory)"/>")]
+	  [Obsolete("Use <seealso cref=DirectoryReader#open(Lucene.Net.Store.Directory)/>")]
 	  public static DirectoryReader Open(Directory directory)
 	  {
 		return DirectoryReader.Open(directory);
@@ -369,7 +371,7 @@ namespace Lucene.Net.Index
 	  ///  to -1 to skip loading the terms index entirely. </param>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  /// @deprecated Use <seealso cref="DirectoryReader#open(Directory,int)"/> 
-	  [Obsolete("Use <seealso cref="DirectoryReader#open(Lucene.Net.Store.Directory,int)"/>")]
+	  [Obsolete("Use <seealso cref=DirectoryReader#open(Lucene.Net.Store.Directory,int)/>")]
 	  public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
 	  {
 		return DirectoryReader.Open(directory, termInfosIndexDivisor);
@@ -393,7 +395,7 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// @lucene.experimental </seealso>
 	  /// @deprecated Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/> 
-	  [Obsolete("Use <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/>")]
+	  [Obsolete("Use <seealso cref=DirectoryReader#open(IndexWriter,boolean)/>")]
 	  public static DirectoryReader Open(IndexWriter writer, bool applyAllDeletes)
 	  {
 		return DirectoryReader.Open(writer, applyAllDeletes);
@@ -405,7 +407,7 @@ namespace Lucene.Net.Index
 	  /// <param name="commit"> the commit point to open </param>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit)"/> 
-	  [Obsolete("Use <seealso cref="DirectoryReader#open(IndexCommit)"/>")]
+	  [Obsolete("Use <seealso cref=DirectoryReader#open(IndexCommit)/>")]
 	  public static DirectoryReader Open(IndexCommit commit)
 	  {
 		return DirectoryReader.Open(commit);
@@ -428,7 +430,7 @@ namespace Lucene.Net.Index
 	  ///  to -1 to skip loading the terms index entirely. </param>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  /// @deprecated Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/> 
-	  [Obsolete("Use <seealso cref="DirectoryReader#open(IndexCommit,int)"/>")]
+	  [Obsolete("Use <seealso cref=DirectoryReader#open(IndexCommit,int)/>")]
 	  public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
 	  {
 		return DirectoryReader.Open(commit, termInfosIndexDivisor);
@@ -507,8 +509,6 @@ namespace Lucene.Net.Index
 	  // IndexableField
 	  public Document Document(int docID)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Document.DocumentStoredFieldVisitor visitor = new Lucene.Net.Document.DocumentStoredFieldVisitor();
 		DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor();
 		Document(docID, visitor);
 		return visitor.Document;
@@ -519,10 +519,8 @@ namespace Lucene.Net.Index
 	  /// fields.  Note that this is simply sugar for {@link
 	  /// DocumentStoredFieldVisitor#DocumentStoredFieldVisitor(Set)}.
 	  /// </summary>
-	  public Document Document(int docID, Set<string> fieldsToLoad)
+	  public Document Document(int docID, ISet<string> fieldsToLoad)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Document.DocumentStoredFieldVisitor visitor = new Lucene.Net.Document.DocumentStoredFieldVisitor(fieldsToLoad);
 		DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(fieldsToLoad);
 		Document(docID, visitor);
 		return visitor.Document;

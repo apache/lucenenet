@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 
 	using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
 	using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Counter = Lucene.Net.Util.Counter;
 	using IOUtils = Lucene.Net.Util.IOUtils;
@@ -56,29 +56,29 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType dvType = field.fieldType().docValueType();
-		DocValuesType_e dvType = field.FieldType().docValueType();
+		DocValuesType_e? dvType = field.FieldType().DocValueType();
 		if (dvType != null)
 		{
-		  fieldInfo.DocValuesType_e = dvType;
-		  if (dvType == DocValuesType.BINARY)
+		  fieldInfo.DocValuesType = dvType;
+		  if (dvType == DocValuesType_e.BINARY)
 		  {
 			AddBinaryField(fieldInfo, docID, field.BinaryValue());
 		  }
-		  else if (dvType == DocValuesType.SORTED)
+          else if (dvType == DocValuesType_e.SORTED)
 		  {
 			AddSortedField(fieldInfo, docID, field.BinaryValue());
 		  }
-		  else if (dvType == DocValuesType.SORTED_SET)
+          else if (dvType == DocValuesType_e.SORTED_SET)
 		  {
 			AddSortedSetField(fieldInfo, docID, field.BinaryValue());
 		  }
-		  else if (dvType == DocValuesType.NUMERIC)
+          else if (dvType == DocValuesType_e.NUMERIC)
 		  {
-			if (!(field.NumericValue() is long?))
+			if (!(field.NumericValue is long?))
 			{
-			  throw new System.ArgumentException("illegal type " + field.NumericValue().GetType() + ": DocValues types must be Long");
+			  throw new System.ArgumentException("illegal type " + field.NumericValue.GetType() + ": DocValues types must be Long");
 			}
-			AddNumericField(fieldInfo, docID, (long)field.NumericValue());
+			AddNumericField(fieldInfo, docID, (long)field.NumericValue);
 		  }
 		  else
 		  {
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 	  {
 		if (Writers.Count > 0)
 		{
-		  DocValuesFormat fmt = state.SegmentInfo.Codec.docValuesFormat();
+		  DocValuesFormat fmt = state.SegmentInfo.Codec.DocValuesFormat();
 		  DocValuesConsumer dvConsumer = fmt.FieldsConsumer(state);
 		  bool success = false;
 		  try

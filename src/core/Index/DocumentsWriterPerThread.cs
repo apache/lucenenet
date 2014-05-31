@@ -23,12 +23,6 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_MASK;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.ByteBlockPool.BYTE_BLOCK_SIZE;
-
-
 	using Analyzer = Lucene.Net.Analysis.Analyzer;
 	using Codec = Lucene.Net.Codecs.Codec;
 	using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
@@ -45,6 +39,8 @@ namespace Lucene.Net.Index
 	using IntBlockPool = Lucene.Net.Util.IntBlockPool;
 	using MutableBits = Lucene.Net.Util.MutableBits;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+using System.Globalization;
+    using Lucene.Net.Util;
 
 	internal class DocumentsWriterPerThread
 	{
@@ -94,25 +90,13 @@ namespace Lucene.Net.Index
 
 		  // Build up indexing chain:
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsHashConsumer termVectorsWriter = new TermVectorsConsumer(documentsWriterPerThread);
 			TermsHashConsumer termVectorsWriter = new TermVectorsConsumer(documentsWriterPerThread);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
 			TermsHashConsumer freqProxWriter = new FreqProxTermsWriter();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true, new TermsHash(documentsWriterPerThread, termVectorsWriter, false, null));
 			InvertedDocConsumer termsHash = new TermsHash(documentsWriterPerThread, freqProxWriter, true, new TermsHash(documentsWriterPerThread, termVectorsWriter, false, null));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final NormsConsumer normsWriter = new NormsConsumer();
 			NormsConsumer normsWriter = new NormsConsumer();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocInverter docInverter = new DocInverter(documentsWriterPerThread.docState, termsHash, normsWriter);
-			DocInverter docInverter = new DocInverter(documentsWriterPerThread.DocState, termsHash, normsWriter);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(new StoredFieldsProcessor(documentsWriterPerThread), new DocValuesProcessor(documentsWriterPerThread.bytesUsed));
-			StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(new StoredFieldsProcessor(documentsWriterPerThread), new DocValuesProcessor(documentsWriterPerThread.BytesUsed_Renamed));
+			DocInverter docInverter = new DocInverter(documentsWriterPerThread.docState, termsHash, normsWriter);
+			StoredFieldsConsumer storedFields = new TwoStoredFieldsConsumers(new StoredFieldsProcessor(documentsWriterPerThread), new DocValuesProcessor(documentsWriterPerThread.bytesUsed));
 			return new DocFieldProcessor(documentsWriterPerThread, docInverter, storedFields);
 		  }
 	  }
@@ -124,9 +108,7 @@ namespace Lucene.Net.Index
 		internal InfoStream InfoStream;
 		internal Similarity Similarity;
 		internal int DocID;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: Iterable<? extends IndexableField> doc;
-		internal IEnumerable<?> Doc;
+		internal IEnumerable<IndexableField> Doc;
 		internal string MaxTermPrefix;
 
 		internal DocState(DocumentsWriterPerThread docWriter, InfoStream infoStream)
@@ -174,7 +156,7 @@ namespace Lucene.Net.Index
 	  ///  currently buffered docs.  this resets our state,
 	  ///  discarding any docs added since last flush. 
 	  /// </summary>
-	  internal virtual void Abort(Set<string> createdFiles)
+	  internal virtual void Abort(ISet<string> createdFiles)
 	  {
 		//System.out.println(Thread.currentThread().getName() + ": now abort seg=" + segmentInfo.name);
 		HasAborted = Aborting = true;
@@ -208,9 +190,9 @@ namespace Lucene.Net.Index
 	  internal readonly Codec Codec;
 	  internal readonly TrackingDirectoryWrapper Directory;
 	  internal readonly Directory DirectoryOrig;
-	  internal readonly DocState DocState;
+	  internal readonly DocState docState;
 	  internal readonly DocConsumer Consumer;
-	  internal readonly Counter BytesUsed_Renamed;
+	  internal readonly Counter bytesUsed;
 
 	  internal SegmentWriteState FlushState;
 	  // Updates for our still-in-RAM (to be flushed next) segment
@@ -221,12 +203,12 @@ namespace Lucene.Net.Index
 
 	  private FieldInfos.Builder FieldInfos;
 	  private readonly InfoStream InfoStream;
-	  private int NumDocsInRAM_Renamed;
+	  private int numDocsInRAM;
 	  internal readonly DocumentsWriterDeleteQueue DeleteQueue;
 	  private readonly DeleteSlice DeleteSlice;
-	  private readonly NumberFormat Nf = NumberFormat.getInstance(Locale.ROOT);
+	  private readonly NumberFormatInfo Nf = CultureInfo.InvariantCulture.NumberFormat;
 	  internal readonly Allocator ByteBlockAllocator;
-	  internal readonly IntBlockPool.Allocator IntBlockAllocator;
+	  internal readonly IntBlockPool.Allocator intBlockAllocator;
 	  private readonly LiveIndexWriterConfig IndexWriterConfig;
 
 
@@ -238,19 +220,19 @@ namespace Lucene.Net.Index
 		this.IndexWriterConfig = indexWriterConfig;
 		this.InfoStream = infoStream;
 		this.Codec = indexWriterConfig.Codec;
-		this.DocState = new DocState(this, infoStream);
-		this.DocState.Similarity = indexWriterConfig.Similarity;
-		BytesUsed_Renamed = Counter.NewCounter();
-		ByteBlockAllocator = new DirectTrackingAllocator(BytesUsed_Renamed);
+		this.docState = new DocState(this, infoStream);
+		this.docState.Similarity = indexWriterConfig.Similarity;
+		bytesUsed = Counter.NewCounter();
+		ByteBlockAllocator = new DirectTrackingAllocator(bytesUsed);
 		PendingUpdates = new BufferedUpdates();
-		IntBlockAllocator = new IntBlockAllocator(BytesUsed_Renamed);
+		intBlockAllocator = new IntBlockAllocator(bytesUsed);
 		this.DeleteQueue = deleteQueue;
-		Debug.Assert(NumDocsInRAM_Renamed == 0, "num docs " + NumDocsInRAM_Renamed);
+		Debug.Assert(numDocsInRAM == 0, "num docs " + numDocsInRAM);
 		PendingUpdates.Clear();
 		DeleteSlice = deleteQueue.NewSlice();
 
 		SegmentInfo_Renamed = new SegmentInfo(DirectoryOrig, Constants.LUCENE_MAIN_VERSION, segmentName, -1, false, Codec, null);
-		Debug.Assert(NumDocsInRAM_Renamed == 0);
+		Debug.Assert(numDocsInRAM == 0);
 		if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
 		{
 		  infoStream.Message("DWPT", Thread.CurrentThread.Name + " init seg=" + segmentName + " delQueue=" + deleteQueue);
@@ -284,16 +266,16 @@ namespace Lucene.Net.Index
 		return true;
 	  }
 
-	  public virtual void updateDocument<T1>(IEnumerable<T1> doc, Analyzer analyzer, Term delTerm) where T1 : IndexableField
+	  public virtual void updateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
 	  {
 		Debug.Assert(TestPoint("DocumentsWriterPerThread addDocument start"));
 		Debug.Assert(DeleteQueue != null);
-		DocState.Doc = doc;
-		DocState.Analyzer = analyzer;
-		DocState.DocID = NumDocsInRAM_Renamed;
+		docState.Doc = doc;
+		docState.Analyzer = analyzer;
+		docState.DocID = numDocsInRAM;
 		if (INFO_VERBOSE && InfoStream.IsEnabled("DWPT"))
 		{
-		  InfoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + DocState.DocID + " seg=" + SegmentInfo_Renamed.Name);
+		  InfoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + docState.DocID + " seg=" + SegmentInfo_Renamed.Name);
 		}
 		bool success = false;
 		try
@@ -304,7 +286,7 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			DocState.Clear();
+			docState.Clear();
 		  }
 		  success = true;
 		}
@@ -315,8 +297,8 @@ namespace Lucene.Net.Index
 			if (!Aborting)
 			{
 			  // mark document as deleted
-			  DeleteDocID(DocState.DocID);
-			  NumDocsInRAM_Renamed++;
+			  DeleteDocID(docState.DocID);
+			  numDocsInRAM++;
 			}
 			else
 			{
@@ -340,14 +322,14 @@ namespace Lucene.Net.Index
 		FinishDocument(delTerm);
 	  }
 
-	  public virtual int updateDocuments<T1>(IEnumerable<T1> docs, Analyzer analyzer, Term delTerm) where T1 : Iterable<T1 extends IndexableField>
+	  public virtual int UpdateDocuments(IEnumerable<IndexableField> docs, Analyzer analyzer, Term delTerm)
 	  {
 		Debug.Assert(TestPoint("DocumentsWriterPerThread addDocuments start"));
 		Debug.Assert(DeleteQueue != null);
-		DocState.Analyzer = analyzer;
+		docState.Analyzer = analyzer;
 		if (INFO_VERBOSE && InfoStream.IsEnabled("DWPT"))
 		{
-		  InfoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + DocState.DocID + " seg=" + SegmentInfo_Renamed.Name);
+		  InfoStream.Message("DWPT", Thread.CurrentThread.Name + " update delTerm=" + delTerm + " docID=" + docState.DocID + " seg=" + SegmentInfo_Renamed.Name);
 		}
 		int docCount = 0;
 		bool allDocsIndexed = false;
@@ -355,10 +337,10 @@ namespace Lucene.Net.Index
 		{
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 //ORIGINAL LINE: for(Iterable<? extends IndexableField> doc : docs)
-		  foreach (IEnumerable<?> doc in docs)
+		  foreach (IEnumerable<IndexableField> doc in docs)
 		  {
-			DocState.Doc = doc;
-			DocState.DocID = NumDocsInRAM_Renamed;
+			docState.Doc = doc;
+			docState.DocID = numDocsInRAM;
 			docCount++;
 
 			bool success = false;
@@ -376,7 +358,7 @@ namespace Lucene.Net.Index
 				{
 				  // Incr here because finishDocument will not
 				  // be called (because an exc is being thrown):
-				  NumDocsInRAM_Renamed++;
+				  numDocsInRAM++;
 				}
 				else
 				{
@@ -409,7 +391,7 @@ namespace Lucene.Net.Index
 		  {
 			DeleteQueue.Add(delTerm, DeleteSlice);
 			Debug.Assert(DeleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
-			DeleteSlice.Apply(PendingUpdates, NumDocsInRAM_Renamed - docCount);
+			DeleteSlice.Apply(PendingUpdates, numDocsInRAM - docCount);
 		  }
 
 		}
@@ -419,7 +401,7 @@ namespace Lucene.Net.Index
 		  {
 			// the iterator threw an exception that is not aborting 
 			// go and mark all docs from this block as deleted
-			int docID = NumDocsInRAM_Renamed - 1;
+			int docID = numDocsInRAM - 1;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int endDocID = docID - docCount;
 			int endDocID = docID - docCount;
@@ -429,7 +411,7 @@ namespace Lucene.Net.Index
 			  docID--;
 			}
 		  }
-		  DocState.Clear();
+          docState.Clear();
 		}
 
 		return docCount;
@@ -445,7 +427,7 @@ namespace Lucene.Net.Index
 		 * the updated slice we get from 1. holds all the deletes that have occurred
 		 * since we updated the slice the last time.
 		 */
-		bool applySlice = NumDocsInRAM_Renamed != 0;
+		bool applySlice = numDocsInRAM != 0;
 		if (delTerm != null)
 		{
 		  DeleteQueue.Add(delTerm, DeleteSlice);
@@ -458,13 +440,13 @@ namespace Lucene.Net.Index
 
 		if (applySlice)
 		{
-		  DeleteSlice.Apply(PendingUpdates, NumDocsInRAM_Renamed);
+		  DeleteSlice.Apply(PendingUpdates, numDocsInRAM);
 		} // if we don't need to apply we must reset!
 		else
 		{
 		  DeleteSlice.Reset();
 		}
-		++NumDocsInRAM_Renamed;
+		++numDocsInRAM;
 	  }
 
 	  // Buffer a specific docID for deletion. Currently only
@@ -489,7 +471,7 @@ namespace Lucene.Net.Index
 	  public virtual int NumDeleteTerms()
 	  {
 		// public for FlushPolicy
-		return PendingUpdates.NumTermDeletes.get();
+		return PendingUpdates.NumTermDeletes.Get();
 	  }
 
 	  /// <summary>
@@ -500,7 +482,7 @@ namespace Lucene.Net.Index
 		  get
 		  {
 			// public for FlushPolicy
-			return NumDocsInRAM_Renamed;
+			return numDocsInRAM;
 		  }
 	  }
 
@@ -512,7 +494,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  internal virtual FrozenBufferedUpdates PrepareFlush()
 	  {
-		Debug.Assert(NumDocsInRAM_Renamed > 0);
+		Debug.Assert(numDocsInRAM > 0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final FrozenBufferedUpdates globalUpdates = deleteQueue.freezeGlobalBuffer(deleteSlice);
 		FrozenBufferedUpdates globalUpdates = DeleteQueue.FreezeGlobalBuffer(DeleteSlice);
@@ -521,7 +503,7 @@ namespace Lucene.Net.Index
 		if (DeleteSlice != null)
 		{
 		  // apply all deletes before we flush and release the delete slice
-		  DeleteSlice.Apply(PendingUpdates, NumDocsInRAM_Renamed);
+		  DeleteSlice.Apply(PendingUpdates, numDocsInRAM);
 		  Debug.Assert(DeleteSlice.Empty);
 		  DeleteSlice.Reset();
 		}
@@ -532,14 +514,10 @@ namespace Lucene.Net.Index
 	  /// Flush all pending docs to a new segment </summary>
 	  internal virtual FlushedSegment Flush()
 	  {
-		Debug.Assert(NumDocsInRAM_Renamed > 0);
+		Debug.Assert(numDocsInRAM > 0);
 		Debug.Assert(DeleteSlice.Empty, "all deletes must be applied in prepareFlush");
-		SegmentInfo_Renamed.DocCount = NumDocsInRAM_Renamed;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentWriteState flushState = new SegmentWriteState(infoStream, directory, segmentInfo, fieldInfos.finish(), indexWriterConfig.getTermIndexInterval(), pendingUpdates, new Lucene.Net.Store.IOContext(new Lucene.Net.Store.FlushInfo(numDocsInRAM, bytesUsed())));
-		SegmentWriteState flushState = new SegmentWriteState(InfoStream, Directory, SegmentInfo_Renamed, FieldInfos.Finish(), IndexWriterConfig.TermIndexInterval, PendingUpdates, new IOContext(new FlushInfo(NumDocsInRAM_Renamed, BytesUsed())));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double startMBUsed = bytesUsed() / 1024.0 / 1024.0;
+		SegmentInfo_Renamed.DocCount = numDocsInRAM;
+		SegmentWriteState flushState = new SegmentWriteState(InfoStream, Directory, SegmentInfo_Renamed, FieldInfos.Finish(), IndexWriterConfig.TermIndexInterval, PendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed())));
 		double startMBUsed = BytesUsed() / 1024.0 / 1024.0;
 
 		// Apply delete-by-docID now (delete-byDocID only
@@ -547,13 +525,13 @@ namespace Lucene.Net.Index
 		// doc, eg if analyzer has some problem w/ the text):
 		if (PendingUpdates.DocIDs.Count > 0)
 		{
-		  flushState.LiveDocs = Codec.LiveDocsFormat().newLiveDocs(NumDocsInRAM_Renamed);
+		  flushState.LiveDocs = Codec.LiveDocsFormat().NewLiveDocs(numDocsInRAM);
 		  foreach (int delDocID in PendingUpdates.DocIDs)
 		  {
-			flushState.LiveDocs.clear(delDocID);
+			flushState.LiveDocs.Clear(delDocID);
 		  }
 		  flushState.DelCountOnFlush = PendingUpdates.DocIDs.Count;
-		  PendingUpdates.BytesUsed.addAndGet(-PendingUpdates.DocIDs.Count * BufferedUpdates.BYTES_PER_DEL_DOCID);
+		  PendingUpdates.BytesUsed.AddAndGet(-PendingUpdates.DocIDs.Count * BufferedUpdates.BYTES_PER_DEL_DOCID);
 		  PendingUpdates.DocIDs.Clear();
 		}
 
@@ -568,7 +546,7 @@ namespace Lucene.Net.Index
 
 		if (InfoStream.IsEnabled("DWPT"))
 		{
-		  InfoStream.Message("DWPT", "flush postings as segment " + flushState.SegmentInfo.name + " numDocs=" + NumDocsInRAM_Renamed);
+		  InfoStream.Message("DWPT", "flush postings as segment " + flushState.SegmentInfo.Name + " numDocs=" + numDocsInRAM);
 		}
 
 		bool success = false;
@@ -577,21 +555,17 @@ namespace Lucene.Net.Index
 		{
 		  Consumer.Flush(flushState);
 		  PendingUpdates.Terms.Clear();
-		  SegmentInfo_Renamed.Files = new HashSet<>(Directory.CreatedFiles);
+		  SegmentInfo_Renamed.Files = new HashSet<string>(Directory.CreatedFiles);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(segmentInfo, 0, -1L, -1L);
 		  SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(SegmentInfo_Renamed, 0, -1L, -1L);
 		  if (InfoStream.IsEnabled("DWPT"))
 		  {
 			InfoStream.Message("DWPT", "new segment has " + (flushState.LiveDocs == null ? 0 : (flushState.SegmentInfo.DocCount - flushState.DelCountOnFlush)) + " deleted docs");
-			InfoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.hasVectors() ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.hasNorms() ? "norms" : "no norms") + "; " + (flushState.FieldInfos.hasDocValues() ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.hasProx() ? "prox" : "no prox") + "; " + (flushState.FieldInfos.hasFreq() ? "freqs" : "no freqs"));
+			InfoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.HasVectors() ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.hasNorms() ? "norms" : "no norms") + "; " + (flushState.FieldInfos.hasDocValues() ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.hasProx() ? "prox" : "no prox") + "; " + (flushState.FieldInfos.hasFreq() ? "freqs" : "no freqs"));
 			InfoStream.Message("DWPT", "flushedFiles=" + segmentInfoPerCommit.Files());
 			InfoStream.Message("DWPT", "flushed codec=" + Codec);
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BufferedUpdates segmentDeletes;
 		  BufferedUpdates segmentDeletes;
 		  if (PendingUpdates.Queries.Count == 0 && PendingUpdates.NumericUpdates.Count == 0 && PendingUpdates.BinaryUpdates.Count == 0)
 		  {
@@ -605,8 +579,6 @@ namespace Lucene.Net.Index
 
 		  if (InfoStream.IsEnabled("DWPT"))
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double newSegmentSize = segmentInfoPerCommit.sizeInBytes()/1024.0/1024.0;
 			double newSegmentSize = segmentInfoPerCommit.SizeInBytes() / 1024.0 / 1024.0;
 			InfoStream.Message("DWPT", "flushed: segment=" + SegmentInfo_Renamed.Name + " ramUsed=" + Nf.format(startMBUsed) + " MB" + " newFlushedSize(includes docstores)=" + Nf.format(newSegmentSize) + " MB" + " docs/MB=" + Nf.format(flushState.SegmentInfo.DocCount / newSegmentSize));
 		  }
@@ -628,9 +600,9 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private readonly Set<string> FilesToDelete = new HashSet<string>();
+	  private readonly HashSet<string> FilesToDelete = new HashSet<string>();
 
-	  public virtual Set<string> PendingFilesToDelete()
+	  public virtual ISet<string> PendingFilesToDelete()
 	  {
 		return FilesToDelete;
 	  }
@@ -662,7 +634,7 @@ namespace Lucene.Net.Index
 		  // creating CFS so that 1) .si isn't slurped into CFS,
 		  // and 2) .si reflects useCompoundFile=true change
 		  // above:
-		  Codec.SegmentInfoFormat().SegmentInfoWriter.write(Directory, newSegment.Info, flushedSegment.FieldInfos, context);
+		  Codec.SegmentInfoFormat().SegmentInfoWriter.Write(Directory, newSegment.Info, flushedSegment.FieldInfos, context);
 
 		  // TODO: ideally we would freeze newSegment here!!
 		  // because any changes after writing the .si will be
@@ -692,7 +664,7 @@ namespace Lucene.Net.Index
 
 			SegmentCommitInfo info = flushedSegment.SegmentInfo;
 			Codec codec = info.Info.Codec;
-			codec.LiveDocsFormat().writeLiveDocs(flushedSegment.LiveDocs, Directory, info, delCount, context);
+			codec.LiveDocsFormat().WriteLiveDocs(flushedSegment.LiveDocs, Directory, info, delCount, context);
 			newSegment.DelCount = delCount;
 			newSegment.AdvanceDelGen();
 		  }
@@ -705,7 +677,7 @@ namespace Lucene.Net.Index
 		  {
 			if (InfoStream.IsEnabled("DWPT"))
 			{
-			  InfoStream.Message("DWPT", "hit exception creating compound file for newly flushed segment " + newSegment.Info.name);
+			  InfoStream.Message("DWPT", "hit exception creating compound file for newly flushed segment " + newSegment.Info.Name);
 			}
 		  }
 		}
@@ -723,16 +695,16 @@ namespace Lucene.Net.Index
 
 	  internal virtual long BytesUsed()
 	  {
-		return BytesUsed_Renamed.Get() + PendingUpdates.BytesUsed.get();
+		return bytesUsed.Get() + PendingUpdates.BytesUsed.Get();
 	  }
 
 	  /* Initial chunks size of the shared byte[] blocks used to
 	     store postings data */
-	  internal static readonly int BYTE_BLOCK_NOT_MASK = ~BYTE_BLOCK_MASK;
+	  internal static readonly int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
 
 	  /* if you increase this, you must fix field cache impl for
 	   * getTerms/getTermsIndex requires <= 32768 */
-	  internal static readonly int MAX_TERM_LENGTH_UTF8 = BYTE_BLOCK_SIZE-2;
+      public static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
 
 	  private class IntBlockAllocator : IntBlockPool.Allocator
@@ -764,7 +736,7 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-		return "DocumentsWriterPerThread [pendingDeletes=" + PendingUpdates + ", segment=" + (SegmentInfo_Renamed != null ? SegmentInfo_Renamed.Name : "null") + ", aborting=" + Aborting + ", numDocsInRAM=" + NumDocsInRAM_Renamed + ", deleteQueue=" + DeleteQueue + "]";
+		return "DocumentsWriterPerThread [pendingDeletes=" + PendingUpdates + ", segment=" + (SegmentInfo_Renamed != null ? SegmentInfo_Renamed.Name : "null") + ", aborting=" + Aborting + ", numDocsInRAM=" + numDocsInRAM + ", deleteQueue=" + DeleteQueue + "]";
 	  }
 
 	}

@@ -25,6 +25,7 @@ namespace Lucene.Net.Index
 	using SearcherManager = Lucene.Net.Search.SearcherManager; // javadocs
 	using Directory = Lucene.Net.Store.Directory;
 	using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
+    using System.IO;
 
 	/// <summary>
 	/// DirectoryReader is an implementation of <seealso cref="CompositeReader"/>
@@ -287,7 +288,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: final String[] files = dir.listAll();
 		string[] files = dir.ListAll();
 
-		IList<IndexCommit> commits = new List<IndexCommit>();
+		List<IndexCommit> commits = new List<IndexCommit>();
 
 		SegmentInfos latest = new SegmentInfos();
 		latest.Read(dir);
@@ -315,7 +316,7 @@ namespace Lucene.Net.Index
 			  sis.Read(dir, fileName);
 			}
 //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-			catch (FileNotFoundException | NoSuchFileException fnfe)
+			catch (FileNotFoundException/* | NoSuchFileException fnfe*/)
 			{
 			  // LUCENE-948: on NFS (and maybe others), if
 			  // you have writers switching back and forth

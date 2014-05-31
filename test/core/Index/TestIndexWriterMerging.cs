@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 

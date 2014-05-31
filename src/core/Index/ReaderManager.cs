@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override void DecRef(DirectoryReader reference)
 	  {
-		reference.decRef();
+		reference.DecRef();
 	  }
 
 	  protected internal override DirectoryReader RefreshIfNeeded(DirectoryReader referenceToRefresh)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override bool TryIncRef(DirectoryReader reference)
 	  {
-		return reference.tryIncRef();
+		return reference.TryIncRef();
 	  }
 
 	  protected internal override int GetRefCount(DirectoryReader reference)

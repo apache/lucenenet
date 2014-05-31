@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 	  ///  sorted by age (the 0th one is the oldest commit).
 	  ///  Note that for a new index this method is invoked with
 	  ///  an empty list. </param>
-	  public abstract void onInit<T1>(IList<T1> commits) where T1 : IndexCommit;
+      public abstract void OnInit(IList<IndexCommit> commits);
 
 	  /// <summary>
 	  /// <p>this is called each time the writer completed a commit.
@@ -109,18 +109,11 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  /// <param name="commits"> List of <seealso cref="IndexCommit"/>,
 	  ///  sorted by age (the 0th one is the oldest commit). </param>
-	  public abstract void onCommit<T1>(IList<T1> commits) where T1 : IndexCommit;
+      public abstract void OnCommit(IList<IndexCommit> commits);
 
 	  public override IndexDeletionPolicy Clone()
 	  {
-		try
-		{
-		  return (IndexDeletionPolicy) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception(e);
-		}
+		  return (IndexDeletionPolicy) base.MemberwiseClone();
 	  }
 
 	}

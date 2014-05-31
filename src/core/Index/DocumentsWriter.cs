@@ -36,6 +36,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using InfoStream = Lucene.Net.Util.InfoStream;
+using Lucene.Net.Support;
 
 	/// <summary>
 	/// this class accepts multiple added documents and directly
@@ -148,8 +149,6 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 			// TODO why is this synchronized?
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
 			DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
 			deleteQueue.AddDelete(queries);
 			FlushControl.DoOnDelete();
@@ -165,8 +164,6 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 			// TODO why is this synchronized?
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
 			DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
 			deleteQueue.AddDelete(terms);
 			FlushControl.DoOnDelete();
@@ -178,8 +175,6 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
 			DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
 			deleteQueue.AddNumericUpdate(new NumericDocValuesUpdate(term, field, value));
 			FlushControl.DoOnDelete();
@@ -191,8 +186,6 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterDeleteQueue deleteQueue = this.deleteQueue;
 			DocumentsWriterDeleteQueue deleteQueue = this.DeleteQueue;
 			deleteQueue.AddBinaryUpdate(new BinaryDocValuesUpdate(term, field, value));
 			FlushControl.DoOnDelete();
@@ -238,7 +231,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return NumDocsInRAM.get();
+			return NumDocsInRAM.Get();
 		  }
 	  }
 
@@ -260,11 +253,11 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(!Thread.holdsLock(writer), "IndexWriter lock should never be hold when aborting");
+			Debug.Assert(!Thread.HoldsLock(writer), "IndexWriter lock should never be hold when aborting");
 			bool success = false;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<String> newFilesSet = new java.util.HashSet<>();
-			Set<string> newFilesSet = new HashSet<string>();
+			HashSet<string> newFilesSet = new HashSet<string>();
 			try
 			{
 			  DeleteQueue.Clear();
@@ -280,14 +273,14 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = perThreadPool.getThreadState(i);
 				ThreadState perThread = PerThreadPool.GetThreadState(i);
-				perThread.@lock();
+				perThread.@Lock();
 				try
 				{
 				  AbortThreadState(perThread, newFilesSet);
 				}
 				finally
 				{
-				  perThread.unlock();
+				  perThread.Unlock();
 				}
 			  }
 			  FlushControl.AbortPendingFlushes(newFilesSet);
@@ -323,13 +316,13 @@ namespace Lucene.Net.Index
 			  int limit = PerThreadPool.MaxThreadStates;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<String> newFilesSet = new java.util.HashSet<>();
-			  Set<string> newFilesSet = new HashSet<string>();
+			  HashSet<string> newFilesSet = new HashSet<string>();
 			  for (int i = 0; i < limit; i++)
 			  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = perThreadPool.getThreadState(i);
 				ThreadState perThread = PerThreadPool.GetThreadState(i);
-				perThread.@lock();
+				perThread.@Lock();
 				AbortThreadState(perThread, newFilesSet);
 			  }
 			  DeleteQueue.Clear();
@@ -353,7 +346,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  private void AbortThreadState(ThreadState perThread, Set<string> newFiles)
+	  private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
 	  {
 		Debug.Assert(perThread.HeldByCurrentThread);
 		if (perThread.Active) // we might be closed
@@ -363,11 +356,11 @@ namespace Lucene.Net.Index
 			try
 			{
 			  SubtractFlushedNumDocs(perThread.Dwpt.NumDocsInRAM);
-			  perThread.Dwpt.abort(newFiles);
+			  perThread.Dwpt.Abort(newFiles);
 			}
 			finally
 			{
-			  perThread.Dwpt.checkAndResetHasAborted();
+			  perThread.Dwpt.CheckAndResetHasAborted();
 			  FlushControl.DoOnAbort(perThread);
 			}
 		  }
@@ -403,7 +396,7 @@ namespace Lucene.Net.Index
 				ThreadState perThread = PerThreadPool.GetThreadState(i);
 				if (perThread.HeldByCurrentThread)
 				{
-				  perThread.unlock();
+				  perThread.Unlock();
 				}
 			  }
 			  catch (Exception e)
@@ -422,7 +415,7 @@ namespace Lucene.Net.Index
 	  {
 		if (InfoStream.IsEnabled("DW"))
 		{
-		  InfoStream.Message("DW", "anyChanges? numDocsInRam=" + NumDocsInRAM.get() + " deletes=" + AnyDeletions() + " hasTickets:" + TicketQueue.HasTickets() + " pendingChangesInFullFlush: " + PendingChangesInCurrentFullFlush);
+		  InfoStream.Message("DW", "anyChanges? numDocsInRam=" + NumDocsInRAM.Get() + " deletes=" + AnyDeletions() + " hasTickets:" + TicketQueue.HasTickets() + " pendingChangesInFullFlush: " + PendingChangesInCurrentFullFlush);
 		}
 		/*
 		 * changes are either in a DWPT or in the deleteQueue.
@@ -431,7 +424,7 @@ namespace Lucene.Net.Index
 		 * before they are published to the IW. ie we need to check if the 
 		 * ticket queue has any tickets.
 		 */
-		return NumDocsInRAM.get() != 0 || AnyDeletions() || TicketQueue.HasTickets() || PendingChangesInCurrentFullFlush;
+		return NumDocsInRAM.Get() != 0 || AnyDeletions() || TicketQueue.HasTickets() || PendingChangesInCurrentFullFlush;
 	  }
 
 	  public int BufferedDeleteTermsSize
@@ -534,15 +527,11 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal bool updateDocuments<T1>(IEnumerable<T1> docs, Analyzer analyzer, Term delTerm) where T1 : Iterable<T1 extends IndexableField>
+	  internal bool UpdateDocuments(IEnumerable<IndexableField> docs, Analyzer analyzer, Term delTerm)
 	  {
 		bool hasEvents = PreUpdate();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = flushControl.obtainAndLock();
 		ThreadState perThread = FlushControl.ObtainAndLock();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread flushingDWPT;
 		DocumentsWriterPerThread flushingDWPT;
 
 		try
@@ -554,24 +543,19 @@ namespace Lucene.Net.Index
 		  }
 		  EnsureInitialized(perThread);
 		  Debug.Assert(perThread.Initialized);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt = perThread.dwpt;
 		  DocumentsWriterPerThread dwpt = perThread.Dwpt;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int dwptNumDocs = dwpt.getNumDocsInRAM();
 		  int dwptNumDocs = dwpt.NumDocsInRAM;
 		  try
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount = dwpt.updateDocuments(docs, analyzer, delTerm);
 			int docCount = dwpt.UpdateDocuments(docs, analyzer, delTerm);
-			NumDocsInRAM.addAndGet(docCount);
+			NumDocsInRAM.AddAndGet(docCount);
 		  }
 		  finally
 		  {
 			if (dwpt.CheckAndResetHasAborted())
 			{
-			  if (!dwpt.PendingFilesToDelete().Empty)
+                //LUCENE TO-DO make sure this was a .Empty()
+			  if (!(dwpt.PendingFilesToDelete().Count == 0))
 			  {
 				PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete()));
 			  }
@@ -586,7 +570,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  perThread.unlock();
+		  perThread.Unlock();
 		}
 
 		return PostUpdate(flushingDWPT, hasEvents);
@@ -622,13 +606,14 @@ namespace Lucene.Net.Index
 		  try
 		  {
 			dwpt.UpdateDocument(doc, analyzer, delTerm);
-			NumDocsInRAM.incrementAndGet();
+			NumDocsInRAM.IncrementAndGet();
 		  }
 		  finally
 		  {
 			if (dwpt.CheckAndResetHasAborted())
 			{
-			  if (!dwpt.PendingFilesToDelete().Empty)
+                //LUCENE TO-DO make sure this was a .Empty()
+                if (!(dwpt.PendingFilesToDelete().Count == 0))
 			  {
 				PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete()));
 			  }
@@ -643,7 +628,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  perThread.unlock();
+		  perThread.Unlock();
 		}
 
 		return PostUpdate(flushingDWPT, hasEvents);
@@ -695,7 +680,8 @@ namespace Lucene.Net.Index
 			  finally
 			  {
 				SubtractFlushedNumDocs(flushingDocsInRam);
-				if (!flushingDWPT.PendingFilesToDelete().Empty)
+                //LUCENE TO-DO make sure this was a .Empty()
+                if (!(flushingDWPT.PendingFilesToDelete().Count == 0))
 				{
 				  PutEvent(new DeleteNewFilesEvent(flushingDWPT.PendingFilesToDelete()));
 				  hasEvents = true;
@@ -770,10 +756,10 @@ namespace Lucene.Net.Index
 
 	  internal void SubtractFlushedNumDocs(int numFlushed)
 	  {
-		int oldValue = NumDocsInRAM.get();
-		while (!NumDocsInRAM.compareAndSet(oldValue, oldValue - numFlushed))
+		int oldValue = NumDocsInRAM.Get();
+		while (!NumDocsInRAM.CompareAndSet(oldValue, oldValue - numFlushed))
 		{
-		  oldValue = NumDocsInRAM.get();
+		  oldValue = NumDocsInRAM.Get();
 		}
 	  }
 
@@ -813,7 +799,7 @@ namespace Lucene.Net.Index
 		   * otherwise a new DWPT could sneak into the loop with an already flushing
 		   * delete queue */
 		  FlushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
-		  Debug.Assert(setFlushingDeleteQueue(flushingDeleteQueue));
+		  Debug.Assert(SetFlushingDeleteQueue(flushingDeleteQueue));
 		}
 		Debug.Assert(CurrentFullFlushDelQueue != null);
 		Debug.Assert(CurrentFullFlushDelQueue != DeleteQueue);
@@ -855,7 +841,7 @@ namespace Lucene.Net.Index
 		  {
 			InfoStream.Message("DW", Thread.CurrentThread.Name + " finishFullFlush success=" + success);
 		  }
-		  Debug.Assert(setFlushingDeleteQueue(null));
+		  Debug.Assert(SetFlushingDeleteQueue(null));
 		  if (success)
 		  {
 			// Release the flush lock
@@ -863,7 +849,7 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			Set<string> newFilesSet = new HashSet<string>();
+			HashSet<string> newFilesSet = new HashSet<string>();
 			FlushControl.AbortFullFlushes(newFilesSet);
 			PutEvent(new DeleteNewFilesEvent(newFilesSet));
 

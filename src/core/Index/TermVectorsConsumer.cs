@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 	internal sealed class TermVectorsConsumer : TermsHashConsumer
 	{
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
 	  public TermVectorsConsumer(DocumentsWriterPerThread docWriter)
 	  {
 		this.DocWriter = docWriter;
-		DocState = docWriter.DocState;
+		DocState = docWriter.docState;
 	  }
 
 	  internal override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
@@ -78,7 +79,7 @@ namespace Lucene.Net.Index
 		foreach (TermsHashConsumerPerField field in fieldsToFlush.Values)
 		{
 		  TermVectorsConsumerPerField perField = (TermVectorsConsumerPerField) field;
-		  perField.TermsHashPerField.reset();
+		  perField.TermsHashPerField.Reset();
 		  perField.ShrinkHash();
 		}
 	  }
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
 		if (Writer == null)
 		{
 		  IOContext context = new IOContext(new FlushInfo(DocWriter.NumDocsInRAM, DocWriter.BytesUsed()));
-		  Writer = DocWriter.Codec.termVectorsFormat().vectorsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
+		  Writer = DocWriter.Codec.TermVectorsFormat().VectorsWriter(DocWriter.Directory, DocWriter.SegmentInfo, context);
 		  LastDocID = 0;
 		}
 	  }
@@ -154,7 +155,7 @@ namespace Lucene.Net.Index
 
 	  internal void Reset()
 	  {
-		Arrays.fill(PerFields, null); // don't hang onto stuff from previous doc
+		Arrays.Fill(PerFields, null); // don't hang onto stuff from previous doc
 		NumVectorFields = 0;
 	  }
 

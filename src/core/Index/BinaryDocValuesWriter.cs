@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 		catch (System.IO.IOException ioe)
 		{
 		  // Should never happen!
-		  throw new Exception(ioe);
+		  throw new Exception(ioe.Message, ioe);
 		}
 		DocsWithField = FixedBitSet.EnsureCapacity(DocsWithField, docID);
 		DocsWithField.Set(docID);
@@ -201,12 +201,10 @@ namespace Lucene.Net.Index
 		  {
 			throw new NoSuchElementException();
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef v;
 		  BytesRef v;
 		  if (Upto < Size)
 		  {
-			int length = (int) LengthsIterator.next();
+			int length = (int) LengthsIterator.Next();
 			Value.Grow(length);
 			Value.Length = length;
 			try

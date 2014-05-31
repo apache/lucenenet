@@ -72,23 +72,18 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder buffer = new StringBuilder();
 		StringBuilder buffer = new StringBuilder();
 		// walk up through class hierarchy to get a non-empty simple name (anonymous classes have no name):
 		for (Type clazz = this.GetType(); clazz != null; clazz = clazz.BaseType)
 		{
-		  if (!clazz.AnonymousClass)
+		  if (clazz.Name != null)
 		  {
 			buffer.Append(clazz.Name);
 			break;
 		  }
 		}
 		buffer.Append('(');
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<? extends IndexReader> subReaders = getSequentialSubReaders();
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		IList<?> subReaders = SequentialSubReaders;
+		var subReaders = GetSequentialSubReaders();
 		Debug.Assert(subReaders != null);
 		if (subReaders.Count > 0)
 		{
@@ -111,11 +106,7 @@ namespace Lucene.Net.Index
 	  ///  is no longer public, code that wants to get all <seealso cref="AtomicReader"/>s
 	  ///  this composite is composed of should use <seealso cref="IndexReader#leaves()"/>. </summary>
 	  /// <seealso cref= IndexReader#leaves() </seealso>
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: protected abstract java.util.List<? extends IndexReader> getSequentialSubReaders();
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: protected abstract java.util.List<? extends IndexReader> getSequentialSubReaders();
-	  protected internal abstract IList<?> SequentialSubReaders where ? : IndexReader {get;}
+	  protected internal abstract IList<IndexReader> GetSequentialSubReaders();
 
 	  public override sealed CompositeReaderContext Context
 	  {
@@ -125,7 +116,7 @@ namespace Lucene.Net.Index
 			// lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
 			if (ReaderContext == null)
 			{
-			  Debug.Assert(SequentialSubReaders != null);
+			  Debug.Assert(GetSequentialSubReaders() != null);
 			  ReaderContext = CompositeReaderContext.Create(this);
 			}
 			return ReaderContext;

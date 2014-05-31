@@ -41,6 +41,8 @@ namespace Lucene.Net.Index
 	using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using StringHelper = Lucene.Net.Util.StringHelper;
+    using Lucene.Net.Support;
+    using System.IO;
 
 	/// <summary>
 	/// A collection of segmentInfo objects with methods for operating on
@@ -149,7 +151,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
-	  public IDictionary<string, string> UserData_Renamed = Collections.emptyMap<string, string>();
+	  public IDictionary<string, string> UserData_Renamed = CollectionsHelper.EmptyMap<string, string>();
 
 	  private IList<SegmentCommitInfo> Segments = new List<SegmentCommitInfo>();
 
@@ -265,7 +267,7 @@ namespace Lucene.Net.Index
 		}
 		else if (fileName.StartsWith(IndexFileNames.SEGMENTS))
 		{
-		  return Convert.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), char.MAX_RADIX);
+		  return Convert.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), Character.MAX_RADIX);
 		}
 		else
 		{
@@ -299,7 +301,7 @@ namespace Lucene.Net.Index
 		  finally
 		  {
 			genOutput.Close();
-			dir.Sync(Collections.singleton(IndexFileNames.SEGMENTS_GEN));
+			dir.Sync(CollectionsHelper.Singleton(IndexFileNames.SEGMENTS_GEN));
 		  }
 		}
 		catch (Exception t)
@@ -383,7 +385,7 @@ namespace Lucene.Net.Index
 			  string segName = input.ReadString();
 			  Codec codec = Codec.ForName(input.ReadString());
 			  //System.out.println("SIS.read seg=" + seg + " codec=" + codec);
-			  SegmentInfo info = codec.SegmentInfoFormat().SegmentInfoReader.read(directory, segName, IOContext.READ);
+			  SegmentInfo info = codec.SegmentInfoFormat().SegmentInfoReader.Read(directory, segName, IOContext.READ);
 			  info.Codec = codec;
 			  long delGen = input.ReadLong();
 			  int delCount = input.ReadInt();
@@ -402,14 +404,14 @@ namespace Lucene.Net.Index
 				int numGensUpdatesFiles = input.ReadInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Map<Long,java.util.Set<String>> genUpdatesFiles;
-				IDictionary<long?, Set<string>> genUpdatesFiles;
+				IDictionary<long?, ISet<string>> genUpdatesFiles;
 				if (numGensUpdatesFiles == 0)
 				{
-				  genUpdatesFiles = Collections.emptyMap();
+				  genUpdatesFiles = CollectionsHelper.EmptyMap();
 				}
 				else
 				{
-				  genUpdatesFiles = new Dictionary<>(numGensUpdatesFiles);
+				  genUpdatesFiles = new Dictionary<long?, ISet<string>>(numGensUpdatesFiles);
 				  for (int i = 0; i < numGensUpdatesFiles; i++)
 				  {
 					genUpdatesFiles[input.ReadLong()] = input.ReadStringSet();
@@ -477,8 +479,7 @@ namespace Lucene.Net.Index
 	  {
 		Generation_Renamed = LastGeneration_Renamed = -1;
 
-		new FindSegmentsFileAnonymousInnerClassHelper(this, directory)
-		.run();
+		new FindSegmentsFileAnonymousInnerClassHelper(this, directory).Run();
 	  }
 
 	  private class FindSegmentsFileAnonymousInnerClassHelper : FindSegmentsFile
@@ -496,7 +497,7 @@ namespace Lucene.Net.Index
 
 		  protected internal override object DoBody(string segmentFileName)
 		  {
-			outerInstance.Read(Directory, segmentFileName);
+			OuterInstance.Read(Directory, segmentFileName);
 			return null;
 		  }
 	  }
@@ -528,7 +529,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<String> upgradedSIFiles = new java.util.HashSet<>();
-		Set<string> upgradedSIFiles = new HashSet<string>();
+		HashSet<string> upgradedSIFiles = new HashSet<string>();
 
 		try
 		{
@@ -546,15 +547,15 @@ namespace Lucene.Net.Index
 			int delCount = siPerCommit.DelCount;
 			if (delCount < 0 || delCount > si.DocCount)
 			{
-			  throw new IllegalStateException("cannot write segment: invalid docCount segment=" + si.Name + " docCount=" + si.DocCount + " delCount=" + delCount);
+			  throw new InvalidOperationException("cannot write segment: invalid docCount segment=" + si.Name + " docCount=" + si.DocCount + " delCount=" + delCount);
 			}
 			segnOutput.WriteInt(delCount);
 			segnOutput.WriteLong(siPerCommit.FieldInfosGen);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Map<Long,java.util.Set<String>> genUpdatesFiles = siPerCommit.getUpdatesFiles();
-			IDictionary<long?, Set<string>> genUpdatesFiles = siPerCommit.UpdatesFiles;
+			IDictionary<long?, ISet<string>> genUpdatesFiles = siPerCommit.UpdatesFiles;
 			segnOutput.WriteInt(genUpdatesFiles.Count);
-			foreach (KeyValuePair<long?, Set<string>> e in genUpdatesFiles)
+			foreach (KeyValuePair<long?, ISet<string>> e in genUpdatesFiles)
 			{
 			  segnOutput.WriteLong(e.Key);
 			  segnOutput.WriteStringSet(e.Value);
@@ -576,7 +577,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String segmentFileName = write3xInfo(directory, si, Lucene.Net.Store.IOContext.DEFAULT);
 				string segmentFileName = Write3xInfo(directory, si, IOContext.DEFAULT);
-				upgradedSIFiles.add(segmentFileName);
+				upgradedSIFiles.Add(segmentFileName);
 				directory.Sync(Collections.singletonList(segmentFileName));
 
 				// Write separate marker file indicating upgrade
@@ -593,7 +594,7 @@ namespace Lucene.Net.Index
 				{
 				  @out.Close();
 				}
-				upgradedSIFiles.add(markerFileName);
+				upgradedSIFiles.Add(markerFileName);
 				directory.Sync(Collections.singletonList(markerFileName));
 			  }
 			}
@@ -682,7 +683,7 @@ namespace Lucene.Net.Index
 		  // so it had better be a 3.x segment or you will get very confusing errors later.
 		  if ((si.Codec is Lucene3xCodec) == false)
 		  {
-			throw new IllegalStateException("cannot write 3x SegmentInfo unless codec is Lucene3x (got: " + si.Codec + ")");
+			throw new InvalidOperationException("cannot write 3x SegmentInfo unless codec is Lucene3x (got: " + si.Codec + ")");
 		  }
 
 		  CodecUtil.WriteHeader(output, Lucene3xSegmentInfoFormat.UPGRADED_SI_CODEC_NAME, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_CURRENT);
@@ -694,7 +695,7 @@ namespace Lucene.Net.Index
 
 		  output.WriteByte((sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
 		  output.WriteStringStringMap(si.Diagnostics);
-		  output.WriteStringSet(si.Files());
+		  output.WriteStringSet(si.Files);
 
 		  output.Close();
 
@@ -707,9 +708,9 @@ namespace Lucene.Net.Index
 			IOUtils.CloseWhileHandlingException(output);
 			try
 			{
-			  si.Dir.deleteFile(fileName);
+			  si.Dir.DeleteFile(fileName);
 			}
-			catch (Exception t)
+			catch (Exception)
 			{
 			  // Suppress so we keep throwing the original exception
 			}
@@ -730,16 +731,16 @@ namespace Lucene.Net.Index
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final SegmentInfos sis = (SegmentInfos) base.clone();
-		  SegmentInfos sis = (SegmentInfos) base.Clone();
+		  SegmentInfos sis = (SegmentInfos) base.MemberwiseClone();
 		  // deep clone, first recreate all collections:
-		  sis.Segments = new List<>(Size());
+		  sis.Segments = new List<SegmentCommitInfo>(Size());
 		  foreach (SegmentCommitInfo info in this)
 		  {
-			Debug.Assert(info.info.Codec != null);
+			Debug.Assert(info.Info.Codec != null);
 			// dont directly access segments, use add method!!!
-			sis.Add(info.clone());
+			sis.Add(info.Clone());
 		  }
-		  sis.UserData_Renamed = new Dictionary<>(UserData_Renamed);
+		  sis.UserData_Renamed = new Dictionary<string, string>(UserData_Renamed);
 		  return sis;
 		}
 		catch (CloneNotSupportedException e)
@@ -1099,7 +1100,7 @@ namespace Lucene.Net.Index
 
 				try
 				{
-				  Directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).close();
+				  Directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Close();
 				  prevExists = true;
 				}
 				catch (IOException ioe)
@@ -1187,7 +1188,7 @@ namespace Lucene.Net.Index
 	  {
 		if (PendingSegnOutput != null)
 		{
-		  throw new IllegalStateException("prepareCommit was already called");
+		  throw new InvalidOperationException("prepareCommit was already called");
 		}
 		Write(dir);
 	  }
@@ -1220,8 +1221,8 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final SegmentCommitInfo info = info(i);
 		  SegmentCommitInfo info = Info(i);
-		  Debug.Assert(info.Info.dir == dir);
-		  if (info.Info.dir == dir)
+		  Debug.Assert(info.Info.Dir == dir);
+		  if (info.Info.Dir == dir)
 		  {
 			files.addAll(info.Files());
 		  }
@@ -1234,7 +1235,7 @@ namespace Lucene.Net.Index
 	  {
 		if (PendingSegnOutput == null)
 		{
-		  throw new IllegalStateException("prepareCommit was not called");
+		  throw new InvalidOperationException("prepareCommit was not called");
 		}
 		bool success = false;
 		try
@@ -1362,7 +1363,7 @@ namespace Lucene.Net.Index
 		  {
 			if (value == null)
 			{
-			  UserData_Renamed = Collections.emptyMap<string, string>();
+			  UserData_Renamed = CollectionsHelper.EmptyMap<string, string>();
 			}
 			else
 			{
@@ -1412,7 +1413,7 @@ namespace Lucene.Net.Index
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.Set<SegmentCommitInfo> mergedAway = new java.util.HashSet<>(merge.segments);
-		Set<SegmentCommitInfo> mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
+		HashSet<SegmentCommitInfo> mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
 		bool inserted = false;
 		int newSegIdx = 0;
 		for (int segIdx = 0, cnt = Segments.Count; segIdx < cnt; segIdx++)
@@ -1458,8 +1459,8 @@ namespace Lucene.Net.Index
 		IList<SegmentCommitInfo> list = new List<SegmentCommitInfo>(Size());
 		foreach (SegmentCommitInfo info in this)
 		{
-		  Debug.Assert(info.info.Codec != null);
-		  list.Add(info.clone());
+		  Debug.Assert(info.Info.Codec != null);
+		  list.Add(info.Clone());
 		}
 		return list;
 	  }

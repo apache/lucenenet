@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Buffers up pending long per doc, then flushes when

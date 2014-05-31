@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;

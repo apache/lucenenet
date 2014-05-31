@@ -19,8 +19,8 @@ namespace Lucene.Net.Index
 	 */
 
 	using TokenStream = Lucene.Net.Analysis.TokenStream;
-	using OffsetAttribute = Lucene.Net.Analysis.tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = Lucene.Net.Analysis.tokenattributes.PositionIncrementAttribute;
+	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
+	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 	internal sealed class DocInverterPerField : DocFieldConsumerPerField
 	{
 
-	  internal readonly FieldInfo FieldInfo_Renamed;
+	  internal readonly FieldInfo fieldInfo;
 	  internal readonly InvertedDocConsumerPerField Consumer;
 	  internal readonly InvertedDocEndConsumerPerField EndConsumer;
 	  internal readonly DocumentsWriterPerThread.DocState DocState;
@@ -44,11 +44,11 @@ namespace Lucene.Net.Index
 
 	  public DocInverterPerField(DocInverter parent, FieldInfo fieldInfo)
 	  {
-		this.FieldInfo_Renamed = fieldInfo;
+		this.fieldInfo = fieldInfo;
 		DocState = parent.DocState;
 		FieldState = new FieldInvertState(fieldInfo.Name);
-		this.Consumer = parent.Consumer.addField(this, fieldInfo);
-		this.EndConsumer = parent.EndConsumer.addField(this, fieldInfo);
+		this.Consumer = parent.Consumer.AddField(this, fieldInfo);
+        this.EndConsumer = parent.EndConsumer.AddField(this, fieldInfo);
 	  }
 
 	  internal override void Abort()
@@ -68,18 +68,12 @@ namespace Lucene.Net.Index
 
 		FieldState.Reset();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean doInvert = consumer.start(fields, count);
 		bool doInvert = Consumer.Start(fields, count);
 
 		for (int i = 0;i < count;i++)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexableField field = fields[i];
 		  IndexableField field = fields[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexableFieldType fieldType = field.fieldType();
 		  IndexableFieldType fieldType = field.FieldType();
 
 		  // TODO FI: this should be "genericized" to querying
@@ -87,8 +81,6 @@ namespace Lucene.Net.Index
 		  // tokenized.
 		  if (fieldType.Indexed() && doInvert)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean analyzed = fieldType.tokenized() && docState.analyzer != null;
 			bool analyzed = fieldType.Tokenized() && DocState.Analyzer != null;
 
 			// if the field omits norms, the boost cannot be indexed.
@@ -99,14 +91,12 @@ namespace Lucene.Net.Index
 
 			// only bother checking offsets if something will consume them.
 			// TODO: after we fix analyzers, also check if termVectorOffsets will be indexed.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean checkOffsets = fieldType.indexOptions() == Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			bool checkOffsets = fieldType.IndexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			int lastStartOffset = 0;
 
 			if (i > 0)
 			{
-			  FieldState.Position_Renamed += analyzed ? DocState.Analyzer.getPositionIncrementGap(FieldInfo_Renamed.Name) : 0;
+			  FieldState.Position_Renamed += analyzed ? DocState.Analyzer.GetPositionIncrementGap(fieldInfo.Name) : 0;
 			}
 
 			 /*
@@ -117,8 +107,6 @@ namespace Lucene.Net.Index
 
 			bool succeededInProcessingField = false;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Analysis.TokenStream stream = field.tokenStream(docState.analyzer);
 			TokenStream stream = field.TokenStream(DocState.Analyzer);
 			// reset the TokenStream to the first token
 			stream.Reset();
@@ -129,8 +117,8 @@ namespace Lucene.Net.Index
 
 			  FieldState.AttributeSource_Renamed = stream;
 
-			  OffsetAttribute offsetAttribute = FieldState.AttributeSource_Renamed.addAttribute(typeof(OffsetAttribute));
-			  PositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource_Renamed.addAttribute(typeof(PositionIncrementAttribute));
+			  OffsetAttribute offsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<OffsetAttribute>();
+			  PositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource_Renamed.AddAttribute<PositionIncrementAttribute>();
 
 			  if (hasMoreTokens)
 			  {
@@ -145,8 +133,6 @@ namespace Lucene.Net.Index
 				  // will be marked as deleted, but still
 				  // consume a docID
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posIncr = posIncrAttribute.getPositionIncrement();
 				  int posIncr = posIncrAttribute.PositionIncrement;
 				  if (posIncr < 0)
 				  {
@@ -209,7 +195,7 @@ namespace Lucene.Net.Index
 				  {
 					if (!success)
 					{
-					  DocState.DocWriter.setAborting();
+					  DocState.DocWriter.SetAborting();
 					}
 				  }
 				  FieldState.Length_Renamed++;
@@ -227,12 +213,10 @@ namespace Lucene.Net.Index
 
 			  if (DocState.MaxTermPrefix != null)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String msg = "Document contains at least one immense term in field=\"" + fieldInfo.name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.maxTermPrefix + "...'";
-				string msg = "Document contains at least one immense term in field=\"" + FieldInfo_Renamed.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + DocState.MaxTermPrefix + "...'";
-				if (DocState.InfoStream.isEnabled("IW"))
+				string msg = "Document contains at least one immense term in field=\"" + fieldInfo.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + DocState.MaxTermPrefix + "...'";
+				if (DocState.InfoStream.IsEnabled("IW"))
 				{
-				  DocState.InfoStream.message("IW", "ERROR: " + msg);
+				  DocState.InfoStream.Message("IW", "ERROR: " + msg);
 				}
 				DocState.MaxTermPrefix = null;
 				throw new System.ArgumentException(msg);
@@ -251,13 +235,13 @@ namespace Lucene.Net.Index
 			  {
 				stream.Close();
 			  }
-			  if (!succeededInProcessingField && DocState.InfoStream.isEnabled("DW"))
+			  if (!succeededInProcessingField && DocState.InfoStream.IsEnabled("DW"))
 			  {
-				DocState.InfoStream.message("DW", "An exception was thrown while processing field " + FieldInfo_Renamed.Name);
+				DocState.InfoStream.Message("DW", "An exception was thrown while processing field " + fieldInfo.Name);
 			  }
 			}
 
-			FieldState.Offset_Renamed += analyzed ? DocState.Analyzer.getOffsetGap(FieldInfo_Renamed.Name) : 0;
+			FieldState.Offset_Renamed += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
 			FieldState.Boost_Renamed *= field.Boost();
 		  }
 
@@ -274,7 +258,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return FieldInfo_Renamed;
+			return fieldInfo;
 		  }
 	  }
 	}

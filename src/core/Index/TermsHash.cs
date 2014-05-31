@@ -60,12 +60,12 @@ namespace Lucene.Net.Index
 
 	  public TermsHash(DocumentsWriterPerThread docWriter, TermsHashConsumer consumer, bool trackAllocations, TermsHash nextTermsHash)
 	  {
-		this.DocState = docWriter.DocState;
+		this.DocState = docWriter.docState;
 		this.Consumer = consumer;
 		this.TrackAllocations = trackAllocations;
 		this.NextTermsHash = nextTermsHash;
-		this.BytesUsed = trackAllocations ? docWriter.BytesUsed_Renamed : Counter.NewCounter();
-		IntPool = new IntBlockPool(docWriter.IntBlockAllocator);
+		this.BytesUsed = trackAllocations ? docWriter.bytesUsed : Counter.NewCounter();
+		IntPool = new IntBlockPool(docWriter.intBlockAllocator);
 		BytePool = new ByteBlockPool(docWriter.ByteBlockAllocator);
 
 		if (nextTermsHash != null)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
 
 		if (NextTermsHash != null)
 		{
-		  nextChildFields = new Dictionary<>();
+            nextChildFields = new Dictionary<string, InvertedDocConsumerPerField>();
 		}
 		else
 		{

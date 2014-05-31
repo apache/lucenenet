@@ -478,7 +478,7 @@ namespace Lucene.Net.Index
 		w.close();
 
 		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.OpenMode = IndexWriterConfig.OpenMode.CREATE;
+		iwc.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE;
 		w = new IndexWriter(dir, iwc);
 		doc = new Document();
 		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
@@ -719,7 +719,7 @@ namespace Lucene.Net.Index
 		doc.add(new NumericDocValuesField("dv", 0L));
 		writer.addDocument(doc);
 		writer.close();
-		conf.OpenMode = IndexWriterConfig.OpenMode.CREATE;
+		conf.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE;
 		writer = new IndexWriter(dir, conf.clone());
 		doc = new Document();
 		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));

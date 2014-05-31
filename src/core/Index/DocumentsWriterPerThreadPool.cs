@@ -23,6 +23,7 @@ namespace Lucene.Net.Index
 
 	using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
 	using Lucene.Net.Util;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// <seealso cref="DocumentsWriterPerThreadPool"/> controls <seealso cref="ThreadState"/> instances
@@ -80,14 +81,14 @@ namespace Lucene.Net.Index
 
 		internal void Deactivate()
 		{
-		  Debug.Assert(this.HeldByCurrentThread);
+		  //Debug.Assert(this.HeldByCurrentThread);
 		  IsActive = false;
 		  Reset();
 		}
 
 		internal void Reset()
 		{
-		  Debug.Assert(this.HeldByCurrentThread);
+		  //Debug.Assert(this.HeldByCurrentThread);
 		  this.Dwpt = null;
 		  this.BytesUsed = 0;
 		  this.FlushPending_Renamed = false;
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
 		{
 			get
 			{
-			  Debug.Assert(this.HeldByCurrentThread);
+			  //Debug.Assert(this.HeldByCurrentThread);
 			  return IsActive;
 			}
 		}
@@ -111,7 +112,7 @@ namespace Lucene.Net.Index
 		{
 			get
 			{
-			  Debug.Assert(this.HeldByCurrentThread);
+			  //Debug.Assert(this.HeldByCurrentThread);
 			  return Active && Dwpt != null;
 			}
 		}
@@ -124,7 +125,7 @@ namespace Lucene.Net.Index
 		{
 			get
 			{
-			  Debug.Assert(this.HeldByCurrentThread);
+			  //Debug.Assert(this.HeldByCurrentThread);
 			  // public for FlushPolicy
 			  return BytesUsed;
 			}
@@ -137,7 +138,7 @@ namespace Lucene.Net.Index
 		{
 			get
 			{
-			  Debug.Assert(this.HeldByCurrentThread);
+			  //Debug.Assert(this.HeldByCurrentThread);
 			  // public for FlushPolicy
 			  return Dwpt;
 			}
@@ -181,19 +182,13 @@ namespace Lucene.Net.Index
 		// We should only be cloned before being used:
 		if (NumThreadStatesActive != 0)
 		{
-		  throw new IllegalStateException("clone this object before it is used!");
+		  throw new InvalidOperationException("clone this object before it is used!");
 		}
 
 		DocumentsWriterPerThreadPool clone;
-		try
-		{
-		  clone = (DocumentsWriterPerThreadPool) base.Clone();
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  // should not happen
-		  throw new Exception(e);
-		}
+
+        clone = (DocumentsWriterPerThreadPool) base.MemberwiseClone();
+
 		clone.ThreadStates = new ThreadState[ThreadStates.Length];
 		for (int i = 0; i < ThreadStates.Length; i++)
 		{
@@ -244,7 +239,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final ThreadState threadState = threadStates[numThreadStatesActive];
 			  ThreadState threadState = ThreadStates[NumThreadStatesActive];
-			  threadState.@lock(); // lock so nobody else will get this ThreadState
+			  threadState.@Lock(); // lock so nobody else will get this ThreadState
 			  bool unlock = true;
 			  try
 			  {
@@ -265,7 +260,7 @@ namespace Lucene.Net.Index
 				if (unlock)
 				{
 				  // in any case make sure we unlock if we fail 
-				  threadState.unlock();
+				  threadState.Unlock();
 				}
 			  }
 			}
@@ -279,14 +274,14 @@ namespace Lucene.Net.Index
 		  {
 			for (int i = NumThreadStatesActive; i < ThreadStates.Length; i++)
 			{
-			  Debug.Assert(ThreadStates[i].tryLock(), "unreleased threadstate should not be locked");
+			  Debug.Assert(ThreadStates[i].TryLock(), "unreleased threadstate should not be locked");
 			  try
 			  {
 				Debug.Assert(!ThreadStates[i].Initialized, "expected unreleased thread state to be inactive");
 			  }
 			  finally
 			  {
-				ThreadStates[i].unlock();
+				ThreadStates[i].Unlock();
 			  }
 			}
 			return true;
@@ -305,14 +300,14 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final ThreadState threadState = threadStates[i];
 			  ThreadState threadState = ThreadStates[i];
-			  threadState.@lock();
+			  threadState.@Lock();
 			  try
 			  {
 				threadState.Deactivate();
 			  }
 			  finally
 			  {
-				threadState.unlock();
+				threadState.Unlock();
 			  }
 			}
 		  }
@@ -320,9 +315,7 @@ namespace Lucene.Net.Index
 
 	  internal virtual DocumentsWriterPerThread Reset(ThreadState threadState, bool closed)
 	  {
-		Debug.Assert(threadState.HeldByCurrentThread);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt = threadState.dwpt;
+		//Debug.Assert(threadState.HeldByCurrentThread);
 		DocumentsWriterPerThread dwpt = threadState.Dwpt;
 		if (!closed)
 		{
@@ -395,7 +388,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final ThreadState threadState = threadStates[i];
 		  ThreadState threadState = ThreadStates[i];
-		  threadState.@lock();
+		  threadState.@Lock();
 		  try
 		  {
 		   if (!threadState.IsActive)
@@ -405,7 +398,7 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			threadState.unlock();
+			threadState.Unlock();
 		  }
 		}
 		return count;

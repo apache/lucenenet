@@ -4,28 +4,29 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
-	using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
-	using Query = Lucene.Net.Search.Query;
-	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
+    using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
+    using Query = Lucene.Net.Search.Query;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
 	/* Holds buffered deletes and updates, by docID, term or query for a
 	 * single segment. this is used to hold buffered pending
@@ -143,7 +144,7 @@ namespace Lucene.Net.Index
 	  // only once).
 	  internal readonly IDictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>> BinaryUpdates = new Dictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>>();
 
-	  public static readonly int? MAX_INT = Convert.ToInt32(int.MaxValue);
+	  public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
 
 	  internal readonly AtomicLong BytesUsed;
 
@@ -165,9 +166,9 @@ namespace Lucene.Net.Index
 		else
 		{
 		  string s = "gen=" + Gen;
-		  if (NumTermDeletes.get() != 0)
+		  if (NumTermDeletes.Get() != 0)
 		  {
-			s += " " + NumTermDeletes.get() + " deleted terms (unique count=" + Terms.Count + ")";
+			s += " " + NumTermDeletes.Get() + " deleted terms (unique count=" + Terms.Count + ")";
 		  }
 		  if (Queries.Count != 0)
 		  {
@@ -177,17 +178,17 @@ namespace Lucene.Net.Index
 		  {
 			s += " " + DocIDs.Count + " deleted docIDs";
 		  }
-		  if (NumNumericUpdates.get() != 0)
+		  if (NumNumericUpdates.Get() != 0)
 		  {
-			s += " " + NumNumericUpdates.get() + " numeric updates (unique count=" + NumericUpdates.Count + ")";
+			s += " " + NumNumericUpdates.Get() + " numeric updates (unique count=" + NumericUpdates.Count + ")";
 		  }
-		  if (NumBinaryUpdates.get() != 0)
+          if (NumBinaryUpdates.Get() != 0)
 		  {
-			s += " " + NumBinaryUpdates.get() + " binary updates (unique count=" + BinaryUpdates.Count + ")";
+              s += " " + NumBinaryUpdates.Get() + " binary updates (unique count=" + BinaryUpdates.Count + ")";
 		  }
-		  if (BytesUsed.get() != 0)
+          if (BytesUsed.Get() != 0)
 		  {
-			s += " bytesUsed=" + BytesUsed.get();
+              s += " bytesUsed=" + BytesUsed.Get();
 		  }
 
 		  return s;
@@ -200,14 +201,14 @@ namespace Lucene.Net.Index
 		// increment bytes used only if the query wasn't added so far.
 		if (current == null)
 		{
-		  BytesUsed.addAndGet(BYTES_PER_DEL_QUERY);
+		  BytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
 		}
 	  }
 
 	  public virtual void AddDocID(int docID)
 	  {
 		DocIDs.Add(Convert.ToInt32(docID));
-		BytesUsed.addAndGet(BYTES_PER_DEL_DOCID);
+		BytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
 	  }
 
 	  public virtual void AddTerm(Term term, int docIDUpto)
@@ -229,10 +230,10 @@ namespace Lucene.Net.Index
 		// note that if current != null then it means there's already a buffered
 		// delete on that term, therefore we seem to over-count. this over-counting
 		// is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
-		NumTermDeletes.incrementAndGet();
+		NumTermDeletes.IncrementAndGet();
 		if (current == null)
 		{
-		  BytesUsed.addAndGet(BYTES_PER_DEL_TERM + term.Bytes_Renamed.length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field().Length));
+		  BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes_Renamed.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field().Length));
 		}
 	  }
 
@@ -241,9 +242,9 @@ namespace Lucene.Net.Index
 		LinkedHashMap<Term, NumericDocValuesUpdate> fieldUpdates = NumericUpdates[update.Field];
 		if (fieldUpdates == null)
 		{
-		  fieldUpdates = new LinkedHashMap<>();
+		  fieldUpdates = new LinkedHashMap<Term, NumericDocValuesUpdate>();
 		  NumericUpdates[update.Field] = fieldUpdates;
-		  BytesUsed.addAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
+		  BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate current = fieldUpdates.get(update.term);
@@ -265,10 +266,10 @@ namespace Lucene.Net.Index
 		  fieldUpdates.remove(update.Term);
 		}
 		fieldUpdates.put(update.Term, update);
-		NumNumericUpdates.incrementAndGet();
+		NumNumericUpdates.IncrementAndGet();
 		if (current == null)
 		{
-		  BytesUsed.addAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
+		  BytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
 		}
 	  }
 
@@ -277,9 +278,9 @@ namespace Lucene.Net.Index
 		LinkedHashMap<Term, BinaryDocValuesUpdate> fieldUpdates = BinaryUpdates[update.Field];
 		if (fieldUpdates == null)
 		{
-		  fieldUpdates = new LinkedHashMap<>();
+		  fieldUpdates = new LinkedHashMap<Term, BinaryDocValuesUpdate>();
 		  BinaryUpdates[update.Field] = fieldUpdates;
-		  BytesUsed.addAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
+		  BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
 		}
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate current = fieldUpdates.get(update.term);
@@ -301,10 +302,10 @@ namespace Lucene.Net.Index
 		  fieldUpdates.remove(update.Term);
 		}
 		fieldUpdates.put(update.Term, update);
-		NumBinaryUpdates.incrementAndGet();
+		NumBinaryUpdates.IncrementAndGet();
 		if (current == null)
 		{
-		  BytesUsed.addAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
+		  BytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
 		}
 	  }
 
@@ -315,10 +316,10 @@ namespace Lucene.Net.Index
 		DocIDs.Clear();
 		NumericUpdates.Clear();
 		BinaryUpdates.Clear();
-		NumTermDeletes.set(0);
-		NumNumericUpdates.set(0);
-		NumBinaryUpdates.set(0);
-		BytesUsed.set(0);
+		NumTermDeletes.Set(0);
+		NumNumericUpdates.Set(0);
+		NumBinaryUpdates.Set(0);
+		BytesUsed.Set(0);
 	  }
 
 	  internal virtual bool Any()

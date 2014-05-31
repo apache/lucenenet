@@ -195,18 +195,10 @@ namespace Lucene.Net.Index
 
 		  public virtual int Compare(MergeThread t1, MergeThread t2)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergePolicy.OneMerge m1 = t1.getCurrentMerge();
 			MergePolicy.OneMerge m1 = t1.CurrentMerge;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergePolicy.OneMerge m2 = t2.getCurrentMerge();
 			MergePolicy.OneMerge m2 = t2.CurrentMerge;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c1 = m1 == null ? Integer.MAX_VALUE : m1.totalDocCount;
 			int c1 = m1 == null ? int.MaxValue : m1.TotalDocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c2 = m2 == null ? Integer.MAX_VALUE : m2.totalDocCount;
 			int c2 = m2 == null ? int.MaxValue : m2.TotalDocCount;
 
 			return c2 - c1;
@@ -226,15 +218,11 @@ namespace Lucene.Net.Index
         
 			// Only look at threads that are alive & not in the
 			// process of stopping (ie have an active merge):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<MergeThread> activeMerges = new java.util.ArrayList<>();
 			IList<MergeThread> activeMerges = new List<MergeThread>();
         
 			int threadIdx = 0;
 			while (threadIdx < MergeThreads.Count)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeThread mergeThread = mergeThreads.get(threadIdx);
 			  MergeThread mergeThread = MergeThreads[threadIdx];
 			  if (!mergeThread.IsAlive)
 			  {
@@ -327,7 +315,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual void Message(string message)
 	  {
-		Writer.InfoStream.message("CMS", message);
+		Writer.infoStream.Message("CMS", message);
 	  }
 
 	  private void InitMergeThreadPriority()
@@ -379,7 +367,7 @@ namespace Lucene.Net.Index
 			  {
 				toSync.Join();
 			  }
-			  catch (InterruptedException ie)
+			  catch (ThreadInterruptedException ie)
 			  {
 				// ignore this Exception, we will retry until all threads are dead
 				interrupted = true;
@@ -464,7 +452,7 @@ namespace Lucene.Net.Index
 				// updateMergeThreads).  We stall this producer
 				// thread to prevent creation of new segments,
 				// until merging has caught up:
-				startStallTime = System.currentTimeMillis();
+				startStallTime = DateTime.Now.Millisecond;
 				if (Verbose())
 				{
 				  Message("    too many merges; stalling...");
@@ -473,7 +461,7 @@ namespace Lucene.Net.Index
 				{
 				  Monitor.Wait(this);
 				}
-				catch (InterruptedException ie)
+                catch (ThreadInterruptedException ie)
 				{
 				  throw new ThreadInterruptedException(ie);
 				}
@@ -483,7 +471,7 @@ namespace Lucene.Net.Index
 			  {
 				if (startStallTime != 0)
 				{
-				  Message("  stalled for " + (System.currentTimeMillis() - startStallTime) + " msec");
+				  Message("  stalled for " + (DateTime.Now.Millisecond - startStallTime) + " msec");
 				}
 			  }
         
@@ -662,15 +650,15 @@ namespace Lucene.Net.Index
 		  try
 		  {
 
-			if (outerInstance.Verbose())
+			if (OuterInstance.Verbose())
 			{
-			  outerInstance.Message("  merge thread: start");
+                OuterInstance.Message("  merge thread: start");
 			}
 
 			while (true)
 			{
 			  RunningMerge = merge;
-			  outerInstance.DoMerge(merge);
+              OuterInstance.DoMerge(merge);
 
 			  // Subsequent times through the loop we do any new
 			  // merge that writer says is necessary:
@@ -686,10 +674,10 @@ namespace Lucene.Net.Index
 
 			  if (merge != null)
 			  {
-				outerInstance.UpdateMergeThreads();
-				if (outerInstance.Verbose())
+                OuterInstance.UpdateMergeThreads();
+                if (OuterInstance.Verbose())
 				{
-				  outerInstance.Message("  merge thread: do another merge " + TWriter.SegString(merge.Segments));
+                    OuterInstance.Message("  merge thread: do another merge " + TWriter.SegString(merge.Segments));
 				}
 			  }
 			  else
@@ -698,9 +686,9 @@ namespace Lucene.Net.Index
 			  }
 			}
 
-			if (outerInstance.Verbose())
+            if (OuterInstance.Verbose())
 			{
-			  outerInstance.Message("  merge thread: done");
+                OuterInstance.Message("  merge thread: done");
 			}
 
 		  }
@@ -712,11 +700,11 @@ namespace Lucene.Net.Index
 			{
 			  //System.out.println(Thread.currentThread().getName() + ": CMS: exc");
 			  //exc.printStackTrace(System.out);
-			  if (!outerInstance.SuppressExceptions)
+              if (!OuterInstance.SuppressExceptions)
 			  {
 				// suppressExceptions is normally only set during
 				// testing.
-				outerInstance.HandleMergeException(exc);
+                  OuterInstance.HandleMergeException(exc);
 			  }
 			}
 		  }
@@ -725,7 +713,7 @@ namespace Lucene.Net.Index
 			Done = true;
 			lock (OuterInstance)
 			{
-			  outerInstance.UpdateMergeThreads();
+                OuterInstance.UpdateMergeThreads();
 			  Monitor.PulseAll(OuterInstance);
 			}
 		  }
@@ -748,7 +736,7 @@ namespace Lucene.Net.Index
 		  // cases:
 		  Thread.Sleep(250);
 		}
-		catch (InterruptedException ie)
+		catch (ThreadInterruptedException ie)
 		{
 		  throw new ThreadInterruptedException(ie);
 		}
@@ -773,7 +761,7 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-		StringBuilder sb = new StringBuilder(this.GetType().SimpleName + ": ");
+		StringBuilder sb = new StringBuilder(this.GetType().Name + ": ");
 		sb.Append("maxThreadCount=").Append(MaxThreadCount_Renamed).Append(", ");
 		sb.Append("maxMergeCount=").Append(MaxMergeCount_Renamed).Append(", ");
 		sb.Append("mergeThreadPriority=").Append(MergeThreadPriority_Renamed);
@@ -785,7 +773,7 @@ namespace Lucene.Net.Index
 		ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler) base.Clone();
 		clone.Writer = null;
 		clone.Dir = null;
-		clone.MergeThreads = new List<>();
+		clone.MergeThreads = new List<MergeThread>();
 		return clone;
 	  }
 	}

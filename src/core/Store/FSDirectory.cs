@@ -171,7 +171,7 @@ namespace Lucene.Net.Store
 	  /// 
 	  /// <p>See <a href="#subclasses">above</a> 
 	  /// </summary>
-	  public static FSDirectory Open(File path)
+	  public static FSDirectory Open(DirectoryInfo path)
 	  {
 		return Open(path, null);
 	  }

@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 	using Codec = Lucene.Net.Codecs.Codec;
 	using Document = Lucene.Net.Document.Document;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
