@@ -1,4 +1,3 @@
 C:\Lucene Port\CScore\lucene.net-4.0.0\obj\x86\Debug\Lucene.Net.csprojResolveAssemblyReference.cache
 C:\Lucene Port\CScore\lucene.net-4.0.0\bin\Debug\ConsoleApplication.exe.config
-C:\Users\t-dewan\Documents\GitHub\lucene.net-1\obj\x86\Debug\Lucene.Net.csprojResolveAssemblyReference.cache
 C:\Users\t-russtr\Documents\GitHub\lucene.net-1\obj\x86\Debug\Lucene.Net.csprojResolveAssemblyReference.cache

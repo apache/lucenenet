@@ -1,5 +1,7 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -232,14 +234,14 @@ namespace Lucene.Net.Store
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int toRead = Math.min(CHUNK_SIZE, readLength);
 			  int toRead = Math.Min(CHUNK_SIZE, readLength);
-			  bb.limit(bb.position() + toRead);
-			  Debug.Assert(bb.remaining() == toRead);
+			  bb.Limit(bb.Position + toRead);
+			  Debug.Assert(bb.Remaining() == toRead);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int i = channel.read(bb, pos);
 			  int i = Channel.read(bb, pos);
 			  if (i < 0) // be defensive here, even though we checked before hand, something could have changed
 			  {
-				throw new EOFException("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + toRead + " end: " + End);
+				throw new Exception ("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + toRead + " end: " + End);
 			  }
 			  Debug.Assert(i > 0, "FileChannel.read with non zero-length bb.remaining() must always read at least one byte (FileChannel is in blocking mode, see spec of ReadableByteChannel)");
 			  pos += i;

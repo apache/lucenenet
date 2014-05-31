@@ -78,10 +78,17 @@ namespace Lucene.Net.Store
 		  lockFactory = Type.GetType(lockFactoryClassName).asSubclass(typeof(LockFactory)).newInstance();
 		}
 //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (IllegalAccessException | InstantiationException | System.InvalidCastException | ClassNotFoundException e)
+		catch (IllegalAccessException)
 		{
 		  throw new System.IO.IOException("Cannot instantiate lock factory " + lockFactoryClassName);
 		}
+        catch (InvalidCastException) {
+            throw new IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory");
+        }
+        catch (ClassNotFoundException)
+        {
+            throw new IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
+        }
 
 		File lockDir = new File(lockDirName);
 
