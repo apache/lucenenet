@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Store
 {
@@ -140,7 +141,7 @@ namespace Lucene.Net.Store
 			ISet<string> files = new HashSet<string>();
 			foreach (string f in Cache.ListAll())
 			{
-			  files.add(f);
+			  files.Add(f);
 			}
 			// LUCENE-1468: our NRTCachingDirectory will actually exist (RAMDir!),
 			// but if the underlying delegate is an FSDir and mkdirs() has not
@@ -153,7 +154,7 @@ namespace Lucene.Net.Store
 				// Cannot do this -- if lucene calls createOutput but
 				// file already exists then this falsely trips:
 				//assert !files.contains(f): "file \"" + f + "\" is in both dirs";
-				files.add(f);
+				files.Add(f);
 			  }
 			}
 			catch (NoSuchDirectoryException ex)
@@ -165,7 +166,7 @@ namespace Lucene.Net.Store
 				throw ex;
 			  }
 			}
-			return files.ToArray(new string[files.Count]);
+			return files.ToArray();
 		  }
 	  }
 

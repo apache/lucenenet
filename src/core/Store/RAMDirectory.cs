@@ -1,5 +1,11 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using Lucene.Net.Support;
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Threading;
+using Lucene.Net.Support.Compatibility;
 
 namespace Lucene.Net.Store
 {
@@ -143,7 +149,7 @@ namespace Lucene.Net.Store
 		RAMFile file = FileMap[name];
 		if (file == null)
 		{
-		  throw new FileNotFoundException(name);
+		  throw new FileNotFoundException (name);
 		}
 		return file.Length;
 	  }
@@ -155,7 +161,7 @@ namespace Lucene.Net.Store
 	  public long SizeInBytes()
 	  {
 		EnsureOpen();
-		return SizeInBytes_Renamed.get();
+		return SizeInBytes_Renamed.Get();
 	  }
 
 	  /// <summary>
@@ -182,7 +188,7 @@ namespace Lucene.Net.Store
 	  {
 		EnsureOpen();
 		RAMFile file = NewRAMFile();
-		RAMFile existing = FileMap.Remove(name);
+        RAMFile existing = FileMap[name];
 		if (existing != null)
 		{
 		  SizeInBytes_Renamed.addAndGet(-existing.SizeInBytes_Renamed);

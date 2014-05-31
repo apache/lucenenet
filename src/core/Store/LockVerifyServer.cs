@@ -53,7 +53,7 @@ namespace Lucene.Net.Store
 //ORIGINAL LINE: final int maxClients = Integer.parseInt(args[arg++]);
 		int maxClients = Convert.ToInt32(args[arg++]);
 
-		using (final ServerSocket s = new ServerSocket())
+		try (ServerSocket s = new ServerSocket())
 		{
 		  s.ReuseAddress = true;
 		  s.SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
