@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
 		return (sbyte) v;
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		while (len > 0)
 		{

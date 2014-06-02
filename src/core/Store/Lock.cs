@@ -100,17 +100,16 @@ namespace Lucene.Net.Store
 			  reason += ": " + FailureReason;
 			}
 			LockObtainFailedException e = new LockObtainFailedException(reason);
-			if (FailureReason != null)
-			{
-			  e.initCause(FailureReason);
-			}
+            e = FailureReason != null
+                                ? new LockObtainFailedException(reason, FailureReason)
+                                : new LockObtainFailedException(reason);
 			throw e;
 		  }
 		  try
 		  {
-			Thread.Sleep(LOCK_POLL_INTERVAL);
+			Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
 		  }
-		  catch (InterruptedException ie)
+          catch (ThreadInterruptedException ie)
 		  {
 			throw new ThreadInterruptedException(ie);
 		  }
