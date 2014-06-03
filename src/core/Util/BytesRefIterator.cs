@@ -50,33 +50,34 @@ namespace Lucene.Net.Util
         
         public static BytesRefIteratorHelper EMPTY = BytesRefIteratorHelper.CreateBytesRefIteratorHelper();
 
-        
-        /// <summary>
-	    /// Singleton BytesRefIterator that iterates over 0 BytesRefs. </summary>
-        public class BytesRefIteratorHelper : BytesRefIterator{
-            private BytesRefIteratorHelper() 
-            {
-                me = null;
-            }
-            private static BytesRefIteratorHelper me;
-            public static BytesRefIteratorHelper CreateBytesRefIteratorHelper() {
-                if (BytesRefIteratorHelper.me == null)
-                    return new BytesRefIteratorHelper();
-                return me;
-            }
-
-            public override BytesRef Next()
-            {
-                return null;
-            }
-
-            public override IComparer<BytesRef> Comparator
-            {
-                get;
-            }
-        }
     }
 
+    /// <summary>
+    /// Singleton BytesRefIterator that iterates over 0 BytesRefs. </summary>
+    internal class BytesRefIteratorHelper : BytesRefIterator
+    {
+        private BytesRefIteratorHelper()
+        {
+            me = null;
+        }
+        private static BytesRefIteratorHelper me;
+        public static BytesRefIteratorHelper CreateBytesRefIteratorHelper()
+        {
+            if (BytesRefIteratorHelper.me == null)
+                return new BytesRefIteratorHelper();
+            return me;
+        }
+
+        public override BytesRef Next()
+        {
+            return null;
+        }
+
+        public override IComparer<BytesRef> Comparator
+        {
+            get;
+        }
+    }
 
 
 

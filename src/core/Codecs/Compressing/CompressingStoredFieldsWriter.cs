@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Compressing
 		BytesRef bytes;
 		string @string;
 
-		object number = (object)field.NumericValue();
+		object number = (object)field.NumericValue;
 		if (number != null)
 		{
 		  if (number is sbyte? || number is short? || number is int?)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  else
 		  {
 			bits = STRING;
-			@string = field.StringValue();
+			@string = field.StringValue;
 			if (@string == null)
 			{
 			  throw new System.ArgumentException("field " + field.Name() + " is stored but does not have binaryValue, stringValue nor numericValue");
@@ -314,7 +314,7 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 		else if (@string != null)
 		{
-		  BufferedDocs.WriteString(field.StringValue());
+		  BufferedDocs.WriteString(field.StringValue);
 		}
 		else
 		{

@@ -32,7 +32,6 @@ namespace Lucene.Net
 	  public static Package Get()
 	  {
 		return typeof(LucenePackage).Assembly;
-	  }
+	  }*/
 	}
-*/
 }

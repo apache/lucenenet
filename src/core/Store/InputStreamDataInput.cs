@@ -43,11 +43,11 @@ namespace Lucene.Net.Store
 		return (sbyte) v;
 	  }
 
-	  public override void ReadBytes(byte[] b, int offset, int len)
+	  public override void ReadBytes(sbyte[] b, int offset, int len)
 	  {
 		while (len > 0)
 		{
-		  int cnt = @is.Read(b, offset, len);
+		  int cnt = @is.Read((byte[])(Array)b, offset, len);
 		  if (cnt < 0)
 		  {
 			  // Partially read the input, but no more data available in the stream.

@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  {
 			if (!success)
 			{
-			  IOUtils.CloseWhileHandlingException(Formats.Values.ToArray());
+			  IOUtils.CloseWhileHandlingException(Formats.Values);
 			}
 		  }
 		}

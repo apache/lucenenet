@@ -222,7 +222,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  }
 		  else
 		  {
-			visitor.StringField(info, new string(bytes, 0, bytes.Length, IOUtils.CHARSET_UTF_8));
+            visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)bytes));
 		  }
 		}
 	  }

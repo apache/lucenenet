@@ -502,15 +502,13 @@ namespace Lucene.Net.Store
 		  IsOpen = true;
 		}
 
-		protected internal override void FlushBuffer(byte[] b, int offset, int size)
+		protected internal override void FlushBuffer(sbyte[] b, int offset, int size)
 		{
 		  //Debug.Assert(IsOpen);
 		  while (size > 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toWrite = Math.min(CHUNK_SIZE, size);
 			int toWrite = Math.Min(CHUNK_SIZE, size);
-			File.Write(b, offset, toWrite);
+			File.Write((byte[])(Array)b, offset, toWrite);
 			offset += toWrite;
 			size -= toWrite;
 		  }
@@ -559,7 +557,7 @@ namespace Lucene.Net.Store
 
 	  protected internal virtual void Fsync(string name)
 	  {
-		IOUtils.Fsync(new File(Directory_Renamed, name), false);
+		IOUtils.Fsync(new FileInfo(Directory_Renamed, name), false);
 	  }
 	}
 

@@ -53,30 +53,31 @@ namespace Lucene.Net.Index
 
 		// set SegmentReadState to list only the fields that are relevant to that gen
 		SegmentReadState srs = new SegmentReadState(dvDir, si.Info, new FieldInfos(infos.ToArray()), context, termsIndexDivisor, segmentSuffix);
-		return new RefCountAnonymousInnerClassHelper(this, dvFormat.FieldsProducer(srs), gen);
+        return new RefCountHelper(this, dvFormat.FieldsProducer(srs), gen);
 	  }
 
-	  private class RefCountAnonymousInnerClassHelper : RefCount<DocValuesProducer>
-	  {
-		  private readonly SegmentDocValues OuterInstance;
+        private class RefCountHelper : RefCount<DocValuesProducer> {
+            
+            private readonly SegmentDocValues OuterInstance;
+            private long? Gen;
 
-		  private long? Gen;
+            public RefCountHelper(SegmentDocValues outerInstance, DocValuesProducer fieldsProducer, long? gen)
+                : base(fieldsProducer)
+            {
+                this.OuterInstance = outerInstance;
+                this.Gen = gen;
+            }
 
-		  public RefCountAnonymousInnerClassHelper(SegmentDocValues outerInstance, DocValuesProducer fieldsProducer, long? gen) : base(fieldsProducer)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.Gen = gen;
-		  }
-
-		  protected internal override void Release()
-		  {
-			@object.Dispose();
-			lock (OuterInstance)
-			{
-			  OuterInstance.GenDVProducers.Remove(Gen);
-			}
-		  }
-	  }
+            protected internal override void Release()
+            {
+                //LUCENE TO-DO Not sure why this method isn't registering. DVP : IDisposable
+                //((DocValuesProducer)@object).Dispose();
+                lock (OuterInstance)
+                {
+                    OuterInstance.GenDVProducers.Remove(Gen);
+                }
+            }
+        }
 
 	  /// <summary>
 	  /// Returns the <seealso cref="DocValuesProducer"/> for the given generation. </summary>

@@ -94,11 +94,6 @@ namespace Lucene.Net.Support
             return inflateMethod(buffer);
         }
 
-        public int Inflate(byte[] buffer)
-        {
-            return inflateMethod(buffer);
-        }
-
         public int Inflate(byte[] buffer, int offset, int count)
         {
             return inflate3Method(buffer, offset, count);

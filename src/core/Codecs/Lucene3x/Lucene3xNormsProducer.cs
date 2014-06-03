@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (!success)
 		  {
-			IOUtils.CloseWhileHandlingException(OpenFiles.ToArray());
+			IOUtils.CloseWhileHandlingException(OpenFiles);
 		  }
 		}
 		//RamBytesUsed_Renamed = new AtomicLong();

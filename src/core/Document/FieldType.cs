@@ -22,7 +22,7 @@ namespace Lucene.Net.Document
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
 	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
 	using Lucene.Net.Search; // javadocs
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Document
 	  private bool StoreTermVectorPositions_Renamed;
 	  private bool StoreTermVectorPayloads_Renamed;
 	  private bool OmitNorms_Renamed;
-      private FieldInfo.IndexOptions_e IndexOptions_Renamed = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+      private FieldInfo.IndexOptions_e? IndexOptions_Renamed = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 	  private NumericType NumericType_Renamed;
 	  private bool Frozen;
 	  private int NumericPrecisionStep_Renamed = NumericUtils.PRECISION_STEP_DEFAULT;
@@ -273,7 +273,7 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #indexOptions() </seealso>
-	  public virtual IndexOptions IndexOptionsValue
+	  public virtual IndexOptions_e? IndexOptionsValue
 	  {
           get
           {
@@ -377,7 +377,7 @@ namespace Lucene.Net.Document
 		  {
 			result.Append(",omitNorms");
 		  }
-		  if (IndexOptions_Renamed != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+		  if (IndexOptions_Renamed != IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 		  {
 			result.Append(",indexOptions=");
 			result.Append(IndexOptions_Renamed);

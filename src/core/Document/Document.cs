@@ -244,9 +244,9 @@ namespace Lucene.Net.Document
 		List<string> result = new List<string>();
 		foreach (IndexableField field in Fields_Renamed)
 		{
-		  if (field.Name().Equals(name) && field.StringValue() != null)
+		  if (field.Name().Equals(name) && field.StringValue != null)
 		  {
-			result.Add(field.StringValue());
+			result.Add(field.StringValue);
 		  }
 		}
 
@@ -271,9 +271,9 @@ namespace Lucene.Net.Document
 	  {
 		foreach (IndexableField field in Fields_Renamed)
 		{
-		  if (field.Name().Equals(name) && field.StringValue() != null)
+		  if (field.Name().Equals(name) && field.StringValue != null)
 		  {
-			return field.StringValue();
+			return field.StringValue;
 		  }
 		}
 		return null;
