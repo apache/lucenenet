@@ -86,17 +86,17 @@ namespace Lucene.Net.Index
 			packet.DelGen = NextGen_Renamed++;
 			Debug.Assert(packet.Any());
 			Debug.Assert(CheckDeleteStats());
-			Debug.Assert(packet.DelGen() < NextGen_Renamed);
-			Debug.Assert(Updates.Count == 0 || Updates[Updates.Count - 1].DelGen() < packet.DelGen(), "Delete packets must be in order");
+			Debug.Assert(packet.DelGen < NextGen_Renamed);
+			Debug.Assert(Updates.Count == 0 || Updates[Updates.Count - 1].DelGen < packet.DelGen, "Delete packets must be in order");
 			Updates.Add(packet);
 			numTerms.AddAndGet(packet.NumTermDeletes);
 			bytesUsed.AddAndGet(packet.BytesUsed);
 			if (InfoStream.IsEnabled("BD"))
 			{
-			  InfoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen() + " packetCount=" + Updates.Count + " totBytesUsed=" + bytesUsed.Get());
+			  InfoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + Updates.Count + " totBytesUsed=" + bytesUsed.Get());
 			}
 			Debug.Assert(CheckDeleteStats());
-			return packet.DelGen();
+			return packet.DelGen;
 		  }
 	  }
 
@@ -157,8 +157,6 @@ namespace Lucene.Net.Index
 
 		  public virtual int Compare(SegmentCommitInfo si1, SegmentCommitInfo si2)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long cmp = si1.getBufferedDeletesGen() - si2.getBufferedDeletesGen();
 			long cmp = si1.BufferedDeletesGen - si2.BufferedDeletesGen;
 			if (cmp > 0)
 			{
@@ -184,8 +182,6 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long t0 = DateTime.Now.Millisecond;
 			long t0 = DateTime.Now.Millisecond;
         
 			if (infos.Count == 0)
@@ -209,8 +205,6 @@ namespace Lucene.Net.Index
 			  InfoStream.Message("BD", "applyDeletes: infos=" + infos + " packetCount=" + Updates.Count);
 			}
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long gen = nextGen++;
 			long gen = NextGen_Renamed++;
         
 			List<SegmentCommitInfo> infos2 = new List<SegmentCommitInfo>();
@@ -229,17 +223,11 @@ namespace Lucene.Net.Index
 			{
 			  //System.out.println("BD: cycle delIDX=" + delIDX + " infoIDX=" + infosIDX);
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FrozenBufferedUpdates packet = delIDX >= 0 ? updates.get(delIDX) : null;
 			  FrozenBufferedUpdates packet = delIDX >= 0 ? Updates[delIDX] : null;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = infos2.get(infosIDX);
 			  SegmentCommitInfo info = infos2[infosIDX];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long segGen = info.getBufferedDeletesGen();
 			  long segGen = info.BufferedDeletesGen;
         
-			  if (packet != null && segGen < packet.DelGen())
+			  if (packet != null && segGen < packet.DelGen)
 			  {
 		//        System.out.println("  coalesce");
 				if (coalescedUpdates == null)
@@ -260,27 +248,19 @@ namespace Lucene.Net.Index
         
 				delIDX--;
 			  }
-			  else if (packet != null && segGen == packet.DelGen())
+			  else if (packet != null && segGen == packet.DelGen)
 			  {
 				Debug.Assert(packet.IsSegmentPrivate, "Packet and Segments deletegen can only match on a segment private del packet gen=" + segGen);
 				//System.out.println("  eq");
         
 				// Lock order: IW -> BD -> RP
 				Debug.Assert(readerPool.InfoIsLive(info));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, true);
 				ReadersAndUpdates rld = readerPool.Get(info, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader reader = rld.getReader(Lucene.Net.Store.IOContext.READ);
 				SegmentReader reader = rld.GetReader(IOContext.READ);
 				int delCount = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean segAllDeletes;
 				bool segAllDeletes;
 				try
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
 				  DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
 				  if (coalescedUpdates != null)
 				  {
@@ -348,15 +328,9 @@ namespace Lucene.Net.Index
 				{
 				  // Lock order: IW -> BD -> RP
 				  Debug.Assert(readerPool.InfoIsLive(info));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, true);
 				  ReadersAndUpdates rld = readerPool.Get(info, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader reader = rld.getReader(Lucene.Net.Store.IOContext.READ);
 				  SegmentReader reader = rld.GetReader(IOContext.READ);
 				  int delCount = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean segAllDeletes;
 				  bool segAllDeletes;
 				  try
 				  {
@@ -441,12 +415,10 @@ namespace Lucene.Net.Index
 			{
 			  InfoStream.Message("BD", "prune sis=" + segmentInfos + " minGen=" + minGen + " packetCount=" + Updates.Count);
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = updates.size();
 			int limit = Updates.Count;
 			for (int delIDX = 0;delIDX < limit;delIDX++)
 			{
-			  if (Updates[delIDX].DelGen() >= minGen)
+			  if (Updates[delIDX].DelGen >= minGen)
 			  {
 				Prune(delIDX);
 				Debug.Assert(CheckDeleteStats());
@@ -473,8 +445,6 @@ namespace Lucene.Net.Index
 			  }
 			  for (int delIDX = 0;delIDX < count;delIDX++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FrozenBufferedUpdates packet = updates.get(delIDX);
 				FrozenBufferedUpdates packet = Updates[delIDX];
 				numTerms.AddAndGet(-packet.NumTermDeletes);
 				Debug.Assert(numTerms.Get() >= 0);
@@ -547,8 +517,6 @@ namespace Lucene.Net.Index
 				{
 				  while (true)
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docsEnum.nextDoc();
 					int docID = docsEnum.NextDoc();
 					//System.out.println(Thread.currentThread().getName() + " del term=" + term + " doc=" + docID);
 					if (docID == DocIdSetIterator.NO_MORE_DOCS)
@@ -579,7 +547,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // DocValues updates
-	  private void applyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, DocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
+	  private void ApplyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, DocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
 	  {
 		  lock (this)
 		  {
@@ -685,21 +653,15 @@ namespace Lucene.Net.Index
 	  private static long ApplyQueryDeletes(IEnumerable<QueryAndLimit> queriesIter, ReadersAndUpdates rld, SegmentReader reader)
 	  {
 		long delCount = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReaderContext readerContext = reader.getContext();
 		AtomicReaderContext readerContext = reader.Context;
 		bool any = false;
 		foreach (QueryAndLimit ent in queriesIter)
 		{
 		  Query query = ent.Query;
 		  int? limit = ent.Limit;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.DocIdSet docs = new Lucene.Net.Search.QueryWrapperFilter(query).getDocIdSet(readerContext, reader.getLiveDocs());
 		  DocIdSet docs = (new QueryWrapperFilter(query)).GetDocIdSet(readerContext, reader.LiveDocs);
 		  if (docs != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.DocIdSetIterator it = docs.iterator();
 			DocIdSetIterator it = docs.Iterator();
 			if (it != null)
 			{

@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 
 	internal class CoalescedUpdates
 	{
-	  internal readonly IDictionary<Query, int?> Queries = new Dictionary<Query, int?>();
+	  internal readonly IDictionary<Query, int> Queries = new Dictionary<Query, int>();
 	  internal readonly IList<IEnumerable<Term>> Iterables = new List<IEnumerable<Term>>();
 	  internal readonly IList<NumericDocValuesUpdate> NumericDVUpdates = new List<NumericDocValuesUpdate>();
 	  internal readonly IList<BinaryDocValuesUpdate> BinaryDVUpdates = new List<BinaryDocValuesUpdate>();
@@ -47,8 +47,6 @@ namespace Lucene.Net.Index
 
 		for (int queryIdx = 0; queryIdx < @in.Queries.Length; queryIdx++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.Query query = in.queries[queryIdx];
 		  Query query = @in.Queries[queryIdx];
 		  Queries[query] = BufferedUpdates.MAX_INT;
 		}
@@ -68,11 +66,19 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	 public virtual IEnumerable<Term> TermsIterable()
-	 {
-	   return new IterableAnonymousInnerClassHelper(this);
-	 }
+      //LUCENE TO-DO Is this right???
+	  public virtual IEnumerable<Term> TermsIterable()
+	  {
+          foreach (IEnumerable<Term> iterable in Iterables)
+          {
+              foreach (Term t in iterable)
+              {
+                  yield return t;
+              }
+          }
+	  }
 
+        /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<Term>
 	  {
 		  private readonly CoalescedUpdates OuterInstance;
@@ -82,8 +88,6 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) @Override public java.util.Iterator<Term> iterator()
 		  public virtual IEnumerator<Term> GetEnumerator()
 		  {
 			IEnumerator<Term>[] subs = new IEnumerator<Term>[OuterInstance.Iterables.Count];
@@ -93,13 +97,18 @@ namespace Lucene.Net.Index
 			}
             return new MergedIterator<Term>(subs);
 		  }
-	  }
+	  }*/
 
-	  public virtual IEnumerable<QueryAndLimit> QueriesIterable()
+      //LUCENE TO-DO Is this right???
+      public virtual IEnumerable<QueryAndLimit> QueriesIterable()
 	  {
-		return new IterableAnonymousInnerClassHelper2(this);
+          foreach (KeyValuePair<Query, int> entry in Queries)
+          {
+              yield return new QueryAndLimit(entry.Key, entry.Value);
+          }
+		//return new IterableAnonymousInnerClassHelper2(this);
 	  }
-
+        /*
 	  private class IterableAnonymousInnerClassHelper2 : IEnumerable<QueryAndLimit>
 	  {
 		  private readonly CoalescedUpdates OuterInstance;
@@ -129,7 +138,7 @@ namespace Lucene.Net.Index
 
 			  public virtual bool HasNext()
 			  {
-				return iter.hasNext();
+				return iter.HasNext();
 			  }
 
 			  public virtual QueryAndLimit Next()
@@ -143,7 +152,7 @@ namespace Lucene.Net.Index
 				throw new System.NotSupportedException();
 			  }
 		  }
-	  }
+	  }*/
 	}
 
 }

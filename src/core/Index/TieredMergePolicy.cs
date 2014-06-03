@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -405,7 +407,7 @@ namespace Lucene.Net.Index
 			{
 			  extra += " [floored]";
 			}
-			Message("  seg=" + Writer.Get().segString(info) + " size=" + string.format(Locale.ROOT, "%.3f", segBytes / 1024 / 1024.0) + " MB" + extra);
+            Message("  seg=" + Writer.Get().SegString(info) + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", segBytes / 1024 / 1024.0) + " MB" + extra);
 		  }
 
 		  minSegmentBytes = Math.Min(segBytes, minSegmentBytes);
@@ -502,17 +504,11 @@ namespace Lucene.Net.Index
 
 			  long totAfterMergeBytes = 0;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> candidate = new java.util.ArrayList<>();
 			  IList<SegmentCommitInfo> candidate = new List<SegmentCommitInfo>();
 			  bool hitTooLarge = false;
 			  for (int idx = startIdx;idx < eligible.Count && candidate.Count < MaxMergeAtOnce_Renamed;idx++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = eligible.get(idx);
 				SegmentCommitInfo info = eligible[idx];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long segBytes = size(info);
 				long segBytes = Size(info);
 
 				if (totAfterMergeBytes + segBytes > MaxMergedSegmentBytes)
@@ -530,12 +526,10 @@ namespace Lucene.Net.Index
 				totAfterMergeBytes += segBytes;
 			  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeScore score = score(candidate, hitTooLarge, mergingBytes);
 			  MergeScore score = Score(candidate, hitTooLarge, mergingBytes);
 			  if (Verbose())
 			  {
-				Message("  maybe=" + Writer.Get().segString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.format(Locale.ROOT, "%.3f MB", totAfterMergeBytes / 1024.0 / 1024.0));
+                  Message("  maybe=" + Writer.Get().SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", totAfterMergeBytes / 1024.0 / 1024.0));
 			  }
 
 			  // If we are already running a max sized merge
@@ -556,8 +550,6 @@ namespace Lucene.Net.Index
 			  {
 				spec = new MergeSpecification();
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OneMerge merge = new OneMerge(best);
 			  OneMerge merge = new OneMerge(best);
 			  spec.Add(merge);
 			  foreach (SegmentCommitInfo info in merge.Segments)
@@ -567,7 +559,7 @@ namespace Lucene.Net.Index
 
 			  if (Verbose())
 			  {
-				Message("  add merge=" + Writer.Get().segString(merge.Segments) + " size=" + string.format(Locale.ROOT, "%.3f MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.format(Locale.ROOT, "%.3f", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
+                  Message("  add merge=" + Writer.Get().SegString(merge.Segments) + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format(CultureInfo.InvariantCulture, "%.3f", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
 			  }
 			}
 			else
@@ -591,8 +583,6 @@ namespace Lucene.Net.Index
 		long totAfterMergeBytesFloored = 0;
 		foreach (SegmentCommitInfo info in candidate)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long segBytes = size(info);
 		  long segBytes = Size(info);
 		  totAfterMergeBytes += segBytes;
 		  totAfterMergeBytesFloored += FloorSize(segBytes);
@@ -605,8 +595,6 @@ namespace Lucene.Net.Index
 		// 1.0/numSegsBeingMerged (good) to 1.0 (poor). Heavily
 		// lopsided merges (skew near 1.0) is no good; it means
 		// O(N^2) merge cost over time:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double skew;
 		double skew;
 		if (hitTooLarge)
 		{
@@ -632,13 +620,9 @@ namespace Lucene.Net.Index
 		mergeScore *= Math.Pow(totAfterMergeBytes, 0.05);
 
 		// Strongly favor merges that reclaim deletes:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double nonDelRatio = ((double) totAfterMergeBytes)/totBeforeMergeBytes;
 		double nonDelRatio = ((double) totAfterMergeBytes) / totBeforeMergeBytes;
 		mergeScore *= Math.Pow(nonDelRatio, ReclaimDeletesWeight_Renamed);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double finalMergeScore = mergeScore;
 		double finalMergeScore = mergeScore;
 
 		return new MergeScoreAnonymousInnerClassHelper(this, skew, nonDelRatio, finalMergeScore);
@@ -673,7 +657,7 @@ namespace Lucene.Net.Index
 		  {
 			  get
 			  {
-				return "skew=" + string.format(Locale.ROOT, "%.3f", Skew) + " nonDelRatio=" + string.format(Locale.ROOT, "%.3f", NonDelRatio);
+                  return "skew=" + string.Format(CultureInfo.InvariantCulture, "%.3f", Skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "%.3f", NonDelRatio);
 			  }
 		  }
 	  }
@@ -682,19 +666,15 @@ namespace Lucene.Net.Index
 	  {
 		if (Verbose())
 		{
-		  Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + Writer.Get().segString(infos) + " segmentsToMerge=" + segmentsToMerge);
+		  Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + Writer.Get().SegString(infos) + " segmentsToMerge=" + segmentsToMerge);
 		}
 
 		List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
 		bool forceMergeRunning = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<SegmentCommitInfo> merging = writer.get().getMergingSegments();
 		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
-		bool segmentIsOriginal = false;
+		bool? segmentIsOriginal = false;
 		foreach (SegmentCommitInfo info in infos)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Boolean isOriginal = segmentsToMerge.get(info);
 		  bool? isOriginal = segmentsToMerge[info];
 		  if (isOriginal != null)
 		  {
@@ -715,7 +695,7 @@ namespace Lucene.Net.Index
 		  return null;
 		}
 
-		if ((maxSegmentCount > 1 && eligible.Count <= maxSegmentCount) || (maxSegmentCount == 1 && eligible.Count == 1 && (!segmentIsOriginal || IsMerged(infos, eligible[0]))))
+		if ((maxSegmentCount > 1 && eligible.Count <= maxSegmentCount) || (maxSegmentCount == 1 && eligible.Count == 1 && (segmentIsOriginal == false || IsMerged(infos, eligible[0]))))
 		{
 		  if (Verbose())
 		  {
@@ -743,12 +723,10 @@ namespace Lucene.Net.Index
 		  {
 			spec = new MergeSpecification();
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OneMerge merge = new OneMerge(eligible.subList(end-maxMergeAtOnceExplicit, end));
-		  OneMerge merge = new OneMerge(eligible.subList(end - MaxMergeAtOnceExplicit_Renamed, end));
+		  OneMerge merge = new OneMerge(eligible.SubList(end - MaxMergeAtOnceExplicit_Renamed, end));
 		  if (Verbose())
 		  {
-			Message("add merge=" + Writer.Get().segString(merge.Segments));
+			Message("add merge=" + Writer.Get().SegString(merge.Segments));
 		  }
 		  spec.Add(merge);
 		  end -= MaxMergeAtOnceExplicit_Renamed;
@@ -757,12 +735,8 @@ namespace Lucene.Net.Index
 		if (spec == null && !forceMergeRunning)
 		{
 		  // Do final merge
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numToMerge = end - maxSegmentCount + 1;
 		  int numToMerge = end - maxSegmentCount + 1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OneMerge merge = new OneMerge(eligible.subList(end-numToMerge, end));
-		  OneMerge merge = new OneMerge(eligible.subList(end - numToMerge, end));
+		  OneMerge merge = new OneMerge(eligible.SubList(end - numToMerge, end));
 		  if (Verbose())
 		  {
 			Message("add final merge=" + merge.SegString(Writer.Get().Directory));
@@ -778,13 +752,9 @@ namespace Lucene.Net.Index
 	  {
 		if (Verbose())
 		{
-		  Message("findForcedDeletesMerges infos=" + Writer.Get().segString(infos) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
+		  Message("findForcedDeletesMerges infos=" + Writer.Get().SegString(infos) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> eligible = new java.util.ArrayList<>();
 		List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<SegmentCommitInfo> merging = writer.get().getMergingSegments();
 		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
 		foreach (SegmentCommitInfo info in infos)
 		{
@@ -815,20 +785,16 @@ namespace Lucene.Net.Index
 		  // Don't enforce max merged size here: app is explicitly
 		  // calling forceMergeDeletes, and knows this may take a
 		  // long time / produce big segments (like forceMerge):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = Math.min(start + maxMergeAtOnceExplicit, eligible.size());
 		  int end = Math.Min(start + MaxMergeAtOnceExplicit_Renamed, eligible.Count);
 		  if (spec == null)
 		  {
 			spec = new MergeSpecification();
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final OneMerge merge = new OneMerge(eligible.subList(start, end));
-		  OneMerge merge = new OneMerge(eligible.subList(start, end));
+		  OneMerge merge = new OneMerge(eligible.SubList(start, end));
 		  if (Verbose())
 		  {
-			Message("add merge=" + Writer.Get().segString(merge.Segments));
+			Message("add merge=" + Writer.Get().SegString(merge.Segments));
 		  }
 		  spec.Add(merge);
 		  start = end;
@@ -848,8 +814,6 @@ namespace Lucene.Net.Index
 
 	  private bool Verbose()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexWriter w = writer.get();
 		IndexWriter w = Writer.Get();
 		return w != null && w.infoStream.IsEnabled("TMP");
 	  }

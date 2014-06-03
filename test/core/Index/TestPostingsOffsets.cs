@@ -539,11 +539,11 @@ namespace Lucene.Net.Index
 		{
 		  if (success)
 		  {
-			IOUtils.close(riw, dir);
+			IOUtils.Close(riw, dir);
 		  }
 		  else
 		  {
-			IOUtils.closeWhileHandlingException(riw, dir);
+			IOUtils.CloseWhileHandlingException(riw, dir);
 		  }
 		}
 	  }

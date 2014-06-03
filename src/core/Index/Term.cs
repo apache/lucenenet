@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static string ToString(BytesRef termText)
 	  {
-		// the term might not be text, but usually is. so we make a best effort
+		/*// the term might not be text, but usually is. so we make a best effort
 		CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
 		try
 		{
@@ -107,7 +107,16 @@ namespace Lucene.Net.Index
 		catch (CharacterCodingException e)
 		{
 		  return termText.ToString();
-		}
+		}*/
+          try
+          {
+              // .Net port: termText already has this handy UTF8ToString method, so we're using that instead
+              return termText.Utf8ToString();
+          }
+          catch
+          {
+              return termText.ToString();
+          }
 	  }
 
 	  /// <summary>
@@ -161,8 +170,8 @@ namespace Lucene.Net.Index
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.HashCode());
-		result = prime * result + ((Bytes_Renamed == null) ? 0 : Bytes_Renamed.HashCode());
+		result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.GetHashCode());
+		result = prime * result + ((Bytes_Renamed == null) ? 0 : Bytes_Renamed.GetHashCode());
 		return result;
 	  }
 

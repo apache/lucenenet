@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
 	  public override int HashCode()
 	  {
-		return (Payload_Renamed == null) ? 0 : Payload_Renamed.HashCode();
+		return (Payload_Renamed == null) ? 0 : Payload_Renamed.GetHashCode();
 	  }
 
 	  public override void CopyTo(AttributeImpl target)

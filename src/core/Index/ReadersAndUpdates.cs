@@ -235,11 +235,9 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 			Debug.Assert(LiveDocs_Renamed != null);
-			Debug.Assert(Thread.holdsLock(Writer));
-			Debug.Assert(docID >= 0 && docID < LiveDocs_Renamed.Length(), "out of bounds: docid=" + docID + " liveDocsLength=" + LiveDocs_Renamed.Length() + " seg=" + Info.Info.name + " docCount=" + Info.Info.DocCount);
+			//Debug.Assert(Thread.holdsLock(Writer));
+			Debug.Assert(docID >= 0 && docID < LiveDocs_Renamed.Length(), "out of bounds: docid=" + docID + " liveDocsLength=" + LiveDocs_Renamed.Length() + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
 			Debug.Assert(!LiveDocsShared);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean didDelete = liveDocs.get(docID);
 			bool didDelete = LiveDocs_Renamed.Get(docID);
 			if (didDelete)
 			{
@@ -324,7 +322,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(Thread.holdsLock(Writer));
+			//Debug.Assert(Thread.holdsLock(Writer));
 			Debug.Assert(Info.Info.DocCount > 0);
 			//System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
 			if (LiveDocsShared)
@@ -354,7 +352,7 @@ namespace Lucene.Net.Index
 		  {
 			  lock (this)
 			  {
-				Debug.Assert(Thread.holdsLock(Writer));
+				//Debug.Assert(Thread.holdsLock(Writer));
 				return LiveDocs_Renamed;
 			  }
 		  }
@@ -367,7 +365,7 @@ namespace Lucene.Net.Index
 			  lock (this)
 			  {
 				//System.out.println("getROLiveDocs seg=" + info);
-				Debug.Assert(Thread.holdsLock(Writer));
+				//Debug.Assert(Thread.holdsLock(Writer));
 				LiveDocsShared = true;
 				//if (liveDocs != null) {
 				//System.out.println("  liveCount=" + liveDocs.count());
@@ -401,7 +399,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(Thread.holdsLock(Writer));
+			//Debug.Assert(Thread.holdsLock(Writer));
 			//System.out.println("rld.writeLiveDocs seg=" + info + " pendingDelCount=" + pendingDeleteCount + " numericUpdates=" + numericUpdates);
 			if (PendingDeleteCount_Renamed == 0)
 			{
@@ -465,7 +463,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(Thread.holdsLock(Writer));
+			//Debug.Assert(Thread.holdsLock(Writer));
 			//System.out.println("rld.writeFieldUpdates: seg=" + info + " numericFieldUpdates=" + numericFieldUpdates);
         
 			Debug.Assert(dvUpdates.Any());
@@ -544,30 +542,20 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final String field = e.getKey();
 					string field = e.Key;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final NumericDocValuesFieldUpdates fieldUpdates = e.getValue();
 					NumericDocValuesFieldUpdates fieldUpdates = e.Value;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
 					FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
 					Debug.Assert(fieldInfo != null);
         
 					fieldInfo.DocValuesGen = nextFieldInfosGen;
 					// write the numeric updates to a new gen'd docvalues file
-					fieldsConsumer.AddNumericField(fieldInfo, new IterableAnonymousInnerClassHelper(this, reader, field, fieldUpdates));
+					fieldsConsumer.AddNumericField(fieldInfo, GetLongEnumerable(reader, field, fieldUpdates));
 				  }
         
 		//        System.out.println("[" + Thread.currentThread().getName() + "] RAU.writeFieldUpdates: applying binary updates; seg=" + info + " updates=" + dvUpdates.binaryDVUpdates);
 				foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.BinaryDVUpdates)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String field = e.getKey();
 				  string field = e.Key;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BinaryDocValuesFieldUpdates dvFieldUpdates = e.getValue();
 				  BinaryDocValuesFieldUpdates dvFieldUpdates = e.Value;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
 				  FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
 				  Debug.Assert(fieldInfo != null);
         
@@ -575,7 +563,7 @@ namespace Lucene.Net.Index
         
 				  fieldInfo.DocValuesGen = nextFieldInfosGen;
 				  // write the numeric updates to a new gen'd docvalues file
-				  fieldsConsumer.AddBinaryField(fieldInfo, new IterableAnonymousInnerClassHelper2(this, reader, field, dvFieldUpdates));
+				  fieldsConsumer.AddBinaryField(fieldInfo, GetBytesRefEnumerable(reader, field, dvFieldUpdates));
 				}
         
 				  codec.FieldInfosFormat().FieldInfosWriter.Write(trackingDir, Info.Info.Name, segmentSuffix, fieldInfos, IOContext.DEFAULT);
@@ -660,8 +648,6 @@ namespace Lucene.Net.Index
 			// create a new map, keeping only the gens that are in use
 			IDictionary<long?, ISet<string>> genUpdatesFiles = Info.UpdatesFiles;
 			IDictionary<long?, ISet<string>> newGenUpdatesFiles = new Dictionary<long?, ISet<string>>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long fieldInfosGen = info.getFieldInfosGen();
 			long fieldInfosGen = Info.FieldInfosGen;
 			foreach (FieldInfo fi in fieldInfos)
 			{
@@ -706,6 +692,73 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
+      private IEnumerable<long> GetLongEnumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
+      {
+          int maxDoc = reader.MaxDoc();
+          Bits DocsWithField = reader.GetDocsWithField(field);
+          NumericDocValues currentValues = reader.GetNumericDocValues(field);
+          NumericDocValuesFieldUpdates.Iterator iter = fieldUpdates.Iterator();
+          int updateDoc = iter.NextDoc();
+
+          for (int curDoc = 0; curDoc < maxDoc; ++curDoc)
+          {
+              if (curDoc == updateDoc) //document has an updated value
+              {
+                  long? value = iter.Value(); // either null or updated
+                  updateDoc = iter.NextDoc(); //prepare for next round
+                  yield return value ?? default(long);
+              }
+              else
+              {   // no update for this document
+                  if (currentValues != null && DocsWithField.Get(curDoc))
+                  {
+                      // only read the current value if the document had a value before
+                      yield return currentValues.Get(curDoc);
+                  }
+                  else
+                  {
+                      yield return default(long);
+                  }
+              }
+          }
+          
+      }
+
+      private IEnumerable<BytesRef> GetBytesRefEnumerable(SegmentReader reader, string field, BinaryDocValuesFieldUpdates fieldUpdates)
+      {
+          BinaryDocValues currentValues = reader.GetBinaryDocValues(field);
+          Bits DocsWithField = reader.GetDocsWithField(field);
+          int maxDoc = reader.MaxDoc();
+          BinaryDocValuesFieldUpdates.Iterator iter = fieldUpdates.Iterator();
+          BytesRef scratch = new BytesRef();
+          int updateDoc = iter.NextDoc();
+
+          for (int curDoc = 0; curDoc < maxDoc; ++curDoc)
+          {
+              if (curDoc == updateDoc) //document has an updated value
+              {
+                  BytesRef value = iter.Value(); // either null or updated
+                  updateDoc = iter.NextDoc(); //prepare for next round
+                  yield return value;
+              }
+              else
+              {   // no update for this document
+                  if (currentValues != null && DocsWithField.Get(curDoc))
+                  {
+                      // only read the current value if the document had a value before
+                      currentValues.Get(curDoc, scratch);
+                      yield return scratch;
+                  }
+                  else
+                  {
+                      yield return null;
+                  }
+              }
+          }
+
+      }
+
+        /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
 	  {
 		  private readonly ReadersAndUpdates OuterInstance;
@@ -789,8 +842,8 @@ namespace Lucene.Net.Index
 				throw new System.NotSupportedException("this iterator does not support removing elements");
 			  }
 		  }
-	  }
-
+	  }*/
+        /*
 	  private class IterableAnonymousInnerClassHelper2 : IEnumerable<BytesRef>
 	  {
 		  private readonly ReadersAndUpdates OuterInstance;
@@ -877,7 +930,7 @@ namespace Lucene.Net.Index
 				throw new System.NotSupportedException("this iterator does not support removing elements");
 			  }
 		  }
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Returns a reader for merge. this method applies field updates if there are
@@ -887,7 +940,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(Thread.holdsLock(Writer));
+			//Debug.Assert(Thread.holdsLock(Writer));
 			// must execute these two statements as atomic operation, otherwise we
 			// could lose updates if e.g. another thread calls writeFieldUpdates in
 			// between, or the updates are applied to the obtained reader, but then

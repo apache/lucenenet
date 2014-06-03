@@ -53,42 +53,42 @@ namespace Lucene.Net.Util
 
 	  public class Bits_MatchAllBits : Bits
 	  {
-	internal readonly int Len;
+	    internal readonly int Len;
 
-	public Bits_MatchAllBits(int len)
-	{
-	  this.Len = len;
-	}
+	    public Bits_MatchAllBits(int len)
+	    {
+	      this.Len = len;
+	    }
 
-	public override bool Get(int index)
-	{
-	  return true;
-	}
+	    public override bool Get(int index)
+	    {
+	      return true;
+	    }
 
-	public override int Length()
-	{
-	  return Len;
-	}
+	    public override int Length()
+	    {
+	      return Len;
+	    }
 	  }
 
 	  public class Bits_MatchNoBits : Bits
 	  {
-	internal readonly int Len;
+	    internal readonly int Len;
 
-	public Bits_MatchNoBits(int len)
-	{
-	  this.Len = len;
-	}
+	    public Bits_MatchNoBits(int len)
+	    {
+	      this.Len = len;
+	    }
 
-	public override bool Get(int index)
-	{
-	  return false;
-	}
+	    public override bool Get(int index)
+	    {
+	      return false;
+	    }
 
-	public override int Length()
-	{
-	  return Len;
-	}
+	    public override int Length()
+	    {
+	      return Len;
+	    }
 	  }
 
 }

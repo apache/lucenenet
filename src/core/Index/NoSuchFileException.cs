@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lucene.Net.src.core.Index
+namespace Lucene.Net.Index
 {
     class NoSuchFileException : Exception
     {

@@ -29,7 +29,6 @@ namespace Lucene.Net.Index
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
 	using Lucene.Net.Util;
-	using AlreadySetException = Lucene.Net.Util.AlreadySetException;
 	using Version = Lucene.Net.Util.Version;
     using System.IO;
 
@@ -190,7 +189,7 @@ namespace Lucene.Net.Index
 	  {
 		try
 		{
-		  IndexWriterConfig clone = (IndexWriterConfig) base.clone();
+          IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
 
 		  clone.Writer = Writer.Clone();
 
@@ -208,10 +207,11 @@ namespace Lucene.Net.Index
 
 		  return clone;
 		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception(e);
-		}
+        catch
+        {
+            // .NET port: no need to deal with checked exceptions here
+            throw;
+        }
 	  }
 
 	  /// <summary>

@@ -68,11 +68,9 @@ namespace Lucene.Net.Index
 			  this.Gen = gen;
 		  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("synthetic-access") @Override protected void release() throws java.io.IOException
 		  protected internal override void Release()
 		  {
-			@object.Close();
+			@object.Dispose();
 			lock (OuterInstance)
 			{
 			  OuterInstance.GenDVProducers.Remove(Gen);
@@ -82,7 +80,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Returns the <seealso cref="DocValuesProducer"/> for the given generation. </summary>
-	  internal DocValuesProducer GetDocValuesProducer(long gen, SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, IList<FieldInfo> infos, int termsIndexDivisor)
+	  internal DocValuesProducer GetDocValuesProducer(long? gen, SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, IList<FieldInfo> infos, int termsIndexDivisor)
 	  {
 		  lock (this)
 		  {
@@ -131,7 +129,9 @@ namespace Lucene.Net.Index
 			  IOUtils.ReThrow(t);
 			}
 		  }
-	  }
+	   }
+       
+       internal override void Release(){}
 	}
 
 }

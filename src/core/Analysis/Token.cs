@@ -437,7 +437,7 @@ namespace Lucene.Net.Analysis
 		}
 		if (payload != null)
 		{
-		    code = code * 31 + payload.HashCode();
+		    code = code * 31 + payload.GetHashCode();
 		}
 		return code;
 	  }

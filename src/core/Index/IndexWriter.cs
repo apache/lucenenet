@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Lucene.Net.src.core.Index;
 
 namespace Lucene.Net.Index
 {
@@ -51,6 +50,8 @@ namespace Lucene.Net.Index
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using Lucene.Net.Support;
     using System.IO;
+    using System.Collections.Concurrent;
+    using System.Globalization;
 
 	/// <summary>
 	///  An <code>IndexWriter</code> creates and maintains an index.
@@ -238,7 +239,7 @@ namespace Lucene.Net.Index
 	  internal readonly FieldNumbers GlobalFieldNumberMap;
 
 	  private readonly DocumentsWriter DocWriter;
-	  private readonly LinkedList<Event> eventQueue;
+	  private readonly ConcurrentQueue<Event> eventQueue;
 	  internal readonly IndexFileDeleter Deleter;
 
 	  // used by forceMerge to note those needing merging
@@ -252,7 +253,7 @@ namespace Lucene.Net.Index
 
 	  // Holds all SegmentInfo instances currently involved in
 	  // merges
-	  private HashSet<SegmentCommitInfo> MergingSegments_Renamed = new HashSet<SegmentCommitInfo>();
+	  private HashSet<SegmentCommitInfo> mergingSegments = new HashSet<SegmentCommitInfo>();
 
 	  private MergePolicy MergePolicy;
 	  private readonly MergeScheduler MergeScheduler;
@@ -262,8 +263,8 @@ namespace Lucene.Net.Index
 	  private long MergeGen;
 	  private bool StopMerges;
 
-	  internal readonly AtomicInteger FlushCount_Renamed = new AtomicInteger();
-	  internal readonly AtomicInteger FlushDeletesCount_Renamed = new AtomicInteger();
+	  internal readonly AtomicInteger flushCount = new AtomicInteger();
+	  internal readonly AtomicInteger flushDeletesCount = new AtomicInteger();
 
 	  internal ReaderPool readerPool;
 	  internal readonly BufferedUpdatesStream BufferedUpdatesStream;
@@ -387,7 +388,7 @@ namespace Lucene.Net.Index
 			  {
 				// prevent double increment since docWriter#doFlush increments the flushcount
 				// if we flushed anything.
-				FlushCount_Renamed.IncrementAndGet();
+				flushCount.IncrementAndGet();
 			  }
 			  success = true;
 			  // Prevent segmentInfos from changing while opening the
@@ -556,7 +557,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  DropAll(false);
 		}
@@ -607,7 +608,7 @@ namespace Lucene.Net.Index
 				// in the end, in case we hit an exception;
 				// otherwise we could over-decref if close() is
 				// called again:
-				it.remove();
+                ReaderMap.Remove(it.Current);
         
 				// NOTE: it is allowed that these decRefs do not
 				// actually close the SRs; this happens when a
@@ -799,12 +800,13 @@ namespace Lucene.Net.Index
 	  ///           IO error </exception>
 	  public IndexWriter(Directory d, IndexWriterConfig conf)
 	  {
-		  if (!InstanceFieldsInitialized)
+		  /*if (!InstanceFieldsInitialized)
 		  {
 			  InitializeInstanceFields();
 			  InstanceFieldsInitialized = true;
-		  }
-		conf.IndexWriter = this; // prevent reuse by other instances
+		  }*/
+        readerPool = new ReaderPool(this);
+		//conf.IndexWriter = this; // prevent reuse by other instances
 		Config_Renamed = new LiveIndexWriterConfig(conf);
 		directory = d;
 		analyzer = Config_Renamed.Analyzer;
@@ -909,7 +911,7 @@ namespace Lucene.Net.Index
 		  // KeepOnlyLastCommitDeleter:
 		  lock (this)
 		  {
-			Deleter = new IndexFileDeleter(directory, Config_Renamed.IndexDeletionPolicy, SegmentInfos, InfoStream, this, initialIndexExists);
+			Deleter = new IndexFileDeleter(directory, Config_Renamed.IndexDeletionPolicy, SegmentInfos, infoStream, this, initialIndexExists);
 		  }
 
 		  if (Deleter.StartingCommitDeleted)
@@ -1170,7 +1172,9 @@ namespace Lucene.Net.Index
 			try
 			{
 			  // clean up merge scheduler in all cases, although flushing may have failed:
-			  interrupted = Thread.Interrupted();
+			  //interrupted = Thread.Interrupted();
+			  //LUCENE TO-DO
+              interrupted = false;
 
 			  if (waitForMerges)
 			  {
@@ -1660,7 +1664,7 @@ namespace Lucene.Net.Index
 					  // segment, we leave it in the readerPool; the
 					  // merge will skip merging it and will then drop
 					  // it once it's done:
-					  if (!MergingSegments_Renamed.Contains(rld.Info))
+					  if (!mergingSegments.Contains(rld.Info))
 					  {
 						SegmentInfos.Remove(rld.Info);
 						readerPool.Drop(rld.Info);
@@ -1987,7 +1991,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return FlushCount_Renamed.Get();
+			return flushCount.Get();
 		  }
 	  }
 
@@ -1996,7 +2000,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return FlushDeletesCount_Renamed.Get();
+			return flushDeletesCount.Get();
 		  }
 	  }
 
@@ -2168,13 +2172,13 @@ namespace Lucene.Net.Index
 				  MergePolicy.OneMerge merge = MergeExceptions[i];
 				  if (merge.MaxNumSegments != -1)
 				  {
-                      System.IO.IOException err = new System.IO.IOException("background merge hit exception: " + merge.SegString(directory));
-					Exception t = merge.Exception;
+                      throw new System.IO.IOException("background merge hit exception: " + merge.SegString(directory), merge.Exception ?? new Exception());
+					/*Exception t = merge.Exception;
 					if (t != null)
 					{
 					  err.initCause(t);
 					}
-					throw err;
+					throw err;*/
 				  }
 				}
 			  }
@@ -2308,9 +2312,7 @@ namespace Lucene.Net.Index
 				Exception t = merge.Exception;
 				if (t != null)
 				{
-				  System.IO.IOException ioe = new System.IO.IOException("background merge hit exception: " + merge.SegString(directory));
-				  ioe.initCause(t);
-				  throw ioe;
+				  throw new System.IO.IOException("background merge hit exception: " + merge.SegString(directory), t);
 				}
 			  }
 
@@ -2403,23 +2405,17 @@ namespace Lucene.Net.Index
 			  return false;
 			}
 			bool newMergesFound = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergePolicy.MergeSpecification spec;
 			MergePolicy.MergeSpecification spec;
 			if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
 			{
-			  Debug.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: " + trigger.name());
-			  spec = MergePolicy.FindForcedMerges(SegmentInfos, maxNumSegments, Collections.unmodifiableMap(SegmentsToMerge));
+			  Debug.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: " + trigger.ToString());
+			  spec = MergePolicy.FindForcedMerges(SegmentInfos, maxNumSegments, SegmentsToMerge);
 			  newMergesFound = spec != null;
 			  if (newMergesFound)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numMerges = spec.merges.size();
 				int numMerges = spec.Merges.Count;
 				for (int i = 0;i < numMerges;i++)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergePolicy.OneMerge merge = spec.merges.get(i);
 				  MergePolicy.OneMerge merge = spec.Merges[i];
 				  merge.MaxNumSegments = maxNumSegments;
 				}
@@ -2460,7 +2456,7 @@ namespace Lucene.Net.Index
 		  {
 			  lock (this)
 			  {
-				return MergingSegments_Renamed;
+				return mergingSegments;
 			  }
 		  }
 	  }
@@ -2789,7 +2785,7 @@ namespace Lucene.Net.Index
 			  StopMerges = false;
 			  Monitor.PulseAll(this);
         
-			  Debug.Assert(0 == MergingSegments_Renamed.Count);
+			  Debug.Assert(0 == mergingSegments.Count);
 
               if (infoStream.IsEnabled("IW"))
 			  {
@@ -2830,7 +2826,7 @@ namespace Lucene.Net.Index
 			}
         
 			// sanity check
-			Debug.Assert(0 == MergingSegments_Renamed.Count);
+			Debug.Assert(0 == mergingSegments.Count);
 
             if (infoStream.IsEnabled("IW"))
 			{
@@ -2940,7 +2936,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  FlushCount_Renamed.IncrementAndGet();
+		  flushCount.IncrementAndGet();
 		  DoAfterFlush();
 		}
 	  }
@@ -2994,7 +2990,7 @@ namespace Lucene.Net.Index
 			if (success == false)
 			{
 			  // Release all previously acquired locks:
-			  IOUtils.CloseWhileHandlingException(locks.ToArray());
+			  IOUtils.CloseWhileHandlingException(locks);
 			}
 		  }
 		}
@@ -3076,14 +3072,8 @@ namespace Lucene.Net.Index
 			  }
 			  SegmentInfos sis = new SegmentInfos(); // read infos from dir
 			  sis.Read(dir);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> dsFilesCopied = new java.util.HashSet<>();
 			  HashSet<string> dsFilesCopied = new HashSet<string>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String, String> dsNames = new java.util.HashMap<>();
 			  IDictionary<string, string> dsNames = new Dictionary<string, string>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> copiedFiles = new java.util.HashSet<>();
 			  HashSet<string> copiedFiles = new HashSet<string>();
 			  foreach (SegmentCommitInfo info in sis)
 			  {
@@ -3169,11 +3159,11 @@ namespace Lucene.Net.Index
 		{
 		  if (successTop)
 		  {
-			IOUtils.Close(locks.ToArray());
+			IOUtils.Close(locks);
 		  }
 		  else
 		  {
-			IOUtils.CloseWhileHandlingException(locks.ToArray());
+			IOUtils.CloseWhileHandlingException(locks);
 		  }
 		}
 	  }
@@ -3366,12 +3356,8 @@ namespace Lucene.Net.Index
 		// only relevant for segments that share doc store with others,
 		// because the DS might have been copied already, in which case we
 		// just want to update the DS name of this SegmentInfo.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String dsName = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat.getDocStoreSegment(info.info);
 		string dsName = Lucene3xSegmentInfoFormat.GetDocStoreSegment(info.Info);
 		Debug.Assert(dsName != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String newDsName;
 		string newDsName;
 		if (dsNames.ContainsKey(dsName))
 		{
@@ -3389,8 +3375,6 @@ namespace Lucene.Net.Index
 
 		ISet<string> docStoreFiles3xOnly = Lucene3xCodec.GetDocStoreFiles(info.Info);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,String> attributes;
 		IDictionary<string, string> attributes;
 		// copy the attributes map, we might modify it below.
 		// also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
@@ -3421,16 +3405,14 @@ namespace Lucene.Net.Index
 		// before writing SegmentInfo:
 		foreach (string file in info.Files())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String newFileName;
 		  string newFileName;
 		  if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
 		  {
-			newFileName = newDsName + IndexFileNames.StripSegmentName(file);
+              newFileName = newDsName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
 		  }
 		  else
 		  {
-			newFileName = segName + IndexFileNames.StripSegmentName(file);
+              newFileName = segName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
 		  }
 		  segFiles.Add(newFileName);
 		}
@@ -3440,8 +3422,6 @@ namespace Lucene.Net.Index
 		// segment name (its own name, if its 3.x, and doc
 		// store segment name):
 		TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(directory);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.Codec currentCodec = newInfo.getCodec();
 		Codec currentCodec = newInfo.Codec;
 		try
 		{
@@ -3460,8 +3440,6 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<String> siFiles = trackingDir.getCreatedFiles();
 		ICollection<string> siFiles = trackingDir.CreatedFiles;
 
 		bool success = false;
@@ -3472,12 +3450,10 @@ namespace Lucene.Net.Index
 		  foreach (string file in info.Files())
 		  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String newFileName;
 			string newFileName;
 			if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
 			{
-			  newFileName = newDsName + IndexFileNames.StripSegmentName(file);
+			  newFileName = newDsName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
 			  if (dsFilesCopied.Contains(newFileName))
 			  {
 				continue;
@@ -3486,7 +3462,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  newFileName = segName + IndexFileNames.StripSegmentName(file);
+			  newFileName = segName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
 			}
 
 			if (siFiles.Contains(newFileName))
@@ -3498,7 +3474,7 @@ namespace Lucene.Net.Index
 			Debug.Assert(!SlowFileExists(directory, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + siFiles);
 			Debug.Assert(!copiedFiles.Contains(file), "file \"" + file + "\" is being copied more than once");
 			copiedFiles.Add(file);
-			info.Info.dir.copy(directory, file, newFileName, context);
+			info.Info.Dir.Copy(directory, file, newFileName, context);
 		  }
 		  success = true;
 		}
@@ -3608,7 +3584,7 @@ namespace Lucene.Net.Index
 				{
 				  // prevent double increment since docWriter#doFlush increments the flushcount
 				  // if we flushed anything.
-				  FlushCount_Renamed.IncrementAndGet();
+				  flushCount.IncrementAndGet();
 				}
 				ProcessEvents(false, true);
 				flushSuccess = true;
@@ -3860,11 +3836,12 @@ namespace Lucene.Net.Index
 	  // at a time:
 	  private readonly object FullFlushLock = new object();
 
-	  // for assert
+      //LUCENE TO-DO Not possible in .NET
+	  /*// for assert
 	  internal virtual bool HoldsFullFlushLock()
 	  {
 		return Thread.holdsLock(FullFlushLock);
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Flush all in-memory buffered updates (adds and deletes)
@@ -3933,7 +3910,7 @@ namespace Lucene.Net.Index
 			if (!anySegmentFlushed)
 			{
 			  // flushCount is incremented in flushAllThreads
-			  FlushCount_Renamed.IncrementAndGet();
+			  flushCount.IncrementAndGet();
 			}
 			success = true;
 			return anySegmentFlushed;
@@ -3980,7 +3957,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-			FlushDeletesCount_Renamed.IncrementAndGet();
+			flushDeletesCount.IncrementAndGet();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BufferedUpdatesStream.ApplyDeletesResult result;
 			BufferedUpdatesStream.ApplyDeletesResult result;
@@ -4001,7 +3978,7 @@ namespace Lucene.Net.Index
 				// segment, we leave it in the readerPool; the
 				// merge will skip merging it and will then drop
 				// it once it's done:
-				if (!MergingSegments_Renamed.Contains(info))
+				if (!mergingSegments.Contains(info))
 				{
 				  SegmentInfos.Remove(info);
 				  readerPool.Drop(info);
@@ -4716,7 +4693,7 @@ namespace Lucene.Net.Index
 			bool isExternal = false;
 			foreach (SegmentCommitInfo info in merge.Segments)
 			{
-			  if (MergingSegments_Renamed.Contains(info))
+			  if (mergingSegments.Contains(info))
 			  {
 				if (infoStream.IsEnabled("IW"))
 				{
@@ -4761,7 +4738,7 @@ namespace Lucene.Net.Index
 			if (infoStream.IsEnabled("IW"))
 			{
 			  StringBuilder builder = new StringBuilder("registerMerge merging= [");
-			  foreach (SegmentCommitInfo info in MergingSegments_Renamed)
+			  foreach (SegmentCommitInfo info in mergingSegments)
 			  {
 				builder.Append(info.Info.Name).Append(", ");
 			  }
@@ -4779,7 +4756,7 @@ namespace Lucene.Net.Index
 			  {
                   infoStream.Message("IW", "registerMerge info=" + SegString(info));
 			  }
-			  MergingSegments_Renamed.Add(info);
+			  mergingSegments.Add(info);
 			}
         
 			Debug.Assert(merge.EstimatedMergeBytes == 0);
@@ -4887,7 +4864,7 @@ namespace Lucene.Net.Index
 				SegmentInfos.Remove(info);
 				if (merge.Segments.Contains(info))
 				{
-				  MergingSegments_Renamed.Remove(info);
+				  mergingSegments.Remove(info);
 				  merge.Segments.Remove(info);
 				}
 				readerPool.Drop(info);
@@ -4966,7 +4943,7 @@ namespace Lucene.Net.Index
 			  IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 			  foreach (SegmentCommitInfo info in sourceSegments)
 			  {
-				MergingSegments_Renamed.Remove(info);
+				mergingSegments.Remove(info);
 			  }
 			  merge.RegisterDone = false;
 			}
@@ -5191,7 +5168,7 @@ namespace Lucene.Net.Index
 			}
 		  }
 		  Debug.Assert(mergeState.SegmentInfo == merge.Info_Renamed.Info);
-		  merge.Info_Renamed.Info.Files = new HashSet<>(dirWrapper.CreatedFiles);
+		  merge.Info_Renamed.Info.Files = new HashSet<string>(dirWrapper.CreatedFiles);
 
 		  // Record which codec was used to write the segment
 
@@ -5259,9 +5236,9 @@ namespace Lucene.Net.Index
 
 				lock (this)
 				{
-				  Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_EXTENSION));
-				  Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
-				  Deleter.DeleteNewFiles(merge.Info_Renamed.Files());
+                    Deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION));
+                    Deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+				    Deleter.DeleteNewFiles(merge.Info_Renamed.Files());
 				}
 			  }
 			}
@@ -5284,8 +5261,8 @@ namespace Lucene.Net.Index
 				{
 				  infoStream.Message("IW", "abort merge after building CFS");
 				}
-				Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_EXTENSION));
-				Deleter.DeleteFile(IndexFileNames.SegmentFileName(mergedName, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+                Deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION));
+                Deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
 				return 0;
 			  }
 			}
@@ -5316,7 +5293,7 @@ namespace Lucene.Net.Index
 			{
 			  lock (this)
 			  {
-				Deleter.DeleteNewFiles(merge.Info_Renamed.Files);
+				Deleter.DeleteNewFiles(merge.Info_Renamed.Files());
 			  }
 			}
 		  }
@@ -5327,19 +5304,13 @@ namespace Lucene.Net.Index
 
 		  if (infoStream.IsEnabled("IW"))
 		  {
-			infoStream.Message("IW", string.format(Locale.ROOT, "merged segment size=%.3f MB vs estimate=%.3f MB", merge.Info_Renamed.SizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
+              infoStream.Message("IW", string.Format(CultureInfo.InvariantCulture, "merged segment size=%.3f MB vs estimate=%.3f MB", merge.Info_Renamed.SizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReaderWarmer mergedSegmentWarmer = config.getMergedSegmentWarmer();
 		  IndexReaderWarmer mergedSegmentWarmer = Config_Renamed.MergedSegmentWarmer;
 		  if (PoolReaders && mergedSegmentWarmer != null && merge.Info_Renamed.Info.DocCount != 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(merge.info, true);
 			ReadersAndUpdates rld = readerPool.Get(merge.Info_Renamed, true);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader sr = rld.getReader(Lucene.Net.Store.IOContext.READ);
 			SegmentReader sr = rld.GetReader(IOContext.READ);
 			try
 			{
@@ -5536,11 +5507,7 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentInfos newSIS = new SegmentInfos();
 			SegmentInfos newSIS = new SegmentInfos();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<SegmentCommitInfo,SegmentCommitInfo> liveSIS = new java.util.HashMap<>();
 			IDictionary<SegmentCommitInfo, SegmentCommitInfo> liveSIS = new Dictionary<SegmentCommitInfo, SegmentCommitInfo>();
 			foreach (SegmentCommitInfo info in SegmentInfos)
 			{
@@ -5548,12 +5515,13 @@ namespace Lucene.Net.Index
 			}
 			foreach (SegmentCommitInfo info in sis)
 			{
+              SegmentCommitInfo infoMod = info;
 			  SegmentCommitInfo liveInfo = liveSIS[info];
 			  if (liveInfo != null)
 			  {
-				info = liveInfo;
+				infoMod = liveInfo;
 			  }
-			  newSIS.Add(info);
+			  newSIS.Add(infoMod);
 			}
         
 			return newSIS;
@@ -5861,9 +5829,7 @@ namespace Lucene.Net.Index
 	  internal static ICollection<string> CreateCompoundFile(InfoStream infoStream, Directory directory, CheckAbort checkAbort, SegmentInfo info, IOContext context)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = IndexFileNames.segmentFileName(info.name, "", IndexFileNames.COMPOUND_FILE_EXTENSION);
-		string fileName = IndexFileNames.SegmentFileName(info.Name, "", IndexFileNames.COMPOUND_FILE_EXTENSION);
+		string fileName = Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION);
 		if (infoStream.IsEnabled("IW"))
 		{
 		  infoStream.Message("IW", "create compound file " + fileName);
@@ -5906,7 +5872,7 @@ namespace Lucene.Net.Index
 			  }
 			  try
 			  {
-				directory.DeleteFile(IndexFileNames.SegmentFileName(info.Name, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+                  directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
 			  }
 			  catch (Exception t)
 			  {
@@ -5918,7 +5884,7 @@ namespace Lucene.Net.Index
 		// Replace all previous files with the CFS/CFE files:
 		HashSet<string> siFiles = new HashSet<string>();
 		siFiles.Add(fileName);
-		siFiles.Add(IndexFileNames.SegmentFileName(info.Name, "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+        siFiles.Add(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
 		info.Files = siFiles;
 
 		return files;
@@ -5962,7 +5928,7 @@ namespace Lucene.Net.Index
 		finally
 		{
 		  ApplyAllDeletesAndUpdates();
-		  FlushCount_Renamed.IncrementAndGet();
+		  flushCount.IncrementAndGet();
 		}
 	  }
 	  internal void DoAfterSegmentFlushed(bool triggerMerge, bool forcePurge)
@@ -6001,15 +5967,16 @@ namespace Lucene.Net.Index
 
 	  private bool ProcessEvents(bool triggerMerge, bool forcePurge)
 	  {
-		return ProcessEvents(EventQueue, triggerMerge, forcePurge);
+		return ProcessEvents(eventQueue, triggerMerge, forcePurge);
 	  }
 
-	  private bool ProcessEvents(LinkedList<Event> queue, bool triggerMerge, bool forcePurge)
+	  private bool ProcessEvents(ConcurrentQueue<Event> queue, bool triggerMerge, bool forcePurge)
 	  {
 		Event @event;
 		bool processed = false;
-		while ((@event = queue.RemoveFirst()) != null)
-		{
+		//while ((@event = queue.RemoveFirst()) != null)
+		while (queue.TryDequeue(out @event))
+        {
 		  processed = true;
 		  @event.Process(this, triggerMerge, forcePurge);
 		}

@@ -1,7 +1,10 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
+using System.Globalization;
 
 namespace Lucene.Net.Index
 {
@@ -257,9 +260,7 @@ namespace Lucene.Net.Index
 	  private MergeSpecification FindForcedMergesSizeLimit(SegmentInfos infos, int maxNumSegments, int last)
 	  {
 		MergeSpecification spec = new MergeSpecification();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> segments = infos.asList();
-		IList<SegmentCommitInfo> segments = infos.AsList();
+		List<SegmentCommitInfo> segments = infos.AsList();
 
 		int start = last - 1;
 		while (start >= 0)
@@ -277,14 +278,14 @@ namespace Lucene.Net.Index
 			{
 			  // there is more than 1 segment to the right of
 			  // this one, or a mergeable single segment.
-			  spec.Add(new OneMerge(segments.subList(start + 1, last)));
+			  spec.Add(new OneMerge(segments.SubList(start + 1, last)));
 			}
 			last = start;
 		  }
 		  else if (last - start == MergeFactor_Renamed)
 		  {
 			// mergeFactor eligible segments were found, add them as a merge.
-			spec.Add(new OneMerge(segments.subList(start, last)));
+			spec.Add(new OneMerge(segments.SubList(start, last)));
 			last = start;
 		  }
 		  --start;
@@ -294,7 +295,7 @@ namespace Lucene.Net.Index
 		// already fully merged
 		if (last > 0 && (++start + 1 < last || !IsMerged(infos, infos.Info(start))))
 		{
-		  spec.Add(new OneMerge(segments.subList(start, last)));
+            spec.Add(new OneMerge(segments.SubList(start, last)));
 		}
 
 		return spec.Merges.Count == 0 ? null : spec;
@@ -308,15 +309,13 @@ namespace Lucene.Net.Index
 	  private MergeSpecification FindForcedMergesMaxNumSegments(SegmentInfos infos, int maxNumSegments, int last)
 	  {
 		MergeSpecification spec = new MergeSpecification();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> segments = infos.asList();
-		IList<SegmentCommitInfo> segments = infos.AsList();
+		List<SegmentCommitInfo> segments = infos.AsList();
 
 		// First, enroll all "full" merges (size
 		// mergeFactor) to potentially be run concurrently:
 		while (last - maxNumSegments + 1 >= MergeFactor_Renamed)
 		{
-		  spec.Add(new OneMerge(segments.subList(last - MergeFactor_Renamed, last)));
+		  spec.Add(new OneMerge(segments.SubList(last - MergeFactor_Renamed, last)));
 		  last -= MergeFactor_Renamed;
 		}
 
@@ -331,7 +330,7 @@ namespace Lucene.Net.Index
 			// choice is simple:
 			if (last > 1 || !IsMerged(infos, infos.Info(0)))
 			{
-			  spec.Add(new OneMerge(segments.subList(0, last)));
+			  spec.Add(new OneMerge(segments.SubList(0, last)));
 			}
 		  }
 		  else if (last > maxNumSegments)
@@ -346,8 +345,6 @@ namespace Lucene.Net.Index
 			// We must merge this many segments to leave
 			// maxNumSegments in the index (from when
 			// forceMerge was first kicked off):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int finalMergeSize = last - maxNumSegments + 1;
 			int finalMergeSize = last - maxNumSegments + 1;
 
 			// Consider all possible starting points:
@@ -368,7 +365,7 @@ namespace Lucene.Net.Index
 			  }
 			}
 
-			spec.Add(new OneMerge(segments.subList(bestStart, bestStart + finalMergeSize)));
+			spec.Add(new OneMerge(segments.SubList(bestStart, bestStart + finalMergeSize)));
 		  }
 		}
 		return spec.Merges.Count == 0 ? null : spec;
@@ -412,8 +409,6 @@ namespace Lucene.Net.Index
 		int last = infos.Size();
 		while (last > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = infos.info(--last);
 		  SegmentCommitInfo info = infos.Info(--last);
 		  if (segmentsToMerge[info] != null)
 		  {
@@ -470,11 +465,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> segments = segmentInfos.asList();
-		IList<SegmentCommitInfo> segments = segmentInfos.AsList();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = segments.size();
+		List<SegmentCommitInfo> segments = segmentInfos.AsList();
 		int numSegments = segments.Count;
 
 		if (Verbose())
@@ -488,8 +479,6 @@ namespace Lucene.Net.Index
 		Debug.Assert(w != null);
 		for (int i = 0;i < numSegments;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = segmentInfos.info(i);
 		  SegmentCommitInfo info = segmentInfos.Info(i);
 		  int delCount = w.NumDeletedDocs(info);
 		  if (delCount > 0)
@@ -510,7 +499,7 @@ namespace Lucene.Net.Index
 			  {
 				Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
 			  }
-			  spec.Add(new OneMerge(segments.subList(firstSegmentWithDeletions, i)));
+              spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, i)));
 			  firstSegmentWithDeletions = i;
 			}
 		  }
@@ -523,7 +512,7 @@ namespace Lucene.Net.Index
 			{
 			  Message("  add merge " + firstSegmentWithDeletions + " to " + (i - 1) + " inclusive");
 			}
-			spec.Add(new OneMerge(segments.subList(firstSegmentWithDeletions, i)));
+            spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, i)));
 			firstSegmentWithDeletions = -1;
 		  }
 		}
@@ -534,7 +523,7 @@ namespace Lucene.Net.Index
 		  {
 			Message("  add merge " + firstSegmentWithDeletions + " to " + (numSegments - 1) + " inclusive");
 		  }
-		  spec.Add(new OneMerge(segments.subList(firstSegmentWithDeletions, numSegments)));
+          spec.Add(new OneMerge(segments.SubList(firstSegmentWithDeletions, numSegments)));
 		}
 
 		return spec;
@@ -606,22 +595,18 @@ namespace Lucene.Net.Index
 			size = 1;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentInfoAndLevel infoLevel = new SegmentInfoAndLevel(info, (float) Math.log(size)/norm, i);
 		  SegmentInfoAndLevel infoLevel = new SegmentInfoAndLevel(info, (float) Math.Log(size) / norm, i);
 		  levels.Add(infoLevel);
 
 		  if (Verbose())
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long segBytes = sizeBytes(info);
 			long segBytes = SizeBytes(info);
 			string extra = mergingSegments.Contains(info) ? " [merging]" : "";
 			if (size >= MaxMergeSize)
 			{
 			  extra += " [skip: too large]";
 			}
-			Message("seg=" + Writer.Get().segString(info) + " level=" + infoLevel.Level + " size=" + string.format(Locale.ROOT, "%.3f MB", segBytes / 1024 / 1024.0) + extra);
+            Message("seg=" + Writer.Get().SegString(info) + " level=" + infoLevel.Level + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00} MB", segBytes / 1024 / 1024.0) + extra);
 		  }
 		}
 
@@ -740,7 +725,7 @@ namespace Lucene.Net.Index
 			  }
 			  if (Verbose())
 			  {
-				Message("  add merge=" + Writer.Get().segString(mergeInfos) + " start=" + start + " end=" + end);
+				Message("  add merge=" + Writer.Get().SegString(mergeInfos) + " start=" + start + " end=" + end);
 			  }
 			  spec.Add(new OneMerge(mergeInfos));
 			}

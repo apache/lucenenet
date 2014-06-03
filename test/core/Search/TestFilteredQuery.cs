@@ -483,7 +483,7 @@ namespace Lucene.Net.Search
 
 		TopDocs search = searcher.search(query, 10);
 		Assert.AreEqual(totalDocsWithZero, search.totalHits);
-		IOUtils.close(reader, writer, directory);
+		IOUtils.Close(reader, writer, directory);
 
 	  }
 
@@ -605,7 +605,7 @@ namespace Lucene.Net.Search
 
 		TopDocs search = searcher.search(query, 10);
 		Assert.AreEqual(totalDocsWithZero, search.totalHits);
-		IOUtils.close(reader, writer, directory);
+		IOUtils.Close(reader, writer, directory);
 
 	  }
 

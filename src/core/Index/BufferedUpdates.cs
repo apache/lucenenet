@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 	  // one that came in wins), and helps us detect faster if the same Term is
 	  // used to update the same field multiple times (so we later traverse it
 	  // only once).
-	  internal readonly IDictionary<string, LinkedHashMap<Term, NumericDocValuesUpdate>> NumericUpdates = new Dictionary<string, LinkedHashMap<Term, NumericDocValuesUpdate>>();
+	  internal readonly IDictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>> NumericUpdates = new Dictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>>();
 
 	  // Map<dvField,Map<updateTerm,BinaryUpdate>>
 	  // For each field we keep an ordered list of BinaryUpdates, key'd by the
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
 	  // one that came in wins), and helps us detect faster if the same Term is
 	  // used to update the same field multiple times (so we later traverse it
 	  // only once).
-	  internal readonly IDictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>> BinaryUpdates = new Dictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>>();
+      internal readonly IDictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>> BinaryUpdates = new Dictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>>();
 
 	  public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
 
@@ -239,16 +239,14 @@ namespace Lucene.Net.Index
 
 	  public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
 	  {
-		LinkedHashMap<Term, NumericDocValuesUpdate> fieldUpdates = NumericUpdates[update.Field];
+		/*Linked*/HashMap<Term, NumericDocValuesUpdate> fieldUpdates = NumericUpdates[update.Field];
 		if (fieldUpdates == null)
 		{
-		  fieldUpdates = new LinkedHashMap<Term, NumericDocValuesUpdate>();
+		  fieldUpdates = new /*Linked*/HashMap<Term, NumericDocValuesUpdate>();
 		  NumericUpdates[update.Field] = fieldUpdates;
 		  BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate current = fieldUpdates.get(update.term);
-		NumericDocValuesUpdate current = fieldUpdates.get(update.Term);
+		NumericDocValuesUpdate current = fieldUpdates[update.Term];
 		if (current != null && docIDUpto < current.DocIDUpto)
 		{
 		  // Only record the new number if it's greater than or equal to the current
@@ -263,9 +261,9 @@ namespace Lucene.Net.Index
 		// it's added last (we're interested in insertion-order).
 		if (current != null)
 		{
-		  fieldUpdates.remove(update.Term);
+		  fieldUpdates.Remove(update.Term);
 		}
-		fieldUpdates.put(update.Term, update);
+		fieldUpdates[update.Term] = update;
 		NumNumericUpdates.IncrementAndGet();
 		if (current == null)
 		{
@@ -275,16 +273,14 @@ namespace Lucene.Net.Index
 
 	  public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
 	  {
-		LinkedHashMap<Term, BinaryDocValuesUpdate> fieldUpdates = BinaryUpdates[update.Field];
+		/*Linked*/HashMap<Term, BinaryDocValuesUpdate> fieldUpdates = BinaryUpdates[update.Field];
 		if (fieldUpdates == null)
 		{
-		  fieldUpdates = new LinkedHashMap<Term, BinaryDocValuesUpdate>();
+		  fieldUpdates = new /*Linked*/HashMap<Term, BinaryDocValuesUpdate>();
 		  BinaryUpdates[update.Field] = fieldUpdates;
 		  BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate current = fieldUpdates.get(update.term);
-		BinaryDocValuesUpdate current = fieldUpdates.get(update.Term);
+		BinaryDocValuesUpdate current = fieldUpdates[update.Term];
 		if (current != null && docIDUpto < current.DocIDUpto)
 		{
 		  // Only record the new number if it's greater than or equal to the current
@@ -299,9 +295,9 @@ namespace Lucene.Net.Index
 		// it's added last (we're interested in insertion-order).
 		if (current != null)
 		{
-		  fieldUpdates.remove(update.Term);
+		  fieldUpdates.Remove(update.Term);
 		}
-		fieldUpdates.put(update.Term, update);
+		fieldUpdates[update.Term] = update;
 		NumBinaryUpdates.IncrementAndGet();
 		if (current == null)
 		{

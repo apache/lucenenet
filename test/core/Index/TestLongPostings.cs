@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			IOUtils.closeWhileHandlingException(priorException, ts);
+			IOUtils.CloseWhileHandlingException(priorException, ts);
 		  }
 		}
 	  }

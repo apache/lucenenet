@@ -202,7 +202,7 @@ namespace Lucene.Net.Store
 		  bool success = false;
 		  try
 		  {
-			IOUtils.closeWhileHandlingException(priorException, os, @is);
+			IOUtils.CloseWhileHandlingException(priorException, os, @is);
 			success = true;
 		  }
 		  finally

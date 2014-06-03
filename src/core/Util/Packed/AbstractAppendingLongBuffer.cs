@@ -84,8 +84,6 @@ namespace Lucene.Net.Util.Packed
 		  // check size
 		  if (Values.Length == ValuesOff)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLength = Lucene.Net.Util.ArrayUtil.oversize(valuesOff + 1, 8);
 			int newLength = ArrayUtil.Oversize(ValuesOff + 1, 8);
 			Grow(newLength);
 		  }
@@ -108,11 +106,7 @@ namespace Lucene.Net.Util.Packed
 	  public override sealed long Get(long index)
 	  {
 		Debug.Assert(index >= 0 && index < Size());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int block = (int)(index >> pageShift);
 		int block = (int)(index >> PageShift);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int element = (int)(index & pageMask);
 		int element = (int)(index & PageMask);
 		return Get(block, element);
 	  }

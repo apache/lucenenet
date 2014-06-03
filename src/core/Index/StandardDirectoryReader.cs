@@ -532,7 +532,7 @@ namespace Lucene.Net.Index
 		  SegmentsFileName_Renamed = infos.SegmentsFileName;
 		  this.Dir = dir;
 		  UserData_Renamed = infos.UserData;
-		  Files = Collections.unmodifiableCollection(infos.Files(dir, true));
+		  Files = infos.Files(dir, true);
 		  Generation_Renamed = infos.Generation;
 		  SegmentCount_Renamed = infos.Size();
 		}

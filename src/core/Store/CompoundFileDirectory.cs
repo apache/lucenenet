@@ -207,7 +207,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  IOUtils.closeWhileHandlingException(priorE, stream, entriesStream);
+		  IOUtils.CloseWhileHandlingException(priorE, stream, entriesStream);
 		}
 		// this is needed until Java 7's real try-with-resources:
 		throw new InvalidOperationException("impossible to get here");

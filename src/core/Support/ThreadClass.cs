@@ -74,7 +74,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// this method has no functionality unless the method is overridden
+        /// This method has no functionality unless the method is overridden
         /// </summary>
         public virtual void Run()
         {
@@ -260,15 +260,12 @@ namespace Lucene.Net.Support
         }
 
         [ThreadStatic]
-        //static ThreadClass this = null;
+        static ThreadClass This = null;
 
         // named as the Java version
-        public static ThreadClass CurrentThread
+        public static ThreadClass CurrentThread()
         {
-            get
-            {
-                return Current();
-            }
+            return Current();
         }
 
         public static void Sleep(long ms)
@@ -284,12 +281,12 @@ namespace Lucene.Net.Support
         /// <returns>The currently running thread</returns>
         public static ThreadClass Current()
         {
-            if (this == null)
+            if (This == null)
             {
-                this = new ThreadClass();
-                this.Instance = Thread.CurrentThread;
+                This = new ThreadClass();
+                This.Instance = Thread.CurrentThread;
             }
-            return this;
+            return This;
         }
 
         public static bool operator ==(ThreadClass t1, object t2)

@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
 			Assert.AreEqual(buf1[i], buf2[i]);
 		  }
 		}
-		IOUtils.close(is1, is2);
+		IOUtils.Close(is1, is2);
 	  }
 
 	  private File WriteAll(string name, sbyte[][] data)

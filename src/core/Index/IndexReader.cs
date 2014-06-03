@@ -101,7 +101,9 @@ using Lucene.Net.Support;
 
 	  private readonly ISet<ReaderClosedListener> ReaderClosedListeners = new ConcurrentHashSet<ReaderClosedListener>();
 
-	  private readonly ISet<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
+      //LUCENE TO-DO
+	  //private readonly ISet<IndexReader> ParentReaders = Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<IndexReader, bool?>()));
+      private readonly ISet<IdentityWeakReference<IndexReader>> parentReaders = new ConcurrentHashSet<IdentityWeakReference<IndexReader>>();
 
 	  /// <summary>
 	  /// Expert: adds a <seealso cref="ReaderClosedListener"/>.  The
@@ -137,7 +139,7 @@ using Lucene.Net.Support;
 	  public void RegisterParentReader(IndexReader reader)
 	  {
 		EnsureOpen();
-		ParentReaders.Add(reader);
+		parentReaders.Add(new IdentityWeakReference<IndexReader>(reader));
 	  }
 
 	  private void NotifyReaderClosedListeners(Exception th)
@@ -168,15 +170,22 @@ using Lucene.Net.Support;
 
 	  private void ReportCloseToParentReaders()
 	  {
-		lock (ParentReaders)
+		lock (parentReaders)
 		{
-		  foreach (IndexReader parent in ParentReaders)
+		  foreach (IdentityWeakReference<IndexReader> parent in parentReaders)
 		  {
-			parent.ClosedByChild = true;
-			// cross memory barrier by a fake write:
-			parent.refCount.AddAndGet(0);
-			// recurse:
-			parent.ReportCloseToParentReaders();
+              //Using weak references
+              IndexReader target = parent.Target;
+
+              if (target != null)
+              {
+                    target.ClosedByChild = true;
+			        // cross memory barrier by a fake write:
+                    target.refCount.AddAndGet(0);
+			        // recurse:
+                    target.ReportCloseToParentReaders();
+              }
+			
 		  }
 		}
 	  }

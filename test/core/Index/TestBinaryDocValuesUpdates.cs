@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(1, GetValue(bdv1, 0, scratch));
 		Assert.AreEqual(10, GetValue(bdv2, 0, scratch));
 
-		IOUtils.close(writer, reader1, reader2, dir);
+		IOUtils.Close(writer, reader1, reader2, dir);
 	  }
 
 	  public virtual void TestUpdatesAndDeletes()
@@ -958,7 +958,7 @@ namespace Lucene.Net.Index
 	//      System.out.println();
 		}
 
-		IOUtils.close(writer, reader, dir);
+		IOUtils.Close(writer, reader, dir);
 	  }
 
 	  public virtual void TestUpdateSegmentWithNoDocValues()

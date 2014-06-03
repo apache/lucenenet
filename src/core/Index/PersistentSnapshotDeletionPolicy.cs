@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -234,7 +235,7 @@ namespace Lucene.Net.Index
 			  }
 			}
         
-			Dir.Sync(Collections.singletonList(fileName));
+			Dir.Sync(/*Collections.singletonList(*/new[] {fileName}/*)*/);
         
 			if (NextWriteGen > 0)
 			{
@@ -336,7 +337,7 @@ namespace Lucene.Net.Index
 				  genLoaded = gen;
 				  RefCounts.Clear();
 //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
-				  RefCounts.putAll(m);
+				  RefCounts.PutAll(m);
 				}
 			  }
 			}

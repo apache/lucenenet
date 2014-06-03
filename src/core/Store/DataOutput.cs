@@ -192,7 +192,7 @@ namespace Lucene.Net.Store
 	  /// supported, but should be avoided. </param>
 	  /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
 	  /// <seealso cref= DataInput#readVInt() </seealso>
-	  public void WriteVInt(int i)
+	  public void WriteVInt(int? i)
 	  {
 		while ((i & ~0x7F) != 0)
 		{
@@ -208,7 +208,7 @@ namespace Lucene.Net.Store
 	  /// 64-bit unsigned integer written as eight bytes, high-order bytes first.
 	  /// </summary>
 	  /// <seealso cref= DataInput#readLong() </seealso>
-	  public virtual void WriteLong(long i)
+	  public virtual void WriteLong(long? i)
 	  {
 		WriteInt((int)(i >> 32));
 		WriteInt((int) i);
@@ -221,7 +221,7 @@ namespace Lucene.Net.Store
 	  /// <p>
 	  /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>. </summary>
 	  /// <seealso cref= DataInput#readVLong() </seealso>
-	  public void WriteVLong(long i)
+	  public void WriteVLong(long? i)
 	  {
 		Debug.Assert(i >= 0L);
 		while ((i & ~0x7FL) != 0L)

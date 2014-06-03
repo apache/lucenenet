@@ -66,31 +66,34 @@ namespace Lucene.Net.Index
 	  // Thingy class holding fieldsReader, termVectorsReader,
 	  // normsProducer
 
-	  internal readonly IDisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal = new IDisposableThreadLocalAnonymousInnerClassHelper();
+	  internal readonly IDisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;// = new IDisposableThreadLocalAnonymousInnerClassHelper();
 
-	  private class IDisposableThreadLocalAnonymousInnerClassHelper : IDisposableThreadLocal<StoredFieldsReader>
+	  private class AnonymousFieldsReaderLocal  : IDisposableThreadLocal<StoredFieldsReader>
 	  {
-		  public IDisposableThreadLocalAnonymousInnerClassHelper()
+          private readonly SegmentCoreReaders OuterInstance;
+          public AnonymousFieldsReaderLocal(SegmentCoreReaders outerInstance)
 		  {
 		  }
 
 		  protected internal override StoredFieldsReader InitialValue()
 		  {
-			return outerInstance.FieldsReaderOrig.clone();
+              return OuterInstance.FieldsReaderOrig.Clone();
 		  }
 	  }
 
-	  internal readonly IDisposableThreadLocal<TermVectorsReader> termVectorsLocal = new IDisposableThreadLocalAnonymousInnerClassHelper2();
+	  internal readonly IDisposableThreadLocal<TermVectorsReader> termVectorsLocal;// = new IDisposableThreadLocalAnonymousInnerClassHelper2();
 
-	  private class IDisposableThreadLocalAnonymousInnerClassHelper2 : IDisposableThreadLocal<TermVectorsReader>
+	  private class AnonymousTermVectorsLocal  : IDisposableThreadLocal<TermVectorsReader>
 	  {
-		  public IDisposableThreadLocalAnonymousInnerClassHelper2()
+          private readonly SegmentCoreReaders OuterInstance;
+          public AnonymousTermVectorsLocal(SegmentCoreReaders outerInstance)
 		  {
+              OuterInstance = outerInstance;
 		  }
 
 		  protected internal override TermVectorsReader InitialValue()
 		  {
-			return (outerInstance.TermVectorsReaderOrig == null) ? null : outerInstance.TermVectorsReaderOrig.clone();
+              return (OuterInstance.TermVectorsReaderOrig == null) ? null : OuterInstance.TermVectorsReaderOrig.Clone();
 		  }
 	  }
 
@@ -108,21 +111,19 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  private readonly ISet<CoreClosedListener> CoreClosedListeners = Collections.synchronizedSet(new LinkedHashSet<CoreClosedListener>());
+      private readonly ISet<CoreClosedListener> CoreClosedListeners = new ConcurrentHashSet<CoreClosedListener>(new IdentityComparer<CoreClosedListener>());
 
 	  internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
 	  {
+        fieldsReaderLocal = new AnonymousFieldsReaderLocal(this);
+        termVectorsLocal = new AnonymousTermVectorsLocal(this);
 
 		if (termsIndexDivisor == 0)
 		{
 		  throw new System.ArgumentException("indexDivisor must be < 0 (don't load terms index) or greater than 0 (got 0)");
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.Codec codec = si.info.getCodec();
 		Codec codec = si.Info.Codec;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.Directory cfsDir;
 		Directory cfsDir; // confusing name: if (cfs) its the cfsdir, otherwise its the segment's directory.
 
 		bool success = false;
@@ -139,16 +140,10 @@ namespace Lucene.Net.Index
 			cfsDir = dir;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfos fieldInfos = owner.fieldInfos;
 		  FieldInfos fieldInfos = owner.FieldInfos_Renamed;
 
 		  this.TermsIndexDivisor = termsIndexDivisor;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.PostingsFormat format = codec.postingsFormat();
 		  PostingsFormat format = codec.PostingsFormat();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.info, fieldInfos, context, termsIndexDivisor);
 		  SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.Info, fieldInfos, context, termsIndexDivisor);
 		  // Ask codec for its Fields
 		  Fields = format.FieldsProducer(segmentReadState);
@@ -230,7 +225,6 @@ namespace Lucene.Net.Index
 	  {
 		if (@ref.DecrementAndGet() == 0)
 		{
-	//      System.err.println("--- closing core readers");
 		  Exception th = null;
 		  try
 		  {
@@ -261,14 +255,7 @@ namespace Lucene.Net.Index
 			}
 			catch (Exception t)
 			{
-			  if (th == null)
-			  {
-				th = t;
-			  }
-			  else
-			  {
-				th.addSuppressed(t);
-			  }
+			  
 			}
 		  }
 		  IOUtils.ReThrowUnchecked(th);

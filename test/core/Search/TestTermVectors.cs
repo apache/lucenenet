@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
 
 		VerifyIndex(target);
 
-		IOUtils.close(target, input[0], input[1]);
+		IOUtils.Close(target, input[0], input[1]);
 	  }
 
 	  public virtual void TestFullMergeAddIndexesReader()
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
 		writer.close();
 
 		VerifyIndex(target);
-		IOUtils.close(target, input[0], input[1]);
+		IOUtils.Close(target, input[0], input[1]);
 	  }
 
 	}

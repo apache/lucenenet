@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -44,7 +45,7 @@ namespace Lucene.Net.Index
 	  public abstract class SubReaderWrapper
 	  {
 
-		internal virtual AtomicReader[] wrap<T1>(IList<T1> readers) where T1 : AtomicReader
+		internal virtual AtomicReader[] Wrap(IList<AtomicReader> readers)
 		{
 		  AtomicReader[] wrapped = new AtomicReader[readers.Count];
 		  for (int i = 0; i < readers.Count; i++)
@@ -103,8 +104,8 @@ namespace Lucene.Net.Index
 	  /// using the supplied SubReaderWrapper to wrap its subreader. </summary>
 	  /// <param name="in"> the DirectoryReader to filter </param>
 	  /// <param name="wrapper"> the SubReaderWrapper to use to wrap subreaders </param>
-	  public FilterDirectoryReader(DirectoryReader @in, SubReaderWrapper wrapper) 
-          : base(@in.Directory(), wrapper.Wrap(@in.GetSequentialSubReaders()))
+	  public FilterDirectoryReader(DirectoryReader @in, SubReaderWrapper wrapper)
+          : base(@in.Directory(), wrapper.Wrap(@in.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
 	  {
 		this.@in = @in;
 	  }

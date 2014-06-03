@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  IOUtils.closeWhileHandlingException(priorException, stream);
+		  IOUtils.CloseWhileHandlingException(priorException, stream);
 		}
 		w.close();
 

@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 	using CollectionUtil = Lucene.Net.Util.CollectionUtil;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -172,9 +173,9 @@ namespace Lucene.Net.Index
 		  {
 			  lock (this)
 			  {
-				if (value > Thread.MAX_PRIORITY || value < Thread.MIN_PRIORITY)
+				if (value > (int)ThreadPriority.Highest || value < (int)ThreadPriority.Lowest)
 				{
-				  throw new System.ArgumentException("priority must be in range " + Thread.MIN_PRIORITY + " .. " + Thread.MAX_PRIORITY + " inclusive");
+                    throw new System.ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
 				}
 				MergeThreadPriority_Renamed = value;
 				UpdateMergeThreads();
@@ -241,16 +242,10 @@ namespace Lucene.Net.Index
 			CollectionUtil.TimSort(activeMerges, compareByMergeDocCount);
         
 			int pri = MergeThreadPriority_Renamed;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int activeMergeCount = activeMerges.size();
 			int activeMergeCount = activeMerges.Count;
 			for (threadIdx = 0;threadIdx < activeMergeCount;threadIdx++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeThread mergeThread = activeMerges.get(threadIdx);
 			  MergeThread mergeThread = activeMerges[threadIdx];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergePolicy.OneMerge merge = mergeThread.getCurrentMerge();
 			  MergePolicy.OneMerge merge = mergeThread.CurrentMerge;
 			  if (merge == null)
 			  {
@@ -258,8 +253,6 @@ namespace Lucene.Net.Index
 			  }
         
 			  // pause the thread if maxThreadCount is smaller than the number of merge threads.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean doPause = threadIdx < activeMergeCount - maxThreadCount;
 			  bool doPause = threadIdx < activeMergeCount - MaxThreadCount_Renamed;
         
 			  if (Verbose())
@@ -288,7 +281,7 @@ namespace Lucene.Net.Index
 				  Message("set priority of merge thread " + mergeThread.Name + " to " + pri);
 				}
 				mergeThread.ThreadPriority = pri;
-				pri = Math.Min(Thread.MAX_PRIORITY, 1 + pri);
+				pri = Math.Min((int)ThreadPriority.Highest, 1 + pri);
 			  }
 			}
 		  }
@@ -306,7 +299,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual bool Verbose()
 	  {
-		return Writer != null && Writer.InfoStream.isEnabled("CMS");
+		return Writer != null && Writer.infoStream.IsEnabled("CMS");
 	  }
 
 	  /// <summary>
@@ -326,10 +319,10 @@ namespace Lucene.Net.Index
 			{
 			  // Default to slightly higher priority than our
 			  // calling thread
-			  MergeThreadPriority_Renamed = 1 + Thread.CurrentThread.Priority;
-			  if (MergeThreadPriority_Renamed > Thread.MAX_PRIORITY)
+			  MergeThreadPriority_Renamed = 1 + (int)ThreadClass.Current().Priority;
+			  if (MergeThreadPriority_Renamed > (int)ThreadPriority.Highest)
 			  {
-				MergeThreadPriority_Renamed = Thread.MAX_PRIORITY;
+				MergeThreadPriority_Renamed = (int)ThreadPriority.Highest;
 			  }
 			}
 		  }
@@ -414,7 +407,7 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
         
-			Debug.Assert(!Thread.holdsLock(writer));
+			//Debug.Assert(!Thread.holdsLock(writer));
         
 			this.Writer = writer;
         
@@ -495,8 +488,6 @@ namespace Lucene.Net.Index
         
 				// OK to spawn a new merge thread to handle this
 				// merge:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeThread merger = getMergeThread(writer, merge);
 				MergeThread merger = GetMergeThread(writer, merge);
 				MergeThreads.Add(merger);
 				if (Verbose())
@@ -537,11 +528,9 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeThread thread = new MergeThread(writer, merge);
 			MergeThread thread = new MergeThread(this, writer, merge);
 			thread.ThreadPriority = MergeThreadPriority_Renamed;
-			thread.Daemon = true;
+			thread.IsBackground = true;
 			thread.Name = "Lucene Merge Thread #" + MergeThreadCount_Renamed++;
 			return thread;
 		  }
@@ -551,7 +540,7 @@ namespace Lucene.Net.Index
 	  /// Runs a merge thread, which may run one or more merges
 	  ///  in sequence. 
 	  /// </summary>
-	  protected internal class MergeThread : System.Threading.Thread
+	  protected internal class MergeThread : ThreadClass//System.Threading.Thread
 	  {
 		  private readonly ConcurrentMergeScheduler OuterInstance;
 
@@ -566,8 +555,8 @@ namespace Lucene.Net.Index
 		public MergeThread(ConcurrentMergeScheduler outerInstance, IndexWriter writer, MergePolicy.OneMerge startMerge)
 		{
 			this.OuterInstance = outerInstance;
-		  this.TWriter = writer;
-		  this.StartMerge = startMerge;
+		    this.TWriter = writer;
+		    this.StartMerge = startMerge;
 		}
 
 		/// <summary>
@@ -625,14 +614,14 @@ namespace Lucene.Net.Index
 			{
 			  try
 			  {
-				Priority = value;
+				Priority = (ThreadPriority)value;
 			  }
 			  catch (System.NullReferenceException npe)
 			  {
 				// Strangely, Sun's JDK 1.5 on Linux sometimes
 				// throws NPE out of here...
 			  }
-			  catch (SecurityException se)
+			  catch (System.Security.SecurityException se)
 			  {
 				// Ignore this because we will still run fine with
 				// normal thread priority

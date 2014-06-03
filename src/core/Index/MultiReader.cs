@@ -55,8 +55,8 @@ namespace Lucene.Net.Index
 	  /// <param name="subReaders"> set of (sub)readers; this array will be cloned. </param>
 	  /// <param name="closeSubReaders"> indicates whether the subreaders should be closed
 	  /// when this MultiReader is closed </param>
-	  public MultiReader(IndexReader[] subReaders, bool closeSubReaders) 
-          : base(subReaders.Clone())
+	  public MultiReader(IndexReader[] subReaders, bool closeSubReaders)
+          : base((IndexReader[])subReaders.Clone())
 	  {
 		this.CloseSubReaders = closeSubReaders;
 		if (!closeSubReaders)

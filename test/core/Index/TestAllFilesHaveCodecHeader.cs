@@ -102,11 +102,11 @@ namespace Lucene.Net.Index
 		  {
 			if (success)
 			{
-			  IOUtils.close(@in);
+			  IOUtils.Close(@in);
 			}
 			else
 			{
-			  IOUtils.closeWhileHandlingException(@in);
+			  IOUtils.CloseWhileHandlingException(@in);
 			}
 		  }
 		}

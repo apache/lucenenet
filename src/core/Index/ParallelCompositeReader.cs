@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
 	public class ParallelCompositeReader : BaseCompositeReader<IndexReader>
 	{
 	  private readonly bool CloseSubReaders;
-	  private readonly ISet<IndexReader> CompleteReaderSet = Collections.newSetFromMap(new IdentityHashMap<IndexReader, bool?>());
+	  private readonly ISet<IndexReader> CompleteReaderSet = new IdentityHashSet<IndexReader>();
 
 	  /// <summary>
 	  /// Create a ParallelCompositeReader based on the provided
@@ -76,8 +77,8 @@ namespace Lucene.Net.Index
 	  public ParallelCompositeReader(bool closeSubReaders, CompositeReader[] readers, CompositeReader[] storedFieldReaders) : base(PrepareSubReaders(readers, storedFieldReaders))
 	  {
 		this.CloseSubReaders = closeSubReaders;
-		Collections.addAll(CompleteReaderSet, readers);
-		Collections.addAll(CompleteReaderSet, storedFieldReaders);
+		CollectionsHelper.AddAll(CompleteReaderSet, readers);
+        CollectionsHelper.AddAll(CompleteReaderSet, storedFieldReaders);
 		// update ref-counts (like MultiReader):
 		if (!closeSubReaders)
 		{
@@ -87,7 +88,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		// finally add our own synthetic readers, so we close or decRef them, too (it does not matter what we do)
-		CompleteReaderSet.addAll(SequentialSubReaders);
+		CollectionsHelper.AddAll(CompleteReaderSet, SequentialSubReaders);
 	  }
 
 	  private static IndexReader[] PrepareSubReaders(CompositeReader[] readers, CompositeReader[] storedFieldsReaders)

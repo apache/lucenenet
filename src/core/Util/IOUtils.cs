@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
 	  /// </p> </summary>
 	  /// <param name="priorException">  <tt>null</tt> or an exception that will be rethrown after method completion </param>
 	  /// <param name="objects">         objects to call <tt>close()</tt> on </param>
-	  public static void closeWhileHandlingException<E>(E priorException, params IDisposable[] objects) where E : Exception
+      public static void CloseWhileHandlingException(Exception priorException, params IDisposable[] objects)
 	  {
 		Exception th = null;
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Closes all given <tt>IDisposable</tt>s, suppressing all thrown exceptions. </summary>
 	  /// <seealso cref= #closeWhileHandlingException(Exception, IDisposable...)  </seealso>
-	  public static void closeWhileHandlingException<E, T1>(E priorException, IEnumerable<T1> objects) where E : Exception where T1 : IDisposable
+      public static void CloseWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects)
 	  {
 		Exception th = null;
 
@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Closes all given <tt>IDisposable</tt>s. </summary>
 	  /// <seealso cref= #close(IDisposable...) </seealso>
-	  public static void close<T1>(IEnumerable<T1> objects) where T1 : IDisposable
+      public static void Close(IEnumerable<IDisposable> objects)
 	  {
 		Exception th = null;
 
@@ -234,7 +234,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Closes all given <tt>IDisposable</tt>s, suppressing all thrown exceptions. </summary>
 	  /// <seealso cref= #closeWhileHandlingException(IDisposable...) </seealso>
-	  public static void closeWhileHandlingException<T1>(IEnumerable<T1> objects) where T1 : IDisposable
+	  public static void CloseWhileHandlingException<T1>(IEnumerable<T1> objects) where T1 : IDisposable
 	  {
 		foreach (IDisposable @object in objects)
 		{

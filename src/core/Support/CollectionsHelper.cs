@@ -76,6 +76,14 @@ namespace Lucene.Net.Support
             }
         }
 
+        public static void AddAll<T>(ISet<T> set, IEnumerable<T> itemsToAdd)
+        {
+            foreach (var item in itemsToAdd)
+            {
+                set.Add(item);
+            }
+        }
+
         public static void AddAllIfNotContains(System.Collections.Hashtable hashtable, System.Collections.IList items)
         {
             System.Object item;
@@ -138,7 +146,6 @@ namespace Lucene.Net.Support
             }
             return false;
         }
-
 
 
         public static System.String CollectionToString(System.Collections.Generic.IDictionary<string, string> c)
@@ -263,6 +270,12 @@ namespace Lucene.Net.Support
             }
         }
 
+        public static void Sort<T>(List<T> list)
+            where T : IComparable<T>
+        {
+            list.Sort((a, b) => a.CompareTo(b));
+        }
+
         /// <summary>
         /// Fills the array with an specific value from an specific index to an specific index.
         /// </summary>
@@ -336,6 +349,13 @@ namespace Lucene.Net.Support
                 }
             }
             return result;
+        }
+
+        public static void Swap<T>(IList<T> list, int index1, int index2)
+        {
+            T tmp = list[index1];
+            list[index1] = list[index2];
+            list[index2] = tmp;
         }
 
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()

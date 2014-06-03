@@ -164,8 +164,8 @@ namespace Lucene.Net.Search
 		int result = base.HashCode();
 		result = prime * result + (IncludeLower ? 1231 : 1237);
 		result = prime * result + (IncludeUpper ? 1231 : 1237);
-		result = prime * result + ((LowerTerm_Renamed == null) ? 0 : LowerTerm_Renamed.HashCode());
-		result = prime * result + ((UpperTerm_Renamed == null) ? 0 : UpperTerm_Renamed.HashCode());
+		result = prime * result + ((LowerTerm_Renamed == null) ? 0 : LowerTerm_Renamed.GetHashCode());
+		result = prime * result + ((UpperTerm_Renamed == null) ? 0 : UpperTerm_Renamed.GetHashCode());
 		return result;
 	  }
 

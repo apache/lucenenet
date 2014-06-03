@@ -162,17 +162,17 @@ namespace Lucene.Net.Util
 		for (int i = 0; i < num; i++)
 		{
 		  int?[] a1 = CreateRandomArray(2000), a2 = a1.clone();
-		  ArrayUtil.introSort(a1);
+		  ArrayUtil.IntroSort(a1);
 		  Arrays.sort(a2);
 		  assertArrayEquals(a2, a1);
 
 		  a1 = CreateRandomArray(2000);
 		  a2 = a1.clone();
-		  ArrayUtil.introSort(a1, Collections.reverseOrder());
+		  ArrayUtil.IntroSort(a1, Collections.reverseOrder());
 		  Arrays.sort(a2, Collections.reverseOrder());
 		  assertArrayEquals(a2, a1);
 		  // reverse back, so we can test that completely backwards sorted array (worst case) is working:
-		  ArrayUtil.introSort(a1);
+		  ArrayUtil.IntroSort(a1);
 		  Arrays.sort(a2);
 		  assertArrayEquals(a2, a1);
 		}
@@ -196,7 +196,7 @@ namespace Lucene.Net.Util
 		for (int i = 0; i < num; i++)
 		{
 		  int?[] a1 = CreateSparseRandomArray(40000), a2 = a1.clone();
-		  ArrayUtil.introSort(a1);
+		  ArrayUtil.IntroSort(a1);
 		  Arrays.sort(a2);
 		  assertArrayEquals(a2, a1);
 		}
@@ -327,9 +327,9 @@ namespace Lucene.Net.Util
 	  public virtual void TestEmptyArraySort()
 	  {
 		int?[] a = new int?[0];
-		ArrayUtil.introSort(a);
+		ArrayUtil.IntroSort(a);
 		ArrayUtil.timSort(a);
-		ArrayUtil.introSort(a, Collections.reverseOrder());
+		ArrayUtil.IntroSort(a, Collections.reverseOrder());
 		ArrayUtil.timSort(a, Collections.reverseOrder());
 	  }
 

@@ -616,7 +616,7 @@ namespace Lucene.Net.Util
 	  /// Returns hash of chars in range start (inclusive) to
 	  /// end (inclusive)
 	  /// </summary>
-	  public static int HashCode(char[] array, int start, int end)
+	  public static int GetHashCode(char[] array, int start, int end)
 	  {
 		int code = 0;
 		for (int i = end - 1; i >= start; i--)
@@ -630,7 +630,7 @@ namespace Lucene.Net.Util
 	  /// Returns hash of bytes in range start (inclusive) to
 	  /// end (inclusive)
 	  /// </summary>
-	  public static int HashCode(sbyte[] array, int start, int end)
+	  public static int GetHashCode(sbyte[] array, int start, int end)
 	  {
 		int code = 0;
 		for (int i = end - 1; i >= start; i--)
@@ -808,7 +808,7 @@ namespace Lucene.Net.Util
 	  /// algorithm, but falls back to insertion sort for small arrays. </summary>
 	  /// <param name="fromIndex"> start index (inclusive) </param>
 	  /// <param name="toIndex"> end index (exclusive) </param>
-	  public static void introSort<T>(T[] a, int fromIndex, int toIndex, IComparer<T> comp)
+	  public static void IntroSort<T>(T[] a, int fromIndex, int toIndex, IComparer<T> comp)
 	  {
 		if (toIndex - fromIndex <= 1)
 		{
@@ -821,9 +821,9 @@ namespace Lucene.Net.Util
 	  /// Sorts the given array using the <seealso cref="Comparator"/>. this method uses the intro sort
 	  /// algorithm, but falls back to insertion sort for small arrays.
 	  /// </summary>
-	  public static void introSort<T>(T[] a, IComparer<T> comp)
+	  public static void IntroSort<T>(T[] a, IComparer<T> comp)
 	  {
-		introSort(a, 0, a.Length, comp);
+		IntroSort(a, 0, a.Length, comp);
 	  }
 
 	  /// <summary>
@@ -831,22 +831,22 @@ namespace Lucene.Net.Util
 	  /// algorithm, but falls back to insertion sort for small arrays. </summary>
 	  /// <param name="fromIndex"> start index (inclusive) </param>
 	  /// <param name="toIndex"> end index (exclusive) </param>
-	  public static void introSort<T>(T[] a, int fromIndex, int toIndex) where T : IComparable<T>
+	  public static void IntroSort<T>(T[] a, int fromIndex, int toIndex) where T : IComparable<T>
 	  {
 		if (toIndex - fromIndex <= 1)
 		{
 			return;
 		}
-		introSort(a, fromIndex, toIndex, ArrayUtil.naturalComparator<T>());
+		IntroSort(a, fromIndex, toIndex, ArrayUtil.naturalComparator<T>());
 	  }
 
 	  /// <summary>
 	  /// Sorts the given array in natural order. this method uses the intro sort
 	  /// algorithm, but falls back to insertion sort for small arrays.
 	  /// </summary>
-	  public static void introSort<T>(T[] a) where T : IComparable<T>
+	  public static void IntroSort<T>(T[] a) where T : IComparable<T>
 	  {
-		introSort(a, 0, a.Length);
+		IntroSort(a, 0, a.Length);
 	  }
 
 	  // tim sorts:

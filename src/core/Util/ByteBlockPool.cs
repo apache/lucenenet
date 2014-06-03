@@ -334,8 +334,6 @@ namespace Lucene.Net.Util
 	  // byte block
 	  public void SetBytesRef(BytesRef term, int textStart)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = term.bytes = buffers[textStart >> BYTE_BLOCK_SHIFT];
 		sbyte[] bytes = term.Bytes = Buffers[textStart >> BYTE_BLOCK_SHIFT];
 		int pos = textStart & BYTE_BLOCK_MASK;
 		if ((bytes[pos] & 0x80) == 0)

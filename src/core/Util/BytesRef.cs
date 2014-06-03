@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
 	  ///  StringHelper#GOOD_FAST_HASH_SEED}, but is subject to
 	  ///  change from release to release. 
 	  /// </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return StringHelper.Murmurhash3_x86_32(this, StringHelper.GOOD_FAST_HASH_SEED);
 	  }

@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(1, reader1.leaves().get(0).reader().getNumericDocValues("val").get(0));
 		Assert.AreEqual(10, reader2.leaves().get(0).reader().getNumericDocValues("val").get(0));
 
-		IOUtils.close(writer, reader1, reader2, dir);
+		IOUtils.Close(writer, reader1, reader2, dir);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -949,7 +949,7 @@ namespace Lucene.Net.Index
 	//      System.out.println();
 		}
 
-		IOUtils.close(writer, reader, dir);
+		IOUtils.Close(writer, reader, dir);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

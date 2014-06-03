@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  internal readonly IDictionary<string, DocValuesProducer> DvProducersByField = new Dictionary<string, DocValuesProducer>();
-	  internal readonly ISet<DocValuesProducer> DvProducers = Collections.newSetFromMap(new IdentityHashMap<DocValuesProducer, bool?>());
+	  internal readonly ISet<DocValuesProducer> DvProducers = new IdentityHashSet<DocValuesProducer>();
 
 	  internal readonly FieldInfos FieldInfos_Renamed;
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
 	  ///  SegmentReader and loading new live docs from a new
 	  ///  deletes file.  Used by openIfChanged. 
 	  /// </summary>
-	  internal SegmentReader(SegmentCommitInfo si, SegmentReader sr) : this(si, sr, si.Info.Codec.LiveDocsFormat().readLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
+	  internal SegmentReader(SegmentCommitInfo si, SegmentReader sr) : this(si, sr, si.Info.Codec.LiveDocsFormat().ReadLiveDocs(si.Info.Dir, si, IOContext.READONCE), si.Info.DocCount - si.DelCount)
 	  {
 	  }
 
@@ -211,14 +211,8 @@ namespace Lucene.Net.Index
 	  // initialize the per-field DocValuesProducer
 	  private void InitDocValuesProducers(Codec codec)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.Directory dir = core.cfsReader != null ? core.cfsReader : si.info.dir;
 		Directory dir = Core.CfsReader != null ? Core.CfsReader : Si.Info.Dir;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.DocValuesFormat dvFormat = codec.docValuesFormat();
 		DocValuesFormat dvFormat = codec.DocValuesFormat();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Long,java.util.List<FieldInfo>> genInfos = getGenInfos();
 		IDictionary<long?, IList<FieldInfo>> genInfos = GenInfos;
 
 	//      System.out.println("[" + Thread.currentThread().getName() + "] SR.initDocValuesProducers: segInfo=" + si + "; gens=" + genInfos.keySet());

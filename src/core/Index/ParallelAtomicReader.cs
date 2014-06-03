@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -57,12 +58,12 @@ namespace Lucene.Net.Index
 	  private readonly FieldInfos FieldInfos_Renamed;
 	  private ParallelFields Fields_Renamed;
 	  private readonly AtomicReader[] ParallelReaders, StoredFieldsReaders;
-	  private readonly ISet<AtomicReader> CompleteReaderSet = Collections.newSetFromMap(new IdentityHashMap<AtomicReader, bool?>());
+	  private readonly ISet<AtomicReader> CompleteReaderSet = new IdentityHashSet<AtomicReader>();
 	  private readonly bool CloseSubReaders;
 	  private readonly int MaxDoc_Renamed, NumDocs_Renamed;
 	  private readonly bool HasDeletions;
-	  private readonly SortedMap<string, AtomicReader> FieldToReader = new SortedDictionary<string, AtomicReader>();
-	  private readonly SortedMap<string, AtomicReader> TvFieldToReader = new SortedDictionary<string, AtomicReader>();
+	  private readonly IDictionary<string, AtomicReader> FieldToReader = new SortedDictionary<string, AtomicReader>();
+      private readonly IDictionary<string, AtomicReader> TvFieldToReader = new SortedDictionary<string, AtomicReader>();
 
 	  /// <summary>
 	  /// Create a ParallelAtomicReader based on the provided
@@ -107,12 +108,10 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("There must be at least one main reader if storedFieldsReaders are used.");
 		}
-		this.ParallelReaders = readers.Clone();
-		this.StoredFieldsReaders = storedFieldsReaders.Clone();
+        this.ParallelReaders = (AtomicReader[])readers.Clone();
+        this.StoredFieldsReaders = (AtomicReader[])storedFieldsReaders.Clone();
 		if (ParallelReaders.Length > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader first = parallelReaders[0];
 		  AtomicReader first = ParallelReaders[0];
 		  this.MaxDoc_Renamed = first.MaxDoc();
 		  this.NumDocs_Renamed = first.NumDocs();
@@ -123,8 +122,8 @@ namespace Lucene.Net.Index
 		  this.MaxDoc_Renamed = this.NumDocs_Renamed = 0;
 		  this.HasDeletions = false;
 		}
-		Collections.addAll(CompleteReaderSet, this.ParallelReaders);
-		Collections.addAll(CompleteReaderSet, this.StoredFieldsReaders);
+		CollectionsHelper.AddAll(CompleteReaderSet, this.ParallelReaders);
+        CollectionsHelper.AddAll(CompleteReaderSet, this.StoredFieldsReaders);
 
 		// check compatibility:
 		foreach (AtomicReader reader in CompleteReaderSet)
@@ -140,19 +139,17 @@ namespace Lucene.Net.Index
 		// build FieldInfos and fieldToReader map:
 		foreach (AtomicReader reader in this.ParallelReaders)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfos readerFieldInfos = reader.getFieldInfos();
 		  FieldInfos readerFieldInfos = reader.FieldInfos;
 		  foreach (FieldInfo fieldInfo in readerFieldInfos)
 		  {
 			// NOTE: first reader having a given field "wins":
-			if (!FieldToReader.containsKey(fieldInfo.Name))
+			if (!FieldToReader.ContainsKey(fieldInfo.Name))
 			{
 			  builder.Add(fieldInfo);
-			  FieldToReader.put(fieldInfo.Name, reader);
+			  FieldToReader[fieldInfo.Name] = reader;
 			  if (fieldInfo.HasVectors())
 			  {
-				TvFieldToReader.put(fieldInfo.Name, reader);
+				TvFieldToReader[fieldInfo.Name] = reader;
 			  }
 			}
 		  }
@@ -170,7 +167,7 @@ namespace Lucene.Net.Index
 			foreach (string field in readerFields)
 			{
 			  // only add if the reader responsible for that field name is the current:
-			  if (FieldToReader.get(field) == reader)
+			  if (FieldToReader[field] == reader)
 			  {
 				this.Fields_Renamed.AddField(field, readerFields.Terms(field));
 			  }
@@ -191,18 +188,21 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder buffer = new StringBuilder("ParallelAtomicReader(");
 		StringBuilder buffer = new StringBuilder("ParallelAtomicReader(");
-		for (IEnumerator<AtomicReader> iter = CompleteReaderSet.GetEnumerator(); iter.hasNext();)
-		{
-		  buffer.Append(iter.next());
-		  if (iter.hasNext())
-		  {
-			  buffer.Append(", ");
-		  }
-		}
-		return buffer.Append(')').ToString();
+        bool removeLastCommaSpace = false;
+        foreach (AtomicReader reader in CompleteReaderSet)
+        {
+            buffer.Append(reader);
+            buffer.Append(", ");
+            removeLastCommaSpace = true;
+        }
+
+        if (removeLastCommaSpace)
+        {
+            buffer.Remove(buffer.Length - 2, 2);
+        }
+
+        return buffer.Append(')').ToString();
 	  }
 
 	  // Single instance of this, per ParallelReader instance
@@ -222,10 +222,10 @@ namespace Lucene.Net.Index
 		  Fields[fieldName] = terms;
 		}
 
-		public override IEnumerator<string> Iterator()
+		/*public override IEnumerator<string> Iterator()
 		{
-		  return Collections.unmodifiableSet(Fields.Keys).GetEnumerator();
-		}
+		  return CollectionsHelper.UnmodifiableSet(Fields.Keys).GetEnumerator();
+		}*/
 
 		public override Terms Terms(string field)
 		{
@@ -294,10 +294,10 @@ namespace Lucene.Net.Index
 	  {
 		EnsureOpen();
 		ParallelFields fields = null;
-		foreach (KeyValuePair<string, AtomicReader> ent in TvFieldToReader.entrySet())
+		foreach (KeyValuePair<string, AtomicReader> ent in TvFieldToReader/*.EntrySet()*/)
 		{
 		  string fieldName = ent.Key;
-		  Terms vector = ent.Value.getTermVector(docID, fieldName);
+		  Terms vector = ent.Value.GetTermVector(docID, fieldName);
 		  if (vector != null)
 		  {
 			if (fields == null)
@@ -348,42 +348,42 @@ namespace Lucene.Net.Index
 	  public override NumericDocValues GetNumericDocValues(string field)
 	  {
 		EnsureOpen();
-		AtomicReader reader = FieldToReader.get(field);
+		AtomicReader reader = FieldToReader[field];
 		return reader == null ? null : reader.GetNumericDocValues(field);
 	  }
 
 	  public override BinaryDocValues GetBinaryDocValues(string field)
 	  {
 		EnsureOpen();
-		AtomicReader reader = FieldToReader.get(field);
+		AtomicReader reader = FieldToReader[field];
 		return reader == null ? null : reader.GetBinaryDocValues(field);
 	  }
 
 	  public override SortedDocValues GetSortedDocValues(string field)
 	  {
 		EnsureOpen();
-		AtomicReader reader = FieldToReader.get(field);
+		AtomicReader reader = FieldToReader[field];
 		return reader == null ? null : reader.GetSortedDocValues(field);
 	  }
 
 	  public override SortedSetDocValues GetSortedSetDocValues(string field)
 	  {
 		EnsureOpen();
-		AtomicReader reader = FieldToReader.get(field);
+		AtomicReader reader = FieldToReader[field];
 		return reader == null ? null : reader.GetSortedSetDocValues(field);
 	  }
 
 	  public override Bits GetDocsWithField(string field)
 	  {
 		EnsureOpen();
-		AtomicReader reader = FieldToReader.get(field);
+		AtomicReader reader = FieldToReader[field];
 		return reader == null ? null : reader.GetDocsWithField(field);
 	  }
 
 	  public override NumericDocValues GetNormValues(string field)
 	  {
 		EnsureOpen();
-		AtomicReader reader = FieldToReader.get(field);
+		AtomicReader reader = FieldToReader[field];
 		NumericDocValues values = reader == null ? null : reader.GetNormValues(field);
 		return values;
 	  }

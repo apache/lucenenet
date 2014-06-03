@@ -37,6 +37,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using InfoStream = Lucene.Net.Util.InfoStream;
 using Lucene.Net.Support;
+    using System.Collections.Concurrent;
 
 	/// <summary>
 	/// this class accepts multiple added documents and directly
@@ -110,7 +111,7 @@ using Lucene.Net.Support;
 
 	  private readonly InfoStream InfoStream;
 
-	  private readonly LiveIndexWriterConfig Config;
+	  private readonly LiveIndexWriterConfig LIWConfig;
 
 	  private readonly AtomicInteger NumDocsInRAM = new AtomicInteger(0);
 
@@ -129,18 +130,18 @@ using Lucene.Net.Support;
 	  internal readonly FlushPolicy FlushPolicy;
 	  internal readonly DocumentsWriterFlushControl FlushControl;
 	  private readonly IndexWriter Writer;
-	  private readonly LinkedList<Event> Events;
+      private readonly ConcurrentQueue<Event> Events;
 
 
 	  internal DocumentsWriter(IndexWriter writer, LiveIndexWriterConfig config, Directory directory)
 	  {
 		this.Directory = directory;
-		this.Config = config;
+		this.LIWConfig = config;
 		this.InfoStream = config.InfoStream;
 		this.PerThreadPool = config.IndexerThreadPool;
 		FlushPolicy = config.FlushPolicy;
 		this.Writer = writer;
-		this.Events = new ConcurrentLinkedQueue<>();
+		this.Events = new ConcurrentQueue<Event>();
 		FlushControl = new DocumentsWriterFlushControl(this, config, writer.BufferedUpdatesStream);
 	  }
 
@@ -253,10 +254,8 @@ using Lucene.Net.Support;
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(!Thread.HoldsLock(writer), "IndexWriter lock should never be hold when aborting");
+			//Debug.Assert(!Thread.HoldsLock(writer), "IndexWriter lock should never be hold when aborting");
 			bool success = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> newFilesSet = new java.util.HashSet<>();
 			HashSet<string> newFilesSet = new HashSet<string>();
 			try
 			{
@@ -265,13 +264,9 @@ using Lucene.Net.Support;
 			  {
 				InfoStream.Message("DW", "abort");
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = perThreadPool.getActiveThreadState();
 			  int limit = PerThreadPool.ActiveThreadState;
 			  for (int i = 0; i < limit; i++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = perThreadPool.getThreadState(i);
 				ThreadState perThread = PerThreadPool.GetThreadState(i);
 				perThread.@Lock();
 				try
@@ -302,7 +297,7 @@ using Lucene.Net.Support;
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(indexWriter.HoldsFullFlushLock());
+			//Debug.Assert(indexWriter.HoldsFullFlushLock());
 			if (InfoStream.IsEnabled("DW"))
 			{
 			  InfoStream.Message("DW", "lockAndAbortAll");
@@ -311,16 +306,10 @@ using Lucene.Net.Support;
 			try
 			{
 			  DeleteQueue.Clear();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = perThreadPool.getMaxThreadStates();
 			  int limit = PerThreadPool.MaxThreadStates;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> newFilesSet = new java.util.HashSet<>();
 			  HashSet<string> newFilesSet = new HashSet<string>();
 			  for (int i = 0; i < limit; i++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = perThreadPool.getThreadState(i);
 				ThreadState perThread = PerThreadPool.GetThreadState(i);
 				perThread.@Lock();
 				AbortThreadState(perThread, newFilesSet);
@@ -348,7 +337,7 @@ using Lucene.Net.Support;
 
 	  private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
 	  {
-		Debug.Assert(perThread.HeldByCurrentThread);
+		//Debug.Assert(perThread.HeldByCurrentThread);
 		if (perThread.Active) // we might be closed
 		{
 		  if (perThread.Initialized)
@@ -379,25 +368,21 @@ using Lucene.Net.Support;
 	  {
 		  lock (this)
 		  {
-			Debug.Assert(indexWriter.HoldsFullFlushLock());
+			//Debug.Assert(indexWriter.HoldsFullFlushLock());
 			if (InfoStream.IsEnabled("DW"))
 			{
 			  InfoStream.Message("DW", "unlockAll");
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = perThreadPool.getMaxThreadStates();
 			int limit = PerThreadPool.MaxThreadStates;
 			for (int i = 0; i < limit; i++)
 			{
 			  try
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = perThreadPool.getThreadState(i);
 				ThreadState perThread = PerThreadPool.GetThreadState(i);
-				if (perThread.HeldByCurrentThread)
-				{
+				//if (perThread.HeldByCurrentThread)
+				//{
 				  perThread.Unlock();
-				}
+				//}
 			  }
 			  catch (Exception e)
 			  {
@@ -504,8 +489,6 @@ using Lucene.Net.Support;
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread nextPendingFlush = flushControl.nextPendingFlush();
 		  DocumentsWriterPerThread nextPendingFlush = FlushControl.NextPendingFlush();
 		  if (nextPendingFlush != null)
 		  {
@@ -520,10 +503,8 @@ using Lucene.Net.Support;
 	  {
 		if (state.Active && state.Dwpt == null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfos.Builder infos = new FieldInfos.Builder(writer.globalFieldNumberMap);
 		  FieldInfos.Builder infos = new FieldInfos.Builder(Writer.GlobalFieldNumberMap);
-		  state.Dwpt = new DocumentsWriterPerThread(Writer.NewSegmentName(), Directory, Config, InfoStream, DeleteQueue, infos);
+		  state.Dwpt = new DocumentsWriterPerThread(Writer.NewSegmentName(), Directory, LIWConfig, InfoStream, DeleteQueue, infos);
 		}
 	  }
 
@@ -563,8 +544,6 @@ using Lucene.Net.Support;
 			  FlushControl.DoOnAbort(perThread);
 			}
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isUpdate = delTerm != null;
 		  bool isUpdate = delTerm != null;
 		  flushingDWPT = FlushControl.DoAfterDocument(perThread, isUpdate);
 		}
@@ -576,17 +555,13 @@ using Lucene.Net.Support;
 		return PostUpdate(flushingDWPT, hasEvents);
 	  }
 
-	  internal bool updateDocument<T1>(IEnumerable<T1> doc, Analyzer analyzer, Term delTerm) where T1 : IndexableField
+      internal bool UpdateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
 	  {
 
 		bool hasEvents = PreUpdate();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState perThread = flushControl.obtainAndLock();
 		ThreadState perThread = FlushControl.ObtainAndLock();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread flushingDWPT;
 		DocumentsWriterPerThread flushingDWPT;
 		try
 		{
@@ -597,11 +572,7 @@ using Lucene.Net.Support;
 		  }
 		  EnsureInitialized(perThread);
 		  Debug.Assert(perThread.Initialized);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt = perThread.dwpt;
 		  DocumentsWriterPerThread dwpt = perThread.Dwpt;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int dwptNumDocs = dwpt.getNumDocsInRAM();
 		  int dwptNumDocs = dwpt.NumDocsInRAM;
 		  try
 		  {
@@ -621,8 +592,6 @@ using Lucene.Net.Support;
 			  FlushControl.DoOnAbort(perThread);
 			}
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isUpdate = delTerm != null;
 		  bool isUpdate = delTerm != null;
 		  flushingDWPT = FlushControl.DoAfterDocument(perThread, isUpdate);
 		}
@@ -664,15 +633,11 @@ using Lucene.Net.Support;
 			  // Each flush is assigned a ticket in the order they acquire the ticketQueue lock
 			  ticket = TicketQueue.AddFlushTicket(flushingDWPT);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int flushingDocsInRam = flushingDWPT.getNumDocsInRAM();
 			  int flushingDocsInRam = flushingDWPT.NumDocsInRAM;
 			  bool dwptSuccess = false;
 			  try
 			  {
 				// flush concurrently without locking
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment newSegment = flushingDWPT.flush();
 				FlushedSegment newSegment = flushingDWPT.Flush();
 				TicketQueue.AddSegment(ticket, newSegment);
 				dwptSuccess = true;
@@ -735,9 +700,7 @@ using Lucene.Net.Support;
 		// buffer, force them all to apply now. this is to
 		// prevent too-frequent flushing of a long tail of
 		// tiny segments:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double ramBufferSizeMB = config.getRAMBufferSizeMB();
-		double ramBufferSizeMB = Config.RAMBufferSizeMB;
+		double ramBufferSizeMB = LIWConfig.RAMBufferSizeMB;
 		if (ramBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH && FlushControl.DeleteBytesUsed > (1024 * 1024 * ramBufferSizeMB / 2))
 		{
 		  if (InfoStream.IsEnabled("DW"))
@@ -862,17 +825,17 @@ using Lucene.Net.Support;
 
 	  }
 
-	  public LiveIndexWriterConfig IndexWriterConfig
+	  public LiveIndexWriterConfig Config
 	  {
 		  get
 		  {
-			return Config;
+			return LIWConfig;
 		  }
 	  }
 
 	  private void PutEvent(Event @event)
 	  {
-		Events.AddLast(@event);
+		Events.Enqueue(@event);
 	  }
 
 	  internal sealed class ApplyDeletesEvent : Event
@@ -953,7 +916,7 @@ using Lucene.Net.Support;
 		}
 	  }
 
-	  public LinkedList<Event> EventQueue()
+	  public ConcurrentQueue<Event> EventQueue()
 	  {
 		return Events;
 	  }

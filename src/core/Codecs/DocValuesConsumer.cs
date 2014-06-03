@@ -39,7 +39,6 @@ namespace Lucene.Net.Codecs
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LongBitSet = Lucene.Net.Util.LongBitSet;
-    using BytesRefIterator_Fields = Lucene.Net.Util.BytesRefIterator_Fields;
 
 	/// <summary>
 	/// Abstract API that consumes numeric, binary and

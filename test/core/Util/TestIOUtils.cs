@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
 		try
 		{
 		  TestException t = new TestException();
-		  IOUtils.closeWhileHandlingException(t, new BrokenIDisposable(1), new BrokenIDisposable(2));
+		  IOUtils.CloseWhileHandlingException(t, new BrokenIDisposable(1), new BrokenIDisposable(2));
 		}
 		catch (TestException e1)
 		{
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
 		// test without prior exception
 		try
 		{
-		  IOUtils.closeWhileHandlingException((TestException) null, new BrokenIDisposable(1), new BrokenIDisposable(2));
+		  IOUtils.CloseWhileHandlingException((TestException) null, new BrokenIDisposable(1), new BrokenIDisposable(2));
 		}
 		catch (TestException e1)
 		{

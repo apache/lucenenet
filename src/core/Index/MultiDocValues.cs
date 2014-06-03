@@ -62,11 +62,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static NumericDocValues GetNormValues(IndexReader r, string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = r.leaves();
 		IList<AtomicReaderContext> leaves = r.Leaves();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = leaves.size();
 		int size = leaves.Count;
 		if (size == 0)
 		{
@@ -83,11 +79,7 @@ namespace Lucene.Net.Index
 		}
 
 		bool anyReal = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final NumericDocValues[] values = new NumericDocValues[size];
 		NumericDocValues[] values = new NumericDocValues[size];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] starts = new int[size+1];
 		int[] starts = new int[size+1];
 		for (int i = 0; i < size; i++)
 		{
@@ -216,11 +208,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static Bits GetDocsWithField(IndexReader r, string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = r.leaves();
 		IList<AtomicReaderContext> leaves = r.Leaves();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = leaves.size();
 		int size = leaves.Count;
 		if (size == 0)
 		{
@@ -233,11 +221,7 @@ namespace Lucene.Net.Index
 
 		bool anyReal = false;
 		bool anyMissing = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits[] values = new Lucene.Net.Util.Bits[size];
 		Bits[] values = new Bits[size];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] starts = new int[size+1];
 		int[] starts = new int[size+1];
 		for (int i = 0; i < size; i++)
 		{
@@ -251,7 +235,7 @@ namespace Lucene.Net.Index
 		  else
 		  {
 			anyReal = true;
-			if (v is Bits.MatchAllBits == false)
+            if (v is Lucene.Net.Util.Bits_MatchAllBits == false)
 			{
 			  anyMissing = true;
 			}

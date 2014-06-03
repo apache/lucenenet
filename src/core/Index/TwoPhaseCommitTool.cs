@@ -38,14 +38,15 @@ namespace Lucene.Net.Index
 	  /// Thrown by <seealso cref="TwoPhaseCommitTool#execute(TwoPhaseCommit...)"/> when an
 	  /// object fails to prepareCommit().
 	  /// </summary>
-	  public class PrepareCommitFailException : System.IO.IOException
+	  public class PrepareCommitFailException 
+          : System.IO.IOException
 	  {
 
 		/// <summary>
 		/// Sole constructor. </summary>
-		public PrepareCommitFailException(Exception cause, TwoPhaseCommit obj) : base("prepareCommit() failed on " + obj)
+		public PrepareCommitFailException(Exception cause, TwoPhaseCommit obj) 
+            : base("prepareCommit() failed on " + obj, cause)
 		{
-		  initCause(cause);
 		}
 	  }
 
@@ -58,9 +59,9 @@ namespace Lucene.Net.Index
 
 		/// <summary>
 		/// Sole constructor. </summary>
-		public CommitFailException(Exception cause, TwoPhaseCommit obj) : base("commit() failed on " + obj)
+		public CommitFailException(Exception cause, TwoPhaseCommit obj) 
+            : base("commit() failed on " + obj, cause)
 		{
-		  initCause(cause);
 		}
 
 	  }

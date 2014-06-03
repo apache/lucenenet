@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Codecs
 		}
 		finally
 		{
-		  IOUtils.closeWhileHandlingException(ioe, @out, IndexOut, PostingsWriter);
+		  IOUtils.CloseWhileHandlingException(ioe, @out, IndexOut, PostingsWriter);
 		}
 	  }
 	}

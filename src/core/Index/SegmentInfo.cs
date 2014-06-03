@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
 		        {
                     throw new InvalidOperationException("files were not computed yet");
 		        }
-		        return CollectionsHelper.UnmodifiableSet(SetFiles);
+                return SetFiles;//CollectionsHelper.UnmodifiableSet(SetFiles);
           }
           
           set
@@ -314,7 +314,8 @@ namespace Lucene.Net.Index
 	  public void AddFiles(ICollection<string> files)
 	  {
 		CheckFileNames(files);
-		SetFiles.addAll(files);
+        //SetFiles.AddAll(files);
+        SetFiles.UnionWith(files);
 	  }
 
 	  /// <summary>
@@ -323,7 +324,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public void AddFile(string file)
 	  {
-		CheckFileNames(Collections.Singleton(file));
+		//CheckFileNames(Collections.Singleton(file));
+		CheckFileNames(new [] { file });
 		SetFiles.Add(file);
 	  }
 

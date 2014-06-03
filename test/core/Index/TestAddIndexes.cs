@@ -1339,7 +1339,7 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 
-		IOUtils.close(w1, w2, src, dest);
+		IOUtils.Close(w1, w2, src, dest);
 	  }
 	}
 

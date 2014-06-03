@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 	  internal readonly Codec Codec;
 
 	  // Holds all fields seen in current doc
-	  internal DocFieldProcessorPerField[] Fields_Renamed = new DocFieldProcessorPerField[1];
+	  internal DocFieldProcessorPerField[] fields = new DocFieldProcessorPerField[1];
 	  internal int FieldCount;
 
 	  // Hash table for all fields ever seen
@@ -205,8 +205,6 @@ namespace Lucene.Net.Index
 
 		FieldCount = 0;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int thisFieldGen = fieldGen++;
 		int thisFieldGen = FieldGen++;
 
 		// Absorb any new fields first seen in this document.
@@ -216,13 +214,9 @@ namespace Lucene.Net.Index
 
 		foreach (IndexableField field in DocState.Doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fieldName = field.name();
 		  string fieldName = field.Name();
 
 		  // Make sure we have a PerField allocated
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int hashPos = fieldName.hashCode() & hashMask;
 		  int hashPos = fieldName.GetHashCode() & HashMask;
 		  DocFieldProcessorPerField fp = FieldHash[hashPos];
 		  while (fp != null && !fp.FieldInfo.Name.Equals(fieldName))
@@ -264,17 +258,15 @@ namespace Lucene.Net.Index
 			// First time we're seeing this field for this doc
 			fp.FieldCount = 0;
 
-			if (FieldCount == Fields_Renamed.Length)
+			if (FieldCount == fields.Length)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = fields.length*2;
-			  int newSize = Fields_Renamed.Length * 2;
+			  int newSize = fields.Length * 2;
 			  DocFieldProcessorPerField[] newArray = new DocFieldProcessorPerField[newSize];
-			  Array.Copy(Fields_Renamed, 0, newArray, 0, FieldCount);
-			  Fields_Renamed = newArray;
+			  Array.Copy(fields, 0, newArray, 0, FieldCount);
+			  fields = newArray;
 			}
 
-			Fields_Renamed[FieldCount++] = fp;
+			fields[FieldCount++] = fp;
 			fp.LastGen = thisFieldGen;
 		  }
 
@@ -288,12 +280,10 @@ namespace Lucene.Net.Index
 		// sort the subset of fields that have vectors
 		// enabled; we could save [small amount of] CPU
 		// here.
-		ArrayUtil.IntroSort(Fields_Renamed, 0, FieldCount, fieldsComp);
+		ArrayUtil.IntroSort(fields, 0, FieldCount, fieldsComp);
 		for (int i = 0;i < FieldCount;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocFieldProcessorPerField perField = fields[i];
-		  DocFieldProcessorPerField perField = Fields_Renamed[i];
+		  DocFieldProcessorPerField perField = fields[i];
 		  perField.Consumer.ProcessFields(perField.Fields, perField.FieldCount);
 		}
 	  }

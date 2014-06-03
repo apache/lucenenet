@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
 	//      System.out.println();
 		}
 
-		IOUtils.close(writer, reader, dir);
+		IOUtils.Close(writer, reader, dir);
 	  }
 
 	  public virtual void TestStressMultiThreading()

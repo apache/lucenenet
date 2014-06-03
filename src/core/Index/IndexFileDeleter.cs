@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 
 	  /* Holds files we had incref'd from the previous
 	   * non-commit checkpoint: */
-	  private readonly IList<string> LastFiles = new List<string>();
+	  private readonly List<string> LastFiles = new List<string>();
 
 	  /* Commits that the IndexDeletionPolicy have decided to delete: */
 	  private IList<CommitPoint> CommitsToDelete = new List<CommitPoint>();
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
 
 		// Finally, give policy a chance to remove things on
 		// startup:
-		policy.OnInit(Commits);
+		Policy.OnInit(Commits);
 
 		// Always protect the incoming segmentInfos since
 		// sometime it may not be the most recent commit
@@ -503,11 +503,11 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(Locked());
 
-		Debug.Assert(Thread.holdsLock(Writer));
+		//Debug.Assert(Thread.holdsLock(Writer));
 		long t0 = 0;
 		if (InfoStream.IsEnabled("IFD"))
 		{
-		  t0 = System.nanoTime();
+		  t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		  InfoStream.Message("IFD", "now checkpoint \"" + Writer.SegString(Writer.ToLiveInfos(segmentInfos)) + "\" [" + segmentInfos.Size() + " segments " + "; isCommit = " + isCommit + "]");
 		}
 
@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
 		}
 		if (InfoStream.IsEnabled("IFD"))
 		{
-		  long t1 = System.nanoTime();
+		  long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		  InfoStream.Message("IFD", ((t1 - t0) / 1000000) + " msec to checkpoint");
 		}
 	  }
@@ -776,7 +776,7 @@ namespace Lucene.Net.Index
 		  UserData_Renamed = segmentInfos.UserData;
 		  SegmentsFileName_Renamed = segmentInfos.SegmentsFileName;
 		  Generation_Renamed = segmentInfos.Generation;
-		  Files = Collections.unmodifiableCollection(segmentInfos.Files(directory, true));
+		  Files = segmentInfos.Files(directory, true);
 		  SegmentCount_Renamed = segmentInfos.Size();
 		}
 

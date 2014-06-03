@@ -67,32 +67,32 @@ namespace Lucene.Net.Index
 		  // Flush this state by num del terms
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int maxBufferedDeleteTerms = indexWriterConfig.getMaxBufferedDeleteTerms();
-		  int maxBufferedDeleteTerms = IndexWriterConfig.MaxBufferedDeleteTerms;
+		  int maxBufferedDeleteTerms = IWConfig.MaxBufferedDeleteTerms;
 		  if (control.NumGlobalTermDeletes >= maxBufferedDeleteTerms)
 		  {
 			control.SetApplyAllDeletes();
 		  }
 		}
-		if ((FlushOnRAM() && control.DeleteBytesUsed > (1024 * 1024 * IndexWriterConfig.RAMBufferSizeMB)))
+		if ((FlushOnRAM() && control.DeleteBytesUsed > (1024 * 1024 * IWConfig.RAMBufferSizeMB)))
 		{
 		  control.SetApplyAllDeletes();
 		 if (InfoStream.IsEnabled("FP"))
 		 {
-		   InfoStream.Message("FP", "force apply deletes bytesUsed=" + control.DeleteBytesUsed + " vs ramBuffer=" + (1024 * 1024 * IndexWriterConfig.RAMBufferSizeMB));
+		   InfoStream.Message("FP", "force apply deletes bytesUsed=" + control.DeleteBytesUsed + " vs ramBuffer=" + (1024 * 1024 * IWConfig.RAMBufferSizeMB));
 		 }
 		}
 	  }
 
 	  public override void OnInsert(DocumentsWriterFlushControl control, ThreadState state)
 	  {
-		if (FlushOnDocCount() && state.Dwpt.NumDocsInRAM >= IndexWriterConfig.MaxBufferedDocs)
+		if (FlushOnDocCount() && state.Dwpt.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
 		{
 		  // Flush this state by num docs
 		  control.FlushPending = state;
 		} // flush by RAM
 		else if (FlushOnRAM())
 		{
-		  long limit = (long)(IndexWriterConfig.RAMBufferSizeMB * 1024d * 1024d);
+		  long limit = (long)(IWConfig.RAMBufferSizeMB * 1024d * 1024d);
 		  long totalRam = control.ActiveBytes() + control.DeleteBytesUsed;
 		  if (totalRam >= limit)
 		  {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual bool FlushOnDocCount()
 	  {
-		return IndexWriterConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH;
+		return IWConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH;
 	  }
 
 	  /// <summary>
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual bool FlushOnDeleteTerms()
 	  {
-		return IndexWriterConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH;
+          return IWConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH;
 	  }
 
 	  /// <summary>
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual bool FlushOnRAM()
 	  {
-		return IndexWriterConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH;
+          return IWConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH;
 	  }
 	}
 

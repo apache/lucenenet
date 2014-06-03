@@ -109,8 +109,6 @@ namespace Lucene.Net.Util.Packed
 		  minValue = Math.Min(minValue, Pending[i]);
 		  maxValue = Math.Max(maxValue, Pending[i]);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delta = maxValue - minValue;
 		long delta = maxValue - minValue;
 
 		MinValues[ValuesOff] = minValue;
@@ -121,15 +119,11 @@ namespace Lucene.Net.Util.Packed
 		else
 		{
 		  // build a new packed reader
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsRequired = delta < 0 ? 64 : PackedInts.bitsRequired(delta);
 		  int bitsRequired = delta < 0 ? 64 : PackedInts.BitsRequired(delta);
 		  for (int i = 0; i < PendingOff; ++i)
 		  {
 			Pending[i] -= minValue;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PackedInts.Mutable mutable = PackedInts.getMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
 		  PackedInts.Mutable mutable = PackedInts.GetMutable(PendingOff, bitsRequired, AcceptableOverheadRatio);
 		  for (int i = 0; i < PendingOff;)
 		  {

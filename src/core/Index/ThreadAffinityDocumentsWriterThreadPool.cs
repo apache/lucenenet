@@ -60,14 +60,12 @@ namespace Lucene.Net.Index
 		 we should somehow prevent this. */
 		// Find the state that has minimum number of threads waiting
 		minThreadState = MinContendedThreadState();
-		if (minThreadState == null || minThreadState.HasQueuedThreads())
+		if (minThreadState == null || minThreadState.HasQueuedThreads)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState newState = newThreadState();
 		  ThreadState newState = NewThreadState(); // state is already locked if non-null
 		  if (newState != null)
 		  {
-			Debug.Assert(newState.HeldByCurrentThread);
+			//Debug.Assert(newState.HeldByCurrentThread);
 			ThreadBindings[requestingThread] = newState;
 			return newState;
 		  }

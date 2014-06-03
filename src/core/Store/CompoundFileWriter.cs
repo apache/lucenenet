@@ -188,7 +188,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  IOUtils.closeWhileHandlingException(priorException, DataOut);
+		  IOUtils.CloseWhileHandlingException(priorException, DataOut);
 		}
 		try
 		{
@@ -201,7 +201,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  IOUtils.closeWhileHandlingException(priorException, entryTableOut);
+		  IOUtils.CloseWhileHandlingException(priorException, entryTableOut);
 		}
 	  }
 

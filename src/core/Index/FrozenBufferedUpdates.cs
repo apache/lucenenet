@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
 	using Query = Lucene.Net.Search.Query;
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Holds buffered deletes and updates by term or query, once pushed. Pushed
@@ -94,9 +95,9 @@ namespace Lucene.Net.Index
 		// updated. 
 		IList<NumericDocValuesUpdate> allNumericUpdates = new List<NumericDocValuesUpdate>();
 		int numericUpdatesSize = 0;
-		foreach (LinkedHashMap<Term, NumericDocValuesUpdate> numericUpdates in deletes.NumericUpdates.Values)
+		foreach (/*Linked*/HashMap<Term, NumericDocValuesUpdate> numericUpdates in deletes.NumericUpdates.Values)
 		{
-		  foreach (NumericDocValuesUpdate update in numericUpdates.values())
+		  foreach (NumericDocValuesUpdate update in numericUpdates.Values)
 		  {
 			allNumericUpdates.Add(update);
 			numericUpdatesSize += update.SizeInBytes();
@@ -110,9 +111,9 @@ namespace Lucene.Net.Index
 		// updated. 
 		IList<BinaryDocValuesUpdate> allBinaryUpdates = new List<BinaryDocValuesUpdate>();
 		int binaryUpdatesSize = 0;
-		foreach (LinkedHashMap<Term, BinaryDocValuesUpdate> binaryUpdates in deletes.BinaryUpdates.Values)
+        foreach (/*Linked*/HashMap<Term, BinaryDocValuesUpdate> binaryUpdates in deletes.BinaryUpdates.Values)
 		{
-		  foreach (BinaryDocValuesUpdate update in binaryUpdates.values())
+		  foreach (BinaryDocValuesUpdate update in binaryUpdates.Values)
 		  {
 			allBinaryUpdates.Add(update);
 			binaryUpdatesSize += update.SizeInBytes();
@@ -132,12 +133,11 @@ namespace Lucene.Net.Index
 			Debug.Assert(this.Gen == -1);
 			this.Gen = value;
 		  }
-	  }
-
-	  public virtual long DelGen()
-	  {
-		Debug.Assert(Gen != -1);
-		return Gen;
+          get
+          {
+              Debug.Assert(Gen != -1);
+              return Gen;
+          }
 	  }
 
 	  public virtual IEnumerable<Term> TermsIterable()
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
 
 		  public virtual IEnumerator<Term> GetEnumerator()
 		  {
-			return OuterInstance.Terms.Iterator();
+              return OuterInstance.Terms.GetEnumerator();
 		  }
 	  }
 

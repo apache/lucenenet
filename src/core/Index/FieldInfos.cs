@@ -64,16 +64,22 @@ namespace Lucene.Net.Index
 		  {
 			throw new System.ArgumentException("illegal field number: " + info.Number + " for field " + info.Name);
 		  }
-		  FieldInfo previous = ByNumber.Put(info.Number, info);
-		  if (previous != null)
-		  {
-			throw new System.ArgumentException("duplicate field numbers: " + previous.Name + " and " + info.Name + " have: " + info.Number);
-		  }
-		  previous = ByName[info.Name] = info;
-		  if (previous != null)
-		  {
-			throw new System.ArgumentException("duplicate field names: " + previous.Number + " and " + info.Number + " have: " + info.Name);
-		  }
+
+          FieldInfo previous;
+
+          if (ByNumber.TryGetValue(info.Number, out previous))
+          {
+              throw new ArgumentException("duplicate field numbers: " + previous.Name + " and " + info.Name + " have: " + info.Number);
+          }
+
+          ByNumber[info.Number] = info;
+
+          if (ByName.TryGetValue(info.Name, out previous))
+          {
+              throw new ArgumentException("duplicate field names: " + previous.Number + " and " + info.Number + " have: " + info.Name);
+          }
+
+          ByName[info.Name] = info;
 
 		  hasVectors |= info.HasVectors();
 		  hasProx |= info.Indexed && info.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;

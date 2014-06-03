@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
 		}
 		finally
 		{
-		  IOUtils.close(r, dir);
+		  IOUtils.Close(r, dir);
 		}
 	  }
 

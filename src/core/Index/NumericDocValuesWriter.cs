@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
 	using AppendingDeltaPackedLongBuffer = Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
     using Lucene.Net.Support;
+    using Lucene.Net.Util.Packed;
 
 	/// <summary>
 	/// Buffers up pending long per doc, then flushes when
@@ -99,13 +100,36 @@ namespace Lucene.Net.Index
 	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = state.segmentInfo.getDocCount();
 		int maxDoc = state.SegmentInfo.DocCount;
 
-		dvConsumer.AddNumericField(FieldInfo, new IterableAnonymousInnerClassHelper(this, maxDoc));
+		dvConsumer.AddNumericField(FieldInfo, GetNumericIterator(maxDoc));
 	  }
 
+      private IEnumerable<long> GetNumericIterator(int maxDoc)
+      {
+          // .NET Port: using yield return instead of custom iterator type. Much less code.
+
+          AbstractAppendingLongBuffer.Iterator iter = Pending.Iterator();
+          int size = (int)Pending.Size();
+          int upto = 0;
+
+          while (upto < maxDoc)
+          {
+              long value;
+              if (upto < size)
+              {
+                  value = iter.Next();
+              }
+              else
+              {
+                  value = 0;
+              }
+              upto++;
+              // TODO: make reusable Number
+              yield return value;
+          }
+      }
+        /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
 	  {
 		  private readonly NumericDocValuesWriter OuterInstance;
@@ -122,12 +146,12 @@ namespace Lucene.Net.Index
 		  {
 			return new NumericIterator(OuterInstance, MaxDoc);
 		  }
-	  }
+	  }*/
 
 	  public override void Abort()
 	  {
 	  }
-
+        /*
 	  // iterates over the values we have in ram
 	  private class NumericIterator : IEnumerator<Number>
 	  {
@@ -135,8 +159,8 @@ namespace Lucene.Net.Index
 
 		  internal virtual void InitializeInstanceFields()
 		  {
-			  Iter = outerInstance.Pending.Iterator();
-			  Size = (int)outerInstance.Pending.Size();
+			  Iter = OuterInstance.Pending.Iterator();
+			  Size = (int)OuterInstance.Pending.Size();
 		  }
 
 		  private readonly NumericDocValuesWriter OuterInstance;
@@ -173,7 +197,7 @@ namespace Lucene.Net.Index
 		  if (Upto < Size)
 		  {
 			long v = Iter.next();
-			if (outerInstance.DocsWithField == null || outerInstance.DocsWithField.Get(Upto))
+            if (OuterInstance.DocsWithField == null || OuterInstance.DocsWithField.Get(Upto))
 			{
 			  value = v;
 			}
@@ -184,7 +208,7 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			value = outerInstance.DocsWithField != null ? null : MISSING;
+              value = OuterInstance.DocsWithField != null ? null : MISSING;
 		  }
 		  Upto++;
 		  return value;
@@ -194,7 +218,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.NotSupportedException();
 		}
-	  }
+	  }*/
 	}
 
 }

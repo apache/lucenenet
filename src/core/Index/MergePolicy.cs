@@ -200,6 +200,10 @@ namespace Lucene.Net.Index
 			{
 			  this.Info_Renamed = value;
 			}
+            get
+            {
+                return Info_Renamed;
+            }
 		}
 
 		/// <summary>

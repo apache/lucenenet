@@ -3,25 +3,26 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using Directory = Lucene.Net.Store.Directory;
+    using Directory = Lucene.Net.Store.Directory;
 
 	/// <summary>
 	/// Embeds a [read-only] SegmentInfo and adds per-commit
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return Collections.unmodifiableMap(GenUpdatesFiles_Renamed);
+			return CollectionsHelper.UnmodifiableMap(GenUpdatesFiles_Renamed);
 		  }
 	  }
 
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
 	  public virtual ICollection<string> Files()
 	  {
 		// Start from the wrapped info's files:
-		ICollection<string> files = new HashSet<string>(Info.Files);
+		ISet<string> files = new HashSet<string>(Info.Files);
 
 		// TODO we could rely on TrackingDir.getCreatedFiles() (like we do for
 		// updates) and then maybe even be able to remove LiveDocsFormat.files().
@@ -192,7 +193,7 @@ namespace Lucene.Net.Index
 		// Must separately add any field updates files
 		foreach (ISet<string> updateFiles in GenUpdatesFiles_Renamed.Values)
 		{
-		  files.AddAll(updateFiles);
+		  CollectionsHelper.AddAll(files, updateFiles);
 		}
 
 		return files;

@@ -218,7 +218,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  public override int HashCode()
 	  {
 		int code = TermLength;
-		code = code * 31 + ArrayUtil.HashCode(TermBuffer, 0, TermLength);
+		code = code * 31 + ArrayUtil.GetHashCode(TermBuffer, 0, TermLength);
 		return code;
 	  }
 

@@ -153,12 +153,12 @@ namespace Lucene.Net.Index
 	  /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
 	  public IDictionary<string, string> UserData_Renamed = CollectionsHelper.EmptyMap<string, string>();
 
-	  private IList<SegmentCommitInfo> Segments = new List<SegmentCommitInfo>();
+	  private List<SegmentCommitInfo> Segments = new List<SegmentCommitInfo>();
 
 	  /// <summary>
 	  /// If non-null, information about loading segments_N files </summary>
 	  /// will be printed here.  <seealso cref= #setInfoStream. </seealso>
-	  private static PrintStream InfoStream_Renamed = null;
+      private static StreamWriter infoStream = null;
 
 	  /// <summary>
 	  /// Sole constructor. Typically you call this and then
@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
 		  finally
 		  {
 			genOutput.Close();
-			dir.Sync(CollectionsHelper.Singleton(IndexFileNames.SEGMENTS_GEN));
+			dir.Sync(/*CollectionsHelper.Singleton(*/ new[] {IndexFileNames.SEGMENTS_GEN}/*)*/);
 		  }
 		}
 		catch (Exception t)
@@ -363,11 +363,7 @@ namespace Lucene.Net.Index
 		ChecksumIndexInput input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int format = input.readInt();
 		  int format = input.ReadInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int actualFormat;
 		  int actualFormat;
 		  if (format == CodecUtil.CODEC_MAGIC)
 		  {
@@ -402,12 +398,10 @@ namespace Lucene.Net.Index
 			  if (actualFormat >= VERSION_46)
 			  {
 				int numGensUpdatesFiles = input.ReadInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Long,java.util.Set<String>> genUpdatesFiles;
 				IDictionary<long?, ISet<string>> genUpdatesFiles;
 				if (numGensUpdatesFiles == 0)
 				{
-				  genUpdatesFiles = CollectionsHelper.EmptyMap();
+                    genUpdatesFiles = CollectionsHelper.EmptyMap<long?, ISet<string>>();
 				}
 				else
 				{
@@ -527,8 +521,6 @@ namespace Lucene.Net.Index
 		IndexOutput segnOutput = null;
 		bool success = false;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<String> upgradedSIFiles = new java.util.HashSet<>();
 		HashSet<string> upgradedSIFiles = new HashSet<string>();
 
 		try
@@ -551,8 +543,6 @@ namespace Lucene.Net.Index
 			}
 			segnOutput.WriteInt(delCount);
 			segnOutput.WriteLong(siPerCommit.FieldInfosGen);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Long,java.util.Set<String>> genUpdatesFiles = siPerCommit.getUpdatesFiles();
 			IDictionary<long?, ISet<string>> genUpdatesFiles = siPerCommit.UpdatesFiles;
 			segnOutput.WriteInt(genUpdatesFiles.Count);
 			foreach (KeyValuePair<long?, ISet<string>> e in genUpdatesFiles)
@@ -574,11 +564,9 @@ namespace Lucene.Net.Index
 				string markerFileName = IndexFileNames.SegmentFileName(si.Name, "upgraded", Lucene3xSegmentInfoFormat.UPGRADED_SI_EXTENSION);
 				si.AddFile(markerFileName);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentFileName = write3xInfo(directory, si, Lucene.Net.Store.IOContext.DEFAULT);
 				string segmentFileName = Write3xInfo(directory, si, IOContext.DEFAULT);
 				upgradedSIFiles.Add(segmentFileName);
-				directory.Sync(Collections.singletonList(segmentFileName));
+				directory.Sync(/*Collections.singletonList(*/new[] {segmentFileName}/*)*/);
 
 				// Write separate marker file indicating upgrade
 				// is completed.  this way, if there is a JVM
@@ -595,7 +583,7 @@ namespace Lucene.Net.Index
 				  @out.Close();
 				}
 				upgradedSIFiles.Add(markerFileName);
-				directory.Sync(Collections.singletonList(markerFileName));
+				directory.Sync(/*Collections.singletonList(*/new[] {markerFileName}/*)*/);
 			  }
 			}
 		  }
@@ -727,10 +715,6 @@ namespace Lucene.Net.Index
 
 	  public override SegmentInfos Clone()
 	  {
-		try
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentInfos sis = (SegmentInfos) base.clone();
 		  SegmentInfos sis = (SegmentInfos) base.MemberwiseClone();
 		  // deep clone, first recreate all collections:
 		  sis.Segments = new List<SegmentCommitInfo>(Size());
@@ -742,11 +726,6 @@ namespace Lucene.Net.Index
 		  }
 		  sis.UserData_Renamed = new Dictionary<string, string>(UserData_Renamed);
 		  return sis;
-		}
-		catch (CloneNotSupportedException e)
-		{
-		  throw new Exception("should not happen", e);
-		}
 	  }
 
 	  /// <summary>
@@ -784,15 +763,15 @@ namespace Lucene.Net.Index
 	  /// If non-null, information about retries when loading
 	  /// the segments file will be printed to this.
 	  /// </summary>
-	  public static PrintStream InfoStream
+	  public static StreamWriter InfoStream
 	  {
 		  set
 		  {
-			SegmentInfos.InfoStream_Renamed = value;
+			SegmentInfos.infoStream = value;
 		  }
 		  get
 		  {
-			return InfoStream_Renamed;
+			return infoStream;
 		  }
 	  }
 
@@ -840,7 +819,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  private static void Message(string message)
 	  {
-		InfoStream_Renamed.println("SIS [" + Thread.CurrentThread.Name + "]: " + message);
+		infoStream.WriteLine("SIS [" + Thread.CurrentThread.Name + "]: " + message);
 	  }
 
 	  /// <summary>
@@ -933,7 +912,7 @@ namespace Lucene.Net.Index
 				genA = GetLastCommitGeneration(files);
 			  }
 
-			  if (InfoStream_Renamed != null)
+			  if (infoStream != null)
 			  {
 				Message("directory listing genA=" + genA);
 			  }
@@ -951,7 +930,7 @@ namespace Lucene.Net.Index
 			  }
 			  catch (IOException e)
 			  {
-				if (InfoStream_Renamed != null)
+				if (infoStream != null)
 				{
 				  Message("segments.gen open: IOException " + e);
 				}
@@ -966,7 +945,7 @@ namespace Lucene.Net.Index
 				  {
 					long gen0 = genInput.ReadLong();
 					long gen1 = genInput.ReadLong();
-					if (InfoStream_Renamed != null)
+					if (infoStream != null)
 					{
 					  Message("fallback check: " + gen0 + "; " + gen1);
 					}
@@ -1003,7 +982,7 @@ namespace Lucene.Net.Index
 				}
 			  }
 
-			  if (InfoStream_Renamed != null)
+			  if (infoStream != null)
 			  {
 				Message(IndexFileNames.SEGMENTS_GEN + " check: genB=" + genB);
 			  }
@@ -1035,7 +1014,7 @@ namespace Lucene.Net.Index
 			  {
 				gen++;
 				genLookaheadCount++;
-				if (InfoStream_Renamed != null)
+				if (infoStream != null)
 				{
 				  Message("look ahead increment gen to " + gen);
 				}
@@ -1066,7 +1045,7 @@ namespace Lucene.Net.Index
 			try
 			{
 			  object v = DoBody(segmentFileName);
-			  if (InfoStream_Renamed != null)
+			  if (infoStream != null)
 			  {
 				Message("success on " + segmentFileName);
 			  }
@@ -1081,7 +1060,7 @@ namespace Lucene.Net.Index
 				exc = err;
 			  }
 
-			  if (InfoStream_Renamed != null)
+			  if (infoStream != null)
 			  {
 				Message("primary Exception on '" + segmentFileName + "': " + err + "'; will retry: retryCount=" + retryCount + "; gen = " + gen);
 			  }
@@ -1110,14 +1089,14 @@ namespace Lucene.Net.Index
 
 				if (prevExists)
 				{
-				  if (InfoStream_Renamed != null)
+				  if (infoStream != null)
 				  {
 					Message("fallback to prior segment file '" + prevSegmentFileName + "'");
 				  }
 				  try
 				  {
 					object v = DoBody(prevSegmentFileName);
-					if (InfoStream_Renamed != null)
+					if (infoStream != null)
 					{
 					  Message("success on fallback " + prevSegmentFileName);
 					}
@@ -1125,7 +1104,7 @@ namespace Lucene.Net.Index
 				  }
 				  catch (IOException err2)
 				  {
-					if (InfoStream_Renamed != null)
+					if (infoStream != null)
 					{
 					  Message("secondary Exception on '" + prevSegmentFileName + "': " + err2 + "'; will retry");
 					}
@@ -1205,26 +1184,20 @@ namespace Lucene.Net.Index
 		HashSet<string> files = new HashSet<string>();
 		if (includeSegmentsFile)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentFileName = getSegmentsFileName();
 		  string segmentFileName = SegmentsFileName;
 		  if (segmentFileName != null)
 		  {
 			files.Add(segmentFileName);
 		  }
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = size();
 		int size = Size();
 		for (int i = 0;i < size;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = info(i);
 		  SegmentCommitInfo info = Info(i);
 		  Debug.Assert(info.Info.Dir == dir);
 		  if (info.Info.Dir == dir)
 		  {
-			files.addAll(info.Files());
+			files.UnionWith(info.Files());
 		  }
 		}
 
@@ -1283,13 +1256,11 @@ namespace Lucene.Net.Index
 		// logic in SegmentInfos to kick in and load the last
 		// good (previous) segments_N-1 file.
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = IndexFileNames.fileNameFromGeneration(IndexFileNames.SEGMENTS, "", generation);
 		string fileName = IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", Generation_Renamed);
 		success = false;
 		try
 		{
-		  dir.Sync(Collections.singleton(fileName));
+		  dir.Sync(/*Collections.singleton(*/new[] {fileName}/*)*/);
 		  success = true;
 		}
 		finally
@@ -1332,8 +1303,6 @@ namespace Lucene.Net.Index
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append(SegmentsFileName).Append(": ");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = size();
 		int count = Size();
 		for (int i = 0; i < count; i++)
 		{
@@ -1341,8 +1310,6 @@ namespace Lucene.Net.Index
 		  {
 			buffer.Append(' ');
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = info(i);
 		  SegmentCommitInfo info = Info(i);
 		  buffer.Append(info.ToString(directory, 0));
 		}
@@ -1411,18 +1378,14 @@ namespace Lucene.Net.Index
 	  /// applies all changes caused by committing a merge to this SegmentInfos </summary>
 	  internal void ApplyMergeChanges(MergePolicy.OneMerge merge, bool dropSegment)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Set<SegmentCommitInfo> mergedAway = new java.util.HashSet<>(merge.segments);
 		HashSet<SegmentCommitInfo> mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
 		bool inserted = false;
 		int newSegIdx = 0;
 		for (int segIdx = 0, cnt = Segments.Count; segIdx < cnt; segIdx++)
 		{
 		  Debug.Assert(segIdx >= newSegIdx);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = segments.get(segIdx);
 		  SegmentCommitInfo info = Segments[segIdx];
-		  if (mergedAway.contains(info))
+		  if (mergedAway.Contains(info))
 		  {
 			if (!inserted && !dropSegment)
 			{
@@ -1439,7 +1402,7 @@ namespace Lucene.Net.Index
 		}
 
 		// the rest of the segments in list are duplicates, so don't remove from map, only list!
-		Segments.subList(newSegIdx, Segments.Count).clear();
+		Segments.SubList(newSegIdx, Segments.Count).Clear();
 
 		// Either we found place to insert segment, or, we did
 		// not, but only because all segments we merged becamee
@@ -1454,8 +1417,6 @@ namespace Lucene.Net.Index
 
 	  internal IList<SegmentCommitInfo> CreateBackupSegmentInfos()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> list = new java.util.ArrayList<>(size());
 		IList<SegmentCommitInfo> list = new List<SegmentCommitInfo>(Size());
 		foreach (SegmentCommitInfo info in this)
 		{
@@ -1481,9 +1442,9 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Returns all contained segments as an <b>unmodifiable</b> <seealso cref="List"/> view. </summary>
-	  public IList<SegmentCommitInfo> AsList()
+	  public List<SegmentCommitInfo> AsList()
 	  {
-		return Collections.unmodifiableList(Segments);
+		return /*Collections.unmodifiableList*/(Segments);
 	  }
 
 	  /// <summary>

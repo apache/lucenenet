@@ -104,12 +104,12 @@ namespace Lucene.Net.Index
 		long t0 = 0;
 		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  t0 = System.nanoTime();
+		  t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		}
 		int numMerged = MergeFields();
 		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  long t1 = System.nanoTime();
+		  long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		  MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge stored fields [" + numMerged + " docs]");
 		}
 		Debug.Assert(numMerged == MergeState.SegmentInfo.DocCount);
@@ -119,18 +119,18 @@ namespace Lucene.Net.Index
 		SegmentWriteState segmentWriteState = new SegmentWriteState(MergeState.InfoStream, Directory, MergeState.SegmentInfo, MergeState.FieldInfos, TermIndexInterval, null, Context);
 		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  t0 = System.nanoTime();
+		  t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		}
 		MergeTerms(segmentWriteState);
 		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  long t1 = System.nanoTime();
+		  long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		  MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge postings [" + numMerged + " docs]");
 		}
 
         if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  t0 = System.nanoTime();
+		  t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		}
 		if (MergeState.FieldInfos.HasDocValues())
 		{
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 		}
         if (MergeState.InfoStream.IsEnabled("SM"))
 		{
-		  long t1 = System.nanoTime();
+		  long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
           MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge doc values [" + numMerged + " docs]");
 		}
 
@@ -146,12 +146,12 @@ namespace Lucene.Net.Index
 		{
 		  if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
-			t0 = System.nanoTime();
+			t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		  }
 		  MergeNorms(segmentWriteState);
 		  if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
-			long t1 = System.nanoTime();
+			long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 			MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge norms [" + numMerged + " docs]");
 		  }
 		}
@@ -160,12 +160,12 @@ namespace Lucene.Net.Index
 		{
 		  if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
-			t0 = System.nanoTime();
+			t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 		  }
 		  numMerged = MergeVectors();
           if (MergeState.InfoStream.IsEnabled("SM"))
 		  {
-			long t1 = System.nanoTime();
+			long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
             MergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge vectors [" + numMerged + " docs]");
 		  }
 		  Debug.Assert(numMerged == MergeState.SegmentInfo.DocCount);
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
 			  if (type == DocValuesType_e.NUMERIC)
 			  {
 				IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-				IList<Bits> docsWithField = new List<Bits>();
+				//IList<Bits> docsWithField = new List<Bits>();
 				foreach (AtomicReader reader in MergeState.Readers)
 				{
 				  NumericDocValues values = reader.GetNumericDocValues(field.Name);
@@ -203,14 +203,14 @@ namespace Lucene.Net.Index
 					bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc());
 				  }
 				  toMerge.Add(values);
-				  docsWithField.Add(bits);
+				  //docsWithField.Add(bits);
 				}
-				consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
+				consumer.MergeNumericField(field, MergeState, toMerge/*, docsWithField*/);
 			  }
 			  else if (type == DocValuesType_e.BINARY)
 			  {
 				IList<BinaryDocValues> toMerge = new List<BinaryDocValues>();
-				IList<Bits> docsWithField = new List<Bits>();
+				//IList<Bits> docsWithField = new List<Bits>();
 				foreach (AtomicReader reader in MergeState.Readers)
 				{
 				  BinaryDocValues values = reader.GetBinaryDocValues(field.Name);
@@ -221,9 +221,9 @@ namespace Lucene.Net.Index
 					bits = new Lucene.Net.Util.Bits_MatchNoBits(reader.MaxDoc());
 				  }
 				  toMerge.Add(values);
-				  docsWithField.Add(bits);
+				  //docsWithField.Add(bits);
 				}
-				consumer.MergeBinaryField(field, MergeState, toMerge, docsWithField);
+				consumer.MergeBinaryField(field, MergeState, toMerge/*, docsWithField*/);
 			  }
 			  else if (type == DocValuesType_e.SORTED)
 			  {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
 			if (field.HasNorms())
 			{
 			  IList<NumericDocValues> toMerge = new List<NumericDocValues>();
-			  IList<Bits> docsWithField = new List<Bits>();
+			  //IList<Bits> docsWithField = new List<Bits>();
 			  foreach (AtomicReader reader in MergeState.Readers)
 			  {
 				NumericDocValues norms = reader.GetNormValues(field.Name);
@@ -294,9 +294,9 @@ namespace Lucene.Net.Index
 				  norms = DocValues.EMPTY_NUMERIC;
 				}
 				toMerge.Add(norms);
-				docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc()));
+				//docsWithField.Add(new Lucene.Net.Util.Bits_MatchAllBits(reader.MaxDoc()));
 			  }
-			  consumer.MergeNumericField(field, MergeState, toMerge, docsWithField);
+			  consumer.MergeNumericField(field, MergeState, toMerge/*, docsWithField*/);
 			}
 		  }
 		  success = true;

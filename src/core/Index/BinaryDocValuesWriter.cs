@@ -49,7 +49,8 @@ namespace Lucene.Net.Index
 	  private const int BLOCK_BITS = 15;
 
 	  private readonly PagedBytes Bytes;
-	  private readonly DataOutput BytesOut;
+      private readonly DataOutput BytesOut;
+      private readonly DataInput BytesIn;
 
 	  private readonly Counter IwBytesUsed;
 	  private readonly AppendingDeltaPackedLongBuffer Lengths;
@@ -115,8 +116,6 @@ namespace Lucene.Net.Index
 
 	  private void UpdateBytesUsed()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long newBytesUsed = lengths.ramBytesUsed() + bytes.ramBytesUsed() + docsWithFieldBytesUsed();
 		long newBytesUsed = Lengths.RamBytesUsed() + Bytes.RamBytesUsed() + DocsWithFieldBytesUsed();
 		IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
 		BytesUsed = newBytesUsed;
@@ -128,13 +127,12 @@ namespace Lucene.Net.Index
 
 	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = state.segmentInfo.getDocCount();
 		int maxDoc = state.SegmentInfo.DocCount;
 		Bytes.Freeze(false);
-		dvConsumer.AddBinaryField(FieldInfo, new IterableAnonymousInnerClassHelper(this, maxDoc));
+        dvConsumer.AddBinaryField(FieldInfo, GetBytesIterator(maxDoc));
+        //dvConsumer.AddBinaryField(FieldInfo, new IterableAnonymousInnerClassHelper(this, maxDoc));
 	  }
-
+        /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
 	  {
 		  private readonly BinaryDocValuesWriter OuterInstance;
@@ -151,12 +149,48 @@ namespace Lucene.Net.Index
 		  {
 			 return new BytesIterator(OuterInstance, MaxDoc);
 		  }
-	  }
+	  }*/
 
 	  public override void Abort()
 	  {
 	  }
 
+
+      private IEnumerable<BytesRef> GetBytesIterator(int maxDocParam)
+      {
+          // Use yield return instead of ucsom IEnumerable
+
+          BytesRef value = new BytesRef();
+          AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = (AppendingDeltaPackedLongBuffer.Iterator)Lengths.Iterator();
+          int size = (int)Lengths.Size();
+          int maxDoc = maxDocParam;
+          int upto = 0;
+          long byteOffset = 0L;
+
+          while (upto < maxDoc)
+          {
+              if (upto < size)
+              {
+                  int length = (int)lengthsIterator.Next();
+                  value.Grow(length);
+                  value.Length = length;
+                  //LUCENE TO-DO: This modification is slightly fishy, 4x port uses ByteBlockPool
+                  BytesIn.ReadBytes(/*byteOffset,*/ value.Bytes, value.Offset, value.Length);
+                  byteOffset += length;
+              }
+              else
+              {
+                  // This is to handle last N documents not having
+                  // this DV field in the end of the segment:
+                  value.Length = 0;
+              }
+
+              upto++;
+              yield return value;
+          }
+      }
+
+        /*
 	  // iterates over the values we have in ram
 	  private class BytesIterator : IEnumerator<BytesRef>
 	  {
@@ -237,7 +271,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.NotSupportedException();
 		}
-	  }
+	  }*/
 	}
 
 }

@@ -207,14 +207,14 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Sugar for <code>.getIndexReader().document(docID, fieldsToLoad)</code> </summary>
 	  /// <seealso cref= IndexReader#document(int, Set)  </seealso>
-	  public virtual Document Doc(int docID, Set<string> fieldsToLoad)
+	  public virtual Document Doc(int docID, ISet<string> fieldsToLoad)
 	  {
 		return Reader.Document(docID, fieldsToLoad);
 	  }
 
 	  /// @deprecated Use <seealso cref="#doc(int, Set)"/> instead. 
-	  [Obsolete("Use <seealso cref="#doc(int, java.util.Set)"/> instead.")]
-	  public Document Document(int docID, Set<string> fieldsToLoad)
+	  [Obsolete("Use <seealso cref=#doc(int, java.util.Set)/> instead.")]
+	  public Document Document(int docID, ISet<string> fieldsToLoad)
 	  {
 		return Doc(docID, fieldsToLoad);
 	  }

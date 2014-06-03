@@ -220,9 +220,9 @@ namespace Lucene.Net.Search
 	  public override sealed int HashCode()
 	  {
 		int h = Field_Renamed.HashCode();
-		h ^= (LowerVal_Renamed != null) ? LowerVal_Renamed.HashCode() : 550356204;
+		h ^= (LowerVal_Renamed != null) ? LowerVal_Renamed.GetHashCode() : 550356204;
 		h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
-		h ^= (UpperVal_Renamed != null) ? UpperVal_Renamed.HashCode() : -1674416163;
+		h ^= (UpperVal_Renamed != null) ? UpperVal_Renamed.GetHashCode() : -1674416163;
 		h ^= (IncludeLower ? 1549299360 : -365038026) ^ (IncludeUpper ? 1721088258 : 1948649653);
 		return h;
 	  }

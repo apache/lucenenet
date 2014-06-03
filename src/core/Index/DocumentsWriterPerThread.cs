@@ -41,6 +41,7 @@ namespace Lucene.Net.Index
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 using System.Globalization;
     using Lucene.Net.Util;
+    using Lucene.Net.Support;
 
 	internal class DocumentsWriterPerThread
 	{
@@ -175,7 +176,7 @@ using System.Globalization;
 		  }
 
 		  PendingUpdates.Clear();
-		  createdFiles.addAll(Directory.CreatedFiles);
+		  CollectionsHelper.AddAll(createdFiles, Directory.CreatedFiles);
 		}
 		finally
 		{
@@ -266,7 +267,7 @@ using System.Globalization;
 		return true;
 	  }
 
-	  public virtual void updateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
+	  public virtual void UpdateDocument(IEnumerable<IndexableField> doc, Analyzer analyzer, Term delTerm)
 	  {
 		Debug.Assert(TestPoint("DocumentsWriterPerThread addDocument start"));
 		Debug.Assert(DeleteQueue != null);
@@ -561,7 +562,7 @@ using System.Globalization;
 		  if (InfoStream.IsEnabled("DWPT"))
 		  {
 			InfoStream.Message("DWPT", "new segment has " + (flushState.LiveDocs == null ? 0 : (flushState.SegmentInfo.DocCount - flushState.DelCountOnFlush)) + " deleted docs");
-			InfoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.HasVectors() ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.hasNorms() ? "norms" : "no norms") + "; " + (flushState.FieldInfos.hasDocValues() ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.hasProx() ? "prox" : "no prox") + "; " + (flushState.FieldInfos.hasFreq() ? "freqs" : "no freqs"));
+			InfoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.HasVectors() ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.HasNorms() ? "norms" : "no norms") + "; " + (flushState.FieldInfos.HasDocValues() ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.HasProx() ? "prox" : "no prox") + "; " + (flushState.FieldInfos.HasFreq() ? "freqs" : "no freqs"));
 			InfoStream.Message("DWPT", "flushedFiles=" + segmentInfoPerCommit.Files());
 			InfoStream.Message("DWPT", "flushed codec=" + Codec);
 		  }
@@ -580,7 +581,7 @@ using System.Globalization;
 		  if (InfoStream.IsEnabled("DWPT"))
 		  {
 			double newSegmentSize = segmentInfoPerCommit.SizeInBytes() / 1024.0 / 1024.0;
-			InfoStream.Message("DWPT", "flushed: segment=" + SegmentInfo_Renamed.Name + " ramUsed=" + Nf.format(startMBUsed) + " MB" + " newFlushedSize(includes docstores)=" + Nf.format(newSegmentSize) + " MB" + " docs/MB=" + Nf.format(flushState.SegmentInfo.DocCount / newSegmentSize));
+			InfoStream.Message("DWPT", "flushed: segment=" + SegmentInfo_Renamed.Name + " ramUsed=" + startMBUsed.ToString(Nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(Nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(Nf));
 		  }
 
 		  Debug.Assert(SegmentInfo_Renamed != null);
@@ -626,8 +627,8 @@ using System.Globalization;
 
 		  if (IndexWriterConfig.UseCompoundFile)
 		  {
-			FilesToDelete.addAll(IndexWriter.CreateCompoundFile(InfoStream, Directory, MergeState.CheckAbort.NONE, newSegment.Info, context));
-			newSegment.Info.UseCompoundFile = true;
+              CollectionsHelper.AddAll(FilesToDelete, IndexWriter.CreateCompoundFile(InfoStream, Directory, MergeState.CheckAbort.NONE, newSegment.Info, context));
+			  newSegment.Info.UseCompoundFile = true;
 		  }
 
 		  // Have codec write SegmentInfo.  Must do this after

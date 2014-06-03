@@ -62,8 +62,6 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static Fields GetFields(IndexReader reader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = reader.leaves();
 		IList<AtomicReaderContext> leaves = reader.Leaves();
 		switch (leaves.Count)
 		{
@@ -74,19 +72,11 @@ namespace Lucene.Net.Index
 			// already an atomic reader / reader with one leave
 			return leaves[0].Reader().Fields();
 		  default:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Fields> fields = new java.util.ArrayList<>();
 			IList<Fields> fields = new List<Fields>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<ReaderSlice> slices = new java.util.ArrayList<>();
 			IList<ReaderSlice> slices = new List<ReaderSlice>();
 			foreach (AtomicReaderContext ctx in leaves)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader r = ctx.reader();
 			  AtomicReader r = ctx.Reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields f = r.fields();
 			  Fields f = r.Fields();
 			  if (f != null)
 			  {
@@ -124,28 +114,18 @@ namespace Lucene.Net.Index
 	  {
 		if (reader.HasDeletions())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<AtomicReaderContext> leaves = reader.leaves();
 		  IList<AtomicReaderContext> leaves = reader.Leaves();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = leaves.size();
 		  int size = leaves.Count;
 		  Debug.Assert(size > 0, "A reader with deletions must have at least one leave");
 		  if (size == 1)
 		  {
 			return leaves[0].Reader().LiveDocs;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits[] liveDocs = new Lucene.Net.Util.Bits[size];
 		  Bits[] liveDocs = new Bits[size];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] starts = new int[size + 1];
 		  int[] starts = new int[size + 1];
 		  for (int i = 0; i < size; i++)
 		  {
 			// record all liveDocs, even if they are null
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReaderContext ctx = leaves.get(i);
 			AtomicReaderContext ctx = leaves[i];
 			liveDocs[i] = ctx.Reader().LiveDocs;
 			starts[i] = ctx.DocBase;
@@ -163,8 +143,6 @@ namespace Lucene.Net.Index
 	  ///  this method may return null if the field does not exist. </summary>
 	  public static Terms GetTerms(IndexReader r, string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = getFields(r);
 		Fields fields = GetFields(r);
 		if (fields == null)
 		{
@@ -198,13 +176,9 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(field != null);
 		Debug.Assert(term != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = getTerms(r, field);
 		Terms terms = GetTerms(r, field);
 		if (terms != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 		  TermsEnum termsEnum = terms.Iterator(null);
 		  if (termsEnum.SeekExact(term))
 		  {
@@ -237,13 +211,9 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(field != null);
 		Debug.Assert(term != null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = getTerms(r, field);
 		Terms terms = GetTerms(r, field);
 		if (terms != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 		  TermsEnum termsEnum = terms.Iterator(null);
 		  if (termsEnum.SeekExact(term))
 		  {
@@ -264,8 +234,6 @@ namespace Lucene.Net.Index
 		this.SubSlices = subSlices;
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) @Override public java.util.Iterator<String> iterator()
 	  public override IEnumerator<string> Iterator()
 	  {
 		IEnumerator<string>[] subIterators = new IEnumerator<string>[Subs.Length];
@@ -287,18 +255,12 @@ namespace Lucene.Net.Index
 
 		// Lazy init: first time this field is requested, we
 		// create & add to terms:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Terms> subs2 = new java.util.ArrayList<>();
 		IList<Terms> subs2 = new List<Terms>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<ReaderSlice> slices2 = new java.util.ArrayList<>();
 		IList<ReaderSlice> slices2 = new List<ReaderSlice>();
 
 		// Gather all sub-readers that share this field
 		for (int i = 0;i < Subs.Length;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = subs[i].terms(field);
 		  Terms terms = Subs[i].Terms(field);
 		  if (terms != null)
 		  {
@@ -337,8 +299,6 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static FieldInfos GetMergedFieldInfos(IndexReader reader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfos.Builder builder = new FieldInfos.Builder();
 		FieldInfos.Builder builder = new FieldInfos.Builder();
 		foreach (AtomicReaderContext ctx in reader.Leaves())
 		{
@@ -358,8 +318,6 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static ICollection<string> GetIndexedFields(IndexReader reader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<String> fields = new java.util.HashSet<>();
 		ICollection<string> fields = new HashSet<string>();
 		foreach (FieldInfo fieldInfo in GetMergedFieldInfos(reader))
 		{

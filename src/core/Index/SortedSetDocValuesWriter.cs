@@ -155,8 +155,6 @@ namespace Lucene.Net.Index
 
 	  private void UpdateBytesUsed()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long newBytesUsed = pending.ramBytesUsed() + pendingCounts.ramBytesUsed();
 		long newBytesUsed = Pending.RamBytesUsed() + PendingCounts.RamBytesUsed();
 		IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
 		BytesUsed = newBytesUsed;
@@ -164,22 +162,12 @@ namespace Lucene.Net.Index
 
 	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = state.segmentInfo.getDocCount();
 		int maxDoc = state.SegmentInfo.DocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxCountPerDoc = maxCount;
 		int maxCountPerDoc = MaxCount;
 		Debug.Assert(PendingCounts.Size() == maxDoc);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int valueCount = hash.size();
 		int valueCount = Hash.Size();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] sortedValues = hash.sort(Lucene.Net.Util.BytesRef.getUTF8SortedAsUnicodeComparator());
 		int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparator);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ordMap = new int[valueCount];
 		int[] ordMap = new int[valueCount];
 
 		for (int ord = 0;ord < valueCount;ord++)
@@ -187,15 +175,62 @@ namespace Lucene.Net.Index
 		  ordMap[sortedValues[ord]] = ord;
 		}
 
-		dvConsumer.AddSortedSetField(FieldInfo, new IterableAnonymousInnerClassHelper(this, valueCount, sortedValues),
+		dvConsumer.AddSortedSetField(FieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
 
 								  // doc -> ordCount
-								  new IterableAnonymousInnerClassHelper2(this, maxDoc),
+								  GetIntEnumberable(maxDoc),
 
 								  // ords
-								  new IterableAnonymousInnerClassHelper3(this, maxCountPerDoc, ordMap));
+								  GetLongEnumberable(maxCountPerDoc, ordMap));
 	  }
 
+        private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues) 
+        {
+            BytesRef scratch = new BytesRef();
+            for (int i = 0; i < valueCount; ++i)
+            {
+                yield return Hash.Get(sortedValues[i], scratch);
+            }
+        }
+
+        private IEnumerable<int> GetIntEnumberable(int maxDoc)
+        {
+            AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.Iterator();
+            
+            Debug.Assert(maxDoc == Pending.Size());
+
+            for (int i = 0; i < maxDoc; ++i )
+            {
+                yield return (int)iter.Next();
+            }
+        }
+
+        private IEnumerable<long> GetLongEnumberable(int maxCountPerDoc, int[] ordMap) 
+        {
+            int currentUpTo = 0, currentLength = 0;
+            AppendingPackedLongBuffer.Iterator iter = Pending.Iterator();
+		    AppendingDeltaPackedLongBuffer.Iterator counts = PendingCounts.Iterator();
+            int[] currentDoc = new int[maxCountPerDoc];
+
+            for (long i = 0; i < Pending.Size(); ++i)
+            {
+                while (currentUpTo == currentLength)
+                {
+                    // refill next doc, and sort remapped ords within the doc.
+                    currentUpTo = 0;
+                    currentLength = (int)counts.Next();
+                    for (int j = 0; j < currentLength; j++)
+                    {
+                        currentDoc[j] = ordMap[(int)iter.Next()];
+                    }
+                    Array.Sort(currentDoc, 0, currentLength);
+                }
+                int ord = currentDoc[currentUpTo];
+                currentUpTo++;
+                yield return ord;
+            }
+        }
+        /*
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
 	  {
 		  private readonly SortedSetDocValuesWriter OuterInstance;
@@ -418,7 +453,7 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.NotSupportedException();
 		}
-	  }
+	  }*/
 	}
 
 }

@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 
 	  public override void TearDown()
 	  {
-		IOUtils.close(Iw, Ir, Dir);
+		IOUtils.Close(Iw, Ir, Dir);
 		base.tearDown();
 	  }
 

@@ -289,7 +289,7 @@ namespace Lucene.Net.Analysis
 		  }
 		  finally
 		  {
-			IOUtils.closeWhileHandlingException(priorException, ts);
+			IOUtils.CloseWhileHandlingException(priorException, ts);
 		  }
 		}
 
@@ -349,7 +349,7 @@ namespace Lucene.Net.Analysis
 				}
 				finally
 				{
-				  IOUtils.closeWhileHandlingException(priorException, ts);
+				  IOUtils.CloseWhileHandlingException(priorException, ts);
 				}
 			  }
 			}
