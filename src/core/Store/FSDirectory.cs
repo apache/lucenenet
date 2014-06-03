@@ -1,26 +1,33 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+
+// Used only for WRITE_LOCK_NAME in deprecated create=true case:
+using System.IO;
+using Lucene.Net.Support;
+using IndexWriter = Lucene.Net.Index.IndexWriter;
+using Constants = Lucene.Net.Util.Constants;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
-
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
 
 	using Constants = Lucene.Net.Util.Constants;
 	using IOUtils = Lucene.Net.Util.IOUtils;
@@ -140,9 +147,9 @@ namespace Lucene.Net.Store
 		}
 		Directory_Renamed = GetCanonicalPath(path);
 
-		if (Directory_Renamed.Exists && !Directory_Renamed.Directory)
+		if (File.Exists(path.FullName))
 		{
-		  throw new NoSuchDirectoryException("file '" + Directory_Renamed + "' exists but is not a directory");
+		  throw new NoSuchDirectoryException ("file '" + path.FullName + "' exists but is not a directory"); //should be NoSuchDirectoryException
 		}
 
 		LockFactory = lockFactory;
@@ -192,7 +199,9 @@ namespace Lucene.Net.Store
 		}
 		else
 		{
-		  return new NIOFSDirectory(path, lockFactory);
+            //NIOFSDirectory is not implemented in Lucene.Net
+            //return new NIOFSDirectory(path, lockFactory);
+           return new SimpleFSDirectory(path, lockFactory);
 		}
 	  }
 
@@ -214,7 +223,7 @@ namespace Lucene.Net.Store
 				lf.LockDir = Directory_Renamed;
 				lf.LockPrefix = null;
 			  }
-			  else if (dir.CanonicalPath.Equals(Directory_Renamed.CanonicalPath))
+			  else if (dir.FullName.Equals(Directory_Renamed.FullName))
 			  {
 				lf.LockPrefix = null;
 			  }
@@ -232,7 +241,7 @@ namespace Lucene.Net.Store
 	  ///   does not exist, or does exist but is not a
 	  ///   directory. </exception>
 	  ///  <exception cref="System.IO.IOException"> if list() returns null  </exception>
-	  public static string[] ListAll(File dir)
+	  public static string[] ListAll(DirectoryInfo dir)
 	  {
 		if (!dir.Exists)
 		{
@@ -244,16 +253,23 @@ namespace Lucene.Net.Store
 		}
 
 		// Exclude subdirs
-		string[] result = dir.list(new FilenameFilterAnonymousInnerClassHelper(dir));
+        FileInfo[] files = dir.GetFiles();
+        string[] result = new String[files.Length];
 
-		if (result == null)
-		{
-		  throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
-		}
+        for (int i = 0; i < files.Length; i++)
+        {
+            result[i] = files[i].Name;
+        }
+          /*
+            if (result == null)
+            {
+                throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
+            }*/
 
 		return result;
 	  }
 
+        /*
 	  private class FilenameFilterAnonymousInnerClassHelper : FilenameFilter
 	  {
 		  private File Dir;
@@ -267,7 +283,7 @@ namespace Lucene.Net.Store
 		  {
 			return !(new DirectoryInfo(Path.Combine(dir.FullName, file))).Directory;
 		  }
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Lists all files (not subdirectories) in the
@@ -284,8 +300,8 @@ namespace Lucene.Net.Store
 	  public override bool FileExists(string name)
 	  {
 		EnsureOpen();
-		File file = new File(Directory_Renamed, name);
-		return file.exists();
+		FileInfo file = new FileInfo (Path.Combine(Directory_Renamed.FullName, name));
+		return file.Exists;
 	  }
 
 	  /// <summary>
@@ -293,11 +309,11 @@ namespace Lucene.Net.Store
 	  public override long FileLength(string name)
 	  {
 		EnsureOpen();
-		File file = new File(Directory_Renamed, name);
+        FileInfo file = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long len = file.length();
-		long len = file.length();
-		if (len == 0 && !file.exists())
+		long len = file.Length;
+		if (len == 0 && !file.Exists)
 		{
 		  throw new FileNotFoundException(name);
 		}
@@ -312,12 +328,15 @@ namespace Lucene.Net.Store
 	  public override void DeleteFile(string name)
 	  {
 		EnsureOpen();
-		File file = new File(Directory_Renamed, name);
-		if (!file.delete())
-		{
-		  throw new System.IO.IOException("Cannot delete " + file);
-		}
-		StaleFiles.remove(name);
+        FileInfo file = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
+        try
+        {
+            file.Delete();
+        }
+        catch (Exception) {
+            throw new System.IO.IOException("Cannot delete " + file);
+        }
+		StaleFiles.Remove(name);
 	  }
 
 	  /// <summary>
@@ -332,31 +351,42 @@ namespace Lucene.Net.Store
 
 	  protected internal virtual void EnsureCanWrite(string name)
 	  {
-		if (!Directory_Renamed.exists())
+		if (!Directory_Renamed.Exists)
 		{
-		  if (!Directory_Renamed.mkdirs())
-		  {
-			throw new System.IO.IOException("Cannot create directory: " + Directory_Renamed);
-		  }
+          try
+          {
+            Directory_Renamed.Create();      
+          }
+          catch
+          {
+              throw new System.IO.IOException("Cannot create directory: " + Directory_Renamed);
+          }
 		}
 
-		File file = new File(Directory_Renamed, name);
-		if (file.exists() && !file.delete()) // delete existing, if any
+        FileInfo file = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
+		if (file.Exists) // delete existing, if any
 		{
-		  throw new System.IO.IOException("Cannot overwrite: " + file);
+            try
+            {
+                file.Delete();
+            }
+            catch
+            {
+                throw new System.IO.IOException("Cannot overwrite: " + file);
+            }
 		}
 	  }
 
 	  protected internal virtual void OnIndexOutputClosed(FSIndexOutput io)
 	  {
-		StaleFiles.add(io.Name);
+		StaleFiles.Add(io.Name);
 	  }
 
 	  public override void Sync(ICollection<string> names)
 	  {
 		EnsureOpen();
-		Set<string> toSync = new HashSet<string>(names);
-		toSync.retainAll(StaleFiles);
+		ISet<string> toSync = new HashSet<string>(names);
+		toSync.IntersectWith(StaleFiles);
 
 		foreach (string name in toSync)
 		{
@@ -365,12 +395,12 @@ namespace Lucene.Net.Store
 
 		// fsync the directory itsself, but only if there was any file fsynced before
 		// (otherwise it can happen that the directory does not yet exist)!
-		if (!toSync.Empty)
+		if (toSync.Count > 0)
 		{
-		  IOUtils.Fsync(Directory_Renamed, true);
+		  IOUtils.Fsync(Directory_Renamed.FullName, true);
 		}
 
-		StaleFiles.removeAll(toSync);
+		StaleFiles.ExceptWith(toSync);
 	  }
 
 	  public override string LockID
@@ -381,7 +411,7 @@ namespace Lucene.Net.Store
 			string dirName; // name to be hashed
 			try
 			{
-			  dirName = Directory_Renamed.CanonicalPath;
+			  dirName = Directory_Renamed.FullName;
 			}
 			catch (System.IO.IOException e)
 			{
@@ -411,7 +441,7 @@ namespace Lucene.Net.Store
 	  }
 
 	  /// <returns> the underlying filesystem directory </returns>
-	  public virtual File Directory
+      public virtual DirectoryInfo Directory
 	  {
 		  get
 		  {
@@ -461,30 +491,30 @@ namespace Lucene.Net.Store
 
 		internal readonly FSDirectory Parent;
 		internal readonly string Name;
-		internal readonly RandomAccessFile File;
+		internal readonly FileStream File;
 		internal volatile bool IsOpen; // remember if the file is open, so that we don't try to close it more than once
 
 		public FSIndexOutput(FSDirectory parent, string name) : base(CHUNK_SIZE)
 		{
 		  this.Parent = parent;
 		  this.Name = name;
-		  File = new RandomAccessFile(new File(parent.Directory_Renamed, name), "rw");
+		  File = new FileStream (Path.Combine(parent.Directory_Renamed.FullName, name), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 		  IsOpen = true;
 		}
 
-		protected internal override void FlushBuffer(sbyte[] b, int offset, int size)
+		protected internal override void FlushBuffer(byte[] b, int offset, int size)
 		{
-		  Debug.Assert(IsOpen);
+		  //Debug.Assert(IsOpen);
 		  while (size > 0)
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int toWrite = Math.min(CHUNK_SIZE, size);
 			int toWrite = Math.Min(CHUNK_SIZE, size);
-			File.write(b, offset, toWrite);
+			File.Write(b, offset, toWrite);
 			offset += toWrite;
 			size -= toWrite;
 		  }
-		  Debug.Assert(size == 0);
+		  //Debug.Assert(size == 0);
 		}
 
 		public override void Close()
@@ -515,20 +545,15 @@ namespace Lucene.Net.Store
 		public override void Seek(long pos)
 		{
 		  base.Seek(pos);
-		  File.seek(pos);
-		}
-
-		public override long Length()
-		{
-		  return File.length();
+		  File.Seek(pos, SeekOrigin.Begin);
 		}
 
 		public override long Length
 		{
-			set
-			{
-			  File.Length = value;
-			}
+            get
+            {
+                return File.Length;
+            }
 		}
 	  }
 

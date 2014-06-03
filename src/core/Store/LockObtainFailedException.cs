@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 namespace Lucene.Net.Store
 {
 
@@ -29,6 +30,11 @@ namespace Lucene.Net.Store
 	  public LockObtainFailedException(string message) : base(message)
 	  {
 	  }
+
+      public LockObtainFailedException(string message, Exception ex)
+          : base(message, ex)
+      {
+      }
 	}
 
 }
