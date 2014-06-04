@@ -28,6 +28,7 @@ namespace Lucene.Net.Search.Spans
 	using TermContext = Lucene.Net.Index.TermContext;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// <p>Wrapper to allow <seealso cref="SpanQuery"/> objects participate in composite 
@@ -74,20 +75,20 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public class FieldMaskingSpanQuery : SpanQuery
 	{
-	  private SpanQuery MaskedQuery_Renamed;
-	  private string Field_Renamed;
+	  private SpanQuery maskedQuery;
+	  private string field;
 
 	  public FieldMaskingSpanQuery(SpanQuery maskedQuery, string maskedField)
 	  {
-		this.MaskedQuery_Renamed = maskedQuery;
-		this.Field_Renamed = maskedField;
+		this.maskedQuery = maskedQuery;
+		this.field = maskedField;
 	  }
 
 	  public override string Field
 	  {
 		  get
 		  {
-			return Field_Renamed;
+			return field;
 		  }
 	  }
 
@@ -95,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			return MaskedQuery_Renamed;
+			return maskedQuery;
 		  }
 	  }
 
@@ -104,28 +105,28 @@ namespace Lucene.Net.Search.Spans
 
 	  public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 	  {
-		return MaskedQuery_Renamed.GetSpans(context, acceptDocs, termContexts);
+		return maskedQuery.GetSpans(context, acceptDocs, termContexts);
 	  }
 
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		MaskedQuery_Renamed.ExtractTerms(terms);
+		maskedQuery.ExtractTerms(terms);
 	  }
 
 	  public override Weight CreateWeight(IndexSearcher searcher)
 	  {
-		return MaskedQuery_Renamed.CreateWeight(searcher);
+		return maskedQuery.CreateWeight(searcher);
 	  }
 
 	  public override Query Rewrite(IndexReader reader)
 	  {
 		FieldMaskingSpanQuery clone = null;
 
-		SpanQuery rewritten = (SpanQuery) MaskedQuery_Renamed.Rewrite(reader);
-		if (rewritten != MaskedQuery_Renamed)
+		SpanQuery rewritten = (SpanQuery) maskedQuery.Rewrite(reader);
+		if (rewritten != maskedQuery)
 		{
 		  clone = (FieldMaskingSpanQuery) this.Clone();
-		  clone.MaskedQuery_Renamed = rewritten;
+		  clone.maskedQuery = rewritten;
 		}
 
 		if (clone != null)
@@ -142,11 +143,11 @@ namespace Lucene.Net.Search.Spans
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("mask(");
-		buffer.Append(MaskedQuery_Renamed.ToString(field));
+		buffer.Append(maskedQuery.ToString(field));
 		buffer.Append(")");
 		buffer.Append(ToStringUtils.Boost(Boost));
 		buffer.Append(" as ");
-		buffer.Append(this.Field_Renamed);
+		buffer.Append(this.field);
 		return buffer.ToString();
 	  }
 
@@ -163,7 +164,7 @@ namespace Lucene.Net.Search.Spans
 
 	  public override int HashCode()
 	  {
-		return MaskedQuery.HashCode() ^ Field.HashCode() ^ float.floatToRawIntBits(Boost);
+		return MaskedQuery.GetHashCode() ^ Field.GetHashCode() ^ Number.FloatToIntBits(Boost);
 	  }
 	}
 

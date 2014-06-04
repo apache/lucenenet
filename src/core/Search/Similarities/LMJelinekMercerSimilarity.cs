@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		  get
 		  {
-			return string.format(Locale.ROOT, "Jelinek-Mercer(%f)", Lambda);
+			return string.Format(Locale.ROOT, "Jelinek-Mercer(%f)", Lambda);
 		  }
 	  }
 	}

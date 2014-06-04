@@ -27,6 +27,7 @@ namespace Lucene.Net.Search
 	using Bits = Lucene.Net.Util.Bits;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using WAH8DocIdSet = Lucene.Net.Util.WAH8DocIdSet;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Wraps another <seealso cref="Filter"/>'s result and caches it.  The purpose is to allow
@@ -36,7 +37,8 @@ namespace Lucene.Net.Search
 	public class CachingWrapperFilter : Filter
 	{
 	  private readonly Filter Filter_Renamed;
-	  private readonly IDictionary<object, DocIdSet> Cache = Collections.synchronizedMap(new WeakHashMap<object, DocIdSet>());
+	  //private readonly IDictionary<object, DocIdSet> Cache = Collections.synchronizedMap(new WeakHashMap<object, DocIdSet>());
+      private readonly IDictionary<object, DocIdSet> Cache = new ConcurrentHashMapWrapper<object, DocIdSet>(new WeakDictionary<object, DocIdSet>());
 
 	  /// <summary>
 	  /// Wraps another filter's result and caches it. </summary>
@@ -79,8 +81,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSetIterator it = docIdSet.iterator();
 		  DocIdSetIterator it = docIdSet.Iterator();
 		  // null is allowed to be returned by iterator(),
 		  // in this case we wrap with the sentinel set,
@@ -111,11 +111,7 @@ namespace Lucene.Net.Search
 
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReader reader = context.reader();
 		AtomicReader reader = context.Reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object key = reader.getCoreCacheKey();
 		object key = reader.CoreCacheKey;
 
 		DocIdSet docIdSet = Cache[key];
@@ -136,7 +132,7 @@ namespace Lucene.Net.Search
 
 	  public override string ToString()
 	  {
-		return this.GetType().SimpleName + "(" + Filter_Renamed + ")";
+		return this.GetType().Name + "(" + Filter_Renamed + ")";
 	  }
 
 	  public override bool Equals(object o)
@@ -145,15 +141,13 @@ namespace Lucene.Net.Search
 		{
 			return false;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CachingWrapperFilter other = (CachingWrapperFilter) o;
 		CachingWrapperFilter other = (CachingWrapperFilter) o;
 		return this.Filter_Renamed.Equals(other.Filter_Renamed);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return (Filter_Renamed.HashCode() ^ this.GetType().HashCode());
+		return (Filter_Renamed.GetHashCode() ^ this.GetType().GetHashCode());
 	  }
 
 	  /// <summary>
@@ -196,7 +190,7 @@ namespace Lucene.Net.Search
 		IList<DocIdSet> docIdSets;
 		lock (Cache)
 		{
-		  docIdSets = new List<>(Cache.Values);
+		  docIdSets = new List<DocIdSet>(Cache.Values);
 		}
 
 		long total = 0;

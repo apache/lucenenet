@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Keeps track of current plus old IndexSearchers, closing
@@ -114,7 +115,7 @@ namespace Lucene.Net.Search
 		  searcher.IndexReader.IncRef();
 		  // Use nanoTime not currentTimeMillis since it [in
 		  // theory] reduces risk from clock shift
-		  RecordTimeSec = System.nanoTime() / NANOS_PER_SEC;
+		  RecordTimeSec = DateTime.Now.ToFileTime()/100.0d/NANOS_PER_SEC;
 		}
 
 		// Newer searchers are sort before older ones:
@@ -137,7 +138,7 @@ namespace Lucene.Net.Search
 	  // TODO: we could get by w/ just a "set"; need to have
 	  // Tracker hash by its version and have compareTo(Long)
 	  // compare to its version
-	  private readonly ConcurrentDictionary<long?, SearcherTracker> Searchers = new ConcurrentDictionary<long?, SearcherTracker>();
+      private readonly ConcurrentHashMap<long, SearcherTracker> Searchers = new ConcurrentHashMap<long, SearcherTracker>();
 
 	  private void EnsureOpen()
 	  {
@@ -167,8 +168,6 @@ namespace Lucene.Net.Search
 		// TODO: we don't have to use IR.getVersion to track;
 		// could be risky (if it's buggy); we could get better
 		// bug isolation if we assign our own private ID:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long version = ((Lucene.Net.Index.DirectoryReader) searcher.getIndexReader()).getVersion();
 		long version = ((DirectoryReader) searcher.IndexReader).Version;
 		SearcherTracker tracker = Searchers[version];
 		if (tracker == null)
@@ -207,10 +206,8 @@ namespace Lucene.Net.Search
 	  public virtual IndexSearcher Acquire(long version)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SearcherTracker tracker = searchers.get(version);
 		SearcherTracker tracker = Searchers[version];
-		if (tracker != null && tracker.Searcher.IndexReader.tryIncRef())
+		if (tracker != null && tracker.Searcher.IndexReader.TryIncRef())
 		{
 		  return tracker.Searcher;
 		}
@@ -283,22 +280,16 @@ namespace Lucene.Net.Search
 			// (not thread-safe since the values can change while
 			// ArrayList is init'ing itself); must instead iterate
 			// ourselves:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SearcherTracker> trackers = new java.util.ArrayList<>();
-			IList<SearcherTracker> trackers = new List<SearcherTracker>();
+			List<SearcherTracker> trackers = new List<SearcherTracker>();
 			foreach (SearcherTracker tracker in Searchers.Values)
 			{
 			  trackers.Add(tracker);
 			}
-			trackers.Sort();
+            CollectionsHelper.Sort(trackers, null);
 			double lastRecordTimeSec = 0.0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double now = System.nanoTime()/NANOS_PER_SEC;
-			double now = System.nanoTime() / NANOS_PER_SEC;
+			double now = DateTime.Now.ToFileTime()/100.0d/NANOS_PER_SEC;
 			foreach (SearcherTracker tracker in trackers)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double ageSec;
 			  double ageSec;
 			  if (lastRecordTimeSec == 0.0)
 			  {
@@ -339,8 +330,6 @@ namespace Lucene.Net.Search
 		  lock (this)
 		  {
 			Closed = true;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SearcherTracker> toClose = new java.util.ArrayList<>(searchers.values());
 			IList<SearcherTracker> toClose = new List<SearcherTracker>(Searchers.Values);
         
 			// Remove up front in case exc below, so we don't
@@ -355,7 +344,7 @@ namespace Lucene.Net.Search
 			// Make some effort to catch mis-use:
 			if (Searchers.Count != 0)
 			{
-			  throw new IllegalStateException("another thread called record while this SearcherLifetimeManager instance was being closed; not all searchers were closed");
+			  throw new InvalidOperationException("another thread called record while this SearcherLifetimeManager instance was being closed; not all searchers were closed");
 			}
 		  }
 	  }

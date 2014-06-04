@@ -45,8 +45,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public readonly IndexReaderContext TopReaderContext;
 	  private readonly TermState[] States;
-	  private int DocFreq_Renamed;
-	  private long TotalTermFreq_Renamed;
+	  private int docFreq;
+	  private long totalTermFreq;
 
 	  //public static boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
@@ -57,9 +57,7 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(context != null && context.IsTopLevel);
 		TopReaderContext = context;
-		DocFreq_Renamed = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int len;
+		docFreq = 0;
 		int len;
 		if (context.Leaves() == null)
 		{
@@ -92,36 +90,22 @@ namespace Lucene.Net.Index
 	  public static TermContext Build(IndexReaderContext context, Term term)
 	  {
 		Debug.Assert(context != null && context.IsTopLevel);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String field = term.field();
 		string field = term.Field();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes = term.bytes();
 		BytesRef bytes = term.Bytes();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermContext perReaderTermState = new TermContext(context);
 		TermContext perReaderTermState = new TermContext(context);
 		//if (DEBUG) System.out.println("prts.build term=" + term);
 		foreach (AtomicReaderContext ctx in context.Leaves())
 		{
 		  //if (DEBUG) System.out.println("  r=" + leaves[i].reader);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = ctx.reader().fields();
 		  Fields fields = ctx.Reader().Fields();
 		  if (fields != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(field);
 			Terms terms = fields.Terms(field);
 			if (terms != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum termsEnum = terms.iterator(null);
 			  TermsEnum termsEnum = terms.Iterator(null);
 			  if (termsEnum.SeekExact(bytes))
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermState termState = termsEnum.termState();
 				TermState termState = termsEnum.TermState();
 				//if (DEBUG) System.out.println("    found");
 				perReaderTermState.Register(termState, ctx.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
@@ -138,7 +122,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public void Clear()
 	  {
-		DocFreq_Renamed = 0;
+		docFreq = 0;
 		Arrays.Fill(States, null);
 	  }
 
@@ -151,14 +135,14 @@ namespace Lucene.Net.Index
 		Debug.Assert(state != null, "state must not be null");
 		Debug.Assert(ord >= 0 && ord < States.Length);
 		Debug.Assert(States[ord] == null, "state for ord: " + ord + " already registered");
-		this.DocFreq_Renamed += docFreq;
-		if (this.TotalTermFreq_Renamed >= 0 && totalTermFreq >= 0)
+		this.docFreq += docFreq;
+		if (this.totalTermFreq >= 0 && totalTermFreq >= 0)
 		{
-		  this.TotalTermFreq_Renamed += totalTermFreq;
+		  this.totalTermFreq += totalTermFreq;
 		}
 		else
 		{
-		  this.TotalTermFreq_Renamed = -1;
+		  this.totalTermFreq = -1;
 		}
 		States[ord] = state;
 	  }
@@ -178,23 +162,13 @@ namespace Lucene.Net.Index
 	  }
 
 	  /// <summary>
-	  ///  Returns the accumulated document frequency of all <seealso cref="TermState"/>
-	  ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </summary>
-	  /// <returns> the accumulated document frequency of all <seealso cref="TermState"/>
-	  ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </returns>
-	  public int DocFreq()
-	  {
-		return DocFreq_Renamed;
-	  }
-
-	  /// <summary>
 	  ///  Returns the accumulated term frequency of all <seealso cref="TermState"/>
 	  ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </summary>
 	  /// <returns> the accumulated term frequency of all <seealso cref="TermState"/>
 	  ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </returns>
 	  public long TotalTermFreq()
 	  {
-		return TotalTermFreq_Renamed;
+		return totalTermFreq;
 	  }
 
 	  /// <summary>
@@ -205,8 +179,12 @@ namespace Lucene.Net.Index
 	  {
 		  set
 		  {
-			this.DocFreq_Renamed = value;
+			this.docFreq = value;
 		  }
+          get
+          {
+              return docFreq;
+          }
 	  }
 	}
 }

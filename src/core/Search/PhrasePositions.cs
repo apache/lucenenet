@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
 	  internal int Offset; // position in phrase
 	  internal readonly int Ord; // unique across all PhrasePositions instances
 	  internal readonly DocsAndPositionsEnum Postings; // stream of docs & positions
-	  internal PhrasePositions Next_Renamed; // used to make lists
+	  internal PhrasePositions next; // used to make lists
 	  internal int RptGroup = -1; // >=0 indicates that this is a repeating PP
 	  internal int RptInd; // index in the rptGroup
 	  internal readonly Term[] Terms; // for repetitions initialization

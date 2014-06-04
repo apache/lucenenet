@@ -52,8 +52,8 @@ namespace Lucene.Net.Search.Similarities
 		double phi = (double)tfn / F;
 		double nphi = 1 - phi;
 		double p = 1.0 / (stats.NumberOfDocuments + 1);
-        double D = phi * Similaritybase.Log2(phi / p) + nphi * Similaritybase.Log2(nphi / (1 - p));
-        return (float)(D * F + 0.5 * Similaritybase.Log2(1 + 2 * Math.PI * tfn * nphi));
+        double D = phi * SimilarityBase.Log2(phi / p) + nphi * SimilarityBase.Log2(nphi / (1 - p));
+        return (float)(D * F + 0.5 * SimilarityBase.Log2(1 + 2 * Math.PI * tfn * nphi));
 	  }
 
 	  public override string ToString()

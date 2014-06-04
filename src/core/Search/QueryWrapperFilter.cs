@@ -60,11 +60,7 @@ namespace Lucene.Net.Search
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
 		// get a private context that is used to rewrite, createWeight and score eventually
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReaderContext privateContext = context.reader().getContext();
 		AtomicReaderContext privateContext = context.Reader().Context;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Weight weight = new IndexSearcher(privateContext).createNormalizedWeight(query);
 		Weight weight = (new IndexSearcher(privateContext)).CreateNormalizedWeight(Query_Renamed);
 		return new DocIdSetAnonymousInnerClassHelper(this, acceptDocs, privateContext, weight);
 	  }
@@ -112,9 +108,9 @@ namespace Lucene.Net.Search
 		return this.Query_Renamed.Equals(((QueryWrapperFilter)o).Query_Renamed);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return Query_Renamed.HashCode() ^ 0x923F64B9;
+		return Query_Renamed.GetHashCode() ^ unchecked((int)0x923F64B9);
 	  }
 	}
 

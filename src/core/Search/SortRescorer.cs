@@ -23,6 +23,7 @@ namespace Lucene.Net.Search
 
 
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using System;
 
 	/// <summary>
 	/// A <seealso cref="Rescorer"/> that re-sorts according to a provided
@@ -32,25 +33,25 @@ namespace Lucene.Net.Search
 	public class SortRescorer : Rescorer
 	{
 
-	  private readonly Sort Sort;
+	  private readonly Sort sort;
 
 	  /// <summary>
 	  /// Sole constructor. </summary>
 	  public SortRescorer(Sort sort)
 	  {
-		this.Sort = sort;
+		this.sort = sort;
 	  }
 
 	  public override TopDocs Rescore(IndexSearcher searcher, TopDocs firstPassTopDocs, int topN)
 	  {
 
 		// Copy ScoreDoc[] and sort by ascending docID:
-		ScoreDoc[] hits = firstPassTopDocs.ScoreDocs.clone();
-		Arrays.sort(hits, new ComparatorAnonymousInnerClassHelper(this));
+		ScoreDoc[] hits = (ScoreDoc[])firstPassTopDocs.ScoreDocs.Clone();
+		Array.Sort(hits, new ComparatorAnonymousInnerClassHelper(this));
 
 		IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves();
 
-		TopFieldCollector collector = TopFieldCollector.Create(Sort, topN, true, true, true, false);
+		TopFieldCollector collector = TopFieldCollector.Create(sort, topN, true, true, true, false);
 
 		// Now merge sort docIDs from hits, with reader's leaves:
 		int hitUpto = 0;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Search
 		  {
 			readerUpto++;
 			readerContext = leaves[readerUpto];
-			endDoc = readerContext.DocBase + readerContext.Reader().maxDoc();
+			endDoc = readerContext.DocBase + readerContext.Reader().MaxDoc();
 		  }
 
 		  if (readerContext != null)
@@ -83,7 +84,7 @@ namespace Lucene.Net.Search
 		  fakeScorer.Score_Renamed = hit.Score;
 		  fakeScorer.Doc = docID - docBase;
 
-		  collector.collect(fakeScorer.Doc);
+		  collector.Collect(fakeScorer.Doc);
 
 		  hitUpto++;
 		}
@@ -114,7 +115,7 @@ namespace Lucene.Net.Search
 
 		// TODO: if we could ask the Sort to explain itself then
 		// we wouldn't need the separate ExpressionRescorer...
-		Explanation result = new Explanation(0.0f, "sort field values for sort=" + Sort.ToString());
+		Explanation result = new Explanation(0.0f, "sort field values for sort=" + sort.ToString());
 
 		// Add first pass:
 		Explanation first = new Explanation(firstPassExplanation.Value, "first pass score");
@@ -124,7 +125,7 @@ namespace Lucene.Net.Search
 		FieldDoc fieldDoc = (FieldDoc) hits.ScoreDocs[0];
 
 		// Add sort values:
-		SortField[] sortFields = Sort.Sort;
+		SortField[] sortFields = sort.GetSort();
 		for (int i = 0;i < sortFields.Length;i++)
 		{
 		  result.AddDetail(new Explanation(0.0f, "sort field " + sortFields[i].ToString() + " value=" + fieldDoc.Fields[i]));

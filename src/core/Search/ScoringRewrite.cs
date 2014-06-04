@@ -76,8 +76,6 @@ namespace Lucene.Net.Search
 
 		  protected internal override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermQuery tq = new TermQuery(term, states);
 			TermQuery tq = new TermQuery(term, states);
 			tq.Boost = boost;
 			topLevel.Add(tq, BooleanClause.Occur_e.SHOULD);
@@ -113,12 +111,8 @@ namespace Lucene.Net.Search
 
 		  public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BooleanQuery bq = SCORING_BOOLEAN_QUERY_REWRITE.rewrite(reader, query);
-			BooleanQuery bq = SCORING_BOOLEAN_QUERY_REWRITE.rewrite(reader, query);
+			BooleanQuery bq = SCORING_BOOLEAN_QUERY_REWRITE.Rewrite(reader, query);
 			// strip the scores off
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Query result = new ConstantScoreQuery(bq);
 			Query result = new ConstantScoreQuery(bq);
 			result.Boost = query.Boost;
 			return result;
@@ -133,38 +127,22 @@ namespace Lucene.Net.Search
 
 	  public override Q Rewrite(IndexReader reader, MultiTermQuery query)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Q result = getTopLevelQuery();
 		Q result = TopLevelQuery;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ParallelArraysTermCollector col = new ParallelArraysTermCollector();
 		ParallelArraysTermCollector col = new ParallelArraysTermCollector(this);
-		collectTerms(reader, query, col);
+		CollectTerms(reader, query, col);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = col.terms.size();
-		int size = col.Terms.size();
+		int size = col.Terms.Size();
 		if (size > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int sort[] = col.terms.sort(col.termsEnum.getComparator());
-		  int[] sort = col.Terms.sort(col.TermsEnum.Comparator);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float[] boost = col.array.boost;
-		  float[] boost = col.Array.boost;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermContext[] termStates = col.array.termState;
-		  TermContext[] termStates = col.Array.termState;
+		  int[] sort = col.Terms.Sort(col.TermsEnum.Comparator);
+		  float[] boost = col.Array.Boost;
+		  TermContext[] termStates = col.Array.TermState;
 		  for (int i = 0; i < size; i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = sort[i];
 			int pos = sort[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = new Lucene.Net.Index.Term(query.getField(), col.terms.get(pos, new Lucene.Net.Util.BytesRef()));
-			Term term = new Term(query.Field, col.Terms.get(pos, new BytesRef()));
-			Debug.Assert(reader.DocFreq(term) == termStates[pos].DocFreq());
-			addClause(result, term, termStates[pos].DocFreq(), query.Boost * boost[pos], termStates[pos]);
+			Term term = new Term(query.Field, col.Terms.Get(pos, new BytesRef()));
+			Debug.Assert(reader.DocFreq(term) == termStates[pos].DocFreq);
+			AddClause(result, term, termStates[pos].DocFreq, query.Boost * boost[pos], termStates[pos]);
 		  }
 		}
 		return result;
@@ -179,9 +157,9 @@ namespace Lucene.Net.Search
 			  Terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, Array);
 		  }
 
-		  private readonly ScoringRewrite OuterInstance;
+		  private readonly ScoringRewrite<Q> OuterInstance;
 
-		  public ParallelArraysTermCollector(ScoringRewrite outerInstance)
+		  public ParallelArraysTermCollector(ScoringRewrite<Q> outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 
@@ -203,34 +181,28 @@ namespace Lucene.Net.Search
 			set
 			{
 			  this.TermsEnum = value;
-			  this.BoostAtt = value.Attributes().addAttribute(typeof(BoostAttribute));
+			  this.BoostAtt = value.Attributes().AddAttribute<BoostAttribute>();
 			}
 		}
 
 		public override bool Collect(BytesRef bytes)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int e = terms.add(bytes);
 		  int e = Terms.Add(bytes);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermState state = termsEnum.termState();
 		  TermState state = TermsEnum.TermState();
 		  Debug.Assert(state != null);
 		  if (e < 0)
 		  {
 			// duplicate term: update docFreq
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = (-e)-1;
 			int pos = (-e) - 1;
-			Array.TermState[pos].register(state, readerContext.ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+			Array.TermState[pos].Register(state, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
 			Debug.Assert(Array.Boost[pos] == BoostAtt.Boost, "boost should be equal in all segment TermsEnums");
 		  }
 		  else
 		  {
 			// new entry: we populate the entry initially
 			Array.Boost[e] = BoostAtt.Boost;
-			Array.TermState[e] = new TermContext(topReaderContext, state, readerContext.ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
-			OuterInstance.checkMaxClauseCount(Terms.Size());
+			Array.TermState[e] = new TermContext(TopReaderContext, state, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+			OuterInstance.CheckMaxClauseCount(Terms.Size());
 		  }
 		  return true;
 		}
@@ -249,8 +221,6 @@ namespace Lucene.Net.Search
 
 		public override int[] Init()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ord = base.init();
 		  int[] ord = base.Init();
 		  Boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_FLOAT)];
 		  TermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
@@ -260,8 +230,6 @@ namespace Lucene.Net.Search
 
 		public override int[] Grow()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ord = base.grow();
 		  int[] ord = base.Grow();
 		  Boost = ArrayUtil.Grow(Boost, ord.Length);
 		  if (TermState.Length < ord.Length)

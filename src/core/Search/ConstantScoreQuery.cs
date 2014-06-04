@@ -36,8 +36,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public class ConstantScoreQuery : Query
 	{
-	  protected internal readonly Filter Filter_Renamed;
-	  protected internal readonly Query Query_Renamed;
+	  protected internal readonly Filter filter;
+	  protected internal readonly Query query;
 
 	  /// <summary>
 	  /// Strips off scores from the passed in Query. The hits will get a constant score
@@ -49,8 +49,8 @@ namespace Lucene.Net.Search
 		{
 		  throw new System.NullReferenceException("Query may not be null");
 		}
-		this.Filter_Renamed = null;
-		this.Query_Renamed = query;
+		this.filter = null;
+		this.query = query;
 	  }
 
 	  /// <summary>
@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
 		{
 		  throw new System.NullReferenceException("Filter may not be null");
 		}
-		this.Filter_Renamed = filter;
-		this.Query_Renamed = null;
+		this.filter = filter;
+		this.query = null;
 	  }
 
 	  /// <summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Filter_Renamed;
+			return filter;
 		  }
 	  }
 
@@ -86,16 +86,16 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Query_Renamed;
+			return query;
 		  }
 	  }
 
 	  public override Query Rewrite(IndexReader reader)
 	  {
-		if (Query_Renamed != null)
+		if (query != null)
 		{
-		  Query rewritten = Query_Renamed.Rewrite(reader);
-		  if (rewritten != Query_Renamed)
+		  Query rewritten = query.Rewrite(reader);
+		  if (rewritten != query)
 		  {
 			rewritten = new ConstantScoreQuery(rewritten);
 			rewritten.Boost = this.Boost;
@@ -104,15 +104,15 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  Debug.Assert(Filter_Renamed != null);
+		  Debug.Assert(filter != null);
 		  // Fix outdated usage pattern from Lucene 2.x/early-3.x:
 		  // because ConstantScoreQuery only accepted filters,
 		  // QueryWrapperFilter was used to wrap queries.
-		  if (Filter_Renamed is QueryWrapperFilter)
+		  if (filter is QueryWrapperFilter)
 		  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final QueryWrapperFilter qwf = (QueryWrapperFilter) filter;
-			QueryWrapperFilter qwf = (QueryWrapperFilter) Filter_Renamed;
+			QueryWrapperFilter qwf = (QueryWrapperFilter) filter;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Query rewritten = new ConstantScoreQuery(qwf.getQuery().rewrite(reader));
 			Query rewritten = new ConstantScoreQuery(qwf.Query.Rewrite(reader));
@@ -123,15 +123,15 @@ namespace Lucene.Net.Search
 		return this;
 	  }
 
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
 		// TODO: OK to not add any terms when wrapped a filter
 		// and used with MultiSearcher, but may not be OK for
 		// highlighting.
 		// If a query was wrapped, we delegate to query.
-		if (Query_Renamed != null)
+		if (query != null)
 		{
-		  Query_Renamed.ExtractTerms(terms);
+		  query.ExtractTerms(terms);
 		}
 	  }
 
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 		public ConstantWeight(ConstantScoreQuery outerInstance, IndexSearcher searcher)
 		{
 			this.OuterInstance = outerInstance;
-		  this.InnerWeight = (outerInstance.Query_Renamed == null) ? null : outerInstance.Query_Renamed.CreateWeight(searcher);
+		  this.InnerWeight = (outerInstance.query == null) ? null : outerInstance.query.CreateWeight(searcher);
 		}
 
 		public override Query Query
@@ -162,11 +162,11 @@ namespace Lucene.Net.Search
 			get
 			{
 			  // we calculate sumOfSquaredWeights of the inner weight, but ignore it (just to initialize everything)
-			  if (InnerWeight != null)
+			  /*if (InnerWeight != null)
 			  {
 				  InnerWeight.ValueForNormalization;
-			  }
-			  QueryWeight = outerInstance.Boost;
+			  }*/
+              QueryWeight = OuterInstance.Boost;
 			  return QueryWeight * QueryWeight;
 			}
 		}
@@ -184,17 +184,15 @@ namespace Lucene.Net.Search
 
 		public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSetIterator disi;
-		  DocIdSetIterator disi;
-		  if (outerInstance.Filter_Renamed != null)
+		  //DocIdSetIterator disi;
+          if (OuterInstance.filter != null)
 		  {
-			Debug.Assert(outerInstance.Query_Renamed == null);
+			Debug.Assert(OuterInstance.query == null);
 			return base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
 		  }
 		  else
 		  {
-			Debug.Assert(outerInstance.Query_Renamed != null && InnerWeight != null);
+			Debug.Assert(OuterInstance.query != null && InnerWeight != null);
 			BulkScorer bulkScorer = InnerWeight.BulkScorer(context, scoreDocsInOrder, acceptDocs);
 			if (bulkScorer == null)
 			{
@@ -206,15 +204,11 @@ namespace Lucene.Net.Search
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSetIterator disi;
 		  DocIdSetIterator disi;
-		  if (outerInstance.Filter_Renamed != null)
+          if (OuterInstance.filter != null)
 		  {
-			Debug.Assert(outerInstance.Query_Renamed == null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSet dis = filter.getDocIdSet(context, acceptDocs);
-			DocIdSet dis = outerInstance.Filter_Renamed.GetDocIdSet(context, acceptDocs);
+			Debug.Assert(OuterInstance.query == null);
+            DocIdSet dis = OuterInstance.filter.GetDocIdSet(context, acceptDocs);
 			if (dis == null)
 			{
 			  return null;
@@ -223,7 +217,7 @@ namespace Lucene.Net.Search
 		  }
 		  else
 		  {
-			Debug.Assert(outerInstance.Query_Renamed != null && InnerWeight != null);
+			Debug.Assert(OuterInstance.query != null && InnerWeight != null);
 			disi = InnerWeight.Scorer(context, acceptDocs);
 		  }
 
@@ -241,22 +235,16 @@ namespace Lucene.Net.Search
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Scorer cs = scorer(context, context.reader().getLiveDocs());
 		  Scorer cs = Scorer(context, context.Reader().LiveDocs);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean exists = (cs != null && cs.advance(doc) == doc);
 		  bool exists = (cs != null && cs.Advance(doc) == doc);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ComplexExplanation result = new ComplexExplanation();
 		  ComplexExplanation result = new ComplexExplanation();
 		  if (exists)
 		  {
 			result.Description = OuterInstance.ToString() + ", product of:";
 			result.Value = QueryWeight;
 			result.Match = true;
-			result.AddDetail(new Explanation(outerInstance.Boost, "boost"));
+            result.AddDetail(new Explanation(OuterInstance.Boost, "boost"));
 			result.AddDetail(new Explanation(QueryNorm, "queryNorm"));
 		  }
 		  else
@@ -318,7 +306,7 @@ namespace Lucene.Net.Search
 				set
 				{
 				  // we must wrap again here, but using the value passed in as parameter:
-				  Collector.Scorer = new ConstantScorer(OuterInstance.outerInstance, value, OuterInstance.Weight, OuterInstance.TheScore);
+				  Collector.Scorer = new ConstantScorer(OuterInstance.OuterInstance, value, OuterInstance.Weight, OuterInstance.TheScore);
 				}
 			}
 
@@ -391,13 +379,17 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  if (outerInstance.Query_Renamed != null)
+			  if (OuterInstance.query != null)
 			  {
-				return Collections.singletonList(new ChildScorer((Scorer) DocIdSetIterator, "constant"));
+                  //LUCENE TO-DO
+                  //return Collections.singletonList(new ChildScorer((Scorer)DocIdSetIterator, "constant"));
+                  return new[] {new ChildScorer((Scorer)DocIdSetIterator, "constant")};
 			  }
 			  else
 			  {
-				return Collections.emptyList();
+                  //LUCENE TO-DO
+                  return new List<ChildScorer>();
+				//return Collections.emptyList();
 			  }
 			}
 		}
@@ -410,7 +402,7 @@ namespace Lucene.Net.Search
 
 	  public override string ToString(string field)
 	  {
-		return (new StringBuilder("ConstantScore(")).Append((Query_Renamed == null) ? Filter_Renamed.ToString() : Query_Renamed.ToString(field)).Append(')').Append(ToStringUtils.Boost(Boost)).ToString();
+		return (new StringBuilder("ConstantScore(")).Append((query == null) ? filter.ToString() : query.ToString(field)).Append(')').Append(ToStringUtils.Boost(Boost)).ToString();
 	  }
 
 	  public override bool Equals(object o)
@@ -428,14 +420,14 @@ namespace Lucene.Net.Search
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final ConstantScoreQuery other = (ConstantScoreQuery) o;
 		  ConstantScoreQuery other = (ConstantScoreQuery) o;
-		  return ((this.Filter_Renamed == null) ? other.Filter_Renamed == null : this.Filter_Renamed.Equals(other.Filter_Renamed)) && ((this.Query_Renamed == null) ? other.Query_Renamed == null : this.Query_Renamed.Equals(other.Query_Renamed));
+		  return ((this.filter == null) ? other.filter == null : this.filter.Equals(other.filter)) && ((this.query == null) ? other.query == null : this.query.Equals(other.query));
 		}
 		return false;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return 31 * base.HashCode() + ((Query_Renamed == null) ? Filter_Renamed : Query_Renamed).HashCode();
+          return 31 * base.GetHashCode() + ((query == null) ? (object)filter : query).GetHashCode();
 	  }
 
 	}

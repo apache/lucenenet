@@ -35,12 +35,12 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public abstract class SpanPositionCheckQuery : SpanQuery, ICloneable
 	{
-	  protected internal SpanQuery Match_Renamed;
+	  protected internal SpanQuery match;
 
 
 	  public SpanPositionCheckQuery(SpanQuery match)
 	  {
-		this.Match_Renamed = match;
+		this.match = match;
 	  }
 
 	  /// <returns> the SpanQuery whose matches are filtered.
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Match_Renamed;
+			  return match;
 		  }
 	  }
 
@@ -60,12 +60,12 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Match_Renamed.Field;
+			  return match.Field;
 		  }
 	  }
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		Match_Renamed.ExtractTerms(terms);
+		match.ExtractTerms(terms);
 	  }
 
 	  /// <summary>
@@ -113,11 +113,11 @@ namespace Lucene.Net.Search.Spans
 	  {
 		SpanPositionCheckQuery clone = null;
 
-		SpanQuery rewritten = (SpanQuery) Match_Renamed.Rewrite(reader);
-		if (rewritten != Match_Renamed)
+		SpanQuery rewritten = (SpanQuery) match.Rewrite(reader);
+		if (rewritten != match)
 		{
 		  clone = (SpanPositionCheckQuery) this.Clone();
-		  clone.Match_Renamed = rewritten;
+		  clone.match = rewritten;
 		}
 
 		if (clone != null)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Spans
 		public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 		{
 			this.OuterInstance = outerInstance;
-		  Spans = outerInstance.Match_Renamed.GetSpans(context, acceptDocs, termContexts);
+		  Spans = outerInstance.match.GetSpans(context, acceptDocs, termContexts);
 		}
 
 		public override bool Next()
@@ -166,17 +166,17 @@ namespace Lucene.Net.Search.Spans
 		{
 		  for (;;)
 		  {
-			switch (outerInstance.AcceptPosition(this))
+			switch (OuterInstance.AcceptPosition(this))
 			{
-			  case YES:
+			  case AcceptStatus.YES:
 				  return true;
-			  case NO:
+              case AcceptStatus.NO:
 				if (!Spans.Next())
 				{
 				  return false;
 				}
 				break;
-			  case NO_AND_ADVANCE:
+              case AcceptStatus.NO_AND_ADVANCE:
 				if (!Spans.SkipTo(Spans.Doc() + 1))
 				{
 				  return false;
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Spans
 			  List<sbyte[]> result = null;
 			  if (Spans.PayloadAvailable)
 			  {
-				result = new List<>(Spans.Payload);
+				result = new List<sbyte[]>(Spans.Payload);
 			  }
 			  return result; //TODO: any way to avoid the new construction?
 			}

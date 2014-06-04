@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 	  {
 		if (Details_Renamed == null)
 		{
-		  Details_Renamed = new List<>();
+            Details_Renamed = new List<Explanation>();
 		}
 		Details_Renamed.Add(detail);
 	  }

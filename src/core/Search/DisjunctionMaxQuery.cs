@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -26,6 +27,7 @@ namespace Lucene.Net.Search
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using Term = Lucene.Net.Index.Term;
 	using Bits = Lucene.Net.Util.Bits;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// A query that generates the union of documents produced by its subqueries, and that scores each document with the maximum
@@ -45,10 +47,10 @@ namespace Lucene.Net.Search
 	{
 
 	  /* The subqueries */
-	  private List<Query> Disjuncts_Renamed = new List<Query>();
+	  private List<Query> disjuncts = new List<Query>();
 
 	  /* Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking. */
-	  private float TieBreakerMultiplier_Renamed = 0.0f;
+	  private float tieBreakerMultiplier = 0.0f;
 
 	  /// <summary>
 	  /// Creates a new empty DisjunctionMaxQuery.  Use add() to add the subqueries. </summary>
@@ -58,7 +60,7 @@ namespace Lucene.Net.Search
 	  ///        word in the lower scored field (i.e., one that is not in any higher scored field. </param>
 	  public DisjunctionMaxQuery(float tieBreakerMultiplier)
 	  {
-		this.TieBreakerMultiplier_Renamed = tieBreakerMultiplier;
+		this.tieBreakerMultiplier = tieBreakerMultiplier;
 	  }
 
 	  /// <summary>
@@ -67,7 +69,7 @@ namespace Lucene.Net.Search
 	  /// <param name="tieBreakerMultiplier">   the weight to give to each matching non-maximum disjunct </param>
 	  public DisjunctionMaxQuery(ICollection<Query> disjuncts, float tieBreakerMultiplier)
 	  {
-		this.TieBreakerMultiplier_Renamed = tieBreakerMultiplier;
+		this.tieBreakerMultiplier = tieBreakerMultiplier;
 		Add(disjuncts);
 	  }
 
@@ -76,7 +78,7 @@ namespace Lucene.Net.Search
 	  /// <param name="query"> the disjunct added </param>
 	  public virtual void Add(Query query)
 	  {
-		Disjuncts_Renamed.Add(query);
+		disjuncts.Add(query);
 	  }
 
 	  /// <summary>
@@ -85,13 +87,13 @@ namespace Lucene.Net.Search
 	  /// <param name="disjuncts"> a collection of queries to add as disjuncts. </param>
 	  public virtual void Add(ICollection<Query> disjuncts)
 	  {
-		this.Disjuncts_Renamed.AddRange(disjuncts);
+		this.disjuncts.AddRange(disjuncts);
 	  }
 
 	  /// <returns> An {@code Iterator<Query>} over the disjuncts </returns>
 	  public virtual IEnumerator<Query> GetEnumerator()
 	  {
-		return Disjuncts_Renamed.GetEnumerator();
+		return disjuncts.GetEnumerator();
 	  }
 
 	  /// <returns> the disjuncts. </returns>
@@ -99,7 +101,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Disjuncts_Renamed;
+			return disjuncts;
 		  }
 	  }
 
@@ -108,7 +110,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return TieBreakerMultiplier_Renamed;
+			return tieBreakerMultiplier;
 		  }
 	  }
 
@@ -133,7 +135,7 @@ namespace Lucene.Net.Search
 		public DisjunctionMaxWeight(DisjunctionMaxQuery outerInstance, IndexSearcher searcher)
 		{
 			this.OuterInstance = outerInstance;
-		  foreach (Query disjunctQuery in outerInstance.Disjuncts_Renamed)
+		  foreach (Query disjunctQuery in outerInstance.disjuncts)
 		  {
 			Weights.Add(disjunctQuery.CreateWeight(searcher));
 		  }
@@ -162,8 +164,8 @@ namespace Lucene.Net.Search
 				max = Math.Max(max, sub);
     
 			  }
-			  float boost = outerInstance.Boost;
-			  return (((sum - max) * outerInstance.TieBreakerMultiplier_Renamed * outerInstance.TieBreakerMultiplier_Renamed) + max) * boost * boost;
+              float boost = OuterInstance.Boost;
+              return (((sum - max) * OuterInstance.tieBreakerMultiplier * OuterInstance.tieBreakerMultiplier) + max) * boost * boost;
 			}
 		}
 
@@ -171,7 +173,7 @@ namespace Lucene.Net.Search
 		/// Apply the computed normalization factor to our subqueries </summary>
 		public override void Normalize(float norm, float topLevelBoost)
 		{
-		  topLevelBoost *= outerInstance.Boost; // Incorporate our boost
+		  topLevelBoost *= OuterInstance.Boost; // Incorporate our boost
 		  foreach (Weight wt in Weights)
 		  {
 			wt.Normalize(norm, topLevelBoost);
@@ -198,7 +200,7 @@ namespace Lucene.Net.Search
 			// no sub-scorers had any documents
 			return null;
 		  }
-		  DisjunctionMaxScorer result = new DisjunctionMaxScorer(this, outerInstance.TieBreakerMultiplier_Renamed, scorers.ToArray());
+          DisjunctionMaxScorer result = new DisjunctionMaxScorer(this, OuterInstance.tieBreakerMultiplier, scorers.ToArray());
 		  return result;
 		}
 
@@ -206,13 +208,13 @@ namespace Lucene.Net.Search
 		/// Explain the score we computed for doc </summary>
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-		  if (outerInstance.Disjuncts_Renamed.Count == 1)
+		  if (OuterInstance.disjuncts.Count == 1)
 		  {
 			  return Weights[0].Explain(context,doc);
 		  }
 		  ComplexExplanation result = new ComplexExplanation();
 		  float max = 0.0f, sum = 0.0f;
-		  result.Description = outerInstance.TieBreakerMultiplier_Renamed == 0.0f ? "max of:" : "max plus " + outerInstance.TieBreakerMultiplier_Renamed + " times others of:";
+          result.Description = OuterInstance.tieBreakerMultiplier == 0.0f ? "max of:" : "max plus " + OuterInstance.tieBreakerMultiplier + " times others of:";
 		  foreach (Weight wt in Weights)
 		  {
 			Explanation e = wt.Explain(context, doc);
@@ -224,7 +226,7 @@ namespace Lucene.Net.Search
 			  max = Math.Max(max, e.Value);
 			}
 		  }
-		  result.Value = max + (sum - max) * outerInstance.TieBreakerMultiplier_Renamed;
+          result.Value = max + (sum - max) * OuterInstance.tieBreakerMultiplier;
 		  return result;
 		}
 
@@ -243,10 +245,10 @@ namespace Lucene.Net.Search
 	  /// <returns> an optimized copy of us (which may not be a copy if there is nothing to optimize)  </returns>
 	  public override Query Rewrite(IndexReader reader)
 	  {
-		int numDisjunctions = Disjuncts_Renamed.Count;
+		int numDisjunctions = disjuncts.Count;
 		if (numDisjunctions == 1)
 		{
-		  Query singleton = Disjuncts_Renamed[0];
+		  Query singleton = disjuncts[0];
 		  Query result = singleton.Rewrite(reader);
 		  if (Boost != 1.0f)
 		  {
@@ -261,7 +263,7 @@ namespace Lucene.Net.Search
 		DisjunctionMaxQuery clone = null;
 		for (int i = 0 ; i < numDisjunctions; i++)
 		{
-		  Query clause = Disjuncts_Renamed[i];
+		  Query clause = disjuncts[i];
 		  Query rewrite = clause.Rewrite(reader);
 		  if (rewrite != clause)
 		  {
@@ -269,7 +271,7 @@ namespace Lucene.Net.Search
 			{
 				clone = this.Clone();
 			}
-			clone.Disjuncts_Renamed[i] = rewrite;
+			clone.disjuncts[i] = rewrite;
 		  }
 		}
 		if (clone != null)
@@ -290,14 +292,14 @@ namespace Lucene.Net.Search
 	  public override DisjunctionMaxQuery Clone()
 	  {
 		DisjunctionMaxQuery clone = (DisjunctionMaxQuery)base.Clone();
-		clone.Disjuncts_Renamed = (List<Query>) this.Disjuncts_Renamed.clone();
+		clone.disjuncts = (List<Query>) this.disjuncts.Clone();
 		return clone;
 	  }
 
 	  // inherit javadoc
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		foreach (Query query in Disjuncts_Renamed)
+		foreach (Query query in disjuncts)
 		{
 		  query.ExtractTerms(terms);
 		}
@@ -311,10 +313,10 @@ namespace Lucene.Net.Search
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("(");
-		int numDisjunctions = Disjuncts_Renamed.Count;
+		int numDisjunctions = disjuncts.Count;
 		for (int i = 0 ; i < numDisjunctions; i++)
 		{
-		  Query subquery = Disjuncts_Renamed[i];
+		  Query subquery = disjuncts[i];
 		  if (subquery is BooleanQuery) // wrap sub-bools in parens
 		  {
 			buffer.Append("(");
@@ -331,10 +333,10 @@ namespace Lucene.Net.Search
 		  }
 		}
 		buffer.Append(")");
-		if (TieBreakerMultiplier_Renamed != 0.0f)
+		if (tieBreakerMultiplier != 0.0f)
 		{
 		  buffer.Append("~");
-		  buffer.Append(TieBreakerMultiplier_Renamed);
+		  buffer.Append(tieBreakerMultiplier);
 		}
 		if (Boost != 1.0)
 		{
@@ -355,15 +357,15 @@ namespace Lucene.Net.Search
 			return false;
 		}
 		DisjunctionMaxQuery other = (DisjunctionMaxQuery)o;
-		return this.Boost == other.Boost && this.TieBreakerMultiplier_Renamed == other.TieBreakerMultiplier_Renamed && this.Disjuncts_Renamed.Equals(other.Disjuncts_Renamed);
+		return this.Boost == other.Boost && this.tieBreakerMultiplier == other.tieBreakerMultiplier && this.disjuncts.Equals(other.disjuncts);
 	  }
 
 	  /// <summary>
 	  /// Compute a hash code for hashing us </summary>
 	  /// <returns> the hash code </returns>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) + float.floatToIntBits(TieBreakerMultiplier_Renamed) + Disjuncts_Renamed.HashCode();
+		return Number.FloatToIntBits(Boost) + Number.FloatToIntBits(tieBreakerMultiplier) + disjuncts.GetHashCode();
 	  }
 
 

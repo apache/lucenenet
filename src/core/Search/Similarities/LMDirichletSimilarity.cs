@@ -104,7 +104,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		  get
 		  {
-			return string.format(Locale.ROOT, "Dirichlet(%f)", Mu);
+			return string.Format(Locale.ROOT, "Dirichlet(%f)", Mu);
 		  }
 	  }
 	}

@@ -56,8 +56,8 @@ namespace Lucene.Net.Search
 
 	  public override TopDocs Rescore(IndexSearcher searcher, TopDocs firstPassTopDocs, int topN)
 	  {
-		ScoreDoc[] hits = firstPassTopDocs.ScoreDocs.clone();
-		Arrays.sort(hits, new ComparatorAnonymousInnerClassHelper(this));
+		ScoreDoc[] hits = (ScoreDoc[])firstPassTopDocs.ScoreDocs.Clone();
+		Array.Sort(hits, new ComparatorAnonymousInnerClassHelper(this));
 
 		IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves();
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 		  {
 			readerUpto++;
 			readerContext = leaves[readerUpto];
-			endDoc = readerContext.DocBase + readerContext.Reader().maxDoc();
+			endDoc = readerContext.DocBase + readerContext.Reader().MaxDoc();
 		  }
 
 		  if (readerContext != null)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 		// TODO: we should do a partial sort (of only topN)
 		// instead, but typically the number of hits is
 		// smallish:
-		Arrays.sort(hits, new ComparatorAnonymousInnerClassHelper2(this));
+		Array.Sort(hits, new ComparatorAnonymousInnerClassHelper2(this));
 
 		if (topN < hits.Length)
 		{
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 	  {
 		Explanation secondPassExplanation = searcher.Explain(Query, docID);
 
-		float? secondPassScore = secondPassExplanation.Match ? secondPassExplanation.Value : null;
+		float? secondPassScore = secondPassExplanation.Match ? (float?)secondPassExplanation.Value : null;
 
 		float score;
 		if (secondPassScore == null)
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  second = new Explanation(secondPassScore, "second pass score");
+		  second = new Explanation((float)secondPassScore, "second pass score");
 		}
 		second.AddDetail(secondPassExplanation);
 		result.AddDetail(second);
@@ -213,8 +213,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public static TopDocs Rescore(IndexSearcher searcher, TopDocs topDocs, Query query, double weight, int topN)
 	  {
-		return new QueryRescorerAnonymousInnerClassHelper(query, weight)
-		.rescore(searcher, topDocs, topN);
+		return new QueryRescorerAnonymousInnerClassHelper(query, weight).Rescore(searcher, topDocs, topN);
 	  }
 
 	  private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer

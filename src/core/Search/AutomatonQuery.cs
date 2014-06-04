@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
 	  public override int HashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
+		int result = base.GetHashCode();
 		result = prime * result + Compiled.GetHashCode();
 		result = prime * result + ((Term == null) ? 0 : Term.HashCode());
 		return result;

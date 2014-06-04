@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
 	  }
 
 	  private SubScorer Scorers = null;
-	  private BucketTable BucketTable = new BucketTable();
+	  private BucketTable bucketTable = new BucketTable();
 	  private readonly float[] CoordFactors;
 	  // TODO: re-enable this if BQ ever sends us required clauses
 	  //private int requiredMask = 0;
@@ -216,12 +216,12 @@ namespace Lucene.Net.Search
 
 		foreach (BulkScorer scorer in optionalScorers)
 		{
-		  Scorers = new SubScorer(scorer, false, false, BucketTable.NewCollector(0), Scorers);
+            Scorers = new SubScorer(scorer, false, false, bucketTable.NewCollector(0), Scorers);
 		}
 
 		foreach (BulkScorer scorer in prohibitedScorers)
 		{
-		  Scorers = new SubScorer(scorer, false, true, BucketTable.NewCollector(PROHIBITED_MASK), Scorers);
+            Scorers = new SubScorer(scorer, false, true, bucketTable.NewCollector(PROHIBITED_MASK), Scorers);
 		}
 
 		CoordFactors = new float[optionalScorers.Count + 1];
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
 		collector.Scorer = fs;
 		do
 		{
-		  BucketTable.First = null;
+		  bucketTable.First = null;
 
 		  while (Current != null) // more queued
 		  {
@@ -265,8 +265,8 @@ namespace Lucene.Net.Search
 			  {
 				tmp = Current;
 				Current = Current.Next;
-				tmp.Next = BucketTable.First;
-				BucketTable.First = tmp;
+                tmp.Next = bucketTable.First;
+                bucketTable.First = tmp;
 				continue;
 			  }
 
@@ -282,10 +282,10 @@ namespace Lucene.Net.Search
 			Current = Current.Next; // pop the queue
 		  }
 
-		  if (BucketTable.First != null)
+          if (bucketTable.First != null)
 		  {
-			Current = BucketTable.First;
-			BucketTable.First = Current.Next;
+              Current = bucketTable.First;
+              bucketTable.First = Current.Next;
 			return true;
 		  }
 
@@ -296,11 +296,11 @@ namespace Lucene.Net.Search
 		  {
 			if (sub.More)
 			{
-			  sub.More = sub.Scorer.score(sub.Collector, End);
+			  sub.More = sub.Scorer.Score(sub.Collector, End);
 			  more |= sub.More;
 			}
 		  }
-		  Current = BucketTable.First;
+          Current = bucketTable.First;
 
 		} while (Current != null || more);
 

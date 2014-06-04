@@ -72,14 +72,14 @@ namespace Lucene.Net.Search.Payloads
 
 	  public override PayloadNearQuery Clone()
 	  {
-		int sz = Clauses_Renamed.Count;
+		int sz = clauses.Count;
 		SpanQuery[] newClauses = new SpanQuery[sz];
 
 		for (int i = 0; i < sz; i++)
 		{
-		  newClauses[i] = (SpanQuery) Clauses_Renamed[i].Clone();
+		  newClauses[i] = (SpanQuery) clauses[i].Clone();
 		}
-		PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, Slop_Renamed, InOrder_Renamed, Function);
+		PayloadNearQuery boostingNearQuery = new PayloadNearQuery(newClauses, slop, inOrder, Function);
 		boostingNearQuery.Boost = Boost;
 		return boostingNearQuery;
 	  }
@@ -88,32 +88,34 @@ namespace Lucene.Net.Search.Payloads
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("payloadNear([");
-		IEnumerator<SpanQuery> i = Clauses_Renamed.GetEnumerator();
+		IEnumerator<SpanQuery> i = clauses.GetEnumerator();
+        bool hasCommaSpace = false;
 		while (i.MoveNext())
 		{
 		  SpanQuery clause = i.Current;
 		  buffer.Append(clause.ToString(field));
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  if (i.hasNext())
-		  {
-			buffer.Append(", ");
-		  }
+		  buffer.Append(", ");
+          hasCommaSpace = true;
 		}
+
+        if (hasCommaSpace)
+            buffer.Remove(buffer.Length - 2, 2);
+
 		buffer.Append("], ");
-		buffer.Append(Slop_Renamed);
+		buffer.Append(slop);
 		buffer.Append(", ");
-		buffer.Append(InOrder_Renamed);
+		buffer.Append(inOrder);
 		buffer.Append(")");
 		buffer.Append(ToStringUtils.Boost(Boost));
 		return buffer.ToString();
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
-		result = prime * result + ((FieldName == null) ? 0 : FieldName.HashCode());
-		result = prime * result + ((Function == null) ? 0 : Function.HashCode());
+		int result = base.GetHashCode();
+		result = prime * result + ((FieldName == null) ? 0 : FieldName.GetHashCode());
+		result = prime * result + ((Function == null) ? 0 : Function.GetHashCode());
 		return result;
 	  }
 
@@ -168,7 +170,7 @@ namespace Lucene.Net.Search.Payloads
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  return new PayloadNearSpanScorer(OuterInstance, Query_Renamed.GetSpans(context, acceptDocs, TermContexts), this, Similarity, Similarity.SimScorer(Stats, context));
+		  return new PayloadNearSpanScorer(OuterInstance, query.GetSpans(context, acceptDocs, TermContexts), this, Similarity, Similarity.SimScorer(Stats, context));
 		}
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -188,7 +190,7 @@ namespace Lucene.Net.Search.Payloads
 			  expl.Value = scoreExplanation.Value;
 			  string field = ((SpanQuery)Query).Field;
 			  // now the payloads part
-			  Explanation payloadExpl = outerInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore);
+              Explanation payloadExpl = OuterInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore);
 			  // combined
 			  ComplexExplanation result = new ComplexExplanation();
 			  result.AddDetail(expl);
@@ -259,8 +261,8 @@ namespace Lucene.Net.Search.Payloads
 		  {
 			Scratch.Bytes = thePayload;
 			Scratch.Offset = 0;
-			Scratch.Length = thePayload.length;
-			PayloadScore = outerInstance.Function.CurrentScore(Doc, outerInstance.FieldName, start, end, PayloadsSeen, PayloadScore, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Scratch));
+			Scratch.Length = thePayload.Length;
+            PayloadScore = OuterInstance.Function.CurrentScore(Doc, OuterInstance.FieldName, start, end, PayloadsSeen, PayloadScore, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Scratch));
 			++PayloadsSeen;
 		  }
 		}
@@ -291,7 +293,7 @@ namespace Lucene.Net.Search.Payloads
 		public override float Score()
 		{
 
-		  return base.Score() * outerInstance.Function.DocScore(Doc, outerInstance.FieldName, PayloadsSeen, PayloadScore);
+            return base.Score() * OuterInstance.Function.DocScore(Doc, OuterInstance.FieldName, PayloadsSeen, PayloadScore);
 		}
 	  }
 

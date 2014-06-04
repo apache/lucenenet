@@ -112,11 +112,7 @@ namespace Lucene.Net.Search
 		public override bool LessThan(ShardRef first, ShardRef second)
 		{
 		  Debug.Assert(first != second);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float firstScore = shardHits[first.shardIndex][first.hitIndex].score;
 		  float firstScore = ShardHits[first.ShardIndex][first.HitIndex].Score;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float secondScore = shardHits[second.shardIndex][second.hitIndex].score;
 		  float secondScore = ShardHits[second.ShardIndex][second.HitIndex].Score;
 
 		  if (firstScore < secondScore)
@@ -149,15 +145,11 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private static class MergeSortQueue extends Lucene.Net.Util.PriorityQueue<ShardRef>
 	  private class MergeSortQueue : PriorityQueue<ShardRef>
 	  {
 		// These are really FieldDoc instances:
 		internal readonly ScoreDoc[][] ShardHits;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: final FieldComparator<?>[] comparators;
-		internal readonly FieldComparator<?>[] Comparators;
+		internal readonly FieldComparator[] comparators;
 		internal readonly int[] ReverseMul;
 
 		public MergeSortQueue(Sort sort, TopDocs[] shardHits) : base(shardHits.Length)
@@ -165,8 +157,6 @@ namespace Lucene.Net.Search
 		  this.ShardHits = new ScoreDoc[shardHits.Length][];
 		  for (int shardIDX = 0;shardIDX < shardHits.Length;shardIDX++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc[] shard = shardHits[shardIDX].scoreDocs;
 			ScoreDoc[] shard = shardHits[shardIDX].ScoreDocs;
 			//System.out.println("  init shardIdx=" + shardIDX + " hits=" + shard);
 			if (shard != null)
@@ -175,15 +165,11 @@ namespace Lucene.Net.Search
 			  // Fail gracefully if API is misused:
 			  for (int hitIDX = 0;hitIDX < shard.Length;hitIDX++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc sd = shard[hitIDX];
 				ScoreDoc sd = shard[hitIDX];
 				if (!(sd is FieldDoc))
 				{
 				  throw new System.ArgumentException("shard " + shardIDX + " was not sorted by the provided Sort (expected FieldDoc but got ScoreDoc)");
 				}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldDoc fd = (FieldDoc) sd;
 				FieldDoc fd = (FieldDoc) sd;
 				if (fd.Fields == null)
 				{
@@ -193,44 +179,30 @@ namespace Lucene.Net.Search
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortField[] sortFields = sort.getSort();
-		  SortField[] sortFields = sort.Sort;
-		  Comparators = new FieldComparator[sortFields.Length];
+		  SortField[] sortFields = sort.GetSort();
+		  comparators = new FieldComparator[sortFields.Length];
 		  ReverseMul = new int[sortFields.Length];
 		  for (int compIDX = 0;compIDX < sortFields.Length;compIDX++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortField sortField = sortFields[compIDX];
 			SortField sortField = sortFields[compIDX];
-			Comparators[compIDX] = sortField.GetComparator(1, compIDX);
+			comparators[compIDX] = sortField.GetComparator(1, compIDX);
 			ReverseMul[compIDX] = sortField.Reverse ? - 1 : 1;
 		  }
 		}
 
 		// Returns true if first is < second
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings({"unchecked","rawtypes"}) public boolean lessThan(ShardRef first, ShardRef second)
 		public override bool LessThan(ShardRef first, ShardRef second)
 		{
 		  Debug.Assert(first != second);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldDoc firstFD = (FieldDoc) shardHits[first.shardIndex][first.hitIndex];
 		  FieldDoc firstFD = (FieldDoc) ShardHits[first.ShardIndex][first.HitIndex];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldDoc secondFD = (FieldDoc) shardHits[second.shardIndex][second.hitIndex];
 		  FieldDoc secondFD = (FieldDoc) ShardHits[second.ShardIndex][second.HitIndex];
 		  //System.out.println("  lessThan:\n     first=" + first + " doc=" + firstFD.doc + " score=" + firstFD.score + "\n    second=" + second + " doc=" + secondFD.doc + " score=" + secondFD.score);
 
-		  for (int compIDX = 0;compIDX < Comparators.Length;compIDX++)
+		  for (int compIDX = 0;compIDX < comparators.Length;compIDX++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldComparator comp = comparators[compIDX];
-			FieldComparator comp = Comparators[compIDX];
+			FieldComparator comp = comparators[compIDX];
 			//System.out.println("    cmp idx=" + compIDX + " cmp1=" + firstFD.fields[compIDX] + " cmp2=" + secondFD.fields[compIDX] + " reverse=" + reverseMul[compIDX]);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = reverseMul[compIDX] * comp.compareValues(firstFD.fields[compIDX], secondFD.fields[compIDX]);
 			int cmp = ReverseMul[compIDX] * comp.compareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);
 
 			if (cmp != 0)
@@ -286,8 +258,6 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.PriorityQueue<ShardRef> queue;
 		PriorityQueue<ShardRef> queue;
 		if (sort == null)
 		{
@@ -303,8 +273,6 @@ namespace Lucene.Net.Search
 		float maxScore = float.MinValue;
 		for (int shardIDX = 0;shardIDX < shardHits.Length;shardIDX++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TopDocs shard = shardHits[shardIDX];
 		  TopDocs shard = shardHits[shardIDX];
 		  // totalHits can be non-zero even if no hits were
 		  // collected, when searchAfter was used:
@@ -323,8 +291,6 @@ namespace Lucene.Net.Search
 		  maxScore = float.NaN;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc[] hits;
 		ScoreDoc[] hits;
 		if (availHitCount <= start)
 		{
@@ -340,8 +306,6 @@ namespace Lucene.Net.Search
 		  {
 			Debug.Assert(queue.Size() > 0);
 			ShardRef @ref = queue.Pop();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc hit = shardHits[ref.shardIndex].scoreDocs[ref.hitIndex++];
 			ScoreDoc hit = shardHits[@ref.ShardIndex].ScoreDocs[@ref.HitIndex++];
 			hit.ShardIndex = @ref.ShardIndex;
 			if (hitUpto >= start)
@@ -368,7 +332,7 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  return new TopFieldDocs(totalHitCount, hits, sort.Sort, maxScore);
+		  return new TopFieldDocs(totalHitCount, hits, sort.GetSort(), maxScore);
 		}
 	  }
 	}

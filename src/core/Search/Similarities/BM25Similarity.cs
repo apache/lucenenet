@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Similarities
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long df = stat.docFreq();
-		  long df = stat.docFreq();
+		  long df = stat.DocFreq();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final float termIdf = idf(df, max);
 		  float termIdf = Idf(df, max);
@@ -259,7 +259,7 @@ namespace Lucene.Net.Search.Similarities
 	  public override sealed SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
 	  {
 		BM25Stats bm25stats = (BM25Stats) stats;
-		return new BM25DocScorer(this, bm25stats, context.Reader().getNormValues(bm25stats.Field));
+		return new BM25DocScorer(this, bm25stats, context.Reader().GetNormValues(bm25stats.Field));
 	  }
 
 	  private class BM25DocScorer : SimScorer
@@ -283,23 +283,23 @@ namespace Lucene.Net.Search.Similarities
 		public override float Score(int doc, float freq)
 		{
 		  // if there are no norms, we act as if b=0
-		  float norm = Norms == null ? outerInstance.K1_Renamed : Cache[(sbyte)Norms.Get(doc) & 0xFF];
+		  float norm = Norms == null ? OuterInstance.K1_Renamed : Cache[(sbyte)Norms.Get(doc) & 0xFF];
 		  return WeightValue * freq / (freq + norm);
 		}
 
 		public override Explanation Explain(int doc, Explanation freq)
 		{
-		  return outerInstance.ExplainScore(doc, freq, Stats, Norms);
+            return OuterInstance.ExplainScore(doc, freq, Stats, Norms);
 		}
 
 		public override float ComputeSlopFactor(int distance)
 		{
-		  return outerInstance.SloppyFreq(distance);
+            return OuterInstance.SloppyFreq(distance);
 		}
 
 		public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
 		{
-		  return outerInstance.ScorePayload(doc, start, end, payload);
+            return OuterInstance.ScorePayload(doc, start, end, payload);
 		}
 	  }
 

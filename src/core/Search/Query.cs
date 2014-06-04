@@ -3,26 +3,28 @@ using System;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    using System.Collections.Generic;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
 
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using Term = Lucene.Net.Index.Term;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using Term = Lucene.Net.Index.Term;
 
 	/// <summary>
 	/// The abstract base class for queries.
@@ -47,7 +49,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class Query : ICloneable
 	{
-	  private float Boost_Renamed = 1.0f; // query boost factor
+	  private float boost = 1.0f; // query boost factor
 
 	  /// <summary>
 	  /// Sets the boost for this query clause to <code>b</code>.  Documents
@@ -58,11 +60,11 @@ namespace Lucene.Net.Search
 	  {
 		  set
 		  {
-			  Boost_Renamed = value;
+			  boost = value;
 		  }
 		  get
 		  {
-			  return Boost_Renamed;
+			  return boost;
 		  }
 	  }
 
@@ -106,7 +108,7 @@ namespace Lucene.Net.Search
 	  /// works if this query is in its <seealso cref="#rewrite rewritten"/> form.
 	  /// </summary>
 	  /// <exception cref="UnsupportedOperationException"> if this query is not yet rewritten </exception>
-	  public virtual void ExtractTerms(Set<Term> terms)
+	  public virtual void ExtractTerms(ISet<Term> terms)
 	  {
 		// needs to be implemented by query subclasses
 		throw new System.NotSupportedException();
@@ -118,19 +120,19 @@ namespace Lucene.Net.Search
 	  {
 		try
 		{
-		  return (Query)base.Clone();
+		  return (Query)base.MemberwiseClone();
 		}
-		catch (CloneNotSupportedException e)
+		catch (Exception e)
 		{
 		  throw new Exception("Clone not supported: " + e.Message);
 		}
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + float.floatToIntBits(Boost_Renamed);
+		result = prime * result + Number.FloatToIntBits(boost);
 		return result;
 	  }
 
@@ -149,7 +151,7 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 		Query other = (Query) obj;
-		if (float.floatToIntBits(Boost_Renamed) != float.floatToIntBits(other.Boost_Renamed))
+        if (Number.FloatToIntBits(boost) != Number.FloatToIntBits(other.boost))
 		{
 		  return false;
 		}

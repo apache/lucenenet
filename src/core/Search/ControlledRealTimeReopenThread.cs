@@ -25,6 +25,7 @@ namespace Lucene.Net.Search
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Utility class that runs a thread to manage periodicc
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search
 	/// @lucene.experimental 
 	/// </summary>
 
-	public class ControlledRealTimeReopenThread<T> : System.Threading.Thread, IDisposable
+	public class ControlledRealTimeReopenThread<T> : ThreadClass, IDisposable
 	{
 		private bool InstanceFieldsInitialized = false;
 
@@ -111,7 +112,7 @@ namespace Lucene.Net.Search
 
 		public override void AfterRefresh(bool didRefresh)
 		{
-		  outerInstance.RefreshDone();
+            OuterInstance.RefreshDone();
 		}
 	  }
 
@@ -133,21 +134,21 @@ namespace Lucene.Net.Search
 			Finish = true;
         
 			// So thread wakes up and notices it should finish:
-			ReopenLock.@lock();
+			ReopenLock.Lock();
 			try
 			{
 			  ReopenCond.signal();
 			}
 			finally
 			{
-			  ReopenLock.unlock();
+			  ReopenLock.Unlock();
 			}
         
 			try
 			{
-			  join();
+			  Join();
 			}
-			catch (InterruptedException ie)
+			catch (ThreadInterruptedException ie)
 			{
 			  throw new ThreadInterruptedException(ie);
 			}
@@ -194,8 +195,6 @@ namespace Lucene.Net.Search
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long curGen = writer.getGeneration();
 			long curGen = Writer.Generation;
 			if (targetGen > curGen)
 			{
@@ -206,7 +205,7 @@ namespace Lucene.Net.Search
 			  // Notify the reopen thread that the waitingGen has
 			  // changed, so it may wake up and realize it should
 			  // not sleep for much or any longer before reopening:
-			  ReopenLock.@lock();
+			  ReopenLock.Lock();
         
 			  // Need to find waitingGen inside lock as its used to determine
 			  // stale time
@@ -218,7 +217,7 @@ namespace Lucene.Net.Search
 			  }
 			  finally
 			  {
-				ReopenLock.unlock();
+				ReopenLock.Unlock();
 			  }
         
 			  long startMS = System.nanoTime() / 1000000;
@@ -267,17 +266,13 @@ namespace Lucene.Net.Search
 		  {
 
 			// Need lock before finding out if has waiting
-			ReopenLock.@lock();
+			ReopenLock.Lock();
 			try
 			{
 			  // True if we have someone waiting for reopened searcher:
 			  bool hasWaiting = WaitingGen > SearchingGen;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
 			  long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? TargetMinStaleNS : TargetMaxStaleNS);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long sleepNS = nextReopenStartNS - System.nanoTime();
 			  long sleepNS = nextReopenStartNS - System.nanoTime();
 
 			  if (sleepNS > 0)
@@ -289,14 +284,14 @@ namespace Lucene.Net.Search
 				break;
 			  }
 			}
-			catch (InterruptedException ie)
+			catch (ThreadInterruptedException ie)
 			{
 			  Thread.CurrentThread.Interrupt();
 			  return;
 			}
 			finally
 			{
-			  ReopenLock.unlock();
+			  ReopenLock.Unlock();
 			}
 		  }
 
@@ -314,9 +309,9 @@ namespace Lucene.Net.Search
 		  {
 			Manager.MaybeRefreshBlocking();
 		  }
-		  catch (IOException ioe)
+		  catch (System.IO.IOException ioe)
 		  {
-			throw new Exception(ioe);
+			throw new Exception(ioe.Message, ioe);
 		  }
 		}
 	  }

@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Similarities
 	  public virtual Explanation Explain(BasicStats stats, float tf, float len)
 	  {
 		Explanation result = new Explanation();
-		result.Description = this.GetType().SimpleName + ", computed from: ";
+		result.Description = this.GetType().Name + ", computed from: ";
 		result.Value = Tfn(stats, tf, len);
 		result.AddDetail(new Explanation(tf, "tf"));
 		result.AddDetail(new Explanation(stats.AvgFieldLength, "avgFieldLength"));

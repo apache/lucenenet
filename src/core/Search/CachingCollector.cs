@@ -3,25 +3,26 @@ using System.Collections.Generic;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
 
 	/// <summary>
@@ -428,7 +429,7 @@ namespace Lucene.Net.Search
 	  ///          scores are cached. </param>
 	  public static CachingCollector Create(Collector other, bool cacheScores, double maxRAMMB)
 	  {
-		return cacheScores ? new ScoreCachingCollector(other, maxRAMMB) : new NoScoreCachingCollector(other, maxRAMMB);
+          return cacheScores ? (CachingCollector)new ScoreCachingCollector(other, maxRAMMB) : new NoScoreCachingCollector(other, maxRAMMB);
 	  }
 
 	  /// <summary>
@@ -446,7 +447,7 @@ namespace Lucene.Net.Search
 	  ///          no documents and scores are cached. </param>
 	  public static CachingCollector Create(Collector other, bool cacheScores, int maxDocsToCache)
 	  {
-		return cacheScores ? new ScoreCachingCollector(other, maxDocsToCache) : new NoScoreCachingCollector(other, maxDocsToCache);
+          return cacheScores ? (CachingCollector)new ScoreCachingCollector(other, maxDocsToCache) : new NoScoreCachingCollector(other, maxDocsToCache);
 	  }
 
 	  // Prevent extension from non-internal classes
@@ -508,7 +509,7 @@ namespace Lucene.Net.Search
 	  {
 		if (!Cached)
 		{
-		  throw new IllegalStateException("cannot replay: cache was cleared because too much RAM was required");
+		  throw new InvalidOperationException("cannot replay: cache was cleared because too much RAM was required");
 		}
 
 		if (!other.AcceptsDocsOutOfOrder() && this.Other.AcceptsDocsOutOfOrder())
@@ -529,7 +530,7 @@ namespace Lucene.Net.Search
 	  /// instance does not cache scores, then Scorer is not set on
 	  /// {@code other.setScorer} as well as scores are not replayed.
 	  /// </summary>
-	  /// <exception cref="IllegalStateException">
+	  /// <exception cref="InvalidOperationException">
 	  ///           if this collector is not cached (i.e., if the RAM limits were too
 	  ///           low for the number of documents + scores to cache). </exception>
 	  /// <exception cref="IllegalArgumentException">

@@ -134,7 +134,9 @@ namespace Lucene.Net.Search.Spans
 			{
 			  bytes = null;
 			}
-			return Collections.singletonList(bytes);
+            //LUCENE TO-DO
+            return new[] { bytes };
+			//return Collections.singletonList(bytes);
 		  }
 	  }
 

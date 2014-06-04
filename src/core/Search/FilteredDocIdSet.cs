@@ -62,8 +62,6 @@ namespace Lucene.Net.Search
 
 	  public override Bits Bits()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits bits = _innerSet.bits();
 		Bits bits = _innerSet.Bits();
 		return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
 	  }
@@ -103,8 +101,6 @@ namespace Lucene.Net.Search
 	  /// <seealso cref= FilteredDocIdSetIterator </seealso>
 	  public override DocIdSetIterator Iterator()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSetIterator iterator = _innerSet.iterator();
 		DocIdSetIterator iterator = _innerSet.Iterator();
 		if (iterator == null)
 		{

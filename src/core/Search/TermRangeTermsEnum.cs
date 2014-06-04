@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 
 		// do a little bit of normalization...
 		// open ended range queries should always be inclusive.
-		if (lowerTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (lowerTerm == null)
 		{
 		  this.LowerBytesRef = new BytesRef();
 		  this.IncludeLower = true;
@@ -77,10 +77,10 @@ namespace Lucene.Net.Search
 		  this.IncludeLower = includeLower;
 		}
 
-		if (upperTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (upperTerm == null)
 		{
 		  this.IncludeUpper = true;
-		  UpperBytesRef = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  UpperBytesRef = null;
 		}
 		else
 		{
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 		}
 
 		InitialSeekTerm = LowerBytesRef;
-		TermComp = IComparer;
+		TermComp = Comparator;
 	  }
 
 	  protected internal override AcceptStatus Accept(BytesRef term)
@@ -100,10 +100,8 @@ namespace Lucene.Net.Search
 		}
 
 		// Use this field's default sort ordering
-		if (UpperBytesRef != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (UpperBytesRef != null)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = termComp.compare(upperBytesRef, term);
 		  int cmp = TermComp.Compare(UpperBytesRef, term);
 		  /*
 		   * if beyond the upper term, or is exclusive and this is equal to

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -62,7 +63,7 @@ namespace Lucene.Net.Search
 		// map.  While reopen is running, any lookup will first
 		// try this new map, then fallback to old, then to the
 		// current searcher:
-		Current = new ConcurrentDictionary<>();
+		Current = new ConcurrentDictionary<string, T>();
 	  }
 
 	  public override void AfterRefresh(bool didRefresh)
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
 		// entries in it, which is fine: it means they were
 		// actually already included in the previously opened
 		// reader.  So we can safely clear old here:
-		Old = new ConcurrentDictionary<>();
+		Old = new ConcurrentDictionary<string, T>();
 	  }
 
 	  /// <summary>
@@ -112,11 +113,11 @@ namespace Lucene.Net.Search
 	  {
 		// First try to get the "live" value:
 		T value = Current[id];
-		if (value == MissingValue)
+        if ((object)value == (object)MissingValue)
 		{
 		  // Deleted but the deletion is not yet reflected in
 		  // the reader:
-		  return null;
+		  return default(T);
 		}
 		else if (value != null)
 		{
@@ -125,11 +126,11 @@ namespace Lucene.Net.Search
 		else
 		{
 		  value = Old[id];
-		  if (value == MissingValue)
+          if ((object)value == (object)MissingValue)
 		  {
 			// Deleted but the deletion is not yet reflected in
 			// the reader:
-			return null;
+			return default(T);
 		  }
 		  else if (value != null)
 		  {

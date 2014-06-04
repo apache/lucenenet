@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Similarities
 	  /// </summary>
 	  public virtual Explanation Explain(BasicStats stats, float tfn, float lambda)
 	  {
-		return new Explanation(Score(stats, tfn, lambda), this.GetType().SimpleName);
+		return new Explanation(Score(stats, tfn, lambda), this.GetType().Name);
 	  }
 
 	  /// <summary>

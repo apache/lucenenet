@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Specifies the type of the terms to be sorted, or special types such as CUSTOM
 	  /// </summary>
-	  public enum Type
+	  public enum Type_e
 	  {
 
 		/// <summary>
@@ -127,22 +127,22 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Represents sorting by document score (relevance). </summary>
-	  public static readonly SortField FIELD_SCORE = new SortField(null, Type.SCORE);
+	  public static readonly SortField FIELD_SCORE = new SortField(null, Type_e.SCORE);
 
 	  /// <summary>
 	  /// Represents sorting by document number (index order). </summary>
-	  public static readonly SortField FIELD_DOC = new SortField(null, Type.DOC);
+	  public static readonly SortField FIELD_DOC = new SortField(null, Type_e.DOC);
 
-	  private string Field_Renamed;
-	  private Type Type_Renamed; // defaults to determining type dynamically
-	  internal bool Reverse_Renamed = false; // defaults to natural order
-	  private FieldCache_Parser Parser_Renamed;
+	  private string field;
+	  private Type_e type; // defaults to determining type dynamically
+	  internal bool reverse = false; // defaults to natural order
+	  private FieldCache_Parser parser;
 
 	  // Used for CUSTOM sort
-	  private FieldComparatorSource ComparatorSource_Renamed;
+	  private FieldComparatorSource comparatorSource;
 
 	  // Used for 'sortMissingFirst/Last'
-	  public object MissingValue_Renamed = null;
+	  public object missingValue = null;
 
 	  /// <summary>
 	  /// Creates a sort by terms in the given field with the type of term
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 	  /// <param name="field">  Name of field to sort by.  Can be <code>null</code> if
 	  ///               <code>type</code> is SCORE or DOC. </param>
 	  /// <param name="type">   Type of values in the terms. </param>
-	  public SortField(string field, Type type)
+	  public SortField(string field, Type_e type)
 	  {
 		InitFieldType(field, type);
 	  }
@@ -162,10 +162,10 @@ namespace Lucene.Net.Search
 	  ///               <code>type</code> is SCORE or DOC. </param>
 	  /// <param name="type">   Type of values in the terms. </param>
 	  /// <param name="reverse"> True if natural order should be reversed. </param>
-	  public SortField(string field, Type type, bool reverse)
+	  public SortField(string field, Type_e type, bool reverse)
 	  {
 		InitFieldType(field, type);
-		this.Reverse_Renamed = reverse;
+		this.reverse = reverse;
 	  }
 
 	  /// <summary>
@@ -197,35 +197,35 @@ namespace Lucene.Net.Search
 	  {
 		if (parser is FieldCache_IntParser)
 		{
-			InitFieldType(field, Type.INT);
+			InitFieldType(field, Type_e.INT);
 		}
 		else if (parser is FieldCache_FloatParser)
 		{
-			InitFieldType(field, Type.FLOAT);
+			InitFieldType(field, Type_e.FLOAT);
 		}
 		else if (parser is FieldCache_ShortParser)
 		{
-			InitFieldType(field, Type.SHORT);
+			InitFieldType(field, Type_e.SHORT);
 		}
 		else if (parser is FieldCache_ByteParser)
 		{
-			InitFieldType(field, Type.BYTE);
+			InitFieldType(field, Type_e.BYTE);
 		}
 		else if (parser is FieldCache_LongParser)
 		{
-			InitFieldType(field, Type.LONG);
+			InitFieldType(field, Type_e.LONG);
 		}
 		else if (parser is FieldCache_DoubleParser)
 		{
-			InitFieldType(field, Type.DOUBLE);
+			InitFieldType(field, Type_e.DOUBLE);
 		}
 		else
 		{
 		  throw new System.ArgumentException("Parser instance does not subclass existing numeric parser from FieldCache (got " + parser + ")");
 		}
 
-		this.Reverse_Renamed = reverse;
-		this.Parser_Renamed = parser;
+		this.reverse = reverse;
+		this.parser = parser;
 	  }
 
 	  /// <summary>
@@ -268,18 +268,18 @@ namespace Lucene.Net.Search
 	  {
 		  set
 		  {
-			if (Type_Renamed == Type.STRING)
+			if (type == Type_e.STRING)
 			{
 			  if (value != STRING_FIRST && value != STRING_LAST)
 			  {
 				throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
 			  }
 			}
-			else if (Type_Renamed != Type.BYTE && Type_Renamed != Type.SHORT && Type_Renamed != Type.INT && Type_Renamed != Type.FLOAT && Type_Renamed != Type.LONG && Type_Renamed != Type.DOUBLE)
+			else if (type != Type_e.BYTE && type != Type_e.SHORT && type != Type_e.INT && type != Type_e.FLOAT && type != Type_e.LONG && type != Type_e.DOUBLE)
 			{
 			  throw new System.ArgumentException("Missing value only works for numeric or STRING types");
 			}
-			this.MissingValue_Renamed = value;
+			this.missingValue = value;
 		  }
 	  }
 
@@ -289,8 +289,8 @@ namespace Lucene.Net.Search
 	  /// <param name="comparator"> Returns a comparator for sorting hits. </param>
 	  public SortField(string field, FieldComparatorSource comparator)
 	  {
-		InitFieldType(field, Type.CUSTOM);
-		this.ComparatorSource_Renamed = comparator;
+		InitFieldType(field, Type_e.CUSTOM);
+		this.comparatorSource = comparator;
 	  }
 
 	  /// <summary>
@@ -300,26 +300,26 @@ namespace Lucene.Net.Search
 	  /// <param name="reverse"> True if natural order should be reversed. </param>
 	  public SortField(string field, FieldComparatorSource comparator, bool reverse)
 	  {
-		InitFieldType(field, Type.CUSTOM);
-		this.Reverse_Renamed = reverse;
-		this.ComparatorSource_Renamed = comparator;
+		InitFieldType(field, Type_e.CUSTOM);
+		this.reverse = reverse;
+		this.comparatorSource = comparator;
 	  }
 
 	  // Sets field & type, and ensures field is not NULL unless
 	  // type is SCORE or DOC
-	  private void InitFieldType(string field, Type type)
+	  private void InitFieldType(string field, Type_e type)
 	  {
-		this.Type_Renamed = type;
+		this.type = type;
 		if (field == null)
 		{
-		  if (type != Type.SCORE && type != Type.DOC)
+		  if (type != Type_e.SCORE && type != Type_e.DOC)
 		  {
 			throw new System.ArgumentException("field can only be null when type is SCORE or DOC");
 		  }
 		}
 		else
 		{
-		  this.Field_Renamed = field;
+		  this.field = field;
 		}
 	  }
 
@@ -331,18 +331,18 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Field_Renamed;
+			return field;
 		  }
 	  }
 
 	  /// <summary>
 	  /// Returns the type of contents in the field. </summary>
 	  /// <returns> One of the constants SCORE, DOC, STRING, INT or FLOAT. </returns>
-	  public virtual Type Type
+	  public virtual Type_e Type
 	  {
 		  get
 		  {
-			return Type_Renamed;
+			return type;
 		  }
 	  }
 
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Parser_Renamed;
+			return parser;
 		  }
 	  }
 
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Reverse_Renamed;
+			return reverse;
 		  }
 	  }
 
@@ -377,76 +377,76 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return ComparatorSource_Renamed;
+			return comparatorSource;
 		  }
 	  }
 
 	  public override string ToString()
 	  {
 		StringBuilder buffer = new StringBuilder();
-		switch (Type_Renamed)
+		switch (type)
 		{
-		  case Lucene.Net.Search.SortField.Type.SCORE:
+		  case Lucene.Net.Search.SortField.Type_e.SCORE:
 			buffer.Append("<score>");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.DOC:
+		  case Lucene.Net.Search.SortField.Type_e.DOC:
 			buffer.Append("<doc>");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.STRING:
-			buffer.Append("<string" + ": \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.STRING:
+			buffer.Append("<string" + ": \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.STRING_VAL:
-			buffer.Append("<string_val" + ": \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.STRING_VAL:
+			buffer.Append("<string_val" + ": \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.BYTE:
-			buffer.Append("<byte: \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.BYTE:
+			buffer.Append("<byte: \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.SHORT:
-			buffer.Append("<short: \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.SHORT:
+			buffer.Append("<short: \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.INT:
-			buffer.Append("<int" + ": \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.INT:
+			buffer.Append("<int" + ": \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.LONG:
-			buffer.Append("<long: \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.LONG:
+			buffer.Append("<long: \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.FLOAT:
-			buffer.Append("<float" + ": \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.FLOAT:
+			buffer.Append("<float" + ": \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.DOUBLE:
-			buffer.Append("<double" + ": \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.DOUBLE:
+			buffer.Append("<double" + ": \"").Append(field).Append("\">");
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.CUSTOM:
-			buffer.Append("<custom:\"").Append(Field_Renamed).Append("\": ").Append(ComparatorSource_Renamed).Append('>');
+		  case Lucene.Net.Search.SortField.Type_e.CUSTOM:
+			buffer.Append("<custom:\"").Append(field).Append("\": ").Append(comparatorSource).Append('>');
 			break;
 
-		  case Lucene.Net.Search.SortField.Type.REWRITEABLE:
-			buffer.Append("<rewriteable: \"").Append(Field_Renamed).Append("\">");
+		  case Lucene.Net.Search.SortField.Type_e.REWRITEABLE:
+			buffer.Append("<rewriteable: \"").Append(field).Append("\">");
 			break;
 
 		  default:
-			buffer.Append("<???: \"").Append(Field_Renamed).Append("\">");
+			buffer.Append("<???: \"").Append(field).Append("\">");
 			break;
 		}
 
-		if (Reverse_Renamed)
+		if (reverse)
 		{
 			buffer.Append('!');
 		}
-		if (MissingValue_Renamed != null)
+		if (missingValue != null)
 		{
 		  buffer.Append(" missingValue=");
-		  buffer.Append(MissingValue_Renamed);
+		  buffer.Append(missingValue);
 		}
 
 		return buffer.ToString();
@@ -468,10 +468,8 @@ namespace Lucene.Net.Search
 		{
 			return false;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortField other = (SortField)o;
 		SortField other = (SortField)o;
-		return (StringHelper.Equals(other.Field_Renamed, this.Field_Renamed) && other.Type_Renamed == this.Type_Renamed && other.Reverse_Renamed == this.Reverse_Renamed && (other.ComparatorSource_Renamed == null ? this.ComparatorSource_Renamed == null : other.ComparatorSource_Renamed.Equals(this.ComparatorSource_Renamed)));
+		return (StringHelper.Equals(other.field, this.field) && other.type == this.type && other.reverse == this.reverse && (other.comparatorSource == null ? this.comparatorSource == null : other.comparatorSource.Equals(this.comparatorSource)));
 	  }
 
 	  /// <summary>
@@ -481,16 +479,16 @@ namespace Lucene.Net.Search
 	  ///  implement hashCode (unless a singleton is always
 	  ///  used). 
 	  /// </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int hash = Type_Renamed.HashCode() ^ 0x346565dd + Convert.ToBoolean(Reverse_Renamed).HashCode() ^ 0xaf5998bb;
-		if (Field_Renamed != null)
+		int hash = (int)(type.GetHashCode() ^ 0x346565dd + reverse.GetHashCode() ^ 0xaf5998bb);
+		if (field != null)
 		{
-			hash += Field_Renamed.HashCode() ^ 0xff5685dd;
+			hash += (int)(field.GetHashCode() ^ 0xff5685dd);
 		}
-		if (ComparatorSource_Renamed != null)
+		if (comparatorSource != null)
 		{
-			hash += ComparatorSource_Renamed.HashCode();
+			hash += comparatorSource.GetHashCode();
 		}
 		return hash;
 	  }
@@ -522,53 +520,51 @@ namespace Lucene.Net.Search
 	  ///   secondary if sortPos==1, etc.  Some comparators can
 	  ///   optimize themselves when they are the primary sort. </param>
 	  /// <returns> <seealso cref="FieldComparator"/> to use when sorting </returns>
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: public FieldComparator<?> getComparator(final int numHits, final int sortPos) throws java.io.IOException
-	  public virtual FieldComparator<?> GetComparator(int numHits, int sortPos)
+	  public virtual FieldComparator GetComparator(int numHits, int sortPos)
 	  {
 
-		switch (Type_Renamed)
+		switch (type)
 		{
-		case Lucene.Net.Search.SortField.Type.SCORE:
+		case Type_e.SCORE:
 		  return new FieldComparator.RelevanceComparator(numHits);
 
-		case Lucene.Net.Search.SortField.Type.DOC:
+		case Type_e.DOC:
 		  return new FieldComparator.DocComparator(numHits);
 
-		case Lucene.Net.Search.SortField.Type.INT:
-		  return new FieldComparator.IntComparator(numHits, Field_Renamed, Parser_Renamed, (int?) MissingValue_Renamed);
+		case Type_e.INT:
+		  return new FieldComparator.IntComparator(numHits, field, parser, (int) missingValue);
 
-		case Lucene.Net.Search.SortField.Type.FLOAT:
-		  return new FieldComparator.FloatComparator(numHits, Field_Renamed, Parser_Renamed, (float?) MissingValue_Renamed);
+		case Type_e.FLOAT:
+		  return new FieldComparator.FloatComparator(numHits, field, parser, (float) missingValue);
 
-		case Lucene.Net.Search.SortField.Type.LONG:
-		  return new FieldComparator.LongComparator(numHits, Field_Renamed, Parser_Renamed, (long?) MissingValue_Renamed);
+		case Type_e.LONG:
+		  return new FieldComparator.LongComparator(numHits, field, parser, (long) missingValue);
 
-		case Lucene.Net.Search.SortField.Type.DOUBLE:
-		  return new FieldComparator.DoubleComparator(numHits, Field_Renamed, Parser_Renamed, (double?) MissingValue_Renamed);
+		case Type_e.DOUBLE:
+		  return new FieldComparator.DoubleComparator(numHits, field, parser, (double) missingValue);
 
-		case Lucene.Net.Search.SortField.Type.BYTE:
-		  return new FieldComparator.ByteComparator(numHits, Field_Renamed, Parser_Renamed, (sbyte?) MissingValue_Renamed);
+		case Type_e.BYTE:
+		  return new FieldComparator.ByteComparator(numHits, field, parser, (sbyte) missingValue);
 
-		case Lucene.Net.Search.SortField.Type.SHORT:
-		  return new FieldComparator.ShortComparator(numHits, Field_Renamed, Parser_Renamed, (short?) MissingValue_Renamed);
+		case Type_e.SHORT:
+		  return new FieldComparator.ShortComparator(numHits, field, parser, (short) missingValue);
 
-		case Lucene.Net.Search.SortField.Type.CUSTOM:
-		  Debug.Assert(ComparatorSource_Renamed != null);
-		  return ComparatorSource_Renamed.NewComparator(Field_Renamed, numHits, sortPos, Reverse_Renamed);
+		case Type_e.CUSTOM:
+		  Debug.Assert(comparatorSource != null);
+		  return comparatorSource.NewComparator(field, numHits, sortPos, reverse);
 
-		case Lucene.Net.Search.SortField.Type.STRING:
-		  return new FieldComparator.TermOrdValComparator(numHits, Field_Renamed, MissingValue_Renamed == STRING_LAST);
+		case Type_e.STRING:
+		  return new FieldComparator.TermOrdValComparator(numHits, field, missingValue == STRING_LAST);
 
-		case Lucene.Net.Search.SortField.Type.STRING_VAL:
+		case Type_e.STRING_VAL:
 		  // TODO: should we remove this?  who really uses it?
-		  return new FieldComparator.TermValComparator(numHits, Field_Renamed);
+		  return new FieldComparator.TermValComparator(numHits, field);
 
-		case Lucene.Net.Search.SortField.Type.REWRITEABLE:
-		  throw new IllegalStateException("SortField needs to be rewritten through Sort.rewrite(..) and SortField.rewrite(..)");
+		case Type_e.REWRITEABLE:
+		  throw new InvalidOperationException("SortField needs to be rewritten through Sort.rewrite(..) and SortField.rewrite(..)");
 
 		default:
-		  throw new IllegalStateException("Illegal sort type: " + Type_Renamed);
+		  throw new InvalidOperationException("Illegal sort type: " + type);
 		}
 	  }
 
@@ -590,7 +586,7 @@ namespace Lucene.Net.Search
 	  /// Whether the relevance score is needed to sort documents. </summary>
 	  public virtual bool NeedsScores()
 	  {
-		return Type_Renamed == Type.SCORE;
+		return type == Type_e.SCORE;
 	  }
 	}
 

@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public class ComplexExplanation : Explanation
 	{
-	  private bool? Match_Renamed;
+	  private bool? match;
 
 	  public ComplexExplanation() : base()
 	  {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 	  {
 		// NOTE: use of "boolean" instead of "Boolean" in params is conscious
 		// choice to encourage clients to be specific.
-		this.Match_Renamed = Convert.ToBoolean(match);
+		this.match = Convert.ToBoolean(match);
 	  }
 
 	  /// <summary>
@@ -46,11 +46,11 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			  return Match_Renamed;
+			  return match;
 		  }
 		  set
 		  {
-			  this.Match_Renamed = value;
+			  this.match = value;
 		  }
 	  }
 	  /// <summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 	  /// uses it; otherwise it defers to the superclass.
 	  /// </p> </summary>
 	  /// <seealso cref= #getMatch </seealso>
-	  public override bool Match
+	  public override bool IsMatch
 	  {
 		  get
 		  {
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 			  return base.Summary;
 			}
     
-			return Value + " = " + (Match ? "(MATCH) " : "(NON-MATCH) ") + Description;
+			return Value + " = " + (IsMatch ? "(MATCH) " : "(NON-MATCH) ") + Description;
 		  }
 	  }
 

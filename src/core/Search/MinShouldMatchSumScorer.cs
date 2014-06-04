@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -24,6 +25,7 @@ namespace Lucene.Net.Search
 
 
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// A Scorer for OR like queries, counterpart of <code>ConjunctionScorer</code>.
@@ -126,7 +128,7 @@ namespace Lucene.Net.Search
 
 		  public virtual int Compare(Scorer o1, Scorer o2)
 		  {
-			return long.signum(o2.Cost() - o1.Cost());
+              return Number.Signum(o2.Cost() - o1.Cost());
 		  }
 	  }
 
@@ -407,8 +409,6 @@ namespace Lucene.Net.Search
 	  protected internal void MinheapSiftUp(int i)
 	  {
 		Scorer scorer = SubScorers[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = scorer.docID();
 		int doc = scorer.DocID();
 		// find right place for scorer
 		while (i > 0)

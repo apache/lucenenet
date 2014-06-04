@@ -40,6 +40,7 @@ namespace Lucene.Net.Search
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// A Query that matches documents containing a particular sequence of terms.
@@ -204,7 +205,7 @@ namespace Lucene.Net.Search
 			{
 			  Term[] terms2 = new Term[terms.Length];
 			  Array.Copy(terms, 0, terms2, 0, terms.Length);
-			  Arrays.sort(terms2);
+			  Array.Sort(terms2);
 			  this.Terms = terms2;
 			}
 		  }
@@ -300,15 +301,11 @@ namespace Lucene.Net.Search
 		{
 			this.OuterInstance = outerInstance;
 		  this.Similarity = searcher.Similarity;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.IndexReaderContext context = searcher.getTopReaderContext();
 		  IndexReaderContext context = searcher.TopReaderContext;
 		  States = new TermContext[outerInstance.Terms_Renamed.Count];
 		  TermStatistics[] termStats = new TermStatistics[outerInstance.Terms_Renamed.Count];
 		  for (int i = 0; i < outerInstance.Terms_Renamed.Count; i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = terms.get(i);
 			Term term = outerInstance.Terms_Renamed[i];
 			States[i] = TermContext.Build(context, term);
 			termStats[i] = searcher.TermStatistics(term, States[i]);
@@ -342,35 +339,23 @@ namespace Lucene.Net.Search
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  Debug.Assert(outerInstance.Terms_Renamed.Count > 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReader reader = context.reader();
+		  Debug.Assert(OuterInstance.Terms_Renamed.Count > 0);
 		  AtomicReader reader = context.Reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = acceptDocs;
 		  Bits liveDocs = acceptDocs;
-		  PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.Terms_Renamed.Count];
+          PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[OuterInstance.Terms_Renamed.Count];
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Terms fieldTerms = reader.terms(field);
-		  Terms fieldTerms = reader.Terms(outerInstance.Field);
+          Terms fieldTerms = reader.Terms(OuterInstance.Field);
 		  if (fieldTerms == null)
 		  {
 			return null;
 		  }
 
 		  // Reuse single TermsEnum below:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum te = fieldTerms.iterator(null);
 		  TermsEnum te = fieldTerms.Iterator(null);
 
-		  for (int i = 0; i < outerInstance.Terms_Renamed.Count; i++)
+          for (int i = 0; i < OuterInstance.Terms_Renamed.Count; i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term t = terms.get(i);
-			Term t = outerInstance.Terms_Renamed[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermState state = states[i].get(context.ord);
+			Term t = OuterInstance.Terms_Renamed[i];
 			TermState state = States[i].Get(context.Ord);
 			if (state == null) // term doesnt exist in this segment
 			{
@@ -386,18 +371,18 @@ namespace Lucene.Net.Search
 			{
 			  Debug.Assert(te.SeekExact(t.Bytes()), "termstate found but no term exists in reader");
 			  // term does exist, but has no positions
-			  throw new IllegalStateException("field \"" + t.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
+			  throw new InvalidOperationException("field \"" + t.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
 			}
-			postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)outerInstance.Positions_Renamed[i], t);
+            postingsFreqs[i] = new PostingsAndFreq(postingsEnum, te.DocFreq(), (int)OuterInstance.Positions_Renamed[i], t);
 		  }
 
 		  // sort by increasing docFreq order
-		  if (outerInstance.Slop_Renamed == 0)
+          if (OuterInstance.Slop_Renamed == 0)
 		  {
 			ArrayUtil.TimSort(postingsFreqs);
 		  }
 
-		  if (outerInstance.Slop_Renamed == 0) // optimize exact case
+          if (OuterInstance.Slop_Renamed == 0) // optimize exact case
 		  {
 			ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.SimScorer(Stats, context));
 			if (s.NoDocs)
@@ -411,7 +396,7 @@ namespace Lucene.Net.Search
 		  }
 		  else
 		  {
-			return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.Slop_Renamed, Similarity.SimScorer(Stats, context));
+			return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.Slop_Renamed, Similarity.SimScorer(Stats, context));
 		  }
 		}
 
@@ -429,7 +414,7 @@ namespace Lucene.Net.Search
 			int newDoc = scorer.Advance(doc);
 			if (newDoc == doc)
 			{
-			  float freq = outerInstance.Slop_Renamed == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
+			  float freq = OuterInstance.Slop_Renamed == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
 			  SimScorer docScorer = Similarity.SimScorer(Stats, context);
 			  ComplexExplanation result = new ComplexExplanation();
 			  result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
@@ -451,9 +436,10 @@ namespace Lucene.Net.Search
 	  }
 
 	  /// <seealso cref= Lucene.Net.Search.Query#extractTerms(Set) </seealso>
-	  public override void ExtractTerms(Set<Term> queryTerms)
+	  public override void ExtractTerms(ISet<Term> queryTerms)
 	  {
-		queryTerms.addAll(Terms_Renamed);
+          //LUCENE TO-DO Normal conundrum
+		queryTerms.UnionWith(Terms_Renamed);
 	  }
 
 	  /// <summary>
@@ -526,9 +512,9 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) ^ Slop_Renamed ^ Terms_Renamed.HashCode() ^ Positions_Renamed.HashCode();
+          return Number.FloatToIntBits(Boost) ^ Slop_Renamed ^ Terms_Renamed.GetHashCode() ^ Positions_Renamed.GetHashCode();
 	  }
 
 	}

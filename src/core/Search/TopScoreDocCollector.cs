@@ -279,11 +279,11 @@ namespace Lucene.Net.Search
 
 		if (docsScoredInOrder)
 		{
-		  return after == null ? new InOrderTopScoreDocCollector(numHits) : new InOrderPagingScoreDocCollector(after, numHits);
+            return after == null ? (TopScoreDocCollector)new InOrderTopScoreDocCollector(numHits) : new InOrderPagingScoreDocCollector(after, numHits);
 		}
 		else
 		{
-		  return after == null ? new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
+            return after == null ? (TopScoreDocCollector)new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
 		}
 
 	  }
@@ -322,7 +322,7 @@ namespace Lucene.Net.Search
 		  {
 			  Pq.Pop();
 		  }
-		  maxScore = Pq.Pop().score;
+		  maxScore = Pq.Pop().Score;
 		}
 
 		return new TopDocs(TotalHits_Renamed, results, maxScore);

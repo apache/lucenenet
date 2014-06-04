@@ -105,50 +105,32 @@ namespace Lucene.Net.Search
 		// exhaust the enum before hitting either of the
 		// cutoffs, we use ConstantBooleanQueryRewrite; else,
 		// ConstantFilterRewrite:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCountCutoff = (int)((docCountPercent / 100.0) * reader.maxDoc());
 		int docCountCutoff = (int)((DocCountPercent_Renamed / 100.0) * reader.MaxDoc());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termCountLimit = Math.min(BooleanQuery.getMaxClauseCount(), termCountCutoff);
 		int termCountLimit = Math.Min(BooleanQuery.MaxClauseCount, TermCountCutoff_Renamed);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CutOffTermCollector col = new CutOffTermCollector(docCountCutoff, termCountLimit);
 		CutOffTermCollector col = new CutOffTermCollector(docCountCutoff, termCountLimit);
 		CollectTerms(reader, query, col);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = col.pendingTerms.size();
-		int size = col.PendingTerms.size();
+		int size = col.PendingTerms.Size();
 		if (col.HasCutOff)
 		{
-		  return MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE.rewrite(reader, query);
+		  return MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE.Rewrite(reader, query);
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BooleanQuery bq = getTopLevelQuery();
 		  BooleanQuery bq = TopLevelQuery;
 		  if (size > 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRefHash pendingTerms = col.pendingTerms;
 			BytesRefHash pendingTerms = col.PendingTerms;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int sort[] = pendingTerms.sort(col.termsEnum.getComparator());
 			int[] sort = pendingTerms.Sort(col.TermsEnum.Comparator);
 			for (int i = 0; i < size; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = sort[i];
 			  int pos = sort[i];
 			  // docFreq is not used for constant score here, we pass 1
 			  // to explicitely set a fake value, so it's not calculated
-			  AddClause(bq, new Term(query.Field_Renamed, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.termState[pos]);
+			  AddClause(bq, new Term(query.field, pendingTerms.Get(pos, new BytesRef())), 1, 1.0f, col.Array.TermState[pos]);
 			}
 		  }
 		  // Strip scores
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Query result = new ConstantScoreQuery(bq);
 		  Query result = new ConstantScoreQuery(bq);
 		  result.Boost = query.Boost;
 		  return result;
@@ -193,14 +175,12 @@ namespace Lucene.Net.Search
 			return false;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermState termState = termsEnum.termState();
 		  TermState termState = TermsEnum.TermState();
 		  Debug.Assert(termState != null);
 		  if (pos < 0)
 		  {
 			pos = (-pos) - 1;
-			Array.TermState[pos].register(termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
+			Array.TermState[pos].Register(termState, ReaderContext.Ord, TermsEnum.DocFreq(), TermsEnum.TotalTermFreq());
 		  }
 		  else
 		  {
@@ -221,7 +201,7 @@ namespace Lucene.Net.Search
 	  public override int HashCode()
 	  {
 		const int prime = 1279;
-		return (int)(prime * TermCountCutoff_Renamed + double.doubleToLongBits(DocCountPercent_Renamed));
+		return (int)(prime * TermCountCutoff_Renamed + BitConverter.DoubleToInt64Bits(DocCountPercent_Renamed));
 	  }
 
 	  public override bool Equals(object obj)
@@ -245,7 +225,7 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 
-		if (double.doubleToLongBits(other.DocCountPercent_Renamed) != double.doubleToLongBits(DocCountPercent_Renamed))
+        if (BitConverter.DoubleToInt64Bits(other.DocCountPercent_Renamed) != BitConverter.DoubleToInt64Bits(DocCountPercent_Renamed))
 		{
 		  return false;
 		}
@@ -265,8 +245,6 @@ namespace Lucene.Net.Search
 
 		public override int[] Init()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ord = base.init();
 		  int[] ord = base.Init();
 		  TermState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  Debug.Assert(TermState.Length >= ord.Length);
@@ -275,8 +253,6 @@ namespace Lucene.Net.Search
 
 		public override int[] Grow()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ord = base.grow();
 		  int[] ord = base.Grow();
 		  if (TermState.Length < ord.Length)
 		  {

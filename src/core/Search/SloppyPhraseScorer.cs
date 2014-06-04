@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -25,6 +26,8 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using System;
+    using Lucene.Net.Support;
 
 	internal sealed class SloppyPhraseScorer : Scorer
 	{
@@ -56,7 +59,7 @@ namespace Lucene.Net.Search
 		this.NumPostings = postings == null ? 0 : postings.Length;
 		Pq = new PhraseQueue(postings.Length);
 		// min(cost)
-		Cost_Renamed = postings[0].Postings.cost();
+		Cost_Renamed = postings[0].Postings.Cost();
 		// convert tps to a list of phrase positions.
 		// note: phrase-position differs from term-position in that its position
 		// reflects the phrase offset: pp.pos = tp.pos - offset.
@@ -70,11 +73,11 @@ namespace Lucene.Net.Search
 		  for (int i = 1; i < postings.Length; i++)
 		  {
 			PhrasePositions pp = new PhrasePositions(postings[i].Postings, postings[i].Position, i, postings[i].Terms);
-			Max.Next_Renamed = pp;
+			Max.next = pp;
 			Max = pp;
 			Max.Doc = -1;
 		  }
-		  Max.Next_Renamed = Min; // make it cyclic for easier manipulation
+		  Max.next = Min; // make it cyclic for easier manipulation
 		}
 	  }
 
@@ -270,7 +273,7 @@ namespace Lucene.Net.Search
 	  {
 		//System.err.println("initSimple: doc: "+min.doc);
 		Pq.Clear();
-		// position pps and build queue from list
+        // position pps and build queue from list
 		for (PhrasePositions pp = Min,prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
 		{
 		  pp.FirstPosition();
@@ -397,8 +400,8 @@ namespace Lucene.Net.Search
 		CheckedRpts = true;
 		PlaceFirstPositions();
 
-		LinkedHashMap<Term, int?> rptTerms = RepeatingTerms();
-		HasRpts = !rptTerms.Empty;
+		var rptTerms = RepeatingTerms();
+		HasRpts = rptTerms.Count > 0;
 
 		if (HasRpts)
 		{
@@ -426,7 +429,7 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < RptGroups.Length; i++)
 		{
 		  PhrasePositions[] rg = rgs[i].ToArray();
-		  Arrays.sort(rg, cmprtr);
+		  Array.Sort(rg, cmprtr);
 		  RptGroups[i] = rg;
 		  for (int j = 0; j < rg.Length; j++)
 		  {
@@ -452,7 +455,7 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Detect repetition groups. Done once - for first doc </summary>
-	  private List<List<PhrasePositions>> GatherRptGroups(LinkedHashMap<Term, int?> rptTerms)
+	  private List<List<PhrasePositions>> GatherRptGroups(HashMap<Term, int?> rptTerms)
 	  {
 		PhrasePositions[] rpp = RepeatingPPs(rptTerms);
 		List<List<PhrasePositions>> res = new List<List<PhrasePositions>>();
@@ -495,8 +498,8 @@ namespace Lucene.Net.Search
 		  List<HashSet<PhrasePositions>> tmp = new List<HashSet<PhrasePositions>>();
 		  List<FixedBitSet> bb = PpTermsBitSets(rpp, rptTerms);
 		  UnionTermGroups(bb);
-		  Dictionary<Term, int?> tg = TermGroups(rptTerms, bb);
-		  HashSet<int?> distinctGroupIDs = new HashSet<int?>(tg.Values);
+		  Dictionary<Term, int> tg = TermGroups(rptTerms, bb);
+		  HashSet<int> distinctGroupIDs = new HashSet<int>(tg.Values);
 		  for (int i = 0; i < distinctGroupIDs.Count; i++)
 		  {
 			tmp.Add(new HashSet<PhrasePositions>());
@@ -505,7 +508,7 @@ namespace Lucene.Net.Search
 		  {
 			foreach (Term t in pp.Terms)
 			{
-			  if (rptTerms.containsKey(t))
+			  if (rptTerms.ContainsKey(t))
 			  {
 				int g = tg[t];
 				tmp[g].Add(pp);
@@ -516,7 +519,7 @@ namespace Lucene.Net.Search
 		  }
 		  foreach (HashSet<PhrasePositions> hs in tmp)
 		  {
-			res.Add(new List<>(hs));
+              res.Add(new List<PhrasePositions>(hs));
 		  }
 		}
 		return res;
@@ -531,9 +534,9 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// find repeating terms and assign them ordinal values </summary>
-	  private LinkedHashMap<Term, int?> RepeatingTerms()
+	  private HashMap<Term, int?> RepeatingTerms()
 	  {
-		LinkedHashMap<Term, int?> tord = new LinkedHashMap<Term, int?>();
+		HashMap<Term, int?> tord = new HashMap<Term, int?>();
 		Dictionary<Term, int?> tcnt = new Dictionary<Term, int?>();
 		for (PhrasePositions pp = Min,prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
 		{
@@ -544,7 +547,7 @@ namespace Lucene.Net.Search
 			tcnt[t] = cnt;
 			if (cnt == 2)
 			{
-			  tord.put(t,tord.size());
+			  tord[t] = tord.Count;
 			}
 		  }
 		}
@@ -553,7 +556,7 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// find repeating pps, and for each, if has multi-terms, update this.hasMultiTermRpts </summary>
-	  private PhrasePositions[] RepeatingPPs(Dictionary<Term, int?> rptTerms)
+	  private PhrasePositions[] RepeatingPPs(HashMap<Term, int?> rptTerms)
 	  {
 		List<PhrasePositions> rp = new List<PhrasePositions>();
 		for (PhrasePositions pp = Min,prev = null; prev != Max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
@@ -573,20 +576,17 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
-	  private List<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, Dictionary<Term, int?> tord)
+	  private List<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, HashMap<Term, int?> tord)
 	  {
 		List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
 		foreach (PhrasePositions pp in rpp)
 		{
 		  FixedBitSet b = new FixedBitSet(tord.Count);
-		  int? ord;
-		  foreach (Term t in pp.Terms)
-		  {
-			if ((ord = tord[t]) != null)
-			{
-			  b.Set(ord);
-			}
-		  }
+          var ord = new int?();
+          foreach (var t in pp.Terms.Where(t => (ord = tord[t]) != null))
+          {
+              b.Set((int)ord);
+          }
 		  bb.Add(b);
 		}
 		return bb;
@@ -619,10 +619,10 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// map each term to the single group that contains it </summary>
-	  private Dictionary<Term, int?> TermGroups(LinkedHashMap<Term, int?> tord, List<FixedBitSet> bb)
+	  private Dictionary<Term, int> TermGroups(HashMap<Term, int?> tord, List<FixedBitSet> bb)
 	  {
-		Dictionary<Term, int?> tg = new Dictionary<Term, int?>();
-		Term[] t = tord.Keys.toArray(new Term[0]);
+		Dictionary<Term, int> tg = new Dictionary<Term, int>();
+		Term[] t = tord.Keys.ToArray(/*new Term[0]*/);
 		for (int i = 0; i < bb.Count; i++) // i is the group no.
 		{
 		  DocIdSetIterator bits = bb[i].Iterator();
@@ -673,8 +673,8 @@ namespace Lucene.Net.Search
 		  Max.Doc = NO_MORE_DOCS; // for further calls to docID()
 		  return false;
 		}
-		Min = Min.Next_Renamed; // cyclic
-		Max = Max.Next_Renamed; // cyclic
+		Min = Min.next; // cyclic
+		Max = Max.next; // cyclic
 		return true;
 	  }
 
@@ -725,7 +725,7 @@ namespace Lucene.Net.Search
 
 	  public override string ToString()
 	  {
-		  return "scorer(" + Weight_Renamed + ")";
+		  return "scorer(" + weight + ")";
 	  }
 	}
 

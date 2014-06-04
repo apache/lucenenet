@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		long N = stats.NumberOfDocuments;
 		long F = stats.TotalTermFreq;
-		return tfn * (float)(Similaritybase.Log2(1 + (N + 1) / (F + 0.5)));
+		return tfn * (float)(SimilarityBase.Log2(1 + (N + 1) / (F + 0.5)));
 	  }
 
 	  public override string ToString()

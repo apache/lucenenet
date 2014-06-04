@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 	  /// Returns a string representation of this <code>TermScorer</code>. </summary>
 	  public override string ToString()
 	  {
-		  return "scorer(" + Weight_Renamed + ")";
+		  return "scorer(" + weight + ")";
 	  }
 	}
 

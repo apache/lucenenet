@@ -3,26 +3,27 @@ using System.Diagnostics;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 
-	using Lucene.Net.Index;
-	using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using Lucene.Net.Index;
+    using Lucene.Net.Support;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
 	internal sealed class ExactPhraseScorer : Scorer
 	{
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search
 		EndMinus1 = postings.Length - 1;
 
 		// min(cost)
-		Cost_Renamed = postings[0].Postings.cost();
+		Cost_Renamed = postings[0].Postings.Cost();
 
 		for (int i = 0;i < postings.Length;i++)
 		{
@@ -82,11 +83,9 @@ namespace Lucene.Net.Search
 		  // the first term, then we just use .nextDoc() when
 		  // ANDing.  this buys ~15% gain for phrases where
 		  // freq of rarest 2 terms is close:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean useAdvance = postings[i].docFreq > 5*postings[0].docFreq;
 		  bool useAdvance = postings[i].DocFreq > 5 * postings[0].DocFreq;
 		  ChunkStates[i] = new ChunkState(postings[i].Postings, -postings[i].Position, useAdvance);
-		  if (i > 0 && postings[i].Postings.nextDoc() == DocIdSetIterator.NO_MORE_DOCS)
+		  if (i > 0 && postings[i].Postings.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			NoDocs = true;
 			return;
@@ -100,9 +99,7 @@ namespace Lucene.Net.Search
 		{
 
 		  // first (rarest) term
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = chunkStates[0].posEnum.nextDoc();
-		  int doc = ChunkStates[0].PosEnum.nextDoc();
+		  int doc = ChunkStates[0].PosEnum.NextDoc();
 		  if (doc == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			DocID_Renamed = doc;
@@ -113,15 +110,13 @@ namespace Lucene.Net.Search
 		  int i = 1;
 		  while (i < ChunkStates.Length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ChunkState cs = chunkStates[i];
 			ChunkState cs = ChunkStates[i];
-			int doc2 = cs.PosEnum.docID();
+			int doc2 = cs.PosEnum.DocID();
 			if (cs.UseAdvance)
 			{
 			  if (doc2 < doc)
 			  {
-				doc2 = cs.PosEnum.advance(doc);
+				doc2 = cs.PosEnum.Advance(doc);
 			  }
 			}
 			else
@@ -133,12 +128,12 @@ namespace Lucene.Net.Search
 				// done too many .nextDocs
 				if (++iter == 50)
 				{
-				  doc2 = cs.PosEnum.advance(doc);
+				  doc2 = cs.PosEnum.Advance(doc);
 				  break;
 				}
 				else
 				{
-				  doc2 = cs.PosEnum.nextDoc();
+				  doc2 = cs.PosEnum.NextDoc();
 				}
 			  }
 			}
@@ -168,7 +163,7 @@ namespace Lucene.Net.Search
 	  {
 
 		// first term
-		int doc = ChunkStates[0].PosEnum.advance(target);
+		int doc = ChunkStates[0].PosEnum.Advance(target);
 		if (doc == DocIdSetIterator.NO_MORE_DOCS)
 		{
 		  DocID_Renamed = DocIdSetIterator.NO_MORE_DOCS;
@@ -182,10 +177,10 @@ namespace Lucene.Net.Search
 		  int i = 1;
 		  while (i < ChunkStates.Length)
 		  {
-			int doc2 = ChunkStates[i].PosEnum.docID();
+			int doc2 = ChunkStates[i].PosEnum.DocID();
 			if (doc2 < doc)
 			{
-			  doc2 = ChunkStates[i].PosEnum.advance(doc);
+			  doc2 = ChunkStates[i].PosEnum.Advance(doc);
 			}
 			if (doc2 > doc)
 			{
@@ -206,7 +201,7 @@ namespace Lucene.Net.Search
 			}
 		  }
 
-		  doc = ChunkStates[0].PosEnum.nextDoc();
+		  doc = ChunkStates[0].PosEnum.NextDoc();
 		  if (doc == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			DocID_Renamed = doc;
@@ -217,7 +212,7 @@ namespace Lucene.Net.Search
 
 	  public override string ToString()
 	  {
-		return "ExactPhraseScorer(" + Weight_Renamed + ")";
+		return "ExactPhraseScorer(" + weight + ")";
 	  }
 
 	  public override int Freq()
@@ -243,11 +238,9 @@ namespace Lucene.Net.Search
 		// init chunks
 		for (int i = 0;i < ChunkStates.Length;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ChunkState cs = chunkStates[i];
 		  ChunkState cs = ChunkStates[i];
-		  cs.PosLimit = cs.PosEnum.freq();
-		  cs.Pos = cs.Offset + cs.PosEnum.nextPosition();
+		  cs.PosLimit = cs.PosEnum.Freq();
+		  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
 		  cs.PosUpto = 1;
 		  cs.LastPos = -1;
 		}
@@ -269,22 +262,18 @@ namespace Lucene.Net.Search
 		  if (Gen == 0)
 		  {
 			// wraparound
-			Arrays.fill(Gens, 0);
+			Arrays.Fill(Gens, 0);
 			Gen++;
 		  }
 
 		  // first term
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ChunkState cs = chunkStates[0];
 			ChunkState cs = ChunkStates[0];
 			while (cs.Pos < chunkEnd)
 			{
 			  if (cs.Pos > cs.LastPos)
 			  {
 				cs.LastPos = cs.Pos;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posIndex = cs.pos - chunkStart;
 				int posIndex = cs.Pos - chunkStart;
 				Counts[posIndex] = 1;
 				Debug.Assert(Gens[posIndex] != Gen);
@@ -297,7 +286,7 @@ namespace Lucene.Net.Search
 				break;
 			  }
 			  cs.PosUpto++;
-			  cs.Pos = cs.Offset + cs.PosEnum.nextPosition();
+			  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
 			}
 		  }
 
@@ -305,8 +294,6 @@ namespace Lucene.Net.Search
 		  bool any = true;
 		  for (int t = 1;t < EndMinus1;t++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ChunkState cs = chunkStates[t];
 			ChunkState cs = ChunkStates[t];
 			any = false;
 			while (cs.Pos < chunkEnd)
@@ -314,8 +301,6 @@ namespace Lucene.Net.Search
 			  if (cs.Pos > cs.LastPos)
 			  {
 				cs.LastPos = cs.Pos;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posIndex = cs.pos - chunkStart;
 				int posIndex = cs.Pos - chunkStart;
 				if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == t)
 				{
@@ -331,7 +316,7 @@ namespace Lucene.Net.Search
 				break;
 			  }
 			  cs.PosUpto++;
-			  cs.Pos = cs.Offset + cs.PosEnum.nextPosition();
+			  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
 			}
 
 			if (!any)
@@ -351,16 +336,12 @@ namespace Lucene.Net.Search
 		  // last term
 
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ChunkState cs = chunkStates[endMinus1];
 			ChunkState cs = ChunkStates[EndMinus1];
 			while (cs.Pos < chunkEnd)
 			{
 			  if (cs.Pos > cs.LastPos)
 			  {
 				cs.LastPos = cs.Pos;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int posIndex = cs.pos - chunkStart;
 				int posIndex = cs.Pos - chunkStart;
 				if (posIndex >= 0 && Gens[posIndex] == Gen && Counts[posIndex] == EndMinus1)
 				{
@@ -374,7 +355,7 @@ namespace Lucene.Net.Search
 				break;
 			  }
 			  cs.PosUpto++;
-			  cs.Pos = cs.Offset + cs.PosEnum.nextPosition();
+			  cs.Pos = cs.Offset + cs.PosEnum.NextPosition();
 			}
 		  }
 

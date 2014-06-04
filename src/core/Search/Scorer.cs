@@ -46,14 +46,14 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// the Scorer's parent Weight. in some cases this may be null </summary>
 	  // TODO can we clean this up?
-	  protected internal readonly Weight Weight_Renamed;
+	  protected internal readonly Weight weight;
 
 	  /// <summary>
 	  /// Constructs a Scorer </summary>
 	  /// <param name="weight"> The scorers <code>Weight</code>. </param>
 	  protected internal Scorer(Weight weight)
 	  {
-		this.Weight_Renamed = weight;
+		this.weight = weight;
 	  }
 
 	  /// <summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Weight_Renamed;
+			return weight;
 		  }
 	  }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Collections.emptyList();
+              return new List<ChildScorer>();
 		  }
 	  }
 

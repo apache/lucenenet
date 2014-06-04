@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using Terms = Lucene.Net.Index.Terms;
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// An abstract <seealso cref="Query"/> that matches documents
@@ -62,8 +63,8 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public abstract class MultiTermQuery : Query
 	{
-	  protected internal readonly string Field_Renamed;
-	  protected internal RewriteMethod RewriteMethod_Renamed = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+	  protected internal readonly string field;
+	  protected internal RewriteMethod rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 
 	  /// <summary>
 	  /// Abstract class that defines how the query is rewritten. </summary>
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search
 
 		  public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 		  {
-			Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<>(query));
+			Query result = new ConstantScoreQuery(new MultiTermQueryWrapperFilter<MultiTermQuery>(query));
 			result.Boost = query.Boost;
 			return result;
 		  }
@@ -122,7 +123,7 @@ namespace Lucene.Net.Search
 	  ///  exceeds <seealso cref="BooleanQuery#getMaxClauseCount"/>.
 	  /// </summary>
 	  ///  <seealso cref= #setRewriteMethod  </seealso>
-	  public static readonly RewriteMethod SCORING_BOOLEAN_QUERY_REWRITE = ScoringRewrite.SCORING_BOOLEAN_QUERY_REWRITE;
+      public static readonly RewriteMethod SCORING_BOOLEAN_QUERY_REWRITE = ScoringRewrite<MultiTermQuery>.SCORING_BOOLEAN_QUERY_REWRITE;
 
 	  /// <summary>
 	  /// Like <seealso cref="#SCORING_BOOLEAN_QUERY_REWRITE"/> except
@@ -135,7 +136,7 @@ namespace Lucene.Net.Search
 	  ///  exceeds <seealso cref="BooleanQuery#getMaxClauseCount"/>.
 	  /// </summary>
 	  ///  <seealso cref= #setRewriteMethod  </seealso>
-	  public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = ScoringRewrite.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+      public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = ScoringRewrite<MultiTermQuery>.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 
 	  /// <summary>
 	  /// A rewrite method that first translates each term into
@@ -180,8 +181,6 @@ namespace Lucene.Net.Search
 
 		protected internal override void AddClause(BooleanQuery topLevel, Term term, int docCount, float boost, TermContext states)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermQuery tq = new TermQuery(term, states);
 		  TermQuery tq = new TermQuery(term, states);
 		  tq.Boost = boost;
 		  topLevel.Add(tq, BooleanClause.Occur_e.SHOULD);
@@ -229,8 +228,6 @@ namespace Lucene.Net.Search
 
 		protected internal override void AddClause(BooleanQuery topLevel, Term term, int docFreq, float boost, TermContext states)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Query q = new ConstantScoreQuery(new TermQuery(term, states));
 		  Query q = new ConstantScoreQuery(new TermQuery(term, states));
 		  q.Boost = boost;
 		  topLevel.Add(q, BooleanClause.Occur_e.SHOULD);
@@ -299,7 +296,7 @@ namespace Lucene.Net.Search
 		{
 		  throw new System.ArgumentException("field must not be null");
 		}
-		this.Field_Renamed = field;
+		this.field = field;
 	  }
 
 	  /// <summary>
@@ -308,7 +305,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			  return Field_Renamed;
+			  return field;
 		  }
 	  }
 
@@ -343,32 +340,42 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override sealed Query Rewrite(IndexReader reader)
 	  {
-		return RewriteMethod_Renamed.Rewrite(reader, this);
+		return rewriteMethod.Rewrite(reader, this);
 	  }
-
+/*
 	  /// <seealso cref= #setRewriteMethod </seealso>
 	  public virtual RewriteMethod RewriteMethod
 	  {
 		  get
 		  {
-			return RewriteMethod_Renamed;
+			return rewriteMethod;
 		  }
 		  set
 		  {
-			RewriteMethod_Renamed = value;
+			rewriteMethod = value;
 		  }
 	  }
+        */
+      public virtual RewriteMethod GetRewriteMethod()
+      {
+          return rewriteMethod;
+      }
+
+      public virtual void SetRewriteMethod(RewriteMethod value)
+      {
+          rewriteMethod = value;
+      }
 
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + float.floatToIntBits(Boost);
-		result = prime * result + RewriteMethod_Renamed.HashCode();
-		if (Field_Renamed != null)
+		result = prime * result + Number.FloatToIntBits(Boost);
+		result = prime * result + rewriteMethod.GetHashCode();
+		if (field != null)
 		{
-			result = prime * result + Field_Renamed.HashCode();
+			result = prime * result + field.GetHashCode();
 		}
 		return result;
 	  }
@@ -388,15 +395,15 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 		MultiTermQuery other = (MultiTermQuery) obj;
-		if (float.floatToIntBits(Boost) != float.floatToIntBits(other.Boost))
+		if (Number.FloatToIntBits(Boost) != Number.FloatToIntBits(other.Boost))
 		{
 		  return false;
 		}
-		if (!RewriteMethod_Renamed.Equals(other.RewriteMethod_Renamed))
+		if (!rewriteMethod.Equals(other.rewriteMethod))
 		{
 		  return false;
 		}
-		return (other.Field_Renamed == null ? Field_Renamed == null : other.Field_Renamed.Equals(Field_Renamed));
+		return (other.field == null ? field == null : other.field.Equals(field));
 	  }
 
 	}

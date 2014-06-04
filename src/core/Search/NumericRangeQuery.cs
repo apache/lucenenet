@@ -171,133 +171,29 @@ namespace Lucene.Net.Search
 	/// @since 2.9
 	/// 
 	/// </summary>
-	public sealed class NumericRangeQuery<T> : MultiTermQuery where T : Number
-	{
+	public sealed class NumericRangeQuery<T> : MultiTermQuery 
+        where T : struct, IComparable<T> // best equiv constraint for java's number class
+    {
 
-	  private NumericRangeQuery(string field, int precisionStep, NumericType dataType, T min, T max, bool minInclusive, bool maxInclusive) : base(field)
+	  internal NumericRangeQuery(string field, int precisionStep, NumericType dataType, T? min, T? max, bool minInclusive, bool maxInclusive) 
+          : base(field)
 	  {
 		if (precisionStep < 1)
 		{
 		  throw new System.ArgumentException("precisionStep must be >=1");
 		}
-		this.PrecisionStep_Renamed = precisionStep;
+		this.precisionStep = precisionStep;
 		this.DataType = dataType;
-		this.Min_Renamed = min;
-		this.Max_Renamed = max;
+		this.min = min;
+		this.max = max;
 		this.MinInclusive = minInclusive;
 		this.MaxInclusive = maxInclusive;
 	  }
 
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
-	  /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<long?> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, precisionStep, NumericType.LONG, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
-	  /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<long?> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.LONG, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
-	  /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<int?> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, precisionStep, NumericType.INT, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
-	  /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<int?> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
-	  /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>.
-	  /// <seealso cref="Double#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
-	  /// with {@code min == max == Double.NaN}.  By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<double?> NewDoubleRange(string field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, precisionStep, NumericType.DOUBLE, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
-	  /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>.
-	  /// <seealso cref="Double#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
-	  /// with {@code min == max == Double.NaN}.  By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<double?> NewDoubleRange(string field, double? min, double? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.DOUBLE, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
-	  /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>.
-	  /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
-	  /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<float?> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, precisionStep, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
-	  }
-
-	  /// <summary>
-	  /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
-	  /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
-	  /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
-	  /// by setting the min or max value to <code>null</code>.
-	  /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
-	  /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
-	  /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
-	  /// </summary>
-	  public static NumericRangeQuery<float?> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
-	  {
-		return new NumericRangeQuery<>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
-	  }
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings("unchecked") protected Lucene.Net.Index.TermsEnum getTermsEnum(final Lucene.Net.Index.Terms terms, Lucene.Net.Util.AttributeSource atts) throws java.io.IOException
 	  protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 	  {
 		// very strange: java.lang.Number itself is not Comparable, but all subclasses used here are
-		if (Min_Renamed != null && Max_Renamed != null && ((IComparable<T>) Min_Renamed).CompareTo(Max_Renamed) > 0)
+		if (min.HasValue && max.HasValue && (min.Value).CompareTo(max.Value) > 0)
 		{
 		  return TermsEnum.EMPTY;
 		}
@@ -320,21 +216,21 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Returns the lower value of this range query </summary>
-	  public T Min
+	  public T? Min
 	  {
 		  get
 		  {
-			  return Min_Renamed;
+			  return min;
 		  }
 	  }
 
 	  /// <summary>
 	  /// Returns the upper value of this range query </summary>
-	  public T Max
+	  public T? Max
 	  {
 		  get
 		  {
-			  return Max_Renamed;
+			  return max;
 		  }
 	  }
 
@@ -344,24 +240,20 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			  return PrecisionStep_Renamed;
+			  return precisionStep;
 		  }
 	  }
 
 	  public override string ToString(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder sb = new StringBuilder();
 		StringBuilder sb = new StringBuilder();
 		if (!Field.Equals(field))
 		{
 			sb.Append(Field).Append(':');
 		}
-		return sb.Append(MinInclusive ? '[' : '{').Append((Min_Renamed == null) ? "*" : Min_Renamed.ToString()).Append(" TO ").Append((Max_Renamed == null) ? "*" : Max_Renamed.ToString()).Append(MaxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
+		return sb.Append(MinInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(MaxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings({"unchecked","rawtypes"}) public final boolean equals(final Object o)
 	  public override bool Equals(object o)
 	  {
 		if (o == this)
@@ -372,35 +264,33 @@ namespace Lucene.Net.Search
 		{
 		  return false;
 		}
-		if (o is NumericRangeQuery)
+		if (o is NumericRangeQuery<T>)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final NumericRangeQuery q=(NumericRangeQuery)o;
-		  NumericRangeQuery q = (NumericRangeQuery)o;
-		  return ((q.Min_Renamed == null ? Min_Renamed == null : q.Min_Renamed.Equals(Min_Renamed)) && (q.Max_Renamed == null ? Max_Renamed == null : q.Max_Renamed.Equals(Max_Renamed)) && MinInclusive == q.MinInclusive && MaxInclusive == q.MaxInclusive && PrecisionStep_Renamed == q.PrecisionStep_Renamed);
+		  var q = (NumericRangeQuery<T>)o;
+          return ((q.min == null ? min == null : q.min.Equals(min)) && (q.max == null ? max == null : q.max.Equals(max)) && MinInclusive == q.MinInclusive && MaxInclusive == q.MaxInclusive && precisionStep == q.precisionStep);
 		}
 		return false;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int hash = base.HashCode();
-		hash += PrecisionStep_Renamed ^ 0x64365465;
-		if (Min_Renamed != null)
+		int hash = base.GetHashCode();
+		hash += precisionStep ^ 0x64365465;
+		if (min != null)
 		{
-			hash += Min_Renamed.HashCode() ^ 0x14fa55fb;
+            hash += min.GetHashCode() ^ 0x14fa55fb;
 		}
-		if (Max_Renamed != null)
+		if (max != null)
 		{
-			hash += Max_Renamed.HashCode() ^ 0x733fa5fe;
+            hash += max.GetHashCode() ^ 0x733fa5fe;
 		}
-		return hash + (Convert.ToBoolean(MinInclusive).HashCode() ^ 0x14fa55fb) + (Convert.ToBoolean(MaxInclusive).HashCode() ^ 0x733fa5fe);
+        return hash + (Convert.ToBoolean(MinInclusive).GetHashCode() ^ 0x14fa55fb) + (Convert.ToBoolean(MaxInclusive).GetHashCode() ^ 0x733fa5fe);
 	  }
 
 	  // members (package private, to be also fast accessible by NumericRangeTermEnum)
-	  internal readonly int PrecisionStep_Renamed;
+	  internal readonly int precisionStep;
 	  internal readonly NumericType DataType;
-	  internal readonly T Min_Renamed, Max_Renamed;
+	  internal readonly T? min, max;
 	  internal readonly bool MinInclusive, MaxInclusive;
 
 	  // used to handle float/double infinity correcty
@@ -421,7 +311,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  private sealed class NumericRangeTermsEnum : FilteredTermsEnum
 	  {
-		  private readonly NumericRangeQuery OuterInstance;
+		private readonly NumericRangeQuery<T> OuterInstance;
 
 
 		internal BytesRef CurrentLowerBound, CurrentUpperBound;
@@ -429,26 +319,27 @@ namespace Lucene.Net.Search
 		internal readonly LinkedList<BytesRef> RangeBounds = new LinkedList<BytesRef>();
 		internal readonly IComparer<BytesRef> TermComp;
 
-		internal NumericRangeTermsEnum(NumericRangeQuery outerInstance, TermsEnum tenum) : base(tenum)
+		internal NumericRangeTermsEnum(NumericRangeQuery<T> outerInstance, TermsEnum tenum) 
+            : base(tenum)
 		{
-			this.OuterInstance = outerInstance;
-		  switch (outerInstance.DataType)
+		  this.OuterInstance = outerInstance;
+		  switch (OuterInstance.DataType)
 		  {
 			case NumericType.LONG:
 			case NumericType.DOUBLE:
 			{
 			  // lower
 			  long minBound;
-			  if (outerInstance.DataType == NumericType.LONG)
+              if (OuterInstance.DataType == NumericType.LONG)
 			  {
-				minBound = (outerInstance.Min_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? long.MinValue : (long)outerInstance.Min_Renamed;
+                  minBound = (OuterInstance.min == null) ? long.MinValue : Convert.ToInt64(OuterInstance.min.Value);
 			  }
 			  else
 			  {
-				Debug.Assert(outerInstance.DataType == NumericType.DOUBLE);
-				minBound = (outerInstance.Min_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? LONG_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableLong((double)outerInstance.Min_Renamed);
+                  Debug.Assert(OuterInstance.DataType == NumericType.DOUBLE);
+                  minBound = (OuterInstance.min == null) ? LONG_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableLong(Convert.ToDouble(OuterInstance.min.Value));
 			  }
-			  if (!outerInstance.MinInclusive && outerInstance.Min_Renamed != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+              if (!OuterInstance.MinInclusive && OuterInstance.min != null)
 			  {
 				if (minBound == long.MaxValue)
 				{
@@ -459,16 +350,16 @@ namespace Lucene.Net.Search
 
 			  // upper
 			  long maxBound;
-			  if (outerInstance.DataType == NumericType.LONG)
+              if (OuterInstance.DataType == NumericType.LONG)
 			  {
-				maxBound = (outerInstance.Max_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? long.MaxValue : (long)outerInstance.Max_Renamed;
+                  maxBound = (OuterInstance.max == null) ? long.MaxValue : Convert.ToInt64(OuterInstance.max);
 			  }
 			  else
 			  {
-				Debug.Assert(outerInstance.DataType == NumericType.DOUBLE);
-				maxBound = (outerInstance.Max_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? LONG_POSITIVE_INFINITY : NumericUtils.DoubleToSortableLong((double)outerInstance.Max_Renamed);
+                  Debug.Assert(OuterInstance.DataType == NumericType.DOUBLE);
+                  maxBound = (OuterInstance.max == null) ? LONG_POSITIVE_INFINITY : NumericUtils.DoubleToSortableLong(Convert.ToDouble(OuterInstance.max));
 			  }
-			  if (!outerInstance.MaxInclusive && outerInstance.Max_Renamed != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+              if (!OuterInstance.MaxInclusive && OuterInstance.max != null)
 			  {
 				if (maxBound == long.MinValue)
 				{
@@ -477,7 +368,7 @@ namespace Lucene.Net.Search
 				maxBound--;
 			  }
 
-			  NumericUtils.SplitLongRange(new LongRangeBuilderAnonymousInnerClassHelper(this), outerInstance.PrecisionStep_Renamed, minBound, maxBound);
+              NumericUtils.SplitLongRange(new LongRangeBuilderAnonymousInnerClassHelper(this), OuterInstance.precisionStep, minBound, maxBound);
 			  break;
 			}
 
@@ -486,16 +377,16 @@ namespace Lucene.Net.Search
 			{
 			  // lower
 			  int minBound;
-			  if (outerInstance.DataType == NumericType.INT)
+              if (OuterInstance.DataType == NumericType.INT)
 			  {
-				minBound = (outerInstance.Min_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? int.MinValue : (int)outerInstance.Min_Renamed;
+                  minBound = (OuterInstance.min == null) ? int.MinValue : Convert.ToInt32(OuterInstance.min);
 			  }
 			  else
 			  {
-				Debug.Assert(outerInstance.DataType == NumericType.FLOAT);
-				minBound = (outerInstance.Min_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? INT_NEGATIVE_INFINITY : NumericUtils.FloatToSortableInt((float)outerInstance.Min_Renamed);
+                  Debug.Assert(OuterInstance.DataType == NumericType.FLOAT);
+                  minBound = (OuterInstance.min == null) ? INT_NEGATIVE_INFINITY : NumericUtils.FloatToSortableInt(Convert.ToSingle(OuterInstance.min));
 			  }
-			  if (!outerInstance.MinInclusive && outerInstance.Min_Renamed != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+              if (!OuterInstance.MinInclusive && OuterInstance.min != null)
 			  {
 				if (minBound == int.MaxValue)
 				{
@@ -506,16 +397,16 @@ namespace Lucene.Net.Search
 
 			  // upper
 			  int maxBound;
-			  if (outerInstance.DataType == NumericType.INT)
+              if (OuterInstance.DataType == NumericType.INT)
 			  {
-				maxBound = (outerInstance.Max_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? int.MaxValue : (int)outerInstance.Max_Renamed;
+                  maxBound = (OuterInstance.max == null) ? int.MaxValue : Convert.ToInt32(OuterInstance.max);
 			  }
 			  else
 			  {
-				Debug.Assert(outerInstance.DataType == NumericType.FLOAT);
-				maxBound = (outerInstance.Max_Renamed == Lucene.Net.Util.BytesRefIterator_Fields.Null) ? INT_POSITIVE_INFINITY : NumericUtils.FloatToSortableInt((float)outerInstance.Max_Renamed);
+                  Debug.Assert(OuterInstance.DataType == NumericType.FLOAT);
+                  maxBound = (OuterInstance.max == null) ? INT_POSITIVE_INFINITY : NumericUtils.FloatToSortableInt(Convert.ToSingle(OuterInstance.max));
 			  }
-			  if (!outerInstance.MaxInclusive && outerInstance.Max_Renamed != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+              if (!OuterInstance.MaxInclusive && OuterInstance.max != null)
 			  {
 				if (maxBound == int.MinValue)
 				{
@@ -524,7 +415,7 @@ namespace Lucene.Net.Search
 				maxBound--;
 			  }
 
-			  NumericUtils.SplitIntRange(new IntRangeBuilderAnonymousInnerClassHelper(this), outerInstance.PrecisionStep_Renamed, minBound, maxBound);
+              NumericUtils.SplitIntRange(new IntRangeBuilderAnonymousInnerClassHelper(this), OuterInstance.precisionStep, minBound, maxBound);
 			  break;
 			}
 
@@ -533,7 +424,7 @@ namespace Lucene.Net.Search
 			  throw new System.ArgumentException("Invalid NumericType");
 		  }
 
-		  TermComp = IComparer;
+		  TermComp = Comparator;
 		}
 
 		private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.LongRangeBuilder
@@ -572,10 +463,12 @@ namespace Lucene.Net.Search
 		{
 		  Debug.Assert(RangeBounds.Count % 2 == 0);
 
-		  CurrentLowerBound = RangeBounds.RemoveFirst();
-		  Debug.Assert(CurrentUpperBound == Lucene.Net.Util.BytesRefIterator_Fields.Null || TermComp.Compare(CurrentUpperBound, CurrentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
+          CurrentLowerBound = RangeBounds.First.Value;
+          RangeBounds.RemoveFirst();
+		  Debug.Assert(CurrentUpperBound == null || TermComp.Compare(CurrentUpperBound, CurrentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
 
-		  CurrentUpperBound = RangeBounds.RemoveFirst();
+          CurrentUpperBound = RangeBounds.First.Value;
+          RangeBounds.RemoveFirst();
 		}
 
 		protected internal override BytesRef NextSeekTerm(BytesRef term)
@@ -585,23 +478,23 @@ namespace Lucene.Net.Search
 			NextRange();
 
 			// if the new upper bound is before the term parameter, the sub-range is never a hit
-			if (term != Lucene.Net.Util.BytesRefIterator_Fields.Null && TermComp.Compare(term, CurrentUpperBound) > 0)
+			if (term != null && TermComp.Compare(term, CurrentUpperBound) > 0)
 			{
 			  continue;
 			}
 			// never seek backwards, so use current term if lower bound is smaller
-			return (term != Lucene.Net.Util.BytesRefIterator_Fields.Null && TermComp.Compare(term, CurrentLowerBound) > 0) ? term : CurrentLowerBound;
+			return (term != null && TermComp.Compare(term, CurrentLowerBound) > 0) ? term : CurrentLowerBound;
 		  }
 
 		  // no more sub-range enums available
 		  Debug.Assert(RangeBounds.Count == 0);
-		  CurrentLowerBound = CurrentUpperBound = Lucene.Net.Util.BytesRefIterator_Fields.Null;
-		  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  CurrentLowerBound = CurrentUpperBound = null;
+		  return null;
 		}
 
 		protected internal override AcceptStatus Accept(BytesRef term)
 		{
-		  while (CurrentUpperBound == Lucene.Net.Util.BytesRefIterator_Fields.Null || TermComp.Compare(term, CurrentUpperBound) > 0)
+		  while (CurrentUpperBound == null || TermComp.Compare(term, CurrentUpperBound) > 0)
 		  {
 			if (RangeBounds.Count == 0)
 			{
@@ -621,5 +514,112 @@ namespace Lucene.Net.Search
 	  }
 
 	}
+
+    public static class NumericRangeQuery
+    {
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
+        /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<long> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
+	    {
+		    return new NumericRangeQuery<long>(field, precisionStep, NumericType.LONG, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>long</code>
+        /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<long> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
+	    {
+		    return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.LONG, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
+        /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<int> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
+	    {
+		    return new NumericRangeQuery<int>(field, precisionStep, NumericType.INT, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>int</code>
+        /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<int> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
+	    {
+		    return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
+        /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>.
+        /// <seealso cref="Double#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
+        /// with {@code min == max == Double.NaN}.  By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<double> NewDoubleRange(string field, int precisionStep, double? min, double? max, bool minInclusive, bool maxInclusive)
+	    {
+		    return new NumericRangeQuery<double>(field, precisionStep, NumericType.DOUBLE, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>double</code>
+        /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>.
+        /// <seealso cref="Double#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
+        /// with {@code min == max == Double.NaN}.  By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<double> NewDoubleRange(string field, double? min, double? max, bool minInclusive, bool maxInclusive)
+	    {
+            return new NumericRangeQuery<double>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.DOUBLE, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
+        /// range using the given <a href="#precisionStepDesc"><code>precisionStep</code></a>.
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>.
+        /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
+        /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<float> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
+	    {
+            return new NumericRangeQuery<float>(field, precisionStep, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
+	    }
+
+        /// <summary>
+        /// Factory that creates a <code>NumericRangeQuery</code>, that queries a <code>float</code>
+        /// range using the default <code>precisionStep</code> <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> (4).
+        /// You can have half-open ranges (which are in fact &lt;/&le; or &gt;/&ge; queries)
+        /// by setting the min or max value to <code>null</code>.
+        /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
+        /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
+        /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// </summary>
+        public static NumericRangeQuery<float> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
+	    {
+            return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
+	    }
+    }
 
 }

@@ -28,6 +28,7 @@ namespace Lucene.Net.Search.Spans
 	using TermContext = Lucene.Net.Index.TermContext;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -36,8 +37,8 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public class SpanNotQuery : SpanQuery, ICloneable
 	{
-	  private SpanQuery Include_Renamed;
-	  private SpanQuery Exclude_Renamed;
+	  private SpanQuery include;
+	  private SpanQuery exclude;
 	  private readonly int Pre;
 	  private readonly int Post;
 
@@ -66,8 +67,8 @@ namespace Lucene.Net.Search.Spans
 	  /// </summary>
 	  public SpanNotQuery(SpanQuery include, SpanQuery exclude, int pre, int post)
 	  {
-		this.Include_Renamed = include;
-		this.Exclude_Renamed = exclude;
+		this.include = include;
+		this.exclude = exclude;
 		this.Pre = (pre >= 0) ? pre : 0;
 		this.Post = (post >= 0) ? post : 0;
 
@@ -83,7 +84,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Include_Renamed;
+			  return include;
 		  }
 	  }
 
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Exclude_Renamed;
+			  return exclude;
 		  }
 	  }
 
@@ -101,20 +102,20 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Include_Renamed.Field;
+			  return include.Field;
 		  }
 	  }
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		  Include_Renamed.ExtractTerms(terms);
+		  include.ExtractTerms(terms);
 	  }
 	  public override string ToString(string field)
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("spanNot(");
-		buffer.Append(Include_Renamed.ToString(field));
+		buffer.Append(include.ToString(field));
 		buffer.Append(", ");
-		buffer.Append(Exclude_Renamed.ToString(field));
+		buffer.Append(exclude.ToString(field));
 		buffer.Append(", ");
 		buffer.Append(Convert.ToString(Pre));
 		buffer.Append(", ");
@@ -126,7 +127,7 @@ namespace Lucene.Net.Search.Spans
 
 	  public override SpanNotQuery Clone()
 	  {
-		SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery)Include_Renamed.Clone(), (SpanQuery) Exclude_Renamed.Clone(), Pre, Post);
+		SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery)include.Clone(), (SpanQuery) exclude.Clone(), Pre, Post);
 		spanNotQuery.Boost = Boost;
 		return spanNotQuery;
 	  }
@@ -150,10 +151,10 @@ namespace Lucene.Net.Search.Spans
 			  this.Context = context;
 			  this.AcceptDocs = acceptDocs;
 			  this.TermContexts = termContexts;
-			  includeSpans = outerInstance.Include_Renamed.GetSpans(context, acceptDocs, termContexts);
+			  includeSpans = outerInstance.include.GetSpans(context, acceptDocs, termContexts);
 			  moreInclude = true;
-			  excludeSpans = outerInstance.Exclude_Renamed.GetSpans(context, acceptDocs, termContexts);
-			  moreExclude = excludeSpans.next();
+			  excludeSpans = outerInstance.exclude.GetSpans(context, acceptDocs, termContexts);
+			  moreExclude = excludeSpans.Next();
 		  }
 
 		  private Spans includeSpans;
@@ -166,28 +167,28 @@ namespace Lucene.Net.Search.Spans
 		  {
 			if (moreInclude) // move to next include
 			{
-			  moreInclude = includeSpans.next();
+                moreInclude = includeSpans.Next();
 			}
 
 			while (moreInclude && moreExclude)
 			{
 
-			  if (includeSpans.doc() > excludeSpans.doc()) // skip exclude
+              if (includeSpans.Doc() > excludeSpans.Doc()) // skip exclude
 			  {
-				moreExclude = excludeSpans.skipTo(includeSpans.doc());
+                  moreExclude = excludeSpans.SkipTo(includeSpans.Doc());
 			  }
 
-			  while (moreExclude && includeSpans.doc() == excludeSpans.doc() && excludeSpans.end() <= includeSpans.start() - OuterInstance.Pre) // while exclude is before
+              while (moreExclude && includeSpans.Doc() == excludeSpans.Doc() && excludeSpans.End() <= includeSpans.Start() - OuterInstance.Pre) // while exclude is before
 			  {
-				moreExclude = excludeSpans.next(); // increment exclude
+				moreExclude = excludeSpans.Next(); // increment exclude
 			  }
 
-			  if (!moreExclude || includeSpans.doc() != excludeSpans.doc() || includeSpans.end() + OuterInstance.Post <= excludeSpans.start()) // if no intersection
+              if (!moreExclude || includeSpans.Doc() != excludeSpans.Doc() || includeSpans.End() + OuterInstance.Post <= excludeSpans.Start()) // if no intersection
 			  {
 				break; // we found a match
 			  }
 
-			  moreInclude = includeSpans.next(); // intersected: keep scanning
+			  moreInclude = includeSpans.Next(); // intersected: keep scanning
 			}
 			return moreInclude;
 		  }
@@ -196,7 +197,7 @@ namespace Lucene.Net.Search.Spans
 		  {
 			if (moreInclude) // skip include
 			{
-			  moreInclude = includeSpans.skipTo(target);
+			  moreInclude = includeSpans.SkipTo(target);
 			}
 
 			if (!moreInclude)
@@ -204,36 +205,36 @@ namespace Lucene.Net.Search.Spans
 			  return false;
 			}
 
-			if (moreExclude && includeSpans.doc() > excludeSpans.doc()) // skip exclude
+			if (moreExclude && includeSpans.Doc() > excludeSpans.Doc()) // skip exclude
 			{
-			  moreExclude = excludeSpans.skipTo(includeSpans.doc());
+			  moreExclude = excludeSpans.SkipTo(includeSpans.Doc());
 			}
 
-			while (moreExclude && includeSpans.doc() == excludeSpans.doc() && excludeSpans.end() <= includeSpans.start() - OuterInstance.Pre) // while exclude is before
+			while (moreExclude && includeSpans.Doc() == excludeSpans.Doc() && excludeSpans.End() <= includeSpans.Start() - OuterInstance.Pre) // while exclude is before
 			{
-			  moreExclude = excludeSpans.next(); // increment exclude
+			  moreExclude = excludeSpans.Next(); // increment exclude
 			}
 
-			if (!moreExclude || includeSpans.doc() != excludeSpans.doc() || includeSpans.end() + OuterInstance.Post <= excludeSpans.start()) // if no intersection
+			if (!moreExclude || includeSpans.Doc() != excludeSpans.Doc() || includeSpans.End() + OuterInstance.Post <= excludeSpans.Start()) // if no intersection
 			{
 			  return true; // we found a match
 			}
 
-			return next(); // scan to next match
+			return Next(); // scan to next match
 		  }
 
 		  public override int Doc()
 		  {
-			  return includeSpans.doc();
+			  return includeSpans.Doc();
 		  }
 		  public override int Start()
 		  {
-			  return includeSpans.start();
+			  return includeSpans.Start();
 		  }
 		  public override int End()
 		// TODO: Remove warning after API has been finalized
 		  {
-			  return includeSpans.end();
+			  return includeSpans.End();
 		  }
 		  public override ICollection<sbyte[]> Payload
 		  {
@@ -242,7 +243,7 @@ namespace Lucene.Net.Search.Spans
 			  List<sbyte[]> result = null;
 			  if (includeSpans.PayloadAvailable)
 			  {
-				result = new List<>(includeSpans.Payload);
+				result = new List<sbyte[]>(includeSpans.Payload);
 			  }
 			  return result;
 			  }
@@ -259,7 +260,7 @@ namespace Lucene.Net.Search.Spans
 
 		public override long Cost()
 		{
-		  return includeSpans.cost();
+		  return includeSpans.Cost();
 		}
 
 		public override string ToString()
@@ -273,20 +274,20 @@ namespace Lucene.Net.Search.Spans
 	  {
 		SpanNotQuery clone = null;
 
-		SpanQuery rewrittenInclude = (SpanQuery) Include_Renamed.Rewrite(reader);
-		if (rewrittenInclude != Include_Renamed)
+		SpanQuery rewrittenInclude = (SpanQuery) include.Rewrite(reader);
+		if (rewrittenInclude != include)
 		{
 		  clone = this.Clone();
-		  clone.Include_Renamed = rewrittenInclude;
+		  clone.include = rewrittenInclude;
 		}
-		SpanQuery rewrittenExclude = (SpanQuery) Exclude_Renamed.Rewrite(reader);
-		if (rewrittenExclude != Exclude_Renamed)
+		SpanQuery rewrittenExclude = (SpanQuery) exclude.Rewrite(reader);
+		if (rewrittenExclude != exclude)
 		{
 		  if (clone == null)
 		  {
 			  clone = this.Clone();
 		  }
-		  clone.Exclude_Renamed = rewrittenExclude;
+		  clone.exclude = rewrittenExclude;
 		}
 
 		if (clone != null)
@@ -309,19 +310,19 @@ namespace Lucene.Net.Search.Spans
 		}
 
 		SpanNotQuery other = (SpanNotQuery)o;
-		return this.Include_Renamed.Equals(other.Include_Renamed) && this.Exclude_Renamed.Equals(other.Exclude_Renamed) && this.Pre == other.Pre && this.Post == other.Post;
+		return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.Pre == other.Pre && this.Post == other.Post;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int h = base.HashCode();
-		h = int.rotateLeft(h, 1);
-		h ^= Include_Renamed.HashCode();
-		h = int.rotateLeft(h, 1);
-		h ^= Exclude_Renamed.HashCode();
-		h = int.rotateLeft(h, 1);
+		int h = base.GetHashCode();
+		h = Number.RotateLeft(h, 1);
+		h ^= include.GetHashCode();
+        h = Number.RotateLeft(h, 1);
+		h ^= exclude.GetHashCode();
+        h = Number.RotateLeft(h, 1);
 		h ^= Pre;
-		h = int.rotateLeft(h, 1);
+        h = Number.RotateLeft(h, 1);
 		h ^= Post;
 		return h;
 	  }

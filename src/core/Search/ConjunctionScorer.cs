@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
 	internal class ConjunctionScorer : Scorer
 	{
 	  protected internal int LastDoc = -1;
-	  protected internal readonly DocsAndFreqs[] DocsAndFreqs;
+	  protected internal readonly DocsAndFreqs[] docsAndFreqs;
 	  private readonly DocsAndFreqs Lead;
 	  private readonly float Coord;
 
@@ -39,16 +39,16 @@ namespace Lucene.Net.Search
 	  internal ConjunctionScorer(Weight weight, Scorer[] scorers, float coord) : base(weight)
 	  {
 		this.Coord = coord;
-		this.DocsAndFreqs = new DocsAndFreqs[scorers.Length];
+        this.docsAndFreqs = new DocsAndFreqs[scorers.Length];
 		for (int i = 0; i < scorers.Length; i++)
 		{
-		  DocsAndFreqs[i] = new DocsAndFreqs(scorers[i]);
+            docsAndFreqs[i] = new DocsAndFreqs(scorers[i]);
 		}
 		// Sort the array the first time to allow the least frequent DocsEnum to
 		// lead the matching.
-		ArrayUtil.TimSort(DocsAndFreqs, new ComparatorAnonymousInnerClassHelper(this));
+		ArrayUtil.TimSort(docsAndFreqs, new ComparatorAnonymousInnerClassHelper(this));
 
-		Lead = DocsAndFreqs[0]; // least frequent DocsEnum leads the intersection
+        Lead = docsAndFreqs[0]; // least frequent DocsEnum leads the intersection
 	  }
 
 	  private class ComparatorAnonymousInnerClassHelper : IComparer<DocsAndFreqs>
@@ -62,7 +62,18 @@ namespace Lucene.Net.Search
 
 		  public virtual int Compare(DocsAndFreqs o1, DocsAndFreqs o2)
 		  {
-			return long.compare(o1.Cost, o2.Cost);
+              if (o1.Cost < o2.Cost)
+              {
+                  return -1;
+              }
+              else if (o1.Cost > o2.Cost)
+              {
+                  return 1;
+              }
+              else
+              {
+                  return 0;
+              }
 		  }
 	  }
 
@@ -75,37 +86,37 @@ namespace Lucene.Net.Search
 		  // return that value.
 		  for (;;)
 		  {
-			for (int i = 1; i < DocsAndFreqs.Length; i++)
+			for (int i = 1; i < docsAndFreqs.Length; i++)
 			{
 			  // invariant: docsAndFreqs[i].doc <= doc at this point.
 
 			  // docsAndFreqs[i].doc may already be equal to doc if we "broke advanceHead"
 			  // on the previous iteration and the advance on the lead scorer exactly matched.
-			  if (DocsAndFreqs[i].Doc < doc)
+			  if (docsAndFreqs[i].Doc < doc)
 			  {
-				DocsAndFreqs[i].Doc = DocsAndFreqs[i].Scorer.advance(doc);
+                  docsAndFreqs[i].Doc = docsAndFreqs[i].Scorer.Advance(doc);
 
-				if (DocsAndFreqs[i].Doc > doc)
+				if (docsAndFreqs[i].Doc > doc)
 				{
 				  // DocsEnum beyond the current doc - break and advance lead to the new highest doc.
-				  doc = DocsAndFreqs[i].Doc;
+                    doc = docsAndFreqs[i].Doc;
 				  goto advanceHeadBreak;
 				}
 			  }
 			}
 			// success - all DocsEnums are on the same doc
 			return doc;
-			  advanceHeadContinue:;
+			  //advanceHeadContinue:;
 		  }
 		  advanceHeadBreak:
 		  // advance head for next iteration
-		  doc = Lead.Doc = Lead.Scorer.advance(doc);
+		  doc = Lead.Doc = Lead.Scorer.Advance(doc);
 		}
 	  }
 
 	  public override int Advance(int target)
 	  {
-		Lead.Doc = Lead.Scorer.advance(target);
+		Lead.Doc = Lead.Scorer.Advance(target);
 		return LastDoc = DoNext(Lead.Doc);
 	  }
 
@@ -116,7 +127,7 @@ namespace Lucene.Net.Search
 
 	  public override int NextDoc()
 	  {
-		Lead.Doc = Lead.Scorer.nextDoc();
+		Lead.Doc = Lead.Scorer.NextDoc();
 		return LastDoc = DoNext(Lead.Doc);
 	  }
 
@@ -124,29 +135,29 @@ namespace Lucene.Net.Search
 	  {
 		// TODO: sum into a double and cast to float if we ever send required clauses to BS1
 		float sum = 0.0f;
-		foreach (DocsAndFreqs docs in DocsAndFreqs)
+        foreach (DocsAndFreqs docs in docsAndFreqs)
 		{
-		  sum += docs.Scorer.score();
+		  sum += docs.Scorer.Score();
 		}
 		return sum * Coord;
 	  }
 
 	  public override int Freq()
 	  {
-		return DocsAndFreqs.Length;
+          return docsAndFreqs.Length;
 	  }
 
 	  public override long Cost()
 	  {
-		return Lead.Scorer.cost();
+		return Lead.Scorer.Cost();
 	  }
 
 	  public override ICollection<ChildScorer> Children
 	  {
 		  get
 		  {
-			List<ChildScorer> children = new List<ChildScorer>(DocsAndFreqs.Length);
-			foreach (DocsAndFreqs docs in DocsAndFreqs)
+			List<ChildScorer> children = new List<ChildScorer>(docsAndFreqs.Length);
+            foreach (DocsAndFreqs docs in docsAndFreqs)
 			{
 			  children.Add(new ChildScorer(docs.Scorer, "MUST"));
 			}

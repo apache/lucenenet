@@ -40,6 +40,7 @@ namespace Lucene.Net.Search
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
+    using System.IO;
 
 	/// <summary>
 	/// Expert: Maintains caches of term values.
@@ -458,7 +459,7 @@ namespace Lucene.Net.Search
 	  /// entries are created that are not sane according to
 	  /// <seealso cref="Lucene.Net.Util.FieldCacheSanityChecker"/>.
 	  /// </summary>
-	  PrintStream InfoStream {set;get;}
+	  StreamWriter InfoStream {set;get;}
 
 	}
 
@@ -478,7 +479,7 @@ namespace Lucene.Net.Search
 		  // UTF8 bytes... but really users should use
 		  // IntField, instead, which already decodes
 		  // directly from byte[]
-		  return Convert.ToByte(term.Utf8ToString());
+		  return (sbyte)Convert.ToByte(term.Utf8ToString());
 		  }
 		public override string ToString()
 		{
@@ -908,100 +909,100 @@ namespace Lucene.Net.Search
 	  public sealed class FieldCache_CacheEntry
 	  {
 
-	private readonly object ReaderKey_Renamed;
-	private readonly string FieldName_Renamed;
-	private readonly Type CacheType_Renamed;
-	private readonly object Custom_Renamed;
-	private readonly object Value_Renamed;
-	private string Size;
+	    private readonly object readerKey;
+	    private readonly string fieldName;
+	    private readonly Type cacheType;
+	    private readonly object custom;
+	    private readonly object value;
+	    private string Size;
 
-	public FieldCache_CacheEntry(object readerKey, string fieldName, Type cacheType, object custom, object value)
-	{
-	  this.ReaderKey_Renamed = readerKey;
-	  this.FieldName_Renamed = fieldName;
-	  this.CacheType_Renamed = cacheType;
-	  this.Custom_Renamed = custom;
-	  this.Value_Renamed = value;
-	}
+	    public FieldCache_CacheEntry(object readerKey, string fieldName, Type cacheType, object custom, object value)
+	    {
+	      this.readerKey = readerKey;
+	      this.fieldName = fieldName;
+	      this.cacheType = cacheType;
+	      this.custom = custom;
+	      this.value = value;
+	    }
 
-	public object ReaderKey
-	{
-		get
-		{
-		  return ReaderKey_Renamed;
-		}
-	}
+	    public object ReaderKey
+	    {
+		    get
+		    {
+		      return readerKey;
+		    }
+	    }
 
-	public string FieldName
-	{
-		get
-		{
-		  return FieldName_Renamed;
-		}
-	}
+	    public string FieldName
+	    {
+		    get
+		    {
+		      return fieldName;
+		    }
+	    }
 
-	public Type CacheType
-	{
-		get
-		{
-		  return CacheType_Renamed;
-		}
-	}
+	    public Type CacheType
+	    {
+		    get
+		    {
+		      return cacheType;
+		    }
+	    }
 
-	public object Custom
-	{
-		get
-		{
-		  return Custom_Renamed;
-		}
-	}
+	    public object Custom
+	    {
+		    get
+		    {
+		      return custom;
+		    }
+	    }
 
-	public object Value
-	{
-		get
-		{
-		  return Value_Renamed;
-		}
-	}
+	    public object Value
+	    {
+		    get
+		    {
+		      return value;
+		    }
+	    }
 
-	/// <summary>
-	/// Computes (and stores) the estimated size of the cache Value </summary>
-	/// <seealso cref= #getEstimatedSize </seealso>
-	public void EstimateSize()
-	{
-	  long bytesUsed = RamUsageEstimator.SizeOf(Value);
-	  Size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
-	}
+	    /// <summary>
+	    /// Computes (and stores) the estimated size of the cache Value </summary>
+	    /// <seealso cref= #getEstimatedSize </seealso>
+	    public void EstimateSize()
+	    {
+	      long bytesUsed = RamUsageEstimator.SizeOf(Value);
+	      Size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
+	    }
 
-	/// <summary>
-	/// The most recently estimated size of the value, null unless 
-	/// estimateSize has been called.
-	/// </summary>
-	public string EstimatedSize
-	{
-		get
-		{
-		  return Size;
-		}
-	}
+	    /// <summary>
+	    /// The most recently estimated size of the value, null unless 
+	    /// estimateSize has been called.
+	    /// </summary>
+	    public string EstimatedSize
+	    {
+		    get
+		    {
+		      return Size;
+		    }
+	    }
 
-	public override string ToString()
-	{
-	  StringBuilder b = new StringBuilder();
-	  b.Append("'").Append(ReaderKey).Append("'=>");
-	  b.Append("'").Append(FieldName).Append("',");
-	  b.Append(CacheType).Append(",").Append(Custom);
-	  b.Append("=>").Append(Value.GetType().Name).Append("#");
-	  b.Append(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Value));
+	    public override string ToString()
+	    {
+	      StringBuilder b = new StringBuilder();
+	      b.Append("'").Append(ReaderKey).Append("'=>");
+	      b.Append("'").Append(FieldName).Append("',");
+	      b.Append(CacheType).Append(",").Append(Custom);
+	      b.Append("=>").Append(Value.GetType().Name).Append("#");
+	      b.Append(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Value));
 
-	  string s = EstimatedSize;
-	  if (null != s)
-	  {
-		b.Append(" (size =~ ").Append(s).Append(')');
-	  }
+	      string s = EstimatedSize;
+	      if (null != s)
+	      {
+		    b.Append(" (size =~ ").Append(s).Append(')');
+	      }
 
-	  return b.ToString();
-	}
+	      return b.ToString();
+	    }
 	  }
 
 }

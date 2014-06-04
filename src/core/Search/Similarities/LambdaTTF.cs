@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Similarities
 	  public override sealed Explanation Explain(BasicStats stats)
 	  {
 		Explanation result = new Explanation();
-		result.Description = this.GetType().SimpleName + ", computed from: ";
+		result.Description = this.GetType().Name + ", computed from: ";
 		result.Value = Lambda(stats);
 		result.AddDetail(new Explanation(stats.TotalTermFreq, "totalTermFreq"));
 		result.AddDetail(new Explanation(stats.NumberOfDocuments, "numberOfDocuments"));

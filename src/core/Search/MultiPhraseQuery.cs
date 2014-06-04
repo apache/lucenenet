@@ -42,6 +42,7 @@ namespace Lucene.Net.Search
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Lucene.Net.Util;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// MultiPhraseQuery is a generalized version of PhraseQuery, with an added
@@ -55,10 +56,10 @@ namespace Lucene.Net.Search
 	public class MultiPhraseQuery : Query
 	{
 	  private string Field;
-	  private List<Term[]> TermArrays_Renamed = new List<Term[]>();
-	  private List<int?> Positions_Renamed = new List<int?>();
+	  private List<Term[]> termArrays = new List<Term[]>();
+	  private List<int> positions = new List<int>();
 
-	  private int Slop_Renamed = 0;
+	  private int slop = 0;
 
 	  /// <summary>
 	  /// Sets the phrase slop for this query. </summary>
@@ -71,11 +72,11 @@ namespace Lucene.Net.Search
 			{
 			  throw new System.ArgumentException("slop value cannot be negative");
 			}
-			Slop_Renamed = value;
+			slop = value;
 		  }
 		  get
 		  {
-			  return Slop_Renamed;
+			  return slop;
 		  }
 	  }
 
@@ -96,9 +97,9 @@ namespace Lucene.Net.Search
 	  public virtual void Add(Term[] terms)
 	  {
 		int position = 0;
-		if (Positions_Renamed.Count > 0)
+		if (positions.Count > 0)
 		{
-		  position = (int)Positions_Renamed[Positions_Renamed.Count - 1] + 1;
+		  position = (int)positions[positions.Count - 1] + 1;
 		}
 
 		Add(terms, position);
@@ -110,7 +111,7 @@ namespace Lucene.Net.Search
 	  /// <seealso cref= PhraseQuery#add(Term, int) </seealso>
 	  public virtual void Add(Term[] terms, int position)
 	  {
-		if (TermArrays_Renamed.Count == 0)
+		if (termArrays.Count == 0)
 		{
 		  Field = terms[0].Field();
 		}
@@ -123,8 +124,8 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		TermArrays_Renamed.Add(terms);
-		Positions_Renamed.Add(Convert.ToInt32(position));
+		termArrays.Add(terms);
+		positions.Add(Convert.ToInt32(position));
 	  }
 
 	  /// <summary>
@@ -135,7 +136,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Collections.unmodifiableList(TermArrays_Renamed);
+              return termArrays.AsReadOnly();// Collections.unmodifiableList(TermArrays_Renamed);
 		  }
 	  }
 
@@ -146,23 +147,23 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			int[] result = new int[Positions_Renamed.Count];
-			for (int i = 0; i < Positions_Renamed.Count; i++)
+			int[] result = new int[positions.Count];
+			for (int i = 0; i < positions.Count; i++)
 			{
-			  result[i] = (int)Positions_Renamed[i];
+			  result[i] = (int)positions[i];
 			}
 			return result;
 		  }
 	  }
 
 	  // inherit javadoc
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		foreach (Term[] arr in TermArrays_Renamed)
+		foreach (Term[] arr in termArrays)
 		{
 		  foreach (Term term in arr)
 		  {
-			terms.add(term);
+			terms.Add(term);
 		  }
 		}
 	  }
@@ -180,13 +181,11 @@ namespace Lucene.Net.Search
 		{
 			this.OuterInstance = outerInstance;
 		  this.Similarity = searcher.Similarity;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.IndexReaderContext context = searcher.getTopReaderContext();
 		  IndexReaderContext context = searcher.TopReaderContext;
 
 		  // compute idf
 		  List<TermStatistics> allTermStats = new List<TermStatistics>();
-		  foreach (Term[] terms in outerInstance.TermArrays_Renamed)
+		  foreach (Term[] terms in outerInstance.termArrays)
 		  {
 			foreach (Term term in terms)
 			{
@@ -224,35 +223,25 @@ namespace Lucene.Net.Search
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  Debug.Assert(outerInstance.TermArrays_Renamed.Count > 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReader reader = context.reader();
+		  Debug.Assert(OuterInstance.termArrays.Count > 0);
 		  AtomicReader reader = context.Reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = acceptDocs;
 		  Bits liveDocs = acceptDocs;
 
-		  PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[outerInstance.TermArrays_Renamed.Count];
+          PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[OuterInstance.termArrays.Count];
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Terms fieldTerms = reader.terms(field);
-		  Terms fieldTerms = reader.Terms(outerInstance.Field);
+          Terms fieldTerms = reader.Terms(OuterInstance.Field);
 		  if (fieldTerms == null)
 		  {
 			return null;
 		  }
 
 		  // Reuse single TermsEnum below:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = fieldTerms.iterator(null);
 		  TermsEnum termsEnum = fieldTerms.Iterator(null);
 
 		  for (int pos = 0; pos < postingsFreqs.Length; pos++)
 		  {
-			Term[] terms = outerInstance.TermArrays_Renamed[pos];
+			Term[] terms = OuterInstance.termArrays[pos];
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocsAndPositionsEnum postingsEnum;
 			DocsAndPositionsEnum postingsEnum;
 			int docFreq;
 
@@ -265,8 +254,6 @@ namespace Lucene.Net.Search
 			  docFreq = 0;
 			  for (int termIdx = 0;termIdx < terms.Length;termIdx++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = terms[termIdx];
 				Term term = terms[termIdx];
 				TermState termState = TermContexts[term].Get(context.Ord);
 				if (termState == null)
@@ -286,8 +273,6 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = terms[0];
 			  Term term = terms[0];
 			  TermState termState = TermContexts[term].Get(context.Ord);
 			  if (termState == null)
@@ -302,22 +287,22 @@ namespace Lucene.Net.Search
 			  {
 				// term does exist, but has no positions
 				Debug.Assert(termsEnum.Docs(liveDocs, null, DocsEnum.FLAG_NONE) != null, "termstate found but no term exists in reader");
-				throw new IllegalStateException("field \"" + term.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
+				throw new InvalidOperationException("field \"" + term.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
 			  }
 
 			  docFreq = termsEnum.DocFreq();
 			}
 
-			postingsFreqs[pos] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, (int)outerInstance.Positions_Renamed[pos], terms);
+            postingsFreqs[pos] = new PhraseQuery.PostingsAndFreq(postingsEnum, docFreq, (int)OuterInstance.positions[pos], terms);
 		  }
 
 		  // sort by increasing docFreq order
-		  if (outerInstance.Slop_Renamed == 0)
+          if (OuterInstance.slop == 0)
 		  {
 			ArrayUtil.TimSort(postingsFreqs);
 		  }
 
-		  if (outerInstance.Slop_Renamed == 0)
+          if (OuterInstance.slop == 0)
 		  {
 			ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.SimScorer(Stats, context));
 			if (s.NoDocs)
@@ -331,7 +316,7 @@ namespace Lucene.Net.Search
 		  }
 		  else
 		  {
-			return new SloppyPhraseScorer(this, postingsFreqs, outerInstance.Slop_Renamed, Similarity.SimScorer(Stats, context));
+			return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.slop, Similarity.SimScorer(Stats, context));
 		  }
 		}
 
@@ -343,7 +328,7 @@ namespace Lucene.Net.Search
 			int newDoc = scorer.Advance(doc);
 			if (newDoc == doc)
 			{
-			  float freq = outerInstance.Slop_Renamed == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
+			  float freq = OuterInstance.slop == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
 			  SimScorer docScorer = Similarity.SimScorer(Stats, context);
 			  ComplexExplanation result = new ComplexExplanation();
 			  result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
@@ -361,15 +346,15 @@ namespace Lucene.Net.Search
 
 	  public override Query Rewrite(IndexReader reader)
 	  {
-		if (TermArrays_Renamed.Count == 0)
+		if (termArrays.Count == 0)
 		{
 		  BooleanQuery bq = new BooleanQuery();
 		  bq.Boost = Boost;
 		  return bq;
 		} // optimize one-term case
-		else if (TermArrays_Renamed.Count == 1)
+		else if (termArrays.Count == 1)
 		{
-		  Term[] terms = TermArrays_Renamed[0];
+		  Term[] terms = termArrays[0];
 		  BooleanQuery boq = new BooleanQuery(true);
 		  for (int i = 0; i < terms.Length; i++)
 		  {
@@ -402,13 +387,13 @@ namespace Lucene.Net.Search
 
 		buffer.Append("\"");
 		int k = 0;
-		IEnumerator<Term[]> i = TermArrays_Renamed.GetEnumerator();
-		int lastPos = -1;
+		IEnumerator<Term[]> i = termArrays.GetEnumerator();
+		int? lastPos = -1;
 		bool first = true;
 		while (i.MoveNext())
 		{
 		  Term[] terms = i.Current;
-		  int position = Positions_Renamed[k];
+		  int? position = positions[k];
 		  if (first)
 		  {
 			first = false;
@@ -443,10 +428,10 @@ namespace Lucene.Net.Search
 		}
 		buffer.Append("\"");
 
-		if (Slop_Renamed != 0)
+		if (slop != 0)
 		{
 		  buffer.Append("~");
-		  buffer.Append(Slop_Renamed);
+		  buffer.Append(slop);
 		}
 
 		buffer.Append(ToStringUtils.Boost(Boost));
@@ -464,21 +449,21 @@ namespace Lucene.Net.Search
 			return false;
 		}
 		MultiPhraseQuery other = (MultiPhraseQuery)o;
-		return this.Boost == other.Boost && this.Slop_Renamed == other.Slop_Renamed && TermArraysEquals(this.TermArrays_Renamed, other.TermArrays_Renamed) && this.Positions_Renamed.Equals(other.Positions_Renamed);
+		return this.Boost == other.Boost && this.slop == other.slop && TermArraysEquals(this.termArrays, other.termArrays) && this.positions.Equals(other.positions);
 	  }
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) ^ Slop_Renamed ^ TermArraysHashCode() ^ Positions_Renamed.HashCode() ^ 0x4AC65113;
+		return Number.FloatToIntBits(Boost) ^ slop ^ TermArraysHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
 	  }
 
 	  // Breakout calculation of the termArrays hashcode
 	  private int TermArraysHashCode()
 	  {
 		int hashCode = 1;
-		foreach (Term[] termArray in TermArrays_Renamed)
+		foreach (Term[] termArray in termArrays)
 		{
 		  hashCode = 31 * hashCode + (termArray == null ? 0 : Arrays.GetHashCode(termArray));
 		}
@@ -492,15 +477,13 @@ namespace Lucene.Net.Search
 		{
 		  return false;
 		}
-//JAVA TO C# CONVERTER WARNING: Unlike Java's ListIterator, enumerators in .NET do not allow altering the collection:
 		IEnumerator<Term[]> iterator1 = termArrays1.GetEnumerator();
-//JAVA TO C# CONVERTER WARNING: Unlike Java's ListIterator, enumerators in .NET do not allow altering the collection:
 		IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator();
 		while (iterator1.MoveNext())
 		{
 		  Term[] termArray1 = iterator1.Current;
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Term[] termArray2 = iterator2.next();
+          iterator2.MoveNext();
+		  Term[] termArray2 = iterator2.Current;
 		  if (!(termArray1 == null ? termArray2 == null : Array.Equals(termArray1, termArray2)))
 		  {
 			return false;
@@ -518,9 +501,9 @@ namespace Lucene.Net.Search
 	internal class UnionDocsAndPositionsEnum : DocsAndPositionsEnum
 	{
 
-	  private sealed class DocsQueue : PriorityQueue<DocsAndPositionsEnum>
+	  private sealed class DocsQueue : Util.PriorityQueue<DocsAndPositionsEnum>
 	  {
-		internal DocsQueue(IList<DocsAndPositionsEnum> docsEnums) : base(docsEnums.Count)
+		internal DocsQueue(ICollection<DocsAndPositionsEnum> docsEnums) : base(docsEnums.Count)
 		{
 
 		  IEnumerator<DocsAndPositionsEnum> i = docsEnums.GetEnumerator();
@@ -611,11 +594,9 @@ namespace Lucene.Net.Search
 
 	  public UnionDocsAndPositionsEnum(Bits liveDocs, AtomicReaderContext context, Term[] terms, IDictionary<Term, TermContext> termContexts, TermsEnum termsEnum)
 	  {
-		IList<DocsAndPositionsEnum> docsEnums = new LinkedList<DocsAndPositionsEnum>();
+		ICollection<DocsAndPositionsEnum> docsEnums = new LinkedList<DocsAndPositionsEnum>();
 		for (int i = 0; i < terms.Length; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = terms[i];
 		  Term term = terms[i];
 		  TermState termState = termContexts[term].Get(context.Ord);
 		  if (termState == null)
@@ -628,7 +609,7 @@ namespace Lucene.Net.Search
 		  if (postings == null)
 		  {
 			// term does exist, but has no positions
-			throw new IllegalStateException("field \"" + term.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
+			throw new InvalidOperationException("field \"" + term.Field() + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
 		  }
 		  Cost_Renamed += postings.Cost();
 		  docsEnums.Add(postings);
@@ -649,7 +630,7 @@ namespace Lucene.Net.Search
 		// doesn't need the positions for this doc then don't
 		// waste CPU merging them:
 		_posList.Clear();
-		_doc = _queue.Top().docID();
+		_doc = _queue.Top().DocID();
 
 		// merge sort all positions together
 		DocsAndPositionsEnum postings;
@@ -657,8 +638,6 @@ namespace Lucene.Net.Search
 		{
 		  postings = _queue.Top();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int freq = postings.freq();
 		  int freq = postings.Freq();
 		  for (int i = 0; i < freq; i++)
 		  {
@@ -673,7 +652,7 @@ namespace Lucene.Net.Search
 		  {
 			_queue.Pop();
 		  }
-		} while (_queue.Size() > 0 && _queue.Top().docID() == _doc);
+        } while (_queue.Size() > 0 && _queue.Top().DocID() == _doc);
 
 		_posList.Sort();
 		_freq = _posList.Size();
@@ -706,7 +685,7 @@ namespace Lucene.Net.Search
 
 	  public override sealed int Advance(int target)
 	  {
-		while (_queue.Top() != null && target > _queue.Top().docID())
+		while (_queue.Top() != null && target > _queue.Top().DocID())
 		{
 		  DocsAndPositionsEnum postings = _queue.Pop();
 		  if (postings.Advance(target) != NO_MORE_DOCS)

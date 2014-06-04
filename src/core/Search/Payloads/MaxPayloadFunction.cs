@@ -47,11 +47,11 @@ namespace Lucene.Net.Search.Payloads
 		return numPayloadsSeen > 0 ? payloadScore : 1;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + this.GetType().HashCode();
+		result = prime * result + this.GetType().GetHashCode();
 		return result;
 	  }
 

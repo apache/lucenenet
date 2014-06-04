@@ -1,3 +1,4 @@
+using System;
 namespace Lucene.Net.Search
 {
 
@@ -27,7 +28,7 @@ namespace Lucene.Net.Search
 	  /// Specifies how clauses are to occur in matching documents. </summary>
 	  public enum Occur_e
 	  {
-            MUST, SHOULD, MUST_NOT;/*
+            MUST, SHOULD, MUST_NOT/*
 		/// <summary>
 		/// Use this operator for clauses that <i>must</i> appear in the matching documents. </summary>
 		MUST 
@@ -67,6 +68,21 @@ namespace Lucene.Net.Search
 
       }
 
+      private string ToString(Occur_e occur)
+      {
+          switch (occur)
+          {
+              case Occur_e.MUST:
+                  return "+";
+              case Occur_e.SHOULD:
+                  return "";
+              case Occur_e.MUST_NOT:
+                  return "-";
+              default:
+                  throw new Exception("Invalid Occur_e value");
+          }
+      }
+
 	  /// <summary>
 	  /// The query whose matching documents are combined by the boolean query.
 	  /// </summary>
@@ -87,33 +103,43 @@ namespace Lucene.Net.Search
 
 	  public Occur_e Occur
 	  {
-		return occur;
+		get 
+        {
+            return occur;
+        }
+        set 
+        {
+            occur = value;
+        }
 	  }
 
-	  public void setOccur(Occur_e occur)
-	  {
-		this.occur = occur;
-
-	  }
 
 	  public Query Query
 	  {
-		return query;
-	  }
-
-	  public void setQuery(Query query)
-	  {
-		this.query = query;
+          get 
+          {
+               return query;
+          }
+          set 
+          {
+              query = value;
+          }
 	  }
 
 	  public bool Prohibited
 	  {
-		return Occur.MUST_NOT == occur;
+          get 
+          {
+            return Occur_e.MUST_NOT == occur;
+          }
 	  }
 
 	  public bool Required
 	  {
-		return Occur.MUST == occur;
+          get
+          {
+              return Occur_e.MUST == occur;
+          }
 	  }
 
 
@@ -134,13 +160,13 @@ namespace Lucene.Net.Search
 	  /// Returns a hash code value for this object. </summary>
 	  public int GetHashCode()
 	  {
-		return query.HashCode() ^ (Occur_e.MUST == occur?1:0) ^ (Occur_e.MUST_NOT == occur?2:0);
+		return query.GetHashCode() ^ (Occur_e.MUST == occur?1:0) ^ (Occur_e.MUST_NOT == occur?2:0);
 	  }
 
 
 	  public string ToString()
 	  {
-		return occur.ToString() + query.ToString();
+          return ToString(occur) + query.ToString();
 	  }
 	}
 

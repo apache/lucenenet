@@ -3,24 +3,25 @@ using System.Text;
 
 namespace Lucene.Net.Search.Spans
 {
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 
 
@@ -86,7 +87,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("spanPayCheck(");
-		buffer.Append(Match_Renamed.ToString(field));
+		buffer.Append(match.ToString(field));
 		buffer.Append(", payloadRef: ");
 		foreach (sbyte[] bytes in PayloadToMatch)
 		{
@@ -100,7 +101,7 @@ namespace Lucene.Net.Search.Spans
 
 	  public override SpanNearPayloadCheckQuery Clone()
 	  {
-		SpanNearPayloadCheckQuery result = new SpanNearPayloadCheckQuery((SpanNearQuery) Match_Renamed.Clone(), PayloadToMatch);
+		SpanNearPayloadCheckQuery result = new SpanNearPayloadCheckQuery((SpanNearQuery) match.Clone(), PayloadToMatch);
 		result.Boost = Boost;
 		return result;
 	  }
@@ -117,16 +118,16 @@ namespace Lucene.Net.Search.Spans
 		}
 
 		SpanNearPayloadCheckQuery other = (SpanNearPayloadCheckQuery) o;
-		return this.PayloadToMatch.Equals(other.PayloadToMatch) && this.Match_Renamed.Equals(other.Match_Renamed) && this.Boost == other.Boost;
+		return this.PayloadToMatch.Equals(other.PayloadToMatch) && this.match.Equals(other.match) && this.Boost == other.Boost;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int h = Match_Renamed.HashCode();
+		int h = match.GetHashCode();
 		h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
 		//TODO: is this right?
-		h ^= PayloadToMatch.HashCode();
-		h ^= float.floatToRawIntBits(Boost);
+		h ^= PayloadToMatch.GetHashCode();
+		h ^= Number.FloatToIntBits(Boost);
 		return h;
 	  }
 	}

@@ -31,19 +31,20 @@ namespace Lucene.Net.Search.Spans
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using System;
 
 
 	/// <summary>
 	/// Matches spans containing a term. </summary>
 	public class SpanTermQuery : SpanQuery
 	{
-	  protected internal Term Term_Renamed;
+	  protected internal Term term;
 
 	  /// <summary>
 	  /// Construct a SpanTermQuery matching the named term's spans. </summary>
 	  public SpanTermQuery(Term term)
 	  {
-		  this.Term_Renamed = term;
+		  this.term = term;
 	  }
 
 	  /// <summary>
@@ -52,7 +53,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Term_Renamed;
+			  return term;
 		  }
 	  }
 
@@ -60,24 +61,24 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Term_Renamed.Field();
+			  return term.Field();
 		  }
 	  }
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		terms.add(Term_Renamed);
+		terms.Add(term);
 	  }
 
 	  public override string ToString(string field)
 	  {
 		StringBuilder buffer = new StringBuilder();
-		if (Term_Renamed.Field().Equals(field))
+		if (term.Field().Equals(field))
 		{
-		  buffer.Append(Term_Renamed.Text());
+		  buffer.Append(term.Text());
 		}
 		else
 		{
-		  buffer.Append(Term_Renamed.ToString());
+		  buffer.Append(term.ToString());
 		}
 		buffer.Append(ToStringUtils.Boost(Boost));
 		return buffer.ToString();
@@ -86,8 +87,8 @@ namespace Lucene.Net.Search.Spans
 	  public override int HashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
-		result = prime * result + ((Term_Renamed == null) ? 0 : Term_Renamed.HashCode());
+		int result = base.GetHashCode();
+		result = prime * result + ((term == null) ? 0 : term.HashCode());
 		return result;
 	  }
 
@@ -106,14 +107,14 @@ namespace Lucene.Net.Search.Spans
 		  return false;
 		}
 		SpanTermQuery other = (SpanTermQuery) obj;
-		if (Term_Renamed == null)
+		if (term == null)
 		{
-		  if (other.Term_Renamed != null)
+		  if (other.term != null)
 		  {
 			return false;
 		  }
 		}
-		else if (!Term_Renamed.Equals(other.Term_Renamed))
+		else if (!term.Equals(other.term))
 		{
 		  return false;
 		}
@@ -122,28 +123,20 @@ namespace Lucene.Net.Search.Spans
 
 	  public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 	  {
-		TermContext termContext = termContexts[Term_Renamed];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermState state;
+		TermContext termContext = termContexts[term];
 		TermState state;
 		if (termContext == null)
 		{
 		  // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
 		  // so we seek to the term now in this segment..., this sucks because its ugly mostly!
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Fields fields = context.reader().fields();
-		  Fields fields = context.Reader().fields();
+		  Fields fields = context.Reader().Fields();
 		  if (fields != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Terms terms = fields.terms(term.field());
-			Terms terms = fields.Terms(Term_Renamed.Field());
+			Terms terms = fields.Terms(term.Field());
 			if (terms != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = terms.iterator(null);
 			  TermsEnum termsEnum = terms.Iterator(null);
-			  if (termsEnum.SeekExact(Term_Renamed.Bytes()))
+			  if (termsEnum.SeekExact(term.Bytes()))
 			  {
 				state = termsEnum.TermState();
 			  }
@@ -172,23 +165,19 @@ namespace Lucene.Net.Search.Spans
 		  return TermSpans.EMPTY_TERM_SPANS;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = context.reader().terms(term.field()).iterator(null);
-		TermsEnum termsEnum = context.Reader().terms(Term_Renamed.Field()).iterator(null);
-		termsEnum.SeekExact(Term_Renamed.Bytes(), state);
+		TermsEnum termsEnum_ = context.Reader().Terms(term.Field()).Iterator(null);
+		termsEnum_.SeekExact(term.Bytes(), state);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocsAndPositionsEnum postings = termsEnum.docsAndPositions(acceptDocs, null, Lucene.Net.Index.DocsAndPositionsEnum.FLAG_PAYLOADS);
-		DocsAndPositionsEnum postings = termsEnum.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);
+		DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);
 
 		if (postings != null)
 		{
-		  return new TermSpans(postings, Term_Renamed);
+		  return new TermSpans(postings, term);
 		}
 		else
 		{
 		  // term does exist, but has no positions
-		  throw new IllegalStateException("field \"" + Term_Renamed.Field() + "\" was indexed without position data; cannot run SpanTermQuery (term=" + Term_Renamed.Text() + ")");
+		  throw new InvalidOperationException("field \"" + term.Field() + "\" was indexed without position data; cannot run SpanTermQuery (term=" + term.Text() + ")");
 		}
 	  }
 	}

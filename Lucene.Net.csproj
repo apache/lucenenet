@@ -9638,9 +9638,13 @@
     <Compile Include="src\core\Support\ByteBuffer.cs" />
     <Compile Include="src\core\Support\Character.cs" />
     <Compile Include="src\core\Support\Arrays.cs" />
+    <Compile Include="src\core\Support\ConcurrentHashMap.cs" />
+    <Compile Include="src\core\Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="src\core\Support\ConcurrentHashSet.cs" />
     <Compile Include="src\core\Support\FileStreamExtensions.cs" />
+    <Compile Include="src\core\Support\ICallable.cs" />
     <Compile Include="src\core\Support\ICharSequence.cs" />
+    <Compile Include="src\core\Support\ICompletionService.cs" />
     <Compile Include="src\core\Support\IdentityComparer.cs" />
     <Compile Include="src\core\Support\IdentityHashMap.cs" />
     <Compile Include="src\core\Support\IdentityHashSet.cs" />
@@ -9648,9 +9652,11 @@
     <Compile Include="src\core\Support\IDictionaryExtensions.cs" />
     <Compile Include="src\core\Support\ListExtensions.cs" />
     <Compile Include="src\core\Support\MathExtension.cs" />
+    <Compile Include="src\core\Support\PriorityQueue.cs" />
     <Compile Include="src\core\Support\ReentrantLock.cs" />
     <Compile Include="src\core\Support\StringBuilderExtensions.cs" />
     <Compile Include="src\core\Support\StringTokenizer.cs" />
+    <Compile Include="src\core\Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="src\core\Support\ThreadFactory.cs" />
     <Compile Include="src\core\Support\UnmodifiableDictionary.cs" />
     <Compile Include="src\core\Support\CloseableThreadLocalProfiler.cs" />

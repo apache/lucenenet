@@ -4,24 +4,25 @@ using System.Text;
 namespace Lucene.Net.Search.Spans
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 	/// <summary>
 	/// Matches spans near the beginning of a field.
@@ -46,11 +47,11 @@ namespace Lucene.Net.Search.Spans
 	  protected internal override AcceptStatus AcceptPosition(Spans spans)
 	  {
 		Debug.Assert(spans.Start() != spans.End(), "start equals end: " + spans.Start());
-		if (spans.Start() >= End_Renamed)
+		if (spans.Start() >= end)
 		{
 		  return AcceptStatus.NO_AND_ADVANCE;
 		}
-		else if (spans.End() <= End_Renamed)
+		else if (spans.End() <= end)
 		{
 		  return AcceptStatus.YES;
 		}
@@ -65,9 +66,9 @@ namespace Lucene.Net.Search.Spans
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("spanFirst(");
-		buffer.Append(Match_Renamed.ToString(field));
+		buffer.Append(match.ToString(field));
 		buffer.Append(", ");
-		buffer.Append(End_Renamed);
+		buffer.Append(end);
 		buffer.Append(")");
 		buffer.Append(ToStringUtils.Boost(Boost));
 		return buffer.ToString();
@@ -75,7 +76,7 @@ namespace Lucene.Net.Search.Spans
 
 	  public override SpanFirstQuery Clone()
 	  {
-		SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) Match_Renamed.Clone(), End_Renamed);
+		SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
 		spanFirstQuery.Boost = Boost;
 		return spanFirstQuery;
 	  }
@@ -92,14 +93,14 @@ namespace Lucene.Net.Search.Spans
 		}
 
 		SpanFirstQuery other = (SpanFirstQuery)o;
-		return this.End_Renamed == other.End_Renamed && this.Match_Renamed.Equals(other.Match_Renamed) && this.Boost == other.Boost;
+		return this.end == other.end && this.match.Equals(other.match) && this.Boost == other.Boost;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int h = Match_Renamed.HashCode();
+		int h = match.GetHashCode();
 		h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-		h ^= float.floatToRawIntBits(Boost) ^ End_Renamed;
+		h ^= Number.FloatToIntBits(Boost) ^ end;
 		return h;
 	  }
 

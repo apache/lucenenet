@@ -56,12 +56,12 @@ namespace Lucene.Net.Search.Payloads
 	  public virtual Explanation Explain(int docId, string field, int numPayloadsSeen, float payloadScore)
 	  {
 		Explanation result = new Explanation();
-		result.Description = this.GetType().SimpleName + ".docScore()";
+		result.Description = this.GetType().Name + ".docScore()";
 		result.Value = DocScore(docId, field, numPayloadsSeen, payloadScore);
 		return result;
 	  }
 
-	  public override abstract int HashCode();
+	  public override abstract int GetHashCode();
 
 	  public override abstract bool Equals(object o);
 

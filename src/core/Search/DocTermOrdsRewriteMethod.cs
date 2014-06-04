@@ -83,9 +83,9 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 
-		public override sealed int HashCode()
+		public override sealed int GetHashCode()
 		{
-		  return Query.HashCode();
+		  return Query.GetHashCode();
 		}
 
 		/// <summary>
@@ -104,12 +104,8 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.getDocTermOrds(context.reader(), query.field);
-		  SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(context.Reader(), Query.Field_Renamed);
+		  SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(context.Reader(), Query.field);
 		  // Cannot use FixedBitSet because we require long index (ord):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.LongBitSet termSet = new Lucene.Net.Util.LongBitSet(docTermOrds.getValueCount());
 		  LongBitSet termSet = new LongBitSet(docTermOrds.ValueCount);
 		  TermsEnum termsEnum = Query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
 
@@ -127,7 +123,7 @@ namespace Lucene.Net.Search
 			return null;
 		  }
 
-		  return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().maxDoc(), acceptDocs, docTermOrds, termSet);
+		  return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, docTermOrds, termSet);
 		}
 
 		private class TermsAnonymousInnerClassHelper : Terms

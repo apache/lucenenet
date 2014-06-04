@@ -46,14 +46,14 @@ namespace Lucene.Net.Search.Similarities
 		double F = stats.TotalTermFreq + 1 + tfn;
 		// approximation only holds true when F << N, so we use N += F
 		double N = F + stats.NumberOfDocuments;
-        return (float)(-Similaritybase.Log2((N - 1) * Math.E) + f(N + F - 1, N + F - tfn - 2) - f(F, F - tfn));
+        return (float)(-SimilarityBase.Log2((N - 1) * Math.E) + f(N + F - 1, N + F - tfn - 2) - f(F, F - tfn));
 	  }
 
 	  /// <summary>
 	  /// The <em>f</em> helper function defined for <em>B<sub>E</sub></em>. </summary>
 	  private double f(double n, double m)
 	  {
-          return (m + 0.5) * Similaritybase.Log2(n / m) + (n - m) * Similaritybase.Log2(n);
+          return (m + 0.5) * SimilarityBase.Log2(n / m) + (n - m) * SimilarityBase.Log2(n);
 	  }
 
 	  public override string ToString()

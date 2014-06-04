@@ -37,22 +37,18 @@ namespace Lucene.Net.Search.Spans
 	{
 	  protected internal Similarity Similarity;
 	  protected internal IDictionary<Term, TermContext> TermContexts;
-	  protected internal SpanQuery Query_Renamed;
+	  protected internal SpanQuery query;
 	  protected internal Similarity.SimWeight Stats;
 
 	  public SpanWeight(SpanQuery query, IndexSearcher searcher)
 	  {
 		this.Similarity = searcher.Similarity;
-		this.Query_Renamed = query;
+		this.query = query;
 
-		TermContexts = new Dictionary<>();
+        TermContexts = new Dictionary<Term, TermContext>();
 		SortedSet<Term> terms = new SortedSet<Term>();
 		query.ExtractTerms(terms);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.IndexReaderContext context = searcher.getTopReaderContext();
 		IndexReaderContext context = searcher.TopReaderContext;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermStatistics termStats[] = new TermStatistics[terms.size()];
 		TermStatistics[] termStats = new TermStatistics[terms.Count];
 		int i = 0;
 		foreach (Term term in terms)
@@ -62,8 +58,6 @@ namespace Lucene.Net.Search.Spans
 		  TermContexts[term] = state;
 		  i++;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String field = query.getField();
 		string field = query.Field;
 		if (field != null)
 		{
@@ -75,7 +69,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Query_Renamed;
+			  return query;
 		  }
 	  }
 	  public override float ValueForNormalization
@@ -102,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		else
 		{
-		  return new SpanScorer(Query_Renamed.GetSpans(context, acceptDocs, TermContexts), this, Similarity.SimScorer(Stats, context));
+		  return new SpanScorer(query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.SimScorer(Stats, context));
 		}
 	  }
 

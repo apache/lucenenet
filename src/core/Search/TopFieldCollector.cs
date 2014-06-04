@@ -48,16 +48,15 @@ namespace Lucene.Net.Search
 	  private class OneComparatorNonScoringCollector : TopFieldCollector
 	  {
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: FieldComparator<?> comparator;
-		internal FieldComparator<?> Comparator;
+		internal FieldComparator comparator;
 		internal readonly int ReverseMul;
 		internal readonly FieldValueHitQueue<Entry> Queue;
 
-		public OneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public OneComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		  this.Queue = queue;
-		  Comparator = queue.Comparators[0];
+		  comparator = queue.Comparators[0];
 		  ReverseMul = queue.ReverseMul[0];
 		}
 
@@ -73,7 +72,7 @@ namespace Lucene.Net.Search
 		  ++TotalHits_Renamed;
 		  if (QueueFull)
 		  {
-			if ((ReverseMul * Comparator.CompareBottom(doc)) <= 0)
+			if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
 			{
 			  // since docs are visited in doc Id order, if compare is 0, it means
 			  // this document is larger than anything else in the queue, and
@@ -82,22 +81,20 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			Comparator.Copy(Bottom.Slot, doc);
+			comparator.Copy(Bottom.Slot, doc);
 			UpdateBottom(doc);
-			Comparator.Bottom = Bottom.Slot;
+			comparator.Bottom = Bottom.Slot;
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			Comparator.Copy(slot, doc);
+			comparator.Copy(slot, doc);
 			Add(slot, doc, float.NaN);
 			if (QueueFull)
 			{
-			  Comparator.Bottom = Bottom.Slot;
+			  comparator.Bottom = Bottom.Slot;
 			}
 		  }
 		}
@@ -107,8 +104,8 @@ namespace Lucene.Net.Search
 			set
 			{
 			  this.DocBase = value.DocBase;
-			  Queue.SetComparator(0, Comparator.setNextReader(value));
-			  Comparator = Queue.FirstComparator;
+			  Queue.SetComparator(0, comparator.SetNextReader(value));
+			  comparator = Queue.FirstComparator;
 			}
 		}
 
@@ -116,7 +113,7 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  Comparator.Scorer = value;
+			  comparator.Scorer = value;
 			}
 		}
 
@@ -140,31 +137,27 @@ namespace Lucene.Net.Search
 		  if (QueueFull)
 		  {
 			// Fastmatch: return if this hit is not competitive
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = reverseMul * comparator.compareBottom(doc);
-			int cmp = ReverseMul * Comparator.CompareBottom(doc);
+			int cmp = ReverseMul * comparator.CompareBottom(doc);
 			if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
 			{
 			  return;
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			Comparator.Copy(Bottom.Slot, doc);
+			comparator.Copy(Bottom.Slot, doc);
 			UpdateBottom(doc);
-			Comparator.Bottom = Bottom.Slot;
+			comparator.Bottom = Bottom.Slot;
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			Comparator.Copy(slot, doc);
+			comparator.Copy(slot, doc);
 			Add(slot, doc, float.NaN);
 			if (QueueFull)
 			{
-			  Comparator.Bottom = Bottom.Slot;
+			  comparator.Bottom = Bottom.Slot;
 			}
 		  }
 		}
@@ -201,7 +194,7 @@ namespace Lucene.Net.Search
 		  ++TotalHits_Renamed;
 		  if (QueueFull)
 		  {
-			if ((ReverseMul * Comparator.CompareBottom(doc)) <= 0)
+			if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
 			{
 			  // since docs are visited in doc Id order, if compare is 0, it means
 			  // this document is largest than anything else in the queue, and
@@ -210,32 +203,26 @@ namespace Lucene.Net.Search
 			}
 
 			// Compute the score only if the hit is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			Comparator.Copy(Bottom.Slot, doc);
+			comparator.Copy(Bottom.Slot, doc);
 			UpdateBottom(doc, score);
-			Comparator.Bottom = Bottom.Slot;
+			comparator.Bottom = Bottom.Slot;
 		  }
 		  else
 		  {
 			// Compute the score only if the hit is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			Comparator.Copy(slot, doc);
+			comparator.Copy(slot, doc);
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  Comparator.Bottom = Bottom.Slot;
+			  comparator.Bottom = Bottom.Slot;
 			}
 		  }
 		}
@@ -245,7 +232,7 @@ namespace Lucene.Net.Search
 			set
 			{
 			  this.Scorer_Renamed = value;
-			  Comparator.Scorer = value;
+			  comparator.Scorer = value;
 			}
 		}
 
@@ -259,7 +246,8 @@ namespace Lucene.Net.Search
 	  private class OutOfOrderOneComparatorScoringNoMaxScoreCollector : OneComparatorScoringNoMaxScoreCollector
 	  {
 
-		public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		}
 
@@ -269,41 +257,33 @@ namespace Lucene.Net.Search
 		  if (QueueFull)
 		  {
 			// Fastmatch: return if this hit is not competitive
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = reverseMul * comparator.compareBottom(doc);
-			int cmp = ReverseMul * Comparator.CompareBottom(doc);
+			int cmp = ReverseMul * comparator.CompareBottom(doc);
 			if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
 			{
 			  return;
 			}
 
 			// Compute the score only if the hit is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			Comparator.Copy(Bottom.Slot, doc);
+			comparator.Copy(Bottom.Slot, doc);
 			UpdateBottom(doc, score);
-			Comparator.Bottom = Bottom.Slot;
+			comparator.Bottom = Bottom.Slot;
 		  }
 		  else
 		  {
 			// Compute the score only if the hit is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			Comparator.Copy(slot, doc);
+			comparator.Copy(slot, doc);
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  Comparator.Bottom = Bottom.Slot;
+			  comparator.Bottom = Bottom.Slot;
 			}
 		  }
 		}
@@ -322,9 +302,10 @@ namespace Lucene.Net.Search
 	  private class OneComparatorScoringMaxScoreCollector : OneComparatorNonScoringCollector
 	  {
 
-		internal Scorer Scorer_Renamed;
+		internal Scorer scorer;
 
-		public OneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public OneComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		  // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
 		  MaxScore = float.NegativeInfinity;
@@ -339,9 +320,7 @@ namespace Lucene.Net.Search
 
 		public override void Collect(int doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
-		  float score = Scorer_Renamed.Score();
+		  float score = scorer.Score();
 		  if (score > MaxScore)
 		  {
 			MaxScore = score;
@@ -349,7 +328,7 @@ namespace Lucene.Net.Search
 		  ++TotalHits_Renamed;
 		  if (QueueFull)
 		  {
-			if ((ReverseMul * Comparator.CompareBottom(doc)) <= 0)
+			if ((ReverseMul * comparator.CompareBottom(doc)) <= 0)
 			{
 			  // since docs are visited in doc Id order, if compare is 0, it means
 			  // this document is largest than anything else in the queue, and
@@ -358,22 +337,20 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			Comparator.Copy(Bottom.Slot, doc);
+			comparator.Copy(Bottom.Slot, doc);
 			UpdateBottom(doc, score);
-			Comparator.Bottom = Bottom.Slot;
+			comparator.Bottom = Bottom.Slot;
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			Comparator.Copy(slot, doc);
+			comparator.Copy(slot, doc);
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  Comparator.Bottom = Bottom.Slot;
+			  comparator.Bottom = Bottom.Slot;
 			}
 		  }
 
@@ -383,7 +360,7 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  this.Scorer_Renamed = value;
+			  this.scorer = value;
 			  base.Scorer = value;
 			}
 		}
@@ -403,9 +380,7 @@ namespace Lucene.Net.Search
 
 		public override void Collect(int doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
-		  float score = Scorer_Renamed.Score();
+		  float score = scorer.Score();
 		  if (score > MaxScore)
 		  {
 			MaxScore = score;
@@ -414,31 +389,27 @@ namespace Lucene.Net.Search
 		  if (QueueFull)
 		  {
 			// Fastmatch: return if this hit is not competitive
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = reverseMul * comparator.compareBottom(doc);
-			int cmp = ReverseMul * Comparator.CompareBottom(doc);
+			int cmp = ReverseMul * comparator.CompareBottom(doc);
 			if (cmp < 0 || (cmp == 0 && doc + DocBase > Bottom.Doc))
 			{
 			  return;
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			Comparator.Copy(Bottom.Slot, doc);
+			comparator.Copy(Bottom.Slot, doc);
 			UpdateBottom(doc, score);
-			Comparator.Bottom = Bottom.Slot;
+			comparator.Bottom = Bottom.Slot;
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			Comparator.Copy(slot, doc);
+			comparator.Copy(slot, doc);
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  Comparator.Bottom = Bottom.Slot;
+			  comparator.Bottom = Bottom.Slot;
 			}
 		  }
 		}
@@ -457,15 +428,14 @@ namespace Lucene.Net.Search
 	  private class MultiComparatorNonScoringCollector : TopFieldCollector
 	  {
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: final FieldComparator<?>[] comparators;
-		internal readonly FieldComparator<?>[] Comparators;
+		internal readonly FieldComparator[] comparators;
 		internal readonly int[] ReverseMul;
 		internal readonly FieldValueHitQueue<Entry> Queue;
-		public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public MultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		  this.Queue = queue;
-		  Comparators = queue.Comparators;
+		  comparators = queue.Comparators;
 		  ReverseMul = queue.ReverseMul;
 		}
 
@@ -484,9 +454,7 @@ namespace Lucene.Net.Search
 			// Fastmatch: return if this hit is not competitive
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -497,7 +465,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// Here c=0. If we're at the last comparator, this doc is not
 				// competitive, since docs are visited in doc Id order, which means
@@ -507,35 +475,33 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			UpdateBottom(doc);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 			Add(slot, doc, float.NaN);
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -546,9 +512,9 @@ namespace Lucene.Net.Search
 			set
 			{
 			  DocBase = value.DocBase;
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Queue.SetComparator(i, Comparators[i].setNextReader(value));
+				Queue.SetComparator(i, comparators[i].SetNextReader(value));
 			  }
 			}
 		}
@@ -558,9 +524,9 @@ namespace Lucene.Net.Search
 			set
 			{
 			  // set the value on all comparators
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Scorer = value;
+				comparators[i].Scorer = value;
 			  }
 			}
 		}
@@ -574,7 +540,8 @@ namespace Lucene.Net.Search
 	  private class OutOfOrderMultiComparatorNonScoringCollector : MultiComparatorNonScoringCollector
 	  {
 
-		public OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		}
 
@@ -586,9 +553,7 @@ namespace Lucene.Net.Search
 			// Fastmatch: return if this hit is not competitive
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -599,7 +564,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// this is the equals case.
 				if (doc + DocBase > Bottom.Doc)
@@ -612,35 +577,33 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			UpdateBottom(doc);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 			Add(slot, doc, float.NaN);
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -662,7 +625,8 @@ namespace Lucene.Net.Search
 
 		internal Scorer Scorer_Renamed;
 
-		public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public MultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		  // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
 		  MaxScore = float.NegativeInfinity;
@@ -677,8 +641,6 @@ namespace Lucene.Net.Search
 
 		public override void Collect(int doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 		  float score = Scorer_Renamed.Score();
 		  if (score > MaxScore)
 		  {
@@ -690,9 +652,7 @@ namespace Lucene.Net.Search
 			// Fastmatch: return if this hit is not competitive
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -703,7 +663,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// Here c=0. If we're at the last comparator, this doc is not
 				// competitive, since docs are visited in doc Id order, which means
@@ -713,35 +673,33 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			UpdateBottom(doc, score);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -765,14 +723,13 @@ namespace Lucene.Net.Search
 	  private sealed class OutOfOrderMultiComparatorScoringMaxScoreCollector : MultiComparatorScoringMaxScoreCollector
 	  {
 
-		public OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		}
 
 		public override void Collect(int doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 		  float score = Scorer_Renamed.Score();
 		  if (score > MaxScore)
 		  {
@@ -784,9 +741,7 @@ namespace Lucene.Net.Search
 			// Fastmatch: return if this hit is not competitive
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -797,7 +752,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// this is the equals case.
 				if (doc + DocBase > Bottom.Doc)
@@ -810,35 +765,33 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			UpdateBottom(doc, score);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -860,7 +813,8 @@ namespace Lucene.Net.Search
 
 		internal Scorer Scorer_Renamed;
 
-		public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		}
 
@@ -879,9 +833,7 @@ namespace Lucene.Net.Search
 			// Fastmatch: return if this hit is not competitive
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -892,7 +844,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// Here c=0. If we're at the last comparator, this doc is not
 				// competitive, since docs are visited in doc Id order, which means
@@ -902,44 +854,38 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			// Compute score only if it is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 			UpdateBottom(doc, score);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 
 			// Compute score only if it is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -963,7 +909,8 @@ namespace Lucene.Net.Search
 	  private sealed class OutOfOrderMultiComparatorScoringNoMaxScoreCollector : MultiComparatorScoringNoMaxScoreCollector
 	  {
 
-		public OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) : base(queue, numHits, fillFields)
+		public OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields) 
+            : base(queue, numHits, fillFields)
 		{
 		}
 
@@ -975,9 +922,7 @@ namespace Lucene.Net.Search
 			// Fastmatch: return if this hit is not competitive
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -988,7 +933,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// this is the equals case.
 				if (doc + DocBase > Bottom.Doc)
@@ -1001,44 +946,38 @@ namespace Lucene.Net.Search
 			}
 
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			// Compute score only if it is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 			UpdateBottom(doc, score);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
 		  {
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = totalHits - 1;
 			int slot = TotalHits_Renamed - 1;
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 
 			// Compute score only if it is competitive.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float score = scorer.score();
 			float score = Scorer_Renamed.Score();
 			Add(slot, doc, score);
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -1068,9 +1007,7 @@ namespace Lucene.Net.Search
 
 		internal Scorer Scorer_Renamed;
 		internal int CollectedHits;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: final FieldComparator<?>[] comparators;
-		internal readonly FieldComparator<?>[] Comparators;
+		internal readonly FieldComparator[] comparators;
 		internal readonly int[] ReverseMul;
 		internal readonly FieldValueHitQueue<Entry> Queue;
 		internal readonly bool TrackDocScores;
@@ -1078,24 +1015,23 @@ namespace Lucene.Net.Search
 		internal readonly FieldDoc After;
 		internal int AfterDoc;
 
-		public PagingFieldCollector(FieldValueHitQueue<Entry> queue, FieldDoc after, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore) : base(queue, numHits, fillFields)
+		public PagingFieldCollector(FieldValueHitQueue<Entry> queue, FieldDoc after, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore) 
+            : base(queue, numHits, fillFields)
 		{
 		  this.Queue = queue;
 		  this.TrackDocScores = trackDocScores;
 		  this.TrackMaxScore = trackMaxScore;
 		  this.After = after;
-		  Comparators = queue.Comparators;
+		  comparators = queue.Comparators;
 		  ReverseMul = queue.ReverseMul;
 
 		  // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
 		  MaxScore = float.NegativeInfinity;
 
 		  // Tell all comparators their top value:
-		  for (int i = 0;i < Comparators.Length;i++)
+		  for (int i = 0;i < comparators.Length;i++)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") FieldComparator<Object> comparator = (FieldComparator<Object>) comparators[i];
-			FieldComparator<object> comparator = (FieldComparator<object>) Comparators[i];
+			FieldComparator<object> comparator = (FieldComparator<object>) comparators[i];
 			comparator.TopValue = after.Fields[i];
 		  }
 		}
@@ -1107,8 +1043,6 @@ namespace Lucene.Net.Search
 		  Bottom = Pq.UpdateTop();
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"unchecked", "rawtypes"}) @Override public void collect(int doc) throws java.io.IOException
 		public override void Collect(int doc)
 		{
 		  //System.out.println("  collect doc=" + doc);
@@ -1131,9 +1065,7 @@ namespace Lucene.Net.Search
 			// the worst hit currently in the queue:
 			for (int i = 0;; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = reverseMul[i] * comparators[i].compareBottom(doc);
-			  int c = ReverseMul[i] * Comparators[i].CompareBottom(doc);
+			  int c = ReverseMul[i] * comparators[i].CompareBottom(doc);
 			  if (c < 0)
 			  {
 				// Definitely not competitive.
@@ -1144,7 +1076,7 @@ namespace Lucene.Net.Search
 				// Definitely competitive.
 				break;
 			  }
-			  else if (i == Comparators.Length - 1)
+			  else if (i == comparators.Length - 1)
 			  {
 				// this is the equals case.
 				if (doc + DocBase > Bottom.Doc)
@@ -1160,15 +1092,11 @@ namespace Lucene.Net.Search
 		  // Check if this hit was already collected on a
 		  // previous page:
 		  bool sameValues = true;
-		  for (int compIDX = 0;compIDX < Comparators.Length;compIDX++)
+		  for (int compIDX = 0;compIDX < comparators.Length;compIDX++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldComparator comp = comparators[compIDX];
-			FieldComparator comp = Comparators[compIDX];
+			FieldComparator comp = comparators[compIDX];
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = reverseMul[compIDX] * comp.compareTop(doc);
-			int cmp = ReverseMul[compIDX] * comp.compareTop(doc);
+			int cmp = ReverseMul[compIDX] * comp.CompareTop(doc);
 			if (cmp > 0)
 			{
 			  // Already collected on a previous page
@@ -1195,9 +1123,9 @@ namespace Lucene.Net.Search
 		  if (QueueFull)
 		  {
 			// this hit is competitive - replace bottom element in queue & adjustTop
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(Bottom.Slot, doc);
+			  comparators[i].Copy(Bottom.Slot, doc);
 			}
 
 			// Compute score only if it is competitive.
@@ -1207,9 +1135,9 @@ namespace Lucene.Net.Search
 			}
 			UpdateBottom(doc, score);
 
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Bottom = Bottom.Slot;
+			  comparators[i].Bottom = Bottom.Slot;
 			}
 		  }
 		  else
@@ -1217,14 +1145,12 @@ namespace Lucene.Net.Search
 			CollectedHits++;
 
 			// Startup transient: queue hasn't gathered numHits yet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slot = collectedHits - 1;
 			int slot = CollectedHits - 1;
 			//System.out.println("    slot=" + slot);
 			// Copy hit into queue
-			for (int i = 0; i < Comparators.Length; i++)
+			for (int i = 0; i < comparators.Length; i++)
 			{
-			  Comparators[i].Copy(slot, doc);
+			  comparators[i].Copy(slot, doc);
 			}
 
 			// Compute score only if it is competitive.
@@ -1236,9 +1162,9 @@ namespace Lucene.Net.Search
 			QueueFull = CollectedHits == NumHits;
 			if (QueueFull)
 			{
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Bottom = Bottom.Slot;
+				comparators[i].Bottom = Bottom.Slot;
 			  }
 			}
 		  }
@@ -1249,9 +1175,9 @@ namespace Lucene.Net.Search
 			set
 			{
 			  this.Scorer_Renamed = value;
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Comparators[i].Scorer = value;
+				comparators[i].Scorer = value;
 			  }
 			}
 		}
@@ -1267,9 +1193,9 @@ namespace Lucene.Net.Search
 			{
 			  DocBase = value.DocBase;
 			  AfterDoc = After.Doc - DocBase;
-			  for (int i = 0; i < Comparators.Length; i++)
+			  for (int i = 0; i < comparators.Length; i++)
 			  {
-				Queue.SetComparator(i, Comparators[i].setNextReader(value));
+				Queue.SetComparator(i, comparators[i].SetNextReader(value));
 			  }
 			}
 		}
@@ -1381,7 +1307,7 @@ namespace Lucene.Net.Search
 	  public static TopFieldCollector Create(Sort sort, int numHits, FieldDoc after, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
 	  {
 
-		if (sort.Fields.Length == 0)
+		if (sort.fields.Length == 0)
 		{
 		  throw new System.ArgumentException("Sort must contain at least one field");
 		}
@@ -1391,7 +1317,7 @@ namespace Lucene.Net.Search
 		  throw new System.ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
 		}
 
-		FieldValueHitQueue<Entry> queue = FieldValueHitQueue.Create(sort.Fields, numHits);
+		FieldValueHitQueue<Entry> queue = FieldValueHitQueue.Create<Entry>(sort.fields, numHits);
 
 		if (after == null)
 		{
@@ -1468,9 +1394,9 @@ namespace Lucene.Net.Search
 			throw new System.ArgumentException("after.fields wasn't set; you must pass fillFields=true for the previous search");
 		  }
 
-		  if (after.Fields.Length != sort.Sort.Length)
+		  if (after.Fields.Length != sort.GetSort().Length)
 		  {
-			throw new System.ArgumentException("after.fields has " + after.Fields.Length + " values but sort has " + sort.Sort.Length);
+			throw new System.ArgumentException("after.fields has " + after.Fields.Length + " values but sort has " + sort.GetSort().Length);
 		  }
 
 		  return new PagingFieldCollector(queue, after, numHits, fillFields, trackDocScores, trackMaxScore);
@@ -1496,7 +1422,7 @@ namespace Lucene.Net.Search
 		  FieldValueHitQueue<Entry> queue = (FieldValueHitQueue<Entry>) Pq;
 		  for (int i = howMany - 1; i >= 0; i--)
 		  {
-			results[i] = queue.FillFields(queue.pop());
+			results[i] = queue.FillFields(queue.Pop());
 		  }
 		}
 		else

@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Expert: a FieldComparator compares hits so as to determine their
@@ -90,7 +91,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// @lucene.experimental
 	/// </summary>
-	public abstract class FieldComparator<T>
+    public abstract class FieldComparator<T> : FieldComparator
 	{
 
 	  /// <summary>
@@ -173,7 +174,96 @@ namespace Lucene.Net.Search
 	  ///   comparators can just return "this" to reuse the same
 	  ///   comparator across segments </returns>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
-	  public abstract FieldComparator<T> SetNextReader(AtomicReaderContext context);
+	  public abstract FieldComparator SetNextReader(AtomicReaderContext context);
+    }
+
+    // .NET Port: Using a non-generic class here so that we avoid having to use the 
+    // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
+    public abstract class FieldComparator {
+
+        //Set up abstract methods
+        /// <summary>
+        /// Compare hit at slot1 with hit at slot2.
+        /// </summary>
+        /// <param name="slot1"> first slot to compare </param>
+        /// <param name="slot2"> second slot to compare </param>
+        /// <returns> any N < 0 if slot2's value is sorted after
+        /// slot1, any N > 0 if the slot2's value is sorted before
+        /// slot1 and 0 if they are equal </returns>
+        public abstract int Compare(int slot1, int slot2);
+
+        /// <summary>
+        /// Set the bottom slot, ie the "weakest" (sorted last)
+        /// entry in the queue.  When <seealso cref="#compareBottom"/> is
+        /// called, you should compare against this slot.  this
+        /// will always be called before <seealso cref="#compareBottom"/>.
+        /// </summary>
+        /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
+        public abstract int Bottom { set; }
+
+        /// <summary>
+        /// Record the top value, for future calls to {@link
+        /// #compareTop}.  this is only called for searches that
+        /// use searchAfter (deep paging), and is called before any
+        /// calls to <seealso cref="#setNextReader"/>.
+        /// </summary>
+        public abstract object TopValue { set; }
+
+        /// <summary>
+        /// Compare the bottom of the queue with this doc.  this will
+        /// only invoked after setBottom has been called.  this
+        /// should return the same result as {@link
+        /// #compare(int,int)}} as if bottom were slot1 and the new
+        /// document were slot 2.
+        ///    
+        /// <p>For a search that hits many results, this method
+        /// will be the hotspot (invoked by far the most
+        /// frequently).</p>
+        /// </summary>
+        /// <param name="doc"> that was hit </param>
+        /// <returns> any N < 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N > 0 if the
+        /// doc's value is sorted before the bottom entry and 0 if
+        /// they are equal. </returns>
+        public abstract int CompareBottom(int doc);
+
+        /// <summary>
+        /// Compare the top value with this doc.  this will
+        /// only invoked after setTopValue has been called.  this
+        /// should return the same result as {@link
+        /// #compare(int,int)}} as if topValue were slot1 and the new
+        /// document were slot 2.  this is only called for searches that
+        /// use searchAfter (deep paging).
+        /// </summary>
+        /// <param name="doc"> that was hit </param>
+        /// <returns> any N < 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N > 0 if the
+        /// doc's value is sorted before the bottom entry and 0 if
+        /// they are equal. </returns>
+        public abstract int CompareTop(int doc);
+
+        /// <summary>
+        /// this method is called when a new hit is competitive.
+        /// You should copy any state associated with this document
+        /// that will be required for future comparisons, into the
+        /// specified slot.
+        /// </summary>
+        /// <param name="slot"> which slot to copy the hit to </param>
+        /// <param name="doc"> docID relative to current reader </param>
+        public abstract void Copy(int slot, int doc);
+
+        /// <summary>
+        /// Set a new <seealso cref="AtomicReaderContext"/>. All subsequent docIDs are relative to
+        /// the current reader (you must add docBase if you need to
+        /// map it to a top-level docID).
+        /// </summary>
+        /// <param name="context"> current reader context </param>
+        /// <returns> the comparator to use for this segment; most
+        ///   comparators can just return "this" to reuse the same
+        ///   comparator across segments </returns>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        public abstract FieldComparator SetNextReader(AtomicReaderContext context);
+
 
 	  /// <summary>
 	  /// Sets the Scorer to use in case a document's score is
@@ -195,7 +285,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  /// <param name="slot"> the value </param>
 	  /// <returns> value in this slot </returns>
-	  public abstract T Value(int slot);
+	  public abstract object Value(int slot);
 
 	  /// <summary>
 	  /// Returns -1 if first is less than second.  Default
@@ -204,9 +294,7 @@ namespace Lucene.Net.Search
 	  ///  your FieldComparator's type isn't a Comparable or
 	  ///  if your values may sometimes be null 
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public int compareValues(T first, T second)
-	  public virtual int CompareValues(T first, T second)
+      public virtual int CompareValues(object first, object second)
 	  {
 		if (first == null)
 		{
@@ -225,7 +313,7 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  return ((IComparable<T>) first).CompareTo(second);
+            return ((IComparable<object>)first).CompareTo(second);
 		}
 	  }
 
@@ -234,7 +322,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public abstract class NumericComparator<T> : FieldComparator<T> where T : Number
 	  {
-		protected internal readonly T MissingValue;
+		protected internal readonly T? MissingValue;
 		protected internal readonly string Field;
 		protected internal Bits DocsWithField;
 
@@ -244,7 +332,7 @@ namespace Lucene.Net.Search
 		  this.MissingValue = missingValue;
 		}
 
-		public override FieldComparator<T> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  if (MissingValue != null)
 		  {
@@ -268,15 +356,16 @@ namespace Lucene.Net.Search
 	  ///  FieldCache#getBytes} and sorts by ascending value 
 	  /// </summary>
 	  [Obsolete]
-	  public sealed class ByteComparator : NumericComparator<sbyte?>
+	  public sealed class ByteComparator : NumericComparator<sbyte>
 	  {
 		internal readonly sbyte[] Values;
 		internal readonly FieldCache_ByteParser Parser;
 		internal FieldCache_Bytes CurrentReaderValues;
-		internal sbyte Bottom_Renamed;
-		internal sbyte TopValue_Renamed;
+		internal sbyte bottom;
+		internal sbyte topValue;
 
-		internal ByteComparator(int numHits, string field, FieldCache_Parser parser, sbyte? missingValue) : base(field, missingValue)
+		internal ByteComparator(int numHits, string field, FieldCache_Parser parser, sbyte missingValue) 
+            : base(field, missingValue)
 		{
 		  Values = new sbyte[numHits];
 		  this.Parser = (FieldCache_ByteParser) parser;
@@ -284,7 +373,8 @@ namespace Lucene.Net.Search
 
 		public override int Compare(int slot1, int slot2)
 		{
-		  return sbyte.compare(Values[slot1], Values[slot2]);
+            //LUCENE TO-DO
+		  return Number.Signum(Values[slot1], Values[slot2]);
 		}
 
 		public override int CompareBottom(int doc)
@@ -294,10 +384,10 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+			v2 = MissingValue.GetValueOrDefault();
 		  }
-
-		  return sbyte.compare(Bottom_Renamed, v2);
+          //LUCENE TO-DO
+		  return Number.Signum(bottom, v2);
 		}
 
 		public override void Copy(int slot, int doc)
@@ -307,24 +397,24 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 		  Values[slot] = v2;
 		}
 
-		public override FieldComparator<sbyte?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  // NOTE: must do this before calling super otherwise
 		  // we compute the docsWithField Bits twice!
 		  CurrentReaderValues = FieldCache_Fields.DEFAULT.GetBytes(context.Reader(), Field, Parser, MissingValue != null);
-		  return base.setNextReader(context);
+          return base.SetNextReader(context);
 		}
 
 		public override int Bottom
 		{
 			set
 			{
-			  this.Bottom_Renamed = Values[value];
+			  this.bottom = Values[value];
 			}
 		}
 
@@ -332,13 +422,13 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                topValue = value.GetValueOrDefault();
 			}
 		}
 
 		public override sbyte? Value(int slot)
 		{
-		  return Convert.ToByte(Values[slot]);
+		  return Values[slot];
 		}
 
 		public override int CompareTop(int doc)
@@ -348,9 +438,10 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && docValue == 0 && !DocsWithField.Get(doc))
 		  {
-			docValue = MissingValue;
+              docValue = MissingValue.GetValueOrDefault();
 		  }
-		  return sbyte.compare(TopValue_Renamed, docValue);
+          //LUCENE TO-DO
+          return Number.Signum(topValue, docValue);
 		}
 	  }
 
@@ -358,7 +449,7 @@ namespace Lucene.Net.Search
 	  /// Parses field's values as double (using {@link
 	  ///  FieldCache#getDoubles} and sorts by ascending value 
 	  /// </summary>
-	  public sealed class DoubleComparator : NumericComparator<double?>
+	  public sealed class DoubleComparator : NumericComparator<double>
 	  {
 		internal readonly double[] Values;
 		internal readonly FieldCache_DoubleParser Parser;
@@ -366,7 +457,8 @@ namespace Lucene.Net.Search
 		internal double Bottom_Renamed;
 		internal double TopValue_Renamed;
 
-		internal DoubleComparator(int numHits, string field, FieldCache_Parser parser, double? missingValue) : base(field, missingValue)
+		internal DoubleComparator(int numHits, string field, FieldCache_Parser parser, double missingValue) 
+            : base(field, missingValue)
 		{
 		  Values = new double[numHits];
 		  this.Parser = (FieldCache_DoubleParser) parser;
@@ -384,7 +476,7 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  return Bottom_Renamed.CompareTo(v2);
@@ -397,18 +489,18 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  Values[slot] = v2;
 		}
 
-		public override FieldComparator<double?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  // NOTE: must do this before calling super otherwise
 		  // we compute the docsWithField Bits twice!
 		  CurrentReaderValues = FieldCache_Fields.DEFAULT.GetDoubles(context.Reader(), Field, Parser, MissingValue != null);
-		  return base.setNextReader(context);
+		  return base.SetNextReader(context);
 		}
 
 		public override int Bottom
@@ -423,13 +515,13 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
 		public override double? Value(int slot)
 		{
-		  return Convert.ToDouble(Values[slot]);
+		  return Values[slot];
 		}
 
 		public override int CompareTop(int doc)
@@ -439,7 +531,7 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && docValue == 0 && !DocsWithField.Get(doc))
 		  {
-			docValue = MissingValue;
+              docValue = MissingValue.GetValueOrDefault();
 		  }
 		  return TopValue_Renamed.CompareTo(docValue);
 		}
@@ -449,7 +541,7 @@ namespace Lucene.Net.Search
 	  /// Parses field's values as float (using {@link
 	  ///  FieldCache#getFloats} and sorts by ascending value 
 	  /// </summary>
-	  public sealed class FloatComparator : NumericComparator<float?>
+	  public sealed class FloatComparator : NumericComparator<float>
 	  {
 		internal readonly float[] Values;
 		internal readonly FieldCache_FloatParser Parser;
@@ -457,7 +549,8 @@ namespace Lucene.Net.Search
 		internal float Bottom_Renamed;
 		internal float TopValue_Renamed;
 
-		internal FloatComparator(int numHits, string field, FieldCache_Parser parser, float? missingValue) : base(field, missingValue)
+		internal FloatComparator(int numHits, string field, FieldCache_Parser parser, float missingValue) 
+            : base(field, missingValue)
 		{
 		  Values = new float[numHits];
 		  this.Parser = (FieldCache_FloatParser) parser;
@@ -476,7 +569,7 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  return Bottom_Renamed.CompareTo(v2);
@@ -489,18 +582,18 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  Values[slot] = v2;
 		}
 
-		public override FieldComparator<float?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  // NOTE: must do this before calling super otherwise
 		  // we compute the docsWithField Bits twice!
 		  CurrentReaderValues = FieldCache_Fields.DEFAULT.GetFloats(context.Reader(), Field, Parser, MissingValue != null);
-		  return base.setNextReader(context);
+		  return base.SetNextReader(context);
 		}
 
 		public override int Bottom
@@ -515,13 +608,13 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
 		public override float? Value(int slot)
 		{
-		  return Convert.ToSingle(Values[slot]);
+		  return Values[slot];
 		}
 
 		public override int CompareTop(int doc)
@@ -531,7 +624,7 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && docValue == 0 && !DocsWithField.Get(doc))
 		  {
-			docValue = MissingValue;
+			docValue = MissingValue.GetValueOrDefault();
 		  }
 		  return TopValue_Renamed.CompareTo(docValue);
 		}
@@ -542,7 +635,7 @@ namespace Lucene.Net.Search
 	  ///  FieldCache#getShorts} and sorts by ascending value 
 	  /// </summary>
 	  [Obsolete]
-	  public sealed class ShortComparator : NumericComparator<short?>
+	  public sealed class ShortComparator : NumericComparator<short>
 	  {
 		internal readonly short[] Values;
 		internal readonly FieldCache_ShortParser Parser;
@@ -550,7 +643,8 @@ namespace Lucene.Net.Search
 		internal short Bottom_Renamed;
 		internal short TopValue_Renamed;
 
-		internal ShortComparator(int numHits, string field, FieldCache_Parser parser, short? missingValue) : base(field, missingValue)
+		internal ShortComparator(int numHits, string field, FieldCache_Parser parser, short missingValue) 
+            : base(field, missingValue)
 		{
 		  Values = new short[numHits];
 		  this.Parser = (FieldCache_ShortParser) parser;
@@ -558,7 +652,8 @@ namespace Lucene.Net.Search
 
 		public override int Compare(int slot1, int slot2)
 		{
-		  return short.compare(Values[slot1], Values[slot2]);
+          //LUCENE TO-DO
+		  return Number.Signum(Values[slot1], Values[slot2]);
 		}
 
 		public override int CompareBottom(int doc)
@@ -568,10 +663,11 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+			v2 = MissingValue.GetValueOrDefault();
 		  }
 
-		  return short.compare(Bottom_Renamed, v2);
+          //LUCENE TO-DO
+          return Number.Signum(Bottom_Renamed, v2);
 		}
 
 		public override void Copy(int slot, int doc)
@@ -581,18 +677,18 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  Values[slot] = v2;
 		}
 
-		public override FieldComparator<short?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  // NOTE: must do this before calling super otherwise
 		  // we compute the docsWithField Bits twice!
 		  CurrentReaderValues = FieldCache_Fields.DEFAULT.GetShorts(context.Reader(), Field, Parser, MissingValue != null);
-		  return base.setNextReader(context);
+          return base.SetNextReader(context);
 		}
 
 		public override int Bottom
@@ -607,13 +703,13 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
 		public override short? Value(int slot)
 		{
-		  return Convert.ToInt16(Values[slot]);
+		  return Values[slot];
 		}
 
 		public override int CompareTop(int doc)
@@ -623,9 +719,9 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && docValue == 0 && !DocsWithField.Get(doc))
 		  {
-			docValue = MissingValue;
+              docValue = MissingValue.GetValueOrDefault();
 		  }
-		  return short.compare(TopValue_Renamed, docValue);
+          return TopValue_Renamed.CompareTo(docValue);
 		}
 	  }
 
@@ -633,7 +729,7 @@ namespace Lucene.Net.Search
 	  /// Parses field's values as int (using {@link
 	  ///  FieldCache#getInts} and sorts by ascending value 
 	  /// </summary>
-	  public sealed class IntComparator : NumericComparator<int?>
+	  public sealed class IntComparator : NumericComparator<int>
 	  {
 		internal readonly int[] Values;
 		internal readonly FieldCache_IntParser Parser;
@@ -641,7 +737,8 @@ namespace Lucene.Net.Search
 		internal int Bottom_Renamed; // Value of bottom of queue
 		internal int TopValue_Renamed;
 
-		internal IntComparator(int numHits, string field, FieldCache_Parser parser, int? missingValue) : base(field, missingValue)
+		internal IntComparator(int numHits, string field, FieldCache_Parser parser, int missingValue) 
+            : base(field, missingValue)
 		{
 		  Values = new int[numHits];
 		  this.Parser = (FieldCache_IntParser) parser;
@@ -649,7 +746,7 @@ namespace Lucene.Net.Search
 
 		public override int Compare(int slot1, int slot2)
 		{
-		  return int.compare(Values[slot1], Values[slot2]);
+          return Values[slot1].CompareTo(Values[slot2]);
 		}
 
 		public override int CompareBottom(int doc)
@@ -659,11 +756,10 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
-
-		  return int.compare(Bottom_Renamed, v2);
-		}
+          return Bottom_Renamed.CompareTo(v2);
+        }
 
 		public override void Copy(int slot, int doc)
 		{
@@ -672,18 +768,18 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  Values[slot] = v2;
 		}
 
-		public override FieldComparator<int?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  // NOTE: must do this before calling super otherwise
 		  // we compute the docsWithField Bits twice!
 		  CurrentReaderValues = FieldCache_Fields.DEFAULT.GetInts(context.Reader(), Field, Parser, MissingValue != null);
-		  return base.setNextReader(context);
+		  return base.SetNextReader(context);
 		}
 
 		public override int Bottom
@@ -698,13 +794,13 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
 		public override int? Value(int slot)
 		{
-		  return Convert.ToInt32(Values[slot]);
+		  return Values[slot];
 		}
 
 		public override int CompareTop(int doc)
@@ -714,9 +810,9 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && docValue == 0 && !DocsWithField.Get(doc))
 		  {
-			docValue = MissingValue;
+              docValue = MissingValue.GetValueOrDefault();
 		  }
-		  return int.compare(TopValue_Renamed, docValue);
+          return TopValue_Renamed.CompareTo(docValue);
 		}
 	  }
 
@@ -724,7 +820,7 @@ namespace Lucene.Net.Search
 	  /// Parses field's values as long (using {@link
 	  ///  FieldCache#getLongs} and sorts by ascending value 
 	  /// </summary>
-	  public sealed class LongComparator : NumericComparator<long?>
+	  public sealed class LongComparator : NumericComparator<long>
 	  {
 		internal readonly long[] Values;
 		internal readonly FieldCache_LongParser Parser;
@@ -732,7 +828,8 @@ namespace Lucene.Net.Search
 		internal long Bottom_Renamed;
 		internal long TopValue_Renamed;
 
-		internal LongComparator(int numHits, string field, FieldCache_Parser parser, long? missingValue) : base(field, missingValue)
+		internal LongComparator(int numHits, string field, FieldCache_Parser parser, long missingValue) 
+            : base(field, missingValue)
 		{
 		  Values = new long[numHits];
 		  this.Parser = (FieldCache_LongParser) parser;
@@ -740,7 +837,7 @@ namespace Lucene.Net.Search
 
 		public override int Compare(int slot1, int slot2)
 		{
-		  return long.compare(Values[slot1], Values[slot2]);
+		  return Number.Signum(Values[slot1], Values[slot2]);
 		}
 
 		public override int CompareBottom(int doc)
@@ -752,10 +849,10 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
-		  return long.compare(Bottom_Renamed, v2);
+          return Number.Signum(Bottom_Renamed, v2);
 		}
 
 		public override void Copy(int slot, int doc)
@@ -765,18 +862,18 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && v2 == 0 && !DocsWithField.Get(doc))
 		  {
-			v2 = MissingValue;
+              v2 = MissingValue.GetValueOrDefault();
 		  }
 
 		  Values[slot] = v2;
 		}
 
-		public override FieldComparator<long?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  // NOTE: must do this before calling super otherwise
 		  // we compute the docsWithField Bits twice!
 		  CurrentReaderValues = FieldCache_Fields.DEFAULT.GetLongs(context.Reader(), Field, Parser, MissingValue != null);
-		  return base.setNextReader(context);
+          return base.SetNextReader(context);
 		}
 
 		public override int Bottom
@@ -791,13 +888,13 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
 		public override long? Value(int slot)
 		{
-		  return Convert.ToInt64(Values[slot]);
+		  return Values[slot];
 		}
 
 		public override int CompareTop(int doc)
@@ -807,9 +904,9 @@ namespace Lucene.Net.Search
 		  // the common case (doc has value and value is non-zero):
 		  if (DocsWithField != null && docValue == 0 && !DocsWithField.Get(doc))
 		  {
-			docValue = MissingValue;
+              docValue = MissingValue.GetValueOrDefault();
 		  }
-		  return long.compare(TopValue_Renamed, docValue);
+          return TopValue_Renamed.CompareTo(docValue);
 		}
 	  }
 
@@ -821,7 +918,7 @@ namespace Lucene.Net.Search
 	  ///  IndexSearcher#search} uses when no <seealso cref="Sort"/> is
 	  ///  specified). 
 	  /// </summary>
-	  public sealed class RelevanceComparator : FieldComparator<float?>
+	  public sealed class RelevanceComparator : FieldComparator<float>
 	  {
 		internal readonly float[] Scores;
 		internal float Bottom_Renamed;
@@ -851,7 +948,7 @@ namespace Lucene.Net.Search
 		  Debug.Assert(!float.IsNaN(Scores[slot]));
 		}
 
-		public override FieldComparator<float?> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  return this;
 		}
@@ -868,7 +965,7 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
@@ -896,11 +993,11 @@ namespace Lucene.Net.Search
 		}
 
 		// Override because we sort reverse of natural Float order:
-		public override int CompareValues(float? first, float? second)
+		public override int CompareValues(float first, float second)
 		{
 		  // Reversed intentionally because relevance by default
 		  // sorts descending:
-		  return second.compareTo(first);
+		  return second.CompareTo(first);
 		}
 
 		public override int CompareTop(int doc)
@@ -963,7 +1060,7 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  TopValue_Renamed = value;
+                TopValue_Renamed = value.GetValueOrDefault();
 			}
 		}
 
@@ -975,7 +1072,7 @@ namespace Lucene.Net.Search
 		public override int CompareTop(int doc)
 		{
 		  int docValue = DocBase + doc;
-		  return int.compare(TopValue_Renamed, docValue);
+          return Number.Signum(TopValue_Renamed, docValue);
 		}
 	  }
 
@@ -1090,11 +1187,7 @@ namespace Lucene.Net.Search
 			return Ords[slot1] - Ords[slot2];
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef val1 = values[slot1];
 		  BytesRef val1 = Values[slot1];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef val2 = values[slot2];
 		  BytesRef val2 = Values[slot2];
 		  if (val1 == null)
 		  {
@@ -1225,8 +1318,6 @@ namespace Lucene.Net.Search
 				}
 				else
 				{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final int ord = termsIndex.lookupTerm(bottomValue);
 				  int ord = TermsIndex.LookupTerm(BottomValue);
 				  if (ord < 0)
 				  {
@@ -1342,11 +1433,7 @@ namespace Lucene.Net.Search
 
 		public override int Compare(int slot1, int slot2)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef val1 = values[slot1];
 		  BytesRef val1 = Values[slot1];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef val2 = values[slot2];
 		  BytesRef val2 = Values[slot2];
 		  if (val1.Bytes == MISSING_BYTES)
 		  {

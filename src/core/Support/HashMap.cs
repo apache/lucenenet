@@ -33,13 +33,13 @@ namespace Lucene.Net.Support
     /// the Hashmap supports both null keys and values, where the C# Dictionary
     /// only supports null values not keys.  Also, <c>V Get(TKey)</c>
     /// method in Java returns null if the key doesn't exist, instead of throwing
-    /// an exception.  this implementation doesn't throw an exception when a key 
-    /// doesn't exist, it will return null.  this class is slower than using a 
+    /// an exception.  This implementation doesn't throw an exception when a key 
+    /// doesn't exist, it will return null.  This class is slower than using a 
     /// <see cref="Dictionary{TKey, TValue}"/>, because of extra checks that have to be
     /// done on each access, to check for null.
     /// </para>
     /// <para>
-    /// <b>NOTE:</b> this class works best with nullable types.  default(T) is returned
+    /// <b>NOTE:</b> This class works best with nullable types.  default(T) is returned
     /// when a key doesn't exist in the collection (this being similar to how Java returns
     /// null).  Therefore, if the expected behavior of the java code is to execute code
     /// based on if the key exists, when the key is an integer type, it will return 0 instead of null.
@@ -56,7 +56,7 @@ namespace Lucene.Net.Support
     public class HashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
         internal IEqualityComparer<TKey> _comparer;
-        internal Dictionary<TKey, TValue> _dict;
+        internal IDictionary<TKey, TValue> _dict;
 
         // Indicates if a null key has been assigned, used for iteration
         private bool _hasNullValue;
@@ -72,25 +72,18 @@ namespace Lucene.Net.Support
         public HashMap(IEqualityComparer<TKey> comparer)
             : this(0, comparer)
         {
-            
+
         }
 
         public HashMap(int initialCapacity)
             : this(initialCapacity, EqualityComparer<TKey>.Default)
         {
-            
+
         }
 
         public HashMap(int initialCapacity, IEqualityComparer<TKey> comparer)
+            : this(new Dictionary<TKey, TValue>(initialCapacity, comparer), comparer)
         {
-            _comparer = comparer;
-            _dict = new Dictionary<TKey, TValue>(initialCapacity, _comparer);
-            _hasNullValue = false;
-
-            if (typeof(TKey).IsValueType)
-            {
-                _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
-            }
         }
 
         public HashMap(IEnumerable<KeyValuePair<TKey, TValue>> other)
@@ -102,12 +95,34 @@ namespace Lucene.Net.Support
             }
         }
 
+        internal HashMap(IDictionary<TKey, TValue> wrappedDict, IEqualityComparer<TKey> comparer)
+        {
+            _comparer = EqualityComparer<TKey>.Default;
+            _dict = wrappedDict;
+            _hasNullValue = false;
+
+            if (typeof(TKey).IsValueType)
+            {
+                _isValueType = Nullable.GetUnderlyingType(typeof(TKey)) == null;
+            }
+        }
+
         public bool ContainsValue(TValue value)
         {
             if (!_isValueType && _hasNullValue && _nullValue.Equals(value))
                 return true;
 
-            return _dict.ContainsValue(value);
+            return _dict.Values.Contains(value);
+        }
+
+        public TValue AddIfAbsent(TKey key, TValue value)
+        {
+            if (!ContainsKey(key))
+            {
+                Add(key, value);
+                return default(TValue);
+            }
+            return this[key];
         }
 
         #region Implementation of IEnumerable
@@ -157,8 +172,8 @@ namespace Lucene.Net.Support
 
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            ((ICollection<KeyValuePair<TKey, TValue>>) _dict).CopyTo(array, arrayIndex);
-            if(!_isValueType && _hasNullValue)
+            ((ICollection<KeyValuePair<TKey, TValue>>)_dict).CopyTo(array, arrayIndex);
+            if (!_isValueType && _hasNullValue)
             {
                 array[array.Length - 1] = new KeyValuePair<TKey, TValue>(default(TKey), _nullValue);
             }
@@ -307,9 +322,9 @@ namespace Lucene.Net.Support
         class NullValueCollection : ICollection<TValue>
         {
             private readonly TValue _nullValue;
-            private readonly Dictionary<TKey, TValue> _internalDict;
+            private readonly IDictionary<TKey, TValue> _internalDict;
 
-            public NullValueCollection(Dictionary<TKey, TValue> dict, TValue nullValue)
+            public NullValueCollection(IDictionary<TKey, TValue> dict, TValue nullValue)
             {
                 _internalDict = dict;
                 _nullValue = nullValue;
@@ -386,9 +401,9 @@ namespace Lucene.Net.Support
         /// </summary>
         class NullKeyCollection : ICollection<TKey>
         {
-            private readonly Dictionary<TKey, TValue> _internalDict;
+            private readonly IDictionary<TKey, TValue> _internalDict;
 
-            public NullKeyCollection(Dictionary<TKey, TValue> dict)
+            public NullKeyCollection(IDictionary<TKey, TValue> dict)
             {
                 _internalDict = dict;
             }

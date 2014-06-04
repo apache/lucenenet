@@ -1,25 +1,26 @@
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using Term = Lucene.Net.Index.Term;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using Term = Lucene.Net.Index.Term;
 
 	/// <summary>
 	/// this is a <seealso cref="PhraseQuery"/> which is optimized for n-gram phrase query.
@@ -72,17 +73,15 @@ namespace Lucene.Net.Search
 		// now create the new optimized phrase query for n-gram
 		PhraseQuery optimized = new PhraseQuery();
 		optimized.Boost = Boost;
-		int pos = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int lastPos = terms.length - 1;
+		int pos_ = 0;
 		int lastPos = terms.Length - 1;
 		for (int i = 0; i < terms.Length; i++)
 		{
-		  if (pos % n == 0 || pos >= lastPos)
+		  if (pos_ % n == 0 || pos_ >= lastPos)
 		  {
 			optimized.Add(terms[i], positions[i]);
 		  }
-		  pos++;
+		  pos_++;
 		}
 
 		return optimized;
@@ -106,9 +105,9 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) ^ Slop ^ Terms.HashCode() ^ Positions.HashCode() ^ n;
+		return Number.FloatToIntBits(Boost) ^ Slop ^ Terms.GetHashCode() ^ Positions.GetHashCode() ^ n;
 	  }
 	}
 

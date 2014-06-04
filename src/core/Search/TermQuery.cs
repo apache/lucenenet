@@ -35,6 +35,8 @@ namespace Lucene.Net.Search
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using System.Collections.Generic;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// A Query that matches documents containing a term.
@@ -90,8 +92,6 @@ namespace Lucene.Net.Search
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
 		  Debug.Assert(TermStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), "The top-reader used to create Weight (" + TermStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = getTermsEnum(context);
 		  TermsEnum termsEnum = GetTermsEnum(context);
 		  if (termsEnum == null)
 		  {
@@ -108,19 +108,15 @@ namespace Lucene.Net.Search
 		/// </summary>
 		internal TermsEnum GetTermsEnum(AtomicReaderContext context)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermState state = termStates.get(context.ord);
 		  TermState state = TermStates.Get(context.Ord);
 		  if (state == null) // term is not present in that reader
 		  {
-			Debug.Assert(TermNotInReader(context.Reader(), outerInstance.Term_Renamed), "no termstate found but term exists in reader term=" + outerInstance.Term_Renamed);
+              Debug.Assert(TermNotInReader(context.Reader(), OuterInstance.Term_Renamed), "no termstate found but term exists in reader term=" + OuterInstance.Term_Renamed);
 			return null;
 		  }
 		  //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = context.reader().terms(term.field()).iterator(null);
-		  TermsEnum termsEnum = context.Reader().terms(outerInstance.Term_Renamed.Field()).iterator(null);
-		  termsEnum.SeekExact(outerInstance.Term_Renamed.Bytes(), state);
+          TermsEnum termsEnum = context.Reader().Terms(OuterInstance.Term_Renamed.Field()).Iterator(null);
+          termsEnum.SeekExact(OuterInstance.Term_Renamed.Bytes(), state);
 		  return termsEnum;
 		}
 
@@ -181,7 +177,7 @@ namespace Lucene.Net.Search
 	  {
 		Debug.Assert(states != null);
 		Term_Renamed = t;
-		DocFreq = states.DocFreq();
+		DocFreq = states.DocFreq;
 		PerReaderTermState = states;
 	  }
 
@@ -197,11 +193,7 @@ namespace Lucene.Net.Search
 
 	  public override Weight CreateWeight(IndexSearcher searcher)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.IndexReaderContext context = searcher.getTopReaderContext();
 		IndexReaderContext context = searcher.TopReaderContext;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermContext termState;
 		TermContext termState;
 		if (PerReaderTermState == null || PerReaderTermState.TopReaderContext != context)
 		{
@@ -223,9 +215,9 @@ namespace Lucene.Net.Search
 		return new TermWeight(this, searcher, termState);
 	  }
 
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		terms.add(Term);
+		terms.Add(Term);
 	  }
 
 	  /// <summary>
@@ -257,9 +249,9 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) ^ Term_Renamed.HashCode();
+		return Number.FloatToIntBits(Boost) ^ Term_Renamed.HashCode();
 	  }
 
 	}

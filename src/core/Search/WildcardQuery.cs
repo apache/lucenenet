@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using Automaton = Lucene.Net.Util.Automaton.Automaton;
 	using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
 	using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
+    using Lucene.Net.Support;
 
 
 	/// <summary>
@@ -67,8 +68,6 @@ namespace Lucene.Net.Search
 	  /// Convert Lucene wildcard syntax into an automaton.
 	  /// @lucene.internal
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("fallthrough") public static Lucene.Net.Util.Automaton.Automaton toAutomaton(Lucene.Net.Index.Term wildcardquery)
 	  public static Automaton ToAutomaton(Term wildcardquery)
 	  {
 		IList<Automaton> automata = new List<Automaton>();
@@ -77,10 +76,8 @@ namespace Lucene.Net.Search
 
 		for (int i = 0; i < wildcardText.Length;)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int c = wildcardText.codePointAt(i);
-		  int c = wildcardText.codePointAt(i);
-		  int length = char.charCount(c);
+		  int c = wildcardText[i];//.codePointAt(i);
+		  int length = Character.CharCount(c);
 		  switch (c)
 		  {
 			case WILDCARD_STRING:
@@ -93,10 +90,8 @@ namespace Lucene.Net.Search
 			  // add the next codepoint instead, if it exists
 			  if (i + length < wildcardText.Length)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int nextChar = wildcardText.codePointAt(i + length);
-				int nextChar = wildcardText.codePointAt(i + length);
-				length += char.charCount(nextChar);
+				int nextChar = wildcardText[i+length];//.codePointAt(i + length);
+                length += Character.CharCount(nextChar);
 				automata.Add(BasicAutomata.MakeChar(nextChar));
 				break;
 			  } // else fallthru, lenient parsing with a trailing \

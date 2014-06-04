@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -31,6 +32,7 @@ namespace Lucene.Net.Search.Spans
 	using TermContext = Lucene.Net.Index.TermContext;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Matches spans which are near one another.  One can specify <i>slop</i>, the
@@ -39,11 +41,11 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public class SpanNearQuery : SpanQuery, ICloneable
 	{
-	  protected internal IList<SpanQuery> Clauses_Renamed;
-	  protected internal int Slop_Renamed;
-	  protected internal bool InOrder_Renamed;
+	  protected internal IList<SpanQuery> clauses;
+	  protected internal int slop;
+	  protected internal bool inOrder;
 
-	  protected internal string Field_Renamed;
+	  protected internal string field;
 	  private bool CollectPayloads;
 
 	  /// <summary>
@@ -63,23 +65,23 @@ namespace Lucene.Net.Search.Spans
 	  {
 
 		// copy clauses array into an ArrayList
-		this.Clauses_Renamed = new List<>(clauses.Length);
+          this.clauses = new List<SpanQuery>(clauses.Length);
 		for (int i = 0; i < clauses.Length; i++)
 		{
 		  SpanQuery clause = clauses[i];
-		  if (Field_Renamed == null) // check field
+		  if (field == null) // check field
 		  {
-			Field_Renamed = clause.Field;
+			field = clause.Field;
 		  }
-		  else if (clause.Field != null && !clause.Field.Equals(Field_Renamed))
+		  else if (clause.Field != null && !clause.Field.Equals(field))
 		  {
 			throw new System.ArgumentException("Clauses must have same field.");
 		  }
-		  this.Clauses_Renamed.Add(clause);
+		  this.clauses.Add(clause);
 		}
 		this.CollectPayloads = collectPayloads;
-		this.Slop_Renamed = slop;
-		this.InOrder_Renamed = inOrder;
+		this.slop = slop;
+		this.inOrder = inOrder;
 	  }
 
 	  /// <summary>
@@ -88,7 +90,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			return Clauses_Renamed.ToArray();
+			return clauses.ToArray();
 		  }
 	  }
 
@@ -98,7 +100,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Slop_Renamed;
+			  return slop;
 		  }
 	  }
 
@@ -108,7 +110,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return InOrder_Renamed;
+			  return inOrder;
 		  }
 	  }
 
@@ -116,14 +118,14 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			  return Field_Renamed;
+			  return field;
 		  }
 	  }
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		foreach (SpanQuery clause in Clauses_Renamed)
+		foreach (SpanQuery clause in clauses)
 		{
-		  clause.extractTerms(terms);
+		  clause.ExtractTerms(terms);
 		}
 	  }
 
@@ -132,21 +134,20 @@ namespace Lucene.Net.Search.Spans
 	  {
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append("spanNear([");
-		IEnumerator<SpanQuery> i = Clauses_Renamed.GetEnumerator();
+		IEnumerator<SpanQuery> i = clauses.GetEnumerator();
 		while (i.MoveNext())
 		{
 		  SpanQuery clause = i.Current;
 		  buffer.Append(clause.ToString(field));
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  if (i.hasNext())
-		  {
-			buffer.Append(", ");
-		  }
+	      buffer.Append(", ");
 		}
+        //LUCENE TO-DO
+        if (clauses.Count > 0) 
+            buffer.Remove(buffer.Length - 2, 2);
 		buffer.Append("], ");
-		buffer.Append(Slop_Renamed);
+		buffer.Append(slop);
 		buffer.Append(", ");
-		buffer.Append(InOrder_Renamed);
+		buffer.Append(inOrder);
 		buffer.Append(")");
 		buffer.Append(ToStringUtils.Boost(Boost));
 		return buffer.ToString();
@@ -154,25 +155,25 @@ namespace Lucene.Net.Search.Spans
 
 	  public override Spans GetSpans(AtomicReaderContext context, Bits acceptDocs, IDictionary<Term, TermContext> termContexts)
 	  {
-		if (Clauses_Renamed.Count == 0) // optimize 0-clause case
+		if (clauses.Count == 0) // optimize 0-clause case
 		{
 		  return (new SpanOrQuery(Clauses)).GetSpans(context, acceptDocs, termContexts);
 		}
 
-		if (Clauses_Renamed.Count == 1) // optimize 1-clause case
+		if (clauses.Count == 1) // optimize 1-clause case
 		{
-		  return Clauses_Renamed[0].GetSpans(context, acceptDocs, termContexts);
+		  return clauses[0].GetSpans(context, acceptDocs, termContexts);
 		}
 
-		return InOrder_Renamed ? (Spans) new NearSpansOrdered(this, context, acceptDocs, termContexts, CollectPayloads) : (Spans) new NearSpansUnordered(this, context, acceptDocs, termContexts);
+		return inOrder ? (Spans) new NearSpansOrdered(this, context, acceptDocs, termContexts, CollectPayloads) : (Spans) new NearSpansUnordered(this, context, acceptDocs, termContexts);
 	  }
 
 	  public override Query Rewrite(IndexReader reader)
 	  {
 		SpanNearQuery clone = null;
-		for (int i = 0 ; i < Clauses_Renamed.Count; i++)
+		for (int i = 0 ; i < clauses.Count; i++)
 		{
-		  SpanQuery c = Clauses_Renamed[i];
+		  SpanQuery c = clauses[i];
 		  SpanQuery query = (SpanQuery) c.Rewrite(reader);
 		  if (query != c) // clause rewrote: must clone
 		  {
@@ -180,7 +181,7 @@ namespace Lucene.Net.Search.Spans
 			{
 			  clone = this.Clone();
 			}
-			clone.Clauses_Renamed[i] = query;
+			clone.clauses[i] = query;
 		  }
 		}
 		if (clone != null)
@@ -195,14 +196,14 @@ namespace Lucene.Net.Search.Spans
 
 	  public override SpanNearQuery Clone()
 	  {
-		int sz = Clauses_Renamed.Count;
+		int sz = clauses.Count;
 		SpanQuery[] newClauses = new SpanQuery[sz];
 
 		for (int i = 0; i < sz; i++)
 		{
-		  newClauses[i] = (SpanQuery) Clauses_Renamed[i].Clone();
+		  newClauses[i] = (SpanQuery) clauses[i].Clone();
 		}
-		SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, Slop_Renamed, InOrder_Renamed);
+		SpanNearQuery spanNearQuery = new SpanNearQuery(newClauses, slop, inOrder);
 		spanNearQuery.Boost = Boost;
 		return spanNearQuery;
 	  }
@@ -224,15 +225,15 @@ namespace Lucene.Net.Search.Spans
 //ORIGINAL LINE: final SpanNearQuery spanNearQuery = (SpanNearQuery) o;
 		SpanNearQuery spanNearQuery = (SpanNearQuery) o;
 
-		if (InOrder_Renamed != spanNearQuery.InOrder_Renamed)
+		if (inOrder != spanNearQuery.inOrder)
 		{
 			return false;
 		}
-		if (Slop_Renamed != spanNearQuery.Slop_Renamed)
+		if (slop != spanNearQuery.slop)
 		{
 			return false;
 		}
-		if (!Clauses_Renamed.Equals(spanNearQuery.Clauses_Renamed))
+		if (!clauses.Equals(spanNearQuery.clauses))
 		{
 			return false;
 		}
@@ -240,17 +241,17 @@ namespace Lucene.Net.Search.Spans
 		return Boost == spanNearQuery.Boost;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		int result;
-		result = Clauses_Renamed.HashCode();
+		result = clauses.GetHashCode();
 		// Mix bits before folding in things like boost, since it could cancel the
 		// last element of clauses.  this particular mix also serves to
 		// differentiate SpanNearQuery hashcodes from others.
 		result ^= (result << 14) | ((int)((uint)result >> 19)); // reversible
-		result += float.floatToRawIntBits(Boost);
-		result += Slop_Renamed;
-		result ^= (InOrder_Renamed ? 0x99AFD3BD : 0);
+		result += Number.FloatToIntBits(Boost);
+		result += slop;
+		result ^= (inOrder ? unchecked((int)0x99AFD3BD) : 0);
 		return result;
 	  }
 	}

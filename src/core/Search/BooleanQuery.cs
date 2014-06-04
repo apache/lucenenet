@@ -26,20 +26,21 @@ namespace Lucene.Net.Search
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using Term = Lucene.Net.Index.Term;
-	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
+	using Occur_e = Lucene.Net.Search.BooleanClause.Occur_e;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// A Query that matches documents matching boolean combinations of other
 	/// queries, e.g. <seealso cref="TermQuery"/>s, <seealso cref="PhraseQuery"/>s or other
 	/// BooleanQuerys.
 	/// </summary>
-	public class BooleanQuery : Query, IEnumerable<BooleanClause>
+	public class BooleanQuery : Query, IEnumerable<BooleanClause>, ICloneable
 	{
 
-	  private static int MaxClauseCount_Renamed = 1024;
+	  private static int maxClauseCount = 1024;
 
 	  /// <summary>
 	  /// Thrown when an attempt is made to add more than {@link
@@ -49,7 +50,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public class TooManyClauses : Exception
 	  {
-		public TooManyClauses() : base("maxClauseCount is set to " + MaxClauseCount_Renamed)
+		public TooManyClauses() : base("maxClauseCount is set to " + maxClauseCount)
 		{
 		}
 	  }
@@ -63,7 +64,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			  return MaxClauseCount_Renamed;
+			  return maxClauseCount;
 		  }
 		  set
 		  {
@@ -71,12 +72,12 @@ namespace Lucene.Net.Search
 			{
 			  throw new System.ArgumentException("maxClauseCount must be >= 1");
 			}
-			BooleanQuery.MaxClauseCount_Renamed = value;
+			BooleanQuery.maxClauseCount = value;
 		  }
 	  }
 
 
-	  private List<BooleanClause> Clauses_Renamed = new List<BooleanClause>();
+	  private IList<BooleanClause> clauses = new List<BooleanClause>();
 	  private readonly bool DisableCoord;
 
 	  /// <summary>
@@ -158,12 +159,12 @@ namespace Lucene.Net.Search
 	  /// <seealso cref= #getMaxClauseCount() </seealso>
 	  public virtual void Add(BooleanClause clause)
 	  {
-		if (Clauses_Renamed.Count >= MaxClauseCount_Renamed)
+		if (clauses.Count >= maxClauseCount)
 		{
 		  throw new TooManyClauses();
 		}
 
-		Clauses_Renamed.Add(clause);
+		clauses.Add(clause);
 	  }
 
 	  /// <summary>
@@ -172,15 +173,15 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Clauses_Renamed.ToArray();
+			return clauses.ToArray();
 		  }
 	  }
 
 	  /// <summary>
 	  /// Returns the list of clauses in this query. </summary>
-	  public virtual IList<BooleanClause> Clauses()
+	  public virtual IList<BooleanClause> GetClauses()
 	  {
-		  return Clauses_Renamed;
+		  return clauses;
 	  }
 
 	  /// <summary>
@@ -190,7 +191,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override IEnumerator<BooleanClause> Iterator()
 	  {
-		  return Clauses().GetEnumerator();
+		  return GetClauses().GetEnumerator();
 	  }
 
 	  /// <summary>
@@ -215,11 +216,11 @@ namespace Lucene.Net.Search
 			this.OuterInstance = outerInstance;
 		  this.Similarity = searcher.Similarity;
 		  this.DisableCoord = disableCoord;
-		  Weights = new List<>(outerInstance.Clauses_Renamed.Count);
-		  for (int i = 0 ; i < outerInstance.Clauses_Renamed.Count; i++)
+		  Weights = new List<Weight>(outerInstance.clauses.Count);
+		  for (int i = 0 ; i < outerInstance.clauses.Count; i++)
 		  {
-			BooleanClause c = outerInstance.Clauses_Renamed[i];
-			Weight w = c.Query.createWeight(searcher);
+			BooleanClause c = outerInstance.clauses[i];
+			Weight w = c.Query.CreateWeight(searcher);
 			Weights.Add(w);
 			if (!c.Prohibited)
 			{
@@ -244,14 +245,14 @@ namespace Lucene.Net.Search
 			  {
 				// call sumOfSquaredWeights for all clauses in case of side effects
 				float s = Weights[i].ValueForNormalization; // sum sub weights
-				if (!outerInstance.Clauses_Renamed[i].Prohibited)
+                if (!OuterInstance.clauses[i].Prohibited)
 				{
 				  // only add to sum for non-prohibited clauses
 				  sum += s;
 				}
 			  }
-    
-			  sum *= outerInstance.Boost * outerInstance.Boost; // boost each sub-weight
+
+              sum *= OuterInstance.Boost * OuterInstance.Boost; // boost each sub-weight
     
 			  return sum;
 			}
@@ -268,7 +269,7 @@ namespace Lucene.Net.Search
 
 		public override void Normalize(float norm, float topLevelBoost)
 		{
-		  topLevelBoost *= outerInstance.Boost; // incorporate boost
+		  topLevelBoost *= OuterInstance.Boost; // incorporate boost
 		  foreach (Weight w in Weights)
 		  {
 			// normalize all clauses, (even if prohibited in case of side affects)
@@ -278,8 +279,6 @@ namespace Lucene.Net.Search
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int minShouldMatch = BooleanQuery.this.getMinimumNumberShouldMatch();
 		  int minShouldMatch = OuterInstance.MinimumNumberShouldMatch;
 		  ComplexExplanation sumExpl = new ComplexExplanation();
 		  sumExpl.Description = "sum of:";
@@ -287,12 +286,12 @@ namespace Lucene.Net.Search
 		  float sum = 0.0f;
 		  bool fail = false;
 		  int shouldMatchCount = 0;
-		  IEnumerator<BooleanClause> cIter = outerInstance.Clauses_Renamed.GetEnumerator();
+          IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
 		  for (IEnumerator<Weight> wIter = Weights.GetEnumerator(); wIter.MoveNext();)
 		  {
 			Weight w = wIter.Current;
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			BooleanClause c = cIter.next();
+            cIter.MoveNext();
+            BooleanClause c = cIter.Current;
 			if (w.Scorer(context, context.Reader().LiveDocs) == null)
 			{
 			  if (c.Required)
@@ -319,7 +318,7 @@ namespace Lucene.Net.Search
 				sumExpl.AddDetail(r);
 				fail = true;
 			  }
-			  if (c.Occur_e == Occur.SHOULD)
+			  if (c.Occur == Occur_e.SHOULD)
 			  {
 				shouldMatchCount++;
 			  }
@@ -350,8 +349,6 @@ namespace Lucene.Net.Search
 		  sumExpl.Match = 0 < coord ? true : false;
 		  sumExpl.Value = sum;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float coordFactor = disableCoord ? 1.0f : coord(coord, maxCoord);
 		  float coordFactor = DisableCoord ? 1.0f : Coord(coord, MaxCoord);
 		  if (coordFactor == 1.0f)
 		  {
@@ -359,7 +356,7 @@ namespace Lucene.Net.Search
 		  }
 		  else
 		  {
-			ComplexExplanation result = new ComplexExplanation(sumExpl.Match, sum * coordFactor, "product of:");
+			ComplexExplanation result = new ComplexExplanation(sumExpl.IsMatch, sum * coordFactor, "product of:");
 			result.AddDetail(sumExpl);
 			result.AddDetail(new Explanation(coordFactor, "coord(" + coord + "/" + MaxCoord + ")"));
 			return result;
@@ -369,7 +366,7 @@ namespace Lucene.Net.Search
 		public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
 		{
 
-		  if (scoreDocsInOrder || outerInstance.MinNrShouldMatch > 1)
+		  if (scoreDocsInOrder || OuterInstance.MinNrShouldMatch > 1)
 		  {
 			// TODO: (LUCENE-4872) in some cases BooleanScorer may be faster for minNrShouldMatch
 			// but the same is even true of pure conjunctions...
@@ -378,11 +375,11 @@ namespace Lucene.Net.Search
 
 		  IList<BulkScorer> prohibited = new List<BulkScorer>();
 		  IList<BulkScorer> optional = new List<BulkScorer>();
-		  IEnumerator<BooleanClause> cIter = outerInstance.Clauses_Renamed.GetEnumerator();
+          IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
 		  foreach (Weight w in Weights)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			BooleanClause c = cIter.next();
+			cIter.MoveNext();
+            BooleanClause c = cIter.Current;
 			BulkScorer subScorer = w.BulkScorer(context, false, acceptDocs);
 			if (subScorer == null)
 			{
@@ -409,7 +406,7 @@ namespace Lucene.Net.Search
 		  }
 
 		  // Check if we can and should return a BooleanScorer
-		  return new BooleanScorer(this, DisableCoord, outerInstance.MinNrShouldMatch, optional, prohibited, MaxCoord);
+          return new BooleanScorer(this, DisableCoord, OuterInstance.MinNrShouldMatch, optional, prohibited, MaxCoord);
 		}
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
@@ -417,11 +414,12 @@ namespace Lucene.Net.Search
 		  IList<Scorer> required = new List<Scorer>();
 		  IList<Scorer> prohibited = new List<Scorer>();
 		  IList<Scorer> optional = new List<Scorer>();
-		  IEnumerator<BooleanClause> cIter = outerInstance.Clauses_Renamed.GetEnumerator();
+          IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
 		  foreach (Weight w in Weights)
 		  {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			BooleanClause c = cIter.next();
+            cIter.MoveNext();
+            BooleanClause c = cIter.Current;
 			Scorer subScorer = w.Scorer(context, acceptDocs);
 			if (subScorer == null)
 			{
@@ -449,7 +447,7 @@ namespace Lucene.Net.Search
 			// no required and optional clauses.
 			return null;
 		  }
-		  else if (optional.Count < outerInstance.MinNrShouldMatch)
+          else if (optional.Count < OuterInstance.MinNrShouldMatch)
 		  {
 			// either >1 req scorer, or there are 0 req scorers and at least 1
 			// optional scorer. Therefore if there are not enough optional scorers
@@ -465,7 +463,7 @@ namespace Lucene.Net.Search
 		  }
 
 		  // simple disjunction
-		  if (required.Count == 0 && prohibited.Count == 0 && outerInstance.MinNrShouldMatch <= 1 && optional.Count > 1)
+          if (required.Count == 0 && prohibited.Count == 0 && OuterInstance.MinNrShouldMatch <= 1 && optional.Count > 1)
 		  {
 			float[] coord = new float[optional.Count + 1];
 			for (int i = 0; i < coord.Length; i++)
@@ -476,17 +474,17 @@ namespace Lucene.Net.Search
 		  }
 
 		  // Return a BooleanScorer2
-		  return new BooleanScorer2(this, DisableCoord, outerInstance.MinNrShouldMatch, required, prohibited, optional, MaxCoord);
+          return new BooleanScorer2(this, DisableCoord, OuterInstance.MinNrShouldMatch, required, prohibited, optional, MaxCoord);
 		}
 
 		public override bool ScoresDocsOutOfOrder()
 		{
-		  if (outerInstance.MinNrShouldMatch > 1)
+		  if (OuterInstance.MinNrShouldMatch > 1)
 		  {
 			// BS2 (in-order) will be used by scorer()
 			return false;
 		  }
-		  foreach (BooleanClause c in outerInstance.Clauses_Renamed)
+          foreach (BooleanClause c in OuterInstance.clauses)
 		  {
 			if (c.Required)
 			{
@@ -508,13 +506,13 @@ namespace Lucene.Net.Search
 
 	  public override Query Rewrite(IndexReader reader)
 	  {
-		if (MinNrShouldMatch == 0 && Clauses_Renamed.Count == 1) // optimize 1-clause queries
+		if (MinNrShouldMatch == 0 && clauses.Count == 1) // optimize 1-clause queries
 		{
-		  BooleanClause c = Clauses_Renamed[0];
+		  BooleanClause c = clauses[0];
 		  if (!c.Prohibited) // just return clause
 		  {
 
-			Query query = c.Query.rewrite(reader); // rewrite first
+			Query query = c.Query.Rewrite(reader); // rewrite first
 
 			if (Boost != 1.0f) // incorporate boost
 			{
@@ -533,10 +531,10 @@ namespace Lucene.Net.Search
 		}
 
 		BooleanQuery clone = null; // recursively rewrite
-		for (int i = 0 ; i < Clauses_Renamed.Count; i++)
+		for (int i = 0 ; i < clauses.Count; i++)
 		{
-		  BooleanClause c = Clauses_Renamed[i];
-		  Query query = c.Query.rewrite(reader);
+		  BooleanClause c = clauses[i];
+		  Query query = c.Query.Rewrite(reader);
 		  if (query != c.Query) // clause rewrote: must clone
 		  {
 			if (clone == null)
@@ -546,7 +544,7 @@ namespace Lucene.Net.Search
 			  // initialized already).  If nothing differs, the clone isn't needlessly created
 			  clone = this.Clone();
 			}
-			clone.Clauses_Renamed[i] = new BooleanClause(query, c.Occur_e);
+			clone.clauses[i] = new BooleanClause(query, c.Occur);
 		  }
 		}
 		if (clone != null)
@@ -560,23 +558,21 @@ namespace Lucene.Net.Search
 	  }
 
 	  // inherit javadoc
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		foreach (BooleanClause clause in Clauses_Renamed)
+		foreach (BooleanClause clause in clauses)
 		{
-		  if (clause.Occur_e != Occur.MUST_NOT)
+		  if (clause.Occur != Occur_e.MUST_NOT)
 		  {
-			clause.Query.extractTerms(terms);
+			clause.Query.ExtractTerms(terms);
 		  }
 		}
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public BooleanQuery clone()
 	  public override BooleanQuery Clone()
 	  {
 		BooleanQuery clone = (BooleanQuery)base.Clone();
-		clone.Clauses_Renamed = (List<BooleanClause>) this.Clauses_Renamed.clone();
+		clone.clauses = (List<BooleanClause>) this.clauses.Clone();
 		return clone;
 	  }
 
@@ -591,9 +587,9 @@ namespace Lucene.Net.Search
 		  buffer.Append("(");
 		}
 
-		for (int i = 0 ; i < Clauses_Renamed.Count; i++)
+		for (int i = 0 ; i < clauses.Count; i++)
 		{
-		  BooleanClause c = Clauses_Renamed[i];
+		  BooleanClause c = clauses[i];
 		  if (c.Prohibited)
 		  {
 			buffer.Append("-");
@@ -622,7 +618,7 @@ namespace Lucene.Net.Search
 			buffer.Append("null");
 		  }
 
-		  if (i != Clauses_Renamed.Count - 1)
+		  if (i != clauses.Count - 1)
 		  {
 			buffer.Append(" ");
 		  }
@@ -656,14 +652,14 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 		BooleanQuery other = (BooleanQuery)o;
-		return this.Boost == other.Boost && this.Clauses_Renamed.Equals(other.Clauses_Renamed) && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch && this.DisableCoord == other.DisableCoord;
+		return this.Boost == other.Boost && this.clauses.Equals(other.clauses) && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch && this.DisableCoord == other.DisableCoord;
 	  }
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) ^ Clauses_Renamed.HashCode() + MinimumNumberShouldMatch + (DisableCoord ? 17:0);
+		return Number.FloatToIntBits(Boost) ^ clauses.GetHashCode() + MinimumNumberShouldMatch + (DisableCoord ? 17:0);
 	  }
 
 	}

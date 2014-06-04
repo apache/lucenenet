@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Payloads
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  return new PayloadTermSpanScorer(this, (TermSpans) Query_Renamed.GetSpans(context, acceptDocs, TermContexts), this, Similarity.SimScorer(Stats, context));
+		  return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.SimScorer(Stats, context));
 		}
 
 		protected internal class PayloadTermSpanScorer : SpanScorer
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Payloads
 
 			  Freq_Renamed += DocScorer.ComputeSlopFactor(matchLength);
 			  NumMatches++;
-			  ProcessPayload(outerInstance.Similarity);
+              ProcessPayload(OuterInstance.Similarity);
 
 			  More = Spans.Next(); // this moves positions to the next match in this
 								  // document
@@ -130,11 +130,11 @@ namespace Lucene.Net.Search.Payloads
 			  Payload = postings.Payload;
 			  if (Payload != null)
 			  {
-				PayloadScore_Renamed = outerInstance.OuterInstance.Function.currentScore(Doc, outerInstance.OuterInstance.Term_Renamed.field(), Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Payload));
+                  PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field(), Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, DocScorer.ComputePayloadFactor(Doc, Spans.Start(), Spans.End(), Payload));
 			  }
 			  else
 			  {
-				PayloadScore_Renamed = outerInstance.OuterInstance.Function.currentScore(Doc, outerInstance.OuterInstance.Term_Renamed.field(), Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, 1F);
+                  PayloadScore_Renamed = OuterInstance.OuterInstance.Function.CurrentScore(Doc, OuterInstance.OuterInstance.Term.Field(), Spans.Start(), Spans.End(), PayloadsSeen, PayloadScore_Renamed, 1F);
 			  }
 			  PayloadsSeen++;
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Payloads
 		  public override float Score()
 		  {
 
-			return outerInstance.OuterInstance.IncludeSpanScore ? SpanScore * PayloadScore : PayloadScore;
+              return OuterInstance.OuterInstance.IncludeSpanScore ? SpanScore * PayloadScore : PayloadScore;
 		  }
 
 		  /// <summary>
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search.Payloads
 		  {
 			  get
 			  {
-				return outerInstance.OuterInstance.Function.docScore(Doc, outerInstance.OuterInstance.Term_Renamed.field(), PayloadsSeen, PayloadScore_Renamed);
+                  return OuterInstance.OuterInstance.Function.DocScore(Doc, OuterInstance.OuterInstance.Term.Field(), PayloadsSeen, PayloadScore_Renamed);
 			  }
 		  }
 		}
@@ -206,11 +206,11 @@ namespace Lucene.Net.Search.Payloads
 			  // GSI: I suppose we could toString the payload, but I don't think that
 			  // would be a good idea
 			  string field = ((SpanQuery)Query).Field;
-			  Explanation payloadExpl = outerInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore_Renamed);
+              Explanation payloadExpl = OuterInstance.Function.Explain(doc, field, scorer.PayloadsSeen, scorer.PayloadScore_Renamed);
 			  payloadExpl.Value = scorer.PayloadScore;
 			  // combined
 			  ComplexExplanation result = new ComplexExplanation();
-			  if (outerInstance.IncludeSpanScore)
+              if (OuterInstance.IncludeSpanScore)
 			  {
 				result.AddDetail(expl);
 				result.AddDetail(payloadExpl);
@@ -235,8 +235,8 @@ namespace Lucene.Net.Search.Payloads
 	  public override int HashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
-		result = prime * result + ((Function == null) ? 0 : Function.HashCode());
+		int result = base.GetHashCode();
+		result = prime * result + ((Function == null) ? 0 : Function.GetHashCode());
 		result = prime * result + (IncludeSpanScore ? 1231 : 1237);
 		return result;
 	  }

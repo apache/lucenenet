@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 		this.PrefixLength_Renamed = prefixLength;
 		this.Transpositions_Renamed = transpositions;
 		this.MaxExpansions = maxExpansions;
-		RewriteMethod = new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions);
+		SetRewriteMethod(new MultiTermQuery.TopTermsScoringBooleanQueryRewrite(maxExpansions));
 	  }
 
 	  /// <summary>
@@ -185,8 +185,6 @@ namespace Lucene.Net.Search
 
 	  public override string ToString(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder buffer = new StringBuilder();
 		StringBuilder buffer = new StringBuilder();
 		if (!Term_Renamed.Field().Equals(field))
 		{
@@ -203,7 +201,7 @@ namespace Lucene.Net.Search
 	  public override int HashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
+		int result = base.GetHashCode();
 		result = prime * result + MaxEdits_Renamed;
 		result = prime * result + PrefixLength_Renamed;
 		result = prime * result + MaxExpansions;

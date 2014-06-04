@@ -38,7 +38,9 @@ namespace Lucene.Net.Search
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory; // javadoc
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-	using IndexWriter = Lucene.Net.Index.IndexWriter; // javadocs
+	using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using System.Threading.Tasks;
+    using Lucene.Net.Support; // javadocs
 
 	/// <summary>
 	/// Implements search over a single IndexReader.
@@ -80,7 +82,7 @@ namespace Lucene.Net.Search
 	  protected internal readonly LeafSlice[] LeafSlices;
 
 	  // These are only used for multi-threaded search
-	  private readonly ExecutorService Executor;
+      private readonly TaskScheduler Executor;
 
 	  // the default Similarity
 	  private static readonly Similarity DefaultSimilarity_Renamed = new DefaultSimilarity();
@@ -106,7 +108,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Creates a searcher searching the provided index. </summary>
-	  public IndexSearcher(IndexReader r) : this(r, null)
+	  public IndexSearcher(IndexReader r) 
+          : this(r, null)
 	  {
 	  }
 
@@ -123,7 +126,8 @@ namespace Lucene.Net.Search
 	  /// 
 	  /// @lucene.experimental 
 	  /// </summary>
-	  public IndexSearcher(IndexReader r, ExecutorService executor) : this(r.Context, executor)
+      public IndexSearcher(IndexReader r, TaskScheduler executor)
+          : this(r.Context, executor)
 	  {
 	  }
 
@@ -142,7 +146,7 @@ namespace Lucene.Net.Search
 	  /// <seealso cref= IndexReaderContext </seealso>
 	  /// <seealso cref= IndexReader#getContext()
 	  /// @lucene.experimental </seealso>
-	  public IndexSearcher(IndexReaderContext context, ExecutorService executor)
+      public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
 	  {
 		Debug.Assert(context.IsTopLevel, "IndexSearcher's ReaderContext must be topLevel for reader" + context.Reader());
 		Reader = context.Reader();
@@ -158,7 +162,8 @@ namespace Lucene.Net.Search
 	  /// <seealso cref= IndexReaderContext </seealso>
 	  /// <seealso cref= IndexReader#getContext()
 	  /// @lucene.experimental </seealso>
-	  public IndexSearcher(IndexReaderContext context) : this(context, null)
+	  public IndexSearcher(IndexReaderContext context) 
+          : this(context, null)
 	  {
 	  }
 
@@ -472,14 +477,8 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HitQueue hq = new HitQueue(nDocs, false);
 		  HitQueue hq = new HitQueue(nDocs, false);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.concurrent.locks.Lock lock = new java.util.concurrent.locks.ReentrantLock();
-		  Lock @lock = new ReentrantLock();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ExecutionHelper<TopDocs> runner = new ExecutionHelper<>(executor);
+          ReentrantLock @lock = new ReentrantLock();
 		  ExecutionHelper<TopDocs> runner = new ExecutionHelper<TopDocs>(Executor);
 
 		  for (int i = 0; i < LeafSlices.Length; i++) // search each sub
@@ -491,15 +490,13 @@ namespace Lucene.Net.Search
 		  float maxScore = float.NegativeInfinity;
 		  foreach (TopDocs topDocs in runner)
 		  {
-			if (topDocs.totalHits != 0)
+			if (topDocs.TotalHits != 0)
 			{
-			  totalHits += topDocs.totalHits;
+			  totalHits += topDocs.TotalHits;
 			  maxScore = Math.Max(maxScore, topDocs.MaxScore);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc[] scoreDocs = new ScoreDoc[hq.size()];
 		  ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
 		  for (int i = hq.Size() - 1; i >= 0; i--) // put docs in array
 		  {
@@ -576,15 +573,9 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TopFieldCollector topCollector = TopFieldCollector.create(sort, nDocs, after, fillFields, doDocScores, doMaxScore, false);
 		  TopFieldCollector topCollector = TopFieldCollector.Create(sort, nDocs, after, fillFields, doDocScores, doMaxScore, false);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.concurrent.locks.Lock lock = new java.util.concurrent.locks.ReentrantLock();
-		  Lock @lock = new ReentrantLock();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<>(executor);
+          ReentrantLock @lock = new ReentrantLock();
 		  ExecutionHelper<TopFieldDocs> runner = new ExecutionHelper<TopFieldDocs>(Executor);
 		  for (int i = 0; i < LeafSlices.Length; i++) // search each leaf slice
 		  {
@@ -594,15 +585,13 @@ namespace Lucene.Net.Search
 		  float maxScore = float.NegativeInfinity;
 		  foreach (TopFieldDocs topFieldDocs in runner)
 		  {
-			if (topFieldDocs.totalHits != 0)
+			if (topFieldDocs.TotalHits != 0)
 			{
-			  totalHits += topFieldDocs.totalHits;
+			  totalHits += topFieldDocs.TotalHits;
 			  maxScore = Math.Max(maxScore, topFieldDocs.MaxScore);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TopFieldDocs topDocs = (TopFieldDocs) topCollector.topDocs();
 		  TopFieldDocs topDocs = (TopFieldDocs) topCollector.TopDocs();
 
 		  return new TopFieldDocs(totalHits, topDocs.ScoreDocs, topDocs.Fields, topDocs.MaxScore);
@@ -660,7 +649,7 @@ namespace Lucene.Net.Search
 		  {
 			collector.NextReader = ctx;
 		  }
-		  catch (CollectionTerminatedException e)
+		  catch (CollectionTerminatedException)
 		  {
 			// there is no doc of interest in this reader context
 			// continue with the following leaf
@@ -673,7 +662,7 @@ namespace Lucene.Net.Search
 			{
 			  scorer.Score(collector);
 			}
-			catch (CollectionTerminatedException e)
+			catch (CollectionTerminatedException)
 			{
 			  // collection was terminated prematurely
 			  // continue with the following leaf
@@ -725,8 +714,6 @@ namespace Lucene.Net.Search
 	  protected internal virtual Explanation Explain(Weight weight, int doc)
 	  {
 		int n = ReaderUtil.SubIndex(doc, LeafContexts);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReaderContext ctx = leafContexts.get(n);
 		AtomicReaderContext ctx = LeafContexts[n];
 		int deBasedDoc = doc - ctx.DocBase;
 
@@ -769,10 +756,10 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// A thread subclass for searching a single searchable 
 	  /// </summary>
-	  private sealed class SearcherCallableNoSort : Callable<TopDocs>
+	  private sealed class SearcherCallableNoSort : ICallable<TopDocs>
 	  {
 
-		internal readonly Lock @lock;
+		internal readonly ReentrantLock @lock;
 		internal readonly IndexSearcher Searcher;
 		internal readonly Weight Weight;
 		internal readonly ScoreDoc After;
@@ -780,7 +767,7 @@ namespace Lucene.Net.Search
 		internal readonly HitQueue Hq;
 		internal readonly LeafSlice Slice;
 
-		public SearcherCallableNoSort(Lock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc after, int nDocs, HitQueue hq)
+        public SearcherCallableNoSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, ScoreDoc after, int nDocs, HitQueue hq)
 		{
 		  this.@lock = @lock;
 		  this.Searcher = searcher;
@@ -793,20 +780,14 @@ namespace Lucene.Net.Search
 
 		public override TopDocs Call()
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TopDocs docs = searcher.search(java.util.Arrays.asList(slice.leaves), weight, after, nDocs);
-		  TopDocs docs = Searcher.Search(Arrays.asList(Slice.Leaves), Weight, After, NDocs);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc[] scoreDocs = docs.scoreDocs;
+		  TopDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs);
 		  ScoreDoc[] scoreDocs = docs.ScoreDocs;
 		  //it would be so nice if we had a thread-safe insert 
-		  @lock.@lock();
+		  @lock.Lock();
 		  try
 		  {
 			for (int j = 0; j < scoreDocs.Length; j++) // merge scoreDocs into hq
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreDoc scoreDoc = scoreDocs[j];
 			  ScoreDoc scoreDoc = scoreDocs[j];
 			  if (scoreDoc == Hq.InsertWithOverflow(scoreDoc))
 			  {
@@ -816,7 +797,7 @@ namespace Lucene.Net.Search
 		  }
 		  finally
 		  {
-			@lock.unlock();
+			@lock.Unlock();
 		  }
 		  return docs;
 		}
@@ -826,10 +807,10 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// A thread subclass for searching a single searchable 
 	  /// </summary>
-	  private sealed class SearcherCallableWithSort : Callable<TopFieldDocs>
+	  private sealed class SearcherCallableWithSort : ICallable<TopFieldDocs>
 	  {
 
-		internal readonly Lock @lock;
+		internal readonly ReentrantLock @lock;
 		internal readonly IndexSearcher Searcher;
 		internal readonly Weight Weight;
 		internal readonly int NDocs;
@@ -840,7 +821,7 @@ namespace Lucene.Net.Search
 		internal readonly bool DoDocScores;
 		internal readonly bool DoMaxScore;
 
-		public SearcherCallableWithSort(Lock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
+        public SearcherCallableWithSort(ReentrantLock @lock, IndexSearcher searcher, LeafSlice slice, Weight weight, FieldDoc after, int nDocs, TopFieldCollector hq, Sort sort, bool doDocScores, bool doMaxScore)
 		{
 		  this.@lock = @lock;
 		  this.Searcher = searcher;
@@ -859,17 +840,11 @@ namespace Lucene.Net.Search
 		public override TopFieldDocs Call()
 		{
 		  Debug.Assert(Slice.Leaves.Length == 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TopFieldDocs docs = searcher.search(java.util.Arrays.asList(slice.leaves), weight, after, nDocs, sort, true, doDocScores || sort.needsScores(), doMaxScore);
-		  TopFieldDocs docs = Searcher.Search(Arrays.asList(Slice.Leaves), Weight, After, NDocs, Sort, true, DoDocScores || Sort.NeedsScores(), DoMaxScore);
-		  @lock.@lock();
+		  TopFieldDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs, Sort, true, DoDocScores || Sort.NeedsScores(), DoMaxScore);
+		  @lock.Lock();
 		  try
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReaderContext ctx = slice.leaves[0];
 			AtomicReaderContext ctx = Slice.Leaves[0];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int base = ctx.docBase;
 			int @base = ctx.DocBase;
 			Hq.NextReader = ctx;
 			Hq.Scorer = FakeScorer;
@@ -877,7 +852,7 @@ namespace Lucene.Net.Search
 			{
 			  FakeScorer.Doc = scoreDoc.Doc - @base;
 			  FakeScorer.Score_Renamed = scoreDoc.Score;
-			  Hq.collect(scoreDoc.Doc - @base);
+			  Hq.Collect(scoreDoc.Doc - @base);
 			}
 
 			// Carry over maxScore from sub:
@@ -888,7 +863,7 @@ namespace Lucene.Net.Search
 		  }
 		  finally
 		  {
-			@lock.unlock();
+			@lock.Unlock();
 		  }
 		  return docs;
 		}
@@ -902,26 +877,49 @@ namespace Lucene.Net.Search
 	  ///          the type of the <seealso cref="Callable"/> return value </param>
 	  private sealed class ExecutionHelper<T> : IEnumerator<T>, IEnumerable<T>
 	  {
-		internal readonly CompletionService<T> Service;
+		internal readonly ICompletionService<T> Service;
 		internal int NumTasks;
+        private T current;
 
-		internal ExecutionHelper(Executor executor)
+		internal ExecutionHelper(TaskScheduler executor)
 		{
-		  this.Service = new ExecutorCompletionService<>(executor);
+		  this.Service = new TaskSchedulerCompletionService<T>(executor);
 		}
 
-		public override bool HasNext()
+        public T Current
+        {
+            get
+            {
+                return current;
+            }
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get { return current; }
+        }
+
+        public void Dispose()
+        {
+        }
+          
+		/*public override bool HasNext()
 		{
 		  return NumTasks > 0;
-		}
+		}*/
 
-		public void Submit(Callable<T> task)
+		public void Submit(ICallable<T> task)
 		{
-		  this.Service.submit(task);
+		  this.Service.Submit(task);
 		  ++NumTasks;
 		}
 
-		public override T Next()
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+	
+        /*public override T Next()
 		{
 		  if (!this.HasNext())
 		  {
@@ -929,9 +927,9 @@ namespace Lucene.Net.Search
 		  }
 		  try
 		  {
-			return Service.take().get();
+			return Service.Take().Get();
 		  }
-		  catch (InterruptedException e)
+		  catch (ThreadInterruptedException e)
 		  {
 			throw new ThreadInterruptedException(e);
 		  }
@@ -943,18 +941,40 @@ namespace Lucene.Net.Search
 		  {
 			--NumTasks;
 		  }
-		}
+		}*/
+   
+        public bool MoveNext()
+        {
+            if (NumTasks > 0)
+            {
+                try
+                {
+                    current = Service.Take().Result;
+                }
+                finally
+                {
+                    --NumTasks;
+                }
+            }
 
-		public override void Remove()
+            return false;
+        }
+
+		/*public override void Remove()
 		{
 		  throw new System.NotSupportedException();
-		}
+		}*/
 
 		public IEnumerator<T> GetEnumerator()
 		{
 		  // use the shortcut here - this is only used in a private context
 		  return this;
 		}
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this;
+        }
 	  }
 
 	  /// <summary>
@@ -987,7 +1007,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual TermStatistics TermStatistics(Term term, TermContext context)
 	  {
-		return new TermStatistics(term.Bytes(), context.DocFreq(), context.TotalTermFreq());
+		return new TermStatistics(term.Bytes(), context.DocFreq, context.TotalTermFreq());
 	  }
 
 	  /// <summary>
@@ -999,14 +1019,8 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual CollectionStatistics CollectionStatistics(string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount;
 		int docCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long sumTotalTermFreq;
 		long sumTotalTermFreq;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long sumDocFreq;
 		long sumDocFreq;
 
 		Debug.Assert(field != null);

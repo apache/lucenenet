@@ -612,7 +612,7 @@ namespace Lucene.Net.Search.Similarities
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final long df = stat.docFreq();
-		  long df = stat.docFreq();
+		  long df = stat.DocFreq();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final float termIdf = idf(df, max);
 		  float termIdf = Idf(df, max);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Search.Similarities
 	  public override sealed SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
 	  {
 		IDFStats idfstats = (IDFStats) stats;
-		return new TFIDFSimScorer(this, idfstats, context.Reader().getNormValues(idfstats.Field));
+		return new TFIDFSimScorer(this, idfstats, context.Reader().GetNormValues(idfstats.Field));
 	  }
 
 	  private sealed class TFIDFSimScorer : SimScorer
@@ -725,24 +725,24 @@ namespace Lucene.Net.Search.Similarities
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final float raw = tf(freq) * weightValue;
-		  float raw = outerInstance.Tf(freq) * WeightValue; // compute tf(f)*weight
+            float raw = OuterInstance.Tf(freq) * WeightValue; // compute tf(f)*weight
 
-		  return Norms == null ? raw : raw * outerInstance.DecodeNormValue(Norms.Get(doc)); // normalize for field
+            return Norms == null ? raw : raw * OuterInstance.DecodeNormValue(Norms.Get(doc)); // normalize for field
 		}
 
 		public override float ComputeSlopFactor(int distance)
 		{
-		  return outerInstance.SloppyFreq(distance);
+            return OuterInstance.SloppyFreq(distance);
 		}
 
 		public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
 		{
-		  return outerInstance.ScorePayload(doc, start, end, payload);
+            return OuterInstance.ScorePayload(doc, start, end, payload);
 		}
 
 		public override Explanation Explain(int doc, Explanation freq)
 		{
-		  return outerInstance.ExplainScore(doc, freq, Stats, Norms);
+            return OuterInstance.ExplainScore(doc, freq, Stats, Norms);
 		}
 	  }
 

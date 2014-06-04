@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spans
 	  private SpanNearQuery Query;
 
 	  private IList<SpansCell> Ordered = new List<SpansCell>(); // spans in query order
-	  private Spans[] SubSpans_Renamed;
+	  private Spans[] subSpans;
 	  private int Slop; // from query
 
 	  private SpansCell First; // linked list of spans
@@ -109,19 +109,19 @@ namespace Lucene.Net.Search.Spans
 		{
 		  if (Length != -1)
 		  {
-			outerInstance.TotalLength -= Length; // subtract old length
+              OuterInstance.TotalLength -= Length; // subtract old length
 		  }
 		  if (condition)
 		  {
 			Length = End() - Start();
-			outerInstance.TotalLength += Length; // add new length
+            OuterInstance.TotalLength += Length; // add new length
 
-			if (outerInstance.Max == null || Doc() > outerInstance.Max.Doc() || (Doc() == outerInstance.Max.Doc()) && (End() > outerInstance.Max.End()))
+            if (OuterInstance.Max == null || Doc() > OuterInstance.Max.Doc() || (Doc() == OuterInstance.Max.Doc()) && (End() > OuterInstance.Max.End()))
 			{
-			  outerInstance.Max = this;
+                OuterInstance.Max = this;
 			}
 		  }
-		  outerInstance.More = condition;
+          OuterInstance.More = condition;
 		  return condition;
 		}
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Spans
 		{
 			get
 			{
-			  return new List<>(Spans.Payload);
+			  return new List<sbyte[]>(Spans.Payload);
 			}
 		}
 
@@ -174,19 +174,19 @@ namespace Lucene.Net.Search.Spans
 
 		SpanQuery[] clauses = query.Clauses;
 		Queue = new CellQueue(this, clauses.Length);
-		SubSpans_Renamed = new Spans[clauses.Length];
+		subSpans = new Spans[clauses.Length];
 		for (int i = 0; i < clauses.Length; i++)
 		{
 		  SpansCell cell = new SpansCell(this, clauses[i].GetSpans(context, acceptDocs, termContexts), i);
 		  Ordered.Add(cell);
-		  SubSpans_Renamed[i] = cell.Spans;
+		  subSpans[i] = cell.Spans;
 		}
 	  }
 	  public virtual Spans[] SubSpans
 	  {
 		  get
 		  {
-			return SubSpans_Renamed;
+			return subSpans;
 		  }
 	  }
 	  public override bool Next()
@@ -314,12 +314,12 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			Set<sbyte[]> matchPayload = new HashSet<sbyte[]>();
+			HashSet<sbyte[]> matchPayload = new HashSet<sbyte[]>();
 			for (SpansCell cell = First; cell != null; cell = cell.Next_Renamed)
 			{
 			  if (cell.PayloadAvailable)
 			  {
-				matchPayload.addAll(cell.Payload);
+				matchPayload.UnionWith(cell.Payload);
 			  }
 			}
 			return matchPayload;
@@ -348,9 +348,9 @@ namespace Lucene.Net.Search.Spans
 	  public override long Cost()
 	  {
 		long minCost = long.MaxValue;
-		for (int i = 0; i < SubSpans_Renamed.Length; i++)
+		for (int i = 0; i < subSpans.Length; i++)
 		{
-		  minCost = Math.Min(minCost, SubSpans_Renamed[i].Cost());
+		  minCost = Math.Min(minCost, subSpans[i].Cost());
 		}
 		return minCost;
 	  }

@@ -4,26 +4,27 @@ using System.Threading;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using Counter = Lucene.Net.Util.Counter;
-	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Counter = Lucene.Net.Util.Counter;
+    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
 	/// <summary>
 	/// The <seealso cref="TimeLimitingCollector"/> is used to timeout search requests that
@@ -37,18 +38,16 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Thrown when elapsed search time exceeds allowed search time. </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("serial") public static class TimeExceededException extends RuntimeException
 	  public class TimeExceededException : Exception
 	  {
-		internal long TimeAllowed_Renamed;
-		internal long TimeElapsed_Renamed;
-		internal int LastDocCollected_Renamed;
+		internal long timeAllowed;
+		internal long timeElapsed;
+		internal int lastDocCollected;
 		internal TimeExceededException(long timeAllowed, long timeElapsed, int lastDocCollected) : base("Elapsed time: " + timeElapsed + "Exceeded allowed search time: " + timeAllowed + " ms.")
 		{
-		  this.TimeAllowed_Renamed = timeAllowed;
-		  this.TimeElapsed_Renamed = timeElapsed;
-		  this.LastDocCollected_Renamed = lastDocCollected;
+		  this.timeAllowed = timeAllowed;
+		  this.timeElapsed = timeElapsed;
+		  this.lastDocCollected = lastDocCollected;
 		}
 		/// <summary>
 		/// Returns allowed time (milliseconds). </summary>
@@ -56,7 +55,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return TimeAllowed_Renamed;
+			  return timeAllowed;
 			}
 		}
 		/// <summary>
@@ -65,7 +64,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return TimeElapsed_Renamed;
+			  return timeElapsed;
 			}
 		}
 		/// <summary>
@@ -74,17 +73,17 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return LastDocCollected_Renamed;
+			  return lastDocCollected;
 			}
 		}
 	  }
 
 	  private long T0 = long.MinValue;
 	  private long Timeout = long.MinValue;
-	  private Collector Collector_Renamed;
+	  private Collector collector;
 	  private readonly Counter Clock;
 	  private readonly long TicksAllowed;
-	  private bool Greedy_Renamed = false;
+	  private bool greedy = false;
 	  private int DocBase;
 
 	  /// <summary>
@@ -95,7 +94,7 @@ namespace Lucene.Net.Search
 	  /// hits after which <seealso cref="TimeExceededException"/> is thrown </param>
 	  public TimeLimitingCollector(Collector collector, Counter clock, long ticksAllowed)
 	  {
-		this.Collector_Renamed = collector;
+		this.collector = collector;
 		this.Clock = clock;
 		this.TicksAllowed = ticksAllowed;
 	  }
@@ -146,11 +145,11 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Greedy_Renamed;
+			return greedy;
 		  }
 		  set
 		  {
-			this.Greedy_Renamed = value;
+			this.greedy = value;
 		  }
 	  }
 
@@ -163,28 +162,26 @@ namespace Lucene.Net.Search
 	  ///           if the time allowed has exceeded. </exception>
 	  public override void Collect(int doc)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long time = clock.get();
 		long time = Clock.Get();
 		if (Timeout < time)
 		{
-		  if (Greedy_Renamed)
+		  if (greedy)
 		  {
 			//System.out.println(this+"  greedy: before failing, collecting doc: "+(docBase + doc)+"  "+(time-t0));
-			Collector_Renamed.Collect(doc);
+			collector.Collect(doc);
 		  }
 		  //System.out.println(this+"  failing on:  "+(docBase + doc)+"  "+(time-t0));
 		  throw new TimeExceededException(Timeout - T0, time - T0, DocBase + doc);
 		}
 		//System.out.println(this+"  collecting: "+(docBase + doc)+"  "+(time-t0));
-		Collector_Renamed.Collect(doc);
+		collector.Collect(doc);
 	  }
 
 	  public override AtomicReaderContext NextReader
 	  {
 		  set
 		  {
-			Collector_Renamed.NextReader = value;
+			collector.NextReader = value;
 			this.DocBase = value.DocBase;
 			if (long.MinValue == T0)
 			{
@@ -197,13 +194,13 @@ namespace Lucene.Net.Search
 	  {
 		  set
 		  {
-			Collector_Renamed.Scorer = value;
+			collector.Scorer = value;
 		  }
 	  }
 
 	  public override bool AcceptsDocsOutOfOrder()
 	  {
-		return Collector_Renamed.AcceptsDocsOutOfOrder();
+		return collector.AcceptsDocsOutOfOrder();
 	  }
 
 	  /// <summary>
@@ -216,7 +213,7 @@ namespace Lucene.Net.Search
 	  {
 		  set
 		  {
-			this.Collector_Renamed = value;
+			this.collector = value;
 		  }
 	  }
 
@@ -273,7 +270,7 @@ namespace Lucene.Net.Search
 	  /// Can be stopped completely with <seealso cref="TimerThread#stopTimer()"/>
 	  /// @lucene.experimental
 	  /// </summary>
-	  public sealed class TimerThread : System.Threading.Thread
+	  public sealed class TimerThread : ThreadClass
 	  {
 
 		public const string THREAD_NAME = "TimeLimitedCollector timer thread";
@@ -290,14 +287,15 @@ namespace Lucene.Net.Search
 		// See section 17 of the Java Language Specification for details.
 		internal volatile long Time = 0;
 		internal volatile bool Stop = false;
-		internal volatile long Resolution_Renamed;
+		internal long resolution;
 		internal readonly Counter Counter;
 
-		public TimerThread(long resolution, Counter counter) : base(THREAD_NAME)
+		public TimerThread(long resolution, Counter counter) 
+            : base(THREAD_NAME)
 		{
-		  this.Resolution_Renamed = resolution;
+		  this.resolution = resolution;
 		  this.Counter = counter;
-		  this.Daemon = true;
+		  this.SetDaemon(true);
 		}
 
 		public TimerThread(Counter counter) : this(DEFAULT_RESOLUTION, counter)
@@ -309,12 +307,12 @@ namespace Lucene.Net.Search
 		  while (!Stop)
 		  {
 			// TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
-			Counter.AddAndGet(Resolution_Renamed);
+			Counter.AddAndGet(resolution);
 			try
 			{
-			  Thread.Sleep(Resolution_Renamed);
+                Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
 			}
-			catch (InterruptedException ie)
+			catch (ThreadInterruptedException ie)
 			{
 			  throw new ThreadInterruptedException(ie);
 			}
@@ -347,11 +345,11 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return Resolution_Renamed;
+			  return resolution;
 			}
 			set
 			{
-			  this.Resolution_Renamed = Math.Max(value, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
+			  this.resolution = Math.Max(value, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
 			}
 		}
 

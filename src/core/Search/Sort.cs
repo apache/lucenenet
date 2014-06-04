@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -114,14 +115,15 @@ namespace Lucene.Net.Search
 	  public static readonly Sort INDEXORDER = new Sort(SortField.FIELD_DOC);
 
 	  // internal representation of the sort criteria
-	  internal SortField[] Fields;
+	  internal SortField[] fields;
 
 	  /// <summary>
 	  /// Sorts by computed relevance. this is the same sort criteria as calling
 	  /// <seealso cref="IndexSearcher#search(Query,int) IndexSearcher#search()"/>without a sort criteria,
 	  /// only with slightly more overhead.
 	  /// </summary>
-	  public Sort() : this(SortField.FIELD_SCORE)
+	  public Sort() 
+          : this(SortField.FIELD_SCORE)
 	  {
 	  }
 
@@ -129,39 +131,35 @@ namespace Lucene.Net.Search
 	  /// Sorts by the criteria in the given SortField. </summary>
 	  public Sort(SortField field)
 	  {
-		Sort = field;
+		    SetSort(field);
 	  }
 
 	  /// <summary>
 	  /// Sorts in succession by the criteria in each SortField. </summary>
 	  public Sort(params SortField[] fields)
 	  {
-		Sort = fields;
+		    SetSort(fields);
 	  }
 
-	  /// <summary>
-	  /// Sets the sort to the given criteria. </summary>
-	  public virtual SortField Sort
-	  {
-		  set
-		  {
-			this.Fields = new SortField[] {value};
-		  }
-		  get
-		  {
-			return Fields;
-		  }
-	  }
+      /// <summary>Sets the sort to the given criteria. </summary>
+      public virtual void SetSort(SortField field)
+      {
+          this.fields = new SortField[] { field };
+      }
 
-	  /// <summary>
-	  /// Sets the sort to the given criteria in succession. </summary>
-	  public virtual params SortField[] Sort
-	  {
-		  set
-		  {
-			this.Fields = value;
-		  }
-	  }
+      /// <summary>Sets the sort to the given criteria in succession. </summary>
+      public virtual void SetSort(params SortField[] fields)
+      {
+          this.fields = fields;
+      }
+
+      /// <summary> Representation of the sort criteria.</summary>
+      /// <returns> Array of SortField objects used in this sort criteria
+      /// </returns>
+      public virtual SortField[] GetSort()
+      {
+          return fields;
+      }
 
 
 	  /// <summary>
@@ -177,11 +175,11 @@ namespace Lucene.Net.Search
 	  {
 		bool changed = false;
 
-		SortField[] rewrittenSortFields = new SortField[Fields.Length];
-		for (int i = 0; i < Fields.Length; i++)
+		SortField[] rewrittenSortFields = new SortField[fields.Length];
+		for (int i = 0; i < fields.Length; i++)
 		{
-		  rewrittenSortFields[i] = Fields[i].Rewrite(searcher);
-		  if (Fields[i] != rewrittenSortFields[i])
+		  rewrittenSortFields[i] = fields[i].Rewrite(searcher);
+		  if (fields[i] != rewrittenSortFields[i])
 		  {
 			changed = true;
 		  }
@@ -194,10 +192,10 @@ namespace Lucene.Net.Search
 	  {
 		StringBuilder buffer = new StringBuilder();
 
-		for (int i = 0; i < Fields.Length; i++)
+		for (int i = 0; i < fields.Length; i++)
 		{
-		  buffer.Append(Fields[i].ToString());
-		  if ((i + 1) < Fields.Length)
+		  buffer.Append(fields[i].ToString());
+		  if ((i + 1) < fields.Length)
 		  {
 			buffer.Append(',');
 		  }
@@ -218,24 +216,22 @@ namespace Lucene.Net.Search
 		{
 			return false;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Sort other = (Sort)o;
 		Sort other = (Sort)o;
-		return Arrays.Equals(this.Fields, other.Fields);
+		return Arrays.Equals(this.fields, other.fields);
 	  }
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return 0x45aaf665 + Arrays.GetHashCode(Fields);
+		return 0x45aaf665 + Arrays.GetHashCode(fields);
 	  }
 
 	  /// <summary>
 	  /// Returns true if the relevance score is needed to sort documents. </summary>
 	  public virtual bool NeedsScores()
 	  {
-		foreach (SortField sortField in Fields)
+		foreach (SortField sortField in fields)
 		{
 		  if (sortField.NeedsScores())
 		  {

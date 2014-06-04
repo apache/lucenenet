@@ -61,8 +61,7 @@ namespace Lucene.Net.Search
 
 	  public override sealed Bits Bits()
 	  {
-		return (AcceptDocs == null) ? new BitsAnonymousInnerClassHelper(this)
-		: new BitsAnonymousInnerClassHelper2(this);
+		return (AcceptDocs == null) ? (Bits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
 	  }
 
 	  private class BitsAnonymousInnerClassHelper : Bits
@@ -76,7 +75,7 @@ namespace Lucene.Net.Search
 
 		  public virtual bool Get(int docid)
 		  {
-			return outerInstance.MatchDoc(docid);
+			return OuterInstance.MatchDoc(docid);
 		  }
 
 		  public virtual int Length()
@@ -96,7 +95,7 @@ namespace Lucene.Net.Search
 
 		  public virtual bool Get(int docid)
 		  {
-			return outerInstance.MatchDoc(docid) && OuterInstance.AcceptDocs.Get(docid);
+              return OuterInstance.MatchDoc(docid) && OuterInstance.AcceptDocs.Get(docid);
 		  }
 
 		  public virtual int Length()
@@ -151,7 +150,7 @@ namespace Lucene.Net.Search
 			  {
 				return doc = NO_MORE_DOCS;
 			  }
-			} while (!outerInstance.MatchDoc(doc));
+            } while (!OuterInstance.MatchDoc(doc));
 			return doc;
 		  }
 
@@ -159,7 +158,7 @@ namespace Lucene.Net.Search
 		  {
 			for (doc = target; doc < OuterInstance.MaxDoc; doc++)
 			{
-			  if (outerInstance.MatchDoc(doc))
+			  if (OuterInstance.MatchDoc(doc))
 			  {
 				return doc;
 			  }
@@ -214,7 +213,7 @@ namespace Lucene.Net.Search
 			  {
 				return doc = NO_MORE_DOCS;
 			  }
-			} while (!(outerInstance.MatchDoc(doc) && OuterInstance.AcceptDocs.Get(doc)));
+            } while (!(OuterInstance.MatchDoc(doc) && OuterInstance.AcceptDocs.Get(doc)));
 			return doc;
 		  }
 
@@ -222,7 +221,7 @@ namespace Lucene.Net.Search
 		  {
 			for (doc = target; doc < OuterInstance.MaxDoc; doc++)
 			{
-			  if (outerInstance.MatchDoc(doc) && OuterInstance.AcceptDocs.Get(doc))
+			  if (OuterInstance.MatchDoc(doc) && OuterInstance.AcceptDocs.Get(doc))
 			  {
 				return doc;
 			  }

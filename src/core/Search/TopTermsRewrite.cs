@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -30,6 +31,7 @@ namespace Lucene.Net.Search
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Base rewrite method for collecting only the top terms
@@ -39,7 +41,7 @@ namespace Lucene.Net.Search
 	public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q> where Q : Query
 	{
 
-	  private readonly int Size_Renamed;
+	  private readonly int size;
 
 	  /// <summary>
 	  /// Create a TopTermsBooleanQueryRewrite for 
@@ -50,7 +52,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public TopTermsRewrite(int size)
 	  {
-		this.Size_Renamed = size;
+		this.size = size;
 	  }
 
 	  /// <summary>
@@ -59,7 +61,7 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Size_Renamed;
+			return size;
 		  }
 	  }
 
@@ -69,47 +71,37 @@ namespace Lucene.Net.Search
 
 	  public override Q Rewrite(IndexReader reader, MultiTermQuery query)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxSize = Math.min(size, getMaxSize());
-		int maxSize = Math.Min(Size_Renamed, MaxSize);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.PriorityQueue<ScoreTerm> stQueue = new java.util.PriorityQueue<>();
+		int maxSize = Math.Min(size, MaxSize);
 		PriorityQueue<ScoreTerm> stQueue = new PriorityQueue<ScoreTerm>();
-		collectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
+		CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Q q = getTopLevelQuery();
 		Q q = TopLevelQuery;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreTerm[] scoreTerms = stQueue.toArray(new ScoreTerm[stQueue.size()]);
-		ScoreTerm[] scoreTerms = stQueue.toArray(new ScoreTerm[stQueue.size()]);
+		ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.size()]*/);
 		ArrayUtil.TimSort(scoreTerms, scoreTermSortByTermComp);
 
 		foreach (ScoreTerm st in scoreTerms)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term term = new Lucene.Net.Index.Term(query.field, st.bytes);
-		  Term term = new Term(query.Field_Renamed, st.bytes);
-		  Debug.Assert(reader.DocFreq(term) == st.termState.docFreq(), "reader DF is " + reader.DocFreq(term) + " vs " + st.termState.docFreq() + " term=" + term);
-		  addClause(q, term, st.termState.docFreq(), query.Boost * st.boost, st.termState); // add to query
+		  Term term = new Term(query.field, st.Bytes);
+          Debug.Assert(reader.DocFreq(term) == st.TermState.DocFreq, "reader DF is " + reader.DocFreq(term) + " vs " + st.TermState.DocFreq + " term=" + term);
+          AddClause(q, term, st.TermState.DocFreq, query.Boost * st.Boost, st.TermState); // add to query
 		}
 		return q;
 	  }
 
 	  private class TermCollectorAnonymousInnerClassHelper : TermCollector
 	  {
-		  private readonly TopTermsRewrite OuterInstance;
+		  private readonly TopTermsRewrite<Q> OuterInstance;
 
 		  private int MaxSize;
 		  private PriorityQueue<ScoreTerm> StQueue;
 
-		  public TermCollectorAnonymousInnerClassHelper(TopTermsRewrite outerInstance, int maxSize, PriorityQueue<ScoreTerm> stQueue)
+		  public TermCollectorAnonymousInnerClassHelper(TopTermsRewrite<Q> outerInstance, int maxSize, PriorityQueue<ScoreTerm> stQueue)
 		  {
-			  this.outerInstance = outerInstance;
+			  this.OuterInstance = outerInstance;
 			  this.MaxSize = maxSize;
 			  this.StQueue = stQueue;
-			  maxBoostAtt = attributes.addAttribute(typeof(MaxNonCompetitiveBoostAttribute));
-			  visitedTerms = new Dictionary<>();
+			  maxBoostAtt = attributes.AddAttribute<MaxNonCompetitiveBoostAttribute>();
+			  visitedTerms = new Dictionary<BytesRef, ScoreTerm>();
 		  }
 
 		  private readonly MaxNonCompetitiveBoostAttribute maxBoostAtt;
@@ -128,14 +120,14 @@ namespace Lucene.Net.Search
 				this.termsEnum = value;
 				this.termComp = value.Comparator;
     
-				Debug.Assert(compareToLastTerm(null));
+				Debug.Assert(CompareToLastTerm(null));
     
 				// lazy init the initial ScoreTerm because comparator is not known on ctor:
 				if (st == null)
 				{
-				  st = new ScoreTerm(this.termComp, new TermContext(topReaderContext));
+				  st = new ScoreTerm(this.termComp, new TermContext(TopReaderContext));
 				}
-				boostAtt = value.Attributes().addAttribute(typeof(BoostAttribute));
+				boostAtt = value.Attributes().AddAttribute<BoostAttribute>();
 			  }
 		  }
 
@@ -153,76 +145,70 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-			  Debug.Assert(termsEnum.Comparator.compare(lastTerm, t) < 0, "lastTerm=" + lastTerm + " t=" + t);
-			  lastTerm.copyBytes(t);
+			  Debug.Assert(termsEnum.Comparator.Compare(lastTerm, t) < 0, "lastTerm=" + lastTerm + " t=" + t);
+			  lastTerm.CopyBytes(t);
 			}
 			return true;
 		  }
 
 		  public override bool Collect(BytesRef bytes)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float boost = boostAtt.getBoost();
 			float boost = boostAtt.Boost;
 
 			// make sure within a single seg we always collect
 			// terms in order
-			Debug.Assert(compareToLastTerm(bytes));
+			Debug.Assert(CompareToLastTerm(bytes));
 
 			//System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
 			// ignore uncompetitive hits
-			if (StQueue.size() == MaxSize)
+            if (StQueue.Count == MaxSize)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ScoreTerm t = stQueue.peek();
-			  ScoreTerm t = StQueue.peek();
+			  ScoreTerm t = StQueue.Peek();
 			  if (boost < t.Boost)
 			  {
 				return true;
 			  }
-			  if (boost == t.Boost && termComp.compare(bytes, t.Bytes) > 0)
+			  if (boost == t.Boost && termComp.Compare(bytes, t.Bytes) > 0)
 			  {
 				return true;
 			  }
 			}
-			ScoreTerm t = visitedTerms.get(bytes);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermState state = termsEnum.termState();
-			TermState state = termsEnum.termState();
+			ScoreTerm st = visitedTerms[bytes];
+			TermState state = termsEnum.TermState();
 			Debug.Assert(state != null);
-			if (t != null)
+			if (st != null)
 			{
 			  // if the term is already in the PQ, only update docFreq of term in PQ
-			  Debug.Assert(t.Boost == boost, "boost should be equal in all segment TermsEnums");
-			  t.TermState.register(state, readerContext.ord, termsEnum.docFreq(), termsEnum.totalTermFreq());
+			  Debug.Assert(st.Boost == boost, "boost should be equal in all segment TermsEnums");
+			  st.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
 			}
 			else
 			{
 			  // add new entry in PQ, we must clone the term, else it may get overwritten!
-			  st.bytes.copyBytes(bytes);
-			  st.boost = boost;
-			  visitedTerms.put(st.bytes, st);
-			  Debug.Assert(st.termState.docFreq() == 0);
-			  st.termState.register(state, readerContext.ord, termsEnum.docFreq(), termsEnum.totalTermFreq());
-			  StQueue.offer(st);
+			  st.Bytes.CopyBytes(bytes);
+			  st.Boost = boost;
+			  visitedTerms[st.Bytes] = st;
+			  Debug.Assert(st.TermState.DocFreq == 0);
+			  st.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+			  StQueue.Offer(st);
 			  // possibly drop entries from queue
-			  if (StQueue.size() > MaxSize)
+			  if (StQueue.Count > MaxSize)
 			  {
-				st = StQueue.poll();
-				visitedTerms.remove(st.bytes);
-				st.termState.clear(); // reset the termstate!
+				st = StQueue.Poll();
+                visitedTerms.Remove(st.Bytes);
+				st.TermState.Clear(); // reset the termstate!
 			  }
 			  else
 			  {
-				st = new ScoreTerm(termComp, new TermContext(topReaderContext));
+				st = new ScoreTerm(termComp, new TermContext(TopReaderContext));
 			  }
-			  Debug.Assert(StQueue.size() <= MaxSize, "the PQ size must be limited to maxSize");
+              Debug.Assert(StQueue.Count <= MaxSize, "the PQ size must be limited to maxSize");
 			  // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
-			  if (StQueue.size() == MaxSize)
+              if (StQueue.Count == MaxSize)
 			  {
-				t = StQueue.peek();
-				maxBoostAtt.MaxNonCompetitiveBoost = t.Boost;
-				maxBoostAtt.CompetitiveTerm = t.Bytes;
+				st = StQueue.Peek();
+				maxBoostAtt.MaxNonCompetitiveBoost = st.Boost;
+				maxBoostAtt.CompetitiveTerm = st.Bytes;
 			  }
 			}
 
@@ -230,9 +216,9 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return 31 * Size_Renamed;
+		return 31 * size;
 	  }
 
 	  public override bool Equals(object obj)
@@ -249,11 +235,8 @@ namespace Lucene.Net.Search
 		{
 			return false;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TopTermsRewrite<?> other = (TopTermsRewrite<?>) obj;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-		TopTermsRewrite<?> other = (TopTermsRewrite<?>) obj;
-		if (Size_Renamed != other.Size_Renamed)
+		var other = (TopTermsRewrite<Q>) obj;
+		if (size != other.size)
 		{
 			return false;
 		}

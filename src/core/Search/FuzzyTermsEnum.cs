@@ -42,6 +42,7 @@ namespace Lucene.Net.Search
 	using ByteRunAutomaton = Lucene.Net.Util.Automaton.ByteRunAutomaton;
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using LevenshteinAutomata = Lucene.Net.Util.Automaton.LevenshteinAutomata;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Subclass of TermsEnum for enumerating all terms that are similar
@@ -57,7 +58,7 @@ namespace Lucene.Net.Search
 
 		private void InitializeInstanceFields()
 		{
-			BoostAtt = Attributes().AddAttribute(typeof(BoostAttribute));
+			BoostAtt = Attributes().AddAttribute<BoostAttribute>();
 		}
 
 	  private TermsEnum ActualEnum;
@@ -129,16 +130,16 @@ namespace Lucene.Net.Search
 		this.Term_Renamed = term;
 
 		// convert the string into a utf32 int[] representation for fast comparisons
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String utf16 = term.text();
 		string utf16 = term.Text();
-		this.TermText = new int[utf16.codePointCount(0, utf16.Length)];
-		for (int cp, i = 0, j = 0; i < utf16.Length; i += char.charCount(cp))
+        //LUCENE TO-DO
+        //this.TermText = new int[utf16.codePointCount(0, utf16.Length)];
+        this.TermText = new int[utf16.Length];
+		for (int cp, i = 0, j = 0; i < utf16.Length; i += Character.CharCount(cp))
 		{
-			   TermText[j++] = cp = utf16.codePointAt(i);
+			   TermText[j++] = cp = utf16[i];//.codePointAt(i);
 		}
 		this.TermLength = TermText.Length;
-		this.DfaAtt = atts.AddAttribute(typeof(LevenshteinAutomataAttribute));
+		this.DfaAtt = atts.AddAttribute<LevenshteinAutomataAttribute>();
 
 		//The prefix could be longer than the word.
 		//It's kind of silly though.  It means we must match the entire word.
@@ -164,10 +165,10 @@ namespace Lucene.Net.Search
 		this.Transpositions = transpositions;
 		this.Scale_factor = 1.0f / (1.0f - this.MinSimilarity_Renamed);
 
-		this.MaxBoostAtt = atts.AddAttribute(typeof(MaxNonCompetitiveBoostAttribute));
+		this.MaxBoostAtt = atts.AddAttribute<MaxNonCompetitiveBoostAttribute>();
 		Bottom = MaxBoostAtt.MaxNonCompetitiveBoost;
 		BottomTerm = MaxBoostAtt.CompetitiveTerm;
-		BottomChanged(Lucene.Net.Util.BytesRefIterator_Fields.Null, true);
+		BottomChanged(null, true);
 	  }
 
 	  /// <summary>
@@ -176,20 +177,16 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  protected internal virtual TermsEnum GetAutomatonEnum(int editDistance, BytesRef lastTerm)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Util.Automaton.CompiledAutomaton> runAutomata = initAutomata(editDistance);
 		IList<CompiledAutomaton> runAutomata = InitAutomata(editDistance);
 		if (editDistance < runAutomata.Count)
 		{
 		  //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Automaton.CompiledAutomaton compiled = runAutomata.get(editDistance);
 		  CompiledAutomaton compiled = runAutomata[editDistance];
-		  return new AutomatonFuzzyTermsEnum(this, Terms.Intersect(compiled, lastTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null ? Lucene.Net.Util.BytesRefIterator_Fields.Null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.subList(0, editDistance + 1).toArray(new CompiledAutomaton[editDistance + 1]));
+		  return new AutomatonFuzzyTermsEnum(this, Terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
 		}
 		else
 		{
-		  return Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  return null;
 		}
 	  }
 
@@ -197,8 +194,6 @@ namespace Lucene.Net.Search
 	  /// initialize levenshtein DFAs up to maxDistance, if possible </summary>
 	  private IList<CompiledAutomaton> InitAutomata(int maxDistance)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Util.Automaton.CompiledAutomaton> runAutomata = dfaAtt.automata();
 		IList<CompiledAutomaton> runAutomata = DfaAtt.Automata();
 		//System.out.println("cached automata size: " + runAutomata.size());
 		if (runAutomata.Count <= maxDistance && maxDistance <= LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
@@ -228,7 +223,7 @@ namespace Lucene.Net.Search
 		  set
 		  {
 			this.ActualEnum = value;
-			this.ActualBoostAtt = value.Attributes().addAttribute(typeof(BoostAttribute));
+			this.ActualBoostAtt = value.Attributes().AddAttribute<BoostAttribute>();
 		  }
 	  }
 
@@ -241,7 +236,7 @@ namespace Lucene.Net.Search
 		int oldMaxEdits = MaxEdits;
 
 		// true if the last term encountered is lexicographically equal or after the bottom term in the PQ
-		bool termAfter = BottomTerm == Lucene.Net.Util.BytesRefIterator_Fields.Null || (lastTerm != Lucene.Net.Util.BytesRefIterator_Fields.Null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
+		bool termAfter = BottomTerm == null || (lastTerm != null && TermComparator.Compare(lastTerm, BottomTerm) >= 0);
 
 		// as long as the max non-competitive boost is >= the max boost
 		// for some edit distance, keep dropping the max edit distance.
@@ -261,7 +256,7 @@ namespace Lucene.Net.Search
 		TermsEnum newEnum = GetAutomatonEnum(maxEdits, lastTerm);
 		// instead of assert, we do a hard check in case someone uses our enum directly
 		// assert newEnum != null;
-		if (newEnum == Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (newEnum == null)
 		{
 		  Debug.Assert(maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
 		  throw new System.ArgumentException("maxEdits cannot be > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE");
@@ -278,32 +273,26 @@ namespace Lucene.Net.Search
 	  // for some number of edits, the maximum possible scaled boost
 	  private float CalculateMaxBoost(int nEdits)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float similarity = 1.0f - ((float) nEdits / (float)(termLength));
 		float similarity = 1.0f - ((float) nEdits / (float)(TermLength));
 		return (similarity - MinSimilarity_Renamed) * Scale_factor;
 	  }
 
-	  private BytesRef QueuedBottom = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+	  private BytesRef QueuedBottom = null;
 
 	  public override BytesRef Next()
 	  {
-		if (QueuedBottom != Lucene.Net.Util.BytesRefIterator_Fields.Null)
+		if (QueuedBottom != null)
 		{
 		  BottomChanged(QueuedBottom, false);
-		  QueuedBottom = Lucene.Net.Util.BytesRefIterator_Fields.Null;
+		  QueuedBottom = null;
 		}
 
 		BytesRef term = ActualEnum.Next();
 		BoostAtt.Boost = ActualBoostAtt.Boost;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float bottom = maxBoostAtt.getMaxNonCompetitiveBoost();
 		float bottom = MaxBoostAtt.MaxNonCompetitiveBoost;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bottomTerm = maxBoostAtt.getCompetitiveTerm();
 		BytesRef bottomTerm = MaxBoostAtt.CompetitiveTerm;
-		if (term != Lucene.Net.Util.BytesRefIterator_Fields.Null && (bottom != this.Bottom || bottomTerm != this.BottomTerm))
+		if (term != null && (bottom != this.Bottom || bottomTerm != this.BottomTerm))
 		{
 		  this.Bottom = bottom;
 		  this.BottomTerm = bottomTerm;
@@ -392,7 +381,7 @@ namespace Lucene.Net.Search
 
 		  internal virtual void InitializeInstanceFields()
 		  {
-			  BoostAtt = Attributes().AddAttribute(typeof(BoostAttribute));
+			  BoostAtt = Attributes().AddAttribute<BoostAttribute>();
 		  }
 
 		  private readonly FuzzyTermsEnum OuterInstance;
@@ -452,15 +441,11 @@ namespace Lucene.Net.Search
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int codePointCount = Lucene.Net.Util.UnicodeUtil.codePointCount(term);
 			int codePointCount = UnicodeUtil.CodePointCount(term);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float similarity = 1.0f - ((float) ed / (float)(Math.min(codePointCount, termLength)));
-			float similarity = 1.0f - ((float) ed / (float)(Math.Min(codePointCount, outerInstance.TermLength)));
-			if (similarity > outerInstance.MinSimilarity_Renamed)
+            float similarity = 1.0f - ((float)ed / (float)(Math.Min(codePointCount, OuterInstance.TermLength)));
+            if (similarity > OuterInstance.MinSimilarity_Renamed)
 			{
-			  BoostAtt.Boost = (similarity - outerInstance.MinSimilarity_Renamed) * outerInstance.Scale_factor;
+			  BoostAtt.Boost = (similarity - OuterInstance.MinSimilarity_Renamed) * OuterInstance.Scale_factor;
 			  //System.out.println("  yes");
 			  return AcceptStatus.YES;
 			}
@@ -527,9 +512,9 @@ namespace Lucene.Net.Search
 		  Automata_Renamed.Clear();
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
-		  return Automata_Renamed.HashCode();
+		  return Automata_Renamed.GetHashCode();
 		}
 
 		public override bool Equals(object other)
@@ -547,8 +532,6 @@ namespace Lucene.Net.Search
 
 		public override void CopyTo(AttributeImpl target)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Util.Automaton.CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute) target).automata();
 		  IList<CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute) target).Automata();
 		  targetAutomata.Clear();
 		  targetAutomata.AddRange(Automata_Renamed);

@@ -58,27 +58,21 @@ namespace Lucene.Net.Search
 		IComparer<BytesRef> lastTermComp = null;
 		foreach (AtomicReaderContext context in topReaderContext.Leaves())
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Fields fields = context.reader().fields();
-		  Fields fields = context.Reader().fields();
+		  Fields fields = context.Reader().Fields();
 		  if (fields == null)
 		  {
 			// reader has no fields
 			continue;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Terms terms = fields.terms(query.field);
-		  Terms terms = fields.Terms(query.Field_Renamed);
+		  Terms terms = fields.Terms(query.field);
 		  if (terms == null)
 		  {
 			// field does not exist
 			continue;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = getTermsEnum(query, terms, collector.attributes);
-		  TermsEnum termsEnum = getTermsEnum(query, terms, collector.Attributes);
+		  TermsEnum termsEnum = GetTermsEnum(query, terms, collector.Attributes);
 		  Debug.Assert(termsEnum != null);
 
 		  if (termsEnum == TermsEnum.EMPTY)
@@ -87,8 +81,6 @@ namespace Lucene.Net.Search
 		  }
 
 		  // Check comparator compatibility:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Comparator<Lucene.Net.Util.BytesRef> newTermComp = termsEnum.getComparator();
 		  IComparer<BytesRef> newTermComp = termsEnum.Comparator;
 		  if (lastTermComp != null && newTermComp != null && newTermComp != lastTermComp)
 		  {

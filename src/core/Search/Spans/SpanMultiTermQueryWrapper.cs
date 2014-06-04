@@ -49,7 +49,7 @@ namespace Lucene.Net.Search.Spans
 	/// </summary>
 	public class SpanMultiTermQueryWrapper<Q> : SpanQuery where Q : Lucene.Net.Search.MultiTermQuery
 	{
-	  protected internal readonly Q Query;
+	  protected internal readonly Q query;
 
 	  /// <summary>
 	  /// Create a new SpanMultiTermQueryWrapper. 
@@ -62,16 +62,16 @@ namespace Lucene.Net.Search.Spans
 	  /// throw <seealso cref="UnsupportedOperationException"/> on rewriting this query! </param>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) public SpanMultiTermQueryWrapper(Q query)
-	  public SpanMultiTermQueryWrapper(Q query)
+	  public SpanMultiTermQueryWrapper(Q query_)
 	  {
-		this.Query = query;
+		this.query= query_;
 
-		MultiTermQuery.RewriteMethod method = query.RewriteMethod;
-		if (method is TopTermsRewrite)
+        MultiTermQuery.RewriteMethod method = query.GetRewriteMethod();
+		if (method is TopTermsRewrite<Q>)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int pqsize = ((Lucene.Net.Search.TopTermsRewrite) method).getSize();
-		  int pqsize = ((TopTermsRewrite) method).Size;
+		  int pqsize = ((TopTermsRewrite<Q>) method).Size;
 		  RewriteMethod = new TopTermsSpanBooleanQueryRewrite(pqsize);
 		}
 		else
@@ -87,9 +87,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Lucene.Net.Search.MultiTermQuery.RewriteMethod m = query.getRewriteMethod();
-			MultiTermQuery.RewriteMethod m = Query.RewriteMethod;
+			MultiTermQuery.RewriteMethod m = query.GetRewriteMethod();
 			if (!(m is SpanRewriteMethod))
 			{
 			  throw new System.NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -98,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 		  }
 		  set
 		  {
-			Query.RewriteMethod = value;
+			query.SetRewriteMethod(value);
 		  }
 	  }
 
@@ -112,7 +110,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			return Query.Field;
+			return query.Field;
 		  }
 	  }
 
@@ -122,7 +120,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  get
 		  {
-			return Query;
+			return query;
 		  }
 	  }
 
@@ -130,7 +128,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		StringBuilder builder = new StringBuilder();
 		builder.Append("SpanMultiTermQueryWrapper(");
-		builder.Append(Query.ToString(field));
+		builder.Append(query.ToString(field));
 		builder.Append(")");
 		if (Boost != 1F)
 		{
@@ -144,7 +142,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Search.Query q = query.rewrite(reader);
-		Query q = Query.Rewrite(reader);
+		Query q = query.Rewrite(reader);
 		if (!(q is SpanQuery))
 		{
 		  throw new System.NotSupportedException("You can only use SpanMultiTermQueryWrapper with a suitable SpanRewriteMethod.");
@@ -153,11 +151,11 @@ namespace Lucene.Net.Search.Spans
 		return q;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
-		result = prime * result + Query.HashCode();
+		int result = base.GetHashCode();
+		result = prime * result + query.GetHashCode();
 		return result;
 	  }
 
@@ -177,8 +175,8 @@ namespace Lucene.Net.Search.Spans
 		}
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 //ORIGINAL LINE: SpanMultiTermQueryWrapper<?> other = (SpanMultiTermQueryWrapper<?>) obj;
-		SpanMultiTermQueryWrapper<?> other = (SpanMultiTermQueryWrapper<?>) obj;
-		if (!Query.Equals(other.Query))
+		var other = (SpanMultiTermQueryWrapper<Q>) obj;
+		if (!query.Equals(other.query))
 		{
 			return false;
 		}
@@ -242,7 +240,7 @@ namespace Lucene.Net.Search.Spans
 
 		  public override SpanQuery Rewrite(IndexReader reader, MultiTermQuery query)
 		  {
-			return @delegate.rewrite(reader, query);
+			return @delegate.Rewrite(reader, query);
 		  }
 	  }
 
@@ -319,9 +317,9 @@ namespace Lucene.Net.Search.Spans
 		  return @delegate.Rewrite(reader, query);
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
-		  return 31 * @delegate.HashCode();
+		  return 31 * @delegate.GetHashCode();
 		}
 
 		public override bool Equals(object obj)

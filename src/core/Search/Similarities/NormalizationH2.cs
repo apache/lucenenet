@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Similarities
 
 	  public override sealed float Tfn(BasicStats stats, float tf, float len)
 	  {
-		return (float)(tf * Similaritybase.Log2(1 + c * stats.AvgFieldLength / len));
+		return (float)(tf * SimilarityBase.Log2(1 + c * stats.AvgFieldLength / len));
 	  }
 
 	  public override string ToString()

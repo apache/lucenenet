@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Creates a new instance by wrapping the given scorer. </summary>
-	  public ScoreCachingWrappingScorer(Scorer scorer) : base(scorer.Weight_Renamed)
+	  public ScoreCachingWrappingScorer(Scorer scorer) : base(scorer.weight)
 	  {
 		this.Scorer = scorer;
 	  }
@@ -82,7 +82,9 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Collections.singleton(new ChildScorer(Scorer, "CACHED"));
+              //LUCENE TO-DO
+              return new[] {new ChildScorer(Scorer, "CACHED")};
+              //return Collections.singleton(new ChildScorer(Scorer, "CACHED"));
 		  }
 	  }
 

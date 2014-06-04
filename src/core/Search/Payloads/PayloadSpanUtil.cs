@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Payloads
@@ -118,23 +119,16 @@ namespace Lucene.Net.Search.Payloads
 		}
 		else if (query is DisjunctionMaxQuery)
 		{
-
-		  for (IEnumerator<Query> iterator = ((DisjunctionMaxQuery) query).Iterator(); iterator.MoveNext();)
-		  {
-			QueryToSpanQuery(iterator.Current, payloads);
-		  }
-
+            IEnumerator<Query> enumerator = ((DisjunctionMaxQuery)query).GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                QueryToSpanQuery(enumerator.Current, payloads);
+            }
 		}
 		else if (query is MultiPhraseQuery)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.MultiPhraseQuery mpq = (Lucene.Net.Search.MultiPhraseQuery) query;
 		  MultiPhraseQuery mpq = (MultiPhraseQuery) query;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Lucene.Net.Index.Term[]> termArrays = mpq.getTermArrays();
 		  IList<Term[]> termArrays = mpq.TermArrays;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] positions = mpq.getPositions();
 		  int[] positions = mpq.Positions;
 		  if (positions.Length > 0)
 		  {
@@ -148,21 +142,16 @@ namespace Lucene.Net.Search.Payloads
 			  }
 			}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final java.util.List<Lucene.Net.Search.Query>[] disjunctLists = new java.util.List[maxPosition + 1];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-			IList<Query>[] disjunctLists = new IList[maxPosition + 1];
+			IList<Query>[] disjunctLists = new List<Query>[maxPosition + 1];
 			int distinctPositions = 0;
 
 			for (int i = 0; i < termArrays.Count; ++i)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Term[] termArray = termArrays.get(i);
 			  Term[] termArray = termArrays[i];
 			  IList<Query> disjuncts = disjunctLists[positions[i]];
 			  if (disjuncts == null)
 			  {
-				disjuncts = (disjunctLists[positions[i]] = new List<>(termArray.Length));
+				disjuncts = (disjunctLists[positions[i]] = new List<Query>(termArray.Length));
 				++distinctPositions;
 			  }
 			  foreach (Term term in termArray)
@@ -173,15 +162,13 @@ namespace Lucene.Net.Search.Payloads
 
 			int positionGaps = 0;
 			int position = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Search.Spans.SpanQuery[] clauses = new Lucene.Net.Search.Spans.SpanQuery[distinctPositions];
 			SpanQuery[] clauses = new SpanQuery[distinctPositions];
 			for (int i = 0; i < disjunctLists.Length; ++i)
 			{
 			  IList<Query> disjuncts = disjunctLists[i];
 			  if (disjuncts != null)
 			  {
-				clauses[position++] = new SpanOrQuery(disjuncts.ToArray());
+                  clauses[position++] = new SpanOrQuery(disjuncts.OfType<SpanQuery>().ToArray());
 			  }
 			  else
 			  {
@@ -189,11 +176,7 @@ namespace Lucene.Net.Search.Payloads
 			  }
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int slop = mpq.getSlop();
 			int slop = mpq.Slop;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean inorder = (slop == 0);
 			bool inorder = (slop == 0);
 
 			SpanNearQuery sp = new SpanNearQuery(clauses, slop + positionGaps, inorder);

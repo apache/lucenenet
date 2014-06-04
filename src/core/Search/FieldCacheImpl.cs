@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -44,6 +45,8 @@ namespace Lucene.Net.Search
 	using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
 	using MonotonicAppendingLongBuffer = Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
+    using System.IO;
 
 	/// <summary>
 	/// Expert: The default cache implementation, storing all values in memory.
@@ -58,19 +61,23 @@ namespace Lucene.Net.Search
 	  internal FieldCacheImpl()
 	  {
 		Init();
+
+        //Have to do this here because no 'this' in class definition
+        purgeCore = new CoreClosedListenerAnonymousInnerClassHelper(this);
+        purgeReader = new ReaderClosedListenerAnonymousInnerClassHelper(this);
 	  }
 
 	  private void Init()
 	  {
 		  lock (this)
 		  {
-			Caches = new Dictionary<>(9);
-			Caches[sbyte.TYPE] = new ByteCache(this);
-			Caches[short.TYPE] = new ShortCache(this);
-			Caches[int.TYPE] = new IntCache(this);
-			Caches[float.TYPE] = new FloatCache(this);
-			Caches[long.TYPE] = new LongCache(this);
-			Caches[double.TYPE] = new DoubleCache(this);
+			Caches = new Dictionary<Type, Cache>(9);
+			Caches[typeof(sbyte)] = new ByteCache(this);
+			Caches[typeof(short)] = new ShortCache(this);
+			Caches[typeof(int)] = new IntCache(this);
+			Caches[typeof(float)] = new FloatCache(this);
+			Caches[typeof(long)] = new LongCache(this);
+			Caches[typeof(double)] = new DoubleCache(this);
 			Caches[typeof(BinaryDocValues)] = new BinaryDocValuesCache(this);
 			Caches[typeof(SortedDocValues)] = new SortedDocValuesCache(this);
 			Caches[typeof(DocTermOrds)] = new DocTermOrdsCache(this);
@@ -83,6 +90,7 @@ namespace Lucene.Net.Search
 		  lock (this)
 		  {
 			Init();
+            
 		  }
 	  }
 
@@ -106,25 +114,17 @@ namespace Lucene.Net.Search
 				IList<FieldCache_CacheEntry> result = new List<FieldCache_CacheEntry>(17);
 				foreach (KeyValuePair<Type, Cache> cacheEntry in Caches)
 				{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Cache cache = cacheEntry.getValue();
 				  Cache cache = cacheEntry.Value;
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Class cacheType = cacheEntry.getKey();
 				  Type cacheType = cacheEntry.Key;
 				  lock (cache.ReaderCache)
 				  {
 					foreach (KeyValuePair<object, IDictionary<CacheKey, object>> readerCacheEntry in cache.ReaderCache)
 					{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Object readerKey = readerCacheEntry.getKey();
 					  object readerKey = readerCacheEntry.Key;
 					  if (readerKey == null)
 					  {
 						  continue;
 					  }
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final java.util.Map<CacheKey, Object> innerCache = readerCacheEntry.getValue();
 					  IDictionary<CacheKey, object> innerCache = readerCacheEntry.Value;
 					  foreach (KeyValuePair<CacheKey, object> mapEntry in innerCache)
 					  {
@@ -140,33 +140,37 @@ namespace Lucene.Net.Search
 	  }
 
 	  // per-segment fieldcaches don't purge until the shared core closes.
-	  internal readonly SegmentReader.CoreClosedListener purgeCore = new CoreClosedListenerAnonymousInnerClassHelper();
+      internal readonly SegmentReader.CoreClosedListener purgeCore;
 
 	  private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.CoreClosedListener
 	  {
-		  public CoreClosedListenerAnonymousInnerClassHelper()
+          FieldCacheImpl OuterInstance;
+		  public CoreClosedListenerAnonymousInnerClassHelper(FieldCacheImpl outerInstance)
 		  {
+              this.OuterInstance = outerInstance;
 		  }
 
 		  public override void OnClose(object ownerCoreCacheKey)
 		  {
-			outerInstance.purgeByCacheKey(ownerCoreCacheKey);
+			OuterInstance.PurgeByCacheKey(ownerCoreCacheKey);
 		  }
 	  }
 
 	  // composite/SlowMultiReaderWrapper fieldcaches don't purge until composite reader is closed.
-	  internal readonly IndexReader.ReaderClosedListener purgeReader = new ReaderClosedListenerAnonymousInnerClassHelper();
+	  internal readonly IndexReader.ReaderClosedListener purgeReader;
 
 	  private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
 	  {
-		  public ReaderClosedListenerAnonymousInnerClassHelper()
+          FieldCacheImpl OuterInstance;
+		  public ReaderClosedListenerAnonymousInnerClassHelper(FieldCacheImpl outerInstance)
 		  {
+              this.OuterInstance = outerInstance;
 		  }
 
 		  public override void OnClose(IndexReader owner)
 		  {
 			Debug.Assert(owner is AtomicReader);
-			outerInstance.purgeByCacheKey(((AtomicReader) owner).CoreCacheKey);
+			OuterInstance.PurgeByCacheKey(((AtomicReader) owner).CoreCacheKey);
 		  }
 	  }
 
@@ -205,7 +209,7 @@ namespace Lucene.Net.Search
 
 		internal readonly FieldCacheImpl Wrapper;
 
-		internal readonly IDictionary<object, IDictionary<CacheKey, object>> ReaderCache = new WeakHashMap<object, IDictionary<CacheKey, object>>();
+        internal IDictionary<object, IDictionary<CacheKey, object>> ReaderCache = new WeakDictionary<object, IDictionary<CacheKey, object>>();
 
 		protected internal abstract object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField);
 
@@ -225,8 +229,6 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual void Put(AtomicReader reader, CacheKey key, object value)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object readerKey = reader.getCoreCacheKey();
 		  object readerKey = reader.CoreCacheKey;
 		  lock (ReaderCache)
 		  {
@@ -234,7 +236,7 @@ namespace Lucene.Net.Search
 			if (innerCache == null)
 			{
 			  // First time this reader is using FieldCache
-			  innerCache = new Dictionary<>();
+			  innerCache = new Dictionary<CacheKey, object>();
 			  ReaderCache[readerKey] = innerCache;
 			  Wrapper.InitReader(reader);
 			}
@@ -254,8 +256,6 @@ namespace Lucene.Net.Search
 		{
 		  IDictionary<CacheKey, object> innerCache;
 		  object value;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object readerKey = reader.getCoreCacheKey();
 		  object readerKey = reader.CoreCacheKey;
 		  lock (ReaderCache)
 		  {
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
 			if (innerCache == null)
 			{
 			  // First time this reader is using FieldCache
-			  innerCache = new Dictionary<>();
+			  innerCache = new Dictionary<CacheKey, object>();
 			  ReaderCache[readerKey] = innerCache;
 			  Wrapper.InitReader(reader);
 			  value = null;
@@ -296,9 +296,7 @@ namespace Lucene.Net.Search
 				// call to FieldCache.getXXX
 				if (key.Custom != null && Wrapper != null)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.PrintStream infoStream = wrapper.getInfoStream();
-				  PrintStream infoStream = Wrapper.InfoStream;
+				  StreamWriter infoStream = Wrapper.InfoStream;
 				  if (infoStream != null)
 				  {
 					PrintNewInsanity(infoStream, progress.Value);
@@ -311,27 +309,21 @@ namespace Lucene.Net.Search
 		  return value;
 		}
 
-		internal virtual void PrintNewInsanity(PrintStream infoStream, object value)
+		internal virtual void PrintNewInsanity(StreamWriter infoStream, object value)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FieldCacheSanityChecker.Insanity[] insanities = Lucene.Net.Util.FieldCacheSanityChecker.checkSanity(wrapper);
 		  FieldCacheSanityChecker.Insanity[] insanities = FieldCacheSanityChecker.CheckSanity(Wrapper);
 		  for (int i = 0;i < insanities.Length;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FieldCacheSanityChecker.Insanity insanity = insanities[i];
 			FieldCacheSanityChecker.Insanity insanity = insanities[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_CacheEntry[] entries = insanity.getCacheEntries();
 			FieldCache_CacheEntry[] entries = insanity.CacheEntries;
 			for (int j = 0;j < entries.Length;j++)
 			{
 			  if (entries[j].Value == value)
 			  {
 				// OK this insanity involves our entry
-				infoStream.println("WARNING: new FieldCache insanity created\nDetails: " + insanity.ToString());
-				infoStream.println("\nStack:\n");
-				(new Exception()).printStackTrace(infoStream);
+				infoStream.WriteLine("WARNING: new FieldCache insanity created\nDetails: " + insanity.ToString());
+                infoStream.WriteLine("\nStack:\n");
+                infoStream.WriteLine(new Exception().StackTrace);
 				break;
 			  }
 			}
@@ -381,9 +373,9 @@ namespace Lucene.Net.Search
 
 		/// <summary>
 		/// Composes a hashcode based on the field and type. </summary>
-		public override int HashCode()
+		public override int GetHashCode()
 		{
-		  return Field.HashCode() ^ (Custom == null ? 0 : Custom.HashCode());
+		  return Field.GetHashCode() ^ (Custom == null ? 0 : Custom.GetHashCode());
 		}
 	  }
 
@@ -394,16 +386,12 @@ namespace Lucene.Net.Search
 
 		public virtual void Uninvert(AtomicReader reader, string field, bool setDocsWithField)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
 		  Terms terms = reader.Terms(field);
 		  if (terms != null)
 		  {
 			if (setDocsWithField)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termsDocCount = terms.getDocCount();
 			  int termsDocCount = terms.DocCount;
 			  Debug.Assert(termsDocCount <= maxDoc);
 			  if (termsDocCount == maxDoc)
@@ -414,16 +402,12 @@ namespace Lucene.Net.Search
 			  }
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = termsEnum(terms);
 			TermsEnum termsEnum = TermsEnum(terms);
 
 			DocsEnum docs = null;
 			FixedBitSet docsWithField = null;
 			while (true)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnum.next();
 			  BytesRef term = termsEnum.Next();
 			  if (term == null)
 			  {
@@ -433,8 +417,6 @@ namespace Lucene.Net.Search
 			  docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
 			  while (true)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docs.nextDoc();
 				int docID = docs.NextDoc();
 				if (docID == DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -463,11 +445,7 @@ namespace Lucene.Net.Search
 	  // null Bits means no docs matched
 	  internal virtual void SetDocsWithField(AtomicReader reader, string field, Bits docsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits bits;
 		Bits bits;
 		if (docsWithField == null)
 		{
@@ -475,8 +453,6 @@ namespace Lucene.Net.Search
 		}
 		else if (docsWithField is FixedBitSet)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSet = ((Lucene.Net.Util.FixedBitSet) docsWithField).cardinality();
 		  int numSet = ((FixedBitSet) docsWithField).Cardinality();
 		  if (numSet >= maxDoc)
 		  {
@@ -504,8 +480,6 @@ namespace Lucene.Net.Search
 
 	  public override FieldCache_Bytes GetBytes(AtomicReader reader, string field, FieldCache_ByteParser parser, bool setDocsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.NumericDocValues valuesIn = reader.getNumericDocValues(field);
 		NumericDocValues valuesIn = reader.GetNumericDocValues(field);
 		if (valuesIn != null)
 		{
@@ -515,8 +489,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -524,13 +496,13 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
 			return FieldCache_Bytes.EMPTY;
 		  }
-		  return (FieldCache_Bytes) Caches[sbyte.TYPE].Get(reader, new CacheKey(field, parser), setDocsWithField);
+		  return (FieldCache_Bytes) Caches[typeof(sbyte)].Get(reader, new CacheKey(field, parser), setDocsWithField);
 		}
 	  }
 
@@ -577,18 +549,14 @@ namespace Lucene.Net.Search
 		{
 
 		  int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] values;
 		  sbyte[] values;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_ByteParser parser = (FieldCache_ByteParser) key.custom;
 		  FieldCache_ByteParser parser = (FieldCache_ByteParser) key.Custom;
 		  if (parser == null)
 		  {
 			// Confusing: must delegate to wrapper (vs simply
 			// setting parser = DEFAULT_SHORT_PARSER) so cache
 			// key includes DEFAULT_SHORT_PARSER:
-			return Wrapper.GetBytes(reader, key.Field, DEFAULT_BYTE_PARSER, setDocsWithField);
+			return Wrapper.GetBytes(reader, key.Field, FieldCache.DEFAULT_BYTE_PARSER, setDocsWithField);
 		  }
 
 		  values = new sbyte[maxDoc];
@@ -647,8 +615,6 @@ namespace Lucene.Net.Search
 	  // inherit javadocs
 	  public virtual FieldCache_Shorts GetShorts(AtomicReader reader, string field, FieldCache_ShortParser parser, bool setDocsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.NumericDocValues valuesIn = reader.getNumericDocValues(field);
 		NumericDocValues valuesIn = reader.GetNumericDocValues(field);
 		if (valuesIn != null)
 		{
@@ -658,8 +624,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -667,13 +631,13 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
 			return FieldCache_Shorts.EMPTY;
 		  }
-		  return (FieldCache_Shorts) Caches[short.TYPE].Get(reader, new CacheKey(field, parser), setDocsWithField);
+		  return (FieldCache_Shorts) Caches[typeof(short)].Get(reader, new CacheKey(field, parser), setDocsWithField);
 		}
 	  }
 
@@ -720,18 +684,14 @@ namespace Lucene.Net.Search
 		{
 
 		  int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short[] values;
 		  short[] values;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_ShortParser parser = (FieldCache_ShortParser) key.custom;
 		  FieldCache_ShortParser parser = (FieldCache_ShortParser) key.Custom;
 		  if (parser == null)
 		  {
 			// Confusing: must delegate to wrapper (vs simply
 			// setting parser = DEFAULT_SHORT_PARSER) so cache
 			// key includes DEFAULT_SHORT_PARSER:
-			return Wrapper.GetShorts(reader, key.Field, DEFAULT_SHORT_PARSER, setDocsWithField);
+			return Wrapper.GetShorts(reader, key.Field, FieldCache.DEFAULT_SHORT_PARSER, setDocsWithField);
 		  }
 
 		  values = new short[maxDoc];
@@ -787,8 +747,6 @@ namespace Lucene.Net.Search
 
 	  public override FieldCache_Ints GetInts(AtomicReader reader, string field, FieldCache_IntParser parser, bool setDocsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.NumericDocValues valuesIn = reader.getNumericDocValues(field);
 		NumericDocValues valuesIn = reader.GetNumericDocValues(field);
 		if (valuesIn != null)
 		{
@@ -798,8 +756,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -807,13 +763,13 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
 			return FieldCache_Ints.EMPTY;
 		  }
-		  return (FieldCache_Ints) Caches[int.TYPE].Get(reader, new CacheKey(field, parser), setDocsWithField);
+		  return (FieldCache_Ints) Caches[typeof(int)].Get(reader, new CacheKey(field, parser), setDocsWithField);
 		}
 	  }
 
@@ -849,8 +805,6 @@ namespace Lucene.Net.Search
 
 		public override int Get(int docID)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delta = values.get(docID);
 		  long delta = Values.Get(docID);
 		  return MinValue + (int) delta;
 		}
@@ -891,8 +845,6 @@ namespace Lucene.Net.Search
 		protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_IntParser parser = (FieldCache_IntParser) key.custom;
 		  FieldCache_IntParser parser = (FieldCache_IntParser) key.Custom;
 		  if (parser == null)
 		  {
@@ -903,16 +855,14 @@ namespace Lucene.Net.Search
 			// DEFAULT_INT_PARSER/NUMERIC_UTILS_INT_PARSER:
 			try
 			{
-			  return Wrapper.GetInts(reader, key.Field, DEFAULT_INT_PARSER, setDocsWithField);
+			  return Wrapper.GetInts(reader, key.Field, FieldCache.DEFAULT_INT_PARSER, setDocsWithField);
 			}
-			catch (NumberFormatException ne)
+			catch (System.FormatException ne)
 			{
-			  return Wrapper.GetInts(reader, key.Field, NUMERIC_UTILS_INT_PARSER, setDocsWithField);
+                return Wrapper.GetInts(reader, key.Field, FieldCache.NUMERIC_UTILS_INT_PARSER, setDocsWithField);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<>();
 		  HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<GrowableWriterAndMinValue>();
 
 		  Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
@@ -957,7 +907,7 @@ namespace Lucene.Net.Search
 			  if (values == null)
 			  {
 				// Lazy alloc so for the numeric field case
-				// (which will hit a NumberFormatException
+				// (which will hit a System.FormatException
 				// when we first try the DEFAULT_INT_PARSER),
 				// we don't double-alloc:
 				int startBitsPerValue;
@@ -975,7 +925,7 @@ namespace Lucene.Net.Search
 				values = new GrowableWriter(startBitsPerValue, Reader.MaxDoc(), PackedInts.FAST);
 				if (minValue != 0)
 				{
-				  values.fill(0, values.size(), (-minValue) & 0xFFFFFFFFL); // default value must be 0
+				  values.Fill(0, values.Size(), (-minValue) & 0xFFFFFFFFL); // default value must be 0
 				}
 				ValuesRef.Set(new GrowableWriterAndMinValue(values, minValue));
 			  }
@@ -983,7 +933,7 @@ namespace Lucene.Net.Search
 
 			public override void VisitDoc(int docID)
 			{
-			  values.set(docID, (currentValue - minValue) & 0xFFFFFFFFL);
+			  values.Set(docID, (currentValue - minValue) & 0xFFFFFFFFL);
 			}
 
 			protected internal override TermsEnum TermsEnum(Terms terms)
@@ -995,8 +945,6 @@ namespace Lucene.Net.Search
 
 	  public virtual Bits GetDocsWithField(AtomicReader reader, string field)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = reader.getFieldInfos().fieldInfo(field);
 		FieldInfo fieldInfo = reader.FieldInfos.FieldInfo(field);
 		if (fieldInfo == null)
 		{
@@ -1022,11 +970,7 @@ namespace Lucene.Net.Search
 
 		protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String field = key.field;
 		  string field = key.Field;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
 
 		  // Visit all docs that have terms for this field
@@ -1034,8 +978,6 @@ namespace Lucene.Net.Search
 		  Terms terms = reader.Terms(field);
 		  if (terms != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termsDocCount = terms.getDocCount();
 			int termsDocCount = terms.DocCount;
 			Debug.Assert(termsDocCount <= maxDoc);
 			if (termsDocCount == maxDoc)
@@ -1043,14 +985,10 @@ namespace Lucene.Net.Search
 			  // Fast case: all docs have this field:
 			  return new Lucene.Net.Util.Bits_MatchAllBits(maxDoc);
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = terms.iterator(null);
 			TermsEnum termsEnum = terms.Iterator(null);
 			DocsEnum docs = null;
 			while (true)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnum.next();
 			  BytesRef term = termsEnum.Next();
 			  if (term == null)
 			  {
@@ -1066,8 +1004,6 @@ namespace Lucene.Net.Search
 			  // TODO: use bulk API
 			  while (true)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docs.nextDoc();
 				int docID = docs.NextDoc();
 				if (docID == DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -1081,8 +1017,6 @@ namespace Lucene.Net.Search
 		  {
 			return new Lucene.Net.Util.Bits_MatchNoBits(maxDoc);
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSet = res.cardinality();
 		  int numSet = res.Cardinality();
 		  if (numSet >= maxDoc)
 		  {
@@ -1101,8 +1035,6 @@ namespace Lucene.Net.Search
 
 	  public override FieldCache_Floats GetFloats(AtomicReader reader, string field, FieldCache_FloatParser parser, bool setDocsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.NumericDocValues valuesIn = reader.getNumericDocValues(field);
 		NumericDocValues valuesIn = reader.GetNumericDocValues(field);
 		if (valuesIn != null)
 		{
@@ -1112,8 +1044,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -1121,13 +1051,13 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
 			return FieldCache_Floats.EMPTY;
 		  }
-		  return (FieldCache_Floats) Caches[float.TYPE].Get(reader, new CacheKey(field, parser), setDocsWithField);
+		  return (FieldCache_Floats) Caches[typeof(float)].Get(reader, new CacheKey(field, parser), setDocsWithField);
 		}
 	  }
 
@@ -1145,7 +1075,7 @@ namespace Lucene.Net.Search
 
 		  public override float Get(int docID)
 		  {
-			return float.intBitsToFloat((int) ValuesIn.Get(docID));
+			return Number.IntBitsToFloat((int) ValuesIn.Get(docID));
 		  }
 	  }
 
@@ -1173,8 +1103,6 @@ namespace Lucene.Net.Search
 		protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_FloatParser parser = (FieldCache_FloatParser) key.custom;
 		  FieldCache_FloatParser parser = (FieldCache_FloatParser) key.Custom;
 		  if (parser == null)
 		  {
@@ -1185,16 +1113,14 @@ namespace Lucene.Net.Search
 			// DEFAULT_FLOAT_PARSER/NUMERIC_UTILS_FLOAT_PARSER:
 			try
 			{
-			  return Wrapper.GetFloats(reader, key.Field, DEFAULT_FLOAT_PARSER, setDocsWithField);
+			  return Wrapper.GetFloats(reader, key.Field, FieldCache.DEFAULT_FLOAT_PARSER, setDocsWithField);
 			}
-			catch (NumberFormatException ne)
+			catch (System.FormatException ne)
 			{
-			  return Wrapper.GetFloats(reader, key.Field, NUMERIC_UTILS_FLOAT_PARSER, setDocsWithField);
+                return Wrapper.GetFloats(reader, key.Field, FieldCache.NUMERIC_UTILS_FLOAT_PARSER, setDocsWithField);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HoldsOneThing<float[]> valuesRef = new HoldsOneThing<>();
 		  HoldsOneThing<float[]> valuesRef = new HoldsOneThing<float[]>();
 
 		  Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
@@ -1239,7 +1165,7 @@ namespace Lucene.Net.Search
 			  if (values == null)
 			  {
 				// Lazy alloc so for the numeric field case
-				// (which will hit a NumberFormatException
+				// (which will hit a System.FormatException
 				// when we first try the DEFAULT_INT_PARSER),
 				// we don't double-alloc:
 				values = new float[Reader.MaxDoc()];
@@ -1266,8 +1192,6 @@ namespace Lucene.Net.Search
 
 	  public override FieldCache_Longs GetLongs(AtomicReader reader, string field, FieldCache_LongParser parser, bool setDocsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.NumericDocValues valuesIn = reader.getNumericDocValues(field);
 		NumericDocValues valuesIn = reader.GetNumericDocValues(field);
 		if (valuesIn != null)
 		{
@@ -1277,8 +1201,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -1286,13 +1208,13 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
 			return FieldCache_Longs.EMPTY;
 		  }
-		  return (FieldCache_Longs) Caches[long.TYPE].Get(reader, new CacheKey(field, parser), setDocsWithField);
+		  return (FieldCache_Longs) Caches[typeof(long)].Get(reader, new CacheKey(field, parser), setDocsWithField);
 		}
 	  }
 
@@ -1340,8 +1262,6 @@ namespace Lucene.Net.Search
 		protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_LongParser parser = (FieldCache_LongParser) key.custom;
 		  FieldCache_LongParser parser = (FieldCache_LongParser) key.Custom;
 		  if (parser == null)
 		  {
@@ -1352,16 +1272,14 @@ namespace Lucene.Net.Search
 			// DEFAULT_LONG_PARSER/NUMERIC_UTILS_LONG_PARSER:
 			try
 			{
-			  return Wrapper.GetLongs(reader, key.Field, DEFAULT_LONG_PARSER, setDocsWithField);
+			  return Wrapper.GetLongs(reader, key.Field, FieldCache.DEFAULT_LONG_PARSER, setDocsWithField);
 			}
-			catch (NumberFormatException ne)
+			catch (System.FormatException ne)
 			{
-			  return Wrapper.GetLongs(reader, key.Field, NUMERIC_UTILS_LONG_PARSER, setDocsWithField);
+			  return Wrapper.GetLongs(reader, key.Field, FieldCache.NUMERIC_UTILS_LONG_PARSER, setDocsWithField);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<>();
 		  HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<GrowableWriterAndMinValue>();
 
 		  Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
@@ -1406,7 +1324,7 @@ namespace Lucene.Net.Search
 			  if (values == null)
 			  {
 				// Lazy alloc so for the numeric field case
-				// (which will hit a NumberFormatException
+				// (which will hit a System.FormatException
 				// when we first try the DEFAULT_INT_PARSER),
 				// we don't double-alloc:
 				int startBitsPerValue;
@@ -1424,7 +1342,7 @@ namespace Lucene.Net.Search
 				values = new GrowableWriter(startBitsPerValue, Reader.MaxDoc(), PackedInts.FAST);
 				if (minValue != 0)
 				{
-				  values.fill(0, values.size(), -minValue); // default value must be 0
+				  values.Fill(0, values.Size(), -minValue); // default value must be 0
 				}
 				ValuesRef.Set(new GrowableWriterAndMinValue(values, minValue));
 			  }
@@ -1432,7 +1350,7 @@ namespace Lucene.Net.Search
 
 			public override void VisitDoc(int docID)
 			{
-			  values.set(docID, currentValue - minValue);
+			  values.Set(docID, currentValue - minValue);
 			}
 
 			protected internal override TermsEnum TermsEnum(Terms terms)
@@ -1449,8 +1367,6 @@ namespace Lucene.Net.Search
 
 	  public override FieldCache_Doubles GetDoubles(AtomicReader reader, string field, FieldCache_DoubleParser parser, bool setDocsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.NumericDocValues valuesIn = reader.getNumericDocValues(field);
 		NumericDocValues valuesIn = reader.GetNumericDocValues(field);
 		if (valuesIn != null)
 		{
@@ -1460,8 +1376,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -1469,13 +1383,13 @@ namespace Lucene.Net.Search
 		  }
 		  else if (info.HasDocValues())
 		  {
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
 			return FieldCache_Doubles.EMPTY;
 		  }
-		  return (FieldCache_Doubles) Caches[double.TYPE].Get(reader, new CacheKey(field, parser), setDocsWithField);
+		  return (FieldCache_Doubles) Caches[typeof(double)].Get(reader, new CacheKey(field, parser), setDocsWithField);
 		}
 	  }
 
@@ -1493,7 +1407,7 @@ namespace Lucene.Net.Search
 
 		  public override double Get(int docID)
 		  {
-			return double.longBitsToDouble(ValuesIn.Get(docID));
+			return BitConverter.Int64BitsToDouble(ValuesIn.Get(docID));
 		  }
 	  }
 
@@ -1521,8 +1435,6 @@ namespace Lucene.Net.Search
 		protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_DoubleParser parser = (FieldCache_DoubleParser) key.custom;
 		  FieldCache_DoubleParser parser = (FieldCache_DoubleParser) key.Custom;
 		  if (parser == null)
 		  {
@@ -1533,16 +1445,14 @@ namespace Lucene.Net.Search
 			// DEFAULT_DOUBLE_PARSER/NUMERIC_UTILS_DOUBLE_PARSER:
 			try
 			{
-			  return Wrapper.GetDoubles(reader, key.Field, DEFAULT_DOUBLE_PARSER, setDocsWithField);
+			  return Wrapper.GetDoubles(reader, key.Field, FieldCache.DEFAULT_DOUBLE_PARSER, setDocsWithField);
 			}
-			catch (NumberFormatException ne)
+			catch (System.FormatException ne)
 			{
-			  return Wrapper.GetDoubles(reader, key.Field, NUMERIC_UTILS_DOUBLE_PARSER, setDocsWithField);
+			  return Wrapper.GetDoubles(reader, key.Field, FieldCache.NUMERIC_UTILS_DOUBLE_PARSER, setDocsWithField);
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final HoldsOneThing<double[]> valuesRef = new HoldsOneThing<>();
 		  HoldsOneThing<double[]> valuesRef = new HoldsOneThing<double[]>();
 
 		  Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
@@ -1586,7 +1496,7 @@ namespace Lucene.Net.Search
 			  if (values == null)
 			  {
 				// Lazy alloc so for the numeric field case
-				// (which will hit a NumberFormatException
+				// (which will hit a System.FormatException
 				// when we first try the DEFAULT_INT_PARSER),
 				// we don't double-alloc:
 				values = new double[Reader.MaxDoc()];
@@ -1663,8 +1573,6 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		  FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		  if (info == null)
 		  {
@@ -1674,7 +1582,7 @@ namespace Lucene.Net.Search
 		  {
 			// we don't try to build a sorted instance from numeric/binary doc
 			// values because dedup can be very costly
-			throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+			throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		  }
 		  else if (!info.Indexed)
 		  {
@@ -1693,24 +1601,16 @@ namespace Lucene.Net.Search
 		protected internal override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
 
 		  Terms terms = reader.Terms(key.Field);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float acceptableOverheadRatio = ((Float) key.custom).floatValue();
 		  float acceptableOverheadRatio = (float)((float?) key.Custom);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes bytes = new Lucene.Net.Util.PagedBytes(15);
 		  PagedBytes bytes = new PagedBytes(15);
 
 		  int startTermsBPV;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termCountHardLimit;
 		  int termCountHardLimit;
 		  if (maxDoc == int.MaxValue)
 		  {
@@ -1751,8 +1651,6 @@ namespace Lucene.Net.Search
 		  }
 
 		  MonotonicAppendingLongBuffer termOrdToBytesOffset = new MonotonicAppendingLongBuffer();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.GrowableWriter docToTermOrd = new Lucene.Net.Util.Packed.GrowableWriter(startTermsBPV, maxDoc, acceptableOverheadRatio);
 		  GrowableWriter docToTermOrd = new GrowableWriter(startTermsBPV, maxDoc, acceptableOverheadRatio);
 
 		  int termOrd = 0;
@@ -1761,15 +1659,11 @@ namespace Lucene.Net.Search
 
 		  if (terms != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = terms.iterator(null);
 			TermsEnum termsEnum = terms.Iterator(null);
 			DocsEnum docs = null;
 
 			while (true)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnum.next();
 			  BytesRef term = termsEnum.Next();
 			  if (term == null)
 			  {
@@ -1784,8 +1678,6 @@ namespace Lucene.Net.Search
 			  docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
 			  while (true)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docs.nextDoc();
 				int docID = docs.NextDoc();
 				if (docID == DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -1817,8 +1709,6 @@ namespace Lucene.Net.Search
 
 		public override void Get(int docID, BytesRef ret)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pointer = (int) docToOffset.get(docID);
 		  int pointer = (int) DocToOffset.Get(docID);
 		  if (pointer == 0)
 		  {
@@ -1855,8 +1745,6 @@ namespace Lucene.Net.Search
 		  return valuesIn;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		if (info == null)
 		{
@@ -1864,7 +1752,7 @@ namespace Lucene.Net.Search
 		}
 		else if (info.HasDocValues())
 		{
-		  throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+		  throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		}
 		else if (!info.Indexed)
 		{
@@ -1887,22 +1775,14 @@ namespace Lucene.Net.Search
 		  // was already cached for this field and then return
 		  // that instead, to avoid insanity
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
 		  Terms terms = reader.Terms(key.Field);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float acceptableOverheadRatio = ((Float) key.custom).floatValue();
 		  float acceptableOverheadRatio = (float)((float?) key.Custom);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int termCountHardLimit = maxDoc;
 		  int termCountHardLimit = maxDoc;
 
 		  // Holds the actual term data, expanded.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.PagedBytes bytes = new Lucene.Net.Util.PagedBytes(15);
 		  PagedBytes bytes = new PagedBytes(15);
 
 		  int startBPV;
@@ -1931,8 +1811,6 @@ namespace Lucene.Net.Search
 			startBPV = 1;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.GrowableWriter docToOffset = new Lucene.Net.Util.Packed.GrowableWriter(startBPV, maxDoc, acceptableOverheadRatio);
 		  GrowableWriter docToOffset = new GrowableWriter(startBPV, maxDoc, acceptableOverheadRatio);
 
 		  // pointer==0 means not set
@@ -1941,8 +1819,6 @@ namespace Lucene.Net.Search
 		  if (terms != null)
 		  {
 			int termCount = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = terms.iterator(null);
 			TermsEnum termsEnum = terms.Iterator(null);
 			DocsEnum docs = null;
 			while (true)
@@ -1955,21 +1831,15 @@ namespace Lucene.Net.Search
 				break;
 			  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnum.next();
 			  BytesRef term = termsEnum.Next();
 			  if (term == null)
 			  {
 				break;
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long pointer = bytes.copyUsingLengthPrefix(term);
 			  long pointer = bytes.CopyUsingLengthPrefix(term);
 			  docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
 			  while (true)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docID = docs.nextDoc();
 				int docID = docs.NextDoc();
 				if (docID == DocIdSetIterator.NO_MORE_DOCS)
 				{
@@ -1980,8 +1850,6 @@ namespace Lucene.Net.Search
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader offsetReader = docToOffset.getMutable();
 		  PackedInts.Reader offsetReader = docToOffset.Mutable;
 		  if (setDocsWithField)
 		  {
@@ -2033,8 +1901,6 @@ namespace Lucene.Net.Search
 		  return DocValues.Singleton(sdv);
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		FieldInfo info = reader.FieldInfos.FieldInfo(field);
 		if (info == null)
 		{
@@ -2042,7 +1908,7 @@ namespace Lucene.Net.Search
 		}
 		else if (info.HasDocValues())
 		{
-		  throw new IllegalStateException("Type mismatch: " + field + " was indexed as " + info.DocValuesType_e);
+		  throw new InvalidOperationException("Type mismatch: " + field + " was indexed as " + info.DocValuesType);
 		}
 		else if (!info.Indexed)
 		{
@@ -2065,17 +1931,17 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  private volatile PrintStream InfoStream_Renamed;
+	  private volatile StreamWriter infoStream;
 
-	  public virtual PrintStream InfoStream
+      public virtual StreamWriter InfoStream
 	  {
 		  set
 		  {
-			InfoStream_Renamed = value;
+			infoStream = value;
 		  }
 		  get
 		  {
-			return InfoStream_Renamed;
+			return infoStream;
 		  }
 	  }
 

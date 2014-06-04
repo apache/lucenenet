@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
 		if (query is BooleanQuery)
 		{
 		  BooleanQuery bq = (BooleanQuery) query;
-		  bq.MinimumNumberShouldMatch = (int)(fraction * bq.Clauses().Count);
+		  bq.MinimumNumberShouldMatch = (int)(fraction * bq.GetClauses().Count);
 		}
 		return query;
 	  }

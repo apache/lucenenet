@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 	  /// Construct a <code>ReqExclScorer</code>. </summary>
 	  /// <param name="reqScorer"> The scorer that must match, except where </param>
 	  /// <param name="exclDisi"> indicates exclusion. </param>
-	  public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi) : base(reqScorer.Weight_Renamed)
+	  public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi) : base(reqScorer.weight)
 	  {
 		this.ReqScorer = reqScorer;
 		this.ExclDisi = exclDisi;
@@ -125,7 +125,9 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			return Collections.singleton(new ChildScorer(ReqScorer, "FILTERED"));
+              //LUCENE TO-DO
+              return new[] {new ChildScorer(ReqScorer, "FILTERED")};
+              //return Collections.singleton(new ChildScorer(ReqScorer, "FILTERED"));
 		  }
 	  }
 

@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
 	  public override int HashCode()
 	  {
 		const int prime = 31;
-		int result = base.HashCode();
+		int result = base.GetHashCode();
 		result = prime * result + (IncludeLower ? 1231 : 1237);
 		result = prime * result + (IncludeUpper ? 1231 : 1237);
 		result = prime * result + ((LowerTerm_Renamed == null) ? 0 : LowerTerm_Renamed.GetHashCode());

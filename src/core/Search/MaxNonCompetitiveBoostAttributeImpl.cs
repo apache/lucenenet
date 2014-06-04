@@ -64,8 +64,6 @@ namespace Lucene.Net.Search
 
 	  public override void CopyTo(AttributeImpl target)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MaxNonCompetitiveBoostAttributeImpl t = (MaxNonCompetitiveBoostAttributeImpl) target;
 		MaxNonCompetitiveBoostAttributeImpl t = (MaxNonCompetitiveBoostAttributeImpl) target;
 		t.MaxNonCompetitiveBoost = MaxNonCompetitiveBoost_Renamed;
 		t.CompetitiveTerm = CompetitiveTerm_Renamed;

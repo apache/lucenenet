@@ -24,6 +24,7 @@ namespace Lucene.Net.Search
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
+    using System;
 
 	/// <summary>
 	/// Utility class to safely share <seealso cref="IndexSearcher"/> instances across multiple
@@ -116,12 +117,8 @@ namespace Lucene.Net.Search
 
 	  protected internal override IndexSearcher RefreshIfNeeded(IndexSearcher referenceToRefresh)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.IndexReader r = referenceToRefresh.getIndexReader();
 		IndexReader r = referenceToRefresh.IndexReader;
 		Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.IndexReader newReader = Lucene.Net.Index.DirectoryReader.openIfChanged((Lucene.Net.Index.DirectoryReader) r);
 		IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader) r);
 		if (newReader == null)
 		{
@@ -151,13 +148,9 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final IndexSearcher searcher = acquire();
 			IndexSearcher searcher = Acquire();
 			try
 			{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Lucene.Net.Index.IndexReader r = searcher.getIndexReader();
 			  IndexReader r = searcher.IndexReader;
 			  Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
 			  return ((DirectoryReader) r).Current;
@@ -178,15 +171,13 @@ namespace Lucene.Net.Search
 	  public static IndexSearcher GetSearcher(SearcherFactory searcherFactory, IndexReader reader)
 	  {
 		bool success = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexSearcher searcher;
 		IndexSearcher searcher;
 		try
 		{
 		  searcher = searcherFactory.NewSearcher(reader);
 		  if (searcher.IndexReader != reader)
 		  {
-			throw new IllegalStateException("SearcherFactory must wrap exactly the provided reader (got " + searcher.IndexReader + " but expected " + reader + ")");
+			throw new InvalidOperationException("SearcherFactory must wrap exactly the provided reader (got " + searcher.IndexReader + " but expected " + reader + ")");
 		  }
 		  success = true;
 		}

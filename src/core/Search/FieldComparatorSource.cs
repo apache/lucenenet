@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
 	  ///           If an error occurs reading the index. </exception>
 //JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 //ORIGINAL LINE: public abstract FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed) throws java.io.IOException;
-	  public abstract FieldComparator<?> NewComparator(string fieldname, int numHits, int sortPos, bool reversed);
+	  public abstract FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed);
 	}
 
 }

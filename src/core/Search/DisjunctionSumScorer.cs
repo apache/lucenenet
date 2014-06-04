@@ -49,8 +49,6 @@ namespace Lucene.Net.Search
 
 	  protected internal override void AfterNext()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Scorer sub = subScorers[0];
 		Scorer sub = SubScorers[0];
 		Doc = sub.DocID();
 		if (Doc != NO_MORE_DOCS)

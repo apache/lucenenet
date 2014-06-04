@@ -1,4 +1,21 @@
-﻿using System;
+﻿/* 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +27,7 @@ namespace Lucene.Net.Support.Compatibility
 {
     /// <summary>
     /// Support class that emulates the behavior of the ConcurrentDictionary
-    /// from .NET 4.0.  this class will, in most cases, perform slightly slower
+    /// from .NET 4.0.  This class will, in most cases, perform slightly slower
     /// than the 4.0 equivalent.  Note that all behavior is emulated, which means
     /// that <see cref="GetEnumerator"/>, <see cref="Keys"/>, and <see cref="Values"/>
     /// all return a snapshot of the data at the time it was called.
@@ -43,7 +60,7 @@ namespace Lucene.Net.Support.Compatibility
             }
         }
 
-        #region Concurrent Dictionary Special Methods
+#region Concurrent Dictionary Special Methods
 
         public TValue AddOrUpdate(TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
@@ -151,7 +168,7 @@ namespace Lucene.Net.Support.Compatibility
 
         #endregion
 
-        #region IDictionary Methods
+#region IDictionary Methods
 
         // .NET4 ConcurrentDictionary returns an enumerator that can enumerate even
         // if the collection is modified.  We can't do that, so create a copy (expensive)
@@ -233,7 +250,7 @@ namespace Lucene.Net.Support.Compatibility
 
         #endregion
 
-        #region Explicit Interface Definitions
+#region Explicit Interface Definitions
 
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
         {

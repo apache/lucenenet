@@ -115,18 +115,10 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SortedDocValues fcsi = FieldCache_Fields.DEFAULT.getTermsIndex(context.reader(), field);
 			SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(context.Reader(), Field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int lowerPoint = lowerVal == null ? -1 : fcsi.lookupTerm(new Lucene.Net.Util.BytesRef(lowerVal));
 			int lowerPoint = LowerVal == null ? - 1 : fcsi.LookupTerm(new BytesRef(LowerVal));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upperPoint = upperVal == null ? -1 : fcsi.lookupTerm(new Lucene.Net.Util.BytesRef(upperVal));
 			int upperPoint = UpperVal == null ? - 1 : fcsi.LookupTerm(new BytesRef(UpperVal));
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int inclusiveLowerPoint, inclusiveUpperPoint;
 			int inclusiveLowerPoint, inclusiveUpperPoint;
 
 			// Hints:
@@ -174,7 +166,7 @@ namespace Lucene.Net.Search
 
 			Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().maxDoc(), acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
@@ -187,7 +179,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldCacheRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, Bits acceptDocs, SortedDocValues fcsi, int inclusiveLowerPoint, int inclusiveUpperPoint) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.Fcsi = fcsi;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
@@ -195,8 +187,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override sealed bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docOrd = fcsi.getOrd(doc);
 				int docOrd = Fcsi.GetOrd(doc);
 				return docOrd >= InclusiveLowerPoint && docOrd <= InclusiveUpperPoint;
 			  }
@@ -233,18 +223,10 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SortedDocValues fcsi = FieldCache_Fields.DEFAULT.getTermsIndex(context.reader(), field);
 			SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(context.Reader(), Field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int lowerPoint = lowerVal == null ? -1 : fcsi.lookupTerm(lowerVal);
 			int lowerPoint = LowerVal == null ? - 1 : fcsi.LookupTerm(LowerVal);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upperPoint = upperVal == null ? -1 : fcsi.lookupTerm(upperVal);
 			int upperPoint = UpperVal == null ? - 1 : fcsi.LookupTerm(UpperVal);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int inclusiveLowerPoint, inclusiveUpperPoint;
 			int inclusiveLowerPoint, inclusiveUpperPoint;
 
 			// Hints:
@@ -292,7 +274,7 @@ namespace Lucene.Net.Search
 
 			Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().maxDoc(), acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().MaxDoc(), acceptDocs, fcsi, inclusiveLowerPoint, inclusiveUpperPoint);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
@@ -305,7 +287,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldCacheRangeFilterAnonymousInnerClassHelper2 outerInstance, int maxDoc, Bits acceptDocs, SortedDocValues fcsi, int inclusiveLowerPoint, int inclusiveUpperPoint) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.Fcsi = fcsi;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
@@ -313,8 +295,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override sealed bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docOrd = fcsi.getOrd(doc);
 				int docOrd = Fcsi.GetOrd(doc);
 				return docOrd >= InclusiveLowerPoint && docOrd <= InclusiveUpperPoint;
 			  }
@@ -364,13 +344,9 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte inclusiveLowerPoint, inclusiveUpperPoint;
 			sbyte inclusiveLowerPoint, inclusiveUpperPoint;
 			if (LowerVal != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte i = lowerVal.byteValue();
 			  sbyte i = (sbyte)LowerVal;
 			  if (!IncludeLower && i == sbyte.MaxValue)
 			  {
@@ -384,8 +360,6 @@ namespace Lucene.Net.Search
 			}
 			if (UpperVal != null)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte i = upperVal.byteValue();
 			  sbyte i = (sbyte)UpperVal;
 			  if (!IncludeUpper && i == sbyte.MinValue)
 			  {
@@ -403,10 +377,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_Bytes values = FieldCache_Fields.DEFAULT.getBytes(context.reader(), field, (FieldCache_ByteParser) parser, false);
 			FieldCache_Bytes values = FieldCache_Fields.DEFAULT.GetBytes(context.Reader(), Field, (FieldCache_ByteParser) Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper3(this, context.Reader().maxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper3(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper3 : FieldCacheDocIdSet
@@ -419,7 +391,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper3(FieldCacheRangeFilterAnonymousInnerClassHelper3 outerInstance, int maxDoc, Bits acceptDocs, sbyte inclusiveLowerPoint, sbyte inclusiveUpperPoint, Lucene.Net.Search.FieldCache_Bytes values) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
 				  this.Values = values;
@@ -427,8 +399,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte value = values.get(doc);
 				sbyte value = Values.Get(doc);
 				return value >= InclusiveLowerPoint && value <= InclusiveUpperPoint;
 			  }
@@ -478,8 +448,6 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short inclusiveLowerPoint, inclusiveUpperPoint;
 			short inclusiveLowerPoint, inclusiveUpperPoint;
 			if (LowerVal != null)
 			{
@@ -513,10 +481,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_Shorts values = FieldCache_Fields.DEFAULT.getShorts(context.reader(), field, (FieldCache_ShortParser) parser, false);
 			FieldCache_Shorts values = FieldCache_Fields.DEFAULT.GetShorts(context.Reader(), Field, (FieldCache_ShortParser) Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper4(this, context.Reader().maxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper4(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper4 : FieldCacheDocIdSet
@@ -529,7 +495,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper4(FieldCacheRangeFilterAnonymousInnerClassHelper4 outerInstance, int maxDoc, Bits acceptDocs, short inclusiveLowerPoint, short inclusiveUpperPoint, Lucene.Net.Search.FieldCache_Shorts values) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
 				  this.Values = values;
@@ -537,8 +503,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short value = values.get(doc);
 				short value = Values.Get(doc);
 				return value >= InclusiveLowerPoint && value <= InclusiveUpperPoint;
 			  }
@@ -586,8 +550,6 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int inclusiveLowerPoint, inclusiveUpperPoint;
 			int inclusiveLowerPoint, inclusiveUpperPoint;
 			if (LowerVal != null)
 			{
@@ -621,10 +583,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_Ints values = FieldCache_Fields.DEFAULT.getInts(context.reader(), field, (FieldCache_IntParser) parser, false);
 			FieldCache_Ints values = FieldCache_Fields.DEFAULT.GetInts(context.Reader(), Field, (FieldCache_IntParser) Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper5(this, context.Reader().maxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper5(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper5 : FieldCacheDocIdSet
@@ -637,7 +597,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper5(FieldCacheRangeFilterAnonymousInnerClassHelper5 outerInstance, int maxDoc, Bits acceptDocs, int inclusiveLowerPoint, int inclusiveUpperPoint, Lucene.Net.Search.FieldCache_Ints values) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
 				  this.Values = values;
@@ -645,8 +605,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int value = values.get(doc);
 				int value = Values.Get(doc);
 				return value >= InclusiveLowerPoint && value <= InclusiveUpperPoint;
 			  }
@@ -694,8 +652,6 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long inclusiveLowerPoint, inclusiveUpperPoint;
 			long inclusiveLowerPoint, inclusiveUpperPoint;
 			if (LowerVal != null)
 			{
@@ -729,10 +685,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_Longs values = FieldCache_Fields.DEFAULT.getLongs(context.reader(), field, (FieldCache_LongParser) parser, false);
 			FieldCache_Longs values = FieldCache_Fields.DEFAULT.GetLongs(context.Reader(), Field, (FieldCache_LongParser) Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper6(this, context.Reader().maxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper6(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper6 : FieldCacheDocIdSet
@@ -745,7 +699,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper6(FieldCacheRangeFilterAnonymousInnerClassHelper6 outerInstance, int maxDoc, Bits acceptDocs, long inclusiveLowerPoint, long inclusiveUpperPoint, Lucene.Net.Search.FieldCache_Longs values) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
 				  this.Values = values;
@@ -753,8 +707,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long value = values.get(doc);
 				long value = Values.Get(doc);
 				return value >= InclusiveLowerPoint && value <= InclusiveUpperPoint;
 			  }
@@ -804,8 +756,6 @@ namespace Lucene.Net.Search
 		  {
 			// we transform the floating point numbers to sortable integers
 			// using NumericUtils to easier find the next bigger/lower value
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float inclusiveLowerPoint, inclusiveUpperPoint;
 			float inclusiveLowerPoint, inclusiveUpperPoint;
 			if (LowerVal != null)
 			{
@@ -841,10 +791,8 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_Floats values = FieldCache_Fields.DEFAULT.getFloats(context.reader(), field, (FieldCache_FloatParser) parser, false);
 			FieldCache_Floats values = FieldCache_Fields.DEFAULT.GetFloats(context.Reader(), Field, (FieldCache_FloatParser) Parser, false);
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper7(this, context.Reader().maxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper7(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper7 : FieldCacheDocIdSet
@@ -857,7 +805,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper7(FieldCacheRangeFilterAnonymousInnerClassHelper7 outerInstance, int maxDoc, Bits acceptDocs, float inclusiveLowerPoint, float inclusiveUpperPoint, Lucene.Net.Search.FieldCache_Floats values) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
 				  this.Values = values;
@@ -865,8 +813,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float value = values.get(doc);
 				float value = Values.Get(doc);
 				return value >= InclusiveLowerPoint && value <= InclusiveUpperPoint;
 			  }
@@ -916,8 +862,6 @@ namespace Lucene.Net.Search
 		  {
 			// we transform the floating point numbers to sortable integers
 			// using NumericUtils to easier find the next bigger/lower value
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double inclusiveLowerPoint, inclusiveUpperPoint;
 			double inclusiveLowerPoint, inclusiveUpperPoint;
 			if (LowerVal != null)
 			{
@@ -953,11 +897,9 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldCache_Doubles values = FieldCache_Fields.DEFAULT.getDoubles(context.reader(), field, (FieldCache_DoubleParser) parser, false);
 			FieldCache_Doubles values = FieldCache_Fields.DEFAULT.GetDoubles(context.Reader(), Field, (FieldCache_DoubleParser) Parser, false);
 			// ignore deleted docs if range doesn't contain 0
-			return new FieldCacheDocIdSetAnonymousInnerClassHelper8(this, context.Reader().maxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
+			return new FieldCacheDocIdSetAnonymousInnerClassHelper8(this, context.Reader().MaxDoc(), acceptDocs, inclusiveLowerPoint, inclusiveUpperPoint, values);
 		  }
 
 		  private class FieldCacheDocIdSetAnonymousInnerClassHelper8 : FieldCacheDocIdSet
@@ -970,7 +912,7 @@ namespace Lucene.Net.Search
 
 			  public FieldCacheDocIdSetAnonymousInnerClassHelper8(FieldCacheRangeFilterAnonymousInnerClassHelper8 outerInstance, int maxDoc, Bits acceptDocs, double inclusiveLowerPoint, double inclusiveUpperPoint, Lucene.Net.Search.FieldCache_Doubles values) : base(maxDoc, acceptDocs)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 				  this.InclusiveLowerPoint = inclusiveLowerPoint;
 				  this.InclusiveUpperPoint = inclusiveUpperPoint;
 				  this.Values = values;
@@ -978,8 +920,6 @@ namespace Lucene.Net.Search
 
 			  protected internal override bool MatchDoc(int doc)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double value = values.get(doc);
 				double value = Values.Get(doc);
 				return value >= InclusiveLowerPoint && value <= InclusiveUpperPoint;
 			  }
@@ -988,25 +928,21 @@ namespace Lucene.Net.Search
 
 	  public override sealed string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder sb = new StringBuilder(field).append(":");
 		StringBuilder sb = (new StringBuilder(Field_Renamed)).Append(":");
 		return sb.Append(IncludeLower ? '[' : '{').Append((LowerVal_Renamed == null) ? "*" : LowerVal_Renamed.ToString()).Append(" TO ").Append((UpperVal_Renamed == null) ? "*" : UpperVal_Renamed.ToString()).Append(IncludeUpper ? ']' : '}').ToString();
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings({"unchecked","rawtypes"}) public final boolean equals(Object o)
 	  public override sealed bool Equals(object o)
 	  {
 		if (this == o)
 		{
 			return true;
 		}
-		if (!(o is FieldCacheRangeFilter))
+		if (!(o is FieldCacheRangeFilter<T>))
 		{
 			return false;
 		}
-		FieldCacheRangeFilter other = (FieldCacheRangeFilter) o;
+		FieldCacheRangeFilter<T> other = (FieldCacheRangeFilter<T>) o;
 
 		if (!this.Field_Renamed.Equals(other.Field_Renamed) || this.IncludeLower != other.IncludeLower || this.IncludeUpper != other.IncludeUpper)
 		{
@@ -1027,13 +963,13 @@ namespace Lucene.Net.Search
 		return true;
 	  }
 
-	  public override sealed int HashCode()
+	  public override sealed int GetHashCode()
 	  {
-		int h = Field_Renamed.HashCode();
-		h ^= (LowerVal_Renamed != null) ? LowerVal_Renamed.HashCode() : 550356204;
+		int h = Field_Renamed.GetHashCode();
+        h ^= (LowerVal_Renamed != null) ? LowerVal_Renamed.GetHashCode() : 550356204;
 		h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
-		h ^= (UpperVal_Renamed != null) ? UpperVal_Renamed.HashCode() : -1674416163;
-		h ^= (Parser_Renamed != null) ? Parser_Renamed.HashCode() : -1572457324;
+        h ^= (UpperVal_Renamed != null) ? UpperVal_Renamed.GetHashCode() : -1674416163;
+        h ^= (Parser_Renamed != null) ? Parser_Renamed.GetHashCode() : -1572457324;
 		h ^= (IncludeLower ? 1549299360 : -365038026) ^ (IncludeUpper ? 1721088258 : 1948649653);
 		return h;
 	  }

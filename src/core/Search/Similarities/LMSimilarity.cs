@@ -38,13 +38,13 @@ namespace Lucene.Net.Search.Similarities
 	{
 	  /// <summary>
 	  /// The collection model. </summary>
-	  protected internal readonly CollectionModel CollectionModel;
+	  protected internal readonly CollectionModel collectionModel;
 
 	  /// <summary>
 	  /// Creates a new instance with the specified collection language model. </summary>
 	  public LMSimilarity(CollectionModel collectionModel)
 	  {
-		this.CollectionModel = collectionModel;
+          this.collectionModel = collectionModel;
 	  }
 
 	  /// <summary>
@@ -66,12 +66,12 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		base.FillBasicStats(stats, collectionStats, termStats);
 		LMStats lmStats = (LMStats) stats;
-		lmStats.CollectionProbability = CollectionModel.ComputeProbability(stats);
+        lmStats.CollectionProbability = collectionModel.ComputeProbability(stats);
 	  }
 
 	  protected internal override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)
 	  {
-		expl.AddDetail(new Explanation(CollectionModel.ComputeProbability(stats), "collection probability"));
+          expl.AddDetail(new Explanation(collectionModel.ComputeProbability(stats), "collection probability"));
 	  }
 
 	  /// <summary>
@@ -89,14 +89,14 @@ namespace Lucene.Net.Search.Similarities
 	  /// <seealso cref= DefaultCollectionModel  </seealso>
 	  public override string ToString()
 	  {
-		string coll = CollectionModel.Name;
+		string coll = collectionModel.Name;
 		if (coll != null)
 		{
-		  return string.format(Locale.ROOT, "LM %s - %s", Name, coll);
+		  return string.Format(Locale.ROOT, "LM %s - %s", Name, coll);
 		}
 		else
 		{
-		  return string.format(Locale.ROOT, "LM %s", Name);
+		  return string.Format(Locale.ROOT, "LM %s", Name);
 		}
 	  }
 

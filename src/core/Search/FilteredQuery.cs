@@ -84,8 +84,6 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override Weight CreateWeight(IndexSearcher searcher)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Weight weight = query.createWeight(searcher);
 		Weight weight = Query_Renamed.CreateWeight(searcher);
 		return new WeightAnonymousInnerClassHelper(this, weight);
 	  }
@@ -112,13 +110,13 @@ namespace Lucene.Net.Search
 		  {
 			  get
 			  {
-				return Weight.ValueForNormalization * outerInstance.Boost * outerInstance.Boost; // boost sub-weight
+                  return Weight.ValueForNormalization * OuterInstance.Boost * OuterInstance.Boost; // boost sub-weight
 			  }
 		  }
 
 		  public override void Normalize(float norm, float topLevelBoost)
 		  {
-			Weight.Normalize(norm, topLevelBoost * outerInstance.Boost); // incorporate boost
+              Weight.Normalize(norm, topLevelBoost * OuterInstance.Boost); // incorporate boost
 		  }
 
 		  public override Explanation Explain(AtomicReaderContext ir, int i)
@@ -245,7 +243,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return Collections.singleton(new ChildScorer(Scorer, "FILTERED"));
+			  return new[] {new ChildScorer(Scorer, "FILTERED")};
 			}
 		}
 
@@ -278,8 +276,6 @@ namespace Lucene.Net.Search
 		  }
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int scorerDoc = scorer.docID();
 			int scorerDoc = Scorer.DocID();
 			if (scorerDoc < maxDoc)
 			{
@@ -378,7 +374,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return Collections.singleton(new ChildScorer(Scorer, "FILTERED"));
+			  return new[] {new ChildScorer(Scorer, "FILTERED")};
 			}
 		}
 
@@ -419,15 +415,11 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override Query Rewrite(IndexReader reader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Query queryRewritten = query.rewrite(reader);
 		Query queryRewritten = Query_Renamed.Rewrite(reader);
 
 		if (queryRewritten != Query_Renamed)
 		{
 		  // rewrite to a new FilteredQuery wrapping the rewritten query
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Query rewritten = new FilteredQuery(queryRewritten, filter, strategy);
 		  Query rewritten = new FilteredQuery(queryRewritten, Filter_Renamed, Strategy);
 		  rewritten.Boost = this.Boost;
 		  return rewritten;
@@ -470,7 +462,7 @@ namespace Lucene.Net.Search
 	  }
 
 	  // inherit javadoc
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
 		Query.ExtractTerms(terms);
 	  }
@@ -501,20 +493,18 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 		Debug.Assert(o is FilteredQuery);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FilteredQuery fq = (FilteredQuery) o;
 		FilteredQuery fq = (FilteredQuery) o;
 		return fq.Query_Renamed.Equals(this.Query_Renamed) && fq.Filter_Renamed.Equals(this.Filter_Renamed) && fq.Strategy.Equals(this.Strategy);
 	  }
 
 	  /// <summary>
 	  /// Returns a hash code value for this object. </summary>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int hash = base.HashCode();
-		hash = hash * 31 + Strategy.HashCode();
-		hash = hash * 31 + Query_Renamed.HashCode();
-		hash = hash * 31 + Filter_Renamed.HashCode();
+		int hash = base.GetHashCode();
+        hash = hash * 31 + Strategy.GetHashCode();
+        hash = hash * 31 + Query_Renamed.GetHashCode();
+        hash = hash * 31 + Filter_Renamed.GetHashCode();
 		return hash;
 	  }
 
@@ -625,8 +615,6 @@ namespace Lucene.Net.Search
 
 		public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSetIterator filterIter = docIdSet.iterator();
 		  DocIdSetIterator filterIter = docIdSet.Iterator();
 		  if (filterIter == null)
 		  {
@@ -634,20 +622,14 @@ namespace Lucene.Net.Search
 			return null;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int firstFilterDoc = filterIter.nextDoc();
 		  int firstFilterDoc = filterIter.NextDoc();
 		  if (firstFilterDoc == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			return null;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits filterAcceptDocs = docIdSet.bits();
 		  Bits filterAcceptDocs = docIdSet.Bits();
 		  // force if RA is requested
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean useRandomAccess = filterAcceptDocs != null && useRandomAccess(filterAcceptDocs, firstFilterDoc);
 		  bool useRandomAccess = filterAcceptDocs != null && UseRandomAccess(filterAcceptDocs, firstFilterDoc);
 		  if (useRandomAccess)
 		  {
@@ -659,8 +641,6 @@ namespace Lucene.Net.Search
 			Debug.Assert(firstFilterDoc > -1);
 			// we are gonna advance() this scorer, so we set inorder=true/toplevel=false
 			// we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Scorer scorer = weight.scorer(context, null);
 			Scorer scorer = weight.Scorer(context, null);
 			// TODO once we have way to figure out if we use RA or LeapFrog we can remove this scorer
 			return (scorer == null) ? null : new PrimaryAdvancedLeapFrogScorer(weight, firstFilterDoc, filterIter, scorer);
@@ -698,8 +678,6 @@ namespace Lucene.Net.Search
 
 		public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocIdSetIterator filterIter = docIdSet.iterator();
 		  DocIdSetIterator filterIter = docIdSet.Iterator();
 		  if (filterIter == null)
 		  {
@@ -707,8 +685,6 @@ namespace Lucene.Net.Search
 			return null;
 		  }
 		  // we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Scorer scorer = weight.scorer(context, null);
 		  Scorer scorer = weight.Scorer(context, null);
 		  if (scorer == null)
 		  {
@@ -750,8 +726,6 @@ namespace Lucene.Net.Search
 			// must fallback to leapfrog:
 			return LEAP_FROG_QUERY_FIRST_STRATEGY.FilteredScorer(context, weight, docIdSet);
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Scorer scorer = weight.scorer(context, null);
 		  Scorer scorer = weight.Scorer(context, null);
 		  return scorer == null ? null : new QueryFirstScorer(weight, filterAcceptDocs, scorer);
 		}
@@ -765,8 +739,6 @@ namespace Lucene.Net.Search
 			// must fallback to leapfrog:
 			return LEAP_FROG_QUERY_FIRST_STRATEGY.FilteredBulkScorer(context, weight, scoreDocsInOrder, docIdSet);
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Scorer scorer = weight.scorer(context, null);
 		  Scorer scorer = weight.Scorer(context, null);
 		  return scorer == null ? null : new QueryFirstBulkScorer(scorer, filterAcceptDocs);
 		}

@@ -127,11 +127,7 @@ namespace Lucene.Net.Search
 
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.SortedDocValues fcsi = getFieldCache().getTermsIndex(context.reader(), field);
 		SortedDocValues fcsi = FieldCache.GetTermsIndex(context.Reader(), Field);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet bits = new Lucene.Net.Util.FixedBitSet(fcsi.getValueCount());
 		FixedBitSet bits = new FixedBitSet(fcsi.ValueCount);
 		for (int i = 0;i < Terms.Length;i++)
 		{
@@ -141,7 +137,7 @@ namespace Lucene.Net.Search
 			bits.Set(ord);
 		  }
 		}
-		return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().maxDoc(), acceptDocs, fcsi, bits);
+		return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, fcsi, bits);
 	  }
 
 	  private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet

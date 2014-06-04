@@ -25,6 +25,8 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 	using Bits = Lucene.Net.Util.Bits;
+    using Lucene.Net.Support;
+    using System.Collections.Generic;
 
 
 	/// <summary>
@@ -121,7 +123,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  QueryWeight = outerInstance.Boost;
+			  QueryWeight = OuterInstance.Boost;
 			  return QueryWeight * QueryWeight;
 			}
 		}
@@ -141,9 +143,9 @@ namespace Lucene.Net.Search
 		{
 		  // explain query weight
 		  Explanation queryExpl = new ComplexExplanation(true, QueryWeight, "MatchAllDocsQuery, product of:");
-		  if (outerInstance.Boost != 1.0f)
+          if (OuterInstance.Boost != 1.0f)
 		  {
-			queryExpl.AddDetail(new Explanation(outerInstance.Boost,"boost"));
+			queryExpl.AddDetail(new Explanation(OuterInstance.Boost,"boost"));
 		  }
 		  queryExpl.AddDetail(new Explanation(QueryNorm,"queryNorm"));
 
@@ -156,7 +158,7 @@ namespace Lucene.Net.Search
 		return new MatchAllDocsWeight(this, searcher);
 	  }
 
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
 	  }
 
@@ -178,9 +180,9 @@ namespace Lucene.Net.Search
 		return this.Boost == other.Boost;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return float.floatToIntBits(Boost) ^ 0x1AA71190;
+		return Number.FloatToIntBits(Boost) ^ 0x1AA71190;
 	  }
 	}
 

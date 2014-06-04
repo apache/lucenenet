@@ -62,8 +62,6 @@ namespace Lucene.Net.Search
 		return Query.ToString();
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings({"unchecked","rawtypes"}) public final boolean equals(final Object o)
 	  public override sealed bool Equals(object o)
 	  {
 		if (o == this)
@@ -76,14 +74,14 @@ namespace Lucene.Net.Search
 		}
 		if (this.GetType().Equals(o.GetType()))
 		{
-		  return this.Query.Equals(((MultiTermQueryWrapperFilter)o).Query);
+		  return this.Query.Equals(((MultiTermQueryWrapperFilter<Q>)o).Query);
 		}
 		return false;
 	  }
 
 	  public override sealed int HashCode()
 	  {
-		return Query.HashCode();
+		return Query.GetHashCode();
 	  }
 
 	  /// <summary>
@@ -102,11 +100,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.AtomicReader reader = context.reader();
 		AtomicReader reader = context.Reader();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Fields fields = reader.fields();
 		Fields fields = reader.Fields();
 		if (fields == null)
 		{
@@ -114,25 +108,19 @@ namespace Lucene.Net.Search
 		  return null;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.Terms terms = fields.terms(query.field);
-		Terms terms = fields.Terms(Query.Field_Renamed);
+		Terms terms = fields.Terms(Query.field);
 		if (terms == null)
 		{
 		  // field does not exist
 		  return null;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.TermsEnum termsEnum = query.getTermsEnum(terms);
 		TermsEnum termsEnum = Query.GetTermsEnum(terms);
 		Debug.Assert(termsEnum != null);
 		if (termsEnum.Next() != null)
 		{
 		  // fill into a FixedBitSet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet bitSet = new Lucene.Net.Util.FixedBitSet(context.reader().maxDoc());
-		  FixedBitSet bitSet = new FixedBitSet(context.Reader().maxDoc());
+		  FixedBitSet bitSet = new FixedBitSet(context.Reader().MaxDoc());
 		  DocsEnum docsEnum = null;
 		  do
 		  {
@@ -145,7 +133,6 @@ namespace Lucene.Net.Search
 			  bitSet.Set(docid);
 			}
 		  } while (termsEnum.Next() != null);
-		  // System.out.println("  done termCount=" + termCount);
 
 		  return bitSet;
 		}

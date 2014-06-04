@@ -75,8 +75,6 @@ namespace Lucene.Net.Search
 
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits docsWithField = FieldCache_Fields.DEFAULT.getDocsWithField(context.reader(), field);
 		Bits docsWithField = FieldCache_Fields.DEFAULT.GetDocsWithField(context.Reader(), Field_Renamed);
 		if (Negate_Renamed)
 		{
@@ -84,7 +82,7 @@ namespace Lucene.Net.Search
 		  {
 			return null;
 		  }
-		  return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().maxDoc(), acceptDocs, docsWithField);
+		  return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
 		}
 		else
 		{
@@ -98,7 +96,7 @@ namespace Lucene.Net.Search
 			// :-)
 			return BitsFilteredDocIdSet.Wrap((DocIdSet) docsWithField, acceptDocs);
 		  }
-		  return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().maxDoc(), acceptDocs, docsWithField);
+          return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.Reader().MaxDoc(), acceptDocs, docsWithField);
 		}
 	  }
 
@@ -138,11 +136,11 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.HashCode());
+		result = prime * result + ((Field_Renamed == null) ? 0 : Field_Renamed.GetHashCode());
 		result = prime * result + (Negate_Renamed ? 1231 : 1237);
 		return result;
 	  }

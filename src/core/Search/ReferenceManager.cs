@@ -23,6 +23,8 @@ namespace Lucene.Net.Search
 
 
 	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+    using System;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Utility class to safely share instances of a certain type across multiple
@@ -37,15 +39,16 @@ namespace Lucene.Net.Search
 	/// 
 	/// @lucene.experimental </param>
 	public abstract class ReferenceManager<G> : IDisposable
+        where G : class //Make G nullable
 	{
 
 	  private const string REFERENCE_MANAGER_IS_CLOSED_MSG = "this ReferenceManager is closed";
 
 	  protected internal volatile G Current;
 
-	  private readonly Lock RefreshLock = new ReentrantLock();
+      private readonly ReentrantLock RefreshLock = new ReentrantLock();
 
-	  private readonly IList<RefreshListener> RefreshListeners = new CopyOnWriteArrayList<RefreshListener>();
+      private readonly ISet<ReferenceManager.RefreshListener> RefreshListeners = new ConcurrentHashSet<ReferenceManager.RefreshListener>();
 
 	  private void EnsureOpen()
 	  {
@@ -60,8 +63,6 @@ namespace Lucene.Net.Search
 		  lock (this)
 		  {
 			EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final G oldReference = current;
 			G oldReference = Current;
 			Current = newReference;
 			Release(oldReference);
@@ -107,7 +108,7 @@ namespace Lucene.Net.Search
 		  {
 			return @ref;
 		  }
-		  if (GetRefCount(@ref) == 0 && Current == @ref)
+          if (GetRefCount(@ref) == 0 && (object)Current == (object)@ref)
 		  {
 			Debug.Assert(@ref != null);
 			/* if we can't increment the reader but we are
@@ -119,7 +120,7 @@ namespace Lucene.Net.Search
 			   decrements the refcount without a corresponding increment
 			   since the RM assigns the new reference before counting down
 			   the reference. */
-			throw new IllegalStateException("The managed reference has already closed - this is likely a bug when the reference count is modified outside of the ReferenceManager");
+			throw new InvalidOperationException("The managed reference has already closed - this is likely a bug when the reference count is modified outside of the ReferenceManager");
 		  }
 		} while (true);
 	  }
@@ -180,12 +181,10 @@ namespace Lucene.Net.Search
 		// where this method will be called outside the scope of refreshLock.
 		// Per ReentrantLock's javadoc, calling lock() by the same thread more than
 		// once is ok, as long as unlock() is called a matching number of times.
-		RefreshLock.@lock();
+		RefreshLock.Lock();
 		bool refreshed = false;
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final G reference = acquire();
 		  G reference = Acquire();
 		  try
 		  {
@@ -193,7 +192,7 @@ namespace Lucene.Net.Search
 			G newReference = RefreshIfNeeded(reference);
 			if (newReference != null)
 			{
-			  Debug.Assert(newReference != reference, "refreshIfNeeded should return null if refresh wasn't needed");
+			  Debug.Assert((object)newReference != (object)reference, "refreshIfNeeded should return null if refresh wasn't needed");
 			  try
 			  {
 				SwapReference(newReference);
@@ -217,7 +216,7 @@ namespace Lucene.Net.Search
 		}
 		finally
 		{
-		  RefreshLock.unlock();
+		  RefreshLock.Unlock();
 		}
 	  }
 
@@ -245,9 +244,7 @@ namespace Lucene.Net.Search
 		EnsureOpen();
 
 		// Ensure only 1 thread does refresh at once; other threads just return immediately:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean doTryRefresh = refreshLock.tryLock();
-		bool doTryRefresh = RefreshLock.tryLock();
+		bool doTryRefresh = RefreshLock.TryLock();
 		if (doTryRefresh)
 		{
 		  try
@@ -256,7 +253,7 @@ namespace Lucene.Net.Search
 		  }
 		  finally
 		  {
-			RefreshLock.unlock();
+			RefreshLock.Unlock();
 		  }
 		}
 
@@ -280,14 +277,14 @@ namespace Lucene.Net.Search
 		EnsureOpen();
 
 		// Ensure only 1 thread does refresh at once
-		RefreshLock.@lock();
+		RefreshLock.Lock();
 		try
 		{
 		  DoMaybeRefresh();
 		}
 		finally
 		{
-		  RefreshLock.unlock();
+		  RefreshLock.Unlock();
 		}
 	  }
 
@@ -313,7 +310,7 @@ namespace Lucene.Net.Search
 
 	  private void NotifyRefreshListenersBefore()
 	  {
-		foreach (RefreshListener refreshListener in RefreshListeners)
+		foreach (ReferenceManager.RefreshListener refreshListener in RefreshListeners)
 		{
 		  refreshListener.BeforeRefresh();
 		}
@@ -321,7 +318,7 @@ namespace Lucene.Net.Search
 
 	  private void NotifyRefreshListenersRefreshed(bool didRefresh)
 	  {
-		foreach (RefreshListener refreshListener in RefreshListeners)
+		foreach (ReferenceManager.RefreshListener refreshListener in RefreshListeners)
 		{
 		  refreshListener.AfterRefresh(didRefresh);
 		}
@@ -330,7 +327,7 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Adds a listener, to be notified when a reference is refreshed/swapped.
 	  /// </summary>
-	  public virtual void AddListener(RefreshListener listener)
+      public virtual void AddListener(ReferenceManager.RefreshListener listener)
 	  {
 		if (listener == null)
 		{
@@ -342,7 +339,7 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Remove a listener added with <seealso cref="#addListener(RefreshListener)"/>.
 	  /// </summary>
-	  public virtual void RemoveListener(RefreshListener listener)
+      public virtual void RemoveListener(ReferenceManager.RefreshListener listener)
 	  {
 		if (listener == null)
 		{
@@ -350,7 +347,10 @@ namespace Lucene.Net.Search
 		}
 		RefreshListeners.Remove(listener);
 	  }
-
+    }
+    // .NET Port: non-generic type to hold RefreshListener
+    public static class ReferenceManager
+    {
 	  /// <summary>
 	  /// Use to receive notification when a refresh has
 	  ///  finished.  See <seealso cref="#addListener"/>. 
