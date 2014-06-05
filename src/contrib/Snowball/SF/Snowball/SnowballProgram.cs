@@ -299,7 +299,7 @@ namespace SF.Snowball
                     {
                         System.Object resobj = w.method.Invoke(w.methodobject, (System.Object[]) new System.Object[0]);
                         // {{Aroush}} UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Object.toString' may return a different value. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1043_3"'
-                        res = resobj.ToString().Equals("true");
+                        res = resobj.ToString().Equals("true", StringComparison.InvariantCultureIgnoreCase);
                     }
                     catch (System.Reflection.TargetInvocationException)
                     {
@@ -389,7 +389,7 @@ namespace SF.Snowball
                     {
                         System.Object resobj = w.method.Invoke(w.methodobject, (System.Object[]) new System.Object[0]);
                         // {{Aroush}} UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Object.toString' may return a different value. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1043_3"'
-                        res = resobj.ToString().Equals("true");
+                        res = resobj.ToString().Equals("true", StringComparison.InvariantCultureIgnoreCase);
                     }
                     catch (System.Reflection.TargetInvocationException)
                     {
