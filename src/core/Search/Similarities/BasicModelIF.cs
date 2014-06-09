@@ -18,7 +18,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
     
-    using Lucene.Net.Search.Similarities.SimilarityBase;
 
 	/// <summary>
 	/// An approximation of the <em>I(n<sub>e</sub>)</em> model.

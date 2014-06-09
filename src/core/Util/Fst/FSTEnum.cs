@@ -28,7 +28,7 @@ namespace Lucene.Net.Util.Fst
 	/// @lucene.experimental
 	/// </summary>
 
-	internal abstract class FSTEnum<T>
+	public abstract class FSTEnum<T>
 	{
 	  protected internal readonly FST<T> Fst;
 

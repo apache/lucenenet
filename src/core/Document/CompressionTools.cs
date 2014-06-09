@@ -65,8 +65,6 @@ namespace Lucene.Net.Document
 		  compressor.Finish();
 
 		  // Compress the data
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] buf = new byte[1024];
 		  byte[] buf = new byte[1024];
 		  while (!compressor.IsFinished)
 		  {

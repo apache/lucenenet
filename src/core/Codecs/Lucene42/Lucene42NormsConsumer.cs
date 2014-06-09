@@ -202,34 +202,37 @@ namespace Lucene.Net.Codecs.Lucene42
 		}
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		bool success = false;
-		try
-		{
-		  if (Meta != null)
-		  {
-			Meta.WriteVInt(-1); // write EOF marker
-			CodecUtil.WriteFooter(Meta); // write checksum
-		  }
-		  if (Data != null)
-		  {
-			CodecUtil.WriteFooter(Data); // write checksum
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.Close(Data, Meta);
-		  }
-		  else
-		  {
-			IOUtils.CloseWhileHandlingException(Data, Meta);
-		  }
-		  Meta = Data = null;
-		}
+          if (disposing)
+          {
+              bool success = false;
+              try
+              {
+                  if (Meta != null)
+                  {
+                      Meta.WriteVInt(-1); // write EOF marker
+                      CodecUtil.WriteFooter(Meta); // write checksum
+                  }
+                  if (Data != null)
+                  {
+                      CodecUtil.WriteFooter(Data); // write checksum
+                  }
+                  success = true;
+              }
+              finally
+              {
+                  if (success)
+                  {
+                      IOUtils.Close(Data, Meta);
+                  }
+                  else
+                  {
+                      IOUtils.CloseWhileHandlingException(Data, Meta);
+                  }
+                  Meta = Data = null;
+              }
+          }
 	  }
 
 	  public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
@@ -237,12 +240,12 @@ namespace Lucene.Net.Codecs.Lucene42
 		throw new System.NotSupportedException();
 	  }
 
-	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
+      public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 	  {
 		throw new System.NotSupportedException();
 	  }
 
-	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+      public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 	  {
 		throw new System.NotSupportedException();
 	  }

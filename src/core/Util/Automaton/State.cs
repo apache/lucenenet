@@ -86,28 +86,56 @@ namespace Lucene.Net.Util.Automaton
 		  return new IteratorAnonymousInnerClassHelper(this);
 		}
 
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
 		private class IteratorAnonymousInnerClassHelper : IEnumerator<Transition>
 		{
 			private readonly TransitionsIterable OuterInstance;
+            private Transition current;
+            private int i, upTo;
 
 			public IteratorAnonymousInnerClassHelper(TransitionsIterable outerInstance)
 			{
 				this.OuterInstance = outerInstance;
+                upTo = OuterInstance.OuterInstance.numTransitions;
+                i = 0;
 			}
 
-			internal int upto;
-			public virtual bool HasNext()
-			{
-			  return upto < OuterInstance.OuterInstance.numTransitions;
-			}
-			public virtual Transition Next()
-			{
-			  return OuterInstance.OuterInstance.TransitionsArray[upto++];
-			}
-			public virtual void Remove()
-			{
-			  throw new System.NotSupportedException();
-			}
+            public bool MoveNext()
+            {
+                if (i < upTo)
+                {
+                    current = OuterInstance.OuterInstance.TransitionsArray[i++];
+                    return true;
+                }
+                return false;
+            }
+
+            public Transition Current
+            {
+                get
+                {
+                    return current;
+                }
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
+
+            public void Reset()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Dispose() { }
 		}
 	  }
 
@@ -354,12 +382,12 @@ namespace Lucene.Net.Util.Automaton
 	  /// Compares this object with the specified object for order. States are
 	  /// ordered by the time of construction.
 	  /// </summary>
-	  public override int CompareTo(State s)
+	  public int CompareTo(State s)
 	  {
 		return s.Id - Id;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return Id;
 	  }

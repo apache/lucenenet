@@ -1,25 +1,26 @@
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Index;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using Bits = Lucene.Net.Util.Bits;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Bits = Lucene.Net.Util.Bits;
 
 	/// <summary>
 	/// Constrains search results to only match those which also match a provided
@@ -60,7 +61,7 @@ namespace Lucene.Net.Search
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
 		// get a private context that is used to rewrite, createWeight and score eventually
-		AtomicReaderContext privateContext = context.Reader().Context;
+        AtomicReaderContext privateContext = context.AtomicReader.AtomicContext;
 		Weight weight = (new IndexSearcher(privateContext)).CreateNormalizedWeight(Query_Renamed);
 		return new DocIdSetAnonymousInnerClassHelper(this, acceptDocs, privateContext, weight);
 	  }
@@ -81,7 +82,7 @@ namespace Lucene.Net.Search
 			  this.Weight = weight;
 		  }
 
-		  public override DocIdSetIterator Iterator()
+		  public override DocIdSetIterator GetIterator()
 		  {
 			return Weight.Scorer(PrivateContext, AcceptDocs);
 		  }

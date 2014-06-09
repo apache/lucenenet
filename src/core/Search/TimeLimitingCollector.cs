@@ -285,7 +285,7 @@ namespace Lucene.Net.Search
 		//   afford losing a tick or two.
 		//
 		// See section 17 of the Java Language Specification for details.
-		internal volatile long Time = 0;
+		internal long Time = 0;
 		internal volatile bool Stop = false;
 		internal long resolution;
 		internal readonly Counter Counter;

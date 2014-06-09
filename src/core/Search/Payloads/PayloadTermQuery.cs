@@ -31,6 +31,7 @@ namespace Lucene.Net.Search.Payloads
 	using SpanScorer = Lucene.Net.Search.Spans.SpanScorer;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// this class is very similar to
@@ -77,7 +78,7 @@ namespace Lucene.Net.Search.Payloads
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.SimScorer(Stats, context));
+		  return new PayloadTermSpanScorer(this, (TermSpans) query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.DoSimScorer(Stats, context));
 		}
 
 		protected internal class PayloadTermSpanScorer : SpanScorer
@@ -187,14 +188,14 @@ namespace Lucene.Net.Search.Payloads
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-		  PayloadTermSpanScorer scorer = (PayloadTermSpanScorer) Scorer(context, context.Reader().LiveDocs);
+            PayloadTermSpanScorer scorer = (PayloadTermSpanScorer)Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
 		  if (scorer != null)
 		  {
 			int newDoc = scorer.Advance(doc);
 			if (newDoc == doc)
 			{
 			  float freq = scorer.SloppyFreq();
-			  Similarity.SimScorer docScorer = Similarity.SimScorer(Stats, context);
+			  Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
 			  Explanation expl = new Explanation();
 			  expl.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
 			  Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));
@@ -232,7 +233,7 @@ namespace Lucene.Net.Search.Payloads
 		}
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = base.GetHashCode();

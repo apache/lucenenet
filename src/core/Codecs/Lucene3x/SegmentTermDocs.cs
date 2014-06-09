@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public SegmentTermDocs(IndexInput freqStream, TermInfosReader tis, FieldInfos fieldInfos)
 	  {
-		this.FreqStream = freqStream.Clone();
+		this.FreqStream = (IndexInput)freqStream.Clone();
 		this.Tis = tis;
 		this.FieldInfos = fieldInfos;
 		SkipInterval = tis.SkipInterval;
@@ -123,10 +123,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public virtual void Close()
 	  {
-		FreqStream.Close();
+		FreqStream.Dispose();
 		if (SkipListReader != null)
 		{
-		  SkipListReader.Close();
+		  SkipListReader.Dispose();
 		}
 	  }
 
@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (SkipListReader == null)
 		  {
-			SkipListReader = new Lucene3xSkipListReader(FreqStream.Clone(), MaxSkipLevels, SkipInterval); // lazily clone
+			SkipListReader = new Lucene3xSkipListReader((IndexInput)FreqStream.Clone(), MaxSkipLevels, SkipInterval); // lazily clone
 		  }
 
 		  if (!HaveSkipped) // lazily initialize skip stream

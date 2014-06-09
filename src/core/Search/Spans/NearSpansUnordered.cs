@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Spans
 			this.OuterInstance = outerInstance;
 		}
 
-		protected internal override bool LessThan(SpansCell spans1, SpansCell spans2)
+        public override bool LessThan(SpansCell spans1, SpansCell spans2)
 		{
 		  if (spans1.Doc() == spans2.Doc())
 		  {

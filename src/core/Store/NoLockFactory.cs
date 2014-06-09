@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
 	  {
 	  }
 
-	  public static NoLockFactory NoLockFactory
+	  public static NoLockFactory DoNoLockFactory
 	  {
 		  get
 		  {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Store
 		return true;
 	  }
 
-	  public override void Close()
+	  public override void Release()
 	  {
 	  }
 

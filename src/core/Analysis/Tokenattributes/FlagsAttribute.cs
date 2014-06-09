@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 
@@ -21,22 +23,60 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
-	/// this attribute can be used to pass different flags down the <seealso cref="Tokenizer"/> chain,
-	/// e.g. from one TokenFilter to another one. 
-	/// <p>
-	/// this is completely distinct from <seealso cref="TypeAttribute"/>, although they do share similar purposes.
-	/// The flags can be used to encode information about the token for use by other 
-	/// <seealso cref="Lucene.Net.Analysis.TokenFilter"/>s.
-	/// @lucene.experimental While we think this is here to stay, we may want to change it to be a long.
-	/// </summary>
-	public interface FlagsAttribute : Attribute
+	/// Default implementation of <seealso cref="FlagsAttribute"/>. </summary>
+	public class FlagsAttribute : Attribute, IFlagsAttribute, ICloneable
 	{
-	  /// <summary>
-	  /// Get the bitset for any bits that have been set. </summary>
-	  /// <returns> The bits </returns>
-	  /// <seealso cref= #getFlags() </seealso>
-	  int Flags {get;set;}
+	  private int Flags_Renamed = 0;
 
+	  /// <summary>
+	  /// Initialize this attribute with no bits set </summary>
+	  public FlagsAttribute()
+	  {
+	  }
+
+	  public int Flags
+	  {
+		  get
+		  {
+			return Flags_Renamed;
+		  }
+		  set
+		  {
+			this.Flags_Renamed = value;
+		  }
+	  }
+
+
+	  public override void Clear()
+	  {
+		Flags_Renamed = 0;
+	  }
+
+	  public override bool Equals(object other)
+	  {
+		if (this == other)
+		{
+		  return true;
+		}
+
+		if (other is FlagsAttribute)
+		{
+		  return ((FlagsAttribute) other).Flags_Renamed == Flags_Renamed;
+		}
+
+		return false;
+	  }
+
+	  public override int GetHashCode()
+	  {
+		return Flags_Renamed;
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		FlagsAttribute t = (FlagsAttribute) target;
+		t.Flags = Flags_Renamed;
+	  }
 	}
 
 }

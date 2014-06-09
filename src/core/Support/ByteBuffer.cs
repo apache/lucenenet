@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Lucene.Net.Support
 {
-    public abstract class ByteBuffer
+    public abstract class ByteBuffer : Buffer, IComparable<ByteBuffer>
     {
         // .NET Port Notes: This has been implemented from the best interpretation
         // of the description of the methods on the Java documentation here:
@@ -17,25 +17,9 @@ namespace Lucene.Net.Support
         private byte[] _data;
         private int _offset;
 
-        private int mark = -1;
-        private int position = 0;
-        private int limit;
-        private int capacity;
-
         protected ByteBuffer(int mark, int pos, int lim, int cap)
+            : base(mark, pos, lim, cap)
         {
-            if (cap < 0)
-                throw new Exception ("Negative capacity: " + cap);
-            this.capacity = cap;
-            Limit(lim);
-            position = pos;
-            if (mark >= 0)
-            {
-                if (mark > pos)
-                    throw new Exception("mark > position: ("
-                                                       + mark + " > " + pos + ")");
-                this.mark = mark;
-            }
         }
 
         public override object Array
@@ -64,47 +48,6 @@ namespace Lucene.Net.Support
                 _data = new byte[capacity],
                 _offset = 0
             };
-        }
-
-        public int Position
-        {
-            get
-            {
-                return position;
-            }
-
-            set
-            {
-                if ((value > limit) || value < 0)
-                    throw new Exception("Position is too large.");
-                position = value;
-                if (mark > position) mark = -1;
-            }
-        }
-
-        public ByteBuffer Limit (int limit) {
-            if ((limit > capacity || limit < 0))
-                throw new Exception("Limit is too large.");
-            this.limit = limit;
-            if (position > this.limit)
-            {
-                position = this.limit;
-            }
-            if (mark > this.limit)
-            {
-                mark = -1;
-            }
-            return this;
-        }
-
-        public Boolean HasRemaining()
-        {
-            return position < limit;
-        }
-
-        public int Remaining()
-        {
-            return limit - position;
         }
 
         // public static ByteBuffer AllocateDirect(int capacity)
@@ -158,7 +101,7 @@ namespace Lucene.Net.Support
 
         public virtual ByteBuffer Put(ByteBuffer src)
         {
-            while (src.HasRemaining())
+            while (src.HasRemaining)
                 Put(src.Get());
 
             return this;
@@ -264,7 +207,7 @@ namespace Lucene.Net.Support
 
             public override ByteBuffer Slice()
             {
-                return new WrappedByteBuffer(-1, 0, Remaining(), Remaining())
+                return new WrappedByteBuffer(-1, 0, Remaining, Remaining)
                 {
                     _data = this._data,
                     _offset = this._offset
@@ -273,7 +216,7 @@ namespace Lucene.Net.Support
 
             public override ByteBuffer Duplicate()
             {
-                return new WrappedByteBuffer(mark, position, limit, capacity)
+                return new WrappedByteBuffer(Mark, Position, Limit, Capacity)
                 {
                     _data = this._data,
                     _offset = this._offset
@@ -287,12 +230,12 @@ namespace Lucene.Net.Support
 
             public override byte Get()
             {
-                return _data[position++];
+                return _data[Position++];
             }
 
             public override ByteBuffer Put(byte b)
             {
-                _data[position++] = b;
+                _data[Position++] = b;
                 return this;
             }
 
@@ -309,28 +252,28 @@ namespace Lucene.Net.Support
 
             public override ByteBuffer Compact()
             {
-                if (position == 0)
+                if (Position == 0)
                     return this;
 
-                int p = position;
-                for (int i = 0; i < limit - 1; i++)
+                int p = Position;
+                for (int i = 0; i < Limit - 1; i++)
                 {
                     _data[i] = _data[p];
                     p++;
                 }
 
-                position = limit - position;
-                limit = capacity;
-                mark = -1;
+                Position = Limit - Position;
+                Limit = Capacity;
+                Mark = -1;
 
                 return this;
             }
 
             public override char GetChar()
             {
-                var c = BitConverter.ToChar(_data, position);
+                var c = BitConverter.ToChar(_data, Position);
 
-                position += 2;
+                Position += 2;
 
                 return c;
             }
@@ -339,8 +282,8 @@ namespace Lucene.Net.Support
             {
                 var bytes = BitConverter.GetBytes(value);
 
-                _data[position++] = bytes[0];
-                _data[position++] = bytes[1];
+                _data[Position++] = bytes[0];
+                _data[Position++] = bytes[1];
 
                 return this;
             }
@@ -364,9 +307,9 @@ namespace Lucene.Net.Support
 
             public override short GetShort()
             {
-                var c = BitConverter.ToInt16(_data, position);
+                var c = BitConverter.ToInt16(_data, Position);
 
-                position += 2;
+                Position += 2;
 
                 return c;
             }
@@ -375,8 +318,8 @@ namespace Lucene.Net.Support
             {
                 var bytes = BitConverter.GetBytes(value);
 
-                _data[position++] = bytes[0];
-                _data[position++] = bytes[1];
+                _data[Position++] = bytes[0];
+                _data[Position++] = bytes[1];
 
                 return this;
             }
@@ -400,9 +343,9 @@ namespace Lucene.Net.Support
 
             public override int GetInt()
             {
-                var c = BitConverter.ToInt32(_data, position);
+                var c = BitConverter.ToInt32(_data, Position);
 
-                position += 4;
+                Position += 4;
 
                 return c;
             }
@@ -411,10 +354,10 @@ namespace Lucene.Net.Support
             {
                 var bytes = BitConverter.GetBytes(value);
 
-                _data[position++] = bytes[0];
-                _data[position++] = bytes[1];
-                _data[position++] = bytes[2];
-                _data[position++] = bytes[3];
+                _data[Position++] = bytes[0];
+                _data[Position++] = bytes[1];
+                _data[Position++] = bytes[2];
+                _data[Position++] = bytes[3];
 
                 return this;
             }
@@ -440,9 +383,9 @@ namespace Lucene.Net.Support
 
             public override long GetLong()
             {
-                var c = BitConverter.ToInt64(_data, position);
+                var c = BitConverter.ToInt64(_data, Position);
 
-                position += 8;
+                Position += 8;
 
                 return c;
             }
@@ -451,14 +394,14 @@ namespace Lucene.Net.Support
             {
                 var bytes = BitConverter.GetBytes(value);
 
-                _data[position++] = bytes[0];
-                _data[position++] = bytes[1];
-                _data[position++] = bytes[2];
-                _data[position++] = bytes[3];
-                _data[position++] = bytes[4];
-                _data[position++] = bytes[5];
-                _data[position++] = bytes[6];
-                _data[position++] = bytes[7];
+                _data[Position++] = bytes[0];
+                _data[Position++] = bytes[1];
+                _data[Position++] = bytes[2];
+                _data[Position++] = bytes[3];
+                _data[Position++] = bytes[4];
+                _data[Position++] = bytes[5];
+                _data[Position++] = bytes[6];
+                _data[Position++] = bytes[7];
 
                 return this;
             }
@@ -488,9 +431,9 @@ namespace Lucene.Net.Support
 
             public override float GetFloat()
             {
-                var c = BitConverter.ToSingle(_data, position);
+                var c = BitConverter.ToSingle(_data, Position);
 
-                position += 4;
+                Position += 4;
 
                 return c;
             }
@@ -499,10 +442,10 @@ namespace Lucene.Net.Support
             {
                 var bytes = BitConverter.GetBytes(value);
 
-                _data[position++] = bytes[0];
-                _data[position++] = bytes[1];
-                _data[position++] = bytes[2];
-                _data[position++] = bytes[3];
+                _data[Position++] = bytes[0];
+                _data[Position++] = bytes[1];
+                _data[Position++] = bytes[2];
+                _data[Position++] = bytes[3];
 
                 return this;
             }
@@ -528,9 +471,9 @@ namespace Lucene.Net.Support
 
             public override double GetDouble()
             {
-                var c = BitConverter.ToDouble(_data, position);
+                var c = BitConverter.ToDouble(_data, Position);
 
-                position += 8;
+                Position += 8;
 
                 return c;
             }
@@ -539,14 +482,14 @@ namespace Lucene.Net.Support
             {
                 var bytes = BitConverter.GetBytes(value);
 
-                _data[position++] = bytes[0];
-                _data[position++] = bytes[1];
-                _data[position++] = bytes[2];
-                _data[position++] = bytes[3];
-                _data[position++] = bytes[4];
-                _data[position++] = bytes[5];
-                _data[position++] = bytes[6];
-                _data[position++] = bytes[7];
+                _data[Position++] = bytes[0];
+                _data[Position++] = bytes[1];
+                _data[Position++] = bytes[2];
+                _data[Position++] = bytes[3];
+                _data[Position++] = bytes[4];
+                _data[Position++] = bytes[5];
+                _data[Position++] = bytes[6];
+                _data[Position++] = bytes[7];
 
                 return this;
             }

@@ -5,6 +5,7 @@
 //	this class provides the logic to simulate Java rectangular arrays, which are jagged
 //	arrays with inner arrays of the same length. A size of -1 indicates unknown length.
 //----------------------------------------------------------------------------------------
+using System.Collections;
 internal static partial class RectangularArrays
 {
     internal static ArrayList[][] ReturnRectangularArrayListArray(int Size1, int Size2)

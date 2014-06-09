@@ -356,18 +356,18 @@ namespace Lucene.Net.Search
 	  // up front. this is only relevant for the ScoreCaching
 	  // version -- if the wrapped Collector does not need
 	  // scores, it can avoid cachedScorer entirely.
-	  protected internal readonly Collector Other;
+	  protected readonly Collector Other;
 
-	  protected internal readonly int MaxDocsToCache;
-	  protected internal readonly IList<SegStart> CachedSegs = new List<SegStart>();
-	  protected internal readonly IList<int[]> CachedDocs;
+	  protected readonly int MaxDocsToCache;
+	  private readonly IList<SegStart> CachedSegs = new List<SegStart>();
+	  protected readonly IList<int[]> CachedDocs;
 
 	  private AtomicReaderContext LastReaderContext;
 
-	  protected internal int[] CurDocs;
-	  protected internal int Upto;
-	  protected internal int @base;
-	  protected internal int LastDocBase;
+	  protected int[] CurDocs;
+	  protected int Upto;
+	  protected int @base;
+	  protected int LastDocBase;
 
 	  /// <summary>
 	  /// Creates a <seealso cref="CachingCollector"/> which does not wrap another collector.

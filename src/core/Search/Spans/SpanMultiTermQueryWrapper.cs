@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Spans
 	  /// Abstract class that defines how the query is rewritten. </summary>
 	  public abstract class SpanRewriteMethod : MultiTermQuery.RewriteMethod
 	  {
-		public override abstract SpanQuery Rewrite(IndexReader reader, MultiTermQuery query);
+		public override abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
 	  }
 
 	  /// <summary>
@@ -230,15 +230,13 @@ namespace Lucene.Net.Search.Spans
 				// TODO: would be nice to not lose term-state here.
 				// we could add a hack option to SpanOrQuery, but the hack would only work if this is the top-level Span
 				// (if you put this thing in another span query, it would extractTerms/double-seek anyway)
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SpanTermQuery q = new SpanTermQuery(term);
 				SpanTermQuery q = new SpanTermQuery(term);
 				q.Boost = boost;
 				topLevel.AddClause(q);
 			  }
 		  }
 
-		  public override SpanQuery Rewrite(IndexReader reader, MultiTermQuery query)
+		  public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 		  {
 			return @delegate.Rewrite(reader, query);
 		  }
@@ -312,7 +310,7 @@ namespace Lucene.Net.Search.Spans
 			}
 		}
 
-		public override SpanQuery Rewrite(IndexReader reader, MultiTermQuery query)
+		public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 		{
 		  return @delegate.Rewrite(reader, query);
 		}

@@ -625,7 +625,7 @@ namespace Lucene.Net.Search
 		Term[] t = tord.Keys.ToArray(/*new Term[0]*/);
 		for (int i = 0; i < bb.Count; i++) // i is the group no.
 		{
-		  DocIdSetIterator bits = bb[i].Iterator();
+		  DocIdSetIterator bits = bb[i].GetIterator();
 		  int ord;
 		  while ((ord = bits.NextDoc()) != NO_MORE_DOCS)
 		  {

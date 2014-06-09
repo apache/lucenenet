@@ -95,11 +95,7 @@ namespace Lucene.Net.Util.Packed
 
 
 		// build a new packed reader
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsRequired = minValue < 0 ? 64 : PackedInts.bitsRequired(maxValue);
 		int bitsRequired = minValue < 0 ? 64 : PackedInts.BitsRequired(maxValue);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PackedInts.Mutable mutable = PackedInts.getMutable(pendingOff, bitsRequired, acceptableOverheadRatio);
 		PackedInts.Mutable mutable = PackedInts.GetMutable(PendingOff, bitsRequired, AcceptableOverheadRatio);
 		for (int i = 0; i < PendingOff;)
 		{
@@ -108,6 +104,11 @@ namespace Lucene.Net.Util.Packed
 		Values[ValuesOff] = mutable;
 
 	  }
+       
+      public override Iterator GetIterator()
+      {
+          return new Iterator(this);
+      }
 
 	}
 

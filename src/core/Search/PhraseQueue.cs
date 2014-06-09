@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	  {
 	  }
 
-	  protected internal override bool LessThan(PhrasePositions pp1, PhrasePositions pp2)
+	  public override bool LessThan(PhrasePositions pp1, PhrasePositions pp2)
 	  {
 		if (pp1.Doc == pp2.Doc)
 		{

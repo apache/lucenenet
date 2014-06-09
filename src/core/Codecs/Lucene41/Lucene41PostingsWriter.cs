@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 	  }
 
-	  internal sealed class IntBlockTermState : BlockTermState
+	  public sealed class IntBlockTermState : BlockTermState
 	  {
 		internal long DocStartFP = 0;
 		internal long PosStartFP = 0;
@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		// freq is always implicitly totalTermFreq in this case.
 		internal int SingletonDocID = -1;
 
-		public override IntBlockTermState Clone()
+		public override object Clone()
 		{
 		  IntBlockTermState other = new IntBlockTermState();
 		  other.CopyFrom(this);
@@ -236,7 +236,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		}
 	  }
 
-	  public override IntBlockTermState NewTermState()
+	  public override BlockTermState NewTermState()
 	  {
 		return new IntBlockTermState();
 	  }
@@ -670,38 +670,42 @@ namespace Lucene.Net.Codecs.Lucene41
 		LastState = state;
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		// TODO: add a finish() at least to PushBase? DV too...?
-		bool success = false;
-		try
-		{
-		  if (DocOut != null)
-		  {
-			CodecUtil.WriteFooter(DocOut);
-		  }
-		  if (PosOut != null)
-		  {
-			CodecUtil.WriteFooter(PosOut);
-		  }
-		  if (PayOut != null)
-		  {
-			CodecUtil.WriteFooter(PayOut);
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.Close(DocOut, PosOut, PayOut);
-		  }
-		  else
-		  {
-			IOUtils.CloseWhileHandlingException(DocOut, PosOut, PayOut);
-		  }
-		  DocOut = PosOut = PayOut = null;
-		}
+          if (disposing)
+          {
+              // TODO: add a finish() at least to PushBase? DV too...?
+              bool success = false;
+              try
+              {
+                  if (DocOut != null)
+                  {
+                      CodecUtil.WriteFooter(DocOut);
+                  }
+                  if (PosOut != null)
+                  {
+                      CodecUtil.WriteFooter(PosOut);
+                  }
+                  if (PayOut != null)
+                  {
+                      CodecUtil.WriteFooter(PayOut);
+                  }
+                  success = true;
+              }
+              finally
+              {
+                  if (success)
+                  {
+                      IOUtils.Close(DocOut, PosOut, PayOut);
+                  }
+                  else
+                  {
+                      IOUtils.CloseWhileHandlingException(DocOut, PosOut, PayOut);
+                  }
+                  DocOut = PosOut = PayOut = null;
+              }
+          }
+		
 	  }
 	}
 

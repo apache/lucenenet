@@ -73,7 +73,7 @@ namespace Lucene.Net.Util.Mutable
 	  }
 
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		// TODO: if used in HashMap, it already mixes the value... maybe use a straight value?
 		return (Value >> 8) + (Value >> 16);

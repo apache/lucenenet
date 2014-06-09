@@ -58,8 +58,6 @@ namespace Lucene.Net.Index
 		Buffer = pool.Buffers[BufferUpto];
 		Upto = startIndex & ByteBlockPool.BYTE_BLOCK_MASK;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int firstSize = Lucene.Net.Util.ByteBlockPool.LEVEL_SIZE_ARRAY[0];
 		int firstSize = ByteBlockPool.LEVEL_SIZE_ARRAY[0];
 
 		if (startIndex + firstSize >= endIndex)
@@ -79,7 +77,7 @@ namespace Lucene.Net.Index
 		return Upto + BufferOffset == EndIndex;
 	  }
 
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
 		Debug.Assert(!Eof());
 		Debug.Assert(Upto <= Limit);
@@ -87,7 +85,7 @@ namespace Lucene.Net.Index
 		{
 		  NextSlice();
 		}
-		return Buffer[Upto++];
+		return (byte)Buffer[Upto++];
 	  }
 
 	  public long WriteTo(DataOutput @out)
@@ -117,13 +115,9 @@ namespace Lucene.Net.Index
 	  {
 
 		// Skip to our next slice
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int nextIndex = ((buffer[limit]&0xff)<<24) + ((buffer[1+limit]&0xff)<<16) + ((buffer[2+limit]&0xff)<<8) + (buffer[3+limit]&0xff);
 		int nextIndex = ((Buffer[Limit] & 0xff) << 24) + ((Buffer[1 + Limit] & 0xff) << 16) + ((Buffer[2 + Limit] & 0xff) << 8) + (Buffer[3 + Limit] & 0xff);
 
 		Level = ByteBlockPool.NEXT_LEVEL_ARRAY[Level];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = Lucene.Net.Util.ByteBlockPool.LEVEL_SIZE_ARRAY[level];
 		int newSize = ByteBlockPool.LEVEL_SIZE_ARRAY[Level];
 
 		BufferUpto = nextIndex / ByteBlockPool.BYTE_BLOCK_SIZE;
@@ -146,12 +140,10 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		while (len > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numLeft = limit-upto;
 		  int numLeft = Limit - Upto;
 		  if (numLeft < len)
 		  {

@@ -360,7 +360,7 @@ namespace Lucene.Net.Util
 		  CurrentBlock = outerInstance.Blocks[0];
 		}
 
-		public override PagedBytesDataInput Clone()
+		public override object Clone()
 		{
 		  PagedBytesDataInput clone = OuterInstance.DataInput;
 		  clone.Position = Position;
@@ -384,16 +384,16 @@ namespace Lucene.Net.Util
 		}
 
 
-		public override sbyte ReadByte()
+		public override byte ReadByte()
 		{
             if (CurrentBlockUpto == OuterInstance.BlockSize)
 		  {
 			NextBlock();
 		  }
-		  return CurrentBlock[CurrentBlockUpto++];
+		  return (byte)CurrentBlock[CurrentBlockUpto++];
 		}
 
-		public override void ReadBytes(sbyte[] b, int offset, int len)
+		public override void ReadBytes(byte[] b, int offset, int len)
 		{
 		  Debug.Assert(b.Length >= offset + len);
 		  int offsetEnd = offset + len;
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
 			  this.OuterInstance = outerInstance;
 		  }
 
-		public override void WriteByte(sbyte b)
+		public override void WriteByte(byte b)
 		{
           if (OuterInstance.Upto == OuterInstance.BlockSize)
 		  {
@@ -446,10 +446,10 @@ namespace Lucene.Net.Util
             OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
             OuterInstance.Upto = 0;
 		  }
-          OuterInstance.CurrentBlock[OuterInstance.Upto++] = b;
+          OuterInstance.CurrentBlock[OuterInstance.Upto++] = (sbyte)b;
 		}
 
-		public override void WriteBytes(sbyte[] b, int offset, int length)
+		public override void WriteBytes(byte[] b, int offset, int length)
 		{
 		  Debug.Assert(b.Length >= offset + length);
 		  if (length == 0)
@@ -468,16 +468,10 @@ namespace Lucene.Net.Util
 			OuterInstance.Upto = 0;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offsetEnd = offset + length;
 		  int offsetEnd = offset + length;
 		  while (true)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int left = offsetEnd - offset;
 			int left = offsetEnd - offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int blockLeft = blockSize - upto;
 			int blockLeft = OuterInstance.BlockSize - OuterInstance.Upto;
 			if (blockLeft < left)
 			{

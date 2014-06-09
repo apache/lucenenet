@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 	  }
 
-	  public override sealed float Lambda(BasicStats stats)
+	  public override sealed float CalculateLambda(BasicStats stats)
 	  {
 		return (stats.DocFreq + 1F) / (stats.NumberOfDocuments + 1F);
 	  }
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		Explanation result = new Explanation();
 		result.Description = this.GetType().Name + ", computed from: ";
-		result.Value = Lambda(stats);
+		result.Value = CalculateLambda(stats);
 		result.AddDetail(new Explanation(stats.DocFreq, "docFreq"));
 		result.AddDetail(new Explanation(stats.NumberOfDocuments, "numberOfDocuments"));
 		return result;

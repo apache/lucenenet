@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 		IList<SegmentReader> readers = new List<SegmentReader>();
 		Directory dir = writer.Directory;
 
-		SegmentInfos segmentInfos = infos.Clone();
+		SegmentInfos segmentInfos = (SegmentInfos)infos.Clone();
 		int infosUpto = 0;
 		bool success = false;
 		try
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
 					{
 					  // this is a new subReader that is not used by the old one,
 					  // we can close it
-					  newReaders[i].Close();
+					  newReaders[i].Dispose();
 					}
 					else
 					{
@@ -299,13 +299,9 @@ namespace Lucene.Net.Index
 
 	  public override string ToString()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder buffer = new StringBuilder();
 		StringBuilder buffer = new StringBuilder();
 		buffer.Append(this.GetType().Name);
 		buffer.Append('(');
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentsFile = segmentInfos.getSegmentsFileName();
 		string segmentsFile = SegmentInfos.SegmentsFileName;
 		if (segmentsFile != null)
 		{
@@ -315,7 +311,7 @@ namespace Lucene.Net.Index
 		{
 		  buffer.Append(":nrt");
 		}
-		foreach (AtomicReader r in SequentialSubReaders)
+		foreach (AtomicReader r in GetSequentialSubReaders())
 		{
 		  buffer.Append(' ');
 		  buffer.Append(r);
@@ -423,8 +419,6 @@ namespace Lucene.Net.Index
 
 		  protected internal override object DoBody(string segmentFileName)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentInfos infos = new SegmentInfos();
 			SegmentInfos infos = new SegmentInfos();
 			infos.Read(OuterInstance.Directory_Renamed, segmentFileName);
 			return OuterInstance.DoOpenIfChanged(infos);
@@ -433,7 +427,7 @@ namespace Lucene.Net.Index
 
 	  internal DirectoryReader DoOpenIfChanged(SegmentInfos infos)
 	  {
-		return StandardDirectoryReader.Open(Directory_Renamed, infos, SequentialSubReaders, TermInfosIndexDivisor);
+          return StandardDirectoryReader.Open(Directory_Renamed, infos, GetSequentialSubReaders().OfType<AtomicReader>().ToList(), TermInfosIndexDivisor);
 	  }
 
 	  public override long Version
@@ -473,7 +467,7 @@ namespace Lucene.Net.Index
 	  protected internal override void DoClose()
 	  {
 		Exception firstExc = null;
-		foreach (AtomicReader r in SequentialSubReaders)
+		foreach (AtomicReader r in GetSequentialSubReaders())
 		{
 		  // try to close each reader, even if an exception is thrown
 		  try

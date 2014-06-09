@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Compressing
 		return StartPointers[block] + RelativeStartPointer(block, relativeChunk);
 	  }
 
-	  public override CompressingStoredFieldsIndexReader Clone()
+	  public object Clone()
 	  {
 		return this;
 	  }

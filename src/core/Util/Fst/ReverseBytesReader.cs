@@ -22,20 +22,20 @@ namespace Lucene.Net.Util.Fst
 	/// Reads in reverse from a single byte[]. </summary>
 	internal sealed class ReverseBytesReader : FST.BytesReader
 	{
-	  private readonly sbyte[] Bytes;
+	  private readonly byte[] Bytes;
 	  private int Pos;
 
-	  public ReverseBytesReader(sbyte[] bytes)
+	  public ReverseBytesReader(byte[] bytes)
 	  {
 		this.Bytes = bytes;
 	  }
 
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
 		return Bytes[Pos--];
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		for (int i = 0;i < len;i++)
 		{

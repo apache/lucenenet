@@ -151,7 +151,7 @@ namespace Lucene.Net.Util
 		}
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		// Clear the hard refs; then, the only remaining refs to
 		// all values we were storing are weak (unless somewhere

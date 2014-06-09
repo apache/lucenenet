@@ -76,12 +76,12 @@ namespace Lucene.Net.Index
 		return children;
 	  }
 
-	  public override CompositeReader Reader()
+	  public override IndexReader Reader()
 	  {
 		return reader;
 	  }
 
-	  private sealed class Builder
+	  public sealed class Builder
 	  {
 		internal readonly CompositeReader Reader;
 		internal readonly IList<AtomicReaderContext> Leaves = new List<AtomicReaderContext>();

@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		  }
 		  else
 		  {
-			output.Close();
+			output.Dispose();
 		  }
 		}
 	  }

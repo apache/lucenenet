@@ -35,6 +35,7 @@ namespace Lucene.Net.Search.Payloads
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Index;
 
 
 	/// <summary>
@@ -70,7 +71,7 @@ namespace Lucene.Net.Search.Payloads
 		return new PayloadNearSpanWeight(this, this, searcher);
 	  }
 
-	  public override PayloadNearQuery Clone()
+	  public override object Clone()
 	  {
 		int sz = clauses.Count;
 		SpanQuery[] newClauses = new SpanQuery[sz];
@@ -170,19 +171,19 @@ namespace Lucene.Net.Search.Payloads
 
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  return new PayloadNearSpanScorer(OuterInstance, query.GetSpans(context, acceptDocs, TermContexts), this, Similarity, Similarity.SimScorer(Stats, context));
+		  return new PayloadNearSpanScorer(OuterInstance, query.GetSpans(context, acceptDocs, TermContexts), this, Similarity, Similarity.DoSimScorer(Stats, context));
 		}
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-		  PayloadNearSpanScorer scorer = (PayloadNearSpanScorer) Scorer(context, context.Reader().LiveDocs);
+            PayloadNearSpanScorer scorer = (PayloadNearSpanScorer)Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
 		  if (scorer != null)
 		  {
 			int newDoc = scorer.Advance(doc);
 			if (newDoc == doc)
 			{
 			  float freq = scorer.Freq();
-			  Similarity.SimScorer docScorer = Similarity.SimScorer(Stats, context);
+			  Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
 			  Explanation expl = new Explanation();
 			  expl.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
 			  Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));

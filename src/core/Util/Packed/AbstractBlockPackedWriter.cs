@@ -24,7 +24,7 @@ namespace Lucene.Net.Util.Packed
 
     using DataOutput = Lucene.Net.Store.DataOutput;
 
-	internal abstract class AbstractBlockPackedWriter
+	public abstract class AbstractBlockPackedWriter
 	{
 
 	  internal const int MIN_BLOCK_SIZE = 64;

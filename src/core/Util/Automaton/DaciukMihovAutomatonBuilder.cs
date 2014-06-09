@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// <summary>
 	  /// DFSA state with <code>char</code> labels on transitions.
 	  /// </summary>
-	  private sealed class State
+	  public sealed class State
 	  {
 
 		/// <summary>
@@ -221,7 +221,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("deprecation") private static final Comparator<Lucene.Net.Util.CharsRef> comparator = Lucene.Net.Util.CharsRef.getUTF16SortedAsUTF8Comparator();
-	  private static readonly IComparer<CharsRef> Comparator = CharsRef.UTF16SortedAsUTF8Comparator;
+	  private static readonly IComparer<CharsRef> Comparator = CharsRef.UTF16SortedAsUTF8Comparer;
 
 	  /// <summary>
 	  /// Add another character sequence to this automaton. The sequence must be
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util.Automaton
 		Debug.Assert(SetPrevious(current));
 
 		// Descend in the automaton (find matching prefix).
-		int pos = 0, max = current.Length();
+		int pos = 0, max = current.Length;
 		State next , state = Root;
 		while (pos < max && (next = state.LastChild(current.CharAt(pos))) != null)
 		{

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 
@@ -21,37 +23,83 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
-	/// The start and end character offset of a Token. 
-	/// </summary>
-	public interface OffsetAttribute : Attribute
+	/// Default implementation of <seealso cref="OffsetAttribute"/>. </summary>
+	public class OffsetAttribute : Attribute, IOffsetAttribute, ICloneable
 	{
-	  /// <summary>
-	  /// Returns this Token's starting offset, the position of the first character
-	  /// corresponding to this token in the source text.
-	  /// <p>
-	  /// Note that the difference between <seealso cref="#EndOffset()"/> and <code>StartOffset()</code> 
-	  /// may not be equal to termText.length(), as the term text may have been altered by a
-	  /// stemmer or some other filter. </summary>
-	  /// <seealso cref= #SetOffset(int, int)  </seealso>
-	  int StartOffset();
-
+	  private int StartOffset_Renamed;
+	  private int EndOffset_Renamed;
 
 	  /// <summary>
-	  /// Set the starting and ending offset. </summary>
-	  /// <exception cref="IllegalArgumentException"> If <code>startOffset</code> or <code>endOffset</code>
-	  ///         are negative, or if <code>startOffset</code> is greater than 
-	  ///         <code>endOffset</code> </exception>
-	  /// <seealso cref= #StartOffset() </seealso>
-	  /// <seealso cref= #EndOffset() </seealso>
-	  void SetOffset(int startOffset, int endOffset);
+	  /// Initialize this attribute with startOffset and endOffset of 0. </summary>
+	  public OffsetAttribute()
+	  {
+	  }
+
+	  public int StartOffset()
+	  {
+		return StartOffset_Renamed;
+	  }
+
+	  public void SetOffset(int startOffset, int endOffset)
+	  {
+
+		// TODO: we could assert that this is set-once, ie,
+		// current values are -1?  Very few token filters should
+		// change offsets once set by the tokenizer... and
+		// tokenizer should call clearAtts before re-using
+		// OffsetAtt
+
+		if (startOffset < 0 || endOffset < startOffset)
+		{
+		  throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
+		}
+
+		this.StartOffset_Renamed = startOffset;
+		this.EndOffset_Renamed = endOffset;
+	  }
+
+	  public int EndOffset()
+	  {
+		return EndOffset_Renamed;
+	  }
 
 
-	  /// <summary>
-	  /// Returns this Token's ending offset, one greater than the position of the
-	  /// last character corresponding to this token in the source text. The length
-	  /// of the token in the source text is (<code>EndOffset()</code> - <seealso cref="#StartOffset()"/>). </summary>
-	  /// <seealso cref= #SetOffset(int, int) </seealso>
-	  int EndOffset();
+	  public override void Clear()
+	  {
+		// TODO: we could use -1 as default here?  Then we can
+		// assert in setOffset...
+		StartOffset_Renamed = 0;
+		EndOffset_Renamed = 0;
+	  }
+
+	  public override bool Equals(object other)
+	  {
+		if (other == this)
+		{
+		  return true;
+		}
+
+		if (other is OffsetAttribute)
+		{
+		  OffsetAttribute o = (OffsetAttribute) other;
+		  return o.StartOffset_Renamed == StartOffset_Renamed && o.EndOffset_Renamed == EndOffset_Renamed;
+		}
+
+		return false;
+	  }
+
+	  public override int GetHashCode()
+	  {
+		int code = StartOffset_Renamed;
+		code = code * 31 + EndOffset_Renamed;
+		return code;
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		OffsetAttribute t = (OffsetAttribute) target;
+		t.SetOffset(StartOffset_Renamed, EndOffset_Renamed);
+	  }
 	}
 
 }

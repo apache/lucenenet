@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  protected internal override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
+	  public override bool LessThan(ScoreDoc hitA, ScoreDoc hitB)
 	  {
 		if (hitA.Score == hitB.Score)
 		{

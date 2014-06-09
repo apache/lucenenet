@@ -326,7 +326,7 @@ namespace Lucene.Net.Store
 	  /// Close this directory, which flushes any cached files
 	  ///  to the delegate and then closes the delegate. 
 	  /// </summary>
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		// NOTE: technically we shouldn't have to do this, ie,
 		// IndexWriter should have sync'd all files, but we do
@@ -337,8 +337,8 @@ namespace Lucene.Net.Store
 		{
 		  UnCache(fileName);
 		}
-		Cache.Close();
-		@delegate.Close();
+		Cache.Dispose();
+		@delegate.Dispose();
 	  }
 
 	  /// <summary>

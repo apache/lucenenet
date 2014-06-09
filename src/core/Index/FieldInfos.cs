@@ -167,6 +167,11 @@ namespace Lucene.Net.Index
 		return Values.GetEnumerator();
 	  }
 
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
+
 	  /// <summary>
 	  /// Return the fieldinfo object referenced by the field name </summary>
 	  /// <returns> the FieldInfo object or null when the given fieldName
@@ -315,7 +320,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal sealed class Builder
+	  public sealed class Builder
 	  {
 		internal readonly Dictionary<string, FieldInfo> ByName = new Dictionary<string, FieldInfo>();
 		internal readonly FieldNumbers GlobalFieldNumbers;
@@ -355,7 +360,7 @@ namespace Lucene.Net.Index
 		  // rather, each component in the chain should update
 		  // what it "owns".  EG fieldType.indexOptions() should
 		  // be updated by maybe FreqProxTermsWriterPerField:
-		  return AddOrUpdateInternal(name, -1, fieldType.Indexed(), false, fieldType.OmitNorms(), false, fieldType.IndexOptions(), fieldType.DocValueType(), null);
+		  return AddOrUpdateInternal(name, -1, fieldType.Indexed, false, fieldType.OmitNorms, false, fieldType.IndexOptionsValue, fieldType.DocValueType, null);
 		}
 
         internal FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions_e? indexOptions, DocValuesType_e? docValues, DocValuesType_e? normType)

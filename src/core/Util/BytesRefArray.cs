@@ -141,8 +141,6 @@ namespace Lucene.Net.Util
 
 		  protected internal override void Swap(int i, int j)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int o = orderedEntries[i];
 			int o = OrderedEntries[i];
 			OrderedEntries[i] = OrderedEntries[j];
 			OrderedEntries[j] = o;
@@ -158,8 +156,6 @@ namespace Lucene.Net.Util
 		  {
 			  set
 			  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final int index = orderedEntries[value];
 				int index = OrderedEntries[value];
 				OuterInstance.Get(pivot, index);
 			  }
@@ -167,8 +163,6 @@ namespace Lucene.Net.Util
 
 		  protected internal override int ComparePivot(int j)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int index = orderedEntries[j];
 			int index = OrderedEntries[j];
 			return Comp.Compare(pivot, OuterInstance.Get(scratch2, index));
 		  }
@@ -181,7 +175,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// sugar for <seealso cref="#iterator(Comparator)"/> with a <code>null</code> comparator
 	  /// </summary>
-	  public BytesRefIterator Iterator()
+	  public IBytesRefIterator Iterator()
 	  {
 		return Iterator(null);
 	  }
@@ -200,7 +194,7 @@ namespace Lucene.Net.Util
 	  /// this is a non-destructive operation.
 	  /// </p>
 	  /// </summary>
-	  public BytesRefIterator Iterator(IComparer<BytesRef> comp)
+	  public IBytesRefIterator Iterator(IComparer<BytesRef> comp)
 	  {
 		BytesRef spare = new BytesRef();
 		int size = Size();
@@ -208,7 +202,7 @@ namespace Lucene.Net.Util
 		return new BytesRefIteratorAnonymousInnerClassHelper(this, comp, spare, size, indices);
 	  }
 
-	  private class BytesRefIteratorAnonymousInnerClassHelper : BytesRefIterator
+	  private class BytesRefIteratorAnonymousInnerClassHelper : IBytesRefIterator
 	  {
 		  private readonly BytesRefArray OuterInstance;
 

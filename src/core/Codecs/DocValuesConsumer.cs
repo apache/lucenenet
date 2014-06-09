@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs
 	  /// <param name="docToOrd"> Iterable of ordinals (one for each document). {@code -1} indicates
 	  ///                 a missing value. </param>
 	  /// <exception cref="IOException"> if an I/O error occurred. </exception>
-	  public abstract void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrd);
+      public abstract void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd);
 
 	  /// <summary>
 	  /// Writes pre-sorted set docvalues for a field </summary>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs
 	  ///                      count indicates a missing value. </param>
 	  /// <param name="ords"> Iterable of ordinal occurrences (docToOrdCount*maxDoc total). </param>
 	  /// <exception cref="IOException"> if an I/O error occurred. </exception>
-	  public abstract void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrdCount, IEnumerable<long> ords);
+      public abstract void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords);
 
 	  /// <summary>
 	  /// Merges the numeric docvalues from <code>toMerge</code>.
@@ -492,7 +492,7 @@ namespace Lucene.Net.Codecs
           }
       }
 
-      private IEnumerable<int> GetMergeSortedFieldDocToOrdEnumerable(AtomicReader[] readers, SortedDocValues[] dvs, OrdinalMap map)
+      private IEnumerable<long> GetMergeSortedFieldDocToOrdEnumerable(AtomicReader[] readers, SortedDocValues[] dvs, OrdinalMap map)
       {
           int readerUpTo = -1;
           int docIDUpTo = 0;
@@ -522,7 +522,7 @@ namespace Lucene.Net.Codecs
               {
                   int segOrd = dvs[readerUpTo].GetOrd(docIDUpTo);
                   docIDUpTo++;
-                  yield return (int)map.GetGlobalOrd(readerUpTo, segOrd);
+                  yield return map.GetGlobalOrd(readerUpTo, segOrd);
                   continue;
               }
 
@@ -750,7 +750,7 @@ namespace Lucene.Net.Codecs
               yield return scratch;
           }
       }
-      private IEnumerable<int> GetMergeSortedSetDocToOrdCountEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs)
+      private IEnumerable<long> GetMergeSortedSetDocToOrdCountEnumerable(AtomicReader[] readers, SortedSetDocValues[] dvs)
       {
           int readerUpto = -1;
 		  int docIDUpto = 0;
@@ -780,7 +780,7 @@ namespace Lucene.Net.Codecs
               {
                   SortedSetDocValues dv = dvs[readerUpto];
                   dv.Document = docIDUpto;
-                  int value = 0;
+                  long value = 0;
                   while (dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS)
                   {
                       value++;
@@ -1153,12 +1153,13 @@ namespace Lucene.Net.Codecs
 		}
 	  }
 
-      public void Close()
+      public void Dispose()
       {
-          //Dispose(true);
-          // LUCENE TO-DO
+          Dispose(true);
           GC.SuppressFinalize(this);
       }
+
+      protected abstract void Dispose(bool disposing);
 	}
 
 }

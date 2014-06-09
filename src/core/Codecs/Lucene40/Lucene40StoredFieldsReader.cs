@@ -61,10 +61,10 @@ namespace Lucene.Net.Codecs.Lucene40
 	  ///  clones are called (eg, currently SegmentReader manages
 	  ///  this logic). 
 	  /// </summary>
-	  public override Lucene40StoredFieldsReader Clone()
+	  public override object Clone()
 	  {
 		EnsureOpen();
-		return new Lucene40StoredFieldsReader(FieldInfos, NumTotalDocs, Size_Renamed, FieldsStream.Clone(), IndexStream.Clone());
+        return new Lucene40StoredFieldsReader(FieldInfos, NumTotalDocs, Size_Renamed, (IndexInput)FieldsStream.Clone(), (IndexInput)IndexStream.Clone());
 	  }
 
 	  /// <summary>
@@ -116,9 +116,9 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			try
 			{
-			  Close();
+			  Dispose();
 			} // ensure we throw our original exception
-			catch (Exception t)
+			catch (Exception)
 			{
 			}
 		  }
@@ -139,13 +139,16 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// this means that the Fields values will not be accessible.
 	  /// </summary>
 	  /// <exception cref="IOException"> If an I/O error occurs </exception>
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		if (!Closed)
-		{
-		  IOUtils.Close(FieldsStream, IndexStream);
-		  Closed = true;
-		}
+          if (disposing)
+          {
+              if (!Closed)
+              {
+                  IOUtils.Close(FieldsStream, IndexStream);
+                  Closed = true;
+              }
+          }
 	  }
 
 	  /// <summary>
@@ -229,8 +232,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void SkipField(int bits)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numeric = bits & FIELD_IS_NUMERIC_MASK;
 		int numeric = bits & Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK;
 		if (numeric != 0)
 		{

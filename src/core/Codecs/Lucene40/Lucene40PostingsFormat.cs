@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (!success)
 		  {
-			postings.Close();
+			postings.Dispose();
 		  }
 		}
 	  }

@@ -17,8 +17,7 @@ namespace Lucene.Net.Search.Similarities
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-    
-    using Lucene.Net.Search.Similarities.SimilarityBase;
+
 
 	/// <summary>
 	/// Geometric as limiting form of the Bose-Einstein model.  The formula used in Lucene differs

@@ -81,9 +81,9 @@ namespace Lucene.Net.Index
 		  this.@in = @in;
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
-		  return @in.Iterator();
+		  return @in.GetEnumerator();
 		}
 
 		public override Terms Terms(string field)
@@ -429,7 +429,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override void DoClose()
 	  {
-		@in.Close();
+		@in.Dispose();
 	  }
 
 	  public override Fields Fields()

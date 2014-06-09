@@ -550,7 +550,7 @@ using Lucene.Net.Support;
 	  /// Also saves any new deletions to disk.
 	  /// No other methods should be called after this has been called. </summary>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		  lock (this)
 		  {

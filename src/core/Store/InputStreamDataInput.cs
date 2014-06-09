@@ -26,28 +26,28 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class InputStreamDataInput : DataInput, IDisposable
 	{
-	  private readonly Stream @is;
+	  private Stream @is;
 
 	  public InputStreamDataInput(Stream @is)
 	  {
 		this.@is = @is;
 	  }
 
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
 		int v = @is.ReadByte();
 		if (v == -1)
 		{
 			throw new EndOfStreamException();
 		}
-		return (sbyte) v;
+		return (byte)v;
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		while (len > 0)
 		{
-		  int cnt = @is.Read((byte[])(Array)b, offset, len);
+		  int cnt = @is.Read(b, offset, len);
 		  if (cnt < 0)
 		  {
 			  // Partially read the input, but no more data available in the stream.
@@ -58,10 +58,28 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override void Close()
-	  {
-		@is.Close();
-	  }
+      public void Dispose()
+      {
+          Dispose(true);
+
+          GC.SuppressFinalize(this);
+      }
+
+      private bool disposed = false;
+
+      protected virtual void Dispose(bool disposing)
+      {
+          if (!disposed)
+          {
+              if (disposing)
+              {
+                  @is.Dispose();
+              }
+
+              @is = null;
+              disposed = true;
+          }
+      }
 	}
 
 }

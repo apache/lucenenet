@@ -79,17 +79,15 @@ namespace Lucene.Net.Util
 	  /// object.
 	  /// </summary>
 	  /// <seealso cref= #deepCopyOf </seealso>
-	  public override IntsRef Clone()
+	  public object Clone()
 	  {
 		return new IntsRef(Ints, Offset, Length);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		int end = Offset + Length;
 		for (int i = Offset; i < end; i++)
 		{

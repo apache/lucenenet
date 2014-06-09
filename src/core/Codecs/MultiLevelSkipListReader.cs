@@ -228,13 +228,13 @@ namespace Lucene.Net.Codecs
 		}
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		for (int i = 1; i < SkipStream.Length; i++)
 		{
 		  if (SkipStream[i] != null)
 		  {
-			SkipStream[i].Close();
+			SkipStream[i].Dispose();
 		  }
 		}
 	  }
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs
 		  else
 		  {
 			// clone this stream, it is already at the start of the current level
-			SkipStream[i] = SkipStream[0].Clone();
+			SkipStream[i] = (IndexInput)SkipStream[0].Clone();
 			if (InputIsBuffered && length < BufferedIndexInput.BUFFER_SIZE)
 			{
 			  ((BufferedIndexInput) SkipStream[i]).BufferSize_ = (int) length;
@@ -333,18 +333,18 @@ namespace Lucene.Net.Codecs
 	  /// used to buffer the top skip levels </summary>
 	  private sealed class SkipBuffer : IndexInput
 	  {
-		internal sbyte[] Data;
+		internal byte[] Data;
 		internal long Pointer;
 		internal int Pos;
 
 		internal SkipBuffer(IndexInput input, int length) : base("SkipBuffer on " + input)
 		{
-		  Data = new sbyte[length];
+		  Data = new byte[length];
 		  Pointer = input.FilePointer;
 		  input.ReadBytes(Data, 0, length);
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  Data = null;
 		}
@@ -362,12 +362,12 @@ namespace Lucene.Net.Codecs
 		  return Data.Length;
 		}
 
-		public override sbyte ReadByte()
+		public override byte ReadByte()
 		{
 		  return Data[Pos++];
 		}
 
-		public override void ReadBytes(sbyte[] b, int offset, int len)
+		public override void ReadBytes(byte[] b, int offset, int len)
 		{
 		  Array.Copy(Data, Pos, b, offset, len);
 		  Pos += len;

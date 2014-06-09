@@ -6,22 +6,23 @@ namespace Lucene.Net.Store
 
     using Lucene.Net.Support;
     using System.IO;
+    using System.IO.MemoryMappedFiles;
     /*
-             * Licensed to the Apache Software Foundation (ASF) under one or more
-             * contributor license agreements.  See the NOTICE file distributed with
-             * this work for additional information regarding copyright ownership.
-             * The ASF licenses this file to You under the Apache License, Version 2.0
-             * (the "License"); you may not use this file except in compliance with
-             * the License.  You may obtain a copy of the License at
-             *
-             *     http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-             * See the License for the specific language governing permissions and
-             * limitations under the License.
-             */
+                 * Licensed to the Apache Software Foundation (ASF) under one or more
+                 * contributor license agreements.  See the NOTICE file distributed with
+                 * this work for additional information regarding copyright ownership.
+                 * The ASF licenses this file to You under the Apache License, Version 2.0
+                 * (the "License"); you may not use this file except in compliance with
+                 * the License.  You may obtain a copy of the License at
+                 *
+                 *     http://www.apache.org/licenses/LICENSE-2.0
+                 *
+                 * Unless required by applicable law or agreed to in writing, software
+                 * distributed under the License is distributed on an "AS IS" BASIS,
+                 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                 * See the License for the specific language governing permissions and
+                 * limitations under the License.
+                 */
 
 
 
@@ -146,7 +147,7 @@ namespace Lucene.Net.Store
 		  Type.GetType("java.nio.DirectByteBuffer").GetMethod("cleaner");
 		  v = true;
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
 		  v = false;
 		}
@@ -197,8 +198,8 @@ namespace Lucene.Net.Store
 	  public override IndexInput OpenInput(string name, IOContext context)
 	  {
 		EnsureOpen();
-		File file = new File(Directory, name);
-		using (FileChannel c = FileChannel.open(file.toPath(), StandardOpenOption.READ))
+		FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
+		using (FileStream c = new FileStream(file.FullName, FileMode.Open))
 		{
 		  return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file.ToString() + "\")", c);
 		}
@@ -231,25 +232,26 @@ namespace Lucene.Net.Store
 		  public override IndexInput OpenFullSlice()
 		  {
 			OuterInstance.EnsureOpen();
-			return Full.Clone();
+			return (IndexInput)Full.Clone();
 		  }
 
-		  public override void Close()
+		  public override void Dispose(bool disposing)
 		  {
-			Full.Close();
+			Full.Dispose();
 		  }
 	  }
 
-	  private sealed class MMapIndexInput : ByteBufferIndexInput
+	  public sealed class MMapIndexInput : ByteBufferIndexInput
 	  {
-		  private readonly MMapDirectory OuterInstance;
 
 		internal readonly bool UseUnmapHack;
+        internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
 
-		internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileChannel fc) : base(resourceDescription, outerInstance.Map(fc, 0, fc.size()), fc.size(), outerInstance.ChunkSizePower, outerInstance.UseUnmap)
+		internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc) 
+            : base(resourceDescription, null, fc.Length, outerInstance.ChunkSizePower, outerInstance.UseUnmap)
 		{
-			this.OuterInstance = outerInstance;
-		  this.UseUnmapHack = outerInstance.UseUnmap;
+		    this.UseUnmapHack = outerInstance.UseUnmap;
+            this.Buffers = outerInstance.Map(this, fc, 0, fc.Length);
 		}
 
 		/// <summary>
@@ -259,6 +261,12 @@ namespace Lucene.Net.Store
 		/// </summary>
 		protected internal override void FreeBuffer(ByteBuffer buffer)
 		{
+            // .NET port: this should free the memory mapped view accessor
+            var mmfbb = buffer as MemoryMappedFileByteBuffer;
+
+            if (mmfbb != null)
+                mmfbb.Dispose();
+            /*
 		  if (UseUnmapHack)
 		  {
 			try
@@ -271,9 +279,9 @@ namespace Lucene.Net.Store
 			  ioe.initCause(e.InnerException);
 			  throw ioe;
 			}
-		  }
+		  }*/
 		}
-
+          /*
 		private class PrivilegedExceptionActionAnonymousInnerClassHelper : PrivilegedExceptionAction<Void>
 		{
 			private readonly MMapIndexInput OuterInstance;
@@ -297,17 +305,15 @@ namespace Lucene.Net.Store
 			  }
 			  //return null;
 			}
-		}
+		}*/
 	  }
 
 	  /// <summary>
 	  /// Maps a file into a set of buffers </summary>
-	  internal virtual ByteBuffer[] Map(FileChannel fc, long offset, long length)
+	  internal virtual ByteBuffer[] Map(MMapIndexInput input, FileStream fc, long offset, long length)
 	  {
-		if (((long)((ulong)length >> ChunkSizePower)) >= int.MaxValue)
-		{
-		  throw new System.ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
-		}
+		 if (Number.URShift(length, ChunkSizePower) >= int.MaxValue)
+                throw new ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
 
 		long chunkSize = 1L << ChunkSizePower;
 
@@ -320,7 +326,9 @@ namespace Lucene.Net.Store
 		for (int bufNr = 0; bufNr < nrBuffers; bufNr++)
 		{
 		  int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
-		  buffers[bufNr] = fc.map(FileChannel.MapMode.READ_ONLY, offset + bufferStart, bufSize);
+          //LUCENE TO-DO 
+          buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor(offset + bufferStart, bufSize), -1, 0, bufSize, bufSize);
+          //buffers[bufNr] = fc.Map(FileStream.MapMode.READ_ONLY, offset + bufferStart, bufSize);
 		  bufferStart += bufSize;
 		}
 

@@ -22,9 +22,9 @@ namespace Lucene.Net.Index
 	{
 	  /// <summary>
 	  /// Processes all occurrences of a single field </summary>
-	  internal abstract void ProcessFields(IndexableField[] fields, int count);
-	  internal abstract void Abort();
-	  internal abstract FieldInfo FieldInfo {get;}
+        public abstract void ProcessFields(IndexableField[] fields, int count);
+        public abstract void Abort();
+        public abstract FieldInfo FieldInfo { get; }
 	}
 
 }

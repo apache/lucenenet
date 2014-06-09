@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Spans
 		}
 	  }
 
-	  public override SpanOrQuery Clone()
+	  public override object Clone()
 	  {
 		int sz = clauses.Count;
 		SpanQuery[] newClauses = new SpanQuery[sz];
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
 		  {
 			if (clone == null)
 			{
-			  clone = this.Clone();
+			  clone = (SpanOrQuery)this.Clone();
 			}
 			clone.clauses[i] = query;
 		  }
@@ -163,8 +163,6 @@ namespace Lucene.Net.Search.Spans
 			return false;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SpanOrQuery that = (SpanOrQuery) o;
 		SpanOrQuery that = (SpanOrQuery) o;
 
 		if (!clauses.Equals(that.clauses))
@@ -184,7 +182,7 @@ namespace Lucene.Net.Search.Spans
 	  }
 
 
-	  private class SpanQueue : PriorityQueue<Spans>
+	  private class SpanQueue : Util.PriorityQueue<Spans>
 	  {
 		  private readonly SpanOrQuery OuterInstance;
 
@@ -193,7 +191,7 @@ namespace Lucene.Net.Search.Spans
 			this.OuterInstance = outerInstance;
 		}
 
-		protected internal override bool LessThan(Spans spans1, Spans spans2)
+		public override bool LessThan(Spans spans1, Spans spans2)
 		{
 		  if (spans1.Doc() == spans2.Doc())
 		  {
@@ -256,7 +254,7 @@ namespace Lucene.Net.Search.Spans
 				queue.Add(spans);
 			  }
 			}
-			return queue.Count != 0;
+			return queue.Size() != 0;
 		  }
 
 		  public override bool Next()
@@ -266,7 +264,7 @@ namespace Lucene.Net.Search.Spans
 			  return InitSpanQueue(-1);
 			}
 
-            if (queue.Count == 0) // all done
+            if (queue.Size() == 0) // all done
 			{
 			  return false;
 			}
@@ -278,7 +276,7 @@ namespace Lucene.Net.Search.Spans
 			}
 
 			queue.Pop(); // exhausted a clause
-            return queue.Count != 0;
+            return queue.Size() != 0;
 		  }
 
 		  private Spans Top()
@@ -294,7 +292,7 @@ namespace Lucene.Net.Search.Spans
 			}
 
 			bool skipCalled = false;
-            while (queue.Count != 0 && Top().Doc() < target)
+            while (queue.Size() != 0 && Top().Doc() < target)
 			{
 			  if (Top().SkipTo(target))
 			  {
@@ -309,7 +307,7 @@ namespace Lucene.Net.Search.Spans
 
 			if (skipCalled)
 			{
-                return queue.Count != 0;
+                return queue.Size() != 0;
 			}
 			return Next();
 		  }
@@ -351,7 +349,7 @@ namespace Lucene.Net.Search.Spans
 
 		public override string ToString()
 		{
-			return "spans(" + OuterInstance + ")@" + ((queue == null)?"START" :(queue.Count > 0?(Doc() + ":" + Start() + "-" + End()):"END"));
+            return "spans(" + OuterInstance + ")@" + ((queue == null) ? "START" : (queue.Size() > 0 ? (Doc() + ":" + Start() + "-" + End()) : "END"));
 		}
 
 		public override long Cost()

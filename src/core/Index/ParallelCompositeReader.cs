@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		// finally add our own synthetic readers, so we close or decRef them, too (it does not matter what we do)
-		CollectionsHelper.AddAll(CompleteReaderSet, SequentialSubReaders);
+		CollectionsHelper.AddAll(CompleteReaderSet, GetSequentialSubReaders());
 	  }
 
 	  private static IndexReader[] PrepareSubReaders(CompositeReader[] readers, CompositeReader[] storedFieldsReaders)
@@ -103,23 +103,14 @@ namespace Lucene.Net.Index
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<? extends IndexReader> firstSubReaders = readers[0].getSequentialSubReaders();
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 		  IList<IndexReader> firstSubReaders = readers[0].GetSequentialSubReaders();
 
 		  // check compatibility:
 		  int maxDoc = readers[0].MaxDoc(), noSubs = firstSubReaders.Count;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] childMaxDoc = new int[noSubs];
 		  int[] childMaxDoc = new int[noSubs];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean[] childAtomic = new boolean[noSubs];
 		  bool[] childAtomic = new bool[noSubs];
 		  for (int i = 0; i < noSubs; i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReader r = firstSubReaders.get(i);
 			IndexReader r = firstSubReaders[i];
 			childMaxDoc[i] = r.MaxDoc();
 			childAtomic[i] = r is AtomicReader;
@@ -128,22 +119,16 @@ namespace Lucene.Net.Index
 		  Validate(storedFieldsReaders, maxDoc, childMaxDoc, childAtomic);
 
 		  // hierarchically build the same subreader structure as the first CompositeReader with Parallel*Readers:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReader[] subReaders = new IndexReader[noSubs];
 		  IndexReader[] subReaders = new IndexReader[noSubs];
 		  for (int i = 0; i < subReaders.Length; i++)
 		  {
 			if (firstSubReaders[i] is AtomicReader)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader[] atomicSubs = new AtomicReader[readers.length];
 			  AtomicReader[] atomicSubs = new AtomicReader[readers.Length];
 			  for (int j = 0; j < readers.Length; j++)
 			  {
 				atomicSubs[j] = (AtomicReader) readers[j].GetSequentialSubReaders()[i];
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader[] storedSubs = new AtomicReader[storedFieldsReaders.length];
 			  AtomicReader[] storedSubs = new AtomicReader[storedFieldsReaders.Length];
 			  for (int j = 0; j < storedFieldsReaders.Length; j++)
 			  {
@@ -156,8 +141,6 @@ namespace Lucene.Net.Index
 			else
 			{
 			  Debug.Assert(firstSubReaders[i] is CompositeReader);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CompositeReader[] compositeSubs = new CompositeReader[readers.length];
 			  CompositeReader[] compositeSubs = new CompositeReader[readers.Length];
 			  for (int j = 0; j < readers.Length; j++)
 			  {
@@ -205,19 +188,12 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < readers.Length; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final CompositeReader reader = readers[i];
 		  CompositeReader reader = readers[i];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<? extends IndexReader> subs = reader.getSequentialSubReaders();
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
 		  IList<IndexReader> subs = reader.GetSequentialSubReaders();
 		  if (reader.MaxDoc() != maxDoc)
 		  {
 			throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc());
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int noSubs = subs.size();
 		  int noSubs = subs.Count;
 		  if (noSubs != childMaxDoc.Length)
 		  {
@@ -225,8 +201,6 @@ namespace Lucene.Net.Index
 		  }
 		  for (int subIDX = 0; subIDX < noSubs; subIDX++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexReader r = subs.get(subIDX);
 			IndexReader r = subs[subIDX];
 			if (r.MaxDoc() != childMaxDoc[subIDX])
 			{
@@ -251,7 +225,7 @@ namespace Lucene.Net.Index
 			  {
 				if (CloseSubReaders)
 				{
-				  reader.Close();
+				  reader.Dispose();
 				}
 				else
 				{

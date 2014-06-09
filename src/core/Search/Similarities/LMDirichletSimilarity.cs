@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -104,7 +105,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		  get
 		  {
-			return string.Format(Locale.ROOT, "Dirichlet(%f)", Mu);
+              return string.Format(CultureInfo.InvariantCulture, "Dirichlet(%f)", Mu);
 		  }
 	  }
 	}

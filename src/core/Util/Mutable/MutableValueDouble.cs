@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Mutable
 		return 0;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		long x = BitConverter.DoubleToInt64Bits(Value);
 		return (int)x + (int)((long)((ulong)x >> 32));

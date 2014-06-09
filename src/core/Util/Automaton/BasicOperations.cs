@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Automaton
 		}
 		else if (min == 1)
 		{
-			b = a.Clone();
+			b = (Automaton)a.Clone();
 		}
 		else
 		{
@@ -293,10 +293,10 @@ namespace Lucene.Net.Util.Automaton
 		}
 		if (max > 0)
 		{
-		  Automaton d = a.Clone();
+		  Automaton d = (Automaton)a.Clone();
 		  while (--max > 0)
 		  {
-			Automaton c = a.Clone();
+			Automaton c = (Automaton)a.Clone();
 			foreach (State p in c.AcceptStates)
 			{
 			  p.AddEpsilon(d.Initial);
@@ -668,7 +668,7 @@ namespace Lucene.Net.Util.Automaton
 		  return ((PointTransitions) other).Point == Point;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return Point;
 		}

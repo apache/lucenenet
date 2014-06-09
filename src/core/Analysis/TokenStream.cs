@@ -27,7 +27,6 @@ namespace Lucene.Net.Analysis
     using Field = Lucene.Net.Document.Field;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using Attribute = Lucene.Net.Util.Attribute;
-    using AttributeImpl = Lucene.Net.Util.AttributeImpl;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 	/// <summary>
@@ -206,7 +205,7 @@ namespace Lucene.Net.Analysis
 	  /// some internal state will not be correctly reset (e.g., <seealso cref="Tokenizer"/> will
 	  /// throw <seealso cref="IllegalStateException"/> on reuse).
 	  /// </summary>
-	  public override void Close()
+	  public void Dispose()
 	  {
 	  }
 

@@ -19,31 +19,55 @@ namespace Lucene.Net.Search
 	 */
 
 	using Attribute = Lucene.Net.Util.Attribute;
-	using AttributeSource = Lucene.Net.Util.AttributeSource; // javadocs only
 	using BytesRef = Lucene.Net.Util.BytesRef;
-	using Terms = Lucene.Net.Index.Terms; // javadocs only
 
 	/// <summary>
-	/// Add this <seealso cref="Attribute"/> to a fresh <seealso cref="AttributeSource"/> before calling
-	/// <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>.
-	/// <seealso cref="FuzzyQuery"/> is using this to control its internal behaviour
-	/// to only return competitive terms.
-	/// <p><b>Please note:</b> this attribute is intended to be added by the <seealso cref="MultiTermQuery.RewriteMethod"/>
-	/// to an empty <seealso cref="AttributeSource"/> that is shared for all segments
-	/// during query rewrite. this attribute source is passed to all segment enums
-	/// on <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>.
-	/// <seealso cref="TopTermsRewrite"/> uses this attribute to
-	/// inform all enums about the current boost, that is not competitive.
+	/// Implementation class for <seealso cref="MaxNonCompetitiveBoostAttribute"/>.
 	/// @lucene.internal
 	/// </summary>
-	public interface MaxNonCompetitiveBoostAttribute : Attribute
+	public sealed class MaxNonCompetitiveBoostAttribute : Attribute, IMaxNonCompetitiveBoostAttribute
 	{
-	  /// <summary>
-	  /// this is the maximum boost that would not be competitive. </summary>
-	  float MaxNonCompetitiveBoost {set;get;}
-	  /// <summary>
-	  /// this is the term or <code>null</code> of the term that triggered the boost change. </summary>
-	  BytesRef CompetitiveTerm {set;get;}
+	  private float MaxNonCompetitiveBoost_Renamed = float.NegativeInfinity;
+	  private BytesRef CompetitiveTerm_Renamed = null;
+
+	  public float MaxNonCompetitiveBoost
+	  {
+		  set
+		  {
+			this.MaxNonCompetitiveBoost_Renamed = value;
+		  }
+		  get
+		  {
+			return MaxNonCompetitiveBoost_Renamed;
+		  }
+	  }
+
+
+	  public BytesRef CompetitiveTerm
+	  {
+		  set
+		  {
+			this.CompetitiveTerm_Renamed = value;
+		  }
+		  get
+		  {
+			return CompetitiveTerm_Renamed;
+		  }
+	  }
+
+
+	  public override void Clear()
+	  {
+		MaxNonCompetitiveBoost_Renamed = float.NegativeInfinity;
+		CompetitiveTerm_Renamed = null;
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		MaxNonCompetitiveBoostAttribute t = (MaxNonCompetitiveBoostAttribute) target;
+		t.MaxNonCompetitiveBoost = MaxNonCompetitiveBoost_Renamed;
+		t.CompetitiveTerm = CompetitiveTerm_Renamed;
+	  }
 	}
 
 }

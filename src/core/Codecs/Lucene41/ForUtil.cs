@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE; ++i)
 		{
 		  Debug.Assert(data[i] >= 0);
-		  or |= data[i];
+		  or |= (uint)data[i];
 		}
 		return PackedInts.BitsRequired(or);
 	  }

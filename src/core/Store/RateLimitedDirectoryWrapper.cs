@@ -2,23 +2,25 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
+    using Lucene.Net.Support;
     using System;
+    using System.Collections.Generic;
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+                 * Licensed to the Apache Software Foundation (ASF) under one or more
+                 * contributor license agreements.  See the NOTICE file distributed with
+                 * this work for additional information regarding copyright ownership.
+                 * The ASF licenses this file to You under the Apache License, Version 2.0
+                 * (the "License"); you may not use this file except in compliance with
+                 * the License.  You may obtain a copy of the License at
+                 *
+                 *     http://www.apache.org/licenses/LICENSE-2.0
+                 *
+                 * Unless required by applicable law or agreed to in writing, software
+                 * distributed under the License is distributed on an "AS IS" BASIS,
+                 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                 * See the License for the specific language governing permissions and
+                 * limitations under the License.
+                 */
 
     using Context_e = Lucene.Net.Store.IOContext.Context_e;
 
@@ -34,7 +36,8 @@ namespace Lucene.Net.Store
 
 	  // we need to be volatile here to make sure we see all the values that are set
 	  // / modified concurrently
-	  private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
+	  //private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
+      private IDictionary<IOContext.Context_e, RateLimiter> ContextRateLimiters = new ConcurrentHashMap<IOContext.Context_e, RateLimiter>();
 
 	  public RateLimitedDirectoryWrapper(Directory wrapped) : base(wrapped)
 	  {
@@ -67,7 +70,7 @@ namespace Lucene.Net.Store
 	  private RateLimiter GetRateLimiter(IOContext.Context_e context)
 	  {
 		Debug.Assert(context != null);
-		return ContextRateLimiters[context.ordinal()];
+		return ContextRateLimiters[context];
 	  }
 
 	  /// <summary>
@@ -95,24 +98,24 @@ namespace Lucene.Net.Store
 		{
 		  throw new System.ArgumentException("Context must not be null");
 		}
-		int ord = context.ordinal();
-		RateLimiter limiter = ContextRateLimiters[ord];
+		//int ord = context.ordinal();
+        RateLimiter limiter = ContextRateLimiters[context];
 		if (mbPerSec == null)
 		{
 		  if (limiter != null)
 		  {
 			limiter.MbPerSec = double.MaxValue;
-			ContextRateLimiters[ord] = null;
+            ContextRateLimiters[context] = null;
 		  }
 		}
 		else if (limiter != null)
 		{
 		  limiter.MbPerSec = mbPerSec;
-		  ContextRateLimiters[ord] = limiter; // cross the mem barrier again
+          ContextRateLimiters[context] = limiter; // cross the mem barrier again
 		}
 		else
 		{
-		  ContextRateLimiters[ord] = new RateLimiter.SimpleRateLimiter(mbPerSec);
+            ContextRateLimiters[context] = new RateLimiter.SimpleRateLimiter(mbPerSec);
 		}
 	  }
 
@@ -131,14 +134,14 @@ namespace Lucene.Net.Store
 	  ///           if context is <code>null</code> </exception>
 	  /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed           
 	  /// @lucene.experimental </exception>
-	  public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, Context context)
+	  public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.Context_e context)
 	  {
 		EnsureOpen();
 		if (context == null)
 		{
 		  throw new System.ArgumentException("Context must not be null");
 		}
-		ContextRateLimiters[context.ordinal()] = mergeWriteRateLimiter;
+		ContextRateLimiters[context] = mergeWriteRateLimiter;
 	  }
 
 	  /// <summary>

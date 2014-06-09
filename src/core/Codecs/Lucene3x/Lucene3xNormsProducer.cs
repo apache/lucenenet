@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// @lucene.experimental </summary>
 	/// @deprecated Only for reading existing 3.x indexes 
 	[Obsolete("Only for reading existing 3.x indexes")]
-	internal class Lucene3xNormsProducer : DocValuesProducer
+	public class Lucene3xNormsProducer : DocValuesProducer
 	{
 
 	  /// <summary>
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// Extension of separate norms file </summary>
 	  internal const string SEPARATE_NORMS_EXTENSION = "s";
 
-	  internal readonly IDictionary<string, NormsDocValues> Norms = new Dictionary<string, NormsDocValues>();
+	  private readonly IDictionary<string, NormsDocValues> Norms = new Dictionary<string, NormsDocValues>();
 	  // any .nrm or .sNN files we have open at any time.
 	  // TODO: just a list, and double-close() separate norms files?
       internal readonly ISet<IndexInput> OpenFiles = new IdentityHashSet<IndexInput>();
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  internal IndexInput SingleNormStream;
 	  internal readonly int Maxdoc;
 
-	  //private readonly AtomicLong RamBytesUsed_Renamed;
+	  private readonly AtomicLong RamBytesUsed_Renamed;
 
 	  // note: just like segmentreader in 3.x, we open up all the files here (including separate norms) up front.
 	  // but we just don't do any seeks or reading yet.
@@ -143,20 +143,23 @@ namespace Lucene.Net.Codecs.Lucene3x
 			IOUtils.CloseWhileHandlingException(OpenFiles);
 		  }
 		}
-		//RamBytesUsed_Renamed = new AtomicLong();
+		RamBytesUsed_Renamed = new AtomicLong();
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		try
-		{
-		  IOUtils.Close(OpenFiles.ToArray());
-		}
-		finally
-		{
-		  Norms.Clear();
-		  OpenFiles.Clear();
-		}
+          if (disposing)
+          {
+              try
+              {
+                  IOUtils.Close(OpenFiles.ToArray());
+              }
+              finally
+              {
+                  Norms.Clear();
+                  OpenFiles.Clear();
+              }
+          }
 	  }
 
 	  private static string GetNormFilename(SegmentInfo info, int number)
@@ -212,8 +215,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 				{
 				  if (Instance_Renamed == null)
 				  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final byte[] bytes = new byte[maxdoc];
 					sbyte[] bytes = new sbyte[OuterInstance.Maxdoc];
 					// some norms share fds
 					lock (File)
@@ -225,9 +226,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (File != OuterInstance.SingleNormStream)
 					{
                         OuterInstance.OpenFiles.Remove(File);
-					    File.Close();
+					    File.Dispose();
 					}
-                    //OuterInstance.RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(bytes));
+                    OuterInstance.RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
 					Instance_Renamed = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
 				  }
 				  return Instance_Renamed;
@@ -281,10 +282,10 @@ namespace Lucene.Net.Codecs.Lucene3x
           throw new InvalidOperationException();
 	  }
 
-	  /*public override long RamBytesUsed()
+	  public override long RamBytesUsed()
 	  {
-		return RamBytesUsed_Renamed.get();
-	  }*/
+		return RamBytesUsed_Renamed.Get();
+	  }
 
 	  public override void CheckIntegrity()
 	  {

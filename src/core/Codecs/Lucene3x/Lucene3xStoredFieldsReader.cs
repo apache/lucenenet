@@ -108,10 +108,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  ///  clones are called (eg, currently SegmentReader manages
 	  ///  this logic). 
 	  /// </summary>
-	  public override Lucene3xStoredFieldsReader Clone()
+	  public override object Clone()
 	  {
 		EnsureOpen();
-		return new Lucene3xStoredFieldsReader(FieldInfos, NumTotalDocs, Size, Format, DocStoreOffset, FieldsStream.Clone(), IndexStream.Clone());
+        return new Lucene3xStoredFieldsReader(FieldInfos, NumTotalDocs, Size, Format, DocStoreOffset, (IndexInput)FieldsStream.Clone(), (IndexInput)IndexStream.Clone());
 	  }
 
 	  /// <summary>
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		finally
 		{
-		  idxStream.Close();
+		  idxStream.Dispose();
 		}
 	  }
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  {
 			try
 			{
-			  Close();
+			  Dispose();
 			} // keep our original exception
 			catch (Exception t)
 			{
@@ -243,13 +243,16 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// this means that the Fields values will not be accessible.
 	  /// </summary>
 	  /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-	  public void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		if (!Closed)
-		{
-		  IOUtils.Close(FieldsStream, IndexStream, StoreCFSReader);
-		  Closed = true;
-		}
+          if (disposing)
+          {
+              if (!Closed)
+              {
+                  IOUtils.Close(FieldsStream, IndexStream, StoreCFSReader);
+                  Closed = true;
+              }
+          }
 	  }
 
 	  private void SeekIndex(int docID)

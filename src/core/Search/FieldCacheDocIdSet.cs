@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public override sealed Bits Bits()
+	  public override sealed Bits GetBits()
 	  {
 		return (AcceptDocs == null) ? (Bits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
 	  }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public override sealed DocIdSetIterator Iterator()
+	  public override sealed DocIdSetIterator GetIterator()
 	  {
 		if (AcceptDocs == null)
 		{
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 		{
 		  // special case for FixedBitSet / OpenBitSet: use the iterator and filter it
 		  // (used e.g. when Filters are chained by FilteredQuery)
-		  return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, ((DocIdSet) AcceptDocs).Iterator());
+		  return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, ((DocIdSet) AcceptDocs).GetIterator());
 		}
 		else
 		{

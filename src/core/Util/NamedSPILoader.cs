@@ -133,6 +133,11 @@ namespace Lucene.Net.Util
 		return Services.Values.GetEnumerator();
 	  }
 
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
+
 	  /// <summary>
 	  /// Interface to support <seealso cref="NamedSPILoader#lookup(String)"/> by name.
 	  /// <p>

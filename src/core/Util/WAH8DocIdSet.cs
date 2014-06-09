@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
 	  public const int DEFAULT_INDEX_INTERVAL = 24;
 
 	  private static readonly MonotonicAppendingLongBuffer SINGLE_ZERO_BUFFER = new MonotonicAppendingLongBuffer(1, 64, PackedInts.COMPACT);
-	  private static WAH8DocIdSet EMPTY = new WAH8DocIdSet(new sbyte[0], 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
+	  private static WAH8DocIdSet EMPTY = new WAH8DocIdSet(new byte[0], 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 
 	  static WAH8DocIdSet()
 	  {
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
 		int i = 0;
 		foreach (WAH8DocIdSet set in docIdSets)
 		{
-		  Iterator it = set.Iterator();
+		  Iterator it = (Iterator)set.GetIterator();
 		  iterators[i++] = it;
 		}
 		Array.Sort(iterators, SERIALIZED_LENGTH_COMPARATOR);
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
 		  {
 			break;
 		  }
-		  sbyte word = iterators[0].Word;
+		  byte word = iterators[0].Word;
 		  for (i = 1; i < numSets; ++i)
 		  {
 			if (iterators[i].WordNum < wordNum)
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util
 		  ++wordNum;
 		  mainContinue:;
 		}
-		mainBreak:
+		//mainBreak:
 		return builder.Build();
 	  }
 
@@ -214,7 +214,7 @@ namespace Lucene.Net.Util
 		PriorityQueue<Iterator> iterators = new PriorityQueueAnonymousInnerClassHelper(numSets);
 		foreach (WAH8DocIdSet set in docIdSets)
 		{
-		  Iterator iterator = set.Iterator();
+		  Iterator iterator = (Iterator)set.GetIterator();
 		  iterator.NextWord();
 		  iterators.Add(iterator);
 		}
@@ -225,7 +225,7 @@ namespace Lucene.Net.Util
 		  return EMPTY;
 		}
 		int wordNum = top.WordNum;
-		sbyte word = top.Word;
+		byte word = top.Word;
 		WordBuilder builder = (new WordBuilder()).SetIndexInterval(indexInterval);
 		while (true)
 		{
@@ -256,7 +256,7 @@ namespace Lucene.Net.Util
 		  {
 		  }
 
-		  protected internal override bool LessThan(Iterator a, Iterator b)
+		  public override bool LessThan(Iterator a, Iterator b)
 		  {
 			return a.WordNum < b.WordNum;
 		  }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Word-based builder. </summary>
-	  internal class WordBuilder
+	  public class WordBuilder
 	  {
 
 		internal readonly GrowableByteArrayDataOutput @out;
@@ -314,8 +314,6 @@ namespace Lucene.Net.Util
 
 		internal virtual void WriteHeader(bool reverse, int cleanLength, int dirtyLength)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cleanLengthMinus2 = cleanLength - 2;
 		  int cleanLengthMinus2 = cleanLength - 2;
 		  Debug.Assert(cleanLengthMinus2 >= 0);
 		  Debug.Assert(dirtyLength >= 0);
@@ -348,7 +346,7 @@ namespace Lucene.Net.Util
 		  for (int i = 1; i < DirtyWords.Length; ++i)
 		  {
 			Debug.Assert(DirtyWords.Bytes[i - 1] != 0 || DirtyWords.Bytes[i] != 0);
-			Debug.Assert(DirtyWords.Bytes[i - 1] != unchecked((sbyte) 0xFF) || DirtyWords.Bytes[i] != unchecked((sbyte) 0xFF));
+            Debug.Assert((byte)DirtyWords.Bytes[i - 1] != 0xFF || (byte)DirtyWords.Bytes[i] != 0xFF);
 		  }
 		  return true;
 		}
@@ -369,7 +367,7 @@ namespace Lucene.Net.Util
 		  ++NumSequences;
 		}
 
-		internal virtual void AddWord(int wordNum, sbyte word)
+		internal virtual void AddWord(int wordNum, byte word)
 		{
 		  Debug.Assert(wordNum > LastWordNum);
 		  Debug.Assert(word != 0);
@@ -386,7 +384,7 @@ namespace Lucene.Net.Util
 			  switch (wordNum - LastWordNum)
 			  {
 				case 1:
-				  if (word == unchecked((sbyte) 0xFF) && DirtyWords.Bytes[DirtyWords.Length - 1] == unchecked((sbyte) 0xFF))
+                      if (word == 0xFF && (byte)DirtyWords.Bytes[DirtyWords.Length - 1] == 0xFF)
 				  {
 					--DirtyWords.Length;
 					WriteSequence();
@@ -416,13 +414,13 @@ namespace Lucene.Net.Util
 			switch (wordNum - LastWordNum)
 			{
 			  case 1:
-				if (word == unchecked((sbyte) 0xFF))
+				if (word == 0xFF)
 				{
 				  if (DirtyWords.Length == 0)
 				  {
 					++Clean;
 				  }
-				  else if (DirtyWords.Bytes[DirtyWords.Length - 1] == unchecked((sbyte) 0xFF))
+                  else if ((byte)DirtyWords.Bytes[DirtyWords.Length - 1] == 0xFF)
 				  {
 					--DirtyWords.Length;
 					WriteSequence();
@@ -464,7 +462,7 @@ namespace Lucene.Net.Util
 			return EMPTY;
 		  }
 		  WriteSequence();
-		  sbyte[] data = Arrays.CopyOf(@out.Bytes, @out.Length);
+		  byte[] data = Arrays.CopyOf((byte[])(Array)@out.Bytes, @out.Length);
 
 		  // Now build the index
 		  int valueCount = (NumSequences - 1) / IndexInterval_Renamed + 1;
@@ -476,20 +474,12 @@ namespace Lucene.Net.Util
 		  else
 		  {
 			const int pageSize = 128;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int initialPageCount = (valueCount + pageSize - 1) / pageSize;
 			int initialPageCount = (valueCount + pageSize - 1) / pageSize;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer positions = new Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer(initialPageCount, pageSize, Lucene.Net.Util.Packed.PackedInts.COMPACT);
 			MonotonicAppendingLongBuffer positions = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer wordNums = new Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer(initialPageCount, pageSize, Lucene.Net.Util.Packed.PackedInts.COMPACT);
 			MonotonicAppendingLongBuffer wordNums = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, PackedInts.COMPACT);
 
 			positions.Add(0L);
 			wordNums.Add(0L);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Iterator it = new Iterator(data, cardinality, Integer.MAX_VALUE, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 			Iterator it = new Iterator(data, Cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 			Debug.Assert(it.@in.Position == 0);
 			Debug.Assert(it.WordNum == -1);
@@ -498,17 +488,11 @@ namespace Lucene.Net.Util
 			  // skip indexInterval sequences
 			  for (int j = 0; j < IndexInterval_Renamed; ++j)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean readSequence = it.readSequence();
 				bool readSequence = it.ReadSequence();
 				Debug.Assert(readSequence);
 				it.SkipDirtyBytes();
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int position = it.in.getPosition();
 			  int position = it.@in.Position;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int wordNum = it.wordNum;
 			  int wordNum = it.WordNum;
 			  positions.Add(position);
 			  wordNums.Add(wordNum + 1);
@@ -549,8 +533,6 @@ namespace Lucene.Net.Util
 		  {
 			throw new System.ArgumentException("Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + LastDocID);
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int wordNum = wordNum(docID);
 		  int wordNum = WordNum(docID);
 		  if (this.WordNum == -1)
 		  {
@@ -563,7 +545,7 @@ namespace Lucene.Net.Util
 		  }
 		  else
 		  {
-			AddWord(this.WordNum, (sbyte) Word);
+			AddWord(this.WordNum, (byte) Word);
 			this.WordNum = wordNum;
 			Word = 1 << (docID & 0x07);
 		  }
@@ -582,7 +564,7 @@ namespace Lucene.Net.Util
 		  return this;
 		}
 
-		public override Builder SetIndexInterval(int indexInterval)
+		public override WordBuilder SetIndexInterval(int indexInterval)
 		{
 		  return (Builder) base.SetIndexInterval(indexInterval);
 		}
@@ -591,7 +573,7 @@ namespace Lucene.Net.Util
 		{
 		  if (this.WordNum != -1)
 		  {
-			AddWord(WordNum, (sbyte) Word);
+			AddWord(WordNum, (byte)Word);
 		  }
 		  return base.Build();
 		}
@@ -599,13 +581,13 @@ namespace Lucene.Net.Util
 	  }
 
 	  // where the doc IDs are stored
-	  private readonly sbyte[] Data;
+	  private readonly byte[] Data;
 	  private readonly int Cardinality_Renamed;
 	  private readonly int IndexInterval;
 	  // index for advance(int)
 	  private readonly MonotonicAppendingLongBuffer Positions, WordNums; // wordNums[i] starts at the sequence at positions[i]
 
-	  internal WAH8DocIdSet(sbyte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
+	  internal WAH8DocIdSet(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
 	  {
 		this.Data = data;
 		this.Cardinality_Renamed = cardinality;
@@ -622,7 +604,7 @@ namespace Lucene.Net.Util
 		  }
 	  }
 
-	  public override Iterator Iterator()
+      public override DocIdSetIterator GetIterator()
 	  {
 		return new Iterator(Data, Cardinality_Renamed, IndexInterval, Positions, WordNums);
 	  }
@@ -630,8 +612,6 @@ namespace Lucene.Net.Util
 	  internal static int ReadCleanLength(ByteArrayDataInput @in, int token)
 	  {
 		int len = ((int)((uint)token >> 4)) & 0x07;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startPosition = in.getPosition();
 		int startPosition = @in.Position;
 		if ((len & 0x04) != 0)
 		{
@@ -654,7 +634,7 @@ namespace Lucene.Net.Util
 		return len;
 	  }
 
-	  internal class Iterator : DocIdSetIterator
+	  public class Iterator : DocIdSetIterator
 	  {
 
 		/* Using the index can be costly for close targets. */
@@ -676,13 +656,13 @@ namespace Lucene.Net.Util
 		internal int DirtyLength;
 
 		internal int WordNum; // byte offset
-		internal sbyte Word; // current word
+		internal byte Word; // current word
 		internal int BitList; // list of bits set in the current word
 		internal int SequenceNum; // in which sequence are we?
 
 		internal int DocID_Renamed;
 
-		internal Iterator(sbyte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
+		internal Iterator(byte[] data, int cardinality, int indexInterval, MonotonicAppendingLongBuffer positions, MonotonicAppendingLongBuffer wordNums)
 		{
 		  this.@in = new ByteArrayDataInput(data);
 		  this.Cardinality = cardinality;
@@ -704,13 +684,9 @@ namespace Lucene.Net.Util
 			WordNum = int.MaxValue;
 			return false;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int token = in.readByte() & 0xFF;
 		  int token = @in.ReadByte() & 0xFF;
 		  if ((token & (1 << 7)) == 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cleanLength = readCleanLength(in, token);
 			int cleanLength = ReadCleanLength(@in, token);
 			WordNum += cleanLength;
 		  }
@@ -754,7 +730,7 @@ namespace Lucene.Net.Util
 		{
 		  if (AllOnesLength > 0)
 		  {
-			Word = unchecked((sbyte) 0xFF);
+			Word = 0xFF;
 			++WordNum;
 			--AllOnesLength;
 			return;
@@ -786,8 +762,6 @@ namespace Lucene.Net.Util
 		internal virtual int ForwardBinarySearch(int targetWordNum)
 		{
 		  // advance forward and double the window at each step
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int indexSize = (int) wordNums.size();
 		  int indexSize = (int) WordNums.Size();
 		  int lo = SequenceNum / IndexInterval, hi = lo + 1;
 		  Debug.Assert(SequenceNum == -1 || WordNums.Get(lo) <= WordNum);
@@ -803,8 +777,6 @@ namespace Lucene.Net.Util
 			{
 			  break;
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLo = hi;
 			int newLo = hi;
 			hi += (hi - lo) << 1;
 			lo = newLo;
@@ -813,11 +785,7 @@ namespace Lucene.Net.Util
 		  // we found a window containing our target, let's binary search now
 		  while (lo <= hi)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mid = (lo + hi) >>> 1;
 			int mid = (int)((uint)(lo + hi) >> 1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int midWordNum = (int) wordNums.get(mid);
 			int midWordNum = (int) WordNums.Get(mid);
 			if (midWordNum <= targetWordNum)
 			{
@@ -848,11 +816,7 @@ namespace Lucene.Net.Util
 			if (delta > IndexThreshold_Renamed)
 			{
 			  // use the index
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i = forwardBinarySearch(targetWordNum);
 			  int i = ForwardBinarySearch(targetWordNum);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int position = (int) positions.get(i);
 			  int position = (int) Positions.Get(i);
 			  if (position > @in.Position) // if the binary search returned a backward offset, don't move
 			  {
@@ -912,8 +876,6 @@ namespace Lucene.Net.Util
 		public override int Advance(int target)
 		{
 		  Debug.Assert(target > DocID_Renamed);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int targetWordNum = wordNum(target);
 		  int targetWordNum = WordNum(target);
 		  if (targetWordNum > this.WordNum)
 		  {

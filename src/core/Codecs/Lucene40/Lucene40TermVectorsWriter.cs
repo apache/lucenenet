@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		try
 		{
-		  Close();
+		  Dispose();
 		}
 		catch (Exception ignored)
 		{
@@ -518,19 +518,23 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  /// <summary>
 	  /// Close all streams. </summary>
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		// make an effort to close all streams we can but remember and re-throw
-		// the first exception encountered in this process
-		IOUtils.Close(Tvx, Tvd, Tvf);
-		Tvx = Tvd = Tvf = null;
+          if (disposing)
+          {
+              // make an effort to close all streams we can but remember and re-throw
+              // the first exception encountered in this process
+              IOUtils.Close(Tvx, Tvd, Tvf);
+              Tvx = Tvd = Tvf = null;
+          }
+		
 	  }
 
 	  public override IComparer<BytesRef> Comparator
 	  {
 		  get
 		  {
-			return BytesRef.UTF8SortedAsUnicodeComparator;
+			return BytesRef.UTF8SortedAsUnicodeComparer;
 		  }
 	  }
 	}

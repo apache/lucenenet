@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
 	  public const int DEFAULT_BUFFER_SIZE = 16384;
 
 	  private readonly int BufferSize_Renamed;
-	  private readonly sbyte[] Buffer;
+	  private readonly byte[] Buffer;
 	  private long BufferStart = 0; // position in file of buffer
 	  private int BufferPosition = 0; // position in buffer
 	  private readonly CRC32 Crc = new CRC32();
@@ -55,10 +55,10 @@ namespace Lucene.Net.Store
 		  throw new System.ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
 		}
 		this.BufferSize_Renamed = bufferSize;
-		Buffer = new sbyte[bufferSize];
+		Buffer = new byte[bufferSize];
 	  }
 
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		if (BufferPosition >= BufferSize_Renamed)
 		{
@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
 		Buffer[BufferPosition++] = b;
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int length)
+	  public override void WriteBytes(byte[] b, int offset, int length)
 	  {
 		int bytesLeft = BufferSize_Renamed - BufferPosition;
 		// is there enough space in the buffer?
@@ -133,7 +133,7 @@ namespace Lucene.Net.Store
 	  /// the output. </summary>
 	  /// <param name="b"> the bytes to write </param>
 	  /// <param name="len"> the number of bytes to write </param>
-	  private void FlushBuffer(sbyte[] b, int len)
+	  private void FlushBuffer(byte[] b, int len)
 	  {
 		FlushBuffer(b, 0, len);
 	  }
@@ -144,9 +144,9 @@ namespace Lucene.Net.Store
 	  /// <param name="b"> the bytes to write </param>
 	  /// <param name="offset"> the offset in the byte array </param>
 	  /// <param name="len"> the number of bytes to write </param>
-	  protected internal abstract void FlushBuffer(sbyte[] b, int offset, int len);
+	  protected internal abstract void FlushBuffer(byte[] b, int offset, int len);
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		Flush();
 	  }
@@ -159,13 +159,14 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
+      [Obsolete]
 	  public override void Seek(long pos)
 	  {
 		Flush();
 		BufferStart = pos;
 	  }
 
-	  public override abstract long Length();
+      public override abstract long Length { get; }
 
 	  /// <summary>
 	  /// Returns size of the used output buffer in bytes.

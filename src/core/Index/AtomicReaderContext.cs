@@ -67,9 +67,19 @@ namespace Lucene.Net.Index
 		return null;
 	  }
 
-	  public override AtomicReader Reader()
-	  {
-		return Reader_Renamed;
-	  }
+      public override IndexReader Reader()
+      {
+          return Reader_Renamed;
+      }
+
+      // .NET Port: Can't change return type on override like Java, so adding helper property
+      // to avoid a bunch of casting.
+      public AtomicReader AtomicReader
+      {
+          get
+          {
+              return Reader_Renamed;
+          }
+      }
 	}
 }

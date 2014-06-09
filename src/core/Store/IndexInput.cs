@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Closes the stream to further operations. </summary>
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
 	  /// <summary>
 	  /// Returns the current position in this file, where the next read will
@@ -86,9 +86,18 @@ namespace Lucene.Net.Store
 	  /// The original instance must take care that cloned instances throw
 	  /// <seealso cref="AlreadyClosedException"/> when the original one is closed.
 	  /// </summary>
-	  public override IndexInput Clone()
+	  public override object Clone()
 	  {
-		return (IndexInput) base.Clone();
+          IndexInput clone = null;
+          try
+          {
+              clone = (IndexInput)base.MemberwiseClone();
+          }
+          catch (System.Exception)
+          {
+          }
+
+          return clone;
 	  }
 	}
 

@@ -120,7 +120,9 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Releases exclusive access. </summary>
-	  public abstract void Close();
+	  public abstract void Release();
+
+      public virtual void Dispose() { }
 
 	  /// <summary>
 	  /// Returns true if the resource is currently locked.  Note that one must
@@ -169,7 +171,7 @@ namespace Lucene.Net.Store
 		  {
 			if (locked)
 			{
-			  @lock.Close();
+			  @lock.Release();
 			}
 		  }
 		}

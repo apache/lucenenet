@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Compressing
 			if (literalLen == 0x0F)
 			{
 			  sbyte len;
-			  while ((len = compressed.ReadByte()) == unchecked((sbyte) 0xFF))
+			  while ((len = compressed.ReadSByte()) == unchecked((sbyte) 0xFF))
 			  {
 				literalLen += 0xFF;
 			  }
@@ -233,24 +233,20 @@ namespace Lucene.Net.Codecs.Compressing
 	  internal sealed class HashTable
 	  {
 		internal int HashLog;
-		internal PackedInts.Mutable HashTable;
+		internal PackedInts.Mutable hashTable;
 
 		internal void Reset(int len)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerOffset = Lucene.Net.Util.Packed.PackedInts.bitsRequired(len - LAST_LITERALS);
 		  int bitsPerOffset = PackedInts.BitsRequired(len - LAST_LITERALS);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerOffsetLog = 32 - Integer.numberOfLeadingZeros(bitsPerOffset - 1);
 		  int bitsPerOffsetLog = 32 - Number.NumberOfLeadingZeros(bitsPerOffset - 1);
 		  HashLog = MEMORY_USAGE + 3 - bitsPerOffsetLog;
-		  if (HashTable == null || HashTable.Size() < 1 << HashLog || HashTable.BitsPerValue < bitsPerOffset)
+		  if (hashTable == null || hashTable.Size() < 1 << HashLog || hashTable.BitsPerValue < bitsPerOffset)
 		  {
-			HashTable = PackedInts.GetMutable(1 << HashLog, bitsPerOffset, PackedInts.DEFAULT);
+			hashTable = PackedInts.GetMutable(1 << HashLog, bitsPerOffset, PackedInts.DEFAULT);
 		  }
 		  else
 		  {
-			HashTable.Clear();
+			hashTable.Clear();
 		  }
 		}
 
@@ -288,7 +284,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  int hashLog = ht.HashLog;
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Mutable hashTable = ht.hashTable;
-		  PackedInts.Mutable hashTable = ht.HashTable;
+		  PackedInts.Mutable hashTable = ht.hashTable;
 
 		  while (off <= limit)
 		  {
@@ -337,7 +333,7 @@ namespace Lucene.Net.Codecs.Compressing
 		EncodeLastLiterals(bytes, anchor, end - anchor, @out);
 	  }
 
-	  private class Match
+	  public class Match
 	  {
 		internal int Start, @ref, Len;
 
@@ -426,7 +422,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		}
 
-		internal bool InsertAndFindBestMatch(sbyte[] buf, int off, int matchLimit, Match match)
+		public bool InsertAndFindBestMatch(sbyte[] buf, int off, int matchLimit, Match match)
 		{
 		  match.Start = off;
 		  match.Len = 0;
@@ -491,7 +487,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  return match.Len != 0;
 		}
 
-		internal bool InsertAndFindWiderMatch(sbyte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
+		public bool InsertAndFindWiderMatch(sbyte[] buf, int off, int startLimit, int matchLimit, int minLen, Match match)
 		{
 		  match.Len = minLen;
 

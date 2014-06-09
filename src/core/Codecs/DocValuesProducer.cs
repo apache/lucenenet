@@ -92,6 +92,14 @@ namespace Lucene.Net.Codecs
 	  /// @lucene.internal
 	  /// </summary>
 	  public abstract void CheckIntegrity();
+
+      public void Dispose()
+      {
+          Dispose(true);
+          GC.SuppressFinalize(this);
+      }
+
+      protected abstract void Dispose(bool disposing);
 	}
 
 }

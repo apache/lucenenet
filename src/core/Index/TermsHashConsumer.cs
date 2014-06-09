@@ -23,11 +23,11 @@ namespace Lucene.Net.Index
 
 	internal abstract class TermsHashConsumer
 	{
-	  internal abstract void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state);
-	  internal abstract void Abort();
-	  internal abstract void StartDocument();
-	  internal abstract void FinishDocument(TermsHash termsHash);
-	  public abstract TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo);
+	  public abstract void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state);
+      public abstract void Abort();
+      public abstract void StartDocument();
+      public abstract void FinishDocument(TermsHash termsHash);
+      public abstract TermsHashConsumerPerField AddField(TermsHashPerField termsHashPerField, FieldInfo fieldInfo);
 	}
 
 }

@@ -28,6 +28,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Bits = Lucene.Net.Util.Bits;
     using Lucene.Net.Support;
+    using System.Collections;
 
 	/// <summary>
 	/// A query that generates the union of documents produced by its subqueries, and that scores each document with the maximum
@@ -47,7 +48,7 @@ namespace Lucene.Net.Search
 	{
 
 	  /* The subqueries */
-	  private List<Query> disjuncts = new List<Query>();
+	  private EquatableList<Query> disjuncts = new EquatableList<Query>();
 
 	  /* Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking. */
 	  private float tieBreakerMultiplier = 0.0f;
@@ -95,6 +96,11 @@ namespace Lucene.Net.Search
 	  {
 		return disjuncts.GetEnumerator();
 	  }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
 
 	  /// <returns> the disjuncts. </returns>
 	  public virtual List<Query> Disjuncts
@@ -218,7 +224,7 @@ namespace Lucene.Net.Search
 		  foreach (Weight wt in Weights)
 		  {
 			Explanation e = wt.Explain(context, doc);
-			if (e.Match)
+			if (e.IsMatch)
 			{
 			  result.Match = true;
 			  result.AddDetail(e);
@@ -254,7 +260,7 @@ namespace Lucene.Net.Search
 		  {
 			if (result == singleton)
 			{
-				result = result.Clone();
+				result = (Query)result.Clone();
 			}
 			result.Boost = Boost * result.Boost;
 		  }
@@ -269,7 +275,7 @@ namespace Lucene.Net.Search
 		  {
 			if (clone == null)
 			{
-				clone = this.Clone();
+				clone = (DisjunctionMaxQuery)this.Clone();
 			}
 			clone.disjuncts[i] = rewrite;
 		  }
@@ -287,12 +293,10 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Create a shallow copy of us -- used in rewriting if necessary </summary>
 	  /// <returns> a copy of us (but reuse, don't copy, our subqueries)  </returns>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Override @SuppressWarnings("unchecked") public DisjunctionMaxQuery clone()
-	  public override DisjunctionMaxQuery Clone()
+	  public override object Clone()
 	  {
 		DisjunctionMaxQuery clone = (DisjunctionMaxQuery)base.Clone();
-		clone.disjuncts = (List<Query>) this.disjuncts.Clone();
+		clone.disjuncts = (EquatableList<Query>) this.disjuncts.Clone();
 		return clone;
 	  }
 

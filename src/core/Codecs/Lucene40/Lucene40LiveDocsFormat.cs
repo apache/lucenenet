@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene40
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final BitVector liveDocs = (BitVector) existing;
 		BitVector liveDocs = (BitVector) existing;
-		return liveDocs.Clone();
+		return (BitVector)liveDocs.Clone();
 	  }
 
 	  public override Bits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)

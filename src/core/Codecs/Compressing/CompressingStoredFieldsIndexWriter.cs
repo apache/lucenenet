@@ -223,9 +223,9 @@ namespace Lucene.Net.Codecs.Compressing
 		CodecUtil.WriteFooter(FieldsIndexOut);
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
-		FieldsIndexOut.Close();
+		FieldsIndexOut.Dispose();
 	  }
 
 	}

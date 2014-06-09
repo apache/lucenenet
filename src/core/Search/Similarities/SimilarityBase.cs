@@ -199,7 +199,7 @@ namespace Lucene.Net.Search.Similarities
 		return result;
 	  }
 
-	  public override SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
+	  public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
 	  {
 		if (stats is MultiSimilarity.MultiStats)
 		{
@@ -210,14 +210,14 @@ namespace Lucene.Net.Search.Similarities
 		  for (int i = 0; i < subScorers.Length; i++)
 		  {
 			BasicStats basicstats = (BasicStats) subStats[i];
-			subScorers[i] = new BasicSimScorer(this, basicstats, context.Reader().GetNormValues(basicstats.Field));
+			subScorers[i] = new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.Field));
 		  }
 		  return new MultiSimilarity.MultiSimScorer(subScorers);
 		}
 		else
 		{
 		  BasicStats basicstats = (BasicStats) stats;
-		  return new BasicSimScorer(this, basicstats, context.Reader().GetNormValues(basicstats.Field));
+		  return new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.Field));
 		}
 	  }
 

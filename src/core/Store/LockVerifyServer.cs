@@ -4,25 +4,29 @@ using System.Threading;
 namespace Lucene.Net.Store
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    using System.IO;
+    using System.Net;
+    using System.Net.Sockets;
+    /*
+                     * Licensed to the Apache Software Foundation (ASF) under one or more
+                     * contributor license agreements.  See the NOTICE file distributed with
+                     * this work for additional information regarding copyright ownership.
+                     * The ASF licenses this file to You under the Apache License, Version 2.0
+                     * (the "License"); you may not use this file except in compliance with
+                     * the License.  You may obtain a copy of the License at
+                     *
+                     *     http://www.apache.org/licenses/LICENSE-2.0
+                     *
+                     * Unless required by applicable law or agreed to in writing, software
+                     * distributed under the License is distributed on an "AS IS" BASIS,
+                     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                     * See the License for the specific language governing permissions and
+                     * limitations under the License.
+                     */
 
 
-	using IOUtils = Lucene.Net.Util.IOUtils;
+    using IOUtils = Lucene.Net.Util.IOUtils;
 
 	/// <summary>
 	/// Simple standalone server that must be running when you
@@ -35,7 +39,12 @@ namespace Lucene.Net.Store
 
 	public class LockVerifyServer
 	{
+        private static String GetTime(long startTime)
+        {
+            return "[" + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) / 1000) + "s] ";
+        }
 
+      /*[STAThread]
 	  public static void Main(string[] args)
 	  {
 
@@ -46,74 +55,60 @@ namespace Lucene.Net.Store
 		}
 
 		int arg = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String hostname = args[arg++];
-		string hostname = args[arg++];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxClients = Integer.parseInt(args[arg++]);
+        IPHostEntry ipHostInfo = Dns.GetHostEntry(args[arg++]);
+        IPAddress ipAddress = ipHostInfo.AddressList[0];
+        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 0);
 		int maxClients = Convert.ToInt32(args[arg++]);
 
-		try (ServerSocket s = new ServerSocket())
+        using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
 		{
-		  s.ReuseAddress = true;
-		  s.SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
-		  s.bind(new InetSocketAddress(hostname, 0));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.net.InetSocketAddress localAddr = (java.net.InetSocketAddress) s.getLocalSocketAddress();
-		  InetSocketAddress localAddr = (InetSocketAddress) s.LocalSocketAddress;
-		  Console.WriteLine("Listening on " + localAddr + "...");
+          s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+          s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
+          s.Bind(localEndPoint);
+          Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
 
 		  // we set the port as a sysprop, so the ANT task can read it. For that to work, this server must run in-process:
-		  System.setProperty("lockverifyserver.port", Convert.ToString(localAddr.Port));
+          System.Environment.SetEnvironmentVariable("lockverifyserver.port", ((IPEndPoint)s.LocalEndPoint).Port.ToString());
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Object localLock = new Object();
 		  object localLock = new object();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] lockedID = new int[1];
 		  int[] lockedID = new int[1];
 		  lockedID[0] = -1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.concurrent.CountDownLatch startingGun = new java.util.concurrent.CountDownLatch(1);
-		  CountDownLatch startingGun = new CountDownLatch(1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Thread[] threads = new Thread[maxClients];
-		  Thread[] threads = new Thread[maxClients];
+          CountdownEvent startingGun = new CountdownEvent(1);
+		  ThreadClass[] threads = new ThreadClass[maxClients];
 
 		  for (int count = 0; count < maxClients; count++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.net.Socket cs = s.accept();
-			Socket cs = s.accept();
+			Socket cs = s.Accept();
 			threads[count] = new ThreadAnonymousInnerClassHelper(localLock, lockedID, startingGun, cs);
 			threads[count].Start();
 		  }
 
 		  // start
 		  Console.WriteLine("All clients started, fire gun...");
-		  startingGun.countDown();
+		  startingGun.Signal();
 
 		  // wait for all threads to finish
-		  foreach (Thread t in threads)
+          foreach (ThreadClass t in threads)
 		  {
 			t.Join();
 		  }
 
+          //LUCENE TO-DO Not sure if equivalent?
 		  // cleanup sysprop
-		  System.clearProperty("lockverifyserver.port");
+		  //System.clearProperty("lockverifyserver.port");
 
 		  Console.WriteLine("Server terminated.");
 		}
-	  }
+	  }*/
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private object LocalLock;
 		  private int[] LockedID;
-		  private CountDownLatch StartingGun;
+          private CountdownEvent StartingGun;
 		  private Socket Cs;
 
-		  public ThreadAnonymousInnerClassHelper(object localLock, int[] lockedID, CountDownLatch startingGun, Socket cs)
+          public ThreadAnonymousInnerClassHelper(object localLock, int[] lockedID, CountdownEvent startingGun, Socket cs)
 		  {
 			  this.LocalLock = localLock;
 			  this.LockedID = lockedID;
@@ -123,27 +118,26 @@ namespace Lucene.Net.Store
 
 		  public override void Run()
 		  {
-			using (InputStream @in = Cs.InputStream, OutputStream os = Cs.OutputStream)
+			using (Stream @in = new NetworkStream(Cs, FileAccess.Read), os = new NetworkStream(Cs, FileAccess.ReadWrite))
 			{
-					try
-					{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int id = in.read();
-				  int id = @in.read();
+                BinaryReader intReader = new BinaryReader(@in);
+                BinaryWriter intWriter = new BinaryWriter(os);
+				try
+				{
+                  int id = intReader.ReadInt32();
 				  if (id < 0)
 				  {
 					throw new System.IO.IOException("Client closed connection before communication started.");
 				  }
 
-				  StartingGun.@await();
-				  os.write(43);
-				  os.flush();
+                  //LUCENE TO-DO NOt sure about this
+				  StartingGun.Wait();
+                  intWriter.Write(43);
+				  os.Flush();
 
 				  while (true)
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int command = in.read();
-					int command = @in.read();
+					int command = intReader.ReadInt32();
 					if (command < 0)
 					{
 					  return; // closed
@@ -151,8 +145,6 @@ namespace Lucene.Net.Store
 
 					lock (LocalLock)
 					{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int currentLock = lockedID[0];
 					  int currentLock = LockedID[0];
 					  if (currentLock == -2)
 					  {
@@ -181,19 +173,14 @@ namespace Lucene.Net.Store
 						default:
 						  throw new Exception("Unrecognized command: " + command);
 					  }
-					  os.write(command);
-					  os.flush();
+					  intWriter.Write(command);
+					  os.Flush();
 					}
 				  }
 					}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-				catch (Exception | Exception e)
+				catch (Exception e)
 				{
 				  throw e;
-				}
-				catch (Exception ioe)
-				{
-				  throw new Exception(ioe);
 				}
 				finally
 				{

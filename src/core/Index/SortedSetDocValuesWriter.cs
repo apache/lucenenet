@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 		CurrentDoc++;
 	  }
 
-	  public override void Finish(int maxDoc)
+	  internal override void Finish(int maxDoc)
 	  {
 		FinishCurrentDoc();
 
@@ -160,14 +160,14 @@ namespace Lucene.Net.Index
 		BytesUsed = newBytesUsed;
 	  }
 
-	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+      internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
 		int maxDoc = state.SegmentInfo.DocCount;
 		int maxCountPerDoc = MaxCount;
 		Debug.Assert(PendingCounts.Size() == maxDoc);
 		int valueCount = Hash.Size();
 
-		int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparator);
+		int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
 		int[] ordMap = new int[valueCount];
 
 		for (int ord = 0;ord < valueCount;ord++)
@@ -178,11 +178,15 @@ namespace Lucene.Net.Index
 		dvConsumer.AddSortedSetField(FieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
 
 								  // doc -> ordCount
-								  GetIntEnumberable(maxDoc),
+								  GetOrdsEnumberable(maxDoc),
 
 								  // ords
-								  GetLongEnumberable(maxCountPerDoc, ordMap));
+								  GetOrdCountEnumberable(maxCountPerDoc, ordMap));
 	  }
+
+      internal override void Abort()
+      {
+      }
 
         private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues) 
         {
@@ -193,9 +197,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<int> GetIntEnumberable(int maxDoc)
+        private IEnumerable<long> GetOrdsEnumberable(int maxDoc)
         {
-            AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.Iterator();
+            AppendingDeltaPackedLongBuffer.Iterator iter = PendingCounts.GetIterator();
             
             Debug.Assert(maxDoc == Pending.Size());
 
@@ -205,11 +209,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long> GetLongEnumberable(int maxCountPerDoc, int[] ordMap) 
+        private IEnumerable<long> GetOrdCountEnumberable(int maxCountPerDoc, int[] ordMap) 
         {
             int currentUpTo = 0, currentLength = 0;
-            AppendingPackedLongBuffer.Iterator iter = Pending.Iterator();
-		    AppendingDeltaPackedLongBuffer.Iterator counts = PendingCounts.Iterator();
+            AppendingPackedLongBuffer.Iterator iter = Pending.GetIterator();
+		    AppendingDeltaPackedLongBuffer.Iterator counts = PendingCounts.GetIterator();
             int[] currentDoc = new int[maxCountPerDoc];
 
             for (long i = 0; i < Pending.Size(); ++i)

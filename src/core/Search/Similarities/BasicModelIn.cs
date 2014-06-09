@@ -18,8 +18,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Search.Similarities.SimilarityBase;
-
 	/// <summary>
 	/// The basic tf-idf model of randomness.
 	/// @lucene.experimental

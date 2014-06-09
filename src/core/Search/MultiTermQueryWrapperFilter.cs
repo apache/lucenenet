@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 		return false;
 	  }
 
-	  public override sealed int HashCode()
+	  public override sealed int GetHashCode()
 	  {
 		return Query.GetHashCode();
 	  }
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-		AtomicReader reader = context.Reader();
+		AtomicReader reader = ((AtomicReader)context.Reader());
 		Fields fields = reader.Fields();
 		if (fields == null)
 		{

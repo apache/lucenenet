@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-			return BytesRef.UTF8SortedAsUnicodeComparator;
+			return BytesRef.UTF8SortedAsUnicodeComparer;
 		  }
 	  }
 

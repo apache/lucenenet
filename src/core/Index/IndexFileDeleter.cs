@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
 		Refresh(null);
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		// DecRef old files from the last checkpoint, if any:
 		Debug.Assert(Locked());

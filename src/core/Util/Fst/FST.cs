@@ -64,7 +64,7 @@ namespace Lucene.Net.Util.Fst
 	/// </summary>
 	public sealed class FST<T> : FST
 	{
-	  /// <summary>
+	  /*/// <summary>
 	  /// Specifies allowed range of each int input label for
 	  ///  this FST. 
 	  /// </summary>
@@ -73,10 +73,10 @@ namespace Lucene.Net.Util.Fst
 		  BYTE1,
 		  BYTE2,
 		  BYTE4
-	  }
+	  }*/
 	  public readonly INPUT_TYPE inputType;
 
-	  internal static readonly int BIT_FINAL_ARC = 1 << 0;
+	  /*internal static readonly int BIT_FINAL_ARC = 1 << 0;
 	  internal static readonly int BIT_LAST_ARC = 1 << 1;
 	  internal static readonly int BIT_TARGET_NEXT = 1 << 2;
 
@@ -104,11 +104,11 @@ namespace Lucene.Net.Util.Fst
 	  internal const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
 
 	  /// <seealso cref= #shouldExpand(UnCompiledNode) </seealso>
-	  internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
+	  internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;*/
 
 	  private int[] BytesPerArc = new int[0];
 
-	  // Increment version to change it
+	  /*// Increment version to change it
 	  private const string FILE_FORMAT_NAME = "FST";
 	  private const int VERSION_START = 0;
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Fst
 
 	  // Never serialized; just used to represent the virtual
 	  // non-final node w/ no arcs:
-	  private const long NON_FINAL_END_NODE = 0;
+	  private const long NON_FINAL_END_NODE = 0;*/
 
 	  // if non-null, this FST accepts the empty string and
 	  // produces this output
@@ -381,7 +381,7 @@ namespace Lucene.Net.Util.Fst
 		{
 		  emptyOutput = default(T);
 		}
-		sbyte t = @in.ReadByte();
+		sbyte t = @in.ReadSByte();
 		switch (t)
 		{
 		  case 0:
@@ -923,7 +923,7 @@ namespace Lucene.Net.Util.Fst
 		  //System.out.println("write int @pos=" + (fixedArrayStart-4) + " numArcs=" + nodeIn.numArcs);
 		  // create the header
 		  // TODO: clean this up: or just rewind+reuse and deal with it
-		  sbyte[] header = new sbyte[MAX_HEADER_SIZE];
+		  byte[] header = new byte[MAX_HEADER_SIZE];
 		  ByteArrayDataOutput bad = new ByteArrayDataOutput(header);
 		  // write a "false" first arc:
 		  bad.WriteByte(ARCS_AS_FIXED_ARRAY);
@@ -1047,7 +1047,7 @@ namespace Lucene.Net.Util.Fst
 		{
 		  @in.Position = GetNodeAddress(follow.Target);
 		  arc.Node = follow.Target;
-		  sbyte b = @in.ReadByte();
+		  sbyte b = @in.ReadSByte();
 		  if (b == ARCS_AS_FIXED_ARRAY)
 		  {
 			// array: jump straight to end
@@ -1096,7 +1096,7 @@ namespace Lucene.Net.Util.Fst
 			  {
 				ReadUnpackedNodeTarget(@in);
 			  }
-			  arc.Flags = @in.ReadByte();
+			  arc.Flags = @in.ReadSByte();
 			}
 			// Undo the byte flags we read:
 			@in.SkipBytes(-1);
@@ -1249,7 +1249,7 @@ namespace Lucene.Net.Util.Fst
 		  long pos = GetNodeAddress(arc.NextArc);
 		  @in.Position = pos;
 
-		  sbyte b = @in.ReadByte();
+		  sbyte b = @in.ReadSByte();
 		  if (b == ARCS_AS_FIXED_ARRAY)
 		  {
 			//System.out.println("    nextArc fixed array");
@@ -1315,7 +1315,7 @@ namespace Lucene.Net.Util.Fst
 		  // arcs are packed
 		  @in.Position = arc.NextArc;
 		}
-		arc.Flags = @in.ReadByte();
+		arc.Flags = @in.ReadSByte();
 		arc.Label = ReadLabel(@in);
 
 		if (arc.Flag(BIT_ARC_HAS_OUTPUT))
@@ -1842,12 +1842,8 @@ namespace Lucene.Net.Util.Fst
 
 		Arc<T> arc = new Arc<T>();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BytesReader r = getBytesReader();
 		BytesReader r = GetBytesReader;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int topN = Math.min(maxDerefNodes, inCounts.size());
 		int topN = Math.Min(maxDerefNodes, InCounts.Size());
 
 		// Find top nodes with highest number of incoming arcs:
@@ -1877,8 +1873,6 @@ namespace Lucene.Net.Util.Fst
 		// Free up RAM:
 		InCounts = null;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<Integer,Integer> topNodeMap = new java.util.HashMap<>();
 		IDictionary<int, int> topNodeMap = new Dictionary<int, int>();
 		for (int downTo = q.Size() - 1;downTo >= 0;downTo--)
 		{
@@ -1888,8 +1882,6 @@ namespace Lucene.Net.Util.Fst
 		}
 
 		// +1 because node ords start at 1 (0 is reserved as stop node):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.GrowableWriter newNodeAddress = new Lucene.Net.Util.Packed.GrowableWriter(Lucene.Net.Util.Packed.PackedInts.bitsRequired(this.bytes.getPosition()), (int)(1 + nodeCount), acceptableOverheadRatio);
 		GrowableWriter newNodeAddress = new GrowableWriter(PackedInts.BitsRequired(this.Bytes.Position), (int)(1 + nodeCount), acceptableOverheadRatio);
 
 		// Fill initial coarse guess:
@@ -1917,8 +1909,6 @@ namespace Lucene.Net.Util.Fst
 
 		  fst = new FST<T>(inputType, Outputs, Bytes.BlockBits);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BytesStore writer = fst.bytes;
 		  BytesStore writer = fst.Bytes;
 
 		  // Skip 0 byte since 0 is reserved target:
@@ -1942,8 +1932,6 @@ namespace Lucene.Net.Util.Fst
 		  for (int node = (int)nodeCount;node >= 1;node--)
 		  {
 			fst.nodeCount++;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long address = writer.getPosition();
 			long address = writer.Position;
 
 			//System.out.println("  node: " + node + " address=" + address);
@@ -1972,8 +1960,6 @@ namespace Lucene.Net.Util.Fst
 			  //System.out.println("  cycle: retry");
 			  ReadFirstRealTargetArc(node, arc, r);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean useArcArray = arc.bytesPerArc != 0;
 			  bool useArcArray = arc.BytesPerArc != 0;
 			  if (useArcArray)
 			  {
@@ -1994,8 +1980,6 @@ namespace Lucene.Net.Util.Fst
 			  {
 				//System.out.println("    cycle next arc");
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long arcStartPos = writer.getPosition();
 				long arcStartPos = writer.Position;
 				nodeArcCount++;
 
@@ -2040,17 +2024,11 @@ namespace Lucene.Net.Util.Fst
 				  flags += (sbyte)BIT_ARC_HAS_OUTPUT;
 				}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long absPtr;
 				long absPtr;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean doWriteTarget = targetHasArcs(arc) && (flags & BIT_TARGET_NEXT) == 0;
 				bool doWriteTarget = TargetHasArcs(arc) && (flags & BIT_TARGET_NEXT) == 0;
 				if (doWriteTarget)
 				{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer ptr = topNodeMap.get(arc.target);
 				  int ptr = topNodeMap[(int)arc.Target];
 				  if (ptr != null)
 				  {
@@ -2189,9 +2167,9 @@ namespace Lucene.Net.Util.Fst
 			  nodeArcCount = 0;
 			  retry = true;
 			  anyNegDelta = false;
-				writeNodeContinue:;
+				//writeNodeContinue:;
 			}
-			writeNodeBreak:
+			//writeNodeBreak:
 
 			negDelta |= anyNegDelta;
 
@@ -2283,8 +2261,6 @@ namespace Lucene.Net.Util.Fst
 
 		public override bool LessThan(NodeAndInCount a, NodeAndInCount b)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = a.compareTo(b);
 		  int cmp = a.CompareTo(b);
 		  Debug.Assert(cmp != 0);
 		  return cmp < 0;

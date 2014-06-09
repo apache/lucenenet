@@ -179,7 +179,7 @@ namespace Lucene.Net.Search.Spans
 		  {
 			if (clone == null)
 			{
-			  clone = this.Clone();
+			  clone = (SpanNearQuery)this.Clone();
 			}
 			clone.clauses[i] = query;
 		  }
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search.Spans
 		}
 	  }
 
-	  public override SpanNearQuery Clone()
+	  public override object Clone()
 	  {
 		int sz = clauses.Count;
 		SpanQuery[] newClauses = new SpanQuery[sz];

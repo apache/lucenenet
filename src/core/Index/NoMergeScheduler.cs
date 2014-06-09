@@ -40,13 +40,13 @@ namespace Lucene.Net.Index
 		// prevent instantiation
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
 	  public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
 	  {
 	  }
-	  public override MergeScheduler Clone()
+	  public override object Clone()
 	  {
 		return this;
 	  }

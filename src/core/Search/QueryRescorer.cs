@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 	  {
 		Explanation secondPassExplanation = searcher.Explain(Query, docID);
 
-		float? secondPassScore = secondPassExplanation.Match ? (float?)secondPassExplanation.Value : null;
+		float? secondPassScore = secondPassExplanation.IsMatch ? (float?)secondPassExplanation.Value : null;
 
 		float score;
 		if (secondPassScore == null)

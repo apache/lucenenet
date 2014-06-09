@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 	/// <seealso cref="IndexWriterConfig#getRAMPerThreadHardLimitMB()"/> to prevent address
 	/// space exhaustion.
 	/// </summary>
-	internal sealed class DocumentsWriterFlushControl
+	public sealed class DocumentsWriterFlushControl
 	{
 
 	  private readonly long HardMaxBytesPerDWPT;
@@ -523,32 +523,45 @@ namespace Lucene.Net.Index
 	  private class IteratorAnonymousInnerClassHelper : IEnumerator<ThreadState>
 	  {
 		  private readonly DocumentsWriterFlushControl OuterInstance;
-
+          private ThreadState current;
 		  private int Upto;
+          private int i;
 
 		  public IteratorAnonymousInnerClassHelper(DocumentsWriterFlushControl outerInstance, int upto)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Upto = upto;
-			  i = 0;
+              i = 0;
 		  }
 
-		  internal int i;
 
-		  public virtual bool HasNext()
-		  {
-			return i < Upto;
-		  }
+          public ThreadState Current
+          {
+              get { return current; }
+          }
 
-		  public virtual ThreadState Next()
-		  {
-			return OuterInstance.PerThreadPool.GetThreadState(i++);
-		  }
+          public void Dispose(){}
 
-		  public virtual void Remove()
-		  {
-			throw new System.NotSupportedException("remove() not supported.");
-		  }
+          object System.Collections.IEnumerator.Current
+          {
+              get { return Current; }
+          }
+
+          public bool MoveNext()
+          {
+              if (i < Upto)
+              {
+                  current = OuterInstance.PerThreadPool.GetThreadState(i++);
+                  return true;
+              }
+
+              return false;
+          }
+
+          public void Reset()
+          {
+              throw new NotImplementedException();
+          }
 	  }
 
 
@@ -844,7 +857,7 @@ namespace Lucene.Net.Index
 				  DocumentsWriter.SubtractFlushedNumDocs(dwpt.NumDocsInRAM);
 				  dwpt.Abort(newFiles);
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 				  // ignore - keep on aborting the flush queue
 				}
@@ -861,7 +874,7 @@ namespace Lucene.Net.Index
 				  DocumentsWriter.SubtractFlushedNumDocs(blockedFlush.Dwpt.NumDocsInRAM);
 				  blockedFlush.Dwpt.Abort(newFiles);
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
 				  // ignore - keep on aborting the blocked queue
 				}

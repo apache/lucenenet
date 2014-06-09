@@ -20,8 +20,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Search.Similarities.SimilarityBase;
-
 	/// <summary>
 	/// Implements the Poisson approximation for the binomial model for DFR.
 	/// @lucene.experimental

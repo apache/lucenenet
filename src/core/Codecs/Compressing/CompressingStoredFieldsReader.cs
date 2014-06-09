@@ -76,7 +76,6 @@ namespace Lucene.Net.Codecs.Compressing
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Lucene.Net.Codecs.Compressing.CompressingStoredFieldsWriter;
     using Lucene.Net.Support;
 
 	/// <summary>
@@ -107,13 +106,13 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		this.Version_Renamed = reader.Version_Renamed;
 		this.FieldInfos = reader.FieldInfos;
-		this.FieldsStream = reader.FieldsStream.Clone();
-		this.IndexReader = reader.IndexReader.Clone();
+        this.FieldsStream = (IndexInput)reader.FieldsStream.Clone();
+        this.IndexReader = (CompressingStoredFieldsIndexReader)reader.IndexReader.Clone();
 		this.MaxPointer = reader.MaxPointer;
 		this.ChunkSize_Renamed = reader.ChunkSize_Renamed;
 		this.PackedIntsVersion = reader.PackedIntsVersion;
 		this.CompressionMode_Renamed = reader.CompressionMode_Renamed;
-		this.Decompressor = reader.Decompressor.Clone();
+		this.Decompressor = (Decompressor)reader.Decompressor.Clone();
 		this.NumDocs = reader.NumDocs;
 		this.Bytes = new BytesRef(reader.Bytes.Bytes.Length);
 		this.Closed = false;
@@ -124,8 +123,6 @@ namespace Lucene.Net.Codecs.Compressing
 	  public CompressingStoredFieldsReader(Directory d, SegmentInfo si, string segmentSuffix, FieldInfos fn, IOContext context, string formatName, CompressionMode compressionMode)
 	  {
 		this.CompressionMode_Renamed = compressionMode;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segment = si.name;
 		string segment = si.Name;
 		bool success = false;
 		FieldInfos = fn;
@@ -133,16 +130,10 @@ namespace Lucene.Net.Codecs.Compressing
 		ChecksumIndexInput indexStream = null;
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String indexStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_INDEX_EXTENSION);
 		  string indexStreamFN = IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fieldsStreamFN = Lucene.Net.Index.IndexFileNames.segmentFileName(segment, segmentSuffix, FIELDS_EXTENSION);
 		  string fieldsStreamFN = IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
 		  // Load the index into memory
 		  indexStream = d.OpenChecksumInput(indexStreamFN, context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String codecNameIdx = formatName + CODEC_SFX_IDX;
 		  string codecNameIdx = formatName + CompressingStoredFieldsWriter.CODEC_SFX_IDX;
 		  Version_Renamed = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
 		  Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
@@ -159,7 +150,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  {
 			CodecUtil.CheckEOF(indexStream);
 		  }
-		  indexStream.Close();
+		  indexStream.Dispose();
 		  indexStream = null;
 
 		  // Open the data file and read metadata
@@ -176,11 +167,7 @@ namespace Lucene.Net.Codecs.Compressing
 			maxPointer = FieldsStream.Length();
 		  }
 		  this.MaxPointer = maxPointer;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String codecNameDat = formatName + CODEC_SFX_DAT;
 		  string codecNameDat = formatName + CompressingStoredFieldsWriter.CODEC_SFX_DAT;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fieldsVersion = Lucene.Net.Codecs.CodecUtil.checkHeader(fieldsStream, codecNameDat, VERSION_START, VERSION_CURRENT);
 		  int fieldsVersion = CodecUtil.CheckHeader(FieldsStream, codecNameDat, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
 		  if (Version_Renamed != fieldsVersion)
 		  {
@@ -223,7 +210,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  /// <summary>
 	  /// Close the underlying <seealso cref="IndexInput"/>s.
 	  /// </summary>
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
 		if (!Closed)
 		{
@@ -271,8 +258,6 @@ namespace Lucene.Net.Codecs.Compressing
 		{
           case CompressingStoredFieldsWriter.BYTE_ARR:
           case CompressingStoredFieldsWriter.STRING:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = in.readVInt();
 			int length = @in.ReadVInt();
 			@in.SkipBytes(length);
 			break;
@@ -293,19 +278,13 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		FieldsStream.Seek(IndexReader.GetStartPointer(docID));
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docBase = fieldsStream.readVInt();
 		int docBase = FieldsStream.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chunkDocs = fieldsStream.readVInt();
 		int chunkDocs = FieldsStream.ReadVInt();
 		if (docID < docBase || docID >= docBase + chunkDocs || docBase + chunkDocs > NumDocs)
 		{
 		  throw new CorruptIndexException("Corrupted: docID=" + docID + ", docBase=" + docBase + ", chunkDocs=" + chunkDocs + ", numDocs=" + NumDocs + " (resource=" + FieldsStream + ")");
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numStoredFields, offset, length, totalLength;
 		int numStoredFields, offset, length, totalLength;
 		if (chunkDocs == 1)
 		{
@@ -316,8 +295,6 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerStoredFields = fieldsStream.readVInt();
 		  int bitsPerStoredFields = FieldsStream.ReadVInt();
 		  if (bitsPerStoredFields == 0)
 		  {
@@ -329,18 +306,12 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long filePointer = fieldsStream.getFilePointer();
 			long filePointer = FieldsStream.FilePointer;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Reader reader = Lucene.Net.Util.Packed.PackedInts.getDirectReaderNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields);
 			PackedInts.Reader reader = PackedInts.GetDirectReaderNoHeader(FieldsStream, PackedInts.Format.PACKED, PackedIntsVersion, chunkDocs, bitsPerStoredFields);
 			numStoredFields = (int)(reader.Get(docID - docBase));
 			FieldsStream.Seek(filePointer + PackedInts.Format.PACKED.ByteCount(PackedIntsVersion, chunkDocs, bitsPerStoredFields));
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerLength = fieldsStream.readVInt();
 		  int bitsPerLength = FieldsStream.ReadVInt();
 		  if (bitsPerLength == 0)
 		  {
@@ -354,8 +325,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.ReaderIterator it = Lucene.Net.Util.Packed.PackedInts.getReaderIteratorNoHeader(fieldsStream, Lucene.Net.Util.Packed.PackedInts.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerLength, 1);
 			PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(FieldsStream, PackedInts.Format.PACKED, PackedIntsVersion, chunkDocs, bitsPerLength, 1);
 			int off = 0;
 			for (int i = 0; i < docID - docBase; ++i)
@@ -383,8 +352,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  return;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.DataInput documentInput;
 		DataInput documentInput;
 		if (Version_Renamed >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS && totalLength >= 2 * ChunkSize_Renamed)
 		{
@@ -396,28 +363,18 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 		else
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.bytes : new Lucene.Net.Util.BytesRef();
 		  BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.Bytes : new BytesRef();
 		  Decompressor.Decompress(FieldsStream, totalLength, offset, length, bytes);
 		  Debug.Assert(bytes.Length == length);
-		  documentInput = new ByteArrayDataInput(bytes.Bytes, bytes.Offset, bytes.Length);
+		  documentInput = new ByteArrayDataInput((byte[])(Array)bytes.Bytes, bytes.Offset, bytes.Length);
 		}
 
 		for (int fieldIDX = 0; fieldIDX < numStoredFields; fieldIDX++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long infoAndBits = documentInput.readVLong();
 		  long infoAndBits = documentInput.ReadVLong();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fieldNumber = (int)(infoAndBits >>> TYPE_BITS);
 		  int fieldNumber = (int)((long)((ulong)infoAndBits >> CompressingStoredFieldsWriter.TYPE_BITS));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo fieldInfo = fieldInfos.fieldInfo(fieldNumber);
 		  FieldInfo fieldInfo = FieldInfos.FieldInfo(fieldNumber);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bits = (int)(infoAndBits & TYPE_MASK);
 		  int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);
 		  Debug.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE, "bits=" + bits.ToString("x"));
 
@@ -460,24 +417,22 @@ namespace Lucene.Net.Codecs.Compressing
 			{
 			  throw new Exception();
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toDecompress = Math.min(length - decompressed, chunkSize);
 			int toDecompress = Math.Min(Length - decompressed, OuterInstance.ChunkSize_Renamed);
 			OuterInstance.Decompressor.Decompress(OuterInstance.FieldsStream, toDecompress, 0, toDecompress, OuterInstance.Bytes);
 			decompressed += toDecompress;
 		  }
 
-		  public override sbyte ReadByte()
+		  public override byte ReadByte()
 		  {
 			if (OuterInstance.Bytes.Length == 0)
 			{
 			  FillBuffer();
 			}
 			--OuterInstance.Bytes.Length;
-			return OuterInstance.Bytes.Bytes[OuterInstance.Bytes.Offset++];
+			return (byte)OuterInstance.Bytes.Bytes[OuterInstance.Bytes.Offset++];
 		  }
 
-		  public override void ReadBytes(sbyte[] b, int offset, int len)
+		  public override void ReadBytes(byte[] b, int offset, int len)
 		  {
 			while (len > OuterInstance.Bytes.Length)
 			{
@@ -493,7 +448,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  }
 
-	  public override StoredFieldsReader Clone()
+	  public override object Clone()
 	  {
 		EnsureOpen();
 		return new CompressingStoredFieldsReader(this);
@@ -523,7 +478,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 	  }
 
-	  internal ChunkIterator ChunkIterator(int startDocID)
+	  internal ChunkIterator GetChunkIterator(int startDocID)
 	  {
 		EnsureOpen();
 		return new ChunkIterator(this, startDocID);

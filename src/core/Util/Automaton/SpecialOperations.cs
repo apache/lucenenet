@@ -195,7 +195,7 @@ namespace Lucene.Net.Util.Automaton
 		}
 
 		// reverse the language of the automaton, then reverse its common prefix.
-		Automaton r = a.Clone();
+        Automaton r = (Automaton)a.Clone();
 		Reverse(r);
 		r.Determinize();
 //JAVA TO C# CONVERTER TODO TASK: There is no .NET StringBuilder equivalent to the Java 'reverse' method:
@@ -210,7 +210,7 @@ namespace Lucene.Net.Util.Automaton
 		}
 
 		// reverse the language of the automaton, then reverse its common prefix.
-		Automaton r = a.Clone();
+        Automaton r = (Automaton)a.Clone();
 		Reverse(r);
 		r.Determinize();
 		BytesRef @ref = SpecialOperations.GetCommonPrefixBytesRef(r);

@@ -175,8 +175,6 @@ namespace Lucene.Net.Index
 	  /// DirectoryReader instance which you must eventually close </returns>
 	  public static DirectoryReader OpenIfChanged(DirectoryReader oldReader)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DirectoryReader newReader = oldReader.doOpenIfChanged();
 		DirectoryReader newReader = oldReader.DoOpenIfChanged();
 		Debug.Assert(newReader != oldReader);
 		return newReader;
@@ -190,8 +188,6 @@ namespace Lucene.Net.Index
 	  /// <seealso cref= #openIfChanged(DirectoryReader) </seealso>
 	  public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexCommit commit)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DirectoryReader newReader = oldReader.doOpenIfChanged(commit);
 		DirectoryReader newReader = oldReader.DoOpenIfChanged(commit);
 		Debug.Assert(newReader != oldReader);
 		return newReader;
@@ -259,8 +255,6 @@ namespace Lucene.Net.Index
 	  /// @lucene.experimental </exception>
 	  public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexWriter writer, bool applyAllDeletes)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DirectoryReader newReader = oldReader.doOpenIfChanged(writer, applyAllDeletes);
 		DirectoryReader newReader = oldReader.DoOpenIfChanged(writer, applyAllDeletes);
 		Debug.Assert(newReader != oldReader);
 		return newReader;
@@ -284,16 +278,12 @@ namespace Lucene.Net.Index
 	  ///  to latest.  </returns>
 	  public static IList<IndexCommit> ListCommits(Directory dir)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String[] files = dir.listAll();
 		string[] files = dir.ListAll();
 
 		List<IndexCommit> commits = new List<IndexCommit>();
 
 		SegmentInfos latest = new SegmentInfos();
 		latest.Read(dir);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long currentGen = latest.getGeneration();
 		long currentGen = latest.Generation;
 
 		commits.Add(new StandardDirectoryReader.ReaderCommit(latest, dir));
@@ -301,8 +291,6 @@ namespace Lucene.Net.Index
 		for (int i = 0;i < files.Length;i++)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String fileName = files[i];
 		  string fileName = files[i];
 
 		  if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
@@ -315,7 +303,6 @@ namespace Lucene.Net.Index
 			  // segments_N is corrupt
 			  sis.Read(dir, fileName);
 			}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
 			catch (FileNotFoundException/* | NoSuchFileException fnfe*/)
 			{
 			  // LUCENE-948: on NFS (and maybe others), if

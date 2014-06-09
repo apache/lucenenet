@@ -82,9 +82,9 @@ namespace Lucene.Net.Codecs.Perfield
 		internal FieldsConsumer Consumer;
 		internal int Suffix;
 
-		public override void Close()
+		public void Dispose()
 		{
-		  Consumer.Close();
+		  Consumer.Dispose();
 		}
 	  }
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  return consumer.Consumer.AddField(field);
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  // Close all subs
 		  IOUtils.Close(Formats.Values.ToArray());
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  }
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
 		  return Fields.Keys.GetEnumerator();
 		}
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  return Fields.Count;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  IOUtils.Close(Formats.Values.ToArray());
 		}

@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  // If we opened the directory, close it
 			  if (dir != directory)
 			  {
-				  dir.Close();
+				  dir.Dispose();
 			  }
 			}
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		  else
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		}
 	  }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 
 		// pre-4.0 indexes write a byte if there is a single norms file
-		sbyte b = input.ReadByte();
+		byte b = input.ReadByte();
 
 		//System.out.println("version=" + version + " name=" + name + " docCount=" + docCount + " delGen=" + delGen + " dso=" + docStoreOffset + " dss=" + docStoreSegment + " dssCFs=" + docStoreIsCompoundFile + " b=" + b + " format=" + format);
 

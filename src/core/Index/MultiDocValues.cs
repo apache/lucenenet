@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 		}
 		else if (size == 1)
 		{
-		  return leaves[0].Reader().GetNormValues(field);
+            return leaves[0].AtomicReader.GetNormValues(field);
 		}
 		FieldInfo fi = MultiFields.GetMergedFieldInfos(r).FieldInfo(field);
 		if (fi == null || fi.HasNorms() == false)
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = leaves[i];
-		  NumericDocValues v = context.Reader().GetNormValues(field);
+          NumericDocValues v = context.AtomicReader.GetNormValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_NUMERIC;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 		}
 		else if (size == 1)
 		{
-		  return leaves[0].Reader().GetNumericDocValues(field);
+            return leaves[0].AtomicReader.GetNumericDocValues(field);
 		}
 
 		bool anyReal = false;
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = leaves[i];
-		  NumericDocValues v = context.Reader().GetNumericDocValues(field);
+          NumericDocValues v = context.AtomicReader.GetNumericDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_NUMERIC;
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
 		}
 		else if (size == 1)
 		{
-		  return leaves[0].Reader().GetDocsWithField(field);
+            return leaves[0].AtomicReader.GetDocsWithField(field);
 		}
 
 		bool anyReal = false;
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = leaves[i];
-		  Bits v = context.Reader().GetDocsWithField(field);
+          Bits v = context.AtomicReader.GetDocsWithField(field);
 		  if (v == null)
 		  {
 			v = new Lucene.Net.Util.Bits_MatchNoBits(context.Reader().MaxDoc());
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
 		}
 		else if (size == 1)
 		{
-		  return leaves[0].Reader().GetBinaryDocValues(field);
+            return leaves[0].AtomicReader.GetBinaryDocValues(field);
 		}
 
 		bool anyReal = false;
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = leaves[i];
-          BinaryDocValues v = context.Reader().GetBinaryDocValues(field);
+          BinaryDocValues v = context.AtomicReader.GetBinaryDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_BINARY;
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
 		}
 		else if (size == 1)
 		{
-		  return leaves[0].Reader().GetSortedDocValues(field);
+            return leaves[0].AtomicReader.GetSortedDocValues(field);
 		}
 
 		bool anyReal = false;
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = leaves[i];
-		  SortedDocValues v = context.Reader().GetSortedDocValues(field);
+          SortedDocValues v = context.AtomicReader.GetSortedDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_SORTED;
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
 		}
 		else if (size == 1)
 		{
-		  return leaves[0].Reader().GetSortedSetDocValues(field);
+            return leaves[0].AtomicReader.GetSortedSetDocValues(field);
 		}
 
 		bool anyReal = false;
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = leaves[i];
-		  SortedSetDocValues v = context.Reader().GetSortedSetDocValues(field);
+          SortedSetDocValues v = context.AtomicReader.GetSortedSetDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_SORTED_SET;

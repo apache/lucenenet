@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  DocIdSetIterator it = docIdSet.Iterator();
+		  DocIdSetIterator it = docIdSet.GetIterator();
 		  // null is allowed to be returned by iterator(),
 		  // in this case we wrap with the sentinel set,
 		  // which is cacheable.
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-		AtomicReader reader = context.Reader();
+		AtomicReader reader = (AtomicReader)context.Reader();
 		object key = reader.CoreCacheKey;
 
 		DocIdSet docIdSet = Cache[key];
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
 		  }
 
 
-		  public override DocIdSetIterator Iterator()
+		  public override DocIdSetIterator GetIterator()
 		  {
 			return DocIdSetIterator.Empty();
 		  }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
 		  }
 
 		  // we explicitly provide no random access, as this filter is 100% sparse and iterator exits faster
-		  public override Bits Bits()
+		  public override Bits GetBits()
 		  {
 			return null;
 		  }

@@ -18,13 +18,15 @@ namespace Lucene.Net.Search
 	 * limitations under the License.
 	 */
 
-	using AttributeImpl = Lucene.Net.Util.AttributeImpl;
+    /*LUCENE TO-DO Unnecessary class
+
+	using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
 	/// Implementation class for <seealso cref="BoostAttribute"/>.
 	/// @lucene.internal
 	/// </summary>
-	public sealed class BoostAttributeImpl : AttributeImpl, BoostAttribute
+	public sealed class BoostAttributeImpl : BoostAttribute, Attribute
 	{
 	  private float Boost_Renamed = 1.0f;
 
@@ -46,10 +48,10 @@ namespace Lucene.Net.Search
 		Boost_Renamed = 1.0f;
 	  }
 
-	  public override void CopyTo(AttributeImpl target)
+	  public override void CopyTo(Attribute target)
 	  {
 		((BoostAttribute) target).Boost = Boost_Renamed;
 	  }
-	}
+	}*/
 
 }

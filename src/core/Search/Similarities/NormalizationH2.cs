@@ -18,8 +18,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Search.Similarities.SimilarityBase;
-
 	/// <summary>
 	/// Normalization model in which the term frequency is inversely related to the
 	/// length.

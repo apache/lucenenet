@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
 	  // same as DataInput.readVLong but supports negative values
 	  internal static long ReadVLong(DataInput @in)
 	  {
-		sbyte b = @in.ReadByte();
+		byte b = @in.ReadByte();
 		if (b >= 0)
 		{
 			return b;

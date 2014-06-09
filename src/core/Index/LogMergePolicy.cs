@@ -126,8 +126,6 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual bool Verbose()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final IndexWriter w = writer.get();
 		IndexWriter w = Writer.Get();
 		return w != null && w.infoStream.IsEnabled("LMP");
 	  }
@@ -183,7 +181,7 @@ namespace Lucene.Net.Index
 	  }
 
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
 
@@ -558,11 +556,9 @@ namespace Lucene.Net.Index
 	  ///  will return multiple merges, allowing the {@link
 	  ///  MergeScheduler} to use concurrency. 
 	  /// </summary>
-	  public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos infos)
+	  public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = infos.size();
 		int numSegments = infos.Size();
 		if (Verbose())
 		{
@@ -571,21 +567,13 @@ namespace Lucene.Net.Index
 
 		// Compute levels, which is just log (base mergeFactor)
 		// of the size of each segment
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentInfoAndLevel> levels = new java.util.ArrayList<>();
 		IList<SegmentInfoAndLevel> levels = new List<SegmentInfoAndLevel>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float norm = (float) Math.log(mergeFactor);
 		float norm = (float) Math.Log(MergeFactor_Renamed);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<SegmentCommitInfo> mergingSegments = writer.get().getMergingSegments();
 		ICollection<SegmentCommitInfo> mergingSegments = Writer.Get().MergingSegments;
 
 		for (int i = 0;i < numSegments;i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = infos.info(i);
 		  SegmentCommitInfo info = infos.Info(i);
 		  long size = Size(info);
 
@@ -610,8 +598,6 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float levelFloor;
 		float levelFloor;
 		if (MinMergeSize <= 0)
 		{
@@ -631,8 +617,6 @@ namespace Lucene.Net.Index
 
 		MergeSpecification spec = null;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numMergeableSegments = levels.size();
 		int numMergeableSegments = levels.Count;
 
 		int start = 0;
@@ -644,8 +628,6 @@ namespace Lucene.Net.Index
 		  float maxLevel = levels[start].Level;
 		  for (int i = 1 + start;i < numMergeableSegments;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final float level = levels.get(i).level;
 			float level = levels[i].Level;
 			if (level > maxLevel)
 			{
@@ -694,8 +676,6 @@ namespace Lucene.Net.Index
 			bool anyMerging = false;
 			for (int i = start;i < end;i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = levels.get(i).info;
 			  SegmentCommitInfo info = levels[i].Info;
 			  anyTooLarge |= (Size(info) >= MaxMergeSize || SizeDocs(info) >= MaxMergeDocs_Renamed);
 			  if (mergingSegments.Contains(info))
@@ -715,8 +695,6 @@ namespace Lucene.Net.Index
 			  {
 				spec = new MergeSpecification();
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> mergeInfos = new java.util.ArrayList<>();
 			  IList<SegmentCommitInfo> mergeInfos = new List<SegmentCommitInfo>();
 			  for (int i = start;i < end;i++)
 			  {

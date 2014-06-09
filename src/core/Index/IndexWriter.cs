@@ -225,13 +225,13 @@ namespace Lucene.Net.Index
 	  private readonly Directory directory; // where this index resides
 	  private readonly Analyzer analyzer; // how to analyze text
 
-	  private volatile long ChangeCount; // increments every time a change is completed
-	  private volatile long LastCommitChangeCount; // last changeCount that was committed
+	  private long ChangeCount; // increments every time a change is completed
+	  private long LastCommitChangeCount; // last changeCount that was committed
 
 	  private IList<SegmentCommitInfo> RollbackSegments; // list of segmentInfo we will fallback to if the commit fails
 
 	  internal volatile SegmentInfos PendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
-	  internal volatile long PendingCommitChangeCount;
+	  internal long PendingCommitChangeCount;
 
 	  private ICollection<string> FilesToCommit;
 
@@ -557,7 +557,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
-		public override void Dispose()
+		public void Dispose()
 		{
 		  DropAll(false);
 		}
@@ -862,7 +862,7 @@ namespace Lucene.Net.Index
 			  SegmentInfos.Read(directory);
 			  SegmentInfos.Clear();
 			}
-			catch (IOException e)
+			catch (IOException)
 			{
 			  // Likely this means it's a fresh directory
 			  initialIndexExists = false;
@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
 	  /// href="#OOME">above</a> for details.</p>
 	  /// </summary>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		Close(true);
 	  }
@@ -1151,7 +1151,7 @@ namespace Lucene.Net.Index
               infoStream.Message("IW", "now flush at close waitForMerges=" + waitForMerges);
 		  }
 
-		  DocWriter.Close();
+		  DocWriter.Dispose();
 
 		  try
 		  {
@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Index
 				  // any pending merges are waiting:
 				  MergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
 				}
-				catch (ThreadInterruptedException tie)
+				catch (ThreadInterruptedException)
 				{
 				  // ignore any interruption, does not matter
 				  interrupted = true;
@@ -1204,7 +1204,7 @@ namespace Lucene.Net.Index
 					FinishMerges(waitForMerges && !interrupted);
 					break;
 				  }
-				  catch (ThreadInterruptedException tie)
+				  catch (ThreadInterruptedException)
 				  {
 					// by setting the interrupted status, the
 					// next call to finishMerges will pass false,
@@ -1243,7 +1243,7 @@ namespace Lucene.Net.Index
 			// writes any pending liveDocs from ReaderPool, so
 			// it's safe to drop all readers now:
 			readerPool.DropAll(true);
-			Deleter.Close();
+			Deleter.Dispose();
 		  }
 
           if (infoStream.IsEnabled("IW"))
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Index
 
 		  if (WriteLock != null)
 		  {
-			WriteLock.Close(); // release write lock
+			WriteLock.Release(); // release write lock
 			WriteLock = null;
 		  }
 		  lock (this)
@@ -1625,7 +1625,7 @@ namespace Lucene.Net.Index
 			  // Composite reader: lookup sub-reader and re-base docID:
 			  IList<AtomicReaderContext> leaves = readerIn.Leaves();
 			  int subIndex = ReaderUtil.SubIndex(docID, leaves);
-			  reader = leaves[subIndex].Reader();
+			  reader = leaves[subIndex].AtomicReader;
 			  docID -= leaves[subIndex].DocBase;
 			  Debug.Assert(docID >= 0);
 			  Debug.Assert(docID < reader.MaxDoc());
@@ -2512,7 +2512,7 @@ namespace Lucene.Net.Index
 	  /// writer was first opened.  this also clears a previous
 	  /// call to <seealso cref="#prepareCommit"/>. </summary>
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
-	  public override void Rollback()
+	  public void Rollback()
 	  {
 		// don't call ensureOpen here: this acts like "close()" in closeable.
 
@@ -2553,11 +2553,11 @@ namespace Lucene.Net.Index
 		  // Must pre-close these two, in case they increment
 		  // changeCount so that we can then set it to false
 		  // before calling closeInternal
-		  MergePolicy.Close();
-		  MergeScheduler.Close();
+		  MergePolicy.Dispose();
+		  MergeScheduler.Dispose();
 
 		  BufferedUpdatesStream.Clear();
-		  DocWriter.Close(); // mark it as closed first to prevent subsequent indexing actions/flushes
+		  DocWriter.Dispose(); // mark it as closed first to prevent subsequent indexing actions/flushes
 		  DocWriter.Abort(this); // don't sync on IW here
 		  lock (this)
 		  {
@@ -2594,7 +2594,7 @@ namespace Lucene.Net.Index
 			LastCommitChangeCount = ChangeCount;
 
 			Deleter.Refresh();
-			Deleter.Close();
+			Deleter.Dispose();
 
 			IOUtils.Close(WriteLock); // release write lock
 			WriteLock = null;
@@ -2631,7 +2631,7 @@ namespace Lucene.Net.Index
 				  PendingCommit.RollbackCommit(directory);
 				  Deleter.DecRef(PendingCommit);
 				}
-				catch (Exception t)
+				catch (Exception)
 				{
 				}
 			  }
@@ -3109,7 +3109,7 @@ namespace Lucene.Net.Index
 				  {
 					directory.DeleteFile(file);
 				  }
-				  catch (Exception t)
+				  catch (Exception)
 				  {
 				  }
 				}
@@ -3137,7 +3137,7 @@ namespace Lucene.Net.Index
 					{
 					  directory.DeleteFile(file);
 					}
-					catch (Exception t)
+					catch (Exception)
 					{
 					}
 				  }
@@ -3228,7 +3228,7 @@ namespace Lucene.Net.Index
 			numDocs += indexReader.NumDocs();
 			foreach (AtomicReaderContext ctx in indexReader.Leaves())
 			{
-			  mergeReaders.Add(ctx.Reader());
+                mergeReaders.Add(ctx.AtomicReader);
 			}
 		  }
 
@@ -3488,7 +3488,7 @@ namespace Lucene.Net.Index
 			  {
 				directory.DeleteFile(file);
 			  }
-			  catch (Exception t)
+			  catch (Exception)
 			  {
 			  }
 			}
@@ -3534,7 +3534,7 @@ namespace Lucene.Net.Index
 	  ///  you should immediately close the writer.  See <a
 	  ///  href="#OOME">above</a> for details.</p>
 	  /// </summary>
-	  public override void PrepareCommit()
+	  public void PrepareCommit()
 	  {
 		EnsureOpen();
 		PrepareCommitInternal();
@@ -3600,7 +3600,7 @@ namespace Lucene.Net.Index
 				  // no partial changes (eg a delete w/o
 				  // corresponding add from an updateDocument) can
 				  // sneak into the commit point:
-				  toCommit = SegmentInfos.Clone();
+				  toCommit = (SegmentInfos)SegmentInfos.Clone();
 
 				  PendingCommitChangeCount = ChangeCount;
 
@@ -3723,7 +3723,7 @@ namespace Lucene.Net.Index
 	  /// href="#OOME">above</a> for details.</p>
 	  /// </summary>
 	  /// <seealso cref= #prepareCommit </seealso>
-	  public override void Commit()
+	  public void Commit()
 	  {
 		EnsureOpen();
 		CommitInternal();
@@ -4198,7 +4198,7 @@ namespace Lucene.Net.Index
 				  {
 					dvFieldUpdates[idx] = mergedDVUpdates.NewUpdates(field, updates.Type, mergeState.SegmentInfo.DocCount);
 				  }
-				  updatesIters[idx] = updates.Iterator();
+				  updatesIters[idx] = updates.GetIterator();
 				  updatesIters[idx].NextDoc(); // advance to first update doc
 				  ++idx;
 				}
@@ -4518,7 +4518,7 @@ namespace Lucene.Net.Index
 				{
 				  Checkpoint();
 				}
-				catch (Exception t)
+				catch (Exception)
 				{
 				  // Ignore so we keep throwing original exception.
 				}
@@ -5684,7 +5684,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static void Unlock(Directory directory)
 	  {
-		directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Close();
+		directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
 	  }
 
 	  /// <summary>
@@ -5867,14 +5867,14 @@ namespace Lucene.Net.Index
 			  {
 				directory.DeleteFile(fileName);
 			  }
-			  catch (Exception t)
+			  catch (Exception)
 			  {
 			  }
 			  try
 			  {
                   directory.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
 			  }
-			  catch (Exception t)
+			  catch (Exception)
 			  {
 			  }
 			}
@@ -6017,11 +6017,10 @@ namespace Lucene.Net.Index
 	  {
 		try
 		{
-		  dir.OpenInput(fileName, IOContext.DEFAULT).Close();
+		  dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
 		  return true;
 		}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (NoSuchFileException/* | FileNotFoundException*/ e)
+		catch (NoSuchFileException/* | FileNotFoundException*/)
 		{
 		  return false;
 		}

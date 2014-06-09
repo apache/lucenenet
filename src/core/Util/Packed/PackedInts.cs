@@ -728,7 +728,7 @@ namespace Lucene.Net.Util.Packed
 		  this.valueCount = valueCount;
 		}
 
-		public override long Next()
+		public virtual long Next()
 		{
 		  LongsRef nextValues = Next(1);
 		  Debug.Assert(nextValues.Length > 0);
@@ -740,7 +740,7 @@ namespace Lucene.Net.Util.Packed
 
         public abstract LongsRef Next(int count);
 
-		public override int BitsPerValue
+		public virtual int BitsPerValue
 		{
 			get
 			{
@@ -748,10 +748,12 @@ namespace Lucene.Net.Util.Packed
 			}
 		}
 
-		public override int Size()
+		public virtual int Size()
 		{
 		  return valueCount;
 		}
+
+        public abstract int Ord();
 	  }
 
 	  /// <summary>
@@ -1222,7 +1224,7 @@ namespace Lucene.Net.Util.Packed
 	  private class DirectPackedReaderAnonymousInnerClassHelper : DirectPackedReader
 	  {
 		  private IndexInput @in;
-		  private new int ValueCount;
+		  private int ValueCount;
 		  private long EndPointer;
 
 		  public DirectPackedReaderAnonymousInnerClassHelper(int bitsPerValue, int valueCount, IndexInput @in, long endPointer) : base(bitsPerValue, valueCount, @in)
@@ -1234,8 +1236,6 @@ namespace Lucene.Net.Util.Packed
 
 		  public override long Get(int index)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long result = base.get(index);
 			long result = base.Get(index);
 			if (index == ValueCount - 1)
 			{
@@ -1283,18 +1283,10 @@ namespace Lucene.Net.Util.Packed
 	  /// @lucene.internal </exception>
 	  public static Reader GetDirectReader(IndexInput @in)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int version = Lucene.Net.Codecs.CodecUtil.checkHeader(in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
 		int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerValue = in.readVInt();
 		int bitsPerValue = @in.ReadVInt();
 		Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int valueCount = in.readVInt();
 		int valueCount = @in.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
 		Format format = Format.ById(@in.ReadVInt());
 		return GetDirectReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
 	  }
@@ -1319,8 +1311,6 @@ namespace Lucene.Net.Util.Packed
 	  /// @lucene.internal </returns>
 	  public static Mutable GetMutable(int valueCount, int bitsPerValue, float acceptableOverheadRatio)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FormatAndBits formatAndBits = fastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
 		FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
 		return GetMutable(valueCount, formatAndBits.bitsPerValue, formatAndBits.format);
 	  }
@@ -1454,11 +1444,7 @@ namespace Lucene.Net.Util.Packed
 	  {
 		Debug.Assert(valueCount >= 0);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FormatAndBits formatAndBits = fastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
 		FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Writer writer = getWriterNoHeader(out, formatAndBits.format, valueCount, formatAndBits.bitsPerValue, DEFAULT_BUFFER_SIZE);
 		Writer writer = GetWriterNoHeader(@out, formatAndBits.format, valueCount, formatAndBits.bitsPerValue, DEFAULT_BUFFER_SIZE);
 		writer.WriteHeader();
 		return writer;
@@ -1499,8 +1485,6 @@ namespace Lucene.Net.Util.Packed
 	  {
 		Debug.Assert(srcPos + len <= src.Size());
 		Debug.Assert(destPos + len <= dest.Size());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int capacity = mem >>> 3;
 		int capacity = (int)((uint)mem >> 3);
 		if (capacity == 0)
 		{
@@ -1512,8 +1496,6 @@ namespace Lucene.Net.Util.Packed
 		else if (len > 0)
 		{
 		  // use bulk operations
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long[] buf = new long[Math.min(capacity, len)];
 		  long[] buf = new long[Math.Min(capacity, len)];
 		  Copy(src, srcPos, dest, destPos, len, buf);
 		}
@@ -1527,15 +1509,11 @@ namespace Lucene.Net.Util.Packed
 		int remaining = 0;
 		while (len > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int read = src.get(srcPos, buf, remaining, Math.min(len, buf.length - remaining));
 		  int read = src.Get(srcPos, buf, remaining, Math.Min(len, buf.Length - remaining));
 		  Debug.Assert(read > 0);
 		  srcPos += read;
 		  len -= read;
 		  remaining += read;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int written = dest.set(destPos, buf, 0, remaining);
 		  int written = dest.Set(destPos, buf, 0, remaining);
 		  Debug.Assert(written > 0);
 		  destPos += written;
@@ -1547,8 +1525,6 @@ namespace Lucene.Net.Util.Packed
 		}
 		while (remaining > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int written = dest.set(destPos, buf, 0, remaining);
 		  int written = dest.Set(destPos, buf, 0, remaining);
 		  destPos += written;
 		  remaining -= written;
@@ -1568,18 +1544,10 @@ namespace Lucene.Net.Util.Packed
 	  /// <seealso cref= #getDirectReaderNoHeader(IndexInput, Header) </seealso>
 	  public static Header ReadHeader(DataInput @in)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int version = Lucene.Net.Codecs.CodecUtil.checkHeader(in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
 		int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bitsPerValue = in.readVInt();
 		int bitsPerValue = @in.ReadVInt();
 		Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int valueCount = in.readVInt();
 		int valueCount = @in.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Format format = Format.byId(in.readVInt());
 		Format format = Format.ById(@in.ReadVInt());
 		return new Header(format, valueCount, bitsPerValue, version);
 	  }
@@ -1626,8 +1594,6 @@ namespace Lucene.Net.Util.Packed
 	  /// </summary>
 	  internal static int NumBlocks(long size, int blockSize)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBlocks = (int)(size / blockSize) + (size % blockSize == 0 ? 0 : 1);
 		int numBlocks = (int)(size / blockSize) + (size % blockSize == 0 ? 0 : 1);
 		if ((long) numBlocks * blockSize < size)
 		{

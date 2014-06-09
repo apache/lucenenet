@@ -229,11 +229,7 @@ namespace Lucene.Net.Util.Packed
 		}
 
 		// bulk set of the inner blocks
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fromBlock = fromIndex / valuesPerBlock;
 		int fromBlock = fromIndex / valuesPerBlock;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toBlock = toIndex / valuesPerBlock;
 		int toBlock = toIndex / valuesPerBlock;
 		Debug.Assert(fromBlock * valuesPerBlock == fromIndex);
 
@@ -251,7 +247,7 @@ namespace Lucene.Net.Util.Packed
 		}
 	  }
 
-	  protected internal override PackedInts.Format Format
+	  internal override PackedInts.Format Format
 	  {
 		  get
 		  {

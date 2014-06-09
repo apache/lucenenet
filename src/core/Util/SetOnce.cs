@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
 		}
 	  }
 
-	  private volatile T Obj = default(T);
+	  private T Obj = default(T);
 	  private int set;
 
 	  /// <summary>
@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
 		return Obj;
 	  }
 
-	  public override SetOnce<T> Clone()
+	  public object Clone()
 	  {
 		return Obj == null ? new SetOnce<T>() : new SetOnce<T>(Obj);
 	  }

@@ -80,13 +80,9 @@ namespace Lucene.Net.Index
 		/// Useful from an assert. </summary>
 		internal virtual bool IsConsistent(int maxDoc)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet targets = new Lucene.Net.Util.FixedBitSet(maxDoc);
 		  FixedBitSet targets = new FixedBitSet(maxDoc);
 		  for (int i = 0; i < maxDoc; ++i)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int target = map(i);
 			int target = Map(i);
 			if (target < 0 || target >= maxDoc)
 			{
@@ -122,10 +118,10 @@ namespace Lucene.Net.Index
 
 		/// <summary>
 		/// Estimated size in bytes of the merged segment. </summary>
-		public volatile long EstimatedMergeBytes; // used by IndexWriter
+		public long EstimatedMergeBytes; // used by IndexWriter
 
 		// Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
-		internal volatile long TotalMergeBytes;
+		internal long TotalMergeBytes;
 
 		internal IList<SegmentReader> Readers; // used by IndexWriter
 
@@ -176,8 +172,6 @@ namespace Lucene.Net.Index
 			  {
 				throw new InvalidOperationException("IndexWriter has not initialized readers from the segment infos yet");
 			  }
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final java.util.List<AtomicReader> readers = new java.util.ArrayList<>(this.readers.size());
 			  IList<AtomicReader> readers = new List<AtomicReader>(this.Readers.Count);
 			  foreach (AtomicReader reader in this.Readers)
 			  {
@@ -352,8 +346,6 @@ namespace Lucene.Net.Index
 		public virtual string SegString(Directory dir)
 		{
 		  StringBuilder b = new StringBuilder();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = segments.size();
 		  int numSegments = Segments.Count;
 		  for (int i = 0;i < numSegments;i++)
 		  {
@@ -455,8 +447,6 @@ namespace Lucene.Net.Index
 		{
 		  StringBuilder b = new StringBuilder();
 		  b.Append("MergeSpec:\n");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = merges.size();
 		  int count = Merges.Count;
 		  for (int i = 0;i < count;i++)
 		  {
@@ -555,7 +545,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal long MaxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
 
-	  public override MergePolicy Clone()
+	  public virtual object Clone()
 	  {
 		MergePolicy clone;
 		clone = (MergePolicy) base.MemberwiseClone();
@@ -642,7 +632,7 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Release all resources for the policy.
 	  /// </summary>
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
 	  /// <summary>
 	  /// Returns true if a new segment (regardless of its origin) should use the

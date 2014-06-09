@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = @in.Leaves()[i];
-		  SortedDocValues v = context.Reader().GetSortedDocValues(field);
+          SortedDocValues v = context.AtomicReader.GetSortedDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_SORTED;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < size; i++)
 		{
 		  AtomicReaderContext context = @in.Leaves()[i];
-		  SortedSetDocValues v = context.Reader().GetSortedSetDocValues(field);
+          SortedSetDocValues v = context.AtomicReader.GetSortedSetDocValues(field);
 		  if (v == null)
 		  {
 			v = DocValues.EMPTY_SORTED_SET;
@@ -276,7 +276,7 @@ namespace Lucene.Net.Index
 	  protected internal override void DoClose()
 	  {
 		// TODO: as this is a wrapper, should we really close the delegate?
-		@in.Close();
+		@in.Dispose();
 	  }
 
 	  public override void CheckIntegrity()
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
 		EnsureOpen();
 		foreach (AtomicReaderContext ctx in @in.Leaves())
 		{
-		  ctx.Reader().CheckIntegrity();
+            ctx.AtomicReader.CheckIntegrity();
 		}
 	  }
 	}

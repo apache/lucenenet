@@ -42,7 +42,11 @@ namespace Lucene.Net.Index
 	  /// Returns an iterator that will step through all fields
 	  ///  names.  this will not return null.  
 	  /// </summary>
-	  public override abstract IEnumerator<string> Iterator();
+	  public abstract IEnumerator<string> GetEnumerator();
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
 
 	  /// <summary>
 	  /// Get the <seealso cref="Terms"/> for this field.  this will return
@@ -78,8 +82,6 @@ namespace Lucene.Net.Index
 			  Terms terms = Terms(field);
 			  if (terms != null)
 			  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final long termCount = terms.size();
 				long termCount = terms.Size();
 				if (termCount == -1)
 				{

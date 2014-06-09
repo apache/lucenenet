@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
 		{
 		  if (closeDir)
 		  {
-			dir.Close();
+			dir.Dispose();
 		  }
 		}
 	  }

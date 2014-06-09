@@ -180,8 +180,6 @@ namespace Lucene.Net.Util
 	  {
 		Debug.Assert(index >= 0 && index < NumBits);
 		int i = (int)(index >> 6);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subIndex = (int)(index & 0x3f);
 		int subIndex = (int)(index & 0x3f); // index within the word
 		long word = Bits_Renamed[i] >> subIndex; // skip all the bits to the right of index
 
@@ -210,8 +208,6 @@ namespace Lucene.Net.Util
 	  {
 		Debug.Assert(index >= 0 && index < NumBits, "index=" + index + " numBits=" + NumBits);
 		int i = (int)(index >> 6);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int subIndex = (int)(index & 0x3f);
 		int subIndex = (int)(index & 0x3f); // index within the word
 		long word = (Bits_Renamed[i] << (63 - subIndex)); // skip all the bits to the left of index
 
@@ -415,7 +411,7 @@ namespace Lucene.Net.Util
 		Bits_Renamed[endWord] &= endmask;
 	  }
 
-	  public override LongBitSet Clone()
+	  public LongBitSet Clone()
 	  {
 		long[] bits = new long[this.Bits_Renamed.Length];
 		Array.Copy(this.Bits_Renamed, 0, bits, 0, bits.Length);
@@ -442,7 +438,7 @@ namespace Lucene.Net.Util
 		return Arrays.Equals(Bits_Renamed, other.Bits_Renamed);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		long h = 0;
 		for (int i = NumWords; --i >= 0;)

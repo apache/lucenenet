@@ -93,11 +93,11 @@ namespace Lucene.Net.Index
 		BytesUsed = newBytesUsed;
 	  }
 
-	  public override void Finish(int maxDoc)
+	  internal override void Finish(int maxDoc)
 	  {
 	  }
 
-	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+      internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
 
 		int maxDoc = state.SegmentInfo.DocCount;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
       {
           // .NET Port: using yield return instead of custom iterator type. Much less code.
 
-          AbstractAppendingLongBuffer.Iterator iter = Pending.Iterator();
+          AbstractAppendingLongBuffer.Iterator iter = Pending.GetIterator();
           int size = (int)Pending.Size();
           int upto = 0;
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
 		  }
 	  }*/
 
-	  public override void Abort()
+      internal override void Abort()
 	  {
 	  }
         /*

@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 	  /// <seealso cref= IndexReader#leaves() </seealso>
 	  protected internal abstract IList<IndexReader> GetSequentialSubReaders();
 
-	  public override sealed CompositeReaderContext Context
+	  public override sealed IndexReaderContext Context
 	  {
 		  get
 		  {

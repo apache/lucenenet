@@ -112,7 +112,8 @@ namespace Lucene.Net.Index
 	/// 
 	/// @lucene.experimental
 	/// </summary>
-	public sealed class SegmentInfos : ICloneable, IEnumerable<SegmentCommitInfo>
+    [Serializable]
+	public sealed class SegmentInfos : List<SegmentCommitInfo>, ICloneable
 	{
 
 	  /// <summary>
@@ -300,7 +301,7 @@ namespace Lucene.Net.Index
 		  }
 		  finally
 		  {
-			genOutput.Close();
+			genOutput.Dispose();
 			dir.Sync(/*CollectionsHelper.Singleton(*/ new[] {IndexFileNames.SEGMENTS_GEN}/*)*/);
 		  }
 		}
@@ -460,7 +461,7 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		}
 	  }
@@ -580,7 +581,7 @@ namespace Lucene.Net.Index
 				}
 				finally
 				{
-				  @out.Close();
+				  @out.Dispose();
 				}
 				upgradedSIFiles.Add(markerFileName);
 				directory.Sync(/*Collections.singletonList(*/new[] {markerFileName}/*)*/);
@@ -685,7 +686,7 @@ namespace Lucene.Net.Index
 		  output.WriteStringStringMap(si.Diagnostics);
 		  output.WriteStringSet(si.Files);
 
-		  output.Close();
+		  output.Dispose();
 
 		  success = true;
 		}
@@ -713,7 +714,7 @@ namespace Lucene.Net.Index
 	  /// SegmentInfo.
 	  /// </summary>
 
-	  public override SegmentInfos Clone()
+	  public object Clone()
 	  {
 		  SegmentInfos sis = (SegmentInfos) base.MemberwiseClone();
 		  // deep clone, first recreate all collections:
@@ -722,7 +723,7 @@ namespace Lucene.Net.Index
 		  {
 			Debug.Assert(info.Info.Codec != null);
 			// dont directly access segments, use add method!!!
-			sis.Add(info.Clone());
+			sis.Add((SegmentCommitInfo)(info.Clone()));
 		  }
 		  sis.UserData_Renamed = new Dictionary<string, string>(UserData_Renamed);
 		  return sis;
@@ -978,7 +979,7 @@ namespace Lucene.Net.Index
 				}
 				finally
 				{
-				  genInput.Close();
+				  genInput.Dispose();
 				}
 			  }
 
@@ -1079,7 +1080,7 @@ namespace Lucene.Net.Index
 
 				try
 				{
-				  Directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Close();
+				  Directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
 				  prevExists = true;
 				}
 				catch (IOException ioe)
@@ -1228,7 +1229,7 @@ namespace Lucene.Net.Index
 			success = false;
 			try
 			{
-			  PendingSegnOutput.Close();
+			  PendingSegnOutput.Dispose();
 			  success = true;
 			}
 			finally
@@ -1421,7 +1422,7 @@ namespace Lucene.Net.Index
 		foreach (SegmentCommitInfo info in this)
 		{
 		  Debug.Assert(info.Info.Codec != null);
-		  list.Add(info.Clone());
+		  list.Add((SegmentCommitInfo)(info.Clone()));
 		}
 		return list;
 	  }
@@ -1430,14 +1431,6 @@ namespace Lucene.Net.Index
 	  {
 		this.Clear();
 		this.AddAll(infos);
-	  }
-
-	  /// <summary>
-	  /// Returns an <b>unmodifiable</b> <seealso cref="Iterator"/> of contained segments in order. </summary>
-	  // @Override (comment out until Java 6)
-	  public override IEnumerator<SegmentCommitInfo> Iterator()
-	  {
-		return AsList().GetEnumerator();
 	  }
 
 	  /// <summary>

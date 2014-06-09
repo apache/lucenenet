@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 	  private readonly ISet<AtomicReader> CompleteReaderSet = new IdentityHashSet<AtomicReader>();
 	  private readonly bool CloseSubReaders;
 	  private readonly int MaxDoc_Renamed, NumDocs_Renamed;
-	  private readonly bool HasDeletions;
+	  private readonly bool hasDeletions;
 	  private readonly IDictionary<string, AtomicReader> FieldToReader = new SortedDictionary<string, AtomicReader>();
       private readonly IDictionary<string, AtomicReader> TvFieldToReader = new SortedDictionary<string, AtomicReader>();
 
@@ -115,12 +115,12 @@ namespace Lucene.Net.Index
 		  AtomicReader first = ParallelReaders[0];
 		  this.MaxDoc_Renamed = first.MaxDoc();
 		  this.NumDocs_Renamed = first.NumDocs();
-		  this.HasDeletions = first.HasDeletions();
+		  this.hasDeletions = first.HasDeletions();
 		}
 		else
 		{
 		  this.MaxDoc_Renamed = this.NumDocs_Renamed = 0;
-		  this.HasDeletions = false;
+		  this.hasDeletions = false;
 		}
 		CollectionsHelper.AddAll(CompleteReaderSet, this.ParallelReaders);
         CollectionsHelper.AddAll(CompleteReaderSet, this.StoredFieldsReaders);
@@ -222,10 +222,10 @@ namespace Lucene.Net.Index
 		  Fields[fieldName] = terms;
 		}
 
-		/*public override IEnumerator<string> Iterator()
-		{
-		  return CollectionsHelper.UnmodifiableSet(Fields.Keys).GetEnumerator();
-		}*/
+        public override IEnumerator<string> GetEnumerator()
+        {
+            return Fields.Keys.GetEnumerator();
+        }
 
 		public override Terms Terms(string field)
 		{
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
 		  get
 		  {
 			EnsureOpen();
-			return HasDeletions ? ParallelReaders[0].LiveDocs : null;
+			return hasDeletions ? ParallelReaders[0].LiveDocs : null;
 		  }
 	  }
 
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
 			  {
 				if (CloseSubReaders)
 				{
-				  reader.Close();
+				  reader.Dispose();
 				}
 				else
 				{

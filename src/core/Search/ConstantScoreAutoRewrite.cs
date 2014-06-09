@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using DirectBytesStartArray = Lucene.Net.Util.BytesRefHash.DirectBytesStartArray;
 
-	internal class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
+	public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
 	{
 
 	  // Defaults derived from rough tests with a 20.0 million
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
 		internal BytesRefHash PendingTerms;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 1279;
 		return (int)(prime * TermCountCutoff_Renamed + BitConverter.DoubleToInt64Bits(DocCountPercent_Renamed));

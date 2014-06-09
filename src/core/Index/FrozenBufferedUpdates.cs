@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using Lucene.Net.Support;
+    using System;
 
 	/// <summary>
 	/// Holds buffered deletes and updates by term or query, once pushed. Pushed
@@ -158,6 +159,11 @@ namespace Lucene.Net.Index
 		  {
               return OuterInstance.Terms.GetEnumerator();
 		  }
+
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
 	  }
 
 	  public virtual IEnumerable<QueryAndLimit> QueriesIterable()
@@ -179,33 +185,53 @@ namespace Lucene.Net.Index
 			return new IteratorAnonymousInnerClassHelper(this);
 		  }
 
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
+
 		  private class IteratorAnonymousInnerClassHelper : IEnumerator<QueryAndLimit>
 		  {
 			  private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
+              private int upto, i;
+              private QueryAndLimit current;
 
 			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper2 outerInstance)
 			  {
 				  this.OuterInstance = outerInstance;
+                  upto = OuterInstance.OuterInstance.Queries.Length;
+                  i = 0;
 			  }
 
-			  private int upto;
+              public virtual bool MoveNext()
+              {
+                  if (i < upto)
+                  {
+                      current = new QueryAndLimit(OuterInstance.OuterInstance.Queries[i], OuterInstance.OuterInstance.QueryLimits[i]);
+                      i++;
+                      return true;
+                  }
+                  return false;
+              }
+              public virtual QueryAndLimit Current
+              {
+                  get
+                  {
+                      return current;
+                  }
+              }
 
-			  public virtual bool HasNext()
-			  {
-				return upto < OuterInstance.OuterInstance.Queries.Length;
-			  }
+              object System.Collections.IEnumerator.Current
+              {
+                  get { return Current; }
+              }
 
-			  public virtual QueryAndLimit Next()
-			  {
-				QueryAndLimit ret = new QueryAndLimit(OuterInstance.OuterInstance.Queries[upto], OuterInstance.OuterInstance.QueryLimits[upto]);
-				upto++;
-				return ret;
-			  }
+              public virtual void Reset()
+              {
+                  throw new NotImplementedException();
+              }
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+              public void Dispose() { }
 		  }
 	  }
 

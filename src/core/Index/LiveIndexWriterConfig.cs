@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 	  private readonly Analyzer analyzer;
 
 	  private volatile int maxBufferedDocs;
-	  private volatile double RamBufferSizeMB;
+	  private double RamBufferSizeMB;
 	  private volatile int maxBufferedDeleteTerms;
 	  private volatile int readerTermsIndexDivisor;
 	  private volatile IndexReaderWarmer mergedSegmentWarmer;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Timeout when trying to obtain the write lock on init. </summary>
-	  protected internal volatile long writeLockTimeout;
+	  protected internal long writeLockTimeout;
 
 	  /// <summary>
 	  /// <seealso cref="IndexingChain"/> that determines how documents are

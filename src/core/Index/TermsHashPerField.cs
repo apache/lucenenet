@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override void Abort()
+	  internal override void Abort()
 	  {
 		Reset();
 		if (NextPerField != null)
@@ -115,11 +115,7 @@ namespace Lucene.Net.Index
 	  {
 		Debug.Assert(stream < StreamCount);
 		int intStart = PostingsArray.IntStarts[termID];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] ints = intPool.buffers[intStart >> Lucene.Net.Util.IntBlockPool.INT_BLOCK_SHIFT];
 		int[] ints = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upto = intStart & Lucene.Net.Util.IntBlockPool.INT_BLOCK_MASK;
 		int upto = intStart & IntBlockPool.INT_BLOCK_MASK;
 		reader.Init(BytePool, PostingsArray.ByteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
 	  }
@@ -185,8 +181,6 @@ namespace Lucene.Net.Index
 
 		  for (int i = 0;i < StreamCount;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upto = bytePool.newSlice(Lucene.Net.Util.ByteBlockPool.FIRST_LEVEL_SIZE);
 			int upto = BytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
 			IntUptos[IntUptoStart + i] = upto + BytePool.ByteOffset;
 		  }
@@ -219,7 +213,7 @@ namespace Lucene.Net.Index
 		{
 		  termID = BytesHash.Add(TermBytesRef);
 		}
-		catch (BytesRefHash.MaxBytesLengthExceededException e)
+		catch (BytesRefHash.MaxBytesLengthExceededException)
 		{
 		  // Term is too large; record this here (can't throw an
 		  // exc because DocInverterPerField will then abort the
@@ -228,8 +222,6 @@ namespace Lucene.Net.Index
 		  // used to prune the term before indexing:
 		  if (DocState.MaxTermPrefix == null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int saved = termBytesRef.length;
 			int saved = TermBytesRef.Length;
 			try
 			{
@@ -266,8 +258,6 @@ namespace Lucene.Net.Index
 
 		  for (int i = 0;i < StreamCount;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upto = bytePool.newSlice(Lucene.Net.Util.ByteBlockPool.FIRST_LEVEL_SIZE);
 			int upto = BytePool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
 			IntUptos[IntUptoStart + i] = upto + BytePool.ByteOffset;
 		  }
@@ -279,8 +269,6 @@ namespace Lucene.Net.Index
 		else
 		{
 		  termID = (-termID) - 1;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int intStart = postingsArray.intStarts[termID];
 		  int intStart = PostingsArray.IntStarts[termID];
 		  IntUptos = IntPool.Buffers[intStart >> IntBlockPool.INT_BLOCK_SHIFT];
 		  IntUptoStart = intStart & IntBlockPool.INT_BLOCK_MASK;
@@ -316,8 +304,6 @@ namespace Lucene.Net.Index
 	  public void WriteBytes(int stream, sbyte[] b, int offset, int len)
 	  {
 		// TODO: optimize
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + len;
 		int end = offset + len;
 		for (int i = offset;i < end;i++)
 		{
@@ -370,8 +356,6 @@ namespace Lucene.Net.Index
 		public override int[] Grow()
 		{
 		  ParallelPostingsArray postingsArray = PerField.PostingsArray;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int oldSize = perField.postingsArray.size;
 		  int oldSize = PerField.PostingsArray.Size;
 		  postingsArray = PerField.PostingsArray = postingsArray.Grow();
 		  BytesUsed_Renamed.AddAndGet((postingsArray.BytesPerPosting() * (postingsArray.Size - oldSize)));

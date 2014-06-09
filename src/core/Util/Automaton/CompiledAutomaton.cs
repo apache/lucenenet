@@ -456,7 +456,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + ((RunAutomaton == null) ? 0 : RunAutomaton.HashCode());
+		result = prime * result + ((RunAutomaton == null) ? 0 : RunAutomaton.GetHashCode());
 		result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
 		result = prime * result + ((Type == null) ? 0 : Type.GetHashCode());
 		return result;

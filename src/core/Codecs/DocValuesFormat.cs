@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs
 	  /// </summary>
 	  public abstract DocValuesProducer FieldsProducer(SegmentReadState state);
 
-	  public override string Name
+	  public string Name
 	  {
 		  get
 		  {

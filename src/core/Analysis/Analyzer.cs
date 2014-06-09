@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis
 	  /// <param name="fieldName"> IndexableField name being indexed </param>
 	  /// <param name="reader"> original Reader </param>
 	  /// <returns> reader, optionally decorated with CharFilter(s) </returns>
-      protected internal virtual TextReader InitReader(string fieldName, TextReader reader)
+      public virtual TextReader InitReader(string fieldName, TextReader reader)
 	  {
 		return reader;
 	  }
@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis
 	  {
 		return 1;
 	  }
-
+        /*LUCENE TO-DO
 	  /// <summary>
 	  /// Returns the used <seealso cref="ReuseStrategy"/>.
 	  /// </summary>
@@ -200,15 +200,15 @@ namespace Lucene.Net.Analysis
 		  {
 			return ReuseStrategy_Renamed;
 		  }
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Frees persistent resources used by this Analyzer </summary>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		if (StoredValue != null)
 		{
-		  StoredValue.Close();
+		  StoredValue.Dispose();
 		  StoredValue = null;
 		}
 	  }

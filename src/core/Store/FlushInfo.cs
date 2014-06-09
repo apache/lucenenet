@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
 		this.EstimatedSegmentSize = estimatedSegmentSize;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;

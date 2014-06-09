@@ -72,12 +72,10 @@ namespace Lucene.Net.Index
 	  /// Main method to run {code IndexUpgrader} from the
 	  ///  command-line. 
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("deprecation") public static void main(String[] args) throws java.io.IOException
-	  public static void Main(string[] args)
+	  /*public static void Main(string[] args)
 	  {
 		ParseArgs(args).Upgrade();
-	  }
+	  }*/
 	  internal static IndexUpgrader ParseArgs(string[] args)
 	  {
 		string path = null;
@@ -189,7 +187,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		IndexWriterConfig c = Iwc.Clone();
+        IndexWriterConfig c = (IndexWriterConfig)Iwc.Clone();
 		c.SetMergePolicy(new UpgradeIndexMergePolicy(c.MergePolicy));
 		c.SetIndexDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 
@@ -209,7 +207,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  w.Close();
+		  w.Dispose();
 		}
 	  }
 

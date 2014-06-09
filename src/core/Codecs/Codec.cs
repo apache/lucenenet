@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// Returns this codec's name </summary>
-	  public override string Name
+	  public string Name
 	  {
 		  get
 		  {

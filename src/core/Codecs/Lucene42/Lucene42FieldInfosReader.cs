@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene42
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int fieldNumber = input.readVInt();
 			int fieldNumber = input.ReadVInt();
-			sbyte bits = input.ReadByte();
+			byte bits = input.ReadByte();
 			bool isIndexed = (bits & Lucene42FieldInfosFormat.IS_INDEXED) != 0;
 			bool storeTermVector = (bits & Lucene42FieldInfosFormat.STORE_TERMVECTOR) != 0;
 			bool omitNorms = (bits & Lucene42FieldInfosFormat.OMIT_NORMS) != 0;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene42
 			}
 
 			// DV Types are packed in one byte
-			sbyte val = input.ReadByte();
+			byte val = input.ReadByte();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType docValuesType = getDocValuesType(input, (byte)(val & 0x0F));
 			FieldInfo.DocValuesType_e docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		{
 		  if (success)
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		  else
 		  {

@@ -24,6 +24,7 @@ namespace Lucene.Net.Store
 
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using System;
 
 	/// <summary>
 	/// Abstract base class for performing write operations of Lucene's low-level
@@ -43,17 +44,32 @@ namespace Lucene.Net.Store
 	  /// as sequences of bytes, so file formats are byte-order independent.
 	  /// </summary>
 	  /// <seealso cref= IndexInput#readByte() </seealso>
-	  public abstract void WriteByte(sbyte b);
+	  public abstract void WriteByte(byte b);
+
+      public void WriteByte(sbyte b)
+      {
+          WriteByte((byte)b);
+      }
 
 	  /// <summary>
 	  /// Writes an array of bytes. </summary>
 	  /// <param name="b"> the bytes to write </param>
 	  /// <param name="length"> the number of bytes to write </param>
 	  /// <seealso cref= DataInput#readBytes(byte[],int,int) </seealso>
-	  public virtual void WriteBytes(sbyte[] b, int length)
+	  public void WriteBytes(sbyte[] b, int length)
 	  {
 		WriteBytes(b, 0, length);
 	  }
+
+      public void WriteBytes(sbyte[] b, int offset, int length)
+      {
+          WriteBytes((byte[])(Array)b, offset, length);
+      }
+
+      public void WriteBytes(byte[] b, int length)
+      {
+          WriteBytes(b, 0, length);
+      }
 
 	  /// <summary>
 	  /// Writes an array of bytes. </summary>
@@ -61,7 +77,7 @@ namespace Lucene.Net.Store
 	  /// <param name="offset"> the offset in the byte array </param>
 	  /// <param name="length"> the number of bytes to write </param>
 	  /// <seealso cref= DataInput#readBytes(byte[],int,int) </seealso>
-	  public abstract void WriteBytes(sbyte[] b, int offset, int length);
+	  public abstract void WriteBytes(byte[] b, int offset, int length);
 
 	  /// <summary>
 	  /// Writes an int as four bytes.

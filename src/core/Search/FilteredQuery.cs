@@ -28,6 +28,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Index;
 
 
 
@@ -44,7 +45,7 @@ namespace Lucene.Net.Search
 
 	  private readonly Query Query_Renamed;
 	  private readonly Filter Filter_Renamed;
-	  private readonly FilterStrategy Strategy;
+	  private readonly FilterStrategy strategy;
 
 	  /// <summary>
 	  /// Constructs a new query which applies a filter to the results of the original query.
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
 		{
 		  throw new System.ArgumentException("FilterStrategy can not be null");
 		}
-		this.Strategy = strategy;
+		this.strategy = strategy;
 		this.Query_Renamed = query;
 		this.Filter_Renamed = filter;
 	  }
@@ -123,8 +124,8 @@ namespace Lucene.Net.Search
 		  {
 			Explanation inner = Weight.Explain(ir, i);
 			Filter f = OuterInstance.Filter_Renamed;
-			DocIdSet docIdSet = f.GetDocIdSet(ir, ir.Reader().LiveDocs);
-			DocIdSetIterator docIdSetIterator = docIdSet == null ? DocIdSetIterator.Empty() : docIdSet.Iterator();
+			DocIdSet docIdSet = f.GetDocIdSet(ir, ((AtomicReader)ir.Reader()).LiveDocs);
+			DocIdSetIterator docIdSetIterator = docIdSet == null ? DocIdSetIterator.Empty() : docIdSet.GetIterator();
 			if (docIdSetIterator == null)
 			{
 			  docIdSetIterator = DocIdSetIterator.Empty();
@@ -162,7 +163,7 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-			return OuterInstance.Strategy.FilteredScorer(context, Weight, filterDocIdSet);
+			return OuterInstance.strategy.FilteredScorer(context, Weight, filterDocIdSet);
 		  }
 
 		  // return a filtering top scorer
@@ -177,7 +178,7 @@ namespace Lucene.Net.Search
 			  return null;
 			}
 
-			return OuterInstance.Strategy.FilteredBulkScorer(context, Weight, scoreDocsInOrder, filterDocIdSet);
+			return OuterInstance.strategy.FilteredBulkScorer(context, Weight, scoreDocsInOrder, filterDocIdSet);
 		  }
 	  }
 
@@ -193,7 +194,7 @@ namespace Lucene.Net.Search
 		internal int ScorerDoc = -1;
 		internal readonly Bits FilterBits;
 
-		protected internal QueryFirstScorer(Weight weight, Bits filterBits, Scorer other) : base(weight)
+		internal QueryFirstScorer(Weight weight, Bits filterBits, Scorer other) : base(weight)
 		{
 		  this.Scorer = other;
 		  this.FilterBits = filterBits;
@@ -389,7 +390,7 @@ namespace Lucene.Net.Search
 	  {
 		internal readonly int FirstFilteredDoc;
 
-		protected internal PrimaryAdvancedLeapFrogScorer(Weight weight, int firstFilteredDoc, DocIdSetIterator filterIter, Scorer other) : base(weight, filterIter, other, other)
+		internal PrimaryAdvancedLeapFrogScorer(Weight weight, int firstFilteredDoc, DocIdSetIterator filterIter, Scorer other) : base(weight, filterIter, other, other)
 		{
 		  this.FirstFilteredDoc = firstFilteredDoc;
 		  this.PrimaryDoc = firstFilteredDoc; // initialize to prevent and advance call to move it further
@@ -420,7 +421,7 @@ namespace Lucene.Net.Search
 		if (queryRewritten != Query_Renamed)
 		{
 		  // rewrite to a new FilteredQuery wrapping the rewritten query
-		  Query rewritten = new FilteredQuery(queryRewritten, Filter_Renamed, Strategy);
+		  Query rewritten = new FilteredQuery(queryRewritten, Filter_Renamed, strategy);
 		  rewritten.Boost = this.Boost;
 		  return rewritten;
 		}
@@ -453,11 +454,11 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Returns this FilteredQuery's <seealso cref="FilterStrategy"/> </summary>
-	  public virtual FilterStrategy FilterStrategy
+	  public virtual FilterStrategy Strategy
 	  {
 		  get
 		  {
-			return this.Strategy;
+			return this.strategy;
 		  }
 	  }
 
@@ -494,7 +495,7 @@ namespace Lucene.Net.Search
 		}
 		Debug.Assert(o is FilteredQuery);
 		FilteredQuery fq = (FilteredQuery) o;
-		return fq.Query_Renamed.Equals(this.Query_Renamed) && fq.Filter_Renamed.Equals(this.Filter_Renamed) && fq.Strategy.Equals(this.Strategy);
+		return fq.Query_Renamed.Equals(this.Query_Renamed) && fq.Filter_Renamed.Equals(this.Filter_Renamed) && fq.strategy.Equals(this.strategy);
 	  }
 
 	  /// <summary>
@@ -502,7 +503,7 @@ namespace Lucene.Net.Search
 	  public override int GetHashCode()
 	  {
 		int hash = base.GetHashCode();
-        hash = hash * 31 + Strategy.GetHashCode();
+        hash = hash * 31 + strategy.GetHashCode();
         hash = hash * 31 + Query_Renamed.GetHashCode();
         hash = hash * 31 + Filter_Renamed.GetHashCode();
 		return hash;
@@ -615,7 +616,7 @@ namespace Lucene.Net.Search
 
 		public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
 		{
-		  DocIdSetIterator filterIter = docIdSet.Iterator();
+		  DocIdSetIterator filterIter = docIdSet.GetIterator();
 		  if (filterIter == null)
 		  {
 			// this means the filter does not accept any documents.
@@ -628,7 +629,7 @@ namespace Lucene.Net.Search
 			return null;
 		  }
 
-		  Bits filterAcceptDocs = docIdSet.Bits();
+		  Bits filterAcceptDocs = docIdSet.GetBits();
 		  // force if RA is requested
 		  bool useRandomAccess = filterAcceptDocs != null && UseRandomAccess(filterAcceptDocs, firstFilterDoc);
 		  if (useRandomAccess)
@@ -678,7 +679,7 @@ namespace Lucene.Net.Search
 
 		public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
 		{
-		  DocIdSetIterator filterIter = docIdSet.Iterator();
+		  DocIdSetIterator filterIter = docIdSet.GetIterator();
 		  if (filterIter == null)
 		  {
 			// this means the filter does not accept any documents.
@@ -719,7 +720,7 @@ namespace Lucene.Net.Search
 	  {
 		public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
 		{
-		  Bits filterAcceptDocs = docIdSet.Bits();
+		  Bits filterAcceptDocs = docIdSet.GetBits();
 		  if (filterAcceptDocs == null)
 		  {
 			// Filter does not provide random-access Bits; we
@@ -732,7 +733,7 @@ namespace Lucene.Net.Search
 
 		public override BulkScorer FilteredBulkScorer(AtomicReaderContext context, Weight weight, bool scoreDocsInOrder, DocIdSet docIdSet) // ignored (we always top-score in order)
 		{
-		  Bits filterAcceptDocs = docIdSet.Bits();
+		  Bits filterAcceptDocs = docIdSet.GetBits();
 		  if (filterAcceptDocs == null)
 		  {
 			// Filter does not provide random-access Bits; we

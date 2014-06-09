@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return Directory.GetHashCode() + Convert.ToInt64(Generation).GetHashCode();
 	  }

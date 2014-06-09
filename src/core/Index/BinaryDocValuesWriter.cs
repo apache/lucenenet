@@ -121,11 +121,11 @@ namespace Lucene.Net.Index
 		BytesUsed = newBytesUsed;
 	  }
 
-	  public override void Finish(int maxDoc)
+	  internal override void Finish(int maxDoc)
 	  {
 	  }
 
-	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+	  internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
 		int maxDoc = state.SegmentInfo.DocCount;
 		Bytes.Freeze(false);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 		  }
 	  }*/
 
-	  public override void Abort()
+	  internal override void Abort()
 	  {
 	  }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
           // Use yield return instead of ucsom IEnumerable
 
           BytesRef value = new BytesRef();
-          AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = (AppendingDeltaPackedLongBuffer.Iterator)Lengths.Iterator();
+          AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = (AppendingDeltaPackedLongBuffer.Iterator)Lengths.GetIterator();
           int size = (int)Lengths.Size();
           int maxDoc = maxDocParam;
           int upto = 0;

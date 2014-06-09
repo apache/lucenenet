@@ -141,7 +141,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// the destination state).
 	  /// </summary>
 	  /// <returns> hash code </returns>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return Min_Renamed * 2 + Max_Renamed * 3;
 	  }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// Clones this transition.
 	  /// </summary>
 	  /// <returns> clone with same character interval and destination state </returns>
-	  public override Transition Clone()
+	  public virtual object Clone()
 	  {
 		  return (Transition) base.MemberwiseClone();
 	  }

@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 	  internal override void Abort()
 	  {
 	  }
-	  public override void Flush(IDictionary<string, InvertedDocEndConsumerPerField> fieldsToFlush, SegmentWriteState state)
+      internal override void Flush(IDictionary<string, InvertedDocEndConsumerPerField> fieldsToFlush, SegmentWriteState state)
 	  {
 		bool success = false;
 		DocValuesConsumer normsConsumer = null;
@@ -55,8 +55,6 @@ namespace Lucene.Net.Index
 
 			foreach (FieldInfo fi in state.FieldInfos)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final NormsConsumerPerField toWrite = (NormsConsumerPerField) fieldsToFlush.get(fi.name);
 			  NormsConsumerPerField toWrite = (NormsConsumerPerField) fieldsToFlush[fi.Name];
 			  // we must check the final value of omitNorms for the fieldinfo, it could have 
 			  // changed for this field since the first time we added it.

@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  /// <param name="bytes"> a <seealso cref="BytesRef"/> where to store the decompressed data </param>
 	  public abstract void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes);
 
-	  public override abstract Decompressor Clone();
+	  public abstract object Clone();
 
 	}
 

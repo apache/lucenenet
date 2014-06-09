@@ -185,25 +185,25 @@ namespace Lucene.Net.Index
 	  {
 	  }
 
-	  public override IndexWriterConfig Clone()
+	  public object Clone()
 	  {
 		try
 		{
           IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
 
-		  clone.Writer = Writer.Clone();
+		  clone.Writer = (SetOnce<IndexWriter>)Writer.Clone();
 
 		  // Mostly shallow clone, but do a deepish clone of
 		  // certain objects that have state that cannot be shared
 		  // across IW instances:
-		  clone.DelPolicy = DelPolicy.Clone();
-		  clone.flushPolicy = flushPolicy.Clone();
-		  clone.indexerThreadPool = indexerThreadPool.Clone();
+		  clone.DelPolicy = (IndexDeletionPolicy)DelPolicy.Clone();
+		  clone.flushPolicy = (FlushPolicy)flushPolicy.Clone();
+		  clone.indexerThreadPool = (DocumentsWriterPerThreadPool)indexerThreadPool.Clone();
 		  // we clone the infoStream because some impls might have state variables
 		  // such as line numbers, message throughput, ...
-		  clone.infoStream = infoStream.Clone();
-		  clone.mergePolicy = mergePolicy.Clone();
-		  clone.mergeScheduler = mergeScheduler.Clone();
+		  clone.infoStream = (InfoStream)infoStream.Clone();
+		  clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
+		  clone.mergeScheduler = (MergeScheduler)mergeScheduler.Clone();
 
 		  return clone;
 		}
@@ -670,37 +670,37 @@ namespace Lucene.Net.Index
 		return SetInfoStream(new PrintStreamInfoStream(printStream));
 	  }
 
-	  public override IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
+	  public override LiveIndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
 	  {
 		return (IndexWriterConfig) base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
 	  }
 
-	  public override IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
+      public override LiveIndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
 	  {
 		return (IndexWriterConfig) base.SetMaxBufferedDocs(maxBufferedDocs);
 	  }
 
-	  public override IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
+      public override LiveIndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
 	  {
 		return (IndexWriterConfig) base.SetMergedSegmentWarmer(mergeSegmentWarmer);
 	  }
 
-	  public override IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
+      public override LiveIndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
 	  {
 		return (IndexWriterConfig) base.SetRAMBufferSizeMB(ramBufferSizeMB);
 	  }
 
-	  public override IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
+      public override LiveIndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
 	  {
 		return (IndexWriterConfig) base.SetReaderTermsIndexDivisor(divisor);
 	  }
 
-	  public override IndexWriterConfig SetTermIndexInterval(int interval)
+      public override LiveIndexWriterConfig SetTermIndexInterval(int interval)
 	  {
 		return (IndexWriterConfig) base.SetTermIndexInterval(interval);
 	  }
 
-	  public override IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
+      public override LiveIndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
 	  {
 		return (IndexWriterConfig) base.SetUseCompoundFile(useCompoundFile);
 	  }

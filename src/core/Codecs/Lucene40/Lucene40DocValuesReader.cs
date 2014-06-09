@@ -40,6 +40,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using PagedBytes = Lucene.Net.Util.PagedBytes;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Reads the 4.0 format of norms/docvalues
@@ -58,14 +59,14 @@ namespace Lucene.Net.Codecs.Lucene40
 	  private readonly IDictionary<int, BinaryDocValues> BinaryInstances = new Dictionary<int, BinaryDocValues>();
 	  private readonly IDictionary<int, SortedDocValues> SortedInstances = new Dictionary<int, SortedDocValues>();
 
-	  //private readonly AtomicLong RamBytesUsed_Renamed;
+      private readonly AtomicLong RamBytesUsed_Renamed;
 
 	  internal Lucene40DocValuesReader(SegmentReadState state, string filename, string legacyKey)
 	  {
 		this.State = state;
 		this.LegacyKey = legacyKey;
 		this.Dir = new CompoundFileDirectory(state.Directory, filename, state.Context, false);
-		//RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOf(this.GetType()));
+        RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOf(this.GetType()));
 	  }
 
 	  public override NumericDocValues GetNumeric(FieldInfo field)
@@ -140,7 +141,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  private NumericDocValues LoadVarIntsField(FieldInfo field, IndexInput input)
 	  {
 		CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.VAR_INTS_CODEC_NAME, Lucene40DocValuesFormat.VAR_INTS_VERSION_START, Lucene40DocValuesFormat.VAR_INTS_VERSION_CURRENT);
-		sbyte header = input.ReadByte();
+		byte header = input.ReadByte();
 		if (header == Lucene40DocValuesFormat.VAR_INTS_FIXED_64)
 		{
 		  int maxDoc = State.SegmentInfo.DocCount;
@@ -149,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			values[i] = input.ReadLong();
 		  }
-		  //RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+          RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		  return new NumericDocValuesAnonymousInnerClassHelper(this, values);
 		}
 		else if (header == Lucene40DocValuesFormat.VAR_INTS_PACKED)
@@ -157,7 +158,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  long minValue = input.ReadLong();
 		  long defaultValue = input.ReadLong();
 		  PackedInts.Reader reader = PackedInts.GetReader(input);
-		  //RamBytesUsed_Renamed.addAndGet(reader.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(reader.RamBytesUsed());
 		  return new NumericDocValuesAnonymousInnerClassHelper2(this, minValue, defaultValue, reader);
 		}
 		else
@@ -202,8 +203,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		  public override long Get(int docID)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long value = reader.get(docID);
 			long value = Reader.Get(docID);
 			if (value == DefaultValue)
 			{
@@ -225,11 +224,9 @@ namespace Lucene.Net.Codecs.Lucene40
 		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
 		}
 		int maxDoc = State.SegmentInfo.DocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte values[] = new byte[maxDoc];
 		sbyte[] values = new sbyte[maxDoc];
 		input.ReadBytes(values, 0, values.Length);
-		//RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+        RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		return new NumericDocValuesAnonymousInnerClassHelper3(this, values);
 	  }
 
@@ -260,14 +257,12 @@ namespace Lucene.Net.Codecs.Lucene40
 		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
 		}
 		int maxDoc = State.SegmentInfo.DocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short values[] = new short[maxDoc];
 		short[] values = new short[maxDoc];
 		for (int i = 0; i < values.Length; i++)
 		{
 		  values[i] = input.ReadShort();
 		}
-        //RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+        RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		return new NumericDocValuesAnonymousInnerClassHelper4(this, values);
 	  }
 
@@ -303,7 +298,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  values[i] = input.ReadInt();
 		}
-        //RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+        RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		return new NumericDocValuesAnonymousInnerClassHelper5(this, values);
 	  }
 
@@ -339,7 +334,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  values[i] = input.ReadLong();
 		}
-        //RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+        RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		return new NumericDocValuesAnonymousInnerClassHelper6(this, values);
 	  }
 
@@ -370,14 +365,12 @@ namespace Lucene.Net.Codecs.Lucene40
 		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
 		}
 		int maxDoc = State.SegmentInfo.DocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int values[] = new int[maxDoc];
 		int[] values = new int[maxDoc];
 		for (int i = 0; i < values.Length; i++)
 		{
 		  values[i] = input.ReadInt();
 		}
-        //RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+        RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		return new NumericDocValuesAnonymousInnerClassHelper7(this, values);
 	  }
 
@@ -408,14 +401,12 @@ namespace Lucene.Net.Codecs.Lucene40
 		  throw new CorruptIndexException("invalid valueSize: " + valueSize);
 		}
 		int maxDoc = State.SegmentInfo.DocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long values[] = new long[maxDoc];
 		long[] values = new long[maxDoc];
 		for (int i = 0; i < values.Length; i++)
 		{
 		  values[i] = input.ReadLong();
 		}
-        //RamBytesUsed_Renamed.addAndGet(RamUsageEstimator.SizeOf(values));
+        RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(values));
 		return new NumericDocValuesAnonymousInnerClassHelper8(this, values);
 	  }
 
@@ -486,7 +477,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  PagedBytes.Reader bytesReader = bytes.Freeze(true);
 		  CodecUtil.CheckEOF(input);
 		  success = true;
-          //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed());
 		  return new BinaryDocValuesAnonymousInnerClassHelper(this, fixedLength, bytesReader);
 		}
 		finally
@@ -543,7 +534,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  CodecUtil.CheckEOF(data);
 		  CodecUtil.CheckEOF(index);
 		  success = true;
-          //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
 		  return new BinaryDocValuesAnonymousInnerClassHelper2(this, bytesReader, reader);
 		}
 		finally
@@ -603,7 +594,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  PackedInts.Reader reader = PackedInts.GetReader(index);
 		  CodecUtil.CheckEOF(data);
 		  CodecUtil.CheckEOF(index);
-          //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
 		  success = true;
 		  return new BinaryDocValuesAnonymousInnerClassHelper3(this, fixedLength, bytesReader, reader);
 		}
@@ -664,7 +655,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  PackedInts.Reader reader = PackedInts.GetReader(index);
 		  CodecUtil.CheckEOF(data);
 		  CodecUtil.CheckEOF(index);
-          //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
 		  success = true;
 		  return new BinaryDocValuesAnonymousInnerClassHelper4(this, bytesReader, reader);
 		}
@@ -780,7 +771,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		bytes.Copy(data, fixedLength * (long) valueCount);
 		PagedBytes.Reader bytesReader = bytes.Freeze(true);
 		PackedInts.Reader reader = PackedInts.GetReader(index);
-        //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
+        RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + reader.RamBytesUsed());
 
 		return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper(this, fixedLength, valueCount, bytesReader, reader));
 	  }
@@ -790,7 +781,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  private readonly Lucene40DocValuesReader OuterInstance;
 
 		  private int FixedLength;
-		  private int ValueCount;
+		  private int valueCount;
 		  private PagedBytes.Reader BytesReader;
 		  private PackedInts.Reader Reader;
 
@@ -798,7 +789,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.FixedLength = fixedLength;
-			  this.ValueCount = valueCount;
+			  this.valueCount = valueCount;
 			  this.BytesReader = bytesReader;
 			  this.Reader = reader;
 		  }
@@ -817,7 +808,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			  get
 			  {
-				return ValueCount;
+				return valueCount;
 			  }
 		  }
 	  }
@@ -835,7 +826,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		PackedInts.Reader ordsReader = PackedInts.GetReader(index);
 
 		int valueCount = addressReader.Size() - 1;
-        //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + addressReader.RamBytesUsed() + ordsReader.RamBytesUsed());
+        RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + addressReader.RamBytesUsed() + ordsReader.RamBytesUsed());
 
 		return CorrectBuggyOrds(new SortedDocValuesAnonymousInnerClassHelper2(this, bytesReader, addressReader, ordsReader, valueCount));
 	  }
@@ -847,7 +838,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  private PagedBytes.Reader BytesReader;
 		  private PackedInts.Reader AddressReader;
 		  private PackedInts.Reader OrdsReader;
-		  private int ValueCount;
+		  private int valueCount;
 
 		  public SortedDocValuesAnonymousInnerClassHelper2(Lucene40DocValuesReader outerInstance, PagedBytes.Reader bytesReader, PackedInts.Reader addressReader, PackedInts.Reader ordsReader, int valueCount)
 		  {
@@ -855,7 +846,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			  this.BytesReader = bytesReader;
 			  this.AddressReader = addressReader;
 			  this.OrdsReader = ordsReader;
-			  this.ValueCount = valueCount;
+			  this.valueCount = valueCount;
 		  }
 
 		  public override int GetOrd(int docID)
@@ -874,7 +865,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			  get
 			  {
-				return ValueCount;
+				return valueCount;
 			  }
 		  }
 	  }
@@ -882,8 +873,6 @@ namespace Lucene.Net.Codecs.Lucene40
 	  // detects and corrects LUCENE-4717 in old indexes
 	  private SortedDocValues CorrectBuggyOrds(SortedDocValues @in)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = state.segmentInfo.getDocCount();
 		int maxDoc = State.SegmentInfo.DocCount;
 		for (int i = 0; i < maxDoc; i++)
 		{
@@ -938,15 +927,18 @@ namespace Lucene.Net.Codecs.Lucene40
 		return new Lucene.Net.Util.Bits_MatchAllBits(State.SegmentInfo.DocCount);
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		Dir.Close();
+          if (disposing)
+          {
+              Dir.Dispose();
+          }
 	  }
 
-	  //public override long RamBytesUsed()
-	  //{
-		//return RamBytesUsed_Renamed.get();
-	  //}
+      public override long RamBytesUsed()
+      {
+          return RamBytesUsed_Renamed.Get();
+      }
 
 	  public override void CheckIntegrity()
 	  {

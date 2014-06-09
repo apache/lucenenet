@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 		  {
 		  }
 
-		  public override Automaton GetAutomaton(string name)
+		  public Automaton GetAutomaton(string name)
 		  {
 			return null;
 		  }

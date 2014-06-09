@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Similarities
 
 	  protected internal override float Score(BasicStats stats, float freq, float docLen)
 	  {
-		return stats.TotalBoost * Distribution_Renamed.Score(stats, Normalization_Renamed.Tfn(stats, freq, docLen), Lambda_Renamed.Lambda(stats));
+		return stats.TotalBoost * Distribution_Renamed.Score(stats, Normalization_Renamed.Tfn(stats, freq, docLen), Lambda_Renamed.CalculateLambda(stats));
 	  }
 
 	  protected internal override void Explain(Explanation expl, BasicStats stats, int doc, float freq, float docLen)

@@ -125,12 +125,12 @@ namespace Lucene.Net.Util
 		this.NumBits = Wlen * 64;
 	  }
 
-	  public override DocIdSetIterator Iterator()
+	  public override DocIdSetIterator GetIterator()
 	  {
 		return new OpenBitSetIterator(bits, Wlen);
 	  }
 
-	  public override Bits Bits()
+	  public override Bits GetBits()
 	  {
 		return this;
 	  }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
 		return Capacity();
 	  }
 
-	  public override int Length()
+	  public virtual int Length()
 	  {
 		return bits.Length << 6;
 	  }
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Returns true or false for the specified bit index. </summary>
-	  public override bool Get(int index)
+      public virtual bool Get(int index)
 	  {
 		int i = index >> 6; // div 64
 		// signed shift will keep a negative index and force an
@@ -907,7 +907,7 @@ namespace Lucene.Net.Util
 		return -1;
 	  }
 
-	  public override OpenBitSet Clone()
+	  public object Clone()
 	  {
 		try
 		{
@@ -1127,7 +1127,7 @@ namespace Lucene.Net.Util
 	  }
 
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		// Start with a zero hash and use a mix that results in zero if the input is zero.
 		// this effectively truncates trailing zeros without an explicit check.

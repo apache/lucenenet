@@ -44,19 +44,17 @@ namespace Lucene.Net.Index
 		this.BytesUsed = bytesUsed;
 	  }
 
-	  internal override void StartDocument()
+      public override void StartDocument()
 	  {
 	  }
 
-	  internal override void FinishDocument()
+      public override void FinishDocument()
 	  {
 	  }
 
 	  public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.FieldInfo.DocValuesType dvType = field.fieldType().docValueType();
-		DocValuesType_e? dvType = field.FieldType().DocValueType();
+		DocValuesType_e? dvType = field.FieldType().DocValueType;
 		if (dvType != null)
 		{
 		  fieldInfo.DocValuesType = dvType;
@@ -87,7 +85,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal override void Flush(SegmentWriteState state)
+      public override void Flush(SegmentWriteState state)
 	  {
 		if (Writers.Count > 0)
 		{

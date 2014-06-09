@@ -50,12 +50,14 @@ namespace Lucene.Net.Util
 	/// </ul>
 	/// @lucene.internal
 	/// </summary>
-	public sealed class MergedIterator<T> : IEnumerator<T> where T : IComparable<T>
+	public sealed class MergedIterator<T> : IEnumerator<T> 
+        where T : IComparable<T>
 	{
         private readonly TermMergeQueue<T> Queue;
         private readonly SubIterator<T>[] Top;
         private readonly bool RemoveDuplicates;
         private int NumTop;
+        private T current;
         
         public MergedIterator(params IEnumerator<T>[] iterators)
             : this(true, iterators)
@@ -81,6 +83,84 @@ namespace Lucene.Net.Util
                 }
             }
         }
+
+        public bool MoveNext()
+        {
+            PushTop();
+
+            if (Queue.Size() > 0) 
+            {
+                PullTop();
+            }
+            else
+            {
+                current = default(T);
+            }
+
+            if ((object)current == (object)default(T))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public T Current
+        {
+            get 
+            {
+                return current;
+            }
+        }
+
+        object System.Collections.IEnumerator.Current
+        {
+            get
+            {
+                return Current;
+            }
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose() { }
+
+        private void PullTop()
+        {
+            Debug.Assert(NumTop == 0);
+            Top[NumTop++] = Queue.Pop();
+            if (RemoveDuplicates)
+            {
+                //extract all subs from the queue that have the same top element
+                while (Queue.Size() != 0 && Queue.Top().Current.Equals(Top[0].Current))
+                {
+                    Top[NumTop++] = Queue.Pop();
+                }
+            }
+            current = Top[0].Current;
+        }
+
+        private void PushTop()
+        {
+            for (int i = 0; i < NumTop; ++i)
+            {
+                if (Top[i].Iterator.MoveNext())
+                {
+                    Top[i].Current = Top[i].Iterator.Current;
+                    Queue.Add(Top[i]);
+                }
+                else
+                {
+                    Top[i].Current = default(T);
+                }
+            }
+            NumTop = 0;
+        }
+
+
 
 
 	  /*private T Current;
@@ -198,21 +278,23 @@ namespace Lucene.Net.Util
 		NumTop = 0;
 	  }*/
 
-	  private class SubIterator<I> where I : IComparable<I>
+	  private class SubIterator<I> 
+          where I : IComparable<I>
 	  {
 		internal IEnumerator<I> Iterator;
 		internal I Current;
 		internal int Index;
 	  }
 
-	  private class TermMergeQueue<C> : PriorityQueue<SubIterator<C>> where C : IComparable<C>
+	  private class TermMergeQueue<C> : PriorityQueue<SubIterator<C>> 
+          where C : IComparable<C>
 	  {
 		internal TermMergeQueue(int size) 
             : base(size)
 		{
 		}
 
-		protected internal override bool LessThan(SubIterator<C> a, SubIterator<C> b)
+		public override bool LessThan(SubIterator<C> a, SubIterator<C> b)
 		{
 		  int cmp = a.Current.CompareTo(b.Current);
 		  if (cmp != 0)

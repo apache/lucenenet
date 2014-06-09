@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace Lucene.Net.Store
@@ -33,7 +36,8 @@ namespace Lucene.Net.Store
 	public class LockStressTest
 	{
 
-	  public static void Main(string[] args)
+      [STAThread]
+	  /*public static void Main(string[] args)
 	  {
 
 		if (args.Length != 7)
@@ -43,8 +47,6 @@ namespace Lucene.Net.Store
 		}
 
 		int arg = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int myID = Integer.parseInt(args[arg++]);
 		int myID = Convert.ToInt32(args[arg++]);
 
 		if (myID < 0 || myID > 255)
@@ -53,114 +55,112 @@ namespace Lucene.Net.Store
 		  Environment.Exit(1);
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String verifierHost = args[arg++];
-		string verifierHost = args[arg++];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int verifierPort = Integer.parseInt(args[arg++]);
+		IPHostEntry verifierHost = Dns.GetHostEntry(args[arg++]);
 		int verifierPort = Convert.ToInt32(args[arg++]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String lockFactoryClassName = args[arg++];
-		string lockFactoryClassName = args[arg++];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String lockDirName = args[arg++];
+        IPAddress verifierIp = verifierHost.AddressList[0];
+        IPEndPoint addr = new IPEndPoint(verifierIp, verifierPort);
+        string lockFactoryClassName = args[arg++];
 		string lockDirName = args[arg++];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int sleepTimeMS = Integer.parseInt(args[arg++]);
 		int sleepTimeMS = Convert.ToInt32(args[arg++]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int count = Integer.parseInt(args[arg++]);
 		int count = Convert.ToInt32(args[arg++]);
 
-		LockFactory lockFactory;
-		try
-		{
-		  lockFactory = Type.GetType(lockFactoryClassName).asSubclass(typeof(LockFactory)).newInstance();
+        Type c;
+        try
+        {
+            c = Type.GetType(lockFactoryClassName);
+        }
+        catch (Exception)
+        {
+            throw new IOException("unable to find LockClass " + lockFactoryClassName);
+        }
+
+        LockFactory lockFactory;
+        try
+        {
+            lockFactory = (LockFactory)Activator.CreateInstance(c);
 		}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (IllegalAccessException)
+        catch (UnauthorizedAccessException)
 		{
 		  throw new System.IO.IOException("Cannot instantiate lock factory " + lockFactoryClassName);
 		}
         catch (InvalidCastException) {
-            throw new IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory");
+            throw new System.IO.IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory");
         }
-        catch (ClassNotFoundException)
+        catch (Exception)
         {
-            throw new IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
+            throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
         }
 
-		File lockDir = new File(lockDirName);
+        DirectoryInfo lockDir = new DirectoryInfo(lockDirName);
 
 		if (lockFactory is FSLockFactory)
 		{
 		  ((FSLockFactory) lockFactory).LockDir = lockDir;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.net.InetSocketAddress addr = new java.net.InetSocketAddress(verifierHost, verifierPort);
-		InetSocketAddress addr = new InetSocketAddress(verifierHost, verifierPort);
+
+        
 		Console.WriteLine("Connecting to server " + addr + " and registering as client " + myID + "...");
-		using (Socket socket = new Socket())
+        using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
 		{
-		  socket.ReuseAddress = true;
-		  socket.connect(addr, 500);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.OutputStream out = socket.getOutputStream();
-		  OutputStream @out = socket.OutputStream;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.InputStream in = socket.getInputStream();
-		  InputStream @in = socket.InputStream;
+            using (Stream @out = new NetworkStream(socket, FileAccess.ReadWrite), @in = new NetworkStream(socket, FileAccess.Read))
+            {
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+                socket.Connect(verifierIp, 500);
 
-		  @out.write(myID);
-		  @out.flush();
+                BinaryReader intReader = new BinaryReader(@in);
+                BinaryWriter intWriter = new BinaryWriter(@out);
 
-		  lockFactory.LockPrefix = "test";
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final LockFactory verifyLF = new VerifyingLockFactory(lockFactory, in, out);
-		  LockFactory verifyLF = new VerifyingLockFactory(lockFactory, @in, @out);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lock l = verifyLF.makeLock("test.lock");
-		  Lock l = verifyLF.MakeLock("test.lock");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Random rnd = new java.util.Random();
-		  Random rnd = new Random();
+                intWriter.Write(myID);
+                @out.Flush();
 
-		  // wait for starting gun
-		  if (@in.read() != 43)
-		  {
-			throw new System.IO.IOException("Protocol violation");
-		  }
+                lockFactory.LockPrefix = "test";
+                LockFactory verifyLF = new VerifyingLockFactory(lockFactory, @in, @out);
+                Lock l = verifyLF.MakeLock("test.lock");
+                Random rnd = new Random();
 
-		  for (int i = 0; i < count; i++)
-		  {
-			bool obtained = false;
 
-			try
-			{
-			  obtained = l.Obtain(rnd.Next(100) + 10);
-			}
-			catch (LockObtainFailedException e)
-			{
-			}
+                // wait for starting gun
+                if (intReader.ReadInt32() != 43)
+                {
+                    throw new System.IO.IOException("Protocol violation");
+                }
 
-			if (obtained)
-			{
-			  Thread.Sleep(sleepTimeMS);
-			  l.Close();
-			}
+                for (int i = 0; i < count; i++)
+                {
+                    bool obtained = false;
 
-			if (i % 500 == 0)
-			{
-			  Console.WriteLine((i * 100.0 / count) + "% done.");
-			}
+                    try
+                    {
+                        obtained = l.Obtain(rnd.Next(100) + 10);
+                    }
+                    catch (LockObtainFailedException e)
+                    {
+                    }
 
-			Thread.Sleep(sleepTimeMS);
-		  }
+                    if (obtained)
+                    {
+                        Thread.Sleep(sleepTimeMS);
+                        l.Release();
+                    }
+
+                    if (i % 500 == 0)
+                    {
+                        Console.WriteLine((i * 100.0 / count) + "% done.");
+                    }
+
+                    Thread.Sleep(sleepTimeMS);
+                }
+            }
 		}
 
 		Console.WriteLine("Finished " + count + " tries.");
-	  }
+	  }*/
+
+      private static int ToInt32(byte[] tempBuf, int p)
+      {
+          throw new NotImplementedException();
+      }
 	}
 
 }

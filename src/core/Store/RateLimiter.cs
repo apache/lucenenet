@@ -3,24 +3,25 @@ using System.Threading;
 namespace Lucene.Net.Store
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
 	/// <summary>
 	/// Abstract base class to rate limit IO.  Typically implementations are
@@ -52,9 +53,9 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  public class SimpleRateLimiter : RateLimiter
 	  {
-		internal volatile double MbPerSec_Renamed;
-		internal volatile double NsPerByte;
-		internal volatile long LastNS;
+		internal double MbPerSec_Renamed;
+		internal double NsPerByte;
+		internal long LastNS;
 
 		// TODO: we could also allow eg a sub class to dynamically
 		// determine the allowed rate, eg if an app wants to
@@ -106,7 +107,7 @@ namespace Lucene.Net.Store
 		  // should also offer decayed recent history one?
 		  long targetNS = LastNS = LastNS + ((long)(bytes * NsPerByte));
 		  long startNS;
-		  long curNS = startNS = System.nanoTime();
+          long curNS = startNS = DateTime.UtcNow.Ticks * 100 /* ns */;
 		  if (LastNS < curNS)
 		  {
 			LastNS = curNS;
@@ -121,13 +122,13 @@ namespace Lucene.Net.Store
 			{
 			  try
 			  {
-				Thread.Sleep((int)(pauseNS / 1000000), (int)(pauseNS % 1000000));
+                  Thread.Sleep((int)(pauseNS / 1000000));
 			  }
-			  catch (InterruptedException ie)
+			  catch (ThreadInterruptedException ie)
 			  {
 				throw new ThreadInterruptedException(ie);
 			  }
-			  curNS = System.nanoTime();
+              curNS = DateTime.UtcNow.Ticks * 100;
 			  continue;
 			}
 			break;

@@ -37,13 +37,13 @@ namespace Lucene.Net.Index
 		// keep private to avoid instantiation
 	  }
 
-	  public override void OnCommit(IList<IndexCommit> commits)
+      public override void OnCommit<T>(IList<T> commits)
 	  {
 	  }
-	  public override void OnInit(IList<IndexCommit> commits)
+      public override void OnInit<T>(IList<T> commits)
 	  {
 	  }
-	  public override IndexDeletionPolicy Clone()
+	  public override object Clone()
 	  {
 		return this;
 	  }

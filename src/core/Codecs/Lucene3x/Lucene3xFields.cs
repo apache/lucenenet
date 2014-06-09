@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  // wait for a GC to do so.
 		  if (!success)
 		  {
-			Close();
+			Dispose();
 		  }
 		}
 		this.Dir = dir;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		return true;
 	  }
 
-	  public override IEnumerator<string> Iterator()
+	  public override IEnumerator<string> GetEnumerator()
 	  {
 		return Fields.Keys.GetEnumerator();
 	  }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		IOUtils.Close(Tis, TisNoIndex, CfsReader, FreqStream, ProxStream);
 	  }
@@ -220,11 +220,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  // we remap on-the-fly to unicode order
 			  if (OuterInstance.SortTermsByUnicode())
 			  {
-				return BytesRef.UTF8SortedAsUnicodeComparator;
+				return BytesRef.UTF8SortedAsUnicodeComparer;
 			  }
 			  else
 			  {
-				return BytesRef.UTF8SortedAsUTF16Comparator;
+				return BytesRef.UTF8SortedAsUTF16Comparer;
 			  }
 			}
 		}
@@ -834,11 +834,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  // we remap on-the-fly to unicode order
 			  if (UnicodeSortOrder)
 			  {
-				return BytesRef.UTF8SortedAsUnicodeComparator;
+				return BytesRef.UTF8SortedAsUnicodeComparer;
 			  }
 			  else
 			  {
-				return BytesRef.UTF8SortedAsUTF16Comparator;
+				return BytesRef.UTF8SortedAsUTF16Comparer;
 			  }
 			}
 		}

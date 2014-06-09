@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Fst
 
 		  // NodeHash calls hashCode for this output; we fix this
 		  // so we get deterministic hashing.
-		  public override int HashCode()
+		  public override int GetHashCode()
 		  {
 			return 42;
 		  }

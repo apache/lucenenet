@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(MaxThreadStates >= 1);
 	  }
 
-	  public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+	  internal override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
 	  {
 		ThreadState threadState = ThreadBindings[requestingThread];
 		if (threadState != null && threadState.TryLock())
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
 		return minThreadState;
 	  }
 
-	  public override ThreadAffinityDocumentsWriterThreadPool Clone()
+	  public override object Clone()
 	  {
 		ThreadAffinityDocumentsWriterThreadPool clone = (ThreadAffinityDocumentsWriterThreadPool) base.Clone();
 		clone.ThreadBindings = new ConcurrentDictionary<Thread, ThreadState>();

@@ -31,32 +31,32 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class ByteArrayDataOutput : DataOutput
 	{
-	  private sbyte[] Bytes;
+	  private byte[] Bytes;
 
 	  private int Pos;
 	  private int Limit;
 
-	  public ByteArrayDataOutput(sbyte[] bytes)
+      public ByteArrayDataOutput(byte[] bytes)
 	  {
 		Reset(bytes);
 	  }
 
-	  public ByteArrayDataOutput(sbyte[] bytes, int offset, int len)
+      public ByteArrayDataOutput(byte[] bytes, int offset, int len)
 	  {
 		Reset(bytes, offset, len);
 	  }
 
 	  public ByteArrayDataOutput()
 	  {
-		Reset(BytesRef.EMPTY_BYTES);
+		Reset((byte[])(Array)BytesRef.EMPTY_BYTES);
 	  }
 
-	  public virtual void Reset(sbyte[] bytes)
+      public virtual void Reset(byte[] bytes)
 	  {
 		Reset(bytes, 0, bytes.Length);
 	  }
 
-	  public virtual void Reset(sbyte[] bytes, int offset, int len)
+      public virtual void Reset(byte[] bytes, int offset, int len)
 	  {
 		this.Bytes = bytes;
 		Pos = offset;
@@ -71,13 +71,13 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  public override void WriteByte(sbyte b)
+      public override void WriteByte(byte b)
 	  {
 		Debug.Assert(Pos < Limit);
 		Bytes[Pos++] = b;
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int length)
+      public override void WriteBytes(byte[] b, int offset, int length)
 	  {
 		Debug.Assert(Pos + length <= Limit);
 		Array.Copy(b, offset, Bytes, Pos, length);

@@ -592,7 +592,7 @@ namespace Lucene.Net.Util.Automaton
 			{
 				throw new System.ArgumentException("'" + s + "' not found");
 			}
-			a = aa.Clone(); // always clone here (ignore allow_mutate)
+			a = (Automaton)aa.Clone(); // always clone here (ignore allow_mutate)
 			break;
 		  case Kind.REGEXP_INTERVAL:
 			a = BasicAutomata.MakeInterval(Min, Max, Digits);

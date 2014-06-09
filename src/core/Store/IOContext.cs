@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Store
@@ -109,13 +110,13 @@ namespace Lucene.Net.Store
 		this.ReadOnce = readOnce;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;
-		result = prime * result + ((Context == null) ? 0 : Context.GetHashCode());
-		result = prime * result + ((FlushInfo == null) ? 0 : FlushInfo.HashCode());
-		result = prime * result + ((MergeInfo == null) ? 0 : MergeInfo.HashCode());
+        result = prime * result + ((Context == null) ? 0 : Context.GetHashCode());
+        result = prime * result + ((FlushInfo == null) ? 0 : FlushInfo.GetHashCode());
+        result = prime * result + ((MergeInfo == null) ? 0 : MergeInfo.GetHashCode());
 		result = prime * result + (ReadOnce ? 1231 : 1237);
 		return result;
 	  }
@@ -167,6 +168,15 @@ namespace Lucene.Net.Store
 		}
 		return true;
 	  }
+
+      public static IEnumerable<Context_e> ContextValues()
+      {
+          // .NET port: This is to make up for enums in .NET not having a Values method.
+          yield return Context_e.DEFAULT;
+          yield return Context_e.FLUSH;
+          yield return Context_e.MERGE;
+          yield return Context_e.READ;
+      }
 
 	  public override string ToString()
 	  {

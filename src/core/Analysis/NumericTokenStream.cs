@@ -88,9 +88,10 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// @since 2.9
 	/// </summary>
-	public sealed class NumericTokenStream : TokenStream, Lucene.Net.Util.Attribute
+	public sealed class NumericTokenStream : TokenStream, IAttribute
 	{
-		private bool InstanceFieldsInitialized = false;
+        
+        private bool InstanceFieldsInitialized = false;
 
 		private void InitializeInstanceFields()
 		{
@@ -113,7 +114,7 @@ namespace Lucene.Net.Analysis
 	  /// @lucene.experimental
 	  /// @since 4.0
 	  /// </summary>
-	  public interface NumericTermAttribute : Lucene.Net.Util.Attribute
+	  public interface INumericTermAttribute : IAttribute
 	  {
 		/// <summary>
 		/// Returns current shift value, undefined before first token </summary>
@@ -149,7 +150,7 @@ namespace Lucene.Net.Analysis
 		    this.@delegate = @delegate;
 		  }
 
-		public override AttributeImpl CreateAttributeInstance(Type attClass)
+		public override Util.Attribute CreateAttributeInstance(Type attClass)
 		{
 		  if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
 		  {
@@ -164,7 +165,7 @@ namespace Lucene.Net.Analysis
 	  /// @lucene.internal
 	  /// @since 4.0
 	  /// </summary>
-	  public sealed class NumericTermAttributeImpl : AttributeImpl, NumericTermAttribute, TermToBytesRefAttribute
+      public sealed class NumericTermAttribute : Util.Attribute, INumericTermAttribute, TermToBytesRefAttribute
 	  {
 		internal long Value = 0L;
 		internal int ValueSize_Renamed = 0, Shift_Renamed = 0, PrecisionStep = 0;
@@ -173,11 +174,11 @@ namespace Lucene.Net.Analysis
 		/// <summary>
 		/// Creates, but does not yet initialize this attribute instance </summary>
 		/// <seealso cref= #init(long, int, int, int) </seealso>
-		public NumericTermAttributeImpl()
+		public NumericTermAttribute()
 		{
 		}
 
-		public override BytesRef BytesRef
+		public BytesRef BytesRef
 		{
 			get
 			{
@@ -185,7 +186,7 @@ namespace Lucene.Net.Analysis
 			}
 		}
 
-		public override void FillBytesRef()
+		public void FillBytesRef()
 		{
 		  Debug.Assert(ValueSize_Renamed == 64 || ValueSize_Renamed == 32);
 		  if (ValueSize_Renamed == 64)
@@ -198,7 +199,7 @@ namespace Lucene.Net.Analysis
 		  }
 		}
 
-		public override int Shift
+		public int Shift
 		{
 			get
 			{
@@ -209,26 +210,26 @@ namespace Lucene.Net.Analysis
 				this.Shift_Renamed = value;
 			}
 		}
-		public override int IncShift()
+		public int IncShift()
 		{
 		  return (Shift_Renamed += PrecisionStep);
 		}
 
-		public override long RawValue
+		public long RawValue
 		{
 			get
 			{
 				return Value & ~((1L << Shift_Renamed) - 1L);
 			}
 		}
-		public override int ValueSize
+		public int ValueSize
 		{
 			get
 			{
 				return ValueSize_Renamed;
 			}
 		}
-		public override void Init(long value, int valueSize, int precisionStep, int shift)
+		public void Init(long value, int valueSize, int precisionStep, int shift)
 		{
 		  this.Value = value;
 		  this.ValueSize_Renamed = valueSize;
@@ -242,7 +243,7 @@ namespace Lucene.Net.Analysis
 		  // we keep it untouched as it's fully controlled by outer class.
 		}
 
-		public override void ReflectWith(AttributeReflector reflector)
+		public override void ReflectWith(IAttributeReflector reflector)
 		{
 		  FillBytesRef();
 		  reflector.Reflect(typeof(TermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
@@ -251,7 +252,7 @@ namespace Lucene.Net.Analysis
 		  reflector.Reflect(typeof(NumericTermAttribute), "valueSize", ValueSize_Renamed);
 		}
 
-		public override void CopyTo(AttributeImpl target)
+        public override void CopyTo(Util.Attribute target)
 		{
 		  NumericTermAttribute a = (NumericTermAttribute) target;
 		  a.Init(Value, ValueSize_Renamed, PrecisionStep, Shift_Renamed);
@@ -375,7 +376,7 @@ namespace Lucene.Net.Analysis
 		ClearAttributes();
 
 		int shift = NumericAtt.IncShift();
-		TypeAtt.type = (shift == 0) ? TOKEN_TYPE_FULL_PREC : TOKEN_TYPE_LOWER_PREC;
+		TypeAtt.Type = (shift == 0) ? TOKEN_TYPE_FULL_PREC : TOKEN_TYPE_LOWER_PREC;
 		PosIncrAtt.PositionIncrement = (shift == 0) ? 1 : 0;
 		return (shift < ValSize);
 	  }

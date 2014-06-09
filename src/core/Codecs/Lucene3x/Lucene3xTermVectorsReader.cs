@@ -118,14 +118,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public Lucene3xTermVectorsReader(Directory d, SegmentInfo si, FieldInfos fieldInfos, IOContext context)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segment = Lucene3xSegmentInfoFormat.getDocStoreSegment(si);
 		string segment = Lucene3xSegmentInfoFormat.GetDocStoreSegment(si);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docStoreOffset = Lucene3xSegmentInfoFormat.getDocStoreOffset(si);
 		int docStoreOffset = Lucene3xSegmentInfoFormat.GetDocStoreOffset(si);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int size = si.getDocCount();
 		int size = si.DocCount;
 
 		bool success = false;
@@ -145,13 +139,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  Format = CheckValidFormat(Tvx);
 		  string fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_DOCUMENTS_EXTENSION);
 		  Tvd = d.OpenInput(fn, context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int tvdFormat = checkValidFormat(tvd);
 		  int tvdFormat = CheckValidFormat(Tvd);
 		  fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_FIELDS_EXTENSION);
 		  Tvf = d.OpenInput(fn, context);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int tvfFormat = checkValidFormat(tvf);
 		  int tvfFormat = CheckValidFormat(Tvf);
 
 		  Debug.Assert(Format == tvdFormat);
@@ -188,9 +178,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  {
 			try
 			{
-			  Close();
+			  Dispose();
 			} // keep our original exception
-			catch (Exception t)
+			catch (Exception)
 			{
 			}
 		  }
@@ -217,9 +207,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		return format;
 	  }
 
-	  public virtual void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		IOUtils.Close(Tvx, Tvd, Tvf, StoreCFSReader);
+          if (disposing)
+          {
+              IOUtils.Close(Tvx, Tvd, Tvf, StoreCFSReader);
+          }
 	  }
 
 	  /// 
@@ -274,7 +267,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
 		  return new IteratorAnonymousInnerClassHelper(this);
 		}
@@ -282,36 +275,48 @@ namespace Lucene.Net.Codecs.Lucene3x
 		private class IteratorAnonymousInnerClassHelper : IEnumerator<string>
 		{
 			private readonly TVFields OuterInstance;
+            private string current;
+            private int i, upTo;
 
 			public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
 			{
 				this.OuterInstance = outerInstance;
+                upTo = OuterInstance.FieldNumbers.Length;
+                i = 0;
 			}
 
-			private int fieldUpto;
+            public bool MoveNext()
+            {
+                if (OuterInstance.FieldNumbers != null && i < upTo)
+                {
+                    current = OuterInstance.OuterInstance.FieldInfos.FieldInfo(OuterInstance.FieldNumbers[i++]).Name;
+                    return true;
+                }
+                return false;
+            }
 
-			public virtual string Next()
-			{
-			  if (OuterInstance.FieldNumbers != null && fieldUpto < OuterInstance.FieldNumbers.Length)
-			  {
-				return OuterInstance.OuterInstance.FieldInfos.FieldInfo(OuterInstance.FieldNumbers[fieldUpto++]).Name;
-			  }
-			  else
-			  {
-                  //LUCENE TO-DO NoSuchElementException
-				throw new InvalidOperationException();
-			  }
-			}
+            public string Current
+            {
+                get
+                {
+                    return current;
+                }
+            }
 
-			public virtual bool HasNext()
-			{
-			  return OuterInstance.FieldNumbers != null && fieldUpto < OuterInstance.FieldNumbers.Length;
-			}
+            object System.Collections.IEnumerator.Current
+            {
+                get
+                {
+                    return Current;
+                }
+            }
 
-			public virtual void Remove()
-			{
-			  throw new System.NotSupportedException();
-			}
+            public void Reset()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Dispose(){}
 		}
 
 		public override Terms Terms(string field)
@@ -363,7 +368,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  NumTerms = outerInstance.Tvf.ReadVInt();
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final byte bits = tvf.readByte();
-		  sbyte bits = outerInstance.Tvf.ReadByte();
+		  byte bits = outerInstance.Tvf.ReadByte();
 		  StorePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
 		  StoreOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
 		  TvfFPStart = outerInstance.Tvf.FilePointer;
@@ -425,11 +430,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 			{
 			  if (UnicodeSortOrder)
 			  {
-				return BytesRef.UTF8SortedAsUnicodeComparator;
+				return BytesRef.UTF8SortedAsUnicodeComparer;
 			  }
 			  else
 			  {
-				return BytesRef.UTF8SortedAsUTF16Comparator;
+				return BytesRef.UTF8SortedAsUTF16Comparer;
 			  }
 			}
 		}
@@ -483,7 +488,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 			this.OuterInstance = outerInstance;
 		  this.OrigTVF = outerInstance.Tvf;
-		  Tvf = OrigTVF.Clone();
+          Tvf = (IndexInput)OrigTVF.Clone();
 		}
 
 		public virtual bool CanReuse(IndexInput tvf)
@@ -675,11 +680,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 			{
 			  if (UnicodeSortOrder)
 			  {
-				return BytesRef.UTF8SortedAsUnicodeComparator;
+				return BytesRef.UTF8SortedAsUnicodeComparer;
 			  }
 			  else
 			  {
-				return BytesRef.UTF8SortedAsUTF16Comparator;
+				return BytesRef.UTF8SortedAsUTF16Comparer;
 			  }
 			}
 		}
@@ -883,7 +888,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-	  public override TermVectorsReader Clone()
+	  public override object Clone()
 	  {
 		IndexInput cloneTvx = null;
 		IndexInput cloneTvd = null;
@@ -893,9 +898,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		// on a segment that did not have term vectors saved
 		if (Tvx != null && Tvd != null && Tvf != null)
 		{
-		  cloneTvx = Tvx.Clone();
-		  cloneTvd = Tvd.Clone();
-		  cloneTvf = Tvf.Clone();
+            cloneTvx = (IndexInput)Tvx.Clone();
+            cloneTvd = (IndexInput)Tvd.Clone();
+            cloneTvf = (IndexInput)Tvf.Clone();
 		}
 
 		return new Lucene3xTermVectorsReader(FieldInfos, cloneTvx, cloneTvd, cloneTvf, Size_Renamed, NumTotalDocs, DocStoreOffset, Format);

@@ -30,6 +30,7 @@ namespace Lucene.Net.Document
     using Lucene.Net.Util;
     using Lucene.Net.Index;
     using System.Text;
+    using System.Collections;
 
 	/// <summary>
 	/// Documents are the unit of indexing and search.
@@ -58,8 +59,13 @@ namespace Lucene.Net.Document
 
 	  public IEnumerator<IndexableField> GetEnumerator()
 	  {
-		return Fields_Renamed.GetEnumerator();
+		  return Fields_Renamed.GetEnumerator();
 	  }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
 
 	  /// <summary>
 	  /// <p>Adds a field to a document.  Several fields may be added with

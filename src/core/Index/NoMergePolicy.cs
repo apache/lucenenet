@@ -54,10 +54,10 @@ namespace Lucene.Net.Index
 		this.UseCompoundFile_Renamed = useCompoundFile;
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
-	  public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
+	  public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
 	  {
 		  return null;
 	  }

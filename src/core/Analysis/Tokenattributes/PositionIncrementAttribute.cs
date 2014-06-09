@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 
@@ -21,42 +23,65 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
-	/// Determines the position of this token
-	/// relative to the previous Token in a TokenStream, used in phrase
-	/// searching.
-	/// 
-	/// <p>The default value is one.
-	/// 
-	/// <p>Some common uses for this are:<ul>
-	/// 
-	/// <li>Set it to zero to put multiple terms in the same position.  this is
-	/// useful if, e.g., a word has multiple stems.  Searches for phrases
-	/// including either stem will match.  In this case, all but the first stem's
-	/// increment should be set to zero: the increment of the first instance
-	/// should be one.  Repeating a token with an increment of zero can also be
-	/// used to boost the scores of matches on that token.
-	/// 
-	/// <li>Set it to values greater than one to inhibit exact phrase matches.
-	/// If, for example, one does not want phrases to match across removed stop
-	/// words, then one could build a stop word filter that removes stop words and
-	/// also sets the increment to the number of stop words removed before each
-	/// non-stop word.  Then exact phrase queries will only match when the terms
-	/// occur with no intervening stop words.
-	/// 
-	/// </ul>
-	/// </summary>
-	/// <seealso cref= Lucene.Net.Index.DocsAndPositionsEnum </seealso>
-	public interface PositionIncrementAttribute : Attribute
+	/// Default implementation of <seealso cref="PositionIncrementAttribute"/>. </summary>
+	public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute, ICloneable
 	{
-	  /// <summary>
-	  /// Set the position increment. The default value is one.
-	  /// </summary>
-	  /// <param name="positionIncrement"> the distance from the prior term </param>
-	  /// <exception cref="IllegalArgumentException"> if <code>positionIncrement</code> 
-	  ///         is negative. </exception>
-	  /// <seealso cref= #getPositionIncrement() </seealso>
-	  int PositionIncrement {set;get;}
+	  private int positionIncrement = 1;
 
+	  /// <summary>
+	  /// Initialize this attribute with position increment of 1 </summary>
+	  public PositionIncrementAttribute()
+	  {
+	  }
+
+	  public int PositionIncrement
+	  {
+		  set
+		  {
+			if (value < 0)
+			{
+			  throw new System.ArgumentException("Increment must be zero or greater: got " + value);
+			}
+			this.positionIncrement = value;
+		  }
+		  get
+		  {
+			return positionIncrement;
+		  }
+	  }
+
+
+	  public override void Clear()
+	  {
+		this.positionIncrement = 1;
+	  }
+
+	  public override bool Equals(object other)
+	  {
+		if (other == this)
+		{
+		  return true;
+		}
+
+		if (other is PositionIncrementAttribute)
+		{
+		  PositionIncrementAttribute _other = (PositionIncrementAttribute) other;
+		  return positionIncrement == _other.positionIncrement;
+		}
+
+		return false;
+	  }
+
+	  public int GetHashCode()
+	  {
+		return positionIncrement;
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		PositionIncrementAttribute t = (PositionIncrementAttribute) target;
+		t.PositionIncrement = positionIncrement;
+	  }
 	}
 
 }

@@ -616,7 +616,7 @@ namespace Lucene.Net.Util
 	      {
 		    return HumanReadableUnits(SizeOf(@object));
 	      }
-
+        /*
 	      /// <summary>
 	      /// An identity hash set implemented using open addressing. No null keys are allowed.
 	      /// 
@@ -764,7 +764,7 @@ namespace Lucene.Net.Util
 		      /*
 		       * Rehash all assigned slots from the old hash table.
 		       */
-		      int mask = Keys.Length - 1;
+		      /*int mask = Keys.Length - 1;
 		      for (int i = 0; i < oldKeys.Length; i++)
 		      {
 			    object key = oldKeys[i];
@@ -810,7 +810,7 @@ namespace Lucene.Net.Util
 		    /// <summary>
 		    /// Round the capacity to the next allowed value.
 		    /// </summary>
-		    protected internal int RoundCapacity(int requestedCapacity)
+		    private int RoundCapacity(int requestedCapacity)
 		    {
 		      // Maximum positive integer that is a power of two.
 		      if (requestedCapacity > ((int)((uint)0x80000000 >> 1)))
@@ -897,8 +897,8 @@ namespace Lucene.Net.Util
 			    {
 			      throw new System.NotSupportedException();
 			    }
-		    }*/
-	      }
+		    }
+	      }*/
 	}
 
 }

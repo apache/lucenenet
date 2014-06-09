@@ -181,7 +181,8 @@ namespace Lucene.Net.Search
 	/// @since 2.9 </summary>
 	/// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
 	/// <seealso cref= FieldCache </seealso>
-	public abstract class FieldValueHitQueue<T> : PriorityQueue<T> where T : FieldValueHitQueue.Entry
+	public abstract class FieldValueHitQueue<T> : PriorityQueue<T> 
+        where T : FieldValueHitQueue.Entry
 	{
 
 	  
@@ -233,7 +234,7 @@ namespace Lucene.Net.Search
 	  protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0]
 	  protected internal readonly int[] reverseMul;
 
-      protected internal override abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
+      public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
 	  /// <summary>
 	  /// Given a queue Entry, creates a corresponding FieldDoc

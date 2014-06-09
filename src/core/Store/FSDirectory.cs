@@ -247,7 +247,7 @@ namespace Lucene.Net.Store
 		{
 		  throw new NoSuchDirectoryException("directory '" + dir + "' does not exist");
 		}
-		else if (!dir.Directory)
+		else if (!File.Exists(dir.FullName))
 		{
 		  throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
 		}
@@ -310,8 +310,6 @@ namespace Lucene.Net.Store
 	  {
 		EnsureOpen();
         FileInfo file = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long len = file.length();
 		long len = file.Length;
 		if (len == 0 && !file.Exists)
 		{
@@ -397,7 +395,9 @@ namespace Lucene.Net.Store
 		// (otherwise it can happen that the directory does not yet exist)!
 		if (toSync.Count > 0)
 		{
-		  IOUtils.Fsync(Directory_Renamed.FullName, true);
+            //LUCENE TO-DO
+		  //IOUtils.Fsync(Directory_Renamed.FullName, true);
+		  IOUtils.Fsync(new FileInfo(Path.Combine(Directory_Renamed.FullName)), true);
 		}
 
 		StaleFiles.ExceptWith(toSync);
@@ -421,8 +421,6 @@ namespace Lucene.Net.Store
 			int digest = 0;
 			for (int charIDX = 0;charIDX < dirName.Length;charIDX++)
 			{
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final char ch = dirName.charAt(charIDX);
 			  char ch = dirName[charIDX];
 			  digest = 31 * digest + ch;
 			}
@@ -432,7 +430,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Closes the store to future operations. </summary>
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		  lock (this)
 		  {
@@ -502,20 +500,20 @@ namespace Lucene.Net.Store
 		  IsOpen = true;
 		}
 
-		protected internal override void FlushBuffer(sbyte[] b, int offset, int size)
+		protected internal override void FlushBuffer(byte[] b, int offset, int size)
 		{
 		  //Debug.Assert(IsOpen);
 		  while (size > 0)
 		  {
 			int toWrite = Math.Min(CHUNK_SIZE, size);
-			File.Write((byte[])(Array)b, offset, toWrite);
+			File.Write(b, offset, toWrite);
 			offset += toWrite;
 			size -= toWrite;
 		  }
 		  //Debug.Assert(size == 0);
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  Parent.OnIndexOutputClosed(this);
 		  // only close the file if it has not been closed yet
@@ -524,7 +522,7 @@ namespace Lucene.Net.Store
 			System.IO.IOException priorE = null;
 			try
 			{
-			  base.Close();
+			  base.Dispose();
 			}
 			catch (System.IO.IOException ioe)
 			{
@@ -557,7 +555,7 @@ namespace Lucene.Net.Store
 
 	  protected internal virtual void Fsync(string name)
 	  {
-		IOUtils.Fsync(new FileInfo(Directory_Renamed, name), false);
+		IOUtils.Fsync(new FileInfo(Path.Combine(Directory.FullName, name)), false);
 	  }
 	}
 

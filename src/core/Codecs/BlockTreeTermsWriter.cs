@@ -37,8 +37,6 @@ namespace Lucene.Net.Codecs
 	using IntsRef = Lucene.Net.Util.IntsRef;
 	using Lucene.Net.Util.Fst;
 	using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
-	using Lucene.Net.Util.Fst;
-	using Lucene.Net.Util.Fst;
 	using NoOutputs = Lucene.Net.Util.Fst.NoOutputs;
 	using Util = Lucene.Net.Util.Fst.Util;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
@@ -535,7 +533,7 @@ namespace Lucene.Net.Codecs
 		internal readonly Builder<object> BlockBuilder;
 
 		// PendingTerm or PendingBlock:
-		internal readonly IList<PendingEntry> Pending = new List<PendingEntry>();
+		private readonly IList<PendingEntry> Pending = new List<PendingEntry>();
 
 		// Index into pending of most recently written block
 		internal int LastBlockIndex = -1;
@@ -887,7 +885,7 @@ namespace Lucene.Net.Codecs
 
 		// Writes all entries in the pending slice as a single
 		// block: 
-		internal virtual PendingBlock WriteBlock(IntsRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
+		private PendingBlock WriteBlock(IntsRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
 		{
 
 		  Debug.Assert(length > 0);
@@ -1131,7 +1129,7 @@ namespace Lucene.Net.Codecs
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 
@@ -1216,7 +1214,7 @@ namespace Lucene.Net.Codecs
 		internal readonly RAMOutputStream BytesWriter = new RAMOutputStream();
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 
 		System.IO.IOException ioe = null;

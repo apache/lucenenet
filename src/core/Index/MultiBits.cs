@@ -50,21 +50,15 @@ namespace Lucene.Net.Index
 
 	  private bool CheckLength(int reader, int doc)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int length = starts[1+reader]-starts[reader];
 		int length = Starts[1 + reader] - Starts[reader];
 		Debug.Assert(doc - Starts[reader] < length, "doc=" + doc + " reader=" + reader + " starts[reader]=" + Starts[reader] + " length=" + length);
 		return true;
 	  }
 
-	  public override bool Get(int doc)
+	  public bool Get(int doc)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int reader = ReaderUtil.subIndex(doc, starts);
 		int reader = ReaderUtil.SubIndex(doc, Starts);
 		Debug.Assert(reader != -1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits bits = subs[reader];
 		Bits bits = Subs[reader];
 		if (bits == null)
 		{
@@ -123,8 +117,6 @@ namespace Lucene.Net.Index
 		int reader = ReaderUtil.SubIndex(slice.Start, Starts);
 		Debug.Assert(reader != -1);
 		Debug.Assert(reader < Subs.Length, "slice=" + slice + " starts[-1]=" + Starts[Starts.Length - 1]);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SubResult subResult = new SubResult();
 		SubResult subResult = new SubResult();
 		if (Starts[reader] == slice.Start && Starts[1 + reader] == slice.Start + slice.Length)
 		{
@@ -138,7 +130,7 @@ namespace Lucene.Net.Index
 		return subResult;
 	  }
 
-	  public override int Length()
+	  public int Length()
 	  {
 		return Starts[Starts.Length - 1];
 	  }

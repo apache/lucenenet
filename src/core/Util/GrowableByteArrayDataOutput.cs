@@ -44,19 +44,17 @@ namespace Lucene.Net.Util
 		this.Length = 0;
 	  }
 
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		if (Length >= Bytes.Length)
 		{
 		  Bytes = ArrayUtil.Grow(Bytes);
 		}
-		Bytes[Length++] = b;
+		Bytes[Length++] = (sbyte)b;
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int off, int len)
+	  public override void WriteBytes(byte[] b, int off, int len)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLength = length + len;
 		int newLength = Length + len;
 		Bytes = ArrayUtil.Grow(Bytes, newLength);
 		Array.Copy(b, off, Bytes, Length, len);

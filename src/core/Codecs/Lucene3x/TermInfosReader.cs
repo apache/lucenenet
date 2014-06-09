@@ -31,7 +31,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IOContext = Lucene.Net.Store.IOContext;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Lucene.Net.Util;
-	using Lucene.Net.Util;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 
 	/// <summary>
@@ -60,7 +59,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private const int DEFAULT_CACHE_SIZE = 1024;
 
 	  // Just adds term's ord to TermInfo
-	  private sealed class TermInfoAndOrd : TermInfo
+	  public sealed class TermInfoAndOrd : TermInfo
 	  {
 		internal readonly long TermOrd;
 		public TermInfoAndOrd(TermInfo ti, long termOrd) : base(ti)
@@ -84,12 +83,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  return this.Term.Equals(t.Term);
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
-		  return Term.HashCode();
+		  return Term.GetHashCode();
 		}
 
-		public override CloneableTerm Clone()
+        public override DoubleBarrelLRUCache.CloneableKey Clone()
 		{
 		  return new CloneableTerm(Term);
 		}
@@ -139,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			}
 			finally
 			{
-			  indexEnum.Close();
+			  indexEnum.Dispose();
 			}
 		  }
 		  else
@@ -160,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  // wait for a GC to do so.
 		  if (!success)
 		  {
-			Close();
+			Dispose();
 		  }
 		}
 	  }
@@ -181,7 +180,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 	  }
 
-	  public void Close()
+	  public void Dispose()
 	  {
 		IOUtils.Close(OrigEnum, threadResources);
 	  }
@@ -208,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 	  }
 
-	  private static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparator;
+	  private static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
 
 	  private int CompareAsUTF16(Term term1, Term term2)
 	  {
@@ -431,7 +430,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// Returns an enumeration of all the Terms and TermInfos in the set. </summary>
 	  public SegmentTermEnum Terms()
 	  {
-		return OrigEnum.Clone();
+		return (SegmentTermEnum)OrigEnum.Clone();
 	  }
 
 	  /// <summary>
@@ -439,7 +438,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  public SegmentTermEnum Terms(Term term)
 	  {
 		Get(term, true);
-		return GetThreadResources.TermEnum.Clone();
+        return (SegmentTermEnum)GetThreadResources.TermEnum.Clone();
 	  }
 
 	  internal long RamBytesUsed()

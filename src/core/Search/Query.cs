@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Returns a clone of this query. </summary>
-	  public override Query Clone()
+	  public virtual object Clone()
 	  {
 		try
 		{

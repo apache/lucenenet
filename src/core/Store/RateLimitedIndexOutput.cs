@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
 		this.RateLimiter = rateLimiter;
 	  }
 
-	  protected internal override void FlushBuffer(sbyte[] b, int offset, int len)
+	  protected internal override void FlushBuffer(byte[] b, int offset, int len)
 	  {
 		RateLimiter.Pause(len);
 		if (BufferedDelegate != null)
@@ -59,10 +59,17 @@ namespace Lucene.Net.Store
 
 	  }
 
-	  public override long Length()
-	  {
-		return @delegate.Length();
-	  }
+      public override long Length
+      {
+          get
+          {
+              return @delegate.Length;
+          }
+          set
+          {
+
+          }
+      }
 
 	  public override void Seek(long pos)
 	  {
@@ -83,15 +90,15 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		try
 		{
-		  base.Close();
+		  base.Dispose();
 		}
 		finally
 		{
-		  @delegate.Close();
+		  @delegate.Dispose();
 		}
 	  }
 	}

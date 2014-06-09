@@ -76,7 +76,7 @@ using System;
 		this.Primary = primary;
 	  }
 
-	  public override void OnCommit(IList<IndexCommit> commits)
+	  public override void OnCommit<T>(IList<T> commits)
 	  {
 		  lock (this)
 		  {
@@ -85,7 +85,7 @@ using System;
 		  }
 	  }
 
-	  public override void OnInit(IList<IndexCommit> commits)
+	  public override void OnInit<T>(IList<T> commits)
 	  {
 		  lock (this)
 		  {
@@ -249,12 +249,12 @@ using System;
 		  }
 	  }
 
-	  public override IndexDeletionPolicy Clone()
+	  public object Clone()
 	  {
 		  lock (this)
 		  {
 			SnapshotDeletionPolicy other = (SnapshotDeletionPolicy) base.Clone();
-			other.Primary = this.Primary.Clone();
+			other.Primary = (IndexDeletionPolicy)this.Primary.Clone();
 			other.LastCommit = null;
 			other.RefCounts = new Dictionary<long?, int?>(RefCounts);
 			other.IndexCommits = new Dictionary<long?, IndexCommit>(IndexCommits);
@@ -266,7 +266,8 @@ using System;
 	  /// Wraps each <seealso cref="IndexCommit"/> as a {@link
 	  ///  SnapshotCommitPoint}. 
 	  /// </summary>
-	  private IList<IndexCommit> WrapCommits(IList<IndexCommit> commits)
+	  private IList<IndexCommit> WrapCommits<T>(IList<T> commits)
+          where T : IndexCommit
 	  {
 		IList<IndexCommit> wrappedCommits = new List<IndexCommit>(commits.Count);
 		foreach (IndexCommit ic in commits)

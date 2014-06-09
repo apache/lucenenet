@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis
 	 * limitations under the License.
 	 */
 
-    using CharTermAttributeImpl = Lucene.Net.Analysis.Tokenattributes.CharTermAttributeImpl;
+    using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
     using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
     using FlagsAttribute = Lucene.Net.Analysis.Tokenattributes.FlagsAttribute;
     using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
@@ -30,9 +30,9 @@ namespace Lucene.Net.Analysis
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum; // for javadoc
     using Attribute = Lucene.Net.Util.Attribute;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
-    using AttributeImpl = Lucene.Net.Util.AttributeImpl;
-    using AttributeReflector = Lucene.Net.Util.AttributeReflector;
+    using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Analysis.Tokenattributes;
 
 	/// <summary>
 	///  A Token is an occurrence of a term from the text of a field.  It consists of
@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis
 	///  this method now only prints the term text, no additional information anymore.
 	///  </p>
 	/// </summary>
-	public class Token : CharTermAttributeImpl, TypeAttribute, PositionIncrementAttribute, FlagsAttribute, OffsetAttribute, PayloadAttribute, PositionLengthAttribute
+	public class Token : CharTermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute, IPositionLengthAttribute
 	{
 
 	  private int startOffset, endOffset;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= PositionIncrementAttribute </seealso>
-	  public override int PositionIncrement
+	  public int PositionIncrement
 	  {
 		  set
 		  {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= PositionLengthAttribute </seealso>
-	  public override int PositionLength
+	  public int PositionLength
 	  {
 		  set
 		  {
@@ -287,7 +287,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= OffsetAttribute </seealso>
-	  public override int StartOffset()
+	  public int StartOffset()
 	  {
 		return startOffset;
 	  }
@@ -295,7 +295,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= OffsetAttribute </seealso>
-	  public override int EndOffset()
+	  public int EndOffset()
 	  {
 		return endOffset;
 	  }
@@ -303,36 +303,24 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= OffsetAttribute </seealso>
-	  public override void SetOffset(int startOffset, int endOffset)
+	  public void SetOffset(int startOffset, int endOffset)
 	  {
 		CheckOffsets(startOffset, endOffset);
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
 	  }
 
-	  /// <summary>
-	  /// {@inheritDoc} </summary>
-	  /// <seealso cref= TypeAttribute </seealso>
-	  public override string Type()
-	  {
-		return type;
-	  }
-
-	  /// <summary>
-	  /// {@inheritDoc} </summary>
-	  /// <seealso cref= TypeAttribute </seealso>
-	  public override string Type
-	  {
-		  set
-		  {
-			this.type = value;
-		  }
-	  }
+      /// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
+      public string Type
+      {
+          get { return type; }
+          set { this.type = value; }
+      }
 
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= FlagsAttribute </seealso>
-	  public override int Flags
+	  public int Flags
 	  {
 		  get
 		  {
@@ -348,7 +336,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// {@inheritDoc} </summary>
 	  /// <seealso cref= PayloadAttribute </seealso>
-	  public override BytesRef Payload
+	  public BytesRef Payload
 	  {
 		  get
 		  {
@@ -375,13 +363,13 @@ namespace Lucene.Net.Analysis
 		type = Tokenattributes.TypeAttribute_Fields.DEFAULT_TYPE;
 	  }
 
-	  public override Token Clone()
+	  public override object Clone()
 	  {
 		Token t = (Token)base.Clone();
 		// Do a deep clone
 		if (payload != null)
 		{
-		  t.payload = payload.Clone();
+            t.payload = (BytesRef)payload.Clone();
 		}
 		return t;
 	  }
@@ -401,7 +389,7 @@ namespace Lucene.Net.Analysis
 		t.type = type;
 		if (payload != null)
 		{
-		  t.payload = payload.Clone();
+            t.payload = (BytesRef)payload.Clone();
 		}
 		return t;
 	  }
@@ -424,9 +412,9 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		int code = base.HashCode();
+		int code = base.GetHashCode();
 		code = code * 31 + startOffset;
 		code = code * 31 + endOffset;
 		code = code * 31 + flags;
@@ -602,7 +590,7 @@ namespace Lucene.Net.Analysis
 		payload = prototype.payload;
 	  }
 
-	  public override void CopyTo(AttributeImpl target)
+	  public override void CopyTo(Attribute target)
 	  {
 		if (target is Token)
 		{
@@ -611,7 +599,7 @@ namespace Lucene.Net.Analysis
 		  // reinit shares the payload, so clone it:
 		  if (payload != null)
 		  {
-			to.payload = payload.Clone();
+			to.payload = (BytesRef)payload.Clone();
 		  }
 		}
 		else
@@ -619,13 +607,13 @@ namespace Lucene.Net.Analysis
 		  base.CopyTo(target);
 		  ((OffsetAttribute) target).SetOffset(startOffset, endOffset);
 		  ((PositionIncrementAttribute) target).PositionIncrement = positionIncrement;
-		  ((PayloadAttribute) target).Payload = (payload == null) ? null : payload.Clone();
+          ((PayloadAttribute)target).Payload = (payload == null) ? null : (BytesRef)payload.Clone();
 		  ((FlagsAttribute) target).Flags = flags;
-		  ((TypeAttribute) target).type = type;
+		  ((TypeAttribute) target).Type = type;
 		}
 	  }
 
-	  public override void ReflectWith(AttributeReflector reflector)
+	  public override void ReflectWith(IAttributeReflector reflector)
 	  {
 		base.ReflectWith(reflector);
 		reflector.Reflect(typeof(OffsetAttribute), "startOffset", startOffset);
@@ -671,7 +659,7 @@ namespace Lucene.Net.Analysis
 		  this.@delegate = @delegate;
 		}
 
-		public override AttributeImpl CreateAttributeInstance(Type attClass)
+		public override Attribute CreateAttributeInstance(Type attClass)
 		{
 		  return attClass.IsAssignableFrom(typeof(Token)) ? new Token() : @delegate.CreateAttributeInstance(attClass);
 		}
@@ -690,7 +678,7 @@ namespace Lucene.Net.Analysis
 		  return false;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return @delegate.GetHashCode() ^ 0x0a45aa31;
 		}

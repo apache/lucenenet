@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Mutable
 		return (this.GetType() == other.GetType()) && this.EqualsSameType(other);
 	  }
 
-	  public override abstract int HashCode();
+	  public override abstract int GetHashCode();
 
 	  public override string ToString()
 	  {

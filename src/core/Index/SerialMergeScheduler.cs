@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
 	}

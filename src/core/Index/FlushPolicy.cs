@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 	/// <seealso cref= DocumentsWriterFlushControl </seealso>
 	/// <seealso cref= DocumentsWriterPerThread </seealso>
 	/// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
-	internal abstract class FlushPolicy : ICloneable
+	public abstract class FlushPolicy : ICloneable
 	{
 	  protected internal LiveIndexWriterConfig IWConfig;
 	  protected internal InfoStream InfoStream;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
 		return true;
 	  }
 
-	  public override FlushPolicy Clone()
+	  public object Clone()
 	  {
 		FlushPolicy clone;
 		

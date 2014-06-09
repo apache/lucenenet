@@ -73,13 +73,13 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 			IOException ioe = null;
-			foreach (IndexReader r in SequentialSubReaders)
+			foreach (IndexReader r in GetSequentialSubReaders())
 			{
 			  try
 			  {
 				if (CloseSubReaders)
 				{
-				  r.Close();
+				  r.Dispose();
 				}
 				else
 				{

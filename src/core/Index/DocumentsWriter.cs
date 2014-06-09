@@ -434,7 +434,7 @@ using Lucene.Net.Support;
 		return DeleteQueue.AnyChanges();
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		Closed = true;
 		FlushControl.SetClosed();
@@ -848,7 +848,7 @@ using Lucene.Net.Support;
 		  InstCount++;
 		}
 
-		public override void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
+		public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
 		{
 		  writer.ApplyDeletesAndPurge(true); // we always purge!
 		}
@@ -864,7 +864,7 @@ using Lucene.Net.Support;
 		  InstCount++;
 		}
 
-		public override void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
+		public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
 		{
 		  writer.DoAfterSegmentFlushed(triggerMerge, forcePurge);
 		}
@@ -880,7 +880,7 @@ using Lucene.Net.Support;
 		  InstCount++;
 		}
 
-		public override void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
+		public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
 		{
 		  writer.Purge(true);
 		}
@@ -895,7 +895,7 @@ using Lucene.Net.Support;
 		  this.Info = info;
 		}
 
-		public override void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
+		public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
 		{
 		  writer.FlushFailed(Info);
 		}
@@ -910,7 +910,7 @@ using Lucene.Net.Support;
 		  this.Files = files;
 		}
 
-		public override void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
+		public void Process(IndexWriter writer, bool triggerMerge, bool forcePurge)
 		{
 		  writer.DeleteNewFiles(Files);
 		}

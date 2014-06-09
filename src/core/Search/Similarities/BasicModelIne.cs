@@ -20,8 +20,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Search.Similarities.SimilarityBase;
-
 	/// <summary>
 	/// Tf-idf model of randomness, based on a mixture of Poisson and inverse
 	/// document frequency.

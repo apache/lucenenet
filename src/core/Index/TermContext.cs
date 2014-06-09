@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
 		foreach (AtomicReaderContext ctx in context.Leaves())
 		{
 		  //if (DEBUG) System.out.println("  r=" + leaves[i].reader);
-		  Fields fields = ctx.Reader().Fields();
+		  Fields fields = ctx.AtomicReader.Fields();
 		  if (fields != null)
 		  {
 			Terms terms = fields.Terms(field);

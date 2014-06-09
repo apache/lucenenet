@@ -194,7 +194,7 @@ namespace Lucene.Net.Util.Automaton
 		return new FrozenIntSet(c, HashCode_Renamed, state);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return HashCode_Renamed;
 	  }
@@ -264,7 +264,7 @@ namespace Lucene.Net.Util.Automaton
 		  this.HashCode_Renamed = 683 + num;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return HashCode_Renamed;
 		}

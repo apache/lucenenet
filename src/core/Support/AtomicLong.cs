@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Lucene.Net.Support
 {
-    class AtomicLong
+    public class AtomicLong
     {
         private long value;
         public AtomicLong()

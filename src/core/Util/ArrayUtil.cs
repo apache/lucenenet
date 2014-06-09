@@ -452,6 +452,11 @@ namespace Lucene.Net.Util
 		return Grow(array, 1 + array.Length);
 	  }
 
+      public static byte[] Grow(byte[] array)
+      {
+          return Grow(array, 1 + array.Length);
+      }
+
 	  public static sbyte[] Shrink(sbyte[] array, int targetSize)
 	  {
 		Debug.Assert(targetSize >= 0, "size must be positive (got " + targetSize + "): likely integer overflow?");

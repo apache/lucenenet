@@ -65,48 +65,48 @@ namespace Lucene.Net.Codecs.Lucene40
           postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
 	  }
 
-	  public override sealed StoredFieldsFormat StoredFieldsFormat
+	  public override sealed StoredFieldsFormat StoredFieldsFormat()
 	  {
-		get{return FieldsFormat;}
+		return FieldsFormat;
 	  }
 
-	  public override sealed TermVectorsFormat TermVectorsFormat
+	  public override sealed TermVectorsFormat TermVectorsFormat()
 	  {
-		get{return VectorsFormat;}
+		return VectorsFormat;
 	  }
 
-	  public override sealed PostingsFormat PostingsFormat
+	  public override sealed PostingsFormat PostingsFormat()
 	  {
-		get{return postingsFormat;}
+		return postingsFormat;
 	  }
 
-	  public override FieldInfosFormat FieldInfosFormat
+	  public override FieldInfosFormat FieldInfosFormat()
 	  {
-		get{return FieldInfosFormat_Renamed;}
+		return FieldInfosFormat_Renamed;
 	  }
 
-	  public override SegmentInfoFormat SegmentInfoFormat
+	  public override SegmentInfoFormat SegmentInfoFormat()
 	  {
-		get{return InfosFormat;}
+		return InfosFormat;
 	  }
 
 	  private readonly DocValuesFormat DefaultDVFormat = new Lucene40DocValuesFormat();
 
-	  public override DocValuesFormat DocValuesFormat
+	  public override DocValuesFormat DocValuesFormat()
 	  {
-		get{return DefaultDVFormat;}
+		return DefaultDVFormat;
 	  }
 
 	  private readonly NormsFormat NormsFormat_Renamed = new Lucene40NormsFormat();
 
-	  public override NormsFormat NormsFormat
+	  public override NormsFormat NormsFormat()
 	  {
-		get{return NormsFormat_Renamed;}
+		return NormsFormat_Renamed;
 	  }
 
-	  public override sealed LiveDocsFormat LiveDocsFormat
+	  public override sealed LiveDocsFormat LiveDocsFormat()
 	  {
-          get { return LiveDocsFormat_Renamed; }
+          return LiveDocsFormat_Renamed;
 	  }
 
 	  /// <summary>
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		return DefaultFormat;
 	  }
 
-	  private readonly PostingsFormat DefaultFormat = PostingsFormat.ForName("Lucene40");
+      private readonly PostingsFormat DefaultFormat = Codecs.PostingsFormat.ForName("Lucene40");
 	}
 
 }

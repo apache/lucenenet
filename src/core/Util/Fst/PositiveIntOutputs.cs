@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Fst
 		  }
 	  }
 
-	  public override string OutputToString(long? output)
+	  public override string OutputToString(long output)
 	  {
 		return output.ToString();
 	  }

@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 	  /// this implementation can return <code>null</code> if there
 	  /// are no docs that match. 
 	  /// </summary>
-	  public abstract DocIdSetIterator Iterator();
+	  public abstract DocIdSetIterator GetIterator();
 
 	  // TODO: somehow this class should express the cost of
 	  // iteration vs the cost of random access Bits; for
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 	  // (down-low filtering using e.g. FixedBitSet)
 
 	  /// <summary>
-	  /// Optionally provides a <seealso cref="Bits"/> interface for random access
+	  /// Optionally provides a <seealso cref="GetBits"/> interface for random access
 	  /// to matching documents. </summary>
 	  /// <returns> {@code null}, if this {@code DocIdSet} does not support random access.
 	  /// In contrast to <seealso cref="#iterator()"/>, a return value of {@code null}
@@ -50,11 +50,11 @@ namespace Lucene.Net.Search
 	  /// The default implementation does not provide random access, so you
 	  /// only need to implement this method if your DocIdSet can
 	  /// guarantee random access to every docid in O(1) time without
-	  /// external disk access (as <seealso cref="Bits"/> interface cannot throw
+	  /// external disk access (as <seealso cref="GetBits"/> interface cannot throw
 	  /// <seealso cref="IOException"/>). this is generally true for bit sets
 	  /// like <seealso cref="Lucene.Net.Util.FixedBitSet"/>, which return
 	  /// itself if they are used as {@code DocIdSet}. </returns>
-	  public virtual Bits Bits()
+	  public virtual Bits GetBits()
 	  {
 		return null;
 	  }

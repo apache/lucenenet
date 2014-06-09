@@ -149,6 +149,10 @@ namespace Lucene.Net.Util.Packed
 		return base.RamBytesUsed() + RamUsageEstimator.SizeOf(MinValues);
 	  }
 
+      public override Iterator GetIterator()
+      {
+          return new Iterator(this);
+      }
 	}
 
 }

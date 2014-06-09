@@ -97,7 +97,13 @@ namespace Lucene.Net.Codecs
 	  // TODO: better name?
 	  public abstract int SetField(FieldInfo fieldInfo);
 
-	  public override abstract void Close();
+      public void Dispose()
+      {
+          Dispose(true);
+          GC.SuppressFinalize(this);
+      }
+
+      protected abstract void Dispose(bool disposing);
 	}
 
 }

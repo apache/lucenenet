@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 	/// new <seealso cref="DocumentsWriterPerThread"/> instance.
 	/// </p>
 	/// </summary>
-	internal abstract class DocumentsWriterPerThreadPool : ICloneable
+	public abstract class DocumentsWriterPerThreadPool : ICloneable
 	{
 
 	  /// <summary>
@@ -54,9 +54,7 @@ namespace Lucene.Net.Index
 	  /// and release the lock in a finally block via <seealso cref="ThreadState#unlock()"/>
 	  /// before accessing the state.
 	  /// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("serial") final static class ThreadState extends java.util.concurrent.locks.ReentrantLock
-	  internal sealed class ThreadState : ReentrantLock
+	  public sealed class ThreadState : ReentrantLock
 	  {
 		internal DocumentsWriterPerThread Dwpt;
 		// TODO this should really be part of DocumentsWriterFlushControl
@@ -177,7 +175,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override DocumentsWriterPerThreadPool Clone()
+	  public virtual object Clone()
 	  {
 		// We should only be cloned before being used:
 		if (NumThreadStatesActive != 0)
@@ -236,8 +234,6 @@ namespace Lucene.Net.Index
 		  {
 			if (NumThreadStatesActive < ThreadStates.Length)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ThreadState threadState = threadStates[numThreadStatesActive];
 			  ThreadState threadState = ThreadStates[NumThreadStatesActive];
 			  threadState.@Lock(); // lock so nobody else will get this ThreadState
 			  bool unlock = true;
@@ -297,8 +293,6 @@ namespace Lucene.Net.Index
 		  {
 			for (int i = NumThreadStatesActive; i < ThreadStates.Length; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ThreadState threadState = threadStates[i];
 			  ThreadState threadState = ThreadStates[i];
 			  threadState.@Lock();
 			  try
@@ -359,13 +353,9 @@ namespace Lucene.Net.Index
 	  internal virtual ThreadState MinContendedThreadState()
 	  {
 		ThreadState minThreadState = null;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = numThreadStatesActive;
 		int limit = NumThreadStatesActive;
 		for (int i = 0; i < limit; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ThreadState state = threadStates[i];
 		  ThreadState state = ThreadStates[i];
 		  if (minThreadState == null || state.QueueLength < minThreadState.QueueLength)
 		  {
@@ -385,8 +375,6 @@ namespace Lucene.Net.Index
 		int count = 0;
 		for (int i = 0; i < ThreadStates.Length; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ThreadState threadState = threadStates[i];
 		  ThreadState threadState = ThreadStates[i];
 		  threadState.@Lock();
 		  try

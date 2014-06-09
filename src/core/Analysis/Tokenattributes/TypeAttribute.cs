@@ -23,28 +23,57 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
-	/// A Token's lexical type. The Default value is "word". 
-	/// </summary>
-	public interface TypeAttribute : Attribute
+	/// Default implementation of <seealso cref="TypeAttribute"/>. </summary>
+	public class TypeAttribute : Attribute, ITypeAttribute, ICloneable
 	{
+	  private string type;
 
 	  /// <summary>
-	  /// the default type </summary>
+	  /// Initialize this attribute with <seealso cref="TypeAttribute#DEFAULT_TYPE"/> </summary>
+	  public TypeAttribute() : this(TypeAttribute_Fields.DEFAULT_TYPE)
+	  {
+	  }
 
 	  /// <summary>
-	  /// Returns this Token's lexical type.  Defaults to "word". </summary>
-	  /// <seealso cref= #setType(String) </seealso>
-	  string Type();
+	  /// Initialize this attribute with <code>type</code> </summary>
+	  public TypeAttribute(string type)
+	  {
+		this.type = type;
+	  }
 
-	  /// <summary>
-	  /// Set the lexical type. </summary>
-	  /// <seealso cref= #type()  </seealso>
-      string type { get; set; }
-	}
+      public virtual string Type { get; set; }
 
-	public static class TypeAttribute_Fields
-	{
-	  public const string DEFAULT_TYPE = "word";
+	  public override void Clear()
+	  {
+		type = TypeAttribute_Fields.DEFAULT_TYPE;
+	  }
+
+	  public override bool Equals(object other)
+	  {
+		if (other == this)
+		{
+		  return true;
+		}
+
+		if (other is TypeAttribute)
+		{
+		  TypeAttribute o = (TypeAttribute) other;
+		  return (this.type == null ? o.type == null : this.type.Equals(o.type));
+		}
+
+		return false;
+	  }
+
+	  public override int GetHashCode()
+	  {
+		return (type == null) ? 0 : type.GetHashCode();
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		TypeAttribute t = (TypeAttribute) target;
+		t.type = type;
+	  }
 	}
 
 }

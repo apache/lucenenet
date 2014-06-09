@@ -76,7 +76,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override void Close()
+	  public override void Release()
 	  {
 		lock (Locks)
 		{

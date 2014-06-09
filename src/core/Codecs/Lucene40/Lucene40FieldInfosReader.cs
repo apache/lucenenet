@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene40
           {
               string name = input.ReadString();
               int fieldNumber = input.ReadVInt();
-              sbyte bits = input.ReadByte();
+              byte bits = input.ReadByte();
               bool isIndexed = (bits & Lucene40FieldInfosFormat.IS_INDEXED) != 0;
               bool storeTermVector = (bits & Lucene40FieldInfosFormat.STORE_TERMVECTOR) != 0;
               bool omitNorms = (bits & Lucene40FieldInfosFormat.OMIT_NORMS) != 0;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.Lucene40
                   storePayloads = false;
               }
               // DV Types are packed in one byte
-              sbyte val = input.ReadByte();
+              byte val = input.ReadByte();
               LegacyDocValuesType oldValuesType = GetDocValuesType((sbyte)(val & 0x0F));
               LegacyDocValuesType oldNormsType = GetDocValuesType((sbyte)(((int)((uint)val >> 4)) & 0x0F));
               IDictionary<string, string> attributes = input.ReadStringStringMap();
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (success)
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		  else
 		  {

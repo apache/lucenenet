@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Spans
 		return buffer.ToString();
 	  }
 
-	  public override SpanFirstQuery Clone()
+	  public override object Clone()
 	  {
 		SpanFirstQuery spanFirstQuery = new SpanFirstQuery((SpanQuery) match.Clone(), end);
 		spanFirstQuery.Boost = Boost;

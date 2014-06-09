@@ -50,7 +50,6 @@ namespace Lucene.Net.Codecs
 	using Transition = Lucene.Net.Util.Automaton.Transition;
 	using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
 	using Lucene.Net.Util.Fst;
-	using Lucene.Net.Util.Fst;
 	using Util = Lucene.Net.Util.Fst.Util;
     using Lucene.Net.Support;
     using System.Text;
@@ -166,8 +165,6 @@ namespace Lucene.Net.Codecs
 			SeekDir(indexIn, IndexDirOffset);
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numFields = in.readVInt();
 		  int numFields = @in.ReadVInt();
 		  if (numFields < 0)
 		  {
@@ -210,7 +207,7 @@ namespace Lucene.Net.Codecs
 		  }
 		  if (indexDivisor != -1)
 		  {
-			indexIn.Close();
+			indexIn.Dispose();
 		  }
 
 		  success = true;
@@ -271,7 +268,7 @@ namespace Lucene.Net.Codecs
 	  //   return "0x" + Integer.toHexString(v);
 	  // }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		try
 		{
@@ -285,7 +282,7 @@ namespace Lucene.Net.Codecs
 		}
 	  }
 
-	  public override IEnumerator<string> Iterator()
+	  public override IEnumerator<string> GetEnumerator()
 	  {
           return Fields.Keys.GetEnumerator();
 	  }
@@ -314,7 +311,7 @@ namespace Lucene.Net.Codecs
 		  {
 			return b.Utf8ToString() + " " + b;
 		  }
-		  catch (Exception t)
+		  catch (Exception)
 		  {
 			// If BytesRef isn't actually UTF8, or it's eg a
 			// prefix of UTF8 that ends mid-unicode-char, we
@@ -587,13 +584,11 @@ namespace Lucene.Net.Codecs
 		  //   System.out.println("BTTR: seg=" + segment + " field=" + fieldInfo.name + " rootBlockCode=" + rootCode + " divisor=" + indexDivisor);
 		  // }
 
-		  RootBlockFP = (int)((uint)(new ByteArrayDataInput(rootCode.Bytes, rootCode.Offset, rootCode.Length)).ReadVLong() >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
+		  RootBlockFP = (int)((uint)(new ByteArrayDataInput((byte[])(Array)rootCode.Bytes, rootCode.Offset, rootCode.Length)).ReadVLong() >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
 
 		  if (indexIn != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput clone = indexIn.clone();
-			IndexInput clone = indexIn.Clone();
+			IndexInput clone = (IndexInput)indexIn.Clone();
 			//System.out.println("start=" + indexStartFP + " field=" + fieldInfo.name);
 			clone.Seek(indexStartFP);
 			Index = new FST<BytesRef>(clone, ByteSequenceOutputs.Singleton);
@@ -626,7 +621,7 @@ namespace Lucene.Net.Codecs
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 
@@ -707,16 +702,14 @@ namespace Lucene.Net.Codecs
 
 		  internal readonly IndexInput @in;
 
-		  internal Frame[] Stack;
+		  private Frame[] Stack;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private Lucene.Net.Util.Fst.FST.Arc<Lucene.Net.Util.BytesRef>[] arcs = new Lucene.Net.Util.Fst.FST.Arc[5];
           internal FST<BytesRef>.Arc<BytesRef>[] Arcs = new FST<BytesRef>.Arc<BytesRef>[5];
 
 		  internal readonly RunAutomaton runAutomaton;
 		  internal readonly CompiledAutomaton CompiledAutomaton;
 
-		  internal Frame CurrentFrame;
+		  private Frame CurrentFrame;
 
 		  internal readonly BytesRef Term_Renamed = new BytesRef();
 
@@ -738,13 +731,13 @@ namespace Lucene.Net.Codecs
 
 			internal int MetaDataUpto;
 
-			internal sbyte[] SuffixBytes = new sbyte[128];
+			internal byte[] SuffixBytes = new byte[128];
 			internal readonly ByteArrayDataInput SuffixesReader = new ByteArrayDataInput();
 
-			internal sbyte[] StatBytes = new sbyte[64];
+			internal byte[] StatBytes = new byte[64];
 			internal readonly ByteArrayDataInput StatsReader = new ByteArrayDataInput();
 
-			internal sbyte[] FloorData = new sbyte[32];
+			internal byte[] FloorData = new byte[32];
 			internal readonly ByteArrayDataInput FloorDataReader = new ByteArrayDataInput();
 
 			// Length of prefix shared by all terms in this block
@@ -777,7 +770,7 @@ namespace Lucene.Net.Codecs
 			// metadata buffer, holding monotonic values
 			public long[] Longs;
 			// metadata buffer, holding general values
-			public sbyte[] Bytes;
+			public byte[] Bytes;
 			internal ByteArrayDataInput BytesReader;
 
 			// Cumulative output so far
@@ -857,14 +850,12 @@ namespace Lucene.Net.Codecs
 				// Floor frame
 				if (FloorData.Length < frameIndexData.Length)
 				{
-				  this.FloorData = new sbyte[ArrayUtil.Oversize(frameIndexData.Length, 1)];
+				  this.FloorData = new byte[ArrayUtil.Oversize(frameIndexData.Length, 1)];
 				}
 				Array.Copy(frameIndexData.Bytes, frameIndexData.Offset, FloorData, 0, frameIndexData.Length);
 				FloorDataReader.Reset(FloorData, 0, frameIndexData.Length);
 				// Skip first long -- has redundant fp, hasTerms
 				// flag, isFloor flag
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long code = floorDataReader.readVLong();
 				long code = FloorDataReader.ReadVLong();
 				if ((code & BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR) != 0)
 				{
@@ -908,7 +899,7 @@ namespace Lucene.Net.Codecs
 			  // if (DEBUG) System.out.println("      entCount=" + entCount + " lastInFloor?=" + isLastInFloor + " leafBlock?=" + isLeafBlock + " numSuffixBytes=" + numBytes);
 			  if (SuffixBytes.Length < numBytes)
 			  {
-				SuffixBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				SuffixBytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
               OuterInstance.@in.ReadBytes(SuffixBytes, 0, numBytes);
 			  SuffixesReader.Reset(SuffixBytes, 0, numBytes);
@@ -917,7 +908,7 @@ namespace Lucene.Net.Codecs
               numBytes = OuterInstance.@in.ReadVInt();
 			  if (StatBytes.Length < numBytes)
 			  {
-				StatBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				StatBytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
               OuterInstance.@in.ReadBytes(StatBytes, 0, numBytes);
 			  StatsReader.Reset(StatBytes, 0, numBytes);
@@ -930,12 +921,12 @@ namespace Lucene.Net.Codecs
               numBytes = OuterInstance.@in.ReadVInt();
 			  if (Bytes == null)
 			  {
-				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				Bytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 				BytesReader = new ByteArrayDataInput();
 			  }
 			  else if (Bytes.Length < numBytes)
 			  {
-				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				Bytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
               OuterInstance.@in.ReadBytes(Bytes, 0, numBytes);
 			  BytesReader.Reset(Bytes, 0, numBytes);
@@ -1055,7 +1046,7 @@ namespace Lucene.Net.Codecs
 			// }
 			runAutomaton = compiled.RunAutomaton;
 			CompiledAutomaton = compiled;
-			@in = outerInstance.OuterInstance.@in.Clone();
+            @in = (IndexInput)outerInstance.OuterInstance.@in.Clone();
 			Stack = new Frame[5];
 			for (int idx = 0;idx < Stack.Length;idx++)
 			{
@@ -1115,10 +1106,10 @@ namespace Lucene.Net.Codecs
 		  public override TermState TermState()
 		  {
 			CurrentFrame.DecodeMetaData();
-			return CurrentFrame.TermState.Clone();
+			return (TermState)CurrentFrame.TermState.Clone();
 		  }
 
-		  internal Frame GetFrame(int ord)
+		  private Frame GetFrame(int ord)
 		  {
 			if (ord >= Stack.Length)
 			{
@@ -1149,7 +1140,7 @@ namespace Lucene.Net.Codecs
 			return Arcs[ord];
 		  }
 
-		  internal Frame PushFrame(int state)
+		  private Frame PushFrame(int state)
 		  {
 			Frame f = GetFrame(CurrentFrame == null ? 0 : 1 + CurrentFrame.Ord);
 
@@ -1395,8 +1386,8 @@ namespace Lucene.Net.Codecs
 				  goto nextTermContinue;
 				}
 
-				sbyte[] suffixBytes = CurrentFrame.SuffixBytes;
-				sbyte[] commonSuffixBytes = CompiledAutomaton.CommonSuffixRef.Bytes;
+				byte[] suffixBytes = CurrentFrame.SuffixBytes;
+				byte[] commonSuffixBytes = (byte[])(Array)CompiledAutomaton.CommonSuffixRef.Bytes;
 
 				int lenInPrefix = CompiledAutomaton.CommonSuffixRef.Length - CurrentFrame.Suffix;
 				Debug.Assert(CompiledAutomaton.CommonSuffixRef.Offset == 0);
@@ -1487,7 +1478,7 @@ namespace Lucene.Net.Codecs
 			  }
 				nextTermContinue:;
 			}
-			nextTermBreak:;
+			//nextTermBreak:;
 		  }
 
 		  internal void CopyTerm()
@@ -1505,7 +1496,7 @@ namespace Lucene.Net.Codecs
 		  {
 			  get
 			  {
-				return BytesRef.UTF8SortedAsUnicodeComparator;
+				return BytesRef.UTF8SortedAsUnicodeComparer;
 			  }
 		  }
 
@@ -1612,7 +1603,7 @@ namespace Lucene.Net.Codecs
 		  {
 			if (this.@in == null)
 			{
-			  this.@in = OuterInstance.OuterInstance.@in.Clone();
+                this.@in = (IndexInput)OuterInstance.OuterInstance.@in.Clone();
 			}
 		  }
 
@@ -1701,7 +1692,7 @@ namespace Lucene.Net.Codecs
 				  break;
 				}
 			  }
-				allTermsContinue:;
+				//allTermsContinue:;
 			}
 			allTermsBreak:
 
@@ -1763,14 +1754,14 @@ namespace Lucene.Net.Codecs
 		  {
 			  get
 			  {
-				return BytesRef.UTF8SortedAsUnicodeComparator;
+				return BytesRef.UTF8SortedAsUnicodeComparer;
 			  }
 		  }
 
 		  // Pushes a frame we seek'd to
           internal Frame PushFrame(FST<BytesRef>.Arc<BytesRef> arc, BytesRef frameData, int length)
 		  {
-			ScratchReader.Reset(frameData.Bytes, frameData.Offset, frameData.Length);
+			ScratchReader.Reset((byte[])(Array)frameData.Bytes, frameData.Offset, frameData.Length);
 			long code = ScratchReader.ReadVLong();
 			long fpSeek = (long)((ulong)code >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
 			Frame f = GetFrame(1 + CurrentFrame.Ord);
@@ -2674,7 +2665,7 @@ namespace Lucene.Net.Codecs
 		  {
 			Debug.Assert(!Eof);
 			CurrentFrame.DecodeMetaData();
-			TermState ts = CurrentFrame.State.Clone();
+			TermState ts = (TermState)CurrentFrame.State.Clone();
 			//if (DEBUG) System.out.println("BTTR.termState seg=" + segment + " state=" + ts);
 			return ts;
 		  }
@@ -2709,13 +2700,13 @@ namespace Lucene.Net.Codecs
 			internal long FpOrig;
 			internal long FpEnd;
 
-			internal sbyte[] SuffixBytes = new sbyte[128];
+			internal byte[] SuffixBytes = new byte[128];
 			internal readonly ByteArrayDataInput SuffixesReader = new ByteArrayDataInput();
 
-			internal sbyte[] StatBytes = new sbyte[64];
+			internal byte[] StatBytes = new byte[64];
 			internal readonly ByteArrayDataInput StatsReader = new ByteArrayDataInput();
 
-			internal sbyte[] FloorData = new sbyte[32];
+			internal byte[] FloorData = new byte[32];
 			internal readonly ByteArrayDataInput FloorDataReader = new ByteArrayDataInput();
 
 			// Length of prefix shared by all terms in this block
@@ -2752,7 +2743,7 @@ namespace Lucene.Net.Codecs
 			// metadata buffer, holding monotonic values
 			public long[] Longs;
 			// metadata buffer, holding general values
-			public sbyte[] Bytes;
+			public byte[] Bytes;
 			internal ByteArrayDataInput BytesReader;
 
 			public Frame(BlockTreeTermsReader.FieldReader.SegmentTermsEnum outerInstance, int ord)
@@ -2766,12 +2757,10 @@ namespace Lucene.Net.Codecs
 
 			public void SetFloorData(ByteArrayDataInput @in, BytesRef source)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBytes = source.length - (in.getPosition() - source.offset);
 			  int numBytes = source.Length - (@in.Position - source.Offset);
 			  if (numBytes > FloorData.Length)
 			  {
-				FloorData = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				FloorData = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
 			  Array.Copy(source.Bytes, source.Offset + @in.Position, FloorData, 0, numBytes);
 			  FloorDataReader.Reset(FloorData, 0, numBytes);
@@ -2843,7 +2832,7 @@ namespace Lucene.Net.Codecs
 			  int numBytes = (int)((uint)code >> 1);
 			  if (SuffixBytes.Length < numBytes)
 			  {
-				SuffixBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				SuffixBytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
 			  OuterInstance.@in.ReadBytes(SuffixBytes, 0, numBytes);
 			  SuffixesReader.Reset(SuffixBytes, 0, numBytes);
@@ -2860,7 +2849,7 @@ namespace Lucene.Net.Codecs
 			  numBytes = OuterInstance.@in.ReadVInt();
 			  if (StatBytes.Length < numBytes)
 			  {
-				StatBytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				StatBytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
 			  OuterInstance.@in.ReadBytes(StatBytes, 0, numBytes);
 			  StatsReader.Reset(StatBytes, 0, numBytes);
@@ -2876,12 +2865,12 @@ namespace Lucene.Net.Codecs
 			  numBytes = OuterInstance.@in.ReadVInt();
 			  if (Bytes == null)
 			  {
-				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				Bytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 				BytesReader = new ByteArrayDataInput();
 			  }
 			  else if (Bytes.Length < numBytes)
 			  {
-				Bytes = new sbyte[ArrayUtil.Oversize(numBytes, 1)];
+				Bytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
 			  }
 			  OuterInstance.@in.ReadBytes(Bytes, 0, numBytes);
 			  BytesReader.Reset(Bytes, 0, numBytes);

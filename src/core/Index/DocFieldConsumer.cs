@@ -27,17 +27,17 @@ namespace Lucene.Net.Index
 	  /// Called when DocumentsWriterPerThread decides to create a new
 	  ///  segment 
 	  /// </summary>
-	  internal abstract void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
+        public abstract void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
 
 	  /// <summary>
 	  /// Called when an aborting exception is hit </summary>
-	  internal abstract void Abort();
+        public abstract void Abort();
 
-	  internal abstract void StartDocument();
+        public abstract void StartDocument();
 
-	  internal abstract DocFieldConsumerPerField AddField(FieldInfo fi);
+        public abstract DocFieldConsumerPerField AddField(FieldInfo fi);
 
-	  internal abstract void FinishDocument();
+        public abstract void FinishDocument();
 	}
 
 }

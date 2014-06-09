@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis
 		return GetWrappedAnalyzer(fieldName).GetOffsetGap(fieldName);
 	  }
 
-      public override sealed TextReader InitReader(string fieldName, TextReader reader)
+      public override TextReader InitReader(string fieldName, TextReader reader)
 	  {
 		return GetWrappedAnalyzer(fieldName).InitReader(fieldName, WrapReader(fieldName, reader));
 	  }

@@ -44,7 +44,15 @@ namespace Lucene.Net.Codecs
 	  /// Visit the stored fields for document <code>n</code> </summary>
 	  public abstract void VisitDocument(int n, StoredFieldVisitor visitor);
 
-	  public override abstract StoredFieldsReader Clone();
+	  public abstract object Clone();
+
+      public void Dispose()
+      {
+          Dispose(true);
+          GC.SuppressFinalize(this);
+      }
+
+      protected abstract void Dispose(bool disposing);
 
 	  /// <summary>
 	  /// Returns approximate RAM bytes used </summary>

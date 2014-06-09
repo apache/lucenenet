@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 
@@ -21,31 +23,65 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
-	/// Determines how many positions this
-	///  token spans.  Very few analyzer components actually
-	///  produce this attribute, and indexing ignores it, but
-	///  it's useful to express the graph structure naturally
-	///  produced by decompounding, word splitting/joining,
-	///  synonym filtering, etc.
-	/// 
-	/// <p>NOTE: this is optional, and most analyzers
-	///  don't change the default value (1). 
-	/// </summary>
-
-	public interface PositionLengthAttribute : Attribute
+	/// Default implementation of <seealso cref="PositionLengthAttribute"/>. </summary>
+	public class PositionLengthAttribute : Attribute, IPositionLengthAttribute, ICloneable
 	{
+	  private int PositionLength_Renamed = 1;
+
 	  /// <summary>
-	  /// Set the position length of this Token.
-	  /// <p>
-	  /// The default value is one. </summary>
-	  /// <param name="positionLength"> how many positions this token
-	  ///  spans. </param>
-	  /// <exception cref="IllegalArgumentException"> if <code>positionLength</code> 
-	  ///         is zero or negative. </exception>
-	  /// <seealso cref= #getPositionLength() </seealso>
-	  int PositionLength {set;get;}
+	  /// Initializes this attribute with position length of 1. </summary>
+	  public PositionLengthAttribute()
+	  {
+	  }
 
+	  public int PositionLength
+	  {
+		  set
+		  {
+			if (value < 1)
+			{
+			  throw new System.ArgumentException("Position length must be 1 or greater: got " + value);
+			}
+			this.PositionLength_Renamed = value;
+		  }
+		  get
+		  {
+			return PositionLength_Renamed;
+		  }
+	  }
+
+
+	  public override void Clear()
+	  {
+		this.PositionLength_Renamed = 1;
+	  }
+
+	  public override bool Equals(object other)
+	  {
+		if (other == this)
+		{
+		  return true;
+		}
+
+		if (other is PositionLengthAttribute)
+		{
+		  PositionLengthAttribute _other = (PositionLengthAttribute) other;
+		  return PositionLength_Renamed == _other.PositionLength_Renamed;
+		}
+
+		return false;
+	  }
+
+	  public int GetHashCode()
+	  {
+		return PositionLength_Renamed;
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		PositionLengthAttribute t = (PositionLengthAttribute) target;
+		t.PositionLength = PositionLength_Renamed;
+	  }
 	}
-
 
 }

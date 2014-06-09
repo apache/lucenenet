@@ -70,13 +70,13 @@ namespace Lucene.Net.Index
 			return null;
 		  case 1:
 			// already an atomic reader / reader with one leave
-			return leaves[0].Reader().Fields();
+            return leaves[0].AtomicReader.Fields();
 		  default:
 			IList<Fields> fields = new List<Fields>();
 			IList<ReaderSlice> slices = new List<ReaderSlice>();
 			foreach (AtomicReaderContext ctx in leaves)
 			{
-			  AtomicReader r = ctx.Reader();
+                AtomicReader r = ctx.AtomicReader;
 			  Fields f = r.Fields();
 			  if (f != null)
 			  {
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
 		  Debug.Assert(size > 0, "A reader with deletions must have at least one leave");
 		  if (size == 1)
 		  {
-			return leaves[0].Reader().LiveDocs;
+              return leaves[0].AtomicReader.LiveDocs;
 		  }
 		  Bits[] liveDocs = new Bits[size];
 		  int[] starts = new int[size + 1];
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
 		  {
 			// record all liveDocs, even if they are null
 			AtomicReaderContext ctx = leaves[i];
-			liveDocs[i] = ctx.Reader().LiveDocs;
+            liveDocs[i] = ctx.AtomicReader.LiveDocs;
 			starts[i] = ctx.DocBase;
 		  }
 		  starts[size] = reader.MaxDoc();
@@ -234,12 +234,12 @@ namespace Lucene.Net.Index
 		this.SubSlices = subSlices;
 	  }
 
-	  public override IEnumerator<string> Iterator()
+	  public override IEnumerator<string> GetEnumerator()
 	  {
 		IEnumerator<string>[] subIterators = new IEnumerator<string>[Subs.Length];
 		for (int i = 0;i < Subs.Length;i++)
 		{
-		  subIterators[i] = Subs[i].Iterator();
+		  subIterators[i] = Subs[i].GetEnumerator();
 		}
 		return new MergedIterator<string>(subIterators);
 	  }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
 		FieldInfos.Builder builder = new FieldInfos.Builder();
 		foreach (AtomicReaderContext ctx in reader.Leaves())
 		{
-		  builder.Add(ctx.Reader().FieldInfos);
+            builder.Add(ctx.AtomicReader.FieldInfos);
 		}
 		return builder.Finish();
 	  }

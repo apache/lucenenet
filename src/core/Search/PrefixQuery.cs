@@ -83,11 +83,11 @@ namespace Lucene.Net.Search
 		return buffer.ToString();
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = base.GetHashCode();
-		result = prime * result + ((Prefix_Renamed == null) ? 0 : Prefix_Renamed.HashCode());
+		result = prime * result + ((Prefix_Renamed == null) ? 0 : Prefix_Renamed.GetHashCode());
 		return result;
 	  }
 

@@ -73,17 +73,17 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		if (DoClose)
 		{
 		  try
 		  {
-			SecondaryDir_Renamed.Close();
+			SecondaryDir_Renamed.Dispose();
 		  }
 		  finally
 		  {
-			PrimaryDir_Renamed.Close();
+			PrimaryDir_Renamed.Dispose();
 		  }
 		  DoClose = false;
 		}

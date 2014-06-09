@@ -72,7 +72,16 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public override sealed AtomicReaderContext Context
+      public sealed override IndexReaderContext Context
+      {
+          get
+          {
+              EnsureOpen();
+              return ReaderContext;
+          }
+      }
+
+	  public AtomicReaderContext AtomicContext
 	  {
 		  get
 		  {

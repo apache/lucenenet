@@ -43,8 +43,6 @@ namespace Lucene.Net.Util
 
 	  public PriorityQueue(int maxSize, bool prepopulate)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int heapSize;
 		int heapSize;
 		if (0 == maxSize)
 		{
@@ -74,9 +72,6 @@ namespace Lucene.Net.Util
 		  }
 		}
 		// T is unbounded type, so this unchecked cast works always:
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") final T[] h = (T[]) new Object[heapSize];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 		T[] h = new T[heapSize];
 		this.Heap = h;
 		this.MaxSize = maxSize;
@@ -101,7 +96,7 @@ namespace Lucene.Net.Util
 	  /// Determines the ordering of objects in this priority queue.  Subclasses
 	  ///  must define this one method. </summary>
 	  ///  <returns> <code>true</code> iff parameter <tt>a</tt> is less than parameter <tt>b</tt>. </returns>
-	  protected internal abstract bool LessThan(T a, T b);
+	  public abstract bool LessThan(T a, T b);
 
 	  /// <summary>
 	  /// this method can be overridden by extending classes to return a sentinel

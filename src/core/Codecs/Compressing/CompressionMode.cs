@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Compressing
 			bytes.Length = length;
 		  }
 
-		  public override Decompressor Clone()
+		  public override object Clone()
 		  {
 			return this;
 		  }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  bytes.Length = length;
 		}
 
-		public override Decompressor Clone()
+		public override object Clone()
 		{
 		  return new DeflateDecompressor();
 		}

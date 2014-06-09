@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-	  protected internal override SegmentTermEnum Clone()
+	  public object Clone()
 	  {
 		SegmentTermEnum clone = null;
 		try
@@ -120,11 +120,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		}
 
-		clone.Input = Input.Clone();
+        clone.Input = (IndexInput)Input.Clone();
 		clone.TermInfo_Renamed = new TermInfo(TermInfo_Renamed);
 
-		clone.TermBuffer = TermBuffer.Clone();
-		clone.PrevBuffer = PrevBuffer.Clone();
+        clone.TermBuffer = (TermBuffer)TermBuffer.Clone();
+        clone.PrevBuffer = (TermBuffer)PrevBuffer.Clone();
 		clone.ScanBuffer = new TermBuffer();
 
 		return clone;
@@ -260,9 +260,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// Closes the enumeration to further activity, freeing resources. </summary>
-	  public void Close()
+	  public void Dispose()
 	  {
-		Input.Close();
+		Input.Dispose();
 	  }
 	}
 

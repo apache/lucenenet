@@ -57,12 +57,12 @@ namespace Lucene.Net.Index
 		  this.Docs = docs;
 		}
 
-		internal override long? Value()
+        public object Value()
 		{
 		  return Value_Renamed;
 		}
 
-		internal override int NextDoc()
+		public int NextDoc()
 		{
 		  if (Idx >= Size)
 		  {
@@ -87,12 +87,12 @@ namespace Lucene.Net.Index
 		  return Doc_Renamed;
 		}
 
-		internal override int Doc()
+        public int Doc()
 		{
 		  return Doc_Renamed;
 		}
 
-		internal override void Reset()
+        public void Reset()
 		{
 		  Doc_Renamed = -1;
 		  Value_Renamed = null;
@@ -146,16 +146,10 @@ namespace Lucene.Net.Index
 		++Size;
 	  }
 
-	  public override Iterator Iterator()
+      internal override DocValuesFieldUpdates.Iterator GetIterator()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PagedMutable docs = this.docs;
 		PagedMutable docs = this.Docs;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PagedGrowableWriter values = this.values;
 		PagedGrowableWriter values = this.Values;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet docsWithField = this.docsWithField;
 		FixedBitSet docsWithField = this.DocsWithField;
 		new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, values, docsWithField).Sort(0, Size);
 

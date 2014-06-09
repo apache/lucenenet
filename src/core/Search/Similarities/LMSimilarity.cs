@@ -1,3 +1,4 @@
+using System.Globalization;
 namespace Lucene.Net.Search.Similarities
 {
 
@@ -92,11 +93,11 @@ namespace Lucene.Net.Search.Similarities
 		string coll = collectionModel.Name;
 		if (coll != null)
 		{
-		  return string.Format(Locale.ROOT, "LM %s - %s", Name, coll);
+            return string.Format(CultureInfo.InvariantCulture, "LM %s - %s", Name, coll);
 		}
 		else
 		{
-		  return string.Format(Locale.ROOT, "LM %s", Name);
+		  return string.Format(CultureInfo.InvariantCulture, "LM %s", Name);
 		}
 	  }
 
@@ -161,12 +162,12 @@ namespace Lucene.Net.Search.Similarities
 		{
 		}
 
-		public override float ComputeProbability(BasicStats stats)
+		public float ComputeProbability(BasicStats stats)
 		{
 		  return (stats.TotalTermFreq + 1F) / (stats.NumberOfFieldTokens + 1F);
 		}
 
-		public override string Name
+		public string Name
 		{
 			get
 			{

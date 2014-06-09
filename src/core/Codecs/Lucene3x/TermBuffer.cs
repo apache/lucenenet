@@ -26,7 +26,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Term = Lucene.Net.Index.Term;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using Lucene.Net.Util.ByteBlockPool;
     using Lucene.Net.Util;
 
 	/// <summary>
@@ -45,7 +44,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  // fieldNumber into index for first indexed term:
 	  private int CurrentFieldNumber = -2;
 
-	  private static readonly IComparer<BytesRef> Utf8AsUTF16Comparator = BytesRef.UTF8SortedAsUTF16Comparator;
+	  private static readonly IComparer<BytesRef> Utf8AsUTF16Comparator = BytesRef.UTF8SortedAsUTF16Comparer;
 
 	  internal int NewSuffixStart; // only valid right after .read is called
 
@@ -143,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		return Term;
 	  }
 
-	  protected internal override TermBuffer Clone()
+	  public object Clone()
 	  {
 		TermBuffer clone = null;
 		try

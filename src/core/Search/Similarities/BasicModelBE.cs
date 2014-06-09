@@ -20,7 +20,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Search.Similarities.SimilarityBase;
 
 	/// <summary>
 	/// Limiting form of the Bose-Einstein model. The formula used in Lucene differs

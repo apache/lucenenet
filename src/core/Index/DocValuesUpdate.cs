@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 
 	/// <summary>
 	/// An in-place update to a DocValues field. </summary>
-	internal abstract class DocValuesUpdate
+	public abstract class DocValuesUpdate
 	{
 
 	  /* Rough logic: OBJ_HEADER + 3*PTR + INT
@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// An in-place update to a binary DocValues field </summary>
-	  internal sealed class BinaryDocValuesUpdate : DocValuesUpdate
+	  public sealed class BinaryDocValuesUpdate : DocValuesUpdate
 	  {
 
 		/* Size of BytesRef: 2*INT + ARRAY_HEADER + PTR */
@@ -98,12 +98,12 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// An in-place update to a numeric DocValues field </summary>
-	  internal sealed class NumericDocValuesUpdate : DocValuesUpdate
+	  public sealed class NumericDocValuesUpdate : DocValuesUpdate
 	  {
 
 		internal static readonly long? MISSING = new long?(0);
 
-        internal NumericDocValuesUpdate(Term term, string field, long? value)
+        public NumericDocValuesUpdate(Term term, string field, long? value)
             : base(DocValuesFieldUpdates.Type_e.NUMERIC, term, field, value == null ? MISSING : value)
 		{
 		}

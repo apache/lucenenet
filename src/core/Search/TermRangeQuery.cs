@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
 		  return buffer.ToString();
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = base.GetHashCode();

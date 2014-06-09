@@ -131,7 +131,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Closes the store. </summary>
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
 	  /// <summary>
 	  /// Set the LockFactory that this Directory instance should
@@ -213,7 +213,7 @@ namespace Lucene.Net.Store
 			  {
 				to.DeleteFile(dest);
 			  }
-			  catch (Exception t)
+			  catch (Exception)
 			  {
 			  }
 			}
@@ -260,13 +260,16 @@ namespace Lucene.Net.Store
 		  {
 			return new SlicedIndexInput("SlicedIndexInput(" + sliceDescription + " in " + @base + ")", @base, offset, length);
 		  }
-		  public override void Close()
-		  {
-			@base.Close();
-		  }
+
+          public override void Dispose(bool disposing)
+          {
+              @base.Dispose();
+          }
+
+          [Obsolete]
 		  public override IndexInput OpenFullSlice()
 		  {
-			return @base.Clone();
+			return (IndexInput)@base.Clone();
 		  }
 	  }
 
@@ -284,25 +287,32 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  public abstract class IndexInputSlicer : IDisposable
 	  {
-		  private readonly Directory OuterInstance;
+            private readonly Directory OuterInstance;
 
-		  public IndexInputSlicer(Directory outerInstance)
-		  {
-			  this.OuterInstance = outerInstance;
-		  }
+            public IndexInputSlicer(Directory outerInstance)
+            {
+	            this.OuterInstance = outerInstance;
+            }
 
-		/// <summary>
-		/// Returns an <seealso cref="IndexInput"/> slice starting at the given offset with the given length.
-		/// </summary>
-		public abstract IndexInput OpenSlice(string sliceDescription, long offset, long length);
+		    /// <summary>
+		    /// Returns an <seealso cref="IndexInput"/> slice starting at the given offset with the given length.
+		    /// </summary>
+		    public abstract IndexInput OpenSlice(string sliceDescription, long offset, long length);
 
-		/// <summary>
-		/// Returns an <seealso cref="IndexInput"/> slice starting at offset <i>0</i> with a
-		/// length equal to the length of the underlying file </summary>
-		/// @deprecated Only for reading CFS files from 3.x indexes. 
-		[Obsolete("Only for reading CFS files from 3.x indexes.")]
-		public abstract IndexInput OpenFullSlice();
-		// can we remove this somehow?
+		    /// <summary>
+		    /// Returns an <seealso cref="IndexInput"/> slice starting at offset <i>0</i> with a
+		    /// length equal to the length of the underlying file </summary>
+		    /// @deprecated Only for reading CFS files from 3.x indexes. 
+		    [Obsolete("Only for reading CFS files from 3.x indexes.")]
+		    public abstract IndexInput OpenFullSlice();
+		    // can we remove this somehow?
+
+            public abstract void Dispose(bool disposing);
+
+            public void Dispose()
+            {
+                Dispose(true);
+            }
 	  }
 
 	  /// <summary>
@@ -321,15 +331,15 @@ namespace Lucene.Net.Store
 
 		internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length, int readBufferSize) : base("SlicedIndexInput(" + sliceDescription + " in " + @base + " slice=" + fileOffset + ":" + (fileOffset + length) + ")", readBufferSize)
 		{
-		  this.@base = @base.Clone();
+		  this.@base = (IndexInput)@base.Clone();
 		  this.FileOffset = fileOffset;
 		  this.Length_Renamed = length;
 		}
 
-		public override SlicedIndexInput Clone()
+		public override object Clone()
 		{
 		  SlicedIndexInput clone = (SlicedIndexInput)base.Clone();
-		  clone.@base = @base.Clone();
+		  clone.@base = (IndexInput)@base.Clone();
 		  clone.FileOffset = FileOffset;
 		  clone.Length_Renamed = Length_Renamed;
 		  return clone;
@@ -341,7 +351,7 @@ namespace Lucene.Net.Store
 		/// <param name="b"> the array to read bytes into </param>
 		/// <param name="offset"> the offset in the array to start storing bytes </param>
 		/// <param name="len"> the number of bytes to read </param>
-		protected internal override void ReadInternal(sbyte[] b, int offset, int len)
+		protected internal override void ReadInternal(byte[] b, int offset, int len)
 		{
 		  long start = FilePointer;
 		  if (start + len > Length_Renamed)
@@ -361,9 +371,9 @@ namespace Lucene.Net.Store
 		/// Closes the stream to further operations. </summary>
 		{
 		}
-		public override void Close()
+		public override void Dispose()
 		{
-		  @base.Close();
+		  @base.Dispose();
 		}
 
 		public override long Length()

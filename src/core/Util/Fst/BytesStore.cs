@@ -32,13 +32,13 @@ namespace Lucene.Net.Util.Fst
 	internal class BytesStore : DataOutput
 	{
 
-	  private readonly List<sbyte[]> Blocks = new List<sbyte[]>();
+	  private readonly List<byte[]> Blocks = new List<byte[]>();
 
 	  private readonly int BlockSize;
 	  private readonly int blockBits;
 	  private readonly int BlockMask;
 
-	  private sbyte[] Current;
+	  private byte[] Current;
 	  private int NextWrite;
 
 	  public BytesStore(int blockBits)
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Fst
 		while (left > 0)
 		{
 		  int chunk = (int) Math.Min(blockSize, left);
-		  sbyte[] block = new sbyte[chunk];
+		  byte[] block = new byte[chunk];
 		  @in.ReadBytes(block, 0, block.Length);
 		  Blocks.Add(block);
 		  left -= chunk;
@@ -81,25 +81,25 @@ namespace Lucene.Net.Util.Fst
 	  /// Absolute write byte; you must ensure dest is < max
 	  ///  position written so far. 
 	  /// </summary>
-	  public virtual void WriteByte(int dest, sbyte b)
+	  public virtual void WriteByte(int dest, byte b)
 	  {
 		int blockIndex = dest >> blockBits;
-		sbyte[] block = Blocks[blockIndex];
+		byte[] block = Blocks[blockIndex];
 		block[dest & BlockMask] = b;
 	  }
 
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		if (NextWrite == BlockSize)
 		{
-		  Current = new sbyte[BlockSize];
+		  Current = new byte[BlockSize];
 		  Blocks.Add(Current);
 		  NextWrite = 0;
 		}
 		Current[NextWrite++] = b;
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int len)
+	  public override void WriteBytes(byte[] b, int offset, int len)
 	  {
 		while (len > 0)
 		{
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util.Fst
 			  offset += chunk;
 			  len -= chunk;
 			}
-			Current = new sbyte[BlockSize];
+			Current = new byte[BlockSize];
 			Blocks.Add(Current);
 			NextWrite = 0;
 		  }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Fst
 	  ///  position.  Note: this cannot "grow" the bytes, so you
 	  ///  must only call it on already written parts. 
 	  /// </summary>
-	  internal virtual void WriteBytes(long dest, sbyte[] b, int offset, int len)
+	  internal virtual void WriteBytes(long dest, byte[] b, int offset, int len)
 	  {
 		//System.out.println("  BS.writeBytes dest=" + dest + " offset=" + offset + " len=" + len);
 		Debug.Assert(dest + len <= Position, "dest=" + dest + " pos=" + Position + " len=" + len);
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util.Fst
 		  blockIndex--;
 		  downTo = BlockSize;
 		}
-		sbyte[] block = Blocks[blockIndex];
+		byte[] block = Blocks[blockIndex];
 
 		while (len > 0)
 		{
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util.Fst
 		  blockIndex--;
 		  downTo = BlockSize;
 		}
-		sbyte[] block = Blocks[blockIndex];
+		byte[] block = Blocks[blockIndex];
 
 		while (len > 0)
 		{
@@ -276,11 +276,11 @@ namespace Lucene.Net.Util.Fst
 	  {
 		int blockIndex = (int)(pos >> blockBits);
 		int upto = (int)(pos & BlockMask);
-		sbyte[] block = Blocks[blockIndex];
+		byte[] block = Blocks[blockIndex];
 		int shift = 24;
 		for (int i = 0;i < 4;i++)
 		{
-		  block[upto++] = (sbyte)(value >> shift);
+		  block[upto++] = (byte)(value >> shift);
 		  shift -= 8;
 		  if (upto == BlockSize)
 		  {
@@ -301,18 +301,18 @@ namespace Lucene.Net.Util.Fst
 
 		int srcBlockIndex = (int)(srcPos >> blockBits);
 		int src = (int)(srcPos & BlockMask);
-		sbyte[] srcBlock = Blocks[srcBlockIndex];
+		byte[] srcBlock = Blocks[srcBlockIndex];
 
 		int destBlockIndex = (int)(destPos >> blockBits);
 		int dest = (int)(destPos & BlockMask);
-		sbyte[] destBlock = Blocks[destBlockIndex];
+		byte[] destBlock = Blocks[destBlockIndex];
 		//System.out.println("  srcBlock=" + srcBlockIndex + " destBlock=" + destBlockIndex);
 
 		int limit = (int)(destPos - srcPos + 1) / 2;
 		for (int i = 0;i < limit;i++)
 		{
 		  //System.out.println("  cycle src=" + src + " dest=" + dest);
-		  sbyte b = srcBlock[src];
+		  byte b = srcBlock[src];
 		  srcBlock[src] = destBlock[dest];
 		  destBlock[dest] = b;
 		  src++;
@@ -348,7 +348,7 @@ namespace Lucene.Net.Util.Fst
 		  else
 		  {
 			len -= chunk;
-			Current = new sbyte[BlockSize];
+			Current = new byte[BlockSize];
 			Blocks.Add(Current);
 			NextWrite = 0;
 		  }
@@ -395,7 +395,7 @@ namespace Lucene.Net.Util.Fst
 	  {
 		if (Current != null)
 		{
-		  sbyte[] lastBuffer = new sbyte[NextWrite];
+		  byte[] lastBuffer = new byte[NextWrite];
 		  Array.Copy(Current, 0, lastBuffer, 0, NextWrite);
 		  Blocks[Blocks.Count - 1] = lastBuffer;
 		  Current = null;
@@ -406,7 +406,7 @@ namespace Lucene.Net.Util.Fst
 	  /// Writes all of our bytes to the target <seealso cref="DataOutput"/>. </summary>
 	  public virtual void WriteTo(DataOutput @out)
 	  {
-		foreach (sbyte[] block in Blocks)
+		foreach (byte[] block in Blocks)
 		{
 		  @out.WriteBytes(block, 0, block.Length);
 		}
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util.Fst
 		  private int nextBuffer;
 		  private int nextRead;
 
-		  public override sbyte ReadByte()
+		  public override byte ReadByte()
 		  {
 			if (nextRead == OuterInstance.BlockSize)
 			{
@@ -453,7 +453,7 @@ namespace Lucene.Net.Util.Fst
 			Position = OuterInstance.Position + count;
 		  }
 
-		  public override void ReadBytes(sbyte[] b, int offset, int len)
+		  public override void ReadBytes(byte[] b, int offset, int len)
 		  {
 			while (len > 0)
 			{
@@ -538,7 +538,7 @@ namespace Lucene.Net.Util.Fst
 		  private int nextBuffer;
 		  private int nextRead;
 
-		  public override sbyte ReadByte()
+		  public override byte ReadByte()
 		  {
 			if (nextRead == -1)
 			{
@@ -553,7 +553,7 @@ namespace Lucene.Net.Util.Fst
 			Position = OuterInstance.Position - count;
 		  }
 
-		  public override void ReadBytes(sbyte[] b, int offset, int len)
+		  public override void ReadBytes(byte[] b, int offset, int len)
 		  {
 			for (int i = 0;i < len;i++)
 			{

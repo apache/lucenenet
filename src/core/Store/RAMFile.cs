@@ -26,7 +26,7 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class RAMFile
 	{
-	  protected internal List<sbyte[]> Buffers = new List<sbyte[]>();
+	  protected internal List<byte[]> Buffers = new List<byte[]>();
 	  internal long Length_Renamed;
 	  internal RAMDirectory Directory;
 	  protected internal long SizeInBytes_Renamed;
@@ -61,9 +61,9 @@ namespace Lucene.Net.Store
 	  }
 
 
-	  protected internal sbyte[] AddBuffer(int size)
+	  protected internal byte[] AddBuffer(int size)
 	  {
-		sbyte[] buffer = NewBuffer(size);
+		byte[] buffer = NewBuffer(size);
 		lock (this)
 		{
 		  Buffers.Add(buffer);
@@ -72,12 +72,12 @@ namespace Lucene.Net.Store
 
 		if (Directory != null)
 		{
-		  Directory.SizeInBytes_Renamed.getAndAdd(size);
+		  Directory.SizeInBytes_Renamed.AddAndGet(size);
 		}
 		return buffer;
 	  }
 
-	  protected internal sbyte[] GetBuffer(int index)
+	  protected internal byte[] GetBuffer(int index)
 	  {
 		  lock (this)
 		  {
@@ -98,9 +98,9 @@ namespace Lucene.Net.Store
 	  /// Subclasses can allocate differently. </summary>
 	  /// <param name="size"> size of allocated buffer. </param>
 	  /// <returns> allocated buffer. </returns>
-	  protected internal virtual sbyte[] NewBuffer(int size)
+	  protected internal virtual byte[] NewBuffer(int size)
 	  {
-		return new sbyte[size];
+		return new byte[size];
 	  }
 
 	  public virtual long SizeInBytes

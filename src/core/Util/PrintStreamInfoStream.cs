@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
 		return true;
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		if (!SystemStream)
 		{

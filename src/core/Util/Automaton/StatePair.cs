@@ -106,9 +106,9 @@ namespace Lucene.Net.Util.Automaton
 	  /// Returns hash code.
 	  /// </summary>
 	  /// <returns> hash code </returns>
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return S1.HashCode() + S2.HashCode();
+          return S1.GetHashCode() + S2.GetHashCode();
 	  }
 	}
 

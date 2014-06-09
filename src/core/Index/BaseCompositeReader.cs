@@ -46,7 +46,8 @@ namespace Lucene.Net.Index
 	/// (non-Lucene) objects instead. </summary>
 	/// <seealso cref= MultiReader
 	/// @lucene.internal </seealso>
-	public abstract class BaseCompositeReader<R> : CompositeReader where R : IndexReader
+	public abstract class BaseCompositeReader<R> : CompositeReader 
+        where R : IndexReader
 	{
 	  private readonly R[] SubReaders;
 	  private readonly int[] Starts; // 1st docno for each reader
@@ -212,13 +213,10 @@ namespace Lucene.Net.Index
 		return this.Starts[readerIndex];
 	  }
 
-	  protected internal override sealed IList<R> SequentialSubReaders
-	  {
-		  get
-		  {
-			return SubReadersList;
-		  }
-	  }
+      protected internal override IList<IndexReader> GetSequentialSubReaders()
+      {
+          return (IList<IndexReader>)SubReadersList;
+      }
 	}
 
 }

@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		internal long ProxOffset;
 		internal long SkipOffset;
 
-		public override StandardTermState Clone()
+		public override object Clone()
 		{
 		  StandardTermState other = new StandardTermState();
 		  other.CopyFrom(this);
@@ -158,32 +158,31 @@ namespace Lucene.Net.Codecs.Lucene40
 		return new StandardTermState();
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		try
-		{
-		  if (FreqIn != null)
-		  {
-			FreqIn.Close();
-		  }
-		}
-		finally
-		{
-		  if (ProxIn != null)
-		  {
-			ProxIn.Close();
-		  }
-		}
+          if (disposing)
+          {
+              try
+              {
+                  if (FreqIn != null)
+                  {
+                      FreqIn.Dispose();
+                  }
+              }
+              finally
+              {
+                  if (ProxIn != null)
+                  {
+                      ProxIn.Dispose();
+                  }
+              }
+          }
 	  }
 
 	  public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StandardTermState termState = (StandardTermState) _termState;
 		StandardTermState termState = (StandardTermState) _termState;
 		// if (DEBUG) System.out.println("SPR: nextTerm seg=" + segment + " tbOrd=" + termState.termBlockOrd + " bytesReader.fp=" + termState.bytesReader.getPosition());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isFirstTerm = termState.termBlockOrd == 0;
 		bool isFirstTerm = termState.TermBlockOrd == 0;
 		if (absolute)
 		{
@@ -347,7 +346,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 			this.OuterInstance = outerInstance;
 		  this.StartFreqIn = startFreqIn;
-		  this.FreqIn = startFreqIn.Clone();
+          this.FreqIn = (IndexInput)startFreqIn.Clone();
 		  this.LiveDocs = liveDocs;
 
 		}
@@ -540,7 +539,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			if (Skipper == null)
 			{
 			  // this is the first time this enum has ever been used for skipping -- do lazy init
-                Skipper = new Lucene40SkipListReader(FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
+                Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
 			}
 
 			if (!Skipped)
@@ -855,8 +854,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 			this.OuterInstance = outerInstance;
 		  StartFreqIn = freqIn;
-		  this.FreqIn = freqIn.Clone();
-		  this.ProxIn = proxIn.Clone();
+          this.FreqIn = (IndexInput)freqIn.Clone();
+          this.ProxIn = (IndexInput)proxIn.Clone();
 		}
 
 		public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
@@ -956,7 +955,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			if (Skipper == null)
 			{
 			  // this is the first time this enum has ever been used for skipping -- do lazy init
-                Skipper = new Lucene40SkipListReader(FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
+                Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
 			}
 
 			if (!Skipped)
@@ -1096,8 +1095,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 			this.OuterInstance = outerInstance;
 		  StartFreqIn = freqIn;
-		  this.FreqIn = freqIn.Clone();
-		  this.ProxIn = proxIn.Clone();
+          this.FreqIn = (IndexInput)freqIn.Clone();
+          this.ProxIn = (IndexInput)proxIn.Clone();
 		}
 
 		public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, Bits liveDocs)
@@ -1204,7 +1203,7 @@ namespace Lucene.Net.Codecs.Lucene40
 			if (Skipper == null)
 			{
 			  // this is the first time this enum has ever been used for skipping -- do lazy init
-                Skipper = new Lucene40SkipListReader(FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
+                Skipper = new Lucene40SkipListReader((IndexInput)FreqIn.Clone(), OuterInstance.MaxSkipLevels, OuterInstance.SkipInterval);
 			}
 
 			if (!Skipped)

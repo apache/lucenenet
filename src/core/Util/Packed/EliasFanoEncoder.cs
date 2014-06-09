@@ -383,7 +383,7 @@ namespace Lucene.Net.Util.Packed
 		return (this.NumValues == oefs.NumValues) && (this.NumEncoded == oefs.NumEncoded) && (this.NumLowBits == oefs.NumLowBits) && (this.NumIndexEntries == oefs.NumIndexEntries) && (this.IndexInterval == oefs.IndexInterval) && Arrays.Equals(this.UpperLongs, oefs.UpperLongs) && Arrays.Equals(this.LowerLongs, oefs.LowerLongs); // no need to check index content
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		int h = ((int)(31 * (NumValues + 7 * (NumEncoded + 5 * (NumLowBits + 3 * (NumIndexEntries + 11 * IndexInterval)))))) ^ Arrays.GetHashCode(UpperLongs) ^ Arrays.GetHashCode(LowerLongs);
 		return h;

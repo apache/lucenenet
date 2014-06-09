@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
 				  }
 				  finally
 				  {
-					@in.Close();
+					@in.Dispose();
 				  }
         
 				  genLoaded = gen;

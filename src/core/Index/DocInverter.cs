@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
 		this.EndConsumer = endConsumer;
 	  }
 
-	  internal override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
+	  public override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
 	  {
 
 		IDictionary<string, InvertedDocConsumerPerField> childFieldsToFlush = new Dictionary<string, InvertedDocConsumerPerField>();
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 		Consumer.FinishDocument();
 	  }
 
-	  internal override void Abort()
+	  public override void Abort()
 	  {
 		try
 		{

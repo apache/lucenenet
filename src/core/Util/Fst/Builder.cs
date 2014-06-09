@@ -84,9 +84,9 @@ namespace Lucene.Net.Util.Fst
 	  /// Expert: this is invoked by Builder whenever a suffix
 	  ///  is serialized. 
 	  /// </summary>
-	  public abstract class FreezeTail<T>
+	  public abstract class FreezeTail<S>
 	  {
-		public abstract void Freeze(UnCompiledNode<T>[] frontier, int prefixLenPlus1, IntsRef prevInput);
+		public abstract void Freeze(UnCompiledNode<S>[] frontier, int prefixLenPlus1, IntsRef prevInput);
 	  }
 
 	  private readonly FreezeTail<T> FreezeTail_Renamed;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util.Fst
 		return fn;
 	  }
 
-	  private void FreezeTail(int prefixLenPlus1)
+	  private void DoFreezeTail(int prefixLenPlus1)
 	  {
 		if (FreezeTail_Renamed != null)
 		{
@@ -240,8 +240,6 @@ namespace Lucene.Net.Util.Fst
 		else
 		{
 		  //System.out.println("  compileTail " + prefixLenPlus1);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int downTo = Math.max(1, prefixLenPlus1);
 		  int downTo = Math.Max(1, prefixLenPlus1);
 		  for (int idx = LastInput.Length; idx >= downTo; idx--)
 		  {
@@ -249,11 +247,7 @@ namespace Lucene.Net.Util.Fst
 			bool doPrune = false;
 			bool doCompile = false;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final UnCompiledNode<T> node = frontier[idx];
 			UnCompiledNode<T> node = Frontier[idx];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final UnCompiledNode<T> parent = frontier[idx-1];
 			UnCompiledNode<T> parent = Frontier[idx - 1];
 
 			if (node.InputCount < MinSuffixCount1)
@@ -300,9 +294,6 @@ namespace Lucene.Net.Util.Fst
 			  // drop all arcs
 			  for (int arcIdx = 0;arcIdx < node.NumArcs;arcIdx++)
 			  {
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final UnCompiledNode<T> target = (UnCompiledNode<T>) node.arcs[arcIdx].target;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 				UnCompiledNode<T> target = (UnCompiledNode<T>) node.Arcs[arcIdx].Target;
 				target.Clear();
 			  }
@@ -322,8 +313,6 @@ namespace Lucene.Net.Util.Fst
 			  {
 				CompileAllTargets(node, LastInput.Length - idx);
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T nextFinalOutput = node.output;
 			  T nextFinalOutput = node.Output;
 
 			  // We "fake" the node as being final if it has no
@@ -331,8 +320,6 @@ namespace Lucene.Net.Util.Fst
 			  // as non-final (the FST can represent this), but
 			  // FSTEnum, Util, etc., have trouble w/ non-final
 			  // dead-end states:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean isFinal = node.isFinal || node.numArcs == 0;
 			  bool isFinal = node.IsFinal || node.NumArcs == 0;
 
 			  if (doCompile)
@@ -422,8 +409,6 @@ namespace Lucene.Net.Util.Fst
 		// compare shared prefix length
 		int pos1 = 0;
 		int pos2 = input.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos1Stop = Math.min(lastInput.length, input.length);
 		int pos1Stop = Math.Min(LastInput.Length, input.Length);
 		while (true)
 		{
@@ -436,15 +421,10 @@ namespace Lucene.Net.Util.Fst
 		  pos1++;
 		  pos2++;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int prefixLenPlus1 = pos1+1;
 		int prefixLenPlus1 = pos1 + 1;
 
 		if (Frontier.Length < input.Length + 1)
 		{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final UnCompiledNode<T>[] next = new UnCompiledNode[Lucene.Net.Util.ArrayUtil.oversize(input.length+1, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 		  UnCompiledNode<T>[] next = new UnCompiledNode<T>[ArrayUtil.Oversize(input.Length + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 		  Array.Copy(Frontier, 0, next, 0, Frontier.Length);
 		  for (int idx = Frontier.Length;idx < next.Length;idx++)
@@ -456,7 +436,7 @@ namespace Lucene.Net.Util.Fst
 
 		// minimize/compile states from previous input's
 		// orphan'd suffix
-		FreezeTail(prefixLenPlus1);
+		DoFreezeTail(prefixLenPlus1);
 
 		// init tail states for current input
 		for (int idx = prefixLenPlus1;idx <= input.Length;idx++)
@@ -465,8 +445,6 @@ namespace Lucene.Net.Util.Fst
 		  Frontier[idx].InputCount++;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final UnCompiledNode<T> lastNode = frontier[input.length];
 		UnCompiledNode<T> lastNode = Frontier[input.Length];
 		if (LastInput.Length != input.Length || prefixLenPlus1 != input.Length + 1)
 		{
@@ -478,23 +456,13 @@ namespace Lucene.Net.Util.Fst
 		// needed
 		for (int idx = 1;idx < prefixLenPlus1;idx++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final UnCompiledNode<T> node = frontier[idx];
 		  UnCompiledNode<T> node = Frontier[idx];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final UnCompiledNode<T> parentNode = frontier[idx-1];
 		  UnCompiledNode<T> parentNode = Frontier[idx - 1];
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T lastOutput = parentNode.getLastOutput(input.ints[input.offset + idx - 1]);
 		  T lastOutput = parentNode.GetLastOutput(input.Ints[input.Offset + idx - 1]);
 		  Debug.Assert(ValidOutput(lastOutput));
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T commonOutputPrefix;
 		  T commonOutputPrefix;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final T wordSuffix;
 		  T wordSuffix;
 
           if ((object)lastOutput != (object)NO_OUTPUT)
@@ -546,12 +514,10 @@ namespace Lucene.Net.Util.Fst
 	  public virtual FST<T> Finish()
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final UnCompiledNode<T> root = frontier[0];
 		UnCompiledNode<T> root = Frontier[0];
 
 		// minimize nodes in the last word's suffix
-		FreezeTail(0);
+		DoFreezeTail(0);
 		if (root.InputCount < MinSuffixCount1 || root.InputCount < MinSuffixCount2 || root.NumArcs == 0)
 		{
 		  if (Fst.emptyOutput == null)
@@ -588,15 +554,10 @@ namespace Lucene.Net.Util.Fst
 	  {
 		for (int arcIdx = 0;arcIdx < node.NumArcs;arcIdx++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Arc<T> arc = node.arcs[arcIdx];
 		  Arc<T> arc = node.Arcs[arcIdx];
 		  if (!arc.Target.Compiled)
 		  {
 			// not yet compiled
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final UnCompiledNode<T> n = (UnCompiledNode<T>) arc.target;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 			UnCompiledNode<T> n = (UnCompiledNode<T>) arc.Target;
 			if (n.NumArcs == 0)
 			{
@@ -610,20 +571,20 @@ namespace Lucene.Net.Util.Fst
 
 	  /// <summary>
 	  /// Expert: holds a pending (seen but not yet serialized) arc. </summary>
-	  public class Arc<T>
+	  public class Arc<S>
 	  {
 		public int Label; // really an "unsigned" byte
 		public Node Target;
 		public bool IsFinal;
-		public T Output;
-		public T NextFinalOutput;
+		public S Output;
+		public S NextFinalOutput;
 	  }
 
 	  // NOTE: not many instances of Node or CompiledNode are in
 	  // memory while the FST is being built; it's only the
 	  // current "frontier":
 
-	  internal interface Node
+	  public interface Node
 	  {
 		bool Compiled {get;}
 	  }
@@ -636,7 +597,7 @@ namespace Lucene.Net.Util.Fst
 	  internal sealed class CompiledNode : Node
 	  {
 		internal long Node;
-		public override bool Compiled
+		public bool Compiled
 		{
 			get
 			{
@@ -647,16 +608,16 @@ namespace Lucene.Net.Util.Fst
 
 	  /// <summary>
 	  /// Expert: holds a pending (seen but not yet serialized) Node. </summary>
-	  public sealed class UnCompiledNode<T> : Node
+	  public sealed class UnCompiledNode<S> : Node
 	  {
-		internal readonly Builder<T> Owner;
+		internal readonly Builder<S> Owner;
 		public int NumArcs;
-		public Arc<T>[] Arcs;
+		public Arc<S>[] Arcs;
 		// TODO: instead of recording isFinal/output on the
 		// node, maybe we should use -1 arc to mean "end" (like
 		// we do when reading the FST).  Would simplify much
 		// code here...
-		public T Output;
+		public S Output;
 		public bool IsFinal;
 		public long InputCount;
 
@@ -668,18 +629,16 @@ namespace Lucene.Net.Util.Fst
 		///          The node's depth starting from the automaton root. Needed for
 		///          LUCENE-2934 (node expansion based on conditions other than the
 		///          fanout size). </param>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) public UnCompiledNode(Builder<T> owner, int depth)
-		public UnCompiledNode(Builder<T> owner, int depth)
+		public UnCompiledNode(Builder<S> owner, int depth)
 		{
 		  this.Owner = owner;
-		  Arcs = (Arc<T>[]) new Arc<T>[1];
-		  Arcs[0] = new Arc<T>();
+		  Arcs = (Arc<S>[]) new Arc<S>[1];
+		  Arcs[0] = new Arc<S>();
 		  Output = owner.NO_OUTPUT;
 		  this.Depth = depth;
 		}
 
-		public override bool Compiled
+		public bool Compiled
 		{
 			get
 			{
@@ -698,7 +657,7 @@ namespace Lucene.Net.Util.Fst
 		  // for nodes on the frontier (even when reused).
 		}
 
-		public T GetLastOutput(int labelToMatch)
+		public S GetLastOutput(int labelToMatch)
 		{
 		  Debug.Assert(NumArcs > 0);
 		  Debug.Assert(Arcs[NumArcs - 1].Label == labelToMatch);
@@ -714,29 +673,29 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final Arc<T>[] newArcs = new Arc[Lucene.Net.Util.ArrayUtil.oversize(numArcs+1, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-			Arc<T>[] newArcs = new Arc<T>[ArrayUtil.Oversize(NumArcs + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+			Arc<S>[] newArcs = new Arc<S>[ArrayUtil.Oversize(NumArcs + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			Array.Copy(Arcs, 0, newArcs, 0, Arcs.Length);
 			for (int arcIdx = NumArcs;arcIdx < newArcs.Length;arcIdx++)
 			{
-			  newArcs[arcIdx] = new Arc<T>();
+			  newArcs[arcIdx] = new Arc<S>();
 			}
 			Arcs = newArcs;
 		  }
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Arc<T> arc = arcs[numArcs++];
-		  Arc<T> arc = Arcs[NumArcs++];
+		  Arc<S> arc = Arcs[NumArcs++];
 		  arc.Label = label;
 		  arc.Target = target;
 		  arc.Output = arc.NextFinalOutput = Owner.NO_OUTPUT;
 		  arc.IsFinal = false;
 		}
 
-		public void ReplaceLast(int labelToMatch, Node target, T nextFinalOutput, bool isFinal)
+		public void ReplaceLast(int labelToMatch, Node target, S nextFinalOutput, bool isFinal)
 		{
 		  Debug.Assert(NumArcs > 0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Arc<T> arc = arcs[numArcs-1];
-		  Arc<T> arc = Arcs[NumArcs - 1];
+		  Arc<S> arc = Arcs[NumArcs - 1];
 		  Debug.Assert(arc.Label == labelToMatch, "arc.label=" + arc.Label + " vs " + labelToMatch);
 		  arc.Target = target;
 		  //assert target.node != -2;
@@ -752,19 +711,19 @@ namespace Lucene.Net.Util.Fst
 		  NumArcs--;
 		}
 
-		public void SetLastOutput(int labelToMatch, T newOutput)
+		public void SetLastOutput(int labelToMatch, S newOutput)
 		{
 		  Debug.Assert(Owner.ValidOutput(newOutput));
 		  Debug.Assert(NumArcs > 0);
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Arc<T> arc = arcs[numArcs-1];
-		  Arc<T> arc = Arcs[NumArcs - 1];
+		  Arc<S> arc = Arcs[NumArcs - 1];
 		  Debug.Assert(arc.Label == labelToMatch);
 		  arc.Output = newOutput;
 		}
 
 		// pushes an output prefix forward onto all arcs
-		public void PrependOutput(T outputPrefix)
+		public void PrependOutput(S outputPrefix)
 		{
 		  Debug.Assert(Owner.ValidOutput(outputPrefix));
 

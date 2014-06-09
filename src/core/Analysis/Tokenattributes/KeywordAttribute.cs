@@ -21,23 +21,59 @@ namespace Lucene.Net.Analysis.Tokenattributes
     using Attribute = Lucene.Net.Util.Attribute;
 
 	/// <summary>
-	/// this attribute can be used to mark a token as a keyword. Keyword aware
-	/// <seealso cref="TokenStream"/>s can decide to modify a token based on the return value
-	/// of <seealso cref="#isKeyword()"/> if the token is modified. Stemming filters for
-	/// instance can use this attribute to conditionally skip a term if
-	/// <seealso cref="#isKeyword()"/> returns <code>true</code>.
-	/// </summary>
-	public interface KeywordAttribute : Attribute
+	/// Default implementation of <seealso cref="KeywordAttribute"/>. </summary>
+	public sealed class KeywordAttribute : Attribute, IKeywordAttribute
 	{
+	  private bool Keyword_Renamed;
 
 	  /// <summary>
-	  /// Returns <code>true</code> if the current token is a keyword, otherwise
-	  /// <code>false</code>
-	  /// </summary>
-	  /// <returns> <code>true</code> if the current token is a keyword, otherwise
-	  ///         <code>false</code> </returns>
-	  /// <seealso cref= #setKeyword(boolean) </seealso>
-	  bool Keyword {get;set;}
+	  /// Initialize this attribute with the keyword value as false. </summary>
+	  public KeywordAttribute()
+	  {
+	  }
+
+	  public override void Clear()
+	  {
+		Keyword_Renamed = false;
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		KeywordAttribute attr = (KeywordAttribute) target;
+		attr.Keyword = Keyword_Renamed;
+	  }
+
+	  public int GetHashCode()
+	  {
+		return Keyword_Renamed ? 31 : 37;
+	  }
+
+	  public override bool Equals(object obj)
+	  {
+		if (this == obj)
+		{
+		  return true;
+		}
+		if (this.GetType() != obj.GetType())
+		{
+		  return false;
+		}
+		KeywordAttribute other = (KeywordAttribute) obj;
+		return Keyword_Renamed == other.Keyword_Renamed;
+	  }
+
+	  public bool Keyword
+	  {
+		  get
+		  {
+			return Keyword_Renamed;
+		  }
+		  set
+		  {
+			Keyword_Renamed = value;
+		  }
+	  }
+
 
 	}
 

@@ -96,20 +96,20 @@ namespace Lucene.Net.Search.Spans
 		}
 		else
 		{
-		  return new SpanScorer(query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.SimScorer(Stats, context));
+		  return new SpanScorer(query.GetSpans(context, acceptDocs, TermContexts), this, Similarity.DoSimScorer(Stats, context));
 		}
 	  }
 
 	  public override Explanation Explain(AtomicReaderContext context, int doc)
 	  {
-		SpanScorer scorer = (SpanScorer) Scorer(context, context.Reader().LiveDocs);
+		SpanScorer scorer = (SpanScorer) Scorer(context, context.AtomicReader.LiveDocs);
 		if (scorer != null)
 		{
 		  int newDoc = scorer.Advance(doc);
 		  if (newDoc == doc)
 		  {
 			float freq = scorer.SloppyFreq();
-			Similarity.SimScorer docScorer = Similarity.SimScorer(Stats, context);
+			Similarity.SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
 			ComplexExplanation result = new ComplexExplanation();
 			result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
 			Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));

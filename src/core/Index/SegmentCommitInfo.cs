@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 	  // Track the per-generation updates files
 	  private readonly IDictionary<long?, ISet<string>> GenUpdatesFiles_Renamed = new Dictionary<long?, ISet<string>>();
 
-	  private volatile long SizeInBytes_Renamed = -1;
+	  private long SizeInBytes_Renamed = -1;
 
 	  /// <summary>
 	  /// Sole constructor.
@@ -320,7 +320,7 @@ namespace Lucene.Net.Index
 		return ToString(Info.Dir, 0);
 	  }
 
-	  public override SegmentCommitInfo Clone()
+	  public virtual object Clone()
 	  {
 		SegmentCommitInfo other = new SegmentCommitInfo(Info, DelCount_Renamed, DelGen_Renamed, FieldInfosGen_Renamed);
 		// Not clear that we need to carry over nextWriteDelGen

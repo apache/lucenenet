@@ -371,7 +371,13 @@ namespace Lucene.Net.Codecs
 	  /// </summary>
 	  public abstract IComparer<BytesRef> Comparator {get;}
 
-	  public override abstract void Close();
+      public void Dispose()
+      {
+          Dispose(true);
+          GC.SuppressFinalize(this);
+      }
+
+      protected abstract void Dispose(bool disposing);
 	}
 
 }

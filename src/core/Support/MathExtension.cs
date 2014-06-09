@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Lucene.Net.Support
 {
-    class MathExtension
+    public static class MathExtension
     {
         /// <summary>
         /// Convert to Radians.

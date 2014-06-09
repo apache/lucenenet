@@ -39,8 +39,6 @@ namespace Lucene.Net.Document
     using Lucene.Net.Analysis.Tokenattributes;
     using Lucene.Net.Index;
     using Lucene.Net.Util;
-    using Lucene.Net.Support;
-    using TokenStream = Lucene.Net.Analysis.TokenStream;
 
 	/// <summary>
 	/// Expert: directly create a field for a document.  Most
@@ -352,7 +350,7 @@ namespace Lucene.Net.Document
 	  /// Expert: change the value of this field. See 
 	  /// <seealso cref="#setStringValue(String)"/>.
 	  /// </summary>
-	  public virtual sbyte[] BytesValue
+	  public virtual sbyte[] SBytesValue
 	  {
 		  set
 		  {
@@ -510,7 +508,7 @@ namespace Lucene.Net.Document
 		  }
 	  }
 
-	  public override string Name()
+	  public string Name()
 	  {
 		return Name_Renamed;
 	  }
@@ -520,7 +518,7 @@ namespace Lucene.Net.Document
 	  /// <p>
 	  /// The default value is <code>1.0f</code> (no boost). </summary>
 	  /// <seealso cref= #setBoost(float) </seealso>
-	  public override float Boost()
+	  public float GetBoost()
 	  {
 		return Boost_Renamed;
 	  }
@@ -545,19 +543,23 @@ namespace Lucene.Net.Document
 		  }
 	  }
 
-	  public override Number NumericValue()
+	  public object NumericValue
 	  {
-		if (FieldsData is Number)
-		{
-		  return (Number) FieldsData;
-		}
-		else
-		{
-		  return null;
-		}
+          get 
+          {
+                if (FieldsData is Number)
+		        {
+		          return (Number) FieldsData;
+		        }
+		        else
+		        {
+		          return null;
+		        }
+          }
+		
 	  }
 
-	  public override BytesRef BinaryValue()
+	  public BytesRef BinaryValue()
 	  {
 		if (FieldsData is BytesRef)
 		{
@@ -590,26 +592,26 @@ namespace Lucene.Net.Document
 
 	  /// <summary>
 	  /// Returns the <seealso cref="FieldType"/> for this field. </summary>
-	  public override FieldType FieldType()
+	  public IndexableFieldType FieldType()
 	  {
 		return Type;
 	  }
 
-	  public override TokenStream TokenStream(Analyzer analyzer)
+	  public TokenStream GetTokenStream(Analyzer analyzer)
 	  {
-		if (!FieldType().Indexed)
+		if (!((FieldType)FieldType()).Indexed)
 		{
 		  return null;
 		}
 
-		NumericType? numericType = FieldType().NumericTypeValue;
+		NumericType? numericType = ((FieldType)FieldType()).NumericTypeValue;
 		if (numericType != null)
 		{
 		  if (!(InternalTokenStream is NumericTokenStream))
 		  {
 			// lazy init the TokenStream as it is heavy to instantiate
 			// (attributes,...) if not needed (stored field loading)
-			InternalTokenStream = new NumericTokenStream(Type.NumericPrecisionStep());
+			InternalTokenStream = new NumericTokenStream(Type.NumericPrecisionStep);
 		  }
 		  NumericTokenStream nts = (NumericTokenStream) InternalTokenStream;
 		  // initialize value in TokenStream
@@ -634,7 +636,7 @@ namespace Lucene.Net.Document
 		  return InternalTokenStream;
 		}
 
-		if (!FieldType().Tokenized)
+        if (!((FieldType)FieldType()).Tokenized)
 		{
 		  if (StringValue == null)
 		  {
@@ -733,9 +735,10 @@ namespace Lucene.Net.Document
 		  Used = false;
 		}
 
-		public override void Close()
+		public void Dispose(bool disposing)
 		{
-		  Value_Renamed = null;
+            if (disposing)
+		        Value_Renamed = null;
 		}
 	  }
 

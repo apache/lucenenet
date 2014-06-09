@@ -52,9 +52,9 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Close this MergeScheduler. </summary>
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
-	  public override MergeScheduler Clone()
+	  public virtual object Clone()
 	  {
 		  return (MergeScheduler) base.MemberwiseClone();
 	  }

@@ -36,27 +36,28 @@ namespace Lucene.Net.Search
 	///  cannot in general know which thread "won". 
 	/// </summary>
 
-	public abstract class LiveFieldValues<S, T> : ReferenceManager.RefreshListener, IDisposable
+	public abstract class LiveFieldValues<T> : ReferenceManager.RefreshListener, IDisposable
+        where T : class
 	{
 
 	  private volatile IDictionary<string, T> Current = new ConcurrentDictionary<string, T>();
 	  private volatile IDictionary<string, T> Old = new ConcurrentDictionary<string, T>();
-	  private readonly ReferenceManager<S> Mgr;
+	  private readonly ReferenceManager<IndexSearcher> Mgr;
 	  private readonly T MissingValue;
 
-	  public LiveFieldValues(ReferenceManager<S> mgr, T missingValue)
+      public LiveFieldValues(ReferenceManager<IndexSearcher> mgr, T missingValue)
 	  {
 		this.MissingValue = missingValue;
 		this.Mgr = mgr;
 		mgr.AddListener(this);
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		Mgr.RemoveListener(this);
 	  }
 
-	  public override void BeforeRefresh()
+	  public void BeforeRefresh()
 	  {
 		Old = Current;
 		// Start sending all updates after this point to the new
@@ -66,7 +67,7 @@ namespace Lucene.Net.Search
 		Current = new ConcurrentDictionary<string, T>();
 	  }
 
-	  public override void AfterRefresh(bool didRefresh)
+	  public void AfterRefresh(bool didRefresh)
 	  {
 		// Now drop all the old values because they are now
 		// visible via the searcher that was just opened; if
@@ -141,7 +142,7 @@ namespace Lucene.Net.Search
 			// It either does not exist in the index, or, it was
 			// already flushed & NRT reader was opened on the
 			// segment, so fallback to current searcher:
-			S s = Mgr.Acquire();
+			IndexSearcher s = Mgr.Acquire();
 			try
 			{
 			  return LookupFromSearcher(s, id);
@@ -160,7 +161,7 @@ namespace Lucene.Net.Search
 	  ///  go look up the value (eg, via doc values, field cache,
 	  ///  stored fields, etc.). 
 	  /// </summary>
-	  protected internal abstract T LookupFromSearcher(S s, string id);
+      protected internal abstract T LookupFromSearcher(IndexSearcher s, string id);
 	}
 
 

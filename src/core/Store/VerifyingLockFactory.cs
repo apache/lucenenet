@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 namespace Lucene.Net.Store
 {
 
@@ -35,10 +36,10 @@ namespace Lucene.Net.Store
 
 	public class VerifyingLockFactory : LockFactory
 	{
-
+        
 	  internal readonly LockFactory Lf;
-	  internal readonly InputStream @in;
-	  internal readonly OutputStream @out;
+	  internal readonly Stream @in; //LUCENE TO-DO is this the proper class to use?
+      internal readonly Stream @out;
 
 	  private class CheckedLock : Lock
 	  {
@@ -49,14 +50,14 @@ namespace Lucene.Net.Store
 		public CheckedLock(VerifyingLockFactory outerInstance, Lock @lock)
 		{
 			this.OuterInstance = outerInstance;
-		  this.@lock = @lock;
+		    this.@lock = @lock;
 		}
 
 		internal virtual void Verify(sbyte message)
 		{
-          OuterInstance.@out.write(message);
-		  OuterInstance.@out.flush();
-		  int ret = OuterInstance.@in.read();
+          OuterInstance.@out.WriteByte((byte)message);
+		  OuterInstance.@out.Flush();
+		  int ret = OuterInstance.@in.ReadByte();
 		  if (ret < 0)
 		  {
 			throw new InvalidOperationException("Lock server died because of locking error.");
@@ -91,14 +92,14 @@ namespace Lucene.Net.Store
 			}
 		}
 
-		public override void Close()
+		public override void Release()
 		{
 			lock (this)
 			{
 			  if (Locked)
 			  {
 				Verify((sbyte) 0);
-				@lock.Close();
+				@lock.Release();
 			  }
 			}
 		}
@@ -107,7 +108,7 @@ namespace Lucene.Net.Store
 	  /// <param name="lf"> the LockFactory that we are testing </param>
 	  /// <param name="in"> the socket's input to <seealso cref="LockVerifyServer"/> </param>
 	  /// <param name="out"> the socket's output to <seealso cref="LockVerifyServer"/> </param>
-	  public VerifyingLockFactory(LockFactory lf, InputStream @in, OutputStream @out)
+      public VerifyingLockFactory(LockFactory lf, Stream @in, Stream @out)
 	  {
 		this.Lf = lf;
 		this.@in = @in;

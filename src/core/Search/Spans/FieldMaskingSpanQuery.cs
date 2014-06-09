@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return MaskedQuery.GetHashCode() ^ Field.GetHashCode() ^ Number.FloatToIntBits(Boost);
 	  }

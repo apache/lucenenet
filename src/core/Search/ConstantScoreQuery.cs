@@ -27,6 +27,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using Lucene.Net.Index;
 
 
 	/// <summary>
@@ -213,7 +214,7 @@ namespace Lucene.Net.Search
 			{
 			  return null;
 			}
-			disi = dis.Iterator();
+			disi = dis.GetIterator();
 		  }
 		  else
 		  {
@@ -235,7 +236,7 @@ namespace Lucene.Net.Search
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-		  Scorer cs = Scorer(context, context.Reader().LiveDocs);
+		  Scorer cs = Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
 		  bool exists = (cs != null && cs.Advance(doc) == doc);
 
 		  ComplexExplanation result = new ComplexExplanation();

@@ -38,7 +38,8 @@ namespace Lucene.Net.Search
 	/// via a priority queue.
 	/// @lucene.internal Only public to be accessible by spans package.
 	/// </summary>
-	public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q> where Q : Query
+	public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q> 
+        where Q : Query
 	{
 
 	  private readonly int size;
@@ -69,13 +70,13 @@ namespace Lucene.Net.Search
 	  /// return the maximum size of the priority queue (for boolean rewrites this is BooleanQuery#getMaxClauseCount). </summary>
 	  protected internal abstract int MaxSize {get;}
 
-	  public override Q Rewrite(IndexReader reader, MultiTermQuery query)
+	  public override Query Rewrite(IndexReader reader, MultiTermQuery query)
 	  {
 		int maxSize = Math.Min(size, MaxSize);
 		PriorityQueue<ScoreTerm> stQueue = new PriorityQueue<ScoreTerm>();
 		CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
-		Q q = TopLevelQuery;
+		var q = TopLevelQuery;
 		ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.size()]*/);
 		ArrayUtil.TimSort(scoreTerms, scoreTermSortByTermComp);
 
@@ -100,7 +101,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 			  this.MaxSize = maxSize;
 			  this.StQueue = stQueue;
-			  maxBoostAtt = attributes.AddAttribute<MaxNonCompetitiveBoostAttribute>();
+			  maxBoostAtt = Attributes.AddAttribute<MaxNonCompetitiveBoostAttribute>();
 			  visitedTerms = new Dictionary<BytesRef, ScoreTerm>();
 		  }
 

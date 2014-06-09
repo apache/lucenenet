@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		Sync();
 	  }
@@ -757,7 +757,7 @@ namespace Lucene.Net.Index
 		return sb.ToString();
 	  }
 
-	  public override MergeScheduler Clone()
+	  public override object Clone()
 	  {
 		ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler) base.Clone();
 		clone.Writer = null;

@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
 		  return other.RecordTimeSec.CompareTo(RecordTimeSec);
 		}
 
-		public override void Close()
+		public void Dispose()
 		{
 			lock (this)
 			{
@@ -174,11 +174,11 @@ namespace Lucene.Net.Search
 		{
 		  //System.out.println("RECORD version=" + version + " ms=" + System.currentTimeMillis());
 		  tracker = new SearcherTracker(searcher);
-		  if (Searchers.GetOrAdd(version, tracker) != null)
+		  if (Searchers.AddIfAbsent(version, tracker) != null)
 		  {
 			// Another thread beat us -- must decRef to undo
 			// incRef done by SearcherTracker ctor:
-			tracker.Close();
+			tracker.Dispose();
 		  }
 		}
 		else if (tracker.Searcher != searcher)
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
 		  this.MaxAgeSec = maxAgeSec;
 		}
 
-		public override bool DoPrune(double ageSec, IndexSearcher searcher)
+		public bool DoPrune(double ageSec, IndexSearcher searcher)
 		{
 		  return ageSec > MaxAgeSec;
 		}
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search
 			  {
 				//System.out.println("PRUNE version=" + tracker.version + " age=" + ageSec + " ms=" + System.currentTimeMillis());
 				Searchers.Remove(tracker.Version);
-				tracker.Close();
+				tracker.Dispose();
 			  }
 			  lastRecordTimeSec = tracker.RecordTimeSec;
 			}
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search
 	  ///  otherwise it's possible not all searcher references
 	  ///  will be freed. 
 	  /// </summary>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		  lock (this)
 		  {

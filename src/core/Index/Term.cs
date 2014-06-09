@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
 		return true;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;

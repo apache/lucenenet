@@ -40,7 +40,8 @@ namespace Lucene.Net.Search
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
     using System.Threading.Tasks;
-    using Lucene.Net.Support; // javadocs
+    using Lucene.Net.Support;
+    using Lucene.Net.Index; // javadocs
 
 	/// <summary>
 	/// Implements search over a single IndexReader.
@@ -655,7 +656,7 @@ namespace Lucene.Net.Search
 			// continue with the following leaf
 			continue;
 		  }
-		  BulkScorer scorer = weight.BulkScorer(ctx, !collector.AcceptsDocsOutOfOrder(), ctx.Reader().LiveDocs);
+		  BulkScorer scorer = weight.BulkScorer(ctx, !collector.AcceptsDocsOutOfOrder(), ((AtomicReader)ctx.Reader()).LiveDocs);
 		  if (scorer != null)
 		  {
 			try
@@ -778,7 +779,7 @@ namespace Lucene.Net.Search
 		  this.Slice = slice;
 		}
 
-		public override TopDocs Call()
+		public TopDocs Call()
 		{
 		  TopDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs);
 		  ScoreDoc[] scoreDocs = docs.ScoreDocs;
@@ -837,7 +838,7 @@ namespace Lucene.Net.Search
 
 		internal readonly FakeScorer FakeScorer = new FakeScorer();
 
-		public override TopFieldDocs Call()
+		public TopFieldDocs Call()
 		{
 		  Debug.Assert(Slice.Leaves.Length == 1);
 		  TopFieldDocs docs = Searcher.Search(Arrays.AsList(Slice.Leaves), Weight, After, NDocs, Sort, true, DoDocScores || Sort.NeedsScores(), DoMaxScore);

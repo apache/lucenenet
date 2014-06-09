@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			}
 			finally
 			{
-			  cfsDir.Close();
+			  cfsDir.Dispose();
 			}
 		  }
 		  else

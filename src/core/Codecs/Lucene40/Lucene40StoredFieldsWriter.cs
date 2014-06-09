@@ -125,23 +125,27 @@ namespace Lucene.Net.Codecs.Lucene40
 		FieldsStream.WriteVInt(numStoredFields);
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		try
-		{
-		  IOUtils.Close(FieldsStream, IndexStream);
-		}
-		finally
-		{
-		  FieldsStream = IndexStream = null;
-		}
+          if (disposing)
+          {
+              try
+              {
+                  IOUtils.Close(FieldsStream, IndexStream);
+              }
+              finally
+              {
+                  FieldsStream = IndexStream = null;
+              }
+          }
+		
 	  }
 
 	  public override void Abort()
 	  {
 		try
 		{
-		  Close();
+		  Dispose();
 		}
 		catch (Exception)
 		{

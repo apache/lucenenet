@@ -20,7 +20,6 @@ namespace Lucene.Net.Search.Similarities
 	 * limitations under the License.
 	 */
 
-    using Lucene.Net.Search.Similarities.SimilarityBase;
 
 	/// <summary>
 	/// Implements the approximation of the binomial model with the divergence

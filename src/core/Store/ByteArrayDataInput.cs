@@ -30,27 +30,27 @@ namespace Lucene.Net.Store
 	public sealed class ByteArrayDataInput : DataInput
 	{
 
-	  private sbyte[] Bytes;
+	  private byte[] Bytes;
 
 	  private int Pos;
 	  private int Limit;
 
-	  public ByteArrayDataInput(sbyte[] bytes)
+	  public ByteArrayDataInput(byte[] bytes)
 	  {
 		Reset(bytes);
 	  }
 
-	  public ByteArrayDataInput(sbyte[] bytes, int offset, int len)
+	  public ByteArrayDataInput(byte[] bytes, int offset, int len)
 	  {
 		Reset(bytes, offset, len);
 	  }
 
 	  public ByteArrayDataInput()
 	  {
-		Reset(BytesRef.EMPTY_BYTES);
+		Reset((byte[])(Array)BytesRef.EMPTY_BYTES);
 	  }
 
-	  public void Reset(sbyte[] bytes)
+	  public void Reset(byte[] bytes)
 	  {
 		Reset(bytes, 0, bytes.Length);
 	  }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
 	  }
 
 
-	  public void Reset(sbyte[] bytes, int offset, int len)
+	  public void Reset(byte[] bytes, int offset, int len)
 	  {
 		this.Bytes = bytes;
 		Pos = offset;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
 
 	  public override int ReadVInt()
 	  {
-		sbyte b = Bytes[Pos++];
+		byte b = Bytes[Pos++];
 		if (b >= 0)
 		{
 			return b;
@@ -156,7 +156,7 @@ namespace Lucene.Net.Store
 
 	  public override long ReadVLong()
 	  {
-		sbyte b = Bytes[Pos++];
+		byte b = Bytes[Pos++];
 		if (b >= 0)
 		{
 			return b;
@@ -214,13 +214,13 @@ namespace Lucene.Net.Store
 	  }
 
 	  // NOTE: AIOOBE not EOF if you read too much
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
 		return Bytes[Pos++];
 	  }
 
 	  // NOTE: AIOOBE not EOF if you read too much
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		Array.Copy(Bytes, Pos, b, offset, len);
 		Pos += len;

@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 
 		  protected internal override StoredFieldsReader InitialValue()
 		  {
-              return OuterInstance.FieldsReaderOrig.Clone();
+              return (StoredFieldsReader)OuterInstance.FieldsReaderOrig.Clone();
 		  }
 	  }
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 
 		  protected internal override TermVectorsReader InitialValue()
 		  {
-              return (OuterInstance.TermVectorsReaderOrig == null) ? null : OuterInstance.TermVectorsReaderOrig.Clone();
+              return (OuterInstance.TermVectorsReaderOrig == null) ? null : (TermVectorsReader)OuterInstance.TermVectorsReaderOrig.Clone();
 		  }
 	  }
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
 			{
 			  listener.OnClose(this);
 			}
-			catch (Exception t)
+			catch (Exception)
 			{
 			  
 			}

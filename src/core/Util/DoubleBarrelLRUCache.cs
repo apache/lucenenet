@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 	  /// Object providing clone(); the key class must subclass this. </summary>
 	  public abstract class CloneableKey
 	  {
-		public override abstract CloneableKey Clone();
+		public abstract CloneableKey Clone();
 	  }
 
 	  private readonly IDictionary<K, V> Cache1;

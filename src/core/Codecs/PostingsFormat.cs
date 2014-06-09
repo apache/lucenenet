@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// Returns this posting format's name </summary>
-	  public override string Name
+	  public string Name
 	  {
 		  get
 		  {

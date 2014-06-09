@@ -43,7 +43,7 @@ using System.Globalization;
     using Lucene.Net.Util;
     using Lucene.Net.Support;
 
-	internal class DocumentsWriterPerThread
+	public class DocumentsWriterPerThread
 	{
 
 	  /// <summary>
@@ -51,7 +51,7 @@ using System.Globalization;
 	  /// which returns the DocConsumer that the DocumentsWriter calls to process the
 	  /// documents.
 	  /// </summary>
-	  internal abstract class IndexingChain
+	  public abstract class IndexingChain
 	  {
 		internal abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
 	  }

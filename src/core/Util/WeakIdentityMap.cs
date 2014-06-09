@@ -152,6 +152,34 @@ namespace Lucene.Net.Util
 		return BackingStore[new IdentityWeakReference(key)] = value;
 	  }
 
+      public IEnumerable<K> Keys
+      {
+          // .NET port: using this method which mimics IDictionary instead of KeyIterator()
+          get
+          {
+              foreach (var key in BackingStore.Keys)
+              {
+                  var target = key.Target;
+
+                  if (target == null)
+                      continue;
+                  else if (target == NULL)
+                      yield return null;
+                  else
+                      yield return (K)target;
+              }
+          }
+      }
+
+      public IEnumerable<V> Values
+      {
+          get
+          {
+              if (ReapOnRead) Reap();
+              return BackingStore.Values;
+          }
+      }
+
 	  /// <summary>
 	  /// Returns {@code true} if this map contains no key-value mappings. </summary>
 	  public bool Empty
@@ -339,7 +367,7 @@ namespace Lucene.Net.Util
 		  Hash = RuntimeHelpers.GetHashCode(obj);
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return Hash;
 		}

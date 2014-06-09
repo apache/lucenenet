@@ -163,9 +163,9 @@ namespace Lucene.Net.Index
 		return @base.UseCompoundFile(segments, newSegment);
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
-		@base.Close();
+		@base.Dispose();
 	  }
 
 	  public override string ToString()

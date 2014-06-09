@@ -114,8 +114,6 @@ namespace Lucene.Net.Index
 		}
 		Debug.Assert(numMerged == MergeState.SegmentInfo.DocCount);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentWriteState segmentWriteState = new SegmentWriteState(mergeState.infoStream, directory, mergeState.segmentInfo, mergeState.fieldInfos, termIndexInterval, null, context);
 		SegmentWriteState segmentWriteState = new SegmentWriteState(MergeState.InfoStream, Directory, MergeState.SegmentInfo, MergeState.FieldInfos, TermIndexInterval, null, Context);
 		if (MergeState.InfoStream.IsEnabled("SM"))
 		{
@@ -385,8 +383,6 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  private int MergeFields()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.StoredFieldsWriter fieldsWriter = codec.storedFieldsFormat().fieldsWriter(directory, mergeState.segmentInfo, context);
 		StoredFieldsWriter fieldsWriter = Codec.StoredFieldsFormat().FieldsWriter(Directory, MergeState.SegmentInfo, Context);
 
 		try
@@ -395,7 +391,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  fieldsWriter.Close();
+		  fieldsWriter.Dispose();
 		}
 	  }
 
@@ -404,8 +400,6 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  private int MergeVectors()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.TermVectorsWriter termVectorsWriter = codec.termVectorsFormat().vectorsWriter(directory, mergeState.segmentInfo, context);
 		TermVectorsWriter termVectorsWriter = Codec.TermVectorsFormat().VectorsWriter(Directory, MergeState.SegmentInfo, Context);
 
 		try
@@ -414,15 +408,13 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  termVectorsWriter.Close();
+		  termVectorsWriter.Dispose();
 		}
 	  }
 
 	  // NOTE: removes any "all deleted" readers from mergeState.readers
 	  private int SetDocMaps()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numReaders = mergeState.readers.size();
 		int numReaders = MergeState.Readers.Count;
 
 		// Remap docIDs
@@ -435,13 +427,9 @@ namespace Lucene.Net.Index
 		while (i < MergeState.Readers.Count)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader reader = mergeState.readers.get(i);
 		  AtomicReader reader = MergeState.Readers[i];
 
 		  MergeState.DocBase[i] = docBase;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeState.DocMap docMap = MergeState.DocMap.build(reader);
 		  MergeState.DocMap docMap = MergeState.DocMap.Build(reader);
 		  MergeState.DocMaps[i] = docMap;
 		  docBase += docMap.NumDocs();
@@ -455,25 +443,15 @@ namespace Lucene.Net.Index
 	  private void MergeTerms(SegmentWriteState segmentWriteState)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<Fields> fields = new java.util.ArrayList<>();
 		IList<Fields> fields = new List<Fields>();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<ReaderSlice> slices = new java.util.ArrayList<>();
 		IList<ReaderSlice> slices = new List<ReaderSlice>();
 
 		int docBase = 0;
 
 		for (int readerIndex = 0;readerIndex < MergeState.Readers.Count;readerIndex++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final AtomicReader reader = mergeState.readers.get(readerIndex);
 		  AtomicReader reader = MergeState.Readers[readerIndex];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields f = reader.fields();
 		  Fields f = reader.Fields();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		  int maxDoc = reader.MaxDoc();
 		  if (f != null)
 		  {
@@ -483,8 +461,6 @@ namespace Lucene.Net.Index
 		  docBase += maxDoc;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.FieldsConsumer consumer = codec.postingsFormat().fieldsConsumer(segmentWriteState);
 		FieldsConsumer consumer = Codec.PostingsFormat().FieldsConsumer(segmentWriteState);
 		bool success = false;
 		try

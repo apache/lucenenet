@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 	  }
 
 
-	  internal override void Abort()
+	  public override void Abort()
 	  {
 		Reset();
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal override void FinishDocument()
+	  public override void FinishDocument()
 	  {
 		Debug.Assert(DocWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 
 	  public override void AddField(int docID, IndexableField field, FieldInfo fieldInfo)
 	  {
-		if (field.FieldType().Stored())
+		if (field.FieldType().Stored)
 		{
 		  if (NumStoredFields == StoredFields.Length)
 		  {

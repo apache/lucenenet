@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 		DocState = docWriter.docState;
 	  }
 
-	  internal override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
+	  public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
 	  {
 		if (Writer != null)
 		{
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal override void FinishDocument(TermsHash termsHash)
+	  public override void FinishDocument(TermsHash termsHash)
 	  {
 
 		Debug.Assert(DocWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
 		PerFields[NumVectorFields++] = fieldToFlush;
 	  }
 
-	  internal override void StartDocument()
+	  public override void StartDocument()
 	  {
 		Debug.Assert(ClearLastVectorFieldName());
 		Reset();

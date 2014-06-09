@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis.Tokenattributes
 {
 
@@ -18,29 +20,90 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	 * limitations under the License.
 	 */
 
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum; // javadocs
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
 	/// <summary>
-	/// The payload of a Token.
-	/// <p>
-	/// The payload is stored in the index at each position, and can
-	/// be used to influence scoring when using Payload-based queries 
-	/// in the <seealso cref="Lucene.Net.Search.Payloads"/> and
-	/// <seealso cref="Lucene.Net.Search.Spans"/> packages.
-	/// <p>
-	/// NOTE: because the payload will be stored at each position, its usually
-	/// best to use the minimum number of bytes necessary. Some codec implementations
-	/// may optimize payload storage when all payloads have the same length.
-	/// </summary>
-	/// <seealso cref= DocsAndPositionsEnum </seealso>
-	public interface PayloadAttribute : Attribute
+	/// Default implementation of <seealso cref="PayloadAttribute"/>. </summary>
+	public class PayloadAttribute : Attribute, IPayloadAttribute, ICloneable
 	{
+	  private BytesRef Payload_Renamed;
+
 	  /// <summary>
-	  /// Returns this Token's payload. </summary>
-	  /// <seealso cref= #setPayload(BytesRef) </seealso>
-	  BytesRef Payload {get;set;}
+	  /// Initialize this attribute with no payload.
+	  /// </summary>
+	  public PayloadAttribute()
+	  {
+	  }
+
+	  /// <summary>
+	  /// Initialize this attribute with the given payload. 
+	  /// </summary>
+	  public PayloadAttribute(BytesRef payload)
+	  {
+		this.Payload_Renamed = payload;
+	  }
+
+	  public BytesRef Payload
+	  {
+		  get
+		  {
+			return this.Payload_Renamed;
+		  }
+		  set
+		  {
+			this.Payload_Renamed = value;
+		  }
+	  }
+
+
+	  public override void Clear()
+	  {
+		Payload_Renamed = null;
+	  }
+
+	  public override object Clone()
+	  {
+		PayloadAttribute clone = (PayloadAttribute) base.Clone();
+		if (Payload_Renamed != null)
+		{
+		  clone.Payload_Renamed = (BytesRef)Payload_Renamed.Clone();
+		}
+		return clone;
+	  }
+
+	  public override bool Equals(object other)
+	  {
+		if (other == this)
+		{
+		  return true;
+		}
+
+		if (other is PayloadAttribute)
+		{
+		  PayloadAttribute o = (PayloadAttribute) other;
+		  if (o.Payload_Renamed == null || Payload_Renamed == null)
+		  {
+			return o.Payload_Renamed == null && Payload_Renamed == null;
+		  }
+
+		  return o.Payload_Renamed.Equals(Payload_Renamed);
+		}
+
+		return false;
+	  }
+
+	  public override int GetHashCode()
+	  {
+		return (Payload_Renamed == null) ? 0 : Payload_Renamed.GetHashCode();
+	  }
+
+	  public override void CopyTo(Attribute target)
+	  {
+		PayloadAttribute t = (PayloadAttribute) target;
+		t.Payload = (Payload_Renamed == null) ? null : (BytesRef)Payload_Renamed.Clone();
+	  }
+
 
 	}
 

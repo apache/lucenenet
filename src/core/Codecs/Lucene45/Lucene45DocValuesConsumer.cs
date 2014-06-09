@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
 	  // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
-	  internal virtual void writeMissingBitset<T1>(IEnumerable<T1> values)
+	  internal virtual void WriteMissingBitset(IEnumerable<object> values)
 	  {
 		sbyte bits = 0;
 		int count = 0;
@@ -416,7 +416,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 	  }
 
-	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
+      public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 	  {
 		Meta.WriteVInt(field.Number);
 		Meta.WriteByte(Lucene45DocValuesFormat.SORTED);
@@ -424,11 +424,11 @@ namespace Lucene.Net.Codecs.Lucene45
 		AddNumericField(field, docToOrd, false);
 	  }
 
-	  private static bool IsSingleValued(IEnumerable<int> docToOrdCount)
+      private static bool IsSingleValued(IEnumerable<long> docToOrdCount)
 	  {
-		foreach (int ordCount in docToOrdCount)
+		foreach (long ordCount in docToOrdCount)
 		{
-		  if ((long)ordCount > 1)
+		  if (ordCount > 1)
 		  {
 			return false;
 		  }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		return true;
 	  }
 
-	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrdCount, IEnumerable<long> ords)
+      public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 	  {
 		Meta.WriteVInt(field.Number);
 		Meta.WriteByte(Lucene45DocValuesFormat.SORTED_SET);
@@ -445,7 +445,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		{
 		  Meta.WriteVInt(SORTED_SET_SINGLE_VALUED_SORTED);
 		  // The field is single-valued, we can encode it as SORTED
-		  AddSortedField(field, values, new IterableAnonymousInnerClassHelper(docToOrdCount, ords));
+          AddSortedField(field, values, GetSortedSetEnumerable(docToOrdCount, ords));
 		  return;
 		}
 
@@ -478,7 +478,32 @@ namespace Lucene.Net.Codecs.Lucene45
 		writer.Finish();
 	  }
 
-      private class IterableAnonymousInnerClassHelper : IEnumerable<long>
+      private IEnumerable<long> GetSortedSetEnumerable(IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+      {
+          IEnumerator<long> docToOrdCountIter = docToOrdCount.GetEnumerator();
+          IEnumerator<long> ordsIter = ords.GetEnumerator();
+
+          const long MISSING_ORD = -1;
+
+          while (docToOrdCountIter.MoveNext())
+          {
+              long current = docToOrdCountIter.Current;
+              if (current == 0)
+              {
+                  yield return MISSING_ORD;
+              }
+              else
+              {
+                  Debug.Assert(current == 1);
+                  ordsIter.MoveNext();
+                  yield return ordsIter.Current;
+              }
+          }
+
+          Debug.Assert(!ordsIter.MoveNext());
+      }
+        /*
+      private class IterableAnonymousInnerClassHelper : IEnumerable<int>
 	  {
 		  private readonly Lucene45DocValuesConsumer OuterInstance;
 
@@ -493,13 +518,18 @@ namespace Lucene.Net.Codecs.Lucene45
 		  }
 
 
-		  public virtual IEnumerator<BytesRef> GetEnumerator()
+          public virtual IEnumerator<BytesRef> GetEnumerator()
 		  {
-			/*IEnumerator<Number> docToOrdCountIt = DocToOrdCount.GetEnumerator();
+			*//*IEnumerator<Number> docToOrdCountIt = DocToOrdCount.GetEnumerator();
 			IEnumerator<Number> ordsIt = Ords.GetEnumerator();
-			return new IteratorAnonymousInnerClassHelper(this, docToOrdCountIt, ordsIt);*/
+			return new IteratorAnonymousInnerClassHelper(this, docToOrdCountIt, ordsIt);*//*
             return new SortedSetIterator(DocToOrdCount.GetEnumerator(), Ords.GetEnumerator());
 		  }
+
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
 
           private class SortedSetIterator : IEnumerator<BytesRef>
           {
@@ -563,7 +593,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
               private void EncodeValues(int count)
               {
-                  output.Reset((sbyte[])(Array)buffer);
+                  output.Reset(buffer);
                   long lastOrd = 0;
                   for (int i = 0; i < count; i++)
                   {
@@ -578,7 +608,7 @@ namespace Lucene.Net.Codecs.Lucene45
               {
                   throw new NotImplementedException();
               }
-          }
+          }*/
 
 		  /*private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
 		  {
@@ -621,36 +651,39 @@ namespace Lucene.Net.Codecs.Lucene45
 
 		  }*/
 
-	  }
+	  //}
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		bool success = false;
-		try
-		{
-		  if (Meta != null)
-		  {
-			Meta.WriteVInt(-1); // write EOF marker
-			CodecUtil.WriteFooter(Meta); // write checksum
-		  }
-		  if (Data != null)
-		  {
-			CodecUtil.WriteFooter(Data); // write checksum
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.Close(Data, Meta);
-		  }
-		  else
-		  {
-			IOUtils.CloseWhileHandlingException(Data, Meta);
-		  }
-		  Meta = Data = null;
-		}
+          if (disposing)
+          {
+                bool success = false;
+		        try
+		        {
+		          if (Meta != null)
+		          {
+			        Meta.WriteVInt(-1); // write EOF marker
+			        CodecUtil.WriteFooter(Meta); // write checksum
+		          }
+		          if (Data != null)
+		          {
+			        CodecUtil.WriteFooter(Data); // write checksum
+		          }
+		          success = true;
+		        }
+		        finally
+		        {
+		          if (success)
+		          {
+			        IOUtils.Close(Data, Meta);
+		          }
+		          else
+		          {
+			        IOUtils.CloseWhileHandlingException(Data, Meta);
+		          }
+		          Meta = Data = null;
+		        }
+          }
 	  }
 	}
 

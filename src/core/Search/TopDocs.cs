@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
 			FieldComparator comp = comparators[compIDX];
 			//System.out.println("    cmp idx=" + compIDX + " cmp1=" + firstFD.fields[compIDX] + " cmp2=" + secondFD.fields[compIDX] + " reverse=" + reverseMul[compIDX]);
 
-			int cmp = ReverseMul[compIDX] * comp.compareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);
+			int cmp = ReverseMul[compIDX] * comp.CompareValues(firstFD.Fields[compIDX], secondFD.Fields[compIDX]);
 
 			if (cmp != 0)
 			{

@@ -107,10 +107,16 @@ namespace Lucene.Net.Store
 			lockName = LockPrefix_Renamed + "-" + lockName;
 		  }
           FileInfo lockFile = new FileInfo(Path.Combine(LockDir_Renamed.FullName, lockName));
-		  if (lockFile.Exists && !lockFile.delete())
-		  {
-			throw new System.IO.IOException("Cannot delete " + lockFile);
-		  }
+          try
+          {
+              lockFile.Delete();
+
+          }
+          catch (Exception e)
+          {
+              if (lockFile.Exists) // Delete failed and lockFile exists
+                  throw new System.IO.IOException("Cannot delete " + lockFile);
+          }
 		}
 	  }
 	}
@@ -133,33 +139,40 @@ namespace Lucene.Net.Store
 		// Ensure that lockDir exists and is a directory:
 		if (!LockDir.Exists)
 		{
-		  if (!LockDir.mkdirs())
-		  {
-			throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
-		  }
+            try
+            {
+                System.IO.Directory.CreateDirectory(LockDir.FullName);
+            }
+            catch
+            {
+                throw new System.IO.IOException("Cannot create directory: " + LockDir.FullName);
+            }
 		}
-		else if (!LockDir.Directory)
+		else
 		{
-		  // TODO: NoSuchDirectoryException instead?
-            throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.FullName);
+            try
+            {
+                System.IO.Directory.Exists(LockDir.FullName);
+            }
+            catch
+            {
+                throw new System.IO.IOException("Found regular file where directory expected: " + LockDir.FullName);
+            }
 		}
 
-		try
-		{
-		  return LockFile.createNewFile();
-		}
-		catch (System.IO.IOException ioe)
-		{
-		  // On Windows, on concurrent createNewFile, the 2nd process gets "access denied".
-		  // In that case, the lock was not aquired successfully, so return false.
-		  // We record the failure reason here; the obtain with timeout (usually the
-		  // one calling us) will use this as "root cause" if it fails to get the lock.
-		  FailureReason = ioe;
-		  return false;
-		}
+        if (LockFile.Exists)
+        {
+            return false;
+        }
+        else
+        {
+            System.IO.FileStream createdFile = LockFile.Create();
+            createdFile.Close();
+            return true;
+        }
 	  }
 
-	  public override void Close()
+	  public override void Release()
 	  {//LUCENE TO-DO
 
           try

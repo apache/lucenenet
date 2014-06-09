@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Fst
 		  }
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return Output1.GetHashCode() + Output2.GetHashCode();
 		}

@@ -25,6 +25,7 @@ namespace Lucene.Net.Search
 	using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// A range filter built on top of a cached multi-valued term field (in <seealso cref="FieldCache"/>).
@@ -84,7 +85,7 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-			SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(context.Reader(), Field);
+			SortedSetDocValues docTermOrds = FieldCache_Fields.DEFAULT.GetDocTermOrds(((AtomicReader)context.Reader()), Field);
 			long lowerPoint = LowerVal == null ? - 1 : docTermOrds.LookupTerm(LowerVal);
 			long upperPoint = UpperVal == null ? - 1 : docTermOrds.LookupTerm(UpperVal);
 

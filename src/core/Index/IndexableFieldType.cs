@@ -31,11 +31,11 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// True if this field should be indexed (inverted) </summary>
-	  bool Indexed();
+	  bool Indexed { get; set; }
 
 	  /// <summary>
 	  /// True if the field's value should be stored </summary>
-	  bool Stored();
+      bool Stored { get; set; }
 
 	  /// <summary>
 	  /// True if this field's value should be analyzed by the
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 	  /// <p>
 	  /// this has no effect if <seealso cref="#indexed()"/> returns false.
 	  /// </summary>
-	  bool Tokenized();
+      bool Tokenized { get; set; }
 
 	  /// <summary>
 	  /// True if this field's indexed form should be also stored 
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 	  /// <p>
 	  /// this option is illegal if <seealso cref="#indexed()"/> returns false.
 	  /// </summary>
-	  bool StoreTermVectors();
+      bool StoreTermVectors { get; set; }
 
 	  /// <summary>
 	  /// True if this field's token character offsets should also
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 	  /// this option is illegal if term vectors are not enabled for the field
 	  /// (<seealso cref="#storeTermVectors()"/> is false)
 	  /// </summary>
-	  bool StoreTermVectorOffsets();
+      bool StoreTermVectorOffsets { get; set; }
 
 	  /// <summary>
 	  /// True if this field's token positions should also be stored
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 	  /// this option is illegal if term vectors are not enabled for the field
 	  /// (<seealso cref="#storeTermVectors()"/> is false). 
 	  /// </summary>
-	  bool StoreTermVectorPositions();
+      bool StoreTermVectorPositions { get; set; }
 
 	  /// <summary>
 	  /// True if this field's token payloads should also be stored
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
 	  /// this option is illegal if term vector positions are not enabled 
 	  /// for the field (<seealso cref="#storeTermVectors()"/> is false).
 	  /// </summary>
-	  bool StoreTermVectorPayloads();
+      bool StoreTermVectorPayloads { get; set; }
 
 	  /// <summary>
 	  /// True if normalization values should be omitted for the field.
@@ -90,19 +90,19 @@ namespace Lucene.Net.Index
 	  /// this saves memory, but at the expense of scoring quality (length normalization
 	  /// will be disabled), and if you omit norms, you cannot use index-time boosts. 
 	  /// </summary>
-	  bool OmitNorms();
+      bool OmitNorms { get; set; }
 
 	  /// <summary>
-	  /// <seealso cref="IndexOptions"/>, describing what should be
+	  /// <seealso cref="IndexOptionsValue"/>, describing what should be
 	  /// recorded into the inverted index 
 	  /// </summary>
-	  IndexOptions_e? IndexOptions();
+      IndexOptions_e? IndexOptionsValue { get; set; }
 
 	  /// <summary>
 	  /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value
 	  /// will be indexed into docValues.
 	  /// </summary>
-	  DocValuesType_e? DocValueType();
+      DocValuesType_e? DocValueType { get; set; }
 	}
 
 }

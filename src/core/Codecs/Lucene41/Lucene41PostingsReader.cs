@@ -24,16 +24,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-/*
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat.BLOCK_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.ForUtil.ForUtil.MAX_DATA_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.ForUtil.ForUtil.MAX_ENCODED_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.Lucene41PostingsWriter.IntBlockTermState;
-    */
 
 	/// <summary>
 	/// Concrete class that reads docId(maybe frq,pos,offset,payloads) list
@@ -97,8 +87,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 		// Make sure we are talking to the matching postings writer
 		CodecUtil.CheckHeader(termsIn, Lucene41PostingsWriter.TERMS_CODEC, Lucene41PostingsWriter.VERSION_START, Lucene41PostingsWriter.VERSION_CURRENT);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int indexBlockSize = termsIn.readVInt();
 		int indexBlockSize = termsIn.ReadVInt();
         if (indexBlockSize != Lucene41PostingsFormat.BLOCK_SIZE)
 		{
@@ -115,8 +103,6 @@ namespace Lucene.Net.Codecs.Lucene41
 		{
 		  for (int i = 0;i < num;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int code = docIn.readVInt();
 			int code = docIn.ReadVInt();
 			docBuffer[i] = (int)((uint)code >> 1);
 			if ((code & 1) != 0)
@@ -143,9 +129,10 @@ namespace Lucene.Net.Codecs.Lucene41
           return new Lucene41PostingsWriter.IntBlockTermState();
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		IOUtils.Close(DocIn, PosIn, PayIn);
+          if (disposing)
+		    IOUtils.Close(DocIn, PosIn, PayIn);
 	  }
 
 	  public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState _termState, bool absolute)
@@ -384,7 +371,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			if (DocIn == null)
 			{
 			  // lazy init
-			  DocIn = StartDocIn.Clone();
+                DocIn = (IndexInput)StartDocIn.Clone();
 			}
 			DocIn.Seek(DocTermStartFP);
 		  }
@@ -523,7 +510,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			if (Skipper == null)
 			{
 			  // Lazy init: first time this enum has ever been used for skipping
-                Skipper = new Lucene41SkipReader(DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, IndexHasPos, IndexHasOffsets, IndexHasPayloads);
+                Skipper = new Lucene41SkipReader((IndexInput)DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, IndexHasPos, IndexHasOffsets, IndexHasPayloads);
 			}
 
 			if (!Skipped)
@@ -686,7 +673,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			this.OuterInstance = outerInstance;
 		  this.StartDocIn = outerInstance.DocIn;
 		  this.DocIn = null;
-		  this.PosIn = outerInstance.PosIn.Clone();
+          this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
 		  Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
 		  IndexHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		  IndexHasPayloads = fieldInfo.HasPayloads();
@@ -715,7 +702,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			if (DocIn == null)
 			{
 			  // lazy init
-			  DocIn = StartDocIn.Clone();
+                DocIn = (IndexInput)StartDocIn.Clone();
 			}
 			DocIn.Seek(DocTermStartFP);
 		  }
@@ -899,7 +886,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  // if (DEBUG) {
 			  //   System.out.println("    create skipper");
 			  // }
-                Skipper = new Lucene41SkipReader(DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, IndexHasOffsets, IndexHasPayloads);
+                Skipper = new Lucene41SkipReader((IndexInput)DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, IndexHasOffsets, IndexHasPayloads);
 			}
 
 			if (!Skipped)
@@ -1183,8 +1170,8 @@ namespace Lucene.Net.Codecs.Lucene41
 			this.OuterInstance = outerInstance;
 		  this.StartDocIn = outerInstance.DocIn;
 		  this.DocIn = null;
-		  this.PosIn = outerInstance.PosIn.Clone();
-		  this.PayIn = outerInstance.PayIn.Clone();
+          this.PosIn = (IndexInput)outerInstance.PosIn.Clone();
+          this.PayIn = (IndexInput)outerInstance.PayIn.Clone();
 		  Encoded = new sbyte[ForUtil.MAX_ENCODED_SIZE];
 		  IndexHasOffsets = fieldInfo.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		  if (IndexHasOffsets)
@@ -1238,7 +1225,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			if (DocIn == null)
 			{
 			  // lazy init
-			  DocIn = StartDocIn.Clone();
+                DocIn = (IndexInput)StartDocIn.Clone();
 			}
 			DocIn.Seek(DocTermStartFP);
 		  }
@@ -1497,7 +1484,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  // if (DEBUG) {
 			  //   System.out.println("    create skipper");
 			  // }
-			  Skipper = new Lucene41SkipReader(DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, IndexHasOffsets, IndexHasPayloads);
+                Skipper = new Lucene41SkipReader((IndexInput)DocIn.Clone(), Lucene41PostingsWriter.MaxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, true, IndexHasOffsets, IndexHasPayloads);
 			}
 
 			if (!Skipped)

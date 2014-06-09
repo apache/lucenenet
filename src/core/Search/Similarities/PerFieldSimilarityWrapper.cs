@@ -53,10 +53,10 @@ namespace Lucene.Net.Search.Similarities
 		return weight;
 	  }
 
-	  public override sealed SimScorer SimScorer(SimWeight weight, AtomicReaderContext context)
+	  public override sealed SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
 	  {
 		PerFieldSimWeight perFieldWeight = (PerFieldSimWeight) weight;
-		return perFieldWeight.@delegate.SimScorer(perFieldWeight.DelegateWeight, context);
+		return perFieldWeight.@delegate.DoSimScorer(perFieldWeight.DelegateWeight, context);
 	  }
 
 	  /// <summary>

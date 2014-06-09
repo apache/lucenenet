@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  }
 		  else
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		}
 	  }

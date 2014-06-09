@@ -45,13 +45,13 @@ namespace Lucene.Net.Store
 
 	  private int bufferSize = BUFFER_SIZE;
 
-	  protected internal sbyte[] Buffer;
+	  protected internal byte[] Buffer;
 
 	  private long BufferStart = 0; // position in file of buffer
 	  private int BufferLength = 0; // end of valid bytes
 	  private int BufferPosition = 0; // next byte to read
 
-	  public override sealed sbyte ReadByte()
+	  public override sealed byte ReadByte()
 	  {
 		if (BufferPosition >= BufferLength)
 		{
@@ -92,7 +92,7 @@ namespace Lucene.Net.Store
 				// Resize the existing buffer and carefully save as
 				// many bytes as possible starting from the current
 				// bufferPosition
-				sbyte[] newBuffer = new sbyte[value];
+				byte[] newBuffer = new byte[value];
 				int leftInBuffer = BufferLength - BufferPosition;
 				int numToCopy;
 				if (leftInBuffer > value)
@@ -117,7 +117,7 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  protected internal virtual void NewBuffer(sbyte[] newBuffer)
+	  protected internal virtual void NewBuffer(byte[] newBuffer)
 	  {
 		// Subclasses can do something here
 		Buffer = newBuffer;
@@ -132,12 +132,12 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override sealed void ReadBytes(sbyte[] b, int offset, int len)
+	  public override sealed void ReadBytes(byte[] b, int offset, int len)
 	  {
 		ReadBytes(b, offset, len, true);
 	  }
 
-	  public override sealed void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
+	  public override sealed void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
 	  {
 		int available = BufferLength - BufferPosition;
 		if (len <= available)
@@ -242,7 +242,7 @@ namespace Lucene.Net.Store
 	  {
 		if (5 <= (BufferLength - BufferPosition))
 		{
-		  sbyte b = Buffer[BufferPosition++];
+		  byte b = Buffer[BufferPosition++];
 		  if (b >= 0)
 		  {
 			  return b;
@@ -285,7 +285,7 @@ namespace Lucene.Net.Store
 	  {
 		if (9 <= BufferLength - BufferPosition)
 		{
-		  sbyte b = Buffer[BufferPosition++];
+		  byte b = Buffer[BufferPosition++];
 		  if (b >= 0)
 		  {
 			  return b;
@@ -363,7 +363,7 @@ namespace Lucene.Net.Store
 
 		if (Buffer == null)
 		{
-		  NewBuffer(new sbyte[bufferSize]); // allocate buffer lazily
+		  NewBuffer(new byte[bufferSize]); // allocate buffer lazily
 		  SeekInternal(BufferStart);
 		}
 		ReadInternal(Buffer, 0, newLength);
@@ -378,7 +378,7 @@ namespace Lucene.Net.Store
 	  /// <param name="b"> the array to read bytes into </param>
 	  /// <param name="offset"> the offset in the array to start storing bytes </param>
 	  /// <param name="length"> the number of bytes to read </param>
-	  protected internal abstract void ReadInternal(sbyte[] b, int offset, int length);
+	  protected internal abstract void ReadInternal(byte[] b, int offset, int length);
 
 	  public override sealed long FilePointer
 	  {
@@ -408,7 +408,7 @@ namespace Lucene.Net.Store
 	  /// <seealso cref= #readInternal(byte[],int,int) </seealso>
 	  protected internal abstract void SeekInternal(long pos);
 
-	  public override BufferedIndexInput Clone()
+	  public override object Clone()
 	  {
 		BufferedIndexInput clone = (BufferedIndexInput)base.Clone();
 

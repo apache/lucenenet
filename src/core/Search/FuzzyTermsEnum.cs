@@ -31,7 +31,6 @@ namespace Lucene.Net.Search
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
 	using Attribute = Lucene.Net.Util.Attribute;
-	using AttributeImpl = Lucene.Net.Util.AttributeImpl;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
@@ -43,6 +42,7 @@ namespace Lucene.Net.Search
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using LevenshteinAutomata = Lucene.Net.Util.Automaton.LevenshteinAutomata;
     using Lucene.Net.Support;
+    using Lucene.Net.Util;
 
 	/// <summary>
 	/// Subclass of TermsEnum for enumerating all terms that are similar
@@ -58,22 +58,22 @@ namespace Lucene.Net.Search
 
 		private void InitializeInstanceFields()
 		{
-			BoostAtt = Attributes().AddAttribute<BoostAttribute>();
+			BoostAtt = Attributes().AddAttribute<IBoostAttribute>();
 		}
 
 	  private TermsEnum ActualEnum;
-	  private BoostAttribute ActualBoostAtt;
+	  private IBoostAttribute ActualBoostAtt;
 
-	  private BoostAttribute BoostAtt;
+	  private IBoostAttribute BoostAtt;
 
-	  private readonly MaxNonCompetitiveBoostAttribute MaxBoostAtt;
-	  private readonly LevenshteinAutomataAttribute DfaAtt;
+	  private readonly IMaxNonCompetitiveBoostAttribute MaxBoostAtt;
+	  private readonly ILevenshteinAutomataAttribute DfaAtt;
 
 	  private float Bottom;
 	  private BytesRef BottomTerm;
 
 	  // TODO: chicken-and-egg
-	  private readonly IComparer<BytesRef> TermComparator = BytesRef.UTF8SortedAsUnicodeComparator;
+	  private readonly IComparer<BytesRef> TermComparator = BytesRef.UTF8SortedAsUnicodeComparer;
 
 	  protected internal readonly float MinSimilarity_Renamed;
 	  protected internal readonly float Scale_factor;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
 			   TermText[j++] = cp = utf16[i];//.codePointAt(i);
 		}
 		this.TermLength = TermText.Length;
-		this.DfaAtt = atts.AddAttribute<LevenshteinAutomataAttribute>();
+		this.DfaAtt = atts.AddAttribute<ILevenshteinAutomataAttribute>();
 
 		//The prefix could be longer than the word.
 		//It's kind of silly though.  It means we must match the entire word.
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
 		  set
 		  {
 			this.ActualEnum = value;
-			this.ActualBoostAtt = value.Attributes().AddAttribute<BoostAttribute>();
+			this.ActualBoostAtt = value.Attributes().AddAttribute<IBoostAttribute>();
 		  }
 	  }
 
@@ -489,7 +489,7 @@ namespace Lucene.Net.Search
 	  /// because they are independent of the index
 	  /// @lucene.internal 
 	  /// </summary>
-	  public interface LevenshteinAutomataAttribute : Attribute
+	  public interface ILevenshteinAutomataAttribute : IAttribute
 	  {
 		IList<CompiledAutomaton> Automata();
 	  }
@@ -498,23 +498,23 @@ namespace Lucene.Net.Search
 	  /// Stores compiled automata as a list (indexed by edit distance)
 	  /// @lucene.internal 
 	  /// </summary>
-	  public sealed class LevenshteinAutomataAttributeImpl : AttributeImpl, LevenshteinAutomataAttribute
+	  public sealed class LevenshteinAutomataAttribute : Attribute, ILevenshteinAutomataAttribute
 	  {
-		internal readonly IList<CompiledAutomaton> Automata_Renamed = new List<CompiledAutomaton>();
+		internal readonly IList<CompiledAutomaton> automata = new List<CompiledAutomaton>();
 
-		public override IList<CompiledAutomaton> Automata()
+		public IList<CompiledAutomaton> Automata()
 		{
-		  return Automata_Renamed;
+		  return automata;
 		}
 
 		public override void Clear()
 		{
-		  Automata_Renamed.Clear();
+		  automata.Clear();
 		}
 
 		public override int GetHashCode()
 		{
-		  return Automata_Renamed.GetHashCode();
+		  return automata.GetHashCode();
 		}
 
 		public override bool Equals(object other)
@@ -523,18 +523,18 @@ namespace Lucene.Net.Search
 		  {
 			return true;
 		  }
-		  if (!(other is LevenshteinAutomataAttributeImpl))
+		  if (!(other is LevenshteinAutomataAttribute))
 		  {
 			return false;
 		  }
-		  return Automata_Renamed.Equals(((LevenshteinAutomataAttributeImpl) other).Automata_Renamed);
+		  return automata.Equals(((LevenshteinAutomataAttribute) other).automata);
 		}
 
-		public override void CopyTo(AttributeImpl target)
+		public override void CopyTo(Attribute target)
 		{
 		  IList<CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute) target).Automata();
 		  targetAutomata.Clear();
-		  targetAutomata.AddRange(Automata_Renamed);
+		  targetAutomata.AddRange(automata);
 		}
 	  }
 	}

@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
 	  private string field;
 	  private Type_e type; // defaults to determining type dynamically
 	  internal bool reverse = false; // defaults to natural order
-	  private FieldCache_Parser parser;
+	  private FieldCache_Fields.IParser parser;
 
 	  // Used for CUSTOM sort
 	  private FieldComparatorSource comparatorSource;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search
 	  ///  by testing which numeric parser the parser subclasses. </param>
 	  /// <exception cref="IllegalArgumentException"> if the parser fails to
 	  ///  subclass an existing numeric parser, or field is null </exception>
-	  public SortField(string field, FieldCache_Parser parser) : this(field, parser, false)
+	  public SortField(string field, FieldCache_Fields.IParser parser) : this(field, parser, false)
 	  {
 	  }
 
@@ -193,29 +193,29 @@ namespace Lucene.Net.Search
 	  /// <param name="reverse"> True if natural order should be reversed. </param>
 	  /// <exception cref="IllegalArgumentException"> if the parser fails to
 	  ///  subclass an existing numeric parser, or field is null </exception>
-	  public SortField(string field, FieldCache_Parser parser, bool reverse)
+	  public SortField(string field, FieldCache_Fields.IParser parser, bool reverse)
 	  {
-		if (parser is FieldCache_IntParser)
+		if (parser is FieldCache_Fields.IIntParser)
 		{
 			InitFieldType(field, Type_e.INT);
 		}
-		else if (parser is FieldCache_FloatParser)
+        else if (parser is FieldCache_Fields.IFloatParser)
 		{
 			InitFieldType(field, Type_e.FLOAT);
 		}
-		else if (parser is FieldCache_ShortParser)
+        else if (parser is FieldCache_Fields.IShortParser)
 		{
 			InitFieldType(field, Type_e.SHORT);
 		}
-		else if (parser is FieldCache_ByteParser)
+        else if (parser is FieldCache_Fields.IByteParser)
 		{
 			InitFieldType(field, Type_e.BYTE);
 		}
-		else if (parser is FieldCache_LongParser)
+        else if (parser is FieldCache_Fields.ILongParser)
 		{
 			InitFieldType(field, Type_e.LONG);
 		}
-		else if (parser is FieldCache_DoubleParser)
+        else if (parser is FieldCache_Fields.IDoubleParser)
 		{
 			InitFieldType(field, Type_e.DOUBLE);
 		}
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 	  /// Returns the instance of a <seealso cref="FieldCache"/> parser that fits to the given sort type.
 	  /// May return <code>null</code> if no parser was specified. Sorting is using the default parser then. </summary>
 	  /// <returns> An instance of a <seealso cref="FieldCache"/> parser, or <code>null</code>. </returns>
-	  public virtual FieldCache_Parser Parser
+	  public virtual FieldCache_Fields.IParser Parser
 	  {
 		  get
 		  {
@@ -493,7 +493,7 @@ namespace Lucene.Net.Search
 		return hash;
 	  }
 
-	  private IComparer<BytesRef> BytesComparator_Renamed = BytesRef.UTF8SortedAsUnicodeComparator;
+	  private IComparer<BytesRef> BytesComparator_Renamed = BytesRef.UTF8SortedAsUnicodeComparer;
 
 	  public virtual IComparer<BytesRef> BytesComparator
 	  {

@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		  }
 		  else
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		}
 	  }

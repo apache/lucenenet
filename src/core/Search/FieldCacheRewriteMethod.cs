@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LongBitSet = Lucene.Net.Util.LongBitSet;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// Rewrites MultiTermQueries into a filter, using the FieldCache for term enumeration.
@@ -83,7 +84,7 @@ namespace Lucene.Net.Search
 		  return false;
 		}
 
-		public override sealed int HashCode()
+		public override sealed int GetHashCode()
 		{
 		  return Query.GetHashCode();
 		}
@@ -104,7 +105,7 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(context.Reader(), Query.field);
+		  SortedDocValues fcsi = FieldCache_Fields.DEFAULT.GetTermsIndex(((AtomicReader)context.Reader()), Query.field);
 		  // Cannot use FixedBitSet because we require long index (ord):
 		  LongBitSet termSet = new LongBitSet(fcsi.ValueCount);
 		  TermsEnum termsEnum = Query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, fcsi));
@@ -147,7 +148,7 @@ namespace Lucene.Net.Search
 			{
 				get
 				{
-				  return BytesRef.UTF8SortedAsUnicodeComparator;
+				  return BytesRef.UTF8SortedAsUnicodeComparer;
 				}
 			}
 
@@ -249,7 +250,7 @@ namespace Lucene.Net.Search
 		return true;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return 641;
 	  }

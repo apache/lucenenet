@@ -32,6 +32,7 @@ namespace Lucene.Net.Search.Payloads
 	using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
 	using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 	using Spans = Lucene.Net.Search.Spans.Spans;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// Experimental class to get set of payloads for most standard Lucene queries.
@@ -199,7 +200,7 @@ namespace Lucene.Net.Search.Payloads
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Lucene.Net.Search.Spans.Spans spans = query.getSpans(atomicReaderContext, atomicReaderContext.reader().getLiveDocs(), termContexts);
-		  Spans spans = query.GetSpans(atomicReaderContext, atomicReaderContext.Reader().LiveDocs, termContexts);
+		  Spans spans = query.GetSpans(atomicReaderContext, ((AtomicReader)atomicReaderContext.Reader()).LiveDocs, termContexts);
 		  while (spans.Next() == true)
 		  {
 			if (spans.PayloadAvailable)

@@ -256,7 +256,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return Dir.GetHashCode() + Name.GetHashCode();
 	  }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
 		{
 		  if (!r.IsMatch(file))
 		  {
-			throw new System.ArgumentException("invalid codec filename '" + file + "', must match: " + IndexFileNames.CODEC_FILE_PATTERN.pattern());
+			throw new System.ArgumentException("invalid codec filename '" + file + "', must match: " + IndexFileNames.CODEC_FILE_PATTERN.ToString());
 		  }
 		}
 	  }

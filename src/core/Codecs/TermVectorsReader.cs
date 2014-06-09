@@ -66,7 +66,15 @@ namespace Lucene.Net.Codecs
 	  /// Create a clone that one caller at a time may use to
 	  ///  read term vectors. 
 	  /// </summary>
-	  public override abstract TermVectorsReader Clone();
+	  public abstract object Clone();
+
+      public void Dispose()
+      {
+          Dispose(true);
+          GC.SuppressFinalize(this);
+      }
+
+      protected abstract void Dispose(bool disposing);
 	}
 
 }

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// Computes the lambda parameter. </summary>
-	  public abstract float Lambda(BasicStats stats);
+	  public abstract float CalculateLambda(BasicStats stats);
 	  /// <summary>
 	  /// Explains the lambda parameter. </summary>
 	  public abstract Explanation Explain(BasicStats stats);

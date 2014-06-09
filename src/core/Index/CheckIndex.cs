@@ -469,9 +469,9 @@ namespace Lucene.Net.Index
 	  ///  you only call this when the index is not opened by any
 	  ///  writer. 
 	  /// </summary>
-	  public virtual Status CheckIndex()
+	  public virtual Status DoCheckIndex()
 	  {
-		return CheckIndex(null);
+		return DoCheckIndex(null);
 	  }
 
 	  /// <summary>
@@ -487,7 +487,7 @@ namespace Lucene.Net.Index
 	  ///  <p><b>WARNING</b>: make sure
 	  ///  you only call this when the index is not opened by any
 	  ///  writer.  </param>
-	  public virtual Status CheckIndex(IList<string> onlySegments)
+	  public virtual Status DoCheckIndex(IList<string> onlySegments)
 	  {
 		NumberFormatInfo nf = CultureInfo.CurrentCulture.NumberFormat;
 		SegmentInfos sis = new SegmentInfos();
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
 		{
 		  if (input != null)
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		}
 
@@ -634,7 +634,7 @@ namespace Lucene.Net.Index
 		}
 
 
-		result.NewSegments = sis.Clone();
+		result.NewSegments = (SegmentInfos)sis.Clone();
 		result.NewSegments.Clear();
 		result.MaxSegmentName = -1;
 
@@ -852,12 +852,12 @@ namespace Lucene.Net.Index
 		  {
 			if (reader != null)
 			{
-			  reader.Close();
+			  reader.Dispose();
 			}
 		  }
 
 		  // Keeper
-		  result.NewSegments.Add(info.Clone());
+		  result.NewSegments.Add((SegmentCommitInfo)info.Clone());
 		}
 
 		if (0 == result.NumBadSegments)
@@ -2208,11 +2208,7 @@ namespace Lucene.Net.Index
 
 						  // Call the methods to at least make
 						  // sure they don't throw exc:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int startOffset = postings.StartOffset();
 						  int startOffset = postings.StartOffset();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int endOffset = postings.EndOffset();
 						  int endOffset = postings.EndOffset();
 						  // TODO: these are too anal...?
 						  /*
@@ -2227,12 +2223,8 @@ namespace Lucene.Net.Index
 
 						  if (postingsPostings != null)
 						  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int postingsStartOffset = postingsPostings.StartOffset();
 							int postingsStartOffset = postingsPostings.StartOffset();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int postingsEndOffset = postingsPostings.EndOffset();
 							int postingsEndOffset = postingsPostings.EndOffset();
 							if (startOffset != -1 && postingsStartOffset != -1 && startOffset != postingsStartOffset)
 							{
@@ -2375,7 +2367,8 @@ namespace Lucene.Net.Index
 	  ///                     this tool exits with exit code 1 if the index cannot be opened or has any
 	  ///                     corruption, else 0.
 	  /// </summary>
-	  public static void Main(string[] args)
+	  /*[STAThread]
+      public static void Main(string[] args)
 	  {
 
 		bool doFix = false;
@@ -2478,7 +2471,7 @@ namespace Lucene.Net.Index
 		checker.CrossCheckTermVectors = doCrossCheckTermVectors;
         checker.SetInfoStream(new StreamWriter(Console.OpenStandardOutput()), verbose);
 
-		Status result = checker.CheckIndex(onlySegments);
+		Status result = checker.DoCheckIndex(onlySegments);
 		if (result.MissingSegments)
 		{
 		  Environment.Exit(1);
@@ -2507,8 +2500,6 @@ namespace Lucene.Net.Index
 		}
 		Console.WriteLine("");
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int exitCode;
 		int exitCode;
 		if (result.Clean == true)
 		{
@@ -2519,7 +2510,7 @@ namespace Lucene.Net.Index
 		  exitCode = 1;
 		}
 		Environment.Exit(exitCode);
-	  }
+	  }*/
 	}
 
 }

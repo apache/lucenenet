@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Packed
 	  /// <summary>
 	  /// Provides a <seealso cref="DocIdSetIterator"/> to access encoded document ids.
 	  /// </summary>
-	  public override DocIdSetIterator Iterator()
+	  public override DocIdSetIterator GetIterator()
 	  {
 		if (EfEncoder.LastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
 		{
@@ -136,9 +136,9 @@ namespace Lucene.Net.Util.Packed
 		return ((other is EliasFanoDocIdSet)) && EfEncoder.Equals(((EliasFanoDocIdSet) other).EfEncoder);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
-		return EfEncoder.HashCode() ^ this.GetType().GetHashCode();
+		return EfEncoder.GetHashCode() ^ this.GetType().GetHashCode();
 	  }
 	}
 

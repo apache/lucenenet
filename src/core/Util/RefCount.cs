@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Returns the current reference count. </summary>
-	  public int RefCount
+	  public int GetRefCount
 	  {
 		  get
 		  {

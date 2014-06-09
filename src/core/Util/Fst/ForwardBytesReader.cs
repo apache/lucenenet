@@ -27,20 +27,20 @@ namespace Lucene.Net.Util.Fst
 	/// Reads from a single byte[]. </summary>
 	internal sealed class ForwardBytesReader : FST.BytesReader
 	{
-	  private readonly sbyte[] Bytes;
+	  private readonly byte[] Bytes;
 	  private int Pos;
 
-	  public ForwardBytesReader(sbyte[] bytes)
+      public ForwardBytesReader(byte[] bytes)
 	  {
 		this.Bytes = bytes;
 	  }
 
-	  public override sbyte ReadByte()
+      public override byte ReadByte()
 	  {
 		return Bytes[Pos++];
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+      public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		Array.Copy(Bytes, Pos, b, offset, len);
 		Pos += len;

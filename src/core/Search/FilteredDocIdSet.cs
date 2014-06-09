@@ -60,9 +60,9 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public override Bits Bits()
+	  public override Bits GetBits()
 	  {
-		Bits bits = _innerSet.Bits();
+		Bits bits = _innerSet.GetBits();
 		return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
 	  }
 
@@ -99,9 +99,9 @@ namespace Lucene.Net.Search
 	  /// Implementation of the contract to build a DocIdSetIterator. </summary>
 	  /// <seealso cref= DocIdSetIterator </seealso>
 	  /// <seealso cref= FilteredDocIdSetIterator </seealso>
-	  public override DocIdSetIterator Iterator()
+	  public override DocIdSetIterator GetIterator()
 	  {
-		DocIdSetIterator iterator = _innerSet.Iterator();
+		DocIdSetIterator iterator = _innerSet.GetIterator();
 		if (iterator == null)
 		{
 		  return null;

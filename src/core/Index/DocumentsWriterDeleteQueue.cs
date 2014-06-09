@@ -72,7 +72,7 @@ using Query = Lucene.Net.Search.Query;
 	/// will also not be added to its private deletes neither to the global deletes.
 	/// 
 	/// </summary>
-	internal sealed class DocumentsWriterDeleteQueue
+	public sealed class DocumentsWriterDeleteQueue
 	{
         private Node Tail; // .NET port: can't use type without specifying type parameter, also not volatile due to Interlocked
 
@@ -151,7 +151,7 @@ using Query = Lucene.Net.Search.Query;
 		// we can do it just every n times or so?
 	  }
 
-	  internal void Add(Node item)
+	  private void Add(Node item)
 	  {
 		/*
 		 * this non-blocking / 'wait-free' linked list add was inspired by Apache
@@ -371,7 +371,7 @@ using Query = Lucene.Net.Search.Query;
 		}
 	  }
 
-	  private class Node
+	  public class Node
 	  {
 		internal /*volatile*/ Node Next;
 		internal readonly object Item;

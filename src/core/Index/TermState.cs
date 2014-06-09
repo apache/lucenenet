@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 	  ///          the TermState to copy </param>
 	  public abstract void CopyFrom(TermState other);
 
-	  public override TermState Clone()
+	  public virtual object Clone()
 	  {
 		  return (TermState)base.MemberwiseClone();
 	  }

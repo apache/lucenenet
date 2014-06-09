@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
 	  private RAMFile File;
 	  private long Length_Renamed;
 
-	  private sbyte[] CurrentBuffer;
+	  private byte[] CurrentBuffer;
 	  private int CurrentBufferIndex;
 
 	  private int BufferPosition;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 		CurrentBuffer = null;
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		// nothing to do here
 	  }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
 		return Length_Renamed;
 	  }
 
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
 		if (BufferPosition >= BufferLength)
 		{
@@ -76,7 +76,7 @@ namespace Lucene.Net.Store
 		return CurrentBuffer[BufferPosition++];
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		while (len > 0)
 		{

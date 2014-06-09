@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  /// <exception cref="IOException">
 	  ///           if the underlying reader of the current reference could not be closed </exception>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		  lock (this)
 		  {

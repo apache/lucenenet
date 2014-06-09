@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 	  private BytesRef Current;
 	  private IComparer<BytesRef> TermComp;
 
-	  internal class TermsEnumIndex
+	  public class TermsEnumIndex
 	  {
 		public static readonly TermsEnumIndex[] EMPTY_ARRAY = new TermsEnumIndex[0];
 		internal readonly int SubIndex;
@@ -137,8 +137,6 @@ namespace Lucene.Net.Index
 		for (int i = 0;i < termsEnumsIndex.Length;i++)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
 		  TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
 		  Debug.Assert(termsEnumIndex != null);
 
@@ -151,8 +149,6 @@ namespace Lucene.Net.Index
 		  {
 			// We cannot merge sub-readers that have
 			// different TermComps
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Comparator<Lucene.Net.Util.BytesRef> subTermComp = termsEnumIndex.termsEnum.getComparator();
 			IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparator;
 			if (subTermComp != null && !subTermComp.Equals(TermComp))
 			{
@@ -160,13 +156,9 @@ namespace Lucene.Net.Index
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef term = termsEnumIndex.termsEnum.next();
 		  BytesRef term = termsEnumIndex.TermsEnum.Next();
 		  if (term != null)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnumWithSlice entry = subs[termsEnumIndex.subIndex];
 			TermsEnumWithSlice entry = Subs[termsEnumIndex.SubIndex];
 			entry.Reset(termsEnumIndex.TermsEnum, term);
 			Queue.Add(entry);
@@ -674,7 +666,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal sealed class TermsEnumWithSlice
+	  public sealed class TermsEnumWithSlice
 	  {
 		internal readonly ReaderSlice SubSlice;
 		internal TermsEnum Terms;
@@ -700,17 +692,15 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private sealed class TermMergeQueue : PriorityQueue<TermsEnumWithSlice>
+	  private sealed class TermMergeQueue : Util.PriorityQueue<TermsEnumWithSlice>
 	  {
 		internal IComparer<BytesRef> TermComp;
 		internal TermMergeQueue(int size) : base(size)
 		{
 		}
 
-		protected internal override bool LessThan(TermsEnumWithSlice termsA, TermsEnumWithSlice termsB)
+		public override bool LessThan(TermsEnumWithSlice termsA, TermsEnumWithSlice termsB)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int cmp = termComp.compare(termsA.current, termsB.current);
 		  int cmp = TermComp.Compare(termsA.Current, termsB.Current);
 		  if (cmp != 0)
 		  {

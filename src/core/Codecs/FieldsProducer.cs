@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs
 	  {
 	  }
 
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
 	  /// <summary>
 	  /// Returns approximate RAM bytes used </summary>

@@ -18,12 +18,12 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-	internal abstract class DocConsumer
+	public abstract class DocConsumer
 	{
-	  internal abstract void ProcessDocument(FieldInfos.Builder fieldInfos);
-	  internal abstract void FinishDocument();
-	  internal abstract void Flush(SegmentWriteState state);
-	  internal abstract void Abort();
+        public abstract void ProcessDocument(FieldInfos.Builder fieldInfos);
+        public abstract void FinishDocument();
+        public abstract void Flush(SegmentWriteState state);
+        public abstract void Abort();
 	}
 
 }

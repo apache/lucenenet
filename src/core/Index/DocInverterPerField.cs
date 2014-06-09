@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
         this.EndConsumer = parent.EndConsumer.AddField(this, fieldInfo);
 	  }
 
-	  internal override void Abort()
+	  public override void Abort()
 	  {
 		try
 		{
@@ -79,19 +79,19 @@ namespace Lucene.Net.Index
 		  // TODO FI: this should be "genericized" to querying
 		  // consumer if it wants to see this particular field
 		  // tokenized.
-		  if (fieldType.Indexed() && doInvert)
+		  if (fieldType.Indexed && doInvert)
 		  {
-			bool analyzed = fieldType.Tokenized() && DocState.Analyzer != null;
+			bool analyzed = fieldType.Tokenized && DocState.Analyzer != null;
 
 			// if the field omits norms, the boost cannot be indexed.
-			if (fieldType.OmitNorms() && field.Boost() != 1.0f)
+			if (fieldType.OmitNorms && field.GetBoost() != 1.0f)
 			{
 			  throw new System.NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name() + "'");
 			}
 
 			// only bother checking offsets if something will consume them.
 			// TODO: after we fix analyzers, also check if termVectorOffsets will be indexed.
-			bool checkOffsets = fieldType.IndexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+			bool checkOffsets = fieldType.IndexOptionsValue == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 			int lastStartOffset = 0;
 
 			if (i > 0)
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
 
 			bool succeededInProcessingField = false;
 
-			TokenStream stream = field.TokenStream(DocState.Analyzer);
+			TokenStream stream = field.GetTokenStream(DocState.Analyzer);
 			// reset the TokenStream to the first token
 			stream.Reset();
 
@@ -233,7 +233,7 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-				stream.Close();
+				stream.Dispose();
 			  }
 			  if (!succeededInProcessingField && DocState.InfoStream.IsEnabled("DW"))
 			  {
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
 			}
 
 			FieldState.Offset_Renamed += analyzed ? DocState.Analyzer.GetOffsetGap(fieldInfo.Name) : 0;
-			FieldState.Boost_Renamed *= field.Boost();
+			FieldState.Boost_Renamed *= field.GetBoost();
 		  }
 
 		  // LUCENE-2387: don't hang onto the field, so GC can
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
 		EndConsumer.Finish();
 	  }
 
-	  internal override FieldInfo FieldInfo
+	  public override FieldInfo FieldInfo
 	  {
 		  get
 		  {

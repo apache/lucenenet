@@ -119,7 +119,7 @@ namespace Lucene.Net.Util
 	  public void CopyChars(CharsRef text)
 	  {
 		Debug.Assert(Offset == 0); // TODO broken if offset != 0
-		UnicodeUtil.UTF16toUTF8(text, 0, text.Length(), this);
+		UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
 	  }
 
       /// <summary>
@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
 	  /// object.
 	  /// </summary>
 	  /// <seealso cref= #deepCopyOf </seealso>
-	  public override BytesRef Clone()
+	  public object Clone()
 	  {
 		return new BytesRef(Bytes, Offset, Length);
 	  }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
 
 	  private static readonly IComparer<BytesRef> Utf8SortedAsUnicodeSortOrder = new UTF8SortedAsUnicodeComparator();
 
-	  public static IComparer<BytesRef> UTF8SortedAsUnicodeComparator
+	  public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer
 	  {
 		  get
 		  {
@@ -332,7 +332,7 @@ namespace Lucene.Net.Util
 
 	  /// @deprecated this comparator is only a transition mechanism 
 	  [Obsolete("this comparator is only a transition mechanism")]
-	  public static IComparer<BytesRef> UTF8SortedAsUTF16Comparator
+	  public static IComparer<BytesRef> UTF8SortedAsUTF16Comparer
 	  {
 		  get
 		  {

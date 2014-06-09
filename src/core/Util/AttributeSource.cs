@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     using System.Runtime.CompilerServices;
     
     /// <summary>
-	/// An AttributeSource contains a list of different <seealso cref="AttributeImpl"/>s,
+	/// An AttributeSource contains a list of different <seealso cref="Attribute"/>s,
 	/// and methods to add and get them. There can only be a single instance
 	/// of an attribute in the same AttributeSource instance. this is ensured
 	/// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to 
@@ -40,17 +40,17 @@ namespace Lucene.Net.Util
 	public class AttributeSource
 	{
 	  /// <summary>
-	  /// An AttributeFactory creates instances of <seealso cref="AttributeImpl"/>s.
+	  /// An AttributeFactory creates instances of <seealso cref="Attribute"/>s.
 	  /// </summary>
 	  public abstract class AttributeFactory
 	  {
 		/// <summary>
-		/// returns an <seealso cref="AttributeImpl"/> for the supplied <seealso cref="Attribute"/> interface class.
+		/// returns an <seealso cref="Attribute"/> for the supplied <seealso cref="Attribute"/> interface class.
 		/// </summary>
-		public abstract AttributeImpl CreateAttributeInstance(Type attClass);
+		public abstract Attribute CreateAttributeInstance(Type attClass);
 
 		/// <summary>
-		/// this is the default factory that creates <seealso cref="AttributeImpl"/>s using the
+		/// this is the default factory that creates <seealso cref="Attribute"/>s using the
 		/// class name of the supplied <seealso cref="Attribute"/> interface class by appending <code>Impl</code> to it.
 		/// </summary>
 		public static readonly AttributeFactory DEFAULT_ATTRIBUTE_FACTORY = new DefaultAttributeFactory();
@@ -105,17 +105,17 @@ namespace Lucene.Net.Util
 	  /// <seealso cref= #restoreState </seealso>
 	  public sealed class State : ICloneable
 	  {
-		internal AttributeImpl Attribute;
-		internal State Next;
+		internal Attribute attribute;
+		internal State next;
 
-		public override State Clone()
+		public object Clone()
 		{
 		  State clone = new State();
-		  clone.Attribute = Attribute.Clone();
+		  clone.attribute = (Attribute)attribute.Clone();
 
-		  if (Next != null)
+		  if (next != null)
 		  {
-			clone.Next = Next.Clone();
+			clone.next = (State)next.Clone();
 		  }
 
 		  return clone;
@@ -124,8 +124,8 @@ namespace Lucene.Net.Util
 
 	  // These two maps must always be in sync!!!
 	  // So they are private, final and read-only from the outside (read-only iterators)
-	  private readonly IDictionary<Type, AttributeImpl> Attributes;
-	  private readonly IDictionary<Type, AttributeImpl> AttributeImpls;
+      private readonly GeneralKeyedCollection<Type, AttributeImplItem> Attributes;
+      private readonly GeneralKeyedCollection<Type, AttributeImplItem> AttributeImpls;
 	  private readonly State[] CurrentState_Renamed;
 
 	  private readonly AttributeFactory Factory;
@@ -158,8 +158,8 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public AttributeSource(AttributeFactory factory)
 	  {
-		this.Attributes = new HashMap<Type, AttributeImpl>();
-        this.AttributeImpls = new HashMap<Type, AttributeImpl>();
+		this.Attributes = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
+        this.AttributeImpls = new GeneralKeyedCollection<Type, AttributeImplItem>(att => att.Key);
 		this.CurrentState_Renamed = new State[1];
 		this.Factory = factory;
 	  }
@@ -192,7 +192,7 @@ namespace Lucene.Net.Util
 	  /// this iterator may contain less entries that <seealso cref="#getAttributeClassesIterator"/>,
 	  /// if one instance implements more than one Attribute interface.
 	  /// </summary>
-	  public IEnumerator<AttributeImpl> AttributeImplsIterator
+	  public IEnumerator<Attribute> AttributeImplsIterator
 	  {
 		  get
 		  {
@@ -203,12 +203,12 @@ namespace Lucene.Net.Util
 			}
 			else
 			{
-			  return Collections.emptySet<AttributeImpl>().GetEnumerator();
+			  return Collections.emptySet<Attribute>().GetEnumerator();
 			}
 		  }
 	  }
 
-	  private class IteratorAnonymousInnerClassHelper : IEnumerator<AttributeImpl>
+	  private class IteratorAnonymousInnerClassHelper : IEnumerator<Attribute>
 	  {
 		  private readonly AttributeSource OuterInstance;
 
@@ -228,13 +228,13 @@ namespace Lucene.Net.Util
 			throw new System.NotSupportedException();
 		  }
 
-		  public virtual AttributeImpl Next()
+		  public virtual Attribute Next()
 		  {
 			if (state == null)
 			{
 			  throw new Exception();
 			}
-			AttributeImpl att = state.Attribute;
+			Attribute att = state.Attribute;
 			state = state.Next;
 			return att;
 		  }
@@ -276,7 +276,7 @@ namespace Lucene.Net.Util
 	  }
 
 	  /// <summary>
-	  /// <b>Expert:</b> Adds a custom AttributeImpl instance with one or more Attribute interfaces.
+	  /// <b>Expert:</b> Adds a custom Attribute instance with one or more Attribute interfaces.
 	  /// <p><font color="red"><b>Please note:</b> It is not guaranteed, that <code>att</code> is added to
 	  /// the <code>AttributeSource</code>, because the provided attributes may already exist.
 	  /// You should always retrieve the wanted attributes using <seealso cref="#getAttribute"/> after adding
@@ -284,7 +284,7 @@ namespace Lucene.Net.Util
 	  /// The recommended way to use custom implementations is using an <seealso cref="AttributeFactory"/>.
 	  /// </font></p>
 	  /// </summary>
-	  public void AddAttributeImpl(AttributeImpl att)
+	  public void AddAttributeImpl(Attribute att)
 	  {
 		Type clazz = att.GetType();
 		if (AttributeImpls.ContainsKey(clazz))
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util
 		}
 		LinkedList<WeakReference> foundInterfaces = GetAttributeInterfaces(clazz);
 
-		// add all interfaces of this AttributeImpl to the maps
+		// add all interfaces of this Attribute to the maps
 		foreach (WeakReference curInterfaceRef in foundInterfaces)
 		{
 		  Type curInterface = curInterfaceRef.GetType();
@@ -303,13 +303,16 @@ namespace Lucene.Net.Util
 		  {
 			// invalidate state to force recomputation in captureState()
 			this.CurrentState_Renamed[0] = null;
-			Attributes[curInterface] = att;
-			AttributeImpls[clazz] = att;
+            Attributes.Add(new AttributeImplItem(curInterface, att));
+            if (!AttributeImpls.ContainsKey(clazz))
+            {
+                AttributeImpls.Add(new AttributeImplItem(clazz, att));
+            }
 		  }
 		}
 	  }
 
-      public virtual T AddAttribute<T>() where T : Attribute 
+      public virtual T AddAttribute<T>() where T : IAttribute 
       {
           var attClass = typeof(T);
           if (!Attributes.ContainsKey(attClass))
@@ -322,7 +325,7 @@ namespace Lucene.Net.Util
                 
                 AddAttributeImpl(this.Factory.CreateAttributeInstance(attClass));
           }
-          return (T)(Attribute)Attributes[attClass];
+          return (T)(IAttribute)Attributes[attClass].Value;
       }
 
 	  /// <summary>
@@ -351,15 +354,14 @@ namespace Lucene.Net.Util
 	  ///         a specific Attribute. <seealso cref="#addAttribute"/> will automatically make the attribute
 	  ///         available. If you want to only use the attribute, if it is available (to optimize
 	  ///         consuming), use <seealso cref="#HasAttribute"/>. </exception>
-	  public virtual T GetAttribute<T>() where T : Attribute
+	  public virtual T GetAttribute<T>() where T : IAttribute
 	  {
         var attClass = typeof(T);
-        AttributeImpl attImpl = Attributes[attClass];
-		if (attImpl == null)
+		if (!Attributes.ContainsKey(attClass))
 		{
 		  throw new System.ArgumentException("this AttributeSource does not have the attribute '" + attClass.Name + "'.");
 		}
-        return (T)(Attribute)this.Attributes[attClass];
+        return (T)(IAttribute)this.Attributes[attClass].Value;
 	  }
 
 	  private State CurrentState
@@ -371,15 +373,15 @@ namespace Lucene.Net.Util
 			{
 			  return s;
 			}
-			State c = s = CurrentState_Renamed[0] = new State();
-			IEnumerator<AttributeImpl> it = AttributeImpls.Values.GetEnumerator();
+			var c = s = CurrentState_Renamed[0] = new State();
+			var it = AttributeImpls.Values().GetEnumerator();
             it.MoveNext();
-            c.Attribute = it.Current;
+            c.attribute = it.Current.Value;
 			while (it.MoveNext())
 			{
-			  c.Next = new State();
-			  c = c.Next;
-			  c.Attribute = it.Current;
+			  c.next = new State();
+			  c = c.next;
+			  c.attribute = it.Current.Value;
 			}
 			return s;
 		  }
@@ -387,13 +389,13 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// Resets all Attributes in this AttributeSource by calling
-	  /// <seealso cref="AttributeImpl#clear()"/> on each Attribute implementation.
+	  /// <seealso cref="Attribute#clear()"/> on each Attribute implementation.
 	  /// </summary>
 	  public void ClearAttributes()
 	  {
-		for (State state = CurrentState; state != null; state = state.Next)
+		for (State state = CurrentState; state != null; state = state.next)
 		{
-		  state.Attribute.Clear();
+		  state.attribute.Clear();
 		}
 	  }
 
@@ -404,7 +406,7 @@ namespace Lucene.Net.Util
 	  public State CaptureState()
 	  {
 		State state = this.CurrentState;
-		return (state == null) ? null : state.Clone();
+		return (State)((state == null) ? null : state.Clone());
 	  }
 
 	  /// <summary>
@@ -431,22 +433,22 @@ namespace Lucene.Net.Util
 
 		do
 		{
-		  AttributeImpl targetImpl = AttributeImpls[state.Attribute.GetType()];
+		  var targetImpl = AttributeImpls[state.attribute.GetType()];
 		  if (targetImpl == null)
 		  {
-			throw new System.ArgumentException("State contains AttributeImpl of type " + state.Attribute.GetType().Name + " that is not in in this AttributeSource");
+			throw new System.ArgumentException("State contains Attribute of type " + state.attribute.GetType().Name + " that is not in in this AttributeSource");
 		  }
-		  state.Attribute.CopyTo(targetImpl);
-		  state = state.Next;
+          state.attribute.CopyTo(AttributeImpls[state.attribute.GetType()].Value);
+		  state = state.next;
 		} while (state != null);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		int code = 0;
-		for (State state = CurrentState; state != null; state = state.Next)
+		for (State state = CurrentState; state != null; state = state.next)
 		{
-		  code = code * 31 + state.Attribute.GetHashCode();
+		  code = code * 31 + state.attribute.GetHashCode();
 		}
 		return code;
 	  }
@@ -479,12 +481,12 @@ namespace Lucene.Net.Util
 			State otherState = other.CurrentState;
 			while (thisState != null && otherState != null)
 			{
-			  if (otherState.Attribute.GetType() != thisState.Attribute.GetType() || !otherState.Attribute.Equals(thisState.Attribute))
+			  if (otherState.attribute.GetType() != thisState.attribute.GetType() || !otherState.attribute.Equals(thisState.attribute))
 			  {
 				return false;
 			  }
-			  thisState = thisState.Next;
-			  otherState = otherState.Next;
+			  thisState = thisState.next;
+			  otherState = otherState.next;
 			}
 			return true;
 		  }
@@ -516,7 +518,7 @@ namespace Lucene.Net.Util
 		return buffer.ToString();
 	  }
 
-	  private class AttributeReflectorAnonymousInnerClassHelper : AttributeReflector
+	  private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
 	  {
 		  private readonly AttributeSource OuterInstance;
 
@@ -530,7 +532,12 @@ namespace Lucene.Net.Util
 			  this.Buffer = buffer;
 		  }
 
-		  public virtual void Reflect(Type attClass, string key, object value)
+          public void Reflect<T>(string key, object value) where T : IAttribute
+          {
+              Reflect(typeof(T), key, value);
+          }
+
+		  public void Reflect(Type attClass, string key, object value)
 		  {
 			if (Buffer.Length > 0)
 			{
@@ -549,19 +556,19 @@ namespace Lucene.Net.Util
 	  /// add the key/values this AttributeSource holds to the given <seealso cref="AttributeReflector"/>.
 	  /// 
 	  /// <p>this method iterates over all Attribute implementations and calls the
-	  /// corresponding <seealso cref="AttributeImpl#reflectWith"/> method.</p>
+	  /// corresponding <seealso cref="Attribute#reflectWith"/> method.</p>
 	  /// </summary>
-	  /// <seealso cref= AttributeImpl#reflectWith </seealso>
-	  public void ReflectWith(AttributeReflector reflector)
+	  /// <seealso cref= Attribute#reflectWith </seealso>
+	  public void ReflectWith(IAttributeReflector reflector)
 	  {
-		for (State state = CurrentState; state != null; state = state.Next)
+		for (State state = CurrentState; state != null; state = state.next)
 		{
-		  state.Attribute.ReflectWith(reflector);
+		  state.attribute.ReflectWith(reflector);
 		}
 	  }
 
 	  /// <summary>
-	  /// Performs a clone of all <seealso cref="AttributeImpl"/> instances returned in a new
+	  /// Performs a clone of all <seealso cref="Attribute"/> instances returned in a new
 	  /// {@code AttributeSource} instance. this method can be used to e.g. create another TokenStream
 	  /// with exactly the same attributes (using <seealso cref="#AttributeSource(AttributeSource)"/>).
 	  /// You can also use it as a (non-performant) replacement for <seealso cref="#captureState"/>, if you need to look
@@ -574,15 +581,21 @@ namespace Lucene.Net.Util
 		if (HasAttributes())
 		{
 		  // first clone the impls
-		  for (State state = CurrentState; state != null; state = state.Next)
+		  for (State state = CurrentState; state != null; state = state.next)
 		  {
-			clone.AttributeImpls[state.Attribute.GetType()] = state.Attribute.Clone();
+			//clone.AttributeImpls[state.attribute.GetType()] = state.attribute.Clone();
+              var impl = (Attribute)state.attribute.Clone();
+
+              if (!clone.AttributeImpls.ContainsKey(impl.GetType()))
+              {
+                  clone.AttributeImpls.Add(new AttributeImplItem(impl.GetType(), impl));
+              }
 		  }
 
 		  // now the interfaces
-		  foreach (KeyValuePair<Type, AttributeImpl> entry in this.Attributes)
+		  foreach (var entry in this.Attributes)
 		  {
-			clone.Attributes[entry.Key] = clone.AttributeImpls[entry.Value.GetType()];
+              clone.Attributes.Add(new AttributeImplItem(entry.Key, clone.AttributeImpls[entry.Value.GetType()].Value));
 		  }
 		}
 
@@ -599,14 +612,14 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public void CopyTo(AttributeSource target)
 	  {
-		for (State state = CurrentState; state != null; state = state.Next)
+		for (State state = CurrentState; state != null; state = state.next)
 		{
-		  AttributeImpl targetImpl = target.AttributeImpls[state.Attribute.GetType()];
+          Attribute targetImpl = target.AttributeImpls[state.attribute.GetType()].Value;
 		  if (targetImpl == null)
 		  {
-			throw new System.ArgumentException("this AttributeSource contains AttributeImpl of type " + state.Attribute.GetType().Name + " that is not in the target");
+			throw new System.ArgumentException("this AttributeSource contains Attribute of type " + state.attribute.GetType().Name + " that is not in the target");
 		  }
-		  state.Attribute.CopyTo(targetImpl);
+		  state.attribute.CopyTo(targetImpl);
 		}
 	  }
 

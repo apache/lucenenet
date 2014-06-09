@@ -25,6 +25,7 @@ namespace Lucene.Net.Search.Similarities
 	using NumericDocValues = Lucene.Net.Index.NumericDocValues;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using SmallFloat = Lucene.Net.Util.SmallFloat;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// BM25 Similarity. Introduced in Stephen E. Robertson, Steve Walker,
@@ -256,10 +257,10 @@ namespace Lucene.Net.Search.Similarities
 		return new BM25Stats(collectionStats.Field(), idf, queryBoost, avgdl, cache);
 	  }
 
-	  public override sealed SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
+	  public override sealed SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
 	  {
 		BM25Stats bm25stats = (BM25Stats) stats;
-		return new BM25DocScorer(this, bm25stats, context.Reader().GetNormValues(bm25stats.Field));
+		return new BM25DocScorer(this, bm25stats, ((AtomicReader)context.Reader()).GetNormValues(bm25stats.Field));
 	  }
 
 	  private class BM25DocScorer : SimScorer

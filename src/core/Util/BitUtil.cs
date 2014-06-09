@@ -56,10 +56,15 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
 	  /// <summary>
 	  /// Return the number of bits sets in b. </summary>
-	  public static int BitCount(sbyte b)
+      public static int BitCount(byte b)
 	  {
 		return BYTE_COUNTS[b & 0xFF];
 	  }
+
+      public static int BitCount(sbyte b)
+      {
+          return BYTE_COUNTS[b & 0xFF];
+      }
 
 	  /// <summary>
 	  /// Return the list of bits which are set in b encoded as followed:
@@ -75,6 +80,12 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 	  {
 		return BIT_LISTS[b & 0xFF];
 	  }
+
+      public static int BitList(byte b)
+      {
+          return BitList((sbyte)b);
+      }
+
 
 	  // The pop methods used to rely on bit-manipulation tricks for speed but it
 	  // turns out that it is faster to use the Long.bitCount method (which is an

@@ -53,11 +53,11 @@ namespace Lucene.Net.Codecs.Compressing
 	  private CompressingTermVectorsReader(CompressingTermVectorsReader reader)
 	  {
 		this.FieldInfos = reader.FieldInfos;
-		this.VectorsStream_Renamed = reader.VectorsStream_Renamed.Clone();
-		this.IndexReader = reader.IndexReader.Clone();
+        this.VectorsStream_Renamed = (IndexInput)reader.VectorsStream_Renamed.Clone();
+		this.IndexReader = (CompressingStoredFieldsIndexReader)reader.IndexReader.Clone();
 		this.PackedIntsVersion_Renamed = reader.PackedIntsVersion_Renamed;
 		this.CompressionMode_Renamed = reader.CompressionMode_Renamed;
-		this.Decompressor = reader.Decompressor.Clone();
+		this.Decompressor = (Decompressor)reader.Decompressor.Clone();
 		this.ChunkSize_Renamed = reader.ChunkSize_Renamed;
 		this.NumDocs = reader.NumDocs;
         this.Reader = new BlockPackedReaderIterator(VectorsStream_Renamed, PackedIntsVersion_Renamed, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  {
 			CodecUtil.CheckEOF(indexStream);
 		  }
-		  indexStream.Close();
+		  indexStream.Dispose();
 		  indexStream = null;
 
 		  // Open the data file and read metadata
@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
 		if (!Closed)
 		{
@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 	  }
 
-	  public override TermVectorsReader Clone()
+	  public override object Clone()
 	  {
 		return new CompressingTermVectorsReader(this);
 	  }
@@ -715,40 +715,21 @@ namespace Lucene.Net.Codecs.Compressing
 		  this.SuffixBytes = suffixBytes;
 		}
 
-		public override IEnumerator<string> Iterator()
-		{
-		  return new IteratorAnonymousInnerClassHelper(this);
-		}
+        public override IEnumerator<string> GetEnumerator()
+        {
+            return GetFieldInfoNameEnumerable().GetEnumerator();
+        }
 
-		private class IteratorAnonymousInnerClassHelper : IEnumerator<string>
-		{
-			private readonly TVFields OuterInstance;
+        private IEnumerable<string> GetFieldInfoNameEnumerable()
+        {
+            int i = 0;
 
-			public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
-			{
-				this.OuterInstance = outerInstance;
-				i = 0;
-			}
-
-			internal int i;
-			public virtual bool HasNext()
-			{
-			  return i < OuterInstance.FieldNumOffs.Length;
-			}
-			public virtual string Next()
-			{
-			  if (!HasNext())
-			  {
-				throw new Exception();
-			  }
-			  int fieldNum = OuterInstance.FieldNums[OuterInstance.FieldNumOffs[i++]];
-			  return OuterInstance.OuterInstance.FieldInfos.FieldInfo(fieldNum).Name;
-			}
-			public virtual void Remove()
-			{
-			  throw new System.NotSupportedException();
-			}
-		}
+            while (i < FieldNumOffs.Length)
+            {
+                int fieldNum = FieldNums[FieldNumOffs[i++]];
+                yield return OuterInstance.FieldInfos.FieldInfo(fieldNum).Name;
+            }
+        }
 
 		public override Terms Terms(string field)
 		{
@@ -833,7 +814,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  {
 			termsEnum = new TVTermsEnum();
 		  }
-		  termsEnum.Reset(NumTerms, Flags, PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex, PayloadBytes, new ByteArrayDataInput(TermBytes.Bytes, TermBytes.Offset, TermBytes.Length));
+		  termsEnum.Reset(NumTerms, Flags, PrefixLengths, SuffixLengths, TermFreqs, PositionIndex, Positions, StartOffsets, Lengths, PayloadIndex, PayloadBytes, new ByteArrayDataInput((byte[])(Array)TermBytes.Bytes, TermBytes.Offset, TermBytes.Length));
 		  return termsEnum;
 		}
 
@@ -841,7 +822,7 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 
@@ -962,7 +943,7 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 

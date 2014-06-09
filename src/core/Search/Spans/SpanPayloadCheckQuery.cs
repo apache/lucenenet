@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Spans
 		return buffer.ToString();
 	  }
 
-	  public override SpanPayloadCheckQuery Clone()
+	  public override object Clone()
 	  {
 		SpanPayloadCheckQuery result = new SpanPayloadCheckQuery((SpanQuery) match.Clone(), PayloadToMatch);
 		result.Boost = Boost;

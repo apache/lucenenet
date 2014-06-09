@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
 		this.Buffer = new sbyte[bufferSize];
 	  }
 
-	  public override void Update(int b)
+	  public void Update(int b)
 	  {
 		if (Upto == Buffer.Length)
 		{
@@ -57,7 +57,12 @@ namespace Lucene.Net.Store
 		Buffer[Upto++] = (sbyte) b;
 	  }
 
-	  public override void Update(sbyte[] b, int off, int len)
+      public void Update(byte[] b)
+      {
+          Update(b, 0, b.Length);
+      }
+
+	  public void Update(byte[] b, int off, int len)
 	  {
 		if (len >= Buffer.Length)
 		{
@@ -75,7 +80,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override long Value
+	  public long Value
 	  {
 		  get
 		  {
@@ -84,7 +89,7 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  public override void Reset()
+	  public void Reset()
 	  {
 		Upto = 0;
 		@in.Reset();

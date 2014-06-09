@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Mutable
 	  }
 
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return Value.GetHashCode();
 	  }

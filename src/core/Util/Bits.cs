@@ -60,12 +60,12 @@ namespace Lucene.Net.Util
 	      this.Len = len;
 	    }
 
-	    public override bool Get(int index)
+	    public bool Get(int index)
 	    {
 	      return true;
 	    }
 
-	    public override int Length()
+	    public int Length()
 	    {
 	      return Len;
 	    }
@@ -80,12 +80,12 @@ namespace Lucene.Net.Util
 	      this.Len = len;
 	    }
 
-	    public override bool Get(int index)
+	    public bool Get(int index)
 	    {
 	      return false;
 	    }
 
-	    public override int Length()
+	    public int Length()
 	    {
 	      return Len;
 	    }

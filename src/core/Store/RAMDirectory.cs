@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
 		}
 		if (closeDir)
 		{
-		  dir.Close();
+		  dir.Dispose();
 		}
 	  }
 
@@ -123,8 +123,9 @@ namespace Lucene.Net.Store
 		EnsureOpen();
 		// NOTE: fileMap.keySet().toArray(new String[0]) is broken in non Sun JDKs,
 		// and the code below is resilient to map changes during the array population.
-		IDictionary<string, RAMFile>.KeyCollection fileNames = FileMap.Keys;
-		IList<string> names = new List<string>(fileNames.size());
+		//IDictionary<string, RAMFile>.KeyCollection fileNames = FileMap.Keys;
+        ISet<string> fileNames = SetFactory.CreateHashSet(FileMap.Keys);//just want a set of strings
+		IList<string> names = new List<string>(fileNames.Count);
 		foreach (string name in fileNames)
 		{
 			names.Add(name);
@@ -170,11 +171,12 @@ namespace Lucene.Net.Store
 	  public override void DeleteFile(string name)
 	  {
 		EnsureOpen();
-		RAMFile file = FileMap.Remove(name);
+        RAMFile file = FileMap[name];
+        FileMap.Remove(name);
 		if (file != null)
 		{
 		  file.Directory = null;
-		  SizeInBytes_Renamed.addAndGet(-file.SizeInBytes_Renamed);
+          SizeInBytes_Renamed.AddAndGet(-file.SizeInBytes_Renamed);
 		}
 		else
 		{
@@ -191,7 +193,7 @@ namespace Lucene.Net.Store
         RAMFile existing = FileMap[name];
 		if (existing != null)
 		{
-		  SizeInBytes_Renamed.addAndGet(-existing.SizeInBytes_Renamed);
+		  SizeInBytes_Renamed.AddAndGet(-existing.SizeInBytes_Renamed);
 		  existing.Directory = null;
 		}
 		FileMap[name] = file;
@@ -227,7 +229,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Closes the store to future operations, releasing associated memory. </summary>
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		IsOpen = false;
 		FileMap.Clear();

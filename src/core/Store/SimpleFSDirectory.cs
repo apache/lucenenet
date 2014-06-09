@@ -59,17 +59,17 @@ namespace Lucene.Net.Store
 	  /// Creates an IndexInput for the file with the given name. </summary>
 	  public override IndexInput OpenInput(string name, IOContext context)
 	  {
-		EnsureOpen();
-        FileInfo path = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
-        FileStream raf = new FileStream(path, "r");
+        EnsureOpen();
+        FileInfo path = new FileInfo(Path.Combine(Directory.FullName, name));
+        FileStream raf = new FileStream(path.FullName, FileMode.Open);
 		return new SimpleFSIndexInput("SimpleFSIndexInput(path=\"" + path.FullName + "\")", raf, context);
 	  }
 
 	  public override IndexInputSlicer CreateSlicer(string name, IOContext context)
 	  {
 		EnsureOpen();
-		FileInfo file = new FileInfo(Directory, name);
-		FileStream descriptor = new RandomAccessFile(file, "r");
+		FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
+        FileStream descriptor = new FileStream(file.FullName, FileMode.Open);
 		return new IndexInputSlicerAnonymousInnerClassHelper(this, context, file, descriptor);
 	  }
 
@@ -90,9 +90,12 @@ namespace Lucene.Net.Store
 		  }
 
 
-		  public override void Close()
+		  public override void Dispose(bool disposing)
 		  {
-			Descriptor.Close();
+              if (disposing)
+              {
+                  Descriptor.Close();
+              }
 		  }
 
 		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
@@ -155,7 +158,7 @@ namespace Lucene.Net.Store
 		  this.IsClone = true;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  if (!IsClone)
 		  {
@@ -163,7 +166,7 @@ namespace Lucene.Net.Store
 		  }
 		}
 
-		public override SimpleFSIndexInput Clone()
+		public override object Clone()
 		{
 		  SimpleFSIndexInput clone = (SimpleFSIndexInput)base.Clone();
 		  clone.IsClone = true;
@@ -177,7 +180,7 @@ namespace Lucene.Net.Store
 
 		/// <summary>
 		/// IndexInput methods </summary>
-		protected internal override void ReadInternal(sbyte[] b, int offset, int len)
+		protected internal override void ReadInternal(byte[] b, int offset, int len)
 		{
 		  lock (File)
 		  {
@@ -195,7 +198,7 @@ namespace Lucene.Net.Store
 			  while (total < len)
 			  {
 				int toRead = Math.Min(CHUNK_SIZE, len - total);
-				int i = File.Read(b, offset + total, toRead);
+				int i = File.Read((byte[])(Array)b, offset + total, toRead);
 				if (i < 0) // be defensive here, even though we checked before hand, something could have changed
 				{
                     throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + End);
@@ -215,14 +218,14 @@ namespace Lucene.Net.Store
 		protected internal override void SeekInternal(long position)
 		{
 		}
-
+          /* LUCENE TO-DO Removing until need is shown
 		internal virtual bool FDValid
 		{
 			get
 			{
 			  return File.FD.valid();
 			}
-		}
+		}*/
 	  }
 	}
 

@@ -53,7 +53,13 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// Reads and returns a single byte. </summary>
 	  /// <seealso cref= DataOutput#writeByte(byte) </seealso>
-	  public abstract sbyte ReadByte();
+	  public abstract byte ReadByte();
+
+      public sbyte ReadSByte()
+      {
+          // helper method to account for java's byte being signed
+          return (sbyte)ReadByte();
+      }
 
 	  /// <summary>
 	  /// Reads a specified number of bytes into an array at the specified offset. </summary>
@@ -61,7 +67,7 @@ namespace Lucene.Net.Store
 	  /// <param name="offset"> the offset in the array to start storing bytes </param>
 	  /// <param name="len"> the number of bytes to read </param>
 	  /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
-	  public abstract void ReadBytes(sbyte[] b, int offset, int len);
+	  public abstract void ReadBytes(byte[] b, int offset, int len);
 
 	  /// <summary>
 	  /// Reads a specified number of bytes into an array at the
@@ -75,11 +81,41 @@ namespace Lucene.Net.Store
 	  /// <param name="useBuffer"> set to false if the caller will handle
 	  /// buffering. </param>
 	  /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
-	  public virtual void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
+	  public virtual void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
 	  {
 		// Default to ignoring useBuffer entirely
 		ReadBytes(b, offset, len);
 	  }
+
+      /// <summary>
+      /// Reads a specified number of bytes into an array at the specified offset. </summary>
+      /// <param name="b"> the array to read bytes into </param>
+      /// <param name="offset"> the offset in the array to start storing bytes </param>
+      /// <param name="len"> the number of bytes to read </param>
+      /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
+      public void ReadBytes(sbyte[] b, int offset, int len)
+      {
+          // helper method to account for java's byte being signed
+          ReadBytes(b, offset, len, false);
+      }
+
+      /// <summary>
+      /// Reads a specified number of bytes into an array at the
+      /// specified offset with control over whether the read
+      /// should be buffered (callers who have their own buffer
+      /// should pass in "false" for useBuffer).  Currently only
+      /// <seealso cref="BufferedIndexInput"/> respects this parameter. </summary>
+      /// <param name="b"> the array to read bytes into </param>
+      /// <param name="offset"> the offset in the array to start storing bytes </param>
+      /// <param name="len"> the number of bytes to read </param>
+      /// <param name="useBuffer"> set to false if the caller will handle
+      /// buffering. </param>
+      /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
+      public void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
+      {
+          // helper method to account for java's byte being signed
+          ReadBytes((byte[])(Array)b, offset, len, useBuffer);
+      }
 
 	  /// <summary>
 	  /// Reads two bytes and returns a short. </summary>
@@ -118,7 +154,7 @@ namespace Lucene.Net.Store
 		}
 		return i;
 		*/
-		sbyte b = ReadByte();
+		byte b = ReadByte();
 		if (b >= 0)
 		{
 			return b;
@@ -181,7 +217,7 @@ namespace Lucene.Net.Store
 		}
 		return i;
 		*/
-		sbyte b = ReadByte();
+		byte b = ReadByte();
 		if (b >= 0)
 		{
 			return b;
@@ -244,9 +280,7 @@ namespace Lucene.Net.Store
 	  public virtual string ReadString()
 	  {
 		int length = ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] bytes = new byte[length];
-		sbyte[] bytes = new sbyte[length];
+		byte[] bytes = new byte[length];
 		ReadBytes(bytes, 0, length);
 
 		//return new string(bytes, 0, length, IOUtils.CHARSET_UTF_8);
@@ -263,7 +297,7 @@ namespace Lucene.Net.Store
 	  /// different points in the input from each other and from the stream they
 	  /// were cloned from.
 	  /// </summary>
-	  public override DataInput Clone()
+	  public virtual object Clone()
 	  {
 		  return (DataInput) base.MemberwiseClone();
 	  }
@@ -321,8 +355,6 @@ namespace Lucene.Net.Store
 		Debug.Assert(SkipBuffer.Length == SKIP_BUFFER_SIZE);
 		for (long skipped = 0; skipped < numBytes;)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int step = (int) Math.min(SKIP_BUFFER_SIZE, numBytes - skipped);
 		  int step = (int) Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);
 		  ReadBytes(SkipBuffer, 0, step, false);
 		  skipped += step;

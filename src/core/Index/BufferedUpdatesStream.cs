@@ -653,7 +653,7 @@ namespace Lucene.Net.Index
 	  private static long ApplyQueryDeletes(IEnumerable<QueryAndLimit> queriesIter, ReadersAndUpdates rld, SegmentReader reader)
 	  {
 		long delCount = 0;
-		AtomicReaderContext readerContext = reader.Context;
+		AtomicReaderContext readerContext = reader.AtomicContext;
 		bool any = false;
 		foreach (QueryAndLimit ent in queriesIter)
 		{
@@ -662,7 +662,7 @@ namespace Lucene.Net.Index
 		  DocIdSet docs = (new QueryWrapperFilter(query)).GetDocIdSet(readerContext, reader.LiveDocs);
 		  if (docs != null)
 		  {
-			DocIdSetIterator it = docs.Iterator();
+			DocIdSetIterator it = docs.GetIterator();
 			if (it != null)
 			{
 			  while (true)

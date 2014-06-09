@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override void Abort()
+	  internal override void Abort()
 	  {
 		Reset();
 		try

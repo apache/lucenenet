@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 		  }
 		  DocsEnum docs = termsEnum.Docs(acceptDocs, null);
 		  Debug.Assert(docs != null);
-		  return new TermScorer(this, docs, Similarity.SimScorer(Stats, context));
+		  return new TermScorer(this, docs, Similarity.DoSimScorer(Stats, context));
 		}
 
 		/// <summary>
@@ -111,11 +111,11 @@ namespace Lucene.Net.Search
 		  TermState state = TermStates.Get(context.Ord);
 		  if (state == null) // term is not present in that reader
 		  {
-              Debug.Assert(TermNotInReader(context.Reader(), OuterInstance.Term_Renamed), "no termstate found but term exists in reader term=" + OuterInstance.Term_Renamed);
+              Debug.Assert(TermNotInReader(context.AtomicReader, OuterInstance.Term_Renamed), "no termstate found but term exists in reader term=" + OuterInstance.Term_Renamed);
 			return null;
 		  }
 		  //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));
-          TermsEnum termsEnum = context.Reader().Terms(OuterInstance.Term_Renamed.Field()).Iterator(null);
+          TermsEnum termsEnum = context.AtomicReader.Terms(OuterInstance.Term_Renamed.Field()).Iterator(null);
           termsEnum.SeekExact(OuterInstance.Term_Renamed.Bytes(), state);
 		  return termsEnum;
 		}
@@ -129,14 +129,14 @@ namespace Lucene.Net.Search
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-		  Scorer scorer = Scorer(context, context.Reader().LiveDocs);
+		  Scorer scorer = Scorer(context, context.AtomicReader.LiveDocs);
 		  if (scorer != null)
 		  {
 			int newDoc = scorer.Advance(doc);
 			if (newDoc == doc)
 			{
 			  float freq = scorer.Freq();
-			  SimScorer docScorer = Similarity.SimScorer(Stats, context);
+			  SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
 			  ComplexExplanation result = new ComplexExplanation();
 			  result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
 			  Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "termFreq=" + freq));
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
 	  /// Returns a hash code value for this object. </summary>
 	  public override int GetHashCode()
 	  {
-		return Number.FloatToIntBits(Boost) ^ Term_Renamed.HashCode();
+		return Number.FloatToIntBits(Boost) ^ Term_Renamed.GetHashCode();
 	  }
 
 	}

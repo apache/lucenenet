@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 				LockAttempts++;
 				return false;
 			}
-			public override void Close()
+			public override void Release()
 			{
 				// do nothing
 			}

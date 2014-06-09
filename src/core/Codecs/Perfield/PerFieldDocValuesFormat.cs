@@ -87,9 +87,9 @@ namespace Lucene.Net.Codecs.Perfield
 		internal DocValuesConsumer Consumer;
 		internal int Suffix;
 
-		public override void Close()
+        public void Dispose()
 		{
-		  Consumer.Close();
+		  Consumer.Dispose();
 		}
 	  }
 
@@ -119,12 +119,12 @@ namespace Lucene.Net.Codecs.Perfield
 		  GetInstance(field).AddBinaryField(field, values);
 		}
 
-		public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 		{
 		  GetInstance(field).AddSortedField(field, values, docToOrd);
 		}
 
-		public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<int> docToOrdCount, IEnumerable<long> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 		{
 		  GetInstance(field).AddSortedSetField(field, values, docToOrdCount, ords);
 		}
@@ -188,8 +188,6 @@ namespace Lucene.Net.Codecs.Perfield
 			}
 			Suffixes[formatName_] = suffix;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentSuffix = getFullSegmentSuffix(segmentWriteState.segmentSuffix, getSuffix(formatName, Integer.toString(suffix)));
 			string segmentSuffix = GetFullSegmentSuffix(SegmentWriteState.SegmentSuffix, GetSuffix(formatName_, Convert.ToString(suffix)));
 			consumer = new ConsumerAndSuffix();
 			consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(SegmentWriteState, segmentSuffix));
@@ -211,10 +209,13 @@ namespace Lucene.Net.Codecs.Perfield
 		  return consumer.Consumer;
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  // Close all subs
-		  IOUtils.Close(Formats.Values.ToArray());
+            if (disposing)
+            {
+                // Close all subs
+                IOUtils.Close(Formats.Values.ToArray());
+            }
 		}
 	  }
 
@@ -336,12 +337,13 @@ namespace Lucene.Net.Codecs.Perfield
 		  return producer == null ? null : producer.GetDocsWithField(field);
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  IOUtils.Close(Formats.Values.ToArray());
+		  if (disposing)
+            IOUtils.Close(Formats.Values.ToArray());
 		}
 
-		public override DocValuesProducer Clone()
+		public object Clone()
 		{
 		  return new FieldsReader(OuterInstance, this);
 		}

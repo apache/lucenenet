@@ -58,10 +58,10 @@ namespace Lucene.Net.Index
 		  this.Lengths = lengths;
 		  this.Docs = docs;
 		  this.DocsWithField = docsWithField;
-		  Value_Renamed = values.Clone();
+		  Value_Renamed = (BytesRef)values.Clone();
 		}
 
-		internal override BytesRef Value()
+		public object Value()
 		{
 		  if (Offset == -1)
 		  {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		internal override int NextDoc()
+        public int NextDoc()
 		{
 		  if (Idx >= Size)
 		  {
@@ -105,12 +105,12 @@ namespace Lucene.Net.Index
 		  return Doc_Renamed;
 		}
 
-		internal override int Doc()
+        public int Doc()
 		{
 		  return Doc_Renamed;
 		}
 
-		internal override void Reset()
+        public void Reset()
 		{
 		  Doc_Renamed = -1;
 		  Offset = -1;
@@ -170,22 +170,12 @@ namespace Lucene.Net.Index
 		++Size;
 	  }
 
-	  public override Iterator Iterator()
+      internal override DocValuesFieldUpdates.Iterator GetIterator()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PagedMutable docs = this.docs;
 		PagedMutable docs = this.Docs;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PagedGrowableWriter offsets = this.offsets;
 		PagedGrowableWriter offsets = this.Offsets;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PagedGrowableWriter lengths = this.lengths;
 		PagedGrowableWriter lengths = this.Lengths;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef values = this.values;
 		BytesRef values = this.Values;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.FixedBitSet docsWithField = this.docsWithField;
 		FixedBitSet docsWithField = this.DocsWithField;
 		new InPlaceMergeSorterAnonymousInnerClassHelper(this, docs, offsets, lengths, docsWithField).Sort(0, Size);
 

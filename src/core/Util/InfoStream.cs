@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 		  return false;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		}
 	  }
@@ -91,8 +91,11 @@ namespace Lucene.Net.Util
 		  }
 	  }
 
+      public virtual void Dispose()
+      {
+      }
 
-	  public override InfoStream Clone()
+	  public virtual object Clone()
 	  {
 		try
 		{

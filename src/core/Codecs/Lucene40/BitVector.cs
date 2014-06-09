@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	internal sealed class BitVector : ICloneable, MutableBits
 	{
 
-	  private sbyte[] Bits;
+	  private byte[] Bits;
 	  private int Size_Renamed;
 	  private int Count_Renamed;
 	  private int Version_Renamed;
@@ -61,11 +61,11 @@ namespace Lucene.Net.Codecs.Lucene40
 	  public BitVector(int n)
 	  {
 		Size_Renamed = n;
-		Bits = new sbyte[GetNumBytes(Size_Renamed)];
+        Bits = new byte[GetNumBytes(Size_Renamed)];
 		Count_Renamed = 0;
 	  }
 
-	  internal BitVector(sbyte[] bits, int size)
+      internal BitVector(byte[] bits, int size)
 	  {
 		this.Bits = bits;
 		this.Size_Renamed = size;
@@ -82,9 +82,9 @@ namespace Lucene.Net.Codecs.Lucene40
 		return bytesLength;
 	  }
 
-	  public override BitVector Clone()
+	  public object Clone()
 	  {
-		sbyte[] copyBits = new sbyte[Bits.Length];
+		byte[] copyBits = new byte[Bits.Length];
 		Array.Copy(Bits, 0, copyBits, 0, Bits.Length);
 		BitVector clone = new BitVector(copyBits, Size_Renamed);
 		clone.Count_Renamed = Count_Renamed;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + Size_Renamed);
 		}
-		Bits[bit >> 3] |= (sbyte)(1 << (bit & 7));
+        Bits[bit >> 3] |= (byte)(1 << (bit & 7));
 		Count_Renamed = -1;
 	  }
 
@@ -113,14 +113,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + Size_Renamed);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = bit >> 3;
 		int pos = bit >> 3;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = bits[pos];
 		int v = Bits[pos];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int flag = 1 << (bit & 7);
 		int flag = 1 << (bit & 7);
 		if ((flag & v) != 0)
 		{
@@ -128,7 +122,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		else
 		{
-		  Bits[pos] = (sbyte)(v | flag);
+		  Bits[pos] = (byte)(v | flag);
 		  if (Count_Renamed != -1)
 		  {
 			Count_Renamed++;
@@ -140,13 +134,13 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  /// <summary>
 	  /// Sets the value of <code>bit</code> to zero. </summary>
-	  public override void Clear(int bit)
+	  public void Clear(int bit)
 	  {
 		if (bit >= Size_Renamed)
 		{
 		  throw new System.IndexOutOfRangeException(bit.ToString());
 		}
-		Bits[bit >> 3] &= (sbyte)(~(1 << (bit & 7)));
+        Bits[bit >> 3] &= (byte)(~(1 << (bit & 7)));
 		Count_Renamed = -1;
 	  }
 
@@ -156,14 +150,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
             throw new System.IndexOutOfRangeException(bit.ToString());
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int pos = bit >> 3;
 		int pos = bit >> 3;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = bits[pos];
 		int v = Bits[pos];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int flag = 1 << (bit & 7);
 		int flag = 1 << (bit & 7);
 		if ((flag & v) == 0)
 		{
@@ -171,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		else
 		{
-		  Bits[pos] &= (sbyte)(~flag);
+		  Bits[pos] &= (byte)(~flag);
 		  if (Count_Renamed != -1)
 		  {
 			Count_Renamed--;
@@ -185,7 +173,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Returns <code>true</code> if <code>bit</code> is one and
 	  ///  <code>false</code> if it is zero. 
 	  /// </summary>
-	  public override bool Get(int bit)
+	  public bool Get(int bit)
 	  {
 		Debug.Assert(bit >= 0 && bit < Size_Renamed, "bit " + bit + " is out of bounds 0.." + (Size_Renamed - 1));
 		return (Bits[bit >> 3] & (1 << (bit & 7))) != 0;
@@ -200,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		return Size_Renamed;
 	  }
 
-	  public override int Length()
+	  public int Length()
 	  {
 		return Size_Renamed;
 	  }
@@ -314,7 +302,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  for (int idx = 0;idx < Bits.Length;idx++)
 		  {
-			Bits[idx] = (sbyte)(~Bits[idx]);
+			Bits[idx] = (byte)(~Bits[idx]);
 		  }
 		  ClearUnusedBits();
 		}
@@ -326,15 +314,11 @@ namespace Lucene.Net.Codecs.Lucene40
 		// last byte:
 		if (Bits.Length > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int lastNBits = size & 7;
 		  int lastNBits = Size_Renamed & 7;
 		  if (lastNBits != 0)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mask = (1 << lastNBits)-1;
 			int mask = (1 << lastNBits) - 1;
-			Bits[Bits.Length - 1] &= (sbyte)mask;
+            Bits[Bits.Length - 1] &= (byte)mask;
 		  }
 		}
 	  }
@@ -343,7 +327,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Set all bits </summary>
 	  public void SetAll()
 	  {
-		Arrays.Fill(Bits, unchecked((sbyte) 0xff));
+		Arrays.Fill(Bits, unchecked((byte) 0xff));
 		ClearUnusedBits();
 		Count_Renamed = Size_Renamed;
 	  }
@@ -368,7 +352,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		int numCleared = Size() - Count();
 		for (int i = 0; i < Bits.Length && numCleared>0; i++)
 		{
-		  if (Bits[i] != unchecked((sbyte) 0xff))
+		  if (Bits[i] != unchecked((byte) 0xff))
 		  {
 			output.WriteVInt(i - last);
 			output.WriteByte(Bits[i]);
@@ -498,7 +482,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 		finally
 		{
-		  input.Close();
+		  input.Dispose();
 		}
 	  }
 
@@ -519,7 +503,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  private void ReadBits(IndexInput input)
 	  {
 		Count_Renamed = input.ReadInt(); // read count
-		Bits = new sbyte[GetNumBytes(Size_Renamed)]; // allocate bits
+        Bits = new byte[GetNumBytes(Size_Renamed)]; // allocate bits
 		input.ReadBytes(Bits, 0, Bits.Length);
 	  }
 
@@ -529,7 +513,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		Size_Renamed = input.ReadInt(); // (re)read size
 		Count_Renamed = input.ReadInt(); // read count
-		Bits = new sbyte[GetNumBytes(Size_Renamed)]; // allocate bits
+        Bits = new byte[GetNumBytes(Size_Renamed)]; // allocate bits
 		int last = 0;
 		int n = Count();
 		while (n > 0)
@@ -547,7 +531,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		Size_Renamed = input.ReadInt(); // (re)read size
 		Count_Renamed = input.ReadInt(); // read count
-		Bits = new sbyte[GetNumBytes(Size_Renamed)]; // allocate bits
+        Bits = new byte[GetNumBytes(Size_Renamed)]; // allocate bits
         CollectionsHelper.Fill(Bits, unchecked((sbyte)0xff));
 		ClearUnusedBits();
 		int last = 0;

@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Packed
 	/// Base implementation for <seealso cref="PagedMutable"/> and <seealso cref="PagedGrowableWriter"/>.
 	/// @lucene.internal
 	/// </summary>
-	internal abstract class AbstractPagedMutable<T> : LongValues where T : AbstractPagedMutable<T>
+	public abstract class AbstractPagedMutable<T> : LongValues where T : AbstractPagedMutable<T>
 	{
 
 	  internal static readonly int MIN_BLOCK_SIZE = 1 << 6;

@@ -50,6 +50,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
 	using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// reader for <seealso cref="Lucene45DocValuesFormat"/> </summary>
@@ -60,7 +61,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	  private readonly IDictionary<int, SortedSetEntry> SortedSets;
 	  private readonly IDictionary<int, NumericEntry> Ords;
 	  private readonly IDictionary<int, NumericEntry> OrdIndexes;
-	  //private readonly AtomicLong RamBytesUsed_Renamed;
+	  private readonly AtomicLong RamBytesUsed_Renamed;
 	  private readonly IndexInput Data;
 	  private readonly int MaxDoc;
 	  private readonly int Version;
@@ -132,7 +133,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  }
 		}
 
-		//RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+        RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
 	  }
 
 	  private void ReadSortedField(int fieldNumber, IndexInput meta, FieldInfos infos)
@@ -211,7 +212,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			// for "composite" types like sortedset, etc.
 			throw new Exception("Invalid field number: " + fieldNumber + " (resource=" + meta + ")");
 		  }
-		  sbyte type = meta.ReadByte();
+		  byte type = meta.ReadByte();
 		  if (type == Lucene45DocValuesFormat.NUMERIC)
 		  {
 			Numerics[fieldNumber] = ReadNumericEntry(meta);
@@ -351,10 +352,10 @@ namespace Lucene.Net.Codecs.Lucene45
 		return GetNumeric(entry);
 	  }
 
-	  /*public override long RamBytesUsed()
-	  {
-		return RamBytesUsed_Renamed.get();
-	  }*/
+      public override long RamBytesUsed()
+      {
+        return RamBytesUsed_Renamed.Get();
+      }
 
 	  public override void CheckIntegrity()
 	  {
@@ -366,7 +367,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  internal virtual LongValues GetNumeric(NumericEntry entry)
 	  {
-		IndexInput data = this.Data.Clone();
+		IndexInput data = (IndexInput)this.Data.Clone();
 		data.Seek(entry.Offset);
 
 		switch (entry.Format)
@@ -449,9 +450,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  private BinaryDocValues GetFixedBinary(FieldInfo field, BinaryEntry bytes)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput data = this.data.clone();
-		IndexInput data = this.Data.Clone();
+		IndexInput data = (IndexInput)this.Data.Clone();
 
 		return new LongBinaryDocValuesAnonymousInnerClassHelper(this, bytes, data);
 	  }
@@ -478,15 +477,13 @@ namespace Lucene.Net.Codecs.Lucene45
 			  Data.Seek(address);
 			  // NOTE: we could have one buffer, but various consumers (e.g. FieldComparatorSource) 
 			  // assume "they" own the bytes after calling this!
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] buffer = new byte[bytes.maxLength];
 			  sbyte[] buffer = new sbyte[Bytes.MaxLength];
 			  Data.ReadBytes(buffer, 0, buffer.Length);
 			  result.Bytes = buffer;
 			  result.Offset = 0;
 			  result.Length = buffer.Length;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			  throw;
 			}
@@ -499,8 +496,6 @@ namespace Lucene.Net.Codecs.Lucene45
 	  /// </summary>
 	  protected internal virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedReader addresses;
 		MonotonicBlockPackedReader addresses;
 		lock (AddressInstances)
 		{
@@ -510,7 +505,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			data.Seek(bytes.AddressesOffset);
 			addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, bytes.Count, false);
 			AddressInstances[field.Number] = addrInstance;
-			//RamBytesUsed_Renamed.addAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+            RamBytesUsed_Renamed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
 		  }
 		  addresses = addrInstance;
 		}
@@ -519,12 +514,8 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  private BinaryDocValues GetVariableBinary(FieldInfo field, BinaryEntry bytes)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IndexInput data = this.data.clone();
-		IndexInput data = this.Data.Clone();
+		IndexInput data = (IndexInput)this.Data.Clone();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.MonotonicBlockPackedReader addresses = getAddressInstance(data, field, bytes);
 		MonotonicBlockPackedReader addresses = GetAddressInstance(data, field, bytes);
 
 		return new LongBinaryDocValuesAnonymousInnerClassHelper2(this, bytes, data, addresses);
@@ -562,7 +553,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			  result.Offset = 0;
 			  result.Length = length;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			  throw;
 			}
@@ -594,7 +585,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			}
 			addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, size, false);
 			AddressInstances[field.Number] = addrInstance;
-			//RamBytesUsed_Renamed.addAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+            RamBytesUsed_Renamed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
 		  }
 		  addresses = addrInstance;
 		}
@@ -604,7 +595,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
 	  private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
 	  {
-		IndexInput data = this.Data.Clone();
+		IndexInput data = (IndexInput)this.Data.Clone();
 
 		MonotonicBlockPackedReader addresses = GetIntervalInstance(data, field, bytes);
 
@@ -616,7 +607,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		int valueCount = (int) Binaries[field.Number].Count;
 		BinaryDocValues binary = GetBinary(field);
 		NumericEntry entry = Ords[field.Number];
-		IndexInput data = this.Data.Clone();
+        IndexInput data = (IndexInput)this.Data.Clone();
 		data.Seek(entry.Offset);
 		BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
 
@@ -627,14 +618,14 @@ namespace Lucene.Net.Codecs.Lucene45
 	  {
 		  private readonly Lucene45DocValuesProducer OuterInstance;
 
-		  private int ValueCount;
+		  private int valueCount;
 		  private BinaryDocValues Binary;
 		  private BlockPackedReader Ordinals;
 
 		  public SortedDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
 		  {
 			  this.OuterInstance = outerInstance;
-			  this.ValueCount = valueCount;
+			  this.valueCount = valueCount;
 			  this.Binary = binary;
 			  this.Ordinals = ordinals;
 		  }
@@ -654,7 +645,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  {
 			  get
 			  {
-				return ValueCount;
+				return valueCount;
 			  }
 		  }
 
@@ -698,7 +689,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			data.Seek(entry.Offset);
 			ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, false);
 			OrdIndexInstances[field.Number] = ordIndexInstance;
-			//RamBytesUsed_Renamed.addAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
+            RamBytesUsed_Renamed.AddAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
 		  }
 		  ordIndex = ordIndexInstance;
 		}
@@ -718,7 +709,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  throw new Exception();
 		}
 
-		IndexInput data = this.Data.Clone();
+        IndexInput data = (IndexInput)this.Data.Clone();
 		long valueCount = Binaries[field.Number].Count;
 		// we keep the byte[]s and list of ords on disk, these could be large
 		LongBinaryDocValues binary = (LongBinaryDocValues) GetBinary(field);
@@ -733,7 +724,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	  {
 		  private readonly Lucene45DocValuesProducer OuterInstance;
 
-		  private long ValueCount;
+		  private long valueCount;
 		  private Lucene45DocValuesProducer.LongBinaryDocValues Binary;
 		  private LongValues Ordinals;
 		  private MonotonicBlockPackedReader OrdIndex;
@@ -741,7 +732,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  public RandomAccessOrdsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long valueCount, Lucene45DocValuesProducer.LongBinaryDocValues binary, LongValues ordinals, MonotonicBlockPackedReader ordIndex)
 		  {
 			  this.OuterInstance = outerInstance;
-			  this.ValueCount = valueCount;
+			  this.valueCount = valueCount;
 			  this.Binary = binary;
 			  this.Ordinals = ordinals;
 			  this.OrdIndex = ordIndex;
@@ -783,7 +774,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  {
 			  get
 			  {
-				return ValueCount;
+				return valueCount;
 			  }
 		  }
 
@@ -830,7 +821,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 		else
 		{
-		  IndexInput @in = Data.Clone();
+		  IndexInput @in = (IndexInput)Data.Clone();
 		  return new BitsAnonymousInnerClassHelper(this, offset, @in);
 		}
 	  }
@@ -888,9 +879,10 @@ namespace Lucene.Net.Codecs.Lucene45
 		}
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		Data.Close();
+          if (disposing)
+		       Data.Dispose();
 	  }
 
 	  /// <summary>
@@ -975,7 +967,7 @@ namespace Lucene.Net.Codecs.Lucene45
 		  Get((long)docID, result);
 		}
 
-		internal abstract void Get(long id, BytesRef Result);
+		public abstract void Get(long id, BytesRef Result);
 	  }
 
 	  // in the compressed case, we add a few additional operations for
@@ -1035,7 +1027,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			  return -TermsEnum_Renamed.Ord() - 1;
 			}
 		  }
-		  catch (Exception bogus)
+		  catch (Exception)
 		  {
 			throw;
 		  }
@@ -1047,9 +1039,9 @@ namespace Lucene.Net.Codecs.Lucene45
 			{
 			  try
 			  {
-				return GetTermsEnum(Data.Clone());
+                  return GetTermsEnum((IndexInput)Data.Clone());
 			  }
-			  catch (Exception e)
+			  catch (Exception)
 			  {
 				throw;
 			  }
@@ -1217,7 +1209,7 @@ namespace Lucene.Net.Codecs.Lucene45
 			{
 				get
 				{
-				  return BytesRef.UTF8SortedAsUnicodeComparator;
+				  return BytesRef.UTF8SortedAsUnicodeComparer;
 				}
 			}
 

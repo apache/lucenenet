@@ -22,8 +22,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-    using RamUsageEstimator;
-
 	/// <summary>
 	/// Class that Posting and PostingVector use to write byte
 	/// streams into shared fixed-size byte[] arrays.  The idea
@@ -251,8 +249,6 @@ namespace Lucene.Net.Util
 		{
 		  NextBuffer();
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int upto = byteUpto;
 		int upto = ByteUpto;
 		ByteUpto += size;
 		Buffer[ByteUpto - 1] = 16;
@@ -288,14 +284,8 @@ namespace Lucene.Net.Util
 	  public int AllocSlice(sbyte[] slice, int upto)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int level = slice[upto] & 15;
 		int level = slice[upto] & 15;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLevel = NEXT_LEVEL_ARRAY[level];
 		int newLevel = NEXT_LEVEL_ARRAY[level];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newSize = LEVEL_SIZE_ARRAY[newLevel];
 		int newSize = LEVEL_SIZE_ARRAY[newLevel];
 
 		// Maybe allocate another block
@@ -304,11 +294,7 @@ namespace Lucene.Net.Util
 		  NextBuffer();
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newUpto = byteUpto;
 		int newUpto = ByteUpto;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offset = newUpto + byteOffset;
 		int offset = newUpto + ByteOffset;
 		ByteUpto += newSize;
 
@@ -374,8 +360,6 @@ namespace Lucene.Net.Util
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bytesToCopy = length-overflow;
 			int bytesToCopy = length - overflow;
 			if (bytesToCopy > 0)
 			{
@@ -415,8 +399,6 @@ namespace Lucene.Net.Util
 		  }
 		  else
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int bytesToCopy = length - overflow;
 			int bytesToCopy = length - overflow;
 			Array.Copy(buffer, pos, bytes, bytesOffset, bytesToCopy);
 			pos = 0;

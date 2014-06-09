@@ -973,7 +973,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Returns a SortedSetDocValues view of this instance </summary>
-	  public virtual SortedSetDocValues Iterator(AtomicReader reader)
+	  public virtual SortedSetDocValues GetIterator(AtomicReader reader)
 	  {
 		if (Empty)
 		{

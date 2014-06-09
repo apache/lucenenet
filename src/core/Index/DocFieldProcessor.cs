@@ -302,7 +302,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal override void FinishDocument()
+	  public override void FinishDocument()
 	  {
 		try
 		{

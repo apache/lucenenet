@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  }
 		  else
 		  {
-			output.Close();
+			output.Dispose();
 		  }
 		}
 	  }

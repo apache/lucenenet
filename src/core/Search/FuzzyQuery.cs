@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
 		return buffer.ToString();
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = base.GetHashCode();
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
 		result = prime * result + PrefixLength_Renamed;
 		result = prime * result + MaxExpansions;
 		result = prime * result + (Transpositions_Renamed ? 0 : 1);
-		result = prime * result + ((Term_Renamed == null) ? 0 : Term_Renamed.HashCode());
+		result = prime * result + ((Term_Renamed == null) ? 0 : Term_Renamed.GetHashCode());
 		return result;
 	  }
 

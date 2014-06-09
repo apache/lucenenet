@@ -75,12 +75,12 @@ namespace Lucene.Net.Search
 		return Compiled.GetTermsEnum(terms);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = base.GetHashCode();
 		result = prime * result + Compiled.GetHashCode();
-		result = prime * result + ((Term == null) ? 0 : Term.HashCode());
+		result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
 		return result;
 	  }
 

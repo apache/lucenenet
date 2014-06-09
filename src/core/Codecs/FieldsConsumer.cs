@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// Called when we are done adding everything. </summary>
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
 	  /// <summary>
 	  /// Called during merging to merge all <seealso cref="Fields"/> from

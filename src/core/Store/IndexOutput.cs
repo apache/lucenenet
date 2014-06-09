@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Closes this stream to further operations. </summary>
-	  public override abstract void Close();
+	  public abstract void Dispose();
 
 	  /// <summary>
 	  /// Returns the current position in this file, where the next write will

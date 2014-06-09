@@ -55,6 +55,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
 	using MonotonicBlockPackedReader = Lucene.Net.Util.Packed.MonotonicBlockPackedReader;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Reader for <seealso cref="Lucene42DocValuesFormat"/>
@@ -74,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	  private readonly IDictionary<int, FST<long>> FstInstances = new Dictionary<int, FST<long>>();
 
 	  private readonly int MaxDoc;
-	  //private readonly AtomicLong RamBytesUsed_Renamed;
+	  private readonly AtomicLong RamBytesUsed_Renamed;
 
 	  internal const sbyte NUMBER = 0;
 	  internal const sbyte BYTES = 1;
@@ -99,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		// read in the entries from the metadata file.
 		ChecksumIndexInput @in = state.Directory.OpenChecksumInput(metaName, state.Context);
 		bool success = false;
-		//RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
+		RamBytesUsed_Renamed = new AtomicLong(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
 		try
 		{
 		  Version = CodecUtil.CheckHeader(@in, metaCodec, VERSION_START, VERSION_CURRENT);
@@ -171,7 +172,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		  {
 			NumericEntry entry = new NumericEntry();
 			entry.Offset = meta.ReadLong();
-			entry.Format = meta.ReadByte();
+			entry.Format = meta.ReadSByte();
 			switch (entry.Format)
 			{
 			  case DELTA_COMPRESSED:
@@ -231,10 +232,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		  }
 	  }
 
-	  /*public override long RamBytesUsed()
+	  public override long RamBytesUsed()
 	  {
-		return RamBytesUsed_Renamed.get();
-	  }*/
+		return RamBytesUsed_Renamed.Get();
+	  }
 
 	  public override void CheckIntegrity()
 	  {
@@ -264,24 +265,24 @@ namespace Lucene.Net.Codecs.Lucene42
 			int formatID = Data.ReadVInt();
 			int bitsPerValue = Data.ReadVInt();
 			PackedInts.Reader ordsReader = PackedInts.GetReaderNoHeader(Data, PackedInts.Format.ById(formatID), entry.PackedIntsVersion, MaxDoc, bitsPerValue);
-			//RamBytesUsed_Renamed.addAndGet(Org.apache.lucene.util.RamUsageEstimator.sizeOf(decode) + ordsReader.RamBytesUsed());
+            RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
 			return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
 		  case DELTA_COMPRESSED:
 			int blockSize = Data.ReadVInt();
 			BlockPackedReader reader = new BlockPackedReader(Data, entry.PackedIntsVersion, blockSize, MaxDoc, false);
-			//RamBytesUsed_Renamed.addAndGet(reader.RamBytesUsed());
+            RamBytesUsed_Renamed.AddAndGet(reader.RamBytesUsed());
 			return reader;
 		  case UNCOMPRESSED:
 			sbyte[] bytes = new sbyte[MaxDoc];
 			Data.ReadBytes(bytes, 0, bytes.Length);
-			//RamBytesUsed_Renamed.addAndGet(Org.apache.lucene.util.RamUsageEstimator.sizeOf(bytes));
+            RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
 			return new NumericDocValuesAnonymousInnerClassHelper2(this, bytes);
 		  case GCD_COMPRESSED:
 			long min = Data.ReadLong();
 			long mult = Data.ReadLong();
 			int quotientBlockSize = Data.ReadVInt();
 			BlockPackedReader quotientReader = new BlockPackedReader(Data, entry.PackedIntsVersion, quotientBlockSize, MaxDoc, false);
-			//RamBytesUsed_Renamed.addAndGet(quotientReader.RamBytesUsed());
+            RamBytesUsed_Renamed.AddAndGet(quotientReader.RamBytesUsed());
 			return new NumericDocValuesAnonymousInnerClassHelper3(this, min, mult, quotientReader);
 		  default:
 			throw new InvalidOperationException();
@@ -372,13 +373,13 @@ namespace Lucene.Net.Codecs.Lucene42
 		if (entry.MinLength == entry.MaxLength)
 		{
 		  int fixedLength = entry.MinLength;
-		  //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed());
 		  return new BinaryDocValuesAnonymousInnerClassHelper(this, bytesReader, fixedLength);
 		}
 		else
 		{
 		  MonotonicBlockPackedReader addresses = new MonotonicBlockPackedReader(Data, entry.PackedIntsVersion, entry.BlockSize, MaxDoc, false);
-		  //RamBytesUsed_Renamed.addAndGet(bytes.RamBytesUsed() + addresses.RamBytesUsed());
+          RamBytesUsed_Renamed.AddAndGet(bytes.RamBytesUsed() + addresses.RamBytesUsed());
 		  return new BinaryDocValuesAnonymousInnerClassHelper2(this, bytesReader, addresses);
 		}
 	  }
@@ -436,7 +437,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		  {
 			Data.Seek(entry.Offset);
 			instance = new FST<long>(Data, PositiveIntOutputs.Singleton);
-			//RamBytesUsed_Renamed.addAndGet(instance.SizeInBytes());
+            RamBytesUsed_Renamed.AddAndGet(instance.SizeInBytes());
 			FstInstances[field.Number] = instance;
 		  }
 		}
@@ -555,7 +556,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		  {
 			Data.Seek(entry.Offset);
 			instance = new FST<long>((DataInput)Data, Lucene.Net.Util.Fst.PositiveIntOutputs.Singleton);
-			//RamBytesUsed_Renamed.addAndGet(instance.SizeInBytes());
+			RamBytesUsed_Renamed.AddAndGet(instance.SizeInBytes());
 			FstInstances[field.Number] = instance;
 		  }
 		}
@@ -623,7 +624,7 @@ namespace Lucene.Net.Codecs.Lucene42
 			  set
 			  {
 				DocToOrds.Get(value, @ref);
-				Input.Reset(@ref.Bytes, @ref.Offset, @ref.Length);
+				Input.Reset((byte[])(Array)@ref.Bytes, @ref.Offset, @ref.Length);
 				currentOrd = 0;
 			  }
 		  }
@@ -696,10 +697,13 @@ namespace Lucene.Net.Codecs.Lucene42
 		}
 	  }
 
-	  public override void Close()
-	  {
-		Data.Close();
-	  }
+      protected override void Dispose(bool disposing)
+      {
+          if (disposing)
+          {
+              Data.Dispose();
+          }
+      }
 
 	  internal class NumericEntry
 	  {
@@ -762,7 +766,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 

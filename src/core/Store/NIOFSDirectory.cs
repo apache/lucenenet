@@ -59,7 +59,8 @@ namespace Lucene.Net.Store
 	  /// <param name="lockFactory"> the lock factory to use, or null for the default
 	  /// (<seealso cref="NativeFSLockFactory"/>); </param>
 	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
-	  public NIOFSDirectory(File path, LockFactory lockFactory) : base(path, lockFactory)
+	  public NIOFSDirectory(DirectoryInfo path, LockFactory lockFactory) 
+          : base(path, lockFactory)
 	  {
 	  }
 
@@ -68,7 +69,8 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  /// <param name="path"> the path of the directory </param>
 	  /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
-	  public NIOFSDirectory(File path) : base(path, null)
+      public NIOFSDirectory(DirectoryInfo path)
+          : base(path, null)
 	  {
 	  }
 
@@ -77,21 +79,21 @@ namespace Lucene.Net.Store
 	  public override IndexInput OpenInput(string name, IOContext context)
 	  {
 		EnsureOpen();
-		File path = new File(Directory, name);
-		FileChannel fc = FileChannel.open(path.toPath(), StandardOpenOption.READ);
+		//File path = new File(Directory, name);
+        FileInfo path = new FileInfo(Path.Combine(Directory.FullName, name));
+        FileStream fc = new FileStream(path.FullName, FileMode.Open);//FileChannel.open(path.toPath(), StandardOpenOption.READ);
 		return new NIOFSIndexInput("NIOFSIndexInput(path=\"" + path + "\")", fc, context);
+        //return new NIOFSIndexInput(new FileInfo(Path.Combine(Directory.FullName, name)), context, ReadChunkSize);
 	  }
 
 	  public override IndexInputSlicer CreateSlicer(string name, IOContext context)
 	  {
 		EnsureOpen();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.io.File path = new java.io.File(getDirectory(), name);
-		File path = new File(Directory, name);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.nio.channels.FileChannel descriptor = java.nio.channels.FileChannel.open(path.toPath(), java.nio.file.StandardOpenOption.READ);
-		FileChannel descriptor = FileChannel.open(path.toPath(), StandardOpenOption.READ);
-		return new IndexInputSlicerAnonymousInnerClassHelper(this, context, path, descriptor);
+		//File path = new File(Directory, name);
+        //FileStream descriptor = FileChannel.open(path.toPath(), StandardOpenOption.READ);
+        FileInfo path = new FileInfo(Path.Combine(Directory.FullName, name));
+        FileStream fc = new FileStream(path.FullName, FileMode.Open);
+		return new IndexInputSlicerAnonymousInnerClassHelper(this, context, path, fc);
 	  }
 
 	  private class IndexInputSlicerAnonymousInnerClassHelper : Directory.IndexInputSlicer
@@ -99,10 +101,11 @@ namespace Lucene.Net.Store
 		  private readonly NIOFSDirectory OuterInstance;
 
 		  private Lucene.Net.Store.IOContext Context;
-		  private File Path;
-		  private FileChannel Descriptor;
+		  private FileInfo Path;
+		  private FileStream Descriptor;
 
-		  public IndexInputSlicerAnonymousInnerClassHelper(NIOFSDirectory outerInstance, Lucene.Net.Store.IOContext context, File path, FileChannel descriptor) : base(outerInstance)
+          public IndexInputSlicerAnonymousInnerClassHelper(NIOFSDirectory outerInstance, Lucene.Net.Store.IOContext context, FileInfo path, FileStream descriptor)
+              : base(outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Context = context;
@@ -111,9 +114,12 @@ namespace Lucene.Net.Store
 		  }
 
 
-		  public override void Close()
+		  public override void Dispose(bool disposing)
 		  {
-			Descriptor.close();
+              if (disposing)
+              {
+                  Descriptor.Close();
+              }
 		  }
 
 		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
@@ -125,11 +131,11 @@ namespace Lucene.Net.Store
 		  {
 			try
 			{
-			  return openSlice("full-slice", 0, Descriptor.size());
+			  return OpenSlice("full-slice", 0, Descriptor.Length);
 			}
 			catch (System.IO.IOException ex)
 			{
-			  throw new Exception(ex);
+			  throw new Exception(ex.Message, ex);
 			}
 		  }
 	  }
@@ -146,7 +152,7 @@ namespace Lucene.Net.Store
 
 		/// <summary>
 		/// the file channel we will read from </summary>
-		protected internal readonly FileChannel Channel;
+		protected internal readonly FileStream Channel;
 		/// <summary>
 		/// is this instance a clone and hence does not own the file to close it </summary>
 		internal bool IsClone = false;
@@ -159,14 +165,15 @@ namespace Lucene.Net.Store
 
 		internal ByteBuffer ByteBuf; // wraps the buffer for NIO
 
-		public NIOFSIndexInput(string resourceDesc, FileChannel fc, IOContext context) : base(resourceDesc, context)
+		public NIOFSIndexInput(string resourceDesc, FileStream fc, IOContext context) : base(resourceDesc, context)
 		{
 		  this.Channel = fc;
 		  this.Off = 0L;
-		  this.End = fc.size();
+		  this.End = fc.Length;
 		}
 
-		public NIOFSIndexInput(string resourceDesc, FileChannel fc, long off, long length, int bufferSize) : base(resourceDesc, bufferSize)
+        public NIOFSIndexInput(string resourceDesc, FileStream fc, long off, long length, int bufferSize)
+            : base(resourceDesc, bufferSize)
 		{
 		  this.Channel = fc;
 		  this.Off = off;
@@ -174,15 +181,15 @@ namespace Lucene.Net.Store
 		  this.IsClone = true;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  if (!IsClone)
 		  {
-			Channel.close();
+			Channel.Close();
 		  }
 		}
 
-		public override NIOFSIndexInput Clone()
+		public override object Clone()
 		{
 		  NIOFSIndexInput clone = (NIOFSIndexInput)base.Clone();
 		  clone.IsClone = true;
@@ -194,58 +201,61 @@ namespace Lucene.Net.Store
 		  return End - Off;
 		}
 
-		protected internal override void NewBuffer(sbyte[] newBuffer)
+		protected internal override void NewBuffer(byte[] newBuffer)
 		{
 		  base.NewBuffer(newBuffer);
-		  ByteBuf = ByteBuffer.wrap(newBuffer);
+		  ByteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer);
 		}
 
-		protected internal override void ReadInternal(sbyte[] b, int offset, int len)
+		protected internal override void ReadInternal(byte[] b, int offset, int len)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.nio.ByteBuffer bb;
 		  ByteBuffer bb;
 
 		  // Determine the ByteBuffer we should use
-		  if (b == Buffer)
+          if (b == Buffer && 0 == offset)
 		  {
 			// Use our own pre-wrapped byteBuf:
 			Debug.Assert(ByteBuf != null);
-			bb = ByteBuf;
-			ByteBuf.clear().position(offset);
+            ByteBuf.Clear();
+            ByteBuf.Limit = len;
+            bb = ByteBuf;
 		  }
 		  else
 		  {
-			bb = ByteBuffer.wrap(b, offset, len);
+			bb = ByteBuffer.Wrap((byte[])(Array)b, offset, len);
 		  }
 
+          int readOffset = bb.Position;
+          int readLength = bb.Limit - readOffset;
 		  long pos = FilePointer + Off;
 
 		  if (pos + len > End)
 		  {
-			throw new EOFException("read past EOF: " + this);
+              throw new EndOfStreamException("read past EOF: " + this);
 		  }
 
 		  try
 		  {
-			int readLength = len;
 			while (readLength > 0)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toRead = Math.min(CHUNK_SIZE, readLength);
-			  int toRead = Math.Min(CHUNK_SIZE, readLength);
-			  bb.Limit(bb.Position + toRead);
-			  Debug.Assert(bb.Remaining() == toRead);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i = channel.read(bb, pos);
-			  int i = Channel.read(bb, pos);
-			  if (i < 0) // be defensive here, even though we checked before hand, something could have changed
-			  {
-				throw new Exception ("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + toRead + " end: " + End);
-			  }
-			  Debug.Assert(i > 0, "FileChannel.read with non zero-length bb.remaining() must always read at least one byte (FileChannel is in blocking mode, see spec of ReadableByteChannel)");
-			  pos += i;
-			  readLength -= i;
+                int limit;
+                if (readLength > CHUNK_SIZE)
+                {
+                    limit = readOffset + CHUNK_SIZE;
+                }
+                else
+                {
+                    limit = readOffset + readLength;
+                }
+                bb.Limit = limit;
+                int i = Channel.Read(bb, pos);
+                if (i < 0) // be defensive here, even though we checked before hand, something could have changed
+                {
+                    throw new Exception("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + End);
+                }
+                pos += i;
+                readOffset += i;
+                readLength -= i;
 			}
 			Debug.Assert(readLength == 0);
 		  }

@@ -219,7 +219,7 @@ namespace Lucene.Net.Util.Automaton
 		}
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 1;

@@ -89,7 +89,7 @@ namespace Lucene.Net.Search.Spans
 		return buffer.ToString();
 	  }
 
-	  public override SpanPositionRangeQuery Clone()
+	  public override object Clone()
 	  {
 		SpanPositionRangeQuery result = new SpanPositionRangeQuery((SpanQuery) match.Clone(), start, end);
 		result.Boost = Boost;

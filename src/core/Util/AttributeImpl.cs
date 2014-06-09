@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 	/// Attributes are used to add data in a dynamic, yet type-safe way to a source
 	/// of usually streamed objects, e. g. a <seealso cref="Lucene.Net.Analysis.TokenStream"/>.
 	/// </summary>
-	public abstract class AttributeImpl : ICloneable, Attribute
+	public abstract class AttributeImpl : Attribute, ICloneable 
 	{
 	  /// <summary>
 	  /// Clears the values in this AttributeImpl and resets it to its 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util
 	  /// Shallow clone. Subclasses must override this if they 
 	  /// need to clone any members deeply,
 	  /// </summary>
-	  public override AttributeImpl Clone()
+	  public object Clone()
 	  {
 		AttributeImpl clone = null;
 		try

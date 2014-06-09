@@ -39,21 +39,25 @@ namespace Lucene.Net.Store
 		this.Digest = new BufferedChecksum(new CRC32());
 	  }
 
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte b = main.readByte();
-		sbyte b = Main.ReadByte();
+		byte b = Main.ReadByte();
 		Digest.Update(b);
 		return b;
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		Main.ReadBytes(b, offset, len);
         Digest.Update((byte[])(Array) b, offset, len);
 	  }
-
+/*
+      public override void ReadBytes(byte[] b, int offset, int len)
+      {
+          Main.ReadBytes(b, offset, len);
+          Digest.Update(b, offset, len);
+      }
+        */
 	  public override long Checksum
 	  {
 		  get
@@ -62,9 +66,9 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
-		Main.Close();
+		Main.Dispose();
 	  }
 
 	  public override long FilePointer
@@ -80,7 +84,7 @@ namespace Lucene.Net.Store
 		return Main.Length();
 	  }
 
-	  public override IndexInput Clone()
+	  public override object Clone()
 	  {
 		throw new System.NotSupportedException();
 	  }

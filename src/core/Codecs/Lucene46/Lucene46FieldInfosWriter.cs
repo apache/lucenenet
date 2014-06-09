@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene46
 		{
 		  if (success)
 		  {
-			output.Close();
+			output.Dispose();
 		  }
 		  else
 		  {

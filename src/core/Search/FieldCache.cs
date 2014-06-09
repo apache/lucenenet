@@ -41,6 +41,7 @@ namespace Lucene.Net.Search
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using System.IO;
+using System.Runtime.CompilerServices;
 
 	/// <summary>
 	/// Expert: Maintains caches of term values.
@@ -53,115 +54,6 @@ namespace Lucene.Net.Search
 	/// @lucene.internal </seealso>
 	public interface FieldCache
 	{
-
-	  /// <summary>
-	  /// Field values as 8-bit signed bytes </summary>
-
-	  /// <summary>
-	  /// Field values as 16-bit signed shorts </summary>
-
-	  /// <summary>
-	  /// Field values as 32-bit signed integers </summary>
-
-	  /// <summary>
-	  /// Field values as 64-bit signed long integers </summary>
-
-	  /// <summary>
-	  /// Field values as 32-bit floats </summary>
-
-	  /// <summary>
-	  /// Field values as 64-bit doubles </summary>
-
-	  /// <summary>
-	  /// Placeholder indicating creation of this cache is currently in-progress.
-	  /// </summary>
-
-	  /// <summary>
-	  /// Marker interface as super-interface to all parsers. It
-	  /// is used to specify a custom parser to {@link
-	  /// SortField#SortField(String, FieldCache.Parser)}.
-	  /// </summary>
-
-	  /// <summary>
-	  /// Interface to parse bytes from document fields. </summary>
-	  /// <seealso cref= FieldCache#getBytes(AtomicReader, String, FieldCache.ByteParser, boolean) </seealso>
-
-	  /// <summary>
-	  /// Interface to parse shorts from document fields. </summary>
-	  /// <seealso cref= FieldCache#getShorts(AtomicReader, String, FieldCache.ShortParser, boolean) </seealso>
-
-	  /// <summary>
-	  /// Interface to parse ints from document fields. </summary>
-	  /// <seealso cref= FieldCache#getInts(AtomicReader, String, FieldCache.IntParser, boolean) </seealso>
-
-	  /// <summary>
-	  /// Interface to parse floats from document fields. </summary>
-	  /// <seealso cref= FieldCache#getFloats(AtomicReader, String, FieldCache.FloatParser, boolean) </seealso>
-
-	  /// <summary>
-	  /// Interface to parse long from document fields. </summary>
-	  /// <seealso cref= FieldCache#getLongs(AtomicReader, String, FieldCache.LongParser, boolean) </seealso>
-
-	  /// <summary>
-	  /// Interface to parse doubles from document fields. </summary>
-	  /// <seealso cref= FieldCache#getDoubles(AtomicReader, String, FieldCache.DoubleParser, boolean) </seealso>
-
-	  /// <summary>
-	  /// Expert: The cache used internally by sorting and range query classes. </summary>
-
-	  /// <summary>
-	  /// The default parser for byte values, which are encoded by <seealso cref="Byte#toString(byte)"/> </summary>
-[Obsolete]
-//	  public static final FieldCache_ByteParser DEFAULT_BYTE_PARSER = new FieldCache_ByteParserAnonymousInnerClassHelper();
-
-	  /// <summary>
-	  /// The default parser for short values, which are encoded by <seealso cref="Short#toString(short)"/> </summary>
-[Obsolete]
-//	  public static final FieldCache_ShortParser DEFAULT_SHORT_PARSER = new FieldCache_ShortParserAnonymousInnerClassHelper();
-
-	  /// <summary>
-	  /// The default parser for int values, which are encoded by <seealso cref="Integer#toString(int)"/> </summary>
-[Obsolete]
-//	  public static final FieldCache_IntParser DEFAULT_INT_PARSER = new FieldCache_IntParserAnonymousInnerClassHelper();
-
-	  /// <summary>
-	  /// The default parser for float values, which are encoded by <seealso cref="Float#toString(float)"/> </summary>
-[Obsolete]
-//	  public static final FieldCache_FloatParser DEFAULT_FLOAT_PARSER = new FieldCache_FloatParserAnonymousInnerClassHelper();
-
-	  /// <summary>
-	  /// The default parser for long values, which are encoded by <seealso cref="Long#toString(long)"/> </summary>
-[Obsolete]
-//	  public static final FieldCache_LongParser DEFAULT_LONG_PARSER = new FieldCache_LongParserAnonymousInnerClassHelper();
-
-	  /// <summary>
-	  /// The default parser for double values, which are encoded by <seealso cref="Double#toString(double)"/> </summary>
-[Obsolete]
-//	  public static final FieldCache_DoubleParser DEFAULT_DOUBLE_PARSER = new FieldCache_DoubleParserAnonymousInnerClassHelper();
-
-	  /// <summary>
-	  /// A parser instance for int values encoded by <seealso cref="NumericUtils"/>, e.g. when indexed
-	  /// via <seealso cref="IntField"/>/<seealso cref="NumericTokenStream"/>.
-	  /// </summary>
-//	  public static final FieldCache_IntParser NUMERIC_UTILS_INT_PARSER = new FieldCache_IntParserAnonymousInnerClassHelper2();
-
-	  /// <summary>
-	  /// A parser instance for float values encoded with <seealso cref="NumericUtils"/>, e.g. when indexed
-	  /// via <seealso cref="FloatField"/>/<seealso cref="NumericTokenStream"/>.
-	  /// </summary>
-//	  public static final FieldCache_FloatParser NUMERIC_UTILS_FLOAT_PARSER = new FieldCache_FloatParserAnonymousInnerClassHelper2();
-
-	  /// <summary>
-	  /// A parser instance for long values encoded by <seealso cref="NumericUtils"/>, e.g. when indexed
-	  /// via <seealso cref="LongField"/>/<seealso cref="NumericTokenStream"/>.
-	  /// </summary>
-//	  public static final FieldCache_LongParser NUMERIC_UTILS_LONG_PARSER = new FieldCache_LongParserAnonymousInnerClassHelper2();
-
-	  /// <summary>
-	  /// A parser instance for double values encoded with <seealso cref="NumericUtils"/>, e.g. when indexed
-	  /// via <seealso cref="DoubleField"/>/<seealso cref="NumericTokenStream"/>.
-	  /// </summary>
-//	  public static final FieldCache_DoubleParser NUMERIC_UTILS_DOUBLE_PARSER = new FieldCache_DoubleParserAnonymousInnerClassHelper2();
 
 	  /// <summary>
 	  /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -183,7 +75,7 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  FieldCache_Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
+	  FieldCache_Fields.Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -198,7 +90,7 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  FieldCache_Bytes GetBytes(AtomicReader reader, string field, FieldCache_ByteParser parser, bool setDocsWithField);
+	  FieldCache_Fields.Bytes GetBytes(AtomicReader reader, string field, FieldCache_Fields.IByteParser parser, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Checks the internal cache for an appropriate entry, and if none is
@@ -212,7 +104,7 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  FieldCache_Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField);
+	  FieldCache_Fields.Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Checks the internal cache for an appropriate entry, and if none is found,
@@ -227,14 +119,14 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">  If any error occurs. </exception>
 	  /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead. 
-	  FieldCache_Shorts GetShorts(AtomicReader reader, string field, FieldCache_ShortParser parser, bool setDocsWithField);
+	  FieldCache_Fields.Shorts GetShorts(AtomicReader reader, string field, FieldCache_Fields.IShortParser parser, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns an <seealso cref="Ints"/> over the values found in documents in the given
 	  /// field.
 	  /// </summary>
 	  /// <seealso cref= #getInts(AtomicReader, String, IntParser, boolean) </seealso>
-	  FieldCache_Ints GetInts(AtomicReader reader, string field, bool setDocsWithField);
+	  FieldCache_Fields.Ints GetInts(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns an <seealso cref="Ints"/> over the values found in documents in the given
@@ -259,14 +151,14 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">
 	  ///           If any error occurs. </exception>
-	  FieldCache_Ints GetInts(AtomicReader reader, string field, FieldCache_IntParser parser, bool setDocsWithField);
+	  FieldCache_Fields.Ints GetInts(AtomicReader reader, string field, FieldCache_Fields.IIntParser parser, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
 	  /// field.
 	  /// </summary>
 	  /// <seealso cref= #getFloats(AtomicReader, String, FloatParser, boolean) </seealso>
-	  FieldCache_Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField);
+	  FieldCache_Fields.Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
@@ -291,14 +183,14 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">
 	  ///           If any error occurs. </exception>
-	  FieldCache_Floats GetFloats(AtomicReader reader, string field, FieldCache_FloatParser parser, bool setDocsWithField);
+	  FieldCache_Fields.Floats GetFloats(AtomicReader reader, string field, FieldCache_Fields.IFloatParser parser, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
 	  /// field.
 	  /// </summary>
 	  /// <seealso cref= #getLongs(AtomicReader, String, LongParser, boolean) </seealso>
-	  FieldCache_Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField);
+	  FieldCache_Fields.Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
@@ -323,14 +215,14 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">
 	  ///           If any error occurs. </exception>
-	  FieldCache_Longs GetLongs(AtomicReader reader, string field, FieldCache_LongParser parser, bool setDocsWithField);
+	  FieldCache_Fields.Longs GetLongs(AtomicReader reader, string field, FieldCache_Fields.ILongParser parser, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
 	  /// field.
 	  /// </summary>
 	  /// <seealso cref= #getDoubles(AtomicReader, String, DoubleParser, boolean) </seealso>
-	  FieldCache_Doubles GetDoubles(AtomicReader reader, string field, bool setDocsWithField);
+	  FieldCache_Fields.Doubles GetDoubles(AtomicReader reader, string field, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
@@ -355,7 +247,7 @@ namespace Lucene.Net.Search
 	  /// <returns> The values in the given field for each document. </returns>
 	  /// <exception cref="IOException">
 	  ///           If any error occurs. </exception>
-	  FieldCache_Doubles GetDoubles(AtomicReader reader, string field, FieldCache_DoubleParser parser, bool setDocsWithField);
+	  FieldCache_Fields.Doubles GetDoubles(AtomicReader reader, string field, FieldCache_Fields.IDoubleParser parser, bool setDocsWithField);
 
 	  /// <summary>
 	  /// Checks the internal cache for an appropriate entry, and if none
@@ -429,7 +321,7 @@ namespace Lucene.Net.Search
 	  /// </p>
 	  /// @lucene.experimental
 	  /// </summary>
-	  FieldCache_CacheEntry[] CacheEntries {get;}
+	  FieldCache_Fields.CacheEntry[] CacheEntries {get;}
 
 	  /// <summary>
 	  /// <p>
@@ -465,6 +357,441 @@ namespace Lucene.Net.Search
 
 	public static class FieldCache_Fields
 	{
+
+        public abstract class Bytes
+        {
+            public abstract sbyte Get(int docID);
+
+            public static readonly Bytes EMPTY = new EmptyBytes();
+
+            public sealed class EmptyBytes : Bytes
+            {
+                public override sbyte Get(int docID)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public abstract class Shorts
+        {
+            public abstract short Get(int docID);
+
+            public static readonly Shorts EMPTY = new EmptyShorts();
+
+            public sealed class EmptyShorts : Shorts
+            {
+                public override short Get(int docID)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public abstract class Ints
+        {
+            public abstract int Get(int docID);
+
+            public static readonly Ints EMPTY = new EmptyInts();
+
+            public sealed class EmptyInts : Ints
+            {
+                public override int Get(int docID)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public abstract class Longs
+        {
+            public abstract long Get(int docID);
+
+            public static readonly Longs EMPTY = new EmptyLongs();
+
+            public sealed class EmptyLongs : Longs
+            {
+                public override long Get(int docID)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public abstract class Floats
+        {
+            public abstract float Get(int docID);
+
+            public static readonly Floats EMPTY = new EmptyFloats();
+
+            public sealed class EmptyFloats : Floats
+            {
+                public override float Get(int docID)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public abstract class Doubles
+        {
+            public abstract double Get(int docID);
+
+            public static readonly Doubles EMPTY = new EmptyDoubles();
+
+            public sealed class EmptyDoubles : Doubles
+            {
+                public override double Get(int docID)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public sealed class CreationPlaceholder
+        {
+            internal object Value;
+        }
+
+        public interface IParser
+        {
+            TermsEnum TermsEnum(Terms terms);
+        }
+
+        public interface IByteParser : IParser
+        {
+            sbyte ParseByte(BytesRef term);
+        }
+
+        public interface IShortParser : IParser
+        {
+            short ParseShort(BytesRef term);
+        }
+
+        public interface IIntParser : IParser
+        {
+            int ParseInt(BytesRef term);
+        }
+
+        public interface IFloatParser : IParser
+        {
+            float ParseFloat(BytesRef term);
+        }
+
+        public interface ILongParser : IParser
+        {
+            long ParseLong(BytesRef term);
+        }
+
+        public interface IDoubleParser : IParser
+        {
+            double ParseDouble(BytesRef term);
+        }
+
+        public static FieldCache DEFAULT = new FieldCacheImpl();
+
+        public static readonly IByteParser DEFAULT_BYTE_PARSER = new AnonymousByteParser();
+
+        private sealed class AnonymousByteParser : IByteParser
+        {
+            public sbyte ParseByte(BytesRef term)
+            {
+                // TODO: would be far better to directly parse from
+                // UTF8 bytes... but really users should use
+                // IntField, instead, which already decodes
+                // directly from byte[]
+                return sbyte.Parse(term.Utf8ToString());
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".DEFAULT_BYTE_PARSER";
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return terms.Iterator(null);
+            }
+        }
+
+        public static readonly IShortParser DEFAULT_SHORT_PARSER = new AnonymousShortParser();
+
+        private sealed class AnonymousShortParser : IShortParser
+        {
+            public short ParseShort(BytesRef term)
+            {
+                // TODO: would be far better to directly parse from
+                // UTF8 bytes... but really users should use
+                // IntField, instead, which already decodes
+                // directly from byte[]
+                return short.Parse(term.Utf8ToString());
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".DEFAULT_SHORT_PARSER";
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return terms.Iterator(null);
+            }
+        }
+
+        public static readonly IIntParser DEFAULT_INT_PARSER = new AnonymousIntParser();
+
+        private sealed class AnonymousIntParser : IIntParser
+        {
+            public int ParseInt(BytesRef term)
+            {
+                // TODO: would be far better to directly parse from
+                // UTF8 bytes... but really users should use
+                // IntField, instead, which already decodes
+                // directly from byte[]
+                return int.Parse(term.Utf8ToString());
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return terms.Iterator(null);
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".DEFAULT_INT_PARSER";
+            }
+        }
+
+        public static readonly IFloatParser DEFAULT_FLOAT_PARSER = new AnonymousFloatParser();
+
+        private sealed class AnonymousFloatParser : IFloatParser
+        {
+            public float ParseFloat(BytesRef term)
+            {
+                // TODO: would be far better to directly parse from
+                // UTF8 bytes... but really users should use
+                // FloatField, instead, which already decodes
+                // directly from byte[]
+                return float.Parse(term.Utf8ToString());
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return terms.Iterator(null);
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".DEFAULT_FLOAT_PARSER";
+            }
+        }
+
+        public static readonly ILongParser DEFAULT_LONG_PARSER = new AnonymousLongParser();
+
+        private sealed class AnonymousLongParser : ILongParser
+        {
+            public long ParseLong(BytesRef term)
+            {
+                // TODO: would be far better to directly parse from
+                // UTF8 bytes... but really users should use
+                // LongField, instead, which already decodes
+                // directly from byte[]
+                return long.Parse(term.Utf8ToString());
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return terms.Iterator(null);
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".DEFAULT_LONG_PARSER";
+            }
+        }
+
+        public static readonly IDoubleParser DEFAULT_DOUBLE_PARSER = new AnonymousDoubleParser();
+
+        private sealed class AnonymousDoubleParser : IDoubleParser
+        {
+            public double ParseDouble(BytesRef term)
+            {
+                // TODO: would be far better to directly parse from
+                // UTF8 bytes... but really users should use
+                // DoubleField, instead, which already decodes
+                // directly from byte[]
+                return double.Parse(term.Utf8ToString());
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return terms.Iterator(null);
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".DEFAULT_DOUBLE_PARSER";
+            }
+        }
+
+        public static readonly IIntParser NUMERIC_UTILS_INT_PARSER = new AnonymousNumericUtilsIntParser();
+
+        private sealed class AnonymousNumericUtilsIntParser : IIntParser
+        {
+            public int ParseInt(BytesRef term)
+            {
+                return NumericUtils.PrefixCodedToInt(term);
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_INT_PARSER";
+            }
+        }
+
+        public static readonly IFloatParser NUMERIC_UTILS_FLOAT_PARSER = new AnonymousNumericUtilsFloatParser();
+
+        private sealed class AnonymousNumericUtilsFloatParser : IFloatParser
+        {
+            public float ParseFloat(BytesRef term)
+            {
+                return NumericUtils.SortableIntToFloat(NumericUtils.PrefixCodedToInt(term));
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_FLOAT_PARSER";
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
+            }
+        }
+
+        public static readonly ILongParser NUMERIC_UTILS_LONG_PARSER = new AnonymousNumericUtilsLongParser();
+
+        private sealed class AnonymousNumericUtilsLongParser : ILongParser
+        {
+            public long ParseLong(BytesRef term)
+            {
+                return NumericUtils.PrefixCodedToLong(term);
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_LONG_PARSER";
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
+            }
+        }
+
+        public static readonly IDoubleParser NUMERIC_UTILS_DOUBLE_PARSER = new AnonymousNumericUtilsDoubleParser();
+
+        private sealed class AnonymousNumericUtilsDoubleParser : IDoubleParser
+        {
+            public double ParseDouble(BytesRef term)
+            {
+                return NumericUtils.SortableLongToDouble(NumericUtils.PrefixCodedToLong(term));
+            }
+
+            public override string ToString()
+            {
+                return typeof(FieldCache).FullName + ".NUMERIC_UTILS_DOUBLE_PARSER";
+            }
+
+            public TermsEnum TermsEnum(Terms terms)
+            {
+                return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
+            }
+        }
+
+        // .NET Port: skipping down to about line 681 of java version. The actual interface methods of FieldCache are in IFieldCache below.
+        public sealed class CacheEntry
+        {
+            private readonly object readerKey;
+            private readonly string fieldName;
+            private readonly Type cacheType;
+            private readonly object custom;
+            private readonly object value;
+            private string size;
+
+            public CacheEntry(object readerKey, string fieldName,
+                      Type cacheType,
+                      object custom,
+                      object value)
+            {
+                this.readerKey = readerKey;
+                this.fieldName = fieldName;
+                this.cacheType = cacheType;
+                this.custom = custom;
+                this.value = value;
+            }
+
+            public object ReaderKey
+            {
+                get { return readerKey; }
+            }
+
+            public string FieldName
+            {
+                get { return fieldName; }
+            }
+
+            public Type CacheType
+            {
+                get { return cacheType; }
+            }
+
+            public object Custom
+            {
+                get { return custom; }
+            }
+
+            public object Value
+            {
+                get { return value; }
+            }
+
+            public void EstimateSize()
+            {
+                long bytesUsed = RamUsageEstimator.SizeOf(Value);
+                size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
+            }
+
+            public string EstimatedSize
+            {
+                get { return size; }
+            }
+
+            public override string ToString()
+            {
+                StringBuilder b = new StringBuilder();
+                b.Append("'").Append(ReaderKey).Append("'=>");
+                b.Append("'").Append(FieldName).Append("',");
+                b.Append(CacheType).Append(",").Append(Custom);
+                b.Append("=>").Append(Value.GetType().FullName).Append("#");
+                b.Append(RuntimeHelpers.GetHashCode(Value));
+
+                String s = EstimatedSize;
+                if (null != s)
+                {
+                    b.Append(" (size =~ ").Append(s).Append(')');
+                }
+
+                return b.ToString();
+            }
+        }
+    }
+        /*LUCENE TO-DO refactoring because of enum nonsense
 	  public static readonly FieldCache DEFAULT = new FieldCacheImpl();
 
 	  private class FieldCache_ByteParserAnonymousInnerClassHelper : FieldCache_ByteParser
@@ -708,202 +1035,202 @@ namespace Lucene.Net.Search
 
 	  public abstract class FieldCache_Bytes
 	  {
-	/// <summary>
-	/// Return a single Byte representation of this field's value. </summary>
-	public abstract sbyte Get(int docID);
+	    /// <summary>
+	    /// Return a single Byte representation of this field's value. </summary>
+	    public abstract sbyte Get(int docID);
 
-	/// <summary>
-	/// Zero value for every document </summary>
-	public static readonly FieldCache_Bytes EMPTY = new FieldCache_BytesAnonymousInnerClassHelper();
+	    /// <summary>
+	    /// Zero value for every document </summary>
+	    public static readonly FieldCache_Bytes EMPTY = new FieldCache_BytesAnonymousInnerClassHelper();
 
-	private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache_Bytes
-	{
-		public FieldCache_BytesAnonymousInnerClassHelper()
-		{
-		}
+	    private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache_Bytes
+	    {
+		    public FieldCache_BytesAnonymousInnerClassHelper()
+		    {
+		    }
 
-	  public override sbyte Get(int docID)
-	  {
-		return 0;
-	  }
-	}
+	      public override sbyte Get(int docID)
+	      {
+		    return 0;
+	      }
+	    }
 	  }
 
 	  public abstract class FieldCache_Shorts
 	  {
-	/// <summary>
-	/// Return a short representation of this field's value. </summary>
-	public abstract short Get(int docID);
+	    /// <summary>
+	    /// Return a short representation of this field's value. </summary>
+	    public abstract short Get(int docID);
 
-	/// <summary>
-	/// Zero value for every document </summary>
-	public static readonly FieldCache_Shorts EMPTY = new FieldCache_ShortsAnonymousInnerClassHelper();
+	    /// <summary>
+	    /// Zero value for every document </summary>
+	    public static readonly FieldCache_Shorts EMPTY = new FieldCache_ShortsAnonymousInnerClassHelper();
 
-	private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache_Shorts
-	{
-		public FieldCache_ShortsAnonymousInnerClassHelper()
-		{
-		}
+	    private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache_Shorts
+	    {
+		    public FieldCache_ShortsAnonymousInnerClassHelper()
+		    {
+		    }
 
-	  public override short Get(int docID)
-	  {
-		return 0;
-	  }
-	}
+	      public override short Get(int docID)
+	      {
+		    return 0;
+	      }
+	    }
 	  }
 
 	  public abstract class FieldCache_Ints
 	  {
-	/// <summary>
-	/// Return an integer representation of this field's value. </summary>
-	public abstract int Get(int docID);
+	    /// <summary>
+	    /// Return an integer representation of this field's value. </summary>
+	    public abstract int Get(int docID);
 
-	/// <summary>
-	/// Zero value for every document </summary>
-	public static readonly FieldCache_Ints EMPTY = new FieldCache_IntsAnonymousInnerClassHelper();
+	    /// <summary>
+	    /// Zero value for every document </summary>
+	    public static readonly FieldCache_Ints EMPTY = new FieldCache_IntsAnonymousInnerClassHelper();
 
-	private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache_Ints
-	{
-		public FieldCache_IntsAnonymousInnerClassHelper()
-		{
-		}
+	    private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache_Ints
+	    {
+		    public FieldCache_IntsAnonymousInnerClassHelper()
+		    {
+		    }
 
-	  public override int Get(int docID)
-	  {
-		return 0;
-	  }
-	}
+	      public override int Get(int docID)
+	      {
+		    return 0;
+	      }
+	    }
 	  }
 
 	  public abstract class FieldCache_Longs
 	  {
-	/// <summary>
-	/// Return an long representation of this field's value. </summary>
-	public abstract long Get(int docID);
+	    /// <summary>
+	    /// Return an long representation of this field's value. </summary>
+	    public abstract long Get(int docID);
 
-	/// <summary>
-	/// Zero value for every document </summary>
-	public static readonly FieldCache_Longs EMPTY = new FieldCache_LongsAnonymousInnerClassHelper();
+	    /// <summary>
+	    /// Zero value for every document </summary>
+	    public static readonly FieldCache_Longs EMPTY = new FieldCache_LongsAnonymousInnerClassHelper();
 
-	private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache_Longs
-	{
-		public FieldCache_LongsAnonymousInnerClassHelper()
-		{
-		}
+	    private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache_Longs
+	    {
+		    public FieldCache_LongsAnonymousInnerClassHelper()
+		    {
+		    }
 
-	  public override long Get(int docID)
-	  {
-		return 0;
-	  }
-	}
+	      public override long Get(int docID)
+	      {
+		    return 0;
+	      }
+	    }
 	  }
 
 	  public abstract class FieldCache_Floats
 	  {
-	/// <summary>
-	/// Return an float representation of this field's value. </summary>
-	public abstract float Get(int docID);
+	    /// <summary>
+	    /// Return an float representation of this field's value. </summary>
+	    public abstract float Get(int docID);
 
-	/// <summary>
-	/// Zero value for every document </summary>
-	public static readonly FieldCache_Floats EMPTY = new FieldCache_FloatsAnonymousInnerClassHelper();
+	    /// <summary>
+	    /// Zero value for every document </summary>
+	    public static readonly FieldCache_Floats EMPTY = new FieldCache_FloatsAnonymousInnerClassHelper();
 
-	private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache_Floats
-	{
-		public FieldCache_FloatsAnonymousInnerClassHelper()
-		{
-		}
+	    private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache_Floats
+	    {
+		    public FieldCache_FloatsAnonymousInnerClassHelper()
+		    {
+		    }
 
-	  public override float Get(int docID)
-	  {
-		return 0;
-	  }
-	}
+	      public override float Get(int docID)
+	      {
+		    return 0;
+	      }
+	    }
 	  }
 
 	  public abstract class FieldCache_Doubles
 	  {
-	/// <summary>
-	/// Return an double representation of this field's value. </summary>
-	public abstract double Get(int docID);
+	    /// <summary>
+	    /// Return an double representation of this field's value. </summary>
+	    public abstract double Get(int docID);
 
-	/// <summary>
-	/// Zero value for every document </summary>
-	public static readonly FieldCache_Doubles EMPTY = new FieldCache_DoublesAnonymousInnerClassHelper();
+	    /// <summary>
+	    /// Zero value for every document </summary>
+	    public static readonly FieldCache_Doubles EMPTY = new FieldCache_DoublesAnonymousInnerClassHelper();
 
-	private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache_Doubles
-	{
-		public FieldCache_DoublesAnonymousInnerClassHelper()
-		{
-		}
+	    private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache_Doubles
+	    {
+		    public FieldCache_DoublesAnonymousInnerClassHelper()
+		    {
+		    }
 
-	  public override double Get(int docID)
-	  {
-		return 0;
-	  }
-	}
+	      public override double Get(int docID)
+	      {
+		    return 0;
+	      }
+	    }
 	  }
 
 	  public sealed class FieldCache_CreationPlaceholder
 	  {
-	internal object Value;
+	    internal object Value;
 	  }
 
 	  public interface FieldCache_Parser
 	  {
 
-	/// <summary>
-	/// Pulls a <seealso cref="TermsEnum"/> from the given <seealso cref="Terms"/>. this method allows certain parsers
-	/// to filter the actual TermsEnum before the field cache is filled.
-	/// </summary>
-	/// <param name="terms"> the <seealso cref="Terms"/> instance to create the <seealso cref="TermsEnum"/> from. </param>
-	/// <returns> a possibly filtered <seealso cref="TermsEnum"/> instance, this method must not return <code>null</code>. </returns>
-	/// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
-	TermsEnum TermsEnum(Terms terms);
+	    /// <summary>
+	    /// Pulls a <seealso cref="TermsEnum"/> from the given <seealso cref="Terms"/>. this method allows certain parsers
+	    /// to filter the actual TermsEnum before the field cache is filled.
+	    /// </summary>
+	    /// <param name="terms"> the <seealso cref="Terms"/> instance to create the <seealso cref="TermsEnum"/> from. </param>
+	    /// <returns> a possibly filtered <seealso cref="TermsEnum"/> instance, this method must not return <code>null</code>. </returns>
+	    /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
+	    TermsEnum TermsEnum(Terms terms);
 	  }
 
 	  [Obsolete]
 	  public interface FieldCache_ByteParser : FieldCache_Parser
 	  {
-	/// <summary>
-	/// Return a single Byte representation of this field's value. </summary>
-	sbyte ParseByte(BytesRef term);
+	    /// <summary>
+	    /// Return a single Byte representation of this field's value. </summary>
+	    sbyte ParseByte(BytesRef term);
 	  }
 
 	  [Obsolete]
 	  public interface FieldCache_ShortParser : FieldCache_Parser
 	  {
-	/// <summary>
-	/// Return a short representation of this field's value. </summary>
-	short ParseShort(BytesRef term);
+	    /// <summary>
+	    /// Return a short representation of this field's value. </summary>
+	    short ParseShort(BytesRef term);
 	  }
 
 	  public interface FieldCache_IntParser : FieldCache_Parser
 	  {
-	/// <summary>
-	/// Return an integer representation of this field's value. </summary>
-	int ParseInt(BytesRef term);
+	    /// <summary>
+	    /// Return an integer representation of this field's value. </summary>
+	    int ParseInt(BytesRef term);
 	  }
 
 	  public interface FieldCache_FloatParser : FieldCache_Parser
 	  {
-	/// <summary>
-	/// Return an float representation of this field's value. </summary>
-	float ParseFloat(BytesRef term);
+	    /// <summary>
+	    /// Return an float representation of this field's value. </summary>
+	    float ParseFloat(BytesRef term);
 	  }
 
 	  public interface FieldCache_LongParser : FieldCache_Parser
 	  {
-	/// <summary>
-	/// Return an long representation of this field's value. </summary>
-	long ParseLong(BytesRef term);
+	    /// <summary>
+	    /// Return an long representation of this field's value. </summary>
+	    long ParseLong(BytesRef term);
 	  }
 
 	  public interface FieldCache_DoubleParser : FieldCache_Parser
 	  {
-	/// <summary>
-	/// Return an double representation of this field's value. </summary>
-	double ParseDouble(BytesRef term);
+	    /// <summary>
+	    /// Return an double representation of this field's value. </summary>
+	    double ParseDouble(BytesRef term);
 	  }
 
 	  public sealed class FieldCache_CacheEntry
@@ -1003,6 +1330,6 @@ namespace Lucene.Net.Search
 
 	      return b.ToString();
 	    }
-	  }
+	  }*/
 
 }

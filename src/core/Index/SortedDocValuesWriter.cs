@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 		AddOneValue(value);
 	  }
 
-	  public override void Finish(int maxDoc)
+	  internal override void Finish(int maxDoc)
 	  {
 		while (Pending.Size() < maxDoc)
 		{
@@ -110,14 +110,14 @@ namespace Lucene.Net.Index
 		BytesUsed = newBytesUsed;
 	  }
 
-	  public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
+	  internal override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
 	  {
 		int maxDoc = state.SegmentInfo.DocCount;
 
 		Debug.Assert(Pending.Size() == maxDoc);
 		int valueCount = Hash.Size();
 
-		int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparator);
+		int[] sortedValues = Hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
 		int[] ordMap = new int[valueCount];
 
 		for (int ord = 0;ord < valueCount;ord++)
@@ -127,8 +127,11 @@ namespace Lucene.Net.Index
 
 		dvConsumer.AddSortedField(FieldInfo, GetBytesRefEnumberable(valueCount, sortedValues),
 								  // doc -> ord
-								  GetIntEnumberable(maxDoc, ordMap));
+								  GetOrdsEnumberable(maxDoc, ordMap));
 	  }
+      internal override void Abort()
+      {
+      }
 
         private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues) 
         {
@@ -139,9 +142,9 @@ namespace Lucene.Net.Index
                 yield return Hash.Get(sortedValues[i], scratch);
             }
         }
-        private IEnumerable<int> GetIntEnumberable(int maxDoc, int[] ordMap)
+        private IEnumerable<long> GetOrdsEnumberable(int maxDoc, int[] ordMap)
         {
-            AppendingDeltaPackedLongBuffer.Iterator iter = Pending.Iterator();
+            AppendingDeltaPackedLongBuffer.Iterator iter = Pending.GetIterator();
 
             for (int i = 0; i < maxDoc; ++i)
             {

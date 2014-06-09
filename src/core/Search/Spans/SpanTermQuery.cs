@@ -84,11 +84,11 @@ namespace Lucene.Net.Search.Spans
 		return buffer.ToString();
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = base.GetHashCode();
-		result = prime * result + ((term == null) ? 0 : term.HashCode());
+		result = prime * result + ((term == null) ? 0 : term.GetHashCode());
 		return result;
 	  }
 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spans
 		{
 		  // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
 		  // so we seek to the term now in this segment..., this sucks because its ugly mostly!
-		  Fields fields = context.Reader().Fields();
+		  Fields fields = context.AtomicReader.Fields();
 		  if (fields != null)
 		  {
 			Terms terms = fields.Terms(term.Field());
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Spans
 		  return TermSpans.EMPTY_TERM_SPANS;
 		}
 
-		TermsEnum termsEnum_ = context.Reader().Terms(term.Field()).Iterator(null);
+        TermsEnum termsEnum_ = context.AtomicReader.Terms(term.Field()).Iterator(null);
 		termsEnum_.SeekExact(term.Bytes(), state);
 
 		DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);

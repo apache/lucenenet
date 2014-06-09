@@ -31,6 +31,8 @@ namespace Lucene.Net.Search
 	using Bits = Lucene.Net.Util.Bits;
 	using ToStringUtils = Lucene.Net.Util.ToStringUtils;
     using Lucene.Net.Support;
+    using Lucene.Net.Index;
+    using System.Collections;
 
 	/// <summary>
 	/// A Query that matches documents matching boolean combinations of other
@@ -77,7 +79,7 @@ namespace Lucene.Net.Search
 	  }
 
 
-	  private IList<BooleanClause> clauses = new List<BooleanClause>();
+      private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
 	  private readonly bool DisableCoord;
 
 	  /// <summary>
@@ -189,10 +191,15 @@ namespace Lucene.Net.Search
 	  /// make it possible to do:
 	  /// <pre class="prettyprint">for (BooleanClause clause : booleanQuery) {}</pre>
 	  /// </summary>
-	  public override IEnumerator<BooleanClause> Iterator()
+      public IEnumerator<BooleanClause> GetEnumerator()
 	  {
 		  return GetClauses().GetEnumerator();
 	  }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
 
 	  /// <summary>
 	  /// Expert: the Weight for BooleanQuery, used to
@@ -292,7 +299,7 @@ namespace Lucene.Net.Search
 			Weight w = wIter.Current;
             cIter.MoveNext();
             BooleanClause c = cIter.Current;
-			if (w.Scorer(context, context.Reader().LiveDocs) == null)
+			if (w.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs) == null)
 			{
 			  if (c.Required)
 			  {
@@ -303,7 +310,7 @@ namespace Lucene.Net.Search
 			  continue;
 			}
 			Explanation e = w.Explain(context, doc);
-			if (e.Match)
+			if (e.IsMatch)
 			{
 			  if (!c.Prohibited)
 			  {
@@ -417,7 +424,6 @@ namespace Lucene.Net.Search
           IEnumerator<BooleanClause> cIter = OuterInstance.clauses.GetEnumerator();
 		  foreach (Weight w in Weights)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
             cIter.MoveNext();
             BooleanClause c = cIter.Current;
 			Scorer subScorer = w.Scorer(context, acceptDocs);
@@ -518,7 +524,7 @@ namespace Lucene.Net.Search
 			{
 			  if (query == c.Query) // if rewrite was no-op
 			  {
-				query = query.Clone(); // then clone before boost
+				query = (Query)query.Clone(); // then clone before boost
 			  }
 			  // Since the BooleanQuery only has 1 clause, the BooleanQuery will be
 			  // written out. Therefore the rewritten Query's boost must incorporate both
@@ -542,7 +548,7 @@ namespace Lucene.Net.Search
 			  // The BooleanQuery clone is lazily initialized so only initialize
 			  // it if a rewritten clause differs from the original clause (and hasn't been
 			  // initialized already).  If nothing differs, the clone isn't needlessly created
-			  clone = this.Clone();
+			  clone = (BooleanQuery)this.Clone();
 			}
 			clone.clauses[i] = new BooleanClause(query, c.Occur);
 		  }
@@ -569,10 +575,10 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public override BooleanQuery Clone()
+	  public override object Clone()
 	  {
 		BooleanQuery clone = (BooleanQuery)base.Clone();
-		clone.clauses = (List<BooleanClause>) this.clauses.Clone();
+        clone.clauses = (EquatableList<BooleanClause>)this.clauses.Clone();
 		return clone;
 	  }
 

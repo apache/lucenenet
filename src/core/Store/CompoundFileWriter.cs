@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
 	  /// <exception cref="InvalidOperationException">
 	  ///           if close() had been called before or if no file has been added to
 	  ///           this object </exception>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		if (Closed)
 		{
@@ -258,7 +258,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  protected internal void WriteEntryTable(ICollection<FileEntry> entries, IndexOutput entryOut)
+	  private void WriteEntryTable(ICollection<FileEntry> entries, IndexOutput entryOut)
 	  {
 		CodecUtil.WriteHeader(entryOut, ENTRY_CODEC, VERSION_CURRENT);
 		entryOut.WriteVInt(entries.Count);
@@ -425,7 +425,7 @@ namespace Lucene.Net.Store
 		  @delegate.Flush();
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  if (!Closed)
 		  {
@@ -433,7 +433,7 @@ namespace Lucene.Net.Store
 			Entry.Length = WrittenBytes;
 			if (IsSeparate)
 			{
-			  @delegate.Close();
+			  @delegate.Dispose();
 			  // we are a separate file - push into the pending entries
 			  OuterInstance.PendingEntries.AddLast(Entry);
 			}
@@ -455,26 +455,31 @@ namespace Lucene.Net.Store
 			}
 		}
 
+        [Obsolete]
 		public override void Seek(long pos)
 		{
 		  Debug.Assert(!Closed);
 		  @delegate.Seek(Offset + pos);
 		}
 
-		public override long Length()
+		public override long Length
 		{
-		  Debug.Assert(!Closed);
-		  return @delegate.Length - Offset;
+            get 
+            {
+                Debug.Assert(!Closed);
+		        return @delegate.Length - Offset;
+            }
+		  
 		}
 
-		public override void WriteByte(sbyte b)
+		public override void WriteByte(byte b)
 		{
 		  Debug.Assert(!Closed);
 		  WrittenBytes++;
 		  @delegate.WriteByte(b);
 		}
 
-		public override void WriteBytes(sbyte[] b, int offset, int length)
+		public override void WriteBytes(byte[] b, int offset, int length)
 		{
 		  Debug.Assert(!Closed);
 		  WrittenBytes += length;

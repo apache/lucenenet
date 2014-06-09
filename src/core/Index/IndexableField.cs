@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  /// <seealso cref= Similarity#computeNorm(FieldInvertState) </seealso>
 	  /// <seealso cref= DefaultSimilarity#encodeNormValue(float) </seealso>
-	  float Boost();
+	  float GetBoost();
 
 	  /// <summary>
 	  /// Non-null if this field has a binary value </summary>
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 	  /// <returns> TokenStream value for indexing the document.  Should always return
 	  ///         a non-null value if the field is to be indexed </returns>
 	  /// <exception cref="IOException"> Can be thrown while creating the TokenStream </exception>
-	  TokenStream TokenStream(Analyzer analyzer);
+	  TokenStream GetTokenStream(Analyzer analyzer);
 	}
 
 }

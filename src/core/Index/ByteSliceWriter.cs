@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Write byte into byte slice stream </summary>
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		Debug.Assert(Slice != null);
 		if (Slice[Upto] != 0)
@@ -68,14 +68,12 @@ namespace Lucene.Net.Index
 		  Offset0 = Pool.ByteOffset;
 		  Debug.Assert(Slice != null);
 		}
-		Slice[Upto++] = b;
+		Slice[Upto++] = (sbyte)b;
 		Debug.Assert(Upto != Slice.Length);
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int len)
+	  public override void WriteBytes(byte[] b, int offset, int len)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offsetEnd = offset + len;
 		int offsetEnd = offset + len;
 		while (offset < offsetEnd)
 		{
@@ -87,7 +85,7 @@ namespace Lucene.Net.Index
 			Offset0 = Pool.ByteOffset;
 		  }
 
-		  Slice[Upto++] = b[offset++];
+		  Slice[Upto++] = (sbyte)b[offset++];
 		  Debug.Assert(Upto != Slice.Length);
 		}
 	  }

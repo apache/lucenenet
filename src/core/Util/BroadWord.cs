@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
 	  ///  The suffix _L indicates the long implementation.
 	  /// </summary>
 	  public const long L8_L = 0x0101010101010101L;
-	  public const long L9_L = (long)0x8040201008040201L;
+	  public const long L9_L = unchecked((long)0x8040201008040201L);
 	  public const long L16_L = 0x0001000100010001L;
 
 	  /// <summary>

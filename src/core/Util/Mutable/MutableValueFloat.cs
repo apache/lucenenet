@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Mutable
 		return Exists ? 1 : -1;
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return Number.FloatToIntBits(Value);
 	  }

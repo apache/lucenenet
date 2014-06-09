@@ -21,7 +21,7 @@ namespace Lucene.Net.Document
 	 */
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer; // javadocs
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexableFieldType = Lucene.Net.Index.IndexableFieldType;
 	using Lucene.Net.Search; // javadocs
@@ -68,10 +68,10 @@ namespace Lucene.Net.Document
 	  private bool StoreTermVectorPayloads_Renamed;
 	  private bool OmitNorms_Renamed;
       private FieldInfo.IndexOptions_e? IndexOptions_Renamed = FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
-	  private NumericType NumericType_Renamed;
+	  private NumericType numericType;
 	  private bool Frozen;
 	  private int NumericPrecisionStep_Renamed = NumericUtils.PRECISION_STEP_DEFAULT;
-	  private DocValuesType DocValueType_Renamed;
+	  private DocValuesType_e? docValueType;
 
 	  /// <summary>
 	  /// Create a new mutable FieldType with all of the properties from <code>ref</code>
@@ -87,8 +87,8 @@ namespace Lucene.Net.Document
 		this.StoreTermVectorPayloads_Renamed = @ref.StoreTermVectorPayloads;
 		this.OmitNorms_Renamed = @ref.OmitNorms;
 		this.IndexOptions_Renamed = @ref.IndexOptionsValue;
-		this.DocValueType_Renamed = @ref.DocValueType;
-		this.NumericType_Renamed = @ref.NumericTypeValue;
+		this.docValueType = @ref.DocValueType;
+		this.numericType = @ref.NumericTypeValue;
 		// Do not copy frozen!
 	  }
 
@@ -296,12 +296,12 @@ namespace Lucene.Net.Document
 	  {
           get
           {
-              return this.NumericType_Renamed;
+              return this.numericType;
           }
 		  set
 		  {
 			CheckIfFrozen();
-			NumericType_Renamed = value;
+			numericType = value;
 		  }
 	  }
 
@@ -323,18 +323,10 @@ namespace Lucene.Net.Document
 			}
 			this.NumericPrecisionStep_Renamed = value;
 		  }
-	  }
-
-	  /// <summary>
-	  /// Precision step for numeric field. 
-	  /// <p>
-	  /// this has no effect if <seealso cref=/> returns null.
-	  /// <p>
-	  /// The default is <seealso cref="NumericUtils#PRECISION_STEP_DEFAULT"/> </summary>
-	  /// <seealso cref= #setNumericPrecisionStep(int) </seealso>
-	  public virtual int NumericPrecisionStep()
-	  {
-		return NumericPrecisionStep_Renamed;
+          get
+          {
+              return NumericPrecisionStep_Renamed;
+          }
 	  }
 
 	  /// <summary>
@@ -382,22 +374,22 @@ namespace Lucene.Net.Document
 			result.Append(",indexOptions=");
 			result.Append(IndexOptions_Renamed);
 		  }
-		  if (NumericType_Renamed != null)
+		  if (numericType != null)
 		  {
 			result.Append(",numericType=");
-			result.Append(NumericType_Renamed);
+			result.Append(numericType);
 			result.Append(",numericPrecisionStep=");
 			result.Append(NumericPrecisionStep_Renamed);
 		  }
 		}
-		if (DocValueType_Renamed != null)
+		if (docValueType != null)
 		{
 		  if (result.Length > 0)
 		  {
 			result.Append(",");
 		  }
 		  result.Append("docValueType=");
-		  result.Append(DocValueType_Renamed);
+		  result.Append(docValueType);
 		}
 
 		return result.ToString();
@@ -419,17 +411,17 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #docValueType() </seealso>
-	  public DocValuesType DocValueType
+	  public DocValuesType_e? DocValueType
 	  {
           get
           {
-              return DocValueType_Renamed;
+              return docValueType;
           }
           
           set
 		  {
 			CheckIfFrozen();
-			DocValueType_Renamed = value;
+			docValueType = value;
 		  }
 	  }
 	}

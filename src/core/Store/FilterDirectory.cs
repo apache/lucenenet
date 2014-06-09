@@ -99,9 +99,9 @@ namespace Lucene.Net.Store
 		@in.ClearLock(name);
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
-		@in.Close();
+		@in.Dispose();
 	  }
 
 	  public override LockFactory LockFactory

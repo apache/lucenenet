@@ -287,17 +287,21 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		try
-		{
-		  IOUtils.Close(VectorsStream, IndexWriter);
-		}
-		finally
-		{
-		  VectorsStream = null;
-		  IndexWriter = null;
-		}
+          if (disposing)
+          {
+              try
+              {
+                  IOUtils.Close(VectorsStream, IndexWriter);
+              }
+              finally
+              {
+                  VectorsStream = null;
+                  IndexWriter = null;
+              }
+          }
+		
 	  }
 
 	  public override void Abort()
@@ -804,7 +808,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		  get
 		  {
-			return BytesRef.UTF8SortedAsUnicodeComparator;
+			return BytesRef.UTF8SortedAsUnicodeComparer;
 		  }
 	  }
 
@@ -917,7 +921,7 @@ namespace Lucene.Net.Codecs.Compressing
 			CompressingStoredFieldsIndexReader index = matchingVectorsReader.Index;
 			IndexInput vectorsStreamOrig = matchingVectorsReader.VectorsStream;
 			vectorsStreamOrig.Seek(0);
-			ChecksumIndexInput vectorsStream = new BufferedChecksumIndexInput(vectorsStreamOrig.Clone());
+            ChecksumIndexInput vectorsStream = new BufferedChecksumIndexInput((IndexInput)vectorsStreamOrig.Clone());
 
 			for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc;)
 			{

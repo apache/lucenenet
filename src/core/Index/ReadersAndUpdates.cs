@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
 				  {
 					dir.DeleteFile(fileName);
 				  }
-				  catch (Exception t)
+				  catch (Exception)
 				  {
 					// Ignore so we throw only the first exc
 				  }
@@ -477,14 +477,10 @@ namespace Lucene.Net.Index
 			bool success = false;
 			try
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.Codec codec = info.info.getCodec();
 			  Codec codec = Info.Info.Codec;
         
 			  // reader could be null e.g. for a just merged segment (from
 			  // IndexWriter.commitMergedDeletes).
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader reader = this.reader == null ? new SegmentReader(info, writer.getConfig().getReaderTermsIndexDivisor(), Lucene.Net.Store.IOContext.READONCE) : this.reader;
 			  SegmentReader reader = this.Reader == null ? new SegmentReader(Info, Writer.Config.ReaderTermsIndexDivisor, IOContext.READONCE) : this.Reader;
 			  try
 			  {
@@ -518,20 +514,10 @@ namespace Lucene.Net.Index
 				}
         
 				fieldInfos = builder.Finish();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long nextFieldInfosGen = info.getNextFieldInfosGen();
 				long nextFieldInfosGen = Info.NextFieldInfosGen;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentSuffix = Long.toString(nextFieldInfosGen, Character.MAX_RADIX);
 				string segmentSuffix = Convert.ToString(nextFieldInfosGen, Character.MAX_RADIX);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentWriteState state = new SegmentWriteState(null, trackingDir, info.info, fieldInfos, writer.getConfig().getTermIndexInterval(), null, Lucene.Net.Store.IOContext.DEFAULT, segmentSuffix);
 				SegmentWriteState state = new SegmentWriteState(null, trackingDir, Info.Info, fieldInfos, Writer.Config.TermIndexInterval, null, IOContext.DEFAULT, segmentSuffix);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.DocValuesFormat docValuesFormat = codec.docValuesFormat();
 				DocValuesFormat docValuesFormat = codec.DocValuesFormat();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.DocValuesConsumer fieldsConsumer = docValuesFormat.fieldsConsumer(state);
 				DocValuesConsumer fieldsConsumer = docValuesFormat.FieldsConsumer(state);
 				bool fieldsConsumerSuccess = false;
 				try
@@ -539,8 +525,6 @@ namespace Lucene.Net.Index
 		//          System.out.println("[" + Thread.currentThread().getName() + "] RLD.writeFieldUpdates: applying numeric updates; seg=" + info + " updates=" + numericFieldUpdates);
 				  foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.NumericDVUpdates)
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String field = e.getKey();
 					string field = e.Key;
 					NumericDocValuesFieldUpdates fieldUpdates = e.Value;
 					FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
@@ -573,7 +557,7 @@ namespace Lucene.Net.Index
 				{
 				  if (fieldsConsumerSuccess)
 				  {
-					fieldsConsumer.Close();
+					fieldsConsumer.Dispose();
 				  }
 				  else
 				  {
@@ -586,7 +570,7 @@ namespace Lucene.Net.Index
 				if (reader != this.Reader)
 				{
 		//          System.out.println("[" + Thread.currentThread().getName() + "] RLD.writeLiveDocs: closeReader " + reader);
-				  reader.Close();
+				  reader.Dispose();
 				}
 			  }
         
@@ -607,7 +591,7 @@ namespace Lucene.Net.Index
 				  {
 					dir.DeleteFile(fileName);
 				  }
-				  catch (Exception t)
+				  catch (Exception)
 				  {
 					// Ignore so we throw only the first exc
 				  }
@@ -697,14 +681,14 @@ namespace Lucene.Net.Index
           int maxDoc = reader.MaxDoc();
           Bits DocsWithField = reader.GetDocsWithField(field);
           NumericDocValues currentValues = reader.GetNumericDocValues(field);
-          NumericDocValuesFieldUpdates.Iterator iter = fieldUpdates.Iterator();
+          NumericDocValuesFieldUpdates.Iterator iter = (NumericDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
           int updateDoc = iter.NextDoc();
 
           for (int curDoc = 0; curDoc < maxDoc; ++curDoc)
           {
               if (curDoc == updateDoc) //document has an updated value
               {
-                  long? value = iter.Value(); // either null or updated
+                  long? value = (long?)(iter.Value()); // either null or updated
                   updateDoc = iter.NextDoc(); //prepare for next round
                   yield return value ?? default(long);
               }
@@ -729,7 +713,7 @@ namespace Lucene.Net.Index
           BinaryDocValues currentValues = reader.GetBinaryDocValues(field);
           Bits DocsWithField = reader.GetDocsWithField(field);
           int maxDoc = reader.MaxDoc();
-          BinaryDocValuesFieldUpdates.Iterator iter = fieldUpdates.Iterator();
+          BinaryDocValuesFieldUpdates.Iterator iter = (BinaryDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
           BytesRef scratch = new BytesRef();
           int updateDoc = iter.NextDoc();
 
@@ -737,7 +721,7 @@ namespace Lucene.Net.Index
           {
               if (curDoc == updateDoc) //document has an updated value
               {
-                  BytesRef value = iter.Value(); // either null or updated
+                  BytesRef value = (BytesRef)iter.Value(); // either null or updated
                   updateDoc = iter.NextDoc(); //prepare for next round
                   yield return value;
               }

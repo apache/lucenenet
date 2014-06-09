@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 		  }
 	   }
        
-       internal override void Release(){}
+       internal void Release(){}
 	}
 
 }

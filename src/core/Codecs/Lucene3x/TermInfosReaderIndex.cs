@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private const int MAX_PAGE_BITS = 18; // 256 KB block
 	  private Term[] Fields;
 	  private int TotalIndexInterval;
-	  private IComparer<BytesRef> Comparator = BytesRef.UTF8SortedAsUTF16Comparator;
+	  private IComparer<BytesRef> Comparator = BytesRef.UTF8SortedAsUTF16Comparer;
 	  private readonly PagedBytesDataInput DataInput;
 	  private readonly PackedInts.Reader IndexToDataOffset;
 	  private readonly int IndexSize;
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  internal virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
 	  {
-		PagedBytesDataInput input = DataInput.Clone();
+		PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 
 		input.Position = IndexToDataOffset.Get(indexOffset);
 
@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		int lo = 0;
 		int hi = IndexSize - 1;
-		PagedBytesDataInput input = DataInput.Clone();
+		PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 		BytesRef scratch = new BytesRef();
 		while (hi >= lo)
 		{
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
 	  internal virtual Term GetTerm(int termIndex)
 	  {
-		PagedBytesDataInput input = DataInput.Clone();
+		PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 		input.Position = IndexToDataOffset.Get(termIndex);
 
 		// read the term
@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
 	  internal virtual int CompareTo(Term term, int termIndex)
 	  {
-		return CompareTo(term, termIndex, DataInput.Clone(), new BytesRef());
+		return CompareTo(term, termIndex, (PagedBytesDataInput)DataInput.Clone(), new BytesRef());
 	  }
 
 	  /// <summary>

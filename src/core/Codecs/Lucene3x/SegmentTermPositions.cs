@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		base.Close();
 		if (ProxStream != null)
 		{
-			ProxStream.Close();
+			ProxStream.Dispose();
 		}
 	  }
 
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		if (ProxStream == null)
 		{
 		  // clone lazily
-		  ProxStream = ProxStreamOrig.Clone();
+		  ProxStream = (IndexInput)ProxStreamOrig.Clone();
 		}
 
 		// we might have to skip the current payload

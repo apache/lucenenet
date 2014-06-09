@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int fieldNumber = i;
 			int fieldNumber = i;
-			sbyte bits = input.ReadByte();
+			byte bits = input.ReadByte();
 			bool isIndexed = (bits & IS_INDEXED) != 0;
 			bool storeTermVector = (bits & STORE_TERMVECTOR) != 0;
 			bool omitNorms = (bits & OMIT_NORMS) != 0;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (success)
 		  {
-			input.Close();
+			input.Dispose();
 		  }
 		  else
 		  {

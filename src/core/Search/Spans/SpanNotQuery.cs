@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Spans
 		return buffer.ToString();
 	  }
 
-	  public override SpanNotQuery Clone()
+	  public override object Clone()
 	  {
 		SpanNotQuery spanNotQuery = new SpanNotQuery((SpanQuery)include.Clone(), (SpanQuery) exclude.Clone(), Pre, Post);
 		spanNotQuery.Boost = Boost;
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search.Spans
 		SpanQuery rewrittenInclude = (SpanQuery) include.Rewrite(reader);
 		if (rewrittenInclude != include)
 		{
-		  clone = this.Clone();
+		  clone = (SpanNotQuery)this.Clone();
 		  clone.include = rewrittenInclude;
 		}
 		SpanQuery rewrittenExclude = (SpanQuery) exclude.Rewrite(reader);
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search.Spans
 		{
 		  if (clone == null)
 		  {
-			  clone = this.Clone();
+              clone = (SpanNotQuery)this.Clone();
 		  }
 		  clone.exclude = rewrittenExclude;
 		}

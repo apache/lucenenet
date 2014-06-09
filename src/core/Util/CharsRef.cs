@@ -89,17 +89,15 @@ namespace Lucene.Net.Util
 	  /// object.
 	  /// </summary>
 	  /// <seealso cref= #deepCopyOf </seealso>
-	  public override CharsRef Clone()
+	  public object Clone()
 	  {
 		return new CharsRef(Chars, Offset, Length_Renamed);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		const int prime = 31;
 		int result = 0;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		int end = Offset + Length_Renamed;
 		for (int i = Offset; i < end; i++)
 		{
@@ -126,11 +124,7 @@ namespace Lucene.Net.Util
 		if (Length_Renamed == other.Length_Renamed)
 		{
 		  int otherUpto = other.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] otherChars = other.chars;
 		  char[] otherChars = other.Chars;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = offset + length;
 		  int end = Offset + Length_Renamed;
 		  for (int upto = Offset; upto < end; upto++, otherUpto++)
 		  {
@@ -156,17 +150,11 @@ namespace Lucene.Net.Util
 		  return 0;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] aChars = this.chars;
 		char[] aChars = this.Chars;
 		int aUpto = this.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] bChars = other.chars;
 		char[] bChars = other.Chars;
 		int bUpto = other.Offset;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int aStop = aUpto + Math.min(this.length, other.length);
 		int aStop = aUpto + Math.Min(this.Length_Renamed, other.Length_Renamed);
 
 		while (aUpto < aStop)
@@ -248,12 +236,15 @@ namespace Lucene.Net.Util
 		return new string(Chars, Offset, Length_Renamed);
 	  }
 
-	  public override int Length()
+	  public int Length
 	  {
-		return Length_Renamed;
+          get 
+          {
+		        return Length_Renamed;
+          }
 	  }
 
-	  public override char CharAt(int index)
+	  public char CharAt(int index)
 	  {
 		// NOTE: must do a real check here to meet the specs of CharSequence
 		if (index < 0 || index >= Length_Renamed)
@@ -263,7 +254,7 @@ namespace Lucene.Net.Util
 		return Chars[Offset + index];
 	  }
 
-	  public override ICharSequence SubSequence(int start, int end)
+	  public ICharSequence SubSequence(int start, int end)
 	  {
 		// NOTE: must do a real check here to meet the specs of CharSequence
 		if (start < 0 || end > Length_Renamed || start > end)
@@ -279,7 +270,7 @@ namespace Lucene.Net.Util
 
 	  /// @deprecated this comparator is only a transition mechanism 
 	  [Obsolete("this comparator is only a transition mechanism")]
-	  public static IComparer<CharsRef> UTF16SortedAsUTF8Comparator
+	  public static IComparer<CharsRef> UTF16SortedAsUTF8Comparer
 	  {
 		  get
 		  {
@@ -303,17 +294,11 @@ namespace Lucene.Net.Util
 			return 0;
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] aChars = a.chars;
 		  char[] aChars = a.Chars;
 		  int aUpto = a.Offset;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final char[] bChars = b.chars;
 		  char[] bChars = b.Chars;
 		  int bUpto = b.Offset;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int aStop = aUpto + Math.min(a.length, b.length);
 		  int aStop = aUpto + Math.Min(a.Length_Renamed, b.Length_Renamed);
 
 		  while (aUpto < aStop)

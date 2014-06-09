@@ -692,7 +692,7 @@ namespace Lucene.Net.Util.Automaton
 		throw new System.NotSupportedException("use BasicOperations.sameLanguage instead");
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		throw new System.NotSupportedException();
 	  }
@@ -778,7 +778,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  internal virtual Automaton CloneExpanded()
 	  {
-		Automaton a = Clone();
+		Automaton a = (Automaton)Clone();
 		a.ExpandSingleton();
 		return a;
 	  }
@@ -803,7 +803,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// <summary>
 	  /// Returns a clone of this automaton.
 	  /// </summary>
-	  public override Automaton Clone()
+	  public object Clone()
 	  {
 		  Automaton a = (Automaton) base.MemberwiseClone();
 		  if (!IsSingleton)
@@ -845,7 +845,7 @@ namespace Lucene.Net.Util.Automaton
 		}
 		else
 		{
-			return Clone();
+			return (Automaton)Clone();
 		}
 	  }
 

@@ -36,12 +36,12 @@ namespace Lucene.Net.Util
 		this.bitSet = bitSet;
 	  }
 
-	  public override DocIdSetIterator Iterator()
+	  public override DocIdSetIterator GetIterator()
 	  {
 		return new DocIdBitSetIterator(bitSet);
 	  }
 
-	  public override Bits Bits()
+	  public override Bits GetBits()
 	  {
 		return this;
 	  }
@@ -67,12 +67,12 @@ namespace Lucene.Net.Util
 		  }
 	  }
 
-	  public override bool Get(int index)
+	  public bool Get(int index)
 	  {
 		return bitSet.Get(index);
 	  }
 
-	  public override int Length()
+	  public int Length()
 	  {
 		// the size may not be correct...
 		return bitSet.Count;

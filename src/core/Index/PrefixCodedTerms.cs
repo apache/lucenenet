@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
 	using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 	using BytesRef = Lucene.Net.Util.BytesRef;
     using System.IO;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Prefix codes term instances (prefixes are shared)
@@ -55,78 +56,71 @@ namespace Lucene.Net.Index
 	  /// <returns> iterator over the bytes </returns>
 	  public virtual IEnumerator<Term> GetEnumerator()
 	  {
-		return new PrefixCodedTermsIterator(this);
+		return new PrefixCodedTermsIterator(Buffer);
 	  }
+
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+          return GetEnumerator();
+      }
 
 	  internal class PrefixCodedTermsIterator : IEnumerator<Term>
 	  {
-		  internal bool InstanceFieldsInitialized = false;
+          readonly IndexInput input;
+          string field = "";
+          BytesRef bytes = new BytesRef();
+          Term term;
 
-		  internal virtual void InitializeInstanceFields()
-		  {
-			  Term = new Term(Field, Bytes);
-		  }
+          public PrefixCodedTermsIterator(RAMFile buffer)
+          {
+              term = new Term(field, bytes);
 
-		  private readonly PrefixCodedTerms OuterInstance;
+              try
+              {
+                  input = new RAMInputStream("PrefixCodedTermsIterator", buffer);
+              }
+              catch (System.IO.IOException)
+              {
+                  throw;
+              }
+          }
 
-		internal readonly IndexInput Input;
-		internal string Field = "";
-		internal BytesRef Bytes = new BytesRef();
-		internal Term Term;
+          public Term Current
+          {
+              get { return term; }
+          }
 
-		internal PrefixCodedTermsIterator(PrefixCodedTerms outerInstance)
-		{
-			this.OuterInstance = outerInstance;
+          public void Dispose() { }
 
-			if (!InstanceFieldsInitialized)
-			{
-				InitializeInstanceFields();
-				InstanceFieldsInitialized = true;
-			}
-		  try
-		  {
-			Input = new RAMInputStream("PrefixCodedTermsIterator", outerInstance.Buffer);
-		  }
-		  catch (IOException e)
-		  {
-			throw new Exception(e.Message, e);
-		  }
-		}
+          object System.Collections.IEnumerator.Current
+          {
+              get { return Current; }
+          }
 
-		public override bool HasNext()
-		{
-		  return Input.FilePointer < Input.Length();
-		}
+          public bool MoveNext()
+          {     
+              if (input.FilePointer < input.Length())
+              {
+                  int code = input.ReadVInt();
+                  if ((code & 1) != 0)
+                  {
+                      field = input.ReadString();
+                  }
+                  int prefix = Number.URShift(code, 1);
+                  int suffix = input.ReadVInt();
+                  bytes.Grow(prefix + suffix);
+                  input.ReadBytes(bytes.Bytes, prefix, suffix);
+                  bytes.Length = prefix + suffix;
+                  term.Set(field, bytes);
+                  return true;
+              }
+              return false;
+          }
 
-		public override Term Next()
-		{
-		  Debug.Assert(HasNext());
-		  try
-		  {
-			int code = Input.ReadVInt();
-			if ((code & 1) != 0)
-			{
-			  // new field
-			  Field = Input.ReadString();
-			}
-			int prefix = (int)((uint)code >> 1);
-			int suffix = Input.ReadVInt();
-			Bytes.Grow(prefix + suffix);
-			Input.ReadBytes(Bytes.Bytes, prefix, suffix);
-			Bytes.Length = prefix + suffix;
-			Term.Set(Field, Bytes);
-			return Term;
-		  }
-		  catch (IOException e)
-		  {
-			throw new Exception(e.Message, e);
-		  }
-		}
-
-		public override void Remove()
-		{
-		  throw new System.NotSupportedException();
-		}
+          public void Reset()
+          {
+              throw new NotImplementedException();
+          }
 	  }
 
 	  /// <summary>
@@ -189,7 +183,7 @@ namespace Lucene.Net.Index
 		{
 		  try
 		  {
-			Output.Close();
+			Output.Dispose();
 			return new PrefixCodedTerms(Buffer);
 		  }
 		  catch (IOException e)

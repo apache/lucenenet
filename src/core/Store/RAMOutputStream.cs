@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -33,14 +34,14 @@ namespace Lucene.Net.Store
 
 	  private RAMFile File;
 
-	  private sbyte[] CurrentBuffer;
+	  private byte[] CurrentBuffer;
 	  private int CurrentBufferIndex;
 
 	  private int BufferPosition;
 	  private long BufferStart;
 	  private int BufferLength;
 
-	  //private Checksum Crc = new BufferedChecksum(new CRC32());
+      private BufferedChecksum Crc = new BufferedChecksum(new CRC32());
 
 	  /// <summary>
 	  /// Construct an empty output buffer. </summary>
@@ -114,10 +115,10 @@ namespace Lucene.Net.Store
 		BufferStart = 0;
 		BufferLength = 0;
 		File.Length = 0;
-		//Crc.reset();
+		Crc.Reset();
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		Flush();
 	  }
@@ -136,26 +137,33 @@ namespace Lucene.Net.Store
 		BufferPosition = (int)(pos % BUFFER_SIZE);
 	  }
 
-	  public override long Length()
-	  {
-		return File.Length_Renamed;
-	  }
+      public override long Length
+      {
+          get
+          {
+              return File.Length_Renamed;
+          }
+          set
+          {
 
-	  public override void WriteByte(sbyte b)
+          }
+      }
+
+	  public override void WriteByte(byte b)
 	  {
 		if (BufferPosition == BufferLength)
 		{
 		  CurrentBufferIndex++;
 		  SwitchCurrentBuffer();
 		}
-		//Crc.update(b);
+		Crc.Update(b);
 		CurrentBuffer[BufferPosition++] = b;
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int len)
+	  public override void WriteBytes(byte[] b, int offset, int len)
 	  {
 		Debug.Assert(b != null);
-		//Crc.update(b, offset, len);
+		Crc.Update(b, offset, len);
 		while (len > 0)
 		{
 		  if (BufferPosition == BufferLength)
@@ -217,13 +225,13 @@ namespace Lucene.Net.Store
 		return (long) File.NumBuffers() * (long) BUFFER_SIZE;
 	  }
 
-	  /*public override long Checksum
+	  public override long Checksum
 	  {
 		  get
 		  {
 			return Crc.Value;
 		  }
-	  }*/
+	  }
 	}
 
 }

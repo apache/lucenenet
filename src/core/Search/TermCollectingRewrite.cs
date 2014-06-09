@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 
-	internal abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod where Q : Query
+	public abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod where Q : Query
 	{
 
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 		IComparer<BytesRef> lastTermComp = null;
 		foreach (AtomicReaderContext context in topReaderContext.Leaves())
 		{
-		  Fields fields = context.Reader().Fields();
+		  Fields fields = context.AtomicReader.Fields();
 		  if (fields == null)
 		  {
 			// reader has no fields

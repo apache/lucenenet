@@ -91,8 +91,8 @@ namespace Lucene.Net.Store
 
 	  private readonly Directory Directory_Renamed;
 	  private readonly string FileName;
-	  protected internal readonly int ReadBufferSize;
-	  private readonly IDictionary<string, FileEntry> Entries;
+	  private readonly int ReadBufferSize;
+      private readonly IDictionary<string, FileEntry> Entries;
 	  private readonly bool OpenForWrite;
 	  private static readonly IDictionary<string, FileEntry> SENTINEL = CollectionsHelper.EmptyMap<string, FileEntry>();
 	  private readonly CompoundFileWriter Writer;
@@ -160,9 +160,9 @@ namespace Lucene.Net.Store
 		  // and separate norms/etc are outside of cfs.
 		  if (firstInt == CODEC_MAGIC_BYTE1)
 		  {
-			sbyte secondByte = stream.ReadByte();
-			sbyte thirdByte = stream.ReadByte();
-			sbyte fourthByte = stream.ReadByte();
+			byte secondByte = stream.ReadByte();
+			byte thirdByte = stream.ReadByte();
+			byte fourthByte = stream.ReadByte();
 			if (secondByte != CODEC_MAGIC_BYTE2 || thirdByte != CODEC_MAGIC_BYTE3 || fourthByte != CODEC_MAGIC_BYTE4)
 			{
 			  throw new CorruptIndexException("Illegal/impossible header for CFS file: " + secondByte + "," + thirdByte + "," + fourthByte);
@@ -294,7 +294,7 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		  lock (this)
 		  {
@@ -307,7 +307,7 @@ namespace Lucene.Net.Store
 			if (Writer != null)
 			{
 			  Debug.Assert(OpenForWrite);
-			  Writer.Close();
+			  Writer.Dispose();
 			}
 			else
 			{
@@ -361,6 +361,7 @@ namespace Lucene.Net.Store
 
 	  /// <summary>
 	  /// Returns true iff a file with the given name exists. </summary>
+      [Obsolete]
 	  public override bool FileExists(string name)
 	  {
 		EnsureOpen();
@@ -453,7 +454,7 @@ namespace Lucene.Net.Store
 			  this.Entry = entry;
 		  }
 
-		  public override void Close()
+		  public override void Dispose(bool disposing)
 		  {
 		  }
 
@@ -462,6 +463,7 @@ namespace Lucene.Net.Store
 			return OuterInstance.Handle.OpenSlice(sliceDescription, Entry.Offset + offset, length);
 		  }
 
+          [Obsolete]
 		  public override IndexInput OpenFullSlice()
 		  {
 			return OpenSlice("full-slice", 0, Entry.Length);

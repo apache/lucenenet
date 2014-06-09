@@ -40,37 +40,37 @@ namespace Lucene.Net.Index
 		Second.AddField(docID, field, fieldInfo);
 	  }
 
-	  internal override void Flush(SegmentWriteState state)
+      public override void Flush(SegmentWriteState state)
 	  {
 		First.Flush(state);
 		Second.Flush(state);
 	  }
 
-	  internal override void Abort()
+      public override void Abort()
 	  {
 		try
 		{
 		  First.Abort();
 		}
-		catch (Exception t)
+		catch (Exception)
 		{
 		}
 		try
 		{
 		  Second.Abort();
 		}
-		catch (Exception t)
+		catch (Exception)
 		{
 		}
 	  }
 
-	  internal override void StartDocument()
+      public override void StartDocument()
 	  {
 		First.StartDocument();
 		Second.StartDocument();
 	  }
 
-	  internal override void FinishDocument()
+      public override void FinishDocument()
 	  {
 		First.FinishDocument();
 		Second.FinishDocument();

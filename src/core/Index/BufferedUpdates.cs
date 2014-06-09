@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	// instance on DocumentWriterPerThread, or via sync'd code by
 	// DocumentsWriterDeleteQueue
 
-	internal class BufferedUpdates
+	public class BufferedUpdates
 	{
 
 	  /* Rough logic: HashMap has an array[Entry] w/ varying

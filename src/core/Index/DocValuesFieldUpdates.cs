@@ -30,10 +30,10 @@ namespace Lucene.Net.Index
 	/// 
 	/// @lucene.experimental
 	/// </summary>
-	internal abstract class DocValuesFieldUpdates
+	public abstract class DocValuesFieldUpdates
 	{
 
-	  internal enum Type_e
+	  public enum Type_e
 	  {
 		  NUMERIC,
 		  BINARY
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 	  /// updates are returned by this iterator, and the documents are returned in
 	  /// increasing order.
 	  /// </summary>
-	  internal abstract class Iterator
+	  internal interface Iterator
 	  {
 
 		/// <summary>
@@ -52,23 +52,23 @@ namespace Lucene.Net.Index
 		/// <seealso cref="DocIdSetIterator#NO_MORE_DOCS"/> if there are no more documents to
 		/// return.
 		/// </summary>
-		internal abstract int NextDoc();
+		int NextDoc();
 
 		/// <summary>
 		/// Returns the current document this iterator is on. </summary>
-		internal abstract int Doc();
+		int Doc();
 
 		/// <summary>
 		/// Returns the value of the document returned from <seealso cref="#nextDoc()"/>. A
 		/// {@code null} value means that it was unset for this document.
 		/// </summary>
-		internal abstract object Value();
+		object Value();
 
 		/// <summary>
 		/// Reset the iterator's state. Should be called before <seealso cref="#nextDoc()"/>
 		/// and <seealso cref="#value()"/>.
 		/// </summary>
-		internal abstract void Reset();
+		void Reset();
 
 	  }
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
 	  /// Returns an <seealso cref="Iterator"/> over the updated documents and their
 	  /// values.
 	  /// </summary>
-	  public abstract Iterator Iterator();
+	  internal abstract Iterator GetIterator();
 
 	  /// <summary>
 	  /// Merge with another <seealso cref="DocValuesFieldUpdates"/>. this is called for a

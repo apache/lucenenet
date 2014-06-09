@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(Length_Renamed >= 0, "length=" + Length_Renamed);
 	  }
 
-	  public override bool Get(int doc)
+	  public bool Get(int doc)
 	  {
 		if (doc >= Length_Renamed)
 		{
@@ -53,9 +53,9 @@ namespace Lucene.Net.Index
 		return Parent.Get(doc + Start);
 	  }
 
-	  public override int Length()
+	  public int Length()
 	  {
-		return Length_Renamed;
+          return Length_Renamed;
 	  }
 	}
 

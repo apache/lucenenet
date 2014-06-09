@@ -45,11 +45,11 @@ namespace Lucene.Net.Util.Fst
 	  /// Looks up the output for this input, or null if the
 	  ///  input is not accepted. 
 	  /// </summary>
-	  public static T get<T>(FST<T> fst, IntsRef input)
+	  public static T Get<T>(FST<T> fst, IntsRef input)
 	  {
 
 		// TODO: would be nice not to alloc this on every lookup
-          FST<long>.Arc<T> arc = fst.GetFirstArc(new FST<long>.Arc<T>());
+        var arc = fst.GetFirstArc(new FST<T>.Arc<T>());
 
 		var fstReader = fst.GetBytesReader;
 
@@ -80,14 +80,14 @@ namespace Lucene.Net.Util.Fst
 	  /// Looks up the output for this input, or null if the
 	  ///  input is not accepted 
 	  /// </summary>
-	  public static T get<T>(FST<T> fst, BytesRef input)
+	  public static T Get<T>(FST<T> fst, BytesRef input)
 	  {
           Debug.Assert(fst.inputType == FST<long>.INPUT_TYPE.BYTE1);
 
 		var fstReader = fst.GetBytesReader;
 
 		// TODO: would be nice not to alloc this on every lookup
-        FST<long>.Arc<T> arc = fst.GetFirstArc(new FST<long>.Arc<T>());
+        var arc = fst.GetFirstArc(new FST<T>.Arc<T>());
 
 		// Accumulate output as we go
 		T output = fst.Outputs.NoOutput;
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util.Fst
 				mid = (int)((uint)(low + high) >> 1);
 				@in.Position = arc.PosArcsStart;
 				@in.SkipBytes(arc.BytesPerArc * mid);
-				sbyte flags = @in.ReadByte();
+				sbyte flags = @in.ReadSByte();
 				fst.ReadLabel(@in);
 				long minArcOutput;
                 if ((flags & FST<long>.BIT_ARC_HAS_OUTPUT) != 0)
@@ -249,8 +249,6 @@ namespace Lucene.Net.Util.Fst
 
 				// this is the min output we'd hit if we follow
 				// this arc:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long minArcOutput = output + arc.output;
 				long minArcOutput = output + arc.Output;
 
 				if (minArcOutput == targetOutput)
@@ -681,6 +679,10 @@ namespace Lucene.Net.Util.Fst
 		{
 		  return TopN.GetEnumerator();
 		}
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
 	  }
 
 

@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using Bits = Lucene.Net.Util.Bits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using BytesRefIterator = Lucene.Net.Util.BytesRefIterator;
+    using IBytesRefIterator = Lucene.Net.Util.IBytesRefIterator;
 
 	/// <summary>
 	/// Iterator to seek (<seealso cref="#seekCeil(BytesRef)"/>, {@link
@@ -45,10 +45,10 @@ namespace Lucene.Net.Index
 	/// 
 	/// @lucene.experimental 
 	/// </summary>
-	public abstract class TermsEnum : BytesRefIterator
+	public abstract class TermsEnum : IBytesRefIterator
 	{
-		public abstract IComparer<BytesRef> Comparator {get;}
-		public abstract BytesRef Next();
+	  public abstract IComparer<BytesRef> Comparator {get;}
+	  public abstract BytesRef Next();
 
 	  private AttributeSource Atts = null;
 

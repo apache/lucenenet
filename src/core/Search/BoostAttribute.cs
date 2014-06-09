@@ -21,7 +21,8 @@ namespace Lucene.Net.Search
 	using Attribute = Lucene.Net.Util.Attribute;
 	using AttributeSource = Lucene.Net.Util.AttributeSource; // javadocs only
 	using TermsEnum = Lucene.Net.Index.TermsEnum; // javadocs only
-	using Terms = Lucene.Net.Index.Terms; // javadocs only
+	using Terms = Lucene.Net.Index.Terms;
+    using Lucene.Net.Util; // javadocs only
 
 	/// <summary>
 	/// Add this <seealso cref="Attribute"/> to a <seealso cref="TermsEnum"/> returned by <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>
@@ -33,11 +34,28 @@ namespace Lucene.Net.Search
 	/// to itself in its constructor and consumed by the <seealso cref="MultiTermQuery.RewriteMethod"/>.
 	/// @lucene.internal
 	/// </summary>
-	public interface BoostAttribute : Attribute
+	public sealed class BoostAttribute : Util.Attribute, IBoostAttribute
 	{
-	  /// <summary>
+	  /*/// <summary>
 	  /// Sets the boost in this attribute </summary>
-	  float Boost {set;get;}
+	  float Boost {set;get;}*/
+        private float boost = 1.0f;
+
+        public float Boost
+        {
+            get { return boost; }
+            set { boost = value; }
+        }
+
+        public override void Clear()
+        {
+            boost = 1.0f;
+        }
+
+        public override void CopyTo(Util.Attribute target)
+        {
+            ((BoostAttribute)target).Boost = boost;
+        }
 	}
 
 }

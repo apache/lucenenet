@@ -21,8 +21,9 @@ namespace Lucene.Net.Search
 	 * limitations under the License.
 	 */
 
-
-	using IndexWriter = Lucene.Net.Index.IndexWriter;
+    /*LUCENE TO-DO Removing until use is proven
+	
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using Lucene.Net.Support;
@@ -315,6 +316,6 @@ namespace Lucene.Net.Search
 		  }
 		}
 	  }
-	}
+	}*/
 
 }

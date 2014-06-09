@@ -32,17 +32,17 @@ namespace Lucene.Net.Store
 		this.Os = os;
 	  }
 
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		Os.WriteByte(unchecked((byte)b));
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int length)
+	  public override void WriteBytes(byte[] b, int offset, int length)
 	  {
 		Os.Write(b, offset, length);
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		Os.Close();
 	  }

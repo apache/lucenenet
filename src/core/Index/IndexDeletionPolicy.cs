@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 	  ///  sorted by age (the 0th one is the oldest commit). </param>
       public abstract void OnCommit<T>(IList<T> commits) where T : IndexCommit;
 
-	  public override IndexDeletionPolicy Clone()
+	  public virtual object Clone()
 	  {
 		  return (IndexDeletionPolicy) base.MemberwiseClone();
 	  }

@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Packed
 
 	/// <summary>
 	/// Common functionality shared by <seealso cref="AppendingDeltaPackedLongBuffer"/> and <seealso cref="MonotonicAppendingLongBuffer"/>. </summary>
-	internal abstract class AbstractAppendingLongBuffer : LongValues
+	public abstract class AbstractAppendingLongBuffer : LongValues
 	{
 
 	  internal const int MIN_PAGE_SIZE = 64;
@@ -132,13 +132,14 @@ namespace Lucene.Net.Util.Packed
 
 	  internal abstract int Get(int block, int element, long[] arr, int off, int len);
 
-
+        /* LUCENE TO-DO
 	  /// <summary>
 	  /// Return an iterator over the values of this buffer. </summary>
 	  public virtual Iterator Iterator()
 	  {
 		return new Iterator(this);
-	  }
+	  }*/
+      public abstract Iterator GetIterator();
 
 	  public sealed class Iterator
 	  {

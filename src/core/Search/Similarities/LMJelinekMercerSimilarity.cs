@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 		  get
 		  {
-			return string.Format(Locale.ROOT, "Jelinek-Mercer(%f)", Lambda);
+              return string.Format(CultureInfo.InvariantCulture, "Jelinek-Mercer(%f)", Lambda);
 		  }
 	  }
 	}

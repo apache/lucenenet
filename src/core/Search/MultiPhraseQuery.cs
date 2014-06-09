@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
 		public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 		{
 		  Debug.Assert(OuterInstance.termArrays.Count > 0);
-		  AtomicReader reader = context.Reader();
+          AtomicReader reader = ((AtomicReader)context.Reader());
 		  Bits liveDocs = acceptDocs;
 
           PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[OuterInstance.termArrays.Count];
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
 
           if (OuterInstance.slop == 0)
 		  {
-			ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.SimScorer(Stats, context));
+			ExactPhraseScorer s = new ExactPhraseScorer(this, postingsFreqs, Similarity.DoSimScorer(Stats, context));
 			if (s.NoDocs)
 			{
 			  return null;
@@ -316,20 +316,20 @@ namespace Lucene.Net.Search
 		  }
 		  else
 		  {
-			return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.slop, Similarity.SimScorer(Stats, context));
+			return new SloppyPhraseScorer(this, postingsFreqs, OuterInstance.slop, Similarity.DoSimScorer(Stats, context));
 		  }
 		}
 
 		public override Explanation Explain(AtomicReaderContext context, int doc)
 		{
-		  Scorer scorer = Scorer(context, context.Reader().LiveDocs);
+		  Scorer scorer = Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
 		  if (scorer != null)
 		  {
 			int newDoc = scorer.Advance(doc);
 			if (newDoc == doc)
 			{
 			  float freq = OuterInstance.slop == 0 ? scorer.Freq() : ((SloppyPhraseScorer)scorer).SloppyFreq();
-			  SimScorer docScorer = Similarity.SimScorer(Stats, context);
+			  SimScorer docScorer = Similarity.DoSimScorer(Stats, context);
 			  ComplexExplanation result = new ComplexExplanation();
 			  result.Description = "weight(" + Query + " in " + doc + ") [" + Similarity.GetType().Name + "], result of:";
 			  Explanation scoreExplanation = docScorer.Explain(doc, new Explanation(freq, "phraseFreq=" + freq));

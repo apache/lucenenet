@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		  get
 		  {
 			bool? m = Match;
-			return (null != m ? (bool)m : base.Match);
+			return (null != m ? (bool)m : base.IsMatch);
 		  }
 	  }
 
