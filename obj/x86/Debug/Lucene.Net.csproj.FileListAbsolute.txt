@@ -1,8 +1,0 @@
-C:\Users\t-dewan\Documents\GitHub\lucene.net-1\obj\x86\Debug\Lucene.Net.csprojResolveAssemblyReference.cache
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\bin\Debug\ConsoleApplication.dll
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\bin\Debug\ConsoleApplication.pdb
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\bin\Debug\nunit.framework.dll
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\bin\Debug\nunit.framework.xml
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\obj\x86\Debug\Lucene.Net.csprojResolveAssemblyReference.cache
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\obj\x86\Debug\ConsoleApplication.dll
-C:\Users\t-russtr\Documents\GitHub\lucene.net-1\obj\x86\Debug\ConsoleApplication.pdb

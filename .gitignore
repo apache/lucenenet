@@ -22,3 +22,11 @@ src/core/QueryParser/
 test/core/QueryParser/
 src/contrib/
 test/contrib/
+src/core/obj/
+src/core/bin/
+test/core/obj/
+test/core/bin/
+bin/
+obj/
+doc/
+src/demo/
