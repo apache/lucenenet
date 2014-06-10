@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Lucene.Net.Support
 {
-    internal class AtomicBoolean
+    public class AtomicBoolean
     {
         private int value = 0;
 

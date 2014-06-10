@@ -112,12 +112,13 @@ namespace Lucene.Net.Analysis
             x = StandardTokenizer.HOST;
             x = StandardTokenizer.NUM;
             x = StandardTokenizer.CJ;
-            System.String[] y = StandardTokenizer.TOKEN_TYPES;
+            string[] y = StandardTokenizer.TOKEN_TYPES;
         }
         
-        private class MyStandardAnalyzer:StandardAnalyzer
+        private class MyStandardAnalyzer : StandardAnalyzer
         {
-            public MyStandardAnalyzer() : base(Version.LUCENE_CURRENT)
+            public MyStandardAnalyzer() 
+                : base(Version.LUCENE_CURRENT)
             {
                 
             }
@@ -177,7 +178,7 @@ namespace Lucene.Net.Analysis
         
         public override bool IncrementToken()
         {
-            bool hasNext = input.IncrementToken();
+            bool hasNext = Input.IncrementToken();
             if (!hasNext)
                 return false;
             payloadAtt.Payload = p; // reuse the payload / byte[]

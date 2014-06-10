@@ -32,6 +32,7 @@ namespace Lucene.Net.Analysis
 	using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
 	using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestGraphTokenizers : BaseTokenStreamTestCase
 	{
@@ -131,7 +132,7 @@ namespace Lucene.Net.Analysis
 
 		  string[] parts = sb.ToString().Split(" ", true);
 
-		  Tokens = new List<>();
+		  Tokens = new List<Token>();
 		  int pos = 0;
 		  int maxPos = -1;
 		  int offset = 0;
@@ -222,7 +223,7 @@ namespace Lucene.Net.Analysis
 		  // seed:
 		  Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
 
-		  checkAnalysisConsistency(Random(), a, false, "a/x:3 c/y:2 d e f/z:4 g h i j k");
+		  CheckAnalysisConsistency(Random(), a, false, "a/x:3 c/y:2 d e f/z:4 g h i j k");
 		}
 	  }
 
@@ -305,10 +306,10 @@ namespace Lucene.Net.Analysis
 		  Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
 
 		  Random random = Random();
-		  checkAnalysisConsistency(random, a, false, "a b c d e f g h i j k");
-		  checkAnalysisConsistency(random, a, false, "x y a b c d e f g h i j k");
-		  checkAnalysisConsistency(random, a, false, "a b c d e f g h i j k a");
-		  checkAnalysisConsistency(random, a, false, "a b c d e f g h i j k a x y");
+		  CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k");
+		  CheckAnalysisConsistency(random, a, false, "x y a b c d e f g h i j k");
+		  CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a");
+		  CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a x y");
 		}
 	  }
 
@@ -422,7 +423,7 @@ namespace Lucene.Net.Analysis
 		  Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
 
 		  Random random = Random();
-		  CheckRandomData(random, a, 5, atLeast(100));
+		  CheckRandomData(random, a, 5, AtLeast(100));
 		}
 	  }
 
@@ -459,7 +460,7 @@ namespace Lucene.Net.Analysis
 		  Analyzer a = new AnalyzerAnonymousInnerClassHelper5(this);
 
 		  Random random = Random();
-		  CheckRandomData(random, a, 5, atLeast(100));
+		  CheckRandomData(random, a, 5, AtLeast(100));
 		}
 	  }
 
@@ -496,7 +497,7 @@ namespace Lucene.Net.Analysis
 		  Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this);
 
 		  Random random = Random();
-		  CheckRandomData(random, a, 5, atLeast(100));
+          CheckRandomData(random, a, 5, AtLeast(100));
 		}
 	  }
 
@@ -589,7 +590,7 @@ namespace Lucene.Net.Analysis
 
 	  private Automaton Join(params Automaton[] @as)
 	  {
-		return BasicOperations.Concatenate(Arrays.asList(@as));
+		return BasicOperations.Concatenate(Arrays.AsList(@as));
 	  }
 
 	  private Automaton S2a(string s)

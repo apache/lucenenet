@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Lucene.Net.Support
 {
-    class AtomicInteger
+    public class AtomicInteger
     {
         private int value;
         public AtomicInteger()

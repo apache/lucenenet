@@ -84,7 +84,7 @@ using System.Collections.Generic;
 	  ///  IndexWriter#updateDocuments(Term,Iterable,Analyzer)}
 	  ///  and returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IndexableField> docs, Analyzer a)
+      public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
 	  {
 		Writer.UpdateDocuments(t, docs, a);
 		// Return gen as of when indexing finished:
@@ -96,7 +96,7 @@ using System.Collections.Generic;
 	  ///  IndexWriter#updateDocuments(Term,Iterable)} and returns
 	  ///  the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IndexableField> docs)
+      public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IEnumerable<IndexableField>> docs)
 	  {
 		Writer.UpdateDocuments(t, docs);
 		// Return gen as of when indexing finished:
@@ -175,7 +175,7 @@ using System.Collections.Generic;
 	  ///  IndexWriter#addDocuments(Iterable,Analyzer)} and
 	  ///  returns the generation that reflects this change.  
 	  /// </summary>
-	  public virtual long AddDocuments(IEnumerable<IndexableField> docs, Analyzer a)
+      public virtual long AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
 	  {
 		Writer.AddDocuments(docs, a);
 		// Return gen as of when indexing finished:
@@ -197,7 +197,7 @@ using System.Collections.Generic;
 	  /// Calls <seealso cref="IndexWriter#addDocuments(Iterable)"/> and
 	  ///  returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long AddDocuments(IEnumerable<IndexableField> docs)
+      public virtual long AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs)
 	  {
 		Writer.AddDocuments(docs);
 		// Return gen as of when indexing finished:

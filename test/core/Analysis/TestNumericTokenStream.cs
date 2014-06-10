@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
 	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 	using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
+	using ICharTermAttribute = Lucene.Net.Analysis.Tokenattributes.ICharTermAttribute;
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-	using CharTermAttributeImpl = Lucene.Net.Analysis.Tokenattributes.CharTermAttributeImpl;
     using NUnit.Framework;
     using System;
 
@@ -50,11 +50,11 @@ namespace Lucene.Net.Analysis
 		  bytesAtt.FillBytesRef();
 		  Assert.AreEqual(Lvalue & ~((1L << shift) - 1L), NumericUtils.PrefixCodedToLong(bytes), "Term is incorrectly encoded");
 		  Assert.AreEqual(Lvalue & ~((1L << shift) - 1L), numericAtt.RawValue, "Term raw value is incorrectly encoded");
-          Assert.AreEqual((shift == 0) ? NumericTokenStream.TOKEN_TYPE_FULL_PREC : NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.type, "Type incorrect");
+          Assert.AreEqual((shift == 0) ? NumericTokenStream.TOKEN_TYPE_FULL_PREC : NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type incorrect");
 		}
 		Assert.IsFalse( stream.IncrementToken(), "More tokens available");
 		stream.End();
-		stream.Close();
+		stream.Dispose();
 	  }
 
 	  public virtual void TestIntStream()
@@ -74,11 +74,11 @@ namespace Lucene.Net.Analysis
 		  bytesAtt.FillBytesRef();
 		  Assert.AreEqual(Ivalue & ~((1 << shift) - 1), NumericUtils.PrefixCodedToInt(bytes), "Term is incorrectly encoded");
 		  Assert.AreEqual(((long) Ivalue) & ~((1L << shift) - 1L), numericAtt.RawValue, "Term raw value is incorrectly encoded");
-		  Assert.AreEqual("Type incorrect", (shift == 0) ? NumericTokenStream.TOKEN_TYPE_FULL_PREC : NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.type);
+		  Assert.AreEqual("Type incorrect", (shift == 0) ? NumericTokenStream.TOKEN_TYPE_FULL_PREC : NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type);
 		}
 		Assert.IsFalse( stream.IncrementToken(), "More tokens available");
 		stream.End();
-		stream.Close();
+		stream.Dispose();
 	  }
 
 	  public virtual void TestNotInitialized()
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis
 		  stream.Reset();
 		  Assert.Fail("reset() should not succeed.");
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
 		  // pass
 		}
@@ -100,16 +100,16 @@ namespace Lucene.Net.Analysis
 		  stream.IncrementToken();
 		  Assert.Fail("IncrementToken() should not succeed.");
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
 		  // pass
 		}
 	  }
 
-	  public interface TestAttribute : CharTermAttribute
+	  public interface TestAttribute : ICharTermAttribute
 	  {
 	  }
-	  public class TestAttributeImpl : CharTermAttributeImpl, TestAttribute
+	  public class TestAttributeImpl : CharTermAttribute, TestAttribute
 	  {
 	  }
 

@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
             return "[" + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) / 1000) + "s] ";
         }
 
-      /*[STAThread]
+      [STAThread]
 	  public static void Main(string[] args)
 	  {
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
 
 		  Console.WriteLine("Server terminated.");
 		}
-	  }*/
+	  }
 
 	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {

@@ -80,8 +80,6 @@ namespace Lucene.Net.Analysis
 	  /// </summary>
 	  public int CorrectOffset(int currentOff)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int corrected = correct(currentOff);
 		int corrected = Correct(currentOff);
 		return (Input is CharFilter) ? ((CharFilter) Input).CorrectOffset(corrected) : corrected;
 	  }

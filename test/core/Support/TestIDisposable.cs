@@ -20,7 +20,7 @@
 */
 
 using Lucene.Net.Analysis;
-using Lucene.Net.Documents;
+using Lucene.Net.Document;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using NUnit.Framework;

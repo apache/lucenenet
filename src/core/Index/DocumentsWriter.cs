@@ -508,7 +508,7 @@ using Lucene.Net.Support;
 		}
 	  }
 
-	  internal bool UpdateDocuments(IEnumerable<IndexableField> docs, Analyzer analyzer, Term delTerm)
+      internal bool UpdateDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer analyzer, Term delTerm)
 	  {
 		bool hasEvents = PreUpdate();
 

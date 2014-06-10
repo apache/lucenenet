@@ -190,17 +190,17 @@ namespace Lucene.Net.Analysis
 	  {
 		return 1;
 	  }
-        /*LUCENE TO-DO
+
 	  /// <summary>
 	  /// Returns the used <seealso cref="ReuseStrategy"/>.
 	  /// </summary>
-	  public ReuseStrategy ReuseStrategy
+	  public ReuseStrategy Strategy
 	  {
 		  get
 		  {
 			return ReuseStrategy_Renamed;
 		  }
-	  }*/
+	  }
 
 	  /// <summary>
 	  /// Frees persistent resources used by this Analyzer </summary>

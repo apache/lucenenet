@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
 	{
 
       [STAThread]
-	  /*public static void Main(string[] args)
+	  public static void Main(string[] args)
 	  {
 
 		if (args.Length != 7)
@@ -155,7 +155,7 @@ namespace Lucene.Net.Store
 		}
 
 		Console.WriteLine("Finished " + count + " tries.");
-	  }*/
+	  }
 
       private static int ToInt32(byte[] tempBuf, int p)
       {

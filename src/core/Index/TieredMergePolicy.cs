@@ -121,6 +121,11 @@ namespace Lucene.Net.Index
 		  {
 			return MaxMergeAtOnce_Renamed;
 		  }
+
+          set
+          {
+              SetMaxMergeAtOnce(value);
+          }
 	  }
 
 	  // TODO: should addIndexes do explicit merging, too?  And,
@@ -150,6 +155,11 @@ namespace Lucene.Net.Index
 		  {
 			return MaxMergeAtOnceExplicit_Renamed;
 		  }
+
+          set
+          {
+              SetMaxMergeAtOnceExplicit(value);
+          }
 	  }
 
 	  /// <summary>
@@ -180,6 +190,11 @@ namespace Lucene.Net.Index
 		  {
 			return MaxMergedSegmentBytes / 1024 / 1024.0;
 		  }
+
+          set
+          {
+              SetMaxMergedSegmentMB(value);
+          }
 	  }
 
 	  /// <summary>
@@ -209,6 +224,11 @@ namespace Lucene.Net.Index
 		  {
 			return ReclaimDeletesWeight_Renamed;
 		  }
+
+          set
+          {
+              SetReclaimDeletesWeight(value);
+          }
 	  }
 
 	  /// <summary>
@@ -239,6 +259,11 @@ namespace Lucene.Net.Index
 		  {
 			return FloorSegmentBytes / (1024 * 1024.0);
 		  }
+
+          set
+          {
+              SetFloorSegmentMB(value);
+          }
 	  }
 
 	  /// <summary>
@@ -266,6 +291,11 @@ namespace Lucene.Net.Index
 		  {
 			return ForceMergeDeletesPctAllowed_Renamed;
 		  }
+
+          set
+          {
+              SetForceMergeDeletesPctAllowed(value);
+          }
 	  }
 
 	  /// <summary>
@@ -298,6 +328,11 @@ namespace Lucene.Net.Index
 		  {
 			return SegsPerTier;
 		  }
+
+          set
+          {
+              SetSegmentsPerTier(value);
+          }
 	  }
 
 	  private class SegmentByteSizeDescending : IComparer<SegmentCommitInfo>

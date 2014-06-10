@@ -25,7 +25,7 @@ namespace Lucene.Net.Test.Analysis
 {
     
     /// <summary>Base class for all Lucene unit tests that use TokenStreams.</summary>
-    public abstract class BaseTokenStreamTestCase:LuceneTestCase
+    public abstract class BaseTokenStreamTestCase : LuceneTestCase
     {
         public BaseTokenStreamTestCase()
         { }
@@ -85,27 +85,27 @@ namespace Lucene.Net.Test.Analysis
             Assert.IsNotNull(output);
             ICheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
-            Assert.IsTrue(ts.HasAttribute<ITermAttribute>(), "has no TermAttribute");
+            Assert.IsTrue(ts.HasAttribute(typeof(ITermAttribute)), "has no TermAttribute");
             ITermAttribute termAtt = ts.GetAttribute<ITermAttribute>();
 
             IOffsetAttribute offsetAtt = null;
             if (startOffsets != null || endOffsets != null || finalOffset != null)
             {
-                Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
+                Assert.IsTrue(ts.HasAttribute(typeof(IOffsetAttribute)), "has no OffsetAttribute");
                 offsetAtt = ts.GetAttribute<IOffsetAttribute>();
             }
     
             ITypeAttribute typeAtt = null;
             if (types != null)
             {
-                Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
+                Assert.IsTrue(ts.HasAttribute(typeof(ITypeAttribute)), "has no TypeAttribute");
                 typeAtt = ts.GetAttribute<ITypeAttribute>();
             }
             
             IPositionIncrementAttribute posIncrAtt = null;
             if (posIncrements != null)
             {
-                Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+                Assert.IsTrue(ts.HasAttribute(typeof(IPositionIncrementAttribute)), "has no PositionIncrementAttribute");
                 posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
             }
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Test.Analysis
             ts.End();
             if (finalOffset.HasValue)
                 Assert.AreEqual(finalOffset, offsetAtt.EndOffset, "finalOffset ");
-            ts.Close();
+            ts.Dispose();
         }
 
         public static void AssertTokenStreamContents(TokenStream ts, String[] output, int[] startOffsets, int[] endOffsets, String[] types, int[] posIncrements)

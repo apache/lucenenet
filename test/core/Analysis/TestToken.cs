@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis
 	using Lucene.Net.Analysis.Tokenattributes;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using Attribute = Lucene.Net.Util.Attribute;
-	using AttributeImpl = Lucene.Net.Util.AttributeImpl;
+	using Attribute = Lucene.Net.Util.Attribute;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual(0, t.StartOffset());
 		Assert.AreEqual(0, t.EndOffset());
 		Assert.AreEqual("hello", t.ToString());
-		Assert.AreEqual("word", t.Type());
+		Assert.AreEqual("word", t.Type);
 		Assert.AreEqual(0, t.Flags);
 
 		t = new Token(6, 22);
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual("hello", t.ToString());
 		Assert.AreEqual(6, t.StartOffset());
 		Assert.AreEqual(22, t.EndOffset());
-		Assert.AreEqual("word", t.Type());
+		Assert.AreEqual("word", t.Type);
 		Assert.AreEqual(0, t.Flags);
 
 		t = new Token(6, 22, 7);
@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual("hello", t.ToString());
 		Assert.AreEqual(6, t.StartOffset());
 		Assert.AreEqual(22, t.EndOffset());
-		Assert.AreEqual("word", t.Type());
+		Assert.AreEqual("word", t.Type);
 		Assert.AreEqual(7, t.Flags);
 
 		t = new Token(6, 22, "junk");
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual("hello", t.ToString());
 		Assert.AreEqual(6, t.StartOffset());
 		Assert.AreEqual(22, t.EndOffset());
-		Assert.AreEqual("junk", t.Type());
+		Assert.AreEqual("junk", t.Type);
 		Assert.AreEqual(0, t.Flags);
 	  }
 
@@ -230,13 +230,13 @@ namespace Lucene.Net.Analysis
 		Assert.AreNotSame(pl, copy.Payload);
 	  }
 
-	  public interface SenselessAttribute : Attribute
+	  public interface SenselessAttribute : Lucene.Net.Util.IAttribute
 	  {
 	  }
 
-	  public sealed class SenselessAttributeImpl : AttributeImpl, SenselessAttribute
+	  public sealed class SenselessAttributeImpl : Attribute, SenselessAttribute
 	  {
-		public override void CopyTo(AttributeImpl target)
+		public override void CopyTo(Attribute target)
 		{
 		}
 		public override void Clear()
@@ -271,7 +271,7 @@ namespace Lucene.Net.Analysis
 	  public virtual void TestAttributeReflection()
 	  {
 		Token t = new Token("foobar", 6, 22, 8);
-		TestUtil.assertAttributeReflection(t, new Dictionary<string, object>() {
+		TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() {
             {   put(typeof(CharTermAttribute).Name + "#term", "foobar"); 
                 put(typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar")); 
                 put(typeof(OffsetAttribute).Name + "#startOffset", 6); 
@@ -284,7 +284,7 @@ namespace Lucene.Net.Analysis
         });
 	  }
 
-      public static T AssertCloneIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl
+      public static T AssertCloneIsEqual<T>(T att) where T : Attribute
 	  {
 		T clone = (T) att.Clone();
 		Assert.AreEqual(att, clone, "Clone must be equal");
@@ -292,7 +292,7 @@ namespace Lucene.Net.Analysis
 		return clone;
 	  }
 
-	  public static T AssertCopyIsEqual<T>(T att) where T : Lucene.Net.Util.AttributeImpl
+      public static T AssertCopyIsEqual<T>(T att) where T : Attribute
 	  {
         T copy = (T)System.Activator.CreateInstance(att.GetType());
 		att.CopyTo(copy);

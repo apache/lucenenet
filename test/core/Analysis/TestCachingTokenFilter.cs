@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis
 
 		// 2) now add the document to the index and verify if all tokens are indexed
 		//    don't reset the stream here, the DocumentWriter should do that implicitly
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
 		DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "preanalyzed", new BytesRef("term1"));
@@ -75,12 +75,12 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 		Assert.AreEqual(1, termPositions.Freq());
 		Assert.AreEqual(2, termPositions.NextPosition());
-		reader.Close();
+        reader.Dispose();
 		writer.Close();
 		// 3) reset stream and consume tokens again
 		stream.Reset();
 		CheckTokens(stream);
-		dir.Close();
+		dir.Dispose();
 	  }
 
 	  private class TokenStreamAnonymousInnerClassHelper : TokenStream

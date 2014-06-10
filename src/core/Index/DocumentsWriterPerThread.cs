@@ -323,7 +323,7 @@ using System.Globalization;
 		FinishDocument(delTerm);
 	  }
 
-	  public virtual int UpdateDocuments(IEnumerable<IndexableField> docs, Analyzer analyzer, Term delTerm)
+      public virtual int UpdateDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer analyzer, Term delTerm)
 	  {
 		Debug.Assert(TestPoint("DocumentsWriterPerThread addDocuments start"));
 		Debug.Assert(DeleteQueue != null);
@@ -336,8 +336,6 @@ using System.Globalization;
 		bool allDocsIndexed = false;
 		try
 		{
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: for(Iterable<? extends IndexableField> doc : docs)
 		  foreach (IEnumerable<IndexableField> doc in docs)
 		  {
 			docState.Doc = doc;

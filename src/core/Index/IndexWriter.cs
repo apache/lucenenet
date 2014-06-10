@@ -1484,7 +1484,7 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error
 	  /// 
 	  /// @lucene.experimental </exception>
-	  public virtual void AddDocuments(IEnumerable<IndexableField> docs)
+      public virtual void AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs)
 	  {
 		AddDocuments(docs, analyzer);
 	  }
@@ -1499,7 +1499,7 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error
 	  /// 
 	  /// @lucene.experimental </exception>
-	  public virtual void AddDocuments(IEnumerable<IndexableField> docs, Analyzer analyzer)
+      public virtual void AddDocuments(IEnumerable<IEnumerable<IndexableField>> docs, Analyzer analyzer)
 	  {
 		UpdateDocuments(null, docs, analyzer);
 	  }
@@ -1516,7 +1516,7 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error
 	  /// 
 	  /// @lucene.experimental </exception>
-	  public virtual void UpdateDocuments(Term delTerm, IEnumerable<IndexableField> docs)
+      public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IndexableField>> docs)
 	  {
 		UpdateDocuments(delTerm, docs, analyzer);
 	  }
@@ -1534,7 +1534,7 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error
 	  /// 
 	  /// @lucene.experimental </exception>
-      public virtual void UpdateDocuments(Term delTerm, IEnumerable<IndexableField> docs, Analyzer analyzer)
+      public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IndexableField>> docs, Analyzer analyzer)
 	  {
 		EnsureOpen();
 		try
