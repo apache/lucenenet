@@ -16,3 +16,9 @@ build/bin
 _ReSharper*
 *.orig
 *.cache
+src/core/Messages/
+test/core/Messages/
+src/core/QueryParser/
+test/core/QueryParser/
+src/contrib/
+test/contrib/
