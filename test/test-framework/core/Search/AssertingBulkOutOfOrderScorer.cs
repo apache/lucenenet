@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	  public override bool Score(Collector collector, int max)
 	  {
 		RandomOrderCollector randomCollector = new RandomOrderCollector(Random, collector);
-		bool remaining = @in.score(randomCollector, max);
+		bool remaining = @in.Score(randomCollector, max);
 		randomCollector.Flush();
 		return remaining;
 	  }
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 	  public override void Score(Collector collector)
 	  {
 		RandomOrderCollector randomCollector = new RandomOrderCollector(Random, collector);
-		@in.score(randomCollector);
+		@in.Score(randomCollector);
 		randomCollector.Flush();
 	  }
 

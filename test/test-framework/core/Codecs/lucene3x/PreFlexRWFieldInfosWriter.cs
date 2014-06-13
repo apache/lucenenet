@@ -56,60 +56,60 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  internal const sbyte OMIT_NORMS = 0x10;
 	  internal const sbyte STORE_PAYLOADS = 0x20;
 	  internal const sbyte OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
-	  internal const sbyte OMIT_POSITIONS = -unchecked((sbyte)128);
+	  internal const sbyte OMIT_POSITIONS = -128;
 
 	  public override void Write(Directory directory, string segmentName, string segmentSuffix, FieldInfos infos, IOContext context)
 	  {
-		string fileName = IndexFileNames.segmentFileName(segmentName, "", FIELD_INFOS_EXTENSION);
-		IndexOutput output = directory.createOutput(fileName, context);
+		string fileName = IndexFileNames.SegmentFileName(segmentName, "", FIELD_INFOS_EXTENSION);
+		IndexOutput output = directory.CreateOutput(fileName, context);
 		bool success = false;
 		try
 		{
-		  output.writeVInt(FORMAT_PREFLEX_RW);
-		  output.writeVInt(infos.size());
+		  output.WriteVInt(FORMAT_PREFLEX_RW);
+		  output.WriteVInt(infos.Size());
 		  foreach (FieldInfo fi in infos)
 		  {
 			sbyte bits = 0x0;
-			if (fi.hasVectors())
+			if (fi.HasVectors())
 			{
 				bits |= STORE_TERMVECTOR;
 			}
-			if (fi.omitsNorms())
+			if (fi.OmitsNorms())
 			{
 				bits |= OMIT_NORMS;
 			}
-			if (fi.hasPayloads())
+			if (fi.HasPayloads())
 			{
 				bits |= STORE_PAYLOADS;
 			}
 			if (fi.Indexed)
 			{
 			  bits |= IS_INDEXED;
-			  Debug.Assert(fi.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS || !fi.hasPayloads());
-			  if (fi.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY)
+			  Debug.Assert(fi.IndexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+			  if (fi.IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY)
 			  {
 				bits |= OMIT_TERM_FREQ_AND_POSITIONS;
 			  }
-			  else if (fi.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_AND_FREQS)
+			  else if (fi.IndexOptions == FieldInfo.IndexOptions_e.DOCS_AND_FREQS)
 			  {
 				bits |= OMIT_POSITIONS;
 			  }
 			}
-			output.writeString(fi.name);
+			output.WriteString(fi.Name);
 			/*
 			 * we need to write the field number since IW tries
 			 * to stabelize the field numbers across segments so the
 			 * FI ordinal is not necessarily equivalent to the field number 
 			 */
-			output.writeInt(fi.number);
-			output.writeByte(bits);
-			if (fi.Indexed && !fi.omitsNorms())
+			output.WriteInt(fi.Number);
+			output.WriteByte(bits);
+			if (fi.Indexed && !fi.OmitsNorms())
 			{
 			  // to allow null norm types we need to indicate if norms are written 
 			  // only in RW case
-			  output.writeByte((sbyte)(fi.NormType == null ? 0 : 1));
+			  output.WriteByte((sbyte)(fi.NormType == null ? 0 : 1));
 			}
-			Debug.Assert(fi.attributes() == null); // not used or supported
+			Debug.Assert(fi.Attributes() == null); // not used or supported
 		  }
 		  success = true;
 		}
@@ -117,11 +117,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (success)
 		  {
-			output.close();
+			output.Dispose();
 		  }
 		  else
 		  {
-			IOUtils.closeWhileHandlingException(output);
+			IOUtils.CloseWhileHandlingException(output);
 		  }
 		}
 	  }

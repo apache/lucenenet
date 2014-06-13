@@ -104,8 +104,8 @@ namespace Lucene.Net.Analysis
 
 	  public override int Correct(int currentOff)
 	  {
-		KeyValuePair<int, int> lastEntry = Corrections.lowerEntry(currentOff + 1);
-		int ret = lastEntry == null ? currentOff : currentOff + lastEntry.Value;
+		KeyValuePair<int, int> lastEntry = Corrections.LowerEntry(currentOff + 1);
+        int ret = lastEntry.Equals(default(KeyValuePair<int, int>)) ? currentOff : currentOff + lastEntry.Value;
 		Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
 		return ret;
 	  }

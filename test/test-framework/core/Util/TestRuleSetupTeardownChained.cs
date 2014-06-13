@@ -65,11 +65,11 @@ namespace Lucene.Net.Util
 			// test because this would obscure the original exception?
 			if (!OuterInstance.SetupCalled)
 			{
-			  Assert.Assert.Fail("One of the overrides of setUp does not propagate the call.");
+			  Assert.Fail("One of the overrides of setUp does not propagate the call.");
 			}
 			if (!OuterInstance.TeardownCalled)
 			{
-			  Assert.Assert.Fail("One of the overrides of tearDown does not propagate the call.");
+			  Assert.Fail("One of the overrides of tearDown does not propagate the call.");
 			}
 		  }
 	  }

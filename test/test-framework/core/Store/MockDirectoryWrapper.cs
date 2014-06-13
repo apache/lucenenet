@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
@@ -34,6 +35,7 @@ namespace Lucene.Net.Store
 	using ThrottledIndexOutput = Lucene.Net.Util.ThrottledIndexOutput;
     using Lucene.Net.Support;
     using System.IO;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// this is a Directory Wrapper that adds methods
@@ -70,7 +72,7 @@ namespace Lucene.Net.Store
 	  private ISet<string> UnSyncedFiles;
 	  private ISet<string> CreatedFiles;
 	  private ISet<string> OpenFilesForWrite = new HashSet<string>();
-	  internal ISet<string> OpenLocks = Collections.synchronizedSet(new HashSet<string>());
+	  internal ISet<string> OpenLocks = /*Collections.synchronizedSet(*/new HashSet<string>()/*)*/;
 	  internal volatile bool Crashed;
 	  private ThrottledIndexOutput ThrottledOutput;
 	  private Throttling_e throttling = Throttling_e.SOMETIMES;
@@ -324,7 +326,7 @@ namespace Lucene.Net.Store
 				  @out.WriteBytes(zeroes, 0, limit);
 				  upto += limit;
 				}
-				@out.Close();
+				@out.Dispose();
 			  }
 			  else if (damage == 2)
 			  {
@@ -512,13 +514,13 @@ namespace Lucene.Net.Store
 			Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
 			(new Exception()).printStackTrace(System.out);
 		  }*/
-		  if (AllowRandomFileNotFoundException_Renamed == false || RandomState.nextBoolean())
+		  if (AllowRandomFileNotFoundException_Renamed == false || RandomState.NextBoolean())
 		  {
 			throw new System.IO.IOException("a randomSystem.IO.IOException (" + name + ")");
 		  }
 		  else
 		  {
-			throw RandomState.nextBoolean() ? new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new NoSuchFileException("a randomSystem.IO.IOException (" + name + ")");
+              throw RandomState.NextBoolean() ? new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")");
 		  }
 		}
 	  }
@@ -557,7 +559,7 @@ namespace Lucene.Net.Store
 
 	  private void MaybeYield()
 	  {
-		if (RandomState.nextBoolean())
+		if (RandomState.NextBoolean())
 		{
 		  Thread.@Yield();
 		}
@@ -737,7 +739,7 @@ namespace Lucene.Net.Store
 			  OpenFiles[name] = Convert.ToInt32(1);
 			}
         
-			OpenFileHandles[c] = new Exception("unclosed Index" + handle.Name + ": " + name);
+			OpenFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
 		  }
 	  }
 
@@ -764,7 +766,7 @@ namespace Lucene.Net.Store
 			}
 			if (!LuceneTestCase.SlowFileExists(@in, name))
 			{
-			  throw RandomState.nextBoolean() ? new FileNotFoundException(name + " in dir=" + @in) : new NoSuchFileException(name + " in dir=" + @in);
+                throw RandomState.NextBoolean() ? new FileNotFoundException(name + " in dir=" + @in) : new FileNotFoundException(name + " in dir=" + @in);
 			}
         
 			// cannot open a file for input if it's still open for
@@ -935,11 +937,11 @@ namespace Lucene.Net.Store
 				if (AssertNoUnreferencedFilesOnClose)
 				{
 				  // now look for unreferenced files: discount ones that we tried to delete but could not
-				  ISet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
+				  HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
 				  allFiles.removeAll(pendingDeletions);
 				  string[] startFiles = allFiles.ToArray(/*new string[0]*/);
 				  IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
-				  iwc.IndexDeletionPolicy = NoDeletionPolicy.INSTANCE;
+				  iwc.SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
 				  (new IndexWriter(@in, iwc)).Rollback();
 				  string[] endFiles = @in.ListAll();
 
@@ -1052,16 +1054,16 @@ namespace Lucene.Net.Store
         
 				  DirectoryReader ir1 = DirectoryReader.Open(this);
 				  int numDocs1 = ir1.NumDocs();
-				  ir1.Close();
-				  (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).Close();
+				  ir1.Dispose();
+				  (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).Dispose();
 				  DirectoryReader ir2 = DirectoryReader.Open(this);
 				  int numDocs2 = ir2.NumDocs();
-				  ir2.Close();
+                  ir2.Dispose();
 				  Debug.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
 				}
 			  }
 			}
-			@in.Close();
+            @in.Dispose();
 		  }
 	  }
 
@@ -1291,7 +1293,7 @@ namespace Lucene.Net.Store
 		MaybeYield();
 		if (!LuceneTestCase.SlowFileExists(@in, name))
 		{
-		  throw RandomState.nextBoolean() ? new FileNotFoundException(name) : new NoSuchFileException(name);
+            throw RandomState.NextBoolean() ? new FileNotFoundException(name) : new FileNotFoundException(name);
 		}
 		// cannot open a file for input if it's still open for
 		// output, except for segments.gen and segments_N

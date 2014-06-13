@@ -35,7 +35,8 @@ namespace Lucene.Net.Util
 	/// 
 	///  @lucene.internal 
 	/// </summary>
-	public abstract class RollingBuffer<T> where T : RollingBuffer.Resettable
+	public abstract class RollingBuffer<T> 
+        where T : RollingBuffer.Resettable
 	{
 
 	  private T[] Buffer = new T[8];
@@ -143,8 +144,6 @@ namespace Lucene.Net.Util
 
 	  public virtual void FreeBefore(int pos)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toFree = count - (nextPos - pos);
 		int toFree = Count - (NextPos - pos);
 		Debug.Assert(toFree >= 0);
 		Debug.Assert(toFree <= Count, "toFree=" + toFree + " count=" + Count);

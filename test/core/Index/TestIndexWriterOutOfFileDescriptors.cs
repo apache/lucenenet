@@ -30,18 +30,21 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using System.IO;
 
 	public class TestIndexWriterOutOfFileDescriptors : LuceneTestCase
 	{
 	  public virtual void Test()
 	  {
-		MockDirectoryWrapper dir = newMockFSDirectory(createTempDir("TestIndexWriterOutOfFileDescriptors"));
+		MockDirectoryWrapper dir = NewMockFSDirectory(CreateTempDir("TestIndexWriterOutOfFileDescriptors"));
 		dir.PreventDoubleWrite = false;
-		double rate = random().NextDouble() * 0.01;
+		double rate = Random().NextDouble() * 0.01;
 		//System.out.println("rate=" + rate);
 		dir.RandomIOExceptionRateOnOpen = rate;
-		int iters = atLeast(20);
-		LineFileDocs docs = new LineFileDocs(random(), defaultCodecSupportsDocValues());
+		int iters = AtLeast(20);
+		LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
 		IndexReader r = null;
 		DirectoryReader r2 = null;
 		bool any = false;
@@ -57,31 +60,31 @@ namespace Lucene.Net.Index
 		  }
 		  try
 		  {
-			MockAnalyzer analyzer = new MockAnalyzer(random());
-			analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
-			IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+			MockAnalyzer analyzer = new MockAnalyzer(Random());
+			analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+			IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 
 			if (VERBOSE)
 			{
 			  // Do this ourselves instead of relying on LTC so
 			  // we see incrementing messageID:
-			  iwc.InfoStream = new PrintStreamInfoStream(System.out);
+			  iwc.InfoStream = new PrintStreamInfoStream(Console.Out);
 			}
 			MergeScheduler ms = iwc.MergeScheduler;
 			if (ms is ConcurrentMergeScheduler)
 			{
-			  ((ConcurrentMergeScheduler) ms).setSuppressExceptions();
+			  ((ConcurrentMergeScheduler) ms).SetSuppressExceptions();
 			}
 			w = new IndexWriter(dir, iwc);
-			if (r != null && random().Next(5) == 3)
+			if (r != null && Random().Next(5) == 3)
 			{
-			  if (random().nextBoolean())
+			  if (Random().NextBoolean())
 			  {
 				if (VERBOSE)
 				{
 				  Console.WriteLine("TEST: addIndexes IR[]");
 				}
-				w.addIndexes(new IndexReader[] {r});
+				w.AddIndexes(new IndexReader[] {r});
 			  }
 			  else
 			  {
@@ -89,7 +92,7 @@ namespace Lucene.Net.Index
 				{
 				  Console.WriteLine("TEST: addIndexes Directory[]");
 				}
-				w.addIndexes(new Directory[] {dirCopy});
+				w.AddIndexes(new Directory[] {dirCopy});
 			  }
 			}
 			else
@@ -98,36 +101,36 @@ namespace Lucene.Net.Index
 			  {
 				Console.WriteLine("TEST: addDocument");
 			  }
-			  w.addDocument(docs.nextDoc());
+			  w.AddDocument(docs.NextDoc());
 			}
 			dir.RandomIOExceptionRateOnOpen = 0.0;
-			w.close();
+			w.Dispose();
 			w = null;
 
 			// NOTE: this is O(N^2)!  Only enable for temporary debugging:
 			//dir.setRandomIOExceptionRateOnOpen(0.0);
-			//TestUtil.checkIndex(dir);
+			//TestUtil.CheckIndex(dir);
 			//dir.setRandomIOExceptionRateOnOpen(rate);
 
 			// Verify numDocs only increases, to catch IndexWriter
 			// accidentally deleting the index:
 			dir.RandomIOExceptionRateOnOpen = 0.0;
-			Assert.IsTrue(DirectoryReader.indexExists(dir));
+			Assert.IsTrue(DirectoryReader.IndexExists(dir));
 			if (r2 == null)
 			{
-			  r2 = DirectoryReader.open(dir);
+			  r2 = DirectoryReader.Open(dir);
 			}
 			else
 			{
-			  DirectoryReader r3 = DirectoryReader.openIfChanged(r2);
+			  DirectoryReader r3 = DirectoryReader.OpenIfChanged(r2);
 			  if (r3 != null)
 			  {
-				r2.close();
+				r2.Dispose();
 				r2 = r3;
 			  }
 			}
-			Assert.IsTrue("before=" + lastNumDocs + " after=" + r2.numDocs(), r2.numDocs() >= lastNumDocs);
-			lastNumDocs = r2.numDocs();
+			Assert.IsTrue(r2.NumDocs() >= lastNumDocs, "before=" + lastNumDocs + " after=" + r2.NumDocs());
+			lastNumDocs = r2.NumDocs();
 			//System.out.println("numDocs=" + lastNumDocs);
 			dir.RandomIOExceptionRateOnOpen = rate;
 
@@ -150,29 +153,29 @@ namespace Lucene.Net.Index
 			  // NOTE: leave random IO exceptions enabled here,
 			  // to verify that rollback does not try to write
 			  // anything:
-			  w.rollback();
+			  w.Rollback();
 			}
 		  }
 
-		  if (any && r == null && random().nextBoolean())
+		  if (any && r == null && Random().NextBoolean())
 		  {
 			// Make a copy of a non-empty index so we can use
 			// it to addIndexes later:
 			dir.RandomIOExceptionRateOnOpen = 0.0;
-			r = DirectoryReader.open(dir);
-			dirCopy = newMockFSDirectory(createTempDir("TestIndexWriterOutOfFileDescriptors.copy"));
-			Set<string> files = new HashSet<string>();
-			foreach (string file in dir.listAll())
+			r = DirectoryReader.Open(dir);
+			dirCopy = NewMockFSDirectory(CreateTempDir("TestIndexWriterOutOfFileDescriptors.copy"));
+			HashSet<string> files = new HashSet<string>();
+			foreach (string file in dir.ListAll())
 			{
-			  dir.copy(dirCopy, file, file, IOContext.DEFAULT);
-			  files.add(file);
+			  dir.Copy(dirCopy, file, file, IOContext.DEFAULT);
+			  files.Add(file);
 			}
-			dirCopy.sync(files);
+			dirCopy.Sync(files);
 			// Have IW kiss the dir so we remove any leftover
 			// files ... we can easily have leftover files at
 			// the time we take a copy because we are holding
 			// open a reader:
-			(new IndexWriter(dirCopy, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())))).close();
+			(new IndexWriter(dirCopy, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();
 			dirCopy.RandomIOExceptionRate = rate;
 			dir.RandomIOExceptionRateOnOpen = rate;
 		  }
@@ -180,14 +183,14 @@ namespace Lucene.Net.Index
 
 		if (r2 != null)
 		{
-		  r2.close();
+		  r2.Dispose();
 		}
 		if (r != null)
 		{
-		  r.close();
-		  dirCopy.close();
+		  r.Dispose();
+		  dirCopy.Dispose();
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 	}
 

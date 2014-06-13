@@ -32,9 +32,10 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TimeUnits = Lucene.Net.Util.TimeUnits;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-	using Ignore = org.junit.Ignore;
+    using Lucene.Net.Support;
+	/*using Ignore = org.junit.Ignore;
 
-	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
+	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
 
 	/// <summary>
 	/// Test indexes 2B docs with 65k freqs each, 
@@ -52,14 +53,14 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
 		public virtual void Test()
 		{
-		BaseDirectoryWrapper dir = newFSDirectory(createTempDir("2BPostingsBytes1"));
+		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
 		if (dir is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))
-	   .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).setRAMBufferSizeMB(256.0).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(false, 10)).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
 		MergePolicy mp = w.Config.MergePolicy;
 		if (mp is LogByteSizeMergePolicy)
@@ -70,11 +71,11 @@ namespace Lucene.Net.Index
 
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
+		ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS;
 		ft.OmitNorms = true;
 		MyTokenStream tokenStream = new MyTokenStream();
 		Field field = new Field("field", tokenStream, ft);
-		doc.add(field);
+		doc.Add(field);
 
 		const int numDocs = 1000;
 		for (int i = 0; i < numDocs; i++)
@@ -87,49 +88,49 @@ namespace Lucene.Net.Index
 		  {
 			tokenStream.n = 65537;
 		  }
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		}
-		w.forceMerge(1);
-		w.close();
+		w.ForceMerge(1);
+		w.Dispose();
 
-		DirectoryReader oneThousand = DirectoryReader.open(dir);
+		DirectoryReader oneThousand = DirectoryReader.Open(dir);
 		IndexReader[] subReaders = new IndexReader[1000];
-		Arrays.fill(subReaders, oneThousand);
+		Arrays.Fill(subReaders, oneThousand);
 		MultiReader mr = new MultiReader(subReaders);
-		BaseDirectoryWrapper dir2 = newFSDirectory(createTempDir("2BPostingsBytes2"));
+		BaseDirectoryWrapper dir2 = NewFSDirectory(CreateTempDir("2BPostingsBytes2"));
 		if (dir2 is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir2).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir2).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 		IndexWriter w2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
-		w2.addIndexes(mr);
-		w2.forceMerge(1);
-		w2.close();
-		oneThousand.close();
+		w2.AddIndexes(mr);
+		w2.ForceMerge(1);
+		w2.Dispose();
+		oneThousand.Dispose();
 
-		DirectoryReader oneMillion = DirectoryReader.open(dir2);
+		DirectoryReader oneMillion = DirectoryReader.Open(dir2);
 		subReaders = new IndexReader[2000];
-		Arrays.fill(subReaders, oneMillion);
+		Arrays.Fill(subReaders, oneMillion);
 		mr = new MultiReader(subReaders);
-		BaseDirectoryWrapper dir3 = newFSDirectory(createTempDir("2BPostingsBytes3"));
+		BaseDirectoryWrapper dir3 = NewFSDirectory(CreateTempDir("2BPostingsBytes3"));
 		if (dir3 is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir3).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir3).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 		IndexWriter w3 = new IndexWriter(dir3, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
-		w3.addIndexes(mr);
-		w3.forceMerge(1);
-		w3.close();
-		oneMillion.close();
+		w3.AddIndexes(mr);
+		w3.ForceMerge(1);
+		w3.Dispose();
+		oneMillion.Dispose();
 
-		dir.close();
-		dir2.close();
-		dir3.close();
+		dir.Dispose();
+		dir2.Dispose();
+		dir3.Dispose();
 		}
 
 	  public sealed class MyTokenStream : TokenStream
 	  {
-		internal readonly CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
+		internal readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
 		internal int Index;
 		internal int n;
 
@@ -138,7 +139,7 @@ namespace Lucene.Net.Index
 		  if (Index < n)
 		  {
 			ClearAttributes();
-			TermAtt.buffer()[0] = 'a';
+			TermAtt.Buffer()[0] = 'a';
 			TermAtt.Length = 1;
 			Index++;
 			return true;

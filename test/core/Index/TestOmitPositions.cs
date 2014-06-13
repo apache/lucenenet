@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// 
 	/// <summary>
@@ -40,153 +41,153 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestBasic()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
-		Field f = newField("foo", "this is a test test", ft);
-		doc.add(f);
+		ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS;
+		Field f = NewField("foo", "this is a test test", ft);
+		doc.Add(f);
 		for (int i = 0; i < 100; i++)
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		}
 
 		IndexReader reader = w.Reader;
-		w.close();
+        w.Close();
 
-		assertNull(MultiFields.getTermPositionsEnum(reader, null, "foo", new BytesRef("test")));
+		Assert.IsNull(MultiFields.GetTermPositionsEnum(reader, null, "foo", new BytesRef("test")));
 
-		DocsEnum de = TestUtil.docs(random(), reader, "foo", new BytesRef("test"), null, null, DocsEnum.FLAG_FREQS);
-		while (de.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		DocsEnum de = TestUtil.Docs(Random(), reader, "foo", new BytesRef("test"), null, null, DocsEnum.FLAG_FREQS);
+		while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(2, de.freq());
+		  Assert.AreEqual(2, de.Freq());
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Tests whether the DocumentWriter correctly enable the
 	  // omitTermFreqAndPositions bit in the FieldInfo
 	  public virtual void TestPositions()
 	  {
-		Directory ram = newDirectory();
-		Analyzer analyzer = new MockAnalyzer(random());
-		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		Directory ram = NewDirectory();
+		Analyzer analyzer = new MockAnalyzer(Random());
+		IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 		Document d = new Document();
 
 		// f1,f2,f3: docs only
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.IndexOptions = IndexOptions.DOCS_ONLY;
 
-		Field f1 = newField("f1", "this field has docs only", ft);
-		d.add(f1);
+		Field f1 = NewField("f1", "this field has docs only", ft);
+		d.Add(f1);
 
-		Field f2 = newField("f2", "this field has docs only", ft);
-		d.add(f2);
+		Field f2 = NewField("f2", "this field has docs only", ft);
+		d.Add(f2);
 
-		Field f3 = newField("f3", "this field has docs only", ft);
-		d.add(f3);
+		Field f3 = NewField("f3", "this field has docs only", ft);
+		d.Add(f3);
 
 		FieldType ft2 = new FieldType(TextField.TYPE_NOT_STORED);
 		ft2.IndexOptions = IndexOptions.DOCS_AND_FREQS;
 
 		// f4,f5,f6 docs and freqs
-		Field f4 = newField("f4", "this field has docs and freqs", ft2);
-		d.add(f4);
+		Field f4 = NewField("f4", "this field has docs and freqs", ft2);
+		d.Add(f4);
 
-		Field f5 = newField("f5", "this field has docs and freqs", ft2);
-		d.add(f5);
+		Field f5 = NewField("f5", "this field has docs and freqs", ft2);
+		d.Add(f5);
 
-		Field f6 = newField("f6", "this field has docs and freqs", ft2);
-		d.add(f6);
+		Field f6 = NewField("f6", "this field has docs and freqs", ft2);
+		d.Add(f6);
 
 		FieldType ft3 = new FieldType(TextField.TYPE_NOT_STORED);
 		ft3.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
 		// f7,f8,f9 docs/freqs/positions
-		Field f7 = newField("f7", "this field has docs and freqs and positions", ft3);
-		d.add(f7);
+		Field f7 = NewField("f7", "this field has docs and freqs and positions", ft3);
+		d.Add(f7);
 
-		Field f8 = newField("f8", "this field has docs and freqs and positions", ft3);
-		d.add(f8);
+		Field f8 = NewField("f8", "this field has docs and freqs and positions", ft3);
+		d.Add(f8);
 
-		Field f9 = newField("f9", "this field has docs and freqs and positions", ft3);
-		d.add(f9);
+		Field f9 = NewField("f9", "this field has docs and freqs and positions", ft3);
+		d.Add(f9);
 
-		writer.addDocument(d);
-		writer.forceMerge(1);
+		writer.AddDocument(d);
+		writer.ForceMerge(1);
 
 		// now we add another document which has docs-only for f1, f4, f7, docs/freqs for f2, f5, f8, 
 		// and docs/freqs/positions for f3, f6, f9
 		d = new Document();
 
 		// f1,f4,f7: docs only
-		f1 = newField("f1", "this field has docs only", ft);
-		d.add(f1);
+		f1 = NewField("f1", "this field has docs only", ft);
+		d.Add(f1);
 
-		f4 = newField("f4", "this field has docs only", ft);
-		d.add(f4);
+		f4 = NewField("f4", "this field has docs only", ft);
+		d.Add(f4);
 
-		f7 = newField("f7", "this field has docs only", ft);
-		d.add(f7);
+		f7 = NewField("f7", "this field has docs only", ft);
+		d.Add(f7);
 
 		// f2, f5, f8: docs and freqs
-		f2 = newField("f2", "this field has docs and freqs", ft2);
-		d.add(f2);
+		f2 = NewField("f2", "this field has docs and freqs", ft2);
+		d.Add(f2);
 
-		f5 = newField("f5", "this field has docs and freqs", ft2);
-		d.add(f5);
+		f5 = NewField("f5", "this field has docs and freqs", ft2);
+		d.Add(f5);
 
-		f8 = newField("f8", "this field has docs and freqs", ft2);
-		d.add(f8);
+		f8 = NewField("f8", "this field has docs and freqs", ft2);
+		d.Add(f8);
 
 		// f3, f6, f9: docs and freqs and positions
-		f3 = newField("f3", "this field has docs and freqs and positions", ft3);
-		d.add(f3);
+		f3 = NewField("f3", "this field has docs and freqs and positions", ft3);
+		d.Add(f3);
 
-		f6 = newField("f6", "this field has docs and freqs and positions", ft3);
-		d.add(f6);
+		f6 = NewField("f6", "this field has docs and freqs and positions", ft3);
+		d.Add(f6);
 
-		f9 = newField("f9", "this field has docs and freqs and positions", ft3);
-		d.add(f9);
+		f9 = NewField("f9", "this field has docs and freqs and positions", ft3);
+		d.Add(f9);
 
-		writer.addDocument(d);
+		writer.AddDocument(d);
 
 		// force merge
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		// flush
-		writer.close();
+		writer.Dispose();
 
-		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
 		FieldInfos fi = reader.FieldInfos;
 		// docs + docs = docs
-		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.fieldInfo("f1").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f1").IndexOptions);
 		// docs + docs/freqs = docs
-		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.fieldInfo("f2").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f2").IndexOptions);
 		// docs + docs/freqs/pos = docs
-		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.fieldInfo("f3").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f3").IndexOptions);
 		// docs/freqs + docs = docs
-		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.fieldInfo("f4").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f4").IndexOptions);
 		// docs/freqs + docs/freqs = docs/freqs
-		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fi.fieldInfo("f5").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fi.FieldInfo("f5").IndexOptions);
 		// docs/freqs + docs/freqs/pos = docs/freqs
-		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fi.fieldInfo("f6").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fi.FieldInfo("f6").IndexOptions);
 		// docs/freqs/pos + docs = docs
-		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.fieldInfo("f7").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f7").IndexOptions);
 		// docs/freqs/pos + docs/freqs = docs/freqs
-		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fi.fieldInfo("f8").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fi.FieldInfo("f8").IndexOptions);
 		// docs/freqs/pos + docs/freqs/pos = docs/freqs/pos
-		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.fieldInfo("f9").IndexOptions);
+		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.FieldInfo("f9").IndexOptions);
 
-		reader.close();
-		ram.close();
+		reader.Dispose();
+		ram.Dispose();
 	  }
 
 	  private void AssertNoPrx(Directory dir)
 	  {
-		string[] files = dir.listAll();
+		string[] files = dir.ListAll();
 		for (int i = 0;i < files.Length;i++)
 		{
 		  Assert.IsFalse(files[i].EndsWith(".prx"));
@@ -197,9 +198,9 @@ namespace Lucene.Net.Index
 	  // Verifies no *.prx exists when all fields omit term positions:
 	  public virtual void TestNoPrxFile()
 	  {
-		Directory ram = newDirectory();
-		Analyzer analyzer = new MockAnalyzer(random());
-		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(3).setMergePolicy(newLogMergePolicy()));
+		Directory ram = NewDirectory();
+		Analyzer analyzer = new MockAnalyzer(Random());
+		IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy()));
 		LogMergePolicy lmp = (LogMergePolicy) writer.Config.MergePolicy;
 		lmp.MergeFactor = 2;
 		lmp.NoCFSRatio = 0.0;
@@ -207,35 +208,35 @@ namespace Lucene.Net.Index
 
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
-		Field f1 = newField("f1", "this field has term freqs", ft);
-		d.add(f1);
+		Field f1 = NewField("f1", "this field has term freqs", ft);
+		d.Add(f1);
 
 		for (int i = 0;i < 30;i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
-		writer.commit();
+		writer.Commit();
 
 		AssertNoPrx(ram);
 
 		// now add some documents with positions, and check there is no prox after optimization
 		d = new Document();
-		f1 = newTextField("f1", "this field has positions", Field.Store.NO);
-		d.add(f1);
+		f1 = NewTextField("f1", "this field has positions", Field.Store.NO);
+		d.Add(f1);
 
 		for (int i = 0;i < 30;i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
 		// force merge
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		// flush
-		writer.close();
+		writer.Dispose();
 
 		AssertNoPrx(ram);
-		ram.close();
+		ram.Dispose();
 	  }
 
 	  /// <summary>
@@ -246,42 +247,42 @@ namespace Lucene.Net.Index
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
 
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 
 		for (int i = 0; i < 20; i++)
 		{
 		  Document doc = new Document();
-		  if (i < 19 && random().nextBoolean())
+		  if (i < 19 && Random().NextBoolean())
 		  {
 			for (int j = 0; j < 50; j++)
 			{
-			  doc.add(new TextField("foo", "i have positions", Field.Store.NO));
+			  doc.Add(new TextField("foo", "i have positions", Field.Store.NO));
 			}
 		  }
 		  else
 		  {
 			for (int j = 0; j < 50; j++)
 			{
-			  doc.add(new Field("foo", "i have no positions", ft));
+			  doc.Add(new Field("foo", "i have no positions", ft));
 			}
 		  }
-		  iw.addDocument(doc);
-		  iw.commit();
+		  iw.AddDocument(doc);
+		  iw.Commit();
 		}
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  iw.forceMerge(1);
+		  iw.ForceMerge(1);
 		}
 
 		DirectoryReader ir = iw.Reader;
-		FieldInfos fis = MultiFields.getMergedFieldInfos(ir);
-		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fis.fieldInfo("foo").IndexOptions);
-		Assert.IsFalse(fis.fieldInfo("foo").hasPayloads());
-		iw.close();
-		ir.close();
-		dir.close(); // checkindex
+		FieldInfos fis = MultiFields.GetMergedFieldInfos(ir);
+		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fis.FieldInfo("foo").IndexOptions);
+		Assert.IsFalse(fis.FieldInfo("foo").HasPayloads());
+        iw.Close();
+		ir.Dispose();
+		dir.Dispose(); // checkindex
 	  }
 	}
 

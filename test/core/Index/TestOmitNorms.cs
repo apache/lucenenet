@@ -27,6 +27,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	public class TestOmitNorms : LuceneTestCase
 	{
@@ -34,70 +36,70 @@ namespace Lucene.Net.Index
 	  // omitNorms bit in the FieldInfo
 	  public virtual void TestOmitNorms()
 	  {
-		Directory ram = newDirectory();
-		Analyzer analyzer = new MockAnalyzer(random());
-		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		Directory ram = NewDirectory();
+		Analyzer analyzer = new MockAnalyzer(Random());
+		IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 		Document d = new Document();
 
 		// this field will have norms
-		Field f1 = newTextField("f1", "this field has norms", Field.Store.NO);
-		d.add(f1);
+		Field f1 = NewTextField("f1", "this field has norms", Field.Store.NO);
+		d.Add(f1);
 
 		// this field will NOT have norms
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
-		Field f2 = newField("f2", "this field has NO norms in all docs", customType);
-		d.add(f2);
+		Field f2 = NewField("f2", "this field has NO norms in all docs", customType);
+		d.Add(f2);
 
-		writer.addDocument(d);
-		writer.forceMerge(1);
+		writer.AddDocument(d);
+		writer.ForceMerge(1);
 		// now we add another document which has term freq for field f2 and not for f1 and verify if the SegmentMerger
 		// keep things constant
 		d = new Document();
 
 		// Reverse
-		d.add(newField("f1", "this field has norms", customType));
+		d.Add(NewField("f1", "this field has norms", customType));
 
-		d.add(newTextField("f2", "this field has NO norms in all docs", Field.Store.NO));
+		d.Add(NewTextField("f2", "this field has NO norms in all docs", Field.Store.NO));
 
-		writer.addDocument(d);
+		writer.AddDocument(d);
 
 		// force merge
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		// flush
-		writer.close();
+		writer.Dispose();
 
-		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
 		FieldInfos fi = reader.FieldInfos;
-		Assert.IsTrue("OmitNorms field bit should be set.", fi.fieldInfo("f1").omitsNorms());
-		Assert.IsTrue("OmitNorms field bit should be set.", fi.fieldInfo("f2").omitsNorms());
+		Assert.IsTrue(fi.FieldInfo("f1").OmitsNorms(),"OmitNorms field bit should be set.");
+		Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms(), "OmitNorms field bit should be set.");
 
-		reader.close();
-		ram.close();
+		reader.Dispose();
+		ram.Dispose();
 	  }
 
 	  // Tests whether merging of docs that have different
 	  // omitNorms for the same field works
 	  public virtual void TestMixedMerge()
 	  {
-		Directory ram = newDirectory();
-		Analyzer analyzer = new MockAnalyzer(random());
-		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(3).setMergePolicy(newLogMergePolicy(2)));
+		Directory ram = NewDirectory();
+		Analyzer analyzer = new MockAnalyzer(Random());
+		IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy(2)));
 		Document d = new Document();
 
 		// this field will have norms
-		Field f1 = newTextField("f1", "this field has norms", Field.Store.NO);
-		d.add(f1);
+		Field f1 = NewTextField("f1", "this field has norms", Field.Store.NO);
+		d.Add(f1);
 
 		// this field will NOT have norms
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
-		Field f2 = newField("f2", "this field has NO norms in all docs", customType);
-		d.add(f2);
+		Field f2 = NewField("f2", "this field has NO norms in all docs", customType);
+		d.Add(f2);
 
 		for (int i = 0; i < 30; i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
 		// now we add another document which has norms for field f2 and not for f1 and verify if the SegmentMerger
@@ -105,27 +107,27 @@ namespace Lucene.Net.Index
 		d = new Document();
 
 		// Reverese
-		d.add(newField("f1", "this field has norms", customType));
+		d.Add(NewField("f1", "this field has norms", customType));
 
-		d.add(newTextField("f2", "this field has NO norms in all docs", Field.Store.NO));
+		d.Add(NewTextField("f2", "this field has NO norms in all docs", Field.Store.NO));
 
 		for (int i = 0; i < 30; i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
 		// force merge
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		// flush
-		writer.close();
+		writer.Dispose();
 
-		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
 		FieldInfos fi = reader.FieldInfos;
-		Assert.IsTrue("OmitNorms field bit should be set.", fi.fieldInfo("f1").omitsNorms());
-		Assert.IsTrue("OmitNorms field bit should be set.", fi.fieldInfo("f2").omitsNorms());
+		Assert.IsTrue(fi.FieldInfo("f1").OmitsNorms(), "OmitNorms field bit should be set.");
+		Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms(), "OmitNorms field bit should be set.");
 
-		reader.close();
-		ram.close();
+		reader.Dispose();
+		ram.Dispose();
 	  }
 
 	  // Make sure first adding docs that do not omitNorms for
@@ -133,50 +135,50 @@ namespace Lucene.Net.Index
 	  // field, 
 	  public virtual void TestMixedRAM()
 	  {
-		Directory ram = newDirectory();
-		Analyzer analyzer = new MockAnalyzer(random());
-		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy(2)));
+		Directory ram = NewDirectory();
+		Analyzer analyzer = new MockAnalyzer(Random());
+		IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(2)));
 		Document d = new Document();
 
 		// this field will have norms
-		Field f1 = newTextField("f1", "this field has norms", Field.Store.NO);
-		d.add(f1);
+		Field f1 = NewTextField("f1", "this field has norms", Field.Store.NO);
+		d.Add(f1);
 
 		// this field will NOT have norms
 
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
-		Field f2 = newField("f2", "this field has NO norms in all docs", customType);
-		d.add(f2);
+		Field f2 = NewField("f2", "this field has NO norms in all docs", customType);
+		d.Add(f2);
 
 		for (int i = 0; i < 5; i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
 		for (int i = 0; i < 20; i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
 		// force merge
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 
 		// flush
-		writer.close();
+		writer.Dispose();
 
-		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(ram));
+		SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(ram));
 		FieldInfos fi = reader.FieldInfos;
-		Assert.IsTrue("OmitNorms field bit should not be set.", !fi.fieldInfo("f1").omitsNorms());
-		Assert.IsTrue("OmitNorms field bit should be set.", fi.fieldInfo("f2").omitsNorms());
+		Assert.IsTrue(!fi.FieldInfo("f1").OmitsNorms(), "OmitNorms field bit should not be set.");
+		Assert.IsTrue(fi.FieldInfo("f2").OmitsNorms(), "OmitNorms field bit should be set.");
 
-		reader.close();
-		ram.close();
+		reader.Dispose();
+		ram.Dispose();
 	  }
 
 	  private void AssertNoNrm(Directory dir)
 	  {
-		string[] files = dir.listAll();
+		string[] files = dir.ListAll();
 		for (int i = 0; i < files.Length; i++)
 		{
 		  // TODO: this relies upon filenames
@@ -187,9 +189,9 @@ namespace Lucene.Net.Index
 	  // Verifies no *.nrm exists when all fields omit norms:
 	  public virtual void TestNoNrmFile()
 	  {
-		Directory ram = newDirectory();
-		Analyzer analyzer = new MockAnalyzer(random());
-		IndexWriter writer = new IndexWriter(ram, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(3).setMergePolicy(newLogMergePolicy()));
+		Directory ram = NewDirectory();
+		Analyzer analyzer = new MockAnalyzer(Random());
+		IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy()));
 		LogMergePolicy lmp = (LogMergePolicy) writer.Config.MergePolicy;
 		lmp.MergeFactor = 2;
 		lmp.NoCFSRatio = 0.0;
@@ -197,25 +199,25 @@ namespace Lucene.Net.Index
 
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
-		Field f1 = newField("f1", "this field has no norms", customType);
-		d.add(f1);
+		Field f1 = NewField("f1", "this field has no norms", customType);
+		d.Add(f1);
 
 		for (int i = 0; i < 30; i++)
 		{
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
-		writer.commit();
+		writer.Commit();
 
 		AssertNoNrm(ram);
 
 		// force merge
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		// flush
-		writer.close();
+		writer.Dispose();
 
 		AssertNoNrm(ram);
-		ram.close();
+		ram.Dispose();
 	  }
 
 	  /// <summary>
@@ -246,20 +248,20 @@ namespace Lucene.Net.Index
 		Field emptyNorms = new Field("bar", "a", customType);
 
 		Assert.IsNotNull(GetNorms("foo", norms, norms));
-		assertNull(GetNorms("foo", norms, noNorms));
+		Assert.IsNull(GetNorms("foo", norms, noNorms));
 		Assert.IsNotNull(GetNorms("foo", norms, noIndex));
-		Assert.IsNotNull(GetNorms("foo", norms, noNormsNoIndex));
-		Assert.IsNotNull(GetNorms("foo", norms, emptyNorms));
-		assertNull(GetNorms("foo", noNorms, noNorms));
-		assertNull(GetNorms("foo", noNorms, noIndex));
-		assertNull(GetNorms("foo", noNorms, noNormsNoIndex));
-		assertNull(GetNorms("foo", noNorms, emptyNorms));
-		assertNull(GetNorms("foo", noIndex, noIndex));
-		assertNull(GetNorms("foo", noIndex, noNormsNoIndex));
-		assertNull(GetNorms("foo", noIndex, emptyNorms));
-		assertNull(GetNorms("foo", noNormsNoIndex, noNormsNoIndex));
-		assertNull(GetNorms("foo", noNormsNoIndex, emptyNorms));
-		assertNull(GetNorms("foo", emptyNorms, emptyNorms));
+        Assert.IsNotNull(GetNorms("foo", norms, noNormsNoIndex));
+        Assert.IsNotNull(GetNorms("foo", norms, emptyNorms));
+		Assert.IsNull(GetNorms("foo", noNorms, noNorms));
+		Assert.IsNull(GetNorms("foo", noNorms, noIndex));
+		Assert.IsNull(GetNorms("foo", noNorms, noNormsNoIndex));
+		Assert.IsNull(GetNorms("foo", noNorms, emptyNorms));
+		Assert.IsNull(GetNorms("foo", noIndex, noIndex));
+		Assert.IsNull(GetNorms("foo", noIndex, noNormsNoIndex));
+		Assert.IsNull(GetNorms("foo", noIndex, emptyNorms));
+		Assert.IsNull(GetNorms("foo", noNormsNoIndex, noNormsNoIndex));
+		Assert.IsNull(GetNorms("foo", noNormsNoIndex, emptyNorms));
+		Assert.IsNull(GetNorms("foo", emptyNorms, emptyNorms));
 	  }
 
 	  /// <summary>
@@ -268,53 +270,53 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  internal virtual NumericDocValues GetNorms(string field, Field f1, Field f2)
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy());
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir, iwc);
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
 		// add f1
 		Document d = new Document();
-		d.add(f1);
-		riw.addDocument(d);
+		d.Add(f1);
+		riw.AddDocument(d);
 
 		// add f2
 		d = new Document();
-		d.add(f2);
-		riw.addDocument(d);
+		d.Add(f2);
+		riw.AddDocument(d);
 
 		// add a mix of f1's and f2's
-		int numExtraDocs = TestUtil.Next(random(), 1, 1000);
+		int numExtraDocs = TestUtil.NextInt(Random(), 1, 1000);
 		for (int i = 0; i < numExtraDocs; i++)
 		{
 		  d = new Document();
-		  d.add(random().nextBoolean() ? f1 : f2);
-		  riw.addDocument(d);
+		  d.Add(Random().NextBoolean() ? f1 : f2);
+		  riw.AddDocument(d);
 		}
 
 		IndexReader ir1 = riw.Reader;
 		// todo: generalize
-		NumericDocValues norms1 = MultiDocValues.getNormValues(ir1, field);
+		NumericDocValues norms1 = MultiDocValues.GetNormValues(ir1, field);
 
 		// fully merge and validate MultiNorms against single segment.
-		riw.forceMerge(1);
+		riw.ForceMerge(1);
 		DirectoryReader ir2 = riw.Reader;
-		NumericDocValues norms2 = getOnlySegmentReader(ir2).getNormValues(field);
+		NumericDocValues norms2 = GetOnlySegmentReader(ir2).GetNormValues(field);
 
 		if (norms1 == null)
 		{
-		  assertNull(norms2);
+		  Assert.IsNull(norms2);
 		}
 		else
 		{
-		  for (int docID = 0;docID < ir1.maxDoc();docID++)
+		  for (int docID = 0;docID < ir1.MaxDoc();docID++)
 		  {
-			Assert.AreEqual(norms1.get(docID), norms2.get(docID));
+			Assert.AreEqual(norms1.Get(docID), norms2.Get(docID));
 		  }
 		}
-		ir1.close();
-		ir2.close();
-		riw.close();
-		dir.close();
+		ir1.Dispose();
+		ir2.Dispose();
+        riw.Close();
+		dir.Dispose();
 		return norms1;
 	  }
 	}

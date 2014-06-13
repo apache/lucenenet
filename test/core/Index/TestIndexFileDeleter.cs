@@ -26,12 +26,13 @@ namespace Lucene.Net.Index
 	using Codec = Lucene.Net.Codecs.Codec;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	/*
 	  Verify we can read the pre-2.1 file format, do searches
@@ -43,19 +44,19 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestDeleteLeftoverFiles()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		if (dir is MockDirectoryWrapper)
 		{
 		  ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
 		}
 
-		MergePolicy mergePolicy = newLogMergePolicy(true, 10);
+		MergePolicy mergePolicy = NewLogMergePolicy(true, 10);
 
 		// this test expects all of its segments to be in CFS
 		mergePolicy.NoCFSRatio = 1.0;
 		mergePolicy.MaxCFSSegmentSizeMB = double.PositiveInfinity;
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(10).setMergePolicy(mergePolicy).setUseCompoundFile(true));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(mergePolicy).setUseCompoundFile(true));
 
 		int i;
 		for (i = 0;i < 35;i++)
@@ -68,20 +69,20 @@ namespace Lucene.Net.Index
 		{
 		  AddDoc(writer, i);
 		}
-		writer.close();
+		writer.Dispose();
 
 		// Delete one doc so we get a .del file:
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).setUseCompoundFile(true));
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).setUseCompoundFile(true));
 		Term searchTerm = new Term("id", "7");
-		writer.deleteDocuments(searchTerm);
-		writer.close();
+		writer.DeleteDocuments(searchTerm);
+		writer.Dispose();
 
 		// Now, artificially create an extra .del file & extra
 		// .s0 file:
-		string[] files = dir.listAll();
+		string[] files = dir.ListAll();
 
 		/*
-		for(int j=0;j<files.length;j++) {
+		for(int j=0;j<files.Length;j++) {
 		  System.out.println(j + ": " + files[j]);
 		}
 		*/
@@ -114,24 +115,24 @@ namespace Lucene.Net.Index
 		// Create a bogus cfs file shadowing a non-cfs segment:
 
 		// TODO: assert is bogus (relies upon codec-specific filenames)
-		Assert.IsTrue(slowFileExists(dir, "_3.fdt") || slowFileExists(dir, "_3.fld"));
-		Assert.IsTrue(!slowFileExists(dir, "_3.cfs"));
+		Assert.IsTrue(SlowFileExists(dir, "_3.fdt") || SlowFileExists(dir, "_3.fld"));
+		Assert.IsTrue(!SlowFileExists(dir, "_3.cfs"));
 		CopyFile(dir, "_1.cfs", "_3.cfs");
 
-		string[] filesPre = dir.listAll();
+		string[] filesPre = dir.ListAll();
 
 		// Open & close a writer: it should delete the above 4
 		// files and nothing more:
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
-		writer.close();
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+		writer.Dispose();
 
-		string[] files2 = dir.listAll();
-		dir.close();
+		string[] files2 = dir.ListAll();
+		dir.Dispose();
 
 		Array.Sort(files);
 		Array.Sort(files2);
 
-		Set<string> dif = DifFiles(files, files2);
+        HashSet<string> dif = DifFiles(files, files2);
 
 		if (!Array.Equals(files, files2))
 		{
@@ -139,36 +140,36 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private static Set<string> DifFiles(string[] files1, string[] files2)
+	  private static ISet<string> DifFiles(string[] files1, string[] files2)
 	  {
-		Set<string> set1 = new HashSet<string>();
-		Set<string> set2 = new HashSet<string>();
-		Set<string> extra = new HashSet<string>();
+		HashSet<string> set1 = new HashSet<string>();
+        HashSet<string> set2 = new HashSet<string>();
+        HashSet<string> extra = new HashSet<string>();
 
 		for (int x = 0; x < files1.Length; x++)
 		{
-		  set1.add(files1[x]);
+		  set1.Add(files1[x]);
 		}
 		for (int x = 0; x < files2.Length; x++)
 		{
-		  set2.add(files2[x]);
+		  set2.Add(files2[x]);
 		}
 		IEnumerator<string> i1 = set1.GetEnumerator();
 		while (i1.MoveNext())
 		{
 		  string o = i1.Current;
-		  if (!set2.contains(o))
+		  if (!set2.Contains(o))
 		  {
-			extra.add(o);
+			extra.Add(o);
 		  }
 		}
 		IEnumerator<string> i2 = set2.GetEnumerator();
 		while (i2.MoveNext())
 		{
 		  string o = i2.Current;
-		  if (!set1.contains(o))
+		  if (!set1.Contains(o))
 		  {
-			extra.add(o);
+			extra.Add(o);
 		  }
 		}
 		return extra;
@@ -190,27 +191,27 @@ namespace Lucene.Net.Index
 
 	  public virtual void CopyFile(Directory dir, string src, string dest)
 	  {
-		IndexInput @in = dir.openInput(src, newIOContext(random()));
-		IndexOutput @out = dir.createOutput(dest, newIOContext(random()));
+		IndexInput @in = dir.OpenInput(src, NewIOContext(Random()));
+		IndexOutput @out = dir.CreateOutput(dest, NewIOContext(Random()));
 		sbyte[] b = new sbyte[1024];
-		long remainder = @in.length();
+		long remainder = @in.Length();
 		while (remainder > 0)
 		{
 		  int len = (int) Math.Min(b.Length, remainder);
-		  @in.readBytes(b, 0, len);
-		  @out.writeBytes(b, len);
+		  @in.ReadBytes(b, 0, len);
+		  @out.WriteBytes(b, len);
 		  remainder -= len;
 		}
-		@in.close();
-		@out.close();
+		@in.Dispose();
+		@out.Dispose();
 	  }
 
 	  private void AddDoc(IndexWriter writer, int id)
 	  {
 		Document doc = new Document();
-		doc.add(newTextField("content", "aaa", Field.Store.NO));
-		doc.add(newStringField("id", Convert.ToString(id), Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+		doc.Add(NewStringField("id", Convert.ToString(id), Field.Store.NO));
+		writer.AddDocument(doc);
 	  }
 	}
 

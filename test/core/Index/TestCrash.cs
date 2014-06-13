@@ -28,32 +28,33 @@ namespace Lucene.Net.Index
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using NoLockFactory = Lucene.Net.Store.NoLockFactory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestCrash : LuceneTestCase
 	{
 
 	  private IndexWriter InitIndex(Random random, bool initialCommit)
 	  {
-		return InitIndex(random, newMockDirectory(random), initialCommit);
+		return InitIndex(random, NewMockDirectory(random), initialCommit);
 	  }
 
 	  private IndexWriter InitIndex(Random random, MockDirectoryWrapper dir, bool initialCommit)
 	  {
 		dir.LockFactory = NoLockFactory.NoLockFactory;
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setMaxBufferedDocs(10).setMergeScheduler(new ConcurrentMergeScheduler()));
-		((ConcurrentMergeScheduler) writer.Config.MergeScheduler).setSuppressExceptions();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMaxBufferedDocs(10).SetMergeScheduler(new ConcurrentMergeScheduler()));
+		((ConcurrentMergeScheduler) writer.Config.MergeScheduler).SetSuppressExceptions();
 		if (initialCommit)
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
 		Document doc = new Document();
-		doc.add(newTextField("content", "aaa", Field.Store.NO));
-		doc.add(newTextField("id", "0", Field.Store.NO));
+		doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+		doc.Add(NewTextField("id", "0", Field.Store.NO));
 		for (int i = 0;i < 157;i++)
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		return writer;
@@ -74,7 +75,7 @@ namespace Lucene.Net.Index
 		// this test relies on being able to open a reader before any commit
 		// happened, so we must create an initial commit just to allow that, but
 		// before any documents were added.
-		IndexWriter writer = InitIndex(random(), true);
+		IndexWriter writer = InitIndex(Random(), true);
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
 		// We create leftover files because merging could be
@@ -83,18 +84,18 @@ namespace Lucene.Net.Index
 
 		Crash(writer);
 
-		IndexReader reader = DirectoryReader.open(dir);
-		Assert.IsTrue(reader.numDocs() < 157);
-		reader.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		Assert.IsTrue(reader.NumDocs() < 157);
+		reader.Dispose();
 
 		// Make a new dir, copying from the crashed dir, and
 		// open IW on it, to confirm IW "recovers" after a
 		// crash:
-		Directory dir2 = newDirectory(dir);
-		dir.close();
+		Directory dir2 = NewDirectory(dir);
+		dir.Dispose();
 
-		(new RandomIndexWriter(random(), dir2)).close();
-		dir2.close();
+        (new RandomIndexWriter(Random(), dir2)).Close();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestWriterAfterCrash()
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
 		// happened, so we must create an initial commit just to allow that, but
 		// before any documents were added.
 		Console.WriteLine("TEST: initIndex");
-		IndexWriter writer = InitIndex(random(), true);
+		IndexWriter writer = InitIndex(Random(), true);
 		Console.WriteLine("TEST: done initIndex");
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
@@ -114,102 +115,102 @@ namespace Lucene.Net.Index
 		dir.PreventDoubleWrite = false;
 		Console.WriteLine("TEST: now crash");
 		Crash(writer);
-		writer = InitIndex(random(), dir, false);
-		writer.close();
+		writer = InitIndex(Random(), dir, false);
+		writer.Dispose();
 
-		IndexReader reader = DirectoryReader.open(dir);
-		Assert.IsTrue(reader.numDocs() < 314);
-		reader.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		Assert.IsTrue(reader.NumDocs() < 314);
+		reader.Dispose();
 
 		// Make a new dir, copying from the crashed dir, and
 		// open IW on it, to confirm IW "recovers" after a
 		// crash:
-		Directory dir2 = newDirectory(dir);
-		dir.close();
+		Directory dir2 = NewDirectory(dir);
+		dir.Dispose();
 
-		(new RandomIndexWriter(random(), dir2)).close();
-		dir2.close();
+        (new RandomIndexWriter(Random(), dir2)).Close();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestCrashAfterReopen()
 	  {
-		IndexWriter writer = InitIndex(random(), false);
+		IndexWriter writer = InitIndex(Random(), false);
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
 		// We create leftover files because merging could be
 		// running when we crash:
 		dir.AssertNoUnrefencedFilesOnClose = false;
 
-		writer.close();
-		writer = InitIndex(random(), dir, false);
-		Assert.AreEqual(314, writer.maxDoc());
+		writer.Dispose();
+		writer = InitIndex(Random(), dir, false);
+		Assert.AreEqual(314, writer.MaxDoc());
 		Crash(writer);
 
 		/*
 		System.out.println("\n\nTEST: open reader");
 		String[] l = dir.list();
 		Arrays.sort(l);
-		for(int i=0;i<l.length;i++)
+		for(int i=0;i<l.Length;i++)
 		  System.out.println("file " + i + " = " + l[i] + " " +
-		dir.fileLength(l[i]) + " bytes");
+		dir.FileLength(l[i]) + " bytes");
 		*/
 
-		IndexReader reader = DirectoryReader.open(dir);
-		Assert.IsTrue(reader.numDocs() >= 157);
-		reader.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		Assert.IsTrue(reader.NumDocs() >= 157);
+		reader.Dispose();
 
 		// Make a new dir, copying from the crashed dir, and
 		// open IW on it, to confirm IW "recovers" after a
 		// crash:
-		Directory dir2 = newDirectory(dir);
-		dir.close();
+		Directory dir2 = NewDirectory(dir);
+		dir.Dispose();
 
-		(new RandomIndexWriter(random(), dir2)).close();
-		dir2.close();
+        (new RandomIndexWriter(Random(), dir2)).Close();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestCrashAfterClose()
 	  {
 
-		IndexWriter writer = InitIndex(random(), false);
+		IndexWriter writer = InitIndex(Random(), false);
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
-		writer.close();
+		writer.Dispose();
 		dir.crash();
 
 		/*
 		String[] l = dir.list();
 		Arrays.sort(l);
-		for(int i=0;i<l.length;i++)
-		  System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
+		for(int i=0;i<l.Length;i++)
+		  System.out.println("file " + i + " = " + l[i] + " " + dir.FileLength(l[i]) + " bytes");
 		*/
 
-		IndexReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(157, reader.numDocs());
-		reader.close();
-		dir.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(157, reader.NumDocs());
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestCrashAfterCloseNoWait()
 	  {
 
-		IndexWriter writer = InitIndex(random(), false);
+		IndexWriter writer = InitIndex(Random(), false);
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
-		writer.close(false);
+		writer.Close(false);
 
 		dir.crash();
 
 		/*
 		String[] l = dir.list();
 		Arrays.sort(l);
-		for(int i=0;i<l.length;i++)
-		  System.out.println("file " + i + " = " + l[i] + " " + dir.fileLength(l[i]) + " bytes");
+		for(int i=0;i<l.Length;i++)
+		  System.out.println("file " + i + " = " + l[i] + " " + dir.FileLength(l[i]) + " bytes");
 		*/
-		IndexReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(157, reader.numDocs());
-		reader.close();
-		dir.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(157, reader.NumDocs());
+		reader.Dispose();
+		dir.Dispose();
 	  }
 	}
 

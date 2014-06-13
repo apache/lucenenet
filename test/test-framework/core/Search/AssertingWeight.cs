@@ -23,6 +23,7 @@ namespace Lucene.Net.Search
 
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 	using Bits = Lucene.Net.Util.Bits;
+    using Lucene.Net.Randomized.Generators;
 
 	internal class AssertingWeight : Weight
 	{
@@ -40,12 +41,12 @@ namespace Lucene.Net.Search
 	  {
 		this.Random = random;
 		this.@in = @in;
-		ScoresDocsOutOfOrder_Renamed = @in.scoresDocsOutOfOrder() || random.nextBoolean();
+		ScoresDocsOutOfOrder_Renamed = @in.ScoresDocsOutOfOrder() || random.NextBoolean();
 	  }
 
 	  public override Explanation Explain(AtomicReaderContext context, int doc)
 	  {
-		return @in.explain(context, doc);
+		return @in.Explain(context, doc);
 	  }
 
 	  public override Query Query
@@ -66,14 +67,14 @@ namespace Lucene.Net.Search
 
 	  public override void Normalize(float norm, float topLevelBoost)
 	  {
-		@in.normalize(norm, topLevelBoost);
+		@in.Normalize(norm, topLevelBoost);
 	  }
 
 	  public override Scorer Scorer(AtomicReaderContext context, Bits acceptDocs)
 	  {
 		// if the caller asks for in-order scoring or if the weight does not support
 		// out-of order scoring then collection will have to happen in-order.
-		Scorer inScorer = @in.scorer(context, acceptDocs);
+		Scorer inScorer = @in.Scorer(context, acceptDocs);
 		return AssertingScorer.Wrap(new Random(Random.nextLong()), inScorer);
 	  }
 
@@ -81,7 +82,7 @@ namespace Lucene.Net.Search
 	  {
 		// if the caller asks for in-order scoring or if the weight does not support
 		// out-of order scoring then collection will have to happen in-order.
-		BulkScorer inScorer = @in.bulkScorer(context, scoreDocsInOrder, acceptDocs);
+		BulkScorer inScorer = @in.BulkScorer(context, scoreDocsInOrder, acceptDocs);
 		if (inScorer == null)
 		{
 		  return null;
@@ -93,14 +94,14 @@ namespace Lucene.Net.Search
 		  // implementation for BulkScorer, so we should use it:
 		  inScorer = AssertingBulkScorer.Wrap(new Random(Random.nextLong()), inScorer);
 		}
-		else if (Random.nextBoolean())
+		else if (Random.NextBoolean())
 		{
 		  // Let super wrap this.scorer instead, so we use
 		  // AssertingScorer:
-		  inScorer = base.bulkScorer(context, scoreDocsInOrder, acceptDocs);
+		  inScorer = base.BulkScorer(context, scoreDocsInOrder, acceptDocs);
 		}
 
-		if (scoreDocsInOrder == false && Random.nextBoolean())
+		if (scoreDocsInOrder == false && Random.NextBoolean())
 		{
 		  // The caller claims it can handle out-of-order
 		  // docs; let's confirm that by pulling docs and

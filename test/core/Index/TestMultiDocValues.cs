@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests MultiDocValues versus ordinary segment merging </summary>
@@ -43,119 +44,119 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestNumerics()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		Document doc = new Document();
 		Field field = new NumericDocValuesField("numbers", 0);
-		doc.add(field);
+		doc.Add(field);
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  field.LongValue = random().nextLong();
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  field.LongValue = Random().nextLong();
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
-		NumericDocValues multi = MultiDocValues.getNumericValues(ir, "numbers");
-		NumericDocValues single = merged.getNumericDocValues("numbers");
+		NumericDocValues multi = MultiDocValues.GetNumericValues(ir, "numbers");
+		NumericDocValues single = merged.GetNumericDocValues("numbers");
 		for (int i = 0; i < numDocs; i++)
 		{
-		  Assert.AreEqual(single.get(i), multi.get(i));
+		  Assert.AreEqual(single.Get(i), multi.Get(i));
 		}
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestBinary()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		Document doc = new Document();
 		BytesRef @ref = new BytesRef();
 		Field field = new BinaryDocValuesField("bytes", @ref);
-		doc.add(field);
+		doc.Add(field);
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  @ref.copyChars(TestUtil.randomUnicodeString(random()));
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  @ref.copyChars(TestUtil.RandomUnicodeString(Random()));
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
-		BinaryDocValues multi = MultiDocValues.getBinaryValues(ir, "bytes");
-		BinaryDocValues single = merged.getBinaryDocValues("bytes");
+		BinaryDocValues multi = MultiDocValues.GetBinaryValues(ir, "bytes");
+		BinaryDocValues single = merged.GetBinaryDocValues("bytes");
 		BytesRef actual = new BytesRef();
 		BytesRef expected = new BytesRef();
 		for (int i = 0; i < numDocs; i++)
 		{
-		  single.get(i, expected);
-		  multi.get(i, actual);
+		  single.Get(i, expected);
+		  multi.Get(i, actual);
 		  Assert.AreEqual(expected, actual);
 		}
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSorted()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		Document doc = new Document();
 		BytesRef @ref = new BytesRef();
 		Field field = new SortedDocValuesField("bytes", @ref);
-		doc.add(field);
+		doc.Add(field);
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  @ref.copyChars(TestUtil.randomUnicodeString(random()));
-		  if (defaultCodecSupportsDocsWithField() && random().Next(7) == 0)
+		  @ref.copyChars(TestUtil.RandomUnicodeString(Random()));
+		  if (DefaultCodecSupportsDocsWithField() && Random().Next(7) == 0)
 		  {
-			iw.addDocument(new Document());
+			iw.AddDocument(new Document());
 		  }
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
-		SortedDocValues multi = MultiDocValues.getSortedValues(ir, "bytes");
-		SortedDocValues single = merged.getSortedDocValues("bytes");
+		SortedDocValues multi = MultiDocValues.GetSortedValues(ir, "bytes");
+		SortedDocValues single = merged.GetSortedDocValues("bytes");
 		Assert.AreEqual(single.ValueCount, multi.ValueCount);
 		BytesRef actual = new BytesRef();
 		BytesRef expected = new BytesRef();
@@ -164,46 +165,46 @@ namespace Lucene.Net.Index
 		  // check ord
 		  Assert.AreEqual(single.getOrd(i), multi.getOrd(i));
 		  // check value
-		  single.get(i, expected);
-		  multi.get(i, actual);
+		  single.Get(i, expected);
+		  multi.Get(i, actual);
 		  Assert.AreEqual(expected, actual);
 		}
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  // tries to make more dups than testSorted
 	  public virtual void TestSortedWithLotsOfDups()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		Document doc = new Document();
 		BytesRef @ref = new BytesRef();
 		Field field = new SortedDocValuesField("bytes", @ref);
-		doc.add(field);
+		doc.Add(field);
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  @ref.copyChars(TestUtil.randomSimpleString(random(), 2));
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  @ref.copyChars(TestUtil.RandomSimpleString(Random(), 2));
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
-		SortedDocValues multi = MultiDocValues.getSortedValues(ir, "bytes");
-		SortedDocValues single = merged.getSortedDocValues("bytes");
+		SortedDocValues multi = MultiDocValues.GetSortedValues(ir, "bytes");
+		SortedDocValues single = merged.GetSortedDocValues("bytes");
 		Assert.AreEqual(single.ValueCount, multi.ValueCount);
 		BytesRef actual = new BytesRef();
 		BytesRef expected = new BytesRef();
@@ -212,50 +213,50 @@ namespace Lucene.Net.Index
 		  // check ord
 		  Assert.AreEqual(single.getOrd(i), multi.getOrd(i));
 		  // check ord value
-		  single.get(i, expected);
-		  multi.get(i, actual);
+		  single.Get(i, expected);
+		  multi.Get(i, actual);
 		  Assert.AreEqual(expected, actual);
 		}
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSortedSet()
 	  {
-		assumeTrue("codec does not support SORTED_SET", defaultCodecSupportsSortedSet());
-		Directory dir = newDirectory();
+		AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+		Directory dir = NewDirectory();
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  int numValues = random().Next(5);
+		  int numValues = Random().Next(5);
 		  for (int j = 0; j < numValues; j++)
 		  {
-			doc.add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.randomUnicodeString(random()))));
+			doc.Add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.RandomUnicodeString(Random()))));
 		  }
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
 		SortedSetDocValues multi = MultiDocValues.getSortedSetValues(ir, "bytes");
-		SortedSetDocValues single = merged.getSortedSetDocValues("bytes");
+		SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
 		if (multi == null)
 		{
-		  assertNull(single);
+		  Assert.IsNull(single);
 		}
 		else
 		{
@@ -265,8 +266,8 @@ namespace Lucene.Net.Index
 		  // check values
 		  for (long i = 0; i < single.ValueCount; i++)
 		  {
-			single.lookupOrd(i, expected);
-			multi.lookupOrd(i, actual);
+			single.LookupOrd(i, expected);
+			multi.LookupOrd(i, actual);
 			Assert.AreEqual(expected, actual);
 		  }
 		  // check ord list
@@ -275,14 +276,14 @@ namespace Lucene.Net.Index
 			single.Document = i;
 			List<long?> expectedList = new List<long?>();
 			long ord;
-			while ((ord = single.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+			while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
 			{
 			  expectedList.Add(ord);
 			}
 
 			multi.Document = i;
 			int upto = 0;
-			while ((ord = multi.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+			while ((ord = multi.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
 			{
 			  Assert.AreEqual((long)expectedList[upto], ord);
 			  upto++;
@@ -291,47 +292,47 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  // tries to make more dups than testSortedSet
 	  public virtual void TestSortedSetWithDups()
 	  {
-		assumeTrue("codec does not support SORTED_SET", defaultCodecSupportsSortedSet());
-		Directory dir = newDirectory();
+		AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+		Directory dir = NewDirectory();
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  int numValues = random().Next(5);
+		  int numValues = Random().Next(5);
 		  for (int j = 0; j < numValues; j++)
 		  {
-			doc.add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.randomSimpleString(random(), 2))));
+			doc.Add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.RandomSimpleString(Random(), 2))));
 		  }
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
 		SortedSetDocValues multi = MultiDocValues.getSortedSetValues(ir, "bytes");
-		SortedSetDocValues single = merged.getSortedSetDocValues("bytes");
+		SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
 		if (multi == null)
 		{
-		  assertNull(single);
+		  Assert.IsNull(single);
 		}
 		else
 		{
@@ -341,8 +342,8 @@ namespace Lucene.Net.Index
 		  // check values
 		  for (long i = 0; i < single.ValueCount; i++)
 		  {
-			single.lookupOrd(i, expected);
-			multi.lookupOrd(i, actual);
+			single.LookupOrd(i, expected);
+			multi.LookupOrd(i, actual);
 			Assert.AreEqual(expected, actual);
 		  }
 		  // check ord list
@@ -351,14 +352,14 @@ namespace Lucene.Net.Index
 			single.Document = i;
 			List<long?> expectedList = new List<long?>();
 			long ord;
-			while ((ord = single.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+			while ((ord = single.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
 			{
 			  expectedList.Add(ord);
 			}
 
 			multi.Document = i;
 			int upto = 0;
-			while ((ord = multi.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+			while ((ord = multi.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
 			{
 			  Assert.AreEqual((long)expectedList[upto], ord);
 			  upto++;
@@ -367,66 +368,66 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDocsWithField()
 	  {
-		assumeTrue("codec does not support docsWithField", defaultCodecSupportsDocsWithField());
-		Directory dir = newDirectory();
+		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+		Directory dir = NewDirectory();
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, null);
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  if (random().Next(4) >= 0)
+		  if (Random().Next(4) >= 0)
 		  {
-			doc.add(new NumericDocValuesField("numbers", random().nextLong()));
+			doc.Add(new NumericDocValuesField("numbers", Random().nextLong()));
 		  }
-		  doc.add(new NumericDocValuesField("numbersAlways", random().nextLong()));
-		  iw.addDocument(doc);
-		  if (random().Next(17) == 0)
+		  doc.Add(new NumericDocValuesField("numbersAlways", Random().nextLong()));
+		  iw.AddDocument(doc);
+		  if (Random().Next(17) == 0)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		DirectoryReader ir = iw.Reader;
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
-		AtomicReader merged = getOnlySegmentReader(ir2);
-		iw.close();
+		AtomicReader merged = GetOnlySegmentReader(ir2);
+        iw.Close();
 
-		Bits multi = MultiDocValues.getDocsWithField(ir, "numbers");
-		Bits single = merged.getDocsWithField("numbers");
+		Bits multi = MultiDocValues.GetDocsWithField(ir, "numbers");
+		Bits single = merged.GetDocsWithField("numbers");
 		if (multi == null)
 		{
-		  assertNull(single);
+		  Assert.IsNull(single);
 		}
 		else
 		{
-		  Assert.AreEqual(single.length(), multi.length());
+		  Assert.AreEqual(single.Length(), multi.Length());
 		  for (int i = 0; i < numDocs; i++)
 		  {
-			Assert.AreEqual(single.get(i), multi.get(i));
+			Assert.AreEqual(single.Get(i), multi.Get(i));
 		  }
 		}
 
-		multi = MultiDocValues.getDocsWithField(ir, "numbersAlways");
-		single = merged.getDocsWithField("numbersAlways");
-		Assert.AreEqual(single.length(), multi.length());
+		multi = MultiDocValues.GetDocsWithField(ir, "numbersAlways");
+		single = merged.GetDocsWithField("numbersAlways");
+		Assert.AreEqual(single.Length(), multi.Length());
 		for (int i = 0; i < numDocs; i++)
 		{
-		  Assert.AreEqual(single.get(i), multi.get(i));
+		  Assert.AreEqual(single.Get(i), multi.Get(i));
 		}
-		ir.close();
-		ir2.close();
-		dir.close();
+		ir.Dispose();
+		ir2.Dispose();
+		dir.Dispose();
 	  }
 	}
 

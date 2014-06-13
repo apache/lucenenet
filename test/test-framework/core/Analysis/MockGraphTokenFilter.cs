@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
 			Console.WriteLine("  do insert! posLen=" + posLength);
 		  }
 
-		  Position posEndData = positions.get(OutputPos + posLength);
+		  Position posEndData = positions.Get(OutputPos + posLength);
 
 		  // Look ahead as needed until we figure out the right
 		  // endOffset:
@@ -86,9 +86,9 @@ namespace Lucene.Net.Analysis
 			InsertToken();
 			ClearAttributes();
 			PosLenAtt.PositionLength = posLength;
-			TermAtt.append(TestUtil.RandomUnicodeString(Random));
+			TermAtt.Append(TestUtil.RandomUnicodeString(Random));
 			PosIncAtt.PositionIncrement = 0;
-			OffsetAtt.SetOffset(positions.get(OutputPos).startOffset, posEndData.EndOffset);
+			OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, posEndData.EndOffset);
 			if (DEBUG)
 			{
 			  Console.WriteLine("  inject: outputPos=" + OutputPos + " startOffset=" + OffsetAtt.StartOffset() + " endOffset=" + OffsetAtt.EndOffset() + " posLength=" + PosLenAtt.PositionLength);
@@ -107,16 +107,16 @@ namespace Lucene.Net.Analysis
 
 	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		// NOTE: must be "deterministically random" because
 		// baseTokenStreamTestCase pulls tokens twice on the
 		// same input and asserts they are the same:
-		this.Random = new Random(Seed);
+		this.Random = new Random((int)Seed);
 	  }
 
 	  public override void Close()
 	  {
-		base.close();
+		base.Dispose();
 		this.Random = null;
 	  }
 

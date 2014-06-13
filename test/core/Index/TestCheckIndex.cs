@@ -32,14 +32,15 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
+    using NUnit.Framework;
 
 	public class TestCheckIndex : LuceneTestCase
 	{
 
 	  public virtual void TestDeletedDocs()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2));
+		Directory dir = NewDirectory();
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
 		for (int i = 0;i < 19;i++)
 		{
 		  Document doc = new Document();
@@ -47,78 +48,78 @@ namespace Lucene.Net.Index
 		  customType.StoreTermVectors = true;
 		  customType.StoreTermVectorPositions = true;
 		  customType.StoreTermVectorOffsets = true;
-		  doc.add(newField("field", "aaa" + i, customType));
-		  writer.addDocument(doc);
+		  doc.Add(NewField("field", "aaa" + i, customType));
+		  writer.AddDocument(doc);
 		}
-		writer.forceMerge(1);
-		writer.commit();
-		writer.deleteDocuments(new Term("field","aaa5"));
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Commit();
+		writer.DeleteDocuments(new Term("field","aaa5"));
+		writer.Dispose();
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		CheckIndex checker = new CheckIndex(dir);
 		checker.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
 		if (VERBOSE)
 		{
-			checker.InfoStream = System.out;
+            checker.InfoStream = Console.Out;
 		}
-		CheckIndex.Status indexStatus = checker.checkIndex();
-		if (indexStatus.clean == false)
+		CheckIndex.Status indexStatus = checker.CheckIndex();
+		if (indexStatus.Clean == false)
 		{
 		  Console.WriteLine("CheckIndex failed");
 		  Console.WriteLine(bos.ToString(IOUtils.UTF_8));
 		  Assert.Fail();
 		}
 
-		CheckIndex.Status.SegmentInfoStatus seg = indexStatus.segmentInfos.get(0);
-		Assert.IsTrue(seg.openReaderPassed);
+		CheckIndex.Status.SegmentInfoStatus seg = indexStatus.SegmentInfos[0];
+		Assert.IsTrue(seg.OpenReaderPassed);
 
-		Assert.IsNotNull(seg.diagnostics);
+		Assert.IsNotNull(seg.Diagnostics);
 
-		Assert.IsNotNull(seg.fieldNormStatus);
-		assertNull(seg.fieldNormStatus.error);
-		Assert.AreEqual(1, seg.fieldNormStatus.totFields);
+		Assert.IsNotNull(seg.FieldNormStatus);
+		Assert.IsNull(seg.FieldNormStatus.Error);
+		Assert.AreEqual(1, seg.FieldNormStatus.TotFields);
 
-		Assert.IsNotNull(seg.termIndexStatus);
-		assertNull(seg.termIndexStatus.error);
-		Assert.AreEqual(18, seg.termIndexStatus.termCount);
-		Assert.AreEqual(18, seg.termIndexStatus.totFreq);
-		Assert.AreEqual(18, seg.termIndexStatus.totPos);
+		Assert.IsNotNull(seg.TermIndexStatus);
+		Assert.IsNull(seg.TermIndexStatus.Error);
+		Assert.AreEqual(18, seg.TermIndexStatus.TermCount);
+		Assert.AreEqual(18, seg.TermIndexStatus.TotFreq);
+		Assert.AreEqual(18, seg.TermIndexStatus.TotPos);
 
-		Assert.IsNotNull(seg.storedFieldStatus);
-		assertNull(seg.storedFieldStatus.error);
-		Assert.AreEqual(18, seg.storedFieldStatus.docCount);
-		Assert.AreEqual(18, seg.storedFieldStatus.totFields);
+		Assert.IsNotNull(seg.StoredFieldStatus);
+		Assert.IsNull(seg.StoredFieldStatus.Error);
+		Assert.AreEqual(18, seg.StoredFieldStatus.DocCount);
+		Assert.AreEqual(18, seg.StoredFieldStatus.TotFields);
 
-		Assert.IsNotNull(seg.termVectorStatus);
-		assertNull(seg.termVectorStatus.error);
-		Assert.AreEqual(18, seg.termVectorStatus.docCount);
-		Assert.AreEqual(18, seg.termVectorStatus.totVectors);
+		Assert.IsNotNull(seg.TermVectorStatus);
+		Assert.IsNull(seg.TermVectorStatus.Error);
+		Assert.AreEqual(18, seg.TermVectorStatus.DocCount);
+		Assert.AreEqual(18, seg.TermVectorStatus.TotVectors);
 
-		Assert.IsTrue(seg.diagnostics.size() > 0);
+		Assert.IsTrue(seg.Diagnostics.Count > 0);
 		IList<string> onlySegments = new List<string>();
 		onlySegments.Add("_0");
 
-		Assert.IsTrue(checker.checkIndex(onlySegments).clean == true);
-		dir.close();
+		Assert.IsTrue(checker.CheckIndex(onlySegments).Clean == true);
+		dir.Dispose();
 	  }
 
 	  // LUCENE-4221: we have to let these thru, for now
 	  public virtual void TestBogusTermVectors()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter iw = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, null));
+		Directory dir = NewDirectory();
+		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.StoreTermVectors = true;
 		ft.StoreTermVectorOffsets = true;
 		Field field = new Field("foo", "", ft);
-		field.setTokenStream(new CannedTokenStream(new Token("bar", 5, 10), new Token("bar", 1, 4)
+		field.SetTokenStream(new CannedTokenStream(new Token("bar", 5, 10), new Token("bar", 1, 4)
 	   ));
-		doc.add(field);
-		iw.addDocument(doc);
-		iw.close();
-		dir.close(); // checkindex
+		doc.Add(field);
+		iw.AddDocument(doc);
+		iw.Dispose();
+		dir.Dispose(); // checkindex
 	  }
 	}
 

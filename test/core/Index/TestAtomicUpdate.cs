@@ -24,16 +24,18 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Document;
 	using Lucene.Net.Store;
 	using Lucene.Net.Util;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestAtomicUpdate : LuceneTestCase
 	{
 
 
-	  private abstract class TimedThread : System.Threading.Thread
+	  private abstract class TimedThread : ThreadClass
 	  {
 		internal volatile bool Failed;
 		internal int Count;
-		internal static float RUN_TIME_MSEC = atLeast(500);
+		internal static float RUN_TIME_MSEC = AtLeast(500);
 		internal TimedThread[] AllThreads;
 
 		public abstract void DoWork();
@@ -45,7 +47,7 @@ namespace Lucene.Net.Index
 
 		public override void Run()
 		{
-		  long stopTime = System.currentTimeMillis() + (long) RUN_TIME_MSEC;
+		  long stopTime = DateTime.Now.Millisecond + (long) RUN_TIME_MSEC;
 
 		  Count = 0;
 
@@ -59,12 +61,12 @@ namespace Lucene.Net.Index
 			  }
 			  DoWork();
 			  Count++;
-			} while (System.currentTimeMillis() < stopTime);
+			} while (DateTime.Now.Millisecond < stopTime);
 		  }
 		  catch (Exception e)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": exc");
-			e.printStackTrace(System.out);
+			Console.WriteLine(e.StackTrace);
 			Failed = true;
 		  }
 		}
@@ -96,9 +98,9 @@ namespace Lucene.Net.Index
 		  for (int i = 0; i < 100; i++)
 		  {
 			Document d = new Document();
-			d.add(new StringField("id", Convert.ToString(i), Field.Store.YES));
-			d.add(new TextField("contents", English.intToEnglish(i + 10 * Count), Field.Store.NO));
-			Writer.updateDocument(new Term("id", Convert.ToString(i)), d);
+			d.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
+			d.Add(new TextField("contents", English.IntToEnglish(i + 10 * Count), Field.Store.NO));
+			Writer.UpdateDocument(new Term("id", Convert.ToString(i)), d);
 		  }
 		}
 	  }
@@ -114,9 +116,9 @@ namespace Lucene.Net.Index
 
 		public override void DoWork()
 		{
-		  IndexReader r = DirectoryReader.open(Directory);
-		  Assert.AreEqual(100, r.numDocs());
-		  r.close();
+		  IndexReader r = DirectoryReader.Open(Directory);
+		  Assert.AreEqual(100, r.NumDocs());
+		  r.Dispose();
 		}
 	  }
 
@@ -129,55 +131,55 @@ namespace Lucene.Net.Index
 
 		TimedThread[] threads = new TimedThread[4];
 
-		IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setMaxBufferedDocs(7);
+		IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(7);
 		((TieredMergePolicy) conf.MergePolicy).MaxMergeAtOnce = 3;
-		IndexWriter writer = RandomIndexWriter.mockIndexWriter(directory, conf, random());
+		IndexWriter writer = RandomIndexWriter.MockIndexWriter(directory, conf, Random());
 
 		// Establish a base index of 100 docs:
 		for (int i = 0;i < 100;i++)
 		{
 		  Document d = new Document();
-		  d.add(newStringField("id", Convert.ToString(i), Field.Store.YES));
-		  d.add(newTextField("contents", English.intToEnglish(i), Field.Store.NO));
+		  d.Add(NewStringField("id", Convert.ToString(i), Field.Store.YES));
+		  d.Add(NewTextField("contents", English.IntToEnglish(i), Field.Store.NO));
 		  if ((i - 1) % 7 == 0)
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
-		writer.commit();
+		writer.Commit();
 
-		IndexReader r = DirectoryReader.open(directory);
-		Assert.AreEqual(100, r.numDocs());
-		r.close();
+		IndexReader r = DirectoryReader.Open(directory);
+		Assert.AreEqual(100, r.NumDocs());
+		r.Dispose();
 
 		IndexerThread indexerThread = new IndexerThread(writer, threads);
 		threads[0] = indexerThread;
-		indexerThread.start();
+		indexerThread.Start();
 
 		IndexerThread indexerThread2 = new IndexerThread(writer, threads);
 		threads[1] = indexerThread2;
-		indexerThread2.start();
+		indexerThread2.Start();
 
 		SearcherThread searcherThread1 = new SearcherThread(directory, threads);
 		threads[2] = searcherThread1;
-		searcherThread1.start();
+		searcherThread1.Start();
 
 		SearcherThread searcherThread2 = new SearcherThread(directory, threads);
 		threads[3] = searcherThread2;
-		searcherThread2.start();
+		searcherThread2.Start();
 
-		indexerThread.join();
-		indexerThread2.join();
-		searcherThread1.join();
-		searcherThread2.join();
+		indexerThread.Join();
+		indexerThread2.Join();
+		searcherThread1.Join();
+		searcherThread2.Join();
 
-		writer.close();
+		writer.Dispose();
 
-		Assert.IsTrue("hit unexpected exception in indexer", !indexerThread.Failed);
-		Assert.IsTrue("hit unexpected exception in indexer2", !indexerThread2.Failed);
-		Assert.IsTrue("hit unexpected exception in search1", !searcherThread1.Failed);
-		Assert.IsTrue("hit unexpected exception in search2", !searcherThread2.Failed);
+		Assert.IsTrue(!indexerThread.Failed, "hit unexpected exception in indexer");
+		Assert.IsTrue(!indexerThread2.Failed, "hit unexpected exception in indexer2");
+		Assert.IsTrue(!searcherThread1.Failed, "hit unexpected exception in search1");
+		Assert.IsTrue(!searcherThread2.Failed, "hit unexpected exception in search2");
 		//System.out.println("    Writer: " + indexerThread.count + " iterations");
 		//System.out.println("Searcher 1: " + searcherThread1.count + " searchers created");
 		//System.out.println("Searcher 2: " + searcherThread2.count + " searchers created");
@@ -192,16 +194,16 @@ namespace Lucene.Net.Index
 		Directory directory;
 
 		// First in a RAM directory:
-		directory = new MockDirectoryWrapper(random(), new RAMDirectory());
+		directory = new MockDirectoryWrapper(Random(), new RAMDirectory());
 		RunTest(directory);
-		directory.close();
+		directory.Dispose();
 
 		// Second in an FSDirectory:
-		File dirPath = createTempDir("lucene.test.atomic");
-		directory = newFSDirectory(dirPath);
+		File dirPath = CreateTempDir("lucene.test.atomic");
+		directory = NewFSDirectory(dirPath);
 		RunTest(directory);
-		directory.close();
-		TestUtil.rm(dirPath);
+		directory.Dispose();
+		TestUtil.Rm(dirPath);
 	  }
 	}
 

@@ -25,9 +25,10 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Some tests for <seealso cref="ParallelAtomicReader"/>s with empty indexes
@@ -41,40 +42,40 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestEmptyIndex()
 	  {
-		Directory rd1 = newDirectory();
-		IndexWriter iw = new IndexWriter(rd1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		iw.close();
+		Directory rd1 = NewDirectory();
+		IndexWriter iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		iw.Dispose();
 		// create a copy:
-		Directory rd2 = newDirectory(rd1);
+		Directory rd2 = NewDirectory(rd1);
 
-		Directory rdOut = newDirectory();
+		Directory rdOut = NewDirectory();
 
-		IndexWriter iwOut = new IndexWriter(rdOut, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
-		ParallelAtomicReader apr = new ParallelAtomicReader(SlowCompositeReaderWrapper.wrap(DirectoryReader.open(rd1)), SlowCompositeReaderWrapper.wrap(DirectoryReader.open(rd2)));
-
-		// When unpatched, Lucene crashes here with a NoSuchElementException (caused by ParallelTermEnum)
-		iwOut.addIndexes(apr);
-		iwOut.forceMerge(1);
-
-		// 2nd try with a readerless parallel reader
-		iwOut.addIndexes(new ParallelAtomicReader());
-		iwOut.forceMerge(1);
-
-		ParallelCompositeReader cpr = new ParallelCompositeReader(DirectoryReader.open(rd1), DirectoryReader.open(rd2));
+		ParallelAtomicReader apr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd2)));
 
 		// When unpatched, Lucene crashes here with a NoSuchElementException (caused by ParallelTermEnum)
-		iwOut.addIndexes(cpr);
-		iwOut.forceMerge(1);
+		iwOut.AddIndexes(apr);
+		iwOut.ForceMerge(1);
 
 		// 2nd try with a readerless parallel reader
-		iwOut.addIndexes(new ParallelCompositeReader());
-		iwOut.forceMerge(1);
+		iwOut.AddIndexes(new ParallelAtomicReader());
+		iwOut.ForceMerge(1);
 
-		iwOut.close();
-		rdOut.close();
-		rd1.close();
-		rd2.close();
+		ParallelCompositeReader cpr = new ParallelCompositeReader(DirectoryReader.Open(rd1), DirectoryReader.Open(rd2));
+
+		// When unpatched, Lucene crashes here with a NoSuchElementException (caused by ParallelTermEnum)
+		iwOut.AddIndexes(cpr);
+		iwOut.ForceMerge(1);
+
+		// 2nd try with a readerless parallel reader
+		iwOut.AddIndexes(new ParallelCompositeReader());
+		iwOut.ForceMerge(1);
+
+		iwOut.Dispose();
+		rdOut.Dispose();
+		rd1.Dispose();
+		rd2.Dispose();
 	  }
 
 	  /// <summary>
@@ -84,76 +85,76 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestEmptyIndexWithVectors()
 	  {
-		Directory rd1 = newDirectory();
+		Directory rd1 = NewDirectory();
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("\nTEST: make 1st writer");
 		  }
-		  IndexWriter iw = new IndexWriter(rd1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  IndexWriter iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		  Document doc = new Document();
-		  Field idField = newTextField("id", "", Field.Store.NO);
-		  doc.add(idField);
+		  Field idField = NewTextField("id", "", Field.Store.NO);
+		  doc.Add(idField);
 		  FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		  customType.StoreTermVectors = true;
-		  doc.add(newField("test", "", customType));
+		  doc.Add(NewField("test", "", customType));
 		  idField.StringValue = "1";
-		  iw.addDocument(doc);
-		  doc.add(newTextField("test", "", Field.Store.NO));
+		  iw.AddDocument(doc);
+		  doc.Add(NewTextField("test", "", Field.Store.NO));
 		  idField.StringValue = "2";
-		  iw.addDocument(doc);
-		  iw.close();
+		  iw.AddDocument(doc);
+		  iw.Dispose();
 
-		  IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setMergePolicy(NoMergePolicy.COMPOUND_FILES);
+		  IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("\nTEST: make 2nd writer");
 		  }
 		  IndexWriter writer = new IndexWriter(rd1, dontMergeConfig);
 
-		  writer.deleteDocuments(new Term("id", "1"));
-		  writer.close();
-		  IndexReader ir = DirectoryReader.open(rd1);
-		  Assert.AreEqual(2, ir.maxDoc());
-		  Assert.AreEqual(1, ir.numDocs());
-		  ir.close();
+		  writer.DeleteDocuments(new Term("id", "1"));
+		  writer.Dispose();
+		  IndexReader ir = DirectoryReader.Open(rd1);
+		  Assert.AreEqual(2, ir.MaxDoc());
+		  Assert.AreEqual(1, ir.NumDocs());
+		  ir.Dispose();
 
-		  iw = new IndexWriter(rd1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
-		  iw.forceMerge(1);
-		  iw.close();
+		  iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+		  iw.ForceMerge(1);
+		  iw.Dispose();
 		}
 
-		Directory rd2 = newDirectory();
+		Directory rd2 = NewDirectory();
 		{
-		  IndexWriter iw = new IndexWriter(rd2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  IndexWriter iw = new IndexWriter(rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		  Document doc = new Document();
-		  iw.addDocument(doc);
-		  iw.close();
+		  iw.AddDocument(doc);
+		  iw.Dispose();
 		}
 
-		Directory rdOut = newDirectory();
+		Directory rdOut = NewDirectory();
 
-		IndexWriter iwOut = new IndexWriter(rdOut, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		DirectoryReader reader1, reader2;
-		ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.wrap(reader1 = DirectoryReader.open(rd1)), SlowCompositeReaderWrapper.wrap(reader2 = DirectoryReader.open(rd2)));
+		ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(reader1 = DirectoryReader.Open(rd1)), SlowCompositeReaderWrapper.Wrap(reader2 = DirectoryReader.Open(rd2)));
 
 		// When unpatched, Lucene crashes here with an ArrayIndexOutOfBoundsException (caused by TermVectorsWriter)
-		iwOut.addIndexes(pr);
+		iwOut.AddIndexes(pr);
 
 		// ParallelReader closes any IndexReader you added to it:
-		pr.close();
+		pr.Dispose();
 
 		// assert subreaders were closed
 		Assert.AreEqual(0, reader1.RefCount);
 		Assert.AreEqual(0, reader2.RefCount);
 
-		rd1.close();
-		rd2.close();
+		rd1.Dispose();
+		rd2.Dispose();
 
-		iwOut.forceMerge(1);
-		iwOut.close();
+		iwOut.ForceMerge(1);
+		iwOut.Dispose();
 
-		rdOut.close();
+		rdOut.Dispose();
 	  }
 	}
 

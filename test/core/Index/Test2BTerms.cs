@@ -28,19 +28,12 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Analysis;
 	using Lucene.Net.Analysis.Tokenattributes;
 	using Lucene.Net.Document;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-	using Ignore = org.junit.Ignore;
-
-
-	using Lucene.Net.Analysis;
-	using Lucene.Net.Analysis.Tokenattributes;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Codec = Lucene.Net.Codecs.Codec;
 	using Lucene.Net.Document;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-	using Lucene.Net.Search;
-	using Lucene.Net.Store;
 	using Lucene.Net.Util;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 	// NOTE: this test will fail w/ PreFlexRW codec!  (Because
 	// this test uses full binary term space, but PreFlex cannot
@@ -76,10 +69,10 @@ namespace Lucene.Net.Index
 		public MyTokenStream(Random random, int tokensPerDoc) : base(new MyAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY))
 		{
 		  this.TokensPerDoc = tokensPerDoc;
-		  addAttribute(typeof(TermToBytesRefAttribute));
-		  Bytes.length = TOKEN_LEN;
+          AddAttribute<TermToBytesRefAttribute>();
+		  Bytes.Length = TOKEN_LEN;
 		  this.Random = random;
-		  NextSave = TestUtil.Next(random, 500000, 1000000);
+		  NextSave = TestUtil.NextInt(random, 500000, 1000000);
 		}
 
 		public override bool IncrementToken()
@@ -92,16 +85,16 @@ namespace Lucene.Net.Index
 		  int shift = 32;
 		  for (int i = 0;i < 5;i++)
 		  {
-			Bytes.bytes[i] = unchecked((sbyte)((TermCounter >> shift) & 0xFF));
+			Bytes.Bytes[i] = unchecked((sbyte)((TermCounter >> shift) & 0xFF));
 			shift -= 8;
 		  }
 		  TermCounter++;
 		  TokenCount++;
 		  if (--NextSave == 0)
 		  {
-			SavedTerms.Add(BytesRef.deepCopyOf(Bytes));
+			SavedTerms.Add(BytesRef.DeepCopyOf(Bytes));
 			Console.WriteLine("TEST: save term=" + Bytes);
-			NextSave = TestUtil.Next(Random, 500000, 1000000);
+			NextSave = TestUtil.NextInt(Random, 500000, 1000000);
 		  }
 		  return true;
 		}
@@ -111,7 +104,7 @@ namespace Lucene.Net.Index
 		  TokenCount = 0;
 		}
 
-		private sealed class MyTermAttributeImpl : AttributeImpl, TermToBytesRefAttribute
+		private sealed class MyTermAttributeImpl : Attribute, TermToBytesRefAttribute
 		{
 		  public override void FillBytesRef()
 		  {
@@ -140,7 +133,7 @@ namespace Lucene.Net.Index
 			return System.identityHashCode(this);
 		  }
 
-		  public override void CopyTo(AttributeImpl target)
+		  public override void CopyTo(Attribute target)
 		  {
 		  }
 
@@ -159,7 +152,7 @@ namespace Lucene.Net.Index
 			this.@delegate = @delegate;
 		  }
 
-		  public override AttributeImpl CreateAttributeInstance(Type attClass)
+		  public override Attribute CreateAttributeInstance(Type attClass)
 		  {
 			if (attClass == typeof(TermToBytesRefAttribute))
 			{
@@ -169,7 +162,7 @@ namespace Lucene.Net.Index
 			{
 			  throw new System.ArgumentException("no");
 			}
-			return @delegate.createAttributeInstance(attClass);
+			return @delegate.CreateAttributeInstance(attClass);
 		  }
 		}
 	  }
@@ -186,23 +179,23 @@ namespace Lucene.Net.Index
 		Console.WriteLine("Starting Test2B");
 		long TERM_COUNT = ((long) int.MaxValue) + 100000000;
 
-		int TERMS_PER_DOC = TestUtil.Next(random(), 100000, 1000000);
+		int TERMS_PER_DOC = TestUtil.NextInt(Random(), 100000, 1000000);
 
 		IList<BytesRef> savedTerms = null;
 
-		BaseDirectoryWrapper dir = newFSDirectory(createTempDir("2BTerms"));
-		//MockDirectoryWrapper dir = newFSDirectory(new File("/p/lucene/indices/2bindex"));
+		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BTerms"));
+		//MockDirectoryWrapper dir = NewFSDirectory(new File("/p/lucene/indices/2bindex"));
 		if (dir is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 		dir.CheckIndexOnClose = false; // don't double-checkindex
 
 		if (true)
 		{
 
-		  IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))
-									 .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).setRAMBufferSizeMB(256.0).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(false, 10)).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		  IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+									 .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
 		  MergePolicy mp = w.Config.MergePolicy;
 		  if (mp is LogByteSizeMergePolicy)
@@ -212,13 +205,13 @@ namespace Lucene.Net.Index
 		  }
 
 		  Document doc = new Document();
-		  MyTokenStream ts = new MyTokenStream(random(), TERMS_PER_DOC);
+		  MyTokenStream ts = new MyTokenStream(Random(), TERMS_PER_DOC);
 
 		  FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		  customType.IndexOptions = IndexOptions.DOCS_ONLY;
+		  customType.IndexOptionsValue = IndexOptions_e.DOCS_ONLY;
 		  customType.OmitNorms = true;
 		  Field field = new Field("field", ts, customType);
-		  doc.add(field);
+		  doc.Add(field);
 		  //w.setInfoStream(System.out);
 		  int numDocs = (int)(TERM_COUNT / TERMS_PER_DOC);
 
@@ -227,55 +220,55 @@ namespace Lucene.Net.Index
 
 		  for (int i = 0;i < numDocs;i++)
 		  {
-			long t0 = System.currentTimeMillis();
-			w.addDocument(doc);
-			Console.WriteLine(i + " of " + numDocs + " " + (System.currentTimeMillis() - t0) + " msec");
+			long t0 = DateTime.Now.Millisecond;
+			w.AddDocument(doc);
+			Console.WriteLine(i + " of " + numDocs + " " + (DateTime.Now.Millisecond - t0) + " msec");
 		  }
 		  savedTerms = ts.SavedTerms;
 
 		  Console.WriteLine("TEST: full merge");
-		  w.forceMerge(1);
+		  w.ForceMerge(1);
 		  Console.WriteLine("TEST: close writer");
-		  w.close();
+		  w.Dispose();
 		}
 
 		Console.WriteLine("TEST: open reader");
-		IndexReader r = DirectoryReader.open(dir);
+		IndexReader r = DirectoryReader.Open(dir);
 		if (savedTerms == null)
 		{
 		  savedTerms = FindTerms(r);
 		}
 		int numSavedTerms = savedTerms.Count;
-		IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.subList(numSavedTerms - 10, numSavedTerms));
+		IList<BytesRef> bigOrdTerms = new List<BytesRef>(savedTerms.SubList(numSavedTerms - 10, numSavedTerms));
 		Console.WriteLine("TEST: test big ord terms...");
 		TestSavedTerms(r, bigOrdTerms);
 		Console.WriteLine("TEST: test all saved terms...");
 		TestSavedTerms(r, savedTerms);
-		r.close();
+		r.Dispose();
 
 		Console.WriteLine("TEST: now CheckIndex...");
-		CheckIndex.Status status = TestUtil.checkIndex(dir);
-		long tc = status.segmentInfos.get(0).termIndexStatus.termCount;
-		Assert.IsTrue("count " + tc + " is not > " + int.MaxValue, tc > int.MaxValue);
+		CheckIndex.Status status = TestUtil.CheckIndex(dir);
+		long tc = status.SegmentInfos.Get(0).TermIndexStatus.TermCount;
+		Assert.IsTrue(tc > int.MaxValue, "count " + tc + " is not > " + int.MaxValue);
 
-		dir.close();
+		dir.Dispose();
 		Console.WriteLine("TEST: done!");
 	  }
 
 	  private IList<BytesRef> FindTerms(IndexReader r)
 	  {
 		Console.WriteLine("TEST: findTerms");
-		TermsEnum termsEnum = MultiFields.getTerms(r, "field").iterator(null);
+		TermsEnum termsEnum = MultiFields.GetTerms(r, "field").Iterator(null);
 		IList<BytesRef> savedTerms = new List<BytesRef>();
-		int nextSave = TestUtil.Next(random(), 500000, 1000000);
+		int nextSave = TestUtil.NextInt(Random(), 500000, 1000000);
 		BytesRef term;
-		while ((term = termsEnum.next()) != null)
+		while ((term = termsEnum.Next()) != null)
 		{
 		  if (--nextSave == 0)
 		  {
-			savedTerms.Add(BytesRef.deepCopyOf(term));
+			savedTerms.Add(BytesRef.DeepCopyOf(term));
 			Console.WriteLine("TEST: add " + term);
-			nextSave = TestUtil.Next(random(), 500000, 1000000);
+			nextSave = TestUtil.NextInt(Random(), 500000, 1000000);
 		  }
 		}
 		return savedTerms;
@@ -284,25 +277,25 @@ namespace Lucene.Net.Index
 	  private void TestSavedTerms(IndexReader r, IList<BytesRef> terms)
 	  {
 		Console.WriteLine("TEST: run " + terms.Count + " terms on reader=" + r);
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 		Collections.shuffle(terms);
-		TermsEnum termsEnum = MultiFields.getTerms(r, "field").iterator(null);
+		TermsEnum termsEnum = MultiFields.GetTerms(r, "field").Iterator(null);
 		bool failed = false;
 		for (int iter = 0;iter < 10 * terms.Count;iter++)
 		{
-		  BytesRef term = terms[random().Next(terms.Count)];
+		  BytesRef term = terms[Random().Next(terms.Count)];
 		  Console.WriteLine("TEST: search " + term);
-		  long t0 = System.currentTimeMillis();
-		  int count = s.search(new TermQuery(new Term("field", term)), 1).totalHits;
+		  long t0 = DateTime.Now.Millisecond;
+		  int count = s.Search(new TermQuery(new Term("field", term)), 1).TotalHits;
 		  if (count <= 0)
 		  {
 			Console.WriteLine("  FAILED: count=" + count);
 			failed = true;
 		  }
-		  long t1 = System.currentTimeMillis();
+		  long t1 = DateTime.Now.Millisecond;
 		  Console.WriteLine("  took " + (t1 - t0) + " millis");
 
-		  TermsEnum.SeekStatus result = termsEnum.seekCeil(term);
+		  TermsEnum.SeekStatus result = termsEnum.SeekCeil(term);
 		  if (result != TermsEnum.SeekStatus.FOUND)
 		  {
 			if (result == TermsEnum.SeekStatus.END)
@@ -311,7 +304,7 @@ namespace Lucene.Net.Index
 			}
 			else
 			{
-			  Console.WriteLine("  FAILED: wrong term: got " + termsEnum.term());
+			  Console.WriteLine("  FAILED: wrong term: got " + termsEnum.Term());
 			}
 			failed = true;
 		  }

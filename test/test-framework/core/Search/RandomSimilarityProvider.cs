@@ -53,6 +53,7 @@ namespace Lucene.Net.Search
 	using NormalizationZ = Lucene.Net.Search.Similarities.NormalizationZ;
 	using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// Similarity implementation that randomizes Similarity implementations
@@ -74,8 +75,8 @@ namespace Lucene.Net.Search
 	  {
 		PerFieldSeed = random.Next();
 		CoordType = random.Next(3);
-		ShouldQueryNorm = random.nextBoolean();
-		KnownSims = new List<>(AllSims);
+		ShouldQueryNorm = random.NextBoolean();
+		KnownSims = new List<Similarity>(AllSims);
 		Collections.shuffle(KnownSims, random);
 	  }
 
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search
 		}
 		else if (CoordType == 1)
 		{
-		  return DefaultSim.coord(overlap, maxOverlap);
+		  return DefaultSim.Coord(overlap, maxOverlap);
 		}
 		else
 		{
@@ -99,7 +100,7 @@ namespace Lucene.Net.Search
 	  {
 		if (ShouldQueryNorm)
 		{
-		  return DefaultSim.queryNorm(sumOfSquaredWeights);
+		  return DefaultSim.QueryNorm(sumOfSquaredWeights);
 		}
 		else
 		{
@@ -141,7 +142,7 @@ namespace Lucene.Net.Search
 	  internal static IList<Similarity> AllSims;
 	  static RandomSimilarityProvider()
 	  {
-		AllSims = new List<>();
+		AllSims = new List<Similarity>();
 		AllSims.Add(new DefaultSimilarity());
 		AllSims.Add(new BM25Similarity());
 		foreach (BasicModel basicModel in BASIC_MODELS)
@@ -165,7 +166,7 @@ namespace Lucene.Net.Search
 		  }
 		}
 		/* TODO: enable Dirichlet 
-		allSims.add(new LMDirichletSimilarity()); */
+		allSims.Add(new LMDirichletSimilarity()); */
 		AllSims.Add(new LMJelinekMercerSimilarity(0.1f));
 		AllSims.Add(new LMJelinekMercerSimilarity(0.7f));
 	  }

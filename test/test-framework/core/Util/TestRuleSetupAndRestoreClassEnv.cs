@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using System.IO;
 
 namespace Lucene.Net.Util
 {
@@ -22,7 +23,7 @@ namespace Lucene.Net.Util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    /*
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.INFOSTREAM;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
@@ -42,7 +43,7 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.randomLocale;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.LuceneTestCase.randomTimeZone;
+	import static Lucene.Net.Util.LuceneTestCase.randomTimeZone;*/
 
 
 	using Codec = Lucene.Net.Codecs.Codec;
@@ -66,8 +67,8 @@ namespace Lucene.Net.Util
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using AssumptionViolatedException = org.junit.@internal.AssumptionViolatedException;
-
-	using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
+    using Lucene.Net.Randomized.Generators;
+	//using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
 
 	/// <summary>
 	/// Setup and restore suite-level environment (fine grained junk that 
@@ -96,7 +97,7 @@ namespace Lucene.Net.Util
 	  internal class ThreadNameFixingPrintStreamInfoStream : PrintStreamInfoStream
 	  {
 
-		public ThreadNameFixingPrintStreamInfoStream(PrintStream @out) : base(@out)
+		public ThreadNameFixingPrintStreamInfoStream(TextWriter @out) : base(@out)
 		{
 		}
 
@@ -117,7 +118,7 @@ namespace Lucene.Net.Util
 		  {
 			name = Thread.CurrentThread.Name;
 		  }
-		  stream.println(component + " " + messageID + " [" + DateTime.Now + "; " + name + "]: " + message);
+		  Stream.WriteLine(component + " " + MessageID + " [" + DateTime.Now + "; " + name + "]: " + message);
 		}
 	  }
 
@@ -139,13 +140,13 @@ namespace Lucene.Net.Util
 		// if verbose: print some debugging stuff about which codecs are loaded.
 		if (VERBOSE)
 		{
-		  Set<string> codecs = Codec.availableCodecs();
+		  ISet<string> codecs = Codec.availableCodecs();
 		  foreach (string codec in codecs)
 		  {
 			Console.WriteLine("Loaded codec: '" + codec + "': " + Codec.forName(codec).GetType().Name);
 		  }
 
-		  Set<string> postingsFormats = PostingsFormat.availablePostingsFormats();
+		  ISet<string> postingsFormats = PostingsFormat.availablePostingsFormats();
 		  foreach (string postingsFormat in postingsFormats)
 		  {
 			Console.WriteLine("Loaded postingsFormat: '" + postingsFormat + "': " + PostingsFormat.forName(postingsFormat).GetType().Name);
@@ -154,7 +155,7 @@ namespace Lucene.Net.Util
 
 		SavedInfoStream = InfoStream.Default;
 		Random random = RandomizedContext.current().Random;
-		bool v = random.nextBoolean();
+		bool v = random.NextBoolean();
 		if (INFOSTREAM)
 		{
 		  InfoStream.Default = new ThreadNameFixingPrintStreamInfoStream(System.out);

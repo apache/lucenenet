@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
 		return new IterableAnonymousInnerClassHelper(iterable);
 	  }
 
-	  private class IterableAnonymousInnerClassHelper : Iterable<BytesRef>
+      private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
 	  {
 		  private IEnumerable<BytesRef> Iterable;
 
@@ -92,26 +92,26 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// remaps ord -1 to ord 0 on this iterable. </summary>
-	  public static IEnumerable<Number> MapMissingToOrd0(IEnumerable<Number> iterable)
+	  public static IEnumerable<long> MapMissingToOrd0(IEnumerable<long> iterable)
 	  {
 		return new IterableAnonymousInnerClassHelper2(iterable);
 	  }
 
-	  private class IterableAnonymousInnerClassHelper2 : Iterable<Number>
+      private class IterableAnonymousInnerClassHelper2 : IEnumerable<long>
 	  {
-		  private IEnumerable<Number> Iterable;
+          private IEnumerable<long> Iterable;
 
-		  public IterableAnonymousInnerClassHelper2(IEnumerable<Number> iterable)
+          public IterableAnonymousInnerClassHelper2(IEnumerable<long> iterable)
 		  {
 			  this.Iterable = iterable;
 		  }
 
-		  public virtual IEnumerator<Number> GetEnumerator()
+          public virtual IEnumerator<long> GetEnumerator()
 		  {
 			return new IteratorAnonymousInnerClassHelper2(this);
 		  }
 
-		  private class IteratorAnonymousInnerClassHelper2 : IEnumerator<Number>
+          private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long>
 		  {
 			  private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
 
@@ -121,16 +121,16 @@ namespace Lucene.Net.Codecs
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 
-			  internal IEnumerator<Number> @in;
+              internal IEnumerator<long> @in;
 
 			  public virtual bool HasNext()
 			  {
 				return @in.hasNext();
 			  }
 
-			  public virtual Number Next()
+              public virtual long Next()
 			  {
-				Number n = @in.next();
+				long n = @in.next();
 				if ((long)n == -1)
 				{
 				  return 0;
@@ -150,26 +150,26 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// remaps every ord+1 on this iterable </summary>
-	  public static IEnumerable<Number> MapAllOrds(IEnumerable<Number> iterable)
+      public static IEnumerable<long> MapAllOrds(IEnumerable<long> iterable)
 	  {
 		return new IterableAnonymousInnerClassHelper3(iterable);
 	  }
 
-	  private class IterableAnonymousInnerClassHelper3 : Iterable<Number>
+      private class IterableAnonymousInnerClassHelper3 : IEnumerable<long>
 	  {
-		  private IEnumerable<Number> Iterable;
+          private IEnumerable<long> Iterable;
 
-		  public IterableAnonymousInnerClassHelper3(IEnumerable<Number> iterable)
+          public IterableAnonymousInnerClassHelper3(IEnumerable<long> iterable)
 		  {
 			  this.Iterable = iterable;
 		  }
 
-		  public virtual IEnumerator<Number> GetEnumerator()
+          public virtual IEnumerator<long> GetEnumerator()
 		  {
 			return new IteratorAnonymousInnerClassHelper3(this);
 		  }
 
-		  private class IteratorAnonymousInnerClassHelper3 : IEnumerator<Number>
+          private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long>
 		  {
 			  private readonly IterableAnonymousInnerClassHelper3 OuterInstance;
 
@@ -179,16 +179,16 @@ namespace Lucene.Net.Codecs
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 
-			  internal IEnumerator<Number> @in;
+              internal IEnumerator<long> @in;
 
 			  public virtual bool HasNext()
 			  {
 				return @in.hasNext();
 			  }
 
-			  public virtual Number Next()
+              public virtual long Next()
 			  {
-				Number n = @in.next();
+				long n = @in.next();
 				return (long)n + 1;
 			  }
 

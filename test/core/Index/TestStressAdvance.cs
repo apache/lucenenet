@@ -25,6 +25,7 @@ namespace Lucene.Net.Index
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Lucene.Net.Store;
 	using Lucene.Net.Document;
+    using NUnit.Framework;
 
 	public class TestStressAdvance : LuceneTestCase
 	{
@@ -37,49 +38,49 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("\nTEST: iter=" + iter);
 		  }
-		  Directory dir = newDirectory();
-		  RandomIndexWriter w = new RandomIndexWriter(random(), dir);
-		  Set<int?> aDocs = new HashSet<int?>();
+		  Directory dir = NewDirectory();
+		  RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+		  HashSet<int> aDocs = new HashSet<int>();
 		  Document doc = new Document();
-		  Field f = newStringField("field", "", Field.Store.NO);
-		  doc.add(f);
-		  Field idField = newStringField("id", "", Field.Store.YES);
-		  doc.add(idField);
-		  int num = atLeast(4097);
+		  Field f = NewStringField("field", "", Field.Store.NO);
+		  doc.Add(f);
+		  Field idField = NewStringField("id", "", Field.Store.YES);
+		  doc.Add(idField);
+		  int num = AtLeast(4097);
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("\nTEST: numDocs=" + num);
 		  }
 		  for (int id = 0;id < num;id++)
 		  {
-			if (random().Next(4) == 3)
+			if (Random().Next(4) == 3)
 			{
 			  f.StringValue = "a";
-			  aDocs.add(id);
+			  aDocs.Add(id);
 			}
 			else
 			{
 			  f.StringValue = "b";
 			}
 			idField.StringValue = "" + id;
-			w.addDocument(doc);
+			w.AddDocument(doc);
 			if (VERBOSE)
 			{
 			  Console.WriteLine("\nTEST: doc upto " + id);
 			}
 		  }
 
-		  w.forceMerge(1);
+		  w.ForceMerge(1);
 
-		  IList<int?> aDocIDs = new List<int?>();
-		  IList<int?> bDocIDs = new List<int?>();
+		  IList<int> aDocIDs = new List<int>();
+		  IList<int> bDocIDs = new List<int>();
 
 		  DirectoryReader r = w.Reader;
-		  int[] idToDocID = new int[r.maxDoc()];
+		  int[] idToDocID = new int[r.MaxDoc()];
 		  for (int docID = 0;docID < idToDocID.Length;docID++)
 		  {
-			int id = Convert.ToInt32(r.document(docID).get("id"));
-			if (aDocs.contains(id))
+			int id = Convert.ToInt32(r.Document(docID).Get("id"));
+			if (aDocs.Contains(id))
 			{
 			  aDocIDs.Add(docID);
 			}
@@ -88,7 +89,7 @@ namespace Lucene.Net.Index
 			  bDocIDs.Add(docID);
 			}
 		  }
-		  TermsEnum te = getOnlySegmentReader(r).fields().terms("field").iterator(null);
+		  TermsEnum te = GetOnlySegmentReader(r).Fields().Terms("field").Iterator(null);
 
 		  DocsEnum de = null;
 		  for (int iter2 = 0;iter2 < 10;iter2++)
@@ -97,22 +98,22 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("\nTEST: iter=" + iter + " iter2=" + iter2);
 			}
-			Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.seekCeil(new BytesRef("a")));
-			de = TestUtil.docs(random(), te, null, de, DocsEnum.FLAG_NONE);
+			Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(new BytesRef("a")));
+			de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
 			TestOne(de, aDocIDs);
 
-			Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.seekCeil(new BytesRef("b")));
-			de = TestUtil.docs(random(), te, null, de, DocsEnum.FLAG_NONE);
+			Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(new BytesRef("b")));
+			de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
 			TestOne(de, bDocIDs);
 		  }
 
-		  w.close();
-		  r.close();
-		  dir.close();
+          w.Close();
+		  r.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
-	  private void TestOne(DocsEnum docs, IList<int?> expected)
+	  private void TestOne(DocsEnum docs, IList<int> expected)
 	  {
 		if (VERBOSE)
 		{
@@ -126,7 +127,7 @@ namespace Lucene.Net.Index
 			Console.WriteLine("  cycle upto=" + upto + " of " + expected.Count);
 		  }
 		  int docID;
-		  if (random().Next(4) == 1 || upto == expected.Count - 1)
+		  if (Random().Next(4) == 1 || upto == expected.Count - 1)
 		  {
 			// test nextDoc()
 			if (VERBOSE)
@@ -134,18 +135,18 @@ namespace Lucene.Net.Index
 			  Console.WriteLine("    do nextDoc");
 			}
 			upto++;
-			docID = docs.nextDoc();
+			docID = docs.NextDoc();
 		  }
 		  else
 		  {
 			// test advance()
-			int inc = TestUtil.Next(random(), 1, expected.Count - 1 - upto);
+			int inc = TestUtil.NextInt(Random(), 1, expected.Count - 1 - upto);
 			if (VERBOSE)
 			{
 			  Console.WriteLine("    do advance inc=" + inc);
 			}
 			upto += inc;
-			docID = docs.advance(expected[upto]);
+			docID = docs.Advance(expected[upto]);
 		  }
 		  if (upto == expected.Count)
 		  {

@@ -26,6 +26,7 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Util;
 	using Lucene.Net.Document;
 	using Lucene.Net.Analysis;
+    using NUnit.Framework;
 
 	public class TestMultiFields : LuceneTestCase
 	{
@@ -33,7 +34,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestRandom()
 	  {
 
-		int num = atLeast(2);
+		int num = AtLeast(2);
 		for (int iter = 0; iter < num; iter++)
 		{
 		  if (VERBOSE)
@@ -41,9 +42,9 @@ namespace Lucene.Net.Index
 			Console.WriteLine("TEST: iter=" + iter);
 		  }
 
-		  Directory dir = newDirectory();
+		  Directory dir = NewDirectory();
 
-		  IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
+		  IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 		  // we can do this because we use NoMergePolicy (and dont merge to "nothing")
 		  w.KeepFullyDeletedSegments = true;
 
@@ -51,14 +52,14 @@ namespace Lucene.Net.Index
 		  Set<int?> deleted = new HashSet<int?>();
 		  IList<BytesRef> terms = new List<BytesRef>();
 
-		  int numDocs = TestUtil.Next(random(), 1, 100 * RANDOM_MULTIPLIER);
+		  int numDocs = TestUtil.NextInt(Random(), 1, 100 * RANDOM_MULTIPLIER);
 		  Document doc = new Document();
-		  Field f = newStringField("field", "", Field.Store.NO);
-		  doc.add(f);
-		  Field id = newStringField("id", "", Field.Store.NO);
-		  doc.add(id);
+		  Field f = NewStringField("field", "", Field.Store.NO);
+		  doc.Add(f);
+		  Field id = NewStringField("id", "", Field.Store.NO);
+		  doc.Add(id);
 
-		  bool onlyUniqueTerms = random().nextBoolean();
+		  bool onlyUniqueTerms = Random().NextBoolean();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: onlyUniqueTerms=" + onlyUniqueTerms + " numDocs=" + numDocs);
@@ -67,16 +68,16 @@ namespace Lucene.Net.Index
 		  for (int i = 0;i < numDocs;i++)
 		  {
 
-			if (!onlyUniqueTerms && random().nextBoolean() && terms.Count > 0)
+			if (!onlyUniqueTerms && Random().NextBoolean() && terms.Count > 0)
 			{
 			  // re-use existing term
-			  BytesRef term = terms[random().Next(terms.Count)];
+			  BytesRef term = terms[Random().Next(terms.Count)];
 			  docs[term].Add(i);
-			  f.StringValue = term.utf8ToString();
+			  f.StringValue = term.Utf8ToString();
 			}
 			else
 			{
-			  string s = TestUtil.randomUnicodeString(random(), 10);
+			  string s = TestUtil.RandomUnicodeString(Random(), 10);
 			  BytesRef term = new BytesRef(s);
 			  if (!docs.ContainsKey(term))
 			  {
@@ -84,20 +85,20 @@ namespace Lucene.Net.Index
 			  }
 			  docs[term].Add(i);
 			  terms.Add(term);
-			  uniqueTerms.add(term);
+			  uniqueTerms.Add(term);
 			  f.StringValue = s;
 			}
 			id.StringValue = "" + i;
-			w.addDocument(doc);
-			if (random().Next(4) == 1)
+			w.AddDocument(doc);
+			if (Random().Next(4) == 1)
 			{
-			  w.commit();
+			  w.Commit();
 			}
-			if (i > 0 && random().Next(20) == 1)
+			if (i > 0 && Random().Next(20) == 1)
 			{
-			  int delID = random().Next(i);
-			  deleted.add(delID);
-			  w.deleteDocuments(new Term("id", "" + delID));
+			  int delID = Random().Next(i);
+			  deleted.Add(delID);
+			  w.DeleteDocuments(new Term("id", "" + delID));
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("TEST: delete " + delID);
@@ -112,10 +113,10 @@ namespace Lucene.Net.Index
 			Console.WriteLine("TEST: terms in UTF16 order:");
 			foreach (BytesRef b in termsList)
 			{
-			  Console.WriteLine("  " + UnicodeUtil.toHexString(b.utf8ToString()) + " " + b);
+			  Console.WriteLine("  " + UnicodeUtil.toHexString(b.Utf8ToString()) + " " + b);
 			  foreach (int docID in docs[b])
 			  {
-				if (deleted.contains(docID))
+				if (deleted.Contains(docID))
 				{
 				  Console.WriteLine("    " + docID + " (deleted)");
 				}
@@ -128,95 +129,95 @@ namespace Lucene.Net.Index
 		  }
 
 		  IndexReader reader = w.Reader;
-		  w.close();
+		  w.Dispose();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: reader=" + reader);
 		  }
 
-		  Bits liveDocs = MultiFields.getLiveDocs(reader);
+		  Bits liveDocs = MultiFields.GetLiveDocs(reader);
 		  foreach (int delDoc in deleted)
 		  {
-			Assert.IsFalse(liveDocs.get(delDoc));
+			Assert.IsFalse(liveDocs.Get(delDoc));
 		  }
 
 		  for (int i = 0;i < 100;i++)
 		  {
-			BytesRef term = terms[random().Next(terms.Count)];
+			BytesRef term = terms[Random().Next(terms.Count)];
 			if (VERBOSE)
 			{
-			  Console.WriteLine("TEST: seek term=" + UnicodeUtil.toHexString(term.utf8ToString()) + " " + term);
+			  Console.WriteLine("TEST: seek term=" + UnicodeUtil.toHexString(term.Utf8ToString()) + " " + term);
 			}
 
-			DocsEnum docsEnum = TestUtil.docs(random(), reader, "field", term, liveDocs, null, DocsEnum.FLAG_NONE);
+			DocsEnum docsEnum = TestUtil.Docs(Random(), reader, "field", term, liveDocs, null, DocsEnum.FLAG_NONE);
 			Assert.IsNotNull(docsEnum);
 
 			foreach (int docID in docs[term])
 			{
-			  if (!deleted.contains(docID))
+			  if (!deleted.Contains(docID))
 			  {
-				Assert.AreEqual(docID, docsEnum.nextDoc());
+				Assert.AreEqual(docID, docsEnum.NextDoc());
 			  }
 			}
-			Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.nextDoc());
+			Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
 		  }
 
-		  reader.close();
-		  dir.close();
+		  reader.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  /*
 	  private void verify(IndexReader r, String term, List<Integer> expected) throws Exception {
-	    DocsEnum docs = TestUtil.docs(random, r,
+	    DocsEnum docs = TestUtil.Docs(random, r,
 	                                   "field",
 	                                   new BytesRef(term),
-	                                   MultiFields.getLiveDocs(r),
+	                                   MultiFields.GetLiveDocs(r),
 	                                   null,
 	                                   false);
 	    for(int docID : expected) {
-	      Assert.AreEqual(docID, docs.nextDoc());
+	      Assert.AreEqual(docID, docs.NextDoc());
 	    }
-	    Assert.AreEqual(docs.NO_MORE_DOCS, docs.nextDoc());
+	    Assert.AreEqual(docs.NO_MORE_DOCS, docs.NextDoc());
 	  }
 	  */
 
 	  public virtual void TestSeparateEnums()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d = new Document();
-		d.add(newStringField("f", "j", Field.Store.NO));
-		w.addDocument(d);
-		w.commit();
-		w.addDocument(d);
+		d.Add(NewStringField("f", "j", Field.Store.NO));
+		w.AddDocument(d);
+		w.Commit();
+		w.AddDocument(d);
 		IndexReader r = w.Reader;
-		w.close();
-		DocsEnum d1 = TestUtil.docs(random(), r, "f", new BytesRef("j"), null, null, DocsEnum.FLAG_NONE);
-		DocsEnum d2 = TestUtil.docs(random(), r, "f", new BytesRef("j"), null, null, DocsEnum.FLAG_NONE);
-		Assert.AreEqual(0, d1.nextDoc());
-		Assert.AreEqual(0, d2.nextDoc());
-		r.close();
-		dir.close();
+		w.Dispose();
+		DocsEnum d1 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsEnum.FLAG_NONE);
+		DocsEnum d2 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsEnum.FLAG_NONE);
+		Assert.AreEqual(0, d1.NextDoc());
+		Assert.AreEqual(0, d2.NextDoc());
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTermDocsEnum()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d = new Document();
-		d.add(newStringField("f", "j", Field.Store.NO));
-		w.addDocument(d);
-		w.commit();
-		w.addDocument(d);
+		d.Add(NewStringField("f", "j", Field.Store.NO));
+		w.AddDocument(d);
+		w.Commit();
+		w.AddDocument(d);
 		IndexReader r = w.Reader;
-		w.close();
+		w.Dispose();
 		DocsEnum de = MultiFields.getTermDocsEnum(r, null, "f", new BytesRef("j"));
-		Assert.AreEqual(0, de.nextDoc());
-		Assert.AreEqual(1, de.nextDoc());
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, de.nextDoc());
-		r.close();
-		dir.close();
+		Assert.AreEqual(0, de.NextDoc());
+		Assert.AreEqual(1, de.NextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
+		r.Dispose();
+		dir.Dispose();
 	  }
 	}
 

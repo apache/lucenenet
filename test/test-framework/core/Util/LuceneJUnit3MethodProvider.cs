@@ -22,9 +22,9 @@ namespace Lucene.Net.Util
 	 */
 
 
-	using ClassModel = com.carrotsearch.randomizedtesting.ClassModel;
+	/*using ClassModel = com.carrotsearch.randomizedtesting.ClassModel;
 	using MethodModel = com.carrotsearch.randomizedtesting.ClassModel.MethodModel;
-	using TestMethodProvider = com.carrotsearch.randomizedtesting.TestMethodProvider;
+	using TestMethodProvider = com.carrotsearch.randomizedtesting.TestMethodProvider;*/
 
 	/// <summary>
 	/// Backwards compatible test* method provider (public, non-static).

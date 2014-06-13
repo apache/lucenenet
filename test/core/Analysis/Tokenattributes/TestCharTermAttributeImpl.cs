@@ -25,6 +25,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
     [TestFixture]
 	public class TestCharTermAttributeImpl : LuceneTestCase
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
 	  public virtual void TestResize()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+		CharTermAttribute t = new CharTermAttribute();
 		char[] content = "hello".ToCharArray();
 		t.CopyBuffer(content, 0, content.Length);
 		for (int i = 0; i < 2000; i++)
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
       public virtual void TestGrow()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+		CharTermAttribute t = new CharTermAttribute();
 		StringBuilder buf = new StringBuilder("ab");
 		for (int i = 0; i < 20; i++)
 		{
@@ -59,7 +60,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		Assert.AreEqual(1048576, t.Length);
 
 		// now as a StringBuilder, first variant
-		t = new CharTermAttributeImpl();
+        t = new CharTermAttribute();
 		buf = new StringBuilder("ab");
 		for (int i = 0; i < 20; i++)
 		{
@@ -71,7 +72,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		Assert.AreEqual(1048576, t.Length);
 
 		// Test for slow growth to a long term
-		t = new CharTermAttributeImpl();
+        t = new CharTermAttribute();
 		buf = new StringBuilder("a");
 		for (int i = 0; i < 20000; i++)
 		{
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
       public virtual void TestToString()
 	  {
 		char[] b = new char[] {'a', 'l', 'o', 'h', 'a'};
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+        CharTermAttribute t = new CharTermAttribute();
 		t.CopyBuffer(b, 0, 5);
 		Assert.AreEqual("aloha", t.ToString());
 
@@ -98,11 +99,11 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
       public virtual void TestClone()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+        CharTermAttribute t = new CharTermAttribute();
 		char[] content = "hello".ToCharArray();
 		t.CopyBuffer(content, 0, 5);
 		char[] buf = t.Buffer();
-		CharTermAttributeImpl copy = TestToken.AssertCloneIsEqual(t);
+        CharTermAttribute copy = TestToken.AssertCloneIsEqual(t);
 		Assert.AreEqual(t.ToString(), copy.ToString());
 		Assert.AreNotSame(buf, copy.Buffer());
 	  }
@@ -110,13 +111,13 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
       public virtual void TestEquals()
 	  {
-		CharTermAttributeImpl t1a = new CharTermAttributeImpl();
+		CharTermAttribute t1a = new CharTermAttribute();
 		char[] content1a = "hello".ToCharArray();
 		t1a.CopyBuffer(content1a, 0, 5);
-		CharTermAttributeImpl t1b = new CharTermAttributeImpl();
+        CharTermAttribute t1b = new CharTermAttribute();
 		char[] content1b = "hello".ToCharArray();
 		t1b.CopyBuffer(content1b, 0, 5);
-		CharTermAttributeImpl t2 = new CharTermAttributeImpl();
+        CharTermAttribute t2 = new CharTermAttribute();
 		char[] content2 = "hello2".ToCharArray();
 		t2.CopyBuffer(content2, 0, 6);
 		Assert.IsTrue(t1a.Equals(t1b));
@@ -127,12 +128,12 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
       public virtual void TestCopyTo()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
-		CharTermAttributeImpl copy = TestToken.AssertCopyIsEqual(t);
+		CharTermAttribute t = new CharTermAttribute();
+        CharTermAttribute copy = TestToken.AssertCopyIsEqual(t);
 		Assert.AreEqual("", t.ToString());
 		Assert.AreEqual("", copy.ToString());
 
-		t = new CharTermAttributeImpl();
+        t = new CharTermAttribute();
 		char[] content = "hello".ToCharArray();
 		t.CopyBuffer(content, 0, 5);
 		char[] buf = t.Buffer();
@@ -144,37 +145,41 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
 	  public virtual void TestAttributeReflection()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+		CharTermAttribute t = new CharTermAttribute();
 		t.Append("foobar");
-		TestUtil.assertAttributeReflection(t, new Dictionary<string, object>() {{put(typeof(CharTermAttribute).Name + "#term", "foobar"); put(typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar"));}});
+		TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() 
+        {
+                { typeof(ICharTermAttribute).Name + "#term", "foobar" }, 
+                { typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") }
+        });
 	  }
 
       [Test]
       public virtual void TestCharSequenceInterface()
 	  {
 		const string s = "0123456789";
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+        CharTermAttribute t = new CharTermAttribute();
 		t.Append(s);
 
 		Assert.AreEqual(s.Length, t.Length);
-		Assert.AreEqual("12", t.subSequence(1,3).ToString());
-		Assert.AreEqual(s, t.subSequence(0,s.Length).ToString());
+		Assert.AreEqual("12", t.SubSequence(1,3).ToString());
+		Assert.AreEqual(s, t.SubSequence(0,s.Length).ToString());
 
 		Assert.IsTrue(Pattern.matches("01\\d+", t));
-		Assert.IsTrue(Pattern.matches("34", t.subSequence(3,5)));
+        Assert.IsTrue(Pattern.matches("34", t.SubSequence(3, 5)));
 
-		Assert.AreEqual(s.subSequence(3,7).ToString(), t.subSequence(3,7).ToString());
+        Assert.AreEqual(s.Substring(3, 7), t.SubSequence(3, 7).ToString());
 
 		for (int i = 0; i < s.Length; i++)
 		{
-		  Assert.IsTrue(t[i] == s[i]);
+		  Assert.IsTrue(t.CharAt(i) == s[i]);
 		}
 	  }
 
       [Test]
       public virtual void TestAppendableInterface()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+		CharTermAttribute t = new CharTermAttribute();
 		Formatter formatter = new Formatter(t, Locale.ROOT);
 		formatter.format("%d", 1234);
 		Assert.AreEqual("1234", t.ToString());
@@ -182,33 +187,33 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		Assert.AreEqual("12345678", t.ToString());
 		t.Append('9');
 		Assert.AreEqual("123456789", t.ToString());
-		t.Append((CharSequence) "0");
+		t.Append(new StringCharSequenceWrapper("0"));
 		Assert.AreEqual("1234567890", t.ToString());
-		t.Append((CharSequence) "0123456789", 1, 3);
+		t.Append(new StringCharSequenceWrapper("0123456789"), 1, 3);
 		Assert.AreEqual("123456789012", t.ToString());
-		t.Append((CharSequence) CharBuffer.wrap("0123456789".ToCharArray()), 3, 5);
+		t.Append((ICharSequence) CharBuffer.wrap("0123456789".ToCharArray()), 3, 5);
 		Assert.AreEqual("12345678901234", t.ToString());
-		t.Append((CharSequence) t);
+		t.Append((ICharSequence) t);
 		Assert.AreEqual("1234567890123412345678901234", t.ToString());
-		t.Append((CharSequence) new StringBuilder("0123456789"), 5, 7);
+		t.Append((ICharSequence) new StringBuilder("0123456789"), 5, 7);
 		Assert.AreEqual("123456789012341234567890123456", t.ToString());
-		t.Append((CharSequence) new StringBuilder(t));
+		t.Append((ICharSequence) new StringBuilder(t));
 		Assert.AreEqual("123456789012341234567890123456123456789012341234567890123456", t.ToString());
 		// very wierd, to test if a subSlice is wrapped correct :)
 		CharBuffer buf = CharBuffer.wrap("0123456789".ToCharArray(), 3, 5);
 		Assert.AreEqual("34567", buf.ToString());
-		t.SetEmpty().append((CharSequence) buf, 1, 2);
+		t.SetEmpty().Append((ICharSequence) buf, 1, 2);
 		Assert.AreEqual("4", t.ToString());
-		CharTermAttribute t2 = new CharTermAttributeImpl();
-		t2.append("test");
-		t.Append((CharSequence) t2);
+        ICharTermAttribute t2 = new CharTermAttribute();
+		t2.Append("test");
+		t.Append((ICharSequence) t2);
 		Assert.AreEqual("4test", t.ToString());
-		t.Append((CharSequence) t2, 1, 2);
+		t.Append((ICharSequence) t2, 1, 2);
 		Assert.AreEqual("4teste", t.ToString());
 
 		try
 		{
-		  t.Append((CharSequence) t2, 1, 5);
+		  t.Append((ICharSequence) t2, 1, 5);
 		  Assert.Fail("Should throw IndexOutOfBoundsException");
 		}
 		catch (System.IndexOutOfRangeException iobe)
@@ -217,41 +222,41 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
 		try
 		{
-		  t.Append((CharSequence) t2, 1, 0);
+		  t.Append((ICharSequence) t2, 1, 0);
 		  Assert.Fail("Should throw IndexOutOfBoundsException");
 		}
 		catch (System.IndexOutOfRangeException iobe)
 		{
 		}
 
-		t.Append((CharSequence) null);
+		t.Append((ICharSequence) null);
 		Assert.AreEqual("4testenull", t.ToString());
 	  }
 
       [Test]
       public virtual void TestAppendableInterfaceWithLongSequences()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
-		t.Append((CharSequence) "01234567890123456789012345678901234567890123456789");
-		t.Append((CharSequence) CharBuffer.wrap("01234567890123456789012345678901234567890123456789".ToCharArray()), 3, 50);
+		CharTermAttribute t = new CharTermAttribute();
+		t.Append(new StringCharSequenceWrapper("01234567890123456789012345678901234567890123456789"));
+		t.Append((ICharSequence) CharBuffer.wrap("01234567890123456789012345678901234567890123456789".ToCharArray()), 3, 50);
 		Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
-		t.SetEmpty().Append((CharSequence) new StringBuilder("01234567890123456789"), 5, 17);
-		Assert.AreEqual((CharSequence) "567890123456", t.ToString());
+		t.SetEmpty().Append((ICharSequence) new StringBuilder("01234567890123456789"), 5, 17);
+		Assert.AreEqual(new StringCharSequenceWrapper("567890123456"), t.ToString());
 		t.Append(new StringBuilder(t));
-		Assert.AreEqual((CharSequence) "567890123456567890123456", t.ToString());
+		Assert.AreEqual(new StringCharSequenceWrapper("567890123456567890123456"), t.ToString());
 		// very wierd, to test if a subSlice is wrapped correct :)
 		CharBuffer buf = CharBuffer.wrap("012345678901234567890123456789".ToCharArray(), 3, 15);
 		Assert.AreEqual("345678901234567", buf.ToString());
 		t.SetEmpty().Append(buf, 1, 14);
 		Assert.AreEqual("4567890123456", t.ToString());
 
-		// finally use a completely custom CharSequence that is not catched by instanceof checks
+		// finally use a completely custom ICharSequence that is not catched by instanceof checks
 		const string longTestString = "012345678901234567890123456789";
 		t.Append(new CharSequenceAnonymousInnerClassHelper(this, longTestString));
 		Assert.AreEqual("4567890123456" + longTestString, t.ToString());
 	  }
 
-	  private class CharSequenceAnonymousInnerClassHelper : CharSequence
+	  private class CharSequenceAnonymousInnerClassHelper : ICharSequence
 	  {
 		  private readonly TestCharTermAttributeImpl OuterInstance;
 
@@ -271,9 +276,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		  {
 			  return LongTestString.Length;
 		  }
-		  public override CharSequence SubSequence(int start, int end)
+		  public override ICharSequence SubSequence(int start, int end)
 		  {
-			  return LongTestString.subSequence(start, end);
+			  return new StringCharSequenceWrapper(LongTestString.Substring(start, end));
 		  }
 		  public override string ToString()
 		  {
@@ -284,74 +289,74 @@ namespace Lucene.Net.Analysis.Tokenattributes
       [Test]
       public virtual void TestNonCharSequenceAppend()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+		CharTermAttribute t = new CharTermAttribute();
 		t.Append("0123456789");
 		t.Append("0123456789");
 		Assert.AreEqual("01234567890123456789", t.ToString());
 		t.Append(new StringBuilder("0123456789"));
 		Assert.AreEqual("012345678901234567890123456789", t.ToString());
-		CharTermAttribute t2 = new CharTermAttributeImpl();
+        ICharTermAttribute t2 = new CharTermAttribute();
 		t2.Append("test");
 		t.Append(t2);
 		Assert.AreEqual("012345678901234567890123456789test", t.ToString());
 		t.Append((string) null);
 		t.Append((StringBuilder) null);
-		t.Append((CharTermAttribute) null);
+		t.Append((ICharTermAttribute) null);
 		Assert.AreEqual("012345678901234567890123456789testnullnullnull", t.ToString());
 	  }
 
       [Test]
       public virtual void TestExceptions()
 	  {
-		CharTermAttributeImpl t = new CharTermAttributeImpl();
+		CharTermAttribute t = new CharTermAttribute();
 		t.Append("test");
 		Assert.AreEqual("test", t.ToString());
 
 		try
 		{
-		  t[-1];
+		  t.CharAt(-1);
 		  Assert.Fail("Should throw IndexOutOfBoundsException");
 		}
-		catch (System.IndexOutOfRangeException iobe)
+		catch (System.IndexOutOfRangeException)
 		{
 		}
 
 		try
 		{
-		  t[4];
+		  t.CharAt(4);
 		  Assert.Fail("Should throw IndexOutOfBoundsException");
 		}
-		catch (System.IndexOutOfRangeException iobe)
+		catch (System.IndexOutOfRangeException)
 		{
 		}
 
 		try
 		{
-		  t.subSequence(0, 5);
+		  t.SubSequence(0, 5);
 		  Assert.Fail("Should throw IndexOutOfBoundsException");
 		}
-		catch (System.IndexOutOfRangeException iobe)
+		catch (System.IndexOutOfRangeException)
 		{
 		}
 
 		try
 		{
-		  t.subSequence(5, 0);
+		  t.SubSequence(5, 0);
 		  Assert.Fail("Should throw IndexOutOfBoundsException");
 		}
-		catch (System.IndexOutOfRangeException iobe)
+		catch (System.IndexOutOfRangeException)
 		{
 		}
 	  }
 
 	  /*
 	  
-	  // test speed of the dynamic instanceof checks in append(CharSequence),
+	  // test speed of the dynamic instanceof checks in append(ICharSequence),
 	  // to find the best max length for the generic while (start<end) loop:
 	  public void testAppendPerf() {
 	    CharTermAttributeImpl t = new CharTermAttributeImpl();
 	    final int count = 32;
-	    CharSequence[] csq = new CharSequence[count * 6];
+	    ICharSequence[] csq = new ICharSequence[count * 6];
 	    final StringBuilder sb = new StringBuilder();
 	    for (int i=0,j=0; i<count; i++) {
 	      sb.append(i%10);
@@ -363,10 +368,10 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	      csq[j++] = new StringBuilder(sb);
 	      csq[j++] = new StringBuffer(sb);
 	      csq[j++] = CharBuffer.wrap(testString.toCharArray());
-	      csq[j++] = new CharSequence() {
+	      csq[j++] = new ICharSequence() {
 	        public char charAt(int i) { return testString.charAt(i); }
 	        public int length() { return testString.length(); }
-	        public CharSequence subSequence(int start, int end) { return testString.subSequence(start, end); }
+	        public ICharSequence subSequence(int start, int end) { return testString.subSequence(start, end); }
 	        public String toString() { return testString; }
 	      };
 	    }

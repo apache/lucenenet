@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  public override void SetUp()
 	  {
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-		base.setUp();
+		base.SetUp();
 	  }
 
 	  protected internal override Codec Codec
@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override void TestWriteReadMerge()
 	  {
-		assumeFalse("impersonation isnt good enough", true);
+		AssumeFalse("impersonation isnt good enough", true);
 		// this test tries to switch up between the codec and another codec.
 		// for 3.x: we currently cannot take an index with existing 4.x segments
 		// and merge into newly formed 3.x segments.

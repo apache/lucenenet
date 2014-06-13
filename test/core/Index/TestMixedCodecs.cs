@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestMixedCodecs extends Lucene.Net.Util.LuceneTestCase
@@ -39,9 +40,9 @@ namespace Lucene.Net.Index
 	  public virtual void Test()
 	  {
 
-		int NUM_DOCS = atLeast(1000);
+		int NUM_DOCS = AtLeast(1000);
 
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		RandomIndexWriter w = null;
 
 		int docsLeftInthisSegment = 0;
@@ -55,8 +56,8 @@ namespace Lucene.Net.Index
 		  }
 		  if (docsLeftInthisSegment == 0)
 		  {
-			IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-			if (random().nextBoolean())
+			IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+			if (Random().NextBoolean())
 			{
 			  // Make sure we aggressively mix in SimpleText
 			  // since it has different impls for all codec
@@ -65,14 +66,14 @@ namespace Lucene.Net.Index
 			}
 			if (w != null)
 			{
-			  w.close();
+			  w.Close();
 			}
-			w = new RandomIndexWriter(random(), dir, iwc);
-			docsLeftInthisSegment = TestUtil.Next(random(), 10, 100);
+			w = new RandomIndexWriter(Random(), dir, iwc);
+			docsLeftInthisSegment = TestUtil.NextInt(Random(), 10, 100);
 		  }
 		  Document doc = new Document();
-		  doc.add(newStringField("id", Convert.ToString(docUpto), Field.Store.YES));
-		  w.addDocument(doc);
+		  doc.Add(NewStringField("id", Convert.ToString(docUpto), Field.Store.YES));
+		  w.AddDocument(doc);
 		  docUpto++;
 		  docsLeftInthisSegment--;
 		}
@@ -83,25 +84,25 @@ namespace Lucene.Net.Index
 		}
 
 		// Random delete half the docs:
-		Set<int?> deleted = new HashSet<int?>();
-		while (deleted.size() < NUM_DOCS / 2)
+		HashSet<int?> deleted = new HashSet<int?>();
+		while (deleted.Size() < NUM_DOCS / 2)
 		{
-		  int? toDelete = random().Next(NUM_DOCS);
-		  if (!deleted.contains(toDelete))
+		  int? toDelete = Random().Next(NUM_DOCS);
+		  if (!deleted.Contains(toDelete))
 		  {
-			deleted.add(toDelete);
-			w.deleteDocuments(new Term("id", Convert.ToString(toDelete)));
-			if (random().Next(17) == 6)
+			deleted.Add(toDelete);
+			w.DeleteDocuments(new Term("id", Convert.ToString(toDelete)));
+			if (Random().Next(17) == 6)
 			{
 			  IndexReader r = w.Reader;
-			  Assert.AreEqual(NUM_DOCS - deleted.size(), r.numDocs());
-			  r.close();
+			  Assert.AreEqual(NUM_DOCS - deleted.Size(), r.NumDocs());
+			  r.Dispose();
 			}
 		  }
 		}
 
-		w.close();
-		dir.close();
+        w.Close();
+		dir.Dispose();
 	  }
 	}
 

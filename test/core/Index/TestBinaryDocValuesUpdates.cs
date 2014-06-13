@@ -16,7 +16,7 @@ namespace Lucene.Net.Index
 	using Lucene42RWCodec = Lucene.Net.Codecs.Lucene42.Lucene42RWCodec;
 	using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
 	using Lucene45RWCodec = Lucene.Net.Codecs.Lucene45.Lucene45RWCodec;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
 	using Document = Lucene.Net.Document.Document;
 	using Store = Lucene.Net.Document.Field.Store;
@@ -31,8 +31,10 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
+    using System.IO;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -58,13 +60,13 @@ namespace Lucene.Net.Index
 
 	  internal static long GetValue(BinaryDocValues bdv, int idx, BytesRef scratch)
 	  {
-		bdv.get(idx, scratch);
-		idx = scratch.offset;
-		sbyte b = scratch.bytes[idx++];
+		bdv.Get(idx, scratch);
+		idx = scratch.Offset;
+		sbyte b = scratch.Bytes[idx++];
 		long value = b & 0x7FL;
 		for (int shift = 7; (b & 0x80L) != 0; shift += 7)
 		{
-		  b = scratch.bytes[idx++];
+		  b = scratch.Bytes[idx++];
 		  value |= (b & 0x7FL) << shift;
 		}
 		return value;
@@ -77,10 +79,10 @@ namespace Lucene.Net.Index
 		BytesRef bytes = new BytesRef(10); // negative longs may take 10 bytes
 		while ((value & ~0x7FL) != 0L)
 		{
-		  bytes.bytes[bytes.length++] = unchecked((sbyte)((value & 0x7FL) | 0x80L));
+		  bytes.Bytes[bytes.Length++] = unchecked((sbyte)((value & 0x7FL) | 0x80L));
 		  value = (long)((ulong)value >> 7);
 		}
-		bytes.bytes[bytes.length++] = (sbyte) value;
+		bytes.Bytes[bytes.Length++] = (sbyte) value;
 	//    System.err.println("[" + Thread.currentThread().getName() + "] value=" + orig + ", bytes=" + bytes);
 		return bytes;
 	  }
@@ -88,164 +90,164 @@ namespace Lucene.Net.Index
 	  private Document Doc(int id)
 	  {
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc-" + id, Store.NO));
-		doc.add(new BinaryDocValuesField("val", ToBytes(id + 1)));
+		doc.Add(new StringField("id", "doc-" + id, Store.NO));
+		doc.Add(new BinaryDocValuesField("val", ToBytes(id + 1)));
 		return doc;
 	  }
 
 	  public virtual void TestUpdatesAreFlushed()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.WHITESPACE, false)).setRAMBufferSizeMB(0.00000001));
-		writer.addDocument(Doc(0)); // val=1
-		writer.addDocument(Doc(1)); // val=2
-		writer.addDocument(Doc(3)); // val=2
-		writer.commit();
+		Directory dir = NewDirectory();
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetRAMBufferSizeMB(0.00000001));
+		writer.AddDocument(Doc(0)); // val=1
+		writer.AddDocument(Doc(1)); // val=2
+		writer.AddDocument(Doc(3)); // val=2
+		writer.Commit();
 		Assert.AreEqual(1, writer.FlushDeletesCount);
-		writer.updateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(5));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(5));
 		Assert.AreEqual(2, writer.FlushDeletesCount);
-		writer.updateBinaryDocValue(new Term("id", "doc-1"), "val", ToBytes(6));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-1"), "val", ToBytes(6));
 		Assert.AreEqual(3, writer.FlushDeletesCount);
-		writer.updateBinaryDocValue(new Term("id", "doc-2"), "val", ToBytes(7));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-2"), "val", ToBytes(7));
 		Assert.AreEqual(4, writer.FlushDeletesCount);
-		writer.Config.RAMBufferSizeMB = 1000d;
-		writer.updateBinaryDocValue(new Term("id", "doc-2"), "val", ToBytes(7));
+		writer.Config.SetRAMBufferSizeMB(1000d);
+		writer.UpdateBinaryDocValue(new Term("id", "doc-2"), "val", ToBytes(7));
 		Assert.AreEqual(4, writer.FlushDeletesCount);
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSimple()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		// make sure random config doesn't flush on us
-		conf.MaxBufferedDocs = 10;
-		conf.RAMBufferSizeMB = IndexWriterConfig.DISABLE_AUTO_FLUSH;
+		conf.SetMaxBufferedDocs(10);
+		conf.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		IndexWriter writer = new IndexWriter(dir, conf);
-		writer.addDocument(Doc(0)); // val=1
-		writer.addDocument(Doc(1)); // val=2
-		if (random().nextBoolean()) // randomly commit before the update is sent
+		writer.AddDocument(Doc(0)); // val=1
+		writer.AddDocument(Doc(1)); // val=2
+		if (Random().NextBoolean()) // randomly commit before the update is sent
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
-		writer.updateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(2)); // doc=0, exp=2
+		writer.UpdateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(2)); // doc=0, exp=2
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		Assert.AreEqual(1, reader.leaves().size());
-		AtomicReader r = reader.leaves().get(0).reader();
-		BinaryDocValues bdv = r.getBinaryDocValues("val");
+		Assert.AreEqual(1, reader.Leaves().Count);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		BinaryDocValues bdv = r.GetBinaryDocValues("val");
 		BytesRef scratch = new BytesRef();
 		Assert.AreEqual(2, GetValue(bdv, 0, scratch));
 		Assert.AreEqual(2, GetValue(bdv, 1, scratch));
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateFewSegments()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 2; // generate few segments
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // prevent merges for this test
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(2); // generate few segments
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges for this test
 		IndexWriter writer = new IndexWriter(dir, conf);
 		int numDocs = 10;
 		long[] expectedValues = new long[numDocs];
 		for (int i = 0; i < numDocs; i++)
 		{
-		  writer.addDocument(Doc(i));
+		  writer.AddDocument(Doc(i));
 		  expectedValues[i] = i + 1;
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update few docs
 		for (int i = 0; i < numDocs; i++)
 		{
-		  if (random().NextDouble() < 0.4)
+		  if (Random().NextDouble() < 0.4)
 		  {
 			long value = (i + 1) * 2;
-			writer.updateBinaryDocValue(new Term("id", "doc-" + i), "val", ToBytes(value));
+			writer.UpdateBinaryDocValue(new Term("id", "doc-" + i), "val", ToBytes(value));
 			expectedValues[i] = value;
 		  }
 		}
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
 		BytesRef scratch = new BytesRef();
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  BinaryDocValues bdv = r.getBinaryDocValues("val");
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  BinaryDocValues bdv = r.GetBinaryDocValues("val");
 		  Assert.IsNotNull(bdv);
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
-			long expected = expectedValues[i + context.docBase];
+			long expected = expectedValues[i + context.DocBase];
 			long actual = GetValue(bdv, i, scratch);
 			Assert.AreEqual(expected, actual);
 		  }
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestReopen()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
-		writer.addDocument(Doc(0));
-		writer.addDocument(Doc(1));
+		writer.AddDocument(Doc(0));
+		writer.AddDocument(Doc(1));
 
-		bool isNRT = random().nextBoolean();
+		bool isNRT = Random().NextBoolean();
 		DirectoryReader reader1;
 		if (isNRT)
 		{
-		  reader1 = DirectoryReader.open(writer, true);
+		  reader1 = DirectoryReader.Open(writer, true);
 		}
 		else
 		{
-		  writer.commit();
-		  reader1 = DirectoryReader.open(dir);
+		  writer.Commit();
+		  reader1 = DirectoryReader.Open(dir);
 		}
 
 		// update doc
-		writer.updateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(10)); // update doc-0's value to 10
+		writer.UpdateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(10)); // update doc-0's value to 10
 		if (!isNRT)
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
 		// reopen reader and assert only it sees the update
-		DirectoryReader reader2 = DirectoryReader.openIfChanged(reader1);
+		DirectoryReader reader2 = DirectoryReader.OpenIfChanged(reader1);
 		Assert.IsNotNull(reader2);
 		Assert.IsTrue(reader1 != reader2);
 
 		BytesRef scratch = new BytesRef();
-		BinaryDocValues bdv1 = reader1.leaves().get(0).reader().getBinaryDocValues("val");
-		BinaryDocValues bdv2 = reader2.leaves().get(0).reader().getBinaryDocValues("val");
+		BinaryDocValues bdv1 = ((AtomicReader)(reader1.Leaves()[0].Reader())).GetBinaryDocValues("val");
+		BinaryDocValues bdv2 = (AtomicReader)(reader2.Leaves()[0].Reader()).GetBinaryDocValues("val");
 		Assert.AreEqual(1, GetValue(bdv1, 0, scratch));
 		Assert.AreEqual(10, GetValue(bdv2, 0, scratch));
 
@@ -256,295 +258,295 @@ namespace Lucene.Net.Index
 	  {
 		// create an index with a segment with only deletes, a segment with both
 		// deletes and updates and a segment with only updates
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // control segment flushing
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // prevent merges for this test
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // control segment flushing
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges for this test
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 6; i++)
 		{
-		  writer.addDocument(Doc(i));
+		  writer.AddDocument(Doc(i));
 		  if (i % 2 == 1)
 		  {
-			writer.commit(); // create 2-docs segments
+			writer.Commit(); // create 2-docs segments
 		  }
 		}
 
 		// delete doc-1 and doc-2
-		writer.deleteDocuments(new Term("id", "doc-1"), new Term("id", "doc-2")); // 1st and 2nd segments
+		writer.DeleteDocuments(new Term("id", "doc-1"), new Term("id", "doc-2")); // 1st and 2nd segments
 
 		// update docs 3 and 5
-		writer.updateBinaryDocValue(new Term("id", "doc-3"), "val", ToBytes(17L));
-		writer.updateBinaryDocValue(new Term("id", "doc-5"), "val", ToBytes(17L));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-3"), "val", ToBytes(17L));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-5"), "val", ToBytes(17L));
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		AtomicReader slow = SlowCompositeReaderWrapper.wrap(reader);
+		AtomicReader slow = SlowCompositeReaderWrapper.Wrap(reader);
 
 		Bits liveDocs = slow.LiveDocs;
 		bool[] expectedLiveDocs = new bool[] {true, false, false, true, true, true};
 		for (int i = 0; i < expectedLiveDocs.Length; i++)
 		{
-		  Assert.AreEqual(expectedLiveDocs[i], liveDocs.get(i));
+		  Assert.AreEqual(expectedLiveDocs[i], liveDocs.Get(i));
 		}
 
 		long[] expectedValues = new long[] {1, 2, 3, 17, 5, 17};
-		BinaryDocValues bdv = slow.getBinaryDocValues("val");
+		BinaryDocValues bdv = slow.GetBinaryDocValues("val");
 		BytesRef scratch = new BytesRef();
 		for (int i = 0; i < expectedValues.Length; i++)
 		{
 		  Assert.AreEqual(expectedValues[i], GetValue(bdv, i, scratch));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdatesWithDeletes()
 	  {
 		// update and delete different documents in the same commit session
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // control segment flushing
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // control segment flushing
 		IndexWriter writer = new IndexWriter(dir, conf);
 
-		writer.addDocument(Doc(0));
-		writer.addDocument(Doc(1));
+		writer.AddDocument(Doc(0));
+		writer.AddDocument(Doc(1));
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
-		writer.deleteDocuments(new Term("id", "doc-0"));
-		writer.updateBinaryDocValue(new Term("id", "doc-1"), "val", ToBytes(17L));
+		writer.DeleteDocuments(new Term("id", "doc-0"));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-1"), "val", ToBytes(17L));
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		AtomicReader r = reader.leaves().get(0).reader();
-		Assert.IsFalse(r.LiveDocs.get(0));
-		Assert.AreEqual(17, GetValue(r.getBinaryDocValues("val"), 1, new BytesRef()));
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		Assert.IsFalse(r.LiveDocs.Get(0));
+		Assert.AreEqual(17, GetValue(r.GetBinaryDocValues("val"), 1, new BytesRef()));
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateAndDeleteSameDocument()
 	  {
 		// update and delete same document in same commit session
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // control segment flushing
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // control segment flushing
 		IndexWriter writer = new IndexWriter(dir, conf);
 
-		writer.addDocument(Doc(0));
-		writer.addDocument(Doc(1));
+		writer.AddDocument(Doc(0));
+		writer.AddDocument(Doc(1));
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
-		writer.deleteDocuments(new Term("id", "doc-0"));
-		writer.updateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(17L));
+		writer.DeleteDocuments(new Term("id", "doc-0"));
+		writer.UpdateBinaryDocValue(new Term("id", "doc-0"), "val", ToBytes(17L));
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		AtomicReader r = reader.leaves().get(0).reader();
-		Assert.IsFalse(r.LiveDocs.get(0));
-		Assert.AreEqual(1, GetValue(r.getBinaryDocValues("val"), 0, new BytesRef())); // deletes are currently applied first
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		Assert.IsFalse(r.LiveDocs.Get(0));
+		Assert.AreEqual(1, GetValue(r.GetBinaryDocValues("val"), 0, new BytesRef())); // deletes are currently applied first
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestMultipleDocValuesTypes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // prevent merges
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // prevent merges
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 4; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("dvUpdateKey", "dv", Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", i));
-		  doc.add(new BinaryDocValuesField("bdv", new BytesRef(Convert.ToString(i))));
-		  doc.add(new SortedDocValuesField("sdv", new BytesRef(Convert.ToString(i))));
-		  doc.add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i))));
-		  doc.add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i * 2))));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("dvUpdateKey", "dv", Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", i));
+		  doc.Add(new BinaryDocValuesField("bdv", new BytesRef(Convert.ToString(i))));
+		  doc.Add(new SortedDocValuesField("sdv", new BytesRef(Convert.ToString(i))));
+		  doc.Add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i))));
+		  doc.Add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i * 2))));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update all docs' bdv field
-		writer.updateBinaryDocValue(new Term("dvUpdateKey", "dv"), "bdv", ToBytes(17L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("dvUpdateKey", "dv"), "bdv", ToBytes(17L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
-		SortedDocValues sdv = r.getSortedDocValues("sdv");
-		SortedSetDocValues ssdv = r.getSortedSetDocValues("ssdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
+		SortedDocValues sdv = r.GetSortedDocValues("sdv");
+		SortedSetDocValues ssdv = r.GetSortedSetDocValues("ssdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(i, ndv.get(i));
+		  Assert.AreEqual(i, ndv.Get(i));
 		  Assert.AreEqual(17, GetValue(bdv, i, scratch));
-		  sdv.get(i, scratch);
+		  sdv.Get(i, scratch);
 		  Assert.AreEqual(new BytesRef(Convert.ToString(i)), scratch);
 		  ssdv.Document = i;
-		  long ord = ssdv.nextOrd();
-		  ssdv.lookupOrd(ord, scratch);
-		  Assert.AreEqual(i, Convert.ToInt32(scratch.utf8ToString()));
+		  long ord = ssdv.NextOrd();
+		  ssdv.LookupOrd(ord, scratch);
+		  Assert.AreEqual(i, Convert.ToInt32(scratch.Utf8ToString()));
 		  if (i != 0)
 		  {
-			ord = ssdv.nextOrd();
-			ssdv.lookupOrd(ord, scratch);
-			Assert.AreEqual(i * 2, Convert.ToInt32(scratch.utf8ToString()));
+			ord = ssdv.NextOrd();
+			ssdv.LookupOrd(ord, scratch);
+			Assert.AreEqual(i * 2, Convert.ToInt32(scratch.Utf8ToString()));
 		  }
-		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, ssdv.nextOrd());
+		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, ssdv.NextOrd());
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestMultipleBinaryDocValues()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // prevent merges
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // prevent merges
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("dvUpdateKey", "dv", Store.NO));
-		  doc.add(new BinaryDocValuesField("bdv1", ToBytes(i)));
-		  doc.add(new BinaryDocValuesField("bdv2", ToBytes(i)));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("dvUpdateKey", "dv", Store.NO));
+		  doc.Add(new BinaryDocValuesField("bdv1", ToBytes(i)));
+		  doc.Add(new BinaryDocValuesField("bdv2", ToBytes(i)));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update all docs' bdv1 field
-		writer.updateBinaryDocValue(new Term("dvUpdateKey", "dv"), "bdv1", ToBytes(17L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("dvUpdateKey", "dv"), "bdv1", ToBytes(17L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
 
-		BinaryDocValues bdv1 = r.getBinaryDocValues("bdv1");
-		BinaryDocValues bdv2 = r.getBinaryDocValues("bdv2");
+		BinaryDocValues bdv1 = r.GetBinaryDocValues("bdv1");
+		BinaryDocValues bdv2 = r.GetBinaryDocValues("bdv2");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  Assert.AreEqual(17, GetValue(bdv1, i, scratch));
 		  Assert.AreEqual(i, GetValue(bdv2, i, scratch));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDocumentWithNoValue()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("dvUpdateKey", "dv", Store.NO));
+		  doc.Add(new StringField("dvUpdateKey", "dv", Store.NO));
 		  if (i == 0) // index only one document with value
 		  {
-			doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+			doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update all docs' bdv field
-		writer.updateBinaryDocValue(new Term("dvUpdateKey", "dv"), "bdv", ToBytes(17L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("dvUpdateKey", "dv"), "bdv", ToBytes(17L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  Assert.AreEqual(17, GetValue(bdv, i, scratch));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUnsetValue()
 	  {
-		assumeTrue("codec does not support docsWithField", defaultCodecSupportsDocsWithField());
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc" + i, Store.NO));
-		  doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", "doc" + i, Store.NO));
+		  doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// unset the value of 'doc0'
-		writer.updateBinaryDocValue(new Term("id", "doc0"), "bdv", null);
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("id", "doc0"), "bdv", null);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  if (i == 0)
 		  {
-			bdv.get(i, scratch);
-			Assert.AreEqual(0, scratch.length);
+			bdv.Get(i, scratch);
+			Assert.AreEqual(0, scratch.Length);
 		  }
 		  else
 		  {
@@ -552,70 +554,70 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		Bits docsWithField = r.getDocsWithField("bdv");
-		Assert.IsFalse(docsWithField.get(0));
-		Assert.IsTrue(docsWithField.get(1));
+		Bits docsWithField = r.GetDocsWithField("bdv");
+		Assert.IsFalse(docsWithField.Get(0));
+		Assert.IsTrue(docsWithField.Get(1));
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUnsetAllValues()
 	  {
-		assumeTrue("codec does not support docsWithField", defaultCodecSupportsDocsWithField());
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc", Store.NO));
-		  doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", "doc", Store.NO));
+		  doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// unset the value of 'doc'
-		writer.updateBinaryDocValue(new Term("id", "doc"), "bdv", null);
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("id", "doc"), "bdv", null);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  bdv.get(i, scratch);
-		  Assert.AreEqual(0, scratch.length);
+		  bdv.Get(i, scratch);
+		  Assert.AreEqual(0, scratch.Length);
 		}
 
-		Bits docsWithField = r.getDocsWithField("bdv");
-		Assert.IsFalse(docsWithField.get(0));
-		Assert.IsFalse(docsWithField.get(1));
+		Bits docsWithField = r.GetDocsWithField("bdv");
+		Assert.IsFalse(docsWithField.Get(0));
+		Assert.IsFalse(docsWithField.Get(1));
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateNonBinaryDocValuesField()
 	  {
 		// we don't support adding new fields or updating existing non-binary-dv
 		// fields through binary updates
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("key", "doc", Store.NO));
-		doc.add(new StringField("foo", "bar", Store.NO));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("key", "doc", Store.NO));
+		doc.Add(new StringField("foo", "bar", Store.NO));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
 		try
 		{
-		  writer.updateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L));
+		  writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L));
 		  Assert.Fail("should not have allowed creating new fields through update");
 		}
 		catch (System.ArgumentException e)
@@ -625,7 +627,7 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  writer.updateBinaryDocValue(new Term("key", "doc"), "foo", ToBytes(17L));
+		  writer.UpdateBinaryDocValue(new Term("key", "doc"), "foo", ToBytes(17L));
 		  Assert.Fail("should not have allowed updating an existing field to binary-dv");
 		}
 		catch (System.ArgumentException e)
@@ -633,43 +635,43 @@ namespace Lucene.Net.Index
 		  // ok
 		}
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDifferentDVFormatPerField()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.Codec = new Lucene46CodecAnonymousInnerClassHelper(this);
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetCodec(new Lucene46CodecAnonymousInnerClassHelper(this));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("key", "doc", Store.NO));
-		doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
-		doc.add(new SortedDocValuesField("sorted", new BytesRef("value")));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("key", "doc", Store.NO));
+		doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+		doc.Add(new SortedDocValuesField("sorted", new BytesRef("value")));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
-		writer.updateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
-		SortedDocValues sdv = r.getSortedDocValues("sorted");
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
+		SortedDocValues sdv = r.GetSortedDocValues("sorted");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  Assert.AreEqual(17, GetValue(bdv, i, scratch));
-		  sdv.get(i, scratch);
+		  sdv.Get(i, scratch);
 		  Assert.AreEqual(new BytesRef("value"), scratch);
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
@@ -689,72 +691,72 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestUpdateSameDocMultipleTimes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("key", "doc", Store.NO));
-		doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("key", "doc", Store.NO));
+		doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
-		writer.updateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L)); // update existing field
-		writer.updateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(3L)); // update existing field 2nd time in this commit
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(17L)); // update existing field
+		writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(3L)); // update existing field 2nd time in this commit
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  Assert.AreEqual(3, GetValue(bdv, i, scratch));
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSegmentMerges()
 	  {
-		Directory dir = newDirectory();
-		Random random = random();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		Random random = Random();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 
 		int docid = 0;
-		int numRounds = atLeast(10);
+		int numRounds = AtLeast(10);
 		for (int rnd = 0; rnd < numRounds; rnd++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("key", "doc", Store.NO));
-		  doc.add(new BinaryDocValuesField("bdv", ToBytes(-1)));
-		  int numDocs = atLeast(30);
+		  doc.Add(new StringField("key", "doc", Store.NO));
+		  doc.Add(new BinaryDocValuesField("bdv", ToBytes(-1)));
+		  int numDocs = AtLeast(30);
 		  for (int i = 0; i < numDocs; i++)
 		  {
-			doc.removeField("id");
-			doc.add(new StringField("id", Convert.ToString(docid++), Store.NO));
-			writer.addDocument(doc);
+			doc.RemoveField("id");
+			doc.Add(new StringField("id", Convert.ToString(docid++), Store.NO));
+			writer.AddDocument(doc);
 		  }
 
 		  long value = rnd + 1;
-		  writer.updateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(value));
+		  writer.UpdateBinaryDocValue(new Term("key", "doc"), "bdv", ToBytes(value));
 
 		  if (random.NextDouble() < 0.2) // randomly delete some docs
 		  {
-			writer.deleteDocuments(new Term("id", Convert.ToString(random.Next(docid))));
+			writer.DeleteDocuments(new Term("id", Convert.ToString(random.Next(docid))));
 		  }
 
 		  // randomly commit or reopen-IW (or nothing), before forceMerge
 		  if (random.NextDouble() < 0.4)
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 		  else if (random.NextDouble() < 0.1)
 		  {
-			writer.close();
-			writer = new IndexWriter(dir, conf.clone());
+			writer.Dispose();
+			writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		  }
 
 		  // add another document with the current value, to be sure forceMerge has
@@ -764,119 +766,119 @@ namespace Lucene.Net.Index
 		  // and some MPs might now merge it, thereby invalidating test's
 		  // assumption that the reader has no deletes).
 		  doc = new Document();
-		  doc.add(new StringField("id", Convert.ToString(docid++), Store.NO));
-		  doc.add(new StringField("key", "doc", Store.NO));
-		  doc.add(new BinaryDocValuesField("bdv", ToBytes(value)));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", Convert.ToString(docid++), Store.NO));
+		  doc.Add(new StringField("key", "doc", Store.NO));
+		  doc.Add(new BinaryDocValuesField("bdv", ToBytes(value)));
+		  writer.AddDocument(doc);
 
-		  writer.forceMerge(1, true);
+		  writer.ForceMerge(1, true);
 		  DirectoryReader reader;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
-			writer.commit();
-			reader = DirectoryReader.open(dir);
+			writer.Commit();
+			reader = DirectoryReader.Open(dir);
 		  }
 		  else
 		  {
-			reader = DirectoryReader.open(writer, true);
+			reader = DirectoryReader.Open(writer, true);
 		  }
 
-		  Assert.AreEqual(1, reader.leaves().size());
-		  AtomicReader r = reader.leaves().get(0).reader();
-		  assertNull("index should have no deletes after forceMerge", r.LiveDocs);
-		  BinaryDocValues bdv = r.getBinaryDocValues("bdv");
+		  Assert.AreEqual(1, reader.Leaves().Count);
+		  AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		  Assert.IsNull(r.LiveDocs, "index should have no deletes after forceMerge");
+		  BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
 		  Assert.IsNotNull(bdv);
 		  BytesRef scratch = new BytesRef();
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
 			Assert.AreEqual(value, GetValue(bdv, i, scratch));
 		  }
-		  reader.close();
+		  reader.Dispose();
 		}
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateDocumentByMultipleTerms()
 	  {
 		// make sure the order of updates is respected, even when multiple terms affect same document
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("k1", "v1", Store.NO));
-		doc.add(new StringField("k2", "v2", Store.NO));
-		doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("k1", "v1", Store.NO));
+		doc.Add(new StringField("k2", "v2", Store.NO));
+		doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
-		writer.updateBinaryDocValue(new Term("k1", "v1"), "bdv", ToBytes(17L));
-		writer.updateBinaryDocValue(new Term("k2", "v2"), "bdv", ToBytes(3L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("k1", "v1"), "bdv", ToBytes(17L));
+		writer.UpdateBinaryDocValue(new Term("k2", "v2"), "bdv", ToBytes(3L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  Assert.AreEqual(3, GetValue(bdv, i, scratch));
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestManyReopensAndFields()
 	  {
-		Directory dir = newDirectory();
-		Random random = random();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-		LogMergePolicy lmp = newLogMergePolicy();
+		Directory dir = NewDirectory();
+		Random random = Random();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		LogMergePolicy lmp = NewLogMergePolicy();
 		lmp.MergeFactor = 3; // merge often
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
-		bool isNRT = random.nextBoolean();
+		bool isNRT = random.NextBoolean();
 		DirectoryReader reader;
 		if (isNRT)
 		{
-		  reader = DirectoryReader.open(writer, true);
+		  reader = DirectoryReader.Open(writer, true);
 		}
 		else
 		{
-		  writer.commit();
-		  reader = DirectoryReader.open(dir);
+		  writer.Commit();
+		  reader = DirectoryReader.Open(dir);
 		}
 
 		int numFields = random.Next(4) + 3; // 3-7
 		long[] fieldValues = new long[numFields];
 		bool[] fieldHasValue = new bool[numFields];
-		Arrays.fill(fieldHasValue, true);
+		Arrays.Fill(fieldHasValue, true);
 		for (int i = 0; i < fieldValues.Length; i++)
 		{
 		  fieldValues[i] = 1;
 		}
 
-		int numRounds = atLeast(15);
+		int numRounds = AtLeast(15);
 		int docID = 0;
 		for (int i = 0; i < numRounds; i++)
 		{
-		  int numDocs = atLeast(5);
+		  int numDocs = AtLeast(5);
 	//      System.out.println("[" + Thread.currentThread().getName() + "]: round=" + i + ", numDocs=" + numDocs);
 		  for (int j = 0; j < numDocs; j++)
 		  {
 			Document doc = new Document();
-			doc.add(new StringField("id", "doc-" + docID, Store.NO));
-			doc.add(new StringField("key", "all", Store.NO)); // update key
+			doc.Add(new StringField("id", "doc-" + docID, Store.NO));
+			doc.Add(new StringField("key", "all", Store.NO)); // update key
 			// add all fields with their current value
 			for (int f = 0; f < fieldValues.Length; f++)
 			{
-			  doc.add(new BinaryDocValuesField("f" + f, ToBytes(fieldValues[f])));
+			  doc.Add(new BinaryDocValuesField("f" + f, ToBytes(fieldValues[f])));
 			}
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 			++docID;
 		  }
 
@@ -885,71 +887,71 @@ namespace Lucene.Net.Index
 		  {
 			if (!fieldHasValue[field])
 			{
-			  writer.updateBinaryDocValue(new Term("key", "all"), "f" + field, null);
+			  writer.UpdateBinaryDocValue(new Term("key", "all"), "f" + field, null);
 			}
 		  }
 
 		  int fieldIdx = random.Next(fieldValues.Length);
 		  string updateField = "f" + fieldIdx;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 	//        System.out.println("[" + Thread.currentThread().getName() + "]: unset field '" + updateField + "'");
 			fieldHasValue[fieldIdx] = false;
-			writer.updateBinaryDocValue(new Term("key", "all"), updateField, null);
+			writer.UpdateBinaryDocValue(new Term("key", "all"), updateField, null);
 		  }
 		  else
 		  {
 			fieldHasValue[fieldIdx] = true;
-			writer.updateBinaryDocValue(new Term("key", "all"), updateField, ToBytes(++fieldValues[fieldIdx]));
+			writer.UpdateBinaryDocValue(new Term("key", "all"), updateField, ToBytes(++fieldValues[fieldIdx]));
 	//        System.out.println("[" + Thread.currentThread().getName() + "]: updated field '" + updateField + "' to value " + fieldValues[fieldIdx]);
 		  }
 
 		  if (random.NextDouble() < 0.2)
 		  {
 			int deleteDoc = random.Next(docID); // might also delete an already deleted document, ok!
-			writer.deleteDocuments(new Term("id", "doc-" + deleteDoc));
+			writer.DeleteDocuments(new Term("id", "doc-" + deleteDoc));
 	//        System.out.println("[" + Thread.currentThread().getName() + "]: deleted document: doc-" + deleteDoc);
 		  }
 
 		  // verify reader
 		  if (!isNRT)
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 
 	//      System.out.println("[" + Thread.currentThread().getName() + "]: reopen reader: " + reader);
-		  DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
+		  DirectoryReader newReader = DirectoryReader.OpenIfChanged(reader);
 		  Assert.IsNotNull(newReader);
-		  reader.close();
+		  reader.Dispose();
 		  reader = newReader;
 	//      System.out.println("[" + Thread.currentThread().getName() + "]: reopened reader: " + reader);
-		  Assert.IsTrue(reader.numDocs() > 0); // we delete at most one document per round
+		  Assert.IsTrue(reader.NumDocs() > 0); // we delete at most one document per round
 		  BytesRef scratch = new BytesRef();
-		  foreach (AtomicReaderContext context in reader.leaves())
+		  foreach (AtomicReaderContext context in reader.Leaves())
 		  {
-			AtomicReader r = context.reader();
+			AtomicReader r = (AtomicReader)context.Reader();
 	//        System.out.println(((SegmentReader) r).getSegmentName());
 			Bits liveDocs = r.LiveDocs;
 			for (int field = 0; field < fieldValues.Length; field++)
 			{
 			  string f = "f" + field;
-			  BinaryDocValues bdv = r.getBinaryDocValues(f);
-			  Bits docsWithField = r.getDocsWithField(f);
+			  BinaryDocValues bdv = r.GetBinaryDocValues(f);
+			  Bits docsWithField = r.GetDocsWithField(f);
 			  Assert.IsNotNull(bdv);
-			  int maxDoc = r.maxDoc();
+			  int maxDoc = r.MaxDoc();
 			  for (int doc = 0; doc < maxDoc; doc++)
 			  {
-				if (liveDocs == null || liveDocs.get(doc))
+				if (liveDocs == null || liveDocs.Get(doc))
 				{
-	//              System.out.println("doc=" + (doc + context.docBase) + " f='" + f + "' vslue=" + getValue(bdv, doc, scratch));
+	//              System.out.println("doc=" + (doc + context.DocBase) + " f='" + f + "' vslue=" + getValue(bdv, doc, scratch));
 				  if (fieldHasValue[field])
 				  {
-					Assert.IsTrue(docsWithField.get(doc));
-					Assert.AreEqual("invalid value for doc=" + doc + ", field=" + f + ", reader=" + r, fieldValues[field], GetValue(bdv, doc, scratch));
+					Assert.IsTrue(docsWithField.Get(doc));
+					Assert.AreEqual(fieldValues[field], GetValue(bdv, doc, scratch), "invalid value for doc=" + doc + ", field=" + f + ", reader=" + r);
 				  }
 				  else
 				  {
-					Assert.IsFalse(docsWithField.get(doc));
+					Assert.IsFalse(docsWithField.Get(doc));
 				  }
 				}
 			  }
@@ -963,182 +965,182 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestUpdateSegmentWithNoDocValues()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		// prevent merges, otherwise by the time updates are applied
-		// (writer.close()), the segments might have merged and that update becomes
+		// (writer.Dispose()), the segments might have merged and that update becomes
 		// legit.
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES;
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// first segment with BDV
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc0", Store.NO));
-		doc.add(new BinaryDocValuesField("bdv", ToBytes(3L)));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "doc0", Store.NO));
+		doc.Add(new BinaryDocValuesField("bdv", ToBytes(3L)));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new StringField("id", "doc4", Store.NO)); // document without 'bdv' field
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc4", Store.NO)); // document without 'bdv' field
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// second segment with no BDV
 		doc = new Document();
-		doc.add(new StringField("id", "doc1", Store.NO));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "doc1", Store.NO));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new StringField("id", "doc2", Store.NO)); // document that isn't updated
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc2", Store.NO)); // document that isn't updated
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// update document in the first segment - should not affect docsWithField of
 		// the document without BDV field
-		writer.updateBinaryDocValue(new Term("id", "doc0"), "bdv", ToBytes(5L));
+		writer.UpdateBinaryDocValue(new Term("id", "doc0"), "bdv", ToBytes(5L));
 
 		// update document in the second segment - field should be added and we should
 		// be able to handle the other document correctly (e.g. no NPE)
-		writer.updateBinaryDocValue(new Term("id", "doc1"), "bdv", ToBytes(5L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("id", "doc1"), "bdv", ToBytes(5L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  BinaryDocValues bdv = r.getBinaryDocValues("bdv");
-		  Bits docsWithField = r.getDocsWithField("bdv");
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
+		  Bits docsWithField = r.GetDocsWithField("bdv");
 		  Assert.IsNotNull(docsWithField);
-		  Assert.IsTrue(docsWithField.get(0));
+		  Assert.IsTrue(docsWithField.Get(0));
 		  Assert.AreEqual(5L, GetValue(bdv, 0, scratch));
-		  Assert.IsFalse(docsWithField.get(1));
-		  bdv.get(1, scratch);
-		  Assert.AreEqual(0, scratch.length);
+		  Assert.IsFalse(docsWithField.Get(1));
+		  bdv.Get(1, scratch);
+		  Assert.AreEqual(0, scratch.Length);
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateSegmentWithPostingButNoDocValues()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		// prevent merges, otherwise by the time updates are applied
-		// (writer.close()), the segments might have merged and that update becomes
+		// (writer.Dispose()), the segments might have merged and that update becomes
 		// legit.
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES;
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// first segment with BDV
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc0", Store.NO));
-		doc.add(new StringField("bdv", "mock-value", Store.NO));
-		doc.add(new BinaryDocValuesField("bdv", ToBytes(5L)));
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc0", Store.NO));
+		doc.Add(new StringField("bdv", "mock-value", Store.NO));
+		doc.Add(new BinaryDocValuesField("bdv", ToBytes(5L)));
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// second segment with no BDV
 		doc = new Document();
-		doc.add(new StringField("id", "doc1", Store.NO));
-		doc.add(new StringField("bdv", "mock-value", Store.NO));
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc1", Store.NO));
+		doc.Add(new StringField("bdv", "mock-value", Store.NO));
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// update document in the second segment
-		writer.updateBinaryDocValue(new Term("id", "doc1"), "bdv", ToBytes(5L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("id", "doc1"), "bdv", ToBytes(5L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  BinaryDocValues bdv = r.getBinaryDocValues("bdv");
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
 			Assert.AreEqual(5L, GetValue(bdv, i, scratch));
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateBinaryDVFieldWithSameNameAsPostingField()
 	  {
 		// this used to fail because FieldInfos.Builder neglected to update
 		// globalFieldMaps.docValueTypes map
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("f", "mock-value", Store.NO));
-		doc.add(new BinaryDocValuesField("f", ToBytes(5L)));
-		writer.addDocument(doc);
-		writer.commit();
-		writer.updateBinaryDocValue(new Term("f", "mock-value"), "f", ToBytes(17L));
-		writer.close();
+		doc.Add(new StringField("f", "mock-value", Store.NO));
+		doc.Add(new BinaryDocValuesField("f", ToBytes(5L)));
+		writer.AddDocument(doc);
+		writer.Commit();
+		writer.UpdateBinaryDocValue(new Term("f", "mock-value"), "f", ToBytes(17L));
+		writer.Dispose();
 
-		DirectoryReader r = DirectoryReader.open(dir);
-		BinaryDocValues bdv = r.leaves().get(0).reader().getBinaryDocValues("f");
+		DirectoryReader r = DirectoryReader.Open(dir);
+		BinaryDocValues bdv = r.Leaves()[0].Reader().GetBinaryDocValues("f");
 		Assert.AreEqual(17, GetValue(bdv, 0, new BytesRef()));
-		r.close();
+		r.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateOldSegments()
 	  {
 		Codec[] oldCodecs = new Codec[] {new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec()};
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
 		// create a segment with an old Codec
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.Codec = oldCodecs[random().Next(oldCodecs.Length)];
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
 		IndexWriter writer = new IndexWriter(dir, conf);
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc", Store.NO));
-		doc.add(new BinaryDocValuesField("f", ToBytes(5L)));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new StringField("id", "doc", Store.NO));
+		doc.Add(new BinaryDocValuesField("f", ToBytes(5L)));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		writer = new IndexWriter(dir, conf);
-		writer.updateBinaryDocValue(new Term("id", "doc"), "f", ToBytes(4L));
+		writer.UpdateBinaryDocValue(new Term("id", "doc"), "f", ToBytes(4L));
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
 		try
 		{
-		  writer.close();
+		  writer.Dispose();
 		  Assert.Fail("should not have succeeded to update a segment written with an old Codec");
 		}
 		catch (System.NotSupportedException e)
 		{
-		  writer.rollback();
+		  writer.Rollback();
 		}
 		finally
 		{
 		  OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestStressMultiThreading()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// create index
-		int numThreads = TestUtil.Next(random(), 3, 6);
-		int numDocs = atLeast(2000);
+		int numThreads = TestUtil.NextInt(Random(), 3, 6);
+		int numDocs = AtLeast(2000);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc" + i, Store.NO));
-		  double group = random().NextDouble();
+		  doc.Add(new StringField("id", "doc" + i, Store.NO));
+		  double group = Random().NextDouble();
 		  string g;
 		  if (group < 0.1)
 		  {
@@ -1156,21 +1158,21 @@ namespace Lucene.Net.Index
 		  {
 			  g = "g3";
 		  }
-		  doc.add(new StringField("updKey", g, Store.NO));
+		  doc.Add(new StringField("updKey", g, Store.NO));
 		  for (int j = 0; j < numThreads; j++)
 		  {
-			long value = random().Next();
-			doc.add(new BinaryDocValuesField("f" + j, ToBytes(value)));
-			doc.add(new BinaryDocValuesField("cf" + j, ToBytes(value * 2))); // control, always updated to f * 2
+			long value = Random().Next();
+			doc.Add(new BinaryDocValuesField("f" + j, ToBytes(value)));
+			doc.Add(new BinaryDocValuesField("cf" + j, ToBytes(value * 2))); // control, always updated to f * 2
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		CountDownLatch done = new CountDownLatch(numThreads);
-		AtomicInteger numUpdates = new AtomicInteger(atLeast(100));
+		AtomicInteger numUpdates = new AtomicInteger(AtLeast(100));
 
 		// same thread updates a field as well as reopens
-		Thread[] threads = new Thread[numThreads];
+		ThreadClass[] threads = new ThreadClass[numThreads];
 		for (int i = 0; i < threads.Length; i++)
 		{
 		  string f = "f" + i;
@@ -1178,31 +1180,31 @@ namespace Lucene.Net.Index
 		  threads[i] = new ThreadAnonymousInnerClassHelper(this, "UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
 		}
 
-		foreach (Thread t in threads)
+		foreach (ThreadClass t in threads)
 		{
 			t.Start();
 		}
 		done.@await();
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
+		  AtomicReader r = (AtomicReader)context.Reader();
 		  for (int i = 0; i < numThreads; i++)
 		  {
-			BinaryDocValues bdv = r.getBinaryDocValues("f" + i);
-			BinaryDocValues control = r.getBinaryDocValues("cf" + i);
-			Bits docsWithBdv = r.getDocsWithField("f" + i);
-			Bits docsWithControl = r.getDocsWithField("cf" + i);
+			BinaryDocValues bdv = r.GetBinaryDocValues("f" + i);
+			BinaryDocValues control = r.GetBinaryDocValues("cf" + i);
+			Bits docsWithBdv = r.GetDocsWithField("f" + i);
+			Bits docsWithControl = r.GetDocsWithField("cf" + i);
 			Bits liveDocs = r.LiveDocs;
-			for (int j = 0; j < r.maxDoc(); j++)
+			for (int j = 0; j < r.MaxDoc(); j++)
 			{
-			  if (liveDocs == null || liveDocs.get(j))
+			  if (liveDocs == null || liveDocs.Get(j))
 			  {
-				Assert.AreEqual(docsWithBdv.get(j), docsWithControl.get(j));
-				if (docsWithBdv.get(j))
+				Assert.AreEqual(docsWithBdv.Get(j), docsWithControl.Get(j));
+				if (docsWithBdv.Get(j))
 				{
 				  Assert.AreEqual(GetValue(control, j, scratch), GetValue(bdv, j, scratch) * 2);
 				}
@@ -1210,12 +1212,12 @@ namespace Lucene.Net.Index
 			}
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestBinaryDocValuesUpdates OuterInstance;
 
@@ -1226,7 +1228,8 @@ namespace Lucene.Net.Index
 		  private string f;
 		  private string Cf;
 
-		  public ThreadAnonymousInnerClassHelper(TestBinaryDocValuesUpdates outerInstance, string "UpdateThread-" + i, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInteger numUpdates, string f, string cf) : base("UpdateThread-" + i)
+		  public ThreadAnonymousInnerClassHelper(TestBinaryDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInteger numUpdates, string f, string cf) 
+              : base(str)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Writer = writer;
@@ -1243,7 +1246,7 @@ namespace Lucene.Net.Index
 			bool success = false;
 			try
 			{
-			  Random random = random();
+			  Random random = Random();
 			  while (NumUpdates.AndDecrement > 0)
 			  {
 				double group = random.NextDouble();
@@ -1265,16 +1268,16 @@ namespace Lucene.Net.Index
 					t = new Term("updKey", "g3");
 				}
 	  //              System.out.println("[" + Thread.currentThread().getName() + "] numUpdates=" + numUpdates + " updateTerm=" + t);
-				if (random.nextBoolean()) // sometimes unset a value
+				if (random.NextBoolean()) // sometimes unset a value
 				{
-				  Writer.updateBinaryDocValue(t, f, null);
-				  Writer.updateBinaryDocValue(t, Cf, null);
+				  Writer.UpdateBinaryDocValue(t, f, null);
+				  Writer.UpdateBinaryDocValue(t, Cf, null);
 				}
 				else
 				{
 				  long updValue = random.Next();
-				  Writer.updateBinaryDocValue(t, f, ToBytes(updValue));
-				  Writer.updateBinaryDocValue(t, Cf, ToBytes(updValue * 2));
+				  Writer.UpdateBinaryDocValue(t, f, ToBytes(updValue));
+				  Writer.UpdateBinaryDocValue(t, Cf, ToBytes(updValue * 2));
 				}
 
 				if (random.NextDouble() < 0.2)
@@ -1282,13 +1285,13 @@ namespace Lucene.Net.Index
 				  // delete a random document
 				  int doc = random.Next(NumDocs);
 	  //                System.out.println("[" + Thread.currentThread().getName() + "] deleteDoc=doc" + doc);
-				  Writer.deleteDocuments(new Term("id", "doc" + doc));
+				  Writer.DeleteDocuments(new Term("id", "doc" + doc));
 				}
 
 				if (random.NextDouble() < 0.05) // commit every 20 updates on average
 				{
 	  //                  System.out.println("[" + Thread.currentThread().getName() + "] commit");
-				  Writer.commit();
+				  Writer.Commit();
 				}
 
 				if (random.NextDouble() < 0.1) // reopen NRT reader (apply updates), on average once every 10 updates
@@ -1296,15 +1299,15 @@ namespace Lucene.Net.Index
 				  if (reader == null)
 				  {
 	  //                  System.out.println("[" + Thread.currentThread().getName() + "] open NRT");
-					reader = DirectoryReader.open(Writer, true);
+					reader = DirectoryReader.Open(Writer, true);
 				  }
 				  else
 				  {
 	  //                  System.out.println("[" + Thread.currentThread().getName() + "] reopen NRT");
-					DirectoryReader r2 = DirectoryReader.openIfChanged(reader, Writer, true);
+					DirectoryReader r2 = DirectoryReader.OpenIfChanged(reader, Writer, true);
 					if (r2 != null)
 					{
-					  reader.close();
+					  reader.Dispose();
 					  reader = r2;
 					}
 				  }
@@ -1315,7 +1318,7 @@ namespace Lucene.Net.Index
 			}
 			catch (IOException e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 			finally
 			{
@@ -1323,13 +1326,13 @@ namespace Lucene.Net.Index
 			  {
 				try
 				{
-				  reader.close();
+				  reader.Dispose();
 				}
 				catch (IOException e)
 				{
 				  if (success) // suppress this exception only if there was another exception
 				  {
-					throw new Exception(e);
+					throw new Exception(e.Message, e);
 				  }
 				}
 			  }
@@ -1341,83 +1344,83 @@ namespace Lucene.Net.Index
 	  public virtual void TestUpdateDifferentDocsInDifferentGens()
 	  {
 		// update same document multiple times across generations
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 4;
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(4);
 		IndexWriter writer = new IndexWriter(dir, conf);
-		int numDocs = atLeast(10);
+		int numDocs = AtLeast(10);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc" + i, Store.NO));
-		  long value = random().Next();
-		  doc.add(new BinaryDocValuesField("f", ToBytes(value)));
-		  doc.add(new BinaryDocValuesField("cf", ToBytes(value * 2)));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", "doc" + i, Store.NO));
+		  long value = Random().Next();
+		  doc.Add(new BinaryDocValuesField("f", ToBytes(value)));
+		  doc.Add(new BinaryDocValuesField("cf", ToBytes(value * 2)));
+		  writer.AddDocument(doc);
 		}
 
-		int numGens = atLeast(5);
+		int numGens = AtLeast(5);
 		BytesRef scratch = new BytesRef();
 		for (int i = 0; i < numGens; i++)
 		{
-		  int doc = random().Next(numDocs);
+		  int doc = Random().Next(numDocs);
 		  Term t = new Term("id", "doc" + doc);
-		  long value = random().nextLong();
-		  writer.updateBinaryDocValue(t, "f", ToBytes(value));
-		  writer.updateBinaryDocValue(t, "cf", ToBytes(value * 2));
-		  DirectoryReader reader = DirectoryReader.open(writer, true);
-		  foreach (AtomicReaderContext context in reader.leaves())
+		  long value = Random().nextLong();
+		  writer.UpdateBinaryDocValue(t, "f", ToBytes(value));
+		  writer.UpdateBinaryDocValue(t, "cf", ToBytes(value * 2));
+		  DirectoryReader reader = DirectoryReader.Open(writer, true);
+		  foreach (AtomicReaderContext context in reader.Leaves())
 		  {
-			AtomicReader r = context.reader();
-			BinaryDocValues fbdv = r.getBinaryDocValues("f");
-			BinaryDocValues cfbdv = r.getBinaryDocValues("cf");
-			for (int j = 0; j < r.maxDoc(); j++)
+			AtomicReader r = (AtomicReader)context.Reader();
+			BinaryDocValues fbdv = r.GetBinaryDocValues("f");
+			BinaryDocValues cfbdv = r.GetBinaryDocValues("cf");
+			for (int j = 0; j < r.MaxDoc(); j++)
 			{
 			  Assert.AreEqual(GetValue(cfbdv, j, scratch), GetValue(fbdv, j, scratch) * 2);
 			}
 		  }
-		  reader.close();
+		  reader.Dispose();
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestChangeCodec()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // disable merges to simplify test assertions.
-		conf.Codec = new Lucene46CodecAnonymousInnerClassHelper2(this);
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // disable merges to simplify test assertions.
+		conf.SetCodec(new Lucene46CodecAnonymousInnerClassHelper2(this));
+		IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new StringField("id", "d0", Store.NO));
-		doc.add(new BinaryDocValuesField("f1", ToBytes(5L)));
-		doc.add(new BinaryDocValuesField("f2", ToBytes(13L)));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new StringField("id", "d0", Store.NO));
+		doc.Add(new BinaryDocValuesField("f1", ToBytes(5L)));
+		doc.Add(new BinaryDocValuesField("f2", ToBytes(13L)));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
 		// change format
-		conf.Codec = new Lucene46CodecAnonymousInnerClassHelper3(this);
-		writer = new IndexWriter(dir, conf.clone());
+		conf.SetCodec(new Lucene46CodecAnonymousInnerClassHelper3(this));
+		writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		doc = new Document();
-		doc.add(new StringField("id", "d1", Store.NO));
-		doc.add(new BinaryDocValuesField("f1", ToBytes(17L)));
-		doc.add(new BinaryDocValuesField("f2", ToBytes(2L)));
-		writer.addDocument(doc);
-		writer.updateBinaryDocValue(new Term("id", "d0"), "f1", ToBytes(12L));
-		writer.close();
+		doc.Add(new StringField("id", "d1", Store.NO));
+		doc.Add(new BinaryDocValuesField("f1", ToBytes(17L)));
+		doc.Add(new BinaryDocValuesField("f2", ToBytes(2L)));
+		writer.AddDocument(doc);
+		writer.UpdateBinaryDocValue(new Term("id", "d0"), "f1", ToBytes(12L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		BinaryDocValues f1 = r.getBinaryDocValues("f1");
-		BinaryDocValues f2 = r.getBinaryDocValues("f2");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		BinaryDocValues f1 = r.GetBinaryDocValues("f1");
+		BinaryDocValues f2 = r.GetBinaryDocValues("f2");
 		BytesRef scratch = new BytesRef();
 		Assert.AreEqual(12L, GetValue(f1, 0, scratch));
 		Assert.AreEqual(13L, GetValue(f2, 0, scratch));
 		Assert.AreEqual(17L, GetValue(f1, 1, scratch));
 		Assert.AreEqual(2L, GetValue(f2, 1, scratch));
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
@@ -1452,124 +1455,124 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestAddIndexes()
 	  {
-		Directory dir1 = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir1 = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir1, conf);
 
-		int numDocs = atLeast(50);
-		int numTerms = TestUtil.Next(random(), 1, numDocs / 5);
-		Set<string> randomTerms = new HashSet<string>();
-		while (randomTerms.size() < numTerms)
+		int numDocs = AtLeast(50);
+		int numTerms = TestUtil.NextInt(Random(), 1, numDocs / 5);
+		HashSet<string> randomTerms = new HashSet<string>();
+		while (randomTerms.Count < numTerms)
 		{
-		  randomTerms.add(TestUtil.randomSimpleString(random()));
+		  randomTerms.Add(TestUtil.RandomSimpleString(Random()));
 		}
 
 		// create first index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", RandomPicks.randomFrom(random(), randomTerms), Store.NO));
-		  doc.add(new BinaryDocValuesField("bdv", ToBytes(4L)));
-		  doc.add(new BinaryDocValuesField("control", ToBytes(8L)));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", RandomPicks.randomFrom(Random(), randomTerms), Store.NO));
+		  doc.Add(new BinaryDocValuesField("bdv", ToBytes(4L)));
+		  doc.Add(new BinaryDocValuesField("control", ToBytes(8L)));
+		  writer.AddDocument(doc);
 		}
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
 		// update some docs to a random value
-		long value = random().Next();
-		Term term = new Term("id", RandomPicks.randomFrom(random(), randomTerms));
-		writer.updateBinaryDocValue(term, "bdv", ToBytes(value));
-		writer.updateBinaryDocValue(term, "control", ToBytes(value * 2));
-		writer.close();
+		long value = Random().Next();
+		Term term = new Term("id", RandomPicks.randomFrom(Random(), randomTerms));
+		writer.UpdateBinaryDocValue(term, "bdv", ToBytes(value));
+		writer.UpdateBinaryDocValue(term, "control", ToBytes(value * 2));
+		writer.Dispose();
 
-		Directory dir2 = newDirectory();
-		conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir2 = NewDirectory();
+		conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		writer = new IndexWriter(dir2, conf);
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.addIndexes(dir1);
+		  writer.AddIndexes(dir1);
 		}
 		else
 		{
-		  DirectoryReader reader = DirectoryReader.open(dir1);
-		  writer.addIndexes(reader);
-		  reader.close();
+		  DirectoryReader reader = DirectoryReader.Open(dir1);
+		  writer.AddIndexes(reader);
+		  reader.Dispose();
 		}
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir2);
+		DirectoryReader reader_ = DirectoryReader.Open(dir2);
 		BytesRef scratch = new BytesRef();
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader_.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  BinaryDocValues bdv = r.getBinaryDocValues("bdv");
-		  BinaryDocValues control = r.getBinaryDocValues("control");
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
+		  BinaryDocValues control = r.GetBinaryDocValues("control");
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
 			Assert.AreEqual(GetValue(bdv, i, scratch) * 2, GetValue(control, i, scratch));
 		  }
 		}
-		reader.close();
+		reader_.Dispose();
 
-		IOUtils.close(dir1, dir2);
+		IOUtils.Close(dir1, dir2);
 	  }
 
 	  public virtual void TestDeleteUnusedUpdatesFiles()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("id", "d0", Store.NO));
-		doc.add(new BinaryDocValuesField("f", ToBytes(1L)));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "d0", Store.NO));
+		doc.Add(new BinaryDocValuesField("f", ToBytes(1L)));
+		writer.AddDocument(doc);
 
 		// create first gen of update files
-		writer.updateBinaryDocValue(new Term("id", "d0"), "f", ToBytes(2L));
-		writer.commit();
-		int numFiles = dir.listAll().length;
+		writer.UpdateBinaryDocValue(new Term("id", "d0"), "f", ToBytes(2L));
+		writer.Commit();
+		int numFiles = dir.ListAll().Length;
 
-		DirectoryReader r = DirectoryReader.open(dir);
+		DirectoryReader r = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		Assert.AreEqual(2L, GetValue(r.leaves().get(0).reader().getBinaryDocValues("f"), 0, scratch));
-		r.close();
+		Assert.AreEqual(2L, GetValue(r.Leaves()[0].Reader().GetBinaryDocValues("f"), 0, scratch));
+		r.Dispose();
 
 		// create second gen of update files, first gen should be deleted
-		writer.updateBinaryDocValue(new Term("id", "d0"), "f", ToBytes(5L));
-		writer.commit();
-		Assert.AreEqual(numFiles, dir.listAll().length);
+		writer.UpdateBinaryDocValue(new Term("id", "d0"), "f", ToBytes(5L));
+		writer.Commit();
+		Assert.AreEqual(numFiles, dir.ListAll().Length);
 
-		r = DirectoryReader.open(dir);
-		Assert.AreEqual(5L, GetValue(r.leaves().get(0).reader().getBinaryDocValues("f"), 0, scratch));
-		r.close();
+		r = DirectoryReader.Open(dir);
+		Assert.AreEqual(5L, GetValue(r.Leaves()[0].Reader().GetBinaryDocValues("f"), 0, scratch));
+		r.Dispose();
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTonsOfUpdates()
 	  {
 		// LUCENE-5248: make sure that when there are many updates, we don't use too much RAM
-		Directory dir = newDirectory();
-		Random random = random();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-		conf.RAMBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
-		conf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH; // don't flush by doc
+		Directory dir = NewDirectory();
+		Random random = Random();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		conf.SetRAMBufferSizeMB(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
+		conf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH); // don't flush by doc
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// test data: lots of documents (few 10Ks) and lots of update terms (few hundreds)
-		int numDocs = atLeast(20000);
-		int numBinaryFields = atLeast(5);
-		int numTerms = TestUtil.Next(random, 10, 100); // terms should affect many docs
-		Set<string> updateTerms = new HashSet<string>();
-		while (updateTerms.size() < numTerms)
+		int numDocs = AtLeast(20000);
+		int numBinaryFields = AtLeast(5);
+		int numTerms = TestUtil.NextInt(random, 10, 100); // terms should affect many docs
+		HashSet<string> updateTerms = new HashSet<string>();
+		while (updateTerms.Size() < numTerms)
 		{
-		  updateTerms.add(TestUtil.randomSimpleString(random));
+		  updateTerms.Add(TestUtil.RandomSimpleString(random));
 		}
 
 	//    System.out.println("numDocs=" + numDocs + " numBinaryFields=" + numBinaryFields + " numTerms=" + numTerms);
@@ -1578,132 +1581,132 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  int numUpdateTerms = TestUtil.Next(random, 1, numTerms / 10);
+		  int numUpdateTerms = TestUtil.NextInt(random, 1, numTerms / 10);
 		  for (int j = 0; j < numUpdateTerms; j++)
 		  {
-			doc.add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
+			doc.Add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
 		  }
 		  for (int j = 0; j < numBinaryFields; j++)
 		  {
 			long val = random.Next();
-			doc.add(new BinaryDocValuesField("f" + j, ToBytes(val)));
-			doc.add(new BinaryDocValuesField("cf" + j, ToBytes(val * 2)));
+			doc.Add(new BinaryDocValuesField("f" + j, ToBytes(val)));
+			doc.Add(new BinaryDocValuesField("cf" + j, ToBytes(val * 2)));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
-		writer.commit(); // commit so there's something to apply to
+		writer.Commit(); // commit so there's something to apply to
 
 		// set to flush every 2048 bytes (approximately every 12 updates), so we get
 		// many flushes during binary updates
-		writer.Config.RAMBufferSizeMB = 2048.0 / 1024 / 1024;
-		int numUpdates = atLeast(100);
+		writer.Config.SetRAMBufferSizeMB(2048.0 / 1024 / 1024);
+		int numUpdates = AtLeast(100);
 	//    System.out.println("numUpdates=" + numUpdates);
 		for (int i = 0; i < numUpdates; i++)
 		{
 		  int field = random.Next(numBinaryFields);
 		  Term updateTerm = new Term("upd", RandomPicks.randomFrom(random, updateTerms));
 		  long value = random.Next();
-		  writer.updateBinaryDocValue(updateTerm, "f" + field, ToBytes(value));
-		  writer.updateBinaryDocValue(updateTerm, "cf" + field, ToBytes(value * 2));
+		  writer.UpdateBinaryDocValue(updateTerm, "f" + field, ToBytes(value));
+		  writer.UpdateBinaryDocValue(updateTerm, "cf" + field, ToBytes(value * 2));
 		}
 
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
 		  for (int i = 0; i < numBinaryFields; i++)
 		  {
-			AtomicReader r = context.reader();
-			BinaryDocValues f = r.getBinaryDocValues("f" + i);
-			BinaryDocValues cf = r.getBinaryDocValues("cf" + i);
-			for (int j = 0; j < r.maxDoc(); j++)
+			AtomicReader r = (AtomicReader)context.Reader();
+			BinaryDocValues f = r.GetBinaryDocValues("f" + i);
+			BinaryDocValues cf = r.GetBinaryDocValues("cf" + i);
+			for (int j = 0; j < r.MaxDoc(); j++)
 			{
-			  Assert.AreEqual("reader=" + r + ", field=f" + i + ", doc=" + j, GetValue(cf, j, scratch), GetValue(f, j, scratch) * 2);
+			  Assert.AreEqual(GetValue(cf, j, scratch), GetValue(f, j, scratch) * 2, "reader=" + r + ", field=f" + i + ", doc=" + j);
 			}
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdatesOrder()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("upd", "t1", Store.NO));
-		doc.add(new StringField("upd", "t2", Store.NO));
-		doc.add(new BinaryDocValuesField("f1", ToBytes(1L)));
-		doc.add(new BinaryDocValuesField("f2", ToBytes(1L)));
-		writer.addDocument(doc);
-		writer.updateBinaryDocValue(new Term("upd", "t1"), "f1", ToBytes(2L)); // update f1 to 2
-		writer.updateBinaryDocValue(new Term("upd", "t1"), "f2", ToBytes(2L)); // update f2 to 2
-		writer.updateBinaryDocValue(new Term("upd", "t2"), "f1", ToBytes(3L)); // update f1 to 3
-		writer.updateBinaryDocValue(new Term("upd", "t2"), "f2", ToBytes(3L)); // update f2 to 3
-		writer.updateBinaryDocValue(new Term("upd", "t1"), "f1", ToBytes(4L)); // update f1 to 4 (but not f2)
-		writer.close();
+		doc.Add(new StringField("upd", "t1", Store.NO));
+		doc.Add(new StringField("upd", "t2", Store.NO));
+		doc.Add(new BinaryDocValuesField("f1", ToBytes(1L)));
+		doc.Add(new BinaryDocValuesField("f2", ToBytes(1L)));
+		writer.AddDocument(doc);
+		writer.UpdateBinaryDocValue(new Term("upd", "t1"), "f1", ToBytes(2L)); // update f1 to 2
+		writer.UpdateBinaryDocValue(new Term("upd", "t1"), "f2", ToBytes(2L)); // update f2 to 2
+		writer.UpdateBinaryDocValue(new Term("upd", "t2"), "f1", ToBytes(3L)); // update f1 to 3
+		writer.UpdateBinaryDocValue(new Term("upd", "t2"), "f2", ToBytes(3L)); // update f2 to 3
+		writer.UpdateBinaryDocValue(new Term("upd", "t1"), "f1", ToBytes(4L)); // update f1 to 4 (but not f2)
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		Assert.AreEqual(4, GetValue(reader.leaves().get(0).reader().getBinaryDocValues("f1"), 0, scratch));
-		Assert.AreEqual(3, GetValue(reader.leaves().get(0).reader().getBinaryDocValues("f2"), 0, scratch));
-		reader.close();
+		Assert.AreEqual(4, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f1"), 0, scratch));
+		Assert.AreEqual(3, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f2"), 0, scratch));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateAllDeletedSegment()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc", Store.NO));
-		doc.add(new BinaryDocValuesField("f1", ToBytes(1L)));
-		writer.addDocument(doc);
-		writer.addDocument(doc);
-		writer.commit();
-		writer.deleteDocuments(new Term("id", "doc")); // delete all docs in the first segment
-		writer.addDocument(doc);
-		writer.updateBinaryDocValue(new Term("id", "doc"), "f1", ToBytes(2L));
-		writer.close();
+		doc.Add(new StringField("id", "doc", Store.NO));
+		doc.Add(new BinaryDocValuesField("f1", ToBytes(1L)));
+		writer.AddDocument(doc);
+		writer.AddDocument(doc);
+		writer.Commit();
+		writer.DeleteDocuments(new Term("id", "doc")); // delete all docs in the first segment
+		writer.AddDocument(doc);
+		writer.UpdateBinaryDocValue(new Term("id", "doc"), "f1", ToBytes(2L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(1, reader.leaves().size());
-		Assert.AreEqual(2L, GetValue(reader.leaves().get(0).reader().getBinaryDocValues("f1"), 0, new BytesRef()));
-		reader.close();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(1, reader.Leaves().Count);
+		Assert.AreEqual(2L, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f1"), 0, new BytesRef()));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUpdateTwoNonexistingTerms()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc", Store.NO));
-		doc.add(new BinaryDocValuesField("f1", ToBytes(1L)));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "doc", Store.NO));
+		doc.Add(new BinaryDocValuesField("f1", ToBytes(1L)));
+		writer.AddDocument(doc);
 		// update w/ multiple nonexisting terms in same field
-		writer.updateBinaryDocValue(new Term("c", "foo"), "f1", ToBytes(2L));
-		writer.updateBinaryDocValue(new Term("c", "bar"), "f1", ToBytes(2L));
-		writer.close();
+		writer.UpdateBinaryDocValue(new Term("c", "foo"), "f1", ToBytes(2L));
+		writer.UpdateBinaryDocValue(new Term("c", "bar"), "f1", ToBytes(2L));
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(1, reader.leaves().size());
-		Assert.AreEqual(1L, GetValue(reader.leaves().get(0).reader().getBinaryDocValues("f1"), 0, new BytesRef()));
-		reader.close();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(1, reader.Leaves().Count);
+		Assert.AreEqual(1L, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f1"), 0, new BytesRef()));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	}

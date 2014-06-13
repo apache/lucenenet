@@ -90,7 +90,7 @@ namespace org.apache.lucene
 			d.Add(newTextField(ID_FIELD, Convert.ToString(j), Field.Store.YES));
 			writer.addDocument(d);
 		  }
-		  writer.Close();
+		  writer.Dispose();
 
 		  // try a search without OR
 		  IndexReader reader = DirectoryReader.Open(directory);

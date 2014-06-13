@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestSegmentReader : LuceneTestCase
 	{
@@ -38,42 +39,42 @@ namespace Lucene.Net.Index
 	  //TODO: Setup the reader w/ multiple documents
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		DocHelper.setupDoc(TestDoc);
-		SegmentCommitInfo info = DocHelper.writeDoc(random(), Dir, TestDoc);
+		base.SetUp();
+		Dir = NewDirectory();
+		DocHelper.SetupDoc(TestDoc);
+		SegmentCommitInfo info = DocHelper.WriteDoc(Random(), Dir, TestDoc);
 		Reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IOContext.READ);
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void Test()
 	  {
 		Assert.IsTrue(Dir != null);
 		Assert.IsTrue(Reader != null);
-		Assert.IsTrue(DocHelper.nameValues.size() > 0);
-		Assert.IsTrue(DocHelper.numFields(TestDoc) == DocHelper.all.size());
+		Assert.IsTrue(DocHelper.nameValues.Size() > 0);
+		Assert.IsTrue(DocHelper.NumFields(TestDoc) == DocHelper.all.Size());
 	  }
 
 	  public virtual void TestDocument()
 	  {
-		Assert.IsTrue(Reader.numDocs() == 1);
-		Assert.IsTrue(Reader.maxDoc() >= 1);
-		Document result = Reader.document(0);
+		Assert.IsTrue(Reader.NumDocs() == 1);
+		Assert.IsTrue(Reader.MaxDoc() >= 1);
+		Document result = Reader.Document(0);
 		Assert.IsTrue(result != null);
 		//There are 2 unstored fields on the document that are not preserved across writing
-		Assert.IsTrue(DocHelper.numFields(result) == DocHelper.numFields(TestDoc) - DocHelper.unstored.size());
+		Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(TestDoc) - DocHelper.unstored.Size());
 
 		IList<IndexableField> fields = result.Fields;
 		foreach (IndexableField field in fields)
 		{
 		  Assert.IsTrue(field != null);
-		  Assert.IsTrue(DocHelper.nameValues.containsKey(field.name()));
+		  Assert.IsTrue(DocHelper.nameValues.containsKey(field.Name()));
 		}
 	  }
 
@@ -87,7 +88,7 @@ namespace Lucene.Net.Index
 
 		foreach (FieldInfo fieldInfo in Reader.FieldInfos)
 		{
-		  string name = fieldInfo.name;
+		  string name = fieldInfo.Name;
 		  allFieldNames.Add(name);
 		  if (fieldInfo.Indexed)
 		  {
@@ -97,7 +98,7 @@ namespace Lucene.Net.Index
 		  {
 			notIndexedFieldNames.Add(name);
 		  }
-		  if (fieldInfo.hasVectors())
+		  if (fieldInfo.HasVectors())
 		  {
 			tvFieldNames.Add(name);
 		  }
@@ -107,56 +108,56 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		Assert.IsTrue(allFieldNames.Count == DocHelper.all.size());
+		Assert.IsTrue(allFieldNames.Count == DocHelper.all.Size());
 		foreach (string s in allFieldNames)
 		{
 		  Assert.IsTrue(DocHelper.nameValues.containsKey(s) == true || s.Equals(""));
 		}
 
-		Assert.IsTrue(indexedFieldNames.Count == DocHelper.indexed.size());
+		Assert.IsTrue(indexedFieldNames.Count == DocHelper.indexed.Size());
 		foreach (string s in indexedFieldNames)
 		{
 		  Assert.IsTrue(DocHelper.indexed.containsKey(s) == true || s.Equals(""));
 		}
 
-		Assert.IsTrue(notIndexedFieldNames.Count == DocHelper.unindexed.size());
+		Assert.IsTrue(notIndexedFieldNames.Count == DocHelper.unindexed.Size());
 		//Get all indexed fields that are storing term vectors
-		Assert.IsTrue(tvFieldNames.Count == DocHelper.termvector.size());
+		Assert.IsTrue(tvFieldNames.Count == DocHelper.termvector.Size());
 
-		Assert.IsTrue(noTVFieldNames.Count == DocHelper.notermvector.size());
+		Assert.IsTrue(noTVFieldNames.Count == DocHelper.notermvector.Size());
 	  }
 
 	  public virtual void TestTerms()
 	  {
-		Fields fields = MultiFields.getFields(Reader);
+		Fields fields = MultiFields.GetFields(Reader);
 		foreach (string field in fields)
 		{
-		  Terms terms = fields.terms(field);
+		  Terms terms = fields.Terms(field);
 		  Assert.IsNotNull(terms);
-		  TermsEnum termsEnum = terms.iterator(null);
-		  while (termsEnum.next() != null)
+		  TermsEnum termsEnum = terms.Iterator(null);
+		  while (termsEnum.Next() != null)
 		  {
-			BytesRef term = termsEnum.term();
+			BytesRef term = termsEnum.Term();
 			Assert.IsTrue(term != null);
-			string fieldValue = (string) DocHelper.nameValues.get(field);
-			Assert.IsTrue(fieldValue.IndexOf(term.utf8ToString()) != -1);
+			string fieldValue = (string) DocHelper.nameValues.Get(field);
+			Assert.IsTrue(fieldValue.IndexOf(term.Utf8ToString()) != -1);
 		  }
 		}
 
-		DocsEnum termDocs = TestUtil.docs(random(), Reader, DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"), MultiFields.getLiveDocs(Reader), null, 0);
-		Assert.IsTrue(termDocs.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		DocsEnum termDocs = TestUtil.Docs(Random(), Reader, DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(Reader), null, 0);
+		Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
-		termDocs = TestUtil.docs(random(), Reader, DocHelper.NO_NORMS_KEY, new BytesRef(DocHelper.NO_NORMS_TEXT), MultiFields.getLiveDocs(Reader), null, 0);
+		termDocs = TestUtil.Docs(Random(), Reader, DocHelper.NO_NORMS_KEY, new BytesRef(DocHelper.NO_NORMS_TEXT), MultiFields.GetLiveDocs(Reader), null, 0);
 
-		Assert.IsTrue(termDocs.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
 
-		DocsAndPositionsEnum positions = MultiFields.getTermPositionsEnum(Reader, MultiFields.getLiveDocs(Reader), DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"));
+		DocsAndPositionsEnum positions = MultiFields.GetTermPositionsEnum(Reader, MultiFields.GetLiveDocs(Reader), DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"));
 		// NOTE: prior rev of this test was failing to first
 		// call next here:
-		Assert.IsTrue(positions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.IsTrue(positions.docID() == 0);
-		Assert.IsTrue(positions.nextPosition() >= 0);
+		Assert.IsTrue(positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue(positions.DocID() == 0);
+		Assert.IsTrue(positions.NextPosition() >= 0);
 	  }
 
 	  public virtual void TestNorms()
@@ -179,18 +180,18 @@ namespace Lucene.Net.Index
 	  public static void CheckNorms(AtomicReader reader)
 	  {
 		// test omit norms
-		for (int i = 0; i < DocHelper.fields.length; i++)
+		for (int i = 0; i < DocHelper.fields.Length; i++)
 		{
 		  IndexableField f = DocHelper.fields[i];
-		  if (f.fieldType().indexed())
+		  if (f.FieldType().indexed())
 		  {
-			Assert.AreEqual(reader.getNormValues(f.name()) != null, !f.fieldType().omitNorms());
-			Assert.AreEqual(reader.getNormValues(f.name()) != null, !DocHelper.noNorms.containsKey(f.name()));
-			if (reader.getNormValues(f.name()) == null)
+			Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !f.FieldType().OmitsNorms());
+			Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !DocHelper.noNorms.containsKey(f.Name()));
+			if (reader.GetNormValues(f.Name()) == null)
 			{
 			  // test for norms of null
-			  NumericDocValues norms = MultiDocValues.getNormValues(reader, f.name());
-			  assertNull(norms);
+			  NumericDocValues norms = MultiDocValues.GetNormValues(reader, f.Name());
+			  Assert.IsNull(norms);
 			}
 		  }
 		}
@@ -198,29 +199,29 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestTermVectors()
 	  {
-		Terms result = Reader.getTermVectors(0).terms(DocHelper.TEXT_FIELD_2_KEY);
+		Terms result = Reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
 		Assert.IsNotNull(result);
-		Assert.AreEqual(3, result.size());
-		TermsEnum termsEnum = result.iterator(null);
-		while (termsEnum.next() != null)
+		Assert.AreEqual(3, result.Size());
+		TermsEnum termsEnum = result.Iterator(null);
+		while (termsEnum.Next() != null)
 		{
-		  string term = termsEnum.term().utf8ToString();
-		  int freq = (int) termsEnum.totalTermFreq();
+		  string term = termsEnum.Term().Utf8ToString();
+		  int freq = (int) termsEnum.TotalTermFreq();
 		  Assert.IsTrue(DocHelper.FIELD_2_TEXT.IndexOf(term) != -1);
 		  Assert.IsTrue(freq > 0);
 		}
 
-		Fields results = Reader.getTermVectors(0);
+		Fields results = Reader.GetTermVectors(0);
 		Assert.IsTrue(results != null);
-		Assert.AreEqual("We do not have 3 term freq vectors", 3, results.size());
+		Assert.AreEqual(3, results.Size(), "We do not have 3 term freq vectors");
 	  }
 
 	  public virtual void TestOutOfBoundsAccess()
 	  {
-		int numDocs = Reader.maxDoc();
+		int numDocs = Reader.MaxDoc();
 		try
 		{
-		  Reader.document(-1);
+		  Reader.Document(-1);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -229,7 +230,7 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  Reader.getTermVectors(-1);
+		  Reader.GetTermVectors(-1);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -238,7 +239,7 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  Reader.document(numDocs);
+		  Reader.Document(numDocs);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -247,7 +248,7 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  Reader.getTermVectors(numDocs);
+		  Reader.GetTermVectors(numDocs);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)

@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestForTooMuchCloning : LuceneTestCase
 	{
@@ -43,42 +44,42 @@ namespace Lucene.Net.Index
 		// NOTE: if we see a fail on this test with "NestedPulsing" its because its 
 		// reuse isnt perfect (but reasonable). see TestPulsingReuse.testNestedPulsing 
 		// for more details
-		MockDirectoryWrapper dir = newMockDirectory();
+		MockDirectoryWrapper dir = NewMockDirectory();
 		TieredMergePolicy tmp = new TieredMergePolicy();
 		tmp.MaxMergeAtOnce = 2;
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergePolicy(tmp));
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(tmp));
 		const int numDocs = 20;
 		for (int docs = 0;docs < numDocs;docs++)
 		{
 		  StringBuilder sb = new StringBuilder();
 		  for (int terms = 0;terms < 100;terms++)
 		  {
-			sb.Append(TestUtil.randomRealisticUnicodeString(random()));
+			sb.Append(TestUtil.RandomRealisticUnicodeString(Random()));
 			sb.Append(' ');
 		  }
 		  Document doc = new Document();
-		  doc.add(new TextField("field", sb.ToString(), Field.Store.NO));
-		  w.addDocument(doc);
+		  doc.Add(new TextField("field", sb.ToString(), Field.Store.NO));
+		  w.AddDocument(doc);
 		}
 		IndexReader r = w.Reader;
-		w.close();
+        w.Close();
 
 		int cloneCount = dir.InputCloneCount;
 		//System.out.println("merge clone count=" + cloneCount);
-		Assert.IsTrue("too many calls to IndexInput.clone during merging: " + dir.InputCloneCount, cloneCount < 500);
+		Assert.IsTrue(cloneCount < 500, "too many calls to IndexInput.clone during merging: " + dir.InputCloneCount);
 
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 
 		// MTQ that matches all terms so the AUTO_REWRITE should
 		// cutover to filter rewrite and reuse a single DocsEnum
 		// across all terms;
-		TopDocs hits = s.search(new TermRangeQuery("field", new BytesRef(), new BytesRef("\uFFFF"), true, true), 10);
-		Assert.IsTrue(hits.totalHits > 0);
+		TopDocs hits = s.Search(new TermRangeQuery("field", new BytesRef(), new BytesRef("\uFFFF"), true, true), 10);
+		Assert.IsTrue(hits.TotalHits > 0);
 		int queryCloneCount = dir.InputCloneCount - cloneCount;
 		//System.out.println("query clone count=" + queryCloneCount);
-		Assert.IsTrue("too many calls to IndexInput.clone during TermRangeQuery: " + queryCloneCount, queryCloneCount < 50);
-		r.close();
-		dir.close();
+		Assert.IsTrue(queryCloneCount < 50, "too many calls to IndexInput.clone during TermRangeQuery: " + queryCloneCount);
+		r.Dispose();
+		dir.Dispose();
 	  }
 	}
 

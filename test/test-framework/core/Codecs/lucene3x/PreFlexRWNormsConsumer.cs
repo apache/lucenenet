@@ -28,6 +28,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// Writes and Merges Lucene 3.x norms format
@@ -38,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// norms header placeholder </summary>
-	  private static readonly sbyte[] NORMS_HEADER = new sbyte[]{'N','R','M',-1};
+	  private static readonly sbyte[] NORMS_HEADER = new sbyte[]{ (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
 
 	  /// <summary>
 	  /// Extension of norms file </summary>
@@ -55,13 +56,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public PreFlexRWNormsConsumer(Directory directory, string segment, IOContext context)
 	  {
-		string normsFileName = IndexFileNames.segmentFileName(segment, "", NORMS_EXTENSION);
+		string normsFileName = IndexFileNames.SegmentFileName(segment, "", NORMS_EXTENSION);
 		bool success = false;
 		IndexOutput output = null;
 		try
 		{
-		  output = directory.createOutput(normsFileName, context);
-		  output.writeBytes(NORMS_HEADER, 0, NORMS_HEADER.Length);
+		  output = directory.CreateOutput(normsFileName, context);
+		  output.WriteBytes(NORMS_HEADER, 0, NORMS_HEADER.Length);
 		  @out = output;
 		  success = true;
 		}
@@ -69,43 +70,43 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(output);
+			IOUtils.CloseWhileHandlingException(output);
 		  }
 		}
 	  }
 
-	  public override void AddNumericField(FieldInfo field, IEnumerable<Number> values)
+	  public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
 	  {
-		Debug.Assert(field.number > LastFieldNumber, "writing norms fields out of order" + LastFieldNumber + " -> " + field.number);
-		foreach (Number n in values)
+		Debug.Assert(field.Number > LastFieldNumber, "writing norms fields out of order" + LastFieldNumber + " -> " + field.Number);
+        foreach (long n in values)
 		{
 		  if ((long)n < sbyte.MinValue || (long)n > sbyte.MaxValue)
 		  {
 			throw new System.NotSupportedException("3.x cannot index norms that won't fit in a byte, got: " + (long)n);
 		  }
-		  @out.writeByte((sbyte)n);
+		  @out.WriteByte((sbyte)n);
 		}
-		LastFieldNumber = field.number;
+        LastFieldNumber = field.Number;
 	  }
 
 	  public override void Close()
 	  {
-		IOUtils.close(@out);
+		IOUtils.Close(@out);
 	  }
 
 	  public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
 	  {
-		throw new AssertionError();
+          throw new InvalidOperationException();
 	  }
 
-	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
+	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 	  {
-		throw new AssertionError();
+          throw new InvalidOperationException();
 	  }
 
-	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+      public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 	  {
-		throw new AssertionError();
+          throw new InvalidOperationException();
 	  }
 	}
 

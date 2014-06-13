@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 	  internal readonly Random Random;
 	  internal readonly Collector @in;
 	  internal Scorer Scorer_Renamed;
-	  internal FakeScorer FakeScorer;
+	  internal FakeScorer fakeScorer;
 
 	  internal int Buffered;
 	  internal readonly int BufferSize;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
 
 	  internal RandomOrderCollector(Random random, Collector @in)
 	  {
-		if (!@in.acceptsDocsOutOfOrder())
+		if (!@in.AcceptsDocsOutOfOrder())
 		{
 		  throw new System.ArgumentException();
 		}
@@ -61,8 +61,8 @@ namespace Lucene.Net.Search
 		  set
 		  {
 			this.Scorer_Renamed = value;
-			FakeScorer = new FakeScorer();
-			@in.Scorer = FakeScorer;
+			fakeScorer = new FakeScorer();
+			@in.Scorer = fakeScorer;
 		  }
 	  }
 
@@ -91,10 +91,10 @@ namespace Lucene.Net.Search
 		Shuffle();
 		for (int i = 0; i < Buffered; ++i)
 		{
-		  FakeScorer.doc = DocIDs[i];
-		  FakeScorer.freq = Freqs[i];
-		  FakeScorer.score = Scores[i];
-		  @in.collect(FakeScorer.doc);
+		  fakeScorer.Doc = DocIDs[i];
+		  fakeScorer.freq = Freqs[i];
+		  fakeScorer.Score = Scores[i];
+		  @in.Collect(fakeScorer.Doc);
 		}
 		Buffered = 0;
 	  }
@@ -102,12 +102,12 @@ namespace Lucene.Net.Search
 	  public override void Collect(int doc)
 	  {
 		DocIDs[Buffered] = doc;
-		Scores[Buffered] = Scorer_Renamed.score();
+		Scores[Buffered] = Scorer_Renamed.Score();
 		try
 		{
-		  Freqs[Buffered] = Scorer_Renamed.freq();
+		  Freqs[Buffered] = Scorer_Renamed.Freq();
 		}
-		catch (System.NotSupportedException e)
+		catch (System.NotSupportedException)
 		{
 		  Freqs[Buffered] = -1;
 		}
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 
 	  public override bool AcceptsDocsOutOfOrder()
 	  {
-		return @in.acceptsDocsOutOfOrder();
+		return @in.AcceptsDocsOutOfOrder();
 	  }
 
 	  public override AtomicReaderContext NextReader

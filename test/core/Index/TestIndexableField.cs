@@ -40,6 +40,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestIndexableField : LuceneTestCase
 	{
@@ -129,7 +130,7 @@ namespace Lucene.Net.Index
 
 		public override float Boost()
 		{
-		  return 1.0f + random().nextFloat();
+		  return 1.0f + Random().nextFloat();
 		}
 
 		public override BytesRef BinaryValue()
@@ -186,7 +187,7 @@ namespace Lucene.Net.Index
 
 		public override TokenStream TokenStream(Analyzer analyzer)
 		{
-		  return ReaderValue() != null ? analyzer.tokenStream(Name(), ReaderValue()) : analyzer.tokenStream(Name(), new StringReader(StringValue()));
+		  return ReaderValue() != null ? analyzer.TokenStream(Name(), ReaderValue()) : analyzer.TokenStream(Name(), new StringReader(StringValue()));
 		}
 	  }
 
@@ -195,10 +196,10 @@ namespace Lucene.Net.Index
 	  public virtual void TestArbitraryFields()
 	  {
 
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
-		int NUM_DOCS = atLeast(27);
+		int NUM_DOCS = AtLeast(27);
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: " + NUM_DOCS + " docs");
@@ -208,7 +209,7 @@ namespace Lucene.Net.Index
 
 		for (int docCount = 0;docCount < NUM_DOCS;docCount++)
 		{
-		  int fieldCount = TestUtil.Next(random(), 1, 17);
+		  int fieldCount = TestUtil.NextInt(Random(), 1, 17);
 		  fieldsPerDoc[docCount] = fieldCount - 1;
 
 		  int finalDocCount = docCount;
@@ -220,13 +221,13 @@ namespace Lucene.Net.Index
 		  int finalBaseCount = baseCount;
 		  baseCount += fieldCount - 1;
 
-		  w.addDocument(new IterableAnonymousInnerClassHelper(this, fieldCount, finalDocCount, finalBaseCount));
+		  w.AddDocument(new IterableAnonymousInnerClassHelper(this, fieldCount, finalDocCount, finalBaseCount));
 		}
 
 		IndexReader r = w.Reader;
-		w.close();
+        w.Close();
 
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 		int counter = 0;
 		for (int id = 0;id < NUM_DOCS;id++)
 		{
@@ -234,10 +235,10 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("TEST: verify doc id=" + id + " (" + fieldsPerDoc[id] + " fields) counter=" + counter);
 		  }
-		  TopDocs hits = s.search(new TermQuery(new Term("id", "" + id)), 1);
-		  Assert.AreEqual(1, hits.totalHits);
-		  int docID = hits.scoreDocs[0].doc;
-		  Document doc = s.doc(docID);
+		  TopDocs hits = s.Search(new TermQuery(new Term("id", "" + id)), 1);
+		  Assert.AreEqual(1, hits.TotalHits);
+		  int docID = hits.ScoreDocs[0].Doc;
+		  Document doc = s.Doc(docID);
 		  int endCounter = counter + fieldsPerDoc[id];
 		  while (counter < endCounter)
 		  {
@@ -261,23 +262,23 @@ namespace Lucene.Net.Index
 			// stored:
 			if (stored)
 			{
-			  IndexableField f = doc.getField(name);
-			  Assert.IsNotNull("doc " + id + " doesn't have field f" + counter, f);
+			  IndexableField f = doc.GetField(name);
+			  Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
 			  if (binary)
 			  {
-				Assert.IsNotNull("doc " + id + " doesn't have field f" + counter, f);
-				BytesRef b = f.binaryValue();
+				Assert.IsNotNull(f, "doc " + id + " doesn't have field f" + counter);
+				BytesRef b = f.BinaryValue();
 				Assert.IsNotNull(b);
-				Assert.AreEqual(10, b.length);
+				Assert.AreEqual(10, b.Length);
 				for (int idx = 0;idx < 10;idx++)
 				{
-				  Assert.AreEqual((sbyte)(idx + counter), b.bytes[b.offset + idx]);
+				  Assert.AreEqual((sbyte)(idx + counter), b.Bytes[b.Offset + idx]);
 				}
 			  }
 			  else
 			  {
 				Debug.Assert(stringValue != null);
-				Assert.AreEqual(stringValue, f.stringValue());
+				Assert.AreEqual(stringValue, f.StringValue);
 			  }
 			}
 
@@ -286,55 +287,55 @@ namespace Lucene.Net.Index
 			  bool tv = counter % 2 == 1 && fieldID != 9;
 			  if (tv)
 			  {
-				Terms tfv = r.getTermVectors(docID).terms(name);
+				Terms tfv = r.GetTermVectors(docID).Terms(name);
 				Assert.IsNotNull(tfv);
-				TermsEnum termsEnum = tfv.iterator(null);
-				Assert.AreEqual(new BytesRef("" + counter), termsEnum.next());
-				Assert.AreEqual(1, termsEnum.totalTermFreq());
-				DocsAndPositionsEnum dpEnum = termsEnum.docsAndPositions(null, null);
-				Assert.IsTrue(dpEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-				Assert.AreEqual(1, dpEnum.freq());
-				Assert.AreEqual(1, dpEnum.nextPosition());
+				TermsEnum termsEnum = tfv.Iterator(null);
+				Assert.AreEqual(new BytesRef("" + counter), termsEnum.Next());
+				Assert.AreEqual(1, termsEnum.TotalTermFreq());
+				DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+				Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+				Assert.AreEqual(1, dpEnum.Freq());
+				Assert.AreEqual(1, dpEnum.NextPosition());
 
-				Assert.AreEqual(new BytesRef("text"), termsEnum.next());
-				Assert.AreEqual(1, termsEnum.totalTermFreq());
-				dpEnum = termsEnum.docsAndPositions(null, dpEnum);
-				Assert.IsTrue(dpEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-				Assert.AreEqual(1, dpEnum.freq());
-				Assert.AreEqual(0, dpEnum.nextPosition());
+				Assert.AreEqual(new BytesRef("text"), termsEnum.Next());
+				Assert.AreEqual(1, termsEnum.TotalTermFreq());
+				dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+				Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+				Assert.AreEqual(1, dpEnum.Freq());
+				Assert.AreEqual(0, dpEnum.NextPosition());
 
-				assertNull(termsEnum.next());
+				Assert.IsNull(termsEnum.Next());
 
 				// TODO: offsets
 
 			  }
 			  else
 			  {
-				Fields vectors = r.getTermVectors(docID);
-				Assert.IsTrue(vectors == null || vectors.terms(name) == null);
+				Fields vectors = r.GetTermVectors(docID);
+				Assert.IsTrue(vectors == null || vectors.Terms(name) == null);
 			  }
 
 			  BooleanQuery bq = new BooleanQuery();
-			  bq.add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
-			  bq.add(new TermQuery(new Term(name, "text")), BooleanClause.Occur_e.MUST);
-			  TopDocs hits2 = s.search(bq, 1);
-			  Assert.AreEqual(1, hits2.totalHits);
-			  Assert.AreEqual(docID, hits2.scoreDocs[0].doc);
+			  bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
+			  bq.Add(new TermQuery(new Term(name, "text")), BooleanClause.Occur_e.MUST);
+			  TopDocs hits2 = s.Search(bq, 1);
+			  Assert.AreEqual(1, hits2.TotalHits);
+			  Assert.AreEqual(docID, hits2.ScoreDocs[0].Doc);
 
 			  bq = new BooleanQuery();
-			  bq.add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
-			  bq.add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur_e.MUST);
-			  TopDocs hits3 = s.search(bq, 1);
-			  Assert.AreEqual(1, hits3.totalHits);
-			  Assert.AreEqual(docID, hits3.scoreDocs[0].doc);
+			  bq.Add(new TermQuery(new Term("id", "" + id)), BooleanClause.Occur_e.MUST);
+			  bq.Add(new TermQuery(new Term(name, "" + counter)), BooleanClause.Occur_e.MUST);
+			  TopDocs hits3 = s.Search(bq, 1);
+			  Assert.AreEqual(1, hits3.TotalHits);
+			  Assert.AreEqual(docID, hits3.ScoreDocs[0].Doc);
 			}
 
 			counter++;
 		  }
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class IterableAnonymousInnerClassHelper : IEnumerable<IndexableField>
@@ -380,7 +381,7 @@ namespace Lucene.Net.Index
 				if (fieldUpto == 0)
 				{
 				  fieldUpto = 1;
-				  return newStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
+				  return NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
 				}
 				else
 				{

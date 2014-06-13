@@ -112,7 +112,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  @delegate.Close();
+		  @delegate.Dispose();
 		  if (Dir.TrackDiskUsage_Renamed)
 		  {
 			// Now compute actual disk usage & track the maxUsedSize

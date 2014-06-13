@@ -277,8 +277,6 @@ using Lucene.Net.Support;
 		  throw new AlreadyClosedException("this IndexReader is closed");
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int rc = refCount.decrementAndGet();
 		int rc = refCount.DecrementAndGet();
 		if (rc == 0)
 		{
@@ -545,22 +543,30 @@ using Lucene.Net.Support;
 		return NumDeletedDocs() > 0;
 	  }
 
-	  /// <summary>
-	  /// Closes files associated with this index.
-	  /// Also saves any new deletions to disk.
-	  /// No other methods should be called after this has been called. </summary>
-	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
-	  public void Dispose()
-	  {
-		  lock (this)
-		  {
-			if (!Closed)
-			{
-			  DecRef();
-			  Closed = true;
-			}
-		  }
-	  }
+      /// <summary> Closes files associated with this index.
+      /// Also saves any new deletions to disk.
+      /// No other methods should be called after this has been called.
+      /// </summary>
+      /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
+      public void Dispose()
+      {
+          Dispose(true);
+      }
+
+      protected virtual void Dispose(bool disposing)
+      {
+          if (disposing)
+          {
+              lock (this)
+              {
+                  if (!Closed)
+                  {
+                      DecRef();
+                      Closed = true;
+                  }
+              }
+          }
+      }
 
 	  /// <summary>
 	  /// Implements close. </summary>

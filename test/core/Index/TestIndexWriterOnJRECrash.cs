@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
 
 	using SeedUtils = com.carrotsearch.randomizedtesting.SeedUtils;
+    using NUnit.Framework;
 	/// <summary>
 	/// Runs TestNRTThreads in a separate process, crashes the JRE in the middle
 	/// of execution, then runs checkindex to make sure its not corrupt.
@@ -41,7 +42,7 @@ namespace Lucene.Net.Index
 	  public override void SetUp()
 	  {
 		base.SetUp();
-		TempDir = createTempDir("jrecrash");
+		TempDir = CreateTempDir("jrecrash");
 		TempDir.delete();
 		TempDir.mkdir();
 	  }
@@ -67,9 +68,9 @@ namespace Lucene.Net.Index
 		else
 		{
 		  // TODO: the non-fork code could simply enable impersonation?
-		  assumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x"));
+		  AssumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x"));
 		  // we are the fork, setup a crashing thread
-		  int crashTime = TestUtil.Next(random(), 3000, 4000);
+		  int crashTime = TestUtil.NextInt(Random(), 3000, 4000);
 		  Thread t = new ThreadAnonymousInnerClassHelper(this, crashTime);
 		  t.Priority = Thread.MAX_PRIORITY;
 		  t.Start();
@@ -99,7 +100,7 @@ namespace Lucene.Net.Index
 			{
 			  Thread.Sleep(CrashTime);
 			}
-			catch (InterruptedException e)
+			catch (ThreadInterruptedException e)
 			{
 			}
 			outerInstance.CrashJRE();
@@ -117,7 +118,7 @@ namespace Lucene.Net.Index
 		// passing NIGHTLY to this test makes it run for much longer, easier to catch it in the act...
 		cmd.Add("-Dtests.nightly=true");
 		cmd.Add("-DtempDir=" + TempDir.Path);
-		cmd.Add("-Dtests.seed=" + SeedUtils.formatSeed(random().nextLong()));
+		cmd.Add("-Dtests.seed=" + SeedUtils.formatSeed(Random().nextLong()));
 		cmd.Add("-ea");
 		cmd.Add("-cp");
 		cmd.Add(System.getProperty("java.class.path"));
@@ -126,7 +127,7 @@ namespace Lucene.Net.Index
 		ProcessBuilder pb = new ProcessBuilder(cmd);
 		pb.directory(TempDir);
 		pb.redirectErrorStream(true);
-		Process p = pb.start();
+		Process p = pb.Start();
 
 		// We pump everything to stderr.
 		PrintStream childOut = System.err;
@@ -173,11 +174,11 @@ namespace Lucene.Net.Index
 			  {
 				sbyte[] buffer = new sbyte [1024];
 				int len;
-				while ((len = From.read(buffer)) != -1)
+				while ((len = From.Read(buffer)) != -1)
 				{
 				  if (VERBOSE)
 				  {
-					To.write(buffer, 0, len);
+					To.Write(buffer, 0, len);
 				  }
 				}
 			  }
@@ -197,7 +198,7 @@ namespace Lucene.Net.Index
 	  {
 		if (file.Directory)
 		{
-		  BaseDirectoryWrapper dir = newFSDirectory(file);
+		  BaseDirectoryWrapper dir = NewFSDirectory(file);
 		  dir.CheckIndexOnClose = false; // don't double-checkindex
 		  if (DirectoryReader.indexExists(dir))
 		  {
@@ -209,14 +210,14 @@ namespace Lucene.Net.Index
 			// commit it's possible index will be corrupt (by
 			// design we don't try to be smart about this case
 			// since that too risky):
-			if (SegmentInfos.getLastCommitGeneration(dir) > 1)
+			if (SegmentInfos.GetLastCommitGeneration(dir) > 1)
 			{
-			  TestUtil.checkIndex(dir);
+			  TestUtil.CheckIndex(dir);
 			}
-			dir.close();
+			dir.Dispose();
 			return true;
 		  }
-		  dir.close();
+		  dir.Dispose();
 		  foreach (File f in file.listFiles())
 		  {
 			if (CheckIndexes(f))
@@ -245,14 +246,14 @@ namespace Lucene.Net.Index
 				Type clazz = Type.GetType("sun.misc.Unsafe");
 				Field field = clazz.getDeclaredField("theUnsafe");
 				field.Accessible = true;
-				object o = field.get(null);
+				object o = field.Get(null);
 				Method m = clazz.GetMethod("putAddress", typeof(long), typeof(long));
 				m.invoke(o, 0L, 0L);
 			  }
 			  catch (Exception e)
 			  {
 				Console.WriteLine("Couldn't kill the JVM via Unsafe.");
-				e.printStackTrace(System.out);
+				Console.WriteLine(e.StackTrace);
 			  }
 			}
 
@@ -262,7 +263,7 @@ namespace Lucene.Net.Index
 		  catch (Exception e)
 		  {
 			Console.WriteLine("Couldn't kill the JVM.");
-			e.printStackTrace(System.out);
+			Console.WriteLine(e.StackTrace);
 		  }
 
 		  // We couldn't get the JVM to crash for some reason.

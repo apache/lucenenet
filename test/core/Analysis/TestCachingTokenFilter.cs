@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis
 	  public virtual void TestCaching()
 	  {
 		Directory dir = new RAMDirectory();
-        IndexWriter writer = new IndexWriter(dir, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
+        RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		TokenStream stream = new TokenStreamAnonymousInnerClassHelper(this);
 

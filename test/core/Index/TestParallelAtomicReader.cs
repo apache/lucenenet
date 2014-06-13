@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestParallelAtomicReader : LuceneTestCase
 	{
@@ -39,8 +40,8 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestQueries()
 	  {
-		Single_Renamed = Single(random());
-		Parallel_Renamed = Parallel(random());
+		Single_Renamed = Single(Random());
+		Parallel_Renamed = Parallel(Random());
 
 		QueryTest(new TermQuery(new Term("f1", "v1")));
 		QueryTest(new TermQuery(new Term("f1", "v2")));
@@ -52,91 +53,91 @@ namespace Lucene.Net.Index
 		QueryTest(new TermQuery(new Term("f4", "v2")));
 
 		BooleanQuery bq1 = new BooleanQuery();
-		bq1.add(new TermQuery(new Term("f1", "v1")), Occur.MUST);
-		bq1.add(new TermQuery(new Term("f4", "v1")), Occur.MUST);
+		bq1.Add(new TermQuery(new Term("f1", "v1")), Occur.MUST);
+		bq1.Add(new TermQuery(new Term("f4", "v1")), Occur.MUST);
 		QueryTest(bq1);
 
-		Single_Renamed.IndexReader.close();
+		Single_Renamed.IndexReader.Dispose();
 		Single_Renamed = null;
-		Parallel_Renamed.IndexReader.close();
+		Parallel_Renamed.IndexReader.Dispose();
 		Parallel_Renamed = null;
-		Dir.close();
+		Dir.Dispose();
 		Dir = null;
-		Dir1.close();
+		Dir1.Dispose();
 		Dir1 = null;
-		Dir2.close();
+		Dir2.Dispose();
 		Dir2 = null;
 	  }
 
 	  public virtual void TestFieldNames()
 	  {
-		Directory dir1 = GetDir1(random());
-		Directory dir2 = GetDir2(random());
-		ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir1)), SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir2)));
+		Directory dir1 = GetDir1(Random());
+		Directory dir2 = GetDir2(Random());
+		ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
 		FieldInfos fieldInfos = pr.FieldInfos;
-		Assert.AreEqual(4, fieldInfos.size());
-		Assert.IsNotNull(fieldInfos.fieldInfo("f1"));
-		Assert.IsNotNull(fieldInfos.fieldInfo("f2"));
-		Assert.IsNotNull(fieldInfos.fieldInfo("f3"));
-		Assert.IsNotNull(fieldInfos.fieldInfo("f4"));
-		pr.close();
-		dir1.close();
-		dir2.close();
+		Assert.AreEqual(4, fieldInfos.Size());
+		Assert.IsNotNull(fieldInfos.FieldInfo("f1"));
+		Assert.IsNotNull(fieldInfos.FieldInfo("f2"));
+		Assert.IsNotNull(fieldInfos.FieldInfo("f3"));
+		Assert.IsNotNull(fieldInfos.FieldInfo("f4"));
+		pr.Dispose();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestRefCounts1()
 	  {
-		Directory dir1 = GetDir1(random());
-		Directory dir2 = GetDir2(random());
+		Directory dir1 = GetDir1(Random());
+		Directory dir2 = GetDir2(Random());
 		AtomicReader ir1, ir2;
 		// close subreaders, ParallelReader will not change refCounts, but close on its own close
-		ParallelAtomicReader pr = new ParallelAtomicReader(ir1 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir1)), ir2 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir2)));
+		ParallelAtomicReader pr = new ParallelAtomicReader(ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
 
 		// check RefCounts
 		Assert.AreEqual(1, ir1.RefCount);
 		Assert.AreEqual(1, ir2.RefCount);
-		pr.close();
+		pr.Dispose();
 		Assert.AreEqual(0, ir1.RefCount);
 		Assert.AreEqual(0, ir2.RefCount);
-		dir1.close();
-		dir2.close();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestRefCounts2()
 	  {
-		Directory dir1 = GetDir1(random());
-		Directory dir2 = GetDir2(random());
-		AtomicReader ir1 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir1));
-		AtomicReader ir2 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir2));
+		Directory dir1 = GetDir1(Random());
+		Directory dir2 = GetDir2(Random());
+		AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
+		AtomicReader ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2));
 		// don't close subreaders, so ParallelReader will increment refcounts
 		ParallelAtomicReader pr = new ParallelAtomicReader(false, ir1, ir2);
 		// check RefCounts
 		Assert.AreEqual(2, ir1.RefCount);
 		Assert.AreEqual(2, ir2.RefCount);
-		pr.close();
+		pr.Dispose();
 		Assert.AreEqual(1, ir1.RefCount);
 		Assert.AreEqual(1, ir2.RefCount);
-		ir1.close();
-		ir2.close();
+		ir1.Dispose();
+		ir2.Dispose();
 		Assert.AreEqual(0, ir1.RefCount);
 		Assert.AreEqual(0, ir2.RefCount);
-		dir1.close();
-		dir2.close();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestCloseInnerReader()
 	  {
-		Directory dir1 = GetDir1(random());
-		AtomicReader ir1 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir1));
+		Directory dir1 = GetDir1(Random());
+		AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
 
 		// with overlapping
 		ParallelAtomicReader pr = new ParallelAtomicReader(true, new AtomicReader[] {ir1}, new AtomicReader[] {ir1});
 
-		ir1.close();
+		ir1.Dispose();
 
 		try
 		{
-		  pr.document(0);
+		  pr.Document(0);
 		  Assert.Fail("ParallelAtomicReader should be already closed because inner reader was closed!");
 		}
 		catch (AlreadyClosedException e)
@@ -145,26 +146,26 @@ namespace Lucene.Net.Index
 		}
 
 		// noop:
-		pr.close();
-		dir1.close();
+		pr.Dispose();
+		dir1.Dispose();
 	  }
 
 	  public virtual void TestIncompatibleIndexes()
 	  {
 		// two documents:
-		Directory dir1 = GetDir1(random());
+		Directory dir1 = GetDir1(Random());
 
 		// one document only:
-		Directory dir2 = newDirectory();
-		IndexWriter w2 = new IndexWriter(dir2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir2 = NewDirectory();
+		IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d3 = new Document();
 
-		d3.add(newTextField("f3", "v1", Field.Store.YES));
-		w2.addDocument(d3);
-		w2.close();
+		d3.Add(NewTextField("f3", "v1", Field.Store.YES));
+		w2.AddDocument(d3);
+		w2.Dispose();
 
-		AtomicReader ir1 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir1));
-		AtomicReader ir2 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir2));
+		AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
+		AtomicReader ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2));
 
 		try
 		{
@@ -178,7 +179,7 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  new ParallelAtomicReader(random().nextBoolean(), new AtomicReader[] {ir1, ir2}, new AtomicReader[] {ir1, ir2});
+		  new ParallelAtomicReader(Random().NextBoolean(), new AtomicReader[] {ir1, ir2}, new AtomicReader[] {ir1, ir2});
 		  Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
 		}
 		catch (System.ArgumentException e)
@@ -188,57 +189,57 @@ namespace Lucene.Net.Index
 		// check RefCounts
 		Assert.AreEqual(1, ir1.RefCount);
 		Assert.AreEqual(1, ir2.RefCount);
-		ir1.close();
-		ir2.close();
-		dir1.close();
-		dir2.close();
+		ir1.Dispose();
+		ir2.Dispose();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestIgnoreStoredFields()
 	  {
-		Directory dir1 = GetDir1(random());
-		Directory dir2 = GetDir2(random());
-		AtomicReader ir1 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir1));
-		AtomicReader ir2 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir2));
+		Directory dir1 = GetDir1(Random());
+		Directory dir2 = GetDir2(Random());
+		AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
+		AtomicReader ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2));
 
 		// with overlapping
 		ParallelAtomicReader pr = new ParallelAtomicReader(false, new AtomicReader[] {ir1, ir2}, new AtomicReader[] {ir1});
-		Assert.AreEqual("v1", pr.document(0).get("f1"));
-		Assert.AreEqual("v1", pr.document(0).get("f2"));
-		assertNull(pr.document(0).get("f3"));
-		assertNull(pr.document(0).get("f4"));
+		Assert.AreEqual("v1", pr.Document(0).Get("f1"));
+		Assert.AreEqual("v1", pr.Document(0).Get("f2"));
+		Assert.IsNull(pr.Document(0).Get("f3"));
+		Assert.IsNull(pr.Document(0).Get("f4"));
 		// check that fields are there
-		Assert.IsNotNull(pr.terms("f1"));
-		Assert.IsNotNull(pr.terms("f2"));
-		Assert.IsNotNull(pr.terms("f3"));
-		Assert.IsNotNull(pr.terms("f4"));
-		pr.close();
+		Assert.IsNotNull(pr.Terms("f1"));
+		Assert.IsNotNull(pr.Terms("f2"));
+		Assert.IsNotNull(pr.Terms("f3"));
+		Assert.IsNotNull(pr.Terms("f4"));
+		pr.Dispose();
 
 		// no stored fields at all
 		pr = new ParallelAtomicReader(false, new AtomicReader[] {ir2}, new AtomicReader[0]);
-		assertNull(pr.document(0).get("f1"));
-		assertNull(pr.document(0).get("f2"));
-		assertNull(pr.document(0).get("f3"));
-		assertNull(pr.document(0).get("f4"));
+		Assert.IsNull(pr.Document(0).Get("f1"));
+		Assert.IsNull(pr.Document(0).Get("f2"));
+		Assert.IsNull(pr.Document(0).Get("f3"));
+		Assert.IsNull(pr.Document(0).Get("f4"));
 		// check that fields are there
-		assertNull(pr.terms("f1"));
-		assertNull(pr.terms("f2"));
-		Assert.IsNotNull(pr.terms("f3"));
-		Assert.IsNotNull(pr.terms("f4"));
-		pr.close();
+		Assert.IsNull(pr.Terms("f1"));
+		Assert.IsNull(pr.Terms("f2"));
+		Assert.IsNotNull(pr.Terms("f3"));
+		Assert.IsNotNull(pr.Terms("f4"));
+		pr.Dispose();
 
 		// without overlapping
 		pr = new ParallelAtomicReader(true, new AtomicReader[] {ir2}, new AtomicReader[] {ir1});
-		Assert.AreEqual("v1", pr.document(0).get("f1"));
-		Assert.AreEqual("v1", pr.document(0).get("f2"));
-		assertNull(pr.document(0).get("f3"));
-		assertNull(pr.document(0).get("f4"));
+		Assert.AreEqual("v1", pr.Document(0).Get("f1"));
+		Assert.AreEqual("v1", pr.Document(0).Get("f2"));
+		Assert.IsNull(pr.Document(0).Get("f3"));
+		Assert.IsNull(pr.Document(0).Get("f4"));
 		// check that fields are there
-		assertNull(pr.terms("f1"));
-		assertNull(pr.terms("f2"));
-		Assert.IsNotNull(pr.terms("f3"));
-		Assert.IsNotNull(pr.terms("f4"));
-		pr.close();
+		Assert.IsNull(pr.Terms("f1"));
+		Assert.IsNull(pr.Terms("f2"));
+		Assert.IsNotNull(pr.Terms("f3"));
+		Assert.IsNotNull(pr.Terms("f4"));
+		pr.Dispose();
 
 		// no main readers
 		try
@@ -251,48 +252,48 @@ namespace Lucene.Net.Index
 		  // pass
 		}
 
-		dir1.close();
-		dir2.close();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  private void QueryTest(Query query)
 	  {
-		ScoreDoc[] parallelHits = Parallel_Renamed.search(query, null, 1000).scoreDocs;
-		ScoreDoc[] singleHits = Single_Renamed.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] parallelHits = Parallel_Renamed.Search(query, null, 1000).ScoreDocs;
+		ScoreDoc[] singleHits = Single_Renamed.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(parallelHits.Length, singleHits.Length);
 		for (int i = 0; i < parallelHits.Length; i++)
 		{
 		  Assert.AreEqual(parallelHits[i].score, singleHits[i].score, 0.001f);
-		  Document docParallel = Parallel_Renamed.doc(parallelHits[i].doc);
-		  Document docSingle = Single_Renamed.doc(singleHits[i].doc);
-		  Assert.AreEqual(docParallel.get("f1"), docSingle.get("f1"));
-		  Assert.AreEqual(docParallel.get("f2"), docSingle.get("f2"));
-		  Assert.AreEqual(docParallel.get("f3"), docSingle.get("f3"));
-		  Assert.AreEqual(docParallel.get("f4"), docSingle.get("f4"));
+		  Document docParallel = Parallel_Renamed.Doc(parallelHits[i].Doc);
+		  Document docSingle = Single_Renamed.Doc(singleHits[i].Doc);
+		  Assert.AreEqual(docParallel.Get("f1"), docSingle.Get("f1"));
+		  Assert.AreEqual(docParallel.Get("f2"), docSingle.Get("f2"));
+		  Assert.AreEqual(docParallel.Get("f3"), docSingle.Get("f3"));
+		  Assert.AreEqual(docParallel.Get("f4"), docSingle.Get("f4"));
 		}
 	  }
 
 	  // Fields 1-4 indexed together:
 	  private IndexSearcher Single(Random random)
 	  {
-		Dir = newDirectory();
-		IndexWriter w = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
+		Dir = NewDirectory();
+		IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
 		Document d1 = new Document();
-		d1.add(newTextField("f1", "v1", Field.Store.YES));
-		d1.add(newTextField("f2", "v1", Field.Store.YES));
-		d1.add(newTextField("f3", "v1", Field.Store.YES));
-		d1.add(newTextField("f4", "v1", Field.Store.YES));
-		w.addDocument(d1);
+		d1.Add(NewTextField("f1", "v1", Field.Store.YES));
+		d1.Add(NewTextField("f2", "v1", Field.Store.YES));
+		d1.Add(NewTextField("f3", "v1", Field.Store.YES));
+		d1.Add(NewTextField("f4", "v1", Field.Store.YES));
+		w.AddDocument(d1);
 		Document d2 = new Document();
-		d2.add(newTextField("f1", "v2", Field.Store.YES));
-		d2.add(newTextField("f2", "v2", Field.Store.YES));
-		d2.add(newTextField("f3", "v2", Field.Store.YES));
-		d2.add(newTextField("f4", "v2", Field.Store.YES));
-		w.addDocument(d2);
-		w.close();
+		d2.Add(NewTextField("f1", "v2", Field.Store.YES));
+		d2.Add(NewTextField("f2", "v2", Field.Store.YES));
+		d2.Add(NewTextField("f3", "v2", Field.Store.YES));
+		d2.Add(NewTextField("f4", "v2", Field.Store.YES));
+		w.AddDocument(d2);
+		w.Dispose();
 
-		DirectoryReader ir = DirectoryReader.open(Dir);
-		return newSearcher(ir);
+		DirectoryReader ir = DirectoryReader.Open(Dir);
+		return NewSearcher(ir);
 	  }
 
 	  // Fields 1 & 2 in one index, 3 & 4 in other, with ParallelReader:
@@ -300,40 +301,40 @@ namespace Lucene.Net.Index
 	  {
 		Dir1 = GetDir1(random);
 		Dir2 = GetDir2(random);
-		ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.wrap(DirectoryReader.open(Dir1)), SlowCompositeReaderWrapper.wrap(DirectoryReader.open(Dir2)));
-		TestUtil.checkReader(pr);
-		return newSearcher(pr);
+		ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Dir2)));
+		TestUtil.CheckReader(pr);
+		return NewSearcher(pr);
 	  }
 
 	  private Directory GetDir1(Random random)
 	  {
-		Directory dir1 = newDirectory();
-		IndexWriter w1 = new IndexWriter(dir1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
+		Directory dir1 = NewDirectory();
+		IndexWriter w1 = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
 		Document d1 = new Document();
-		d1.add(newTextField("f1", "v1", Field.Store.YES));
-		d1.add(newTextField("f2", "v1", Field.Store.YES));
-		w1.addDocument(d1);
+		d1.Add(NewTextField("f1", "v1", Field.Store.YES));
+		d1.Add(NewTextField("f2", "v1", Field.Store.YES));
+		w1.AddDocument(d1);
 		Document d2 = new Document();
-		d2.add(newTextField("f1", "v2", Field.Store.YES));
-		d2.add(newTextField("f2", "v2", Field.Store.YES));
-		w1.addDocument(d2);
-		w1.close();
+		d2.Add(NewTextField("f1", "v2", Field.Store.YES));
+		d2.Add(NewTextField("f2", "v2", Field.Store.YES));
+		w1.AddDocument(d2);
+		w1.Dispose();
 		return dir1;
 	  }
 
 	  private Directory GetDir2(Random random)
 	  {
-		Directory dir2 = newDirectory();
-		IndexWriter w2 = new IndexWriter(dir2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
+		Directory dir2 = NewDirectory();
+		IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
 		Document d3 = new Document();
-		d3.add(newTextField("f3", "v1", Field.Store.YES));
-		d3.add(newTextField("f4", "v1", Field.Store.YES));
-		w2.addDocument(d3);
+		d3.Add(NewTextField("f3", "v1", Field.Store.YES));
+		d3.Add(NewTextField("f4", "v1", Field.Store.YES));
+		w2.AddDocument(d3);
 		Document d4 = new Document();
-		d4.add(newTextField("f3", "v2", Field.Store.YES));
-		d4.add(newTextField("f4", "v2", Field.Store.YES));
-		w2.addDocument(d4);
-		w2.close();
+		d4.Add(NewTextField("f3", "v2", Field.Store.YES));
+		d4.Add(NewTextField("f4", "v2", Field.Store.YES));
+		w2.AddDocument(d4);
+		w2.Dispose();
 		return dir2;
 	  }
 

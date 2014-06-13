@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
 	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 	using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
-	using RollingBuffer = Lucene.Net.Util.RollingBuffer;
+	//using RollingBuffer = Lucene.Net.Util.RollingBuffer;
 
 	// TODO: cut SynFilter over to this
 	// TODO: somehow add "nuke this input token" capability...
@@ -39,7 +39,16 @@ namespace Lucene.Net.Analysis
 	///  position, restoring them, providing access to them, etc. 
 	/// </summary>
 
-	public abstract class LookaheadTokenFilter<T> : TokenFilter where T : LookaheadTokenFilter.Position
+    public static class LookaheadTokenFilter
+    {
+        public interface Position
+        {
+            void Add(AttributeSource.State state);
+        }
+    }
+
+	public abstract class LookaheadTokenFilter<T> : TokenFilter 
+        where T : LookaheadTokenFilter.Position
 	{
 
 	  private const bool DEBUG = false;
@@ -64,7 +73,7 @@ namespace Lucene.Net.Analysis
 	  /// Holds all state for a single position; subclass this
 	  ///  to record other state at each position. 
 	  /// </summary>
-	  protected internal class Position : RollingBuffer.Resettable
+	  protected internal class Position : Lucene.Net.Util.RollingBuffer.Resettable
 	  {
 		// Buffered input tokens at this position:
 		public readonly IList<AttributeSource.State> InputTokens = new List<AttributeSource.State>();
@@ -111,7 +120,7 @@ namespace Lucene.Net.Analysis
 	  {
 		if (TokenPending)
 		{
-		  positions.get(InputPos).add(CaptureState());
+		  positions.Get(InputPos).Add(CaptureState());
 		  TokenPending = false;
 		}
 		Debug.Assert(!InsertPending);
@@ -131,15 +140,15 @@ namespace Lucene.Net.Analysis
 
 	  protected internal abstract T NewPosition();
 
-	  protected internal readonly RollingBuffer positions = new RollingBufferAnonymousInnerClassHelper();
+      protected internal readonly Lucene.Net.Util.RollingBuffer<Position> positions = new RollingBufferAnonymousInnerClassHelper();
 
-	  private class RollingBufferAnonymousInnerClassHelper : RollingBuffer
+      private class RollingBufferAnonymousInnerClassHelper : Lucene.Net.Util.RollingBuffer<Position>
 	  {
 		  public RollingBufferAnonymousInnerClassHelper()
 		  {
 		  }
 
-		  protected internal override T NewInstance()
+          protected internal override Position NewInstance()
 		  {
 			return OuterInstance.NewPosition();
 		  }
@@ -157,7 +166,7 @@ namespace Lucene.Net.Analysis
 		Debug.Assert(InputPos == -1 || OutputPos <= InputPos);
 		if (TokenPending)
 		{
-		  positions.get(InputPos).add(CaptureState());
+		  positions.Get(InputPos).Add(CaptureState());
 		  TokenPending = false;
 		}
 		bool gotToken = Input.IncrementToken();
@@ -174,8 +183,8 @@ namespace Lucene.Net.Analysis
 			Console.WriteLine("  now inputPos=" + InputPos);
 		  }
 
-		  Position startPosData = positions.get(InputPos);
-		  Position endPosData = positions.get(InputPos + PosLenAtt.PositionLength);
+          Position startPosData = positions.Get(InputPos);
+          Position endPosData = positions.Get(InputPos + PosLenAtt.PositionLength);
 
 		  int startOffset = OffsetAtt.StartOffset();
 		  if (startPosData.StartOffset == -1)
@@ -222,7 +231,7 @@ namespace Lucene.Net.Analysis
 		  Console.WriteLine("LTF.nextToken inputPos=" + InputPos + " outputPos=" + OutputPos + " tokenPending=" + TokenPending);
 		}
 
-		Position posData = positions.get(OutputPos);
+        Position posData = positions.Get(OutputPos);
 
 		// While loop here in case we have to
 		// skip over a hole from the input:
@@ -245,10 +254,10 @@ namespace Lucene.Net.Analysis
 			// this position has buffered tokens to serve up:
 			if (TokenPending)
 			{
-			  positions.get(InputPos).add(CaptureState());
+			  positions.Get(InputPos).Add(CaptureState());
 			  TokenPending = false;
 			}
-			RestoreState(positions.get(OutputPos).nextState());
+            RestoreState(positions.Get(OutputPos).NextState());
 			//System.out.println("      return!");
 			return true;
 		  }
@@ -322,8 +331,8 @@ namespace Lucene.Net.Analysis
 			{
 			  Console.WriteLine("  next position: outputPos=" + OutputPos);
 			}
-			positions.freeBefore(OutputPos);
-			posData = positions.get(OutputPos);
+			positions.FreeBefore(OutputPos);
+			posData = positions.Get(OutputPos);
 		  }
 		}
 	  }
@@ -333,7 +342,7 @@ namespace Lucene.Net.Analysis
 	  private bool InsertedTokenConsistent()
 	  {
 		int posLen = PosLenAtt.PositionLength;
-		Position endPosData = positions.get(OutputPos + posLen);
+        Position endPosData = positions.Get(OutputPos + posLen);
 		Debug.Assert(endPosData.EndOffset != -1);
 		Debug.Assert(OffsetAtt.EndOffset() == endPosData.EndOffset, "offsetAtt.endOffset=" + OffsetAtt.EndOffset() + " vs expected=" + endPosData.EndOffset);
 		return true;
@@ -345,7 +354,7 @@ namespace Lucene.Net.Analysis
 	  public override void Reset()
 	  {
 		base.Reset();
-		positions.reset();
+		positions.Reset();
 		InputPos = -1;
 		OutputPos = 0;
 		TokenPending = false;

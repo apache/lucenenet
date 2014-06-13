@@ -3,27 +3,28 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using MergedIterator = Lucene.Net.Util.MergedIterator;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MergedIterator = Lucene.Net.Util.MergedIterator;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
 	public class TestPrefixCodedTerms : LuceneTestCase
 	{
@@ -31,7 +32,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestEmpty()
 	  {
 		PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
-		PrefixCodedTerms pb = b.finish();
+		PrefixCodedTerms pb = b.Finish();
 		Assert.IsFalse(pb.GetEnumerator().hasNext());
 	  }
 
@@ -39,31 +40,31 @@ namespace Lucene.Net.Index
 	  {
 		Term term = new Term("foo", "bogus");
 		PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
-		b.add(term);
-		PrefixCodedTerms pb = b.finish();
+		b.Add(term);
+		PrefixCodedTerms pb = b.Finish();
 		IEnumerator<Term> iterator = pb.GetEnumerator();
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsTrue(iterator.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual(term, iterator.next());
+		Assert.AreEqual(term, iterator.Next());
 	  }
 
 	  public virtual void TestRandom()
 	  {
 		Set<Term> terms = new SortedSet<Term>();
-		int nterms = atLeast(10000);
+		int nterms = AtLeast(10000);
 		for (int i = 0; i < nterms; i++)
 		{
-		  Term term = new Term(TestUtil.randomUnicodeString(random(), 2), TestUtil.randomUnicodeString(random()));
-		  terms.add(term);
+		  Term term = new Term(TestUtil.RandomUnicodeString(Random(), 2), TestUtil.RandomUnicodeString(Random()));
+		  terms.Add(term);
 		}
 
 		PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
 		foreach (Term @ref in terms)
 		{
-		  b.add(@ref);
+		  b.Add(@ref);
 		}
-		PrefixCodedTerms pb = b.finish();
+		PrefixCodedTerms pb = b.Finish();
 
 		IEnumerator<Term> expected = terms.GetEnumerator();
 		foreach (Term t in pb)
@@ -71,7 +72,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		  Assert.IsTrue(expected.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Assert.AreEqual(expected.next(), t);
+		  Assert.AreEqual(expected.Next(), t);
 		}
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsFalse(expected.hasNext());
@@ -83,49 +84,49 @@ namespace Lucene.Net.Index
 	  {
 		Term t1 = new Term("foo", "a");
 		PrefixCodedTerms.Builder b1 = new PrefixCodedTerms.Builder();
-		b1.add(t1);
-		PrefixCodedTerms pb1 = b1.finish();
+		b1.Add(t1);
+		PrefixCodedTerms pb1 = b1.Finish();
 
 		Term t2 = new Term("foo", "b");
 		PrefixCodedTerms.Builder b2 = new PrefixCodedTerms.Builder();
-		b2.add(t2);
-		PrefixCodedTerms pb2 = b2.finish();
+		b2.Add(t2);
+		PrefixCodedTerms pb2 = b2.Finish();
 
 		IEnumerator<Term> merged = new MergedIterator<Term>(pb1.GetEnumerator(), pb2.GetEnumerator());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsTrue(merged.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual(t1, merged.next());
+		Assert.AreEqual(t1, merged.Next());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsTrue(merged.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual(t2, merged.next());
+		Assert.AreEqual(t2, merged.Next());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) public void testMergeRandom()
 	  public virtual void TestMergeRandom()
 	  {
-		PrefixCodedTerms[] pb = new PrefixCodedTerms[TestUtil.Next(random(), 2, 10)];
+		PrefixCodedTerms[] pb = new PrefixCodedTerms[TestUtil.NextInt(Random(), 2, 10)];
 		Set<Term> superSet = new SortedSet<Term>();
 
 		for (int i = 0; i < pb.Length; i++)
 		{
 		  Set<Term> terms = new SortedSet<Term>();
-		  int nterms = TestUtil.Next(random(), 0, 10000);
+		  int nterms = TestUtil.NextInt(Random(), 0, 10000);
 		  for (int j = 0; j < nterms; j++)
 		  {
-			Term term = new Term(TestUtil.randomUnicodeString(random(), 2), TestUtil.randomUnicodeString(random(), 4));
-			terms.add(term);
+			Term term = new Term(TestUtil.RandomUnicodeString(Random(), 2), TestUtil.RandomUnicodeString(Random(), 4));
+			terms.Add(term);
 		  }
 		  superSet.addAll(terms);
 
 		  PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
 		  foreach (Term @ref in terms)
 		  {
-			b.add(@ref);
+			b.Add(@ref);
 		  }
-		  pb[i] = b.finish();
+		  pb[i] = b.DoFinish();
 		}
 
 		IList<IEnumerator<Term>> subs = new List<IEnumerator<Term>>();
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		  Assert.IsTrue(expected.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Assert.AreEqual(expected.next(), actual.Current);
+		  Assert.AreEqual(expected.Next(), actual.Current);
 		}
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsFalse(expected.hasNext());

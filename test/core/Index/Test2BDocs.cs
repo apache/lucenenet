@@ -22,8 +22,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class Test2BDocs : LuceneTestCase
 	{
@@ -33,30 +33,30 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Dir = newFSDirectory(createTempDir("2Bdocs"));
+		Dir = NewFSDirectory(CreateTempDir("2Bdocs"));
 		IndexWriter iw = new IndexWriter(Dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
 		Document doc = new Document();
 		for (int i = 0; i < 262144; i++)
 		{
-		  iw.addDocument(doc);
+		  iw.AddDocument(doc);
 		}
-		iw.forceMerge(1);
-		iw.close();
+		iw.ForceMerge(1);
+		iw.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Dir.close();
+		Dir.Dispose();
 		Dir = null;
 	  }
 
 	  public virtual void TestOverflow()
 	  {
-		DirectoryReader ir = DirectoryReader.open(Dir);
+		DirectoryReader ir = DirectoryReader.Open(Dir);
 		IndexReader[] subReaders = new IndexReader[8192];
-		Arrays.fill(subReaders, ir);
+		Arrays.Fill(subReaders, ir);
 		try
 		{
 		  new MultiReader(subReaders);
@@ -66,30 +66,30 @@ namespace Lucene.Net.Index
 		{
 		  // expected
 		}
-		ir.close();
+		ir.Dispose();
 	  }
 
 	  public virtual void TestExactlyAtLimit()
 	  {
-		Directory dir2 = newFSDirectory(createTempDir("2BDocs2"));
+		Directory dir2 = NewFSDirectory(CreateTempDir("2BDocs2"));
 		IndexWriter iw = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
 		Document doc = new Document();
 		for (int i = 0; i < 262143; i++)
 		{
-		  iw.addDocument(doc);
+		  iw.AddDocument(doc);
 		}
-		iw.close();
-		DirectoryReader ir = DirectoryReader.open(Dir);
-		DirectoryReader ir2 = DirectoryReader.open(dir2);
+		iw.Dispose();
+		DirectoryReader ir = DirectoryReader.Open(Dir);
+		DirectoryReader ir2 = DirectoryReader.Open(dir2);
 		IndexReader[] subReaders = new IndexReader[8192];
-		Arrays.fill(subReaders, ir);
+		Arrays.Fill(subReaders, ir);
 		subReaders[subReaders.Length - 1] = ir2;
 		MultiReader mr = new MultiReader(subReaders);
-		Assert.AreEqual(int.MaxValue, mr.maxDoc());
-		Assert.AreEqual(int.MaxValue, mr.numDocs());
-		ir.close();
-		ir2.close();
-		dir2.close();
+		Assert.AreEqual(int.MaxValue, mr.MaxDoc());
+		Assert.AreEqual(int.MaxValue, mr.NumDocs());
+		ir.Dispose();
+		ir2.Dispose();
+		dir2.Dispose();
 	  }
 	}
 

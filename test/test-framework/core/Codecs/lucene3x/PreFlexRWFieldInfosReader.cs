@@ -18,17 +18,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 	 */
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
 	using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
 	using SegmentInfo = Lucene.Net.Index.SegmentInfo;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
+    using System.Collections.Generic;
 
 	/// <summary>
 	/// @lucene.internal
@@ -40,12 +41,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override FieldInfos Read(Directory directory, string segmentName, string segmentSuffix, IOContext iocontext)
 	  {
-		string fileName = IndexFileNames.segmentFileName(segmentName, "", PreFlexRWFieldInfosWriter.FIELD_INFOS_EXTENSION);
-		IndexInput input = directory.openInput(fileName, iocontext);
+		string fileName = IndexFileNames.SegmentFileName(segmentName, "", PreFlexRWFieldInfosWriter.FIELD_INFOS_EXTENSION);
+		IndexInput input = directory.OpenInput(fileName, iocontext);
 
 		try
 		{
-		  int format = input.readVInt();
+		  int format = input.ReadVInt();
 
 		  if (format > FORMAT_MINIMUM)
 		  {
@@ -56,19 +57,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 			throw new IndexFormatTooNewException(input, format, FORMAT_MINIMUM, PreFlexRWFieldInfosWriter.FORMAT_CURRENT);
 		  }
 
-		  int size = input.readVInt(); //read in the size
+          int size = input.ReadVInt(); //read in the size
 		  FieldInfo[] infos = new FieldInfo[size];
 
 		  for (int i = 0; i < size; i++)
 		  {
-			string name = input.readString();
-			int fieldNumber = format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW ? input.readInt() : i;
-			sbyte bits = input.readByte();
+			string name = input.ReadString();
+			int fieldNumber = format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW ? input.ReadInt() : i;
+			byte bits = input.ReadByte();
 			bool isIndexed = (bits & PreFlexRWFieldInfosWriter.IS_INDEXED) != 0;
 			bool storeTermVector = (bits & PreFlexRWFieldInfosWriter.STORE_TERMVECTOR) != 0;
 			bool omitNorms = (bits & PreFlexRWFieldInfosWriter.OMIT_NORMS) != 0;
 			bool storePayloads = (bits & PreFlexRWFieldInfosWriter.STORE_PAYLOADS) != 0;
-			FieldInfo.IndexOptions_e indexOptions;
+			FieldInfo.IndexOptions_e? indexOptions;
 			if (!isIndexed)
 			{
 			  indexOptions = null;
@@ -101,31 +102,31 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  storePayloads = false;
 			}
 
-			DocValuesType_e normType = isIndexed && !omitNorms ? DocValuesType.NUMERIC : null;
+            DocValuesType_e? normType = isIndexed && !omitNorms ? (DocValuesType_e?)DocValuesType_e.NUMERIC : null;
 			if (format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW && normType != null)
 			{
 			  // RW can have norms but doesn't write them
-			  normType = input.readByte() != 0 ? DocValuesType.NUMERIC : null;
+			  normType = input.ReadByte() != 0 ? (DocValuesType_e?)DocValuesType_e.NUMERIC : null;
 			}
 
 			infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, normType, null);
 		  }
 
-		  if (input.FilePointer != input.length())
+		  if (input.FilePointer != input.Length())
 		  {
-			throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.length() + " (resource: " + input + ")");
+			throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length() + " (resource: " + input + ")");
 		  }
 		  return new FieldInfos(infos);
 		}
 		finally
 		{
-		  input.close();
+		  input.Dispose();
 		}
 	  }
 
-	  public static void Files(Directory dir, SegmentInfo info, Set<string> files)
+	  public static void Files(Directory dir, SegmentInfo info, ISet<string> files)
 	  {
-		files.add(IndexFileNames.segmentFileName(info.name, "", PreFlexRWFieldInfosWriter.FIELD_INFOS_EXTENSION));
+		files.Add(IndexFileNames.SegmentFileName(info.Name, "", PreFlexRWFieldInfosWriter.FIELD_INFOS_EXTENSION));
 	  }
 	}
 

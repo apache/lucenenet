@@ -33,6 +33,8 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using System.IO;
 
 	/// <summary>
 	/// Tests lazy skipping on the proximity file.
@@ -52,14 +54,14 @@ namespace Lucene.Net.Index
 		{
 			private readonly TestLazyProxSkipping OuterInstance;
 
-		  public SeekCountingDirectory(TestLazyProxSkipping outerInstance, Directory @delegate) : base(random(), @delegate)
+		  public SeekCountingDirectory(TestLazyProxSkipping outerInstance, Directory @delegate) : base(Random(), @delegate)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
 		  public override IndexInput OpenInput(string name, IOContext context)
 		  {
-			IndexInput ii = base.openInput(name, context);
+			IndexInput ii = base.OpenInput(name, context);
 			if (name.EndsWith(".prx") || name.EndsWith(".pos"))
 			{
 			  // we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
@@ -77,7 +79,7 @@ namespace Lucene.Net.Index
 			Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 			Directory directory = new SeekCountingDirectory(this, new RAMDirectory());
 			// note: test explicitly disables payloads
-			IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy(false)));
+			IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false)));
 
 			for (int i = 0; i < numDocs; i++)
 			{
@@ -99,17 +101,17 @@ namespace Lucene.Net.Index
 					content = this.Term3 + " " + this.Term2;
 				}
 
-				doc.add(newTextField(this.Field, content, Field.Store.YES));
-				writer.addDocument(doc);
+				doc.Add(NewTextField(this.Field, content, Lucene.Net.Document.Field.Store.YES));
+				writer.AddDocument(doc);
 			}
 
 			// make sure the index has only a single segment
-			writer.forceMerge(1);
-			writer.close();
+			writer.ForceMerge(1);
+			writer.Dispose();
 
-		  SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(directory));
+		  SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(directory));
 
-		  this.Searcher = newSearcher(reader);
+		  this.Searcher = NewSearcher(reader);
 		}
 
 		private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -121,7 +123,7 @@ namespace Lucene.Net.Index
 				this.OuterInstance = outerInstance;
 			}
 
-			public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+			public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 			{
 			  return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
 			}
@@ -131,9 +133,9 @@ namespace Lucene.Net.Index
 		{
 			// create PhraseQuery "term1 term2" and search
 			PhraseQuery pq = new PhraseQuery();
-			pq.add(new Term(this.Field, this.Term1));
-			pq.add(new Term(this.Field, this.Term2));
-			return this.Searcher.search(pq, null, 1000).scoreDocs;
+			pq.Add(new Term(this.Field, this.Term1));
+			pq.Add(new Term(this.Field, this.Term2));
+			return this.Searcher.Search(pq, null, 1000).ScoreDocs;
 		}
 
 		private void PerformTest(int numHits)
@@ -146,16 +148,16 @@ namespace Lucene.Net.Index
 
 			// check if the number of calls of seek() does not exceed the number of hits
 			Assert.IsTrue(this.SeeksCounter > 0);
-			Assert.IsTrue("seeksCounter=" + this.SeeksCounter + " numHits=" + numHits, this.SeeksCounter <= numHits + 1);
-			Searcher.IndexReader.close();
+			Assert.IsTrue(this.SeeksCounter <= numHits + 1, "seeksCounter=" + this.SeeksCounter + " numHits=" + numHits);
+			Searcher.IndexReader.Dispose();
 		}
 
 		public virtual void TestLazySkipping()
 		{
-		  string fieldFormat = TestUtil.getPostingsFormat(this.Field);
-		  assumeFalse("this test cannot run with Memory postings format", fieldFormat.Equals("Memory"));
-		  assumeFalse("this test cannot run with Direct postings format", fieldFormat.Equals("Direct"));
-		  assumeFalse("this test cannot run with SimpleText postings format", fieldFormat.Equals("SimpleText"));
+		  string fieldFormat = TestUtil.GetPostingsFormat(this.Field);
+		  AssumeFalse("this test cannot run with Memory postings format", fieldFormat.Equals("Memory"));
+		  AssumeFalse("this test cannot run with Direct postings format", fieldFormat.Equals("Direct"));
+		  AssumeFalse("this test cannot run with SimpleText postings format", fieldFormat.Equals("SimpleText"));
 
 			// test whether only the minimum amount of seeks()
 			// are performed
@@ -165,37 +167,37 @@ namespace Lucene.Net.Index
 
 		public virtual void TestSeek()
 		{
-			Directory directory = newDirectory();
-			IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+			Directory directory = NewDirectory();
+			IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 			for (int i = 0; i < 10; i++)
 			{
 				Document doc = new Document();
-				doc.add(newTextField(this.Field, "a b", Field.Store.YES));
-				writer.addDocument(doc);
+				doc.Add(NewTextField(this.Field, "a b", Lucene.Net.Document.Field.Store.YES));
+				writer.AddDocument(doc);
 			}
 
-			writer.close();
-			IndexReader reader = DirectoryReader.open(directory);
+			writer.Dispose();
+			IndexReader reader = DirectoryReader.Open(directory);
 
-			DocsAndPositionsEnum tp = MultiFields.getTermPositionsEnum(reader, MultiFields.getLiveDocs(reader), this.Field, new BytesRef("b"));
+			DocsAndPositionsEnum tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), this.Field, new BytesRef("b"));
 
 			for (int i = 0; i < 10; i++)
 			{
-				tp.nextDoc();
-				Assert.AreEqual(tp.docID(), i);
-				Assert.AreEqual(tp.nextPosition(), 1);
+				tp.NextDoc();
+				Assert.AreEqual(tp.DocID(), i);
+				Assert.AreEqual(tp.NextPosition(), 1);
 			}
 
-			tp = MultiFields.getTermPositionsEnum(reader, MultiFields.getLiveDocs(reader), this.Field, new BytesRef("a"));
+			tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), this.Field, new BytesRef("a"));
 
 			for (int i = 0; i < 10; i++)
 			{
-				tp.nextDoc();
-				Assert.AreEqual(tp.docID(), i);
-				Assert.AreEqual(tp.nextPosition(), 0);
+				tp.NextDoc();
+				Assert.AreEqual(tp.DocID(), i);
+				Assert.AreEqual(tp.NextPosition(), 0);
 			}
-			reader.close();
-			directory.close();
+			reader.Dispose();
+			directory.Dispose();
 
 		}
 
@@ -209,25 +211,26 @@ namespace Lucene.Net.Index
 			  internal IndexInput Input;
 
 
-			  internal SeeksCountingStream(TestLazyProxSkipping outerInstance, IndexInput input) : base("SeekCountingStream(" + input + ")")
+			  internal SeeksCountingStream(TestLazyProxSkipping outerInstance, IndexInput input) 
+                  : base("SeekCountingStream(" + input + ")")
 			  {
 				  this.OuterInstance = outerInstance;
 				  this.Input = input;
 			  }
 
-			  public override sbyte ReadByte()
+			  public override byte ReadByte()
 			  {
-				  return this.Input.readByte();
+				  return this.Input.ReadByte();
 			  }
 
-			  public override void ReadBytes(sbyte[] b, int offset, int len)
+			  public override void ReadBytes(byte[] b, int offset, int len)
 			  {
-				  this.Input.readBytes(b, offset, len);
+				  this.Input.ReadBytes(b, offset, len);
 			  }
 
 			  public override void Close()
 			  {
-				  this.Input.close();
+				  this.Input.Dispose();
 			  }
 
 			  public override long FilePointer
@@ -241,17 +244,17 @@ namespace Lucene.Net.Index
 			  public override void Seek(long pos)
 			  {
 				  OuterInstance.SeeksCounter++;
-				  this.Input.seek(pos);
+				  this.Input.Seek(pos);
 			  }
 
 			  public override long Length()
 			  {
-				  return this.Input.length();
+				  return this.Input.Length();
 			  }
 
 			  public override SeeksCountingStream Clone()
 			  {
-				  return new SeeksCountingStream(OuterInstance, this.Input.clone());
+				  return new SeeksCountingStream(OuterInstance, (IndexInput)this.Input.Clone());
 			  }
 
 		}

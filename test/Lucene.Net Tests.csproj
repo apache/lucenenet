@@ -45,6 +45,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="core\App.config" />
     <None Include="core\Lucene.Net.snk" />
     <None Include="core\Test.nunit" />
@@ -647,9 +648,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestUniqueTermCount.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestWordlistLoader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\RectangularArrays.cs">
@@ -1480,12 +1478,6 @@
     <Compile Include="test-framework\core\Codecs\asserting\AssertingTermVectorsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test-framework\core\Codecs\bloom\TestBloomFilteredLucene41Postings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\cheapbastard\CheapBastardCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="test-framework\core\Codecs\compressing\CompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1573,9 +1565,6 @@
     <Compile Include="test-framework\core\Codecs\lucene40\Lucene40SkipListWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test-framework\core\Codecs\lucene41ords\Lucene41WithOrds.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="test-framework\core\Codecs\lucene41\Lucene41RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1595,30 +1584,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test-framework\core\Codecs\MissingOrdRemapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mockintblock\MockFixedIntBlockPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mockintblock\MockVariableIntBlockPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mockrandom\MockRandomPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mocksep\MockSepPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mocksep\MockSingleIntFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mocksep\MockSingleIntIndexInput.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\mocksep\MockSingleIntIndexOutput.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Codecs\nestedpulsing\NestedPulsingPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test-framework\core\Codecs\ramonly\RAMOnlyPostingsFormat.cs">
@@ -1817,9 +1782,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test-framework\core\Util\LineFileDocs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="test-framework\core\Util\LuceneJUnit3MethodProvider.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test-framework\core\Util\LuceneTestCase.cs">

@@ -21,7 +21,7 @@
 
 using System;
 using Lucene.Net.Analysis;
-using Lucene.Net.Documents;
+using Lucene.Net.Document;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -59,8 +59,8 @@ namespace Lucene.Net.Support
 
             System.Threading.Tasks.Parallel.For(0, LoopCount, (i) =>
                                                                   {
-                                                                      analyzers[i].Close();
-                                                                      indexWriters[i].Close();
+                                                                      analyzers[i].Dispose();
+                                                                      indexWriters[i].Dispose();
                                                                   });
 
             System.Threading.Tasks.Parallel.For(0, LoopCount, (i) =>
@@ -70,7 +70,7 @@ namespace Lucene.Net.Support
                                                                       searcher.Close();
                                                                   });
 
-            System.Threading.Tasks.Parallel.For(0, LoopCount, (i) => dirs[i].Close());
+            System.Threading.Tasks.Parallel.For(0, LoopCount, (i) => dirs[i].Dispose());
 
             GC.Collect(GC.MaxGeneration);
             GC.WaitForPendingFinalizers();

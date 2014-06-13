@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
 	  {
-		return new PreFlexRWStoredFieldsWriter(directory, segmentInfo.name, context);
+		return new PreFlexRWStoredFieldsWriter(directory, segmentInfo.Name, context);
 	  }
 	}
 

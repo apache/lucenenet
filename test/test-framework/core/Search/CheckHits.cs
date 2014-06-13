@@ -5,29 +5,28 @@ using System.Text;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    using System.IO;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
-
-	using Assert = junit.framework.Assert;
-
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 	/// <summary>
 	/// Utility class for asserting expected hits in tests.
@@ -59,23 +58,23 @@ namespace Lucene.Net.Search
 	  {
 
 		string d = q.ToString(defaultFieldName);
-		Set<int?> ignore = new SortedSet<int?>();
+		SortedSet<int?> ignore = new SortedSet<int?>();
 		for (int i = 0; i < results.Length; i++)
 		{
-		  ignore.add(Convert.ToInt32(results[i]));
+		  ignore.Add(Convert.ToInt32(results[i]));
 		}
 
-		int maxDoc = searcher.IndexReader.maxDoc();
+		int maxDoc = searcher.IndexReader.MaxDoc();
 		for (int doc = 0; doc < maxDoc; doc++)
 		{
-		  if (ignore.contains(Convert.ToInt32(doc)))
+		  if (ignore.Contains(Convert.ToInt32(doc)))
 		  {
 			  continue;
 		  }
 
-		  Explanation exp = searcher.explain(q, doc);
-		  Assert.Assert.IsNotNull("Explanation of [[" + d + "]] for #" + doc + " is null", exp);
-		  Assert.Assert.IsFalse("Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString(), exp.Match);
+		  Explanation exp = searcher.Explain(q, doc);
+		  Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
+		  Assert.IsFalse(exp.Match, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
 		}
 
 	  }
@@ -98,23 +97,23 @@ namespace Lucene.Net.Search
 
 		QueryUtils.Check(random,query,searcher);
 
-		Set<int?> correct = new SortedSet<int?>();
+		SortedSet<int?> correct = new SortedSet<int?>();
 		for (int i = 0; i < results.Length; i++)
 		{
-		  correct.add(Convert.ToInt32(results[i]));
+		  correct.Add(Convert.ToInt32(results[i]));
 		}
-		Set<int?> actual = new SortedSet<int?>();
+        SortedSet<int?> actual = new SortedSet<int?>();
 		Collector c = new SetCollector(actual);
 
-		searcher.search(query, c);
-		Assert.Assert.AreEqual("Simple: " + query.ToString(defaultFieldName), correct, actual);
+		searcher.Search(query, c);
+		Assert.AreEqual("Simple: " + query.ToString(defaultFieldName), correct, actual);
 
 		for (int i = -1; i < 2; i++)
 		{
-		  actual.clear();
+		  actual.Clear();
 		  IndexSearcher s = QueryUtils.WrapUnderlyingReader(random, searcher, i);
-		  s.search(query, c);
-		  Assert.Assert.AreEqual("Wrap Reader " + i + ": " + query.ToString(defaultFieldName), correct, actual);
+		  s.Search(query, c);
+		  Assert.AreEqual("Wrap Reader " + i + ": " + query.ToString(defaultFieldName), correct, actual);
 		}
 	  }
 
@@ -123,8 +122,8 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public class SetCollector : Collector
 	  {
-		internal readonly Set<int?> Bag;
-		public SetCollector(Set<int?> bag)
+		internal readonly ISet<int?> Bag;
+		public SetCollector(ISet<int?> bag)
 		{
 		  this.Bag = bag;
 		}
@@ -137,13 +136,13 @@ namespace Lucene.Net.Search
 		}
 		public override void Collect(int doc)
 		{
-		  Bag.add(Convert.ToInt32(doc + @base));
+		  Bag.Add(Convert.ToInt32(doc + @base));
 		}
 		public override AtomicReaderContext NextReader
 		{
 			set
 			{
-			  @base = value.docBase;
+			  @base = value.DocBase;
 			}
 		}
 		public override bool AcceptsDocsOutOfOrder()
@@ -167,21 +166,21 @@ namespace Lucene.Net.Search
 	  public static void CheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
 	  {
 
-		ScoreDoc[] hits = searcher.search(query, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 
-		Set<int?> correct = new SortedSet<int?>();
+        SortedSet<int?> correct = new SortedSet<int?>();
 		for (int i = 0; i < results.Length; i++)
 		{
-		  correct.add(Convert.ToInt32(results[i]));
+		  correct.Add(Convert.ToInt32(results[i]));
 		}
 
-		Set<int?> actual = new SortedSet<int?>();
+        SortedSet<int?> actual = new SortedSet<int?>();
 		for (int i = 0; i < hits.Length; i++)
 		{
-		  actual.add(Convert.ToInt32(hits[i].doc));
+		  actual.Add(Convert.ToInt32(hits[i].Doc));
 		}
 
-		Assert.Assert.AreEqual(query.ToString(defaultFieldName), correct, actual);
+		Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 
 		QueryUtils.Check(random, query,searcher, LuceneTestCase.Rarely(random));
 	  }
@@ -190,10 +189,10 @@ namespace Lucene.Net.Search
 	  /// Tests that a Hits has an expected order of documents </summary>
 	  public static void CheckDocIds(string mes, int[] results, ScoreDoc[] hits)
 	  {
-		Assert.Assert.AreEqual(mes + " nr of hits", hits.Length, results.Length);
+		Assert.AreEqual(hits.Length, results.Length, mes + " nr of hits");
 		for (int i = 0; i < results.Length; i++)
 		{
-		  Assert.Assert.AreEqual(mes + " doc nrs for hit " + i, results[i], hits[i].doc);
+		  Assert.AreEqual(results[i], hits[i].Doc, mes + " doc nrs for hit " + i);
 		}
 	  }
 
@@ -214,18 +213,18 @@ namespace Lucene.Net.Search
 		 const float scoreTolerance = 1.0e-6f;
 		 if (hits1.Length != hits2.Length)
 		 {
-		   Assert.Assert.Fail("Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
+		   Assert.Fail("Unequal lengths: hits1=" + hits1.Length + ",hits2=" + hits2.Length);
 		 }
 		for (int i = 0; i < hits1.Length; i++)
 		{
-		  if (hits1[i].doc != hits2[i].doc)
+		  if (hits1[i].Doc != hits2[i].Doc)
 		  {
-			Assert.Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2,0,0) + "for query:" + query.ToString());
+			Assert.Fail("Hit " + i + " docnumbers don't match\n" + Hits2str(hits1, hits2,0,0) + "for query:" + query.ToString());
 		  }
 
-		  if ((hits1[i].doc != hits2[i].doc) || Math.Abs(hits1[i].score - hits2[i].score) > scoreTolerance)
+		  if ((hits1[i].Doc != hits2[i].Doc) || Math.Abs(hits1[i].Score - hits2[i].Score) > scoreTolerance)
 		  {
-			Assert.Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].doc + " and " + hits2[i].doc + "\nunequal       : " + hits1[i].score + "\n           and: " + hits2[i].score + "\nfor query:" + query.ToString());
+			Assert.Fail("Hit " + i + ", doc nrs " + hits1[i].Doc + " and " + hits2[i].Doc + "\nunequal       : " + hits1[i].Score + "\n           and: " + hits2[i].Score + "\nfor query:" + query.ToString());
 		  }
 		}
 	  }
@@ -248,7 +247,7 @@ namespace Lucene.Net.Search
 			sb.Append("hit=").Append(i).Append(':');
 		  if (i < len1)
 		  {
-			  sb.Append(" doc").Append(hits1[i].doc).Append('=').Append(hits1[i].score);
+			  sb.Append(" doc").Append(hits1[i].Doc).Append('=').Append(hits1[i].Score);
 		  }
 		  else
 		  {
@@ -257,7 +256,7 @@ namespace Lucene.Net.Search
 		  sb.Append(",\t");
 		  if (i < len2)
 		  {
-			sb.Append(" doc").Append(hits2[i].doc).Append('=').Append(hits2[i].score);
+			sb.Append(" doc").Append(hits2[i].Doc).Append('=').Append(hits2[i].Score);
 		  }
 		  sb.Append('\n');
 		}
@@ -268,23 +267,23 @@ namespace Lucene.Net.Search
 	  public static string TopdocsString(TopDocs docs, int start, int end)
 	  {
 		StringBuilder sb = new StringBuilder();
-		  sb.Append("TopDocs totalHits=").Append(docs.totalHits).Append(" top=").Append(docs.scoreDocs.length).Append('\n');
+		  sb.Append("TopDocs totalHits=").Append(docs.TotalHits).Append(" top=").Append(docs.ScoreDocs.Length).Append('\n');
 		if (end <= 0)
 		{
-			end = docs.scoreDocs.length;
+			end = docs.ScoreDocs.Length;
 		}
 		else
 		{
-			end = Math.Min(end,docs.scoreDocs.length);
+			end = Math.Min(end,docs.ScoreDocs.Length);
 		}
 		for (int i = start; i < end; i++)
 		{
 		  sb.Append('\t');
 		  sb.Append(i);
 		  sb.Append(") doc=");
-		  sb.Append(docs.scoreDocs[i].doc);
+		  sb.Append(docs.ScoreDocs[i].Doc);
 		  sb.Append("\tscore=");
-		  sb.Append(docs.scoreDocs[i].score);
+		  sb.Append(docs.ScoreDocs[i].Score);
 		  sb.Append('\n');
 		}
 		return sb.ToString();
@@ -319,7 +318,7 @@ namespace Lucene.Net.Search
 	  public static void CheckExplanations(Query query, string defaultFieldName, IndexSearcher searcher, bool deep)
 	  {
 
-		searcher.search(query, new ExplanationAsserter(query, defaultFieldName, searcher, deep));
+		searcher.Search(query, new ExplanationAsserter(query, defaultFieldName, searcher, deep));
 
 	  }
 
@@ -344,7 +343,7 @@ namespace Lucene.Net.Search
 	  public static void VerifyExplanation(string q, int doc, float score, bool deep, Explanation expl)
 	  {
 		float value = expl.Value;
-		Assert.Assert.AreEqual(q + ": score(doc=" + doc + ")=" + score + " != explanationScore=" + value + " Explanation: " + expl, score,value,ExplainToleranceDelta(score, value));
+		Assert.AreEqual(q + ": score(doc=" + doc + ")=" + score + " != explanationScore=" + value + " Explanation: " + expl, score,value,ExplainToleranceDelta(score, value));
 
 		if (!deep)
 		{
@@ -395,13 +394,13 @@ namespace Lucene.Net.Search
 					maxTimesOthers = true;
 				  }
 				}
-				catch (NumberFormatException e)
+				catch (FormatException e)
 				{
 				}
 			  }
 			}
 			// TODO: this is a TERRIBLE assertion!!!!
-			Assert.Assert.IsTrue(q + ": multi valued explanation description=\"" + descr + "\" must be 'max of plus x times others' or end with 'product of'" + " or 'sum of:' or 'max of:' - " + expl, productOf || sumOf || maxOf || maxTimesOthers);
+			Assert.IsTrue(productOf || sumOf || maxOf || maxTimesOthers, q + ": multi valued explanation description=\"" + descr + "\" must be 'max of plus x times others' or end with 'product of'" + " or 'sum of:' or 'max of:' - " + expl);
 			float sum = 0;
 			float product = 1;
 			float max = 0;
@@ -432,9 +431,9 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-				Assert.Assert.IsTrue("should never get here!",false);
+				Assert.IsTrue(false, "should never get here!");
 			}
-			Assert.Assert.AreEqual(q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl, combined,value,ExplainToleranceDelta(combined, value));
+			Assert.AreEqual(q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl, combined,value,ExplainToleranceDelta(combined, value));
 		  }
 		}
 	  }
@@ -451,29 +450,29 @@ namespace Lucene.Net.Search
 		}
 		protected internal virtual void CheckExplanations(Query q)
 		{
-		  base.search(q, null, new ExplanationAsserter(q, null, this));
+		  base.Search(q, null, new ExplanationAsserter(q, null, this));
 		}
 		public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
 		{
 
 		  CheckExplanations(query);
-		  return base.search(query,filter,n,sort);
+		  return base.Search(query,filter,n,sort);
 		}
 		public override void Search(Query query, Collector results)
 		{
 		  CheckExplanations(query);
-		  base.search(query, results);
+		  base.Search(query, results);
 		}
 		public override void Search(Query query, Filter filter, Collector results)
 		{
 		  CheckExplanations(query);
-		  base.search(query, filter, results);
+		  base.Search(query, filter, results);
 		}
 		public override TopDocs Search(Query query, Filter filter, int n)
 		{
 
 		  CheckExplanations(query);
-		  return base.search(query,filter, n);
+		  return base.Search(query,filter, n);
 		}
 	  }
 
@@ -523,22 +522,22 @@ namespace Lucene.Net.Search
 		  doc = doc + @base;
 		  try
 		  {
-			exp = s.explain(q, doc);
+			exp = s.Explain(q, doc);
 		  }
 		  catch (IOException e)
 		  {
 			throw new Exception("exception in hitcollector of [[" + d + "]] for #" + doc, e);
 		  }
 
-		  Assert.Assert.IsNotNull("Explanation of [[" + d + "]] for #" + doc + " is null", exp);
-		  VerifyExplanation(d,doc,Scorer_Renamed.score(),Deep,exp);
-		  Assert.Assert.IsTrue("Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString(), exp.Match);
+		  Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
+		  VerifyExplanation(d,doc,Scorer_Renamed.Score(),Deep,exp);
+		  Assert.IsTrue("Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString(), exp.Match);
 		}
 		public override AtomicReaderContext NextReader
 		{
 			set
 			{
-			  @base = value.docBase;
+			  @base = value.DocBase;
 			}
 		}
 		public override bool AcceptsDocsOutOfOrder()

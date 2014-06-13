@@ -30,6 +30,7 @@ namespace Lucene.Net.Analysis
 	//using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
     using System.IO;
     using Lucene.Net.Support;
+    using Lucene.Net.Randomized;
 
 	/// <summary>
 	/// Tokenizer for testing.
@@ -91,9 +92,9 @@ namespace Lucene.Net.Analysis
 	  private bool EnableChecks_Renamed = true;
 
 	  // evil: but we don't change the behavior with this random, we only switch up how we read
-	  private readonly Random Random = new Random(RandomizedContext.current().Random.nextLong());
+	  private readonly Random Random = new Random(/*RandomizedContext.Current.Random.nextLong()*/);
 
-      public MockTokenizer(AttributeFactory factory, StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength) 
+      public MockTokenizer(AttributeFactory factory, TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength) 
           : base(factory, input)
 	  {
 		this.RunAutomaton = runAutomaton;
@@ -103,18 +104,18 @@ namespace Lucene.Net.Analysis
 		this.MaxTokenLength = maxTokenLength;
 	  }
 
-      public MockTokenizer(StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
+      public MockTokenizer(TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
           : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, input, runAutomaton, lowerCase, maxTokenLength)
 	  {
 	  }
 
-      public MockTokenizer(StreamReader input, CharacterRunAutomaton runAutomaton, bool lowerCase)
+      public MockTokenizer(TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase)
           : this(input, runAutomaton, lowerCase, DEFAULT_MAX_TOKEN_LENGTH)
 	  {
 	  }
 	  /// <summary>
 	  /// Calls <seealso cref="#MockTokenizer(Reader, CharacterRunAutomaton, boolean) MockTokenizer(Reader, WHITESPACE, true)"/> </summary>
-      public MockTokenizer(StreamReader input)
+      public MockTokenizer(TextReader input)
           : this(input, WHITESPACE, true)
 	  {
 	  }
@@ -236,13 +237,13 @@ namespace Lucene.Net.Analysis
 
 	  protected internal virtual int ReadChar()
 	  {
-		switch (Random.Next(10))
+		switch (Random.Next(0, 10))
 		{
 		  case 0:
 		  {
 			// read(char[])
 			char[] c = new char[1];
-			int ret = Input.Read(c);
+			int ret = Input.Read(c, 0, c.Length);
 			return ret < 0 ? ret : c[0];
 		  }
 		  case 1:
@@ -252,6 +253,7 @@ namespace Lucene.Net.Analysis
 			int ret = Input.Read(c, 1, 1);
 			return ret < 0 ? ret : c[1];
 		  }
+        /* LUCENE TO-DO not sure if needed, CharBuffer not supported
 		  case 2:
 		  {
 			// read(CharBuffer)
@@ -259,7 +261,7 @@ namespace Lucene.Net.Analysis
 			CharBuffer cb = CharBuffer.Wrap(c);
 			int ret = Input.Read(cb);
 			return ret < 0 ? ret : c[0];
-		  }
+		  }*/
 		  default:
 			// read()
 			return Input.Read();
@@ -285,7 +287,7 @@ namespace Lucene.Net.Analysis
 
 	  protected internal virtual int Normalize(int c)
 	  {
-		return LowerCase ? char.ToLower(c) : c;
+		return LowerCase ? Character.ToLowerCase(c) : c;
 	  }
 
 	  public override void Reset()

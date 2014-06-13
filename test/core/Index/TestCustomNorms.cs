@@ -34,6 +34,8 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -46,45 +48,45 @@ namespace Lucene.Net.Index
 	  public virtual void TestFloatNorms()
 	  {
 
-		Directory dir = newDirectory();
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		Directory dir = NewDirectory();
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 		Similarity provider = new MySimProvider(this);
-		config.Similarity = provider;
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, config);
-		LineFileDocs docs = new LineFileDocs(random());
-		int num = atLeast(100);
+		config.SetSimilarity(provider);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, config);
+		LineFileDocs docs = new LineFileDocs(Random());
+		int num = AtLeast(100);
 		for (int i = 0; i < num; i++)
 		{
-		  Document doc = docs.nextDoc();
-		  float nextFloat = random().nextFloat();
+		  Document doc = docs.NextDoc();
+		  float nextFloat = Random().nextFloat();
 		  Field f = new TextField(FloatTestField, "" + nextFloat, Field.Store.YES);
 		  f.Boost = nextFloat;
 
-		  doc.add(f);
-		  writer.addDocument(doc);
-		  doc.removeField(FloatTestField);
-		  if (rarely())
+		  doc.Add(f);
+		  writer.AddDocument(doc);
+		  doc.RemoveField(FloatTestField);
+		  if (Rarely())
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 		}
-		writer.commit();
-		writer.close();
-		AtomicReader open = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir));
-		NumericDocValues norms = open.getNormValues(FloatTestField);
+		writer.Commit();
+        writer.Close();
+		AtomicReader open = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
+		NumericDocValues norms = open.GetNormValues(FloatTestField);
 		Assert.IsNotNull(norms);
-		for (int i = 0; i < open.maxDoc(); i++)
+		for (int i = 0; i < open.MaxDoc(); i++)
 		{
-		  Document document = open.document(i);
-		  float expected = Convert.ToSingle(document.get(FloatTestField));
-		  Assert.AreEqual(expected, float.intBitsToFloat((int)norms.get(i)), 0.0f);
+		  Document document = open.Document(i);
+		  float expected = Convert.ToSingle(document.Get(FloatTestField));
+		  Assert.AreEqual(expected, Number.IntBitsToFloat((int)norms.Get(i)), 0.0f);
 		}
-		open.close();
-		dir.close();
-		docs.close();
+		open.Dispose();
+		dir.Dispose();
+        docs.Close();
 	  }
 
 	  public class MySimProvider : PerFieldSimilarityWrapper
@@ -100,12 +102,12 @@ namespace Lucene.Net.Index
 
 		public override float QueryNorm(float sumOfSquaredWeights)
 		{
-		  return @delegate.queryNorm(sumOfSquaredWeights);
+		  return @delegate.QueryNorm(sumOfSquaredWeights);
 		}
 
 		public override Similarity Get(string field)
 		{
-		  if (outerInstance.FloatTestField.Equals(field))
+		  if (OuterInstance.FloatTestField.Equals(field))
 		  {
 			return new FloatEncodingBoostSimilarity();
 		  }
@@ -117,7 +119,7 @@ namespace Lucene.Net.Index
 
 		public override float Coord(int overlap, int maxOverlap)
 		{
-		  return @delegate.coord(overlap, maxOverlap);
+		  return @delegate.Coord(overlap, maxOverlap);
 		}
 	  }
 
@@ -126,7 +128,7 @@ namespace Lucene.Net.Index
 
 		public override long ComputeNorm(FieldInvertState state)
 		{
-		  return float.floatToIntBits(state.Boost);
+		  return Number.FloatToIntBits(state.Boost);
 		}
 
 		public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)

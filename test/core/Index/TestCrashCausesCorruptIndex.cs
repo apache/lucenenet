@@ -34,18 +34,20 @@ namespace Lucene.Net.Index
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using System.IO;
 
 	public class TestCrashCausesCorruptIndex : LuceneTestCase
 	{
 
-	  internal File Path;
+	  internal DirectoryInfo Path;
 
 	  /// <summary>
 	  /// LUCENE-3627: this test fails.
 	  /// </summary>
 	  public virtual void TestCrashCorruptsIndexing()
 	  {
-		Path = createTempDir("testCrashCorruptsIndexing");
+		Path = CreateTempDir("testCrashCorruptsIndexing");
 
 		IndexAndCrashOnCreateOutputSegments2();
 
@@ -63,23 +65,23 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  private void IndexAndCrashOnCreateOutputSegments2()
 	  {
-		Directory realDirectory = FSDirectory.open(Path);
+		Directory realDirectory = FSDirectory.Open(Path);
 		CrashAfterCreateOutput crashAfterCreateOutput = new CrashAfterCreateOutput(realDirectory);
 
 		// NOTE: cannot use RandomIndexWriter because it
 		// sometimes commits:
-		IndexWriter indexWriter = new IndexWriter(crashAfterCreateOutput, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter indexWriter = new IndexWriter(crashAfterCreateOutput, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
-		indexWriter.addDocument(Document);
+		indexWriter.AddDocument(Document);
 		// writes segments_1:
-		indexWriter.commit();
+		indexWriter.Commit();
 
 		crashAfterCreateOutput.CrashAfterCreateOutput = "segments_2";
-		indexWriter.addDocument(Document);
+		indexWriter.AddDocument(Document);
 		try
 		{
 		  // tries to write segments_2 but hits fake exc:
-		  indexWriter.commit();
+		  indexWriter.Commit();
 		  Assert.Fail("should have hit CrashingException");
 		}
 		catch (CrashingException e)
@@ -87,9 +89,9 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 		// writes segments_3
-		indexWriter.close();
-		Assert.IsFalse(slowFileExists(realDirectory, "segments_2"));
-		crashAfterCreateOutput.close();
+		indexWriter.Dispose();
+		Assert.IsFalse(SlowFileExists(realDirectory, "segments_2"));
+		crashAfterCreateOutput.Dispose();
 	  }
 
 	  /// <summary>
@@ -97,19 +99,19 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  private void IndexAfterRestart()
 	  {
-		Directory realDirectory = newFSDirectory(Path);
+		Directory realDirectory = NewFSDirectory(Path);
 
 		// LUCENE-3627 (before the fix): this line fails because
 		// it doesn't know what to do with the created but empty
 		// segments_2 file
-		IndexWriter indexWriter = new IndexWriter(realDirectory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter indexWriter = new IndexWriter(realDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		// currently the test fails above.
 		// however, to test the fix, the following lines should pass as well.
-		indexWriter.addDocument(Document);
-		indexWriter.close();
-		Assert.IsFalse(slowFileExists(realDirectory, "segments_2"));
-		realDirectory.close();
+		indexWriter.AddDocument(Document);
+		indexWriter.Dispose();
+		Assert.IsFalse(SlowFileExists(realDirectory, "segments_2"));
+		realDirectory.Dispose();
 	  }
 
 	  /// <summary>
@@ -117,14 +119,14 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  private void SearchForFleas(int expectedTotalHits)
 	  {
-		Directory realDirectory = newFSDirectory(Path);
-		IndexReader indexReader = DirectoryReader.open(realDirectory);
-		IndexSearcher indexSearcher = newSearcher(indexReader);
-		TopDocs topDocs = indexSearcher.search(new TermQuery(new Term(TEXT_FIELD, "fleas")), 10);
+		Directory realDirectory = NewFSDirectory(Path);
+		IndexReader indexReader = DirectoryReader.Open(realDirectory);
+		IndexSearcher indexSearcher = NewSearcher(indexReader);
+		TopDocs topDocs = indexSearcher.Search(new TermQuery(new Term(TEXT_FIELD, "fleas")), 10);
 		Assert.IsNotNull(topDocs);
-		Assert.AreEqual(expectedTotalHits, topDocs.totalHits);
-		indexReader.close();
-		realDirectory.close();
+		Assert.AreEqual(expectedTotalHits, topDocs.TotalHits);
+		indexReader.Dispose();
+		realDirectory.Dispose();
 	  }
 
 	  private const string TEXT_FIELD = "text";
@@ -137,7 +139,7 @@ namespace Lucene.Net.Index
 		  get
 		  {
 			Document document = new Document();
-			document.add(newTextField(TEXT_FIELD, "my dog has fleas", Field.Store.NO));
+			document.Add(NewTextField(TEXT_FIELD, "my dog has fleas", Field.Store.NO));
 			return document;
 		  }
 	  }
@@ -155,7 +157,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// this test class provides direct access to "simulating" a crash right after 
-	  /// realDirectory.createOutput(..) has been called on a certain specified name.
+	  /// realDirectory.CreateOutput(..) has been called on a certain specified name.
 	  /// </summary>
 	  private class CrashAfterCreateOutput : FilterDirectory
 	  {
@@ -177,15 +179,15 @@ namespace Lucene.Net.Index
 
 		public override IndexOutput CreateOutput(string name, IOContext cxt)
 		{
-		  IndexOutput indexOutput = @in.createOutput(name, cxt);
+		  IndexOutput indexOutput = @in.CreateOutput(name, cxt);
 		  if (null != CrashAfterCreateOutput_Renamed && name.Equals(CrashAfterCreateOutput_Renamed))
 		  {
 			// CRASH!
-			indexOutput.close();
+			indexOutput.Dispose();
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: now crash");
-			  (new Exception()).printStackTrace(System.out);
+              Console.WriteLine(new Exception().StackTrace);
 			}
 			throw new CrashingException("crashAfterCreateOutput " + CrashAfterCreateOutput_Renamed);
 		  }

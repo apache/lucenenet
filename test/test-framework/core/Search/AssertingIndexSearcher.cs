@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// Helper class that adds some extra checks to ensure correct
@@ -98,7 +99,7 @@ namespace Lucene.Net.Search
 
 	  protected internal override Query WrapFilter(Query query, Filter filter)
 	  {
-		if (Random.nextBoolean())
+		if (Random.NextBoolean())
 		{
 		  return base.WrapFilter(query, filter);
 		}

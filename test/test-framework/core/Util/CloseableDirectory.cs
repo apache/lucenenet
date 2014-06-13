@@ -1,6 +1,7 @@
 namespace Lucene.Net.Util
 {
 
+    using NUnit.Framework;
     using System;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
@@ -46,7 +47,7 @@ namespace Lucene.Net.Util
 		{
 		  if (FailureMarker.WasSuccessful() && Dir.Open)
 		  {
-			Assert.Assert.Fail("Directory not closed: " + Dir);
+			Assert.Fail("Directory not closed: " + Dir);
 		  }
 		}
 		finally

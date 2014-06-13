@@ -18,21 +18,22 @@ namespace Lucene.Net.Analysis
 	 * limitations under the License.
 	 */
 
-	using CharTermAttributeImpl = Lucene.Net.Analysis.Tokenattributes.CharTermAttributeImpl;
+	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 
 	/// <summary>
 	/// Extension of <seealso cref="CharTermAttributeImpl"/> that encodes the term
 	/// text as UTF-16 bytes instead of as UTF-8 bytes.
 	/// </summary>
-	public class MockUTF16TermAttributeImpl : CharTermAttributeImpl
+	public class MockUTF16TermAttributeImpl : CharTermAttribute
 	{
-	  internal static readonly Charset Charset = Charset.forName("UTF-16LE");
+	  //internal static readonly Charset Charset = Charset.forName("UTF-16LE");
+        internal static readonly System.Text.Encoding Charset = System.Text.Encoding.Unicode;
 
 	  public override void FillBytesRef()
 	  {
 		BytesRef bytes = BytesRef;
-		sbyte[] utf16 = ToString().getBytes(Charset);
+		sbyte[] utf16 = ToString().GetBytes(Charset);
 		bytes.Bytes = utf16;
 		bytes.Offset = 0;
 		bytes.Length = utf16.Length;

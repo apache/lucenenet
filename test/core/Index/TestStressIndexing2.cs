@@ -21,7 +21,6 @@ namespace Lucene.Net.Index
 	/// </summary>
 
 
-	using Assert = junit.framework.Assert;
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
@@ -29,11 +28,14 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using TermQuery = Lucene.Net.Search.TermQuery;
 	using Directory = Lucene.Net.Store.Directory;
 	using Lucene.Net.Util;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestStressIndexing2 : LuceneTestCase
 	{
@@ -57,69 +59,69 @@ namespace Lucene.Net.Index
 		public override void Apply(string name)
 		{
 		  //      if (name.equals("startCommit")) {
-		  if (random().Next(4) == 2)
+		  if (Random().Next(4) == 2)
 		  {
-			Thread.@yield();
+			Thread.@Yield();
 		  }
 		}
 	  }
 	//  
 	  public virtual void TestRandomIWReader()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		// TODO: verify equals using IW.getReader
 		DocsAndWriter dw = IndexRandomIWReader(5, 3, 100, dir);
 		DirectoryReader reader = dw.Writer.Reader;
-		dw.Writer.commit();
-		VerifyEquals(random(), reader, dir, "id");
-		reader.close();
-		dw.Writer.close();
-		dir.close();
+		dw.Writer.Commit();
+		VerifyEquals(Random(), reader, dir, "id");
+		reader.Dispose();
+		dw.Writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestRandom()
 	  {
-		Directory dir1 = newDirectory();
-		Directory dir2 = newDirectory();
+		Directory dir1 = NewDirectory();
+		Directory dir2 = NewDirectory();
 		// mergeFactor=2; maxBufferedDocs=2; Map docs = indexRandom(1, 3, 2, dir1);
-		int maxThreadStates = 1 + random().Next(10);
-		bool doReaderPooling = random().nextBoolean();
+		int maxThreadStates = 1 + Random().Next(10);
+		bool doReaderPooling = Random().NextBoolean();
 		IDictionary<string, Document> docs = IndexRandom(5, 3, 100, dir1, maxThreadStates, doReaderPooling);
-		IndexSerial(random(), docs, dir2);
+		IndexSerial(Random(), docs, dir2);
 
 		// verifying verify
 		// verifyEquals(dir1, dir1, "id");
 		// verifyEquals(dir2, dir2, "id");
 
 		VerifyEquals(dir1, dir2, "id");
-		dir1.close();
-		dir2.close();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestMultiConfig()
 	  {
 		// test lots of smaller different params together
 
-		int num = atLeast(3);
+		int num = AtLeast(3);
 		for (int i = 0; i < num; i++) // increase iterations for better testing
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("\n\nTEST: top iter=" + i);
 		  }
-		  SameFieldOrder = random().nextBoolean();
-		  MergeFactor = random().Next(3) + 2;
-		  MaxBufferedDocs = random().Next(3) + 2;
-		  int maxThreadStates = 1 + random().Next(10);
-		  bool doReaderPooling = random().nextBoolean();
+		  SameFieldOrder = Random().NextBoolean();
+		  MergeFactor = Random().Next(3) + 2;
+		  MaxBufferedDocs = Random().Next(3) + 2;
+		  int maxThreadStates = 1 + Random().Next(10);
+		  bool doReaderPooling = Random().NextBoolean();
 		  Seed++;
 
-		  int nThreads = random().Next(5) + 1;
-		  int iter = random().Next(5) + 1;
-		  int range = random().Next(20) + 1;
-		  Directory dir1 = newDirectory();
-		  Directory dir2 = newDirectory();
+		  int nThreads = Random().Next(5) + 1;
+		  int iter = Random().Next(5) + 1;
+		  int range = Random().Next(20) + 1;
+		  Directory dir1 = NewDirectory();
+		  Directory dir2 = NewDirectory();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("  nThreads=" + nThreads + " iter=" + iter + " range=" + range + " doPooling=" + doReaderPooling + " maxThreadStates=" + maxThreadStates + " sameFieldOrder=" + SameFieldOrder + " mergeFactor=" + MergeFactor + " maxBufferedDocs=" + MaxBufferedDocs);
@@ -129,14 +131,14 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("TEST: index serial");
 		  }
-		  IndexSerial(random(), docs, dir2);
+		  IndexSerial(Random(), docs, dir2);
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: verify");
 		  }
 		  VerifyEquals(dir1, dir2, "id");
-		  dir1.close();
-		  dir2.close();
+		  dir1.Dispose();
+		  dir2.Dispose();
 		}
 	  }
 
@@ -153,7 +155,7 @@ namespace Lucene.Net.Index
 
 		  public virtual int Compare(IndexableField o1, IndexableField o2)
 		  {
-			return o1.name().compareTo(o2.name());
+			return o1.Name().CompareTo(o2.Name());
 		  }
 	  }
 
@@ -170,8 +172,8 @@ namespace Lucene.Net.Index
 	  public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
 	  {
 		IDictionary<string, Document> docs = new Dictionary<string, Document>();
-		IndexWriter w = RandomIndexWriter.mockIndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setRAMBufferSizeMB(0.1).setMaxBufferedDocs(MaxBufferedDocs).setMergePolicy(newLogMergePolicy()), new YieldTestPoint(this));
-		w.commit();
+		IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+		w.Commit();
 		LogMergePolicy lmp = (LogMergePolicy) w.Config.MergePolicy;
 		lmp.NoCFSRatio = 0.0;
 		lmp.MergeFactor = MergeFactor;
@@ -179,7 +181,7 @@ namespace Lucene.Net.Index
 		///*
 		///    w.setMaxMergeDocs(Integer.MAX_VALUE);
 		///    w.setMaxFieldLength(10000);
-		///    w.setRAMBufferSizeMB(1);
+		///    w.SetRAMBufferSizeMB(1);
 		///    w.setMergeFactor(10);
 		/// **
 		/// </summary>
@@ -204,20 +206,19 @@ namespace Lucene.Net.Index
 		  Threads[i].Join();
 		}
 
-		// w.forceMerge(1);
-		//w.close();    
+		// w.ForceMerge(1);
+		//w.Dispose();    
 
 		for (int i = 0; i < Threads.Length; i++)
 		{
 		  IndexingThread th = Threads[i];
 		  lock (th)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
-			docs.putAll(th.Docs);
+			docs.PutAll(th.Docs);
 		  }
 		}
 
-		TestUtil.checkIndex(dir);
+		TestUtil.CheckIndex(dir);
 		DocsAndWriter dw = new DocsAndWriter();
 		dw.Docs = docs;
 		dw.Writer = w;
@@ -227,7 +228,7 @@ namespace Lucene.Net.Index
 	  public virtual IDictionary<string, Document> IndexRandom(int nThreads, int iterations, int range, Directory dir, int maxThreadStates, bool doReaderPooling)
 	  {
 		IDictionary<string, Document> docs = new Dictionary<string, Document>();
-		IndexWriter w = RandomIndexWriter.mockIndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setRAMBufferSizeMB(0.1).setMaxBufferedDocs(MaxBufferedDocs).setIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).setReaderPooling(doReaderPooling).setMergePolicy(newLogMergePolicy()), new YieldTestPoint(this));
+		IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).setReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
 		LogMergePolicy lmp = (LogMergePolicy) w.Config.MergePolicy;
 		lmp.NoCFSRatio = 0.0;
 		lmp.MergeFactor = MergeFactor;
@@ -252,21 +253,20 @@ namespace Lucene.Net.Index
 		  Threads[i].Join();
 		}
 
-		//w.forceMerge(1);
-		w.close();
+		//w.ForceMerge(1);
+		w.Dispose();
 
 		for (int i = 0; i < Threads.Length; i++)
 		{
 		  IndexingThread th = Threads[i];
 		  lock (th)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
-			docs.putAll(th.Docs);
+			docs.PutAll(th.Docs);
 		  }
 		}
 
 		//System.out.println("TEST: checkindex");
-		TestUtil.checkIndex(dir);
+		TestUtil.CheckIndex(dir);
 
 		return docs;
 	  }
@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
 
 	  public static void IndexSerial(Random random, IDictionary<string, Document> docs, Directory dir)
 	  {
-		IndexWriter w = new IndexWriter(dir, LuceneTestCase.newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).setMergePolicy(newLogMergePolicy()));
+		IndexWriter w = new IndexWriter(dir, LuceneTestCase.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
 
 		// index all docs in a single thread
 		IEnumerator<Document> iter = docs.Values.GetEnumerator();
@@ -289,49 +289,49 @@ namespace Lucene.Net.Index
 		  Document d1 = new Document();
 		  for (int i = 0; i < fields.Count; i++)
 		  {
-			d1.add(fields[i]);
+			d1.Add(fields[i]);
 		  }
-		  w.addDocument(d1);
+		  w.AddDocument(d1);
 		  // System.out.println("indexing "+d1);
 		}
 
-		w.close();
+		w.Dispose();
 	  }
 
 	  public virtual void VerifyEquals(Random r, DirectoryReader r1, Directory dir2, string idField)
 	  {
-		DirectoryReader r2 = DirectoryReader.open(dir2);
+		DirectoryReader r2 = DirectoryReader.Open(dir2);
 		VerifyEquals(r1, r2, idField);
-		r2.close();
+		r2.Dispose();
 	  }
 
 	  public virtual void VerifyEquals(Directory dir1, Directory dir2, string idField)
 	  {
-		DirectoryReader r1 = DirectoryReader.open(dir1);
-		DirectoryReader r2 = DirectoryReader.open(dir2);
+		DirectoryReader r1 = DirectoryReader.Open(dir1);
+		DirectoryReader r2 = DirectoryReader.Open(dir2);
 		VerifyEquals(r1, r2, idField);
-		r1.close();
-		r2.close();
+		r1.Dispose();
+		r2.Dispose();
 	  }
 
 	  private static void PrintDocs(DirectoryReader r)
 	  {
-		foreach (AtomicReaderContext ctx in r.leaves())
+		foreach (AtomicReaderContext ctx in r.Leaves())
 		{
 		  // TODO: improve this
-		  AtomicReader sub = ctx.reader();
+		  AtomicReader sub = (AtomicReader)ctx.Reader();
 		  Bits liveDocs = sub.LiveDocs;
 		  Console.WriteLine("  " + ((SegmentReader) sub).SegmentInfo);
-		  for (int docID = 0;docID < sub.maxDoc();docID++)
+		  for (int docID = 0;docID < sub.MaxDoc();docID++)
 		  {
-			Document doc = sub.document(docID);
-			if (liveDocs == null || liveDocs.get(docID))
+			Document doc = sub.Document(docID);
+			if (liveDocs == null || liveDocs.Get(docID))
 			{
-			  Console.WriteLine("    docID=" + docID + " id:" + doc.get("id"));
+			  Console.WriteLine("    docID=" + docID + " id:" + doc.Get("id"));
 			}
 			else
 			{
-			  Console.WriteLine("    DEL docID=" + docID + " id:" + doc.get("id"));
+			  Console.WriteLine("    DEL docID=" + docID + " id:" + doc.Get("id"));
 			}
 		  }
 		}
@@ -347,113 +347,113 @@ namespace Lucene.Net.Index
 		  Console.WriteLine("\nr2 docs:");
 		  PrintDocs(r2);
 		}
-		if (r1.numDocs() != r2.numDocs())
+		if (r1.NumDocs() != r2.NumDocs())
 		{
-		  Debug.Assert(false, "r1.numDocs()=" + r1.numDocs() + " vs r2.numDocs()=" + r2.numDocs());
+		  Debug.Assert(false, "r1.NumDocs()=" + r1.NumDocs() + " vs r2.NumDocs()=" + r2.NumDocs());
 		}
-		bool hasDeletes = !(r1.maxDoc() == r2.maxDoc() && r1.numDocs() == r1.maxDoc());
+		bool hasDeletes = !(r1.MaxDoc() == r2.MaxDoc() && r1.NumDocs() == r1.MaxDoc());
 
-		int[] r2r1 = new int[r2.maxDoc()]; // r2 id to r1 id mapping
+		int[] r2r1 = new int[r2.MaxDoc()]; // r2 id to r1 id mapping
 
 		// create mapping from id2 space to id2 based on idField
-		Fields f1 = MultiFields.getFields(r1);
+		Fields f1 = MultiFields.GetFields(r1);
 		if (f1 == null)
 		{
 		  // make sure r2 is empty
-		  assertNull(MultiFields.getFields(r2));
+		  Assert.IsNull(MultiFields.GetFields(r2));
 		  return;
 		}
-		Terms terms1 = f1.terms(idField);
+		Terms terms1 = f1.Terms(idField);
 		if (terms1 == null)
 		{
-		  Assert.IsTrue(MultiFields.getFields(r2) == null || MultiFields.getFields(r2).terms(idField) == null);
+		  Assert.IsTrue(MultiFields.GetFields(r2) == null || MultiFields.GetFields(r2).Terms(idField) == null);
 		  return;
 		}
-		TermsEnum termsEnum = terms1.iterator(null);
+		TermsEnum termsEnum = terms1.Iterator(null);
 
-		Bits liveDocs1 = MultiFields.getLiveDocs(r1);
-		Bits liveDocs2 = MultiFields.getLiveDocs(r2);
+		Bits liveDocs1 = MultiFields.GetLiveDocs(r1);
+		Bits liveDocs2 = MultiFields.GetLiveDocs(r2);
 
-		Fields fields = MultiFields.getFields(r2);
+		Fields fields = MultiFields.GetFields(r2);
 		if (fields == null)
 		{
 		  // make sure r1 is in fact empty (eg has only all
 		  // deleted docs):
-		  Bits liveDocs = MultiFields.getLiveDocs(r1);
+		  Bits liveDocs = MultiFields.GetLiveDocs(r1);
 		  DocsEnum docs = null;
-		  while (termsEnum.next() != null)
+		  while (termsEnum.Next() != null)
 		  {
-			docs = TestUtil.docs(random(), termsEnum, liveDocs, docs, DocsEnum.FLAG_NONE);
-			while (docs.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			docs = TestUtil.Docs(Random(), termsEnum, liveDocs, docs, DocsEnum.FLAG_NONE);
+			while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 			{
 			  Assert.Fail("r1 is not empty but r2 is");
 			}
 		  }
 		  return;
 		}
-		Terms terms2 = fields.terms(idField);
-		TermsEnum termsEnum2 = terms2.iterator(null);
+		Terms terms2 = fields.Terms(idField);
+		TermsEnum termsEnum2 = terms2.Iterator(null);
 
 		DocsEnum termDocs1 = null;
 		DocsEnum termDocs2 = null;
 
 		while (true)
 		{
-		  BytesRef term = termsEnum.next();
+		  BytesRef term = termsEnum.Next();
 		  //System.out.println("TEST: match id term=" + term);
 		  if (term == null)
 		  {
 			break;
 		  }
 
-		  termDocs1 = TestUtil.docs(random(), termsEnum, liveDocs1, termDocs1, DocsEnum.FLAG_NONE);
-		  if (termsEnum2.seekExact(term))
+		  termDocs1 = TestUtil.Docs(Random(), termsEnum, liveDocs1, termDocs1, DocsEnum.FLAG_NONE);
+		  if (termsEnum2.SeekExact(term))
 		  {
-			termDocs2 = TestUtil.docs(random(), termsEnum2, liveDocs2, termDocs2, DocsEnum.FLAG_NONE);
+			termDocs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, termDocs2, DocsEnum.FLAG_NONE);
 		  }
 		  else
 		  {
 			termDocs2 = null;
 		  }
 
-		  if (termDocs1.nextDoc() == DocIdSetIterator.NO_MORE_DOCS)
+		  if (termDocs1.NextDoc() == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			// this doc is deleted and wasn't replaced
-			Assert.IsTrue(termDocs2 == null || termDocs2.nextDoc() == DocIdSetIterator.NO_MORE_DOCS);
+			Assert.IsTrue(termDocs2 == null || termDocs2.NextDoc() == DocIdSetIterator.NO_MORE_DOCS);
 			continue;
 		  }
 
-		  int id1 = termDocs1.docID();
-		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, termDocs1.nextDoc());
+		  int id1 = termDocs1.DocID();
+		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, termDocs1.NextDoc());
 
-		  Assert.IsTrue(termDocs2.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		  int id2 = termDocs2.docID();
-		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, termDocs2.nextDoc());
+		  Assert.IsTrue(termDocs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		  int id2 = termDocs2.DocID();
+		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, termDocs2.NextDoc());
 
 		  r2r1[id2] = id1;
 
 		  // verify stored fields are equivalent
 		  try
 		  {
-			VerifyEquals(r1.document(id1), r2.document(id2));
+			VerifyEquals(r1.Document(id1), r2.Document(id2));
 		  }
 		  catch (Exception t)
 		  {
 			Console.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2 + " term=" + term);
-			Console.WriteLine("  d1=" + r1.document(id1));
-			Console.WriteLine("  d2=" + r2.document(id2));
+			Console.WriteLine("  d1=" + r1.Document(id1));
+			Console.WriteLine("  d2=" + r2.Document(id2));
 			throw t;
 		  }
 
 		  try
 		  {
 			// verify term vectors are equivalent        
-			VerifyEquals(r1.getTermVectors(id1), r2.getTermVectors(id2));
+			VerifyEquals(r1.GetTermVectors(id1), r2.GetTermVectors(id2));
 		  }
 		  catch (Exception e)
 		  {
 			Console.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2);
-			Fields tv1 = r1.getTermVectors(id1);
+			Fields tv1 = r1.GetTermVectors(id1);
 			Console.WriteLine("  d1=" + tv1);
 			if (tv1 != null)
 			{
@@ -462,37 +462,37 @@ namespace Lucene.Net.Index
 			  foreach (string field in tv1)
 			  {
 				Console.WriteLine("    " + field + ":");
-				Terms terms3 = tv1.terms(field);
+				Terms terms3 = tv1.Terms(field);
 				Assert.IsNotNull(terms3);
-				TermsEnum termsEnum3 = terms3.iterator(null);
+				TermsEnum termsEnum3 = terms3.Iterator(null);
 				BytesRef term2;
-				while ((term2 = termsEnum3.next()) != null)
+				while ((term2 = termsEnum3.Next()) != null)
 				{
-				  Console.WriteLine("      " + term2.utf8ToString() + ": freq=" + termsEnum3.totalTermFreq());
-				  dpEnum = termsEnum3.docsAndPositions(null, dpEnum);
+				  Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq());
+				  dpEnum = termsEnum3.DocsAndPositions(null, dpEnum);
 				  if (dpEnum != null)
 				  {
-					Assert.IsTrue(dpEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-					int freq = dpEnum.freq();
-					Console.WriteLine("        doc=" + dpEnum.docID() + " freq=" + freq);
+					Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+					int freq = dpEnum.Freq();
+					Console.WriteLine("        doc=" + dpEnum.DocID() + " freq=" + freq);
 					for (int posUpto = 0;posUpto < freq;posUpto++)
 					{
-					  Console.WriteLine("          pos=" + dpEnum.nextPosition());
+					  Console.WriteLine("          pos=" + dpEnum.NextPosition());
 					}
 				  }
 				  else
 				  {
-					dEnum = TestUtil.docs(random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
+					dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
 					Assert.IsNotNull(dEnum);
-					Assert.IsTrue(dEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-					int freq = dEnum.freq();
-					Console.WriteLine("        doc=" + dEnum.docID() + " freq=" + freq);
+					Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+					int freq = dEnum.Freq();
+					Console.WriteLine("        doc=" + dEnum.DocID() + " freq=" + freq);
 				  }
 				}
 			  }
 			}
 
-			Fields tv2 = r2.getTermVectors(id2);
+			Fields tv2 = r2.GetTermVectors(id2);
 			Console.WriteLine("  d2=" + tv2);
 			if (tv2 != null)
 			{
@@ -501,31 +501,31 @@ namespace Lucene.Net.Index
 			  foreach (string field in tv2)
 			  {
 				Console.WriteLine("    " + field + ":");
-				Terms terms3 = tv2.terms(field);
+				Terms terms3 = tv2.Terms(field);
 				Assert.IsNotNull(terms3);
-				TermsEnum termsEnum3 = terms3.iterator(null);
+				TermsEnum termsEnum3 = terms3.Iterator(null);
 				BytesRef term2;
-				while ((term2 = termsEnum3.next()) != null)
+				while ((term2 = termsEnum3.Next()) != null)
 				{
-				  Console.WriteLine("      " + term2.utf8ToString() + ": freq=" + termsEnum3.totalTermFreq());
-				  dpEnum = termsEnum3.docsAndPositions(null, dpEnum);
+				  Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq());
+				  dpEnum = termsEnum3.DocsAndPositions(null, dpEnum);
 				  if (dpEnum != null)
 				  {
-					Assert.IsTrue(dpEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-					int freq = dpEnum.freq();
-					Console.WriteLine("        doc=" + dpEnum.docID() + " freq=" + freq);
+					Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+					int freq = dpEnum.Freq();
+					Console.WriteLine("        doc=" + dpEnum.DocID() + " freq=" + freq);
 					for (int posUpto = 0;posUpto < freq;posUpto++)
 					{
-					  Console.WriteLine("          pos=" + dpEnum.nextPosition());
+					  Console.WriteLine("          pos=" + dpEnum.NextPosition());
 					}
 				  }
 				  else
 				  {
-					dEnum = TestUtil.docs(random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
+					dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
 					Assert.IsNotNull(dEnum);
-					Assert.IsTrue(dEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-					int freq = dEnum.freq();
-					Console.WriteLine("        doc=" + dEnum.docID() + " freq=" + freq);
+					Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+					int freq = dEnum.Freq();
+					Console.WriteLine("        doc=" + dEnum.DocID() + " freq=" + freq);
 				  }
 				}
 			  }
@@ -539,9 +539,9 @@ namespace Lucene.Net.Index
 
 		// Verify postings
 		//System.out.println("TEST: create te1");
-		Fields fields1 = MultiFields.getFields(r1);
+		Fields fields1 = MultiFields.GetFields(r1);
 		IEnumerator<string> fields1Enum = fields1.GetEnumerator();
-		Fields fields2 = MultiFields.getFields(r2);
+		Fields fields2 = MultiFields.GetFields(r2);
 		IEnumerator<string> fields2Enum = fields2.GetEnumerator();
 
 
@@ -551,8 +551,8 @@ namespace Lucene.Net.Index
 		DocsEnum docs1 = null, docs2 = null;
 
 		// pack both doc and freq into single element for easy sorting
-		long[] info1 = new long[r1.numDocs()];
-		long[] info2 = new long[r2.numDocs()];
+		long[] info1 = new long[r1.NumDocs()];
+		long[] info2 = new long[r2.NumDocs()];
 
 		for (;;)
 		{
@@ -565,21 +565,19 @@ namespace Lucene.Net.Index
 			len1 = 0;
 			if (termsEnum1 == null)
 			{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  if (!fields1Enum.hasNext())
+			  if (!fields1Enum.MoveNext())
 			  {
 				break;
 			  }
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  field1 = fields1Enum.next();
-			  Terms terms = fields1.terms(field1);
+			  field1 = fields1Enum.Current;
+			  Terms terms = fields1.Terms(field1);
 			  if (terms == null)
 			  {
 				continue;
 			  }
-			  termsEnum1 = terms.iterator(null);
+			  termsEnum1 = terms.Iterator(null);
 			}
-			term1 = termsEnum1.next();
+			term1 = termsEnum1.Next();
 			if (term1 == null)
 			{
 			  // no more terms in this field
@@ -588,11 +586,11 @@ namespace Lucene.Net.Index
 			}
 
 			//System.out.println("TEST: term1=" + term1);
-			docs1 = TestUtil.docs(random(), termsEnum1, liveDocs1, docs1, DocsEnum.FLAG_FREQS);
-			while (docs1.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			docs1 = TestUtil.Docs(Random(), termsEnum1, liveDocs1, docs1, DocsEnum.FLAG_FREQS);
+			while (docs1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 			{
-			  int d = docs1.docID();
-			  int f = docs1.freq();
+			  int d = docs1.DocID();
+			  int f = docs1.Freq();
 			  info1[len1] = (((long)d) << 32) | f;
 			  len1++;
 			}
@@ -609,21 +607,19 @@ namespace Lucene.Net.Index
 			len2 = 0;
 			if (termsEnum2 == null)
 			{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  if (!fields2Enum.hasNext())
+			  if (!fields2Enum.MoveNext())
 			  {
 				break;
 			  }
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  field2 = fields2Enum.next();
-			  Terms terms = fields2.terms(field2);
+			  field2 = fields2Enum.Current;
+			  Terms terms = fields2.Terms(field2);
 			  if (terms == null)
 			  {
 				continue;
 			  }
-			  termsEnum2 = terms.iterator(null);
+			  termsEnum2 = terms.Iterator(null);
 			}
-			term2 = termsEnum2.next();
+			term2 = termsEnum2.Next();
 			if (term2 == null)
 			{
 			  // no more terms in this field
@@ -632,11 +628,11 @@ namespace Lucene.Net.Index
 			}
 
 			//System.out.println("TEST: term1=" + term1);
-			docs2 = TestUtil.docs(random(), termsEnum2, liveDocs2, docs2, DocsEnum.FLAG_FREQS);
-			while (docs2.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			docs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, docs2, DocsEnum.FLAG_FREQS);
+			while (docs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 			{
-			  int d = r2r1[docs2.docID()];
-			  int f = docs2.freq();
+			  int d = r2r1[docs2.DocID()];
+			  int f = docs2.Freq();
 			  info2[len2] = (((long)d) << 32) | f;
 			  len2++;
 			}
@@ -653,22 +649,22 @@ namespace Lucene.Net.Index
 		  }
 
 		  Assert.AreEqual(field1, field2);
-		  Assert.IsTrue(term1.bytesEquals(term2));
+		  Assert.IsTrue(term1.BytesEquals(term2));
 
 		  if (!hasDeletes)
 		  {
-			Assert.AreEqual(termsEnum1.docFreq(), termsEnum2.docFreq());
+			Assert.AreEqual(termsEnum1.DocFreq(), termsEnum2.DocFreq());
 		  }
 
-		  Assert.AreEqual("len1=" + len1 + " len2=" + len2 + " deletes?=" + hasDeletes, term1, term2);
+		  Assert.AreEqual(term1, term2, "len1=" + len1 + " len2=" + len2 + " deletes?=" + hasDeletes);
 
 		  // sort info2 to get it into ascending docid
-		  Arrays.sort(info2, 0, len2);
+		  Array.Sort(info2, 0, len2);
 
 		  // now compare
 		  for (int i = 0; i < len1; i++)
 		  {
-			Assert.AreEqual("i=" + i + " len=" + len1 + " d1=" + ((long)((ulong)info1[i] >> 32)) + " f1=" + (info1[i] & int.MaxValue) + " d2=" + ((long)((ulong)info2[i] >> 32)) + " f2=" + (info2[i] & int.MaxValue) + " field=" + field1 + " term=" + term1.utf8ToString(), info1[i], info2[i]);
+			Assert.AreEqual(info1[i], info2[i], "i=" + i + " len=" + len1 + " d1=" + ((long)((ulong)info1[i] >> 32)) + " f1=" + (info1[i] & int.MaxValue) + " d2=" + ((long)((ulong)info2[i] >> 32)) + " f2=" + (info2[i] & int.MaxValue) + " field=" + field1 + " term=" + term1.Utf8ToString());
 		  }
 		}
 	  }
@@ -681,20 +677,20 @@ namespace Lucene.Net.Index
 		ff1.Sort(fieldNameComparator);
 		ff2.Sort(fieldNameComparator);
 
-		Assert.AreEqual(ff1 + " : " + ff2, ff1.Count, ff2.Count);
+		Assert.AreEqual(ff1.Count, ff2.Count, ff1 + " : " + ff2);
 
 		for (int i = 0; i < ff1.Count; i++)
 		{
 		  IndexableField f1 = ff1[i];
 		  IndexableField f2 = ff2[i];
-		  if (f1.binaryValue() != null)
+		  if (f1.BinaryValue() != null)
 		  {
-			assert(f2.binaryValue() != null);
+			Debug.Assert(f2.BinaryValue() != null);
 		  }
 		  else
 		  {
-			string s1 = f1.stringValue();
-			string s2 = f2.stringValue();
+			string s1 = f1.StringValue;
+			string s2 = f2.StringValue;
 			Assert.AreEqual(ff1 + " : " + ff2, s1,s2);
 		  }
 		}
@@ -704,7 +700,7 @@ namespace Lucene.Net.Index
 	  {
 		if (d1 == null)
 		{
-		  Assert.IsTrue(d2 == null || d2.size() == 0);
+		  Assert.IsTrue(d2 == null || d2.Size() == 0);
 		  return;
 		}
 		Assert.IsTrue(d2 != null);
@@ -713,17 +709,17 @@ namespace Lucene.Net.Index
 
 		foreach (string field1 in d1)
 		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  string field2 = fieldsEnum2.next();
+          fieldsEnum2.MoveNext();
+          string field2 = fieldsEnum2.Current;
 		  Assert.AreEqual(field1, field2);
 
-		  Terms terms1 = d1.terms(field1);
+		  Terms terms1 = d1.Terms(field1);
 		  Assert.IsNotNull(terms1);
-		  TermsEnum termsEnum1 = terms1.iterator(null);
+		  TermsEnum termsEnum1 = terms1.Iterator(null);
 
-		  Terms terms2 = d2.terms(field2);
+		  Terms terms2 = d2.Terms(field2);
 		  Assert.IsNotNull(terms2);
-		  TermsEnum termsEnum2 = terms2.iterator(null);
+		  TermsEnum termsEnum2 = terms2.Iterator(null);
 
 		  DocsAndPositionsEnum dpEnum1 = null;
 		  DocsAndPositionsEnum dpEnum2 = null;
@@ -731,29 +727,29 @@ namespace Lucene.Net.Index
 		  DocsEnum dEnum2 = null;
 
 		  BytesRef term1;
-		  while ((term1 = termsEnum1.next()) != null)
+		  while ((term1 = termsEnum1.Next()) != null)
 		  {
-			BytesRef term2 = termsEnum2.next();
+			BytesRef term2 = termsEnum2.Next();
 			Assert.AreEqual(term1, term2);
-			Assert.AreEqual(termsEnum1.totalTermFreq(), termsEnum2.totalTermFreq());
+			Assert.AreEqual(termsEnum1.TotalTermFreq(), termsEnum2.TotalTermFreq());
 
-			dpEnum1 = termsEnum1.docsAndPositions(null, dpEnum1);
-			dpEnum2 = termsEnum2.docsAndPositions(null, dpEnum2);
+			dpEnum1 = termsEnum1.DocsAndPositions(null, dpEnum1);
+			dpEnum2 = termsEnum2.DocsAndPositions(null, dpEnum2);
 			if (dpEnum1 != null)
 			{
 			  Assert.IsNotNull(dpEnum2);
-			  int docID1 = dpEnum1.nextDoc();
-			  dpEnum2.nextDoc();
+			  int docID1 = dpEnum1.NextDoc();
+			  dpEnum2.NextDoc();
 			  // docIDs are not supposed to be equal
-			  //int docID2 = dpEnum2.nextDoc();
+			  //int docID2 = dpEnum2.NextDoc();
 			  //Assert.AreEqual(docID1, docID2);
 			  Assert.IsTrue(docID1 != DocIdSetIterator.NO_MORE_DOCS);
 
-			  int freq1 = dpEnum1.freq();
-			  int freq2 = dpEnum2.freq();
+			  int freq1 = dpEnum1.Freq();
+			  int freq2 = dpEnum2.Freq();
 			  Assert.AreEqual(freq1, freq2);
-			  OffsetAttribute offsetAtt1 = dpEnum1.attributes().HasAttribute(typeof(OffsetAttribute)) ? dpEnum1.attributes().getAttribute(typeof(OffsetAttribute)) : null;
-			  OffsetAttribute offsetAtt2 = dpEnum2.attributes().HasAttribute(typeof(OffsetAttribute)) ? dpEnum2.attributes().getAttribute(typeof(OffsetAttribute)) : null;
+			  OffsetAttribute offsetAtt1 = dpEnum1.Attributes().HasAttribute(typeof(OffsetAttribute)) ? dpEnum1.Attributes().GetAttribute<OffsetAttribute>() : null;
+			  OffsetAttribute offsetAtt2 = dpEnum2.Attributes().HasAttribute(typeof(OffsetAttribute)) ? dpEnum2.Attributes().GetAttribute<OffsetAttribute>() : null;
 
 			  if (offsetAtt1 != null)
 			  {
@@ -761,13 +757,13 @@ namespace Lucene.Net.Index
 			  }
 			  else
 			  {
-				assertNull(offsetAtt2);
+				Assert.IsNull(offsetAtt2);
 			  }
 
 			  for (int posUpto = 0;posUpto < freq1;posUpto++)
 			  {
-				int pos1 = dpEnum1.nextPosition();
-				int pos2 = dpEnum2.nextPosition();
+				int pos1 = dpEnum1.NextPosition();
+				int pos2 = dpEnum2.NextPosition();
 				Assert.AreEqual(pos1, pos2);
 				if (offsetAtt1 != null)
 				{
@@ -775,36 +771,35 @@ namespace Lucene.Net.Index
 				  Assert.AreEqual(offsetAtt1.EndOffset(), offsetAtt2.EndOffset());
 				}
 			  }
-			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum1.nextDoc());
-			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum2.nextDoc());
+			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum1.NextDoc());
+			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum2.NextDoc());
 			}
 			else
 			{
-			  dEnum1 = TestUtil.docs(random(), termsEnum1, null, dEnum1, DocsEnum.FLAG_FREQS);
-			  dEnum2 = TestUtil.docs(random(), termsEnum2, null, dEnum2, DocsEnum.FLAG_FREQS);
+			  dEnum1 = TestUtil.Docs(Random(), termsEnum1, null, dEnum1, DocsEnum.FLAG_FREQS);
+			  dEnum2 = TestUtil.Docs(Random(), termsEnum2, null, dEnum2, DocsEnum.FLAG_FREQS);
 			  Assert.IsNotNull(dEnum1);
 			  Assert.IsNotNull(dEnum2);
-			  int docID1 = dEnum1.nextDoc();
-			  dEnum2.nextDoc();
+			  int docID1 = dEnum1.NextDoc();
+			  dEnum2.NextDoc();
 			  // docIDs are not supposed to be equal
-			  //int docID2 = dEnum2.nextDoc();
+			  //int docID2 = dEnum2.NextDoc();
 			  //Assert.AreEqual(docID1, docID2);
 			  Assert.IsTrue(docID1 != DocIdSetIterator.NO_MORE_DOCS);
-			  int freq1 = dEnum1.freq();
-			  int freq2 = dEnum2.freq();
+			  int freq1 = dEnum1.Freq();
+			  int freq2 = dEnum2.Freq();
 			  Assert.AreEqual(freq1, freq2);
-			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dEnum1.nextDoc());
-			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dEnum2.nextDoc());
+			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dEnum1.NextDoc());
+			  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dEnum2.NextDoc());
 			}
 		  }
 
-		  assertNull(termsEnum2.next());
+		  Assert.IsNull(termsEnum2.Next());
 		}
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(fieldsEnum2.hasNext());
+		Assert.IsFalse(fieldsEnum2.MoveNext());
 	  }
 
-	  private class IndexingThread : System.Threading.Thread
+	  private class IndexingThread : ThreadClass
 	  {
 		  private readonly TestStressIndexing2 OuterInstance;
 
@@ -880,7 +875,7 @@ namespace Lucene.Net.Index
 		  nTokens = nTokens != 0 ? nTokens : r.Next(4) + 1;
 
 		  // Half the time make a random UTF8 string
-		  if (r.nextBoolean())
+		  if (r.NextBoolean())
 		  {
 			return GetUTF8String(nTokens);
 		  }
@@ -898,7 +893,7 @@ namespace Lucene.Net.Index
 		public virtual string GetUTF8String(int nTokens)
 		{
 		  int upto = 0;
-		  Arrays.fill(Buffer, (char) 0);
+		  Arrays.Fill(Buffer, (char) 0);
 		  for (int i = 0;i < nTokens;i++)
 		  {
 			upto = AddUTF8Token(upto);
@@ -924,7 +919,7 @@ namespace Lucene.Net.Index
 
 		  List<Field> fields = new List<Field>();
 		  string idString = IdString;
-		  Field idField = newField("id", idString, customType1);
+		  Field idField = NewField("id", idString, customType1);
 		  fields.Add(idField);
 
 		  int nFields = NextInt(MaxFields);
@@ -955,25 +950,25 @@ namespace Lucene.Net.Index
 				customType.Stored = true;
 				customType.OmitNorms = true;
 				customType.Indexed = true;
-				fields.Add(newField("f" + NextInt(100), GetString(1), customType));
+				fields.Add(NewField("f" + NextInt(100), GetString(1), customType));
 				break;
 			  case 1:
 				customType.Indexed = true;
 				customType.Tokenized = true;
-				fields.Add(newField("f" + NextInt(100), GetString(0), customType));
+				fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
 				break;
 			  case 2:
 				customType.Stored = true;
 				customType.StoreTermVectors = false;
 				customType.StoreTermVectorOffsets = false;
 				customType.StoreTermVectorPositions = false;
-				fields.Add(newField("f" + NextInt(100), GetString(0), customType));
+				fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
 				break;
 			  case 3:
 				customType.Stored = true;
 				customType.Indexed = true;
 				customType.Tokenized = true;
-				fields.Add(newField("f" + NextInt(100), GetString(BigFieldSize), customType));
+				fields.Add(NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
 				break;
 			}
 		  }
@@ -990,13 +985,13 @@ namespace Lucene.Net.Index
 
 		  for (int i = 0; i < fields.Count; i++)
 		  {
-			d.add(fields[i]);
+			d.Add(fields[i]);
 		  }
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": indexing id:" + idString);
 		  }
-		  w.updateDocument(new Term("id", idString), d);
+		  w.UpdateDocument(new Term("id", idString), d);
 		  //System.out.println(Thread.currentThread().getName() + ": indexing "+d);
 		  Docs[idString] = d;
 		}
@@ -1008,7 +1003,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": del id:" + idString);
 		  }
-		  w.deleteDocuments(new Term("id", idString));
+		  w.DeleteDocuments(new Term("id", idString));
 		  Docs.Remove(idString);
 		}
 
@@ -1019,7 +1014,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": del query id:" + idString);
 		  }
-		  w.deleteDocuments(new TermQuery(new Term("id", idString)));
+		  w.DeleteDocuments(new TermQuery(new Term("id", idString)));
 		  Docs.Remove(idString);
 		}
 
@@ -1049,12 +1044,12 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine(e.ToString());
 			Console.Write(e.StackTrace);
-			Assert.Assert.Fail(e.ToString());
+			Assert.Fail(e.ToString());
 		  }
 
 		  lock (this)
 		  {
-			Docs.Count;
+			Docs.Size();
 		  }
 		}
 	  }

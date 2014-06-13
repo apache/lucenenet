@@ -18,13 +18,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat.BLOCK_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.ForUtil.MAX_DATA_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene41.ForUtil.MAX_ENCODED_SIZE;
-
 
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
@@ -33,33 +26,36 @@ namespace Lucene.Net.Codecs.Lucene41
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 
 	public class TestForUtil : LuceneTestCase
 	{
 
 	  public virtual void TestEncodeDecode()
 	  {
-		int iterations = RandomInts.randomIntBetween(random(), 1, 1000);
-		float acceptableOverheadRatio = random().nextFloat();
-		int[] values = new int[(iterations - 1) * BLOCK_SIZE + ForUtil.MAX_DATA_SIZE];
+		int iterations = RandomInts.NextIntBetween(Random(), 1, 1000);
+		float acceptableOverheadRatio = Random().NextFloat();
+		int[] values = new int[(iterations - 1) * Lucene41PostingsFormat.BLOCK_SIZE + ForUtil.MAX_DATA_SIZE];
 		for (int i = 0; i < iterations; ++i)
 		{
-		  int bpv = random().Next(32);
+		  int bpv = Random().Next(32);
 		  if (bpv == 0)
 		  {
-			int value = RandomInts.randomIntBetween(random(), 0, int.MaxValue);
-			for (int j = 0; j < BLOCK_SIZE; ++j)
+			int value = RandomInts.NextIntBetween(Random(), 0, int.MaxValue);
+			for (int j = 0; j < Lucene41PostingsFormat.BLOCK_SIZE; ++j)
 			{
-			  values[i * BLOCK_SIZE + j] = value;
+			  values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = value;
 			}
 		  }
 		  else
 		  {
-			for (int j = 0; j < BLOCK_SIZE; ++j)
+			for (int j = 0; j < Lucene41PostingsFormat.BLOCK_SIZE; ++j)
 			{
-			  values[i * BLOCK_SIZE + j] = RandomInts.randomIntBetween(random(), 0, (int) PackedInts.maxValue(bpv));
+			  values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.NextIntBetween(Random(), 0, (int) PackedInts.MaxValue(bpv));
 			}
 		  }
 		}
@@ -69,34 +65,34 @@ namespace Lucene.Net.Codecs.Lucene41
 
 		{
 		  // encode
-		  IndexOutput @out = d.createOutput("test.bin", IOContext.DEFAULT);
-		  ForUtil forUtil = new ForUtil(acceptableOverheadRatio, @out);
+		  IndexOutput @out = d.CreateOutput("test.bin", IOContext.DEFAULT);
+		  ForUtil forUtil = new ForUtil(AcceptableOverheadRatio, @out);
 
 		  for (int i = 0; i < iterations; ++i)
 		  {
-			forUtil.writeBlock(Arrays.copyOfRange(values, i * BLOCK_SIZE, values.Length), new sbyte[MAX_ENCODED_SIZE], @out);
+			forUtil.WriteBlock(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length), new sbyte[Lucene41.ForUtil.MAX_ENCODED_SIZE], @out);
 		  }
 		  endPointer = @out.FilePointer;
-		  @out.close();
+		  @out.Dispose();
 		}
 
 		{
 		  // decode
-		  IndexInput @in = d.openInput("test.bin", IOContext.READONCE);
+		  IndexInput @in = d.OpenInput("test.bin", IOContext.READONCE);
 		  ForUtil forUtil = new ForUtil(@in);
 		  for (int i = 0; i < iterations; ++i)
 		  {
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  forUtil.skipBlock(@in);
+			  forUtil.SkipBlock(@in);
 			  continue;
 			}
-			int[] restored = new int[MAX_DATA_SIZE];
-			forUtil.readBlock(@in, new sbyte[MAX_ENCODED_SIZE], restored);
-			assertArrayEquals(Arrays.copyOfRange(values, i * BLOCK_SIZE, (i + 1) * BLOCK_SIZE), Arrays.copyOf(restored, BLOCK_SIZE));
+            int[] restored = new int[Lucene41.ForUtil.MAX_DATA_SIZE.MAX_DATA_SIZE];
+			forUtil.ReadBlock(@in, new sbyte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
+			AssertArrayEquals(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE), Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
 		  }
 		  Assert.AreEqual(endPointer, @in.FilePointer);
-		  @in.close();
+		  @in.Dispose();
 		}
 	  }
 

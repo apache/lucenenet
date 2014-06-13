@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test indexing and searching some byte[] terms
@@ -39,41 +40,41 @@ namespace Lucene.Net.Index
 	{
 	  public virtual void TestBinary()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		BytesRef bytes = new BytesRef(2);
 		BinaryTokenStream tokenStream = new BinaryTokenStream(bytes);
 
 		for (int i = 0; i < 256; i++)
 		{
-		  bytes.bytes[0] = (sbyte) i;
-		  bytes.bytes[1] = unchecked((sbyte)(255 - i));
-		  bytes.length = 2;
+		  bytes.Bytes[0] = (sbyte) i;
+		  bytes.Bytes[1] = unchecked((sbyte)(255 - i));
+		  bytes.Length = 2;
 		  Document doc = new Document();
 		  FieldType customType = new FieldType();
 		  customType.Stored = true;
-		  doc.add(new Field("id", "" + i, customType));
-		  doc.add(new TextField("bytes", tokenStream));
-		  iw.addDocument(doc);
+		  doc.Add(new Field("id", "" + i, customType));
+		  doc.Add(new TextField("bytes", tokenStream));
+		  iw.AddDocument(doc);
 		}
 
 		IndexReader ir = iw.Reader;
-		iw.close();
+        iw.Close();
 
-		IndexSearcher @is = newSearcher(ir);
+		IndexSearcher @is = NewSearcher(ir);
 
 		for (int i = 0; i < 256; i++)
 		{
-		  bytes.bytes[0] = (sbyte) i;
-		  bytes.bytes[1] = unchecked((sbyte)(255 - i));
-		  bytes.length = 2;
-		  TopDocs docs = @is.search(new TermQuery(new Term("bytes", bytes)), 5);
-		  Assert.AreEqual(1, docs.totalHits);
-		  Assert.AreEqual("" + i, @is.doc(docs.scoreDocs[0].doc).get("id"));
+		  bytes.Bytes[0] = (sbyte) i;
+		  bytes.Bytes[1] = unchecked((sbyte)(255 - i));
+		  bytes.Length = 2;
+		  TopDocs docs = @is.Search(new TermQuery(new Term("bytes", bytes)), 5);
+		  Assert.AreEqual(1, docs.TotalHits);
+		  Assert.AreEqual("" + i, @is.Doc(docs.ScoreDocs[0].Doc).Get("id"));
 		}
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestToString()

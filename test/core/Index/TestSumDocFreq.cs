@@ -25,6 +25,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests <seealso cref="Terms#getSumDocFreq()"/>
@@ -35,57 +36,57 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestSumDocFreq()
 	  {
-		int numDocs = atLeast(500);
+		int numDocs = AtLeast(500);
 
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 
 		Document doc = new Document();
-		Field id = newStringField("id", "", Field.Store.NO);
-		Field field1 = newTextField("foo", "", Field.Store.NO);
-		Field field2 = newTextField("bar", "", Field.Store.NO);
-		doc.add(id);
-		doc.add(field1);
-		doc.add(field2);
+		Field id = NewStringField("id", "", Field.Store.NO);
+		Field field1 = NewTextField("foo", "", Field.Store.NO);
+		Field field2 = NewTextField("bar", "", Field.Store.NO);
+		doc.Add(id);
+		doc.Add(field1);
+		doc.Add(field2);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  id.StringValue = "" + i;
-		  char ch1 = (char) TestUtil.Next(random(), 'a', 'z');
-		  char ch2 = (char) TestUtil.Next(random(), 'a', 'z');
+		  char ch1 = (char) TestUtil.NextInt(Random(), 'a', 'z');
+		  char ch2 = (char) TestUtil.NextInt(Random(), 'a', 'z');
 		  field1.StringValue = "" + ch1 + " " + ch2;
-		  ch1 = (char) TestUtil.Next(random(), 'a', 'z');
-		  ch2 = (char) TestUtil.Next(random(), 'a', 'z');
+		  ch1 = (char) TestUtil.NextInt(Random(), 'a', 'z');
+		  ch2 = (char) TestUtil.NextInt(Random(), 'a', 'z');
 		  field2.StringValue = "" + ch1 + " " + ch2;
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		IndexReader ir = writer.Reader;
 
 		AssertSumDocFreq(ir);
-		ir.close();
+		ir.Dispose();
 
-		int numDeletions = atLeast(20);
+		int numDeletions = AtLeast(20);
 		for (int i = 0; i < numDeletions; i++)
 		{
-		  writer.deleteDocuments(new Term("id", "" + random().Next(numDocs)));
+		  writer.DeleteDocuments(new Term("id", "" + Random().Next(numDocs)));
 		}
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+        writer.Close();
 
-		ir = DirectoryReader.open(dir);
+		ir = DirectoryReader.Open(dir);
 		AssertSumDocFreq(ir);
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  private void AssertSumDocFreq(IndexReader ir)
 	  {
 		// compute sumDocFreq across all fields
-		Fields fields = MultiFields.getFields(ir);
+		Fields fields = MultiFields.GetFields(ir);
 
 		foreach (string f in fields)
 		{
-		  Terms terms = fields.terms(f);
+		  Terms terms = fields.Terms(f);
 		  long sumDocFreq = terms.SumDocFreq;
 		  if (sumDocFreq == -1)
 		  {
@@ -97,10 +98,10 @@ namespace Lucene.Net.Index
 		  }
 
 		  long computedSumDocFreq = 0;
-		  TermsEnum termsEnum = terms.iterator(null);
-		  while (termsEnum.next() != null)
+		  TermsEnum termsEnum = terms.Iterator(null);
+		  while (termsEnum.Next() != null)
 		  {
-			computedSumDocFreq += termsEnum.docFreq();
+			computedSumDocFreq += termsEnum.DocFreq();
 		  }
 		  Assert.AreEqual(computedSumDocFreq, sumDocFreq);
 		}

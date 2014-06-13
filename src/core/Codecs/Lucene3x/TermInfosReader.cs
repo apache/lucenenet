@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// FormatPostingsTermsDictReader, except for reading old segments. 
 	/// @lucene.experimental 
 	[Obsolete("(4.0) this class has been replaced by")]
-	internal sealed class TermInfosReader : IDisposable
+	public sealed class TermInfosReader : IDisposable
 	{
 	  private readonly Directory Directory;
 	  private readonly string Segment;

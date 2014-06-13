@@ -44,6 +44,7 @@ namespace Lucene.Net.Analysis
     using System.IO;
     using NUnit.Framework;
     using Lucene.Net.Support;
+    using Lucene.Net.Randomized.Generators;
 
     [TestFixture]
 	public class TestMockAnalyzer : BaseTokenStreamTestCase
@@ -187,7 +188,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false, 5);
 			return new TokenStreamComponents(t, t);
@@ -240,8 +241,8 @@ namespace Lucene.Net.Analysis
 		for (int i = 0; i < iters; i++)
 		{
 		  CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random()));
-		  bool lowercase = Random().nextBoolean();
-          int limit = TestUtil.Next(new Random(), 0, 500);
+		  bool lowercase = Random().NextBoolean();
+          int limit = TestUtil.NextInt(new Random(), 0, 500);
 		  Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, dfa, lowercase, limit);
           CheckRandomData(new Random(), a, 100);
 		  a.Dispose();
@@ -264,7 +265,7 @@ namespace Lucene.Net.Analysis
 			  this.Limit = limit;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, Dfa, Lowercase, Limit);
 			return new TokenStreamComponents(t, t);
@@ -328,7 +329,7 @@ namespace Lucene.Net.Analysis
 		  }
 
 
-		  protected internal override Reader WrapReader(string fieldName, Reader reader)
+          protected internal override TextReader WrapReader(string fieldName, StreamReader reader)
 		  {
 			return new MockCharFilter(reader, 7);
 		  }

@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using CodecUtil = Lucene.Net.Codecs.CodecUtil;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test that a plain default puts codec headers in all files.
@@ -40,40 +41,40 @@ namespace Lucene.Net.Index
 	{
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.Codec = new Lucene46Codec();
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir, conf);
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetCodec(new Lucene46Codec());
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, conf);
 		Document doc = new Document();
 		// these fields should sometimes get term vectors, etc
-		Field idField = newStringField("id", "", Field.Store.NO);
-		Field bodyField = newTextField("body", "", Field.Store.NO);
+		Field idField = NewStringField("id", "", Field.Store.NO);
+		Field bodyField = NewTextField("body", "", Field.Store.NO);
 		Field dvField = new NumericDocValuesField("dv", 5);
-		doc.add(idField);
-		doc.add(bodyField);
-		doc.add(dvField);
+		doc.Add(idField);
+		doc.Add(bodyField);
+		doc.Add(dvField);
 		for (int i = 0; i < 100; i++)
 		{
 		  idField.StringValue = Convert.ToString(i);
-		  bodyField.StringValue = TestUtil.randomUnicodeString(random());
-		  riw.addDocument(doc);
-		  if (random().Next(7) == 0)
+		  bodyField.StringValue = TestUtil.RandomUnicodeString(Random());
+		  riw.AddDocument(doc);
+		  if (Random().Next(7) == 0)
 		  {
-			riw.commit();
+			riw.Commit();
 		  }
 		  // TODO: we should make a new format with a clean header...
-		  // if (random().nextInt(20) == 0) {
-		  //  riw.deleteDocuments(new Term("id", Integer.toString(i)));
+		  // if (Random().nextInt(20) == 0) {
+		  //  riw.DeleteDocuments(new Term("id", Integer.toString(i)));
 		  // }
 		}
-		riw.close();
+        riw.Close();
 		CheckHeaders(dir);
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private void CheckHeaders(Directory dir)
 	  {
-		foreach (string file in dir.listAll())
+		foreach (string file in dir.ListAll())
 		{
 		  if (file.Equals(IndexWriter.WRITE_LOCK_NAME))
 		  {
@@ -85,17 +86,17 @@ namespace Lucene.Net.Index
 		  }
 		  if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION))
 		  {
-			CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, newIOContext(random()), false);
+			CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random()), false);
 			CheckHeaders(cfsDir); // recurse into cfs
-			cfsDir.close();
+			cfsDir.Dispose();
 		  }
 		  IndexInput @in = null;
 		  bool success = false;
 		  try
 		  {
-			@in = dir.openInput(file, newIOContext(random()));
-			int val = @in.readInt();
-			Assert.AreEqual(file + " has no codec header, instead found: " + val, CodecUtil.CODEC_MAGIC, val);
+			@in = dir.OpenInput(file, NewIOContext(Random()));
+			int val = @in.ReadInt();
+			Assert.AreEqual(CodecUtil.CODEC_MAGIC, val, file + " has no codec header, instead found: " + val);
 			success = true;
 		  }
 		  finally

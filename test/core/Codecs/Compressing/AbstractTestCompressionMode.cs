@@ -3,6 +3,7 @@ namespace Lucene.Net.Codecs.Compressing
 
     using Lucene.Net.Support;
     using NUnit.Framework;
+    using Lucene.Net.Randomized.Generators;
     /*
              * Licensed to the Apache Software Foundation (ASF) under one or more
              * contributor license agreements.  See the NOTICE file distributed with
@@ -36,8 +37,8 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  internal static sbyte[] RandomArray()
 	  {
-		int max = random().nextBoolean() ? random().Next(4) : random().Next(256);
-		int length = random().nextBoolean() ? random().Next(20) : random().Next(192 * 1024);
+		int max = Random().NextBoolean() ? Random().Next(4) : Random().Next(256);
+		int length = Random().NextBoolean() ? Random().Next(20) : Random().Next(192 * 1024);
 		return RandomArray(length, max);
 	  }
 
@@ -46,7 +47,7 @@ namespace Lucene.Net.Codecs.Compressing
 		sbyte[] arr = new sbyte[length];
 		for (int i = 0; i < arr.Length; ++i)
 		{
-		  arr[i] = (sbyte) RandomInts.randomIntBetween(random(), 0, max);
+		  arr[i] = (sbyte) RandomInts.NextIntBetween(Random(), 0, max);
 		}
 		return arr;
 	  }
@@ -76,7 +77,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		BytesRef bytes = new BytesRef();
 		decompressor.Decompress(new ByteArrayDataInput(compressed), originalLength, 0, originalLength, bytes);
-		return Arrays.copyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
+		return Arrays.CopyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
 	  }
 
 	  internal virtual sbyte[] Decompress(sbyte[] compressed, int originalLength, int offset, int length)
@@ -89,21 +90,21 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public virtual void TestDecompress()
 	  {
-		int iterations = atLeast(10);
+		int iterations = AtLeast(10);
 		for (int i = 0; i < iterations; ++i)
 		{
 		  sbyte[] decompressed = RandomArray();
-		  int off = random().nextBoolean() ? 0 : TestUtil.Next(random(), 0, decompressed.Length);
-		  int len = random().nextBoolean() ? decompressed.Length - off : TestUtil.Next(random(), 0, decompressed.Length - off);
+		  int off = Random().NextBoolean() ? 0 : TestUtil.NextInt(Random(), 0, decompressed.Length);
+          int len = Random().NextBoolean() ? decompressed.Length - off : TestUtil.NextInt(Random(), 0, decompressed.Length - off);
 		  sbyte[] compressed = Compress(decompressed, off, len);
 		  sbyte[] restored = Decompress(compressed, len);
-		  assertArrayEquals(Arrays.copyOfRange(decompressed, off, off + len), restored);
+		  AssertArrayEquals(Arrays.copyOfRange(decompressed, off, off + len), restored);
 		}
 	  }
 
 	  public virtual void TestPartialDecompress()
 	  {
-		int iterations = atLeast(10);
+		int iterations = AtLeast(10);
 		for (int i = 0; i < iterations; ++i)
 		{
 		  sbyte[] decompressed = RandomArray();
@@ -115,11 +116,11 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  else
 		  {
-			offset = random().Next(decompressed.Length);
-			length = random().Next(decompressed.Length - offset);
+			offset = Random().Next(decompressed.Length);
+			length = Random().Next(decompressed.Length - offset);
 		  }
 		  sbyte[] restored = Decompress(compressed, decompressed.Length, offset, length);
-		  assertArrayEquals(Arrays.copyOfRange(decompressed, offset, offset + length), restored);
+		  AssertArrayEquals(Arrays.copyOfRange(decompressed, offset, offset + length), restored);
 		}
 	  }
 
@@ -143,12 +144,12 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public virtual void TestShortSequence()
 	  {
-		Test(new sbyte[] {(sbyte) random().Next(256)});
+		Test(new sbyte[] {(sbyte) Random().Next(256)});
 	  }
 
 	  public virtual void TestIncompressible()
 	  {
-		sbyte[] decompressed = new sbyte[RandomInts.randomIntBetween(random(), 20, 256)];
+		sbyte[] decompressed = new sbyte[RandomInts.NextIntBetween(Random(), 20, 256)];
 		for (int i = 0; i < decompressed.Length; ++i)
 		{
 		  decompressed[i] = (sbyte) i;
@@ -158,8 +159,8 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  public virtual void TestConstant()
 	  {
-		sbyte[] decompressed = new sbyte[TestUtil.Next(random(), 1, 10000)];
-		Arrays.Fill(decompressed, (sbyte) random().Next());
+		sbyte[] decompressed = new sbyte[TestUtil.NextInt(Random(), 1, 10000)];
+		Arrays.Fill(decompressed, (sbyte) Random().Next());
 		Test(decompressed);
 	  }
 

@@ -32,13 +32,10 @@ namespace Lucene.Net.Index
 	using StoredField = Lucene.Net.Document.StoredField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using Similarity = Lucene.Net.Search.Similarities.Similarity;
 	using Directory = Lucene.Net.Store.Directory;
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.LuceneTestCase.TEST_VERSION_CURRENT;
 
 	internal class DocHelper
 	{
@@ -65,7 +62,7 @@ namespace Lucene.Net.Index
 		CustomType5.Tokenized = false;
 		NoNormsField = new Field(NO_NORMS_KEY, NO_NORMS_TEXT, CustomType5);
 		CustomType6 = new FieldType(TextField.TYPE_STORED);
-		CustomType6.IndexOptions = IndexOptions.DOCS_ONLY;
+		CustomType6.IndexOptionsValue = IndexOptions_e.DOCS_ONLY;
 		NoTFField = new Field(NO_TF_KEY, NO_TF_TEXT, CustomType6);
 		CustomType7 = new FieldType();
 		CustomType7.Stored = true;
@@ -96,7 +93,7 @@ namespace Lucene.Net.Index
 		{
 		  IndexableField f = Fields[i];
 		  Add(All,f);
-		  if (f.fieldType().indexed())
+		  if (f.FieldType().Indexed)
 		  {
 			  Add(Indexed,f);
 		  }
@@ -104,15 +101,15 @@ namespace Lucene.Net.Index
 		  {
 			  Add(Unindexed,f);
 		  }
-		  if (f.fieldType().storeTermVectors())
+		  if (f.FieldType().StoreTermVectors)
 		  {
 			  Add(Termvector,f);
 		  }
-		  if (f.fieldType().indexed() && !f.fieldType().storeTermVectors())
+		  if (f.FieldType().Indexed && !f.FieldType().StoreTermVectors)
 		  {
 			  Add(Notermvector,f);
 		  }
-		  if (f.fieldType().stored())
+		  if (f.FieldType().Stored)
 		  {
 			  Add(Stored,f);
 		  }
@@ -120,21 +117,21 @@ namespace Lucene.Net.Index
 		  {
 			  Add(Unstored,f);
 		  }
-		  if (f.fieldType().indexOptions() == IndexOptions.DOCS_ONLY)
+		  if (f.FieldType().IndexOptionsValue == IndexOptions_e.DOCS_ONLY)
 		  {
 			  Add(NoTf,f);
 		  }
-		  if (f.fieldType().omitNorms())
+		  if (f.FieldType().OmitNorms)
 		  {
 			  Add(NoNorms,f);
 		  }
-		  if (f.fieldType().indexOptions() == IndexOptions.DOCS_ONLY)
+		  if (f.FieldType().IndexOptionsValue == IndexOptions_e.DOCS_ONLY)
 		  {
 			  Add(NoTf,f);
 		  }
 		  //if (f.isLazy()) add(lazy, f);
 		}
-		NameValues = new Dictionary<>();
+		NameValues = new Dictionary<string, object>();
 		NameValues[TEXT_FIELD_1_KEY] = FIELD_1_TEXT;
 		NameValues[TEXT_FIELD_2_KEY] = FIELD_2_TEXT;
 		NameValues[TEXT_FIELD_3_KEY] = FIELD_3_TEXT;
@@ -240,7 +237,7 @@ namespace Lucene.Net.Index
 
 	  private static void Add(IDictionary<string, IndexableField> map, IndexableField field)
 	  {
-		map[field.name()] = field;
+		map[field.Name()] = field;
 	  }
 
 
@@ -252,7 +249,7 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < Fields.Length; i++)
 		{
-		  doc.add(Fields[i]);
+		  doc.Add(Fields[i]);
 		}
 	  }
 
@@ -273,18 +270,18 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
 	  {
-		IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)).setSimilarity(similarity == null ? IndexSearcher.DefaultSimilarity : similarity)); // LuceneTestCase.newIndexWriterConfig(random,
+		IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity == null ? IndexSearcher.DefaultSimilarity : similarity)); // LuceneTestCase.newIndexWriterConfig(random,
 		//writer.setNoCFSRatio(0.0);
-		writer.addDocument(doc);
-		writer.commit();
-		SegmentCommitInfo info = writer.newestSegment();
-		writer.close();
+		writer.AddDocument(doc);
+		writer.Commit();
+		SegmentCommitInfo info = writer.NewestSegment();
+		writer.Dispose();
 		return info;
 	  }
 
 	  public static int NumFields(Document doc)
 	  {
-		return doc.Fields.size();
+		return doc.Fields.Count;
 	  }
 
 	  public static Document CreateDocument(int n, string indexName, int numFields)
@@ -301,16 +298,16 @@ namespace Lucene.Net.Index
 		customType1.StoreTermVectorOffsets = true;
 
 		Document doc = new Document();
-		doc.add(new Field("id", Convert.ToString(n), customType1));
-		doc.add(new Field("indexname", indexName, customType1));
+		doc.Add(new Field("id", Convert.ToString(n), customType1));
+		doc.Add(new Field("indexname", indexName, customType1));
 		sb.Append("a");
 		sb.Append(n);
-		doc.add(new Field("field1", sb.ToString(), customType));
+		doc.Add(new Field("field1", sb.ToString(), customType));
 		sb.Append(" b");
 		sb.Append(n);
 		for (int i = 1; i < numFields; i++)
 		{
-		  doc.add(new Field("field" + (i + 1), sb.ToString(), customType));
+		  doc.Add(new Field("field" + (i + 1), sb.ToString(), customType));
 		}
 		return doc;
 	  }

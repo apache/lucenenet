@@ -1,9 +1,9 @@
 namespace Lucene.Net.Codecs.Lucene3x
 {
 
-	using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
+    using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -31,8 +31,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// we will manually instantiate preflex-rw here </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass3xPostingsFormat()
+      [SetUp]
 	  public static void BeforeClass3xPostingsFormat()
 	  {
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;

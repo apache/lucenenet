@@ -64,7 +64,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 
 		public override IEnumerator<string> Iterator()
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 	  }
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.asserting
 		{
 		  Debug.Assert(State == PostingsConsumerState.START);
 		  State = PostingsConsumerState.INITIAL;
-		  if (FieldInfo.IndexOptions.CompareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+		  if (FieldInfo.IndexOptions < FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 		  {
 			Debug.Assert(PositionCount == 0); // we should not have fed any positions!
 		  }

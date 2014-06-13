@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                     }
                     writer.AddDocument(doc);
                 }
-                writer.Close();
+                writer.Dispose();
             }
             catch (System.Exception e)
             {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            reader.Close();
+            reader.Dispose();
         }
         
         [Test]

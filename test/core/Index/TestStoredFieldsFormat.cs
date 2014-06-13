@@ -40,11 +40,11 @@ namespace Lucene.Net.Index
 
 	  public override void TestWriteReadMerge()
 	  {
-		assumeFalse("impersonation isnt good enough", Codec is Lucene3xCodec);
+		AssumeFalse("impersonation isnt good enough", Codec is Lucene3xCodec);
 		// this test tries to switch up between the codec and another codec.
 		// for 3.x: we currently cannot take an index with existing 4.x segments
 		// and merge into newly formed 3.x segments.
-		base.testWriteReadMerge();
+		base.TestWriteReadMerge();
 	  }
 	}
 

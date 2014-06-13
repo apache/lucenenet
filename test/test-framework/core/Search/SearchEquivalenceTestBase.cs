@@ -38,8 +38,8 @@ namespace Lucene.Net.Search
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
 	using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Simple base class for checking search equivalence.
@@ -56,21 +56,20 @@ namespace Lucene.Net.Search
 	  protected internal static Analyzer Analyzer;
 	  protected internal static string Stopword; // we always pick a character as a stopword
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
+      [SetUp]
 	  public static void BeforeClass()
 	  {
 		Random random = Random();
 		Directory = NewDirectory();
 		Stopword = "" + RandomChar();
-		CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.makeString(Stopword));
+		CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(Stopword));
 		Analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
 		RandomIndexWriter iw = new RandomIndexWriter(random, Directory, Analyzer);
 		Document doc = new Document();
 		Field id = new StringField("id", "", Field.Store.NO);
 		Field field = new TextField("field", "", Field.Store.NO);
-		doc.add(id);
-		doc.add(field);
+		doc.Add(id);
+		doc.Add(field);
 
 		// index some docs
 		int numDocs = AtLeast(1000);
@@ -86,7 +85,7 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < numDeletes; i++)
 		{
 		  Term toDelete = new Term("id", Convert.ToString(random.Next(numDocs)));
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 			iw.DeleteDocuments(toDelete);
 		  }
@@ -102,13 +101,12 @@ namespace Lucene.Net.Search
 		iw.Close();
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TearDown]
+      public static void AfterClass()
 	  {
-		Reader.close();
-		Directory.close();
-		Analyzer.close();
+		Reader.Dispose();
+        Directory.Dispose();
+        Analyzer.Dispose();
 		Reader = null;
 		Directory = null;
 		Analyzer = null;
@@ -158,7 +156,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  protected internal virtual Filter RandomFilter()
 	  {
-		return new QueryWrapperFilter(TermRangeQuery.newStringRange("field", "a", "" + RandomChar(), true, true));
+		return new QueryWrapperFilter(TermRangeQuery.NewStringRange("field", "a", "" + RandomChar(), true, true));
 	  }
 
 	  /// <summary>
@@ -193,7 +191,7 @@ namespace Lucene.Net.Search
 	  protected internal virtual void AssertSubsetOf(Query q1, Query q2, Filter filter)
 	  {
 		// TRUNK ONLY: test both filter code paths
-		if (filter != null && Random().nextBoolean())
+		if (filter != null && Random().NextBoolean())
 		{
 		  q1 = new FilteredQuery(q1, filter, TestUtil.RandomFilterStrategy(Random()));
 		  q2 = new FilteredQuery(q2, filter, TestUtil.RandomFilterStrategy(Random()));
@@ -201,21 +199,21 @@ namespace Lucene.Net.Search
 		}
 
 		// not efficient, but simple!
-		TopDocs td1 = S1.search(q1, filter, Reader.maxDoc());
-		TopDocs td2 = S2.search(q2, filter, Reader.maxDoc());
-		Assert.IsTrue(td1.totalHits <= td2.totalHits);
+		TopDocs td1 = S1.Search(q1, filter, Reader.MaxDoc());
+		TopDocs td2 = S2.Search(q2, filter, Reader.MaxDoc());
+		Assert.IsTrue(td1.TotalHits <= td2.TotalHits);
 
 		// fill the superset into a bitset
 		BitArray bitset = new BitArray();
-		for (int i = 0; i < td2.scoreDocs.length; i++)
+		for (int i = 0; i < td2.ScoreDocs.Length; i++)
 		{
-		  bitset.Set(td2.scoreDocs[i].doc, true);
+		  bitset.Set(td2.ScoreDocs[i].Doc, true);
 		}
 
 		// check in the subset, that every bit was set by the super
-		for (int i = 0; i < td1.scoreDocs.length; i++)
+		for (int i = 0; i < td1.ScoreDocs.Length; i++)
 		{
-		  Assert.IsTrue(bitset.Get(td1.scoreDocs[i].doc));
+		  Assert.IsTrue(bitset.Get(td1.ScoreDocs[i].Doc));
 		}
 	  }
 	}

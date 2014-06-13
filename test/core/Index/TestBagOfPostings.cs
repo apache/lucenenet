@@ -34,6 +34,8 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Simple test that adds numeric terms, where each term has the 
@@ -46,12 +48,12 @@ namespace Lucene.Net.Index
 	  public virtual void Test()
 	  {
 		IList<string> postingsList = new List<string>();
-		int numTerms = atLeast(300);
-		int maxTermsPerDoc = TestUtil.Next(random(), 10, 20);
+		int numTerms = AtLeast(300);
+		int maxTermsPerDoc = TestUtil.NextInt(Random(), 10, 20);
 
-		bool isSimpleText = "SimpleText".Equals(TestUtil.getPostingsFormat("field"));
+		bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"));
 
-		IndexWriterConfig iwc = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
 		if ((isSimpleText || iwc.MergePolicy is MockRandomMergePolicy) && (TEST_NIGHTLY || RANDOM_MULTIPLIER > 1))
 		{
@@ -73,21 +75,21 @@ namespace Lucene.Net.Index
 			postingsList.Add(term);
 		  }
 		}
-		Collections.shuffle(postingsList, random());
+		Collections.shuffle(postingsList, Random());
 
 		ConcurrentLinkedQueue<string> postings = new ConcurrentLinkedQueue<string>(postingsList);
 
-		Directory dir = newFSDirectory(createTempDir("bagofpostings"));
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		Directory dir = NewFSDirectory(CreateTempDir("bagofpostings"));
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-		int threadCount = TestUtil.Next(random(), 1, 5);
+		int threadCount = TestUtil.NextInt(Random(), 1, 5);
 		if (VERBOSE)
 		{
 		  Console.WriteLine("config: " + iw.w.Config);
 		  Console.WriteLine("threadCount=" + threadCount);
 		}
 
-		Thread[] threads = new Thread[threadCount];
+        ThreadClass[] threads = new ThreadClass[threadCount];
 		CountDownLatch startingGun = new CountDownLatch(1);
 
 		for (int threadID = 0;threadID < threadCount;threadID++)
@@ -96,38 +98,38 @@ namespace Lucene.Net.Index
 		  threads[threadID].Start();
 		}
 		startingGun.countDown();
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
 
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader ir = iw.Reader;
-		Assert.AreEqual(1, ir.leaves().size());
-		AtomicReader air = ir.leaves().get(0).reader();
-		Terms terms = air.terms("field");
+		Assert.AreEqual(1, ir.Leaves().Count);
+        AtomicReader air = (AtomicReader)ir.Leaves()[0].Reader();
+		Terms terms = air.Terms("field");
 		// numTerms-1 because there cannot be a term 0 with 0 postings:
-		Assert.AreEqual(numTerms - 1, air.fields().UniqueTermCount);
+		Assert.AreEqual(numTerms - 1, air.Fields().UniqueTermCount);
 		if (iwc.Codec is Lucene3xCodec == false)
 		{
-		  Assert.AreEqual(numTerms - 1, terms.size());
+		  Assert.AreEqual(numTerms - 1, terms.Size());
 		}
-		TermsEnum termsEnum = terms.iterator(null);
-		BytesRef term;
-		while ((term = termsEnum.next()) != null)
+		TermsEnum termsEnum = terms.Iterator(null);
+		BytesRef term_;
+		while ((term_ = termsEnum.Next()) != null)
 		{
-		  int value = Convert.ToInt32(term.utf8ToString());
-		  Assert.AreEqual(value, termsEnum.docFreq());
+		  int value = Convert.ToInt32(term_.Utf8ToString());
+		  Assert.AreEqual(value, termsEnum.DocFreq());
 		  // don't really need to check more than this, as CheckIndex
 		  // will verify that docFreq == actual number of documents seen
 		  // from a docsAndPositionsEnum.
 		}
-		ir.close();
-		iw.close();
-		dir.close();
+		ir.Dispose();
+        iw.Close();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestBagOfPostings OuterInstance;
 
@@ -150,13 +152,13 @@ namespace Lucene.Net.Index
 			try
 			{
 			  Document document = new Document();
-			  Field field = newTextField("field", "", Field.Store.NO);
-			  document.add(field);
+			  Field field = NewTextField("field", "", Field.Store.NO);
+			  document.Add(field);
 			  StartingGun.@await();
 			  while (!Postings.Empty)
 			  {
 				StringBuilder text = new StringBuilder();
-				Set<string> visited = new HashSet<string>();
+				HashSet<string> visited = new HashSet<string>();
 				for (int i = 0; i < MaxTermsPerDoc; i++)
 				{
 				  string token = Postings.poll();
@@ -164,23 +166,23 @@ namespace Lucene.Net.Index
 				  {
 					break;
 				  }
-				  if (visited.contains(token))
+				  if (visited.Contains(token))
 				  {
 					// Put it back:
-					Postings.add(token);
+					Postings.Add(token);
 					break;
 				  }
 				  text.Append(' ');
 				  text.Append(token);
-				  visited.add(token);
+				  visited.Add(token);
 				}
 				field.StringValue = text.ToString();
-				Iw.addDocument(document);
+				Iw.AddDocument(document);
 			  }
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }

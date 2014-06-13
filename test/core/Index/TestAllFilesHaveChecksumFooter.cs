@@ -40,40 +40,40 @@ namespace Lucene.Net.Index
 	{
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.Codec = new Lucene46Codec();
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir, conf);
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetCodec(new Lucene46Codec());
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, conf);
 		Document doc = new Document();
 		// these fields should sometimes get term vectors, etc
-		Field idField = newStringField("id", "", Field.Store.NO);
-		Field bodyField = newTextField("body", "", Field.Store.NO);
+		Field idField = NewStringField("id", "", Field.Store.NO);
+		Field bodyField = NewTextField("body", "", Field.Store.NO);
 		Field dvField = new NumericDocValuesField("dv", 5);
-		doc.add(idField);
-		doc.add(bodyField);
-		doc.add(dvField);
+		doc.Add(idField);
+		doc.Add(bodyField);
+		doc.Add(dvField);
 		for (int i = 0; i < 100; i++)
 		{
 		  idField.StringValue = Convert.ToString(i);
-		  bodyField.StringValue = TestUtil.randomUnicodeString(random());
-		  riw.addDocument(doc);
-		  if (random().Next(7) == 0)
+		  bodyField.StringValue = TestUtil.RandomUnicodeString(Random());
+		  riw.AddDocument(doc);
+		  if (Random().Next(7) == 0)
 		  {
-			riw.commit();
+			riw.Commit();
 		  }
-		  if (random().Next(20) == 0)
+		  if (Random().Next(20) == 0)
 		  {
-			riw.deleteDocuments(new Term("id", Convert.ToString(i)));
+			riw.DeleteDocuments(new Term("id", Convert.ToString(i)));
 		  }
 		}
-		riw.close();
+        riw.Close();
 		CheckHeaders(dir);
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private void CheckHeaders(Directory dir)
 	  {
-		foreach (string file in dir.listAll())
+		foreach (string file in dir.ListAll())
 		{
 		  if (file.Equals(IndexWriter.WRITE_LOCK_NAME))
 		  {
@@ -81,15 +81,15 @@ namespace Lucene.Net.Index
 		  }
 		  if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION))
 		  {
-			CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, newIOContext(random()), false);
+			CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random()), false);
 			CheckHeaders(cfsDir); // recurse into cfs
-			cfsDir.close();
+			cfsDir.Dispose();
 		  }
 		  IndexInput @in = null;
 		  bool success = false;
 		  try
 		  {
-			@in = dir.openInput(file, newIOContext(random()));
+			@in = dir.OpenInput(file, NewIOContext(Random()));
 			CodecUtil.checksumEntireFile(@in);
 			success = true;
 		  }

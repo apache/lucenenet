@@ -35,8 +35,8 @@ namespace Lucene.Net.Codecs.Lucene41
 	using TextField = Lucene.Net.Document.TextField;
 	using AtomicReader = Lucene.Net.Index.AtomicReader;
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
@@ -58,6 +58,9 @@ namespace Lucene.Net.Codecs.Lucene41
 	using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using System.IO;
+    using NUnit.Framework;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// Tests partial enumeration (only pulling a subset of the indexed data) 
@@ -69,23 +72,23 @@ namespace Lucene.Net.Codecs.Lucene41
 	  // creates 8 fields with different options and does "duels" of fields against each other
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwc.Codec = TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat());
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
 		// TODO we could actually add more fields implemented with different PFs
 		// or, just put this test into the usual rotation?
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc.clone());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, (IndexWriterConfig)iwc.Clone());
 		Document doc = new Document();
 		FieldType docsOnlyType = new FieldType(TextField.TYPE_NOT_STORED);
 		// turn this on for a cross-check
 		docsOnlyType.StoreTermVectors = true;
-		docsOnlyType.IndexOptions = IndexOptions.DOCS_ONLY;
+		docsOnlyType.IndexOptionsValue = IndexOptions_e.DOCS_ONLY;
 
 		FieldType docsAndFreqsType = new FieldType(TextField.TYPE_NOT_STORED);
 		// turn this on for a cross-check
 		docsAndFreqsType.StoreTermVectors = true;
-		docsAndFreqsType.IndexOptions = IndexOptions.DOCS_AND_FREQS;
+        docsAndFreqsType.IndexOptionsValue = IndexOptions_e.DOCS_AND_FREQS;
 
 		FieldType positionsType = new FieldType(TextField.TYPE_NOT_STORED);
 		// turn these on for a cross-check
@@ -94,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		positionsType.StoreTermVectorOffsets = true;
 		positionsType.StoreTermVectorPayloads = true;
 		FieldType offsetsType = new FieldType(positionsType);
-		offsetsType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+		offsetsType.IndexOptionsValue = IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		Field field1 = new Field("field1docs", "", docsOnlyType);
 		Field field2 = new Field("field2freqs", "", docsAndFreqsType);
 		Field field3 = new Field("field3positions", "", positionsType);
@@ -103,17 +106,17 @@ namespace Lucene.Net.Codecs.Lucene41
 		Field field6 = new Field("field6payloadsVariable", "", positionsType);
 		Field field7 = new Field("field7payloadsFixedOffsets", "", offsetsType);
 		Field field8 = new Field("field8payloadsVariableOffsets", "", offsetsType);
-		doc.add(field1);
-		doc.add(field2);
-		doc.add(field3);
-		doc.add(field4);
-		doc.add(field5);
-		doc.add(field6);
-		doc.add(field7);
-		doc.add(field8);
+		doc.Add(field1);
+		doc.Add(field2);
+		doc.Add(field3);
+		doc.Add(field4);
+		doc.Add(field5);
+		doc.Add(field6);
+		doc.Add(field7);
+		doc.Add(field8);
 		for (int i = 0; i < MAXDOC; i++)
 		{
-		  string stringValue = Convert.ToString(i) + " verycommon " + English.intToEnglish(i).replace('-', ' ') + " " + TestUtil.randomSimpleString(random());
+		  string stringValue = Convert.ToString(i) + " verycommon " + English.IntToEnglish(i).Replace('-', ' ') + " " + TestUtil.RandomSimpleString(Random());
 		  field1.StringValue = stringValue;
 		  field2.StringValue = stringValue;
 		  field3.StringValue = stringValue;
@@ -122,29 +125,29 @@ namespace Lucene.Net.Codecs.Lucene41
 		  field6.StringValue = stringValue;
 		  field7.StringValue = stringValue;
 		  field8.StringValue = stringValue;
-		  iw.addDocument(doc);
+		  iw.AddDocument(doc);
 		}
-		iw.close();
+		iw.Close();
 		Verify(dir);
-		TestUtil.checkIndex(dir); // for some extra coverage, checkIndex before we forceMerge
-		iwc.OpenMode = OpenMode.APPEND;
-		IndexWriter iw2 = new IndexWriter(dir, iwc.clone());
-		iw2.forceMerge(1);
-		iw2.close();
+		TestUtil.CheckIndex(dir); // for some extra coverage, checkIndex before we forceMerge
+		iwc.SetOpenMode(OpenMode_e.APPEND);
+		IndexWriter iw2 = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
+		iw2.ForceMerge(1);
+		iw2.Dispose();
 		Verify(dir);
-		dir.close();
+        dir.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
 	  {
 		  private readonly TestBlockPostingsFormat3 OuterInstance;
 
-		  public AnalyzerAnonymousInnerClassHelper(TestBlockPostingsFormat3 outerInstance, UnknownType PER_FIELD_REUSE_STRATEGY) : base(PER_FIELD_REUSE_STRATEGY)
+		  public AnalyzerAnonymousInnerClassHelper(TestBlockPostingsFormat3 outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY) : base(PER_FIELD_REUSE_STRATEGY)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader);
 			if (fieldName.Contains("payloadsFixed"))
@@ -166,18 +169,18 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  private void Verify(Directory dir)
 	  {
-		DirectoryReader ir = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext leaf in ir.leaves())
+		DirectoryReader ir = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext leaf in ir.Leaves())
 		{
-		  AtomicReader leafReader = leaf.reader();
-		  AssertTerms(leafReader.terms("field1docs"), leafReader.terms("field2freqs"), true);
-		  AssertTerms(leafReader.terms("field3positions"), leafReader.terms("field4offsets"), true);
-		  AssertTerms(leafReader.terms("field4offsets"), leafReader.terms("field5payloadsFixed"), true);
-		  AssertTerms(leafReader.terms("field5payloadsFixed"), leafReader.terms("field6payloadsVariable"), true);
-		  AssertTerms(leafReader.terms("field6payloadsVariable"), leafReader.terms("field7payloadsFixedOffsets"), true);
-		  AssertTerms(leafReader.terms("field7payloadsFixedOffsets"), leafReader.terms("field8payloadsVariableOffsets"), true);
+		  AtomicReader leafReader = (AtomicReader)leaf.Reader();
+          AssertTerms(leafReader.Terms("field1docs"), leafReader.Terms("field2freqs"), true);
+          AssertTerms(leafReader.Terms("field3positions"), leafReader.Terms("field4offsets"), true);
+          AssertTerms(leafReader.Terms("field4offsets"), leafReader.Terms("field5payloadsFixed"), true);
+          AssertTerms(leafReader.Terms("field5payloadsFixed"), leafReader.Terms("field6payloadsVariable"), true);
+          AssertTerms(leafReader.Terms("field6payloadsVariable"), leafReader.Terms("field7payloadsFixedOffsets"), true);
+          AssertTerms(leafReader.Terms("field7payloadsFixedOffsets"), leafReader.Terms("field8payloadsVariableOffsets"), true);
 		}
-		ir.close();
+		ir.Dispose();
 	  }
 
 	  // following code is almost an exact dup of code from TestDuelingCodecs: sorry!
@@ -186,33 +189,33 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 		if (leftTerms == null || rightTerms == null)
 		{
-		  assertNull(leftTerms);
-		  assertNull(rightTerms);
+		  Assert.IsNull(leftTerms);
+		  Assert.IsNull(rightTerms);
 		  return;
 		}
 		AssertTermsStatistics(leftTerms, rightTerms);
 
 		// NOTE: we don't assert hasOffsets/hasPositions/hasPayloads because they are allowed to be different
 
-		TermsEnum leftTermsEnum = leftTerms.iterator(null);
-		TermsEnum rightTermsEnum = rightTerms.iterator(null);
+		TermsEnum leftTermsEnum = leftTerms.Iterator(null);
+		TermsEnum rightTermsEnum = rightTerms.Iterator(null);
 		AssertTermsEnum(leftTermsEnum, rightTermsEnum, true);
 
 		AssertTermsSeeking(leftTerms, rightTerms);
 
 		if (deep)
 		{
-		  int numIntersections = atLeast(3);
+		  int numIntersections = AtLeast(3);
 		  for (int i = 0; i < numIntersections; i++)
 		  {
-			string re = AutomatonTestUtil.randomRegexp(random());
-			CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExp.NONE)).toAutomaton());
-			if (automaton.type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
+			string re = AutomatonTestUtil.RandomRegexp(Random());
+			CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExp.NONE)).ToAutomaton());
+			if (automaton.Type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
 			{
 			  // TODO: test start term too
-			  TermsEnum leftIntersection = leftTerms.intersect(automaton, null);
-			  TermsEnum rightIntersection = rightTerms.intersect(automaton, null);
-			  AssertTermsEnum(leftIntersection, rightIntersection, rarely());
+			  TermsEnum leftIntersection = leftTerms.Intersect(automaton, null);
+              TermsEnum rightIntersection = rightTerms.Intersect(automaton, null);
+			  AssertTermsEnum(leftIntersection, rightIntersection, Rarely());
 			}
 		  }
 		}
@@ -224,40 +227,40 @@ namespace Lucene.Net.Codecs.Lucene41
 		TermsEnum rightEnum = null;
 
 		// just an upper bound
-		int numTests = atLeast(20);
-		Random random = random();
+		int numTests = AtLeast(20);
+		Random random = Random();
 
 		// collect this number of terms from the left side
 		HashSet<BytesRef> tests = new HashSet<BytesRef>();
 		int numPasses = 0;
 		while (numPasses < 10 && tests.Count < numTests)
 		{
-		  leftEnum = leftTerms.iterator(leftEnum);
+		  leftEnum = leftTerms.Iterator(leftEnum);
 		  BytesRef term = null;
-		  while ((term = leftEnum.next()) != null)
+		  while ((term = leftEnum.Next()) != null)
 		  {
 			int code = random.Next(10);
 			if (code == 0)
 			{
 			  // the term
-			  tests.Add(BytesRef.deepCopyOf(term));
+			  tests.Add(BytesRef.DeepCopyOf(term));
 			}
 			else if (code == 1)
 			{
 			  // truncated subsequence of term
-			  term = BytesRef.deepCopyOf(term);
-			  if (term.length > 0)
+			  term = BytesRef.DeepCopyOf(term);
+			  if (term.Length > 0)
 			  {
 				// truncate it
-				term.length = random.Next(term.length);
+				term.Length = random.Next(term.Length);
 			  }
 			}
 			else if (code == 2)
 			{
 			  // term, but ensure a non-zero offset
-			  sbyte[] newbytes = new sbyte[term.length + 5];
-			  Array.Copy(term.bytes, term.offset, newbytes, 5, term.length);
-			  tests.Add(new BytesRef(newbytes, 5, term.length));
+			  sbyte[] newbytes = new sbyte[term.Length + 5];
+			  Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
+			  tests.Add(new BytesRef(newbytes, 5, term.Length));
 			}
 		  }
 		  numPasses++;
@@ -268,29 +271,29 @@ namespace Lucene.Net.Codecs.Lucene41
 
 		foreach (BytesRef b in shuffledTests)
 		{
-		  leftEnum = leftTerms.iterator(leftEnum);
-		  rightEnum = rightTerms.iterator(rightEnum);
+		  leftEnum = leftTerms.Iterator(leftEnum);
+          rightEnum = rightTerms.Iterator(rightEnum);
 
-		  Assert.AreEqual(leftEnum.seekExact(b), rightEnum.seekExact(b));
-		  Assert.AreEqual(leftEnum.seekExact(b), rightEnum.seekExact(b));
+          Assert.AreEqual(leftEnum.SeekExact(b), rightEnum.SeekExact(b));
+          Assert.AreEqual(leftEnum.SeekExact(b), rightEnum.SeekExact(b));
 
 		  SeekStatus leftStatus;
 		  SeekStatus rightStatus;
 
-		  leftStatus = leftEnum.seekCeil(b);
-		  rightStatus = rightEnum.seekCeil(b);
+		  leftStatus = leftEnum.SeekCeil(b);
+          rightStatus = rightEnum.SeekCeil(b);
 		  Assert.AreEqual(leftStatus, rightStatus);
 		  if (leftStatus != SeekStatus.END)
 		  {
-			Assert.AreEqual(leftEnum.term(), rightEnum.term());
+			Assert.AreEqual(leftEnum.Term(), rightEnum.Term());
 		  }
 
-		  leftStatus = leftEnum.seekCeil(b);
-		  rightStatus = rightEnum.seekCeil(b);
+          leftStatus = leftEnum.SeekCeil(b);
+          rightStatus = rightEnum.SeekCeil(b);
 		  Assert.AreEqual(leftStatus, rightStatus);
 		  if (leftStatus != SeekStatus.END)
 		  {
-			Assert.AreEqual(leftEnum.term(), rightEnum.term());
+			Assert.AreEqual(leftEnum.Term(), rightEnum.Term());
 		  }
 		}
 	  }
@@ -313,9 +316,9 @@ namespace Lucene.Net.Codecs.Lucene41
 		{
 		  Assert.AreEqual(leftTerms.SumTotalTermFreq, rightTerms.SumTotalTermFreq);
 		}
-		if (leftTerms.size() != -1 && rightTerms.size() != -1)
+		if (leftTerms.Size() != -1 && rightTerms.Size() != -1)
 		{
-		  Assert.AreEqual(leftTerms.size(), rightTerms.size());
+		  Assert.AreEqual(leftTerms.Size(), rightTerms.Size());
 		}
 	  }
 
@@ -326,63 +329,63 @@ namespace Lucene.Net.Codecs.Lucene41
 	  public virtual void AssertTermsEnum(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
 	  {
 		BytesRef term;
-		Bits randomBits = new RandomBits(MAXDOC, random().NextDouble(), random());
+		Bits randomBits = new RandomBits(MAXDOC, Random().NextDouble(), Random());
 		DocsAndPositionsEnum leftPositions = null;
 		DocsAndPositionsEnum rightPositions = null;
 		DocsEnum leftDocs = null;
 		DocsEnum rightDocs = null;
 
-		while ((term = leftTermsEnum.next()) != null)
+		while ((term = leftTermsEnum.Next()) != null)
 		{
-		  Assert.AreEqual(term, rightTermsEnum.next());
+		  Assert.AreEqual(term, rightTermsEnum.Next());
 		  AssertTermStats(leftTermsEnum, rightTermsEnum);
 		  if (deep)
 		  {
 			// with payloads + off
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions));
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions));
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 			// with payloads only
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
 
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_PAYLOADS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_PAYLOADS));
 
 			// with offsets only
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
 
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsAndPositionsEnum.FLAG_OFFSETS), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsAndPositionsEnum.FLAG_OFFSETS));
 
 			// with positions only
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
-			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
+			AssertDocsAndPositionsEnum(leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
 
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
-			AssertPositionsSkipping(leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
-
-			// with freqs:
-			AssertDocsEnum(leftDocs = leftTermsEnum.docs(null, leftDocs), rightDocs = rightTermsEnum.docs(null, rightDocs));
-			AssertDocsEnum(leftDocs = leftTermsEnum.docs(randomBits, leftDocs), rightDocs = rightTermsEnum.docs(randomBits, rightDocs));
-
-			// w/o freqs:
-			AssertDocsEnum(leftDocs = leftTermsEnum.docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(null, rightDocs, DocsEnum.FLAG_NONE));
-			AssertDocsEnum(leftDocs = leftTermsEnum.docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions, DocsEnum.FLAG_NONE));
+			AssertPositionsSkipping(leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions, DocsEnum.FLAG_NONE), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions, DocsEnum.FLAG_NONE));
 
 			// with freqs:
-			AssertDocsSkipping(leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(null, leftDocs), rightDocs = rightTermsEnum.docs(null, rightDocs));
-			AssertDocsSkipping(leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(randomBits, leftDocs), rightDocs = rightTermsEnum.docs(randomBits, rightDocs));
+			AssertDocsEnum(leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs));
+			AssertDocsEnum(leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs));
 
 			// w/o freqs:
-			AssertDocsSkipping(leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(null, rightDocs, DocsEnum.FLAG_NONE));
-			AssertDocsSkipping(leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
+			AssertDocsEnum(leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE));
+			AssertDocsEnum(leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
+
+			// with freqs:
+			AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs));
+			AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs));
+
+			// w/o freqs:
+			AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE));
+			AssertDocsSkipping(leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE));
 		  }
 		}
-		assertNull(rightTermsEnum.next());
+		Assert.IsNull(rightTermsEnum.Next());
 	  }
 
 	  /// <summary>
@@ -390,10 +393,10 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// </summary>
 	  public virtual void AssertTermStats(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
 	  {
-		Assert.AreEqual(leftTermsEnum.docFreq(), rightTermsEnum.docFreq());
-		if (leftTermsEnum.totalTermFreq() != -1 && rightTermsEnum.totalTermFreq() != -1)
+		Assert.AreEqual(leftTermsEnum.DocFreq(), rightTermsEnum.DocFreq());
+		if (leftTermsEnum.TotalTermFreq() != -1 && rightTermsEnum.TotalTermFreq() != -1)
 		{
-		  Assert.AreEqual(leftTermsEnum.totalTermFreq(), rightTermsEnum.totalTermFreq());
+		  Assert.AreEqual(leftTermsEnum.TotalTermFreq(), rightTermsEnum.TotalTermFreq());
 		}
 	  }
 
@@ -404,25 +407,25 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 		if (leftDocs == null || rightDocs == null)
 		{
-		  assertNull(leftDocs);
-		  assertNull(rightDocs);
+		  Assert.IsNull(leftDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
-		Assert.AreEqual(-1, leftDocs.docID());
-		Assert.AreEqual(-1, rightDocs.docID());
+		Assert.AreEqual(-1, leftDocs.DocID());
+		Assert.AreEqual(-1, rightDocs.DocID());
 		int docid;
-		while ((docid = leftDocs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(docid, rightDocs.nextDoc());
-		  int freq = leftDocs.freq();
-		  Assert.AreEqual(freq, rightDocs.freq());
+		  Assert.AreEqual(docid, rightDocs.NextDoc());
+		  int freq = leftDocs.Freq();
+		  Assert.AreEqual(freq, rightDocs.Freq());
 		  for (int i = 0; i < freq; i++)
 		  {
-			Assert.AreEqual(leftDocs.nextPosition(), rightDocs.nextPosition());
+			Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition());
 			// we don't assert offsets/payloads, they are allowed to be different
 		  }
 		}
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.nextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.NextDoc());
 	  }
 
 	  /// <summary>
@@ -432,18 +435,18 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 		if (leftDocs == null)
 		{
-		  assertNull(rightDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
-		Assert.AreEqual(-1, leftDocs.docID());
-		Assert.AreEqual(-1, rightDocs.docID());
+		Assert.AreEqual(-1, leftDocs.DocID());
+		Assert.AreEqual(-1, rightDocs.DocID());
 		int docid;
-		while ((docid = leftDocs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(docid, rightDocs.nextDoc());
+		  Assert.AreEqual(docid, rightDocs.NextDoc());
 		  // we don't assert freqs, they are allowed to be different
 		}
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.nextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.NextDoc());
 	  }
 
 	  /// <summary>
@@ -453,7 +456,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 		if (leftDocs == null)
 		{
-		  assertNull(rightDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
 		int docid = -1;
@@ -462,18 +465,18 @@ namespace Lucene.Net.Codecs.Lucene41
 
 		while (true)
 		{
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// nextDoc()
-			docid = leftDocs.nextDoc();
-			Assert.AreEqual(docid, rightDocs.nextDoc());
+			docid = leftDocs.NextDoc();
+			Assert.AreEqual(docid, rightDocs.NextDoc());
 		  }
 		  else
 		  {
 			// advance()
-			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + random().nextGaussian() * averageGap));
-			docid = leftDocs.advance(skip);
-			Assert.AreEqual(docid, rightDocs.advance(skip));
+			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().nextGaussian() * averageGap));
+			docid = leftDocs.Advance(skip);
+			Assert.AreEqual(docid, rightDocs.Advance(skip));
 		  }
 
 		  if (docid == DocIdSetIterator.NO_MORE_DOCS)
@@ -491,8 +494,8 @@ namespace Lucene.Net.Codecs.Lucene41
 	  {
 		if (leftDocs == null || rightDocs == null)
 		{
-		  assertNull(leftDocs);
-		  assertNull(rightDocs);
+		  Assert.IsNull(leftDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
 
@@ -502,29 +505,29 @@ namespace Lucene.Net.Codecs.Lucene41
 
 		while (true)
 		{
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// nextDoc()
-			docid = leftDocs.nextDoc();
-			Assert.AreEqual(docid, rightDocs.nextDoc());
+			docid = leftDocs.NextDoc();
+			Assert.AreEqual(docid, rightDocs.NextDoc());
 		  }
 		  else
 		  {
 			// advance()
-			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + random().nextGaussian() * averageGap));
-			docid = leftDocs.advance(skip);
-			Assert.AreEqual(docid, rightDocs.advance(skip));
+			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().nextGaussian() * averageGap));
+			docid = leftDocs.Advance(skip);
+			Assert.AreEqual(docid, rightDocs.Advance(skip));
 		  }
 
 		  if (docid == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			return;
 		  }
-		  int freq = leftDocs.freq();
-		  Assert.AreEqual(freq, rightDocs.freq());
+		  int freq = leftDocs.Freq();
+		  Assert.AreEqual(freq, rightDocs.Freq());
 		  for (int i = 0; i < freq; i++)
 		  {
-			Assert.AreEqual(leftDocs.nextPosition(), rightDocs.nextPosition());
+			Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition());
 			// we don't compare the payloads, its allowed that one is empty etc
 		  }
 		}
@@ -541,19 +544,19 @@ namespace Lucene.Net.Codecs.Lucene41
 		  {
 			if (random.NextDouble() <= pctLive)
 			{
-			  Bits.set(i);
+			  Bits.Set(i);
 			}
 		  }
 		}
 
 		public override bool Get(int index)
 		{
-		  return Bits.get(index);
+		  return Bits.Get(index);
 		}
 
 		public override int Length()
 		{
-		  return Bits.length();
+		  return Bits.Length();
 		}
 	  }
 	}

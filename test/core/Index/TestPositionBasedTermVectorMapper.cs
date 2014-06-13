@@ -100,12 +100,12 @@ namespace Lucene.Net.Index
                 Assert.IsTrue(info.Offsets != null, "info.getOffsets() is null and it shouldn't be");
                 if (pos == 0)
                 {
-                    Assert.IsTrue(info.Terms.Count == 2, "info.getTerms() Size: " + info.Terms.Count + " is not: " + 2); //need a test for multiple terms at one pos
+                    Assert.IsTrue(info.Terms.Count == 2, "info.GetTerms() Size: " + info.Terms.Count + " is not: " + 2); //need a test for multiple terms at one pos
                     Assert.IsTrue(info.Offsets.Count == 2, "info.getOffsets() Size: " + info.Offsets.Count + " is not: " + 2);
                 }
                 else
                 {
-                    Assert.IsTrue(info.Terms.Count == 1, "info.getTerms() Size: " + info.Terms.Count + " is not: " + 1); //need a test for multiple terms at one pos
+                    Assert.IsTrue(info.Terms.Count == 1, "info.GetTerms() Size: " + info.Terms.Count + " is not: " + 1); //need a test for multiple terms at one pos
                     Assert.IsTrue(info.Offsets.Count == 1, "info.getOffsets() Size: " + info.Offsets.Count + " is not: " + 1);
                 }
             }

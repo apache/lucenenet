@@ -26,6 +26,7 @@ namespace Lucene.Net.Index
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using Test = org.junit.Test;
+    using NUnit.Framework;
 
 	public class TestNoDeletionPolicy : LuceneTestCase
 	{
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestNoDeletionPolicy()
 	  {
 		IndexDeletionPolicy idp = NoDeletionPolicy.INSTANCE;
-		idp.onInit(null);
+		idp.OnInit(null);
 		idp.OnCommit(null);
 	  }
 
@@ -79,18 +80,18 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testAllCommitsRemain() throws Exception
 	  public virtual void TestAllCommitsRemain()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
 		for (int i = 0; i < 10; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("c", "a" + i, Field.Store.YES));
-		  writer.addDocument(doc);
-		  writer.commit();
-		  Assert.AreEqual("wrong number of commits !", i + 1, DirectoryReader.listCommits(dir).size());
+		  doc.Add(NewTextField("c", "a" + i, Field.Store.YES));
+		  writer.AddDocument(doc);
+		  writer.Commit();
+		  Assert.AreEqual("wrong number of commits !", i + 1, DirectoryReader.ListCommits(dir).Size());
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	}

@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// @lucene.experimental  
 
 	[Obsolete]
-	internal sealed class SegmentTermEnum : ICloneable, IDisposable
+	public sealed class SegmentTermEnum : ICloneable, IDisposable
 	{
 	  private IndexInput Input;
 	  internal FieldInfos FieldInfos;

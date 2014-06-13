@@ -31,6 +31,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests the maxTermFrequency statistic in FieldInvertState
@@ -44,36 +45,36 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.SIMPLE, true)).setMergePolicy(newLogMergePolicy());
+		base.SetUp();
+		Dir = NewDirectory();
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy());
 		config.Similarity = new TestSimilarity(this);
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, config);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
 		Document doc = new Document();
-		Field foo = newTextField("foo", "", Field.Store.NO);
-		doc.add(foo);
+		Field foo = NewTextField("foo", "", Field.Store.NO);
+		doc.Add(foo);
 		for (int i = 0; i < 100; i++)
 		{
 		  foo.StringValue = AddValue();
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
+        writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void Test()
 	  {
-		NumericDocValues fooNorms = MultiDocValues.getNormValues(Reader, "foo");
-		for (int i = 0; i < Reader.maxDoc(); i++)
+		NumericDocValues fooNorms = MultiDocValues.GetNormValues(Reader, "foo");
+		for (int i = 0; i < Reader.MaxDoc(); i++)
 		{
-		  Assert.AreEqual((int)Expected[i], fooNorms.get(i) & 0xff);
+		  Assert.AreEqual((int)Expected[i], fooNorms.Get(i) & 0xff);
 		}
 	  }
 
@@ -86,11 +87,11 @@ namespace Lucene.Net.Index
 	  private string AddValue()
 	  {
 		IList<string> terms = new List<string>();
-		int maxCeiling = TestUtil.Next(random(), 0, 255);
+		int maxCeiling = TestUtil.NextInt(Random(), 0, 255);
 		int max = 0;
 		for (char ch = 'a'; ch <= 'z'; ch++)
 		{
-		  int num = TestUtil.Next(random(), 0, maxCeiling);
+		  int num = TestUtil.NextInt(Random(), 0, maxCeiling);
 		  for (int i = 0; i < num; i++)
 		  {
 			terms.Add(char.ToString(ch));
@@ -98,7 +99,7 @@ namespace Lucene.Net.Index
 		  max = Math.Max(max, num);
 		}
 		Expected.Add(max);
-		Collections.shuffle(terms, random());
+		Collections.shuffle(terms, Random());
 		return Arrays.ToString(terms.ToArray());
 	  }
 

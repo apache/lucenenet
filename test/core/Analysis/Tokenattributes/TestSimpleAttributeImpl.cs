@@ -25,23 +25,29 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
     using Attribute = Lucene.Net.Util.Attribute;
+    using Lucene.Net.Support;
 
-
+    [TestFixture]
 	public class TestSimpleAttributeImpl : LuceneTestCase
 	{
 
 	  // this checks using reflection API if the defaults are correct
 	  public virtual void TestAttributes()
 	  {
-		TestUtil.assertAttributeReflection(new PositionIncrementAttributeImpl(), Collections.singletonMap(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1));
-		TestUtil.assertAttributeReflection(new PositionLengthAttributeImpl(), Collections.singletonMap(typeof(PositionLengthAttribute).Name + "#positionLength", 1));
-		TestUtil.assertAttributeReflection(new FlagsAttributeImpl(), Collections.singletonMap(typeof(FlagsAttribute).Name + "#flags", 0));
-		TestUtil.assertAttributeReflection(new TypeAttributeImpl(), Collections.singletonMap(typeof(TypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE));
-		TestUtil.assertAttributeReflection(new PayloadAttributeImpl(), Collections.singletonMap(typeof(PayloadAttribute).Name + "#payload", null));
-		TestUtil.assertAttributeReflection(new KeywordAttributeImpl(), Collections.singletonMap(typeof(KeywordAttribute).Name + "#keyword", false));
-		TestUtil.assertAttributeReflection(new OffsetAttributeImpl(), new Dictionary<string, object>() {{put(typeof(OffsetAttribute).Name + "#startOffset", 0); put(typeof(OffsetAttribute).Name + "#endOffset", 0);}});
+		TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), CollectionsHelper.SingletonMap(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1));
+        TestUtil.AssertAttributeReflection(new PositionLengthAttribute(), CollectionsHelper.SingletonMap(typeof(PositionLengthAttribute).Name + "#positionLength", 1));
+        TestUtil.AssertAttributeReflection(new FlagsAttribute(), CollectionsHelper.SingletonMap(typeof(FlagsAttribute).Name + "#flags", 0));
+        TestUtil.AssertAttributeReflection(new TypeAttribute(), CollectionsHelper.SingletonMap(typeof(TypeAttribute).Name + "#type", TypeAttribute_Fields.DEFAULT_TYPE));
+        TestUtil.AssertAttributeReflection(new PayloadAttribute(), CollectionsHelper.SingletonMap(typeof(PayloadAttribute).Name + "#payload", (object)null));
+        TestUtil.AssertAttributeReflection(new KeywordAttribute(), CollectionsHelper.SingletonMap(typeof(KeywordAttribute).Name + "#keyword", false));
+		TestUtil.AssertAttributeReflection(new OffsetAttribute(), new Dictionary<string, object>() 
+        {
+            {typeof(OffsetAttribute).Name + "#startOffset", 0 },
+            {typeof(OffsetAttribute).Name + "#endOffset", 0}
+        });
 	  }
 
+      [Test]
       public static Attribute AssertCloneIsEqual(Attribute att)
       {
           Attribute clone = (Attribute)att.Clone();
@@ -50,6 +56,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
           return clone;
       }
 
+      [Test]
       public static Attribute AssertCopyIsEqual(Attribute att)
       {
           Attribute copy = (Attribute)System.Activator.CreateInstance(att.GetType());

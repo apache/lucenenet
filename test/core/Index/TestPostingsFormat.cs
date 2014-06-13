@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
 
 	  public override void TestMergeStability()
 	  {
-		assumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
+		AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
 	  }
 
 	}

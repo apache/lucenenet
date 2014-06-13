@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using Store = Lucene.Net.Document.Field.Store;
 	using StringField = Lucene.Net.Document.StringField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using ReferenceManager = Lucene.Net.Search.ReferenceManager;
 	using SearcherFactory = Lucene.Net.Search.SearcherFactory;
@@ -34,6 +34,9 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Search;
 
 
 	public class TestTryDelete : LuceneTestCase
@@ -41,9 +44,9 @@ namespace Lucene.Net.Index
 	  private static IndexWriter GetWriter(Directory directory)
 	  {
 		MergePolicy policy = new LogByteSizeMergePolicy();
-		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MergePolicy = policy;
-		conf.OpenMode_e = OpenMode.CREATE_OR_APPEND;
+		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMergePolicy(policy);
+		conf.SetOpenMode(OpenMode_e.CREATE_OR_APPEND);
 
 		IndexWriter writer = new IndexWriter(directory, conf);
 
@@ -59,12 +62,12 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < 10; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("foo", Convert.ToString(i), Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("foo", Convert.ToString(i), Store.YES));
+		  writer.AddDocument(doc);
 		}
 
-		writer.commit();
-		writer.close();
+		writer.Commit();
+		writer.Dispose();
 
 		return directory;
 	  }
@@ -79,42 +82,42 @@ namespace Lucene.Net.Index
 
 		TrackingIndexWriter mgrWriter = new TrackingIndexWriter(writer);
 
-		IndexSearcher searcher = mgr.acquire();
+		IndexSearcher searcher = mgr.Acquire();
 
-		TopDocs topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
-		Assert.AreEqual(1, topDocs.totalHits);
+		TopDocs topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
+		Assert.AreEqual(1, topDocs.TotalHits);
 
 		long result;
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  IndexReader r = DirectoryReader.open(writer, true);
-		  result = mgrWriter.tryDeleteDocument(r, 0);
-		  r.close();
+		  IndexReader r = DirectoryReader.Open(writer, true);
+		  result = mgrWriter.TryDeleteDocument(r, 0);
+		  r.Dispose();
 		}
 		else
 		{
-		  result = mgrWriter.tryDeleteDocument(searcher.IndexReader, 0);
+		  result = mgrWriter.TryDeleteDocument(searcher.IndexReader, 0);
 		}
 
 		// The tryDeleteDocument should have succeeded:
 		Assert.IsTrue(result != -1);
 
-		Assert.IsTrue(writer.hasDeletions());
+		Assert.IsTrue(writer.HasDeletions());
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
-		Assert.IsTrue(writer.hasDeletions());
+		Assert.IsTrue(writer.HasDeletions());
 
-		mgr.maybeRefresh();
+		mgr.MaybeRefresh();
 
-		searcher = mgr.acquire();
+		searcher = mgr.Acquire();
 
-		topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
+		topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
 
-		Assert.AreEqual(0, topDocs.totalHits);
+		Assert.AreEqual(0, topDocs.TotalHits);
 	  }
 
 	  public virtual void TestTryDeleteDocumentCloseAndReopen()
@@ -125,35 +128,35 @@ namespace Lucene.Net.Index
 
 		ReferenceManager<IndexSearcher> mgr = new SearcherManager(writer, true, new SearcherFactory());
 
-		IndexSearcher searcher = mgr.acquire();
+		IndexSearcher searcher = mgr.Acquire();
 
-		TopDocs topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
-		Assert.AreEqual(1, topDocs.totalHits);
+		TopDocs topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
+		Assert.AreEqual(1, topDocs.TotalHits);
 
 		TrackingIndexWriter mgrWriter = new TrackingIndexWriter(writer);
-		long result = mgrWriter.tryDeleteDocument(DirectoryReader.open(writer, true), 0);
+		long result = mgrWriter.TryDeleteDocument(DirectoryReader.Open(writer, true), 0);
 
 		Assert.AreEqual(1, result);
 
-		writer.commit();
+		writer.Commit();
 
-		Assert.IsTrue(writer.hasDeletions());
+		Assert.IsTrue(writer.HasDeletions());
 
-		mgr.maybeRefresh();
+		mgr.MaybeRefresh();
 
-		searcher = mgr.acquire();
+		searcher = mgr.Acquire();
 
-		topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
+		topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
 
-		Assert.AreEqual(0, topDocs.totalHits);
+		Assert.AreEqual(0, topDocs.TotalHits);
 
-		writer.close();
+		writer.Dispose();
 
-		searcher = new IndexSearcher(DirectoryReader.open(directory));
+		searcher = new IndexSearcher(DirectoryReader.Open(directory));
 
-		topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
+		topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
 
-		Assert.AreEqual(0, topDocs.totalHits);
+		Assert.AreEqual(0, topDocs.TotalHits);
 
 	  }
 
@@ -165,27 +168,27 @@ namespace Lucene.Net.Index
 
 		ReferenceManager<IndexSearcher> mgr = new SearcherManager(writer, true, new SearcherFactory());
 
-		IndexSearcher searcher = mgr.acquire();
+		IndexSearcher searcher = mgr.Acquire();
 
-		TopDocs topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
-		Assert.AreEqual(1, topDocs.totalHits);
+		TopDocs topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
+		Assert.AreEqual(1, topDocs.TotalHits);
 
 		TrackingIndexWriter mgrWriter = new TrackingIndexWriter(writer);
-		long result = mgrWriter.deleteDocuments(new TermQuery(new Term("foo", "0")));
+		long result = mgrWriter.DeleteDocuments(new TermQuery(new Term("foo", "0")));
 
 		Assert.AreEqual(1, result);
 
-		// writer.commit();
+		// writer.Commit();
 
-		Assert.IsTrue(writer.hasDeletions());
+		Assert.IsTrue(writer.HasDeletions());
 
-		mgr.maybeRefresh();
+		mgr.MaybeRefresh();
 
-		searcher = mgr.acquire();
+		searcher = mgr.Acquire();
 
-		topDocs = searcher.search(new TermQuery(new Term("foo", "0")), 100);
+		topDocs = searcher.Search(new TermQuery(new Term("foo", "0")), 100);
 
-		Assert.AreEqual(0, topDocs.totalHits);
+		Assert.AreEqual(0, topDocs.TotalHits);
 	  }
 	}
 

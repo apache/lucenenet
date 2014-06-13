@@ -32,7 +32,9 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using Before = org.junit.Before;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
+    using System.IO;
 
 	/// <summary>
 	/// this testcase tests whether multi-level skipping is being used
@@ -49,14 +51,14 @@ namespace Lucene.Net.Index
 	  {
 		  private readonly TestMultiLevelSkipList OuterInstance;
 
-		public CountingRAMDirectory(TestMultiLevelSkipList outerInstance, Directory @delegate) : base(random(), @delegate)
+		public CountingRAMDirectory(TestMultiLevelSkipList outerInstance, Directory @delegate) : base(Random(), @delegate)
 		{
 			this.OuterInstance = outerInstance;
 		}
 
 		public override IndexInput OpenInput(string fileName, IOContext context)
 		{
-		  IndexInput @in = base.openInput(fileName, context);
+		  IndexInput @in = base.OpenInput(fileName, context);
 		  if (fileName.EndsWith(".frq"))
 		  {
 			@in = new CountingStream(OuterInstance, @in);
@@ -69,31 +71,31 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Override @Before public void setUp() throws Exception
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		Counter = 0;
 	  }
 
 	  public virtual void TestSimpleSkip()
 	  {
 		Directory dir = new CountingRAMDirectory(this, new RAMDirectory());
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).setCodec(TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat())).setMergePolicy(newLogMergePolicy()));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())).SetMergePolicy(NewLogMergePolicy()));
 		Term term = new Term("test", "a");
 		for (int i = 0; i < 5000; i++)
 		{
 		  Document d1 = new Document();
-		  d1.add(newTextField(term.field(), term.text(), Field.Store.NO));
-		  writer.addDocument(d1);
+		  d1.Add(NewTextField(term.Field(), term.Text(), Field.Store.NO));
+		  writer.AddDocument(d1);
 		}
-		writer.commit();
-		writer.forceMerge(1);
-		writer.close();
+		writer.Commit();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
-		AtomicReader reader = getOnlySegmentReader(DirectoryReader.open(dir));
+		AtomicReader reader = GetOnlySegmentReader(DirectoryReader.Open(dir));
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Counter = 0;
-		  DocsAndPositionsEnum tp = reader.termPositionsEnum(term);
+		  DocsAndPositionsEnum tp = reader.TermPositionsEnum(term);
 		  CheckSkipTo(tp, 14, 185); // no skips
 		  CheckSkipTo(tp, 17, 190); // one skip on level 0
 		  CheckSkipTo(tp, 287, 200); // one skip on level 1, two on level 0
@@ -106,24 +108,24 @@ namespace Lucene.Net.Index
 
 	  public virtual void CheckSkipTo(DocsAndPositionsEnum tp, int target, int maxCounter)
 	  {
-		tp.advance(target);
+		tp.Advance(target);
 		if (maxCounter < Counter)
 		{
 		  Assert.Fail("Too many bytes read: " + Counter + " vs " + maxCounter);
 		}
 
-		Assert.AreEqual("Wrong document " + tp.docID() + " after skipTo target " + target, target, tp.docID());
-		Assert.AreEqual("Frequency is not 1: " + tp.freq(), 1,tp.freq());
-		tp.nextPosition();
+		Assert.AreEqual(target, tp.DocID(), "Wrong document " + tp.DocID() + " after skipTo target " + target);
+		Assert.AreEqual(1,tp.Freq(), "Frequency is not 1: " + tp.Freq());
+		tp.NextPosition();
 		BytesRef b = tp.Payload;
-		Assert.AreEqual(1, b.length);
-		Assert.AreEqual("Wrong payload for the target " + target + ": " + b.bytes[b.offset], (sbyte) target, b.bytes[b.offset]);
+		Assert.AreEqual(1, b.Length);
+		Assert.AreEqual((sbyte) target, b.Bytes[b.Offset], "Wrong payload for the target " + target + ": " + b.Bytes[b.Offset]);
 	  }
 
 	  private class PayloadAnalyzer : Analyzer
 	  {
 		internal readonly AtomicInteger PayloadCount = new AtomicInteger(-1);
-		public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
 		  return new TokenStreamComponents(tokenizer, new PayloadFilter(PayloadCount, tokenizer));
@@ -140,15 +142,15 @@ namespace Lucene.Net.Index
 		protected internal PayloadFilter(AtomicInteger payloadCount, TokenStream input) : base(input)
 		{
 		  this.PayloadCount = payloadCount;
-		  PayloadAtt = addAttribute(typeof(PayloadAttribute));
+		  PayloadAtt = AddAttribute<PayloadAttribute>();
 		}
 
 		public override bool IncrementToken()
 		{
-		  bool hasNext = input.IncrementToken();
+		  bool hasNext = Input.IncrementToken();
 		  if (hasNext)
 		  {
-			PayloadAtt.Payload = new BytesRef(new sbyte[] {(sbyte) PayloadCount.incrementAndGet()});
+			PayloadAtt.Payload = new BytesRef(new sbyte[] {(sbyte) PayloadCount.IncrementAndGet()});
 		  }
 		  return hasNext;
 		}
@@ -171,21 +173,21 @@ namespace Lucene.Net.Index
 		  this.Input = input;
 		}
 
-		public override sbyte ReadByte()
+		public override byte ReadByte()
 		{
 		  OuterInstance.Counter++;
-		  return this.Input.readByte();
+		  return this.Input.ReadByte();
 		}
 
-		public override void ReadBytes(sbyte[] b, int offset, int len)
+		public override void ReadBytes(byte[] b, int offset, int len)
 		{
 		  OuterInstance.Counter += len;
-		  this.Input.readBytes(b, offset, len);
+		  this.Input.ReadBytes(b, offset, len);
 		}
 
 		public override void Close()
 		{
-		  this.Input.close();
+		  this.Input.Dispose();
 		}
 
 		public override long FilePointer
@@ -198,17 +200,17 @@ namespace Lucene.Net.Index
 
 		public override void Seek(long pos)
 		{
-		  this.Input.seek(pos);
+		  this.Input.Seek(pos);
 		}
 
 		public override long Length()
 		{
-		  return this.Input.length();
+		  return this.Input.Length();
 		}
 
 		public override CountingStream Clone()
 		{
-		  return new CountingStream(OuterInstance, this.Input.clone());
+		  return new CountingStream(OuterInstance, (IndexInput)this.Input.Clone());
 		}
 
 	  }

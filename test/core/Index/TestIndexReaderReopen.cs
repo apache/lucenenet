@@ -121,12 +121,12 @@ namespace Lucene.Net.Index
                         // r might have changed because this is not a 
                         // synchronized method. However we don't want
                         // to make it synchronized to test 
-                        // thread-safety of IndexReader.close().
+                        // thread-safety of IndexReader.Dispose().
                         // That's why we add refreshed also to 
                         // readersToClose, because double closing is fine
                         if (refreshed != r)
                         {
-                            refreshed.Close();
+                            refreshed.Dispose();
                         }
                         CollectionsHelper.AddIfNotContains(readersToClose, refreshed);
                     }
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
                                         ModifyIndexAction = i => ModifyIndex(i, dir1),
                                         OpenReaderFunc = () => IndexReader.Open(dir1, false)
                                     });
-            dir1.Close();
+            dir1.Dispose();
             
             Directory dir2 = new MockRAMDirectory();
             
@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
                                         ModifyIndexAction = i => ModifyIndex(i, dir2),
                                         OpenReaderFunc = () => IndexReader.Open(dir2, false)
                                      });
-            dir2.Close();
+            dir2.Dispose();
         }
         
         [Test]
@@ -228,8 +228,8 @@ namespace Lucene.Net.Index
                                                                  return pr;
                                                              }
                                     });
-            dir1.Close();
-            dir2.Close();
+            dir1.Dispose();
+            dir2.Dispose();
             
             Directory dir3 = new MockRAMDirectory();
             CreateIndex(dir3, true);
@@ -254,11 +254,11 @@ namespace Lucene.Net.Index
                                                                                return pr;
                                                                            }
                                                   });
-            dir3.Close();
-            dir4.Close();
+            dir3.Dispose();
+            dir4.Dispose();
         }
         
-        // LUCENE-1228: IndexWriter.commit() does not update the index version
+        // LUCENE-1228: IndexWriter.Commit() does not update the index version
         // populate an index in iterations.
         // at the end of every iteration, commit the index and reopen/recreate the reader.
         // in each iteration verify the work of previous iteration. 
@@ -268,21 +268,21 @@ namespace Lucene.Net.Index
         {
             Directory dir = FSDirectory.Open(indexDir);
             DoTestReopenWithCommit(dir, true);
-            dir.Close();
+            dir.Dispose();
         }
         [Test]
         public virtual void  TestCommitRecreateFS()
         {
             Directory dir = FSDirectory.Open(indexDir);
             DoTestReopenWithCommit(dir, false);
-            dir.Close();
+            dir.Dispose();
         }
         [Test]
         public virtual void  TestCommitReopenRAM()
         {
             Directory dir = new MockRAMDirectory();
             DoTestReopenWithCommit(dir, true);
-            dir.Close();
+            dir.Dispose();
         }
         [Test]
         public virtual void  TestCommitRecreateRAM()
@@ -325,22 +325,22 @@ namespace Lucene.Net.Index
                         IndexReader r2 = reader.Reopen();
                         if (reader != r2)
                         {
-                            reader.Close();
+                            reader.Dispose();
                             reader = r2;
                         }
                     }
                     else
                     {
                         // recreate
-                        reader.Close();
+                        reader.Dispose();
                         reader = IndexReader.Open(dir, false);
                     }
                 }
             }
             finally
             {
-                iwriter.Close();
-                reader.Close();
+                iwriter.Dispose();
+                reader.Dispose();
             }
         }
         
@@ -368,8 +368,8 @@ namespace Lucene.Net.Index
                                                                                    })
                                     });
             
-            dir1.Close();
-            dir2.Close();
+            dir1.Dispose();
+            dir2.Dispose();
             
             Directory dir3 = new MockRAMDirectory();
             CreateIndex(dir3, true);
@@ -393,8 +393,8 @@ namespace Lucene.Net.Index
                                                                                                      new FilterIndexReader(IndexReader.Open(dir3, false))
                                                                                                  })
                                                   });
-            dir3.Close();
-            dir4.Close();
+            dir3.Dispose();
+            dir4.Dispose();
         }
         
         [Test]
@@ -434,11 +434,11 @@ namespace Lucene.Net.Index
                                                                                              });
                                                              }
                                     });
-            dir1.Close();
-            dir2.Close();
-            dir3.Close();
-            dir4.Close();
-            dir5.Close();
+            dir1.Dispose();
+            dir2.Dispose();
+            dir3.Dispose();
+            dir4.Dispose();
+            dir5.Dispose();
         }
         
         private void  PerformDefaultTests(TestReopen test)
@@ -455,16 +455,16 @@ namespace Lucene.Net.Index
             Assert.IsTrue(couple.refreshedReader == index2);
             
             couple = RefreshReader(index2, test, 0, true);
-            index1.Close();
+            index1.Dispose();
             index1 = couple.newReader;
             
             IndexReader index2_refreshed = couple.refreshedReader;
-            index2.Close();
+            index2.Dispose();
             
             // test if refreshed reader and newly opened reader return equal results
             TestIndexReader.AssertIndexEquals(index1, index2_refreshed);
             
-            index2_refreshed.Close();
+            index2_refreshed.Dispose();
             AssertReaderClosed(index2, true, true);
             AssertReaderClosed(index2_refreshed, true, true);
             
@@ -473,18 +473,18 @@ namespace Lucene.Net.Index
             for (int i = 1; i < 4; i++)
             {
                 
-                index1.Close();
+                index1.Dispose();
                 couple = RefreshReader(index2, test, i, true);
                 // refresh IndexReader
-                index2.Close();
+                index2.Dispose();
                 
                 index2 = couple.refreshedReader;
                 index1 = couple.newReader;
                 TestIndexReader.AssertIndexEquals(index1, index2);
             }
             
-            index1.Close();
-            index2.Close();
+            index1.Dispose();
+            index2.Dispose();
             AssertReaderClosed(index1, true, true);
             AssertReaderClosed(index2, true, true);
         }
@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
                 // delete first document, so that only one of the subReaders have to be re-opened
                 IndexReader modifier = IndexReader.Open(dir1, false);
                 modifier.DeleteDocument(0);
-                modifier.Close();
+                modifier.Dispose();
                 
                 IndexReader reader1 = RefreshReader(reader0, true).refreshedReader;
                 Assert.IsTrue(reader1 is DirectoryReader);
@@ -534,7 +534,7 @@ namespace Lucene.Net.Index
                 // delete first document, so that only one of the subReaders have to be re-opened
                 modifier = IndexReader.Open(dir1, false);
                 modifier.DeleteDocument(1);
-                modifier.Close();
+                modifier.Dispose();
                 
                 IndexReader reader2 = RefreshReader(reader1, true).refreshedReader;
                 Assert.IsTrue(reader2 is DirectoryReader);
@@ -580,31 +580,31 @@ namespace Lucene.Net.Index
                 {
                     
                     case 0: 
-                        reader0.Close();
-                        reader1.Close();
-                        reader2.Close();
-                        reader3.Close();
+                        reader0.Dispose();
+                        reader1.Dispose();
+                        reader2.Dispose();
+                        reader3.Dispose();
                         break;
                     
                     case 1: 
-                        reader3.Close();
-                        reader2.Close();
-                        reader1.Close();
-                        reader0.Close();
+                        reader3.Dispose();
+                        reader2.Dispose();
+                        reader1.Dispose();
+                        reader0.Dispose();
                         break;
                     
                     case 2: 
-                        reader2.Close();
-                        reader3.Close();
-                        reader0.Close();
-                        reader1.Close();
+                        reader2.Dispose();
+                        reader3.Dispose();
+                        reader0.Dispose();
+                        reader1.Dispose();
                         break;
                     
                     case 3: 
-                        reader1.Close();
-                        reader3.Close();
-                        reader2.Close();
-                        reader0.Close();
+                        reader1.Dispose();
+                        reader3.Dispose();
+                        reader2.Dispose();
+                        reader0.Dispose();
                         break;
                     }
                 
@@ -613,7 +613,7 @@ namespace Lucene.Net.Index
                 AssertReaderClosed(reader2, true, true);
                 AssertReaderClosed(reader3, true, true);
                 
-                dir1.Close();
+                dir1.Dispose();
             }
         }
         
@@ -646,7 +646,7 @@ namespace Lucene.Net.Index
                 
                 if (mode == 1)
                 {
-                    initReader2.Close();
+                    initReader2.Dispose();
                 }
                 
                 ModifyIndex(1, dir1);
@@ -654,42 +654,42 @@ namespace Lucene.Net.Index
                 AssertRefCountEquals(2 + mode, reader1);
                 AssertRefCountEquals(1, reader2);
                 
-                multiReader1.Close();
+                multiReader1.Dispose();
                 AssertRefCountEquals(1 + mode, reader1);
                 
-                multiReader1.Close();
+                multiReader1.Dispose();
                 AssertRefCountEquals(1 + mode, reader1);
                 
                 if (mode == 1)
                 {
-                    initReader2.Close();
+                    initReader2.Dispose();
                 }
                 
-                reader1.Close();
+                reader1.Dispose();
                 AssertRefCountEquals(1, reader1);
                 
-                multiReader2.Close();
+                multiReader2.Dispose();
                 AssertRefCountEquals(0, reader1);
                 
-                multiReader2.Close();
+                multiReader2.Dispose();
                 AssertRefCountEquals(0, reader1);
                 
-                reader3.Close();
-                AssertRefCountEquals(0, reader1);
-                AssertReaderClosed(reader1, true, false);
-                
-                reader2.Close();
+                reader3.Dispose();
                 AssertRefCountEquals(0, reader1);
                 AssertReaderClosed(reader1, true, false);
                 
-                reader2.Close();
+                reader2.Dispose();
+                AssertRefCountEquals(0, reader1);
+                AssertReaderClosed(reader1, true, false);
+                
+                reader2.Dispose();
                 AssertRefCountEquals(0, reader1);
                 
-                reader3.Close();
+                reader3.Dispose();
                 AssertRefCountEquals(0, reader1);
                 AssertReaderClosed(reader1, true, true);
-                dir1.Close();
-                dir2.Close();
+                dir1.Dispose();
+                dir2.Dispose();
             }
         }
         
@@ -724,7 +724,7 @@ namespace Lucene.Net.Index
                 
                 if (mode == 1)
                 {
-                    initReader2.Close();
+                    initReader2.Dispose();
                 }
                 
                 ModifyIndex(4, dir1);
@@ -732,43 +732,43 @@ namespace Lucene.Net.Index
                 AssertRefCountEquals(2 + mode, reader1);
                 AssertRefCountEquals(1, reader2);
                 
-                parallelReader1.Close();
+                parallelReader1.Dispose();
                 AssertRefCountEquals(1 + mode, reader1);
                 
-                parallelReader1.Close();
+                parallelReader1.Dispose();
                 AssertRefCountEquals(1 + mode, reader1);
                 
                 if (mode == 1)
                 {
-                    initReader2.Close();
+                    initReader2.Dispose();
                 }
                 
-                reader1.Close();
+                reader1.Dispose();
                 AssertRefCountEquals(1, reader1);
                 
-                parallelReader2.Close();
+                parallelReader2.Dispose();
                 AssertRefCountEquals(0, reader1);
                 
-                parallelReader2.Close();
+                parallelReader2.Dispose();
                 AssertRefCountEquals(0, reader1);
                 
-                reader3.Close();
-                AssertRefCountEquals(0, reader1);
-                AssertReaderClosed(reader1, true, false);
-                
-                reader2.Close();
+                reader3.Dispose();
                 AssertRefCountEquals(0, reader1);
                 AssertReaderClosed(reader1, true, false);
                 
-                reader2.Close();
+                reader2.Dispose();
+                AssertRefCountEquals(0, reader1);
+                AssertReaderClosed(reader1, true, false);
+                
+                reader2.Dispose();
                 AssertRefCountEquals(0, reader1);
                 
-                reader3.Close();
+                reader3.Dispose();
                 AssertRefCountEquals(0, reader1);
                 AssertReaderClosed(reader1, true, true);
                 
-                dir1.Close();
-                dir2.Close();
+                dir1.Dispose();
+                dir2.Dispose();
             }
         }
         
@@ -782,24 +782,24 @@ namespace Lucene.Net.Index
             SegmentReader segmentReader1 = SegmentReader.GetOnlySegmentReader(reader1);
             IndexReader modifier = IndexReader.Open(dir1, false);
             modifier.DeleteDocument(0);
-            modifier.Close();
+            modifier.Dispose();
             
             IndexReader reader2 = reader1.Reopen();
             modifier = IndexReader.Open(dir1, false);
             modifier.SetNorm(1, "field1", 50);
             modifier.SetNorm(1, "field2", 50);
-            modifier.Close();
+            modifier.Dispose();
             
             IndexReader reader3 = reader2.Reopen();
             SegmentReader segmentReader3 = SegmentReader.GetOnlySegmentReader(reader3);
             modifier = IndexReader.Open(dir1, false);
             modifier.DeleteDocument(2);
-            modifier.Close();
+            modifier.Dispose();
             
             IndexReader reader4 = reader3.Reopen();
             modifier = IndexReader.Open(dir1, false);
             modifier.DeleteDocument(3);
-            modifier.Close();
+            modifier.Dispose();
             
             IndexReader reader5 = reader3.Reopen();
             
@@ -808,12 +808,12 @@ namespace Lucene.Net.Index
             AssertRefCountEquals(1, reader1);
             Assert.IsFalse(segmentReader1.NormsClosed());
             
-            reader1.Close();
+            reader1.Dispose();
             
             AssertRefCountEquals(0, reader1);
             Assert.IsFalse(segmentReader1.NormsClosed());
             
-            reader2.Close();
+            reader2.Dispose();
             AssertRefCountEquals(0, reader1);
             
             // now the norms for field1 and field2 should be closed
@@ -824,13 +824,13 @@ namespace Lucene.Net.Index
             Assert.IsFalse(segmentReader1.NormsClosed("field3"));
             Assert.IsFalse(segmentReader1.NormsClosed("field4"));
             
-            reader3.Close();
+            reader3.Dispose();
             AssertRefCountEquals(0, reader1);
             Assert.IsFalse(segmentReader3.NormsClosed());
-            reader5.Close();
+            reader5.Dispose();
             AssertRefCountEquals(0, reader1);
             Assert.IsFalse(segmentReader3.NormsClosed());
-            reader4.Close();
+            reader4.Dispose();
             AssertRefCountEquals(0, reader1);
             
             // and now all norms that reader1 used should be closed
@@ -841,7 +841,7 @@ namespace Lucene.Net.Index
             // closed as well
             Assert.IsTrue(segmentReader3.NormsClosed());
             
-            dir1.Close();
+            dir1.Dispose();
         }
         
         private void  PerformTestsWithExceptionInReopen(TestReopen test)
@@ -856,8 +856,8 @@ namespace Lucene.Net.Index
             // index2 should still be usable and unaffected by the failed reopen() call
             TestIndexReader.AssertIndexEquals(index1, index2);
             
-            index1.Close();
-            index2.Close();
+            index1.Dispose();
+            index2.Dispose();
         }
         
         [Test]
@@ -872,7 +872,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(CreateDocument(i, 3));
             }
             writer.Optimize();
-            writer.Close();
+            writer.Dispose();
 
             TestReopen test = new InjectableTestReopen
                                   {
@@ -883,13 +883,13 @@ namespace Lucene.Net.Index
                                                                   {
                                                                       IndexReader modifier = IndexReader.Open(dir, false);
                                                                       modifier.SetNorm(i, "field1", 50);
-                                                                      modifier.Close();
+                                                                      modifier.Dispose();
                                                                   }
                                                                   else if (i%3 == 1)
                                                                   {
                                                                       IndexReader modifier = IndexReader.Open(dir, false);
                                                                       modifier.DeleteDocument(i%modifier.MaxDoc);
-                                                                      modifier.Close();
+                                                                      modifier.Dispose();
                                                                   }
                                                                   else
                                                                   {
@@ -902,7 +902,7 @@ namespace Lucene.Net.Index
                                                                                                                  MaxFieldLength
                                                                                                                  .LIMITED);
                                                                       modifier.AddDocument(CreateDocument(n + i, 6));
-                                                                      modifier.Close();
+                                                                      modifier.Dispose();
                                                                   }
                                                               }};
             
@@ -962,9 +962,9 @@ namespace Lucene.Net.Index
                 if (threads[i] != null)
                 {
                     threads[i].Join();
-                    if (threads[i].error != null)
+                    if (threads[i].Error != null)
                     {
-                        Assert.Fail("Error occurred in thread " + threads[i].Name + ":\n" + threads[i].error.Message);
+                        Assert.Fail("Error occurred in thread " + threads[i].Name + ":\n" + threads[i].Error.Message);
                     }
                 }
             }
@@ -972,11 +972,11 @@ namespace Lucene.Net.Index
             System.Collections.IEnumerator it = readersToClose.GetEnumerator();
             while (it.MoveNext())
             {
-                ((IndexReader) ((System.Collections.DictionaryEntry)it.Current).Key).Close();
+                ((IndexReader) ((System.Collections.DictionaryEntry)it.Current).Key).Dispose();
             }
             
-            firstReader.Close();
-            reader.Close();
+            firstReader.Dispose();
+            reader.Dispose();
             
             it = readersToClose.GetEnumerator();
             while (it.MoveNext())
@@ -987,7 +987,7 @@ namespace Lucene.Net.Index
             AssertReaderClosed(reader, true, true);
             AssertReaderClosed(firstReader, true, true);
             
-            dir.Close();
+            dir.Dispose();
         }
         
         internal class ReaderCouple
@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Index
                 catch (System.Exception r)
                 {
                     System.Console.Out.WriteLine(r.StackTrace);
-                    this.error = r;
+                    this.Error = r;
                 }
             }
         }
@@ -1071,7 +1071,7 @@ namespace Lucene.Net.Index
                     if (refreshed == null && r != null)
                     {
                         // Hit exception -- close opened reader
-                        r.Close();
+                        r.Dispose();
                     }
                 }
                 
@@ -1115,7 +1115,7 @@ namespace Lucene.Net.Index
                 w.Optimize();
             }
             
-            w.Close();
+            w.Dispose();
             
             IndexReader r = IndexReader.Open(dir, false);
             if (multiSegment)
@@ -1126,7 +1126,7 @@ namespace Lucene.Net.Index
             {
                 Assert.IsTrue(r.GetSequentialSubReaders().Length == 1);
             }
-            r.Close();
+            r.Dispose();
         }
         
         public static Document CreateDocument(int n, int numFields)
@@ -1156,7 +1156,7 @@ namespace Lucene.Net.Index
                         IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
                         w.DeleteDocuments(new Term("field2", "a11"));
                         w.DeleteDocuments(new Term("field2", "b30"));
-                        w.Close();
+                        w.Dispose();
                         break;
                     }
                 
@@ -1165,14 +1165,14 @@ namespace Lucene.Net.Index
                         reader.SetNorm(4, "field1", 123);
                         reader.SetNorm(44, "field2", 222);
                         reader.SetNorm(44, "field4", 22);
-                        reader.Close();
+                        reader.Dispose();
                         break;
                     }
                 
                 case 2:  {
                         IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
                         w.Optimize();
-                        w.Close();
+                        w.Dispose();
                         break;
                     }
                 
@@ -1182,7 +1182,7 @@ namespace Lucene.Net.Index
                         w.Optimize();
                         w.AddDocument(CreateDocument(102, 4));
                         w.AddDocument(CreateDocument(103, 4));
-                        w.Close();
+                        w.Dispose();
                         break;
                     }
                 
@@ -1190,14 +1190,14 @@ namespace Lucene.Net.Index
                         IndexReader reader = IndexReader.Open(dir, false);
                         reader.SetNorm(5, "field1", 123);
                         reader.SetNorm(55, "field2", 222);
-                        reader.Close();
+                        reader.Dispose();
                         break;
                     }
                 
                 case 5:  {
                         IndexWriter w = new IndexWriter(dir, new WhitespaceAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
                         w.AddDocument(CreateDocument(101, 4));
-                        w.Close();
+                        w.Dispose();
                         break;
                     }
                 }
@@ -1249,7 +1249,7 @@ namespace Lucene.Net.Index
         
         if (reader instanceof DirectoryReader) {
         IndexReader[] subReaders = reader.getSequentialSubReaders();
-        for (int i = 0; i < subReaders.length; i++) {
+        for (int i = 0; i < subReaders.Length; i++) {
         assertReaderOpen(subReaders[i]);
         }
         }
@@ -1286,14 +1286,14 @@ namespace Lucene.Net.Index
             IndexReader r1 = IndexReader.Open(dir, false);
             IndexReader r2 = IndexReader.Open(dir, false);
             r2.DeleteDocument(0);
-            r2.Close();
+            r2.Dispose();
             
             IndexReader r3 = r1.Reopen();
             Assert.IsTrue(r1 != r3);
-            r1.Close();
+            r1.Dispose();
             Assert.Throws<AlreadyClosedException>(() => r1.Document(2), "did not hit exception");
-            r3.Close();
-            dir.Close();
+            r3.Dispose();
+            dir.Dispose();
         }
         
         [Test]
@@ -1326,9 +1326,9 @@ namespace Lucene.Net.Index
             // Now r2 should have made a private copy of deleted docs:
             Assert.IsTrue(sr1.deletedDocs_ForNUnit != sr2.deletedDocs_ForNUnit);
             
-            r1.Close();
-            r2.Close();
-            dir.Close();
+            r1.Dispose();
+            r2.Dispose();
+            dir.Dispose();
         }
         
         [Test]
@@ -1354,12 +1354,12 @@ namespace Lucene.Net.Index
             // At this point they share the same BitVector
             Assert.IsTrue(sr1.deletedDocs_ForNUnit == sr2.deletedDocs_ForNUnit);
             BitVector delDocs = sr1.deletedDocs_ForNUnit;
-            r1.Close();
+            r1.Dispose();
             
             r2.DeleteDocument(0);
             Assert.IsTrue(delDocs == sr2.deletedDocs_ForNUnit);
-            r2.Close();
-            dir.Close();
+            r2.Dispose();
+            dir.Dispose();
         }
         
         private class KeepAllCommits : IndexDeletionPolicy
@@ -1393,7 +1393,7 @@ namespace Lucene.Net.Index
                 data["index"] = (4 + i) + "";
                 writer.Commit(data);
             }
-            writer.Close();
+            writer.Dispose();
 
             IndexReader r = IndexReader.Open(dir, false);
             Assert.AreEqual(0, r.NumDocs());
@@ -1428,11 +1428,11 @@ namespace Lucene.Net.Index
                 {
                     Assert.AreEqual(7 - v, r2.NumDocs());
                 }
-                r.Close();
+                r.Dispose();
                 r = r2;
             }
-            r.Close();
-            dir.Close();
+            r.Dispose();
+            dir.Dispose();
         }
     }
 }

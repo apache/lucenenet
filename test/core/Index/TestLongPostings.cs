@@ -38,7 +38,9 @@ namespace Lucene.Net.Index
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using System.IO;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestLongPostings extends Lucene.Net.Util.LuceneTestCase
@@ -49,29 +51,29 @@ namespace Lucene.Net.Index
 	  // survives MockAnalyzer unchanged:
 	  private string GetRandomTerm(string other)
 	  {
-		Analyzer a = new MockAnalyzer(random());
+		Analyzer a = new MockAnalyzer(Random());
 		while (true)
 		{
-		  string s = TestUtil.randomRealisticUnicodeString(random());
+		  string s = TestUtil.RandomRealisticUnicodeString(Random());
 		  if (other != null && s.Equals(other))
 		  {
 			continue;
 		  }
 		  IOException priorException = null;
-		  TokenStream ts = a.tokenStream("foo", s);
+		  TokenStream ts = a.TokenStream("foo", new StreamReader(s));
 		  try
 		  {
-			TermToBytesRefAttribute termAtt = ts.getAttribute(typeof(TermToBytesRefAttribute));
+			TermToBytesRefAttribute termAtt = ts.GetAttribute<TermToBytesRefAttribute>();
 			BytesRef termBytes = termAtt.BytesRef;
-			ts.reset();
+			ts.Reset();
 
 			int count = 0;
 			bool changed = false;
 
 			while (ts.IncrementToken())
 			{
-			  termAtt.fillBytesRef();
-			  if (count == 0 && !termBytes.utf8ToString().Equals(s))
+			  termAtt.FillBytesRef();
+			  if (count == 0 && !termBytes.Utf8ToString().Equals(s))
 			  {
 				// The value was changed during analysis.  Keep iterating so the
 				// tokenStream is exhausted.
@@ -80,7 +82,7 @@ namespace Lucene.Net.Index
 			  count++;
 			}
 
-			ts.end();
+			ts.End();
 			// Did we iterate just once and the value was unchanged?
 			if (!changed && count == 1)
 			{
@@ -102,9 +104,9 @@ namespace Lucene.Net.Index
 	  {
 		// Don't use TestUtil.getTempDir so that we own the
 		// randomness (ie same seed will point to same dir):
-		Directory dir = newFSDirectory(createTempDir("longpostings" + "." + random().nextLong()));
+		Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().nextLong()));
 
-		int NUM_DOCS = atLeast(2000);
+		int NUM_DOCS = AtLeast(2000);
 
 		if (VERBOSE)
 		{
@@ -118,10 +120,10 @@ namespace Lucene.Net.Index
 		{
 		  Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
 		  /*
-		  for(int idx=0;idx<s1.length();idx++) {
+		  for(int idx=0;idx<s1.Length();idx++) {
 		    System.out.println("  s1 ch=0x" + Integer.toHexString(s1.charAt(idx)));
 		  }
-		  for(int idx=0;idx<s2.length();idx++) {
+		  for(int idx=0;idx<s2.Length();idx++) {
 		    System.out.println("  s2 ch=0x" + Integer.toHexString(s2.charAt(idx)));
 		  }
 		  */
@@ -130,62 +132,62 @@ namespace Lucene.Net.Index
 		FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
 		for (int idx = 0;idx < NUM_DOCS;idx++)
 		{
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
-			isS1.set(idx);
+			isS1.Set(idx);
 		  }
 		}
 
 		IndexReader r;
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setMergePolicy(newLogMergePolicy());
-		iwc.RAMBufferSizeMB = 16.0 + 16.0 * random().NextDouble();
-		iwc.MaxBufferedDocs = -1;
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy());
+		iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
+		iwc.SetMaxBufferedDocs(-1);
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
 		for (int idx = 0;idx < NUM_DOCS;idx++)
 		{
 		  Document doc = new Document();
-		  string s = isS1.get(idx) ? s1 : s2;
-		  Field f = newTextField("field", s, Field.Store.NO);
-		  int count = TestUtil.Next(random(), 1, 4);
+		  string s = isS1.Get(idx) ? s1 : s2;
+		  Field f = NewTextField("field", s, Field.Store.NO);
+		  int count = TestUtil.NextInt(Random(), 1, 4);
 		  for (int ct = 0;ct < count;ct++)
 		  {
-			doc.add(f);
+			doc.Add(f);
 		  }
-		  riw.addDocument(doc);
+		  riw.AddDocument(doc);
 		}
 
 		r = riw.Reader;
-		riw.close();
+        riw.Close();
 
 		/*
 		if (VERBOSE) {
 		  System.out.println("TEST: terms");
-		  TermEnum termEnum = r.terms();
-		  while(termEnum.next()) {
-		    System.out.println("  term=" + termEnum.term() + " len=" + termEnum.term().text().length());
-		    Assert.IsTrue(termEnum.docFreq() > 0);
-		    System.out.println("    s1?=" + (termEnum.term().text().equals(s1)) + " s1len=" + s1.length());
-		    System.out.println("    s2?=" + (termEnum.term().text().equals(s2)) + " s2len=" + s2.length());
-		    final String s = termEnum.term().text();
-		    for(int idx=0;idx<s.length();idx++) {
+		  TermEnum termEnum = r.Terms();
+		  while(termEnum.Next()) {
+		    System.out.println("  term=" + termEnum.Term() + " len=" + termEnum.Term().Text().Length());
+		    Assert.IsTrue(termEnum.DocFreq() > 0);
+		    System.out.println("    s1?=" + (termEnum.Term().Text().equals(s1)) + " s1len=" + s1.Length());
+		    System.out.println("    s2?=" + (termEnum.Term().Text().equals(s2)) + " s2len=" + s2.Length());
+		    final String s = termEnum.Term().Text();
+		    for(int idx=0;idx<s.Length();idx++) {
 		      System.out.println("      ch=0x" + Integer.toHexString(s.charAt(idx)));
 		    }
 		  }
 		}
 		*/
 
-		Assert.AreEqual(NUM_DOCS, r.numDocs());
-		Assert.IsTrue(r.docFreq(new Term("field", s1)) > 0);
-		Assert.IsTrue(r.docFreq(new Term("field", s2)) > 0);
+		Assert.AreEqual(NUM_DOCS, r.NumDocs());
+		Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
+		Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
 
-		int num = atLeast(1000);
+		int num = AtLeast(1000);
 		for (int iter = 0;iter < num;iter++)
 		{
 
 		  string term;
 		  bool doS1;
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			term = s1;
 			doS1 = true;
@@ -201,12 +203,12 @@ namespace Lucene.Net.Index
 			Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1);
 		  }
 
-		  DocsAndPositionsEnum postings = MultiFields.getTermPositionsEnum(r, null, "field", new BytesRef(term));
+		  DocsAndPositionsEnum postings = MultiFields.GetTermPositionsEnum(r, null, "field", new BytesRef(term));
 
 		  int docID = -1;
 		  while (docID < DocIdSetIterator.NO_MORE_DOCS)
 		  {
-			int what = random().Next(3);
+			int what = Random().Next(3);
 			if (what == 0)
 			{
 			  if (VERBOSE)
@@ -222,7 +224,7 @@ namespace Lucene.Net.Index
 				  expected = int.MaxValue;
 				  break;
 				}
-				else if (isS1.get(expected) == doS1)
+				else if (isS1.Get(expected) == doS1)
 				{
 				  break;
 				}
@@ -231,7 +233,7 @@ namespace Lucene.Net.Index
 				  expected++;
 				}
 			  }
-			  docID = postings.nextDoc();
+			  docID = postings.NextDoc();
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("  got docID=" + docID);
@@ -242,17 +244,17 @@ namespace Lucene.Net.Index
 				break;
 			  }
 
-			  if (random().Next(6) == 3)
+			  if (Random().Next(6) == 3)
 			  {
-				int freq = postings.freq();
+				int freq = postings.Freq();
 				Assert.IsTrue(freq >= 1 && freq <= 4);
 				for (int pos = 0;pos < freq;pos++)
 				{
-				  Assert.AreEqual(pos, postings.nextPosition());
-				  if (random().nextBoolean())
+				  Assert.AreEqual(pos, postings.NextPosition());
+				  if (Random().NextBoolean())
 				  {
 					postings.Payload;
-					if (random().nextBoolean())
+					if (Random().NextBoolean())
 					{
 					  postings.Payload; // get it again
 					}
@@ -266,11 +268,11 @@ namespace Lucene.Net.Index
 			  int targetDocID;
 			  if (docID == -1)
 			  {
-				targetDocID = random().Next(NUM_DOCS + 1);
+				targetDocID = Random().Next(NUM_DOCS + 1);
 			  }
 			  else
 			  {
-				targetDocID = docID + TestUtil.Next(random(), 1, NUM_DOCS - docID);
+				targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
 			  }
 			  if (VERBOSE)
 			  {
@@ -284,7 +286,7 @@ namespace Lucene.Net.Index
 				  expected = int.MaxValue;
 				  break;
 				}
-				else if (isS1.get(expected) == doS1)
+				else if (isS1.Get(expected) == doS1)
 				{
 				  break;
 				}
@@ -294,7 +296,7 @@ namespace Lucene.Net.Index
 				}
 			  }
 
-			  docID = postings.advance(targetDocID);
+			  docID = postings.Advance(targetDocID);
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("  got docID=" + docID);
@@ -305,17 +307,17 @@ namespace Lucene.Net.Index
 				break;
 			  }
 
-			  if (random().Next(6) == 3)
+			  if (Random().Next(6) == 3)
 			  {
-				int freq = postings.freq();
+				int freq = postings.Freq();
 				Assert.IsTrue(freq >= 1 && freq <= 4);
 				for (int pos = 0;pos < freq;pos++)
 				{
-				  Assert.AreEqual(pos, postings.nextPosition());
-				  if (random().nextBoolean())
+				  Assert.AreEqual(pos, postings.NextPosition());
+				  if (Random().NextBoolean())
 				  {
 					postings.Payload;
-					if (random().nextBoolean())
+					if (Random().NextBoolean())
 					{
 					  postings.Payload; // get it again
 					}
@@ -325,8 +327,8 @@ namespace Lucene.Net.Index
 			}
 		  }
 		}
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  // a weaker form of testLongPostings, that doesnt check positions
@@ -340,9 +342,9 @@ namespace Lucene.Net.Index
 	  {
 		// Don't use TestUtil.getTempDir so that we own the
 		// randomness (ie same seed will point to same dir):
-		Directory dir = newFSDirectory(createTempDir("longpostings" + "." + random().nextLong()));
+		Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().nextLong()));
 
-		int NUM_DOCS = atLeast(2000);
+		int NUM_DOCS = AtLeast(2000);
 
 		if (VERBOSE)
 		{
@@ -356,10 +358,10 @@ namespace Lucene.Net.Index
 		{
 		  Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
 		  /*
-		  for(int idx=0;idx<s1.length();idx++) {
+		  for(int idx=0;idx<s1.Length();idx++) {
 		    System.out.println("  s1 ch=0x" + Integer.toHexString(s1.charAt(idx)));
 		  }
-		  for(int idx=0;idx<s2.length();idx++) {
+		  for(int idx=0;idx<s2.Length();idx++) {
 		    System.out.println("  s2 ch=0x" + Integer.toHexString(s2.charAt(idx)));
 		  }
 		  */
@@ -368,71 +370,71 @@ namespace Lucene.Net.Index
 		FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
 		for (int idx = 0;idx < NUM_DOCS;idx++)
 		{
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
-			isS1.set(idx);
+			isS1.Set(idx);
 		  }
 		}
 
 		IndexReader r;
 		if (true)
 		{
-		  IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setMergePolicy(newLogMergePolicy());
-		  iwc.RAMBufferSizeMB = 16.0 + 16.0 * random().NextDouble();
-		  iwc.MaxBufferedDocs = -1;
-		  RandomIndexWriter riw = new RandomIndexWriter(random(), dir, iwc);
+		  IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy());
+		  iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
+		  iwc.SetMaxBufferedDocs(-1);
+		  RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
 		  FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		  ft.IndexOptions = options;
+		  ft.IndexOptionsValue = options;
 		  for (int idx = 0;idx < NUM_DOCS;idx++)
 		  {
 			Document doc = new Document();
-			string s = isS1.get(idx) ? s1 : s2;
-			Field f = newField("field", s, ft);
-			int count = TestUtil.Next(random(), 1, 4);
+			string s = isS1.Get(idx) ? s1 : s2;
+			Field f = NewField("field", s, ft);
+			int count = TestUtil.NextInt(Random(), 1, 4);
 			for (int ct = 0;ct < count;ct++)
 			{
-			  doc.add(f);
+			  doc.Add(f);
 			}
-			riw.addDocument(doc);
+			riw.AddDocument(doc);
 		  }
 
 		  r = riw.Reader;
-		  riw.close();
+          riw.Close();
 		}
 		else
 		{
-		  r = DirectoryReader.open(dir);
+		  r = DirectoryReader.Open(dir);
 		}
 
 		/*
 		if (VERBOSE) {
 		  System.out.println("TEST: terms");
-		  TermEnum termEnum = r.terms();
-		  while(termEnum.next()) {
-		    System.out.println("  term=" + termEnum.term() + " len=" + termEnum.term().text().length());
-		    Assert.IsTrue(termEnum.docFreq() > 0);
-		    System.out.println("    s1?=" + (termEnum.term().text().equals(s1)) + " s1len=" + s1.length());
-		    System.out.println("    s2?=" + (termEnum.term().text().equals(s2)) + " s2len=" + s2.length());
-		    final String s = termEnum.term().text();
-		    for(int idx=0;idx<s.length();idx++) {
+		  TermEnum termEnum = r.Terms();
+		  while(termEnum.Next()) {
+		    System.out.println("  term=" + termEnum.Term() + " len=" + termEnum.Term().Text().Length());
+		    Assert.IsTrue(termEnum.DocFreq() > 0);
+		    System.out.println("    s1?=" + (termEnum.Term().Text().equals(s1)) + " s1len=" + s1.Length());
+		    System.out.println("    s2?=" + (termEnum.Term().Text().equals(s2)) + " s2len=" + s2.Length());
+		    final String s = termEnum.Term().Text();
+		    for(int idx=0;idx<s.Length();idx++) {
 		      System.out.println("      ch=0x" + Integer.toHexString(s.charAt(idx)));
 		    }
 		  }
 		}
 		*/
 
-		Assert.AreEqual(NUM_DOCS, r.numDocs());
-		Assert.IsTrue(r.docFreq(new Term("field", s1)) > 0);
-		Assert.IsTrue(r.docFreq(new Term("field", s2)) > 0);
+		Assert.AreEqual(NUM_DOCS, r.NumDocs());
+		Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
+		Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
 
-		int num = atLeast(1000);
+		int num = AtLeast(1000);
 		for (int iter = 0;iter < num;iter++)
 		{
 
 		  string term;
 		  bool doS1;
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			term = s1;
 			doS1 = true;
@@ -453,12 +455,12 @@ namespace Lucene.Net.Index
 
 		  if (options == IndexOptions.DOCS_ONLY)
 		  {
-			docs = TestUtil.docs(random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_NONE);
+			docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_NONE);
 			postings = null;
 		  }
 		  else
 		  {
-			docs = postings = TestUtil.docs(random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_FREQS);
+			docs = postings = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_FREQS);
 			Debug.Assert(postings != null);
 		  }
 		  Debug.Assert(docs != null);
@@ -466,7 +468,7 @@ namespace Lucene.Net.Index
 		  int docID = -1;
 		  while (docID < DocIdSetIterator.NO_MORE_DOCS)
 		  {
-			int what = random().Next(3);
+			int what = Random().Next(3);
 			if (what == 0)
 			{
 			  if (VERBOSE)
@@ -482,7 +484,7 @@ namespace Lucene.Net.Index
 				  expected = int.MaxValue;
 				  break;
 				}
-				else if (isS1.get(expected) == doS1)
+				else if (isS1.Get(expected) == doS1)
 				{
 				  break;
 				}
@@ -491,7 +493,7 @@ namespace Lucene.Net.Index
 				  expected++;
 				}
 			  }
-			  docID = docs.nextDoc();
+			  docID = docs.NextDoc();
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("  got docID=" + docID);
@@ -502,9 +504,9 @@ namespace Lucene.Net.Index
 				break;
 			  }
 
-			  if (random().Next(6) == 3 && postings != null)
+			  if (Random().Next(6) == 3 && postings != null)
 			  {
-				int freq = postings.freq();
+				int freq = postings.Freq();
 				Assert.IsTrue(freq >= 1 && freq <= 4);
 			  }
 			}
@@ -514,11 +516,11 @@ namespace Lucene.Net.Index
 			  int targetDocID;
 			  if (docID == -1)
 			  {
-				targetDocID = random().Next(NUM_DOCS + 1);
+				targetDocID = Random().Next(NUM_DOCS + 1);
 			  }
 			  else
 			  {
-				targetDocID = docID + TestUtil.Next(random(), 1, NUM_DOCS - docID);
+				targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
 			  }
 			  if (VERBOSE)
 			  {
@@ -532,7 +534,7 @@ namespace Lucene.Net.Index
 				  expected = int.MaxValue;
 				  break;
 				}
-				else if (isS1.get(expected) == doS1)
+				else if (isS1.Get(expected) == doS1)
 				{
 				  break;
 				}
@@ -542,7 +544,7 @@ namespace Lucene.Net.Index
 				}
 			  }
 
-			  docID = docs.advance(targetDocID);
+			  docID = docs.Advance(targetDocID);
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("  got docID=" + docID);
@@ -553,16 +555,16 @@ namespace Lucene.Net.Index
 				break;
 			  }
 
-			  if (random().Next(6) == 3 && postings != null)
+			  if (Random().Next(6) == 3 && postings != null)
 			  {
-				int freq = postings.freq();
-				Assert.IsTrue("got invalid freq=" + freq, freq >= 1 && freq <= 4);
+				int freq = postings.Freq();
+				Assert.IsTrue(freq >= 1 && freq <= 4, "got invalid freq=" + freq);
 			  }
 			}
 		  }
 		}
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 	}
 

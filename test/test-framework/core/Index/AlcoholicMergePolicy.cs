@@ -59,32 +59,48 @@ namespace Lucene.Net.Index
 			// its 5 o'clock somewhere
 		{
 
-		  Drink[] values = Enum.GetValues(typeof(Drink));
+          Drink.Drink_e[] values = Enum.GetValues(typeof(Drink.Drink_e)).Cast<Drink.Drink_e>().ToArray();
 		  // pick a random drink during the day
-		  return values[Random.Next(values.Length)].drunkFactor * info.sizeInBytes();
+		  return DrunkFactor(values[Random.Next(values.Length)]) * info.SizeInBytes();
 		}
 
-		return info.sizeInBytes();
+		return info.SizeInBytes();
 	  }
 
-	  private enum Drink
-	  {
+      private class Drink
+      {
+          private const int NumDrinks = 5;
 
-		Beer = 15,
-		Wine = 17,
-		Champagne = 21,
-		WhiteRussian = 22,
-		SingleMalt = 30
+          internal enum Drink_e
+          {
+              Beer = 15,
+              Wine = 17,
+              Champagne = 21,
+              WhiteRussian = 22,
+              SingleMalt = 30
+          }
 
-//JAVA TO C# CONVERTER TODO TASK: Enums cannot contain fields in .NET:
-//		long drunkFactor;
+          internal Drink_e[] GetEnumValues()
+          {
+              Drink_e[] values = new Drink_e[5];
+              for (int i = 0; i < NumDrinks; ++i)
+              {
+                  values[i] = 
+              }
+          }
 
-//JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
-//		Drink(long drunkFactor)
-	//	{
-	//	  this.drunkFactor = drunkFactor;
-	//	}
-	  }
+          long drunkFactor;
+
+          Drink(long drunkFactor)
+          {
+              this.drunkFactor = drunkFactor;
+          }
+
+          internal long DrunkFactor()
+          {
+
+          }
+      }
 
 	}
 

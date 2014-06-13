@@ -27,6 +27,8 @@ namespace Lucene.Net.Index
 	using LineFileDocs = Lucene.Net.Util.LineFileDocs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestForceMergeForever : LuceneTestCase
 	{
@@ -44,14 +46,14 @@ namespace Lucene.Net.Index
 
 		public override void Merge(MergePolicy.OneMerge merge)
 		{
-		  if (merge.maxNumSegments != -1 && (First || merge.segments.size() == 1))
+		  if (merge.maxNumSegments != -1 && (First || merge.segments.Size() == 1))
 		  {
 			First = false;
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: maxNumSegments merge");
 			}
-			MergeCount.incrementAndGet();
+			MergeCount.IncrementAndGet();
 		  }
 		  base.merge(merge);
 		}
@@ -59,22 +61,22 @@ namespace Lucene.Net.Index
 
 	  public virtual void Test()
 	  {
-		Directory d = newDirectory();
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		Directory d = NewDirectory();
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
-		MyIndexWriter w = new MyIndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		MyIndexWriter w = new MyIndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
 		// Try to make an index that requires merging:
-		w.Config.MaxBufferedDocs = TestUtil.Next(random(), 2, 11);
-		int numStartDocs = atLeast(20);
-		LineFileDocs docs = new LineFileDocs(random(), defaultCodecSupportsDocValues());
+		w.Config.MaxBufferedDocs = TestUtil.NextInt(Random(), 2, 11);
+		int numStartDocs = AtLeast(20);
+		LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
 		for (int docIDX = 0;docIDX < numStartDocs;docIDX++)
 		{
-		  w.addDocument(docs.nextDoc());
+		  w.AddDocument(docs.NextDoc());
 		}
 		MergePolicy mp = w.Config.MergePolicy;
-		int mergeAtOnce = 1 + w.segmentInfos.size();
+		int mergeAtOnce = 1 + w.SegmentInfos.Size();
 		if (mp is TieredMergePolicy)
 		{
 		  ((TieredMergePolicy) mp).MaxMergeAtOnce = mergeAtOnce;
@@ -86,8 +88,8 @@ namespace Lucene.Net.Index
 		else
 		{
 		  // skip test
-		  w.close();
-		  d.close();
+		  w.Dispose();
+		  d.Dispose();
 		  return;
 		}
 
@@ -95,13 +97,13 @@ namespace Lucene.Net.Index
 		w.Config.MaxBufferedDocs = 2;
 		Thread t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
 		t.Start();
-		w.forceMerge(1);
-		doStop.set(true);
+		w.ForceMerge(1);
+		doStop.Set(true);
 		t.Join();
-		Assert.IsTrue("merge count is " + w.MergeCount.get(), w.MergeCount.get() <= 1);
-		w.close();
-		d.close();
-		docs.close();
+		Assert.IsTrue(w.MergeCount.Get() <= 1, "merge count is " + w.MergeCount.Get());
+		w.Dispose();
+		d.Dispose();
+        docs.Close();
 	  }
 
 	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
@@ -126,11 +128,11 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  while (!DoStop.get())
+			  while (!DoStop.Get())
 			  {
-				w.updateDocument(new Term("docid", "" + random().Next(NumStartDocs)), Docs.nextDoc());
+				w.UpdateDocument(new Term("docid", "" + Random().Next(NumStartDocs)), Docs.NextDoc());
 				// Force deletes to apply
-				w.Reader.close();
+				w.Reader.Dispose();
 			  }
 			}
 			catch (Exception t)

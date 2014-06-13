@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Automaton
 	 * limitations under the License.
 	 */
 
-
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// Utilities for testing automata.
@@ -221,7 +221,7 @@ namespace Lucene.Net.Util.Automaton
 		public RandomAcceptedStrings(Automaton a)
 		{
 		  this.a = a;
-		  if (a.Singleton)
+		  if (!String.IsNullOrEmpty(a.Singleton))
 		  {
 			LeadsToAccept = null;
 			return;
@@ -261,7 +261,8 @@ namespace Lucene.Net.Util.Automaton
 		  // backwards:
 		  while (q.Count > 0)
 		  {
-			State s = q.RemoveFirst();
+			State s = q.First.Value;
+            q.RemoveFirst();
 			IList<ArrivingTransition> arriving = allArriving[s];
 			if (arriving != null)
 			{
@@ -283,7 +284,7 @@ namespace Lucene.Net.Util.Automaton
 		{
 
 		  IList<int?> soFar = new List<int?>();
-		  if (a.Singleton)
+          if (!String.IsNullOrEmpty(a.Singleton))
 		  {
 			// accepts only one
 			string s = a.singleton;
@@ -313,7 +314,7 @@ namespace Lucene.Net.Util.Automaton
 				}
 				else
 				{
-				  if (r.nextBoolean())
+				  if (r.NextBoolean())
 				  {
 					break;
 				  }
@@ -325,7 +326,7 @@ namespace Lucene.Net.Util.Automaton
 				throw new Exception("this automaton has dead states");
 			  }
 
-			  bool cheat = r.nextBoolean();
+			  bool cheat = r.NextBoolean();
 
 			  Transition t;
 			  if (cheat)
@@ -370,13 +371,13 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		// get two random Automata from regexps
 		Automaton a1 = (new RegExp(AutomatonTestUtil.RandomRegexp(random), RegExp.NONE)).ToAutomaton();
-		if (random.nextBoolean())
+		if (random.NextBoolean())
 		{
 		  a1 = BasicOperations.Complement(a1);
 		}
 
 		Automaton a2 = (new RegExp(AutomatonTestUtil.RandomRegexp(random), RegExp.NONE)).ToAutomaton();
-		if (random.nextBoolean())
+		if (random.NextBoolean())
 		{
 		  a2 = BasicOperations.Complement(a2);
 		}
@@ -434,7 +435,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static void MinimizeSimple(Automaton a)
 	  {
-		if (a.Singleton)
+		if (!String.IsNullOrEmpty(a.Singleton))
 		{
 		  return;
 		}
@@ -473,7 +474,8 @@ namespace Lucene.Net.Util.Automaton
 		newstate[initialset] = a.Initial;
 		while (worklist.Count > 0)
 		{
-		  ISet<State> s = worklist.RemoveFirst();
+          ISet<State> s = worklist.First.Value;
+          worklist.RemoveFirst();
 		  State r = newstate[s];
 		  foreach (State q in s)
 		  {
@@ -502,7 +504,7 @@ namespace Lucene.Net.Util.Automaton
 			  worklist.AddLast(p);
 			  newstate[p] = new State();
 			}
-			State q = newstate[p];
+			State q_ = newstate[p];
 			int min = points[n];
 			int max;
 			if (n + 1 < points.Length)
@@ -513,7 +515,7 @@ namespace Lucene.Net.Util.Automaton
 			{
 			  max = Character.MAX_CODE_POINT;
 			}
-			r.AddTransition(new Transition(min, max, q));
+			r.AddTransition(new Transition(min, max, q_));
 		  }
 		}
 		a.deterministic = true;
@@ -529,7 +531,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static bool IsFiniteSlow(Automaton a)
 	  {
-		if (a.Singleton)
+          if (!String.IsNullOrEmpty(a.Singleton))
 		{
 			return true;
 		}

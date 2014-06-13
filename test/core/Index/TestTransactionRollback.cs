@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+using NUnit.Framework;
 
 	/// <summary>
 	/// Test class to illustrate using IndexDeletionPolicy to provide multi-level rollback capability.
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
 		// System.out.println("Attempting to rollback to "+id);
 		string ids = "-" + id;
 		IndexCommit last = null;
-		ICollection<IndexCommit> commits = DirectoryReader.listCommits(Dir);
+		ICollection<IndexCommit> commits = DirectoryReader.ListCommits(Dir);
 		for (IEnumerator<IndexCommit> iterator = commits.GetEnumerator(); iterator.MoveNext();)
 		{
 		  IndexCommit commit = iterator.Current;
@@ -70,11 +71,11 @@ namespace Lucene.Net.Index
 		  throw new Exception("Couldn't find commit point " + id);
 		}
 
-		IndexWriter w = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).setIndexCommit(last));
+		IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
 		IDictionary<string, string> data = new Dictionary<string, string>();
 		data["index"] = "Rolled back to 1-" + id;
 		w.CommitData = data;
-		w.close();
+		w.Dispose();
 	  }
 
 	  public virtual void TestRepeatedRollBacks()
@@ -87,44 +88,44 @@ namespace Lucene.Net.Index
 		  RollBackLast(expectedLastRecordId);
 
 		  BitArray expecteds = new BitArray(100);
-		  expecteds.set(1, (expectedLastRecordId + 1), true);
+		  expecteds.Set(1, (expectedLastRecordId + 1), true);
 		  CheckExpecteds(expecteds);
 		}
 	  }
 
 	  private void CheckExpecteds(BitArray expecteds)
 	  {
-		IndexReader r = DirectoryReader.open(Dir);
+		IndexReader r = DirectoryReader.Open(Dir);
 
 		//Perhaps not the most efficient approach but meets our
 		//needs here.
-		Bits liveDocs = MultiFields.getLiveDocs(r);
-		for (int i = 0; i < r.maxDoc(); i++)
+		Bits liveDocs = MultiFields.GetLiveDocs(r);
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  if (liveDocs == null || liveDocs.get(i))
+		  if (liveDocs == null || liveDocs.Get(i))
 		  {
-			string sval = r.document(i).get(FIELD_RECORD_ID);
+			string sval = r.Document(i).Get(FIELD_RECORD_ID);
 			if (sval != null)
 			{
 			  int val = Convert.ToInt32(sval);
-			  Assert.IsTrue("Did not expect document #" + val, expecteds.Get(val));
+			  Assert.IsTrue(expecteds.Get(val), "Did not expect document #" + val);
 			  expecteds.Set(val,false);
 			}
 		  }
 		}
-		r.close();
-		Assert.AreEqual("Should have 0 docs remaining ", 0,expecteds.cardinality());
+		r.Dispose();
+		Assert.AreEqual(0,expecteds.cardinality(), "Should have 0 docs remaining ");
 	  }
 
 	  /*
 	  private void showAvailableCommitPoints() throws Exception {
-	    Collection commits = DirectoryReader.listCommits(dir);
+	    Collection commits = DirectoryReader.ListCommits(dir);
 	    for (Iterator iterator = commits.iterator(); iterator.hasNext();) {
-	      IndexCommit comm = (IndexCommit) iterator.next();
+	      IndexCommit comm = (IndexCommit) iterator.Next();
 	      System.out.print("\t Available commit point:["+comm.getUserData()+"] files=");
 	      Collection files = comm.getFileNames();
 	      for (Iterator iterator2 = files.iterator(); iterator2.hasNext();) {
-	        String filename = (String) iterator2.next();
+	        String filename = (String) iterator2.Next();
 	        System.out.print(filename+", ");
 	      }
 	      System.out.println();
@@ -134,35 +135,35 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
+		base.SetUp();
+		Dir = NewDirectory();
 
 		//Build index, of records 1 to 100, committing after each batch of 10
 		IndexDeletionPolicy sdp = new KeepAllDeletionPolicy(this);
-		IndexWriter w = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(sdp));
+		IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(sdp));
 
 		for (int currentRecordId = 1;currentRecordId <= 100;currentRecordId++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField(FIELD_RECORD_ID, "" + currentRecordId, Field.Store.YES));
-		  w.addDocument(doc);
+		  doc.Add(NewTextField(FIELD_RECORD_ID, "" + currentRecordId, Field.Store.YES));
+		  w.AddDocument(doc);
 
 		  if (currentRecordId % 10 == 0)
 		  {
 			IDictionary<string, string> data = new Dictionary<string, string>();
 			data["index"] = "records 1-" + currentRecordId;
 			w.CommitData = data;
-			w.commit();
+			w.Commit();
 		  }
 		}
 
-		w.close();
+		w.Dispose();
 	  }
 
 	  public override void TearDown()
 	  {
-		Dir.close();
-		base.tearDown();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  // Rolls back to previous commit point
@@ -178,11 +179,11 @@ namespace Lucene.Net.Index
 		  this.RollbackPoint = rollbackPoint;
 		}
 
-		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit(IList<IndexCommit> commits)
 		{
 		}
 
-		public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnInit(IList<IndexCommit> commits)
 		{
 		  foreach (IndexCommit commit in commits)
 		  {
@@ -199,15 +200,15 @@ namespace Lucene.Net.Index
 			  {
 				/*
 				System.out.print("\tRolling back commit point:" +
-				                 " UserData="+commit.getUserData() +")  ("+(commits.size()-1)+" commit points left) files=");
+				                 " UserData="+commit.getUserData() +")  ("+(commits.Size()-1)+" commit points left) files=");
 				Collection files = commit.getFileNames();
 				for (Iterator iterator2 = files.iterator(); iterator2.hasNext();) {
-				  System.out.print(" "+iterator2.next());
+				  System.out.print(" "+iterator2.Next());
 				}
 				System.out.println();
 				*/
 
-				commit.delete();
+				commit.Delete();
 			  }
 			}
 		  }
@@ -224,12 +225,12 @@ namespace Lucene.Net.Index
 		  }
 
 
-		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit(IList<IndexCommit> commits)
 		{
 		}
-		public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnInit(IList<IndexCommit> commits)
 		{
-		  commits[commits.Count - 1].delete();
+		  commits.RemoveAt(commits.Count - 1);
 		}
 	  }
 
@@ -240,10 +241,10 @@ namespace Lucene.Net.Index
 		{
 		  // Unless you specify a prior commit point, rollback
 		  // should not work:
-		  (new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).close();
-		  IndexReader r = DirectoryReader.open(Dir);
-		  Assert.AreEqual(100, r.numDocs());
-		  r.close();
+		  (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).Dispose();
+		  IndexReader r = DirectoryReader.Open(Dir);
+		  Assert.AreEqual(100, r.NumDocs());
+		  r.Dispose();
 		}
 	  }
 
@@ -257,10 +258,10 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		public override void OnCommit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnCommit(IList<IndexCommit> commits)
 		{
 		}
-		public override void onInit<T1>(IList<T1> commits) where T1 : IndexCommit
+		public override void OnInit(IList<IndexCommit> commits)
 		{
 		}
 	  }

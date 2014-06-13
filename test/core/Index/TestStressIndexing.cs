@@ -24,16 +24,18 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Store;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Lucene.Net.Document;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Lucene.Net.Search;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestStressIndexing : LuceneTestCase
 	{
-	  private abstract class TimedThread : System.Threading.Thread
+	  private abstract class TimedThread : ThreadClass
 	  {
 		internal volatile bool Failed;
 		internal int Count;
-		internal static int RUN_TIME_MSEC = atLeast(1000);
+		internal static int RUN_TIME_MSEC = AtLeast(1000);
 		internal TimedThread[] AllThreads;
 
 		public abstract void DoWork();
@@ -45,7 +47,7 @@ namespace Lucene.Net.Index
 
 		public override void Run()
 		{
-		  long stopTime = System.currentTimeMillis() + RUN_TIME_MSEC;
+		  long stopTime = DateTime.Now.Millisecond + RUN_TIME_MSEC;
 
 		  Count = 0;
 
@@ -59,12 +61,12 @@ namespace Lucene.Net.Index
 			  }
 			  DoWork();
 			  Count++;
-			} while (System.currentTimeMillis() < stopTime);
+			} while (DateTime.Now.Millisecond < stopTime);
 		  }
 		  catch (Exception e)
 		  {
 			Console.WriteLine(Thread.CurrentThread + ": exc");
-			e.printStackTrace(System.out);
+			Console.WriteLine(e.StackTrace);
 			Failed = true;
 		  }
 		}
@@ -101,17 +103,17 @@ namespace Lucene.Net.Index
 		  for (int j = 0; j < 10; j++)
 		  {
 			Document d = new Document();
-			int n = random().Next();
-			d.add(newStringField("id", Convert.ToString(NextID++), Field.Store.YES));
-			d.add(newTextField("contents", English.intToEnglish(n), Field.Store.NO));
-			Writer.addDocument(d);
+			int n = Random().Next();
+			d.Add(NewStringField("id", Convert.ToString(NextID++), Field.Store.YES));
+			d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+			Writer.AddDocument(d);
 		  }
 
 		  // Delete 5 docs:
 		  int deleteID = NextID - 1;
 		  for (int j = 0; j < 5; j++)
 		  {
-			Writer.deleteDocuments(new Term("id", "" + deleteID));
+			Writer.DeleteDocuments(new Term("id", "" + deleteID));
 			deleteID -= 2;
 		  }
 		}
@@ -130,9 +132,9 @@ namespace Lucene.Net.Index
 		{
 		  for (int i = 0; i < 100; i++)
 		  {
-			IndexReader ir = DirectoryReader.open(Directory);
-			IndexSearcher @is = newSearcher(ir);
-			ir.close();
+			IndexReader ir = DirectoryReader.Open(Directory);
+			IndexSearcher @is = NewSearcher(ir);
+			ir.Dispose();
 		  }
 		  Count += 100;
 		}
@@ -144,8 +146,8 @@ namespace Lucene.Net.Index
 	  */
 	  public virtual void RunStressTest(Directory directory, MergeScheduler mergeScheduler)
 	  {
-		IndexWriter modifier = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(10).setMergeScheduler(mergeScheduler));
-		modifier.commit();
+		IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
+		modifier.Commit();
 
 		TimedThread[] threads = new TimedThread[4];
 		int numThread = 0;
@@ -155,28 +157,28 @@ namespace Lucene.Net.Index
 		// and over:
 		IndexerThread indexerThread = new IndexerThread(this, modifier, threads);
 		threads[numThread++] = indexerThread;
-		indexerThread.start();
+		indexerThread.Start();
 
 		IndexerThread indexerThread2 = new IndexerThread(this, modifier, threads);
 		threads[numThread++] = indexerThread2;
-		indexerThread2.start();
+		indexerThread2.Start();
 
 		// Two searchers that constantly just re-instantiate the
 		// searcher:
 		SearcherThread searcherThread1 = new SearcherThread(directory, threads);
 		threads[numThread++] = searcherThread1;
-		searcherThread1.start();
+		searcherThread1.Start();
 
 		SearcherThread searcherThread2 = new SearcherThread(directory, threads);
 		threads[numThread++] = searcherThread2;
-		searcherThread2.start();
+		searcherThread2.Start();
 
 		for (int i = 0;i < numThread;i++)
 		{
 		  threads[i].Join();
 		}
 
-		modifier.close();
+		modifier.Dispose();
 
 		for (int i = 0;i < numThread;i++)
 		{
@@ -194,14 +196,14 @@ namespace Lucene.Net.Index
 	  */
 	  public virtual void TestStressIndexAndSearching()
 	  {
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		if (directory is MockDirectoryWrapper)
 		{
 		  ((MockDirectoryWrapper) directory).AssertNoUnrefencedFilesOnClose = true;
 		}
 
 		RunStressTest(directory, new ConcurrentMergeScheduler());
-		directory.close();
+		directory.Dispose();
 	  }
 	}
 

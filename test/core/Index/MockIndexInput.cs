@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
             int start = pointer;
             while (remainder != 0)
             {
-                //          int bufferNumber = start / buffer.length;
+                //          int bufferNumber = start / buffer.Length;
                 int bufferOffset = start % buffer.Length;
                 int bytesInBuffer = buffer.Length - bufferOffset;
                 int bytesToCopy = bytesInBuffer >= remainder?remainder:bytesInBuffer;

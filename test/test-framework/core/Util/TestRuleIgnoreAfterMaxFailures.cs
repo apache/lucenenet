@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
 	  ///          greater or equal 1. </param>
 	  public TestRuleIgnoreAfterMaxFailures(int maxFailures)
 	  {
-		Assert.Assert.IsTrue("maxFailures must be >= 1: " + maxFailures, maxFailures >= 1);
+		Assert.IsTrue("maxFailures must be >= 1: " + maxFailures, maxFailures >= 1);
 		this.MaxFailures = maxFailures;
 	  }
 

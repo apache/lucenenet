@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
 
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
@@ -36,17 +36,17 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestIndexWriterLockRelease()
 	  {
-		Directory dir = newFSDirectory(createTempDir("testLockRelease"));
+		Directory dir = NewFSDirectory(CreateTempDir("testLockRelease"));
 		try
 		{
-		  new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(OpenMode.APPEND));
+		  new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode_e.APPEND));
 		}
 //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
 		catch (FileNotFoundException | NoSuchFileException e)
 		{
 		  try
 		  {
-			new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(OpenMode.APPEND));
+			new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode_e.APPEND));
 		  }
 //JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
 		  catch (FileNotFoundException | NoSuchFileException e1)
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 	}

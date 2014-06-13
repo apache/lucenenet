@@ -30,6 +30,9 @@ namespace Lucene.Net.Index
 	using CharsRef = Lucene.Net.Util.CharsRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Util;
 
 	public class TestIndexWriterUnicode : LuceneTestCase
 	{
@@ -38,7 +41,7 @@ namespace Lucene.Net.Index
 
 	  private int NextInt(int lim)
 	  {
-		return random().Next(lim);
+		return Random().Next(lim);
 	  }
 
 	  private int NextInt(int start, int end)
@@ -89,7 +92,7 @@ namespace Lucene.Net.Index
 			// Illegal unpaired surrogate
 			if (NextInt(10) == 7)
 			{
-			  if (random().nextBoolean())
+			  if (Random().NextBoolean())
 			  {
 				buffer[i] = (char) NextInt(0xd800, 0xdc00);
 			  }
@@ -141,28 +144,28 @@ namespace Lucene.Net.Index
 		return s0;
 	  }
 
-	  private void CheckTermsOrder(IndexReader r, Set<string> allTerms, bool isTop)
+	  private void CheckTermsOrder(IndexReader r, ISet<string> allTerms, bool isTop)
 	  {
-		TermsEnum terms = MultiFields.getFields(r).terms("f").iterator(null);
+		TermsEnum terms = MultiFields.GetFields(r).Terms("f").Iterator(null);
 
 		BytesRef last = new BytesRef();
 
-		Set<string> seenTerms = new HashSet<string>();
+		HashSet<string> seenTerms = new HashSet<string>();
 
 		while (true)
 		{
-		  BytesRef term = terms.next();
+		  BytesRef term = terms.Next();
 		  if (term == null)
 		  {
 			break;
 		  }
 
-		  Assert.IsTrue(last.compareTo(term) < 0);
-		  last.copyBytes(term);
+		  Assert.IsTrue(last.CompareTo(term) < 0);
+		  last.CopyBytes(term);
 
-		  string s = term.utf8ToString();
-		  Assert.IsTrue("term " + TermDesc(s) + " was not added to index (count=" + allTerms.size() + ")", allTerms.contains(s));
-		  seenTerms.add(s);
+		  string s = term.Utf8ToString();
+		  Assert.IsTrue("term " + TermDesc(s) + " was not added to index (count=" + allTerms.Size() + ")", allTerms.Contains(s));
+		  seenTerms.Add(s);
 		}
 
 		if (isTop)
@@ -175,7 +178,7 @@ namespace Lucene.Net.Index
 		while (it.MoveNext())
 		{
 		  BytesRef tr = new BytesRef(it.Current);
-		  Assert.AreEqual("seek failed for term=" + TermDesc(tr.utf8ToString()), TermsEnum.SeekStatus.FOUND, terms.seekCeil(tr));
+		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(tr), "seek failed for term=" + TermDesc(tr.Utf8ToString()));
 		}
 	  }
 
@@ -188,7 +191,7 @@ namespace Lucene.Net.Index
 		BytesRef utf8 = new BytesRef(20);
 		CharsRef utf16 = new CharsRef(20);
 
-		int num = atLeast(100000);
+		int num = AtLeast(100000);
 		for (int iter = 0; iter < num; iter++)
 		{
 		  bool hasIllegal = FillUnicode(buffer, expected, 0, 20);
@@ -196,19 +199,19 @@ namespace Lucene.Net.Index
 		  UnicodeUtil.UTF16toUTF8(buffer, 0, 20, utf8);
 		  if (!hasIllegal)
 		  {
-			sbyte[] b = (new string(buffer, 0, 20)).getBytes(StandardCharsets.UTF_8);
-			Assert.AreEqual(b.Length, utf8.length);
+			sbyte[] b = (new string(buffer, 0, 20)).GetBytes(IOUtils.CHARSET_UTF_8);
+			Assert.AreEqual(b.Length, utf8.Length);
 			for (int i = 0;i < b.Length;i++)
 			{
-			  Assert.AreEqual(b[i], utf8.bytes[i]);
+			  Assert.AreEqual(b[i], utf8.Bytes[i]);
 			}
 		  }
 
-		  UnicodeUtil.UTF8toUTF16(utf8.bytes, 0, utf8.length, utf16);
-		  Assert.AreEqual(utf16.length, 20);
+		  UnicodeUtil.UTF8toUTF16(utf8.Bytes, 0, utf8.Length, utf16);
+		  Assert.AreEqual(utf16.Length, 20);
 		  for (int i = 0;i < 20;i++)
 		  {
-			Assert.AreEqual(expected[i], utf16.chars[i]);
+			Assert.AreEqual(expected[i], utf16.Chars[i]);
 		  }
 		}
 	  }
@@ -243,87 +246,87 @@ namespace Lucene.Net.Index
 		  UnicodeUtil.UTF16toUTF8(chars, 0, len, utf8);
 
 		  string s1 = new string(chars, 0, len);
-		  string s2 = new string(utf8.bytes, 0, utf8.length, StandardCharsets.UTF_8);
+		  string s2 = new string(utf8.Bytes, 0, utf8.Length, IOUtils.CHARSET_UTF_8);
 		  Assert.AreEqual("codepoint " + ch, s1, s2);
 
-		  UnicodeUtil.UTF8toUTF16(utf8.bytes, 0, utf8.length, utf16);
-		  Assert.AreEqual("codepoint " + ch, s1, new string(utf16.chars, 0, utf16.length));
+		  UnicodeUtil.UTF8toUTF16(utf8.Bytes, 0, utf8.Length, utf16);
+		  Assert.AreEqual("codepoint " + ch, s1, new string(utf16.Chars, 0, utf16.Length));
 
-		  sbyte[] b = s1.getBytes(StandardCharsets.UTF_8);
-		  Assert.AreEqual(utf8.length, b.Length);
-		  for (int j = 0;j < utf8.length;j++)
+		  sbyte[] b = s1.getBytes(IOUtils.CHARSET_UTF_8);
+		  Assert.AreEqual(utf8.Length, b.Length);
+		  for (int j = 0;j < utf8.Length;j++)
 		  {
-			Assert.AreEqual(utf8.bytes[j], b[j]);
+			Assert.AreEqual(utf8.Bytes[j], b[j]);
 		  }
 		}
 	  }
 
 	  public virtual void TestEmbeddedFFFF()
 	  {
-		Directory d = newDirectory();
-		IndexWriter w = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory d = NewDirectory();
+		IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(newTextField("field", "a a\uffffb", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewTextField("field", "a a\uffffb", Field.Store.NO));
+		w.AddDocument(doc);
 		doc = new Document();
-		doc.add(newTextField("field", "a", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewTextField("field", "a", Field.Store.NO));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		Assert.AreEqual(1, r.docFreq(new Term("field", "a\uffffb")));
-		r.close();
-		w.close();
-		d.close();
+		Assert.AreEqual(1, r.DocFreq(new Term("field", "a\uffffb")));
+		r.Dispose();
+		w.Dispose();
+		d.Dispose();
 	  }
 
 	  // LUCENE-510
 	  public virtual void TestInvalidUTF16()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new TestIndexWriter.StringSplitAnalyzer()));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestIndexWriter.StringSplitAnalyzer()));
 		Document doc = new Document();
 
 		int count = Utf8Data.Length / 2;
 		for (int i = 0;i < count;i++)
 		{
-		  doc.add(newTextField("f" + i, Utf8Data[2 * i], Field.Store.YES));
+		  doc.Add(NewTextField("f" + i, Utf8Data[2 * i], Field.Store.YES));
 		}
-		w.addDocument(doc);
-		w.close();
+		w.AddDocument(doc);
+		w.Dispose();
 
-		IndexReader ir = DirectoryReader.open(dir);
-		Document doc2 = ir.document(0);
+		IndexReader ir = DirectoryReader.Open(dir);
+		Document doc2 = ir.Document(0);
 		for (int i = 0;i < count;i++)
 		{
-		  Assert.AreEqual("field " + i + " was not indexed correctly", 1, ir.docFreq(new Term("f" + i, Utf8Data[2 * i + 1])));
-		  Assert.AreEqual("field " + i + " is incorrect", Utf8Data[2 * i + 1], doc2.getField("f" + i).stringValue());
+		  Assert.AreEqual(1, ir.DocFreq(new Term("f" + i, Utf8Data[2 * i + 1])), "field " + i + " was not indexed correctly");
+		  Assert.AreEqual(Utf8Data[2 * i + 1], doc2.GetField("f" + i).StringValue, "field " + i + " is incorrect");
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Make sure terms, including ones with surrogate pairs,
 	  // sort in codepoint sort order by default
 	  public virtual void TestTermUTF16SortOrder()
 	  {
-		Random rnd = random();
-		Directory dir = newDirectory();
+		Random rnd = Random();
+		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(rnd, dir);
 		Document d = new Document();
 		// Single segment
-		Field f = newStringField("f", "", Field.Store.NO);
-		d.add(f);
+		Field f = NewStringField("f", "", Field.Store.NO);
+		d.Add(f);
 		char[] chars = new char[2];
-		Set<string> allTerms = new HashSet<string>();
+		HashSet<string> allTerms = new HashSet<string>();
 
-		int num = atLeast(200);
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
 
 		  string s;
-		  if (rnd.nextBoolean())
+		  if (rnd.NextBoolean())
 		  {
 			// Single char
-			if (rnd.nextBoolean())
+			if (rnd.NextBoolean())
 			{
 			  // Above surrogates
 			  chars[0] = (char) GetInt(rnd, 1 + UnicodeUtil.UNI_SUR_LOW_END, 0xffff);
@@ -343,38 +346,38 @@ namespace Lucene.Net.Index
 			chars[1] = (char) GetInt(rnd, UnicodeUtil.UNI_SUR_LOW_START, UnicodeUtil.UNI_SUR_LOW_END);
 			s = new string(chars, 0, 2);
 		  }
-		  allTerms.add(s);
+		  allTerms.Add(s);
 		  f.StringValue = s;
 
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 
 		  if ((1 + i) % 42 == 0)
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 		}
 
 		IndexReader r = writer.Reader;
 
 		// Test each sub-segment
-		foreach (AtomicReaderContext ctx in r.leaves())
+		foreach (AtomicReaderContext ctx in r.Leaves())
 		{
-		  CheckTermsOrder(ctx.reader(), allTerms, false);
+		  CheckTermsOrder(ctx.Reader(), allTerms, false);
 		}
 		CheckTermsOrder(r, allTerms, true);
 
 		// Test multi segment
-		r.close();
+		r.Dispose();
 
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 
 		// Test single segment
 		r = writer.Reader;
 		CheckTermsOrder(r, allTerms, true);
-		r.close();
+		r.Dispose();
 
-		writer.close();
-		dir.close();
+        writer.Close();
+		dir.Dispose();
 	  }
 	}
 

@@ -95,13 +95,13 @@ namespace Lucene.Net.Codecs.Lucene41ords
 
 	  public override FieldsProducer FieldsProducer(SegmentReadState state)
 	  {
-		PostingsReaderBase postings = new Lucene41PostingsReader(state.directory, state.fieldInfos, state.segmentInfo, state.context, state.segmentSuffix);
+		PostingsReaderBase postings = new Lucene41PostingsReader(state.Directory, state.fieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
 		TermsIndexReaderBase indexReader;
 
 		bool success = false;
 		try
 		{
-		  indexReader = new FixedGapTermsIndexReader(state.directory, state.fieldInfos, state.segmentInfo.name, state.termsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.segmentSuffix, state.context);
+		  indexReader = new FixedGapTermsIndexReader(state.Directory, state.fieldInfos, state.SegmentInfo.Name, state.termsIndexDivisor, BytesRef.UTF8SortedAsUnicodeComparator, state.SegmentSuffix, state.Context);
 		  success = true;
 		}
 		finally
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene41ords
 		success = false;
 		try
 		{
-		  FieldsProducer ret = new BlockTermsReader(indexReader, state.directory, state.fieldInfos, state.segmentInfo, postings, state.context, state.segmentSuffix);
+		  FieldsProducer ret = new BlockTermsReader(indexReader, state.Directory, state.fieldInfos, state.SegmentInfo, postings, state.Context, state.SegmentSuffix);
 		  success = true;
 		  return ret;
 		}

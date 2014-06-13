@@ -44,6 +44,8 @@ namespace Lucene.Net.Analysis
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using System.IO;
     using Lucene.Net.Support;
+    using Lucene.Net.Randomized.Generators;
+    using System.Globalization;
 
 	/// <summary>
 	/// base class for all Lucene unit tests that use TokenStreams. 
@@ -610,7 +612,7 @@ namespace Lucene.Net.Analysis
 	  {
 		CheckResetException(a, "best effort");
 		long seed = random.Next();
-		bool useCharFilter = random.nextBoolean();
+        bool useCharFilter = random.NextBoolean();
 		Directory dir = null;
 		RandomIndexWriter iw = null;
 		string postingsFormat = TestUtil.GetPostingsFormat("dummy");
@@ -682,22 +684,22 @@ namespace Lucene.Net.Analysis
 		{
 		  doc = new Document();
 		  FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 			ft.StoreTermVectors = true;
-			ft.StoreTermVectorOffsets = random.nextBoolean();
-			ft.StoreTermVectorPositions = random.nextBoolean();
+            ft.StoreTermVectorOffsets = random.NextBoolean();
+            ft.StoreTermVectorPositions = random.NextBoolean();
 			if (ft.StoreTermVectorPositions && !OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
 			{
-			  ft.StoreTermVectorPayloads = random.nextBoolean();
+                ft.StoreTermVectorPayloads = random.NextBoolean();
 			}
 		  }
-		  if (random.nextBoolean())
+          if (random.NextBoolean())
 		  {
 			ft.OmitNorms = true;
 		  }
 		  string pf = TestUtil.GetPostingsFormat("dummy");
-		  bool supportsOffsets = !DoesntSupportOffsets.contains(pf);
+		  bool supportsOffsets = !DoesntSupportOffsets.Contains(pf);
 		  switch (random.Next(4))
 		  {
 			case 0:
@@ -835,7 +837,7 @@ namespace Lucene.Net.Analysis
 		  {
 			// TODO: we can make ascii easier to read if we
 			// don't escape...
-			sb.Append(string.Format(Locale.ROOT, "\\u%04x", c));
+			sb.Append(string.Format(CultureInfo.InvariantCulture, "\\u%04x", c));
 		  }
 		  charUpto++;
 		}
@@ -936,7 +938,7 @@ namespace Lucene.Net.Analysis
 				// currently allow it, so, we must call
 				// a.TokenStream inside the try since we may
 				// hit the exc on init:
-				ts = a.TokenStream("dummy", useCharFilter ? new MockCharFilter(evilReader, remainder) : evilReader);
+				ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(evilReader, remainder) : evilReader);
 				ts.Reset();
 				while (ts.IncrementToken());
 				Assert.Fail("did not hit exception");
@@ -1078,16 +1080,16 @@ namespace Lucene.Net.Analysis
 		StringWriter sw = new StringWriter();
 		TokenStream ts = a.TokenStream("field", new StringReader(inputText));
 		ts.Reset();
-		(new TokenStreamToDot(inputText, ts, new PrintWriter(sw))).ToDot();
+		(new TokenStreamToDot(inputText, ts, /*new StreamWriter(*/(TextWriter)sw/*)*/)).ToDot();
 		return sw.ToString();
 	  }
 
 	  protected internal virtual void ToDotFile(Analyzer a, string inputText, string localFileName)
 	  {
-		StreamWriter w = new StreamWriter(new FileOutputStream(localFileName), IOUtils.CHARSET_UTF_8);
+		StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), IOUtils.CHARSET_UTF_8);
 		TokenStream ts = a.TokenStream("field", new StreamReader(inputText));
 		ts.Reset();
-		(new TokenStreamToDot(inputText, ts, new PrintWriter(w))).ToDot();
+		(new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();
 		w.Close();
 	  }
 

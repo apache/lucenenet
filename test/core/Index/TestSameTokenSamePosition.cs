@@ -36,13 +36,13 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new TextField("eng", new BugReproTokenStream()));
-		riw.addDocument(doc);
-		riw.close();
-		dir.close();
+		doc.Add(new TextField("eng", new BugReproTokenStream()));
+		riw.AddDocument(doc);
+        riw.Close();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
@@ -50,16 +50,16 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestMoreDocs()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir);
 		for (int i = 0; i < 100; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new TextField("eng", new BugReproTokenStream()));
-		  riw.addDocument(doc);
+		  doc.Add(new TextField("eng", new BugReproTokenStream()));
+		  riw.AddDocument(doc);
 		}
-		riw.close();
-		dir.close();
+        riw.Close();
+		dir.Dispose();
 	  }
 	}
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 	  {
 		if (NextTokenIndex < TokenCount)
 		{
-		  TermAtt.SetEmpty().append(Terms[NextTokenIndex]);
+		  TermAtt.SetEmpty().Append(Terms[NextTokenIndex]);
 		  OffsetAtt.SetOffset(Starts[NextTokenIndex], Ends[NextTokenIndex]);
 		  PosIncAtt.PositionIncrement = Incs[NextTokenIndex];
 		  NextTokenIndex++;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 
 	  public override void Reset()
 	  {
-		base.reset();
+		base.Reset();
 		this.NextTokenIndex = 0;
 	  }
 	}

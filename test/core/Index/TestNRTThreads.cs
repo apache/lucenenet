@@ -26,7 +26,9 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-	using Before = org.junit.Before;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using System.Collections.Generic;
 
 	// TODO
 	//   - mix in forceMerge, addIndexes
@@ -43,8 +45,8 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Before public void setUp() throws Exception
 	  public virtual void SetUp()
 	  {
-		base.setUp();
-		UseNonNrtReaders = random().nextBoolean();
+		base.SetUp();
+		UseNonNrtReaders = Random().NextBoolean();
 	  }
 
 	  protected internal override void DoSearching(ExecutorService es, long stopTime)
@@ -52,20 +54,20 @@ namespace Lucene.Net.Index
 
 		bool anyOpenDelFiles = false;
 
-		DirectoryReader r = DirectoryReader.open(writer, true);
+		DirectoryReader r = DirectoryReader.Open(Writer, true);
 
-		while (System.currentTimeMillis() < stopTime && !failed.get())
+		while (DateTime.Now.Millisecond < stopTime && !Failed.Get())
 		{
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: now reopen r=" + r);
 			}
-			DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+			DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 			if (r2 != null)
 			{
-			  r.close();
+			  r.Dispose();
 			  r = r2;
 			}
 		  }
@@ -75,46 +77,46 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("TEST: now close reader=" + r);
 			}
-			r.close();
-			writer.commit();
-			Set<string> openDeletedFiles = ((MockDirectoryWrapper) dir).OpenDeletedFiles;
-			if (openDeletedFiles.size() > 0)
+			r.Dispose();
+			Writer.Commit();
+			ISet<string> openDeletedFiles = ((MockDirectoryWrapper) Dir).OpenDeletedFiles;
+			if (openDeletedFiles.Count > 0)
 			{
 			  Console.WriteLine("OBD files: " + openDeletedFiles);
 			}
-			anyOpenDelFiles |= openDeletedFiles.size() > 0;
-			//Assert.AreEqual("open but deleted: " + openDeletedFiles, 0, openDeletedFiles.size());
+			anyOpenDelFiles |= openDeletedFiles.Count > 0;
+			//Assert.AreEqual("open but deleted: " + openDeletedFiles, 0, openDeletedFiles.Size());
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: now open");
 			}
-			r = DirectoryReader.open(writer, true);
+			r = DirectoryReader.Open(Writer, true);
 		  }
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: got new reader=" + r);
 		  }
-		  //System.out.println("numDocs=" + r.numDocs() + "
+		  //System.out.println("numDocs=" + r.NumDocs() + "
 		  //openDelFileCount=" + dir.openDeleteFileCount());
 
-		  if (r.numDocs() > 0)
+		  if (r.NumDocs() > 0)
 		  {
 			FixedSearcher = new IndexSearcher(r, es);
-			smokeTestSearcher(FixedSearcher);
-			runSearchThreads(System.currentTimeMillis() + 500);
+			SmokeTestSearcher(FixedSearcher);
+			RunSearchThreads(DateTime.Now.Millisecond + 500);
 		  }
 		}
-		r.close();
+		r.Dispose();
 
-		//System.out.println("numDocs=" + r.numDocs() + " openDelFileCount=" + dir.openDeleteFileCount());
-		Set<string> openDeletedFiles = ((MockDirectoryWrapper) dir).OpenDeletedFiles;
-		if (openDeletedFiles.size() > 0)
+		//System.out.println("numDocs=" + r.NumDocs() + " openDelFileCount=" + dir.openDeleteFileCount());
+		ISet<string> openDeletedFiles_ = ((MockDirectoryWrapper) Dir).OpenDeletedFiles;
+		if (openDeletedFiles_.Count > 0)
 		{
-		  Console.WriteLine("OBD files: " + openDeletedFiles);
+		  Console.WriteLine("OBD files: " + openDeletedFiles_);
 		}
-		anyOpenDelFiles |= openDeletedFiles.size() > 0;
+		anyOpenDelFiles |= openDeletedFiles_.Count > 0;
 
-		Assert.IsFalse("saw non-zero open-but-deleted count", anyOpenDelFiles);
+		Assert.IsFalse(anyOpenDelFiles, "saw non-zero open-but-deleted count");
 	  }
 
 	  protected internal override Directory GetDirectory(Directory @in)
@@ -132,7 +134,7 @@ namespace Lucene.Net.Index
 		// Force writer to do reader pooling, always, so that
 		// all merged segments, even for merges before
 		// doSearching is called, are warmed:
-		writer.Reader.close();
+		Writer.Reader.Dispose();
 	  }
 
 	  private IndexSearcher FixedSearcher;
@@ -150,7 +152,7 @@ namespace Lucene.Net.Index
 		if (s != FixedSearcher)
 		{
 		  // Final searcher:
-		  s.IndexReader.close();
+		  s.IndexReader.Dispose();
 		}
 	  }
 
@@ -161,27 +163,27 @@ namespace Lucene.Net.Index
 			IndexReader r2;
 			if (UseNonNrtReaders)
 			{
-			  if (random().nextBoolean())
+			  if (Random().NextBoolean())
 			  {
-				r2 = writer.Reader;
+				r2 = Writer.Reader;
 			  }
 			  else
 			  {
-				writer.commit();
-				r2 = DirectoryReader.open(dir);
+				Writer.Commit();
+				r2 = DirectoryReader.Open(Dir);
 			  }
 			}
 			else
 			{
-			  r2 = writer.Reader;
+			  r2 = Writer.Reader;
 			}
-			return newSearcher(r2);
+			return NewSearcher(r2);
 		  }
 	  }
 
 	  public virtual void TestNRTThreads()
 	  {
-		runTest("TestNRTThreads");
+		RunTest("TestNRTThreads");
 	  }
 	}
 

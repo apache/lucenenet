@@ -87,7 +87,7 @@ namespace Lucene.Net.Support
             Lucene.Net.Documents.Document doc = new Lucene.Net.Documents.Document();
             doc.Add(new Lucene.Net.Documents.Field("field1", "value1 value11", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
             wr.AddDocument(doc);
-            wr.Close();
+            wr.Dispose();
 
             //now serialize it 
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
@@ -107,7 +107,7 @@ namespace Lucene.Net.Support
             doc = new Lucene.Net.Documents.Document();
             doc.Add(new Lucene.Net.Documents.Field("field1", "value1 value11", Lucene.Net.Documents.Field.Store.YES, Lucene.Net.Documents.Field.Index.ANALYZED));
             wr.AddDocument(doc);
-            wr.Close();
+            wr.Dispose();
 
             //Search
             Lucene.Net.Search.IndexSearcher s = new Lucene.Net.Search.IndexSearcher(ramDIR2);
@@ -133,7 +133,7 @@ namespace Lucene.Net.Support
             doc.Add(f1);
             wr.AddDocument(doc);
 
-            wr.Close();
+            wr.Dispose();
         }
 
         static string TEST_STRING = "First Line\nSecond Line";
@@ -198,7 +198,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual(0, resCount3, "After reopen, resultCount must be 0.");
 
             reader.Close();
-            writer.Close();
+            writer.Dispose();
         }
 
 
@@ -284,7 +284,7 @@ namespace Lucene.Net.Support
             d.Add(f2);
             w.AddDocument(d);
 
-            w.Close();
+            w.Dispose();
         }
 
         //-------------------------------------------

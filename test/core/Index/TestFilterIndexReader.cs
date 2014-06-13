@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
         [STAThread]
         public static void  Main(System.String[] args)
         {
-            // TestRunner.run(new TestSuite(typeof(TestIndexReader))); // {{Aroush-2.9}} How do you do this in NUnit?
+            // TestRunner.Run(new TestSuite(typeof(TestIndexReader))); // {{Aroush-2.9}} How do you do this in NUnit?
         }
         
         /// <summary> Tests the IndexReader.getFieldNames implementation</summary>
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
             d3.Add(new Field("default", "two four", Field.Store.YES, Field.Index.ANALYZED));
             writer.AddDocument(d3);
             
-            writer.Close();
+            writer.Dispose();
             
             IndexReader reader = new TestReader(IndexReader.Open(directory, true));
             
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             {
                 Assert.IsTrue(terms.Term.Text.IndexOf('e') != - 1);
             }
-            terms.Close();
+            terms.Dispose();
             
             TermPositions positions = reader.TermPositions(new Term("default", "one"));
             while (positions.Next())
@@ -147,9 +147,9 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(i, td.Doc);
                 Assert.AreEqual(1, td.Freq);
             }
-            td.Close();
-            reader.Close();
-            directory.Close();
+            td.Dispose();
+            reader.Dispose();
+            directory.Dispose();
         }
     }
 }

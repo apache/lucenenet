@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -43,24 +44,8 @@ namespace Lucene.Net.Codecs.Lucene42
 	using FormatAndBits = Lucene.Net.Util.Packed.PackedInts.FormatAndBits;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.BLOCK_SIZE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.BYTES;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.NUMBER;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.FST;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.DELTA_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.GCD_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.TABLE_COMPRESSED;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.Lucene42.Lucene42DocValuesProducer.UNCOMPRESSED;
+
+ //   Constants use Lucene42DocValuesProducer.
 
 	/// <summary>
 	/// Writer for <seealso cref="Lucene42DocValuesFormat"/>
@@ -74,49 +59,49 @@ namespace Lucene.Net.Codecs.Lucene42
 	  internal Lucene42DocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension, float acceptableOverheadRatio)
 	  {
 		this.AcceptableOverheadRatio = acceptableOverheadRatio;
-		MaxDoc = state.segmentInfo.DocCount;
+		MaxDoc = state.SegmentInfo.DocCount;
 		bool success = false;
 		try
 		{
-		  string dataName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, dataExtension);
-		  Data = state.directory.createOutput(dataName, state.context);
+		  string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
+		  Data = state.Directory.CreateOutput(dataName, state.Context);
 		  // this writer writes the format 4.2 did!
-		  CodecUtil.writeHeader(Data, dataCodec, VERSION_GCD_COMPRESSION);
-		  string metaName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, metaExtension);
-		  Meta = state.directory.createOutput(metaName, state.context);
-		  CodecUtil.writeHeader(Meta, metaCodec, VERSION_GCD_COMPRESSION);
+          CodecUtil.WriteHeader(Data, dataCodec, Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION);
+		  string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
+		  Meta = state.Directory.CreateOutput(metaName, state.Context);
+          CodecUtil.WriteHeader(Meta, metaCodec, Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION);
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(this);
+			IOUtils.CloseWhileHandlingException(this);
 		  }
 		}
 	  }
 
-	  public override void AddNumericField(FieldInfo field, IEnumerable<Number> values)
+	  public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
 	  {
 		AddNumericField(field, values, true);
 	  }
 
-	  internal virtual void AddNumericField(FieldInfo field, IEnumerable<Number> values, bool optimizeStorage)
+	  internal virtual void AddNumericField(FieldInfo field, IEnumerable<long> values, bool optimizeStorage)
 	  {
-		Meta.writeVInt(field.number);
-		Meta.writeByte(NUMBER);
-		Meta.writeLong(Data.FilePointer);
+		Meta.WriteVInt(field.Number);
+		Meta.WriteByte(Lucene42DocValuesProducer.NUMBER);
+		Meta.WriteLong(Data.FilePointer);
 		long minValue = long.MaxValue;
 		long maxValue = long.MinValue;
 		long gcd = 0;
 		// TODO: more efficient?
-		HashSet<long?> uniqueValues = null;
+		HashSet<long> uniqueValues = null;
 		if (optimizeStorage)
 		{
-		  uniqueValues = new HashSet<>();
+		  uniqueValues = new HashSet<long>();
 
 		  long count = 0;
-		  foreach (Number nv in values)
+		  foreach (long nv in values)
 		  {
 			// TODO: support this as MemoryDVFormat (and be smart about missing maybe)
 			long v = nv == null ? 0 : (long)nv;
@@ -132,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene42
 			  } // minValue needs to be set first
 			  else if (count != 0)
 			  {
-				gcd = MathUtil.gcd(gcd, v - minValue);
+				gcd = MathUtil.Gcd(gcd, v - minValue);
 			  }
 			}
 
@@ -158,69 +143,69 @@ namespace Lucene.Net.Codecs.Lucene42
 		if (uniqueValues != null)
 		{
 		  // small number of unique values
-		  int bitsPerValue = PackedInts.bitsRequired(uniqueValues.Count - 1);
-		  FormatAndBits formatAndBits = PackedInts.fastestFormatAndBits(MaxDoc, bitsPerValue, AcceptableOverheadRatio);
+		  int bitsPerValue = PackedInts.BitsRequired(uniqueValues.Count - 1);
+		  FormatAndBits formatAndBits = PackedInts.FastestFormatAndBits(MaxDoc, bitsPerValue, AcceptableOverheadRatio);
 		  if (formatAndBits.bitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
 		  {
-			Meta.writeByte(UNCOMPRESSED); // uncompressed
-			foreach (Number nv in values)
+			Meta.WriteByte(Lucene42DocValuesProducer.UNCOMPRESSED); // uncompressed
+			foreach (long nv in values)
 			{
-			  Data.writeByte(nv == null ? 0 : (long)(sbyte) nv);
+			  Data.WriteByte(nv == null ? (byte)0 : (byte)nv);
 			}
 		  }
 		  else
 		  {
-			Meta.writeByte(TABLE_COMPRESSED); // table-compressed
-			long?[] decode = uniqueValues.toArray(new long?[uniqueValues.Count]);
-			Dictionary<long?, int?> encode = new Dictionary<long?, int?>();
-			Data.writeVInt(decode.Length);
+			Meta.WriteByte(Lucene42DocValuesProducer.TABLE_COMPRESSED); // table-compressed
+			long[] decode = uniqueValues.ToArray(/*new long?[uniqueValues.Count]*/);
+			Dictionary<long, int> encode = new Dictionary<long, int>();
+			Data.WriteVInt(decode.Length);
 			for (int i = 0; i < decode.Length; i++)
 			{
-			  Data.writeLong(decode[i]);
+			  Data.WriteLong(decode[i]);
 			  encode[decode[i]] = i;
 			}
 
-			Meta.writeVInt(PackedInts.VERSION_CURRENT);
-			Data.writeVInt(formatAndBits.format.Id);
-			Data.writeVInt(formatAndBits.bitsPerValue);
+			Meta.WriteVInt(PackedInts.VERSION_CURRENT);
+			Data.WriteVInt(formatAndBits.format.id);
+			Data.WriteVInt(formatAndBits.bitsPerValue);
 
-			PackedInts.Writer writer = PackedInts.getWriterNoHeader(Data, formatAndBits.format, MaxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
-			foreach (Number nv in values)
+			PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.format, MaxDoc, formatAndBits.bitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
+			foreach (long nv in values)
 			{
-			  writer.add(encode[nv == null ? 0 : (long)nv]);
+			  writer.Add(encode[nv == null ? 0 : (long)nv]);
 			}
-			writer.finish();
+			writer.Finish();
 		  }
 		}
 		else if (gcd != 0 && gcd != 1)
 		{
-		  Meta.writeByte(GCD_COMPRESSED);
-		  Meta.writeVInt(PackedInts.VERSION_CURRENT);
-		  Data.writeLong(minValue);
-		  Data.writeLong(gcd);
-		  Data.writeVInt(BLOCK_SIZE);
+		  Meta.WriteByte(Lucene42DocValuesProducer.GCD_COMPRESSED);
+		  Meta.WriteVInt(PackedInts.VERSION_CURRENT);
+		  Data.WriteLong(minValue);
+		  Data.WriteLong(gcd);
+		  Data.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
 
-		  BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-		  foreach (Number nv in values)
+		  BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
+		  foreach (long nv in values)
 		  {
 			long value = nv == null ? 0 : (long)nv;
-			writer.add((value - minValue) / gcd);
+			writer.Add((value - minValue) / gcd);
 		  }
-		  writer.finish();
+		  writer.Finish();
 		}
 		else
 		{
-		  Meta.writeByte(DELTA_COMPRESSED); // delta-compressed
+		  Meta.WriteByte(Lucene42DocValuesProducer.DELTA_COMPRESSED); // delta-compressed
 
-		  Meta.writeVInt(PackedInts.VERSION_CURRENT);
-		  Data.writeVInt(BLOCK_SIZE);
+		  Meta.WriteVInt(PackedInts.VERSION_CURRENT);
+		  Data.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
 
-		  BlockPackedWriter writer = new BlockPackedWriter(Data, BLOCK_SIZE);
-		  foreach (Number nv in values)
+		  BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
+		  foreach (long nv in values)
 		  {
-			writer.add(nv == null ? 0 : (long)nv);
+			writer.Add(nv == null ? 0 : (long)nv);
 		  }
-		  writer.finish();
+		  writer.Finish();
 		}
 	  }
 
@@ -231,7 +216,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		{
 		  if (Meta != null)
 		  {
-			Meta.writeVInt(-1); // write EOF marker
+			Meta.WriteVInt(-1); // write EOF marker
 		  }
 		  success = true;
 		}
@@ -239,11 +224,11 @@ namespace Lucene.Net.Codecs.Lucene42
 		{
 		  if (success)
 		  {
-			IOUtils.close(Data, Meta);
+			IOUtils.Close(Data, Meta);
 		  }
 		  else
 		  {
-			IOUtils.closeWhileHandlingException(Data, Meta);
+			IOUtils.CloseWhileHandlingException(Data, Meta);
 		  }
 		}
 	  }
@@ -251,81 +236,81 @@ namespace Lucene.Net.Codecs.Lucene42
 	  public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
 	  {
 		// write the byte[] data
-		Meta.writeVInt(field.number);
-		Meta.writeByte(BYTES);
+		Meta.WriteVInt(field.Number);
+        Meta.WriteByte(Lucene42DocValuesProducer.BYTES);
 		int minLength = int.MaxValue;
 		int maxLength = int.MinValue;
 		long startFP = Data.FilePointer;
 		foreach (BytesRef v in values)
 		{
-		  int length = v == null ? 0 : v.length;
+		  int length = v == null ? 0 : v.Length;
 		  if (length > Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
 		  {
-			throw new System.ArgumentException("DocValuesField \"" + field.name + "\" is too large, must be <= " + Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+			throw new System.ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
 		  }
 		  minLength = Math.Min(minLength, length);
 		  maxLength = Math.Max(maxLength, length);
 		  if (v != null)
 		  {
-			Data.writeBytes(v.bytes, v.offset, v.length);
+			Data.WriteBytes(v.Bytes, v.Offset, v.Length);
 		  }
 		}
-		Meta.writeLong(startFP);
-		Meta.writeLong(Data.FilePointer - startFP);
-		Meta.writeVInt(minLength);
-		Meta.writeVInt(maxLength);
+		Meta.WriteLong(startFP);
+		Meta.WriteLong(Data.FilePointer - startFP);
+		Meta.WriteVInt(minLength);
+		Meta.WriteVInt(maxLength);
 
 		// if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
 		// otherwise, we need to record the length fields...
 		if (minLength != maxLength)
 		{
-		  Meta.writeVInt(PackedInts.VERSION_CURRENT);
-		  Meta.writeVInt(BLOCK_SIZE);
+		  Meta.WriteVInt(PackedInts.VERSION_CURRENT);
+          Meta.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
 
-		  MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, BLOCK_SIZE);
+          MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
 		  long addr = 0;
 		  foreach (BytesRef v in values)
 		  {
 			if (v != null)
 			{
-			  addr += v.length;
+			  addr += v.Length;
 			}
-			writer.add(addr);
+			writer.Add(addr);
 		  }
-		  writer.finish();
+		  writer.Finish();
 		}
 	  }
 
 	  private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
 	  {
-		Meta.writeVInt(field.number);
-		Meta.writeByte(FST);
-		Meta.writeLong(Data.FilePointer);
+		Meta.WriteVInt(field.Number);
+		Meta.WriteByte(FST);
+		Meta.WriteLong(Data.FilePointer);
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
 		Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
 		IntsRef scratch = new IntsRef();
 		long ord = 0;
 		foreach (BytesRef v in values)
 		{
-		  builder.add(Util.toIntsRef(v, scratch), ord);
+		  builder.Add(Util.ToIntsRef(v, scratch), ord);
 		  ord++;
 		}
-		FST<long?> fst = builder.finish();
+		FST<long?> fst = builder.Finish();
 		if (fst != null)
 		{
 		  fst.save(Data);
 		}
-		Meta.writeVLong(ord);
+		Meta.WriteVLong(ord);
 	  }
 
-	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
+	  public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 	  {
 		// three cases for simulating the old writer:
 		// 1. no missing
 		// 2. missing (and empty string in use): remap ord=-1 -> ord=0
 		// 3. missing (and empty string not in use): remap all ords +1, insert empty string into values
 		bool anyMissing = false;
-		foreach (Number n in docToOrd)
+		foreach (long n in docToOrd)
 		{
 		  if ((long)n == -1)
 		  {
@@ -337,7 +322,7 @@ namespace Lucene.Net.Codecs.Lucene42
 		bool hasEmptyString = false;
 		foreach (BytesRef b in values)
 		{
-		  hasEmptyString = b.length == 0;
+		  hasEmptyString = b.Length == 0;
 		  break;
 		}
 
@@ -363,7 +348,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	  }
 
 	  // note: this might not be the most efficient... but its fairly simple
-	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 	  {
 		// write the ordinals as a binary field
 		AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
@@ -376,10 +361,10 @@ namespace Lucene.Net.Codecs.Lucene42
 	  {
 		  private readonly Lucene42DocValuesConsumer OuterInstance;
 
-		  private IEnumerable<Number> DocToOrdCount;
-		  private IEnumerable<Number> Ords;
+		  private IEnumerable<long> DocToOrdCount;
+		  private IEnumerable<long> Ords;
 
-		  public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+		  public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.DocToOrdCount = docToOrdCount;
@@ -399,10 +384,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
 		internal BytesRef @ref = new BytesRef();
 
-		internal readonly IEnumerator<Number> Counts;
-		internal readonly IEnumerator<Number> Ords;
+		internal readonly IEnumerator<long> Counts;
+		internal readonly IEnumerator<long> Ords;
 
-		internal SortedSetIterator(IEnumerator<Number> counts, IEnumerator<Number> ords)
+		internal SortedSetIterator(IEnumerator<long> counts, IEnumerator<long> ords)
 		{
 		  this.Counts = counts;
 		  this.Ords = ords;
@@ -426,21 +411,21 @@ namespace Lucene.Net.Codecs.Lucene42
 		  int maxSize = count * 9; // worst case
 		  if (maxSize > Buffer.Length)
 		  {
-			Buffer = ArrayUtil.grow(Buffer, maxSize);
+			Buffer = ArrayUtil.Grow(Buffer, maxSize);
 		  }
 
 		  try
 		  {
 			EncodeValues(count);
 		  }
-		  catch (IOException bogus)
+		  catch (System.IO.IOException bogus)
 		  {
-			throw new Exception(bogus);
+			throw new Exception(bogus.Message, bogus);
 		  }
 
-		  @ref.bytes = Buffer;
-		  @ref.offset = 0;
-		  @ref.length = @out.Position;
+		  @ref.Bytes = Buffer;
+		  @ref.Offset = 0;
+		  @ref.Length = @out.Position;
 
 		  return @ref;
 		}
@@ -448,13 +433,13 @@ namespace Lucene.Net.Codecs.Lucene42
 		// encodes count values to buffer
 		internal virtual void EncodeValues(int count)
 		{
-		  @out.reset(Buffer);
+		  @out.Reset((byte[])(Array)Buffer);
 		  long lastOrd = 0;
 		  for (int i = 0; i < count; i++)
 		  {
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 			long ord = (long)Ords.next();
-			@out.writeVLong(ord - lastOrd);
+			@out.WriteVLong(ord - lastOrd);
 			lastOrd = ord;
 		  }
 		}

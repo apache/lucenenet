@@ -35,6 +35,7 @@ namespace Lucene.Net.Index
 
 	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
 	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// this test creates an index with one segment that is a little larger than 4GB.
@@ -47,11 +48,11 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Nightly public void test() throws Exception
 		public virtual void Test()
 		{
-		MockDirectoryWrapper dir = new MockDirectoryWrapper(random(), new MMapDirectory(createTempDir("4GBStoredFields")));
-		dir.Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));
+		dir.Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))
-	   .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).setRAMBufferSizeMB(256.0).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(false, 10)).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
 		MergePolicy mp = w.Config.MergePolicy;
 		if (mp is LogByteSizeMergePolicy)
@@ -64,36 +65,36 @@ namespace Lucene.Net.Index
 		FieldType ft = new FieldType();
 		ft.Indexed = false;
 		ft.Stored = true;
-		ft.freeze();
-		int valueLength = RandomInts.randomIntBetween(random(), 1 << 13, 1 << 20);
+		ft.Freeze();
+		int valueLength = RandomInts.randomIntBetween(Random(), 1 << 13, 1 << 20);
 		sbyte[] value = new sbyte[valueLength];
 		for (int i = 0; i < valueLength; ++i)
 		{
 		  // random so that even compressing codecs can't compress it
-		  value[i] = (sbyte) random().Next(256);
+		  value[i] = (sbyte) Random().Next(256);
 		}
 		Field f = new Field("fld", value, ft);
-		doc.add(f);
+		doc.Add(f);
 
 		int numDocs = (int)((1L << 32) / valueLength + 100);
 		for (int i = 0; i < numDocs; ++i)
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  if (VERBOSE && i % (numDocs / 10) == 0)
 		  {
 			Console.WriteLine(i + " of " + numDocs + "...");
 		  }
 		}
-		w.forceMerge(1);
-		w.close();
+		w.ForceMerge(1);
+		w.Dispose();
 		if (VERBOSE)
 		{
 		  bool found = false;
-		  foreach (string file in dir.listAll())
+		  foreach (string file in dir.ListAll())
 		  {
 			if (file.EndsWith(".fdt"))
 			{
-			  long fileLength = dir.fileLength(file);
+			  long fileLength = dir.FileLength(file);
 			  if (fileLength >= 1L << 32)
 			  {
 				found = true;
@@ -107,16 +108,16 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		DirectoryReader rd = DirectoryReader.open(dir);
-		Document sd = rd.document(numDocs - 1);
+		DirectoryReader rd = DirectoryReader.Open(dir);
+		Document sd = rd.Document(numDocs - 1);
 		Assert.IsNotNull(sd);
-		Assert.AreEqual(1, sd.Fields.size());
-		BytesRef valueRef = sd.getBinaryValue("fld");
+		Assert.AreEqual(1, sd.Fields.Count);
+		BytesRef valueRef = sd.GetBinaryValue("fld");
 		Assert.IsNotNull(valueRef);
 		Assert.AreEqual(new BytesRef(value), valueRef);
-		rd.close();
+		rd.Dispose();
 
-		dir.close();
+		dir.Dispose();
 		}
 
 	}

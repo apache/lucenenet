@@ -37,13 +37,16 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+using Lucene.Net.Support;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	public class TestStressNRT : LuceneTestCase
 	{
 	  internal volatile DirectoryReader Reader;
 
-	  internal readonly ConcurrentDictionary<int?, long?> Model = new ConcurrentDictionary<int?, long?>();
-	  internal IDictionary<int?, long?> CommittedModel = new Dictionary<int?, long?>();
+	  internal readonly ConcurrentDictionary<int, long> Model = new ConcurrentDictionary<int, long>();
+	  internal IDictionary<int, long> CommittedModel = new Dictionary<int, long>();
 	  internal long SnapshotCount;
 	  internal long CommittedModelClock;
 	  internal volatile int LastId;
@@ -64,26 +67,26 @@ namespace Lucene.Net.Index
 		  SyncArr[i] = new object();
 		}
 //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
-		CommittedModel.putAll(Model);
+		CommittedModel.PutAll(Model);
 	  }
 
 	  public virtual void Test()
 	  {
 		// update variables
-		int commitPercent = random().Next(20);
-		int softCommitPercent = random().Next(100); // what percent of the commits are soft
-		int deletePercent = random().Next(50);
-		int deleteByQueryPercent = random().Next(25);
-		int ndocs = atLeast(50);
-		int nWriteThreads = TestUtil.Next(random(), 1, TEST_NIGHTLY ? 10 : 5);
-		int maxConcurrentCommits = TestUtil.Next(random(), 1, TEST_NIGHTLY ? 10 : 5); // number of committers at a time... needed if we want to avoid commit errors due to exceeding the max
+		int commitPercent = Random().Next(20);
+		int softCommitPercent = Random().Next(100); // what percent of the commits are soft
+		int deletePercent = Random().Next(50);
+		int deleteByQueryPercent = Random().Next(25);
+		int ndocs = AtLeast(50);
+		int nWriteThreads = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5);
+		int maxConcurrentCommits = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5); // number of committers at a time... needed if we want to avoid commit errors due to exceeding the max
 
-		bool tombstones = random().nextBoolean();
+		bool tombstones = Random().NextBoolean();
 
 		// query variables
-		AtomicLong operations = new AtomicLong(atLeast(10000)); // number of query operations to perform in total
+		AtomicLong operations = new AtomicLong(AtLeast(10000)); // number of query operations to perform in total
 
-		int nReadThreads = TestUtil.Next(random(), 1, TEST_NIGHTLY ? 10 : 5);
+		int nReadThreads = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5);
 		InitModel(ndocs);
 
 		FieldType storedOnlyType = new FieldType();
@@ -107,49 +110,49 @@ namespace Lucene.Net.Index
 
 		AtomicInteger numCommitting = new AtomicInteger();
 
-		IList<Thread> threads = new List<Thread>();
+		IList<ThreadClass> threads = new List<ThreadClass>();
 
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		writer.DoRandomForceMergeAssert = false;
-		writer.commit();
-		Reader = DirectoryReader.open(dir);
+		writer.Commit();
+		Reader = DirectoryReader.Open(dir);
 
 		for (int i = 0; i < nWriteThreads; i++)
 		{
-		  Thread thread = new ThreadAnonymousInnerClassHelper(this, "WRITER" + i, commitPercent, softCommitPercent, deletePercent, deleteByQueryPercent, ndocs, maxConcurrentCommits, tombstones, operations, storedOnlyType, numCommitting, writer);
+		  ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, "WRITER" + i, commitPercent, softCommitPercent, deletePercent, deleteByQueryPercent, ndocs, maxConcurrentCommits, tombstones, operations, storedOnlyType, numCommitting, writer);
 
 		  threads.Add(thread);
 		}
 
 		for (int i = 0; i < nReadThreads; i++)
 		{
-		  Thread thread = new ThreadAnonymousInnerClassHelper2(this, "READER" + i, ndocs, tombstones, operations);
+		  ThreadClass thread = new ThreadAnonymousInnerClassHelper2(this, "READER" + i, ndocs, tombstones, operations);
 
 		  threads.Add(thread);
 		}
 
-		foreach (Thread thread in threads)
+		foreach (ThreadClass thread in threads)
 		{
 		  thread.Start();
 		}
 
-		foreach (Thread thread in threads)
+		foreach (ThreadClass thread in threads)
 		{
 		  thread.Join();
 		}
 
-		writer.close();
+		writer.Close();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: close reader=" + Reader);
 		}
-		Reader.close();
-		dir.close();
+		Reader.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestStressNRT OuterInstance;
 
@@ -165,7 +168,8 @@ namespace Lucene.Net.Index
 		  private AtomicInteger NumCommitting;
 		  private RandomIndexWriter Writer;
 
-		  public ThreadAnonymousInnerClassHelper(TestStressNRT outerInstance, string "WRITER" + i, int commitPercent, int softCommitPercent, int deletePercent, int deleteByQueryPercent, int ndocs, int maxConcurrentCommits, bool tombstones, AtomicLong operations, FieldType storedOnlyType, AtomicInteger numCommitting, RandomIndexWriter writer) : base("WRITER" + i)
+		  public ThreadAnonymousInnerClassHelper(TestStressNRT outerInstance, string str, int commitPercent, int softCommitPercent, int deletePercent, int deleteByQueryPercent, int ndocs, int maxConcurrentCommits, bool tombstones, AtomicLong operations, FieldType storedOnlyType, AtomicInteger numCommitting, RandomIndexWriter writer) 
+              : base(str)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.CommitPercent = commitPercent;
@@ -179,7 +183,7 @@ namespace Lucene.Net.Index
 			  this.StoredOnlyType = storedOnlyType;
 			  this.NumCommitting = numCommitting;
 			  this.Writer = writer;
-			  rand = new Random(random().Next());
+			  rand = new Random(Random().Next());
 		  }
 
 		  internal Random rand;
@@ -188,37 +192,37 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  while (Operations.get() > 0)
+			  while (Operations.Get() > 0)
 			  {
 				int oper = rand.Next(100);
 
 				if (oper < CommitPercent)
 				{
-				  if (NumCommitting.incrementAndGet() <= MaxConcurrentCommits)
+				  if (NumCommitting.IncrementAndGet() <= MaxConcurrentCommits)
 				  {
-					IDictionary<int?, long?> newCommittedModel;
+					IDictionary<int, long> newCommittedModel;
 					long version;
 					DirectoryReader oldReader;
 
 					lock (OuterInstance)
 					{
-					  newCommittedModel = new Dictionary<>(OuterInstance.Model); // take a snapshot
+					  newCommittedModel = new Dictionary<int, long>(OuterInstance.Model); // take a snapshot
 					  version = OuterInstance.SnapshotCount++;
 					  oldReader = OuterInstance.Reader;
-					  oldReader.incRef(); // increment the reference since we will use this for reopening
+					  oldReader.IncRef(); // increment the reference since we will use this for reopening
 					}
 
 					DirectoryReader newReader;
 					if (rand.Next(100) < SoftCommitPercent)
 					{
-					  // assertU(h.commit("softCommit","true"));
-					  if (random().nextBoolean())
+					  // assertU(h.Commit("softCommit","true"));
+					  if (Random().NextBoolean())
 					  {
 						if (VERBOSE)
 						{
 						  Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": call writer.getReader");
 						}
-						newReader = Writer.getReader(true);
+						newReader = Writer.GetReader(true);
 					  }
 					  else
 					  {
@@ -226,7 +230,7 @@ namespace Lucene.Net.Index
 						{
 						  Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": reopen reader=" + oldReader + " version=" + version);
 						}
-						newReader = DirectoryReader.openIfChanged(oldReader, Writer.w, true);
+						newReader = DirectoryReader.OpenIfChanged(oldReader, Writer.w, true);
 					  }
 					}
 					else
@@ -236,23 +240,23 @@ namespace Lucene.Net.Index
 					  {
 						Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": commit+reopen reader=" + oldReader + " version=" + version);
 					  }
-					  Writer.commit();
+					  Writer.Commit();
 					  if (VERBOSE)
 					  {
 						Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": now reopen after commit");
 					  }
-					  newReader = DirectoryReader.openIfChanged(oldReader);
+					  newReader = DirectoryReader.OpenIfChanged(oldReader);
 					}
 
 					// Code below assumes newReader comes w/
 					// extra ref:
 					if (newReader == null)
 					{
-					  oldReader.incRef();
+					  oldReader.IncRef();
 					  newReader = oldReader;
 					}
 
-					oldReader.decRef();
+					oldReader.DecRef();
 
 					lock (OuterInstance)
 					{
@@ -266,7 +270,7 @@ namespace Lucene.Net.Index
 						{
 						  Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": install new reader=" + newReader);
 						}
-						OuterInstance.Reader.decRef();
+						OuterInstance.Reader.DecRef();
 						OuterInstance.Reader = newReader;
 
 						// Silly: forces fieldInfos to be
@@ -299,11 +303,11 @@ namespace Lucene.Net.Index
 						{
 						  Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": skip install new reader=" + newReader);
 						}
-						newReader.decRef();
+						newReader.DecRef();
 					  }
 					}
 				  }
-				  NumCommitting.decrementAndGet();
+				  NumCommitting.DecrementAndGet();
 				}
 				else
 				{
@@ -313,7 +317,7 @@ namespace Lucene.Net.Index
 
 				  // set the lastId before we actually change it sometimes to try and
 				  // uncover more race conditions between writing and reading
-				  bool before = random().nextBoolean();
+				  bool before = Random().NextBoolean();
 				  if (before)
 				  {
 					OuterInstance.LastId = id;
@@ -323,7 +327,7 @@ namespace Lucene.Net.Index
 				  // since we can't guarantee what order the updates will be executed.
 				  lock (sync)
 				  {
-					long? val = OuterInstance.Model[id];
+					long val = OuterInstance.Model[id];
 					long nextVal = Math.Abs(val) + 1;
 
 					if (oper < CommitPercent + DeletePercent)
@@ -334,16 +338,16 @@ namespace Lucene.Net.Index
 					  if (Tombstones)
 					  {
 						Document d = new Document();
-						d.add(newStringField("id", "-" + Convert.ToString(id), Field.Store.YES));
-						d.add(newField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
-						Writer.updateDocument(new Term("id", "-" + Convert.ToString(id)), d);
+                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Lucene.Net.Document.Field.Store.YES));
+						d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
+						Writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
 					  }
 
 					  if (VERBOSE)
 					  {
 						Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": term delDocs id:" + id + " nextVal=" + nextVal);
 					  }
-					  Writer.deleteDocuments(new Term("id",Convert.ToString(id)));
+					  Writer.DeleteDocuments(new Term("id",Convert.ToString(id)));
 					  OuterInstance.Model[id] = -nextVal;
 					}
 					else if (oper < CommitPercent + DeletePercent + DeleteByQueryPercent)
@@ -354,33 +358,33 @@ namespace Lucene.Net.Index
 					  if (Tombstones)
 					  {
 						Document d = new Document();
-						d.add(newStringField("id", "-" + Convert.ToString(id), Field.Store.YES));
-						d.add(newField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
-						Writer.updateDocument(new Term("id", "-" + Convert.ToString(id)), d);
+                        d.Add(NewStringField("id", "-" + Convert.ToString(id), Lucene.Net.Document.Field.Store.YES));
+						d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
+						Writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
 					  }
 
 					  if (VERBOSE)
 					  {
 						Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": query delDocs id:" + id + " nextVal=" + nextVal);
 					  }
-					  Writer.deleteDocuments(new TermQuery(new Term("id", Convert.ToString(id))));
+					  Writer.DeleteDocuments(new TermQuery(new Term("id", Convert.ToString(id))));
 					  OuterInstance.Model[id] = -nextVal;
 					}
 					else
 					{
 					  // assertU(adoc("id",Integer.toString(id), field, Long.toString(nextVal)));
 					  Document d = new Document();
-					  d.add(newStringField("id", Convert.ToString(id), Field.Store.YES));
-					  d.add(newField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
+					  d.Add(NewStringField("id", Convert.ToString(id), Lucene.Net.Document.Field.Store.YES));
+					  d.Add(NewField(OuterInstance.Field, Convert.ToString(nextVal), StoredOnlyType));
 					  if (VERBOSE)
 					  {
 						Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": u id:" + id + " val=" + nextVal);
 					  }
-					  Writer.updateDocument(new Term("id", Convert.ToString(id)), d);
+					  Writer.UpdateDocument(new Term("id", Convert.ToString(id)), d);
 					  if (Tombstones)
 					  {
 						// remove tombstone after new addition (this should be optional?)
-						Writer.deleteDocuments(new Term("id","-" + Convert.ToString(id)));
+						Writer.DeleteDocuments(new Term("id","-" + Convert.ToString(id)));
 					  }
 					  OuterInstance.Model[id] = nextVal;
 					}
@@ -396,13 +400,13 @@ namespace Lucene.Net.Index
 			catch (Exception e)
 			{
 			  Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
-			  e.printStackTrace(System.out);
-			  throw new Exception(e);
+              Console.WriteLine(e.StackTrace);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 	  {
 		  private readonly TestStressNRT OuterInstance;
 
@@ -410,13 +414,14 @@ namespace Lucene.Net.Index
 		  private bool Tombstones;
 		  private AtomicLong Operations;
 
-		  public ThreadAnonymousInnerClassHelper2(TestStressNRT outerInstance, string "READER" + i, int ndocs, bool tombstones, AtomicLong operations) : base("READER" + i)
+		  public ThreadAnonymousInnerClassHelper2(TestStressNRT outerInstance, string str, int ndocs, bool tombstones, AtomicLong operations) 
+              : base(str)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Ndocs = ndocs;
 			  this.Tombstones = tombstones;
 			  this.Operations = operations;
-			  rand = new Random(random().Next());
+			  rand = new Random(Random().Next());
 		  }
 
 		  internal Random rand;
@@ -428,7 +433,7 @@ namespace Lucene.Net.Index
 			  IndexReader lastReader = null;
 			  IndexSearcher lastSearcher = null;
 
-			  while (Operations.decrementAndGet() >= 0)
+			  while (Operations.DecrementAndGet() >= 0)
 			  {
 				// bias toward a recently changed doc
 				int id = rand.Next(100) < 25 ? OuterInstance.LastId : rand.Next(Ndocs);
@@ -442,7 +447,7 @@ namespace Lucene.Net.Index
 				{
 				  val = OuterInstance.CommittedModel[id];
 				  r = OuterInstance.Reader;
-				  r.incRef();
+				  r.IncRef();
 				}
 
 				if (VERBOSE)
@@ -461,64 +466,64 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-				  searcher = newSearcher(r);
+				  searcher = NewSearcher(r);
 				  lastReader = r;
 				  lastSearcher = searcher;
 				}
 				Query q = new TermQuery(new Term("id",Convert.ToString(id)));
-				TopDocs results = searcher.search(q, 10);
+				TopDocs results = searcher.Search(q, 10);
 
-				if (results.totalHits == 0 && Tombstones)
+				if (results.TotalHits == 0 && Tombstones)
 				{
 				  // if we couldn't find the doc, look for its tombstone
 				  q = new TermQuery(new Term("id","-" + Convert.ToString(id)));
-				  results = searcher.search(q, 1);
-				  if (results.totalHits == 0)
+				  results = searcher.Search(q, 1);
+				  if (results.TotalHits == 0)
 				  {
 					if (val == -1L)
 					{
 					  // expected... no doc was added yet
-					  r.decRef();
+					  r.DecRef();
 					  continue;
 					}
 					Assert.Fail("No documents or tombstones found for id " + id + ", expected at least " + val + " reader=" + r);
 				  }
 				}
 
-				if (results.totalHits == 0 && !Tombstones)
+				if (results.TotalHits == 0 && !Tombstones)
 				{
 				  // nothing to do - we can't tell anything from a deleted doc without tombstones
 				}
 				else
 				{
 				  // we should have found the document, or its tombstone
-				  if (results.totalHits != 1)
+				  if (results.TotalHits != 1)
 				  {
 					Console.WriteLine("FAIL: hits id:" + id + " val=" + val);
-					foreach (ScoreDoc sd in results.scoreDocs)
+					foreach (ScoreDoc sd in results.ScoreDocs)
 					{
-					  Document doc = r.document(sd.doc);
-					  Console.WriteLine("  docID=" + sd.doc + " id:" + doc.get("id") + " foundVal=" + doc.get(OuterInstance.Field));
+					  Document doc = r.Document(sd.Doc);
+					  Console.WriteLine("  docID=" + sd.Doc + " id:" + doc.Get("id") + " foundVal=" + doc.Get(OuterInstance.Field));
 					}
-					Assert.Fail("id=" + id + " reader=" + r + " totalHits=" + results.totalHits);
+					Assert.Fail("id=" + id + " reader=" + r + " totalHits=" + results.TotalHits);
 				  }
-				  Document doc = searcher.doc(results.scoreDocs[0].doc);
-				  long foundVal = Convert.ToInt64(doc.get(OuterInstance.Field));
+				  Document doc_ = searcher.Doc(results.ScoreDocs[0].Doc);
+				  long foundVal = Convert.ToInt64(doc_.Get(OuterInstance.Field));
 				  if (foundVal < Math.Abs(val))
 				  {
 					Assert.Fail("foundVal=" + foundVal + " val=" + val + " id=" + id + " reader=" + r);
 				  }
 				}
 
-				r.decRef();
+				r.DecRef();
 			  }
 			}
 			catch (Exception e)
 			{
-			  Operations.set(-1L);
+			  Operations.Set((int)-1L);
 			  Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
-			  e.printStackTrace(System.out);
-			  throw new Exception(e);
+              Console.WriteLine(e.StackTrace);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }

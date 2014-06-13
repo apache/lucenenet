@@ -25,22 +25,23 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using Directory = Lucene.Net.Store.Directory;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestTieredMergePolicy : BaseMergePolicyTestCase
 	{
 
 	  public virtual MergePolicy MergePolicy()
 	  {
-		return newTieredMergePolicy();
+		return NewTieredMergePolicy();
 	  }
 
 	  public virtual void TestForceMergeDeletes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		TieredMergePolicy tmp = newTieredMergePolicy();
-		conf.MergePolicy = tmp;
-		conf.MaxBufferedDocs = 4;
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		TieredMergePolicy tmp = NewTieredMergePolicy();
+		conf.SetMergePolicy(tmp);
+		conf.SetMaxBufferedDocs(4);
 		tmp.MaxMergeAtOnce = 100;
 		tmp.SegmentsPerTier = 100;
 		tmp.ForceMergeDeletesPctAllowed = 30.0;
@@ -48,130 +49,130 @@ namespace Lucene.Net.Index
 		for (int i = 0;i < 80;i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("content", "aaa " + (i % 4), Field.Store.NO));
-		  w.addDocument(doc);
+		  doc.Add(NewTextField("content", "aaa " + (i % 4), Field.Store.NO));
+		  w.AddDocument(doc);
 		}
-		Assert.AreEqual(80, w.maxDoc());
-		Assert.AreEqual(80, w.numDocs());
+		Assert.AreEqual(80, w.MaxDoc());
+		Assert.AreEqual(80, w.NumDocs());
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("\nTEST: delete docs");
 		}
-		w.deleteDocuments(new Term("content", "0"));
-		w.forceMergeDeletes();
+		w.DeleteDocuments(new Term("content", "0"));
+		w.ForceMergeDeletes();
 
-		Assert.AreEqual(80, w.maxDoc());
-		Assert.AreEqual(60, w.numDocs());
+		Assert.AreEqual(80, w.MaxDoc());
+		Assert.AreEqual(60, w.NumDocs());
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("\nTEST: forceMergeDeletes2");
 		}
 		((TieredMergePolicy) w.Config.MergePolicy).ForceMergeDeletesPctAllowed = 10.0;
-		w.forceMergeDeletes();
-		Assert.AreEqual(60, w.maxDoc());
-		Assert.AreEqual(60, w.numDocs());
-		w.close();
-		dir.close();
+		w.ForceMergeDeletes();
+		Assert.AreEqual(60, w.MaxDoc());
+		Assert.AreEqual(60, w.NumDocs());
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestPartialMerge()
 	  {
-		int num = atLeast(10);
+		int num = AtLeast(10);
 		for (int iter = 0;iter < num;iter++)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: iter=" + iter);
 		  }
-		  Directory dir = newDirectory();
-		  IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		  conf.MergeScheduler = new SerialMergeScheduler();
-		  TieredMergePolicy tmp = newTieredMergePolicy();
-		  conf.MergePolicy = tmp;
-		  conf.MaxBufferedDocs = 2;
+		  Directory dir = NewDirectory();
+		  IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		  conf.SetMergeScheduler(new SerialMergeScheduler());
+		  TieredMergePolicy tmp = NewTieredMergePolicy();
+		  conf.SetMergePolicy(tmp);
+		  conf.SetMaxBufferedDocs(2);
 		  tmp.MaxMergeAtOnce = 3;
 		  tmp.SegmentsPerTier = 6;
 
 		  IndexWriter w = new IndexWriter(dir, conf);
 		  int maxCount = 0;
-		  int numDocs = TestUtil.Next(random(), 20, 100);
+		  int numDocs = TestUtil.NextInt(Random(), 20, 100);
 		  for (int i = 0;i < numDocs;i++)
 		  {
 			Document doc = new Document();
-			doc.add(newTextField("content", "aaa " + (i % 4), Field.Store.NO));
-			w.addDocument(doc);
+			doc.Add(NewTextField("content", "aaa " + (i % 4), Field.Store.NO));
+			w.AddDocument(doc);
 			int count = w.SegmentCount;
 			maxCount = Math.Max(count, maxCount);
-			Assert.IsTrue("count=" + count + " maxCount=" + maxCount, count >= maxCount - 3);
+			Assert.IsTrue(count >= maxCount - 3, "count=" + count + " maxCount=" + maxCount);
 		  }
 
-		  w.flush(true, true);
+		  w.Flush(true, true);
 
 		  int segmentCount = w.SegmentCount;
-		  int targetCount = TestUtil.Next(random(), 1, segmentCount);
+		  int targetCount = TestUtil.NextInt(Random(), 1, segmentCount);
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: merge to " + targetCount + " segs (current count=" + segmentCount + ")");
 		  }
-		  w.forceMerge(targetCount);
+		  w.ForceMerge(targetCount);
 		  Assert.AreEqual(targetCount, w.SegmentCount);
 
-		  w.close();
-		  dir.close();
+		  w.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  public virtual void TestForceMergeDeletesMaxSegSize()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		TieredMergePolicy tmp = new TieredMergePolicy();
 		tmp.MaxMergedSegmentMB = 0.01;
 		tmp.ForceMergeDeletesPctAllowed = 0.0;
-		conf.MergePolicy = tmp;
+		conf.SetMergePolicy(tmp);
 
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir, conf);
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
 		w.DoRandomForceMerge = false;
 
-		int numDocs = atLeast(200);
+		int numDocs = AtLeast(200);
 		for (int i = 0;i < numDocs;i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("id", "" + i, Field.Store.NO));
-		  doc.add(newTextField("content", "aaa " + i, Field.Store.NO));
-		  w.addDocument(doc);
+		  doc.Add(NewStringField("id", "" + i, Field.Store.NO));
+		  doc.Add(NewTextField("content", "aaa " + i, Field.Store.NO));
+		  w.AddDocument(doc);
 		}
 
-		w.forceMerge(1);
+		w.ForceMerge(1);
 		IndexReader r = w.Reader;
-		Assert.AreEqual(numDocs, r.maxDoc());
-		Assert.AreEqual(numDocs, r.numDocs());
-		r.close();
+		Assert.AreEqual(numDocs, r.MaxDoc());
+		Assert.AreEqual(numDocs, r.NumDocs());
+		r.Dispose();
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("\nTEST: delete doc");
 		}
 
-		w.deleteDocuments(new Term("id", "" + (42 + 17)));
+		w.DeleteDocuments(new Term("id", "" + (42 + 17)));
 
 		r = w.Reader;
-		Assert.AreEqual(numDocs, r.maxDoc());
-		Assert.AreEqual(numDocs - 1, r.numDocs());
-		r.close();
+		Assert.AreEqual(numDocs, r.MaxDoc());
+		Assert.AreEqual(numDocs - 1, r.NumDocs());
+		r.Dispose();
 
-		w.forceMergeDeletes();
+		w.ForceMergeDeletes();
 
 		r = w.Reader;
-		Assert.AreEqual(numDocs - 1, r.maxDoc());
-		Assert.AreEqual(numDocs - 1, r.numDocs());
-		r.close();
+		Assert.AreEqual(numDocs - 1, r.MaxDoc());
+		Assert.AreEqual(numDocs - 1, r.NumDocs());
+		r.Dispose();
 
-		w.close();
+        w.Close();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private const double EPSILON = 1E-14;

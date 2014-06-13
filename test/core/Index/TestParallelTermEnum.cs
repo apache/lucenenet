@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestParallelTermEnum : LuceneTestCase
 	{
@@ -40,56 +41,56 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		Document doc;
-		Rd1 = newDirectory();
-		IndexWriter iw1 = new IndexWriter(Rd1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Rd1 = NewDirectory();
+		IndexWriter iw1 = new IndexWriter(Rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		doc = new Document();
-		doc.add(newTextField("field1", "the quick brown fox jumps", Field.Store.YES));
-		doc.add(newTextField("field2", "the quick brown fox jumps", Field.Store.YES));
-		iw1.addDocument(doc);
+		doc.Add(NewTextField("field1", "the quick brown fox jumps", Field.Store.YES));
+		doc.Add(NewTextField("field2", "the quick brown fox jumps", Field.Store.YES));
+		iw1.AddDocument(doc);
 
-		iw1.close();
-		Rd2 = newDirectory();
-		IndexWriter iw2 = new IndexWriter(Rd2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		iw1.Dispose();
+		Rd2 = NewDirectory();
+		IndexWriter iw2 = new IndexWriter(Rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		doc = new Document();
-		doc.add(newTextField("field1", "the fox jumps over the lazy dog", Field.Store.YES));
-		doc.add(newTextField("field3", "the fox jumps over the lazy dog", Field.Store.YES));
-		iw2.addDocument(doc);
+		doc.Add(NewTextField("field1", "the fox jumps over the lazy dog", Field.Store.YES));
+		doc.Add(NewTextField("field3", "the fox jumps over the lazy dog", Field.Store.YES));
+		iw2.AddDocument(doc);
 
-		iw2.close();
+		iw2.Dispose();
 
-		this.Ir1 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(Rd1));
-		this.Ir2 = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(Rd2));
+		this.Ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Rd1));
+		this.Ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Rd2));
 	  }
 
 	  public override void TearDown()
 	  {
-		Ir1.close();
-		Ir2.close();
-		Rd1.close();
-		Rd2.close();
-		base.tearDown();
+		Ir1.Dispose();
+		Ir2.Dispose();
+		Rd1.Dispose();
+		Rd2.Dispose();
+		base.TearDown();
 	  }
 
 	  private void CheckTerms(Terms terms, Bits liveDocs, params string[] termsList)
 	  {
 		Assert.IsNotNull(terms);
-		TermsEnum te = terms.iterator(null);
+		TermsEnum te = terms.Iterator(null);
 
 		foreach (string t in termsList)
 		{
-		  BytesRef b = te.next();
+		  BytesRef b = te.Next();
 		  Assert.IsNotNull(b);
-		  Assert.AreEqual(t, b.utf8ToString());
-		  DocsEnum td = TestUtil.docs(random(), te, liveDocs, null, DocsEnum.FLAG_NONE);
-		  Assert.IsTrue(td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		  Assert.AreEqual(0, td.docID());
-		  Assert.AreEqual(td.nextDoc(), DocIdSetIterator.NO_MORE_DOCS);
+		  Assert.AreEqual(t, b.Utf8ToString());
+		  DocsEnum td = TestUtil.Docs(Random(), te, liveDocs, null, DocsEnum.FLAG_NONE);
+		  Assert.IsTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		  Assert.AreEqual(0, td.DocID());
+		  Assert.AreEqual(td.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);
 		}
-		assertNull(te.next());
+		Assert.IsNull(te.Next());
 	  }
 
 	  public virtual void Test1()
@@ -98,23 +99,23 @@ namespace Lucene.Net.Index
 
 		Bits liveDocs = pr.LiveDocs;
 
-		Fields fields = pr.fields();
+		Fields fields = pr.Fields();
 		IEnumerator<string> fe = fields.GetEnumerator();
 
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		string f = fe.next();
+		string f = fe.Next();
 		Assert.AreEqual("field1", f);
-		checkTerms(fields.terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
+		checkTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
 
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		f = fe.next();
+		f = fe.Next();
 		Assert.AreEqual("field2", f);
-		checkTerms(fields.terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
+		checkTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
 
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		f = fe.next();
+		f = fe.Next();
 		Assert.AreEqual("field3", f);
-		checkTerms(fields.terms(f), liveDocs, "dog", "fox", "jumps", "lazy", "over", "the");
+		checkTerms(fields.Terms(f), liveDocs, "dog", "fox", "jumps", "lazy", "over", "the");
 
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsFalse(fe.hasNext());

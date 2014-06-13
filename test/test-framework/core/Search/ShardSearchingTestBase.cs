@@ -36,6 +36,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Support;
 
 	// TODO
 	//   - doc blocks?  so we can test joins/grouping...
@@ -139,14 +140,14 @@ namespace Lucene.Net.Search
 
 		if (VERBOSE)
 		{
-		  Console.WriteLine("REOPEN: nodeID=" + nodeID + " version=" + version + " maxDoc=" + newSearcher.IndexReader.maxDoc());
+		  Console.WriteLine("REOPEN: nodeID=" + nodeID + " version=" + version + " maxDoc=" + newSearcher.IndexReader.MaxDoc());
 		}
 
 		// Broadcast new collection stats for this node to all
 		// other nodes:
 		foreach (string field in FieldsToShare)
 		{
-		  CollectionStatistics stats = newSearcher.collectionStatistics(field);
+		  CollectionStatistics stats = newSearcher.CollectionStatistics(field);
 		  foreach (NodeState node in Nodes)
 		  {
 			// Don't put my own collection stats into the cache;
@@ -199,11 +200,11 @@ namespace Lucene.Net.Search
 
 	  // Mock: in a real env, this would hit the wire and get
 	  // term stats from remote node
-	  internal virtual IDictionary<Term, TermStatistics> GetNodeTermStats(Set<Term> terms, int nodeID, long version)
+	  internal virtual IDictionary<Term, TermStatistics> GetNodeTermStats(ISet<Term> terms, int nodeID, long version)
 	  {
 		NodeState node = Nodes[nodeID];
 		IDictionary<Term, TermStatistics> stats = new Dictionary<Term, TermStatistics>();
-		IndexSearcher s = node.Searchers.acquire(version);
+		IndexSearcher s = node.Searchers.Acquire(version);
 		if (s == null)
 		{
 		  throw new SearcherExpiredException("node=" + nodeID + " version=" + version);
@@ -212,13 +213,13 @@ namespace Lucene.Net.Search
 		{
 		  foreach (Term term in terms)
 		  {
-			TermContext termContext = TermContext.build(s.IndexReader.Context, term);
-			stats[term] = s.termStatistics(term, termContext);
+			TermContext termContext = TermContext.Build(s.IndexReader.Context, term);
+			stats[term] = s.TermStatistics(term, termContext);
 		  }
 		}
 		finally
 		{
-		  node.Searchers.release(s);
+		  node.Searchers.Release(s);
 		}
 		return stats;
 	  }
@@ -250,13 +251,14 @@ namespace Lucene.Net.Search
 
 		public class ShardIndexSearcher : IndexSearcher
 		{
-			private readonly ShardSearchingTestbase.NodeState OuterInstance;
+			private readonly ShardSearchingTestBase.NodeState OuterInstance;
 
 		  // Version for the node searchers we search:
 		  public readonly long[] NodeVersions;
 		  public readonly int MyNodeID;
 
-		  public ShardIndexSearcher(ShardSearchingTestbase.NodeState outerInstance, long[] nodeVersions, IndexReader localReader, int nodeID) : base(localReader)
+          public ShardIndexSearcher(ShardSearchingTestBase.NodeState outerInstance, long[] nodeVersions, IndexReader localReader, int nodeID)
+              : base(localReader)
 		  {
 			  this.OuterInstance = outerInstance;
 			this.NodeVersions = nodeVersions;
@@ -266,9 +268,9 @@ namespace Lucene.Net.Search
 
 		  public override Query Rewrite(Query original)
 		  {
-			Query rewritten = base.rewrite(original);
-			Set<Term> terms = new HashSet<Term>();
-			rewritten.extractTerms(terms);
+			Query rewritten = base.Rewrite(original);
+			HashSet<Term> terms = new HashSet<Term>();
+			rewritten.ExtractTerms(terms);
 
 			// Make a single request to remote nodes for term
 			// stats:
@@ -279,21 +281,21 @@ namespace Lucene.Net.Search
 				continue;
 			  }
 
-			  Set<Term> missing = new HashSet<Term>();
+			  HashSet<Term> missing = new HashSet<Term>();
 			  foreach (Term term in terms)
 			  {
 				TermAndShardVersion key = new TermAndShardVersion(nodeID, NodeVersions[nodeID], term);
-				if (!outerInstance.TermStatsCache.ContainsKey(key))
+				if (!OuterInstance.TermStatsCache.ContainsKey(key))
 				{
-				  missing.add(term);
+				  missing.Add(term);
 				}
 			  }
-			  if (missing.size() != 0)
+			  if (missing.Count != 0)
 			  {
-				foreach (KeyValuePair<Term, TermStatistics> ent in outerInstance.outerInstance.GetNodeTermStats(missing, nodeID, NodeVersions[nodeID]))
+				foreach (KeyValuePair<Term, TermStatistics> ent in OuterInstance.OuterInstance.GetNodeTermStats(missing, nodeID, NodeVersions[nodeID]))
 				{
 				  TermAndShardVersion key = new TermAndShardVersion(nodeID, NodeVersions[nodeID], ent.Key);
-				  outerInstance.TermStatsCache[key] = ent.Value;
+                  OuterInstance.TermStatsCache[key] = ent.Value;
 				}
 			  }
 			}
@@ -312,18 +314,18 @@ namespace Lucene.Net.Search
 			  TermStatistics subStats;
 			  if (nodeID == MyNodeID)
 			  {
-				subStats = base.termStatistics(term, context);
+				subStats = base.TermStatistics(term, context);
 			  }
 			  else
 			  {
 				TermAndShardVersion key = new TermAndShardVersion(nodeID, NodeVersions[nodeID], term);
-				subStats = outerInstance.TermStatsCache[key];
+                subStats = OuterInstance.TermStatsCache[key];
 				// We pre-cached during rewrite so all terms
 				// better be here...
 				Debug.Assert(subStats != null);
 			  }
 
-			  long nodeDocFreq = subStats.docFreq();
+			  long nodeDocFreq = subStats.DocFreq();
 			  if (docFreq >= 0 && nodeDocFreq >= 0)
 			  {
 				docFreq += nodeDocFreq;
@@ -333,7 +335,7 @@ namespace Lucene.Net.Search
 				docFreq = -1;
 			  }
 
-			  long nodeTotalTermFreq = subStats.totalTermFreq();
+			  long nodeTotalTermFreq = subStats.TotalTermFreq();
 			  if (totalTermFreq >= 0 && nodeTotalTermFreq >= 0)
 			  {
 				totalTermFreq += nodeTotalTermFreq;
@@ -344,7 +346,7 @@ namespace Lucene.Net.Search
 			  }
 			}
 
-			return new TermStatistics(term.bytes(), docFreq, totalTermFreq);
+			return new TermStatistics(term.Bytes(), docFreq, totalTermFreq);
 		  }
 
 		  public override CollectionStatistics CollectionStatistics(string field)
@@ -363,21 +365,21 @@ namespace Lucene.Net.Search
 			  CollectionStatistics nodeStats;
 			  if (nodeID == MyNodeID)
 			  {
-				nodeStats = base.collectionStatistics(field);
+				nodeStats = base.CollectionStatistics(field);
 			  }
 			  else
 			  {
-				nodeStats = outerInstance.CollectionStatsCache[key];
+				nodeStats = OuterInstance.CollectionStatsCache[key];
 			  }
 			  if (nodeStats == null)
 			  {
-				Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + outerInstance.CollectionStatsCache.Keys);
+                  Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + OuterInstance.CollectionStatsCache.Keys);
 			  }
 			  // Collection stats are pre-shared on reopen, so,
 			  // we better not have a cache miss:
 			  Debug.Assert(nodeStats != null, "myNodeID=" + MyNodeID + " nodeID=" + nodeID + " version=" + NodeVersions[nodeID] + " field=" + field);
 
-			  long nodeDocCount = nodeStats.docCount();
+			  long nodeDocCount = nodeStats.DocCount();
 			  if (docCount >= 0 && nodeDocCount >= 0)
 			  {
 				docCount += nodeDocCount;
@@ -387,7 +389,7 @@ namespace Lucene.Net.Search
 				docCount = -1;
 			  }
 
-			  long nodeSumTotalTermFreq = nodeStats.sumTotalTermFreq();
+			  long nodeSumTotalTermFreq = nodeStats.SumTotalTermFreq();
 			  if (sumTotalTermFreq >= 0 && nodeSumTotalTermFreq >= 0)
 			  {
 				sumTotalTermFreq += nodeSumTotalTermFreq;
@@ -397,7 +399,7 @@ namespace Lucene.Net.Search
 				sumTotalTermFreq = -1;
 			  }
 
-			  long nodeSumDocFreq = nodeStats.sumDocFreq();
+			  long nodeSumDocFreq = nodeStats.SumDocFreq();
 			  if (sumDocFreq >= 0 && nodeSumDocFreq >= 0)
 			  {
 				sumDocFreq += nodeSumDocFreq;
@@ -407,8 +409,8 @@ namespace Lucene.Net.Search
 				sumDocFreq = -1;
 			  }
 
-			  Debug.Assert(nodeStats.maxDoc() >= 0);
-			  maxDoc += nodeStats.maxDoc();
+			  Debug.Assert(nodeStats.MaxDoc() >= 0);
+			  maxDoc += nodeStats.MaxDoc();
 			}
 
 			return new CollectionStatistics(field, maxDoc, docCount, sumTotalTermFreq, sumDocFreq);
@@ -427,61 +429,61 @@ namespace Lucene.Net.Search
 			  }
 			  else
 			  {
-				shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, null);
+                  shardHits[nodeID] = OuterInstance.OuterInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, null);
 			  }
 			}
 
 			// Merge:
-			return TopDocs.merge(null, numHits, shardHits);
+			return TopDocs.Merge(null, numHits, shardHits);
 		  }
 
 		  public virtual TopDocs LocalSearch(Query query, int numHits)
 		  {
-			return base.search(query, numHits);
+			return base.Search(query, numHits);
 		  }
 
 		  public override TopDocs SearchAfter(ScoreDoc after, Query query, int numHits)
 		  {
 			TopDocs[] shardHits = new TopDocs[NodeVersions.Length];
 			// results are merged in that order: score, shardIndex, doc. therefore we set
-			// after to after.score and depending on the nodeID we set doc to either:
+			// after to after.Score and depending on the nodeID we set doc to either:
 			// - not collect any more documents with that score (only with worse score)
 			// - collect more documents with that score (and worse) following the last collected document
 			// - collect all documents with that score (and worse)
-			ScoreDoc shardAfter = new ScoreDoc(after.doc, after.score);
+			ScoreDoc shardAfter = new ScoreDoc(after.Doc, after.Score);
 			for (int nodeID = 0; nodeID < NodeVersions.Length; nodeID++)
 			{
-			  if (nodeID < after.shardIndex)
+			  if (nodeID < after.ShardIndex)
 			  {
-				// all documents with after.score were already collected, so collect
+				// all documents with after.Score were already collected, so collect
 				// only documents with worse scores.
-				NodeState.ShardIndexSearcher s = outerInstance.OuterInstance.Nodes[nodeID].acquire(NodeVersions);
+				NodeState.ShardIndexSearcher s = OuterInstance.OuterInstance.Nodes[nodeID].Acquire(NodeVersions);
 				try
 				{
-				  // Setting after.doc to reader.maxDoc-1 is a way to tell
+				  // Setting after.Doc to reader.MaxDoc-1 is a way to tell
 				  // TopScoreDocCollector that no more docs with that score should
 				  // be collected. note that in practice the shard which sends the
-				  // request to a remote shard won't have reader.maxDoc at hand, so
+				  // request to a remote shard won't have reader.MaxDoc at hand, so
 				  // it will send some arbitrary value which will be fixed on the
 				  // other end.
-				  shardAfter.doc = s.IndexReader.maxDoc() - 1;
+				  shardAfter.Doc = s.IndexReader.MaxDoc() - 1;
 				}
 				finally
 				{
-				  outerInstance.OuterInstance.Nodes[nodeID].release(s);
+                    OuterInstance.OuterInstance.Nodes[nodeID].Release(s);
 				}
 			  }
-			  else if (nodeID == after.shardIndex)
+			  else if (nodeID == after.ShardIndex)
 			  {
 				// collect all documents following the last collected doc with
-				// after.score + documents with worse scores.  
-				shardAfter.doc = after.doc;
+				// after.Score + documents with worse scores.  
+				shardAfter.Doc = after.Doc;
 			  }
 			  else
 			  {
-				// all documents with after.score (and worse) should be collected
+				// all documents with after.Score (and worse) should be collected
 				// because they didn't make it to top-N in the previous round.
-				shardAfter.doc = -1;
+				shardAfter.Doc = -1;
 			  }
 			  if (nodeID == MyNodeID)
 			  {
@@ -491,18 +493,18 @@ namespace Lucene.Net.Search
 			  }
 			  else
 			  {
-				shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, shardAfter);
+                  shardHits[nodeID] = OuterInstance.OuterInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, shardAfter);
 			  }
-			  //System.out.println("  node=" + nodeID + " totHits=" + shardHits[nodeID].totalHits);
+			  //System.out.println("  node=" + nodeID + " totHits=" + shardHits[nodeID].TotalHits);
 			}
 
 			// Merge:
-			return TopDocs.merge(null, numHits, shardHits);
+			return TopDocs.Merge(null, numHits, shardHits);
 		  }
 
 		  public virtual TopDocs LocalSearchAfter(ScoreDoc after, Query query, int numHits)
 		  {
-			return base.searchAfter(after, query, numHits);
+			return base.SearchAfter(after, query, numHits);
 		  }
 
 		  public override TopFieldDocs Search(Query query, int numHits, Sort sort)
@@ -519,17 +521,17 @@ namespace Lucene.Net.Search
 			  }
 			  else
 			  {
-				shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, NodeVersions, query, sort, numHits, null);
+                  shardHits[nodeID] = OuterInstance.OuterInstance.SearchNode(nodeID, NodeVersions, query, sort, numHits, null);
 			  }
 			}
 
 			// Merge:
-			return (TopFieldDocs) TopDocs.merge(sort, numHits, shardHits);
+			return (TopFieldDocs) TopDocs.Merge(sort, numHits, shardHits);
 		  }
 
 		  public virtual TopFieldDocs LocalSearch(Query query, int numHits, Sort sort)
 		  {
-			return base.search(query, numHits, sort);
+			return base.Search(query, numHits, sort);
 		  }
 
 		}
@@ -545,10 +547,10 @@ namespace Lucene.Net.Search
 		  MockAnalyzer analyzer = new MockAnalyzer(Random());
 		  analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 		  IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		  iwc.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE;
+		  iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
 		  if (VERBOSE)
 		  {
-			iwc.InfoStream = new PrintStreamInfoStream(System.out);
+			iwc.InfoStream = new PrintStreamInfoStream(Console.Out);
 		  }
 		  Writer = new IndexWriter(Dir, iwc);
 		  Mgr = new SearcherManager(Writer, true, null);
@@ -563,7 +565,7 @@ namespace Lucene.Net.Search
 		{
 		  Debug.Assert(CurrentShardSearcher == null);
 		  Array.Copy(nodeVersions, 0, CurrentNodeVersions, 0, CurrentNodeVersions.Length);
-		  CurrentShardSearcher = new ShardIndexSearcher(this, CurrentNodeVersions.clone(), Mgr.acquire().IndexReader, MyNodeID);
+          CurrentShardSearcher = new ShardIndexSearcher(this, (long[])CurrentNodeVersions.Clone(), Mgr.Acquire().IndexReader, MyNodeID);
 		}
 
 		public void UpdateNodeVersion(int nodeID, long version)
@@ -571,9 +573,9 @@ namespace Lucene.Net.Search
 		  CurrentNodeVersions[nodeID] = version;
 		  if (CurrentShardSearcher != null)
 		  {
-			CurrentShardSearcher.IndexReader.decRef();
+			CurrentShardSearcher.IndexReader.DecRef();
 		  }
-		  CurrentShardSearcher = new ShardIndexSearcher(this, CurrentNodeVersions.clone(), Mgr.acquire().IndexReader, MyNodeID);
+		  CurrentShardSearcher = new ShardIndexSearcher(this, (long[])CurrentNodeVersions.Clone(), Mgr.Acquire().IndexReader, MyNodeID);
 		}
 
 		// Get the current (fresh) searcher for this node
@@ -587,7 +589,7 @@ namespace Lucene.Net.Search
 			// happens right after the above line, this thread
 			// gets stalled, and the old IR is closed.  So we
 			// must try/retry until incRef succeeds:
-			if (s.IndexReader.tryIncRef())
+			if (s.IndexReader.TryIncRef())
 			{
 			  return s;
 			}
@@ -596,13 +598,13 @@ namespace Lucene.Net.Search
 
 		public void Release(ShardIndexSearcher s)
 		{
-		  s.IndexReader.decRef();
+		  s.IndexReader.DecRef();
 		}
 
 		// Get and old searcher matching the specified versions:
 		public ShardIndexSearcher Acquire(long[] nodeVersions)
 		{
-		  IndexSearcher s = Searchers.acquire(nodeVersions[MyNodeID]);
+		  IndexSearcher s = Searchers.Acquire(nodeVersions[MyNodeID]);
 		  if (s == null)
 		  {
 			throw new SearcherExpiredException("nodeID=" + MyNodeID + " version=" + nodeVersions[MyNodeID]);
@@ -613,24 +615,24 @@ namespace Lucene.Net.Search
 		// Reopen local reader
 		public void Reopen()
 		{
-		  IndexSearcher before = Mgr.acquire();
-		  Mgr.release(before);
+		  IndexSearcher before = Mgr.Acquire();
+		  Mgr.Release(before);
 
-		  Mgr.maybeRefresh();
-		  IndexSearcher after = Mgr.acquire();
+		  Mgr.MaybeRefresh();
+		  IndexSearcher after = Mgr.Acquire();
 		  try
 		  {
 			if (after != before)
 			{
 			  // New searcher was opened
-			  long version = Searchers.record(after);
-			  Searchers.prune(new SearcherLifetimeManager.PruneByAge(outerInstance.MaxSearcherAgeSeconds));
-			  outerInstance.BroadcastNodeReopen(MyNodeID, version, after);
+			  long version = Searchers.Record(after);
+			  Searchers.Prune(new SearcherLifetimeManager.PruneByAge(OuterInstance.MaxSearcherAgeSeconds));
+              OuterInstance.BroadcastNodeReopen(MyNodeID, version, after);
 			}
 		  }
 		  finally
 		  {
-			Mgr.release(after);
+			Mgr.Release(after);
 		  }
 		}
 
@@ -638,19 +640,19 @@ namespace Lucene.Net.Search
 		{
 		  if (CurrentShardSearcher != null)
 		  {
-			CurrentShardSearcher.IndexReader.decRef();
+			CurrentShardSearcher.IndexReader.DecRef();
 		  }
-		  Searchers.close();
-		  Mgr.close();
-		  Writer.close();
-		  Dir.close();
+		  Searchers.Dispose();
+          Mgr.Dispose();
+          Writer.Dispose();
+          Dir.Dispose();
 		}
 	  }
 
 	  // TODO: make this more realistic, ie, each node should
 	  // have its own thread, so we have true node to node
 	  // concurrency
-	  private sealed class ChangeIndices : System.Threading.Thread
+	  private sealed class ChangeIndices : ThreadClass
 	  {
 		  private readonly ShardSearchingTestBase OuterInstance;
 
@@ -665,42 +667,42 @@ namespace Lucene.Net.Search
 		  {
 			LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
 			int numDocs = 0;
-			while (System.nanoTime() < outerInstance.EndTimeNanos)
+			while (System.nanoTime() < OuterInstance.EndTimeNanos)
 			{
 			  int what = Random().Next(3);
-			  NodeState node = outerInstance.Nodes[Random().Next(outerInstance.Nodes.Length)];
+			  NodeState node = OuterInstance.Nodes[Random().Next(OuterInstance.Nodes.Length)];
 			  if (numDocs == 0 || what == 0)
 			  {
-				node.Writer.addDocument(docs.NextDoc());
+				node.Writer.AddDocument(docs.NextDoc());
 				numDocs++;
 			  }
 			  else if (what == 1)
 			  {
-				node.Writer.updateDocument(new Term("docid", "" + Random().Next(numDocs)), docs.NextDoc());
+				node.Writer.UpdateDocument(new Term("docid", "" + Random().Next(numDocs)), docs.NextDoc());
 				numDocs++;
 			  }
 			  else
 			  {
-				node.Writer.deleteDocuments(new Term("docid", "" + Random().Next(numDocs)));
+				node.Writer.DeleteDocuments(new Term("docid", "" + Random().Next(numDocs)));
 			  }
 			  // TODO: doc blocks too
 
 			  if (Random().Next(17) == 12)
 			  {
-				node.Writer.commit();
+				node.Writer.Commit();
 			  }
 
 			  if (Random().Next(17) == 12)
 			  {
-				outerInstance.Nodes[Random().Next(outerInstance.Nodes.Length)].Reopen();
+				OuterInstance.Nodes[Random().Next(OuterInstance.Nodes.Length)].Reopen();
 			  }
 			}
 		  }
 		  catch (Exception t)
 		  {
 			Console.WriteLine("FAILED:");
-			t.printStackTrace(System.out);
-			throw new Exception(t);
+            Console.Out.WriteLine(t.StackTrace);
+			throw new Exception(t.Message, t);
 		  }
 		}
 	  }
@@ -708,7 +710,7 @@ namespace Lucene.Net.Search
 	  protected internal NodeState[] Nodes;
 	  internal int MaxSearcherAgeSeconds;
 	  internal long EndTimeNanos;
-	  private Thread ChangeIndicesThread;
+	  private ThreadClass ChangeIndicesThread;
 
 	  protected internal virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
 	  {
@@ -725,21 +727,21 @@ namespace Lucene.Net.Search
 		long[] nodeVersions = new long[Nodes.Length];
 		for (int nodeID = 0;nodeID < numNodes;nodeID++)
 		{
-		  IndexSearcher s = Nodes[nodeID].Mgr.acquire();
+		  IndexSearcher s = Nodes[nodeID].Mgr.Acquire();
 		  try
 		  {
-			nodeVersions[nodeID] = Nodes[nodeID].Searchers.record(s);
+			nodeVersions[nodeID] = Nodes[nodeID].Searchers.Record(s);
 		  }
 		  finally
 		  {
-			Nodes[nodeID].Mgr.release(s);
+			Nodes[nodeID].Mgr.Release(s);
 		  }
 		}
 
 		for (int nodeID = 0;nodeID < numNodes;nodeID++)
 		{
-		  IndexSearcher s = Nodes[nodeID].Mgr.acquire();
-		  Debug.Assert(nodeVersions[nodeID] == Nodes[nodeID].Searchers.record(s));
+		  IndexSearcher s = Nodes[nodeID].Mgr.Acquire();
+		  Debug.Assert(nodeVersions[nodeID] == Nodes[nodeID].Searchers.Record(s));
 		  Debug.Assert(s != null);
 		  try
 		  {
@@ -747,7 +749,7 @@ namespace Lucene.Net.Search
 		  }
 		  finally
 		  {
-			Nodes[nodeID].Mgr.release(s);
+			Nodes[nodeID].Mgr.Release(s);
 		  }
 		}
 

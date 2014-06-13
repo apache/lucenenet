@@ -26,12 +26,13 @@ namespace Lucene.Net.Index
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using System.IO;
 
 	internal class RepeatingTokenizer : Tokenizer
 	{
@@ -43,13 +44,13 @@ namespace Lucene.Net.Index
 	  internal CharTermAttribute TermAtt;
 	  internal string Value;
 
-	   public RepeatingTokenizer(Reader reader, string val, Random random, float percentDocs, int maxTF) : base(reader)
+	   public RepeatingTokenizer(TextReader reader, string val, Random random, float percentDocs, int maxTF) : base(reader)
 	   {
 		 this.Value = val;
 		 this.Random = random;
 		 this.PercentDocs = percentDocs;
 		 this.MaxTF = maxTF;
-		 this.TermAtt = addAttribute(typeof(CharTermAttribute));
+		 this.TermAtt = AddAttribute<CharTermAttribute>();
 	   }
 
 	   public override bool IncrementToken()
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
 		 if (Num >= 0)
 		 {
 		   ClearAttributes();
-		   TermAtt.append(Value);
+		   TermAtt.Append(Value);
 		   return true;
 		 }
 		 return false;
@@ -66,8 +67,8 @@ namespace Lucene.Net.Index
 
 	  public override void Reset()
 	  {
-		base.reset();
-		if (Random.nextFloat() < PercentDocs)
+		base.Reset();
+		if (Random.NextFloat() < PercentDocs)
 		{
 		  Num = Random.Next(MaxTF) + 1;
 		}
@@ -89,16 +90,16 @@ namespace Lucene.Net.Index
 
 		Document doc = new Document();
 
-		doc.add(newStringField(field, val, Field.Store.NO));
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(100).setMergePolicy(newLogMergePolicy(100)));
+		doc.Add(NewStringField(field, val, Field.Store.NO));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(100).SetMergePolicy(NewLogMergePolicy(100)));
 
 		for (int i = 0; i < ndocs; i++)
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -119,7 +120,7 @@ namespace Lucene.Net.Index
 			  this.PercentDocs = percentDocs;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new RepeatingTokenizer(reader, Val, Random, PercentDocs, MaxTF));
 		  }
@@ -128,36 +129,36 @@ namespace Lucene.Net.Index
 
 	  public virtual int DoTest(int iter, int ndocs, int maxTF, float percentDocs)
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		long start = System.currentTimeMillis();
-		AddDocs(random(), dir, ndocs, "foo", "val", maxTF, percentDocs);
-		long end = System.currentTimeMillis();
+		long start = DateTime.Now.Millisecond;
+		AddDocs(Random(), dir, ndocs, "foo", "val", maxTF, percentDocs);
+		long end = DateTime.Now.Millisecond;
 		if (VERBOSE)
 		{
 			Console.WriteLine("milliseconds for creation of " + ndocs + " docs = " + (end - start));
 		}
 
-		IndexReader reader = DirectoryReader.open(dir);
+		IndexReader reader = DirectoryReader.Open(dir);
 
-		TermsEnum tenum = MultiFields.getTerms(reader, "foo").iterator(null);
+		TermsEnum tenum = MultiFields.GetTerms(reader, "foo").Iterator(null);
 
-		start = System.currentTimeMillis();
+		start = DateTime.Now.Millisecond;
 
 		int ret = 0;
 		DocsEnum tdocs = null;
-		Random random = new Random(random().nextLong());
+		Random random = new Random(Random().nextLong());
 		for (int i = 0; i < iter; i++)
 		{
-		  tenum.seekCeil(new BytesRef("val"));
-		  tdocs = TestUtil.docs(random, tenum, MultiFields.getLiveDocs(reader), tdocs, DocsEnum.FLAG_NONE);
-		  while (tdocs.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		  tenum.SeekCeil(new BytesRef("val"));
+		  tdocs = TestUtil.Docs(random, tenum, MultiFields.GetLiveDocs(reader), tdocs, DocsEnum.FLAG_NONE);
+		  while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		  {
-			ret += tdocs.docID();
+			ret += tdocs.DocID();
 		  }
 		}
 
-		end = System.currentTimeMillis();
+		end = DateTime.Now.Millisecond;
 		if (VERBOSE)
 		{
 			Console.WriteLine("milliseconds for " + iter + " TermDocs iteration: " + (end - start));

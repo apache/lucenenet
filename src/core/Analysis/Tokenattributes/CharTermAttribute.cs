@@ -27,6 +27,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 	using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Default implementation of <seealso cref="CharTermAttribute"/>. </summary>
@@ -84,7 +85,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
           set { this.SetLength(value); }
       }
 
-	  public CharTermAttribute SetLength(int length)
+	  public ICharTermAttribute SetLength(int length)
 	  {
 		if (length > TermBuffer.Length)
 		{
@@ -94,7 +95,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		return this;
 	  }
 
-	  public CharTermAttribute SetEmpty()
+	  public ICharTermAttribute SetEmpty()
 	  {
 		TermLength = 0;
 		return this;
@@ -127,19 +128,17 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		return TermBuffer[index];
 	  }
       
-      /*LUCENE TO-DO this isn't used
-	  public override CharSequence SubSequence(int start, int end)
+	  public ICharSequence SubSequence(int start, int end)
 	  {
 		if (start > TermLength || end > TermLength)
 		{
 		  throw new System.IndexOutOfRangeException();
 		}
-		return new string(TermBuffer, start, end - start);
+		return new StringCharSequenceWrapper(new string(TermBuffer, start, end - start));
 	  }
-      */
 	  // *** Appendable interface ***
 
-	  public CharTermAttribute Append(string csq, int start, int end)
+	  public ICharTermAttribute Append(string csq, int start, int end)
 	  {
           if (csq == null)
               return AppendNull();
@@ -151,18 +150,18 @@ namespace Lucene.Net.Analysis.Tokenattributes
           return this;
 	  }
 
-	  public CharTermAttribute Append(char c)
+      public ICharTermAttribute Append(char c)
 	  {
 		ResizeBuffer(TermLength + 1)[TermLength++] = c;
 		return this;
 	  }
 
-	  public CharTermAttribute Append(string s)
+      public ICharTermAttribute Append(string s)
 	  {
           return Append(s, 0, s == null ? 0 : s.Length);
 	  }
 
-	  public CharTermAttribute Append(StringBuilder s)
+      public ICharTermAttribute Append(StringBuilder s)
 	  {
 		if (s == null) // needed for Appendable compliance
 		{
@@ -172,7 +171,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
         return Append(s.ToString());
 	  }
 
-	  public CharTermAttribute Append(CharTermAttribute ta)
+      public ICharTermAttribute Append(ICharTermAttribute ta)
 	  {
 		if (ta == null) // needed for Appendable compliance
 		{
@@ -183,6 +182,35 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		TermLength += len;
 		return this;
 	  }
+
+      public ICharTermAttribute Append(ICharSequence csq)
+      {
+          if (csq == null)
+              return AppendNull();
+
+          return Append(csq, 0, csq.Length);
+      }
+
+      public ICharTermAttribute Append(ICharSequence csq, int start, int end)
+      {
+          if (csq == null)
+              csq = new StringCharSequenceWrapper("null");
+
+          int len = end - start, csqlen = csq.Length;
+
+          if (len < 0 || start > csqlen || end > csqlen)
+              throw new IndexOutOfRangeException();
+
+          if (len == 0)
+              return this;
+
+          ResizeBuffer(TermLength + len);
+
+          while (start < end)
+              TermBuffer[TermLength++] = csq.CharAt(start++);
+
+          return this;
+      }
 
       private char[] InternalResizeBuffer(int length)
       {

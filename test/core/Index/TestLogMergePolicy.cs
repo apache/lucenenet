@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 
 	  public virtual MergePolicy MergePolicy()
 	  {
-		return newLogMergePolicy(random());
+		return NewLogMergePolicy(Random());
 	  }
 
 	}

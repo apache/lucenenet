@@ -26,9 +26,10 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 	/// <summary>
-	/// Tests the Terms.docCount statistic
+	/// Tests the Terms.DocCount statistic
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocCount extends Lucene.Net.Util.LuceneTestCase
@@ -36,58 +37,58 @@ namespace Lucene.Net.Index
 	{
 	  public virtual void TestSimple()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
-		int numDocs = atLeast(100);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+		int numDocs = AtLeast(100);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  iw.addDocument(Doc());
+		  iw.AddDocument(Doc());
 		}
 		IndexReader ir = iw.Reader;
 		VerifyCount(ir);
-		ir.close();
-		iw.forceMerge(1);
+		ir.Dispose();
+		iw.ForceMerge(1);
 		ir = iw.Reader;
 		VerifyCount(ir);
-		ir.close();
-		iw.close();
-		dir.close();
+		ir.Dispose();
+        iw.Close();
+		dir.Dispose();
 	  }
 
 	  private Document Doc()
 	  {
 		Document doc = new Document();
-		int numFields = TestUtil.Next(random(), 1, 10);
+		int numFields = TestUtil.NextInt(Random(), 1, 10);
 		for (int i = 0; i < numFields; i++)
 		{
-		  doc.add(newStringField("" + TestUtil.Next(random(), 'a', 'z'), "" + TestUtil.Next(random(), 'a', 'z'), Field.Store.NO));
+		  doc.Add(NewStringField("" + TestUtil.NextInt(Random(), 'a', 'z'), "" + TestUtil.NextInt(Random(), 'a', 'z'), Field.Store.NO));
 		}
 		return doc;
 	  }
 
 	  private void VerifyCount(IndexReader ir)
 	  {
-		Fields fields = MultiFields.getFields(ir);
+		Fields fields = MultiFields.GetFields(ir);
 		if (fields == null)
 		{
 		  return;
 		}
 		foreach (string field in fields)
 		{
-		  Terms terms = fields.terms(field);
+		  Terms terms = fields.Terms(field);
 		  if (terms == null)
 		  {
 			continue;
 		  }
 		  int docCount = terms.DocCount;
-		  FixedBitSet visited = new FixedBitSet(ir.maxDoc());
-		  TermsEnum te = terms.iterator(null);
-		  while (te.next() != null)
+		  FixedBitSet visited = new FixedBitSet(ir.MaxDoc());
+		  TermsEnum te = terms.Iterator(null);
+		  while (te.Next() != null)
 		  {
-			DocsEnum de = TestUtil.docs(random(), te, null, null, DocsEnum.FLAG_NONE);
-			while (de.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			DocsEnum de = TestUtil.Docs(Random(), te, null, null, DocsEnum.FLAG_NONE);
+			while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 			{
-			  visited.set(de.docID());
+			  visited.Set(de.DocID());
 			}
 		  }
 		  Assert.AreEqual(visited.cardinality(), docCount);

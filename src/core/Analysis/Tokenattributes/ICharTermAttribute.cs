@@ -68,18 +68,18 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  ///  Note: to grow the size of the array,
 	  ///  use <seealso cref="#resizeBuffer(int)"/> first. </summary>
 	  ///  <param name="length"> the truncated length </param>
-	  CharTermAttribute SetLength(int length);
+	  ICharTermAttribute SetLength(int length);
 
 	  /// <summary>
 	  /// Sets the length of the termBuffer to zero.
 	  /// Use this method before appending contents
 	  /// using the <seealso cref="Appendable"/> interface.
 	  /// </summary>
-	  CharTermAttribute SetEmpty();
+      ICharTermAttribute SetEmpty();
 
 	  // the following methods are redefined to get rid of IOException declaration:
-	  CharTermAttribute Append(string csq, int start, int end);
-	  CharTermAttribute Append(char c);
+      ICharTermAttribute Append(string csq, int start, int end);
+      ICharTermAttribute Append(char c);
 
 	  /// <summary>
 	  /// Appends the specified {@code String} to this character sequence. 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  /// this sequence by the length of the argument. If argument is {@code null}, then the four
 	  /// characters {@code "null"} are appended. 
 	  /// </summary>
-	  CharTermAttribute Append(string s);
+      ICharTermAttribute Append(string s);
 
 	  /// <summary>
 	  /// Appends the specified {@code StringBuilder} to this character sequence. 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  /// this sequence by the length of the argument. If argument is {@code null}, then the four
 	  /// characters {@code "null"} are appended. 
 	  /// </summary>
-	  CharTermAttribute Append(StringBuilder sb);
+      ICharTermAttribute Append(StringBuilder sb);
 
 	  /// <summary>
 	  /// Appends the contents of the other {@code CharTermAttribute} to this character sequence. 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  /// this sequence by the length of the argument. If argument is {@code null}, then the four
 	  /// characters {@code "null"} are appended. 
 	  /// </summary>
-	  CharTermAttribute Append(CharTermAttribute termAtt);
+      ICharTermAttribute Append(ICharTermAttribute termAtt);
 	}
 
 }

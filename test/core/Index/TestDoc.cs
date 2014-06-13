@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 	using Codec = Lucene.Net.Codecs.Codec;
 	using Document = Lucene.Net.Document.Document;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
@@ -35,6 +35,9 @@ namespace Lucene.Net.Index
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using System.IO;
+    using Lucene.Net.Util;
 
 
 	/// <summary>
@@ -52,19 +55,19 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public override void SetUp()
 		{
-			base.setUp();
+			base.SetUp();
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: setUp");
 			}
-			WorkDir = createTempDir("TestDoc");
+			WorkDir = CreateTempDir("TestDoc");
 			WorkDir.mkdirs();
 
-			IndexDir = createTempDir("testIndex");
+			IndexDir = CreateTempDir("testIndex");
 			IndexDir.mkdirs();
 
-			Directory directory = newFSDirectory(IndexDir);
-			directory.close();
+			Directory directory = NewFSDirectory(IndexDir);
+			directory.Dispose();
 
 			Files = new LinkedList<>();
 			Files.AddLast(CreateOutput("test.txt", "this is the first test file"));
@@ -72,22 +75,22 @@ namespace Lucene.Net.Index
 			Files.AddLast(CreateOutput("test2.txt", "this is the second test file"));
 		}
 
-		private File CreateOutput(string name, string text)
+		private FileInfo CreateOutput(string name, string text)
 		{
-			Writer fw = null;
-			PrintWriter pw = null;
+			TextWriter fw = null;
+            StreamWriter pw = null;
 
 			try
 			{
-				File f = new File(WorkDir, name);
+				FileInfo f = new FileInfo(WorkDir, name);
 				if (f.exists())
 				{
 					f.delete();
 				}
 
-				fw = new OutputStreamWriter(new FileOutputStream(f), StandardCharsets.UTF_8);
-				pw = new PrintWriter(fw);
-				pw.println(text);
+                fw = new OutputStreamWriter(new FileOutputStream(f), IOUtils.CHARSET_UTF_8);
+                pw = new StreamWriter(fw);
+				pw.WriteLine(text);
 				return f;
 
 			}
@@ -95,11 +98,11 @@ namespace Lucene.Net.Index
 			{
 				if (pw != null)
 				{
-					pw.close();
+					pw.Dispose();
 				}
 				if (fw != null)
 				{
-					fw.close();
+					fw.Dispose();
 				}
 			}
 		}
@@ -117,9 +120,9 @@ namespace Lucene.Net.Index
 		public virtual void TestIndexAndMerge()
 		{
 		  StringWriter sw = new StringWriter();
-		  PrintWriter @out = new PrintWriter(sw, true);
+          StreamWriter @out = new StreamWriter(sw, true);
 
-		  Directory directory = newFSDirectory(IndexDir, null);
+		  Directory directory = NewFSDirectory(IndexDir, null);
 
 		  if (directory is MockDirectoryWrapper)
 		  {
@@ -128,14 +131,14 @@ namespace Lucene.Net.Index
 			((MockDirectoryWrapper) directory).AssertNoUnrefencedFilesOnClose = false;
 		  }
 
-		  IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(-1).setMergePolicy(newLogMergePolicy(10)));
+		  IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
 
 		  SegmentCommitInfo si1 = IndexDoc(writer, "test.txt");
 		  PrintSegment(@out, si1);
 
 		  SegmentCommitInfo si2 = IndexDoc(writer, "test2.txt");
 		  PrintSegment(@out, si2);
-		  writer.close();
+		  writer.Dispose();
 
 		  SegmentCommitInfo siMerge = Merge(directory, si1, si2, "_merge", false);
 		  PrintSegment(@out, siMerge);
@@ -146,17 +149,17 @@ namespace Lucene.Net.Index
 		  SegmentCommitInfo siMerge3 = Merge(directory, siMerge, siMerge2, "_merge3", false);
 		  PrintSegment(@out, siMerge3);
 
-		  directory.close();
-		  @out.close();
-		  sw.close();
+		  directory.Dispose();
+		  @out.Dispose();
+		  sw.Dispose();
 
 		  string multiFileOutput = sw.ToString();
 		  //System.out.println(multiFileOutput);
 
 		  sw = new StringWriter();
-		  @out = new PrintWriter(sw, true);
+          @out = new StreamWriter(sw, true);
 
-		  directory = newFSDirectory(IndexDir, null);
+		  directory = NewFSDirectory(IndexDir, null);
 
 		  if (directory is MockDirectoryWrapper)
 		  {
@@ -165,14 +168,14 @@ namespace Lucene.Net.Index
 			((MockDirectoryWrapper) directory).AssertNoUnrefencedFilesOnClose = false;
 		  }
 
-		  writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(-1).setMergePolicy(newLogMergePolicy(10)));
+		  writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
 
 		  si1 = IndexDoc(writer, "test.txt");
 		  PrintSegment(@out, si1);
 
 		  si2 = IndexDoc(writer, "test2.txt");
 		  PrintSegment(@out, si2);
-		  writer.close();
+		  writer.Dispose();
 
 		  siMerge = Merge(directory, si1, si2, "_merge", true);
 		  PrintSegment(@out, siMerge);
@@ -183,9 +186,9 @@ namespace Lucene.Net.Index
 		  siMerge3 = Merge(directory, siMerge, siMerge2, "_merge3", true);
 		  PrintSegment(@out, siMerge3);
 
-		  directory.close();
-		  @out.close();
-		  sw.close();
+		  directory.Dispose();
+		  @out.Dispose();
+		  sw.Dispose();
 		  string singleFileOutput = sw.ToString();
 
 		  Assert.AreEqual(multiFileOutput, singleFileOutput);
@@ -195,18 +198,18 @@ namespace Lucene.Net.Index
 	   {
 		  File file = new File(WorkDir, fileName);
 		  Document doc = new Document();
-		  InputStreamReader @is = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-		  doc.add(new TextField("contents", @is));
-		  writer.addDocument(doc);
-		  writer.commit();
-		  @is.close();
-		  return writer.newestSegment();
+		  InputStreamReader @is = new InputStreamReader(new FileInputStream(file), IOUtils.CHARSET_UTF_8);
+		  doc.Add(new TextField("contents", @is));
+		  writer.AddDocument(doc);
+		  writer.Commit();
+		  @is.Dispose();
+		  return writer.NewestSegment();
 	   }
 
 
 	   private SegmentCommitInfo Merge(Directory dir, SegmentCommitInfo si1, SegmentCommitInfo si2, string merged, bool useCompoundFile)
 	   {
-		  IOContext context = newIOContext(random());
+		  IOContext context = NewIOContext(Random());
 		  SegmentReader r1 = new SegmentReader(si1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, context);
 		  SegmentReader r2 = new SegmentReader(si2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, context);
 
@@ -217,18 +220,18 @@ namespace Lucene.Net.Index
 		  SegmentMerger merger = new SegmentMerger(Arrays.asList<AtomicReader>(r1, r2), si, InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, MergeState.CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
 
 		  MergeState mergeState = merger.merge();
-		  r1.close();
-		  r2.close();
+		  r1.Dispose();
+		  r2.Dispose();
 		  SegmentInfo info = new SegmentInfo(si1.info.dir, Constants.LUCENE_MAIN_VERSION, merged, si1.info.DocCount + si2.info.DocCount, false, codec, null);
 		  info.Files = new HashSet<>(trackingDir.CreatedFiles);
 
 		  if (useCompoundFile)
 		  {
-			ICollection<string> filesToDelete = IndexWriter.createCompoundFile(InfoStream.Default, dir, MergeState.CheckAbort.NONE, info, newIOContext(random()));
+			ICollection<string> filesToDelete = IndexWriter.createCompoundFile(InfoStream.Default, dir, MergeState.CheckAbort.NONE, info, NewIOContext(Random()));
 			info.UseCompoundFile = true;
 			foreach (String fileToDelete in filesToDelete)
 			{
-			  si1.info.dir.deleteFile(fileToDelete);
+			  si1.Info.dir.DeleteFile(fileToDelete);
 			}
 		  }
 
@@ -236,44 +239,44 @@ namespace Lucene.Net.Index
 	   }
 
 
-	   private void PrintSegment(PrintWriter @out, SegmentCommitInfo si)
+       private void PrintSegment(StreamWriter @out, SegmentCommitInfo si)
 	   {
-		  SegmentReader reader = new SegmentReader(si, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		  SegmentReader reader = new SegmentReader(si, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 
-		  for (int i = 0; i < reader.numDocs(); i++)
+		  for (int i = 0; i < reader.NumDocs(); i++)
 		  {
-			@out.println(reader.document(i));
+			@out.WriteLine(reader.Document(i));
 		  }
 
-		  Fields fields = reader.fields();
+		  Fields fields = reader.Fields();
 		  foreach (string field in fields)
 		  {
-			Terms terms = fields.terms(field);
+			Terms terms = fields.Terms(field);
 			Assert.IsNotNull(terms);
-			TermsEnum tis = terms.iterator(null);
-			while (tis.next() != null)
+			TermsEnum tis = terms.Iterator(null);
+			while (tis.Next() != null)
 			{
 
-			  @out.print("  term=" + field + ":" + tis.term());
-			  @out.println("    DF=" + tis.docFreq());
+			  @out.Write("  term=" + field + ":" + tis.Term());
+              @out.WriteLine("    DF=" + tis.DocFreq());
 
-			  DocsAndPositionsEnum positions = tis.docsAndPositions(reader.LiveDocs, null);
+			  DocsAndPositionsEnum positions = tis.DocsAndPositions(reader.LiveDocs, null);
 
-			  while (positions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			  while (positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 			  {
-				@out.print(" doc=" + positions.docID());
-				@out.print(" TF=" + positions.freq());
-				@out.print(" pos=");
-				@out.print(positions.nextPosition());
-				for (int j = 1; j < positions.freq(); j++)
+                  @out.Write(" doc=" + positions.DocID());
+                  @out.Write(" TF=" + positions.Freq());
+                  @out.Write(" pos=");
+                  @out.Write(positions.NextPosition());
+				for (int j = 1; j < positions.Freq(); j++)
 				{
-				  @out.print("," + positions.nextPosition());
+                    @out.Write("," + positions.NextPosition());
 				}
-				@out.println("");
+                @out.WriteLine("");
 			  }
 			}
 		  }
-		  reader.close();
+		  reader.Dispose();
 	   }
 	}
 

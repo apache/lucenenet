@@ -31,7 +31,8 @@ namespace Lucene.Net.Index
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	//
 	// this was developed for Lucene In Action,
@@ -44,10 +45,10 @@ namespace Lucene.Net.Index
 
 	  protected internal virtual IndexWriterConfig GetConfig(Random random, IndexDeletionPolicy dp)
 	  {
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
 		if (dp != null)
 		{
-		  conf.IndexDeletionPolicy = dp;
+		  conf.SetIndexDeletionPolicy(dp);
 		}
 		return conf;
 	  }
@@ -55,19 +56,19 @@ namespace Lucene.Net.Index
 	  protected internal virtual void CheckSnapshotExists(Directory dir, IndexCommit c)
 	  {
 		string segFileName = c.SegmentsFileName;
-		Assert.IsTrue("segments file not found in directory: " + segFileName, slowFileExists(dir, segFileName));
+		Assert.IsTrue(SlowFileExists(dir, segFileName), "segments file not found in directory: " + segFileName);
 	  }
 
 	  protected internal virtual void CheckMaxDoc(IndexCommit commit, int expectedMaxDoc)
 	  {
-		IndexReader reader = DirectoryReader.open(commit);
+		IndexReader reader = DirectoryReader.Open(commit);
 		try
 		{
-		  Assert.AreEqual(expectedMaxDoc, reader.maxDoc());
+		  Assert.AreEqual(expectedMaxDoc, reader.MaxDoc());
 		}
 		finally
 		{
-		  reader.close();
+		  reader.Dispose();
 		}
 	  }
 
@@ -78,9 +79,9 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numSnapshots; i++)
 		{
 		  // create dummy document to trigger commit.
-		  writer.addDocument(new Document());
-		  writer.commit();
-		  Snapshots.Add(sdp.snapshot());
+		  writer.AddDocument(new Document());
+		  writer.Commit();
+		  Snapshots.Add(sdp.Snapshot());
 		}
 	  }
 
@@ -101,46 +102,45 @@ namespace Lucene.Net.Index
 		  CheckSnapshotExists(dir, snapshot);
 		  if (checkIndexCommitSame)
 		  {
-			assertSame(snapshot, sdp.getIndexCommit(snapshot.Generation));
+			AssertSame(snapshot, sdp.GetIndexCommit(snapshot.Generation));
 		  }
 		  else
 		  {
-			Assert.AreEqual(snapshot.Generation, sdp.getIndexCommit(snapshot.Generation).Generation);
+			Assert.AreEqual(snapshot.Generation, sdp.GetIndexCommit(snapshot.Generation).Generation);
 		  }
 		}
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSnapshotDeletionPolicy() throws Exception
+      [Test]
 	  public virtual void TestSnapshotDeletionPolicy()
 	  {
-		Directory fsDir = newDirectory();
-		RunTest(random(), fsDir);
-		fsDir.close();
+		Directory fsDir = NewDirectory();
+		RunTest(Random(), fsDir);
+		fsDir.Dispose();
 	  }
 
 	  private void RunTest(Random random, Directory dir)
 	  {
 		// Run for ~1 seconds
-		long stopTime = System.currentTimeMillis() + 1000;
+		long stopTime = DateTime.Now.Millisecond + 1000;
 
 		SnapshotDeletionPolicy dp = DeletionPolicy;
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setIndexDeletionPolicy(dp).setMaxBufferedDocs(2));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetIndexDeletionPolicy(dp).SetMaxBufferedDocs(2));
 
 		// Verify we catch misuse:
 		try
 		{
-		  dp.snapshot();
+		  dp.Snapshot();
 		  Assert.Fail("did not hit exception");
 		}
-		catch (IllegalStateException ise)
+		catch (InvalidOperationException ise)
 		{
 		  // expected
 		}
 		dp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
-		writer.commit();
+		writer.Commit();
 
-		Thread t = new ThreadAnonymousInnerClassHelper(this, stopTime, writer);
+		ThreadClass t = new ThreadAnonymousInnerClassHelper(this, stopTime, writer);
 
 		t.Start();
 
@@ -162,16 +162,16 @@ namespace Lucene.Net.Index
 		customType.StoreTermVectors = true;
 		customType.StoreTermVectorPositions = true;
 		customType.StoreTermVectorOffsets = true;
-		doc.add(newField("content", "aaa", customType));
-		writer.addDocument(doc);
+		doc.Add(NewField("content", "aaa", customType));
+		writer.AddDocument(doc);
 
 		// Make sure we don't have any leftover files in the
 		// directory:
-		writer.close();
+		writer.Dispose();
 		TestIndexWriter.AssertNoUnreferencedFiles(dir, "some files were not deleted but should have been");
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestSnapshotDeletionPolicy OuterInstance;
 
@@ -192,29 +192,29 @@ namespace Lucene.Net.Index
 			customType.StoreTermVectors = true;
 			customType.StoreTermVectorPositions = true;
 			customType.StoreTermVectorOffsets = true;
-			doc.add(newField("content", "aaa", customType));
+			doc.Add(NewField("content", "aaa", customType));
 			do
 			{
 			  for (int i = 0;i < 27;i++)
 			  {
 				try
 				{
-				  Writer.addDocument(doc);
+				  Writer.AddDocument(doc);
 				}
 				catch (Exception t)
 				{
-				  t.printStackTrace(System.out);
+				  Console.WriteLine(t.StackTrace);
 				  Assert.Fail("addDocument failed");
 				}
 				if (i % 2 == 0)
 				{
 				  try
 				  {
-					Writer.commit();
+					Writer.Commit();
 				  }
 				  catch (Exception e)
 				  {
-					throw new Exception(e);
+					throw new Exception(e.Message, e);
 				  }
 				}
 			  }
@@ -222,11 +222,11 @@ namespace Lucene.Net.Index
 			  {
 				Thread.Sleep(1);
 			  }
-			  catch (InterruptedException ie)
+			  catch (ThreadInterruptedException ie)
 			  {
 				throw new ThreadInterruptedException(ie);
 			  }
-			} while (System.currentTimeMillis() < StopTime);
+			} while (DateTime.Now.Millisecond < StopTime);
 		  }
 	  }
 
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
 	  public virtual void BackupIndex(Directory dir, SnapshotDeletionPolicy dp)
 	  {
 		// To backup an index we first take a snapshot:
-		IndexCommit snapshot = dp.snapshot();
+		IndexCommit snapshot = dp.Snapshot();
 		try
 		{
 		  CopyFiles(dir, snapshot);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
 		  // Make sure to release the snapshot, otherwise these
 		  // files will never be deleted during this IndexWriter
 		  // session:
-		  dp.release(snapshot);
+		  dp.Release(snapshot);
 		}
 	  }
 
@@ -276,10 +276,10 @@ namespace Lucene.Net.Index
 
 	  private void ReadFile(Directory dir, string name)
 	  {
-		IndexInput input = dir.openInput(name, newIOContext(random()));
+		IndexInput input = dir.OpenInput(name, NewIOContext(Random()));
 		try
 		{
-		  long size = dir.fileLength(name);
+		  long size = dir.FileLength(name);
 		  long bytesLeft = size;
 		  while (bytesLeft > 0)
 		  {
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
 			{
 			  numToRead = Buffer.Length;
 			}
-			input.readBytes(Buffer, 0, numToRead, false);
+			input.ReadBytes(Buffer, 0, numToRead, false);
 			bytesLeft -= numToRead;
 		  }
 		  // Don't do this in your real backups!  this is just
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
 		}
 		finally
 		{
-		  input.close();
+		  input.Dispose();
 		}
 	  }
 
@@ -316,37 +316,37 @@ namespace Lucene.Net.Index
 		int numSnapshots = 3;
 
 		// Create 3 snapshots: snapshot0, snapshot1, snapshot2
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), DeletionPolicy));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
 		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 		PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
-		writer.close();
+		writer.Dispose();
 
-		Assert.AreEqual(numSnapshots, sdp.Snapshots.size());
+		Assert.AreEqual(numSnapshots, sdp.Snapshots.Count);
 		Assert.AreEqual(numSnapshots, sdp.SnapshotCount);
 		AssertSnapshotExists(dir, sdp, numSnapshots, true);
 
 		// open a reader on a snapshot - should succeed.
-		DirectoryReader.open(Snapshots[0]).close();
+		DirectoryReader.Open(Snapshots[0]).Dispose();
 
 		// open a new IndexWriter w/ no snapshots to keep and assert that all snapshots are gone.
 		sdp = DeletionPolicy;
-		writer = new IndexWriter(dir, GetConfig(random(), sdp));
-		writer.deleteUnusedFiles();
-		writer.close();
-		Assert.AreEqual("no snapshots should exist", 1, DirectoryReader.listCommits(dir).size());
-		dir.close();
+		writer = new IndexWriter(dir, GetConfig(Random(), sdp));
+		writer.DeleteUnusedFiles();
+		writer.Dispose();
+		Assert.AreEqual(1, DirectoryReader.ListCommits(dir).Count, "no snapshots should exist");
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMultiThreadedSnapshotting() throws Exception
 	  public virtual void TestMultiThreadedSnapshotting()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), DeletionPolicy));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
 		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 
-		Thread[] threads = new Thread[10];
+        ThreadClass[] threads = new ThreadClass[10];
 		IndexCommit[] snapshots = new IndexCommit[threads.Length];
 		for (int i = 0; i < threads.Length; i++)
 		{
@@ -355,31 +355,31 @@ namespace Lucene.Net.Index
 		  threads[i].Name = "t" + i;
 		}
 
-		foreach (Thread t in threads)
+		foreach (ThreadClass t in threads)
 		{
 		  t.Start();
 		}
 
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
 
 		// Do one last commit, so that after we release all snapshots, we stay w/ one commit
-		writer.addDocument(new Document());
-		writer.commit();
+		writer.AddDocument(new Document());
+		writer.Commit();
 
 		for (int i = 0;i < threads.Length;i++)
 		{
-		  sdp.release(snapshots[i]);
-		  writer.deleteUnusedFiles();
+		  sdp.Release(snapshots[i]);
+		  writer.DeleteUnusedFiles();
 		}
-		Assert.AreEqual(1, DirectoryReader.listCommits(dir).size());
-		writer.close();
-		dir.close();
+		Assert.AreEqual(1, DirectoryReader.ListCommits(dir).Count);
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 	  {
 		  private readonly TestSnapshotDeletionPolicy OuterInstance;
 
@@ -401,13 +401,13 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  Writer.addDocument(new Document());
-			  Writer.commit();
-			  Snapshots[FinalI] = Sdp.snapshot();
+			  Writer.AddDocument(new Document());
+			  Writer.Commit();
+			  Snapshots[FinalI] = Sdp.Snapshot();
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }
@@ -417,77 +417,77 @@ namespace Lucene.Net.Index
 	  public virtual void TestRollbackToOldSnapshot()
 	  {
 		int numSnapshots = 2;
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		SnapshotDeletionPolicy sdp = DeletionPolicy;
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), sdp));
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), sdp));
 		PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
-		writer.close();
+		writer.Dispose();
 
 		// now open the writer on "snapshot0" - make sure it succeeds
-		writer = new IndexWriter(dir, GetConfig(random(), sdp).setIndexCommit(Snapshots[0]));
+		writer = new IndexWriter(dir, GetConfig(Random(), sdp).SetIndexCommit(Snapshots[0]));
 		// this does the actual rollback
-		writer.commit();
-		writer.deleteUnusedFiles();
+		writer.Commit();
+		writer.DeleteUnusedFiles();
 		AssertSnapshotExists(dir, sdp, numSnapshots - 1, false);
-		writer.close();
+		writer.Dispose();
 
 		// but 'snapshot1' files will still exist (need to release snapshot before they can be deleted).
 		string segFileName = Snapshots[1].SegmentsFileName;
-		Assert.IsTrue("snapshot files should exist in the directory: " + segFileName, slowFileExists(dir, segFileName));
+		Assert.IsTrue(SlowFileExists(dir, segFileName), "snapshot files should exist in the directory: " + segFileName);
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testReleaseSnapshot() throws Exception
 	  public virtual void TestReleaseSnapshot()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), DeletionPolicy));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
 		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 		PrepareIndexAndSnapshots(sdp, writer, 1);
 
 		// Create another commit - we must do that, because otherwise the "snapshot"
 		// files will still remain in the index, since it's the last commit.
-		writer.addDocument(new Document());
-		writer.commit();
+		writer.AddDocument(new Document());
+		writer.Commit();
 
 		// Release
 		string segFileName = Snapshots[0].SegmentsFileName;
-		sdp.release(Snapshots[0]);
-		writer.deleteUnusedFiles();
-		writer.close();
-		Assert.IsFalse("segments file should not be found in dirctory: " + segFileName, slowFileExists(dir, segFileName));
-		dir.close();
+		sdp.Release(Snapshots[0]);
+		writer.DeleteUnusedFiles();
+		writer.Dispose();
+		Assert.IsFalse(SlowFileExists(dir, segFileName), "segments file should not be found in dirctory: " + segFileName);
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSnapshotLastCommitTwice() throws Exception
 	  public virtual void TestSnapshotLastCommitTwice()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), DeletionPolicy));
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
 		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
-		writer.addDocument(new Document());
-		writer.commit();
+		writer.AddDocument(new Document());
+		writer.Commit();
 
-		IndexCommit s1 = sdp.snapshot();
-		IndexCommit s2 = sdp.snapshot();
-		assertSame(s1, s2); // should be the same instance
+		IndexCommit s1 = sdp.Snapshot();
+		IndexCommit s2 = sdp.Snapshot();
+		AssertSame(s1, s2); // should be the same instance
 
 		// create another commit
-		writer.addDocument(new Document());
-		writer.commit();
+		writer.AddDocument(new Document());
+		writer.Commit();
 
 		// release "s1" should not delete "s2"
-		sdp.release(s1);
-		writer.deleteUnusedFiles();
+		sdp.Release(s1);
+		writer.DeleteUnusedFiles();
 		CheckSnapshotExists(dir, s2);
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -496,23 +496,23 @@ namespace Lucene.Net.Index
 	  {
 		// Tests the behavior of SDP when commits that are given at ctor are missing
 		// on onInit().
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), DeletionPolicy));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
 		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
-		writer.addDocument(new Document());
-		writer.commit();
-		IndexCommit s1 = sdp.snapshot();
+		writer.AddDocument(new Document());
+		writer.Commit();
+		IndexCommit s1 = sdp.Snapshot();
 
 		// create another commit, not snapshotted.
-		writer.addDocument(new Document());
-		writer.close();
+		writer.AddDocument(new Document());
+		writer.Dispose();
 
 		// open a new writer w/ KeepOnlyLastCommit policy, so it will delete "s1"
 		// commit.
-		(new IndexWriter(dir, GetConfig(random(), null))).close();
+		(new IndexWriter(dir, GetConfig(Random(), null))).Dispose();
 
-		Assert.IsFalse("snapshotted commit should not exist", slowFileExists(dir, s1.SegmentsFileName));
-		dir.close();
+		Assert.IsFalse(SlowFileExists(dir, s1.SegmentsFileName), "snapshotted commit should not exist");
+		dir.Dispose();
 	  }
 	}
 

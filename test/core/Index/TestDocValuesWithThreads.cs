@@ -28,13 +28,17 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
 	using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
-	using FieldCache = Lucene.Net.Search.FieldCache;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
+    using System.IO;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocValuesWithThreads extends Lucene.Net.Util.LuceneTestCase
@@ -43,41 +47,41 @@ namespace Lucene.Net.Index
 
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 
 		IList<long?> numbers = new List<long?>();
 		IList<BytesRef> binary = new List<BytesRef>();
 		IList<BytesRef> sorted = new List<BytesRef>();
-		int numDocs = atLeast(100);
+		int numDocs = AtLeast(100);
 		for (int i = 0;i < numDocs;i++)
 		{
 		  Document d = new Document();
-		  long number = random().nextLong();
-		  d.add(new NumericDocValuesField("number", number));
-		  BytesRef bytes = new BytesRef(TestUtil.randomRealisticUnicodeString(random()));
-		  d.add(new BinaryDocValuesField("bytes", bytes));
+		  long number = Random().nextLong();
+		  d.Add(new NumericDocValuesField("number", number));
+		  BytesRef bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
+		  d.Add(new BinaryDocValuesField("bytes", bytes));
 		  binary.Add(bytes);
-		  bytes = new BytesRef(TestUtil.randomRealisticUnicodeString(random()));
-		  d.add(new SortedDocValuesField("sorted", bytes));
+		  bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
+		  d.Add(new SortedDocValuesField("sorted", bytes));
 		  sorted.Add(bytes);
-		  w.addDocument(d);
+		  w.AddDocument(d);
 		  numbers.Add(number);
 		}
 
-		w.forceMerge(1);
+		w.ForceMerge(1);
 		IndexReader r = w.Reader;
-		w.close();
+		w.Dispose();
 
-		Assert.AreEqual(1, r.leaves().size());
-		AtomicReader ar = r.leaves().get(0).reader();
+		Assert.AreEqual(1, r.Leaves().Count);
+		AtomicReader ar = (AtomicReader)r.Leaves()[0].Reader();
 
-		int numThreads = TestUtil.Next(random(), 2, 5);
+		int numThreads = TestUtil.NextInt(Random(), 2, 5);
 		IList<Thread> threads = new List<Thread>();
 		CountDownLatch startingGun = new CountDownLatch(1);
 		for (int t = 0;t < numThreads;t++)
 		{
-		  Random threadRandom = new Random(random().nextLong());
+		  Random threadRandom = new Random(Random().nextLong());
 		  Thread thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
 		  thread.Start();
 		  threads.Add(thread);
@@ -90,11 +94,11 @@ namespace Lucene.Net.Index
 		  thread.Join();
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestDocValuesWithThreads OuterInstance;
 
@@ -108,7 +112,7 @@ namespace Lucene.Net.Index
 		  private CountDownLatch StartingGun;
 		  private Random ThreadRandom;
 
-		  public ThreadAnonymousInnerClassHelper<T1>(TestDocValuesWithThreads outerInstance, IList<T1> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountDownLatch startingGun, Random threadRandom)
+		  public ThreadAnonymousInnerClassHelper(TestDocValuesWithThreads outerInstance, IList<long?> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountDownLatch startingGun, Random threadRandom)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Numbers = numbers;
@@ -124,13 +128,13 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  //NumericDocValues ndv = ar.getNumericDocValues("number");
-			  FieldCache.Longs ndv = FieldCache.DEFAULT.getLongs(Ar, "number", false);
-			  //BinaryDocValues bdv = ar.getBinaryDocValues("bytes");
-			  BinaryDocValues bdv = FieldCache.DEFAULT.getTerms(Ar, "bytes", false);
-			  SortedDocValues sdv = FieldCache.DEFAULT.getTermsIndex(Ar, "sorted");
+			  //NumericDocValues ndv = ar.GetNumericDocValues("number");
+			  FieldCache_Fields.Longs ndv = FieldCache_Fields.DEFAULT.GetLongs(Ar, "number", false);
+			  //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
+              BinaryDocValues bdv = FieldCache_Fields.DEFAULT.GetTerms(Ar, "bytes", false);
+              SortedDocValues sdv = FieldCache_Fields.DEFAULT.GetTermsIndex(Ar, "sorted");
 			  StartingGun.@await();
-			  int iters = atLeast(1000);
+			  int iters = AtLeast(1000);
 			  BytesRef scratch = new BytesRef();
 			  BytesRef scratch2 = new BytesRef();
 			  for (int iter = 0;iter < iters;iter++)
@@ -139,46 +143,46 @@ namespace Lucene.Net.Index
 				switch (ThreadRandom.Next(6))
 				{
 				case 0:
-				  Assert.AreEqual((long)(sbyte) Numbers[docID], FieldCache.DEFAULT.getBytes(Ar, "number", false).get(docID));
+				  Assert.AreEqual((long)(sbyte) Numbers[docID], FieldCache_Fields.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
 				  break;
 				case 1:
-				  Assert.AreEqual((long)(short) Numbers[docID], FieldCache.DEFAULT.getShorts(Ar, "number", false).get(docID));
+                  Assert.AreEqual((long)(short)Numbers[docID], FieldCache_Fields.DEFAULT.GetShorts(Ar, "number", false).Get(docID));
 				  break;
 				case 2:
-				  Assert.AreEqual((long)(int) Numbers[docID], FieldCache.DEFAULT.getInts(Ar, "number", false).get(docID));
+                  Assert.AreEqual((long)(int)Numbers[docID], FieldCache_Fields.DEFAULT.GetInts(Ar, "number", false).Get(docID));
 				  break;
 				case 3:
-				  Assert.AreEqual((long)Numbers[docID], FieldCache.DEFAULT.getLongs(Ar, "number", false).get(docID));
+                  Assert.AreEqual((long)Numbers[docID], FieldCache_Fields.DEFAULT.GetLongs(Ar, "number", false).Get(docID));
 				  break;
 				case 4:
-				  Assert.AreEqual(float.intBitsToFloat((long)(int) Numbers[docID]), FieldCache.DEFAULT.getFloats(Ar, "number", false).get(docID), 0.0f);
+                  Assert.AreEqual(Number.IntBitsToFloat((int)Numbers[docID]), FieldCache_Fields.DEFAULT.GetFloats(Ar, "number", false).Get(docID), 0.0f);
 				  break;
 				case 5:
-				  Assert.AreEqual(double.longBitsToDouble((long)Numbers[docID]), FieldCache.DEFAULT.getDoubles(Ar, "number", false).get(docID), 0.0);
+                  Assert.AreEqual(BitConverter.Int64BitsToDouble((long)Numbers[docID]), FieldCache_Fields.DEFAULT.GetDoubles(Ar, "number", false).Get(docID), 0.0);
 				  break;
 				}
-				bdv.get(docID, scratch);
+				bdv.Get(docID, scratch);
 				Assert.AreEqual(Binary[docID], scratch);
 				// Cannot share a single scratch against two "sources":
-				sdv.get(docID, scratch2);
+				sdv.Get(docID, scratch2);
 				Assert.AreEqual(Sorted[docID], scratch2);
 			  }
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }
 
 	  public virtual void Test2()
 	  {
-		Random random = random();
-		int NUM_DOCS = atLeast(100);
-		Directory dir = newDirectory();
+		Random random = Random();
+		int NUM_DOCS = AtLeast(100);
+		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(random, dir);
-		bool allowDups = random.nextBoolean();
-		Set<string> seen = new HashSet<string>();
+		bool allowDups = random.NextBoolean();
+		HashSet<string> seen = new HashSet<string>();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS + " allowDups=" + allowDups);
@@ -190,23 +194,23 @@ namespace Lucene.Net.Index
 		while (numDocs < NUM_DOCS)
 		{
 		  string s;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
-			s = TestUtil.randomSimpleString(random);
+			s = TestUtil.RandomSimpleString(random);
 		  }
 		  else
 		  {
-			s = TestUtil.randomUnicodeString(random);
+			s = TestUtil.RandomUnicodeString(random);
 		  }
 		  BytesRef br = new BytesRef(s);
 
 		  if (!allowDups)
 		  {
-			if (seen.contains(s))
+			if (seen.Contains(s))
 			{
 			  continue;
 			}
-			seen.add(s);
+			seen.Add(s);
 		  }
 
 		  if (VERBOSE)
@@ -215,45 +219,45 @@ namespace Lucene.Net.Index
 		  }
 
 		  Document doc = new Document();
-		  doc.add(new SortedDocValuesField("stringdv", br));
-		  doc.add(new NumericDocValuesField("id", numDocs));
+		  doc.Add(new SortedDocValuesField("stringdv", br));
+		  doc.Add(new NumericDocValuesField("id", numDocs));
 		  docValues.Add(br);
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  numDocs++;
 
 		  if (random.Next(40) == 17)
 		  {
 			// force flush
-			writer.Reader.close();
+			writer.Reader.Dispose();
 		  }
 		}
 
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		DirectoryReader r = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		AtomicReader sr = getOnlySegmentReader(r);
+		AtomicReader sr = GetOnlySegmentReader(r);
 
-		long END_TIME = System.currentTimeMillis() + (TEST_NIGHTLY ? 30 : 1);
+		long END_TIME = DateTime.Now.Millisecond + (TEST_NIGHTLY ? 30 : 1);
 
-		int NUM_THREADS = TestUtil.Next(random(), 1, 10);
-		Thread[] threads = new Thread[NUM_THREADS];
+		int NUM_THREADS = TestUtil.NextInt(Random(), 1, 10);
+		ThreadClass[] threads = new ThreadClass[NUM_THREADS];
 		for (int thread = 0;thread < NUM_THREADS;thread++)
 		{
 		  threads[thread] = new ThreadAnonymousInnerClassHelper2(this, random, docValues, sr, END_TIME);
 		  threads[thread].Start();
 		}
 
-		foreach (Thread thread in threads)
+		foreach (ThreadClass thread in threads)
 		{
 		  thread.Join();
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 	  {
 		  private readonly TestDocValuesWithThreads OuterInstance;
 
@@ -273,20 +277,20 @@ namespace Lucene.Net.Index
 
 		  public override void Run()
 		  {
-			Random random = random();
+			Random random = Random();
 			SortedDocValues stringDVDirect;
 			NumericDocValues docIDToID;
 			try
 			{
-			  stringDVDirect = Sr.getSortedDocValues("stringdv");
-			  docIDToID = Sr.getNumericDocValues("id");
+			  stringDVDirect = Sr.GetSortedDocValues("stringdv");
+			  docIDToID = Sr.GetNumericDocValues("id");
 			  Assert.IsNotNull(stringDVDirect);
 			}
 			catch (IOException ioe)
 			{
-			  throw new Exception(ioe);
+			  throw new Exception(ioe.Message, ioe);
 			}
-			while (System.currentTimeMillis() < END_TIME)
+			while (DateTime.Now.Millisecond < END_TIME)
 			{
 			  SortedDocValues source;
 			  source = stringDVDirect;
@@ -294,9 +298,9 @@ namespace Lucene.Net.Index
 
 			  for (int iter = 0;iter < 100;iter++)
 			  {
-				int docID = random.Next(Sr.maxDoc());
-				source.get(docID, scratch);
-				Assert.AreEqual(DocValues[(int) docIDToID.get(docID)], scratch);
+				int docID = random.Next(Sr.MaxDoc());
+				source.Get(docID, scratch);
+				Assert.AreEqual(DocValues[(int) docIDToID.Get(docID)], scratch);
 			  }
 			}
 		  }

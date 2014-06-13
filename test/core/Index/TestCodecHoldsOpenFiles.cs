@@ -29,24 +29,24 @@ namespace Lucene.Net.Index
 	{
 	  public virtual void Test()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
-		int numDocs = atLeast(100);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+		int numDocs = AtLeast(100);
 		for (int i = 0;i < numDocs;i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newField("foo", "bar", TextField.TYPE_NOT_STORED));
-		  w.addDocument(doc);
+		  doc.Add(NewField("foo", "bar", TextField.TYPE_NOT_STORED));
+		  w.AddDocument(doc);
 		}
 
 		IndexReader r = w.Reader;
-		w.close();
+        w.Close();
 
-		foreach (string fileName in d.listAll())
+		foreach (string fileName in d.ListAll())
 		{
 		  try
 		  {
-			d.deleteFile(fileName);
+			d.DeleteFile(fileName);
 		  }
 		  catch (IOException ioe)
 		  {
@@ -55,13 +55,13 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		foreach (AtomicReaderContext cxt in r.leaves())
+		foreach (AtomicReaderContext cxt in r.Leaves())
 		{
-		  TestUtil.checkReader(cxt.reader());
+		  TestUtil.CheckReader(cxt.Reader());
 		}
 
-		r.close();
-		d.close();
+		r.Dispose();
+		d.Dispose();
 	  }
 	}
 

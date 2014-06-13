@@ -50,8 +50,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestTermInfosReaderIndex : LuceneTestCase
 	{
@@ -68,59 +68,57 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// we will manually instantiate preflex-rw here </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [SetUp]
+      public static void BeforeClass()
 	  {
 		// NOTE: turn off compound file, this test will open some index files directly.
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.KEYWORD, false)).setUseCompoundFile(false);
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).setUseCompoundFile(false);
 
 		TermIndexInterval = config.TermIndexInterval;
-		IndexDivisor = TestUtil.Next(random(), 1, 10);
-		NUMBER_OF_DOCUMENTS = atLeast(100);
-		NUMBER_OF_FIELDS = atLeast(Math.Max(10, 3 * TermIndexInterval * IndexDivisor / NUMBER_OF_DOCUMENTS));
+		IndexDivisor = TestUtil.NextInt(Random(), 1, 10);
+		NUMBER_OF_DOCUMENTS = AtLeast(100);
+		NUMBER_OF_FIELDS = AtLeast(Math.Max(10, 3 * TermIndexInterval * IndexDivisor / NUMBER_OF_DOCUMENTS));
 
-		Directory = newDirectory();
+		Directory = NewDirectory();
 
-		config.Codec = new PreFlexRWCodec();
-		LogMergePolicy mp = newLogMergePolicy();
+		config.SetCodec(new PreFlexRWCodec());
+		LogMergePolicy mp = NewLogMergePolicy();
 		// NOTE: turn off compound file, this test will open some index files directly.
 		mp.NoCFSRatio = 0.0;
-		config.MergePolicy = mp;
+		config.SetMergePolicy(mp);
 
 
 		Populate(Directory, config);
 
-		DirectoryReader r0 = IndexReader.open(Directory);
-		SegmentReader r = LuceneTestCase.getOnlySegmentReader(r0);
+		DirectoryReader r0 = IndexReader.Open(Directory);
+		SegmentReader r = LuceneTestCase.GetOnlySegmentReader(r0);
 		string segment = r.SegmentName;
-		r.close();
+		r.Dispose();
 
-		FieldInfosReader infosReader = (new PreFlexRWCodec()).fieldInfosFormat().FieldInfosReader;
-		FieldInfos fieldInfos = infosReader.read(Directory, segment, "", IOContext.READONCE);
-		string segmentFileName = IndexFileNames.segmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
-		long tiiFileLength = Directory.fileLength(segmentFileName);
-		IndexInput input = Directory.openInput(segmentFileName, newIOContext(random()));
-		TermEnum = new SegmentTermEnum(Directory.openInput(IndexFileNames.segmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), newIOContext(random())), fieldInfos, false);
+		FieldInfosReader infosReader = (new PreFlexRWCodec()).FieldInfosFormat().FieldInfosReader;
+		FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READONCE);
+		string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
+		long tiiFileLength = Directory.FileLength(segmentFileName);
+		IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random()));
+		TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.segmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), newIOContext(Random())), fieldInfos, false);
 		int totalIndexInterval = TermEnum.indexInterval * IndexDivisor;
 
 		SegmentTermEnum indexEnum = new SegmentTermEnum(input, fieldInfos, true);
 		Index = new TermInfosReaderIndex(indexEnum, IndexDivisor, tiiFileLength, totalIndexInterval);
-		indexEnum.close();
-		input.close();
+        indexEnum.Dispose();
+		input.Dispose();
 
-		Reader = IndexReader.open(Directory);
-		SampleTerms = Sample(random(),Reader,1000);
+		Reader = IndexReader.Open(Directory);
+		SampleTerms = Sample(Random(),Reader,1000);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
+      [TearDown]
 	  public static void AfterClass()
 	  {
-		TermEnum.close();
-		Reader.close();
-		Directory.close();
+		TermEnum.Dispose();
+        Reader.Dispose();
+        Directory.Dispose();
 		TermEnum = null;
 		Reader = null;
 		Directory = null;
@@ -131,21 +129,21 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  public virtual void TestSeekEnum()
 	  {
 		int indexPosition = 3;
-		SegmentTermEnum clone = TermEnum.clone();
+        SegmentTermEnum clone = (SegmentTermEnum)TermEnum.Clone();
 		Term term = FindTermThatWouldBeAtIndex(clone, indexPosition);
 		SegmentTermEnum enumerator = clone;
 		Index.seekEnum(enumerator, indexPosition);
-		Assert.AreEqual(term, enumerator.term());
-		clone.close();
+		Assert.AreEqual(term, enumerator.Term());
+		clone.Dispose();
 	  }
 
 	  public virtual void TestCompareTo()
 	  {
-		Term term = new Term("field" + random().Next(NUMBER_OF_FIELDS),Text);
-		for (int i = 0; i < Index.length(); i++)
+		Term term = new Term("field" + Random().Next(NUMBER_OF_FIELDS),Text);
+		for (int i = 0; i < Index.Length(); i++)
 		{
 		  Term t = Index.getTerm(i);
-		  int compareTo = term.compareTo(t);
+		  int compareTo = term.CompareTo(t);
 		  Assert.AreEqual(compareTo, Index.compareTo(term, i));
 		}
 	  }
@@ -156,30 +154,30 @@ namespace Lucene.Net.Codecs.Lucene3x
 		foreach (Term t in SampleTerms)
 		{
 		  TermQuery query = new TermQuery(t);
-		  TopDocs topDocs = searcher.search(query, 10);
-		  Assert.IsTrue(topDocs.totalHits > 0);
+		  TopDocs topDocs = searcher.Search(query, 10);
+		  Assert.IsTrue(topDocs.TotalHits > 0);
 		}
 	  }
 
 	  private static IList<Term> Sample(Random random, IndexReader reader, int size)
 	  {
 		IList<Term> sample = new List<Term>();
-		Fields fields = MultiFields.getFields(reader);
+		Fields fields = MultiFields.GetFields(reader);
 		foreach (string field in fields)
 		{
-		  Terms terms = fields.terms(field);
+		  Terms terms = fields.Terms(field);
 		  Assert.IsNotNull(terms);
-		  TermsEnum termsEnum = terms.iterator(null);
-		  while (termsEnum.next() != null)
+		  TermsEnum termsEnum = terms.Iterator(null);
+		  while (termsEnum.Next() != null)
 		  {
 			if (sample.Count >= size)
 			{
 			  int pos = random.Next(size);
-			  sample[pos] = new Term(field, termsEnum.term());
+			  sample[pos] = new Term(field, termsEnum.Term());
 			}
 			else
 			{
-			  sample.Add(new Term(field, termsEnum.term()));
+			  sample.Add(new Term(field, termsEnum.Term()));
 			}
 		  }
 		}
@@ -193,39 +191,39 @@ namespace Lucene.Net.Codecs.Lucene3x
 		for (int i = 0; i < termPosition; i++)
 		{
 		  // TODO: this test just uses random terms, so this is always possible
-		  assumeTrue("ran out of terms", termEnum.next());
+		  AssumeTrue("ran out of terms", termEnum.Next());
 		}
-		Term term = termEnum.term();
+		Term term = termEnum.Term();
 		// An indexed term is only written when the term after
 		// it exists, so, if the number of terms is 0 mod
 		// termIndexInterval, the last index term will not be
 		// written; so we require a term after this term
 		// as well:
-		assumeTrue("ran out of terms", termEnum.next());
+		AssumeTrue("ran out of terms", termEnum.Next());
 		return term;
 	  }
 
 	  private static void Populate(Directory directory, IndexWriterConfig config)
 	  {
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, config);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, config);
 		for (int i = 0; i < NUMBER_OF_DOCUMENTS; i++)
 		{
 		  Document document = new Document();
 		  for (int f = 0; f < NUMBER_OF_FIELDS; f++)
 		  {
-			document.add(newStringField("field" + f, Text, Field.Store.NO));
+			document.Add(NewStringField("field" + f, Text, Field.Store.NO));
 		  }
-		  writer.addDocument(document);
+		  writer.AddDocument(document);
 		}
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Close();
 	  }
 
 	  private static string Text
 	  {
 		  get
 		  {
-			return Convert.ToString(random().nextLong(),char.MAX_RADIX);
+			return Convert.ToString(Random().nextLong(),Character.MAX_RADIX);
 		  }
 	  }
 	}

@@ -31,12 +31,14 @@ namespace Lucene.Net.Index
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using System.IO;
 
-
+    /*
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Store.TestHelper.isSimpleFSIndexInput;
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Store.TestHelper.isSimpleFSIndexInputOpen;
+	import static Lucene.Net.Store.TestHelper.isSimpleFSIndexInputOpen;*/
 
 	public class TestCompoundFile : LuceneTestCase
 	{
@@ -44,29 +46,29 @@ namespace Lucene.Net.Index
 
 		public override void SetUp()
 		{
-		   base.setUp();
-		   File file = createTempDir("testIndex");
+		   base.SetUp();
+		   DirectoryInfo file = CreateTempDir("testIndex");
 		   // use a simple FSDir here, to be sure to have SimpleFSInputs
 		   Dir = new SimpleFSDirectory(file,null);
 		}
 
 		public override void TearDown()
 		{
-		   Dir.close();
-		   base.tearDown();
+		   Dir.Dispose();
+		   base.TearDown();
 		}
 
 		/// <summary>
 		/// Creates a file of the specified size with random data. </summary>
 		private void CreateRandomFile(Directory dir, string name, int size)
 		{
-			IndexOutput os = dir.createOutput(name, newIOContext(random()));
+			IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
 			for (int i = 0; i < size; i++)
 			{
 				sbyte b = unchecked((sbyte)(new Random(1).NextDouble() * 256));
-				os.writeByte(b);
+				os.WriteByte(b);
 			}
-			os.close();
+			os.Dispose();
 		}
 
 		/// <summary>
@@ -76,32 +78,32 @@ namespace Lucene.Net.Index
 		/// </summary>
 		private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
 		{
-			IndexOutput os = dir.createOutput(name, newIOContext(random()));
+			IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
 			for (int i = 0; i < size; i++)
 			{
-				os.writeByte(start);
+				os.WriteByte(start);
 				start++;
 			}
-			os.close();
+			os.Dispose();
 		}
 
 
 		private void AssertSameStreams(string msg, IndexInput expected, IndexInput test)
 		{
-			Assert.IsNotNull(msg + " null expected", expected);
-			Assert.IsNotNull(msg + " null test", test);
-			Assert.AreEqual(msg + " length", expected.length(), test.length());
-			Assert.AreEqual(msg + " position", expected.FilePointer, test.FilePointer);
+			Assert.IsNotNull(expected, msg + " null expected");
+			Assert.IsNotNull(test, msg + " null test");
+			Assert.AreEqual(expected.Length(), test.Length(), msg + " length");
+			Assert.AreEqual(expected.FilePointer, test.FilePointer, msg + " position");
 
 			sbyte[] expectedBuffer = new sbyte[512];
 			sbyte[] testBuffer = new sbyte[expectedBuffer.Length];
 
-			long remainder = expected.length() - expected.FilePointer;
+			long remainder = expected.Length() - expected.FilePointer;
 			while (remainder > 0)
 			{
 				int readLen = (int) Math.Min(remainder, expectedBuffer.Length);
-				expected.readBytes(expectedBuffer, 0, readLen);
-				test.readBytes(testBuffer, 0, readLen);
+				expected.ReadBytes(expectedBuffer, 0, readLen);
+				test.ReadBytes(testBuffer, 0, readLen);
 				AssertEqualArrays(msg + ", remainder " + remainder, expectedBuffer, testBuffer, 0, readLen);
 				remainder -= readLen;
 			}
@@ -110,10 +112,10 @@ namespace Lucene.Net.Index
 
 		private void AssertSameStreams(string msg, IndexInput expected, IndexInput actual, long seekTo)
 		{
-			if (seekTo >= 0 && seekTo < expected.length())
+			if (seekTo >= 0 && seekTo < expected.Length())
 			{
-				expected.seek(seekTo);
-				actual.seek(seekTo);
+				expected.Seek(seekTo);
+				actual.Seek(seekTo);
 				AssertSameStreams(msg + ", seek(mid)", expected, actual);
 			}
 		}
@@ -127,35 +129,35 @@ namespace Lucene.Net.Index
 			AssertSameStreams(msg + ", seek(0)", expected, actual, point);
 
 			// seek to middle
-			point = expected.length() / 2l;
+			point = expected.Length() / 2l;
 			AssertSameStreams(msg + ", seek(mid)", expected, actual, point);
 
 			// seek to end - 2
-			point = expected.length() - 2;
+			point = expected.Length() - 2;
 			AssertSameStreams(msg + ", seek(end-2)", expected, actual, point);
 
 			// seek to end - 1
-			point = expected.length() - 1;
+			point = expected.Length() - 1;
 			AssertSameStreams(msg + ", seek(end-1)", expected, actual, point);
 
 			// seek to the end
-			point = expected.length();
+			point = expected.Length();
 			AssertSameStreams(msg + ", seek(end)", expected, actual, point);
 
 			// seek past end
-			point = expected.length() + 1;
+			point = expected.Length() + 1;
 			AssertSameStreams(msg + ", seek(end+1)", expected, actual, point);
 		}
 
 
 		private void AssertEqualArrays(string msg, sbyte[] expected, sbyte[] test, int start, int len)
 		{
-			Assert.IsNotNull(msg + " null expected", expected);
-			Assert.IsNotNull(msg + " null test", test);
+			Assert.IsNotNull(expected, msg + " null expected");
+			Assert.IsNotNull(test, msg + " null test");
 
 			for (int i = start; i < len; i++)
 			{
-				Assert.AreEqual(msg + " " + i, expected[i], test[i]);
+				Assert.AreEqual(expected[i], test[i], msg + " " + i);
 			}
 		}
 
@@ -176,18 +178,18 @@ namespace Lucene.Net.Index
 			{
 				string name = "t" + data[i];
 				CreateSequenceFile(Dir, name, (sbyte) 0, data[i]);
-				CompoundFileDirectory csw = new CompoundFileDirectory(Dir, name + ".cfs", newIOContext(random()), true);
-				Dir.copy(csw, name, name, newIOContext(random()));
-				csw.close();
+				CompoundFileDirectory csw = new CompoundFileDirectory(Dir, name + ".cfs", NewIOContext(Random()), true);
+				Dir.Copy(csw, name, name, NewIOContext(Random()));
+				csw.Dispose();
 
-				CompoundFileDirectory csr = new CompoundFileDirectory(Dir, name + ".cfs", newIOContext(random()), false);
-				IndexInput expected = Dir.openInput(name, newIOContext(random()));
-				IndexInput actual = csr.openInput(name, newIOContext(random()));
+				CompoundFileDirectory csr = new CompoundFileDirectory(Dir, name + ".cfs", NewIOContext(Random()), false);
+				IndexInput expected = Dir.OpenInput(name, NewIOContext(Random()));
+				IndexInput actual = csr.OpenInput(name, NewIOContext(Random()));
 				AssertSameStreams(name, expected, actual);
 				AssertSameSeekBehavior(name, expected, actual);
-				expected.close();
-				actual.close();
-				csr.close();
+				expected.Dispose();
+				actual.Dispose();
+				csr.Dispose();
 			}
 		}
 
@@ -201,26 +203,26 @@ namespace Lucene.Net.Index
 			CreateSequenceFile(Dir, "d1", (sbyte) 0, 15);
 			CreateSequenceFile(Dir, "d2", (sbyte) 0, 114);
 
-			CompoundFileDirectory csw = new CompoundFileDirectory(Dir, "d.cfs", newIOContext(random()), true);
-			Dir.copy(csw, "d1", "d1", newIOContext(random()));
-			Dir.copy(csw, "d2", "d2", newIOContext(random()));
-			csw.close();
+			CompoundFileDirectory csw = new CompoundFileDirectory(Dir, "d.cfs", NewIOContext(Random()), true);
+			Dir.Copy(csw, "d1", "d1", NewIOContext(Random()));
+			Dir.Copy(csw, "d2", "d2", NewIOContext(Random()));
+			csw.Dispose();
 
-			CompoundFileDirectory csr = new CompoundFileDirectory(Dir, "d.cfs", newIOContext(random()), false);
-			IndexInput expected = Dir.openInput("d1", newIOContext(random()));
-			IndexInput actual = csr.openInput("d1", newIOContext(random()));
+			CompoundFileDirectory csr = new CompoundFileDirectory(Dir, "d.cfs", NewIOContext(Random()), false);
+			IndexInput expected = Dir.OpenInput("d1", NewIOContext(Random()));
+			IndexInput actual = csr.OpenInput("d1", NewIOContext(Random()));
 			AssertSameStreams("d1", expected, actual);
 			AssertSameSeekBehavior("d1", expected, actual);
-			expected.close();
-			actual.close();
+			expected.Dispose();
+			actual.Dispose();
 
-			expected = Dir.openInput("d2", newIOContext(random()));
-			actual = csr.openInput("d2", newIOContext(random()));
+			expected = Dir.OpenInput("d2", NewIOContext(Random()));
+			actual = csr.OpenInput("d2", NewIOContext(Random()));
 			AssertSameStreams("d2", expected, actual);
 			AssertSameSeekBehavior("d2", expected, actual);
-			expected.close();
-			actual.close();
-			csr.close();
+			expected.Dispose();
+			actual.Dispose();
+			csr.Dispose();
 		}
 
 		/// <summary>
@@ -253,26 +255,26 @@ namespace Lucene.Net.Index
 			CreateRandomFile(Dir, segment + ".notIn2", 51);
 
 			// Now test
-			CompoundFileDirectory csw = new CompoundFileDirectory(Dir, "test.cfs", newIOContext(random()), true);
+			CompoundFileDirectory csw = new CompoundFileDirectory(Dir, "test.cfs", NewIOContext(Random()), true);
 			string[] data = new string[] {".zero", ".one", ".ten", ".hundred", ".big1", ".big2", ".big3", ".big4", ".big5", ".big6", ".big7"};
 			for (int i = 0; i < data.Length; i++)
 			{
 				string fileName = segment + data[i];
-				Dir.copy(csw, fileName, fileName, newIOContext(random()));
+				Dir.Copy(csw, fileName, fileName, NewIOContext(Random()));
 			}
-			csw.close();
+			csw.Dispose();
 
-			CompoundFileDirectory csr = new CompoundFileDirectory(Dir, "test.cfs", newIOContext(random()), false);
+			CompoundFileDirectory csr = new CompoundFileDirectory(Dir, "test.cfs", NewIOContext(Random()), false);
 			for (int i = 0; i < data.Length; i++)
 			{
-				IndexInput check = Dir.openInput(segment + data[i], newIOContext(random()));
-				IndexInput test = csr.openInput(segment + data[i], newIOContext(random()));
+				IndexInput check = Dir.OpenInput(segment + data[i], NewIOContext(Random()));
+				IndexInput test = csr.OpenInput(segment + data[i], NewIOContext(Random()));
 				AssertSameStreams(data[i], check, test);
 				AssertSameSeekBehavior(data[i], check, test);
-				test.close();
-				check.close();
+				test.Dispose();
+				check.Dispose();
 			}
-			csr.close();
+			csr.Dispose();
 		}
 
 
@@ -284,14 +286,14 @@ namespace Lucene.Net.Index
 		/// </summary>
 		private void SetUp_2()
 		{
-			CompoundFileDirectory cw = new CompoundFileDirectory(Dir, "f.comp", newIOContext(random()), true);
+			CompoundFileDirectory cw = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), true);
 			for (int i = 0; i < 20; i++)
 			{
 				CreateSequenceFile(Dir, "f" + i, (sbyte) 0, 2000);
 				string fileName = "f" + i;
-				Dir.copy(cw, fileName, fileName, newIOContext(random()));
+				Dir.Copy(cw, fileName, fileName, NewIOContext(Random()));
 			}
-			cw.close();
+			cw.Dispose();
 		}
 
 
@@ -303,33 +305,33 @@ namespace Lucene.Net.Index
 		private void Demo_FSIndexInputBug(Directory fsdir, string file)
 		{
 			// Setup the test file - we need more than 1024 bytes
-			IndexOutput os = fsdir.createOutput(file, IOContext.DEFAULT);
+			IndexOutput os = fsdir.CreateOutput(file, IOContext.DEFAULT);
 			for (int i = 0; i < 2000; i++)
 			{
-				os.writeByte((sbyte) i);
+				os.WriteByte((sbyte) i);
 			}
-			os.close();
+			os.Dispose();
 
-			IndexInput @in = fsdir.openInput(file, IOContext.DEFAULT);
+			IndexInput @in = fsdir.OpenInput(file, IOContext.DEFAULT);
 
 			// this read primes the buffer in IndexInput
-			@in.readByte();
+			@in.ReadByte();
 
 			// Close the file
-			@in.close();
+			@in.Dispose();
 
 			// ERROR: this call should fail, but succeeds because the buffer
 			// is still filled
-			@in.readByte();
+			@in.ReadByte();
 
 			// ERROR: this call should fail, but succeeds for some reason as well
-			@in.seek(1099);
+			@in.Seek(1099);
 
 			try
 			{
 				// OK: this call correctly fails. We are now past the 1024 internal
 				// buffer, so an actual IO is attempted, which fails
-				@in.readByte();
+				@in.ReadByte();
 				Assert.Fail("expected readByte() to throw exception");
 			}
 			catch (IOException e)
@@ -341,50 +343,50 @@ namespace Lucene.Net.Index
 		public virtual void TestClonedStreamsClosing()
 		{
 			SetUp_2();
-			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", newIOContext(random()), false);
+			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
 
 			// basic clone
-			IndexInput expected = Dir.openInput("f11", newIOContext(random()));
+			IndexInput expected = Dir.OpenInput("f11", NewIOContext(Random()));
 
 			// this test only works for FSIndexInput
 			Assert.IsTrue(isSimpleFSIndexInput(expected));
 			Assert.IsTrue(isSimpleFSIndexInputOpen(expected));
 
-			IndexInput one = cr.openInput("f11", newIOContext(random()));
+			IndexInput one = cr.OpenInput("f11", NewIOContext(Random()));
 
-			IndexInput two = one.clone();
+            IndexInput two = (IndexInput)one.Clone();
 
 			AssertSameStreams("basic clone one", expected, one);
-			expected.seek(0);
+			expected.Seek(0);
 			AssertSameStreams("basic clone two", expected, two);
 
 			// Now close the first stream
-			one.close();
+			one.Dispose();
 
 			// The following should really fail since we couldn't expect to
 			// access a file once close has been called on it (regardless of
 			// buffering and/or clone magic)
-			expected.seek(0);
-			two.seek(0);
+			expected.Seek(0);
+			two.Seek(0);
 			AssertSameStreams("basic clone two/2", expected, two);
 
 
 			// Now close the compound reader
-			cr.close();
+			cr.Dispose();
 
 			// The following may also fail since the compound stream is closed
-			expected.seek(0);
-			two.seek(0);
+			expected.Seek(0);
+			two.Seek(0);
 			//assertSameStreams("basic clone two/3", expected, two);
 
 
 			// Now close the second clone
-			two.close();
-			expected.seek(0);
-			two.seek(0);
+			two.Dispose();
+			expected.Seek(0);
+			two.Seek(0);
 			//assertSameStreams("basic clone two/4", expected, two);
 
-			expected.close();
+			expected.Dispose();
 		}
 
 
@@ -395,78 +397,78 @@ namespace Lucene.Net.Index
 		public virtual void TestRandomAccess()
 		{
 			SetUp_2();
-			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", newIOContext(random()), false);
+			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
 
 			// Open two files
-			IndexInput e1 = Dir.openInput("f11", newIOContext(random()));
-			IndexInput e2 = Dir.openInput("f3", newIOContext(random()));
+			IndexInput e1 = Dir.OpenInput("f11", NewIOContext(Random()));
+			IndexInput e2 = Dir.OpenInput("f3", NewIOContext(Random()));
 
-			IndexInput a1 = cr.openInput("f11", newIOContext(random()));
-			IndexInput a2 = Dir.openInput("f3", newIOContext(random()));
+			IndexInput a1 = cr.OpenInput("f11", NewIOContext(Random()));
+			IndexInput a2 = Dir.OpenInput("f3", NewIOContext(Random()));
 
 			// Seek the first pair
-			e1.seek(100);
-			a1.seek(100);
+			e1.Seek(100);
+			a1.Seek(100);
 			Assert.AreEqual(100, e1.FilePointer);
 			Assert.AreEqual(100, a1.FilePointer);
-			sbyte be1 = e1.readByte();
-			sbyte ba1 = a1.readByte();
+			byte be1 = e1.ReadByte();
+			byte ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
 			// Now seek the second pair
-			e2.seek(1027);
-			a2.seek(1027);
+			e2.Seek(1027);
+			a2.Seek(1027);
 			Assert.AreEqual(1027, e2.FilePointer);
 			Assert.AreEqual(1027, a2.FilePointer);
-			sbyte be2 = e2.readByte();
-			sbyte ba2 = a2.readByte();
+			byte be2 = e2.ReadByte();
+			byte ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 
 			// Now make sure the first one didn't move
 			Assert.AreEqual(101, e1.FilePointer);
 			Assert.AreEqual(101, a1.FilePointer);
-			be1 = e1.readByte();
-			ba1 = a1.readByte();
+			be1 = e1.ReadByte();
+			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
 			// Now more the first one again, past the buffer length
-			e1.seek(1910);
-			a1.seek(1910);
+			e1.Seek(1910);
+			a1.Seek(1910);
 			Assert.AreEqual(1910, e1.FilePointer);
 			Assert.AreEqual(1910, a1.FilePointer);
-			be1 = e1.readByte();
-			ba1 = a1.readByte();
+			be1 = e1.ReadByte();
+			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
 			// Now make sure the second set didn't move
 			Assert.AreEqual(1028, e2.FilePointer);
 			Assert.AreEqual(1028, a2.FilePointer);
-			be2 = e2.readByte();
-			ba2 = a2.readByte();
+			be2 = e2.ReadByte();
+			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 
 			// Move the second set back, again cross the buffer size
-			e2.seek(17);
-			a2.seek(17);
+			e2.Seek(17);
+			a2.Seek(17);
 			Assert.AreEqual(17, e2.FilePointer);
 			Assert.AreEqual(17, a2.FilePointer);
-			be2 = e2.readByte();
-			ba2 = a2.readByte();
+			be2 = e2.ReadByte();
+			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 
 			// Finally, make sure the first set didn't move
 			// Now make sure the first one didn't move
 			Assert.AreEqual(1911, e1.FilePointer);
 			Assert.AreEqual(1911, a1.FilePointer);
-			be1 = e1.readByte();
-			ba1 = a1.readByte();
+			be1 = e1.ReadByte();
+			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
-			e1.close();
-			e2.close();
-			a1.close();
-			a2.close();
-			cr.close();
+			e1.Dispose();
+			e2.Dispose();
+			a1.Dispose();
+			a2.Dispose();
+			cr.Dispose();
 		}
 
 		/// <summary>
@@ -476,90 +478,90 @@ namespace Lucene.Net.Index
 		public virtual void TestRandomAccessClones()
 		{
 			SetUp_2();
-			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", newIOContext(random()), false);
+			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
 
 			// Open two files
-			IndexInput e1 = cr.openInput("f11", newIOContext(random()));
-			IndexInput e2 = cr.openInput("f3", newIOContext(random()));
+			IndexInput e1 = cr.OpenInput("f11", NewIOContext(Random()));
+			IndexInput e2 = cr.OpenInput("f3", NewIOContext(Random()));
 
-			IndexInput a1 = e1.clone();
-			IndexInput a2 = e2.clone();
+            IndexInput a1 = (IndexInput)e1.Clone();
+            IndexInput a2 = (IndexInput)e2.Clone();
 
 			// Seek the first pair
-			e1.seek(100);
-			a1.seek(100);
+			e1.Seek(100);
+			a1.Seek(100);
 			Assert.AreEqual(100, e1.FilePointer);
 			Assert.AreEqual(100, a1.FilePointer);
-			sbyte be1 = e1.readByte();
-			sbyte ba1 = a1.readByte();
+			byte be1 = e1.ReadByte();
+			byte ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
 			// Now seek the second pair
-			e2.seek(1027);
-			a2.seek(1027);
+			e2.Seek(1027);
+			a2.Seek(1027);
 			Assert.AreEqual(1027, e2.FilePointer);
 			Assert.AreEqual(1027, a2.FilePointer);
-			sbyte be2 = e2.readByte();
-			sbyte ba2 = a2.readByte();
+			byte be2 = e2.ReadByte();
+			byte ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 
 			// Now make sure the first one didn't move
 			Assert.AreEqual(101, e1.FilePointer);
 			Assert.AreEqual(101, a1.FilePointer);
-			be1 = e1.readByte();
-			ba1 = a1.readByte();
+			be1 = e1.ReadByte();
+			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
 			// Now more the first one again, past the buffer length
-			e1.seek(1910);
-			a1.seek(1910);
+			e1.Seek(1910);
+			a1.Seek(1910);
 			Assert.AreEqual(1910, e1.FilePointer);
 			Assert.AreEqual(1910, a1.FilePointer);
-			be1 = e1.readByte();
-			ba1 = a1.readByte();
+			be1 = e1.ReadByte();
+			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
 			// Now make sure the second set didn't move
 			Assert.AreEqual(1028, e2.FilePointer);
 			Assert.AreEqual(1028, a2.FilePointer);
-			be2 = e2.readByte();
-			ba2 = a2.readByte();
+			be2 = e2.ReadByte();
+			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 
 			// Move the second set back, again cross the buffer size
-			e2.seek(17);
-			a2.seek(17);
+			e2.Seek(17);
+			a2.Seek(17);
 			Assert.AreEqual(17, e2.FilePointer);
 			Assert.AreEqual(17, a2.FilePointer);
-			be2 = e2.readByte();
-			ba2 = a2.readByte();
+			be2 = e2.ReadByte();
+			ba2 = a2.ReadByte();
 			Assert.AreEqual(be2, ba2);
 
 			// Finally, make sure the first set didn't move
 			// Now make sure the first one didn't move
 			Assert.AreEqual(1911, e1.FilePointer);
 			Assert.AreEqual(1911, a1.FilePointer);
-			be1 = e1.readByte();
-			ba1 = a1.readByte();
+			be1 = e1.ReadByte();
+			ba1 = a1.ReadByte();
 			Assert.AreEqual(be1, ba1);
 
-			e1.close();
-			e2.close();
-			a1.close();
-			a2.close();
-			cr.close();
+			e1.Dispose();
+			e2.Dispose();
+			a1.Dispose();
+			a2.Dispose();
+			cr.Dispose();
 		}
 
 
 		public virtual void TestFileNotFound()
 		{
 			SetUp_2();
-			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", newIOContext(random()), false);
+			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
 
 			// Open two files
 			try
 			{
-				cr.openInput("bogus", newIOContext(random()));
+				cr.OpenInput("bogus", NewIOContext(Random()));
 				Assert.Fail("File not found");
 
 			}
@@ -569,22 +571,22 @@ namespace Lucene.Net.Index
 				//System.out.println("SUCCESS: File Not Found: " + e);
 			}
 
-			cr.close();
+			cr.Dispose();
 		}
 
 
 		public virtual void TestReadPastEOF()
 		{
 			SetUp_2();
-			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", newIOContext(random()), false);
-			IndexInput @is = cr.openInput("f2", newIOContext(random()));
-			@is.seek(@is.length() - 10);
+			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
+			IndexInput @is = cr.OpenInput("f2", NewIOContext(Random()));
+			@is.Seek(@is.Length() - 10);
 			sbyte[] b = new sbyte[100];
-			@is.readBytes(b, 0, 10);
+			@is.ReadBytes(b, 0, 10);
 
 			try
 			{
-				@is.readByte();
+				@is.ReadByte();
 				Assert.Fail("Single byte read past end of file");
 			}
 			catch (IOException e)
@@ -593,10 +595,10 @@ namespace Lucene.Net.Index
 				//System.out.println("SUCCESS: single byte read past end of file: " + e);
 			}
 
-			@is.seek(@is.length() - 10);
+			@is.Seek(@is.Length() - 10);
 			try
 			{
-				@is.readBytes(b, 0, 50);
+				@is.ReadBytes(b, 0, 50);
 				Assert.Fail("Block read past end of file");
 			}
 			catch (IOException e)
@@ -605,8 +607,8 @@ namespace Lucene.Net.Index
 				//System.out.println("SUCCESS: block read past end of file: " + e);
 			}
 
-			@is.close();
-			cr.close();
+			@is.Dispose();
+			cr.Dispose();
 		}
 
 		/// <summary>
@@ -615,7 +617,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public virtual void TestLargeWrites()
 		{
-			IndexOutput os = Dir.createOutput("testBufferStart.txt", newIOContext(random()));
+			IndexOutput os = Dir.CreateOutput("testBufferStart.txt", NewIOContext(Random()));
 
 			sbyte[] largeBuf = new sbyte[2048];
 			for (int i = 0; i < largeBuf.Length; i++)
@@ -624,7 +626,7 @@ namespace Lucene.Net.Index
 			}
 
 			long currentPos = os.FilePointer;
-			os.writeBytes(largeBuf, largeBuf.Length);
+			os.WriteBytes(largeBuf, largeBuf.Length);
 
 			try
 			{
@@ -632,7 +634,7 @@ namespace Lucene.Net.Index
 			}
 			finally
 			{
-				os.close();
+				os.Dispose();
 			}
 
 		}
@@ -641,160 +643,160 @@ namespace Lucene.Net.Index
 	   {
 		   CreateSequenceFile(Dir, "d1", (sbyte) 0, 15);
 
-		   Directory newDir = newDirectory();
-		   CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
-		   Dir.copy(csw, "d1", "d1", newIOContext(random()));
-		   csw.close();
+		   Directory newDir = NewDirectory();
+		   CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+		   Dir.Copy(csw, "d1", "d1", NewIOContext(Random()));
+		   csw.Dispose();
 
-		   CompoundFileDirectory csr = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
-		   IndexInput expected = Dir.openInput("d1", newIOContext(random()));
-		   IndexInput actual = csr.openInput("d1", newIOContext(random()));
+		   CompoundFileDirectory csr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+		   IndexInput expected = Dir.OpenInput("d1", NewIOContext(Random()));
+		   IndexInput actual = csr.OpenInput("d1", NewIOContext(Random()));
 		   AssertSameStreams("d1", expected, actual);
 		   AssertSameSeekBehavior("d1", expected, actual);
-		   expected.close();
-		   actual.close();
-		   csr.close();
+		   expected.Dispose();
+		   actual.Dispose();
+		   csr.Dispose();
 
-		   newDir.close();
+		   newDir.Dispose();
 	   }
 
 
 	  public virtual void TestAppend()
 	  {
-		Directory newDir = newDirectory();
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
-		int size = 5 + random().Next(128);
+		Directory newDir = NewDirectory();
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+		int size = 5 + Random().Next(128);
 		for (int j = 0; j < 2; j++)
 		{
-		  IndexOutput os = csw.createOutput("seg_" + j + "_foo.txt", newIOContext(random()));
+		  IndexOutput os = csw.CreateOutput("seg_" + j + "_foo.txt", NewIOContext(Random()));
 		  for (int i = 0; i < size; i++)
 		  {
-			os.writeInt(i * j);
+			os.WriteInt(i * j);
 		  }
-		  os.close();
-		  string[] listAll = newDir.listAll();
+		  os.Dispose();
+		  string[] listAll = newDir.ListAll();
 		  Assert.AreEqual(1, listAll.Length);
 		  Assert.AreEqual("d.cfs", listAll[0]);
 		}
 		CreateSequenceFile(Dir, "d1", (sbyte) 0, 15);
-		Dir.copy(csw, "d1", "d1", newIOContext(random()));
-		string[] listAll = newDir.listAll();
-		Assert.AreEqual(1, listAll.Length);
-		Assert.AreEqual("d.cfs", listAll[0]);
-		csw.close();
-		CompoundFileDirectory csr = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
+		Dir.Copy(csw, "d1", "d1", NewIOContext(Random()));
+		string[] listAll_ = newDir.ListAll();
+		Assert.AreEqual(1, listAll_.Length);
+		Assert.AreEqual("d.cfs", listAll_[0]);
+		csw.Dispose();
+		CompoundFileDirectory csr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
 		for (int j = 0; j < 2; j++)
 		{
-		  IndexInput openInput = csr.openInput("seg_" + j + "_foo.txt", newIOContext(random()));
-		  Assert.AreEqual(size * 4, openInput.length());
+		  IndexInput openInput = csr.OpenInput("seg_" + j + "_foo.txt", NewIOContext(Random()));
+		  Assert.AreEqual(size * 4, openInput.Length());
 		  for (int i = 0; i < size; i++)
 		  {
-			Assert.AreEqual(i * j, openInput.readInt());
+			Assert.AreEqual(i * j, openInput.ReadInt());
 		  }
 
-		  openInput.close();
+		  openInput.Dispose();
 
 		}
-		IndexInput expected = Dir.openInput("d1", newIOContext(random()));
-		IndexInput actual = csr.openInput("d1", newIOContext(random()));
+		IndexInput expected = Dir.OpenInput("d1", NewIOContext(Random()));
+		IndexInput actual = csr.OpenInput("d1", NewIOContext(Random()));
 		AssertSameStreams("d1", expected, actual);
 		AssertSameSeekBehavior("d1", expected, actual);
-		expected.close();
-		actual.close();
-		csr.close();
-		newDir.close();
+		expected.Dispose();
+		actual.Dispose();
+		csr.Dispose();
+		newDir.Dispose();
 	  }
 
 	  public virtual void TestAppendTwice()
 	  {
-		Directory newDir = newDirectory();
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
+		Directory newDir = NewDirectory();
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
 		CreateSequenceFile(newDir, "d1", (sbyte) 0, 15);
-		IndexOutput @out = csw.createOutput("d.xyz", newIOContext(random()));
-		@out.writeInt(0);
-		@out.close();
-		Assert.AreEqual(1, csw.listAll().length);
-		Assert.AreEqual("d.xyz", csw.listAll()[0]);
+		IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
+		@out.WriteInt(0);
+		@out.Dispose();
+		Assert.AreEqual(1, csw.ListAll().Length);
+		Assert.AreEqual("d.xyz", csw.ListAll()[0]);
 
-		csw.close();
+		csw.Dispose();
 
-		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
-		Assert.AreEqual(1, cfr.listAll().length);
-		Assert.AreEqual("d.xyz", cfr.listAll()[0]);
-		cfr.close();
-		newDir.close();
+		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+		Assert.AreEqual(1, cfr.ListAll().Length);
+		Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
+		cfr.Dispose();
+		newDir.Dispose();
 	  }
 
 	  public virtual void TestEmptyCFS()
 	  {
-		Directory newDir = newDirectory();
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
-		csw.close();
+		Directory newDir = NewDirectory();
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+		csw.Dispose();
 
-		CompoundFileDirectory csr = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
-		Assert.AreEqual(0, csr.listAll().length);
-		csr.close();
+		CompoundFileDirectory csr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+		Assert.AreEqual(0, csr.ListAll().Length);
+		csr.Dispose();
 
-		newDir.close();
+		newDir.Dispose();
 	  }
 
 	  public virtual void TestReadNestedCFP()
 	  {
-		Directory newDir = newDirectory();
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
-		CompoundFileDirectory nested = new CompoundFileDirectory(newDir, "b.cfs", newIOContext(random()), true);
-		IndexOutput @out = nested.createOutput("b.xyz", newIOContext(random()));
-		IndexOutput out1 = nested.createOutput("b_1.xyz", newIOContext(random()));
-		@out.writeInt(0);
-		out1.writeInt(1);
-		@out.close();
-		out1.close();
-		nested.close();
-		newDir.copy(csw, "b.cfs", "b.cfs", newIOContext(random()));
-		newDir.copy(csw, "b.cfe", "b.cfe", newIOContext(random()));
-		newDir.deleteFile("b.cfs");
-		newDir.deleteFile("b.cfe");
-		csw.close();
+		Directory newDir = NewDirectory();
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+		CompoundFileDirectory nested = new CompoundFileDirectory(newDir, "b.cfs", NewIOContext(Random()), true);
+		IndexOutput @out = nested.CreateOutput("b.xyz", NewIOContext(Random()));
+		IndexOutput out1 = nested.CreateOutput("b_1.xyz", NewIOContext(Random()));
+		@out.WriteInt(0);
+		out1.WriteInt(1);
+		@out.Dispose();
+		out1.Dispose();
+		nested.Dispose();
+		newDir.Copy(csw, "b.cfs", "b.cfs", NewIOContext(Random()));
+		newDir.Copy(csw, "b.cfe", "b.cfe", NewIOContext(Random()));
+		newDir.DeleteFile("b.cfs");
+		newDir.DeleteFile("b.cfe");
+		csw.Dispose();
 
-		Assert.AreEqual(2, newDir.listAll().length);
-		csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
+		Assert.AreEqual(2, newDir.ListAll().Length);
+		csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
 
-		Assert.AreEqual(2, csw.listAll().length);
-		nested = new CompoundFileDirectory(csw, "b.cfs", newIOContext(random()), false);
+		Assert.AreEqual(2, csw.ListAll().Length);
+		nested = new CompoundFileDirectory(csw, "b.cfs", NewIOContext(Random()), false);
 
-		Assert.AreEqual(2, nested.listAll().length);
-		IndexInput openInput = nested.openInput("b.xyz", newIOContext(random()));
-		Assert.AreEqual(0, openInput.readInt());
-		openInput.close();
-		openInput = nested.openInput("b_1.xyz", newIOContext(random()));
-		Assert.AreEqual(1, openInput.readInt());
-		openInput.close();
-		nested.close();
-		csw.close();
-		newDir.close();
+		Assert.AreEqual(2, nested.ListAll().Length);
+		IndexInput openInput = nested.OpenInput("b.xyz", NewIOContext(Random()));
+		Assert.AreEqual(0, openInput.ReadInt());
+		openInput.Dispose();
+		openInput = nested.OpenInput("b_1.xyz", NewIOContext(Random()));
+		Assert.AreEqual(1, openInput.ReadInt());
+		openInput.Dispose();
+		nested.Dispose();
+		csw.Dispose();
+		newDir.Dispose();
 	  }
 
 	  public virtual void TestDoubleClose()
 	  {
-		Directory newDir = newDirectory();
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
-		IndexOutput @out = csw.createOutput("d.xyz", newIOContext(random()));
-		@out.writeInt(0);
-		@out.close();
+		Directory newDir = NewDirectory();
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+		IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
+		@out.WriteInt(0);
+		@out.Dispose();
 
-		csw.close();
+		csw.Dispose();
 		// close a second time - must have no effect according to IDisposable
-		csw.close();
+		csw.Dispose();
 
-		csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
-		IndexInput openInput = csw.openInput("d.xyz", newIOContext(random()));
-		Assert.AreEqual(0, openInput.readInt());
-		openInput.close();
-		csw.close();
+		csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+		IndexInput openInput = csw.OpenInput("d.xyz", NewIOContext(Random()));
+		Assert.AreEqual(0, openInput.ReadInt());
+		openInput.Dispose();
+		csw.Dispose();
 		// close a second time - must have no effect according to IDisposable
-		csw.close();
+		csw.Dispose();
 
-		newDir.close();
+		newDir.Dispose();
 
 	  }
 
@@ -803,86 +805,86 @@ namespace Lucene.Net.Index
 	  public virtual void TestManySubFiles()
 	  {
 
-		Directory d = newFSDirectory(createTempDir("CFSManySubFiles"));
-		int FILE_COUNT = atLeast(500);
+		Directory d = NewFSDirectory(CreateTempDir("CFSManySubFiles"));
+		int FILE_COUNT = AtLeast(500);
 
 		for (int fileIdx = 0;fileIdx < FILE_COUNT;fileIdx++)
 		{
-		  IndexOutput @out = d.createOutput("file." + fileIdx, newIOContext(random()));
-		  @out.writeByte((sbyte) fileIdx);
-		  @out.close();
+		  IndexOutput @out = d.CreateOutput("file." + fileIdx, NewIOContext(Random()));
+		  @out.WriteByte((sbyte) fileIdx);
+		  @out.Dispose();
 		}
 
-		CompoundFileDirectory cfd = new CompoundFileDirectory(d, "c.cfs", newIOContext(random()), true);
+		CompoundFileDirectory cfd = new CompoundFileDirectory(d, "c.cfs", NewIOContext(Random()), true);
 		for (int fileIdx = 0;fileIdx < FILE_COUNT;fileIdx++)
 		{
 		  string fileName = "file." + fileIdx;
-		  d.copy(cfd, fileName, fileName, newIOContext(random()));
+		  d.Copy(cfd, fileName, fileName, NewIOContext(Random()));
 		}
-		cfd.close();
+		cfd.Dispose();
 
 		IndexInput[] ins = new IndexInput[FILE_COUNT];
-		CompoundFileDirectory cfr = new CompoundFileDirectory(d, "c.cfs", newIOContext(random()), false);
+		CompoundFileDirectory cfr = new CompoundFileDirectory(d, "c.cfs", NewIOContext(Random()), false);
 		for (int fileIdx = 0;fileIdx < FILE_COUNT;fileIdx++)
 		{
-		  ins[fileIdx] = cfr.openInput("file." + fileIdx, newIOContext(random()));
+		  ins[fileIdx] = cfr.OpenInput("file." + fileIdx, NewIOContext(Random()));
 		}
 
 		for (int fileIdx = 0;fileIdx < FILE_COUNT;fileIdx++)
 		{
-		  Assert.AreEqual((sbyte) fileIdx, ins[fileIdx].readByte());
+		  Assert.AreEqual((sbyte) fileIdx, ins[fileIdx].ReadByte());
 		}
 
 		for (int fileIdx = 0;fileIdx < FILE_COUNT;fileIdx++)
 		{
-		  ins[fileIdx].close();
+		  ins[fileIdx].Dispose();
 		}
-		cfr.close();
-		d.close();
+		cfr.Dispose();
+		d.Dispose();
 	  }
 
 	  public virtual void TestListAll()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		// riw should sometimes create docvalues fields, etc
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir);
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		// these fields should sometimes get term vectors, etc
-		Field idField = newStringField("id", "", Field.Store.NO);
-		Field bodyField = newTextField("body", "", Field.Store.NO);
-		doc.add(idField);
-		doc.add(bodyField);
+		Field idField = NewStringField("id", "", Field.Store.NO);
+		Field bodyField = NewTextField("body", "", Field.Store.NO);
+		doc.Add(idField);
+		doc.Add(bodyField);
 		for (int i = 0; i < 100; i++)
 		{
 		  idField.StringValue = Convert.ToString(i);
-		  bodyField.StringValue = TestUtil.randomUnicodeString(random());
-		  riw.addDocument(doc);
-		  if (random().Next(7) == 0)
+		  bodyField.StringValue = TestUtil.RandomUnicodeString(Random());
+		  riw.AddDocument(doc);
+		  if (Random().Next(7) == 0)
 		  {
-			riw.commit();
+			riw.Commit();
 		  }
 		}
-		riw.close();
+		riw.Close();
 		CheckFiles(dir);
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  // checks that we can open all files returned by listAll!
 	  private void CheckFiles(Directory dir)
 	  {
-		foreach (string file in dir.listAll())
+		foreach (string file in dir.ListAll())
 		{
 		  if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION))
 		  {
-			CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, newIOContext(random()), false);
+			CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random()), false);
 			CheckFiles(cfsDir); // recurse into cfs
-			cfsDir.close();
+			cfsDir.Dispose();
 		  }
 		  IndexInput @in = null;
 		  bool success = false;
 		  try
 		  {
-			@in = dir.openInput(file, newIOContext(random()));
+			@in = dir.OpenInput(file, NewIOContext(Random()));
 			success = true;
 		  }
 		  finally

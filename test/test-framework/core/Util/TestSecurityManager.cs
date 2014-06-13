@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
 			  this.Status = status;
 		  }
 
-		  public override Void Run()
+		  public override void Run()
 		  {
 			const string systemClassName = typeof(System).Name, runtimeClassName = typeof(Runtime).Name;
 			string exitMethodHit = null;

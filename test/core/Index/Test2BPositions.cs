@@ -35,9 +35,9 @@ namespace Lucene.Net.Index
 	using TimeUnits = Lucene.Net.Util.TimeUnits;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-	using Ignore = org.junit.Ignore;
+	/*using Ignore = org.junit.Ignore;
 
-	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
+	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
 
 	/// <summary>
 	/// Test indexes ~82M docs with 52 positions each, so you get > Integer.MAX_VALUE positions
@@ -52,14 +52,14 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
 		public virtual void Test()
 		{
-		BaseDirectoryWrapper dir = newFSDirectory(createTempDir("2BPositions"));
+		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));
 		if (dir is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))
-	   .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).setRAMBufferSizeMB(256.0).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(false, 10)).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
 		MergePolicy mp = w.Config.MergePolicy;
 		if (mp is LogByteSizeMergePolicy)
@@ -72,26 +72,26 @@ namespace Lucene.Net.Index
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.OmitNorms = true;
 		Field field = new Field("field", new MyTokenStream(), ft);
-		doc.add(field);
+		doc.Add(field);
 
 		int numDocs = (int.MaxValue / 26) + 1;
 		for (int i = 0; i < numDocs; i++)
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  if (VERBOSE && i % 100000 == 0)
 		  {
 			Console.WriteLine(i + " of " + numDocs + "...");
 		  }
 		}
-		w.forceMerge(1);
-		w.close();
-		dir.close();
+		w.ForceMerge(1);
+		w.Dispose();
+		dir.Dispose();
 		}
 
 	  public sealed class MyTokenStream : TokenStream
 	  {
-		internal readonly CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
-		internal readonly PositionIncrementAttribute PosIncAtt = addAttribute(typeof(PositionIncrementAttribute));
+		internal readonly CharTermAttribute TermAtt = AddAttribute<CharTermAttribute>();
+		internal readonly PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute>();
 		internal int Index;
 
 		public override bool IncrementToken()
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 		  {
 			ClearAttributes();
 			TermAtt.Length = 1;
-			TermAtt.buffer()[0] = 'a';
+			TermAtt.Buffer()[0] = 'a';
 			PosIncAtt.PositionIncrement = 1 + Index;
 			Index++;
 			return true;

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Randomized;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Util
 {
@@ -99,7 +100,6 @@ namespace Lucene.Net.Util
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using Lucene.Net.TestFramework.Support;
-using System.IO;
 
 
 
@@ -189,8 +189,6 @@ using System.IO;
 	///   <seealso cref="RandomizedContext#getRunnerSeedAsString()"/>.</li>
 	/// </ul>
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @RunWith(RandomizedRunner.class) @TestMethodProviders({ LuceneJUnit3MethodProvider.class, JUnit4MethodProvider.class }) @Listeners({ RunListenerPrintReproduceInfo.class, FailureMarker.class }) @SeedDecorators({MixWithSuiteName.class}) @ThreadLeakScope(Scope.SUITE) @ThreadLeakGroup(Group.MAIN) @ThreadLeakAction({Action.WARN, Action.INTERRUPT}) @ThreadLeakLingering(linger = 20000) @ThreadLeakZombies(Consequence.IGNORE_REMAINING_TESTS) @TimeoutSuite(millis = 2 * TimeUnits.HOUR) @ThreadLeakFilters(defaultFilters = true, filters = { QuickPatchThreadsFilter.class }) public abstract class LuceneTestCase : org.junit.Assert
 	[TestFixture]
     public abstract class LuceneTestCase : Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
 	{
@@ -541,7 +539,6 @@ using System.IO;
 	  /// </summary>
 	  public TestRule RuleChain = RuleChain.outerRule(TestFailureMarker).around(IgnoreAfterMaxFailures).around(ThreadAndTestNameRule).around(new SystemPropertiesInvariantRule(IGNORED_INVARIANT_PROPERTIES)).around(new TestRuleSetupAndRestoreInstanceEnv()).around(new TestRuleFieldCacheSanity()).around(ParentChainCallRule);
         */
- /* LUCENE TO-DO: Not sure how to convert these
 
 	  // -----------------------------------------------------------------
 	  // Suite and test case setup/ cleanup.
@@ -552,7 +549,9 @@ using System.IO;
 	  /// </summary>
 	  public void SetUp()
 	  {
+        /* LUCENE TO-DO: Not sure how to convert these
 		ParentChainCallRule.SetupCalled = true;
+        */
 	  }
 
 	  /// <summary>
@@ -560,9 +559,10 @@ using System.IO;
 	  /// </summary>
 	  public void TearDown()
 	  {
+        /* LUCENE TO-DO: Not sure how to convert these
 		ParentChainCallRule.TeardownCalled = true;
+        */
 	  }
-  */
 
 	  // -----------------------------------------------------------------
 	  // Test facilities and facades for subclasses. 
@@ -610,7 +610,7 @@ using System.IO;
 	  /// <returns> <code>resource</code> (for call chaining). </returns>
 	  public static T CloseAfterSuite<T>(T resource)
 	  {
-		return RandomizedContext.Current.closeAtEnd(resource, LifecycleScope.SUITE);
+		return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.SUITE);
 	  }
 
         /* LUCENE TO-DO: follow from above
@@ -651,7 +651,7 @@ using System.IO;
 	  /// Returns true if and only if the calling thread is the primary thread 
 	  /// executing the test case. 
 	  /// </summary>
-	  protected bool TestThread
+	  protected bool TestThread()
 	  {
 		Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
 		return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;
@@ -686,7 +686,7 @@ using System.IO;
 		  }
 		  catch (Exception e)
 		  {
-			DumpArray(msg + ": FieldCache", entries, System.err);
+			DumpArray(msg + ": FieldCache", entries, Console.Error);
 			throw e;
 		  }
 
@@ -700,7 +700,7 @@ using System.IO;
 		  // if no failure, then insanity will be null anyway
 		  if (null != insanity)
 		  {
-			DumpArray(msg + ": Insane FieldCache usage(s)", insanity, System.err);
+			DumpArray(msg + ": Insane FieldCache usage(s)", insanity, Console.Error);
 		  }
 		}
 	  }
@@ -759,21 +759,21 @@ using System.IO;
 
 	  public static void AssumeFalse(string msg, bool condition)
 	  {
-		RandomizedTest.assumeFalse(msg, condition);
+		RandomizedTest.AssumeFalse(msg, condition);
 	  }
 
 	  public static void AssumeNoException(string msg, Exception e)
 	  {
-		RandomizedTest.assumeNoException(msg, e);
+		RandomizedTest.AssumeNoException(msg, e);
 	  }
 
 	  /// <summary>
 	  /// Return <code>args</code> as a <seealso cref="Set"/> instance. The order of elements is not
 	  /// preserved in iterators.
 	  /// </summary>
-	  public static <T> Set<T> AsSet(T... args)
+	  public static ISet<object> AsSet(params object[] args)
 	  {
-		return new HashSet<>(Arrays.asList(args));
+		return new HashSet<object>(Arrays.AsList(args));
 	  }
 
 	  /// <summary>
@@ -782,7 +782,7 @@ using System.IO;
 	  /// <param name="label">  String logged before/after the items in the iterator </param>
 	  /// <param name="iter">   Each next() is toString()ed and logged on it's own line. If iter is null this is logged differnetly then an empty iterator. </param>
 	  /// <param name="stream"> Stream to log messages to. </param>
-	  public static void DumpIterator(string label, System.Collections.IEnumerator iter, StreamWriter stream)
+      public static void DumpIterator(string label, System.Collections.IEnumerator iter, TextWriter stream)
 	  {
 		stream.WriteLine("*** BEGIN " + label + " ***");
 		if (null == iter)
@@ -803,7 +803,7 @@ using System.IO;
 	  /// Convenience method for logging an array.  Wraps the array in an iterator and delegates
 	  /// </summary>
 	  /// <seealso cref= #dumpIterator(String,Iterator,PrintStream) </seealso>
-	  public static void DumpArray(string label, Object[] objs, StreamWriter stream)
+	  public static void DumpArray(string label, Object[] objs, TextWriter stream)
 	  {
 		System.Collections.IEnumerator iter = (null == objs) ? (System.Collections.IEnumerator)null : Arrays.AsList(objs).GetEnumerator();
 		DumpIterator(label, iter, stream);
@@ -830,10 +830,10 @@ using System.IO;
 		  // that when there are separate instances of
 		  // IndexWriter created we see "IW 0", "IW 1", "IW 2",
 		  // ... instead of just always "IW 0":
-		  c.InfoStream = new TestRuleSetupAndRestoreClassEnv.ThreadNameFixingPrintStreamInfoStream(System.out);
+		  c.InfoStream = new TestRuleSetupAndRestoreClassEnv.ThreadNameFixingPrintStreamInfoStream(Console.Out);
 		}
 
-		if (r.nextBoolean())
+		if (r.NextBoolean())
 		{
 		  c.SetMergeScheduler(new SerialMergeScheduler());
 		}
@@ -845,7 +845,7 @@ using System.IO;
 		  cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
 		  c.SetMergeScheduler(cms);
 		}
-		if (r.nextBoolean())
+		if (r.NextBoolean())
 		{
 		  if (Rarely(r))
 		  {
@@ -858,12 +858,12 @@ using System.IO;
 			c.SetMaxBufferedDocs(TestUtil.NextInt(r, 16, 1000));
 		  }
 		}
-		if (r.nextBoolean())
+		if (r.NextBoolean())
 		{
 		  if (Rarely(r))
 		  {
 			// crazy value
-			c.TermIndexInterval = r.nextBoolean() ? TestUtil.NextInt(r, 1, 31) : TestUtil.NextInt(r, 129, 1000);
+			c.SetTermIndexInterval(r.NextBoolean() ? TestUtil.NextInt(r, 1, 31) : TestUtil.NextInt(r, 129, 1000));
 		  }
 		  else
 		  {
@@ -871,7 +871,7 @@ using System.IO;
 			c.SetTermIndexInterval(TestUtil.NextInt(r, 32, 128));
 		  }
 		}
-		if (r.nextBoolean())
+		if (r.NextBoolean())
 		{
 		  int maxNumThreadStates = Rarely(r) ? TestUtil.NextInt(r, 5, 20) : TestUtil.NextInt(r, 1, 4); // reasonable value -  crazy value
 
@@ -907,10 +907,10 @@ using System.IO;
 		{
 		  c.SetMergedSegmentWarmer(new SimpleMergedSegmentWarmer(c.InfoStream));
 		}
-		c.UseCompoundFile = r.nextBoolean();
-		c.ReaderPooling = r.nextBoolean();
+		c.SetUseCompoundFile(r.NextBoolean());
+		c.SetReaderPooling(r.NextBoolean());
 		c.SetReaderTermsIndexDivisor(TestUtil.NextInt(r, 1, 4));
-		c.CheckIntegrityAtMerge = r.nextBoolean();
+		c.SetCheckIntegrityAtMerge(r.NextBoolean());
 		return c;
 	  }
 
@@ -920,7 +920,7 @@ using System.IO;
 		{
 		  return new MockRandomMergePolicy(r);
 		}
-		else if (r.nextBoolean())
+		else if (r.NextBoolean())
 		{
 		  return NewTieredMergePolicy(r);
 		}
@@ -958,8 +958,8 @@ using System.IO;
 
 	  public static LogMergePolicy NewLogMergePolicy(Random r)
 	  {
-		LogMergePolicy logmp = r.nextBoolean() ? new LogDocMergePolicy() : new LogByteSizeMergePolicy();
-		logmp.CalibrateSizeByDeletes = r.nextBoolean();
+		LogMergePolicy logmp = r.NextBoolean() ? (LogMergePolicy)new LogDocMergePolicy() : new LogByteSizeMergePolicy();
+		logmp.CalibrateSizeByDeletes = r.NextBoolean();
 		if (Rarely(r))
 		{
 		  logmp.MergeFactor = TestUtil.NextInt(r, 2, 9);
@@ -972,15 +972,15 @@ using System.IO;
 		return logmp;
 	  }
 
-	  private static void configureRandom(Random r, MergePolicy mergePolicy)
+	  private static void ConfigureRandom(Random r, MergePolicy mergePolicy)
 	  {
-		if (r.nextBoolean())
+		if (r.NextBoolean())
 		{
 		  mergePolicy.NoCFSRatio = 0.1 + r.NextDouble() * 0.8;
 		}
 		else
 		{
-		  mergePolicy.NoCFSRatio = r.nextBoolean() ? 1.0 : 0.0;
+		  mergePolicy.NoCFSRatio = r.NextBoolean() ? 1.0 : 0.0;
 		}
 
 		if (Rarely())
@@ -1085,9 +1085,9 @@ using System.IO;
 		return (MockDirectoryWrapper) WrapDirectory(r, NewDirectoryImpl(r, TEST_DIRECTORY), false);
 	  }
 
-	  public static MockDirectoryWrapper NewMockFSDirectory(File f)
+      public static MockDirectoryWrapper NewMockFSDirectory(Directory d)
 	  {
-		return (MockDirectoryWrapper) NewFSDirectory(f, null, false);
+		return (MockDirectoryWrapper) NewFSDirectory(d, null, false);
 	  }
 
 	  /// <summary>
@@ -1095,26 +1095,26 @@ using System.IO;
 	  /// provided directory. See <seealso cref="#newDirectory()"/> for more
 	  /// information.
 	  /// </summary>
-	  public static BaseDirectoryWrapper NewDirectory(Directory d)
+      public static BaseDirectoryWrapper NewDirectory(Directory d)
 	  {
 		return NewDirectory(Random(), d);
 	  }
 
 	  /// <summary>
 	  /// Returns a new FSDirectory instance over the given file, which must be a folder. </summary>
-	  public static BaseDirectoryWrapper NewFSDirectory(File f)
+      public static BaseDirectoryWrapper NewFSDirectory(Directory d)
 	  {
-		return NewFSDirectory(f, null);
+		return NewFSDirectory(d, null);
 	  }
 
 	  /// <summary>
 	  /// Returns a new FSDirectory instance over the given file, which must be a folder. </summary>
-	  public static BaseDirectoryWrapper NewFSDirectory(File f, LockFactory lf)
+      public static BaseDirectoryWrapper NewFSDirectory(Directory d, LockFactory lf)
 	  {
-		return NewFSDirectory(f, lf, Rarely());
+		return NewFSDirectory(d, lf, Rarely());
 	  }
 
-	  private static BaseDirectoryWrapper NewFSDirectory(File f, LockFactory lf, bool bare)
+      private static BaseDirectoryWrapper NewFSDirectory(Directory d, LockFactory lf, bool bare)
 	  {
 		string fsdirClass = TEST_DIRECTORY;
 		if (fsdirClass.Equals("random"))
@@ -1136,7 +1136,7 @@ using System.IO;
 			clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
 		  }
 
-		  Directory fsdir = NewFSDirectoryImpl(clazz, f);
+		  Directory fsdir = NewFSDirectoryImpl(clazz, d);
 		  BaseDirectoryWrapper wrapped = WrapDirectory(Random(), fsdir, bare);
 		  if (lf != null)
 		  {
@@ -1156,7 +1156,7 @@ using System.IO;
 	  /// with contents copied from the provided directory. See 
 	  /// <seealso cref="#newDirectory()"/> for more information.
 	  /// </summary>
-	  public static BaseDirectoryWrapper NewDirectory(Random r, Directory d)
+      public static BaseDirectoryWrapper NewDirectory(Random r, Directory d)
 	  {
 		Directory impl = NewDirectoryImpl(r, TEST_DIRECTORY);
 		foreach (string file in d.ListAll())
@@ -1166,7 +1166,7 @@ using System.IO;
 		return WrapDirectory(r, impl, Rarely(r));
 	  }
 
-	  private static BaseDirectoryWrapper WrapDirectory(Random random, Directory directory, bool bare)
+      private static BaseDirectoryWrapper WrapDirectory(Random random, Directory directory, bool bare)
 	  {
 		if (Rarely(random))
 		{
@@ -1253,25 +1253,25 @@ using System.IO;
 		// already indexing positions...
 
 		FieldType newType = new FieldType(type);
-		if (!newType.Stored && random.nextBoolean())
+		if (!newType.Stored && random.NextBoolean())
 		{
 		  newType.Stored = true; // randomly store it
 		}
 
-		if (!newType.StoreTermVectors && random.nextBoolean())
+		if (!newType.StoreTermVectors && random.NextBoolean())
 		{
 		  newType.StoreTermVectors = true;
 		  if (!newType.StoreTermVectorOffsets)
 		  {
-			newType.StoreTermVectorOffsets = random.nextBoolean();
+			newType.StoreTermVectorOffsets = random.NextBoolean();
 		  }
 		  if (!newType.StoreTermVectorPositions)
 		  {
-			newType.StoreTermVectorPositions = random.nextBoolean();
+			newType.StoreTermVectorPositions = random.NextBoolean();
 
 			if (newType.StoreTermVectorPositions && !newType.StoreTermVectorPayloads && !OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
 			{
-			  newType.StoreTermVectorPayloads = random.nextBoolean();
+			  newType.StoreTermVectorPayloads = random.NextBoolean();
 			}
 		  }
 		}
@@ -1280,8 +1280,8 @@ using System.IO;
 		// the time we set the same value for a given field but
 		// sometimes (rarely) we change it up:
 		/*
-		if (newType.omitNorms()) {
-		  newType.setOmitNorms(random.nextBoolean());
+		if (newType.OmitsNorms()) {
+		  newType.setOmitNorms(random.NextBoolean());
 		}
 		*/
 
@@ -1330,7 +1330,7 @@ using System.IO;
 		return !Codec.Default.Name.Equals("Lucene3x");
 	  }
 
-	  private static Directory NewFSDirectoryImpl(Type clazz, File file)
+      private static Directory NewFSDirectoryImpl(Type clazz, FileInfo file)
 	  {
 		FSDirectory d = null;
 		try
@@ -1364,7 +1364,7 @@ using System.IO;
 		  // If it is a FSDirectory type, try its ctor(File)
 		  if (clazz.IsSubclassOf(typeof(FSDirectory)))
 		  {
-			File dir = CreateTempDir("index-" + clazzName);
+			Directory dir = CreateTempDir("index-" + clazzName);
 			dir.mkdirs(); // ensure it's created so we 'have' it.
 			return NewFSDirectoryImpl(clazz.asSubclass(typeof(FSDirectory)), dir);
 		  }
@@ -1479,7 +1479,7 @@ using System.IO;
 		{
 		  // Always return at least the estimatedMergeBytes of
 		  // the incoming IOContext:
-		  return new IOContext(new MergeInfo(randomNumDocs, Math.Max(oldContext.MergeInfo.EstimatedMergeBytes, size), random.nextBoolean(), TestUtil.NextInt(random, 1, 100)));
+		  return new IOContext(new MergeInfo(randomNumDocs, Math.Max(oldContext.MergeInfo.EstimatedMergeBytes, size), random.NextBoolean(), TestUtil.NextInt(random, 1, 100)));
 		}
 		else
 		{
@@ -1569,11 +1569,11 @@ using System.IO;
 		  IndexSearcher ret;
 		  if (wrapWithAssertions)
 		  {
-			ret = random.nextBoolean() ? new AssertingIndexSearcher(random, r) : new AssertingIndexSearcher(random, r.Context);
+			ret = random.NextBoolean() ? new AssertingIndexSearcher(random, r) : new AssertingIndexSearcher(random, r.Context);
 		  }
 		  else
 		  {
-			ret = random.nextBoolean() ? new IndexSearcher(r) : new IndexSearcher(r.Context);
+			ret = random.NextBoolean() ? new IndexSearcher(r) : new IndexSearcher(r.Context);
 		  }
 		  ret.Similarity = ClassEnvRule.Similarity;
 		  return ret;
@@ -1582,7 +1582,7 @@ using System.IO;
 		{
 		  int threads = 0;
 		  ThreadPoolExecutor ex;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 			ex = null;
 		  }
@@ -1604,11 +1604,11 @@ using System.IO;
 		  IndexSearcher ret;
 		  if (wrapWithAssertions)
 		  {
-			ret = random.nextBoolean() ? new AssertingIndexSearcher(random, r, ex) : new AssertingIndexSearcher(random, r.Context, ex);
+			ret = random.NextBoolean() ? new AssertingIndexSearcher(random, r, ex) : new AssertingIndexSearcher(random, r.Context, ex);
 		  }
 		  else
 		  {
-			ret = random.nextBoolean() ? new IndexSearcher(r, ex) : new IndexSearcher(r.Context, ex);
+			ret = random.NextBoolean() ? new IndexSearcher(r, ex) : new IndexSearcher(r.Context, ex);
 		  }
 		  ret.Similarity = ClassEnvRule.Similarity;
 		  return ret;
@@ -1735,12 +1735,11 @@ using System.IO;
 		while (leftEnum.MoveNext())
 		{
 		  string field = leftEnum.Current;
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Assert.AreEqual(field, rightEnum.next(), info);
-		  AssertTermsEquals(leftReader, leftFields.Terms(field), rightFields.Terms(field), deep, Input);
+          rightEnum.MoveNext();
+		  Assert.AreEqual(field, rightEnum.Current, info);
+		  AssertTermsEquals(leftReader, leftFields.Terms(field), rightFields.Terms(field), deep, input);
 		}
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(rightEnum.hasNext());
+		Assert.IsFalse(rightEnum.MoveNext());
 	  }
 
 	  /// <summary>
@@ -1748,9 +1747,9 @@ using System.IO;
 	  /// </summary>
 	  public void AssertFieldStatisticsEquals(string info, Fields leftFields, Fields rightFields)
 	  {
-		if (leftFields.size() != -1 && rightFields.size() != -1)
+		if (leftFields.Size() != -1 && rightFields.Size() != -1)
 		{
-		  Assert.AreEqual(leftFields.size(), rightFields.size(), info);
+		  Assert.AreEqual(leftFields.Size(), rightFields.Size(), info);
 		}
 	  }
 
@@ -1761,20 +1760,20 @@ using System.IO;
 	  {
 		if (leftTerms == null || rightTerms == null)
 		{
-		  assertNull(info, leftTerms);
-		  assertNull(info, rightTerms);
+		  Assert.IsNull(leftTerms, info);
+		  Assert.IsNull(rightTerms, info);
 		  return;
 		}
-		AssertTermsStatisticsEquals(leftTerms, rightTerms, info);
-		Assert.AreEqual(leftTerms.hasOffsets(), rightTerms.hasOffsets());
-		Assert.AreEqual(leftTerms.hasPositions(), rightTerms.hasPositions());
-		Assert.AreEqual(leftTerms.hasPayloads(), rightTerms.hasPayloads());
+		AssertTermsStatisticsEquals(info, leftTerms, rightTerms);
+		Assert.AreEqual(leftTerms.HasOffsets(), rightTerms.HasOffsets());
+		Assert.AreEqual(leftTerms.HasPositions(), rightTerms.HasPositions());
+		Assert.AreEqual(leftTerms.HasPayloads(), rightTerms.HasPayloads());
 
-		TermsEnum leftTermsEnum = leftTerms.iterator(null);
-		TermsEnum rightTermsEnum = rightTerms.iterator(null);
-		AssertTermsEnumEquals(leftReader, leftTermsEnum, rightTermsEnum, true, info);
+		TermsEnum leftTermsEnum = leftTerms.Iterator(null);
+		TermsEnum rightTermsEnum = rightTerms.Iterator(null);
+		AssertTermsEnumEquals(info, leftReader, leftTermsEnum, rightTermsEnum, true);
 
-		AssertTermsSeekingEquals(leftTerms, rightTerms, info);
+		AssertTermsSeekingEquals(info, leftTerms, rightTerms);
 
 		if (deep)
 		{
@@ -1782,13 +1781,13 @@ using System.IO;
 		  for (int i = 0; i < numIntersections; i++)
 		  {
 			string re = AutomatonTestUtil.RandomRegexp(Random());
-			CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExp.NONE)).toAutomaton());
-			if (automaton.type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
+			CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExp.NONE)).ToAutomaton());
+			if (automaton.Type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
 			{
 			  // TODO: test start term too
-			  TermsEnum leftIntersection = leftTerms.intersect(automaton, null);
-			  TermsEnum rightIntersection = rightTerms.intersect(automaton, null);
-			  AssertTermsEnumEquals(leftReader, leftIntersection, rightIntersection, Rarely(), info);
+			  TermsEnum leftIntersection = leftTerms.Intersect(automaton, null);
+			  TermsEnum rightIntersection = rightTerms.Intersect(automaton, null);
+			  AssertTermsEnumEquals(info, leftReader, leftIntersection, rightIntersection, Rarely());
 			}
 		  }
 		}
@@ -1812,9 +1811,9 @@ using System.IO;
 		{
 		  Assert.AreEqual(leftTerms.SumTotalTermFreq, rightTerms.SumTotalTermFreq, info);
 		}
-		if (leftTerms.size() != -1 && rightTerms.size() != -1)
+		if (leftTerms.Size() != -1 && rightTerms.Size() != -1)
 		{
-		  Assert.AreEqual(leftTerms.size(), rightTerms.size(), info);
+		  Assert.AreEqual(leftTerms.Size(), rightTerms.Size(), info);
 		}
 	  }
 
@@ -1829,19 +1828,19 @@ using System.IO;
 		  {
 			if (random.NextDouble() <= pctLive)
 			{
-			  bits.set(i);
+			  bits.Set(i);
 			}
 		  }
 		}
 
-		public bool get(int index)
+		public bool Get(int index)
 		{
-		  return bits.get(index);
+		  return bits.Get(index);
 		}
 
-		public int length()
+		public int Length()
 		{
-		  return bits.length();
+		  return bits.Length();
 		}
 	  }
 
@@ -1852,42 +1851,42 @@ using System.IO;
 	  public void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
 	  {
 		BytesRef term;
-		Bits randomBits = new RandomBits(leftReader.maxDoc(), Random().NextDouble(), Random());
+		Bits randomBits = new RandomBits(leftReader.MaxDoc(), Random().NextDouble(), Random());
 		DocsAndPositionsEnum leftPositions = null;
 		DocsAndPositionsEnum rightPositions = null;
 		DocsEnum leftDocs = null;
 		DocsEnum rightDocs = null;
 
-		while ((term = leftTermsEnum.next()) != null)
+		while ((term = leftTermsEnum.Next()) != null)
 		{
-		  Assert.AreEqual(info, term, rightTermsEnum.next());
+		  Assert.AreEqual(term, rightTermsEnum.Next(), info);
 		  AssertTermStatsEquals(info, leftTermsEnum, rightTermsEnum);
 		  if (deep)
 		  {
-			AssertDocsAndPositionsEnumEquals(info, leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions));
-			AssertDocsAndPositionsEnumEquals(info, leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions));
+			AssertDocsAndPositionsEnumEquals(info, leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
+			AssertDocsAndPositionsEnumEquals(info, leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 
-			AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(null, rightPositions));
-			AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.docFreq(), leftPositions = leftTermsEnum.docsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.docsAndPositions(randomBits, rightPositions));
-
-			// with freqs:
-			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.docs(null, leftDocs), rightDocs = rightTermsEnum.docs(null, rightDocs), true);
-			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.docs(randomBits, leftDocs), rightDocs = rightTermsEnum.docs(randomBits, rightDocs), true);
-
-			// w/o freqs:
-			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(null, rightDocs, DocsEnum.FLAG_NONE), false);
-			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
+			AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(null, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(null, rightPositions));
+			AssertPositionsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftPositions = leftTermsEnum.DocsAndPositions(randomBits, leftPositions), rightPositions = rightTermsEnum.DocsAndPositions(randomBits, rightPositions));
 
 			// with freqs:
-			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(null, leftDocs), rightDocs = rightTermsEnum.docs(null, rightDocs), true);
-			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(randomBits, leftDocs), rightDocs = rightTermsEnum.docs(randomBits, rightDocs), true);
+			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs), true);
+			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs), true);
 
 			// w/o freqs:
-			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(null, rightDocs, DocsEnum.FLAG_NONE), false);
-			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.docFreq(), leftDocs = leftTermsEnum.docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
+			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE), false);
+			AssertDocsEnumEquals(info, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
+
+			// with freqs:
+			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs), rightDocs = rightTermsEnum.Docs(null, rightDocs), true);
+			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs), true);
+
+			// w/o freqs:
+			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(null, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(null, rightDocs, DocsEnum.FLAG_NONE), false);
+			AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq(), leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsEnum.FLAG_NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsEnum.FLAG_NONE), false);
 		  }
 		}
-		assertNull(info, rightTermsEnum.next());
+		Assert.IsNull(rightTermsEnum.Next(), info);
 	  }
 
 
@@ -1898,51 +1897,51 @@ using System.IO;
 	  {
 		if (leftDocs == null || rightDocs == null)
 		{
-		  assertNull(leftDocs);
-		  assertNull(rightDocs);
+		  Assert.IsNull(leftDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
-		Assert.AreEqual(info, -1, leftDocs.docID());
-		Assert.AreEqual(info, -1, rightDocs.docID());
+		Assert.AreEqual(-1, leftDocs.DocID(), info);
+		Assert.AreEqual(-1, rightDocs.DocID(), info);
 		int docid;
-		while ((docid = leftDocs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(info, docid, rightDocs.nextDoc());
-		  int freq = leftDocs.freq();
-		  Assert.AreEqual(info, freq, rightDocs.freq());
+		  Assert.AreEqual(docid, rightDocs.NextDoc(), info);
+		  int freq = leftDocs.Freq();
+		  Assert.AreEqual(freq, rightDocs.Freq(), info);
 		  for (int i = 0; i < freq; i++)
 		  {
-			Assert.AreEqual(info, leftDocs.nextPosition(), rightDocs.nextPosition());
-			Assert.AreEqual(info, leftDocs.Payload, rightDocs.Payload);
-			Assert.AreEqual(info, leftDocs.StartOffset(), rightDocs.StartOffset());
-			Assert.AreEqual(info, leftDocs.EndOffset(), rightDocs.EndOffset());
+			Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);
+			Assert.AreEqual(leftDocs.Payload, rightDocs.Payload, info);
+			Assert.AreEqual(leftDocs.StartOffset(), rightDocs.StartOffset(), info);
+			Assert.AreEqual(leftDocs.EndOffset(), rightDocs.EndOffset(), info);
 		  }
 		}
-		Assert.AreEqual(info, DocIdSetIterator.NO_MORE_DOCS, rightDocs.nextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.NextDoc(), info);
 	  }
 
 	  /// <summary>
 	  /// checks docs + freqs, sequentially
 	  /// </summary>
-	  public void assertDocsEnumEquals(string info, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
+	  public void AssertDocsEnumEquals(string info, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
 	  {
 		if (leftDocs == null)
 		{
-		  assertNull(rightDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
-		Assert.AreEqual(info, -1, leftDocs.docID());
-		Assert.AreEqual(info, -1, rightDocs.docID());
+		Assert.AreEqual(-1, leftDocs.DocID(), info);
+		Assert.AreEqual(-1, rightDocs.DocID(), info);
 		int docid;
-		while ((docid = leftDocs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((docid = leftDocs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(info, docid, rightDocs.nextDoc());
+		  Assert.AreEqual(docid, rightDocs.NextDoc(), info);
 		  if (hasFreqs)
 		  {
-			Assert.AreEqual(info, leftDocs.freq(), rightDocs.freq());
+			Assert.AreEqual(leftDocs.Freq(), rightDocs.Freq(), info);
 		  }
 		}
-		Assert.AreEqual(info, DocIdSetIterator.NO_MORE_DOCS, rightDocs.nextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, rightDocs.NextDoc(), info);
 	  }
 
 	  /// <summary>
@@ -1952,27 +1951,27 @@ using System.IO;
 	  {
 		if (leftDocs == null)
 		{
-		  assertNull(rightDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
 		int docid = -1;
-		int averageGap = leftReader.maxDoc() / (1 + docFreq);
+		int averageGap = leftReader.MaxDoc() / (1 + docFreq);
 		int skipInterval = 16;
 
 		while (true)
 		{
-		  if (Random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// nextDoc()
-			docid = leftDocs.nextDoc();
-			Assert.AreEqual(info, docid, rightDocs.nextDoc());
+			docid = leftDocs.NextDoc();
+			Assert.AreEqual(docid, rightDocs.NextDoc(), info);
 		  }
 		  else
 		  {
 			// advance()
 			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().nextGaussian() * averageGap));
-			docid = leftDocs.advance(skip);
-			Assert.AreEqual(info, docid, rightDocs.advance(skip));
+			docid = leftDocs.Advance(skip);
+			Assert.AreEqual(docid, rightDocs.Advance(skip), info);
 		  }
 
 		  if (docid == DocIdSetIterator.NO_MORE_DOCS)
@@ -1981,7 +1980,7 @@ using System.IO;
 		  }
 		  if (hasFreqs)
 		  {
-			Assert.AreEqual(info, leftDocs.freq(), rightDocs.freq());
+			Assert.AreEqual(leftDocs.Freq(), rightDocs.Freq(), info);
 		  }
 		}
 	  }
@@ -1993,41 +1992,41 @@ using System.IO;
 	  {
 		if (leftDocs == null || rightDocs == null)
 		{
-		  assertNull(leftDocs);
-		  assertNull(rightDocs);
+		  Assert.IsNull(leftDocs);
+		  Assert.IsNull(rightDocs);
 		  return;
 		}
 
 		int docid = -1;
-		int averageGap = leftReader.maxDoc() / (1 + docFreq);
+		int averageGap = leftReader.MaxDoc() / (1 + docFreq);
 		int skipInterval = 16;
 
 		while (true)
 		{
-		  if (Random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// nextDoc()
-			docid = leftDocs.nextDoc();
-			Assert.AreEqual(info, docid, rightDocs.nextDoc());
+			docid = leftDocs.NextDoc();
+			Assert.AreEqual(docid, rightDocs.NextDoc(), info);
 		  }
 		  else
 		  {
 			// advance()
 			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().nextGaussian() * averageGap));
-			docid = leftDocs.advance(skip);
-			Assert.AreEqual(info, docid, rightDocs.advance(skip));
+			docid = leftDocs.Advance(skip);
+			Assert.AreEqual(docid, rightDocs.Advance(skip), info);
 		  }
 
 		  if (docid == DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			return;
 		  }
-		  int freq = leftDocs.freq();
-		  Assert.AreEqual(info, freq, rightDocs.freq());
+		  int freq = leftDocs.Freq();
+		  Assert.AreEqual(freq, rightDocs.Freq(), info);
 		  for (int i = 0; i < freq; i++)
 		  {
-			Assert.AreEqual(info, leftDocs.nextPosition(), rightDocs.nextPosition());
-			Assert.AreEqual(info, leftDocs.Payload, rightDocs.Payload);
+			Assert.AreEqual(leftDocs.NextPosition(), rightDocs.NextPosition(), info);
+			Assert.AreEqual(leftDocs.Payload, rightDocs.Payload, info);
 		  }
 		}
 	  }
@@ -2047,32 +2046,32 @@ using System.IO;
 		int numPasses = 0;
 		while (numPasses < 10 && tests.Count < numTests)
 		{
-		  leftEnum = leftTerms.iterator(leftEnum);
+		  leftEnum = leftTerms.Iterator(leftEnum);
 		  BytesRef term = null;
-		  while ((term = leftEnum.next()) != null)
+		  while ((term = leftEnum.Next()) != null)
 		  {
 			int code = random.Next(10);
 			if (code == 0)
 			{
 			  // the term
-			  tests.Add(BytesRef.deepCopyOf(term));
+			  tests.Add(BytesRef.DeepCopyOf(term));
 			}
 			else if (code == 1)
 			{
 			  // truncated subsequence of term
-			  term = BytesRef.deepCopyOf(term);
-			  if (term.length > 0)
+			  term = BytesRef.DeepCopyOf(term);
+			  if (term.Length > 0)
 			  {
 				// truncate it
-				term.length = random.Next(term.length);
+				term.Length = random.Next(term.Length);
 			  }
 			}
 			else if (code == 2)
 			{
 			  // term, but ensure a non-zero offset
-			  sbyte[] newbytes = new sbyte[term.length + 5];
-			  Array.Copy(term.bytes, term.offset, newbytes, 5, term.length);
-			  tests.Add(new BytesRef(newbytes, 5, term.length));
+			  sbyte[] newbytes = new sbyte[term.Length + 5];
+			  Array.Copy(term.Bytes, term.Offset, newbytes, 5, term.Length);
+			  tests.Add(new BytesRef(newbytes, 5, term.Length));
 			}
 			else if (code == 3)
 			{
@@ -2088,14 +2087,14 @@ using System.IO;
 				  tests.Add(new BytesRef(TestUtil.RandomSimpleString(Random()))); // random term
 				  break;
 				default:
-				  throw new AssertionError();
+				  throw new InvalidOperationException();
 			  }
 			}
 		  }
 		  numPasses++;
 		}
 
-		rightEnum = rightTerms.iterator(rightEnum);
+		rightEnum = rightTerms.Iterator(rightEnum);
 
 		List<BytesRef> shuffledTests = new List<BytesRef>(tests);
 		Collections.shuffle(shuffledTests, random);
@@ -2105,24 +2104,24 @@ using System.IO;
 		  if (Rarely())
 		  {
 			// reuse the enums
-			leftEnum = leftTerms.iterator(leftEnum);
-			rightEnum = rightTerms.iterator(rightEnum);
+			leftEnum = leftTerms.Iterator(leftEnum);
+			rightEnum = rightTerms.Iterator(rightEnum);
 		  }
 
-		  bool seekExact = Random().nextBoolean();
+		  bool seekExact = Random().NextBoolean();
 
 		  if (seekExact)
 		  {
-			Assert.AreEqual(info, leftEnum.seekExact(b), rightEnum.seekExact(b));
+			Assert.AreEqual(leftEnum.SeekExact(b), rightEnum.SeekExact(b), info);
 		  }
 		  else
 		  {
-			TermsEnum.SeekStatus leftStatus = leftEnum.seekCeil(b);
-			TermsEnum.SeekStatus rightStatus = rightEnum.seekCeil(b);
-			Assert.AreEqual(info, leftStatus, rightStatus);
+			TermsEnum.SeekStatus leftStatus = leftEnum.SeekCeil(b);
+			TermsEnum.SeekStatus rightStatus = rightEnum.SeekCeil(b);
+			Assert.AreEqual(leftStatus, rightStatus, info);
 			if (leftStatus != TermsEnum.SeekStatus.END)
 			{
-			  Assert.AreEqual(info, leftEnum.term(), rightEnum.term());
+			  Assert.AreEqual(leftEnum.Term(), rightEnum.Term(), info);
 			  AssertTermStatsEquals(info, leftEnum, rightEnum);
 			}
 		  }
@@ -2134,10 +2133,10 @@ using System.IO;
 	  /// </summary>
 	  public void AssertTermStatsEquals(string info, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
 	  {
-		Assert.AreEqual(info, leftTermsEnum.docFreq(), rightTermsEnum.docFreq());
-		if (leftTermsEnum.totalTermFreq() != -1 && rightTermsEnum.totalTermFreq() != -1)
+		Assert.AreEqual(leftTermsEnum.DocFreq(), rightTermsEnum.DocFreq(), info);
+		if (leftTermsEnum.TotalTermFreq() != -1 && rightTermsEnum.TotalTermFreq() != -1)
 		{
-		  Assert.AreEqual(info, leftTermsEnum.totalTermFreq(), rightTermsEnum.totalTermFreq());
+		  Assert.AreEqual(leftTermsEnum.TotalTermFreq(), rightTermsEnum.TotalTermFreq(), info);
 		}
 	  }
 
@@ -2146,29 +2145,29 @@ using System.IO;
 	  /// </summary>
 	  public void AssertNormsEquals(string info, IndexReader leftReader, IndexReader rightReader)
 	  {
-		Fields leftFields = MultiFields.getFields(leftReader);
-		Fields rightFields = MultiFields.getFields(rightReader);
+		Fields leftFields = MultiFields.GetFields(leftReader);
+		Fields rightFields = MultiFields.GetFields(rightReader);
 		// Fields could be null if there are no postings,
 		// but then it must be null for both
 		if (leftFields == null || rightFields == null)
 		{
-		  assertNull(info, leftFields);
-		  assertNull(info, rightFields);
+		  Assert.IsNull(leftFields, info);
+		  Assert.IsNull(rightFields, info);
 		  return;
 		}
 
 		foreach (string field in leftFields)
 		{
-		  NumericDocValues leftNorms = MultiDocValues.getNormValues(leftReader, field);
-		  NumericDocValues rightNorms = MultiDocValues.getNormValues(rightReader, field);
+		  NumericDocValues leftNorms = MultiDocValues.GetNormValues(leftReader, field);
+		  NumericDocValues rightNorms = MultiDocValues.GetNormValues(rightReader, field);
 		  if (leftNorms != null && rightNorms != null)
 		  {
-			AssertDocValuesEquals(info, leftReader.maxDoc(), leftNorms, rightNorms);
+			AssertDocValuesEquals(info, leftReader.MaxDoc(), leftNorms, rightNorms);
 		  }
 		  else
 		  {
-			assertNull(info, leftNorms);
-			assertNull(info, rightNorms);
+			Assert.IsNull(leftNorms, info);
+			Assert.IsNull(rightNorms, info);
 		  }
 		}
 	  }
@@ -2178,11 +2177,11 @@ using System.IO;
 	  /// </summary>
 	  public void AssertStoredFieldsEquals(string info, IndexReader leftReader, IndexReader rightReader)
 	  {
-		Debug.Assert(leftReader.maxDoc() == rightReader.maxDoc());
-		for (int i = 0; i < leftReader.maxDoc(); i++)
+		Debug.Assert(leftReader.MaxDoc() == rightReader.MaxDoc());
+		for (int i = 0; i < leftReader.MaxDoc(); i++)
 		{
-		  Document leftDoc = leftReader.document(i);
-		  Document rightDoc = rightReader.document(i);
+		  Document leftDoc = leftReader.Document(i);
+		  Document rightDoc = rightReader.Document(i);
 
 		  // TODO: I think this is bogus because we don't document what the order should be
 		  // from these iterators, etc. I think the codec/IndexReader should be free to order this stuff
@@ -2190,20 +2189,17 @@ using System.IO;
 		  // To fix this, we sort the fields in both documents by name, but
 		  // we still assume that all instances with same name are in order:
 		  IComparer<IndexableField> comp = new ComparatorAnonymousInnerClassHelper(this);
-		  Collections.sort(leftDoc.Fields, comp);
-		  Collections.sort(rightDoc.Fields, comp);
+		  CollectionsHelper.Sort(leftDoc.Fields, comp);
+		  CollectionsHelper.Sort(rightDoc.Fields, comp);
 
 		  IEnumerator<IndexableField> leftIterator = leftDoc.GetEnumerator();
 		  IEnumerator<IndexableField> rightIterator = rightDoc.GetEnumerator();
 		  while (leftIterator.MoveNext())
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			Assert.IsTrue(info, rightIterator.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.next());
+			Assert.IsTrue(rightIterator.MoveNext(), info);
+			AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
 		  }
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Assert.IsFalse(info, rightIterator.hasNext());
+		  Assert.IsFalse(rightIterator.MoveNext(), info);
 		}
 	  }
 
@@ -2212,10 +2208,10 @@ using System.IO;
 	  /// </summary>
 	  public void AssertStoredFieldEquals(string info, IndexableField leftField, IndexableField rightField)
 	  {
-		Assert.AreEqual(info, leftField.name(), rightField.name());
-		Assert.AreEqual(info, leftField.binaryValue(), rightField.binaryValue());
-		Assert.AreEqual(info, leftField.stringValue(), rightField.stringValue());
-		Assert.AreEqual(info, leftField.numericValue(), rightField.numericValue());
+		Assert.AreEqual(leftField.Name(), rightField.Name(), info);
+		Assert.AreEqual(leftField.BinaryValue(), rightField.BinaryValue(), info);
+		Assert.AreEqual(leftField.StringValue, rightField.StringValue, info);
+		Assert.AreEqual(leftField.NumericValue, rightField.NumericValue, info);
 		// TODO: should we check the FT at all?
 	  }
 
@@ -2224,23 +2220,23 @@ using System.IO;
 	  /// </summary>
 	  public void AssertTermVectorsEquals(string info, IndexReader leftReader, IndexReader rightReader) 
 	  {
-		Debug.Assert(leftReader.maxDoc() == rightReader.maxDoc());
-		for (int i = 0; i < leftReader.maxDoc(); i++)
+		Debug.Assert(leftReader.MaxDoc() == rightReader.MaxDoc());
+		for (int i = 0; i < leftReader.MaxDoc(); i++)
 		{
-		  Fields leftFields = leftReader.getTermVectors(i);
-		  Fields rightFields = rightReader.getTermVectors(i);
+		  Fields leftFields = leftReader.GetTermVectors(i);
+		  Fields rightFields = rightReader.GetTermVectors(i);
 		  AssertFieldsEquals(info, leftReader, leftFields, rightFields, Rarely());
 		}
 	  }
 
 	  private static ISet<string> GetDVFields(IndexReader reader)
 	  {
-		Set<string> fields = new HashSet<string>();
-		foreach (FieldInfo fi in MultiFields.getMergedFieldInfos(reader))
+		HashSet<string> fields = new HashSet<string>();
+		foreach (FieldInfo fi in MultiFields.GetMergedFieldInfos(reader))
 		{
-		  if (fi.hasDocValues())
+		  if (fi.HasDocValues())
 		  {
-			fields.add(fi.name);
+			fields.Add(fi.Name);
 		  }
 		}
 
@@ -2252,130 +2248,130 @@ using System.IO;
 	  /// </summary>
 	  public void AssertDocValuesEquals(string info, IndexReader leftReader, IndexReader rightReader) 
 	  {
-		Set<string> leftFields = GetDVFields(leftReader);
-		Set<string> rightFields = GetDVFields(rightReader);
-		Assert.AreEqual(info, leftFields, rightFields);
+		ISet<string> leftFields = GetDVFields(leftReader);
+		ISet<string> rightFields = GetDVFields(rightReader);
+		Assert.AreEqual(leftFields, rightFields, info);
 
 		foreach (string field in leftFields)
 		{
 		  // TODO: clean this up... very messy
 		{
-			NumericDocValues leftValues = MultiDocValues.getNumericValues(leftReader, field);
-			NumericDocValues rightValues = MultiDocValues.getNumericValues(rightReader, field);
+			NumericDocValues leftValues = MultiDocValues.GetNumericValues(leftReader, field);
+			NumericDocValues rightValues = MultiDocValues.GetNumericValues(rightReader, field);
 			if (leftValues != null && rightValues != null)
 			{
-			  AssertDocValuesEquals(info, leftReader.maxDoc(), leftValues, rightValues);
+			  AssertDocValuesEquals(info, leftReader.MaxDoc(), leftValues, rightValues);
 			}
 			else
 			{
-			  assertNull(info, leftValues);
-			  assertNull(info, rightValues);
+			  Assert.IsNull(leftValues, info);
+			  Assert.IsNull(rightValues, info);
 			}
 		  }
 
 		  {
-			BinaryDocValues leftValues = MultiDocValues.getBinaryValues(leftReader, field);
-			BinaryDocValues rightValues = MultiDocValues.getBinaryValues(rightReader, field);
+			BinaryDocValues leftValues = MultiDocValues.GetBinaryValues(leftReader, field);
+			BinaryDocValues rightValues = MultiDocValues.GetBinaryValues(rightReader, field);
 			if (leftValues != null && rightValues != null)
 			{
 			  BytesRef scratchLeft = new BytesRef();
 			  BytesRef scratchRight = new BytesRef();
-			  for (int docID = 0;docID < leftReader.maxDoc();docID++)
+			  for (int docID = 0;docID < leftReader.MaxDoc();docID++)
 			  {
-				leftValues.get(docID, scratchLeft);
-				rightValues.get(docID, scratchRight);
-				Assert.AreEqual(info, scratchLeft, scratchRight);
+				leftValues.Get(docID, scratchLeft);
+				rightValues.Get(docID, scratchRight);
+				Assert.AreEqual(scratchLeft, scratchRight, info);
 			  }
 			}
 			else
 			{
-			  assertNull(info, leftValues);
-			  assertNull(info, rightValues);
+			  Assert.IsNull(leftValues, info);
+			  Assert.IsNull(rightValues, info);
 			}
 		  }
 
 		  {
-			SortedDocValues leftValues = MultiDocValues.getSortedValues(leftReader, field);
-			SortedDocValues rightValues = MultiDocValues.getSortedValues(rightReader, field);
+			SortedDocValues leftValues = MultiDocValues.GetSortedValues(leftReader, field);
+			SortedDocValues rightValues = MultiDocValues.GetSortedValues(rightReader, field);
 			if (leftValues != null && rightValues != null)
 			{
 			  // numOrds
-			  Assert.AreEqual(info, leftValues.ValueCount, rightValues.ValueCount);
+			  Assert.AreEqual(leftValues.ValueCount, rightValues.ValueCount, info);
 			  // ords
 			  BytesRef scratchLeft = new BytesRef();
 			  BytesRef scratchRight = new BytesRef();
 			  for (int i = 0; i < leftValues.ValueCount; i++)
 			  {
-				leftValues.lookupOrd(i, scratchLeft);
-				rightValues.lookupOrd(i, scratchRight);
-				Assert.AreEqual(info, scratchLeft, scratchRight);
+				leftValues.LookupOrd(i, scratchLeft);
+				rightValues.LookupOrd(i, scratchRight);
+				Assert.AreEqual(scratchLeft, scratchRight, info);
 			  }
 			  // bytes
-			  for (int docID = 0;docID < leftReader.maxDoc();docID++)
+			  for (int docID = 0;docID < leftReader.MaxDoc();docID++)
 			  {
-				leftValues.get(docID, scratchLeft);
-				rightValues.get(docID, scratchRight);
-				Assert.AreEqual(info, scratchLeft, scratchRight);
+				leftValues.Get(docID, scratchLeft);
+				rightValues.Get(docID, scratchRight);
+				Assert.AreEqual(scratchLeft, scratchRight, info);
 			  }
 			}
 			else
 			{
-			  assertNull(info, leftValues);
-			  assertNull(info, rightValues);
+			  Assert.IsNull(leftValues, info);
+			  Assert.IsNull(rightValues, info);
 			}
 		  }
 
 		  {
-			SortedSetDocValues leftValues = MultiDocValues.getSortedSetValues(leftReader, field);
-			SortedSetDocValues rightValues = MultiDocValues.getSortedSetValues(rightReader, field);
+			SortedSetDocValues leftValues = MultiDocValues.GetSortedSetValues(leftReader, field);
+			SortedSetDocValues rightValues = MultiDocValues.GetSortedSetValues(rightReader, field);
 			if (leftValues != null && rightValues != null)
 			{
 			  // numOrds
-			  Assert.AreEqual(info, leftValues.ValueCount, rightValues.ValueCount);
+			  Assert.AreEqual(leftValues.ValueCount, rightValues.ValueCount, info);
 			  // ords
 			  BytesRef scratchLeft = new BytesRef();
 			  BytesRef scratchRight = new BytesRef();
 			  for (int i = 0; i < leftValues.ValueCount; i++)
 			  {
-				leftValues.lookupOrd(i, scratchLeft);
-				rightValues.lookupOrd(i, scratchRight);
-				Assert.AreEqual(info, scratchLeft, scratchRight);
+				leftValues.LookupOrd(i, scratchLeft);
+				rightValues.LookupOrd(i, scratchRight);
+				Assert.AreEqual(scratchLeft, scratchRight, info);
 			  }
 			  // ord lists
-			  for (int docID = 0;docID < leftReader.maxDoc();docID++)
+			  for (int docID = 0;docID < leftReader.MaxDoc();docID++)
 			  {
 				leftValues.Document = docID;
 				rightValues.Document = docID;
 				long ord;
-				while ((ord = leftValues.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+				while ((ord = leftValues.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
 				{
-				  Assert.AreEqual(info, ord, rightValues.nextOrd());
+				  Assert.AreEqual(ord, rightValues.NextOrd(), info);
 				}
-				Assert.AreEqual(info, SortedSetDocValues.NO_MORE_ORDS, rightValues.nextOrd());
+				Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, rightValues.NextOrd(), info);
 			  }
 			}
 			else
 			{
-			  assertNull(info, leftValues);
-			  assertNull(info, rightValues);
+			  Assert.IsNull(leftValues, info);
+			  Assert.IsNull(rightValues, info);
 			}
 		  }
 
 		  {
-			Bits leftBits = MultiDocValues.getDocsWithField(leftReader, field);
-			Bits rightBits = MultiDocValues.getDocsWithField(rightReader, field);
+			Bits leftBits = MultiDocValues.GetDocsWithField(leftReader, field);
+			Bits rightBits = MultiDocValues.GetDocsWithField(rightReader, field);
 			if (leftBits != null && rightBits != null)
 			{
-			  Assert.AreEqual(info, leftBits.length(), rightBits.length());
-			  for (int i = 0; i < leftBits.length(); i++)
+			  Assert.AreEqual(leftBits.Length(), rightBits.Length(), info);
+			  for (int i = 0; i < leftBits.Length(); i++)
 			  {
-				Assert.AreEqual(info, leftBits.get(i), rightBits.get(i));
+				Assert.AreEqual(leftBits.Get(i), rightBits.Get(i), info);
 			  }
 			}
 			else
 			{
-			  assertNull(info, leftBits);
-			  assertNull(info, rightBits);
+			  Assert.IsNull(leftBits, info);
+			  Assert.IsNull(rightBits, info);
 			}
 		  }
 		}
@@ -2383,40 +2379,40 @@ using System.IO;
 
 	  public void AssertDocValuesEquals(string info, int num, NumericDocValues leftDocValues, NumericDocValues rightDocValues) 
 	  {
-		Assert.IsNotNull(info, leftDocValues);
-		Assert.IsNotNull(info, rightDocValues);
+		Assert.IsNotNull(leftDocValues, info);
+		Assert.IsNotNull(rightDocValues, info);
 		for (int docID = 0;docID < num;docID++)
 		{
-		  Assert.AreEqual(leftDocValues.get(docID), rightDocValues.get(docID));
+		  Assert.AreEqual(leftDocValues.Get(docID), rightDocValues.Get(docID));
 		}
 	  }
 
 	  // TODO: this is kinda stupid, we don't delete documents in the test.
 	  public void AssertDeletedDocsEquals(string info, IndexReader leftReader, IndexReader rightReader) 
 	  {
-		Debug.Assert(leftReader.numDeletedDocs() == rightReader.numDeletedDocs());
-		Bits leftBits = MultiFields.getLiveDocs(leftReader);
-		Bits rightBits = MultiFields.getLiveDocs(rightReader);
+		Debug.Assert(leftReader.NumDeletedDocs() == rightReader.NumDeletedDocs());
+		Bits leftBits = MultiFields.GetLiveDocs(leftReader);
+		Bits rightBits = MultiFields.GetLiveDocs(rightReader);
 
 		if (leftBits == null || rightBits == null)
 		{
-		  assertNull(info, leftBits);
-		  assertNull(info, rightBits);
+		  Assert.IsNull(leftBits, info);
+		  Assert.IsNull(rightBits, info);
 		  return;
 		}
 
-		Debug.Assert(leftReader.maxDoc() == rightReader.maxDoc());
-		Assert.AreEqual(info, leftBits.length(), rightBits.length());
-		for (int i = 0; i < leftReader.maxDoc(); i++)
+		Debug.Assert(leftReader.MaxDoc() == rightReader.MaxDoc());
+		Assert.AreEqual(leftBits.Length(), rightBits.Length(), info);
+		for (int i = 0; i < leftReader.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(info, leftBits.get(i), rightBits.get(i));
+		  Assert.AreEqual(leftBits.Get(i), rightBits.Get(i), info);
 		}
 	  }
 
 	  public void AssertFieldInfosEquals(string info, IndexReader leftReader, IndexReader rightReader) 
 	  {
-		FieldInfos leftInfos = MultiFields.getMergedFieldInfos(leftReader);
-		FieldInfos rightInfos = MultiFields.getMergedFieldInfos(rightReader);
+		FieldInfos leftInfos = MultiFields.GetMergedFieldInfos(leftReader);
+		FieldInfos rightInfos = MultiFields.GetMergedFieldInfos(rightReader);
 
 		// TODO: would be great to verify more than just the names of the fields!
 		SortedSet<string> left = new SortedSet<string>();
@@ -2424,15 +2420,15 @@ using System.IO;
 
 		foreach (FieldInfo fi in leftInfos)
 		{
-		  left.Add(fi.name);
+		  left.Add(fi.Name);
 		}
 
 		foreach (FieldInfo fi in rightInfos)
 		{
-		  right.Add(fi.name);
+		  right.Add(fi.Name);
 		}
 
-		Assert.AreEqual(info, left, right);
+		Assert.AreEqual(left, right, info);
 	  }
 
 	  /// <summary>
@@ -2445,7 +2441,7 @@ using System.IO;
 	  {
 		try
 		{
-		  dir.openInput(fileName, IOContext.DEFAULT).close();
+		  dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
 		  return true;
 		}
 		catch (Exception /*NoSuchFileException | FileNotFoundException*/ e)
@@ -2458,7 +2454,7 @@ using System.IO;
 	  /// A base location for temporary files of a given test. Helps in figuring out
 	  /// which tests left which files and where.
 	  /// </summary>
-	  private static File TempDirBase;
+      private static Directory TempDirBase;
 
 	  /// <summary>
 	  /// Retry to create temporary file name this many times.
@@ -2470,7 +2466,7 @@ using System.IO;
 	  /// or <seealso cref="#createTempDir(String)"/> or <seealso cref="#createTempFile(String, String)"/>.
 	  /// </summary>
 	  [Obsolete]
-	  public static File BaseTempDirForTestClass
+	  public static Directory BaseTempDirForTestClass()
 	  {
 		lock (typeof(LuceneTestCase))
 		{
@@ -2479,7 +2475,7 @@ using System.IO;
 			File directory = new File(System.getProperty("tempDir", System.getProperty("java.io.tmpdir")));
 			Debug.Assert(directory.exists() && directory.Directory && directory.canWrite());
 
-			RandomizedContext ctx = RandomizedContext.current();
+			RandomizedContext ctx = RandomizedContext.Current();
 			Type clazz = ctx.TargetClass;
 			string prefix = clazz.Name;
 			prefix = prefix.replaceFirst("^org.apache.lucene.", "lucene.");
@@ -2508,7 +2504,7 @@ using System.IO;
 	  /// Creates an empty, temporary folder (when the name of the folder is of no importance).
 	  /// </summary>
 	  /// <seealso cref= #createTempDir(String) </seealso>
-	  public static File CreateTempDir()
+      public static Directory CreateTempDir()
 	  {
 		return CreateTempDir("tempDir");
 	  }
@@ -2521,9 +2517,9 @@ using System.IO;
 	  /// test class completes successfully. The test should close any file handles that would prevent
 	  /// the folder from being removed. 
 	  /// </summary>
-	  public static File CreateTempDir(string prefix)
+      public static Directory CreateTempDir(string prefix)
 	  {
-		File @base = BaseTempDirForTestClass;
+		Directory @base = BaseTempDirForTestClass();
 
 		int attempt = 0;
 		File f;
@@ -2580,7 +2576,7 @@ using System.IO;
 	  /// A queue of temporary resources to be removed after the
 	  /// suite completes. </summary>
 	  /// <seealso cref= #registerToRemoveAfterSuite(File) </seealso>
-	  private static IList<File> CleanupQueue = new List<File>();
+	  private static List<FileInfo> CleanupQueue = new List<FileInfo>();
 
 	  /// <summary>
 	  /// Register temporary folder for removal after the suite completes.
@@ -2657,7 +2653,7 @@ using System.IO;
 	}
 
 
-	private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
+	internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
 	{
 		private readonly LuceneTestCase outerInstance;
 
@@ -2675,7 +2671,7 @@ using System.IO;
 		}
 	}
 
-	private class ComparatorAnonymousInnerClassHelper : IComparer<IndexableField>
+	internal class ComparatorAnonymousInnerClassHelper : IComparer<IndexableField>
 	{
 		private readonly LuceneTestCase outerInstance;
 
@@ -2686,7 +2682,7 @@ using System.IO;
 
 		public virtual int Compare(IndexableField arg0, IndexableField arg1)
 		{
-		  return arg0.name().compareTo(arg1.name());
+		  return arg0.Name().CompareTo(arg1.Name());
 		}
 	}
 }

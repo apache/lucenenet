@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Implementation for <seealso cref="BinaryTermAttribute"/>. </summary>
-	  public sealed class BinaryTermAttributeImpl : AttributeImpl, BinaryTermAttribute, TermToBytesRefAttribute
+	  public sealed class BinaryTermAttributeImpl : Attribute, BinaryTermAttribute, TermToBytesRefAttribute
 	  {
 		internal readonly BytesRef Bytes = new BytesRef();
 
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis
 		  return RuntimeHelpers.GetHashCode(this);
 		}
 
-		public override void CopyTo(AttributeImpl target)
+		public override void CopyTo(Attribute target)
 		{
 		  BinaryTermAttributeImpl other = (BinaryTermAttributeImpl) target;
 		  other.Bytes.CopyBytes(Bytes);

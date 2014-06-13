@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests the uniqueTermCount statistic in FieldInvertState
@@ -45,39 +46,39 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		MockAnalyzer analyzer = new MockAnalyzer(random(), MockTokenizer.SIMPLE, true);
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		config.MergePolicy = newLogMergePolicy();
-		config.Similarity = new TestSimilarity(this);
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, config);
+		base.SetUp();
+		Dir = NewDirectory();
+		MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		config.SetMergePolicy(NewLogMergePolicy());
+		config.SetSimilarity(new TestSimilarity(this));
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
 		Document doc = new Document();
-		Field foo = newTextField("foo", "", Field.Store.NO);
-		doc.add(foo);
+		Field foo = NewTextField("foo", "", Field.Store.NO);
+		doc.Add(foo);
 		for (int i = 0; i < 100; i++)
 		{
 		  foo.StringValue = AddValue();
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
+        writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void Test()
 	  {
-		NumericDocValues fooNorms = MultiDocValues.getNormValues(Reader, "foo");
+		NumericDocValues fooNorms = MultiDocValues.GetNormValues(Reader, "foo");
 		Assert.IsNotNull(fooNorms);
-		for (int i = 0; i < Reader.maxDoc(); i++)
+		for (int i = 0; i < Reader.MaxDoc(); i++)
 		{
-		  Assert.AreEqual((long)Expected[i], fooNorms.get(i));
+		  Assert.AreEqual((long)Expected[i], fooNorms.Get(i));
 		}
 	  }
 
@@ -89,11 +90,11 @@ namespace Lucene.Net.Index
 	  {
 		StringBuilder sb = new StringBuilder();
 		HashSet<string> terms = new HashSet<string>();
-		int num = TestUtil.Next(random(), 0, 255);
+		int num = TestUtil.NextInt(Random(), 0, 255);
 		for (int i = 0; i < num; i++)
 		{
 		  sb.Append(' ');
-		  char term = (char) TestUtil.Next(random(), 'a', 'z');
+		  char term = (char) TestUtil.NextInt(Random(), 'a', 'z');
 		  sb.Append(term);
 		  terms.Add("" + term);
 		}

@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// @lucene.experimental </summary>
@@ -48,11 +49,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 		bool success = false;
 		try
 		{
-		  FieldsStream = directory.createOutput(IndexFileNames.segmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), context);
-		  IndexStream = directory.createOutput(IndexFileNames.segmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION), context);
+		  FieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), context);
+		  IndexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION), context);
 
-		  FieldsStream.writeInt(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
-		  IndexStream.writeInt(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
+		  FieldsStream.WriteInt(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
+		  IndexStream.WriteInt(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
 
 		  success = true;
 		}
@@ -71,15 +72,15 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  // in the correct fields format.
 	  public void StartDocument(int numStoredFields)
 	  {
-		IndexStream.writeLong(FieldsStream.FilePointer);
-		FieldsStream.writeVInt(numStoredFields);
+		IndexStream.WriteLong(FieldsStream.FilePointer);
+		FieldsStream.WriteVInt(numStoredFields);
 	  }
 
 	  public void Close()
 	  {
 		try
 		{
-		  IOUtils.close(FieldsStream, IndexStream);
+		  IOUtils.Close(FieldsStream, IndexStream);
 		}
 		finally
 		{
@@ -96,12 +97,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		catch (Exception ignored)
 		{
 		}
-		IOUtils.deleteFilesIgnoringExceptions(Directory, IndexFileNames.segmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.segmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+		IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
 	  }
 
 	  public void WriteField(FieldInfo info, IndexableField field)
 	  {
-		FieldsStream.writeVInt(info.number);
+		FieldsStream.WriteVInt(info.Number);
 		int bits = 0;
 		BytesRef bytes;
 		string @string;
@@ -110,7 +111,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		// specific encodings for different fields?  and apps
 		// can customize...
 
-		Number number = field.numericValue();
+		object number = field.NumericValue;
 		if (number != null)
 		{
 		  if (number is sbyte? || number is short? || number is int?)
@@ -138,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  bytes = field.binaryValue();
+		  bytes = field.BinaryValue();
 		  if (bytes != null)
 		  {
 			bits |= Lucene3xStoredFieldsReader.FIELD_IS_BINARY;
@@ -146,42 +147,42 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		  else
 		  {
-			@string = field.stringValue();
+			@string = field.StringValue;
 			if (@string == null)
 			{
-			  throw new System.ArgumentException("field " + field.name() + " is stored but does not have binaryValue, stringValue nor numericValue");
+			  throw new System.ArgumentException("field " + field.Name() + " is stored but does not have binaryValue, stringValue nor numericValue");
 			}
 		  }
 		}
 
-		FieldsStream.writeByte((sbyte) bits);
+		FieldsStream.WriteByte((sbyte) bits);
 
 		if (bytes != null)
 		{
-		  FieldsStream.writeVInt(bytes.length);
-		  FieldsStream.writeBytes(bytes.bytes, bytes.offset, bytes.length);
+		  FieldsStream.WriteVInt(bytes.Length);
+		  FieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
 		}
 		else if (@string != null)
 		{
-		  FieldsStream.writeString(field.stringValue());
+		  FieldsStream.WriteString(field.StringValue);
 		}
 		else
 		{
 		  if (number is sbyte? || number is short? || number is int?)
 		  {
-			FieldsStream.writeInt((int)number);
+			FieldsStream.WriteInt((int)number);
 		  }
 		  else if (number is long?)
 		  {
-			FieldsStream.writeLong((long)number);
+			FieldsStream.WriteLong((long)number);
 		  }
 		  else if (number is float?)
 		  {
-			FieldsStream.writeInt(float.floatToIntBits((float)number));
+			FieldsStream.WriteInt(Number.FloatToIntBits((float)number));
 		  }
 		  else if (number is double?)
 		  {
-			FieldsStream.writeLong(double.doubleToLongBits((double)number));
+			FieldsStream.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
 		  }
 		  else
 		  {

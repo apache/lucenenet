@@ -38,6 +38,7 @@ namespace Lucene.Net.Document
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
+    using System.IO;
 
 
 	/// <summary>
@@ -59,42 +60,42 @@ namespace Lucene.Net.Document
 		IndexableField binaryFld = new StoredField("binary", BinaryVal.getBytes(StandardCharsets.UTF_8));
 		IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.getBytes(StandardCharsets.UTF_8));
 
-		doc.add(stringFld);
-		doc.add(binaryFld);
+		doc.Add(stringFld);
+		doc.Add(binaryFld);
 
-		Assert.AreEqual(2, doc.Fields.size());
+		Assert.AreEqual(2, doc.Fields.Count);
 
-		Assert.IsTrue(binaryFld.binaryValue() != null);
-		Assert.IsTrue(binaryFld.fieldType().stored());
-		Assert.IsFalse(binaryFld.fieldType().indexed());
+		Assert.IsTrue(binaryFld.BinaryValue() != null);
+		Assert.IsTrue(binaryFld.FieldType().Stored);
+		Assert.IsFalse(binaryFld.FieldType().Indexed);
 
-		string binaryTest = doc.getBinaryValue("binary").utf8ToString();
+		string binaryTest = doc.GetBinaryValue("binary").Utf8ToString();
 		Assert.IsTrue(binaryTest.Equals(BinaryVal));
 
-		string stringTest = doc.get("string");
+		string stringTest = doc.Get("string");
 		Assert.IsTrue(binaryTest.Equals(stringTest));
 
-		doc.add(binaryFld2);
+		doc.Add(binaryFld2);
 
-		Assert.AreEqual(3, doc.Fields.size());
+		Assert.AreEqual(3, doc.Fields.Count);
 
-		BytesRef[] binaryTests = doc.getBinaryValues("binary");
+		BytesRef[] binaryTests = doc.GetBinaryValues("binary");
 
 		Assert.AreEqual(2, binaryTests.Length);
 
-		binaryTest = binaryTests[0].utf8ToString();
-		string binaryTest2 = binaryTests[1].utf8ToString();
+		binaryTest = binaryTests[0].Utf8ToString();
+		string binaryTest2 = binaryTests[1].Utf8ToString();
 
 		Assert.IsFalse(binaryTest.Equals(binaryTest2));
 
 		Assert.IsTrue(binaryTest.Equals(BinaryVal));
 		Assert.IsTrue(binaryTest2.Equals(BinaryVal2));
 
-		doc.removeField("string");
-		Assert.AreEqual(2, doc.Fields.size());
+		doc.RemoveField("string");
+		Assert.AreEqual(2, doc.Fields.Count);
 
-		doc.removeFields("binary");
-		Assert.AreEqual(0, doc.Fields.size());
+		doc.RemoveFields("binary");
+		Assert.AreEqual(0, doc.Fields.Count);
 	  }
 
 	  /// <summary>
@@ -105,32 +106,32 @@ namespace Lucene.Net.Document
 	  public virtual void TestRemoveForNewDocument()
 	  {
 		Document doc = MakeDocumentWithFields();
-		Assert.AreEqual(10, doc.Fields.size());
-		doc.removeFields("keyword");
-		Assert.AreEqual(8, doc.Fields.size());
-		doc.removeFields("doesnotexists"); // removing non-existing fields is
+        Assert.AreEqual(10, doc.Fields.Count);
+		doc.RemoveFields("keyword");
+        Assert.AreEqual(8, doc.Fields.Count);
+        doc.RemoveFields("doesnotexists"); // removing non-existing fields is
 										   // siltenlty ignored
-		doc.removeFields("keyword"); // removing a field more than once
-		Assert.AreEqual(8, doc.Fields.size());
-		doc.removeField("text");
-		Assert.AreEqual(7, doc.Fields.size());
-		doc.removeField("text");
-		Assert.AreEqual(6, doc.Fields.size());
-		doc.removeField("text");
-		Assert.AreEqual(6, doc.Fields.size());
-		doc.removeField("doesnotexists"); // removing non-existing fields is
+        doc.RemoveFields("keyword"); // removing a field more than once
+        Assert.AreEqual(8, doc.Fields.Count);
+        doc.RemoveFields("text");
+        Assert.AreEqual(7, doc.Fields.Count);
+        doc.RemoveFields("text");
+        Assert.AreEqual(6, doc.Fields.Count);
+        doc.RemoveFields("text");
+        Assert.AreEqual(6, doc.Fields.Count);
+        doc.RemoveFields("doesnotexists"); // removing non-existing fields is
 										  // siltenlty ignored
-		Assert.AreEqual(6, doc.Fields.size());
-		doc.removeFields("unindexed");
-		Assert.AreEqual(4, doc.Fields.size());
-		doc.removeFields("unstored");
-		Assert.AreEqual(2, doc.Fields.size());
-		doc.removeFields("doesnotexists"); // removing non-existing fields is
+        Assert.AreEqual(6, doc.Fields.Count);
+        doc.RemoveFields("unindexed");
+        Assert.AreEqual(4, doc.Fields.Count);
+        doc.RemoveFields("unstored");
+        Assert.AreEqual(2, doc.Fields.Count);
+        doc.RemoveFields("doesnotexists"); // removing non-existing fields is
 										   // siltenlty ignored
-		Assert.AreEqual(2, doc.Fields.size());
+        Assert.AreEqual(2, doc.Fields.Count);
 
-		doc.removeFields("indexed_not_tokenized");
-		Assert.AreEqual(0, doc.Fields.size());
+        doc.RemoveFields("indexed_not_tokenized");
+        Assert.AreEqual(0, doc.Fields.Count);
 	  }
 
 	  public virtual void TestConstructorExceptions()
@@ -180,54 +181,54 @@ namespace Lucene.Net.Document
 	  /// <exception cref="Exception"> on error </exception>
 	  public virtual void TestGetValuesForIndexedDocument()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
-		writer.addDocument(MakeDocumentWithFields());
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+		writer.AddDocument(MakeDocumentWithFields());
 		IndexReader reader = writer.Reader;
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		// search for something that does exists
 		Query query = new TermQuery(new Term("keyword", "test1"));
 
 		// ensure that queries return expected results without DateFilter first
-		ScoreDoc[] hits = searcher.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
-		DoAssert(searcher.doc(hits[0].doc), true);
-		writer.close();
-		reader.close();
-		dir.close();
+		DoAssert(searcher.Doc(hits[0].Doc), true);
+		writer.Close();
+        reader.Dispose();
+        dir.Dispose();
 	  }
 
 	  public virtual void TestGetValues()
 	  {
 		Document doc = MakeDocumentWithFields();
-		Assert.AreEqual(new string[] {"test1", "test2"}, doc.getValues("keyword"));
-		Assert.AreEqual(new string[] {"test1", "test2"}, doc.getValues("text"));
-		Assert.AreEqual(new string[] {"test1", "test2"}, doc.getValues("unindexed"));
-		Assert.AreEqual(new string[0], doc.getValues("nope"));
+		Assert.AreEqual(new string[] {"test1", "test2"}, doc.GetValues("keyword"));
+		Assert.AreEqual(new string[] {"test1", "test2"}, doc.GetValues("text"));
+		Assert.AreEqual(new string[] {"test1", "test2"}, doc.GetValues("unindexed"));
+		Assert.AreEqual(new string[0], doc.GetValues("nope"));
 	  }
 
 	  public virtual void TestPositionIncrementMultiFields()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
-		writer.addDocument(MakeDocumentWithFields());
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+		writer.AddDocument(MakeDocumentWithFields());
 		IndexReader reader = writer.Reader;
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 		PhraseQuery query = new PhraseQuery();
-		query.add(new Term("indexed_not_tokenized", "test1"));
-		query.add(new Term("indexed_not_tokenized", "test2"));
+		query.Add(new Term("indexed_not_tokenized", "test1"));
+		query.Add(new Term("indexed_not_tokenized", "test2"));
 
-		ScoreDoc[] hits = searcher.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
-		DoAssert(searcher.doc(hits[0].doc), true);
-		writer.close();
-		reader.close();
-		dir.close();
+		DoAssert(searcher.Doc(hits[0].Doc), true);
+		writer.Close();
+        reader.Dispose();
+        dir.Dispose();
 	  }
 
 	  private Document MakeDocumentWithFields()
@@ -238,25 +239,25 @@ namespace Lucene.Net.Document
 		FieldType indexedNotTokenized = new FieldType();
 		indexedNotTokenized.Indexed = true;
 		indexedNotTokenized.Tokenized = false;
-		doc.add(new StringField("keyword", "test1", Field.Store.YES));
-		doc.add(new StringField("keyword", "test2", Field.Store.YES));
-		doc.add(new TextField("text", "test1", Field.Store.YES));
-		doc.add(new TextField("text", "test2", Field.Store.YES));
-		doc.add(new Field("unindexed", "test1", stored));
-		doc.add(new Field("unindexed", "test2", stored));
-		doc.add(new TextField("unstored", "test1", Field.Store.NO));
-		doc.add(new TextField("unstored", "test2", Field.Store.NO));
-		doc.add(new Field("indexed_not_tokenized", "test1", indexedNotTokenized));
-		doc.add(new Field("indexed_not_tokenized", "test2", indexedNotTokenized));
+		doc.Add(new StringField("keyword", "test1", Field.Store.YES));
+		doc.Add(new StringField("keyword", "test2", Field.Store.YES));
+		doc.Add(new TextField("text", "test1", Field.Store.YES));
+		doc.Add(new TextField("text", "test2", Field.Store.YES));
+		doc.Add(new Field("unindexed", "test1", stored));
+		doc.Add(new Field("unindexed", "test2", stored));
+		doc.Add(new TextField("unstored", "test1", Field.Store.NO));
+		doc.Add(new TextField("unstored", "test2", Field.Store.NO));
+		doc.Add(new Field("indexed_not_tokenized", "test1", indexedNotTokenized));
+		doc.Add(new Field("indexed_not_tokenized", "test2", indexedNotTokenized));
 		return doc;
 	  }
 
 	  private void DoAssert(Document doc, bool fromIndex)
 	  {
-		IndexableField[] keywordFieldValues = doc.getFields("keyword");
-		IndexableField[] textFieldValues = doc.getFields("text");
-		IndexableField[] unindexedFieldValues = doc.getFields("unindexed");
-		IndexableField[] unstoredFieldValues = doc.getFields("unstored");
+		IndexableField[] keywordFieldValues = doc.GetFields("keyword");
+		IndexableField[] textFieldValues = doc.GetFields("text");
+		IndexableField[] unindexedFieldValues = doc.GetFields("unindexed");
+		IndexableField[] unstoredFieldValues = doc.GetFields("unstored");
 
 		Assert.IsTrue(keywordFieldValues.Length == 2);
 		Assert.IsTrue(textFieldValues.Length == 2);
@@ -268,18 +269,18 @@ namespace Lucene.Net.Document
 		  Assert.IsTrue(unstoredFieldValues.Length == 2);
 		}
 
-		Assert.IsTrue(keywordFieldValues[0].stringValue().Equals("test1"));
-		Assert.IsTrue(keywordFieldValues[1].stringValue().Equals("test2"));
-		Assert.IsTrue(textFieldValues[0].stringValue().Equals("test1"));
-		Assert.IsTrue(textFieldValues[1].stringValue().Equals("test2"));
-		Assert.IsTrue(unindexedFieldValues[0].stringValue().Equals("test1"));
-		Assert.IsTrue(unindexedFieldValues[1].stringValue().Equals("test2"));
+		Assert.IsTrue(keywordFieldValues[0].StringValue.Equals("test1"));
+		Assert.IsTrue(keywordFieldValues[1].StringValue.Equals("test2"));
+		Assert.IsTrue(textFieldValues[0].StringValue.Equals("test1"));
+		Assert.IsTrue(textFieldValues[1].StringValue.Equals("test2"));
+		Assert.IsTrue(unindexedFieldValues[0].StringValue.Equals("test1"));
+		Assert.IsTrue(unindexedFieldValues[1].StringValue.Equals("test2"));
 		// this test cannot work for documents retrieved from the index
 		// since unstored fields will obviously not be returned
 		if (!fromIndex)
 		{
-		  Assert.IsTrue(unstoredFieldValues[0].stringValue().Equals("test1"));
-		  Assert.IsTrue(unstoredFieldValues[1].stringValue().Equals("test2"));
+		  Assert.IsTrue(unstoredFieldValues[0].StringValue.Equals("test1"));
+		  Assert.IsTrue(unstoredFieldValues[1].StringValue.Equals("test2"));
 		}
 	  }
 
@@ -288,39 +289,39 @@ namespace Lucene.Net.Document
 
 		Field field = new StringField("id", "id1", Field.Store.YES);
 		Document doc = new Document();
-		doc.add(field);
-		doc.add(new StringField("keyword", "test", Field.Store.YES));
+		doc.Add(field);
+		doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
-		writer.addDocument(doc);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
+		writer.AddDocument(doc);
 		field.StringValue = "id2";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "id3";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		Query query = new TermQuery(new Term("keyword", "test"));
 
 		// ensure that queries return expected results without DateFilter first
-		ScoreDoc[] hits = searcher.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(3, hits.Length);
 		int result = 0;
 		for (int i = 0; i < 3; i++)
 		{
-		  Document doc2 = searcher.doc(hits[i].doc);
-		  Field f = (Field) doc2.getField("id");
-		  if (f.stringValue().Equals("id1"))
+		  Document doc2 = searcher.Doc(hits[i].Doc);
+		  Field f = (Field) doc2.GetField("id");
+		  if (f.StringValue.Equals("id1"))
 		  {
 			  result |= 1;
 		  }
-		  else if (f.stringValue().Equals("id2"))
+		  else if (f.StringValue.Equals("id2"))
 		  {
 			  result |= 2;
 		  }
-		  else if (f.stringValue().Equals("id3"))
+		  else if (f.StringValue.Equals("id3"))
 		  {
 			  result |= 4;
 		  }
@@ -329,10 +330,10 @@ namespace Lucene.Net.Document
 			  Assert.Fail("unexpected id field");
 		  }
 		}
-		writer.close();
-		reader.close();
-		dir.close();
-		Assert.AreEqual("did not see all IDs", 7, result);
+		writer.Close();
+		reader.Dispose();
+        dir.Dispose();
+		Assert.AreEqual(7, result, "did not see all IDs");
 	  }
 
 	  // LUCENE-3616
@@ -340,7 +341,7 @@ namespace Lucene.Net.Document
 	  {
 		try
 		{
-		  new Field("foo", new MockTokenizer(new StringReader("")), StringField.TYPE_STORED);
+		  new Field("foo", new MockTokenizer(new StreamReader("")), StringField.TYPE_STORED);
 		  Assert.Fail("did not hit expected exc");
 		}
 		catch (System.ArgumentException iae)
@@ -352,93 +353,93 @@ namespace Lucene.Net.Document
 	  // LUCENE-3682
 	  public virtual void TestTransitionAPI()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
 		Document doc = new Document();
-		doc.add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
-		doc.add(new Field("stored_indexed", "abc xyz", Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("stored_tokenized", "abc xyz", Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field("indexed", "abc xyz", Field.Store.NO, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("tokenized", "abc xyz", Field.Store.NO, Field.Index.ANALYZED));
-		doc.add(new Field("tokenized_reader", new StringReader("abc xyz")));
-		doc.add(new Field("tokenized_tokenstream", w.w.Analyzer.tokenStream("tokenized_tokenstream", new StringReader("abc xyz"))));
-		doc.add(new Field("binary", new sbyte[10]));
-		doc.add(new Field("tv", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
-		doc.add(new Field("tv_pos", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS));
-		doc.add(new Field("tv_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_OFFSETS));
-		doc.add(new Field("tv_pos_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
-		w.addDocument(doc);
+		doc.Add(new Field("stored", "abc", Field.Store.YES, Field.Index.NO));
+		doc.Add(new Field("stored_indexed", "abc xyz", Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.Add(new Field("stored_tokenized", "abc xyz", Field.Store.YES, Field.Index.ANALYZED));
+		doc.Add(new Field("indexed", "abc xyz", Field.Store.NO, Field.Index.NOT_ANALYZED));
+		doc.Add(new Field("tokenized", "abc xyz", Field.Store.NO, Field.Index.ANALYZED));
+		doc.Add(new Field("tokenized_reader", new StringReader("abc xyz")));
+		doc.Add(new Field("tokenized_tokenstream", w.w.Analyzer.tokenStream("tokenized_tokenstream", new StringReader("abc xyz"))));
+		doc.Add(new Field("binary", new sbyte[10]));
+		doc.Add(new Field("tv", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
+		doc.Add(new Field("tv_pos", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS));
+		doc.Add(new Field("tv_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_OFFSETS));
+		doc.Add(new Field("tv_pos_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 
-		doc = r.document(0);
+		doc = r.Document(0);
 		// 4 stored fields
-		Assert.AreEqual(4, doc.Fields.size());
-		Assert.AreEqual("abc", doc.get("stored"));
-		Assert.AreEqual("abc xyz", doc.get("stored_indexed"));
-		Assert.AreEqual("abc xyz", doc.get("stored_tokenized"));
-		BytesRef br = doc.getBinaryValue("binary");
+		Assert.AreEqual(4, doc.Fields.Count);
+		Assert.AreEqual("abc", doc.Get("stored"));
+		Assert.AreEqual("abc xyz", doc.Get("stored_indexed"));
+		Assert.AreEqual("abc xyz", doc.Get("stored_tokenized"));
+		BytesRef br = doc.GetBinaryValue("binary");
 		Assert.IsNotNull(br);
-		Assert.AreEqual(10, br.length);
+		Assert.AreEqual(10, br.Length);
 
 		IndexSearcher s = new IndexSearcher(r);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("stored_indexed", "abc xyz")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("stored_tokenized", "abc")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("stored_tokenized", "xyz")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("indexed", "abc xyz")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("tokenized", "abc")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("tokenized", "xyz")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("tokenized_reader", "abc")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("tokenized_reader", "xyz")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("tokenized_tokenstream", "abc")), 1).totalHits);
-		Assert.AreEqual(1, s.search(new TermQuery(new Term("tokenized_tokenstream", "xyz")), 1).totalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("stored_indexed", "abc xyz")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("stored_tokenized", "abc")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("stored_tokenized", "xyz")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("indexed", "abc xyz")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("tokenized", "abc")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("tokenized", "xyz")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("tokenized_reader", "abc")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("tokenized_reader", "xyz")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("tokenized_tokenstream", "abc")), 1).TotalHits);
+		Assert.AreEqual(1, s.Search(new TermQuery(new Term("tokenized_tokenstream", "xyz")), 1).TotalHits);
 
 		foreach (string field in new string[] {"tv", "tv_pos", "tv_off", "tv_pos_off"})
 		{
-		  Fields tvFields = r.getTermVectors(0);
-		  Terms tvs = tvFields.terms(field);
+		  Fields tvFields = r.GetTermVectors(0);
+		  Terms tvs = tvFields.Terms(field);
 		  Assert.IsNotNull(tvs);
-		  Assert.AreEqual(2, tvs.size());
-		  TermsEnum tvsEnum = tvs.iterator(null);
-		  Assert.AreEqual(new BytesRef("abc"), tvsEnum.next());
-		  DocsAndPositionsEnum dpEnum = tvsEnum.docsAndPositions(null, null);
+		  Assert.AreEqual(2, tvs.Size());
+		  TermsEnum tvsEnum = tvs.Iterator(null);
+		  Assert.AreEqual(new BytesRef("abc"), tvsEnum.Next());
+		  DocsAndPositionsEnum dpEnum = tvsEnum.DocsAndPositions(null, null);
 		  if (field.Equals("tv"))
 		  {
-			assertNull(dpEnum);
+			Assert.IsNull(dpEnum);
 		  }
 		  else
 		  {
 			Assert.IsNotNull(dpEnum);
 		  }
-		  Assert.AreEqual(new BytesRef("xyz"), tvsEnum.next());
-		  assertNull(tvsEnum.next());
+		  Assert.AreEqual(new BytesRef("xyz"), tvsEnum.Next());
+		  Assert.IsNull(tvsEnum.Next());
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+        dir.Dispose();
 	  }
 
 	  public virtual void TestNumericFieldAsString()
 	  {
 		Document doc = new Document();
-		doc.add(new IntField("int", 5, Field.Store.YES));
-		Assert.AreEqual("5", doc.get("int"));
-		assertNull(doc.get("somethingElse"));
-		doc.add(new IntField("int", 4, Field.Store.YES));
-		assertArrayEquals(new string[] {"5", "4"}, doc.getValues("int"));
+		doc.Add(new IntField("int", 5, Field.Store.YES));
+		Assert.AreEqual("5", doc.Get("int"));
+		Assert.IsNull(doc.Get("somethingElse"));
+		doc.Add(new IntField("int", 4, Field.Store.YES));
+		AssertArrayEquals(new string[] {"5", "4"}, doc.GetValues("int"));
 
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
-		iw.addDocument(doc);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
+		iw.AddDocument(doc);
 		DirectoryReader ir = iw.Reader;
-		Document sdoc = ir.document(0);
-		Assert.AreEqual("5", sdoc.get("int"));
-		assertNull(sdoc.get("somethingElse"));
-		assertArrayEquals(new string[] {"5", "4"}, sdoc.getValues("int"));
-		ir.close();
-		iw.close();
-		dir.close();
+		Document sdoc = ir.Document(0);
+		Assert.AreEqual("5", sdoc.Get("int"));
+		Assert.IsNull(sdoc.Get("somethingElse"));
+		AssertArrayEquals(new string[] {"5", "4"}, sdoc.GetValues("int"));
+		ir.Dispose();
+		iw.Close();
+        dir.Dispose();
 	  }
 	}
 

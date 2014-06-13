@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
 	  /// <pre class="prettyprint">
 	  /// //customize Lucene41PostingsFormat, passing minBlockSize=50, maxBlockSize=100
 	  /// final PostingsFormat tweakedPostings = new Lucene41PostingsFormat(50, 100);
-	  /// iwc.setCodec(new Lucene45Codec() {
+	  /// iwc.SetCodec(new Lucene45Codec() {
 	  ///   &#64;Override
 	  ///   public PostingsFormat getPostingsFormatForField(String field) {
 	  ///     if (field.equals("fieldWithTonsOfTerms"))
@@ -462,7 +462,7 @@ namespace Lucene.Net.Index
 	  /// for example when applying deletes or creating a near-real-time reader in
 	  /// <seealso cref="DirectoryReader#open(IndexWriter, boolean)"/>. If you pass -1, the
 	  /// terms index won't be loaded by the readers. this is only useful in advanced
-	  /// situations when you will only .next() through all terms; attempts to seek
+	  /// situations when you will only .Next() through all terms; attempts to seek
 	  /// will hit an exception.
 	  /// 
 	  /// <p>

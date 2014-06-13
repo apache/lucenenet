@@ -49,22 +49,22 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 
 		// for now its SimpleText vs Lucene46(random postings format)
 		// as this gives the best overall coverage. when we have more
 		// codecs we should probably pick 2 from Codec.availableCodecs()
 
 		LeftCodec = Codec.forName("SimpleText");
-		RightCodec = new RandomCodec(random());
+		RightCodec = new RandomCodec(Random());
 
-		LeftDir = newDirectory();
-		RightDir = newDirectory();
+		LeftDir = NewDirectory();
+		RightDir = NewDirectory();
 
-		long seed = random().nextLong();
+		long seed = Random().nextLong();
 
 		// must use same seed because of random payloads, etc
-		int maxTermLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		int maxTermLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 		MockAnalyzer leftAnalyzer = new MockAnalyzer(new Random(seed));
 		leftAnalyzer.MaxTokenLength = maxTermLength;
 		MockAnalyzer rightAnalyzer = new MockAnalyzer(new Random(seed));
@@ -72,32 +72,32 @@ namespace Lucene.Net.Index
 
 		// but these can be different
 		// TODO: this turns this into a really big test of Multi*, is that what we want?
-		IndexWriterConfig leftConfig = newIndexWriterConfig(TEST_VERSION_CURRENT, leftAnalyzer);
+		IndexWriterConfig leftConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, leftAnalyzer);
 		leftConfig.Codec = LeftCodec;
 		// preserve docids
-		leftConfig.MergePolicy = newLogMergePolicy();
+		leftConfig.MergePolicy = NewLogMergePolicy();
 
-		IndexWriterConfig rightConfig = newIndexWriterConfig(TEST_VERSION_CURRENT, rightAnalyzer);
+		IndexWriterConfig rightConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, rightAnalyzer);
 		rightConfig.Codec = RightCodec;
 		// preserve docids
-		rightConfig.MergePolicy = newLogMergePolicy();
+		rightConfig.MergePolicy = NewLogMergePolicy();
 
 		// must use same seed because of random docvalues fields, etc
 		RandomIndexWriter leftWriter = new RandomIndexWriter(new Random(seed), LeftDir, leftConfig);
 		RandomIndexWriter rightWriter = new RandomIndexWriter(new Random(seed), RightDir, rightConfig);
 
-		int numdocs = atLeast(100);
+		int numdocs = AtLeast(100);
 		CreateRandomIndex(numdocs, leftWriter, seed);
 		CreateRandomIndex(numdocs, rightWriter, seed);
 
-		LeftReader = maybeWrapReader(leftWriter.Reader);
-		leftWriter.close();
-		RightReader = maybeWrapReader(rightWriter.Reader);
-		rightWriter.close();
+		LeftReader = MaybeWrapReader(leftWriter.Reader);
+        leftWriter.Close();
+		RightReader = MaybeWrapReader(rightWriter.Reader);
+        rightWriter.Close();
 
 		// check that our readers are valid
-		TestUtil.checkReader(LeftReader);
-		TestUtil.checkReader(RightReader);
+		TestUtil.CheckReader(LeftReader);
+		TestUtil.CheckReader(RightReader);
 
 		Info = "left: " + LeftCodec.ToString() + " / right: " + RightCodec.ToString();
 	  }
@@ -106,23 +106,23 @@ namespace Lucene.Net.Index
 	  {
 		if (LeftReader != null)
 		{
-		  LeftReader.close();
+		  LeftReader.Dispose();
 		}
 		if (RightReader != null)
 		{
-		  RightReader.close();
+		  RightReader.Dispose();
 		}
 
 		if (LeftDir != null)
 		{
-		  LeftDir.close();
+		  LeftDir.Dispose();
 		}
 		if (RightDir != null)
 		{
-		  RightDir.close();
+		  RightDir.Dispose();
 		}
 
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  /// <summary>
@@ -138,24 +138,24 @@ namespace Lucene.Net.Index
 		// because linefiledocs doesn't cover all the possibilities.
 		for (int i = 0; i < numdocs; i++)
 		{
-		  Document document = lineFileDocs.nextDoc();
+		  Document document = lineFileDocs.NextDoc();
 		  // grab the title and add some SortedSet instances for fun
-		  string title = document.get("titleTokenized");
+		  string title = document.Get("titleTokenized");
 		  string[] split = title.Split("\\s+", true);
 		  foreach (string trash in split)
 		  {
-			document.add(new SortedSetDocValuesField("sortedset", new BytesRef(trash)));
+			document.Add(new SortedSetDocValuesField("sortedset", new BytesRef(trash)));
 		  }
 		  // add a numeric dv field sometimes
 		  document.removeFields("sparsenumeric");
 		  if (random.Next(4) == 2)
 		  {
-			document.add(new NumericDocValuesField("sparsenumeric", random.Next()));
+			document.Add(new NumericDocValuesField("sparsenumeric", random.Next()));
 		  }
-		  writer.addDocument(document);
+		  writer.AddDocument(document);
 		}
 
-		lineFileDocs.close();
+        lineFileDocs.Close();
 	  }
 
 	  /// <summary>
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestEquals()
 	  {
-		assertReaderEquals(Info, LeftReader, RightReader);
+		AssertReaderEquals(Info, LeftReader, RightReader);
 	  }
 
 	}

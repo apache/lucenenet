@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -26,18 +27,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using Lucene.Net.Analysis;
 	using Lucene.Net.Index;
 	using Lucene.Net.Util;
-
-
-	using BeforeClass = org.junit.BeforeClass;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
 
 	public class TestSurrogates : LuceneTestCase
 	{
 	  /// <summary>
 	  /// we will manually instantiate preflex-rw here </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass()
-	  public static void BeforeClass()
+	  [SetUp]
+      public static void BeforeClass()
 	  {
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
 	  }
@@ -77,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  private string ToHexString(Term t)
 	  {
-		return t.field() + ":" + UnicodeUtil.toHexString(t.text());
+		return t.Field() + ":" + UnicodeUtil.ToHexString(t.Text());
 	  }
 
 	  private string GetRandomString(Random r)
@@ -91,29 +88,29 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 		  else
 		  {
-			s = TestUtil.randomUnicodeString(r);
+			s = TestUtil.RandomUnicodeString(r);
 		  }
 		}
 		else
 		{
-		  s = TestUtil.randomRealisticUnicodeString(r);
+		  s = TestUtil.RandomRealisticUnicodeString(r);
 		}
 		return s;
 	  }
 
 	  private class SortTermAsUTF16Comparator : IComparer<Term>
 	  {
-		internal static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparator;
+		internal static readonly IComparer<BytesRef> LegacyComparator = BytesRef.UTF8SortedAsUTF16Comparer;
 
 		public virtual int Compare(Term term1, Term term2)
 		{
-		  if (term1.field().Equals(term2.field()))
+		  if (term1.Field().Equals(term2.Field()))
 		  {
-			return LegacyComparator.Compare(term1.bytes(), term2.bytes());
+			return LegacyComparator.Compare(term1.Bytes(), term2.Bytes());
 		  }
 		  else
 		  {
-			return term1.field().compareTo(term2.field());
+			return term1.Field().CompareTo(term2.Field());
 		  }
 		}
 	  }
@@ -128,38 +125,38 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  Console.WriteLine("\nTEST: top now enum reader=" + reader);
 		}
-		Fields fields = MultiFields.getFields(reader);
+		Fields fields = MultiFields.GetFields(reader);
 
 		{
 		  // Test straight enum:
 		  int termCount = 0;
 		  foreach (string field in fields)
 		  {
-			Terms terms = fields.terms(field);
+			Terms terms = fields.Terms(field);
 			Assert.IsNotNull(terms);
-			TermsEnum termsEnum = terms.iterator(null);
+			TermsEnum termsEnum = terms.Iterator(null);
 			BytesRef text;
 			BytesRef lastText = null;
-			while ((text = termsEnum.next()) != null)
+			while ((text = termsEnum.Next()) != null)
 			{
 			  Term exp = fieldTerms[termCount];
 			  if (VERBOSE)
 			  {
-				Console.WriteLine("  got term=" + field + ":" + UnicodeUtil.toHexString(text.utf8ToString()));
-				Console.WriteLine("       exp=" + exp.field() + ":" + UnicodeUtil.toHexString(exp.text().ToString()));
+				Console.WriteLine("  got term=" + field + ":" + UnicodeUtil.ToHexString(text.Utf8ToString()));
+				Console.WriteLine("       exp=" + exp.Field() + ":" + UnicodeUtil.ToHexString(exp.Text().ToString()));
 				Console.WriteLine();
 			  }
 			  if (lastText == null)
 			  {
-				lastText = BytesRef.deepCopyOf(text);
+				lastText = BytesRef.DeepCopyOf(text);
 			  }
 			  else
 			  {
-				Assert.IsTrue(lastText.compareTo(text) < 0);
-				lastText.copyBytes(text);
+				Assert.IsTrue(lastText.CompareTo(text) < 0);
+				lastText.CopyBytes(text);
 			  }
-			  Assert.AreEqual(exp.field(), field);
-			  Assert.AreEqual(exp.bytes(), text);
+			  Assert.AreEqual(exp.Field(), field);
+			  Assert.AreEqual(exp.Bytes(), text);
 			  termCount++;
 			}
 			if (VERBOSE)
@@ -184,25 +181,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  Console.WriteLine("\nTEST: top now seek");
 		}
 
-		int num = atLeast(100);
+		int num = AtLeast(100);
 		for (int iter = 0; iter < num; iter++)
 		{
 
 		  // pick random field+term
 		  int spot = r.Next(fieldTerms.Count);
 		  Term term = fieldTerms[spot];
-		  string field = term.field();
+		  string field = term.Field();
 
 		  if (VERBOSE)
 		  {
-			Console.WriteLine("TEST: exist seek field=" + field + " term=" + UnicodeUtil.toHexString(term.text()));
+			Console.WriteLine("TEST: exist seek field=" + field + " term=" + UnicodeUtil.ToHexString(term.Text()));
 		  }
 
 		  // seek to it
 		  TermsEnum te = tes[field];
 		  if (te == null)
 		  {
-			te = MultiFields.getTerms(reader, field).iterator(null);
+			te = MultiFields.GetTerms(reader, field).Iterator(null);
 			tes[field] = te;
 		  }
 
@@ -212,10 +209,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 
 		  // seek should find the term
-		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.seekCeil(term.bytes()));
+		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(term.Bytes()));
 
 		  // now .next() this many times:
-		  int ct = TestUtil.Next(r, 5, 100);
+		  int ct = TestUtil.NextInt(r, 5, 100);
 		  for (int i = 0;i < ct;i++)
 		  {
 			if (VERBOSE)
@@ -227,22 +224,22 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  break;
 			}
 			term = fieldTerms[1 + spot + i];
-			if (!term.field().Equals(field))
+			if (!term.Field().Equals(field))
 			{
-			  assertNull(te.next());
+			  Assert.IsNull(te.Next());
 			  break;
 			}
 			else
 			{
-			  BytesRef t = te.next();
+			  BytesRef t = te.Next();
 
 			  if (VERBOSE)
 			  {
-				Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.toHexString(t.utf8ToString())));
-				Console.WriteLine("       exp=" + UnicodeUtil.toHexString(term.text().ToString()));
+				Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
+				Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
 			  }
 
-			  Assert.AreEqual(term.bytes(), t);
+			  Assert.AreEqual(term.Bytes(), t);
 			}
 		  }
 		}
@@ -259,12 +256,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 
 		{
-		  int num = atLeast(100);
+		  int num = AtLeast(100);
 		  for (int iter = 0; iter < num; iter++)
 		  {
 
 			// seek to random spot
-			string field = ("f" + r.Next(numField)).intern();
+            string field = String.Intern("f" + r.Next(numField));
 			Term tx = new Term(field, GetRandomString(r));
 
 			int spot = Array.BinarySearch(fieldTermsArray, tx);
@@ -273,14 +270,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 			{
 			  if (VERBOSE)
 			  {
-				Console.WriteLine("TEST: non-exist seek to " + field + ":" + UnicodeUtil.toHexString(tx.text()));
+				Console.WriteLine("TEST: non-exist seek to " + field + ":" + UnicodeUtil.ToHexString(tx.Text()));
 			  }
 
 			  // term does not exist:
 			  TermsEnum te = tes[field];
 			  if (te == null)
 			  {
-				te = MultiFields.getTerms(reader, field).iterator(null);
+				te = MultiFields.GetTerms(reader, field).Iterator(null);
 				tes[field] = te;
 			  }
 
@@ -291,24 +288,24 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 			  spot = -spot - 1;
 
-			  if (spot == fieldTerms.Count || !fieldTerms[spot].field().Equals(field))
+			  if (spot == fieldTerms.Count || !fieldTerms[spot].Field().Equals(field))
 			  {
-				Assert.AreEqual(TermsEnum.SeekStatus.END, te.seekCeil(tx.bytes()));
+				Assert.AreEqual(TermsEnum.SeekStatus.END, te.SeekCeil(tx.Bytes()));
 			  }
 			  else
 			  {
-				Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, te.seekCeil(tx.bytes()));
+				Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(tx.Bytes()));
 
 				if (VERBOSE)
 				{
-				  Console.WriteLine("  got term=" + UnicodeUtil.toHexString(te.term().utf8ToString()));
-				  Console.WriteLine("  exp term=" + UnicodeUtil.toHexString(fieldTerms[spot].text()));
+				  Console.WriteLine("  got term=" + UnicodeUtil.ToHexString(te.Term().Utf8ToString()));
+				  Console.WriteLine("  exp term=" + UnicodeUtil.ToHexString(fieldTerms[spot].Text()));
 				}
 
-				Assert.AreEqual(fieldTerms[spot].bytes(), te.term());
+				Assert.AreEqual(fieldTerms[spot].Bytes(), te.Term());
 
 				// now .next() this many times:
-				int ct = TestUtil.Next(r, 5, 100);
+				int ct = TestUtil.NextInt(r, 5, 100);
 				for (int i = 0;i < ct;i++)
 				{
 				  if (VERBOSE)
@@ -320,22 +317,22 @@ namespace Lucene.Net.Codecs.Lucene3x
 					break;
 				  }
 				  Term term = fieldTerms[1 + spot + i];
-				  if (!term.field().Equals(field))
+				  if (!term.Field().Equals(field))
 				  {
-					assertNull(te.next());
+					Assert.IsNull(te.Next());
 					break;
 				  }
 				  else
 				  {
-					BytesRef t = te.next();
+					BytesRef t = te.Next();
 
 					if (VERBOSE)
 					{
-					  Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.toHexString(t.utf8ToString())));
-					  Console.WriteLine("       exp=" + UnicodeUtil.toHexString(term.text().ToString()));
+					  Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
+					  Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
 					}
 
-					Assert.AreEqual(term.bytes(), t);
+					Assert.AreEqual(term.Bytes(), t);
 				  }
 				}
 
@@ -346,14 +343,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  }
 
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSurrogatesOrder() throws Exception
 	  public virtual void TestSurrogatesOrder()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(new PreFlexRWCodec()));
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(new PreFlexRWCodec()));
 
-		int numField = TestUtil.Next(random(), 2, 5);
+		int numField = TestUtil.NextInt(Random(), 2, 5);
 
 		int uniqueTermCount = 0;
 
@@ -364,20 +359,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 		for (int f = 0;f < numField;f++)
 		{
 		  string field = "f" + f;
-		  int numTerms = atLeast(200);
+		  int numTerms = AtLeast(200);
 
-		  Set<string> uniqueTerms = new HashSet<string>();
+		  ISet<string> uniqueTerms = new HashSet<string>();
 
 		  for (int i = 0;i < numTerms;i++)
 		  {
-			string term = GetRandomString(random()) + "_ " + (tc++);
-			uniqueTerms.add(term);
+			string term = GetRandomString(Random()) + "_ " + (tc++);
+			uniqueTerms.Add(term);
 			fieldTerms.Add(new Term(field, term));
 			Document doc = new Document();
-			doc.add(newStringField(field, term, Field.Store.NO));
-			w.addDocument(doc);
+			doc.Add(NewStringField(field, term, Field.Store.NO));
+			w.AddDocument(doc);
 		  }
-		  uniqueTermCount += uniqueTerms.size();
+		  uniqueTermCount += uniqueTerms.Count;
 		}
 
 		IndexReader reader = w.Reader;
@@ -413,12 +408,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		//Assert.IsNotNull(fields);
 
 		DoTestStraightEnum(fieldTerms, reader, uniqueTermCount);
-		DoTestSeekExists(random(), fieldTerms, reader);
-		DoTestSeekDoesNotExist(random(), numField, fieldTerms, fieldTermsArray, reader);
+		DoTestSeekExists(Random(), fieldTerms, reader);
+		DoTestSeekDoesNotExist(Random(), numField, fieldTerms, fieldTermsArray, reader);
 
-		reader.close();
-		w.close();
-		dir.close();
+		reader.Dispose();
+		w.Close();
+        dir.Dispose();
 	  }
 	}
 

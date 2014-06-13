@@ -4,25 +4,28 @@ using System.Collections.Generic;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    using System.IO;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
 
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
 
 	public class TestTwoPhaseCommitTool : LuceneTestCase
 	{
@@ -52,7 +55,7 @@ namespace Lucene.Net.Index
 		public virtual void PrepareCommit(IDictionary<string, string> commitData)
 		{
 		  this.PrepareCommitData = commitData;
-		  Assert.IsFalse("commit should not have been called before all prepareCommit were", CommitCalled);
+		  Assert.IsFalse(CommitCalled, "commit should not have been called before all prepareCommit were");
 		  if (FailOnPrepare)
 		  {
 			throw new IOException("failOnPrepare");
@@ -86,7 +89,7 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		TwoPhaseCommitImpl.CommitCalled = false; // reset count before every test
 	  }
 
@@ -100,27 +103,27 @@ namespace Lucene.Net.Index
 		}
 
 		// following call will fail if commit() is called before all prepare() were
-		TwoPhaseCommitTool.execute(objects);
+		TwoPhaseCommitTool.Execute(objects);
 	  }
 
 	  public virtual void TestRollback()
 	  {
 		// tests that rollback is called if failure occurs at any stage
-		int numObjects = random().Next(8) + 3; // between [3, 10]
+		int numObjects = Random().Next(8) + 3; // between [3, 10]
 		TwoPhaseCommitImpl[] objects = new TwoPhaseCommitImpl[numObjects];
 		for (int i = 0; i < objects.Length; i++)
 		{
-		  bool failOnPrepare = random().nextBoolean();
+		  bool failOnPrepare = Random().NextBoolean();
 		  // we should not hit failures on commit usually
-		  bool failOnCommit = random().NextDouble() < 0.05;
-		  bool railOnRollback = random().nextBoolean();
+		  bool failOnCommit = Random().NextDouble() < 0.05;
+		  bool railOnRollback = Random().NextBoolean();
 		  objects[i] = new TwoPhaseCommitImpl(failOnPrepare, failOnCommit, railOnRollback);
 		}
 
 		bool anyFailure = false;
 		try
 		{
-		  TwoPhaseCommitTool.execute(objects);
+		  TwoPhaseCommitTool.Execute(objects);
 		}
 		catch (Exception t)
 		{
@@ -132,19 +135,19 @@ namespace Lucene.Net.Index
 		  // if any failure happened, ensure that rollback was called on all.
 		  foreach (TwoPhaseCommitImpl tpc in objects)
 		  {
-			Assert.IsTrue("rollback was not called while a failure occurred during the 2-phase commit", tpc.RollbackCalled);
+			Assert.IsTrue(tpc.RollbackCalled, "rollback was not called while a failure occurred during the 2-phase commit");
 		  }
 		}
 	  }
 
 	  public virtual void TestNullTPCs()
 	  {
-		int numObjects = random().Next(4) + 3; // between [3, 6]
+		int numObjects = Random().Next(4) + 3; // between [3, 6]
 		TwoPhaseCommit[] tpcs = new TwoPhaseCommit[numObjects];
 		bool setNull = false;
 		for (int i = 0; i < tpcs.Length; i++)
 		{
-		  bool isNull = random().NextDouble() < 0.3;
+		  bool isNull = Random().NextDouble() < 0.3;
 		  if (isNull)
 		  {
 			setNull = true;
@@ -159,12 +162,12 @@ namespace Lucene.Net.Index
 		if (!setNull)
 		{
 		  // none of the TPCs were picked to be null, pick one at random
-		  int idx = random().Next(numObjects);
+		  int idx = Random().Next(numObjects);
 		  tpcs[idx] = null;
 		}
 
 		// following call would fail if TPCTool won't handle null TPCs properly
-		TwoPhaseCommitTool.execute(tpcs);
+		TwoPhaseCommitTool.Execute(tpcs);
 	  }
 
 	}

@@ -30,7 +30,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using Test = org.junit.Test;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	public class TestConsistentFieldNumbers : LuceneTestCase
 	{
@@ -41,66 +42,66 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < 2; i++)
 		{
-		  Directory dir = newDirectory();
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
+		  Directory dir = NewDirectory();
+		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
 		  Document d1 = new Document();
-		  d1.add(new StringField("f1", "first field", Field.Store.YES));
-		  d1.add(new StringField("f2", "second field", Field.Store.YES));
-		  writer.addDocument(d1);
+		  d1.Add(new StringField("f1", "first field", Field.Store.YES));
+		  d1.Add(new StringField("f2", "second field", Field.Store.YES));
+		  writer.AddDocument(d1);
 
 		  if (i == 1)
 		  {
-			writer.close();
-			writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
+			writer.Dispose();
+			writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 		  }
 		  else
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 
 		  Document d2 = new Document();
 		  FieldType customType2 = new FieldType(TextField.TYPE_STORED);
 		  customType2.StoreTermVectors = true;
-		  d2.add(new TextField("f2", "second field", Field.Store.NO));
-		  d2.add(new Field("f1", "first field", customType2));
-		  d2.add(new TextField("f3", "third field", Field.Store.NO));
-		  d2.add(new TextField("f4", "fourth field", Field.Store.NO));
-		  writer.addDocument(d2);
+		  d2.Add(new TextField("f2", "second field", Field.Store.NO));
+		  d2.Add(new Field("f1", "first field", customType2));
+		  d2.Add(new TextField("f3", "third field", Field.Store.NO));
+		  d2.Add(new TextField("f4", "fourth field", Field.Store.NO));
+		  writer.AddDocument(d2);
 
-		  writer.close();
+		  writer.Dispose();
 
 		  SegmentInfos sis = new SegmentInfos();
-		  sis.read(dir);
-		  Assert.AreEqual(2, sis.size());
+		  sis.Read(dir);
+		  Assert.AreEqual(2, sis.Size());
 
-		  FieldInfos fis1 = SegmentReader.readFieldInfos(sis.info(0));
-		  FieldInfos fis2 = SegmentReader.readFieldInfos(sis.info(1));
+		  FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
+		  FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
 
-		  Assert.AreEqual("f1", fis1.fieldInfo(0).name);
-		  Assert.AreEqual("f2", fis1.fieldInfo(1).name);
-		  Assert.AreEqual("f1", fis2.fieldInfo(0).name);
-		  Assert.AreEqual("f2", fis2.fieldInfo(1).name);
-		  Assert.AreEqual("f3", fis2.fieldInfo(2).name);
-		  Assert.AreEqual("f4", fis2.fieldInfo(3).name);
+		  Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
+		  Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
+		  Assert.AreEqual("f1", fis2.FieldInfo(0).Name);
+		  Assert.AreEqual("f2", fis2.FieldInfo(1).Name);
+		  Assert.AreEqual("f3", fis2.FieldInfo(2).Name);
+		  Assert.AreEqual("f4", fis2.FieldInfo(3).Name);
 
-		  writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		  writer.forceMerge(1);
-		  writer.close();
+		  writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		  writer.ForceMerge(1);
+		  writer.Dispose();
 
 		  sis = new SegmentInfos();
-		  sis.read(dir);
-		  Assert.AreEqual(1, sis.size());
+		  sis.Read(dir);
+		  Assert.AreEqual(1, sis.Size());
 
-		  FieldInfos fis3 = SegmentReader.readFieldInfos(sis.info(0));
+		  FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis.Info(0));
 
-		  Assert.AreEqual("f1", fis3.fieldInfo(0).name);
-		  Assert.AreEqual("f2", fis3.fieldInfo(1).name);
-		  Assert.AreEqual("f3", fis3.fieldInfo(2).name);
-		  Assert.AreEqual("f4", fis3.fieldInfo(3).name);
+		  Assert.AreEqual("f1", fis3.FieldInfo(0).Name);
+		  Assert.AreEqual("f2", fis3.FieldInfo(1).Name);
+		  Assert.AreEqual("f3", fis3.FieldInfo(2).Name);
+		  Assert.AreEqual("f4", fis3.FieldInfo(3).Name);
 
 
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
@@ -108,138 +109,138 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testAddIndexes() throws Exception
 	  public virtual void TestAddIndexes()
 	  {
-		Directory dir1 = newDirectory();
-		Directory dir2 = newDirectory();
-		IndexWriter writer = new IndexWriter(dir1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
+		Directory dir1 = NewDirectory();
+		Directory dir2 = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
 		Document d1 = new Document();
-		d1.add(new TextField("f1", "first field", Field.Store.YES));
-		d1.add(new TextField("f2", "second field", Field.Store.YES));
-		writer.addDocument(d1);
+		d1.Add(new TextField("f1", "first field", Field.Store.YES));
+		d1.Add(new TextField("f2", "second field", Field.Store.YES));
+		writer.AddDocument(d1);
 
-		writer.close();
-		writer = new IndexWriter(dir2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
+		writer.Dispose();
+		writer = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
 		Document d2 = new Document();
 		FieldType customType2 = new FieldType(TextField.TYPE_STORED);
 		customType2.StoreTermVectors = true;
-		d2.add(new TextField("f2", "second field", Field.Store.YES));
-		d2.add(new Field("f1", "first field", customType2));
-		d2.add(new TextField("f3", "third field", Field.Store.YES));
-		d2.add(new TextField("f4", "fourth field", Field.Store.YES));
-		writer.addDocument(d2);
+		d2.Add(new TextField("f2", "second field", Field.Store.YES));
+		d2.Add(new Field("f1", "first field", customType2));
+		d2.Add(new TextField("f3", "third field", Field.Store.YES));
+		d2.Add(new TextField("f4", "fourth field", Field.Store.YES));
+		writer.AddDocument(d2);
 
-		writer.close();
+		writer.Dispose();
 
-		writer = new IndexWriter(dir1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
-		writer.addIndexes(dir2);
-		writer.close();
+		writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+		writer.AddIndexes(dir2);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir1);
-		Assert.AreEqual(2, sis.size());
+		sis.Read(dir1);
+		Assert.AreEqual(2, sis.Size());
 
-		FieldInfos fis1 = SegmentReader.readFieldInfos(sis.info(0));
-		FieldInfos fis2 = SegmentReader.readFieldInfos(sis.info(1));
+		FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
+		FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
 
-		Assert.AreEqual("f1", fis1.fieldInfo(0).name);
-		Assert.AreEqual("f2", fis1.fieldInfo(1).name);
+		Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
+		Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
 		// make sure the ordering of the "external" segment is preserved
-		Assert.AreEqual("f2", fis2.fieldInfo(0).name);
-		Assert.AreEqual("f1", fis2.fieldInfo(1).name);
-		Assert.AreEqual("f3", fis2.fieldInfo(2).name);
-		Assert.AreEqual("f4", fis2.fieldInfo(3).name);
+		Assert.AreEqual("f2", fis2.FieldInfo(0).Name);
+		Assert.AreEqual("f1", fis2.FieldInfo(1).Name);
+		Assert.AreEqual("f3", fis2.FieldInfo(2).Name);
+		Assert.AreEqual("f4", fis2.FieldInfo(3).Name);
 
-		dir1.close();
-		dir2.close();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestFieldNumberGaps()
 	  {
-		int numIters = atLeast(13);
+		int numIters = AtLeast(13);
 		for (int i = 0; i < numIters; i++)
 		{
-		  Directory dir = newDirectory();
+		  Directory dir = NewDirectory();
 		  {
-			IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
+			IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
 			Document d = new Document();
-			d.add(new TextField("f1", "d1 first field", Field.Store.YES));
-			d.add(new TextField("f2", "d1 second field", Field.Store.YES));
-			writer.addDocument(d);
-			writer.close();
+			d.Add(new TextField("f1", "d1 first field", Field.Store.YES));
+			d.Add(new TextField("f2", "d1 second field", Field.Store.YES));
+			writer.AddDocument(d);
+			writer.Dispose();
 			SegmentInfos sis = new SegmentInfos();
-			sis.read(dir);
-			Assert.AreEqual(1, sis.size());
-			FieldInfos fis1 = SegmentReader.readFieldInfos(sis.info(0));
-			Assert.AreEqual("f1", fis1.fieldInfo(0).name);
-			Assert.AreEqual("f2", fis1.fieldInfo(1).name);
+			sis.Read(dir);
+			Assert.AreEqual(1, sis.Size());
+			FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
+			Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
+			Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
 		  }
 
 
 		  {
-			IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(random().nextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
+			IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
 			Document d = new Document();
-			d.add(new TextField("f1", "d2 first field", Field.Store.YES));
-			d.add(new StoredField("f3", new sbyte[] {1, 2, 3}));
-			writer.addDocument(d);
-			writer.close();
+			d.Add(new TextField("f1", "d2 first field", Field.Store.YES));
+			d.Add(new StoredField("f3", new sbyte[] {1, 2, 3}));
+			writer.AddDocument(d);
+			writer.Dispose();
 			SegmentInfos sis = new SegmentInfos();
-			sis.read(dir);
-			Assert.AreEqual(2, sis.size());
-			FieldInfos fis1 = SegmentReader.readFieldInfos(sis.info(0));
-			FieldInfos fis2 = SegmentReader.readFieldInfos(sis.info(1));
-			Assert.AreEqual("f1", fis1.fieldInfo(0).name);
-			Assert.AreEqual("f2", fis1.fieldInfo(1).name);
-			Assert.AreEqual("f1", fis2.fieldInfo(0).name);
-			assertNull(fis2.fieldInfo(1));
-			Assert.AreEqual("f3", fis2.fieldInfo(2).name);
+			sis.Read(dir);
+			Assert.AreEqual(2, sis.Size());
+			FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
+			FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
+			Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
+			Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
+			Assert.AreEqual("f1", fis2.FieldInfo(0).Name);
+			Assert.IsNull(fis2.FieldInfo(1));
+			Assert.AreEqual("f3", fis2.FieldInfo(2).Name);
 		  }
 
 		  {
-			IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(random().nextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
+			IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
 			Document d = new Document();
-			d.add(new TextField("f1", "d3 first field", Field.Store.YES));
-			d.add(new TextField("f2", "d3 second field", Field.Store.YES));
-			d.add(new StoredField("f3", new sbyte[] {1, 2, 3, 4, 5}));
-			writer.addDocument(d);
-			writer.close();
+			d.Add(new TextField("f1", "d3 first field", Field.Store.YES));
+			d.Add(new TextField("f2", "d3 second field", Field.Store.YES));
+			d.Add(new StoredField("f3", new sbyte[] {1, 2, 3, 4, 5}));
+			writer.AddDocument(d);
+			writer.Dispose();
 			SegmentInfos sis = new SegmentInfos();
-			sis.read(dir);
-			Assert.AreEqual(3, sis.size());
-			FieldInfos fis1 = SegmentReader.readFieldInfos(sis.info(0));
-			FieldInfos fis2 = SegmentReader.readFieldInfos(sis.info(1));
-			FieldInfos fis3 = SegmentReader.readFieldInfos(sis.info(2));
-			Assert.AreEqual("f1", fis1.fieldInfo(0).name);
-			Assert.AreEqual("f2", fis1.fieldInfo(1).name);
-			Assert.AreEqual("f1", fis2.fieldInfo(0).name);
-			assertNull(fis2.fieldInfo(1));
-			Assert.AreEqual("f3", fis2.fieldInfo(2).name);
-			Assert.AreEqual("f1", fis3.fieldInfo(0).name);
-			Assert.AreEqual("f2", fis3.fieldInfo(1).name);
-			Assert.AreEqual("f3", fis3.fieldInfo(2).name);
+			sis.Read(dir);
+			Assert.AreEqual(3, sis.Size());
+			FieldInfos fis1 = SegmentReader.ReadFieldInfos(sis.Info(0));
+			FieldInfos fis2 = SegmentReader.ReadFieldInfos(sis.Info(1));
+			FieldInfos fis3 = SegmentReader.ReadFieldInfos(sis.Info(2));
+			Assert.AreEqual("f1", fis1.FieldInfo(0).Name);
+			Assert.AreEqual("f2", fis1.FieldInfo(1).Name);
+			Assert.AreEqual("f1", fis2.FieldInfo(0).Name);
+			Assert.IsNull(fis2.FieldInfo(1));
+			Assert.AreEqual("f3", fis2.FieldInfo(2).Name);
+			Assert.AreEqual("f1", fis3.FieldInfo(0).Name);
+			Assert.AreEqual("f2", fis3.FieldInfo(1).Name);
+			Assert.AreEqual("f3", fis3.FieldInfo(2).Name);
 		  }
 
 		  {
-			IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(random().nextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
-			writer.deleteDocuments(new Term("f1", "d1"));
+			IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.NO_COMPOUND_FILES : NoMergePolicy.COMPOUND_FILES));
+			writer.DeleteDocuments(new Term("f1", "d1"));
 			// nuke the first segment entirely so that the segment with gaps is
 			// loaded first!
-			writer.forceMergeDeletes();
-			writer.close();
+			writer.ForceMergeDeletes();
+			writer.Dispose();
 		  }
 
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(new LogByteSizeMergePolicy()).setInfoStream(new FailOnNonBulkMergesInfoStream()));
-		  writer.forceMerge(1);
-		  writer.close();
+		  IndexWriter writer_ = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(new LogByteSizeMergePolicy()).SetInfoStream(new FailOnNonBulkMergesInfoStream()));
+		  writer_.ForceMerge(1);
+		  writer_.Dispose();
 
-		  SegmentInfos sis = new SegmentInfos();
-		  sis.read(dir);
-		  Assert.AreEqual(1, sis.size());
-		  FieldInfos fis1 = SegmentReader.readFieldInfos(sis.info(0));
-		  Assert.AreEqual("f1", fis1.fieldInfo(0).name);
-		  Assert.AreEqual("f2", fis1.fieldInfo(1).name);
-		  Assert.AreEqual("f3", fis1.fieldInfo(2).name);
-		  dir.close();
+		  SegmentInfos sis_ = new SegmentInfos();
+		  sis_.Read(dir);
+		  Assert.AreEqual(1, sis_.Size());
+		  FieldInfos fis1_ = SegmentReader.ReadFieldInfos(sis_.Info(0));
+		  Assert.AreEqual("f1", fis1_.FieldInfo(0).Name);
+		  Assert.AreEqual("f2", fis1_.FieldInfo(1).Name);
+		  Assert.AreEqual("f3", fis1_.FieldInfo(2).Name);
+		  dir.Dispose();
 		}
 	  }
 
@@ -247,8 +248,8 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testManyFields() throws Exception
 	  public virtual void TestManyFields()
 	  {
-		int NUM_DOCS = atLeast(200);
-		int MAX_FIELDS = atLeast(50);
+		int NUM_DOCS = AtLeast(200);
+		int MAX_FIELDS = AtLeast(50);
 
 //JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
 //ORIGINAL LINE: int[][] docs = new int[NUM_DOCS][4];
@@ -257,42 +258,42 @@ namespace Lucene.Net.Index
 		{
 		  for (int j = 0; j < docs[i].Length;j++)
 		  {
-			docs[i][j] = random().Next(MAX_FIELDS);
+			docs[i][j] = Random().Next(MAX_FIELDS);
 		  }
 		}
 
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
 		  Document d = new Document();
 		  for (int j = 0; j < docs[i].Length; j++)
 		  {
-			d.add(GetField(docs[i][j]));
+			d.Add(GetField(docs[i][j]));
 		  }
 
-		  writer.addDocument(d);
+		  writer.AddDocument(d);
 		}
 
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
+		sis.Read(dir);
 		foreach (SegmentCommitInfo si in sis)
 		{
-		  FieldInfos fis = SegmentReader.readFieldInfos(si);
+		  FieldInfos fis = SegmentReader.ReadFieldInfos(si);
 
 		  foreach (FieldInfo fi in fis)
 		  {
-			Field expected = GetField(Convert.ToInt32(fi.name));
-			Assert.AreEqual(expected.fieldType().indexed(), fi.Indexed);
-			Assert.AreEqual(expected.fieldType().storeTermVectors(), fi.hasVectors());
+			Field expected = GetField(Convert.ToInt32(fi.Name));
+			Assert.AreEqual(expected.FieldType().Indexed, fi.Indexed);
+			Assert.AreEqual(expected.FieldType().StoreTermVectors, fi.HasVectors());
 		  }
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private Field GetField(int number)

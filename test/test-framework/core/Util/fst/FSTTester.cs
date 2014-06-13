@@ -23,23 +23,15 @@ namespace Lucene.Net.Util.Fst
 	 * limitations under the License.
 	 */
 
-
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static org.junit.Assert.Assert.AreEqual;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static org.junit.Assert.Assert.IsFalse;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static org.junit.Assert.Assert.IsNotNull;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static org.junit.Assert.assertNull;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static org.junit.Assert.Assert.IsTrue;
+    using Lucene.Net.Support;
+    using Lucene.Net.Randomized.Generators;
+    using System.IO;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Helper class to test FSTs. </summary>
@@ -77,32 +69,32 @@ namespace Lucene.Net.Util.Fst
 		else if (inputMode == 0)
 		{
 		  // utf8
-		  return ToBytesRef(term).utf8ToString() + " " + term;
+		  return ToBytesRef(term).Utf8ToString() + " " + term;
 		}
 		else
 		{
 		  // utf32
-		  return UnicodeUtil.newString(term.ints, term.offset, term.length) + " " + term;
+		  return UnicodeUtil.NewString(term.Ints, term.Offset, term.Length) + " " + term;
 		}
 	  }
 
 	  private static BytesRef ToBytesRef(IntsRef ir)
 	  {
-		BytesRef br = new BytesRef(ir.length);
-		for (int i = 0;i < ir.length;i++)
+		BytesRef br = new BytesRef(ir.Length);
+        for (int i = 0; i < ir.Length; i++)
 		{
-		  int x = ir.ints[ir.offset + i];
+		  int x = ir.Ints[ir.Offset + i];
 		  Debug.Assert(x >= 0 && x <= 255);
-		  br.bytes[i] = (sbyte) x;
+		  br.Bytes[i] = (sbyte) x;
 		}
-		br.length = ir.length;
+        br.Length = ir.Length;
 		return br;
 	  }
 
 	  internal static string GetRandomString(Random random)
 	  {
 		string term;
-		if (random.nextBoolean())
+		if (random.NextBoolean())
 		{
 		  term = TestUtil.RandomRealisticUnicodeString(random);
 		}
@@ -158,30 +150,30 @@ namespace Lucene.Net.Util.Fst
 		int intIdx = 0;
 		while (charIdx < charLength)
 		{
-		  if (intIdx == ir.ints.length)
+		  if (intIdx == ir.Ints.Length)
 		  {
-			ir.grow(intIdx + 1);
+			ir.Grow(intIdx + 1);
 		  }
-		  int utf32 = s.codePointAt(charIdx);
-		  ir.ints[intIdx] = utf32;
-		  charIdx += char.charCount(utf32);
+		  int utf32 = s[charIdx];
+		  ir.Ints[intIdx] = utf32;
+		  charIdx += Character.CharCount(utf32);
 		  intIdx++;
 		}
-		ir.length = intIdx;
+		ir.Length = intIdx;
 		return ir;
 	  }
 
 	  internal static IntsRef ToIntsRef(BytesRef br, IntsRef ir)
 	  {
-		if (br.length > ir.ints.length)
+		if (br.Length > ir.Ints.Length)
 		{
-		  ir.grow(br.length);
+		  ir.Grow(br.Length);
 		}
-		for (int i = 0;i < br.length;i++)
+		for (int i = 0;i < br.Length;i++)
 		{
-		  ir.ints[i] = br.bytes[br.offset + i] & 0xFF;
+		  ir.Ints[i] = br.Bytes[br.Offset + i] & 0xFF;
 		}
-		ir.length = br.length;
+		ir.Length = br.Length;
 		return ir;
 	  }
 
@@ -202,7 +194,7 @@ namespace Lucene.Net.Util.Fst
 		{
 		  if (other is InputOutput)
 		  {
-			return Input.compareTo((other).Input);
+			return Input.CompareTo((other).Input);
 		  }
 		  else
 		  {
@@ -233,24 +225,24 @@ namespace Lucene.Net.Util.Fst
 	  private T Run(FST<T> fst, IntsRef term, int[] prefixLength)
 	  {
 		Debug.Assert(prefixLength == null || prefixLength.Length == 1);
-		FST.Arc<T> arc = fst.getFirstArc(new FST.Arc<T>());
-		T NO_OUTPUT = fst.outputs.NoOutput;
+		FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
+		T NO_OUTPUT = fst.Outputs.NoOutput;
 		T output = NO_OUTPUT;
-		FST.BytesReader fstReader = fst.BytesReader;
+		FST.BytesReader fstReader = fst.GetBytesReader;
 
-		for (int i = 0;i <= term.length;i++)
+		for (int i = 0;i <= term.Length;i++)
 		{
 		  int label;
-		  if (i == term.length)
+		  if (i == term.Length)
 		  {
 			label = FST.END_LABEL;
 		  }
 		  else
 		  {
-			label = term.ints[term.offset + i];
+			label = term.Ints[term.Offset + i];
 		  }
-		  // System.out.println("   loop i=" + i + " label=" + label + " output=" + fst.outputs.outputToString(output) + " curArc: target=" + arc.target + " isFinal?=" + arc.isFinal());
-		  if (fst.findTargetArc(label, arc, arc, fstReader) == null)
+		  // System.out.println("   loop i=" + i + " label=" + label + " output=" + fst.Outputs.outputToString(output) + " curArc: target=" + arc.target + " isFinal?=" + arc.isFinal());
+		  if (fst.FindTargetArc(label, arc, arc, fstReader) == null)
 		  {
 			// System.out.println("    not found");
 			if (prefixLength != null)
@@ -260,15 +252,15 @@ namespace Lucene.Net.Util.Fst
 			}
 			else
 			{
-			  return null;
+			  return default(T);
 			}
 		  }
-		  output = fst.outputs.add(output, arc.output);
+		  output = fst.Outputs.Add(output, arc.Output);
 		}
 
 		if (prefixLength != null)
 		{
-		  prefixLength[0] = term.length;
+		  prefixLength[0] = term.Length;
 		}
 
 		return output;
@@ -279,21 +271,21 @@ namespace Lucene.Net.Util.Fst
 		FST.Arc<T> arc = fst.getFirstArc(new FST.Arc<T>());
 
 		IList<FST.Arc<T>> arcs = new List<FST.Arc<T>>();
-		@in.length = 0;
-		@in.offset = 0;
-		T NO_OUTPUT = fst.outputs.NoOutput;
+		@in.Length = 0;
+		@in.Offset = 0;
+		T NO_OUTPUT = fst.Outputs.NoOutput;
 		T output = NO_OUTPUT;
-		FST.BytesReader fstReader = fst.BytesReader;
+		FST.BytesReader fstReader = fst.GetBytesReader;
 
 		while (true)
 		{
 		  // read all arcs:
 		  fst.readFirstTargetArc(arc, arc, fstReader);
-		  arcs.Add((new FST.Arc<T>()).copyFrom(arc));
+		  arcs.Add((new FST.Arc<T>()).CopyFrom(arc));
 		  while (!arc.Last)
 		  {
 			fst.readNextArc(arc, fstReader);
-			arcs.Add((new FST.Arc<T>()).copyFrom(arc));
+			arcs.Add((new FST.Arc<T>()).CopyFrom(arc));
 		  }
 
 		  // pick one
@@ -301,19 +293,19 @@ namespace Lucene.Net.Util.Fst
 		  arcs.Clear();
 
 		  // accumulate output
-		  output = fst.outputs.add(output, arc.output);
+		  output = fst.Outputs.Add(output, arc.Output);
 
 		  // append label
-		  if (arc.label == FST.END_LABEL)
+		  if (arc.Label == FST.END_LABEL)
 		  {
 			break;
 		  }
 
-		  if (@in.ints.length == @in.length)
+		  if (@in.Ints.Length == @in.Length)
 		  {
-			@in.grow(1 + @in.length);
+			@in.Grow(1 + @in.Length);
 		  }
-		  @in.ints[@in.length++] = arc.label;
+		  @in.Ints[@in.Length++] = arc.Label;
 		}
 
 		return output;
@@ -327,9 +319,9 @@ namespace Lucene.Net.Util.Fst
 		  Console.WriteLine("\nTEST: prune1=" + prune1 + " prune2=" + prune2);
 		}
 
-		bool willRewrite = Random.nextBoolean();
+		bool willRewrite = Random.NextBoolean();
 
-		Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, prune1, prune2, prune1 == 0 && prune2 == 0, allowRandomSuffixSharing ? Random.nextBoolean() : true, allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, Outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
+		Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, prune1, prune2, prune1 == 0 && prune2 == 0, allowRandomSuffixSharing ? Random.NextBoolean() : true, allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, Outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
 		if (LuceneTestCase.VERBOSE)
 		{
 		  if (willRewrite)
@@ -346,47 +338,43 @@ namespace Lucene.Net.Util.Fst
 		{
 		  if (pair.Output is IList)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") java.util.List<Long> longValues = (java.util.List<Long>) pair.output;
 			IList<long?> longValues = (IList<long?>) pair.Output;
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") final Builder<Object> builderObject = (Builder<Object>) builder;
 			Builder<object> builderObject = (Builder<object>) builder;
 			foreach (long? value in longValues)
 			{
-			  builderObject.add(pair.Input, value);
+			  builderObject.Add(pair.Input, value);
 			}
 		  }
 		  else
 		  {
-			builder.add(pair.Input, pair.Output);
+			builder.Add(pair.Input, pair.Output);
 		  }
 		}
-		FST<T> fst = builder.finish();
+		FST<T> fst = builder.Finish();
 
-		if (Random.nextBoolean() && fst != null && !willRewrite)
+		if (Random.NextBoolean() && fst != null && !willRewrite)
 		{
 		  IOContext context = LuceneTestCase.NewIOContext(Random);
-		  IndexOutput @out = Dir.createOutput("fst.bin", context);
-		  fst.save(@out);
-		  @out.close();
-		  IndexInput @in = Dir.openInput("fst.bin", context);
+		  IndexOutput @out = Dir.CreateOutput("fst.bin", context);
+		  fst.Save(@out);
+		  @out.Dispose();
+		  IndexInput @in = Dir.OpenInput("fst.bin", context);
 		  try
 		  {
-			fst = new FST<>(@in, Outputs);
+			fst = new FST<T>(@in, Outputs);
 		  }
 		  finally
 		  {
-			@in.close();
-			Dir.deleteFile("fst.bin");
+			@in.Dispose();
+			Dir.DeleteFile("fst.bin");
 		  }
 		}
 
 		if (LuceneTestCase.VERBOSE && Pairs.Count <= 20 && fst != null)
 		{
-		  Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"), StandardCharsets.UTF_8);
+		  TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Open), IOUtils.CHARSET_UTF_8);
 		  Util.toDot(fst, w, false, false);
-		  w.close();
+		  w.Close();
 		  Console.WriteLine("SAVED out.dot");
 		}
 
@@ -423,24 +411,22 @@ namespace Lucene.Net.Util.Fst
 	  private void VerifyUnPruned(int inputMode, FST<T> fst)
 	  {
 
-		FST<long?> fstLong;
-		Set<long?> validOutputs;
+		FST<long> fstLong;
+		ISet<long> validOutputs;
 		long minLong = long.MaxValue;
 		long maxLong = long.MinValue;
 
 		if (DoReverseLookup)
 		{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") FST<Long> fstLong0 = (FST<Long>) fst;
-		  FST<long?> fstLong0 = (FST<long?>) fst;
+		  FST<long> fstLong0 = (FST<long>) fst;
 		  fstLong = fstLong0;
-		  validOutputs = new HashSet<>();
+		  validOutputs = new HashSet<long>();
 		  foreach (InputOutput<T> pair in Pairs)
 		  {
-			long? output = (long?) pair.Output;
+			long output = (long) pair.Output;
 			maxLong = Math.Max(maxLong, output);
 			minLong = Math.Min(minLong, output);
-			validOutputs.add(output);
+			validOutputs.Add(output);
 		  }
 		}
 		else
@@ -451,7 +437,7 @@ namespace Lucene.Net.Util.Fst
 
 		if (Pairs.Count == 0)
 		{
-		  assertNull(fst);
+		  Assert.IsNull(fst);
 		  return;
 		}
 
@@ -463,7 +449,7 @@ namespace Lucene.Net.Util.Fst
 			Assert.IsNotNull(pair);
 			Assert.IsNotNull(pair.Input);
 			Assert.IsNotNull(pair.Output);
-			Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + Outputs.outputToString(pair.Output));
+			Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + Outputs.OutputToString(pair.Output));
 		  }
 		}
 
@@ -483,19 +469,19 @@ namespace Lucene.Net.Util.Fst
 			IntsRef term = pair.Input;
 			if (LuceneTestCase.VERBOSE)
 			{
-			  Console.WriteLine("TEST: check term=" + InputToString(inputMode, term) + " output=" + fst.outputs.outputToString(pair.Output));
+			  Console.WriteLine("TEST: check term=" + InputToString(inputMode, term) + " output=" + fst.Outputs.OutputToString(pair.Output));
 			}
 			T output = Run(fst, term, null);
-			Assert.IsNotNull("term " + InputToString(inputMode, term) + " is not accepted", output);
+			Assert.IsNotNull(output, "term " + InputToString(inputMode, term) + " is not accepted");
 			Assert.IsTrue(OutputsEqual(pair.Output, output));
 
 			// verify enum's next
 			IntsRefFSTEnum.InputOutput<T> t = fstEnum.next();
 			Assert.IsNotNull(t);
 			Assert.AreEqual("expected input=" + InputToString(inputMode, term) + " but fstEnum returned " + InputToString(inputMode, t.input), term, t.input);
-			Assert.IsTrue(OutputsEqual(pair.Output, t.output));
+			Assert.IsTrue(OutputsEqual(pair.Output, t.Output));
 		  }
-		  assertNull(fstEnum.next());
+		  Assert.IsNull(fstEnum.Next());
 		}
 
 		IDictionary<IntsRef, T> termsMap = new Dictionary<IntsRef, T>();
@@ -508,15 +494,15 @@ namespace Lucene.Net.Util.Fst
 		{
 		  // Do random lookups so we test null (output doesn't
 		  // exist) case:
-		  assertNull(Util.getByOutput(fstLong, minLong - 7));
-		  assertNull(Util.getByOutput(fstLong, maxLong + 7));
+		  Assert.IsNull(Util.GetByOutput(fstLong, minLong - 7));
+		  Assert.IsNull(Util.GetByOutput(fstLong, maxLong + 7));
 
 		  int num = LuceneTestCase.AtLeast(Random, 100);
 		  for (int iter = 0;iter < num;iter++)
 		  {
-			long? v = TestUtil.NextLong(Random, minLong, maxLong);
-			IntsRef input = Util.getByOutput(fstLong, v);
-			Assert.IsTrue(validOutputs.contains(v) || input == null);
+			long v = TestUtil.NextLong(Random, minLong, maxLong);
+			IntsRef input = Util.GetByOutput(fstLong, v);
+			Assert.IsTrue(validOutputs.Contains(v) || input == null);
 		  }
 		}
 
@@ -526,37 +512,37 @@ namespace Lucene.Net.Util.Fst
 		  Console.WriteLine("TEST: verify random accepted terms");
 		}
 		IntsRef scratch = new IntsRef(10);
-		int num = LuceneTestCase.AtLeast(Random, 500);
-		for (int iter = 0;iter < num;iter++)
+		int num_ = LuceneTestCase.AtLeast(Random, 500);
+		for (int iter = 0;iter < num_;iter++)
 		{
 		  T output = RandomAcceptedWord(fst, scratch);
-		  Assert.IsTrue("accepted word " + InputToString(inputMode, scratch) + " is not valid", termsMap.ContainsKey(scratch));
+		  Assert.IsTrue(termsMap.ContainsKey(scratch), "accepted word " + InputToString(inputMode, scratch) + " is not valid");
 		  Assert.IsTrue(OutputsEqual(termsMap[scratch], output));
 
 		  if (DoReverseLookup)
 		  {
-			//System.out.println("lookup output=" + output + " outs=" + fst.outputs);
-			IntsRef input = Util.getByOutput(fstLong, (long?) output);
+			//System.out.println("lookup output=" + output + " outs=" + fst.Outputs);
+			IntsRef input = Util.GetByOutput(fstLong, (long) output);
 			Assert.IsNotNull(input);
 			//System.out.println("  got " + Util.toBytesRef(input, new BytesRef()).utf8ToString());
 			Assert.AreEqual(scratch, input);
 		  }
 		}
 
-		// test IntsRefFSTEnum.seek:
+		// test IntsRefFSTEnum.Seek:
 		if (LuceneTestCase.VERBOSE)
 		{
 		  Console.WriteLine("TEST: verify seek");
 		}
-		IntsRefFSTEnum<T> fstEnum = new IntsRefFSTEnum<T>(fst);
-		num = LuceneTestCase.AtLeast(Random, 100);
-		for (int iter = 0;iter < num;iter++)
+		IntsRefFSTEnum<T> fstEnum_ = new IntsRefFSTEnum<T>(fst);
+		num_ = LuceneTestCase.AtLeast(Random, 100);
+		for (int iter = 0;iter < num_;iter++)
 		{
 		  if (LuceneTestCase.VERBOSE)
 		  {
 			Console.WriteLine("  iter=" + iter);
 		  }
-		  if (Random.nextBoolean())
+		  if (Random.NextBoolean())
 		  {
 			// seek to term that doesn't exist:
 			while (true)
@@ -575,16 +561,16 @@ namespace Lucene.Net.Util.Fst
 				  {
 					Console.WriteLine("  do non-exist seekExact term=" + InputToString(inputMode, term));
 				  }
-				  seekResult = fstEnum.seekExact(term);
+				  seekResult = fstEnum_.SeekExact(term);
 				  pos = -1;
 				}
-				else if (Random.nextBoolean())
+				else if (Random.NextBoolean())
 				{
 				  if (LuceneTestCase.VERBOSE)
 				  {
 					Console.WriteLine("  do non-exist seekFloor term=" + InputToString(inputMode, term));
 				  }
-				  seekResult = fstEnum.seekFloor(term);
+				  seekResult = fstEnum_.SeekFloor(term);
 				  pos--;
 				}
 				else
@@ -593,25 +579,25 @@ namespace Lucene.Net.Util.Fst
 				  {
 					Console.WriteLine("  do non-exist seekCeil term=" + InputToString(inputMode, term));
 				  }
-				  seekResult = fstEnum.seekCeil(term);
+				  seekResult = fstEnum_.SeekCeil(term);
 				}
 
 				if (pos != -1 && pos < Pairs.Count)
 				{
-				  //System.out.println("    got " + inputToString(inputMode,seekResult.input) + " output=" + fst.outputs.outputToString(seekResult.output));
+				  //System.out.println("    got " + inputToString(inputMode,seekResult.input) + " output=" + fst.Outputs.outputToString(seekResult.Output));
 				  Assert.IsNotNull("got null but expected term=" + InputToString(inputMode, Pairs[pos].Input), seekResult);
 				  if (LuceneTestCase.VERBOSE)
 				  {
 					Console.WriteLine("    got " + InputToString(inputMode, seekResult.input));
 				  }
 				  Assert.AreEqual("expected " + InputToString(inputMode, Pairs[pos].Input) + " but got " + InputToString(inputMode, seekResult.input), Pairs[pos].Input, seekResult.input);
-				  Assert.IsTrue(OutputsEqual(Pairs[pos].Output, seekResult.output));
+				  Assert.IsTrue(OutputsEqual(Pairs[pos].Output, seekResult.Output));
 				}
 				else
 				{
 				  // seeked before start or beyond end
 				  //System.out.println("seek=" + seekTerm);
-				  assertNull("expected null but got " + (seekResult == null ? "null" : InputToString(inputMode, seekResult.input)), seekResult);
+				  Assert.IsNull("expected null but got " + (seekResult == null ? "null" : InputToString(inputMode, seekResult.input)), seekResult);
 				  if (LuceneTestCase.VERBOSE)
 				  {
 					Console.WriteLine("    got null");
@@ -633,15 +619,15 @@ namespace Lucene.Net.Util.Fst
 			  {
 				Console.WriteLine("  do exists seekExact term=" + InputToString(inputMode, pair.Input));
 			  }
-			  seekResult = fstEnum.seekExact(pair.Input);
+			  seekResult = fstEnum_.SeekExact(pair.Input);
 			}
-			else if (Random.nextBoolean())
+			else if (Random.NextBoolean())
 			{
 			  if (LuceneTestCase.VERBOSE)
 			  {
 				Console.WriteLine("  do exists seekFloor " + InputToString(inputMode, pair.Input));
 			  }
-			  seekResult = fstEnum.seekFloor(pair.Input);
+			  seekResult = fstEnum_.SeekFloor(pair.Input);
 			}
 			else
 			{
@@ -649,11 +635,11 @@ namespace Lucene.Net.Util.Fst
 			  {
 				Console.WriteLine("  do exists seekCeil " + InputToString(inputMode, pair.Input));
 			  }
-			  seekResult = fstEnum.seekCeil(pair.Input);
+			  seekResult = fstEnum_.SeekCeil(pair.Input);
 			}
 			Assert.IsNotNull(seekResult);
 			Assert.AreEqual("got " + InputToString(inputMode, seekResult.input) + " but expected " + InputToString(inputMode, pair.Input), pair.Input, seekResult.input);
-			Assert.IsTrue(OutputsEqual(pair.Output, seekResult.output));
+			Assert.IsTrue(OutputsEqual(pair.Output, seekResult.Output));
 		  }
 		}
 
@@ -663,20 +649,20 @@ namespace Lucene.Net.Util.Fst
 		}
 
 		// test mixed next/seek
-		num = LuceneTestCase.AtLeast(Random, 100);
-		for (int iter = 0;iter < num;iter++)
+		num_ = LuceneTestCase.AtLeast(Random, 100);
+		for (int iter = 0;iter < num_;iter++)
 		{
 		  if (LuceneTestCase.VERBOSE)
 		  {
 			Console.WriteLine("TEST: iter " + iter);
 		  }
 		  // reset:
-		  fstEnum = new IntsRefFSTEnum<>(fst);
+		  fstEnum_ = new IntsRefFSTEnum<T>(fst);
 		  int upto = -1;
 		  while (true)
 		  {
 			bool isDone = false;
-			if (upto == Pairs.Count - 1 || Random.nextBoolean())
+			if (upto == Pairs.Count - 1 || Random.NextBoolean())
 			{
 			  // next
 			  upto++;
@@ -684,21 +670,21 @@ namespace Lucene.Net.Util.Fst
 			  {
 				Console.WriteLine("  do next");
 			  }
-			  isDone = fstEnum.next() == null;
+			  isDone = fstEnum_.Next() == null;
 			}
-			else if (upto != -1 && upto < 0.75 * Pairs.Count && Random.nextBoolean())
+			else if (upto != -1 && upto < 0.75 * Pairs.Count && Random.NextBoolean())
 			{
 			  int attempt = 0;
 			  for (;attempt < 10;attempt++)
 			  {
 				IntsRef term = ToIntsRef(GetRandomString(Random), inputMode);
-				if (!termsMap.ContainsKey(term) && term.compareTo(Pairs[upto].Input) > 0)
+				if (!termsMap.ContainsKey(term) && term.CompareTo(Pairs[upto].Input) > 0)
 				{
 				  int pos = Collections.binarySearch(Pairs, new InputOutput<T>(term, null));
 				  Debug.Assert(pos < 0);
 				  upto = -(pos + 1);
 
-				  if (Random.nextBoolean())
+				  if (Random.NextBoolean())
 				  {
 					upto--;
 					Assert.IsTrue(upto != -1);
@@ -706,7 +692,7 @@ namespace Lucene.Net.Util.Fst
 					{
 					  Console.WriteLine("  do non-exist seekFloor(" + InputToString(inputMode, term) + ")");
 					}
-					isDone = fstEnum.seekFloor(term) == null;
+					isDone = fstEnum_.SeekFloor(term) == null;
 				  }
 				  else
 				  {
@@ -714,7 +700,7 @@ namespace Lucene.Net.Util.Fst
 					{
 					  Console.WriteLine("  do non-exist seekCeil(" + InputToString(inputMode, term) + ")");
 					}
-					isDone = fstEnum.seekCeil(term) == null;
+					isDone = fstEnum_.SeekCeil(term) == null;
 				  }
 
 				  break;
@@ -735,13 +721,13 @@ namespace Lucene.Net.Util.Fst
 				upto = 0;
 			  }
 
-			  if (Random.nextBoolean())
+			  if (Random.NextBoolean())
 			  {
 				if (LuceneTestCase.VERBOSE)
 				{
 				  Console.WriteLine("  do seekCeil(" + InputToString(inputMode, Pairs[upto].Input) + ")");
 				}
-				isDone = fstEnum.seekCeil(Pairs[upto].Input) == null;
+				isDone = fstEnum_.SeekCeil(Pairs[upto].Input) == null;
 			  }
 			  else
 			  {
@@ -749,14 +735,14 @@ namespace Lucene.Net.Util.Fst
 				{
 				  Console.WriteLine("  do seekFloor(" + InputToString(inputMode, Pairs[upto].Input) + ")");
 				}
-				isDone = fstEnum.seekFloor(Pairs[upto].Input) == null;
+				isDone = fstEnum_.SeekFloor(Pairs[upto].Input) == null;
 			  }
 			}
 			if (LuceneTestCase.VERBOSE)
 			{
 			  if (!isDone)
 			  {
-				Console.WriteLine("    got " + InputToString(inputMode, fstEnum.current().input));
+				Console.WriteLine("    got " + InputToString(inputMode, fstEnum_.Current().Input));
 			  }
 			  else
 			  {
@@ -772,8 +758,8 @@ namespace Lucene.Net.Util.Fst
 			else
 			{
 			  Assert.IsFalse(isDone);
-			  Assert.AreEqual(Pairs[upto].Input, fstEnum.current().input);
-			  Assert.IsTrue(OutputsEqual(Pairs[upto].Output, fstEnum.current().output));
+              Assert.AreEqual(Pairs[upto].Input, fstEnum_.Current().Input);
+              Assert.IsTrue(OutputsEqual(Pairs[upto].Output, fstEnum_.Current().Output));
 
 			  /*
 			    if (upto < pairs.size()-1) {
@@ -797,11 +783,11 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-	  private class CountMinOutput<T>
+	  private class CountMinOutput<S>
 	  {
 		internal int Count;
-		internal T Output;
-		internal T FinalOutput;
+		internal S Output;
+		internal S FinalOutput;
 		internal bool IsLeaf = true;
 		internal bool IsFinal;
 	  }
@@ -815,7 +801,7 @@ namespace Lucene.Net.Util.Fst
 		  Console.WriteLine("TEST: now verify pruned " + Pairs.Count + " terms; outputs=" + Outputs);
 		  foreach (InputOutput<T> pair in Pairs)
 		  {
-			Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + Outputs.outputToString(pair.Output));
+			Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + Outputs.OutputToString(pair.Output));
 		  }
 		}
 
@@ -833,17 +819,17 @@ namespace Lucene.Net.Util.Fst
 		IntsRef scratch = new IntsRef(10);
 		foreach (InputOutput<T> pair in Pairs)
 		{
-		  scratch.copyInts(pair.Input);
-		  for (int idx = 0;idx <= pair.Input.length;idx++)
+		  scratch.CopyInts(pair.Input);
+		  for (int idx = 0;idx <= pair.Input.Length;idx++)
 		  {
-			scratch.length = idx;
+			scratch.Length = idx;
 			CountMinOutput<T> cmo = prefixes[scratch];
 			if (cmo == null)
 			{
-			  cmo = new CountMinOutput<>();
+			  cmo = new CountMinOutput<T>();
 			  cmo.Count = 1;
 			  cmo.Output = pair.Output;
-			  prefixes[IntsRef.deepCopyOf(scratch)] = cmo;
+			  prefixes[IntsRef.DeepCopyOf(scratch)] = cmo;
 			}
 			else
 			{
@@ -858,9 +844,9 @@ namespace Lucene.Net.Util.Fst
 			  {
 				output2 = Outputs.NoOutput;
 			  }
-			  cmo.Output = Outputs.common(output1, output2);
+			  cmo.Output = Outputs.Common(output1, output2);
 			}
-			if (idx == pair.Input.length)
+			if (idx == pair.Input.Length)
 			{
 			  cmo.IsFinal = true;
 			  cmo.FinalOutput = cmo.Output;
@@ -882,7 +868,7 @@ namespace Lucene.Net.Util.Fst
 		  CountMinOutput<T> cmo = ent.Value;
 		  if (LuceneTestCase.VERBOSE)
 		  {
-			Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + Outputs.outputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
+			Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + Outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
 		  }
 		  bool keep;
 		  if (prune1 > 0)
@@ -896,14 +882,14 @@ namespace Lucene.Net.Util.Fst
 			{
 			  keep = true;
 			}
-			else if (prefix.length > 0)
+			else if (prefix.Length > 0)
 			{
 			  // consult our parent
-			  scratch.length = prefix.length - 1;
-			  Array.Copy(prefix.ints, prefix.offset, scratch.ints, 0, scratch.length);
+			  scratch.Length = prefix.Length - 1;
+			  Array.Copy(prefix.Ints, prefix.Offset, scratch.Ints, 0, scratch.Length);
 			  CountMinOutput<T> cmo2 = prefixes[scratch];
 			  //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
-			  keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.length <= 1)));
+			  keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
 			}
 			else if (cmo.Count >= prune2)
 			{
@@ -924,9 +910,9 @@ namespace Lucene.Net.Util.Fst
 		  {
 			// clear isLeaf for all ancestors
 			//System.out.println("    keep");
-			scratch.copyInts(prefix);
-			scratch.length--;
-			while (scratch.length >= 0)
+			scratch.CopyInts(prefix);
+			scratch.Length--;
+			while (scratch.Length >= 0)
 			{
 			  CountMinOutput<T> cmo2 = prefixes[scratch];
 			  if (cmo2 != null)
@@ -934,7 +920,7 @@ namespace Lucene.Net.Util.Fst
 				//System.out.println("    clear isLeaf " + inputToString(inputMode, scratch));
 				cmo2.IsLeaf = false;
 			  }
-			  scratch.length--;
+			  scratch.Length--;
 			}
 		  }
 		}
@@ -944,17 +930,17 @@ namespace Lucene.Net.Util.Fst
 		  Console.WriteLine("TEST: after prune");
 		  foreach (KeyValuePair<IntsRef, CountMinOutput<T>> ent in prefixes)
 		  {
-			Console.WriteLine("  " + InputToString(inputMode, ent.Key, false) + ": isLeaf=" + ent.Value.isLeaf + " isFinal=" + ent.Value.isFinal);
-			if (ent.Value.isFinal)
+			Console.WriteLine("  " + InputToString(inputMode, ent.Key, false) + ": isLeaf=" + ent.Value.IsLeaf + " isFinal=" + ent.Value.IsFinal);
+			if (ent.Value.IsFinal)
 			{
-			  Console.WriteLine("    finalOutput=" + Outputs.outputToString(ent.Value.finalOutput));
+			  Console.WriteLine("    finalOutput=" + Outputs.OutputToString(ent.Value.FinalOutput));
 			}
 		  }
 		}
 
 		if (prefixes.Count <= 1)
 		{
-		  assertNull(fst);
+		  Assert.IsNull(fst);
 		  return;
 		}
 
@@ -967,11 +953,11 @@ namespace Lucene.Net.Util.Fst
 		}
 		IntsRefFSTEnum<T> fstEnum = new IntsRefFSTEnum<T>(fst);
 		IntsRefFSTEnum.InputOutput<T> current;
-		while ((current = fstEnum.next()) != null)
+		while ((current = fstEnum.Next()) != null)
 		{
 		  if (LuceneTestCase.VERBOSE)
 		  {
-			Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.input, false) + " output=" + Outputs.outputToString(current.output));
+			Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.input, false) + " output=" + Outputs.OutputToString(current.Output));
 		  }
 		  CountMinOutput<T> cmo = prefixes[current.input];
 		  Assert.IsNotNull(cmo);
@@ -979,11 +965,11 @@ namespace Lucene.Net.Util.Fst
 		  //if (cmo.isFinal && !cmo.isLeaf) {
 		  if (cmo.IsFinal)
 		  {
-			Assert.AreEqual(cmo.FinalOutput, current.output);
+			Assert.AreEqual(cmo.FinalOutput, current.Output);
 		  }
 		  else
 		  {
-			Assert.AreEqual(cmo.Output, current.output);
+			Assert.AreEqual(cmo.Output, current.Output);
 		  }
 		}
 
@@ -995,13 +981,13 @@ namespace Lucene.Net.Util.Fst
 		int[] stopNode = new int[1];
 		foreach (KeyValuePair<IntsRef, CountMinOutput<T>> ent in prefixes)
 		{
-		  if (ent.Key.length > 0)
+		  if (ent.Key.Length > 0)
 		  {
 			CountMinOutput<T> cmo = ent.Value;
 			T output = Run(fst, ent.Key, stopNode);
 			if (LuceneTestCase.VERBOSE)
 			{
-			  Console.WriteLine("TEST: verify prefix=" + InputToString(inputMode, ent.Key, false) + " output=" + Outputs.outputToString(cmo.Output));
+			  Console.WriteLine("TEST: verify prefix=" + InputToString(inputMode, ent.Key, false) + " output=" + Outputs.OutputToString(cmo.Output));
 			}
 			// if (cmo.isFinal && !cmo.isLeaf) {
 			if (cmo.IsFinal)
@@ -1012,7 +998,7 @@ namespace Lucene.Net.Util.Fst
 			{
 			  Assert.AreEqual(cmo.Output, output);
 			}
-			Assert.AreEqual(ent.Key.length, stopNode[0]);
+			Assert.AreEqual(ent.Key.Length, stopNode[0]);
 		  }
 		}
 	  }

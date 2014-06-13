@@ -26,6 +26,7 @@ namespace Lucene.Net.Index
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	//import org.cnlp.utils.properties.ResourceBundleHelper;
 
@@ -36,8 +37,8 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		DocHelper.setupDoc(TestDoc);
+		base.SetUp();
+		DocHelper.SetupDoc(TestDoc);
 	  }
 
 	  public virtual FieldInfos CreateAndWriteFieldInfos(Directory dir, string filename)
@@ -47,76 +48,76 @@ namespace Lucene.Net.Index
 		FieldInfos.Builder builder = new FieldInfos.Builder();
 		foreach (IndexableField field in TestDoc)
 		{
-		  builder.addOrUpdate(field.name(), field.fieldType());
+		  builder.AddOrUpdate(field.Name(), field.FieldType());
 		}
-		FieldInfos fieldInfos = builder.finish();
+		FieldInfos fieldInfos = builder.Finish();
 		//Since the complement is stored as well in the fields map
-		Assert.IsTrue(fieldInfos.size() == DocHelper.all.size()); //this is all b/c we are using the no-arg constructor
+		Assert.IsTrue(fieldInfos.Size() == DocHelper.All.Count); //this is all b/c we are using the no-arg constructor
 
 
-		IndexOutput output = dir.createOutput(filename, newIOContext(random()));
+		IndexOutput output = dir.CreateOutput(filename, NewIOContext(Random()));
 		Assert.IsTrue(output != null);
 		//Use a RAMOutputStream
 
-		FieldInfosWriter writer = Codec.Default.fieldInfosFormat().FieldInfosWriter;
-		writer.write(dir, filename, "", fieldInfos, IOContext.DEFAULT);
-		output.close();
+		FieldInfosWriter writer = Codec.Default.FieldInfosFormat().FieldInfosWriter;
+		writer.Write(dir, filename, "", fieldInfos, IOContext.DEFAULT);
+		output.Dispose();
 		return fieldInfos;
 	  }
 
 	  public virtual FieldInfos ReadFieldInfos(Directory dir, string filename)
 	  {
-		FieldInfosReader reader = Codec.Default.fieldInfosFormat().FieldInfosReader;
-		return reader.read(dir, filename, "", IOContext.DEFAULT);
+		FieldInfosReader reader = Codec.Default.FieldInfosFormat().FieldInfosReader;
+		return reader.Read(dir, filename, "", IOContext.DEFAULT);
 	  }
 
 	  public virtual void Test()
 	  {
 		string name = "testFile";
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		FieldInfos fieldInfos = CreateAndWriteFieldInfos(dir, name);
 
 		FieldInfos readIn = ReadFieldInfos(dir, name);
-		Assert.IsTrue(fieldInfos.size() == readIn.size());
-		FieldInfo info = readIn.fieldInfo("textField1");
+		Assert.IsTrue(fieldInfos.Size() == readIn.Size());
+		FieldInfo info = readIn.FieldInfo("textField1");
 		Assert.IsTrue(info != null);
-		Assert.IsTrue(info.hasVectors() == false);
-		Assert.IsTrue(info.omitsNorms() == false);
+		Assert.IsTrue(info.HasVectors() == false);
+		Assert.IsTrue(info.OmitsNorms() == false);
 
-		info = readIn.fieldInfo("textField2");
+		info = readIn.FieldInfo("textField2");
 		Assert.IsTrue(info != null);
-		Assert.IsTrue(info.omitsNorms() == false);
+		Assert.IsTrue(info.OmitsNorms() == false);
 
-		info = readIn.fieldInfo("textField3");
+		info = readIn.FieldInfo("textField3");
 		Assert.IsTrue(info != null);
-		Assert.IsTrue(info.hasVectors() == false);
-		Assert.IsTrue(info.omitsNorms() == true);
+		Assert.IsTrue(info.HasVectors() == false);
+		Assert.IsTrue(info.OmitsNorms() == true);
 
-		info = readIn.fieldInfo("omitNorms");
+		info = readIn.FieldInfo("omitNorms");
 		Assert.IsTrue(info != null);
-		Assert.IsTrue(info.hasVectors() == false);
-		Assert.IsTrue(info.omitsNorms() == true);
+		Assert.IsTrue(info.HasVectors() == false);
+		Assert.IsTrue(info.OmitsNorms() == true);
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestReadOnly()
 	  {
 		string name = "testFile";
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		FieldInfos fieldInfos = CreateAndWriteFieldInfos(dir, name);
 		FieldInfos readOnly = ReadFieldInfos(dir, name);
 		AssertReadOnly(readOnly, fieldInfos);
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private void AssertReadOnly(FieldInfos readOnly, FieldInfos modifiable)
 	  {
-		Assert.AreEqual(modifiable.size(), readOnly.size());
+		Assert.AreEqual(modifiable.Size(), readOnly.Size());
 		// assert we can iterate
 		foreach (FieldInfo fi in readOnly)
 		{
-		  Assert.AreEqual(fi.name, modifiable.fieldInfo(fi.number).name);
+		  Assert.AreEqual(fi.Name, modifiable.FieldInfo(fi.Number).Name);
 		}
 	  }
 	}

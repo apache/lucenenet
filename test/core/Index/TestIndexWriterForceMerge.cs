@@ -23,47 +23,48 @@ namespace Lucene.Net.Index
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestIndexWriterForceMerge : LuceneTestCase
 	{
 	  public virtual void TestPartialMerge()
 	  {
 
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		Document doc = new Document();
-		doc.add(newStringField("content", "aaa", Field.Store.NO));
+		doc.Add(NewStringField("content", "aaa", Field.Store.NO));
 		int incrMin = TEST_NIGHTLY ? 15 : 40;
-		for (int numDocs = 10;numDocs < 500;numDocs += TestUtil.Next(random(), incrMin, 5 * incrMin))
+		for (int numDocs = 10;numDocs < 500;numDocs += TestUtil.NextInt(Random(), incrMin, 5 * incrMin))
 		{
 		  LogDocMergePolicy ldmp = new LogDocMergePolicy();
 		  ldmp.MinMergeDocs = 1;
 		  ldmp.MergeFactor = 5;
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(2).setMergePolicy(ldmp));
+		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(ldmp));
 		  for (int j = 0;j < numDocs;j++)
 		  {
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 		  }
-		  writer.close();
+		  writer.Dispose();
 
 		  SegmentInfos sis = new SegmentInfos();
-		  sis.read(dir);
-		  int segCount = sis.size();
+		  sis.Read(dir);
+		  int segCount = sis.Size();
 
 		  ldmp = new LogDocMergePolicy();
 		  ldmp.MergeFactor = 5;
-		  writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(ldmp));
-		  writer.forceMerge(3);
-		  writer.close();
+		  writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(ldmp));
+		  writer.ForceMerge(3);
+		  writer.Dispose();
 
 		  sis = new SegmentInfos();
-		  sis.read(dir);
-		  int optSegCount = sis.size();
+		  sis.Read(dir);
+		  int optSegCount = sis.Size();
 
 		  if (segCount < 3)
 		  {
@@ -74,43 +75,43 @@ namespace Lucene.Net.Index
 			Assert.AreEqual(3, optSegCount);
 		  }
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestMaxNumSegments2()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		Document doc = new Document();
-		doc.add(newStringField("content", "aaa", Field.Store.NO));
+		doc.Add(NewStringField("content", "aaa", Field.Store.NO));
 
 		LogDocMergePolicy ldmp = new LogDocMergePolicy();
 		ldmp.MinMergeDocs = 1;
 		ldmp.MergeFactor = 4;
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergePolicy(ldmp).setMergeScheduler(new ConcurrentMergeScheduler()));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(ldmp).SetMergeScheduler(new ConcurrentMergeScheduler()));
 
 		for (int iter = 0;iter < 10;iter++)
 		{
 		  for (int i = 0;i < 19;i++)
 		  {
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 		  }
 
-		  writer.commit();
-		  writer.waitForMerges();
-		  writer.commit();
+		  writer.Commit();
+		  writer.WaitForMerges();
+		  writer.Commit();
 
 		  SegmentInfos sis = new SegmentInfos();
-		  sis.read(dir);
+		  sis.Read(dir);
 
-		  int segCount = sis.size();
-		  writer.forceMerge(7);
-		  writer.commit();
-		  writer.waitForMerges();
+		  int segCount = sis.Size();
+		  writer.ForceMerge(7);
+		  writer.Commit();
+		  writer.WaitForMerges();
 
 		  sis = new SegmentInfos();
-		  sis.read(dir);
-		  int optSegCount = sis.size();
+		  sis.Read(dir);
+		  int optSegCount = sis.Size();
 
 		  if (segCount < 7)
 		  {
@@ -118,11 +119,11 @@ namespace Lucene.Net.Index
 		  }
 		  else
 		  {
-			Assert.AreEqual("seg: " + segCount, 7, optSegCount);
+			Assert.AreEqual(7, optSegCount, "seg: " + segCount);
 		  }
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
@@ -133,8 +134,8 @@ namespace Lucene.Net.Index
 	  public virtual void TestForceMergeTempSpaceUsage()
 	  {
 
-		MockDirectoryWrapper dir = newMockDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy()));
+		MockDirectoryWrapper dir = NewMockDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy()));
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: config1=" + writer.Config);
@@ -147,83 +148,83 @@ namespace Lucene.Net.Index
 		int termIndexInterval = writer.Config.TermIndexInterval;
 		// force one extra segment w/ different doc store so
 		// we see the doc stores get merged
-		writer.commit();
+		writer.Commit();
 		TestIndexWriter.AddDocWithIndex(writer, 500);
-		writer.close();
+		writer.Dispose();
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: start disk usage");
 		}
 		long startDiskUsage = 0;
-		string[] files = dir.listAll();
+		string[] files = dir.ListAll();
 		for (int i = 0;i < files.Length;i++)
 		{
-		  startDiskUsage += dir.fileLength(files[i]);
+		  startDiskUsage += dir.FileLength(files[i]);
 		  if (VERBOSE)
 		  {
-			Console.WriteLine(files[i] + ": " + dir.fileLength(files[i]));
+			Console.WriteLine(files[i] + ": " + dir.FileLength(files[i]));
 		  }
 		}
 
-		dir.resetMaxUsedSizeInBytes();
+		dir.ResetMaxUsedSizeInBytes();
 		dir.TrackDiskUsage = true;
 
 		// Import to use same term index interval else a
 		// smaller one here could increase the disk usage and
 		// cause a false failure:
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setTermIndexInterval(termIndexInterval).setMergePolicy(newLogMergePolicy()));
-		writer.forceMerge(1);
-		writer.close();
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetTermIndexInterval(termIndexInterval).SetMergePolicy(NewLogMergePolicy()));
+		writer.ForceMerge(1);
+		writer.Dispose();
 		long maxDiskUsage = dir.MaxUsedSizeInBytes;
-		Assert.IsTrue("forceMerge used too much temporary space: starting usage was " + startDiskUsage + " bytes; max temp usage was " + maxDiskUsage + " but should have been " + (4 * startDiskUsage) + " (= 4X starting usage)", maxDiskUsage <= 4 * startDiskUsage);
-		dir.close();
+		Assert.IsTrue(maxDiskUsage <= 4 * startDiskUsage, "forceMerge used too much temporary space: starting usage was " + startDiskUsage + " bytes; max temp usage was " + maxDiskUsage + " but should have been " + (4 * startDiskUsage) + " (= 4X starting usage)");
+		dir.Dispose();
 	  }
 
 	  // Test calling forceMerge(1, false) whereby forceMerge is kicked
 	  // off but we don't wait for it to finish (but
-	  // writer.close()) does wait
+	  // writer.Dispose()) does wait
 	  public virtual void TestBackgroundForceMerge()
 	  {
 
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		for (int pass = 0;pass < 2;pass++)
 		{
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy(51)));
+		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(51)));
 		  Document doc = new Document();
-		  doc.add(newStringField("field", "aaa", Field.Store.NO));
+		  doc.Add(NewStringField("field", "aaa", Field.Store.NO));
 		  for (int i = 0;i < 100;i++)
 		  {
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 		  }
-		  writer.forceMerge(1, false);
+		  writer.ForceMerge(1, false);
 
 		  if (0 == pass)
 		  {
-			writer.close();
-			DirectoryReader reader = DirectoryReader.open(dir);
-			Assert.AreEqual(1, reader.leaves().size());
-			reader.close();
+			writer.Dispose();
+			DirectoryReader reader = DirectoryReader.Open(dir);
+			Assert.AreEqual(1, reader.Leaves().Count);
+			reader.Dispose();
 		  }
 		  else
 		  {
 			// Get another segment to flush so we can verify it is
 			// NOT included in the merging
-			writer.addDocument(doc);
-			writer.addDocument(doc);
-			writer.close();
+			writer.AddDocument(doc);
+			writer.AddDocument(doc);
+			writer.Dispose();
 
-			DirectoryReader reader = DirectoryReader.open(dir);
-			Assert.IsTrue(reader.leaves().size() > 1);
-			reader.close();
+			DirectoryReader reader = DirectoryReader.Open(dir);
+			Assert.IsTrue(reader.Leaves().Count > 1);
+			reader.Dispose();
 
 			SegmentInfos infos = new SegmentInfos();
-			infos.read(dir);
-			Assert.AreEqual(2, infos.size());
+			infos.Read(dir);
+			Assert.AreEqual(2, infos.Size());
 		  }
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 	}
 

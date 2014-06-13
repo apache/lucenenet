@@ -31,6 +31,7 @@ namespace Lucene.Net.Index
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestFilterAtomicReader : LuceneTestCase
 	{
@@ -48,7 +49,7 @@ namespace Lucene.Net.Index
 
 		  public override Terms Terms(string field)
 		  {
-			return new TestTerms(base.terms(field));
+			return new TestTerms(base.Terms(field));
 		  }
 		}
 
@@ -75,9 +76,9 @@ namespace Lucene.Net.Index
 		  public override BytesRef Next()
 		  {
 			BytesRef text;
-			while ((text = @in.next()) != null)
+			while ((text = @in.Next()) != null)
 			{
-			  if (text.utf8ToString().IndexOf('e') != -1)
+			  if (text.Utf8ToString().IndexOf('e') != -1)
 			  {
 				return text;
 			  }
@@ -87,7 +88,7 @@ namespace Lucene.Net.Index
 
 		  public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		  {
-			return new TestPositions(base.docsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum) reuse).@in, flags));
+			return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum) reuse).@in, flags));
 		  }
 		}
 
@@ -104,7 +105,7 @@ namespace Lucene.Net.Index
 		  public override int NextDoc()
 		  {
 			int doc;
-			while ((doc = @in.nextDoc()) != NO_MORE_DOCS)
+			while ((doc = @in.NextDoc()) != NO_MORE_DOCS)
 			{
 			  if ((doc % 2) == 1)
 			  {
@@ -115,13 +116,13 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		public TestReader(IndexReader reader) : base(SlowCompositeReaderWrapper.wrap(reader))
+		public TestReader(IndexReader reader) : base(SlowCompositeReaderWrapper.Wrap(reader))
 		{
 		}
 
 		public override Fields Fields()
 		{
-		  return new TestFields(base.fields());
+		  return new TestFields(base.Fields());
 		}
 	  }
 
@@ -130,53 +131,53 @@ namespace Lucene.Net.Index
 	  /// <exception cref="Exception"> on error </exception>
 	  public virtual void TestFilterIndexReader()
 	  {
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		Document d1 = new Document();
-		d1.add(newTextField("default", "one two", Field.Store.YES));
-		writer.addDocument(d1);
+		d1.Add(NewTextField("default", "one two", Field.Store.YES));
+		writer.AddDocument(d1);
 
 		Document d2 = new Document();
-		d2.add(newTextField("default", "one three", Field.Store.YES));
-		writer.addDocument(d2);
+		d2.Add(NewTextField("default", "one three", Field.Store.YES));
+		writer.AddDocument(d2);
 
 		Document d3 = new Document();
-		d3.add(newTextField("default", "two four", Field.Store.YES));
-		writer.addDocument(d3);
+		d3.Add(NewTextField("default", "two four", Field.Store.YES));
+		writer.AddDocument(d3);
 
-		writer.close();
+		writer.Dispose();
 
-		Directory target = newDirectory();
+		Directory target = NewDirectory();
 
 		// We mess with the postings so this can fail:
 		((BaseDirectoryWrapper) target).CrossCheckTermVectorsOnClose = false;
 
-		writer = new IndexWriter(target, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		IndexReader reader = new TestReader(DirectoryReader.open(directory));
-		writer.addIndexes(reader);
-		writer.close();
-		reader.close();
-		reader = DirectoryReader.open(target);
+		writer = new IndexWriter(target, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		IndexReader reader = new TestReader(DirectoryReader.Open(directory));
+		writer.AddIndexes(reader);
+		writer.Dispose();
+		reader.Dispose();
+		reader = DirectoryReader.Open(target);
 
-		TermsEnum terms = MultiFields.getTerms(reader, "default").iterator(null);
-		while (terms.next() != null)
+		TermsEnum terms = MultiFields.GetTerms(reader, "default").Iterator(null);
+		while (terms.Next() != null)
 		{
-		  Assert.IsTrue(terms.term().utf8ToString().IndexOf('e') != -1);
+		  Assert.IsTrue(terms.Term().Utf8ToString().IndexOf('e') != -1);
 		}
 
-		Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.seekCeil(new BytesRef("one")));
+		Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(new BytesRef("one")));
 
-		DocsAndPositionsEnum positions = terms.docsAndPositions(MultiFields.getLiveDocs(reader), null);
-		while (positions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		DocsAndPositionsEnum positions = terms.DocsAndPositions(MultiFields.GetLiveDocs(reader), null);
+		while (positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.IsTrue((positions.docID() % 2) == 1);
+		  Assert.IsTrue((positions.DocID() % 2) == 1);
 		}
 
-		reader.close();
-		directory.close();
-		target.close();
+		reader.Dispose();
+		directory.Dispose();
+		target.Dispose();
 	  }
 
 	  private static void CheckOverrideMethods(Type clazz)

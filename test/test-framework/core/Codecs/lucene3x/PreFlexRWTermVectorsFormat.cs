@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
 	  {
-		return new PreFlexRWTermVectorsWriter(directory, segmentInfo.name, context);
+		return new PreFlexRWTermVectorsWriter(directory, segmentInfo.Name, context);
 	  }
 
 	  public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)

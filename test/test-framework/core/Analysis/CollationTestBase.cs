@@ -54,6 +54,7 @@ namespace Lucene.Net.Analysis
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// base test class for testing Unicode collation.
@@ -92,8 +93,8 @@ namespace Lucene.Net.Analysis
 		Document doc = new Document();
 		doc.Add(new TextField("content", "\u0633\u0627\u0628", Field.Store.YES));
 		doc.Add(new StringField("body", "body", Field.Store.YES));
-		writer.addDocument(doc);
-		writer.Close();
+		writer.AddDocument(doc);
+		writer.Dispose();
 		IndexReader reader = DirectoryReader.Open(dir);
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Query query = new TermQuery(new Term("body","body"));
@@ -109,8 +110,8 @@ namespace Lucene.Net.Analysis
 		result = searcher.Search(query, new TermRangeFilter("content", secondBeg, secondEnd, true, true), 1).ScoreDocs;
         Assert.AreEqual(1, result.Length, "The index Term should be included.");
 
-		reader.Close();
-		dir.Close();
+		reader.Dispose();
+        dir.Dispose();
 	  }
 
 	  public virtual void TestFarsiRangeQueryCollating(Analyzer analyzer, BytesRef firstBeg, BytesRef firstEnd, BytesRef secondBeg, BytesRef secondEnd)
@@ -124,20 +125,20 @@ namespace Lucene.Net.Analysis
 		// index Term below should NOT be returned by a TermRangeQuery with a Farsi
 		// Collator (or an Arabic one for the case when Farsi is not supported).
 		doc.Add(new TextField("content", "\u0633\u0627\u0628", Field.Store.YES));
-		writer.addDocument(doc);
-		writer.Close();
+		writer.AddDocument(doc);
+		writer.Dispose();
 		IndexReader reader = DirectoryReader.Open(dir);
 		IndexSearcher searcher = new IndexSearcher(reader);
 
 		Query query = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
-		ScoreDoc[] hits = searcher.Search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length, "The index Term should not be included.");
 
 		query = new TermRangeQuery("content", secondBeg, secondEnd, true, true);
-		hits = searcher.Search(query, null, 1000).scoreDocs;
+		hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length, "The index Term should be included.");
-		reader.Close();
-		dir.Close();
+		reader.Dispose();
+        dir.Dispose();
 	  }
 
 	  public virtual void TestFarsiTermRangeQuery(Analyzer analyzer, BytesRef firstBeg, BytesRef firstEnd, BytesRef secondBeg, BytesRef secondEnd)
@@ -148,8 +149,8 @@ namespace Lucene.Net.Analysis
 		Document doc = new Document();
 		doc.Add(new TextField("content", "\u0633\u0627\u0628", Field.Store.YES));
 		doc.Add(new StringField("body", "body", Field.Store.YES));
-		writer.addDocument(doc);
-		writer.Close();
+		writer.AddDocument(doc);
+		writer.Dispose();
 
 		IndexReader reader = DirectoryReader.Open(farsiIndex);
 		IndexSearcher search = NewSearcher(reader);
@@ -166,8 +167,8 @@ namespace Lucene.Net.Analysis
 		csrq = new TermRangeQuery("content", secondBeg, secondEnd, true, true);
 		result = search.Search(csrq, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, result.Length, "The index Term should be included.");
-		reader.Close();
-		farsiIndex.Close();
+		reader.Dispose();
+        farsiIndex.Dispose();
 	  }
 
 	  // Test using various international locales with accented characters (which
@@ -211,10 +212,10 @@ namespace Lucene.Net.Analysis
 		  {
 			doc.Add(new TextField("Denmark", denmarkAnalyzer.TokenStream("Denmark", new StringReader(sortData[i][5]))));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
-		writer.forceMerge(1);
-		writer.Close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 		IndexReader reader = DirectoryReader.Open(indexStore);
 		IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -222,19 +223,19 @@ namespace Lucene.Net.Analysis
 		Query queryX = new TermQuery(new Term("contents", "x"));
 		Query queryY = new TermQuery(new Term("contents", "y"));
 
-		sort.Sort = new SortField("US", SortField.Type.STRING);
+		sort.SetSort(new SortField("US", SortField.Type_e.STRING));
 		AssertMatches(searcher, queryY, sort, usResult);
 
-		sort.Sort = new SortField("France", SortField.Type.STRING);
+		sort.SetSort(new SortField("France", SortField.Type_e.STRING));
 		AssertMatches(searcher, queryX, sort, frResult);
 
-		sort.Sort = new SortField("Sweden", SortField.Type.STRING);
+		sort.SetSort(new SortField("Sweden", SortField.Type_e.STRING));
 		AssertMatches(searcher, queryY, sort, svResult);
 
-		sort.Sort = new SortField("Denmark", SortField.Type.STRING);
+		sort.SetSort(new SortField("Denmark", SortField.Type_e.STRING));
 		AssertMatches(searcher, queryY, sort, dkResult);
-		reader.Close();
-		indexStore.Close();
+        reader.Dispose();
+        indexStore.Dispose();
 	  }
 
 	  // Make sure the documents returned by the search match the expected list
@@ -250,7 +251,7 @@ namespace Lucene.Net.Analysis
 		  IndexableField[] v = doc.GetFields("tracer");
 		  for (int j = 0 ; j < v.Length ; ++j)
 		  {
-			buff.Append(v[j].StringValue());
+			buff.Append(v[j].StringValue);
 		  }
 		}
 		Assert.AreEqual(expectedResult, buff.ToString());
@@ -270,7 +271,7 @@ namespace Lucene.Net.Analysis
 		{
 		  string term = TestUtil.RandomSimpleString(Random());
 		  IOException priorException = null;
-		  TokenStream ts = analyzer.tokenStream("fake", term);
+		  TokenStream ts = analyzer.TokenStream("fake", new StreamReader(term));
 		  try
 		  {
 			TermToBytesRefAttribute termAtt = ts.AddAttribute<TermToBytesRefAttribute>();
@@ -293,7 +294,7 @@ namespace Lucene.Net.Analysis
 		  }
 		}
 
-		Thread[] threads = new Thread[numThreads];
+		ThreadClass[] threads = new ThreadClass[numThreads];
 		for (int i = 0; i < numThreads; i++)
 		{
 		  threads[i] = new ThreadAnonymousInnerClassHelper(this, analyzer, map);
@@ -308,7 +309,7 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly CollationTestbase OuterInstance;
 
@@ -331,7 +332,7 @@ namespace Lucene.Net.Analysis
 				string term = mapping.Key;
 				BytesRef expected = mapping.Value;
 				IOException priorException = null;
-				TokenStream ts = Analyzer.TokenStream("fake", term);
+				TokenStream ts = Analyzer.TokenStream("fake", new StreamReader(term));
 				try
 				{
 				  TermToBytesRefAttribute termAtt = ts.AddAttribute<TermToBytesRefAttribute>();

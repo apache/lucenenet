@@ -5,7 +5,6 @@ using System.Threading;
 namespace Lucene.Net.Index
 {
 
-
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
 	using Codec = Lucene.Net.Codecs.Codec;
@@ -16,7 +15,7 @@ namespace Lucene.Net.Index
 	using Lucene42RWCodec = Lucene.Net.Codecs.Lucene42.Lucene42RWCodec;
 	using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
 	using Lucene45RWCodec = Lucene.Net.Codecs.Lucene45.Lucene45RWCodec;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
 	using Document = Lucene.Net.Document.Document;
 	using Store = Lucene.Net.Document.Field.Store;
@@ -31,9 +30,13 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using Test = org.junit.Test;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+using Lucene.Net.Support;
+    using System.IO;
+	/*using Test = org.junit.Test;
 
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
+	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;*/
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -60,9 +63,9 @@ namespace Lucene.Net.Index
 	  private Document Doc(int id)
 	  {
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc-" + id, Store.NO));
+		doc.Add(new StringField("id", "doc-" + id, Store.NO));
 		// make sure we don't set the doc's value to 0, to not confuse with a document that's missing values
-		doc.add(new NumericDocValuesField("val", id + 1));
+		doc.Add(new NumericDocValuesField("val", id + 1));
 		return doc;
 	  }
 
@@ -70,160 +73,160 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testUpdatesAreFlushed() throws java.io.IOException
 	  public virtual void TestUpdatesAreFlushed()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.WHITESPACE, false)).setRAMBufferSizeMB(0.00000001));
-		writer.addDocument(Doc(0)); // val=1
-		writer.addDocument(Doc(1)); // val=2
-		writer.addDocument(Doc(3)); // val=2
-		writer.commit();
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetRAMBufferSizeMB(0.00000001));
+		writer.AddDocument(Doc(0)); // val=1
+		writer.AddDocument(Doc(1)); // val=2
+		writer.AddDocument(Doc(3)); // val=2
+		writer.Commit();
 		Assert.AreEqual(1, writer.FlushDeletesCount);
-		writer.updateNumericDocValue(new Term("id", "doc-0"), "val", 5L);
+		writer.UpdateNumericDocValue(new Term("id", "doc-0"), "val", 5L);
 		Assert.AreEqual(2, writer.FlushDeletesCount);
-		writer.updateNumericDocValue(new Term("id", "doc-1"), "val", 6L);
+		writer.UpdateNumericDocValue(new Term("id", "doc-1"), "val", 6L);
 		Assert.AreEqual(3, writer.FlushDeletesCount);
-		writer.updateNumericDocValue(new Term("id", "doc-2"), "val", 7L);
+		writer.UpdateNumericDocValue(new Term("id", "doc-2"), "val", 7L);
 		Assert.AreEqual(4, writer.FlushDeletesCount);
-		writer.Config.RAMBufferSizeMB = 1000d;
-		writer.updateNumericDocValue(new Term("id", "doc-2"), "val", 7L);
+		writer.Config.SetRAMBufferSizeMB(1000d);
+		writer.UpdateNumericDocValue(new Term("id", "doc-2"), "val", 7L);
 		Assert.AreEqual(4, writer.FlushDeletesCount);
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSimple() throws Exception
 	  public virtual void TestSimple()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		// make sure random config doesn't flush on us
-		conf.MaxBufferedDocs = 10;
-		conf.RAMBufferSizeMB = IndexWriterConfig.DISABLE_AUTO_FLUSH;
+		conf.SetMaxBufferedDocs(10);
+		conf.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		IndexWriter writer = new IndexWriter(dir, conf);
-		writer.addDocument(Doc(0)); // val=1
-		writer.addDocument(Doc(1)); // val=2
-		if (random().nextBoolean()) // randomly commit before the update is sent
+		writer.AddDocument(Doc(0)); // val=1
+		writer.AddDocument(Doc(1)); // val=2
+		if (Random().NextBoolean()) // randomly commit before the update is sent
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
-		writer.updateNumericDocValue(new Term("id", "doc-0"), "val", 2L); // doc=0, exp=2
+		writer.UpdateNumericDocValue(new Term("id", "doc-0"), "val", 2L); // doc=0, exp=2
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		Assert.AreEqual(1, reader.leaves().size());
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv = r.getNumericDocValues("val");
-		Assert.AreEqual(2, ndv.get(0));
-		Assert.AreEqual(2, ndv.get(1));
-		reader.close();
+		Assert.AreEqual(1, reader.Leaves().Count);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv = r.GetNumericDocValues("val");
+		Assert.AreEqual(2, ndv.Get(0));
+		Assert.AreEqual(2, ndv.Get(1));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateFewSegments() throws Exception
 	  public virtual void TestUpdateFewSegments()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 2; // generate few segments
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // prevent merges for this test
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(2); // generate few segments
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges for this test
 		IndexWriter writer = new IndexWriter(dir, conf);
 		int numDocs = 10;
 		long[] expectedValues = new long[numDocs];
 		for (int i = 0; i < numDocs; i++)
 		{
-		  writer.addDocument(Doc(i));
+		  writer.AddDocument(Doc(i));
 		  expectedValues[i] = i + 1;
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update few docs
 		for (int i = 0; i < numDocs; i++)
 		{
-		  if (random().NextDouble() < 0.4)
+		  if (Random().NextDouble() < 0.4)
 		  {
 			long value = (i + 1) * 2;
-			writer.updateNumericDocValue(new Term("id", "doc-" + i), "val", value);
+			writer.UpdateNumericDocValue(new Term("id", "doc-" + i), "val", value);
 			expectedValues[i] = value;
 		  }
 		}
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		foreach (AtomicReaderContext context in reader.leaves())
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  NumericDocValues ndv = r.getNumericDocValues("val");
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  NumericDocValues ndv = r.GetNumericDocValues("val");
 		  Assert.IsNotNull(ndv);
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
-			long expected = expectedValues[i + context.docBase];
-			long actual = ndv.get(i);
+			long expected = expectedValues[i + context.DocBase];
+			long actual = ndv.Get(i);
 			Assert.AreEqual(expected, actual);
 		  }
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testReopen() throws Exception
 	  public virtual void TestReopen()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
-		writer.addDocument(Doc(0));
-		writer.addDocument(Doc(1));
+		writer.AddDocument(Doc(0));
+		writer.AddDocument(Doc(1));
 
-		bool isNRT = random().nextBoolean();
+		bool isNRT = Random().NextBoolean();
 		DirectoryReader reader1;
 		if (isNRT)
 		{
-		  reader1 = DirectoryReader.open(writer, true);
+		  reader1 = DirectoryReader.Open(writer, true);
 		}
 		else
 		{
-		  writer.commit();
-		  reader1 = DirectoryReader.open(dir);
+		  writer.Commit();
+		  reader1 = DirectoryReader.Open(dir);
 		}
 
 		// update doc
-		writer.updateNumericDocValue(new Term("id", "doc-0"), "val", 10L); // update doc-0's value to 10
+		writer.UpdateNumericDocValue(new Term("id", "doc-0"), "val", 10L); // update doc-0's value to 10
 		if (!isNRT)
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
 		// reopen reader and assert only it sees the update
-		DirectoryReader reader2 = DirectoryReader.openIfChanged(reader1);
+		DirectoryReader reader2 = DirectoryReader.OpenIfChanged(reader1);
 		Assert.IsNotNull(reader2);
 		Assert.IsTrue(reader1 != reader2);
 
-		Assert.AreEqual(1, reader1.leaves().get(0).reader().getNumericDocValues("val").get(0));
-		Assert.AreEqual(10, reader2.leaves().get(0).reader().getNumericDocValues("val").get(0));
+        Assert.AreEqual(1, ((AtomicReader)reader1.Leaves()[0].Reader()).GetNumericDocValues("val").Get(0));
+		Assert.AreEqual(10, ((AtomicReader)reader2.Leaves()[0].Reader()).GetNumericDocValues("val").Get(0));
 
 		IOUtils.Close(writer, reader1, reader2, dir);
 	  }
@@ -234,58 +237,58 @@ namespace Lucene.Net.Index
 	  {
 		// create an index with a segment with only deletes, a segment with both
 		// deletes and updates and a segment with only updates
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // control segment flushing
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // prevent merges for this test
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // control segment flushing
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // prevent merges for this test
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 6; i++)
 		{
-		  writer.addDocument(Doc(i));
+		  writer.AddDocument(Doc(i));
 		  if (i % 2 == 1)
 		  {
-			writer.commit(); // create 2-docs segments
+			writer.Commit(); // create 2-docs segments
 		  }
 		}
 
 		// delete doc-1 and doc-2
-		writer.deleteDocuments(new Term("id", "doc-1"), new Term("id", "doc-2")); // 1st and 2nd segments
+		writer.DeleteDocuments(new Term("id", "doc-1"), new Term("id", "doc-2")); // 1st and 2nd segments
 
 		// update docs 3 and 5
-		writer.updateNumericDocValue(new Term("id", "doc-3"), "val", 17L);
-		writer.updateNumericDocValue(new Term("id", "doc-5"), "val", 17L);
+		writer.UpdateNumericDocValue(new Term("id", "doc-3"), "val", 17L);
+		writer.UpdateNumericDocValue(new Term("id", "doc-5"), "val", 17L);
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		AtomicReader slow = SlowCompositeReaderWrapper.wrap(reader);
+		AtomicReader slow = SlowCompositeReaderWrapper.Wrap(reader);
 
 		Bits liveDocs = slow.LiveDocs;
 		bool[] expectedLiveDocs = new bool[] {true, false, false, true, true, true};
 		for (int i = 0; i < expectedLiveDocs.Length; i++)
 		{
-		  Assert.AreEqual(expectedLiveDocs[i], liveDocs.get(i));
+		  Assert.AreEqual(expectedLiveDocs[i], liveDocs.Get(i));
 		}
 
 		long[] expectedValues = new long[] {1, 2, 3, 17, 5, 17};
-		NumericDocValues ndv = slow.getNumericDocValues("val");
+		NumericDocValues ndv = slow.GetNumericDocValues("val");
 		for (int i = 0; i < expectedValues.Length; i++)
 		{
-		  Assert.AreEqual(expectedValues[i], ndv.get(i));
+		  Assert.AreEqual(expectedValues[i], ndv.Get(i));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -293,40 +296,40 @@ namespace Lucene.Net.Index
 	  public virtual void TestUpdatesWithDeletes()
 	  {
 		// update and delete different documents in the same commit session
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // control segment flushing
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // control segment flushing
 		IndexWriter writer = new IndexWriter(dir, conf);
 
-		writer.addDocument(Doc(0));
-		writer.addDocument(Doc(1));
+		writer.AddDocument(Doc(0));
+		writer.AddDocument(Doc(1));
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
-		writer.deleteDocuments(new Term("id", "doc-0"));
-		writer.updateNumericDocValue(new Term("id", "doc-1"), "val", 17L);
+		writer.DeleteDocuments(new Term("id", "doc-0"));
+		writer.UpdateNumericDocValue(new Term("id", "doc-1"), "val", 17L);
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		AtomicReader r = reader.leaves().get(0).reader();
-		Assert.IsFalse(r.LiveDocs.get(0));
-		Assert.AreEqual(17, r.getNumericDocValues("val").get(1));
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		Assert.IsFalse(r.LiveDocs.Get(0));
+		Assert.AreEqual(17, r.GetNumericDocValues("val").Get(1));
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -334,251 +337,251 @@ namespace Lucene.Net.Index
 	  public virtual void TestUpdateAndDeleteSameDocument()
 	  {
 		// update and delete same document in same commit session
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // control segment flushing
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // control segment flushing
 		IndexWriter writer = new IndexWriter(dir, conf);
 
-		writer.addDocument(Doc(0));
-		writer.addDocument(Doc(1));
+		writer.AddDocument(Doc(0));
+		writer.AddDocument(Doc(1));
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
-		writer.deleteDocuments(new Term("id", "doc-0"));
-		writer.updateNumericDocValue(new Term("id", "doc-0"), "val", 17L);
+		writer.DeleteDocuments(new Term("id", "doc-0"));
+		writer.UpdateNumericDocValue(new Term("id", "doc-0"), "val", 17L);
 
 		DirectoryReader reader;
-		if (random().nextBoolean()) // not NRT
+		if (Random().NextBoolean()) // not NRT
 		{
-		  writer.close();
-		  reader = DirectoryReader.open(dir);
+		  writer.Dispose();
+		  reader = DirectoryReader.Open(dir);
 		} // NRT
 		else
 		{
-		  reader = DirectoryReader.open(writer, true);
-		  writer.close();
+		  reader = DirectoryReader.Open(writer, true);
+		  writer.Dispose();
 		}
 
-		AtomicReader r = reader.leaves().get(0).reader();
-		Assert.IsFalse(r.LiveDocs.get(0));
-		Assert.AreEqual(1, r.getNumericDocValues("val").get(0)); // deletes are currently applied first
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		Assert.IsFalse(r.LiveDocs.Get(0));
+		Assert.AreEqual(1, r.GetNumericDocValues("val").Get(0)); // deletes are currently applied first
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMultipleDocValuesTypes() throws Exception
 	  public virtual void TestMultipleDocValuesTypes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // prevent merges
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // prevent merges
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 4; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("dvUpdateKey", "dv", Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", i));
-		  doc.add(new BinaryDocValuesField("bdv", new BytesRef(Convert.ToString(i))));
-		  doc.add(new SortedDocValuesField("sdv", new BytesRef(Convert.ToString(i))));
-		  doc.add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i))));
-		  doc.add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i * 2))));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("dvUpdateKey", "dv", Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", i));
+		  doc.Add(new BinaryDocValuesField("bdv", new BytesRef(Convert.ToString(i))));
+		  doc.Add(new SortedDocValuesField("sdv", new BytesRef(Convert.ToString(i))));
+		  doc.Add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i))));
+		  doc.Add(new SortedSetDocValuesField("ssdv", new BytesRef(Convert.ToString(i * 2))));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update all docs' ndv field
-		writer.updateNumericDocValue(new Term("dvUpdateKey", "dv"), "ndv", 17L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("dvUpdateKey", "dv"), "ndv", 17L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		BinaryDocValues bdv = r.getBinaryDocValues("bdv");
-		SortedDocValues sdv = r.getSortedDocValues("sdv");
-		SortedSetDocValues ssdv = r.getSortedSetDocValues("ssdv");
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		BinaryDocValues bdv = r.GetBinaryDocValues("bdv");
+		SortedDocValues sdv = r.GetSortedDocValues("sdv");
+		SortedSetDocValues ssdv = r.GetSortedSetDocValues("ssdv");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(17, ndv.get(i));
-		  bdv.get(i, scratch);
+		  Assert.AreEqual(17, ndv.Get(i));
+		  bdv.Get(i, scratch);
 		  Assert.AreEqual(new BytesRef(Convert.ToString(i)), scratch);
-		  sdv.get(i, scratch);
+		  sdv.Get(i, scratch);
 		  Assert.AreEqual(new BytesRef(Convert.ToString(i)), scratch);
 		  ssdv.Document = i;
-		  long ord = ssdv.nextOrd();
-		  ssdv.lookupOrd(ord, scratch);
-		  Assert.AreEqual(i, Convert.ToInt32(scratch.utf8ToString()));
+		  long ord = ssdv.NextOrd();
+		  ssdv.LookupOrd(ord, scratch);
+		  Assert.AreEqual(i, Convert.ToInt32(scratch.Utf8ToString()));
 		  if (i != 0)
 		  {
-			ord = ssdv.nextOrd();
-			ssdv.lookupOrd(ord, scratch);
-			Assert.AreEqual(i * 2, Convert.ToInt32(scratch.utf8ToString()));
+			ord = ssdv.NextOrd();
+			ssdv.LookupOrd(ord, scratch);
+			Assert.AreEqual(i * 2, Convert.ToInt32(scratch.Utf8ToString()));
 		  }
-		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, ssdv.nextOrd());
+		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, ssdv.NextOrd());
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMultipleNumericDocValues() throws Exception
 	  public virtual void TestMultipleNumericDocValues()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 10; // prevent merges
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(10); // prevent merges
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("dvUpdateKey", "dv", Store.NO));
-		  doc.add(new NumericDocValuesField("ndv1", i));
-		  doc.add(new NumericDocValuesField("ndv2", i));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("dvUpdateKey", "dv", Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv1", i));
+		  doc.Add(new NumericDocValuesField("ndv2", i));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update all docs' ndv1 field
-		writer.updateNumericDocValue(new Term("dvUpdateKey", "dv"), "ndv1", 17L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("dvUpdateKey", "dv"), "ndv1", 17L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv1 = r.getNumericDocValues("ndv1");
-		NumericDocValues ndv2 = r.getNumericDocValues("ndv2");
-		for (int i = 0; i < r.maxDoc(); i++)
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv1 = r.GetNumericDocValues("ndv1");
+		NumericDocValues ndv2 = r.GetNumericDocValues("ndv2");
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(17, ndv1.get(i));
-		  Assert.AreEqual(i, ndv2.get(i));
+		  Assert.AreEqual(17, ndv1.Get(i));
+		  Assert.AreEqual(i, ndv2.Get(i));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDocumentWithNoValue() throws Exception
 	  public virtual void TestDocumentWithNoValue()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("dvUpdateKey", "dv", Store.NO));
+		  doc.Add(new StringField("dvUpdateKey", "dv", Store.NO));
 		  if (i == 0) // index only one document with value
 		  {
-			doc.add(new NumericDocValuesField("ndv", 5));
+			doc.Add(new NumericDocValuesField("ndv", 5));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// update all docs' ndv field
-		writer.updateNumericDocValue(new Term("dvUpdateKey", "dv"), "ndv", 17L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("dvUpdateKey", "dv"), "ndv", 17L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		for (int i = 0; i < r.maxDoc(); i++)
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(17, ndv.get(i));
+		  Assert.AreEqual(17, ndv.Get(i));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUnsetValue() throws Exception
 	  public virtual void TestUnsetValue()
 	  {
-		assumeTrue("codec does not support docsWithField", defaultCodecSupportsDocsWithField());
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc" + i, Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", 5));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", "doc" + i, Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", 5));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// unset the value of 'doc0'
-		writer.updateNumericDocValue(new Term("id", "doc0"), "ndv", null);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("id", "doc0"), "ndv", null);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		for (int i = 0; i < r.maxDoc(); i++)
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
 		  if (i == 0)
 		  {
-			Assert.AreEqual(0, ndv.get(i));
+			Assert.AreEqual(0, ndv.Get(i));
 		  }
 		  else
 		  {
-			Assert.AreEqual(5, ndv.get(i));
+			Assert.AreEqual(5, ndv.Get(i));
 		  }
 		}
 
-		Bits docsWithField = r.getDocsWithField("ndv");
-		Assert.IsFalse(docsWithField.get(0));
-		Assert.IsTrue(docsWithField.get(1));
+		Bits docsWithField = r.GetDocsWithField("ndv");
+		Assert.IsFalse(docsWithField.Get(0));
+		Assert.IsTrue(docsWithField.Get(1));
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestUnsetAllValues()
 	  {
-		assumeTrue("codec does not support docsWithField", defaultCodecSupportsDocsWithField());
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0; i < 2; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc", Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", 5));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", "doc", Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", 5));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 
 		// unset the value of 'doc'
-		writer.updateNumericDocValue(new Term("id", "doc"), "ndv", null);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("id", "doc"), "ndv", null);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = reader.leaves().get(0).reader();
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		for (int i = 0; i < r.maxDoc(); i++)
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(0, ndv.get(i));
+		  Assert.AreEqual(0, ndv.Get(i));
 		}
 
-		Bits docsWithField = r.getDocsWithField("ndv");
-		Assert.IsFalse(docsWithField.get(0));
-		Assert.IsFalse(docsWithField.get(1));
+		Bits docsWithField = r.GetDocsWithField("ndv");
+		Assert.IsFalse(docsWithField.Get(0));
+		Assert.IsFalse(docsWithField.Get(1));
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -587,20 +590,20 @@ namespace Lucene.Net.Index
 	  {
 		// we don't support adding new fields or updating existing non-numeric-dv
 		// fields through numeric updates
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("key", "doc", Store.NO));
-		doc.add(new StringField("foo", "bar", Store.NO));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("key", "doc", Store.NO));
+		doc.Add(new StringField("foo", "bar", Store.NO));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
 		try
 		{
-		  writer.updateNumericDocValue(new Term("key", "doc"), "ndv", 17L);
+		  writer.UpdateNumericDocValue(new Term("key", "doc"), "ndv", 17L);
 		  Assert.Fail("should not have allowed creating new fields through update");
 		}
 		catch (System.ArgumentException e)
@@ -610,7 +613,7 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  writer.updateNumericDocValue(new Term("key", "doc"), "foo", 17L);
+		  writer.UpdateNumericDocValue(new Term("key", "doc"), "foo", 17L);
 		  Assert.Fail("should not have allowed updating an existing field to numeric-dv");
 		}
 		catch (System.ArgumentException e)
@@ -618,45 +621,45 @@ namespace Lucene.Net.Index
 		  // ok
 		}
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDifferentDVFormatPerField() throws Exception
 	  public virtual void TestDifferentDVFormatPerField()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.Codec = new Lucene46CodecAnonymousInnerClassHelper(this);
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetCodec(new Lucene46CodecAnonymousInnerClassHelper(this));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("key", "doc", Store.NO));
-		doc.add(new NumericDocValuesField("ndv", 5));
-		doc.add(new SortedDocValuesField("sorted", new BytesRef("value")));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("key", "doc", Store.NO));
+		doc.Add(new NumericDocValuesField("ndv", 5));
+		doc.Add(new SortedDocValuesField("sorted", new BytesRef("value")));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
-		writer.updateNumericDocValue(new Term("key", "doc"), "ndv", 17L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("key", "doc"), "ndv", 17L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		SortedDocValues sdv = r.getSortedDocValues("sorted");
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		SortedDocValues sdv = r.GetSortedDocValues("sorted");
 		BytesRef scratch = new BytesRef();
-		for (int i = 0; i < r.maxDoc(); i++)
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(17, ndv.get(i));
-		  sdv.get(i, scratch);
+		  Assert.AreEqual(17, ndv.Get(i));
+		  sdv.Get(i, scratch);
 		  Assert.AreEqual(new BytesRef("value"), scratch);
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
@@ -678,73 +681,73 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testUpdateSameDocMultipleTimes() throws Exception
 	  public virtual void TestUpdateSameDocMultipleTimes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("key", "doc", Store.NO));
-		doc.add(new NumericDocValuesField("ndv", 5));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("key", "doc", Store.NO));
+		doc.Add(new NumericDocValuesField("ndv", 5));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
-		writer.updateNumericDocValue(new Term("key", "doc"), "ndv", 17L); // update existing field
-		writer.updateNumericDocValue(new Term("key", "doc"), "ndv", 3L); // update existing field 2nd time in this commit
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("key", "doc"), "ndv", 17L); // update existing field
+		writer.UpdateNumericDocValue(new Term("key", "doc"), "ndv", 3L); // update existing field 2nd time in this commit
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		for (int i = 0; i < r.maxDoc(); i++)
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(3, ndv.get(i));
+		  Assert.AreEqual(3, ndv.Get(i));
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSegmentMerges() throws Exception
 	  public virtual void TestSegmentMerges()
 	  {
-		Directory dir = newDirectory();
-		Random random = random();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		Random random = Random();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 
 		int docid = 0;
-		int numRounds = atLeast(10);
+		int numRounds = AtLeast(10);
 		for (int rnd = 0; rnd < numRounds; rnd++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("key", "doc", Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", -1));
-		  int numDocs = atLeast(30);
+		  doc.Add(new StringField("key", "doc", Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", -1));
+		  int numDocs = AtLeast(30);
 		  for (int i = 0; i < numDocs; i++)
 		  {
-			doc.removeField("id");
-			doc.add(new StringField("id", Convert.ToString(docid++), Store.NO));
-			writer.addDocument(doc);
+			doc.RemoveField("id");
+			doc.Add(new StringField("id", Convert.ToString(docid++), Store.NO));
+			writer.AddDocument(doc);
 		  }
 
 		  long value = rnd + 1;
-		  writer.updateNumericDocValue(new Term("key", "doc"), "ndv", value);
+		  writer.UpdateNumericDocValue(new Term("key", "doc"), "ndv", value);
 
 		  if (random.NextDouble() < 0.2) // randomly delete some docs
 		  {
-			writer.deleteDocuments(new Term("id", Convert.ToString(random.Next(docid))));
+			writer.DeleteDocuments(new Term("id", Convert.ToString(random.Next(docid))));
 		  }
 
 		  // randomly commit or reopen-IW (or nothing), before forceMerge
 		  if (random.NextDouble() < 0.4)
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 		  else if (random.NextDouble() < 0.1)
 		  {
-			writer.close();
-			writer = new IndexWriter(dir, conf.clone());
+			writer.Dispose();
+			writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		  }
 
 		  // add another document with the current value, to be sure forceMerge has
@@ -754,37 +757,37 @@ namespace Lucene.Net.Index
 		  // and some MPs might now merge it, thereby invalidating test's
 		  // assumption that the reader has no deletes).
 		  doc = new Document();
-		  doc.add(new StringField("id", Convert.ToString(docid++), Store.NO));
-		  doc.add(new StringField("key", "doc", Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", value));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", Convert.ToString(docid++), Store.NO));
+		  doc.Add(new StringField("key", "doc", Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", value));
+		  writer.AddDocument(doc);
 
-		  writer.forceMerge(1, true);
+		  writer.ForceMerge(1, true);
 		  DirectoryReader reader;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
-			writer.commit();
-			reader = DirectoryReader.open(dir);
+			writer.Commit();
+			reader = DirectoryReader.Open(dir);
 		  }
 		  else
 		  {
-			reader = DirectoryReader.open(writer, true);
+			reader = DirectoryReader.Open(writer, true);
 		  }
 
-		  Assert.AreEqual(1, reader.leaves().size());
-		  AtomicReader r = reader.leaves().get(0).reader();
-		  assertNull("index should have no deletes after forceMerge", r.LiveDocs);
-		  NumericDocValues ndv = r.getNumericDocValues("ndv");
+		  Assert.AreEqual(1, reader.Leaves().Count);
+		  AtomicReader r = (AtomicReader)reader.Leaves()[0].Reader();
+		  Assert.IsNull(r.LiveDocs, "index should have no deletes after forceMerge");
+		  NumericDocValues ndv = r.GetNumericDocValues("ndv");
 		  Assert.IsNotNull(ndv);
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
-			Assert.AreEqual(value, ndv.get(i));
+			Assert.AreEqual(value, ndv.Get(i));
 		  }
-		  reader.close();
+		  reader.Dispose();
 		}
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -792,83 +795,83 @@ namespace Lucene.Net.Index
 	  public virtual void TestUpdateDocumentByMultipleTerms()
 	  {
 		// make sure the order of updates is respected, even when multiple terms affect same document
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("k1", "v1", Store.NO));
-		doc.add(new StringField("k2", "v2", Store.NO));
-		doc.add(new NumericDocValuesField("ndv", 5));
-		writer.addDocument(doc); // flushed document
-		writer.commit();
-		writer.addDocument(doc); // in-memory document
+		doc.Add(new StringField("k1", "v1", Store.NO));
+		doc.Add(new StringField("k2", "v2", Store.NO));
+		doc.Add(new NumericDocValuesField("ndv", 5));
+		writer.AddDocument(doc); // flushed document
+		writer.Commit();
+		writer.AddDocument(doc); // in-memory document
 
-		writer.updateNumericDocValue(new Term("k1", "v1"), "ndv", 17L);
-		writer.updateNumericDocValue(new Term("k2", "v2"), "ndv", 3L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("k1", "v1"), "ndv", 17L);
+		writer.UpdateNumericDocValue(new Term("k2", "v2"), "ndv", 3L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		NumericDocValues ndv = r.getNumericDocValues("ndv");
-		for (int i = 0; i < r.maxDoc(); i++)
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		for (int i = 0; i < r.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(3, ndv.get(i));
+		  Assert.AreEqual(3, ndv.Get(i));
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testManyReopensAndFields() throws Exception
 	  public virtual void TestManyReopensAndFields()
 	  {
-		Directory dir = newDirectory();
-		Random random = random();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-		LogMergePolicy lmp = newLogMergePolicy();
+		Directory dir = NewDirectory();
+		Random random = Random();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		LogMergePolicy lmp = NewLogMergePolicy();
 		lmp.MergeFactor = 3; // merge often
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
-		bool isNRT = random.nextBoolean();
+		bool isNRT = random.NextBoolean();
 		DirectoryReader reader;
 		if (isNRT)
 		{
-		  reader = DirectoryReader.open(writer, true);
+		  reader = DirectoryReader.Open(writer, true);
 		}
 		else
 		{
-		  writer.commit();
-		  reader = DirectoryReader.open(dir);
+		  writer.Commit();
+		  reader = DirectoryReader.Open(dir);
 		}
 
 		int numFields = random.Next(4) + 3; // 3-7
 		long[] fieldValues = new long[numFields];
 		bool[] fieldHasValue = new bool[numFields];
-		Arrays.fill(fieldHasValue, true);
+		Arrays.Fill(fieldHasValue, true);
 		for (int i = 0; i < fieldValues.Length; i++)
 		{
 		  fieldValues[i] = 1;
 		}
 
-		int numRounds = atLeast(15);
+		int numRounds = AtLeast(15);
 		int docID = 0;
 		for (int i = 0; i < numRounds; i++)
 		{
-		  int numDocs = atLeast(5);
+		  int numDocs = AtLeast(5);
 	//      System.out.println("[" + Thread.currentThread().getName() + "]: round=" + i + ", numDocs=" + numDocs);
 		  for (int j = 0; j < numDocs; j++)
 		  {
 			Document doc = new Document();
-			doc.add(new StringField("id", "doc-" + docID, Store.NO));
-			doc.add(new StringField("key", "all", Store.NO)); // update key
+			doc.Add(new StringField("id", "doc-" + docID, Store.NO));
+			doc.Add(new StringField("key", "all", Store.NO)); // update key
 			// add all fields with their current value
 			for (int f = 0; f < fieldValues.Length; f++)
 			{
-			  doc.add(new NumericDocValuesField("f" + f, fieldValues[f]));
+			  doc.Add(new NumericDocValuesField("f" + f, fieldValues[f]));
 			}
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 			++docID;
 		  }
 
@@ -877,70 +880,70 @@ namespace Lucene.Net.Index
 		  {
 			if (!fieldHasValue[field])
 			{
-			  writer.updateNumericDocValue(new Term("key", "all"), "f" + field, null);
+			  writer.UpdateNumericDocValue(new Term("key", "all"), "f" + field, null);
 			}
 		  }
 
 		  int fieldIdx = random.Next(fieldValues.Length);
 		  string updateField = "f" + fieldIdx;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 	//        System.out.println("[" + Thread.currentThread().getName() + "]: unset field '" + updateField + "'");
 			fieldHasValue[fieldIdx] = false;
-			writer.updateNumericDocValue(new Term("key", "all"), updateField, null);
+			writer.UpdateNumericDocValue(new Term("key", "all"), updateField, null);
 		  }
 		  else
 		  {
 			fieldHasValue[fieldIdx] = true;
-			writer.updateNumericDocValue(new Term("key", "all"), updateField, ++fieldValues[fieldIdx]);
+			writer.UpdateNumericDocValue(new Term("key", "all"), updateField, ++fieldValues[fieldIdx]);
 	//        System.out.println("[" + Thread.currentThread().getName() + "]: updated field '" + updateField + "' to value " + fieldValues[fieldIdx]);
 		  }
 
 		  if (random.NextDouble() < 0.2)
 		  {
 			int deleteDoc = random.Next(docID); // might also delete an already deleted document, ok!
-			writer.deleteDocuments(new Term("id", "doc-" + deleteDoc));
+			writer.DeleteDocuments(new Term("id", "doc-" + deleteDoc));
 	//        System.out.println("[" + Thread.currentThread().getName() + "]: deleted document: doc-" + deleteDoc);
 		  }
 
 		  // verify reader
 		  if (!isNRT)
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 
 	//      System.out.println("[" + Thread.currentThread().getName() + "]: reopen reader: " + reader);
-		  DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
+		  DirectoryReader newReader = DirectoryReader.OpenIfChanged(reader);
 		  Assert.IsNotNull(newReader);
-		  reader.close();
+		  reader.Dispose();
 		  reader = newReader;
 	//      System.out.println("[" + Thread.currentThread().getName() + "]: reopened reader: " + reader);
-		  Assert.IsTrue(reader.numDocs() > 0); // we delete at most one document per round
-		  foreach (AtomicReaderContext context in reader.leaves())
+		  Assert.IsTrue(reader.NumDocs() > 0); // we delete at most one document per round
+		  foreach (AtomicReaderContext context in reader.Leaves())
 		  {
-			AtomicReader r = context.reader();
+			AtomicReader r = (AtomicReader)context.Reader();
 	//        System.out.println(((SegmentReader) r).getSegmentName());
 			Bits liveDocs = r.LiveDocs;
 			for (int field = 0; field < fieldValues.Length; field++)
 			{
 			  string f = "f" + field;
-			  NumericDocValues ndv = r.getNumericDocValues(f);
-			  Bits docsWithField = r.getDocsWithField(f);
+			  NumericDocValues ndv = r.GetNumericDocValues(f);
+			  Bits docsWithField = r.GetDocsWithField(f);
 			  Assert.IsNotNull(ndv);
-			  int maxDoc = r.maxDoc();
+			  int maxDoc = r.MaxDoc();
 			  for (int doc = 0; doc < maxDoc; doc++)
 			  {
-				if (liveDocs == null || liveDocs.get(doc))
+				if (liveDocs == null || liveDocs.Get(doc))
 				{
-	//              System.out.println("doc=" + (doc + context.docBase) + " f='" + f + "' vslue=" + ndv.get(doc));
+	//              System.out.println("doc=" + (doc + context.DocBase) + " f='" + f + "' vslue=" + ndv.Get(doc));
 				  if (fieldHasValue[field])
 				  {
-					Assert.IsTrue(docsWithField.get(doc));
-					Assert.AreEqual("invalid value for doc=" + doc + ", field=" + f + ", reader=" + r, fieldValues[field], ndv.get(doc));
+					Assert.IsTrue(docsWithField.Get(doc));
+					Assert.AreEqual(fieldValues[field], ndv.Get(doc), "invalid value for doc=" + doc + ", field=" + f + ", reader=" + r);
 				  }
 				  else
 				  {
-					Assert.IsFalse(docsWithField.get(doc));
+					Assert.IsFalse(docsWithField.Get(doc));
 				  }
 				}
 			  }
@@ -956,103 +959,103 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testUpdateSegmentWithNoDocValues() throws Exception
 	  public virtual void TestUpdateSegmentWithNoDocValues()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		// prevent merges, otherwise by the time updates are applied
-		// (writer.close()), the segments might have merged and that update becomes
+		// (writer.Dispose()), the segments might have merged and that update becomes
 		// legit.
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES;
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// first segment with NDV
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc0", Store.NO));
-		doc.add(new NumericDocValuesField("ndv", 3));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "doc0", Store.NO));
+		doc.Add(new NumericDocValuesField("ndv", 3));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new StringField("id", "doc4", Store.NO)); // document without 'ndv' field
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc4", Store.NO)); // document without 'ndv' field
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// second segment with no NDV
 		doc = new Document();
-		doc.add(new StringField("id", "doc1", Store.NO));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "doc1", Store.NO));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new StringField("id", "doc2", Store.NO)); // document that isn't updated
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc2", Store.NO)); // document that isn't updated
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// update document in the first segment - should not affect docsWithField of
 		// the document without NDV field
-		writer.updateNumericDocValue(new Term("id", "doc0"), "ndv", 5L);
+		writer.UpdateNumericDocValue(new Term("id", "doc0"), "ndv", 5L);
 
 		// update document in the second segment - field should be added and we should
 		// be able to handle the other document correctly (e.g. no NPE)
-		writer.updateNumericDocValue(new Term("id", "doc1"), "ndv", 5L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("id", "doc1"), "ndv", 5L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext context in reader.leaves())
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  NumericDocValues ndv = r.getNumericDocValues("ndv");
-		  Bits docsWithField = r.getDocsWithField("ndv");
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		  Bits docsWithField = r.GetDocsWithField("ndv");
 		  Assert.IsNotNull(docsWithField);
-		  Assert.IsTrue(docsWithField.get(0));
-		  Assert.AreEqual(5L, ndv.get(0));
-		  Assert.IsFalse(docsWithField.get(1));
-		  Assert.AreEqual(0L, ndv.get(1));
+		  Assert.IsTrue(docsWithField.Get(0));
+		  Assert.AreEqual(5L, ndv.Get(0));
+		  Assert.IsFalse(docsWithField.Get(1));
+		  Assert.AreEqual(0L, ndv.Get(1));
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateSegmentWithPostingButNoDocValues() throws Exception
 	  public virtual void TestUpdateSegmentWithPostingButNoDocValues()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		// prevent merges, otherwise by the time updates are applied
-		// (writer.close()), the segments might have merged and that update becomes
+		// (writer.Dispose()), the segments might have merged and that update becomes
 		// legit.
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES;
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// first segment with NDV
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc0", Store.NO));
-		doc.add(new StringField("ndv", "mock-value", Store.NO));
-		doc.add(new NumericDocValuesField("ndv", 5));
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc0", Store.NO));
+		doc.Add(new StringField("ndv", "mock-value", Store.NO));
+		doc.Add(new NumericDocValuesField("ndv", 5));
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// second segment with no NDV
 		doc = new Document();
-		doc.add(new StringField("id", "doc1", Store.NO));
-		doc.add(new StringField("ndv", "mock-value", Store.NO));
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("id", "doc1", Store.NO));
+		doc.Add(new StringField("ndv", "mock-value", Store.NO));
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// update document in the second segment
-		writer.updateNumericDocValue(new Term("id", "doc1"), "ndv", 5L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("id", "doc1"), "ndv", 5L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext context in reader.leaves())
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  NumericDocValues ndv = r.getNumericDocValues("ndv");
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
-			Assert.AreEqual(5L, ndv.get(i));
+			Assert.AreEqual(5L, ndv.Get(i));
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -1061,24 +1064,24 @@ namespace Lucene.Net.Index
 	  {
 		// this used to fail because FieldInfos.Builder neglected to update
 		// globalFieldMaps.docValueTypes map
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("f", "mock-value", Store.NO));
-		doc.add(new NumericDocValuesField("f", 5));
-		writer.addDocument(doc);
-		writer.commit();
-		writer.updateNumericDocValue(new Term("f", "mock-value"), "f", 17L);
-		writer.close();
+		doc.Add(new StringField("f", "mock-value", Store.NO));
+		doc.Add(new NumericDocValuesField("f", 5));
+		writer.AddDocument(doc);
+		writer.Commit();
+		writer.UpdateNumericDocValue(new Term("f", "mock-value"), "f", 17L);
+		writer.Dispose();
 
-		DirectoryReader r = DirectoryReader.open(dir);
-		NumericDocValues ndv = r.leaves().get(0).reader().getNumericDocValues("f");
-		Assert.AreEqual(17, ndv.get(0));
-		r.close();
+		DirectoryReader r = DirectoryReader.Open(dir);
+		NumericDocValues ndv = ((AtomicReader)r.Leaves()[0].Reader()).GetNumericDocValues("f");
+		Assert.AreEqual(17, ndv.Get(0));
+		r.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -1086,57 +1089,57 @@ namespace Lucene.Net.Index
 	  public virtual void TestUpdateOldSegments()
 	  {
 		Codec[] oldCodecs = new Codec[] {new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec()};
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
 		// create a segment with an old Codec
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.Codec = oldCodecs[random().Next(oldCodecs.Length)];
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
 		IndexWriter writer = new IndexWriter(dir, conf);
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc", Store.NO));
-		doc.add(new NumericDocValuesField("f", 5));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new StringField("id", "doc", Store.NO));
+		doc.Add(new NumericDocValuesField("f", 5));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		writer = new IndexWriter(dir, conf);
-		writer.updateNumericDocValue(new Term("id", "doc"), "f", 4L);
+		writer.UpdateNumericDocValue(new Term("id", "doc"), "f", 4L);
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
 		try
 		{
-		  writer.close();
+		  writer.Dispose();
 		  Assert.Fail("should not have succeeded to update a segment written with an old Codec");
 		}
 		catch (System.NotSupportedException e)
 		{
-		  writer.rollback();
+		  writer.Rollback();
 		}
 		finally
 		{
 		  OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testStressMultiThreading() throws Exception
 	  public virtual void TestStressMultiThreading()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// create index
-		int numThreads = TestUtil.Next(random(), 3, 6);
-		int numDocs = atLeast(2000);
+		int numThreads = TestUtil.NextInt(Random(), 3, 6);
+		int numDocs = AtLeast(2000);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc" + i, Store.NO));
-		  double group = random().NextDouble();
+		  doc.Add(new StringField("id", "doc" + i, Store.NO));
+		  double group = Random().NextDouble();
 		  string g;
 		  if (group < 0.1)
 		  {
@@ -1154,18 +1157,18 @@ namespace Lucene.Net.Index
 		  {
 			  g = "g3";
 		  }
-		  doc.add(new StringField("updKey", g, Store.NO));
+		  doc.Add(new StringField("updKey", g, Store.NO));
 		  for (int j = 0; j < numThreads; j++)
 		  {
-			long value = random().Next();
-			doc.add(new NumericDocValuesField("f" + j, value));
-			doc.add(new NumericDocValuesField("cf" + j, value * 2)); // control, always updated to f * 2
+			long value = Random().Next();
+			doc.Add(new NumericDocValuesField("f" + j, value));
+			doc.Add(new NumericDocValuesField("cf" + j, value * 2)); // control, always updated to f * 2
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		CountDownLatch done = new CountDownLatch(numThreads);
-		AtomicInteger numUpdates = new AtomicInteger(atLeast(100));
+		AtomicInteger numUpdates = new AtomicInteger(AtLeast(100));
 
 		// same thread updates a field as well as reopens
 		Thread[] threads = new Thread[numThreads];
@@ -1181,38 +1184,38 @@ namespace Lucene.Net.Index
 			t.Start();
 		}
 		done.@await();
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext context in reader.leaves())
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  AtomicReader r = context.reader();
+		  AtomicReader r = (AtomicReader)context.Reader();
 		  for (int i = 0; i < numThreads; i++)
 		  {
-			NumericDocValues ndv = r.getNumericDocValues("f" + i);
-			NumericDocValues control = r.getNumericDocValues("cf" + i);
-			Bits docsWithNdv = r.getDocsWithField("f" + i);
-			Bits docsWithControl = r.getDocsWithField("cf" + i);
+			NumericDocValues ndv = r.GetNumericDocValues("f" + i);
+			NumericDocValues control = r.GetNumericDocValues("cf" + i);
+			Bits docsWithNdv = r.GetDocsWithField("f" + i);
+			Bits docsWithControl = r.GetDocsWithField("cf" + i);
 			Bits liveDocs = r.LiveDocs;
-			for (int j = 0; j < r.maxDoc(); j++)
+			for (int j = 0; j < r.MaxDoc(); j++)
 			{
-			  if (liveDocs == null || liveDocs.get(j))
+			  if (liveDocs == null || liveDocs.Get(j))
 			  {
-				Assert.AreEqual(docsWithNdv.get(j), docsWithControl.get(j));
-				if (docsWithNdv.get(j))
+				Assert.AreEqual(docsWithNdv.Get(j), docsWithControl.Get(j));
+				if (docsWithNdv.Get(j))
 				{
-				  Assert.AreEqual(control.get(j), ndv.get(j) * 2);
+				  Assert.AreEqual(control.Get(j), ndv.Get(j) * 2);
 				}
 			  }
 			}
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestNumericDocValuesUpdates OuterInstance;
 
@@ -1223,7 +1226,8 @@ namespace Lucene.Net.Index
 		  private string f;
 		  private string Cf;
 
-		  public ThreadAnonymousInnerClassHelper(TestNumericDocValuesUpdates outerInstance, string "UpdateThread-" + i, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInteger numUpdates, string f, string cf) : base("UpdateThread-" + i)
+		  public ThreadAnonymousInnerClassHelper(TestNumericDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountDownLatch done, AtomicInteger numUpdates, string f, string cf) 
+              : base(str)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Writer = writer;
@@ -1240,7 +1244,7 @@ namespace Lucene.Net.Index
 			bool success = false;
 			try
 			{
-			  Random random = random();
+			  Random random = Random();
 			  while (NumUpdates.AndDecrement > 0)
 			  {
 				double group = random.NextDouble();
@@ -1262,16 +1266,16 @@ namespace Lucene.Net.Index
 					t = new Term("updKey", "g3");
 				}
 	  //              System.out.println("[" + Thread.currentThread().getName() + "] numUpdates=" + numUpdates + " updateTerm=" + t);
-				if (random.nextBoolean()) // sometimes unset a value
+				if (random.NextBoolean()) // sometimes unset a value
 				{
-				  Writer.updateNumericDocValue(t, f, null);
-				  Writer.updateNumericDocValue(t, Cf, null);
+				  Writer.UpdateNumericDocValue(t, f, null);
+				  Writer.UpdateNumericDocValue(t, Cf, null);
 				}
 				else
 				{
 				  long updValue = random.Next();
-				  Writer.updateNumericDocValue(t, f, updValue);
-				  Writer.updateNumericDocValue(t, Cf, updValue * 2);
+				  Writer.UpdateNumericDocValue(t, f, updValue);
+				  Writer.UpdateNumericDocValue(t, Cf, updValue * 2);
 				}
 
 				if (random.NextDouble() < 0.2)
@@ -1279,13 +1283,13 @@ namespace Lucene.Net.Index
 				  // delete a random document
 				  int doc = random.Next(NumDocs);
 	  //                System.out.println("[" + Thread.currentThread().getName() + "] deleteDoc=doc" + doc);
-				  Writer.deleteDocuments(new Term("id", "doc" + doc));
+				  Writer.DeleteDocuments(new Term("id", "doc" + doc));
 				}
 
 				if (random.NextDouble() < 0.05) // commit every 20 updates on average
 				{
 	  //                  System.out.println("[" + Thread.currentThread().getName() + "] commit");
-				  Writer.commit();
+				  Writer.Commit();
 				}
 
 				if (random.NextDouble() < 0.1) // reopen NRT reader (apply updates), on average once every 10 updates
@@ -1293,15 +1297,15 @@ namespace Lucene.Net.Index
 				  if (reader == null)
 				  {
 	  //                  System.out.println("[" + Thread.currentThread().getName() + "] open NRT");
-					reader = DirectoryReader.open(Writer, true);
+					reader = DirectoryReader.Open(Writer, true);
 				  }
 				  else
 				  {
 	  //                  System.out.println("[" + Thread.currentThread().getName() + "] reopen NRT");
-					DirectoryReader r2 = DirectoryReader.openIfChanged(reader, Writer, true);
+					DirectoryReader r2 = DirectoryReader.OpenIfChanged(reader, Writer, true);
 					if (r2 != null)
 					{
-					  reader.close();
+					  reader.Dispose();
 					  reader = r2;
 					}
 				  }
@@ -1312,7 +1316,7 @@ namespace Lucene.Net.Index
 			}
 			catch (IOException e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 			finally
 			{
@@ -1320,13 +1324,13 @@ namespace Lucene.Net.Index
 			  {
 				try
 				{
-				  reader.close();
+				  reader.Dispose();
 				}
 				catch (IOException e)
 				{
 				  if (success) // suppress this exception only if there was another exception
 				  {
-					throw new Exception(e);
+					throw new Exception(e.Message, e);
 				  }
 				}
 			  }
@@ -1340,83 +1344,83 @@ namespace Lucene.Net.Index
 	  public virtual void TestUpdateDifferentDocsInDifferentGens()
 	  {
 		// update same document multiple times across generations
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MaxBufferedDocs = 4;
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMaxBufferedDocs(4);
 		IndexWriter writer = new IndexWriter(dir, conf);
-		int numDocs = atLeast(10);
+		int numDocs = AtLeast(10);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", "doc" + i, Store.NO));
-		  long value = random().Next();
-		  doc.add(new NumericDocValuesField("f", value));
-		  doc.add(new NumericDocValuesField("cf", value * 2));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", "doc" + i, Store.NO));
+		  long value = Random().Next();
+		  doc.Add(new NumericDocValuesField("f", value));
+		  doc.Add(new NumericDocValuesField("cf", value * 2));
+		  writer.AddDocument(doc);
 		}
 
-		int numGens = atLeast(5);
+		int numGens = AtLeast(5);
 		for (int i = 0; i < numGens; i++)
 		{
-		  int doc = random().Next(numDocs);
+		  int doc = Random().Next(numDocs);
 		  Term t = new Term("id", "doc" + doc);
-		  long value = random().nextLong();
-		  writer.updateNumericDocValue(t, "f", value);
-		  writer.updateNumericDocValue(t, "cf", value * 2);
-		  DirectoryReader reader = DirectoryReader.open(writer, true);
-		  foreach (AtomicReaderContext context in reader.leaves())
+		  long value = Random().nextLong();
+		  writer.UpdateNumericDocValue(t, "f", value);
+		  writer.UpdateNumericDocValue(t, "cf", value * 2);
+		  DirectoryReader reader = DirectoryReader.Open(writer, true);
+		  foreach (AtomicReaderContext context in reader.Leaves())
 		  {
-			AtomicReader r = context.reader();
-			NumericDocValues fndv = r.getNumericDocValues("f");
-			NumericDocValues cfndv = r.getNumericDocValues("cf");
-			for (int j = 0; j < r.maxDoc(); j++)
+			AtomicReader r = (AtomicReader)context.Reader();
+			NumericDocValues fndv = r.GetNumericDocValues("f");
+			NumericDocValues cfndv = r.GetNumericDocValues("cf");
+			for (int j = 0; j < r.MaxDoc(); j++)
 			{
-			  Assert.AreEqual(cfndv.get(j), fndv.get(j) * 2);
+			  Assert.AreEqual(cfndv.Get(j), fndv.Get(j) * 2);
 			}
 		  }
-		  reader.close();
+		  reader.Dispose();
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testChangeCodec() throws Exception
 	  public virtual void TestChangeCodec()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES; // disable merges to simplify test assertions.
-		conf.Codec = new Lucene46CodecAnonymousInnerClassHelper2(this);
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES); // disable merges to simplify test assertions.
+		conf.SetCodec(new Lucene46CodecAnonymousInnerClassHelper2(this));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new StringField("id", "d0", Store.NO));
-		doc.add(new NumericDocValuesField("f1", 5L));
-		doc.add(new NumericDocValuesField("f2", 13L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new StringField("id", "d0", Store.NO));
+		doc.Add(new NumericDocValuesField("f1", 5L));
+		doc.Add(new NumericDocValuesField("f2", 13L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
 		// change format
-		conf.Codec = new Lucene46CodecAnonymousInnerClassHelper3(this);
-		writer = new IndexWriter(dir, conf.clone());
+		conf.SetCodec(new Lucene46CodecAnonymousInnerClassHelper3(this));
+        writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		doc = new Document();
-		doc.add(new StringField("id", "d1", Store.NO));
-		doc.add(new NumericDocValuesField("f1", 17L));
-		doc.add(new NumericDocValuesField("f2", 2L));
-		writer.addDocument(doc);
-		writer.updateNumericDocValue(new Term("id", "d0"), "f1", 12L);
-		writer.close();
+		doc.Add(new StringField("id", "d1", Store.NO));
+		doc.Add(new NumericDocValuesField("f1", 17L));
+		doc.Add(new NumericDocValuesField("f2", 2L));
+		writer.AddDocument(doc);
+		writer.UpdateNumericDocValue(new Term("id", "d0"), "f1", 12L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(reader);
-		NumericDocValues f1 = r.getNumericDocValues("f1");
-		NumericDocValues f2 = r.getNumericDocValues("f2");
-		Assert.AreEqual(12L, f1.get(0));
-		Assert.AreEqual(13L, f2.get(0));
-		Assert.AreEqual(17L, f1.get(1));
-		Assert.AreEqual(2L, f2.get(1));
-		reader.close();
-		dir.close();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(reader);
+		NumericDocValues f1 = r.GetNumericDocValues("f1");
+		NumericDocValues f2 = r.GetNumericDocValues("f2");
+		Assert.AreEqual(12L, f1.Get(0));
+		Assert.AreEqual(13L, f2.Get(0));
+		Assert.AreEqual(17L, f1.Get(1));
+		Assert.AreEqual(2L, f2.Get(1));
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
@@ -1453,104 +1457,104 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testAddIndexes() throws Exception
 	  public virtual void TestAddIndexes()
 	  {
-		Directory dir1 = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir1 = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir1, conf);
 
-		int numDocs = atLeast(50);
-		int numTerms = TestUtil.Next(random(), 1, numDocs / 5);
-		Set<string> randomTerms = new HashSet<string>();
-		while (randomTerms.size() < numTerms)
+		int numDocs = AtLeast(50);
+		int numTerms = TestUtil.NextInt(Random(), 1, numDocs / 5);
+		HashSet<string> randomTerms = new HashSet<string>();
+		while (randomTerms.Count < numTerms)
 		{
-		  randomTerms.add(TestUtil.randomSimpleString(random()));
+		  randomTerms.Add(TestUtil.RandomSimpleString(Random()));
 		}
 
 		// create first index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", RandomPicks.randomFrom(random(), randomTerms), Store.NO));
-		  doc.add(new NumericDocValuesField("ndv", 4L));
-		  doc.add(new NumericDocValuesField("control", 8L));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("id", RandomPicks.randomFrom(Random(), randomTerms), Store.NO));
+		  doc.Add(new NumericDocValuesField("ndv", 4L));
+		  doc.Add(new NumericDocValuesField("control", 8L));
+		  writer.AddDocument(doc);
 		}
 
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.commit();
+		  writer.Commit();
 		}
 
 		// update some docs to a random value
-		long value = random().Next();
-		Term term = new Term("id", RandomPicks.randomFrom(random(), randomTerms));
-		writer.updateNumericDocValue(term, "ndv", value);
-		writer.updateNumericDocValue(term, "control", value * 2);
-		writer.close();
+		long value = Random().Next();
+		Term term = new Term("id", RandomPicks.randomFrom(Random(), randomTerms));
+		writer.UpdateNumericDocValue(term, "ndv", value);
+		writer.UpdateNumericDocValue(term, "control", value * 2);
+		writer.Dispose();
 
-		Directory dir2 = newDirectory();
-		conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir2 = NewDirectory();
+		conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		writer = new IndexWriter(dir2, conf);
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
-		  writer.addIndexes(dir1);
+		  writer.AddIndexes(dir1);
 		}
 		else
 		{
-		  DirectoryReader reader = DirectoryReader.open(dir1);
-		  writer.addIndexes(reader);
-		  reader.close();
+		  DirectoryReader reader = DirectoryReader.Open(dir1);
+		  writer.AddIndexes(reader);
+		  reader.Dispose();
 		}
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir2);
-		foreach (AtomicReaderContext context in reader.leaves())
+		DirectoryReader reader_ = DirectoryReader.Open(dir2);
+		foreach (AtomicReaderContext context in reader_.Leaves())
 		{
-		  AtomicReader r = context.reader();
-		  NumericDocValues ndv = r.getNumericDocValues("ndv");
-		  NumericDocValues control = r.getNumericDocValues("control");
-		  for (int i = 0; i < r.maxDoc(); i++)
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  NumericDocValues ndv = r.GetNumericDocValues("ndv");
+		  NumericDocValues control = r.GetNumericDocValues("control");
+		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
-			Assert.AreEqual(ndv.get(i) * 2, control.get(i));
+			Assert.AreEqual(ndv.Get(i) * 2, control.Get(i));
 		  }
 		}
-		reader.close();
+		reader_.Dispose();
 
-		IOUtils.close(dir1, dir2);
+		IOUtils.Close(dir1, dir2);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDeleteUnusedUpdatesFiles() throws Exception
 	  public virtual void TestDeleteUnusedUpdatesFiles()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("id", "d0", Store.NO));
-		doc.add(new NumericDocValuesField("f", 1L));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "d0", Store.NO));
+		doc.Add(new NumericDocValuesField("f", 1L));
+		writer.AddDocument(doc);
 
 		// create first gen of update files
-		writer.updateNumericDocValue(new Term("id", "d0"), "f", 2L);
-		writer.commit();
-		int numFiles = dir.listAll().length;
+		writer.UpdateNumericDocValue(new Term("id", "d0"), "f", 2L);
+		writer.Commit();
+		int numFiles = dir.ListAll().Length;
 
-		DirectoryReader r = DirectoryReader.open(dir);
-		Assert.AreEqual(2L, r.leaves().get(0).reader().getNumericDocValues("f").get(0));
-		r.close();
+		DirectoryReader r = DirectoryReader.Open(dir);
+		Assert.AreEqual(2L, ((AtomicReader)r.Leaves()[0].Reader()).GetNumericDocValues("f").Get(0));
+		r.Dispose();
 
 		// create second gen of update files, first gen should be deleted
-		writer.updateNumericDocValue(new Term("id", "d0"), "f", 5L);
-		writer.commit();
-		Assert.AreEqual(numFiles, dir.listAll().length);
+		writer.UpdateNumericDocValue(new Term("id", "d0"), "f", 5L);
+		writer.Commit();
+		Assert.AreEqual(numFiles, dir.ListAll().Length);
 
-		r = DirectoryReader.open(dir);
-		Assert.AreEqual(5L, r.leaves().get(0).reader().getNumericDocValues("f").get(0));
-		r.close();
+		r = DirectoryReader.Open(dir);
+		Assert.AreEqual(5L, ((AtomicReader)r.Leaves()[0].Reader()).GetNumericDocValues("f").Get(0));
+		r.Dispose();
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -1558,21 +1562,21 @@ namespace Lucene.Net.Index
 	  public virtual void TestTonsOfUpdates()
 	  {
 		// LUCENE-5248: make sure that when there are many updates, we don't use too much RAM
-		Directory dir = newDirectory();
-		Random random = random();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
-		conf.RAMBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
-		conf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH; // don't flush by doc
+		Directory dir = NewDirectory();
+		Random random = Random();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
+		conf.SetRAMBufferSizeMB(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
+		conf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH); // don't flush by doc
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		// test data: lots of documents (few 10Ks) and lots of update terms (few hundreds)
-		int numDocs = atLeast(20000);
-		int numNumericFields = atLeast(5);
-		int numTerms = TestUtil.Next(random, 10, 100); // terms should affect many docs
-		Set<string> updateTerms = new HashSet<string>();
-		while (updateTerms.size() < numTerms)
+		int numDocs = AtLeast(20000);
+		int numNumericFields = AtLeast(5);
+		int numTerms = TestUtil.NextInt(random, 10, 100); // terms should affect many docs
+		HashSet<string> updateTerms = new HashSet<string>();
+		while (updateTerms.Count < numTerms)
 		{
-		  updateTerms.add(TestUtil.randomSimpleString(random));
+		  updateTerms.Add(TestUtil.RandomSimpleString(random));
 		}
 
 	//    System.out.println("numDocs=" + numDocs + " numNumericFields=" + numNumericFields + " numTerms=" + numTerms);
@@ -1581,136 +1585,136 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  int numUpdateTerms = TestUtil.Next(random, 1, numTerms / 10);
+		  int numUpdateTerms = TestUtil.NextInt(random, 1, numTerms / 10);
 		  for (int j = 0; j < numUpdateTerms; j++)
 		  {
-			doc.add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
+			doc.Add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
 		  }
 		  for (int j = 0; j < numNumericFields; j++)
 		  {
 			long val = random.Next();
-			doc.add(new NumericDocValuesField("f" + j, val));
-			doc.add(new NumericDocValuesField("cf" + j, val * 2));
+			doc.Add(new NumericDocValuesField("f" + j, val));
+			doc.Add(new NumericDocValuesField("cf" + j, val * 2));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
-		writer.commit(); // commit so there's something to apply to
+		writer.Commit(); // commit so there's something to apply to
 
 		// set to flush every 2048 bytes (approximately every 12 updates), so we get
 		// many flushes during numeric updates
-		writer.Config.RAMBufferSizeMB = 2048.0 / 1024 / 1024;
-		int numUpdates = atLeast(100);
+		writer.Config.SetRAMBufferSizeMB(2048.0 / 1024 / 1024);
+		int numUpdates = AtLeast(100);
 	//    System.out.println("numUpdates=" + numUpdates);
 		for (int i = 0; i < numUpdates; i++)
 		{
 		  int field = random.Next(numNumericFields);
 		  Term updateTerm = new Term("upd", RandomPicks.randomFrom(random, updateTerms));
 		  long value = random.Next();
-		  writer.updateNumericDocValue(updateTerm, "f" + field, value);
-		  writer.updateNumericDocValue(updateTerm, "cf" + field, value * 2);
+		  writer.UpdateNumericDocValue(updateTerm, "f" + field, value);
+		  writer.UpdateNumericDocValue(updateTerm, "cf" + field, value * 2);
 		}
 
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext context in reader.leaves())
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext context in reader.Leaves())
 		{
 		  for (int i = 0; i < numNumericFields; i++)
 		  {
-			AtomicReader r = context.reader();
-			NumericDocValues f = r.getNumericDocValues("f" + i);
-			NumericDocValues cf = r.getNumericDocValues("cf" + i);
-			for (int j = 0; j < r.maxDoc(); j++)
+			AtomicReader r = (AtomicReader)context.Reader();
+			NumericDocValues f = r.GetNumericDocValues("f" + i);
+			NumericDocValues cf = r.GetNumericDocValues("cf" + i);
+			for (int j = 0; j < r.MaxDoc(); j++)
 			{
-			  Assert.AreEqual("reader=" + r + ", field=f" + i + ", doc=" + j, cf.get(j), f.get(j) * 2);
+			  Assert.AreEqual(cf.Get(j), f.Get(j) * 2, "reader=" + r + ", field=f" + i + ", doc=" + j);
 			}
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdatesOrder() throws Exception
 	  public virtual void TestUpdatesOrder()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("upd", "t1", Store.NO));
-		doc.add(new StringField("upd", "t2", Store.NO));
-		doc.add(new NumericDocValuesField("f1", 1L));
-		doc.add(new NumericDocValuesField("f2", 1L));
-		writer.addDocument(doc);
-		writer.updateNumericDocValue(new Term("upd", "t1"), "f1", 2L); // update f1 to 2
-		writer.updateNumericDocValue(new Term("upd", "t1"), "f2", 2L); // update f2 to 2
-		writer.updateNumericDocValue(new Term("upd", "t2"), "f1", 3L); // update f1 to 3
-		writer.updateNumericDocValue(new Term("upd", "t2"), "f2", 3L); // update f2 to 3
-		writer.updateNumericDocValue(new Term("upd", "t1"), "f1", 4L); // update f1 to 4 (but not f2)
-		writer.close();
+		doc.Add(new StringField("upd", "t1", Store.NO));
+		doc.Add(new StringField("upd", "t2", Store.NO));
+		doc.Add(new NumericDocValuesField("f1", 1L));
+		doc.Add(new NumericDocValuesField("f2", 1L));
+		writer.AddDocument(doc);
+		writer.UpdateNumericDocValue(new Term("upd", "t1"), "f1", 2L); // update f1 to 2
+		writer.UpdateNumericDocValue(new Term("upd", "t1"), "f2", 2L); // update f2 to 2
+		writer.UpdateNumericDocValue(new Term("upd", "t2"), "f1", 3L); // update f1 to 3
+		writer.UpdateNumericDocValue(new Term("upd", "t2"), "f2", 3L); // update f2 to 3
+		writer.UpdateNumericDocValue(new Term("upd", "t1"), "f1", 4L); // update f1 to 4 (but not f2)
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(4, reader.leaves().get(0).reader().getNumericDocValues("f1").get(0));
-		Assert.AreEqual(3, reader.leaves().get(0).reader().getNumericDocValues("f2").get(0));
-		reader.close();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(4, ((AtomicReader)reader.Leaves()[0].Reader()).GetNumericDocValues("f1").Get(0));
+		Assert.AreEqual(3, ((AtomicReader)reader.Leaves()[0].Reader()).GetNumericDocValues("f2").Get(0));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateAllDeletedSegment() throws Exception
 	  public virtual void TestUpdateAllDeletedSegment()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc", Store.NO));
-		doc.add(new NumericDocValuesField("f1", 1L));
-		writer.addDocument(doc);
-		writer.addDocument(doc);
-		writer.commit();
-		writer.deleteDocuments(new Term("id", "doc")); // delete all docs in the first segment
-		writer.addDocument(doc);
-		writer.updateNumericDocValue(new Term("id", "doc"), "f1", 2L);
-		writer.close();
+		doc.Add(new StringField("id", "doc", Store.NO));
+		doc.Add(new NumericDocValuesField("f1", 1L));
+		writer.AddDocument(doc);
+		writer.AddDocument(doc);
+		writer.Commit();
+		writer.DeleteDocuments(new Term("id", "doc")); // delete all docs in the first segment
+		writer.AddDocument(doc);
+		writer.UpdateNumericDocValue(new Term("id", "doc"), "f1", 2L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(1, reader.leaves().size());
-		Assert.AreEqual(2L, reader.leaves().get(0).reader().getNumericDocValues("f1").get(0));
-		reader.close();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(1, reader.Leaves().Count);
+		Assert.AreEqual(2L, ((AtomicReader)reader.Leaves()[0].Reader()).GetNumericDocValues("f1").Get(0));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateTwoNonexistingTerms() throws Exception
 	  public virtual void TestUpdateTwoNonexistingTerms()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("id", "doc", Store.NO));
-		doc.add(new NumericDocValuesField("f1", 1L));
-		writer.addDocument(doc);
+		doc.Add(new StringField("id", "doc", Store.NO));
+		doc.Add(new NumericDocValuesField("f1", 1L));
+		writer.AddDocument(doc);
 		// update w/ multiple nonexisting terms in same field
-		writer.updateNumericDocValue(new Term("c", "foo"), "f1", 2L);
-		writer.updateNumericDocValue(new Term("c", "bar"), "f1", 2L);
-		writer.close();
+		writer.UpdateNumericDocValue(new Term("c", "foo"), "f1", 2L);
+		writer.UpdateNumericDocValue(new Term("c", "bar"), "f1", 2L);
+		writer.Dispose();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(1, reader.leaves().size());
-		Assert.AreEqual(1L, reader.leaves().get(0).reader().getNumericDocValues("f1").get(0));
-		reader.close();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(1, reader.Leaves().Count);
+		Assert.AreEqual(1L, ((AtomicReader)reader.Leaves()[0].Reader()).GetNumericDocValues("f1").Get(0));
+		reader.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	}

@@ -4,25 +4,26 @@ using System.Diagnostics;
 namespace Lucene.Net.Codecs.Lucene40
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using Lucene.Net.Support;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IndexOutput = Lucene.Net.Store.IndexOutput;
 
 
 	/// <summary>
@@ -86,14 +87,14 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override void ResetSkip()
 	  {
-		base.resetSkip();
-		Arrays.fill(LastSkipDoc, 0);
-		Arrays.fill(LastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
-		Arrays.fill(LastSkipOffsetLength, -1); // we don't have to write the first length in the skip list
-		Arrays.fill(LastSkipFreqPointer, FreqOutput.FilePointer);
+		base.ResetSkip();
+		Arrays.Fill(LastSkipDoc, 0);
+		Arrays.Fill(LastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
+		Arrays.Fill(LastSkipOffsetLength, -1); // we don't have to write the first length in the skip list
+		Arrays.Fill(LastSkipFreqPointer, FreqOutput.FilePointer);
 		if (ProxOutput != null)
 		{
-		  Arrays.fill(LastSkipProxPointer, ProxOutput.FilePointer);
+		  Arrays.Fill(LastSkipProxPointer, ProxOutput.FilePointer);
 		}
 	  }
 
@@ -130,22 +131,22 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			// the current payload/offset lengths equals the lengths at the previous skip point,
 			// so we don't store the lengths again
-			skipBuffer.writeVInt(delta << 1);
+			skipBuffer.WriteVInt(delta << 1);
 		  }
 		  else
 		  {
 			// the payload and/or offset length is different from the previous one. We shift the DocSkip, 
 			// set the lowest bit and store the current payload and/or offset lengths as VInts.
-			skipBuffer.writeVInt(delta << 1 | 1);
+			skipBuffer.WriteVInt(delta << 1 | 1);
 
 			if (CurStorePayloads)
 			{
-			  skipBuffer.writeVInt(CurPayloadLength);
+			  skipBuffer.WriteVInt(CurPayloadLength);
 			  LastSkipPayloadLength[level] = CurPayloadLength;
 			}
 			if (CurStoreOffsets)
 			{
-			  skipBuffer.writeVInt(CurOffsetLength);
+			  skipBuffer.WriteVInt(CurOffsetLength);
 			  LastSkipOffsetLength[level] = CurOffsetLength;
 			}
 		  }
@@ -153,11 +154,11 @@ namespace Lucene.Net.Codecs.Lucene40
 		else
 		{
 		  // current field does not store payloads or offsets
-		  skipBuffer.writeVInt(delta);
+		  skipBuffer.WriteVInt(delta);
 		}
 
-		skipBuffer.writeVInt((int)(CurFreqPointer - LastSkipFreqPointer[level]));
-		skipBuffer.writeVInt((int)(CurProxPointer - LastSkipProxPointer[level]));
+		skipBuffer.WriteVInt((int)(CurFreqPointer - LastSkipFreqPointer[level]));
+		skipBuffer.WriteVInt((int)(CurProxPointer - LastSkipProxPointer[level]));
 
 		LastSkipDoc[level] = CurDoc;
 

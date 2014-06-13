@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 
 		public override Fields Get(int doc)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override TermVectorsReader Clone()
 		{
-		  return new AssertingTermVectorsReader(@in.Clone());
+		  return new AssertingTermVectorsReader((TermVectorsReader)@in.Clone());
 		}
 
 		public override long RamBytesUsed()
@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 
 	  }

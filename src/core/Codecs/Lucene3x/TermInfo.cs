@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// indexing.  
 
 	[Obsolete]
-	internal class TermInfo
+	public class TermInfo
 	{
 	  /// <summary>
 	  /// The number of documents which contain the term. </summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -33,12 +34,14 @@ namespace Lucene.Net.Index
 	using SortedSetDocValuesField = Lucene.Net.Document.SortedSetDocValuesField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using FieldCache = Lucene.Net.Search.FieldCache;
+	using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// 
 	/// <summary>
@@ -56,56 +59,56 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestAddIndexes()
 	  {
-		Directory d1 = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d1);
+		Directory d1 = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d1);
 		Document doc = new Document();
-		doc.add(newStringField("id", "1", Field.Store.YES));
-		doc.add(new NumericDocValuesField("dv", 1));
-		w.addDocument(doc);
+		doc.Add(NewStringField("id", "1", Field.Store.YES));
+		doc.Add(new NumericDocValuesField("dv", 1));
+		w.AddDocument(doc);
 		IndexReader r1 = w.Reader;
-		w.close();
+		w.Close();
 
-		Directory d2 = newDirectory();
-		w = new RandomIndexWriter(random(), d2);
+		Directory d2 = NewDirectory();
+		w = new RandomIndexWriter(Random(), d2);
 		doc = new Document();
-		doc.add(newStringField("id", "2", Field.Store.YES));
-		doc.add(new NumericDocValuesField("dv", 2));
-		w.addDocument(doc);
+		doc.Add(NewStringField("id", "2", Field.Store.YES));
+		doc.Add(new NumericDocValuesField("dv", 2));
+		w.AddDocument(doc);
 		IndexReader r2 = w.Reader;
-		w.close();
+        w.Close();
 
-		Directory d3 = newDirectory();
-		w = new RandomIndexWriter(random(), d3);
-		w.addIndexes(SlowCompositeReaderWrapper.wrap(r1), SlowCompositeReaderWrapper.wrap(r2));
-		r1.close();
-		d1.close();
-		r2.close();
-		d2.close();
+		Directory d3 = NewDirectory();
+		w = new RandomIndexWriter(Random(), d3);
+		w.AddIndexes(SlowCompositeReaderWrapper.Wrap(r1), SlowCompositeReaderWrapper.Wrap(r2));
+		r1.Dispose();
+		d1.Dispose();
+		r2.Dispose();
+		d2.Dispose();
 
-		w.forceMerge(1);
+		w.ForceMerge(1);
 		DirectoryReader r3 = w.Reader;
-		w.close();
-		AtomicReader sr = getOnlySegmentReader(r3);
-		Assert.AreEqual(2, sr.numDocs());
-		NumericDocValues docValues = sr.getNumericDocValues("dv");
+        w.Close();
+		AtomicReader sr = GetOnlySegmentReader(r3);
+		Assert.AreEqual(2, sr.NumDocs());
+		NumericDocValues docValues = sr.GetNumericDocValues("dv");
 		Assert.IsNotNull(docValues);
-		r3.close();
-		d3.close();
+		r3.Dispose();
+		d3.Dispose();
 	  }
 
 	  public virtual void TestMultiValuedDocValuesField()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
 		Document doc = new Document();
 		Field f = new NumericDocValuesField("field", 17);
 		// Index doc values are single-valued so we should not
 		// be able to add same field more than once:
-		doc.add(f);
-		doc.add(f);
+		doc.Add(f);
+		doc.Add(f);
 		try
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  Assert.Fail("didn't hit expected exception");
 		}
 		catch (System.ArgumentException iae)
@@ -114,29 +117,29 @@ namespace Lucene.Net.Index
 		}
 
 		doc = new Document();
-		doc.add(f);
-		w.addDocument(doc);
-		w.forceMerge(1);
+		doc.Add(f);
+		w.AddDocument(doc);
+		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-		w.close();
-		Assert.AreEqual(17, FieldCache.DEFAULT.getInts(getOnlySegmentReader(r), "field", false).get(0));
-		r.close();
-		d.close();
+        w.Close();
+		Assert.AreEqual(17, FieldCache_Fields.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  public virtual void TestDifferentTypedDocValuesField()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
 		Document doc = new Document();
 		// Index doc values are single-valued so we should not
 		// be able to add same field more than once:
 		Field f;
-		doc.add(f = new NumericDocValuesField("field", 17));
-		doc.add(new BinaryDocValuesField("field", new BytesRef("blah")));
+		doc.Add(f = new NumericDocValuesField("field", 17));
+		doc.Add(new BinaryDocValuesField("field", new BytesRef("blah")));
 		try
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  Assert.Fail("didn't hit expected exception");
 		}
 		catch (System.ArgumentException iae)
@@ -145,29 +148,29 @@ namespace Lucene.Net.Index
 		}
 
 		doc = new Document();
-		doc.add(f);
-		w.addDocument(doc);
-		w.forceMerge(1);
+		doc.Add(f);
+		w.AddDocument(doc);
+		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-		w.close();
-		Assert.AreEqual(17, FieldCache.DEFAULT.getInts(getOnlySegmentReader(r), "field", false).get(0));
-		r.close();
-		d.close();
+        w.Close();
+        Assert.AreEqual(17, FieldCache_Fields.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  public virtual void TestDifferentTypedDocValuesField2()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
 		Document doc = new Document();
 		// Index doc values are single-valued so we should not
 		// be able to add same field more than once:
 		Field f = new NumericDocValuesField("field", 17);
-		doc.add(f);
-		doc.add(new SortedDocValuesField("field", new BytesRef("hello")));
+		doc.Add(f);
+		doc.Add(new SortedDocValuesField("field", new BytesRef("hello")));
 		try
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  Assert.Fail("didn't hit expected exception");
 		}
 		catch (System.ArgumentException iae)
@@ -175,139 +178,139 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 		doc = new Document();
-		doc.add(f);
-		w.addDocument(doc);
-		w.forceMerge(1);
+		doc.Add(f);
+		w.AddDocument(doc);
+		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-		Assert.AreEqual(17, getOnlySegmentReader(r).getNumericDocValues("field").get(0));
-		r.close();
-		w.close();
-		d.close();
+		Assert.AreEqual(17, GetOnlySegmentReader(r).GetNumericDocValues("field").Get(0));
+		r.Dispose();
+        w.Close();
+		d.Dispose();
 	  }
 
 	  // LUCENE-3870
 	  public virtual void TestLengthPrefixAcrossTwoPages()
 	  {
-		Directory d = newDirectory();
-		IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory d = NewDirectory();
+		IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[32764];
 		BytesRef b = new BytesRef();
-		b.bytes = bytes;
-		b.length = bytes.Length;
-		doc.add(new SortedDocValuesField("field", b));
-		w.addDocument(doc);
+		b.Bytes = bytes;
+		b.Length = bytes.Length;
+		doc.Add(new SortedDocValuesField("field", b));
+		w.AddDocument(doc);
 		bytes[0] = 1;
-		w.addDocument(doc);
-		w.forceMerge(1);
+		w.AddDocument(doc);
+		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-		BinaryDocValues s = FieldCache.DEFAULT.getTerms(getOnlySegmentReader(r), "field", false);
+        BinaryDocValues s = FieldCache_Fields.DEFAULT.GetTerms(GetOnlySegmentReader(r), "field", false);
 
 		BytesRef bytes1 = new BytesRef();
-		s.get(0, bytes1);
-		Assert.AreEqual(bytes.Length, bytes1.length);
+		s.Get(0, bytes1);
+		Assert.AreEqual(bytes.Length, bytes1.Length);
 		bytes[0] = 0;
 		Assert.AreEqual(b, bytes1);
 
-		s.get(1, bytes1);
-		Assert.AreEqual(bytes.Length, bytes1.length);
+		s.Get(1, bytes1);
+		Assert.AreEqual(bytes.Length, bytes1.Length);
 		bytes[0] = 1;
 		Assert.AreEqual(b, bytes1);
-		r.close();
-		w.close();
-		d.close();
+		r.Dispose();
+		w.Dispose();
+		d.Dispose();
 	  }
 
 	  public virtual void TestDocValuesUnstored()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig iwconfig = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwconfig.MergePolicy = newLogMergePolicy();
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwconfig.SetMergePolicy(NewLogMergePolicy());
 		IndexWriter writer = new IndexWriter(dir, iwconfig);
 		for (int i = 0; i < 50; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new NumericDocValuesField("dv", i));
-		  doc.add(new TextField("docId", "" + i, Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(new NumericDocValuesField("dv", i));
+		  doc.Add(new TextField("docId", "" + i, Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		DirectoryReader r = writer.Reader;
-		AtomicReader slow = SlowCompositeReaderWrapper.wrap(r);
+		AtomicReader slow = SlowCompositeReaderWrapper.Wrap(r);
 		FieldInfos fi = slow.FieldInfos;
-		FieldInfo dvInfo = fi.fieldInfo("dv");
-		Assert.IsTrue(dvInfo.hasDocValues());
-		NumericDocValues dv = slow.getNumericDocValues("dv");
+		FieldInfo dvInfo = fi.FieldInfo("dv");
+		Assert.IsTrue(dvInfo.HasDocValues());
+		NumericDocValues dv = slow.GetNumericDocValues("dv");
 		for (int i = 0; i < 50; i++)
 		{
-		  Assert.AreEqual(i, dv.get(i));
-		  Document d = slow.document(i);
-		  // cannot use d.get("dv") due to another bug!
-		  assertNull(d.getField("dv"));
-		  Assert.AreEqual(Convert.ToString(i), d.get("docId"));
+		  Assert.AreEqual(i, dv.Get(i));
+		  Document d = slow.Document(i);
+		  // cannot use d.Get("dv") due to another bug!
+		  Assert.IsNull(d.GetField("dv"));
+		  Assert.AreEqual(Convert.ToString(i), d.Get("docId"));
 		}
-		slow.close();
-		writer.close();
-		dir.close();
+		slow.Dispose();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Same field in one document as different types:
 	  public virtual void TestMixedTypesSameDocument()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("foo", 0));
-		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
+		doc.Add(new NumericDocValuesField("foo", 0));
+		doc.Add(new SortedDocValuesField("foo", new BytesRef("hello")));
 		try
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		w.close();
-		dir.close();
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Two documents with same field as different types:
 	  public virtual void TestMixedTypesDifferentDocuments()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("foo", 0));
-		w.addDocument(doc);
+		doc.Add(new NumericDocValuesField("foo", 0));
+		w.AddDocument(doc);
 
 		doc = new Document();
-		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
+		doc.Add(new SortedDocValuesField("foo", new BytesRef("hello")));
 		try
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		w.close();
-		dir.close();
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestAddSortedTwice()
 	  {
-		Analyzer analyzer = new MockAnalyzer(random());
+		Analyzer analyzer = new MockAnalyzer(Random());
 
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwc.MergePolicy = newLogMergePolicy();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		iwc.SetMergePolicy(NewLogMergePolicy());
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo!")));
-		doc.add(new SortedDocValuesField("dv", new BytesRef("bar!")));
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo!")));
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("bar!")));
 		try
 		{
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		  Assert.Fail("didn't hit expected exception");
 		}
 		catch (System.ArgumentException expected)
@@ -315,25 +318,25 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 
-		iwriter.close();
-		directory.close();
+		iwriter.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestAddBinaryTwice()
 	  {
-		Analyzer analyzer = new MockAnalyzer(random());
+		Analyzer analyzer = new MockAnalyzer(Random());
 
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwc.MergePolicy = newLogMergePolicy();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		iwc.SetMergePolicy(NewLogMergePolicy());
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
-		doc.add(new BinaryDocValuesField("dv", new BytesRef("foo!")));
-		doc.add(new BinaryDocValuesField("dv", new BytesRef("bar!")));
+		doc.Add(new BinaryDocValuesField("dv", new BytesRef("foo!")));
+		doc.Add(new BinaryDocValuesField("dv", new BytesRef("bar!")));
 		try
 		{
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		  Assert.Fail("didn't hit expected exception");
 		}
 		catch (System.ArgumentException expected)
@@ -341,25 +344,25 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 
-		iwriter.close();
-		directory.close();
+		iwriter.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestAddNumericTwice()
 	  {
-		Analyzer analyzer = new MockAnalyzer(random());
+		Analyzer analyzer = new MockAnalyzer(Random());
 
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwc.MergePolicy = newLogMergePolicy();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		iwc.SetMergePolicy(NewLogMergePolicy());
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 1));
-		doc.add(new NumericDocValuesField("dv", 2));
+		doc.Add(new NumericDocValuesField("dv", 1));
+		doc.Add(new NumericDocValuesField("dv", 2));
 		try
 		{
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		  Assert.Fail("didn't hit expected exception");
 		}
 		catch (System.ArgumentException expected)
@@ -367,132 +370,132 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 
-		iwriter.close();
-		directory.close();
+		iwriter.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestTooLargeSortedBytes()
 	  {
-		Analyzer analyzer = new MockAnalyzer(random());
+		Analyzer analyzer = new MockAnalyzer(Random());
 
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwc.MergePolicy = newLogMergePolicy();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		iwc.SetMergePolicy(NewLogMergePolicy());
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[100000];
 		BytesRef b = new BytesRef(bytes);
-		random().nextBytes(bytes);
-		doc.add(new SortedDocValuesField("dv", b));
+		Random().NextBytes(bytes);
+		doc.Add(new SortedDocValuesField("dv", b));
 		try
 		{
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		  Assert.Fail("did not get expected exception");
 		}
 		catch (System.ArgumentException expected)
 		{
 		  // expected
 		}
-		iwriter.close();
-		directory.close();
+		iwriter.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestTooLargeTermSortedSetBytes()
 	  {
-		assumeTrue("codec does not support SORTED_SET", defaultCodecSupportsSortedSet());
-		Analyzer analyzer = new MockAnalyzer(random());
+		AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+		Analyzer analyzer = new MockAnalyzer(Random());
 
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwc.MergePolicy = newLogMergePolicy();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		iwc.SetMergePolicy(NewLogMergePolicy());
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[100000];
 		BytesRef b = new BytesRef(bytes);
-		random().nextBytes(bytes);
-		doc.add(new SortedSetDocValuesField("dv", b));
+		Random().nextBytes(bytes);
+		doc.Add(new SortedSetDocValuesField("dv", b));
 		try
 		{
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		  Assert.Fail("did not get expected exception");
 		}
 		catch (System.ArgumentException expected)
 		{
 		  // expected
 		}
-		iwriter.close();
-		directory.close();
+		iwriter.Dispose();
+		directory.Dispose();
 	  }
 
 	  // Two documents across segments
 	  public virtual void TestMixedTypesDifferentSegments()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("foo", 0));
-		w.addDocument(doc);
-		w.commit();
+		doc.Add(new NumericDocValuesField("foo", 0));
+		w.AddDocument(doc);
+		w.Commit();
 
 		doc = new Document();
-		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
+		doc.Add(new SortedDocValuesField("foo", new BytesRef("hello")));
 		try
 		{
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		w.close();
-		dir.close();
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Add inconsistent document after deleteAll
 	  public virtual void TestMixedTypesAfterDeleteAll()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("foo", 0));
-		w.addDocument(doc);
-		w.deleteAll();
+		doc.Add(new NumericDocValuesField("foo", 0));
+		w.AddDocument(doc);
+		w.DeleteAll();
 
 		doc = new Document();
-		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
-		w.addDocument(doc);
-		w.close();
-		dir.close();
+		doc.Add(new SortedDocValuesField("foo", new BytesRef("hello")));
+		w.AddDocument(doc);
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Add inconsistent document after reopening IW w/ create
 	  public virtual void TestMixedTypesAfterReopenCreate()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("foo", 0));
-		w.addDocument(doc);
-		w.close();
+		doc.Add(new NumericDocValuesField("foo", 0));
+		w.AddDocument(doc);
+		w.Dispose();
 
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE;
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
 		w = new IndexWriter(dir, iwc);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
-		w.addDocument(doc);
-		w.close();
-		dir.close();
+		doc.Add(new SortedDocValuesField("foo", new BytesRef("hello")));
+		w.AddDocument(doc);
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Two documents with same field as different types, added
 	  // from separate threads:
 	  public virtual void TestMixedTypesDifferentThreads()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		CountDownLatch startingGun = new CountDownLatch(1);
 		AtomicBoolean hitExc = new AtomicBoolean();
@@ -513,7 +516,7 @@ namespace Lucene.Net.Index
 			field = new BinaryDocValuesField("foo", new BytesRef("bazz"));
 		  }
 		  Document doc = new Document();
-		  doc.add(field);
+		  doc.Add(field);
 
 		  threads[i] = new ThreadAnonymousInnerClassHelper(this, w, startingGun, hitExc, doc);
 		  threads[i].Start();
@@ -525,9 +528,9 @@ namespace Lucene.Net.Index
 		{
 		  t.Join();
 		}
-		Assert.IsTrue(hitExc.get());
-		w.close();
-		dir.close();
+		Assert.IsTrue(hitExc.Get());
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
@@ -553,16 +556,16 @@ namespace Lucene.Net.Index
 			try
 			{
 			  StartingGun.@await();
-			  w.addDocument(Doc);
+			  w.AddDocument(Doc);
 			}
 			catch (System.ArgumentException iae)
 			{
 			  // expected
-			  HitExc.set(true);
+			  HitExc.Set(true);
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }
@@ -570,311 +573,311 @@ namespace Lucene.Net.Index
 	  // Adding documents via addIndexes
 	  public virtual void TestMixedTypesViaAddIndexes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("foo", 0));
-		w.addDocument(doc);
+		doc.Add(new NumericDocValuesField("foo", 0));
+		w.AddDocument(doc);
 
 		// Make 2nd index w/ inconsistent field
-		Directory dir2 = newDirectory();
-		IndexWriter w2 = new IndexWriter(dir2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir2 = NewDirectory();
+		IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		doc = new Document();
-		doc.add(new SortedDocValuesField("foo", new BytesRef("hello")));
-		w2.addDocument(doc);
-		w2.close();
+		doc.Add(new SortedDocValuesField("foo", new BytesRef("hello")));
+		w2.AddDocument(doc);
+		w2.Dispose();
 
 		try
 		{
-		  w.addIndexes(new Directory[] {dir2});
+		  w.AddIndexes(new Directory[] {dir2});
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
 
-		IndexReader r = DirectoryReader.open(dir2);
+		IndexReader r = DirectoryReader.Open(dir2);
 		try
 		{
-		  w.addIndexes(new IndexReader[] {r});
+		  w.AddIndexes(new IndexReader[] {r});
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
 
-		r.close();
-		dir2.close();
-		w.close();
-		dir.close();
+		r.Dispose();
+		dir2.Dispose();
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestIllegalTypeChange()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestIllegalTypeChangeAcrossSegments()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		writer = new IndexWriter(dir, conf.clone());
+		writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeAfterCloseAndDeleteAll()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		writer = new IndexWriter(dir, conf.clone());
-		writer.deleteAll();
+        writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
+		writer.DeleteAll();
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
-		writer.addDocument(doc);
-		writer.close();
-		dir.close();
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		writer.AddDocument(doc);
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeAfterDeleteAll()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.deleteAll();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.DeleteAll();
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
-		writer.addDocument(doc);
-		writer.close();
-		dir.close();
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		writer.AddDocument(doc);
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeAfterCommitAndDeleteAll()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.commit();
-		writer.deleteAll();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Commit();
+		writer.DeleteAll();
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
-		writer.addDocument(doc);
-		writer.close();
-		dir.close();
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		writer.AddDocument(doc);
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeAfterOpenCreate()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
-		conf.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE;
-		writer = new IndexWriter(dir, conf.clone());
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
+		conf.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE);
+        writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
-		writer.addDocument(doc);
-		writer.close();
-		dir.close();
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		writer.AddDocument(doc);
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeViaAddIndexes()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		Directory dir2 = newDirectory();
-		writer = new IndexWriter(dir2, conf.clone());
+		Directory dir2 = NewDirectory();
+        writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		writer.AddDocument(doc);
 		try
 		{
-		  writer.addIndexes(dir);
+		  writer.AddIndexes(dir);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		writer.close();
+		writer.Dispose();
 
-		dir.close();
-		dir2.close();
+		dir.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeViaAddIndexesIR()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		Directory dir2 = newDirectory();
-		writer = new IndexWriter(dir2, conf.clone());
+		Directory dir2 = NewDirectory();
+        writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
-		writer.addDocument(doc);
-		IndexReader[] readers = new IndexReader[] {DirectoryReader.open(dir)};
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		writer.AddDocument(doc);
+		IndexReader[] readers = new IndexReader[] {DirectoryReader.Open(dir)};
 		try
 		{
-		  writer.addIndexes(readers);
+		  writer.AddIndexes(readers);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		readers[0].close();
-		writer.close();
+		readers[0].Dispose();
+		writer.Dispose();
 
-		dir.close();
-		dir2.close();
+		dir.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeViaAddIndexes2()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		Directory dir2 = newDirectory();
-		writer = new IndexWriter(dir2, conf.clone());
-		writer.addIndexes(dir);
+		Directory dir2 = NewDirectory();
+        writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
+		writer.AddIndexes(dir);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		writer.close();
-		dir2.close();
-		dir.close();
+		writer.Dispose();
+		dir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTypeChangeViaAddIndexesIR2()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		IndexWriter writer = new IndexWriter(dir, conf.clone());
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)conf.Clone());
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		Directory dir2 = newDirectory();
-		writer = new IndexWriter(dir2, conf.clone());
-		IndexReader[] readers = new IndexReader[] {DirectoryReader.open(dir)};
-		writer.addIndexes(readers);
-		readers[0].close();
+		Directory dir2 = NewDirectory();
+        writer = new IndexWriter(dir2, (IndexWriterConfig)conf.Clone());
+		IndexReader[] readers = new IndexReader[] {DirectoryReader.Open(dir)};
+		writer.AddIndexes(readers);
+		readers[0].Dispose();
 		doc = new Document();
-		doc.add(new SortedDocValuesField("dv", new BytesRef("foo")));
+		doc.Add(new SortedDocValuesField("dv", new BytesRef("foo")));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		writer.close();
-		dir2.close();
-		dir.close();
+		writer.Dispose();
+		dir2.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDocsWithField()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
 
 		doc = new Document();
-		doc.add(new TextField("dv", "some text", Field.Store.NO));
-		doc.add(new NumericDocValuesField("dv", 0L));
-		writer.addDocument(doc);
+		doc.Add(new TextField("dv", "some text", Field.Store.NO));
+		doc.Add(new NumericDocValuesField("dv", 0L));
+		writer.AddDocument(doc);
 
 		DirectoryReader r = writer.Reader;
-		writer.close();
+		writer.Dispose();
 
-		AtomicReader subR = r.leaves().get(0).reader();
-		Assert.AreEqual(2, subR.numDocs());
+        AtomicReader subR = (AtomicReader)r.Leaves()[0].Reader();
+		Assert.AreEqual(2, subR.NumDocs());
 
-		Bits bits = FieldCache.DEFAULT.getDocsWithField(subR, "dv");
-		Assert.IsTrue(bits.get(0));
-		Assert.IsTrue(bits.get(1));
-		r.close();
-		dir.close();
+		Bits bits = FieldCache_Fields.DEFAULT.GetDocsWithField(subR, "dv");
+		Assert.IsTrue(bits.Get(0));
+		Assert.IsTrue(bits.Get(1));
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSameFieldNameForPostingAndDocValue()
@@ -882,29 +885,29 @@ namespace Lucene.Net.Index
 		// LUCENE-5192: FieldInfos.Builder neglected to update
 		// globalFieldNumbers.docValuesType map if the field existed, resulting in
 		// potentially adding the same field with different DV types.
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		Document doc = new Document();
-		doc.add(new StringField("f", "mock-value", Field.Store.NO));
-		doc.add(new NumericDocValuesField("f", 5));
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(new StringField("f", "mock-value", Field.Store.NO));
+		doc.Add(new NumericDocValuesField("f", 5));
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		doc = new Document();
-		doc.add(new BinaryDocValuesField("f", new BytesRef("mock")));
+		doc.Add(new BinaryDocValuesField("f", new BytesRef("mock")));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail("should not have succeeded to add a field with different DV type than what already exists");
 		}
 		catch (System.ArgumentException e)
 		{
-		  writer.rollback();
+		  writer.Rollback();
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	}

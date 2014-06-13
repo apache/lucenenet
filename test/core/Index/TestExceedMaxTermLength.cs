@@ -27,9 +27,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-
-	using Before = org.junit.Before;
-	using After = org.junit.After;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests that a useful exception is thrown when attempting to index a term that is 
@@ -48,61 +47,61 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Before public void createDir()
 	  public virtual void CreateDir()
 	  {
-		Dir = newDirectory();
+		Dir = NewDirectory();
 	  }
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @After public void destroyDir() throws java.io.IOException
 	  public virtual void DestroyDir()
 	  {
-		Dir.close();
+		Dir.Dispose();
 		Dir = null;
 	  }
 
 	  public virtual void Test()
 	  {
 
-		IndexWriter w = new IndexWriter(Dir, newIndexWriterConfig(random(), TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		try
 		{
 		  FieldType ft = new FieldType();
 		  ft.Indexed = true;
-		  ft.Stored = random().nextBoolean();
-		  ft.freeze();
+		  ft.Stored = Random().NextBoolean();
+		  ft.Freeze();
 
 		  Document doc = new Document();
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// totally ok short field value
-			doc.add(new Field(TestUtil.randomSimpleString(random(), 1, 10), TestUtil.randomSimpleString(random(), 1, 10), ft));
+			doc.Add(new Field(TestUtil.RandomSimpleString(Random(), 1, 10), TestUtil.RandomSimpleString(Random(), 1, 10), ft));
 		  }
 		  // problematic field
-		  string name = TestUtil.randomSimpleString(random(), 1, 50);
-		  string value = TestUtil.randomSimpleString(random(), MinTestTermLength, MaxTestTermLegnth);
+		  string name = TestUtil.RandomSimpleString(Random(), 1, 50);
+		  string value = TestUtil.RandomSimpleString(Random(), MinTestTermLength, MaxTestTermLegnth);
 		  Field f = new Field(name, value, ft);
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// totally ok short field value
-			doc.add(new Field(TestUtil.randomSimpleString(random(), 1, 10), TestUtil.randomSimpleString(random(), 1, 10), ft));
+			doc.Add(new Field(TestUtil.RandomSimpleString(Random(), 1, 10), TestUtil.RandomSimpleString(Random(), 1, 10), ft));
 		  }
-		  doc.add(f);
+		  doc.Add(f);
 
 		  try
 		  {
-			w.addDocument(doc);
+			w.AddDocument(doc);
 			Assert.Fail("Did not get an exception from adding a monster term");
 		  }
 		  catch (System.ArgumentException e)
 		  {
 			string maxLengthMsg = Convert.ToString(IndexWriter.MAX_TERM_LENGTH);
 			string msg = e.Message;
-			Assert.IsTrue("IllegalArgumentException didn't mention 'immense term': " + msg, msg.Contains("immense term"));
-			Assert.IsTrue("IllegalArgumentException didn't mention max length (" + maxLengthMsg + "): " + msg, msg.Contains(maxLengthMsg));
-			Assert.IsTrue("IllegalArgumentException didn't mention field name (" + name + "): " + msg, msg.Contains(name));
+			Assert.IsTrue(msg.Contains("immense term"), "IllegalArgumentException didn't mention 'immense term': " + msg);
+			Assert.IsTrue(msg.Contains(maxLengthMsg), "IllegalArgumentException didn't mention max length (" + maxLengthMsg + "): " + msg);
+			Assert.IsTrue(msg.Contains(name), "IllegalArgumentException didn't mention field name (" + name + "): " + msg);
 		  }
 		}
 		finally
 		{
-		  w.close();
+		  w.Dispose();
 		}
 	  }
 	}

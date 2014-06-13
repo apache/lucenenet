@@ -3,26 +3,27 @@ using System;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using System.Collections.Generic;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using Term = Lucene.Net.Index.Term;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using Term = Lucene.Net.Index.Term;
 
 	/// <summary>
 	/// Assertion-enabled query. </summary>
@@ -49,12 +50,12 @@ namespace Lucene.Net.Search
 
 	  public override Weight CreateWeight(IndexSearcher searcher)
 	  {
-		return AssertingWeight.Wrap(new Random(Random.nextLong()), @in.createWeight(searcher));
+		return AssertingWeight.Wrap(new Random(Random.nextLong()), @in.CreateWeight(searcher));
 	  }
 
-	  public override void ExtractTerms(Set<Term> terms)
+	  public override void ExtractTerms(ISet<Term> terms)
 	  {
-		@in.extractTerms(terms);
+		@in.ExtractTerms(terms);
 	  }
 
 	  public override string ToString(string field)
@@ -79,12 +80,12 @@ namespace Lucene.Net.Search
 
 	  public override Query Clone()
 	  {
-		return Wrap(new Random(Random.nextLong()), @in.clone());
+		return Wrap(new Random(Random.nextLong()), (Query)@in.Clone());
 	  }
 
 	  public override Query Rewrite(IndexReader reader)
 	  {
-		Query rewritten = @in.rewrite(reader);
+		Query rewritten = @in.Rewrite(reader);
 		if (rewritten == @in)
 		{
 		  return this;

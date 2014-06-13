@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test that norms info is preserved during index life - including
@@ -103,90 +104,90 @@ namespace Lucene.Net.Index
 	  // LUCENE-1260
 	  public virtual void TestCustomEncoder()
 	  {
-		Directory dir = newDirectory();
-		MockAnalyzer analyzer = new MockAnalyzer(random());
+		Directory dir = NewDirectory();
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
 
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 		config.Similarity = new CustomNormEncodingSimilarity(this);
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, config);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, config);
 		Document doc = new Document();
-		Field foo = newTextField("foo", "", Field.Store.NO);
-		Field bar = newTextField("bar", "", Field.Store.NO);
-		doc.add(foo);
-		doc.add(bar);
+		Field foo = NewTextField("foo", "", Field.Store.NO);
+		Field bar = NewTextField("bar", "", Field.Store.NO);
+		doc.Add(foo);
+		doc.Add(bar);
 
 		for (int i = 0; i < 100; i++)
 		{
 		  bar.StringValue = "singleton";
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		IndexReader reader = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		NumericDocValues fooNorms = MultiDocValues.getNormValues(reader, "foo");
-		for (int i = 0; i < reader.maxDoc(); i++)
+		NumericDocValues fooNorms = MultiDocValues.GetNormValues(reader, "foo");
+		for (int i = 0; i < reader.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(0, fooNorms.get(i));
+		  Assert.AreEqual(0, fooNorms.Get(i));
 		}
 
-		NumericDocValues barNorms = MultiDocValues.getNormValues(reader, "bar");
-		for (int i = 0; i < reader.maxDoc(); i++)
+		NumericDocValues barNorms = MultiDocValues.GetNormValues(reader, "bar");
+		for (int i = 0; i < reader.MaxDoc(); i++)
 		{
-		  Assert.AreEqual(1, barNorms.get(i));
+		  Assert.AreEqual(1, barNorms.Get(i));
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestMaxByteNorms()
 	  {
-		Directory dir = newFSDirectory(createTempDir("TestNorms.testMaxByteNorms"));
+		Directory dir = NewFSDirectory(CreateTempDir("TestNorms.testMaxByteNorms"));
 		BuildIndex(dir);
-		AtomicReader open = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(dir));
-		NumericDocValues normValues = open.getNormValues(ByteTestField);
+		AtomicReader open = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
+		NumericDocValues normValues = open.GetNormValues(ByteTestField);
 		Assert.IsNotNull(normValues);
-		for (int i = 0; i < open.maxDoc(); i++)
+		for (int i = 0; i < open.MaxDoc(); i++)
 		{
-		  Document document = open.document(i);
-		  int expected = Convert.ToInt32(document.get(ByteTestField));
-		  Assert.AreEqual(expected, normValues.get(i) & 0xff);
+		  Document document = open.Document(i);
+		  int expected = Convert.ToInt32(document.Get(ByteTestField));
+		  Assert.AreEqual(expected, normValues.Get(i) & 0xff);
 		}
-		open.close();
-		dir.close();
+		open.Dispose();
+		dir.Dispose();
 	  }
 
 	  // TODO: create a testNormsNotPresent ourselves by adding/deleting/merging docs
 
 	  public virtual void BuildIndex(Directory dir)
 	  {
-		Random random = random();
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		Random random = Random();
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 		Similarity provider = new MySimProvider(this);
 		config.Similarity = provider;
 		RandomIndexWriter writer = new RandomIndexWriter(random, dir, config);
-		LineFileDocs docs = new LineFileDocs(random, defaultCodecSupportsDocValues());
-		int num = atLeast(100);
+		LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+		int num = AtLeast(100);
 		for (int i = 0; i < num; i++)
 		{
-		  Document doc = docs.nextDoc();
-		  int boost = random().Next(255);
+		  Document doc = docs.NextDoc();
+		  int boost = Random().Next(255);
 		  Field f = new TextField(ByteTestField, "" + boost, Field.Store.YES);
 		  f.Boost = boost;
-		  doc.add(f);
-		  writer.addDocument(doc);
-		  doc.removeField(ByteTestField);
-		  if (rarely())
+		  doc.Add(f);
+		  writer.AddDocument(doc);
+		  doc.RemoveField(ByteTestField);
+		  if (Rarely())
 		  {
-			writer.commit();
+			writer.Commit();
 		  }
 		}
-		writer.commit();
-		writer.close();
-		docs.close();
+		writer.Commit();
+        writer.Close();
+        docs.Close();
 	  }
 
 
@@ -204,7 +205,7 @@ namespace Lucene.Net.Index
 		public override float QueryNorm(float sumOfSquaredWeights)
 		{
 
-		  return @delegate.queryNorm(sumOfSquaredWeights);
+		  return @delegate.QueryNorm(sumOfSquaredWeights);
 		}
 
 		public override Similarity Get(string field)
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
 
 		public override float Coord(int overlap, int maxOverlap)
 		{
-		  return @delegate.coord(overlap, maxOverlap);
+		  return @delegate.Coord(overlap, maxOverlap);
 		}
 	  }
 

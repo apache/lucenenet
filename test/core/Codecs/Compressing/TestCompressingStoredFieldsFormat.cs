@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.Compressing
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
     using NUnit.Framework;
+    using Lucene.Net.Randomized.Generators;
 	//using Test = org.junit.Test;
 
 	//using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 			get
 			{
-			return CompressingCodec.randomInstance(random());
+			return CompressingCodec.RandomInstance(Random());
 			}
 		}
 
@@ -50,19 +51,19 @@ namespace Lucene.Net.Codecs.Compressing
 //ORIGINAL LINE: @Test(expected=IllegalArgumentException.class) public void testDeletePartiallyWrittenFilesIfAbort() throws java.io.IOException
 	  public virtual void TestDeletePartiallyWrittenFilesIfAbort()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig iwConf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwConf.MaxBufferedDocs = RandomInts.randomIntBetween(random(), 2, 30);
-		iwConf.Codec = CompressingCodec.randomInstance(random());
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+		iwConf.SetCodec(CompressingCodec.RandomInstance(Random()));
 		// disable CFS because this test checks file names
-		iwConf.MergePolicy = newLogMergePolicy(false);
-		iwConf.UseCompoundFile = false;
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwConf);
+		iwConf.SetMergePolicy(NewLogMergePolicy(false));
+		iwConf.SetUseCompoundFile(false);
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
 		Document validDoc = new Document();
 		validDoc.Add(new IntField("id", 0, Field.Store.YES));
-		iw.addDocument(validDoc);
-		iw.commit();
+		iw.AddDocument(validDoc);
+		iw.Commit();
 
 		// make sure that #writeField will fail to trigger an abort
 		Document invalidDoc = new Document();
@@ -72,8 +73,8 @@ namespace Lucene.Net.Codecs.Compressing
 
 		try
 		{
-		  iw.addDocument(invalidDoc);
-		  iw.commit();
+		  iw.AddDocument(invalidDoc);
+		  iw.Commit();
 		}
 		finally
 		{
@@ -88,7 +89,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  // Only one .fdt and one .fdx files must have been found
 		  Assert.AreEqual(2, counter);
 		  iw.Close();
-		  dir.Close();
+		  dir.Dispose();
 		}
 	  }
 

@@ -22,8 +22,8 @@ namespace Lucene.Net.Codecs.Lucene40
 	 */
 
 	using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -49,57 +49,57 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public override void Write(Directory directory, string segmentName, string segmentSuffix, FieldInfos infos, IOContext context)
 	  {
-		string fileName = IndexFileNames.segmentFileName(segmentName, "", Lucene40FieldInfosFormat.FIELD_INFOS_EXTENSION);
-		IndexOutput output = directory.createOutput(fileName, context);
+		string fileName = IndexFileNames.SegmentFileName(segmentName, "", Lucene40FieldInfosFormat.FIELD_INFOS_EXTENSION);
+		IndexOutput output = directory.CreateOutput(fileName, context);
 		bool success = false;
 		try
 		{
-		  CodecUtil.writeHeader(output, Lucene40FieldInfosFormat.CODEC_NAME, Lucene40FieldInfosFormat.FORMAT_CURRENT);
-		  output.writeVInt(infos.size());
+		  CodecUtil.WriteHeader(output, Lucene40FieldInfosFormat.CODEC_NAME, Lucene40FieldInfosFormat.FORMAT_CURRENT);
+		  output.WriteVInt(infos.Size());
 		  foreach (FieldInfo fi in infos)
 		  {
-			IndexOptions_e indexOptions = fi.IndexOptions_e;
+			IndexOptions_e? indexOptions = fi.IndexOptions;
 			sbyte bits = 0x0;
-			if (fi.hasVectors())
+			if (fi.HasVectors())
 			{
 				bits |= Lucene40FieldInfosFormat.STORE_TERMVECTOR;
 			}
-			if (fi.omitsNorms())
+			if (fi.OmitsNorms())
 			{
 				bits |= Lucene40FieldInfosFormat.OMIT_NORMS;
 			}
-			if (fi.hasPayloads())
+			if (fi.HasPayloads())
 			{
 				bits |= Lucene40FieldInfosFormat.STORE_PAYLOADS;
 			}
 			if (fi.Indexed)
 			{
 			  bits |= Lucene40FieldInfosFormat.IS_INDEXED;
-			  Debug.Assert(indexOptions.compareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.hasPayloads());
-			  if (indexOptions == IndexOptions.DOCS_ONLY)
+			  Debug.Assert(indexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads());
+              if (indexOptions == IndexOptions_e.DOCS_ONLY)
 			  {
 				bits |= Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
 			  }
-			  else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+              else if (indexOptions == IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
 			  {
 				bits |= Lucene40FieldInfosFormat.STORE_OFFSETS_IN_POSTINGS;
 			  }
-			  else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
+              else if (indexOptions == IndexOptions_e.DOCS_AND_FREQS)
 			  {
 				bits |= Lucene40FieldInfosFormat.OMIT_POSITIONS;
 			  }
 			}
-			output.writeString(fi.name);
-			output.writeVInt(fi.number);
-			output.writeByte(bits);
+			output.WriteString(fi.Name);
+			output.WriteVInt(fi.Number);
+			output.WriteByte(bits);
 
 			// pack the DV types in one byte
-			sbyte dv = DocValuesByte(fi.DocValuesType_e, fi.getAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
-			sbyte nrm = DocValuesByte(fi.NormType, fi.getAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
-			assert(dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0;
+			sbyte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
+			sbyte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
+			Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
 			sbyte val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
-			output.writeByte(val);
-			output.writeStringStringMap(fi.attributes());
+			output.WriteByte(val);
+			output.WriteStringStringMap(fi.Attributes());
 		  }
 		  success = true;
 		}
@@ -107,18 +107,18 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (success)
 		  {
-			output.close();
+			output.Dispose();
 		  }
 		  else
 		  {
-			IOUtils.closeWhileHandlingException(output);
+			IOUtils.CloseWhileHandlingException(output);
 		  }
 		}
 	  }
 
 	  /// <summary>
 	  /// 4.0-style docvalues byte </summary>
-	  public virtual sbyte DocValuesByte(DocValuesType type, string legacyTypeAtt)
+	  public virtual sbyte DocValuesByte(DocValuesType_e? type, string legacyTypeAtt)
 	  {
 		if (type == null)
 		{
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		else
 		{
 		  Debug.Assert(legacyTypeAtt != null);
-		  return (sbyte) LegacyDocValuesType.valueOf(legacyTypeAtt).ordinal();
+		  return (sbyte) LegacyDocValuesType.ValueOf(legacyTypeAtt).ordinal();
 		}
 	  }
 	}

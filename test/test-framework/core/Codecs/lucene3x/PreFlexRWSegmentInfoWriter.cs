@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// Save a single segment's info. </summary>
 	  public override void Write(Directory dir, SegmentInfo si, FieldInfos fis, IOContext ioContext)
 	  {
-		SegmentInfos.write3xInfo(dir, si, ioContext);
+		SegmentInfos.Write3xInfo(dir, si, ioContext);
 	  }
 	}
 

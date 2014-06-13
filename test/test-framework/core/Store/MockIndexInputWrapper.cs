@@ -55,7 +55,7 @@ namespace Lucene.Net.Store
 		finally
 		{
 		  Closed = true;
-		  @delegate.Close();
+		  @delegate.Dispose();
 		  // Pending resolution on LUCENE-686 we may want to
 		  // remove the conditional check so we also track that
 		  // all clones get closed:
@@ -77,8 +77,8 @@ namespace Lucene.Net.Store
 	  public override MockIndexInputWrapper Clone()
 	  {
 		EnsureOpen();
-		Dir.InputCloneCount_Renamed.incrementAndGet();
-		IndexInput iiclone = @delegate.Clone();
+		Dir.InputCloneCount_Renamed.IncrementAndGet();
+        IndexInput iiclone = (IndexInput)@delegate.Clone();
 		MockIndexInputWrapper clone = new MockIndexInputWrapper(Dir, Name, iiclone);
 		clone.IsClone = true;
 		// Pending resolution on LUCENE-686 we may want to
@@ -119,7 +119,7 @@ namespace Lucene.Net.Store
 		return @delegate.Length();
 	  }
 
-	  public override sbyte ReadByte()
+	  public override byte ReadByte()
 	  {
 		EnsureOpen();
 		return @delegate.ReadByte();

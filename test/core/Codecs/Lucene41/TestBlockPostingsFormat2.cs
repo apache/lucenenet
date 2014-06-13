@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexableField = Lucene.Net.Index.IndexableField;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
@@ -47,24 +47,24 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newFSDirectory(createTempDir("testDFBlockSize"));
-		Iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		Iwc.Codec = TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat());
-		Iw = new RandomIndexWriter(random(), Dir, Iwc.clone());
+		base.SetUp();
+		Dir = NewFSDirectory(CreateTempDir("testDFBlockSize"));
+		Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		Iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
+		Iw = new RandomIndexWriter(Random(), Dir, (IndexWriterConfig)Iwc.Clone());
 		Iw.DoRandomForceMerge = false; // we will ourselves
 	  }
 
 	  public override void TearDown()
 	  {
-		Iw.close();
-		TestUtil.checkIndex(Dir); // for some extra coverage, checkIndex before we forceMerge
-		Iwc.OpenMode = IndexWriterConfig.OpenMode.APPEND;
-		IndexWriter iw = new IndexWriter(Dir, Iwc.clone());
-		iw.forceMerge(1);
-		iw.close();
-		Dir.close(); // just force a checkindex for now
-		base.tearDown();
+		Iw.Close();
+		TestUtil.CheckIndex(Dir); // for some extra coverage, checkIndex before we forceMerge
+		Iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND);
+		IndexWriter iw = new IndexWriter(Dir, (IndexWriterConfig)Iwc.Clone());
+		iw.ForceMerge(1);
+		iw.Dispose();
+        Dir.Dispose(); // just force a checkindex for now
+		base.TearDown();
 	  }
 
 	  private Document NewDocument()
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  ft.StoreTermVectorPositions = true;
 		  ft.StoreTermVectorPayloads = true;
 		  ft.IndexOptions = option;
-		  doc.add(new Field(option.ToString(), "", ft));
+		  doc.Add(new Field(option.ToString(), "", ft));
 		}
 		return doc;
 	  }
@@ -93,9 +93,9 @@ namespace Lucene.Net.Codecs.Lucene41
 		{
 		  foreach (IndexableField f in doc.Fields)
 		  {
-			((Field)f).StringValue = f.name() + " " + f.name() + "_2";
+              ((Field)f).StringValue = f.Name() + " " + f.Name() + "_2";
 		  }
-		  Iw.addDocument(doc);
+		  Iw.AddDocument(doc);
 		}
 	  }
 
@@ -108,9 +108,9 @@ namespace Lucene.Net.Codecs.Lucene41
 		{
 		  foreach (IndexableField f in doc.Fields)
 		  {
-			((Field)f).StringValue = f.name() + " " + f.name() + "_2";
+              ((Field)f).StringValue = f.Name() + " " + f.Name() + "_2";
 		  }
-		  Iw.addDocument(doc);
+		  Iw.AddDocument(doc);
 		}
 	  }
 
@@ -123,9 +123,9 @@ namespace Lucene.Net.Codecs.Lucene41
 		{
 		  foreach (IndexableField f in doc.Fields)
 		  {
-			((Field)f).StringValue = f.name() + " " + f.name() + " " + f.name() + "_2 " + f.name() + "_2";
+			((Field)f).StringValue = f.Name() + " " + f.Name() + " " + f.Name() + "_2 " + f.Name() + "_2";
 		  }
-		  Iw.addDocument(doc);
+		  Iw.AddDocument(doc);
 		}
 	  }
 
@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		{
 		  foreach (IndexableField f in doc.Fields)
 		  {
-			string proto = (f.name() + " " + f.name() + " " + f.name() + " " + f.name() + " " + f.name() + "_2 " + f.name() + "_2 " + f.name() + "_2 " + f.name() + "_2");
+			string proto = (f.Name() + " " + f.Name() + " " + f.Name() + " " + f.Name() + " " + f.Name() + "_2 " + f.Name() + "_2 " + f.Name() + "_2 " + f.Name() + "_2");
 			StringBuilder val = new StringBuilder();
 			for (int j = 0; j < 16; j++)
 			{
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			}
 			((Field)f).StringValue = val.ToString();
 		  }
-		  Iw.addDocument(doc);
+		  Iw.AddDocument(doc);
 		}
 	  }
 	}

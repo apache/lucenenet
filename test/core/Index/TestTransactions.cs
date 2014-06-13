@@ -31,6 +31,9 @@ namespace Lucene.Net.Index
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using English = Lucene.Net.Util.English;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using System.IO;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestTransactions : LuceneTestCase
 	{
@@ -48,17 +51,18 @@ namespace Lucene.Net.Index
 
 		public override void Eval(MockDirectoryWrapper dir)
 		{
-		  if (TestTransactions.DoFail && random().Next() % 10 <= 3)
+		  if (DoFail && Random().Next() % 10 <= 3)
 		  {
 			throw new IOException("now failing randomly but on purpose");
 		  }
 		}
 	  }
 
-	  private abstract class TimedThread : System.Threading.Thread
+	  private abstract class TimedThread : ThreadClass
+
 	  {
 		internal volatile bool Failed;
-		internal static float RUN_TIME_MSEC = atLeast(500);
+		internal static float RUN_TIME_MSEC = AtLeast(500);
 		internal TimedThread[] AllThreads;
 
 		public abstract void DoWork();
@@ -70,7 +74,7 @@ namespace Lucene.Net.Index
 
 		public override void Run()
 		{
-		  long stopTime = System.currentTimeMillis() + (long)(RUN_TIME_MSEC);
+		  long stopTime = DateTime.Now.Millisecond + (long)(RUN_TIME_MSEC);
 
 		  try
 		  {
@@ -81,12 +85,12 @@ namespace Lucene.Net.Index
 				  break;
 			  }
 			  DoWork();
-			} while (System.currentTimeMillis() < stopTime);
+			} while (DateTime.Now.Millisecond < stopTime);
 		  }
 		  catch (Exception e)
 		  {
 			Console.WriteLine(Thread.CurrentThread + ": exc");
-			e.printStackTrace(System.out);
+            Console.Error.WriteLine(e.StackTrace);
 			Failed = true;
 		  }
 		}
@@ -124,54 +128,54 @@ namespace Lucene.Net.Index
 		public override void DoWork()
 		{
 
-		  IndexWriter writer1 = new IndexWriter(Dir1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(3).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(2)));
-		  ((ConcurrentMergeScheduler) writer1.Config.MergeScheduler).setSuppressExceptions();
+		  IndexWriter writer1 = new IndexWriter(Dir1, (IndexWriterConfig)(NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(3)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(2)));
+		  ((ConcurrentMergeScheduler) writer1.Config.MergeScheduler).SetSuppressExceptions();
 
 		  // Intentionally use different params so flush/merge
 		  // happen @ different times
-		  IndexWriter writer2 = new IndexWriter(Dir2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(3)));
-		  ((ConcurrentMergeScheduler) writer2.Config.MergeScheduler).setSuppressExceptions();
+		  IndexWriter writer2 = new IndexWriter(Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(3)));
+		  ((ConcurrentMergeScheduler) writer2.Config.MergeScheduler).SetSuppressExceptions();
 
 		  Update(writer1);
 		  Update(writer2);
 
-		  TestTransactions.DoFail = true;
+		  DoFail = true;
 		  try
 		  {
 			lock (@lock)
 			{
 			  try
 			  {
-				writer1.prepareCommit();
+				writer1.PrepareCommit();
 			  }
 			  catch (Exception t)
 			  {
-				writer1.rollback();
-				writer2.rollback();
+				writer1.Rollback();
+				writer2.Rollback();
 				return;
 			  }
 			  try
 			  {
-				writer2.prepareCommit();
+				writer2.PrepareCommit();
 			  }
 			  catch (Exception t)
 			  {
-				writer1.rollback();
-				writer2.rollback();
+				writer1.Rollback();
+				writer2.Rollback();
 				return;
 			  }
 
-			  writer1.commit();
-			  writer2.commit();
+			  writer1.Commit();
+			  writer2.Commit();
 			}
 		  }
 		  finally
 		  {
-			TestTransactions.DoFail = false;
+			DoFail = false;
 		  }
 
-		  writer1.close();
-		  writer2.close();
+		  writer1.Dispose();
+          writer2.Dispose();
 		}
 
 		public virtual void Update(IndexWriter writer)
@@ -182,17 +186,17 @@ namespace Lucene.Net.Index
 		  for (int j = 0; j < 10; j++)
 		  {
 			Document d = new Document();
-			int n = random().Next();
-			d.add(newField("id", Convert.ToString(NextID++), customType));
-			d.add(newTextField("contents", English.intToEnglish(n), Field.Store.NO));
-			writer.addDocument(d);
+			int n = Random().Next();
+			d.Add(NewField("id", Convert.ToString(NextID++), customType));
+			d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+			writer.AddDocument(d);
 		  }
 
 		  // Delete 5 docs:
 		  int deleteID = NextID - 1;
 		  for (int j = 0; j < 5; j++)
 		  {
-			writer.deleteDocuments(new Term("id", "" + deleteID));
+			writer.DeleteDocuments(new Term("id", "" + deleteID));
 			deleteID -= 2;
 		  }
 		}
@@ -218,57 +222,57 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  r1 = DirectoryReader.open(Dir1);
-			  r2 = DirectoryReader.open(Dir2);
+			  r1 = DirectoryReader.Open(Dir1);
+			  r2 = DirectoryReader.Open(Dir2);
 			}
 			catch (IOException e)
 			{
-			  if (!e.Message.contains("on purpose"))
+			  if (!e.Message.Contains("on purpose"))
 			  {
 				throw e;
 			  }
 			  if (r1 != null)
 			  {
-				r1.close();
+				r1.Dispose();
 			  }
 			  if (r2 != null)
 			  {
-				r2.close();
+                  r2.Dispose();
 			  }
 			  return;
 			}
 		  }
-		  if (r1.numDocs() != r2.numDocs())
+		  if (r1.NumDocs() != r2.NumDocs())
 		  {
-			throw new Exception("doc counts differ: r1=" + r1.numDocs() + " r2=" + r2.numDocs());
+			throw new Exception("doc counts differ: r1=" + r1.NumDocs() + " r2=" + r2.NumDocs());
 		  }
-		  r1.close();
-		  r2.close();
+          r1.Dispose();
+          r2.Dispose();
 		}
 	  }
 
 	  public virtual void InitIndex(Directory dir)
 	  {
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		for (int j = 0; j < 7; j++)
 		{
 		  Document d = new Document();
-		  int n = random().Next();
-		  d.add(newTextField("contents", English.intToEnglish(n), Field.Store.NO));
-		  writer.addDocument(d);
+		  int n = Random().Next();
+		  d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+		  writer.AddDocument(d);
 		}
-		writer.close();
+        writer.Dispose();
 	  }
 
 	  public virtual void TestTransactions()
 	  {
 		// we cant use non-ramdir on windows, because this test needs to double-write.
-		MockDirectoryWrapper dir1 = new MockDirectoryWrapper(random(), new RAMDirectory());
-		MockDirectoryWrapper dir2 = new MockDirectoryWrapper(random(), new RAMDirectory());
+		MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random(), new RAMDirectory());
+		MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random(), new RAMDirectory());
 		dir1.PreventDoubleWrite = false;
 		dir2.PreventDoubleWrite = false;
-		dir1.failOn(new RandomFailure(this));
-		dir2.failOn(new RandomFailure(this));
+		dir1.FailOn(new RandomFailure(this));
+		dir2.FailOn(new RandomFailure(this));
 		dir1.FailOnOpenInput = false;
 		dir2.FailOnOpenInput = false;
 
@@ -285,15 +289,15 @@ namespace Lucene.Net.Index
 
 		IndexerThread indexerThread = new IndexerThread(this, this, dir1, dir2, threads);
 		threads[numThread++] = indexerThread;
-		indexerThread.start();
+		indexerThread.Start();
 
 		SearcherThread searcherThread1 = new SearcherThread(this, dir1, dir2, threads);
 		threads[numThread++] = searcherThread1;
-		searcherThread1.start();
+		searcherThread1.Start();
 
 		SearcherThread searcherThread2 = new SearcherThread(this, dir1, dir2, threads);
 		threads[numThread++] = searcherThread2;
-		searcherThread2.start();
+		searcherThread2.Start();
 
 		for (int i = 0;i < numThread;i++)
 		{
@@ -304,8 +308,8 @@ namespace Lucene.Net.Index
 		{
 		  Assert.IsTrue(!threads[i].Failed);
 		}
-		dir1.close();
-		dir2.close();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 	}
 

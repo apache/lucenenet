@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  internal readonly int MaxSkipLevels = 10;
 	  internal readonly int TotalNumDocs;
 
-	  internal IndexOptions IndexOptions;
+	  internal IndexOptions_e? IndexOptions;
 	  internal bool StorePayloads;
 	  internal bool StoreOffsets;
 	  // Starts a new term
@@ -105,24 +105,24 @@ namespace Lucene.Net.Codecs.Lucene40
 		this.SkipInterval = skipInterval;
 		this.SkipMinimum = skipInterval; // set to the same for now
 		// this.segment = state.segmentName;
-		string fileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, Lucene40PostingsFormat.FREQ_EXTENSION);
-		FreqOut = state.directory.createOutput(fileName, state.context);
+		string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene40PostingsFormat.FREQ_EXTENSION);
+		FreqOut = state.Directory.CreateOutput(fileName, state.Context);
 		bool success = false;
 		IndexOutput proxOut = null;
 		try
 		{
-		  CodecUtil.writeHeader(FreqOut, Lucene40PostingsReader.FRQ_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
+		  CodecUtil.WriteHeader(FreqOut, Lucene40PostingsReader.FRQ_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
 		  // TODO: this is a best effort, if one of these fields has no postings
 		  // then we make an empty prx file, same as if we are wrapped in 
 		  // per-field postingsformat. maybe... we shouldn't
 		  // bother w/ this opto?  just create empty prx file...?
-		  if (state.fieldInfos.hasProx())
+		  if (state.FieldInfos.HasProx())
 		  {
 			// At least one field does not omit TF, so create the
 			// prox file
-			fileName = IndexFileNames.segmentFileName(state.segmentInfo.name, state.segmentSuffix, Lucene40PostingsFormat.PROX_EXTENSION);
-			proxOut = state.directory.createOutput(fileName, state.context);
-			CodecUtil.writeHeader(proxOut, Lucene40PostingsReader.PRX_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
+			fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, Lucene40PostingsFormat.PROX_EXTENSION);
+			proxOut = state.Directory.CreateOutput(fileName, state.Context);
+			CodecUtil.WriteHeader(proxOut, Lucene40PostingsReader.PRX_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
 		  }
 		  else
 		  {
@@ -136,21 +136,21 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(FreqOut, proxOut);
+			IOUtils.CloseWhileHandlingException(FreqOut, proxOut);
 		  }
 		}
 
-		TotalNumDocs = state.segmentInfo.DocCount;
+		TotalNumDocs = state.SegmentInfo.DocCount;
 
 		SkipListWriter = new Lucene40SkipListWriter(skipInterval, MaxSkipLevels, TotalNumDocs, FreqOut, proxOut);
 	  }
 
 	  public override void Init(IndexOutput termsOut)
 	  {
-		CodecUtil.writeHeader(termsOut, Lucene40PostingsReader.TERMS_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
-		termsOut.writeInt(SkipInterval); // write skipInterval
-		termsOut.writeInt(MaxSkipLevels); // write maxSkipLevels
-		termsOut.writeInt(SkipMinimum); // write skipMinimum
+		CodecUtil.WriteHeader(termsOut, Lucene40PostingsReader.TERMS_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
+		termsOut.WriteInt(SkipInterval); // write skipInterval
+		termsOut.WriteInt(MaxSkipLevels); // write maxSkipLevels
+		termsOut.WriteInt(SkipMinimum); // write skipMinimum
 	  }
 
 	  public override BlockTermState NewTermState()
@@ -180,17 +180,17 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		//System.out.println("SPW: setField");
 		/*
-		if (BlockTreeTermsWriter.DEBUG && fieldInfo.name.equals("id")) {
+		if (BlockTreeTermsWriter.DEBUG && fieldInfo.Name.equals("id")) {
 		  DEBUG = true;
 		} else {
 		  DEBUG = false;
 		}
 		*/
 		this.FieldInfo = fieldInfo;
-		IndexOptions = fieldInfo.IndexOptions_e;
+		IndexOptions = fieldInfo.IndexOptions;
 
-		StoreOffsets = IndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-		StorePayloads = fieldInfo.hasPayloads();
+		StoreOffsets = IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+		StorePayloads = fieldInfo.HasPayloads();
 		LastState = EmptyState;
 		//System.out.println("  set init blockFreqStart=" + freqStart);
 		//System.out.println("  set init blockProxStart=" + proxStart);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		if ((++Df % SkipInterval) == 0)
 		{
 		  SkipListWriter.SetSkipData(LastDocID, StorePayloads, LastPayloadLength, StoreOffsets, LastOffsetLength);
-		  SkipListWriter.bufferSkip(Df);
+		  SkipListWriter.BufferSkip(Df);
 		}
 
 		Debug.Assert(docID < TotalNumDocs, "docID=" + docID + " totalNumDocs=" + TotalNumDocs);
@@ -222,16 +222,16 @@ namespace Lucene.Net.Codecs.Lucene40
 		LastDocID = docID;
 		if (IndexOptions == IndexOptions_e.DOCS_ONLY)
 		{
-		  FreqOut.writeVInt(delta);
+		  FreqOut.WriteVInt(delta);
 		}
 		else if (1 == termDocFreq)
 		{
-		  FreqOut.writeVInt((delta << 1) | 1);
+		  FreqOut.WriteVInt((delta << 1) | 1);
 		}
 		else
 		{
-		  FreqOut.writeVInt(delta << 1);
-		  FreqOut.writeVInt(termDocFreq);
+		  FreqOut.WriteVInt(delta << 1);
+		  FreqOut.WriteVInt(termDocFreq);
 		}
 
 		LastPosition = 0;
@@ -242,8 +242,8 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// Add a new position & payload </summary>
 	  public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
 	  {
-		//if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-		Debug.Assert(IndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: " + IndexOptions);
+		//if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
+		Debug.Assert(IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS, "invalid indexOptions: " + IndexOptions);
 		Debug.Assert(ProxOut != null);
 
 		int delta = position - LastPosition;
@@ -256,22 +256,22 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		if (StorePayloads)
 		{
-		  payloadLength = payload == null ? 0 : payload.length;
+		  payloadLength = payload == null ? 0 : payload.Length;
 
 		  if (payloadLength != LastPayloadLength)
 		  {
 			LastPayloadLength = payloadLength;
-			ProxOut.writeVInt((delta << 1) | 1);
-			ProxOut.writeVInt(payloadLength);
+			ProxOut.WriteVInt((delta << 1) | 1);
+			ProxOut.WriteVInt(payloadLength);
 		  }
 		  else
 		  {
-			ProxOut.writeVInt(delta << 1);
+			ProxOut.WriteVInt(delta << 1);
 		  }
 		}
 		else
 		{
-		  ProxOut.writeVInt(delta);
+		  ProxOut.WriteVInt(delta);
 		}
 
 		if (StoreOffsets)
@@ -283,12 +283,12 @@ namespace Lucene.Net.Codecs.Lucene40
 		  Debug.Assert(offsetDelta >= 0 && offsetLength >= 0, "startOffset=" + startOffset + ",lastOffset=" + LastOffset + ",endOffset=" + endOffset);
 		  if (offsetLength != LastOffsetLength)
 		  {
-			ProxOut.writeVInt(offsetDelta << 1 | 1);
-			ProxOut.writeVInt(offsetLength);
+			ProxOut.WriteVInt(offsetDelta << 1 | 1);
+			ProxOut.WriteVInt(offsetLength);
 		  }
 		  else
 		  {
-			ProxOut.writeVInt(offsetDelta << 1);
+			ProxOut.WriteVInt(offsetDelta << 1);
 		  }
 		  LastOffset = startOffset;
 		  LastOffsetLength = offsetLength;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		if (payloadLength > 0)
 		{
-		  ProxOut.writeBytes(payload.bytes, payload.offset, payloadLength);
+		  ProxOut.WriteBytes(payload.Bytes, payload.Offset, payloadLength);
 		}
 	  }
 
@@ -317,16 +317,16 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		StandardTermState state = (StandardTermState)_state;
 		// if (DEBUG) System.out.println("SPW: finishTerm seg=" + segment + " freqStart=" + freqStart);
-		Debug.Assert(state.docFreq > 0);
+		Debug.Assert(state.DocFreq > 0);
 
 		// TODO: wasteful we are counting this (counting # docs
 		// for this term) in two places?
-		Debug.Assert(state.docFreq == Df);
+		Debug.Assert(state.DocFreq == Df);
 		state.FreqStart = FreqStart;
 		state.ProxStart = ProxStart;
 		if (Df >= SkipMinimum)
 		{
-		  state.SkipOffset = SkipListWriter.writeSkip(FreqOut) - FreqStart;
+		  state.SkipOffset = SkipListWriter.WriteSkip(FreqOut) - FreqStart;
 		}
 		else
 		{
@@ -343,15 +343,15 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		  LastState = EmptyState;
 		}
-		@out.writeVLong(state.FreqStart - LastState.FreqStart);
+		@out.WriteVLong(state.FreqStart - LastState.FreqStart);
 		if (state.SkipOffset != -1)
 		{
 		  Debug.Assert(state.SkipOffset > 0);
-		  @out.writeVLong(state.SkipOffset);
+		  @out.WriteVLong(state.SkipOffset);
 		}
-		if (IndexOptions.compareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+		if (IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 		{
-		  @out.writeVLong(state.ProxStart - LastState.ProxStart);
+		  @out.WriteVLong(state.ProxStart - LastState.ProxStart);
 		}
 		LastState = state;
 	  }
@@ -360,13 +360,13 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		try
 		{
-		  FreqOut.close();
+		  FreqOut.Dispose();
 		}
 		finally
 		{
 		  if (ProxOut != null)
 		  {
-			ProxOut.close();
+              ProxOut.Dispose();
 		  }
 		}
 	  }

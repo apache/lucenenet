@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 
@@ -27,13 +29,13 @@ namespace Lucene.Net.Util
 	/// </summary>
 	internal sealed class RemoveUponClose : IDisposable
 	{
-	  private readonly File File;
+	  private readonly FileInfo file;
 	  private readonly TestRuleMarkFailure FailureMarker;
 	  private readonly string CreationStack;
 
-	  public RemoveUponClose(File file, TestRuleMarkFailure failureMarker)
+	  public RemoveUponClose(FileInfo file, TestRuleMarkFailure failureMarker)
 	  {
-		this.File = file;
+		this.file = file;
 		this.FailureMarker = failureMarker;
 
 		StringBuilder b = new StringBuilder();
@@ -49,15 +51,15 @@ namespace Lucene.Net.Util
 		// only if there were no other test failures.
 		if (FailureMarker.WasSuccessful())
 		{
-		  if (File.exists())
+		  if (file.Exists)
 		  {
 			try
 			{
-			  TestUtil.Rm(File);
+			  TestUtil.Rm(file);
 			}
 			catch (IOException e)
 			{
-			  throw new IOException("Could not remove temporary location '" + File.AbsolutePath + "', created at stack trace:\n" + CreationStack, e);
+			  throw new IOException("Could not remove temporary location '" + file.FullName + "', created at stack trace:\n" + CreationStack, e);
 			}
 		  }
 		}

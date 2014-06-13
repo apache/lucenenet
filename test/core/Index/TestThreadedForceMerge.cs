@@ -28,11 +28,12 @@ namespace Lucene.Net.Index
 	using Document = Lucene.Net.Document.Document;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using StringField = Lucene.Net.Document.StringField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using English = Lucene.Net.Util.English;
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestThreadedForceMerge : LuceneTestCase
 	{
@@ -48,11 +49,10 @@ namespace Lucene.Net.Index
 
 	  private volatile bool Failed;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void setup()
+      [SetUp]
 	  public static void Setup()
 	  {
-		ANALYZER = new MockAnalyzer(random(), MockTokenizer.SIMPLE, true);
+		ANALYZER = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
 	  }
 
 	  private void SetFailed()
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 	  public virtual void RunTest(Random random, Directory directory)
 	  {
 
-		IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy()));
+		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()));
 
 		for (int iter = 0;iter < NUM_ITER;iter++)
 		{
@@ -77,14 +77,14 @@ namespace Lucene.Net.Index
 		  for (int i = 0;i < 200;i++)
 		  {
 			Document d = new Document();
-			d.add(newField("id", Convert.ToString(i), customType));
-			d.add(newField("contents", English.intToEnglish(i), customType));
-			writer.addDocument(d);
+			d.Add(NewField("id", Convert.ToString(i), customType));
+			d.Add(NewField("contents", English.IntToEnglish(i), customType));
+			writer.AddDocument(d);
 		  }
 
 		  ((LogMergePolicy) writer.Config.MergePolicy).MergeFactor = 4;
 
-		  Thread[] threads = new Thread[NUM_THREADS];
+          ThreadClass[] threads = new ThreadClass[NUM_THREADS];
 
 		  for (int i = 0;i < NUM_THREADS;i++)
 		  {
@@ -107,21 +107,21 @@ namespace Lucene.Net.Index
 
 		  int expectedDocCount = (int)((1 + iter) * (200 + 8 * NUM_ITER2 * (NUM_THREADS / 2.0) * (1 + NUM_THREADS)));
 
-		  Assert.AreEqual("index=" + writer.segString() + " numDocs=" + writer.numDocs() + " maxDoc=" + writer.maxDoc() + " config=" + writer.Config, expectedDocCount, writer.numDocs());
-		  Assert.AreEqual("index=" + writer.segString() + " numDocs=" + writer.numDocs() + " maxDoc=" + writer.maxDoc() + " config=" + writer.Config, expectedDocCount, writer.maxDoc());
+		  Assert.AreEqual(expectedDocCount, writer.NumDocs(), "index=" + writer.SegString() + " numDocs=" + writer.NumDocs() + " maxDoc=" + writer.MaxDoc() + " config=" + writer.Config);
+		  Assert.AreEqual(expectedDocCount, writer.MaxDoc(), "index=" + writer.SegString() + " numDocs=" + writer.NumDocs() + " maxDoc=" + writer.MaxDoc() + " config=" + writer.Config);
 
-		  writer.close();
-		  writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).setOpenMode(OpenMode.APPEND).setMaxBufferedDocs(2));
+		  writer.Dispose();
+		  writer = new IndexWriter(directory, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(2));
 
-		  DirectoryReader reader = DirectoryReader.open(directory);
-		  Assert.AreEqual("reader=" + reader, 1, reader.leaves().size());
-		  Assert.AreEqual(expectedDocCount, reader.numDocs());
-		  reader.close();
+		  DirectoryReader reader = DirectoryReader.Open(directory);
+		  Assert.AreEqual(1, reader.Leaves().Count, "reader=" + reader);
+		  Assert.AreEqual(expectedDocCount, reader.NumDocs());
+		  reader.Dispose();
 		}
-		writer.close();
+		writer.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestThreadedForceMerge OuterInstance;
 
@@ -145,26 +145,26 @@ namespace Lucene.Net.Index
 			{
 			  for (int j = 0;j < NUM_ITER2;j++)
 			  {
-				WriterFinal.forceMerge(1, false);
+				WriterFinal.ForceMerge(1, false);
 				for (int k = 0;k < 17 * (1 + IFinal);k++)
 				{
 				  Document d = new Document();
-				  d.add(newField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
-				  d.add(newField("contents", English.intToEnglish(IFinal + k), CustomType));
-				  WriterFinal.addDocument(d);
+				  d.Add(NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
+				  d.Add(NewField("contents", English.IntToEnglish(IFinal + k), CustomType));
+				  WriterFinal.AddDocument(d);
 				}
 				for (int k = 0;k < 9 * (1 + IFinal);k++)
 				{
-				  WriterFinal.deleteDocuments(new Term("id", IterFinal + "_" + IFinal + "_" + j + "_" + k));
+				  WriterFinal.DeleteDocuments(new Term("id", IterFinal + "_" + IFinal + "_" + j + "_" + k));
 				}
-				WriterFinal.forceMerge(1);
+				WriterFinal.ForceMerge(1);
 			  }
 			}
 			catch (Exception t)
 			{
-			  outerInstance.SetFailed();
+			  OuterInstance.SetFailed();
 			  Console.WriteLine(Thread.CurrentThread.Name + ": hit exception");
-			  t.printStackTrace(System.out);
+              Console.WriteLine(t.StackTrace);
 			}
 		  }
 	  }
@@ -175,9 +175,9 @@ namespace Lucene.Net.Index
 	  */
 	  public virtual void TestThreadedForceMerge()
 	  {
-		Directory directory = newDirectory();
-		RunTest(random(), directory);
-		directory.close();
+		Directory directory = NewDirectory();
+		RunTest(Random(), directory);
+		directory.Dispose();
 	  }
 	}
 

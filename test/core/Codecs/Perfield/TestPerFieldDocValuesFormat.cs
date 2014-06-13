@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 	  public override void SetUp()
 	  {
-		Codec_Renamed = new RandomCodec(new Random(random().nextLong()), CollectionsHelper.EmptySet<string>());
+		Codec_Renamed = new RandomCodec(new Random(Random().nextLong()), CollectionsHelper.EmptySet<string>());
 		base.SetUp();
 	  }
 
@@ -80,27 +80,27 @@ namespace Lucene.Net.Codecs.Perfield
 	  // is respected by all codec apis (not just docvalues and postings)
 	  public virtual void TestTwoFieldsTwoFormats()
 	  {
-		Analyzer analyzer = new MockAnalyzer(random());
+		Analyzer analyzer = new MockAnalyzer(Random());
 
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		// we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 		DocValuesFormat fast = DocValuesFormat.ForName("Lucene45");
 		DocValuesFormat slow = DocValuesFormat.ForName("SimpleText");
-		iwc.Codec = new Lucene46CodecAnonymousInnerClassHelper(this, fast, slow);
+		iwc.SetCodec(new Lucene46CodecAnonymousInnerClassHelper(this, fast, slow));
 		IndexWriter iwriter = new IndexWriter(directory, iwc);
 		Document doc = new Document();
 		string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
 		string text = "this is the text to be indexed. " + longTerm;
-		doc.Add(newTextField("fieldname", text, Field.Store.YES));
+		doc.Add(NewTextField("fieldname", text, Field.Store.YES));
 		doc.Add(new NumericDocValuesField("dv1", 5));
 		doc.Add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
-		iwriter.addDocument(doc);
-		iwriter.Close();
+		iwriter.AddDocument(doc);
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-		IndexSearcher isearcher = newSearcher(ireader);
+		IndexSearcher isearcher = NewSearcher(ireader);
 
 		Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
 		Query query = new TermQuery(new Term("fieldname", "text"));
@@ -120,8 +120,8 @@ namespace Lucene.Net.Codecs.Perfield
 		  Assert.AreEqual(new BytesRef("hello world"), scratch);
 		}
 
-		ireader.Close();
-		directory.Close();
+        ireader.Dispose();
+        directory.Dispose();
 	  }
 
 	  private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec

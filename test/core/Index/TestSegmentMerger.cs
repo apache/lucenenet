@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestSegmentMerger : LuceneTestCase
 	{
@@ -47,26 +48,26 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		MergedDir = newDirectory();
-		Merge1Dir = newDirectory();
-		Merge2Dir = newDirectory();
-		DocHelper.setupDoc(Doc1);
-		SegmentCommitInfo info1 = DocHelper.writeDoc(random(), Merge1Dir, Doc1);
-		DocHelper.setupDoc(Doc2);
-		SegmentCommitInfo info2 = DocHelper.writeDoc(random(), Merge2Dir, Doc2);
-		Reader1 = new SegmentReader(info1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
-		Reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		base.SetUp();
+		MergedDir = NewDirectory();
+		Merge1Dir = NewDirectory();
+		Merge2Dir = NewDirectory();
+		DocHelper.SetupDoc(Doc1);
+		SegmentCommitInfo info1 = DocHelper.WriteDoc(Random(), Merge1Dir, Doc1);
+		DocHelper.SetupDoc(Doc2);
+		SegmentCommitInfo info2 = DocHelper.WriteDoc(Random(), Merge2Dir, Doc2);
+		Reader1 = new SegmentReader(info1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+		Reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader1.close();
-		Reader2.close();
-		MergedDir.close();
-		Merge1Dir.close();
-		Merge2Dir.close();
-		base.tearDown();
+		Reader1.Dispose();
+		Reader2.Dispose();
+		MergedDir.Dispose();
+		Merge1Dir.Dispose();
+		Merge2Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void Test()
@@ -83,48 +84,48 @@ namespace Lucene.Net.Index
 		Codec codec = Codec.Default;
 		SegmentInfo si = new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, -1, false, codec, null);
 
-		SegmentMerger merger = new SegmentMerger(Arrays.asList<AtomicReader>(Reader1, Reader2), si, InfoStream.Default, MergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, MergeState.CheckAbort.NONE, new FieldInfos.FieldNumbers(), newIOContext(random()), true);
-		MergeState mergeState = merger.merge();
-		int docsMerged = mergeState.segmentInfo.DocCount;
+		SegmentMerger merger = new SegmentMerger(Arrays.AsList<AtomicReader>(Reader1, Reader2), si, InfoStream.Default, MergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, MergeState.CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random()), true);
+		MergeState mergeState = merger.Merge();
+		int docsMerged = mergeState.SegmentInfo.DocCount;
 		Assert.IsTrue(docsMerged == 2);
 		//Should be able to open a new SegmentReader against the new directory
-		SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 		Assert.IsTrue(mergedReader != null);
-		Assert.IsTrue(mergedReader.numDocs() == 2);
-		Document newDoc1 = mergedReader.document(0);
+		Assert.IsTrue(mergedReader.NumDocs() == 2);
+		Document newDoc1 = mergedReader.Document(0);
 		Assert.IsTrue(newDoc1 != null);
 		//There are 2 unstored fields on the document
-		Assert.IsTrue(DocHelper.numFields(newDoc1) == DocHelper.numFields(Doc1) - DocHelper.unstored.size());
-		Document newDoc2 = mergedReader.document(1);
+		Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(Doc1) - DocHelper.Unstored.Count);
+		Document newDoc2 = mergedReader.Document(1);
 		Assert.IsTrue(newDoc2 != null);
-		Assert.IsTrue(DocHelper.numFields(newDoc2) == DocHelper.numFields(Doc2) - DocHelper.unstored.size());
+        Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(Doc2) - DocHelper.Unstored.Count);
 
-		DocsEnum termDocs = TestUtil.docs(random(), mergedReader, DocHelper.TEXT_FIELD_2_KEY, new BytesRef("field"), MultiFields.getLiveDocs(mergedReader), null, 0);
+		DocsEnum termDocs = TestUtil.Docs(Random(), mergedReader, DocHelper.TEXT_FIELD_2_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(mergedReader), null, 0);
 		Assert.IsTrue(termDocs != null);
-		Assert.IsTrue(termDocs.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
 		int tvCount = 0;
 		foreach (FieldInfo fieldInfo in mergedReader.FieldInfos)
 		{
-		  if (fieldInfo.hasVectors())
+		  if (fieldInfo.HasVectors())
 		  {
 			tvCount++;
 		  }
 		}
 
-		//System.out.println("stored size: " + stored.size());
-		Assert.AreEqual("We do not have 3 fields that were indexed with term vector", 3, tvCount);
+		//System.out.println("stored size: " + stored.Size());
+		Assert.AreEqual(3, tvCount, "We do not have 3 fields that were indexed with term vector");
 
-		Terms vector = mergedReader.getTermVectors(0).terms(DocHelper.TEXT_FIELD_2_KEY);
+		Terms vector = mergedReader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
 		Assert.IsNotNull(vector);
-		Assert.AreEqual(3, vector.size());
-		TermsEnum termsEnum = vector.iterator(null);
+		Assert.AreEqual(3, vector.Size());
+		TermsEnum termsEnum = vector.Iterator(null);
 
 		int i = 0;
-		while (termsEnum.next() != null)
+		while (termsEnum.Next() != null)
 		{
-		  string term = termsEnum.term().utf8ToString();
-		  int freq = (int) termsEnum.totalTermFreq();
+		  string term = termsEnum.Term().Utf8ToString();
+		  int freq = (int) termsEnum.TotalTermFreq();
 		  //System.out.println("Term: " + term + " Freq: " + freq);
 		  Assert.IsTrue(DocHelper.FIELD_2_TEXT.IndexOf(term) != -1);
 		  Assert.IsTrue(DocHelper.FIELD_2_FREQS[i] == freq);
@@ -132,18 +133,18 @@ namespace Lucene.Net.Index
 		}
 
 		TestSegmentReader.CheckNorms(mergedReader);
-		mergedReader.close();
+		mergedReader.Dispose();
 	  }
 
 	  private static bool Equals(MergeState.DocMap map1, MergeState.DocMap map2)
 	  {
-		if (map1.maxDoc() != map2.maxDoc())
+		if (map1.MaxDoc() != map2.MaxDoc())
 		{
 		  return false;
 		}
-		for (int i = 0; i < map1.maxDoc(); ++i)
+		for (int i = 0; i < map1.MaxDoc(); ++i)
 		{
-		  if (map1.get(i) != map2.get(i))
+		  if (map1.Get(i) != map2.Get(i))
 		  {
 			return false;
 		  }
@@ -153,39 +154,39 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestBuildDocMap()
 	  {
-		int maxDoc = TestUtil.Next(random(), 1, 128);
-		int numDocs = TestUtil.Next(random(), 0, maxDoc);
+		int maxDoc = TestUtil.NextInt(Random(), 1, 128);
+		int numDocs = TestUtil.NextInt(Random(), 0, maxDoc);
 		int numDeletedDocs = maxDoc - numDocs;
 		FixedBitSet liveDocs = new FixedBitSet(maxDoc);
 		for (int i = 0; i < numDocs; ++i)
 		{
 		  while (true)
 		  {
-			int docID = random().Next(maxDoc);
-			if (!liveDocs.get(docID))
+			int docID = Random().Next(maxDoc);
+			if (!liveDocs.Get(docID))
 			{
-			  liveDocs.set(docID);
+			  liveDocs.Set(docID);
 			  break;
 			}
 		  }
 		}
 
-		MergeState.DocMap docMap = MergeState.DocMap.build(maxDoc, liveDocs);
+		MergeState.DocMap docMap = MergeState.DocMap.Build(maxDoc, liveDocs);
 
-		Assert.AreEqual(maxDoc, docMap.maxDoc());
-		Assert.AreEqual(numDocs, docMap.numDocs());
-		Assert.AreEqual(numDeletedDocs, docMap.numDeletedDocs());
+		Assert.AreEqual(maxDoc, docMap.MaxDoc());
+		Assert.AreEqual(numDocs, docMap.NumDocs());
+		Assert.AreEqual(numDeletedDocs, docMap.NumDeletedDocs());
 		// assert the mapping is compact
 		for (int i = 0, del = 0; i < maxDoc; ++i)
 		{
-		  if (!liveDocs.get(i))
+		  if (!liveDocs.Get(i))
 		  {
-			Assert.AreEqual(-1, docMap.get(i));
+			Assert.AreEqual(-1, docMap.Get(i));
 			++del;
 		  }
 		  else
 		  {
-			Assert.AreEqual(i - del, docMap.get(i));
+			Assert.AreEqual(i - del, docMap.Get(i));
 		  }
 		}
 	  }

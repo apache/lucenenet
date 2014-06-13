@@ -21,12 +21,12 @@ namespace Lucene.Net.Index
 	 */
 
 	using Document = Lucene.Net.Document.Document;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-	using After = org.junit.After;
-	using Before = org.junit.Before;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
+    using System;
+    using System.IO;
 
 	public class TestPersistentSnapshotDeletionPolicy : TestSnapshotDeletionPolicy
 	{
@@ -35,19 +35,19 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Before @Override public void setUp() throws Exception
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @After @Override public void tearDown() throws Exception
 	  public override void TearDown()
 	  {
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  private SnapshotDeletionPolicy GetDeletionPolicy(Directory dir)
 	  {
-		return new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.CREATE);
+		return new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.CREATE);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -55,17 +55,17 @@ namespace Lucene.Net.Index
 	  public virtual void TestExistingSnapshots()
 	  {
 		int numSnapshots = 3;
-		MockDirectoryWrapper dir = newMockDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), GetDeletionPolicy(dir)));
+		MockDirectoryWrapper dir = NewMockDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), GetDeletionPolicy(dir)));
 		PersistentSnapshotDeletionPolicy psdp = (PersistentSnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
-		assertNull(psdp.LastSaveFile);
+		Assert.IsNull(psdp.LastSaveFile);
 		PrepareIndexAndSnapshots(psdp, writer, numSnapshots);
 		Assert.IsNotNull(psdp.LastSaveFile);
-		writer.close();
+		writer.Dispose();
 
 		// Make sure only 1 save file exists:
 		int count = 0;
-		foreach (string file in dir.listAll())
+		foreach (string file in dir.ListAll())
 		{
 		  if (file.StartsWith(PersistentSnapshotDeletionPolicy.SNAPSHOTS_PREFIX))
 		  {
@@ -75,68 +75,68 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(1, count);
 
 		// Make sure we fsync:
-		dir.crash();
-		dir.clearCrash();
+		dir.Crash();
+		dir.ClearCrash();
 
 		// Re-initialize and verify snapshots were persisted
-		psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
+		psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.APPEND);
 
-		writer = new IndexWriter(dir, GetConfig(random(), psdp));
+		writer = new IndexWriter(dir, GetConfig(Random(), psdp));
 		psdp = (PersistentSnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 
-		Assert.AreEqual(numSnapshots, psdp.Snapshots.size());
+		Assert.AreEqual(numSnapshots, psdp.Snapshots.Count);
 		Assert.AreEqual(numSnapshots, psdp.SnapshotCount);
 		AssertSnapshotExists(dir, psdp, numSnapshots, false);
 
-		writer.addDocument(new Document());
-		writer.commit();
-		Snapshots.Add(psdp.snapshot());
-		Assert.AreEqual(numSnapshots + 1, psdp.Snapshots.size());
+		writer.AddDocument(new Document());
+		writer.Commit();
+		Snapshots.Add(psdp.Snapshot());
+		Assert.AreEqual(numSnapshots + 1, psdp.Snapshots.Count);
 		Assert.AreEqual(numSnapshots + 1, psdp.SnapshotCount);
 		AssertSnapshotExists(dir, psdp, numSnapshots + 1, false);
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoSnapshotInfos() throws Exception
 	  public virtual void TestNoSnapshotInfos()
 	  {
-		Directory dir = newDirectory();
-		new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.CREATE);
-		dir.close();
+		Directory dir = NewDirectory();
+		new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.CREATE);
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMissingSnapshots() throws Exception
 	  public virtual void TestMissingSnapshots()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		try
 		{
-		  new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
+		  new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.APPEND);
 		  Assert.Fail("did not hit expected exception");
 		}
-		catch (IllegalStateException ise)
+		catch (InvalidOperationException ise)
 		{
 		  // expected
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestExceptionDuringSave()
 	  {
-		MockDirectoryWrapper dir = newMockDirectory();
-		dir.failOn(new FailureAnonymousInnerClassHelper(this, dir));
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.CREATE_OR_APPEND)));
-		writer.addDocument(new Document());
-		writer.commit();
+		MockDirectoryWrapper dir = NewMockDirectory();
+		dir.FailOn(new FailureAnonymousInnerClassHelper(this, dir));
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.CREATE_OR_APPEND)));
+		writer.AddDocument(new Document());
+		writer.Commit();
 
 		PersistentSnapshotDeletionPolicy psdp = (PersistentSnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 		try
 		{
-		  psdp.snapshot();
+		  psdp.Snapshot();
 		}
 		catch (IOException ioe)
 		{
@@ -150,9 +150,9 @@ namespace Lucene.Net.Index
 		  }
 		}
 		Assert.AreEqual(0, psdp.SnapshotCount);
-		writer.close();
-		Assert.AreEqual(1, DirectoryReader.listCommits(dir).size());
-		dir.close();
+		writer.Dispose();
+		Assert.AreEqual(1, DirectoryReader.ListCommits(dir).Count);
+		dir.Dispose();
 	  }
 
 	  private class FailureAnonymousInnerClassHelper : MockDirectoryWrapper.Failure
@@ -184,34 +184,34 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testSnapshotRelease() throws Exception
 	  public virtual void TestSnapshotRelease()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), GetDeletionPolicy(dir)));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), GetDeletionPolicy(dir)));
 		PersistentSnapshotDeletionPolicy psdp = (PersistentSnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 		PrepareIndexAndSnapshots(psdp, writer, 1);
-		writer.close();
+		writer.Dispose();
 
-		psdp.release(Snapshots[0]);
+		psdp.Release(Snapshots[0]);
 
-		psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
-		Assert.AreEqual("Should have no snapshots !", 0, psdp.SnapshotCount);
-		dir.close();
+		psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.APPEND);
+		Assert.AreEqual(0, psdp.SnapshotCount, "Should have no snapshots !");
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSnapshotReleaseByGeneration() throws Exception
 	  public virtual void TestSnapshotReleaseByGeneration()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, GetConfig(random(), GetDeletionPolicy(dir)));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), GetDeletionPolicy(dir)));
 		PersistentSnapshotDeletionPolicy psdp = (PersistentSnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
 		PrepareIndexAndSnapshots(psdp, writer, 1);
-		writer.close();
+		writer.Dispose();
 
-		psdp.release(Snapshots[0].Generation);
+		psdp.Release(Snapshots[0].Generation);
 
-		psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
-		Assert.AreEqual("Should have no snapshots !", 0, psdp.SnapshotCount);
-		dir.close();
+		psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.APPEND);
+		Assert.AreEqual(0, psdp.SnapshotCount, "Should have no snapshots !");
+		dir.Dispose();
 	  }
 	}
 

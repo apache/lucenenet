@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis
 	  private const bool DEBUG = false;
 
       private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
-	  private readonly Random random;
+	  private /*readonly*/ Random random; //not readonly to reset seed later
 	  private readonly long Seed;
 
 	  public MockRandomLookaheadTokenFilter(Random random, TokenStream @in) : base(@in)
@@ -113,7 +113,8 @@ namespace Lucene.Net.Analysis
 	  public override void Reset()
 	  {
 		base.Reset();
-		random.Seed = Seed;
+        //random.Seed = Seed;
+        random = new Random((int)Seed);
 	  }
 	}
 

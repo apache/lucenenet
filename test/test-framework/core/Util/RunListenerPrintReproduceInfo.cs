@@ -7,16 +7,16 @@ namespace Lucene.Net.Util
 {
 
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.LuceneTestCase.*;
+	//import static Lucene.Net.Util.LuceneTestCase.*;
 
 
-	using Description = org.junit.runner.Description;
+	/*using Description = org.junit.runner.Description;
 	using Result = org.junit.runner.Result;
 	using Failure = org.junit.runner.notification.Failure;
 	using RunListener = org.junit.runner.notification.RunListener;
 
 	using LifecycleScope = com.carrotsearch.randomizedtesting.LifecycleScope;
-	using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
+	using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;*/
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

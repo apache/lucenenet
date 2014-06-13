@@ -18,9 +18,9 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using Test = org.junit.Test;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 
 	public class TestNoMergeScheduler : LuceneTestCase
@@ -31,8 +31,8 @@ namespace Lucene.Net.Index
 	  public virtual void TestNoMergeScheduler()
 	  {
 		MergeScheduler ms = NoMergeScheduler.INSTANCE;
-		ms.close();
-		ms.merge(null, RandomPicks.randomFrom(random(), MergeTrigger.values()), random().nextBoolean());
+		ms.Dispose();
+		ms.merge(null, RandomPicks.randomFrom(Random(), MergeTrigger.values()), Random().NextBoolean());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

@@ -36,6 +36,8 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using System.IO;
 
 	public class TestDocumentWriter : LuceneTestCase
 	{
@@ -43,14 +45,14 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
+		base.SetUp();
+		Dir = NewDirectory();
 	  }
 
 	  public override void TearDown()
 	  {
-		Dir.close();
-		base.tearDown();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void Test()
@@ -61,40 +63,40 @@ namespace Lucene.Net.Index
 	  public virtual void TestAddDocument()
 	  {
 		Document testDoc = new Document();
-		DocHelper.setupDoc(testDoc);
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.addDocument(testDoc);
-		writer.commit();
-		SegmentCommitInfo info = writer.newestSegment();
-		writer.close();
+		DocHelper.SetupDoc(testDoc);
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.AddDocument(testDoc);
+		writer.Commit();
+		SegmentCommitInfo info = writer.NewestSegment();
+		writer.Dispose();
 		//After adding the document, we should be able to read it back in
-		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 		Assert.IsTrue(reader != null);
-		Document doc = reader.document(0);
+		Document doc = reader.Document(0);
 		Assert.IsTrue(doc != null);
 
 		//System.out.println("Document: " + doc);
-		IndexableField[] fields = doc.getFields("textField2");
+		IndexableField[] fields = doc.GetFields("textField2");
 		Assert.IsTrue(fields != null && fields.Length == 1);
-		Assert.IsTrue(fields[0].stringValue().Equals(DocHelper.FIELD_2_TEXT));
-		Assert.IsTrue(fields[0].fieldType().storeTermVectors());
+		Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_2_TEXT));
+		Assert.IsTrue(fields[0].FieldType().StoreTermVectors);
 
-		fields = doc.getFields("textField1");
+		fields = doc.GetFields("textField1");
 		Assert.IsTrue(fields != null && fields.Length == 1);
-		Assert.IsTrue(fields[0].stringValue().Equals(DocHelper.FIELD_1_TEXT));
-		Assert.IsFalse(fields[0].fieldType().storeTermVectors());
+        Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_1_TEXT));
+		Assert.IsFalse(fields[0].FieldType().StoreTermVectors);
 
-		fields = doc.getFields("keyField");
+		fields = doc.GetFields("keyField");
 		Assert.IsTrue(fields != null && fields.Length == 1);
-		Assert.IsTrue(fields[0].stringValue().Equals(DocHelper.KEYWORD_TEXT));
+        Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.KEYWORD_TEXT));
 
-		fields = doc.getFields(DocHelper.NO_NORMS_KEY);
+		fields = doc.GetFields(DocHelper.NO_NORMS_KEY);
 		Assert.IsTrue(fields != null && fields.Length == 1);
-		Assert.IsTrue(fields[0].stringValue().Equals(DocHelper.NO_NORMS_TEXT));
+        Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.NO_NORMS_TEXT));
 
-		fields = doc.getFields(DocHelper.TEXT_FIELD_3_KEY);
+		fields = doc.GetFields(DocHelper.TEXT_FIELD_3_KEY);
 		Assert.IsTrue(fields != null && fields.Length == 1);
-		Assert.IsTrue(fields[0].stringValue().Equals(DocHelper.FIELD_3_TEXT));
+        Assert.IsTrue(fields[0].StringValue.Equals(DocHelper.FIELD_3_TEXT));
 
 		// test that the norms are not present in the segment if
 		// omitNorms is true
@@ -102,35 +104,35 @@ namespace Lucene.Net.Index
 		{
 		  if (fi.Indexed)
 		  {
-			Assert.IsTrue(fi.omitsNorms() == (reader.getNormValues(fi.name) == null));
+			Assert.IsTrue(fi.OmitsNorms() == (reader.GetNormValues(fi.Name) == null));
 		  }
 		}
-		reader.close();
+		reader.Dispose();
 	  }
 
 	  public virtual void TestPositionIncrementGap()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
 		Document doc = new Document();
-		doc.add(newTextField("repeated", "repeated one", Field.Store.YES));
-		doc.add(newTextField("repeated", "repeated two", Field.Store.YES));
+		doc.Add(NewTextField("repeated", "repeated one", Field.Store.YES));
+		doc.Add(NewTextField("repeated", "repeated two", Field.Store.YES));
 
-		writer.addDocument(doc);
-		writer.commit();
-		SegmentCommitInfo info = writer.newestSegment();
-		writer.close();
-		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		writer.AddDocument(doc);
+		writer.Commit();
+		SegmentCommitInfo info = writer.NewestSegment();
+		writer.Dispose();
+		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 
-		DocsAndPositionsEnum termPositions = MultiFields.getTermPositionsEnum(reader, MultiFields.getLiveDocs(reader), "repeated", new BytesRef("repeated"));
-		Assert.IsTrue(termPositions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		int freq = termPositions.freq();
+		DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "repeated", new BytesRef("repeated"));
+		Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		int freq = termPositions.Freq();
 		Assert.AreEqual(2, freq);
-		Assert.AreEqual(0, termPositions.nextPosition());
-		Assert.AreEqual(502, termPositions.nextPosition());
-		reader.close();
+		Assert.AreEqual(0, termPositions.NextPosition());
+		Assert.AreEqual(502, termPositions.NextPosition());
+		reader.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -142,7 +144,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
 		  }
@@ -157,28 +159,28 @@ namespace Lucene.Net.Index
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
 
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
 		Document doc = new Document();
-		doc.add(newTextField("f1", "a 5 a a", Field.Store.YES));
+		doc.Add(NewTextField("f1", "a 5 a a", Field.Store.YES));
 
-		writer.addDocument(doc);
-		writer.commit();
-		SegmentCommitInfo info = writer.newestSegment();
-		writer.close();
-		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		writer.AddDocument(doc);
+		writer.Commit();
+		SegmentCommitInfo info = writer.NewestSegment();
+		writer.Dispose();
+		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 
-		DocsAndPositionsEnum termPositions = MultiFields.getTermPositionsEnum(reader, reader.LiveDocs, "f1", new BytesRef("a"));
-		Assert.IsTrue(termPositions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		int freq = termPositions.freq();
+		DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, reader.LiveDocs, "f1", new BytesRef("a"));
+		Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		int freq = termPositions.Freq();
 		Assert.AreEqual(3, freq);
-		Assert.AreEqual(0, termPositions.nextPosition());
+		Assert.AreEqual(0, termPositions.NextPosition());
 		Assert.IsNotNull(termPositions.Payload);
-		Assert.AreEqual(6, termPositions.nextPosition());
-		assertNull(termPositions.Payload);
-		Assert.AreEqual(7, termPositions.nextPosition());
-		assertNull(termPositions.Payload);
-		reader.close();
+		Assert.AreEqual(6, termPositions.NextPosition());
+		Assert.IsNull(termPositions.Payload);
+		Assert.AreEqual(7, termPositions.NextPosition());
+		Assert.IsNull(termPositions.Payload);
+		reader.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
@@ -190,7 +192,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousInnerClassHelper(this, tokenizer));
@@ -202,11 +204,11 @@ namespace Lucene.Net.Index
 
 			  public TokenFilterAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper2 outerInstance, Tokenizer tokenizer) : base(tokenizer)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  first = true;
-				  termAtt = addAttribute(typeof(CharTermAttribute));
-				  payloadAtt = addAttribute(typeof(PayloadAttribute));
-				  posIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
+				  termAtt = AddAttribute<CharTermAttribute>();
+				  payloadAtt = AddAttribute<PayloadAttribute>();
+                  posIncrAtt = AddAttribute<PositionIncrementAttribute>();
 			  }
 
 			  internal bool first;
@@ -216,22 +218,22 @@ namespace Lucene.Net.Index
 			  {
 				if (state != null)
 				{
-				  restoreState(state);
+				  RestoreState(state);
 				  payloadAtt.Payload = null;
 				  posIncrAtt.PositionIncrement = 0;
-				  termAtt.SetEmpty().append("b");
+				  termAtt.SetEmpty().Append("b");
 				  state = null;
 				  return true;
 				}
 
-				bool hasNext = input.IncrementToken();
+				bool hasNext = Input.IncrementToken();
 				if (!hasNext)
 				{
 					return false;
 				}
-				if (char.IsDigit(termAtt.buffer()[0]))
+				if (char.IsDigit(termAtt.Buffer()[0]))
 				{
-				  posIncrAtt.PositionIncrement = termAtt.buffer()[0] - '0';
+				  posIncrAtt.PositionIncrement = termAtt.Buffer()[0] - '0';
 				}
 				if (first)
 				{
@@ -241,14 +243,14 @@ namespace Lucene.Net.Index
 				}
 
 				// index a "synonym" for every token
-				state = captureState();
+				state = CaptureState();
 				return true;
 
 			  }
 
 			  public override void Reset()
 			  {
-				base.reset();
+				base.Reset();
 				first = true;
 				state = null;
 			  }
@@ -262,33 +264,33 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestPreAnalyzedField()
 	  {
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
 
-		doc.add(new TextField("preanalyzed", new TokenStreamAnonymousInnerClassHelper(this)));
+		doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousInnerClassHelper(this)));
 
-		writer.addDocument(doc);
-		writer.commit();
-		SegmentCommitInfo info = writer.newestSegment();
-		writer.close();
-		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, newIOContext(random()));
+		writer.AddDocument(doc);
+		writer.Commit();
+		SegmentCommitInfo info = writer.NewestSegment();
+		writer.Dispose();
+		SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 
-		DocsAndPositionsEnum termPositions = reader.termPositionsEnum(new Term("preanalyzed", "term1"));
-		Assert.IsTrue(termPositions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(1, termPositions.freq());
-		Assert.AreEqual(0, termPositions.nextPosition());
+		DocsAndPositionsEnum termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term1"));
+		Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.AreEqual(1, termPositions.Freq());
+		Assert.AreEqual(0, termPositions.NextPosition());
 
-		termPositions = reader.termPositionsEnum(new Term("preanalyzed", "term2"));
-		Assert.IsTrue(termPositions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(2, termPositions.freq());
-		Assert.AreEqual(1, termPositions.nextPosition());
-		Assert.AreEqual(3, termPositions.nextPosition());
+		termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term2"));
+		Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.AreEqual(2, termPositions.Freq());
+		Assert.AreEqual(1, termPositions.NextPosition());
+		Assert.AreEqual(3, termPositions.NextPosition());
 
-		termPositions = reader.termPositionsEnum(new Term("preanalyzed", "term3"));
-		Assert.IsTrue(termPositions.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(1, termPositions.freq());
-		Assert.AreEqual(2, termPositions.nextPosition());
-		reader.close();
+		termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term3"));
+		Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.AreEqual(1, termPositions.Freq());
+		Assert.AreEqual(2, termPositions.NextPosition());
+		reader.Dispose();
 	  }
 
 	  private class TokenStreamAnonymousInnerClassHelper : TokenStream
@@ -300,7 +302,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 			  tokens = new string[] {"term1", "term2", "term3", "term2"};
 			  index = 0;
-			  termAtt = addAttribute(typeof(CharTermAttribute));
+			  termAtt = AddAttribute<CharTermAttribute>();
 		  }
 
 		  private string[] tokens;
@@ -310,14 +312,14 @@ namespace Lucene.Net.Index
 
 		  public override bool IncrementToken()
 		  {
-			if (index == tokens.length)
+			if (index == tokens.Length)
 			{
 			  return false;
 			}
 			else
 			{
 			  ClearAttributes();
-			  termAtt.SetEmpty().append(tokens[index++]);
+			  termAtt.SetEmpty().Append(tokens[index++]);
 			  return true;
 			}
 		  }
@@ -331,32 +333,32 @@ namespace Lucene.Net.Index
 	  {
 		Document doc = new Document();
 		// f1 first without tv then with tv
-		doc.add(newStringField("f1", "v1", Field.Store.YES));
+		doc.Add(NewStringField("f1", "v1", Field.Store.YES));
 		FieldType customType2 = new FieldType(StringField.TYPE_STORED);
 		customType2.StoreTermVectors = true;
 		customType2.StoreTermVectorOffsets = true;
 		customType2.StoreTermVectorPositions = true;
-		doc.add(newField("f1", "v2", customType2));
+		doc.Add(NewField("f1", "v2", customType2));
 		// f2 first with tv then without tv
-		doc.add(newField("f2", "v1", customType2));
-		doc.add(newStringField("f2", "v2", Field.Store.YES));
+		doc.Add(NewField("f2", "v1", customType2));
+		doc.Add(NewStringField("f2", "v2", Field.Store.YES));
 
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.addDocument(doc);
-		writer.close();
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		TestUtil.checkIndex(Dir);
+		TestUtil.CheckIndex(Dir);
 
-		IndexReader reader = DirectoryReader.open(Dir);
+		IndexReader reader = DirectoryReader.Open(Dir);
 		// f1
-		Terms tfv1 = reader.getTermVectors(0).terms("f1");
+		Terms tfv1 = reader.GetTermVectors(0).Terms("f1");
 		Assert.IsNotNull(tfv1);
-		Assert.AreEqual("the 'with_tv' setting should rule!",2,tfv1.size());
+		Assert.AreEqual(2,tfv1.Size(), "the 'with_tv' setting should rule!");
 		// f2
-		Terms tfv2 = reader.getTermVectors(0).terms("f2");
+		Terms tfv2 = reader.GetTermVectors(0).Terms("f2");
 		Assert.IsNotNull(tfv2);
-		Assert.AreEqual("the 'with_tv' setting should rule!",2,tfv2.size());
-		reader.close();
+		Assert.AreEqual(2,tfv2.Size(), "the 'with_tv' setting should rule!");
+		reader.Dispose();
 	  }
 
 	  /// <summary>
@@ -372,31 +374,31 @@ namespace Lucene.Net.Index
 		customType.OmitNorms = true;
 		FieldType customType2 = new FieldType();
 		customType2.Stored = true;
-		doc.add(newField("f1", "v1", customType));
-		doc.add(newField("f1", "v2", customType2));
+		doc.Add(NewField("f1", "v1", customType));
+		doc.Add(NewField("f1", "v2", customType2));
 		// f2 has no TF
 		FieldType customType3 = new FieldType(TextField.TYPE_NOT_STORED);
-		customType3.IndexOptions = IndexOptions.DOCS_ONLY;
-		Field f = newField("f2", "v1", customType3);
-		doc.add(f);
-		doc.add(newField("f2", "v2", customType2));
+		customType3.IndexOptionsValue = IndexOptions.DOCS_ONLY;
+		Field f = NewField("f2", "v1", customType3);
+		doc.Add(f);
+		doc.Add(NewField("f2", "v2", customType2));
 
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.addDocument(doc);
-		writer.forceMerge(1); // be sure to have a single segment
-		writer.close();
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.AddDocument(doc);
+		writer.ForceMerge(1); // be sure to have a single segment
+		writer.Dispose();
 
-		TestUtil.checkIndex(Dir);
+		TestUtil.CheckIndex(Dir);
 
-		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(Dir));
+		SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
 		FieldInfos fi = reader.FieldInfos;
 		// f1
-		Assert.IsFalse("f1 should have no norms", fi.fieldInfo("f1").hasNorms());
-		Assert.AreEqual("omitTermFreqAndPositions field bit should not be set for f1", IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.fieldInfo("f1").IndexOptions);
+		Assert.IsFalse(fi.FieldInfo("f1").HasNorms(), "f1 should have no norms");
+		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, fi.FieldInfo("f1").IndexOptions, "omitTermFreqAndPositions field bit should not be set for f1");
 		// f2
-		Assert.IsTrue("f2 should have norms", fi.fieldInfo("f2").hasNorms());
-		Assert.AreEqual("omitTermFreqAndPositions field bit should be set for f2", IndexOptions.DOCS_ONLY, fi.fieldInfo("f2").IndexOptions);
-		reader.close();
+		Assert.IsTrue(fi.FieldInfo("f2").HasNorms(), "f2 should have norms");
+		Assert.AreEqual(IndexOptions.DOCS_ONLY, fi.FieldInfo("f2").IndexOptions, "omitTermFreqAndPositions field bit should be set for f2");
+		reader.Dispose();
 	  }
 	}
 

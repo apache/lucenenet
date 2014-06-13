@@ -23,6 +23,7 @@ namespace Lucene.Net.Index
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
 	using Lucene.Net.Document;
 	using Lucene.Net.Util;
+    using NUnit.Framework;
 
 	public class TestFlex : LuceneTestCase
 	{
@@ -30,64 +31,64 @@ namespace Lucene.Net.Index
 	  // Test non-flex API emulated on flex index
 	  public virtual void TestNonFlex()
 	  {
-		Directory d = newDirectory();
+		Directory d = NewDirectory();
 
 		const int DOC_COUNT = 177;
 
-		IndexWriter w = new IndexWriter(d, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setMaxBufferedDocs(7).setMergePolicy(newLogMergePolicy()));
+		IndexWriter w = new IndexWriter(d, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(7).SetMergePolicy(NewLogMergePolicy()));
 
 		for (int iter = 0;iter < 2;iter++)
 		{
 		  if (iter == 0)
 		  {
 			Document doc = new Document();
-			doc.add(newTextField("field1", "this is field1", Field.Store.NO));
-			doc.add(newTextField("field2", "this is field2", Field.Store.NO));
-			doc.add(newTextField("field3", "aaa", Field.Store.NO));
-			doc.add(newTextField("field4", "bbb", Field.Store.NO));
+			doc.Add(NewTextField("field1", "this is field1", Field.Store.NO));
+			doc.Add(NewTextField("field2", "this is field2", Field.Store.NO));
+			doc.Add(NewTextField("field3", "aaa", Field.Store.NO));
+			doc.Add(NewTextField("field4", "bbb", Field.Store.NO));
 			for (int i = 0;i < DOC_COUNT;i++)
 			{
-			  w.addDocument(doc);
+			  w.AddDocument(doc);
 			}
 		  }
 		  else
 		  {
-			w.forceMerge(1);
+			w.ForceMerge(1);
 		  }
 
 		  IndexReader r = w.Reader;
 
-		  TermsEnum terms = MultiFields.getTerms(r, "field3").iterator(null);
-		  Assert.AreEqual(TermsEnum.SeekStatus.END, terms.seekCeil(new BytesRef("abc")));
-		  r.close();
+		  TermsEnum terms = MultiFields.GetTerms(r, "field3").Iterator(null);
+		  Assert.AreEqual(TermsEnum.SeekStatus.END, terms.SeekCeil(new BytesRef("abc")));
+		  r.Dispose();
 		}
 
-		w.close();
-		d.close();
+		w.Dispose();
+		d.Dispose();
 	  }
 
 	  public virtual void TestTermOrd()
 	  {
-		Directory d = newDirectory();
-		IndexWriter w = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat())));
+		Directory d = NewDirectory();
+		IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
 		Document doc = new Document();
-		doc.add(newTextField("f", "a b c", Field.Store.NO));
-		w.addDocument(doc);
-		w.forceMerge(1);
+		doc.Add(NewTextField("f", "a b c", Field.Store.NO));
+		w.AddDocument(doc);
+		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-		TermsEnum terms = getOnlySegmentReader(r).fields().terms("f").iterator(null);
-		Assert.IsTrue(terms.next() != null);
+		TermsEnum terms = GetOnlySegmentReader(r).Fields().Terms("f").Iterator(null);
+		Assert.IsTrue(terms.Next() != null);
 		try
 		{
-		  Assert.AreEqual(0, terms.ord());
+		  Assert.AreEqual(0, terms.Ord());
 		}
 		catch (System.NotSupportedException uoe)
 		{
 		  // ok -- codec is not required to support this op
 		}
-		r.close();
-		w.close();
-		d.close();
+		r.Dispose();
+		w.Dispose();
+		d.Dispose();
 	  }
 	}
 

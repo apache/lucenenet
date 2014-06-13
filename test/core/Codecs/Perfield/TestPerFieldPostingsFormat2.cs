@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Perfield
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
-	//using Test = org.junit.Test;
+    using Lucene.Net.Randomized.Generators;
 
 	/// 
 	/// 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.Perfield
 		LogDocMergePolicy logByteSizeMergePolicy = new LogDocMergePolicy();
 		logByteSizeMergePolicy.NoCFSRatio = 0.0; // make sure we use plain
 		// files
-		conf.MergePolicy = logByteSizeMergePolicy;
+		conf.SetMergePolicy(logByteSizeMergePolicy);
 
 		IndexWriter writer = new IndexWriter(dir, conf);
 		return writer;
@@ -72,8 +72,8 @@ namespace Lucene.Net.Codecs.Perfield
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.Add(newTextField("content", "aaa", Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 	  }
 
@@ -82,8 +82,8 @@ namespace Lucene.Net.Codecs.Perfield
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.Add(newTextField("content", "bbb", Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("content", "bbb", Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 	  }
 
@@ -92,9 +92,9 @@ namespace Lucene.Net.Codecs.Perfield
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.Add(newTextField("content", "ccc", Field.Store.NO));
-		  doc.Add(newStringField("id", "" + i, Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("content", "ccc", Field.Store.NO));
+		  doc.Add(NewStringField("id", "" + i, Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 	  }
 
@@ -103,21 +103,21 @@ namespace Lucene.Net.Codecs.Perfield
 	   */
 	  public virtual void TestMergeUnusedPerFieldCodec()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setCodec(new MockCodec());
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
 		IndexWriter writer = NewWriter(dir, iwconf);
 		AddDocs(writer, 10);
-		writer.commit();
+		writer.Commit();
 		AddDocs3(writer, 10);
-		writer.commit();
+		writer.Commit();
 		AddDocs2(writer, 10);
-		writer.commit();
+		writer.Commit();
 		Assert.AreEqual(30, writer.MaxDoc());
 		TestUtil.CheckIndex(dir);
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		Assert.AreEqual(30, writer.MaxDoc());
-		writer.Close();
-		dir.Close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  /*
@@ -128,37 +128,37 @@ namespace Lucene.Net.Codecs.Perfield
 //ORIGINAL LINE: @Test public void testChangeCodecAndMerge() throws java.io.IOException
 	  public virtual void TestChangeCodecAndMerge()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: make new index");
 		}
-		IndexWriterConfig iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setCodec(new MockCodec());
-		iwconf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH;
+        IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetCodec(new MockCodec());
+		iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		//((LogMergePolicy) iwconf.getMergePolicy()).setMergeFactor(10);
 		IndexWriter writer = NewWriter(dir, iwconf);
 
 		AddDocs(writer, 10);
-		writer.commit();
+		writer.Commit();
 		AssertQuery(new Term("content", "aaa"), dir, 10);
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: addDocs3");
 		}
 		AddDocs3(writer, 10);
-		writer.commit();
-		writer.Close();
+		writer.Commit();
+		writer.Dispose();
 
 		AssertQuery(new Term("content", "ccc"), dir, 10);
 		AssertQuery(new Term("content", "aaa"), dir, 10);
 		Codec codec = iwconf.Codec;
 
-		iwconf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode_e.APPEND).setCodec(codec);
+        iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND).SetCodec(codec);
 		//((LogMergePolicy) iwconf.getMergePolicy()).setNoCFSRatio(0.0);
 		//((LogMergePolicy) iwconf.getMergePolicy()).setMergeFactor(10);
-		iwconf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH;
+		iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 
-		iwconf.Codec = new MockCodec2(); // uses standard for field content
+		iwconf.SetCodec(new MockCodec2()); // uses standard for field content
 		writer = NewWriter(dir, iwconf);
 		// swap in new codec for currently written segments
 		if (VERBOSE)
@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  Console.WriteLine("TEST: add docs w/ Standard codec for content field");
 		}
 		AddDocs2(writer, 10);
-		writer.commit();
+		writer.Commit();
 		codec = iwconf.Codec;
 		Assert.AreEqual(30, writer.MaxDoc());
 		AssertQuery(new Term("content", "bbb"), dir, 10);
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  Console.WriteLine("TEST: add more docs w/ new codec");
 		}
 		AddDocs2(writer, 10);
-		writer.commit();
+		writer.Commit();
 		AssertQuery(new Term("content", "ccc"), dir, 10);
 		AssertQuery(new Term("content", "bbb"), dir, 20);
 		AssertQuery(new Term("content", "aaa"), dir, 10);
@@ -188,14 +188,14 @@ namespace Lucene.Net.Codecs.Perfield
 		{
 		  Console.WriteLine("TEST: now optimize");
 		}
-		writer.forceMerge(1);
+		writer.ForceMerge(1);
 		Assert.AreEqual(40, writer.MaxDoc());
-		writer.Close();
+		writer.Dispose();
 		AssertQuery(new Term("content", "ccc"), dir, 10);
 		AssertQuery(new Term("content", "bbb"), dir, 20);
 		AssertQuery(new Term("content", "aaa"), dir, 10);
 
-		dir.Close();
+		dir.Dispose();
 	  }
 
 	  public virtual void AssertQuery(Term t, Directory dir, int num)
@@ -205,10 +205,10 @@ namespace Lucene.Net.Codecs.Perfield
 		  Console.WriteLine("\nTEST: assertQuery " + t);
 		}
 		IndexReader reader = DirectoryReader.Open(dir, 1);
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 		TopDocs search = searcher.Search(new TermQuery(t), num + 10);
 		Assert.AreEqual(num, search.TotalHits);
-		reader.Close();
+		reader.Dispose();
 
 	  }
 
@@ -258,14 +258,14 @@ namespace Lucene.Net.Codecs.Perfield
 	   */
 	  public virtual void TestStressPerFieldCodec()
 	  {
-		Directory dir = newDirectory(random());
+		Directory dir = NewDirectory(Random());
 		const int docsPerRound = 97;
-		int numRounds = atLeast(1);
+		int numRounds = AtLeast(1);
 		for (int i = 0; i < numRounds; i++)
 		{
-		  int num = TestUtil.Next(random(), 30, 60);
-		  IndexWriterConfig config = newIndexWriterConfig(random(), TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		  config.OpenMode_e = IndexWriterConfig.OpenMode_e.CREATE_OR_APPEND;
+		  int num = TestUtil.NextInt(Random(), 30, 60);
+		  IndexWriterConfig config = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		  config.SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE_OR_APPEND);
 		  IndexWriter writer = NewWriter(dir, config);
 		  for (int j = 0; j < docsPerRound; j++)
 		  {
@@ -273,22 +273,22 @@ namespace Lucene.Net.Codecs.Perfield
 			for (int k = 0; k < num; k++)
 			{
 			  FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-			  customType.Tokenized = random().nextBoolean();
-			  customType.OmitNorms = random().nextBoolean();
-			  Field field = newField("" + k, TestUtil.randomRealisticUnicodeString(random(), 128), customType);
+			  customType.Tokenized = Random().NextBoolean();
+			  customType.OmitNorms = Random().NextBoolean();
+			  Field field = NewField("" + k, TestUtil.RandomRealisticUnicodeString(Random(), 128), customType);
 			  doc.Add(field);
 			}
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 		  }
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
-			writer.forceMerge(1);
+			writer.ForceMerge(1);
 		  }
-		  writer.commit();
+		  writer.Commit();
 		  Assert.AreEqual((i + 1) * docsPerRound, writer.MaxDoc());
-		  writer.Close();
+		  writer.Dispose();
 		}
-		dir.Close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSameCodecDifferentInstance()
@@ -357,10 +357,10 @@ namespace Lucene.Net.Codecs.Perfield
 
 	  private void DoTestMixedPostings(Codec codec)
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.Codec = codec;
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwc.SetCodec(codec);
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		// turn on vectors for the checkindex cross-check
@@ -373,12 +373,12 @@ namespace Lucene.Net.Codecs.Perfield
 		doc.Add(dateField);
 		for (int i = 0; i < 100; i++)
 		{
-		  idField.StringValue = Convert.ToString(random().Next(50));
-		  dateField.StringValue = Convert.ToString(random().Next(100));
-		  iw.addDocument(doc);
+		  idField.StringValue = Convert.ToString(Random().Next(50));
+		  dateField.StringValue = Convert.ToString(Random().Next(100));
+		  iw.AddDocument(doc);
 		}
 		iw.Close();
-		dir.Close(); // checkindex
+		dir.Dispose(); // checkindex
 	  }
 	}
 

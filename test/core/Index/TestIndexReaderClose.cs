@@ -24,6 +24,10 @@ namespace Lucene.Net.Index
 	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using System;
+    using Lucene.Net.Support;
 
 
 	public class TestIndexReaderClose : LuceneTestCase
@@ -31,44 +35,44 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestCloseUnderException()
 	  {
-		int iters = 1000 + 1 + random().Next(20);
+		int iters = 1000 + 1 + Random().Next(20);
 		for (int j = 0; j < iters; j++)
 		{
-		  Directory dir = newDirectory();
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(random(), TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		  writer.commit();
-		  writer.close();
-		  DirectoryReader open = DirectoryReader.open(dir);
-		  bool throwOnClose = !rarely();
-		  AtomicReader wrap = SlowCompositeReaderWrapper.wrap(open);
+		  Directory dir = NewDirectory();
+		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		  writer.Commit();
+		  writer.Dispose();
+		  DirectoryReader open = DirectoryReader.Open(dir);
+		  bool throwOnClose = !Rarely();
+		  AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
 		  FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
 		  IList<IndexReader.ReaderClosedListener> listeners = new List<IndexReader.ReaderClosedListener>();
-		  int listenerCount = random().Next(20);
+		  int listenerCount = Random().Next(20);
 		  AtomicInteger count = new AtomicInteger();
 		  bool faultySet = false;
 		  for (int i = 0; i < listenerCount; i++)
 		  {
-			  if (rarely())
+			  if (Rarely())
 			  {
 				faultySet = true;
-				reader.addReaderClosedListener(new FaultyListener());
+				reader.AddReaderClosedListener(new FaultyListener());
 			  }
 			  else
 			  {
-				count.incrementAndGet();
-				reader.addReaderClosedListener(new CountListener(count));
+				count.IncrementAndGet();
+				reader.AddReaderClosedListener(new CountListener(count));
 			  }
 		  }
 		  if (!faultySet && !throwOnClose)
 		  {
-			reader.addReaderClosedListener(new FaultyListener());
+			reader.AddReaderClosedListener(new FaultyListener());
 		  }
 		  try
 		  {
-			reader.close();
+			reader.Dispose();
 			Assert.Fail("expected Exception");
 		  }
-		  catch (IllegalStateException ex)
+		  catch (InvalidOperationException ex)
 		  {
 			if (throwOnClose)
 			{
@@ -82,20 +86,20 @@ namespace Lucene.Net.Index
 
 		  try
 		  {
-			reader.fields();
+			reader.Fields();
 			Assert.Fail("we are closed");
 		  }
 		  catch (AlreadyClosedException ex)
 		  {
 		  }
 
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
-			reader.close(); // call it again
+			reader.Dispose(); // call it again
 		  }
-		  Assert.AreEqual(0, count.get());
-		  wrap.close();
-		  dir.close();
+		  Assert.AreEqual(0, count.Get());
+		  wrap.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
@@ -113,10 +117,10 @@ namespace Lucene.Net.Index
 
 		  protected internal override void DoClose()
 		  {
-			base.doClose();
+			base.DoClose();
 			if (ThrowOnClose)
 			{
-			 throw new IllegalStateException("BOOM!");
+			 throw new InvalidOperationException("BOOM!");
 			}
 		  }
 	  }
@@ -132,7 +136,7 @@ namespace Lucene.Net.Index
 
 		public override void OnClose(IndexReader reader)
 		{
-		  Count.decrementAndGet();
+		  Count.DecrementAndGet();
 		}
 	  }
 
@@ -141,7 +145,7 @@ namespace Lucene.Net.Index
 
 		public override void OnClose(IndexReader reader)
 		{
-		  throw new IllegalStateException("GRRRRRRRRRRRR!");
+		  throw new InvalidOperationException("GRRRRRRRRRRRR!");
 		}
 	  }
 

@@ -21,16 +21,17 @@ namespace Lucene.Net.Index
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestNewestSegment : LuceneTestCase
 	{
 	  public virtual void TestNewestSegment()
 	  {
-		Directory directory = newDirectory();
-		IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		assertNull(writer.newestSegment());
-		writer.close();
-		directory.close();
+		Directory directory = NewDirectory();
+		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		Assert.IsNull(writer.NewestSegment());
+		writer.Dispose();
+		directory.Dispose();
 	  }
 	}
 

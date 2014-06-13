@@ -66,7 +66,7 @@ namespace Lucene.Net.Support
             doc.Add(f);
             wr.AddDocument(doc);
             
-            wr.Close();
+            wr.Dispose();
         }
 
 

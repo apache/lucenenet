@@ -368,5 +368,12 @@ namespace Lucene.Net.Support
         {
             return new UnmodifiableDictionary<TKey, TValue>(dict);
         }
+
+        public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
+        {
+            return new Dictionary<TKey, TValue>() {
+                {key, value}
+            };
+        }
     }
 }

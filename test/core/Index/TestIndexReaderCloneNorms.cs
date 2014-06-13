@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             iw.MergeFactor = 3;
             iw.AddIndexesNoOptimize(new Directory[]{dir1, dir2});
             iw.Optimize();
-            iw.Close();
+            iw.Dispose();
             
             norms1.AddRange(norms);
             norms = norms1;
@@ -166,12 +166,12 @@ namespace Lucene.Net.Index
             iw.SetMaxBufferedDocs(5);
             iw.MergeFactor = 3;
             iw.Optimize();
-            iw.Close();
+            iw.Dispose();
             VerifyIndex(dir3);
             
-            dir1.Close();
-            dir2.Close();
-            dir3.Close();
+            dir1.Dispose();
+            dir2.Dispose();
+            dir3.Dispose();
         }
         
         // try cloning and reopening the norms
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             IndexReader ir = IndexReader.Open(dir, false);
             VerifyIndex(ir);
             ModifyNormsForF1(ir);
-            IndexReader irc = (IndexReader) ir.Clone(); // IndexReader.open(dir, false);//ir.clone();
+            IndexReader irc = (IndexReader) ir.Clone(); // IndexReader.Open(dir, false);//ir.Clone();
             VerifyIndex(irc);
             
             ModifyNormsForF1(irc);
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
             ModifyNormsForF1(irc3);
             VerifyIndex(irc3);
             irc3.Flush();
-            irc3.Close();
+            irc3.Dispose();
         }
         
         [Test]
@@ -205,11 +205,11 @@ namespace Lucene.Net.Index
             SegmentReader.Ref r1BytesRef = r1norm.BytesRef();
             SegmentReader reader2 = (SegmentReader) reader1.Clone();
             Assert.AreEqual(2, r1norm.BytesRef().RefCount());
-            reader1.Close();
+            reader1.Dispose();
             Assert.AreEqual(1, r1BytesRef.RefCount());
             reader2.Norms("field1");
-            reader2.Close();
-            dir1.Close();
+            reader2.Dispose();
+            dir1.Dispose();
         }
         
         [Test]
@@ -253,12 +253,12 @@ namespace Lucene.Net.Index
             reader5C.SetNorm(5, "field1", 0.7f);
             Assert.AreEqual(1, reader5CCNorm.BytesRef().RefCount());
             
-            reader5C.Close();
-            reader4C.Close();
-            reader3C.Close();
-            reader2C.Close();
-            reader1.Close();
-            dir1.Close();
+            reader5C.Dispose();
+            reader4C.Dispose();
+            reader3C.Dispose();
+            reader2C.Dispose();
+            reader1.Dispose();
+            dir1.Dispose();
         }
         
         private void  CreateIndex(Directory dir)
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
             iw.MergeFactor = 3;
             iw.SetSimilarity(similarityOne);
             iw.UseCompoundFile = true;
-            iw.Close();
+            iw.Dispose();
         }
         
         private void  ModifyNormsForF1(Directory dir)
@@ -297,14 +297,14 @@ namespace Lucene.Net.Index
                 // System.out.println("setNorm i: "+i);
                 // break;
             }
-            // ir.close();
+            // ir.Dispose();
         }
         
         private void  VerifyIndex(Directory dir)
         {
             IndexReader ir = IndexReader.Open(dir, false);
             VerifyIndex(ir);
-            ir.Close();
+            ir.Dispose();
         }
         
         private void  VerifyIndex(IndexReader ir)
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
             {
                 iw.AddDocument(NewDoc());
             }
-            iw.Close();
+            iw.Dispose();
         }
         
         // create the next document

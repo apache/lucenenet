@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestReaderClosed : LuceneTestCase
 	{
@@ -36,36 +37,36 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.KEYWORD, false)).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
+		base.SetUp();
+		Dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 
 		Document doc = new Document();
-		Field field = newStringField("field", "", Field.Store.NO);
-		doc.add(field);
+		Field field = NewStringField("field", "", Field.Store.NO);
+		doc.Add(field);
 
 		// we generate aweful prefixes: good for testing.
 		// but for preflex codec, the test can be very slow, so use less iterations.
-		int num = atLeast(10);
+		int num = AtLeast(10);
 		for (int i = 0; i < num; i++)
 		{
-		  field.StringValue = TestUtil.randomUnicodeString(random(), 10);
-		  writer.addDocument(doc);
+		  field.StringValue = TestUtil.RandomUnicodeString(Random(), 10);
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
+        writer.Close();
 	  }
 
 	  public virtual void Test()
 	  {
 		Assert.IsTrue(Reader.RefCount > 0);
-		IndexSearcher searcher = newSearcher(Reader);
+		IndexSearcher searcher = NewSearcher(Reader);
 		TermRangeQuery query = TermRangeQuery.newStringRange("field", "a", "z", true, true);
-		searcher.search(query, 5);
-		Reader.close();
+		searcher.Search(query, 5);
+		Reader.Dispose();
 		try
 		{
-		  searcher.search(query, 5);
+		  searcher.Search(query, 5);
 		}
 		catch (AlreadyClosedException ace)
 		{
@@ -77,16 +78,16 @@ namespace Lucene.Net.Index
 	  public virtual void TestReaderChaining()
 	  {
 		Assert.IsTrue(Reader.RefCount > 0);
-		IndexReader wrappedReader = SlowCompositeReaderWrapper.wrap(Reader);
+		IndexReader wrappedReader = SlowCompositeReaderWrapper.Wrap(Reader);
 		wrappedReader = new ParallelAtomicReader((AtomicReader) wrappedReader);
 
-		IndexSearcher searcher = newSearcher(wrappedReader);
+		IndexSearcher searcher = NewSearcher(wrappedReader);
 		TermRangeQuery query = TermRangeQuery.newStringRange("field", "a", "z", true, true);
-		searcher.search(query, 5);
-		Reader.close(); // close original child reader
+		searcher.Search(query, 5);
+		Reader.Dispose(); // close original child reader
 		try
 		{
-		  searcher.search(query, 5);
+		  searcher.Search(query, 5);
 		}
 		catch (AlreadyClosedException ace)
 		{
@@ -95,14 +96,14 @@ namespace Lucene.Net.Index
 		finally
 		{
 		  // shutdown executor: in case of wrap-wrap-wrapping
-		  searcher.IndexReader.close();
+		  searcher.IndexReader.Dispose();
 		}
 	  }
 
 	  public override void TearDown()
 	  {
-		Dir.close();
-		base.tearDown();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 	}
 

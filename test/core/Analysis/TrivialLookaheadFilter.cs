@@ -31,9 +31,9 @@ namespace Lucene.Net.Analysis
 	public sealed class TrivialLookaheadFilter : LookaheadTokenFilter<TestPosition>
 	{
 
-	  private readonly CharTermAttribute TermAtt = AddAttribute<CharTermAttribute>();
-	  private readonly PositionIncrementAttribute PosIncAtt = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly OffsetAttribute OffsetAtt = addAttribute(typeof(OffsetAttribute));
+	  private readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+	  private readonly PositionIncrementAttribute PosIncAtt;// = addAttribute(typeof(PositionIncrementAttribute));
+	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
 	  private int InsertUpto;
 
@@ -73,8 +73,8 @@ namespace Lucene.Net.Analysis
 		  ClearAttributes();
 		  TermAtt.SetEmpty();
 		  PosIncAtt.PositionIncrement = 0;
-		  TermAtt.Append(positions.get(OutputPos).Fact);
-		  OffsetAtt.SetOffset(positions.get(OutputPos).startOffset, positions.get(OutputPos + 1).endOffset);
+		  TermAtt.Append(positions.Get(OutputPos).GetFact());
+		  OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, positions.Get(OutputPos + 1).EndOffset);
 		  InsertUpto = OutputPos;
 		}
 	  }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis
 		for (int x = 0; x < facts.Count; x++)
 		{
 		  // sentenceTokens is just relative to sentence, positions is absolute.
-		  positions.get(OutputPos + x).Fact = facts[x];
+		  positions.Get(OutputPos + x).Fact = facts[x];
 		}
 	  }
 	}

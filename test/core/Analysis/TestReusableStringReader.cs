@@ -29,17 +29,17 @@ namespace Lucene.Net.Analysis
 	  {
 		ReusableStringReader reader = new ReusableStringReader();
 		Assert.AreEqual(-1, reader.Read());
-		Assert.AreEqual(-1, reader.Read(new char[1]));
+		Assert.AreEqual(-1, reader.Read(new char[1], 0, 1));
 		Assert.AreEqual(-1, reader.Read(new char[2], 1, 1));
 		Assert.AreEqual(-1, reader.Read(CharBuffer.wrap(new char[2])));
 
 		reader.Value = "foobar";
 		char[] buf = new char[4];
-		Assert.AreEqual(4, reader.Read(buf));
+		Assert.AreEqual(4, reader.Read(buf, 0, 4));
 		Assert.AreEqual("foob", new string(buf));
-		Assert.AreEqual(2, reader.Read(buf));
+		Assert.AreEqual(2, reader.Read(buf, 0, 2));
 		Assert.AreEqual("ar", new string(buf, 0, 2));
-		Assert.AreEqual(-1, reader.Read(buf));
+		Assert.AreEqual(-1, reader.Read(buf, 2, 0));
 		reader.Close();
 
 		reader.Value = "foobar";
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual(2, reader.Read(CharBuffer.wrap(buf, 2, 2)));
 		Assert.AreEqual("ba", new string(buf, 2, 2));
 		Assert.AreEqual('r', (char) reader.Read());
-		Assert.AreEqual(-1, reader.Read(buf));
+		Assert.AreEqual(-1, reader.Read(buf, 2, 0));
 		reader.Close();
 
 		reader.Value = "foobar";

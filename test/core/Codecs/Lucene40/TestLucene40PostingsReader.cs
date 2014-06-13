@@ -29,14 +29,15 @@ namespace Lucene.Net.Codecs.Lucene40
 	using FieldType = Lucene.Net.Document.FieldType;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using BeforeClass = org.junit.BeforeClass;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	public class TestLucene40PostingsReader : LuceneTestCase
 	{
@@ -49,8 +50,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass()
+      [SetUp]
 	  public static void BeforeClass()
 	  {
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
@@ -62,10 +62,10 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// </summary>
 	  public virtual void TestPostings()
 	  {
-		Directory dir = newFSDirectory(createTempDir("postings"));
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.Codec = Codec.forName("Lucene40");
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		Directory dir = NewFSDirectory(CreateTempDir("postings"));
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwc.SetCodec(Codec.ForName("Lucene40"));
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
 		Document doc = new Document();
 
@@ -73,59 +73,59 @@ namespace Lucene.Net.Codecs.Lucene40
 		FieldType idType = new FieldType(StringField.TYPE_NOT_STORED);
 		idType.StoreTermVectors = true;
 		Field idField = new Field("id", "", idType);
-		doc.add(idField);
+		doc.Add(idField);
 
 		// title field: short text field
 		FieldType titleType = new FieldType(TextField.TYPE_NOT_STORED);
 		titleType.StoreTermVectors = true;
 		titleType.StoreTermVectorPositions = true;
 		titleType.StoreTermVectorOffsets = true;
-		titleType.IndexOptions = IndexOptions();
+		titleType.IndexOptionsValue = IndexOptions();
 		Field titleField = new Field("title", "", titleType);
-		doc.add(titleField);
+		doc.Add(titleField);
 
 		// body field: long text field
 		FieldType bodyType = new FieldType(TextField.TYPE_NOT_STORED);
 		bodyType.StoreTermVectors = true;
 		bodyType.StoreTermVectorPositions = true;
 		bodyType.StoreTermVectorOffsets = true;
-		bodyType.IndexOptions = IndexOptions();
+		bodyType.IndexOptionsValue = IndexOptions();
 		Field bodyField = new Field("body", "", bodyType);
-		doc.add(bodyField);
+		doc.Add(bodyField);
 
-		int numDocs = atLeast(1000);
+		int numDocs = AtLeast(1000);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  idField.StringValue = Convert.ToString(i);
 		  titleField.StringValue = FieldValue(1);
 		  bodyField.StringValue = FieldValue(3);
-		  iw.addDocument(doc);
-		  if (random().Next(20) == 0)
+		  iw.AddDocument(doc);
+		  if (Random().Next(20) == 0)
 		  {
-			iw.deleteDocuments(new Term("id", Convert.ToString(i)));
+			iw.DeleteDocuments(new Term("id", Convert.ToString(i)));
 		  }
 		}
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
 		  // delete 1-100% of docs
-		  iw.deleteDocuments(new Term("title", Terms[random().Next(Terms.Length)]));
+		  iw.DeleteDocuments(new Term("title", Terms[Random().Next(Terms.Length)]));
 		}
-		iw.close();
-		dir.close(); // checkindex
+		iw.Close();
+		dir.Dispose(); // checkindex
 	  }
 
-	  internal virtual IndexOptions IndexOptions()
+      internal virtual IndexOptions_e IndexOptions()
 	  {
-		switch (random().Next(4))
+		switch (Random().Next(4))
 		{
 		  case 0:
-			  return IndexOptions.DOCS_ONLY;
+			  return IndexOptions_e.DOCS_ONLY;
 		  case 1:
-			  return IndexOptions.DOCS_AND_FREQS;
+              return IndexOptions_e.DOCS_AND_FREQS;
 		  case 2:
-			  return IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+              return IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 		  default:
-			  return IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+              return IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		}
 	  }
 
@@ -133,17 +133,17 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 		List<string> shuffled = new List<string>();
 		StringBuilder sb = new StringBuilder();
-		int i = random().Next(Terms.Length);
+		int i = Random().Next(Terms.Length);
 		while (i < Terms.Length)
 		{
-		  int tf = TestUtil.Next(random(), 1, maxTF);
+		  int tf = TestUtil.NextInt(Random(), 1, maxTF);
 		  for (int j = 0; j < tf; j++)
 		  {
 			shuffled.Add(Terms[i]);
 		  }
 		  i++;
 		}
-		Collections.shuffle(shuffled, random());
+		Collections.shuffle(shuffled, Random());
 		foreach (string term in shuffled)
 		{
 		  sb.Append(term);

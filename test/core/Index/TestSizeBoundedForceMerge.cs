@@ -24,6 +24,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestSizeBoundedForceMerge : LuceneTestCase
 	{
@@ -40,20 +41,20 @@ namespace Lucene.Net.Index
 		  Document doc = new Document();
 		  if (withID)
 		  {
-			doc.add(new StringField("id", "" + i, Field.Store.NO));
+			doc.Add(new StringField("id", "" + i, Field.Store.NO));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
+		writer.Commit();
 	  }
 
 	  private static IndexWriterConfig NewWriterConfig()
 	  {
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, null);
-		conf.MaxBufferedDocs = IndexWriterConfig.DISABLE_AUTO_FLUSH;
-		conf.RAMBufferSizeMB = IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB;
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+		conf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
+		conf.SetRAMBufferSizeMB(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
 		// prevent any merges by default.
-		conf.MergePolicy = NoMergePolicy.COMPOUND_FILES;
+		conf.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 		return conf;
 	  }
 
@@ -71,25 +72,25 @@ namespace Lucene.Net.Index
 		  int numDocs = i == 7 ? 30 : 1;
 		  AddDocs(writer, numDocs);
 		}
-		writer.close();
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		double min = sis.info(0).sizeInBytes();
+		sis.Read(dir);
+		double min = sis.Info(0).SizeInBytes();
 
 		conf = NewWriterConfig();
 		LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();
 		lmp.MaxMergeMBForForcedMerge = (min + 1) / (1 << 20);
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// Should only be 3 segments in the index, because one of them exceeds the size limit
 		sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(3, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(3, sis.Size());
 	  }
 
 	  public virtual void TestNumDocsLimit()
@@ -109,21 +110,21 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 3);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// Should only be 3 segments in the index, because one of them exceeds the size limit
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(3, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(3, sis.Size());
 	  }
 
 	  public virtual void TestLastSegmentTooLarge()
@@ -138,20 +139,20 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 5);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(2, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(2, sis.Size());
 	  }
 
 	  public virtual void TestFirstSegmentTooLarge()
@@ -166,20 +167,20 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 3);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(2, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(2, sis.Size());
 	  }
 
 	  public virtual void TestAllSegmentsSmall()
@@ -194,20 +195,20 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 3);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(1, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(1, sis.Size());
 	  }
 
 	  public virtual void TestAllSegmentsLarge()
@@ -221,20 +222,20 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 3);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 2;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(3, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(3, sis.Size());
 	  }
 
 	  public virtual void TestOneLargeOneSmall()
@@ -249,20 +250,20 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 5);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(4, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(4, sis.Size());
 	  }
 
 	  public virtual void TestMergeFactor()
@@ -280,23 +281,23 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 		AddDocs(writer, 3);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
 		lmp.MergeFactor = 2;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// Should only be 4 segments in the index, because of the merge factor and
 		// max merge docs settings.
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(4, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(4, sis.Size());
 	  }
 
 	  public virtual void TestSingleMergeableSegment()
@@ -311,23 +312,23 @@ namespace Lucene.Net.Index
 		AddDocs(writer, 3);
 
 		// delete the last document, so that the last segment is merged.
-		writer.deleteDocuments(new Term("id", "10"));
-		writer.close();
+		writer.DeleteDocuments(new Term("id", "10"));
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// Verify that the last segment does not have deletions.
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(3, sis.size());
-		Assert.IsFalse(sis.info(2).hasDeletions());
+		sis.Read(dir);
+		Assert.AreEqual(3, sis.Size());
+		Assert.IsFalse(sis.Info(2).HasDeletions());
 	  }
 
 	  public virtual void TestSingleNonMergeableSegment()
@@ -339,21 +340,21 @@ namespace Lucene.Net.Index
 
 		AddDocs(writer, 3, true);
 
-		writer.close();
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 3;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// Verify that the last segment does not have deletions.
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(1, sis.size());
+		sis.Read(dir);
+		Assert.AreEqual(1, sis.Size());
 	  }
 
 	  public virtual void TestSingleMergeableTooLargeSegment()
@@ -367,23 +368,23 @@ namespace Lucene.Net.Index
 
 		// delete the last document
 
-		writer.deleteDocuments(new Term("id", "4"));
-		writer.close();
+		writer.DeleteDocuments(new Term("id", "4"));
+		writer.Dispose();
 
 		conf = NewWriterConfig();
 		LogMergePolicy lmp = new LogDocMergePolicy();
 		lmp.MaxMergeDocs = 2;
-		conf.MergePolicy = lmp;
+		conf.SetMergePolicy(lmp);
 
 		writer = new IndexWriter(dir, conf);
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// Verify that the last segment does not have deletions.
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(dir);
-		Assert.AreEqual(1, sis.size());
-		Assert.IsTrue(sis.info(0).hasDeletions());
+		sis.Read(dir);
+		Assert.AreEqual(1, sis.Size());
+		Assert.IsTrue(sis.Info(0).HasDeletions());
 	  }
 
 	}

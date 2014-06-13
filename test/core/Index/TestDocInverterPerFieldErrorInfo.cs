@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
 
 
 	/// <summary>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testInfoStreamGetsFieldName() throws Exception
 	  public virtual void TestInfoStreamGetsFieldName()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		IndexWriter writer;
 		IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
 		ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
@@ -93,28 +93,28 @@ namespace Lucene.Net.Index
 		c.InfoStream = printStreamInfoStream;
 		writer = new IndexWriter(dir, c);
 		Document doc = new Document();
-		doc.add(newField("distinctiveFieldName", "aaa ", StoredTextType));
+		doc.Add(NewField("distinctiveFieldName", "aaa ", StoredTextType));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail("Failed to fail.");
 		}
 		catch (BadNews badNews)
 		{
-		  infoPrintStream.flush();
+		  infoPrintStream.Flush();
 		  string infoStream = new string(infoBytes.toByteArray(), IOUtils.UTF_8);
 		  Assert.IsTrue(infoStream.Contains("distinctiveFieldName"));
 		}
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoExtraNoise() throws Exception
 	  public virtual void TestNoExtraNoise()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		IndexWriter writer;
 		IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
 		ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
@@ -123,21 +123,21 @@ namespace Lucene.Net.Index
 		c.InfoStream = printStreamInfoStream;
 		writer = new IndexWriter(dir, c);
 		Document doc = new Document();
-		doc.add(newField("boringFieldName", "aaa ", StoredTextType));
+		doc.Add(NewField("boringFieldName", "aaa ", StoredTextType));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 		catch (BadNews badNews)
 		{
 		  Assert.Fail("Unwanted exception");
 		}
-		infoPrintStream.flush();
+		infoPrintStream.Flush();
 		string infoStream = new string(infoBytes.toByteArray(), IOUtils.UTF_8);
 		Assert.IsFalse(infoStream.Contains("boringFieldName"));
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	}

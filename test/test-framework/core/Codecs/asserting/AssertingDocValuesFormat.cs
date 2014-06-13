@@ -75,10 +75,10 @@ namespace Lucene.Net.Codecs.asserting
 		  this.MaxDoc = maxDoc;
 		}
 
-		public override void AddNumericField(FieldInfo field, IEnumerable<Number> values)
+		public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
 		{
 		  int count = 0;
-		  foreach (Number v in values)
+          foreach (long v in values)
 		  {
 			count++;
 		  }
@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.asserting
 		  @in.AddBinaryField(field, values);
 		}
 
-		public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
+        public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 		{
 		  int valueCount = 0;
 		  BytesRef lastValue = null;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.asserting
 		  FixedBitSet seenOrds = new FixedBitSet(valueCount);
 
 		  int count = 0;
-		  foreach (Number v in docToOrd)
+          foreach (long v in docToOrd)
 		  {
 			Debug.Assert(v != null);
 			int ord = (int)v;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.asserting
 		  @in.AddSortedField(field, values, docToOrd);
 		}
 
-		public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+        public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 		{
 		  long valueCount = 0;
 		  BytesRef lastValue = null;
@@ -158,8 +158,8 @@ namespace Lucene.Net.Codecs.asserting
 		  int docCount = 0;
 		  long ordCount = 0;
 		  LongBitSet seenOrds = new LongBitSet(valueCount);
-		  IEnumerator<Number> ordIterator = ords.GetEnumerator();
-		  foreach (Number v in docToOrdCount)
+          IEnumerator<long> ordIterator = ords.GetEnumerator();
+          foreach (long v in docToOrdCount)
 		  {
 			Debug.Assert(v != null);
 			int count = (int)v;
@@ -170,18 +170,17 @@ namespace Lucene.Net.Codecs.asserting
 			long lastOrd = -1;
 			for (int i = 0; i < count; i++)
 			{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  Number o = ordIterator.next();
+              ordIterator.MoveNext();
+			  long o = ordIterator.Current;
 			  Debug.Assert(o != null);
 			  long ord = (long)o;
 			  Debug.Assert(ord >= 0 && ord < valueCount);
 			  Debug.Assert(ord > lastOrd, "ord=" + ord + ",lastOrd=" + lastOrd);
-			  seenOrds.set(ord);
+			  seenOrds.Set(ord);
 			  lastOrd = ord;
 			}
 		  }
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Debug.Assert(ordIterator.hasNext() == false);
+		  Debug.Assert(ordIterator.MoveNext() == false);
 
 		  Debug.Assert(docCount == MaxDoc);
 		  Debug.Assert(seenOrds.Cardinality() == valueCount);
@@ -193,7 +192,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 	  }
 
@@ -208,10 +207,10 @@ namespace Lucene.Net.Codecs.asserting
 		  this.MaxDoc = maxDoc;
 		}
 
-		public override void AddNumericField(FieldInfo field, IEnumerable<Number> values)
+        public override void AddNumericField(FieldInfo field, IEnumerable<long> values)
 		{
 		  int count = 0;
-		  foreach (Number v in values)
+          foreach (long v in values)
 		  {
 			Debug.Assert(v != null);
 			count++;
@@ -223,7 +222,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 
 		public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
@@ -242,38 +241,34 @@ namespace Lucene.Net.Codecs.asserting
 		}
 	  }
 
-	  private static void checkIterator<T>(IEnumerator<T> iterator, long expectedSize, bool allowNull)
+	  private static void CheckIterator<T>(IEnumerator<T> iterator, long expectedSize, bool allowNull)
 	  {
 		for (long i = 0; i < expectedSize; i++)
 		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  bool hasNext = iterator.hasNext();
+		  bool hasNext = iterator.MoveNext();
 		  Debug.Assert(hasNext);
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  T v = iterator.next();
+		  T v = iterator.Current;
 		  Debug.Assert(allowNull || v != null);
 		  try
 		  {
-			iterator.remove();
+			iterator.Reset();
 			throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
 		  }
-		  catch (System.NotSupportedException expected)
+		  catch (System.NotSupportedException)
 		  {
 			// ok
 		  }
 		}
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Debug.Assert(!iterator.hasNext());
-		try
+		Debug.Assert(!iterator.MoveNext());
+		/*try
 		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  iterator.next();
+		  //iterator.next();
           throw new InvalidOperationException("broken iterator (allows next() when hasNext==false) " + iterator);
 		}
-		catch (NoSuchElementException expected)
+		catch (Exception)
 		{
 		  // ok
-		}
+		}*/
 	  }
 
 	  internal class AssertingDocValuesProducer : DocValuesProducer
@@ -330,7 +325,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 
 		public override long RamBytesUsed()

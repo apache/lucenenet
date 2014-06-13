@@ -353,8 +353,6 @@ namespace Lucene.Net.Index
 	  {
 		EnsureOpen();
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long tStart = System.currentTimeMillis();
 		long tStart = DateTime.Now.Millisecond;
 
 		if (infoStream.IsEnabled("IW"))
@@ -482,8 +480,6 @@ namespace Lucene.Net.Index
 		{
 			lock (this)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerMap.get(info);
 			  ReadersAndUpdates rld = ReaderMap[info];
 			  if (rld != null)
 			  {
@@ -646,8 +642,6 @@ namespace Lucene.Net.Index
 			{
 			  foreach (SegmentCommitInfo info in infos)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerMap.get(info);
 				ReadersAndUpdates rld = ReaderMap[info];
 				if (rld != null)
 				{
@@ -734,8 +728,6 @@ namespace Lucene.Net.Index
 		EnsureOpen(false);
 		int delCount = info.DelCount;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, false);
 		ReadersAndUpdates rld = readerPool.Get(info, false);
 		if (rld != null)
 		{
@@ -954,8 +946,6 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final Lucene.Net.Index.FieldInfos.FieldNumbers map = new Lucene.Net.Index.FieldInfos.FieldNumbers();
 			FieldNumbers map = new FieldNumbers();
     
 			foreach (SegmentCommitInfo info in SegmentInfos)
@@ -1040,7 +1030,8 @@ namespace Lucene.Net.Index
 	  /// <exception cref="IOException"> if there is a low-level IO error </exception>
 	  public void Dispose()
 	  {
-		Close(true);
+          Dispose(true);
+          GC.SuppressFinalize(this);
 	  }
 
 	  /// <summary>
@@ -1065,7 +1056,7 @@ namespace Lucene.Net.Index
 	  /// running merges to abort, wait until those merges have
 	  /// finished (which should be at most a few seconds), and
 	  /// then return. </param>
-	  public virtual void Close(bool waitForMerges)
+	  public virtual void Dispose(bool waitForMerges)
 	  {
 
 		// Ensure that only one thread actually gets to do the

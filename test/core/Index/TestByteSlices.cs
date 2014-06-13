@@ -3,32 +3,34 @@ using System;
 namespace Lucene.Net.Index
 {
 
-	/// <summary>
-	/// Licensed under the Apache License, Version 2.0 (the "License");
-	/// you may not use this file except in compliance with the License.
-	/// You may obtain a copy of the License at
-	/// 
-	///     http://www.apache.org/licenses/LICENSE-2.0
-	/// 
-	/// Unless required by applicable law or agreed to in writing, software
-	/// distributed under the License is distributed on an "AS IS" BASIS,
-	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	/// See the License for the specific language governing permissions and
-	/// limitations under the License.
-	/// </summary>
+    using NUnit.Framework;
+    /// <summary>
+    /// Licensed under the Apache License, Version 2.0 (the "License");
+    /// you may not use this file except in compliance with the License.
+    /// You may obtain a copy of the License at
+    /// 
+    ///     http://www.apache.org/licenses/LICENSE-2.0
+    /// 
+    /// Unless required by applicable law or agreed to in writing, software
+    /// distributed under the License is distributed on an "AS IS" BASIS,
+    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    /// See the License for the specific language governing permissions and
+    /// limitations under the License.
+    /// </summary>
 
-	using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using RecyclingByteBlockAllocator = Lucene.Net.Util.RecyclingByteBlockAllocator;
+    using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using RecyclingByteBlockAllocator = Lucene.Net.Util.RecyclingByteBlockAllocator;
+    using Lucene.Net.Randomized.Generators;
 
 	public class TestByteSlices : LuceneTestCase
 	{
 
 	  public virtual void TestBasic()
 	  {
-		ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, random().Next(100)));
+		ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));
 
-		int NUM_STREAM = atLeast(100);
+		int NUM_STREAM = AtLeast(100);
 
 		ByteSliceWriter writer = new ByteSliceWriter(pool);
 
@@ -47,17 +49,17 @@ namespace Lucene.Net.Index
 			counters[stream] = 0;
 		  }
 
-		  int num = atLeast(3000);
+		  int num = AtLeast(3000);
 		  for (int iter = 0; iter < num; iter++)
 		  {
 			int stream;
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  stream = random().Next(3);
+			  stream = Random().Next(3);
 			}
 			else
 			{
-			  stream = random().Next(NUM_STREAM);
+			  stream = Random().Next(NUM_STREAM);
 			}
 
 			if (VERBOSE)
@@ -67,27 +69,27 @@ namespace Lucene.Net.Index
 
 			if (starts[stream] == -1)
 			{
-			  int spot = pool.newSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
-			  starts[stream] = uptos[stream] = spot + pool.byteOffset;
+			  int spot = pool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
+			  starts[stream] = uptos[stream] = spot + pool.ByteOffset;
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("  init to " + starts[stream]);
 			  }
 			}
 
-			writer.init(uptos[stream]);
+			writer.Init(uptos[stream]);
 			int numValue;
-			if (random().Next(10) == 3)
+			if (Random().Next(10) == 3)
 			{
-			  numValue = random().Next(100);
+			  numValue = Random().Next(100);
 			}
-			else if (random().Next(5) == 3)
+			else if (Random().Next(5) == 3)
 			{
-			  numValue = random().Next(3);
+			  numValue = Random().Next(3);
 			}
 			else
 			{
-			  numValue = random().Next(20);
+			  numValue = Random().Next(20);
 			}
 
 			for (int j = 0;j < numValue;j++)
@@ -97,8 +99,8 @@ namespace Lucene.Net.Index
 				Console.WriteLine("    write " + (counters[stream] + j));
 			  }
 			  // write some large (incl. negative) ints:
-			  writer.writeVInt(random().Next());
-			  writer.writeVInt(counters[stream] + j);
+			  writer.WriteVInt(Random().Next());
+			  writer.WriteVInt(counters[stream] + j);
 			}
 			counters[stream] += numValue;
 			uptos[stream] = writer.Address;
@@ -117,16 +119,16 @@ namespace Lucene.Net.Index
 
 			if (starts[stream] != -1 && starts[stream] != uptos[stream])
 			{
-			  reader.init(pool, starts[stream], uptos[stream]);
+			  reader.Init(pool, starts[stream], uptos[stream]);
 			  for (int j = 0;j < counters[stream];j++)
 			  {
-				reader.readVInt();
-				Assert.AreEqual(j, reader.readVInt());
+				reader.ReadVInt();
+				Assert.AreEqual(j, reader.ReadVInt());
 			  }
 			}
 		  }
 
-		  pool.reset();
+		  pool.Reset();
 		}
 	  }
 	}

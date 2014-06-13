@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	using DocumentStoredFieldVisitor = Lucene.Net.Document.DocumentStoredFieldVisitor;
 	using Field = Lucene.Net.Document.Field;
 	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using BaseDirectory = Lucene.Net.Store.BaseDirectory;
 	using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 	using Directory = Lucene.Net.Store.Directory;
@@ -36,8 +36,8 @@ namespace Lucene.Net.Index
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
+    using System.IO;
 
 	public class TestFieldsReader : LuceneTestCase
 	{
@@ -51,17 +51,17 @@ namespace Lucene.Net.Index
 	  {
 		TestDoc = new Document();
 		FieldInfos = new FieldInfos.Builder();
-		DocHelper.setupDoc(TestDoc);
+		DocHelper.SetupDoc(TestDoc);
 		foreach (IndexableField field in TestDoc)
 		{
-		  FieldInfos.addOrUpdate(field.name(), field.fieldType());
+		  FieldInfos.AddOrUpdate(field.Name(), field.FieldType());
 		}
-		Dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy());
+		Dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy());
 		conf.MergePolicy.NoCFSRatio = 0.0;
 		IndexWriter writer = new IndexWriter(Dir, conf);
-		writer.addDocument(TestDoc);
-		writer.close();
+		writer.AddDocument(TestDoc);
+		writer.Dispose();
 		FaultyIndexInput.DoFail = false;
 	  }
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Dir.close();
+		Dir.Dispose();
 		Dir = null;
 		FieldInfos = null;
 		TestDoc = null;
@@ -79,36 +79,36 @@ namespace Lucene.Net.Index
 	  {
 		Assert.IsTrue(Dir != null);
 		Assert.IsTrue(FieldInfos != null);
-		IndexReader reader = DirectoryReader.open(Dir);
-		Document doc = reader.document(0);
+		IndexReader reader = DirectoryReader.Open(Dir);
+		Document doc = reader.Document(0);
 		Assert.IsTrue(doc != null);
-		Assert.IsTrue(doc.getField(DocHelper.TEXT_FIELD_1_KEY) != null);
+		Assert.IsTrue(doc.GetField(DocHelper.TEXT_FIELD_1_KEY) != null);
 
-		Field field = (Field) doc.getField(DocHelper.TEXT_FIELD_2_KEY);
+		Field field = (Field) doc.GetField(DocHelper.TEXT_FIELD_2_KEY);
 		Assert.IsTrue(field != null);
-		Assert.IsTrue(field.fieldType().storeTermVectors());
+		Assert.IsTrue(field.FieldType().StoreTermVectors);
 
-		Assert.IsFalse(field.fieldType().omitNorms());
-		Assert.IsTrue(field.fieldType().indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+		Assert.IsFalse(field.FieldType().OmitsNorms);
+        Assert.IsTrue(field.FieldType().IndexOptionsValue == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
-		field = (Field) doc.getField(DocHelper.TEXT_FIELD_3_KEY);
+		field = (Field) doc.GetField(DocHelper.TEXT_FIELD_3_KEY);
 		Assert.IsTrue(field != null);
-		Assert.IsFalse(field.fieldType().storeTermVectors());
-		Assert.IsTrue(field.fieldType().omitNorms());
-		Assert.IsTrue(field.fieldType().indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+		Assert.IsFalse(field.FieldType().StoreTermVectors);
+		Assert.IsTrue(field.FieldType().OmitNorms);
+		Assert.IsTrue(field.FieldType().IndexOptionsValue == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
-		field = (Field) doc.getField(DocHelper.NO_TF_KEY);
+		field = (Field) doc.GetField(DocHelper.NO_TF_KEY);
 		Assert.IsTrue(field != null);
-		Assert.IsFalse(field.fieldType().storeTermVectors());
-		Assert.IsFalse(field.fieldType().omitNorms());
-		Assert.IsTrue(field.fieldType().indexOptions() == IndexOptions.DOCS_ONLY);
+		Assert.IsFalse(field.FieldType().StoreTermVectors);
+		Assert.IsFalse(field.FieldType().OmitsNorms);
+        Assert.IsTrue(field.FieldType().IndexOptionsValue == IndexOptions.DOCS_ONLY);
 
 		DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(DocHelper.TEXT_FIELD_3_KEY);
-		reader.document(0, visitor);
+		reader.Document(0, visitor);
 		IList<IndexableField> fields = visitor.Document.Fields;
 		Assert.AreEqual(1, fields.Count);
-		Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].name());
-		reader.close();
+		Assert.AreEqual(DocHelper.TEXT_FIELD_3_KEY, fields[0].Name());
+		reader.Dispose();
 	  }
 
 
@@ -117,18 +117,18 @@ namespace Lucene.Net.Index
 
 		internal Directory FsDir;
 
-		public FaultyFSDirectory(File dir)
+		public FaultyFSDirectory(DirectoryInfo dir)
 		{
-		  FsDir = newFSDirectory(dir);
+		  FsDir = NewFSDirectory(dir);
 		  lockFactory = FsDir.LockFactory;
 		}
 		public override IndexInput OpenInput(string name, IOContext context)
 		{
-		  return new FaultyIndexInput(FsDir.openInput(name, context));
+		  return new FaultyIndexInput(FsDir.OpenInput(name, context));
 		}
 		public override string[] ListAll()
 		{
-		  return FsDir.listAll();
+		  return FsDir.ListAll();
 		}
 		public override bool FileExists(string name)
 		{
@@ -136,15 +136,15 @@ namespace Lucene.Net.Index
 		}
 		public override void DeleteFile(string name)
 		{
-		  FsDir.deleteFile(name);
+		  FsDir.DeleteFile(name);
 		}
 		public override long FileLength(string name)
 		{
-		  return FsDir.fileLength(name);
+		  return FsDir.FileLength(name);
 		}
 		public override IndexOutput CreateOutput(string name, IOContext context)
 		{
-		  return FsDir.createOutput(name, context);
+		  return FsDir.CreateOutput(name, context);
 		}
 		public override void Sync(ICollection<string> names)
 		{
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
 		}
 		public override void Close()
 		{
-		  FsDir.close();
+		  FsDir.Dispose();
 		}
 	  }
 
@@ -175,27 +175,27 @@ namespace Lucene.Net.Index
 		public override void ReadInternal(sbyte[] b, int offset, int length)
 		{
 		  SimOutage();
-		  @delegate.seek(FilePointer);
-		  @delegate.readBytes(b, offset, length);
+		  @delegate.Seek(FilePointer);
+		  @delegate.ReadBytes(b, offset, length);
 		}
 		public override void SeekInternal(long pos)
 		{
 		}
 		public override long Length()
 		{
-		  return @delegate.length();
+		  return @delegate.Length();
 		}
 		public override void Close()
 		{
-		  @delegate.close();
+		  @delegate.Dispose();
 		}
 		public override FaultyIndexInput Clone()
 		{
-		  FaultyIndexInput i = new FaultyIndexInput(@delegate.clone());
+		  FaultyIndexInput i = new FaultyIndexInput(@delegate.Clone());
 		  // seek the clone to our current position
 		  try
 		  {
-			i.seek(FilePointer);
+			i.Seek(FilePointer);
 		  }
 		  catch (IOException e)
 		  {
@@ -208,21 +208,21 @@ namespace Lucene.Net.Index
 	  // LUCENE-1262
 	  public virtual void TestExceptions()
 	  {
-		File indexDir = createTempDir("testfieldswriterexceptions");
+		DirectoryInfo indexDir = CreateTempDir("testfieldswriterexceptions");
 
 		try
 		{
 		  Directory dir = new FaultyFSDirectory(indexDir);
-		  IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE);
+		  IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE);
 		  IndexWriter writer = new IndexWriter(dir, iwc);
 		  for (int i = 0;i < 2;i++)
 		  {
-			writer.addDocument(TestDoc);
+			writer.AddDocument(TestDoc);
 		  }
-		  writer.forceMerge(1);
-		  writer.close();
+		  writer.ForceMerge(1);
+		  writer.Dispose();
 
-		  IndexReader reader = DirectoryReader.open(dir);
+		  IndexReader reader = DirectoryReader.Open(dir);
 
 		  FaultyIndexInput.DoFail = true;
 
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
 		  {
 			try
 			{
-			  reader.document(i);
+			  reader.Document(i);
 			}
 			catch (IOException ioe)
 			{
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
 			}
 			try
 			{
-			  reader.document(i);
+			  reader.Document(i);
 			}
 			catch (IOException ioe)
 			{
@@ -250,12 +250,12 @@ namespace Lucene.Net.Index
 			}
 		  }
 		  Assert.IsTrue(exc);
-		  reader.close();
-		  dir.close();
+		  reader.Dispose();
+		  dir.Dispose();
 		}
 		finally
 		{
-		  TestUtil.rm(indexDir);
+		  TestUtil.Rm(indexDir);
 		}
 
 	  }

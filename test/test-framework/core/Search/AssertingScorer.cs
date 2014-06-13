@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 
 	  // we need to track scorers using a weak hash map because otherwise we
 	  // could loose references because of eg.
-	  // AssertingScorer.score(Collector) which needs to delegate to work correctly
+	  // AssertingScorer.Score(Collector) which needs to delegate to work correctly
 	  private static IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = Collections.synchronizedMap(new WeakHashMap<Scorer, WeakReference<AssertingScorer>>());
 
 	  public static Scorer Wrap(Random random, Scorer other)
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 		if (assertingScorer == null)
 		{
 		  // can happen in case of memory pressure or if
-		  // scorer1.score(collector) calls
+		  // scorer1.Score(collector) calls
 		  // collector.setScorer(scorer2) with scorer1 != scorer2, such as
 		  // BooleanScorer. In that case we can't enable all assertions
 		  return new AssertingScorer(random, other);
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 	  internal readonly Scorer @in;
 	  internal readonly AssertingAtomicReader.AssertingDocsEnum DocsEnumIn;
 
-	  private AssertingScorer(Random random, Scorer @in) : base(@in.weight)
+	  private AssertingScorer(Random random, Scorer @in) : base(@in.Weight)
 	  {
 		this.Random = random;
 		this.@in = @in;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
 	  public override float Score()
 	  {
 		Debug.Assert(Iterating());
-		float score = @in.score();
+		float score = @in.Score();
 		Debug.Assert(!float.IsNaN(score));
 		Debug.Assert(!float.IsNaN(score));
 		return score;
@@ -123,12 +123,12 @@ namespace Lucene.Net.Search
 	  public override int Freq()
 	  {
 		Debug.Assert(Iterating());
-		return @in.freq();
+		return @in.Freq();
 	  }
 
 	  public override int DocID()
 	  {
-		return @in.docID();
+		return @in.DocID();
 	  }
 
 	  public override int NextDoc()
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
 
 	  public override long Cost()
 	  {
-		return @in.cost();
+		return @in.Cost();
 	  }
 
 	  public override string ToString()

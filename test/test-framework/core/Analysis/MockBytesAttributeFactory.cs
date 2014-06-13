@@ -20,8 +20,8 @@ namespace Lucene.Net.Analysis
 	 * limitations under the License.
 	 */
 
-	using Attribute = Lucene.Net.Util.Attribute;
-	using AttributeImpl = Lucene.Net.Util.AttributeImpl;
+    using Attribute = Lucene.Net.Util.Attribute;
+    using IAttribute = Lucene.Net.Util.IAttribute;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 	/// <summary>
@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis
 	{
 	  private readonly AttributeSource.AttributeFactory @delegate = AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
 
-	  public override AttributeImpl CreateAttributeInstance(Type attClass)
+	  public override Attribute CreateAttributeInstance(Type attClass)
 	  {
-		return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.createAttributeInstance(attClass);
+		return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? (Attribute)(IAttribute)new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance(attClass);
 	  }
 
 	}

@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
 
 	  internal static TestRuleDelegate<T> of<T>(AtomicReference<T> @delegate) where T : org.junit.rules.TestRule
 	  {
-		return new TestRuleDelegate<>(@delegate);
+		return new TestRuleDelegate<T>(@delegate);
 	  }
 	}
 

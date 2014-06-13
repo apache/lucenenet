@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Lucene45
 	/// </summary>
 	public class TestLucene45DocValuesFormat : BaseCompressingDocValuesFormatTestCase
 	{
-	  private readonly Codec Codec_Renamed = TestUtil.alwaysDocValuesFormat(new Lucene45DocValuesFormat());
+	  private readonly Codec Codec_Renamed = TestUtil.AlwaysDocValuesFormat(new Lucene45DocValuesFormat());
 
 	  protected internal override Codec Codec
 	  {

@@ -33,7 +33,8 @@ namespace Lucene.Net.Util
 	using BinaryDocValuesField = Lucene.Net.Document.BinaryDocValuesField;
 	using Document = Lucene.Net.Document.Document;
 	using DoubleField = Lucene.Net.Document.DoubleField;
-	using Field = Lucene.Net.Document.Field;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
 	using NumericType = Lucene.Net.Document.FieldType.NumericType;
 	using FloatField = Lucene.Net.Document.FloatField;
 	using IntField = Lucene.Net.Document.IntField;
@@ -51,7 +52,7 @@ namespace Lucene.Net.Util
 	using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using IndexableField = Lucene.Net.Index.IndexableField;
@@ -73,6 +74,8 @@ namespace Lucene.Net.Util
 	//using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
     using NUnit.Framework;
     using Lucene.Net.Support;
+    using Lucene.Net.Randomized.Generators;
+    using System.IO;
 
 	/// <summary>
 	/// General utility methods for Lucene unit tests. 
@@ -89,9 +92,9 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  /// <exception cref="IOException"> if any of the given files (or their subhierarchy files in case
 	  /// of directories) cannot be removed. </exception>
-	  public static void Rm(params File[] locations)
+	  public static void Rm(params FileInfo[] locations)
 	  {
-		LinkedHashSet<File> unremoved = Rm(new LinkedHashSet<File>(), locations);
+		LinkedHashSet<FileInfo> unremoved = Rm(new LinkedHashSet<FileInfo>(), locations);
 		if (!unremoved.Empty)
 		{
 		  StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
@@ -103,11 +106,11 @@ namespace Lucene.Net.Util
 		}
 	  }
 
-	  private static LinkedHashSet<File> Rm(LinkedHashSet<File> unremoved, params File[] locations)
+      private static LinkedHashSet<FileInfo> Rm(LinkedHashSet<FileInfo> unremoved, params FileInfo[] locations)
 	  {
-		foreach (File location in locations)
+		foreach (FileInfo location in locations)
 		{
-		  if (location.exists())
+		  if (location.Exists)
 		  {
 			if (location.Directory)
 			{
@@ -127,20 +130,20 @@ namespace Lucene.Net.Util
 	  /// Convenience method unzipping zipName into destDir, cleaning up 
 	  /// destDir first. 
 	  /// </summary>
-	  public static void Unzip(File zipName, File destDir)
+	  public static void Unzip(FileInfo zipName, FileInfo destDir)
 	  {
 		Rm(destDir);
 		destDir.mkdir();
 
 		ZipFile zipFile = new ZipFile(zipName);
-		IEnumerator<?> entries = zipFile.entries();
+        IEnumerator<FileInfo> entries = zipFile.entries();
 
 		while (entries.MoveNext())
 		{
 		  ZipEntry entry = entries.Current;
 
 		  InputStream @in = zipFile.getInputStream(entry);
-		  File targetFile = new File(destDir, entry.Name);
+          FileInfo targetFile = new FileInfo(destDir, entry.Name);
 		  if (entry.Directory)
 		  {
 			// allow unzipping with directory structure
@@ -225,7 +228,7 @@ namespace Lucene.Net.Util
 	  {
 		foreach (AtomicReaderContext context in reader.Leaves())
 		{
-		  CheckReader(context.reader(), true);
+		  CheckReader((AtomicReader)context.Reader(), true);
 		}
 	  }
 
@@ -260,7 +263,7 @@ namespace Lucene.Net.Util
 	  /// start and end are BOTH inclusive </summary>
 	  public static int NextInt(Random r, int start, int end)
 	  {
-		return RandomInts.randomIntBetween(r, start, end);
+		return RandomInts.NextIntBetween(r, start, end);
 	  }
 
 	  /// <summary>
@@ -420,9 +423,9 @@ namespace Lucene.Net.Util
 		StringBuilder regexp = new StringBuilder(maxLength);
 		for (int i = NextInt(r, 0, maxLength); i > 0; i--)
 		{
-		  if (r.nextBoolean())
+		  if (r.NextBoolean())
 		  {
-			regexp.Append((char) RandomInts.randomIntBetween(r, 'a', 'z'));
+			regexp.Append((char) RandomInts.NextIntBetween(r, 'a', 'z'));
 		  }
 		  else
 		  {
@@ -616,8 +619,8 @@ namespace Lucene.Net.Util
 		int pos = 0;
 		while (pos < str.Length)
 		{
-		  int codePoint = str.codePointAt(pos);
-		  pos += char.charCount(codePoint);
+		  int codePoint = str[pos];
+		  pos += Character.CharCount(codePoint);
 		  switch (NextInt(random, 0, 2))
 		  {
 			case 0:
@@ -886,14 +889,14 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Checks some basic behaviour of an AttributeImpl </summary>
 	  /// <param name="reflectedValues"> contains a map with "AttributeClass#key" as values </param>
-	  public static void assertAttributeReflection<T>(AttributeImpl att, IDictionary<string, T> reflectedValues)
+	  public static void AssertAttributeReflection<T>(Attribute att, IDictionary<string, T> reflectedValues)
 	  {
 		IDictionary<string, object> map = new Dictionary<string, object>();
 		att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
 		Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
 	  }
 
-	  private class AttributeReflectorAnonymousInnerClassHelper : AttributeReflector
+	  private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
 	  {
 		  private IDictionary<string, object> Map;
 
@@ -942,50 +945,50 @@ namespace Lucene.Net.Util
 		{
 		  Field field1 = (Field) f;
 		  Field field2;
-		  DocValuesType_e dvType = field1.fieldType().docValueType();
-		  NumericType numType = field1.fieldType().numericType();
+		  DocValuesType_e? dvType = field1.FieldType().DocValueType;
+          NumericType numType = field1.FieldType().NumericValue;
 		  if (dvType != null)
 		  {
 			switch (dvType)
 			{
-			  case NUMERIC:
-				field2 = new NumericDocValuesField(field1.name(), (long)field1.numericValue());
+			  case DocValuesType_e.NUMERIC:
+				field2 = new NumericDocValuesField(field1.Name(), (long)field1.NumericValue);
 				break;
-			  case BINARY:
-				field2 = new BinaryDocValuesField(field1.name(), field1.binaryValue());
+              case DocValuesType_e.BINARY:
+				field2 = new BinaryDocValuesField(field1.Name(), field1.BinaryValue());
 			  break;
-			  case SORTED:
-				field2 = new SortedDocValuesField(field1.name(), field1.binaryValue());
+              case DocValuesType_e.SORTED:
+				field2 = new SortedDocValuesField(field1.Name(), field1.BinaryValue());
 				break;
 			  default:
-				throw new IllegalStateException("unknown Type: " + dvType);
+				throw new InvalidOperationException("unknown Type: " + dvType);
 			}
 		  }
 		  else if (numType != null)
 		  {
 			switch (numType)
 			{
-			  case INT:
-				field2 = new IntField(field1.name(), (int)field1.numericValue(), field1.fieldType());
+			  case NumericType.INT:
+				field2 = new IntField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
 				break;
-			  case FLOAT:
-				field2 = new FloatField(field1.name(), (int)field1.numericValue(), field1.fieldType());
+              case NumericType.FLOAT:
+                field2 = new FloatField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
 				break;
-			  case LONG:
-				field2 = new LongField(field1.name(), (int)field1.numericValue(), field1.fieldType());
+              case NumericType.LONG:
+                field2 = new LongField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
 				break;
-			  case DOUBLE:
-				field2 = new DoubleField(field1.name(), (int)field1.numericValue(), field1.fieldType());
+              case NumericType.DOUBLE:
+                field2 = new DoubleField(field1.Name(), (int)field1.NumericValue, (FieldType)field1.FieldType());
 				break;
 			  default:
-				throw new IllegalStateException("unknown Type: " + numType);
+				throw new InvalidOperationException("unknown Type: " + numType);
 			}
 		  }
 		  else
 		  {
-			field2 = new Field(field1.name(), field1.stringValue(), field1.fieldType());
+              field2 = new Field(field1.Name(), field1.StringValue, (FieldType)field1.FieldType());
 		  }
-		  doc2.add(field2);
+		  doc2.Add(field2);
 		}
 
 		return doc2;
@@ -996,13 +999,13 @@ namespace Lucene.Net.Util
 	  // if field/term doesn't exist:
 	  public static DocsEnum Docs(Random random, IndexReader r, string field, BytesRef term, Bits liveDocs, DocsEnum reuse, int flags)
 	  {
-		Terms terms = MultiFields.getTerms(r, field);
+		Terms terms = MultiFields.GetTerms(r, field);
 		if (terms == null)
 		{
 		  return null;
 		}
-		TermsEnum termsEnum = terms.iterator(null);
-		if (!termsEnum.seekExact(term))
+		TermsEnum termsEnum = terms.Iterator(null);
+		if (!termsEnum.SeekExact(term))
 		{
 		  return null;
 		}
@@ -1013,9 +1016,9 @@ namespace Lucene.Net.Util
 	  // randomly sometimes uses a DocsAndFreqsEnum, DocsAndPositionsEnum.
 	  public static DocsEnum Docs(Random random, TermsEnum termsEnum, Bits liveDocs, DocsEnum reuse, int flags)
 	  {
-		if (random.nextBoolean())
+		if (random.NextBoolean())
 		{
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 			int posFlags;
 			switch (random.Next(4))
@@ -1034,7 +1037,7 @@ namespace Lucene.Net.Util
 				  break;
 			}
 			// TODO: cast to DocsAndPositionsEnum?
-			DocsAndPositionsEnum docsAndPositions = termsEnum.docsAndPositions(liveDocs, null, posFlags);
+			DocsAndPositionsEnum docsAndPositions = termsEnum.DocsAndPositions(liveDocs, null, posFlags);
 			if (docsAndPositions != null)
 			{
 			  return docsAndPositions;
@@ -1042,26 +1045,26 @@ namespace Lucene.Net.Util
 		  }
 		  flags |= DocsEnum.FLAG_FREQS;
 		}
-		return termsEnum.docs(liveDocs, reuse, flags);
+		return termsEnum.Docs(liveDocs, reuse, flags);
 	  }
 
-	  public static CharSequence StringToCharSequence(string @string, Random random)
+	  public static ICharSequence StringToCharSequence(string @string, Random random)
 	  {
 		return BytesToCharSequence(new BytesRef(@string), random);
 	  }
 
-	  public static CharSequence BytesToCharSequence(BytesRef @ref, Random random)
+	  public static ICharSequence BytesToCharSequence(BytesRef @ref, Random random)
 	  {
 		switch (random.Next(5))
 		{
 		case 4:
-		  CharsRef chars = new CharsRef(@ref.length);
-		  UnicodeUtil.UTF8toUTF16(@ref.bytes, @ref.offset, @ref.length, chars);
+		  CharsRef chars = new CharsRef(@ref.Length);
+		  UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
 		  return chars;
 		case 3:
-		  return CharBuffer.wrap(@ref.utf8ToString());
+		  return CharBuffer.wrap(@ref.Utf8ToString());
 		default:
-		  return @ref.utf8ToString();
+		  return new StringCharSequenceWrapper(@ref.Utf8ToString());
 		}
 	  }
 
@@ -1077,11 +1080,11 @@ namespace Lucene.Net.Util
 			ex.shutdown();
 			ex.awaitTermination(1, TimeUnit.SECONDS);
 		  }
-		  catch (InterruptedException e)
+		  catch (ThreadInterruptedException e)
 		  {
 			// Just report it on the syserr.
 			Console.Error.WriteLine("Could not properly shutdown executor service.");
-			e.printStackTrace(System.err);
+            Console.Error.WriteLine(e.StackTrace);
 		  }
 		}
 	  }
@@ -1105,14 +1108,14 @@ namespace Lucene.Net.Util
 			{
 			  replacement = p.matcher(nonBmpString).replaceAll("_");
 			}
-			catch (StringIndexOutOfBoundsException jdkBug)
+			catch (IndexOutOfRangeException jdkBug)
 			{
 			  Console.WriteLine("WARNING: your jdk is buggy!");
 			  Console.WriteLine("Pattern.compile(\"" + p.pattern() + "\").matcher(\"AB\\uD840\\uDC00C\").replaceAll(\"_\"); should not throw IndexOutOfBounds!");
 			}
 			// Make sure the result of applying the pattern to a string with extended
 			// unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
-			if (replacement != null && UnicodeUtil.validUTF16String(replacement))
+			if (replacement != null && UnicodeUtil.ValidUTF16String(replacement.ToCharArray()))
 			{
 			  return p;
 			}
@@ -1153,7 +1156,7 @@ namespace Lucene.Net.Util
 
 		  protected internal override bool UseRandomAccess(Bits bits, int firstFilterDoc)
 		  {
-			return LuceneTestCase.Random().nextBoolean();
+			return LuceneTestCase.Random().NextBoolean();
 		  }
 	  }
 
@@ -1170,7 +1173,7 @@ namespace Lucene.Net.Util
 		  int offset = NextInt(r, 0, WHITESPACE_CHARACTERS.Length - 1);
 		  char c = WHITESPACE_CHARACTERS[offset];
 		  // sanity check
-		  Assert.IsTrue("Not really whitespace? (@" + offset + "): " + c, char.IsWhiteSpace(c));
+		  Assert.IsTrue(char.IsWhiteSpace(c), "Not really whitespace? (@" + offset + "): " + c);
 		  @out.Append(c);
 		}
 		return @out.ToString();
@@ -1223,7 +1226,7 @@ namespace Lucene.Net.Util
 			;
 		  if (simple)
 		  {
-			sb.Append(random.nextBoolean() ? TestUtil.RandomSimpleString(random, wordLength) : TestUtil.RandomHtmlishString(random, wordLength));
+			sb.Append(random.NextBoolean() ? TestUtil.RandomSimpleString(random, wordLength) : TestUtil.RandomHtmlishString(random, wordLength));
 		  }
 		  else
 		  {

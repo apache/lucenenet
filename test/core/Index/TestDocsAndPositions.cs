@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestDocsAndPositions : LuceneTestCase
 	{
@@ -40,8 +41,8 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		FieldName = "field" + random().Next();
+		base.SetUp();
+		FieldName = "field" + Random().Next();
 	  }
 
 	  /// <summary>
@@ -49,60 +50,60 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestPositionsSimple()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		for (int i = 0; i < 39; i++)
 		{
 		  Document doc = new Document();
 		  FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		  customType.OmitNorms = true;
-		  doc.add(newField(FieldName, "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10", customType));
-		  writer.addDocument(doc);
+		  doc.Add(NewField(FieldName, "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10", customType));
+		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		int num = atLeast(13);
+		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
 		{
 		  BytesRef bytes = new BytesRef("1");
 		  IndexReaderContext topReaderContext = reader.Context;
-		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.leaves())
+		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
 		  {
-			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.reader(), bytes, null);
+			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.Reader(), bytes, null);
 			Assert.IsNotNull(docsAndPosEnum);
-			if (atomicReaderContext.reader().maxDoc() == 0)
+			if (atomicReaderContext.Reader().MaxDoc() == 0)
 			{
 			  continue;
 			}
-			int advance = docsAndPosEnum.advance(random().Next(atomicReaderContext.reader().maxDoc()));
+			int advance = docsAndPosEnum.Advance(Random().Next(atomicReaderContext.Reader().MaxDoc()));
 			do
 			{
-			  string msg = "Advanced to: " + advance + " current doc: " + docsAndPosEnum.docID(); // TODO: + " usePayloads: " + usePayload;
-			  Assert.AreEqual(msg, 4, docsAndPosEnum.freq());
-			  Assert.AreEqual(msg, 0, docsAndPosEnum.nextPosition());
-			  Assert.AreEqual(msg, 4, docsAndPosEnum.freq());
-			  Assert.AreEqual(msg, 10, docsAndPosEnum.nextPosition());
-			  Assert.AreEqual(msg, 4, docsAndPosEnum.freq());
-			  Assert.AreEqual(msg, 20, docsAndPosEnum.nextPosition());
-			  Assert.AreEqual(msg, 4, docsAndPosEnum.freq());
-			  Assert.AreEqual(msg, 30, docsAndPosEnum.nextPosition());
-			} while (docsAndPosEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+			  string msg = "Advanced to: " + advance + " current doc: " + docsAndPosEnum.DocID(); // TODO: + " usePayloads: " + usePayload;
+			  Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+			  Assert.AreEqual(0, docsAndPosEnum.NextPosition(), msg);
+			  Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+			  Assert.AreEqual(10, docsAndPosEnum.NextPosition(), msg);
+			  Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+			  Assert.AreEqual(20, docsAndPosEnum.NextPosition(), msg);
+			  Assert.AreEqual(4, docsAndPosEnum.Freq(), msg);
+			  Assert.AreEqual(30, docsAndPosEnum.NextPosition(), msg);
+			} while (docsAndPosEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 		  }
 		}
-		reader.close();
-		directory.close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual DocsAndPositionsEnum GetDocsAndPositions(AtomicReader reader, BytesRef bytes, Bits liveDocs)
 	  {
-		Terms terms = reader.terms(FieldName);
+		Terms terms = reader.Terms(FieldName);
 		if (terms != null)
 		{
-		  TermsEnum te = terms.iterator(null);
-		  if (te.seekExact(bytes))
+		  TermsEnum te = terms.Iterator(null);
+		  if (te.SeekExact(bytes))
 		  {
-			return te.docsAndPositions(liveDocs, null);
+			return te.DocsAndPositions(liveDocs, null);
 		  }
 		}
 		return null;
@@ -116,11 +117,11 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestRandomPositions()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
-		int numDocs = atLeast(47);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+		int numDocs = AtLeast(47);
 		int max = 1051;
-		int term = random().Next(max);
+		int term = Random().Next(max);
 		int?[][] positionsInDoc = new int?[numDocs][];
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
@@ -129,10 +130,10 @@ namespace Lucene.Net.Index
 		  Document doc = new Document();
 		  List<int?> positions = new List<int?>();
 		  StringBuilder builder = new StringBuilder();
-		  int num = atLeast(131);
+		  int num = AtLeast(131);
 		  for (int j = 0; j < num; j++)
 		  {
-			int nextInt = random().Next(max);
+			int nextInt = Random().Next(max);
 			builder.Append(nextInt).Append(" ");
 			if (nextInt == term)
 			{
@@ -144,76 +145,76 @@ namespace Lucene.Net.Index
 			builder.Append(term);
 			positions.Add(num);
 		  }
-		  doc.add(newField(FieldName, builder.ToString(), customType));
+		  doc.Add(NewField(FieldName, builder.ToString(), customType));
 		  positionsInDoc[i] = positions.ToArray();
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		IndexReader reader = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		int num = atLeast(13);
+		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
 		{
 		  BytesRef bytes = new BytesRef("" + term);
 		  IndexReaderContext topReaderContext = reader.Context;
-		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.leaves())
+		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
 		  {
-			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.reader(), bytes, null);
+			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.Reader(), bytes, null);
 			Assert.IsNotNull(docsAndPosEnum);
 			int initDoc = 0;
-			int maxDoc = atomicReaderContext.reader().maxDoc();
+			int maxDoc = atomicReaderContext.Reader().MaxDoc();
 			// initially advance or do next doc
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  initDoc = docsAndPosEnum.nextDoc();
+			  initDoc = docsAndPosEnum.NextDoc();
 			}
 			else
 			{
-			  initDoc = docsAndPosEnum.advance(random().Next(maxDoc));
+			  initDoc = docsAndPosEnum.Advance(Random().Next(maxDoc));
 			}
 			// now run through the scorer and check if all positions are there...
 			do
 			{
-			  int docID = docsAndPosEnum.docID();
+			  int docID = docsAndPosEnum.DocID();
 			  if (docID == DocIdSetIterator.NO_MORE_DOCS)
 			  {
 				break;
 			  }
-			  int?[] pos = positionsInDoc[atomicReaderContext.docBase + docID];
-			  Assert.AreEqual(pos.Length, docsAndPosEnum.freq());
+			  int?[] pos = positionsInDoc[atomicReaderContext.DocBase + docID];
+			  Assert.AreEqual(pos.Length, docsAndPosEnum.Freq());
 			  // number of positions read should be random - don't read all of them
 			  // allways
-			  int howMany = random().Next(20) == 0 ? pos.Length - random().Next(pos.Length) : pos.Length;
+			  int howMany = Random().Next(20) == 0 ? pos.Length - Random().Next(pos.Length) : pos.Length;
 			  for (int j = 0; j < howMany; j++)
 			  {
-				Assert.AreEqual("iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.docBase + " positions: " + Arrays.ToString(pos), (int)pos[j], docsAndPosEnum.nextPosition()); /* TODO: + " usePayloads: "
+				Assert.AreEqual("iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.DocBase + " positions: " + Arrays.ToString(pos), (int)pos[j], docsAndPosEnum.NextPosition()); /* TODO: + " usePayloads: "
 	                + usePayload*/
 			  }
 
-			  if (random().Next(10) == 0) // once is a while advance
+			  if (Random().Next(10) == 0) // once is a while advance
 			  {
-				if (docsAndPosEnum.advance(docID + 1 + random().Next((maxDoc - docID))) == DocIdSetIterator.NO_MORE_DOCS)
+				if (docsAndPosEnum.Advance(docID + 1 + Random().Next((maxDoc - docID))) == DocIdSetIterator.NO_MORE_DOCS)
 				{
 				  break;
 				}
 			  }
 
-			} while (docsAndPosEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+			} while (docsAndPosEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 		  }
 
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestRandomDocs()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
-		int numDocs = atLeast(49);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+		int numDocs = AtLeast(49);
 		int max = 15678;
-		int term = random().Next(max);
+		int term = Random().Next(max);
 		int[] freqInDoc = new int[numDocs];
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
@@ -223,68 +224,68 @@ namespace Lucene.Net.Index
 		  StringBuilder builder = new StringBuilder();
 		  for (int j = 0; j < 199; j++)
 		  {
-			int nextInt = random().Next(max);
+			int nextInt = Random().Next(max);
 			builder.Append(nextInt).Append(' ');
 			if (nextInt == term)
 			{
 			  freqInDoc[i]++;
 			}
 		  }
-		  doc.add(newField(FieldName, builder.ToString(), customType));
-		  writer.addDocument(doc);
+		  doc.Add(NewField(FieldName, builder.ToString(), customType));
+		  writer.AddDocument(doc);
 		}
 
 		IndexReader reader = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		int num = atLeast(13);
+		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
 		{
 		  BytesRef bytes = new BytesRef("" + term);
 		  IndexReaderContext topReaderContext = reader.Context;
-		  foreach (AtomicReaderContext context in topReaderContext.leaves())
+		  foreach (AtomicReaderContext context in topReaderContext.Leaves())
 		  {
-			int maxDoc = context.reader().maxDoc();
-			DocsEnum docsEnum = TestUtil.docs(random(), context.reader(), FieldName, bytes, null, null, DocsEnum.FLAG_FREQS);
-			if (FindNext(freqInDoc, context.docBase, context.docBase + maxDoc) == int.MaxValue)
+			int maxDoc = context.Reader().MaxDoc();
+			DocsEnum docsEnum = TestUtil.Docs(Random(), context.Reader(), FieldName, bytes, null, null, DocsEnum.FLAG_FREQS);
+			if (FindNext(freqInDoc, context.DocBase, context.DocBase + maxDoc) == int.MaxValue)
 			{
-			  assertNull(docsEnum);
+			  Assert.IsNull(docsEnum);
 			  continue;
 			}
 			Assert.IsNotNull(docsEnum);
-			docsEnum.nextDoc();
+			docsEnum.NextDoc();
 			for (int j = 0; j < maxDoc; j++)
 			{
-			  if (freqInDoc[context.docBase + j] != 0)
+			  if (freqInDoc[context.DocBase + j] != 0)
 			  {
-				Assert.AreEqual(j, docsEnum.docID());
-				Assert.AreEqual(docsEnum.freq(), freqInDoc[context.docBase + j]);
-				if (i % 2 == 0 && random().Next(10) == 0)
+				Assert.AreEqual(j, docsEnum.DocID());
+				Assert.AreEqual(docsEnum.Freq(), freqInDoc[context.DocBase + j]);
+				if (i % 2 == 0 && Random().Next(10) == 0)
 				{
-				  int next = FindNext(freqInDoc, context.docBase + j + 1, context.docBase + maxDoc) - context.docBase;
-				  int advancedTo = docsEnum.advance(next);
+				  int next = FindNext(freqInDoc, context.DocBase + j + 1, context.DocBase + maxDoc) - context.DocBase;
+				  int advancedTo = docsEnum.Advance(next);
 				  if (next >= maxDoc)
 				  {
 					Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, advancedTo);
 				  }
 				  else
 				  {
-					Assert.IsTrue("advanced to: " + advancedTo + " but should be <= " + next, next >= advancedTo);
+					Assert.IsTrue(next >= advancedTo, "advanced to: " + advancedTo + " but should be <= " + next);
 				  }
 				}
 				else
 				{
-				  docsEnum.nextDoc();
+				  docsEnum.NextDoc();
 				}
 			  }
 			}
-			Assert.AreEqual("docBase: " + context.docBase + " maxDoc: " + maxDoc + " " + docsEnum.GetType(), DocIdSetIterator.NO_MORE_DOCS, docsEnum.docID());
+			Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.DocID(), "DocBase: " + context.DocBase + " maxDoc: " + maxDoc + " " + docsEnum.GetType());
 		  }
 
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private static int FindNext(int[] docs, int pos, int max)
@@ -305,8 +306,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public virtual void TestLargeNumberOfPositions()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		int howMany = 1000;
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.OmitNorms = true;
@@ -325,98 +326,98 @@ namespace Lucene.Net.Index
 			  builder.Append("odd ");
 			}
 		  }
-		  doc.add(newField(FieldName, builder.ToString(), customType));
-		  writer.addDocument(doc);
+		  doc.Add(NewField(FieldName, builder.ToString(), customType));
+		  writer.AddDocument(doc);
 		}
 
 		// now do searches
 		IndexReader reader = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		int num = atLeast(13);
+		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
 		{
 		  BytesRef bytes = new BytesRef("even");
 
 		  IndexReaderContext topReaderContext = reader.Context;
-		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.leaves())
+		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
 		  {
-			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.reader(), bytes, null);
+			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.Reader(), bytes, null);
 			Assert.IsNotNull(docsAndPosEnum);
 
 			int initDoc = 0;
-			int maxDoc = atomicReaderContext.reader().maxDoc();
+			int maxDoc = atomicReaderContext.Reader().MaxDoc();
 			// initially advance or do next doc
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  initDoc = docsAndPosEnum.nextDoc();
+			  initDoc = docsAndPosEnum.NextDoc();
 			}
 			else
 			{
-			  initDoc = docsAndPosEnum.advance(random().Next(maxDoc));
+			  initDoc = docsAndPosEnum.Advance(Random().Next(maxDoc));
 			}
 			string msg = "Iteration: " + i + " initDoc: " + initDoc; // TODO: + " payloads: " + usePayload;
-			Assert.AreEqual(howMany / 2, docsAndPosEnum.freq());
+			Assert.AreEqual(howMany / 2, docsAndPosEnum.Freq());
 			for (int j = 0; j < howMany; j += 2)
 			{
-			  Assert.AreEqual("position missmatch index: " + j + " with freq: " + docsAndPosEnum.freq() + " -- " + msg, j, docsAndPosEnum.nextPosition());
+			  Assert.AreEqual(j, docsAndPosEnum.NextPosition(), "position missmatch index: " + j + " with freq: " + docsAndPosEnum.Freq() + " -- " + msg);
 			}
 		  }
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDocsEnumStart()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newStringField("foo", "bar", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewStringField("foo", "bar", Field.Store.NO));
+		writer.AddDocument(doc);
 		DirectoryReader reader = writer.Reader;
-		AtomicReader r = getOnlySegmentReader(reader);
-		DocsEnum disi = TestUtil.docs(random(), r, "foo", new BytesRef("bar"), null, null, DocsEnum.FLAG_NONE);
-		int docid = disi.docID();
+		AtomicReader r = GetOnlySegmentReader(reader);
+		DocsEnum disi = TestUtil.Docs(Random(), r, "foo", new BytesRef("bar"), null, null, DocsEnum.FLAG_NONE);
+		int docid = disi.DocID();
 		Assert.AreEqual(-1, docid);
-		Assert.IsTrue(disi.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
 		// now reuse and check again
-		TermsEnum te = r.terms("foo").iterator(null);
-		Assert.IsTrue(te.seekExact(new BytesRef("bar")));
-		disi = TestUtil.docs(random(), te, null, disi, DocsEnum.FLAG_NONE);
-		docid = disi.docID();
+		TermsEnum te = r.Terms("foo").Iterator(null);
+		Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
+		disi = TestUtil.Docs(Random(), te, null, disi, DocsEnum.FLAG_NONE);
+		docid = disi.DocID();
 		Assert.AreEqual(-1, docid);
-		Assert.IsTrue(disi.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		writer.close();
-		r.close();
-		dir.close();
+		Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+        writer.Close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDocsAndPositionsEnumStart()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("foo", "bar", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("foo", "bar", Field.Store.NO));
+		writer.AddDocument(doc);
 		DirectoryReader reader = writer.Reader;
-		AtomicReader r = getOnlySegmentReader(reader);
-		DocsAndPositionsEnum disi = r.termPositionsEnum(new Term("foo", "bar"));
-		int docid = disi.docID();
+		AtomicReader r = GetOnlySegmentReader(reader);
+		DocsAndPositionsEnum disi = r.TermPositionsEnum(new Term("foo", "bar"));
+		int docid = disi.DocID();
 		Assert.AreEqual(-1, docid);
-		Assert.IsTrue(disi.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
 		// now reuse and check again
-		TermsEnum te = r.terms("foo").iterator(null);
-		Assert.IsTrue(te.seekExact(new BytesRef("bar")));
-		disi = te.docsAndPositions(null, disi);
-		docid = disi.docID();
+		TermsEnum te = r.Terms("foo").Iterator(null);
+		Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
+		disi = te.DocsAndPositions(null, disi);
+		docid = disi.DocID();
 		Assert.AreEqual(-1, docid);
-		Assert.IsTrue(disi.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		writer.close();
-		r.close();
-		dir.close();
+		Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+        writer.Close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 	}
 

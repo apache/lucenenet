@@ -42,31 +42,31 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public PreFlexRWFieldsWriter(SegmentWriteState state)
 	  {
-		TermsOut = new TermInfosWriter(state.directory, state.segmentInfo.name, state.fieldInfos, state.termIndexInterval);
+		TermsOut = new TermInfosWriter(state.Directory, state.SegmentInfo.Name, state.FieldInfos, state.TermIndexInterval);
 
 		bool success = false;
 		try
 		{
-		  string freqFile = IndexFileNames.segmentFileName(state.segmentInfo.name, "", Lucene3xPostingsFormat.FREQ_EXTENSION);
-		  FreqOut = state.directory.createOutput(freqFile, state.context);
-		  TotalNumDocs = state.segmentInfo.DocCount;
+		  string freqFile = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, "", Lucene3xPostingsFormat.FREQ_EXTENSION);
+		  FreqOut = state.Directory.CreateOutput(freqFile, state.Context);
+		  TotalNumDocs = state.SegmentInfo.DocCount;
 		  success = true;
 		}
 		finally
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(TermsOut);
+			IOUtils.CloseWhileHandlingException(TermsOut);
 		  }
 		}
 
 		success = false;
 		try
 		{
-		  if (state.fieldInfos.hasProx())
+		  if (state.FieldInfos.HasProx())
 		  {
-			string proxFile = IndexFileNames.segmentFileName(state.segmentInfo.name, "", Lucene3xPostingsFormat.PROX_EXTENSION);
-			ProxOut = state.directory.createOutput(proxFile, state.context);
+			string proxFile = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, "", Lucene3xPostingsFormat.PROX_EXTENSION);
+			ProxOut = state.Directory.CreateOutput(proxFile, state.Context);
 		  }
 		  else
 		  {
@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  if (!success)
 		  {
-			IOUtils.closeWhileHandlingException(TermsOut, FreqOut);
+			IOUtils.CloseWhileHandlingException(TermsOut, FreqOut);
 		  }
 		}
 
@@ -88,18 +88,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override TermsConsumer AddField(FieldInfo field)
 	  {
-		Debug.Assert(field.number != -1);
-		if (field.IndexOptions_e.compareTo(FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+		Debug.Assert(field.Number != -1);
+		if (field.IndexOptions >= FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
 		{
 		  throw new System.NotSupportedException("this codec cannot index offsets");
 		}
-		//System.out.println("w field=" + field.name + " storePayload=" + field.storePayloads + " number=" + field.number);
+		//System.out.println("w field=" + field.Name + " storePayload=" + field.storePayloads + " number=" + field.number);
 		return new PreFlexTermsWriter(this, field);
 	  }
 
 	  public override void Close()
 	  {
-		IOUtils.close(TermsOut, FreqOut, ProxOut);
+		IOUtils.Close(TermsOut, FreqOut, ProxOut);
 	  }
 
 	  private class PreFlexTermsWriter : TermsConsumer
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		  internal virtual void InitializeInstanceFields()
 		  {
-			  PostingsWriter = new PostingsWriter(this);
+			  postingsWriter = new PostingsWriter(this);
 		  }
 
 		  private readonly PreFlexRWFieldsWriter OuterInstance;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		internal readonly bool StorePayloads;
 
 		internal readonly TermInfo TermInfo = new TermInfo();
-		internal PostingsWriter PostingsWriter;
+		internal PostingsWriter postingsWriter;
 
 		public PreFlexTermsWriter(PreFlexRWFieldsWriter outerInstance, FieldInfo fieldInfo)
 		{
@@ -130,8 +130,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 				InstanceFieldsInitialized = true;
 			}
 		  this.FieldInfo = fieldInfo;
-		  OmitTF = fieldInfo.IndexOptions_e == FieldInfo.IndexOptions_e.DOCS_ONLY;
-		  StorePayloads = fieldInfo.hasPayloads();
+		  OmitTF = fieldInfo.IndexOptions == FieldInfo.IndexOptions_e.DOCS_ONLY;
+		  StorePayloads = fieldInfo.HasPayloads();
 		}
 
 		private class PostingsWriter : PostingsConsumer
@@ -166,31 +166,31 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  throw new CorruptIndexException("docs out of order (" + docID + " <= " + LastDocID + " )");
 			}
 
-			if ((++Df % outerInstance.OuterInstance.TermsOut.skipInterval) == 0)
+            if ((++Df % OuterInstance.OuterInstance.TermsOut.SkipInterval) == 0)
 			{
-			  outerInstance.OuterInstance.SkipListWriter.setSkipData(LastDocID, outerInstance.StorePayloads, LastPayloadLength);
-			  outerInstance.OuterInstance.SkipListWriter.bufferSkip(Df);
+                OuterInstance.OuterInstance.SkipListWriter.SetSkipData(LastDocID, OuterInstance.StorePayloads, LastPayloadLength);
+                OuterInstance.OuterInstance.SkipListWriter.BufferSkip(Df);
 			}
 
 			LastDocID = docID;
 
-			Debug.Assert(docID < outerInstance.OuterInstance.TotalNumDocs, "docID=" + docID + " totalNumDocs=" + outerInstance.OuterInstance.TotalNumDocs);
+            Debug.Assert(docID < OuterInstance.OuterInstance.TotalNumDocs, "docID=" + docID + " totalNumDocs=" + OuterInstance.OuterInstance.TotalNumDocs);
 
-			if (outerInstance.OmitTF)
+            if (OuterInstance.OmitTF)
 			{
-			  outerInstance.OuterInstance.FreqOut.writeVInt(delta);
+                OuterInstance.OuterInstance.FreqOut.WriteVInt(delta);
 			}
 			else
 			{
 			  int code = delta << 1;
 			  if (termDocFreq == 1)
 			  {
-				outerInstance.OuterInstance.FreqOut.writeVInt(code | 1);
+                  OuterInstance.OuterInstance.FreqOut.WriteVInt(code | 1);
 			  }
 			  else
 			  {
-				outerInstance.OuterInstance.FreqOut.writeVInt(code);
-				outerInstance.OuterInstance.FreqOut.writeVInt(termDocFreq);
+                  OuterInstance.OuterInstance.FreqOut.WriteVInt(code);
+                  OuterInstance.OuterInstance.FreqOut.WriteVInt(termDocFreq);
 			  }
 			}
 			LastPosition = 0;
@@ -198,35 +198,35 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		  public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
 		  {
-			Debug.Assert(outerInstance.OuterInstance.ProxOut != null);
+			Debug.Assert(OuterInstance.OuterInstance.ProxOut != null);
 			Debug.Assert(startOffset == -1);
 			Debug.Assert(endOffset == -1);
 			//System.out.println("      w pos=" + position + " payl=" + payload);
 			int delta = position - LastPosition;
 			LastPosition = position;
 
-			if (outerInstance.StorePayloads)
+            if (OuterInstance.StorePayloads)
 			{
-			  int payloadLength = payload == null ? 0 : payload.length;
+			  int payloadLength = payload == null ? 0 : payload.Length;
 			  if (payloadLength != LastPayloadLength)
 			  {
 				//System.out.println("        write payload len=" + payloadLength);
 				LastPayloadLength = payloadLength;
-				outerInstance.OuterInstance.ProxOut.writeVInt((delta << 1) | 1);
-				outerInstance.OuterInstance.ProxOut.writeVInt(payloadLength);
+                OuterInstance.OuterInstance.ProxOut.WriteVInt((delta << 1) | 1);
+                OuterInstance.OuterInstance.ProxOut.WriteVInt(payloadLength);
 			  }
 			  else
 			  {
-				outerInstance.OuterInstance.ProxOut.writeVInt(delta << 1);
+                  OuterInstance.OuterInstance.ProxOut.WriteVInt(delta << 1);
 			  }
 			  if (payloadLength > 0)
 			  {
-				outerInstance.OuterInstance.ProxOut.writeBytes(payload.bytes, payload.offset, payload.length);
+                  OuterInstance.OuterInstance.ProxOut.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
 			  }
 			}
 			else
 			{
-			  outerInstance.OuterInstance.ProxOut.writeVInt(delta);
+                OuterInstance.OuterInstance.ProxOut.WriteVInt(delta);
 			}
 		  }
 
@@ -238,24 +238,24 @@ namespace Lucene.Net.Codecs.Lucene3x
 		public override PostingsConsumer StartTerm(BytesRef text)
 		{
 		  //System.out.println("  w term=" + text.utf8ToString());
-		  outerInstance.SkipListWriter.ResetSkip();
-		  TermInfo.freqPointer = outerInstance.FreqOut.FilePointer;
-		  if (outerInstance.ProxOut != null)
+		  OuterInstance.SkipListWriter.ResetSkip();
+          TermInfo.FreqPointer = OuterInstance.FreqOut.FilePointer;
+          if (OuterInstance.ProxOut != null)
 		  {
-			TermInfo.proxPointer = outerInstance.ProxOut.FilePointer;
+              TermInfo.ProxPointer = OuterInstance.ProxOut.FilePointer;
 		  }
-		  return PostingsWriter.Reset();
+		  return postingsWriter.Reset();
 		}
 
 		public override void FinishTerm(BytesRef text, TermStats stats)
 		{
-		  if (stats.docFreq > 0)
+		  if (stats.DocFreq > 0)
 		  {
-			long skipPointer = outerInstance.SkipListWriter.writeSkip(outerInstance.FreqOut);
-			TermInfo.docFreq = stats.docFreq;
-			TermInfo.skipOffset = (int)(skipPointer - TermInfo.freqPointer);
+			long skipPointer = OuterInstance.SkipListWriter.WriteSkip(OuterInstance.FreqOut);
+			TermInfo.DocFreq = stats.DocFreq;
+			TermInfo.SkipOffset = (int)(skipPointer - TermInfo.FreqPointer);
 			//System.out.println("  w finish term=" + text.utf8ToString() + " fnum=" + fieldInfo.number);
-			outerInstance.TermsOut.Add(FieldInfo.number, text, TermInfo);
+            OuterInstance.TermsOut.Add(FieldInfo.Number, text, TermInfo);
 		  }
 		}
 
@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUTF16Comparator;
+			  return BytesRef.UTF8SortedAsUTF16Comparer;
 			}
 		}
 	  }

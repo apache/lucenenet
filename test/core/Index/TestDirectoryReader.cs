@@ -31,16 +31,17 @@ namespace Lucene.Net.Index
 	using StoredField = Lucene.Net.Document.StoredField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using FieldCache = Lucene.Net.Search.FieldCache;
+	using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
 	using Directory = Lucene.Net.Store.Directory;
 	using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using Assume = org.junit.Assume;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestDirectoryReader : LuceneTestCase
 	{
@@ -48,113 +49,113 @@ namespace Lucene.Net.Index
 	  public virtual void TestDocument()
 	  {
 		SegmentReader[] readers = new SegmentReader[2];
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		Document doc1 = new Document();
 		Document doc2 = new Document();
-		DocHelper.setupDoc(doc1);
-		DocHelper.setupDoc(doc2);
-		DocHelper.writeDoc(random(), dir, doc1);
-		DocHelper.writeDoc(random(), dir, doc2);
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DocHelper.SetupDoc(doc1);
+		DocHelper.SetupDoc(doc2);
+		DocHelper.WriteDoc(Random(), dir, doc1);
+		DocHelper.WriteDoc(Random(), dir, doc2);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		Assert.IsTrue(reader != null);
 		Assert.IsTrue(reader is StandardDirectoryReader);
 
-		Document newDoc1 = reader.document(0);
+		Document newDoc1 = reader.Document(0);
 		Assert.IsTrue(newDoc1 != null);
-		Assert.IsTrue(DocHelper.numFields(newDoc1) == DocHelper.numFields(doc1) - DocHelper.unstored.size());
-		Document newDoc2 = reader.document(1);
+		Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(doc1) - DocHelper.Unstored.Count);
+		Document newDoc2 = reader.Document(1);
 		Assert.IsTrue(newDoc2 != null);
-		Assert.IsTrue(DocHelper.numFields(newDoc2) == DocHelper.numFields(doc2) - DocHelper.unstored.size());
-		Terms vector = reader.getTermVectors(0).terms(DocHelper.TEXT_FIELD_2_KEY);
+        Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.Unstored.Count);
+		Terms vector = reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
 		Assert.IsNotNull(vector);
 
-		reader.close();
+		reader.Dispose();
 		if (readers[0] != null)
 		{
-			readers[0].close();
+			readers[0].Dispose();
 		}
 		if (readers[1] != null)
 		{
-			readers[1].close();
+			readers[1].Dispose();
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestMultiTermDocs()
 	  {
-		Directory ramDir1 = newDirectory();
-		AddDoc(random(), ramDir1, "test foo", true);
-		Directory ramDir2 = newDirectory();
-		AddDoc(random(), ramDir2, "test blah", true);
-		Directory ramDir3 = newDirectory();
-		AddDoc(random(), ramDir3, "test wow", true);
+		Directory ramDir1 = NewDirectory();
+		AddDoc(Random(), ramDir1, "test foo", true);
+		Directory ramDir2 = NewDirectory();
+		AddDoc(Random(), ramDir2, "test blah", true);
+		Directory ramDir3 = NewDirectory();
+		AddDoc(Random(), ramDir3, "test wow", true);
 
-		IndexReader[] readers1 = new IndexReader[]{DirectoryReader.open(ramDir1), DirectoryReader.open(ramDir3)};
-		IndexReader[] readers2 = new IndexReader[]{DirectoryReader.open(ramDir1), DirectoryReader.open(ramDir2), DirectoryReader.open(ramDir3)};
+		IndexReader[] readers1 = new IndexReader[]{DirectoryReader.Open(ramDir1), DirectoryReader.Open(ramDir3)};
+		IndexReader[] readers2 = new IndexReader[]{DirectoryReader.Open(ramDir1), DirectoryReader.Open(ramDir2), DirectoryReader.Open(ramDir3)};
 		MultiReader mr2 = new MultiReader(readers1);
 		MultiReader mr3 = new MultiReader(readers2);
 
 		// test mixing up TermDocs and TermEnums from different readers.
-		TermsEnum te2 = MultiFields.getTerms(mr2, "body").iterator(null);
-		te2.seekCeil(new BytesRef("wow"));
-		DocsEnum td = TestUtil.docs(random(), mr2, "body", te2.term(), MultiFields.getLiveDocs(mr2), null, 0);
+		TermsEnum te2 = MultiFields.GetTerms(mr2, "body").Iterator(null);
+		te2.SeekCeil(new BytesRef("wow"));
+		DocsEnum td = TestUtil.Docs(Random(), mr2, "body", te2.Term(), MultiFields.GetLiveDocs(mr2), null, 0);
 
-		TermsEnum te3 = MultiFields.getTerms(mr3, "body").iterator(null);
-		te3.seekCeil(new BytesRef("wow"));
-		td = TestUtil.docs(random(), te3, MultiFields.getLiveDocs(mr3), td, 0);
+		TermsEnum te3 = MultiFields.GetTerms(mr3, "body").Iterator(null);
+		te3.SeekCeil(new BytesRef("wow"));
+		td = TestUtil.Docs(Random(), te3, MultiFields.GetLiveDocs(mr3), td, 0);
 
 		int ret = 0;
 
 		// this should blow up if we forget to check that the TermEnum is from the same
 		// reader as the TermDocs.
-		while (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		while (td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
-			ret += td.docID();
+			ret += td.DocID();
 		}
 
 		// really a dummy assert to ensure that we got some docs and to ensure that
 		// nothing is eliminated by hotspot
 		Assert.IsTrue(ret > 0);
-		readers1[0].close();
-		readers1[1].close();
-		readers2[0].close();
-		readers2[1].close();
-		readers2[2].close();
-		ramDir1.close();
-		ramDir2.close();
-		ramDir3.close();
+		readers1[0].Dispose();
+		readers1[1].Dispose();
+		readers2[0].Dispose();
+		readers2[1].Dispose();
+		readers2[2].Dispose();
+		ramDir1.Dispose();
+		ramDir2.Dispose();
+		ramDir3.Dispose();
 	  }
 
 	  private void AddDoc(Random random, Directory ramDir1, string s, bool create)
 	  {
-		IndexWriter iw = new IndexWriter(ramDir1, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setOpenMode(create ? OpenMode.CREATE : OpenMode.APPEND));
+		IndexWriter iw = new IndexWriter(ramDir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(create ? OpenMode_e.CREATE : OpenMode_e.APPEND));
 		Document doc = new Document();
-		doc.add(newTextField("body", s, Field.Store.NO));
-		iw.addDocument(doc);
-		iw.close();
+		doc.Add(NewTextField("body", s, Field.Store.NO));
+		iw.AddDocument(doc);
+		iw.Dispose();
 	  }
 
 	  public virtual void TestIsCurrent()
 	  {
-		Directory d = newDirectory();
-		IndexWriter writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory d = NewDirectory();
+		IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		AddDocumentWithFields(writer);
-		writer.close();
+		writer.Dispose();
 		// set up reader:
-		DirectoryReader reader = DirectoryReader.open(d);
+		DirectoryReader reader = DirectoryReader.Open(d);
 		Assert.IsTrue(reader.Current);
 		// modify index by adding another document:
-		writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
+		writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
 		AddDocumentWithFields(writer);
-		writer.close();
+		writer.Dispose();
 		Assert.IsFalse(reader.Current);
 		// re-create index:
-		writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE));
+		writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
 		AddDocumentWithFields(writer);
-		writer.close();
+		writer.Dispose();
 		Assert.IsFalse(reader.Current);
-		reader.close();
-		d.close();
+		reader.Dispose();
+		d.Dispose();
 	  }
 
 	  /// <summary>
@@ -162,52 +163,52 @@ namespace Lucene.Net.Index
 	  /// <exception cref="Exception"> on error </exception>
 	  public virtual void TestGetFieldNames()
 	  {
-		  Directory d = newDirectory();
+		  Directory d = NewDirectory();
 		  // set up writer
-		  IndexWriter writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		  Document doc = new Document();
 
 		  FieldType customType3 = new FieldType();
 		  customType3.Stored = true;
 
-		  doc.add(new StringField("keyword", "test1", Field.Store.YES));
-		  doc.add(new TextField("text", "test1", Field.Store.YES));
-		  doc.add(new Field("unindexed", "test1", customType3));
-		  doc.add(new TextField("unstored","test1", Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("keyword", "test1", Field.Store.YES));
+		  doc.Add(new TextField("text", "test1", Field.Store.YES));
+		  doc.Add(new Field("unindexed", "test1", customType3));
+		  doc.Add(new TextField("unstored","test1", Field.Store.NO));
+		  writer.AddDocument(doc);
 
-		  writer.close();
+		  writer.Dispose();
 		  // set up reader
-		  DirectoryReader reader = DirectoryReader.open(d);
-		  FieldInfos fieldInfos = MultiFields.getMergedFieldInfos(reader);
-		  Assert.IsNotNull(fieldInfos.fieldInfo("keyword"));
-		  Assert.IsNotNull(fieldInfos.fieldInfo("text"));
-		  Assert.IsNotNull(fieldInfos.fieldInfo("unindexed"));
-		  Assert.IsNotNull(fieldInfos.fieldInfo("unstored"));
-		  reader.close();
+		  DirectoryReader reader = DirectoryReader.Open(d);
+		  FieldInfos fieldInfos = MultiFields.GetMergedFieldInfos(reader);
+		  Assert.IsNotNull(fieldInfos.FieldInfo("keyword"));
+		  Assert.IsNotNull(fieldInfos.FieldInfo("text"));
+		  Assert.IsNotNull(fieldInfos.FieldInfo("unindexed"));
+		  Assert.IsNotNull(fieldInfos.FieldInfo("unstored"));
+		  reader.Dispose();
 		  // add more documents
-		  writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setMergePolicy(newLogMergePolicy()));
+		  writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy()));
 		  // want to get some more segments here
 		  int mergeFactor = ((LogMergePolicy) writer.Config.MergePolicy).MergeFactor;
 		  for (int i = 0; i < 5 * mergeFactor; i++)
 		  {
 			doc = new Document();
-			doc.add(new StringField("keyword", "test1", Field.Store.YES));
-			doc.add(new TextField("text", "test1", Field.Store.YES));
-			doc.add(new Field("unindexed", "test1", customType3));
-			doc.add(new TextField("unstored","test1", Field.Store.NO));
-			writer.addDocument(doc);
+			doc.Add(new StringField("keyword", "test1", Field.Store.YES));
+			doc.Add(new TextField("text", "test1", Field.Store.YES));
+			doc.Add(new Field("unindexed", "test1", customType3));
+			doc.Add(new TextField("unstored","test1", Field.Store.NO));
+			writer.AddDocument(doc);
 		  }
 		  // new fields are in some different segments (we hope)
 		  for (int i = 0; i < 5 * mergeFactor; i++)
 		  {
 			doc = new Document();
-			doc.add(new StringField("keyword2", "test1", Field.Store.YES));
-			doc.add(new TextField("text2", "test1", Field.Store.YES));
-			doc.add(new Field("unindexed2", "test1", customType3));
-			doc.add(new TextField("unstored2","test1", Field.Store.NO));
-			writer.addDocument(doc);
+			doc.Add(new StringField("keyword2", "test1", Field.Store.YES));
+			doc.Add(new TextField("text2", "test1", Field.Store.YES));
+			doc.Add(new Field("unindexed2", "test1", customType3));
+			doc.Add(new TextField("unstored2","test1", Field.Store.NO));
+			writer.AddDocument(doc);
 		  }
 		  // new termvector fields
 
@@ -227,19 +228,19 @@ namespace Lucene.Net.Index
 		  for (int i = 0; i < 5 * mergeFactor; i++)
 		  {
 			doc = new Document();
-			doc.add(new TextField("tvnot", "tvnot", Field.Store.YES));
-			doc.add(new Field("termvector", "termvector", customType5));
-			doc.add(new Field("tvoffset", "tvoffset", customType6));
-			doc.add(new Field("tvposition", "tvposition", customType7));
-			doc.add(new Field("tvpositionoffset", "tvpositionoffset", customType8));
-			writer.addDocument(doc);
+			doc.Add(new TextField("tvnot", "tvnot", Field.Store.YES));
+			doc.Add(new Field("termvector", "termvector", customType5));
+			doc.Add(new Field("tvoffset", "tvoffset", customType6));
+			doc.Add(new Field("tvposition", "tvposition", customType7));
+			doc.Add(new Field("tvpositionoffset", "tvpositionoffset", customType8));
+			writer.AddDocument(doc);
 		  }
 
-		  writer.close();
+		  writer.Dispose();
 
 		  // verify fields again
-		  reader = DirectoryReader.open(d);
-		  fieldInfos = MultiFields.getMergedFieldInfos(reader);
+		  reader = DirectoryReader.Open(d);
+		  fieldInfos = MultiFields.GetMergedFieldInfos(reader);
 
 		  ICollection<string> allFieldNames = new HashSet<string>();
 		  ICollection<string> indexedFieldNames = new HashSet<string>();
@@ -248,7 +249,7 @@ namespace Lucene.Net.Index
 
 		  foreach (FieldInfo fieldInfo in fieldInfos)
 		  {
-			string name = fieldInfo.name;
+			string name = fieldInfo.Name;
 			allFieldNames.Add(name);
 			if (fieldInfo.Indexed)
 			{
@@ -258,7 +259,7 @@ namespace Lucene.Net.Index
 			{
 			  notIndexedFieldNames.Add(name);
 			}
-			if (fieldInfo.hasVectors())
+			if (fieldInfo.HasVectors())
 			{
 			  tvFieldNames.Add(name);
 			}
@@ -298,18 +299,18 @@ namespace Lucene.Net.Index
 		  Assert.IsTrue(notIndexedFieldNames.Contains("unindexed2"));
 
 		  // verify index term vector fields  
-		  Assert.AreEqual(tvFieldNames.ToString(), 4, tvFieldNames.Count); // 4 field has term vector only
+		  Assert.AreEqual(4, tvFieldNames.Count, tvFieldNames.ToString()); // 4 field has term vector only
 		  Assert.IsTrue(tvFieldNames.Contains("termvector"));
 
-		  reader.close();
-		  d.close();
+		  reader.Dispose();
+		  d.Dispose();
 	  }
 
 	public virtual void TestTermVectors()
 	{
-	  Directory d = newDirectory();
+	  Directory d = NewDirectory();
 	  // set up writer
-	  IndexWriter writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+	  IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 	  // want to get some more segments here
 	  // new termvector fields
 	  int mergeFactor = ((LogMergePolicy) writer.Config.MergePolicy).MergeFactor;
@@ -328,39 +329,39 @@ namespace Lucene.Net.Index
 	  for (int i = 0; i < 5 * mergeFactor; i++)
 	  {
 		Document doc = new Document();
-		  doc.add(new TextField("tvnot", "one two two three three three", Field.Store.YES));
-		  doc.add(new Field("termvector", "one two two three three three", customType5));
-		  doc.add(new Field("tvoffset", "one two two three three three", customType6));
-		  doc.add(new Field("tvposition", "one two two three three three", customType7));
-		  doc.add(new Field("tvpositionoffset", "one two two three three three", customType8));
+		  doc.Add(new TextField("tvnot", "one two two three three three", Field.Store.YES));
+		  doc.Add(new Field("termvector", "one two two three three three", customType5));
+		  doc.Add(new Field("tvoffset", "one two two three three three", customType6));
+		  doc.Add(new Field("tvposition", "one two two three three three", customType7));
+		  doc.Add(new Field("tvpositionoffset", "one two two three three three", customType8));
 
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 	  }
-	  writer.close();
-	  d.close();
+	  writer.Dispose();
+	  d.Dispose();
 	}
 
 	internal virtual void AssertTermDocsCount(string msg, IndexReader reader, Term term, int expected)
 	{
-	  DocsEnum tdocs = TestUtil.docs(random(), reader, term.field(), new BytesRef(term.text()), MultiFields.getLiveDocs(reader), null, 0);
+	  DocsEnum tdocs = TestUtil.Docs(Random(), reader, term.Field(), new BytesRef(term.Text()), MultiFields.GetLiveDocs(reader), null, 0);
 	  int count = 0;
 	  if (tdocs != null)
 	  {
-		while (tdocs.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
 		  count++;
 		}
 	  }
-	  Assert.AreEqual(msg + ", count mismatch", expected, count);
+	  Assert.AreEqual(expected, count, msg + ", count mismatch");
 	}
 
 
 	  public virtual void TestBinaryFields()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		sbyte[] bin = new sbyte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 
 		for (int i = 0; i < 10; i++)
 		{
@@ -369,48 +370,48 @@ namespace Lucene.Net.Index
 		  AddDocumentWithDifferentFields(writer);
 		  AddDocumentWithTermVectorFields(writer);
 		}
-		writer.close();
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setMergePolicy(newLogMergePolicy()));
+		writer.Dispose();
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy()));
 		Document doc = new Document();
-		doc.add(new StoredField("bin1", bin));
-		doc.add(new TextField("junk", "junk text", Field.Store.NO));
-		writer.addDocument(doc);
-		writer.close();
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Document doc2 = reader.document(reader.maxDoc() - 1);
-		IndexableField[] fields = doc2.getFields("bin1");
+		doc.Add(new StoredField("bin1", bin));
+		doc.Add(new TextField("junk", "junk text", Field.Store.NO));
+		writer.AddDocument(doc);
+		writer.Dispose();
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Document doc2 = reader.Document(reader.MaxDoc() - 1);
+		IndexableField[] fields = doc2.GetFields("bin1");
 		Assert.IsNotNull(fields);
 		Assert.AreEqual(1, fields.Length);
 		IndexableField b1 = fields[0];
-		Assert.IsTrue(b1.binaryValue() != null);
-		BytesRef bytesRef = b1.binaryValue();
-		Assert.AreEqual(bin.Length, bytesRef.length);
+		Assert.IsTrue(b1.BinaryValue() != null);
+		BytesRef bytesRef = b1.BinaryValue();
+		Assert.AreEqual(bin.Length, bytesRef.Length);
 		for (int i = 0; i < bin.Length; i++)
 		{
-		  Assert.AreEqual(bin[i], bytesRef.bytes[i + bytesRef.offset]);
+		  Assert.AreEqual(bin[i], bytesRef.Bytes[i + bytesRef.Offset]);
 		}
-		reader.close();
+		reader.Dispose();
 		// force merge
 
 
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setMergePolicy(newLogMergePolicy()));
-		writer.forceMerge(1);
-		writer.close();
-		reader = DirectoryReader.open(dir);
-		doc2 = reader.document(reader.maxDoc() - 1);
-		fields = doc2.getFields("bin1");
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMergePolicy(NewLogMergePolicy()));
+		writer.ForceMerge(1);
+		writer.Dispose();
+		reader = DirectoryReader.Open(dir);
+		doc2 = reader.Document(reader.MaxDoc() - 1);
+		fields = doc2.GetFields("bin1");
 		Assert.IsNotNull(fields);
 		Assert.AreEqual(1, fields.Length);
 		b1 = fields[0];
-		Assert.IsTrue(b1.binaryValue() != null);
-		bytesRef = b1.binaryValue();
-		Assert.AreEqual(bin.Length, bytesRef.length);
+		Assert.IsTrue(b1.BinaryValue() != null);
+		bytesRef = b1.BinaryValue();
+		Assert.AreEqual(bin.Length, bytesRef.Length);
 		for (int i = 0; i < bin.Length; i++)
 		{
-		  Assert.AreEqual(bin[i], bytesRef.bytes[i + bytesRef.offset]);
+		  Assert.AreEqual(bin[i], bytesRef.Bytes[i + bytesRef.Offset]);
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  /* ??? public void testOpenEmptyDirectory() throws IOException{
@@ -420,7 +421,7 @@ namespace Lucene.Net.Index
 	      fileDirName.mkdir();
 	    }
 	    try {
-	      DirectoryReader.open(fileDirName);
+	      DirectoryReader.Open(fileDirName);
 	      Assert.Fail("opening DirectoryReader on empty directory failed to produce FileNotFoundException/NoSuchFileException");
 	    } catch (FileNotFoundException | NoSuchFileException e) {
 	      // GOOD
@@ -431,45 +432,44 @@ namespace Lucene.Net.Index
 	public virtual void TestFilesOpenClose()
 	{
 		  // Create initial data set
-		  File dirFile = createTempDir("TestIndexReader.testFilesOpenClose");
-		  Directory dir = newFSDirectory(dirFile);
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  File dirFile = CreateTempDir("TestIndexReader.testFilesOpenClose");
+		  Directory dir = NewFSDirectory(dirFile);
+		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		  AddDoc(writer, "test");
-		  writer.close();
-		  dir.close();
+		  writer.Dispose();
+		  dir.Dispose();
 
 		  // Try to erase the data - this ensures that the writer closed all files
-		  TestUtil.rm(dirFile);
-		  dir = newFSDirectory(dirFile);
+		  TestUtil.Rm(dirFile);
+		  dir = NewFSDirectory(dirFile);
 
 		  // Now create the data set again, just as before
-		  writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE));
+		  writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE));
 		  AddDoc(writer, "test");
-		  writer.close();
-		  dir.close();
+		  writer.Dispose();
+		  dir.Dispose();
 
 		  // Now open existing directory and test that reader closes all files
-		  dir = newFSDirectory(dirFile);
-		  DirectoryReader reader1 = DirectoryReader.open(dir);
-		  reader1.close();
-		  dir.close();
+		  dir = NewFSDirectory(dirFile);
+		  DirectoryReader reader1 = DirectoryReader.Open(dir);
+		  reader1.Dispose();
+		  dir.Dispose();
 
 		  // The following will fail if reader did not close
 		  // all files
-		  TestUtil.rm(dirFile);
+		  TestUtil.Rm(dirFile);
 	}
 
 	  public virtual void TestOpenReaderAfterDelete()
 	  {
-		File dirFile = createTempDir("deletetest");
-		Directory dir = newFSDirectory(dirFile);
+		File dirFile = CreateTempDir("deletetest");
+		Directory dir = NewFSDirectory(dirFile);
 		try
 		{
-		  DirectoryReader.open(dir);
+		  DirectoryReader.Open(dir);
 		  Assert.Fail("expected FileNotFoundException/NoSuchFileException");
 		}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (FileNotFoundException | NoSuchFileException e)
+		catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
 		{
 		  // expected
 		}
@@ -479,16 +479,15 @@ namespace Lucene.Net.Index
 		// Make sure we still get a CorruptIndexException (not NPE):
 		try
 		{
-		  DirectoryReader.open(dir);
+		  DirectoryReader.Open(dir);
 		  Assert.Fail("expected FileNotFoundException/NoSuchFileException");
 		}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (FileNotFoundException | NoSuchFileException e)
+		catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
 		{
 		  // expected
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  internal static void AddDocumentWithFields(IndexWriter writer)
@@ -497,11 +496,11 @@ namespace Lucene.Net.Index
 
 		  FieldType customType3 = new FieldType();
 		  customType3.Stored = true;
-		  doc.add(newStringField("keyword", "test1", Field.Store.YES));
-		  doc.add(newTextField("text", "test1", Field.Store.YES));
-		  doc.add(newField("unindexed", "test1", customType3));
-		  doc.add(new TextField("unstored","test1", Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("keyword", "test1", Field.Store.YES));
+		  doc.Add(NewTextField("text", "test1", Field.Store.YES));
+		  doc.Add(NewField("unindexed", "test1", customType3));
+		  doc.Add(new TextField("unstored","test1", Field.Store.NO));
+		  writer.AddDocument(doc);
 	  }
 
 	  internal static void AddDocumentWithDifferentFields(IndexWriter writer)
@@ -510,11 +509,11 @@ namespace Lucene.Net.Index
 
 		FieldType customType3 = new FieldType();
 		customType3.Stored = true;
-		doc.add(newStringField("keyword2", "test1", Field.Store.YES));
-		doc.add(newTextField("text2", "test1", Field.Store.YES));
-		doc.add(newField("unindexed2", "test1", customType3));
-		doc.add(new TextField("unstored2","test1", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewStringField("keyword2", "test1", Field.Store.YES));
+		doc.Add(NewTextField("text2", "test1", Field.Store.YES));
+		doc.Add(NewField("unindexed2", "test1", customType3));
+		doc.Add(new TextField("unstored2","test1", Field.Store.NO));
+		writer.AddDocument(doc);
 	  }
 
 	  internal static void AddDocumentWithTermVectorFields(IndexWriter writer)
@@ -532,129 +531,129 @@ namespace Lucene.Net.Index
 		  customType8.StoreTermVectors = true;
 		  customType8.StoreTermVectorOffsets = true;
 		  customType8.StoreTermVectorPositions = true;
-		  doc.add(newTextField("tvnot", "tvnot", Field.Store.YES));
-		  doc.add(newField("termvector","termvector",customType5));
-		  doc.add(newField("tvoffset","tvoffset", customType6));
-		  doc.add(newField("tvposition","tvposition", customType7));
-		  doc.add(newField("tvpositionoffset","tvpositionoffset", customType8));
+		  doc.Add(NewTextField("tvnot", "tvnot", Field.Store.YES));
+		  doc.Add(NewField("termvector","termvector",customType5));
+		  doc.Add(NewField("tvoffset","tvoffset", customType6));
+		  doc.Add(NewField("tvposition","tvposition", customType7));
+		  doc.Add(NewField("tvpositionoffset","tvpositionoffset", customType8));
 
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 	  }
 
 	  internal static void AddDoc(IndexWriter writer, string value)
 	  {
 		  Document doc = new Document();
-		  doc.add(newTextField("content", value, Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("content", value, Field.Store.NO));
+		  writer.AddDocument(doc);
 	  }
 
 	  // TODO: maybe this can reuse the logic of test dueling codecs?
 	  public static void AssertIndexEquals(DirectoryReader index1, DirectoryReader index2)
 	  {
-		Assert.AreEqual("IndexReaders have different values for numDocs.", index1.numDocs(), index2.numDocs());
-		Assert.AreEqual("IndexReaders have different values for maxDoc.", index1.maxDoc(), index2.maxDoc());
-		Assert.AreEqual("Only one IndexReader has deletions.", index1.hasDeletions(), index2.hasDeletions());
-		Assert.AreEqual("Single segment test differs.", index1.leaves().size() == 1, index2.leaves().size() == 1);
+		Assert.AreEqual(index1.NumDocs(), index2.NumDocs(), "IndexReaders have different values for numDocs.");
+		Assert.AreEqual(index1.MaxDoc(), index2.MaxDoc(), "IndexReaders have different values for maxDoc.");
+		Assert.AreEqual(index1.HasDeletions(), index2.HasDeletions(), "Only one IndexReader has deletions.");
+		Assert.AreEqual(index1.Leaves().Count == 1, index2.Leaves().Count == 1, "Single segment test differs.");
 
 		// check field names
-		FieldInfos fieldInfos1 = MultiFields.getMergedFieldInfos(index1);
-		FieldInfos fieldInfos2 = MultiFields.getMergedFieldInfos(index2);
-		Assert.AreEqual("IndexReaders have different numbers of fields.", fieldInfos1.size(), fieldInfos2.size());
-		int numFields = fieldInfos1.size();
+		FieldInfos fieldInfos1 = MultiFields.GetMergedFieldInfos(index1);
+		FieldInfos fieldInfos2 = MultiFields.GetMergedFieldInfos(index2);
+		Assert.AreEqual(fieldInfos1.Size(), fieldInfos2.Size(), "IndexReaders have different numbers of fields.");
+		int numFields = fieldInfos1.Size();
 		for (int fieldID = 0;fieldID < numFields;fieldID++)
 		{
-		  FieldInfo fieldInfo1 = fieldInfos1.fieldInfo(fieldID);
-		  FieldInfo fieldInfo2 = fieldInfos2.fieldInfo(fieldID);
-		  Assert.AreEqual("Different field names.", fieldInfo1.name, fieldInfo2.name);
+		  FieldInfo fieldInfo1 = fieldInfos1.FieldInfo(fieldID);
+		  FieldInfo fieldInfo2 = fieldInfos2.FieldInfo(fieldID);
+		  Assert.AreEqual("Different field names.", fieldInfo1.Name, fieldInfo2.Name);
 		}
 
 		// check norms
 		foreach (FieldInfo fieldInfo in fieldInfos1)
 		{
-		  string curField = fieldInfo.name;
-		  NumericDocValues norms1 = MultiDocValues.getNormValues(index1, curField);
-		  NumericDocValues norms2 = MultiDocValues.getNormValues(index2, curField);
+		  string curField = fieldInfo.Name;
+		  NumericDocValues norms1 = MultiDocValues.GetNormValues(index1, curField);
+		  NumericDocValues norms2 = MultiDocValues.GetNormValues(index2, curField);
 		  if (norms1 != null && norms2 != null)
 		  {
 			// todo: generalize this (like TestDuelingCodecs assert)
-			for (int i = 0; i < index1.maxDoc(); i++)
+			for (int i = 0; i < index1.MaxDoc(); i++)
 			{
-			  Assert.AreEqual("Norm different for doc " + i + " and field '" + curField + "'.", norms1.get(i), norms2.get(i));
+			  Assert.AreEqual(norms1.Get(i), norms2.Get(i), "Norm different for doc " + i + " and field '" + curField + "'.");
 			}
 		  }
 		  else
 		  {
-			assertNull(norms1);
-			assertNull(norms2);
+			Assert.IsNull(norms1);
+			Assert.IsNull(norms2);
 		  }
 		}
 
 		// check deletions
-		Bits liveDocs1 = MultiFields.getLiveDocs(index1);
-		Bits liveDocs2 = MultiFields.getLiveDocs(index2);
-		for (int i = 0; i < index1.maxDoc(); i++)
+		Bits liveDocs1 = MultiFields.GetLiveDocs(index1);
+		Bits liveDocs2 = MultiFields.GetLiveDocs(index2);
+		for (int i = 0; i < index1.MaxDoc(); i++)
 		{
-		  Assert.AreEqual("Doc " + i + " only deleted in one index.", liveDocs1 == null || !liveDocs1.get(i), liveDocs2 == null || !liveDocs2.get(i));
+		  Assert.AreEqual(liveDocs1 == null || !liveDocs1.Get(i), liveDocs2 == null || !liveDocs2.Get(i), "Doc " + i + " only deleted in one index.");
 		}
 
 		// check stored fields
-		for (int i = 0; i < index1.maxDoc(); i++)
+		for (int i = 0; i < index1.MaxDoc(); i++)
 		{
-		  if (liveDocs1 == null || liveDocs1.get(i))
+		  if (liveDocs1 == null || liveDocs1.Get(i))
 		  {
-			Document doc1 = index1.document(i);
-			Document doc2 = index2.document(i);
+			Document doc1 = index1.Document(i);
+			Document doc2 = index2.Document(i);
 			IList<IndexableField> field1 = doc1.Fields;
 			IList<IndexableField> field2 = doc2.Fields;
-			Assert.AreEqual("Different numbers of fields for doc " + i + ".", field1.Count, field2.Count);
+			Assert.AreEqual(field1.Count, field2.Count, "Different numbers of fields for doc " + i + ".");
 			IEnumerator<IndexableField> itField1 = field1.GetEnumerator();
 			IEnumerator<IndexableField> itField2 = field2.GetEnumerator();
 			while (itField1.MoveNext())
 			{
 			  Field curField1 = (Field) itField1.Current;
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  Field curField2 = (Field) itField2.next();
-			  Assert.AreEqual("Different fields names for doc " + i + ".", curField1.name(), curField2.name());
-			  Assert.AreEqual("Different field values for doc " + i + ".", curField1.stringValue(), curField2.stringValue());
+			  Field curField2 = (Field) itField2.Next();
+			  Assert.AreEqual("Different fields names for doc " + i + ".", curField1.Name(), curField2.Name());
+			  Assert.AreEqual("Different field values for doc " + i + ".", curField1.StringValue, curField2.StringValue);
 			}
 		  }
 		}
 
 		// check dictionary and posting lists
-		Fields fields1 = MultiFields.getFields(index1);
-		Fields fields2 = MultiFields.getFields(index2);
+		Fields fields1 = MultiFields.GetFields(index1);
+		Fields fields2 = MultiFields.GetFields(index2);
 		IEnumerator<string> fenum2 = fields2.GetEnumerator();
-		Bits liveDocs = MultiFields.getLiveDocs(index1);
+		Bits liveDocs = MultiFields.GetLiveDocs(index1);
 		foreach (string field1 in fields1)
 		{
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Assert.AreEqual("Different fields", field1, fenum2.next());
-		  Terms terms1 = fields1.terms(field1);
+		  Assert.AreEqual("Different fields", field1, fenum2.Next());
+		  Terms terms1 = fields1.Terms(field1);
 		  if (terms1 == null)
 		  {
-			assertNull(fields2.terms(field1));
+			Assert.IsNull(fields2.Terms(field1));
 			continue;
 		  }
-		  TermsEnum enum1 = terms1.iterator(null);
+		  TermsEnum enum1 = terms1.Iterator(null);
 
-		  Terms terms2 = fields2.terms(field1);
+		  Terms terms2 = fields2.Terms(field1);
 		  Assert.IsNotNull(terms2);
-		  TermsEnum enum2 = terms2.iterator(null);
+		  TermsEnum enum2 = terms2.Iterator(null);
 
-		  while (enum1.next() != null)
+		  while (enum1.Next() != null)
 		  {
-			Assert.AreEqual("Different terms", enum1.term(), enum2.next());
-			DocsAndPositionsEnum tp1 = enum1.docsAndPositions(liveDocs, null);
-			DocsAndPositionsEnum tp2 = enum2.docsAndPositions(liveDocs, null);
+			Assert.AreEqual(enum1.Term(), enum2.Next(), "Different terms");
+			DocsAndPositionsEnum tp1 = enum1.DocsAndPositions(liveDocs, null);
+			DocsAndPositionsEnum tp2 = enum2.DocsAndPositions(liveDocs, null);
 
-			while (tp1.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+			while (tp1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 			{
-			  Assert.IsTrue(tp2.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-			  Assert.AreEqual("Different doc id in postinglist of term " + enum1.term() + ".", tp1.docID(), tp2.docID());
-			  Assert.AreEqual("Different term frequence in postinglist of term " + enum1.term() + ".", tp1.freq(), tp2.freq());
-			  for (int i = 0; i < tp1.freq(); i++)
+			  Assert.IsTrue(tp2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+			  Assert.AreEqual(tp1.DocID(), tp2.DocID(), "Different doc id in postinglist of term " + enum1.Term() + ".");
+			  Assert.AreEqual(tp1.Freq(), tp2.Freq(), "Different term frequence in postinglist of term " + enum1.Term() + ".");
+			  for (int i = 0; i < tp1.Freq(); i++)
 			  {
-				Assert.AreEqual("Different positions in postinglist of term " + enum1.term() + ".", tp1.nextPosition(), tp2.nextPosition());
+				Assert.AreEqual(tp1.NextPosition(), tp2.NextPosition(), "Different positions in postinglist of term " + enum1.Term() + ".");
 			  }
 			}
 		  }
@@ -666,19 +665,19 @@ namespace Lucene.Net.Index
 	  public virtual void TestGetIndexCommit()
 	  {
 
-		Directory d = newDirectory();
+		Directory d = NewDirectory();
 
 		// set up writer
-		IndexWriter writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy(10)));
+		IndexWriter writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
 		for (int i = 0;i < 27;i++)
 		{
 		  AddDocumentWithFields(writer);
 		}
-		writer.close();
+		writer.Dispose();
 
 		SegmentInfos sis = new SegmentInfos();
-		sis.read(d);
-		DirectoryReader r = DirectoryReader.open(d);
+		sis.Read(d);
+		DirectoryReader r = DirectoryReader.Open(d);
 		IndexCommit c = r.IndexCommit;
 
 		Assert.AreEqual(sis.SegmentsFileName, c.SegmentsFileName);
@@ -686,31 +685,31 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(c.Equals(r.IndexCommit));
 
 		// Change the index
-		writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy(10)));
+		writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
 		for (int i = 0;i < 7;i++)
 		{
 		  AddDocumentWithFields(writer);
 		}
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+		DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 		Assert.IsNotNull(r2);
 		Assert.IsFalse(c.Equals(r2.IndexCommit));
 		Assert.IsFalse(r2.IndexCommit.SegmentCount == 1);
-		r2.close();
+		r2.Dispose();
 
-		writer = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
-		writer.forceMerge(1);
-		writer.close();
+		writer = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+		writer.ForceMerge(1);
+		writer.Dispose();
 
-		r2 = DirectoryReader.openIfChanged(r);
+		r2 = DirectoryReader.OpenIfChanged(r);
 		Assert.IsNotNull(r2);
-		assertNull(DirectoryReader.openIfChanged(r2));
+		Assert.IsNull(DirectoryReader.OpenIfChanged(r2));
 		Assert.AreEqual(1, r2.IndexCommit.SegmentCount);
 
-		r.close();
-		r2.close();
-		d.close();
+		r.Dispose();
+		r2.Dispose();
+		d.Dispose();
 	  }
 
 	  internal static Document CreateDocument(string id)
@@ -720,7 +719,7 @@ namespace Lucene.Net.Index
 		customType.Tokenized = false;
 		customType.OmitNorms = true;
 
-		doc.add(newField("id", id, customType));
+		doc.Add(NewField("id", id, customType));
 		return doc;
 	  }
 
@@ -729,46 +728,46 @@ namespace Lucene.Net.Index
 	  // good exception
 	  public virtual void TestNoDir()
 	  {
-		File tempDir = createTempDir("doesnotexist");
-		TestUtil.rm(tempDir);
-		Directory dir = newFSDirectory(tempDir);
+		File tempDir = CreateTempDir("doesnotexist");
+		TestUtil.Rm(tempDir);
+		Directory dir = NewFSDirectory(tempDir);
 		try
 		{
-		  DirectoryReader.open(dir);
+		  DirectoryReader.Open(dir);
 		  Assert.Fail("did not hit expected exception");
 		}
 		catch (NoSuchDirectoryException nsde)
 		{
 		  // expected
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1509
 	  public virtual void TestNoDupCommitFileNames()
 	  {
 
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2));
-		writer.addDocument(CreateDocument("a"));
-		writer.addDocument(CreateDocument("a"));
-		writer.addDocument(CreateDocument("a"));
-		writer.close();
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+		writer.AddDocument(CreateDocument("a"));
+		writer.AddDocument(CreateDocument("a"));
+		writer.AddDocument(CreateDocument("a"));
+		writer.Dispose();
 
-		ICollection<IndexCommit> commits = DirectoryReader.listCommits(dir);
+		ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
 		foreach (IndexCommit commit in commits)
 		{
 		  ICollection<string> files = commit.FileNames;
 		  HashSet<string> seen = new HashSet<string>();
 		  foreach (String fileName in files)
 		  {
-			Assert.IsTrue("file " + fileName + " was duplicated", !seen.Contains(fileName));
+			Assert.IsTrue(!seen.Contains(fileName), "file " + fileName + " was duplicated");
 			seen.Add(fileName);
 		  }
 		}
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1579: Ensure that on a reopened reader, that any
@@ -776,294 +775,294 @@ namespace Lucene.Net.Index
 	  // FieldCache
 	  public virtual void TestFieldCacheReuseAfterReopen()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy(10)));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(10)));
 		Document doc = new Document();
-		doc.add(newStringField("number", "17", Field.Store.NO));
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(NewStringField("number", "17", Field.Store.NO));
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// Open reader1
-		DirectoryReader r = DirectoryReader.open(dir);
-		AtomicReader r1 = getOnlySegmentReader(r);
-		FieldCache.Ints ints = FieldCache.DEFAULT.getInts(r1, "number", false);
-		Assert.AreEqual(17, ints.get(0));
+		DirectoryReader r = DirectoryReader.Open(dir);
+		AtomicReader r1 = GetOnlySegmentReader(r);
+        FieldCache_Fields.Ints ints = FieldCache_Fields.DEFAULT.GetInts(r1, "number", false);
+		Assert.AreEqual(17, ints.Get(0));
 
 		// Add new segment
-		writer.addDocument(doc);
-		writer.commit();
+		writer.AddDocument(doc);
+		writer.Commit();
 
 		// Reopen reader1 --> reader2
-		DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+		DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 		Assert.IsNotNull(r2);
-		r.close();
-		AtomicReader sub0 = r2.leaves().get(0).reader();
-		FieldCache.Ints ints2 = FieldCache.DEFAULT.getInts(sub0, "number", false);
-		r2.close();
+		r.Dispose();
+		AtomicReader sub0 = (AtomicReader)r2.Leaves()[0].Reader();
+        FieldCache_Fields.Ints ints2 = FieldCache_Fields.DEFAULT.GetInts(sub0, "number", false);
+		r2.Dispose();
 		Assert.IsTrue(ints == ints2);
 
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1586: getUniqueTermCount
 	  public virtual void TestUniqueTermCount()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
-		doc.add(newTextField("field", "a b c d e f g h i j k l m n o p q r s t u v w x y z", Field.Store.NO));
-		doc.add(newTextField("number", "0 1 2 3 4 5 6 7 8 9", Field.Store.NO));
-		writer.addDocument(doc);
-		writer.addDocument(doc);
-		writer.commit();
+		doc.Add(NewTextField("field", "a b c d e f g h i j k l m n o p q r s t u v w x y z", Field.Store.NO));
+		doc.Add(NewTextField("number", "0 1 2 3 4 5 6 7 8 9", Field.Store.NO));
+		writer.AddDocument(doc);
+		writer.AddDocument(doc);
+		writer.Commit();
 
-		DirectoryReader r = DirectoryReader.open(dir);
-		AtomicReader r1 = getOnlySegmentReader(r);
-		Assert.AreEqual(36, r1.fields().UniqueTermCount);
-		writer.addDocument(doc);
-		writer.commit();
-		DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+		DirectoryReader r = DirectoryReader.Open(dir);
+		AtomicReader r1 = GetOnlySegmentReader(r);
+		Assert.AreEqual(36, r1.Fields().UniqueTermCount);
+		writer.AddDocument(doc);
+		writer.Commit();
+		DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 		Assert.IsNotNull(r2);
-		r.close();
+		r.Dispose();
 
-		foreach (AtomicReaderContext s in r2.leaves())
+		foreach (AtomicReaderContext s in r2.Leaves())
 		{
-		  Assert.AreEqual(36, s.reader().fields().UniqueTermCount);
+		  Assert.AreEqual(36, ((AtomicReader)s.Reader()).Fields().UniqueTermCount);
 		}
-		r2.close();
-		writer.close();
-		dir.close();
+		r2.Dispose();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1609: don't load terms index
 	  public virtual void TestNoTermsIndex()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
 		Document doc = new Document();
-		doc.add(newTextField("field", "a b c d e f g h i j k l m n o p q r s t u v w x y z", Field.Store.NO));
-		doc.add(newTextField("number", "0 1 2 3 4 5 6 7 8 9", Field.Store.NO));
-		writer.addDocument(doc);
-		writer.addDocument(doc);
-		writer.close();
+		doc.Add(NewTextField("field", "a b c d e f g h i j k l m n o p q r s t u v w x y z", Field.Store.NO));
+		doc.Add(NewTextField("number", "0 1 2 3 4 5 6 7 8 9", Field.Store.NO));
+		writer.AddDocument(doc);
+		writer.AddDocument(doc);
+		writer.Dispose();
 
-		DirectoryReader r = DirectoryReader.open(dir, -1);
+		DirectoryReader r = DirectoryReader.Open(dir, -1);
 		try
 		{
-		  r.docFreq(new Term("field", "f"));
+		  r.DocFreq(new Term("field", "f"));
 		  Assert.Fail("did not hit expected exception");
 		}
-		catch (IllegalStateException ise)
+		catch (InvalidOperationException ise)
 		{
 		  // expected
 		}
 
-		Assert.AreEqual(-1, ((SegmentReader) r.leaves().get(0).reader()).TermInfosIndexDivisor);
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat())).setMergePolicy(newLogMergePolicy(10)));
-		writer.addDocument(doc);
-		writer.close();
+		Assert.AreEqual(-1, ((SegmentReader) r.Leaves()[0].Reader()).TermInfosIndexDivisor);
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())).SetMergePolicy(NewLogMergePolicy(10)));
+		writer.AddDocument(doc);
+		writer.Dispose();
 
 		// LUCENE-1718: ensure re-open carries over no terms index:
-		DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+		DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 		Assert.IsNotNull(r2);
-		assertNull(DirectoryReader.openIfChanged(r2));
-		r.close();
-		IList<AtomicReaderContext> leaves = r2.leaves();
+		Assert.IsNull(DirectoryReader.OpenIfChanged(r2));
+		r.Dispose();
+		IList<AtomicReaderContext> leaves = r2.Leaves();
 		Assert.AreEqual(2, leaves.Count);
 		foreach (AtomicReaderContext ctx in leaves)
 		{
 		  try
 		  {
-			ctx.reader().docFreq(new Term("field", "f"));
+			ctx.Reader().DocFreq(new Term("field", "f"));
 			Assert.Fail("did not hit expected exception");
 		  }
-		  catch (IllegalStateException ise)
+		  catch (InvalidOperationException ise)
 		  {
 			// expected
 		  }
 		}
-		r2.close();
-		dir.close();
+		r2.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-2046
 	  public virtual void TestPrepareCommitIsCurrent()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.commit();
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.Commit();
 		Document doc = new Document();
-		writer.addDocument(doc);
-		DirectoryReader r = DirectoryReader.open(dir);
+		writer.AddDocument(doc);
+		DirectoryReader r = DirectoryReader.Open(dir);
 		Assert.IsTrue(r.Current);
-		writer.addDocument(doc);
-		writer.prepareCommit();
+		writer.AddDocument(doc);
+		writer.PrepareCommit();
 		Assert.IsTrue(r.Current);
-		DirectoryReader r2 = DirectoryReader.openIfChanged(r);
-		assertNull(r2);
-		writer.commit();
+		DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
+		Assert.IsNull(r2);
+		writer.Commit();
 		Assert.IsFalse(r.Current);
-		writer.close();
-		r.close();
-		dir.close();
+		writer.Dispose();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-2753
 	  public virtual void TestListCommits()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, null).setIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
 		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
-		writer.addDocument(new Document());
-		writer.commit();
-		sdp.snapshot();
-		writer.addDocument(new Document());
-		writer.commit();
-		sdp.snapshot();
-		writer.addDocument(new Document());
-		writer.commit();
-		sdp.snapshot();
-		writer.close();
+		writer.AddDocument(new Document());
+		writer.Commit();
+		sdp.Snapshot();
+		writer.AddDocument(new Document());
+		writer.Commit();
+		sdp.Snapshot();
+		writer.AddDocument(new Document());
+		writer.Commit();
+		sdp.Snapshot();
+		writer.Dispose();
 		long currentGen = 0;
-		foreach (IndexCommit ic in DirectoryReader.listCommits(dir))
+		foreach (IndexCommit ic in DirectoryReader.ListCommits(dir))
 		{
-		  Assert.IsTrue("currentGen=" + currentGen + " commitGen=" + ic.Generation, currentGen < ic.Generation);
+		  Assert.IsTrue(currentGen < ic.Generation, "currentGen=" + currentGen + " commitGen=" + ic.Generation);
 		  currentGen = ic.Generation;
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  // Make sure totalTermFreq works correctly in the terms
 	  // dict cache
 	  public virtual void TestTotalTermFreqCached()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d = new Document();
-		d.add(newTextField("f", "a a b", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "a a b", Field.Store.NO));
+		writer.AddDocument(d);
 		DirectoryReader r = writer.Reader;
-		writer.close();
+		writer.Dispose();
 		try
 		{
 		  // Make sure codec impls totalTermFreq (eg PreFlex doesn't)
-		  Assume.assumeTrue(r.totalTermFreq(new Term("f", new BytesRef("b"))) != -1);
-		  Assert.AreEqual(1, r.totalTermFreq(new Term("f", new BytesRef("b"))));
-		  Assert.AreEqual(2, r.totalTermFreq(new Term("f", new BytesRef("a"))));
-		  Assert.AreEqual(1, r.totalTermFreq(new Term("f", new BytesRef("b"))));
+		  Assume.AssumeTruer.TotalTermFreq(new Term("f", new BytesRef("b"))) != -1);
+		  Assert.AreEqual(1, r.TotalTermFreq(new Term("f", new BytesRef("b"))));
+		  Assert.AreEqual(2, r.TotalTermFreq(new Term("f", new BytesRef("a"))));
+		  Assert.AreEqual(1, r.TotalTermFreq(new Term("f", new BytesRef("b"))));
 		}
 		finally
 		{
-		  r.close();
-		  dir.close();
+		  r.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  public virtual void TestGetSumDocFreq()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d = new Document();
-		d.add(newTextField("f", "a", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "a", Field.Store.NO));
+		writer.AddDocument(d);
 		d = new Document();
-		d.add(newTextField("f", "b", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "b", Field.Store.NO));
+		writer.AddDocument(d);
 		DirectoryReader r = writer.Reader;
-		writer.close();
+		writer.Dispose();
 		try
 		{
 		  // Make sure codec impls getSumDocFreq (eg PreFlex doesn't)
-		  Assume.assumeTrue(r.getSumDocFreq("f") != -1);
-		  Assert.AreEqual(2, r.getSumDocFreq("f"));
+		  Assume.AssumeTruer.GetSumDocFreq("f") != -1);
+		  Assert.AreEqual(2, r.GetSumDocFreq("f"));
 		}
 		finally
 		{
-		  r.close();
-		  dir.close();
+		  r.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  public virtual void TestGetDocCount()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d = new Document();
-		d.add(newTextField("f", "a", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "a", Field.Store.NO));
+		writer.AddDocument(d);
 		d = new Document();
-		d.add(newTextField("f", "a", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "a", Field.Store.NO));
+		writer.AddDocument(d);
 		DirectoryReader r = writer.Reader;
-		writer.close();
+		writer.Dispose();
 		try
 		{
 		  // Make sure codec impls getSumDocFreq (eg PreFlex doesn't)
-		  Assume.assumeTrue(r.getDocCount("f") != -1);
-		  Assert.AreEqual(2, r.getDocCount("f"));
+		  Assume.AssumeTruer.GetDocCount("f") != -1);
+		  Assert.AreEqual(2, r.GetDocCount("f"));
 		}
 		finally
 		{
-		  r.close();
-		  dir.close();
+		  r.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  public virtual void TestGetSumTotalTermFreq()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document d = new Document();
-		d.add(newTextField("f", "a b b", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "a b b", Field.Store.NO));
+		writer.AddDocument(d);
 		d = new Document();
-		d.add(newTextField("f", "a a b", Field.Store.NO));
-		writer.addDocument(d);
+		d.Add(NewTextField("f", "a a b", Field.Store.NO));
+		writer.AddDocument(d);
 		DirectoryReader r = writer.Reader;
-		writer.close();
+		writer.Dispose();
 		try
 		{
 		  // Make sure codec impls getSumDocFreq (eg PreFlex doesn't)
-		  Assume.assumeTrue(r.getSumTotalTermFreq("f") != -1);
-		  Assert.AreEqual(6, r.getSumTotalTermFreq("f"));
+		  Assume.AssumeTruer.GetSumTotalTermFreq("f") != -1);
+		  Assert.AreEqual(6, r.GetSumTotalTermFreq("f"));
 		}
 		finally
 		{
-		  r.close();
-		  dir.close();
+		  r.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  // LUCENE-2474
 	  public virtual void TestReaderFinishedListener()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		((LogMergePolicy) writer.Config.MergePolicy).MergeFactor = 3;
-		writer.addDocument(new Document());
-		writer.commit();
-		writer.addDocument(new Document());
-		writer.commit();
+		writer.AddDocument(new Document());
+		writer.Commit();
+		writer.AddDocument(new Document());
+		writer.Commit();
 		DirectoryReader reader = writer.Reader;
 		int[] closeCount = new int[1];
 		IndexReader.ReaderClosedListener listener = new ReaderClosedListenerAnonymousInnerClassHelper(this, reader, closeCount);
 
-		reader.addReaderClosedListener(listener);
+		reader.AddReaderClosedListener(listener);
 
-		reader.close();
+		reader.Dispose();
 
 		// Close the top reader, its the only one that should be closed
 		Assert.AreEqual(1, closeCount[0]);
-		writer.close();
+		writer.Dispose();
 
-		DirectoryReader reader2 = DirectoryReader.open(dir);
-		reader2.addReaderClosedListener(listener);
+		DirectoryReader reader2 = DirectoryReader.Open(dir);
+		reader2.AddReaderClosedListener(listener);
 
 		closeCount[0] = 0;
-		reader2.close();
+		reader2.Dispose();
 		Assert.AreEqual(1, closeCount[0]);
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
@@ -1088,72 +1087,72 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestOOBDocID()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.addDocument(new Document());
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.AddDocument(new Document());
 		DirectoryReader r = writer.Reader;
-		writer.close();
-		r.document(0);
+		writer.Dispose();
+		r.Document(0);
 		try
 		{
-		  r.document(1);
+		  r.Document(1);
 		  Assert.Fail("did not hit exception");
 		}
 		catch (System.ArgumentException iae)
 		{
 		  // expected
 		}
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestTryIncRef()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.addDocument(new Document());
-		writer.commit();
-		DirectoryReader r = DirectoryReader.open(dir);
-		Assert.IsTrue(r.tryIncRef());
-		r.decRef();
-		r.close();
-		Assert.IsFalse(r.tryIncRef());
-		writer.close();
-		dir.close();
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.AddDocument(new Document());
+		writer.Commit();
+		DirectoryReader r = DirectoryReader.Open(dir);
+		Assert.IsTrue(r.TryIncRef());
+		r.DecRef();
+		r.Dispose();
+		Assert.IsFalse(r.TryIncRef());
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestStressTryIncRef()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.addDocument(new Document());
-		writer.commit();
-		DirectoryReader r = DirectoryReader.open(dir);
-		int numThreads = atLeast(2);
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.AddDocument(new Document());
+		writer.Commit();
+		DirectoryReader r = DirectoryReader.Open(dir);
+		int numThreads = AtLeast(2);
 
 		IncThread[] threads = new IncThread[numThreads];
 		for (int i = 0; i < threads.Length; i++)
 		{
-		  threads[i] = new IncThread(r, random());
+		  threads[i] = new IncThread(r, Random());
 		  threads[i].Start();
 		}
 		Thread.Sleep(100);
 
-		Assert.IsTrue(r.tryIncRef());
-		r.decRef();
-		r.close();
+		Assert.IsTrue(r.TryIncRef());
+		r.DecRef();
+		r.Dispose();
 
 		for (int i = 0; i < threads.Length; i++)
 		{
 		  threads[i].Join();
-		  assertNull(threads[i].Failed);
+		  Assert.IsNull(threads[i].Failed);
 		}
-		Assert.IsFalse(r.tryIncRef());
-		writer.close();
-		dir.close();
+		Assert.IsFalse(r.TryIncRef());
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
-	  internal class IncThread : System.Threading.Thread
+	  internal class IncThread : ThreadClass
 	  {
 		internal readonly IndexReader ToInc;
 		internal readonly Random Random;
@@ -1169,12 +1168,12 @@ namespace Lucene.Net.Index
 		{
 		  try
 		  {
-			while (ToInc.tryIncRef())
+			while (ToInc.TryIncRef())
 			{
-			  Assert.IsFalse(ToInc.hasDeletions());
-			  ToInc.decRef();
+			  Assert.IsFalse(ToInc.HasDeletions());
+			  ToInc.DecRef();
 			}
-			Assert.IsFalse(ToInc.tryIncRef());
+			Assert.IsFalse(ToInc.TryIncRef());
 		  }
 		  catch (Exception e)
 		  {
@@ -1185,92 +1184,92 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestLoadCertainFields()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newStringField("field1", "foobar", Field.Store.YES));
-		doc.add(newStringField("field2", "foobaz", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(NewStringField("field1", "foobar", Field.Store.YES));
+		doc.Add(NewStringField("field2", "foobaz", Field.Store.YES));
+		writer.AddDocument(doc);
 		DirectoryReader r = writer.Reader;
-		writer.close();
-		Set<string> fieldsToLoad = new HashSet<string>();
-		Assert.AreEqual(0, r.document(0, fieldsToLoad).Fields.size());
-		fieldsToLoad.add("field1");
-		Document doc2 = r.document(0, fieldsToLoad);
-		Assert.AreEqual(1, doc2.Fields.size());
-		Assert.AreEqual("foobar", doc2.get("field1"));
-		r.close();
-		dir.close();
+		writer.Close();
+		HashSet<string> fieldsToLoad = new HashSet<string>();
+		Assert.AreEqual(0, r.Document(0, fieldsToLoad).Fields.Count);
+		fieldsToLoad.Add("field1");
+		Document doc2 = r.Document(0, fieldsToLoad);
+		Assert.AreEqual(1, doc2.Fields.Count);
+		Assert.AreEqual("foobar", doc2.Get("field1"));
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// @deprecated just to ensure IndexReader static methods work 
 	  [Obsolete("just to ensure IndexReader static methods work")]
 	  public virtual void TestBackwards()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
 		Document doc = new Document();
-		doc.add(newTextField("field", "a b c d e f g h i j k l m n o p q r s t u v w x y z", Field.Store.NO));
-		doc.add(newTextField("number", "0 1 2 3 4 5 6 7 8 9", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("field", "a b c d e f g h i j k l m n o p q r s t u v w x y z", Field.Store.NO));
+		doc.Add(NewTextField("number", "0 1 2 3 4 5 6 7 8 9", Field.Store.NO));
+		writer.AddDocument(doc);
 
 		// open(IndexWriter, boolean)
-		DirectoryReader r = IndexReader.open(writer, true);
-		Assert.AreEqual(1, r.docFreq(new Term("field", "f")));
-		r.close();
-		writer.addDocument(doc);
-		writer.close();
+		DirectoryReader r = IndexReader.Open(writer, true);
+		Assert.AreEqual(1, r.DocFreq(new Term("field", "f")));
+		r.Dispose();
+		writer.AddDocument(doc);
+		writer.Dispose();
 
 		// open(Directory)
-		r = IndexReader.open(dir);
-		Assert.AreEqual(2, r.docFreq(new Term("field", "f")));
-		r.close();
+		r = IndexReader.Open(dir);
+		Assert.AreEqual(2, r.DocFreq(new Term("field", "f")));
+		r.Dispose();
 
 		// open(IndexCommit)
-		IList<IndexCommit> commits = DirectoryReader.listCommits(dir);
+		IList<IndexCommit> commits = DirectoryReader.ListCommits(dir);
 		Assert.AreEqual(1, commits.Count);
-		r = IndexReader.open(commits[0]);
-		Assert.AreEqual(2, r.docFreq(new Term("field", "f")));
-		r.close();
+		r = IndexReader.Open(commits[0]);
+		Assert.AreEqual(2, r.DocFreq(new Term("field", "f")));
+		r.Dispose();
 
 		// open(Directory, int)
-		r = IndexReader.open(dir, -1);
+		r = IndexReader.Open(dir, -1);
 		try
 		{
-		  r.docFreq(new Term("field", "f"));
+		  r.DocFreq(new Term("field", "f"));
 		  Assert.Fail("did not hit expected exception");
 		}
-		catch (IllegalStateException ise)
+		catch (InvalidOperationException ise)
 		{
 		  // expected
 		}
-		Assert.AreEqual(-1, ((SegmentReader) r.leaves().get(0).reader()).TermInfosIndexDivisor);
-		r.close();
+		Assert.AreEqual(-1, ((SegmentReader) r.Leaves()[0].Reader()).TermInfosIndexDivisor);
+		r.Dispose();
 
 		// open(IndexCommit, int)
-		r = IndexReader.open(commits[0], -1);
+		r = IndexReader.Open(commits[0], -1);
 		try
 		{
-		  r.docFreq(new Term("field", "f"));
+		  r.DocFreq(new Term("field", "f"));
 		  Assert.Fail("did not hit expected exception");
 		}
-		catch (IllegalStateException ise)
+		catch (InvalidOperationException ise)
 		{
 		  // expected
 		}
-		Assert.AreEqual(-1, ((SegmentReader) r.leaves().get(0).reader()).TermInfosIndexDivisor);
-		r.close();
-		dir.close();
+		Assert.AreEqual(-1, ((SegmentReader) r.Leaves()[0].Reader()).TermInfosIndexDivisor);
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestIndexExistsOnNonExistentDirectory()
 	  {
-		File tempDir = createTempDir("testIndexExistsOnNonExistentDirectory");
+		File tempDir = CreateTempDir("testIndexExistsOnNonExistentDirectory");
 		tempDir.delete();
-		Directory dir = newFSDirectory(tempDir);
+		Directory dir = NewFSDirectory(tempDir);
 		Console.WriteLine("dir=" + dir);
-		Assert.IsFalse(DirectoryReader.indexExists(dir));
-		dir.close();
+		Assert.IsFalse(DirectoryReader.IndexExists(dir));
+		dir.Dispose();
 	  }
 	}
 

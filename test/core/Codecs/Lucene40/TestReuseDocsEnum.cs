@@ -30,14 +30,15 @@ namespace Lucene.Net.Codecs.Lucene40
 	using Terms = Lucene.Net.Index.Terms;
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using Directory = Lucene.Net.Store.Directory;
-	using MatchNoBits = Lucene.Net.Util.Bits.MatchNoBits;
+	using MatchNoBits = Lucene.Net.Util.Bits_MatchNoBits;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using LineFileDocs = Lucene.Net.Util.LineFileDocs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using BeforeClass = org.junit.BeforeClass;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	// TODO: really this should be in BaseTestPF or somewhere else? useful test!
 	public class TestReuseDocsEnum : LuceneTestCase
@@ -52,143 +53,143 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  public virtual void TestReuseDocsEnumNoReuse()
 	  {
-		Directory dir = newDirectory();
-		Codec cp = TestUtil.alwaysPostingsFormat(new Lucene40RWPostingsFormat());
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(cp));
-		int numdocs = atLeast(20);
-		CreateRandomIndex(numdocs, writer, random());
-		writer.commit();
+		Directory dir = NewDirectory();
+		Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+		int numdocs = AtLeast(20);
+		CreateRandomIndex(numdocs, writer, Random());
+		writer.Commit();
 
-		DirectoryReader open = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext ctx in open.leaves())
+		DirectoryReader open = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext ctx in open.Leaves())
 		{
-		  AtomicReader indexReader = ctx.reader();
-		  Terms terms = indexReader.terms("body");
-		  TermsEnum iterator = terms.iterator(null);
+		  AtomicReader indexReader = (AtomicReader)ctx.Reader();
+		  Terms terms = indexReader.Terms("body");
+		  TermsEnum iterator = terms.Iterator(null);
 		  IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
-		  MatchNoBits bits = new MatchNoBits(indexReader.maxDoc());
-		  while ((iterator.next()) != null)
+		  MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc());
+		  while ((iterator.Next()) != null)
 		  {
-			DocsEnum docs = iterator.docs(random().nextBoolean() ? bits : new MatchNoBits(indexReader.maxDoc()), null, random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+			DocsEnum docs = iterator.Docs(Random().NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc()), null, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 			enums.put(docs, true);
 		  }
 
-		  Assert.AreEqual(terms.size(), enums.size());
+		  Assert.AreEqual(terms.Size(), enums.Size());
 		}
-		IOUtils.close(writer, open, dir);
+		IOUtils.Close(writer, open, dir);
 	  }
 
 	  // tests for reuse only if bits are the same either null or the same instance
 	  public virtual void TestReuseDocsEnumSameBitsOrNull()
 	  {
-		Directory dir = newDirectory();
-		Codec cp = TestUtil.alwaysPostingsFormat(new Lucene40RWPostingsFormat());
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(cp));
-		int numdocs = atLeast(20);
-		CreateRandomIndex(numdocs, writer, random());
-		writer.commit();
+		Directory dir = NewDirectory();
+		Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+		int numdocs = AtLeast(20);
+		CreateRandomIndex(numdocs, writer, Random());
+		writer.Commit();
 
-		DirectoryReader open = DirectoryReader.open(dir);
-		foreach (AtomicReaderContext ctx in open.leaves())
+		DirectoryReader open = DirectoryReader.Open(dir);
+		foreach (AtomicReaderContext ctx in open.Leaves())
 		{
-		  Terms terms = ctx.reader().terms("body");
-		  TermsEnum iterator = terms.iterator(null);
+		  Terms terms = ((AtomicReader)ctx.Reader()).Terms("body");
+		  TermsEnum iterator = terms.Iterator(null);
 		  IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
-		  MatchNoBits bits = new MatchNoBits(open.maxDoc());
+		  MatchNoBits bits = new MatchNoBits(open.MaxDoc());
 		  DocsEnum docs = null;
-		  while ((iterator.next()) != null)
+		  while ((iterator.Next()) != null)
 		  {
-			docs = iterator.docs(bits, docs, random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+			docs = iterator.Docs(bits, docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 			enums.put(docs, true);
 		  }
 
-		  Assert.AreEqual(1, enums.size());
+		  Assert.AreEqual(1, enums.Size());
 		  enums.clear();
-		  iterator = terms.iterator(null);
+          iterator = terms.Iterator(null);
 		  docs = null;
-		  while ((iterator.next()) != null)
+          while ((iterator.Next()) != null)
 		  {
-			docs = iterator.docs(new MatchNoBits(open.maxDoc()), docs, random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+			docs = iterator.Docs(new MatchNoBits(open.MaxDoc()), docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 			enums.put(docs, true);
 		  }
-		  Assert.AreEqual(terms.size(), enums.size());
+		  Assert.AreEqual(terms.Size(), enums.Size());
 
 		  enums.clear();
-		  iterator = terms.iterator(null);
+          iterator = terms.Iterator(null);
 		  docs = null;
-		  while ((iterator.next()) != null)
+          while ((iterator.Next()) != null)
 		  {
-			docs = iterator.docs(null, docs, random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+			docs = iterator.Docs(null, docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 			enums.put(docs, true);
 		  }
-		  Assert.AreEqual(1, enums.size());
+		  Assert.AreEqual(1, enums.Size());
 		}
-		IOUtils.close(writer, open, dir);
+		IOUtils.Close(writer, open, dir);
 	  }
 
 	  // make sure we never reuse from another reader even if it is the same field & codec etc
 	  public virtual void TestReuseDocsEnumDifferentReader()
 	  {
-		Directory dir = newDirectory();
-		Codec cp = TestUtil.alwaysPostingsFormat(new Lucene40RWPostingsFormat());
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		Directory dir = NewDirectory();
+		Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setCodec(cp));
-		int numdocs = atLeast(20);
-		CreateRandomIndex(numdocs, writer, random());
-		writer.commit();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetCodec(cp));
+		int numdocs = AtLeast(20);
+		CreateRandomIndex(numdocs, writer, Random());
+		writer.Commit();
 
-		DirectoryReader firstReader = DirectoryReader.open(dir);
-		DirectoryReader secondReader = DirectoryReader.open(dir);
-		IList<AtomicReaderContext> leaves = firstReader.leaves();
-		IList<AtomicReaderContext> leaves2 = secondReader.leaves();
+		DirectoryReader firstReader = DirectoryReader.Open(dir);
+		DirectoryReader secondReader = DirectoryReader.Open(dir);
+		IList<AtomicReaderContext> leaves = firstReader.Leaves();
+		IList<AtomicReaderContext> leaves2 = secondReader.Leaves();
 
 		foreach (AtomicReaderContext ctx in leaves)
 		{
-		  Terms terms = ctx.reader().terms("body");
-		  TermsEnum iterator = terms.iterator(null);
+		  Terms terms = ((AtomicReader)ctx.Reader()).Terms("body");
+		  TermsEnum iterator = terms.Iterator(null);
 		  IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
-		  MatchNoBits bits = new MatchNoBits(firstReader.maxDoc());
-		  iterator = terms.iterator(null);
+		  MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc());
+		  iterator = terms.Iterator(null);
 		  DocsEnum docs = null;
 		  BytesRef term = null;
-		  while ((term = iterator.next()) != null)
+		  while ((term = iterator.Next()) != null)
 		  {
-			docs = iterator.docs(null, RandomDocsEnum("body", term, leaves2, bits), random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+			docs = iterator.Docs(null, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 			enums.put(docs, true);
 		  }
-		  Assert.AreEqual(terms.size(), enums.size());
+		  Assert.AreEqual(terms.Size(), enums.Size());
 
-		  iterator = terms.iterator(null);
+		  iterator = terms.Iterator(null);
 		  enums.clear();
 		  docs = null;
-		  while ((term = iterator.next()) != null)
+          while ((term = iterator.Next()) != null)
 		  {
-			docs = iterator.docs(bits, RandomDocsEnum("body", term, leaves2, bits), random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+			docs = iterator.Docs(bits, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 			enums.put(docs, true);
 		  }
-		  Assert.AreEqual(terms.size(), enums.size());
+		  Assert.AreEqual(terms.Size(), enums.Size());
 		}
-		IOUtils.close(writer, firstReader, secondReader, dir);
+		IOUtils.Close(writer, firstReader, secondReader, dir);
 	  }
 
 	  public virtual DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, Bits bits)
 	  {
-		if (random().Next(10) == 0)
+		if (Random().Next(10) == 0)
 		{
 		  return null;
 		}
-		AtomicReader indexReader = readers[random().Next(readers.Count)].reader();
-		Terms terms = indexReader.terms(field);
+		AtomicReader indexReader = (AtomicReader)readers[Random().Next(readers.Count)].Reader();
+		Terms terms = indexReader.Terms(field);
 		if (terms == null)
 		{
 		  return null;
 		}
-		TermsEnum iterator = terms.iterator(null);
-		if (iterator.seekExact(term))
+		TermsEnum iterator = terms.Iterator(null);
+		if (iterator.SeekExact(term))
 		{
-		  return iterator.docs(bits, null, random().nextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+		  return iterator.Docs(bits, null, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
 		}
 		return null;
 	  }
@@ -203,10 +204,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
 		for (int i = 0; i < numdocs; i++)
 		{
-		  writer.addDocument(lineFileDocs.nextDoc());
+		  writer.AddDocument(lineFileDocs.NextDoc());
 		}
 
-		lineFileDocs.close();
+		lineFileDocs.Close();
 	  }
 
 	}

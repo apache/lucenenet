@@ -27,6 +27,8 @@ namespace Lucene.Net.Analysis
 	  private int Pos = 0, Size = 0;
 	  private string s = null;
 
+      internal ReusableStringReader() { }
+
 	  internal string Value
 	  {
 		  set

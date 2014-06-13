@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
 	  {
-		return new PreFlexRWNormsConsumer(state.directory, state.segmentInfo.name, state.context);
+		return new PreFlexRWNormsConsumer(state.Directory, state.SegmentInfo.Name, state.Context);
 	  }
 	}
 

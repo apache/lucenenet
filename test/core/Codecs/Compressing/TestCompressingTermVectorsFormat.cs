@@ -42,24 +42,24 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 			get
 			{
-			return CompressingCodec.randomInstance(random());
+			return CompressingCodec.RandomInstance(Random());
 			}
 		}
 
 	  // https://issues.apache.org/jira/browse/LUCENE-5156
 	  public virtual void TestNoOrds()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.StoreTermVectors = true;
 		doc.Add(new Field("foo", "this is a test", ft));
-		iw.addDocument(doc);
-		AtomicReader ir = getOnlySegmentReader(iw.Reader);
-		Terms terms = ir.getTermVector(0, "foo");
+		iw.AddDocument(doc);
+		AtomicReader ir = GetOnlySegmentReader(iw.Reader);
+		Terms terms = ir.GetTermVector(0, "foo");
 		Assert.IsNotNull(terms);
-		TermsEnum termsEnum = terms.iterator(null);
+		TermsEnum termsEnum = terms.Iterator(null);
 		Assert.AreEqual(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("this")));
 		try
 		{
@@ -80,9 +80,9 @@ namespace Lucene.Net.Codecs.Compressing
 		{
 		  // expected exception
 		}
-		ir.Close();
+		ir.Dispose();
 		iw.Close();
-		dir.Close();
+        dir.Dispose();
 	  }
 	}
 

@@ -25,8 +25,9 @@ namespace Lucene.Net.Index
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
 	using Document = Lucene.Net.Document.Document;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Directory = Lucene.Net.Store.Directory;
+    using NUnit.Framework;
 
 
 	public class TestSegmentTermEnum : LuceneTestCase
@@ -36,21 +37,21 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
+		base.SetUp();
+		Dir = NewDirectory();
 	  }
 
 	  public override void TearDown()
 	  {
-		Dir.close();
-		base.tearDown();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestTermEnum()
 	  {
 		IndexWriter writer = null;
 
-		writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		// ADD 100 documents with term : aaa
 		// add 100 documents with terms: aaa bbb
@@ -61,15 +62,15 @@ namespace Lucene.Net.Index
 		  AddDoc(writer, "aaa bbb");
 		}
 
-		writer.close();
+		writer.Dispose();
 
 		// verify document frequency of terms in an multi segment index
 		VerifyDocFreq();
 
 		// merge segments
-		writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
-		writer.forceMerge(1);
-		writer.close();
+		writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		// verify document frequency of terms in a single segment index
 		VerifyDocFreq();
@@ -77,70 +78,70 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestPrevTermAtEnd()
 	  {
-		IndexWriter writer = new IndexWriter(Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setCodec(TestUtil.alwaysPostingsFormat(new Lucene41PostingsFormat())));
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
 		AddDoc(writer, "aaa bbb");
-		writer.close();
-		SegmentReader reader = getOnlySegmentReader(DirectoryReader.open(Dir));
-		TermsEnum terms = reader.fields().terms("content").iterator(null);
-		Assert.IsNotNull(terms.next());
-		Assert.AreEqual("aaa", terms.term().utf8ToString());
-		Assert.IsNotNull(terms.next());
+		writer.Dispose();
+		SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
+		TermsEnum terms = reader.Fields().Terms("content").Iterator(null);
+		Assert.IsNotNull(terms.Next());
+		Assert.AreEqual("aaa", terms.Term().Utf8ToString());
+		Assert.IsNotNull(terms.Next());
 		long ordB;
 		try
 		{
-		  ordB = terms.ord();
+		  ordB = terms.Ord();
 		}
 		catch (System.NotSupportedException uoe)
 		{
 		  // ok -- codec is not required to support ord
-		  reader.close();
+		  reader.Dispose();
 		  return;
 		}
-		Assert.AreEqual("bbb", terms.term().utf8ToString());
-		assertNull(terms.next());
+		Assert.AreEqual("bbb", terms.Term().Utf8ToString());
+		Assert.IsNull(terms.Next());
 
-		terms.seekExact(ordB);
-		Assert.AreEqual("bbb", terms.term().utf8ToString());
-		reader.close();
+		terms.SeekExact(ordB);
+		Assert.AreEqual("bbb", terms.Term().Utf8ToString());
+		reader.Dispose();
 	  }
 
 	  private void VerifyDocFreq()
 	  {
-		  IndexReader reader = DirectoryReader.open(Dir);
-		  TermsEnum termEnum = MultiFields.getTerms(reader, "content").iterator(null);
+		  IndexReader reader = DirectoryReader.Open(Dir);
+		  TermsEnum termEnum = MultiFields.GetTerms(reader, "content").Iterator(null);
 
 		// create enumeration of all terms
 		// go to the first term (aaa)
-		termEnum.next();
+		termEnum.Next();
 		// assert that term is 'aaa'
-		Assert.AreEqual("aaa", termEnum.term().utf8ToString());
-		Assert.AreEqual(200, termEnum.docFreq());
+		Assert.AreEqual("aaa", termEnum.Term().Utf8ToString());
+		Assert.AreEqual(200, termEnum.DocFreq());
 		// go to the second term (bbb)
-		termEnum.next();
+		termEnum.Next();
 		// assert that term is 'bbb'
-		Assert.AreEqual("bbb", termEnum.term().utf8ToString());
-		Assert.AreEqual(100, termEnum.docFreq());
+		Assert.AreEqual("bbb", termEnum.Term().Utf8ToString());
+		Assert.AreEqual(100, termEnum.DocFreq());
 
 
 		// create enumeration of terms after term 'aaa',
 		// including 'aaa'
-		termEnum.seekCeil(new BytesRef("aaa"));
+		termEnum.SeekCeil(new BytesRef("aaa"));
 		// assert that term is 'aaa'
-		Assert.AreEqual("aaa", termEnum.term().utf8ToString());
-		Assert.AreEqual(200, termEnum.docFreq());
+		Assert.AreEqual("aaa", termEnum.Term().Utf8ToString());
+		Assert.AreEqual(200, termEnum.DocFreq());
 		// go to term 'bbb'
-		termEnum.next();
+		termEnum.Next();
 		// assert that term is 'bbb'
-		Assert.AreEqual("bbb", termEnum.term().utf8ToString());
-		Assert.AreEqual(100, termEnum.docFreq());
-		reader.close();
+		Assert.AreEqual("bbb", termEnum.Term().Utf8ToString());
+		Assert.AreEqual(100, termEnum.DocFreq());
+		reader.Dispose();
 	  }
 
 	  private void AddDoc(IndexWriter writer, string value)
 	  {
 		Document doc = new Document();
-		doc.add(newTextField("content", value, Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("content", value, Field.Store.NO));
+		writer.AddDocument(doc);
 	  }
 	}
 

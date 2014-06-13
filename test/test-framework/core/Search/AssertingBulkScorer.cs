@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Search
 {
@@ -66,27 +67,27 @@ namespace Lucene.Net.Search
 
 	  public override void Score(Collector collector)
 	  {
-		if (Random.nextBoolean())
+		if (Random.NextBoolean())
 		{
 		  try
 		  {
-			bool remaining = @in.score(collector, DocsEnum.NO_MORE_DOCS);
+			bool remaining = @in.Score(collector, DocsEnum.NO_MORE_DOCS);
 			Debug.Assert(!remaining);
 		  }
 		  catch (System.NotSupportedException e)
 		  {
-			@in.score(collector);
+			@in.Score(collector);
 		  }
 		}
 		else
 		{
-		  @in.score(collector);
+		  @in.Score(collector);
 		}
 	  }
 
 	  public override bool Score(Collector collector, int max)
 	  {
-		return @in.score(collector, max);
+		return @in.Score(collector, max);
 	  }
 
 	  public override string ToString()

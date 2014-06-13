@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
             Document d3 = new Document();
             d3.Add(new Field("f3", "v1", Field.Store.YES, Field.Index.ANALYZED));
             w2.AddDocument(d3);
-            w2.Close();
+            w2.Dispose();
             
             ParallelReader pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(pr.IsCurrent());
             IndexReader modifier = IndexReader.Open(dir1, false);
             modifier.SetNorm(0, "f1", 100);
-            modifier.Close();
+            modifier.Dispose();
             
             // one of the two IndexReaders which ParallelReader is using
             // is not current anymore
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 
             modifier = IndexReader.Open(dir2, false);
             modifier.SetNorm(0, "f3", 100);
-            modifier.Close();
+            modifier.Dispose();
             
             // now both are not current anymore
             Assert.IsFalse(pr.IsCurrent());
@@ -168,43 +168,43 @@ namespace Lucene.Net.Index
             Document d = new Document();
             d.Add(new Field("f1", "v1", Field.Store.YES, Field.Index.ANALYZED));
             modifier.AddDocument(d);
-            modifier.Close();
+            modifier.Dispose();
             
             modifier = new IndexWriter(dir2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             d = new Document();
             d.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.ANALYZED));
             modifier.AddDocument(d);
-            modifier.Close();
+            modifier.Dispose();
             
             
             ParallelReader pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
             Assert.IsFalse(pr.IsOptimized());
-            pr.Close();
+            pr.Dispose();
             
             modifier = new IndexWriter(dir1, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             modifier.Optimize();
-            modifier.Close();
+            modifier.Dispose();
             
             pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
             // just one of the two indexes are optimized
             Assert.IsFalse(pr.IsOptimized());
-            pr.Close();
+            pr.Dispose();
             
             
             modifier = new IndexWriter(dir2, new StandardAnalyzer(Util.Version.LUCENE_CURRENT), IndexWriter.MaxFieldLength.LIMITED);
             modifier.Optimize();
-            modifier.Close();
+            modifier.Dispose();
             
             pr = new ParallelReader();
             pr.Add(IndexReader.Open(dir1, false));
             pr.Add(IndexReader.Open(dir2, false));
             // now both indexes are optimized
             Assert.IsTrue(pr.IsOptimized());
-            pr.Close();
+            pr.Dispose();
         }
         
         [Test]
@@ -223,10 +223,10 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(i, td.Doc);
                 Assert.AreEqual(1, td.Freq);
             }
-            td.Close();
-            pr.Close();
-            dir1.Close();
-            dir2.Close();
+            td.Dispose();
+            pr.Dispose();
+            dir1.Dispose();
+            dir2.Dispose();
         }
         
         
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
             d2.Add(new Field("f3", "v2", Field.Store.YES, Field.Index.ANALYZED));
             d2.Add(new Field("f4", "v2", Field.Store.YES, Field.Index.ANALYZED));
             w.AddDocument(d2);
-            w.Close();
+            w.Dispose();
 
             return new IndexSearcher(dir, false);
         }
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
             d2.Add(new Field("f1", "v2", Field.Store.YES, Field.Index.ANALYZED));
             d2.Add(new Field("f2", "v2", Field.Store.YES, Field.Index.ANALYZED));
             w1.AddDocument(d2);
-            w1.Close();
+            w1.Dispose();
             return dir1;
         }
         
@@ -308,7 +308,7 @@ namespace Lucene.Net.Index
             d4.Add(new Field("f3", "v2", Field.Store.YES, Field.Index.ANALYZED));
             d4.Add(new Field("f4", "v2", Field.Store.YES, Field.Index.ANALYZED));
             w2.AddDocument(d4);
-            w2.Close();
+            w2.Dispose();
             return dir2;
         }
     }

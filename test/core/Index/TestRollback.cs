@@ -25,6 +25,7 @@ namespace Lucene.Net.Index
 	using Field = Lucene.Net.Document.Field;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestRollback : LuceneTestCase
 	{
@@ -32,33 +33,33 @@ namespace Lucene.Net.Index
 	  // LUCENE-2536
 	  public virtual void TestRollbackIntegrityWithBufferFlush()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter rw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter rw = new RandomIndexWriter(Random(), dir);
 		for (int i = 0; i < 5; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("pk", Convert.ToString(i), Field.Store.YES));
-		  rw.addDocument(doc);
+		  doc.Add(NewStringField("pk", Convert.ToString(i), Field.Store.YES));
+		  rw.AddDocument(doc);
 		}
-		rw.close();
+        rw.Close();
 
 		// If buffer size is small enough to cause a flush, errors ensue...
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
 
 		for (int i = 0; i < 3; i++)
 		{
 		  Document doc = new Document();
 		  string value = Convert.ToString(i);
-		  doc.add(newStringField("pk", value, Field.Store.YES));
-		  doc.add(newStringField("text", "foo", Field.Store.YES));
-		  w.updateDocument(new Term("pk", value), doc);
+		  doc.Add(NewStringField("pk", value, Field.Store.YES));
+		  doc.Add(NewStringField("text", "foo", Field.Store.YES));
+		  w.UpdateDocument(new Term("pk", value), doc);
 		}
-		w.rollback();
+		w.Rollback();
 
-		IndexReader r = DirectoryReader.open(dir);
-		Assert.AreEqual("index should contain same number of docs post rollback", 5, r.numDocs());
-		r.close();
-		dir.close();
+		IndexReader r = DirectoryReader.Open(dir);
+		Assert.AreEqual(5, r.NumDocs(), "index should contain same number of docs post rollback");
+		r.Dispose();
+		dir.Dispose();
 	  }
 	}
 

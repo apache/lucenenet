@@ -59,7 +59,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 
 		public override void VisitDocument(int n, StoredFieldVisitor visitor)
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override StoredFieldsReader Clone()
 		{
-		  return new AssertingStoredFieldsReader(@in.Clone(), MaxDoc);
+		  return new AssertingStoredFieldsReader((StoredFieldsReader)@in.Clone(), MaxDoc);
 		}
 
 		public override long RamBytesUsed()
@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs.asserting
 
 		public override void Close()
 		{
-		  @in.Close();
+		  @in.Dispose();
 		}
 	  }
 	}

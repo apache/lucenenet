@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
 		{
-		  return base.fieldsConsumer(state);
+		  return base.FieldsConsumer(state);
 		}
 		else
 		{
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  bool success = false;
 		  try
 		  {
-			FieldsConsumer ret = new BlockTreeTermsWriter(state, docs, minBlockSize, maxBlockSize);
+			FieldsConsumer ret = new BlockTreeTermsWriter(state, docs, MinBlockSize, MaxBlockSize);
 			success = true;
 			return ret;
 		  }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
 			if (!success)
 			{
-			  docs.close();
+			  docs.Dispose();
 			}
 		  }
 		}

@@ -36,6 +36,8 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using Lucene.Net.Util.Automaton;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	public class TestTermsEnum2 : LuceneTestCase
 	{
@@ -48,38 +50,38 @@ namespace Lucene.Net.Index
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		// we generate aweful regexps: good for testing.
 		// but for preflex codec, the test can be very slow, so use less iterations.
-		NumIterations = Codec.Default.Name.Equals("Lucene3x") ? 10 * RANDOM_MULTIPLIER : atLeast(50);
-		Dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.KEYWORD, false)).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
+		NumIterations = Codec.Default.Name.Equals("Lucene3x") ? 10 * RANDOM_MULTIPLIER : AtLeast(50);
+		Dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 		Document doc = new Document();
-		Field field = newStringField("field", "", Field.Store.YES);
-		doc.add(field);
-		Terms = new SortedSet<>();
+		Field field = NewStringField("field", "", Field.Store.YES);
+		doc.Add(field);
+		Terms = new SortedSet<BytesRef>();
 
-		int num = atLeast(200);
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
-		  string s = TestUtil.randomUnicodeString(random());
+		  string s = TestUtil.RandomUnicodeString(Random());
 		  field.StringValue = s;
-		  Terms.add(new BytesRef(s));
-		  writer.addDocument(doc);
+		  Terms.Add(new BytesRef(s));
+		  writer.AddDocument(doc);
 		}
 
-		TermsAutomaton = BasicAutomata.makeStringUnion(Terms);
+		TermsAutomaton = BasicAutomata.MakeStringUnion(Terms);
 
 		Reader = writer.Reader;
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  /// <summary>
@@ -88,24 +90,24 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
-		  string reg = AutomatonTestUtil.randomRegexp(random());
-		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).toAutomaton();
+		  string reg = AutomatonTestUtil.RandomRegexp(Random());
+		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
 		  IList<BytesRef> matchedTerms = new List<BytesRef>();
 		  foreach (BytesRef t in Terms)
 		  {
-			if (BasicOperations.run(automaton, t.utf8ToString()))
+			if (BasicOperations.Run(automaton, t.Utf8ToString()))
 			{
 			  matchedTerms.Add(t);
 			}
 		  }
 
-		  Automaton alternate = BasicAutomata.makeStringUnion(matchedTerms);
-		  //System.out.println("match " + matchedTerms.size() + " " + alternate.getNumberOfStates() + " states, sigma=" + alternate.getStartPoints().length);
+		  Automaton alternate = BasicAutomata.MakeStringUnion(matchedTerms);
+		  //System.out.println("match " + matchedTerms.Size() + " " + alternate.getNumberOfStates() + " states, sigma=" + alternate.getStartPoints().Length);
 		  //AutomatonTestUtil.minimizeSimple(alternate);
 		  //System.out.println("minmize done");
 		  AutomatonQuery a1 = new AutomatonQuery(new Term("field", ""), automaton);
 		  AutomatonQuery a2 = new AutomatonQuery(new Term("field", ""), alternate);
-		  CheckHits.checkEqual(a1, Searcher.search(a1, 25).scoreDocs, Searcher.search(a2, 25).scoreDocs);
+		  CheckHits.CheckEqual(a1, Searcher.Search(a1, 25).ScoreDocs, Searcher.Search(a2, 25).ScoreDocs);
 		}
 	  }
 
@@ -115,27 +117,27 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
-		  string reg = AutomatonTestUtil.randomRegexp(random());
-		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).toAutomaton();
-		  TermsEnum te = MultiFields.getTerms(Reader, "field").iterator(null);
+		  string reg = AutomatonTestUtil.RandomRegexp(Random());
+		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
+		  TermsEnum te = MultiFields.GetTerms(Reader, "field").Iterator(null);
 		  List<BytesRef> unsortedTerms = new List<BytesRef>(Terms);
-		  Collections.shuffle(unsortedTerms, random());
+		  Collections.shuffle(unsortedTerms, Random());
 
 		  foreach (BytesRef term in unsortedTerms)
 		  {
-			if (BasicOperations.run(automaton, term.utf8ToString()))
+			if (BasicOperations.Run(automaton, term.Utf8ToString()))
 			{
 			  // term is accepted
-			  if (random().nextBoolean())
+			  if (Random().NextBoolean())
 			  {
 				// seek exact
-				Assert.IsTrue(te.seekExact(term));
+				Assert.IsTrue(te.SeekExact(term));
 			  }
 			  else
 			  {
 				// seek ceil
-				Assert.AreEqual(SeekStatus.FOUND, te.seekCeil(term));
-				Assert.AreEqual(term, te.term());
+				Assert.AreEqual(SeekStatus.FOUND, te.SeekCeil(term));
+				Assert.AreEqual(term, te.Term());
 			  }
 			}
 		  }
@@ -148,23 +150,23 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
-		  TermsEnum te = MultiFields.getTerms(Reader, "field").iterator(null);
+		  TermsEnum te = MultiFields.GetTerms(Reader, "field").Iterator(null);
 
 		  foreach (BytesRef term in Terms)
 		  {
-			int c = random().Next(3);
+			int c = Random().Next(3);
 			if (c == 0)
 			{
-			  Assert.AreEqual(term, te.next());
+			  Assert.AreEqual(term, te.Next());
 			}
 			else if (c == 1)
 			{
-			  Assert.AreEqual(SeekStatus.FOUND, te.seekCeil(term));
-			  Assert.AreEqual(term, te.term());
+			  Assert.AreEqual(SeekStatus.FOUND, te.SeekCeil(term));
+			  Assert.AreEqual(term, te.Term());
 			}
 			else
 			{
-			  Assert.IsTrue(te.seekExact(term));
+			  Assert.IsTrue(te.SeekExact(term));
 			}
 		  }
 		}
@@ -176,19 +178,19 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
-		  string reg = AutomatonTestUtil.randomRegexp(random());
-		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).toAutomaton();
-		  CompiledAutomaton ca = new CompiledAutomaton(automaton, SpecialOperations.isFinite(automaton), false);
-		  TermsEnum te = MultiFields.getTerms(Reader, "field").intersect(ca, null);
-		  Automaton expected = BasicOperations.intersection(TermsAutomaton, automaton);
+		  string reg = AutomatonTestUtil.RandomRegexp(Random());
+		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
+		  CompiledAutomaton ca = new CompiledAutomaton(automaton, SpecialOperations.IsFinite(automaton), false);
+		  TermsEnum te = MultiFields.GetTerms(Reader, "field").Intersect(ca, null);
+		  Automaton expected = BasicOperations.Intersection(TermsAutomaton, automaton);
 		  SortedSet<BytesRef> found = new SortedSet<BytesRef>();
-		  while (te.next() != null)
+		  while (te.Next() != null)
 		  {
-			found.Add(BytesRef.deepCopyOf(te.term()));
+			found.Add(BytesRef.DeepCopyOf(te.Term()));
 		  }
 
-		  Automaton actual = BasicAutomata.makeStringUnion(found);
-		  Assert.IsTrue(BasicOperations.sameLanguage(expected, actual));
+		  Automaton actual = BasicAutomata.MakeStringUnion(found);
+		  Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 		}
 	  }
 	}

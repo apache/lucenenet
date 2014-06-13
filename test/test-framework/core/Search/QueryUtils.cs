@@ -42,11 +42,8 @@ namespace Lucene.Net.Search
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using Bits = Lucene.Net.Util.Bits;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using NUnit.Framework;
-using System.IO;
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.LuceneTestCase.TEST_VERSION_CURRENT;
+    using NUnit.Framework;
+    using System.IO;
 
 	/// <summary>
 	/// Utility class for sanity-checking queries.
@@ -160,7 +157,7 @@ using System.IO;
 	  public static void PurgeFieldCache(IndexReader r)
 	  {
 		// this is just a hack, to get an atomic reader that contains all subreaders for insanity checks
-		FieldCache.DEFAULT.purgeByCacheKey(SlowCompositeReaderWrapper.Wrap(r).CoreCacheKey);
+		FieldCache_Fields.DEFAULT.PurgeByCacheKey(SlowCompositeReaderWrapper.Wrap(r).CoreCacheKey);
 	  }
 
 	  /// <summary>
@@ -235,7 +232,7 @@ using System.IO;
 	  {
 		Debug.Assert(numDocs > 0);
 		Directory d = new MockDirectoryWrapper(random, new RAMDirectory());
-		IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
+        IndexWriter w = new IndexWriter(d, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(random)));
 		for (int i = 0; i < numDocs; i++)
 		{
 		  w.AddDocument(new Document());
@@ -267,13 +264,13 @@ using System.IO;
 		{
 
 			int[] order = orders[k];
-			// System.out.print("Order:");for (int i = 0; i < order.length; i++)
+			// System.out.print("Order:");for (int i = 0; i < order.Length; i++)
 			// System.out.print(order[i]==skip_op ? " skip()":" next()");
 			// System.out.println();
 			int[] opidx = new int[] {0};
 			int[] lastDoc = new int[] {-1};
 
-			// FUTURE: ensure scorer.doc()==-1
+			// FUTURE: ensure scorer.Doc()==-1
 
 			const float maxDiff = 1e-5f;
 			AtomicReader[] lastReader = new AtomicReader[] {null};
@@ -288,7 +285,7 @@ using System.IO;
 			  IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(previousReader, false);
 			  indexSearcher.Similarity = s.Similarity;
 			  Weight w = indexSearcher.CreateNormalizedWeight(q);
-			  AtomicReaderContext ctx = previousReader.Context;
+			  AtomicReaderContext ctx = (AtomicReaderContext)previousReader.Context;
 			  Scorer scorer = w.Scorer(ctx, ctx.Reader().LiveDocs);
 			  if (scorer != null)
 			  {
@@ -365,7 +362,7 @@ using System.IO;
 				{
 				  sbord.Append(Order[i] == Skip_op ? " skip()" : " next()");
 				}
-				throw new Exception("ERROR matching docs:" + "\n\t" + (doc != scorerDoc ? "--> " : "") + "doc=" + doc + ", scorerDoc=" + scorerDoc + "\n\t" + (!more ? "--> " : "") + "tscorer.more=" + more + "\n\t" + (scoreDiff > MaxDiff ? "--> " : "") + "scorerScore=" + scorerScore + " scoreDiff=" + scoreDiff + " maxDiff=" + MaxDiff + "\n\t" + (scorerDiff > MaxDiff ? "--> " : "") + "scorerScore2=" + scorerScore2 + " scorerDiff=" + scorerDiff + "\n\thitCollector.doc=" + doc + " score=" + score + "\n\t Scorer=" + scorer + "\n\t Query=" + q + "  " + q.GetType().Name + "\n\t Searcher=" + s + "\n\t Order=" + sbord + "\n\t Op=" + (op == Skip_op ? " skip()" : " next()"));
+				throw new Exception("ERROR matching docs:" + "\n\t" + (doc != scorerDoc ? "--> " : "") + "doc=" + doc + ", scorerDoc=" + scorerDoc + "\n\t" + (!more ? "--> " : "") + "tscorer.more=" + more + "\n\t" + (scoreDiff > MaxDiff ? "--> " : "") + "scorerScore=" + scorerScore + " scoreDiff=" + scoreDiff + " maxDiff=" + MaxDiff + "\n\t" + (scorerDiff > MaxDiff ? "--> " : "") + "scorerScore2=" + scorerScore2 + " scorerDiff=" + scorerDiff + "\n\thitCollector.Doc=" + doc + " score=" + score + "\n\t Scorer=" + scorer + "\n\t Query=" + q + "  " + q.GetType().Name + "\n\t Searcher=" + s + "\n\t Order=" + sbord + "\n\t Op=" + (op == Skip_op ? " skip()" : " next()"));
 			  }
 			}
 			catch (IOException e)
@@ -431,7 +428,7 @@ using System.IO;
 		  if (scorer != null)
 		  {
 			bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-			Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.docID());
+			Assert.IsFalse(more, "query's last doc was " + lastDoc[0] + " but skipTo(" + (lastDoc[0] + 1) + ") got to " + scorer.DocID());
 		  }
 		}
 	  }
@@ -512,7 +509,7 @@ using System.IO;
 				  if (scorer != null)
 				  {
 					bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
-					Assert.IsFalse("query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.docID(),more);
+					Assert.IsFalse(more, "query's last doc was " + LastDoc[0] + " but skipTo(" + (LastDoc[0] + 1) + ") got to " + scorer.DocID());
 				  }
 				  leafPtr++;
 				}

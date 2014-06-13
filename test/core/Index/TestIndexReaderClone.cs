@@ -54,9 +54,9 @@ namespace Lucene.Net.Index
             Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
             Assert.IsFalse(DeleteWorked(1, readOnlyReader), "deleting from the original should not have worked");
 
-            reader.Close();
-            readOnlyReader.Close();
-            dir1.Close();
+            reader.Dispose();
+            readOnlyReader.Dispose();
+            dir1.Dispose();
         }
         
         // open non-readOnly reader1, clone to non-readOnly
@@ -72,9 +72,9 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(DeleteWorked(1, r2), "deleting from the cloned should have worked");
 
-            r1.Close();
-            r2.Close();
-            dir1.Close();
+            r1.Dispose();
+            r2.Dispose();
+            dir1.Dispose();
         }
         
         // open non-readOnly reader1, clone to non-readOnly
@@ -90,9 +90,9 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(DeleteWorked(1, r1), "deleting from the original should have worked");
 
-            r1.Close();
-            r2.Close();
-            dir1.Close();
+            r1.Dispose();
+            r2.Dispose();
+            dir1.Dispose();
         }
         
         // open non-readOnly reader1, clone to non-readOnly
@@ -110,13 +110,13 @@ namespace Lucene.Net.Index
 
             // should fail because reader1 holds the write lock
             Assert.IsTrue(!DeleteWorked(1, r1), "first reader should not be able to delete");
-            r2.Close();
+            r2.Dispose();
             // should fail because we are now stale (reader1
             // committed changes)
             Assert.IsTrue(!DeleteWorked(1, r1), "first reader should not be able to delete");
-            r1.Close();
+            r1.Dispose();
             
-            dir1.Close();
+            dir1.Dispose();
         }
         
         // create single-segment index, open non-readOnly
@@ -136,9 +136,9 @@ namespace Lucene.Net.Index
             Assert.IsTrue(reader1 != reader2);
             
             Assert.IsTrue(DeleteWorked(1, reader2));
-            reader1.Close();
-            reader2.Close();
-            dir1.Close();
+            reader1.Dispose();
+            reader2.Dispose();
+            dir1.Dispose();
         }
         
         // open non-readOnly reader1, clone to readOnly reader2
@@ -157,9 +157,9 @@ namespace Lucene.Net.Index
             // this readonly reader shouldn't have a write lock
             Assert.IsFalse(readOnlyReader.hasChanges, "readOnlyReader has a write lock");
 
-            reader.Close();
-            readOnlyReader.Close();
-            dir1.Close();
+            reader.Dispose();
+            readOnlyReader.Dispose();
+            dir1.Dispose();
         }
         
         // open non-readOnly reader1, reopen to readOnly reader2
@@ -179,9 +179,9 @@ namespace Lucene.Net.Index
 
             Assert.IsFalse(DeleteWorked(1, readOnlyReader));
             Assert.AreEqual(docCount - 1, readOnlyReader.NumDocs());
-            reader.Close();
-            readOnlyReader.Close();
-            dir1.Close();
+            reader.Dispose();
+            readOnlyReader.Dispose();
+            dir1.Dispose();
         }
         
         // open readOnly reader1, clone to non-readOnly reader2
@@ -202,9 +202,9 @@ namespace Lucene.Net.Index
             Assert.IsFalse(reader2.hasChanges, "cloned reader should not have write lock");
 
             Assert.IsTrue(DeleteWorked(1, reader2), "deleting from the cloned reader should have worked");
-            reader1.Close();
-            reader2.Close();
-            dir1.Close();
+            reader1.Dispose();
+            reader2.Dispose();
+            dir1.Dispose();
         }
         
         // open non-readOnly reader1 on multi-segment index, then
@@ -218,12 +218,12 @@ namespace Lucene.Net.Index
             IndexReader reader1 = IndexReader.Open(dir1, false);
             IndexWriter w = new IndexWriter(dir1, new SimpleAnalyzer(), IndexWriter.MaxFieldLength.LIMITED);
             w.Optimize();
-            w.Close();
+            w.Dispose();
             IndexReader reader2 = reader1.Clone(true);
             Assert.IsTrue(IsReadOnly(reader2));
-            reader1.Close();
-            reader2.Close();
-            dir1.Close();
+            reader1.Dispose();
+            reader2.Dispose();
+            dir1.Dispose();
         }
         
         private static bool DeleteWorked(int doc, IndexReader r)
@@ -252,9 +252,9 @@ namespace Lucene.Net.Index
 
             Assert.IsTrue(IsReadOnly(readOnlyReader), "reader isn't read only");
 
-            reader.Close();
-            readOnlyReader.Close();
-            dir1.Close();
+            reader.Dispose();
+            readOnlyReader.Dispose();
+            dir1.Dispose();
         }
         
         public static bool IsReadOnly(IndexReader r)
@@ -279,9 +279,9 @@ namespace Lucene.Net.Index
             pr1.Add(r2);
             
             PerformDefaultTests(pr1);
-            pr1.Close();
-            dir1.Close();
-            dir2.Close();
+            pr1.Dispose();
+            dir1.Dispose();
+            dir2.Dispose();
         }
         
         /// <summary> 1. Get a norm from the original reader 2. Clone the original reader 3.
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
             // try to update the original reader, which should throw an exception
             Assert.Throws<LockObtainFailedException>(() => r1.DeleteDocument(11),
                                      "Tried to delete doc 11 and an exception should have been thrown");
-            pr1Clone.Close();
+            pr1Clone.Dispose();
         }
         
         [Test]
@@ -325,9 +325,9 @@ namespace Lucene.Net.Index
             
             MultiReader multiReader = new MultiReader(new IndexReader[]{r1, r2});
             PerformDefaultTests(multiReader);
-            multiReader.Close();
-            dir1.Close();
-            dir2.Close();
+            multiReader.Dispose();
+            dir1.Dispose();
+            dir2.Dispose();
         }
         
         [Test]
@@ -340,9 +340,9 @@ namespace Lucene.Net.Index
             AssertDelDocsRefCountEquals(1, origSegmentReader);
             origSegmentReader.UndeleteAll();
             Assert.IsNull(origSegmentReader.deletedDocsRef_ForNUnit);
-            origSegmentReader.Close();
+            origSegmentReader.Dispose();
             // need to test norms?
-            dir1.Close();
+            dir1.Dispose();
         }
         
         [Test]
@@ -356,13 +356,13 @@ namespace Lucene.Net.Index
             
             SegmentReader clonedSegmentReader = (SegmentReader) origSegmentReader.Clone();
             AssertDelDocsRefCountEquals(2, origSegmentReader);
-            origSegmentReader.Close();
+            origSegmentReader.Dispose();
             AssertDelDocsRefCountEquals(1, origSegmentReader);
             // check the norm refs
             Norm norm = clonedSegmentReader.norms_ForNUnit["field1"];
             Assert.AreEqual(1, norm.BytesRef().RefCount());
-            clonedSegmentReader.Close();
-            dir1.Close();
+            clonedSegmentReader.Dispose();
+            dir1.Dispose();
         }
         
         [Test]
@@ -405,7 +405,7 @@ namespace Lucene.Net.Index
             // deleting a doc from the original segmentreader should throw an exception
             Assert.Throws<LockObtainFailedException>(() => origReader.DeleteDocument(4), "expected exception");
             
-            origReader.Close();
+            origReader.Dispose();
             // try closing the original segment reader to see if it affects the
             // clonedSegmentReader
             clonedReader.DeleteDocument(3);
@@ -417,11 +417,11 @@ namespace Lucene.Net.Index
             IndexReader cloneReader2 = (IndexReader) reopenedReader.Clone();
             SegmentReader cloneSegmentReader2 = SegmentReader.GetOnlySegmentReader(cloneReader2);
             AssertDelDocsRefCountEquals(2, cloneSegmentReader2);
-            clonedReader.Close();
-            reopenedReader.Close();
-            cloneReader2.Close();
+            clonedReader.Dispose();
+            reopenedReader.Dispose();
+            cloneReader2.Dispose();
             
-            dir1.Close();
+            dir1.Dispose();
         }
         
         // LUCENE-1648
@@ -434,13 +434,13 @@ namespace Lucene.Net.Index
             origReader.DeleteDocument(1);
             
             IndexReader clonedReader = (IndexReader) origReader.Clone();
-            origReader.Close();
-            clonedReader.Close();
+            origReader.Dispose();
+            clonedReader.Dispose();
             
             IndexReader r = IndexReader.Open(dir1, false);
             Assert.IsTrue(r.IsDeleted(1));
-            r.Close();
-            dir1.Close();
+            r.Dispose();
+            dir1.Dispose();
         }
         
         // LUCENE-1648
@@ -457,13 +457,13 @@ namespace Lucene.Net.Index
             // the cloned segmentreader should have 2 references, 1 to itself, and 1 to
             // the original segmentreader
             IndexReader clonedReader = (IndexReader) orig.Clone();
-            orig.Close();
-            clonedReader.Close();
+            orig.Dispose();
+            clonedReader.Dispose();
             
             IndexReader r = IndexReader.Open(dir1, false);
             Assert.AreEqual(encoded, r.Norms("field1")[1]);
-            r.Close();
-            dir1.Close();
+            r.Dispose();
+            dir1.Dispose();
         }
         
         private void  AssertDocDeleted(SegmentReader reader, SegmentReader reader2, int doc)
@@ -492,12 +492,12 @@ namespace Lucene.Net.Index
             {
                 clones[x] = (IndexReader) subs[x].Clone();
             }
-            reader.Close();
+            reader.Dispose();
             for (int x = 0; x < subs.Length; x++)
             {
-                clones[x].Close();
+                clones[x].Dispose();
             }
-            dir1.Close();
+            dir1.Dispose();
         }
         
         [Test]
@@ -513,10 +513,10 @@ namespace Lucene.Net.Index
             
             r1.IncRef();
             
-            r2.Close();
+            r2.Dispose();
             r1.DecRef();
-            r1.Close();
-            dir1.Close();
+            r1.Dispose();
+            dir1.Dispose();
         }
         
         [Test]
@@ -528,12 +528,12 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(new Field("field", "yes it's stored", Field.Store.YES, Field.Index.ANALYZED));
             w.AddDocument(doc);
-            w.Close();
+            w.Dispose();
             IndexReader r1 = IndexReader.Open(dir, false);
             IndexReader r2 = r1.Clone(false);
-            r1.Close();
-            r2.Close();
-            dir.Close();
+            r1.Dispose();
+            r2.Dispose();
+            dir.Dispose();
         }
     }
 }

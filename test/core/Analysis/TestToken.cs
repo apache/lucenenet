@@ -259,12 +259,12 @@ namespace Lucene.Net.Analysis
 
 		Assert.IsTrue( ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 
-		Assert.IsTrue( ts.AddAttribute<CharTermAttribute>() is Token, "CharTermAttribute is not implemented by Token");
-		Assert.IsTrue( ts.AddAttribute<OffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
-		Assert.IsTrue( ts.AddAttribute<FlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
-		Assert.IsTrue( ts.AddAttribute<PayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
-		Assert.IsTrue( ts.AddAttribute<PositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
-		Assert.IsTrue( ts.AddAttribute<TypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
+		Assert.IsTrue( ts.AddAttribute<ICharTermAttribute>() is Token, "CharTermAttribute is not implemented by Token");
+		Assert.IsTrue( ts.AddAttribute<IOffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");
+		Assert.IsTrue( ts.AddAttribute<IFlagsAttribute>() is Token, "FlagsAttribute is not implemented by Token");
+		Assert.IsTrue( ts.AddAttribute<IPayloadAttribute>() is Token, "PayloadAttribute is not implemented by Token");
+		Assert.IsTrue( ts.AddAttribute<IPositionIncrementAttribute>() is Token, "PositionIncrementAttribute is not implemented by Token");
+		Assert.IsTrue( ts.AddAttribute<ITypeAttribute>() is Token, "TypeAttribute is not implemented by Token");
 	  }
 
       [Test]
@@ -272,15 +272,14 @@ namespace Lucene.Net.Analysis
 	  {
 		Token t = new Token("foobar", 6, 22, 8);
 		TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() {
-            {   put(typeof(CharTermAttribute).Name + "#term", "foobar"); 
-                put(typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar")); 
-                put(typeof(OffsetAttribute).Name + "#startOffset", 6); 
-                put(typeof(OffsetAttribute).Name + "#endOffset", 22); 
-                put(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1); 
-                put(typeof(PayloadAttribute).Name + "#payload", null); 
-                put(typeof(TypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE); 
-                put(typeof(FlagsAttribute).Name + "#flags", 8);
-            }
+                { typeof(CharTermAttribute).Name + "#term", "foobar" },
+                { typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") },
+                { typeof(OffsetAttribute).Name + "#startOffset", 6 }, 
+                { typeof(OffsetAttribute).Name + "#endOffset", 22 },
+                { typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1 }, 
+                { typeof(PayloadAttribute).Name + "#payload", null },
+                { typeof(TypeAttribute).Name + "#type", TypeAttribute_Fields.DEFAULT_TYPE }, 
+                { typeof(FlagsAttribute).Name + "#flags", 8 }
         });
 	  }
 

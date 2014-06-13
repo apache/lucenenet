@@ -151,20 +151,20 @@ namespace Lucene.Net.Index
                 
                 int expectedDocCount = (int) ((1 + iter) * (200 + 8 * NUM_ITER2 * (NUM_THREADS / 2.0) * (1 + NUM_THREADS)));
                 
-                // System.out.println("TEST: now index=" + writer.segString());
+                // System.out.println("TEST: now index=" + writer.SegString());
                 
                 Assert.AreEqual(expectedDocCount, writer.MaxDoc());
                 
-                writer.Close();
+                writer.Dispose();
                 writer = new IndexWriter(directory, ANALYZER, false, IndexWriter.MaxFieldLength.UNLIMITED);
                 writer.SetMaxBufferedDocs(2);
 
                 IndexReader reader = IndexReader.Open(directory, true);
                 Assert.IsTrue(reader.IsOptimized());
                 Assert.AreEqual(expectedDocCount, reader.NumDocs());
-                reader.Close();
+                reader.Dispose();
             }
-            writer.Close();
+            writer.Dispose();
         }
         
         /*
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
             Directory directory = new MockRAMDirectory();
             runTest(directory, new SerialMergeScheduler());
             runTest(directory, new ConcurrentMergeScheduler());
-            directory.Close();
+            directory.Dispose();
             
             System.String tempDir = AppSettings.Get("tempDir", "");
             if (tempDir == null)
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
             directory = FSDirectory.Open(new System.IO.DirectoryInfo(dirName));
             runTest(directory, new SerialMergeScheduler());
             runTest(directory, new ConcurrentMergeScheduler());
-            directory.Close();
+            directory.Dispose();
             _TestUtil.RmDir(dirName);
         }
     }

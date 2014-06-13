@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Analysis;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
+	using OpenMode_e = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using ScoreDoc = Lucene.Net.Search.ScoreDoc;
 	using TermQuery = Lucene.Net.Search.TermQuery;
@@ -34,6 +34,9 @@ namespace Lucene.Net.Index
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestIndexWriterCommit : LuceneTestCase
 	{
@@ -44,49 +47,49 @@ namespace Lucene.Net.Index
 	   */
 	  public virtual void TestCommitOnClose()
 	  {
-		  Directory dir = newDirectory();
-		  IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  Directory dir = NewDirectory();
+		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		  for (int i = 0; i < 14; i++)
 		  {
 			TestIndexWriter.AddDoc(writer);
 		  }
-		  writer.close();
+		  writer.Dispose();
 
 		  Term searchTerm = new Term("content", "aaa");
-		  DirectoryReader reader = DirectoryReader.open(dir);
-		  IndexSearcher searcher = newSearcher(reader);
-		  ScoreDoc[] hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		  Assert.AreEqual("first number of hits", 14, hits.Length);
-		  reader.close();
+		  DirectoryReader reader = DirectoryReader.Open(dir);
+		  IndexSearcher searcher = NewSearcher(reader);
+		  ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		  Assert.AreEqual(14, hits.Length, "first number of hits");
+		  reader.Dispose();
 
-		  reader = DirectoryReader.open(dir);
+		  reader = DirectoryReader.Open(dir);
 
-		  writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		  writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		  for (int i = 0;i < 3;i++)
 		  {
 			for (int j = 0;j < 11;j++)
 			{
 			  TestIndexWriter.AddDoc(writer);
 			}
-			IndexReader r = DirectoryReader.open(dir);
-			searcher = newSearcher(r);
-			hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-			Assert.AreEqual("reader incorrectly sees changes from writer", 14, hits.Length);
-			r.close();
-			Assert.IsTrue("reader should have still been current", reader.Current);
+			IndexReader r = DirectoryReader.Open(dir);
+			searcher = NewSearcher(r);
+			hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+			Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
+			r.Dispose();
+			Assert.IsTrue(reader.Current, "reader should have still been current");
 		  }
 
 		  // Now, close the writer:
-		  writer.close();
-		  Assert.IsFalse("reader should not be current now", reader.Current);
+		  writer.Dispose();
+		  Assert.IsFalse(reader.Current, "reader should not be current now");
 
-		  IndexReader r = DirectoryReader.open(dir);
-		  searcher = newSearcher(r);
-		  hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		  Assert.AreEqual("reader did not see changes after writer was closed", 47, hits.Length);
-		  r.close();
-		  reader.close();
-		  dir.close();
+		  IndexReader ir = DirectoryReader.Open(dir);
+		  searcher = NewSearcher(ir);
+		  hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		  Assert.AreEqual(47, hits.Length, "reader did not see changes after writer was closed");
+		  ir.Dispose();
+		  reader.Dispose();
+		  dir.Dispose();
 	  }
 
 	  /*
@@ -99,49 +102,49 @@ namespace Lucene.Net.Index
 	   */
 	  public virtual void TestCommitOnCloseAbort()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(10));
+		Directory dir = NewDirectory();
+        IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10));
 		for (int i = 0; i < 14; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
-		writer.close();
+		writer.Dispose();
 
 		Term searchTerm = new Term("content", "aaa");
-		IndexReader reader = DirectoryReader.open(dir);
-		IndexSearcher searcher = newSearcher(reader);
-		ScoreDoc[] hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		Assert.AreEqual("first number of hits", 14, hits.Length);
-		reader.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		IndexSearcher searcher = NewSearcher(reader);
+		ScoreDoc[] hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		Assert.AreEqual(14, hits.Length, "first number of hits");
+		reader.Dispose();
 
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setMaxBufferedDocs(10));
+        writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10));
 		for (int j = 0;j < 17;j++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
 		// Delete all docs:
-		writer.deleteDocuments(searchTerm);
+		writer.DeleteDocuments(searchTerm);
 
-		reader = DirectoryReader.open(dir);
-		searcher = newSearcher(reader);
-		hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		Assert.AreEqual("reader incorrectly sees changes from writer", 14, hits.Length);
-		reader.close();
+		reader = DirectoryReader.Open(dir);
+		searcher = NewSearcher(reader);
+		hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
+		reader.Dispose();
 
 		// Now, close the writer:
-		writer.rollback();
+		writer.Rollback();
 
 		TestIndexWriter.AssertNoUnreferencedFiles(dir, "unreferenced files remain after rollback()");
 
-		reader = DirectoryReader.open(dir);
-		searcher = newSearcher(reader);
-		hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		Assert.AreEqual("saw changes after writer.abort", 14, hits.Length);
-		reader.close();
+		reader = DirectoryReader.Open(dir);
+		searcher = NewSearcher(reader);
+		hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		Assert.AreEqual(14, hits.Length, "saw changes after writer.abort");
+		reader.Dispose();
 
 		// Now make sure we can re-open the index, add docs,
 		// and all is good:
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND).setMaxBufferedDocs(10));
+        writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10));
 
 		// On abort, writer in fact may write to the same
 		// segments_N file:
@@ -156,21 +159,21 @@ namespace Lucene.Net.Index
 		  {
 			TestIndexWriter.AddDoc(writer);
 		  }
-		  IndexReader r = DirectoryReader.open(dir);
-		  searcher = newSearcher(r);
-		  hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		  Assert.AreEqual("reader incorrectly sees changes from writer", 14, hits.Length);
-		  r.close();
+		  IndexReader r = DirectoryReader.Open(dir);
+		  searcher = NewSearcher(r);
+		  hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		  Assert.AreEqual(14, hits.Length, "reader incorrectly sees changes from writer");
+		  r.Dispose();
 		}
 
-		writer.close();
-		IndexReader r = DirectoryReader.open(dir);
-		searcher = newSearcher(r);
-		hits = searcher.search(new TermQuery(searchTerm), null, 1000).scoreDocs;
-		Assert.AreEqual("didn't see changes after close", 218, hits.Length);
-		r.close();
+		writer.Dispose();
+		IndexReader ir = DirectoryReader.Open(dir);
+		searcher = NewSearcher(ir);
+		hits = searcher.Search(new TermQuery(searchTerm), null, 1000).ScoreDocs;
+		Assert.AreEqual(218, hits.Length, "didn't see changes after close");
+		ir.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  /*
@@ -188,12 +191,12 @@ namespace Lucene.Net.Index
 		// sum because the merged FST may use array encoding for
 		// some arcs (which uses more space):
 
-		string idFormat = TestUtil.getPostingsFormat("id");
-		string contentFormat = TestUtil.getPostingsFormat("content");
-		assumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory") || contentFormat.Equals("Memory"));
-		MockDirectoryWrapper dir = newMockDirectory();
+		string idFormat = TestUtil.GetPostingsFormat("id");
+		string contentFormat = TestUtil.GetPostingsFormat("content");
+		AssumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory") || contentFormat.Equals("Memory"));
+		MockDirectoryWrapper dir = NewMockDirectory();
 		Analyzer analyzer;
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
 		  // no payloads
 		 analyzer = new AnalyzerAnonymousInnerClassHelper(this);
@@ -201,31 +204,31 @@ namespace Lucene.Net.Index
 		else
 		{
 		  // fixed length payloads
-		  int length = random().Next(200);
+		  int length = Random().Next(200);
 		  analyzer = new AnalyzerAnonymousInnerClassHelper2(this, length);
 		}
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(10).setReaderPooling(false).setMergePolicy(newLogMergePolicy(10)));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
 		for (int j = 0;j < 30;j++)
 		{
 		  TestIndexWriter.AddDocWithIndex(writer, j);
 		}
-		writer.close();
-		dir.resetMaxUsedSizeInBytes();
+		writer.Dispose();
+		dir.ResetMaxUsedSizeInBytes();
 
 		dir.TrackDiskUsage = true;
 		long startDiskUsage = dir.MaxUsedSizeInBytes;
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setOpenMode(OpenMode.APPEND).setMaxBufferedDocs(10).setMergeScheduler(new SerialMergeScheduler()).setReaderPooling(false).setMergePolicy(newLogMergePolicy(10)));
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode_e.APPEND).SetMaxBufferedDocs(10).SetMergeScheduler(new SerialMergeScheduler()).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
 		for (int j = 0;j < 1470;j++)
 		{
 		  TestIndexWriter.AddDocWithIndex(writer, j);
 		}
 		long midDiskUsage = dir.MaxUsedSizeInBytes;
-		dir.resetMaxUsedSizeInBytes();
-		writer.forceMerge(1);
-		writer.close();
+		dir.ResetMaxUsedSizeInBytes();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
-		DirectoryReader.open(dir).close();
+		DirectoryReader.Open(dir).Dispose();
 
 		long endDiskUsage = dir.MaxUsedSizeInBytes;
 
@@ -235,9 +238,9 @@ namespace Lucene.Net.Index
 		// and it doesn't delete intermediate segments then it
 		// will exceed this 150X:
 		// System.out.println("start " + startDiskUsage + "; mid " + midDiskUsage + ";end " + endDiskUsage);
-		Assert.IsTrue("writer used too much space while adding documents: mid=" + midDiskUsage + " start=" + startDiskUsage + " end=" + endDiskUsage + " max=" + (startDiskUsage * 150), midDiskUsage < 150 * startDiskUsage);
-		Assert.IsTrue("writer used too much space after close: endDiskUsage=" + endDiskUsage + " startDiskUsage=" + startDiskUsage + " max=" + (startDiskUsage * 150), endDiskUsage < 150 * startDiskUsage);
-		dir.close();
+		Assert.IsTrue(midDiskUsage < 150 * startDiskUsage, "writer used too much space while adding documents: mid=" + midDiskUsage + " start=" + startDiskUsage + " end=" + endDiskUsage + " max=" + (startDiskUsage * 150));
+		Assert.IsTrue(endDiskUsage < 150 * startDiskUsage, "writer used too much space after close: endDiskUsage=" + endDiskUsage + " startDiskUsage=" + startDiskUsage + " max=" + (startDiskUsage * 150));
+		dir.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -270,7 +273,7 @@ namespace Lucene.Net.Index
 		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
-			return new TokenStreamComponents(tokenizer, new MockFixedLengthPayloadFilter(random(), tokenizer, Length));
+			return new TokenStreamComponents(tokenizer, new MockFixedLengthPayloadFilter(Random(), tokenizer, Length));
 		  }
 	  }
 
@@ -282,7 +285,7 @@ namespace Lucene.Net.Index
 	   */
 	  public virtual void TestCommitOnCloseForceMerge()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		// Must disable throwing exc on double-write: this
 		// test uses IW.rollback which easily results in
 		// writing to same file more than once
@@ -290,42 +293,42 @@ namespace Lucene.Net.Index
 		{
 		  ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
 		}
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy(10)));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(10)));
 		for (int j = 0;j < 17;j++)
 		{
 		  TestIndexWriter.AddDocWithIndex(writer, j);
 		}
-		writer.close();
+		writer.Dispose();
 
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
-		writer.forceMerge(1);
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+		writer.ForceMerge(1);
 
 		// Open a reader before closing (commiting) the writer:
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 
 		// Reader should see index as multi-seg at this
 		// point:
-		Assert.IsTrue("Reader incorrectly sees one segment", reader.leaves().size() > 1);
-		reader.close();
+		Assert.IsTrue(reader.Leaves().Count > 1, "Reader incorrectly sees one segment");
+		reader.Dispose();
 
 		// Abort the writer:
-		writer.rollback();
+		writer.Rollback();
 		TestIndexWriter.AssertNoUnreferencedFiles(dir, "aborted writer after forceMerge");
 
 		// Open a reader after aborting writer:
-		reader = DirectoryReader.open(dir);
+		reader = DirectoryReader.Open(dir);
 
 		// Reader should still see index as multi-segment
-		Assert.IsTrue("Reader incorrectly sees one segment", reader.leaves().size() > 1);
-		reader.close();
+		Assert.IsTrue(reader.Leaves().Count > 1, "Reader incorrectly sees one segment");
+		reader.Dispose();
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: do real full merge");
 		}
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.APPEND));
-		writer.forceMerge(1);
-		writer.close();
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.APPEND));
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		if (VERBOSE)
 		{
@@ -334,12 +337,12 @@ namespace Lucene.Net.Index
 		TestIndexWriter.AssertNoUnreferencedFiles(dir, "aborted writer after forceMerge");
 
 		// Open a reader after aborting writer:
-		reader = DirectoryReader.open(dir);
+		reader = DirectoryReader.Open(dir);
 
 		// Reader should see index as one segment
-		Assert.AreEqual("Reader incorrectly sees more than one segment", 1, reader.leaves().size());
-		reader.close();
-		dir.close();
+		Assert.AreEqual(1, reader.Leaves().Count, "Reader incorrectly sees more than one segment");
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-2095: make sure with multiple threads commit
@@ -349,13 +352,13 @@ namespace Lucene.Net.Index
 	  {
 		const int NUM_THREADS = 5;
 		const double RUN_SEC = 0.5;
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
-		TestUtil.reduceOpenFiles(w.w);
-		w.commit();
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+		TestUtil.ReduceOpenFiles(w.w);
+		w.Commit();
 		AtomicBoolean failed = new AtomicBoolean();
 		Thread[] threads = new Thread[NUM_THREADS];
-		long endTime = System.currentTimeMillis() + ((long)(RUN_SEC * 1000));
+		long endTime = DateTime.Now.Millisecond + ((long)(RUN_SEC * 1000));
 		for (int i = 0;i < NUM_THREADS;i++)
 		{
 		  int finalI = i;
@@ -366,9 +369,9 @@ namespace Lucene.Net.Index
 		{
 		  threads[i].Join();
 		}
-		Assert.IsFalse(failed.get());
-		w.close();
-		dir.close();
+		Assert.IsFalse(failed.Get());
+        w.Close();
+		dir.Dispose();
 	  }
 
 	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
@@ -396,13 +399,13 @@ namespace Lucene.Net.Index
 			try
 			{
 			  Document doc = new Document();
-			  DirectoryReader r = DirectoryReader.open(Dir);
-			  Field f = newStringField("f", "", Field.Store.NO);
-			  doc.add(f);
+			  DirectoryReader r = DirectoryReader.Open(Dir);
+			  Field f = NewStringField("f", "", Field.Store.NO);
+			  doc.Add(f);
 			  int count = 0;
 			  do
 			  {
-				if (Failed.get())
+				if (Failed.Get())
 				{
 					break;
 				}
@@ -410,91 +413,91 @@ namespace Lucene.Net.Index
 				{
 				  string s = FinalI + "_" + Convert.ToString(count++);
 				  f.StringValue = s;
-				  w.addDocument(doc);
-				  w.commit();
-				  DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+				  w.AddDocument(doc);
+				  w.Commit();
+				  DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 				  Assert.IsNotNull(r2);
 				  Assert.IsTrue(r2 != r);
-				  r.close();
+				  r.Dispose();
 				  r = r2;
-				  Assert.AreEqual("term=f:" + s + "; r=" + r, 1, r.docFreq(new Term("f", s)));
+				  Assert.AreEqual(1, r.DocFreq(new Term("f", s)), "term=f:" + s + "; r=" + r);
 				}
-			  } while (System.currentTimeMillis() < EndTime);
-			  r.close();
+			  } while (DateTime.Now.Millisecond < EndTime);
+			  r.Dispose();
 			}
 			catch (Exception t)
 			{
-			  Failed.set(true);
-			  throw new Exception(t);
+			  Failed.Set(true);
+			  throw new Exception(t.Message, t);
 			}
 		  }
 	  }
 
-	  // LUCENE-1044: test writer.commit() when ac=false
+	  // LUCENE-1044: test writer.Commit() when ac=false
 	  public virtual void TestForceCommit()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy(5)));
-		writer.commit();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(5)));
+		writer.Commit();
 
 		for (int i = 0; i < 23; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader.numDocs());
-		writer.commit();
-		DirectoryReader reader2 = DirectoryReader.openIfChanged(reader);
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader.NumDocs());
+		writer.Commit();
+		DirectoryReader reader2 = DirectoryReader.OpenIfChanged(reader);
 		Assert.IsNotNull(reader2);
-		Assert.AreEqual(0, reader.numDocs());
-		Assert.AreEqual(23, reader2.numDocs());
-		reader.close();
+		Assert.AreEqual(0, reader.NumDocs());
+		Assert.AreEqual(23, reader2.NumDocs());
+		reader.Dispose();
 
 		for (int i = 0; i < 17; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
-		Assert.AreEqual(23, reader2.numDocs());
-		reader2.close();
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(23, reader.numDocs());
-		reader.close();
-		writer.commit();
+		Assert.AreEqual(23, reader2.NumDocs());
+		reader2.Dispose();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(23, reader.NumDocs());
+		reader.Dispose();
+		writer.Commit();
 
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(40, reader.numDocs());
-		reader.close();
-		writer.close();
-		dir.close();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(40, reader.NumDocs());
+		reader.Dispose();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestFutureCommit()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
 		Document doc = new Document();
-		w.addDocument(doc);
+		w.AddDocument(doc);
 
 		// commit to "first"
 		IDictionary<string, string> commitData = new Dictionary<string, string>();
 		commitData["tag"] = "first";
 		w.CommitData = commitData;
-		w.commit();
+		w.Commit();
 
 		// commit to "second"
-		w.addDocument(doc);
+		w.AddDocument(doc);
 		commitData["tag"] = "second";
 		w.CommitData = commitData;
-		w.close();
+		w.Dispose();
 
 		// open "first" with IndexWriter
 		IndexCommit commit = null;
-		foreach (IndexCommit c in DirectoryReader.listCommits(dir))
+		foreach (IndexCommit c in DirectoryReader.ListCommits(dir))
 		{
-		  if (c.UserData.get("tag").Equals("first"))
+		  if (c.UserData["tag"].Equals("first"))
 		  {
 			commit = c;
 			break;
@@ -503,21 +506,21 @@ namespace Lucene.Net.Index
 
 		Assert.IsNotNull(commit);
 
-		w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE).setIndexCommit(commit));
+		w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE).SetIndexCommit(commit));
 
-		Assert.AreEqual(1, w.numDocs());
+		Assert.AreEqual(1, w.NumDocs());
 
 		// commit IndexWriter to "third"
-		w.addDocument(doc);
+		w.AddDocument(doc);
 		commitData["tag"] = "third";
 		w.CommitData = commitData;
-		w.close();
+		w.Dispose();
 
 		// make sure "second" commit is still there
 		commit = null;
-		foreach (IndexCommit c in DirectoryReader.listCommits(dir))
+		foreach (IndexCommit c in DirectoryReader.ListCommits(dir))
 		{
-		  if (c.UserData.get("tag").Equals("second"))
+		  if (c.UserData["tag"].Equals("second"))
 		  {
 			commit = c;
 			break;
@@ -526,7 +529,7 @@ namespace Lucene.Net.Index
 
 		Assert.IsNotNull(commit);
 
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestZeroCommits()
@@ -534,11 +537,11 @@ namespace Lucene.Net.Index
 		// Tests that if we don't call commit(), the directory has 0 commits. this has
 		// changed since LUCENE-2386, where before IW would always commit on a fresh
 		// new index.
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		try
 		{
-		  DirectoryReader.listCommits(dir);
+		  DirectoryReader.ListCommits(dir);
 		  Assert.Fail("listCommits should have thrown an exception over empty index");
 		}
 		catch (IndexNotFoundException e)
@@ -546,158 +549,158 @@ namespace Lucene.Net.Index
 		  // that's expected !
 		}
 		// No changes still should generate a commit, because it's a new index.
-		writer.close();
-		Assert.AreEqual("expected 1 commits!", 1, DirectoryReader.listCommits(dir).size());
-		dir.close();
+		writer.Dispose();
+		Assert.AreEqual(1, DirectoryReader.ListCommits(dir).Count, "expected 1 commits!");
+		dir.Dispose();
 	  }
 
-	  // LUCENE-1274: test writer.prepareCommit()
+	  // LUCENE-1274: test writer.PrepareCommit()
 	  public virtual void TestPrepareCommit()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy(5)));
-		writer.commit();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(5)));
+		writer.Commit();
 
 		for (int i = 0; i < 23; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader.numDocs());
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader.NumDocs());
 
-		writer.prepareCommit();
+		writer.PrepareCommit();
 
-		IndexReader reader2 = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader2.numDocs());
+		IndexReader reader2 = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader2.NumDocs());
 
-		writer.commit();
+		writer.Commit();
 
-		IndexReader reader3 = DirectoryReader.openIfChanged(reader);
+		IndexReader reader3 = DirectoryReader.OpenIfChanged(reader);
 		Assert.IsNotNull(reader3);
-		Assert.AreEqual(0, reader.numDocs());
-		Assert.AreEqual(0, reader2.numDocs());
-		Assert.AreEqual(23, reader3.numDocs());
-		reader.close();
-		reader2.close();
+		Assert.AreEqual(0, reader.NumDocs());
+		Assert.AreEqual(0, reader2.NumDocs());
+		Assert.AreEqual(23, reader3.NumDocs());
+		reader.Dispose();
+		reader2.Dispose();
 
 		for (int i = 0; i < 17; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
 
-		Assert.AreEqual(23, reader3.numDocs());
-		reader3.close();
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(23, reader.numDocs());
-		reader.close();
+		Assert.AreEqual(23, reader3.NumDocs());
+		reader3.Dispose();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(23, reader.NumDocs());
+		reader.Dispose();
 
-		writer.prepareCommit();
+		writer.PrepareCommit();
 
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(23, reader.numDocs());
-		reader.close();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(23, reader.NumDocs());
+		reader.Dispose();
 
-		writer.commit();
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(40, reader.numDocs());
-		reader.close();
-		writer.close();
-		dir.close();
+		writer.Commit();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(40, reader.NumDocs());
+		reader.Dispose();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
-	  // LUCENE-1274: test writer.prepareCommit()
+	  // LUCENE-1274: test writer.PrepareCommit()
 	  public virtual void TestPrepareCommitRollback()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		if (dir is MockDirectoryWrapper)
 		{
 		  ((MockDirectoryWrapper)dir).PreventDoubleWrite = false;
 		}
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2).setMergePolicy(newLogMergePolicy(5)));
-		writer.commit();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(5)));
+		writer.Commit();
 
 		for (int i = 0; i < 23; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
 
-		DirectoryReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader.numDocs());
+		DirectoryReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader.NumDocs());
 
-		writer.prepareCommit();
+		writer.PrepareCommit();
 
-		IndexReader reader2 = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader2.numDocs());
+		IndexReader reader2 = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader2.NumDocs());
 
-		writer.rollback();
+		writer.Rollback();
 
-		IndexReader reader3 = DirectoryReader.openIfChanged(reader);
-		assertNull(reader3);
-		Assert.AreEqual(0, reader.numDocs());
-		Assert.AreEqual(0, reader2.numDocs());
-		reader.close();
-		reader2.close();
+		IndexReader reader3 = DirectoryReader.OpenIfChanged(reader);
+		Assert.IsNull(reader3);
+		Assert.AreEqual(0, reader.NumDocs());
+		Assert.AreEqual(0, reader2.NumDocs());
+		reader.Dispose();
+		reader2.Dispose();
 
-		writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		for (int i = 0; i < 17; i++)
 		{
 		  TestIndexWriter.AddDoc(writer);
 		}
 
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader.numDocs());
-		reader.close();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader.NumDocs());
+		reader.Dispose();
 
-		writer.prepareCommit();
+		writer.PrepareCommit();
 
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader.numDocs());
-		reader.close();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader.NumDocs());
+		reader.Dispose();
 
-		writer.commit();
-		reader = DirectoryReader.open(dir);
-		Assert.AreEqual(17, reader.numDocs());
-		reader.close();
-		writer.close();
-		dir.close();
+		writer.Commit();
+		reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(17, reader.NumDocs());
+		reader.Dispose();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1274
 	  public virtual void TestPrepareCommitNoChanges()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		writer.prepareCommit();
-		writer.commit();
-		writer.close();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		writer.PrepareCommit();
+		writer.Commit();
+		writer.Dispose();
 
-		IndexReader reader = DirectoryReader.open(dir);
-		Assert.AreEqual(0, reader.numDocs());
-		reader.close();
-		dir.close();
+		IndexReader reader = DirectoryReader.Open(dir);
+		Assert.AreEqual(0, reader.NumDocs());
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1382
 	  public virtual void TestCommitUserData()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2));
+		Directory dir = NewDirectory();
+        IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
 		for (int j = 0;j < 17;j++)
 		{
 		  TestIndexWriter.AddDoc(w);
 		}
-		w.close();
+		w.Dispose();
 
-		DirectoryReader r = DirectoryReader.open(dir);
+		DirectoryReader r = DirectoryReader.Open(dir);
 		// commit(Map) never called for this index
-		Assert.AreEqual(0, r.IndexCommit.UserData.size());
-		r.close();
+		Assert.AreEqual(0, r.IndexCommit.UserData.Count);
+		r.Dispose();
 
-		w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2));
+        w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
 		for (int j = 0;j < 17;j++)
 		{
 		  TestIndexWriter.AddDoc(w);
@@ -705,17 +708,17 @@ namespace Lucene.Net.Index
 		IDictionary<string, string> data = new Dictionary<string, string>();
 		data["label"] = "test1";
 		w.CommitData = data;
-		w.close();
+		w.Dispose();
 
-		r = DirectoryReader.open(dir);
-		Assert.AreEqual("test1", r.IndexCommit.UserData.get("label"));
-		r.close();
+		r = DirectoryReader.Open(dir);
+		Assert.AreEqual("test1", r.IndexCommit.UserData["label"]);
+		r.Dispose();
 
-		w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		w.forceMerge(1);
-		w.close();
+		w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		w.ForceMerge(1);
+		w.Dispose();
 
-		dir.close();
+		dir.Dispose();
 	  }
 	}
 

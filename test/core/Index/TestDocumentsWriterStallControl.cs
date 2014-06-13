@@ -5,26 +5,27 @@ using System.Threading;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements. See the NOTICE file distributed with this
-	 * work for additional information regarding copyright ownership. The ASF
-	 * licenses this file to You under the Apache License, Version 2.0 (the
-	 * "License"); you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 * 
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 * 
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-	 * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-	 * License for the specific language governing permissions and limitations under
-	 * the License.
-	 */
+    using NUnit.Framework;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements. See the NOTICE file distributed with this
+         * work for additional information regarding copyright ownership. The ASF
+         * licenses this file to You under the Apache License, Version 2.0 (the
+         * "License"); you may not use this file except in compliance with the License.
+         * You may obtain a copy of the License at
+         * 
+         * http://www.apache.org/licenses/LICENSE-2.0
+         * 
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+         * License for the specific language governing permissions and limitations under
+         * the License.
+         */
 
 
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
 	/// <summary>
 	/// Tests for <seealso cref="DocumentsWriterStallControl"/>
@@ -37,7 +38,7 @@ namespace Lucene.Net.Index
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 
 		ctrl.updateStalled(false);
-		Thread[] waitThreads = WaitThreads(atLeast(1), ctrl);
+		Thread[] waitThreads = WaitThreads(AtLeast(1), ctrl);
 		Start(waitThreads);
 		Assert.IsFalse(ctrl.hasBlocked());
 		Assert.IsFalse(ctrl.anyStalledThreads());
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
 
 		// now stall threads and wake them up again
 		ctrl.updateStalled(true);
-		waitThreads = WaitThreads(atLeast(1), ctrl);
+		waitThreads = WaitThreads(AtLeast(1), ctrl);
 		Start(waitThreads);
 		AwaitState(Thread.State.WAITING, waitThreads);
 		Assert.IsTrue(ctrl.hasBlocked());
@@ -60,22 +61,22 @@ namespace Lucene.Net.Index
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 		ctrl.updateStalled(false);
 
-		Thread[] stallThreads = new Thread[atLeast(3)];
+		Thread[] stallThreads = new Thread[AtLeast(3)];
 		for (int i = 0; i < stallThreads.Length; i++)
 		{
-		  int stallProbability = 1 + random().Next(10);
+		  int stallProbability = 1 + Random().Next(10);
 		  stallThreads[i] = new ThreadAnonymousInnerClassHelper(this, ctrl, stallProbability);
 		}
 		Start(stallThreads);
-		long time = System.currentTimeMillis();
+		long time = DateTime.Now.Millisecond;
 		/*
 		 * use a 100 sec timeout to make sure we not hang forever. join will fail in
 		 * that case
 		 */
-		while ((System.currentTimeMillis() - time) < 100 * 1000 && !Terminated(stallThreads))
+		while ((DateTime.Now.Millisecond - time) < 100 * 1000 && !Terminated(stallThreads))
 		{
 		  ctrl.updateStalled(false);
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			Thread.@yield();
 		  }
@@ -106,11 +107,11 @@ namespace Lucene.Net.Index
 		  public override void Run()
 		  {
 
-			int iters = atLeast(1000);
+			int iters = AtLeast(1000);
 			for (int j = 0; j < iters; j++)
 			{
-			  Ctrl.updateStalled(random().Next(StallProbability) == 0);
-			  if (random().Next(5) == 0) // thread 0 only updates
+			  Ctrl.updateStalled(Random().Next(StallProbability) == 0);
+			  if (Random().Next(5) == 0) // thread 0 only updates
 			  {
 				Ctrl.waitIfStalled();
 			  }
@@ -125,9 +126,9 @@ namespace Lucene.Net.Index
 		AtomicBoolean stop = new AtomicBoolean(false);
 		AtomicBoolean checkPoint = new AtomicBoolean(true);
 
-		int numStallers = atLeast(1);
-		int numReleasers = atLeast(1);
-		int numWaiters = atLeast(1);
+		int numStallers = AtLeast(1);
+		int numReleasers = AtLeast(1);
+		int numWaiters = AtLeast(1);
 		Synchronizer sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
 		Thread[] threads = new Thread[numReleasers + numStallers + numWaiters];
 		IList<Exception> exceptions = Collections.synchronizedList(new List<Exception>());
@@ -147,11 +148,11 @@ namespace Lucene.Net.Index
 		}
 
 		Start(threads);
-		int iters = atLeast(10000);
+		int iters = AtLeast(10000);
 		float checkPointProbability = TEST_NIGHTLY ? 0.5f : 0.1f;
 		for (int i = 0; i < iters; i++)
 		{
-		  if (checkPoint.get())
+		  if (checkPoint.Get())
 		  {
 
 			Assert.IsTrue("timed out waiting for update threads - deadlock?", sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
@@ -172,29 +173,29 @@ namespace Lucene.Net.Index
 
 			}
 
-			checkPoint.set(false);
+			checkPoint.Set(false);
 			sync.Waiter.countDown();
 			sync.LeftCheckpoint.@await();
 		  }
-		  Assert.IsFalse(checkPoint.get());
+		  Assert.IsFalse(checkPoint.Get());
 		  Assert.AreEqual(0, sync.Waiter.Count);
-		  if (checkPointProbability >= random().nextFloat())
+		  if (checkPointProbability >= Random().nextFloat())
 		  {
 			sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-			checkPoint.set(true);
+			checkPoint.Set(true);
 		  }
 
 		}
-		if (!checkPoint.get())
+		if (!checkPoint.Get())
 		{
 		  sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-		  checkPoint.set(true);
+		  checkPoint.Set(true);
 		}
 
 		Assert.IsTrue(sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
 		AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
-		checkPoint.set(false);
-		stop.set(true);
+		checkPoint.Set(false);
+		stop.Set(true);
 		sync.Waiter.countDown();
 		sync.LeftCheckpoint.@await();
 
@@ -267,16 +268,16 @@ namespace Lucene.Net.Index
 		{
 		  try
 		  {
-			while (!Stop.get())
+			while (!Stop.Get())
 			{
 			  Ctrl.waitIfStalled();
-			  if (CheckPoint.get())
+			  if (CheckPoint.Get())
 			  {
 				try
 				{
 				  Assert.IsTrue(Sync.@await());
 				}
-				catch (InterruptedException e)
+				catch (ThreadInterruptedException e)
 				{
 				  Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Count);
 				  throw new ThreadInterruptedException(e);
@@ -318,28 +319,28 @@ namespace Lucene.Net.Index
 		  try
 		  {
 
-			while (!Stop.get())
+			while (!Stop.Get())
 			{
-			  int internalIters = Release && random().nextBoolean() ? atLeast(5) : 1;
+			  int internalIters = Release && Random().NextBoolean() ? AtLeast(5) : 1;
 			  for (int i = 0; i < internalIters; i++)
 			  {
-				Ctrl.updateStalled(random().nextBoolean());
+				Ctrl.updateStalled(Random().NextBoolean());
 			  }
-			  if (CheckPoint.get())
+			  if (CheckPoint.Get())
 			  {
 				Sync.UpdateJoin.countDown();
 				try
 				{
 				  Assert.IsTrue(Sync.@await());
 				}
-				catch (InterruptedException e)
+				catch (ThreadInterruptedException e)
 				{
 				  Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Count);
 				  throw new ThreadInterruptedException(e);
 				}
 				Sync.LeftCheckpoint.countDown();
 			  }
-			  if (random().nextBoolean())
+			  if (Random().NextBoolean())
 			  {
 				Thread.@yield();
 			  }
@@ -431,7 +432,7 @@ namespace Lucene.Net.Index
 		  {
 			return;
 		  }
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			Thread.@yield();
 		  }

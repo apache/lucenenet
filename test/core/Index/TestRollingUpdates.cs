@@ -29,7 +29,9 @@ namespace Lucene.Net.Index
 	using TopDocs = Lucene.Net.Search.TopDocs;
 	using Lucene.Net.Store;
 	using Lucene.Net.Util;
-	using Test = org.junit.Test;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestRollingUpdates : LuceneTestCase
 	{
@@ -41,25 +43,25 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testRollingUpdates() throws Exception
 	  public virtual void TestRollingUpdates()
 	  {
-		Random random = new Random(random().nextLong());
-		BaseDirectoryWrapper dir = newDirectory();
-		LineFileDocs docs = new LineFileDocs(random, defaultCodecSupportsDocValues());
+		Random random = new Random(Random().nextLong());
+		BaseDirectoryWrapper dir = NewDirectory();
+		LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 
 		//provider.register(new MemoryCodec());
-		if ((!"Lucene3x".Equals(Codec.Default.Name)) && random().nextBoolean())
+		if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
 		{
-		  Codec.Default = TestUtil.alwaysPostingsFormat(new MemoryPostingsFormat(random().nextBoolean(), random.nextFloat()));
+		  Codec.Default = TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().NextBoolean(), random.nextFloat()));
 		}
 
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
-		IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
-		int SIZE = atLeast(20);
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+		int SIZE = AtLeast(20);
 		int id = 0;
 		IndexReader r = null;
 		IndexSearcher s = null;
-		int numUpdates = (int)(SIZE * (2 + (TEST_NIGHTLY ? 200 * random().NextDouble() : 5 * random().NextDouble())));
+		int numUpdates = (int)(SIZE * (2 + (TEST_NIGHTLY ? 200 * Random().NextDouble() : 5 * Random().NextDouble())));
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: numUpdates=" + numUpdates);
@@ -68,7 +70,7 @@ namespace Lucene.Net.Index
 		// TODO: sometimes update ids not in order...
 		for (int docIter = 0;docIter < numUpdates;docIter++)
 		{
-		  Document doc = docs.nextDoc();
+		  Document doc = docs.NextDoc();
 		  string myID = "" + id;
 		  if (id == SIZE-1)
 		  {
@@ -82,16 +84,16 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("  docIter=" + docIter + " id=" + id);
 		  }
-		  ((Field) doc.getField("docid")).StringValue = myID;
+		  ((Field) doc.GetField("docid")).StringValue = myID;
 
 		  Term idTerm = new Term("docid", myID);
 
 		  bool doUpdate;
 		  if (s != null && updateCount < SIZE)
 		  {
-			TopDocs hits = s.search(new TermQuery(idTerm), 1);
-			Assert.AreEqual(1, hits.totalHits);
-			doUpdate = !w.tryDeleteDocument(r, hits.scoreDocs[0].doc);
+			TopDocs hits = s.Search(new TermQuery(idTerm), 1);
+			Assert.AreEqual(1, hits.TotalHits);
+			doUpdate = !w.TryDeleteDocument(r, hits.ScoreDocs[0].Doc);
 			if (VERBOSE)
 			{
 			  if (doUpdate)
@@ -117,86 +119,86 @@ namespace Lucene.Net.Index
 
 		  if (doUpdate)
 		  {
-			w.updateDocument(idTerm, doc);
+			w.UpdateDocument(idTerm, doc);
 		  }
 		  else
 		  {
-			w.addDocument(doc);
+			w.AddDocument(doc);
 		  }
 
-		  if (docIter >= SIZE && random().Next(50) == 17)
+		  if (docIter >= SIZE && Random().Next(50) == 17)
 		  {
 			if (r != null)
 			{
-			  r.close();
+			  r.Dispose();
 			}
 
-			bool applyDeletions = random().nextBoolean();
+			bool applyDeletions = Random().NextBoolean();
 
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: reopen applyDeletions=" + applyDeletions);
 			}
 
-			r = w.getReader(applyDeletions);
+			r = w.GetReader(applyDeletions);
 			if (applyDeletions)
 			{
-			  s = newSearcher(r);
+			  s = NewSearcher(r);
 			}
 			else
 			{
 			  s = null;
 			}
-			Assert.IsTrue("applyDeletions=" + applyDeletions + " r.numDocs()=" + r.numDocs() + " vs SIZE=" + SIZE, !applyDeletions || r.numDocs() == SIZE);
+			Assert.IsTrue(!applyDeletions || r.NumDocs() == SIZE, "applyDeletions=" + applyDeletions + " r.NumDocs()=" + r.NumDocs() + " vs SIZE=" + SIZE);
 			updateCount = 0;
 		  }
 		}
 
 		if (r != null)
 		{
-		  r.close();
+		  r.Dispose();
 		}
 
-		w.commit();
-		Assert.AreEqual(SIZE, w.numDocs());
+		w.Commit();
+		Assert.AreEqual(SIZE, w.NumDocs());
 
-		w.close();
+		w.Dispose();
 
 		TestIndexWriter.AssertNoUnreferencedFiles(dir, "leftover files after rolling updates");
 
-		docs.close();
+        docs.Close();
 
 		// LUCENE-4455:
 		SegmentInfos infos = new SegmentInfos();
-		infos.read(dir);
+		infos.Read(dir);
 		long totalBytes = 0;
 		foreach (SegmentCommitInfo sipc in infos)
 		{
-		  totalBytes += sipc.sizeInBytes();
+		  totalBytes += sipc.SizeInBytes();
 		}
 		long totalBytes2 = 0;
-		foreach (string fileName in dir.listAll())
+		foreach (string fileName in dir.ListAll())
 		{
 		  if (!fileName.StartsWith(IndexFileNames.SEGMENTS))
 		  {
-			totalBytes2 += dir.fileLength(fileName);
+			totalBytes2 += dir.FileLength(fileName);
 		  }
 		}
 		Assert.AreEqual(totalBytes2, totalBytes);
-		dir.close();
+		dir.Dispose();
 	  }
 
 
 	  public virtual void TestUpdateSameDoc()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		LineFileDocs docs = new LineFileDocs(random());
+		LineFileDocs docs = new LineFileDocs(Random());
 		for (int r = 0; r < 3; r++)
 		{
-		  IndexWriter w = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2));
-		  int numUpdates = atLeast(20);
-		  int numThreads = TestUtil.Next(random(), 2, 6);
+          IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+		  int numUpdates = AtLeast(20);
+		  int numThreads = TestUtil.NextInt(Random(), 2, 6);
 		  IndexingThread[] threads = new IndexingThread[numThreads];
 		  for (int i = 0; i < numThreads; i++)
 		  {
@@ -209,17 +211,17 @@ namespace Lucene.Net.Index
 			threads[i].Join();
 		  }
 
-		  w.close();
+		  w.Dispose();
 		}
 
-		IndexReader open = DirectoryReader.open(dir);
-		Assert.AreEqual(1, open.numDocs());
-		open.close();
-		docs.close();
-		dir.close();
+		IndexReader open = DirectoryReader.Open(dir);
+		Assert.AreEqual(1, open.NumDocs());
+		open.Dispose();
+        docs.Close();
+		dir.Dispose();
 	  }
 
-	  internal class IndexingThread : System.Threading.Thread
+	  internal class IndexingThread : ThreadClass
 	  {
 		internal readonly LineFileDocs Docs;
 		internal readonly IndexWriter Writer;
@@ -239,32 +241,32 @@ namespace Lucene.Net.Index
 			DirectoryReader open = null;
 			for (int i = 0; i < Num; i++)
 			{
-			  Document doc = new Document(); // docs.nextDoc();
-			  doc.add(newStringField("id", "test", Field.Store.NO));
-			  Writer.updateDocument(new Term("id", "test"), doc);
-			  if (random().Next(3) == 0)
+			  Document doc = new Document(); // docs.NextDoc();
+			  doc.Add(NewStringField("id", "test", Field.Store.NO));
+			  Writer.UpdateDocument(new Term("id", "test"), doc);
+			  if (Random().Next(3) == 0)
 			  {
 				if (open == null)
 				{
-				  open = DirectoryReader.open(Writer, true);
+				  open = DirectoryReader.Open(Writer, true);
 				}
-				DirectoryReader reader = DirectoryReader.openIfChanged(open);
+				DirectoryReader reader = DirectoryReader.OpenIfChanged(open);
 				if (reader != null)
 				{
-				  open.close();
+				  open.Dispose();
 				  open = reader;
 				}
-				Assert.AreEqual("iter: " + i + " numDocs: " + open.numDocs() + " del: " + open.numDeletedDocs() + " max: " + open.maxDoc(), 1, open.numDocs());
+				Assert.AreEqual(1, open.NumDocs(), "iter: " + i + " numDocs: " + open.NumDocs() + " del: " + open.NumDeletedDocs() + " max: " + open.MaxDoc());
 			  }
 			}
 			if (open != null)
 			{
-			  open.close();
+			  open.Dispose();
 			}
 		  }
 		  catch (Exception e)
 		  {
-			throw new Exception(e);
+			throw new Exception(e.Message, e);
 		  }
 		}
 	  }

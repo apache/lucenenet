@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-	using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+    using Lucene.Net.Util;
 
 	/// <summary>
 	/// Holds all implementations of classes in the o.a.l.search package as a
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache.LongParser
+	  internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache_Fields.ILongParser
 	  {
 
 		public override long ParseLong(BytesRef @string)
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  internal sealed class JustCompileExtendedFieldCacheDoubleParser : FieldCache.DoubleParser
+      internal sealed class JustCompileExtendedFieldCacheDoubleParser : FieldCache_Fields.IDoubleParser
 	  {
 
 		public override double ParseDouble(BytesRef term)
@@ -187,9 +187,7 @@ namespace Lucene.Net.Search
 	  internal sealed class JustCompileFieldComparatorSource : FieldComparatorSource
 	  {
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: @Override public FieldComparator<?> newComparator(String fieldname, int numHits, int sortPos, boolean reversed)
-		public override FieldComparator<?> NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+		public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}

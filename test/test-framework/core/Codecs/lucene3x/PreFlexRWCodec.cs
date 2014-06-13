@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  return base.postingsFormat();
+		  return base.PostingsFormat();
 		}
 	  }
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  return base.normsFormat();
+		  return base.NormsFormat();
 		}
 	  }
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  return base.segmentInfoFormat();
+		  return base.SegmentInfoFormat();
 		}
 	  }
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  return base.fieldInfosFormat();
+		  return base.FieldInfosFormat();
 		}
 	  }
 
@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  return base.termVectorsFormat();
+		  return base.TermVectorsFormat();
 		}
 	  }
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 		else
 		{
-		  return base.storedFieldsFormat();
+		  return base.StoredFieldsFormat();
 		}
 	  }
 	}

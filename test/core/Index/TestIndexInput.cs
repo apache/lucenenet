@@ -29,9 +29,7 @@ namespace Lucene.Net.Index
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
 
 
 	public class TestIndexInput : LuceneTestCase
@@ -48,7 +46,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws java.io.IOException
 	  public static void BeforeClass()
 	  {
-		Random random = random();
+		Random random = Random();
 		INTS = new int[COUNT];
 		LONGS = new long[COUNT];
 		RANDOM_TEST_BYTES = new sbyte[COUNT * (5 + 4 + 9 + 8)];
@@ -56,11 +54,11 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < COUNT; i++)
 		{
 		  int i1 = INTS[i] = random.Next();
-		  bdo.writeVInt(i1);
-		  bdo.writeInt(i1);
+		  bdo.WriteVInt(i1);
+		  bdo.WriteInt(i1);
 
 		  long l1;
-		  if (rarely())
+		  if (Rarely())
 		  {
 			// a long with lots of zeroes at the end
 			l1 = LONGS[i] = TestUtil.nextLong(random, 0, int.MaxValue) << 32;
@@ -69,8 +67,8 @@ namespace Lucene.Net.Index
 		  {
 			l1 = LONGS[i] = TestUtil.nextLong(random, 0, long.MaxValue);
 		  }
-		  bdo.writeVLong(l1);
-		  bdo.writeLong(l1);
+		  bdo.WriteVLong(l1);
+		  bdo.WriteLong(l1);
 		}
 	  }
 
@@ -85,32 +83,32 @@ namespace Lucene.Net.Index
 
 	  private void CheckReads(DataInput @is, Type expectedEx)
 	  {
-		Assert.AreEqual(128,@is.readVInt());
-		Assert.AreEqual(16383,@is.readVInt());
-		Assert.AreEqual(16384,@is.readVInt());
-		Assert.AreEqual(16385,@is.readVInt());
-		Assert.AreEqual(int.MaxValue, @is.readVInt());
-		Assert.AreEqual(-1, @is.readVInt());
-		Assert.AreEqual((long) int.MaxValue, @is.readVLong());
-		Assert.AreEqual(long.MaxValue, @is.readVLong());
-		Assert.AreEqual("Lucene",@is.readString());
+		Assert.AreEqual(128,@is.ReadVInt());
+		Assert.AreEqual(16383,@is.ReadVInt());
+		Assert.AreEqual(16384,@is.ReadVInt());
+		Assert.AreEqual(16385,@is.ReadVInt());
+		Assert.AreEqual(int.MaxValue, @is.ReadVInt());
+		Assert.AreEqual(-1, @is.ReadVInt());
+		Assert.AreEqual((long) int.MaxValue, @is.ReadVLong());
+		Assert.AreEqual(long.MaxValue, @is.ReadVLong());
+		Assert.AreEqual("Lucene",@is.ReadString());
 
-		Assert.AreEqual("\u00BF",@is.readString());
-		Assert.AreEqual("Lu\u00BFce\u00BFne",@is.readString());
+		Assert.AreEqual("\u00BF",@is.ReadString());
+		Assert.AreEqual("Lu\u00BFce\u00BFne",@is.ReadString());
 
-		Assert.AreEqual("\u2620",@is.readString());
-		Assert.AreEqual("Lu\u2620ce\u2620ne",@is.readString());
+		Assert.AreEqual("\u2620",@is.ReadString());
+		Assert.AreEqual("Lu\u2620ce\u2620ne",@is.ReadString());
 
-		Assert.AreEqual("\uD834\uDD1E",@is.readString());
-		Assert.AreEqual("\uD834\uDD1E\uD834\uDD60",@is.readString());
-		Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne",@is.readString());
+		Assert.AreEqual("\uD834\uDD1E",@is.ReadString());
+		Assert.AreEqual("\uD834\uDD1E\uD834\uDD60",@is.ReadString());
+		Assert.AreEqual("Lu\uD834\uDD1Ece\uD834\uDD60ne",@is.ReadString());
 
-		Assert.AreEqual("\u0000",@is.readString());
-		Assert.AreEqual("Lu\u0000ce\u0000ne",@is.readString());
+		Assert.AreEqual("\u0000",@is.ReadString());
+		Assert.AreEqual("Lu\u0000ce\u0000ne",@is.ReadString());
 
 		try
 		{
-		  @is.readVInt();
+		  @is.ReadVInt();
 		  Assert.Fail("Should throw " + expectedEx.Name);
 		}
 		catch (Exception e)
@@ -118,11 +116,11 @@ namespace Lucene.Net.Index
 		  Assert.IsTrue(e.Message.StartsWith("Invalid vInt"));
 		  Assert.IsTrue(expectedEx.IsInstanceOfType(e));
 		}
-		Assert.AreEqual(1, @is.readVInt()); // guard value
+		Assert.AreEqual(1, @is.ReadVInt()); // guard value
 
 		try
 		{
-		  @is.readVLong();
+		  @is.ReadVLong();
 		  Assert.Fail("Should throw " + expectedEx.Name);
 		}
 		catch (Exception e)
@@ -130,16 +128,16 @@ namespace Lucene.Net.Index
 		  Assert.IsTrue(e.Message.StartsWith("Invalid vLong"));
 		  Assert.IsTrue(expectedEx.IsInstanceOfType(e));
 		}
-		Assert.AreEqual(1L, @is.readVLong()); // guard value
+		Assert.AreEqual(1L, @is.ReadVLong()); // guard value
 	  }
 
 	  private void CheckRandomReads(DataInput @is)
 	  {
 		for (int i = 0; i < COUNT; i++)
 		{
-		  Assert.AreEqual(INTS[i], @is.readVInt());
-		  Assert.AreEqual(INTS[i], @is.readInt());
-		  Assert.AreEqual(LONGS[i], @is.readVLong());
+		  Assert.AreEqual(INTS[i], @is.ReadVInt());
+		  Assert.AreEqual(INTS[i], @is.ReadInt());
+		  Assert.AreEqual(LONGS[i], @is.ReadVLong());
 		  Assert.AreEqual(LONGS[i], @is.readLong());
 		}
 	  }
@@ -149,31 +147,31 @@ namespace Lucene.Net.Index
 	  {
 		IndexInput @is = new MockIndexInput(READ_TEST_BYTES);
 		CheckReads(@is, typeof(IOException));
-		@is.close();
+		@is.Dispose();
 		@is = new MockIndexInput(RANDOM_TEST_BYTES);
 		CheckRandomReads(@is);
-		@is.close();
+		@is.Dispose();
 	  }
 
 	  // this test checks the raw IndexInput methods as it uses RAMIndexInput which extends IndexInput directly
 	  public virtual void TestRawIndexInputRead()
 	  {
-		Random random = random();
+		Random random = Random();
 		RAMDirectory dir = new RAMDirectory();
-		IndexOutput os = dir.createOutput("foo", newIOContext(random));
-		os.writeBytes(READ_TEST_BYTES, READ_TEST_BYTES.Length);
-		os.close();
-		IndexInput @is = dir.openInput("foo", newIOContext(random));
+		IndexOutput os = dir.CreateOutput("foo", NewIOContext(random));
+		os.WriteBytes(READ_TEST_BYTES, READ_TEST_BYTES.Length);
+		os.Dispose();
+		IndexInput @is = dir.OpenInput("foo", NewIOContext(random));
 		CheckReads(@is, typeof(IOException));
-		@is.close();
+		@is.Dispose();
 
-		os = dir.createOutput("bar", newIOContext(random));
-		os.writeBytes(RANDOM_TEST_BYTES, RANDOM_TEST_BYTES.Length);
-		os.close();
-		@is = dir.openInput("bar", newIOContext(random));
+		os = dir.CreateOutput("bar", NewIOContext(random));
+		os.WriteBytes(RANDOM_TEST_BYTES, RANDOM_TEST_BYTES.Length);
+		os.Dispose();
+		@is = dir.OpenInput("bar", NewIOContext(random));
 		CheckRandomReads(@is);
-		@is.close();
-		dir.close();
+		@is.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestByteArrayDataInput()

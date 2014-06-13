@@ -28,6 +28,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestIndexWriterNRTIsCurrent : LuceneTestCase
 	{
@@ -40,13 +42,13 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestIsCurrentWithThreads()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		Directory dir = NewDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriter writer = new IndexWriter(dir, conf);
 		ReaderHolder holder = new ReaderHolder();
-		ReaderThread[] threads = new ReaderThread[atLeast(3)];
+		ReaderThread[] threads = new ReaderThread[AtLeast(3)];
 		CountDownLatch latch = new CountDownLatch(1);
-		WriterThread writerThread = new WriterThread(holder, writer, atLeast(500), random(), latch);
+		WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), Random(), latch);
 		for (int i = 0; i < threads.Length; i++)
 		{
 		  threads[i] = new ReaderThread(holder, latch);
@@ -72,8 +74,8 @@ namespace Lucene.Net.Index
 		  }
 		}
 		Assert.IsFalse(failed);
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 
 	  }
 
@@ -97,30 +99,30 @@ namespace Lucene.Net.Index
 		public override void Run()
 		{
 		  DirectoryReader currentReader = null;
-		  Random random = LuceneTestCase.random();
+		  Random random = LuceneTestCase.Random();
 		  try
 		  {
 			Document doc = new Document();
-			doc.add(new TextField("id", "1", Field.Store.NO));
-			Writer.addDocument(doc);
-			Holder.Reader = currentReader = Writer.getReader(true);
+			doc.Add(new TextField("id", "1", Field.Store.NO));
+			Writer.AddDocument(doc);
+			Holder.Reader = currentReader = Writer.GetReader(true);
 			Term term = new Term("id");
 			for (int i = 0; i < NumOps && !Holder.Stop; i++)
 			{
 			  float nextOp = random.nextFloat();
 			  if (nextOp < 0.3)
 			  {
-				term.set("id", new BytesRef("1"));
-				Writer.updateDocument(term, doc);
+				term.Set("id", new BytesRef("1"));
+				Writer.UpdateDocument(term, doc);
 			  }
 			  else if (nextOp < 0.5)
 			  {
-				Writer.addDocument(doc);
+				Writer.AddDocument(doc);
 			  }
 			  else
 			  {
-				term.set("id", new BytesRef("1"));
-				Writer.deleteDocuments(term);
+				term.Set("id", new BytesRef("1"));
+				Writer.DeleteDocuments(term);
 			  }
 			  if (Holder.Reader != currentReader)
 			  {
@@ -131,18 +133,18 @@ namespace Lucene.Net.Index
 				  Latch.countDown();
 				}
 			  }
-			  if (random.nextBoolean())
+			  if (random.NextBoolean())
 			  {
-				Writer.commit();
-				DirectoryReader newReader = DirectoryReader.openIfChanged(currentReader);
+				Writer.Commit();
+				DirectoryReader newReader = DirectoryReader.OpenIfChanged(currentReader);
 				if (newReader != null)
 				{
-				  currentReader.decRef();
+				  currentReader.DecRef();
 				  currentReader = newReader;
 				}
-				if (currentReader.numDocs() == 0)
+				if (currentReader.NumDocs() == 0)
 				{
-				  Writer.addDocument(doc);
+				  Writer.AddDocument(doc);
 				}
 			  }
 			}
@@ -162,7 +164,7 @@ namespace Lucene.Net.Index
 			{
 			  try
 			  {
-				currentReader.decRef();
+				currentReader.DecRef();
 			  }
 			  catch (IOException e)
 			  {
@@ -177,7 +179,7 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  public sealed class ReaderThread : System.Threading.Thread
+	  public sealed class ReaderThread : ThreadClass
 	  {
 		internal readonly ReaderHolder Holder;
 		internal readonly CountDownLatch Latch;
@@ -195,7 +197,7 @@ namespace Lucene.Net.Index
 		  {
 			Latch.@await();
 		  }
-		  catch (InterruptedException e)
+		  catch (ThreadInterruptedException e)
 		  {
 			Failed = e;
 			return;
@@ -203,7 +205,7 @@ namespace Lucene.Net.Index
 		  DirectoryReader reader;
 		  while ((reader = Holder.Reader) != null)
 		  {
-			if (reader.tryIncRef())
+			if (reader.TryIncRef())
 			{
 			  try
 			  {
@@ -229,7 +231,7 @@ namespace Lucene.Net.Index
 			  {
 				try
 				{
-				  reader.decRef();
+				  reader.DecRef();
 				}
 				catch (IOException e)
 				{

@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public virtual void TestLongMatchs()
 	  {
 		// match length >= 20
-		sbyte[] decompressed = new sbyte[RandomInts.randomIntBetween(random(), 300, 1024)];
+		sbyte[] decompressed = new sbyte[RandomInts.randomIntBetween(Random(), 300, 1024)];
 		for (int i = 0; i < decompressed.Length; ++i)
 		{
 		  decompressed[i] = (sbyte) i;
@@ -111,10 +111,10 @@ namespace Lucene.Net.Codecs.Compressing
 	  public virtual void TestLongLiterals()
 	  {
 		// long literals (length >= 16) which are not the last literals
-		sbyte[] decompressed = RandomArray(RandomInts.randomIntBetween(random(), 400, 1024), 256);
-		int matchRef = random().Next(30);
-		int matchOff = RandomInts.randomIntBetween(random(), decompressed.Length - 40, decompressed.Length - 20);
-		int matchLength = RandomInts.randomIntBetween(random(), 4, 10);
+		sbyte[] decompressed = RandomArray(RandomInts.randomIntBetween(Random(), 400, 1024), 256);
+		int matchRef = Random().Next(30);
+		int matchOff = RandomInts.randomIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
+		int matchLength = RandomInts.randomIntBetween(Random(), 4, 10);
 		Array.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
 		Test(decompressed);
 	  }

@@ -1,5 +1,6 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System.IO;
 namespace Lucene.Net.Analysis
 {
 
@@ -26,14 +27,14 @@ namespace Lucene.Net.Analysis
 	{
 	  /// <summary>
 	  /// Run a vocabulary test against two data files. </summary>
-	  public static void AssertVocabulary(Analyzer a, InputStream voc, InputStream @out)
+      public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out)
 	  {
-		BufferedReader vocReader = new BufferedReader(new InputStreamReader(voc, StandardCharsets.UTF_8));
-		BufferedReader outputReader = new BufferedReader(new InputStreamReader(@out, StandardCharsets.UTF_8));
+        TextReader vocReader = (TextReader)(new StreamReader(voc, IOUtils.CHARSET_UTF_8));
+        TextReader outputReader = (TextReader)(new StreamReader(@out, IOUtils.CHARSET_UTF_8));
 		string inputWord = null;
-		while ((inputWord = vocReader.readLine()) != null)
+		while ((inputWord = vocReader.ReadLine()) != null)
 		{
-		  string expectedWord = outputReader.readLine();
+		  string expectedWord = outputReader.ReadLine();
 		  Assert.IsNotNull(expectedWord);
 		  BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
 		}
@@ -41,31 +42,31 @@ namespace Lucene.Net.Analysis
 
 	  /// <summary>
 	  /// Run a vocabulary test against one file: tab separated. </summary>
-	  public static void AssertVocabulary(Analyzer a, InputStream vocOut)
+	  public static void AssertVocabulary(Analyzer a, Stream vocOut)
 	  {
-		BufferedReader vocReader = new BufferedReader(new InputStreamReader(vocOut, IOUtils.CHARSET_UTF_8));
+        TextReader vocReader = (TextReader)(new StreamReader(vocOut, IOUtils.CHARSET_UTF_8));
 		string inputLine = null;
-		while ((inputLine = vocReader.readLine()) != null)
+		while ((inputLine = vocReader.ReadLine()) != null)
 		{
 		  if (inputLine.StartsWith("#") || inputLine.Trim().Length == 0)
 		  {
 			continue; // comment
 		  }
-		  string[] words = inputLine.Split("\t", true);
+		  string[] words = inputLine.Split('\t');
 		  BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
 		}
 	  }
-
+      /* LUCENE TO-DO Removing until use proven
 	  /// <summary>
 	  /// Run a vocabulary test against two data files inside a zip file </summary>
 	  public static void AssertVocabulary(Analyzer a, File zipFile, string voc, string @out)
 	  {
 		ZipFile zip = new ZipFile(zipFile);
-		InputStream v = zip.getInputStream(zip.getEntry(voc));
-		InputStream o = zip.getInputStream(zip.getEntry(@out));
+		Stream v = zip.getInputStream(zip.getEntry(voc));
+		Stream o = zip.getInputStream(zip.getEntry(@out));
 		AssertVocabulary(a, v, o);
-		v.close();
-		o.close();
+		v.Close();
+		o.Close();
 		zip.close();
 	  }
 
@@ -74,11 +75,11 @@ namespace Lucene.Net.Analysis
 	  public static void AssertVocabulary(Analyzer a, File zipFile, string vocOut)
 	  {
 		ZipFile zip = new ZipFile(zipFile);
-		InputStream vo = zip.getInputStream(zip.getEntry(vocOut));
+		Stream vo = zip.getInputStream(zip.getEntry(vocOut));
 		AssertVocabulary(a, vo);
-		vo.close();
+		vo.Close();
 		zip.close();
-	  }
+	  }*/
 	}
 
 }

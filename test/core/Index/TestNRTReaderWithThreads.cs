@@ -27,6 +27,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestNRTReaderWithThreads : LuceneTestCase
 	{
@@ -34,14 +36,14 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestIndexing()
 	  {
-		Directory mainDir = newDirectory();
+		Directory mainDir = NewDirectory();
 		if (mainDir is MockDirectoryWrapper)
 		{
 		  ((MockDirectoryWrapper)mainDir).AssertNoDeleteOpenFile = true;
 		}
-		IndexWriter writer = new IndexWriter(mainDir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy(false,2)));
+		IndexWriter writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false,2)));
 		IndexReader reader = writer.Reader; // start pooling readers
-		reader.close();
+		reader.Dispose();
 		RunThread[] indexThreads = new RunThread[4];
 		for (int x = 0; x < indexThreads.Length; x++)
 		{
@@ -49,9 +51,9 @@ namespace Lucene.Net.Index
 		  indexThreads[x].Name = "Thread " + x;
 		  indexThreads[x].Start();
 		}
-		long startTime = System.currentTimeMillis();
+		long startTime = DateTime.Now.Millisecond;
 		long duration = 1000;
-		while ((System.currentTimeMillis() - startTime) < duration)
+		while ((DateTime.Now.Millisecond - startTime) < duration)
 		{
 		  Thread.Sleep(100);
 		}
@@ -60,7 +62,7 @@ namespace Lucene.Net.Index
 		for (int x = 0; x < indexThreads.Length; x++)
 		{
 		  indexThreads[x].Run_Renamed = false;
-		  assertNull("Exception thrown: " + indexThreads[x].Ex, indexThreads[x].Ex);
+		  Assert.IsNull(indexThreads[x].Ex, "Exception thrown: " + indexThreads[x].Ex);
 		  addCount += indexThreads[x].AddCount;
 		  delCount += indexThreads[x].DelCount;
 		}
@@ -70,15 +72,15 @@ namespace Lucene.Net.Index
 		}
 		for (int x = 0; x < indexThreads.Length; x++)
 		{
-		  assertNull("Exception thrown: " + indexThreads[x].Ex, indexThreads[x].Ex);
+		  Assert.IsNull(indexThreads[x].Ex, "Exception thrown: " + indexThreads[x].Ex);
 		}
 		//System.out.println("addCount:"+addCount);
 		//System.out.println("delCount:"+delCount);
-		writer.close();
-		mainDir.close();
+		writer.Dispose();
+		mainDir.Dispose();
 	  }
 
-	  public class RunThread : System.Threading.Thread
+	  public class RunThread : ThreadClass
 	  {
 		  private readonly TestNRTReaderWithThreads OuterInstance;
 
@@ -88,7 +90,7 @@ namespace Lucene.Net.Index
 		internal int DelCount = 0;
 		internal int AddCount = 0;
 		internal int Type;
-		internal readonly Random r = new Random(random().nextLong());
+		internal readonly Random r = new Random(Random().nextLong());
 
 		public RunThread(TestNRTReaderWithThreads outerInstance, int type, IndexWriter writer)
 		{
@@ -106,9 +108,9 @@ namespace Lucene.Net.Index
 			  //int n = random.nextInt(2);
 			  if (Type == 0)
 			  {
-				int i = outerInstance.Seq.addAndGet(1);
-				Document doc = DocHelper.createDocument(i, "index1", 10);
-				Writer.addDocument(doc);
+				int i = OuterInstance.Seq.AddAndGet(1);
+				Document doc = DocHelper.CreateDocument(i, "index1", 10);
+				Writer.AddDocument(doc);
 				AddCount++;
 			  }
 			  else if (Type == 1)
@@ -116,18 +118,18 @@ namespace Lucene.Net.Index
 				// we may or may not delete because the term may not exist,
 				// however we're opening and closing the reader rapidly
 				IndexReader reader = Writer.Reader;
-				int id = r.Next((int)outerInstance.Seq);
+				int id = r.Next((int)OuterInstance.Seq);
 				Term term = new Term("id", Convert.ToString(id));
 				int count = TestIndexWriterReader.Count(term, reader);
-				Writer.deleteDocuments(term);
-				reader.close();
+				Writer.DeleteDocuments(term);
+				reader.Dispose();
 				DelCount += count;
 			  }
 			}
 		  }
 		  catch (Exception ex)
 		  {
-			ex.printStackTrace(System.out);
+			Console.WriteLine(ex.StackTrace);
 			this.Ex = ex;
 			Run_Renamed = false;
 		  }

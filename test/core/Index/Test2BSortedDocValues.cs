@@ -29,8 +29,9 @@ namespace Lucene.Net.Index
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TimeUnits = Lucene.Net.Util.TimeUnits;
-	using Ignore = org.junit.Ignore;
-	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
+    using NUnit.Framework;
+	/*using Ignore = org.junit.Ignore;
+	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @TimeoutSuite(millis = 80 * TimeUnits.HOUR) @Ignore("very slow") @SuppressCodecs("Lucene3x") public class Test2BSortedDocValues extends Lucene.Net.Util.LuceneTestCase
@@ -40,77 +41,77 @@ namespace Lucene.Net.Index
 	  // indexes Integer.MAX_VALUE docs with a fixed binary field
 	  public virtual void TestFixedSorted()
 	  {
-		BaseDirectoryWrapper dir = newFSDirectory(createTempDir("2BFixedSorted"));
+		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedSorted"));
 		if (dir is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))
-	   .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).setRAMBufferSizeMB(256.0).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(false, 10)).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[2];
 		BytesRef data = new BytesRef(bytes);
 		SortedDocValuesField dvField = new SortedDocValuesField("dv", data);
-		doc.add(dvField);
+		doc.Add(dvField);
 
 		for (int i = 0; i < int.MaxValue; i++)
 		{
 		  bytes[0] = (sbyte)(i >> 8);
 		  bytes[1] = (sbyte) i;
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  if (i % 100000 == 0)
 		  {
 			Console.WriteLine("indexed: " + i);
-			System.out.flush();
+			Console.Out.Flush();
 		  }
 		}
 
-		w.forceMerge(1);
-		w.close();
+		w.ForceMerge(1);
+		w.Dispose();
 
 		Console.WriteLine("verifying...");
-		System.out.flush();
+		Console.Out.Flush();
 
-		DirectoryReader r = DirectoryReader.open(dir);
+		DirectoryReader r = DirectoryReader.Open(dir);
 		int expectedValue = 0;
-		foreach (AtomicReaderContext context in r.leaves())
+		foreach (AtomicReaderContext context in r.Leaves())
 		{
-		  AtomicReader reader = context.reader();
+		  AtomicReader reader = (AtomicReader)context.Reader();
 		  BytesRef scratch = new BytesRef();
-		  BinaryDocValues dv = reader.getSortedDocValues("dv");
-		  for (int i = 0; i < reader.maxDoc(); i++)
+		  BinaryDocValues dv = reader.GetSortedDocValues("dv");
+		  for (int i = 0; i < reader.MaxDoc(); i++)
 		  {
 			bytes[0] = (sbyte)(expectedValue >> 8);
 			bytes[1] = (sbyte) expectedValue;
-			dv.get(i, scratch);
+			dv.Get(i, scratch);
 			Assert.AreEqual(data, scratch);
 			expectedValue++;
 		  }
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  // indexes Integer.MAX_VALUE docs with a fixed binary field
 	  public virtual void Test2BOrds()
 	  {
-		BaseDirectoryWrapper dir = newFSDirectory(createTempDir("2BOrds"));
+		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BOrds"));
 		if (dir is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))
-	   .setMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).setRAMBufferSizeMB(256.0).setMergeScheduler(new ConcurrentMergeScheduler()).setMergePolicy(newLogMergePolicy(false, 10)).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[4];
 		BytesRef data = new BytesRef(bytes);
 		SortedDocValuesField dvField = new SortedDocValuesField("dv", data);
-		doc.add(dvField);
+		doc.Add(dvField);
 
 		for (int i = 0; i < int.MaxValue; i++)
 		{
@@ -118,41 +119,41 @@ namespace Lucene.Net.Index
 		  bytes[1] = (sbyte)(i >> 16);
 		  bytes[2] = (sbyte)(i >> 8);
 		  bytes[3] = (sbyte) i;
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  if (i % 100000 == 0)
 		  {
 			Console.WriteLine("indexed: " + i);
-			System.out.flush();
+			Console.Out.Flush();
 		  }
 		}
 
-		w.forceMerge(1);
-		w.close();
+		w.ForceMerge(1);
+		w.Dispose();
 
 		Console.WriteLine("verifying...");
-		System.out.flush();
+		Console.Out.Flush();
 
-		DirectoryReader r = DirectoryReader.open(dir);
+		DirectoryReader r = DirectoryReader.Open(dir);
 		int counter = 0;
-		foreach (AtomicReaderContext context in r.leaves())
+		foreach (AtomicReaderContext context in r.Leaves())
 		{
-		  AtomicReader reader = context.reader();
+		  AtomicReader reader = (AtomicReader)context.Reader();
 		  BytesRef scratch = new BytesRef();
-		  BinaryDocValues dv = reader.getSortedDocValues("dv");
-		  for (int i = 0; i < reader.maxDoc(); i++)
+		  BinaryDocValues dv = reader.GetSortedDocValues("dv");
+		  for (int i = 0; i < reader.MaxDoc(); i++)
 		  {
 			bytes[0] = (sbyte)(counter >> 24);
 			bytes[1] = (sbyte)(counter >> 16);
 			bytes[2] = (sbyte)(counter >> 8);
 			bytes[3] = (sbyte) counter;
 			counter++;
-			dv.get(i, scratch);
+			dv.Get(i, scratch);
 			Assert.AreEqual(data, scratch);
 		  }
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  // TODO: variable

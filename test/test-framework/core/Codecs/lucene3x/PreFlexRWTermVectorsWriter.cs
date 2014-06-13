@@ -49,12 +49,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 		try
 		{
 		  // Open files for TermVector storage
-		  Tvx = directory.createOutput(IndexFileNames.segmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), context);
-		  Tvx.writeInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
-		  Tvd = directory.createOutput(IndexFileNames.segmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
-		  Tvd.writeInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
-		  Tvf = directory.createOutput(IndexFileNames.segmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
-		  Tvf.writeInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+		  Tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), context);
+		  Tvx.WriteInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+		  Tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
+		  Tvd.WriteInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+		  Tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
+		  Tvf.WriteInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
 		  success = true;
 		}
 		finally
@@ -70,11 +70,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		LastFieldName = null;
 		this.NumVectorFields = numVectorFields;
-		Tvx.writeLong(Tvd.FilePointer);
-		Tvx.writeLong(Tvf.FilePointer);
-		Tvd.writeVInt(numVectorFields);
+		Tvx.WriteLong(Tvd.FilePointer);
+		Tvx.WriteLong(Tvf.FilePointer);
+		Tvd.WriteVInt(numVectorFields);
 		FieldCount = 0;
-		Fps = ArrayUtil.grow(Fps, numVectorFields);
+		Fps = ArrayUtil.Grow(Fps, numVectorFields);
 	  }
 
 	  private long[] Fps = new long[10]; // pointers to the tvf before writing each field
@@ -84,18 +84,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
 	  {
-		Debug.Assert(LastFieldName == null || info.name.compareTo(LastFieldName) > 0, "fieldName=" + info.name + " lastFieldName=" + LastFieldName);
-		LastFieldName = info.name;
+		Debug.Assert(LastFieldName == null || info.Name.CompareTo(LastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + LastFieldName);
+		LastFieldName = info.Name;
 		if (payloads)
 		{
 		  throw new System.NotSupportedException("3.x codec does not support payloads on vectors!");
 		}
 		this.Positions = positions;
 		this.Offsets = offsets;
-		LastTerm.length = 0;
+		LastTerm.Length = 0;
 		Fps[FieldCount++] = Tvf.FilePointer;
-		Tvd.writeVInt(info.number);
-		Tvf.writeVInt(numTerms);
+		Tvd.WriteVInt(info.Number);
+		Tvf.WriteVInt(numTerms);
 		sbyte bits = 0x0;
 		if (positions)
 		{
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		{
 		  bits |= Lucene3xTermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR;
 		}
-		Tvf.writeByte(bits);
+		Tvf.WriteByte(bits);
 
 		Debug.Assert(FieldCount <= NumVectorFields);
 		if (FieldCount == NumVectorFields)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  // this is crazy because the file format is crazy!
 		  for (int i = 1; i < FieldCount; i++)
 		  {
-			Tvd.writeVLong(Fps[i] - Fps[i - 1]);
+			Tvd.WriteVLong(Fps[i] - Fps[i - 1]);
 		  }
 		}
 	  }
@@ -132,20 +132,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  public override void StartTerm(BytesRef term, int freq)
 	  {
-		int prefix = StringHelper.bytesDifference(LastTerm, term);
-		int suffix = term.length - prefix;
-		Tvf.writeVInt(prefix);
-		Tvf.writeVInt(suffix);
-		Tvf.writeBytes(term.bytes, term.offset + prefix, suffix);
-		Tvf.writeVInt(freq);
-		LastTerm.copyBytes(term);
+		int prefix = StringHelper.BytesDifference(LastTerm, term);
+		int suffix = term.Length - prefix;
+		Tvf.WriteVInt(prefix);
+		Tvf.WriteVInt(suffix);
+		Tvf.WriteBytes(term.Bytes, term.Offset + prefix, suffix);
+		Tvf.WriteVInt(freq);
+		LastTerm.CopyBytes(term);
 		LastPosition = LastOffset = 0;
 
 		if (Offsets && Positions)
 		{
 		  // we might need to buffer if its a non-bulk merge
-		  OffsetStartBuffer = ArrayUtil.grow(OffsetStartBuffer, freq);
-		  OffsetEndBuffer = ArrayUtil.grow(OffsetEndBuffer, freq);
+		  OffsetStartBuffer = ArrayUtil.Grow(OffsetStartBuffer, freq);
+		  OffsetEndBuffer = ArrayUtil.Grow(OffsetEndBuffer, freq);
 		  OffsetIndex = 0;
 		  OffsetFreq = freq;
 		}
@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		if (Positions && Offsets)
 		{
 		  // write position delta
-		  Tvf.writeVInt(position - LastPosition);
+		  Tvf.WriteVInt(position - LastPosition);
 		  LastPosition = position;
 
 		  // buffer offsets
@@ -173,8 +173,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  {
 			for (int i = 0; i < OffsetIndex; i++)
 			{
-			  Tvf.writeVInt(OffsetStartBuffer[i] - LastOffset);
-			  Tvf.writeVInt(OffsetEndBuffer[i] - OffsetStartBuffer[i]);
+			  Tvf.WriteVInt(OffsetStartBuffer[i] - LastOffset);
+			  Tvf.WriteVInt(OffsetEndBuffer[i] - OffsetStartBuffer[i]);
 			  LastOffset = OffsetEndBuffer[i];
 			}
 		  }
@@ -182,14 +182,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 		else if (Positions)
 		{
 		  // write position delta
-		  Tvf.writeVInt(position - LastPosition);
+		  Tvf.WriteVInt(position - LastPosition);
 		  LastPosition = position;
 		}
 		else if (Offsets)
 		{
 		  // write offset deltas
-		  Tvf.writeVInt(startOffset - LastOffset);
-		  Tvf.writeVInt(endOffset - startOffset);
+		  Tvf.WriteVInt(startOffset - LastOffset);
+		  Tvf.WriteVInt(endOffset - startOffset);
 		  LastOffset = endOffset;
 		}
 	  }
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		catch (Exception ignored)
 		{
 		}
-		IOUtils.deleteFilesIgnoringExceptions(Directory, IndexFileNames.segmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.segmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.segmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
+		IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
 	  }
 
 	  public override void Finish(FieldInfos fis, int numDocs)
@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		// make an effort to close all streams we can but remember and re-throw
 		// the first exception encountered in this process
-		IOUtils.close(Tvx, Tvd, Tvf);
+		IOUtils.Close(Tvx, Tvd, Tvf);
 		Tvx = Tvd = Tvf = null;
 	  }
 
@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		  get
 		  {
-			return BytesRef.UTF8SortedAsUTF16Comparator;
+			return BytesRef.UTF8SortedAsUTF16Comparer;
 		  }
 	  }
 	}

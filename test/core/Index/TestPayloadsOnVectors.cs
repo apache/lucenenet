@@ -34,6 +34,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestPayloadsOnVectors extends Lucene.Net.Util.LuceneTestCase
@@ -44,115 +45,115 @@ namespace Lucene.Net.Index
 	  /// some docs have payload att, some not </summary>
 	  public virtual void TestMixupDocs()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, iwc);
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwc.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
 		Document doc = new Document();
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.StoreTermVectors = true;
 		customType.StoreTermVectorPositions = true;
 		customType.StoreTermVectorPayloads = true;
-		customType.StoreTermVectorOffsets = random().nextBoolean();
+		customType.StoreTermVectorOffsets = Random().NextBoolean();
 		Field field = new Field("field", "", customType);
 		TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
 		Assert.IsFalse(ts.HasAttribute(typeof(PayloadAttribute)));
 		field.TokenStream = ts;
-		doc.add(field);
-		writer.addDocument(doc);
+		doc.Add(field);
+		writer.AddDocument(doc);
 
 		Token withPayload = new Token("withPayload", 0, 11);
 		withPayload.Payload = new BytesRef("test");
 		ts = new CannedTokenStream(withPayload);
 		Assert.IsTrue(ts.HasAttribute(typeof(PayloadAttribute)));
 		field.TokenStream = ts;
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 
 		ts = new MockTokenizer(new StringReader("another"), MockTokenizer.WHITESPACE, true);
 		Assert.IsFalse(ts.HasAttribute(typeof(PayloadAttribute)));
 		field.TokenStream = ts;
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 
 		DirectoryReader reader = writer.Reader;
 		Terms terms = reader.getTermVector(1, "field");
 		Debug.Assert(terms != null);
-		TermsEnum termsEnum = terms.iterator(null);
-		Assert.IsTrue(termsEnum.seekExact(new BytesRef("withPayload")));
-		DocsAndPositionsEnum de = termsEnum.docsAndPositions(null, null);
-		Assert.AreEqual(0, de.nextDoc());
-		Assert.AreEqual(0, de.nextPosition());
+		TermsEnum termsEnum = terms.Iterator(null);
+		Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
+		DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
+		Assert.AreEqual(0, de.NextDoc());
+		Assert.AreEqual(0, de.NextPosition());
 		Assert.AreEqual(new BytesRef("test"), de.Payload);
-		writer.close();
-		reader.close();
-		dir.close();
+        writer.Close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// some field instances have payload att, some not </summary>
 	  public virtual void TestMixupMultiValued()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.StoreTermVectors = true;
 		customType.StoreTermVectorPositions = true;
 		customType.StoreTermVectorPayloads = true;
-		customType.StoreTermVectorOffsets = random().nextBoolean();
+		customType.StoreTermVectorOffsets = Random().NextBoolean();
 		Field field = new Field("field", "", customType);
 		TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
 		Assert.IsFalse(ts.HasAttribute(typeof(PayloadAttribute)));
 		field.TokenStream = ts;
-		doc.add(field);
+		doc.Add(field);
 		Field field2 = new Field("field", "", customType);
 		Token withPayload = new Token("withPayload", 0, 11);
 		withPayload.Payload = new BytesRef("test");
 		ts = new CannedTokenStream(withPayload);
 		Assert.IsTrue(ts.HasAttribute(typeof(PayloadAttribute)));
 		field2.TokenStream = ts;
-		doc.add(field2);
+		doc.Add(field2);
 		Field field3 = new Field("field", "", customType);
 		ts = new MockTokenizer(new StringReader("nopayload"), MockTokenizer.WHITESPACE, true);
 		Assert.IsFalse(ts.HasAttribute(typeof(PayloadAttribute)));
 		field3.TokenStream = ts;
-		doc.add(field3);
-		writer.addDocument(doc);
+		doc.Add(field3);
+		writer.AddDocument(doc);
 		DirectoryReader reader = writer.Reader;
 		Terms terms = reader.getTermVector(0, "field");
 		Debug.Assert(terms != null);
-		TermsEnum termsEnum = terms.iterator(null);
-		Assert.IsTrue(termsEnum.seekExact(new BytesRef("withPayload")));
-		DocsAndPositionsEnum de = termsEnum.docsAndPositions(null, null);
-		Assert.AreEqual(0, de.nextDoc());
-		Assert.AreEqual(3, de.nextPosition());
+		TermsEnum termsEnum = terms.Iterator(null);
+		Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
+		DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
+		Assert.AreEqual(0, de.NextDoc());
+		Assert.AreEqual(3, de.NextPosition());
 		Assert.AreEqual(new BytesRef("test"), de.Payload);
-		writer.close();
-		reader.close();
-		dir.close();
+        writer.Close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestPayloadsWithoutPositions()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
 		customType.StoreTermVectors = true;
 		customType.StoreTermVectorPositions = false;
 		customType.StoreTermVectorPayloads = true;
-		customType.StoreTermVectorOffsets = random().nextBoolean();
-		doc.add(new Field("field", "foo", customType));
+		customType.StoreTermVectorOffsets = Random().NextBoolean();
+		doc.Add(new Field("field", "foo", customType));
 		try
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  Assert.Fail();
 		}
 		catch (System.ArgumentException expected)
 		{
 		  // expected
 		}
-		writer.close();
-		dir.close();
+        writer.Close();
+		dir.Dispose();
 	  }
 
 	}

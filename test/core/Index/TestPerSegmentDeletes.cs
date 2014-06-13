@@ -32,140 +32,142 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestPerSegmentDeletes : LuceneTestCase
 	{
 	  public virtual void TestDeletes1()
 	  {
 		//IndexWriter.debug2 = System.out;
-		Directory dir = new MockDirectoryWrapper(new Random(random().nextLong()), new RAMDirectory());
-		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		iwc.MergeScheduler = new SerialMergeScheduler();
-		iwc.MaxBufferedDocs = 5000;
-		iwc.RAMBufferSizeMB = 100;
+		Directory dir = new MockDirectoryWrapper(new Random(Random().NextLong()), new RAMDirectory());
+		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		iwc.SetMergeScheduler(new SerialMergeScheduler());
+		iwc.SetMaxBufferedDocs(5000);
+		iwc.SetRAMBufferSizeMB(100);
 		RangeMergePolicy fsmp = new RangeMergePolicy(this, false);
-		iwc.MergePolicy = fsmp;
+		iwc.SetMergePolicy(fsmp);
 		IndexWriter writer = new IndexWriter(dir, iwc);
 		for (int x = 0; x < 5; x++)
 		{
-		  writer.addDocument(DocHelper.createDocument(x, "1", 2));
+		  writer.AddDocument(DocHelper.CreateDocument(x, "1", 2));
 		  //System.out.println("numRamDocs(" + x + ")" + writer.numRamDocs());
 		}
 		//System.out.println("commit1");
-		writer.commit();
-		Assert.AreEqual(1, writer.segmentInfos.size());
+		writer.Commit();
+		Assert.AreEqual(1, writer.SegmentInfos.Size());
 		for (int x = 5; x < 10; x++)
 		{
-		  writer.addDocument(DocHelper.createDocument(x, "2", 2));
+		  writer.AddDocument(DocHelper.CreateDocument(x, "2", 2));
 		  //System.out.println("numRamDocs(" + x + ")" + writer.numRamDocs());
 		}
 		//System.out.println("commit2");
-		writer.commit();
-		Assert.AreEqual(2, writer.segmentInfos.size());
+		writer.Commit();
+		Assert.AreEqual(2, writer.SegmentInfos.Size());
 
 		for (int x = 10; x < 15; x++)
 		{
-		  writer.addDocument(DocHelper.createDocument(x, "3", 2));
+		  writer.AddDocument(DocHelper.CreateDocument(x, "3", 2));
 		  //System.out.println("numRamDocs(" + x + ")" + writer.numRamDocs());
 		}
 
-		writer.deleteDocuments(new Term("id", "1"));
+		writer.DeleteDocuments(new Term("id", "1"));
 
-		writer.deleteDocuments(new Term("id", "11"));
+		writer.DeleteDocuments(new Term("id", "11"));
 
 		// flushing without applying deletes means
 		// there will still be deletes in the segment infos
-		writer.flush(false, false);
-		Assert.IsTrue(writer.bufferedUpdatesStream.any());
+		writer.Flush(false, false);
+		Assert.IsTrue(writer.BufferedUpdatesStream.any());
 
 		// get reader flushes pending deletes
 		// so there should not be anymore
 		IndexReader r1 = writer.Reader;
-		Assert.IsFalse(writer.bufferedUpdatesStream.any());
-		r1.close();
+		Assert.IsFalse(writer.BufferedUpdatesStream.any());
+		r1.Dispose();
 
 		// delete id:2 from the first segment
 		// merge segments 0 and 1
 		// which should apply the delete id:2
-		writer.deleteDocuments(new Term("id", "2"));
-		writer.flush(false, false);
+		writer.DeleteDocuments(new Term("id", "2"));
+		writer.Flush(false, false);
 		fsmp = (RangeMergePolicy) writer.Config.MergePolicy;
 		fsmp.DoMerge = true;
 		fsmp.Start = 0;
 		fsmp.Length = 2;
-		writer.maybeMerge();
+		writer.MaybeMerge();
 
-		Assert.AreEqual(2, writer.segmentInfos.size());
+		Assert.AreEqual(2, writer.SegmentInfos.Size());
 
 		// id:2 shouldn't exist anymore because
 		// it's been applied in the merge and now it's gone
 		IndexReader r2 = writer.Reader;
 		int[] id2docs = ToDocsArray(new Term("id", "2"), null, r2);
 		Assert.IsTrue(id2docs == null);
-		r2.close();
+		r2.Dispose();
 
 		/// <summary>
 		/// // added docs are in the ram buffer
 		/// for (int x = 15; x < 20; x++) {
-		///  writer.addDocument(TestIndexWriterReader.createDocument(x, "4", 2));
+		///  writer.AddDocument(TestIndexWriterReader.CreateDocument(x, "4", 2));
 		///  System.out.println("numRamDocs(" + x + ")" + writer.numRamDocs());
 		/// }
 		/// Assert.IsTrue(writer.numRamDocs() > 0);
 		/// // delete from the ram buffer
-		/// writer.deleteDocuments(new Term("id", Integer.toString(13)));
+		/// writer.DeleteDocuments(new Term("id", Integer.toString(13)));
 		/// 
 		/// Term id3 = new Term("id", Integer.toString(3));
 		/// 
 		/// // delete from the 1st segment
-		/// writer.deleteDocuments(id3);
+		/// writer.DeleteDocuments(id3);
 		/// 
 		/// Assert.IsTrue(writer.numRamDocs() > 0);
 		/// 
 		/// //System.out
 		/// //    .println("segdels1:" + writer.docWriter.deletesToString());
 		/// 
-		/// //Assert.IsTrue(writer.docWriter.segmentDeletes.size() > 0);
+		/// //Assert.IsTrue(writer.docWriter.segmentDeletes.Size() > 0);
 		/// 
 		/// // we cause a merge to happen
 		/// fsmp.doMerge = true;
 		/// fsmp.start = 0;
-		/// fsmp.length = 2;
-		/// System.out.println("maybeMerge "+writer.segmentInfos);
+		/// fsmp.Length = 2;
+		/// System.out.println("maybeMerge "+writer.SegmentInfos);
 		/// 
-		/// SegmentInfo info0 = writer.segmentInfos.info(0);
-		/// SegmentInfo info1 = writer.segmentInfos.info(1);
+		/// SegmentInfo info0 = writer.SegmentInfos.Info(0);
+		/// SegmentInfo info1 = writer.SegmentInfos.Info(1);
 		/// 
-		/// writer.maybeMerge();
-		/// System.out.println("maybeMerge after "+writer.segmentInfos);
+		/// writer.MaybeMerge();
+		/// System.out.println("maybeMerge after "+writer.SegmentInfos);
 		/// // there should be docs in RAM
 		/// Assert.IsTrue(writer.numRamDocs() > 0);
 		/// 
 		/// // assert we've merged the 1 and 2 segments
 		/// // and still have a segment leftover == 2
-		/// Assert.AreEqual(2, writer.segmentInfos.size());
-		/// Assert.IsFalse(segThere(info0, writer.segmentInfos));
-		/// Assert.IsFalse(segThere(info1, writer.segmentInfos));
+		/// Assert.AreEqual(2, writer.SegmentInfos.Size());
+		/// Assert.IsFalse(segThere(info0, writer.SegmentInfos));
+		/// Assert.IsFalse(segThere(info1, writer.SegmentInfos));
 		/// 
 		/// //System.out.println("segdels2:" + writer.docWriter.deletesToString());
 		/// 
-		/// //Assert.IsTrue(writer.docWriter.segmentDeletes.size() > 0);
+		/// //Assert.IsTrue(writer.docWriter.segmentDeletes.Size() > 0);
 		/// 
-		/// IndexReader r = writer.getReader();
+		/// IndexReader r = writer.GetReader();
 		/// IndexReader r1 = r.getSequentialSubReaders()[0];
-		/// printDelDocs(r1.getLiveDocs());
+		/// printDelDocs(r1.GetLiveDocs());
 		/// int[] docs = toDocsArray(id3, null, r);
 		/// System.out.println("id3 docs:"+Arrays.toString(docs));
 		/// // there shouldn't be any docs for id:3
 		/// Assert.IsTrue(docs == null);
-		/// r.close();
+		/// r.Dispose();
 		/// 
 		/// part2(writer, fsmp);
 		/// 
 		/// </summary>
 		// System.out.println("segdels2:"+writer.docWriter.segmentDeletes.toString());
 		//System.out.println("close");
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
@@ -183,35 +185,35 @@ namespace Lucene.Net.Index
 	  {
 		for (int x = 20; x < 25; x++)
 		{
-		  writer.addDocument(DocHelper.createDocument(x, "5", 2));
+		  writer.AddDocument(DocHelper.CreateDocument(x, "5", 2));
 		  //System.out.println("numRamDocs(" + x + ")" + writer.numRamDocs());
 		}
-		writer.flush(false, false);
+		writer.Flush(false, false);
 		for (int x = 25; x < 30; x++)
 		{
-		  writer.addDocument(DocHelper.createDocument(x, "5", 2));
+		  writer.AddDocument(DocHelper.CreateDocument(x, "5", 2));
 		  //System.out.println("numRamDocs(" + x + ")" + writer.numRamDocs());
 		}
-		writer.flush(false, false);
+		writer.Flush(false, false);
 
-		//System.out.println("infos3:"+writer.segmentInfos);
+		//System.out.println("infos3:"+writer.SegmentInfos);
 
 		Term delterm = new Term("id", "8");
-		writer.deleteDocuments(delterm);
+		writer.DeleteDocuments(delterm);
 		//System.out.println("segdels3:" + writer.docWriter.deletesToString());
 
 		fsmp.DoMerge = true;
 		fsmp.Start = 1;
 		fsmp.Length = 2;
-		writer.maybeMerge();
+		writer.MaybeMerge();
 
 		// deletes for info1, the newly created segment from the
 		// merge should have no deletes because they were applied in
 		// the merge
-		//SegmentInfo info1 = writer.segmentInfos.info(1);
+		//SegmentInfo info1 = writer.SegmentInfos.Info(1);
 		//Assert.IsFalse(exists(info1, writer.docWriter.segmentDeletes));
 
-		//System.out.println("infos4:"+writer.segmentInfos);
+		//System.out.println("infos4:"+writer.SegmentInfos);
 		//System.out.println("segdels4:" + writer.docWriter.deletesToString());
 	  }
 
@@ -219,7 +221,7 @@ namespace Lucene.Net.Index
 	  {
 		foreach (SegmentCommitInfo si in infos)
 		{
-		  if (si.info.name.Equals(info.info.name))
+		  if (si.Info.Name.Equals(info.Info.Name))
 		  {
 			  return true;
 		  }
@@ -233,20 +235,20 @@ namespace Lucene.Net.Index
 		{
 			return;
 		}
-		for (int x = 0; x < bits.length(); x++)
+		for (int x = 0; x < bits.Length(); x++)
 		{
-		  Console.WriteLine(x + ":" + bits.get(x));
+		  Console.WriteLine(x + ":" + bits.Get(x));
 		}
 	  }
 
 	  public virtual int[] ToDocsArray(Term term, Bits bits, IndexReader reader)
 	  {
-		Fields fields = MultiFields.getFields(reader);
-		Terms cterms = fields.terms(term.field);
-		TermsEnum ctermsEnum = cterms.iterator(null);
-		if (ctermsEnum.seekExact(new BytesRef(term.text())))
+		Fields fields = MultiFields.GetFields(reader);
+		Terms cterms = fields.Terms(term.Field());
+		TermsEnum ctermsEnum = cterms.Iterator(null);
+		if (ctermsEnum.SeekExact(new BytesRef(term.Text())))
 		{
-		  DocsEnum docsEnum = TestUtil.docs(random(), ctermsEnum, bits, null, DocsEnum.FLAG_NONE);
+		  DocsEnum docsEnum = TestUtil.Docs(Random(), ctermsEnum, bits, null, DocsEnum.FLAG_NONE);
 		  return ToArray(docsEnum);
 		}
 		return null;
@@ -255,12 +257,12 @@ namespace Lucene.Net.Index
 	  public static int[] ToArray(DocsEnum docsEnum)
 	  {
 		IList<int?> docs = new List<int?>();
-		while (docsEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  int docID = docsEnum.docID();
+		  int docID = docsEnum.DocID();
 		  docs.Add(docID);
 		}
-		return ArrayUtil.toIntArray(docs);
+		return ArrayUtil.ToIntArray(docs);
 	  }
 
 	  public class RangeMergePolicy : MergePolicy
@@ -287,8 +289,8 @@ namespace Lucene.Net.Index
 		  MergeSpecification ms = new MergeSpecification();
 		  if (DoMerge)
 		  {
-			OneMerge om = new OneMerge(segmentInfos.asList().subList(Start, Start + Length));
-			ms.add(om);
+			OneMerge om = new OneMerge(segmentInfos.AsList().SubList(Start, Start + Length));
+			ms.Add(om);
 			DoMerge = false;
 			return ms;
 		  }

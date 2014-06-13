@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 	using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
 	using SegmentReadState = Lucene.Net.Index.SegmentReadState;
@@ -212,17 +212,17 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override bool HasFreqs()
 		{
-		  return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            return Info.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS) >= 0;
 		}
 
 		public override bool HasOffsets()
 		{
-		  return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            return Info.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 		}
 
 		public override bool HasPositions()
 		{
-		  return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            return Info.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 		}
 
 		public override bool HasPayloads()
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override TermsConsumer AddField(FieldInfo field)
 		{
-		  if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+		  if (field.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
 		  {
 			throw new System.NotSupportedException("this codec cannot index offsets");
 		  }
@@ -327,7 +327,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override PostingsConsumer StartTerm(BytesRef text)
 		{
-		  string term = text.utf8ToString();
+		  string term = text.Utf8ToString();
 		  Current = new RAMTerm(term);
 		  PostingsWriter.Reset(Current);
 		  return PostingsWriter;
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs.ramonly
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 
@@ -414,7 +414,7 @@ namespace Lucene.Net.Codecs.ramonly
 		{
 			get
 			{
-			  return BytesRef.UTF8SortedAsUnicodeComparator;
+			  return BytesRef.UTF8SortedAsUnicodeComparer;
 			}
 		}
 
@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override SeekStatus SeekCeil(BytesRef term)
 		{
-		  Current = term.utf8ToString();
+		  Current = term.Utf8ToString();
 		  It = null;
 		  if (RamField.TermToDocs.containsKey(Current))
 		  {
@@ -659,7 +659,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 	  public override FieldsConsumer FieldsConsumer(SegmentWriteState writeState)
 	  {
-		int id = NextID.AndIncrement;
+		int id = (int)NextID.IncrementAndGet();
 
 		// TODO -- ok to do this up front instead of
 		// on close....?  should be ok?

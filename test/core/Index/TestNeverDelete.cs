@@ -39,8 +39,8 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestIndexing()
 	  {
-		File tmpDir = createTempDir("TestNeverDelete");
-		BaseDirectoryWrapper d = newFSDirectory(tmpDir);
+		File tmpDir = CreateTempDir("TestNeverDelete");
+		BaseDirectoryWrapper d = NewFSDirectory(tmpDir);
 
 		// We want to "see" files removed if Lucene removed
 		// them.  this is still worth running on Windows since
@@ -49,12 +49,12 @@ namespace Lucene.Net.Index
 		{
 		  ((MockDirectoryWrapper)d).NoDeleteOpenFile = false;
 		}
-		RandomIndexWriter w = new RandomIndexWriter(random(), d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
-		w.w.Config.MaxBufferedDocs = TestUtil.Next(random(), 5, 30);
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
+		w.w.Config.MaxBufferedDocs = TestUtil.NextInt(Random(), 5, 30);
 
-		w.commit();
-		Thread[] indexThreads = new Thread[random().Next(4)];
-		long stopTime = System.currentTimeMillis() + atLeast(1000);
+		w.Commit();
+		Thread[] indexThreads = new Thread[Random().Next(4)];
+		long stopTime = DateTime.Now.Millisecond + AtLeast(1000);
 		for (int x = 0; x < indexThreads.Length; x++)
 		{
 		  indexThreads[x] = new ThreadAnonymousInnerClassHelper(this, w, stopTime);
@@ -64,8 +64,8 @@ namespace Lucene.Net.Index
 
 		Set<string> allFiles = new HashSet<string>();
 
-		DirectoryReader r = DirectoryReader.open(d);
-		while (System.currentTimeMillis() < stopTime)
+		DirectoryReader r = DirectoryReader.Open(d);
+		while (DateTime.Now.Millisecond < stopTime)
 		{
 		  IndexCommit ic = r.IndexCommit;
 		  if (VERBOSE)
@@ -76,26 +76,26 @@ namespace Lucene.Net.Index
 		  // Make sure no old files were removed
 		  foreach (string fileName in allFiles)
 		  {
-			Assert.IsTrue("file " + fileName + " does not exist", slowFileExists(d, fileName));
+			Assert.IsTrue("file " + fileName + " does not exist", SlowFileExists(d, fileName));
 		  }
-		  DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+		  DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 		  if (r2 != null)
 		  {
-			r.close();
+			r.Dispose();
 			r = r2;
 		  }
 		  Thread.Sleep(1);
 		}
-		r.close();
+		r.Dispose();
 
 		foreach (Thread t in indexThreads)
 		{
 		  t.Join();
 		}
-		w.close();
-		d.close();
+        w.Close();
+		d.Dispose();
 
-		TestUtil.rm(tmpDir);
+		TestUtil.Rm(tmpDir);
 	  }
 
 	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
@@ -117,16 +117,16 @@ namespace Lucene.Net.Index
 			try
 			{
 			  int docCount = 0;
-			  while (System.currentTimeMillis() < StopTime)
+			  while (DateTime.Now.Millisecond < StopTime)
 			  {
 				Document doc = new Document();
-				doc.add(newStringField("dc", "" + docCount, Field.Store.YES));
-				doc.add(newTextField("field", "here is some text", Field.Store.YES));
-				w.addDocument(doc);
+				doc.Add(NewStringField("dc", "" + docCount, Field.Store.YES));
+				doc.Add(NewTextField("field", "here is some text", Field.Store.YES));
+				w.AddDocument(doc);
 
 				if (docCount % 13 == 0)
 				{
-				  w.commit();
+				  w.Commit();
 				}
 				docCount++;
 			  }
