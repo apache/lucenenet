@@ -611,8 +611,8 @@ namespace Lucene.Net.Index
 			while (itField1.MoveNext())
 			{
 			  Field curField1 = (Field) itField1.Current;
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  Field curField2 = (Field) itField2.Next();
+              itField2.MoveNext();
+			  Field curField2 = (Field) itField2.Current;
 			  Assert.AreEqual("Different fields names for doc " + i + ".", curField1.Name(), curField2.Name());
 			  Assert.AreEqual("Different field values for doc " + i + ".", curField1.StringValue, curField2.StringValue);
 			}
@@ -626,8 +626,8 @@ namespace Lucene.Net.Index
 		Bits liveDocs = MultiFields.GetLiveDocs(index1);
 		foreach (string field1 in fields1)
 		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  Assert.AreEqual("Different fields", field1, fenum2.Next());
+          fenum2.MoveNext();
+		  Assert.AreEqual("Different fields", field1, fenum2.Current);
 		  Terms terms1 = fields1.Terms(field1);
 		  if (terms1 == null)
 		  {
@@ -658,8 +658,7 @@ namespace Lucene.Net.Index
 			}
 		  }
 		}
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(fenum2.hasNext());
+		Assert.IsFalse(fenum2.MoveNext());
 	  }
 
 	  public virtual void TestGetIndexCommit()
@@ -947,7 +946,7 @@ namespace Lucene.Net.Index
 		try
 		{
 		  // Make sure codec impls totalTermFreq (eg PreFlex doesn't)
-		  Assume.AssumeTruer.TotalTermFreq(new Term("f", new BytesRef("b"))) != -1);
+		  Assume.That(r.TotalTermFreq(new Term("f", new BytesRef("b"))) != -1);
 		  Assert.AreEqual(1, r.TotalTermFreq(new Term("f", new BytesRef("b"))));
 		  Assert.AreEqual(2, r.TotalTermFreq(new Term("f", new BytesRef("a"))));
 		  Assert.AreEqual(1, r.TotalTermFreq(new Term("f", new BytesRef("b"))));
@@ -974,7 +973,7 @@ namespace Lucene.Net.Index
 		try
 		{
 		  // Make sure codec impls getSumDocFreq (eg PreFlex doesn't)
-		  Assume.AssumeTruer.GetSumDocFreq("f") != -1);
+		  Assume.That(r.GetSumDocFreq("f") != -1);
 		  Assert.AreEqual(2, r.GetSumDocFreq("f"));
 		}
 		finally
@@ -999,7 +998,7 @@ namespace Lucene.Net.Index
 		try
 		{
 		  // Make sure codec impls getSumDocFreq (eg PreFlex doesn't)
-		  Assume.AssumeTruer.GetDocCount("f") != -1);
+		  Assume.That(r.GetDocCount("f") != -1);
 		  Assert.AreEqual(2, r.GetDocCount("f"));
 		}
 		finally
@@ -1024,7 +1023,7 @@ namespace Lucene.Net.Index
 		try
 		{
 		  // Make sure codec impls getSumDocFreq (eg PreFlex doesn't)
-		  Assume.AssumeTruer.GetSumTotalTermFreq("f") != -1);
+		  Assume.That(r.GetSumTotalTermFreq("f") != -1);
 		  Assert.AreEqual(6, r.GetSumTotalTermFreq("f"));
 		}
 		finally

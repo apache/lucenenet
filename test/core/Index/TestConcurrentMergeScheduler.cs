@@ -65,11 +65,11 @@ namespace Lucene.Net.Index
 
 		public override void Eval(MockDirectoryWrapper dir)
 		{
-		  if (DoFail && TestThread)
+		  if (DoFail && TestThread())
 		  {
 			bool isDoFlush = false;
 			bool isClose = false;
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			for (int i = 0; i < trace.Length; i++)
 			{
 			  if (isDoFlush && isClose)
@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
 		}
 
 		ConcurrentMergeScheduler cms = new ConcurrentMergeSchedulerAnonymousInnerClassHelper(this, maxMergeCount, enoughMergesWaiting, runningMergeCount, failed);
-		cms.setMaxMergesAndThreads(maxMergeCount, maxMergeThreads);
+		cms.SetMaxMergesAndThreads(maxMergeCount, maxMergeThreads);
 		iwc.SetMergeScheduler(cms);
 		iwc.SetMaxBufferedDocs(2);
 

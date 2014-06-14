@@ -798,7 +798,7 @@ namespace Lucene.Net.Index
 			  InstanceFieldsInitialized = true;
 		  }*/
         readerPool = new ReaderPool(this);
-		//conf.IndexWriter = this; // prevent reuse by other instances
+		conf.SetIndexWriter(this); // prevent reuse by other instances
 		Config_Renamed = new LiveIndexWriterConfig(conf);
 		directory = d;
 		analyzer = Config_Renamed.Analyzer;

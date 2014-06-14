@@ -39,12 +39,12 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  protected internal override ISet<Options> ValidOptions()
+	  protected internal override IEnumerable<Options> ValidOptions()
 	  {
 		if (Codec is Lucene3xCodec)
 		{
 		  // payloads are not supported on vectors in 3.x indexes
-		  return EnumSet.range(Options.NONE, Options.POSITIONS_AND_OFFSETS);
+		  return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
 		}
 		else
 		{

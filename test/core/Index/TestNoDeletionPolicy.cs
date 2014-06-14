@@ -25,7 +25,6 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using Test = org.junit.Test;
     using NUnit.Framework;
 
 	public class TestNoDeletionPolicy : LuceneTestCase
@@ -88,7 +87,7 @@ namespace Lucene.Net.Index
 		  doc.Add(NewTextField("c", "a" + i, Field.Store.YES));
 		  writer.AddDocument(doc);
 		  writer.Commit();
-		  Assert.AreEqual("wrong number of commits !", i + 1, DirectoryReader.ListCommits(dir).Size());
+		  Assert.AreEqual(i + 1, DirectoryReader.ListCommits(dir).Count, "wrong number of commits !");
 		}
 		writer.Dispose();
 		dir.Dispose();

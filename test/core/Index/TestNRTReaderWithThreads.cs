@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 		internal int DelCount = 0;
 		internal int AddCount = 0;
 		internal int Type;
-		internal readonly Random r = new Random(Random().nextLong());
+		internal readonly Random r = new Random(Random().Next());
 
 		public RunThread(TestNRTReaderWithThreads outerInstance, int type, IndexWriter writer)
 		{
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
 				// we may or may not delete because the term may not exist,
 				// however we're opening and closing the reader rapidly
 				IndexReader reader = Writer.Reader;
-				int id = r.Next((int)OuterInstance.Seq);
+				int id = r.Next(OuterInstance.Seq.Get());
 				Term term = new Term("id", Convert.ToString(id));
 				int count = TestIndexWriterReader.Count(term, reader);
 				Writer.DeleteDocuments(term);

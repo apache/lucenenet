@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Codec = Lucene.Net.Codecs.Codec;
-	using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
+	//using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
 	using Lucene.Net.Document;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using TermQuery = Lucene.Net.Search.TermQuery;
@@ -43,14 +43,14 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Test public void testRollingUpdates() throws Exception
 	  public virtual void TestRollingUpdates()
 	  {
-		Random random = new Random(Random().nextLong());
+		Random random = new Random(Random().Next());
 		BaseDirectoryWrapper dir = NewDirectory();
 		LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 
 		//provider.register(new MemoryCodec());
 		if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
 		{
-		  Codec.Default = TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().NextBoolean(), random.nextFloat()));
+            Codec.Default = TestUtil.AlwaysPostingsFormat(new Codecs.Lucene3x.Lucene3xPostingsFormat(/*Random().NextBoolean(), random.NextDouble()*/));
 		}
 
 		MockAnalyzer analyzer = new MockAnalyzer(Random());

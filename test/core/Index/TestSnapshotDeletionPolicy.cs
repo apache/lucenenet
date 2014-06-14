@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 		  CheckSnapshotExists(dir, snapshot);
 		  if (checkIndexCommitSame)
 		  {
-			AssertSame(snapshot, sdp.GetIndexCommit(snapshot.Generation));
+			Assert.AreSame(snapshot, sdp.GetIndexCommit(snapshot.Generation));
 		  }
 		  else
 		  {
@@ -475,7 +475,7 @@ namespace Lucene.Net.Index
 
 		IndexCommit s1 = sdp.Snapshot();
 		IndexCommit s2 = sdp.Snapshot();
-		AssertSame(s1, s2); // should be the same instance
+		Assert.AreSame(s1, s2); // should be the same instance
 
 		// create another commit
 		writer.AddDocument(new Document());

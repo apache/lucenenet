@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 	  public override void Reset()
 	  {
 		base.Reset();
-		if (Random.NextFloat() < PercentDocs)
+		if (Random.NextDouble() < PercentDocs)
 		{
 		  Num = Random.Next(MaxTF) + 1;
 		}
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
 
 		int ret = 0;
 		DocsEnum tdocs = null;
-		Random random = new Random(Random().nextLong());
+		Random random = new Random(Random().Next());
 		for (int i = 0; i < iter; i++)
 		{
 		  tenum.SeekCeil(new BytesRef("val"));

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
-using Lucene.Net.Support;
+    using Lucene.Net.Support;
     using System.IO;
 	/*using Test = org.junit.Test;
 
@@ -1364,7 +1364,7 @@ using Lucene.Net.Support;
 		{
 		  int doc = Random().Next(numDocs);
 		  Term t = new Term("id", "doc" + doc);
-		  long value = Random().nextLong();
+		  long value = Random().NextLong();
 		  writer.UpdateNumericDocValue(t, "f", value);
 		  writer.UpdateNumericDocValue(t, "cf", value * 2);
 		  DirectoryReader reader = DirectoryReader.Open(writer, true);
@@ -1473,7 +1473,7 @@ using Lucene.Net.Support;
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.Add(new StringField("id", RandomPicks.randomFrom(Random(), randomTerms), Store.NO));
+		  doc.Add(new StringField("id", RandomInts.RandomFrom(Random(), randomTerms), Store.NO));
 		  doc.Add(new NumericDocValuesField("ndv", 4L));
 		  doc.Add(new NumericDocValuesField("control", 8L));
 		  writer.AddDocument(doc);
@@ -1486,7 +1486,7 @@ using Lucene.Net.Support;
 
 		// update some docs to a random value
 		long value = Random().Next();
-		Term term = new Term("id", RandomPicks.randomFrom(Random(), randomTerms));
+		Term term = new Term("id", RandomInts.RandomFrom(Random(), randomTerms));
 		writer.UpdateNumericDocValue(term, "ndv", value);
 		writer.UpdateNumericDocValue(term, "control", value * 2);
 		writer.Dispose();
@@ -1588,7 +1588,7 @@ using Lucene.Net.Support;
 		  int numUpdateTerms = TestUtil.NextInt(random, 1, numTerms / 10);
 		  for (int j = 0; j < numUpdateTerms; j++)
 		  {
-			doc.Add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
+			doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));
 		  }
 		  for (int j = 0; j < numNumericFields; j++)
 		  {
@@ -1609,7 +1609,7 @@ using Lucene.Net.Support;
 		for (int i = 0; i < numUpdates; i++)
 		{
 		  int field = random.Next(numNumericFields);
-		  Term updateTerm = new Term("upd", RandomPicks.randomFrom(random, updateTerms));
+		  Term updateTerm = new Term("upd", RandomInts.RandomFrom(random, updateTerms));
 		  long value = random.Next();
 		  writer.UpdateNumericDocValue(updateTerm, "f" + field, value);
 		  writer.UpdateNumericDocValue(updateTerm, "cf" + field, value * 2);

@@ -55,36 +55,36 @@ namespace Lucene.Net.Index
 		// as this gives the best overall coverage. when we have more
 		// codecs we should probably pick 2 from Codec.availableCodecs()
 
-		LeftCodec = Codec.forName("SimpleText");
+		LeftCodec = Codec.ForName("SimpleText");
 		RightCodec = new RandomCodec(Random());
 
 		LeftDir = NewDirectory();
 		RightDir = NewDirectory();
 
-		long seed = Random().nextLong();
+		long seed = Random().Next();
 
 		// must use same seed because of random payloads, etc
 		int maxTermLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
-		MockAnalyzer leftAnalyzer = new MockAnalyzer(new Random(seed));
+		MockAnalyzer leftAnalyzer = new MockAnalyzer(new Random((int)seed));
 		leftAnalyzer.MaxTokenLength = maxTermLength;
-		MockAnalyzer rightAnalyzer = new MockAnalyzer(new Random(seed));
+        MockAnalyzer rightAnalyzer = new MockAnalyzer(new Random((int)seed));
 		rightAnalyzer.MaxTokenLength = maxTermLength;
 
 		// but these can be different
 		// TODO: this turns this into a really big test of Multi*, is that what we want?
 		IndexWriterConfig leftConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, leftAnalyzer);
-		leftConfig.Codec = LeftCodec;
+		leftConfig.SetCodec(LeftCodec);
 		// preserve docids
-		leftConfig.MergePolicy = NewLogMergePolicy();
+        leftConfig.SetMergePolicy(NewLogMergePolicy());
 
 		IndexWriterConfig rightConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, rightAnalyzer);
-		rightConfig.Codec = RightCodec;
+        rightConfig.SetCodec(RightCodec);
 		// preserve docids
-		rightConfig.MergePolicy = NewLogMergePolicy();
+        rightConfig.SetMergePolicy(NewLogMergePolicy());
 
 		// must use same seed because of random docvalues fields, etc
-		RandomIndexWriter leftWriter = new RandomIndexWriter(new Random(seed), LeftDir, leftConfig);
-		RandomIndexWriter rightWriter = new RandomIndexWriter(new Random(seed), RightDir, rightConfig);
+		RandomIndexWriter leftWriter = new RandomIndexWriter(new Random((int)seed), LeftDir, leftConfig);
+		RandomIndexWriter rightWriter = new RandomIndexWriter(new Random((int)seed), RightDir, rightConfig);
 
 		int numdocs = AtLeast(100);
 		CreateRandomIndex(numdocs, leftWriter, seed);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  public static void CreateRandomIndex(int numdocs, RandomIndexWriter writer, long seed)
 	  {
-		Random random = new Random(seed);
+		Random random = new Random((int)seed);
 		// primary source for our data is from linefiledocs, its realistic.
 		LineFileDocs lineFileDocs = new LineFileDocs(random);
 
@@ -141,13 +141,13 @@ namespace Lucene.Net.Index
 		  Document document = lineFileDocs.NextDoc();
 		  // grab the title and add some SortedSet instances for fun
 		  string title = document.Get("titleTokenized");
-		  string[] split = title.Split("\\s+", true);
+          string[] split = title.Split("\\s+".ToCharArray());
 		  foreach (string trash in split)
 		  {
 			document.Add(new SortedSetDocValuesField("sortedset", new BytesRef(trash)));
 		  }
 		  // add a numeric dv field sometimes
-		  document.removeFields("sparsenumeric");
+		  document.RemoveFields("sparsenumeric");
 		  if (random.Next(4) == 2)
 		  {
 			document.Add(new NumericDocValuesField("sparsenumeric", random.Next()));

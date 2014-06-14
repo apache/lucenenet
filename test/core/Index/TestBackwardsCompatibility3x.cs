@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
 		  ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		  CheckIndex checker = new CheckIndex(dir);
 		  checker.InfoStream = new PrintStream(bos, false, "UTF-8");
-		  CheckIndex.Status indexStatus = checker.CheckIndex();
+		  CheckIndex.Status indexStatus = checker.DoCheckIndex();
 		  Assert.IsFalse(indexStatus.Clean);
 		  Assert.IsTrue(bos.ToString("UTF-8").Contains(typeof(IndexFormatTooOldException).Name));
 
@@ -586,7 +586,7 @@ namespace Lucene.Net.Index
 		mp.NoCFSRatio = doCFS ? 1.0 : 0.0;
 		mp.MaxCFSSegmentSizeMB = double.PositiveInfinity;
 		// TODO: remove randomness
-		IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(10).SetMergePolicy(mp).setUseCompoundFile(doCFS);
+		IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(10).SetMergePolicy(mp).SetUseCompoundFile(doCFS);
 		IndexWriter writer = new IndexWriter(dir, conf);
 
 		for (int i = 0;i < 35;i++)
@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
 		  mp = new LogByteSizeMergePolicy();
 		  mp.NoCFSRatio = doCFS ? 1.0 : 0.0;
 		  // TODO: remove randomness
-		  conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(10).SetMergePolicy(mp).setUseCompoundFile(doCFS);
+		  conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(10).SetMergePolicy(mp).SetUseCompoundFile(doCFS);
 		  writer = new IndexWriter(dir, conf);
 		  AddNoProxDoc(writer);
 		  writer.Dispose();
@@ -886,7 +886,7 @@ namespace Lucene.Net.Index
 		  for (int i = 0; i < 3; i++)
 		  {
 			// only use Log- or TieredMergePolicy, to make document addition predictable and not suddenly merge:
-			MergePolicy mp = Random().NextBoolean() ? NewLogMergePolicy() : NewTieredMergePolicy();
+			MergePolicy mp = Random().NextBoolean() ? (MergePolicy)NewLogMergePolicy() : NewTieredMergePolicy();
 			IndexWriterConfig iwc = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(mp);
 			IndexWriter w = new IndexWriter(ramDir, iwc);
 			// add few more docs:
@@ -899,7 +899,7 @@ namespace Lucene.Net.Index
 
 		  // add dummy segments (which are all in current
 		  // version) to single segment index
-		  MergePolicy mp_ = Random().NextBoolean() ? NewLogMergePolicy() : NewTieredMergePolicy();
+          MergePolicy mp_ = Random().NextBoolean() ? (MergePolicy)NewLogMergePolicy() : NewTieredMergePolicy();
 		  IndexWriterConfig iwc_ = (new IndexWriterConfig(TEST_VERSION_CURRENT, null)).SetMergePolicy(mp_);
 		  IndexWriter w_ = new IndexWriter(dir, iwc_);
 		  w_.AddIndexes(ramDir);

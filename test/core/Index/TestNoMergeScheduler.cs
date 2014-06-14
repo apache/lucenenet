@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	  {
 		MergeScheduler ms = NoMergeScheduler.INSTANCE;
 		ms.Dispose();
-		ms.merge(null, RandomPicks.randomFrom(Random(), MergeTrigger.values()), Random().NextBoolean());
+		ms.Merge(null, RandomInts.RandomFrom(Random(), MergeTrigger.values()), Random().NextBoolean());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestDeletes1()
 	  {
 		//IndexWriter.debug2 = System.out;
-		Directory dir = new MockDirectoryWrapper(new Random(Random().NextLong()), new RAMDirectory());
+		Directory dir = new MockDirectoryWrapper(new Random(Random().Next()), new RAMDirectory());
 		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		iwc.SetMergeScheduler(new SerialMergeScheduler());
 		iwc.SetMaxBufferedDocs(5000);
@@ -78,12 +78,12 @@ namespace Lucene.Net.Index
 		// flushing without applying deletes means
 		// there will still be deletes in the segment infos
 		writer.Flush(false, false);
-		Assert.IsTrue(writer.BufferedUpdatesStream.any());
+		Assert.IsTrue(writer.BufferedUpdatesStream.Any());
 
 		// get reader flushes pending deletes
 		// so there should not be anymore
 		IndexReader r1 = writer.Reader;
-		Assert.IsFalse(writer.BufferedUpdatesStream.any());
+		Assert.IsFalse(writer.BufferedUpdatesStream.Any());
 		r1.Dispose();
 
 		// delete id:2 from the first segment
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// static boolean hasPendingDeletes(SegmentInfos infos) {
 	  ///  for (SegmentInfo info : infos) {
-	  ///    if (info.deletes.any()) {
+	  ///    if (info.deletes.Any()) {
 	  ///      return true;
 	  ///    }
 	  ///  }

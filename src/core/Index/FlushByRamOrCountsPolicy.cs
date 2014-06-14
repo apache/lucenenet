@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 	/// pending iff the global active RAM consumption is >= the configured max RAM
 	/// buffer.
 	/// </summary>
-	internal class FlushByRamOrCountsPolicy : FlushPolicy
+	public class FlushByRamOrCountsPolicy : FlushPolicy
 	{
 
 	  public override void OnDelete(DocumentsWriterFlushControl control, ThreadState state)
@@ -65,8 +65,6 @@ namespace Lucene.Net.Index
 		if (FlushOnDeleteTerms())
 		{
 		  // Flush this state by num del terms
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxBufferedDeleteTerms = indexWriterConfig.getMaxBufferedDeleteTerms();
 		  int maxBufferedDeleteTerms = IWConfig.MaxBufferedDeleteTerms;
 		  if (control.NumGlobalTermDeletes >= maxBufferedDeleteTerms)
 		  {

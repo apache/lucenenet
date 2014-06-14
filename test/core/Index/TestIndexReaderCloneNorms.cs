@@ -83,11 +83,13 @@ namespace Lucene.Net.Index
         
         private float normDelta = (float) 0.001;
         
-        public TestIndexReaderCloneNorms(System.String s):base(s)
+        public TestIndexReaderCloneNorms(System.String s)
+            :base(s)
         {
         }
 
-        public TestIndexReaderCloneNorms(): base("")
+        public TestIndexReaderCloneNorms()
+            : base("")
         {
         }
         

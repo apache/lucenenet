@@ -102,23 +102,22 @@ namespace Lucene.Net.Index
 		Fields fields = pr.Fields();
 		IEnumerator<string> fe = fields.GetEnumerator();
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		string f = fe.Next();
+        fe.MoveNext();
+        string f = fe.Current;
 		Assert.AreEqual("field1", f);
-		checkTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
+		CheckTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		f = fe.Next();
+        fe.MoveNext();
+        f = fe.Current;
 		Assert.AreEqual("field2", f);
-		checkTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
+		CheckTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		f = fe.Next();
+        fe.MoveNext();
+        f = fe.Current;
 		Assert.AreEqual("field3", f);
-		checkTerms(fields.Terms(f), liveDocs, "dog", "fox", "jumps", "lazy", "over", "the");
+		CheckTerms(fields.Terms(f), liveDocs, "dog", "fox", "jumps", "lazy", "over", "the");
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(fe.hasNext());
+		Assert.IsFalse(fe.MoveNext());
 	  }
 	}
 

@@ -20,8 +20,8 @@ using System;
 using NUnit.Framework;
 
 using WhitespaceAnalyzer = Lucene.Net.Analysis.WhitespaceAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Document = Lucene.Net.Document.Document;
+using Field = Lucene.Net.Document.Field;
 using Directory = Lucene.Net.Store.Directory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;

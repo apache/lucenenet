@@ -40,8 +40,6 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using System.IO;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocValuesWithThreads extends Lucene.Net.Util.LuceneTestCase
 	public class TestDocValuesWithThreads : LuceneTestCase
 	{
 
@@ -57,7 +55,7 @@ namespace Lucene.Net.Index
 		for (int i = 0;i < numDocs;i++)
 		{
 		  Document d = new Document();
-		  long number = Random().nextLong();
+		  long number = Random().NextLong();
 		  d.Add(new NumericDocValuesField("number", number));
 		  BytesRef bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
 		  d.Add(new BinaryDocValuesField("bytes", bytes));
@@ -81,7 +79,7 @@ namespace Lucene.Net.Index
 		CountDownLatch startingGun = new CountDownLatch(1);
 		for (int t = 0;t < numThreads;t++)
 		{
-		  Random threadRandom = new Random(Random().nextLong());
+		  Random threadRandom = new Random(Random().Next());
 		  Thread thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
 		  thread.Start();
 		  threads.Add(thread);
@@ -102,8 +100,6 @@ namespace Lucene.Net.Index
 	  {
 		  private readonly TestDocValuesWithThreads OuterInstance;
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private IList<long?> numbers;
 		  private IList<long?> Numbers;
 		  private IList<BytesRef> Binary;
 		  private IList<BytesRef> Sorted;

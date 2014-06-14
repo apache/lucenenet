@@ -49,7 +49,7 @@ namespace Lucene.Net.Document
 	public sealed class Document : IEnumerable<IndexableField>
 	{
 
-	  private readonly IList<IndexableField> Fields_Renamed = new List<IndexableField>();
+	  private readonly List<IndexableField> Fields_Renamed = new List<IndexableField>();
 
 	  /// <summary>
 	  /// Constructs a new document with no fields. </summary>
@@ -226,7 +226,7 @@ namespace Lucene.Net.Document
 	  /// index, e.g. <seealso cref="IndexSearcher#doc(int)"/> or {@link
 	  /// IndexReader#document(int)}.
 	  /// </summary>
-	  public IList<IndexableField> Fields
+	  public List<IndexableField> Fields
 	  {
 		  get
 		  {

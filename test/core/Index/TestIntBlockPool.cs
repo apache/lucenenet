@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestSingleWriterReader()
 	  {
-		Counter bytesUsed = Counter.NewCounter();
+        Counter bytesUsed = Util.Counter.NewCounter();
 		IntBlockPool pool = new IntBlockPool(new ByteTrackingAllocator(bytesUsed));
 
 		for (int j = 0; j < 2; j++)
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestMultipleWriterReader()
 	  {
-		Counter bytesUsed = Counter.NewCounter();
+		Counter bytesUsed = Util.Counter.NewCounter();
 		IntBlockPool pool = new IntBlockPool(new ByteTrackingAllocator(bytesUsed));
 		for (int j = 0; j < 2; j++)
 		{
@@ -107,7 +107,9 @@ namespace Lucene.Net.Index
 
 		  while (holders.Count > 0)
 		  {
-			StartEndAndValues values = holders.Remove(Random().Next(holders.Count));
+            int randIndex = Random().Next(holders.Count);
+            StartEndAndValues values = holders[randIndex];
+            holders.RemoveAt(randIndex);
 			AssertReader(reader, values);
 		  }
 		  if (Random().NextBoolean())

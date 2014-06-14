@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 
 	  private IndexWriter InitIndex(Random random, MockDirectoryWrapper dir, bool initialCommit)
 	  {
-		dir.LockFactory = NoLockFactory.NoLockFactory;
+		dir.LockFactory = NoLockFactory.DoNoLockFactory;
 
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMaxBufferedDocs(10).SetMergeScheduler(new ConcurrentMergeScheduler()));
 		((ConcurrentMergeScheduler) writer.Config.MergeScheduler).SetSuppressExceptions();
@@ -64,10 +64,10 @@ namespace Lucene.Net.Index
 	  {
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 		ConcurrentMergeScheduler cms = (ConcurrentMergeScheduler) writer.Config.MergeScheduler;
-		cms.sync();
-		dir.crash();
-		cms.sync();
-		dir.clearCrash();
+		cms.Sync();
+		dir.Crash();
+		cms.Sync();
+		dir.ClearCrash();
 	  }
 
 	  public virtual void TestCrashWhileIndexing()
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
 		writer.Dispose();
-		dir.crash();
+		dir.Crash();
 
 		/*
 		String[] l = dir.list();
@@ -197,9 +197,9 @@ namespace Lucene.Net.Index
 		IndexWriter writer = InitIndex(Random(), false);
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
 
-		writer.Close(false);
+		writer.Dispose(false);
 
-		dir.crash();
+		dir.Crash();
 
 		/*
 		String[] l = dir.list();

@@ -309,9 +309,9 @@ namespace Lucene.Net.Index
 				{
 				  break;
 				}
-				for (int i = 0;i < merge.Segments.Size();i++)
+				for (int i = 0;i < merge.Segments.Count;i++)
 				{
-				  Debug.Assert(merge.Segments.Get(i).info.DocCount < 20);
+				  Debug.Assert(merge.Segments[i].info.DocCount < 20);
 				}
 				writer.Merge(merge);
 			  }

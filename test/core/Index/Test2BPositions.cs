@@ -90,8 +90,8 @@ namespace Lucene.Net.Index
 
 	  public sealed class MyTokenStream : TokenStream
 	  {
-		internal readonly CharTermAttribute TermAtt = AddAttribute<CharTermAttribute>();
-		internal readonly PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute>();
+		internal readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+		internal readonly PositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute>();
 		internal int Index;
 
 		public override bool IncrementToken()

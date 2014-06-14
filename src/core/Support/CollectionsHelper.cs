@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -356,6 +357,12 @@ namespace Lucene.Net.Support
             T tmp = list[index1];
             list[index1] = list[index2];
             list[index2] = tmp;
+        }
+
+        // Method found here http://www.dailycoding.com/Posts/random_sort_a_list_using_linq.aspx
+        public static IList<T> Shuffle<T>(IList<T> list)
+        {
+            return list.OrderBy(str => Guid.NewGuid()).ToList();
         }
 
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()

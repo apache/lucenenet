@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
 		directory.Dispose();
 
 		// Second in an FSDirectory:
-		File dirPath = CreateTempDir("lucene.test.atomic");
+		Directory dirPath = CreateTempDir("lucene.test.atomic");
 		directory = NewFSDirectory(dirPath);
 		RunTest(directory);
 		directory.Dispose();

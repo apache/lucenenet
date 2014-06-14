@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Support;
 
 	// Make sure if you use NoDeletionPolicy that no file
 	// referenced by a commit point is ever deleted
@@ -50,10 +51,10 @@ namespace Lucene.Net.Index
 		  ((MockDirectoryWrapper)d).NoDeleteOpenFile = false;
 		}
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
-		w.w.Config.MaxBufferedDocs = TestUtil.NextInt(Random(), 5, 30);
+		w.w.Config.SetMaxBufferedDocs(TestUtil.NextInt(Random(), 5, 30));
 
 		w.Commit();
-		Thread[] indexThreads = new Thread[Random().Next(4)];
+        ThreadClass[] indexThreads = new ThreadClass[Random().Next(4)];
 		long stopTime = DateTime.Now.Millisecond + AtLeast(1000);
 		for (int x = 0; x < indexThreads.Length; x++)
 		{
@@ -62,7 +63,7 @@ namespace Lucene.Net.Index
 		  indexThreads[x].Start();
 		}
 
-		Set<string> allFiles = new HashSet<string>();
+		HashSet<string> allFiles = new HashSet<string>();
 
 		DirectoryReader r = DirectoryReader.Open(d);
 		while (DateTime.Now.Millisecond < stopTime)
@@ -88,7 +89,7 @@ namespace Lucene.Net.Index
 		}
 		r.Dispose();
 
-		foreach (Thread t in indexThreads)
+        foreach (ThreadClass t in indexThreads)
 		{
 		  t.Join();
 		}
@@ -98,7 +99,7 @@ namespace Lucene.Net.Index
 		TestUtil.Rm(tmpDir);
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestNeverDelete OuterInstance;
 
@@ -133,7 +134,7 @@ namespace Lucene.Net.Index
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }

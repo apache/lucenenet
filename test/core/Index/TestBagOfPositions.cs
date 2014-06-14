@@ -34,7 +34,9 @@ namespace Lucene.Net.Index
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Simple test that adds numeric terms, where each term has the 
@@ -73,7 +75,8 @@ namespace Lucene.Net.Index
 			postingsList.Add(term);
 		  }
 		}
-		Collections.shuffle(postingsList, Random());
+
+        postingsList = CollectionsHelper.Shuffle(postingsList);
 
 		ConcurrentLinkedQueue<string> postings = new ConcurrentLinkedQueue<string>(postingsList);
 
@@ -97,21 +100,21 @@ namespace Lucene.Net.Index
 		int options = Random().Next(3);
 		if (options == 0)
 		{
-		  fieldType.IndexOptions = IndexOptions.DOCS_AND_FREQS; // we dont actually need positions
+		  fieldType.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS; // we dont actually need positions
 		  fieldType.StoreTermVectors = true; // but enforce term vectors when we do this so we check SOMETHING
 		}
-		else if (options == 1 && !doesntSupportOffsets.Contains(TestUtil.GetPostingsFormat("field")))
+		else if (options == 1 && !DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat("field")))
 		{
-		  fieldType.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            fieldType.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		}
 		// else just positions
 
-		Thread[] threads = new Thread[threadCount];
+        ThreadClass[] threads = new ThreadClass[threadCount];
 		CountDownLatch startingGun = new CountDownLatch(1);
 
 		for (int threadID = 0;threadID < threadCount;threadID++)
 		{
-		  Random threadRandom = new Random(Random().nextLong());
+		  Random threadRandom = new Random(Random().Next());
 		  Document document = new Document();
 		  Field field = new Field("field", "", fieldType);
 		  document.Add(field);
@@ -119,7 +122,7 @@ namespace Lucene.Net.Index
 		  threads[threadID].Start();
 		}
 		startingGun.countDown();
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
@@ -127,15 +130,15 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir = iw.Reader;
 		Assert.AreEqual(1, ir.Leaves().Count);
-		AtomicReader air = ir.Leaves()[0].Reader();
+		AtomicReader air = (AtomicReader)ir.Leaves()[0].Reader();
 		Terms terms = air.Terms("field");
 		// numTerms-1 because there cannot be a term 0 with 0 postings:
 		Assert.AreEqual(numTerms - 1, terms.Size());
 		TermsEnum termsEnum = terms.Iterator(null);
-		BytesRef term;
-		while ((term = termsEnum.Next()) != null)
+		BytesRef termBR;
+		while ((termBR = termsEnum.Next()) != null)
 		{
-		  int value = Convert.ToInt32(term.Utf8ToString());
+		  int value = Convert.ToInt32(termBR.Utf8ToString());
 		  Assert.AreEqual(value, termsEnum.TotalTermFreq());
 		  // don't really need to check more than this, as CheckIndex
 		  // will verify that totalTermFreq == total number of positions seen
@@ -146,7 +149,7 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestBagOfPositions OuterInstance;
 
@@ -197,7 +200,7 @@ namespace Lucene.Net.Index
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }

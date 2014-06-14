@@ -30,7 +30,8 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using NUnit.Framework;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test class to illustrate using IndexDeletionPolicy to provide multi-level rollback capability.
@@ -114,7 +115,7 @@ using NUnit.Framework;
 		  }
 		}
 		r.Dispose();
-		Assert.AreEqual(0,expecteds.cardinality(), "Should have 0 docs remaining ");
+		Assert.AreEqual(0, expecteds.Cardinality(), "Should have 0 docs remaining ");
 	  }
 
 	  /*

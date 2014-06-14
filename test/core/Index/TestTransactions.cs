@@ -128,12 +128,12 @@ namespace Lucene.Net.Index
 		public override void DoWork()
 		{
 
-		  IndexWriter writer1 = new IndexWriter(Dir1, (IndexWriterConfig)(NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(3)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(2)));
+		  IndexWriter writer1 = new IndexWriter(Dir1, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(3)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(2)));
 		  ((ConcurrentMergeScheduler) writer1.Config.MergeScheduler).SetSuppressExceptions();
 
 		  // Intentionally use different params so flush/merge
 		  // happen @ different times
-		  IndexWriter writer2 = new IndexWriter(Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(3)));
+		  IndexWriter writer2 = new IndexWriter(Dir2, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2)).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(3)));
 		  ((ConcurrentMergeScheduler) writer2.Config.MergeScheduler).SetSuppressExceptions();
 
 		  Update(writer1);

@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	/// Prefix codes term instances (prefixes are shared)
 	/// @lucene.experimental
 	/// </summary>
-	internal class PrefixCodedTerms : IEnumerable<Term>
+	public class PrefixCodedTerms : IEnumerable<Term>
 	{
 	  internal readonly RAMFile Buffer;
 

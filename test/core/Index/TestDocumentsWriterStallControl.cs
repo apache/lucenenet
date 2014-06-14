@@ -4,24 +4,25 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
     using NUnit.Framework;
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements. See the NOTICE file distributed with this
-         * work for additional information regarding copyright ownership. The ASF
-         * licenses this file to You under the Apache License, Version 2.0 (the
-         * "License"); you may not use this file except in compliance with the License.
-         * You may obtain a copy of the License at
-         * 
-         * http://www.apache.org/licenses/LICENSE-2.0
-         * 
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-         * License for the specific language governing permissions and limitations under
-         * the License.
-         */
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements. See the NOTICE file distributed with this
+             * work for additional information regarding copyright ownership. The ASF
+             * licenses this file to You under the Apache License, Version 2.0 (the
+             * "License"); you may not use this file except in compliance with the License.
+             * You may obtain a copy of the License at
+             * 
+             * http://www.apache.org/licenses/LICENSE-2.0
+             * 
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+             * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+             * License for the specific language governing permissions and limitations under
+             * the License.
+             */
 
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -37,31 +38,31 @@ namespace Lucene.Net.Index
 	  {
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 
-		ctrl.updateStalled(false);
-		Thread[] waitThreads = WaitThreads(AtLeast(1), ctrl);
+		ctrl.UpdateStalled(false);
+        ThreadClass[] waitThreads = WaitThreads(AtLeast(1), ctrl);
 		Start(waitThreads);
-		Assert.IsFalse(ctrl.hasBlocked());
-		Assert.IsFalse(ctrl.anyStalledThreads());
+		Assert.IsFalse(ctrl.HasBlocked());
+		Assert.IsFalse(ctrl.AnyStalledThreads());
 		Join(waitThreads);
 
 		// now stall threads and wake them up again
-		ctrl.updateStalled(true);
+		ctrl.UpdateStalled(true);
 		waitThreads = WaitThreads(AtLeast(1), ctrl);
 		Start(waitThreads);
 		AwaitState(Thread.State.WAITING, waitThreads);
-		Assert.IsTrue(ctrl.hasBlocked());
-		Assert.IsTrue(ctrl.anyStalledThreads());
-		ctrl.updateStalled(false);
-		Assert.IsFalse(ctrl.anyStalledThreads());
+		Assert.IsTrue(ctrl.HasBlocked());
+		Assert.IsTrue(ctrl.AnyStalledThreads());
+		ctrl.UpdateStalled(false);
+		Assert.IsFalse(ctrl.AnyStalledThreads());
 		Join(waitThreads);
 	  }
 
 	  public virtual void TestRandom()
 	  {
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
-		ctrl.updateStalled(false);
+		ctrl.UpdateStalled(false);
 
-		Thread[] stallThreads = new Thread[AtLeast(3)];
+        ThreadClass[] stallThreads = new ThreadClass[AtLeast(3)];
 		for (int i = 0; i < stallThreads.Length; i++)
 		{
 		  int stallProbability = 1 + Random().Next(10);
@@ -75,10 +76,10 @@ namespace Lucene.Net.Index
 		 */
 		while ((DateTime.Now.Millisecond - time) < 100 * 1000 && !Terminated(stallThreads))
 		{
-		  ctrl.updateStalled(false);
+		  ctrl.UpdateStalled(false);
 		  if (Random().NextBoolean())
 		  {
-			Thread.@yield();
+			Thread.@Yield();
 		  }
 		  else
 		  {
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestDocumentsWriterStallControl OuterInstance;
 
@@ -110,7 +111,7 @@ namespace Lucene.Net.Index
 			int iters = AtLeast(1000);
 			for (int j = 0; j < iters; j++)
 			{
-			  Ctrl.updateStalled(Random().Next(StallProbability) == 0);
+			  Ctrl.UpdateStalled(Random().Next(StallProbability) == 0);
 			  if (Random().Next(5) == 0) // thread 0 only updates
 			  {
 				Ctrl.waitIfStalled();
@@ -122,7 +123,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestAccquireReleaseRace()
 	  {
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
-		ctrl.updateStalled(false);
+		ctrl.UpdateStalled(false);
 		AtomicBoolean stop = new AtomicBoolean(false);
 		AtomicBoolean checkPoint = new AtomicBoolean(true);
 
@@ -130,7 +131,7 @@ namespace Lucene.Net.Index
 		int numReleasers = AtLeast(1);
 		int numWaiters = AtLeast(1);
 		Synchronizer sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-		Thread[] threads = new Thread[numReleasers + numStallers + numWaiters];
+        ThreadClass[] threads = new ThreadClass[numReleasers + numStallers + numWaiters];
 		IList<Exception> exceptions = Collections.synchronizedList(new List<Exception>());
 		for (int i = 0; i < numReleasers; i++)
 		{
@@ -166,7 +167,7 @@ namespace Lucene.Net.Index
 			  Assert.Fail("got exceptions in threads");
 			}
 
-			if (ctrl.hasBlocked() && ctrl.Healthy)
+			if (ctrl.HasBlocked() && ctrl.Healthy)
 			{
 			  AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
 
@@ -202,28 +203,28 @@ namespace Lucene.Net.Index
 
 		for (int i = 0; i < threads.Length; i++)
 		{
-		  ctrl.updateStalled(false);
+		  ctrl.UpdateStalled(false);
 		  threads[i].Join(2000);
 		  if (threads[i].IsAlive && threads[i] is Waiter)
 		  {
 			if (threads[i].State == Thread.State.WAITING)
 			{
-			  Assert.Fail("waiter is not released - anyThreadsStalled: " + ctrl.anyStalledThreads());
+			  Assert.Fail("waiter is not released - anyThreadsStalled: " + ctrl.AnyStalledThreads());
 			}
 		  }
 		}
 	  }
 
-	  private void AssertState(int numReleasers, int numStallers, int numWaiters, Thread[] threads, DocumentsWriterStallControl ctrl)
+	  private void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadClass[] threads, DocumentsWriterStallControl ctrl)
 	  {
 		int millisToSleep = 100;
 		while (true)
 		{
-		  if (ctrl.hasBlocked() && ctrl.Healthy)
+		  if (ctrl.HasBlocked() && ctrl.Healthy)
 		  {
 			for (int n = numReleasers + numStallers; n < numReleasers + numStallers + numWaiters; n++)
 			{
-			  if (ctrl.isThreadQueued(threads[n]))
+			  if (ctrl.IsThreadQueued(threads[n]))
 			  {
 				if (millisToSleep < 60000)
 				{
@@ -247,7 +248,7 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  public class Waiter : System.Threading.Thread
+	  public class Waiter : ThreadClass
 	  {
 		internal Synchronizer Sync;
 		internal DocumentsWriterStallControl Ctrl;
@@ -294,7 +295,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public class Updater : System.Threading.Thread
+      public class Updater : ThreadClass
 	  {
 
 		internal Synchronizer Sync;
@@ -324,7 +325,7 @@ namespace Lucene.Net.Index
 			  int internalIters = Release && Random().NextBoolean() ? AtLeast(5) : 1;
 			  for (int i = 0; i < internalIters; i++)
 			  {
-				Ctrl.updateStalled(Random().NextBoolean());
+				Ctrl.UpdateStalled(Random().NextBoolean());
 			  }
 			  if (CheckPoint.Get())
 			  {
@@ -357,9 +358,9 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  public static bool Terminated(Thread[] threads)
+	  public static bool Terminated(ThreadClass[] threads)
 	  {
-		foreach (Thread thread in threads)
+		foreach (ThreadClass thread in threads)
 		{
 		  if (Thread.State.TERMINATED != thread.State)
 		  {
@@ -369,26 +370,26 @@ namespace Lucene.Net.Index
 		return true;
 	  }
 
-	  public static void Start(Thread[] tostart)
+      public static void Start(ThreadClass[] tostart)
 	  {
-		foreach (Thread thread in tostart)
+		foreach (ThreadClass thread in tostart)
 		{
 		  thread.Start();
 		}
 		Thread.Sleep(1); // let them start
 	  }
 
-	  public static void Join(Thread[] toJoin)
+      public static void Join(ThreadClass[] toJoin)
 	  {
-		foreach (Thread thread in toJoin)
+		foreach (ThreadClass thread in toJoin)
 		{
 		  thread.Join();
 		}
 	  }
 
-	  public static Thread[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
+      public static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
 	  {
-		Thread[] array = new Thread[num];
+		ThreadClass[] array = new Thread[num];
 		for (int i = 0; i < array.Length; i++)
 		{
 		  array[i] = new ThreadAnonymousInnerClassHelper(ctrl);
@@ -396,7 +397,7 @@ namespace Lucene.Net.Index
 		return array;
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private DocumentsWriterStallControl Ctrl;
 

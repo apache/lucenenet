@@ -386,7 +386,7 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[100000];
 		BytesRef b = new BytesRef(bytes);
-		Random().NextBytes(bytes);
+		Random().NextBytes((byte[])(Array)bytes);
 		doc.Add(new SortedDocValuesField("dv", b));
 		try
 		{
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[100000];
 		BytesRef b = new BytesRef(bytes);
-		Random().nextBytes(bytes);
+		Random().NextBytes((byte[])(Array)bytes);
 		doc.Add(new SortedSetDocValuesField("dv", b));
 		try
 		{

@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 	  {
 		Assert.IsTrue(Reader.RefCount > 0);
 		IndexSearcher searcher = NewSearcher(Reader);
-		TermRangeQuery query = TermRangeQuery.newStringRange("field", "a", "z", true, true);
+		TermRangeQuery query = TermRangeQuery.NewStringRange("field", "a", "z", true, true);
 		searcher.Search(query, 5);
 		Reader.Dispose();
 		try
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
 		wrappedReader = new ParallelAtomicReader((AtomicReader) wrappedReader);
 
 		IndexSearcher searcher = NewSearcher(wrappedReader);
-		TermRangeQuery query = TermRangeQuery.newStringRange("field", "a", "z", true, true);
+		TermRangeQuery query = TermRangeQuery.NewStringRange("field", "a", "z", true, true);
 		searcher.Search(query, 5);
 		Reader.Dispose(); // close original child reader
 		try

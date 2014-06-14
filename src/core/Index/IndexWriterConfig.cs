@@ -670,37 +670,37 @@ namespace Lucene.Net.Index
 		return SetInfoStream(new PrintStreamInfoStream(printStream));
 	  }
 
-	  public override LiveIndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
+      public IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
 	  {
 		return (IndexWriterConfig) base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
 	  }
 
-      public override LiveIndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
+      public IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
 	  {
 		return (IndexWriterConfig) base.SetMaxBufferedDocs(maxBufferedDocs);
 	  }
 
-      public override LiveIndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
+      public IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
 	  {
 		return (IndexWriterConfig) base.SetMergedSegmentWarmer(mergeSegmentWarmer);
 	  }
 
-      public override LiveIndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
+      public IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
 	  {
 		return (IndexWriterConfig) base.SetRAMBufferSizeMB(ramBufferSizeMB);
 	  }
 
-      public override LiveIndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
+      public IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
 	  {
 		return (IndexWriterConfig) base.SetReaderTermsIndexDivisor(divisor);
 	  }
 
-      public override LiveIndexWriterConfig SetTermIndexInterval(int interval)
+      public IndexWriterConfig SetTermIndexInterval(int interval)
 	  {
 		return (IndexWriterConfig) base.SetTermIndexInterval(interval);
 	  }
 
-      public override LiveIndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
+      public IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
 	  {
 		return (IndexWriterConfig) base.SetUseCompoundFile(useCompoundFile);
 	  }

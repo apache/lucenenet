@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestIndexWriterDelete OuterInstance;
 
@@ -810,7 +810,7 @@ namespace Lucene.Net.Index
 		string[] text = new string[] {"Amsterdam", "Venice"};
 
 		MockDirectoryWrapper dir = NewMockDirectory();
-		IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(2).setReaderPooling(false).SetMergePolicy(NewLogMergePolicy()));
+		IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(2).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy()));
 
 		MergePolicy lmp = modifier.Config.MergePolicy;
 		lmp.NoCFSRatio = 1.0;
@@ -1087,14 +1087,14 @@ namespace Lucene.Net.Index
 		{
 		  ids.Add(id);
 		}
-		Collections.shuffle(ids, Random());
+		ids = CollectionsHelper.Shuffle(ids);
 		foreach (int id in ids)
 		{
 		  Document doc = new Document();
 		  doc.Add(NewStringField("id", "" + id, Field.Store.NO));
 		  w.AddDocument(doc);
 		}
-		Collections.shuffle(ids, Random());
+		ids = CollectionsHelper.Shuffle(ids);
 		int upto = 0;
 		while (upto < ids.Count)
 		{
@@ -1189,7 +1189,7 @@ namespace Lucene.Net.Index
 		// Cannot use RandomIndexWriter because we don't want to
 		// ever call commit() for this test:
 		// note: tiny rambuffer used, as with a 1MB buffer the test is too slow (flush @ 128,999)
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.1f).SetMaxBufferedDocs(1000).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).setReaderPooling(false));
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.1f).SetMaxBufferedDocs(1000).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
 		int count = 0;
 		while (true)
 		{
@@ -1241,7 +1241,7 @@ namespace Lucene.Net.Index
 		// Cannot use RandomIndexWriter because we don't want to
 		// ever call commit() for this test:
 		int flushAtDelCount = AtLeast(1020);
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDeleteTerms(flushAtDelCount).SetMaxBufferedDocs(1000).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).setReaderPooling(false));
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDeleteTerms(flushAtDelCount).SetMaxBufferedDocs(1000).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false));
 		int count = 0;
 		while (true)
 		{
@@ -1288,7 +1288,7 @@ namespace Lucene.Net.Index
 		AtomicInteger docsInSegment = new AtomicInteger();
 		AtomicBoolean closing = new AtomicBoolean();
 		AtomicBoolean sawAfterFlush = new AtomicBoolean();
-		IndexWriter w = new IndexWriterAnonymousInnerClassHelper(this, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).setReaderPooling(false), docsInSegment, closing, sawAfterFlush);
+		IndexWriter w = new IndexWriterAnonymousInnerClassHelper(this, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.5).SetMaxBufferedDocs(-1).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetReaderPooling(false), docsInSegment, closing, sawAfterFlush);
 		int id = 0;
 		while (true)
 		{
@@ -1372,19 +1372,19 @@ namespace Lucene.Net.Index
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		CheckIndex checker = new CheckIndex(dir);
 		checker.SetInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
-		CheckIndex.Status indexStatus = checker.CheckIndex(null);
+		CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
 		Assert.IsTrue(indexStatus.Clean);
 		string s = bos.ToString(IOUtils.UTF_8);
 
 		// Segment should have deletions:
 		Assert.IsTrue(s.Contains("has deletions"));
-		w = new IndexWriter(dir, iwc.Clone());
+		w = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
 		w.ForceMerge(1);
 		w.Dispose();
 
 		bos = new ByteArrayOutputStream(1024);
 		checker.SetInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
-		indexStatus = checker.CheckIndex(null);
+		indexStatus = checker.DoCheckIndex(null);
 		Assert.IsTrue(indexStatus.Clean);
 		s = bos.ToString(IOUtils.UTF_8);
 		Assert.IsFalse(s.Contains("has deletions"));

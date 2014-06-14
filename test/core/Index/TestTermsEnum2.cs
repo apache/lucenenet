@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Util.Automaton;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestTermsEnum2 : LuceneTestCase
 	{
@@ -120,8 +121,8 @@ namespace Lucene.Net.Index
 		  string reg = AutomatonTestUtil.RandomRegexp(Random());
 		  Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
 		  TermsEnum te = MultiFields.GetTerms(Reader, "field").Iterator(null);
-		  List<BytesRef> unsortedTerms = new List<BytesRef>(Terms);
-		  Collections.shuffle(unsortedTerms, Random());
+		  IList<BytesRef> unsortedTerms = new List<BytesRef>(Terms);
+		  unsortedTerms = CollectionsHelper.Shuffle(unsortedTerms);
 
 		  foreach (BytesRef term in unsortedTerms)
 		  {

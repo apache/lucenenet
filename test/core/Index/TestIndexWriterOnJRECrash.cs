@@ -29,8 +29,9 @@ namespace Lucene.Net.Index
 	using Constants = Lucene.Net.Util.Constants;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 
-	using SeedUtils = com.carrotsearch.randomizedtesting.SeedUtils;
     using NUnit.Framework;
+    using Lucene.Net.Support;
+    using System.IO;
 	/// <summary>
 	/// Runs TestNRTThreads in a separate process, crashes the JRE in the middle
 	/// of execution, then runs checkindex to make sure its not corrupt.
@@ -43,7 +44,7 @@ namespace Lucene.Net.Index
 	  {
 		base.SetUp();
 		TempDir = CreateTempDir("jrecrash");
-		TempDir.delete();
+		TempDir.Delete();
 		TempDir.mkdir();
 	  }
 
@@ -71,8 +72,8 @@ namespace Lucene.Net.Index
 		  AssumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x"));
 		  // we are the fork, setup a crashing thread
 		  int crashTime = TestUtil.NextInt(Random(), 3000, 4000);
-		  Thread t = new ThreadAnonymousInnerClassHelper(this, crashTime);
-		  t.Priority = Thread.MAX_PRIORITY;
+          ThreadClass t = new ThreadAnonymousInnerClassHelper(this, crashTime);
+          t.Priority = ThreadPriority.Highest;
 		  t.Start();
 		  // run the test until we crash.
 		  for (int i = 0; i < 1000; i++)
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestIndexWriterOnJRECrash OuterInstance;
 
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
 			catch (ThreadInterruptedException e)
 			{
 			}
-			outerInstance.CrashJRE();
+			OuterInstance.CrashJRE();
 		  }
 	  }
 
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
 		// passing NIGHTLY to this test makes it run for much longer, easier to catch it in the act...
 		cmd.Add("-Dtests.nightly=true");
 		cmd.Add("-DtempDir=" + TempDir.Path);
-		cmd.Add("-Dtests.seed=" + SeedUtils.formatSeed(Random().nextLong()));
+		cmd.Add("-Dtests.seed=" + SeedUtils.formatSeed(Random().NextLong()));
 		cmd.Add("-ea");
 		cmd.Add("-cp");
 		cmd.Add(System.getProperty("java.class.path"));
@@ -157,7 +158,7 @@ namespace Lucene.Net.Index
 		  return t;
 		}
 
-		private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 		{
 			private InputStream From;
 			private OutputStream To;
@@ -200,7 +201,7 @@ namespace Lucene.Net.Index
 		{
 		  BaseDirectoryWrapper dir = NewFSDirectory(file);
 		  dir.CheckIndexOnClose = false; // don't double-checkindex
-		  if (DirectoryReader.indexExists(dir))
+		  if (DirectoryReader.IndexExists(dir))
 		  {
 			if (VERBOSE)
 			{
@@ -218,7 +219,7 @@ namespace Lucene.Net.Index
 			return true;
 		  }
 		  dir.Dispose();
-		  foreach (File f in file.listFiles())
+		  foreach (File f in file.ListFiles())
 		  {
 			if (CheckIndexes(f))
 			{
@@ -244,7 +245,7 @@ namespace Lucene.Net.Index
 			  try
 			  {
 				Type clazz = Type.GetType("sun.misc.Unsafe");
-				Field field = clazz.getDeclaredField("theUnsafe");
+				Field field = clazz.GetDeclaredField("theUnsafe");
 				field.Accessible = true;
 				object o = field.Get(null);
 				Method m = clazz.GetMethod("putAddress", typeof(long), typeof(long));

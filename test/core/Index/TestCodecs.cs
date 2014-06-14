@@ -35,15 +35,15 @@ namespace Lucene.Net.Index
 	using Lucene40RWCodec = Lucene.Net.Codecs.Lucene40.Lucene40RWCodec;
 	using Lucene41RWCodec = Lucene.Net.Codecs.Lucene41.Lucene41RWCodec;
 	using Lucene42RWCodec = Lucene.Net.Codecs.Lucene42.Lucene42RWCodec;
-	using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
+	//using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
 	using Document = Lucene.Net.Document.Document;
 	using Store = Lucene.Net.Document.Field.Store;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using DocValuesType = Lucene.Net.Index.FieldInfo.DocValuesType_e;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+	using DocValuesType_e = Lucene.Net.Index.FieldInfo.DocValuesType_e;
+	using IndexOptions_e = Lucene.Net.Index.FieldInfo.IndexOptions_e;
 	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using PhraseQuery = Lucene.Net.Search.PhraseQuery;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
 		  FieldInfo = fieldInfos.AddOrUpdate(name, new IndexableFieldTypeAnonymousInnerClassHelper(this, omitTF));
 		  if (storePayloads)
 		  {
-			FieldInfo.setStorePayloads();
+			FieldInfo.SetStorePayloads();
 		  }
 		  this.Terms = terms;
 		  for (int i = 0;i < terms.Length;i++)
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
 			terms[i].Field = this;
 		  }
 
-		  Arrays.sort(terms);
+		  Array.Sort(terms);
 		}
 
 		private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
@@ -169,11 +169,11 @@ namespace Lucene.Net.Index
 			{
 				return false;
 			}
-			public override IndexOptions IndexOptions()
+			public override IndexOptions_e IndexOptions()
 			{
-				return OmitTF ? IndexOptions.DOCS_ONLY : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+				return OmitTF ? IndexOptions_e.DOCS_ONLY : IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 			}
-			public override DocValuesType DocValueType()
+			public override DocValuesType_e? DocValueType()
 			{
 				return null;
 			}
@@ -186,21 +186,21 @@ namespace Lucene.Net.Index
 
 		public virtual void Write(FieldsConsumer consumer)
 		{
-		  Arrays.sort(Terms);
-		  TermsConsumer termsConsumer = consumer.addField(FieldInfo);
+		  Array.Sort(Terms);
+		  TermsConsumer termsConsumer = consumer.AddField(FieldInfo);
 		  long sumTotalTermCount = 0;
 		  long sumDF = 0;
 		  OpenBitSet visitedDocs = new OpenBitSet();
 		  foreach (TermData term in Terms)
 		  {
-			for (int i = 0; i < term.docs.Length; i++)
+			for (int i = 0; i < term.Docs.Length; i++)
 			{
-			  visitedDocs.Set(term.docs[i]);
+			  visitedDocs.Set(term.Docs[i]);
 			}
-			sumDF += term.docs.Length;
+			sumDF += term.Docs.Length;
 			sumTotalTermCount += term.Write(termsConsumer);
 		  }
-		  termsConsumer.Finish(OmitTF ? - 1 : sumTotalTermCount, sumDF, (int) visitedDocs.cardinality());
+		  termsConsumer.Finish(OmitTF ? - 1 : sumTotalTermCount, sumDF, (int) visitedDocs.Cardinality());
 		}
 	  }
 
@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
 
 		public virtual long Write(TermsConsumer termsConsumer)
 		{
-		  PostingsConsumer postingsConsumer = termsConsumer.startTerm(Text);
+		  PostingsConsumer postingsConsumer = termsConsumer.StartTerm(Text);
 		  long totTF = 0;
 		  for (int i = 0;i < Docs.Length;i++)
 		  {
@@ -258,19 +258,19 @@ namespace Lucene.Net.Index
 			{
 			  termDocFreq = Positions[i].Length;
 			}
-			postingsConsumer.startDoc(Docs[i], termDocFreq);
+			postingsConsumer.StartDoc(Docs[i], termDocFreq);
 			if (!Field.OmitTF)
 			{
 			  totTF += Positions[i].Length;
 			  for (int j = 0;j < Positions[i].Length;j++)
 			  {
 				PositionData pos = Positions[i][j];
-				postingsConsumer.addPosition(pos.Pos, pos.Payload, -1, -1);
+				postingsConsumer.AddPosition(pos.Pos, pos.Payload, -1, -1);
 			  }
 			}
-			postingsConsumer.finishDoc();
+			postingsConsumer.FinishDoc();
 		  }
-		  termsConsumer.finishTerm(Text, new TermStats(Docs.Length, Field.OmitTF ? - 1 : totTF));
+		  termsConsumer.FinishTerm(Text, new TermStats(Docs.Length, Field.OmitTF ? - 1 : totTF));
 		  return totTF;
 		}
 	  }
@@ -410,8 +410,7 @@ namespace Lucene.Net.Index
 		  Assert.AreEqual(termsEnum.SeekCeil(new BytesRef(terms[i].Text2)), TermsEnum.SeekStatus.FOUND);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(fieldsEnum.hasNext());
+		Assert.IsFalse(fieldsEnum.MoveNext());
 		reader.Dispose();
 		dir.Dispose();
 	  }
@@ -444,13 +443,13 @@ namespace Lucene.Net.Index
 		{
 		  Console.WriteLine("TEST: now read postings");
 		}
-		FieldsProducer terms = codec.postingsFormat().FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
+		FieldsProducer terms = codec.PostingsFormat().FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
 
 		Verify[] threads = new Verify[NUM_TEST_THREADS - 1];
 		for (int i = 0;i < NUM_TEST_THREADS - 1;i++)
 		{
 		  threads[i] = new Verify(this, si, fields, terms);
-		  threads[i].Daemon = true;
+		  threads[i].SetDaemon(true);
 		  threads[i].Start();
 		}
 
@@ -466,11 +465,12 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
+      /* Not implemented in Core
 	  public virtual void TestSepPositionAfterMerge()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-		config.MergePolicy = NewLogMergePolicy();
+		config.SetMergePolicy(NewLogMergePolicy());
 		config.Codec = TestUtil.AlwaysPostingsFormat(new MockSepPostingsFormat());
 		IndexWriter writer = new IndexWriter(dir, config);
 
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
 		  writer.Dispose();
 		  dir.Dispose();
 		}
-	  }
+	  }*/
 
 	  private ScoreDoc[] Search(IndexWriter writer, Query q, int n)
 	  {
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private class Verify : System.Threading.Thread
+	  private class Verify : ThreadClass
 	  {
 		  private readonly TestCodecs OuterInstance;
 
@@ -553,12 +553,10 @@ namespace Lucene.Net.Index
 		  {
 			this._run();
 		  }
-//JAVA TO C# CONVERTER WARNING: 'final' catch parameters are not allowed in C#:
-//ORIGINAL LINE: catch (final Throwable t)
 		  catch (Exception t)
 		  {
 			Failed = true;
-			throw new Exception(t);
+			throw new Exception(t.Message, t);
 		  }
 		}
 
@@ -857,7 +855,7 @@ namespace Lucene.Net.Index
 		DirectoryReader reader = DirectoryReader.Open(dir);
 		foreach (AtomicReaderContext ctx in reader.Leaves())
 		{
-		  DocsEnum de = ctx.Reader().TermDocsEnum(term);
+		  DocsEnum de = ((AtomicReader)ctx.Reader()).TermDocsEnum(term);
 		  while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			Assert.AreEqual(1, de.Freq(), "wrong freq for doc " + de.DocID());

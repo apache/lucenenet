@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
 
 		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		config.Similarity = new CustomNormEncodingSimilarity(this);
+		config.SetSimilarity(new CustomNormEncodingSimilarity(this));
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, config);
 		Document doc = new Document();
 		Field foo = NewTextField("foo", "", Field.Store.NO);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
 		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 		Similarity provider = new MySimProvider(this);
-		config.Similarity = provider;
+		config.SetSimilarity(provider);
 		RandomIndexWriter writer = new RandomIndexWriter(random, dir, config);
 		LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 		int num = AtLeast(100);
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 
 		public override Similarity Get(string field)
 		{
-		  if (outerInstance.ByteTestField.Equals(field))
+		  if (OuterInstance.ByteTestField.Equals(field))
 		  {
 			return new ByteEncodingBoostSimilarity();
 		  }

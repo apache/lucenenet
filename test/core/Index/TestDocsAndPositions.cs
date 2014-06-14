@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
 	public class TestDocsAndPositions : LuceneTestCase
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
 		  IndexReaderContext topReaderContext = reader.Context;
 		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
 		  {
-			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.Reader(), bytes, null);
+			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader(), bytes, null);
 			Assert.IsNotNull(docsAndPosEnum);
 			if (atomicReaderContext.Reader().MaxDoc() == 0)
 			{
@@ -153,14 +154,14 @@ namespace Lucene.Net.Index
 		IndexReader reader = writer.Reader;
         writer.Close();
 
-		int num = AtLeast(13);
-		for (int i = 0; i < num; i++)
+		int num_ = AtLeast(13);
+		for (int i = 0; i < num_; i++)
 		{
 		  BytesRef bytes = new BytesRef("" + term);
 		  IndexReaderContext topReaderContext = reader.Context;
 		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
 		  {
-			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.Reader(), bytes, null);
+			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader(), bytes, null);
 			Assert.IsNotNull(docsAndPosEnum);
 			int initDoc = 0;
 			int maxDoc = atomicReaderContext.Reader().MaxDoc();
@@ -188,7 +189,7 @@ namespace Lucene.Net.Index
 			  int howMany = Random().Next(20) == 0 ? pos.Length - Random().Next(pos.Length) : pos.Length;
 			  for (int j = 0; j < howMany; j++)
 			  {
-				Assert.AreEqual("iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.DocBase + " positions: " + Arrays.ToString(pos), (int)pos[j], docsAndPosEnum.NextPosition()); /* TODO: + " usePayloads: "
+				Assert.AreEqual( (int)pos[j], docsAndPosEnum.NextPosition(), "iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.DocBase + " positions: " + (string[])(Array)(pos)); /* TODO: + " usePayloads: "
 	                + usePayload*/
 			  }
 
@@ -342,7 +343,7 @@ namespace Lucene.Net.Index
 		  IndexReaderContext topReaderContext = reader.Context;
 		  foreach (AtomicReaderContext atomicReaderContext in topReaderContext.Leaves())
 		  {
-			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions(atomicReaderContext.Reader(), bytes, null);
+			DocsAndPositionsEnum docsAndPosEnum = GetDocsAndPositions((AtomicReader)atomicReaderContext.Reader(), bytes, null);
 			Assert.IsNotNull(docsAndPosEnum);
 
 			int initDoc = 0;

@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 				if (NoErrors)
 				{
 				  Console.WriteLine(Thread.CurrentThread.Name + ": ERROR: unexpected IOException:");
-				  ioConsole.WriteLine(e.StackTrace);
+				  Console.WriteLine(ioe.StackTrace);
 				  Error = ioe;
 				}
 				break;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("\nTEST: now close");
 		  }
-		  writer.Close(false);
+		  writer.Dispose(false);
 
 		  // Make sure threads that are adding docs are not hung:
 		  for (int i = 0;i < NUM_THREADS;i++)
@@ -411,7 +411,7 @@ namespace Lucene.Net.Index
 
 		  if (DoFail)
 		  {
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			bool sawAbortOrFlushDoc = false;
 			bool sawClose = false;
 			bool sawMerge = false;
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
 		{
 		  if (DoFail)
 		  {
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			for (int i = 0; i < trace.Length; i++)
 			{
 			  if ("flush".Equals(trace[i].MethodName) && "Lucene.Net.Index.DocFieldProcessor".Equals(trace[i].ClassName))
@@ -654,7 +654,7 @@ namespace Lucene.Net.Index
 		d.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestIndexWriterWithThreads OuterInstance;
 
@@ -762,7 +762,7 @@ namespace Lucene.Net.Index
 			  catch (Exception t)
 			  {
 				Failed.Set(true);
-				throw new Exception(t);
+				throw new Exception(t.Message, t);
 			  }
 			}
 		  }

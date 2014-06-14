@@ -269,15 +269,11 @@ namespace Lucene.Net.Index
 		if (IndexedTermsArray == null)
 		{
 		  //System.out.println("GET normal enum");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = reader.fields();
 		  Fields fields = reader.Fields();
 		  if (fields == null)
 		  {
 			return null;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(field);
 		  Terms terms = fields.Terms(Field);
 		  if (terms == null)
 		  {
@@ -333,42 +329,26 @@ namespace Lucene.Net.Index
 	  /// Call this only once (if you subclass!) </summary>
 	  protected internal virtual void Uninvert(AtomicReader reader, Bits liveDocs, BytesRef termPrefix)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfo info = reader.getFieldInfos().fieldInfo(field);
 		FieldInfo info = reader.FieldInfos.FieldInfo(Field);
 		if (info != null && info.HasDocValues())
 		{
 		  throw new InvalidOperationException("Type mismatch: " + Field + " was indexed as " + info.DocValuesType);
 		}
 		//System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long startTime = DateTime.Now.Millisecond;
 		long startTime = DateTime.Now.Millisecond;
 		Prefix = termPrefix == null ? null : BytesRef.DeepCopyOf(termPrefix);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxDoc = reader.maxDoc();
 		int maxDoc = reader.MaxDoc();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] index = new int[maxDoc];
 		int[] index = new int[maxDoc]; // immediate term numbers, or the index into the byte[] representing the last number
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int[] lastTerm = new int[maxDoc];
 		int[] lastTerm = new int[maxDoc]; // last term we saw for this document
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[][] bytes = new byte[maxDoc][];
 		sbyte[][] bytes = new sbyte[maxDoc][]; // list of term numbers for the doc (delta encoded vInts)
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields fields = reader.fields();
 		Fields fields = reader.Fields();
 		if (fields == null)
 		{
 		  // No terms
 		  return;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Terms terms = fields.terms(field);
 		Terms terms = fields.Terms(Field);
 		if (terms == null)
 		{
@@ -376,11 +356,7 @@ namespace Lucene.Net.Index
 		  return;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum te = terms.iterator(null);
 		TermsEnum te = terms.Iterator(null);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef seekStart = termPrefix != null ? termPrefix : new Lucene.Net.Util.BytesRef();
 		BytesRef seekStart = termPrefix != null ? termPrefix : new BytesRef();
 		//System.out.println("seekStart=" + seekStart.utf8ToString());
 		if (te.SeekCeil(seekStart) == TermsEnum.SeekStatus.END)
@@ -461,8 +437,6 @@ namespace Lucene.Net.Index
 			indexedTerms.Add(indexedTerm);
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int df = te.docFreq();
 		  int df = te.DocFreq();
 		  if (df <= MaxTermDocFreq)
 		  {
@@ -915,17 +889,11 @@ namespace Lucene.Net.Index
 		  //System.out.println("  seek(ord) targetOrd=" + targetOrd + " delta=" + delta + " ord=" + ord + " ii=" + indexInterval);
           if (delta < 0 || delta > OuterInstance.IndexInterval)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int idx = (int)(targetOrd >>> indexIntervalBits);
               int idx = (int)((long)((ulong)targetOrd >> OuterInstance.IndexIntervalBits));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef base = indexedTermsArray[idx];
               BytesRef @base = OuterInstance.IndexedTermsArray[idx];
 			//System.out.println("  do seek term=" + base.utf8ToString());
               Ord_Renamed = idx << OuterInstance.IndexIntervalBits;
 			delta = (int)(targetOrd - Ord_Renamed);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final TermsEnum.SeekStatus seekStatus = termsEnum.seekCeil(base);
 			TermsEnum.SeekStatus seekStatus = TermsEnum.SeekCeil(@base);
 			Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
 		  }

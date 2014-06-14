@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 	  public virtual void RunTest(Random random, Directory directory)
 	  {
 
-		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()));
+		IndexWriter writer = new IndexWriter(directory, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, ANALYZER).SetOpenMode(OpenMode_e.CREATE).SetMaxBufferedDocs(2)).SetMergePolicy(NewLogMergePolicy()));
 
 		for (int iter = 0;iter < NUM_ITER;iter++)
 		{

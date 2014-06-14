@@ -37,6 +37,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using Lucene.Net.Support;
+    using System.IO;
 
 	public class TestIndexWriterCommit : LuceneTestCase
 	{
@@ -252,7 +253,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
 		  }
@@ -270,7 +271,7 @@ namespace Lucene.Net.Index
 			  this.Length = length;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
 			return new TokenStreamComponents(tokenizer, new MockFixedLengthPayloadFilter(Random(), tokenizer, Length));
@@ -357,7 +358,7 @@ namespace Lucene.Net.Index
 		TestUtil.ReduceOpenFiles(w.w);
 		w.Commit();
 		AtomicBoolean failed = new AtomicBoolean();
-		Thread[] threads = new Thread[NUM_THREADS];
+        ThreadClass[] threads = new ThreadClass[NUM_THREADS];
 		long endTime = DateTime.Now.Millisecond + ((long)(RUN_SEC * 1000));
 		for (int i = 0;i < NUM_THREADS;i++)
 		{
@@ -374,7 +375,7 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestIndexWriterCommit OuterInstance;
 

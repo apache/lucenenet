@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -38,6 +39,7 @@ namespace Lucene.Net.Index
 	using StringHelper = Lucene.Net.Util.StringHelper;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	// TODO:
 	//   - test w/ del docs
@@ -69,7 +71,7 @@ namespace Lucene.Net.Index
 
 		AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
 		DocTermOrds dto = new DocTermOrds(ar, ar.LiveDocs, "field");
-		SortedSetDocValues iter = dto.Iterator(ar);
+		SortedSetDocValues iter = dto.GetIterator(ar);
 
 		iter.Document = 0;
 		Assert.AreEqual(0, iter.NextOrd());
@@ -97,8 +99,8 @@ namespace Lucene.Net.Index
 		Directory dir = NewDirectory();
 
 		int NUM_TERMS = AtLeast(20);
-		Set<BytesRef> terms = new HashSet<BytesRef>();
-		while (terms.Size() < NUM_TERMS)
+		HashSet<BytesRef> terms = new HashSet<BytesRef>();
+		while (terms.Count < NUM_TERMS)
 		{
 		  string s = TestUtil.RandomRealisticUnicodeString(Random());
 		  //final String s = TestUtil.RandomSimpleString(random);
@@ -107,8 +109,8 @@ namespace Lucene.Net.Index
 			terms.Add(new BytesRef(s));
 		  }
 		}
-		BytesRef[] termsArray = terms.toArray(new BytesRef[terms.Size()]);
-		Arrays.sort(termsArray);
+		BytesRef[] termsArray = terms.ToArray(/*new BytesRef[terms.Count]*/);
+		Array.Sort(termsArray);
 
 		int NUM_DOCS = AtLeast(100);
 
@@ -118,14 +120,14 @@ namespace Lucene.Net.Index
 		if (Random().Next(10) == 7)
 		{
 		  // Make sure terms index has ords:
-		  Codec codec = TestUtil.AlwaysPostingsFormat(PostingsFormat.forName("Lucene41WithOrds"));
+		  Codec codec = TestUtil.AlwaysPostingsFormat(PostingsFormat.ForName("Lucene41WithOrds"));
 		  conf.SetCodec(codec);
 		}
 
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
 
 		int[][] idToOrds = new int[NUM_DOCS][];
-		Set<int?> ordsForDocSet = new HashSet<int?>();
+		HashSet<int?> ordsForDocSet = new HashSet<int?>();
 
 		for (int id = 0;id < NUM_DOCS;id++)
 		{
@@ -134,7 +136,7 @@ namespace Lucene.Net.Index
 		  doc.Add(new IntField("id", id, Field.Store.NO));
 
 		  int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
-		  while (ordsForDocSet.Size() < termCount)
+		  while (ordsForDocSet.Count < termCount)
 		  {
 			ordsForDocSet.Add(Random().Next(termsArray.Length));
 		  }
@@ -154,8 +156,8 @@ namespace Lucene.Net.Index
 			}
 			doc.Add(field);
 		  }
-		  ordsForDocSet.clear();
-		  Arrays.sort(ordsForDoc);
+		  ordsForDocSet.Clear();
+		  Array.Sort(ordsForDoc);
 		  idToOrds[id] = ordsForDoc;
 		  w.AddDocument(doc);
 		}
@@ -174,7 +176,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("\nTEST: sub=" + ctx.Reader());
 		  }
-		  Verify(ctx.Reader(), idToOrds, termsArray, null);
+		  Verify((AtomicReader)ctx.Reader(), idToOrds, termsArray, null);
 		}
 
 		// Also test top-level reader: its enum does not support
@@ -186,7 +188,7 @@ namespace Lucene.Net.Index
 		AtomicReader slowR = SlowCompositeReaderWrapper.Wrap(r);
 		Verify(slowR, idToOrds, termsArray, null);
 
-        FieldCache_Fields.DEFAULT.purgeByCacheKey(slowR.CoreCacheKey);
+        FieldCache_Fields.DEFAULT.PurgeByCacheKey(slowR.CoreCacheKey);
 
 		r.Dispose();
 		dir.Dispose();
@@ -202,16 +204,16 @@ namespace Lucene.Net.Index
 		{
 		  Console.WriteLine("TEST: use " + numPrefix + " prefixes");
 		}
-		while (prefixes.Size() < numPrefix)
+		while (prefixes.Count < numPrefix)
 		{
 		  prefixes.Add(TestUtil.RandomRealisticUnicodeString(Random()));
 		  //prefixes.Add(TestUtil.RandomSimpleString(random));
 		}
-		string[] prefixesArray = prefixes.toArray(new string[prefixes.Size()]);
+		string[] prefixesArray = prefixes.ToArray(/*new string[prefixes.Count]*/);
 
 		int NUM_TERMS = AtLeast(20);
-		Set<BytesRef> terms = new HashSet<BytesRef>();
-		while (terms.Size() < NUM_TERMS)
+		HashSet<BytesRef> terms = new HashSet<BytesRef>();
+		while (terms.Count < NUM_TERMS)
 		{
 		  string s = prefixesArray[Random().Next(prefixesArray.Length)] + TestUtil.RandomRealisticUnicodeString(Random());
 		  //final String s = prefixesArray[random.nextInt(prefixesArray.Length)] + TestUtil.RandomSimpleString(random);
@@ -220,8 +222,8 @@ namespace Lucene.Net.Index
 			terms.Add(new BytesRef(s));
 		  }
 		}
-		BytesRef[] termsArray = terms.toArray(new BytesRef[terms.Size()]);
-		Arrays.sort(termsArray);
+		BytesRef[] termsArray = terms.ToArray(/*new BytesRef[terms.Size()]*/);
+		Array.Sort(termsArray);
 
 		int NUM_DOCS = AtLeast(100);
 
@@ -230,14 +232,14 @@ namespace Lucene.Net.Index
 		// Sometimes swap in codec that impls ord():
 		if (Random().Next(10) == 7)
 		{
-		  Codec codec = TestUtil.AlwaysPostingsFormat(PostingsFormat.forName("Lucene41WithOrds"));
+		  Codec codec = TestUtil.AlwaysPostingsFormat(PostingsFormat.ForName("Lucene41WithOrds"));
 		  conf.SetCodec(codec);
 		}
 
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
 
 		int[][] idToOrds = new int[NUM_DOCS][];
-		Set<int?> ordsForDocSet = new HashSet<int?>();
+		HashSet<int?> ordsForDocSet = new HashSet<int?>();
 
 		for (int id = 0;id < NUM_DOCS;id++)
 		{
@@ -246,7 +248,7 @@ namespace Lucene.Net.Index
 		  doc.Add(new IntField("id", id, Field.Store.NO));
 
 		  int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
-		  while (ordsForDocSet.Size() < termCount)
+		  while (ordsForDocSet.Count < termCount)
 		  {
 			ordsForDocSet.Add(Random().Next(termsArray.Length));
 		  }
@@ -266,8 +268,8 @@ namespace Lucene.Net.Index
 			}
 			doc.Add(field);
 		  }
-		  ordsForDocSet.clear();
-		  Arrays.sort(ordsForDoc);
+		  ordsForDocSet.Clear();
+		  Array.Sort(ordsForDoc);
 		  idToOrds[id] = ordsForDoc;
 		  w.AddDocument(doc);
 		}
@@ -313,7 +315,7 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("\nTEST: sub=" + ctx.Reader());
 			}
-			Verify(ctx.Reader(), idToOrdsPrefix, termsArray, prefixRef);
+			Verify((AtomicReader)ctx.Reader(), idToOrdsPrefix, termsArray, prefixRef);
 		  }
 
 		  // Also test top-level reader: its enum does not support
@@ -325,7 +327,7 @@ namespace Lucene.Net.Index
 		  Verify(slowR, idToOrdsPrefix, termsArray, prefixRef);
 		}
 
-        FieldCache_Fields.DEFAULT.purgeByCacheKey(slowR.CoreCacheKey);
+        FieldCache_Fields.DEFAULT.PurgeByCacheKey(slowR.CoreCacheKey);
 
 		r.Dispose();
 		dir.Dispose();
@@ -357,8 +359,8 @@ namespace Lucene.Net.Index
 		}
 
 		//final TermsEnum te = subR.Fields().Terms("field").iterator();
-		TermsEnum te = dto.getOrdTermsEnum(r);
-		if (dto.numTerms() == 0)
+		TermsEnum te = dto.GetOrdTermsEnum(r);
+		if (dto.NumTerms() == 0)
 		{
 		  if (prefixRef == null)
 		  {
@@ -402,7 +404,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		SortedSetDocValues iter = dto.iterator(r);
+		SortedSetDocValues iter = dto.GetIterator(r);
 		for (int docID = 0;docID < r.MaxDoc();docID++)
 		{
 		  if (VERBOSE)
@@ -445,9 +447,9 @@ namespace Lucene.Net.Index
 		iw.DeleteDocuments(new Term("foo", "baz"));
 		DirectoryReader r2 = DirectoryReader.Open(iw, true);
 
-        FieldCache_Fields.DEFAULT.getDocTermOrds(GetOnlySegmentReader(r2), "foo");
+        FieldCache_Fields.DEFAULT.GetDocTermOrds(GetOnlySegmentReader(r2), "foo");
 
-        SortedSetDocValues v = FieldCache_Fields.DEFAULT.getDocTermOrds(GetOnlySegmentReader(r1), "foo");
+        SortedSetDocValues v = FieldCache_Fields.DEFAULT.GetDocTermOrds(GetOnlySegmentReader(r1), "foo");
 		Assert.AreEqual(2, v.ValueCount);
 		v.Document = 1;
 		Assert.AreEqual(1, v.NextOrd());
@@ -463,7 +465,7 @@ namespace Lucene.Net.Index
 		Directory directory = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
 		IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		iwconfig.MergePolicy = NewLogMergePolicy();
+		iwconfig.SetMergePolicy(NewLogMergePolicy());
 		RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
 
 		Document doc = new Document();
@@ -483,10 +485,10 @@ namespace Lucene.Net.Index
         iwriter.Close();
 
 		AtomicReader ar = GetOnlySegmentReader(ireader);
-		SortedSetDocValues dv = FieldCache.DEFAULT.getDocTermOrds(ar, "field");
+		SortedSetDocValues dv = FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "field");
 		Assert.AreEqual(3, dv.ValueCount);
 
-		TermsEnum termsEnum = dv.termsEnum();
+		TermsEnum termsEnum = dv.TermsEnum();
 
 		// next()
 		Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());

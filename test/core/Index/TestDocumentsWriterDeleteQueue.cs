@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Unit test for <seealso cref="DocumentsWriterDeleteQueue"/>
@@ -51,59 +52,59 @@ namespace Lucene.Net.Index
 		BufferedUpdates bd2 = new BufferedUpdates();
 		int last1 = 0;
 		int last2 = 0;
-		Set<Term> uniqueValues = new HashSet<Term>();
+		HashSet<Term> uniqueValues = new HashSet<Term>();
 		for (int j = 0; j < ids.Length; j++)
 		{
 		  int? i = ids[j];
 		  // create an array here since we compare identity below against tailItem
 		  Term[] term = new Term[] {new Term("id", i.ToString())};
 		  uniqueValues.Add(term[0]);
-		  queue.addDelete(term);
+		  queue.AddDelete(term);
 		  if (Random().Next(20) == 0 || j == ids.Length - 1)
 		  {
-			queue.updateSlice(slice1);
-			Assert.IsTrue(slice1.isTailItem(term));
-			slice1.apply(bd1, j);
+			queue.UpdateSlice(slice1);
+			Assert.IsTrue(slice1.IsTailItem(term));
+			slice1.Apply(bd1, j);
 			AssertAllBetween(last1, j, bd1, ids);
 			last1 = j + 1;
 		  }
 		  if (Random().Next(10) == 5 || j == ids.Length - 1)
 		  {
-			queue.updateSlice(slice2);
-			Assert.IsTrue(slice2.isTailItem(term));
-			slice2.apply(bd2, j);
+			queue.UpdateSlice(slice2);
+			Assert.IsTrue(slice2.IsTailItem(term));
+			slice2.Apply(bd2, j);
 			AssertAllBetween(last2, j, bd2, ids);
 			last2 = j + 1;
 		  }
-		  Assert.AreEqual(j + 1, queue.numGlobalTermDeletes());
+		  Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes());
 		}
-		Assert.AreEqual(uniqueValues, bd1.terms.Keys);
-		Assert.AreEqual(uniqueValues, bd2.terms.Keys);
+		Assert.AreEqual(uniqueValues, bd1.Terms.Keys);
+		Assert.AreEqual(uniqueValues, bd2.Terms.Keys);
 		HashSet<Term> frozenSet = new HashSet<Term>();
-		foreach (Term t in queue.freezeGlobalBuffer(null).termsIterable())
+		foreach (Term t in queue.FreezeGlobalBuffer(null).termsIterable())
 		{
 		  BytesRef bytesRef = new BytesRef();
 		  bytesRef.CopyBytes(t.Bytes);
 		  frozenSet.Add(new Term(t.Field, bytesRef));
 		}
 		Assert.AreEqual(uniqueValues, frozenSet);
-		Assert.AreEqual("num deletes must be 0 after freeze", 0, queue.numGlobalTermDeletes());
+		Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
 	  }
 
 	  private void AssertAllBetween(int start, int end, BufferedUpdates deletes, int?[] ids)
 	  {
 		for (int i = start; i <= end; i++)
 		{
-		  Assert.AreEqual(Convert.ToInt32(end), deletes.terms.Get(new Term("id", ids[i].ToString())));
+		  Assert.AreEqual(Convert.ToInt32(end), deletes.Terms.Get(new Term("id", ids[i].ToString())));
 		}
 	  }
 
 	  public virtual void TestClear()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-		Assert.IsFalse(queue.anyChanges());
-		queue.clear();
-		Assert.IsFalse(queue.anyChanges());
+		Assert.IsFalse(queue.AnyChanges());
+		queue.Clear();
+		Assert.IsFalse(queue.AnyChanges());
 		int size = 200 + Random().Next(500) * RANDOM_MULTIPLIER;
 		int termsSinceFreeze = 0;
 		int queriesSinceFreeze = 0;
@@ -112,20 +113,20 @@ namespace Lucene.Net.Index
 		  Term term = new Term("id", "" + i);
 		  if (Random().Next(10) == 0)
 		  {
-			queue.addDelete(new TermQuery(term));
+			queue.AddDelete(new TermQuery(term));
 			queriesSinceFreeze++;
 		  }
 		  else
 		  {
-			queue.addDelete(term);
+			queue.AddDelete(term);
 			termsSinceFreeze++;
 		  }
-		  Assert.IsTrue(queue.anyChanges());
+		  Assert.IsTrue(queue.AnyChanges());
 		  if (Random().Next(10) == 0)
 		  {
-			queue.clear();
-			queue.tryApplyGlobalSlice();
-			Assert.IsFalse(queue.anyChanges());
+			queue.Clear();
+			queue.TryApplyGlobalSlice();
+			Assert.IsFalse(queue.AnyChanges());
 		  }
 		}
 
@@ -142,23 +143,23 @@ namespace Lucene.Net.Index
 		  Term term = new Term("id", "" + i);
 		  if (Random().Next(10) == 0)
 		  {
-			queue.addDelete(new TermQuery(term));
+			queue.AddDelete(new TermQuery(term));
 			queriesSinceFreeze++;
 		  }
 		  else
 		  {
-			queue.addDelete(term);
+			queue.AddDelete(term);
 			termsSinceFreeze++;
 		  }
-		  Assert.IsTrue(queue.anyChanges());
+		  Assert.IsTrue(queue.AnyChanges());
 		  if (Random().Next(5) == 0)
 		  {
-			FrozenBufferedUpdates freezeGlobalBuffer = queue.freezeGlobalBuffer(null);
+			FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
 			Assert.AreEqual(termsSinceFreeze, freezeGlobalBuffer.TermCount);
-			Assert.AreEqual(queriesSinceFreeze, freezeGlobalBuffer.queries.Length);
+			Assert.AreEqual(queriesSinceFreeze, freezeGlobalBuffer.Queries.Length);
 			queriesSinceFreeze = 0;
 			termsSinceFreeze = 0;
-			Assert.IsFalse(queue.anyChanges());
+			Assert.IsFalse(queue.AnyChanges());
 		  }
 		}
 	  }
@@ -166,24 +167,24 @@ namespace Lucene.Net.Index
 	  public virtual void TestPartiallyAppliedGlobalSlice()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-		Field field = typeof(DocumentsWriterDeleteQueue).getDeclaredField("globalBufferLock");
+		Field field = typeof(DocumentsWriterDeleteQueue).GetDeclaredField("globalBufferLock");
 		field.Accessible = true;
 		ReentrantLock @lock = (ReentrantLock) field.Get(queue);
-		@lock.@lock();
-		Thread t = new ThreadAnonymousInnerClassHelper(this, queue);
+		@lock.@Lock();
+		ThreadClass t = new ThreadAnonymousInnerClassHelper(this, queue);
 		t.Start();
 		t.Join();
 		@lock.Unlock();
-		Assert.IsTrue("changes in del queue but not in slice yet", queue.anyChanges());
-		queue.tryApplyGlobalSlice();
-		Assert.IsTrue("changes in global buffer", queue.anyChanges());
-		FrozenBufferedUpdates freezeGlobalBuffer = queue.freezeGlobalBuffer(null);
-		Assert.IsTrue(freezeGlobalBuffer.any());
+		Assert.IsTrue(queue.AnyChanges(), "changes in del queue but not in slice yet");
+		queue.TryApplyGlobalSlice();
+		Assert.IsTrue(queue.AnyChanges(), "changes in global buffer");
+		FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
+		Assert.IsTrue(freezeGlobalBuffer.Any());
 		Assert.AreEqual(1, freezeGlobalBuffer.TermCount);
-		Assert.IsFalse("all changes applied", queue.anyChanges());
+		Assert.IsFalse(queue.AnyChanges(), "all changes applied");
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestDocumentsWriterDeleteQueue OuterInstance;
 
@@ -197,14 +198,14 @@ namespace Lucene.Net.Index
 
 		  public override void Run()
 		  {
-			Queue.addDelete(new Term("foo", "bar"));
+			Queue.AddDelete(new Term("foo", "bar"));
 		  }
 	  }
 
 	  public virtual void TestStressDeleteQueue()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-		Set<Term> uniqueValues = new HashSet<Term>();
+		HashSet<Term> uniqueValues = new HashSet<Term>();
 		int size = 10000 + Random().Next(500) * RANDOM_MULTIPLIER;
 		int?[] ids = new int?[size];
 		for (int i = 0; i < ids.Length; i++)
@@ -230,26 +231,26 @@ namespace Lucene.Net.Index
 		foreach (UpdateThread updateThread in threads)
 		{
 		  DeleteSlice slice = updateThread.Slice;
-		  queue.updateSlice(slice);
+		  queue.UpdateSlice(slice);
 		  BufferedUpdates deletes = updateThread.Deletes;
-		  slice.apply(deletes, BufferedUpdates.MAX_INT);
-		  Assert.AreEqual(uniqueValues, deletes.terms.Keys);
+		  slice.Apply(deletes, BufferedUpdates.MAX_INT);
+		  Assert.AreEqual(uniqueValues, deletes.Terms.Keys);
 		}
-		queue.tryApplyGlobalSlice();
-		Set<Term> frozenSet = new HashSet<Term>();
-		foreach (Term t in queue.freezeGlobalBuffer(null).termsIterable())
+		queue.TryApplyGlobalSlice();
+		HashSet<Term> frozenSet = new HashSet<Term>();
+		foreach (Term t in queue.FreezeGlobalBuffer(null).termsIterable())
 		{
 		  BytesRef bytesRef = new BytesRef();
 		  bytesRef.CopyBytes(t.Bytes);
 		  frozenSet.Add(new Term(t.Field, bytesRef));
 		}
-		Assert.AreEqual("num deletes must be 0 after freeze", 0, queue.numGlobalTermDeletes());
+		Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
 		Assert.AreEqual(uniqueValues.Size(), frozenSet.Size());
 		Assert.AreEqual(uniqueValues, frozenSet);
 
 	  }
 
-	  private class UpdateThread : System.Threading.Thread
+	  private class UpdateThread : ThreadClass
 	  {
 		internal readonly DocumentsWriterDeleteQueue Queue;
 		internal readonly AtomicInteger Index;
@@ -283,8 +284,8 @@ namespace Lucene.Net.Index
 		  {
 			Term term = new Term("id", Ids[i].ToString());
 			Queue.Add(term, Slice);
-			Assert.IsTrue(Slice.isTailItem(term));
-			Slice.apply(Deletes, BufferedUpdates.MAX_INT);
+			Assert.IsTrue(Slice.IsTailItem(term));
+			Slice.Apply(Deletes, BufferedUpdates.MAX_INT);
 		  }
 		}
 	  }

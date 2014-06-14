@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	 * each slice until we hit the end of that slice at which
 	 * point we read the forwarding address of the next slice
 	 * and then jump to it.*/
-	internal sealed class ByteSliceReader : DataInput
+	public sealed class ByteSliceReader : DataInput
 	{
 	  internal ByteBlockPool Pool;
 	  internal int BufferUpto;

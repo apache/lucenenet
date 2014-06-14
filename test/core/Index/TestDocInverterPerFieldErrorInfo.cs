@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
     using NUnit.Framework;
+    using System.IO;
 
 
 	/// <summary>
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
 
 	  private class ThrowingAnalyzer : Analyzer
 	  {
-		protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader input)
+		protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader input)
 		{
 		  Tokenizer tokenizer = new MockTokenizer(input);
 		  if (fieldName.Equals("distinctiveFieldName"))

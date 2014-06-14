@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
         private long length;
         
         public MockIndexInput(byte[] bytes)
+            : base("MockIndexInput", BufferedIndexInput.BUFFER_SIZE)
         {
             buffer = bytes;
             length = bytes.Length;

@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -62,7 +63,7 @@ namespace Lucene.Net.Index
 			  // Make sure we aggressively mix in SimpleText
 			  // since it has different impls for all codec
 			  // formats...
-			  iwc.Codec = Codec.forName("SimpleText");
+			  iwc.SetCodec(Codec.ForName("SimpleText"));
 			}
 			if (w != null)
 			{
@@ -85,7 +86,7 @@ namespace Lucene.Net.Index
 
 		// Random delete half the docs:
 		HashSet<int?> deleted = new HashSet<int?>();
-		while (deleted.Size() < NUM_DOCS / 2)
+		while (deleted.Count < NUM_DOCS / 2)
 		{
 		  int? toDelete = Random().Next(NUM_DOCS);
 		  if (!deleted.Contains(toDelete))
@@ -95,7 +96,7 @@ namespace Lucene.Net.Index
 			if (Random().Next(17) == 6)
 			{
 			  IndexReader r = w.Reader;
-			  Assert.AreEqual(NUM_DOCS - deleted.Size(), r.NumDocs());
+			  Assert.AreEqual(NUM_DOCS - deleted.Count, r.NumDocs());
 			  r.Dispose();
 			}
 		  }

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
 	using Lucene41WithOrds = Lucene.Net.Codecs.Lucene41ords.Lucene41WithOrds;
 	using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using DirectPostingsFormat = Lucene.Net.Codecs.memory.DirectPostingsFormat;
 	using MemoryDocValuesFormat = Lucene.Net.Codecs.memory.MemoryDocValuesFormat;
 	using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
@@ -50,6 +50,7 @@ namespace Lucene.Net.Index
 	using FSTPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTPulsing41PostingsFormat;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Codec that assigns per-field random postings formats.
@@ -72,11 +73,11 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// unique set of format names this codec knows about </summary>
-	  public Set<string> FormatNames = new HashSet<string>();
+	  public HashSet<string> FormatNames = new HashSet<string>();
 
 	  /// <summary>
 	  /// unique set of docvalues format names this codec knows about </summary>
-	  public Set<string> DvFormatNames = new HashSet<string>();
+	  public HashSet<string> DvFormatNames = new HashSet<string>();
 
 	  /// <summary>
 	  /// memorized field->postingsformat mappings </summary>
@@ -123,7 +124,7 @@ namespace Lucene.Net.Index
 		return codec;
 	  }
 
-	  public RandomCodec(Random random, Set<string> avoidCodecs)
+	  public RandomCodec(Random random, ISet<string> avoidCodecs)
 	  {
 		this.PerFieldSeed = random.Next();
 		// TODO: make it possible to specify min/max iterms per
@@ -132,52 +133,52 @@ namespace Lucene.Net.Index
 		int maxItemsPerBlock = 2 * (Math.Max(2, minItemsPerBlock - 1)) + random.Next(100);
 		int lowFreqCutoff = TestUtil.NextInt(random, 2, 100);
 
-		add(avoidCodecs, new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock), new FSTPostingsFormat(), new FSTOrdPostingsFormat(), new FSTPulsing41PostingsFormat(1 + random.Next(20)), new FSTOrdPulsing41PostingsFormat(1 + random.Next(20)), new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock), LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : lowFreqCutoff)), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new TestBloomFilteredLucene41Postings(), new MockSepPostingsFormat(), new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)), new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), new MockRandomPostingsFormat(random), new NestedPulsingPostingsFormat(), new Lucene41WithOrds(), new SimpleTextPostingsFormat(), new AssertingPostingsFormat(), new MemoryPostingsFormat(true, random.nextFloat()), new MemoryPostingsFormat(false, random.nextFloat()));
+		Add(avoidCodecs, new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock), new FSTPostingsFormat(), new FSTOrdPostingsFormat(), new FSTPulsing41PostingsFormat(1 + random.Next(20)), new FSTOrdPulsing41PostingsFormat(1 + random.Next(20)), new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock), LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : lowFreqCutoff)), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new TestBloomFilteredLucene41Postings(), new MockSepPostingsFormat(), new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)), new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), new MockRandomPostingsFormat(random), new NestedPulsingPostingsFormat(), new Lucene41WithOrds(), new SimpleTextPostingsFormat(), new AssertingPostingsFormat(), new MemoryPostingsFormat(true, random.nextFloat()), new MemoryPostingsFormat(false, random.nextFloat()));
 			// add pulsing again with (usually) different parameters
 			//TODO as a PostingsFormat which wraps others, we should allow TestBloomFilteredLucene41Postings to be constructed 
 			//with a choice of concrete PostingsFormats. Maybe useful to have a generic means of marking and dealing 
 			//with such "wrapper" classes?
 
-		addDocValues(avoidCodecs, new Lucene45DocValuesFormat(), new DiskDocValuesFormat(), new MemoryDocValuesFormat(), new SimpleTextDocValuesFormat(), new AssertingDocValuesFormat());
+		AddDocValues(avoidCodecs, new Lucene45DocValuesFormat(), new DiskDocValuesFormat(), new MemoryDocValuesFormat(), new SimpleTextDocValuesFormat(), new AssertingDocValuesFormat());
 
-		Collections.shuffle(Formats, random);
-		Collections.shuffle(DvFormats, random);
+        Formats = CollectionsHelper.Shuffle(Formats);
+        DvFormats = CollectionsHelper.Shuffle(DvFormats);
 
 		// Avoid too many open files:
 		if (Formats.Count > 4)
 		{
-		  Formats = Formats.subList(0, 4);
+		  Formats = Formats.SubList(0, 4);
 		}
 		if (DvFormats.Count > 4)
 		{
-		  DvFormats = DvFormats.subList(0, 4);
+		  DvFormats = DvFormats.SubList(0, 4);
 		}
 	  }
 
-	  public RandomCodec(Random random) : this(random, Collections.emptySet<string> ())
+	  public RandomCodec(Random random) : this(random, CollectionsHelper.EmptySet<string> ())
 	  {
 	  }
 
-	  private void Add(Set<string> avoidCodecs, params PostingsFormat[] postings)
+	  private void Add(ISet<string> avoidCodecs, params PostingsFormat[] postings)
 	  {
 		foreach (PostingsFormat p in postings)
 		{
-		  if (!avoidCodecs.contains(p.Name))
+		  if (!avoidCodecs.Contains(p.Name))
 		  {
 			Formats.Add(p);
-			FormatNames.add(p.Name);
+			FormatNames.Add(p.Name);
 		  }
 		}
 	  }
 
-	  private void AddDocValues(Set<string> avoidCodecs, params DocValuesFormat[] docvalues)
+	  private void AddDocValues(ISet<string> avoidCodecs, params DocValuesFormat[] docvalues)
 	  {
 		foreach (DocValuesFormat d in docvalues)
 		{
-		  if (!avoidCodecs.contains(d.Name))
+		  if (!avoidCodecs.Contains(d.Name))
 		  {
 			DvFormats.Add(d);
-			DvFormatNames.add(d.Name);
+			DvFormatNames.Add(d.Name);
 		  }
 		}
 	  }

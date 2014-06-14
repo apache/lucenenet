@@ -34,7 +34,9 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using System.IO;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestPayloadsOnVectors extends Lucene.Net.Util.LuceneTestCase
@@ -75,7 +77,7 @@ namespace Lucene.Net.Index
 		writer.AddDocument(doc);
 
 		DirectoryReader reader = writer.Reader;
-		Terms terms = reader.getTermVector(1, "field");
+		Terms terms = reader.GetTermVector(1, "field");
 		Debug.Assert(terms != null);
 		TermsEnum termsEnum = terms.Iterator(null);
 		Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
@@ -119,7 +121,7 @@ namespace Lucene.Net.Index
 		doc.Add(field3);
 		writer.AddDocument(doc);
 		DirectoryReader reader = writer.Reader;
-		Terms terms = reader.getTermVector(0, "field");
+		Terms terms = reader.GetTermVector(0, "field");
 		Debug.Assert(terms != null);
 		TermsEnum termsEnum = terms.Iterator(null);
 		Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));

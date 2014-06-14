@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 	    Directory dir = NewFSDirectory(indexDir);
 	
 	    LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
-	    mp.setUseCompoundFile(false);
+	    mp.SetUseCompoundFile(false);
 	    mp.setNoCFSRatio(1.0);
 	    mp.setMaxCFSSegmentSizeMB(Double.POSITIVE_INFINITY);
 	    MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 	    // TODO: remove randomness
 	    IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
 	      .SetMergePolicy(mp);
-	    conf.SetCodec(Codec.forName("Lucene40"));
+	    conf.SetCodec(Codec.ForName("Lucene40"));
 	    IndexWriter writer = new IndexWriter(dir, conf);
 	    LineFileDocs docs = new LineFileDocs(null, true);
 	    for(int i=0;i<50;i++) {
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
 		  ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		  CheckIndex checker = new CheckIndex(dir);
 		  checker.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
-		  CheckIndex.Status indexStatus = checker.CheckIndex();
+		  CheckIndex.Status indexStatus = checker.DoCheckIndex();
 		  Assert.IsFalse(indexStatus.Clean);
 		  Assert.IsTrue(bos.ToString(IOUtils.UTF_8).Contains(typeof(IndexFormatTooOldException).Name));
 

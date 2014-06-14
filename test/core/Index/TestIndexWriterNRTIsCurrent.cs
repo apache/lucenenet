@@ -28,8 +28,10 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
+    using System.IO;
 
 	public class TestIndexWriterNRTIsCurrent : LuceneTestCase
 	{
@@ -79,7 +81,7 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  public class WriterThread : System.Threading.Thread
+      public class WriterThread : ThreadClass
 	  {
 		internal readonly ReaderHolder Holder;
 		internal readonly IndexWriter Writer;
@@ -109,7 +111,7 @@ namespace Lucene.Net.Index
 			Term term = new Term("id");
 			for (int i = 0; i < NumOps && !Holder.Stop; i++)
 			{
-			  float nextOp = random.nextFloat();
+			  float nextOp = random.NextDouble();
 			  if (nextOp < 0.3)
 			  {
 				term.Set("id", new BytesRef("1"));

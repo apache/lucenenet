@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 			  visited.Set(de.DocID());
 			}
 		  }
-		  Assert.AreEqual(visited.cardinality(), docCount);
+		  Assert.AreEqual(visited.Cardinality(), docCount);
 		}
 	  }
 	}

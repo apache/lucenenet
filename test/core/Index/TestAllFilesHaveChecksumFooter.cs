@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using CodecUtil = Lucene.Net.Codecs.CodecUtil;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using NumericDocValuesField = Lucene.Net.Document.NumericDocValuesField;
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
 		  try
 		  {
 			@in = dir.OpenInput(file, NewIOContext(Random()));
-			CodecUtil.checksumEntireFile(@in);
+			CodecUtil.ChecksumEntireFile(@in);
 			success = true;
 		  }
 		  finally

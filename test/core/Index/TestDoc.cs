@@ -83,9 +83,9 @@ namespace Lucene.Net.Index
 			try
 			{
 				FileInfo f = new FileInfo(WorkDir, name);
-				if (f.exists())
+				if (f.Exists())
 				{
-					f.delete();
+					f.Delete();
 				}
 
                 fw = new OutputStreamWriter(new FileOutputStream(f), IOUtils.CHARSET_UTF_8);
@@ -214,24 +214,24 @@ namespace Lucene.Net.Index
 		  SegmentReader r2 = new SegmentReader(si2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, context);
 
 		  Codec codec = Codec.Default;
-		  TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(si1.info.dir);
-		  SegmentInfo si = new SegmentInfo(si1.info.dir, Constants.LUCENE_MAIN_VERSION, merged, -1, false, codec, null);
+		  TrackingDirectoryWrapper trackingDir = new TrackingDirectoryWrapper(si1.Info.Dir);
+		  SegmentInfo si = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged, -1, false, codec, null);
 
-		  SegmentMerger merger = new SegmentMerger(Arrays.asList<AtomicReader>(r1, r2), si, InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, MergeState.CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
+		  SegmentMerger merger = new SegmentMerger(Arrays.AsList<AtomicReader>(r1, r2), si, InfoStream.Default, trackingDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, MergeState.CheckAbort.NONE, new FieldInfos.FieldNumbers(), context, true);
 
-		  MergeState mergeState = merger.merge();
+		  MergeState mergeState = merger.Merge();
 		  r1.Dispose();
 		  r2.Dispose();
-		  SegmentInfo info = new SegmentInfo(si1.info.dir, Constants.LUCENE_MAIN_VERSION, merged, si1.info.DocCount + si2.info.DocCount, false, codec, null);
-		  info.Files = new HashSet<>(trackingDir.CreatedFiles);
+		  SegmentInfo info = new SegmentInfo(si1.Info.Dir, Constants.LUCENE_MAIN_VERSION, merged, si1.Info.DocCount + si2.Info.DocCount, false, codec, null);
+		  info.Files = new HashSet<string>(trackingDir.CreatedFiles);
 
 		  if (useCompoundFile)
 		  {
-			ICollection<string> filesToDelete = IndexWriter.createCompoundFile(InfoStream.Default, dir, MergeState.CheckAbort.NONE, info, NewIOContext(Random()));
+			ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile(InfoStream.Default, dir, MergeState.CheckAbort.NONE, info, NewIOContext(Random()));
 			info.UseCompoundFile = true;
 			foreach (String fileToDelete in filesToDelete)
 			{
-			  si1.Info.dir.DeleteFile(fileToDelete);
+                si1.Info.Dir.DeleteFile(fileToDelete);
 			}
 		  }
 

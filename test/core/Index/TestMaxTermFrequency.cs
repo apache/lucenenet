@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -32,6 +33,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Tests the maxTermFrequency statistic in FieldInvertState
@@ -48,7 +50,7 @@ namespace Lucene.Net.Index
 		base.SetUp();
 		Dir = NewDirectory();
 		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy());
-		config.Similarity = new TestSimilarity(this);
+		config.SetSimilarity(new TestSimilarity(this));
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
 		Document doc = new Document();
 		Field foo = NewTextField("foo", "", Field.Store.NO);
@@ -99,7 +101,8 @@ namespace Lucene.Net.Index
 		  max = Math.Max(max, num);
 		}
 		Expected.Add(max);
-		Collections.shuffle(terms, Random());
+
+		terms = CollectionsHelper.Shuffle(terms);
 		return Arrays.ToString(terms.ToArray());
 	  }
 

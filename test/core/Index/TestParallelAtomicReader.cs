@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
 	public class TestParallelAtomicReader : LuceneTestCase
@@ -263,7 +264,7 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(parallelHits.Length, singleHits.Length);
 		for (int i = 0; i < parallelHits.Length; i++)
 		{
-		  Assert.AreEqual(parallelHits[i].score, singleHits[i].score, 0.001f);
+		  Assert.AreEqual(parallelHits[i].Score, singleHits[i].Score, 0.001f);
 		  Document docParallel = Parallel_Renamed.Doc(parallelHits[i].Doc);
 		  Document docSingle = Single_Renamed.Doc(singleHits[i].Doc);
 		  Assert.AreEqual(docParallel.Get("f1"), docSingle.Get("f1"));

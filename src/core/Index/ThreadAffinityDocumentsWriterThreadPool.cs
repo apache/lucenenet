@@ -34,14 +34,15 @@ namespace Lucene.Net.Index
 	/// <seealso cref="ThreadAffinityDocumentsWriterThreadPool"/> tries to find the currently
 	/// minimal contended <seealso cref="ThreadState"/>.
 	/// </summary>
-	internal class ThreadAffinityDocumentsWriterThreadPool : DocumentsWriterPerThreadPool
+	public class ThreadAffinityDocumentsWriterThreadPool : DocumentsWriterPerThreadPool
 	{
 	  private IDictionary<Thread, ThreadState> ThreadBindings = new ConcurrentDictionary<Thread, ThreadState>();
 
 	  /// <summary>
 	  /// Creates a new <seealso cref="ThreadAffinityDocumentsWriterThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
 	  /// </summary>
-	  public ThreadAffinityDocumentsWriterThreadPool(int maxNumPerThreads) : base(maxNumPerThreads)
+	  public ThreadAffinityDocumentsWriterThreadPool(int maxNumPerThreads) 
+          : base(maxNumPerThreads)
 	  {
 		Debug.Assert(MaxThreadStates >= 1);
 	  }

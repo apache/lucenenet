@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -41,12 +42,14 @@ namespace Lucene.Net.Index
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using TermQuery = Lucene.Net.Search.TermQuery;
 	using Directory = Lucene.Net.Store.Directory;
-	using AttributeImpl = Lucene.Net.Util.AttributeImpl;
+	using Attribute = Lucene.Net.Util.Attribute;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
 
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Base class aiming at testing <seealso cref="TermVectorsFormat term vectors formats"/>.
@@ -62,21 +65,13 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal enum Options
 	  {
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		NONE(false, false, false),
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		POSITIONS(true, false, false),
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		OFFSETS(false, true, false),
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		POSITIONS_AND_OFFSETS(true, true, false),
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		POSITIONS_AND_PAYLOADS(true, false, true),
-//JAVA TO C# CONVERTER TODO TASK: Enum values must be single integer values in .NET:
-		POSITIONS_AND_OFFSETS_AND_PAYLOADS(true, true, true);
-//JAVA TO C# CONVERTER TODO TASK: Enums cannot contain fields in .NET:
+		NONE,//(false, false, false),
+		POSITIONS,//(true, false, false),
+		OFFSETS,//(false, true, false),
+		POSITIONS_AND_OFFSETS,//(true, true, false),
+		POSITIONS_AND_PAYLOADS,//(true, false, true),
+		POSITIONS_AND_OFFSETS_AND_PAYLOADS//(true, true, true);
 //		final boolean positions, offsets, payloads;
-//JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
 //		private Options(boolean positions, boolean offsets, boolean payloads)
 	//	{
 	//	  this.positions = positions;
@@ -85,24 +80,86 @@ namespace Lucene.Net.Index
 	//	}
 	  }
 
-	  protected internal virtual ISet<Options> ValidOptions()
+      private class OptionsWrapper
+      {
+          public bool positions, offsets, payloads;
+
+          private void SetOptionsWrapper(bool positions, bool offsets, bool payloads)
+          {
+              this.positions = positions;
+              this.offsets = offsets;
+              this.payloads = payloads;
+          }
+
+          public OptionsWrapper(Options opt)
+          {
+              switch (opt)
+              {
+                  case Options.NONE:
+                      SetOptionsWrapper(false, false, false);
+                      break;
+                  case Options.POSITIONS:
+                      SetOptionsWrapper(true, false, false);
+                      break;
+                  case Options.OFFSETS:
+                      SetOptionsWrapper(false, true, false);
+                      break;
+                  case Options.POSITIONS_AND_OFFSETS:
+                      SetOptionsWrapper(true, true, false);
+                      break;
+                  case Options.POSITIONS_AND_PAYLOADS:
+                      SetOptionsWrapper(true, false, true);
+                      break;
+                  case Options.POSITIONS_AND_OFFSETS_AND_PAYLOADS:
+                      SetOptionsWrapper(true, true, true);
+                      break;
+                  default:
+                      throw new InvalidOperationException("Invalid Options enum type");
+              }
+          }
+
+          public static IEnumerable<Options> GetAsEnumer()
+          {
+              foreach (Options opt in Enum.GetValues(typeof(Options))) {
+                  yield return opt;
+              }
+          }
+
+          public static IEnumerable<Options> GetAsEnumer(Options startInc, Options endInc)
+          {
+              foreach (Options opt in Enum.GetValues(typeof(Options)))
+              {
+                  if (opt >= startInc && opt <= endInc)
+                    yield return opt;
+              }
+          }
+      }
+
+
+
+	  protected internal virtual IEnumerable<Options> ValidOptions()
 	  {
-		return EnumSet.allOf(typeof(Options));
+          return OptionsWrapper.GetAsEnumer();
 	  }
+
+      protected internal virtual IEnumerable<Options> ValidOptions(Options startInc, Options endInc)
+      {
+          return OptionsWrapper.GetAsEnumer(startInc, endInc);
+      }
 
 	  protected internal virtual Options RandomOptions()
 	  {
-		return RandomPicks.randomFrom(Random(), new List<>(ValidOptions()));
+		return RandomPicks.randomFrom(Random(), new List<Options>(ValidOptions()));
 	  }
 
 	  protected internal virtual FieldType FieldType(Options options)
 	  {
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.StoreTermVectors = true;
-		ft.StoreTermVectorPositions = options.positions;
-		ft.StoreTermVectorOffsets = options.offsets;
-		ft.StoreTermVectorPayloads = options.payloads;
-		ft.freeze();
+		ft.StoreTermVectorPositions = (new OptionsWrapper(options)).positions;
+        ft.StoreTermVectorOffsets = (new OptionsWrapper(options)).offsets;
+        ft.StoreTermVectorPayloads = (new OptionsWrapper(options)).payloads;
+		ft.Freeze();
 		return ft;
 	  }
 
@@ -114,8 +171,8 @@ namespace Lucene.Net.Index
 		  return null;
 		}
 		BytesRef payload = new BytesRef(len);
-		Random().nextBytes(payload.bytes);
-		payload.length = len;
+		Random().nextBytes(payload.Bytes);
+		payload.Length = len;
 		return payload;
 	  }
 
@@ -127,13 +184,13 @@ namespace Lucene.Net.Index
 		  int numFields = Random().Next(5);
 		  for (int j = 0; j < numFields; ++j)
 		  {
-			doc.add(new Field("f_" + opts, TestUtil.RandomSimpleString(Random(), 2), ft));
+			doc.Add(new Field("f_" + opts, TestUtil.RandomSimpleString(Random(), 2), ft));
 		  }
 		}
 	  }
 
 	  // custom impl to test cases that are forbidden by the default OffsetAttribute impl
-	  private class PermissiveOffsetAttributeImpl : AttributeImpl, OffsetAttribute
+	  private class PermissiveOffsetAttributeImpl : Attribute, OffsetAttribute
 	  {
 
 		internal int Start, End;
@@ -176,12 +233,12 @@ namespace Lucene.Net.Index
 		  return false;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return Start + 31 * End;
 		}
 
-		public override void CopyTo(AttributeImpl target)
+		public override void CopyTo(Attribute target)
 		{
 		  OffsetAttribute t = (OffsetAttribute) target;
 		  t.SetOffset(Start, End);
@@ -203,8 +260,8 @@ namespace Lucene.Net.Index
 		internal readonly BytesRef[] Payloads;
 
 		internal readonly IDictionary<string, int?> Freqs;
-		internal readonly IDictionary<int?, Set<int?>> PositionToTerms;
-		internal readonly IDictionary<int?, Set<int?>> StartOffsetToTerms;
+		internal readonly IDictionary<int?, ISet<int?>> PositionToTerms;
+		internal readonly IDictionary<int?, ISet<int?>> StartOffsetToTerms;
 
 		internal readonly CharTermAttribute TermAtt;
 		internal readonly PositionIncrementAttribute PiAtt;
@@ -265,7 +322,7 @@ namespace Lucene.Net.Index
 		  }
 		  if (Rarely())
 		  {
-			Arrays.fill(Payloads, outerInstance.RandomPayload());
+			Arrays.Fill(Payloads, outerInstance.RandomPayload());
 		  }
 		  else
 		  {
@@ -275,23 +332,23 @@ namespace Lucene.Net.Index
 			}
 		  }
 
-		  PositionToTerms = new Dictionary<>(len);
-		  StartOffsetToTerms = new Dictionary<>(len);
+		  PositionToTerms = new Dictionary<int?, ISet<int?>>(len);
+		  StartOffsetToTerms = new Dictionary<int?, ISet<int?>>(len);
 		  for (int i = 0; i < len; ++i)
 		  {
 			if (!PositionToTerms.ContainsKey(Positions[i]))
 			{
 			  PositionToTerms[Positions[i]] = new HashSet<int?>(1);
 			}
-			PositionToTerms[Positions[i]].add(i);
+			PositionToTerms[Positions[i]].Add(i);
 			if (!StartOffsetToTerms.ContainsKey(StartOffsets[i]))
 			{
 			  StartOffsetToTerms[StartOffsets[i]] = new HashSet<int?>(1);
 			}
-			StartOffsetToTerms[StartOffsets[i]].add(i);
+			StartOffsetToTerms[StartOffsets[i]].Add(i);
 		  }
 
-		  Freqs = new Dictionary<>();
+		  Freqs = new Dictionary<string, int?>();
 		  foreach (string term in Terms)
 		  {
 			if (Freqs.ContainsKey(term))
@@ -304,19 +361,19 @@ namespace Lucene.Net.Index
 			}
 		  }
 
-		  addAttributeImpl(new PermissiveOffsetAttributeImpl());
+		  AddAttributeImpl(new PermissiveOffsetAttributeImpl());
 
-		  TermAtt = addAttribute(typeof(CharTermAttribute));
-		  PiAtt = addAttribute(typeof(PositionIncrementAttribute));
-		  OAtt = addAttribute(typeof(OffsetAttribute));
-		  PAtt = addAttribute(typeof(PayloadAttribute));
+		  TermAtt = AddAttribute<CharTermAttribute>();
+		  PiAtt = AddAttribute<PositionIncrementAttribute>();
+		  OAtt = AddAttribute<OffsetAttribute>();
+          PAtt = AddAttribute<PayloadAttribute>();
 		}
 
 		public virtual bool HasPayloads()
 		{
 		  foreach (BytesRef payload in Payloads)
 		  {
-			if (payload != null && payload.length > 0)
+			if (payload != null && payload.Length > 0)
 			{
 			  return true;
 			}
@@ -328,7 +385,7 @@ namespace Lucene.Net.Index
 		{
 		  if (i < Terms.Length)
 		  {
-			TermAtt.setLength(0).append(Terms[i]);
+			TermAtt.SetLength(0).Append(Terms[i]);
 			PiAtt.PositionIncrement = PositionsIncrements[i];
 			OAtt.SetOffset(StartOffsets[i], EndOffsets[i]);
 			PAtt.Payload = Payloads[i];
@@ -362,15 +419,15 @@ namespace Lucene.Net.Index
 		  this.FieldNames = new string[fieldCount];
 		  FieldTypes = new FieldType[fieldCount];
 		  TokenStreams = new RandomTokenStream[fieldCount];
-		  Arrays.fill(FieldTypes, outerInstance.FieldType(options));
-		  Set<string> usedFileNames = new HashSet<string>();
+		  Arrays.Fill(FieldTypes, outerInstance.FieldType(options));
+		  HashSet<string> usedFileNames = new HashSet<string>();
 		  for (int i = 0; i < fieldCount; ++i)
 		  {
 			do
 			{
 			  this.FieldNames[i] = RandomPicks.randomFrom(Random(), fieldNames);
-			} while (usedFileNames.contains(this.FieldNames[i]));
-			usedFileNames.add(this.FieldNames[i]);
+			} while (usedFileNames.Contains(this.FieldNames[i]));
+			usedFileNames.Add(this.FieldNames[i]);
 			TokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt(Random(), 1, maxTermCount), sampleTerms, sampleTermBytes);
 		  }
 		}
@@ -380,7 +437,7 @@ namespace Lucene.Net.Index
 		  Document doc = new Document();
 		  for (int i = 0; i < FieldNames.Length; ++i)
 		  {
-			doc.add(new Field(FieldNames[i], TokenStreams[i], FieldTypes[i]));
+			doc.Add(new Field(FieldNames[i], TokenStreams[i], FieldTypes[i]));
 		  }
 		  return doc;
 		}
@@ -399,13 +456,13 @@ namespace Lucene.Net.Index
 		protected internal RandomDocumentFactory(BaseTermVectorsFormatTestCase outerInstance, int distinctFieldNames, int disctinctTerms)
 		{
 			this.OuterInstance = outerInstance;
-		  Set<string> fieldNames = new HashSet<string>();
-		  while (fieldNames.size() < distinctFieldNames)
+		  HashSet<string> fieldNames = new HashSet<string>();
+		  while (fieldNames.Count < distinctFieldNames)
 		  {
-			fieldNames.add(TestUtil.RandomSimpleString(Random()));
-			fieldNames.remove("id");
+			fieldNames.Add(TestUtil.RandomSimpleString(Random()));
+			fieldNames.Remove("id");
 		  }
-		  this.FieldNames = fieldNames.toArray(new string[0]);
+		  this.FieldNames = fieldNames.ToArray(/*new string[0]*/);
 		  Terms = new string[disctinctTerms];
 		  TermBytes = new BytesRef[disctinctTerms];
 		  for (int i = 0; i < disctinctTerms; ++i)
@@ -425,23 +482,23 @@ namespace Lucene.Net.Index
 	  protected internal virtual void AssertEquals(RandomDocument doc, Fields fields)
 	  {
 		// compare field names
-		AssertEquals(doc == null, fields == null);
-		AssertEquals(doc.FieldNames.Length, fields.size());
-		Set<string> fields1 = new HashSet<string>();
-		Set<string> fields2 = new HashSet<string>();
+		Assert.AreEqual(doc == null, fields == null);
+		Assert.AreEqual(doc.FieldNames.Length, fields.Size());
+		HashSet<string> fields1 = new HashSet<string>();
+		HashSet<string> fields2 = new HashSet<string>();
 		for (int i = 0; i < doc.FieldNames.Length; ++i)
 		{
-		  fields1.add(doc.FieldNames[i]);
+		  fields1.Add(doc.FieldNames[i]);
 		}
 		foreach (string field in fields)
 		{
-		  fields2.add(field);
+		  fields2.Add(field);
 		}
-		AssertEquals(fields1, fields2);
+        Assert.AreEqual(fields1, fields2);
 
 		for (int i = 0; i < doc.FieldNames.Length; ++i)
 		{
-		  AssertEquals(doc.TokenStreams[i], doc.FieldTypes[i], fields.terms(doc.FieldNames[i]));
+            AssertEquals(doc.TokenStreams[i], doc.FieldTypes[i], fields.Terms(doc.FieldNames[i]));
 		}
 	  }
 
@@ -464,65 +521,65 @@ namespace Lucene.Net.Index
 
 	  protected internal virtual void AssertEquals(RandomTokenStream tk, FieldType ft, Terms terms)
 	  {
-		AssertEquals(1, terms.DocCount);
-		int termCount = (new HashSet<>(Arrays.asList(tk.Terms))).Count;
-		AssertEquals(termCount, terms.size());
-		AssertEquals(termCount, terms.SumDocFreq);
-		AssertEquals(ft.storeTermVectorPositions(), terms.hasPositions());
-		AssertEquals(ft.storeTermVectorOffsets(), terms.hasOffsets());
-		AssertEquals(ft.storeTermVectorPayloads() && tk.HasPayloads(), terms.hasPayloads());
-		Set<BytesRef> uniqueTerms = new HashSet<BytesRef>();
+		Assert.AreEqual(1, terms.DocCount);
+		int termCount = (new HashSet<string>(Arrays.AsList(tk.Terms))).Count;
+		Assert.AreEqual(termCount, terms.Size());
+		Assert.AreEqual(termCount, terms.SumDocFreq);
+		Assert.AreEqual(ft.StoreTermVectorPositions, terms.HasPositions());
+		Assert.AreEqual(ft.StoreTermVectorOffsets, terms.HasOffsets());
+		Assert.AreEqual(ft.StoreTermVectorPayloads && tk.HasPayloads(), terms.HasPayloads());
+		HashSet<BytesRef> uniqueTerms = new HashSet<BytesRef>();
 		foreach (string term in tk.Freqs.Keys)
 		{
-		  uniqueTerms.add(new BytesRef(term));
+		  uniqueTerms.Add(new BytesRef(term));
 		}
-		BytesRef[] sortedTerms = uniqueTerms.toArray(new BytesRef[0]);
-		Arrays.sort(sortedTerms, terms.Comparator);
-		TermsEnum termsEnum = terms.iterator(Random().nextBoolean() ? null : this.TermsEnum.get());
-		this.TermsEnum.set(termsEnum);
+		BytesRef[] sortedTerms = uniqueTerms.ToArray(/*new BytesRef[0]*/);
+		Arrays.Sort(sortedTerms, terms.Comparator);
+		TermsEnum termsEnum = terms.Iterator(Random().NextBoolean() ? null : this.TermsEnum.Get());
+		this.TermsEnum.Set(termsEnum);
 		for (int i = 0; i < sortedTerms.Length; ++i)
 		{
-		  BytesRef nextTerm = termsEnum.next();
-		  AssertEquals(sortedTerms[i], nextTerm);
-		  AssertEquals(sortedTerms[i], termsEnum.term());
-		  AssertEquals(1, termsEnum.docFreq());
+		  BytesRef nextTerm = termsEnum.Next();
+		  Assert.AreEqual(sortedTerms[i], nextTerm);
+		  Assert.AreEqual(sortedTerms[i], termsEnum.Term());
+		  Assert.AreEqual(1, termsEnum.DocFreq());
 
 		  FixedBitSet bits = new FixedBitSet(1);
-		  DocsEnum docsEnum = termsEnum.docs(bits, Random().nextBoolean() ? null : this.DocsEnum.get());
-		  AssertEquals(DocsEnum.NO_MORE_DOCS, docsEnum.nextDoc());
-		  bits.set(0);
+		  DocsEnum docsEnum = termsEnum.Docs(bits, Random().NextBoolean() ? null : this.DocsEnum.Get());
+		  Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
+		  bits.Set(0);
 
-		  docsEnum = termsEnum.docs(Random().nextBoolean() ? bits : null, Random().nextBoolean() ? null : docsEnum);
+		  docsEnum = termsEnum.Docs(Random().NextBoolean() ? bits : null, Random().NextBoolean() ? null : docsEnum);
 		  Assert.IsNotNull(docsEnum);
-		  AssertEquals(0, docsEnum.nextDoc());
-		  AssertEquals(0, docsEnum.docID());
-		  AssertEquals(tk.Freqs[termsEnum.term().utf8ToString()], (int?) docsEnum.freq());
-		  AssertEquals(DocsEnum.NO_MORE_DOCS, docsEnum.nextDoc());
-		  this.DocsEnum.set(docsEnum);
+		  Assert.AreEqual(0, docsEnum.NextDoc());
+		  Assert.AreEqual(0, docsEnum.DocID());
+		  Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?) docsEnum.Freq());
+		  Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsEnum.NextDoc());
+		  this.DocsEnum.Set(docsEnum);
 
-		  bits.clear(0);
-		  DocsAndPositionsEnum docsAndPositionsEnum = termsEnum.docsAndPositions(bits, Random().nextBoolean() ? null : this.DocsAndPositionsEnum.get());
-		  AssertEquals(ft.storeTermVectorOffsets() || ft.storeTermVectorPositions(), docsAndPositionsEnum != null);
+		  bits.Clear(0);
+		  DocsAndPositionsEnum docsAndPositionsEnum = termsEnum.DocsAndPositions(bits, Random().NextBoolean() ? null : this.DocsAndPositionsEnum.get());
+		  Assert.AreEqual(ft.StoreTermVectorOffsets || ft.StoreTermVectorPositions, docsAndPositionsEnum != null);
 		  if (docsAndPositionsEnum != null)
 		  {
-			AssertEquals(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.nextDoc());
+			Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.NextDoc());
 		  }
-		  bits.set(0);
+		  bits.Set(0);
 
-		  docsAndPositionsEnum = termsEnum.docsAndPositions(Random().nextBoolean() ? bits : null, Random().nextBoolean() ? null : docsAndPositionsEnum);
-		  AssertEquals(ft.storeTermVectorOffsets() || ft.storeTermVectorPositions(), docsAndPositionsEnum != null);
-		  if (terms.hasPositions() || terms.hasOffsets())
+		  docsAndPositionsEnum = termsEnum.DocsAndPositions(Random().NextBoolean() ? bits : null, Random().NextBoolean() ? null : docsAndPositionsEnum);
+		  Assert.AreEqual(ft.StoreTermVectorOffsets || ft.StoreTermVectorPositions, docsAndPositionsEnum != null);
+		  if (terms.HasPositions() || terms.HasOffsets())
 		  {
-			AssertEquals(0, docsAndPositionsEnum.nextDoc());
-			int freq = docsAndPositionsEnum.freq();
-			AssertEquals(tk.Freqs[termsEnum.term().utf8ToString()], (int?) freq);
+			Assert.AreEqual(0, docsAndPositionsEnum.NextDoc());
+			int freq = docsAndPositionsEnum.Freq();
+			Assert.AreEqual(tk.Freqs[termsEnum.Term().Utf8ToString()], (int?) freq);
 			if (docsAndPositionsEnum != null)
 			{
 			  for (int k = 0; k < freq; ++k)
 			  {
-				int position = docsAndPositionsEnum.nextPosition();
-				Set<int?> indexes;
-				if (terms.hasPositions())
+				int position = docsAndPositionsEnum.NextPosition();
+				ISet<int?> indexes;
+				if (terms.HasPositions())
 				{
 				  indexes = tk.PositionToTerms[position];
 				  Assert.IsNotNull(indexes);
@@ -532,12 +589,12 @@ namespace Lucene.Net.Index
 				  indexes = tk.StartOffsetToTerms[docsAndPositionsEnum.StartOffset()];
 				  Assert.IsNotNull(indexes);
 				}
-				if (terms.hasPositions())
+				if (terms.HasPositions())
 				{
 				  bool foundPosition = false;
 				  foreach (int index in indexes)
 				  {
-					if (tk.TermBytes[index].Equals(termsEnum.term()) && tk.Positions[index] == position)
+					if (tk.TermBytes[index].Equals(termsEnum.Term()) && tk.Positions[index] == position)
 					{
 					  foundPosition = true;
 					  break;
@@ -545,12 +602,12 @@ namespace Lucene.Net.Index
 				  }
 				  Assert.IsTrue(foundPosition);
 				}
-				if (terms.hasOffsets())
+				if (terms.HasOffsets())
 				{
 				  bool foundOffset = false;
 				  foreach (int index in indexes)
 				  {
-					if (tk.TermBytes[index].Equals(termsEnum.term()) && tk.StartOffsets[index] == docsAndPositionsEnum.StartOffset() && tk.EndOffsets[index] == docsAndPositionsEnum.EndOffset())
+					if (tk.TermBytes[index].Equals(termsEnum.Term()) && tk.StartOffsets[index] == docsAndPositionsEnum.StartOffset() && tk.EndOffsets[index] == docsAndPositionsEnum.EndOffset())
 					{
 					  foundOffset = true;
 					  break;
@@ -558,12 +615,12 @@ namespace Lucene.Net.Index
 				  }
 				  Assert.IsTrue(foundOffset);
 				}
-				if (terms.hasPayloads())
+				if (terms.HasPayloads())
 				{
 				  bool foundPayload = false;
 				  foreach (int index in indexes)
 				  {
-					if (tk.TermBytes[index].Equals(termsEnum.term()) && Equals(tk.Payloads[index], docsAndPositionsEnum.Payload))
+					if (tk.TermBytes[index].Equals(termsEnum.Term()) && Equals(tk.Payloads[index], docsAndPositionsEnum.Payload))
 					{
 					  foundPayload = true;
 					  break;
@@ -574,45 +631,41 @@ namespace Lucene.Net.Index
 			  }
 			  try
 			  {
-				docsAndPositionsEnum.nextPosition();
+				docsAndPositionsEnum.NextPosition();
 				Assert.Fail();
 			  }
 			  catch (Exception e)
-			  {
-				// ok
-			  }
-			  catch (AssertionError e)
-			  {
+              {
 				// ok
 			  }
 			}
-			AssertEquals(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.nextDoc());
+			Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.NextDoc());
 		  }
-		  this.DocsAndPositionsEnum.set(docsAndPositionsEnum);
+		  this.DocsAndPositionsEnum.Set(docsAndPositionsEnum);
 		}
-		assertNull(termsEnum.next());
+		Assert.IsNull(termsEnum.Next());
 		for (int i = 0; i < 5; ++i)
 		{
-		  if (Random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
-			Assert.IsTrue(termsEnum.seekExact(RandomPicks.randomFrom(Random(), tk.TermBytes)));
+			Assert.IsTrue(termsEnum.SeekExact(RandomPicks.randomFrom(Random(), tk.TermBytes)));
 		  }
 		  else
 		  {
-			AssertEquals(SeekStatus.FOUND, termsEnum.seekCeil(RandomPicks.randomFrom(Random(), tk.TermBytes)));
+			Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(RandomPicks.randomFrom(Random(), tk.TermBytes)));
 		  }
 		}
 	  }
 
 	  protected internal virtual Document AddId(Document doc, string id)
 	  {
-		doc.add(new StringField("id", id, Field.Store.NO));
+		doc.Add(new StringField("id", id, Field.Store.NO));
 		return doc;
 	  }
 
 	  protected internal virtual int DocID(IndexReader reader, string id)
 	  {
-		return (new IndexSearcher(reader)).search(new TermQuery(new Term("id", id)), 1).scoreDocs[0].doc;
+		return (new IndexSearcher(reader)).Search(new TermQuery(new Term("id", id)), 1).ScoreDocs[0].doc;
 	  }
 
 	  // only one doc with vectors
@@ -643,21 +696,21 @@ namespace Lucene.Net.Index
 		  for (int i = 0; i < 10; ++i)
 		  {
 			int docID = Random().Next(numDocs);
-			Fields fields = reader.getTermVectors(docID);
+			Fields fields = reader.GetTermVectors(docID);
 			if (docID == docWithVectorsID)
 			{
 			  AssertEquals(doc, fields);
 			}
 			else
 			{
-			  assertNull(fields);
+			  Assert.IsNull(fields);
 			}
 		  }
-		  Fields fields = reader.getTermVectors(docWithVectorsID);
-		  AssertEquals(doc, fields);
-		  reader.close();
+		  Fields fields_ = reader.GetTermVectors(docWithVectorsID);
+		  AssertEquals(doc, fields_);
+		  reader.Dispose();
 		  writer.Close();
-		  dir.close();
+          dir.Dispose();
 		}
 	  }
 
@@ -675,10 +728,10 @@ namespace Lucene.Net.Index
 		  RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 2), AtLeast(20000), options);
 		  writer.AddDocument(doc.ToDocument());
 		  IndexReader reader = writer.Reader;
-		  AssertEquals(doc, reader.getTermVectors(0));
-		  reader.close();
+          AssertEquals(doc, reader.GetTermVectors(0));
+		  reader.Dispose();
 		  writer.Close();
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
@@ -692,10 +745,10 @@ namespace Lucene.Net.Index
 		  RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
 		  writer.AddDocument(doc.ToDocument());
 		  IndexReader reader = writer.Reader;
-		  AssertEquals(doc, reader.getTermVectors(0));
-		  reader.close();
+          AssertEquals(doc, reader.GetTermVectors(0));
+		  reader.Dispose();
 		  writer.Close();
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
@@ -720,12 +773,12 @@ namespace Lucene.Net.Index
 			writer.AddDocument(AddId(doc2.ToDocument(), "2"));
 			IndexReader reader = writer.Reader;
 			int doc1ID = DocID(reader, "1");
-			AssertEquals(doc1, reader.getTermVectors(doc1ID));
+            AssertEquals(doc1, reader.GetTermVectors(doc1ID));
 			int doc2ID = DocID(reader, "2");
-			AssertEquals(doc2, reader.getTermVectors(doc2ID));
-			reader.close();
+            AssertEquals(doc2, reader.GetTermVectors(doc2ID));
+			reader.Dispose();
 			writer.Close();
-			dir.close();
+            dir.Dispose();
 		  }
 		}
 	  }
@@ -749,11 +802,11 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numDocs; ++i)
 		{
 		  int docID = DocID(reader, "" + i);
-		  AssertEquals(docs[i], reader.getTermVectors(docID));
+          AssertEquals(docs[i], reader.GetTermVectors(docID));
 		}
-		reader.close();
+        reader.Dispose();
 		writer.Close();
-		dir.close();
+        dir.Dispose();
 	  }
 
 	  public virtual void TestMerge()
@@ -761,10 +814,10 @@ namespace Lucene.Net.Index
 		RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5, 20);
 		int numDocs = AtLeast(100);
 		int numDeletes = Random().Next(numDocs);
-		Set<int?> deletes = new HashSet<int?>();
-		while (deletes.size() < numDeletes)
+		HashSet<int?> deletes = new HashSet<int?>();
+		while (deletes.Count < numDeletes)
 		{
-		  deletes.add(Random().Next(numDocs));
+		  deletes.Add(Random().Next(numDocs));
 		}
 		foreach (Options options in ValidOptions())
 		{
@@ -792,15 +845,15 @@ namespace Lucene.Net.Index
 		  IndexReader reader = writer.Reader;
 		  for (int i = 0; i < numDocs; ++i)
 		  {
-			if (!deletes.contains(i))
+			if (!deletes.Contains(i))
 			{
 			  int docID = DocID(reader, "" + i);
-			  AssertEquals(docs[i], reader.getTermVectors(docID));
+              AssertEquals(docs[i], reader.GetTermVectors(docID));
 			}
 		  }
-		  reader.close();
+          reader.Dispose();
 		  writer.Close();
-		  dir.close();
+          dir.Dispose();
 		}
 	  }
 
@@ -827,7 +880,7 @@ namespace Lucene.Net.Index
 		  for (int i = 0; i < numDocs; ++i)
 		  {
 			int docID = DocID(reader, "" + i);
-			AssertEquals(docs[i], reader.getTermVectors(docID));
+            AssertEquals(docs[i], reader.GetTermVectors(docID));
 		  }
 
 		  AtomicReference<Exception> exception = new AtomicReference<Exception>();
@@ -844,10 +897,10 @@ namespace Lucene.Net.Index
 		  {
 			thread.Join();
 		  }
-		  reader.close();
+          reader.Dispose();
 		  writer.Close();
-		  dir.close();
-		  assertNull("One thread threw an exception", exception.get());
+          dir.Dispose();
+		  Assert.IsNull(exception.get(), "One thread threw an exception");
 		}
 	  }
 
@@ -878,8 +931,8 @@ namespace Lucene.Net.Index
 			  for (int i = 0; i < AtLeast(100); ++i)
 			  {
 				int idx = Random().Next(NumDocs);
-				int docID = outerInstance.DocID(Reader, "" + idx);
-				outerInstance.AssertEquals(Docs[idx], Reader.getTermVectors(docID));
+				int docID = OuterInstance.DocID(Reader, "" + idx);
+                OuterInstance.AssertEquals(Docs[idx], Reader.GetTermVectors(docID));
 			  }
 			}
 			catch (Exception t)

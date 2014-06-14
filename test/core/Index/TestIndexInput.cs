@@ -30,12 +30,13 @@ namespace Lucene.Net.Index
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using NUnit.Framework;
+    using System.IO;
 
 
 	public class TestIndexInput : LuceneTestCase
 	{
 
-	  internal static readonly sbyte[] READ_TEST_BYTES = new sbyte[] {unchecked((sbyte) 0x80), 0x01, unchecked((sbyte) 0xFF), 0x7F, unchecked((sbyte) 0x80), unchecked((sbyte) 0x80), 0x01, unchecked((sbyte) 0x81), unchecked((sbyte) 0x80), 0x01, unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), (sbyte) 0x07, unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), (sbyte) 0x0F, unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), (sbyte) 0x07, unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), (sbyte) 0x7F, 0x06, 'L', 'u', 'c', 'e', 'n', 'e', 0x02, unchecked((sbyte) 0xC2), unchecked((sbyte) 0xBF), 0x0A, 'L', 'u', unchecked((sbyte) 0xC2), unchecked((sbyte) 0xBF), 'c', 'e', unchecked((sbyte) 0xC2), unchecked((sbyte) 0xBF), 'n', 'e', 0x03, unchecked((sbyte) 0xE2), unchecked((sbyte) 0x98), unchecked((sbyte) 0xA0), 0x0C, 'L', 'u', unchecked((sbyte) 0xE2), unchecked((sbyte) 0x98), unchecked((sbyte) 0xA0), 'c', 'e', unchecked((sbyte) 0xE2), unchecked((sbyte) 0x98), unchecked((sbyte) 0xA0), 'n', 'e', 0x04, unchecked((sbyte) 0xF0), unchecked((sbyte) 0x9D), unchecked((sbyte) 0x84), unchecked((sbyte) 0x9E), 0x08, unchecked((sbyte) 0xF0), unchecked((sbyte) 0x9D), unchecked((sbyte) 0x84), unchecked((sbyte) 0x9E), unchecked((sbyte) 0xF0), unchecked((sbyte) 0x9D), unchecked((sbyte) 0x85), unchecked((sbyte) 0xA0), 0x0E, 'L', 'u', unchecked((sbyte) 0xF0), unchecked((sbyte) 0x9D), unchecked((sbyte) 0x84), unchecked((sbyte) 0x9E), 'c', 'e', unchecked((sbyte) 0xF0), unchecked((sbyte) 0x9D), unchecked((sbyte) 0x85), unchecked((sbyte) 0xA0), 'n', 'e', 0x01, 0x00, 0x08, 'L', 'u', 0x00, 'c', 'e', 0x00, 'n', 'e', unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), (sbyte) 0x17, (sbyte) 0x01, unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), unchecked((sbyte) 0xFF), (sbyte) 0x01};
+        internal static readonly sbyte[] READ_TEST_BYTES = new sbyte[] { unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), 0x7F, unchecked((sbyte)0x80), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0x81), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x0F, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x7F, 0x06, (sbyte)'L', (sbyte)'u', (sbyte)'c', (sbyte)'e', (sbyte)'n', (sbyte)'e', 0x02, unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), 0x0A, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'n', (sbyte)'e', 0x03, unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), 0x0C, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x04, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), 0x08, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), 0x0E, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x01, 0x00, 0x08, (sbyte)'L', (sbyte)'u', 0x00, (sbyte)'c', (sbyte)'e', 0x00, (sbyte)'n', (sbyte)'e', unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x17, (sbyte)0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x01 };
 
 	  internal static readonly int COUNT = RANDOM_MULTIPLIER * 65536;
 	  internal static int[] INTS;
@@ -61,11 +62,11 @@ namespace Lucene.Net.Index
 		  if (Rarely())
 		  {
 			// a long with lots of zeroes at the end
-			l1 = LONGS[i] = TestUtil.nextLong(random, 0, int.MaxValue) << 32;
+			l1 = LONGS[i] = TestUtil.NextLong(random, 0, int.MaxValue) << 32;
 		  }
 		  else
 		  {
-			l1 = LONGS[i] = TestUtil.nextLong(random, 0, long.MaxValue);
+			l1 = LONGS[i] = TestUtil.NextLong(random, 0, long.MaxValue);
 		  }
 		  bdo.WriteVLong(l1);
 		  bdo.WriteLong(l1);
@@ -138,7 +139,7 @@ namespace Lucene.Net.Index
 		  Assert.AreEqual(INTS[i], @is.ReadVInt());
 		  Assert.AreEqual(INTS[i], @is.ReadInt());
 		  Assert.AreEqual(LONGS[i], @is.ReadVLong());
-		  Assert.AreEqual(LONGS[i], @is.readLong());
+		  Assert.AreEqual(LONGS[i], @is.ReadLong());
 		}
 	  }
 

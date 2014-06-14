@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
 
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
-			StackTraceElement[] trace = Thread.CurrentThread.StackTrace;
+			string[] trace = Thread.CurrentThread.StackTrace;
 			for (int i = 0; i < trace.Length; i++)
 			{
 			  if (typeof(PersistentSnapshotDeletionPolicy).Name.Equals(trace[i].ClassName) && "persist".Equals(trace[i].MethodName))

@@ -24,5 +24,17 @@ namespace Lucene.Net.Randomized.Generators
         }
 
         /* .NET has random.Next(max) which negates the need for randomInt(Random random, int max) as  */
+
+        public static long NextLong(this Random random)
+        {
+            int i1 = random.Next();
+            int i2 = random.Next();
+            long l12 = ((i1 << 32) | i2);
+            return l12;
+        }
+
+        public static T RandomFrom<T>(Random rand, ISet<T> set) {
+            return set.ElementAt(rand.Next(0, set.Count - 1));
+        }
     }
 }

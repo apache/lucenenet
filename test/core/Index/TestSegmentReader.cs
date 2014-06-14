@@ -57,8 +57,8 @@ namespace Lucene.Net.Index
 	  {
 		Assert.IsTrue(Dir != null);
 		Assert.IsTrue(Reader != null);
-		Assert.IsTrue(DocHelper.nameValues.Size() > 0);
-		Assert.IsTrue(DocHelper.NumFields(TestDoc) == DocHelper.all.Size());
+		Assert.IsTrue(DocHelper.NameValues.Count > 0);
+		Assert.IsTrue(DocHelper.NumFields(TestDoc) == DocHelper.All.Count);
 	  }
 
 	  public virtual void TestDocument()
@@ -68,13 +68,13 @@ namespace Lucene.Net.Index
 		Document result = Reader.Document(0);
 		Assert.IsTrue(result != null);
 		//There are 2 unstored fields on the document that are not preserved across writing
-		Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(TestDoc) - DocHelper.unstored.Size());
+		Assert.IsTrue(DocHelper.NumFields(result) == DocHelper.NumFields(TestDoc) - DocHelper.Unstored.Count);
 
 		IList<IndexableField> fields = result.Fields;
 		foreach (IndexableField field in fields)
 		{
 		  Assert.IsTrue(field != null);
-		  Assert.IsTrue(DocHelper.nameValues.containsKey(field.Name()));
+		  Assert.IsTrue(DocHelper.NameValues.ContainsKey(field.Name()));
 		}
 	  }
 
@@ -108,23 +108,23 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		Assert.IsTrue(allFieldNames.Count == DocHelper.all.Size());
+		Assert.IsTrue(allFieldNames.Count == DocHelper.All.Count);
 		foreach (string s in allFieldNames)
 		{
-		  Assert.IsTrue(DocHelper.nameValues.containsKey(s) == true || s.Equals(""));
+		  Assert.IsTrue(DocHelper.NameValues.ContainsKey(s) == true || s.Equals(""));
 		}
 
-		Assert.IsTrue(indexedFieldNames.Count == DocHelper.indexed.Size());
+		Assert.IsTrue(indexedFieldNames.Count == DocHelper.Indexed.Count);
 		foreach (string s in indexedFieldNames)
 		{
-		  Assert.IsTrue(DocHelper.indexed.containsKey(s) == true || s.Equals(""));
+		  Assert.IsTrue(DocHelper.Indexed.ContainsKey(s) == true || s.Equals(""));
 		}
 
-		Assert.IsTrue(notIndexedFieldNames.Count == DocHelper.unindexed.Size());
+        Assert.IsTrue(notIndexedFieldNames.Count == DocHelper.Unindexed.Count);
 		//Get all indexed fields that are storing term vectors
-		Assert.IsTrue(tvFieldNames.Count == DocHelper.termvector.Size());
+        Assert.IsTrue(tvFieldNames.Count == DocHelper.Termvector.Count);
 
-		Assert.IsTrue(noTVFieldNames.Count == DocHelper.notermvector.Size());
+        Assert.IsTrue(noTVFieldNames.Count == DocHelper.Notermvector.Count);
 	  }
 
 	  public virtual void TestTerms()
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
 		  {
 			BytesRef term = termsEnum.Term();
 			Assert.IsTrue(term != null);
-			string fieldValue = (string) DocHelper.nameValues.Get(field);
+			string fieldValue = (string) DocHelper.NameValues[field];
 			Assert.IsTrue(fieldValue.IndexOf(term.Utf8ToString()) != -1);
 		  }
 		}
@@ -180,13 +180,13 @@ namespace Lucene.Net.Index
 	  public static void CheckNorms(AtomicReader reader)
 	  {
 		// test omit norms
-		for (int i = 0; i < DocHelper.fields.Length; i++)
+		for (int i = 0; i < DocHelper.Fields.Length; i++)
 		{
-		  IndexableField f = DocHelper.fields[i];
-		  if (f.FieldType().indexed())
+		  IndexableField f = DocHelper.Fields[i];
+		  if (f.FieldType().Indexed)
 		  {
-			Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !f.FieldType().OmitsNorms());
-			Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !DocHelper.noNorms.containsKey(f.Name()));
+			Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !f.FieldType().OmitNorms);
+			Assert.AreEqual(reader.GetNormValues(f.Name()) != null, !DocHelper.NoNorms.ContainsKey(f.Name()));
 			if (reader.GetNormValues(f.Name()) == null)
 			{
 			  // test for norms of null

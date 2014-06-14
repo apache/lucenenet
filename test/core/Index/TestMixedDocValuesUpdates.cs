@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 		  BytesRef scratch = new BytesRef();
 		  foreach (AtomicReaderContext context in reader.Leaves())
 		  {
-			AtomicReader r = (AtomicReader))context.Reader();
+			AtomicReader r = (AtomicReader)context.Reader();
 	//        System.out.println(((SegmentReader) r).getSegmentName());
 			Bits liveDocs = r.LiveDocs;
 			for (int field = 0; field < fieldValues.Length; field++)
@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
 			}
 			catch (IOException e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 			finally
 			{
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
 				{
 				  if (success) // suppress this exception only if there was another exception
 				  {
-					throw new Exception(e);
+                      throw new Exception(e.Message, e);
 				  }
 				}
 			  }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
 		{
 		  int doc = Random().Next(numDocs);
 		  Term t = new Term("id", "doc" + doc);
-		  long value = Random().nextLong();
+		  long value = Random().NextLong();
 		  writer.UpdateBinaryDocValue(t, "f", TestBinaryDocValuesUpdates.ToBytes(value));
 		  writer.UpdateNumericDocValue(t, "cf", value * 2);
 		  DirectoryReader reader = DirectoryReader.Open(writer, true);
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
 		int numBinaryFields = AtLeast(5);
 		int numTerms = TestUtil.NextInt(random, 10, 100); // terms should affect many docs
 		HashSet<string> updateTerms = new HashSet<string>();
-		while (updateTerms.Size() < numTerms)
+		while (updateTerms.Count < numTerms)
 		{
 		  updateTerms.Add(TestUtil.RandomSimpleString(random));
 		}
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
 		  int numUpdateTerms = TestUtil.NextInt(random, 1, numTerms / 10);
 		  for (int j = 0; j < numUpdateTerms; j++)
 		  {
-			doc.Add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
+			doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));
 		  }
 		  for (int j = 0; j < numBinaryFields; j++)
 		  {
@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numUpdates; i++)
 		{
 		  int field = random.Next(numBinaryFields);
-		  Term updateTerm = new Term("upd", RandomPicks.randomFrom(random, updateTerms));
+		  Term updateTerm = new Term("upd", RandomInts.RandomFrom(random, updateTerms));
 		  long value = random.Next();
 		  writer.UpdateBinaryDocValue(updateTerm, "f" + field, TestBinaryDocValuesUpdates.ToBytes(value));
 		  writer.UpdateNumericDocValue(updateTerm, "cf" + field, value * 2);

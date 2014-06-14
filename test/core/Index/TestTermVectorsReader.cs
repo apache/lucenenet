@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 		Array.Sort(Tokens);
 
 		Dir = NewDirectory();
-		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MyAnalyzer(this)).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(false, 10)).setUseCompoundFile(false));
+		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MyAnalyzer(this)).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(false, 10)).SetUseCompoundFile(false));
 
 		Document doc = new Document();
 		for (int i = 0;i < TestFields.Length;i++)

@@ -40,9 +40,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 	  }
 
-	  protected internal override ISet<Options> ValidOptions()
+	  protected internal override IEnumerable<Options> ValidOptions()
 	  {
-		return EnumSet.range(Options.NONE, Options.POSITIONS_AND_OFFSETS);
+		return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
 	  }
 
 	}

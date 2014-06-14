@@ -65,9 +65,9 @@ namespace Lucene.Net.Index
 
 	internal sealed class BugReproTokenStream : TokenStream
 	{
-	  private readonly CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
-	  private readonly OffsetAttribute OffsetAtt = addAttribute(typeof(OffsetAttribute));
-	  private readonly PositionIncrementAttribute PosIncAtt = addAttribute(typeof(PositionIncrementAttribute));
+	  private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
+	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+	  private readonly PositionIncrementAttribute PosIncAtt;// = addAttribute(typeof(PositionIncrementAttribute));
 	  private readonly int TokenCount = 4;
 	  private int NextTokenIndex = 0;
 	  private readonly string[] Terms = new string[]{"six", "six", "drunken", "drunken"};

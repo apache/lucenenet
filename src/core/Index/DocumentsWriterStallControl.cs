@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 	/// than the number of active <seealso cref="ThreadState"/>s threads are released and can
 	/// continue indexing.
 	/// </summary>
-	internal sealed class DocumentsWriterStallControl
+	public sealed class DocumentsWriterStallControl
 	{
 
 	  private volatile bool Stalled;

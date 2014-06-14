@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 	  public virtual IDictionary<string, Document> IndexRandom(int nThreads, int iterations, int range, Directory dir, int maxThreadStates, bool doReaderPooling)
 	  {
 		IDictionary<string, Document> docs = new Dictionary<string, Document>();
-		IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).setReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+		IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).SetReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
 		LogMergePolicy lmp = (LogMergePolicy) w.Config.MergePolicy;
 		lmp.NoCFSRatio = 0.0;
 		lmp.MergeFactor = MergeFactor;
@@ -671,8 +671,8 @@ namespace Lucene.Net.Index
 
 	  public static void VerifyEquals(Document d1, Document d2)
 	  {
-		IList<IndexableField> ff1 = d1.Fields;
-		IList<IndexableField> ff2 = d2.Fields;
+		List<IndexableField> ff1 = d1.Fields;
+		List<IndexableField> ff2 = d2.Fields;
 
 		ff1.Sort(fieldNameComparator);
 		ff2.Sort(fieldNameComparator);
@@ -980,7 +980,7 @@ namespace Lucene.Net.Index
 		  else
 		  {
 			// random placement of id field also
-			Collections.swap(fields,NextInt(fields.Count), 0);
+			CollectionsHelper.Swap(fields,NextInt(fields.Count), 0);
 		  }
 
 		  for (int i = 0; i < fields.Count; i++)
@@ -1049,7 +1049,7 @@ namespace Lucene.Net.Index
 
 		  lock (this)
 		  {
-			Docs.Size();
+			int dummy = Docs.Count;
 		  }
 		}
 	  }

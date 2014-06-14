@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 	/// segments.
 	/// </summary>
 	/// <seealso cref= #merge </seealso>
-	internal sealed class SegmentMerger
+	public sealed class SegmentMerger
 	{
 	  private readonly Directory Directory;
 	  private readonly int TermIndexInterval;

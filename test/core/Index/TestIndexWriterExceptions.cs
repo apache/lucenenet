@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
 
 		internal IndexWriter Writer;
 
-		internal readonly Random r = new Random(Random().nextLong());
+		internal readonly Random r = new Random(Random().Next());
 		internal volatile Exception Failure;
 
 		public IndexerThread(TestIndexWriterExceptions outerInstance, int i, IndexWriter writer)
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		internal Random r = new Random(Random().nextLong());
+		internal Random r = new Random(Random().Next());
 		public override void Apply(string name)
 		{
 		  if (OuterInstance.DoFail.Get() != null && !name.Equals("startDoFlush") && r.Next(40) == 17)
@@ -467,7 +467,7 @@ namespace Lucene.Net.Index
 		doc.Add(NewTextField("field", "a field", Field.Store.YES));
 		w.AddDocument(doc);
 
-		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+		Analyzer analyzer = new TEJBFAnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
 		Document crashDoc = new Document();
 		crashDoc.Add(NewTextField("crash", "do it on token 4", Field.Store.YES));
@@ -485,11 +485,11 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
+	  private class TEJBFAnalyzerAnonymousInnerClassHelper : Analyzer
 	  {
 		  private readonly TestIndexWriterExceptions OuterInstance;
 
-		  public AnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY) 
+          public TEJBFAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY) 
               : base(PER_FIELD_REUSE_STRATEGY)
 		  {
 			  this.OuterInstance = outerInstance;
@@ -554,7 +554,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestExceptionFromTokenStream()
 	  {
 		Directory dir = NewDirectory();
-		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new AnalyzerAnonymousInnerClassHelper(this));
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new TEFTSAnalyzerAnonymousInnerClassHelper(this));
 		conf.SetMaxBufferedDocs(Math.Max(3, conf.MaxBufferedDocs));
 
 		IndexWriter writer = new IndexWriter(dir, conf);
@@ -602,11 +602,11 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
+	  private class TEFTSAnalyzerAnonymousInnerClassHelper : Analyzer
 	  {
 		  private readonly TestIndexWriterExceptions OuterInstance;
 
-		  public AnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
+          public TEFTSAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
@@ -621,9 +621,9 @@ namespace Lucene.Net.Index
 
 		  private class TokenFilterAnonymousInnerClassHelper : TokenFilter
 		  {
-			  private readonly AnalyzerAnonymousInnerClassHelper OuterInstance;
+              private readonly TEFTSAnalyzerAnonymousInnerClassHelper OuterInstance;
 
-			  public TokenFilterAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper outerInstance, MockTokenizer tokenizer) 
+              public TokenFilterAnonymousInnerClassHelper(TEFTSAnalyzerAnonymousInnerClassHelper outerInstance, MockTokenizer tokenizer) 
                   : base(tokenizer)
 			  {
 				  this.OuterInstance = outerInstance;
@@ -668,7 +668,7 @@ namespace Lucene.Net.Index
 		{
 		  if (DoFail)
 		  {
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			bool sawAppend = false;
 			bool sawFlush = false;
 			for (int i = 0; i < trace.Length; i++)
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestDocumentsWriterExceptions()
 	  {
-		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+		Analyzer analyzer = new TDWEAnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
 		for (int i = 0;i < 2;i++)
 		{
@@ -765,7 +765,7 @@ namespace Lucene.Net.Index
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: hit expected exception");
-			  ioConsole.WriteLine(e.StackTrace);
+			  Console.WriteLine(ioe.StackTrace);
 			}
 		  }
 
@@ -818,10 +818,10 @@ namespace Lucene.Net.Index
 		  writer.Dispose();
 
 		  reader = DirectoryReader.Open(dir);
-		  int expected = 19 + (1 - i) * 2;
-		  Assert.AreEqual(expected, reader.DocFreq(new Term("contents", "here")));
-		  Assert.AreEqual(expected, reader.MaxDoc());
-		  int numDel = 0;
+		  int expected_ = 19 + (1 - i) * 2;
+		  Assert.AreEqual(expected_, reader.DocFreq(new Term("contents", "here")));
+		  Assert.AreEqual(expected_, reader.MaxDoc());
+		  int numDel_ = 0;
 		  Assert.IsNull(MultiFields.GetLiveDocs(reader));
 		  for (int j = 0;j < reader.MaxDoc();j++)
 		  {
@@ -829,22 +829,23 @@ namespace Lucene.Net.Index
 			reader.GetTermVectors(j);
 		  }
 		  reader.Dispose();
-		  Assert.AreEqual(0, numDel);
+		  Assert.AreEqual(0, numDel_);
 
 		  dir.Dispose();
 		}
 	  }
 
-	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
+	  private class TDWEAnalyzerAnonymousInnerClassHelper : Analyzer
 	  {
 		  private readonly TestIndexWriterExceptions OuterInstance;
 
-		  public AnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, UnknownType PER_FIELD_REUSE_STRATEGY) : base(PER_FIELD_REUSE_STRATEGY)
+          public TDWEAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY)
+              : base(PER_FIELD_REUSE_STRATEGY)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -906,15 +907,15 @@ namespace Lucene.Net.Index
 
 		  Assert.AreEqual(NUM_THREAD * NUM_ITER, numDel);
 
-          IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
+          IndexWriter indWriter = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
 		  Document doc = new Document();
 		  doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
 		  for (int j = 0;j < 17;j++)
 		  {
-			writer.AddDocument(doc);
+			indWriter.AddDocument(doc);
 		  }
-		  writer.ForceMerge(1);
-		  writer.Dispose();
+		  indWriter.ForceMerge(1);
+		  indWriter.Dispose();
 
 		  reader = DirectoryReader.Open(dir);
 		  expected += 17 - NUM_THREAD * NUM_ITER;
@@ -1016,18 +1017,18 @@ namespace Lucene.Net.Index
 		internal bool DidFail;
 		public override void Eval(MockDirectoryWrapper dir)
 		{
-		  if (OuterInstance.DoFail)
+		  if (DoFail)
 		  {
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			for (int i = 0; i < trace.Length; i++)
 			{
-			  if (OuterInstance.DoFail && typeof(MockDirectoryWrapper).Name.Equals(trace[i].ClassName) && "sync".Equals(trace[i].MethodName))
+			  if (DoFail && typeof(MockDirectoryWrapper).Name.Equals(trace[i].ClassName) && "sync".Equals(trace[i].MethodName))
 			  {
 				DidFail = true;
 				if (VERBOSE)
 				{
 				  Console.WriteLine("TEST: now throw exc:");
-				  (new Exception()Console.WriteLine().StackTrace);
+                  Console.WriteLine((new Exception()).StackTrace);
 				}
 				throw new IOException("now failing on purpose during sync");
 			  }
@@ -1070,7 +1071,7 @@ namespace Lucene.Net.Index
 			}
 		  }
 		}
-		((ConcurrentMergeScheduler) writer.Config.MergeScheduler).sync();
+		((ConcurrentMergeScheduler) writer.Config.MergeScheduler).Sync();
 		Assert.IsTrue(failure.DidFail);
 		failure.ClearDoFail();
 		writer.Dispose();
@@ -1098,7 +1099,7 @@ namespace Lucene.Net.Index
 
 		public override void Eval(MockDirectoryWrapper dir)
 		{
-		  StackTraceElement[] trace = (new Exception()).StackTrace;
+		  string[] trace = (new Exception()).StackTrace;
 		  bool isCommit = false;
 		  bool isDelete = false;
 		  bool isInGlobalFieldMap = false;
@@ -1224,15 +1225,13 @@ namespace Lucene.Net.Index
 
 		AtomicBoolean thrown = new AtomicBoolean(false);
 		Directory dir = NewDirectory();
-		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).setInfoStream(new InfoStreamAnonymousInnerClassHelper(this, thrown)));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetInfoStream(new TOOMInfoStreamAnonymousInnerClassHelper(this, thrown)));
 
 		try
 		{
 		  writer.Dispose();
 		  Assert.Fail("OutOfMemoryError expected");
 		}
-//JAVA TO C# CONVERTER WARNING: 'final' catch parameters are not allowed in C#:
-//ORIGINAL LINE: catch (final OutOfMemoryError expected)
 		catch (System.OutOfMemoryException expected)
 		{
 		}
@@ -1242,13 +1241,13 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class InfoStreamAnonymousInnerClassHelper : InfoStream
+	  private class TOOMInfoStreamAnonymousInnerClassHelper : InfoStream
 	  {
 		  private readonly TestIndexWriterExceptions OuterInstance;
 
 		  private AtomicBoolean Thrown;
 
-		  public InfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, AtomicBoolean thrown)
+          public TOOMInfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, AtomicBoolean thrown)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Thrown = thrown;
@@ -1256,7 +1255,7 @@ namespace Lucene.Net.Index
 
 		  public override void Message(string component, string message)
 		  {
-			if (message.StartsWith("now flush at close") && Thrown.compareAndSet(false, true))
+			if (message.StartsWith("now flush at close") && Thrown.CompareAndSet(false, true))
 			{
 			  throw new System.OutOfMemoryException("fake OOME at " + message);
 			}
@@ -1421,7 +1420,7 @@ namespace Lucene.Net.Index
 		dir.CheckIndexOnClose = false; // we are corrupting it!
 		IndexWriter writer = null;
 
-		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(true)).setUseCompoundFile(true));
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(true)).SetUseCompoundFile(true));
 		MergePolicy lmp = writer.Config.MergePolicy;
 		// Force creation of CFS:
 		lmp.NoCFSRatio = 1.0;
@@ -2055,7 +2054,7 @@ namespace Lucene.Net.Index
 
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
-			if (OuterInstance.DoFail)
+			if (DoFail)
 			{
 			  if (Random().NextBoolean())
 			  {
@@ -2072,7 +2071,7 @@ namespace Lucene.Net.Index
 	  public virtual void TestNoLostDeletesOrUpdates()
 	  {
 		int deleteCount = 0;
-		int.DocBase = 0;
+		int docBase = 0;
 		int docCount = 0;
 
 		MockDirectoryWrapper dir = NewMockDirectory();
@@ -2086,7 +2085,7 @@ namespace Lucene.Net.Index
 		  int numDocs = AtLeast(100);
 		  if (VERBOSE)
 		  {
-			Console.WriteLine("\nTEST: iter=" + iter + " numDocs=" + numDocs + ".DocBase=" + DocBase + " delCount=" + deleteCount);
+			Console.WriteLine("\nTEST: iter=" + iter + " numDocs=" + numDocs + ".DocBase=" + docBase + " delCount=" + deleteCount);
 		  }
 		  if (w == null)
 		  {
@@ -2110,7 +2109,7 @@ namespace Lucene.Net.Index
 		  for (int i = 0;i < numDocs;i++)
 		  {
 			Document doc = new Document();
-			doc.Add(new StringField("id", "" + DocBase + i), Field.Store.NO));
+			doc.Add(new StringField("id", "" + docBase + i, Field.Store.NO));
 			if (DefaultCodecSupportsDocValues())
 			{
 			  doc.Add(new NumericDocValuesField("f", 1L));
@@ -2145,24 +2144,24 @@ namespace Lucene.Net.Index
 				  long value = iter;
 				  if (VERBOSE)
 				  {
-					Console.WriteLine("  update id=" + DocBase + i) + " to value " + value);
+					Console.WriteLine("  update id=" + docBase + i + " to value " + value);
 				  }
 				  if (Random().NextBoolean()) // update only numeric field
 				  {
-					w.UpdateNumericDocValue(new Term("id", Convert.ToString.DocBase + i)), "f", value);
-					w.UpdateNumericDocValue(new Term("id", Convert.ToString.DocBase + i)), "cf", value * 2);
+					w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "f", value);
+					w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "cf", value * 2);
 				  }
 				  else if (Random().NextBoolean())
 				  {
-					w.UpdateBinaryDocValue(new Term("id", Convert.ToString.DocBase + i)), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
-					w.UpdateBinaryDocValue(new Term("id", Convert.ToString.DocBase + i)), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
+					w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
+					w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
 				  }
 				  else
 				  {
-					w.UpdateNumericDocValue(new Term("id", Convert.ToString.DocBase + i)), "f", value);
-					w.UpdateNumericDocValue(new Term("id", Convert.ToString.DocBase + i)), "cf", value * 2);
-					w.UpdateBinaryDocValue(new Term("id", Convert.ToString.DocBase + i)), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
-					w.UpdateBinaryDocValue(new Term("id", Convert.ToString.DocBase + i)), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
+					w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "f", value);
+					w.UpdateNumericDocValue(new Term("id", (docBase + i).ToString()), "cf", value * 2);
+					w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bf", TestBinaryDocValuesUpdates.ToBytes(value));
+					w.UpdateBinaryDocValue(new Term("id", (docBase + i).ToString()), "bcf", TestBinaryDocValuesUpdates.ToBytes(value * 2));
 				  }
 				}
 
@@ -2171,10 +2170,10 @@ namespace Lucene.Net.Index
 				{
 				  if (VERBOSE)
 				  {
-					Console.WriteLine("  delete id=" + DocBase + i));
+					Console.WriteLine("  delete id=" + (docBase + i).ToString());
 				  }
 				  deleteCount++;
-				  w.DeleteDocuments(new Term("id", "" + DocBase + i)));
+                  w.DeleteDocuments(new Term("id", "" + (docBase + i).ToString()));
 				}
 			  }
 			}
@@ -2195,7 +2194,7 @@ namespace Lucene.Net.Index
 				Console.WriteLine("  now close writer");
 			  }
 			  doClose = true;
-			  w.Dispose();
+			  w.Close();
 			  w = null;
 			}
 
@@ -2220,7 +2219,7 @@ namespace Lucene.Net.Index
 		  }
 		  shouldFail.Set(false);
 
-		  IndexReader r;
+		  IndexReader ir;
 
 		  if (doClose && w != null)
 		  {
@@ -2228,7 +2227,7 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("  now 2nd close writer");
 			}
-			w.Dispose();
+			w.Close();
 			w = null;
 		  }
 
@@ -2244,7 +2243,7 @@ namespace Lucene.Net.Index
 			{
 			  w.Commit();
 			}
-			r = DirectoryReader.Open(dir);
+			ir = DirectoryReader.Open(dir);
 		  }
 		  else
 		  {
@@ -2252,13 +2251,13 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("TEST: verify against NRT reader");
 			}
-			r = w.Reader;
+			ir = w.Reader;
 		  }
-		  Assert.AreEqual(docCount - deleteCount, r.NumDocs());
+		  Assert.AreEqual(docCount - deleteCount, ir.NumDocs());
 		  if (DefaultCodecSupportsDocValues())
 		  {
 			BytesRef scratch = new BytesRef();
-			foreach (AtomicReaderContext context in r.Leaves())
+			foreach (AtomicReaderContext context in ir.Leaves())
 			{
 			  AtomicReader reader = (AtomicReader)context.Reader();
 			  Bits liveDocs = reader.LiveDocs;
@@ -2270,14 +2269,14 @@ namespace Lucene.Net.Index
 			  {
 				if (liveDocs == null || liveDocs.Get(i))
 				{
-				  Assert.AreEqual(cf.Get(i), f.Get(i) * 2, "doc=" + DocBase + i);
-				  Assert.AreEqual(TestBinaryDocValuesUpdates.GetValue(bcf, i, scratch), TestBinaryDocValuesUpdates.GetValue(bf, i, scratch) * 2, "doc=" + DocBase + i);
+                    Assert.AreEqual(cf.Get(i), f.Get(i) * 2, "doc=" + (docBase + i).ToString());
+                    Assert.AreEqual(TestBinaryDocValuesUpdates.GetValue(bcf, i, scratch), TestBinaryDocValuesUpdates.GetValue(bf, i, scratch) * 2, "doc=" + (docBase + i).ToString());
 				}
 			  }
 			}
 		  }
 
-		  r.Dispose();
+		  ir.Dispose();
 
 		  // Sometimes re-use RIW, other times open new one:
 		  if (w != null && Random().NextBoolean())
@@ -2286,22 +2285,22 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("TEST: close writer");
 			}
-			w.Dispose();
+			w.Close();
 			w = null;
 		  }
 
-		  DocBase += numDocs;
+		  docBase += numDocs;
 		}
 
 		if (w != null)
 		{
-		  w.Dispose();
+		  w.Close();
 		}
 
 		// Final verify:
-		IndexReader r = DirectoryReader.Open(dir);
-		Assert.AreEqual(docCount - deleteCount, r.NumDocs());
-		r.Dispose();
+		IndexReader indRdr = DirectoryReader.Open(dir);
+		Assert.AreEqual(docCount - deleteCount, indRdr.NumDocs());
+		indRdr.Dispose();
 
 		dir.Dispose();
 	  }
@@ -2323,7 +2322,7 @@ namespace Lucene.Net.Index
 
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			if (ShouldFail.Get() == false)
 			{
 			  return;
@@ -2376,7 +2375,7 @@ namespace Lucene.Net.Index
 			// suppress only FakeIOException:
 			if (!(exc is MockDirectoryWrapper.FakeIOException))
 			{
-			  base.handleMergeException(exc);
+			  base.HandleMergeException(exc);
 			}
 		  }
 	  }
@@ -2387,7 +2386,7 @@ namespace Lucene.Net.Index
 		string messageToFailOn = Random().NextBoolean() ? "rollback: done finish merges" : "rollback before checkpoint";
 
 		// infostream that throws exception during rollback
-		InfoStream evilInfoStream = new InfoStreamAnonymousInnerClassHelper(this, messageToFailOn);
+		InfoStream evilInfoStream = new TEDRInfoStreamAnonymousInnerClassHelper(this, messageToFailOn);
 
 		Directory dir = NewMockDirectory(); // we want to ensure we don't leak any locks or file handles
 		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
@@ -2425,7 +2424,7 @@ namespace Lucene.Net.Index
 
 		// even though we hit exception: we are closed, no locks or files held, index in good state
 		Assert.IsTrue(iw.Closed);
-		Assert.IsFalse(IndexWriter.isLocked(dir));
+		Assert.IsFalse(IndexWriter.IsLocked(dir));
 
 		r = DirectoryReader.Open(dir);
 		Assert.AreEqual(10, r.MaxDoc());
@@ -2435,13 +2434,13 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class InfoStreamAnonymousInnerClassHelper : InfoStream
+	  private class TEDRInfoStreamAnonymousInnerClassHelper : InfoStream
 	  {
 		  private readonly TestIndexWriterExceptions OuterInstance;
 
 		  private string MessageToFailOn;
 
-		  public InfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, string messageToFailOn)
+          public TEDRInfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, string messageToFailOn)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.MessageToFailOn = messageToFailOn;
@@ -2506,7 +2505,7 @@ namespace Lucene.Net.Index
 
 		  // even though we hit exception: we are closed, no locks or files held, index in good state
 		  Assert.IsTrue(iw.Closed);
-		  Assert.IsFalse(IndexWriter.isLocked(dir));
+		  Assert.IsFalse(IndexWriter.IsLocked(dir));
 
 		  r = DirectoryReader.Open(dir);
 		  Assert.AreEqual(10, r.MaxDoc());
@@ -2533,7 +2532,7 @@ namespace Lucene.Net.Index
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
 			bool maybeFail = false;
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 
 			for (int i = 0; i < trace.Length; i++)
 			{

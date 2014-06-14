@@ -246,8 +246,8 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(reader1 != reader2);
 
 		BytesRef scratch = new BytesRef();
-		BinaryDocValues bdv1 = ((AtomicReader)(reader1.Leaves()[0].Reader())).GetBinaryDocValues("val");
-		BinaryDocValues bdv2 = (AtomicReader)(reader2.Leaves()[0].Reader()).GetBinaryDocValues("val");
+		BinaryDocValues bdv1 = ((AtomicReader)reader1.Leaves()[0].Reader()).GetBinaryDocValues("val");
+		BinaryDocValues bdv2 = ((AtomicReader)reader2.Leaves()[0].Reader()).GetBinaryDocValues("val");
 		Assert.AreEqual(1, GetValue(bdv1, 0, scratch));
 		Assert.AreEqual(10, GetValue(bdv2, 0, scratch));
 
@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Index
 		writer.Dispose();
 
 		DirectoryReader r = DirectoryReader.Open(dir);
-		BinaryDocValues bdv = r.Leaves()[0].Reader().GetBinaryDocValues("f");
+		BinaryDocValues bdv = ((AtomicReader)r.Leaves()[0].Reader()).GetBinaryDocValues("f");
 		Assert.AreEqual(17, GetValue(bdv, 0, new BytesRef()));
 		r.Dispose();
 
@@ -1365,7 +1365,7 @@ namespace Lucene.Net.Index
 		{
 		  int doc = Random().Next(numDocs);
 		  Term t = new Term("id", "doc" + doc);
-		  long value = Random().nextLong();
+		  long value = Random().NextLong();
 		  writer.UpdateBinaryDocValue(t, "f", ToBytes(value));
 		  writer.UpdateBinaryDocValue(t, "cf", ToBytes(value * 2));
 		  DirectoryReader reader = DirectoryReader.Open(writer, true);
@@ -1471,7 +1471,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.Add(new StringField("id", RandomPicks.randomFrom(Random(), randomTerms), Store.NO));
+		  doc.Add(new StringField("id", RandomInts.RandomFrom(Random(), randomTerms), Store.NO));
 		  doc.Add(new BinaryDocValuesField("bdv", ToBytes(4L)));
 		  doc.Add(new BinaryDocValuesField("control", ToBytes(8L)));
 		  writer.AddDocument(doc);
@@ -1484,7 +1484,7 @@ namespace Lucene.Net.Index
 
 		// update some docs to a random value
 		long value = Random().Next();
-		Term term = new Term("id", RandomPicks.randomFrom(Random(), randomTerms));
+		Term term = new Term("id", RandomInts.RandomFrom(Random(), randomTerms));
 		writer.UpdateBinaryDocValue(term, "bdv", ToBytes(value));
 		writer.UpdateBinaryDocValue(term, "control", ToBytes(value * 2));
 		writer.Dispose();
@@ -1539,7 +1539,7 @@ namespace Lucene.Net.Index
 
 		DirectoryReader r = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		Assert.AreEqual(2L, GetValue(r.Leaves()[0].Reader().GetBinaryDocValues("f"), 0, scratch));
+		Assert.AreEqual(2L, GetValue(((AtomicReader)r.Leaves()[0].Reader()).GetBinaryDocValues("f"), 0, scratch));
 		r.Dispose();
 
 		// create second gen of update files, first gen should be deleted
@@ -1548,7 +1548,7 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(numFiles, dir.ListAll().Length);
 
 		r = DirectoryReader.Open(dir);
-		Assert.AreEqual(5L, GetValue(r.Leaves()[0].Reader().GetBinaryDocValues("f"), 0, scratch));
+		Assert.AreEqual(5L, GetValue(((AtomicReader)r.Leaves()[0].Reader()).GetBinaryDocValues("f"), 0, scratch));
 		r.Dispose();
 
 		writer.Dispose();
@@ -1570,7 +1570,7 @@ namespace Lucene.Net.Index
 		int numBinaryFields = AtLeast(5);
 		int numTerms = TestUtil.NextInt(random, 10, 100); // terms should affect many docs
 		HashSet<string> updateTerms = new HashSet<string>();
-		while (updateTerms.Size() < numTerms)
+		while (updateTerms.Count < numTerms)
 		{
 		  updateTerms.Add(TestUtil.RandomSimpleString(random));
 		}
@@ -1584,7 +1584,7 @@ namespace Lucene.Net.Index
 		  int numUpdateTerms = TestUtil.NextInt(random, 1, numTerms / 10);
 		  for (int j = 0; j < numUpdateTerms; j++)
 		  {
-			doc.Add(new StringField("upd", RandomPicks.randomFrom(random, updateTerms), Store.NO));
+			doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));
 		  }
 		  for (int j = 0; j < numBinaryFields; j++)
 		  {
@@ -1605,7 +1605,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numUpdates; i++)
 		{
 		  int field = random.Next(numBinaryFields);
-		  Term updateTerm = new Term("upd", RandomPicks.randomFrom(random, updateTerms));
+		  Term updateTerm = new Term("upd", RandomInts.RandomFrom(random, updateTerms));
 		  long value = random.Next();
 		  writer.UpdateBinaryDocValue(updateTerm, "f" + field, ToBytes(value));
 		  writer.UpdateBinaryDocValue(updateTerm, "cf" + field, ToBytes(value * 2));
@@ -1654,8 +1654,8 @@ namespace Lucene.Net.Index
 
 		DirectoryReader reader = DirectoryReader.Open(dir);
 		BytesRef scratch = new BytesRef();
-		Assert.AreEqual(4, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f1"), 0, scratch));
-		Assert.AreEqual(3, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f2"), 0, scratch));
+		Assert.AreEqual(4, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f1"), 0, scratch));
+		Assert.AreEqual(3, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f2"), 0, scratch));
 		reader.Dispose();
 
 		dir.Dispose();
@@ -1680,7 +1680,7 @@ namespace Lucene.Net.Index
 
 		DirectoryReader reader = DirectoryReader.Open(dir);
 		Assert.AreEqual(1, reader.Leaves().Count);
-		Assert.AreEqual(2L, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f1"), 0, new BytesRef()));
+		Assert.AreEqual(2L, GetValue(((AtomicReader)reader.Leaves()[0].Reader().GetBinaryDocValues("f1")), 0, new BytesRef()));
 		reader.Dispose();
 
 		dir.Dispose();
@@ -1703,7 +1703,7 @@ namespace Lucene.Net.Index
 
 		DirectoryReader reader = DirectoryReader.Open(dir);
 		Assert.AreEqual(1, reader.Leaves().Count);
-		Assert.AreEqual(1L, GetValue(reader.Leaves()[0].Reader().GetBinaryDocValues("f1"), 0, new BytesRef()));
+		Assert.AreEqual(1L, GetValue(((AtomicReader)reader.Leaves()[0].Reader()).GetBinaryDocValues("f1"), 0, new BytesRef()));
 		reader.Dispose();
 
 		dir.Dispose();

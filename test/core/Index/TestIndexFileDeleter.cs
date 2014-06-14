@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 		mergePolicy.NoCFSRatio = 1.0;
 		mergePolicy.MaxCFSSegmentSizeMB = double.PositiveInfinity;
 
-		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(mergePolicy).setUseCompoundFile(true));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(mergePolicy).SetUseCompoundFile(true));
 
 		int i;
 		for (i = 0;i < 35;i++)
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 		  AddDoc(writer, i);
 		}
 		writer.Config.MergePolicy.NoCFSRatio = 0.0;
-		writer.Config.UseCompoundFile = false;
+		writer.Config.SetUseCompoundFile(false);
 		for (;i < 45;i++)
 		{
 		  AddDoc(writer, i);
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
 		writer.Dispose();
 
 		// Delete one doc so we get a .del file:
-		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).setUseCompoundFile(true));
+		writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES).SetUseCompoundFile(true));
 		Term searchTerm = new Term("id", "7");
 		writer.DeleteDocuments(searchTerm);
 		writer.Dispose();
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private static ISet<string> DifFiles(string[] files1, string[] files2)
+	  private static HashSet<string> DifFiles(string[] files1, string[] files2)
 	  {
 		HashSet<string> set1 = new HashSet<string>();
         HashSet<string> set2 = new HashSet<string>();

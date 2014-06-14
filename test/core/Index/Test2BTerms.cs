@@ -34,6 +34,8 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Util;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using NUnit.Framework;
+    using System.Runtime.CompilerServices;
+    using Lucene.Net.Support;
 
 	// NOTE: this test will fail w/ PreFlexRW codec!  (Because
 	// this test uses full binary term space, but PreFlex cannot
@@ -130,7 +132,7 @@ namespace Lucene.Net.Index
 
 		  public override int HashCode()
 		  {
-			return System.identityHashCode(this);
+			return RuntimeHelpers.GetHashCode(this);
 		  }
 
 		  public override void CopyTo(Attribute target)
@@ -248,7 +250,7 @@ namespace Lucene.Net.Index
 
 		Console.WriteLine("TEST: now CheckIndex...");
 		CheckIndex.Status status = TestUtil.CheckIndex(dir);
-		long tc = status.SegmentInfos.Get(0).TermIndexStatus.TermCount;
+		long tc = status.SegmentInfos[0].TermIndexStatus.TermCount;
 		Assert.IsTrue(tc > int.MaxValue, "count " + tc + " is not > " + int.MaxValue);
 
 		dir.Dispose();
@@ -278,7 +280,7 @@ namespace Lucene.Net.Index
 	  {
 		Console.WriteLine("TEST: run " + terms.Count + " terms on reader=" + r);
 		IndexSearcher s = NewSearcher(r);
-		Collections.shuffle(terms);
+        terms = CollectionsHelper.Shuffle(terms);
 		TermsEnum termsEnum = MultiFields.GetTerms(r, "field").Iterator(null);
 		bool failed = false;
 		for (int iter = 0;iter < 10 * terms.Count;iter++)

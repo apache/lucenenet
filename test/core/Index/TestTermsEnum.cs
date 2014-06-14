@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void Test()
 	  {
-		Random random = new Random(Random().nextLong());
+		Random random = new Random(Random().Next());
 		LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 		Directory d = NewDirectory();
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
 		IndexReader r = w.Reader;
         w.Close();
 
-		IList<BytesRef> terms = new List<BytesRef>();
+		List<BytesRef> terms = new List<BytesRef>();
 		TermsEnum termsEnum = MultiFields.GetTerms(r, "body").Iterator(null);
 		BytesRef term;
 		while ((term = termsEnum.Next()) != null)
@@ -133,7 +134,7 @@ namespace Lucene.Net.Index
 			  exists = "yes";
 			}
 
-			upto = Collections.binarySearch(terms, target);
+            upto = terms.BinarySearch(target);
 
 			if (Random().NextBoolean())
 			{

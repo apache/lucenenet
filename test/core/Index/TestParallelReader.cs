@@ -20,9 +20,9 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 
 using StandardAnalyzer = Lucene.Net.Analysis.Standard.StandardAnalyzer;
-using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
-using MapFieldSelector = Lucene.Net.Documents.MapFieldSelector;
+using Document = Lucene.Net.Document.Document;
+using Field = Lucene.Net.Document.Field;
+using MapFieldSelector = Lucene.Net.Document.MapFieldSelector;
 using Directory = Lucene.Net.Store.Directory;
 using MockRAMDirectory = Lucene.Net.Store.MockRAMDirectory;
 using RAMDirectory = Lucene.Net.Store.RAMDirectory;

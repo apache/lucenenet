@@ -33,9 +33,8 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 
-	using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
     using NUnit.Framework;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// this test creates an index with one segment that is a little larger than 4GB.
@@ -48,76 +47,76 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @Nightly public void test() throws Exception
 		public virtual void Test()
 		{
-		MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));
-		dir.Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+		    MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));
+		    dir.Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		    IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	       .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
-		MergePolicy mp = w.Config.MergePolicy;
-		if (mp is LogByteSizeMergePolicy)
-		{
-		 // 1 petabyte:
-		 ((LogByteSizeMergePolicy) mp).MaxMergeMB = 1024 * 1024 * 1024;
-		}
+		    MergePolicy mp = w.Config.MergePolicy;
+		    if (mp is LogByteSizeMergePolicy)
+		    {
+		     // 1 petabyte:
+		     ((LogByteSizeMergePolicy) mp).MaxMergeMB = 1024 * 1024 * 1024;
+		    }
 
-		Document doc = new Document();
-		FieldType ft = new FieldType();
-		ft.Indexed = false;
-		ft.Stored = true;
-		ft.Freeze();
-		int valueLength = RandomInts.randomIntBetween(Random(), 1 << 13, 1 << 20);
-		sbyte[] value = new sbyte[valueLength];
-		for (int i = 0; i < valueLength; ++i)
-		{
-		  // random so that even compressing codecs can't compress it
-		  value[i] = (sbyte) Random().Next(256);
-		}
-		Field f = new Field("fld", value, ft);
-		doc.Add(f);
+		    Document doc = new Document();
+		    FieldType ft = new FieldType();
+		    ft.Indexed = false;
+		    ft.Stored = true;
+		    ft.Freeze();
+		    int valueLength = RandomInts.NextIntBetween(Random(), 1 << 13, 1 << 20);
+		    sbyte[] value = new sbyte[valueLength];
+		    for (int i = 0; i < valueLength; ++i)
+		    {
+		      // random so that even compressing codecs can't compress it
+		      value[i] = (sbyte) Random().Next(256);
+		    }
+		    Field f = new Field("fld", value, ft);
+		    doc.Add(f);
 
-		int numDocs = (int)((1L << 32) / valueLength + 100);
-		for (int i = 0; i < numDocs; ++i)
-		{
-		  w.AddDocument(doc);
-		  if (VERBOSE && i % (numDocs / 10) == 0)
-		  {
-			Console.WriteLine(i + " of " + numDocs + "...");
-		  }
-		}
-		w.ForceMerge(1);
-		w.Dispose();
-		if (VERBOSE)
-		{
-		  bool found = false;
-		  foreach (string file in dir.ListAll())
-		  {
-			if (file.EndsWith(".fdt"))
-			{
-			  long fileLength = dir.FileLength(file);
-			  if (fileLength >= 1L << 32)
-			  {
-				found = true;
-			  }
-			  Console.WriteLine("File length of " + file + " : " + fileLength);
-			}
-		  }
-		  if (!found)
-		  {
-			Console.WriteLine("No .fdt file larger than 4GB, test bug?");
-		  }
-		}
+		    int numDocs = (int)((1L << 32) / valueLength + 100);
+		    for (int i = 0; i < numDocs; ++i)
+		    {
+		      w.AddDocument(doc);
+		      if (VERBOSE && i % (numDocs / 10) == 0)
+		      {
+			    Console.WriteLine(i + " of " + numDocs + "...");
+		      }
+		    }
+		    w.ForceMerge(1);
+		    w.Dispose();
+		    if (VERBOSE)
+		    {
+		      bool found = false;
+		      foreach (string file in dir.ListAll())
+		      {
+			    if (file.EndsWith(".fdt"))
+			    {
+			      long fileLength = dir.FileLength(file);
+			      if (fileLength >= 1L << 32)
+			      {
+				    found = true;
+			      }
+			      Console.WriteLine("File length of " + file + " : " + fileLength);
+			    }
+		      }
+		      if (!found)
+		      {
+			    Console.WriteLine("No .fdt file larger than 4GB, test bug?");
+		      }
+		    }
 
-		DirectoryReader rd = DirectoryReader.Open(dir);
-		Document sd = rd.Document(numDocs - 1);
-		Assert.IsNotNull(sd);
-		Assert.AreEqual(1, sd.Fields.Count);
-		BytesRef valueRef = sd.GetBinaryValue("fld");
-		Assert.IsNotNull(valueRef);
-		Assert.AreEqual(new BytesRef(value), valueRef);
-		rd.Dispose();
+		    DirectoryReader rd = DirectoryReader.Open(dir);
+		    Document sd = rd.Document(numDocs - 1);
+		    Assert.IsNotNull(sd);
+		    Assert.AreEqual(1, sd.Fields.Count);
+		    BytesRef valueRef = sd.GetBinaryValue("fld");
+		    Assert.IsNotNull(valueRef);
+		    Assert.AreEqual(new BytesRef(value), valueRef);
+		    rd.Dispose();
 
-		dir.Dispose();
+		    dir.Dispose();
 		}
 
 	}

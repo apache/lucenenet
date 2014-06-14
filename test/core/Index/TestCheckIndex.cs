@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
 	using FieldType = Lucene.Net.Document.FieldType;
 	using TextField = Lucene.Net.Document.TextField;
     using NUnit.Framework;
+    using System.IO;
 
 	public class TestCheckIndex : LuceneTestCase
 	{
@@ -61,9 +62,9 @@ namespace Lucene.Net.Index
 		checker.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
 		if (VERBOSE)
 		{
-            checker.InfoStream = Console.Out;
+            checker.InfoStream = (StreamWriter)Console.Out;
 		}
-		CheckIndex.Status indexStatus = checker.CheckIndex();
+		CheckIndex.Status indexStatus = checker.DoCheckIndex();
 		if (indexStatus.Clean == false)
 		{
 		  Console.WriteLine("CheckIndex failed");
@@ -100,7 +101,7 @@ namespace Lucene.Net.Index
 		IList<string> onlySegments = new List<string>();
 		onlySegments.Add("_0");
 
-		Assert.IsTrue(checker.CheckIndex(onlySegments).Clean == true);
+		Assert.IsTrue(checker.DoCheckIndex(onlySegments).Clean == true);
 		dir.Dispose();
 	  }
 
@@ -114,8 +115,7 @@ namespace Lucene.Net.Index
 		ft.StoreTermVectors = true;
 		ft.StoreTermVectorOffsets = true;
 		Field field = new Field("foo", "", ft);
-		field.SetTokenStream(new CannedTokenStream(new Token("bar", 5, 10), new Token("bar", 1, 4)
-	   ));
+		field.TokenStream = new CannedTokenStream(new Token("bar", 5, 10), new Token("bar", 1, 4));
 		doc.Add(field);
 		iw.AddDocument(doc);
 		iw.Dispose();

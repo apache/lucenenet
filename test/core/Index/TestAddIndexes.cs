@@ -509,7 +509,7 @@ namespace Lucene.Net.Index
 	  private void VerifyTermDocs(Directory dir, Term term, int numDocs)
 	  {
 		IndexReader reader = DirectoryReader.Open(dir);
-		DocsEnum docsEnum = TestUtil.Docs(Random(), reader, term.Field, term.Bytes, null, null, DocsEnum.FLAG_NONE);
+		DocsEnum docsEnum = TestUtil.Docs(Random(), reader, term.Field(), term.Bytes(), null, null, DocsEnum.FLAG_NONE);
 		int count = 0;
 		while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
@@ -1108,9 +1108,16 @@ namespace Lucene.Net.Index
 
 	  private sealed class CustomPerFieldCodec : Lucene46Codec
 	  {
-		internal readonly PostingsFormat SimpleTextFormat = PostingsFormat.forName("SimpleText");
-		internal readonly PostingsFormat DefaultFormat = PostingsFormat.forName("Lucene41");
-		internal readonly PostingsFormat MockSepFormat = PostingsFormat.forName("MockSep");
+		internal readonly PostingsFormat SimpleTextFormat;
+		internal readonly PostingsFormat DefaultFormat;
+		internal readonly PostingsFormat MockSepFormat;
+
+        public CustomPerFieldCodec()
+        {
+            SimpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
+            DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
+            MockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
+        }
 
 		public override PostingsFormat GetPostingsFormatForField(string field)
 		{

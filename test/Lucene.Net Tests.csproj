@@ -203,9 +203,6 @@
     <Compile Include="core\Index\BinaryTokenStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Index\MockIndexInput.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\Index\Test2BBinaryDocValues.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -234,9 +231,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestAddIndexes.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestAddIndexesNoOptimize.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestAllFilesHaveChecksumFooter.cs">
@@ -353,9 +347,6 @@
     <Compile Include="core\Index\TestFilterAtomicReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Index\TestFilterIndexReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\Index\TestFlex.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -380,19 +371,7 @@
     <Compile Include="core\Index\TestIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Index\TestIndexReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestIndexReaderClone.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestIndexReaderCloneNorms.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\Index\TestIndexReaderClose.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestIndexReaderReopen.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestIndexWriter.cs">
@@ -449,9 +428,6 @@
     <Compile Include="core\Index\TestIsCurrent.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Index\TestLazyBug.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\Index\TestLazyProxSkipping.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -477,9 +453,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestMultiLevelSkipList.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestMultiReader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestNeverDelete.cs">
@@ -524,9 +497,6 @@
     <Compile Include="core\Index\TestParallelCompositeReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Index\TestParallelReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\Index\TestParallelReaderEmptyIndex.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -543,9 +513,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestPersistentSnapshotDeletionPolicy.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestPositionBasedTermVectorMapper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestPostingsFormat.cs">
@@ -627,9 +594,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestThreadedForceMerge.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="core\Index\TestThreadedOptimize.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\Index\TestTieredMergePolicy.cs">

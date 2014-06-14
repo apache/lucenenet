@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 
 		public override void Merge(MergePolicy.OneMerge merge)
 		{
-		  if (merge.maxNumSegments != -1 && (First || merge.segments.Size() == 1))
+		  if (merge.MaxNumSegments != -1 && (First || merge.Segments.Count == 1))
 		  {
 			First = false;
 			if (VERBOSE)
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 			}
 			MergeCount.IncrementAndGet();
 		  }
-		  base.merge(merge);
+		  base.Merge(merge);
 		}
 	  }
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
 		MyIndexWriter w = new MyIndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
 		// Try to make an index that requires merging:
-		w.Config.MaxBufferedDocs = TestUtil.NextInt(Random(), 2, 11);
+		w.Config.SetMaxBufferedDocs(TestUtil.NextInt(Random(), 2, 11));
 		int numStartDocs = AtLeast(20);
 		LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
 		for (int docIDX = 0;docIDX < numStartDocs;docIDX++)
@@ -94,8 +94,8 @@ namespace Lucene.Net.Index
 		}
 
 		AtomicBoolean doStop = new AtomicBoolean();
-		w.Config.MaxBufferedDocs = 2;
-		Thread t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
+		w.Config.SetMaxBufferedDocs(2);
+		ThreadClass t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
 		t.Start();
 		w.ForceMerge(1);
 		doStop.Set(true);
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
         docs.Close();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestForceMergeForever OuterInstance;
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 			}
 			catch (Exception t)
 			{
-			  throw new Exception(t);
+			  throw new Exception(t.Message, t);
 			}
 		  }
 	  }
