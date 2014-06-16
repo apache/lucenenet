@@ -47,10 +47,14 @@ namespace Lucene.Net.Analysis.Snowball
         {
             foreach (var file in Directory.GetFiles(Path.Combine(Paths.ProjectRootDirectory, @"test-files\analysis")))
             {
-                Console.WriteLine(file);
                 using (Analyzer a = new SnowballAnalyzer(Version.LUCENE_CURRENT, "Turkish"))
                 {
-                    a.TokenStream("dummy", new System.IO.StringReader(File.ReadAllText(file)));
+                    var ts = a.TokenStream("dummy", new System.IO.StringReader(File.ReadAllText(file)));
+                    while (ts.IncrementToken())
+                    {
+                        var att = ts.GetAttribute<ITermAttribute>();
+                        Console.WriteLine(att.Term);
+                    }
                 }
             }
         }
