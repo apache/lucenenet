@@ -31,7 +31,7 @@ namespace SF.Snowball
             
             System.Type stemClass = System.Type.GetType("SF.Snowball.Ext." + args[0] + "Stemmer");
             SnowballProgram stemmer = (SnowballProgram) System.Activator.CreateInstance(stemClass);
-            System.Reflection.MethodInfo stemMethod = stemClass.GetMethod("stem", (new System.Type[0] == null)?new System.Type[0]:(System.Type[]) new System.Type[0]);
+            System.Reflection.MethodInfo stemMethod = stemClass.GetMethod("Stem", new Type[0]);
             
             System.IO.StreamReader reader;
             reader = new System.IO.StreamReader(new System.IO.FileStream(args[1], System.IO.FileMode.Open, System.IO.FileAccess.Read), System.Text.Encoding.Default);
