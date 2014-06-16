@@ -25,8 +25,8 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Index;
 using Lucene.Net.Test.Analysis;
+using Lucene.Net.Util;
 using NUnit.Framework;
-using Lucene.Net.Analysis;
 using Version = Lucene.Net.Util.Version;
 
 namespace Lucene.Net.Analysis.Snowball
@@ -40,6 +40,19 @@ namespace Lucene.Net.Analysis.Snowball
             Analyzer a = new SnowballAnalyzer(Version.LUCENE_CURRENT, "English");
             AssertAnalyzesTo(a, "he abhorred accents",
                 new String[] { "he", "abhor", "accent" });
+        }
+
+        [Test]
+        public void TestWithRealWorldData()
+        {
+            foreach (var file in Directory.GetFiles(Path.Combine(Paths.ProjectRootDirectory, @"test-files\analysis")))
+            {
+                Console.WriteLine(file);
+                using (Analyzer a = new SnowballAnalyzer(Version.LUCENE_CURRENT, "Turkish"))
+                {
+                    a.TokenStream("dummy", new System.IO.StringReader(File.ReadAllText(file)));
+                }
+            }
         }
 
         [Test]
