@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  /// <summary>
 	  /// Creates a compressing codec with a given segment suffix
 	  /// </summary>
-	  public CompressingCodec(string name, string segmentSuffix, CompressionMode compressionMode, int chunkSize) : base(name, new Lucene46Codec())
+	  protected CompressingCodec(string name, string segmentSuffix, CompressionMode compressionMode, int chunkSize) : base(name, new Lucene46Codec())
 	  {
 		this.StoredFieldsFormat_Renamed = new CompressingStoredFieldsFormat(name, segmentSuffix, compressionMode, chunkSize);
 		this.TermVectorsFormat_Renamed = new CompressingTermVectorsFormat(name, segmentSuffix, compressionMode, chunkSize);
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  /// <summary>
 	  /// Creates a compressing codec with an empty segment suffix
 	  /// </summary>
-	  public CompressingCodec(string name, CompressionMode compressionMode, int chunkSize) : this(name, "", compressionMode, chunkSize)
+	  protected CompressingCodec(string name, CompressionMode compressionMode, int chunkSize) : this(name, "", compressionMode, chunkSize)
 	  {
 	  }
 

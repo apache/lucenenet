@@ -1,3 +1,5 @@
+using System.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Document
@@ -46,12 +48,14 @@ namespace Lucene.Net.Document
 	/// <summary>
 	/// Tests <seealso cref="Document"/> class.
 	/// </summary>
+	[TestFixture]
 	public class TestDocument : LuceneTestCase
 	{
 
 	  internal string BinaryVal = "this text will be stored as a byte array in the index";
 	  internal string BinaryVal2 = "this text will be also stored as a byte array in the index";
 
+      [Test]
 	  public virtual void TestBinaryField()
 	  {
 		Document doc = new Document();
@@ -59,8 +63,8 @@ namespace Lucene.Net.Document
 		FieldType ft = new FieldType();
 		ft.Stored = true;
 		IndexableField stringFld = new Field("string", BinaryVal, ft);
-		IndexableField binaryFld = new StoredField("binary", BinaryVal.getBytes(IOUtils.UTF_8));
-		IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.getBytes(IOUtils.UTF_8));
+		IndexableField binaryFld = new StoredField("binary", BinaryVal.ToSbyteArray(Encoding.UTF8));
+        IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.ToSbyteArray(Encoding.UTF8));
 
 		doc.Add(stringFld);
 		doc.Add(binaryFld);
@@ -105,6 +109,8 @@ namespace Lucene.Net.Document
 	  /// that has not been indexed yet.
 	  /// </summary>
 	  /// <exception cref="Exception"> on error </exception>
+
+      [Test]
 	  public virtual void TestRemoveForNewDocument()
 	  {
 		Document doc = MakeDocumentWithFields();
@@ -136,6 +142,7 @@ namespace Lucene.Net.Document
         Assert.AreEqual(0, doc.Fields.Count);
 	  }
 
+      [Test]
 	  public virtual void TestConstructorExceptions()
 	  {
 		FieldType ft = new FieldType();
@@ -171,7 +178,8 @@ namespace Lucene.Net.Document
 	  /// that has not been indexed yet.
 	  /// </summary>
 	  /// <exception cref="Exception"> on error </exception>
-	  public virtual void TestGetValuesForNewDocument()
+      [Test]
+      public virtual void TestGetValuesForNewDocument()
 	  {
 		DoAssert(MakeDocumentWithFields(), false);
 	  }
@@ -181,7 +189,8 @@ namespace Lucene.Net.Document
 	  /// from an index.
 	  /// </summary>
 	  /// <exception cref="Exception"> on error </exception>
-	  public virtual void TestGetValuesForIndexedDocument()
+      [Test]
+      public virtual void TestGetValuesForIndexedDocument()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -203,6 +212,7 @@ namespace Lucene.Net.Document
         dir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestGetValues()
 	  {
 		Document doc = MakeDocumentWithFields();
@@ -212,6 +222,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(new string[0], doc.GetValues("nope"));
 	  }
 
+      [Test]
 	  public virtual void TestPositionIncrementMultiFields()
 	  {
 		Directory dir = NewDirectory();
@@ -286,6 +297,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestFieldSetValue()
 	  {
 
@@ -339,6 +351,7 @@ namespace Lucene.Net.Document
 	  }
 
 	  // LUCENE-3616
+      [Test]
 	  public virtual void TestInvalidFields()
 	  {
 		try
@@ -353,6 +366,7 @@ namespace Lucene.Net.Document
 	  }
 
 	  // LUCENE-3682
+      [Test]
 	  public virtual void TestTransitionAPI()
 	  {
 		Directory dir = NewDirectory();
@@ -365,7 +379,7 @@ namespace Lucene.Net.Document
 		doc.Add(new Field("indexed", "abc xyz", Field.Store.NO, Field.Index.NOT_ANALYZED));
 		doc.Add(new Field("tokenized", "abc xyz", Field.Store.NO, Field.Index.ANALYZED));
 		doc.Add(new Field("tokenized_reader", new StringReader("abc xyz")));
-		doc.Add(new Field("tokenized_tokenstream", w.w.Analyzer.tokenStream("tokenized_tokenstream", new StringReader("abc xyz"))));
+		doc.Add(new Field("tokenized_tokenstream", w.w.Analyzer.TokenStream("tokenized_tokenstream", new StringReader("abc xyz"))));
 		doc.Add(new Field("binary", new sbyte[10]));
 		doc.Add(new Field("tv", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
 		doc.Add(new Field("tv_pos", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS));
@@ -422,6 +436,7 @@ namespace Lucene.Net.Document
         dir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestNumericFieldAsString()
 	  {
 		Document doc = new Document();
@@ -429,7 +444,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual("5", doc.Get("int"));
 		Assert.IsNull(doc.Get("somethingElse"));
 		doc.Add(new IntField("int", 4, Field.Store.YES));
-		AssertArrayEquals(new string[] {"5", "4"}, doc.GetValues("int"));
+		Assert.AreEqual(new string[] {"5", "4"}, doc.GetValues("int"));
 
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -438,7 +453,7 @@ namespace Lucene.Net.Document
 		Document sdoc = ir.Document(0);
 		Assert.AreEqual("5", sdoc.Get("int"));
 		Assert.IsNull(sdoc.Get("somethingElse"));
-		AssertArrayEquals(new string[] {"5", "4"}, sdoc.GetValues("int"));
+        Assert.AreEqual(new string[] { "5", "4" }, sdoc.GetValues("int"));
 		ir.Dispose();
 		iw.Close();
         dir.Dispose();

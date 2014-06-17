@@ -48,7 +48,6 @@ namespace Lucene.Net.Analysis.Tokenattributes
         });
 	  }
 
-      [Test]
       public static Attribute AssertCloneIsEqual(Attribute att)
       {
           Attribute clone = (Attribute)att.Clone();
@@ -57,7 +56,6 @@ namespace Lucene.Net.Analysis.Tokenattributes
           return clone;
       }
 
-      [Test]
       public static Attribute AssertCopyIsEqual(Attribute att)
       {
           Attribute copy = (Attribute)System.Activator.CreateInstance(att.GetType());

@@ -40,6 +40,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestLucene40PostingsReader : LuceneTestCase
 	{
 	  internal static readonly string[] Terms = new string[100];
@@ -51,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 	  }
 
-      [SetUp]
+      [TestFixtureSetUp]
 	  public static void BeforeClass()
 	  {
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
@@ -61,6 +62,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  /// tests terms with different probabilities of being in the document.
 	  ///  depends heavily on term vectors cross-check at checkIndex
 	  /// </summary>
+      [Test]
 	  public virtual void TestPostings()
 	  {
 		Directory dir = NewFSDirectory(CreateTempDir("postings"));

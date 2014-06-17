@@ -1,3 +1,5 @@
+using System.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Document
@@ -33,12 +35,14 @@ namespace Lucene.Net.Document
 	/// <summary>
 	/// Tests <seealso cref="Document"/> class.
 	/// </summary>
+	[TestFixture]
 	public class TestBinaryDocument : LuceneTestCase
 	{
 
 	  internal string BinaryValStored = "this text will be stored as a byte array in the index";
 	  internal string BinaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
 
+      [Test]
 	  public virtual void TestBinaryFieldInIndex()
 	  {
 		FieldType ft = new FieldType();
@@ -73,7 +77,9 @@ namespace Lucene.Net.Document
 		/// fetch the binary stored field and compare it's content with the original one </summary>
 		BytesRef bytes = docFromReader.GetBinaryValue("binaryStored");
 		Assert.IsNotNull(bytes);
-		string binaryFldStoredTest = new string((byte[])(Array)bytes.Bytes, bytes.Offset, bytes.Length, IOUtils.CHARSET_UTF_8);
+
+		string binaryFldStoredTest = Encoding.UTF8.GetString((byte[])(Array)bytes.Bytes).Substring(bytes.Offset, bytes.Length);
+            //new string(bytes.Bytes, bytes.Offset, bytes.Length, IOUtils.CHARSET_UTF_8);
 		Assert.IsTrue(binaryFldStoredTest.Equals(BinaryValStored));
 
 		/// <summary>
@@ -86,9 +92,10 @@ namespace Lucene.Net.Document
 		dir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestCompressionTools()
 	  {
-		IndexableField binaryFldCompressed = new StoredField("binaryCompressed", (sbyte[])(Array)CompressionTools.Compress(BinaryValCompressed.getBytes(IOUtils.CHARSET_UTF_8)));
+		IndexableField binaryFldCompressed = new StoredField("binaryCompressed", (sbyte[])(Array)CompressionTools.Compress(BinaryValCompressed.ToSbyteArray(Encoding.UTF8)));
         IndexableField stringFldCompressed = new StoredField("stringCompressed", (sbyte[])(Array)CompressionTools.CompressString(BinaryValCompressed));
 
 		Document doc = new Document();
@@ -110,7 +117,8 @@ namespace Lucene.Net.Document
 
 		/// <summary>
 		/// fetch the binary compressed field and compare it's content with the original one </summary>
-		string binaryFldCompressedTest = new string(CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")), IOUtils.CHARSET_UTF_8);
+	    string binaryFldCompressedTest = Encoding.UTF8.GetString(CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")));
+            //new string(CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")), IOUtils.CHARSET_UTF_8);
 		Assert.IsTrue(binaryFldCompressedTest.Equals(BinaryValCompressed));
 		Assert.IsTrue(CompressionTools.DecompressString(docFromReader.GetBinaryValue("stringCompressed")).Equals(BinaryValCompressed));
 

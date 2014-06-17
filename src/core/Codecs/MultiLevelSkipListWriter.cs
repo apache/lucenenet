@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs
 
 	  /// <summary>
 	  /// Creates new buffers or empties the existing ones </summary>
-	  protected internal virtual void ResetSkip()
+	  public virtual void ResetSkip()
 	  {
 		if (SkipBuffer == null)
 		{

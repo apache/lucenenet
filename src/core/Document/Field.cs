@@ -766,9 +766,373 @@ namespace Lucene.Net.Document
 
 	  /// <summary>
 	  /// Specifies whether and how a field should be indexed.
-	  /// </summary>
-	  ///  @deprecated this is here only to ease transition from
-	  ///  the pre-4.0 APIs.  
+      /// <summary>Specifies whether and how a field should be indexed. </summary>
+      [Obsolete]
+      public enum Index
+      {
+          /// <summary>Do not index the field value. This field can thus not be searched,
+          /// but one can still access its contents provided it is
+          /// <see cref="Field.Store">stored</see>. 
+          /// </summary>
+          NO,
+
+          /// <summary>Index the tokens produced by running the field's
+          /// value through an Analyzer.  This is useful for
+          /// common text. 
+          /// </summary>
+          ANALYZED,
+
+          /// <summary>Index the field's value without using an Analyzer, so it can be searched.
+          /// As no analyzer is used the value will be stored as a single term. This is
+          /// useful for unique Ids like product numbers.
+          /// </summary>
+          NOT_ANALYZED,
+
+          /// <summary>Expert: Index the field's value without an Analyzer,
+          /// and also disable the storing of norms.  Note that you
+          /// can also separately enable/disable norms by setting
+          /// <see cref="AbstractField.OmitNorms" />.  No norms means that
+          /// index-time field and document boosting and field
+          /// length normalization are disabled.  The benefit is
+          /// less memory usage as norms take up one byte of RAM
+          /// per indexed field for every document in the index,
+          /// during searching.  Note that once you index a given
+          /// field <i>with</i> norms enabled, disabling norms will
+          /// have no effect.  In other words, for this to have the
+          /// above described effect on a field, all instances of
+          /// that field must be indexed with NOT_ANALYZED_NO_NORMS
+          /// from the beginning. 
+          /// </summary>
+          NOT_ANALYZED_NO_NORMS,
+
+          /// <summary>Expert: Index the tokens produced by running the
+          /// field's value through an Analyzer, and also
+          /// separately disable the storing of norms.  See
+          /// <see cref="NOT_ANALYZED_NO_NORMS" /> for what norms are
+          /// and why you may want to disable them. 
+          /// </summary>
+          ANALYZED_NO_NORMS,
+      }
+
+      /// <summary>Specifies whether and how a field should have term vectors. </summary>
+      [Obsolete]
+      public enum TermVector
+      {
+          /// <summary>Do not store term vectors. </summary>
+          NO,
+
+          /// <summary>Store the term vectors of each document. A term vector is a list
+          /// of the document's terms and their number of occurrences in that document. 
+          /// </summary>
+          YES,
+
+          /// <summary> Store the term vector + token position information
+          /// 
+          /// </summary>
+          /// <seealso cref="YES">
+          /// </seealso>
+          WITH_POSITIONS,
+
+          /// <summary> Store the term vector + Token offset information
+          /// 
+          /// </summary>
+          /// <seealso cref="YES">
+          /// </seealso>
+          WITH_OFFSETS,
+
+          /// <summary> Store the term vector + Token position and offset information
+          /// 
+          /// </summary>
+          /// <seealso cref="YES">
+          /// </seealso>
+          /// <seealso cref="WITH_POSITIONS">
+          /// </seealso>
+          /// <seealso cref="WITH_OFFSETS">
+          /// </seealso>
+          WITH_POSITIONS_OFFSETS,
+      }
+
+      public static FieldType TranslateFieldType(Store store, Index index, TermVector termVector)
+      {
+          FieldType ft = new FieldType();
+
+          ft.Stored = store == Store.YES;
+
+          switch (index)
+          {
+              case Index.ANALYZED:
+                  ft.Indexed = true;
+                  ft.Tokenized = true;
+                  break;
+              case Index.ANALYZED_NO_NORMS:
+                  ft.Indexed = true;
+                  ft.Tokenized = true;
+                  ft.OmitNorms = true;
+                  break;
+              case Index.NOT_ANALYZED:
+                  ft.Indexed = true;
+                  ft.Tokenized = false;
+                  break;
+              case Index.NOT_ANALYZED_NO_NORMS:
+                  ft.Indexed = true;
+                  ft.Tokenized = false;
+                  ft.OmitNorms = true;
+                  break;
+              case Index.NO:
+                  break;
+          }
+
+          switch (termVector)
+          {
+              case TermVector.NO:
+                  break;
+              case TermVector.YES:
+                  ft.StoreTermVectors = true;
+                  break;
+              case TermVector.WITH_POSITIONS:
+                  ft.StoreTermVectors = true;
+                  ft.StoreTermVectorPositions = true;
+                  break;
+              case TermVector.WITH_OFFSETS:
+                  ft.StoreTermVectors = true;
+                  ft.StoreTermVectorOffsets = true;
+                  break;
+              case TermVector.WITH_POSITIONS_OFFSETS:
+                  ft.StoreTermVectors = true;
+                  ft.StoreTermVectorPositions = true;
+                  ft.StoreTermVectorOffsets = true;
+                  break;
+          }
+          ft.Freeze();
+          return ft;
+      }
+
+      [Obsolete("Use StringField, TextField instead.")]
+      public Field(String name, String value, Store store, Index index)
+          : this(name, value, TranslateFieldType(store, index, TermVector.NO))
+      {
+      }
+
+      [Obsolete("Use StringField, TextField instead.")]
+      public Field(String name, String value, Store store, Index index, TermVector termVector)
+          : this(name, value, TranslateFieldType(store, index, termVector))
+      {
+      }
+
+      [Obsolete("Use TextField instead.")]
+      public Field(String name, TextReader reader)
+          : this(name, reader, TermVector.NO)
+      {
+      }
+
+      [Obsolete("Use TextField instead.")]
+      public Field(String name, TextReader reader, TermVector termVector)
+          : this(name, reader, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
+      {
+      }
+
+      [Obsolete("Use TextField instead.")]
+      public Field(String name, TokenStream tokenStream)
+          : this(name, tokenStream, TermVector.NO)
+      {
+      }
+
+      [Obsolete("Use TextField instead.")]
+      public Field(String name, TokenStream tokenStream, TermVector termVector)
+          : this(name, tokenStream, TranslateFieldType(Store.NO, Index.ANALYZED, termVector))
+      {
+      }
+
+      [Obsolete("Use StoredField instead.")]
+      public Field(String name, sbyte[] value)
+          : this(name, value, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
+      {
+      }
+
+      [Obsolete("Use StoredField instead.")]
+      public Field(String name, sbyte[] value, int offset, int length)
+          : this(name, value, offset, length, TranslateFieldType(Store.YES, Index.NO, TermVector.NO))
+      {
+      }
+    }
+
+    public static class FieldExtensions
+    {
+        public static bool IsStored(this Field.Store store)
+        {
+            switch (store)
+            {
+                case Field.Store.YES:
+                    return true;
+                case Field.Store.NO:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException("store", "Invalid value for Field.Store");
+            }
+        }
+
+
+        public static bool IsIndexed(this Field.Index index)
+        {
+            switch (index)
+            {
+                case Field.Index.NO:
+                    return false;
+                case Field.Index.ANALYZED:
+                case Field.Index.NOT_ANALYZED:
+                case Field.Index.NOT_ANALYZED_NO_NORMS:
+                case Field.Index.ANALYZED_NO_NORMS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+            }
+        }
+
+
+        public static bool IsAnalyzed(this Field.Index index)
+        {
+            switch (index)
+            {
+                case Field.Index.NO:
+                case Field.Index.NOT_ANALYZED:
+                case Field.Index.NOT_ANALYZED_NO_NORMS:
+                    return false;
+                case Field.Index.ANALYZED:
+                case Field.Index.ANALYZED_NO_NORMS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+            }
+        }
+
+
+        public static bool OmitNorms(this Field.Index index)
+        {
+            switch (index)
+            {
+                case Field.Index.ANALYZED:
+                case Field.Index.NOT_ANALYZED:
+                    return false;
+                case Field.Index.NO:
+                case Field.Index.NOT_ANALYZED_NO_NORMS:
+                case Field.Index.ANALYZED_NO_NORMS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+            }
+        }
+
+
+        public static bool IsStored(this Field.TermVector tv)
+        {
+            switch (tv)
+            {
+                case Field.TermVector.NO:
+                    return false;
+                case Field.TermVector.YES:
+                case Field.TermVector.WITH_OFFSETS:
+                case Field.TermVector.WITH_POSITIONS:
+                case Field.TermVector.WITH_POSITIONS_OFFSETS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+            }
+        }
+
+
+        public static bool WithPositions(this Field.TermVector tv)
+        {
+            switch (tv)
+            {
+                case Field.TermVector.NO:
+                case Field.TermVector.YES:
+                case Field.TermVector.WITH_OFFSETS:
+                    return false;
+                case Field.TermVector.WITH_POSITIONS:
+                case Field.TermVector.WITH_POSITIONS_OFFSETS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+            }
+        }
+
+
+        public static bool WithOffsets(this Field.TermVector tv)
+        {
+            switch (tv)
+            {
+                case Field.TermVector.NO:
+                case Field.TermVector.YES:
+                case Field.TermVector.WITH_POSITIONS:
+                    return false;
+                case Field.TermVector.WITH_OFFSETS:
+                case Field.TermVector.WITH_POSITIONS_OFFSETS:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+            }
+        }
+
+
+        public static Field.Index ToIndex(bool indexed, bool analyed)
+        {
+            return ToIndex(indexed, analyed, false);
+        }
+
+
+        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms)
+        {
+            // If it is not indexed nothing else matters
+            if (!indexed)
+            {
+                return Field.Index.NO;
+            }
+
+            // typical, non-expert
+            if (!omitNorms)
+            {
+                if (analyzed)
+                {
+                    return Field.Index.ANALYZED;
+                }
+                return Field.Index.NOT_ANALYZED;
+            }
+
+            // Expert: Norms omitted
+            if (analyzed)
+            {
+                return Field.Index.ANALYZED_NO_NORMS;
+            }
+            return Field.Index.NOT_ANALYZED_NO_NORMS;
+        }
+
+
+        /// <summary>
+        /// Get the best representation of a TermVector given the flags.
+        /// </summary>
+        public static Field.TermVector ToTermVector(bool stored, bool withOffsets, bool withPositions)
+        {
+            // If it is not stored, nothing else matters.
+            if (!stored)
+            {
+                return Field.TermVector.NO;
+            }
+
+            if (withOffsets)
+            {
+                if (withPositions)
+                {
+                    return Field.TermVector.WITH_POSITIONS_OFFSETS;
+                }
+                return Field.TermVector.WITH_OFFSETS;
+            }
+
+            if (withPositions)
+            {
+                return Field.TermVector.WITH_POSITIONS;
+            }
+            return Field.TermVector.YES;
+        }
 
 
 	}

@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Lucene.Net.Document
 {
 
@@ -30,9 +32,11 @@ namespace Lucene.Net.Document
     using Lucene.Net.Util;
 
 	// sanity check some basics of fields
+    [TestFixture]
 	public class TestField : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestDoubleField()
 	  {
 		Field[] fields = new Field[] {new DoubleField("foo", 5d, Field.Store.NO), new DoubleField("foo", 5d, Field.Store.YES)};
@@ -56,6 +60,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestDoubleDocValuesField()
 	  {
 		DoubleDocValuesField field = new DoubleDocValuesField("foo", 5d);
@@ -76,6 +81,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(6d,BitConverter.Int64BitsToDouble((long)field.NumericValue), 0.0d);
 	  }
 
+      [Test]
 	  public virtual void TestFloatDocValuesField()
 	  {
 		FloatDocValuesField field = new FloatDocValuesField("foo", 5f);
@@ -96,6 +102,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(6f, Number.IntBitsToFloat((int)field.NumericValue), 0.0f);
 	  }
 
+      [Test]
 	  public virtual void TestFloatField()
 	  {
 		Field[] fields = new Field[] {new FloatField("foo", 5f, Field.Store.NO), new FloatField("foo", 5f, Field.Store.YES)};
@@ -119,6 +126,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestIntField()
 	  {
 		Field[] fields = new Field[] {new IntField("foo", 5, Field.Store.NO), new IntField("foo", 5, Field.Store.YES)};
@@ -142,6 +150,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestNumericDocValuesField()
 	  {
 		NumericDocValuesField field = new NumericDocValuesField("foo", 5L);
@@ -162,6 +171,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(6L, (long)field.NumericValue);
 	  }
 
+      [Test]
 	  public virtual void TestLongField()
 	  {
 		Field[] fields = new Field[] {new LongField("foo", 5L, Field.Store.NO), new LongField("foo", 5L, Field.Store.YES)};
@@ -185,13 +195,14 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSortedBytesDocValuesField()
 	  {
 		SortedDocValuesField field = new SortedDocValuesField("foo", new BytesRef("bar"));
 
 		TrySetBoost(field);
 		TrySetByteValue(field);
-		field.BytesValue = "fubar".GetBytes(IOUtils.CHARSET_UTF_8);
+        field.BytesValue = "fubar".ToBytesRefArray(Encoding.UTF8);
 		field.BytesValue = new BytesRef("baz");
 		TrySetDoubleValue(field);
 		TrySetIntValue(field);
@@ -205,13 +216,14 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
 	  }
 
+      [Test]
 	  public virtual void TestBinaryDocValuesField()
 	  {
 		BinaryDocValuesField field = new BinaryDocValuesField("foo", new BytesRef("bar"));
 
 		TrySetBoost(field);
 		TrySetByteValue(field);
-		field.BytesValue = "fubar".getBytes(IOUtils.UTF_8);
+        field.BytesValue = "fubar".ToBytesRefArray(Encoding.UTF8);
 		field.BytesValue = new BytesRef("baz");
 		TrySetDoubleValue(field);
 		TrySetIntValue(field);
@@ -225,6 +237,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(new BytesRef("baz"), field.BinaryValue());
 	  }
 
+      [Test]
 	  public virtual void TestStringField()
 	  {
 		Field[] fields = new Field[] {new StringField("foo", "bar", Field.Store.NO), new StringField("foo", "bar", Field.Store.YES)};
@@ -248,6 +261,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestTextFieldString()
 	  {
 		Field[] fields = new Field[] {new TextField("foo", "bar", Field.Store.NO), new TextField("foo", "bar", Field.Store.YES)};
@@ -272,6 +286,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestTextFieldReader()
 	  {
 		Field field = new TextField("foo", new StringReader("bar"));
@@ -299,15 +314,16 @@ namespace Lucene.Net.Document
 	  }
 	  */
 
+      [Test]
 	  public virtual void TestStoredFieldBytes()
 	  {
-		Field[] fields = new Field[] {new StoredField("foo", "bar".getBytes(IOUtils.UTF_8)), new StoredField("foo", "bar".getBytes(IOUtils.UTF_8), 0, 3), new StoredField("foo", new BytesRef("bar"))};
+        Field[] fields = new Field[] { new StoredField("foo", "bar".ToSbyteArray(Encoding.UTF8)), new StoredField("foo", "bar".ToSbyteArray(Encoding.UTF8), 0, 3), new StoredField("foo", new BytesRef("bar")) };
 
 		foreach (Field field in fields)
 		{
 		  TrySetBoost(field);
 		  TrySetByteValue(field);
-		  field.BytesValue = "baz".getBytes(IOUtils.UTF_8);
+		  field.BytesValue = "baz".ToBytesRefArray(Encoding.UTF8);
 		  field.BytesValue = new BytesRef("baz");
 		  TrySetDoubleValue(field);
 		  TrySetIntValue(field);
@@ -322,6 +338,7 @@ namespace Lucene.Net.Document
 		}
 	  }
 
+      [Test]
 	  public virtual void TestStoredFieldString()
 	  {
 		Field field = new StoredField("foo", "bar");
@@ -341,6 +358,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual("baz", field.StringValue);
 	  }
 
+      [Test]
 	  public virtual void TestStoredFieldInt()
 	  {
 		Field field = new StoredField("foo", 1);
@@ -360,6 +378,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(5, (int)field.NumericValue);
 	  }
 
+      [Test]
 	  public virtual void TestStoredFieldDouble()
 	  {
 		Field field = new StoredField("foo", 1D);
@@ -379,6 +398,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(5D, (double)field.NumericValue, 0.0D);
 	  }
 
+      [Test]
 	  public virtual void TestStoredFieldFloat()
 	  {
 		Field field = new StoredField("foo", 1F);
@@ -398,6 +418,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(5f, (float)field.NumericValue, 0.0f);
 	  }
 
+      [Test]
 	  public virtual void TestStoredFieldLong()
 	  {
 		Field field = new StoredField("foo", 1L);

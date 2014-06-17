@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis
 	  public override void Reset()
 	  {
 		base.Reset();
-		Random = new Random((int)RandomSeed);
+		Random = new Random(RandomSeed);
 		MaxPos = -1;
 		Pos = -1;
 	  }
@@ -78,10 +78,8 @@ namespace Lucene.Net.Analysis
 
 		  return true;
 		}
-		else
-		{
-		  return false;
-		}
+		
+        return false;
 	  }
 
 	  // TODO: end?

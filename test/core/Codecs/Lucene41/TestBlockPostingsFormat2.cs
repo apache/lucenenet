@@ -41,13 +41,14 @@ namespace Lucene.Net.Codecs.Lucene41
 	/// <summary>
 	/// Tests special cases of BlockPostingsFormat 
 	/// </summary>
-	public class TestBlockPostingsFormat2 : LuceneTestCase
+    [TestFixture]
+    public class TestBlockPostingsFormat2 : LuceneTestCase
 	{
 	  internal Directory Dir;
 	  internal RandomIndexWriter Iw;
 	  internal IndexWriterConfig Iwc;
 
-      [SetUp]
+      [TestFixtureSetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -58,7 +59,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		Iw.DoRandomForceMerge = false; // we will ourselves
 	  }
 
-      [TearDown]
+      [TestFixtureTearDown]
 	  public override void TearDown()
 	  {
 		Iw.Close();
@@ -74,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  private Document NewDocument()
 	  {
 		Document doc = new Document();
-		foreach (FieldInfo.IndexOptions_e option in Enum.GetValues(FieldInfo.IndexOptions_e))
+		foreach (FieldInfo.IndexOptions_e option in Enum.GetValues(typeof(FieldInfo.IndexOptions_e)))
 		{
 		  FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		  // turn on tvs for a cross-check, since we rely upon checkindex in this test (for now)
@@ -90,7 +91,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  /// <summary>
 	  /// tests terms with df = blocksize </summary>
-	  public virtual void TestDFBlockSize()
+	  [Test]
+      public virtual void TestDFBlockSize()
 	  {
 		Document doc = NewDocument();
 		for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE; i++)
@@ -105,7 +107,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  /// <summary>
 	  /// tests terms with df % blocksize = 0 </summary>
-	  public virtual void TestDFBlockSizeMultiple()
+	  [Test]
+      public virtual void TestDFBlockSizeMultiple()
 	  {
 		Document doc = NewDocument();
 		for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE * 16; i++)
@@ -120,7 +123,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  /// <summary>
 	  /// tests terms with ttf = blocksize </summary>
-	  public virtual void TestTTFBlockSize()
+	  [Test]
+      public virtual void TestTTFBlockSize()
 	  {
 		Document doc = NewDocument();
 		for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE / 2; i++)
@@ -135,6 +139,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
 	  /// <summary>
 	  /// tests terms with ttf % blocksize = 0 </summary>
+	  [Test]
 	  public virtual void TestTTFBlockSizeMultiple()
 	  {
 		Document doc = NewDocument();

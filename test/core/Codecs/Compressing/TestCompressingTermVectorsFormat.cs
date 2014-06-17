@@ -34,8 +34,7 @@ namespace Lucene.Net.Codecs.Compressing
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Repeat(iterations=5) public class TestCompressingTermVectorsFormat extends Lucene.Net.Index.BaseTermVectorsFormatTestCase
+    [TestFixture]
 	public class TestCompressingTermVectorsFormat : BaseTermVectorsFormatTestCase
 	{
 		protected internal override Codec Codec
@@ -47,6 +46,7 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 
 	  // https://issues.apache.org/jira/browse/LUCENE-5156
+      [Test]
 	  public virtual void TestNoOrds()
 	  {
 		Directory dir = NewDirectory();

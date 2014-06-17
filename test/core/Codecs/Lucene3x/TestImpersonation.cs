@@ -26,8 +26,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// 
 	/// @lucene.experimental
 	/// </summary>
-	public class TestImpersonation : LuceneTestCase
+	[TestFixture]
+    public class TestImpersonation : LuceneTestCase
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 		Codec codec = Codec.ForName("Lucene3x");

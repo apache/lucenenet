@@ -24,11 +24,12 @@ namespace Lucene.Net.Codecs.Lucene40
 	/// <summary>
 	/// Tests Lucene40PostingsFormat
 	/// </summary>
-	public class TestLucene40PostingsFormat : BasePostingsFormatTestCase
+	[TestFixture]
+    public class TestLucene40PostingsFormat : BasePostingsFormatTestCase
 	{
 	  private readonly Codec Codec_Renamed = new Lucene40RWCodec();
 
-      [SetUp]
+      [TestFixtureSetUp]
 	  public static void BeforeClass()
 	  {
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec

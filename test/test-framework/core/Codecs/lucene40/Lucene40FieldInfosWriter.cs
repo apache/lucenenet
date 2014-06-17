@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	/// <summary>
 	/// Lucene 4.0 FieldInfos writer.
 	/// </summary>
-	/// <seealso cref= Lucene40FieldInfosFormat
+	/// <seealso> cref= Lucene40FieldInfosFormat
 	/// @lucene.experimental </seealso>
 	[Obsolete]
 	public class Lucene40FieldInfosWriter : FieldInfosWriter
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		else
 		{
 		  Debug.Assert(legacyTypeAtt != null);
-		  return (sbyte) LegacyDocValuesType.ValueOf(legacyTypeAtt).ordinal();
+		    return (sbyte) LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
 		}
 	  }
 	}

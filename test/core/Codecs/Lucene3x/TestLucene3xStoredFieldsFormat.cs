@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Codecs.Lucene3x
 {
 
@@ -21,9 +23,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestLucene3xStoredFieldsFormat : BaseStoredFieldsFormatTestCase
 	{
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
@@ -38,6 +42,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  }
 	  }
 
+      [Test]
 	  public override void TestWriteReadMerge()
 	  {
 		AssumeFalse("impersonation isnt good enough", true);

@@ -25,6 +25,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// <summary>
 	/// Tests Lucene3x postings format
 	/// </summary>
+	[TestFixture]
 	public class TestLucene3xPostingsFormat : BasePostingsFormatTestCase
 	{
 	  private readonly Codec Codec_Renamed = new PreFlexRWCodec();

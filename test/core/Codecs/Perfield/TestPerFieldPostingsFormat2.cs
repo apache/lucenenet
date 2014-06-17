@@ -50,7 +50,8 @@ namespace Lucene.Net.Codecs.Perfield
 	//TODO: would be better in this test to pull termsenums and instanceof or something?
 	// this way we can verify PFPF is doing the right thing.
 	// for now we do termqueries.
-	public class TestPerFieldPostingsFormat2 : LuceneTestCase
+    [TestFixture]
+    public class TestPerFieldPostingsFormat2 : LuceneTestCase
 	{
 
 	  private IndexWriter NewWriter(Directory dir, IndexWriterConfig conf)
@@ -251,7 +252,8 @@ namespace Lucene.Net.Codecs.Perfield
 	  /*
 	   * Test per field codec support - adding fields with random codecs
 	   */
-	  public virtual void TestStressPerFieldCodec()
+	  [Test]
+      public virtual void TestStressPerFieldCodec()
 	  {
 		Directory dir = NewDirectory(Random());
 		const int docsPerRound = 97;
@@ -350,6 +352,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  }
 	  }*/
 
+      [Test]
 	  private void TestMixedPostings(Codec codec)
 	  {
 		Directory dir = NewDirectory();

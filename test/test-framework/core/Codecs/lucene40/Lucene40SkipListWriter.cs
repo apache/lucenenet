@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	/// Implements the skip list writer for the 4.0 posting list format
 	/// that stores positions and payloads.
 	/// </summary>
-	/// <seealso cref= Lucene40PostingsFormat </seealso>
+	/// <seealso> cref= Lucene40PostingsFormat </seealso>
 	/// @deprecated Only for reading old 4.0 segments 
 	[Obsolete("Only for reading old 4.0 segments")]
 	public class Lucene40SkipListWriter : MultiLevelSkipListWriter
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		}
 	  }
 
-	    protected internal override void ResetSkip()
+	  public override void ResetSkip()
 	  {
 		base.ResetSkip();
 		Arrays.Fill(LastSkipDoc, 0);

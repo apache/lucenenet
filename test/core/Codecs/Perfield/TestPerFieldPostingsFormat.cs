@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Perfield
 {
@@ -29,18 +30,20 @@ namespace Lucene.Net.Codecs.Perfield
 	/// <summary>
 	/// Basic tests of PerFieldPostingsFormat
 	/// </summary>
-	public class TestPerFieldPostingsFormat : BasePostingsFormatTestCase
+    [TestFixture]
+    public class TestPerFieldPostingsFormat : BasePostingsFormatTestCase
 	{
 
 	  protected internal override Codec Codec
 	  {
 		  get
 		  {
-			return new RandomCodec(new Random(Random().Next()), CollectionsHelper.EmptySet<string>());
+			return new RandomCodec(new Random(Random().Next()), new HashSet<string>());
 		  }
 	  }
 
-	  public override void TestMergeStability()
+	  [Test]
+      public override void TestMergeStability()
 	  {
 		  //LUCENE TO-DO
           Assume.ReferenceEquals("The MockRandom PF randomizes content on the fly, so we can't check it", false);

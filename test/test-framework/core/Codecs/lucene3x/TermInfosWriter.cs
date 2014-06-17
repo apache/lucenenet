@@ -22,10 +22,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 
 
-	using FieldInfo = Lucene.Net.Index.FieldInfo;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-	using TermsEnum = Lucene.Net.Index.TermsEnum;
 	using Directory = Lucene.Net.Store.Directory;
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;

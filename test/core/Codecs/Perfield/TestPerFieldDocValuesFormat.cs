@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Perfield
@@ -45,20 +46,21 @@ namespace Lucene.Net.Codecs.Perfield
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
     using NUnit.Framework;
     using Lucene.Net.Index;
 
 	/// <summary>
 	/// Basic tests of PerFieldDocValuesFormat
 	/// </summary>
-	public class TestPerFieldDocValuesFormat : BaseDocValuesFormatTestCase
+    [TestFixture]
+    public class TestPerFieldDocValuesFormat : BaseDocValuesFormatTestCase
 	{
 	  private Codec Codec_Renamed;
 
-	  public override void SetUp()
+      [SetUp]
+      public override void SetUp()
 	  {
-		Codec_Renamed = new RandomCodec(new Random(Random().Next()), CollectionsHelper.EmptySet<string>());
+		Codec_Renamed = new RandomCodec(new Random(Random().Next()), new HashSet<string>());
 		base.SetUp();
 	  }
 
@@ -78,7 +80,8 @@ namespace Lucene.Net.Codecs.Perfield
 	  // just a simple trivial test
 	  // TODO: we should come up with a test that somehow checks that segment suffix
 	  // is respected by all codec apis (not just docvalues and postings)
-	  public virtual void TestTwoFieldsTwoFormats()
+	  [Test]
+      public virtual void TestTwoFieldsTwoFormats()
 	  {
 		Analyzer analyzer = new MockAnalyzer(Random());
 

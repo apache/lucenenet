@@ -75,6 +75,19 @@ namespace Lucene.Net.Support
             return newArray;
         }
 
+        public static T[] CopyOfRange<T>(T[] original, int startIndexInc, int endIndexExc)
+        {
+            int newLength = endIndexExc - startIndexInc;
+            T[] newArray = new T[newLength];
+
+            for (int i = startIndexInc, j = 0; i < endIndexExc; i++, j++)
+            {
+                newArray[j] = original[i];
+            }
+
+            return newArray;
+        }
+
         public static string ToString(IEnumerable<string> values)
         {
             if (values == null)
@@ -91,7 +104,7 @@ namespace Lucene.Net.Support
             return string.Join(", ", values);
         }
 
-        public static int HashCode<T>(IEnumerable<T> values)
+        public static int GetHashCode<T>(IEnumerable<T> values)
         {
             if (values == null)
                 return 0;

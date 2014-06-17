@@ -21,10 +21,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
 
+    [TestFixture]
 	public class TestLucene40StoredFieldsFormat : BaseStoredFieldsFormatTestCase
 	{
 
-      [SetUp]
+      [TestFixtureSetUp]
 	  public static void BeforeClass()
 	  {
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec

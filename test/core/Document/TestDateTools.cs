@@ -28,10 +28,12 @@ namespace Lucene.Net.Document
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
+    [TestFixture]
 	public class TestDateTools : LuceneTestCase
 	{
 	  public TestRule TestRules = RuleChain.outerRule(new SystemPropertiesRestoreRule());
 
+      [Test]
 	  public virtual void TestStringToDate()
 	  {
 
@@ -72,6 +74,7 @@ namespace Lucene.Net.Document
 
 	  }
 
+      [Test]
 	  public virtual void TestStringtoTime()
 	  {
 		long time = DateTools.StringToTime("197001010000");
@@ -87,6 +90,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual(cal.Time, time);
 	  }
 
+      [Test]
 	  public virtual void TestDateAndTimetoString()
 	  {
 		// we use default locale since LuceneTestCase randomizes it
@@ -147,6 +151,7 @@ namespace Lucene.Net.Document
 		Assert.AreEqual("19700101010203000", dateString);
 	  }
 
+      [Test]
 	  public virtual void TestRound()
 	  {
 		// we use default locale since LuceneTestCase randomizes it
@@ -193,6 +198,7 @@ namespace Lucene.Net.Document
 		return sdf.Format(date);
 	  }
 
+      [Test]
 	  public virtual void TestDateToolsUTC()
 	  {
 		// Sun, 30 Oct 2005 00:00:00 +0000 -- the last second of 2005's DST in Europe/London

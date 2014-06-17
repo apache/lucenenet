@@ -1,10 +1,10 @@
 using System;
-using System.Management;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
 using NUnit.Framework;
-using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
@@ -100,6 +100,8 @@ namespace Lucene.Net.Util
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using Lucene.Net.TestFramework.Support;
+    using System.IO;
+    using Apache.NMS.Util;
 
 
 
@@ -217,7 +219,17 @@ namespace Lucene.Net.Util
 	  /// <seealso cref= #ignoreAfterMaxFailures </seealso>
 	  public const string SYSPROP_FAILFAST = "tests.failfast";
 
-	  /// <summary>
+
+	    public interface Nightly
+	    {
+	    }
+
+        public interface Weekly
+        {
+        }
+
+
+	    /*/// <summary>
 	  /// Annotation for tests that should only be run during nightly builds.
 	  /// </summary>
 	  public class Nightly : System.Attribute
@@ -282,7 +294,7 @@ namespace Lucene.Net.Util
 		/// <summary>
 		/// Point to JIRA entry. </summary>
 		public string bugUrl();
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Annotation for test classes that should avoid certain codec types
@@ -291,7 +303,12 @@ namespace Lucene.Net.Util
 	  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	  public class SuppressCodecs : System.Attribute
 	  {
-		string[] value();
+	      private string[] value;
+
+	      public string[] Value()
+	      {
+	          return value;
+	      }
 	  }
 
 	  /// <summary>
@@ -412,11 +429,11 @@ namespace Lucene.Net.Util
 		  }
 		  else
 		  {
-			Logger.getLogger(typeof(LuceneTestCase).Name).warning("Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
+			Console.Out.Write(typeof(LuceneTestCase).Name + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
 		  }
 		}
 
-		IgnoreAfterMaxFailuresDelegate = new AtomicReference<>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
+        IgnoreAfterMaxFailuresDelegate = new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
 		IgnoreAfterMaxFailures = TestRuleDelegate.Of(IgnoreAfterMaxFailuresDelegate);
 	  }
 
@@ -490,7 +507,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static TestRuleIgnoreAfterMaxFailures ReplaceMaxFailureRule(TestRuleIgnoreAfterMaxFailures newValue)
 	  {
-		return IgnoreAfterMaxFailuresDelegate.getAndSet(newValue);
+		return IgnoreAfterMaxFailuresDelegate.GetAndSet(newValue);
 	  }
 
 	  /// <summary>
@@ -501,7 +518,7 @@ namespace Lucene.Net.Util
 
 	  /// <summary>
 	  /// By-name list of ignored types like loggers etc. </summary>
-	  private static ISet<string> STATIC_LEAK_IGNORED_TYPES = Collections.unmodifiableSet(new HashSet<string>(Arrays.AsList("org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", typeof(EnumSet).Name)));
+	  private static ISet<string> STATIC_LEAK_IGNORED_TYPES = new HashSet<string>(Arrays.AsList("org.slf4j.Logger", "org.apache.solr.SolrLogFormatter", typeof(EnumSet).Name));
 
 /* LUCENE TO-DO: Not sure how to convert these
 
@@ -822,7 +839,7 @@ namespace Lucene.Net.Util
 	  public static IndexWriterConfig NewIndexWriterConfig(Random r, Version v, Analyzer a)
 	  {
 		IndexWriterConfig c = new IndexWriterConfig(v, a);
-		c.Similarity = ClassEnvRule.Similarity;
+		c.SetSimilarity(ClassEnvRule.Similarity);
 		if (VERBOSE)
 		{
 		  // Even though TestRuleSetupAndRestoreClassEnv calls
@@ -954,7 +971,7 @@ namespace Lucene.Net.Util
 
 	  public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r, TimeZone tz)
 	  {
-		return new AlcoholicMergePolicy(tz, new Random(r.nextLong()));
+		return new AlcoholicMergePolicy(tz, new Random(r.Next()));
 	  }
 
 	  public static LogMergePolicy NewLogMergePolicy(Random r)
@@ -1120,7 +1137,7 @@ namespace Lucene.Net.Util
 		string fsdirClass = TEST_DIRECTORY;
 		if (fsdirClass.Equals("random"))
 		{
-		  fsdirClass = RandomPicks.randomFrom(Random(), FS_DIRECTORIES);
+		  fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
 		}
 
 		Type clazz;
@@ -1133,7 +1150,7 @@ namespace Lucene.Net.Util
 		  catch (System.InvalidCastException e)
 		  {
 			// TEST_DIRECTORY is not a sub-class of FSDirectory, so draw one at random
-			fsdirClass = RandomPicks.randomFrom(Random(), FS_DIRECTORIES);
+              fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
 			clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
 		  }
 
@@ -1292,9 +1309,9 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Return a random Locale from the available locales on the system. </summary>
 	  /// <seealso cref= "https://issues.apache.org/jira/browse/LUCENE-4020" </seealso>
-	  public static Locale RandomLocale(Random random)
+	  public static CultureInfo RandomLocale(Random random)
 	  {
-		Locale[] locales = Locale.AvailableLocales;
+	    CultureInfo[] locales = CultureInfo.GetCultures();
 		return locales[random.Next(locales.Length)];
 	  }
 
@@ -1331,7 +1348,7 @@ namespace Lucene.Net.Util
 		return !Codec.Default.Name.Equals("Lucene3x");
 	  }
 
-      private static Directory NewFSDirectoryImpl(Type clazz, FileInfo file)
+      private static Directory NewFSDirectoryImpl(Type clazz, Directory file)
 	  {
 		FSDirectory d = null;
 		try
@@ -1351,7 +1368,7 @@ namespace Lucene.Net.Util
 		{
 		  if (Rarely(random))
 		  {
-			clazzName = RandomPicks.randomFrom(random, CORE_DIRECTORIES);
+			clazzName = RandomInts.RandomFrom(random, CORE_DIRECTORIES);
 		  }
 		  else
 		  {
@@ -1415,7 +1432,7 @@ namespace Lucene.Net.Util
 				{
 				  allFields.Add(fi.Name);
 				}
-				Collections.shuffle(allFields, random);
+			    allFields = CollectionsHelper.Shuffle(allFields);
 				int end = allFields.Count == 0 ? 0 : random.Next(allFields.Count);
 				HashSet<string> fields = new HashSet<string>(allFields.SubList(0, end));
 				// will create no FC insanity as ParallelAtomicReader has own cache key:
@@ -1596,11 +1613,11 @@ namespace Lucene.Net.Util
 		  }
 		  if (ex != null)
 		  {
-		   if (VERBOSE)
-		   {
-			Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
-		   }
-		   r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(this, ex));
+		       if (VERBOSE)
+		       {
+			    Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
+		       }
+		       r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(this, ex));
 		  }
 		  IndexSearcher ret;
 		  if (wrapWithAssertions)
@@ -1621,11 +1638,11 @@ namespace Lucene.Net.Util
 	  /// be used, if a real file is needed. To get a stream, code should prefer
 	  /// <seealso cref="Class#getResourceAsStream"/> using {@code this.getClass()}.
 	  /// </summary>
-	  protected File GetDataFile(string name)
+	  protected FileInfo GetDataFile(string name)
 	  {
 		try
 		{
-		  return new File(this.GetType().getResource(name).toURI());
+		  return new FileInfo(this.GetType().getResource(name).toURI());
 		}
 		catch (Exception e)
 		{
@@ -1818,11 +1835,11 @@ namespace Lucene.Net.Util
 		}
 	  }
 
-	  private static class RandomBits : Bits
+	  internal class RandomBits : Bits
 	  {
-		FixedBitSet bits;
+		static FixedBitSet bits;
 
-		RandomBits(int maxDoc, double pctLive, Random random)
+		internal RandomBits(int maxDoc, double pctLive, Random random)
 		{
 		  bits = new FixedBitSet(maxDoc);
 		  for (int i = 0; i < maxDoc; i++)
@@ -2097,8 +2114,8 @@ namespace Lucene.Net.Util
 
 		rightEnum = rightTerms.Iterator(rightEnum);
 
-		List<BytesRef> shuffledTests = new List<BytesRef>(tests);
-		Collections.shuffle(shuffledTests, random);
+		IList<BytesRef> shuffledTests = new List<BytesRef>(tests);
+        shuffledTests = CollectionsHelper.Shuffle(shuffledTests);
 
 		foreach (BytesRef b in shuffledTests)
 		{
@@ -2473,24 +2490,24 @@ namespace Lucene.Net.Util
 		{
 		  if (TempDirBase == null)
 		  {
-			File directory = new File(System.getProperty("tempDir", System.getProperty("java.io.tmpdir")));
-			Debug.Assert(directory.exists() && directory.Directory && directory.canWrite());
+			FileInfo directory = new FileInfo(System.getProperty("tempDir", System.getProperty("java.io.tmpdir")));
+			Debug.Assert(directory.Exists && directory.Directory != null && directory.CanWrite());
 
-			RandomizedContext ctx = RandomizedContext.Current();
-			Type clazz = ctx.TargetClass;
+			RandomizedContext ctx = RandomizedContext.Current;
+			Type clazz = ctx.GetTargetType;
 			string prefix = clazz.Name;
 			prefix = prefix.replaceFirst("^org.apache.lucene.", "lucene.");
 			prefix = prefix.replaceFirst("^org.apache.solr.", "solr.");
 
 			int attempt = 0;
-			File f;
+			FileInfo f;
 			do
 			{
 			  if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
 			  {
-				throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.AbsolutePath);
+				throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.FullName);
 			  }
-			  f = new File(directory, prefix + "-" + ctx.RunnerSeedAsString + "-" + string.format(Locale.ENGLISH, "%03d", attempt));
+			  f = new FileInfo(directory, prefix + "-" + ctx.RunnerSeed + "-" + string.Format(Locale.ENGLISH, "%03d", attempt));
 			} while (!f.mkdirs());
 
 			TempDirBase = f;
@@ -2523,14 +2540,14 @@ namespace Lucene.Net.Util
 		Directory @base = BaseTempDirForTestClass();
 
 		int attempt = 0;
-		File f;
+		FileInfo f;
 		do
 		{
 		  if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
 		  {
-			throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.AbsolutePath);
+              throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.FullName);
 		  }
-		  f = new File(@base, prefix + "-" + string.format(Locale.ENGLISH, "%03d", attempt));
+          f = new FileInfo(@base, prefix + "-" + string.Format(Locale.ENGLISH, "%03d", attempt));
 		} while (!f.mkdirs());
 
 		RegisterToRemoveAfterSuite(f);
@@ -2545,20 +2562,20 @@ namespace Lucene.Net.Util
 	  /// test class completes successfully. The test should close any file handles that would prevent
 	  /// the folder from being removed. 
 	  /// </summary>
-	  public static File CreateTempFile(string prefix, string suffix) 
+	  public static FileInfo CreateTempFile(string prefix, string suffix) 
 	  {
-		File @base = BaseTempDirForTestClass;
+		FileInfo @base = BaseTempDirForTestClass;
 
 		int attempt = 0;
-		File f;
+        FileInfo f;
 		do
 		{
 		  if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
 		  {
-			throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.AbsolutePath);
+			throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.FullName);
 		  }
-		  f = new File(@base, prefix + "-" + string.format(Locale.ENGLISH, "%03d", attempt) + suffix);
-		} while (!f.createNewFile());
+          f = new FileInfo(@base, prefix + "-" + string.format(Locale.ENGLISH, "%03d", attempt) + suffix);
+		} while (f.Create() == null);
 
 		RegisterToRemoveAfterSuite(f);
 		return f;
@@ -2568,7 +2585,7 @@ namespace Lucene.Net.Util
 	  /// Creates an empty temporary file.
 	  /// </summary>
 	  /// <seealso cref= #createTempFile(String, String)  </seealso>
-	  public static File CreateTempFile() 
+	  public static FileInfo CreateTempFile() 
 	  {
 		return CreateTempFile("tempFile", ".tmp");
 	  }
@@ -2582,13 +2599,13 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Register temporary folder for removal after the suite completes.
 	  /// </summary>
-	  private static void registerToRemoveAfterSuite(File f)
+	  private static void RegisterToRemoveAfterSuite(FileInfo f)
 	  {
 		Debug.Assert(f != null);
 
 		if (LuceneTestCase.LEAVE_TEMPORARY)
 		{
-		  Console.Error.WriteLine("INFO: Will leave temporary file: " + f.AbsolutePath);
+		  Console.Error.WriteLine("INFO: Will leave temporary file: " + f.FullName);
 		  return;
 		}
 
@@ -2602,14 +2619,14 @@ namespace Lucene.Net.Util
 	  {
 		protected void Before()
 		{
-		  base.before();
+		  base.Before();
 		  Debug.Assert(TempDirBase == null);
 		}
 
 		protected void AfterAlways(IList<Exception> errors)
 		{
 		  // Drain cleanup queue and clear it.
-		  File[] everything;
+		  FileInfo[] everything;
 		  string tempDirBasePath;
 		  lock (CleanupQueue)
 		  {
@@ -2617,8 +2634,8 @@ namespace Lucene.Net.Util
 			TempDirBase = null;
 
 			CleanupQueue.Reverse();
-			everything = new File [CleanupQueue.Count];
-			CleanupQueue.toArray(everything);
+			everything = new FileInfo [CleanupQueue.Count];
+			CleanupQueue.ToArray(/*everything*/);
 			CleanupQueue.Clear();
 		  }
 
@@ -2633,7 +2650,7 @@ namespace Lucene.Net.Util
 			}
 			catch (IOException e)
 			{
-			  Type suiteClass = RandomizedContext.current().TargetClass;
+			  Type suiteClass = RandomizedContext.Current.TargetClass;
 			  if (suiteClass.isAnnotationPresent(typeof(SuppressTempFileChecks)))
 			  {
 				Console.Error.WriteLine("WARNING: Leftover undeleted temporary files (bugUrl: " + suiteClass.getAnnotation(typeof(SuppressTempFileChecks)).bugUrl() + "): " + e.Message);
@@ -2666,7 +2683,7 @@ namespace Lucene.Net.Util
 			this.ex = ex;
 		}
 
-		public override void OnClose(IndexReader reader)
+		public void OnClose(IndexReader reader)
 		{
 		  TestUtil.ShutdownExecutorService(ex);
 		}

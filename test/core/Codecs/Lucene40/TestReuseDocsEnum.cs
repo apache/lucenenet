@@ -42,16 +42,17 @@ namespace Lucene.Net.Codecs.Lucene40
     using Lucene.Net.Support;
 
 	// TODO: really this should be in BaseTestPF or somewhere else? useful test!
-	public class TestReuseDocsEnum : LuceneTestCase
+	[TestFixture]
+    public class TestReuseDocsEnum : LuceneTestCase
 	{
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass()
+      [TestFixtureSetUp]
 	  public static void BeforeClass()
 	  {
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
 	  }
 
+      [Test]
 	  public virtual void TestReuseDocsEnumNoReuse()
 	  {
 		Directory dir = NewDirectory();
@@ -81,6 +82,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  }
 
 	  // tests for reuse only if bits are the same either null or the same instance
+      [Test]
 	  public virtual void TestReuseDocsEnumSameBitsOrNull()
 	  {
 		Directory dir = NewDirectory();
@@ -129,6 +131,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  }
 
 	  // make sure we never reuse from another reader even if it is the same field & codec etc
+      [Test]
 	  public virtual void TestReuseDocsEnumDifferentReader()
 	  {
 		Directory dir = NewDirectory();

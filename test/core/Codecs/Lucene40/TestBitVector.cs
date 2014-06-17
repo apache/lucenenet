@@ -28,13 +28,15 @@ namespace Lucene.Net.Codecs.Lucene40
 	/// <summary>
 	/// <code>TestBitVector</code> tests the <code>BitVector</code>, obviously.
 	/// </summary>
+	[TestFixture]
 	public class TestBitVector : LuceneTestCase
 	{
 
 		/// <summary>
 		/// Test the default constructor on BitVectors of various sizes.
 		/// </summary>
-		public virtual void TestConstructSize()
+		[Test]
+        public virtual void TestConstructSize()
 		{
 			DoTestConstructOfSize(8);
 			DoTestConstructOfSize(20);
@@ -51,7 +53,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		/// <summary>
 		/// Test the get() and set() methods on BitVectors of various sizes.
 		/// </summary>
-		public virtual void TestGetSet()
+        [Test]
+        public virtual void TestGetSet()
 		{
 			DoTestGetSetVectorOfSize(8);
 			DoTestGetSetVectorOfSize(20);
@@ -65,16 +68,17 @@ namespace Lucene.Net.Codecs.Lucene40
 			for (int i = 0;i < bv.Size();i++)
 			{
 				// ensure a set bit can be git'
-				Assert.IsFalse(bv.get(i));
+				Assert.IsFalse(bv.Get(i));
 				bv.Set(i);
-				Assert.IsTrue(bv.get(i));
+				Assert.IsTrue(bv.Get(i));
 			}
 		}
 
 		/// <summary>
 		/// Test the clear() method on BitVectors of various sizes.
 		/// </summary>
-		public virtual void TestClear()
+        [Test]
+        public virtual void TestClear()
 		{
 			DoTestClearVectorOfSize(8);
 			DoTestClearVectorOfSize(20);
@@ -88,18 +92,19 @@ namespace Lucene.Net.Codecs.Lucene40
 			for (int i = 0;i < bv.Size();i++)
 			{
 				// ensure a set bit is cleared
-				Assert.IsFalse(bv.get(i));
-				bv.set(i);
-				Assert.IsTrue(bv.get(i));
-				bv.clear(i);
-				Assert.IsFalse(bv.get(i));
+				Assert.IsFalse(bv.Get(i));
+				bv.Set(i);
+				Assert.IsTrue(bv.Get(i));
+				bv.Clear(i);
+				Assert.IsFalse(bv.Get(i));
 			}
 		}
 
 		/// <summary>
 		/// Test the count() method on BitVectors of various sizes.
 		/// </summary>
-		public virtual void TestCount()
+        [Test]
+        public virtual void TestCount()
 		{
 			DoTestCountVectorOfSize(8);
 			DoTestCountVectorOfSize(20);
@@ -113,32 +118,33 @@ namespace Lucene.Net.Codecs.Lucene40
 			// test count when incrementally setting bits
 			for (int i = 0;i < bv.Size();i++)
 			{
-				Assert.IsFalse(bv.get(i));
-				Assert.AreEqual(i,bv.count());
-				bv.set(i);
-				Assert.IsTrue(bv.get(i));
-				Assert.AreEqual(i + 1,bv.count());
+				Assert.IsFalse(bv.Get(i));
+				Assert.AreEqual(i,bv.Count());
+				bv.Set(i);
+				Assert.IsTrue(bv.Get(i));
+				Assert.AreEqual(i + 1,bv.Count());
 			}
 
 			bv = new BitVector(n);
 			// test count when setting then clearing bits
 			for (int i = 0;i < bv.Size();i++)
 			{
-				Assert.IsFalse(bv.get(i));
-				Assert.AreEqual(0,bv.count());
-				bv.set(i);
-				Assert.IsTrue(bv.get(i));
-				Assert.AreEqual(1,bv.count());
-				bv.clear(i);
-				Assert.IsFalse(bv.get(i));
-				Assert.AreEqual(0,bv.count());
+				Assert.IsFalse(bv.Get(i));
+				Assert.AreEqual(0,bv.Count());
+				bv.Set(i);
+				Assert.IsTrue(bv.Get(i));
+				Assert.AreEqual(1,bv.Count());
+				bv.Clear(i);
+				Assert.IsFalse(bv.Get(i));
+				Assert.AreEqual(0,bv.Count());
 			}
 		}
 
 		/// <summary>
 		/// Test writing and construction to/from Directory.
 		/// </summary>
-		public virtual void TestWriteRead()
+        [Test]
+        public virtual void TestWriteRead()
 		{
 			DoTestWriteRead(8);
 			DoTestWriteRead(20);
@@ -154,13 +160,13 @@ namespace Lucene.Net.Codecs.Lucene40
 			// test count when incrementally setting bits
 			for (int i = 0;i < bv.Size();i++)
 			{
-				Assert.IsFalse(bv.get(i));
-				Assert.AreEqual(i,bv.count());
-				bv.set(i);
-				Assert.IsTrue(bv.get(i));
-				Assert.AreEqual(i + 1,bv.count());
-				bv.write(d, "TESTBV", newIOContext(Random()));
-				BitVector compare = new BitVector(d, "TESTBV", newIOContext(Random()));
+				Assert.IsFalse(bv.Get(i));
+				Assert.AreEqual(i,bv.Count());
+				bv.Set(i);
+				Assert.IsTrue(bv.Get(i));
+				Assert.AreEqual(i + 1,bv.Count());
+				bv.Write(d, "TESTBV", NewIOContext(Random()));
+				BitVector compare = new BitVector(d, "TESTBV", NewIOContext(Random()));
 				// compare bit vectors with bits set incrementally
 				Assert.IsTrue(DoCompare(bv,compare));
 			}
@@ -169,7 +175,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		/// <summary>
 		/// Test r/w when size/count cause switching between bit-set and d-gaps file formats.  
 		/// </summary>
-		public virtual void TestDgaps()
+        [Test]
+        public virtual void TestDgaps()
 		{
 		  DoTestDgaps(1,0,1);
 		  DoTestDgaps(10,0,1);
@@ -182,25 +189,25 @@ namespace Lucene.Net.Codecs.Lucene40
 		  MockDirectoryWrapper d = new MockDirectoryWrapper(Random(), new RAMDirectory());
 		  d.PreventDoubleWrite = false;
 		  BitVector bv = new BitVector(10000);
-		  bv.set(0);
+		  bv.Set(0);
 		  for (int i = 8; i < 16; i++)
 		  {
-			bv.set(i);
+			bv.Set(i);
 		  } // make sure we have once byte full of set bits
 		  for (int i = 32; i < 40; i++)
 		  {
-			bv.set(i);
+			bv.Set(i);
 		  } // get a second byte full of set bits
 		  // add some more bits here 
 		  for (int i = 40; i < 10000; i++)
 		  {
 			if (Random().Next(1000) == 0)
 			{
-			  bv.set(i);
+			  bv.Set(i);
 			}
 		  }
-		  bv.write(d, "TESTBV", newIOContext(Random()));
-		  BitVector compare = new BitVector(d, "TESTBV", newIOContext(Random()));
+		  bv.Write(d, "TESTBV", NewIOContext(Random()));
+		  BitVector compare = new BitVector(d, "TESTBV", NewIOContext(Random()));
 		  Assert.IsTrue(DoCompare(bv,compare));
 		}
 
@@ -209,87 +216,90 @@ namespace Lucene.Net.Codecs.Lucene40
 		  MockDirectoryWrapper d = new MockDirectoryWrapper(Random(), new RAMDirectory());
 		  d.PreventDoubleWrite = false;
 		  BitVector bv = new BitVector(size);
-		  bv.invertAll();
+		  bv.InvertAll();
 		  for (int i = 0; i < count1; i++)
 		  {
-			bv.clear(i);
-			Assert.AreEqual(i + 1,size - bv.count());
+			bv.Clear(i);
+			Assert.AreEqual(i + 1,size - bv.Count());
 		  }
-		  bv.write(d, "TESTBV", newIOContext(Random()));
+		  bv.Write(d, "TESTBV", NewIOContext(Random()));
 		  // gradually increase number of set bits
 		  for (int i = count1; i < count2; i++)
 		  {
-			BitVector bv2 = new BitVector(d, "TESTBV", newIOContext(Random()));
+			BitVector bv2 = new BitVector(d, "TESTBV", NewIOContext(Random()));
 			Assert.IsTrue(DoCompare(bv,bv2));
 			bv = bv2;
-			bv.clear(i);
-			Assert.AreEqual(i + 1, size - bv.count());
-			bv.write(d, "TESTBV", newIOContext(Random()));
+			bv.Clear(i);
+			Assert.AreEqual(i + 1, size - bv.Count());
+			bv.Write(d, "TESTBV", NewIOContext(Random()));
 		  }
 		  // now start decreasing number of set bits
 		  for (int i = count2 - 1; i >= count1; i--)
 		  {
-			BitVector bv2 = new BitVector(d, "TESTBV", newIOContext(Random()));
+			BitVector bv2 = new BitVector(d, "TESTBV", NewIOContext(Random()));
 			Assert.IsTrue(DoCompare(bv,bv2));
 			bv = bv2;
-			bv.set(i);
-			Assert.AreEqual(i,size - bv.count());
-			bv.write(d, "TESTBV", newIOContext(Random()));
+			bv.Set(i);
+			Assert.AreEqual(i,size - bv.Count());
+			bv.Write(d, "TESTBV", NewIOContext(Random()));
 		  }
 		}
 
-		public virtual void TestSparseWrite()
+        [Test]
+        public virtual void TestSparseWrite()
 		{
 		  Directory d = NewDirectory();
 		  const int numBits = 10240;
 		  BitVector bv = new BitVector(numBits);
-		  bv.invertAll();
+		  bv.InvertAll();
 		  int numToClear = Random().Next(5);
 		  for (int i = 0;i < numToClear;i++)
 		  {
-			bv.clear(Random().Next(numBits));
+			bv.Clear(Random().Next(numBits));
 		  }
-		  bv.write(d, "test", newIOContext(Random()));
-		  long size = d.fileLength("test");
-		  Assert.IsTrue("size=" + size, size < 100);
-		  d.close();
+		  bv.Write(d, "test", NewIOContext(Random()));
+		  long size = d.FileLength("test");
+		  Assert.IsTrue(size < 100, "size=" + size);
+		  d.Dispose();
 		}
 
-		public virtual void TestClearedBitNearEnd()
+        [Test]
+        public virtual void TestClearedBitNearEnd()
 		{
 		  Directory d = NewDirectory();
-		  int numBits = TestUtil.Next(Random(), 7, 1000);
+		  int numBits = TestUtil.NextInt(Random(), 7, 1000);
 		  BitVector bv = new BitVector(numBits);
-		  bv.invertAll();
-		  bv.clear(numBits - TestUtil.Next(Random(), 1, 7));
-		  bv.write(d, "test", newIOContext(Random()));
-		  Assert.AreEqual(numBits - 1, bv.count());
-		  d.close();
+		  bv.InvertAll();
+		  bv.Clear(numBits - TestUtil.NextInt(Random(), 1, 7));
+		  bv.Write(d, "test", NewIOContext(Random()));
+		  Assert.AreEqual(numBits - 1, bv.Count());
+		  d.Dispose();
 		}
 
-		public virtual void TestMostlySet()
+        [Test]
+        public virtual void TestMostlySet()
 		{
 		  Directory d = NewDirectory();
-		  int numBits = TestUtil.Next(Random(), 30, 1000);
+		  int numBits = TestUtil.NextInt(Random(), 30, 1000);
 		  for (int numClear = 0;numClear < 20;numClear++)
 		  {
 			BitVector bv = new BitVector(numBits);
-			bv.invertAll();
+			bv.InvertAll();
 			int count = 0;
 			while (count < numClear)
 			{
 			  int bit = Random().Next(numBits);
 			  // Don't use getAndClear, so that count is recomputed
-			  if (bv.get(bit))
+			  if (bv.Get(bit))
 			  {
-				bv.clear(bit);
+				bv.Clear(bit);
 				count++;
-				Assert.AreEqual(numBits - count, bv.count());
+				Assert.AreEqual(numBits - count, bv.Count());
 			  }
 			}
 		  }
 
-		  d.close();
+		  d.Dispose();
 		}
 
 		/// <summary>
@@ -303,13 +313,13 @@ namespace Lucene.Net.Codecs.Lucene40
 			for (int i = 0;i < bv.Size();i++)
 			{
 				// bits must be equal
-				if (bv.get(i) != compare.get(i))
+				if (bv.Get(i) != compare.Get(i))
 				{
 					equal = false;
 					break;
 				}
 			}
-			Assert.AreEqual(bv.count(), compare.count());
+			Assert.AreEqual(bv.Count(), compare.Count());
 			return equal;
 		}
 	}

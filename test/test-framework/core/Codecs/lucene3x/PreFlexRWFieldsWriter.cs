@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  StorePayloads = fieldInfo.HasPayloads();
 		}
 
-	      internal class PostingsWriter : PostingsConsumer
+	    internal class PostingsWriter : PostingsConsumer
 		{
 			private readonly PreFlexRWFieldsWriter.PreFlexTermsWriter OuterInstance;
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  internal int LastPosition;
 		  internal int Df;
 
-		  public virtual PostingsWriter Reset()
+		  public PostingsWriter Reset()
 		  {
 			Df = 0;
 			LastDocID = 0;

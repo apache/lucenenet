@@ -1,4 +1,5 @@
 using System.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -24,9 +25,7 @@ namespace Lucene.Net.Codecs.Compressing
 	 * limitations under the License.
 	 */
 
-
-	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
-
+    [TestFixture]
 	public abstract class AbstractTestLZ4CompressionMode : AbstractTestCompressionMode
 	{
 	      private LZ4 lz4;
@@ -93,39 +92,43 @@ namespace Lucene.Net.Codecs.Compressing
 		    return compressed;
 	      }
 
-	  public virtual void TestShortLiteralsAndMatchs()
-	  {
-		// literals and matchs lengths <= 15
-		sbyte[] decompressed = "1234562345673456745678910123".GetBytes(IOUtils.CHARSET_UTF_8);
-		Test(decompressed);
-	  }
+          [Test]
+	      public virtual void TestShortLiteralsAndMatchs()
+	      {
+		    // literals and matchs lengths <= 15
+		    sbyte[] decompressed = "1234562345673456745678910123".ToSbyteArray(Encoding.UTF8);
+		    Test(decompressed);
+	      }
 
-	  public virtual void TestLongMatchs()
-	  {
-		// match length >= 20
-		sbyte[] decompressed = new sbyte[RandomInts.NextIntBetween(Random(), 300, 1024)];
-		for (int i = 0; i < decompressed.Length; ++i)
-		{
-		  decompressed[i] = (sbyte) i;
-		}
-		Test(decompressed);
-	  }
+          [Test]
+	      public virtual void TestLongMatchs()
+	      {
+		    // match length >= 20
+		    sbyte[] decompressed = new sbyte[RandomInts.NextIntBetween(Random(), 300, 1024)];
+		    for (int i = 0; i < decompressed.Length; ++i)
+		    {
+		      decompressed[i] = (sbyte) i;
+		    }
+		    Test(decompressed);
+	      }
 
-	  public virtual void TestLongLiterals()
-	  {
-		// long literals (length >= 16) which are not the last literals
-		sbyte[] decompressed = RandomArray(RandomInts.NextIntBetween(Random(), 400, 1024), 256);
-		int matchRef = Random().Next(30);
-        int matchOff = RandomInts.NextIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
-        int matchLength = RandomInts.NextIntBetween(Random(), 4, 10);
-		Array.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
-		Test(decompressed);
-	  }
+          [Test]
+	      public virtual void TestLongLiterals()
+	      {
+		    // long literals (length >= 16) which are not the last literals
+		    sbyte[] decompressed = RandomArray(RandomInts.NextIntBetween(Random(), 400, 1024), 256);
+		    int matchRef = Random().Next(30);
+            int matchOff = RandomInts.NextIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
+            int matchLength = RandomInts.NextIntBetween(Random(), 4, 10);
+		    Array.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
+		    Test(decompressed);
+	      }
 
-	  public virtual void TestMatchRightBeforeLastLiterals()
-	  {
-		Test(new sbyte[] {1,2,3,4, 1,2,3,4, 1,2,3,4,5});
-	  }
+          [Test]
+	      public virtual void TestMatchRightBeforeLastLiterals()
+	      {
+		    Test(new sbyte[] {1,2,3,4, 1,2,3,4, 1,2,3,4,5});
+	      }
 
 	}
 

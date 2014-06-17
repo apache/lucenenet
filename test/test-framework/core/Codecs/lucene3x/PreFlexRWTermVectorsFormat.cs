@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -54,20 +55,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 			// we are part of a "merge", we must sort by UTF16:
 			bool unicodeSortOrder = true;
 
-			string[] trace = (new Exception()).StackTrace;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  //System.out.println(trace[i].getClassName());
-			  if ("merge".Equals(trace[i].MethodName))
-			  {
-				unicodeSortOrder = false;
-				if (LuceneTestCase.VERBOSE)
-				{
-				  Console.WriteLine("NOTE: PreFlexRW codec: forcing legacy UTF16 vector term sort order");
-				}
-				break;
-			  }
-			}
+            var trace = new StackTrace(new Exception());
+		    foreach (var frame in trace.GetFrames())
+		    {
+                var method = frame.GetMethod();
+                if ("merge".Equals(method.Name))
+                {
+                    unicodeSortOrder = false;
+                    if (LuceneTestCase.VERBOSE)
+                    {
+                        Console.WriteLine("NOTE: PreFlexRW codec: forcing legacy UTF16 vector term sort order");
+                    }
+                    break;
+                }
+		    }
 
 			return unicodeSortOrder;
 		  }

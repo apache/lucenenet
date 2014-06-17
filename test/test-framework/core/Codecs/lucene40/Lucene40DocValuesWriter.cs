@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -393,7 +394,8 @@ namespace Lucene.Net.Codecs.Lucene40
 		  {
               brefDummy = new BytesRef();
 		  }
-          int ord = dictionary.HeadSet(brefDummy).Size();
+          //int ord = dictionary.HeadSet(brefDummy).Size();
+		  int ord = dictionary.Count(@ref => @ref.CompareTo(brefDummy) < 0);
 		  w.Add(ord);
 		}
 		w.Finish();

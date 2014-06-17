@@ -65,11 +65,13 @@ namespace Lucene.Net.Codecs.Lucene41
 	/// <summary>
 	/// Tests partial enumeration (only pulling a subset of the indexed data) 
 	/// </summary>
+    [TestFixture]
 	public class TestBlockPostingsFormat3 : LuceneTestCase
 	{
 	  internal static readonly int MAXDOC = Lucene41PostingsFormat.BLOCK_SIZE * 20;
 
 	  // creates 8 fields with different options and does "duels" of fields against each other
+      [Test]
 	  public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
@@ -474,7 +476,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  else
 		  {
 			// advance()
-			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().nextGaussian() * averageGap));
+			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().NextDouble() * averageGap));
 			docid = leftDocs.Advance(skip);
 			Assert.AreEqual(docid, rightDocs.Advance(skip));
 		  }
@@ -514,7 +516,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  else
 		  {
 			// advance()
-			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().nextGaussian() * averageGap));
+			int skip = docid + (int) Math.Ceiling(Math.Abs(skipInterval + Random().NextDouble() * averageGap));
 			docid = leftDocs.Advance(skip);
 			Assert.AreEqual(docid, rightDocs.Advance(skip));
 		  }

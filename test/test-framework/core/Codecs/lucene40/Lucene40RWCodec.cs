@@ -22,8 +22,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	/// <summary>
 	/// Read-write version of Lucene40Codec for testing </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("deprecation") public final class Lucene40RWCodec extends Lucene40Codec
 	public sealed class Lucene40RWCodec : Lucene40Codec
 	{
 

@@ -26,8 +26,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using StringField = Lucene.Net.Document.StringField;
-	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 	using FieldInfos = Lucene.Net.Index.FieldInfos;
 	using Fields = Lucene.Net.Index.Fields;
@@ -53,6 +51,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestTermInfosReaderIndex : LuceneTestCase
 	{
 
@@ -68,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// we will manually instantiate preflex-rw here </summary>
-	  [SetUp]
+      [TestFixtureSetUp]
       public static void BeforeClass()
 	  {
 		// NOTE: turn off compound file, this test will open some index files directly.
@@ -113,7 +112,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		SampleTerms = Sample(Random(),Reader,1000);
 	  }
 
-      [TearDown]
+      [TestFixtureTearDown]
 	  public static void AfterClass()
 	  {
 		TermEnum.Dispose();
@@ -126,6 +125,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		SampleTerms = null;
 	  }
 
+      [Test]
 	  public virtual void TestSeekEnum()
 	  {
 		int indexPosition = 3;
@@ -137,6 +137,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		clone.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestCompareTo()
 	  {
 		Term term = new Term("field" + Random().Next(NUMBER_OF_FIELDS),Text);
@@ -148,6 +149,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
+      [Test]
 	  public virtual void TestRandomSearchPerformance()
 	  {
 		IndexSearcher searcher = new IndexSearcher(Reader);

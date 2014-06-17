@@ -22,8 +22,6 @@ namespace Lucene.Net.Analysis
 
 
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
-	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
-	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 
 	/// <summary>
 	/// Simple example of a filter that seems to show some problems with LookaheadTokenFilter.

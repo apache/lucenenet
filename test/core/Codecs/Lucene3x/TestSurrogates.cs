@@ -29,11 +29,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 	using Lucene.Net.Util;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSurrogates : LuceneTestCase
 	{
 	  /// <summary>
 	  /// we will manually instantiate preflex-rw here </summary>
-	  [SetUp]
+      [TestFixtureSetUp]
       public static void BeforeClass()
 	  {
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
@@ -342,7 +343,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-
+      [Test]
 	  public virtual void TestSurrogatesOrder()
 	  {
 		Directory dir = NewDirectory();

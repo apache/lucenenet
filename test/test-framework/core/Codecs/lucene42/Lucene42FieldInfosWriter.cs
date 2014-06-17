@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	/// <summary>
 	/// Lucene 4.2 FieldInfos writer.
 	/// </summary>
-	/// <seealso cref= Lucene42FieldInfosFormat
+	/// <seealso> cref= Lucene42FieldInfosFormat
 	/// @lucene.experimental </seealso>
 	[Obsolete]
 	public sealed class Lucene42FieldInfosWriter : FieldInfosWriter

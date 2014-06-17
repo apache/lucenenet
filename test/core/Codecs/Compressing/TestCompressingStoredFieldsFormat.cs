@@ -21,7 +21,6 @@ namespace Lucene.Net.Codecs.Compressing
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using Store = Lucene.Net.Document.Field.Store;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using IntField = Lucene.Net.Document.IntField;
 	using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
@@ -30,13 +29,8 @@ namespace Lucene.Net.Codecs.Compressing
 	using Directory = Lucene.Net.Store.Directory;
     using NUnit.Framework;
     using Lucene.Net.Randomized.Generators;
-	//using Test = org.junit.Test;
 
-	//using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
-	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Repeat(iterations=5) public class TestCompressingStoredFieldsFormat extends Lucene.Net.Index.BaseStoredFieldsFormatTestCase
+    [TestFixture]
 	public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase
 	{
 		protected internal override Codec Codec
@@ -47,8 +41,8 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test(expected=IllegalArgumentException.class) public void testDeletePartiallyWrittenFilesIfAbort() throws java.io.IOException
+      [Test]
+      [ExpectedException("System.IvalidOperationException")]
 	  public virtual void TestDeletePartiallyWrittenFilesIfAbort()
 	  {
 		Directory dir = NewDirectory();

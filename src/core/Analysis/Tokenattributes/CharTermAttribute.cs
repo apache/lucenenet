@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  // *** TermToBytesRefAttribute interface ***
 	  private BytesRef Bytes = new BytesRef(MIN_BUFFER_SIZE);
 
-	  public void FillBytesRef()
+	  public virtual void FillBytesRef()
 	  {
 		UnicodeUtil.UTF16toUTF8(TermBuffer, 0, TermLength, Bytes);
 	  }

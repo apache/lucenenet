@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-	    protected internal override void ResetSkip()
+	  public override void ResetSkip()
 	  {
 		base.ResetSkip();
 		Arrays.Fill(LastSkipDoc, 0);

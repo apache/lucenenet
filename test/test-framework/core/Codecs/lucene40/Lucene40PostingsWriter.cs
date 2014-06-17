@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	/// <summary>
 	/// Concrete class that writes the 4.0 frq/prx postings format.
 	/// </summary>
-	/// <seealso cref= Lucene40PostingsFormat
+	/// <seealso> cref= Lucene40PostingsFormat
 	/// @lucene.experimental  </seealso>
 	public sealed class Lucene40PostingsWriter : PostingsWriterBase
 	{

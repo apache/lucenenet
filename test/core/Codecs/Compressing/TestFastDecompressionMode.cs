@@ -19,9 +19,11 @@ namespace Lucene.Net.Codecs.Compressing
 	 * limitations under the License.
 	 */
 
+    [TestFixture]
 	public class TestFastDecompressionMode : AbstractTestLZ4CompressionMode
 	{
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();

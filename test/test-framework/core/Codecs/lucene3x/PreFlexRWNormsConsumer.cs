@@ -89,9 +89,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         LastFieldNumber = field.Number;
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		IOUtils.Close(@out);
+          if (disposing)
+		        IOUtils.Close(@out);
 	  }
 
 	  public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)

@@ -27,8 +27,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	/// <summary>
 	/// Read-write version of <seealso cref="Lucene41Codec"/> for testing.
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("deprecation") public class Lucene41RWCodec extends Lucene41Codec
 	public class Lucene41RWCodec : Lucene41Codec
 	{
 	  private readonly StoredFieldsFormat FieldsFormat = new Lucene41StoredFieldsFormat();

@@ -39,7 +39,8 @@ namespace Lucene.Net.Codecs.asserting
 	{
 	  private readonly PostingsFormat @in = new Lucene41PostingsFormat();
 
-	  public AssertingPostingsFormat() : base("Asserting")
+	  public AssertingPostingsFormat() 
+          : base("Asserting")
 	  {
 	  }
 

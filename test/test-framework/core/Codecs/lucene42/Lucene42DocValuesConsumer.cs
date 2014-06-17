@@ -37,7 +37,6 @@ namespace Lucene.Net.Codecs.Lucene42
 	using IntsRef = Lucene.Net.Util.IntsRef;
 	using MathUtil = Lucene.Net.Util.MathUtil;
 	using INPUT_TYPE = Lucene.Net.Util.Fst.FST.INPUT_TYPE;
-	using FST = Lucene.Net.Util.Fst.FST;
 	using PositiveIntOutputs = Lucene.Net.Util.Fst.PositiveIntOutputs;
 	using Util = Lucene.Net.Util.Fst.Util;
 	using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;

@@ -24,8 +24,6 @@ namespace Lucene.Net.Codecs.Lucene40
 	/// <summary>
 	/// Read-write version of <seealso cref="Lucene40PostingsFormat"/> for testing.
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("deprecation") public class Lucene40RWPostingsFormat extends Lucene40PostingsFormat
 	public class Lucene40RWPostingsFormat : Lucene40PostingsFormat
 	{
 		public override FieldsConsumer FieldsConsumer(SegmentWriteState state)

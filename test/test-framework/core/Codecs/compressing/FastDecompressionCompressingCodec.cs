@@ -28,7 +28,8 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  /// <summary>
 	  /// Constructor that allows to configure the chunk size. </summary>
-	  public FastDecompressionCompressingCodec(int chunkSize, bool withSegmentSuffix) : base("FastDecompressionCompressingStoredFields", withSegmentSuffix ? "FastDecompressionCompressingStoredFields" : "", CompressionMode.FAST_DECOMPRESSION, chunkSize)
+	  public FastDecompressionCompressingCodec(int chunkSize, bool withSegmentSuffix) 
+          : base("FastDecompressionCompressingStoredFields", withSegmentSuffix ? "FastDecompressionCompressingStoredFields" : "", CompressionMode.FAST_DECOMPRESSION, chunkSize)
 	  {
 	  }
 

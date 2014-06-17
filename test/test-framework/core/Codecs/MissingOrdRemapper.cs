@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs
@@ -46,10 +47,15 @@ namespace Lucene.Net.Codecs
 			  this.Iterable = iterable;
 		  }
 
-		  public virtual IEnumerator<BytesRef> GetEnumerator()
+		  public IEnumerator<BytesRef> GetEnumerator()
 		  {
 			return new IteratorAnonymousInnerClassHelper(this);
 		  }
+
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
 
 		  private class IteratorAnonymousInnerClassHelper : IEnumerator<BytesRef>
 		  {
@@ -62,31 +68,48 @@ namespace Lucene.Net.Codecs
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 
-			  internal bool seenEmpty;
-			  internal IEnumerator<BytesRef> @in;
+              private bool seenEmpty;
+			  private IEnumerator<BytesRef> @in;
+		      private BytesRef current;
 
-			  public virtual bool HasNext()
-			  {
-				return !seenEmpty || @in.hasNext();
-			  }
 
-			  public virtual BytesRef Next()
-			  {
-				if (!seenEmpty)
-				{
-				  seenEmpty = true;
-				  return new BytesRef();
-				}
-				else
-				{
-				  return @in.next();
-				}
-			  }
+		      public bool MoveNext()
+		      {
+		          if (seenEmpty || !@in.MoveNext())
+		          {
+		              return false;
+		          }
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+		          if (!seenEmpty)
+		          {
+		              seenEmpty = true;
+		              current = new BytesRef();
+		          }
+		          else
+		          {
+		              current = @in.Current;
+		          }
+
+
+		          return true;
+		      }
+
+		      public BytesRef Current
+		      {
+		          get { return current; }
+		      }
+
+		      object System.Collections.IEnumerator.Current
+		      {
+		          get { return Current; }
+		      }
+
+		      public void Reset()
+		      {
+		          throw new NotImplementedException();
+		      }
+
+              public void Dispose() { }
 		  }
 	  }
 
@@ -106,10 +129,15 @@ namespace Lucene.Net.Codecs
 			  this.Iterable = iterable;
 		  }
 
-          public virtual IEnumerator<long> GetEnumerator()
+          public IEnumerator<long> GetEnumerator()
 		  {
 			return new IteratorAnonymousInnerClassHelper2(this);
 		  }
+
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
 
           private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long>
 		  {
@@ -121,30 +149,39 @@ namespace Lucene.Net.Codecs
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 
-              internal IEnumerator<long> @in;
+              private IEnumerator<long> @in;
+              private long current;
 
-			  public virtual bool HasNext()
-			  {
-				return @in.hasNext();
-			  }
+              public bool MoveNext()
+              {
+                  if (!@in.MoveNext())
+                  {
+                      return false;
+                  }
 
-              public virtual long Next()
-			  {
-				long n = @in.next();
-				if ((long)n == -1)
-				{
-				  return 0;
-				}
-				else
-				{
-				  return n;
-				}
-			  }
+                  long n = @in.Current;
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+                  current = n == -1 ? 0 : n;
+
+                  return true;
+              }
+
+              public long Current
+              {
+                  get { return current; }
+              }
+
+              object System.Collections.IEnumerator.Current
+              {
+                  get { return Current; }
+              }
+
+              public void Reset()
+              {
+                  throw new NotImplementedException();
+              }
+
+              public void Dispose() { }
 		  }
 	  }
 
@@ -164,10 +201,15 @@ namespace Lucene.Net.Codecs
 			  this.Iterable = iterable;
 		  }
 
-          public virtual IEnumerator<long> GetEnumerator()
+          public IEnumerator<long> GetEnumerator()
 		  {
 			return new IteratorAnonymousInnerClassHelper3(this);
 		  }
+
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
 
           private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long>
 		  {
@@ -179,23 +221,38 @@ namespace Lucene.Net.Codecs
 				  @in = outerInstance.Iterable.GetEnumerator();
 			  }
 
-              internal IEnumerator<long> @in;
+              private IEnumerator<long> @in;
+              private long current;
 
-			  public virtual bool HasNext()
-			  {
-				return @in.hasNext();
-			  }
+              public bool MoveNext()
+              {
+                  if (!@in.MoveNext())
+                  {
+                      return false;
+                  }
 
-              public virtual long Next()
-			  {
-				long n = @in.next();
-				return (long)n + 1;
-			  }
+                  long n = @in.Current;
+                  current = n + 1;
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+                  return true;
+              }
+
+              public long Current
+              {
+                  get { return current; }
+              }
+
+              object System.Collections.IEnumerator.Current
+              {
+                  get { return Current; }
+              }
+
+              public void Reset()
+              {
+                  throw new NotImplementedException();
+              }
+
+              public void Dispose() { }
 		  }
 	  }
 	}

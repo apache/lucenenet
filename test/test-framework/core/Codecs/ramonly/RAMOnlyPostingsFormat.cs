@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Codecs.ramonly
 {
@@ -199,7 +200,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override TermsEnum Iterator(TermsEnum reuse)
 		{
-		  return new RAMTermsEnum(RAMOnlyPostingsFormat.RAMField.this);
+		  return new RAMTermsEnum(this);
 		}
 
 		public override IComparer<BytesRef> Comparator
@@ -428,7 +429,8 @@ namespace Lucene.Net.Codecs.ramonly
 			}
 			else
 			{
-			  It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
+			  //It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
+			  It = RamField.TermToDocs.Where(kvpair => String.Compare(kvpair.Key, Current) >= 0).ToDictionary(kvpair => kvpair.Key, kvpair => kvpair.Value).Keys.GetEnumerator();
 			}
 		  }
 		  if (It.MoveNext())
@@ -452,7 +454,7 @@ namespace Lucene.Net.Codecs.ramonly
 		  }
 		  else
 		  {
-			if (Current.CompareTo(RamField.TermToDocs.lastKey()) > 0)
+			if (Current.CompareTo(RamField.TermToDocs.Last().Key) > 0)
 			{
 			  return SeekStatus.END;
 			}
@@ -502,11 +504,11 @@ namespace Lucene.Net.Codecs.ramonly
 
 	  private class RAMDocsEnum : DocsEnum
 	  {
-		internal readonly RAMTerm RamTerm;
-		internal readonly Bits LiveDocs;
-		internal RAMDoc Current;
-		internal int Upto = -1;
-		internal int PosUpto = 0;
+          private readonly RAMTerm RamTerm;
+          private readonly Bits LiveDocs;
+          private RAMDoc Current;
+          private int Upto = -1;
+          private int PosUpto = 0;
 
 		public RAMDocsEnum(RAMTerm ramTerm, Bits liveDocs)
 		{
@@ -559,11 +561,11 @@ namespace Lucene.Net.Codecs.ramonly
 
 	  private class RAMDocsAndPositionsEnum : DocsAndPositionsEnum
 	  {
-		internal readonly RAMTerm RamTerm;
-		internal readonly Bits LiveDocs;
-		internal RAMDoc Current;
-		internal int Upto = -1;
-		internal int PosUpto = 0;
+          private readonly RAMTerm RamTerm;
+          private readonly Bits LiveDocs;
+          private RAMDoc Current;
+          private int Upto = -1;
+          private int PosUpto = 0;
 
 		public RAMDocsAndPositionsEnum(RAMTerm ramTerm, Bits liveDocs)
 		{
