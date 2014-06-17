@@ -28,6 +28,7 @@ namespace Lucene.Net.Search.Spans
 	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using Lucene.Net.Search;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using NUnit.Framework;
 
 	/// <summary>
 	///*****************************************************************************
@@ -48,22 +49,22 @@ namespace Lucene.Net.Search.Spans
 		base.SetUp();
 
 		// create test index
-		RandomIndexWriter writer = new RandomIndexWriter(random(), MDirectory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).setOpenMode(OpenMode.APPEND).setMergePolicy(newLogMergePolicy()).setSimilarity(new DefaultSimilarity()));
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
 		AddDocument(writer, "A", "Should we, could we, would we?");
 		AddDocument(writer, "B", "It should.  Should it?");
 		AddDocument(writer, "C", "It shouldn't.");
 		AddDocument(writer, "D", "Should we, should we, should we.");
 		Reader2 = writer.Reader;
-		writer.close();
+		writer.Close();
 
 		// re-open the searcher since we added more docs
-		Searcher2 = newSearcher(Reader2);
+		Searcher2 = NewSearcher(Reader2);
 		Searcher2.Similarity = new DefaultSimilarity();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader2.close();
+		Reader2.Dispose();
 		base.TearDown();
 	  }
 
@@ -72,9 +73,9 @@ namespace Lucene.Net.Search.Spans
 	  /// </summary>
 	  public virtual void TestVerifyIndex()
 	  {
-		IndexReader reader = DirectoryReader.open(MDirectory);
-		Assert.AreEqual(8, reader.numDocs());
-		reader.close();
+		IndexReader reader = DirectoryReader.Open(MDirectory);
+		Assert.AreEqual(8, reader.NumDocs());
+		reader.Dispose();
 	  }
 
 	  /// <summary>
@@ -98,8 +99,8 @@ namespace Lucene.Net.Search.Spans
 		Query spanQuery1 = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
 		Query spanQuery2 = new SpanTermQuery(new Term(FIELD_TEXT, "we"));
 		BooleanQuery query = new BooleanQuery();
-		query.add(spanQuery1, BooleanClause.Occur_e.MUST);
-		query.add(spanQuery2, BooleanClause.Occur_e.MUST);
+		query.Add(spanQuery1, BooleanClause.Occur_e.MUST);
+		query.Add(spanQuery2, BooleanClause.Occur_e.MUST);
 		string[] expectedIds = new string[] {"D", "A"};
 		// these values were pre LUCENE-413
 		// final float[] expectedScores = new float[] { 0.93163157f, 0.20698164f };

@@ -39,6 +39,7 @@ namespace Lucene.Net.Analysis
 	{
 	  private string[] Tokens = new string[] {"term1", "term2", "term3", "term2"};
 
+      [Test]
 	  public virtual void TestCaching()
 	  {
 		Directory dir = new RAMDirectory();

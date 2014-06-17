@@ -29,134 +29,135 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using English = Lucene.Net.Util.English;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestQueryWrapperFilter : LuceneTestCase
 	{
 
 	  public virtual void TestBasic()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("field", "value", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("field", "value", Field.Store.NO));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
 		TermQuery termQuery = new TermQuery(new Term("field", "value"));
 
 		// should not throw exception with primitive query
 		QueryWrapperFilter qwf = new QueryWrapperFilter(termQuery);
 
-		IndexSearcher searcher = newSearcher(reader);
-		TopDocs hits = searcher.search(new MatchAllDocsQuery(), qwf, 10);
-		Assert.AreEqual(1, hits.totalHits);
-		hits = searcher.search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
-		Assert.AreEqual(1, hits.totalHits);
+		IndexSearcher searcher = NewSearcher(reader);
+		TopDocs hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+		Assert.AreEqual(1, hits.TotalHits);
+		hits = searcher.Search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
+		Assert.AreEqual(1, hits.TotalHits);
 
 		// should not throw exception with complex primitive query
 		BooleanQuery booleanQuery = new BooleanQuery();
-		booleanQuery.add(termQuery, Occur.MUST);
-		booleanQuery.add(new TermQuery(new Term("field", "missing")), Occur.MUST_NOT);
+		booleanQuery.Add(termQuery, Occur.MUST);
+		booleanQuery.Add(new TermQuery(new Term("field", "missing")), Occur.MUST_NOT);
 		qwf = new QueryWrapperFilter(termQuery);
 
-		hits = searcher.search(new MatchAllDocsQuery(), qwf, 10);
-		Assert.AreEqual(1, hits.totalHits);
-		hits = searcher.search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
-		Assert.AreEqual(1, hits.totalHits);
+		hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+		Assert.AreEqual(1, hits.TotalHits);
+		hits = searcher.Search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
+		Assert.AreEqual(1, hits.TotalHits);
 
 		// should not throw exception with non primitive Query (doesn't implement
 		// Query#createWeight)
 		qwf = new QueryWrapperFilter(new FuzzyQuery(new Term("field", "valu")));
 
-		hits = searcher.search(new MatchAllDocsQuery(), qwf, 10);
-		Assert.AreEqual(1, hits.totalHits);
-		hits = searcher.search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
-		Assert.AreEqual(1, hits.totalHits);
+		hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+		Assert.AreEqual(1, hits.TotalHits);
+		hits = searcher.Search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
+		Assert.AreEqual(1, hits.TotalHits);
 
 		// test a query with no hits
 		termQuery = new TermQuery(new Term("field", "not_exist"));
 		qwf = new QueryWrapperFilter(termQuery);
-		hits = searcher.search(new MatchAllDocsQuery(), qwf, 10);
-		Assert.AreEqual(0, hits.totalHits);
-		hits = searcher.search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
-		Assert.AreEqual(0, hits.totalHits);
-		reader.close();
-		dir.close();
+		hits = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+		Assert.AreEqual(0, hits.TotalHits);
+		hits = searcher.Search(new MatchAllDocsQuery(), new CachingWrapperFilter(qwf), 10);
+		Assert.AreEqual(0, hits.TotalHits);
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestRandom()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
-		w.w.Config.MaxBufferedDocs = 17;
-		int numDocs = atLeast(100);
-		Set<string> aDocs = new HashSet<string>();
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+		w.w.Config.SetMaxBufferedDocs(17);
+		int numDocs = AtLeast(100);
+		HashSet<string> aDocs = new HashSet<string>();
 		for (int i = 0;i < numDocs;i++)
 		{
 		  Document doc = new Document();
 		  string v;
-		  if (random().Next(5) == 4)
+		  if (Random().Next(5) == 4)
 		  {
 			v = "a";
-			aDocs.add("" + i);
+			aDocs.Add("" + i);
 		  }
 		  else
 		  {
 			v = "b";
 		  }
-		  Field f = newStringField("field", v, Field.Store.NO);
-		  doc.add(f);
-		  doc.add(newStringField("id", "" + i, Field.Store.YES));
-		  w.addDocument(doc);
+		  Field f = NewStringField("field", v, Field.Store.NO);
+		  doc.Add(f);
+		  doc.Add(NewStringField("id", "" + i, Field.Store.YES));
+		  w.AddDocument(doc);
 		}
 
-		int numDelDocs = atLeast(10);
+		int numDelDocs = AtLeast(10);
 		for (int i = 0;i < numDelDocs;i++)
 		{
-		  string delID = "" + random().Next(numDocs);
-		  w.deleteDocuments(new Term("id", delID));
-		  aDocs.remove(delID);
+		  string delID = "" + Random().Next(numDocs);
+		  w.DeleteDocuments(new Term("id", delID));
+		  aDocs.Remove(delID);
 		}
 
 		IndexReader r = w.Reader;
-		w.close();
-		TopDocs hits = newSearcher(r).search(new MatchAllDocsQuery(), new QueryWrapperFilter(new TermQuery(new Term("field", "a"))), numDocs);
-		Assert.AreEqual(aDocs.size(), hits.totalHits);
-		foreach (ScoreDoc sd in hits.scoreDocs)
+		w.Close();
+		TopDocs hits = NewSearcher(r).Search(new MatchAllDocsQuery(), new QueryWrapperFilter(new TermQuery(new Term("field", "a"))), numDocs);
+		Assert.AreEqual(aDocs.Count, hits.TotalHits);
+		foreach (ScoreDoc sd in hits.ScoreDocs)
 		{
-		  Assert.IsTrue(aDocs.contains(r.document(sd.doc).get("id")));
+		  Assert.IsTrue(aDocs.Contains(r.Document(sd.Doc).Get("id")));
 		}
-		r.close();
-		d.close();
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  public virtual void TestThousandDocuments()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		for (int i = 0; i < 1000; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("field", English.intToEnglish(i), Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("field", English.IntToEnglish(i), Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 
 		IndexReader reader = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		for (int i = 0; i < 1000; i++)
 		{
-		  TermQuery termQuery = new TermQuery(new Term("field", English.intToEnglish(i)));
+		  TermQuery termQuery = new TermQuery(new Term("field", English.IntToEnglish(i)));
 		  QueryWrapperFilter qwf = new QueryWrapperFilter(termQuery);
-		  TopDocs td = searcher.search(new MatchAllDocsQuery(), qwf, 10);
-		  Assert.AreEqual(1, td.totalHits);
+		  TopDocs td = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
+		  Assert.AreEqual(1, td.TotalHits);
 		}
 
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 	}
 

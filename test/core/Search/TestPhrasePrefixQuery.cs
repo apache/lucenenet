@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -30,6 +31,7 @@ namespace Lucene.Net.Search
 	using MultiFields = Lucene.Net.Index.MultiFields;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using Directory = Lucene.Net.Store.Directory;
+    using NUnit.Framework;
 
 
 	/// <summary>
@@ -41,44 +43,44 @@ namespace Lucene.Net.Search
 	  ///   
 	  public virtual void TestPhrasePrefix()
 	  {
-		Directory indexStore = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), indexStore);
+		Directory indexStore = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
 		Document doc1 = new Document();
 		Document doc2 = new Document();
 		Document doc3 = new Document();
 		Document doc4 = new Document();
 		Document doc5 = new Document();
-		doc1.add(newTextField("body", "blueberry pie", Field.Store.YES));
-		doc2.add(newTextField("body", "blueberry strudel", Field.Store.YES));
-		doc3.add(newTextField("body", "blueberry pizza", Field.Store.YES));
-		doc4.add(newTextField("body", "blueberry chewing gum", Field.Store.YES));
-		doc5.add(newTextField("body", "piccadilly circus", Field.Store.YES));
-		writer.addDocument(doc1);
-		writer.addDocument(doc2);
-		writer.addDocument(doc3);
-		writer.addDocument(doc4);
-		writer.addDocument(doc5);
+		doc1.Add(NewTextField("body", "blueberry pie", Field.Store.YES));
+		doc2.Add(NewTextField("body", "blueberry strudel", Field.Store.YES));
+		doc3.Add(NewTextField("body", "blueberry pizza", Field.Store.YES));
+		doc4.Add(NewTextField("body", "blueberry chewing gum", Field.Store.YES));
+		doc5.Add(NewTextField("body", "piccadilly circus", Field.Store.YES));
+		writer.AddDocument(doc1);
+		writer.AddDocument(doc2);
+		writer.AddDocument(doc3);
+		writer.AddDocument(doc4);
+		writer.AddDocument(doc5);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		// PhrasePrefixQuery query1 = new PhrasePrefixQuery();
 		MultiPhraseQuery query1 = new MultiPhraseQuery();
 		// PhrasePrefixQuery query2 = new PhrasePrefixQuery();
 		MultiPhraseQuery query2 = new MultiPhraseQuery();
-		query1.add(new Term("body", "blueberry"));
-		query2.add(new Term("body", "strawberry"));
+		query1.Add(new Term("body", "blueberry"));
+		query2.Add(new Term("body", "strawberry"));
 
 		LinkedList<Term> termsWithPrefix = new LinkedList<Term>();
 
 		// this TermEnum gives "piccadilly", "pie" and "pizza".
 		string prefix = "pi";
-		TermsEnum te = MultiFields.getFields(reader).terms("body").iterator(null);
-		te.seekCeil(new BytesRef(prefix));
+		TermsEnum te = MultiFields.GetFields(reader).Terms("body").Iterator(null);
+		te.SeekCeil(new BytesRef(prefix));
 		do
 		{
-		  string s = te.term().utf8ToString();
+		  string s = te.Term().Utf8ToString();
 		  if (s.StartsWith(prefix))
 		  {
 			termsWithPrefix.AddLast(new Term("body", s));
@@ -87,19 +89,19 @@ namespace Lucene.Net.Search
 		  {
 			break;
 		  }
-		} while (te.next() != null);
+		} while (te.Next() != null);
 
-		query1.add(termsWithPrefix.toArray(new Term[0]));
-		query2.add(termsWithPrefix.toArray(new Term[0]));
+		query1.Add(termsWithPrefix.ToArray(/*new Term[0]*/));
+		query2.Add(termsWithPrefix.ToArray(/*new Term[0]*/));
 
 		ScoreDoc[] result;
-		result = searcher.search(query1, null, 1000).scoreDocs;
+		result = searcher.Search(query1, null, 1000).ScoreDocs;
 		Assert.AreEqual(2, result.Length);
 
-		result = searcher.search(query2, null, 1000).scoreDocs;
+		result = searcher.Search(query2, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, result.Length);
-		reader.close();
-		indexStore.close();
+		reader.Dispose();
+		indexStore.Dispose();
 	  }
 	}
 

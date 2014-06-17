@@ -36,11 +36,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2);
+		q1.Add(t1);
+		q1.Add(t2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2);
+		q2.Add(t1);
+		q2.Add(t2);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -56,11 +56,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2, 2);
+		q1.Add(t1);
+		q1.Add(t2, 2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2, 2);
+		q2.Add(t1);
+		q2.Add(t2, 2);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -77,13 +77,13 @@ namespace Lucene.Net.Search
 		Term t2 = randomTerm();
 		Term t3 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2);
-		q1.add(t3);
+		q1.Add(t1);
+		q1.Add(t2);
+		q1.Add(t3);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2);
-		q2.add(t3);
+		q2.Add(t1);
+		q2.Add(t2);
+		q2.Add(t3);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -99,16 +99,16 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		Term t3 = randomTerm();
-		int pos1 = 1 + random().Next(3);
-		int pos2 = pos1 + 1 + random().Next(3);
+		int pos1 = 1 + Random().Next(3);
+		int pos2 = pos1 + 1 + Random().Next(3);
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2, pos1);
-		q1.add(t3, pos2);
+		q1.Add(t1);
+		q1.Add(t2, pos1);
+		q1.Add(t3, pos2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2, pos1);
-		q2.add(t3, pos2);
+		q2.Add(t1);
+		q2.Add(t2, pos1);
+		q2.Add(t3, pos2);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -123,11 +123,11 @@ namespace Lucene.Net.Search
 	  {
 		Term t = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t);
-		q1.add(t);
+		q1.Add(t);
+		q1.Add(t);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t);
-		q2.add(t);
+		q2.Add(t);
+		q2.Add(t);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -142,11 +142,11 @@ namespace Lucene.Net.Search
 	  {
 		Term t = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t);
-		q1.add(t, 2);
+		q1.Add(t);
+		q1.Add(t, 2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t);
-		q2.add(t, 2);
+		q2.Add(t);
+		q2.Add(t, 2);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -161,13 +161,13 @@ namespace Lucene.Net.Search
 	  {
 		Term t = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t);
-		q1.add(t);
-		q1.add(t);
+		q1.Add(t);
+		q1.Add(t);
+		q1.Add(t);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t);
-		q2.add(t);
-		q2.add(t);
+		q2.Add(t);
+		q2.Add(t);
+		q2.Add(t);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -181,16 +181,16 @@ namespace Lucene.Net.Search
 	  public virtual void TestRepetitiveIncreasingSloppiness3WithHoles()
 	  {
 		Term t = randomTerm();
-		int pos1 = 1 + random().Next(3);
-		int pos2 = pos1 + 1 + random().Next(3);
+		int pos1 = 1 + Random().Next(3);
+		int pos2 = pos1 + 1 + Random().Next(3);
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t);
-		q1.add(t, pos1);
-		q1.add(t, pos2);
+		q1.Add(t);
+		q1.Add(t, pos1);
+		q1.Add(t, pos2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t);
-		q2.add(t, pos1);
-		q2.add(t, pos2);
+		q2.Add(t);
+		q2.Add(t, pos1);
+		q2.Add(t, pos2);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
 	  /// MultiPhraseQuery~N ⊆ MultiPhraseQuery~N+1 </summary>
 	  public virtual void TestRandomIncreasingSloppiness()
 	  {
-		long seed = random().nextLong();
+		long seed = Random().NextLong();
 		MultiPhraseQuery q1 = RandomPhraseQuery(seed);
 		MultiPhraseQuery q2 = RandomPhraseQuery(seed);
 		for (int i = 0; i < 10; i++)
@@ -217,19 +217,19 @@ namespace Lucene.Net.Search
 	  private MultiPhraseQuery RandomPhraseQuery(long seed)
 	  {
 		Random random = new Random(seed);
-		int length = TestUtil.Next(random, 2, 5);
+		int length = TestUtil.NextInt(random, 2, 5);
 		MultiPhraseQuery pq = new MultiPhraseQuery();
 		int position = 0;
 		for (int i = 0; i < length; i++)
 		{
-		  int depth = TestUtil.Next(random, 1, 3);
+		  int depth = TestUtil.NextInt(random, 1, 3);
 		  Term[] terms = new Term[depth];
 		  for (int j = 0; j < depth; j++)
 		  {
-			terms[j] = new Term("field", "" + (char) TestUtil.Next(random, 'a', 'z'));
+			terms[j] = new Term("field", "" + (char) TestUtil.NextInt(random, 'a', 'z'));
 		  }
-		  pq.add(terms, position);
-		  position += TestUtil.Next(random, 1, 3);
+		  pq.Add(terms, position);
+		  position += TestUtil.NextInt(random, 1, 3);
 		}
 		return pq;
 	  }

@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests basic sorting on docvalues fields.
@@ -43,956 +44,956 @@ namespace Lucene.Net.Search
 	{
 		public override void SetUp()
 		{
-		base.setUp();
+		base.SetUp();
 		// ensure there is nothing in fieldcache before test starts
-		FieldCache.DEFAULT.purgeAllCaches();
+		FieldCache_Fields.DEFAULT.PurgeAllCaches();
 		}
 
 	  private void AssertNoFieldCaches()
 	  {
 		// docvalues sorting should NOT create any fieldcache entries!
-		Assert.AreEqual(0, FieldCache.DEFAULT.CacheEntries.length);
+		Assert.AreEqual(0, FieldCache_Fields.DEFAULT.CacheEntries.Length);
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type string </summary>
 	  public virtual void TestString()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("foo")));
-		doc.add(newStringField("value", "foo", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("foo")));
+		doc.Add(NewStringField("value", "foo", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("bar")));
-		doc.add(newStringField("value", "bar", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("bar")));
+		doc.Add(NewStringField("value", "bar", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.STRING));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.STRING));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// 'bar' comes before 'foo'
-		Assert.AreEqual("bar", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("foo", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests reverse sorting on type string </summary>
 	  public virtual void TestStringReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("bar")));
-		doc.add(newStringField("value", "bar", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("bar")));
+		doc.Add(NewStringField("value", "bar", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("foo")));
-		doc.add(newStringField("value", "foo", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("foo")));
+		doc.Add(NewStringField("value", "foo", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.STRING, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.STRING, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// 'foo' comes after 'bar' in reverse order
-		Assert.AreEqual("foo", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("bar", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type string_val </summary>
 	  public virtual void TestStringVal()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new BinaryDocValuesField("value", new BytesRef("foo")));
-		doc.add(newStringField("value", "foo", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new BinaryDocValuesField("value", new BytesRef("foo")));
+		doc.Add(NewStringField("value", "foo", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new BinaryDocValuesField("value", new BytesRef("bar")));
-		doc.add(newStringField("value", "bar", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new BinaryDocValuesField("value", new BytesRef("bar")));
+		doc.Add(NewStringField("value", "bar", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.STRING_VAL));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.STRING_VAL));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// 'bar' comes before 'foo'
-		Assert.AreEqual("bar", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("foo", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests reverse sorting on type string_val </summary>
 	  public virtual void TestStringValReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new BinaryDocValuesField("value", new BytesRef("bar")));
-		doc.add(newStringField("value", "bar", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new BinaryDocValuesField("value", new BytesRef("bar")));
+		doc.Add(NewStringField("value", "bar", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new BinaryDocValuesField("value", new BytesRef("foo")));
-		doc.add(newStringField("value", "foo", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new BinaryDocValuesField("value", new BytesRef("foo")));
+		doc.Add(NewStringField("value", "foo", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.STRING_VAL, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.STRING_VAL, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// 'foo' comes after 'bar' in reverse order
-		Assert.AreEqual("foo", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("bar", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type string_val, but with a SortedDocValuesField </summary>
 	  public virtual void TestStringValSorted()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("foo")));
-		doc.add(newStringField("value", "foo", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("foo")));
+		doc.Add(NewStringField("value", "foo", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("bar")));
-		doc.add(newStringField("value", "bar", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("bar")));
+		doc.Add(NewStringField("value", "bar", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.STRING_VAL));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.STRING_VAL));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// 'bar' comes before 'foo'
-		Assert.AreEqual("bar", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("foo", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests reverse sorting on type string_val, but with a SortedDocValuesField </summary>
 	  public virtual void TestStringValReverseSorted()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("bar")));
-		doc.add(newStringField("value", "bar", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("bar")));
+		doc.Add(NewStringField("value", "bar", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new SortedDocValuesField("value", new BytesRef("foo")));
-		doc.add(newStringField("value", "foo", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new SortedDocValuesField("value", new BytesRef("foo")));
+		doc.Add(NewStringField("value", "foo", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.STRING_VAL, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.STRING_VAL, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// 'foo' comes after 'bar' in reverse order
-		Assert.AreEqual("foo", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("bar", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("foo", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("bar", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type byte </summary>
 	  public virtual void TestByte()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 23));
-		doc.add(newStringField("value", "23", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 23));
+		doc.Add(NewStringField("value", "23", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.BYTE));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.BYTE));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("23", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("23", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type byte in reverse </summary>
 	  public virtual void TestByteReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 23));
-		doc.add(newStringField("value", "23", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 23));
+		doc.Add(NewStringField("value", "23", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.BYTE, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.BYTE, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// reverse numeric order
-		Assert.AreEqual("23", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("23", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type short </summary>
 	  public virtual void TestShort()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 300));
-		doc.add(newStringField("value", "300", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 300));
+		doc.Add(NewStringField("value", "300", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.SHORT));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.SHORT));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("300", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("300", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type short in reverse </summary>
 	  public virtual void TestShortReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 300));
-		doc.add(newStringField("value", "300", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 300));
+		doc.Add(NewStringField("value", "300", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.SHORT, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.SHORT, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// reverse numeric order
-		Assert.AreEqual("300", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("300", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type int </summary>
 	  public virtual void TestInt()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 300000));
-		doc.add(newStringField("value", "300000", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 300000));
+		doc.Add(NewStringField("value", "300000", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.INT));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.INT));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("300000", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("300000", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type int in reverse </summary>
 	  public virtual void TestIntReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 300000));
-		doc.add(newStringField("value", "300000", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 300000));
+		doc.Add(NewStringField("value", "300000", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.INT, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.INT, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// reverse numeric order
-		Assert.AreEqual("300000", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("300000", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type int with a missing value </summary>
 	  public virtual void TestIntMissing()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+        writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.INT));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.INT));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// null is treated as a 0
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type int, specifying the missing value should be treated as Integer.MAX_VALUE </summary>
 	  public virtual void TestIntMissingLast()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		SortField sortField = new SortField("value", SortField.Type.INT);
+		IndexSearcher searcher = NewSearcher(ir);
+		SortField sortField = new SortField("value", SortField.Type_e.INT);
 		sortField.MissingValue = int.MaxValue;
 		Sort sort = new Sort(sortField);
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// null is treated as a Integer.MAX_VALUE
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type long </summary>
 	  public virtual void TestLong()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 3000000000L));
-		doc.add(newStringField("value", "3000000000", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 3000000000L));
+		doc.Add(NewStringField("value", "3000000000", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.LONG));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.LONG));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("3000000000", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("3000000000", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type long in reverse </summary>
 	  public virtual void TestLongReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new NumericDocValuesField("value", 3000000000L));
-		doc.add(newStringField("value", "3000000000", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 3000000000L));
+		doc.Add(NewStringField("value", "3000000000", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.LONG, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.LONG, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// reverse numeric order
-		Assert.AreEqual("3000000000", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("3000000000", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type long with a missing value </summary>
 	  public virtual void TestLongMissing()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.LONG));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.LONG));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// null is treated as 0
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type long, specifying the missing value should be treated as Long.MAX_VALUE </summary>
 	  public virtual void TestLongMissingLast()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", -1));
-		doc.add(newStringField("value", "-1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", -1));
+		doc.Add(NewStringField("value", "-1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new NumericDocValuesField("value", 4));
-		doc.add(newStringField("value", "4", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new NumericDocValuesField("value", 4));
+		doc.Add(NewStringField("value", "4", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		SortField sortField = new SortField("value", SortField.Type.LONG);
+		IndexSearcher searcher = NewSearcher(ir);
+		SortField sortField = new SortField("value", SortField.Type_e.LONG);
 		sortField.MissingValue = long.MaxValue;
 		Sort sort = new Sort(sortField);
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// null is treated as Long.MAX_VALUE
-		Assert.AreEqual("-1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type float </summary>
 	  public virtual void TestFloat()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new FloatDocValuesField("value", 30.1F));
-		doc.add(newStringField("value", "30.1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", 30.1F));
+		doc.Add(NewStringField("value", "30.1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", -1.3F));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", -1.3F));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", 4.2F));
-		doc.add(newStringField("value", "4.2", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", 4.2F));
+		doc.Add(NewStringField("value", "4.2", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.FLOAT));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.FLOAT));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4.2", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("30.1", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4.2", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("30.1", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type float in reverse </summary>
 	  public virtual void TestFloatReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new FloatDocValuesField("value", 30.1F));
-		doc.add(newStringField("value", "30.1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", 30.1F));
+		doc.Add(NewStringField("value", "30.1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", -1.3F));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", -1.3F));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", 4.2F));
-		doc.add(newStringField("value", "4.2", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", 4.2F));
+		doc.Add(NewStringField("value", "4.2", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.FLOAT, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.FLOAT, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// reverse numeric order
-		Assert.AreEqual("30.1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4.2", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("30.1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4.2", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type float with a missing value </summary>
 	  public virtual void TestFloatMissing()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", -1.3F));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", -1.3F));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", 4.2F));
-		doc.add(newStringField("value", "4.2", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", 4.2F));
+		doc.Add(NewStringField("value", "4.2", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.FLOAT));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.FLOAT));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// null is treated as 0
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4.2", searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4.2", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type float, specifying the missing value should be treated as Float.MAX_VALUE </summary>
 	  public virtual void TestFloatMissingLast()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", -1.3F));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", -1.3F));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new FloatDocValuesField("value", 4.2F));
-		doc.add(newStringField("value", "4.2", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new FloatDocValuesField("value", 4.2F));
+		doc.Add(NewStringField("value", "4.2", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		SortField sortField = new SortField("value", SortField.Type.FLOAT);
+		IndexSearcher searcher = NewSearcher(ir);
+		SortField sortField = new SortField("value", SortField.Type_e.FLOAT);
 		sortField.MissingValue = float.MaxValue;
 		Sort sort = new Sort(sortField);
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(3, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(3, td.TotalHits);
 		// null is treated as Float.MAX_VALUE
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4.2", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[2].doc).get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4.2", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type double </summary>
 	  public virtual void TestDouble()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 30.1));
-		doc.add(newStringField("value", "30.1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 30.1));
+		doc.Add(NewStringField("value", "30.1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", -1.3));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", -1.3));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333333));
-		doc.add(newStringField("value", "4.2333333333333", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333333));
+		doc.Add(NewStringField("value", "4.2333333333333", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333332));
-		doc.add(newStringField("value", "4.2333333333332", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333332));
+		doc.Add(NewStringField("value", "4.2333333333332", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.DOUBLE));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.DOUBLE));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(4, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(4, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4.2333333333332", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4.2333333333333", searcher.doc(td.scoreDocs[2].doc).get("value"));
-		Assert.AreEqual("30.1", searcher.doc(td.scoreDocs[3].doc).get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333332", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333333", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
+		Assert.AreEqual("30.1", searcher.Doc(td.ScoreDocs[3].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type double with +/- zero </summary>
 	  public virtual void TestDoubleSignedZero()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new DoubleDocValuesField("value", +0D));
-		doc.add(newStringField("value", "+0", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", +0D));
+		doc.Add(NewStringField("value", "+0", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", -0D));
-		doc.add(newStringField("value", "-0", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", -0D));
+		doc.Add(NewStringField("value", "-0", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.DOUBLE));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.DOUBLE));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(2, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(2, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("-0", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("+0", searcher.doc(td.scoreDocs[1].doc).get("value"));
+		Assert.AreEqual("-0", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("+0", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type double in reverse </summary>
 	  public virtual void TestDoubleReverse()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 30.1));
-		doc.add(newStringField("value", "30.1", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 30.1));
+		doc.Add(NewStringField("value", "30.1", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", -1.3));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", -1.3));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333333));
-		doc.add(newStringField("value", "4.2333333333333", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333333));
+		doc.Add(NewStringField("value", "4.2333333333333", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333332));
-		doc.add(newStringField("value", "4.2333333333332", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333332));
+		doc.Add(NewStringField("value", "4.2333333333332", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.DOUBLE, true));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.DOUBLE, true));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(4, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(4, td.TotalHits);
 		// numeric order
-		Assert.AreEqual("30.1", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4.2333333333333", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4.2333333333332", searcher.doc(td.scoreDocs[2].doc).get("value"));
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[3].doc).get("value"));
+		Assert.AreEqual("30.1", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333333", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333332", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[3].Doc).Get("value"));
 		AssertNoFieldCaches();
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type double with a missing value </summary>
 	  public virtual void TestDoubleMissing()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", -1.3));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", -1.3));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333333));
-		doc.add(newStringField("value", "4.2333333333333", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333333));
+		doc.Add(NewStringField("value", "4.2333333333333", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333332));
-		doc.add(newStringField("value", "4.2333333333332", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333332));
+		doc.Add(NewStringField("value", "4.2333333333332", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		Sort sort = new Sort(new SortField("value", SortField.Type.DOUBLE));
+		IndexSearcher searcher = NewSearcher(ir);
+		Sort sort = new Sort(new SortField("value", SortField.Type_e.DOUBLE));
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(4, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(4, td.TotalHits);
 		// null treated as a 0
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4.2333333333332", searcher.doc(td.scoreDocs[2].doc).get("value"));
-		Assert.AreEqual("4.2333333333333", searcher.doc(td.scoreDocs[3].doc).get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333332", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333333", searcher.Doc(td.ScoreDocs[3].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Tests sorting on type double, specifying the missing value should be treated as Double.MAX_VALUE </summary>
 	  public virtual void TestDoubleMissingLast()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", -1.3));
-		doc.add(newStringField("value", "-1.3", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", -1.3));
+		doc.Add(NewStringField("value", "-1.3", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333333));
-		doc.add(newStringField("value", "4.2333333333333", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333333));
+		doc.Add(NewStringField("value", "4.2333333333333", Field.Store.YES));
+		writer.AddDocument(doc);
 		doc = new Document();
-		doc.add(new DoubleDocValuesField("value", 4.2333333333332));
-		doc.add(newStringField("value", "4.2333333333332", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(new DoubleDocValuesField("value", 4.2333333333332));
+		doc.Add(NewStringField("value", "4.2333333333332", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(ir);
-		SortField sortField = new SortField("value", SortField.Type.DOUBLE);
+		IndexSearcher searcher = NewSearcher(ir);
+		SortField sortField = new SortField("value", SortField.Type_e.DOUBLE);
 		sortField.MissingValue = double.MaxValue;
 		Sort sort = new Sort(sortField);
 
-		TopDocs td = searcher.search(new MatchAllDocsQuery(), 10, sort);
-		Assert.AreEqual(4, td.totalHits);
+		TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+		Assert.AreEqual(4, td.TotalHits);
 		// null treated as Double.MAX_VALUE
-		Assert.AreEqual("-1.3", searcher.doc(td.scoreDocs[0].doc).get("value"));
-		Assert.AreEqual("4.2333333333332", searcher.doc(td.scoreDocs[1].doc).get("value"));
-		Assert.AreEqual("4.2333333333333", searcher.doc(td.scoreDocs[2].doc).get("value"));
-		assertNull(searcher.doc(td.scoreDocs[3].doc).get("value"));
+		Assert.AreEqual("-1.3", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333332", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+		Assert.AreEqual("4.2333333333333", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
+		Assert.IsNull(searcher.Doc(td.ScoreDocs[3].Doc).Get("value"));
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 	}
 

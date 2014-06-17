@@ -19,7 +19,6 @@ namespace Lucene.Net.Codecs.Lucene40
 	 */
 
 	using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
-	using BeforeClass = org.junit.BeforeClass;
 
 	public class TestLucene40TermVectorsFormat : BaseTermVectorsFormatTestCase
 	{

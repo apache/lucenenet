@@ -25,8 +25,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
 
 
 	/// <summary>
@@ -34,7 +33,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// represent the bug of 
 	/// 
-	///    BooleanScorer.score(Collector collector, int max, int firstDocID)
+	///    BooleanScorer.Score(Collector collector, int max, int firstDocID)
 	/// 
 	/// Line 273, end=8192, subScorerDocID=11378, then more got false?
 	/// </summary>
@@ -50,33 +49,33 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory);
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
 
 		Document doc = new Document();
-		Field field = newStringField(FIELD, "meaninglessnames", Field.Store.NO);
-		doc.add(field);
+		Field field = NewStringField(FIELD, "meaninglessnames", Field.Store.NO);
+		doc.Add(field);
 
 		for (int i = 0; i < 5137; ++i)
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		field.StringValue = "tangfulin";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 
 		field.StringValue = "meaninglessnames";
 		for (int i = 5138; i < 11377; ++i)
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		field.StringValue = "tangfulin";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 
 		Reader = writer.Reader;
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -84,36 +83,36 @@ namespace Lucene.Net.Search
 	  public static void AfterClass()
 	  {
 		Searcher = null;
-		Reader.close();
+		Reader.Dispose();
 		Reader = null;
-		Directory.close();
+		Directory.Dispose();
 		Directory = null;
 	  }
 
 	  public virtual void TestPrefixQuery()
 	  {
 		Query query = new PrefixQuery(new Term(FIELD, "tang"));
-		Assert.AreEqual("Number of matched documents", 2, Searcher.search(query, null, 1000).totalHits);
+		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 	  }
 	  public virtual void TestTermQuery()
 	  {
 		Query query = new TermQuery(new Term(FIELD, "tangfulin"));
-		Assert.AreEqual("Number of matched documents", 2, Searcher.search(query, null, 1000).totalHits);
+		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 	  }
 	  public virtual void TestTermBooleanQuery()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(FIELD, "tangfulin")), BooleanClause.Occur_e.SHOULD);
-		query.add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur_e.SHOULD);
-		Assert.AreEqual("Number of matched documents", 2, Searcher.search(query, null, 1000).totalHits);
+		query.Add(new TermQuery(new Term(FIELD, "tangfulin")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur_e.SHOULD);
+		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 
 	  }
 	  public virtual void TestPrefixBooleanQuery()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new PrefixQuery(new Term(FIELD, "tang")), BooleanClause.Occur_e.SHOULD);
-		query.add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur_e.SHOULD);
-		Assert.AreEqual("Number of matched documents", 2, Searcher.search(query, null, 1000).totalHits);
+		query.Add(new PrefixQuery(new Term(FIELD, "tang")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(FIELD, "notexistnames")), BooleanClause.Occur_e.SHOULD);
+		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 	  }
 	}
 

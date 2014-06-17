@@ -46,20 +46,21 @@ namespace Lucene.Net.Search
 	using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 	using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 	using TermsEnum = Lucene.Net.Index.TermsEnum;
-	using Bytes = Lucene.Net.Search.FieldCache.Bytes;
-	using Doubles = Lucene.Net.Search.FieldCache.Doubles;
-	using Floats = Lucene.Net.Search.FieldCache.Floats;
-	using Ints = Lucene.Net.Search.FieldCache.Ints;
-	using Longs = Lucene.Net.Search.FieldCache.Longs;
-	using Shorts = Lucene.Net.Search.FieldCache.Shorts;
+	using Bytes = Lucene.Net.Search.FieldCache_Fields.Bytes;
+    using Doubles = Lucene.Net.Search.FieldCache_Fields.Doubles;
+    using Floats = Lucene.Net.Search.FieldCache_Fields.Floats;
+    using Ints = Lucene.Net.Search.FieldCache_Fields.Ints;
+    using Longs = Lucene.Net.Search.FieldCache_Fields.Longs;
+    using Shorts = Lucene.Net.Search.FieldCache_Fields.Shorts;
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestFieldCache : LuceneTestCase
 	{
@@ -67,17 +68,17 @@ namespace Lucene.Net.Search
 	  private static int NUM_DOCS;
 	  private static int NUM_ORDS;
 	  private static string[] UnicodeStrings;
-	  private static BytesRef[][] MultiValued;
+	  private static BytesRef[,] MultiValued;
 	  private static Directory Directory;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		NUM_DOCS = atLeast(500);
-		NUM_ORDS = atLeast(2);
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		NUM_DOCS = AtLeast(500);
+		NUM_ORDS = AtLeast(2);
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		long theLong = long.MaxValue;
 		double theDouble = double.MaxValue;
 		sbyte theByte = sbyte.MaxValue;
@@ -85,9 +86,7 @@ namespace Lucene.Net.Search
 		int theInt = int.MaxValue;
 		float theFloat = float.MaxValue;
 		UnicodeStrings = new string[NUM_DOCS];
-//JAVA TO C# CONVERTER NOTE: The following call to the 'RectangularArrays' helper class reproduces the rectangular array initialization that is automatic in Java:
-//ORIGINAL LINE: MultiValued = new BytesRef[NUM_DOCS][NUM_ORDS];
-		MultiValued = RectangularArrays.ReturnRectangularBytesRefArray(NUM_DOCS, NUM_ORDS);
+        MultiValued = new BytesRef[NUM_DOCS, NUM_ORDS];
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: setUp");
@@ -95,54 +94,54 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
-		  doc.add(newStringField("theDouble", Convert.ToString(theDouble--), Field.Store.NO));
-		  doc.add(newStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
-		  doc.add(newStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
-		  doc.add(newStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));
-		  doc.add(newStringField("theFloat", Convert.ToString(theFloat--), Field.Store.NO));
+		  doc.Add(NewStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
+		  doc.Add(NewStringField("theDouble", Convert.ToString(theDouble--), Field.Store.NO));
+		  doc.Add(NewStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
+		  doc.Add(NewStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
+		  doc.Add(NewStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));
+		  doc.Add(NewStringField("theFloat", Convert.ToString(theFloat--), Field.Store.NO));
 		  if (i % 2 == 0)
 		  {
-			doc.add(newStringField("sparse", Convert.ToString(i), Field.Store.NO));
+			doc.Add(NewStringField("sparse", Convert.ToString(i), Field.Store.NO));
 		  }
 
 		  if (i % 2 == 0)
 		  {
-			doc.add(new IntField("numInt", i, Field.Store.NO));
+			doc.Add(new IntField("numInt", i, Field.Store.NO));
 		  }
 
 		  // sometimes skip the field:
-		  if (random().Next(40) != 17)
+		  if (Random().Next(40) != 17)
 		  {
 			UnicodeStrings[i] = GenerateString(i);
-			doc.add(newStringField("theRandomUnicodeString", UnicodeStrings[i], Field.Store.YES));
+			doc.Add(NewStringField("theRandomUnicodeString", UnicodeStrings[i], Field.Store.YES));
 		  }
 
 		  // sometimes skip the field:
-		  if (random().Next(10) != 8)
+		  if (Random().Next(10) != 8)
 		  {
 			for (int j = 0; j < NUM_ORDS; j++)
 			{
 			  string newValue = GenerateString(i);
-			  MultiValued[i][j] = new BytesRef(newValue);
-			  doc.add(newStringField("theRandomUnicodeMultiValuedField", newValue, Field.Store.YES));
+			  MultiValued[i,j] = new BytesRef(newValue);
+			  doc.Add(NewStringField("theRandomUnicodeMultiValuedField", newValue, Field.Store.YES));
 			}
-			Arrays.sort(MultiValued[i]);
+			Arrays.Sort(MultiValued[i]);
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 		IndexReader r = writer.Reader;
-		Reader = SlowCompositeReaderWrapper.wrap(r);
-		writer.close();
+		Reader = SlowCompositeReaderWrapper.Wrap(r);
+		writer.Close();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
+		Reader.Dispose();
 		Reader = null;
-		Directory.close();
+		Directory.Dispose();
 		Directory = null;
 		UnicodeStrings = null;
 		MultiValued = null;
@@ -152,150 +151,150 @@ namespace Lucene.Net.Search
 	  {
 		try
 		{
-		  FieldCache cache = FieldCache.DEFAULT;
+		  FieldCache cache = FieldCache_Fields.DEFAULT;
 		  ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
 		  cache.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
-		  cache.getDoubles(Reader, "theDouble", false);
-		  cache.getFloats(Reader, "theDouble", false);
+		  cache.GetDoubles(Reader, "theDouble", false);
+		  cache.GetFloats(Reader, "theDouble", false);
 		  Assert.IsTrue(bos.ToString(IOUtils.UTF_8).IndexOf("WARNING") != -1);
 		}
 		finally
 		{
-		  FieldCache.DEFAULT.purgeAllCaches();
+            FieldCache_Fields.DEFAULT.PurgeAllCaches();
 		}
 	  }
 
 	  public virtual void Test()
 	  {
-		FieldCache cache = FieldCache.DEFAULT;
-		FieldCache.Doubles doubles = cache.getDoubles(Reader, "theDouble", random().nextBoolean());
-		assertSame("Second request to cache return same array", doubles, cache.getDoubles(Reader, "theDouble", random().nextBoolean()));
-		assertSame("Second request with explicit parser return same array", doubles, cache.getDoubles(Reader, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, random().nextBoolean()));
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		FieldCache_Fields.Doubles doubles = cache.GetDoubles(Reader, "theDouble", Random().NextBoolean());
+		assertSame("Second request to cache return same array", doubles, cache.GetDoubles(Reader, "theDouble", Random().NextBoolean()));
+		assertSame("Second request with explicit parser return same array", doubles, cache.GetDoubles(Reader, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, Random().NextBoolean()));
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  Assert.IsTrue(doubles.get(i) + " does not equal: " + (double.MaxValue - i), doubles.get(i) == (double.MaxValue - i));
+		  Assert.IsTrue(doubles.Get(i) == (double.MaxValue - i), doubles.Get(i) + " does not equal: " + (double.MaxValue - i));
 		}
 
-		FieldCache.Longs longs = cache.getLongs(Reader, "theLong", random().nextBoolean());
-		assertSame("Second request to cache return same array", longs, cache.getLongs(Reader, "theLong", random().nextBoolean()));
-		assertSame("Second request with explicit parser return same array", longs, cache.getLongs(Reader, "theLong", FieldCache.DEFAULT_LONG_PARSER, random().nextBoolean()));
+		FieldCache_Fields.Longs longs = cache.GetLongs(Reader, "theLong", Random().NextBoolean());
+		assertSame("Second request to cache return same array", longs, cache.GetLongs(Reader, "theLong", Random().NextBoolean()));
+		assertSame("Second request with explicit parser return same array", longs, cache.GetLongs(Reader, "theLong", FieldCache_Fields.DEFAULT_LONG_PARSER, Random().NextBoolean()));
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  Assert.IsTrue(longs.get(i) + " does not equal: " + (long.MaxValue - i) + " i=" + i, longs.get(i) == (long.MaxValue - i));
+		  Assert.IsTrue(longs.Get(i) == (long.MaxValue - i), longs.Get(i) + " does not equal: " + (long.MaxValue - i) + " i=" + i);
 		}
 
-		FieldCache.Bytes bytes = cache.getBytes(Reader, "theByte", random().nextBoolean());
-		assertSame("Second request to cache return same array", bytes, cache.getBytes(Reader, "theByte", random().nextBoolean()));
-		assertSame("Second request with explicit parser return same array", bytes, cache.getBytes(Reader, "theByte", FieldCache.DEFAULT_BYTE_PARSER, random().nextBoolean()));
+		FieldCache_Fields.Bytes bytes = cache.GetBytes(Reader, "theByte", Random().NextBoolean());
+		assertSame("Second request to cache return same array", bytes, cache.GetBytes(Reader, "theByte", Random().NextBoolean()));
+        assertSame("Second request with explicit parser return same array", bytes, cache.GetBytes(Reader, "theByte", FieldCache_Fields.DEFAULT_BYTE_PARSER, Random().NextBoolean()));
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  Assert.IsTrue(bytes.get(i) + " does not equal: " + (sbyte.MaxValue - i), bytes.get(i) == (sbyte)(sbyte.MaxValue - i));
+		  Assert.IsTrue(bytes.Get(i) == (sbyte)(sbyte.MaxValue - i), bytes.Get(i) + " does not equal: " + (sbyte.MaxValue - i));
 		}
 
-		FieldCache.Shorts shorts = cache.getShorts(Reader, "theShort", random().nextBoolean());
-		assertSame("Second request to cache return same array", shorts, cache.getShorts(Reader, "theShort", random().nextBoolean()));
-		assertSame("Second request with explicit parser return same array", shorts, cache.getShorts(Reader, "theShort", FieldCache.DEFAULT_SHORT_PARSER, random().nextBoolean()));
+		FieldCache_Fields.Shorts shorts = cache.GetShorts(Reader, "theShort", Random().NextBoolean());
+		assertSame("Second request to cache return same array", shorts, cache.GetShorts(Reader, "theShort", Random().NextBoolean()));
+		assertSame("Second request with explicit parser return same array", shorts, cache.GetShorts(Reader, "theShort", FieldCache_Fields.DEFAULT_SHORT_PARSER, Random().NextBoolean()));
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  Assert.IsTrue(shorts.get(i) + " does not equal: " + (short.MaxValue - i), shorts.get(i) == (short)(short.MaxValue - i));
+		  Assert.IsTrue(shorts.Get(i) == (short)(short.MaxValue - i), shorts.Get(i) + " does not equal: " + (short.MaxValue - i));
 		}
 
-		FieldCache.Ints ints = cache.getInts(Reader, "theInt", random().nextBoolean());
-		assertSame("Second request to cache return same array", ints, cache.getInts(Reader, "theInt", random().nextBoolean()));
-		assertSame("Second request with explicit parser return same array", ints, cache.getInts(Reader, "theInt", FieldCache.DEFAULT_INT_PARSER, random().nextBoolean()));
+		FieldCache_Fields.Ints ints = cache.GetInts(Reader, "theInt", Random().NextBoolean());
+		assertSame("Second request to cache return same array", ints, cache.GetInts(Reader, "theInt", Random().NextBoolean()));
+		assertSame("Second request with explicit parser return same array", ints, cache.GetInts(Reader, "theInt", FieldCache_Fields.DEFAULT_INT_PARSER, Random().NextBoolean()));
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  Assert.IsTrue(ints.get(i) + " does not equal: " + (int.MaxValue - i), ints.get(i) == (int.MaxValue - i));
+		  Assert.IsTrue(ints.Get(i) == (int.MaxValue - i), ints.Get(i) + " does not equal: " + (int.MaxValue - i));
 		}
 
-		FieldCache.Floats floats = cache.getFloats(Reader, "theFloat", random().nextBoolean());
-		assertSame("Second request to cache return same array", floats, cache.getFloats(Reader, "theFloat", random().nextBoolean()));
-		assertSame("Second request with explicit parser return same array", floats, cache.getFloats(Reader, "theFloat", FieldCache.DEFAULT_FLOAT_PARSER, random().nextBoolean()));
+		FieldCache_Fields.Floats floats = cache.GetFloats(Reader, "theFloat", Random().NextBoolean());
+		assertSame("Second request to cache return same array", floats, cache.GetFloats(Reader, "theFloat", Random().NextBoolean()));
+		assertSame("Second request with explicit parser return same array", floats, cache.GetFloats(Reader, "theFloat", FieldCache_Fields.DEFAULT_FLOAT_PARSER, Random().NextBoolean()));
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  Assert.IsTrue(floats.get(i) + " does not equal: " + (float.MaxValue - i), floats.get(i) == (float.MaxValue - i));
+		  Assert.IsTrue(floats.Get(i) == (float.MaxValue - i), floats.Get(i) + " does not equal: " + (float.MaxValue - i));
 		}
 
-		Bits docsWithField = cache.getDocsWithField(Reader, "theLong");
-		assertSame("Second request to cache return same array", docsWithField, cache.getDocsWithField(Reader, "theLong"));
-		Assert.IsTrue("docsWithField(theLong) must be class Bits.MatchAllBits", docsWithField is Bits.MatchAllBits);
-		Assert.IsTrue("docsWithField(theLong) Size: " + docsWithField.length() + " is not: " + NUM_DOCS, docsWithField.length() == NUM_DOCS);
-		for (int i = 0; i < docsWithField.length(); i++)
+		Bits docsWithField = cache.GetDocsWithField(Reader, "theLong");
+		assertSame("Second request to cache return same array", docsWithField, cache.GetDocsWithField(Reader, "theLong"));
+		Assert.IsTrue(docsWithField is Bits.MatchAllBits, "docsWithField(theLong) must be class Bits.MatchAllBits");
+		Assert.IsTrue(docsWithField.Length() == NUM_DOCS, "docsWithField(theLong) Size: " + docsWithField.Length() + " is not: " + NUM_DOCS);
+		for (int i = 0; i < docsWithField.Length(); i++)
 		{
-		  Assert.IsTrue(docsWithField.get(i));
+		  Assert.IsTrue(docsWithField.Get(i));
 		}
 
-		docsWithField = cache.getDocsWithField(Reader, "sparse");
-		assertSame("Second request to cache return same array", docsWithField, cache.getDocsWithField(Reader, "sparse"));
-		Assert.IsFalse("docsWithField(sparse) must not be class Bits.MatchAllBits", docsWithField is Bits.MatchAllBits);
-		Assert.IsTrue("docsWithField(sparse) Size: " + docsWithField.length() + " is not: " + NUM_DOCS, docsWithField.length() == NUM_DOCS);
-		for (int i = 0; i < docsWithField.length(); i++)
+		docsWithField = cache.GetDocsWithField(Reader, "sparse");
+		assertSame("Second request to cache return same array", docsWithField, cache.GetDocsWithField(Reader, "sparse"));
+		Assert.IsFalse(docsWithField is Bits.MatchAllBits, "docsWithField(sparse) must not be class Bits.MatchAllBits");
+		Assert.IsTrue(docsWithField.Length() == NUM_DOCS, "docsWithField(sparse) Size: " + docsWithField.Length() + " is not: " + NUM_DOCS);
+		for (int i = 0; i < docsWithField.Length(); i++)
 		{
-		  Assert.AreEqual(i % 2 == 0, docsWithField.get(i));
+		  Assert.AreEqual(i % 2 == 0, docsWithField.Get(i));
 		}
 
 		// getTermsIndex
-		SortedDocValues termsIndex = cache.getTermsIndex(Reader, "theRandomUnicodeString");
-		assertSame("Second request to cache return same array", termsIndex, cache.getTermsIndex(Reader, "theRandomUnicodeString"));
+		SortedDocValues termsIndex = cache.GetTermsIndex(Reader, "theRandomUnicodeString");
+		assertSame("Second request to cache return same array", termsIndex, cache.GetTermsIndex(Reader, "theRandomUnicodeString"));
 		BytesRef br = new BytesRef();
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
 		  BytesRef term;
-		  int ord = termsIndex.getOrd(i);
+		  int ord = termsIndex.GetOrd(i);
 		  if (ord == -1)
 		  {
 			term = null;
 		  }
 		  else
 		  {
-			termsIndex.lookupOrd(ord, br);
+			termsIndex.LookupOrd(ord, br);
 			term = br;
 		  }
-		  string s = term == null ? null : term.utf8ToString();
-		  Assert.IsTrue("for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i], UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s));
+		  string s = term == null ? null : term.Utf8ToString();
+		  Assert.IsTrue(UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s), "for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i]);
 		}
 
 		int nTerms = termsIndex.ValueCount;
 
-		TermsEnum tenum = termsIndex.termsEnum();
+		TermsEnum tenum = termsIndex.TermsEnum();
 		BytesRef val = new BytesRef();
 		for (int i = 0; i < nTerms; i++)
 		{
-		  BytesRef val1 = tenum.next();
-		  termsIndex.lookupOrd(i, val);
+		  BytesRef val1 = tenum.Next();
+		  termsIndex.LookupOrd(i, val);
 		  // System.out.println("i="+i);
 		  Assert.AreEqual(val, val1);
 		}
 
 		// seek the enum around (note this isn't a great test here)
-		int num = atLeast(100);
+		int num = AtLeast(100);
 		for (int i = 0; i < num; i++)
 		{
-		  int k = random().Next(nTerms);
-		  termsIndex.lookupOrd(k, val);
-		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, tenum.seekCeil(val));
-		  Assert.AreEqual(val, tenum.term());
+		  int k = Random().Next(nTerms);
+		  termsIndex.LookupOrd(k, val);
+		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, tenum.SeekCeil(val));
+		  Assert.AreEqual(val, tenum.Term());
 		}
 
 		for (int i = 0;i < nTerms;i++)
 		{
-		  termsIndex.lookupOrd(i, val);
-		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, tenum.seekCeil(val));
-		  Assert.AreEqual(val, tenum.term());
+		  termsIndex.LookupOrd(i, val);
+		  Assert.AreEqual(TermsEnum.SeekStatus.FOUND, tenum.SeekCeil(val));
+		  Assert.AreEqual(val, tenum.Term());
 		}
 
 		// test bad field
-		termsIndex = cache.getTermsIndex(Reader, "bogusfield");
+		termsIndex = cache.GetTermsIndex(Reader, "bogusfield");
 
 		// getTerms
-		BinaryDocValues terms = cache.getTerms(Reader, "theRandomUnicodeString", true);
-		assertSame("Second request to cache return same array", terms, cache.getTerms(Reader, "theRandomUnicodeString", true));
-		Bits bits = cache.getDocsWithField(Reader, "theRandomUnicodeString");
+		BinaryDocValues terms = cache.GetTerms(Reader, "theRandomUnicodeString", true);
+		assertSame("Second request to cache return same array", terms, cache.GetTerms(Reader, "theRandomUnicodeString", true));
+		Bits bits = cache.GetDocsWithField(Reader, "theRandomUnicodeString");
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
-		  terms.get(i, br);
+		  terms.Get(i, br);
 		  BytesRef term;
-		  if (!bits.get(i))
+		  if (!bits.Get(i))
 		  {
 			term = null;
 		  }
@@ -303,25 +302,25 @@ namespace Lucene.Net.Search
 		  {
 			term = br;
 		  }
-		  string s = term == null ? null : term.utf8ToString();
-		  Assert.IsTrue("for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i], UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s));
+		  string s = term == null ? null : term.Utf8ToString();
+		  Assert.IsTrue(UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s), "for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i]);
 		}
 
 		// test bad field
-		terms = cache.getTerms(Reader, "bogusfield", false);
+		terms = cache.GetTerms(Reader, "bogusfield", false);
 
 		// getDocTermOrds
-		SortedSetDocValues termOrds = cache.getDocTermOrds(Reader, "theRandomUnicodeMultiValuedField");
-		int numEntries = cache.CacheEntries.length;
+		SortedSetDocValues termOrds = cache.GetDocTermOrds(Reader, "theRandomUnicodeMultiValuedField");
+		int numEntries = cache.CacheEntries.Length;
 		// ask for it again, and check that we didnt create any additional entries:
-		termOrds = cache.getDocTermOrds(Reader, "theRandomUnicodeMultiValuedField");
-		Assert.AreEqual(numEntries, cache.CacheEntries.length);
+		termOrds = cache.GetDocTermOrds(Reader, "theRandomUnicodeMultiValuedField");
+		Assert.AreEqual(numEntries, cache.CacheEntries.Length);
 
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
 		  termOrds.Document = i;
 		  // this will remove identical terms. A DocTermOrds doesn't return duplicate ords for a docId
-		  IList<BytesRef> values = new List<BytesRef>(new LinkedHashSet<>(Arrays.asList(MultiValued[i])));
+		  IList<BytesRef> values = new List<BytesRef>(new LinkedHashSet<BytesRef>(Arrays.AsList(MultiValued[i])));
 		  foreach (BytesRef v in values)
 		  {
 			if (v == null)
@@ -329,112 +328,112 @@ namespace Lucene.Net.Search
 			  // why does this test use null values... instead of an empty list: confusing
 			  break;
 			}
-			long ord = termOrds.nextOrd();
+			long ord = termOrds.NextOrd();
 			Debug.Assert(ord != SortedSetDocValues.NO_MORE_ORDS);
 			BytesRef scratch = new BytesRef();
-			termOrds.lookupOrd(ord, scratch);
+			termOrds.LookupOrd(ord, scratch);
 			Assert.AreEqual(v, scratch);
 		  }
-		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, termOrds.nextOrd());
+		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, termOrds.NextOrd());
 		}
 
 		// test bad field
-		termOrds = cache.getDocTermOrds(Reader, "bogusfield");
+		termOrds = cache.GetDocTermOrds(Reader, "bogusfield");
 		Assert.IsTrue(termOrds.ValueCount == 0);
 
-		FieldCache.DEFAULT.purgeByCacheKey(Reader.CoreCacheKey);
+		FieldCache_Fields.DEFAULT.PurgeByCacheKey(Reader.CoreCacheKey);
 	  }
 
 	  public virtual void TestEmptyIndex()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(500));
-		writer.close();
-		IndexReader r = DirectoryReader.open(dir);
-		AtomicReader reader = SlowCompositeReaderWrapper.wrap(r);
-		FieldCache.DEFAULT.getTerms(reader, "foobar", true);
-		FieldCache.DEFAULT.getTermsIndex(reader, "foobar");
-		FieldCache.DEFAULT.purgeByCacheKey(reader.CoreCacheKey);
-		r.close();
-		dir.close();
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(500));
+		writer.Dispose();
+		IndexReader r = DirectoryReader.Open(dir);
+		AtomicReader reader = SlowCompositeReaderWrapper.Wrap(r);
+		FieldCache_Fields.DEFAULT.GetTerms(reader, "foobar", true);
+		FieldCache_Fields.DEFAULT.GetTermsIndex(reader, "foobar");
+		FieldCache_Fields.DEFAULT.PurgeByCacheKey(reader.CoreCacheKey);
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  private static string GenerateString(int i)
 	  {
 		string s = null;
-		if (i > 0 && random().Next(3) == 1)
+		if (i > 0 && Random().Next(3) == 1)
 		{
 		  // reuse past string -- try to find one that's not null
 		  for (int iter = 0; iter < 10 && s == null;iter++)
 		  {
-			s = UnicodeStrings[random().Next(i)];
+			s = UnicodeStrings[Random().Next(i)];
 		  }
 		  if (s == null)
 		  {
-			s = TestUtil.randomUnicodeString(random());
+			s = TestUtil.RandomUnicodeString(Random());
 		  }
 		}
 		else
 		{
-		  s = TestUtil.randomUnicodeString(random());
+		  s = TestUtil.RandomUnicodeString(Random());
 		}
 		return s;
 	  }
 
 	  public virtual void TestDocsWithField()
 	  {
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
-		Assert.AreEqual(0, cache.CacheEntries.length);
-		cache.getDoubles(Reader, "theDouble", true);
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
+		Assert.AreEqual(0, cache.CacheEntries.Length);
+		cache.GetDoubles(Reader, "theDouble", true);
 
 		// The double[] takes two slots (one w/ null parser, one
 		// w/ real parser), and docsWithField should also
 		// have been populated:
-		Assert.AreEqual(3, cache.CacheEntries.length);
-		Bits bits = cache.getDocsWithField(Reader, "theDouble");
+		Assert.AreEqual(3, cache.CacheEntries.Length);
+		Bits bits = cache.GetDocsWithField(Reader, "theDouble");
 
 		// No new entries should appear:
-		Assert.AreEqual(3, cache.CacheEntries.length);
+		Assert.AreEqual(3, cache.CacheEntries.Length);
 		Assert.IsTrue(bits is Bits.MatchAllBits);
 
-		FieldCache.Ints ints = cache.getInts(Reader, "sparse", true);
-		Assert.AreEqual(6, cache.CacheEntries.length);
-		Bits docsWithField = cache.getDocsWithField(Reader, "sparse");
-		Assert.AreEqual(6, cache.CacheEntries.length);
-		for (int i = 0; i < docsWithField.length(); i++)
+		Ints ints = cache.GetInts(Reader, "sparse", true);
+		Assert.AreEqual(6, cache.CacheEntries.Length);
+		Bits docsWithField = cache.GetDocsWithField(Reader, "sparse");
+		Assert.AreEqual(6, cache.CacheEntries.Length);
+		for (int i = 0; i < docsWithField.Length(); i++)
 		{
 		  if (i % 2 == 0)
 		  {
-			Assert.IsTrue(docsWithField.get(i));
-			Assert.AreEqual(i, ints.get(i));
+			Assert.IsTrue(docsWithField.Get(i));
+			Assert.AreEqual(i, ints.Get(i));
 		  }
 		  else
 		  {
-			Assert.IsFalse(docsWithField.get(i));
+			Assert.IsFalse(docsWithField.Get(i));
 		  }
 		}
 
-		FieldCache.Ints numInts = cache.getInts(Reader, "numInt", random().nextBoolean());
-		docsWithField = cache.getDocsWithField(Reader, "numInt");
-		for (int i = 0; i < docsWithField.length(); i++)
+		Ints numInts = cache.GetInts(Reader, "numInt", Random().NextBoolean());
+		docsWithField = cache.GetDocsWithField(Reader, "numInt");
+		for (int i = 0; i < docsWithField.Length(); i++)
 		{
 		  if (i % 2 == 0)
 		  {
-			Assert.IsTrue(docsWithField.get(i));
-			Assert.AreEqual(i, numInts.get(i));
+			Assert.IsTrue(docsWithField.Get(i));
+			Assert.AreEqual(i, numInts.Get(i));
 		  }
 		  else
 		  {
-			Assert.IsFalse(docsWithField.get(i));
+			Assert.IsFalse(docsWithField.Get(i));
 		  }
 		}
 	  }
 
 	  public virtual void TestGetDocsWithFieldThreadSafety()
 	  {
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
 
 		int NUM_THREADS = 3;
 		Thread[] threads = new Thread[NUM_THREADS];
@@ -452,7 +451,7 @@ namespace Lucene.Net.Search
 		{
 		  threads[threadIDX].Join();
 		}
-		Assert.IsFalse(failed.get());
+		Assert.IsFalse(failed.Get());
 	  }
 
 	  private class RunnableAnonymousInnerClassHelper : Runnable
@@ -471,8 +470,8 @@ namespace Lucene.Net.Search
 
 		  public override void Run()
 		  {
-			Cache.purgeAllCaches();
-			Iters.incrementAndGet();
+			Cache.PurgeAllCaches();
+			Iters.IncrementAndGet();
 		  }
 	  }
 
@@ -501,41 +500,41 @@ namespace Lucene.Net.Search
 
 			try
 			{
-			  while (!Failed.get())
+			  while (!Failed.Get())
 			  {
-				int op = random().Next(3);
+				int op = Random().Next(3);
 				if (op == 0)
 				{
 				  // Purge all caches & resume, once all
 				  // threads get here:
 				  Restart.@await();
-				  if (Iters.get() >= NUM_ITER)
+				  if (Iters.Get() >= NUM_ITER)
 				  {
 					break;
 				  }
 				}
 				else if (op == 1)
 				{
-				  Bits docsWithField = Cache.getDocsWithField(Reader, "sparse");
-				  for (int i = 0; i < docsWithField.length(); i++)
+				  Bits docsWithField = Cache.GetDocsWithField(Reader, "sparse");
+				  for (int i = 0; i < docsWithField.Length(); i++)
 				  {
-					Assert.AreEqual(i % 2 == 0, docsWithField.get(i));
+					Assert.AreEqual(i % 2 == 0, docsWithField.Get(i));
 				  }
 				}
 				else
 				{
-				  FieldCache.Ints ints = Cache.getInts(Reader, "sparse", true);
-				  Bits docsWithField = Cache.getDocsWithField(Reader, "sparse");
-				  for (int i = 0; i < docsWithField.length(); i++)
+				  Ints ints = Cache.GetInts(Reader, "sparse", true);
+				  Bits docsWithField = Cache.GetDocsWithField(Reader, "sparse");
+				  for (int i = 0; i < docsWithField.Length(); i++)
 				  {
 					if (i % 2 == 0)
 					{
-					  Assert.IsTrue(docsWithField.get(i));
-					  Assert.AreEqual(i, ints.get(i));
+					  Assert.IsTrue(docsWithField.Get(i));
+					  Assert.AreEqual(i, ints.Get(i));
 					}
 					else
 					{
-					  Assert.IsFalse(docsWithField.get(i));
+					  Assert.IsFalse(docsWithField.Get(i));
 					}
 				  }
 				}
@@ -543,64 +542,64 @@ namespace Lucene.Net.Search
 			}
 			catch (Exception t)
 			{
-			  Failed.set(true);
-			  Restart.reset();
-			  throw new Exception(t);
+			  Failed.Set(true);
+			  Restart.Reset();
+			  throw new Exception(t.Message, t);
 			}
 		  }
 	  }
 
 	  public virtual void TestDocValuesIntegration()
 	  {
-		assumeTrue("3.x does not support docvalues", defaultCodecSupportsDocValues());
-		Directory dir = newDirectory();
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, null);
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, iwc);
+		AssumeTrue("3.x does not support docvalues", DefaultCodecSupportsDocValues());
+		Directory dir = NewDirectory();
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 		Document doc = new Document();
-		doc.add(new BinaryDocValuesField("binary", new BytesRef("binary value")));
-		doc.add(new SortedDocValuesField("sorted", new BytesRef("sorted value")));
-		doc.add(new NumericDocValuesField("numeric", 42));
-		if (defaultCodecSupportsSortedSet())
+		doc.Add(new BinaryDocValuesField("binary", new BytesRef("binary value")));
+		doc.Add(new SortedDocValuesField("sorted", new BytesRef("sorted value")));
+		doc.Add(new NumericDocValuesField("numeric", 42));
+		if (DefaultCodecSupportsSortedSet())
 		{
-		  doc.add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value1")));
-		  doc.add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value2")));
+		  doc.Add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value1")));
+		  doc.Add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value2")));
 		}
-		iw.addDocument(doc);
+		iw.AddDocument(doc);
 		DirectoryReader ir = iw.Reader;
-		iw.close();
-		AtomicReader ar = getOnlySegmentReader(ir);
+		iw.Close();
+		AtomicReader ar = GetOnlySegmentReader(ir);
 
 		BytesRef scratch = new BytesRef();
 
 		// Binary type: can be retrieved via getTerms()
 		try
 		{
-		  FieldCache.DEFAULT.getInts(ar, "binary", false);
+		  FieldCache_Fields.DEFAULT.GetInts(ar, "binary", false);
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
 		{
 		}
 
-		BinaryDocValues binary = FieldCache.DEFAULT.getTerms(ar, "binary", true);
-		binary.get(0, scratch);
-		Assert.AreEqual("binary value", scratch.utf8ToString());
-
-		try
-		{
-		  FieldCache.DEFAULT.getTermsIndex(ar, "binary");
-		  Assert.Fail();
-		}
-		catch (IllegalStateException expected)
-		{
-		}
+		BinaryDocValues binary = FieldCache_Fields.DEFAULT.GetTerms(ar, "binary", true);
+		binary.Get(0, scratch);
+		Assert.AreEqual("binary value", scratch.Utf8ToString());
 
 		try
 		{
-		  FieldCache.DEFAULT.getDocTermOrds(ar, "binary");
+		  FieldCache_Fields.DEFAULT.GetTermsIndex(ar, "binary");
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
+		{
+		}
+
+		try
+		{
+		  FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "binary");
+		  Assert.Fail();
+		}
+		catch (InvalidOperationException expected)
 		{
 		}
 
@@ -609,20 +608,20 @@ namespace Lucene.Net.Search
 		  new DocTermOrds(ar, null, "binary");
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
 		{
 		}
 
-		Bits bits = FieldCache.DEFAULT.getDocsWithField(ar, "binary");
-		Assert.IsTrue(bits.get(0));
+		Bits bits = FieldCache_Fields.DEFAULT.GetDocsWithField(ar, "binary");
+		Assert.IsTrue(bits.Get(0));
 
 		// Sorted type: can be retrieved via getTerms(), getTermsIndex(), getDocTermOrds()
 		try
 		{
-		  FieldCache.DEFAULT.getInts(ar, "sorted", false);
+		  FieldCache_Fields.DEFAULT.GetInts(ar, "sorted", false);
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
 		{
 		}
 
@@ -631,57 +630,57 @@ namespace Lucene.Net.Search
 		  new DocTermOrds(ar, null, "sorted");
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
 		{
 		}
 
-		binary = FieldCache.DEFAULT.getTerms(ar, "sorted", true);
-		binary.get(0, scratch);
-		Assert.AreEqual("sorted value", scratch.utf8ToString());
+		binary = FieldCache_Fields.DEFAULT.GetTerms(ar, "sorted", true);
+		binary.Get(0, scratch);
+		Assert.AreEqual("sorted value", scratch.Utf8ToString());
 
-		SortedDocValues sorted = FieldCache.DEFAULT.getTermsIndex(ar, "sorted");
-		Assert.AreEqual(0, sorted.getOrd(0));
+		SortedDocValues sorted = FieldCache_Fields.DEFAULT.GetTermsIndex(ar, "sorted");
+		Assert.AreEqual(0, sorted.GetOrd(0));
 		Assert.AreEqual(1, sorted.ValueCount);
-		sorted.get(0, scratch);
-		Assert.AreEqual("sorted value", scratch.utf8ToString());
+		sorted.Get(0, scratch);
+		Assert.AreEqual("sorted value", scratch.Utf8ToString());
 
-		SortedSetDocValues sortedSet = FieldCache.DEFAULT.getDocTermOrds(ar, "sorted");
+		SortedSetDocValues sortedSet = FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "sorted");
 		sortedSet.Document = 0;
-		Assert.AreEqual(0, sortedSet.nextOrd());
-		Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.nextOrd());
+		Assert.AreEqual(0, sortedSet.NextOrd());
+		Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
 		Assert.AreEqual(1, sortedSet.ValueCount);
 
-		bits = FieldCache.DEFAULT.getDocsWithField(ar, "sorted");
-		Assert.IsTrue(bits.get(0));
+		bits = FieldCache_Fields.DEFAULT.GetDocsWithField(ar, "sorted");
+		Assert.IsTrue(bits.Get(0));
 
 		// Numeric type: can be retrieved via getInts() and so on
-		Ints numeric = FieldCache.DEFAULT.getInts(ar, "numeric", false);
-		Assert.AreEqual(42, numeric.get(0));
+		Ints numeric = FieldCache_Fields.DEFAULT.GetInts(ar, "numeric", false);
+		Assert.AreEqual(42, numeric.Get(0));
 
 		try
 		{
-		  FieldCache.DEFAULT.getTerms(ar, "numeric", true);
+		  FieldCache_Fields.DEFAULT.GetTerms(ar, "numeric", true);
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
-		{
-		}
-
-		try
-		{
-		  FieldCache.DEFAULT.getTermsIndex(ar, "numeric");
-		  Assert.Fail();
-		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
 		{
 		}
 
 		try
 		{
-		  FieldCache.DEFAULT.getDocTermOrds(ar, "numeric");
+		  FieldCache_Fields.DEFAULT.GetTermsIndex(ar, "numeric");
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
+		{
+		}
+
+		try
+		{
+		  FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "numeric");
+		  Assert.Fail();
+		}
+		catch (InvalidOperationException expected)
 		{
 		}
 
@@ -690,40 +689,40 @@ namespace Lucene.Net.Search
 		  new DocTermOrds(ar, null, "numeric");
 		  Assert.Fail();
 		}
-		catch (IllegalStateException expected)
+		catch (InvalidOperationException expected)
 		{
 		}
 
-		bits = FieldCache.DEFAULT.getDocsWithField(ar, "numeric");
-		Assert.IsTrue(bits.get(0));
+		bits = FieldCache_Fields.DEFAULT.GetDocsWithField(ar, "numeric");
+		Assert.IsTrue(bits.Get(0));
 
 		// SortedSet type: can be retrieved via getDocTermOrds() 
-		if (defaultCodecSupportsSortedSet())
+		if (DefaultCodecSupportsSortedSet())
 		{
 		  try
 		  {
-			FieldCache.DEFAULT.getInts(ar, "sortedset", false);
+			FieldCache_Fields.DEFAULT.GetInts(ar, "sortedset", false);
 			Assert.Fail();
 		  }
-		  catch (IllegalStateException expected)
+		  catch (InvalidOperationException expected)
 		  {
 		  }
 
 		  try
 		  {
-			FieldCache.DEFAULT.getTerms(ar, "sortedset", true);
+			FieldCache_Fields.DEFAULT.GetTerms(ar, "sortedset", true);
 			Assert.Fail();
 		  }
-		  catch (IllegalStateException expected)
+		  catch (InvalidOperationException expected)
 		  {
 		  }
 
 		  try
 		  {
-			FieldCache.DEFAULT.getTermsIndex(ar, "sortedset");
+			FieldCache_Fields.DEFAULT.GetTermsIndex(ar, "sortedset");
 			Assert.Fail();
 		  }
-		  catch (IllegalStateException expected)
+		  catch (InvalidOperationException expected)
 		  {
 		  }
 
@@ -732,162 +731,162 @@ namespace Lucene.Net.Search
 			new DocTermOrds(ar, null, "sortedset");
 			Assert.Fail();
 		  }
-		  catch (IllegalStateException expected)
+		  catch (InvalidOperationException expected)
 		  {
 		  }
 
-		  sortedSet = FieldCache.DEFAULT.getDocTermOrds(ar, "sortedset");
+		  sortedSet = FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "sortedset");
 		  sortedSet.Document = 0;
-		  Assert.AreEqual(0, sortedSet.nextOrd());
-		  Assert.AreEqual(1, sortedSet.nextOrd());
-		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.nextOrd());
+		  Assert.AreEqual(0, sortedSet.NextOrd());
+		  Assert.AreEqual(1, sortedSet.NextOrd());
+		  Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
 		  Assert.AreEqual(2, sortedSet.ValueCount);
 
-		  bits = FieldCache.DEFAULT.getDocsWithField(ar, "sortedset");
-		  Assert.IsTrue(bits.get(0));
+		  bits = FieldCache_Fields.DEFAULT.GetDocsWithField(ar, "sortedset");
+		  Assert.IsTrue(bits.Get(0));
 		}
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestNonexistantFields()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		iw.addDocument(doc);
+		iw.AddDocument(doc);
 		DirectoryReader ir = iw.Reader;
-		iw.close();
+		iw.Close();
 
-		AtomicReader ar = getOnlySegmentReader(ir);
+		AtomicReader ar = GetOnlySegmentReader(ir);
 
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
-		Assert.AreEqual(0, cache.CacheEntries.length);
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
+		Assert.AreEqual(0, cache.CacheEntries.Length);
 
-		Bytes bytes = cache.getBytes(ar, "bogusbytes", true);
-		Assert.AreEqual(0, bytes.get(0));
+		Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
+		Assert.AreEqual(0, bytes.Get(0));
 
-		Shorts shorts = cache.getShorts(ar, "bogusshorts", true);
-		Assert.AreEqual(0, shorts.get(0));
+		Shorts shorts = cache.GetShorts(ar, "bogusshorts", true);
+		Assert.AreEqual(0, shorts.Get(0));
 
-		Ints ints = cache.getInts(ar, "bogusints", true);
-		Assert.AreEqual(0, ints.get(0));
+		Ints ints = cache.GetInts(ar, "bogusints", true);
+		Assert.AreEqual(0, ints.Get(0));
 
-		Longs longs = cache.getLongs(ar, "boguslongs", true);
-		Assert.AreEqual(0, longs.get(0));
+		Longs longs = cache.GetLongs(ar, "boguslongs", true);
+		Assert.AreEqual(0, longs.Get(0));
 
-		Floats floats = cache.getFloats(ar, "bogusfloats", true);
-		Assert.AreEqual(0, floats.get(0), 0.0f);
+		Floats floats = cache.GetFloats(ar, "bogusfloats", true);
+		Assert.AreEqual(0, floats.Get(0), 0.0f);
 
-		Doubles doubles = cache.getDoubles(ar, "bogusdoubles", true);
-		Assert.AreEqual(0, doubles.get(0), 0.0D);
+		Doubles doubles = cache.GetDoubles(ar, "bogusdoubles", true);
+		Assert.AreEqual(0, doubles.Get(0), 0.0D);
 
 		BytesRef scratch = new BytesRef();
-		BinaryDocValues binaries = cache.getTerms(ar, "bogusterms", true);
-		binaries.get(0, scratch);
-		Assert.AreEqual(0, scratch.length);
+		BinaryDocValues binaries = cache.GetTerms(ar, "bogusterms", true);
+		binaries.Get(0, scratch);
+		Assert.AreEqual(0, scratch.Length);
 
-		SortedDocValues sorted = cache.getTermsIndex(ar, "bogustermsindex");
-		Assert.AreEqual(-1, sorted.getOrd(0));
-		sorted.get(0, scratch);
-		Assert.AreEqual(0, scratch.length);
+		SortedDocValues sorted = cache.GetTermsIndex(ar, "bogustermsindex");
+		Assert.AreEqual(-1, sorted.GetOrd(0));
+		sorted.Get(0, scratch);
+		Assert.AreEqual(0, scratch.Length);
 
-		SortedSetDocValues sortedSet = cache.getDocTermOrds(ar, "bogusmultivalued");
+		SortedSetDocValues sortedSet = cache.GetDocTermOrds(ar, "bogusmultivalued");
 		sortedSet.Document = 0;
-		Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.nextOrd());
+		Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
 
-		Bits bits = cache.getDocsWithField(ar, "bogusbits");
-		Assert.IsFalse(bits.get(0));
+		Bits bits = cache.GetDocsWithField(ar, "bogusbits");
+		Assert.IsFalse(bits.Get(0));
 
 		// check that we cached nothing
-		Assert.AreEqual(0, cache.CacheEntries.length);
-		ir.close();
-		dir.close();
+		Assert.AreEqual(0, cache.CacheEntries.Length);
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestNonIndexedFields()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(new StoredField("bogusbytes", "bogus"));
-		doc.add(new StoredField("bogusshorts", "bogus"));
-		doc.add(new StoredField("bogusints", "bogus"));
-		doc.add(new StoredField("boguslongs", "bogus"));
-		doc.add(new StoredField("bogusfloats", "bogus"));
-		doc.add(new StoredField("bogusdoubles", "bogus"));
-		doc.add(new StoredField("bogusterms", "bogus"));
-		doc.add(new StoredField("bogustermsindex", "bogus"));
-		doc.add(new StoredField("bogusmultivalued", "bogus"));
-		doc.add(new StoredField("bogusbits", "bogus"));
-		iw.addDocument(doc);
+		doc.Add(new StoredField("bogusbytes", "bogus"));
+		doc.Add(new StoredField("bogusshorts", "bogus"));
+		doc.Add(new StoredField("bogusints", "bogus"));
+		doc.Add(new StoredField("boguslongs", "bogus"));
+		doc.Add(new StoredField("bogusfloats", "bogus"));
+		doc.Add(new StoredField("bogusdoubles", "bogus"));
+		doc.Add(new StoredField("bogusterms", "bogus"));
+		doc.Add(new StoredField("bogustermsindex", "bogus"));
+		doc.Add(new StoredField("bogusmultivalued", "bogus"));
+		doc.Add(new StoredField("bogusbits", "bogus"));
+		iw.AddDocument(doc);
 		DirectoryReader ir = iw.Reader;
-		iw.close();
+        iw.Close();
 
-		AtomicReader ar = getOnlySegmentReader(ir);
+		AtomicReader ar = GetOnlySegmentReader(ir);
 
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
-		Assert.AreEqual(0, cache.CacheEntries.length);
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
+		Assert.AreEqual(0, cache.CacheEntries.Length);
 
-		Bytes bytes = cache.getBytes(ar, "bogusbytes", true);
-		Assert.AreEqual(0, bytes.get(0));
+		Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
+		Assert.AreEqual(0, bytes.Get(0));
 
-		Shorts shorts = cache.getShorts(ar, "bogusshorts", true);
-		Assert.AreEqual(0, shorts.get(0));
+		Shorts shorts = cache.GetShorts(ar, "bogusshorts", true);
+		Assert.AreEqual(0, shorts.Get(0));
 
-		Ints ints = cache.getInts(ar, "bogusints", true);
-		Assert.AreEqual(0, ints.get(0));
+		Ints ints = cache.GetInts(ar, "bogusints", true);
+		Assert.AreEqual(0, ints.Get(0));
 
-		Longs longs = cache.getLongs(ar, "boguslongs", true);
-		Assert.AreEqual(0, longs.get(0));
+		Longs longs = cache.GetLongs(ar, "boguslongs", true);
+		Assert.AreEqual(0, longs.Get(0));
 
-		Floats floats = cache.getFloats(ar, "bogusfloats", true);
-		Assert.AreEqual(0, floats.get(0), 0.0f);
+		Floats floats = cache.GetFloats(ar, "bogusfloats", true);
+		Assert.AreEqual(0, floats.Get(0), 0.0f);
 
-		Doubles doubles = cache.getDoubles(ar, "bogusdoubles", true);
-		Assert.AreEqual(0, doubles.get(0), 0.0D);
+		Doubles doubles = cache.GetDoubles(ar, "bogusdoubles", true);
+		Assert.AreEqual(0, doubles.Get(0), 0.0D);
 
 		BytesRef scratch = new BytesRef();
-		BinaryDocValues binaries = cache.getTerms(ar, "bogusterms", true);
-		binaries.get(0, scratch);
-		Assert.AreEqual(0, scratch.length);
+		BinaryDocValues binaries = cache.GetTerms(ar, "bogusterms", true);
+		binaries.Get(0, scratch);
+		Assert.AreEqual(0, scratch.Length);
 
-		SortedDocValues sorted = cache.getTermsIndex(ar, "bogustermsindex");
-		Assert.AreEqual(-1, sorted.getOrd(0));
-		sorted.get(0, scratch);
-		Assert.AreEqual(0, scratch.length);
+		SortedDocValues sorted = cache.GetTermsIndex(ar, "bogustermsindex");
+		Assert.AreEqual(-1, sorted.GetOrd(0));
+		sorted.Get(0, scratch);
+		Assert.AreEqual(0, scratch.Length);
 
-		SortedSetDocValues sortedSet = cache.getDocTermOrds(ar, "bogusmultivalued");
+		SortedSetDocValues sortedSet = cache.GetDocTermOrds(ar, "bogusmultivalued");
 		sortedSet.Document = 0;
-		Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.nextOrd());
+		Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
 
-		Bits bits = cache.getDocsWithField(ar, "bogusbits");
-		Assert.IsFalse(bits.get(0));
+		Bits bits = cache.GetDocsWithField(ar, "bogusbits");
+		Assert.IsFalse(bits.Get(0));
 
 		// check that we cached nothing
-		Assert.AreEqual(0, cache.CacheEntries.length);
-		ir.close();
-		dir.close();
+		Assert.AreEqual(0, cache.CacheEntries.Length);
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  // Make sure that the use of GrowableWriter doesn't prevent from using the full long range
 	  public virtual void TestLongFieldCache()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig cfg = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		cfg.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, cfg);
+		Directory dir = NewDirectory();
+		IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		cfg.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, cfg);
 		Document doc = new Document();
 		LongField field = new LongField("f", 0L, Field.Store.YES);
-		doc.add(field);
-		long[] values = new long[TestUtil.Next(random(), 1, 10)];
+		doc.Add(field);
+		long[] values = new long[TestUtil.NextInt(Random(), 1, 10)];
 		for (int i = 0; i < values.Length; ++i)
 		{
 		  long v;
-		  switch (random().Next(10))
+		  switch (Random().Next(10))
 		  {
 			case 0:
 			  v = long.MinValue;
@@ -899,48 +898,48 @@ namespace Lucene.Net.Search
 			  v = long.MaxValue;
 			  break;
 			default:
-			  v = TestUtil.nextLong(random(), -10, 10);
+			  v = TestUtil.NextLong(Random(), -10, 10);
 			  break;
 		  }
 		  values[i] = v;
-		  if (v == 0 && random().nextBoolean())
+		  if (v == 0 && Random().NextBoolean())
 		  {
 			// missing
-			iw.addDocument(new Document());
+			iw.AddDocument(new Document());
 		  }
 		  else
 		  {
 			field.LongValue = v;
-			iw.addDocument(doc);
+			iw.AddDocument(doc);
 		  }
 		}
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader reader = iw.Reader;
-		FieldCache.Longs longs = FieldCache.DEFAULT.getLongs(getOnlySegmentReader(reader), "f", false);
+		Longs longs = FieldCache_Fields.DEFAULT.GetLongs(GetOnlySegmentReader(reader), "f", false);
 		for (int i = 0; i < values.Length; ++i)
 		{
-		  Assert.AreEqual(values[i], longs.get(i));
+		  Assert.AreEqual(values[i], longs.Get(i));
 		}
-		reader.close();
-		iw.close();
-		dir.close();
+		reader.Dispose();
+        iw.Close();
+		dir.Dispose();
 	  }
 
 	  // Make sure that the use of GrowableWriter doesn't prevent from using the full int range
 	  public virtual void TestIntFieldCache()
 	  {
-		Directory dir = newDirectory();
-		IndexWriterConfig cfg = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		cfg.MergePolicy = newLogMergePolicy();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir, cfg);
+		Directory dir = NewDirectory();
+		IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		cfg.SetMergePolicy(NewLogMergePolicy());
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, cfg);
 		Document doc = new Document();
 		IntField field = new IntField("f", 0, Field.Store.YES);
-		doc.add(field);
-		int[] values = new int[TestUtil.Next(random(), 1, 10)];
+		doc.Add(field);
+		int[] values = new int[TestUtil.NextInt(Random(), 1, 10)];
 		for (int i = 0; i < values.Length; ++i)
 		{
 		  int v;
-		  switch (random().Next(10))
+		  switch (Random().Next(10))
 		  {
 			case 0:
 			  v = int.MinValue;
@@ -952,31 +951,31 @@ namespace Lucene.Net.Search
 			  v = int.MaxValue;
 			  break;
 			default:
-			  v = TestUtil.Next(random(), -10, 10);
+			  v = TestUtil.NextInt(Random(), -10, 10);
 			  break;
 		  }
 		  values[i] = v;
-		  if (v == 0 && random().nextBoolean())
+		  if (v == 0 && Random().NextBoolean())
 		  {
 			// missing
-			iw.addDocument(new Document());
+			iw.AddDocument(new Document());
 		  }
 		  else
 		  {
 			field.IntValue = v;
-			iw.addDocument(doc);
+			iw.AddDocument(doc);
 		  }
 		}
-		iw.forceMerge(1);
+		iw.ForceMerge(1);
 		DirectoryReader reader = iw.Reader;
-		FieldCache.Ints ints = FieldCache.DEFAULT.getInts(getOnlySegmentReader(reader), "f", false);
+		Ints ints = FieldCache_Fields.DEFAULT.GetInts(GetOnlySegmentReader(reader), "f", false);
 		for (int i = 0; i < values.Length; ++i)
 		{
-		  Assert.AreEqual(values[i], ints.get(i));
+		  Assert.AreEqual(values[i], ints.Get(i));
 		}
-		reader.close();
-		iw.close();
-		dir.close();
+		reader.Dispose();
+        iw.Close();
+		dir.Dispose();
 	  }
 
 	}

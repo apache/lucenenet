@@ -83,12 +83,12 @@ namespace Lucene.Net.Analysis
 	  {
 		internal readonly BytesRef Bytes = new BytesRef();
 
-		public override void FillBytesRef()
+		public void FillBytesRef()
 		{
 		  // no-op: we already filled externally during owner's incrementToken
 		}
 
-		public override BytesRef BytesRef
+		public BytesRef BytesRef
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis
 		  return other == this;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return RuntimeHelpers.GetHashCode(this);
 		}
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis
 		  other.Bytes.CopyBytes(Bytes);
 		}
 
-		public override BinaryTermAttributeImpl Clone()
+		public override object Clone()
 		{
 		  throw new System.NotSupportedException();
 		}

@@ -1,26 +1,26 @@
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using Test = org.junit.Test;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 	public class MultiCollectorTest : LuceneTestCase
 	{
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 		// Tests that the collector rejects all null collectors.
 		try
 		{
-		  MultiCollector.wrap(null, null);
+		  MultiCollector.Wrap(null, null);
 		  Assert.Fail("only null collectors should not be supported");
 		}
 		catch (System.ArgumentException e)
@@ -79,10 +79,10 @@ namespace Lucene.Net.Search
 
 		// Tests that the collector handles some null collectors well. If it
 		// doesn't, an NPE would be thrown.
-		Collector c = MultiCollector.wrap(new DummyCollector(), null, new DummyCollector());
+		Collector c = MultiCollector.Wrap(new DummyCollector(), null, new DummyCollector());
 		Assert.IsTrue(c is MultiCollector);
-		Assert.IsTrue(c.acceptsDocsOutOfOrder());
-		c.collect(1);
+		Assert.IsTrue(c.AcceptsDocsOutOfOrder());
+		c.Collect(1);
 		c.NextReader = null;
 		c.Scorer = null;
 	  }
@@ -93,8 +93,8 @@ namespace Lucene.Net.Search
 	  {
 		// Tests that if a single Collector is input, it is returned (and not MultiCollector).
 		DummyCollector dc = new DummyCollector();
-		assertSame(dc, MultiCollector.wrap(dc));
-		assertSame(dc, MultiCollector.wrap(dc, null));
+		assertSame(dc, MultiCollector.Wrap(dc));
+		assertSame(dc, MultiCollector.Wrap(dc, null));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -106,9 +106,9 @@ namespace Lucene.Net.Search
 		// Tests that the collector handles some null collectors well. If it
 		// doesn't, an NPE would be thrown.
 		DummyCollector[] dcs = new DummyCollector[] {new DummyCollector(), new DummyCollector()};
-		Collector c = MultiCollector.wrap(dcs);
-		Assert.IsTrue(c.acceptsDocsOutOfOrder());
-		c.collect(1);
+		Collector c = MultiCollector.Wrap(dcs);
+		Assert.IsTrue(c.AcceptsDocsOutOfOrder());
+		c.Collect(1);
 		c.NextReader = null;
 		c.Scorer = null;
 

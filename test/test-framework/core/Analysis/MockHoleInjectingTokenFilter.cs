@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis
 	public sealed class MockHoleInjectingTokenFilter : TokenFilter
 	{
 
-	  private readonly long RandomSeed;
+	  private readonly int RandomSeed;
 	  private Random Random;
       private readonly PositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute));
       private readonly PositionLengthAttribute PosLenAtt;// = addAttribute(typeof(PositionLengthAttribute));
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis
 
 	  public MockHoleInjectingTokenFilter(Random random, TokenStream @in) : base(@in)
 	  {
-		RandomSeed = random.NextLong();
+		RandomSeed = random.Next();
 	  }
 
 	  public override void Reset()

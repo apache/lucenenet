@@ -304,7 +304,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  {
 	  }
 
-	  private class StandardTermState : BlockTermState
+	    internal class StandardTermState : BlockTermState
 	  {
 		public long FreqStart;
 		public long ProxStart;
@@ -356,20 +356,24 @@ namespace Lucene.Net.Codecs.Lucene40
 		LastState = state;
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		try
-		{
-		  FreqOut.Dispose();
-		}
-		finally
-		{
-		  if (ProxOut != null)
-		  {
-              ProxOut.Dispose();
-		  }
-		}
+	      if (disposing)
+	      {
+              try
+              {
+                  FreqOut.Dispose();
+              }
+              finally
+              {
+                  if (ProxOut != null)
+                  {
+                      ProxOut.Dispose();
+                  }
+              }
+          }
 	  }
+		
 	}
 
 }

@@ -33,7 +33,9 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-using System.Diagnostics;
+    using System.Diagnostics;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestBooleanScorer : LuceneTestCase
 	{
@@ -41,33 +43,33 @@ using System.Diagnostics;
 
 	  public virtual void TestMethod()
 	  {
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 
 		string[] values = new string[] {"1", "2", "3", "4"};
 
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
 		for (int i = 0; i < values.Length; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField(FIELD, values[i], Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField(FIELD, values[i], Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		IndexReader ir = writer.Reader;
-		writer.close();
+		writer.Close();
 
 		BooleanQuery booleanQuery1 = new BooleanQuery();
-		booleanQuery1.add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur_e.SHOULD);
-		booleanQuery1.add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur_e.SHOULD);
+		booleanQuery1.Add(new TermQuery(new Term(FIELD, "1")), BooleanClause.Occur_e.SHOULD);
+		booleanQuery1.Add(new TermQuery(new Term(FIELD, "2")), BooleanClause.Occur_e.SHOULD);
 
 		BooleanQuery query = new BooleanQuery();
-		query.add(booleanQuery1, BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(booleanQuery1, BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(FIELD, "9")), BooleanClause.Occur_e.MUST_NOT);
 
-		IndexSearcher indexSearcher = newSearcher(ir);
-		ScoreDoc[] hits = indexSearcher.search(query, null, 1000).scoreDocs;
-		Assert.AreEqual("Number of matched documents", 2, hits.Length);
-		ir.close();
-		directory.close();
+		IndexSearcher indexSearcher = NewSearcher(ir);
+		ScoreDoc[] hits = indexSearcher.Search(query, null, 1000).ScoreDocs;
+		Assert.AreEqual(2, hits.Length, "Number of matched documents");
+		ir.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestEmptyBucketWithMoreDocs()
@@ -77,35 +79,51 @@ using System.Diagnostics;
 		// 'more' variable to work properly, and this test ensures that if the logic
 		// changes, we have a test to back it up.
 
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory);
-		writer.commit();
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+		writer.Commit();
 		IndexReader ir = writer.Reader;
-		writer.close();
-		IndexSearcher searcher = newSearcher(ir);
-		BooleanWeight weight = (BooleanWeight) (new BooleanQuery()).createWeight(searcher);
-		BulkScorer[] scorers = new BulkScorer[] {new BulkScorer() {private int doc = -1; public bool score(Collector c, int maxDoc) {Debug.Assert(doc == -1); doc = 3000; FakeScorer fs = new FakeScorer(); fs.doc = doc; fs.score = 1.0f; c.setScorer(fs); c.collect(3000); return false;}}};
+		writer.Close();
+		IndexSearcher searcher = NewSearcher(ir);
+		BooleanWeight weight = (BooleanWeight) (new BooleanQuery()).CreateWeight(searcher);
 
-		BooleanScorer bs = new BooleanScorer(weight, false, 1, Arrays.asList(scorers), Collections.emptyList<BulkScorer>(), scorers.Length);
+		BulkScorer[] scorers = new BulkScorer[] {
+            new BulkScorerAnonymousInnerClassHelper()
+        };
 
-		IList<int?> hits = new List<int>();
-		bs.score(new CollectorAnonymousInnerClassHelper(this, hits));
+		BooleanScorer bs = new BooleanScorer(weight, false, 1, Arrays.AsList(scorers), Collections.emptyList<BulkScorer>(), scorers.Length);
 
-		Assert.AreEqual("should have only 1 hit", 1, hits.Count);
-		Assert.AreEqual("hit should have been docID=3000", 3000, (int)hits[0]);
-		ir.close();
-		directory.close();
+		IList<int> hits = new List<int>();
+		bs.Score(new CollectorAnonymousInnerClassHelper(this, hits));
+
+		Assert.AreEqual(1, hits.Count, "should have only 1 hit");
+		Assert.AreEqual(3000, (int)hits[0], "hit should have been docID=3000");
+		ir.Dispose();
+		directory.Dispose();
 	  }
+
+      private class BulkScorerAnonymousInnerClassHelper : BulkScorer{
+            private int doc = -1;
+
+            public bool Score(Collector c, int maxDoc) {
+                Debug.Assert(doc == -1); 
+                doc = 3000; 
+                FakeScorer fs = new FakeScorer(); 
+                fs.Doc = doc; 
+                fs.SetScore(1.0f); 
+                c.SetScorer(fs); 
+                c.Collect(3000); 
+                return false;
+            }
+      }
 
 	  private class CollectorAnonymousInnerClassHelper : Collector
 	  {
 		  private readonly TestBooleanScorer OuterInstance;
 
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private IList<int?> hits;
-		  private IList<int?> Hits;
+		  private IList<int> Hits;
 
-		  public CollectorAnonymousInnerClassHelper<T1>(TestBooleanScorer outerInstance, IList<T1> hits)
+		  public CollectorAnonymousInnerClassHelper(TestBooleanScorer outerInstance, IList<int> hits)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Hits = hits;
@@ -128,7 +146,7 @@ using System.Diagnostics;
 		  {
 			  set
 			  {
-				docBase = value.docBase;
+				docBase = value.DocBase;
 			  }
 		  }
 
@@ -140,33 +158,33 @@ using System.Diagnostics;
 
 	  public virtual void TestMoreThan32ProhibitedClauses()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
 		Document doc = new Document();
-		doc.add(new TextField("field", "0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(new TextField("field", "0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33", Field.Store.NO));
+		w.AddDocument(doc);
 		doc = new Document();
-		doc.add(new TextField("field", "33", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(new TextField("field", "33", Field.Store.NO));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 		// we don't wrap with AssertingIndexSearcher in order to have the original scorer in setScorer.
-		IndexSearcher s = newSearcher(r, true, false);
+		IndexSearcher s = NewSearcher(r, true, false);
 
 		BooleanQuery q = new BooleanQuery();
 		for (int term = 0;term < 33;term++)
 		{
-		  q.add(new BooleanClause(new TermQuery(new Term("field", "" + term)), BooleanClause.Occur.MUST_NOT));
+		  q.Add(new BooleanClause(new TermQuery(new Term("field", "" + term)), BooleanClause.Occur_e.MUST_NOT));
 		}
-		q.add(new BooleanClause(new TermQuery(new Term("field", "33")), BooleanClause.Occur.SHOULD));
+		q.Add(new BooleanClause(new TermQuery(new Term("field", "33")), BooleanClause.Occur_e.SHOULD));
 
 		int[] count = new int[1];
-		s.search(q, new CollectorAnonymousInnerClassHelper2(this, doc, count));
+		s.Search(q, new CollectorAnonymousInnerClassHelper2(this, doc, count));
 
 		Assert.AreEqual(1, count[0]);
 
-		r.close();
-		d.close();
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  private class CollectorAnonymousInnerClassHelper2 : Collector
@@ -277,14 +295,14 @@ using System.Diagnostics;
 
 				public BulkScorerAnonymousInnerClassHelper(WeightAnonymousInnerClassHelper outerInstance)
 				{
-					this.outerInstance = outerInstance;
+					this.OuterInstance = outerInstance;
 				}
 
 
 				public override bool Score(Collector collector, int max)
 				{
 				  collector.Scorer = new FakeScorer();
-				  collector.collect(0);
+				  collector.Collect(0);
 				  return false;
 				}
 			}
@@ -297,26 +315,26 @@ using System.Diagnostics;
 	  /// </summary>
 	  public virtual void TestEmbeddedBooleanScorer()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("field", "doctors are people who prescribe medicines of which they know little, to cure diseases of which they know less, in human beings of whom they know nothing", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewTextField("field", "doctors are people who prescribe medicines of which they know little, to cure diseases of which they know less, in human beings of whom they know nothing", Field.Store.NO));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 		BooleanQuery q1 = new BooleanQuery();
-		q1.add(new TermQuery(new Term("field", "little")), BooleanClause.Occur.SHOULD);
-		q1.add(new TermQuery(new Term("field", "diseases")), BooleanClause.Occur.SHOULD);
+		q1.Add(new TermQuery(new Term("field", "little")), BooleanClause.Occur_e.SHOULD);
+		q1.Add(new TermQuery(new Term("field", "diseases")), BooleanClause.Occur_e.SHOULD);
 
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(q1, BooleanClause.Occur.SHOULD);
-		q2.add(new CrazyMustUseBulkScorerQuery(), BooleanClause.Occur.SHOULD);
+		q2.Add(q1, BooleanClause.Occur_e.SHOULD);
+		q2.Add(new CrazyMustUseBulkScorerQuery(), BooleanClause.Occur_e.SHOULD);
 
-		Assert.AreEqual(1, s.search(q2, 10).totalHits);
-		r.close();
-		dir.close();
+		Assert.AreEqual(1, s.Search(q2, 10).TotalHits);
+		r.Dispose();
+		dir.Dispose();
 	  }
 	}
 

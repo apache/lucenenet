@@ -24,6 +24,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestScoreCachingWrappingScorer : LuceneTestCase
 	{
@@ -93,9 +94,9 @@ namespace Lucene.Net.Search
 		  }
 
 		  // just call score() a couple of times and record the score.
-		  Mscores[Idx] = Scorer_Renamed.score();
-		  Mscores[Idx] = Scorer_Renamed.score();
-		  Mscores[Idx] = Scorer_Renamed.score();
+		  Mscores[Idx] = Scorer_Renamed.Score();
+		  Mscores[Idx] = Scorer_Renamed.Score();
+		  Mscores[Idx] = Scorer_Renamed.Score();
 		  ++Idx;
 		}
 
@@ -125,20 +126,20 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestGetScores()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory);
-		writer.commit();
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+		writer.Commit();
 		IndexReader ir = writer.Reader;
-		writer.close();
-		IndexSearcher searcher = newSearcher(ir);
-		Weight fake = (new TermQuery(new Term("fake", "weight"))).createWeight(searcher);
+		writer.Close();
+		IndexSearcher searcher = NewSearcher(ir);
+		Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
 		Scorer s = new SimpleScorer(fake);
 		ScoreCachingCollector scc = new ScoreCachingCollector(Scores.Length);
 		scc.Scorer = s;
 
 		// We need to iterate on the scorer so that its doc() advances.
 		int doc;
-		while ((doc = s.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((doc = s.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		{
 		  scc.Collect(doc);
 		}
@@ -147,8 +148,8 @@ namespace Lucene.Net.Search
 		{
 		  Assert.AreEqual(Scores[i], scc.Mscores[i], 0f);
 		}
-		ir.close();
-		directory.close();
+		ir.Dispose();
+		directory.Dispose();
 	  }
 
 	}

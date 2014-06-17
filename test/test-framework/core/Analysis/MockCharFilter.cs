@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis
 {
@@ -32,8 +33,8 @@ namespace Lucene.Net.Analysis
 	  internal readonly int Remainder;
 
 	  // for testing only
-      public MockCharFilter(StreamReader @in, int remainder)
-          : base(@in)
+      public MockCharFilter(TextReader @in, int remainder)
+          : base((StreamReader)@in)
 	  {
 		// TODO: instead of fixed remainder... maybe a fixed
 		// random seed?
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis
 	  }
 
 	  // for testing only, uses a remainder of 0
-      public MockCharFilter(StreamReader @in)
+      public MockCharFilter(TextReader @in)
           : this(@in, 0)
 	  {
 	  }
@@ -102,12 +103,12 @@ namespace Lucene.Net.Analysis
 		return numRead == 0 ? - 1 : numRead;
 	  }
 
-	  public override int Correct(int currentOff)
+	  protected override int Correct(int currentOff)
 	  {
-		KeyValuePair<int, int> lastEntry = Corrections.LowerEntry(currentOff + 1);
-        int ret = lastEntry.Equals(default(KeyValuePair<int, int>)) ? currentOff : currentOff + lastEntry.Value;
-		Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
-		return ret;
+	      KeyValuePair<int, int> lastEntry = CollectionsHelper.LowerEntry(Corrections, currentOff + 1);
+          int ret = lastEntry.Equals(default(KeyValuePair<int, int>)) ? currentOff : currentOff + lastEntry.Value;
+		  Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
+		  return ret;
 	  }
 
 	  protected internal virtual void AddOffCorrectMap(int off, int cumulativeDiff)
@@ -115,7 +116,7 @@ namespace Lucene.Net.Analysis
 		Corrections[off] = cumulativeDiff;
 	  }
 
-	  internal SortedDictionary<int?, int?> Corrections = new SortedDictionary<int?, int?>();
+	  internal SortedDictionary<int, int> Corrections = new SortedDictionary<int, int>();
 	}
 
 }

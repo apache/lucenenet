@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		try
 		{
-		  Close();
+		  Dispose();
 		}
 		catch (Exception ignored)
 		{
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// Close all streams. </summary>
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
 		// make an effort to close all streams we can but remember and re-throw
 		// the first exception encountered in this process

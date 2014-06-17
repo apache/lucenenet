@@ -49,33 +49,33 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.KEYWORD, false)).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
+		base.SetUp();
+		Dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 
 		Document doc = new Document();
-		Field field = newStringField("field", "", Field.Store.NO);
-		doc.add(field);
+		Field field = NewStringField("field", "", Field.Store.NO);
+		doc.Add(field);
 
 		// we generate aweful prefixes: good for testing.
 		// but for preflex codec, the test can be very slow, so use less iterations.
 		string codec = Codec.Default.Name;
-		int num = codec.Equals("Lucene3x") ? 200 * RANDOM_MULTIPLIER : atLeast(1000);
+		int num = codec.Equals("Lucene3x") ? 200 * RANDOM_MULTIPLIER : AtLeast(1000);
 		for (int i = 0; i < num; i++)
 		{
-		  field.StringValue = TestUtil.randomUnicodeString(random(), 10);
-		  writer.addDocument(doc);
+		  field.StringValue = TestUtil.RandomUnicodeString(Random(), 10);
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  /// <summary>
@@ -86,15 +86,15 @@ namespace Lucene.Net.Search
 
 		internal readonly BytesRef Prefix;
 
-		internal DumbPrefixQuery(TestPrefixRandom outerInstance, Term term) : base(term.field())
+		internal DumbPrefixQuery(TestPrefixRandom outerInstance, Term term) : base(term.Field())
 		{
 			this.OuterInstance = outerInstance;
-		  Prefix = term.bytes();
+		  Prefix = term.Bytes();
 		}
 
 		protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		{
-		  return new SimplePrefixTermsEnum(this, terms.iterator(null), Prefix);
+		  return new SimplePrefixTermsEnum(this, terms.Iterator(null), Prefix);
 		}
 
 		private class SimplePrefixTermsEnum : FilteredTermsEnum
@@ -126,10 +126,10 @@ namespace Lucene.Net.Search
 	  /// test a bunch of random prefixes </summary>
 	  public virtual void TestPrefixes()
 	  {
-		  int num = atLeast(100);
+		  int num = AtLeast(100);
 		  for (int i = 0; i < num; i++)
 		  {
-			AssertSame(TestUtil.randomUnicodeString(random(), 5));
+			AssertSame(TestUtil.RandomUnicodeString(Random(), 5));
 		  }
 	  }
 
@@ -142,9 +142,9 @@ namespace Lucene.Net.Search
 		PrefixQuery smart = new PrefixQuery(new Term("field", prefix));
 		DumbPrefixQuery dumb = new DumbPrefixQuery(this, new Term("field", prefix));
 
-		TopDocs smartDocs = Searcher.search(smart, 25);
-		TopDocs dumbDocs = Searcher.search(dumb, 25);
-		CheckHits.checkEqual(smart, smartDocs.scoreDocs, dumbDocs.scoreDocs);
+		TopDocs smartDocs = Searcher.Search(smart, 25);
+		TopDocs dumbDocs = Searcher.Search(dumb, 25);
+		CheckHits.CheckEqual(smart, smartDocs.ScoreDocs, dumbDocs.ScoreDocs);
 	  }
 	}
 

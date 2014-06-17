@@ -1,4 +1,6 @@
 using System.IO;
+using NUnit.Framework;
+
 namespace Lucene.Net.Analysis
 {
 
@@ -19,10 +21,11 @@ namespace Lucene.Net.Analysis
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    [TestFixture]
 	public class TestMockCharFilter : BaseTokenStreamTestCase
 	{
 
+      [Test]
 	  public virtual void Test()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
@@ -44,13 +47,13 @@ namespace Lucene.Net.Analysis
 		  }
 
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, StreamReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			return new TokenStreamComponents(tokenizer, tokenizer);
 		  }
 
-          protected internal override StreamReader InitReader(string fieldName, StreamReader reader)
+          public TextReader InitReader(string fieldName, TextReader reader)
 		  {
 			return new MockCharFilter(reader, 7);
 		  }

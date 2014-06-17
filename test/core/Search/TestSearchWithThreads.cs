@@ -31,6 +31,9 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestSearchWithThreads extends Lucene.Net.Util.LuceneTestCase
@@ -42,77 +45,77 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		NUM_DOCS = atLeast(10000);
-		RUN_TIME_MSEC = atLeast(1000);
+		base.SetUp();
+		NUM_DOCS = AtLeast(10000);
+		RUN_TIME_MSEC = AtLeast(1000);
 	  }
 
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
-		long startTime = System.currentTimeMillis();
+		long startTime = DateTime.Now.Millisecond;
 
 		// TODO: replace w/ the @nightly test data; make this
 		// into an optional @nightly stress test
 		Document doc = new Document();
-		Field body = newTextField("body", "", Field.Store.NO);
-		doc.add(body);
+		Field body = NewTextField("body", "", Field.Store.NO);
+		doc.Add(body);
 		StringBuilder sb = new StringBuilder();
 		for (int docCount = 0;docCount < NUM_DOCS;docCount++)
 		{
-		  int numTerms = random().Next(10);
+		  int numTerms = Random().Next(10);
 		  for (int termCount = 0;termCount < numTerms;termCount++)
 		  {
-			sb.Append(random().nextBoolean() ? "aaa" : "bbb");
+			sb.Append(Random().NextBoolean() ? "aaa" : "bbb");
 			sb.Append(' ');
 		  }
 		  body.StringValue = sb.ToString();
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		  sb.Remove(0, sb.Length);
 		}
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 
-		long endTime = System.currentTimeMillis();
+		long endTime = DateTime.Now.Millisecond;
 		if (VERBOSE)
 		{
 			Console.WriteLine("BUILD took " + (endTime - startTime));
 		}
 
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 
 		AtomicBoolean failed = new AtomicBoolean();
 		AtomicLong netSearch = new AtomicLong();
 
-		Thread[] threads = new Thread[NUM_SEARCH_THREADS];
+		ThreadClass[] threads = new ThreadClass[NUM_SEARCH_THREADS];
 		for (int threadID = 0; threadID < NUM_SEARCH_THREADS; threadID++)
 		{
 		  threads[threadID] = new ThreadAnonymousInnerClassHelper(this, s, failed, netSearch);
-		  threads[threadID].Daemon = true;
+		  threads[threadID].SetDaemon(true);
 		}
 
-		foreach (Thread t in threads)
+		foreach (ThreadClass t in threads)
 		{
 		  t.Start();
 		}
 
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
 
 		if (VERBOSE)
 		{
-			Console.WriteLine(NUM_SEARCH_THREADS + " threads did " + netSearch.get() + " searches");
+			Console.WriteLine(NUM_SEARCH_THREADS + " threads did " + netSearch.Get() + " searches");
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestSearchWithThreads OuterInstance;
 
@@ -136,22 +139,22 @@ namespace Lucene.Net.Search
 			  {
 				long totHits = 0;
 				long totSearch = 0;
-				long stopAt = System.currentTimeMillis() + OuterInstance.RUN_TIME_MSEC;
-				while (System.currentTimeMillis() < stopAt && !Failed.get())
+				long stopAt = DateTime.Now.Millisecond + OuterInstance.RUN_TIME_MSEC;
+				while (DateTime.Now.Millisecond < stopAt && !Failed.Get())
 				{
-				  s.search(new TermQuery(new Term("body", "aaa")), col);
+				  s.Search(new TermQuery(new Term("body", "aaa")), col);
 				  totHits += col.TotalHits;
-				  s.search(new TermQuery(new Term("body", "bbb")), col);
+				  s.Search(new TermQuery(new Term("body", "bbb")), col);
 				  totHits += col.TotalHits;
 				  totSearch++;
 				}
 				Assert.IsTrue(totSearch > 0 && totHits > 0);
-				NetSearch.addAndGet(totSearch);
+				NetSearch.AddAndGet(totSearch);
 			  }
 			  catch (Exception exc)
 			  {
-				Failed.set(true);
-				throw new Exception(exc);
+				Failed.Set(true);
+				throw new Exception(exc.Message, exc);
 			  }
 			}
 	  }

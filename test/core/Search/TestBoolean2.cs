@@ -36,10 +36,8 @@ namespace Lucene.Net.Search
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
-	using Test = org.junit.Test;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test BooleanQuery2 against BooleanQuery by overriding the standard query parser.
@@ -53,7 +51,7 @@ namespace Lucene.Net.Search
 	  private static IndexReader LittleReader;
 	  private static int NUM_EXTRA_DOCS = 6000;
 
-	  public const string Field = "field";
+	  public const string field = "field";
 	  private static Directory Directory;
 	  private static Directory Dir2;
 	  private static int MulFactor;
@@ -62,22 +60,22 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		for (int i = 0; i < DocFields.Length; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField(Field, DocFields[i], Field.Store.NO));
-		  writer.addDocument(doc);
+          doc.Add(NewTextField(field, DocFields[i], Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
-		writer.close();
-		LittleReader = DirectoryReader.open(Directory);
-		Searcher = newSearcher(LittleReader);
+		writer.Close();
+		LittleReader = DirectoryReader.Open(Directory);
+		Searcher = NewSearcher(LittleReader);
 		// this is intentionally using the baseline sim, because it compares against bigSearcher (which uses a random one)
 		Searcher.Similarity = new DefaultSimilarity();
 
 		// Make big index
-		Dir2 = new MockDirectoryWrapper(random(), new RAMDirectory(Directory, IOContext.DEFAULT));
+		Dir2 = new MockDirectoryWrapper(Random(), new RAMDirectory(Directory, IOContext.DEFAULT));
 
 		// First multiply small test index:
 		MulFactor = 1;
@@ -92,40 +90,40 @@ namespace Lucene.Net.Search
 		  {
 			Console.WriteLine("\nTEST: cycle...");
 		  }
-		  Directory copy = new MockDirectoryWrapper(random(), new RAMDirectory(Dir2, IOContext.DEFAULT));
-		  RandomIndexWriter w = new RandomIndexWriter(random(), Dir2);
-		  w.addIndexes(copy);
-		  docCount = w.maxDoc();
-		  w.close();
+		  Directory copy = new MockDirectoryWrapper(Random(), new RAMDirectory(Dir2, IOContext.DEFAULT));
+		  RandomIndexWriter w = new RandomIndexWriter(Random(), Dir2);
+		  w.AddIndexes(copy);
+		  docCount = w.MaxDoc();
+		  w.Close();
 		  MulFactor *= 2;
 		} while (docCount < 3000);
 
-		RandomIndexWriter w = new RandomIndexWriter(random(), Dir2, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
-		Document doc = new Document();
-		doc.add(newTextField("field2", "xxx", Field.Store.NO));
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+		Document doc_ = new Document();
+		doc_.Add(NewTextField("field2", "xxx", Field.Store.NO));
 		for (int i = 0;i < NUM_EXTRA_DOCS / 2;i++)
 		{
-		  w.addDocument(doc);
+		  riw.AddDocument(doc_);
 		}
-		doc = new Document();
-		doc.add(newTextField("field2", "big bad bug", Field.Store.NO));
+		doc_ = new Document();
+        doc_.Add(NewTextField("field2", "big bad bug", Field.Store.NO));
 		for (int i = 0;i < NUM_EXTRA_DOCS / 2;i++)
 		{
-		  w.addDocument(doc);
+		  riw.AddDocument(doc_);
 		}
-		Reader = w.Reader;
-		BigSearcher = newSearcher(Reader);
-		w.close();
+		Reader = riw.Reader;
+		BigSearcher = NewSearcher(Reader);
+		riw.Close();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
-		LittleReader.close();
-		Dir2.close();
-		Directory.close();
+		Reader.Dispose();
+		LittleReader.Dispose();
+		Dir2.Dispose();
+		Directory.Dispose();
 		Searcher = null;
 		Reader = null;
 		LittleReader = null;
@@ -138,17 +136,17 @@ namespace Lucene.Net.Search
 
 	  public virtual void QueriesTest(Query query, int[] expDocNrs)
 	  {
-		TopScoreDocCollector collector = TopScoreDocCollector.create(1000, false);
-		Searcher.search(query, null, collector);
-		ScoreDoc[] hits1 = collector.topDocs().scoreDocs;
+		TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, false);
+		Searcher.Search(query, null, collector);
+		ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
 
-		collector = TopScoreDocCollector.create(1000, true);
-		Searcher.search(query, null, collector);
-		ScoreDoc[] hits2 = collector.topDocs().scoreDocs;
+		collector = TopScoreDocCollector.Create(1000, true);
+		Searcher.Search(query, null, collector);
+		ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
 
-		Assert.AreEqual(MulFactor * collector.totalHits, BigSearcher.search(query, 1).totalHits);
+		Assert.AreEqual(MulFactor * collector.TotalHits, BigSearcher.Search(query, 1).TotalHits);
 
-		CheckHits.checkHitsQuery(query, hits1, hits2, expDocNrs);
+		CheckHits.CheckHitsQuery(query, hits1, hits2, expDocNrs);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -156,8 +154,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries01()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST);
 		int[] expDocNrs = new int[] {2,3};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -167,8 +165,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries02()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.SHOULD);
 		int[] expDocNrs = new int[] {2,3,1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -178,8 +176,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries03()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.SHOULD);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.SHOULD);
 		int[] expDocNrs = new int[] {2,3,1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -189,8 +187,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries04()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.SHOULD);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -200,8 +198,8 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries05()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {1,0};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -211,9 +209,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries06()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
-		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w5")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {1};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -223,9 +221,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries07()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST_NOT);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST_NOT);
-		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w5")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -235,9 +233,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries08()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.SHOULD);
-		query.add(new TermQuery(new Term(Field, "w5")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "w5")), BooleanClause.Occur_e.MUST_NOT);
 		int[] expDocNrs = new int[] {2,3,1};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -247,10 +245,10 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries09()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "w2")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "zz")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "w2")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "zz")), BooleanClause.Occur_e.SHOULD);
 		int[] expDocNrs = new int[] {2, 3};
 		QueriesTest(query, expDocNrs);
 	  }
@@ -260,10 +258,10 @@ namespace Lucene.Net.Search
 	  public virtual void TestQueries10()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term(Field, "w3")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "xx")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "w2")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term(Field, "zz")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "xx")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "w2")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term(field, "zz")), BooleanClause.Occur_e.SHOULD);
 
 		int[] expDocNrs = new int[] {2, 3};
 		Similarity oldSimilarity = Searcher.Similarity;
@@ -306,45 +304,45 @@ namespace Lucene.Net.Search
 		{
 
 		  // increase number of iterations for more complete testing
-		  int num = atLeast(20);
+		  int num = AtLeast(20);
 		  for (int i = 0; i < num; i++)
 		  {
-			int level = random().Next(3);
-			q1 = RandBoolQuery(new Random(random().nextLong()), random().nextBoolean(), level, Field, vals, null);
+			int level = Random().Next(3);
+			q1 = RandBoolQuery(new Random(Random().Next()), Random().NextBoolean(), level, field, vals, null);
 
 			// Can't sort by relevance since floating point numbers may not quite
 			// match up.
 			Sort sort = Sort.INDEXORDER;
 
-			QueryUtils.check(random(), q1,Searcher); // baseline sim
+			QueryUtils.Check(Random(), q1,Searcher); // baseline sim
 			try
 			{
 			  // a little hackish, QueryUtils.check is too costly to do on bigSearcher in this loop.
 			  Searcher.Similarity = BigSearcher.Similarity; // random sim
-			  QueryUtils.check(random(), q1, Searcher);
+			  QueryUtils.Check(Random(), q1, Searcher);
 			}
 			finally
 			{
 			  Searcher.Similarity = new DefaultSimilarity(); // restore
 			}
 
-			TopFieldCollector collector = TopFieldCollector.create(sort, 1000, false, true, true, true);
+			TopFieldCollector collector = TopFieldCollector.Create(sort, 1000, false, true, true, true);
 
-			Searcher.search(q1, null, collector);
-			ScoreDoc[] hits1 = collector.topDocs().scoreDocs;
+			Searcher.Search(q1, null, collector);
+			ScoreDoc[] hits1 = collector.TopDocs().ScoreDocs;
 
-			collector = TopFieldCollector.create(sort, 1000, false, true, true, false);
+			collector = TopFieldCollector.Create(sort, 1000, false, true, true, false);
 
-			Searcher.search(q1, null, collector);
-			ScoreDoc[] hits2 = collector.topDocs().scoreDocs;
+			Searcher.Search(q1, null, collector);
+			ScoreDoc[] hits2 = collector.TopDocs().ScoreDocs;
 			tot += hits2.Length;
-			CheckHits.checkEqual(q1, hits1, hits2);
+			CheckHits.CheckEqual(q1, hits1, hits2);
 
 			BooleanQuery q3 = new BooleanQuery();
-			q3.add(q1, BooleanClause.Occur_e.SHOULD);
-			q3.add(new PrefixQuery(new Term("field2", "b")), BooleanClause.Occur_e.SHOULD);
-			TopDocs hits4 = BigSearcher.search(q3, 1);
-			Assert.AreEqual(MulFactor * collector.totalHits + NUM_EXTRA_DOCS / 2, hits4.totalHits);
+			q3.Add(q1, BooleanClause.Occur_e.SHOULD);
+			q3.Add(new PrefixQuery(new Term("field2", "b")), BooleanClause.Occur_e.SHOULD);
+			TopDocs hits4 = BigSearcher.Search(q3, 1);
+			Assert.AreEqual(MulFactor * collector.TotalHits + NUM_EXTRA_DOCS / 2, hits4.TotalHits);
 		  }
 
 		}
@@ -388,8 +386,8 @@ namespace Lucene.Net.Search
 			Term t1 = new Term(field, vals[rnd.Next(vals.Length)]);
 			Term t2 = new Term(field, vals[rnd.Next(vals.Length)]);
 			PhraseQuery pq = new PhraseQuery();
-			pq.add(t1);
-			pq.add(t2);
+			pq.Add(t1);
+			pq.Add(t2);
 			pq.Slop = 10; // increase possibility of matching
 			q = pq;
 		  }
@@ -424,7 +422,7 @@ namespace Lucene.Net.Search
 			occur = BooleanClause.Occur_e.SHOULD;
 		  }
 
-		  current.add(q, occur);
+		  current.Add(q, occur);
 		}
 		if (cb != null)
 		{

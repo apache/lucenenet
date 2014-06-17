@@ -480,6 +480,7 @@ namespace Lucene.Net.Util
 	  /// dispatch to its current value from the <seealso cref="#classRules"/> chain using <seealso cref="TestRuleDelegate"/>.  
 	  /// </summary>
 	  private static AtomicReference<TestRuleIgnoreAfterMaxFailures> IgnoreAfterMaxFailuresDelegate;
+
 	  private static TestRule IgnoreAfterMaxFailures;
 
 	  /// <summary>
@@ -547,7 +548,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// For subclasses to override. Overrides must call {@code super.setUp()}.
 	  /// </summary>
-	  public void SetUp()
+	  public virtual void SetUp()
 	  {
         /* LUCENE TO-DO: Not sure how to convert these
 		ParentChainCallRule.SetupCalled = true;
@@ -557,7 +558,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// For subclasses to override. Overrides must call {@code super.tearDown()}.
 	  /// </summary>
-	  public void TearDown()
+	  public virtual void TearDown()
 	  {
         /* LUCENE TO-DO: Not sure how to convert these
 		ParentChainCallRule.TeardownCalled = true;

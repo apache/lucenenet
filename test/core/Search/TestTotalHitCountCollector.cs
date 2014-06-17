@@ -25,30 +25,31 @@ namespace Lucene.Net.Search
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestTotalHitCountCollector : LuceneTestCase
 	{
 
 	  public virtual void TestBasics()
 	  {
-		Directory indexStore = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), indexStore);
+		Directory indexStore = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
 		for (int i = 0; i < 5; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("string", "a" + i, Field.Store.NO));
-		  doc.add(new StringField("string", "b" + i, Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(new StringField("string", "a" + i, Field.Store.NO));
+		  doc.Add(new StringField("string", "b" + i, Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 		TotalHitCountCollector c = new TotalHitCountCollector();
-		searcher.search(new MatchAllDocsQuery(), null, c);
+		searcher.Search(new MatchAllDocsQuery(), null, c);
 		Assert.AreEqual(5, c.TotalHits);
-		reader.close();
-		indexStore.close();
+		reader.Dispose();
+		indexStore.Dispose();
 	  }
 	}
 

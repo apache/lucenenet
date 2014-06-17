@@ -37,7 +37,9 @@ namespace Lucene.Net.Search
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// random sorting tests </summary>
@@ -46,14 +48,14 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestRandomStringSort()
 	  {
-		Random random = new Random(random().nextLong());
+		Random random = new Random(Random().Next());
 
-		int NUM_DOCS = atLeast(100);
-		Directory dir = newDirectory();
+		int NUM_DOCS = AtLeast(100);
+		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(random, dir);
-		bool allowDups = random.nextBoolean();
-		Set<string> seen = new HashSet<string>();
-		int maxLength = TestUtil.Next(random, 5, 100);
+		bool allowDups = random.NextBoolean();
+		HashSet<string> seen = new HashSet<string>();
+		int maxLength = TestUtil.NextInt(random, 5, 100);
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS + " maxLength=" + maxLength + " allowDups=" + allowDups);
@@ -68,25 +70,25 @@ namespace Lucene.Net.Search
 
 		  // 10% of the time, the document is missing the value:
 		  BytesRef br;
-		  if (random().Next(10) != 7)
+		  if (Random().Next(10) != 7)
 		  {
 			string s;
-			if (random.nextBoolean())
+			if (random.NextBoolean())
 			{
-			  s = TestUtil.randomSimpleString(random, maxLength);
+			  s = TestUtil.RandomSimpleString(random, maxLength);
 			}
 			else
 			{
-			  s = TestUtil.randomUnicodeString(random, maxLength);
+			  s = TestUtil.RandomUnicodeString(random, maxLength);
 			}
 
 			if (!allowDups)
 			{
-			  if (seen.contains(s))
+			  if (seen.Contains(s))
 			  {
 				continue;
 			  }
-			  seen.add(s);
+			  seen.Add(s);
 			}
 
 			if (VERBOSE)
@@ -95,16 +97,16 @@ namespace Lucene.Net.Search
 			}
 
 			br = new BytesRef(s);
-			if (defaultCodecSupportsDocValues())
+			if (DefaultCodecSupportsDocValues())
 			{
-			  doc.add(new SortedDocValuesField("stringdv", br));
-			  doc.add(new NumericDocValuesField("id", numDocs));
+			  doc.Add(new SortedDocValuesField("stringdv", br));
+			  doc.Add(new NumericDocValuesField("id", numDocs));
 			}
 			else
 			{
-			  doc.add(newStringField("id", Convert.ToString(numDocs), Field.Store.NO));
+			  doc.Add(NewStringField("id", Convert.ToString(numDocs), Field.Store.NO));
 			}
-			doc.add(newStringField("string", s, Field.Store.NO));
+			doc.Add(NewStringField("string", s, Field.Store.NO));
 			docValues.Add(br);
 
 		  }
@@ -116,56 +118,56 @@ namespace Lucene.Net.Search
 			  Console.WriteLine("  " + numDocs + ": <missing>");
 			}
 			docValues.Add(null);
-			if (defaultCodecSupportsDocValues())
+			if (DefaultCodecSupportsDocValues())
 			{
-			  doc.add(new NumericDocValuesField("id", numDocs));
+			  doc.Add(new NumericDocValuesField("id", numDocs));
 			}
 			else
 			{
-			  doc.add(newStringField("id", Convert.ToString(numDocs), Field.Store.NO));
+			  doc.Add(NewStringField("id", Convert.ToString(numDocs), Field.Store.NO));
 			}
 		  }
 
-		  doc.add(new StoredField("id", numDocs));
-		  writer.addDocument(doc);
+		  doc.Add(new StoredField("id", numDocs));
+		  writer.AddDocument(doc);
 		  numDocs++;
 
 		  if (random.Next(40) == 17)
 		  {
 			// force flush
-			writer.Reader.close();
+			writer.Reader.Dispose();
 		  }
 		}
 
 		IndexReader r = writer.Reader;
-		writer.close();
+		writer.Close();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("  reader=" + r);
 		}
 
-		IndexSearcher s = newSearcher(r, false);
-		int ITERS = atLeast(100);
+		IndexSearcher idxS = NewSearcher(r, false);
+		int ITERS = AtLeast(100);
 		for (int iter = 0;iter < ITERS;iter++)
 		{
-		  bool reverse = random.nextBoolean();
+		  bool reverse = random.NextBoolean();
 
 		  TopFieldDocs hits;
 		  SortField sf;
 		  bool sortMissingLast;
 		  bool missingIsNull;
-		  if (defaultCodecSupportsDocValues() && random.nextBoolean())
+		  if (DefaultCodecSupportsDocValues() && random.NextBoolean())
 		  {
-			sf = new SortField("stringdv", SortField.Type.STRING, reverse);
+			sf = new SortField("stringdv", SortField.Type_e.STRING, reverse);
 			// Can only use sort missing if the DVFormat
 			// supports docsWithField:
-			sortMissingLast = defaultCodecSupportsDocsWithField() && random().nextBoolean();
-			missingIsNull = defaultCodecSupportsDocsWithField();
+			sortMissingLast = DefaultCodecSupportsDocsWithField() && Random().NextBoolean();
+			missingIsNull = DefaultCodecSupportsDocsWithField();
 		  }
 		  else
 		  {
-			sf = new SortField("string", SortField.Type.STRING, reverse);
-			sortMissingLast = random().nextBoolean();
+			sf = new SortField("string", SortField.Type_e.STRING, reverse);
+			sortMissingLast = Random().NextBoolean();
 			missingIsNull = true;
 		  }
 		  if (sortMissingLast)
@@ -174,7 +176,7 @@ namespace Lucene.Net.Search
 		  }
 
 		  Sort sort;
-		  if (random.nextBoolean())
+		  if (random.NextBoolean())
 		  {
 			sort = new Sort(sf);
 		  }
@@ -182,33 +184,33 @@ namespace Lucene.Net.Search
 		  {
 			sort = new Sort(sf, SortField.FIELD_DOC);
 		  }
-		  int hitCount = TestUtil.Next(random, 1, r.maxDoc() + 20);
-		  RandomFilter f = new RandomFilter(random, random.nextFloat(), docValues);
+		  int hitCount = TestUtil.NextInt(random, 1, r.MaxDoc() + 20);
+		  RandomFilter f = new RandomFilter(random, random.NextFloat(), docValues);
 		  int queryType = random.Next(3);
 		  if (queryType == 0)
 		  {
 			// force out of order
 			BooleanQuery bq = new BooleanQuery();
-			// Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
+			// Add a Query with SHOULD, since bw.Scorer() returns BooleanScorer2
 			// which delegates to BS if there are no mandatory clauses.
-			bq.add(new MatchAllDocsQuery(), Occur.SHOULD);
+			bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 			// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 			// the clause instead of BQ.
 			bq.MinimumNumberShouldMatch = 1;
-			hits = s.search(bq, f, hitCount, sort, random.nextBoolean(), random.nextBoolean());
+            hits = idxS.Search(bq, f, hitCount, sort, random.NextBoolean(), random.NextBoolean());
 		  }
 		  else if (queryType == 1)
 		  {
-			hits = s.search(new ConstantScoreQuery(f), null, hitCount, sort, random.nextBoolean(), random.nextBoolean());
+              hits = idxS.Search(new ConstantScoreQuery(f), null, hitCount, sort, random.NextBoolean(), random.NextBoolean());
 		  }
 		  else
 		  {
-			hits = s.search(new MatchAllDocsQuery(), f, hitCount, sort, random.nextBoolean(), random.nextBoolean());
+              hits = idxS.Search(new MatchAllDocsQuery(), f, hitCount, sort, random.NextBoolean(), random.NextBoolean());
 		  }
 
 		  if (VERBOSE)
 		  {
-			Console.WriteLine("\nTEST: iter=" + iter + " " + hits.totalHits + " hits; topN=" + hitCount + "; reverse=" + reverse + "; sortMissingLast=" + sortMissingLast + " sort=" + sort);
+			Console.WriteLine("\nTEST: iter=" + iter + " " + hits.TotalHits + " hits; topN=" + hitCount + "; reverse=" + reverse + "; sortMissingLast=" + sortMissingLast + " sort=" + sort);
 		  }
 
 		  // Compute expected results:
@@ -229,7 +231,7 @@ namespace Lucene.Net.Search
 			  {
 				br = new BytesRef();
 			  }
-			  Console.WriteLine("    " + idx + ": " + (br == null ? "<missing>" : br.utf8ToString()));
+			  Console.WriteLine("    " + idx + ": " + (br == null ? "<missing>" : br.Utf8ToString()));
 			  if (idx == hitCount - 1)
 			  {
 				break;
@@ -240,17 +242,17 @@ namespace Lucene.Net.Search
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("  actual:");
-			for (int hitIDX = 0;hitIDX < hits.scoreDocs.length;hitIDX++)
+			for (int hitIDX = 0;hitIDX < hits.ScoreDocs.Length;hitIDX++)
 			{
-			  FieldDoc fd = (FieldDoc) hits.scoreDocs[hitIDX];
-			  BytesRef br = (BytesRef) fd.fields[0];
+			  FieldDoc fd = (FieldDoc) hits.ScoreDocs[hitIDX];
+			  BytesRef br = (BytesRef) fd.Fields[0];
 
-			  Console.WriteLine("    " + hitIDX + ": " + (br == null ? "<missing>" : br.utf8ToString()) + " id=" + s.doc(fd.doc).get("id"));
+			  Console.WriteLine("    " + hitIDX + ": " + (br == null ? "<missing>" : br.Utf8ToString()) + " id=" + idxS.Doc(fd.Doc).Get("id"));
 			}
 		  }
-		  for (int hitIDX = 0;hitIDX < hits.scoreDocs.length;hitIDX++)
+		  for (int hitIDX = 0;hitIDX < hits.ScoreDocs.Length;hitIDX++)
 		  {
-			FieldDoc fd = (FieldDoc) hits.scoreDocs[hitIDX];
+			FieldDoc fd = (FieldDoc) hits.ScoreDocs[hitIDX];
 			BytesRef br = expected[hitIDX];
 			if (br == null && missingIsNull == false)
 			{
@@ -263,18 +265,18 @@ namespace Lucene.Net.Search
 			// if all docs in a given segment were missing, in
 			// that case it will return null!  So we must map
 			// null here, too:
-			BytesRef br2 = (BytesRef) fd.fields[0];
+			BytesRef br2 = (BytesRef) fd.Fields[0];
 			if (br2 == null && missingIsNull == false)
 			{
 			  br2 = new BytesRef();
 			}
 
-			Assert.AreEqual("hit=" + hitIDX + " has wrong sort value", br, br2);
+			Assert.AreEqual(br, br2, "hit=" + hitIDX + " has wrong sort value");
 		  }
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class ComparatorAnonymousInnerClassHelper : IComparer<BytesRef>
@@ -319,7 +321,7 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-			  return a.compareTo(b);
+			  return a.CompareTo(b);
 			}
 		  }
 	  }
@@ -329,7 +331,7 @@ namespace Lucene.Net.Search
 		internal readonly Random Random;
 		internal float Density;
 		internal readonly IList<BytesRef> DocValues;
-		public readonly IList<BytesRef> MatchValues = Collections.synchronizedList(new List<BytesRef>());
+		public readonly List<BytesRef> MatchValues = Collections.synchronizedList(new List<BytesRef>());
 
 		// density should be 0.0 ... 1.0
 		public RandomFilter(Random random, float density, IList<BytesRef> docValues)
@@ -341,17 +343,17 @@ namespace Lucene.Net.Search
 
 		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  int maxDoc = context.reader().maxDoc();
-		  FieldCache.Ints idSource = FieldCache.DEFAULT.getInts(context.reader(), "id", false);
+		  int maxDoc = context.Reader().MaxDoc();
+		  FieldCache_Fields.Ints idSource = FieldCache_Fields.DEFAULT.GetInts((AtomicReader)context.Reader(), "id", false);
 		  Assert.IsNotNull(idSource);
 		  FixedBitSet bits = new FixedBitSet(maxDoc);
 		  for (int docID = 0;docID < maxDoc;docID++)
 		  {
-			if (Random.nextFloat() <= Density && (acceptDocs == null || acceptDocs.get(docID)))
+			if (Random.NextFloat() <= Density && (acceptDocs == null || acceptDocs.Get(docID)))
 			{
-			  bits.set(docID);
-			  //System.out.println("  acc id=" + idSource.get(docID) + " docID=" + docID + " id=" + idSource.get(docID) + " v=" + docValues.get(idSource.get(docID)).utf8ToString());
-			  MatchValues.Add(DocValues[idSource.get(docID)]);
+			  bits.Set(docID);
+			  //System.out.println("  acc id=" + idSource.Get(docID) + " docID=" + docID + " id=" + idSource.Get(docID) + " v=" + docValues.Get(idSource.Get(docID)).Utf8ToString());
+			  MatchValues.Add(DocValues[idSource.Get(docID)]);
 			}
 		  }
 

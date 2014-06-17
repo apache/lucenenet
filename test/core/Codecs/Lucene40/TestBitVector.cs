@@ -23,7 +23,6 @@ namespace Lucene.Net.Codecs.Lucene40
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
 	/// <summary>

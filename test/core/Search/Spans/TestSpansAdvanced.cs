@@ -33,6 +33,7 @@ namespace Lucene.Net.Search.Spans
 	using Lucene.Net.Search;
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 	using Directory = Lucene.Net.Store.Directory;
+    using NUnit.Framework;
 
 	/// <summary>
 	///*****************************************************************************
@@ -57,26 +58,26 @@ namespace Lucene.Net.Search.Spans
 	  /// </summary>
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		// create test index
-		MDirectory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), MDirectory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).setMergePolicy(newLogMergePolicy()).setSimilarity(new DefaultSimilarity()));
+		MDirectory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
 		AddDocument(writer, "1", "I think it should work.");
 		AddDocument(writer, "2", "I think it should work.");
 		AddDocument(writer, "3", "I think it should work.");
 		AddDocument(writer, "4", "I think it should work.");
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+		writer.Close();
+		Searcher = NewSearcher(Reader);
 		Searcher.Similarity = new DefaultSimilarity();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		MDirectory.close();
+		Reader.Dispose();
+		MDirectory.Dispose();
 		MDirectory = null;
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  /// <summary>
@@ -89,9 +90,9 @@ namespace Lucene.Net.Search.Spans
 	  {
 
 		Document document = new Document();
-		document.add(newStringField(FIELD_ID, id, Field.Store.YES));
-		document.add(newTextField(FIELD_TEXT, text, Field.Store.YES));
-		writer.addDocument(document);
+		document.Add(NewStringField(FIELD_ID, id, Field.Store.YES));
+		document.Add(NewTextField(FIELD_TEXT, text, Field.Store.YES));
+		writer.AddDocument(document);
 	  }
 
 	  /// <summary>
@@ -111,8 +112,8 @@ namespace Lucene.Net.Search.Spans
 
 		Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "work"));
 		BooleanQuery query = new BooleanQuery();
-		query.add(spanQuery, BooleanClause.Occur_e.MUST);
-		query.add(spanQuery, BooleanClause.Occur_e.MUST);
+		query.Add(spanQuery, BooleanClause.Occur_e.MUST);
+		query.Add(spanQuery, BooleanClause.Occur_e.MUST);
 		string[] expectedIds = new string[] {"1", "2", "3", "4"};
 		float[] expectedScores = new float[] {expectedScore, expectedScore, expectedScore, expectedScore};
 		AssertHits(s, query, "two span queries", expectedIds, expectedScores);
@@ -127,42 +128,42 @@ namespace Lucene.Net.Search.Spans
 	  /// <param name="expectedScores"> the expected scores of the hits </param>
 	  protected internal static void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
 	  {
-		QueryUtils.check(random(), query, s);
+		QueryUtils.Check(Random(), query, s);
 
 		const float tolerance = 1e-5f;
 
-		// Hits hits = searcher.search(query);
+		// Hits hits = searcher.Search(query);
 		// hits normalizes and throws things off if one score is greater than 1.0
-		TopDocs topdocs = s.search(query, null, 10000);
+		TopDocs topdocs = s.Search(query, null, 10000);
 
 		/// <summary>
 		///***
-		/// // display the hits System.out.println(hits.length() +
+		/// // display the hits System.out.println(hits.Length() +
 		/// " hits for search: \"" + description + '\"'); for (int i = 0; i <
-		/// hits.length(); i++) { System.out.println("  " + FIELD_ID + ':' +
-		/// hits.doc(i).get(FIELD_ID) + " (score:" + hits.score(i) + ')'); }
+		/// hits.Length(); i++) { System.out.println("  " + FIELD_ID + ':' +
+		/// hits.Doc(i).Get(FIELD_ID) + " (score:" + hits.Score(i) + ')'); }
 		/// ****
 		/// </summary>
 
 		// did we get the hits we expected
-		Assert.AreEqual(expectedIds.Length, topdocs.totalHits);
-		for (int i = 0; i < topdocs.totalHits; i++)
+		Assert.AreEqual(expectedIds.Length, topdocs.TotalHits);
+		for (int i = 0; i < topdocs.TotalHits; i++)
 		{
 		  // System.out.println(i + " exp: " + expectedIds[i]);
-		  // System.out.println(i + " field: " + hits.doc(i).get(FIELD_ID));
+		  // System.out.println(i + " field: " + hits.Doc(i).Get(FIELD_ID));
 
-		  int id = topdocs.scoreDocs[i].doc;
-		  float score = topdocs.scoreDocs[i].score;
-		  Document doc = s.doc(id);
-		  Assert.AreEqual(expectedIds[i], doc.get(FIELD_ID));
+		  int id = topdocs.ScoreDocs[i].Doc;
+		  float score = topdocs.ScoreDocs[i].Score;
+		  Document doc = s.Doc(id);
+		  Assert.AreEqual(expectedIds[i], doc.Get(FIELD_ID));
 		  bool scoreEq = Math.Abs(expectedScores[i] - score) < tolerance;
 		  if (!scoreEq)
 		  {
 			Console.WriteLine(i + " warning, expected score: " + expectedScores[i] + ", actual " + score);
-			Console.WriteLine(s.explain(query, id));
+			Console.WriteLine(s.Explain(query, id));
 		  }
 		  Assert.AreEqual(expectedScores[i], score, tolerance);
-		  Assert.AreEqual(s.explain(query, id).Value, score, tolerance);
+		  Assert.AreEqual(s.Explain(query, id).Value, score, tolerance);
 		}
 	  }
 

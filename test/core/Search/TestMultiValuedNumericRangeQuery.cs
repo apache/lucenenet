@@ -29,6 +29,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	public class TestMultiValuedNumericRangeQuery : LuceneTestCase
 	{
@@ -41,46 +42,46 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual void TestMultiValuedNRQ()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 
 		DecimalFormat format = new DecimalFormat("00000000000", new DecimalFormatSymbols(Locale.ROOT));
 
-		int num = atLeast(500);
+		int num = AtLeast(500);
 		for (int l = 0; l < num; l++)
 		{
 		  Document doc = new Document();
-		  for (int m = 0, c = random().Next(10); m <= c; m++)
+		  for (int m = 0, c = Random().Next(10); m <= c; m++)
 		  {
-			int value = random().Next(int.MaxValue);
-			doc.add(newStringField("asc", format.format(value), Field.Store.NO));
-			doc.add(new IntField("trie", value, Field.Store.NO));
+			int value = Random().Next(int.MaxValue);
+			doc.Add(NewStringField("asc", format.format(value), Field.Store.NO));
+			doc.Add(new IntField("trie", value, Field.Store.NO));
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
-		num = atLeast(50);
+		IndexSearcher searcher = NewSearcher(reader);
+		num = AtLeast(50);
 		for (int i = 0; i < num; i++)
 		{
-		  int lower = random().Next(int.MaxValue);
-		  int upper = random().Next(int.MaxValue);
+		  int lower = Random().Next(int.MaxValue);
+		  int upper = Random().Next(int.MaxValue);
 		  if (lower > upper)
 		  {
 			int a = lower;
 			lower = upper;
 			upper = a;
 		  }
-		  TermRangeQuery cq = TermRangeQuery.newStringRange("asc", format.format(lower), format.format(upper), true, true);
-		  NumericRangeQuery<int?> tq = NumericRangeQuery.newIntRange("trie", lower, upper, true, true);
-		  TopDocs trTopDocs = searcher.search(cq, 1);
-		  TopDocs nrTopDocs = searcher.search(tq, 1);
-		  Assert.AreEqual("Returned count for NumericRangeQuery and TermRangeQuery must be equal", trTopDocs.totalHits, nrTopDocs.totalHits);
+		  TermRangeQuery cq = TermRangeQuery.NewStringRange("asc", format.format(lower), format.format(upper), true, true);
+		  NumericRangeQuery<int> tq = NumericRangeQuery.NewIntRange("trie", lower, upper, true, true);
+		  TopDocs trTopDocs = searcher.Search(cq, 1);
+		  TopDocs nrTopDocs = searcher.Search(tq, 1);
+		  Assert.AreEqual(trTopDocs.TotalHits, nrTopDocs.TotalHits, "Returned count for NumericRangeQuery and TermRangeQuery must be equal");
 		}
-		reader.close();
-		directory.close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	}

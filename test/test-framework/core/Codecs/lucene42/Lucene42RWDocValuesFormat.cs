@@ -24,8 +24,6 @@ namespace Lucene.Net.Codecs.Lucene42
 	/// <summary>
 	/// Read-write version of <seealso cref="Lucene42DocValuesFormat"/> for testing.
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("deprecation") public class Lucene42RWDocValuesFormat extends Lucene42DocValuesFormat
 	public class Lucene42RWDocValuesFormat : Lucene42DocValuesFormat
 	{
 		public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)

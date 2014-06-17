@@ -62,12 +62,18 @@ namespace Lucene.Net.Codecs.asserting
 		  this.@in = @in;
 		}
 
-		public override void Close()
+        public override void Dispose()
+        {
+            Dispose(true);
+        }
+
+		protected void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
 		  IEnumerator<string> iterator = @in.GetEnumerator();
 		  Debug.Assert(iterator != null);
@@ -120,9 +126,15 @@ namespace Lucene.Net.Codecs.asserting
 		  return new AssertingTermsConsumer(consumer, field);
 		}
 
-		public override void Close()
+	    public override void Dispose()
+	    {
+	        Dispose(true);
+	    }
+
+	    protected void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 	  }
 

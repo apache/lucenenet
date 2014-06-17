@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Perfield
 	  {
 		  get
 		  {
-			return new RandomCodec(new Random(Random().nextLong()), CollectionsHelper.EmptySet<string>());
+			return new RandomCodec(new Random(Random().Next()), CollectionsHelper.EmptySet<string>());
 		  }
 	  }
 

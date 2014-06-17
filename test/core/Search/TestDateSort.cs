@@ -27,6 +27,8 @@ namespace Lucene.Net.Search
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test date sorting, i.e. auto-sorting of fields with type "long".
@@ -43,49 +45,49 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		// Create an index writer.
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory);
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
 
 		// oldest doc:
 		// Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
-		writer.addDocument(CreateDocument("Document 1", 1192001122000L));
+		writer.AddDocument(CreateDocument("Document 1", 1192001122000L));
 		// Add the second document.  text = "Document 2"  dateTime = Oct 10 03:25:26 EDT 2007 
-		writer.addDocument(CreateDocument("Document 2", 1192001126000L));
+		writer.AddDocument(CreateDocument("Document 2", 1192001126000L));
 		// Add the third document.  text = "Document 3"  dateTime = Oct 11 07:12:13 EDT 2007 
-		writer.addDocument(CreateDocument("Document 3", 1192101133000L));
+		writer.AddDocument(CreateDocument("Document 3", 1192101133000L));
 		// Add the fourth document.  text = "Document 4"  dateTime = Oct 11 08:02:09 EDT 2007
-		writer.addDocument(CreateDocument("Document 4", 1192104129000L));
+		writer.AddDocument(CreateDocument("Document 4", 1192104129000L));
 		// latest doc:
 		// Add the fifth document.  text = "Document 5"  dateTime = Oct 12 13:25:43 EDT 2007
-		writer.addDocument(CreateDocument("Document 5", 1192209943000L));
+		writer.AddDocument(CreateDocument("Document 5", 1192209943000L));
 
 		Reader = writer.Reader;
-		writer.close();
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Directory.close();
-		base.tearDown();
+		Reader.Dispose();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestReverseDateSort()
 	  {
-		IndexSearcher searcher = newSearcher(Reader);
+		IndexSearcher searcher = NewSearcher(Reader);
 
-		Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortField.Type.STRING, true));
+		Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortField.Type_e.STRING, true));
 		Query query = new TermQuery(new Term(TEXT_FIELD, "document"));
 
 		// Execute the search and process the search results.
 		string[] actualOrder = new string[5];
-		ScoreDoc[] hits = searcher.search(query, null, 1000, sort).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000, sort).ScoreDocs;
 		for (int i = 0; i < hits.Length; i++)
 		{
-		  Document document = searcher.doc(hits[i].doc);
-		  string text = document.get(TEXT_FIELD);
+		  Document document = searcher.Doc(hits[i].Doc);
+		  string text = document.Get(TEXT_FIELD);
 		  actualOrder[i] = text;
 		}
 
@@ -97,7 +99,7 @@ namespace Lucene.Net.Search
 		expectedOrder[3] = "Document 2";
 		expectedOrder[4] = "Document 1";
 
-		Assert.AreEqual(Arrays.asList(expectedOrder), Arrays.asList(actualOrder));
+		Assert.AreEqual(Arrays.AsList(expectedOrder), Arrays.AsList(actualOrder));
 	  }
 
 	  private Document CreateDocument(string text, long time)
@@ -105,13 +107,13 @@ namespace Lucene.Net.Search
 		Document document = new Document();
 
 		// Add the text field.
-		Field textField = newTextField(TEXT_FIELD, text, Field.Store.YES);
-		document.add(textField);
+		Field textField = NewTextField(TEXT_FIELD, text, Field.Store.YES);
+		document.Add(textField);
 
 		// Add the date/time field.
-		string dateTimeString = DateTools.timeToString(time, DateTools.Resolution.SECOND);
-		Field dateTimeField = newStringField(DATE_TIME_FIELD, dateTimeString, Field.Store.YES);
-		document.add(dateTimeField);
+		string dateTimeString = DateTools.TimeToString(time, DateTools.Resolution.SECOND);
+		Field dateTimeField = NewStringField(DATE_TIME_FIELD, dateTimeString, Field.Store.YES);
+		document.Add(dateTimeField);
 
 		return document;
 	  }

@@ -27,6 +27,8 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	/// 
 	public class TestFieldValueFilter : LuceneTestCase
@@ -34,9 +36,9 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestFieldValueFilterNoValue()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		int docs = atLeast(10);
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		int docs = AtLeast(10);
 		int[] docStates = BuildIndex(writer, docs);
 		int numDocsNoValue = 0;
 		for (int i = 0; i < docStates.Length; i++)
@@ -47,26 +49,26 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		IndexReader reader = DirectoryReader.open(directory);
-		IndexSearcher searcher = newSearcher(reader);
-		TopDocs search = searcher.search(new TermQuery(new Term("all", "test")), new FieldValueFilter("some", true), docs);
-		Assert.AreEqual(search.totalHits, numDocsNoValue);
+		IndexReader reader = DirectoryReader.Open(directory);
+		IndexSearcher searcher = NewSearcher(reader);
+		TopDocs search = searcher.Search(new TermQuery(new Term("all", "test")), new FieldValueFilter("some", true), docs);
+		Assert.AreEqual(search.TotalHits, numDocsNoValue);
 
-		ScoreDoc[] scoreDocs = search.scoreDocs;
+		ScoreDoc[] scoreDocs = search.ScoreDocs;
 		foreach (ScoreDoc scoreDoc in scoreDocs)
 		{
-		  assertNull(reader.document(scoreDoc.doc).get("some"));
+		  Assert.IsNull(reader.Document(scoreDoc.Doc).Get("some"));
 		}
 
-		reader.close();
-		directory.close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestFieldValueFilter()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		int docs = atLeast(10);
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		int docs = AtLeast(10);
 		int[] docStates = BuildIndex(writer, docs);
 		int numDocsWithValue = 0;
 		for (int i = 0; i < docStates.Length; i++)
@@ -76,19 +78,19 @@ namespace Lucene.Net.Search
 			numDocsWithValue++;
 		  }
 		}
-		IndexReader reader = DirectoryReader.open(directory);
-		IndexSearcher searcher = newSearcher(reader);
-		TopDocs search = searcher.search(new TermQuery(new Term("all", "test")), new FieldValueFilter("some"), docs);
-		Assert.AreEqual(search.totalHits, numDocsWithValue);
+		IndexReader reader = DirectoryReader.Open(directory);
+		IndexSearcher searcher = NewSearcher(reader);
+		TopDocs search = searcher.Search(new TermQuery(new Term("all", "test")), new FieldValueFilter("some"), docs);
+		Assert.AreEqual(search.TotalHits, numDocsWithValue);
 
-		ScoreDoc[] scoreDocs = search.scoreDocs;
+		ScoreDoc[] scoreDocs = search.ScoreDocs;
 		foreach (ScoreDoc scoreDoc in scoreDocs)
 		{
-		  Assert.AreEqual("value", reader.document(scoreDoc.doc).get("some"));
+		  Assert.AreEqual("value", reader.Document(scoreDoc.Doc).Get("some"));
 		}
 
-		reader.close();
-		directory.close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  private int[] BuildIndex(RandomIndexWriter writer, int docs)
@@ -97,24 +99,24 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < docs; i++)
 		{
 		  Document doc = new Document();
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			docStates[i] = 1;
-			doc.add(newTextField("some", "value", Field.Store.YES));
+			doc.Add(NewTextField("some", "value", Field.Store.YES));
 		  }
-		  doc.add(newTextField("all", "test", Field.Store.NO));
-		  doc.add(newTextField("id", "" + i, Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("all", "test", Field.Store.NO));
+		  doc.Add(NewTextField("id", "" + i, Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
-		writer.commit();
-		int numDeletes = random().Next(docs);
+		writer.Commit();
+		int numDeletes = Random().Next(docs);
 		for (int i = 0; i < numDeletes; i++)
 		{
-		  int docID = random().Next(docs);
-		  writer.deleteDocuments(new Term("id", "" + docID));
+		  int docID = Random().Next(docs);
+		  writer.DeleteDocuments(new Term("id", "" + docID));
 		  docStates[docID] = 2;
 		}
-		writer.close();
+		writer.Close();
 		return docStates;
 	  }
 

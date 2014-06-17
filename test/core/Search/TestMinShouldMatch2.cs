@@ -41,8 +41,8 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// tests BooleanScorer2's minShouldMatch </summary>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
 	{
 	  internal static Directory Dir;
 	  internal static DirectoryReader r;
-	  internal static AtomicReader Reader;
+	  internal static AtomicReader atomicReader;
 	  internal static IndexSearcher Searcher;
 
 	  internal static readonly string[] AlwaysTerms = new string[] {"a"};
@@ -64,34 +64,34 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), Dir);
-		int numDocs = atLeast(300);
+		Dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+		int numDocs = AtLeast(300);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
 
 		  AddSome(doc, AlwaysTerms);
 
-		  if (random().Next(100) < 90)
+		  if (Random().Next(100) < 90)
 		  {
 			AddSome(doc, CommonTerms);
 		  }
-		  if (random().Next(100) < 50)
+		  if (Random().Next(100) < 50)
 		  {
 			AddSome(doc, MediumTerms);
 		  }
-		  if (random().Next(100) < 10)
+		  if (Random().Next(100) < 10)
 		  {
 			AddSome(doc, RareTerms);
 		  }
-		  iw.addDocument(doc);
+		  iw.AddDocument(doc);
 		}
-		iw.forceMerge(1);
-		iw.close();
-		r = DirectoryReader.open(Dir);
-		Reader = getOnlySegmentReader(r);
-		Searcher = new IndexSearcher(Reader);
+		iw.ForceMerge(1);
+		iw.Close();
+		r = DirectoryReader.Open(Dir);
+		atomicReader = GetOnlySegmentReader(r);
+		Searcher = new IndexSearcher(atomicReader);
 		Searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper();
 	  }
 
@@ -111,23 +111,23 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
-		Dir.close();
+		atomicReader.Dispose();
+		Dir.Dispose();
 		Searcher = null;
-		Reader = null;
+		atomicReader = null;
 		r = null;
 		Dir = null;
 	  }
 
 	  private static void AddSome(Document doc, string[] values)
 	  {
-		IList<string> list = Arrays.asList(values);
-		Collections.shuffle(list, random());
-		int howMany = TestUtil.Next(random(), 1, list.Count);
+		IList<string> list = Arrays.AsList(values);
+		list = CollectionsHelper.Shuffle(list);
+		int howMany = TestUtil.NextInt(Random(), 1, list.Count);
 		for (int i = 0; i < howMany; i++)
 		{
-		  doc.add(new StringField("field", list[i], Field.Store.NO));
-		  doc.add(new SortedSetDocValuesField("dv", new BytesRef(list[i])));
+		  doc.Add(new StringField("field", list[i], Field.Store.NO));
+		  doc.Add(new SortedSetDocValuesField("dv", new BytesRef(list[i])));
 		}
 	  }
 
@@ -136,19 +136,19 @@ namespace Lucene.Net.Search
 		BooleanQuery bq = new BooleanQuery();
 		foreach (string value in values)
 		{
-		  bq.add(new TermQuery(new Term("field", value)), BooleanClause.Occur_e.SHOULD);
+		  bq.Add(new TermQuery(new Term("field", value)), BooleanClause.Occur_e.SHOULD);
 		}
 		bq.MinimumNumberShouldMatch = minShouldMatch;
 
-		BooleanWeight weight = (BooleanWeight) Searcher.createNormalizedWeight(bq);
+		BooleanWeight weight = (BooleanWeight) Searcher.CreateNormalizedWeight(bq);
 
 		if (slow)
 		{
-		  return new SlowMinShouldMatchScorer(weight, Reader, Searcher);
+		  return new SlowMinShouldMatchScorer(weight, (AtomicReader)atomicReader, Searcher);
 		}
 		else
 		{
-		  return weight.scorer(Reader.Context, null);
+		  return weight.Scorer(((AtomicReader)atomicReader).Context, null);
 		}
 	  }
 
@@ -156,40 +156,40 @@ namespace Lucene.Net.Search
 	  {
 		if (actual == null)
 		{
-		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.nextDoc());
+		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.NextDoc());
 		  return;
 		}
 		int doc;
-		while ((doc = expected.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((doc = expected.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(doc, actual.nextDoc());
-		  Assert.AreEqual(expected.freq(), actual.freq());
-		  float expectedScore = expected.score();
-		  float actualScore = actual.score();
-		  Assert.AreEqual(expectedScore, actualScore, CheckHits.explainToleranceDelta(expectedScore, actualScore));
+		  Assert.AreEqual(doc, actual.NextDoc());
+		  Assert.AreEqual(expected.Freq(), actual.Freq());
+		  float expectedScore = expected.Score();
+		  float actualScore = actual.Score();
+		  Assert.AreEqual(expectedScore, actualScore, CheckHits.ExplainToleranceDelta(expectedScore, actualScore));
 		}
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, actual.nextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, actual.NextDoc());
 	  }
 
 	  private void AssertAdvance(Scorer expected, Scorer actual, int amount)
 	  {
 		if (actual == null)
 		{
-		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.nextDoc());
+		  Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, expected.NextDoc());
 		  return;
 		}
 		int prevDoc = 0;
 		int doc;
-		while ((doc = expected.advance(prevDoc + amount)) != DocIdSetIterator.NO_MORE_DOCS)
+		while ((doc = expected.Advance(prevDoc + amount)) != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  Assert.AreEqual(doc, actual.advance(prevDoc + amount));
-		  Assert.AreEqual(expected.freq(), actual.freq());
-		  float expectedScore = expected.score();
-		  float actualScore = actual.score();
-		  Assert.AreEqual(expectedScore, actualScore, CheckHits.explainToleranceDelta(expectedScore, actualScore));
+		  Assert.AreEqual(doc, actual.Advance(prevDoc + amount));
+		  Assert.AreEqual(expected.Freq(), actual.Freq());
+		  float expectedScore = expected.Score();
+		  float actualScore = actual.Score();
+		  Assert.AreEqual(expectedScore, actualScore, CheckHits.ExplainToleranceDelta(expectedScore, actualScore));
 		  prevDoc = doc;
 		}
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, actual.advance(prevDoc + amount));
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, actual.Advance(prevDoc + amount));
 	  }
 
 	  /// <summary>
@@ -236,9 +236,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestNextAllTerms()
 	  {
 		IList<string> termsList = new List<string>();
-		termsList.AddRange(Arrays.asList(CommonTerms));
-		termsList.AddRange(Arrays.asList(MediumTerms));
-		termsList.AddRange(Arrays.asList(RareTerms));
+		termsList.AddRange(Arrays.AsList(CommonTerms));
+		termsList.AddRange(Arrays.AsList(MediumTerms));
+		termsList.AddRange(Arrays.AsList(RareTerms));
 		string[] terms = termsList.ToArray();
 
 		for (int minNrShouldMatch = 1; minNrShouldMatch <= terms.Length; minNrShouldMatch++)
@@ -254,9 +254,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestAdvanceAllTerms()
 	  {
 		IList<string> termsList = new List<string>();
-		termsList.AddRange(Arrays.asList(CommonTerms));
-		termsList.AddRange(Arrays.asList(MediumTerms));
-		termsList.AddRange(Arrays.asList(RareTerms));
+		termsList.AddRange(Arrays.AsList(CommonTerms));
+		termsList.AddRange(Arrays.AsList(MediumTerms));
+		termsList.AddRange(Arrays.AsList(RareTerms));
 		string[] terms = termsList.ToArray();
 
 		for (int amount = 25; amount < 200; amount += 25)
@@ -275,13 +275,14 @@ namespace Lucene.Net.Search
 	  public virtual void TestNextVaryingNumberOfTerms()
 	  {
 		IList<string> termsList = new List<string>();
-		termsList.AddRange(Arrays.asList(CommonTerms));
-		termsList.AddRange(Arrays.asList(MediumTerms));
-		termsList.AddRange(Arrays.asList(RareTerms));
-		Collections.shuffle(termsList, random());
+		termsList.AddRange(Arrays.AsList(CommonTerms));
+		termsList.AddRange(Arrays.AsList(MediumTerms));
+		termsList.AddRange(Arrays.AsList(RareTerms));
+        termsList = CollectionsHelper.Shuffle(termsList);
+
 		for (int numTerms = 2; numTerms <= termsList.Count; numTerms++)
 		{
-		  string[] terms = termsList.subList(0, numTerms).toArray(new string[0]);
+		  string[] terms = termsList.SubList(0, numTerms).ToArray(/*new string[0]*/);
 		  for (int minNrShouldMatch = 1; minNrShouldMatch <= terms.Length; minNrShouldMatch++)
 		  {
 			Scorer expected = Scorer(terms, minNrShouldMatch, true);
@@ -296,16 +297,16 @@ namespace Lucene.Net.Search
 	  public virtual void TestAdvanceVaryingNumberOfTerms()
 	  {
 		IList<string> termsList = new List<string>();
-		termsList.AddRange(Arrays.asList(CommonTerms));
-		termsList.AddRange(Arrays.asList(MediumTerms));
-		termsList.AddRange(Arrays.asList(RareTerms));
-		Collections.shuffle(termsList, random());
+		termsList.AddRange(Arrays.AsList(CommonTerms));
+		termsList.AddRange(Arrays.AsList(MediumTerms));
+		termsList.AddRange(Arrays.AsList(RareTerms));
+        termsList = CollectionsHelper.Shuffle(termsList);
 
 		for (int amount = 25; amount < 200; amount += 25)
 		{
 		  for (int numTerms = 2; numTerms <= termsList.Count; numTerms++)
 		  {
-			string[] terms = termsList.subList(0, numTerms).toArray(new string[0]);
+			string[] terms = termsList.SubList(0, numTerms).ToArray(/*new string[0]*/);
 			for (int minNrShouldMatch = 1; minNrShouldMatch <= terms.Length; minNrShouldMatch++)
 			{
 			  Scorer expected = Scorer(terms, minNrShouldMatch, true);
@@ -329,7 +330,7 @@ namespace Lucene.Net.Search
 		internal readonly SortedSetDocValues Dv;
 		internal readonly int MaxDoc;
 
-		internal readonly Set<long?> Ords = new HashSet<long?>();
+		internal readonly HashSet<long?> Ords = new HashSet<long?>();
 		internal readonly SimScorer[] Sims;
 		internal readonly int MinNrShouldMatch;
 
@@ -337,8 +338,8 @@ namespace Lucene.Net.Search
 
 		internal SlowMinShouldMatchScorer(BooleanWeight weight, AtomicReader reader, IndexSearcher searcher) : base(weight)
 		{
-		  this.Dv = reader.getSortedSetDocValues("dv");
-		  this.MaxDoc = reader.maxDoc();
+		  this.Dv = reader.GetSortedSetDocValues("dv");
+		  this.MaxDoc = reader.MaxDoc();
 		  BooleanQuery bq = (BooleanQuery) weight.Query;
 		  this.MinNrShouldMatch = bq.MinimumNumberShouldMatch;
 		  this.Sims = new SimScorer[(int)Dv.ValueCount];
@@ -347,24 +348,24 @@ namespace Lucene.Net.Search
 			Debug.Assert(!clause.Prohibited);
 			Debug.Assert(!clause.Required);
 			Term term = ((TermQuery)clause.Query).Term;
-			long ord = Dv.lookupTerm(term.bytes());
+			long ord = Dv.LookupTerm(term.Bytes());
 			if (ord >= 0)
 			{
-			  bool success = Ords.add(ord);
+			  bool success = Ords.Add(ord);
 			  Debug.Assert(success); // no dups
-			  TermContext context = TermContext.build(reader.Context, term);
-			  SimWeight w = weight.similarity.computeWeight(1f, searcher.collectionStatistics("field"), searcher.termStatistics(term, context));
-			  w.ValueForNormalization; // ignored
-			  w.normalize(1F, 1F);
-			  Sims[(int)ord] = weight.similarity.simScorer(w, reader.Context);
+			  TermContext context = TermContext.Build(reader.Context, term);
+			  SimWeight w = weight.similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
+			  var dummy = w.ValueForNormalization; // ignored
+			  w.Normalize(1F, 1F);
+			  Sims[(int)ord] = weight.similarity.SimScorer(w, reader.Context);
 			}
 		  }
 		}
 
 		public override float Score()
 		{
-		  Debug.Assert(Score_Renamed != 0, CurrentMatched);
-		  return (float)Score_Renamed * ((BooleanWeight) weight).coord(CurrentMatched, ((BooleanWeight) weight).maxCoord);
+		  Debug.Assert(Score_Renamed != 0, CurrentMatched.ToString());
+		  return (float)Score_Renamed * ((BooleanWeight) weight).Coord(CurrentMatched, ((BooleanWeight) weight).MaxCoord);
 		}
 
 		public override int Freq()
@@ -386,12 +387,12 @@ namespace Lucene.Net.Search
 			Score_Renamed = 0;
 			Dv.Document = CurrentDoc;
 			long ord;
-			while ((ord = Dv.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+			while ((ord = Dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
 			{
-			  if (Ords.contains(ord))
+			  if (Ords.Contains(ord))
 			  {
 				CurrentMatched++;
-				Score_Renamed += Sims[(int)ord].score(CurrentDoc, 1);
+				Score_Renamed += Sims[(int)ord].Score(CurrentDoc, 1);
 			  }
 			}
 			if (CurrentMatched >= MinNrShouldMatch)

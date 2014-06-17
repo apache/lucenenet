@@ -32,6 +32,8 @@ namespace Lucene.Net.Search
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// Tests the use of indexdocvalues in scoring.
@@ -47,74 +49,74 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestSimple()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		Field field = newTextField("foo", "", Field.Store.NO);
-		doc.add(field);
+		Field field = NewTextField("foo", "", Field.Store.NO);
+		doc.Add(field);
 		Field dvField = new FloatDocValuesField("foo_boost", 0.0F);
-		doc.add(dvField);
-		Field field2 = newTextField("bar", "", Field.Store.NO);
-		doc.add(field2);
+		doc.Add(dvField);
+		Field field2 = NewTextField("bar", "", Field.Store.NO);
+		doc.Add(field2);
 
 		field.StringValue = "quick brown fox";
 		field2.StringValue = "quick brown fox";
 		dvField.FloatValue = 2f; // boost x2
-		iw.addDocument(doc);
+		iw.AddDocument(doc);
 		field.StringValue = "jumps over lazy brown dog";
 		field2.StringValue = "jumps over lazy brown dog";
 		dvField.FloatValue = 4f; // boost x4
-		iw.addDocument(doc);
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
+		iw.Close();
 
 		// no boosting
-		IndexSearcher searcher1 = newSearcher(ir, false);
+		IndexSearcher searcher1 = NewSearcher(ir, false);
 		Similarity @base = searcher1.Similarity;
 		// boosting
-		IndexSearcher searcher2 = newSearcher(ir, false);
+		IndexSearcher searcher2 = NewSearcher(ir, false);
 		searcher2.Similarity = new PerFieldSimilarityWrapperAnonymousInnerClassHelper(this, field, @base);
 
 		// in this case, we searched on field "foo". first document should have 2x the score.
 		TermQuery tq = new TermQuery(new Term("foo", "quick"));
-		QueryUtils.check(random(), tq, searcher1);
-		QueryUtils.check(random(), tq, searcher2);
+		QueryUtils.Check(Random(), tq, searcher1);
+		QueryUtils.Check(Random(), tq, searcher2);
 
-		TopDocs noboost = searcher1.search(tq, 10);
-		TopDocs boost = searcher2.search(tq, 10);
-		Assert.AreEqual(1, noboost.totalHits);
-		Assert.AreEqual(1, boost.totalHits);
+		TopDocs noboost = searcher1.Search(tq, 10);
+		TopDocs boost = searcher2.Search(tq, 10);
+		Assert.AreEqual(1, noboost.TotalHits);
+		Assert.AreEqual(1, boost.TotalHits);
 
-		//System.out.println(searcher2.explain(tq, boost.scoreDocs[0].doc));
-		Assert.AreEqual(boost.scoreDocs[0].score, noboost.scoreDocs[0].score * 2f, SCORE_EPSILON);
+		//System.out.println(searcher2.Explain(tq, boost.ScoreDocs[0].Doc));
+		Assert.AreEqual(boost.ScoreDocs[0].Score, noboost.ScoreDocs[0].Score * 2f, SCORE_EPSILON);
 
 		// this query matches only the second document, which should have 4x the score.
 		tq = new TermQuery(new Term("foo", "jumps"));
-		QueryUtils.check(random(), tq, searcher1);
-		QueryUtils.check(random(), tq, searcher2);
+		QueryUtils.Check(Random(), tq, searcher1);
+		QueryUtils.Check(Random(), tq, searcher2);
 
-		noboost = searcher1.search(tq, 10);
-		boost = searcher2.search(tq, 10);
-		Assert.AreEqual(1, noboost.totalHits);
-		Assert.AreEqual(1, boost.totalHits);
+		noboost = searcher1.Search(tq, 10);
+		boost = searcher2.Search(tq, 10);
+		Assert.AreEqual(1, noboost.TotalHits);
+		Assert.AreEqual(1, boost.TotalHits);
 
-		Assert.AreEqual(boost.scoreDocs[0].score, noboost.scoreDocs[0].score * 4f, SCORE_EPSILON);
+		Assert.AreEqual(boost.ScoreDocs[0].Score, noboost.ScoreDocs[0].Score * 4f, SCORE_EPSILON);
 
 		// search on on field bar just for kicks, nothing should happen, since we setup
 		// our sim provider to only use foo_boost for field foo.
 		tq = new TermQuery(new Term("bar", "quick"));
-		QueryUtils.check(random(), tq, searcher1);
-		QueryUtils.check(random(), tq, searcher2);
+		QueryUtils.Check(Random(), tq, searcher1);
+		QueryUtils.Check(Random(), tq, searcher2);
 
-		noboost = searcher1.search(tq, 10);
-		boost = searcher2.search(tq, 10);
-		Assert.AreEqual(1, noboost.totalHits);
-		Assert.AreEqual(1, boost.totalHits);
+		noboost = searcher1.Search(tq, 10);
+		boost = searcher2.Search(tq, 10);
+		Assert.AreEqual(1, noboost.TotalHits);
+		Assert.AreEqual(1, boost.TotalHits);
 
-		Assert.AreEqual(boost.scoreDocs[0].score, noboost.scoreDocs[0].score, SCORE_EPSILON);
+		Assert.AreEqual(boost.ScoreDocs[0].Score, noboost.ScoreDocs[0].Score, SCORE_EPSILON);
 
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class PerFieldSimilarityWrapperAnonymousInnerClassHelper : PerFieldSimilarityWrapper
@@ -141,12 +143,12 @@ namespace Lucene.Net.Search
 
 		  public override float Coord(int overlap, int maxOverlap)
 		  {
-			return @base.coord(overlap, maxOverlap);
+			return @base.Coord(overlap, maxOverlap);
 		  }
 
 		  public override float QueryNorm(float sumOfSquaredWeights)
 		  {
-			return @base.queryNorm(sumOfSquaredWeights);
+			return @base.QueryNorm(sumOfSquaredWeights);
 		  }
 	  }
 
@@ -169,18 +171,18 @@ namespace Lucene.Net.Search
 
 		public override long ComputeNorm(FieldInvertState state)
 		{
-		  return Sim.computeNorm(state);
+		  return Sim.ComputeNorm(state);
 		}
 
 		public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
 		{
-		  return Sim.computeWeight(queryBoost, collectionStats, termStats);
+		  return Sim.ComputeWeight(queryBoost, collectionStats, termStats);
 		}
 
 		public override SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
 		{
-		  SimScorer sub = Sim.simScorer(stats, context);
-		  FieldCache.Floats values = FieldCache.DEFAULT.getFloats(context.reader(), BoostField, false);
+		  SimScorer sub = Sim.SimScorer(stats, context);
+		  FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats((AtomicReader)context.Reader(), BoostField, false);
 
 		  return new SimScorerAnonymousInnerClassHelper(this, sub, values);
 		}
@@ -190,9 +192,9 @@ namespace Lucene.Net.Search
 			private readonly BoostingSimilarity OuterInstance;
 
 			private SimScorer Sub;
-			private FieldCache.Floats Values;
+            private FieldCache_Fields.Floats Values;
 
-			public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Floats values)
+            public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache_Fields.Floats values)
 			{
 				this.OuterInstance = outerInstance;
 				this.Sub = sub;
@@ -201,26 +203,26 @@ namespace Lucene.Net.Search
 
 			public override float Score(int doc, float freq)
 			{
-			  return Values.get(doc) * Sub.score(doc, freq);
+			  return Values.Get(doc) * Sub.Score(doc, freq);
 			}
 
 			public override float ComputeSlopFactor(int distance)
 			{
-			  return Sub.computeSlopFactor(distance);
+			  return Sub.ComputeSlopFactor(distance);
 			}
 
 			public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
 			{
-			  return Sub.computePayloadFactor(doc, start, end, payload);
+			  return Sub.ComputePayloadFactor(doc, start, end, payload);
 			}
 
 			public override Explanation Explain(int doc, Explanation freq)
 			{
-			  Explanation boostExplanation = new Explanation(Values.get(doc), "indexDocValue(" + OuterInstance.BoostField + ")");
-			  Explanation simExplanation = Sub.explain(doc, freq);
+			  Explanation boostExplanation = new Explanation(Values.Get(doc), "indexDocValue(" + OuterInstance.BoostField + ")");
+			  Explanation simExplanation = Sub.Explain(doc, freq);
 			  Explanation expl = new Explanation(boostExplanation.Value * simExplanation.Value, "product of:");
-			  expl.addDetail(boostExplanation);
-			  expl.addDetail(simExplanation);
+			  expl.AddDetail(boostExplanation);
+			  expl.AddDetail(simExplanation);
 			  return expl;
 			}
 		}

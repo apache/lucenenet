@@ -91,6 +91,11 @@ namespace Lucene.Net.Search
 		  {
 			return TotalHits_Renamed;
 		  }
+
+          set
+          {
+              TotalHits_Renamed = value;
+          }
 	  }
 
 	  /// <summary>

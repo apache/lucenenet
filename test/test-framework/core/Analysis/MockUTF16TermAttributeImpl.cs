@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis
 {
 
@@ -30,10 +32,10 @@ namespace Lucene.Net.Analysis
 	  //internal static readonly Charset Charset = Charset.forName("UTF-16LE");
         internal static readonly System.Text.Encoding Charset = System.Text.Encoding.Unicode;
 
-	  public override void FillBytesRef()
+	  public void FillBytesRef()
 	  {
 		BytesRef bytes = BytesRef;
-		sbyte[] utf16 = ToString().GetBytes(Charset);
+	    sbyte[] utf16 = (sbyte[])(Array)Charset.GetBytes(Charset.ToString());
 		bytes.Bytes = utf16;
 		bytes.Offset = 0;
 		bytes.Length = utf16.Length;

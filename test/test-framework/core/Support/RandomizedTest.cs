@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -39,5 +40,15 @@ namespace Lucene.Net.TestFramework.Support
 
             return defaultValue;
         }
+
+        public void AssumeTrue(string msg, bool value) {
+            Assume.That(value);
+        }
+
+        public void AssumeFalse(string msg, bool value)
+        {
+            Assume.That(!value);
+        }
+        
     }
 }

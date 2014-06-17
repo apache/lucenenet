@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
 
 namespace Lucene.Net.Analysis
 {
@@ -22,10 +23,11 @@ namespace Lucene.Net.Analysis
 	 * limitations under the License.
 	 */
 
-
+    [TestFixture]
 	public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
 	{
 
+      [Test]
 	  public virtual void TestRandomStrings()
 	  {
 		Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
@@ -41,7 +43,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Random random = Random();
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, random.NextBoolean());
@@ -56,9 +58,9 @@ namespace Lucene.Net.Analysis
 		{
 		}
 
-		public override Position NewPosition()
+        protected internal override LookaheadTokenFilter.Position NewPosition()
 		{
-		  return new Position();
+            return new LookaheadTokenFilter.Position();
 		}
 
 		public override bool IncrementToken()
@@ -67,6 +69,7 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
+      [Test]
 	  public virtual void TestNeverCallingPeek()
 	  {
 		Analyzer a = new NCPAnalyzerAnonymousInnerClassHelper(this);
@@ -82,7 +85,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random().NextBoolean());
 			TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
@@ -90,6 +93,7 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestMissedFirstToken()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
@@ -106,7 +110,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TrivialLookaheadFilter filter = new TrivialLookaheadFilter(source);

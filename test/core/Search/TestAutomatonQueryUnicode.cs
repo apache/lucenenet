@@ -27,6 +27,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using Automaton = Lucene.Net.Util.Automaton.Automaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Test the automaton query for several unicode corner cases,
@@ -43,51 +44,51 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory);
+		base.SetUp();
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
 		Document doc = new Document();
-		Field titleField = newTextField("title", "some title", Field.Store.NO);
-		Field field = newTextField(FN, "", Field.Store.NO);
-		Field footerField = newTextField("footer", "a footer", Field.Store.NO);
-		doc.add(titleField);
-		doc.add(field);
-		doc.add(footerField);
+		Field titleField = NewTextField("title", "some title", Field.Store.NO);
+		Field field = NewTextField(FN, "", Field.Store.NO);
+		Field footerField = NewTextField("footer", "a footer", Field.Store.NO);
+		doc.Add(titleField);
+		doc.Add(field);
+		doc.Add(footerField);
 		field.StringValue = "\uD866\uDF05abcdef";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "\uD866\uDF06ghijkl";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		// this sorts before the previous two in UTF-8/UTF-32, but after in UTF-16!!!
 		field.StringValue = "\uFB94mnopqr";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "\uFB95stuvwx"; // this one too.
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "a\uFFFCbc";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "a\uFFFDbc";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "a\uFFFEbc";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "a\uFB94bc";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "bacadaba";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "\uFFFD";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "\uFFFD\uD866\uDF05";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "\uFFFD\uFFFD";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		Reader = writer.Reader;
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Directory.close();
-		base.tearDown();
+		Reader.Dispose();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  private Term NewTerm(string value)
@@ -97,23 +98,23 @@ namespace Lucene.Net.Search
 
 	  private int AutomatonQueryNrHits(AutomatonQuery query)
 	  {
-		return Searcher.search(query, 5).totalHits;
+		return Searcher.Search(query, 5).TotalHits;
 	  }
 
 	  private void AssertAutomatonHits(int expected, Automaton automaton)
 	  {
 		AutomatonQuery query = new AutomatonQuery(NewTerm("bogus"), automaton);
 
-		query.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+		query.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-		query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+		query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-		query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+		query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-		query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+		query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 	  }
 
@@ -125,7 +126,7 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual void TestSortOrder()
 	  {
-		Automaton a = (new RegExp("((\uD866\uDF05)|\uFB94).*")).toAutomaton();
+		Automaton a = (new RegExp("((\uD866\uDF05)|\uFB94).*")).ToAutomaton();
 		AssertAutomatonHits(2, a);
 	  }
 	}

@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis
 	  {
 		internal bool ClearCalled = false;
 
-		public override bool AndResetClearCalled
+		public bool AndResetClearCalled
 		{
 			get
 			{

@@ -24,48 +24,49 @@ namespace Lucene.Net.Search
 	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestTopScoreDocCollector : LuceneTestCase
 	{
 
 	  public virtual void TestOutOfOrderCollection()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		for (int i = 0; i < 10; i++)
 		{
-		  writer.addDocument(new Document());
+		  writer.AddDocument(new Document());
 		}
 
 		bool[] inOrder = new bool[] {false, true};
 		string[] actualTSDCClass = new string[] {"OutOfOrderTopScoreDocCollector", "InOrderTopScoreDocCollector"};
 
 		BooleanQuery bq = new BooleanQuery();
-		// Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
+		// Add a Query with SHOULD, since bw.Scorer() returns BooleanScorer2
 		// which delegates to BS if there are no mandatory clauses.
-		bq.add(new MatchAllDocsQuery(), Occur.SHOULD);
+		bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 		// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 		// the clause instead of BQ.
 		bq.MinimumNumberShouldMatch = 1;
 		IndexReader reader = writer.Reader;
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 		for (int i = 0; i < inOrder.Length; i++)
 		{
-		  TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.create(3, inOrder[i]);
+		  TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(3, inOrder[i]);
 		  Assert.AreEqual("Lucene.Net.Search.TopScoreDocCollector$" + actualTSDCClass[i], tdc.GetType().Name);
 
-		  searcher.search(new MatchAllDocsQuery(), tdc);
+		  searcher.Search(new MatchAllDocsQuery(), tdc);
 
-		  ScoreDoc[] sd = tdc.topDocs().scoreDocs;
+		  ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 		  Assert.AreEqual(3, sd.Length);
 		  for (int j = 0; j < sd.Length; j++)
 		  {
-			Assert.AreEqual("expected doc Id " + j + " found " + sd[j].doc, j, sd[j].doc);
+			Assert.AreEqual(j, sd[j].Doc, "expected doc Id " + j + " found " + sd[j].Doc);
 		  }
 		}
-		writer.close();
-		reader.close();
-		dir.close();
+		writer.Close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	}

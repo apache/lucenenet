@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// array and pointers to the position of each are stored in a int array. </summary>
 	/// @deprecated Only for reading existing 3.x indexes 
 	[Obsolete("Only for reading existing 3.x indexes")]
-	internal class TermInfosReaderIndex
+	public class TermInfosReaderIndex
 	{
 
 	  private const int MAX_PAGE_BITS = 18; // 256 KB block
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  ///          buffer. </param>
 	  /// <param name="totalIndexInterval">
 	  ///          the total index interval. </param>
-	  internal TermInfosReaderIndex(SegmentTermEnum indexEnum, int indexDivisor, long tiiFileLength, int totalIndexInterval)
+	  public TermInfosReaderIndex(SegmentTermEnum indexEnum, int indexDivisor, long tiiFileLength, int totalIndexInterval)
 	  {
 		this.TotalIndexInterval = totalIndexInterval;
 		IndexSize = 1 + ((int) indexEnum.Size - 1) / indexDivisor;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		return Math.Max(Math.Min(64 - Number.NumberOfLeadingZeros(estSize), MAX_PAGE_BITS), 4);
 	  }
 
-	  internal virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
+	  public virtual void SeekEnum(SegmentTermEnum enumerator, int indexOffset)
 	  {
 		PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  ///          the position to read the term from the index. </param>
 	  /// <returns> the term. </returns>
 	  /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-	  internal virtual Term GetTerm(int termIndex)
+	  public virtual Term GetTerm(int termIndex)
 	  {
 		PagedBytesDataInput input = (PagedBytesDataInput)DataInput.Clone();
 		input.Position = IndexToDataOffset.Get(termIndex);
@@ -216,7 +216,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  /// Returns the number of terms.
 	  /// </summary>
 	  /// <returns> int. </returns>
-	  internal virtual int Length()
+	  public virtual int Length()
 	  {
 		return IndexSize;
 	  }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  ///          the index of the of term to compare. </param>
 	  /// <returns> int. </returns>
 	  /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
-	  internal virtual int CompareTo(Term term, int termIndex)
+	  public virtual int CompareTo(Term term, int termIndex)
 	  {
 		return CompareTo(term, termIndex, (PagedBytesDataInput)DataInput.Clone(), new BytesRef());
 	  }

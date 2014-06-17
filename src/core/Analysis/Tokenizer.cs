@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis
 	  /// The default implementation closes the input Reader, so
 	  /// be sure to call <code>super.close()</code> when overriding this method.
 	  /// </summary>
-	  public void Close()
+	  public override void Dispose()
 	  {
 		Input.Close();
 		// LUCENE-2387: don't hold onto Reader after close, so

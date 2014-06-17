@@ -38,8 +38,7 @@ namespace Lucene.Net.Search
 	using English = Lucene.Net.Util.English;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
 
 	public class TestTermVectors : LuceneTestCase
 	{
@@ -50,8 +49,8 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.SIMPLE, true)).setMergePolicy(newLogMergePolicy()));
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));
 		//writer.setNoCFSRatio(1.0);
 		//writer.infoStream = System.out;
 		for (int i = 0; i < 1000; i++)
@@ -80,21 +79,21 @@ namespace Lucene.Net.Search
 		  {
 			ft.StoreTermVectors = true;
 		  }
-		  doc.add(new Field("field", English.intToEnglish(i), ft));
+		  doc.Add(new Field("field", English.IntToEnglish(i), ft));
 		  //test no term vectors too
-		  doc.add(new TextField("noTV", English.intToEnglish(i), Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(new TextField("noTV", English.IntToEnglish(i), Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
+		writer.Close();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
-		Directory.close();
+		Reader.Dispose();
+		Directory.Dispose();
 		Reader = null;
 		Directory = null;
 	  }
@@ -103,7 +102,7 @@ namespace Lucene.Net.Search
 	  // vectors up
 	  public virtual void TestMixedVectrosVectors()
 	  {
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.SIMPLE, true)).setOpenMode(OpenMode.CREATE));
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetOpenMode(OpenMode.CREATE));
 		Document doc = new Document();
 
 		FieldType ft2 = new FieldType(TextField.TYPE_STORED);
@@ -122,63 +121,63 @@ namespace Lucene.Net.Search
 		ft5.StoreTermVectorOffsets = true;
 		ft5.StoreTermVectorPositions = true;
 
-		doc.add(newTextField("field", "one", Field.Store.YES));
-		doc.add(newField("field", "one", ft2));
-		doc.add(newField("field", "one", ft3));
-		doc.add(newField("field", "one", ft4));
-		doc.add(newField("field", "one", ft5));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("field", "one", Field.Store.YES));
+		doc.Add(NewField("field", "one", ft2));
+		doc.Add(NewField("field", "one", ft3));
+		doc.Add(NewField("field", "one", ft4));
+		doc.Add(NewField("field", "one", ft5));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		Query query = new TermQuery(new Term("field", "one"));
-		ScoreDoc[] hits = searcher.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
-		Fields vectors = searcher.reader.getTermVectors(hits[0].doc);
+		Fields vectors = searcher.Reader.GetTermVectors(hits[0].Doc);
 		Assert.IsNotNull(vectors);
-		Assert.AreEqual(1, vectors.size());
-		Terms vector = vectors.terms("field");
+		Assert.AreEqual(1, vectors.Size());
+		Terms vector = vectors.Terms("field");
 		Assert.IsNotNull(vector);
-		Assert.AreEqual(1, vector.size());
-		TermsEnum termsEnum = vector.iterator(null);
-		Assert.IsNotNull(termsEnum.next());
-		Assert.AreEqual("one", termsEnum.term().utf8ToString());
-		Assert.AreEqual(5, termsEnum.totalTermFreq());
-		DocsAndPositionsEnum dpEnum = termsEnum.docsAndPositions(null, null);
+		Assert.AreEqual(1, vector.Size());
+		TermsEnum termsEnum = vector.Iterator(null);
+		Assert.IsNotNull(termsEnum.Next());
+		Assert.AreEqual("one", termsEnum.Term().Utf8ToString());
+		Assert.AreEqual(5, termsEnum.TotalTermFreq());
+		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 		Assert.IsNotNull(dpEnum);
-		Assert.IsTrue(dpEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(5, dpEnum.freq());
+		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.AreEqual(5, dpEnum.Freq());
 		for (int i = 0;i < 5;i++)
 		{
-		  Assert.AreEqual(i, dpEnum.nextPosition());
+		  Assert.AreEqual(i, dpEnum.NextPosition());
 		}
 
-		dpEnum = termsEnum.docsAndPositions(null, dpEnum);
+		dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
 		Assert.IsNotNull(dpEnum);
-		Assert.IsTrue(dpEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(5, dpEnum.freq());
+		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.AreEqual(5, dpEnum.Freq());
 		for (int i = 0;i < 5;i++)
 		{
-		  dpEnum.nextPosition();
+		  dpEnum.NextPosition();
 		  Assert.AreEqual(4 * i, dpEnum.StartOffset());
 		  Assert.AreEqual(4 * i + 3, dpEnum.EndOffset());
 		}
-		reader.close();
+		reader.Dispose();
 	  }
 
 	  private IndexWriter CreateWriter(Directory dir)
 	  {
-		return new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(2));
+		return new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
 	  }
 
 	  private void CreateDir(Directory dir)
 	  {
 		IndexWriter writer = CreateWriter(dir);
-		writer.addDocument(CreateDoc());
-		writer.close();
+		writer.AddDocument(CreateDoc());
+		writer.Dispose();
 	  }
 
 	  private Document CreateDoc()
@@ -188,42 +187,42 @@ namespace Lucene.Net.Search
 		ft.StoreTermVectors = true;
 		ft.StoreTermVectorOffsets = true;
 		ft.StoreTermVectorPositions = true;
-		doc.add(newField("c", "aaa", ft));
+		doc.Add(NewField("c", "aaa", ft));
 		return doc;
 	  }
 
 	  private void VerifyIndex(Directory dir)
 	  {
-		IndexReader r = DirectoryReader.open(dir);
-		int numDocs = r.numDocs();
+		IndexReader r = DirectoryReader.Open(dir);
+		int numDocs = r.NumDocs();
 		for (int i = 0; i < numDocs; i++)
 		{
-		  Assert.IsNotNull("term vectors should not have been null for document " + i, r.getTermVectors(i).terms("c"));
+		  Assert.IsNotNull(r.GetTermVectors(i).Terms("c"), "term vectors should not have been null for document " + i);
 		}
-		r.close();
+		r.Dispose();
 	  }
 
 	  public virtual void TestFullMergeAddDocs()
 	  {
-		Directory target = newDirectory();
+		Directory target = NewDirectory();
 		IndexWriter writer = CreateWriter(target);
 		// with maxBufferedDocs=2, this results in two segments, so that forceMerge
 		// actually does something.
 		for (int i = 0; i < 4; i++)
 		{
-		  writer.addDocument(CreateDoc());
+		  writer.AddDocument(CreateDoc());
 		}
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		VerifyIndex(target);
-		target.close();
+		target.Dispose();
 	  }
 
 	  public virtual void TestFullMergeAddIndexesDir()
 	  {
-		Directory[] input = new Directory[] {newDirectory(), newDirectory()};
-		Directory target = newDirectory();
+		Directory[] input = new Directory[] {NewDirectory(), NewDirectory()};
+		Directory target = NewDirectory();
 
 		foreach (Directory dir in input)
 		{
@@ -231,9 +230,9 @@ namespace Lucene.Net.Search
 		}
 
 		IndexWriter writer = CreateWriter(target);
-		writer.addIndexes(input);
-		writer.forceMerge(1);
-		writer.close();
+		writer.AddIndexes(input);
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		VerifyIndex(target);
 
@@ -242,8 +241,8 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestFullMergeAddIndexesReader()
 	  {
-		Directory[] input = new Directory[] {newDirectory(), newDirectory()};
-		Directory target = newDirectory();
+		Directory[] input = new Directory[] {NewDirectory(), NewDirectory()};
+		Directory target = NewDirectory();
 
 		foreach (Directory dir in input)
 		{
@@ -253,12 +252,12 @@ namespace Lucene.Net.Search
 		IndexWriter writer = CreateWriter(target);
 		foreach (Directory dir in input)
 		{
-		  IndexReader r = DirectoryReader.open(dir);
-		  writer.addIndexes(r);
-		  r.close();
+		  IndexReader r = DirectoryReader.Open(dir);
+		  writer.AddIndexes(r);
+		  r.Dispose();
 		}
-		writer.forceMerge(1);
-		writer.close();
+		writer.ForceMerge(1);
+		writer.Dispose();
 
 		VerifyIndex(target);
 		IOUtils.Close(target, input[0], input[1]);

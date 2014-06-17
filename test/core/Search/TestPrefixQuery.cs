@@ -27,6 +27,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Terms = Lucene.Net.Index.Terms;
 	using Document = Lucene.Net.Document.Document;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests <seealso cref="PrefixQuery"/> class.
@@ -36,35 +37,35 @@ namespace Lucene.Net.Search
 	{
 	  public virtual void TestPrefixQuery()
 	  {
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 
 		string[] categories = new string[] {"/Computers", "/Computers/Mac", "/Computers/Windows"};
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
 		for (int i = 0; i < categories.Length; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("category", categories[i], Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("category", categories[i], Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
 
 		PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
-		IndexSearcher searcher = newSearcher(reader);
-		ScoreDoc[] hits = searcher.search(query, null, 1000).scoreDocs;
-		Assert.AreEqual("All documents in /Computers category and below", 3, hits.Length);
+		IndexSearcher searcher = NewSearcher(reader);
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+		Assert.AreEqual(3, hits.Length, "All documents in /Computers category and below");
 
 		query = new PrefixQuery(new Term("category", "/Computers/Mac"));
-		hits = searcher.search(query, null, 1000).scoreDocs;
-		Assert.AreEqual("One in /Computers/Mac", 1, hits.Length);
+		hits = searcher.Search(query, null, 1000).ScoreDocs;
+		Assert.AreEqual(1, hits.Length, "One in /Computers/Mac");
 
 		query = new PrefixQuery(new Term("category", ""));
-		Terms terms = MultiFields.getTerms(searcher.IndexReader, "category");
-		Assert.IsFalse(query.getTermsEnum(terms) is PrefixTermsEnum);
-		hits = searcher.search(query, null, 1000).scoreDocs;
-		Assert.AreEqual("everything", 3, hits.Length);
-		writer.close();
-		reader.close();
-		directory.close();
+		Terms terms = MultiFields.GetTerms(searcher.IndexReader, "category");
+		Assert.IsFalse(query.GetTermsEnum(terms) is PrefixTermsEnum);
+		hits = searcher.Search(query, null, 1000).ScoreDocs;
+		Assert.AreEqual(3, hits.Length, "everything");
+		writer.Close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 	}
 

@@ -31,6 +31,9 @@ namespace Lucene.Net.Search
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	// TODO
 	//   - other queries besides PrefixQuery & TermQuery (but:
@@ -58,7 +61,7 @@ namespace Lucene.Net.Search
 
 		public PreviousSearchState(Query query, Sort sort, ScoreDoc searchAfterLocal, ScoreDoc searchAfterShard, long[] versions, int numHitsPaged)
 		{
-		  this.Versions = versions.clone();
+		  this.Versions = (long[])versions.Clone();
 		  this.SearchAfterLocal = searchAfterLocal;
 		  this.SearchAfterShard = searchAfterShard;
 		  this.Sort = sort;
@@ -70,30 +73,30 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestSimple()
 	  {
-		int numNodes = TestUtil.Next(random(), 1, 10);
+		int numNodes = TestUtil.NextInt(Random(), 1, 10);
 
-		double runTimeSec = atLeast(3);
+		double runTimeSec = AtLeast(3);
 
-		int minDocsToMakeTerms = TestUtil.Next(random(), 5, 20);
+		int minDocsToMakeTerms = TestUtil.NextInt(Random(), 5, 20);
 
-		int maxSearcherAgeSeconds = TestUtil.Next(random(), 1, 3);
+		int maxSearcherAgeSeconds = TestUtil.NextInt(Random(), 1, 3);
 
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: numNodes=" + numNodes + " runTimeSec=" + runTimeSec + " maxSearcherAgeSeconds=" + maxSearcherAgeSeconds);
 		}
 
-		start(numNodes, runTimeSec, maxSearcherAgeSeconds);
+		Start(numNodes, runTimeSec, maxSearcherAgeSeconds);
 
-		IList<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
-		IList<BytesRef> terms = null;
+		List<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
+		List<BytesRef> terms = null;
 		while (System.nanoTime() < endTimeNanos)
 		{
 
-		  bool doFollowon = priorSearches.Count > 0 && random().Next(7) == 1;
+		  bool doFollowon = priorSearches.Count > 0 && Random().Next(7) == 1;
 
 		  // Pick a random node; we will run the query on this node:
-		  int myNodeID = random().Next(numNodes);
+		  int myNodeID = Random().Next(numNodes);
 
 		  NodeState.ShardIndexSearcher localShardSearcher;
 
@@ -102,7 +105,7 @@ namespace Lucene.Net.Search
 		  if (doFollowon)
 		  {
 			// Pretend user issued a followon query:
-			prevSearchState = priorSearches[random().Next(priorSearches.Count)];
+			prevSearchState = priorSearches[Random().Next(priorSearches.Count)];
 
 			if (VERBOSE)
 			{
@@ -111,7 +114,7 @@ namespace Lucene.Net.Search
 
 			try
 			{
-			  localShardSearcher = nodes[myNodeID].acquire(prevSearchState.Versions);
+			  localShardSearcher = Nodes[myNodeID].Acquire(prevSearchState.Versions);
 			}
 			catch (SearcherExpiredException see)
 			{
@@ -135,7 +138,7 @@ namespace Lucene.Net.Search
 			  Console.WriteLine("\nTEST: fresh query");
 			}
 			// Do fresh query:
-			localShardSearcher = nodes[myNodeID].acquire();
+			localShardSearcher = Nodes[myNodeID].Acquire();
 			prevSearchState = null;
 		  }
 
@@ -155,21 +158,21 @@ namespace Lucene.Net.Search
 			{
 			  for (int nodeID = 0;nodeID < numNodes;nodeID++)
 			  {
-				long subVersion = localShardSearcher.nodeVersions[nodeID];
-				IndexSearcher sub = nodes[nodeID].searchers.acquire(subVersion);
+				long subVersion = localShardSearcher.NodeVersions[nodeID];
+				IndexSearcher sub = Nodes[nodeID].Searchers.Acquire(subVersion);
 				if (sub == null)
 				{
 				  nodeID--;
 				  while (nodeID >= 0)
 				  {
-					subs[nodeID].decRef();
+					subs[nodeID].DecRef();
 					subs[nodeID] = null;
 					nodeID--;
 				  }
 				  throw new SearcherExpiredException("nodeID=" + nodeID + " version=" + subVersion);
 				}
 				subs[nodeID] = sub.IndexReader;
-				docCount += subs[nodeID].maxDoc();
+				docCount += subs[nodeID].MaxDoc();
 			  }
 			}
 			catch (SearcherExpiredException see)
@@ -199,11 +202,11 @@ namespace Lucene.Net.Search
 			  {
 				// TODO: try to "focus" on high freq terms sometimes too
 				// TODO: maybe also periodically reset the terms...?
-				TermsEnum termsEnum = MultiFields.getTerms(mockReader, "body").iterator(null);
-				terms = new List<>();
-				while (termsEnum.next() != null)
+				TermsEnum termsEnum = MultiFields.GetTerms(mockReader, "body").Iterator(null);
+				terms = new List<BytesRef>();
+				while (termsEnum.Next() != null)
 				{
-				  terms.Add(BytesRef.deepCopyOf(termsEnum.term()));
+				  terms.Add(BytesRef.DeepCopyOf(termsEnum.Term()));
 				}
 				if (VERBOSE)
 				{
@@ -217,18 +220,18 @@ namespace Lucene.Net.Search
 
 			  if (VERBOSE)
 			  {
-				Console.WriteLine("  maxDoc=" + mockReader.maxDoc());
+				Console.WriteLine("  maxDoc=" + mockReader.MaxDoc());
 			  }
 
 			  if (terms != null)
 			  {
-				if (random().nextBoolean())
+				if (Random().NextBoolean())
 				{
-				  query = new TermQuery(new Term("body", terms[random().Next(terms.Count)]));
+				  query = new TermQuery(new Term("body", terms[Random().Next(terms.Count)]));
 				}
 				else
 				{
-				  string t = terms[random().Next(terms.Count)].utf8ToString();
+				  string t = terms[Random().Next(terms.Count)].Utf8ToString();
 				  string prefix;
 				  if (t.Length <= 1)
 				  {
@@ -236,19 +239,19 @@ namespace Lucene.Net.Search
 				  }
 				  else
 				  {
-					prefix = t.Substring(0, TestUtil.Next(random(), 1, 2));
+					prefix = t.Substring(0, TestUtil.NextInt(Random(), 1, 2));
 				  }
 				  query = new PrefixQuery(new Term("body", prefix));
 				}
 
-				if (random().nextBoolean())
+				if (Random().NextBoolean())
 				{
 				  sort = null;
 				}
 				else
 				{
 				  // TODO: sort by more than 1 field
-				  int what = random().Next(3);
+				  int what = Random().Next(3);
 				  if (what == 0)
 				  {
 					sort = new Sort(SortField.FIELD_SCORE);
@@ -263,11 +266,11 @@ namespace Lucene.Net.Search
 				  }
 				  else if (what == 2)
 				  {
-					sort = new Sort(new SortField[] {new SortField("docid", SortField.Type.INT, random().nextBoolean())});
+					sort = new Sort(new SortField[] {new SortField("docid", SortField.Type_e.INT, Random().NextBoolean())});
 				  }
 				  else
 				  {
-					sort = new Sort(new SortField[] {new SortField("title", SortField.Type.STRING, random().nextBoolean())});
+					sort = new Sort(new SortField[] {new SortField("title", SortField.Type_e.STRING, Random().NextBoolean())});
 				  }
 				}
 			  }
@@ -295,7 +298,7 @@ namespace Lucene.Net.Search
 				if (VERBOSE)
 				{
 				  Console.WriteLine("  searcher expired during search: " + see);
-				  see.printStackTrace(System.out);
+                  Console.Out.Write(see.StackTrace);
 				}
 				// We can't do this in general: on a very slow
 				// computer it's possible the local searcher
@@ -310,34 +313,34 @@ namespace Lucene.Net.Search
 		  }
 		  finally
 		  {
-			nodes[myNodeID].release(localShardSearcher);
+			Nodes[myNodeID].Release(localShardSearcher);
 			foreach (IndexReader sub in subs)
 			{
 			  if (sub != null)
 			  {
-				sub.decRef();
+				sub.DecRef();
 			  }
 			}
 		  }
 
-		  if (searchState != null && searchState.SearchAfterLocal != null && random().Next(5) == 3)
+		  if (searchState != null && searchState.SearchAfterLocal != null && Random().Next(5) == 3)
 		  {
 			priorSearches.Add(searchState);
 			if (priorSearches.Count > 200)
 			{
-			  Collections.shuffle(priorSearches, random());
-			  priorSearches.subList(100, priorSearches.Count).clear();
+			  priorSearches = (List<PreviousSearchState>)CollectionsHelper.Shuffle(priorSearches);
+			  priorSearches.SubList(100, priorSearches.Count).Clear();
 			}
 		  }
 		}
 
-		finish();
+		Finish();
 	  }
 
 	  private PreviousSearchState AssertSame(IndexSearcher mockSearcher, NodeState.ShardIndexSearcher shardSearcher, Query q, Sort sort, PreviousSearchState state)
 	  {
 
-		int numHits = TestUtil.Next(random(), 1, 100);
+		int numHits = TestUtil.NextInt(Random(), 1, 100);
 		if (state != null && state.SearchAfterLocal == null)
 		{
 		  // In addition to what we last searched:
@@ -359,16 +362,16 @@ namespace Lucene.Net.Search
 		{
 		  if (state != null && state.SearchAfterLocal != null)
 		  {
-			hits = mockSearcher.searchAfter(state.SearchAfterLocal, q, numHits);
+			hits = mockSearcher.SearchAfter(state.SearchAfterLocal, q, numHits);
 		  }
 		  else
 		  {
-			hits = mockSearcher.search(q, numHits);
+			hits = mockSearcher.Search(q, numHits);
 		  }
 		}
 		else
 		{
-		  hits = mockSearcher.search(q, numHits, sort);
+		  hits = mockSearcher.Search(q, numHits, sort);
 		}
 
 		// Shard searcher
@@ -377,53 +380,53 @@ namespace Lucene.Net.Search
 		{
 		  if (state != null && state.SearchAfterShard != null)
 		  {
-			shardHits = shardSearcher.searchAfter(state.SearchAfterShard, q, numHits);
+			shardHits = shardSearcher.SearchAfter(state.SearchAfterShard, q, numHits);
 		  }
 		  else
 		  {
-			shardHits = shardSearcher.search(q, numHits);
+			shardHits = shardSearcher.Search(q, numHits);
 		  }
 		}
 		else
 		{
-		  shardHits = shardSearcher.search(q, numHits, sort);
+		  shardHits = shardSearcher.Search(q, numHits, sort);
 		}
 
-		int numNodes = shardSearcher.nodeVersions.length;
+		int numNodes = shardSearcher.NodeVersions.Length;
 		int[] @base = new int[numNodes];
-		IList<IndexReaderContext> subs = mockSearcher.TopReaderContext.children();
+		IList<IndexReaderContext> subs = mockSearcher.TopReaderContext.Children();
 		Assert.AreEqual(numNodes, subs.Count);
 
 		for (int nodeID = 0;nodeID < numNodes;nodeID++)
 		{
-		  @base[nodeID] = subs[nodeID].docBaseInParent;
+		  @base[nodeID] = subs[nodeID].DocBaseInParent;
 		}
 
 		if (VERBOSE)
 		{
 		  /*
-		  for(int shardID=0;shardID<shardSearchers.length;shardID++) {
-		    System.out.println("  shard=" + shardID + " maxDoc=" + shardSearchers[shardID].searcher.getIndexReader().maxDoc());
+		  for(int shardID=0;shardID<shardSearchers.Length;shardID++) {
+		    System.out.println("  shard=" + shardID + " maxDoc=" + shardSearchers[shardID].searcher.getIndexReader().MaxDoc());
 		  }
 		  */
-		  Console.WriteLine("  single searcher: " + hits.totalHits + " totalHits maxScore=" + hits.MaxScore);
-		  for (int i = 0;i < hits.scoreDocs.length;i++)
+		  Console.WriteLine("  single searcher: " + hits.TotalHits + " totalHits maxScore=" + hits.MaxScore);
+		  for (int i = 0;i < hits.ScoreDocs.Length;i++)
 		  {
-			ScoreDoc sd = hits.scoreDocs[i];
-			Console.WriteLine("    doc=" + sd.doc + " score=" + sd.score);
+			ScoreDoc sd = hits.ScoreDocs[i];
+			Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
 		  }
-		  Console.WriteLine("  shard searcher: " + shardHits.totalHits + " totalHits maxScore=" + shardHits.MaxScore);
-		  for (int i = 0;i < shardHits.scoreDocs.length;i++)
+		  Console.WriteLine("  shard searcher: " + shardHits.TotalHits + " totalHits maxScore=" + shardHits.MaxScore);
+		  for (int i = 0;i < shardHits.ScoreDocs.Length;i++)
 		  {
-			ScoreDoc sd = shardHits.scoreDocs[i];
-			Console.WriteLine("    doc=" + sd.doc + " (rebased: " + (sd.doc + @base[sd.shardIndex]) + ") score=" + sd.score + " shard=" + sd.shardIndex);
+			ScoreDoc sd = shardHits.ScoreDocs[i];
+			Console.WriteLine("    doc=" + sd.Doc + " (rebased: " + (sd.Doc + @base[sd.ShardIndex]) + ") score=" + sd.Score + " shard=" + sd.ShardIndex);
 		  }
 		}
 
 		int numHitsPaged;
 		if (state != null && state.SearchAfterLocal != null)
 		{
-		  numHitsPaged = hits.scoreDocs.length;
+		  numHitsPaged = hits.ScoreDocs.Length;
 		  if (state != null)
 		  {
 			numHitsPaged += state.NumHitsPaged;
@@ -431,7 +434,7 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  numHitsPaged = hits.scoreDocs.length;
+		  numHitsPaged = hits.ScoreDocs.Length;
 		}
 
 		bool moreHits;
@@ -439,16 +442,16 @@ namespace Lucene.Net.Search
 		ScoreDoc bottomHit;
 		ScoreDoc bottomHitShards;
 
-		if (numHitsPaged < hits.totalHits)
+		if (numHitsPaged < hits.TotalHits)
 		{
 		  // More hits to page through
 		  moreHits = true;
 		  if (sort == null)
 		  {
-			bottomHit = hits.scoreDocs[hits.scoreDocs.length - 1];
-			ScoreDoc sd = shardHits.scoreDocs[shardHits.scoreDocs.length - 1];
+			bottomHit = hits.ScoreDocs[hits.ScoreDocs.Length - 1];
+			ScoreDoc sd = shardHits.ScoreDocs[shardHits.ScoreDocs.Length - 1];
 			// Must copy because below we rebase:
-			bottomHitShards = new ScoreDoc(sd.doc, sd.score, sd.shardIndex);
+			bottomHitShards = new ScoreDoc(sd.Doc, sd.Score, sd.ShardIndex);
 			if (VERBOSE)
 			{
 			  Console.WriteLine("  save bottomHit=" + bottomHit);
@@ -463,25 +466,25 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  Assert.AreEqual(hits.totalHits, numHitsPaged);
+		  Assert.AreEqual(hits.TotalHits, numHitsPaged);
 		  bottomHit = null;
 		  bottomHitShards = null;
 		  moreHits = false;
 		}
 
 		// Must rebase so Assert.AreEqual passes:
-		for (int hitID = 0;hitID < shardHits.scoreDocs.length;hitID++)
+		for (int hitID = 0;hitID < shardHits.ScoreDocs.Length;hitID++)
 		{
-		  ScoreDoc sd = shardHits.scoreDocs[hitID];
-		  sd.doc += @base[sd.shardIndex];
+		  ScoreDoc sd = shardHits.ScoreDocs[hitID];
+		  sd.Doc += @base[sd.ShardIndex];
 		}
 
-		TestUtil.Assert.AreEqual(hits, shardHits);
+		TestUtil.AssertEquals(hits, shardHits);
 
 		if (moreHits)
 		{
 		  // Return a continuation:
-		  return new PreviousSearchState(q, sort, bottomHit, bottomHitShards, shardSearcher.nodeVersions, numHitsPaged);
+		  return new PreviousSearchState(q, sort, bottomHit, bottomHitShards, shardSearcher.NodeVersions, numHitsPaged);
 		}
 		else
 		{

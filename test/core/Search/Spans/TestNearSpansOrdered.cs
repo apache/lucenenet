@@ -28,6 +28,8 @@ namespace Lucene.Net.Search.Spans
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
+    using Lucene.Net.Index;
 
 	public class TestNearSpansOrdered : LuceneTestCase
 	{
@@ -39,25 +41,25 @@ namespace Lucene.Net.Search.Spans
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Directory.close();
-		base.tearDown();
+		Reader.Dispose();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		base.SetUp();
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		for (int i = 0; i < DocFields.Length; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField(FIELD, DocFields[i], Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField(FIELD, DocFields[i], Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+		writer.Close();
+		Searcher = NewSearcher(Reader);
 	  }
 
 	  protected internal string[] DocFields = new string[] {"w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz"};
@@ -74,12 +76,12 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestSpanNearQuery()
 	  {
 		SpanNearQuery q = MakeQuery();
-		CheckHits.checkHits(random(), q, FIELD, Searcher, new int[] {0,1});
+		CheckHits.CheckHits(Random(), q, FIELD, Searcher, new int[] {0,1});
 	  }
 
 	  public virtual string s(Spans span)
 	  {
-		return s(span.doc(), span.start(), span.end());
+		return s(span.Doc(), span.Start(), span.End());
 	  }
 	  public virtual string s(int doc, int start, int end)
 	  {
@@ -90,11 +92,11 @@ namespace Lucene.Net.Search.Spans
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(true, span.next());
+		Assert.AreEqual(true, span.Next());
 		Assert.AreEqual(s(0,0,3), s(span));
-		Assert.AreEqual(true, span.next());
+		Assert.AreEqual(true, span.Next());
 		Assert.AreEqual(s(1,0,4), s(span));
-		Assert.AreEqual(false, span.next());
+		Assert.AreEqual(false, span.Next());
 	  }
 
 	  /// <summary>
@@ -106,45 +108,45 @@ namespace Lucene.Net.Search.Spans
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(true, span.skipTo(0));
+		Assert.AreEqual(true, span.SkipTo(0));
 		Assert.AreEqual(s(0,0,3), s(span));
-		Assert.AreEqual(true, span.skipTo(1));
+		Assert.AreEqual(true, span.SkipTo(1));
 		Assert.AreEqual(s(1,0,4), s(span));
-		Assert.AreEqual(false, span.skipTo(2));
+		Assert.AreEqual(false, span.SkipTo(2));
 	  }
 
 	  public virtual void TestNearSpansNextThenSkipTo()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(true, span.next());
+		Assert.AreEqual(true, span.Next());
 		Assert.AreEqual(s(0,0,3), s(span));
-		Assert.AreEqual(true, span.skipTo(1));
+		Assert.AreEqual(true, span.SkipTo(1));
 		Assert.AreEqual(s(1,0,4), s(span));
-		Assert.AreEqual(false, span.next());
+		Assert.AreEqual(false, span.Next());
 	  }
 
 	  public virtual void TestNearSpansNextThenSkipPast()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(true, span.next());
+		Assert.AreEqual(true, span.Next());
 		Assert.AreEqual(s(0,0,3), s(span));
-		Assert.AreEqual(false, span.skipTo(2));
+		Assert.AreEqual(false, span.SkipTo(2));
 	  }
 
 	  public virtual void TestNearSpansSkipPast()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(false, span.skipTo(2));
+		Assert.AreEqual(false, span.SkipTo(2));
 	  }
 
 	  public virtual void TestNearSpansSkipTo0()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(true, span.skipTo(0));
+		Assert.AreEqual(true, span.SkipTo(0));
 		Assert.AreEqual(s(0,0,3), s(span));
 	  }
 
@@ -152,7 +154,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
-		Assert.AreEqual(true, span.skipTo(1));
+		Assert.AreEqual(true, span.SkipTo(1));
 		Assert.AreEqual(s(1,0,4), s(span));
 	  }
 
@@ -163,11 +165,11 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestSpanNearScorerSkipTo1()
 	  {
 		SpanNearQuery q = MakeQuery();
-		Weight w = Searcher.createNormalizedWeight(q);
+		Weight w = Searcher.CreateNormalizedWeight(q);
 		IndexReaderContext topReaderContext = Searcher.TopReaderContext;
-		AtomicReaderContext leave = topReaderContext.leaves().get(0);
-		Scorer s = w.scorer(leave, leave.reader().LiveDocs);
-		Assert.AreEqual(1, s.advance(1));
+		AtomicReaderContext leave = topReaderContext.Leaves()[0];
+		Scorer s = w.Scorer(leave, ((AtomicReader)leave.Reader()).LiveDocs);
+		Assert.AreEqual(1, s.Advance(1));
 	  }
 
 	  /// <summary>
@@ -177,8 +179,8 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestSpanNearScorerExplain()
 	  {
 		SpanNearQuery q = MakeQuery();
-		Explanation e = Searcher.explain(q, 1);
-		Assert.IsTrue("Scorer explanation value for doc#1 isn't positive: " + e.ToString(), 0.0f < e.Value);
+		Explanation e = Searcher.Explain(q, 1);
+		Assert.IsTrue(0.0f < e.Value, "Scorer explanation value for doc#1 isn't positive: " + e.ToString());
 	  }
 
 	}

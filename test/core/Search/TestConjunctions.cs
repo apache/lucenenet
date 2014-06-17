@@ -34,6 +34,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestConjunctions : LuceneTestCase
 	{
@@ -47,44 +48,44 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Analyzer = new MockAnalyzer(random());
-		Dir = newDirectory();
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, Analyzer);
-		config.MergePolicy = newLogMergePolicy(); // we will use docids to validate
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, config);
-		writer.addDocument(Doc("lucene", "lucene is a very popular search engine library"));
-		writer.addDocument(Doc("solr", "solr is a very popular search server and is using lucene"));
-		writer.addDocument(Doc("nutch", "nutch is an internet search engine with web crawler and is using lucene and hadoop"));
+		base.SetUp();
+		Analyzer = new MockAnalyzer(Random());
+		Dir = NewDirectory();
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, Analyzer);
+		config.SetMergePolicy(NewLogMergePolicy()); // we will use docids to validate
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
+		writer.AddDocument(Doc("lucene", "lucene is a very popular search engine library"));
+		writer.AddDocument(Doc("solr", "solr is a very popular search server and is using lucene"));
+		writer.AddDocument(Doc("nutch", "nutch is an internet search engine with web crawler and is using lucene and hadoop"));
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+		writer.Close();
+		Searcher = NewSearcher(Reader);
 		Searcher.Similarity = new TFSimilarity();
 	  }
 
 	  internal static Document Doc(string v1, string v2)
 	  {
 		Document doc = new Document();
-		doc.add(new StringField(F1, v1, Store.YES));
-		doc.add(new TextField(F2, v2, Store.YES));
+		doc.Add(new StringField(F1, v1, Store.YES));
+		doc.Add(new TextField(F2, v2, Store.YES));
 		return doc;
 	  }
 
 	  public virtual void TestTermConjunctionsWithOmitTF()
 	  {
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(new Term(F1, "nutch")), BooleanClause.Occur_e.MUST);
-		bq.add(new TermQuery(new Term(F2, "is")), BooleanClause.Occur_e.MUST);
-		TopDocs td = Searcher.search(bq, 3);
-		Assert.AreEqual(1, td.totalHits);
-		Assert.AreEqual(3F, td.scoreDocs[0].score, 0.001F); // f1:nutch + f2:is + f2:is
+		bq.Add(new TermQuery(new Term(F1, "nutch")), BooleanClause.Occur_e.MUST);
+		bq.Add(new TermQuery(new Term(F2, "is")), BooleanClause.Occur_e.MUST);
+		TopDocs td = Searcher.Search(bq, 3);
+		Assert.AreEqual(1, td.TotalHits);
+		Assert.AreEqual(3F, td.ScoreDocs[0].Score, 0.001F); // f1:nutch + f2:is + f2:is
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  // Similarity that returns the TF as score

@@ -27,6 +27,7 @@ namespace Lucene.Net.Search.Spans
 	using ReaderUtil = Lucene.Net.Index.ReaderUtil;
 	using Term = Lucene.Net.Index.Term;
 	using TermContext = Lucene.Net.Index.TermContext;
+    using Lucene.Net.Index;
 
 	/// 
 	/// <summary>
@@ -57,16 +58,16 @@ namespace Lucene.Net.Search.Spans
 	  {
 		IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
 		SortedSet<Term> terms = new SortedSet<Term>();
-		query.extractTerms(terms);
+		query.ExtractTerms(terms);
 		foreach (Term term in terms)
 		{
-		  termContexts[term] = TermContext.build(topLevelReaderContext, term);
+		  termContexts[term] = TermContext.Build(topLevelReaderContext, term);
 		}
-		IList<AtomicReaderContext> leaves = topLevelReaderContext.leaves();
+		IList<AtomicReaderContext> leaves = topLevelReaderContext.Leaves();
 		if (leaves.Count == 1)
 		{
 		  AtomicReaderContext ctx = leaves[0];
-		  return query.getSpans(ctx, ctx.reader().LiveDocs, termContexts);
+          return query.GetSpans(ctx, ((AtomicReader)ctx.Reader()).LiveDocs, termContexts);
 		}
 		return new MultiSpansWrapper(leaves, query, termContexts);
 	  }
@@ -80,18 +81,18 @@ namespace Lucene.Net.Search.Spans
 		if (Current == null)
 		{
 		  AtomicReaderContext ctx = Leaves[LeafOrd];
-		  Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		  Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader()).LiveDocs, TermContexts);
 		}
 		while (true)
 		{
-		  if (Current.next())
+		  if (Current.Next())
 		  {
 			return true;
 		  }
 		  if (++LeafOrd < NumLeaves)
 		  {
 			AtomicReaderContext ctx = Leaves[LeafOrd];
-			Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+			Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader()).LiveDocs, TermContexts);
 		  }
 		  else
 		  {
@@ -109,37 +110,37 @@ namespace Lucene.Net.Search.Spans
 		  return false;
 		}
 
-		int subIndex = ReaderUtil.subIndex(target, Leaves);
+		int subIndex = ReaderUtil.SubIndex(target, Leaves);
 		Debug.Assert(subIndex >= LeafOrd);
 		if (subIndex != LeafOrd)
 		{
 		  AtomicReaderContext ctx = Leaves[subIndex];
-		  Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		  Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader()).LiveDocs, TermContexts);
 		  LeafOrd = subIndex;
 		}
 		else if (Current == null)
 		{
 		  AtomicReaderContext ctx = Leaves[LeafOrd];
-		  Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+		  Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader()).LiveDocs, TermContexts);
 		}
 		while (true)
 		{
-		  if (target < Leaves[LeafOrd].docBase)
+		  if (target < Leaves[LeafOrd].DocBase)
 		  {
 			// target was in the previous slice
-			if (Current.next())
+			if (Current.Next())
 			{
 			  return true;
 			}
 		  }
-		  else if (Current.skipTo(target - Leaves[LeafOrd].docBase))
+		  else if (Current.SkipTo(target - Leaves[LeafOrd].DocBase))
 		  {
 			return true;
 		  }
 		  if (++LeafOrd < NumLeaves)
 		  {
 			AtomicReaderContext ctx = Leaves[LeafOrd];
-			Current = Query.getSpans(ctx, ctx.reader().LiveDocs, TermContexts);
+			Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader()).LiveDocs, TermContexts);
 		  }
 		  else
 		  {
@@ -157,7 +158,7 @@ namespace Lucene.Net.Search.Spans
 		{
 		  return DocIdSetIterator.NO_MORE_DOCS;
 		}
-		return Current.doc() + Leaves[LeafOrd].docBase;
+		return Current.Doc() + Leaves[LeafOrd].DocBase;
 	  }
 
 	  public override int Start()
@@ -166,7 +167,7 @@ namespace Lucene.Net.Search.Spans
 		{
 		  return DocIdSetIterator.NO_MORE_DOCS;
 		}
-		return Current.start();
+		return Current.Start();
 	  }
 
 	  public override int End()
@@ -175,7 +176,7 @@ namespace Lucene.Net.Search.Spans
 		{
 		  return DocIdSetIterator.NO_MORE_DOCS;
 		}
-		return Current.end();
+		return Current.End();
 	  }
 
 	  public override ICollection<sbyte[]> Payload

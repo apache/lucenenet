@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
 	  private int PositionIncrementGap_Renamed;
 	  private int OffsetGap_Renamed;
 	  private readonly Random Random;
-	  private IDictionary<string, int> PreviousMappings = new Dictionary<string, int>();
+	  private IDictionary<string, int?> PreviousMappings = new Dictionary<string, int?>();
 	  private bool EnableChecks_Renamed = true;
 	  private int MaxTokenLength_Renamed = MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH;
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
 	  {
 	  }
 
-      public override TokenStreamComponents CreateComponents(string fieldName, StreamReader reader)
+      protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 	  {
 		MockTokenizer tokenizer = new MockTokenizer(reader, RunAutomaton, LowerCase, MaxTokenLength_Renamed);
 		tokenizer.EnableChecks = EnableChecks_Renamed;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis
 	  {
 		  lock (this)
 		  {
-			int val = PreviousMappings[fieldName];
+			int? val = PreviousMappings[fieldName];
 			if (val == null)
 			{
 			  val = -1; // no payloads
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis
 			}
 			else
 			{
-			  return new MockFixedLengthPayloadFilter(Random, stream, val);
+			  return new MockFixedLengthPayloadFilter(Random, stream, (int)val);
 			}
 		  }
 	  }

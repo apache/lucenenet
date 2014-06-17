@@ -34,6 +34,7 @@ namespace Lucene.Net.Search
 	using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	// TODO: refactor to a base class, that collects freqs from the scorer tree
 	// and test all queries with it
@@ -49,34 +50,34 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Analyzer = new MockAnalyzer(random());
-		Dir = newDirectory();
-		IndexWriterConfig config = newIndexWriterConfig(TEST_VERSION_CURRENT, Analyzer);
-		config.MergePolicy = newLogMergePolicy(); // we will use docids to validate
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, config);
-		writer.addDocument(Doc("lucene", "lucene is a very popular search engine library"));
-		writer.addDocument(Doc("solr", "solr is a very popular search server and is using lucene"));
-		writer.addDocument(Doc("nutch", "nutch is an internet search engine with web crawler and is using lucene and hadoop"));
+		base.SetUp();
+		Analyzer = new MockAnalyzer(Random());
+		Dir = NewDirectory();
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, Analyzer);
+		config.SetMergePolicy(NewLogMergePolicy()); // we will use docids to validate
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
+		writer.AddDocument(Doc("lucene", "lucene is a very popular search engine library"));
+		writer.AddDocument(Doc("solr", "solr is a very popular search server and is using lucene"));
+		writer.AddDocument(Doc("nutch", "nutch is an internet search engine with web crawler and is using lucene and hadoop"));
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+		writer.Close();
+		Searcher = NewSearcher(Reader);
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestDisjunctions()
 	  {
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(new Term(F2, "search")), BooleanClause.Occur_e.SHOULD);
-		IDictionary<int?, int?> tfs = GetDocCounts(Searcher, bq);
+		bq.Add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term(F2, "search")), BooleanClause.Occur_e.SHOULD);
+		IDictionary<int, int> tfs = GetDocCounts(Searcher, bq);
 		Assert.AreEqual(3, tfs.Count); // 3 documents
 		Assert.AreEqual(3, (int)tfs[0]); // f1:lucene + f2:lucene + f2:search
 		Assert.AreEqual(2, (int)tfs[1]); // f2:search + f2:lucene
@@ -86,12 +87,12 @@ namespace Lucene.Net.Search
 	  public virtual void TestNestedDisjunctions()
 	  {
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur_e.SHOULD);
 		BooleanQuery bq2 = new BooleanQuery();
-		bq2.add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.SHOULD);
-		bq2.add(new TermQuery(new Term(F2, "search")), BooleanClause.Occur_e.SHOULD);
-		bq.add(bq2, BooleanClause.Occur_e.SHOULD);
-		IDictionary<int?, int?> tfs = GetDocCounts(Searcher, bq);
+		bq2.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.SHOULD);
+		bq2.Add(new TermQuery(new Term(F2, "search")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(bq2, BooleanClause.Occur_e.SHOULD);
+		IDictionary<int, int> tfs = GetDocCounts(Searcher, bq);
 		Assert.AreEqual(3, tfs.Count); // 3 documents
 		Assert.AreEqual(3, (int)tfs[0]); // f1:lucene + f2:lucene + f2:search
 		Assert.AreEqual(2, (int)tfs[1]); // f2:search + f2:lucene
@@ -101,9 +102,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestConjunctions()
 	  {
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.MUST);
-		bq.add(new TermQuery(new Term(F2, "is")), BooleanClause.Occur_e.MUST);
-		IDictionary<int?, int?> tfs = GetDocCounts(Searcher, bq);
+		bq.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.MUST);
+		bq.Add(new TermQuery(new Term(F2, "is")), BooleanClause.Occur_e.MUST);
+		IDictionary<int, int> tfs = GetDocCounts(Searcher, bq);
 		Assert.AreEqual(3, tfs.Count); // 3 documents
 		Assert.AreEqual(2, (int)tfs[0]); // f2:lucene + f2:is
 		Assert.AreEqual(3, (int)tfs[1]); // f2:is + f2:is + f2:lucene
@@ -113,15 +114,15 @@ namespace Lucene.Net.Search
 	  internal static Document Doc(string v1, string v2)
 	  {
 		Document doc = new Document();
-		doc.add(new TextField(F1, v1, Store.YES));
-		doc.add(new TextField(F2, v2, Store.YES));
+		doc.Add(new TextField(F1, v1, Store.YES));
+		doc.Add(new TextField(F2, v2, Store.YES));
 		return doc;
 	  }
 
-	  internal static IDictionary<int?, int?> GetDocCounts(IndexSearcher searcher, Query query)
+	  internal static IDictionary<int, int> GetDocCounts(IndexSearcher searcher, Query query)
 	  {
 		MyCollector collector = new MyCollector();
-		searcher.search(query, collector);
+		searcher.Search(query, collector);
 		return collector.DocCounts;
 	  }
 
@@ -131,12 +132,12 @@ namespace Lucene.Net.Search
 		internal TopDocsCollector<ScoreDoc> Collector;
 		internal int DocBase;
 
-		public readonly IDictionary<int?, int?> DocCounts = new Dictionary<int?, int?>();
-		internal readonly Set<Scorer> TqsSet = new HashSet<Scorer>();
+		public readonly IDictionary<int, int> DocCounts = new Dictionary<int, int>();
+		internal readonly HashSet<Scorer> TqsSet = new HashSet<Scorer>();
 
 		internal MyCollector()
 		{
-		  Collector = TopScoreDocCollector.create(10, true);
+		  Collector = TopScoreDocCollector.Create(10, true);
 		}
 
 		public override bool AcceptsDocsOutOfOrder()
@@ -149,20 +150,20 @@ namespace Lucene.Net.Search
 		  int freq = 0;
 		  foreach (Scorer scorer in TqsSet)
 		  {
-			if (doc == scorer.docID())
+			if (doc == scorer.DocID())
 			{
-			  freq += scorer.freq();
+			  freq += scorer.Freq();
 			}
 		  }
 		  DocCounts[doc + DocBase] = freq;
-		  Collector.collect(doc);
+		  Collector.Collect(doc);
 		}
 
 		public override AtomicReaderContext NextReader
 		{
 			set
 			{
-			  this.DocBase = value.docBase;
+			  this.DocBase = value.DocBase;
 			  Collector.NextReader = value;
 			}
 		}
@@ -172,29 +173,29 @@ namespace Lucene.Net.Search
 			set
 			{
 			  Collector.Scorer = value;
-			  TqsSet.clear();
+			  TqsSet.Clear();
 			  FillLeaves(value, TqsSet);
 			}
 		}
 
-		internal virtual void FillLeaves(Scorer scorer, Set<Scorer> set)
+		internal virtual void FillLeaves(Scorer scorer, ISet<Scorer> set)
 		{
 		  if (scorer.Weight.Query is TermQuery)
 		  {
-			set.add(scorer);
+			set.Add(scorer);
 		  }
 		  else
 		  {
 			foreach (ChildScorer child in scorer.Children)
 			{
-			  FillLeaves(child.child, set);
+			  FillLeaves(child.Child, set);
 			}
 		  }
 		}
 
 		public virtual TopDocs TopDocs()
 		{
-		  return Collector.topDocs();
+		  return Collector.TopDocs();
 		}
 
 		public virtual int Freq(int doc)

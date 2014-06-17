@@ -39,6 +39,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	// TODO: really this should be in BaseTestPF or somewhere else? useful test!
 	public class TestReuseDocsEnum : LuceneTestCase
@@ -71,10 +72,10 @@ namespace Lucene.Net.Codecs.Lucene40
 		  while ((iterator.Next()) != null)
 		  {
 			DocsEnum docs = iterator.Docs(Random().NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc()), null, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
-			enums.put(docs, true);
+			enums[docs] = true;
 		  }
 
-		  Assert.AreEqual(terms.Size(), enums.Size());
+		  Assert.AreEqual(terms.Size(), enums.Count);
 		}
 		IOUtils.Close(writer, open, dir);
 	  }
@@ -100,29 +101,29 @@ namespace Lucene.Net.Codecs.Lucene40
 		  while ((iterator.Next()) != null)
 		  {
 			docs = iterator.Docs(bits, docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
-			enums.put(docs, true);
+			enums[docs] = true;
 		  }
 
-		  Assert.AreEqual(1, enums.Size());
-		  enums.clear();
+		  Assert.AreEqual(1, enums.Count);
+		  enums.Clear();
           iterator = terms.Iterator(null);
 		  docs = null;
           while ((iterator.Next()) != null)
 		  {
 			docs = iterator.Docs(new MatchNoBits(open.MaxDoc()), docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
-			enums.put(docs, true);
+			enums[docs] = true;
 		  }
-		  Assert.AreEqual(terms.Size(), enums.Size());
+		  Assert.AreEqual(terms.Size(), enums.Count);
 
-		  enums.clear();
+		  enums.Clear();
           iterator = terms.Iterator(null);
 		  docs = null;
           while ((iterator.Next()) != null)
 		  {
 			docs = iterator.Docs(null, docs, Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
-			enums.put(docs, true);
+			enums[docs] = true;
 		  }
-		  Assert.AreEqual(1, enums.Size());
+		  Assert.AreEqual(1, enums.Count);
 		}
 		IOUtils.Close(writer, open, dir);
 	  }
@@ -157,19 +158,19 @@ namespace Lucene.Net.Codecs.Lucene40
 		  while ((term = iterator.Next()) != null)
 		  {
 			docs = iterator.Docs(null, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
-			enums.put(docs, true);
+			enums[docs] = true;
 		  }
-		  Assert.AreEqual(terms.Size(), enums.Size());
+		  Assert.AreEqual(terms.Size(), enums.Count);
 
 		  iterator = terms.Iterator(null);
-		  enums.clear();
+		  enums.Clear();
 		  docs = null;
           while ((term = iterator.Next()) != null)
 		  {
 			docs = iterator.Docs(bits, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
-			enums.put(docs, true);
+			enums[docs] = true;
 		  }
-		  Assert.AreEqual(terms.Size(), enums.Size());
+		  Assert.AreEqual(terms.Size(), enums.Count);
 		}
 		IOUtils.Close(writer, firstReader, secondReader, dir);
 	  }

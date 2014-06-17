@@ -190,9 +190,10 @@ namespace Lucene.Net.Codecs.asserting
 		  @in.AddSortedSetField(field, values, docToOrdCount, ords);
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 	  }
 
@@ -220,22 +221,23 @@ namespace Lucene.Net.Codecs.asserting
 		  @in.AddNumericField(field, values);
 		}
 
-		public override void Close()
-		{
-		  @in.Dispose();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                @in.Dispose();
+        }
 
 		public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
 		{
 		  throw new InvalidOperationException();
 		}
 
-		public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrd)
+		public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 		{
 		  throw new InvalidOperationException();
 		}
 
-		public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<Number> docToOrdCount, IEnumerable<Number> ords)
+		public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 		{
 		  throw new InvalidOperationException();
 		}
@@ -323,10 +325,11 @@ namespace Lucene.Net.Codecs.asserting
 		  return new AssertingAtomicReader.AssertingBits(bits);
 		}
 
-		public override void Close()
-		{
-		  @in.Dispose();
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                @in.Dispose();
+        }
 
 		public override long RamBytesUsed()
 		{

@@ -19,6 +19,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
+    using NUnit.Framework;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -52,12 +53,12 @@ namespace Lucene.Net.Search
 	  {
 		  // Create a dummy index with nothing in it.
 		// this could possibly fail if Lucene starts checking for docid ranges...
-		d = newDirectory();
-		IndexWriter iw = new IndexWriter(d, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		iw.addDocument(new Document());
-		iw.close();
-		r = DirectoryReader.open(d);
-		s = newSearcher(r);
+		d = NewDirectory();
+		IndexWriter iw = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		iw.AddDocument(new Document());
+		iw.Dispose();
+		r = DirectoryReader.Open(d);
+		s = NewSearcher(r);
 	  }
 
 	  public virtual void CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
@@ -71,22 +72,22 @@ namespace Lucene.Net.Search
 		  Terms[i] = new Term("f",char.ToString((char)('A' + i)));
 		}
 
-		IndexWriter iw = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE));
+		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
 		for (int i = 0; i < nDocs; i++)
 		{
 		  Document d = new Document();
 		  for (int j = 0; j < nTerms; j++)
 		  {
-			if (random().Next(freq[j]) == 0)
+			if (Random().Next(freq[j]) == 0)
 			{
-			  d.add(newStringField("f", Terms[j].text(), Field.Store.NO));
+			  d.Add(NewStringField("f", Terms[j].Text(), Field.Store.NO));
 			  //System.out.println(d);
 			}
 		  }
-		  iw.addDocument(d);
+		  iw.AddDocument(d);
 		}
-		iw.forceMerge(1);
-		iw.close();
+		iw.ForceMerge(1);
+		iw.Dispose();
 	  }
 
 
@@ -95,7 +96,7 @@ namespace Lucene.Net.Search
 		BitArray set = new BitArray(sz);
 		for (int i = 0; i < numBitsToSet; i++)
 		{
-		  set.Set(random().Next(sz), true);
+		  set.Set(Random().Next(sz), true);
 		}
 		return set;
 	  }
@@ -105,7 +106,7 @@ namespace Lucene.Net.Search
 		BitArray[] sets = new BitArray[numSets];
 		for (int i = 0; i < sets.Length; i++)
 		{
-		  sets[i] = RandBitSet(setSize, random().Next(setSize));
+		  sets[i] = RandBitSet(setSize, Random().Next(setSize));
 		}
 		return sets;
 	  }
@@ -147,7 +148,7 @@ namespace Lucene.Net.Search
 		{
 			set
 			{
-			  DocBase = value.docBase;
+			  DocBase = value.DocBase;
 			}
 		}
 		public override bool AcceptsDocsOutOfOrder()
@@ -181,14 +182,14 @@ namespace Lucene.Net.Search
 
 	  internal virtual BitArray AddClause(BooleanQuery bq, BitArray result)
 	  {
-		BitArray rnd = Sets[random().Next(Sets.Length)];
+		BitArray rnd = Sets[Random().Next(Sets.Length)];
 		Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(this, rnd));
-		bq.add(q, BooleanClause.Occur_e.MUST);
+		bq.Add(q, BooleanClause.Occur_e.MUST);
 		if (Validate)
 		{
 		  if (result == null)
 		  {
-			  result = (BitArray)rnd.clone();
+			  result = (BitArray)rnd.Clone();
 		  }
 		  else
 		  {
@@ -212,7 +213,7 @@ namespace Lucene.Net.Search
 
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
-			assertNull("acceptDocs should be null, as we have an index without deletions", acceptDocs);
+			Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
 			return new DocIdBitSet(Rnd);
 		  }
 	  }
@@ -224,7 +225,7 @@ namespace Lucene.Net.Search
 
 		for (int i = 0; i < iter; i++)
 		{
-		  int nClauses = random().Next(maxClauses - 1) + 2; // min 2 clauses
+		  int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
 		  BooleanQuery bq = new BooleanQuery();
 		  BitArray result = null;
 		  for (int j = 0; j < nClauses; j++)
@@ -233,12 +234,12 @@ namespace Lucene.Net.Search
 		  }
 
 		  CountingHitCollector hc = Validate ? new MatchingHitCollector(result) : new CountingHitCollector();
-		  s.search(bq, hc);
+		  s.Search(bq, hc);
 		  ret += hc.Sum;
 
 		  if (Validate)
 		  {
-			  Assert.AreEqual(result.cardinality(), hc.Count);
+			  Assert.AreEqual(result.Cardinality(), hc.Count);
 		  }
 		  // System.out.println(hc.getCount());
 		}
@@ -253,30 +254,30 @@ namespace Lucene.Net.Search
 
 		for (int i = 0; i < iter; i++)
 		{
-		  int oClauses = random().Next(maxOuterClauses - 1) + 2;
+		  int oClauses = Random().Next(maxOuterClauses - 1) + 2;
 		  BooleanQuery oq = new BooleanQuery();
 		  BitArray result = null;
 
 		  for (int o = 0; o < oClauses; o++)
 		  {
 
-		  int nClauses = random().Next(maxClauses - 1) + 2; // min 2 clauses
+		  int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
 		  BooleanQuery bq = new BooleanQuery();
 		  for (int j = 0; j < nClauses; j++)
 		  {
 			result = AddClause(bq,result);
 		  }
 
-		  oq.add(bq, BooleanClause.Occur_e.MUST);
+		  oq.Add(bq, BooleanClause.Occur_e.MUST);
 		  } // outer
 
 		  CountingHitCollector hc = Validate ? new MatchingHitCollector(result) : new CountingHitCollector();
-		  s.search(oq, hc);
+		  s.Search(oq, hc);
 		  nMatches += hc.Count;
 		  ret += hc.Sum;
 		  if (Validate)
 		  {
-			  Assert.AreEqual(result.cardinality(), hc.Count);
+			  Assert.AreEqual(result.Cardinality(), hc.Count);
 		  }
 		  // System.out.println(hc.getCount());
 		}
@@ -295,14 +296,14 @@ namespace Lucene.Net.Search
 		long nMatches = 0;
 		for (int i = 0; i < iter; i++)
 		{
-		  int nClauses = random().Next(maxClauses - 1) + 2; // min 2 clauses
+		  int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
 		  BooleanQuery bq = new BooleanQuery();
 		  BitArray termflag = new BitArray(termsInIndex);
 		  for (int j = 0; j < nClauses; j++)
 		  {
 			int tnum;
 			// don't pick same clause twice
-			tnum = random().Next(termsInIndex);
+			tnum = Random().Next(termsInIndex);
 			if (termflag.Get(tnum))
 			{
 				tnum = termflag.nextClearBit(tnum);
@@ -313,11 +314,11 @@ namespace Lucene.Net.Search
 			}
 			termflag.Set(tnum, true);
 			Query tq = new TermQuery(Terms[tnum]);
-			bq.add(tq, BooleanClause.Occur_e.MUST);
+			bq.Add(tq, BooleanClause.Occur_e.MUST);
 		  }
 
 		  CountingHitCollector hc = new CountingHitCollector();
-		  s.search(bq, hc);
+		  s.Search(bq, hc);
 		  nMatches += hc.Count;
 		  ret += hc.Sum;
 		}
@@ -336,19 +337,19 @@ namespace Lucene.Net.Search
 		long nMatches = 0;
 		for (int i = 0; i < iter; i++)
 		{
-		  int oClauses = random().Next(maxOuterClauses - 1) + 2;
+		  int oClauses = Random().Next(maxOuterClauses - 1) + 2;
 		  BooleanQuery oq = new BooleanQuery();
 		  for (int o = 0; o < oClauses; o++)
 		  {
 
-		  int nClauses = random().Next(maxClauses - 1) + 2; // min 2 clauses
+		  int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
 		  BooleanQuery bq = new BooleanQuery();
 		  BitArray termflag = new BitArray(termsInIndex);
 		  for (int j = 0; j < nClauses; j++)
 		  {
 			int tnum;
 			// don't pick same clause twice
-			tnum = random().Next(termsInIndex);
+			tnum = Random().Next(termsInIndex);
 			if (termflag.Get(tnum))
 			{
 				tnum = termflag.nextClearBit(tnum);
@@ -359,15 +360,15 @@ namespace Lucene.Net.Search
 			}
 			termflag.Set(tnum, true);
 			Query tq = new TermQuery(Terms[tnum]);
-			bq.add(tq, BooleanClause.Occur_e.MUST);
+			bq.Add(tq, BooleanClause.Occur_e.MUST);
 		  } // inner
 
-		  oq.add(bq, BooleanClause.Occur_e.MUST);
+		  oq.Add(bq, BooleanClause.Occur_e.MUST);
 		  } // outer
 
 
 		  CountingHitCollector hc = new CountingHitCollector();
-		  s.search(oq, hc);
+		  s.Search(oq, hc);
 		  nMatches += hc.Count;
 		  ret += hc.Sum;
 		}
@@ -385,17 +386,17 @@ namespace Lucene.Net.Search
 
 		for (int i = 0; i < iter; i++)
 		{
-		  int nClauses = random().Next(maxClauses - 1) + 2; // min 2 clauses
+		  int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
 		  PhraseQuery q = new PhraseQuery();
 		  for (int j = 0; j < nClauses; j++)
 		  {
-			int tnum = random().Next(termsInIndex);
-			q.add(new Term("f",char.ToString((char)(tnum + 'A'))), j);
+			int tnum = Random().Next(termsInIndex);
+			q.Add(new Term("f",char.ToString((char)(tnum + 'A'))), j);
 		  }
 		  q.Slop = termsInIndex; // this could be random too
 
 		  CountingHitCollector hc = new CountingHitCollector();
-		  s.search(q, hc);
+		  s.Search(q, hc);
 		  ret += hc.Sum;
 		}
 
@@ -408,11 +409,11 @@ namespace Lucene.Net.Search
 		// test many small sets... the bugs will be found on boundary conditions
 		CreateDummySearcher();
 		Validate = true;
-		Sets = RandBitSets(atLeast(1000), atLeast(10));
-		DoConjunctions(atLeast(10000), atLeast(5));
-		DoNestedConjunctions(atLeast(10000), atLeast(3), atLeast(3));
-		r.close();
-		d.close();
+		Sets = RandBitSets(AtLeast(1000), AtLeast(10));
+		DoConjunctions(AtLeast(10000), AtLeast(5));
+		DoNestedConjunctions(AtLeast(10000), AtLeast(3), AtLeast(3));
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  /// <summary>
@@ -425,12 +426,12 @@ namespace Lucene.Net.Search
 	  ///  validate=false;
 	  ///  sets=randBitSets(32,1000000);
 	  ///  for (int i=0; i<bigIter; i++) {
-	  ///    long start = System.currentTimeMillis();
+	  ///    long start = DateTime.Now.Millisecond;
 	  ///    doConjunctions(500,6);
-	  ///    long end = System.currentTimeMillis();
+	  ///    long end = DateTime.Now.Millisecond;
 	  ///    if (VERBOSE) System.out.println("milliseconds="+(end-start));
 	  ///  }
-	  ///  s.close();
+	  ///  s.Dispose();
 	  /// }
 	  /// 
 	  /// public void testNestedConjunctionPerf() throws Exception {
@@ -439,12 +440,12 @@ namespace Lucene.Net.Search
 	  ///  validate=false;
 	  ///  sets=randBitSets(32,1000000);
 	  ///  for (int i=0; i<bigIter; i++) {
-	  ///    long start = System.currentTimeMillis();
+	  ///    long start = DateTime.Now.Millisecond;
 	  ///    doNestedConjunctions(500,3,3);
-	  ///    long end = System.currentTimeMillis();
+	  ///    long end = DateTime.Now.Millisecond;
 	  ///    if (VERBOSE) System.out.println("milliseconds="+(end-start));
 	  ///  }
-	  ///  s.close();
+	  ///  s.Dispose();
 	  /// }
 	  /// 
 	  /// 
@@ -454,15 +455,15 @@ namespace Lucene.Net.Search
 	  ///  RAMDirectory dir = new RAMDirectory();
 	  ///  if (VERBOSE) System.out.println("Creating index");
 	  ///  createRandomTerms(100000,25,.5, dir);
-	  ///  s = newSearcher(dir, true);
+	  ///  s = NewSearcher(dir, true);
 	  ///  if (VERBOSE) System.out.println("Starting performance test");
 	  ///  for (int i=0; i<bigIter; i++) {
-	  ///    long start = System.currentTimeMillis();
+	  ///    long start = DateTime.Now.Millisecond;
 	  ///    doTermConjunctions(s,25,5,1000);
-	  ///    long end = System.currentTimeMillis();
+	  ///    long end = DateTime.Now.Millisecond;
 	  ///    if (VERBOSE) System.out.println("milliseconds="+(end-start));
 	  ///  }
-	  ///  s.close();
+	  ///  s.Dispose();
 	  /// }
 	  /// 
 	  /// public void testNestedConjunctionTerms() throws Exception {
@@ -471,15 +472,15 @@ namespace Lucene.Net.Search
 	  ///  RAMDirectory dir = new RAMDirectory();
 	  ///  if (VERBOSE) System.out.println("Creating index");
 	  ///  createRandomTerms(100000,25,.2, dir);
-	  ///  s = newSearcher(dir, true);
+	  ///  s = NewSearcher(dir, true);
 	  ///  if (VERBOSE) System.out.println("Starting performance test");
 	  ///  for (int i=0; i<bigIter; i++) {
-	  ///    long start = System.currentTimeMillis();
+	  ///    long start = DateTime.Now.Millisecond;
 	  ///    doNestedTermConjunctions(s,25,3,3,200);
-	  ///    long end = System.currentTimeMillis();
+	  ///    long end = DateTime.Now.Millisecond;
 	  ///    if (VERBOSE) System.out.println("milliseconds="+(end-start));
 	  ///  }
-	  ///  s.close();
+	  ///  s.Dispose();
 	  /// }
 	  /// 
 	  /// 
@@ -489,15 +490,15 @@ namespace Lucene.Net.Search
 	  ///  RAMDirectory dir = new RAMDirectory();
 	  ///  if (VERBOSE) System.out.println("Creating index");
 	  ///  createRandomTerms(100000,25,2,dir);
-	  ///  s = newSearcher(dir, true);
+	  ///  s = NewSearcher(dir, true);
 	  ///  if (VERBOSE) System.out.println("Starting performance test");
 	  ///  for (int i=0; i<bigIter; i++) {
-	  ///    long start = System.currentTimeMillis();
+	  ///    long start = DateTime.Now.Millisecond;
 	  ///    doSloppyPhrase(s,25,2,1000);
-	  ///    long end = System.currentTimeMillis();
+	  ///    long end = DateTime.Now.Millisecond;
 	  ///    if (VERBOSE) System.out.println("milliseconds="+(end-start));
 	  ///  }
-	  ///  s.close();
+	  ///  s.Dispose();
 	  /// }
 	  /// **
 	  /// </summary>

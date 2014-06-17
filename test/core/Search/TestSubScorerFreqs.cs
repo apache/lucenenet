@@ -28,9 +28,8 @@ namespace Lucene.Net.Search
 	using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
 	using Lucene.Net.Store;
 	using Lucene.Net.Util;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestSubScorerFreqs : LuceneTestCase
 	{
@@ -43,31 +42,31 @@ namespace Lucene.Net.Search
 	  public static void MakeIndex()
 	  {
 		Dir = new RAMDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		RandomIndexWriter w = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		// make sure we have more than one segment occationally
-		int num = atLeast(31);
+		int num = AtLeast(31);
 		for (int i = 0; i < num; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("f", "a b c d b c d c d d", Field.Store.NO));
-		  w.addDocument(doc);
+		  doc.Add(NewTextField("f", "a b c d b c d c d d", Field.Store.NO));
+		  w.AddDocument(doc);
 
 		  doc = new Document();
-		  doc.add(newTextField("f", "a b c d", Field.Store.NO));
-		  w.addDocument(doc);
+		  doc.Add(NewTextField("f", "a b c d", Field.Store.NO));
+		  w.AddDocument(doc);
 		}
 
-		s = newSearcher(w.Reader);
-		w.close();
+		s = NewSearcher(w.Reader);
+		w.Close();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void finish() throws Exception
 	  public static void Finish()
 	  {
-		s.IndexReader.close();
+		s.IndexReader.Dispose();
 		s = null;
-		Dir.close();
+		Dir.Dispose();
 		Dir = null;
 	  }
 
@@ -79,13 +78,14 @@ namespace Lucene.Net.Search
 		public readonly IDictionary<int?, IDictionary<Query, float?>> DocCounts = new Dictionary<int?, IDictionary<Query, float?>>();
 
 		internal readonly IDictionary<Query, Scorer> SubScorers = new Dictionary<Query, Scorer>();
-		internal readonly Set<string> Relationships;
+		internal readonly ISet<string> Relationships;
 
-		public CountingCollector(Collector other) : this(other, new HashSet<>("MUST", "SHOULD", "MUST_NOT"))
+		public CountingCollector(Collector other) 
+            : this(other, new HashSet<string>("MUST", "SHOULD", "MUST_NOT"))
 		{
 		}
 
-		public CountingCollector(Collector other, Set<string> relationships)
+		public CountingCollector(Collector other, ISet<string> relationships)
 		{
 		  this.Other = other;
 		  this.Relationships = relationships;
@@ -105,9 +105,9 @@ namespace Lucene.Net.Search
 		{
 		  foreach (ChildScorer child in scorer.Children)
 		  {
-			if (scorer is AssertingScorer || Relationships.contains(child.relationship))
+			if (scorer is AssertingScorer || Relationships.Contains(child.Relationship))
 			{
-			  SetSubScorers(child.child, child.relationship);
+			  SetSubScorers(child.Child, child.Relationship);
 			}
 		  }
 		  SubScorers[scorer.Weight.Query] = scorer;
@@ -119,25 +119,25 @@ namespace Lucene.Net.Search
 		  foreach (KeyValuePair<Query, Scorer> ent in SubScorers)
 		  {
 			Scorer value = ent.Value;
-			int matchId = value.docID();
-			freqs[ent.Key] = matchId == doc ? value.freq() : 0.0f;
+			int matchId = value.DocID();
+			freqs[ent.Key] = matchId == doc ? value.Freq() : 0.0f;
 		  }
 		  DocCounts[doc + DocBase] = freqs;
-		  Other.collect(doc);
+		  Other.Collect(doc);
 		}
 
 		public override AtomicReaderContext NextReader
 		{
 			set
 			{
-			  DocBase = value.docBase;
+			  DocBase = value.DocBase;
 			  Other.NextReader = value;
 			}
 		}
 
 		public override bool AcceptsDocsOutOfOrder()
 		{
-		  return Other.acceptsDocsOutOfOrder();
+		  return Other.AcceptsDocsOutOfOrder();
 		}
 	  }
 
@@ -148,9 +148,9 @@ namespace Lucene.Net.Search
 	  public virtual void TestTermQuery()
 	  {
 		TermQuery q = new TermQuery(new Term("f", "d"));
-		CountingCollector c = new CountingCollector(TopScoreDocCollector.create(10, true));
-		s.search(q, null, c);
-		int maxDocs = s.IndexReader.maxDoc();
+		CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true));
+		s.Search(q, null, c);
+		int maxDocs = s.IndexReader.MaxDoc();
 		Assert.AreEqual(maxDocs, c.DocCounts.Count);
 		for (int i = 0; i < maxDocs; i++)
 		{
@@ -176,26 +176,26 @@ namespace Lucene.Net.Search
 		BooleanQuery query = new BooleanQuery();
 		BooleanQuery inner = new BooleanQuery();
 
-		inner.add(cQuery, Occur.SHOULD);
-		inner.add(yQuery, Occur.MUST_NOT);
-		query.add(inner, Occur.MUST);
-		query.add(aQuery, Occur.MUST);
-		query.add(dQuery, Occur.MUST);
+		inner.Add(cQuery, Occur.SHOULD);
+		inner.Add(yQuery, Occur.MUST_NOT);
+		query.Add(inner, Occur.MUST);
+		query.Add(aQuery, Occur.MUST);
+		query.Add(dQuery, Occur.MUST);
 
 		// Only needed in Java6; Java7+ has a @SafeVarargs annotated Arrays#asList()!
 		// see http://docs.oracle.com/javase/7/docs/api/java/lang/SafeVarargs.html
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") final Iterable<Set<String>> occurList = Arrays.asList(Collections.singleton("MUST"), new HashSet<>(Arrays.asList("MUST", "SHOULD"))
-		IEnumerable<Set<string>> occurList = Arrays.asList(Collections.singleton("MUST"), new HashSet<Set<string>>("MUST", "SHOULD")
+//ORIGINAL LINE: @SuppressWarnings("unchecked") final Iterable<Set<String>> occurList = Arrays.AsList(Collections.singleton("MUST"), new HashSet<>(Arrays.AsList("MUST", "SHOULD"))
+		IEnumerable<HashSet<string>> occurList = Arrays.AsList(Collections.singleton("MUST"), new HashSet<HashSet<string>>("MUST", "SHOULD")
 	   );
 
-		foreach (Set<string> occur in occurList)
+		foreach (HashSet<string> occur in occurList)
 		{
-		  CountingCollector c = new CountingCollector(TopScoreDocCollector.create(10, true), occur);
-		  s.search(query, null, c);
-		  int maxDocs = s.IndexReader.maxDoc();
+		  CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true), occur);
+		  s.Search(query, null, c);
+		  int maxDocs = s.IndexReader.MaxDoc();
 		  Assert.AreEqual(maxDocs, c.DocCounts.Count);
-		  bool includeOptional = occur.contains("SHOULD");
+		  bool includeOptional = occur.Contains("SHOULD");
 		  for (int i = 0; i < maxDocs; i++)
 		  {
 			IDictionary<Query, float?> doc0 = c.DocCounts[i];
@@ -224,11 +224,11 @@ namespace Lucene.Net.Search
 	  public virtual void TestPhraseQuery()
 	  {
 		PhraseQuery q = new PhraseQuery();
-		q.add(new Term("f", "b"));
-		q.add(new Term("f", "c"));
-		CountingCollector c = new CountingCollector(TopScoreDocCollector.create(10, true));
-		s.search(q, null, c);
-		int maxDocs = s.IndexReader.maxDoc();
+		q.Add(new Term("f", "b"));
+		q.Add(new Term("f", "c"));
+		CountingCollector c = new CountingCollector(TopScoreDocCollector.Create(10, true));
+		s.Search(q, null, c);
+		int maxDocs = s.IndexReader.MaxDoc();
 		Assert.AreEqual(maxDocs, c.DocCounts.Count);
 		for (int i = 0; i < maxDocs; i++)
 		{

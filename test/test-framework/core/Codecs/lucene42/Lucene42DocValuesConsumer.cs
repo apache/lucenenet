@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -34,7 +36,6 @@ namespace Lucene.Net.Codecs.Lucene42
 	using IOUtils = Lucene.Net.Util.IOUtils;
 	using IntsRef = Lucene.Net.Util.IntsRef;
 	using MathUtil = Lucene.Net.Util.MathUtil;
-	using Builder = Lucene.Net.Util.Fst.Builder;
 	using INPUT_TYPE = Lucene.Net.Util.Fst.FST.INPUT_TYPE;
 	using FST = Lucene.Net.Util.Fst.FST;
 	using PositiveIntOutputs = Lucene.Net.Util.Fst.PositiveIntOutputs;
@@ -43,6 +44,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
 	using FormatAndBits = Lucene.Net.Util.Packed.PackedInts.FormatAndBits;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Util.Fst;
 
 
  //   Constants use Lucene42DocValuesProducer.
@@ -209,28 +211,32 @@ namespace Lucene.Net.Codecs.Lucene42
 		}
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		bool success = false;
-		try
-		{
-		  if (Meta != null)
-		  {
-			Meta.WriteVInt(-1); // write EOF marker
-		  }
-		  success = true;
-		}
-		finally
-		{
-		  if (success)
-		  {
-			IOUtils.Close(Data, Meta);
-		  }
-		  else
-		  {
-			IOUtils.CloseWhileHandlingException(Data, Meta);
-		  }
-		}
+	      if (disposing)
+	      {
+	            bool success = false;
+		        try
+		        {
+		          if (Meta != null)
+		          {
+			        Meta.WriteVInt(-1); // write EOF marker
+		          }
+		          success = true;
+		        }
+		        finally
+		        {
+		          if (success)
+		          {
+			        IOUtils.Close(Data, Meta);
+		          }
+		          else
+		          {
+			        IOUtils.CloseWhileHandlingException(Data, Meta);
+		          }
+		        }
+	      }
+		
 	  }
 
 	  public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
@@ -284,10 +290,10 @@ namespace Lucene.Net.Codecs.Lucene42
 	  private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
 	  {
 		Meta.WriteVInt(field.Number);
-		Meta.WriteByte(FST);
+        Meta.WriteByte(Lucene42DocValuesProducer.FST);
 		Meta.WriteLong(Data.FilePointer);
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
+		Builder<long> builder = new Builder<long>(INPUT_TYPE.BYTE1, outputs);
 		IntsRef scratch = new IntsRef();
 		long ord = 0;
 		foreach (BytesRef v in values)
@@ -295,10 +301,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		  builder.Add(Util.ToIntsRef(v, scratch), ord);
 		  ord++;
 		}
-		FST<long?> fst = builder.Finish();
+		Lucene.Net.Util.Fst.FST<long> fst = builder.Finish();
 		if (fst != null)
 		{
-		  fst.save(Data);
+		  fst.Save(Data);
 		}
 		Meta.WriteVLong(ord);
 	  }
@@ -351,7 +357,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	  public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 	  {
 		// write the ordinals as a binary field
-		AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
+		AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, values, docToOrdCount, ords));
 
 		// write the values as FST
 		WriteFST(field, values);
@@ -363,18 +369,25 @@ namespace Lucene.Net.Codecs.Lucene42
 
 		  private IEnumerable<long> DocToOrdCount;
 		  private IEnumerable<long> Ords;
+	      private IEnumerable<BytesRef> Values;
 
-		  public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
+		  public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<BytesRef> values, IEnumerable<long> docToOrdCount, IEnumerable<long> ords)
 		  {
 			  this.OuterInstance = outerInstance;
+		      this.Values = values;
 			  this.DocToOrdCount = docToOrdCount;
 			  this.Ords = ords;
 		  }
 
-		  public virtual IEnumerator<BytesRef> GetEnumerator()
+		  public IEnumerator<BytesRef> GetEnumerator()
 		  {
-			return new SortedSetIterator(DocToOrdCount.GetEnumerator(), Ords.GetEnumerator());
+			return new SortedSetIterator(Values.GetEnumerator(), DocToOrdCount.GetEnumerator(), Ords.GetEnumerator());
 		  }
+
+	      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	      {
+	          return GetEnumerator();
+	      }
 	  }
 
 	  // per-document vint-encoded byte[]
@@ -384,70 +397,81 @@ namespace Lucene.Net.Codecs.Lucene42
 		internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
 		internal BytesRef @ref = new BytesRef();
 
+	    internal readonly IEnumerator<BytesRef> Values;
 		internal readonly IEnumerator<long> Counts;
 		internal readonly IEnumerator<long> Ords;
 
-		internal SortedSetIterator(IEnumerator<long> counts, IEnumerator<long> ords)
+        internal SortedSetIterator(IEnumerator<BytesRef> values, IEnumerator<long> counts, IEnumerator<long> ords)
 		{
+          this.Values = values;
 		  this.Counts = counts;
 		  this.Ords = ords;
 		}
 
-		public override bool HasNext()
-		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  return Counts.hasNext();
-		}
+	    public bool MoveNext()
+	    {
+	        if (!Counts.MoveNext())
+	        {
+	            return false;
+	        }
 
-		public override BytesRef Next()
-		{
-		  if (!HasNext())
-		  {
-			throw new NoSuchElementException();
-		  }
+	        int count = (int) Counts.Current;
+	        int maxSize = count*9; //worst case
+	        if (maxSize > Buffer.Length)
+	        {
+	            Buffer = ArrayUtil.Grow(Buffer, maxSize);
+	        }
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  int count = (int)Counts.next();
-		  int maxSize = count * 9; // worst case
-		  if (maxSize > Buffer.Length)
-		  {
-			Buffer = ArrayUtil.Grow(Buffer, maxSize);
-		  }
+	        try
+	        {
+	            EncodeValues(count);
+	        }
+	        catch (IOException bogus)
+	        {
+	            throw new Exception(bogus.Message, bogus);
+	        }
 
-		  try
-		  {
-			EncodeValues(count);
-		  }
-		  catch (System.IO.IOException bogus)
-		  {
-			throw new Exception(bogus.Message, bogus);
-		  }
+            @ref.Bytes = Buffer;
+            @ref.Offset = 0;
+            @ref.Length = @out.Position;
 
-		  @ref.Bytes = Buffer;
-		  @ref.Offset = 0;
-		  @ref.Length = @out.Position;
+	        Values.MoveNext();
 
-		  return @ref;
-		}
+	        return true;
+	    }
 
-		// encodes count values to buffer
-		internal virtual void EncodeValues(int count)
-		{
-		  @out.Reset((byte[])(Array)Buffer);
-		  long lastOrd = 0;
-		  for (int i = 0; i < count; i++)
-		  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			long ord = (long)Ords.next();
-			@out.WriteVLong(ord - lastOrd);
-			lastOrd = ord;
-		  }
-		}
+	    public BytesRef Current
+	    {
+	        get { return Values.Current; }
+	    }
 
-		public override void Remove()
-		{
-		  throw new System.NotSupportedException();
-		}
+	    object System.Collections.IEnumerator.Current
+	    {
+	        get { return Current; }
+	    }
+
+        // encodes count values to buffer
+        internal virtual void EncodeValues(int count)
+        {
+            @out.Reset((byte[])(Array)Buffer);
+            long lastOrd = 0;
+            for (int i = 0; i < count; i++)
+            {
+                Ords.MoveNext();
+                long ord = Ords.Current;
+                @out.WriteVLong(ord - lastOrd);
+                lastOrd = ord;
+            }
+        }
+
+	    public void Reset()
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public void Dispose()
+	    {
+	    }
 	  }
 	}
 

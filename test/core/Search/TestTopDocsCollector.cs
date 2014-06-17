@@ -24,6 +24,7 @@ namespace Lucene.Net.Search
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestTopDocsCollector : LuceneTestCase
 	{
@@ -34,7 +35,8 @@ namespace Lucene.Net.Search
 		internal int Idx = 0;
 		internal int @base = 0;
 
-		public MyTopsDocCollector(int size) : base(new HitQueue(size, false))
+		public MyTopsDocCollector(int size) 
+            : base(new HitQueue(size, false))
 		{
 		}
 
@@ -48,31 +50,31 @@ namespace Lucene.Net.Search
 		  float maxScore = float.NaN;
 		  if (start == 0)
 		  {
-			maxScore = results[0].score;
+			maxScore = results[0].Score;
 		  }
 		  else
 		  {
-			for (int i = pq.size(); i > 1; i--)
+			for (int i = Pq.Size(); i > 1; i--)
 			{
-				pq.pop();
+                Pq.Pop();
 			}
-			maxScore = pq.pop().score;
+            maxScore = Pq.Pop().Score;
 		  }
 
-		  return new TopDocs(totalHits, results, maxScore);
+		  return new TopDocs(TotalHits, results, maxScore);
 		}
 
 		public override void Collect(int doc)
 		{
-		  ++totalHits;
-		  pq.insertWithOverflow(new ScoreDoc(doc + @base, Scores[Idx++]));
+		  ++TotalHits;
+          Pq.InsertWithOverflow(new ScoreDoc(doc + @base, Scores[Idx++]));
 		}
 
 		public override AtomicReaderContext NextReader
 		{
 			set
 			{
-			  @base = value.docBase;
+			  @base = value.DocBase;
 			}
 		}
 
@@ -103,34 +105,34 @@ namespace Lucene.Net.Search
 	  private TopDocsCollector<ScoreDoc> DoSearch(int numResults)
 	  {
 		Query q = new MatchAllDocsQuery();
-		IndexSearcher searcher = newSearcher(Reader);
+		IndexSearcher searcher = NewSearcher(Reader);
 		TopDocsCollector<ScoreDoc> tdc = new MyTopsDocCollector(numResults);
-		searcher.search(q, tdc);
+		searcher.Search(q, tdc);
 		return tdc;
 	  }
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 
 		// populate an index with 30 documents, this should be enough for the test.
 		// The documents have no content - the test uses MatchAllDocsQuery().
-		Dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir);
+		Dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
 		for (int i = 0; i < 30; i++)
 		{
-		  writer.addDocument(new Document());
+		  writer.AddDocument(new Document());
 		}
 		Reader = writer.Reader;
-		writer.close();
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
+		Reader.Dispose();
+		Dir.Dispose();
 		Dir = null;
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  public virtual void TestInvalidArguments()
@@ -139,76 +141,76 @@ namespace Lucene.Net.Search
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(numResults);
 
 		// start < 0
-		Assert.AreEqual(0, tdc.topDocs(-1).scoreDocs.length);
+		Assert.AreEqual(0, tdc.TopDocs(-1).ScoreDocs.Length);
 
-		// start > pq.size()
-		Assert.AreEqual(0, tdc.topDocs(numResults + 1).scoreDocs.length);
+		// start > pq.Size()
+		Assert.AreEqual(0, tdc.TopDocs(numResults + 1).ScoreDocs.Length);
 
-		// start == pq.size()
-		Assert.AreEqual(0, tdc.topDocs(numResults).scoreDocs.length);
+		// start == pq.Size()
+		Assert.AreEqual(0, tdc.TopDocs(numResults).ScoreDocs.Length);
 
 		// howMany < 0
-		Assert.AreEqual(0, tdc.topDocs(0, -1).scoreDocs.length);
+		Assert.AreEqual(0, tdc.TopDocs(0, -1).ScoreDocs.Length);
 
 		// howMany == 0
-		Assert.AreEqual(0, tdc.topDocs(0, 0).scoreDocs.length);
+		Assert.AreEqual(0, tdc.TopDocs(0, 0).ScoreDocs.Length);
 
 	  }
 
 	  public virtual void TestZeroResults()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = new MyTopsDocCollector(5);
-		Assert.AreEqual(0, tdc.topDocs(0, 1).scoreDocs.length);
+		Assert.AreEqual(0, tdc.TopDocs(0, 1).ScoreDocs.Length);
 	  }
 
 	  public virtual void TestFirstResultsPage()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
-		Assert.AreEqual(10, tdc.topDocs(0, 10).scoreDocs.length);
+		Assert.AreEqual(10, tdc.TopDocs(0, 10).ScoreDocs.Length);
 	  }
 
 	  public virtual void TestSecondResultsPages()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		// ask for more results than are available
-		Assert.AreEqual(5, tdc.topDocs(10, 10).scoreDocs.length);
+		Assert.AreEqual(5, tdc.TopDocs(10, 10).ScoreDocs.Length);
 
 		// ask for 5 results (exactly what there should be
 		tdc = DoSearch(15);
-		Assert.AreEqual(5, tdc.topDocs(10, 5).scoreDocs.length);
+		Assert.AreEqual(5, tdc.TopDocs(10, 5).ScoreDocs.Length);
 
 		// ask for less results than there are
 		tdc = DoSearch(15);
-		Assert.AreEqual(4, tdc.topDocs(10, 4).scoreDocs.length);
+		Assert.AreEqual(4, tdc.TopDocs(10, 4).ScoreDocs.Length);
 	  }
 
 	  public virtual void TestGetAllResults()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
-		Assert.AreEqual(15, tdc.topDocs().scoreDocs.length);
+		Assert.AreEqual(15, tdc.TopDocs().ScoreDocs.Length);
 	  }
 
 	  public virtual void TestGetResultsFromStart()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		// should bring all results
-		Assert.AreEqual(15, tdc.topDocs(0).scoreDocs.length);
+		Assert.AreEqual(15, tdc.TopDocs(0).ScoreDocs.Length);
 
 		tdc = DoSearch(15);
 		// get the last 5 only.
-		Assert.AreEqual(5, tdc.topDocs(10).scoreDocs.length);
+		Assert.AreEqual(5, tdc.TopDocs(10).ScoreDocs.Length);
 	  }
 
 	  public virtual void TestMaxScore()
 	  {
 		// ask for all results
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
-		TopDocs td = tdc.topDocs();
+		TopDocs td = tdc.TopDocs();
 		Assert.AreEqual(MAX_SCORE, td.MaxScore, 0f);
 
 		// ask for 5 last results
 		tdc = DoSearch(15);
-		td = tdc.topDocs(10);
+		td = tdc.TopDocs(10);
 		Assert.AreEqual(MAX_SCORE, td.MaxScore, 0f);
 	  }
 
@@ -217,12 +219,12 @@ namespace Lucene.Net.Search
 	  public virtual void TestResultsOrder()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
-		ScoreDoc[] sd = tdc.topDocs().scoreDocs;
+		ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 
-		Assert.AreEqual(MAX_SCORE, sd[0].score, 0f);
+		Assert.AreEqual(MAX_SCORE, sd[0].Score, 0f);
 		for (int i = 1; i < sd.Length; i++)
 		{
-		  Assert.IsTrue(sd[i - 1].score >= sd[i].score);
+		  Assert.IsTrue(sd[i - 1].Score >= sd[i].Score);
 		}
 	  }
 

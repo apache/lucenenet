@@ -76,7 +76,7 @@ using System;
 		this.Primary = primary;
 	  }
 
-	  public override void OnCommit<T>(IList<T> commits)
+      public override void OnCommit<T>(IList<T> commits)
 	  {
 		  lock (this)
 		  {
@@ -85,7 +85,7 @@ using System;
 		  }
 	  }
 
-	  public override void OnInit<T>(IList<T> commits)
+      public override void OnInit<T>(IList<T> commits)
 	  {
 		  lock (this)
 		  {

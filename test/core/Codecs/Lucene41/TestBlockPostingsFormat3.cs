@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -53,7 +54,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	using English = Lucene.Net.Util.English;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader);
 			if (fieldName.Contains("payloadsFixed"))
@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		}
 
 		List<BytesRef> shuffledTests = new List<BytesRef>(tests);
-		Collections.shuffle(shuffledTests, random);
+	    shuffledTests = (List<BytesRef>)CollectionsHelper.Shuffle(shuffledTests);
 
 		foreach (BytesRef b in shuffledTests)
 		{
@@ -549,12 +549,12 @@ namespace Lucene.Net.Codecs.Lucene41
 		  }
 		}
 
-		public override bool Get(int index)
+		public bool Get(int index)
 		{
 		  return Bits.Get(index);
 		}
 
-		public override int Length()
+		public int Length()
 		{
 		  return Bits.Length();
 		}

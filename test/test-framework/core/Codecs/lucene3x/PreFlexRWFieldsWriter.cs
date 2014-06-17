@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		return new PreFlexTermsWriter(this, field);
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		IOUtils.Close(TermsOut, FreqOut, ProxOut);
 	  }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  StorePayloads = fieldInfo.HasPayloads();
 		}
 
-		private class PostingsWriter : PostingsConsumer
+	      internal class PostingsWriter : PostingsConsumer
 		{
 			private readonly PreFlexRWFieldsWriter.PreFlexTermsWriter OuterInstance;
 

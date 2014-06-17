@@ -37,36 +37,38 @@ namespace Lucene.Net.Search
 	using LineFileDocs = Lucene.Net.Util.LineFileDocs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestSameScoresWithThreads : LuceneTestCase
 	{
 
 	  public virtual void Test()
 	  {
-		Directory dir = newDirectory();
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir, analyzer);
-		LineFileDocs docs = new LineFileDocs(random(), defaultCodecSupportsDocValues());
-		int charsToIndex = atLeast(100000);
+		Directory dir = NewDirectory();
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+		LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+		int charsToIndex = AtLeast(100000);
 		int charsIndexed = 0;
 		//System.out.println("bytesToIndex=" + charsToIndex);
 		while (charsIndexed < charsToIndex)
 		{
-		  Document doc = docs.nextDoc();
-		  charsIndexed += doc.get("body").length();
-		  w.addDocument(doc);
+		  Document doc = docs.NextDoc();
+		  charsIndexed += doc.Get("body").Length;
+		  w.AddDocument(doc);
 		  //System.out.println("  bytes=" + charsIndexed + " add: " + doc);
 		}
 		IndexReader r = w.Reader;
-		//System.out.println("numDocs=" + r.numDocs());
-		w.close();
+		//System.out.println("numDocs=" + r.NumDocs());
+		w.Close();
 
-		IndexSearcher s = newSearcher(r);
-		Terms terms = MultiFields.getFields(r).terms("body");
+		IndexSearcher s = NewSearcher(r);
+		Terms terms = MultiFields.GetFields(r).Terms("body");
 		int termCount = 0;
-		TermsEnum termsEnum = terms.iterator(null);
-		while (termsEnum.next() != null)
+		TermsEnum termsEnum = terms.Iterator(null);
+		while (termsEnum.Next() != null)
 		{
 		  termCount++;
 		}
@@ -74,21 +76,21 @@ namespace Lucene.Net.Search
 
 		// Target ~10 terms to search:
 		double chance = 10.0 / termCount;
-		termsEnum = terms.iterator(termsEnum);
+		termsEnum = terms.Iterator(termsEnum);
 		IDictionary<BytesRef, TopDocs> answers = new Dictionary<BytesRef, TopDocs>();
-		while (termsEnum.next() != null)
+		while (termsEnum.Next() != null)
 		{
-		  if (random().NextDouble() <= chance)
+		  if (Random().NextDouble() <= chance)
 		  {
-			BytesRef term = BytesRef.deepCopyOf(termsEnum.term());
-			answers[term] = s.search(new TermQuery(new Term("body", term)), 100);
+			BytesRef term = BytesRef.DeepCopyOf(termsEnum.Term());
+			answers[term] = s.Search(new TermQuery(new Term("body", term)), 100);
 		  }
 		}
 
 		if (answers.Count > 0)
 		{
 		  CountDownLatch startingGun = new CountDownLatch(1);
-		  int numThreads = TestUtil.Next(random(), 2, 5);
+		  int numThreads = TestUtil.NextInt(Random(), 2, 5);
 		  Thread[] threads = new Thread[numThreads];
 		  for (int threadID = 0;threadID < numThreads;threadID++)
 		  {
@@ -102,8 +104,8 @@ namespace Lucene.Net.Search
 			thread.Join();
 		  }
 		}
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
@@ -131,25 +133,25 @@ namespace Lucene.Net.Search
 			  {
 //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'entrySet' method:
 				IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers.entrySet());
-				Collections.shuffle(shuffled);
+                shuffled = CollectionsHelper.Shuffle(shuffled);
 				foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)
 				{
-				  TopDocs actual = s.search(new TermQuery(new Term("body", ent.Key)), 100);
+				  TopDocs actual = s.Search(new TermQuery(new Term("body", ent.Key)), 100);
 				  TopDocs expected = ent.Value;
-				  Assert.AreEqual(expected.totalHits, actual.totalHits);
-				  Assert.AreEqual("query=" + ent.Key.utf8ToString(), expected.scoreDocs.length, actual.scoreDocs.length);
-				  for (int hit = 0;hit < expected.scoreDocs.length;hit++)
+				  Assert.AreEqual(expected.TotalHits, actual.TotalHits);
+				  Assert.AreEqual(expected.ScoreDocs.Length, actual.ScoreDocs.Length, "query=" + ent.Key.Utf8ToString());
+				  for (int hit = 0;hit < expected.ScoreDocs.Length;hit++)
 				  {
-					Assert.AreEqual(expected.scoreDocs[hit].doc, actual.scoreDocs[hit].doc);
+					Assert.AreEqual(expected.ScoreDocs[hit].Doc, actual.ScoreDocs[hit].Doc);
 					// Floats really should be identical:
-					Assert.IsTrue(expected.scoreDocs[hit].score == actual.scoreDocs[hit].score);
+					Assert.IsTrue(expected.ScoreDocs[hit].Score == actual.ScoreDocs[hit].Score);
 				  }
 				}
 			  }
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }

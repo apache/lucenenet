@@ -44,12 +44,12 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// The underlying character-input stream. 
 	  /// </summary>
-      protected internal readonly StreamReader Input;
+	  public readonly StreamReader Input;
 
 	  /// <summary>
 	  /// Create a new CharFilter wrapping the provided reader. </summary>
 	  /// <param name="input"> a Reader, can also be a CharFilter for chaining. </param>
-      public CharFilter(StreamReader input)
+	  protected CharFilter(StreamReader input)
             : base(input.BaseStream)
 	  {
 		this.Input = input;

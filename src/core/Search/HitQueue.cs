@@ -20,7 +20,7 @@ namespace Lucene.Net.Search
 
 	using Lucene.Net.Util;
 
-	internal sealed class HitQueue : PriorityQueue<ScoreDoc>
+	public sealed class HitQueue : PriorityQueue<ScoreDoc>
 	{
 
 	  /// <summary>
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
 	  /// <param name="prePopulate">
 	  ///          specifies whether to pre-populate the queue with sentinel values. </param>
 	  /// <seealso cref= #getSentinelObject() </seealso>
-	  internal HitQueue(int size, bool prePopulate) : base(size, prePopulate)
+	  public HitQueue(int size, bool prePopulate) : base(size, prePopulate)
 	  {
 	  }
 

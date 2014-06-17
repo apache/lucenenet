@@ -32,8 +32,6 @@ namespace Lucene.Net.Search
 	using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
 
 	/// <summary>
 	/// Tests primitive queries (ie: that rewrite to themselves) to
@@ -63,9 +61,9 @@ namespace Lucene.Net.Search
 	  public static void AfterClassTestExplanations()
 	  {
 		Searcher = null;
-		Reader.close();
+		Reader.Dispose();
 		Reader = null;
-		Directory.close();
+		Directory.Dispose();
 		Directory = null;
 	  }
 
@@ -73,21 +71,21 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClassTestExplanations() throws Exception
 	  public static void BeforeClassTestExplanations()
 	  {
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		for (int i = 0; i < DocFields.Length; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField(KEY, "" + i, Field.Store.NO));
-		  Field f = newTextField(FIELD, DocFields[i], Field.Store.NO);
+		  doc.Add(NewStringField(KEY, "" + i, Field.Store.NO));
+		  Field f = NewTextField(FIELD, DocFields[i], Field.Store.NO);
 		  f.Boost = i;
-		  doc.add(f);
-		  doc.add(newTextField(ALTFIELD, DocFields[i], Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(f);
+		  doc.Add(NewTextField(ALTFIELD, DocFields[i], Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+		writer.Close();
+		Searcher = NewSearcher(Reader);
 	  }
 
 	  protected internal static readonly string[] DocFields = new string[] {"w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz"};
@@ -96,7 +94,7 @@ namespace Lucene.Net.Search
 	  /// check the expDocNrs first, then check the query (and the explanations) </summary>
 	  public virtual void Qtest(Query q, int[] expDocNrs)
 	  {
-		CheckHits.checkHitCollector(random(), q, FIELD, Searcher, expDocNrs);
+		CheckHits.CheckHitCollector(Random(), q, FIELD, Searcher, expDocNrs);
 	  }
 
 	  /// <summary>
@@ -225,8 +223,8 @@ namespace Lucene.Net.Search
 	  public virtual Query OptB(Query q)
 	  {
 		BooleanQuery bq = new BooleanQuery(true);
-		bq.add(q, BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(new Term("NEVER","MATCH")), BooleanClause.Occur_e.MUST_NOT);
+		bq.Add(q, BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term("NEVER","MATCH")), BooleanClause.Occur_e.MUST_NOT);
 		return bq;
 	  }
 
@@ -237,8 +235,8 @@ namespace Lucene.Net.Search
 	  public virtual Query ReqB(Query q)
 	  {
 		BooleanQuery bq = new BooleanQuery(true);
-		bq.add(q, BooleanClause.Occur_e.MUST);
-		bq.add(new TermQuery(new Term(FIELD,"w1")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(q, BooleanClause.Occur_e.MUST);
+		bq.Add(new TermQuery(new Term(FIELD,"w1")), BooleanClause.Occur_e.SHOULD);
 		return bq;
 	  }
 

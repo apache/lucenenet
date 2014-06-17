@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		{
 		if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
 		{
-		  return base.fieldsConsumer(state);
+		  return base.FieldsConsumer(state);
 		}
 		else
 		{

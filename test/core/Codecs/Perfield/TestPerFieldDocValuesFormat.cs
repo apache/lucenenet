@@ -45,9 +45,9 @@ namespace Lucene.Net.Codecs.Perfield
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Support;
     using NUnit.Framework;
+    using Lucene.Net.Index;
 
 	/// <summary>
 	/// Basic tests of PerFieldDocValuesFormat
@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Perfield
 
 	  public override void SetUp()
 	  {
-		Codec_Renamed = new RandomCodec(new Random(Random().nextLong()), CollectionsHelper.EmptySet<string>());
+		Codec_Renamed = new RandomCodec(new Random(Random().Next()), CollectionsHelper.EmptySet<string>());
 		base.SetUp();
 	  }
 
@@ -113,9 +113,9 @@ namespace Lucene.Net.Codecs.Perfield
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.AreEqual(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  NumericDocValues dv = ireader.Leaves()[0].Reader().GetNumericDocValues("dv1");
+		  NumericDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv1");
 		  Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
-		  BinaryDocValues dv2 = ireader.Leaves()[0].Reader().GetBinaryDocValues("dv2");
+		  BinaryDocValues dv2 = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv2");
 		  dv2.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.AreEqual(new BytesRef("hello world"), scratch);
 		}

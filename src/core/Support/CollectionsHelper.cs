@@ -365,6 +365,26 @@ namespace Lucene.Net.Support
             return list.OrderBy(str => Guid.NewGuid()).ToList();
         }
 
+        public static KeyValuePair<int, TValue> LowerEntry<TValue>(SortedDictionary<int, TValue> sd, int keyLimit)
+        {
+            KeyValuePair<int, TValue> retKVPair = default(KeyValuePair<int, TValue>);
+
+            foreach (var kvPair in sd)
+            {
+                if (kvPair.Key < keyLimit)
+                {
+                    retKVPair = kvPair;
+                }
+                else
+                {
+                    // No other key lesser key found
+                    break;
+                }
+            }
+
+            return retKVPair;
+        } 
+
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
         {
             // todo: should this return a singleton instance?

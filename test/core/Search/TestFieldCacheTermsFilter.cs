@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -27,6 +28,7 @@ namespace Lucene.Net.Search
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
+    using NUnit.Framework;
 
 
 	/// <summary>
@@ -38,41 +40,41 @@ namespace Lucene.Net.Search
 	  public virtual void TestMissingTerms()
 	  {
 		string fieldName = "field1";
-		Directory rd = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), rd);
+		Directory rd = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), rd);
 		for (int i = 0; i < 100; i++)
 		{
 		  Document doc = new Document();
 		  int term = i * 10; //terms are units of 10;
-		  doc.add(newStringField(fieldName, "" + term, Field.Store.YES));
-		  w.addDocument(doc);
+		  doc.Add(NewStringField(fieldName, "" + term, Field.Store.YES));
+		  w.AddDocument(doc);
 		}
 		IndexReader reader = w.Reader;
-		w.close();
+		w.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
-		int numDocs = reader.numDocs();
+		IndexSearcher searcher = NewSearcher(reader);
+		int numDocs = reader.NumDocs();
 		ScoreDoc[] results;
 		MatchAllDocsQuery q = new MatchAllDocsQuery();
 
-		IList<string> terms = new List<string>();
+		List<string> terms = new List<string>();
 		terms.Add("5");
-		results = searcher.search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).scoreDocs;
-		Assert.AreEqual("Must match nothing", 0, results.Length);
+		results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).ScoreDocs;
+		Assert.AreEqual(0, results.Length, "Must match nothing");
 
-		terms = new List<>();
+		terms = new List<string>();
 		terms.Add("10");
-		results = searcher.search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).scoreDocs;
-		Assert.AreEqual("Must match 1", 1, results.Length);
+		results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).ScoreDocs;
+		Assert.AreEqual(1, results.Length, "Must match 1");
 
-		terms = new List<>();
+        terms = new List<string>();
 		terms.Add("10");
 		terms.Add("20");
-		results = searcher.search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).scoreDocs;
-		Assert.AreEqual("Must match 2", 2, results.Length);
+		results = searcher.Search(q, new FieldCacheTermsFilter(fieldName, terms.ToArray()), numDocs).ScoreDocs;
+		Assert.AreEqual(2, results.Length, "Must match 2");
 
-		reader.close();
-		rd.close();
+		reader.Dispose();
+		rd.Dispose();
 	  }
 	}
 

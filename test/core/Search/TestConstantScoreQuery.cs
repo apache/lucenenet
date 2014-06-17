@@ -29,6 +29,7 @@ namespace Lucene.Net.Search
 	using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// this class only tests some basic functionality in CSQ, the main parts are mostly
@@ -41,23 +42,23 @@ namespace Lucene.Net.Search
 	  {
 		Query q1 = new ConstantScoreQuery(new TermQuery(new Term("a", "b")));
 		Query q2 = new ConstantScoreQuery(new TermQuery(new Term("a", "c")));
-		Query q3 = new ConstantScoreQuery(TermRangeFilter.newStringRange("a", "b", "c", true, true));
-		QueryUtils.check(q1);
-		QueryUtils.check(q2);
-		QueryUtils.checkEqual(q1,q1);
-		QueryUtils.checkEqual(q2,q2);
-		QueryUtils.checkEqual(q3,q3);
-		QueryUtils.checkUnequal(q1,q2);
-		QueryUtils.checkUnequal(q2,q3);
-		QueryUtils.checkUnequal(q1,q3);
-		QueryUtils.checkUnequal(q1, new TermQuery(new Term("a", "b")));
+		Query q3 = new ConstantScoreQuery(TermRangeFilter.NewStringRange("a", "b", "c", true, true));
+		QueryUtils.Check(q1);
+		QueryUtils.Check(q2);
+		QueryUtils.CheckEqual(q1,q1);
+		QueryUtils.CheckEqual(q2,q2);
+		QueryUtils.CheckEqual(q3,q3);
+		QueryUtils.CheckUnequal(q1,q2);
+		QueryUtils.CheckUnequal(q2,q3);
+		QueryUtils.CheckUnequal(q1,q3);
+		QueryUtils.CheckUnequal(q1, new TermQuery(new Term("a", "b")));
 	  }
 
 	  private void CheckHits(IndexSearcher searcher, Query q, float expectedScore, string scorerClassName, string innerScorerClassName)
 	  {
 		int[] count = new int[1];
-		searcher.search(q, new CollectorAnonymousInnerClassHelper(this, expectedScore, scorerClassName, innerScorerClassName, count));
-		Assert.AreEqual("invalid number of results", 1, count[0]);
+		searcher.Search(q, new CollectorAnonymousInnerClassHelper(this, expectedScore, scorerClassName, innerScorerClassName, count));
+		Assert.AreEqual(1, count[0], "invalid number of results");
 	  }
 
 	  private class CollectorAnonymousInnerClassHelper : Collector
@@ -85,18 +86,18 @@ namespace Lucene.Net.Search
 			  set
 			  {
 				this.scorer = value;
-				Assert.AreEqual("Scorer is implemented by wrong class", ScorerClassName, value.GetType().Name);
+				Assert.AreEqual(ScorerClassName, value.GetType().Name, "Scorer is implemented by wrong class");
 				if (InnerScorerClassName != null && value is ConstantScoreQuery.ConstantScorer)
 				{
 				  ConstantScoreQuery.ConstantScorer innerScorer = (ConstantScoreQuery.ConstantScorer) value;
-				  Assert.AreEqual("inner Scorer is implemented by wrong class", InnerScorerClassName, innerScorer.docIdSetIterator.GetType().Name);
+				  Assert.AreEqual(InnerScorerClassName, innerScorer.DocIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
 				}
 			  }
 		  }
 
 		  public override void Collect(int doc)
 		  {
-			Assert.AreEqual("Score differs from expected", ExpectedScore, this.scorer.score(), 0);
+			Assert.AreEqual(ExpectedScore, this.scorer.Score(), 0, "Score differs from expected");
 			Count[0]++;
 		  }
 
@@ -120,17 +121,17 @@ namespace Lucene.Net.Search
 		IndexSearcher searcher = null;
 		try
 		{
-		  directory = newDirectory();
-		  RandomIndexWriter writer = new RandomIndexWriter(random(), directory);
+		  directory = NewDirectory();
+		  RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
 
 		  Document doc = new Document();
-		  doc.add(newStringField("field", "term", Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("field", "term", Field.Store.NO));
+		  writer.AddDocument(doc);
 
 		  reader = writer.Reader;
-		  writer.close();
+          writer.Close();
 		  // we don't wrap with AssertingIndexSearcher in order to have the original scorer in setScorer.
-		  searcher = newSearcher(reader, true, false);
+		  searcher = NewSearcher(reader, true, false);
 
 		  // set a similarity that does not normalize our boost away
 		  searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
@@ -141,8 +142,8 @@ namespace Lucene.Net.Search
 		  csq2.Boost = 5.0f;
 
 		  BooleanQuery bq = new BooleanQuery();
-		  bq.add(csq1, BooleanClause.Occur_e.SHOULD);
-		  bq.add(csq2, BooleanClause.Occur_e.SHOULD);
+		  bq.Add(csq1, BooleanClause.Occur_e.SHOULD);
+		  bq.Add(csq2, BooleanClause.Occur_e.SHOULD);
 
 		  Query csqbq = new ConstantScoreQuery(bq);
 		  csqbq.Boost = 17.0f;
@@ -159,11 +160,11 @@ namespace Lucene.Net.Search
 		{
 		  if (reader != null)
 		  {
-			  reader.close();
+			  reader.Dispose();
 		  }
 		  if (directory != null)
 		  {
-			  directory.close();
+			  directory.Dispose();
 		  }
 		}
 	  }
@@ -185,57 +186,57 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestConstantScoreQueryAndFilter()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
 		Document doc = new Document();
-		doc.add(newStringField("field", "a", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewStringField("field", "a", Field.Store.NO));
+		w.AddDocument(doc);
 		doc = new Document();
-		doc.add(newStringField("field", "b", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewStringField("field", "b", Field.Store.NO));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.close();
+        w.Close();
 
 		Filter filterB = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "b"))));
 		Query query = new ConstantScoreQuery(filterB);
 
-		IndexSearcher s = newSearcher(r);
-		Assert.AreEqual(1, s.search(query, filterB, 1).totalHits); // Query for field:b, Filter field:b
+		IndexSearcher s = NewSearcher(r);
+		Assert.AreEqual(1, s.Search(query, filterB, 1).TotalHits); // Query for field:b, Filter field:b
 
 		Filter filterA = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "a"))));
 		query = new ConstantScoreQuery(filterA);
 
-		Assert.AreEqual(0, s.search(query, filterB, 1).totalHits); // Query field:b, Filter field:a
+		Assert.AreEqual(0, s.Search(query, filterB, 1).TotalHits); // Query field:b, Filter field:a
 
-		r.close();
-		d.close();
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  // LUCENE-5307
 	  // don't reuse the scorer of filters since they have been created with bulkScorer=false
 	  public virtual void TestQueryWrapperFilter()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
 		Document doc = new Document();
-		doc.add(newStringField("field", "a", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewStringField("field", "a", Field.Store.NO));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.close();
+        w.Close();
 
-		Filter filter = new QueryWrapperFilter(AssertingQuery.wrap(random(), new TermQuery(new Term("field", "a"))));
-		IndexSearcher s = newSearcher(r);
+		Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random(), new TermQuery(new Term("field", "a"))));
+		IndexSearcher s = NewSearcher(r);
 		Debug.Assert(s is AssertingIndexSearcher);
 		// this used to fail
-		s.search(new ConstantScoreQuery(filter), new TotalHitCountCollector());
+		s.Search(new ConstantScoreQuery(filter), new TotalHitCountCollector());
 
 		// check the rewrite
-		Query rewritten = (new ConstantScoreQuery(filter)).rewrite(r);
+		Query rewritten = (new ConstantScoreQuery(filter)).Rewrite(r);
 		Assert.IsTrue(rewritten is ConstantScoreQuery);
 		Assert.IsTrue(((ConstantScoreQuery) rewritten).Query is AssertingQuery);
 
-		r.close();
-		d.close();
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	}

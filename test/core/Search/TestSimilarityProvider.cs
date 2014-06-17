@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestSimilarityProvider : LuceneTestCase
 	{
@@ -44,54 +45,54 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Directory = newDirectory();
+		base.SetUp();
+		Directory = NewDirectory();
 		PerFieldSimilarityWrapper sim = new ExampleSimilarityProvider(this);
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setSimilarity(sim);
-		RandomIndexWriter iw = new RandomIndexWriter(random(), Directory, iwc);
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetSimilarity(sim);
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), Directory, iwc);
 		Document doc = new Document();
-		Field field = newTextField("foo", "", Field.Store.NO);
-		doc.add(field);
-		Field field2 = newTextField("bar", "", Field.Store.NO);
-		doc.add(field2);
+		Field field = NewTextField("foo", "", Field.Store.NO);
+		doc.Add(field);
+		Field field2 = NewTextField("bar", "", Field.Store.NO);
+		doc.Add(field2);
 
 		field.StringValue = "quick brown fox";
 		field2.StringValue = "quick brown fox";
-		iw.addDocument(doc);
+		iw.AddDocument(doc);
 		field.StringValue = "jumps over lazy brown dog";
 		field2.StringValue = "jumps over lazy brown dog";
-		iw.addDocument(doc);
+		iw.AddDocument(doc);
 		Reader = iw.Reader;
-		iw.close();
-		Searcher = newSearcher(Reader);
+		iw.Close();
+		Searcher = NewSearcher(Reader);
 		Searcher.Similarity = sim;
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Directory.close();
-		base.tearDown();
+		Reader.Dispose();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestBasics()
 	  {
 		// sanity check of norms writer
 		// TODO: generalize
-		AtomicReader slow = SlowCompositeReaderWrapper.wrap(Reader);
-		NumericDocValues fooNorms = slow.getNormValues("foo");
-		NumericDocValues barNorms = slow.getNormValues("bar");
-		for (int i = 0; i < slow.maxDoc(); i++)
+		AtomicReader slow = SlowCompositeReaderWrapper.Wrap(Reader);
+		NumericDocValues fooNorms = slow.GetNormValues("foo");
+		NumericDocValues barNorms = slow.GetNormValues("bar");
+		for (int i = 0; i < slow.MaxDoc(); i++)
 		{
-		  Assert.IsFalse(fooNorms.get(i) == barNorms.get(i));
+		  Assert.IsFalse(fooNorms.Get(i) == barNorms.Get(i));
 		}
 
 		// sanity check of searching
-		TopDocs foodocs = Searcher.search(new TermQuery(new Term("foo", "brown")), 10);
-		Assert.IsTrue(foodocs.totalHits > 0);
-		TopDocs bardocs = Searcher.search(new TermQuery(new Term("bar", "brown")), 10);
-		Assert.IsTrue(bardocs.totalHits > 0);
-		Assert.IsTrue(foodocs.scoreDocs[0].score < bardocs.scoreDocs[0].score);
+		TopDocs foodocs = Searcher.Search(new TermQuery(new Term("foo", "brown")), 10);
+		Assert.IsTrue(foodocs.TotalHits > 0);
+		TopDocs bardocs = Searcher.Search(new TermQuery(new Term("bar", "brown")), 10);
+		Assert.IsTrue(bardocs.TotalHits > 0);
+		Assert.IsTrue(foodocs.ScoreDocs[0].Score < bardocs.ScoreDocs[0].Score);
 	  }
 
 	  private class ExampleSimilarityProvider : PerFieldSimilarityWrapper

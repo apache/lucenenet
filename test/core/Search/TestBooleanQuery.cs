@@ -42,6 +42,9 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using NamedThreadFactory = Lucene.Net.Util.NamedThreadFactory;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestBooleanQuery : LuceneTestCase
 	{
@@ -49,20 +52,20 @@ namespace Lucene.Net.Search
 	  public virtual void TestEquality()
 	  {
 		BooleanQuery bq1 = new BooleanQuery();
-		bq1.add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur_e.SHOULD);
-		bq1.add(new TermQuery(new Term("field", "value2")), BooleanClause.Occur_e.SHOULD);
+		bq1.Add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur_e.SHOULD);
+		bq1.Add(new TermQuery(new Term("field", "value2")), BooleanClause.Occur_e.SHOULD);
 		BooleanQuery nested1 = new BooleanQuery();
-		nested1.add(new TermQuery(new Term("field", "nestedvalue1")), BooleanClause.Occur_e.SHOULD);
-		nested1.add(new TermQuery(new Term("field", "nestedvalue2")), BooleanClause.Occur_e.SHOULD);
-		bq1.add(nested1, BooleanClause.Occur_e.SHOULD);
+		nested1.Add(new TermQuery(new Term("field", "nestedvalue1")), BooleanClause.Occur_e.SHOULD);
+		nested1.Add(new TermQuery(new Term("field", "nestedvalue2")), BooleanClause.Occur_e.SHOULD);
+		bq1.Add(nested1, BooleanClause.Occur_e.SHOULD);
 
 		BooleanQuery bq2 = new BooleanQuery();
-		bq2.add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur_e.SHOULD);
-		bq2.add(new TermQuery(new Term("field", "value2")), BooleanClause.Occur_e.SHOULD);
+		bq2.Add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur_e.SHOULD);
+		bq2.Add(new TermQuery(new Term("field", "value2")), BooleanClause.Occur_e.SHOULD);
 		BooleanQuery nested2 = new BooleanQuery();
-		nested2.add(new TermQuery(new Term("field", "nestedvalue1")), BooleanClause.Occur_e.SHOULD);
-		nested2.add(new TermQuery(new Term("field", "nestedvalue2")), BooleanClause.Occur_e.SHOULD);
-		bq2.add(nested2, BooleanClause.Occur_e.SHOULD);
+		nested2.Add(new TermQuery(new Term("field", "nestedvalue1")), BooleanClause.Occur_e.SHOULD);
+		nested2.Add(new TermQuery(new Term("field", "nestedvalue2")), BooleanClause.Occur_e.SHOULD);
+		bq2.Add(nested2, BooleanClause.Occur_e.SHOULD);
 
 		Assert.AreEqual(bq1, bq2);
 	  }
@@ -83,150 +86,150 @@ namespace Lucene.Net.Search
 	  // LUCENE-1630
 	  public virtual void TestNullOrSubScorer()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("field", "a b c d", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewTextField("field", "a b c d", Field.Store.NO));
+		w.AddDocument(doc);
 
 		IndexReader r = w.Reader;
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 		// this test relies upon coord being the default implementation,
 		// otherwise scores are different!
 		s.Similarity = new DefaultSimilarity();
 
 		BooleanQuery q = new BooleanQuery();
-		q.add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+		q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
 
 		// LUCENE-2617: make sure that a term not in the index still contributes to the score via coord factor
-		float score = s.search(q, 10).MaxScore;
+		float score = s.Search(q, 10).MaxScore;
 		Query subQuery = new TermQuery(new Term("field", "not_in_index"));
 		subQuery.Boost = 0;
-		q.add(subQuery, BooleanClause.Occur_e.SHOULD);
-		float score2 = s.search(q, 10).MaxScore;
+		q.Add(subQuery, BooleanClause.Occur_e.SHOULD);
+		float score2 = s.Search(q, 10).MaxScore;
 		Assert.AreEqual(score * .5F, score2, 1e-6);
 
 		// LUCENE-2617: make sure that a clause not in the index still contributes to the score via coord factor
-		BooleanQuery qq = q.clone();
+		BooleanQuery qq = (BooleanQuery)q.Clone();
 		PhraseQuery phrase = new PhraseQuery();
-		phrase.add(new Term("field", "not_in_index"));
-		phrase.add(new Term("field", "another_not_in_index"));
+		phrase.Add(new Term("field", "not_in_index"));
+		phrase.Add(new Term("field", "another_not_in_index"));
 		phrase.Boost = 0;
-		qq.add(phrase, BooleanClause.Occur_e.SHOULD);
-		score2 = s.search(qq, 10).MaxScore;
+		qq.Add(phrase, BooleanClause.Occur_e.SHOULD);
+		score2 = s.Search(qq, 10).MaxScore;
 		Assert.AreEqual(score * (1 / 3F), score2, 1e-6);
 
 		// now test BooleanScorer2
 		subQuery = new TermQuery(new Term("field", "b"));
 		subQuery.Boost = 0;
-		q.add(subQuery, BooleanClause.Occur_e.MUST);
-		score2 = s.search(q, 10).MaxScore;
+		q.Add(subQuery, BooleanClause.Occur_e.MUST);
+		score2 = s.Search(q, 10).MaxScore;
 		Assert.AreEqual(score * (2 / 3F), score2, 1e-6);
 
 		// PhraseQuery w/ no terms added returns a null scorer
 		PhraseQuery pq = new PhraseQuery();
-		q.add(pq, BooleanClause.Occur_e.SHOULD);
-		Assert.AreEqual(1, s.search(q, 10).totalHits);
+		q.Add(pq, BooleanClause.Occur_e.SHOULD);
+		Assert.AreEqual(1, s.Search(q, 10).TotalHits);
 
 		// A required clause which returns null scorer should return null scorer to
 		// IndexSearcher.
 		q = new BooleanQuery();
 		pq = new PhraseQuery();
-		q.add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
-		q.add(pq, BooleanClause.Occur_e.MUST);
-		Assert.AreEqual(0, s.search(q, 10).totalHits);
+		q.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+		q.Add(pq, BooleanClause.Occur_e.MUST);
+		Assert.AreEqual(0, s.Search(q, 10).TotalHits);
 
 		DisjunctionMaxQuery dmq = new DisjunctionMaxQuery(1.0f);
-		dmq.add(new TermQuery(new Term("field", "a")));
-		dmq.add(pq);
-		Assert.AreEqual(1, s.search(dmq, 10).totalHits);
+		dmq.Add(new TermQuery(new Term("field", "a")));
+		dmq.Add(pq);
+		Assert.AreEqual(1, s.Search(dmq, 10).TotalHits);
 
-		r.close();
-		w.close();
-		dir.close();
+		r.Dispose();
+		w.Close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestDeMorgan()
 	  {
-		Directory dir1 = newDirectory();
-		RandomIndexWriter iw1 = new RandomIndexWriter(random(), dir1);
+		Directory dir1 = NewDirectory();
+		RandomIndexWriter iw1 = new RandomIndexWriter(Random(), dir1);
 		Document doc1 = new Document();
-		doc1.add(newTextField("field", "foo bar", Field.Store.NO));
-		iw1.addDocument(doc1);
+		doc1.Add(NewTextField("field", "foo bar", Field.Store.NO));
+		iw1.AddDocument(doc1);
 		IndexReader reader1 = iw1.Reader;
-		iw1.close();
+        iw1.Close();
 
-		Directory dir2 = newDirectory();
-		RandomIndexWriter iw2 = new RandomIndexWriter(random(), dir2);
+		Directory dir2 = NewDirectory();
+		RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2);
 		Document doc2 = new Document();
-		doc2.add(newTextField("field", "foo baz", Field.Store.NO));
-		iw2.addDocument(doc2);
+		doc2.Add(NewTextField("field", "foo baz", Field.Store.NO));
+		iw2.AddDocument(doc2);
 		IndexReader reader2 = iw2.Reader;
-		iw2.close();
+        iw2.Close();
 
 		BooleanQuery query = new BooleanQuery(); // Query: +foo -ba*
-		query.add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.MUST);
 		WildcardQuery wildcardQuery = new WildcardQuery(new Term("field", "ba*"));
-		wildcardQuery.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
-		query.add(wildcardQuery, BooleanClause.Occur_e.MUST_NOT);
+		wildcardQuery.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
+		query.Add(wildcardQuery, BooleanClause.Occur_e.MUST_NOT);
 
 		MultiReader multireader = new MultiReader(reader1, reader2);
-		IndexSearcher searcher = newSearcher(multireader);
-		Assert.AreEqual(0, searcher.search(query, 10).totalHits);
+		IndexSearcher searcher = NewSearcher(multireader);
+		Assert.AreEqual(0, searcher.Search(query, 10).TotalHits);
 
 		ExecutorService es = Executors.newCachedThreadPool(new NamedThreadFactory("NRT search threads"));
 		searcher = new IndexSearcher(multireader, es);
 		if (VERBOSE)
 		{
-		  Console.WriteLine("rewritten form: " + searcher.rewrite(query));
+		  Console.WriteLine("rewritten form: " + searcher.Rewrite(query));
 		}
-		Assert.AreEqual(0, searcher.search(query, 10).totalHits);
+		Assert.AreEqual(0, searcher.Search(query, 10).TotalHits);
 		es.shutdown();
 		es.awaitTermination(1, TimeUnit.SECONDS);
 
-		multireader.close();
-		reader1.close();
-		reader2.close();
-		dir1.close();
-		dir2.close();
+		multireader.Dispose();
+		reader1.Dispose();
+		reader2.Dispose();
+		dir1.Dispose();
+		dir2.Dispose();
 	  }
 
 	  public virtual void TestBS2DisjunctionNextVsAdvance()
 	  {
-		Directory d = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), d);
-		int numDocs = atLeast(300);
+		Directory d = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+		int numDocs = AtLeast(300);
 		for (int docUpto = 0;docUpto < numDocs;docUpto++)
 		{
 		  string contents = "a";
-		  if (random().Next(20) <= 16)
+		  if (Random().Next(20) <= 16)
 		  {
 			contents += " b";
 		  }
-		  if (random().Next(20) <= 8)
+		  if (Random().Next(20) <= 8)
 		  {
 			contents += " c";
 		  }
-		  if (random().Next(20) <= 4)
+		  if (Random().Next(20) <= 4)
 		  {
 			contents += " d";
 		  }
-		  if (random().Next(20) <= 2)
+		  if (Random().Next(20) <= 2)
 		  {
 			contents += " e";
 		  }
-		  if (random().Next(20) <= 1)
+		  if (Random().Next(20) <= 1)
 		  {
 			contents += " f";
 		  }
 		  Document doc = new Document();
-		  doc.add(new TextField("field", contents, Field.Store.NO));
-		  w.addDocument(doc);
+		  doc.Add(new TextField("field", contents, Field.Store.NO));
+		  w.AddDocument(doc);
 		}
-		w.forceMerge(1);
+		w.ForceMerge(1);
 		IndexReader r = w.Reader;
-		IndexSearcher s = newSearcher(r);
-		w.close();
+		IndexSearcher s = NewSearcher(r);
+		w.Close();
 
 		for (int iter = 0;iter < 10 * RANDOM_MULTIPLIER;iter++)
 		{
@@ -234,11 +237,11 @@ namespace Lucene.Net.Search
 		  {
 			Console.WriteLine("iter=" + iter);
 		  }
-		  IList<string> terms = new List<string>(Arrays.asList("a", "b", "c", "d", "e", "f"));
-		  int numTerms = TestUtil.Next(random(), 1, terms.Count);
+		  IList<string> terms = new List<string>(Arrays.AsList("a", "b", "c", "d", "e", "f"));
+		  int numTerms = TestUtil.NextInt(Random(), 1, terms.Count);
 		  while (terms.Count > numTerms)
 		  {
-			terms.Remove(random().Next(terms.Count));
+			terms.RemoveAt(Random().Next(terms.Count));
 		  }
 
 		  if (VERBOSE)
@@ -249,18 +252,18 @@ namespace Lucene.Net.Search
 		  BooleanQuery q = new BooleanQuery();
 		  foreach (string term in terms)
 		  {
-			q.add(new BooleanClause(new TermQuery(new Term("field", term)), BooleanClause.Occur_e.SHOULD));
+			q.Add(new BooleanClause(new TermQuery(new Term("field", term)), BooleanClause.Occur_e.SHOULD));
 		  }
 
-		  Weight weight = s.createNormalizedWeight(q);
+		  Weight weight = s.CreateNormalizedWeight(q);
 
-		  Scorer scorer = weight.scorer(s.leafContexts.get(0), null);
+		  Scorer scorer = weight.Scorer(s.LeafContexts.Get(0), null);
 
-		  // First pass: just use .nextDoc() to gather all hits
+		  // First pass: just use .NextDoc() to gather all hits
 		  IList<ScoreDoc> hits = new List<ScoreDoc>();
-		  while (scorer.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		  while (scorer.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		  {
-			hits.Add(new ScoreDoc(scorer.docID(), scorer.score()));
+			hits.Add(new ScoreDoc(scorer.DocID(), scorer.Score()));
 		  }
 
 		  if (VERBOSE)
@@ -273,8 +276,8 @@ namespace Lucene.Net.Search
 		  for (int iter2 = 0;iter2 < 10;iter2++)
 		  {
 
-			weight = s.createNormalizedWeight(q);
-			scorer = weight.scorer(s.leafContexts.get(0), null);
+			weight = s.CreateNormalizedWeight(q);
+			scorer = weight.Scorer(s.LeafContexts.Get(0), null);
 
 			if (VERBOSE)
 			{
@@ -287,18 +290,18 @@ namespace Lucene.Net.Search
 			  int nextUpto;
 			  int nextDoc;
 			  int left = hits.Count - upto;
-			  if (left == 1 || random().nextBoolean())
+			  if (left == 1 || Random().NextBoolean())
 			  {
 				// next
 				nextUpto = 1 + upto;
-				nextDoc = scorer.nextDoc();
+				nextDoc = scorer.NextDoc();
 			  }
 			  else
 			  {
 				// advance
-				int inc = TestUtil.Next(random(), 1, left - 1);
+				int inc = TestUtil.NextInt(Random(), 1, left - 1);
 				nextUpto = inc + upto;
-				nextDoc = scorer.advance(hits[nextUpto].doc);
+				nextDoc = scorer.Advance(hits[nextUpto].Doc);
 			  }
 
 			  if (nextUpto == hits.Count)
@@ -308,17 +311,17 @@ namespace Lucene.Net.Search
 			  else
 			  {
 				ScoreDoc hit = hits[nextUpto];
-				Assert.AreEqual(hit.doc, nextDoc);
+				Assert.AreEqual(hit.Doc, nextDoc);
 				// Test for precise float equality:
-				Assert.IsTrue("doc " + hit.doc + " has wrong score: expected=" + hit.score + " actual=" + scorer.score(), hit.score == scorer.score());
+				Assert.IsTrue(hit.Score == scorer.Score(), "doc " + hit.Doc + " has wrong score: expected=" + hit.Score + " actual=" + scorer.Score());
 			  }
 			  upto = nextUpto;
 			}
 		  }
 		}
 
-		r.close();
-		d.close();
+		r.Dispose();
+		d.Dispose();
 	  }
 
 	  // LUCENE-4477 / LUCENE-4401:
@@ -326,57 +329,57 @@ namespace Lucene.Net.Search
 	  {
 		bool failed = false;
 		int hits = 0;
-		Directory directory = newDirectory();
-		Analyzer indexerAnalyzer = new MockAnalyzer(random());
+		Directory directory = NewDirectory();
+		Analyzer indexerAnalyzer = new MockAnalyzer(Random());
 
 		IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, indexerAnalyzer);
 		IndexWriter writer = new IndexWriter(directory, config);
 		string FIELD = "content";
 		Document d = new Document();
-		d.add(new TextField(FIELD, "clockwork orange", Field.Store.YES));
-		writer.addDocument(d);
-		writer.close();
+		d.Add(new TextField(FIELD, "clockwork orange", Field.Store.YES));
+		writer.AddDocument(d);
+		writer.Dispose();
 
-		IndexReader indexReader = DirectoryReader.open(directory);
-		IndexSearcher searcher = newSearcher(indexReader);
+		IndexReader indexReader = DirectoryReader.Open(directory);
+		IndexSearcher searcher = NewSearcher(indexReader);
 
 		BooleanQuery query = new BooleanQuery();
 		SpanQuery sq1 = new SpanTermQuery(new Term(FIELD, "clockwork"));
 		SpanQuery sq2 = new SpanTermQuery(new Term(FIELD, "clckwork"));
-		query.add(sq1, BooleanClause.Occur_e.SHOULD);
-		query.add(sq2, BooleanClause.Occur_e.SHOULD);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(1000, true);
-		searcher.search(query, collector);
-		hits = collector.topDocs().scoreDocs.length;
-		foreach (ScoreDoc scoreDoc in collector.topDocs().scoreDocs)
+		query.Add(sq1, BooleanClause.Occur_e.SHOULD);
+		query.Add(sq2, BooleanClause.Occur_e.SHOULD);
+		TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, true);
+		searcher.Search(query, collector);
+		hits = collector.TopDocs().ScoreDocs.Length;
+		foreach (ScoreDoc scoreDoc in collector.TopDocs().ScoreDocs)
 		{
-		  Console.WriteLine(scoreDoc.doc);
+		  Console.WriteLine(scoreDoc.Doc);
 		}
-		indexReader.close();
-		Assert.AreEqual("Bug in boolean query composed of span queries", failed, false);
-		Assert.AreEqual("Bug in boolean query composed of span queries", hits, 1);
-		directory.close();
+		indexReader.Dispose();
+		Assert.AreEqual(failed, false, "Bug in boolean query composed of span queries");
+		Assert.AreEqual(hits, 1, "Bug in boolean query composed of span queries");
+		directory.Dispose();
 	  }
 
 	  // LUCENE-5487
 	  public virtual void TestInOrderWithMinShouldMatch()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("field", "some text here", Field.Store.NO));
-		w.addDocument(doc);
+		doc.Add(NewTextField("field", "some text here", Field.Store.NO));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 		IndexSearcher s = new IndexSearcherAnonymousInnerClassHelper(this, r);
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(new Term("field", "some")), BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(new Term("field", "text")), BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(new Term("field", "here")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term("field", "some")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term("field", "text")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term("field", "here")), BooleanClause.Occur_e.SHOULD);
 		bq.MinimumNumberShouldMatch = 2;
-		s.search(bq, 10);
-		r.close();
-		dir.close();
+		s.Search(bq, 10);
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class IndexSearcherAnonymousInnerClassHelper : IndexSearcher
@@ -391,7 +394,7 @@ namespace Lucene.Net.Search
 		  protected internal override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
 		  {
 			Assert.AreEqual(-1, collector.GetType().Name.IndexOf("OutOfOrder"));
-			base.search(leaves, weight, collector);
+			base.Search(leaves, weight, collector);
 		  }
 	  }
 

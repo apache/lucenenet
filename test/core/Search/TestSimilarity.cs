@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Similarity unit test.
@@ -73,47 +74,47 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestSimilarity()
 	  {
-		Directory store = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), store, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setSimilarity(new SimpleSimilarity()));
+		Directory store = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetSimilarity(new SimpleSimilarity()));
 
 		Document d1 = new Document();
-		d1.add(newTextField("field", "a c", Field.Store.YES));
+		d1.Add(NewTextField("field", "a c", Field.Store.YES));
 
 		Document d2 = new Document();
-		d2.add(newTextField("field", "a b c", Field.Store.YES));
+		d2.Add(NewTextField("field", "a b c", Field.Store.YES));
 
-		writer.addDocument(d1);
-		writer.addDocument(d2);
+		writer.AddDocument(d1);
+		writer.AddDocument(d2);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 		searcher.Similarity = new SimpleSimilarity();
 
 		Term a = new Term("field", "a");
 		Term b = new Term("field", "b");
 		Term c = new Term("field", "c");
 
-		searcher.search(new TermQuery(b), new CollectorAnonymousInnerClassHelper(this));
+		searcher.Search(new TermQuery(b), new CollectorAnonymousInnerClassHelper(this));
 
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(a), BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(b), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(a), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(b), BooleanClause.Occur_e.SHOULD);
 		//System.out.println(bq.toString("field"));
-		searcher.search(bq, new CollectorAnonymousInnerClassHelper2(this));
+		searcher.Search(bq, new CollectorAnonymousInnerClassHelper2(this));
 
 		PhraseQuery pq = new PhraseQuery();
-		pq.add(a);
-		pq.add(c);
+		pq.Add(a);
+		pq.Add(c);
 		//System.out.println(pq.toString("field"));
-		searcher.search(pq, new CollectorAnonymousInnerClassHelper3(this));
+		searcher.Search(pq, new CollectorAnonymousInnerClassHelper3(this));
 
 		pq.Slop = 2;
 		//System.out.println(pq.toString("field"));
-		searcher.search(pq, new CollectorAnonymousInnerClassHelper4(this));
+		searcher.Search(pq, new CollectorAnonymousInnerClassHelper4(this));
 
-		reader.close();
-		store.close();
+		reader.Dispose();
+		store.Dispose();
 	  }
 
 	  private class CollectorAnonymousInnerClassHelper : Collector
@@ -135,7 +136,7 @@ namespace Lucene.Net.Search
 		  }
 		  public override void Collect(int doc)
 		  {
-			Assert.AreEqual(1.0f, scorer.score(), 0);
+			Assert.AreEqual(1.0f, scorer.Score(), 0);
 		  }
 		  public override AtomicReaderContext NextReader
 		  {
@@ -171,13 +172,13 @@ namespace Lucene.Net.Search
 		  public override void Collect(int doc)
 		  {
 			//System.out.println("Doc=" + doc + " score=" + score);
-			Assert.AreEqual((float)doc + @base+1, scorer.score(), 0);
+			Assert.AreEqual((float)doc + @base+1, scorer.Score(), 0);
 		  }
 		  public override AtomicReaderContext NextReader
 		  {
 			  set
 			  {
-				@base = value.docBase;
+				@base = value.DocBase;
 			  }
 		  }
 		  public override bool AcceptsDocsOutOfOrder()
@@ -206,7 +207,7 @@ namespace Lucene.Net.Search
 		  public override void Collect(int doc)
 		  {
 			//System.out.println("Doc=" + doc + " score=" + score);
-			Assert.AreEqual(1.0f, scorer.score(), 0);
+			Assert.AreEqual(1.0f, scorer.Score(), 0);
 		  }
 		  public override AtomicReaderContext NextReader
 		  {
@@ -240,7 +241,7 @@ namespace Lucene.Net.Search
 		  public override void Collect(int doc)
 		  {
 			//System.out.println("Doc=" + doc + " score=" + score);
-			Assert.AreEqual(2.0f, scorer.score(), 0);
+			Assert.AreEqual(2.0f, scorer.Score(), 0);
 		  }
 		  public override AtomicReaderContext NextReader
 		  {

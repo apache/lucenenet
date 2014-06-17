@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Unit test for sorting code. </summary>
@@ -47,11 +48,11 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public override void SetUp()
 	  {
-		base.setUp();
-		INDEX_SIZE = atLeast(2000);
-		Index = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Index);
-		RandomGen random = new RandomGen(this, random());
+		base.SetUp();
+		INDEX_SIZE = AtLeast(2000);
+		Index = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Index);
+		RandomGen random = new RandomGen(this, Random());
 		for (int i = 0; i < INDEX_SIZE; ++i) // don't decrease; if to low the
 		{
 											   // problem doesn't show up
@@ -59,26 +60,26 @@ namespace Lucene.Net.Search
 		  if ((i % 5) != 0) // some documents must not have an entry in the first
 		  {
 							  // sort field
-			doc.add(newStringField("publicationDate_", random.LuceneDate, Field.Store.YES));
+			doc.Add(NewStringField("publicationDate_", random.LuceneDate, Field.Store.YES));
 		  }
 		  if ((i % 7) == 0) // some documents to match the query (see below)
 		  {
-			doc.add(newTextField("content", "test", Field.Store.YES));
+			doc.Add(NewTextField("content", "test", Field.Store.YES));
 		  }
 		  // every document has a defined 'mandant' field
-		  doc.add(newStringField("mandant", Convert.ToString(i % 3), Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("mandant", Convert.ToString(i % 3), Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
+        writer.Close();
 		Query = new TermQuery(new Term("content", "test"));
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Index.close();
-		base.tearDown();
+		Reader.Dispose();
+		Index.Dispose();
+		base.TearDown();
 	  }
 
 	  /// <summary>
@@ -88,7 +89,7 @@ namespace Lucene.Net.Search
 	  {
 		// log("Run testFieldSortCustomSearcher");
 		// define the sort criteria
-		Sort custSort = new Sort(new SortField("publicationDate_", SortField.Type.STRING), SortField.FIELD_SCORE);
+		Sort custSort = new Sort(new SortField("publicationDate_", SortField.Type_e.STRING), SortField.FIELD_SCORE);
 		IndexSearcher searcher = new CustomSearcher(this, Reader, 2);
 		// search and check hits
 		MatchHits(searcher, custSort);
@@ -101,7 +102,7 @@ namespace Lucene.Net.Search
 	  {
 		// log("Run testFieldSortSingleSearcher");
 		// define the sort criteria
-		Sort custSort = new Sort(new SortField("publicationDate_", SortField.Type.STRING), SortField.FIELD_SCORE);
+		Sort custSort = new Sort(new SortField("publicationDate_", SortField.Type_e.STRING), SortField.FIELD_SCORE);
 		IndexSearcher searcher = new CustomSearcher(this, Reader, 2);
 		// search and check hits
 		MatchHits(searcher, custSort);
@@ -111,25 +112,25 @@ namespace Lucene.Net.Search
 	  private void MatchHits(IndexSearcher searcher, Sort sort)
 	  {
 		// make a query without sorting first
-		ScoreDoc[] hitsByRank = searcher.search(Query, null, int.MaxValue).scoreDocs;
+		ScoreDoc[] hitsByRank = searcher.Search(Query, null, int.MaxValue).ScoreDocs;
 		CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
 		IDictionary<int?, int?> resultMap = new SortedDictionary<int?, int?>();
 		// store hits in TreeMap - TreeMap does not allow duplicates; existing
 		// entries are silently overwritten
 		for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
 		{
-		  resultMap[Convert.ToInt32(hitsByRank[hitid].doc)] = Convert.ToInt32(hitid); // Value: Hits-Objekt Index -  Key: Lucene
+		  resultMap[Convert.ToInt32(hitsByRank[hitid].Doc)] = Convert.ToInt32(hitid); // Value: Hits-Objekt Index -  Key: Lucene
 																// Document ID
 		}
 
 		// now make a query using the sort criteria
-		ScoreDoc[] resultSort = searcher.search(Query, null, int.MaxValue, sort).scoreDocs;
+		ScoreDoc[] resultSort = searcher.Search(Query, null, int.MaxValue, sort).ScoreDocs;
 		CheckHits(resultSort, "Sort by custom criteria: "); // check for duplicates
 
 		// besides the sorting both sets of hits must be identical
 		for (int hitid = 0; hitid < resultSort.Length; ++hitid)
 		{
-		  int? idHitDate = Convert.ToInt32(resultSort[hitid].doc); // document ID
+		  int? idHitDate = Convert.ToInt32(resultSort[hitid].Doc); // document ID
 																	  // from sorted
 																	  // search
 		  if (!resultMap.ContainsKey(idHitDate))
@@ -167,7 +168,7 @@ namespace Lucene.Net.Search
 		  {
 			int? luceneId = null;
 
-			luceneId = Convert.ToInt32(hits[docnum].doc);
+			luceneId = Convert.ToInt32(hits[docnum].Doc);
 			if (idMap.ContainsKey(luceneId))
 			{
 			  StringBuilder message = new StringBuilder(prefix);
@@ -211,17 +212,17 @@ namespace Lucene.Net.Search
 		public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
 		{
 		  BooleanQuery bq = new BooleanQuery();
-		  bq.add(query, BooleanClause.Occur_e.MUST);
-		  bq.add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur_e.MUST);
-		  return base.search(bq, filter, nDocs, sort);
+		  bq.Add(query, BooleanClause.Occur_e.MUST);
+		  bq.Add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur_e.MUST);
+		  return base.Search(bq, filter, nDocs, sort);
 		}
 
 		public override TopDocs Search(Query query, Filter filter, int nDocs)
 		{
 		  BooleanQuery bq = new BooleanQuery();
-		  bq.add(query, BooleanClause.Occur_e.MUST);
-		  bq.add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur_e.MUST);
-		  return base.search(bq, filter, nDocs);
+		  bq.Add(query, BooleanClause.Occur_e.MUST);
+		  bq.Add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), BooleanClause.Occur_e.MUST);
+		  return base.Search(bq, filter, nDocs);
 		}
 	  }
 
@@ -245,7 +246,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return DateTools.timeToString(@base.TimeInMillis + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
+			  return DateTools.TimeToString(@base.TimeInMillis + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
 			}
 		}
 	  }

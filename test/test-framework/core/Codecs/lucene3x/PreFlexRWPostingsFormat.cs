@@ -63,13 +63,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool SortTermsByUnicode()
+		  protected override bool SortTermsByUnicode()
 		  {
 			// We carefully peek into stack track above us: if
 			// we are part of a "merge", we must sort by UTF16:
 			bool unicodeSortOrder = true;
 
-			StackTraceElement[] trace = (new Exception()).StackTrace;
+			string[] trace = (new Exception()).StackTrace;
 			for (int i = 0; i < trace.Length; i++)
 			{
 			  //System.out.println(trace[i].getClassName());

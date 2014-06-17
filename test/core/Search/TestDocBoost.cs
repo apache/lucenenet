@@ -28,6 +28,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Document boost unit test.
@@ -39,29 +40,29 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestDocBoost()
 	  {
-		Directory store = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), store, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		Directory store = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 
-		Field f1 = newTextField("field", "word", Field.Store.YES);
-		Field f2 = newTextField("field", "word", Field.Store.YES);
+		Field f1 = NewTextField("field", "word", Field.Store.YES);
+		Field f2 = NewTextField("field", "word", Field.Store.YES);
 		f2.Boost = 2.0f;
 
 		Document d1 = new Document();
 		Document d2 = new Document();
 
-		d1.add(f1); // boost = 1
-		d2.add(f2); // boost = 2
+		d1.Add(f1); // boost = 1
+		d2.Add(f2); // boost = 2
 
-		writer.addDocument(d1);
-		writer.addDocument(d2);
+		writer.AddDocument(d1);
+		writer.AddDocument(d2);
 
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
 		float[] scores = new float[4];
 
-		IndexSearcher searcher = newSearcher(reader);
-		searcher.search(new TermQuery(new Term("field", "word")), new CollectorAnonymousInnerClassHelper(this, scores));
+		IndexSearcher searcher = NewSearcher(reader);
+		searcher.Search(new TermQuery(new Term("field", "word")), new CollectorAnonymousInnerClassHelper(this, scores));
 
 		float lastScore = 0.0f;
 
@@ -69,14 +70,14 @@ namespace Lucene.Net.Search
 		{
 		  if (VERBOSE)
 		  {
-			Console.WriteLine(searcher.explain(new TermQuery(new Term("field", "word")), i));
+			Console.WriteLine(searcher.Explain(new TermQuery(new Term("field", "word")), i));
 		  }
-		  Assert.IsTrue("score: " + scores[i] + " should be > lastScore: " + lastScore, scores[i] > lastScore);
+		  Assert.IsTrue(scores[i] > lastScore, "score: " + scores[i] + " should be > lastScore: " + lastScore);
 		  lastScore = scores[i];
 		}
 
-		reader.close();
-		store.close();
+		reader.Dispose();
+		store.Dispose();
 	  }
 
 	  private class CollectorAnonymousInnerClassHelper : Collector
@@ -103,13 +104,13 @@ namespace Lucene.Net.Search
 		  }
 		  public override void Collect(int doc)
 		  {
-			Scores[doc + @base] = scorer.score();
+			Scores[doc + @base] = scorer.Score();
 		  }
 		  public override AtomicReaderContext NextReader
 		  {
 			  set
 			  {
-				@base = value.docBase;
+				@base = value.DocBase;
 			  }
 		  }
 		  public override bool AcceptsDocsOutOfOrder()

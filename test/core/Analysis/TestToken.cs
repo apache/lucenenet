@@ -24,7 +24,6 @@ namespace Lucene.Net.Analysis
 	using Lucene.Net.Analysis.Tokenattributes;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using Attribute = Lucene.Net.Util.Attribute;
-	using Attribute = Lucene.Net.Util.Attribute;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
@@ -246,7 +245,7 @@ namespace Lucene.Net.Analysis
 		{
 			return (o is SenselessAttributeImpl);
 		}
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 			return 0;
 		}

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Codecs.Compressing
 {
 
@@ -61,7 +63,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  internal static sbyte[] Compress(Compressor compressor, sbyte[] decompressed, int off, int len)
 	  {
 		sbyte[] compressed = new sbyte[len * 2 + 16]; // should be enough
-		ByteArrayDataOutput @out = new ByteArrayDataOutput(compressed);
+		ByteArrayDataOutput @out = new ByteArrayDataOutput((byte[])(Array)compressed);
 		compressor.Compress(decompressed, off, len, @out);
 		int compressedLen = @out.Position;
 		return Arrays.CopyOf(compressed, compressedLen);
@@ -76,7 +78,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  internal static sbyte[] Decompress(Decompressor decompressor, sbyte[] compressed, int originalLength)
 	  {
 		BytesRef bytes = new BytesRef();
-		decompressor.Decompress(new ByteArrayDataInput(compressed), originalLength, 0, originalLength, bytes);
+        decompressor.Decompress(new ByteArrayDataInput((byte[])(Array)compressed), originalLength, 0, originalLength, bytes);
 		return Arrays.CopyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
 	  }
 
@@ -84,8 +86,8 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		Decompressor decompressor = Mode.NewDecompressor();
 		BytesRef bytes = new BytesRef();
-		decompressor.Decompress(new ByteArrayDataInput(compressed), originalLength, offset, length, bytes);
-		return Arrays.copyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
+        decompressor.Decompress(new ByteArrayDataInput((byte[])(Array)compressed), originalLength, offset, length, bytes);
+		return Arrays.CopyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);
 	  }
 
 	  public virtual void TestDecompress()
@@ -98,7 +100,7 @@ namespace Lucene.Net.Codecs.Compressing
           int len = Random().NextBoolean() ? decompressed.Length - off : TestUtil.NextInt(Random(), 0, decompressed.Length - off);
 		  sbyte[] compressed = Compress(decompressed, off, len);
 		  sbyte[] restored = Decompress(compressed, len);
-		  AssertArrayEquals(Arrays.copyOfRange(decompressed, off, off + len), restored);
+		  AssertArrayEquals(Arrays.CopyOfRange(decompressed, off, off + len), restored);
 		}
 	  }
 
@@ -120,7 +122,7 @@ namespace Lucene.Net.Codecs.Compressing
 			length = Random().Next(decompressed.Length - offset);
 		  }
 		  sbyte[] restored = Decompress(compressed, decompressed.Length, offset, length);
-		  AssertArrayEquals(Arrays.copyOfRange(decompressed, offset, offset + length), restored);
+		  AssertArrayEquals(Arrays.CopyOfRange(decompressed, offset, offset + length), restored);
 		}
 	  }
 

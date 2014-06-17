@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Compressing.dummy
 			bytes.Length = length;
 		  }
 
-		  public override Decompressor Clone()
+		  public override object Clone()
 		  {
 			return this;
 		  }

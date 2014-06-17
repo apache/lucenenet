@@ -70,29 +70,33 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  // and adds a new entry for this document into the index
 	  // stream.  this assumes the buffer was already written
 	  // in the correct fields format.
-	  public void StartDocument(int numStoredFields)
+	  public override void StartDocument(int numStoredFields)
 	  {
 		IndexStream.WriteLong(FieldsStream.FilePointer);
 		FieldsStream.WriteVInt(numStoredFields);
 	  }
 
-	  public void Close()
+	  protected override void Dispose(bool disposing)
 	  {
-		try
-		{
-		  IOUtils.Close(FieldsStream, IndexStream);
-		}
-		finally
-		{
-		  FieldsStream = IndexStream = null;
-		}
+	      if (disposing)
+	      {
+              try
+              {
+                  IOUtils.Close(FieldsStream, IndexStream);
+              }
+              finally
+              {
+                  FieldsStream = IndexStream = null;
+              }
+	      }
+		
 	  }
 
-	  public void Abort()
+	  public override void Abort()
 	  {
 		try
 		{
-		  Close();
+		  Dispose();
 		}
 		catch (Exception ignored)
 		{
@@ -100,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
 	  }
 
-	  public void WriteField(FieldInfo info, IndexableField field)
+	  public override void WriteField(FieldInfo info, IndexableField field)
 	  {
 		FieldsStream.WriteVInt(info.Number);
 		int bits = 0;

@@ -45,7 +45,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="core\App.config" />
     <None Include="core\Lucene.Net.snk" />
     <None Include="core\Test.nunit" />
@@ -611,9 +610,6 @@
     <Compile Include="core\Index\TestTwoPhaseCommitTool.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Index\TestUniqueTermCount.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\RectangularArrays.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -947,9 +943,6 @@
     <Compile Include="core\Search\TestTermVectors.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Search\TestTimeLimitingCollector.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="core\Search\TestTopDocsCollector.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -971,9 +964,7 @@
     <Compile Include="core\Search\TestWildcardRandom.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Store\TestBufferedChecksum.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="core\Search\ThreadClass.cs" />
     <Compile Include="core\Store\TestBufferedIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>

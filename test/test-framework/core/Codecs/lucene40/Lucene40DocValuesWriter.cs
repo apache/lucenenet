@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void AddBytesField(FieldInfo field, IndexOutput output, IEnumerable<long> values)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_8.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_8.Name);
 		CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
 		output.WriteInt(1); // size
 		foreach (long n in values)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
       private void AddShortsField(FieldInfo field, IndexOutput output, IEnumerable<long> values)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_16.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_16.Name);
 		CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
 		output.WriteInt(2); // size
         foreach (long n in values)
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
       private void AddIntsField(FieldInfo field, IndexOutput output, IEnumerable<long> values)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_32.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_32.Name);
 		CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
 		output.WriteInt(4); // size
         foreach (long n in values)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
       private void AddVarIntsField(FieldInfo field, IndexOutput output, IEnumerable<long> values, long minValue, long maxValue)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.VAR_INTS.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.VAR_INTS.Name);
 
 		CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.VAR_INTS_CODEC_NAME, Lucene40DocValuesFormat.VAR_INTS_VERSION_CURRENT);
 
@@ -173,21 +173,24 @@ namespace Lucene.Net.Codecs.Lucene40
 		HashSet<BytesRef> uniqueValues = new HashSet<BytesRef>();
 		int minLength = int.MaxValue;
 		int maxLength = int.MinValue;
+	    BytesRef brefDummy;
 		foreach (BytesRef b in values)
 		{
-		  if (b == null)
+		  brefDummy = b;
+		  
+          if (b == null)
 		  {
-			b = new BytesRef(); // 4.0 doesnt distinguish
+              brefDummy = new BytesRef(); // 4.0 doesnt distinguish
 		  }
 		  if (b.Length > Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
 		  {
 			throw new System.ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
 		  }
-		  minLength = Math.Min(minLength, b.Length);
-		  maxLength = Math.Max(maxLength, b.Length);
+          minLength = Math.Min(minLength, brefDummy.Length);
+          maxLength = Math.Max(maxLength, brefDummy.Length);
 		  if (uniqueValues != null)
 		  {
-			if (uniqueValues.Add(BytesRef.DeepCopyOf(b)))
+            if (uniqueValues.Add(BytesRef.DeepCopyOf(brefDummy)))
 			{
 			  if (uniqueValues.Count > 256)
 			  {
@@ -293,7 +296,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void AddFixedStraightBytesField(FieldInfo field, IndexOutput output, IEnumerable<BytesRef> values, int length)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_STRAIGHT.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_STRAIGHT.Name);
 
 		CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_CODEC_NAME, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_CURRENT);
 
@@ -310,7 +313,7 @@ namespace Lucene.Net.Codecs.Lucene40
 	  // NOTE: 4.0 file format docs are crazy/wrong here...
 	  private void AddVarStraightBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_STRAIGHT.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_STRAIGHT.Name);
 
 		CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_CURRENT);
 
@@ -354,7 +357,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void AddFixedDerefBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, int length)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_DEREF.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_DEREF.Name);
 
 		CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_CURRENT);
 
@@ -381,13 +384,16 @@ namespace Lucene.Net.Codecs.Lucene40
 		int maxDoc = State.SegmentInfo.DocCount;
 		PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(valueCount - 1), PackedInts.DEFAULT);
 
+        BytesRef brefDummy;
 		foreach (BytesRef v in values)
 		{
-		  if (v == null)
+		  brefDummy = v;
+		  
+          if (v == null)
 		  {
-			v = new BytesRef();
+              brefDummy = new BytesRef();
 		  }
-		  int ord = dictionary.headSet(v).Size();
+          int ord = dictionary.HeadSet(brefDummy).Size();
 		  w.Add(ord);
 		}
 		w.Finish();
@@ -395,7 +401,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  private void AddVarDerefBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_DEREF.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_DEREF.Name);
 
 		CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_VAR_DEREF_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_CURRENT);
 
@@ -522,7 +528,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
       private void AddFixedSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd, int length)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_SORTED.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_SORTED.Name);
 
 		CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_CURRENT);
 
@@ -553,7 +559,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
       private void AddVarSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long> docToOrd)
 	  {
-		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_SORTED.Name());
+		field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_SORTED.Name);
 
 		CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_VAR_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_CURRENT);
 
@@ -606,7 +612,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		throw new System.NotSupportedException("Lucene 4.0 does not support SortedSet docvalues");
 	  }
 
-	  public override void Close()
+	  protected override void Dispose(bool disposing)
 	  {
 		Dir.Dispose();
 	  }

@@ -42,6 +42,9 @@ namespace Lucene.Net.Search
 	using English = Lucene.Net.Util.English;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Tests IndexSearcher's searchAfter() method
@@ -58,13 +61,13 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 
-		AllSortFields = new List<>(Arrays.asList(new SortField[] {new SortField("byte", SortField.Type.BYTE, false), new SortField("short", SortField.Type.SHORT, false), new SortField("int", SortField.Type.INT, false), new SortField("long", SortField.Type.LONG, false), new SortField("float", SortField.Type.FLOAT, false), new SortField("double", SortField.Type.DOUBLE, false), new SortField("bytes", SortField.Type.STRING, false), new SortField("bytesval", SortField.Type.STRING_VAL, false), new SortField("byte", SortField.Type.BYTE, true), new SortField("short", SortField.Type.SHORT, true), new SortField("int", SortField.Type.INT, true), new SortField("long", SortField.Type.LONG, true), new SortField("float", SortField.Type.FLOAT, true), new SortField("double", SortField.Type.DOUBLE, true), new SortField("bytes", SortField.Type.STRING, true), new SortField("bytesval", SortField.Type.STRING_VAL, true), SortField.FIELD_SCORE, SortField.FIELD_DOC}));
+		AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] {new SortField("byte", SortField.Type_e.BYTE, false), new SortField("short", SortField.Type_e.SHORT, false), new SortField("int", SortField.Type_e.INT, false), new SortField("long", SortField.Type_e.LONG, false), new SortField("float", SortField.Type_e.FLOAT, false), new SortField("double", SortField.Type_e.DOUBLE, false), new SortField("bytes", SortField.Type_e.STRING, false), new SortField("bytesval", SortField.Type_e.STRING_VAL, false), new SortField("byte", SortField.Type_e.BYTE, true), new SortField("short", SortField.Type_e.SHORT, true), new SortField("int", SortField.Type_e.INT, true), new SortField("long", SortField.Type_e.LONG, true), new SortField("float", SortField.Type_e.FLOAT, true), new SortField("double", SortField.Type_e.DOUBLE, true), new SortField("bytes", SortField.Type_e.STRING, true), new SortField("bytesval", SortField.Type_e.STRING_VAL, true), SortField.FIELD_SCORE, SortField.FIELD_DOC}));
 
 		if (SupportsDocValues)
 		{
-		  AllSortFields.AddRange(Arrays.asList(new SortField[] {new SortField("intdocvalues", SortField.Type.INT, false), new SortField("floatdocvalues", SortField.Type.FLOAT, false), new SortField("sortedbytesdocvalues", SortField.Type.STRING, false), new SortField("sortedbytesdocvaluesval", SortField.Type.STRING_VAL, false), new SortField("straightbytesdocvalues", SortField.Type.STRING_VAL, false), new SortField("intdocvalues", SortField.Type.INT, true), new SortField("floatdocvalues", SortField.Type.FLOAT, true), new SortField("sortedbytesdocvalues", SortField.Type.STRING, true), new SortField("sortedbytesdocvaluesval", SortField.Type.STRING_VAL, true), new SortField("straightbytesdocvalues", SortField.Type.STRING_VAL, true)}));
+		  AllSortFields.AddRange(Arrays.AsList(new SortField[] {new SortField("intdocvalues", SortField.Type_e.INT, false), new SortField("floatdocvalues", SortField.Type_e.FLOAT, false), new SortField("sortedbytesdocvalues", SortField.Type_e.STRING, false), new SortField("sortedbytesdocvaluesval", SortField.Type_e.STRING_VAL, false), new SortField("straightbytesdocvalues", SortField.Type_e.STRING_VAL, false), new SortField("intdocvalues", SortField.Type_e.INT, true), new SortField("floatdocvalues", SortField.Type_e.FLOAT, true), new SortField("sortedbytesdocvalues", SortField.Type_e.STRING, true), new SortField("sortedbytesdocvaluesval", SortField.Type_e.STRING_VAL, true), new SortField("straightbytesdocvalues", SortField.Type_e.STRING_VAL, true)}));
 		}
 
 		// Also test missing first / last for the "string" sorts:
@@ -73,11 +76,11 @@ namespace Lucene.Net.Search
 		  for (int rev = 0;rev < 2;rev++)
 		  {
 			bool reversed = rev == 0;
-			SortField sf = new SortField(field, SortField.Type.STRING, reversed);
+			SortField sf = new SortField(field, SortField.Type_e.STRING, reversed);
 			sf.MissingValue = SortField.STRING_FIRST;
 			AllSortFields.Add(sf);
 
-			sf = new SortField(field, SortField.Type.STRING, reversed);
+			sf = new SortField(field, SortField.Type_e.STRING, reversed);
 			sf.MissingValue = SortField.STRING_LAST;
 			AllSortFields.Add(sf);
 		  }
@@ -87,61 +90,61 @@ namespace Lucene.Net.Search
 		for (int i = 0;i < limit;i++)
 		{
 		  SortField sf = AllSortFields[i];
-		  if (sf.Type == SortField.Type.INT)
+		  if (sf.Type == SortField.Type_e.INT)
 		  {
-			SortField sf2 = new SortField(sf.Field, SortField.Type.INT, sf.Reverse);
-			sf2.MissingValue = random().Next();
+			SortField sf2 = new SortField(sf.Field, SortField.Type_e.INT, sf.Reverse);
+			sf2.MissingValue = Random().Next();
 			AllSortFields.Add(sf2);
 		  }
-		  else if (sf.Type == SortField.Type.LONG)
+		  else if (sf.Type == SortField.Type_e.LONG)
 		  {
-			SortField sf2 = new SortField(sf.Field, SortField.Type.LONG, sf.Reverse);
-			sf2.MissingValue = random().nextLong();
+			SortField sf2 = new SortField(sf.Field, SortField.Type_e.LONG, sf.Reverse);
+			sf2.MissingValue = Random().NextLong();
 			AllSortFields.Add(sf2);
 		  }
-		  else if (sf.Type == SortField.Type.FLOAT)
+		  else if (sf.Type == SortField.Type_e.FLOAT)
 		  {
-			SortField sf2 = new SortField(sf.Field, SortField.Type.FLOAT, sf.Reverse);
-			sf2.MissingValue = random().nextFloat();
+			SortField sf2 = new SortField(sf.Field, SortField.Type_e.FLOAT, sf.Reverse);
+			sf2.MissingValue = Random().NextFloat();
 			AllSortFields.Add(sf2);
 		  }
-		  else if (sf.Type == SortField.Type.DOUBLE)
+		  else if (sf.Type == SortField.Type_e.DOUBLE)
 		  {
-			SortField sf2 = new SortField(sf.Field, SortField.Type.DOUBLE, sf.Reverse);
-			sf2.MissingValue = random().NextDouble();
+			SortField sf2 = new SortField(sf.Field, SortField.Type_e.DOUBLE, sf.Reverse);
+			sf2.MissingValue = Random().NextDouble();
 			AllSortFields.Add(sf2);
 		  }
 		}
 
-		Dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), Dir);
-		int numDocs = atLeast(200);
+		Dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+		int numDocs = AtLeast(200);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  IList<Field> fields = new List<Field>();
-		  fields.Add(newTextField("english", English.intToEnglish(i), Field.Store.NO));
-		  fields.Add(newTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO));
-		  fields.Add(newStringField("byte", "" + ((sbyte) random().Next()), Field.Store.NO));
-		  fields.Add(newStringField("short", "" + ((short) random().Next()), Field.Store.NO));
-		  fields.Add(new IntField("int", random().Next(), Field.Store.NO));
-		  fields.Add(new LongField("long", random().nextLong(), Field.Store.NO));
+		  fields.Add(NewTextField("english", English.IntToEnglish(i), Field.Store.NO));
+		  fields.Add(NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO));
+		  fields.Add(NewStringField("byte", "" + ((sbyte) Random().Next()), Field.Store.NO));
+		  fields.Add(NewStringField("short", "" + ((short) Random().Next()), Field.Store.NO));
+		  fields.Add(new IntField("int", Random().Next(), Field.Store.NO));
+		  fields.Add(new LongField("long", Random().NextLong(), Field.Store.NO));
 
-		  fields.Add(new FloatField("float", random().nextFloat(), Field.Store.NO));
-		  fields.Add(new DoubleField("double", random().NextDouble(), Field.Store.NO));
-		  fields.Add(newStringField("bytes", TestUtil.randomRealisticUnicodeString(random()), Field.Store.NO));
-		  fields.Add(newStringField("bytesval", TestUtil.randomRealisticUnicodeString(random()), Field.Store.NO));
-		  fields.Add(new DoubleField("double", random().NextDouble(), Field.Store.NO));
+		  fields.Add(new FloatField("float", Random().NextFloat(), Field.Store.NO));
+		  fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
+		  fields.Add(NewStringField("bytes", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
+		  fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
+		  fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
 
 		  if (SupportsDocValues)
 		  {
-			fields.Add(new NumericDocValuesField("intdocvalues", random().Next()));
-			fields.Add(new FloatDocValuesField("floatdocvalues", random().nextFloat()));
-			fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
-			fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
-			fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.randomRealisticUnicodeString(random()))));
+			fields.Add(new NumericDocValuesField("intdocvalues", Random().Next()));
+			fields.Add(new FloatDocValuesField("floatdocvalues", Random().NextFloat()));
+			fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
+			fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
+			fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
 		  }
 		  Document document = new Document();
-		  document.add(new StoredField("id", "" + i));
+		  document.Add(new StoredField("id", "" + i));
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("  add doc id=" + i);
@@ -149,9 +152,9 @@ namespace Lucene.Net.Search
 		  foreach (Field field in fields)
 		  {
 			// So we are sometimes missing that field:
-			if (random().Next(5) != 4)
+			if (Random().Next(5) != 4)
 			{
-			  document.add(field);
+			  document.Add(field);
 			  if (VERBOSE)
 			  {
 				Console.WriteLine("    " + field);
@@ -159,16 +162,16 @@ namespace Lucene.Net.Search
 			}
 		  }
 
-		  iw.addDocument(document);
+		  iw.AddDocument(document);
 
-		  if (random().Next(50) == 17)
+		  if (Random().Next(50) == 17)
 		  {
-			iw.commit();
+			iw.Commit();
 		  }
 		}
 		Reader = iw.Reader;
-		iw.close();
-		Searcher = newSearcher(Reader);
+		iw.Close();
+		Searcher = NewSearcher(Reader);
 		if (VERBOSE)
 		{
 		  Console.WriteLine("  searcher=" + Searcher);
@@ -177,9 +180,9 @@ namespace Lucene.Net.Search
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestQueries()
@@ -187,7 +190,7 @@ namespace Lucene.Net.Search
 		// because the first page has a null 'after', we get a normal collector.
 		// so we need to run the test a few times to ensure we will collect multiple
 		// pages.
-		int n = atLeast(20);
+		int n = AtLeast(20);
 		for (int i = 0; i < n; i++)
 		{
 		  Filter odd = new QueryWrapperFilter(new TermQuery(new Term("oddeven", "odd")));
@@ -196,8 +199,8 @@ namespace Lucene.Net.Search
 		  AssertQuery(new MatchAllDocsQuery(), odd);
 		  AssertQuery(new TermQuery(new Term("english", "four")), odd);
 		  BooleanQuery bq = new BooleanQuery();
-		  bq.add(new TermQuery(new Term("english", "one")), BooleanClause.Occur_e.SHOULD);
-		  bq.add(new TermQuery(new Term("oddeven", "even")), BooleanClause.Occur_e.SHOULD);
+		  bq.Add(new TermQuery(new Term("english", "one")), BooleanClause.Occur_e.SHOULD);
+		  bq.Add(new TermQuery(new Term("oddeven", "even")), BooleanClause.Occur_e.SHOULD);
 		  AssertQuery(bq, null);
 		}
 	  }
@@ -221,10 +224,10 @@ namespace Lucene.Net.Search
 	  {
 		  get
 		  {
-			SortField[] sortFields = new SortField[TestUtil.Next(random(), 2, 7)];
+			SortField[] sortFields = new SortField[TestUtil.NextInt(Random(), 2, 7)];
 			for (int i = 0;i < sortFields.Length;i++)
 			{
-			  sortFields[i] = AllSortFields[random().Next(AllSortFields.Count)];
+			  sortFields[i] = AllSortFields[Random().Next(AllSortFields.Count)];
 			}
 			return new Sort(sortFields);
 		  }
@@ -232,39 +235,39 @@ namespace Lucene.Net.Search
 
 	  internal virtual void AssertQuery(Query query, Filter filter, Sort sort)
 	  {
-		int maxDoc = Searcher.IndexReader.maxDoc();
+		int maxDoc = Searcher.IndexReader.MaxDoc();
 		TopDocs all;
-		int pageSize = TestUtil.Next(random(), 1, maxDoc * 2);
+		int pageSize = TestUtil.NextInt(Random(), 1, maxDoc * 2);
 		if (VERBOSE)
 		{
 		  Console.WriteLine("\nassertQuery " + (Iter++) + ": query=" + query + " filter=" + filter + " sort=" + sort + " pageSize=" + pageSize);
 		}
-		bool doMaxScore = random().nextBoolean();
-		bool doScores = random().nextBoolean();
+		bool doMaxScore = Random().NextBoolean();
+		bool doScores = Random().NextBoolean();
 		if (sort == null)
 		{
-		  all = Searcher.search(query, filter, maxDoc);
+		  all = Searcher.Search(query, filter, maxDoc);
 		}
 		else if (sort == Sort.RELEVANCE)
 		{
-		  all = Searcher.search(query, filter, maxDoc, sort, true, doMaxScore);
+		  all = Searcher.Search(query, filter, maxDoc, sort, true, doMaxScore);
 		}
 		else
 		{
-		  all = Searcher.search(query, filter, maxDoc, sort, doScores, doMaxScore);
+		  all = Searcher.Search(query, filter, maxDoc, sort, doScores, doMaxScore);
 		}
 		if (VERBOSE)
 		{
-		  Console.WriteLine("  all.totalHits=" + all.totalHits);
+		  Console.WriteLine("  all.TotalHits=" + all.TotalHits);
 		  int upto = 0;
-		  foreach (ScoreDoc scoreDoc in all.scoreDocs)
+		  foreach (ScoreDoc scoreDoc in all.ScoreDocs)
 		  {
-			Console.WriteLine("    hit " + (upto++) + ": id=" + Searcher.doc(scoreDoc.doc).get("id") + " " + scoreDoc);
+			Console.WriteLine("    hit " + (upto++) + ": id=" + Searcher.Doc(scoreDoc.Doc).Get("id") + " " + scoreDoc);
 		  }
 		}
 		int pageStart = 0;
 		ScoreDoc lastBottom = null;
-		while (pageStart < all.totalHits)
+		while (pageStart < all.TotalHits)
 		{
 		  TopDocs paged;
 		  if (sort == null)
@@ -273,7 +276,7 @@ namespace Lucene.Net.Search
 			{
 			  Console.WriteLine("  iter lastBottom=" + lastBottom);
 			}
-			paged = Searcher.searchAfter(lastBottom, query, filter, pageSize);
+			paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize);
 		  }
 		  else
 		  {
@@ -283,48 +286,48 @@ namespace Lucene.Net.Search
 			}
 			if (sort == Sort.RELEVANCE)
 			{
-			  paged = Searcher.searchAfter(lastBottom, query, filter, pageSize, sort, true, doMaxScore);
+			  paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, true, doMaxScore);
 			}
 			else
 			{
-			  paged = Searcher.searchAfter(lastBottom, query, filter, pageSize, sort, doScores, doMaxScore);
+			  paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, doScores, doMaxScore);
 			}
 		  }
 		  if (VERBOSE)
 		  {
-			Console.WriteLine("    " + paged.scoreDocs.length + " hits on page");
+			Console.WriteLine("    " + paged.ScoreDocs.Length + " hits on page");
 		  }
 
-		  if (paged.scoreDocs.length == 0)
+		  if (paged.ScoreDocs.Length == 0)
 		  {
 			break;
 		  }
 		  AssertPage(pageStart, all, paged);
-		  pageStart += paged.scoreDocs.length;
-		  lastBottom = paged.scoreDocs[paged.scoreDocs.length - 1];
+		  pageStart += paged.ScoreDocs.Length;
+		  lastBottom = paged.ScoreDocs[paged.ScoreDocs.Length - 1];
 		}
-		Assert.AreEqual(all.scoreDocs.length, pageStart);
+		Assert.AreEqual(all.ScoreDocs.Length, pageStart);
 	  }
 
 	  internal virtual void AssertPage(int pageStart, TopDocs all, TopDocs paged)
 	  {
-		Assert.AreEqual(all.totalHits, paged.totalHits);
-		for (int i = 0; i < paged.scoreDocs.length; i++)
+		Assert.AreEqual(all.TotalHits, paged.TotalHits);
+		for (int i = 0; i < paged.ScoreDocs.Length; i++)
 		{
-		  ScoreDoc sd1 = all.scoreDocs[pageStart + i];
-		  ScoreDoc sd2 = paged.scoreDocs[i];
+		  ScoreDoc sd1 = all.ScoreDocs[pageStart + i];
+		  ScoreDoc sd2 = paged.ScoreDocs[i];
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("    hit " + (pageStart + i));
-			Console.WriteLine("      expected id=" + Searcher.doc(sd1.doc).get("id") + " " + sd1);
-			Console.WriteLine("        actual id=" + Searcher.doc(sd2.doc).get("id") + " " + sd2);
+			Console.WriteLine("      expected id=" + Searcher.Doc(sd1.Doc).Get("id") + " " + sd1);
+			Console.WriteLine("        actual id=" + Searcher.Doc(sd2.Doc).Get("id") + " " + sd2);
 		  }
-		  Assert.AreEqual(sd1.doc, sd2.doc);
-		  Assert.AreEqual(sd1.score, sd2.score, 0f);
+		  Assert.AreEqual(sd1.Doc, sd2.Doc);
+		  Assert.AreEqual(sd1.Score, sd2.Score, 0f);
 		  if (sd1 is FieldDoc)
 		  {
 			Assert.IsTrue(sd2 is FieldDoc);
-			Assert.AreEqual(((FieldDoc) sd1).fields, ((FieldDoc) sd2).fields);
+			Assert.AreEqual(((FieldDoc) sd1).Fields, ((FieldDoc) sd2).Fields);
 		  }
 		}
 	  }

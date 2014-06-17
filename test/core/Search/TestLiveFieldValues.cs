@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+using NUnit.Framework;
 
 	public class TestLiveFieldValues : LuceneTestCase
 	{
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search
 	  {
 
 		Directory dir = newFSDirectory(createTempDir("livefieldupdates"));
-		IndexWriterConfig iwc = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
+		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
 		IndexWriter w = new IndexWriter(dir, iwc);
 
@@ -52,7 +53,7 @@ namespace Lucene.Net.Search
 
 		LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(this, mgr);
 
-		int numThreads = TestUtil.Next(random(), 2, 5);
+		int numThreads = TestUtil.NextInt(Random(), 2, 5);
 		if (VERBOSE)
 		{
 		  Console.WriteLine(numThreads + " threads");
@@ -61,17 +62,17 @@ namespace Lucene.Net.Search
 		CountDownLatch startingGun = new CountDownLatch(1);
 		IList<Thread> threads = new List<Thread>();
 
-		int iters = atLeast(1000);
-		int idCount = TestUtil.Next(random(), 100, 10000);
+		int iters = AtLeast(1000);
+		int idCount = TestUtil.NextInt(Random(), 100, 10000);
 
-		double reopenChance = random().NextDouble() * 0.01;
-		double deleteChance = random().NextDouble() * 0.25;
-		double addChance = random().NextDouble() * 0.5;
+		double reopenChance = Random().NextDouble() * 0.01;
+		double deleteChance = Random().NextDouble() * 0.25;
+		double addChance = Random().NextDouble() * 0.5;
 
 		for (int t = 0;t < numThreads;t++)
 		{
 		  int threadID = t;
-		  Random threadRandom = new Random(random().nextLong());
+		  Random threadRandom = new Random(Random().NextLong());
 		  Thread thread = new ThreadAnonymousInnerClassHelper(this, w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
 		  threads.Add(thread);
 		  thread.Start();
@@ -83,13 +84,13 @@ namespace Lucene.Net.Search
 		{
 		  thread.Join();
 		}
-		mgr.maybeRefresh();
-		Assert.AreEqual(0, rt.size());
+		mgr.MaybeRefresh();
+		Assert.AreEqual(0, rt.Size());
 
-		rt.close();
-		mgr.close();
-		w.close();
-		dir.close();
+		rt.Dispose();
+		mgr.Dispose();
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
@@ -119,16 +120,16 @@ namespace Lucene.Net.Search
 		  protected internal override int? LookupFromSearcher(IndexSearcher s, string id)
 		  {
 			TermQuery tq = new TermQuery(new Term("id", id));
-			TopDocs hits = s.search(tq, 1);
-			Assert.IsTrue(hits.totalHits <= 1);
-			if (hits.totalHits == 0)
+			TopDocs hits = s.Search(tq, 1);
+			Assert.IsTrue(hits.TotalHits <= 1);
+			if (hits.TotalHits == 0)
 			{
 			  return null;
 			}
 			else
 			{
-			  Document doc = s.doc(hits.scoreDocs[0].doc);
-			  return (int?) doc.getField("field").numericValue();
+			  Document doc = s.Doc(hits.ScoreDocs[0].Doc);
+			  return (int?) doc.GetField("field").NumericValue;
 			}
 		  }
 	  }
@@ -190,10 +191,10 @@ namespace Lucene.Net.Search
 				{
 				  string id = string.format(Locale.ROOT, "%d_%04x", ThreadID, ThreadRandom.Next(IdCount));
 				  int? field = ThreadRandom.Next(int.MaxValue);
-				  doc.add(new StringField("id", id, Field.Store.YES));
-				  doc.add(new IntField("field", (int)field, Field.Store.YES));
+				  doc.Add(new StringField("id", id, Field.Store.YES));
+				  doc.Add(new IntField("field", (int)field, Field.Store.YES));
 				  w.updateDocument(new Term("id", id), doc);
-				  Rt.add(id, field);
+				  Rt.Add(id, field);
 				  if (values.put(id, field) == null)
 				  {
 					allIDs.Add(id);
@@ -203,25 +204,25 @@ namespace Lucene.Net.Search
 				if (allIDs.Count > 0 && ThreadRandom.NextDouble() <= DeleteChance)
 				{
 				  string randomID = allIDs[ThreadRandom.Next(allIDs.Count)];
-				  w.deleteDocuments(new Term("id", randomID));
+				  w.DeleteDocuments(new Term("id", randomID));
 				  Rt.delete(randomID);
 				  values[randomID] = Missing;
 				}
 
-				if (ThreadRandom.NextDouble() <= ReopenChance || Rt.size() > 10000)
+				if (ThreadRandom.NextDouble() <= ReopenChance || Rt.Size() > 10000)
 				{
-				  //System.out.println("refresh @ " + rt.size());
-				  Mgr.maybeRefresh();
+				  //System.out.println("refresh @ " + rt.Size());
+				  Mgr.MaybeRefresh();
 				  if (VERBOSE)
 				  {
-					IndexSearcher s = Mgr.acquire();
+					IndexSearcher s = Mgr.Acquire();
 					try
 					{
 					  Console.WriteLine("TEST: reopen " + s);
 					}
 					finally
 					{
-					  Mgr.release(s);
+					  Mgr.Release(s);
 					}
 					Console.WriteLine("TEST: " + values.Count + " values");
 				  }
@@ -229,7 +230,7 @@ namespace Lucene.Net.Search
 
 				if (ThreadRandom.Next(10) == 7)
 				{
-				  Assert.AreEqual(null, Rt.get("foo"));
+				  Assert.AreEqual(null, Rt.Get("foo"));
 				}
 
 				if (allIDs.Count > 0)
@@ -240,13 +241,13 @@ namespace Lucene.Net.Search
 				  {
 					expected = null;
 				  }
-				  Assert.AreEqual("id=" + randomID, expected, Rt.get(randomID));
+				  Assert.AreEqual("id=" + randomID, expected, Rt.Get(randomID));
 				}
 			  }
 			}
 			catch (Exception t)
 			{
-			  throw new Exception(t);
+			  throw new Exception(t.Message, t);
 			}
 		  }
 	  }

@@ -1,6 +1,8 @@
+using System.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -27,68 +29,69 @@ namespace Lucene.Net.Codecs.Compressing
 
 	public abstract class AbstractTestLZ4CompressionMode : AbstractTestCompressionMode
 	{
+	      private LZ4 lz4;
 
-	  public override sbyte[] Test(sbyte[] decompressed)
-	  {
-		sbyte[] compressed = base.Test(decompressed);
-		int off = 0;
-		int decompressedOff = 0;
-		for (;;)
-		{
-		  int token = compressed[off++] & 0xFF;
-		  int literalLen = (int)((uint)token >> 4);
-		  if (literalLen == 0x0F)
-		  {
-			while (compressed[off] == unchecked((sbyte) 0xFF))
-			{
-			  literalLen += 0xFF;
-			  ++off;
-			}
-			literalLen += compressed[off++] & 0xFF;
-		  }
-		  // skip literals
-		  off += literalLen;
-		  decompressedOff += literalLen;
+	      public override sbyte[] Test(sbyte[] decompressed)
+	      {
+		    sbyte[] compressed = base.Test(decompressed);
+		    int off = 0;
+		    int decompressedOff = 0;
+		    for (;;)
+		    {
+		      int token = compressed[off++] & 0xFF;
+		      int literalLen = (int)((uint)token >> 4);
+		      if (literalLen == 0x0F)
+		      {
+			    while (compressed[off] == unchecked((sbyte) 0xFF))
+			    {
+			      literalLen += 0xFF;
+			      ++off;
+			    }
+			    literalLen += compressed[off++] & 0xFF;
+		      }
+		      // skip literals
+		      off += literalLen;
+		      decompressedOff += literalLen;
 
-		  // check that the stream ends with literals and that there are at least
-		  // 5 of them
-		  if (off == compressed.Length)
-		  {
-			Assert.AreEqual(decompressed.Length, decompressedOff);
-			Assert.IsTrue(literalLen >= LZ4.LAST_LITERALS || literalLen == decompressed.Length, "lastLiterals=" + literalLen + ", bytes=" + decompressed.Length);
-			break;
-		  }
+		      // check that the stream ends with literals and that there are at least
+		      // 5 of them
+		      if (off == compressed.Length)
+		      {
+			    Assert.AreEqual(decompressed.Length, decompressedOff);
+			    Assert.IsTrue(literalLen >= LZ4.LAST_LITERALS || literalLen == decompressed.Length, "lastLiterals=" + literalLen + ", bytes=" + decompressed.Length);
+			    break;
+		      }
 
-		  int matchDec = (compressed[off++] & 0xFF) | ((compressed[off++] & 0xFF) << 8);
-		  // check that match dec is not 0
-		  Assert.IsTrue(matchDec > 0 && matchDec <= decompressedOff, matchDec + " " + decompressedOff);
+		      int matchDec = (compressed[off++] & 0xFF) | ((compressed[off++] & 0xFF) << 8);
+		      // check that match dec is not 0
+		      Assert.IsTrue(matchDec > 0 && matchDec <= decompressedOff, matchDec + " " + decompressedOff);
 
-		  int matchLen = token & 0x0F;
-		  if (matchLen == 0x0F)
-		  {
-			while (compressed[off] == unchecked((sbyte) 0xFF))
-			{
-			  matchLen += 0xFF;
-			  ++off;
-			}
-			matchLen += compressed[off++] & 0xFF;
-		  }
-		  matchLen += LZ4.MIN_MATCH;
+		      int matchLen = token & 0x0F;
+		      if (matchLen == 0x0F)
+		      {
+			    while (compressed[off] == unchecked((sbyte) 0xFF))
+			    {
+			      matchLen += 0xFF;
+			      ++off;
+			    }
+			    matchLen += compressed[off++] & 0xFF;
+		      }
+		      matchLen += LZ4.MIN_MATCH;
 
-		  // if the match ends prematurely, the next sequence should not have
-		  // literals or this means we are wasting space
-		  if (decompressedOff + matchLen < decompressed.Length - LZ4.LAST_LITERALS)
-		  {
-			bool moreCommonBytes = decompressed[decompressedOff + matchLen] == decompressed[decompressedOff - matchDec + matchLen];
-			bool nextSequenceHasLiterals = ((int)((uint)(compressed[off] & 0xFF) >> 4)) != 0;
-			Assert.IsTrue(!moreCommonBytes || !nextSequenceHasLiterals);
-		  }
+		      // if the match ends prematurely, the next sequence should not have
+		      // literals or this means we are wasting space
+		      if (decompressedOff + matchLen < decompressed.Length - LZ4.LAST_LITERALS)
+		      {
+			    bool moreCommonBytes = decompressed[decompressedOff + matchLen] == decompressed[decompressedOff - matchDec + matchLen];
+			    bool nextSequenceHasLiterals = ((int)((uint)(compressed[off] & 0xFF) >> 4)) != 0;
+			    Assert.IsTrue(!moreCommonBytes || !nextSequenceHasLiterals);
+		      }
 
-		  decompressedOff += matchLen;
-		}
-		Assert.AreEqual(decompressed.Length, decompressedOff);
-		return compressed;
-	  }
+		      decompressedOff += matchLen;
+		    }
+		    Assert.AreEqual(decompressed.Length, decompressedOff);
+		    return compressed;
+	      }
 
 	  public virtual void TestShortLiteralsAndMatchs()
 	  {
@@ -100,7 +103,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public virtual void TestLongMatchs()
 	  {
 		// match length >= 20
-		sbyte[] decompressed = new sbyte[RandomInts.randomIntBetween(Random(), 300, 1024)];
+		sbyte[] decompressed = new sbyte[RandomInts.NextIntBetween(Random(), 300, 1024)];
 		for (int i = 0; i < decompressed.Length; ++i)
 		{
 		  decompressed[i] = (sbyte) i;
@@ -111,10 +114,10 @@ namespace Lucene.Net.Codecs.Compressing
 	  public virtual void TestLongLiterals()
 	  {
 		// long literals (length >= 16) which are not the last literals
-		sbyte[] decompressed = RandomArray(RandomInts.randomIntBetween(Random(), 400, 1024), 256);
+		sbyte[] decompressed = RandomArray(RandomInts.NextIntBetween(Random(), 400, 1024), 256);
 		int matchRef = Random().Next(30);
-		int matchOff = RandomInts.randomIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
-		int matchLength = RandomInts.randomIntBetween(Random(), 4, 10);
+        int matchOff = RandomInts.NextIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
+        int matchLength = RandomInts.NextIntBetween(Random(), 4, 10);
 		Array.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
 		Test(decompressed);
 	  }

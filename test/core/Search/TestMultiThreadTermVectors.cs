@@ -34,6 +34,8 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using English = Lucene.Net.Util.English;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
+    using System.IO;
 
 	public class TestMultiThreadTermVectors : LuceneTestCase
 	{
@@ -43,9 +45,9 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Directory = newDirectory();
-		IndexWriter writer = new IndexWriter(Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		base.SetUp();
+		Directory = NewDirectory();
+		IndexWriter writer = new IndexWriter(Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		//writer.setNoCFSRatio(0.0);
 		//writer.infoStream = System.out;
 		FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -54,18 +56,18 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < NumDocs; i++)
 		{
 		  Document doc = new Document();
-		  Field fld = newField("field", English.intToEnglish(i), customType);
-		  doc.add(fld);
-		  writer.addDocument(doc);
+		  Field fld = NewField("field", English.IntToEnglish(i), customType);
+		  doc.Add(fld);
+		  writer.AddDocument(doc);
 		}
-		writer.close();
+		writer.Dispose();
 
 	  }
 
 	  public override void TearDown()
 	  {
-		Directory.close();
-		base.tearDown();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void Test()
@@ -75,7 +77,7 @@ namespace Lucene.Net.Search
 
 		try
 		{
-		  reader = DirectoryReader.open(Directory);
+		  reader = DirectoryReader.Open(Directory);
 		  for (int i = 1; i <= NumThreads; i++)
 		  {
 			TestTermPositionVectors(reader, i);
@@ -95,7 +97,7 @@ namespace Lucene.Net.Search
 			{
 			  /// <summary>
 			  /// close the opened reader </summary>
-			  reader.close();
+			  reader.Dispose();
 			}
 			catch (IOException ioe)
 			{
@@ -142,7 +144,7 @@ namespace Lucene.Net.Search
 		  mtr[i] = null;
 		}
 
-		//System.out.println("threadcount: " + mtr.length + " average term vector time: " + totalTime/mtr.length);
+		//System.out.println("threadcount: " + mtr.Length + " average term vector time: " + totalTime/mtr.Length);
 
 	  }
 
@@ -200,22 +202,22 @@ namespace Lucene.Net.Search
 	  private void TestTermVectors()
 	  {
 		// check:
-		int numDocs = Reader.numDocs();
+		int numDocs = Reader.NumDocs();
 		long start = 0L;
 		for (int docId = 0; docId < numDocs; docId++)
 		{
-		  start = System.currentTimeMillis();
-		  Fields vectors = Reader.getTermVectors(docId);
-		  TimeElapsed += System.currentTimeMillis() - start;
+		  start = DateTime.Now.Millisecond;
+		  Fields vectors = Reader.GetTermVectors(docId);
+		  TimeElapsed += DateTime.Now.Millisecond - start;
 
 		  // verify vectors result
 		  VerifyVectors(vectors, docId);
 
-		  start = System.currentTimeMillis();
-		  Terms vector = Reader.getTermVectors(docId).terms("field");
-		  TimeElapsed += System.currentTimeMillis() - start;
+		  start = DateTime.Now.Millisecond;
+		  Terms vector = Reader.GetTermVectors(docId).Terms("field");
+		  TimeElapsed += DateTime.Now.Millisecond - start;
 
-		  VerifyVector(vector.iterator(null), docId);
+		  VerifyVector(vector.Iterator(null), docId);
 		}
 	  }
 
@@ -223,20 +225,20 @@ namespace Lucene.Net.Search
 	  {
 		foreach (string field in vectors)
 		{
-		  Terms terms = vectors.terms(field);
+		  Terms terms = vectors.Terms(field);
 		  Debug.Assert(terms != null);
-		  VerifyVector(terms.iterator(null), num);
+		  VerifyVector(terms.Iterator(null), num);
 		}
 	  }
 
 	  private void VerifyVector(TermsEnum vector, int num)
 	  {
 		StringBuilder temp = new StringBuilder();
-		while (vector.next() != null)
+		while (vector.Next() != null)
 		{
-		  temp.Append(vector.term().utf8ToString());
+		  temp.Append(vector.Term().Utf8ToString());
 		}
-		if (!English.intToEnglish(num).Trim().Equals(temp.ToString().Trim()))
+		if (!English.IntToEnglish(num).Trim().Equals(temp.ToString().Trim()))
 		{
 			Console.WriteLine("wrong term result");
 		}

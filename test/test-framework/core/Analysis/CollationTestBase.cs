@@ -51,7 +51,6 @@ namespace Lucene.Net.Analysis
 	using IndexableBinaryStringTools = Lucene.Net.Util.IndexableBinaryStringTools;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
     using Lucene.Net.Support;

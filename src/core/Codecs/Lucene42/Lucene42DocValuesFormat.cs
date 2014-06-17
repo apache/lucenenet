@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene42
 	  /// Maximum length for each binary doc values field. </summary>
 	  public static readonly int MAX_BINARY_FIELD_LENGTH = (1 << 15) - 2;
 
-	  internal readonly float AcceptableOverheadRatio;
+	    protected internal readonly float AcceptableOverheadRatio;
 
 	  /// <summary>
 	  /// Calls {@link #Lucene42DocValuesFormat(float) 
@@ -163,10 +163,10 @@ namespace Lucene.Net.Codecs.Lucene42
 		return new Lucene42DocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION);
 	  }
 
-	  internal const string DATA_CODEC = "Lucene42DocValuesData";
-	  internal const string DATA_EXTENSION = "dvd";
-	  internal const string METADATA_CODEC = "Lucene42DocValuesMetadata";
-	  internal const string METADATA_EXTENSION = "dvm";
+	  protected internal const string DATA_CODEC = "Lucene42DocValuesData";
+      protected internal const string DATA_EXTENSION = "dvd";
+      protected internal const string METADATA_CODEC = "Lucene42DocValuesMetadata";
+      protected internal const string METADATA_EXTENSION = "dvm";
 	}
 
 }

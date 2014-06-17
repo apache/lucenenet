@@ -30,6 +30,7 @@ namespace Lucene.Net.Search
 	using Document = Lucene.Net.Document.Document;
 	using Directory = Lucene.Net.Store.Directory;
 	using Test = org.junit.Test;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// A basic 'positive' Unit test class for the FieldCacheRangeFilter class.
@@ -49,7 +50,7 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
 		int medId = ((MaxId - MinId) / 2);
 
@@ -57,76 +58,76 @@ namespace Lucene.Net.Search
 		string maxIP = Pad(MaxId);
 		string medIP = Pad(medId);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 
-		Assert.AreEqual("num of docs", numDocs, 1 + MaxId - MinId);
+		Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
 		// test id, bounded on both ends
-		result = search.search(q, FieldCacheRangeFilter.newStringRange("id",minIP,maxIP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q, FieldCacheRangeFilter.NewStringRange("id",minIP,maxIP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,maxIP,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but last", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,maxIP,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but last");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,maxIP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("all but first", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,maxIP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but first");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,maxIP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but ends", numDocs - 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,maxIP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",medIP,maxIP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med and up", 1 + MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",medIP,maxIP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,medIP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("up to med", 1 + medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,medIP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
 
 		// unbounded id
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",null,null,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",null,null,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("min and up", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "min and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",null,maxIP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("max and down", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",null,maxIP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "max and down");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not min, but up", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not min, but up");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",null,maxIP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not max, but down", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",null,maxIP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",medIP,maxIP,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("med and up, not max", MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",medIP,maxIP,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,medIP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("not min, up to med", medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,medIP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
 
 		// very small sets
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,minIP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",medIP,medIP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",maxIP,maxIP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,F,F", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,minIP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "min,min,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",medIP,medIP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "med,med,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",maxIP,maxIP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "max,max,F,F");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",minIP,minIP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",null,minIP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("nul,min,F,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",minIP,minIP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "min,min,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",null,minIP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "nul,min,F,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",maxIP,maxIP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",maxIP,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,nul,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",maxIP,maxIP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,max,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",maxIP,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,nul,T,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("id",medIP,medIP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("id",medIP,medIP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "med,med,T,T");
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -135,62 +136,62 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
 		string minRP = Pad(SignedIndexDir.MinR);
 		string maxRP = Pad(SignedIndexDir.MaxR);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 
-		Assert.AreEqual("num of docs", numDocs, 1 + MaxId - MinId);
+		Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
 		// test extremes, bounded on both ends
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,maxRP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,maxRP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,maxRP,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but biggest", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,maxRP,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but biggest");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,maxRP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("all but smallest", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,maxRP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but smallest");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,maxRP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but extremes", numDocs - 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,maxRP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 2, result.Length, "all but extremes");
 
 		// unbounded
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("smallest and up", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "smallest and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",null,maxRP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("biggest and down", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",null,maxRP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "biggest and down");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not smallest, but up", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not smallest, but up");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",null,maxRP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not biggest, but down", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",null,maxRP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not biggest, but down");
 
 		// very small sets
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,minRP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",maxRP,maxRP,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,F,F", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,minRP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "min,min,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",maxRP,maxRP,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "max,max,F,F");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",minRP,minRP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",null,minRP,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("nul,min,F,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",minRP,minRP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "min,min,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",null,minRP,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "nul,min,F,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",maxRP,maxRP,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newStringRange("rand",maxRP,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,nul,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",maxRP,maxRP,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,max,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewStringRange("rand",maxRP,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,nul,T,T");
 	  }
 
 	  // byte-ranges cannot be tested, because all ranges are too big for bytes, need an extra range for that
@@ -201,90 +202,90 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 		int medId = ((MaxId - MinId) / 2);
 		short? minIdO = Convert.ToInt16((short) MinId);
 		short? maxIdO = Convert.ToInt16((short) MaxId);
 		short? medIdO = Convert.ToInt16((short) medId);
 
-		Assert.AreEqual("num of docs", numDocs, 1 + MaxId - MinId);
+		Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
 		// test id, bounded on both ends
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,maxIdO,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but last", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,maxIdO,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but last");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,maxIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("all but first", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,maxIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but first");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but ends", numDocs - 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",medIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med and up", 1 + MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",medIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("up to med", 1 + medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
 
 		// unbounded id
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",null,null,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",null,null,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("min and up", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "min and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",null,maxIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("max and down", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",null,maxIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "max and down");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not min, but up", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not min, but up");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",null,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not max, but down", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",null,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",medIdO,maxIdO,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("med and up, not max", MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",medIdO,maxIdO,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,medIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("not min, up to med", medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,medIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
 
 		// very small sets
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,minIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",medIdO,medIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",maxIdO,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,F,F", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,minIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "min,min,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",medIdO,medIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "med,med,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",maxIdO,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "max,max,F,F");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",minIdO,minIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",null,minIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("nul,min,F,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",minIdO,minIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "min,min,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",null,minIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "nul,min,F,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",maxIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",maxIdO,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,nul,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",maxIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,max,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",maxIdO,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,nul,T,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",medIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",medIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "med,med,T,T");
 
 		// special cases
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",Convert.ToInt16(short.MaxValue),null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("overflow special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",null,Convert.ToInt16(short.MinValue),F,F), numDocs).scoreDocs;
-		Assert.AreEqual("overflow special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newShortRange("id",maxIdO,minIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("inverse range", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",Convert.ToInt16(short.MaxValue),null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "overflow special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",null,Convert.ToInt16(short.MinValue),F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "overflow special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewShortRange("id",maxIdO,minIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "inverse range");
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -293,91 +294,91 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 		int medId = ((MaxId - MinId) / 2);
 		int? minIdO = Convert.ToInt32(MinId);
 		int? maxIdO = Convert.ToInt32(MaxId);
 		int? medIdO = Convert.ToInt32(medId);
 
-		Assert.AreEqual("num of docs", numDocs, 1 + MaxId - MinId);
+		Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
 		// test id, bounded on both ends
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,maxIdO,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but last", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,maxIdO,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but last");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,maxIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("all but first", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,maxIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but first");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but ends", numDocs - 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",medIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med and up", 1 + MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",medIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("up to med", 1 + medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
 
 		// unbounded id
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",null,null,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",null,null,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("min and up", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "min and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",null,maxIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("max and down", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",null,maxIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "max and down");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not min, but up", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not min, but up");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",null,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not max, but down", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",null,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",medIdO,maxIdO,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("med and up, not max", MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",medIdO,maxIdO,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,medIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("not min, up to med", medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,medIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
 
 		// very small sets
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,minIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",medIdO,medIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",maxIdO,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,F,F", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,minIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "min,min,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",medIdO,medIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "med,med,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",maxIdO,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "max,max,F,F");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",minIdO,minIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",null,minIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("nul,min,F,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",minIdO,minIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "min,min,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",null,minIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "nul,min,F,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",maxIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",maxIdO,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,nul,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",maxIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,max,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",maxIdO,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,nul,T,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",medIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",medIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "med,med,T,T");
 
 		// special cases
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",Convert.ToInt32(int.MaxValue),null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("overflow special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",null,Convert.ToInt32(int.MinValue),F,F), numDocs).scoreDocs;
-		Assert.AreEqual("overflow special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newIntRange("id",maxIdO,minIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("inverse range", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",Convert.ToInt32(int.MaxValue),null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "overflow special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",null,Convert.ToInt32(int.MinValue),F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "overflow special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewIntRange("id",maxIdO,minIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "inverse range");
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -386,91 +387,91 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 		int medId = ((MaxId - MinId) / 2);
 		long? minIdO = Convert.ToInt64(MinId);
 		long? maxIdO = Convert.ToInt64(MaxId);
 		long? medIdO = Convert.ToInt64(medId);
 
-		Assert.AreEqual("num of docs", numDocs, 1 + MaxId - MinId);
+		Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
 		// test id, bounded on both ends
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,maxIdO,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but last", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,maxIdO,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but last");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,maxIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("all but first", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,maxIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "all but first");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("all but ends", numDocs - 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",medIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med and up", 1 + MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",medIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("up to med", 1 + medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
 
 		// unbounded id
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",null,null,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",null,null,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("min and up", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "min and up");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",null,maxIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("max and down", numDocs, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",null,maxIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "max and down");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not min, but up", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not min, but up");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",null,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("not max, but down", numDocs - 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",null,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",medIdO,maxIdO,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("med and up, not max", MaxId - medId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",medIdO,maxIdO,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,medIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("not min, up to med", medId - MinId, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,medIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
 
 		// very small sets
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,minIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",medIdO,medIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,F,F", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",maxIdO,maxIdO,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,F,F", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,minIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "min,min,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",medIdO,medIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "med,med,F,F");
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",maxIdO,maxIdO,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "max,max,F,F");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",minIdO,minIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("min,min,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",null,minIdO,F,T), numDocs).scoreDocs;
-		Assert.AreEqual("nul,min,F,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",minIdO,minIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "min,min,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",null,minIdO,F,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "nul,min,F,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",maxIdO,maxIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("max,max,T,T", 1, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",maxIdO,null,T,F), numDocs).scoreDocs;
-		Assert.AreEqual("max,nul,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",maxIdO,maxIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,max,T,T");
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",maxIdO,null,T,F), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "max,nul,T,T");
 
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",medIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("med,med,T,T", 1, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",medIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(1, result.Length, "med,med,T,T");
 
 		// special cases
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",Convert.ToInt64(long.MaxValue),null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("overflow special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",null,Convert.ToInt64(long.MinValue),F,F), numDocs).scoreDocs;
-		Assert.AreEqual("overflow special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newLongRange("id",maxIdO,minIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("inverse range", 0, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",Convert.ToInt64(long.MaxValue),null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "overflow special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",null,Convert.ToInt64(long.MinValue),F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "overflow special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewLongRange("id",maxIdO,minIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "inverse range");
 	  }
 
 	  // float and double tests are a bit minimalistic, but its complicated, because missing precision
@@ -481,29 +482,29 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 		float? minIdO = Convert.ToSingle(MinId + .5f);
 		float? medIdO = Convert.ToSingle((float)minIdO + ((MaxId - MinId)) / 2.0f);
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
-		result = search.search(q,FieldCacheRangeFilter.newFloatRange("id",minIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs / 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewFloatRange("id",minIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs / 2, result.Length, "find all");
 		int count = 0;
-		result = search.search(q,FieldCacheRangeFilter.newFloatRange("id",null,medIdO,F,T), numDocs).scoreDocs;
+		result = search.Search(q,FieldCacheRangeFilter.NewFloatRange("id",null,medIdO,F,T), numDocs).ScoreDocs;
 		count += result.Length;
-		result = search.search(q,FieldCacheRangeFilter.newFloatRange("id",medIdO,null,F,F), numDocs).scoreDocs;
+		result = search.Search(q,FieldCacheRangeFilter.NewFloatRange("id",medIdO,null,F,F), numDocs).ScoreDocs;
 		count += result.Length;
-		Assert.AreEqual("sum of two concenatted ranges", numDocs, count);
-		result = search.search(q,FieldCacheRangeFilter.newFloatRange("id",null,null,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newFloatRange("id",Convert.ToSingle(float.PositiveInfinity),null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("infinity special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newFloatRange("id",null,Convert.ToSingle(float.NegativeInfinity),F,F), numDocs).scoreDocs;
-		Assert.AreEqual("infinity special case", 0, result.Length);
+		Assert.AreEqual(numDocs, count, "sum of two concenatted ranges");
+		result = search.Search(q,FieldCacheRangeFilter.NewFloatRange("id",null,null,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
+		result = search.Search(q,FieldCacheRangeFilter.NewFloatRange("id",Convert.ToSingle(float.PositiveInfinity),null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "infinity special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewFloatRange("id",null,Convert.ToSingle(float.NegativeInfinity),F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "infinity special case");
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -512,29 +513,29 @@ namespace Lucene.Net.Search
 	  {
 
 		IndexReader reader = SignedIndexReader;
-		IndexSearcher search = newSearcher(reader);
+		IndexSearcher search = NewSearcher(reader);
 
-		int numDocs = reader.numDocs();
+		int numDocs = reader.NumDocs();
 		double? minIdO = Convert.ToDouble(MinId + .5);
 		double? medIdO = Convert.ToDouble((float)minIdO + ((MaxId - MinId)) / 2.0);
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
-		result = search.search(q,FieldCacheRangeFilter.newDoubleRange("id",minIdO,medIdO,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs / 2, result.Length);
+		result = search.Search(q,FieldCacheRangeFilter.NewDoubleRange("id",minIdO,medIdO,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs / 2, result.Length, "find all");
 		int count = 0;
-		result = search.search(q,FieldCacheRangeFilter.newDoubleRange("id",null,medIdO,F,T), numDocs).scoreDocs;
+		result = search.Search(q,FieldCacheRangeFilter.NewDoubleRange("id",null,medIdO,F,T), numDocs).ScoreDocs;
 		count += result.Length;
-		result = search.search(q,FieldCacheRangeFilter.newDoubleRange("id",medIdO,null,F,F), numDocs).scoreDocs;
+		result = search.Search(q,FieldCacheRangeFilter.NewDoubleRange("id",medIdO,null,F,F), numDocs).ScoreDocs;
 		count += result.Length;
-		Assert.AreEqual("sum of two concenatted ranges", numDocs, count);
-		result = search.search(q,FieldCacheRangeFilter.newDoubleRange("id",null,null,T,T), numDocs).scoreDocs;
-		Assert.AreEqual("find all", numDocs, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newDoubleRange("id",Convert.ToDouble(double.PositiveInfinity),null,F,F), numDocs).scoreDocs;
-		Assert.AreEqual("infinity special case", 0, result.Length);
-		result = search.search(q,FieldCacheRangeFilter.newDoubleRange("id",null, Convert.ToDouble(double.NegativeInfinity),F,F), numDocs).scoreDocs;
-		Assert.AreEqual("infinity special case", 0, result.Length);
+		Assert.AreEqual(numDocs, count, "sum of two concenatted ranges");
+		result = search.Search(q,FieldCacheRangeFilter.NewDoubleRange("id",null,null,T,T), numDocs).ScoreDocs;
+		Assert.AreEqual(numDocs, result.Length, "find all");
+		result = search.Search(q,FieldCacheRangeFilter.NewDoubleRange("id",Convert.ToDouble(double.PositiveInfinity),null,F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "infinity special case");
+		result = search.Search(q,FieldCacheRangeFilter.NewDoubleRange("id",null, Convert.ToDouble(double.NegativeInfinity),F,F), numDocs).ScoreDocs;
+		Assert.AreEqual(0, result.Length, "infinity special case");
 	  }
 
 	  // test using a sparse index (with deleted docs).
@@ -542,44 +543,44 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @Test public void testSparseIndex() throws java.io.IOException
 	  public virtual void TestSparseIndex()
 	  {
-		Directory dir = newDirectory();
-		IndexWriter writer = new IndexWriter(dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		for (int d = -20; d <= 20; d++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("id", Convert.ToString(d), Field.Store.NO));
-		  doc.add(newStringField("body", "body", Field.Store.NO));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("id", Convert.ToString(d), Field.Store.NO));
+		  doc.Add(NewStringField("body", "body", Field.Store.NO));
+		  writer.AddDocument(doc);
 		}
 
-		writer.forceMerge(1);
-		writer.deleteDocuments(new Term("id","0"));
-		writer.close();
+		writer.ForceMerge(1);
+		writer.DeleteDocuments(new Term("id","0"));
+		writer.Dispose();
 
-		IndexReader reader = DirectoryReader.open(dir);
-		IndexSearcher search = newSearcher(reader);
-		Assert.IsTrue(reader.hasDeletions());
+		IndexReader reader = DirectoryReader.Open(dir);
+		IndexSearcher search = NewSearcher(reader);
+		Assert.IsTrue(reader.HasDeletions());
 
 		ScoreDoc[] result;
 		Query q = new TermQuery(new Term("body","body"));
 
-		result = search.search(q,FieldCacheRangeFilter.newByteRange("id",Convert.ToByte((sbyte) - 20),Convert.ToByte((sbyte) 20),T,T), 100).scoreDocs;
-		Assert.AreEqual("find all", 40, result.Length);
+        result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)Convert.ToByte((sbyte)-20), (sbyte?)Convert.ToByte((sbyte)20), T, T), 100).ScoreDocs;
+		Assert.AreEqual(40, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newByteRange("id",Convert.ToByte((sbyte) 0),Convert.ToByte((sbyte) 20),T,T), 100).scoreDocs;
-		Assert.AreEqual("find all", 20, result.Length);
+        result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)Convert.ToByte((sbyte)0), (sbyte?)Convert.ToByte((sbyte)20), T, T), 100).ScoreDocs;
+		Assert.AreEqual(20, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newByteRange("id",Convert.ToByte((sbyte) - 20),Convert.ToByte((sbyte) 0),T,T), 100).scoreDocs;
-		Assert.AreEqual("find all", 20, result.Length);
+        result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)Convert.ToByte((sbyte)-20), (sbyte?)Convert.ToByte((sbyte)0), T, T), 100).ScoreDocs;
+		Assert.AreEqual(20, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newByteRange("id",Convert.ToByte((sbyte) 10),Convert.ToByte((sbyte) 20),T,T), 100).scoreDocs;
-		Assert.AreEqual("find all", 11, result.Length);
+        result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)Convert.ToByte((sbyte)10), (sbyte?)Convert.ToByte((sbyte)20), T, T), 100).ScoreDocs;
+		Assert.AreEqual(11, result.Length, "find all");
 
-		result = search.search(q,FieldCacheRangeFilter.newByteRange("id",Convert.ToByte((sbyte) - 20),Convert.ToByte((sbyte) - 10),T,T), 100).scoreDocs;
-		Assert.AreEqual("find all", 11, result.Length);
-		reader.close();
-		dir.close();
+        result = search.Search(q, FieldCacheRangeFilter.NewByteRange("id", (sbyte?)Convert.ToByte((sbyte)-20), (sbyte?)Convert.ToByte((sbyte)-10), T, T), 100).ScoreDocs;
+		Assert.AreEqual(11, result.Length, "find all");
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	}

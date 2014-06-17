@@ -28,6 +28,8 @@ namespace Lucene.Net.Search
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	public class TestBooleanOr : LuceneTestCase
 	{
@@ -47,8 +49,8 @@ namespace Lucene.Net.Search
 
 	  private int Search(Query q)
 	  {
-		QueryUtils.check(random(), q,Searcher);
-		return Searcher.search(q, null, 1000).totalHits;
+		QueryUtils.Check(Random(), q,Searcher);
+		return Searcher.Search(q, null, 1000).TotalHits;
 	  }
 
 	  public virtual void TestElements()
@@ -66,10 +68,10 @@ namespace Lucene.Net.Search
 	  public virtual void TestFlat()
 	  {
 		BooleanQuery q = new BooleanQuery();
-		q.add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q.add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
-		q.add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
-		q.add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
+		q.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+		q.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+		q.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
+		q.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
 		Assert.AreEqual(1, Search(q));
 	  }
 
@@ -80,14 +82,14 @@ namespace Lucene.Net.Search
 	  public virtual void TestParenthesisMust()
 	  {
 		BooleanQuery q3 = new BooleanQuery();
-		q3.add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q3.add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+		q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
 		BooleanQuery q4 = new BooleanQuery();
-		q4.add(new BooleanClause(C1, BooleanClause.Occur_e.MUST));
-		q4.add(new BooleanClause(C2, BooleanClause.Occur_e.MUST));
+		q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.MUST));
+		q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.MUST));
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(q3, BooleanClause.Occur_e.SHOULD);
-		q2.add(q4, BooleanClause.Occur_e.SHOULD);
+		q2.Add(q3, BooleanClause.Occur_e.SHOULD);
+		q2.Add(q4, BooleanClause.Occur_e.SHOULD);
 		Assert.AreEqual(1, Search(q2));
 	  }
 
@@ -98,14 +100,14 @@ namespace Lucene.Net.Search
 	  public virtual void TestParenthesisMust2()
 	  {
 		BooleanQuery q3 = new BooleanQuery();
-		q3.add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q3.add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+		q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
 		BooleanQuery q4 = new BooleanQuery();
-		q4.add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
-		q4.add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
+		q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
+		q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(q3, BooleanClause.Occur_e.SHOULD);
-		q2.add(q4, BooleanClause.Occur_e.MUST);
+		q2.Add(q3, BooleanClause.Occur_e.SHOULD);
+		q2.Add(q4, BooleanClause.Occur_e.MUST);
 		Assert.AreEqual(1, Search(q2));
 	  }
 
@@ -116,91 +118,91 @@ namespace Lucene.Net.Search
 	  public virtual void TestParenthesisShould()
 	  {
 		BooleanQuery q3 = new BooleanQuery();
-		q3.add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q3.add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+		q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
 		BooleanQuery q4 = new BooleanQuery();
-		q4.add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
-		q4.add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
+		q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
+		q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(q3, BooleanClause.Occur_e.SHOULD);
-		q2.add(q4, BooleanClause.Occur_e.SHOULD);
+		q2.Add(q3, BooleanClause.Occur_e.SHOULD);
+		q2.Add(q4, BooleanClause.Occur_e.SHOULD);
 		Assert.AreEqual(1, Search(q2));
 	  }
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 
 		//
-		Dir = newDirectory();
+		Dir = NewDirectory();
 
 
 		//
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
 
 		//
 		Document d = new Document();
-		d.add(newField(FIELD_T, "Optimize not deleting all files", TextField.TYPE_STORED));
-		d.add(newField(FIELD_C, "Deleted When I run an optimize in our production environment.", TextField.TYPE_STORED));
+		d.Add(NewField(FIELD_T, "Optimize not deleting all files", TextField.TYPE_STORED));
+		d.Add(NewField(FIELD_C, "Deleted When I run an optimize in our production environment.", TextField.TYPE_STORED));
 
 		//
-		writer.addDocument(d);
+		writer.AddDocument(d);
 
 		Reader = writer.Reader;
 		//
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestBooleanScorerMax()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter riw = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		Directory dir = NewDirectory();
+		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
-		int docCount = atLeast(10000);
+		int docCount = AtLeast(10000);
 
 		for (int i = 0;i < docCount;i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newField("field", "a", TextField.TYPE_NOT_STORED));
-		  riw.addDocument(doc);
+		  doc.Add(NewField("field", "a", TextField.TYPE_NOT_STORED));
+		  riw.AddDocument(doc);
 		}
 
-		riw.forceMerge(1);
+		riw.ForceMerge(1);
 		IndexReader r = riw.Reader;
-		riw.close();
+		riw.Close();
 
-		IndexSearcher s = newSearcher(r);
+		IndexSearcher s = NewSearcher(r);
 		BooleanQuery bq = new BooleanQuery();
-		bq.add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
-		bq.add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+		bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
 
-		Weight w = s.createNormalizedWeight(bq);
+		Weight w = s.CreateNormalizedWeight(bq);
 
-		Assert.AreEqual(1, s.IndexReader.leaves().size());
-		BulkScorer scorer = w.bulkScorer(s.IndexReader.leaves().get(0), false, null);
+		Assert.AreEqual(1, s.IndexReader.Leaves().Count);
+		BulkScorer scorer = w.BulkScorer(s.IndexReader.Leaves()[0], false, null);
 
 		FixedBitSet hits = new FixedBitSet(docCount);
 		AtomicInteger end = new AtomicInteger();
 		Collector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
 
-		while ((int)end < docCount)
+		while (end.Get() < docCount)
 		{
-		  int inc = TestUtil.Next(random(), 1, 1000);
-		  end.getAndAdd(inc);
-		  scorer.score(c, (int)end);
+		  int inc = TestUtil.NextInt(Random(), 1, 1000);
+		  end.AddAndGet(inc);
+		  scorer.Score(c, end.Get());
 		}
 
-		Assert.AreEqual(docCount, hits.cardinality());
-		r.close();
-		dir.close();
+		Assert.AreEqual(docCount, hits.Cardinality());
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class CollectorAnonymousInnerClassHelper : Collector
@@ -228,8 +230,8 @@ namespace Lucene.Net.Search
 
 		  public override void Collect(int doc)
 		  {
-			Assert.IsTrue("collected doc=" + doc + " beyond max=" + End, doc < (int)End);
-			Hits.set(doc);
+			Assert.IsTrue(doc < End.Get(), "collected doc=" + doc + " beyond max=" + End);
+			Hits.Set(doc);
 		  }
 
 		  public override Scorer Scorer

@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 	  ///  sorted by age (the 0th one is the oldest commit).
 	  ///  Note that for a new index this method is invoked with
 	  ///  an empty list. </param>
-      public abstract void OnInit(IList<IndexCommit> commits);
+      public abstract void OnInit<T>(IList<T> commits) where T : IndexCommit;
 
 	  /// <summary>
 	  /// <p>this is called each time the writer completed a commit.
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  /// <param name="commits"> List of <seealso cref="IndexCommit"/>,
 	  ///  sorted by age (the 0th one is the oldest commit). </param>
-      public abstract void OnCommit(IList<IndexCommit> commits);
+      public abstract void OnCommit<T>(IList<T> commits) where T : IndexCommit;
 
 	  public virtual object Clone()
 	  {

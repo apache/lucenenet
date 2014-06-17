@@ -30,40 +30,41 @@ namespace Lucene.Net.Search.Spans
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using NUnit.Framework;
 
 	public class TestSpanFirstQuery : LuceneTestCase
 	{
 	  public virtual void TestStartPositions()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		// mimic StopAnalyzer
-		CharacterRunAutomaton stopSet = new CharacterRunAutomaton((new RegExp("the|a|of")).toAutomaton());
-		Analyzer analyzer = new MockAnalyzer(random(), MockTokenizer.SIMPLE, true, stopSet);
+		CharacterRunAutomaton stopSet = new CharacterRunAutomaton((new RegExp("the|a|of")).ToAutomaton());
+		Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopSet);
 
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, analyzer);
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, analyzer);
 		Document doc = new Document();
-		doc.add(newTextField("field", "the quick brown fox", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField("field", "the quick brown fox", Field.Store.NO));
+		writer.AddDocument(doc);
 		Document doc2 = new Document();
-		doc2.add(newTextField("field", "quick brown fox", Field.Store.NO));
-		writer.addDocument(doc2);
+		doc2.Add(NewTextField("field", "quick brown fox", Field.Store.NO));
+		writer.AddDocument(doc2);
 
 		IndexReader reader = writer.Reader;
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		// user queries on "starts-with quick"
 		SpanQuery sfq = new SpanFirstQuery(new SpanTermQuery(new Term("field", "quick")), 1);
-		Assert.AreEqual(1, searcher.search(sfq, 10).totalHits);
+		Assert.AreEqual(1, searcher.Search(sfq, 10).TotalHits);
 
 		// user queries on "starts-with the quick"
 		SpanQuery include = new SpanFirstQuery(new SpanTermQuery(new Term("field", "quick")), 2);
 		sfq = new SpanNotQuery(include, sfq);
-		Assert.AreEqual(1, searcher.search(sfq, 10).totalHits);
+		Assert.AreEqual(1, searcher.Search(sfq, 10).TotalHits);
 
-		writer.close();
-		reader.close();
-		dir.close();
+		writer.Close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 	}
 

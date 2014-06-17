@@ -84,14 +84,14 @@ namespace Lucene.Net.Search
 			  Console.WriteLine("TEST: finalSearcher maxGen=" + MaxGen);
 			}
 			NrtDeletesThread.waitForGeneration(MaxGen);
-			return NrtDeletes.acquire();
+			return NrtDeletes.Acquire();
 		  }
 	  }
 
 	  protected internal override Directory GetDirectory(Directory @in)
 	  {
 		// Randomly swap in NRTCachingDir
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
 		  if (VERBOSE)
 		  {
@@ -111,148 +111,148 @@ namespace Lucene.Net.Search
 		long gen = GenWriter.updateDocuments(id, docs);
 
 		// Randomly verify the update "took":
-		if (random().Next(20) == 2)
+		if (Random().Next(20) == 2)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
 		  }
 		  NrtDeletesThread.waitForGeneration(gen);
-		  IndexSearcher s = NrtDeletes.acquire();
+		  IndexSearcher s = NrtDeletes.Acquire();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
 		  }
 		  try
 		  {
-			Assert.AreEqual(docs.Count, s.search(new TermQuery(id), 10).totalHits);
+			Assert.AreEqual(docs.Count, s.Search(new TermQuery(id), 10).TotalHits);
 		  }
 		  finally
 		  {
-			NrtDeletes.release(s);
+			NrtDeletes.Release(s);
 		  }
 		}
 
-		LastGens.set(gen);
+		LastGens.Set(gen);
 	  }
 
 	  protected internal override void addDocuments<T1>(Term id, IList<T1> docs) where T1 : Iterable<T1 extends Lucene.Net.Index.IndexableField>
 	  {
 		long gen = GenWriter.addDocuments(docs);
 		// Randomly verify the add "took":
-		if (random().Next(20) == 2)
+		if (Random().Next(20) == 2)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
 		  }
 		  NrtNoDeletesThread.waitForGeneration(gen);
-		  IndexSearcher s = NrtNoDeletes.acquire();
+		  IndexSearcher s = NrtNoDeletes.Acquire();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
 		  }
 		  try
 		  {
-			Assert.AreEqual(docs.Count, s.search(new TermQuery(id), 10).totalHits);
+			Assert.AreEqual(docs.Count, s.Search(new TermQuery(id), 10).TotalHits);
 		  }
 		  finally
 		  {
-			NrtNoDeletes.release(s);
+			NrtNoDeletes.Release(s);
 		  }
 		}
-		LastGens.set(gen);
+		LastGens.Set(gen);
 	  }
 
 	  protected internal override void addDocument<T1>(Term id, IEnumerable<T1> doc) where T1 : Lucene.Net.Index.IndexableField
 	  {
-		long gen = GenWriter.addDocument(doc);
+		long gen = GenWriter.AddDocument(doc);
 
 		// Randomly verify the add "took":
-		if (random().Next(20) == 2)
+		if (Random().Next(20) == 2)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
 		  }
 		  NrtNoDeletesThread.waitForGeneration(gen);
-		  IndexSearcher s = NrtNoDeletes.acquire();
+		  IndexSearcher s = NrtNoDeletes.Acquire();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
 		  }
 		  try
 		  {
-			Assert.AreEqual(1, s.search(new TermQuery(id), 10).totalHits);
+			Assert.AreEqual(1, s.Search(new TermQuery(id), 10).TotalHits);
 		  }
 		  finally
 		  {
-			NrtNoDeletes.release(s);
+			NrtNoDeletes.Release(s);
 		  }
 		}
-		LastGens.set(gen);
+		LastGens.Set(gen);
 	  }
 
 	  protected internal override void updateDocument<T1>(Term id, IEnumerable<T1> doc) where T1 : Lucene.Net.Index.IndexableField
 	  {
 		long gen = GenWriter.updateDocument(id, doc);
 		// Randomly verify the udpate "took":
-		if (random().Next(20) == 2)
+		if (Random().Next(20) == 2)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
 		  }
 		  NrtDeletesThread.waitForGeneration(gen);
-		  IndexSearcher s = NrtDeletes.acquire();
+		  IndexSearcher s = NrtDeletes.Acquire();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
 		  }
 		  try
 		  {
-			Assert.AreEqual(1, s.search(new TermQuery(id), 10).totalHits);
+			Assert.AreEqual(1, s.Search(new TermQuery(id), 10).TotalHits);
 		  }
 		  finally
 		  {
-			NrtDeletes.release(s);
+			NrtDeletes.Release(s);
 		  }
 		}
-		LastGens.set(gen);
+		LastGens.Set(gen);
 	  }
 
 	  protected internal override void DeleteDocuments(Term id)
 	  {
-		long gen = GenWriter.deleteDocuments(id);
+		long gen = GenWriter.DeleteDocuments(id);
 		// randomly verify the delete "took":
-		if (random().Next(20) == 7)
+		if (Random().Next(20) == 7)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify del " + id);
 		  }
 		  NrtDeletesThread.waitForGeneration(gen);
-		  IndexSearcher s = NrtDeletes.acquire();
+		  IndexSearcher s = NrtDeletes.Acquire();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
 		  }
 		  try
 		  {
-			Assert.AreEqual(0, s.search(new TermQuery(id), 10).totalHits);
+			Assert.AreEqual(0, s.Search(new TermQuery(id), 10).TotalHits);
 		  }
 		  finally
 		  {
-			NrtDeletes.release(s);
+			NrtDeletes.Release(s);
 		  }
 		}
-		LastGens.set(gen);
+		LastGens.Set(gen);
 	  }
 
 	  protected internal override void DoAfterWriter(ExecutorService es)
 	  {
-		double minReopenSec = 0.01 + 0.05 * random().NextDouble();
-		double maxReopenSec = minReopenSec * (1.0 + 10 * random().NextDouble());
+		double minReopenSec = 0.01 + 0.05 * Random().NextDouble();
+		double maxReopenSec = minReopenSec * (1.0 + 10 * Random().NextDouble());
 
 		if (VERBOSE)
 		{
@@ -270,13 +270,13 @@ namespace Lucene.Net.Search
 		NrtDeletesThread.Name = "NRTDeletes Reopen Thread";
 		NrtDeletesThread.Priority = Math.Min(Thread.CurrentThread.Priority + 2, Thread.MAX_PRIORITY);
 		NrtDeletesThread.Daemon = true;
-		NrtDeletesThread.start();
+		NrtDeletesThread.Start();
 
 		NrtNoDeletesThread = new ControlledRealTimeReopenThread<>(GenWriter, NrtNoDeletes, maxReopenSec, minReopenSec);
 		NrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
 		NrtNoDeletesThread.Priority = Math.Min(Thread.CurrentThread.Priority + 2, Thread.MAX_PRIORITY);
 		NrtNoDeletesThread.Daemon = true;
-		NrtNoDeletesThread.start();
+		NrtNoDeletesThread.Start();
 	  }
 
 	  private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
@@ -295,14 +295,14 @@ namespace Lucene.Net.Search
 		  {
 			OuterInstance.WarmCalled = true;
 			IndexSearcher s = new IndexSearcher(r, Es);
-			s.search(new TermQuery(new Term("body", "united")), 10);
+			s.Search(new TermQuery(new Term("body", "united")), 10);
 			return s;
 		  }
 	  }
 
 	  protected internal override void DoAfterIndexingThreadDone()
 	  {
-		long? gen = LastGens.get();
+		long? gen = LastGens.Get();
 		if (gen != null)
 		{
 		  AddMaxGen(gen);
@@ -331,7 +331,7 @@ namespace Lucene.Net.Search
 			// Test doesn't assert deletions until the end, so we
 			// can randomize whether dels must be applied
 			SearcherManager nrt;
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
 			  nrt = NrtDeletes;
 			}
@@ -340,7 +340,7 @@ namespace Lucene.Net.Search
 			  nrt = NrtNoDeletes;
 			}
     
-			return nrt.acquire();
+			return nrt.Acquire();
 		  }
 	  }
 
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
 		// against the same SearcherManager you acquired from... but
 		// both impls just decRef the underlying reader so we
 		// can get away w/ cheating:
-		NrtNoDeletes.release(s);
+		NrtNoDeletes.Release(s);
 	  }
 
 	  protected internal override void DoClose()
@@ -360,10 +360,10 @@ namespace Lucene.Net.Search
 		{
 		  Console.WriteLine("TEST: now close SearcherManagers");
 		}
-		NrtDeletesThread.close();
-		NrtDeletes.close();
-		NrtNoDeletesThread.close();
-		NrtNoDeletes.close();
+		NrtDeletesThread.Dispose();
+		NrtDeletes.Dispose();
+		NrtNoDeletesThread.Dispose();
+		NrtNoDeletes.Dispose();
 	  }
 
 	  /*
@@ -371,9 +371,9 @@ namespace Lucene.Net.Search
 	   */
 	  public virtual void TestThreadStarvationNoDeleteNRTReader()
 	  {
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()));
-		conf.MergePolicy = random().nextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES;
-		Directory d = newDirectory();
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+		conf.MergePolicy = Random().NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES;
+		Directory d = NewDirectory();
 		CountDownLatch latch = new CountDownLatch(1);
 		CountDownLatch signal = new CountDownLatch(1);
 
@@ -381,9 +381,9 @@ namespace Lucene.Net.Search
 		TrackingIndexWriter writer = new TrackingIndexWriter(_writer);
 		SearcherManager manager = new SearcherManager(_writer, false, null);
 		Document doc = new Document();
-		doc.add(newTextField("test", "test", Field.Store.YES));
-		writer.addDocument(doc);
-		manager.maybeRefresh();
+		doc.Add(NewTextField("test", "test", Field.Store.YES));
+		writer.AddDocument(doc);
+		manager.MaybeRefresh();
 		Thread t = new ThreadAnonymousInnerClassHelper(this, latch, signal, writer, manager);
 		t.Start();
 		_writer.WaitAfterUpdate = true; // wait in addDocument to let some reopens go through
@@ -391,17 +391,17 @@ namespace Lucene.Net.Search
 
 		Assert.IsFalse(manager.SearcherCurrent); // false since there is a delete in the queue
 
-		IndexSearcher searcher = manager.acquire();
+		IndexSearcher searcher = manager.Acquire();
 		try
 		{
-		  Assert.AreEqual(2, searcher.IndexReader.numDocs());
+		  Assert.AreEqual(2, searcher.IndexReader.NumDocs());
 		}
 		finally
 		{
-		  manager.release(searcher);
+		  manager.Release(searcher);
 		}
 		ControlledRealTimeReopenThread<IndexSearcher> thread = new ControlledRealTimeReopenThread<IndexSearcher>(writer, manager, 0.01, 0.01);
-		thread.start(); // start reopening
+		thread.Start(); // start reopening
 		if (VERBOSE)
 		{
 		  Console.WriteLine("waiting now for generation " + lastGen);
@@ -410,14 +410,14 @@ namespace Lucene.Net.Search
 		AtomicBoolean finished = new AtomicBoolean(false);
 		Thread waiter = new ThreadAnonymousInnerClassHelper2(this, lastGen, thread, finished);
 		waiter.Start();
-		manager.maybeRefresh();
+		manager.MaybeRefresh();
 		waiter.Join(1000);
-		if (!finished.get())
+		if (!finished.Get())
 		{
 		  waiter.Interrupt();
 		  Assert.Fail("thread deadlocked on waitForGeneration");
 		}
-		thread.close();
+		thread.Dispose();
 		thread.join();
 		IOUtils.close(manager, _writer, d);
 	  }
@@ -445,9 +445,9 @@ namespace Lucene.Net.Search
 			try
 			{
 			  Signal.@await();
-			  Manager.maybeRefresh();
-			  Writer.deleteDocuments(new TermQuery(new Term("foo", "barista")));
-			  Manager.maybeRefresh(); // kick off another reopen so we inc. the internal gen
+			  Manager.MaybeRefresh();
+			  Writer.DeleteDocuments(new TermQuery(new Term("foo", "barista")));
+			  Manager.MaybeRefresh(); // kick off another reopen so we inc. the internal gen
 			}
 			catch (Exception e)
 			{
@@ -488,7 +488,7 @@ namespace Lucene.Net.Search
 			  Thread.CurrentThread.Interrupt();
 			  throw new Exception(ie);
 			}
-			Finished.set(true);
+			Finished.Set(true);
 		  }
 	  }
 
@@ -526,11 +526,11 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestEvilSearcherFactory()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
-		w.commit();
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+		w.Commit();
 
-		IndexReader other = DirectoryReader.open(dir);
+		IndexReader other = DirectoryReader.Open(dir);
 
 		SearcherFactory theEvilOne = new SearcherFactoryAnonymousInnerClassHelper(this, other);
 
@@ -539,13 +539,13 @@ namespace Lucene.Net.Search
 		  new SearcherManager(w.w, false, theEvilOne);
 		  Assert.Fail("didn't hit expected exception");
 		}
-		catch (IllegalStateException ise)
+		catch (InvalidOperationException ise)
 		{
 		  // expected
 		}
-		w.close();
-		other.close();
-		dir.close();
+		w.Dispose();
+		other.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class SearcherFactoryAnonymousInnerClassHelper : SearcherFactory
@@ -562,25 +562,25 @@ namespace Lucene.Net.Search
 
 		  public override IndexSearcher NewSearcher(IndexReader ignored)
 		  {
-			return LuceneTestCase.newSearcher(Other);
+			return LuceneTestCase.NewSearcher(Other);
 		  }
 	  }
 
 	  public virtual void TestListenerCalled()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
 		AtomicBoolean afterRefreshCalled = new AtomicBoolean(false);
 		SearcherManager sm = new SearcherManager(iw, true, new SearcherFactory());
-		sm.addListener(new RefreshListenerAnonymousInnerClassHelper(this, afterRefreshCalled));
-		iw.addDocument(new Document());
-		iw.commit();
-		Assert.IsFalse(afterRefreshCalled.get());
-		sm.maybeRefreshBlocking();
-		Assert.IsTrue(afterRefreshCalled.get());
-		sm.close();
-		iw.close();
-		dir.close();
+		sm.AddListener(new RefreshListenerAnonymousInnerClassHelper(this, afterRefreshCalled));
+		iw.AddDocument(new Document());
+		iw.Commit();
+		Assert.IsFalse(afterRefreshCalled.Get());
+		sm.MaybeRefreshBlocking();
+		Assert.IsTrue(afterRefreshCalled.Get());
+		sm.Dispose();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class RefreshListenerAnonymousInnerClassHelper : ReferenceManager.RefreshListener
@@ -602,7 +602,7 @@ namespace Lucene.Net.Search
 		  {
 			if (didRefresh)
 			{
-			  AfterRefreshCalled.set(true);
+			  AfterRefreshCalled.Set(true);
 			}
 		  }
 	  }
@@ -621,13 +621,13 @@ namespace Lucene.Net.Search
 		StringBuilder builder = new StringBuilder(2048);
 		for (int i = 0; i < 2048; i++)
 		{
-		  builder.Append(chars[random().Next(chars.Length)]);
+		  builder.Append(chars[Random().Next(chars.Length)]);
 		}
 		string content = builder.ToString();
 
 		SnapshotDeletionPolicy sdp = new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 		Directory dir = new NRTCachingDirectory(newFSDirectory(createTempDir("nrt")), 5, 128);
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, new MockAnalyzer(random()));
+		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, new MockAnalyzer(Random()));
 		config.IndexDeletionPolicy = sdp;
 		config.OpenMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND;
 		IndexWriter iw = new IndexWriter(dir, config);
@@ -636,7 +636,7 @@ namespace Lucene.Net.Search
 		ControlledRealTimeReopenThread<IndexSearcher> controlledRealTimeReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(tiw, sm, maxStaleSecs, 0);
 
 		controlledRealTimeReopenThread.Daemon = true;
-		controlledRealTimeReopenThread.start();
+		controlledRealTimeReopenThread.Start();
 
 		IList<Thread> commitThreads = new List<Thread>();
 
@@ -649,17 +649,17 @@ namespace Lucene.Net.Search
 			commitThreads.Add(commitThread);
 		  }
 		  Document d = new Document();
-		  d.add(new TextField("count", i + "", Field.Store.NO));
-		  d.add(new TextField("content", content, Field.Store.YES));
-		  long start = System.currentTimeMillis();
-		  long l = tiw.addDocument(d);
+		  d.Add(new TextField("count", i + "", Field.Store.NO));
+		  d.Add(new TextField("content", content, Field.Store.YES));
+		  long start = DateTime.Now.Millisecond;
+		  long l = tiw.AddDocument(d);
 		  controlledRealTimeReopenThread.waitForGeneration(l);
-		  long wait = System.currentTimeMillis() - start;
+		  long wait = DateTime.Now.Millisecond - start;
 		  Assert.IsTrue("waited too long for generation " + wait, wait < (maxStaleSecs * 1000));
-		  IndexSearcher searcher = sm.acquire();
-		  TopDocs td = searcher.search(new TermQuery(new Term("count", i + "")), 10);
-		  sm.release(searcher);
-		  Assert.AreEqual(1, td.totalHits);
+		  IndexSearcher searcher = sm.Acquire();
+		  TopDocs td = searcher.Search(new TermQuery(new Term("count", i + "")), 10);
+		  sm.Release(searcher);
+		  Assert.AreEqual(1, td.TotalHits);
 		}
 
 		foreach (Thread commitThread in commitThreads)
@@ -667,10 +667,10 @@ namespace Lucene.Net.Search
 		  commitThread.Join();
 		}
 
-		controlledRealTimeReopenThread.close();
-		sm.close();
-		iw.close();
-		dir.close();
+		controlledRealTimeReopenThread.Dispose();
+		sm.Dispose();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class RunnableAnonymousInnerClassHelper : Runnable
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search
 		  {
 			try
 			{
-			  Iw.commit();
+			  Iw.Commit();
 			  IndexCommit ic = Sdp.snapshot();
 			  foreach (string name in ic.FileNames)
 			  {

@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
 	  /// 
 	  /// @lucene.experimental
 	  /// </summary>
-	  protected internal class BooleanWeight : Weight
+	  public class BooleanWeight : Weight
 	  {
 		  private readonly BooleanQuery OuterInstance;
 

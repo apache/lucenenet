@@ -44,12 +44,12 @@ namespace Lucene.Net.Analysis
 
 	  public MockGraphTokenFilter(Random random, TokenStream input) : base(input)
 	  {
-		Seed = random.nextLong();
+		Seed = random.Next();
 	  }
 
-	  protected internal override Position NewPosition()
+      protected internal override LookaheadTokenFilter.Position NewPosition()
 	  {
-		return new Position();
+          return new LookaheadTokenFilter.Position();
 	  }
 
 	  protected internal override void AfterPosition()
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
 			Console.WriteLine("  do insert! posLen=" + posLength);
 		  }
 
-		  Position posEndData = positions.Get(OutputPos + posLength);
+          LookaheadTokenFilter.Position posEndData = positions.Get(OutputPos + posLength);
 
 		  // Look ahead as needed until we figure out the right
 		  // endOffset:
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis
 		this.Random = new Random((int)Seed);
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		base.Dispose();
 		this.Random = null;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -131,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  internal virtual string FieldValue(int maxTF)
 	  {
-		List<string> shuffled = new List<string>();
+		IList<string> shuffled = new List<string>();
 		StringBuilder sb = new StringBuilder();
 		int i = Random().Next(Terms.Length);
 		while (i < Terms.Length)
@@ -143,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  }
 		  i++;
 		}
-		Collections.shuffle(shuffled, Random());
+	    shuffled = CollectionsHelper.Shuffle(shuffled);
 		foreach (string term in shuffled)
 		{
 		  sb.Append(term);

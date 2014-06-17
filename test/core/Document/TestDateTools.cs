@@ -190,7 +190,7 @@ namespace Lucene.Net.Document
 	  {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS", Locale.ROOT);
 		sdf.TimeZone = TimeZone.getTimeZone("GMT");
-		return sdf.format(date);
+		return sdf.Format(date);
 	  }
 
 	  public virtual void TestDateToolsUTC()

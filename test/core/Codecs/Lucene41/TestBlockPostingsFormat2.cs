@@ -1,4 +1,6 @@
+using System;
 using System.Text;
+using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -45,6 +47,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  internal RandomIndexWriter Iw;
 	  internal IndexWriterConfig Iwc;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -55,6 +58,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		Iw.DoRandomForceMerge = false; // we will ourselves
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Iw.Close();
@@ -70,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  private Document NewDocument()
 	  {
 		Document doc = new Document();
-		foreach (FieldInfo.IndexOptions_e option in FieldInfo.IndexOptions_e.values())
+		foreach (FieldInfo.IndexOptions_e option in Enum.GetValues(FieldInfo.IndexOptions_e))
 		{
 		  FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		  // turn on tvs for a cross-check, since we rely upon checkindex in this test (for now)
@@ -78,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  ft.StoreTermVectorOffsets = true;
 		  ft.StoreTermVectorPositions = true;
 		  ft.StoreTermVectorPayloads = true;
-		  ft.IndexOptions = option;
+		  ft.IndexOptionsValue = option;
 		  doc.Add(new Field(option.ToString(), "", ft));
 		}
 		return doc;

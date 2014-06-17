@@ -33,6 +33,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using NUnit.Framework;
 
 
 
@@ -45,19 +46,19 @@ namespace Lucene.Net.Search
 	  public virtual void TestFilteredSearch()
 	  {
 		bool enforceSingleSegment = true;
-		Directory directory = newDirectory();
+		Directory directory = NewDirectory();
 		int[] filterBits = new int[] {1, 36};
 		SimpleDocIdSetFilter filter = new SimpleDocIdSetFilter(filterBits);
-		IndexWriter writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMergePolicy(newLogMergePolicy()));
+		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 		SearchFiltered(writer, directory, filter, enforceSingleSegment);
 		// run the test on more than one segment
 		enforceSingleSegment = false;
-		writer.close();
-		writer = new IndexWriter(directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(10).setMergePolicy(newLogMergePolicy()));
+		writer.Dispose();
+		writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy()));
 		// we index 60 docs - this will create 6 segments
 		SearchFiltered(writer, directory, filter, enforceSingleSegment);
-		writer.close();
-		directory.close();
+		writer.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void SearchFiltered(IndexWriter writer, Directory directory, Filter filter, bool fullMerge)
@@ -65,24 +66,24 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < 60; i++) //Simple docs
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField(FIELD, Convert.ToString(i), Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField(FIELD, Convert.ToString(i), Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		if (fullMerge)
 		{
-		  writer.forceMerge(1);
+		  writer.ForceMerge(1);
 		}
-		writer.close();
+		writer.Dispose();
 
 		BooleanQuery booleanQuery = new BooleanQuery();
-		booleanQuery.add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur_e.SHOULD);
+		booleanQuery.Add(new TermQuery(new Term(FIELD, "36")), BooleanClause.Occur_e.SHOULD);
 
 
-		IndexReader reader = DirectoryReader.open(directory);
-		IndexSearcher indexSearcher = newSearcher(reader);
-		ScoreDoc[] hits = indexSearcher.search(booleanQuery, filter, 1000).scoreDocs;
-		Assert.AreEqual("Number of matched documents", 1, hits.Length);
-		reader.close();
+		IndexReader reader = DirectoryReader.Open(directory);
+		IndexSearcher indexSearcher = NewSearcher(reader);
+		ScoreDoc[] hits = indexSearcher.Search(booleanQuery, filter, 1000).ScoreDocs;
+		Assert.AreEqual(1, hits.Length, "Number of matched documents");
+		reader.Dispose();
 	  }
 
 	  public sealed class SimpleDocIdSetFilter : Filter
@@ -96,19 +97,19 @@ namespace Lucene.Net.Search
 
 		public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		{
-		  assertNull("acceptDocs should be null, as we have an index without deletions", acceptDocs);
-		  FixedBitSet set = new FixedBitSet(context.reader().maxDoc());
-		  int docBase = context.docBase;
-		  int limit = docBase + context.reader().maxDoc();
+		  Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
+		  FixedBitSet set = new FixedBitSet(context.Reader().MaxDoc());
+		  int docBase = context.DocBase;
+		  int limit = docBase + context.Reader().MaxDoc();
 		  for (int index = 0;index < Docs.Length; index++)
 		  {
 			int docId = Docs[index];
 			if (docId >= docBase && docId < limit)
 			{
-			  set.set(docId - docBase);
+			  set.Set(docId - docBase);
 			}
 		  }
-		  return set.cardinality() == 0 ? null:set;
+		  return set.Cardinality() == 0 ? null:set;
 		}
 	  }
 

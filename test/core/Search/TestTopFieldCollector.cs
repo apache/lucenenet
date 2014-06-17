@@ -25,6 +25,7 @@ namespace Lucene.Net.Search
 	using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestTopFieldCollector : LuceneTestCase
 	{
@@ -34,25 +35,25 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), Dir);
-		int numDocs = atLeast(100);
+		base.SetUp();
+		Dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
+		int numDocs = AtLeast(100);
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  iw.addDocument(doc);
+		  iw.AddDocument(doc);
 		}
 		Ir = iw.Reader;
-		iw.close();
-		@is = newSearcher(Ir);
+		iw.Close();
+		@is = NewSearcher(Ir);
 	  }
 
 	  public override void TearDown()
 	  {
-		Ir.close();
-		Dir.close();
-		base.tearDown();
+		Ir.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestSortWithoutFillFields()
@@ -67,14 +68,14 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < sort.Length; i++)
 		{
 		  Query q = new MatchAllDocsQuery();
-		  TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, false, false, false, true);
+		  TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, false, false, false, true);
 
-		  @is.search(q, tdc);
+		  @is.Search(q, tdc);
 
-		  ScoreDoc[] sd = tdc.topDocs().scoreDocs;
+		  ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;
 		  for (int j = 1; j < sd.Length; j++)
 		  {
-			Assert.IsTrue(sd[j].doc != sd[j - 1].doc);
+			Assert.IsTrue(sd[j].Doc != sd[j - 1].Doc);
 		  }
 
 		}
@@ -88,15 +89,15 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < sort.Length; i++)
 		{
 		  Query q = new MatchAllDocsQuery();
-		  TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, true, false, false, true);
+		  TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, false, false, true);
 
-		  @is.search(q, tdc);
+		  @is.Search(q, tdc);
 
-		  TopDocs td = tdc.topDocs();
-		  ScoreDoc[] sd = td.scoreDocs;
+		  TopDocs td = tdc.TopDocs();
+		  ScoreDoc[] sd = td.ScoreDocs;
 		  for (int j = 0; j < sd.Length; j++)
 		  {
-			Assert.IsTrue(float.IsNaN(sd[j].score));
+			Assert.IsTrue(float.IsNaN(sd[j].Score));
 		  }
 		  Assert.IsTrue(float.IsNaN(td.MaxScore));
 		}
@@ -110,15 +111,15 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < sort.Length; i++)
 		{
 		  Query q = new MatchAllDocsQuery();
-		  TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, true, true, false, true);
+		  TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, true, false, true);
 
-		  @is.search(q, tdc);
+		  @is.Search(q, tdc);
 
-		  TopDocs td = tdc.topDocs();
-		  ScoreDoc[] sd = td.scoreDocs;
+		  TopDocs td = tdc.TopDocs();
+		  ScoreDoc[] sd = td.ScoreDocs;
 		  for (int j = 0; j < sd.Length; j++)
 		  {
-			Assert.IsTrue(!float.IsNaN(sd[j].score));
+			Assert.IsTrue(!float.IsNaN(sd[j].Score));
 		  }
 		  Assert.IsTrue(float.IsNaN(td.MaxScore));
 		}
@@ -133,15 +134,15 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < sort.Length; i++)
 		{
 		  Query q = new MatchAllDocsQuery();
-		  TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, true, true, false, true);
+		  TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, true, false, true);
 
-		  @is.search(q, tdc);
+		  @is.Search(q, tdc);
 
-		  TopDocs td = tdc.topDocs();
-		  ScoreDoc[] sd = td.scoreDocs;
+		  TopDocs td = tdc.TopDocs();
+		  ScoreDoc[] sd = td.ScoreDocs;
 		  for (int j = 0; j < sd.Length; j++)
 		  {
-			Assert.IsTrue(!float.IsNaN(sd[j].score));
+			Assert.IsTrue(!float.IsNaN(sd[j].Score));
 		  }
 		  Assert.IsTrue(float.IsNaN(td.MaxScore));
 		}
@@ -155,15 +156,15 @@ namespace Lucene.Net.Search
 		for (int i = 0; i < sort.Length; i++)
 		{
 		  Query q = new MatchAllDocsQuery();
-		  TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
+		  TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
 
-		  @is.search(q, tdc);
+		  @is.Search(q, tdc);
 
-		  TopDocs td = tdc.topDocs();
-		  ScoreDoc[] sd = td.scoreDocs;
+		  TopDocs td = tdc.TopDocs();
+		  ScoreDoc[] sd = td.ScoreDocs;
 		  for (int j = 0; j < sd.Length; j++)
 		  {
-			Assert.IsTrue(!float.IsNaN(sd[j].score));
+			Assert.IsTrue(!float.IsNaN(sd[j].Score));
 		  }
 		  Assert.IsTrue(!float.IsNaN(td.MaxScore));
 		}
@@ -178,9 +179,9 @@ namespace Lucene.Net.Search
 		string[] actualTFCClasses = new string[] {"OutOfOrderOneComparatorNonScoringCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector", "OutOfOrderOneComparatorScoringNoMaxScoreCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector", "OutOfOrderOneComparatorNonScoringCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector", "OutOfOrderOneComparatorScoringNoMaxScoreCollector", "OutOfOrderOneComparatorScoringMaxScoreCollector"};
 
 		BooleanQuery bq = new BooleanQuery();
-		// Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
+		// Add a Query with SHOULD, since bw.Scorer() returns BooleanScorer2
 		// which delegates to BS if there are no mandatory clauses.
-		bq.add(new MatchAllDocsQuery(), Occur.SHOULD);
+		bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 		// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 		// the clause instead of BQ.
 		bq.MinimumNumberShouldMatch = 1;
@@ -188,14 +189,14 @@ namespace Lucene.Net.Search
 		{
 		  for (int j = 0; j < tfcOptions.Length; j++)
 		  {
-			TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
+			TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
 
 			Assert.IsTrue(tdc.GetType().Name.EndsWith("$" + actualTFCClasses[j]));
 
-			@is.search(bq, tdc);
+			@is.Search(bq, tdc);
 
-			TopDocs td = tdc.topDocs();
-			ScoreDoc[] sd = td.scoreDocs;
+			TopDocs td = tdc.TopDocs();
+			ScoreDoc[] sd = td.ScoreDocs;
 			Assert.AreEqual(10, sd.Length);
 		  }
 		}
@@ -211,9 +212,9 @@ namespace Lucene.Net.Search
 		string[] actualTFCClasses = new string[] {"OutOfOrderMultiComparatorNonScoringCollector", "OutOfOrderMultiComparatorScoringMaxScoreCollector", "OutOfOrderMultiComparatorScoringNoMaxScoreCollector", "OutOfOrderMultiComparatorScoringMaxScoreCollector", "OutOfOrderMultiComparatorNonScoringCollector", "OutOfOrderMultiComparatorScoringMaxScoreCollector", "OutOfOrderMultiComparatorScoringNoMaxScoreCollector", "OutOfOrderMultiComparatorScoringMaxScoreCollector"};
 
 		BooleanQuery bq = new BooleanQuery();
-		// Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
+		// Add a Query with SHOULD, since bw.Scorer() returns BooleanScorer2
 		// which delegates to BS if there are no mandatory clauses.
-		bq.add(new MatchAllDocsQuery(), Occur.SHOULD);
+		bq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
 		// Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
 		// the clause instead of BQ.
 		bq.MinimumNumberShouldMatch = 1;
@@ -221,14 +222,14 @@ namespace Lucene.Net.Search
 		{
 		  for (int j = 0; j < tfcOptions.Length; j++)
 		  {
-			TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
+			TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
 
 			Assert.IsTrue(tdc.GetType().Name.EndsWith("$" + actualTFCClasses[j]));
 
-			@is.search(bq, tdc);
+			@is.Search(bq, tdc);
 
-			TopDocs td = tdc.topDocs();
-			ScoreDoc[] sd = td.scoreDocs;
+			TopDocs td = tdc.TopDocs();
+			ScoreDoc[] sd = td.ScoreDocs;
 			Assert.AreEqual(10, sd.Length);
 		  }
 		}
@@ -241,9 +242,9 @@ namespace Lucene.Net.Search
 		Sort[] sort = new Sort[] {new Sort(SortField.FIELD_DOC), new Sort()};
 		for (int i = 0; i < sort.Length; i++)
 		{
-		  TopDocsCollector<Entry> tdc = TopFieldCollector.create(sort[i], 10, true, true, true, true);
-		  TopDocs td = tdc.topDocs();
-		  Assert.AreEqual(0, td.totalHits);
+		  TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, true, true, true, true);
+		  TopDocs td = tdc.TopDocs();
+		  Assert.AreEqual(0, td.TotalHits);
 		  Assert.IsTrue(float.IsNaN(td.MaxScore));
 		}
 	  }

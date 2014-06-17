@@ -211,7 +211,7 @@ namespace Lucene.Net.Document
 
 		TrySetBoost(field);
 		TrySetByteValue(field);
-		field.BytesValue = "fubar".getBytes(StandardCharsets.UTF_8);
+		field.BytesValue = "fubar".getBytes(IOUtils.UTF_8);
 		field.BytesValue = new BytesRef("baz");
 		TrySetDoubleValue(field);
 		TrySetIntValue(field);
@@ -268,7 +268,7 @@ namespace Lucene.Net.Document
 		  field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
 
 		  Assert.AreEqual("baz", field.StringValue);
-		  Assert.AreEqual(5f, field.Boost(), 0f);
+		  Assert.AreEqual(5f, field.GetBoost(), 0f);
 		}
 	  }
 
@@ -290,7 +290,7 @@ namespace Lucene.Net.Document
 		field.TokenStream = new CannedTokenStream(new Token("foo", 0, 3));
 
 		Assert.IsNotNull(field.ReaderValue);
-		Assert.AreEqual(5f, field.Boost(), 0f);
+        Assert.AreEqual(5f, field.GetBoost(), 0f);
 	  }
 
 	  /* TODO: this is pretty expert and crazy
@@ -301,13 +301,13 @@ namespace Lucene.Net.Document
 
 	  public virtual void TestStoredFieldBytes()
 	  {
-		Field[] fields = new Field[] {new StoredField("foo", "bar".getBytes(StandardCharsets.UTF_8)), new StoredField("foo", "bar".getBytes(StandardCharsets.UTF_8), 0, 3), new StoredField("foo", new BytesRef("bar"))};
+		Field[] fields = new Field[] {new StoredField("foo", "bar".getBytes(IOUtils.UTF_8)), new StoredField("foo", "bar".getBytes(IOUtils.UTF_8), 0, 3), new StoredField("foo", new BytesRef("bar"))};
 
 		foreach (Field field in fields)
 		{
 		  TrySetBoost(field);
 		  TrySetByteValue(field);
-		  field.BytesValue = "baz".getBytes(StandardCharsets.UTF_8);
+		  field.BytesValue = "baz".getBytes(IOUtils.UTF_8);
 		  field.BytesValue = new BytesRef("baz");
 		  TrySetDoubleValue(field);
 		  TrySetIntValue(field);
@@ -434,7 +434,7 @@ namespace Lucene.Net.Document
 	  {
 		try
 		{
-		  f.BytesValue = new sbyte[] {5, 5};
+		  f.BytesValue = new BytesRef(new sbyte[] {5, 5});
 		  Assert.Fail();
 		}
 		catch (System.ArgumentException expected)

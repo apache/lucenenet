@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// </summary>
 	/// @deprecated Only for reading existing 3.x indexes 
 	[Obsolete("Only for reading existing 3.x indexes")]
-	internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, ICloneable, IDisposable
+	public sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, ICloneable, IDisposable
 	{
 	  private const int FORMAT_SIZE = 4;
 

@@ -97,15 +97,10 @@ namespace Lucene.Net.Codecs.Compressing
 	  {
 		  private readonly TestCompressingStoredFieldsFormat OuterInstance;
 
-		  public FieldAnonymousInnerClassHelper(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType) : base("invalid", fieldType)
+		  public FieldAnonymousInnerClassHelper(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType) 
+              : base("invalid", fieldType)
 		  {
 			  this.OuterInstance = outerInstance;
-		  }
-
-
-		  public override string StringValue()
-		  {
-			return null;
 		  }
 
 	  }

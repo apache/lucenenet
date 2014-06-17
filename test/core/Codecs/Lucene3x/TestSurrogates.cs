@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 		int tc = 0;
 
-		IList<Term> fieldTerms = new List<Term>();
+		List<Term> fieldTerms = new List<Term>();
 
 		for (int f = 0;f < numField;f++)
 		{

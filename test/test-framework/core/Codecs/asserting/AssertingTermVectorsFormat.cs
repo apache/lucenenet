@@ -58,9 +58,10 @@ namespace Lucene.Net.Codecs.asserting
 		  this.@in = @in;
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 
 		public override Fields Get(int doc)
@@ -69,7 +70,7 @@ namespace Lucene.Net.Codecs.asserting
 		  return fields == null ? null : new AssertingAtomicReader.AssertingFields(fields);
 		}
 
-		public override TermVectorsReader Clone()
+		public override object Clone()
 		{
 		  return new AssertingTermVectorsReader((TermVectorsReader)@in.Clone());
 		}
@@ -198,9 +199,10 @@ namespace Lucene.Net.Codecs.asserting
 			}
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 
 	  }

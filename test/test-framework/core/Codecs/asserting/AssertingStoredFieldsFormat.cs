@@ -57,9 +57,10 @@ namespace Lucene.Net.Codecs.asserting
 		  this.MaxDoc = maxDoc;
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 
 		public override void VisitDocument(int n, StoredFieldVisitor visitor)
@@ -68,7 +69,7 @@ namespace Lucene.Net.Codecs.asserting
 		  @in.VisitDocument(n, visitor);
 		}
 
-		public override StoredFieldsReader Clone()
+		public override object Clone()
 		{
 		  return new AssertingStoredFieldsReader((StoredFieldsReader)@in.Clone(), MaxDoc);
 		}
@@ -143,9 +144,10 @@ namespace Lucene.Net.Codecs.asserting
 		  Debug.Assert(numDocs == NumWritten);
 		}
 
-		public override void Close()
+		protected override void Dispose(bool disposing)
 		{
-		  @in.Dispose();
+            if (disposing)
+		        @in.Dispose();
 		}
 	  }
 	}

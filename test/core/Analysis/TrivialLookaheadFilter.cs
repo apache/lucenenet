@@ -32,12 +32,13 @@ namespace Lucene.Net.Analysis
 	{
 
 	  private readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
-	  private readonly PositionIncrementAttribute PosIncAtt;// = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+	  //private readonly PositionIncrementAttribute PosIncAtt;// = addAttribute(typeof(PositionIncrementAttribute));
+	  //private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+
 
 	  private int InsertUpto;
 
-	  protected internal TrivialLookaheadFilter(TokenStream input) : base(input)
+	  internal TrivialLookaheadFilter(TokenStream input) : base(input)
 	  {
 	  }
 
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis
 		  ClearAttributes();
 		  TermAtt.SetEmpty();
 		  PosIncAtt.PositionIncrement = 0;
-		  TermAtt.Append(positions.Get(OutputPos).GetFact());
+		  TermAtt.Append(((TestPosition)positions.Get(OutputPos)).Fact);
 		  OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, positions.Get(OutputPos + 1).EndOffset);
 		  InsertUpto = OutputPos;
 		}
@@ -107,7 +108,7 @@ namespace Lucene.Net.Analysis
 		for (int x = 0; x < facts.Count; x++)
 		{
 		  // sentenceTokens is just relative to sentence, positions is absolute.
-		  positions.Get(OutputPos + x).Fact = facts[x];
+		  ((TestPosition)positions.Get(OutputPos + x)).Fact = facts[x];
 		}
 	  }
 	}

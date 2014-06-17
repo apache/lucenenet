@@ -31,7 +31,8 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
+    using System.IO;
 
 
 	public class FuzzyTermOnShortTermsTest : LuceneTestCase
@@ -66,13 +67,13 @@ namespace Lucene.Net.Search
 	   private void CountHits(Analyzer analyzer, string[] docs, Query q, int expected)
 	   {
 		  Directory d = GetDirectory(analyzer, docs);
-		  IndexReader r = DirectoryReader.open(d);
+		  IndexReader r = DirectoryReader.Open(d);
 		  IndexSearcher s = new IndexSearcher(r);
 		  TotalHitCountCollector c = new TotalHitCountCollector();
-		  s.search(q, c);
-		  Assert.AreEqual(q.ToString(), expected, c.TotalHits);
-		  r.close();
-		  d.close();
+		  s.Search(q, c);
+		  Assert.AreEqual(expected, c.TotalHits, q.ToString());
+		  r.Dispose();
+		  d.Dispose();
 	   }
 
 	   public static Analyzer Analyzer
@@ -89,7 +90,7 @@ namespace Lucene.Net.Search
 		   {
 		   }
 
-		   public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		   public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		   {
 			  Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 			  return new TokenStreamComponents(tokenizer, tokenizer);
@@ -97,17 +98,17 @@ namespace Lucene.Net.Search
 	   }
 	   public static Directory GetDirectory(Analyzer analyzer, string[] vals)
 	   {
-		  Directory directory = newDirectory();
-		  RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(TestUtil.Next(random(), 100, 1000)).setMergePolicy(newLogMergePolicy()));
+		  Directory directory = NewDirectory();
+		  RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 
 		  foreach (string s in vals)
 		  {
 			 Document d = new Document();
-			 d.add(newTextField(FIELD, s, Field.Store.YES));
-			 writer.addDocument(d);
+			 d.Add(NewTextField(FIELD, s, Field.Store.YES));
+			 writer.AddDocument(d);
 
 		  }
-		  writer.close();
+		  writer.Close();
 		  return directory;
 	   }
 	}

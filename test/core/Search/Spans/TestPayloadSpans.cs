@@ -42,6 +42,9 @@ namespace Lucene.Net.Search.Spans
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
+    using Lucene.Net.Util;
+    using System.IO;
 
 	public class TestPayloadSpans : LuceneTestCase
 	{
@@ -53,9 +56,9 @@ namespace Lucene.Net.Search.Spans
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		PayloadHelper helper = new PayloadHelper();
-		Searcher_Renamed = helper.SetUp(random(), Similarity, 1000);
+		Searcher_Renamed = helper.SetUp(Random(), Similarity, 1000);
 		IndexReader = Searcher_Renamed.IndexReader;
 	  }
 
@@ -65,12 +68,12 @@ namespace Lucene.Net.Search.Spans
 		Spans spans;
 		stq = new SpanTermQuery(new Term(PayloadHelper.FIELD, "seventy"));
 		spans = MultiSpansWrapper.Wrap(IndexReader.Context, stq);
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 100, 1, 1, 1);
 
 		stq = new SpanTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "seventy"));
 		spans = MultiSpansWrapper.Wrap(IndexReader.Context, stq);
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 100, 0, 0, 0);
 	  }
 
@@ -107,19 +110,19 @@ namespace Lucene.Net.Search.Spans
 
 
 
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).setSimilarity(Similarity));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
 
 		Document doc = new Document();
-		doc.add(newTextField(PayloadHelper.FIELD, "one two three one four three", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(NewTextField(PayloadHelper.FIELD, "one two three one four three", Field.Store.YES));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
 
 		CheckSpans(MultiSpansWrapper.Wrap(reader.Context, snq), 1,new int[]{2});
-		reader.close();
-		directory.close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestNestedSpans()
@@ -129,7 +132,7 @@ namespace Lucene.Net.Search.Spans
 		IndexSearcher searcher = Searcher;
 		stq = new SpanTermQuery(new Term(PayloadHelper.FIELD, "mark"));
 		spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, stq);
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 0, null);
 
 
@@ -140,7 +143,7 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery spanNearQuery = new SpanNearQuery(clauses, 12, false);
 
 		spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, spanNearQuery);
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 2, new int[]{3,3});
 
 
@@ -152,7 +155,7 @@ namespace Lucene.Net.Search.Spans
 
 		spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, spanNearQuery);
 
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 1, new int[]{3});
 
 		clauses = new SpanQuery[2];
@@ -174,10 +177,10 @@ namespace Lucene.Net.Search.Spans
 		// yy within 6 of xx within 6 of rr
 
 		spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, nestedSpanNearQuery);
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 2, new int[]{3,3});
-		CloseIndexReader.close();
-		Directory.close();
+		CloseIndexReader.Dispose();
+		Directory.Dispose();
 	  }
 
 	  public virtual void TestFirstClauseWithoutPayload()
@@ -207,10 +210,10 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery nestedSpanNearQuery = new SpanNearQuery(clauses3, 6, false);
 		spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, nestedSpanNearQuery);
 
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 1, new int[]{3});
-		CloseIndexReader.close();
-		Directory.close();
+		CloseIndexReader.Dispose();
+		Directory.Dispose();
 	  }
 
 	  public virtual void TestHeavilyNestedSpanQuery()
@@ -245,24 +248,24 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery nestedSpanNearQuery = new SpanNearQuery(clauses3, 6, false);
 
 		spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, nestedSpanNearQuery);
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		CheckSpans(spans, 2, new int[]{8, 8});
-		CloseIndexReader.close();
-		Directory.close();
+		CloseIndexReader.Dispose();
+		Directory.Dispose();
 	  }
 
 	  public virtual void TestShrinkToAfterShortestMatch()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
 		Document doc = new Document();
-		doc.add(new TextField("content", new StringReader("a b c d e f g h i j a k")));
-		writer.addDocument(doc);
+		doc.Add(new TextField("content", new StreamReader("a b c d e f g h i j a k")));
+		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-		IndexSearcher @is = newSearcher(reader);
-		writer.close();
+		IndexSearcher @is = NewSearcher(reader);
+		writer.Close();
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -270,38 +273,38 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery snq = new SpanNearQuery(sqs, 1, true);
 		Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
-		TopDocs topDocs = @is.search(snq, 1);
-		Set<string> payloadSet = new HashSet<string>();
-		for (int i = 0; i < topDocs.scoreDocs.length; i++)
+		TopDocs topDocs = @is.Search(snq, 1);
+		HashSet<string> payloadSet = new HashSet<string>();
+		for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
 		{
-		  while (spans.next())
+		  while (spans.Next())
 		  {
 			ICollection<sbyte[]> payloads = spans.Payload;
 
 			foreach (sbyte [] payload in payloads)
 			{
-			  payloadSet.add(new string(payload, StandardCharsets.UTF_8));
+			  payloadSet.Add(new string(payload, IOUtils.CHARSET_UTF_8));
 			}
 		  }
 		}
-		Assert.AreEqual(2, payloadSet.size());
-		Assert.IsTrue(payloadSet.contains("a:Noise:10"));
-		Assert.IsTrue(payloadSet.contains("k:Noise:11"));
-		reader.close();
-		directory.close();
+		Assert.AreEqual(2, payloadSet.Count);
+		Assert.IsTrue(payloadSet.Contains("a:Noise:10"));
+		Assert.IsTrue(payloadSet.Contains("k:Noise:11"));
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestShrinkToAfterShortestMatch2()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
 		Document doc = new Document();
-		doc.add(new TextField("content", new StringReader("a b a d k f a h i k a k")));
-		writer.addDocument(doc);
+		doc.Add(new TextField("content", new StringReader("a b a d k f a h i k a k")));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		IndexSearcher @is = newSearcher(reader);
-		writer.close();
+		IndexSearcher @is = NewSearcher(reader);
+		writer.Close();
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -309,37 +312,37 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery snq = new SpanNearQuery(sqs, 0, true);
 		Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
-		TopDocs topDocs = @is.search(snq, 1);
-		Set<string> payloadSet = new HashSet<string>();
-		for (int i = 0; i < topDocs.scoreDocs.length; i++)
+		TopDocs topDocs = @is.Search(snq, 1);
+		HashSet<string> payloadSet = new HashSet<string>();
+		for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
 		{
-		  while (spans.next())
+		  while (spans.Next())
 		  {
 			ICollection<sbyte[]> payloads = spans.Payload;
 			foreach (sbyte[] payload in payloads)
 			{
-			  payloadSet.add(new string(payload, StandardCharsets.UTF_8));
+			  payloadSet.Add(new string(payload, IOUtils.CHARSET_UTF_8));
 			}
 		  }
 		}
-		Assert.AreEqual(2, payloadSet.size());
-		Assert.IsTrue(payloadSet.contains("a:Noise:10"));
-		Assert.IsTrue(payloadSet.contains("k:Noise:11"));
-		reader.close();
-		directory.close();
+		Assert.AreEqual(2, payloadSet.Count);
+		Assert.IsTrue(payloadSet.Contains("a:Noise:10"));
+		Assert.IsTrue(payloadSet.Contains("k:Noise:11"));
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestShrinkToAfterShortestMatch3()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
 		Document doc = new Document();
-		doc.add(new TextField("content", new StringReader("j k a l f k k p a t a k l k t a")));
-		writer.addDocument(doc);
+		doc.Add(new TextField("content", new StringReader("j k a l f k k p a t a k l k t a")));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		IndexSearcher @is = newSearcher(reader);
-		writer.close();
+		IndexSearcher @is = NewSearcher(reader);
+		writer.Close();
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -347,21 +350,21 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery snq = new SpanNearQuery(sqs, 0, true);
 		Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
-		TopDocs topDocs = @is.search(snq, 1);
-		Set<string> payloadSet = new HashSet<string>();
-		for (int i = 0; i < topDocs.scoreDocs.length; i++)
+		TopDocs topDocs = @is.Search(snq, 1);
+		HashSet<string> payloadSet = new HashSet<string>();
+		for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
 		{
-		  while (spans.next())
+		  while (spans.Next())
 		  {
 			ICollection<sbyte[]> payloads = spans.Payload;
 
 			foreach (sbyte [] payload in payloads)
 			{
-			  payloadSet.add(new string(payload, StandardCharsets.UTF_8));
+			  payloadSet.Add(new string(payload, IOUtils.CHARSET_UTF_8));
 			}
 		  }
 		}
-		Assert.AreEqual(2, payloadSet.size());
+		Assert.AreEqual(2, payloadSet.Count);
 		if (VERBOSE)
 		{
 		  foreach (String payload in payloadSet)
@@ -370,96 +373,96 @@ namespace Lucene.Net.Search.Spans
 		  }
 
 		}
-		Assert.IsTrue(payloadSet.contains("a:Noise:10"));
-		Assert.IsTrue(payloadSet.contains("k:Noise:11"));
-		reader.close();
-		directory.close();
+		Assert.IsTrue(payloadSet.Contains("a:Noise:10"));
+		Assert.IsTrue(payloadSet.Contains("k:Noise:11"));
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  public virtual void TestPayloadSpanUtil()
 	  {
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).setSimilarity(Similarity));
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
 
 		Document doc = new Document();
-		doc.add(newTextField(PayloadHelper.FIELD, "xx rr yy mm  pp", Field.Store.YES));
-		writer.addDocument(doc);
+		doc.Add(NewTextField(PayloadHelper.FIELD, "xx rr yy mm  pp", Field.Store.YES));
+		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-		writer.close();
-		IndexSearcher searcher = newSearcher(reader);
+		writer.Close();
+		IndexSearcher searcher = NewSearcher(reader);
 
 		PayloadSpanUtil psu = new PayloadSpanUtil(searcher.TopReaderContext);
 
-		ICollection<sbyte[]> payloads = psu.getPayloadsForQuery(new TermQuery(new Term(PayloadHelper.FIELD, "rr")));
+		ICollection<sbyte[]> payloads = psu.GetPayloadsForQuery(new TermQuery(new Term(PayloadHelper.FIELD, "rr")));
 		if (VERBOSE)
 		{
 		  Console.WriteLine("Num payloads:" + payloads.Count);
 		  foreach (sbyte [] bytes in payloads)
 		  {
-			Console.WriteLine(new string(bytes, StandardCharsets.UTF_8));
+			Console.WriteLine(new string(bytes, IOUtils.CHARSET_UTF_8));
 		  }
 		}
-		reader.close();
-		directory.close();
+		reader.Dispose();
+		directory.Dispose();
 	  }
 
 	  private void CheckSpans(Spans spans, int expectedNumSpans, int expectedNumPayloads, int expectedPayloadLength, int expectedFirstByte)
 	  {
-		Assert.IsTrue("spans is null and it shouldn't be", spans != null);
+		Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
 		//each position match should have a span associated with it, since there is just one underlying term query, there should
 		//only be one entry in the span
 		int seen = 0;
-		while (spans.next() == true)
+		while (spans.Next() == true)
 		{
 		  //if we expect payloads, then isPayloadAvailable should be true
 		  if (expectedNumPayloads > 0)
 		  {
-			Assert.IsTrue("isPayloadAvailable is not returning the correct value: " + spans.PayloadAvailable + " and it should be: " + (expectedNumPayloads > 0), spans.PayloadAvailable == true);
+			Assert.IsTrue(spans.PayloadAvailable == true, "isPayloadAvailable is not returning the correct value: " + spans.PayloadAvailable + " and it should be: " + (expectedNumPayloads > 0));
 		  }
 		  else
 		  {
-			Assert.IsTrue("isPayloadAvailable should be false", spans.PayloadAvailable == false);
+			Assert.IsTrue(spans.PayloadAvailable == false, "isPayloadAvailable should be false");
 		  }
 		  //See payload helper, for the PayloadHelper.FIELD field, there is a single byte payload at every token
 		  if (spans.PayloadAvailable)
 		  {
 			ICollection<sbyte[]> payload = spans.Payload;
-			Assert.IsTrue("payload Size: " + payload.Count + " is not: " + expectedNumPayloads, payload.Count == expectedNumPayloads);
+			Assert.IsTrue(payload.Count == expectedNumPayloads, "payload Size: " + payload.Count + " is not: " + expectedNumPayloads);
 			foreach (sbyte [] thePayload in payload)
 			{
-			  Assert.IsTrue("payload[0] Size: " + thePayload.length + " is not: " + expectedPayloadLength, thePayload.length == expectedPayloadLength);
-			  Assert.IsTrue(thePayload[0] + " does not equal: " + expectedFirstByte, thePayload[0] == expectedFirstByte);
+			  Assert.IsTrue(thePayload.Length == expectedPayloadLength, "payload[0] Size: " + thePayload.Length + " is not: " + expectedPayloadLength);
+			  Assert.IsTrue(thePayload[0] == expectedFirstByte, thePayload[0] + " does not equal: " + expectedFirstByte);
 
 			}
 
 		  }
 		  seen++;
 		}
-		Assert.IsTrue(seen + " does not equal: " + expectedNumSpans, seen == expectedNumSpans);
+		Assert.IsTrue(seen == expectedNumSpans, seen + " does not equal: " + expectedNumSpans);
 	  }
 
 	  private IndexSearcher Searcher
 	  {
 		  get
 		  {
-			Directory = newDirectory();
+			Directory = NewDirectory();
 			string[] docs = new string[]{"xx rr yy mm  pp","xx yy mm rr pp", "nopayload qq ss pp np", "one two three four five six seven eight nine ten eleven", "nine one two three four five six seven eight eleven ten"};
-			RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).setSimilarity(Similarity));
+			RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
     
 			Document doc = null;
 			for (int i = 0; i < docs.Length; i++)
 			{
 			  doc = new Document();
 			  string docText = docs[i];
-			  doc.add(newTextField(PayloadHelper.FIELD, docText, Field.Store.YES));
-			  writer.addDocument(doc);
+			  doc.Add(NewTextField(PayloadHelper.FIELD, docText, Field.Store.YES));
+			  writer.AddDocument(doc);
 			}
     
 			CloseIndexReader = writer.Reader;
-			writer.close();
+            writer.Close();
     
-			IndexSearcher searcher = newSearcher(CloseIndexReader);
+			IndexSearcher searcher = NewSearcher(CloseIndexReader);
 			return searcher;
 		  }
 	  }
@@ -468,7 +471,7 @@ namespace Lucene.Net.Search.Spans
 	  {
 		int cnt = 0;
 
-		while (spans.next() == true)
+		while (spans.Next() == true)
 		{
 		  if (VERBOSE)
 		  {
@@ -482,7 +485,7 @@ namespace Lucene.Net.Search.Spans
 			  Console.WriteLine("payloads for span:" + payload.Count);
 			  foreach (sbyte [] bytes in payload)
 			  {
-				Console.WriteLine("doc:" + spans.doc() + " s:" + spans.start() + " e:" + spans.end() + " " + new string(bytes, StandardCharsets.UTF_8));
+				Console.WriteLine("doc:" + spans.Doc() + " s:" + spans.Start() + " e:" + spans.End() + " " + new string(bytes, IOUtils.CHARSET_UTF_8));
 			  }
 			}
 
@@ -490,7 +493,7 @@ namespace Lucene.Net.Search.Spans
 		  }
 		  else
 		  {
-			Assert.IsFalse("Expected spans:" + numPayloads[cnt] + " found: 0",numPayloads.Length > 0 && numPayloads[cnt] > 0);
+			Assert.IsFalse(numPayloads.Length > 0 && numPayloads[cnt] > 0, "Expected spans:" + numPayloads[cnt] + " found: 0");
 		  }
 		  cnt++;
 		}
@@ -508,7 +511,7 @@ namespace Lucene.Net.Search.Spans
 		  }
 
 
-		public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));
@@ -519,8 +522,8 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  private readonly TestPayloadSpans OuterInstance;
 
-		internal Set<string> Entities = new HashSet<string>();
-		internal Set<string> Nopayload = new HashSet<string>();
+		internal HashSet<string> Entities = new HashSet<string>();
+		internal HashSet<string> Nopayload = new HashSet<string>();
 		internal int Pos;
 		internal PayloadAttribute PayloadAtt;
 		internal CharTermAttribute TermAtt;
@@ -530,24 +533,24 @@ namespace Lucene.Net.Search.Spans
 		{
 			this.OuterInstance = outerInstance;
 		  Pos = 0;
-		  Entities.add("xx");
-		  Entities.add("one");
-		  Nopayload.add("nopayload");
-		  Nopayload.add("np");
-		  TermAtt = addAttribute(typeof(CharTermAttribute));
-		  PosIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
-		  PayloadAtt = addAttribute(typeof(PayloadAttribute));
+		  Entities.Add("xx");
+		  Entities.Add("one");
+		  Nopayload.Add("nopayload");
+		  Nopayload.Add("np");
+		  TermAtt = AddAttribute<CharTermAttribute>();
+		  PosIncrAtt = AddAttribute<PositionIncrementAttribute>();
+		  PayloadAtt = AddAttribute<PayloadAttribute>();
 		}
 
 		public override bool IncrementToken()
 		{
-		  if (input.IncrementToken())
+		  if (Input.IncrementToken())
 		  {
 			string token = TermAtt.ToString();
 
-			if (!Nopayload.contains(token))
+			if (!Nopayload.Contains(token))
 			{
-			  if (Entities.contains(token))
+			  if (Entities.Contains(token))
 			  {
 				PayloadAtt.Payload = new BytesRef(token + ":Entity:" + Pos);
 			  }
@@ -564,7 +567,7 @@ namespace Lucene.Net.Search.Spans
 
 		public override void Reset()
 		{
-		  base.reset();
+		  base.Reset();
 		  this.Pos = 0;
 		}
 	  }
@@ -579,7 +582,7 @@ namespace Lucene.Net.Search.Spans
 		  }
 
 
-		public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));

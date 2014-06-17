@@ -36,9 +36,7 @@ namespace Lucene.Net.Search.Payloads
 	using Directory = Lucene.Net.Store.Directory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.LuceneTestCase.TEST_VERSION_CURRENT;
+    using System.IO;
 
 
 	/// 
@@ -66,7 +64,7 @@ namespace Lucene.Net.Search.Payloads
 			this.OuterInstance = outerInstance;
 		}
 
-		public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result, fieldName));
@@ -85,27 +83,27 @@ namespace Lucene.Net.Search.Payloads
 		{
 			this.OuterInstance = outerInstance;
 		  this.FieldName = fieldName;
-		  PayloadAtt = addAttribute(typeof(PayloadAttribute));
+		  PayloadAtt = AddAttribute<PayloadAttribute>();
 		}
 
 		public override bool IncrementToken()
 		{
 
-		  if (input.IncrementToken())
+		  if (Input.IncrementToken())
 		  {
 			if (FieldName.Equals(FIELD))
 			{
-			  PayloadAtt.Payload = new BytesRef(outerInstance.PayloadField);
+                PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadField);
 			}
 			else if (FieldName.Equals(MULTI_FIELD))
 			{
 			  if (NumSeen % 2 == 0)
 			  {
-				PayloadAtt.Payload = new BytesRef(outerInstance.PayloadMultiField1);
+                  PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField1);
 			  }
 			  else
 			  {
-				PayloadAtt.Payload = new BytesRef(outerInstance.PayloadMultiField2);
+                  PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField2);
 			  }
 			  NumSeen++;
 			}
@@ -116,13 +114,13 @@ namespace Lucene.Net.Search.Payloads
 
 		public override void Reset()
 		{
-		  base.reset();
+		  base.Reset();
 		  this.NumSeen = 0;
 		}
 	  }
 
 	  /// <summary>
-	  /// Sets up a RAMDirectory, and adds documents (using English.intToEnglish()) with two fields: field and multiField
+	  /// Sets up a RAMDirectory, and adds documents (using English.IntToEnglish()) with two fields: field and multiField
 	  /// and analyzes them using the PayloadAnalyzer </summary>
 	  /// <param name="similarity"> The Similarity class to use in the Searcher </param>
 	  /// <param name="numDocs"> The num docs to add </param>
@@ -134,27 +132,27 @@ namespace Lucene.Net.Search.Payloads
 		PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
 
 		// TODO randomize this
-		IndexWriter writer = new IndexWriter(directory, (new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)).setSimilarity(similarity));
+        IndexWriter writer = new IndexWriter(directory, (new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity));
 		// writer.infoStream = System.out;
 		for (int i = 0; i < numDocs; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(new TextField(FIELD, English.intToEnglish(i), Field.Store.YES));
-		  doc.add(new TextField(MULTI_FIELD, English.intToEnglish(i) + "  " + English.intToEnglish(i), Field.Store.YES));
-		  doc.add(new TextField(NO_PAYLOAD_FIELD, English.intToEnglish(i), Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(new TextField(FIELD, English.IntToEnglish(i), Field.Store.YES));
+		  doc.Add(new TextField(MULTI_FIELD, English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES));
+		  doc.Add(new TextField(NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
-		Reader = DirectoryReader.open(writer, true);
-		writer.close();
+		Reader = DirectoryReader.Open(writer, true);
+		writer.Dispose();
 
-		IndexSearcher searcher = LuceneTestCase.newSearcher(Reader);
+		IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader);
 		searcher.Similarity = similarity;
 		return searcher;
 	  }
 
 	  public virtual void TearDown()
 	  {
-		Reader.close();
+		Reader.Dispose();
 	  }
 	}
 

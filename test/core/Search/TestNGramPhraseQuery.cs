@@ -24,8 +24,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
 
 	public class TestNGramPhraseQuery : LuceneTestCase
 	{
@@ -37,19 +36,19 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory);
-		writer.close();
-		Reader = DirectoryReader.open(Directory);
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
+		writer.Close();
+		Reader = DirectoryReader.Open(Directory);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
+		Reader.Dispose();
 		Reader = null;
-		Directory.close();
+		Directory.Dispose();
 		Directory = null;
 	  }
 
@@ -57,10 +56,10 @@ namespace Lucene.Net.Search
 	  {
 		// bi-gram test ABC => AB/BC => AB/BC
 		PhraseQuery pq1 = new NGramPhraseQuery(2);
-		pq1.add(new Term("f", "AB"));
-		pq1.add(new Term("f", "BC"));
+		pq1.Add(new Term("f", "AB"));
+		pq1.Add(new Term("f", "BC"));
 
-		Query q = pq1.rewrite(Reader);
+		Query q = pq1.Rewrite(Reader);
 		Assert.IsTrue(q is NGramPhraseQuery);
 		assertSame(pq1, q);
 		pq1 = (NGramPhraseQuery)q;
@@ -69,11 +68,11 @@ namespace Lucene.Net.Search
 
 		// bi-gram test ABCD => AB/BC/CD => AB//CD
 		PhraseQuery pq2 = new NGramPhraseQuery(2);
-		pq2.add(new Term("f", "AB"));
-		pq2.add(new Term("f", "BC"));
-		pq2.add(new Term("f", "CD"));
+		pq2.Add(new Term("f", "AB"));
+		pq2.Add(new Term("f", "BC"));
+		pq2.Add(new Term("f", "CD"));
 
-		q = pq2.rewrite(Reader);
+		q = pq2.Rewrite(Reader);
 		Assert.IsTrue(q is PhraseQuery);
 		Assert.AreNotSame(pq2, q);
 		pq2 = (PhraseQuery)q;
@@ -82,14 +81,14 @@ namespace Lucene.Net.Search
 
 		// tri-gram test ABCDEFGH => ABC/BCD/CDE/DEF/EFG/FGH => ABC///DEF//FGH
 		PhraseQuery pq3 = new NGramPhraseQuery(3);
-		pq3.add(new Term("f", "ABC"));
-		pq3.add(new Term("f", "BCD"));
-		pq3.add(new Term("f", "CDE"));
-		pq3.add(new Term("f", "DEF"));
-		pq3.add(new Term("f", "EFG"));
-		pq3.add(new Term("f", "FGH"));
+		pq3.Add(new Term("f", "ABC"));
+		pq3.Add(new Term("f", "BCD"));
+		pq3.Add(new Term("f", "CDE"));
+		pq3.Add(new Term("f", "DEF"));
+		pq3.Add(new Term("f", "EFG"));
+		pq3.Add(new Term("f", "FGH"));
 
-		q = pq3.rewrite(Reader);
+		q = pq3.Rewrite(Reader);
 		Assert.IsTrue(q is PhraseQuery);
 		Assert.AreNotSame(pq3, q);
 		pq3 = (PhraseQuery)q;
@@ -98,12 +97,12 @@ namespace Lucene.Net.Search
 
 		// LUCENE-4970: boosting test
 		PhraseQuery pq4 = new NGramPhraseQuery(2);
-		pq4.add(new Term("f", "AB"));
-		pq4.add(new Term("f", "BC"));
-		pq4.add(new Term("f", "CD"));
+		pq4.Add(new Term("f", "AB"));
+		pq4.Add(new Term("f", "BC"));
+		pq4.Add(new Term("f", "CD"));
 		pq4.Boost = 100.0F;
 
-		q = pq4.rewrite(Reader);
+		q = pq4.Rewrite(Reader);
 		Assert.AreNotSame(pq4, q);
 		Assert.AreEqual(pq4.Boost, q.Boost, 0.1f);
 	  }

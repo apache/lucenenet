@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	/// Encode all values in normal area with fixed bit width, 
 	/// which is determined by the max value in this block.
 	/// </summary>
-	internal sealed class ForUtil
+	public sealed class ForUtil
 	{
 
 	  /// <summary>
@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// Upper limit of the number of bytes that might be required to stored
 	  /// <code>BLOCK_SIZE</code> encoded values.
 	  /// </summary>
-	  internal static readonly int MAX_ENCODED_SIZE = Lucene41PostingsFormat.BLOCK_SIZE * 4;
+	  public static readonly int MAX_ENCODED_SIZE = Lucene41PostingsFormat.BLOCK_SIZE * 4;
 
 	  /// <summary>
 	  /// Upper limit of the number of values that might be decoded in a single call to
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <code>BLOCK_SIZE</code> are garbage, it is necessary to allocate value buffers
 	  /// whose size is >= MAX_DATA_SIZE to avoid <seealso cref="ArrayIndexOutOfBoundsException"/>s.
 	  /// </summary>
-	  internal static readonly int MAX_DATA_SIZE;
+	  public static readonly int MAX_DATA_SIZE;
 	  static ForUtil()
 	  {
 		int maxDataSize = 0;
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <summary>
 	  /// Create a new <seealso cref="ForUtil"/> instance and save state into <code>out</code>.
 	  /// </summary>
-	  internal ForUtil(float acceptableOverheadRatio, DataOutput @out)
+	  public ForUtil(float acceptableOverheadRatio, DataOutput @out)
 	  {
 		@out.WriteVInt(PackedInts.VERSION_CURRENT);
 		EncodedSizes = new int[33];
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <summary>
 	  /// Restore a <seealso cref="ForUtil"/> from a <seealso cref="DataInput"/>.
 	  /// </summary>
-	  internal ForUtil(DataInput @in)
+	  public ForUtil(DataInput @in)
 	  {
 		int packedIntsVersion = @in.ReadVInt();
 		PackedInts.CheckVersion(packedIntsVersion);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <param name="encoded">  a buffer to use to encode data </param>
 	  /// <param name="out">      the destination output </param>
 	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-	  internal void WriteBlock(int[] data, sbyte[] encoded, IndexOutput @out)
+	  public void WriteBlock(int[] data, sbyte[] encoded, IndexOutput @out)
 	  {
 		if (IsAllEqual(data))
 		{
@@ -200,7 +200,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <param name="encoded">   a buffer that can be used to store encoded data </param>
 	  /// <param name="decoded">   where to write decoded data </param>
 	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-	  internal void ReadBlock(IndexInput @in, sbyte[] encoded, int[] decoded)
+	  public void ReadBlock(IndexInput @in, sbyte[] encoded, int[] decoded)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numBits = in.readByte();
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// </summary>
 	  /// <param name="in">      the input where to read data </param>
 	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-	  internal void SkipBlock(IndexInput @in)
+	  public void SkipBlock(IndexInput @in)
 	  {
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final int numBits = in.readByte();

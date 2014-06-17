@@ -1,25 +1,27 @@
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    using System;
+    /*
+             * Licensed to the Apache Software Foundation (ASF) under one or more
+             * contributor license agreements.  See the NOTICE file distributed with
+             * this work for additional information regarding copyright ownership.
+             * The ASF licenses this file to You under the Apache License, Version 2.0
+             * (the "License"); you may not use this file except in compliance with
+             * the License.  You may obtain a copy of the License at
+             *
+             *     http://www.apache.org/licenses/LICENSE-2.0
+             *
+             * Unless required by applicable law or agreed to in writing, software
+             * distributed under the License is distributed on an "AS IS" BASIS,
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * See the License for the specific language governing permissions and
+             * limitations under the License.
+             */
 
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 	public class TestCachingCollector : LuceneTestCase
 	{
@@ -95,17 +97,17 @@ namespace Lucene.Net.Search
 	  {
 		foreach (bool cacheScores in new bool[] {false, true})
 		{
-		  CachingCollector cc = CachingCollector.create(new NoOpCollector(false), cacheScores, 1.0);
+		  CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), cacheScores, 1.0);
 		  cc.Scorer = new MockScorer();
 
 		  // collect 1000 docs
 		  for (int i = 0; i < 1000; i++)
 		  {
-			cc.collect(i);
+			cc.Collect(i);
 		  }
 
 		  // now replay them
-		  cc.replay(new CollectorAnonymousInnerClassHelper(this));
+		  cc.Replay(new CollectorAnonymousInnerClassHelper(this));
 		}
 	  }
 
@@ -147,23 +149,23 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestIllegalStateOnReplay()
 	  {
-		CachingCollector cc = CachingCollector.create(new NoOpCollector(false), true, 50 * ONE_BYTE);
+		CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
 		cc.Scorer = new MockScorer();
 
 		// collect 130 docs, this should be enough for triggering cache abort.
 		for (int i = 0; i < 130; i++)
 		{
-		  cc.collect(i);
+		  cc.Collect(i);
 		}
 
-		Assert.IsFalse("CachingCollector should not be cached due to low memory limit", cc.Cached);
+		Assert.IsFalse(cc.Cached, "CachingCollector should not be cached due to low memory limit");
 
 		try
 		{
-		  cc.replay(new NoOpCollector(false));
+		  cc.Replay(new NoOpCollector(false));
 		  Assert.Fail("replay should fail if CachingCollector is not cached");
 		}
-		catch (IllegalStateException e)
+		catch (InvalidOperationException e)
 		{
 		  // expected
 		}
@@ -175,26 +177,26 @@ namespace Lucene.Net.Search
 		// is valid with the Collector passed to the ctor
 
 		// 'src' Collector does not support out-of-order
-		CachingCollector cc = CachingCollector.create(new NoOpCollector(false), true, 50 * ONE_BYTE);
+		CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
 		cc.Scorer = new MockScorer();
 		for (int i = 0; i < 10; i++)
 		{
-			cc.collect(i);
+			cc.Collect(i);
 		}
-		cc.replay(new NoOpCollector(true)); // this call should not fail
-		cc.replay(new NoOpCollector(false)); // this call should not fail
+		cc.Replay(new NoOpCollector(true)); // this call should not fail
+		cc.Replay(new NoOpCollector(false)); // this call should not fail
 
 		// 'src' Collector supports out-of-order
-		cc = CachingCollector.create(new NoOpCollector(true), true, 50 * ONE_BYTE);
+		cc = CachingCollector.Create(new NoOpCollector(true), true, 50 * ONE_BYTE);
 		cc.Scorer = new MockScorer();
 		for (int i = 0; i < 10; i++)
 		{
-			cc.collect(i);
+			cc.Collect(i);
 		}
-		cc.replay(new NoOpCollector(true)); // this call should not fail
+		cc.Replay(new NoOpCollector(true)); // this call should not fail
 		try
 		{
-		  cc.replay(new NoOpCollector(false)); // this call should fail
+		  cc.Replay(new NoOpCollector(false)); // this call should fail
 		  Assert.Fail("should have failed if an in-order Collector was given to replay(), " + "while CachingCollector was initialized with out-of-order collection");
 		}
 		catch (System.ArgumentException e)
@@ -209,20 +211,20 @@ namespace Lucene.Net.Search
 		// caching would terminate even if a smaller length would suffice.
 
 		// set RAM limit enough for 150 docs + random(10000)
-		int numDocs = random().Next(10000) + 150;
+		int numDocs = Random().Next(10000) + 150;
 		foreach (bool cacheScores in new bool[] {false, true})
 		{
 		  int bytesPerDoc = cacheScores ? 8 : 4;
-		  CachingCollector cc = CachingCollector.create(new NoOpCollector(false), cacheScores, bytesPerDoc * ONE_BYTE * numDocs);
+		  CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), cacheScores, bytesPerDoc * ONE_BYTE * numDocs);
 		  cc.Scorer = new MockScorer();
 		  for (int i = 0; i < numDocs; i++)
 		  {
-			  cc.collect(i);
+			  cc.Collect(i);
 		  }
 		  Assert.IsTrue(cc.Cached);
 
 		  // The 151's document should terminate caching
-		  cc.collect(numDocs);
+		  cc.Collect(numDocs);
 		  Assert.IsFalse(cc.Cached);
 		}
 	  }
@@ -232,13 +234,13 @@ namespace Lucene.Net.Search
 		foreach (bool cacheScores in new bool[] {false, true})
 		{
 		  // create w/ null wrapped collector, and test that the methods work
-		  CachingCollector cc = CachingCollector.create(true, cacheScores, 50 * ONE_BYTE);
+		  CachingCollector cc = CachingCollector.Create(true, cacheScores, 50 * ONE_BYTE);
 		  cc.NextReader = null;
 		  cc.Scorer = new MockScorer();
-		  cc.collect(0);
+		  cc.Collect(0);
 
 		  Assert.IsTrue(cc.Cached);
-		  cc.replay(new NoOpCollector(true));
+		  cc.Replay(new NoOpCollector(true));
 		}
 	  }
 

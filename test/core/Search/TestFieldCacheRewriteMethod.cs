@@ -20,6 +20,7 @@ namespace Lucene.Net.Search
 
 	using Term = Lucene.Net.Index.Term;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests the FieldcacheRewriteMethod with random regular expressions
@@ -32,15 +33,15 @@ namespace Lucene.Net.Search
 	  protected internal override void AssertSame(string regexp)
 	  {
 		RegexpQuery fieldCache = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-		fieldCache.RewriteMethod = new FieldCacheRewriteMethod();
+		fieldCache.SetRewriteMethod(new FieldCacheRewriteMethod());
 
 		RegexpQuery filter = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-		filter.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+		filter.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 
-		TopDocs fieldCacheDocs = Searcher1.search(fieldCache, 25);
-		TopDocs filterDocs = Searcher2.search(filter, 25);
+		TopDocs fieldCacheDocs = Searcher1.Search(fieldCache, 25);
+		TopDocs filterDocs = Searcher2.Search(filter, 25);
 
-		CheckHits.checkEqual(fieldCache, fieldCacheDocs.scoreDocs, filterDocs.scoreDocs);
+		CheckHits.CheckEqual(fieldCache, fieldCacheDocs.ScoreDocs, filterDocs.ScoreDocs);
 	  }
 
 	  public virtual void TestEquals()
@@ -51,12 +52,12 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(a1, a2);
 		Assert.IsFalse(a1.Equals(b));
 
-		a1.RewriteMethod = new FieldCacheRewriteMethod();
-		a2.RewriteMethod = new FieldCacheRewriteMethod();
-		b.RewriteMethod = new FieldCacheRewriteMethod();
+		a1.SetRewriteMethod(new FieldCacheRewriteMethod());
+		a2.SetRewriteMethod(new FieldCacheRewriteMethod());
+		b.SetRewriteMethod(new FieldCacheRewriteMethod());
 		Assert.AreEqual(a1, a2);
 		Assert.IsFalse(a1.Equals(b));
-		QueryUtils.check(a1);
+		QueryUtils.Check(a1);
 	  }
 	}
 

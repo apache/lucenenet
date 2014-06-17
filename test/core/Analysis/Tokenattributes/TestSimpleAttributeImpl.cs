@@ -32,6 +32,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	{
 
 	  // this checks using reflection API if the defaults are correct
+      [Test]
 	  public virtual void TestAttributes()
 	  {
 		TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), CollectionsHelper.SingletonMap(typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1));

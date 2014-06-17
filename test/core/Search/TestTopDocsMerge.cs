@@ -36,6 +36,8 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 
 	public class TestTopDocsMerge : LuceneTestCase
@@ -52,12 +54,12 @@ namespace Lucene.Net.Search
 
 		public virtual void Search(Weight weight, Collector collector)
 		{
-		  search(Ctx, weight, collector);
+		  Search(Ctx, weight, collector);
 		}
 
 		public virtual TopDocs Search(Weight weight, int topN)
 		{
-		  return search(Ctx, weight, null, topN);
+		  return Search(Ctx, weight, null, topN);
 		}
 
 		public override string ToString()
@@ -82,8 +84,8 @@ namespace Lucene.Net.Search
 		IndexReader reader = null;
 		Directory dir = null;
 
-		int numDocs = atLeast(1000);
-		//final int numDocs = atLeast(50);
+		int numDocs = AtLeast(1000);
+		//final int numDocs = AtLeast(50);
 
 		string[] tokens = new string[] {"a", "b", "c", "d", "e"};
 
@@ -93,21 +95,21 @@ namespace Lucene.Net.Search
 		}
 
 		{
-		  dir = newDirectory();
-		  RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		  dir = NewDirectory();
+		  RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		  // w.setDoRandomForceMerge(false);
 
-		  // w.w.getConfig().setMaxBufferedDocs(atLeast(100));
+		  // w.w.getConfig().SetMaxBufferedDocs(AtLeast(100));
 
-		  string[] content = new string[atLeast(20)];
+		  string[] content = new string[AtLeast(20)];
 
 		  for (int contentIDX = 0;contentIDX < content.Length;contentIDX++)
 		  {
 			StringBuilder sb = new StringBuilder();
-			int numTokens = TestUtil.Next(random(), 1, 10);
+			int numTokens = TestUtil.NextInt(Random(), 1, 10);
 			for (int tokenIDX = 0;tokenIDX < numTokens;tokenIDX++)
 			{
-			  sb.Append(tokens[random().Next(tokens.Length)]).Append(' ');
+			  sb.Append(tokens[Random().Next(tokens.Length)]).Append(' ');
 			}
 			content[contentIDX] = sb.ToString();
 		  }
@@ -115,37 +117,37 @@ namespace Lucene.Net.Search
 		  for (int docIDX = 0;docIDX < numDocs;docIDX++)
 		  {
 			Document doc = new Document();
-			doc.add(newStringField("string", TestUtil.randomRealisticUnicodeString(random()), Field.Store.NO));
-			doc.add(newTextField("text", content[random().Next(content.Length)], Field.Store.NO));
-			doc.add(new FloatField("float", random().nextFloat(), Field.Store.NO));
+			doc.Add(NewStringField("string", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
+			doc.Add(NewTextField("text", content[Random().Next(content.Length)], Field.Store.NO));
+			doc.Add(new FloatField("float", Random().NextFloat(), Field.Store.NO));
 			int intValue;
-			if (random().Next(100) == 17)
+			if (Random().Next(100) == 17)
 			{
 			  intValue = int.MinValue;
 			}
-			else if (random().Next(100) == 17)
+			else if (Random().Next(100) == 17)
 			{
 			  intValue = int.MaxValue;
 			}
 			else
 			{
-			  intValue = random().Next();
+			  intValue = Random().Next();
 			}
-			doc.add(new IntField("int", intValue, Field.Store.NO));
+			doc.Add(new IntField("int", intValue, Field.Store.NO));
 			if (VERBOSE)
 			{
 			  Console.WriteLine("  doc=" + doc);
 			}
-			w.addDocument(doc);
+			w.AddDocument(doc);
 		  }
 
 		  reader = w.Reader;
-		  w.close();
+		  w.Close();
 		}
 
 		// NOTE: sometimes reader has just one segment, which is
 		// important to test
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 		IndexReaderContext ctx = searcher.TopReaderContext;
 
 		ShardSearcher[] subSearchers;
@@ -161,54 +163,54 @@ namespace Lucene.Net.Search
 		else
 		{
 		  CompositeReaderContext compCTX = (CompositeReaderContext) ctx;
-		  int size = compCTX.leaves().size();
+		  int size = compCTX.Leaves().Count;
 		  subSearchers = new ShardSearcher[size];
 		  docStarts = new int[size];
 		  int docBase = 0;
 		  for (int searcherIDX = 0;searcherIDX < subSearchers.Length;searcherIDX++)
 		  {
-			AtomicReaderContext leave = compCTX.leaves().get(searcherIDX);
+			AtomicReaderContext leave = compCTX.Leaves()[searcherIDX];
 			subSearchers[searcherIDX] = new ShardSearcher(leave, compCTX);
 			docStarts[searcherIDX] = docBase;
-			docBase += leave.reader().maxDoc();
+			docBase += leave.Reader().MaxDoc();
 		  }
 		}
 
 		IList<SortField> sortFields = new List<SortField>();
-		sortFields.Add(new SortField("string", SortField.Type.STRING, true));
-		sortFields.Add(new SortField("string", SortField.Type.STRING, false));
-		sortFields.Add(new SortField("int", SortField.Type.INT, true));
-		sortFields.Add(new SortField("int", SortField.Type.INT, false));
-		sortFields.Add(new SortField("float", SortField.Type.FLOAT, true));
-		sortFields.Add(new SortField("float", SortField.Type.FLOAT, false));
-		sortFields.Add(new SortField(null, SortField.Type.SCORE, true));
-		sortFields.Add(new SortField(null, SortField.Type.SCORE, false));
-		sortFields.Add(new SortField(null, SortField.Type.DOC, true));
-		sortFields.Add(new SortField(null, SortField.Type.DOC, false));
+		sortFields.Add(new SortField("string", SortField.Type_e.STRING, true));
+		sortFields.Add(new SortField("string", SortField.Type_e.STRING, false));
+		sortFields.Add(new SortField("int", SortField.Type_e.INT, true));
+		sortFields.Add(new SortField("int", SortField.Type_e.INT, false));
+		sortFields.Add(new SortField("float", SortField.Type_e.FLOAT, true));
+		sortFields.Add(new SortField("float", SortField.Type_e.FLOAT, false));
+		sortFields.Add(new SortField(null, SortField.Type_e.SCORE, true));
+		sortFields.Add(new SortField(null, SortField.Type_e.SCORE, false));
+		sortFields.Add(new SortField(null, SortField.Type_e.DOC, true));
+		sortFields.Add(new SortField(null, SortField.Type_e.DOC, false));
 
 		for (int iter = 0;iter < 1000 * RANDOM_MULTIPLIER;iter++)
 		{
 
 		  // TODO: custom FieldComp...
-		  Query query = new TermQuery(new Term("text", tokens[random().Next(tokens.Length)]));
+		  Query query = new TermQuery(new Term("text", tokens[Random().Next(tokens.Length)]));
 
 		  Sort sort;
-		  if (random().Next(10) == 4)
+		  if (Random().Next(10) == 4)
 		  {
 			// Sort by score
 			sort = null;
 		  }
 		  else
 		  {
-			SortField[] randomSortFields = new SortField[TestUtil.Next(random(), 1, 3)];
+			SortField[] randomSortFields = new SortField[TestUtil.NextInt(Random(), 1, 3)];
 			for (int sortIDX = 0;sortIDX < randomSortFields.Length;sortIDX++)
 			{
-			  randomSortFields[sortIDX] = sortFields[random().Next(sortFields.Count)];
+			  randomSortFields[sortIDX] = sortFields[Random().Next(sortFields.Count)];
 			}
 			sort = new Sort(randomSortFields);
 		  }
 
-		  int numHits = TestUtil.Next(random(), 1, numDocs + 5);
+		  int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
 		  //final int numHits = 5;
 
 		  if (VERBOSE)
@@ -224,56 +226,56 @@ namespace Lucene.Net.Search
 		  {
 			if (useFrom)
 			{
-			  TopScoreDocCollector c = TopScoreDocCollector.create(numHits, random().nextBoolean());
-			  searcher.search(query, c);
-			  from = TestUtil.Next(random(), 0, numHits - 1);
+			  TopScoreDocCollector c = TopScoreDocCollector.Create(numHits, Random().NextBoolean());
+			  searcher.Search(query, c);
+			  from = TestUtil.NextInt(Random(), 0, numHits - 1);
 			  size = numHits - from;
-			  TopDocs tempTopHits = c.topDocs();
-			  if (from < tempTopHits.scoreDocs.length)
+			  TopDocs tempTopHits = c.TopDocs();
+			  if (from < tempTopHits.ScoreDocs.Length)
 			  {
 				// Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
 				// than TopDocs#merge currently has
-				ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.scoreDocs.length - from)];
-				Array.Copy(tempTopHits.scoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
-				tempTopHits.scoreDocs = newScoreDocs;
+				ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.ScoreDocs.Length - from)];
+				Array.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
+				tempTopHits.ScoreDocs = newScoreDocs;
 				topHits = tempTopHits;
 			  }
 			  else
 			  {
-				topHits = new TopDocs(tempTopHits.totalHits, new ScoreDoc[0], tempTopHits.MaxScore);
+				topHits = new TopDocs(tempTopHits.TotalHits, new ScoreDoc[0], tempTopHits.MaxScore);
 			  }
 			}
 			else
 			{
-			  topHits = searcher.search(query, numHits);
+			  topHits = searcher.Search(query, numHits);
 			}
 		  }
 		  else
 		  {
-			TopFieldCollector c = TopFieldCollector.create(sort, numHits, true, true, true, random().nextBoolean());
-			searcher.search(query, c);
+			TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random().NextBoolean());
+			searcher.Search(query, c);
 			if (useFrom)
 			{
-			  from = TestUtil.Next(random(), 0, numHits - 1);
+			  from = TestUtil.NextInt(Random(), 0, numHits - 1);
 			  size = numHits - from;
-			  TopDocs tempTopHits = c.topDocs();
-			  if (from < tempTopHits.scoreDocs.length)
+			  TopDocs tempTopHits = c.TopDocs();
+			  if (from < tempTopHits.ScoreDocs.Length)
 			  {
 				// Can't use TopDocs#topDocs(start, howMany), since it has different behaviour when start >= hitCount
 				// than TopDocs#merge currently has
-				ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.scoreDocs.length - from)];
-				Array.Copy(tempTopHits.scoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
-				tempTopHits.scoreDocs = newScoreDocs;
+				ScoreDoc[] newScoreDocs = new ScoreDoc[Math.Min(size, tempTopHits.ScoreDocs.Length - from)];
+				Array.Copy(tempTopHits.ScoreDocs, from, newScoreDocs, 0, newScoreDocs.Length);
+				tempTopHits.ScoreDocs = newScoreDocs;
 				topHits = tempTopHits;
 			  }
 			  else
 			  {
-				topHits = new TopDocs(tempTopHits.totalHits, new ScoreDoc[0], tempTopHits.MaxScore);
+				topHits = new TopDocs(tempTopHits.TotalHits, new ScoreDoc[0], tempTopHits.MaxScore);
 			  }
 			}
 			else
 			{
-			  topHits = c.topDocs(0, numHits);
+			  topHits = c.TopDocs(0, numHits);
 			}
 		  }
 
@@ -283,19 +285,19 @@ namespace Lucene.Net.Search
 			{
 			  Console.WriteLine("from=" + from + " size=" + size);
 			}
-			Console.WriteLine("  top search: " + topHits.totalHits + " totalHits; hits=" + (topHits.scoreDocs == null ? "null" : topHits.scoreDocs.length + " maxScore=" + topHits.MaxScore));
-			if (topHits.scoreDocs != null)
+			Console.WriteLine("  top search: " + topHits.TotalHits + " totalHits; hits=" + (topHits.ScoreDocs == null ? "null" : topHits.ScoreDocs.Length + " maxScore=" + topHits.MaxScore));
+			if (topHits.ScoreDocs != null)
 			{
-			  for (int hitIDX = 0;hitIDX < topHits.scoreDocs.length;hitIDX++)
+			  for (int hitIDX = 0;hitIDX < topHits.ScoreDocs.Length;hitIDX++)
 			  {
-				ScoreDoc sd = topHits.scoreDocs[hitIDX];
-				Console.WriteLine("    doc=" + sd.doc + " score=" + sd.score);
+				ScoreDoc sd = topHits.ScoreDocs[hitIDX];
+				Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
 			  }
 			}
 		  }
 
 		  // ... then all shards:
-		  Weight w = searcher.createNormalizedWeight(query);
+		  Weight w = searcher.CreateNormalizedWeight(query);
 
 		  TopDocs[] shardHits = new TopDocs[subSearchers.Length];
 		  for (int shardIDX = 0;shardIDX < subSearchers.Length;shardIDX++)
@@ -308,20 +310,20 @@ namespace Lucene.Net.Search
 			}
 			else
 			{
-			  TopFieldCollector c = TopFieldCollector.create(sort, numHits, true, true, true, random().nextBoolean());
+			  TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random().NextBoolean());
 			  subSearcher.Search(w, c);
-			  subHits = c.topDocs(0, numHits);
+			  subHits = c.TopDocs(0, numHits);
 			}
 
 			shardHits[shardIDX] = subHits;
 			if (VERBOSE)
 			{
-			  Console.WriteLine("  shard=" + shardIDX + " " + subHits.totalHits + " totalHits hits=" + (subHits.scoreDocs == null ? "null" : subHits.scoreDocs.length));
-			  if (subHits.scoreDocs != null)
+			  Console.WriteLine("  shard=" + shardIDX + " " + subHits.TotalHits + " totalHits hits=" + (subHits.ScoreDocs == null ? "null" : subHits.ScoreDocs.Length.ToString()));
+			  if (subHits.ScoreDocs != null)
 			  {
-				foreach (ScoreDoc sd in subHits.scoreDocs)
+				foreach (ScoreDoc sd in subHits.ScoreDocs)
 				{
-				  Console.WriteLine("    doc=" + sd.doc + " score=" + sd.score);
+				  Console.WriteLine("    doc=" + sd.Doc + " score=" + sd.Score);
 				}
 			  }
 			}
@@ -331,27 +333,27 @@ namespace Lucene.Net.Search
 		  TopDocs mergedHits;
 		  if (useFrom)
 		  {
-			mergedHits = TopDocs.merge(sort, from, size, shardHits);
+			mergedHits = TopDocs.Merge(sort, from, size, shardHits);
 		  }
 		  else
 		  {
-			mergedHits = TopDocs.merge(sort, numHits, shardHits);
+			mergedHits = TopDocs.Merge(sort, numHits, shardHits);
 		  }
 
-		  if (mergedHits.scoreDocs != null)
+		  if (mergedHits.ScoreDocs != null)
 		  {
 			// Make sure the returned shards are correct:
-			for (int hitIDX = 0;hitIDX < mergedHits.scoreDocs.length;hitIDX++)
+			for (int hitIDX = 0;hitIDX < mergedHits.ScoreDocs.Length;hitIDX++)
 			{
-			  ScoreDoc sd = mergedHits.scoreDocs[hitIDX];
-			  Assert.AreEqual("doc=" + sd.doc + " wrong shard", ReaderUtil.subIndex(sd.doc, docStarts), sd.shardIndex);
+			  ScoreDoc sd = mergedHits.ScoreDocs[hitIDX];
+			  Assert.AreEqual(ReaderUtil.SubIndex(sd.Doc, docStarts), sd.ShardIndex, "doc=" + sd.Doc + " wrong shard");
 			}
 		  }
 
-		  TestUtil.Assert.AreEqual(topHits, mergedHits);
+		  TestUtil.AssertEquals(topHits, mergedHits);
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 	}
 

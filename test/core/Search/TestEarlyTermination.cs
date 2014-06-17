@@ -24,6 +24,8 @@ namespace Lucene.Net.Search
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	public class TestEarlyTermination : LuceneTestCase
 	{
@@ -33,40 +35,40 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		Writer = new RandomIndexWriter(random(), Dir);
-		int numDocs = atLeast(100);
+		base.SetUp();
+		Dir = NewDirectory();
+		Writer = new RandomIndexWriter(Random(), Dir);
+		int numDocs = AtLeast(100);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  Writer.addDocument(new Document());
-		  if (rarely())
+		  Writer.AddDocument(new Document());
+		  if (Rarely())
 		  {
-			Writer.commit();
+			Writer.Commit();
 		  }
 		}
 	  }
 
 	  public override void TearDown()
 	  {
-		base.tearDown();
-		Writer.close();
-		Dir.close();
+		base.TearDown();
+		Writer.Close();
+		Dir.Dispose();
 	  }
 
 	  public virtual void TestEarlyTermination()
 	  {
-		int iters = atLeast(5);
+		int iters = AtLeast(5);
 		IndexReader reader = Writer.Reader;
 
 		for (int i = 0; i < iters; ++i)
 		{
-		  IndexSearcher searcher = newSearcher(reader);
+		  IndexSearcher searcher = NewSearcher(reader);
 		  Collector collector = new CollectorAnonymousInnerClassHelper(this);
 
-		  searcher.search(new MatchAllDocsQuery(), collector);
+		  searcher.Search(new MatchAllDocsQuery(), collector);
 		}
-		reader.close();
+		reader.Dispose();
 	  }
 
 	  private class CollectorAnonymousInnerClassHelper : Collector
@@ -76,7 +78,7 @@ namespace Lucene.Net.Search
 		  public CollectorAnonymousInnerClassHelper(TestEarlyTermination outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
-			  outOfOrder = random().nextBoolean();
+			  outOfOrder = Random().NextBoolean();
 			  collectionTerminated = true;
 		  }
 
@@ -93,7 +95,7 @@ namespace Lucene.Net.Search
 		  public override void Collect(int doc)
 		  {
 			Assert.IsFalse(collectionTerminated);
-			if (rarely())
+			if (Rarely())
 			{
 			  collectionTerminated = true;
 			  throw new CollectionTerminatedException();
@@ -104,7 +106,7 @@ namespace Lucene.Net.Search
 		  {
 			  set
 			  {
-				if (random().nextBoolean())
+				if (Random().NextBoolean())
 				{
 				  collectionTerminated = true;
 				  throw new CollectionTerminatedException();

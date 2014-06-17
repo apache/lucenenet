@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-	  public override void ResetSkip()
+	    protected internal override void ResetSkip()
 	  {
 		base.ResetSkip();
 		Arrays.Fill(LastSkipDoc, 0);
@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		}
 	  }
 
-	  protected internal override void WriteSkipData(int level, IndexOutput skipBuffer)
+	  protected override void WriteSkipData(int level, IndexOutput skipBuffer)
 	  {
 		// To efficiently store payloads in the posting lists we do not store the length of
 		// every payload. Instead we omit the length for a payload if the previous payload had

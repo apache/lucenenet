@@ -117,12 +117,12 @@ namespace Lucene.Net.Codecs.ramonly
 		  return FieldToTerms.Count;
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
-		  return CollectionsHelper.UnmodifiableSet(FieldToTerms.Keys).GetEnumerator();
+		  return FieldToTerms.Keys.GetEnumerator();
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		}
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.ramonly
 	  internal class RAMField : Terms
 	  {
 		internal readonly string Field;
-		internal readonly SortedMap<string, RAMTerm> TermToDocs = new SortedDictionary<string, RAMTerm>();
+        internal readonly SortedDictionary<string, RAMTerm> TermToDocs = new SortedDictionary<string, RAMTerm>();
 		internal long SumTotalTermFreq_Renamed;
 		internal long SumDocFreq_Renamed;
 		internal int DocCount_Renamed;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.ramonly
 		public virtual long RamBytesUsed()
 		{
 		  long sizeInBytes = 0;
-		  foreach (RAMTerm term in TermToDocs.values())
+		  foreach (RAMTerm term in TermToDocs.Values)
 		  {
 			sizeInBytes += term.RamBytesUsed();
 		  }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override long Size()
 		{
-		  return TermToDocs.size();
+		  return TermToDocs.Count;
 		}
 
 		public override long SumTotalTermFreq
@@ -212,17 +212,17 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override bool HasFreqs()
 		{
-            return Info.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS) >= 0;
+            return Info.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS;
 		}
 
 		public override bool HasOffsets()
 		{
-            return Info.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            return Info.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
 		}
 
 		public override bool HasPositions()
 		{
-            return Info.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            return Info.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
 		}
 
 		public override bool HasPayloads()
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override TermsConsumer AddField(FieldInfo field)
 		{
-		  if (field.IndexOptions.CompareTo(IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+		  if (field.IndexOptions >= IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
 		  {
 			throw new System.NotSupportedException("this codec cannot index offsets");
 		  }
@@ -308,7 +308,7 @@ namespace Lucene.Net.Codecs.ramonly
 		  return TermsConsumer;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  // TODO: finalize stuff
 		}
@@ -347,7 +347,7 @@ namespace Lucene.Net.Codecs.ramonly
 		  Debug.Assert(stats.DocFreq > 0);
 		  Debug.Assert(stats.DocFreq == Current.Docs.Count);
 		  Current.TotalTermFreq = stats.TotalTermFreq;
-		  Field.TermToDocs.put(Current.Term, Current);
+		  Field.TermToDocs[Current.Term] = Current;
 		}
 
 		public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
@@ -431,11 +431,9 @@ namespace Lucene.Net.Codecs.ramonly
 			  It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
 			}
 		  }
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  if (It.hasNext())
+		  if (It.MoveNext())
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			Current = It.next();
+			Current = It.Current;
 			return new BytesRef(Current);
 		  }
 		  else
@@ -448,7 +446,7 @@ namespace Lucene.Net.Codecs.ramonly
 		{
 		  Current = term.Utf8ToString();
 		  It = null;
-		  if (RamField.TermToDocs.containsKey(Current))
+		  if (RamField.TermToDocs.ContainsKey(Current))
 		  {
 			return SeekStatus.FOUND;
 		  }
@@ -483,22 +481,22 @@ namespace Lucene.Net.Codecs.ramonly
 
 		public override int DocFreq()
 		{
-		  return RamField.TermToDocs.get(Current).docs.size();
+		  return RamField.TermToDocs[Current].Docs.Count;
 		}
 
 		public override long TotalTermFreq()
 		{
-		  return RamField.TermToDocs.get(Current).totalTermFreq;
+            return RamField.TermToDocs[Current].TotalTermFreq;
 		}
 
 		public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
 		{
-		  return new RAMDocsEnum(RamField.TermToDocs.get(Current), liveDocs);
+            return new RAMDocsEnum(RamField.TermToDocs[Current], liveDocs);
 		}
 
 		public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		{
-		  return new RAMDocsAndPositionsEnum(RamField.TermToDocs.get(Current), liveDocs);
+            return new RAMDocsAndPositionsEnum(RamField.TermToDocs[Current], liveDocs);
 		}
 	  }
 

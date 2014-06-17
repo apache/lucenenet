@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		// NOTE: turn off compound file, this test will open some index files directly.
 		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).setUseCompoundFile(false);
+		IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
 		TermIndexInterval = config.TermIndexInterval;
 		IndexDivisor = TestUtil.NextInt(Random(), 1, 10);
@@ -101,8 +101,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 		string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
 		long tiiFileLength = Directory.FileLength(segmentFileName);
 		IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random()));
-		TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.segmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), newIOContext(Random())), fieldInfos, false);
-		int totalIndexInterval = TermEnum.indexInterval * IndexDivisor;
+		TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), NewIOContext(Random())), fieldInfos, false);
+		int totalIndexInterval = TermEnum.IndexInterval * IndexDivisor;
 
 		SegmentTermEnum indexEnum = new SegmentTermEnum(input, fieldInfos, true);
 		Index = new TermInfosReaderIndex(indexEnum, IndexDivisor, tiiFileLength, totalIndexInterval);
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         SegmentTermEnum clone = (SegmentTermEnum)TermEnum.Clone();
 		Term term = FindTermThatWouldBeAtIndex(clone, indexPosition);
 		SegmentTermEnum enumerator = clone;
-		Index.seekEnum(enumerator, indexPosition);
+		Index.SeekEnum(enumerator, indexPosition);
 		Assert.AreEqual(term, enumerator.Term());
 		clone.Dispose();
 	  }
@@ -142,9 +142,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 		Term term = new Term("field" + Random().Next(NUMBER_OF_FIELDS),Text);
 		for (int i = 0; i < Index.Length(); i++)
 		{
-		  Term t = Index.getTerm(i);
+		  Term t = Index.GetTerm(i);
 		  int compareTo = term.CompareTo(t);
-		  Assert.AreEqual(compareTo, Index.compareTo(term, i));
+		  Assert.AreEqual(compareTo, Index.CompareTo(term, i));
 		}
 	  }
 
@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 			}
 		  }
 		}
-		Collections.shuffle(sample);
+	    sample = CollectionsHelper.Shuffle(sample);
 		return sample;
 	  }
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  {
 		  get
 		  {
-			return Convert.ToString(Random().nextLong(),Character.MAX_RADIX);
+			return Convert.ToString(Random().Next(),Character.MAX_RADIX);
 		  }
 	  }
 	}

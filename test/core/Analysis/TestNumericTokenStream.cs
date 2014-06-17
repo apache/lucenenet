@@ -27,12 +27,14 @@ namespace Lucene.Net.Analysis
     using NUnit.Framework;
     using System;
 
+    [TestFixture]
 	public class TestNumericTokenStream : BaseTokenStreamTestCase
 	{
 
 	  internal const long Lvalue = 4573245871874382L;
 	  internal const int Ivalue = 123456;
 
+      [NUnit.Framework.Test]
 	  public virtual void TestLongStream()
 	  {
 		NumericTokenStream stream = (new NumericTokenStream()).SetLongValue(Lvalue);
@@ -57,6 +59,7 @@ namespace Lucene.Net.Analysis
 		stream.Dispose();
 	  }
 
+      [NUnit.Framework.Test]
 	  public virtual void TestIntStream()
 	  {
 		NumericTokenStream stream = (new NumericTokenStream()).SetIntValue(Ivalue);
@@ -81,6 +84,7 @@ namespace Lucene.Net.Analysis
 		stream.Dispose();
 	  }
 
+      [NUnit.Framework.Test]
 	  public virtual void TestNotInitialized()
 	  {
 		NumericTokenStream stream = new NumericTokenStream();
@@ -113,6 +117,7 @@ namespace Lucene.Net.Analysis
 	  {
 	  }
 
+      [NUnit.Framework.Test]
 	  public virtual void TestCTA()
 	  {
 		NumericTokenStream stream = new NumericTokenStream();

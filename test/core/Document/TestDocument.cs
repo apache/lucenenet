@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Document
 {
 
@@ -57,8 +59,8 @@ namespace Lucene.Net.Document
 		FieldType ft = new FieldType();
 		ft.Stored = true;
 		IndexableField stringFld = new Field("string", BinaryVal, ft);
-		IndexableField binaryFld = new StoredField("binary", BinaryVal.getBytes(StandardCharsets.UTF_8));
-		IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.getBytes(StandardCharsets.UTF_8));
+		IndexableField binaryFld = new StoredField("binary", BinaryVal.getBytes(IOUtils.UTF_8));
+		IndexableField binaryFld2 = new StoredField("binary", BinaryVal2.getBytes(IOUtils.UTF_8));
 
 		doc.Add(stringFld);
 		doc.Add(binaryFld);

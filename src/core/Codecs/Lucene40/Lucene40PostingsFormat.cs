@@ -268,11 +268,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
 	  /// <summary>
 	  /// Extension of freq postings file </summary>
-	  internal const string FREQ_EXTENSION = "frq";
+	  public const string FREQ_EXTENSION = "frq";
 
 	  /// <summary>
 	  /// Extension of prox postings file </summary>
-	  internal const string PROX_EXTENSION = "prx";
+	  public const string PROX_EXTENSION = "prx";
 
 	  public override string ToString()
 	  {

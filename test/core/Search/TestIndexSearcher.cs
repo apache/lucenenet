@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using NamedThreadFactory = Lucene.Net.Util.NamedThreadFactory;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
 
 	public class TestIndexSearcher : LuceneTestCase
 	{
@@ -41,25 +41,25 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), Dir);
+		base.SetUp();
+		Dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
 		for (int i = 0; i < 100; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("field", Convert.ToString(i), Field.Store.NO));
-		  doc.add(newStringField("field2", Convert.ToString(i % 2 == 0), Field.Store.NO));
-		  iw.addDocument(doc);
+		  doc.Add(NewStringField("field", Convert.ToString(i), Field.Store.NO));
+		  doc.Add(NewStringField("field2", Convert.ToString(i % 2 == 0), Field.Store.NO));
+		  iw.AddDocument(doc);
 		}
 		Reader = iw.Reader;
-		iw.close();
+		iw.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		base.tearDown();
-		Reader.close();
-		Dir.close();
+		base.TearDown();
+		Reader.Dispose();
+		Dir.Dispose();
 	  }
 
 	  // should not throw exception
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 
 		IndexSearcher[] searchers = new IndexSearcher[] {new IndexSearcher(Reader), new IndexSearcher(Reader, service)};
 		Query[] queries = new Query[] {new MatchAllDocsQuery(), new TermQuery(new Term("field", "1"))};
-		Sort[] sorts = new Sort[] {null, new Sort(new SortField("field2", SortField.Type.STRING))};
+		Sort[] sorts = new Sort[] {null, new Sort(new SortField("field2", SortField.Type_e.STRING))};
 		Filter[] filters = new Filter[] {null, new QueryWrapperFilter(new TermQuery(new Term("field2", "true")))};
 		ScoreDoc[] afters = new ScoreDoc[] {null, new FieldDoc(0, 0f, new object[] {new BytesRef("boo!")})};
 
@@ -83,23 +83,23 @@ namespace Lucene.Net.Search
 			  {
 				foreach (Filter filter in filters)
 				{
-				  searcher.search(query, int.MaxValue);
-				  searcher.searchAfter(after, query, int.MaxValue);
-				  searcher.search(query, filter, int.MaxValue);
-				  searcher.searchAfter(after, query, filter, int.MaxValue);
+				  searcher.Search(query, int.MaxValue);
+				  searcher.SearchAfter(after, query, int.MaxValue);
+				  searcher.Search(query, filter, int.MaxValue);
+				  searcher.SearchAfter(after, query, filter, int.MaxValue);
 				  if (sort != null)
 				  {
-					searcher.search(query, int.MaxValue, sort);
-					searcher.search(query, filter, int.MaxValue, sort);
-					searcher.search(query, filter, int.MaxValue, sort, true, true);
-					searcher.search(query, filter, int.MaxValue, sort, true, false);
-					searcher.search(query, filter, int.MaxValue, sort, false, true);
-					searcher.search(query, filter, int.MaxValue, sort, false, false);
-					searcher.searchAfter(after, query, filter, int.MaxValue, sort);
-					searcher.searchAfter(after, query, filter, int.MaxValue, sort, true, true);
-					searcher.searchAfter(after, query, filter, int.MaxValue, sort, true, false);
-					searcher.searchAfter(after, query, filter, int.MaxValue, sort, false, true);
-					searcher.searchAfter(after, query, filter, int.MaxValue, sort, false, false);
+					searcher.Search(query, int.MaxValue, sort);
+					searcher.Search(query, filter, int.MaxValue, sort);
+					searcher.Search(query, filter, int.MaxValue, sort, true, true);
+					searcher.Search(query, filter, int.MaxValue, sort, true, false);
+					searcher.Search(query, filter, int.MaxValue, sort, false, true);
+					searcher.Search(query, filter, int.MaxValue, sort, false, false);
+					searcher.SearchAfter(after, query, filter, int.MaxValue, sort);
+					searcher.SearchAfter(after, query, filter, int.MaxValue, sort, true, true);
+					searcher.SearchAfter(after, query, filter, int.MaxValue, sort, true, false);
+					searcher.SearchAfter(after, query, filter, int.MaxValue, sort, false, true);
+					searcher.SearchAfter(after, query, filter, int.MaxValue, sort, false, false);
 				  }
 				}
 			  }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		TestUtil.shutdownExecutorService(service);
+		TestUtil.ShutdownExecutorService(service);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -115,16 +115,16 @@ namespace Lucene.Net.Search
 	  public virtual void TestSearchAfterPassedMaxDoc()
 	  {
 		// LUCENE-5128: ensure we get a meaningful message if searchAfter exceeds maxDoc
-		Directory dir = newDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
-		w.addDocument(new Document());
+		Directory dir = NewDirectory();
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
+		w.AddDocument(new Document());
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 
 		IndexSearcher s = new IndexSearcher(r);
 		try
 		{
-		  s.searchAfter(new ScoreDoc(r.maxDoc(), 0.54f), new MatchAllDocsQuery(), 10);
+		  s.SearchAfter(new ScoreDoc(r.MaxDoc(), 0.54f), new MatchAllDocsQuery(), 10);
 		  Assert.Fail("should have hit IllegalArgumentException when searchAfter exceeds maxDoc");
 		}
 		catch (System.ArgumentException e)

@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 	using Directory = Lucene.Net.Store.Directory;
 	using Document = Lucene.Net.Document.Document;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Similarity unit test.
@@ -37,26 +38,26 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestNot()
 	  {
-		Directory store = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), store);
+		Directory store = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), store);
 
 		Document d1 = new Document();
-		d1.add(newTextField("field", "a b", Field.Store.YES));
+		d1.Add(NewTextField("field", "a b", Field.Store.YES));
 
-		writer.addDocument(d1);
+		writer.AddDocument(d1);
 		IndexReader reader = writer.Reader;
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
-		query.add(new TermQuery(new Term("field", "b")), BooleanClause.Occur_e.MUST_NOT);
+		query.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+		query.Add(new TermQuery(new Term("field", "b")), BooleanClause.Occur_e.MUST_NOT);
 
-		ScoreDoc[] hits = searcher.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
-		writer.close();
-		reader.close();
-		store.close();
+		writer.Close();
+		reader.Dispose();
+		store.Dispose();
 	  }
 	}
 

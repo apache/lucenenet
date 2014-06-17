@@ -60,13 +60,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 	  private int Format;
 	  private bool IsIndex = false;
 	  internal long IndexPointer = 0;
-	  internal int IndexInterval;
+	    public int IndexInterval;
 	  internal int SkipInterval;
 	  internal int NewSuffixStart;
 	  internal int MaxSkipLevels;
 	  private bool First = true;
 
-	  internal SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
+	    public SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
 	  {
 		Input = i;
 		FieldInfos = fis;

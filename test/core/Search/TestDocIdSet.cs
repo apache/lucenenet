@@ -21,9 +21,6 @@ namespace Lucene.Net.Search
 	 * limitations under the License.
 	 */
 
-
-	using Assert = junit.framework.Assert;
-
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
@@ -32,6 +29,8 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using Bits = Lucene.Net.Util.Bits;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
 	public class TestDocIdSet : LuceneTestCase
 	{
@@ -43,13 +42,13 @@ namespace Lucene.Net.Search
 
 		DocIdSet filteredSet = new FilteredDocIdSetAnonymousInnerClassHelper(this, innerSet);
 
-		DocIdSetIterator iter = filteredSet.GetEnumerator();
+		DocIdSetIterator iter = filteredSet.GetIterator();
 		List<int?> list = new List<int?>();
-		int doc = iter.advance(3);
+		int doc = iter.Advance(3);
 		if (doc != DocIdSetIterator.NO_MORE_DOCS)
 		{
 		  list.Add(Convert.ToInt32(doc));
-		  while ((doc = iter.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+		  while ((doc = iter.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
 		  {
 			list.Add(Convert.ToInt32(doc));
 		  }
@@ -96,7 +95,7 @@ namespace Lucene.Net.Search
 
 			  public DocIdSetIteratorAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  docid = -1;
 			  }
 
@@ -116,7 +115,7 @@ namespace Lucene.Net.Search
 
 			  public override int Advance(int target)
 			  {
-				return slowAdvance(target);
+				return SlowAdvance(target);
 			  }
 
 			  public override long Cost()
@@ -145,24 +144,24 @@ namespace Lucene.Net.Search
 	  {
 		// Tests that if a Filter produces a null DocIdSet, which is given to
 		// IndexSearcher, everything works fine. this came up in LUCENE-1754.
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newStringField("c", "val", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewStringField("c", "val", Field.Store.NO));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
 		// First verify the document is searchable.
-		IndexSearcher searcher = newSearcher(reader);
-		Assert.Assert.AreEqual(1, searcher.search(new MatchAllDocsQuery(), 10).totalHits);
+		IndexSearcher searcher = NewSearcher(reader);
+		Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 
 		// Now search w/ a Filter which returns a null DocIdSet
 		Filter f = new FilterAnonymousInnerClassHelper(this);
 
-		Assert.Assert.AreEqual(0, searcher.search(new MatchAllDocsQuery(), f, 10).totalHits);
-		reader.close();
-		dir.close();
+		Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class FilterAnonymousInnerClassHelper : Filter
@@ -182,24 +181,24 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestNullIteratorFilteredDocIdSet()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newStringField("c", "val", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewStringField("c", "val", Field.Store.NO));
+		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
 		// First verify the document is searchable.
-		IndexSearcher searcher = newSearcher(reader);
-		Assert.Assert.AreEqual(1, searcher.search(new MatchAllDocsQuery(), 10).totalHits);
+		IndexSearcher searcher = NewSearcher(reader);
+		Assert.AreEqual(1, searcher.Search(new MatchAllDocsQuery(), 10).TotalHits);
 
 		  // Now search w/ a Filter which returns a null DocIdSet
 		Filter f = new FilterAnonymousInnerClassHelper2(this);
 
-		Assert.Assert.AreEqual(0, searcher.search(new MatchAllDocsQuery(), f, 10).totalHits);
-		reader.close();
-		dir.close();
+		Assert.AreEqual(0, searcher.Search(new MatchAllDocsQuery(), f, 10).TotalHits);
+		reader.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class FilterAnonymousInnerClassHelper2 : Filter
@@ -223,7 +222,7 @@ namespace Lucene.Net.Search
 
 			  public DocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper2 outerInstance)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 			  }
 
 			  public override DocIdSetIterator Iterator()
@@ -238,7 +237,7 @@ namespace Lucene.Net.Search
 
 			  public FilteredDocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper2 outerInstance, DocIdSet innerNullIteratorSet) : base(innerNullIteratorSet)
 			  {
-				  this.outerInstance = outerInstance;
+                  this.OuterInstance = outerInstance;
 			  }
 
 			  protected internal override bool Match(int docid)

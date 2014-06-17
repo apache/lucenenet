@@ -51,9 +51,9 @@ namespace Lucene.Net.Util
 	  // array:
 	  private int Count;
 
-	  public RollingBuffer()
+	  protected RollingBuffer()
 	  {
-		for (int idx = 0;idx < Buffer.Length;idx++)
+		for (int idx = 0; idx < Buffer.Length; idx++)
 		{
 		  Buffer[idx] = NewInstance();
 		}
@@ -102,14 +102,14 @@ namespace Lucene.Net.Util
 	  public virtual T Get(int pos)
 	  {
 		//System.out.println("RA.get pos=" + pos + " nextPos=" + nextPos + " nextWrite=" + nextWrite + " count=" + count);
-		while (pos >= NextPos)
+		while (NextPos < pos)
 		{
 		  if (Count == Buffer.Length)
 		  {
 			T[] newBuffer = (T[]) new T[ArrayUtil.Oversize(1 + Count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			Array.Copy(Buffer, NextWrite, newBuffer, 0, Buffer.Length - NextWrite);
 			Array.Copy(Buffer, 0, newBuffer, Buffer.Length - NextWrite, NextWrite);
-			for (int i = Buffer.Length;i < newBuffer.Length;i++)
+			for (int i = Buffer.Length; i < newBuffer.Length; i++)
 			{
 			  newBuffer[i] = NewInstance();
 			}

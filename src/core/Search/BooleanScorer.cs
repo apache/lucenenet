@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 	 * conjunction can reduce the number of priority queue
 	 * updates for the optional terms. */
 
-	internal sealed class BooleanScorer : BulkScorer
+	public sealed class BooleanScorer : BulkScorer
 	{
 
 	  private sealed class BooleanScorerCollector : Collector
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
 
 	  private readonly Weight Weight;
 
-	  internal BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
+	  public BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
 	  {
 		this.MinNrShouldMatch = minNrShouldMatch;
 		this.Weight = weight;

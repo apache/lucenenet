@@ -44,6 +44,7 @@ namespace Lucene.Net.Search
 	using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
 	using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// Create an index with random unicode terms
@@ -59,21 +60,21 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		FieldName = random().nextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.KEYWORD, false)).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
+		base.SetUp();
+		Dir = NewDirectory();
+		FieldName = Random().NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 		Document doc = new Document();
-		Field field = newStringField(FieldName, "", Field.Store.NO);
-		doc.add(field);
-		IList<string> terms = new List<string>();
-		int num = atLeast(200);
+		Field field = NewStringField(FieldName, "", Field.Store.NO);
+		doc.Add(field);
+		List<string> terms = new List<string>();
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
-		  string s = TestUtil.randomUnicodeString(random());
+		  string s = TestUtil.RandomUnicodeString(Random());
 		  field.StringValue = s;
 		  terms.Add(s);
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		if (VERBOSE)
@@ -83,21 +84,21 @@ namespace Lucene.Net.Search
 		  Console.WriteLine("UTF16 order:");
 		  foreach (string s in terms)
 		  {
-			Console.WriteLine("  " + UnicodeUtil.toHexString(s));
+			Console.WriteLine("  " + UnicodeUtil.ToHexString(s));
 		  }
 		}
 
 		Reader = writer.Reader;
-		Searcher1 = newSearcher(Reader);
-		Searcher2 = newSearcher(Reader);
-		writer.close();
+		Searcher1 = NewSearcher(Reader);
+		Searcher2 = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  /// <summary>
@@ -108,16 +109,16 @@ namespace Lucene.Net.Search
 
 		internal readonly Automaton Automaton;
 
-		internal DumbRegexpQuery(TestRegexpRandom2 outerInstance, Term term, int flags) : base(term.field())
+		internal DumbRegexpQuery(TestRegexpRandom2 outerInstance, Term term, int flags) : base(term.Field())
 		{
 			this.OuterInstance = outerInstance;
-		  RegExp re = new RegExp(term.text(), flags);
-		  Automaton = re.toAutomaton();
+		  RegExp re = new RegExp(term.Text(), flags);
+		  Automaton = re.ToAutomaton();
 		}
 
 		protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		{
-		  return new SimpleAutomatonTermsEnum(this, terms.iterator(null));
+		  return new SimpleAutomatonTermsEnum(this, terms.Iterator(null));
 		}
 
 		private class SimpleAutomatonTermsEnum : FilteredTermsEnum
@@ -126,7 +127,7 @@ namespace Lucene.Net.Search
 
 			internal virtual void InitializeInstanceFields()
 			{
-				RunAutomaton = new CharacterRunAutomaton(outerInstance.Automaton);
+				RunAutomaton = new CharacterRunAutomaton(OuterInstance.Automaton);
 			}
 
 			private readonly TestRegexpRandom2.DumbRegexpQuery OuterInstance;
@@ -148,8 +149,8 @@ namespace Lucene.Net.Search
 
 		  protected internal override AcceptStatus Accept(BytesRef term)
 		  {
-			UnicodeUtil.UTF8toUTF16(term.bytes, term.offset, term.length, Utf16);
-			return RunAutomaton.run(Utf16.chars, 0, Utf16.length) ? AcceptStatus.YES : AcceptStatus.NO;
+			UnicodeUtil.UTF8toUTF16(term.Bytes, term.Offset, term.Length, Utf16);
+			return RunAutomaton.Run(Utf16.Chars, 0, Utf16.Length) ? AcceptStatus.YES : AcceptStatus.NO;
 		  }
 		}
 
@@ -165,10 +166,10 @@ namespace Lucene.Net.Search
 	  {
 		// we generate aweful regexps: good for testing.
 		// but for preflex codec, the test can be very slow, so use less iterations.
-		int num = Codec.Default.Name.Equals("Lucene3x") ? 100 * RANDOM_MULTIPLIER : atLeast(1000);
+		int num = Codec.Default.Name.Equals("Lucene3x") ? 100 * RANDOM_MULTIPLIER : AtLeast(1000);
 		for (int i = 0; i < num; i++)
 		{
-		  string reg = AutomatonTestUtil.randomRegexp(random());
+		  string reg = AutomatonTestUtil.RandomRegexp(Random());
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: regexp=" + reg);
@@ -186,10 +187,10 @@ namespace Lucene.Net.Search
 		RegexpQuery smart = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
 		DumbRegexpQuery dumb = new DumbRegexpQuery(this, new Term(FieldName, regexp), RegExp.NONE);
 
-		TopDocs smartDocs = Searcher1.search(smart, 25);
-		TopDocs dumbDocs = Searcher2.search(dumb, 25);
+		TopDocs smartDocs = Searcher1.Search(smart, 25);
+		TopDocs dumbDocs = Searcher2.Search(dumb, 25);
 
-		CheckHits.checkEqual(smart, smartDocs.scoreDocs, dumbDocs.scoreDocs);
+		CheckHits.CheckEqual(smart, smartDocs.ScoreDocs, dumbDocs.ScoreDocs);
 	  }
 	}
 

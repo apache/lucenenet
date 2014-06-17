@@ -33,6 +33,11 @@ namespace Lucene.Net.Search
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
+    using System.Collections.Generic;
+    using System.IO;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestSortRescorer extends Lucene.Net.Util.LuceneTestCase
@@ -44,38 +49,38 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), Dir);
+		base.SetUp();
+		Dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
 
 		Document doc = new Document();
-		doc.add(newStringField("id", "1", Field.Store.YES));
-		doc.add(newTextField("body", "some contents and more contents", Field.Store.NO));
-		doc.add(new NumericDocValuesField("popularity", 5));
-		iw.addDocument(doc);
+		doc.Add(NewStringField("id", "1", Field.Store.YES));
+		doc.Add(NewTextField("body", "some contents and more contents", Field.Store.NO));
+		doc.Add(new NumericDocValuesField("popularity", 5));
+		iw.AddDocument(doc);
 
 		doc = new Document();
-		doc.add(newStringField("id", "2", Field.Store.YES));
-		doc.add(newTextField("body", "another document with different contents", Field.Store.NO));
-		doc.add(new NumericDocValuesField("popularity", 20));
-		iw.addDocument(doc);
+		doc.Add(NewStringField("id", "2", Field.Store.YES));
+		doc.Add(NewTextField("body", "another document with different contents", Field.Store.NO));
+		doc.Add(new NumericDocValuesField("popularity", 20));
+		iw.AddDocument(doc);
 
 		doc = new Document();
-		doc.add(newStringField("id", "3", Field.Store.YES));
-		doc.add(newTextField("body", "crappy contents", Field.Store.NO));
-		doc.add(new NumericDocValuesField("popularity", 2));
-		iw.addDocument(doc);
+		doc.Add(NewStringField("id", "3", Field.Store.YES));
+		doc.Add(NewTextField("body", "crappy contents", Field.Store.NO));
+		doc.Add(new NumericDocValuesField("popularity", 2));
+		iw.AddDocument(doc);
 
 		Reader = iw.Reader;
 		Searcher = new IndexSearcher(Reader);
-		iw.close();
+		iw.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestBasic()
@@ -86,22 +91,22 @@ namespace Lucene.Net.Search
 		IndexReader r = Searcher.IndexReader;
 
 		// Just first pass query
-		TopDocs hits = Searcher.search(query, 10);
-		Assert.AreEqual(3, hits.totalHits);
-		Assert.AreEqual("3", r.document(hits.scoreDocs[0].doc).get("id"));
-		Assert.AreEqual("1", r.document(hits.scoreDocs[1].doc).get("id"));
-		Assert.AreEqual("2", r.document(hits.scoreDocs[2].doc).get("id"));
+		TopDocs hits = Searcher.Search(query, 10);
+		Assert.AreEqual(3, hits.TotalHits);
+		Assert.AreEqual("3", r.Document(hits.ScoreDocs[0].Doc).Get("id"));
+		Assert.AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
+		Assert.AreEqual("2", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
 
 		// Now, rescore:
-		Sort sort = new Sort(new SortField("popularity", SortField.Type.INT, true));
+		Sort sort = new Sort(new SortField("popularity", SortField.Type_e.INT, true));
 		Rescorer rescorer = new SortRescorer(sort);
-		hits = rescorer.rescore(Searcher, hits, 10);
-		Assert.AreEqual(3, hits.totalHits);
-		Assert.AreEqual("2", r.document(hits.scoreDocs[0].doc).get("id"));
-		Assert.AreEqual("1", r.document(hits.scoreDocs[1].doc).get("id"));
-		Assert.AreEqual("3", r.document(hits.scoreDocs[2].doc).get("id"));
+		hits = rescorer.Rescore(Searcher, hits, 10);
+		Assert.AreEqual(3, hits.TotalHits);
+		Assert.AreEqual("2", r.Document(hits.ScoreDocs[0].Doc).Get("id"));
+		Assert.AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
+		Assert.AreEqual("3", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
 
-		string expl = rescorer.explain(Searcher, Searcher.explain(query, hits.scoreDocs[0].doc), hits.scoreDocs[0].doc).ToString();
+		string expl = rescorer.Explain(Searcher, Searcher.Explain(query, hits.ScoreDocs[0].Doc), hits.ScoreDocs[0].Doc).ToString();
 
 		// Confirm the explanation breaks out the individual
 		// sort fields:
@@ -114,61 +119,61 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestRandom()
 	  {
-		Directory dir = newDirectory();
-		int numDocs = atLeast(1000);
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		int numDocs = AtLeast(1000);
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 
 		int[] idToNum = new int[numDocs];
-		int maxValue = TestUtil.Next(random(), 10, 1000000);
+		int maxValue = TestUtil.NextInt(Random(), 10, 1000000);
 		for (int i = 0;i < numDocs;i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("id", "" + i, Field.Store.YES));
-		  int numTokens = TestUtil.Next(random(), 1, 10);
+		  doc.Add(NewStringField("id", "" + i, Field.Store.YES));
+		  int numTokens = TestUtil.NextInt(Random(), 1, 10);
 		  StringBuilder b = new StringBuilder();
 		  for (int j = 0;j < numTokens;j++)
 		  {
 			b.Append("a ");
 		  }
-		  doc.add(newTextField("field", b.ToString(), Field.Store.NO));
-		  idToNum[i] = random().Next(maxValue);
-		  doc.add(new NumericDocValuesField("num", idToNum[i]));
-		  w.addDocument(doc);
+		  doc.Add(NewTextField("field", b.ToString(), Field.Store.NO));
+		  idToNum[i] = Random().Next(maxValue);
+		  doc.Add(new NumericDocValuesField("num", idToNum[i]));
+		  w.AddDocument(doc);
 		}
 		IndexReader r = w.Reader;
-		w.close();
+		w.Close();
 
-		IndexSearcher s = newSearcher(r);
-		int numHits = TestUtil.Next(random(), 1, numDocs);
-		bool reverse = random().nextBoolean();
+		IndexSearcher s = NewSearcher(r);
+		int numHits = TestUtil.NextInt(Random(), 1, numDocs);
+		bool reverse = Random().NextBoolean();
 
-		TopDocs hits = s.search(new TermQuery(new Term("field", "a")), numHits);
+		TopDocs hits = s.Search(new TermQuery(new Term("field", "a")), numHits);
 
-		Rescorer rescorer = new SortRescorer(new Sort(new SortField("num", SortField.Type.INT, reverse)));
-		TopDocs hits2 = rescorer.rescore(s, hits, numHits);
+		Rescorer rescorer = new SortRescorer(new Sort(new SortField("num", SortField.Type_e.INT, reverse)));
+		TopDocs hits2 = rescorer.Rescore(s, hits, numHits);
 
-		int?[] expected = new int?[numHits];
+		int[] expected = new int[numHits];
 		for (int i = 0;i < numHits;i++)
 		{
-		  expected[i] = hits.scoreDocs[i].doc;
+		  expected[i] = hits.ScoreDocs[i].Doc;
 		}
 
 		int reverseInt = reverse ? - 1 : 1;
 
-		Arrays.sort(expected, new ComparatorAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
+		Arrays.Sort(expected, new ComparatorAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
 
 		bool fail = false;
 		for (int i = 0;i < numHits;i++)
 		{
-		  fail |= (int)expected[i] != hits2.scoreDocs[i].doc;
+		  fail |= (int)expected[i] != hits2.ScoreDocs[i].Doc;
 		}
 		Assert.IsFalse(fail);
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ComparatorAnonymousInnerClassHelper : IComparer<int?>
+	  private class ComparatorAnonymousInnerClassHelper : IComparer<int>
 	  {
 		  private readonly TestSortRescorer OuterInstance;
 
@@ -184,12 +189,12 @@ namespace Lucene.Net.Search
 			  this.ReverseInt = reverseInt;
 		  }
 
-		  public virtual int Compare(int? a, int? b)
+		  public virtual int Compare(int a, int b)
 		  {
 			try
 			{
-			  int av = IdToNum[Convert.ToInt32(r.document(a).get("id"))];
-			  int bv = IdToNum[Convert.ToInt32(r.document(b).get("id"))];
+			  int av = IdToNum[Convert.ToInt32(r.Document(a).Get("id"))];
+			  int bv = IdToNum[Convert.ToInt32(r.Document(b).Get("id"))];
 			  if (av < bv)
 			  {
 				return -ReverseInt;
@@ -206,7 +211,7 @@ namespace Lucene.Net.Search
 			}
 			catch (IOException ioe)
 			{
-			  throw new Exception(ioe);
+			  throw new Exception(ioe.Message, ioe);
 			}
 		  }
 	  }

@@ -33,6 +33,7 @@ namespace Lucene.Net.Search.Similarities
 	using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests against all the similarities we have
@@ -43,26 +44,26 @@ namespace Lucene.Net.Search.Similarities
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Sims = new List<>();
+		base.SetUp();
+		Sims = new List<Similarity>();
 		Sims.Add(new DefaultSimilarity());
 		Sims.Add(new BM25Similarity());
 		// TODO: not great that we dup this all with TestSimilarityBase
-		foreach (BasicModel basicModel in TestSimilaritybase.BASIC_MODELS)
+		foreach (BasicModel basicModel in TestSimilarityBase.BASIC_MODELS)
 		{
-		  foreach (AfterEffect afterEffect in TestSimilaritybase.AFTER_EFFECTS)
+		  foreach (AfterEffect afterEffect in TestSimilarityBase.AFTER_EFFECTS)
 		  {
-			foreach (Normalization normalization in TestSimilaritybase.NORMALIZATIONS)
+			foreach (Normalization normalization in TestSimilarityBase.NORMALIZATIONS)
 			{
 			  Sims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
 			}
 		  }
 		}
-		foreach (Distribution distribution in TestSimilaritybase.DISTRIBUTIONS)
+		foreach (Distribution distribution in TestSimilarityBase.DISTRIBUTIONS)
 		{
-		  foreach (Lambda lambda in TestSimilaritybase.LAMBDAS)
+		  foreach (Lambda lambda in TestSimilarityBase.LAMBDAS)
 		  {
-			foreach (Normalization normalization in TestSimilaritybase.NORMALIZATIONS)
+			foreach (Normalization normalization in TestSimilarityBase.NORMALIZATIONS)
 			{
 			  Sims.Add(new IBSimilarity(distribution, lambda, normalization));
 			}
@@ -79,153 +80,153 @@ namespace Lucene.Net.Search.Similarities
 	  /// </summary>
 	  public virtual void TestEmptyIndex()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+        iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
 		  @is.Similarity = sim;
-		  Assert.AreEqual(0, @is.search(new TermQuery(new Term("foo", "bar")), 10).totalHits);
+		  Assert.AreEqual(0, @is.Search(new TermQuery(new Term("foo", "bar")), 10).TotalHits);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// similar to the above, but ORs the query with a real field </summary>
 	  public virtual void TestEmptyField()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("foo", "bar", Field.Store.NO));
-		iw.addDocument(doc);
+		doc.Add(NewTextField("foo", "bar", Field.Store.NO));
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+		iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
-		  query.add(new TermQuery(new Term("bar", "baz")), BooleanClause.Occur_e.SHOULD);
-		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
+		  query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  query.Add(new TermQuery(new Term("bar", "baz")), BooleanClause.Occur_e.SHOULD);
+		  Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// similar to the above, however the field exists, but we query with a term that doesnt exist too </summary>
 	  public virtual void TestEmptyTerm()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
-		doc.add(newTextField("foo", "bar", Field.Store.NO));
-		iw.addDocument(doc);
+		doc.Add(NewTextField("foo", "bar", Field.Store.NO));
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+        iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
-		  query.add(new TermQuery(new Term("foo", "baz")), BooleanClause.Occur_e.SHOULD);
-		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
+		  query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  query.Add(new TermQuery(new Term("foo", "baz")), BooleanClause.Occur_e.SHOULD);
+		  Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// make sure we can retrieve when norms are disabled </summary>
 	  public virtual void TestNoNorms()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
 		ft.OmitNorms = true;
-		ft.freeze();
-		doc.add(newField("foo", "bar", ft));
-		iw.addDocument(doc);
+		ft.Freeze();
+		doc.Add(NewField("foo", "bar", ft));
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+        iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
-		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
+		  query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// make sure all sims work if TF is omitted </summary>
 	  public virtual void TestOmitTF()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.IndexOptions = IndexOptions.DOCS_ONLY;
-		ft.freeze();
-		Field f = newField("foo", "bar", ft);
-		doc.add(f);
-		iw.addDocument(doc);
+		ft.IndexOptionsValue = IndexOptions.DOCS_ONLY;
+		ft.Freeze();
+		Field f = NewField("foo", "bar", ft);
+		doc.Add(f);
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+        iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
-		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
+		  query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// make sure all sims work if TF and norms is omitted </summary>
 	  public virtual void TestOmitTFAndNorms()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.IndexOptions = IndexOptions.DOCS_ONLY;
+		ft.IndexOptionsValue = IndexOptions.DOCS_ONLY;
 		ft.OmitNorms = true;
-		ft.freeze();
-		Field f = newField("foo", "bar", ft);
-		doc.add(f);
-		iw.addDocument(doc);
+		ft.Freeze();
+		Field f = NewField("foo", "bar", ft);
+		doc.Add(f);
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+        iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
 		  @is.Similarity = sim;
 		  BooleanQuery query = new BooleanQuery(true);
-		  query.add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
-		  Assert.AreEqual(1, @is.search(query, 10).totalHits);
+		  query.Add(new TermQuery(new Term("foo", "bar")), BooleanClause.Occur_e.SHOULD);
+		  Assert.AreEqual(1, @is.Search(query, 10).TotalHits);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  /// <summary>
@@ -236,15 +237,15 @@ namespace Lucene.Net.Search.Similarities
 		// this means they never score a term that does not exist.
 		// however with spans, there is only one scorer for the whole hierarchy:
 		// inner queries are not real queries, their boosts are ignored, etc.
-		Directory dir = newDirectory();
-		RandomIndexWriter iw = new RandomIndexWriter(random(), dir);
+		Directory dir = NewDirectory();
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		Document doc = new Document();
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		doc.add(newField("foo", "bar", ft));
-		iw.addDocument(doc);
+		doc.Add(NewField("foo", "bar", ft));
+		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.close();
-		IndexSearcher @is = newSearcher(ir);
+        iw.Close();
+		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
 		{
@@ -252,14 +253,14 @@ namespace Lucene.Net.Search.Similarities
 		  SpanTermQuery s1 = new SpanTermQuery(new Term("foo", "bar"));
 		  SpanTermQuery s2 = new SpanTermQuery(new Term("foo", "baz"));
 		  Query query = new SpanOrQuery(s1, s2);
-		  TopDocs td = @is.search(query, 10);
-		  Assert.AreEqual(1, td.totalHits);
-		  float score = td.scoreDocs[0].score;
+		  TopDocs td = @is.Search(query, 10);
+		  Assert.AreEqual(1, td.TotalHits);
+		  float score = td.ScoreDocs[0].Score;
 		  Assert.IsTrue(score >= 0.0f);
-		  Assert.IsFalse("inf score for " + sim, float.IsInfinity(score));
+		  Assert.IsFalse(float.IsInfinity(score), "inf score for " + sim);
 		}
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 	}
 

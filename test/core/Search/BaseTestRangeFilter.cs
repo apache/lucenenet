@@ -31,9 +31,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
-	using Test = org.junit.Test;
+    using NUnit.Framework;
 
 	public class BaseTestRangeFilter : LuceneTestCase
 	{
@@ -59,7 +57,7 @@ namespace Lucene.Net.Search
 		  this.MinR = minR;
 		  this.MaxR = maxR;
 		  this.AllowNegativeRandomInts = allowNegativeRandomInts;
-		  Index = newDirectory(random);
+		  Index = NewDirectory(random);
 		}
 	  }
 
@@ -72,7 +70,7 @@ namespace Lucene.Net.Search
 	  internal static int MinId = 0;
 	  internal static int MaxId;
 
-	  internal static readonly int IntLength = Convert.ToString(int.MaxValue).length();
+	  internal static readonly int IntLength = Convert.ToString(int.MaxValue).Length;
 
 	  /// <summary>
 	  /// a simple padding function that should work with any int
@@ -101,21 +99,21 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClassBaseTestRangeFilter() throws Exception
 	  public static void BeforeClassBaseTestRangeFilter()
 	  {
-		MaxId = atLeast(500);
-		SignedIndexDir = new TestIndex(random(), int.MaxValue, int.MinValue, true);
-		UnsignedIndexDir = new TestIndex(random(), int.MaxValue, 0, false);
-		SignedIndexReader = Build(random(), SignedIndexDir);
-		UnsignedIndexReader = Build(random(), UnsignedIndexDir);
+		MaxId = AtLeast(500);
+		SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
+		UnsignedIndexDir = new TestIndex(Random(), int.MaxValue, 0, false);
+		SignedIndexReader = Build(Random(), SignedIndexDir);
+		UnsignedIndexReader = Build(Random(), UnsignedIndexDir);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClassBaseTestRangeFilter() throws Exception
 	  public static void AfterClassBaseTestRangeFilter()
 	  {
-		SignedIndexReader.close();
-		UnsignedIndexReader.close();
-		SignedIndexDir.Index.close();
-		UnsignedIndexDir.Index.close();
+		SignedIndexReader.Dispose();
+		UnsignedIndexReader.Dispose();
+		SignedIndexDir.Index.Dispose();
+		UnsignedIndexDir.Index.Dispose();
 		SignedIndexReader = null;
 		UnsignedIndexReader = null;
 		SignedIndexDir = null;
@@ -127,15 +125,15 @@ namespace Lucene.Net.Search
 		/* build an index */
 
 		Document doc = new Document();
-		Field idField = newStringField(random, "id", "", Field.Store.YES);
-		Field randField = newStringField(random, "rand", "", Field.Store.YES);
-		Field bodyField = newStringField(random, "body", "", Field.Store.NO);
-		doc.add(idField);
-		doc.add(randField);
-		doc.add(bodyField);
+		Field idField = NewStringField(random, "id", "", Field.Store.YES);
+		Field randField = NewStringField(random, "rand", "", Field.Store.YES);
+		Field bodyField = NewStringField(random, "body", "", Field.Store.NO);
+		doc.Add(idField);
+		doc.Add(randField);
+		doc.Add(bodyField);
 
-		RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, newIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).setOpenMode(OpenMode.CREATE).setMaxBufferedDocs(TestUtil.Next(random, 50, 1000)).setMergePolicy(newLogMergePolicy()));
-		TestUtil.reduceOpenFiles(writer.w);
+		RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(TestUtil.NextInt(random, 50, 1000)).SetMergePolicy(NewLogMergePolicy()));
+		TestUtil.ReduceOpenFiles(writer.w);
 
 		while (true)
 		{
@@ -168,7 +166,7 @@ namespace Lucene.Net.Search
 			}
 			randField.StringValue = Pad(r);
 			bodyField.StringValue = "body";
-			writer.addDocument(doc);
+			writer.AddDocument(doc);
 		  }
 
 		  if (minCount == 1 && maxCount == 1)
@@ -178,12 +176,12 @@ namespace Lucene.Net.Search
 			// exceedingly rare (Yonik calculates 1 in ~429,000)
 			// times) that this loop requires more than one try:
 			IndexReader ir = writer.Reader;
-			writer.close();
+			writer.Close();
 			return ir;
 		  }
 
 		  // try again
-		  writer.deleteAll();
+		  writer.DeleteAll();
 		}
 	  }
 
@@ -200,8 +198,8 @@ namespace Lucene.Net.Search
 		  string aa = Pad(a);
 		  string bb = Pad(b);
 		  string label = a + ":" + aa + " vs " + b + ":" + bb;
-		  Assert.AreEqual("length of " + label, aa.Length, bb.Length);
-		  Assert.IsTrue("compare less than " + label, aa.CompareTo(bb) < 0);
+		  Assert.AreEqual(aa.Length, bb.Length, "length of " + label);
+		  Assert.IsTrue(aa.CompareTo(bb) < 0, "compare less than " + label);
 		}
 
 	  }

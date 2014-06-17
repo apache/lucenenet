@@ -41,6 +41,8 @@ namespace Lucene.Net.Search
 	using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
 	using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;
 	using Directory = Lucene.Net.Store.Directory;
+    using NUnit.Framework;
+    using Lucene.Net.Index;
 
 
 	/// <summary>
@@ -107,122 +109,122 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 
-		Index = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Index, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setSimilarity(Sim).setMergePolicy(newLogMergePolicy()));
+		Index = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Index, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetSimilarity(Sim).SetMergePolicy(NewLogMergePolicy()));
 
 		// hed is the most important field, dek is secondary
 
 		// d1 is an "ok" match for: albino elephant
 		{
 		  Document d1 = new Document();
-		  d1.add(newField("id", "d1", NonAnalyzedType)); // Field.Keyword("id",
+		  d1.Add(NewField("id", "d1", NonAnalyzedType)); // Field.Keyword("id",
 																				   // "d1"));
-		  d1.add(newTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
-		  d1.add(newTextField("dek", "elephant", Field.Store.YES)); // Field.Text("dek", "elephant"));
-		  writer.addDocument(d1);
+		  d1.Add(NewTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
+		  d1.Add(NewTextField("dek", "elephant", Field.Store.YES)); // Field.Text("dek", "elephant"));
+		  writer.AddDocument(d1);
 		}
 
 		// d2 is a "good" match for: albino elephant
 		{
 		  Document d2 = new Document();
-		  d2.add(newField("id", "d2", NonAnalyzedType)); // Field.Keyword("id",
+		  d2.Add(NewField("id", "d2", NonAnalyzedType)); // Field.Keyword("id",
 																				   // "d2"));
-		  d2.add(newTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
-		  d2.add(newTextField("dek", "albino", Field.Store.YES)); // Field.Text("dek",
+		  d2.Add(NewTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
+		  d2.Add(NewTextField("dek", "albino", Field.Store.YES)); // Field.Text("dek",
 																					// "albino"));
-		  d2.add(newTextField("dek", "elephant", Field.Store.YES)); // Field.Text("dek", "elephant"));
-		  writer.addDocument(d2);
+		  d2.Add(NewTextField("dek", "elephant", Field.Store.YES)); // Field.Text("dek", "elephant"));
+		  writer.AddDocument(d2);
 		}
 
 		// d3 is a "better" match for: albino elephant
 		{
 		  Document d3 = new Document();
-		  d3.add(newField("id", "d3", NonAnalyzedType)); // Field.Keyword("id",
+		  d3.Add(NewField("id", "d3", NonAnalyzedType)); // Field.Keyword("id",
 																				   // "d3"));
-		  d3.add(newTextField("hed", "albino", Field.Store.YES)); // Field.Text("hed",
+		  d3.Add(NewTextField("hed", "albino", Field.Store.YES)); // Field.Text("hed",
 																					// "albino"));
-		  d3.add(newTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
-		  writer.addDocument(d3);
+		  d3.Add(NewTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
+		  writer.AddDocument(d3);
 		}
 
 		// d4 is the "best" match for: albino elephant
 		{
 		  Document d4 = new Document();
-		  d4.add(newField("id", "d4", NonAnalyzedType)); // Field.Keyword("id",
+		  d4.Add(NewField("id", "d4", NonAnalyzedType)); // Field.Keyword("id",
 																				   // "d4"));
-		  d4.add(newTextField("hed", "albino", Field.Store.YES)); // Field.Text("hed",
+		  d4.Add(NewTextField("hed", "albino", Field.Store.YES)); // Field.Text("hed",
 																					// "albino"));
-		  d4.add(newField("hed", "elephant", NonAnalyzedType)); // Field.Text("hed", "elephant"));
-		  d4.add(newTextField("dek", "albino", Field.Store.YES)); // Field.Text("dek",
+		  d4.Add(NewField("hed", "elephant", NonAnalyzedType)); // Field.Text("hed", "elephant"));
+		  d4.Add(NewTextField("dek", "albino", Field.Store.YES)); // Field.Text("dek",
 																					// "albino"));
-		  writer.addDocument(d4);
+		  writer.AddDocument(d4);
 		}
 
-		r = SlowCompositeReaderWrapper.wrap(writer.Reader);
-		writer.close();
-		s = newSearcher(r);
+		r = SlowCompositeReaderWrapper.Wrap(writer.Reader);
+		writer.Close();
+		s = NewSearcher(r);
 		s.Similarity = Sim;
 	  }
 
 	  public override void TearDown()
 	  {
-		r.close();
-		Index.close();
-		base.tearDown();
+		r.Dispose();
+		Index.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestSkipToFirsttimeMiss()
 	  {
 		DisjunctionMaxQuery dq = new DisjunctionMaxQuery(0.0f);
-		dq.add(Tq("id", "d1"));
-		dq.add(Tq("dek", "DOES_NOT_EXIST"));
+		dq.Add(Tq("id", "d1"));
+		dq.Add(Tq("dek", "DOES_NOT_EXIST"));
 
-		QueryUtils.check(random(), dq, s);
+		QueryUtils.Check(Random(), dq, s);
 		Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
-		Weight dw = s.createNormalizedWeight(dq);
+		Weight dw = s.CreateNormalizedWeight(dq);
 		AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
-		Scorer ds = dw.scorer(context, context.reader().LiveDocs);
-		bool skipOk = ds.advance(3) != DocIdSetIterator.NO_MORE_DOCS;
+		Scorer ds = dw.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+		bool skipOk = ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS;
 		if (skipOk)
 		{
-		  Assert.Fail("firsttime skipTo found a match? ... " + r.document(ds.docID()).get("id"));
+		  Assert.Fail("firsttime skipTo found a match? ... " + r.Document(ds.DocID()).Get("id"));
 		}
 	  }
 
 	  public virtual void TestSkipToFirsttimeHit()
 	  {
 		DisjunctionMaxQuery dq = new DisjunctionMaxQuery(0.0f);
-		dq.add(Tq("dek", "albino"));
-		dq.add(Tq("dek", "DOES_NOT_EXIST"));
+		dq.Add(Tq("dek", "albino"));
+		dq.Add(Tq("dek", "DOES_NOT_EXIST"));
 		Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
-		QueryUtils.check(random(), dq, s);
-		Weight dw = s.createNormalizedWeight(dq);
+		QueryUtils.Check(Random(), dq, s);
+		Weight dw = s.CreateNormalizedWeight(dq);
 		AtomicReaderContext context = (AtomicReaderContext)s.TopReaderContext;
-		Scorer ds = dw.scorer(context, context.reader().LiveDocs);
-		Assert.IsTrue("firsttime skipTo found no match", ds.advance(3) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual("found wrong docid", "d4", r.document(ds.docID()).get("id"));
+		Scorer ds = dw.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
+		Assert.IsTrue(ds.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "firsttime skipTo found no match");
+		Assert.AreEqual("found wrong docid", "d4", r.Document(ds.DocID()).Get("id"));
 	  }
 
 	  public virtual void TestSimpleEqualScores1()
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
-		q.add(Tq("hed", "albino"));
-		q.add(Tq("hed", "elephant"));
-		QueryUtils.check(random(), q, s);
+		q.Add(Tq("hed", "albino"));
+		q.Add(Tq("hed", "elephant"));
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
-		  Assert.AreEqual("all docs should match " + q.ToString(), 4, h.Length);
+		  Assert.AreEqual(4, h.Length, "all docs should match " + q.ToString());
 
-		  float score = h[0].score;
+		  float score = h[0].Score;
 		  for (int i = 1; i < h.Length; i++)
 		  {
-			Assert.AreEqual("score #" + i + " is not the same", score, h[i].score, SCORE_COMP_THRESH);
+              Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 		  }
 		}
 		catch (Exception e)
@@ -237,19 +239,19 @@ namespace Lucene.Net.Search
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
-		q.add(Tq("dek", "albino"));
-		q.add(Tq("dek", "elephant"));
-		QueryUtils.check(random(), q, s);
+		q.Add(Tq("dek", "albino"));
+		q.Add(Tq("dek", "elephant"));
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
-		  Assert.AreEqual("3 docs should match " + q.ToString(), 3, h.Length);
-		  float score = h[0].score;
+		  Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
+          float score = h[0].Score;
 		  for (int i = 1; i < h.Length; i++)
 		  {
-			Assert.AreEqual("score #" + i + " is not the same", score, h[i].score, SCORE_COMP_THRESH);
+              Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 		  }
 		}
 		catch (Exception e)
@@ -264,21 +266,21 @@ namespace Lucene.Net.Search
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
-		q.add(Tq("hed", "albino"));
-		q.add(Tq("hed", "elephant"));
-		q.add(Tq("dek", "albino"));
-		q.add(Tq("dek", "elephant"));
-		QueryUtils.check(random(), q, s);
+		q.Add(Tq("hed", "albino"));
+		q.Add(Tq("hed", "elephant"));
+		q.Add(Tq("dek", "albino"));
+		q.Add(Tq("dek", "elephant"));
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
-		  Assert.AreEqual("all docs should match " + q.ToString(), 4, h.Length);
-		  float score = h[0].score;
+		  Assert.AreEqual(4, h.Length, "all docs should match " + q.ToString());
+          float score = h[0].Score;
 		  for (int i = 1; i < h.Length; i++)
 		  {
-			Assert.AreEqual("score #" + i + " is not the same", score, h[i].score, SCORE_COMP_THRESH);
+              Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 		  }
 		}
 		catch (Exception e)
@@ -293,21 +295,21 @@ namespace Lucene.Net.Search
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.01f);
-		q.add(Tq("dek", "albino"));
-		q.add(Tq("dek", "elephant"));
-		QueryUtils.check(random(), q, s);
+		q.Add(Tq("dek", "albino"));
+		q.Add(Tq("dek", "elephant"));
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
-		  Assert.AreEqual("3 docs should match " + q.ToString(), 3, h.Length);
-		  Assert.AreEqual("wrong first", "d2", s.doc(h[0].doc).get("id"));
-		  float score0 = h[0].score;
-		  float score1 = h[1].score;
-		  float score2 = h[2].score;
-		  Assert.IsTrue("d2 does not have better score then others: " + score0 + " >? " + score1, score0 > score1);
-		  Assert.AreEqual("d4 and d1 don't have equal scores", score1, score2, SCORE_COMP_THRESH);
+		  Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
+		  Assert.AreEqual("d2", s.Doc(h[0].Doc).Get("id"), "wrong first");
+		  float score0 = h[0].Score;
+          float score1 = h[1].Score;
+          float score2 = h[2].Score;
+		  Assert.IsTrue(score0 > score1, "d2 does not have better score then others: " + score0 + " >? " + score1);
+		  Assert.AreEqual(score1, score2, SCORE_COMP_THRESH, "d4 and d1 don't have equal scores");
 		}
 		catch (Exception e)
 		{
@@ -322,31 +324,31 @@ namespace Lucene.Net.Search
 		BooleanQuery q = new BooleanQuery();
 		{
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
-		  q1.add(Tq("hed", "albino"));
-		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur_e.MUST); // true,false);
-		  QueryUtils.check(random(), q1, s);
+		  q1.Add(Tq("hed", "albino"));
+		  q1.Add(Tq("dek", "albino"));
+		  q.Add(q1, BooleanClause.Occur_e.MUST); // true,false);
+		  QueryUtils.Check(Random(), q1, s);
 
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
-		  q2.add(Tq("hed", "elephant"));
-		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur_e.MUST); // true,false);
-		  QueryUtils.check(random(), q2, s);
+		  q2.Add(Tq("hed", "elephant"));
+		  q2.Add(Tq("dek", "elephant"));
+		  q.Add(q2, BooleanClause.Occur_e.MUST); // true,false);
+		  QueryUtils.Check(Random(), q2, s);
 		}
 
-		QueryUtils.check(random(), q, s);
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
-		  Assert.AreEqual("3 docs should match " + q.ToString(), 3, h.Length);
-		  float score = h[0].score;
+		  Assert.AreEqual(3, h.Length, "3 docs should match " + q.ToString());
+		  float score = h[0].Score;
 		  for (int i = 1; i < h.Length; i++)
 		  {
-			Assert.AreEqual("score #" + i + " is not the same", score, h[i].score, SCORE_COMP_THRESH);
+              Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 		  }
 		}
 		catch (Exception e)
@@ -362,31 +364,31 @@ namespace Lucene.Net.Search
 		BooleanQuery q = new BooleanQuery();
 		{
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.0f);
-		  q1.add(Tq("hed", "albino"));
-		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
+		  q1.Add(Tq("hed", "albino"));
+		  q1.Add(Tq("dek", "albino"));
+		  q.Add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.0f);
-		  q2.add(Tq("hed", "elephant"));
-		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
+		  q2.Add(Tq("hed", "elephant"));
+		  q2.Add(Tq("dek", "elephant"));
+		  q.Add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
-		QueryUtils.check(random(), q, s);
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
-		  Assert.AreEqual("4 docs should match " + q.ToString(), 4, h.Length);
-		  float score = h[0].score;
+		  Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
+		  float score = h[0].Score;
 		  for (int i = 1; i < h.Length - 1; i++) // note: -1
 		  {
-			Assert.AreEqual("score #" + i + " is not the same", score, h[i].score, SCORE_COMP_THRESH);
+              Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
 		  }
-		  Assert.AreEqual("wrong last", "d1", s.doc(h[h.Length - 1].doc).get("id"));
-		  float score1 = h[h.Length - 1].score;
-		  Assert.IsTrue("d1 does not have worse score then others: " + score + " >? " + score1, score > score1);
+		  Assert.AreEqual("wrong last", "d1", s.Doc(h[h.Length - 1].Doc).Get("id"));
+		  float score1 = h[h.Length - 1].Score;
+		  Assert.IsTrue(score > score1, "d1 does not have worse score then others: " + score + " >? " + score1);
 		}
 		catch (Exception e)
 		{
@@ -401,43 +403,43 @@ namespace Lucene.Net.Search
 		BooleanQuery q = new BooleanQuery();
 		{
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
-		  q1.add(Tq("hed", "albino"));
-		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
+		  q1.Add(Tq("hed", "albino"));
+		  q1.Add(Tq("dek", "albino"));
+		  q.Add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
-		  q2.add(Tq("hed", "elephant"));
-		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
+		  q2.Add(Tq("hed", "elephant"));
+		  q2.Add(Tq("dek", "elephant"));
+		  q.Add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
-		QueryUtils.check(random(), q, s);
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
 
-		  Assert.AreEqual("4 docs should match " + q.ToString(), 4, h.Length);
+		  Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 
-		  float score0 = h[0].score;
-		  float score1 = h[1].score;
-		  float score2 = h[2].score;
-		  float score3 = h[3].score;
+		  float score0 = h[0].Score;
+		  float score1 = h[1].Score;
+		  float score2 = h[2].Score;
+		  float score3 = h[3].Score;
 
-		  string doc0 = s.doc(h[0].doc).get("id");
-		  string doc1 = s.doc(h[1].doc).get("id");
-		  string doc2 = s.doc(h[2].doc).get("id");
-		  string doc3 = s.doc(h[3].doc).get("id");
+		  string doc0 = s.Doc(h[0].Doc).Get("id");
+		  string doc1 = s.Doc(h[1].Doc).Get("id");
+		  string doc2 = s.Doc(h[2].Doc).Get("id");
+		  string doc3 = s.Doc(h[3].Doc).Get("id");
 
-		  Assert.IsTrue("doc0 should be d2 or d4: " + doc0, doc0.Equals("d2") || doc0.Equals("d4"));
-		  Assert.IsTrue("doc1 should be d2 or d4: " + doc0, doc1.Equals("d2") || doc1.Equals("d4"));
-		  Assert.AreEqual("score0 and score1 should match", score0, score1, SCORE_COMP_THRESH);
+		  Assert.IsTrue(doc0.Equals("d2") || doc0.Equals("d4"), "doc0 should be d2 or d4: " + doc0);
+		  Assert.IsTrue(doc1.Equals("d2") || doc1.Equals("d4"), "doc1 should be d2 or d4: " + doc0);
+		  Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "score0 and score1 should match");
 		  Assert.AreEqual("wrong third", "d3", doc2);
-		  Assert.IsTrue("d3 does not have worse score then d2 and d4: " + score1 + " >? " + score2, score1 > score2);
+		  Assert.IsTrue(score1 > score2, "d3 does not have worse score then d2 and d4: " + score1 + " >? " + score2);
 
 		  Assert.AreEqual("wrong fourth", "d1", doc3);
-		  Assert.IsTrue("d1 does not have worse score then d3: " + score2 + " >? " + score3, score2 > score3);
+		  Assert.IsTrue(score2 > score3, "d1 does not have worse score then d3: " + score2 + " >? " + score3);
 
 		}
 		catch (Exception e)
@@ -454,43 +456,43 @@ namespace Lucene.Net.Search
 		BooleanQuery q = new BooleanQuery();
 		{
 		  DisjunctionMaxQuery q1 = new DisjunctionMaxQuery(0.01f);
-		  q1.add(Tq("hed", "albino", 1.5f));
-		  q1.add(Tq("dek", "albino"));
-		  q.add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
+		  q1.Add(Tq("hed", "albino", 1.5f));
+		  q1.Add(Tq("dek", "albino"));
+		  q.Add(q1, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
 		{
 		  DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.01f);
-		  q2.add(Tq("hed", "elephant", 1.5f));
-		  q2.add(Tq("dek", "elephant"));
-		  q.add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
+		  q2.Add(Tq("hed", "elephant", 1.5f));
+		  q2.Add(Tq("dek", "elephant"));
+		  q.Add(q2, BooleanClause.Occur_e.SHOULD); // false,false);
 		}
-		QueryUtils.check(random(), q, s);
+		QueryUtils.Check(Random(), q, s);
 
-		ScoreDoc[] h = s.search(q, null, 1000).scoreDocs;
+		ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
 
 		try
 		{
 
-		  Assert.AreEqual("4 docs should match " + q.ToString(), 4, h.Length);
+		  Assert.AreEqual(4, h.Length, "4 docs should match " + q.ToString());
 
-		  float score0 = h[0].score;
-		  float score1 = h[1].score;
-		  float score2 = h[2].score;
-		  float score3 = h[3].score;
+		  float score0 = h[0].Score;
+		  float score1 = h[1].Score;
+		  float score2 = h[2].Score;
+		  float score3 = h[3].Score;
 
-		  string doc0 = s.doc(h[0].doc).get("id");
-		  string doc1 = s.doc(h[1].doc).get("id");
-		  string doc2 = s.doc(h[2].doc).get("id");
-		  string doc3 = s.doc(h[3].doc).get("id");
+		  string doc0 = s.Doc(h[0].Doc).Get("id");
+		  string doc1 = s.Doc(h[1].Doc).Get("id");
+		  string doc2 = s.Doc(h[2].Doc).Get("id");
+		  string doc3 = s.Doc(h[3].Doc).Get("id");
 
 		  Assert.AreEqual("doc0 should be d4: ", "d4", doc0);
 		  Assert.AreEqual("doc1 should be d3: ", "d3", doc1);
 		  Assert.AreEqual("doc2 should be d2: ", "d2", doc2);
 		  Assert.AreEqual("doc3 should be d1: ", "d1", doc3);
 
-		  Assert.IsTrue("d4 does not have a better score then d3: " + score0 + " >? " + score1, score0 > score1);
-		  Assert.IsTrue("d3 does not have a better score then d2: " + score1 + " >? " + score2, score1 > score2);
-		  Assert.IsTrue("d3 does not have a better score then d1: " + score2 + " >? " + score3, score2 > score3);
+		  Assert.IsTrue(score0 > score1, "d4 does not have a better score then d3: " + score0 + " >? " + score1);
+		  Assert.IsTrue(score1 > score2, "d3 does not have a better score then d2: " + score1 + " >? " + score2);
+		  Assert.IsTrue(score2 > score3, "d3 does not have a better score then d1: " + score2 + " >? " + score3);
 
 		}
 		catch (Exception e)
@@ -504,35 +506,35 @@ namespace Lucene.Net.Search
 	  public virtual void TestBooleanSpanQuery()
 	  {
 		int hits = 0;
-		Directory directory = newDirectory();
-		Analyzer indexerAnalyzer = new MockAnalyzer(random());
+		Directory directory = NewDirectory();
+		Analyzer indexerAnalyzer = new MockAnalyzer(Random());
 
 		IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, indexerAnalyzer);
 		IndexWriter writer = new IndexWriter(directory, config);
 		string FIELD = "content";
 		Document d = new Document();
-		d.add(new TextField(FIELD, "clockwork orange", Field.Store.YES));
-		writer.addDocument(d);
-		writer.close();
+		d.Add(new TextField(FIELD, "clockwork orange", Field.Store.YES));
+		writer.AddDocument(d);
+		writer.Dispose();
 
-		IndexReader indexReader = DirectoryReader.open(directory);
-		IndexSearcher searcher = newSearcher(indexReader);
+		IndexReader indexReader = DirectoryReader.Open(directory);
+		IndexSearcher searcher = NewSearcher(indexReader);
 
 		DisjunctionMaxQuery query = new DisjunctionMaxQuery(1.0f);
 		SpanQuery sq1 = new SpanTermQuery(new Term(FIELD, "clockwork"));
 		SpanQuery sq2 = new SpanTermQuery(new Term(FIELD, "clckwork"));
-		query.add(sq1);
-		query.add(sq2);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(1000, true);
-		searcher.search(query, collector);
-		hits = collector.topDocs().scoreDocs.length;
-		foreach (ScoreDoc scoreDoc in collector.topDocs().scoreDocs)
+		query.Add(sq1);
+		query.Add(sq2);
+		TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, true);
+		searcher.Search(query, collector);
+		hits = collector.TopDocs().ScoreDocs.Length;
+		foreach (ScoreDoc scoreDoc in collector.TopDocs().ScoreDocs)
 		{
-		  Console.WriteLine(scoreDoc.doc);
+		  Console.WriteLine(scoreDoc.Doc);
 		}
-		indexReader.close();
+		indexReader.Dispose();
 		Assert.AreEqual(hits, 1);
-		directory.close();
+		directory.Dispose();
 	  }
 
 	  /// <summary>
@@ -560,9 +562,9 @@ namespace Lucene.Net.Search
 
 		for (int i = 0; i < h.Length; i++)
 		{
-		  Document d = searcher.doc(h[i].doc);
-		  float score = h[i].score;
-		  Console.Error.WriteLine("#" + i + ": " + f.format(score) + " - " + d.get("id"));
+		  Document d = searcher.Doc(h[i].Doc);
+		  float score = h[i].Score;
+		  Console.Error.WriteLine("#" + i + ": " + f.format(score) + " - " + d.Get("id"));
 		}
 	  }
 	}

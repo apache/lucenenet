@@ -41,6 +41,7 @@ namespace Lucene.Net.Analysis
 	  private bool ThrowExcNext_Renamed;
 
       public MockReaderWrapper(Random random, StreamReader @in)
+          :base(@in.BaseStream)
 	  {
 		this.@in = @in;
 		this.Random = random;
@@ -98,12 +99,12 @@ namespace Lucene.Net.Analysis
 		return read;
 	  }
 
-	  public override bool MarkSupported()
+	  public bool MarkSupported()
 	  {
 		return false;
 	  }
 
-	  public override bool Ready()
+	  public bool Ready()
 	  {
 		return false;
 	  }

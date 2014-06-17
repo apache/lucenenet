@@ -33,11 +33,11 @@ namespace Lucene.Net.Search
 
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {
-		FixedBitSet bits = new FixedBitSet(context.reader().maxDoc());
-		bits.set(Doc);
-		if (acceptDocs != null && !acceptDocs.get(Doc))
+		FixedBitSet bits = new FixedBitSet(context.Reader().MaxDoc());
+		bits.Set(Doc);
+		if (acceptDocs != null && !acceptDocs.Get(Doc))
 		{
-			bits.clear(Doc);
+			bits.Clear(Doc);
 		}
 		return bits;
 	  }

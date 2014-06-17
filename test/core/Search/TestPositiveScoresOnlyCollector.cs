@@ -23,6 +23,7 @@ namespace Lucene.Net.Search
 	using Term = Lucene.Net.Index.Term;
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using NUnit.Framework;
 
 	public class TestPositiveScoresOnlyCollector : LuceneTestCase
 	{
@@ -86,30 +87,30 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		Directory directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), directory);
-		writer.commit();
+		Directory directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
+		writer.Commit();
 		IndexReader ir = writer.Reader;
-		writer.close();
-		IndexSearcher searcher = newSearcher(ir);
-		Weight fake = (new TermQuery(new Term("fake", "weight"))).createWeight(searcher);
+		writer.Close();
+		IndexSearcher searcher = NewSearcher(ir);
+		Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
 		Scorer s = new SimpleScorer(fake);
-		TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.create(Scores.Length, true);
+		TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(Scores.Length, true);
 		Collector c = new PositiveScoresOnlyCollector(tdc);
 		c.Scorer = s;
-		while (s.nextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+		while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
 		{
-		  c.collect(0);
+		  c.Collect(0);
 		}
-		TopDocs td = tdc.topDocs();
-		ScoreDoc[] sd = td.scoreDocs;
-		Assert.AreEqual(numPositiveScores, td.totalHits);
+		TopDocs td = tdc.TopDocs();
+		ScoreDoc[] sd = td.ScoreDocs;
+		Assert.AreEqual(numPositiveScores, td.TotalHits);
 		for (int i = 0; i < sd.Length; i++)
 		{
-		  Assert.IsTrue("only positive scores should return: " + sd[i].score, sd[i].score > 0);
+		  Assert.IsTrue(sd[i].Score > 0, "only positive scores should return: " + sd[i].Score);
 		}
-		ir.close();
-		directory.close();
+		ir.Dispose();
+		directory.Dispose();
 	  }
 
 	}

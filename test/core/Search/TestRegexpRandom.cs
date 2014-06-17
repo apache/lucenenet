@@ -32,6 +32,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Create an index with terms from 000-999.
@@ -46,31 +47,31 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
+		base.SetUp();
+		Dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
 
 		Document doc = new Document();
 		FieldType customType = new FieldType(TextField.TYPE_STORED);
 		customType.OmitNorms = true;
-		Field field = newField("field", "", customType);
-		doc.add(field);
+		Field field = NewField("field", "", customType);
+		doc.Add(field);
 
 		NumberFormat df = new DecimalFormat("000", new DecimalFormatSymbols(Locale.ROOT));
 		for (int i = 0; i < 1000; i++)
 		{
 		  field.StringValue = df.format(i);
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+        writer.Close();
+		Searcher = NewSearcher(Reader);
 	  }
 
 	  private char N()
 	  {
-		return (char)(0x30 + random().Next(10));
+		return (char)(0x30 + Random().Next(10));
 	  }
 
 	  private string FillPattern(string wildcardPattern)
@@ -94,20 +95,20 @@ namespace Lucene.Net.Search
 	  private void AssertPatternHits(string pattern, int numHits)
 	  {
 		Query wq = new RegexpQuery(new Term("field", FillPattern(pattern)));
-		TopDocs docs = Searcher.search(wq, 25);
-		Assert.AreEqual("Incorrect hits for pattern: " + pattern, numHits, docs.totalHits);
+		TopDocs docs = Searcher.Search(wq, 25);
+		Assert.AreEqual(numHits, docs.TotalHits, "Incorrect hits for pattern: " + pattern);
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestRegexps()
 	  {
-		int num = atLeast(1);
+		int num = AtLeast(1);
 		for (int i = 0; i < num; i++)
 		{
 		  AssertPatternHits("NNN", 1);

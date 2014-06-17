@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	  /// <summary>
 	  /// Called to complete TermInfos creation. </summary>
-	  public void Close()
+	  public void Dispose()
 	  {
 		try
 		{
@@ -327,7 +327,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  {
 			if (!IsIndex)
 			{
-			  Other.Close();
+			  Other.Dispose();
 			}
 		  }
 		}

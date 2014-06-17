@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using Lucene.Net.Randomized.Generators;
 
 	/// <summary>
 	/// Tests the DocTermOrdsRangeFilter
@@ -49,29 +50,29 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newDirectory();
-		FieldName = random().nextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random(), MockTokenizer.KEYWORD, false)).setMaxBufferedDocs(TestUtil.Next(random(), 50, 1000)));
-		IList<string> terms = new List<string>();
-		int num = atLeast(200);
+		base.SetUp();
+		Dir = NewDirectory();
+		FieldName = Random().NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+		List<string> terms = new List<string>();
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("id", Convert.ToString(i), Field.Store.NO));
-		  int numTerms = random().Next(4);
+		  doc.Add(NewStringField("id", Convert.ToString(i), Field.Store.NO));
+		  int numTerms = Random().Next(4);
 		  for (int j = 0; j < numTerms; j++)
 		  {
-			string s = TestUtil.randomUnicodeString(random());
-			doc.add(newStringField(FieldName, s, Field.Store.NO));
+			string s = TestUtil.RandomUnicodeString(Random());
+			doc.Add(NewStringField(FieldName, s, Field.Store.NO));
 			// if the default codec doesn't support sortedset, we will uninvert at search time
-			if (defaultCodecSupportsSortedSet())
+			if (DefaultCodecSupportsSortedSet())
 			{
-			  doc.add(new SortedSetDocValuesField(FieldName, new BytesRef(s)));
+			  doc.Add(new SortedSetDocValuesField(FieldName, new BytesRef(s)));
 			}
 			terms.Add(s);
 		  }
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		}
 
 		if (VERBOSE)
@@ -81,45 +82,45 @@ namespace Lucene.Net.Search
 		  Console.WriteLine("UTF16 order:");
 		  foreach (string s in terms)
 		  {
-			Console.WriteLine("  " + UnicodeUtil.toHexString(s));
+			Console.WriteLine("  " + UnicodeUtil.ToHexString(s));
 		  }
 		}
 
-		int numDeletions = random().Next(num / 10);
+		int numDeletions = Random().Next(num / 10);
 		for (int i = 0; i < numDeletions; i++)
 		{
-		  writer.deleteDocuments(new Term("id", Convert.ToString(random().Next(num))));
+		  writer.DeleteDocuments(new Term("id", Convert.ToString(Random().Next(num))));
 		}
 
 		Reader = writer.Reader;
-		Searcher1 = newSearcher(Reader);
-		Searcher2 = newSearcher(Reader);
-		writer.close();
+		Searcher1 = NewSearcher(Reader);
+		Searcher2 = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Dir.close();
-		base.tearDown();
+		Reader.Dispose();
+		Dir.Dispose();
+		base.TearDown();
 	  }
 
 	  /// <summary>
 	  /// test a bunch of random ranges </summary>
 	  public virtual void TestRanges()
 	  {
-		int num = atLeast(1000);
+		int num = AtLeast(1000);
 		for (int i = 0; i < num; i++)
 		{
-		  BytesRef lowerVal = new BytesRef(TestUtil.randomUnicodeString(random()));
-		  BytesRef upperVal = new BytesRef(TestUtil.randomUnicodeString(random()));
-		  if (upperVal.compareTo(lowerVal) < 0)
+		  BytesRef lowerVal = new BytesRef(TestUtil.RandomUnicodeString(Random()));
+		  BytesRef upperVal = new BytesRef(TestUtil.RandomUnicodeString(Random()));
+		  if (upperVal.CompareTo(lowerVal) < 0)
 		  {
-			AssertSame(upperVal, lowerVal, random().nextBoolean(), random().nextBoolean());
+			AssertSame(upperVal, lowerVal, Random().NextBoolean(), Random().NextBoolean());
 		  }
 		  else
 		  {
-			AssertSame(lowerVal, upperVal, random().nextBoolean(), random().nextBoolean());
+			AssertSame(lowerVal, upperVal, Random().NextBoolean(), Random().NextBoolean());
 		  }
 		}
 	  }
@@ -130,14 +131,14 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  protected internal virtual void AssertSame(BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
 	  {
-		Query docValues = new ConstantScoreQuery(DocTermOrdsRangeFilter.newBytesRefRange(FieldName, lowerVal, upperVal, includeLower, includeUpper));
+		Query docValues = new ConstantScoreQuery(DocTermOrdsRangeFilter.NewBytesRefRange(FieldName, lowerVal, upperVal, includeLower, includeUpper));
 		MultiTermQuery inverted = new TermRangeQuery(FieldName, lowerVal, upperVal, includeLower, includeUpper);
-		inverted.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+		inverted.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 
-		TopDocs invertedDocs = Searcher1.search(inverted, 25);
-		TopDocs docValuesDocs = Searcher2.search(docValues, 25);
+		TopDocs invertedDocs = Searcher1.Search(inverted, 25);
+		TopDocs docValuesDocs = Searcher2.Search(docValues, 25);
 
-		CheckHits.checkEqual(inverted, invertedDocs.scoreDocs, docValuesDocs.scoreDocs);
+		CheckHits.CheckEqual(inverted, invertedDocs.ScoreDocs, docValuesDocs.ScoreDocs);
 	  }
 	}
 

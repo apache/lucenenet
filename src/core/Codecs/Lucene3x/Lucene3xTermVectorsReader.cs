@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
 	/// @deprecated Only for reading existing 3.x indexes 
 	[Obsolete("Only for reading existing 3.x indexes")]
-	internal class Lucene3xTermVectorsReader : TermVectorsReader
+	public class Lucene3xTermVectorsReader : TermVectorsReader
 	{
 
 	  // NOTE: if you make a new format, it must be larger than

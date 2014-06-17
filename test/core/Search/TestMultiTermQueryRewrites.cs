@@ -34,8 +34,7 @@ namespace Lucene.Net.Search
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using NUnit.Framework;
 
 	public class TestMultiTermQueryRewrites : LuceneTestCase
 	{
@@ -48,47 +47,47 @@ namespace Lucene.Net.Search
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Dir = newDirectory();
-		Sdir1 = newDirectory();
-		Sdir2 = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Dir, new MockAnalyzer(random()));
-		RandomIndexWriter swriter1 = new RandomIndexWriter(random(), Sdir1, new MockAnalyzer(random()));
-		RandomIndexWriter swriter2 = new RandomIndexWriter(random(), Sdir2, new MockAnalyzer(random()));
+		Dir = NewDirectory();
+		Sdir1 = NewDirectory();
+		Sdir2 = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, new MockAnalyzer(Random()));
+		RandomIndexWriter swriter1 = new RandomIndexWriter(Random(), Sdir1, new MockAnalyzer(Random()));
+		RandomIndexWriter swriter2 = new RandomIndexWriter(Random(), Sdir2, new MockAnalyzer(Random()));
 
 		for (int i = 0; i < 10; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("data", Convert.ToString(i), Field.Store.NO));
-		  writer.addDocument(doc);
-		  ((i % 2 == 0) ? swriter1 : swriter2).addDocument(doc);
+		  doc.Add(NewStringField("data", Convert.ToString(i), Field.Store.NO));
+		  writer.AddDocument(doc);
+		  ((i % 2 == 0) ? swriter1 : swriter2).AddDocument(doc);
 		}
-		writer.forceMerge(1);
-		swriter1.forceMerge(1);
-		swriter2.forceMerge(1);
-		writer.close();
-		swriter1.close();
-		swriter2.close();
+		writer.ForceMerge(1);
+		swriter1.ForceMerge(1);
+		swriter2.ForceMerge(1);
+		writer.Close();
+        swriter1.Close();
+        swriter2.Close();
 
-		Reader = DirectoryReader.open(Dir);
-		Searcher = newSearcher(Reader);
+		Reader = DirectoryReader.Open(Dir);
+		Searcher = NewSearcher(Reader);
 
-		MultiReader = new MultiReader(new IndexReader[] {DirectoryReader.open(Sdir1), DirectoryReader.open(Sdir2)}, true);
-		MultiSearcher = newSearcher(MultiReader);
+		MultiReader = new MultiReader(new IndexReader[] {DirectoryReader.Open(Sdir1), DirectoryReader.Open(Sdir2)}, true);
+		MultiSearcher = NewSearcher(MultiReader);
 
-		MultiReaderDupls = new MultiReader(new IndexReader[] {DirectoryReader.open(Sdir1), DirectoryReader.open(Dir)}, true);
-		MultiSearcherDupls = newSearcher(MultiReaderDupls);
+		MultiReaderDupls = new MultiReader(new IndexReader[] {DirectoryReader.Open(Sdir1), DirectoryReader.Open(Dir)}, true);
+		MultiSearcherDupls = NewSearcher(MultiReaderDupls);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
-		MultiReader.close();
-		MultiReaderDupls.close();
-		Dir.close();
-		Sdir1.close();
-		Sdir2.close();
+		Reader.Dispose();
+		MultiReader.Dispose();
+		MultiReaderDupls.Dispose();
+		Dir.Dispose();
+		Sdir1.Dispose();
+		Sdir2.Dispose();
 		Reader = MultiReader = MultiReaderDupls = null;
 		Searcher = MultiSearcher = MultiSearcherDupls = null;
 		Dir = Sdir1 = Sdir2 = null;
@@ -115,12 +114,12 @@ namespace Lucene.Net.Search
 		q = ExtractInnerQuery(q);
 		BooleanQuery bq = (BooleanQuery) q;
 		Term last = null, act ;
-		foreach (BooleanClause clause in bq.clauses())
+		foreach (BooleanClause clause in bq.Clauses)
 		{
 		  act = ExtractTerm(clause.Query);
 		  if (last != null)
 		  {
-			Assert.IsTrue("sort order of terms in BQ violated", last.compareTo(act) < 0);
+			Assert.IsTrue(last.CompareTo(act) < 0, "sort order of terms in BQ violated");
 		  }
 		  last = act;
 		}
@@ -128,11 +127,11 @@ namespace Lucene.Net.Search
 
 	  private void CheckDuplicateTerms(MultiTermQuery.RewriteMethod method)
 	  {
-		MultiTermQuery mtq = TermRangeQuery.newStringRange("data", "2", "7", true, true);
-		mtq.RewriteMethod = method;
-		Query q1 = Searcher.rewrite(mtq);
-		Query q2 = MultiSearcher.rewrite(mtq);
-		Query q3 = MultiSearcherDupls.rewrite(mtq);
+		MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
+		mtq.SetRewriteMethod(method);
+		Query q1 = Searcher.Rewrite(mtq);
+		Query q2 = MultiSearcher.Rewrite(mtq);
+		Query q3 = MultiSearcherDupls.Rewrite(mtq);
 		if (VERBOSE)
 		{
 		  Console.WriteLine();
@@ -140,8 +139,8 @@ namespace Lucene.Net.Search
 		  Console.WriteLine("multi segment: " + q2);
 		  Console.WriteLine("multi segment with duplicates: " + q3);
 		}
-		Assert.AreEqual("The multi-segment case must produce same rewritten query", q1, q2);
-		Assert.AreEqual("The multi-segment case with duplicates must produce same rewritten query", q1, q3);
+		Assert.AreEqual(q1, q2, "The multi-segment case must produce same rewritten query");
+		Assert.AreEqual(q1, q3, "The multi-segment case with duplicates must produce same rewritten query");
 		CheckBooleanQueryOrder(q1);
 		CheckBooleanQueryOrder(q2);
 		CheckBooleanQueryOrder(q3);
@@ -166,20 +165,20 @@ namespace Lucene.Net.Search
 
 	  private void CheckBooleanQueryBoosts(BooleanQuery bq)
 	  {
-		foreach (BooleanClause clause in bq.clauses())
+		foreach (BooleanClause clause in bq.Clauses)
 		{
 		  TermQuery mtq = (TermQuery) clause.Query;
-		  Assert.AreEqual("Parallel sorting of boosts in rewrite mode broken", Convert.ToSingle(mtq.Term.text()), mtq.Boost, 0);
+		  Assert.AreEqual(Convert.ToSingle(mtq.Term.Text()), mtq.Boost, 0, "Parallel sorting of boosts in rewrite mode broken");
 		}
 	  }
 
 	  private void CheckBoosts(MultiTermQuery.RewriteMethod method)
 	  {
 		MultiTermQuery mtq = new MultiTermQueryAnonymousInnerClassHelper(this);
-		mtq.RewriteMethod = method;
-		Query q1 = Searcher.rewrite(mtq);
-		Query q2 = MultiSearcher.rewrite(mtq);
-		Query q3 = MultiSearcherDupls.rewrite(mtq);
+		mtq.SetRewriteMethod(method);
+		Query q1 = Searcher.Rewrite(mtq);
+		Query q2 = MultiSearcher.Rewrite(mtq);
+		Query q3 = MultiSearcherDupls.Rewrite(mtq);
 		if (VERBOSE)
 		{
 		  Console.WriteLine();
@@ -187,8 +186,8 @@ namespace Lucene.Net.Search
 		  Console.WriteLine("multi segment: " + q2);
 		  Console.WriteLine("multi segment with duplicates: " + q3);
 		}
-		Assert.AreEqual("The multi-segment case must produce same rewritten query", q1, q2);
-		Assert.AreEqual("The multi-segment case with duplicates must produce same rewritten query", q1, q3);
+		Assert.AreEqual(q1, q2, "The multi-segment case must produce same rewritten query");
+		Assert.AreEqual(q1, q3, "The multi-segment case with duplicates must produce same rewritten query");
 		CheckBooleanQueryBoosts((BooleanQuery) q1);
 		CheckBooleanQueryBoosts((BooleanQuery) q2);
 		CheckBooleanQueryBoosts((BooleanQuery) q3);
@@ -205,25 +204,26 @@ namespace Lucene.Net.Search
 
 		  protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		  {
-			return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.iterator(null), new BytesRef("2"), new BytesRef("7"));
+			return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.Iterator(null), new BytesRef("2"), new BytesRef("7"));
 		  }
 
 		  private class TermRangeTermsEnumAnonymousInnerClassHelper : TermRangeTermsEnum
 		  {
 			  private readonly MultiTermQueryAnonymousInnerClassHelper OuterInstance;
 
-			  public TermRangeTermsEnumAnonymousInnerClassHelper(MultiTermQueryAnonymousInnerClassHelper outerInstance, UnknownType iterator, BytesRef org, BytesRef org) : base(iterator, BytesRef, BytesRef, true, true)
+			  public TermRangeTermsEnumAnonymousInnerClassHelper(MultiTermQueryAnonymousInnerClassHelper outerInstance, TermsEnum iterator, BytesRef bref1, BytesRef bref2) 
+                  : base(iterator, bref1, bref2, true, true)
 			  {
-				  this.outerInstance = outerInstance;
-				  boostAtt = attributes().addAttribute(typeof(BoostAttribute));
+				  this.OuterInstance = outerInstance;
+				  boostAtt = Attributes().AddAttribute<BoostAttribute>();
 			  }
 
 			  internal readonly BoostAttribute boostAtt;
 
 			  protected internal override AcceptStatus Accept(BytesRef term)
 			  {
-				boostAtt.Boost = Convert.ToSingle(term.utf8ToString());
-				return base.accept(term);
+				boostAtt.Boost = Convert.ToSingle(term.Utf8ToString());
+				return base.Accept(term);
 			  }
 		  }
 
@@ -246,11 +246,11 @@ namespace Lucene.Net.Search
 		int savedMaxClauseCount = BooleanQuery.MaxClauseCount;
 		BooleanQuery.MaxClauseCount = 3;
 
-		MultiTermQuery mtq = TermRangeQuery.newStringRange("data", "2", "7", true, true);
-		mtq.RewriteMethod = method;
+		MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
+		mtq.SetRewriteMethod(method);
 		try
 		{
-		  MultiSearcherDupls.rewrite(mtq);
+		  MultiSearcherDupls.Rewrite(mtq);
 		  Assert.Fail("Should throw BooleanQuery.TooManyClauses");
 		}
 		catch (BooleanQuery.TooManyClauses e)
@@ -269,11 +269,11 @@ namespace Lucene.Net.Search
 		int savedMaxClauseCount = BooleanQuery.MaxClauseCount;
 		BooleanQuery.MaxClauseCount = 3;
 
-		MultiTermQuery mtq = TermRangeQuery.newStringRange("data", "2", "7", true, true);
-		mtq.RewriteMethod = method;
+		MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
+		mtq.SetRewriteMethod(method);
 		try
 		{
-		  MultiSearcherDupls.rewrite(mtq);
+		  MultiSearcherDupls.Rewrite(mtq);
 		}
 		finally
 		{

@@ -31,6 +31,8 @@ namespace Lucene.Net.Search
 	using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
 	using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
+    using NUnit.Framework;
+    using Lucene.Net.Support;
 
 	/// <summary>
 	/// Some simple regex tests, mostly converted from contrib's TestRegexQuery.
@@ -44,22 +46,22 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory);
+		base.SetUp();
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
 		Document doc = new Document();
-		doc.add(newTextField(FN, "the quick brown fox jumps over the lazy ??? dog 493432 49344", Field.Store.NO));
-		writer.addDocument(doc);
+		doc.Add(NewTextField(FN, "the quick brown fox jumps over the lazy ??? dog 493432 49344", Field.Store.NO));
+		writer.AddDocument(doc);
 		Reader = writer.Reader;
-		writer.close();
-		Searcher = newSearcher(Reader);
+		writer.Close();
+		Searcher = NewSearcher(Reader);
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Directory.close();
-		base.tearDown();
+		Reader.Dispose();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  private Term NewTerm(string value)
@@ -70,7 +72,7 @@ namespace Lucene.Net.Search
 	  private int RegexQueryNrHits(string regex)
 	  {
 		RegexpQuery query = new RegexpQuery(NewTerm(regex));
-		return Searcher.search(query, 5).totalHits;
+		return Searcher.Search(query, 5).TotalHits;
 	  }
 
 	  public virtual void TestRegex1()
@@ -105,7 +107,7 @@ namespace Lucene.Net.Search
 	  {
 		AutomatonProvider myProvider = new AutomatonProviderAnonymousInnerClassHelper(this);
 		RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExp.ALL, myProvider);
-		Assert.AreEqual(1, Searcher.search(query, 5).totalHits);
+		Assert.AreEqual(1, Searcher.Search(query, 5).TotalHits);
 	  }
 
 	  private class AutomatonProviderAnonymousInnerClassHelper : AutomatonProvider
@@ -115,7 +117,7 @@ namespace Lucene.Net.Search
 		  public AutomatonProviderAnonymousInnerClassHelper(TestRegexpQuery outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
-			  quickBrownAutomaton = BasicOperations.union(Arrays.asList(BasicAutomata.makeString("quick"), BasicAutomata.makeString("brown"), BasicAutomata.makeString("bob")));
+			  quickBrownAutomaton = BasicOperations.Union(Arrays.AsList(BasicAutomata.MakeString("quick"), BasicAutomata.MakeString("brown"), BasicAutomata.MakeString("bob")));
 		  }
 
 			// automaton that matches quick or brown

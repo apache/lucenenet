@@ -45,6 +45,9 @@ namespace Lucene.Net.Search
 	using Spans = Lucene.Net.Search.Spans.Spans;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using BytesRef = Lucene.Net.Util.BytesRef;
+    using NUnit.Framework;
+    using System.IO;
+    using Lucene.Net.Util;
 
 	/// <summary>
 	/// Term position unit test.
@@ -59,110 +62,110 @@ namespace Lucene.Net.Search
 	  public virtual void TestSetPosition()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-		Directory store = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), store, analyzer);
+		Directory store = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), store, analyzer);
 		Document d = new Document();
-		d.add(newTextField("field", "bogus", Field.Store.YES));
-		writer.addDocument(d);
+		d.Add(NewTextField("field", "bogus", Field.Store.YES));
+		writer.AddDocument(d);
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Clear();
 
 
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
-		DocsAndPositionsEnum pos = MultiFields.getTermPositionsEnum(searcher.IndexReader, MultiFields.getLiveDocs(searcher.IndexReader), "field", new BytesRef("1"));
-		pos.nextDoc();
+		DocsAndPositionsEnum pos = MultiFields.GetTermPositionsEnum(searcher.IndexReader, MultiFields.GetLiveDocs(searcher.IndexReader), "field", new BytesRef("1"));
+		pos.NextDoc();
 		// first token should be at position 0
-		Assert.AreEqual(0, pos.nextPosition());
+		Assert.AreEqual(0, pos.NextPosition());
 
-		pos = MultiFields.getTermPositionsEnum(searcher.IndexReader, MultiFields.getLiveDocs(searcher.IndexReader), "field", new BytesRef("2"));
-		pos.nextDoc();
+		pos = MultiFields.GetTermPositionsEnum(searcher.IndexReader, MultiFields.GetLiveDocs(searcher.IndexReader), "field", new BytesRef("2"));
+		pos.NextDoc();
 		// second token should be at position 2
-		Assert.AreEqual(2, pos.nextPosition());
+		Assert.AreEqual(2, pos.NextPosition());
 
 		PhraseQuery q;
 		ScoreDoc[] hits;
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "1"));
-		q.add(new Term("field", "2"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "1"));
+		q.Add(new Term("field", "2"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
 
 		// same as previous, just specify positions explicitely.
 		q = new PhraseQuery();
-		q.add(new Term("field", "1"),0);
-		q.add(new Term("field", "2"),1);
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "1"),0);
+		q.Add(new Term("field", "2"),1);
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
 
 		// specifying correct positions should find the phrase.
 		q = new PhraseQuery();
-		q.add(new Term("field", "1"),0);
-		q.add(new Term("field", "2"),2);
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "1"),0);
+		q.Add(new Term("field", "2"),2);
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "2"));
-		q.add(new Term("field", "3"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "2"));
+		q.Add(new Term("field", "3"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "3"));
-		q.add(new Term("field", "4"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "3"));
+		q.Add(new Term("field", "4"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
 
 		// phrase query would find it when correct positions are specified. 
 		q = new PhraseQuery();
-		q.add(new Term("field", "3"),0);
-		q.add(new Term("field", "4"),0);
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "3"),0);
+		q.Add(new Term("field", "4"),0);
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		// phrase query should fail for non existing searched term 
 		// even if there exist another searched terms in the same searched position. 
 		q = new PhraseQuery();
-		q.add(new Term("field", "3"),0);
-		q.add(new Term("field", "9"),0);
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "3"),0);
+		q.Add(new Term("field", "9"),0);
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
 
 		// multi-phrase query should succed for non existing searched term
 		// because there exist another searched terms in the same searched position. 
 		MultiPhraseQuery mq = new MultiPhraseQuery();
-		mq.add(new Term[]{new Term("field", "3"),new Term("field", "9")},0);
-		hits = searcher.search(mq, null, 1000).scoreDocs;
+		mq.Add(new Term[]{new Term("field", "3"),new Term("field", "9")},0);
+		hits = searcher.Search(mq, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "2"));
-		q.add(new Term("field", "4"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "2"));
+		q.Add(new Term("field", "4"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "3"));
-		q.add(new Term("field", "5"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "3"));
+		q.Add(new Term("field", "5"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "4"));
-		q.add(new Term("field", "5"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "4"));
+		q.Add(new Term("field", "5"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
 		q = new PhraseQuery();
-		q.add(new Term("field", "2"));
-		q.add(new Term("field", "5"));
-		hits = searcher.search(q, null, 1000).scoreDocs;
+		q.Add(new Term("field", "2"));
+		q.Add(new Term("field", "5"));
+		hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
 
-		reader.close();
-		store.close();
+		reader.Dispose();
+		store.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -174,7 +177,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+          public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(this, reader));
 		  }
@@ -183,15 +186,16 @@ namespace Lucene.Net.Search
 		  {
 			  private readonly AnalyzerAnonymousInnerClassHelper OuterInstance;
 
-			  public TokenizerAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper outerInstance, Reader reader) : base(reader)
+			  public TokenizerAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper outerInstance, TextReader reader) 
+                  : base(reader)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
 				  TOKENS = {"1", "2", "3", "4", "5"};
 				  INCREMENTS = {1, 2, 1, 0, 1};
 				  i = 0;
-				  posIncrAtt = addAttribute(typeof(PositionIncrementAttribute));
-				  termAtt = addAttribute(typeof(CharTermAttribute));
-				  offsetAtt = addAttribute(typeof(OffsetAttribute));
+				  posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+				  termAtt = AddAttribute<CharTermAttribute>();
+				  offsetAtt = AddAttribute<OffsetAttribute>();
 			  }
 
 					// TODO: use CannedTokenStream
@@ -205,12 +209,12 @@ namespace Lucene.Net.Search
 
 			  public override bool IncrementToken()
 			  {
-				if (i == TOKENS.length)
+				if (i == TOKENS.Length)
 				{
 				  return false;
 				}
 				ClearAttributes();
-				termAtt.append(TOKENS[i]);
+				termAtt.Append(TOKENS[i]);
 				offsetAtt.SetOffset(i,i);
 				posIncrAtt.PositionIncrement = INCREMENTS[i];
 				i++;
@@ -219,7 +223,7 @@ namespace Lucene.Net.Search
 
 			  public override void Reset()
 			  {
-				base.reset();
+				base.Reset();
 				this.i = 0;
 			  }
 		  }
@@ -227,30 +231,30 @@ namespace Lucene.Net.Search
 
 	  public virtual void TestPayloadsPos0()
 	  {
-		Directory dir = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), dir, new MockPayloadAnalyzer());
+		Directory dir = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, new MockPayloadAnalyzer());
 		Document doc = new Document();
-		doc.add(new TextField("content", new StringReader("a a b c d e a f g h i j a b k k")));
-		writer.addDocument(doc);
+		doc.Add(new TextField("content", new StringReader("a a b c d e a f g h i j a b k k")));
+		writer.AddDocument(doc);
 
 		IndexReader readerFromWriter = writer.Reader;
-		AtomicReader r = SlowCompositeReaderWrapper.wrap(readerFromWriter);
+		AtomicReader r = SlowCompositeReaderWrapper.Wrap(readerFromWriter);
 
-		DocsAndPositionsEnum tp = r.termPositionsEnum(new Term("content", "a"));
+		DocsAndPositionsEnum tp = r.TermPositionsEnum(new Term("content", "a"));
 
 		int count = 0;
-		Assert.IsTrue(tp.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+		Assert.IsTrue(tp.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 		// "a" occurs 4 times
-		Assert.AreEqual(4, tp.freq());
-		Assert.AreEqual(0, tp.nextPosition());
-		Assert.AreEqual(1, tp.nextPosition());
-		Assert.AreEqual(3, tp.nextPosition());
-		Assert.AreEqual(6, tp.nextPosition());
+		Assert.AreEqual(4, tp.Freq());
+		Assert.AreEqual(0, tp.NextPosition());
+		Assert.AreEqual(1, tp.NextPosition());
+		Assert.AreEqual(3, tp.NextPosition());
+		Assert.AreEqual(6, tp.NextPosition());
 
 		// only one doc has "a"
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, tp.nextDoc());
+		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, tp.NextDoc());
 
-		IndexSearcher @is = newSearcher(readerFromWriter);
+		IndexSearcher @is = NewSearcher(readerFromWriter);
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -264,20 +268,20 @@ namespace Lucene.Net.Search
 		  Console.WriteLine("\ngetPayloadSpans test");
 		}
 		Spans pspans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
-		while (pspans.next())
+		while (pspans.Next())
 		{
 		  if (VERBOSE)
 		  {
-			Console.WriteLine("doc " + pspans.doc() + ": span " + pspans.start() + " to " + pspans.end());
+			Console.WriteLine("doc " + pspans.Doc() + ": span " + pspans.Start() + " to " + pspans.End());
 		  }
 		  ICollection<sbyte[]> payloads = pspans.Payload;
-		  sawZero |= pspans.start() == 0;
+		  sawZero |= pspans.Start() == 0;
 		  foreach (sbyte[] bytes in payloads)
 		  {
 			count++;
 			if (VERBOSE)
 			{
-			  Console.WriteLine("  payload: " + new string(bytes, StandardCharsets.UTF_8));
+			  Console.WriteLine("  payload: " + new string(bytes, IOUtils.CHARSET_UTF_8));
 			}
 		  }
 		}
@@ -288,12 +292,12 @@ namespace Lucene.Net.Search
 		Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 		count = 0;
 		sawZero = false;
-		while (spans.next())
+		while (spans.Next())
 		{
 		  count++;
-		  sawZero |= spans.start() == 0;
-		  // System.out.println(spans.doc() + " - " + spans.start() + " - " +
-		  // spans.end());
+		  sawZero |= spans.Start() == 0;
+		  // System.out.println(spans.Doc() + " - " + spans.Start() + " - " +
+		  // spans.End());
 		}
 		Assert.AreEqual(4, count);
 		Assert.IsTrue(sawZero);
@@ -302,19 +306,19 @@ namespace Lucene.Net.Search
 
 		sawZero = false;
 		PayloadSpanUtil psu = new PayloadSpanUtil(@is.TopReaderContext);
-		ICollection<sbyte[]> pls = psu.getPayloadsForQuery(snq);
+		ICollection<sbyte[]> pls = psu.GetPayloadsForQuery(snq);
 		count = pls.Count;
 		foreach (sbyte[] bytes in pls)
 		{
-		  string s = new string(bytes, StandardCharsets.UTF_8);
+		  string s = new string(bytes, IOUtils.CHARSET_UTF_8);
 		  //System.out.println(s);
 		  sawZero |= s.Equals("pos: 0");
 		}
 		Assert.AreEqual(5, count);
 		Assert.IsTrue(sawZero);
-		writer.close();
-		@is.IndexReader.close();
-		dir.close();
+		writer.Close();
+		@is.IndexReader.Dispose();
+		dir.Dispose();
 	  }
 	}
 

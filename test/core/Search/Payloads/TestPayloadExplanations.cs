@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Payloads
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 		Searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
 	  }
 

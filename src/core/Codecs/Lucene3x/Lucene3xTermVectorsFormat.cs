@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 	/// before 4.0.
 	/// @lucene.experimental 
 	[Obsolete("(4.0) this is only used to read indexes created")]
-	internal class Lucene3xTermVectorsFormat : TermVectorsFormat
+	public class Lucene3xTermVectorsFormat : TermVectorsFormat
 	{
 		public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
 		{

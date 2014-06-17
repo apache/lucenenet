@@ -35,8 +35,8 @@ namespace Lucene.Net.Search.Payloads
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using English = Lucene.Net.Util.English;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
+    using System.IO;
+    using NUnit.Framework;
 
 
 	public class TestPayloadNearQuery : LuceneTestCase
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Payloads
 
 	  private class PayloadAnalyzer : Analyzer
 	  {
-		public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(result, fieldName));
@@ -66,13 +66,13 @@ namespace Lucene.Net.Search.Payloads
 		public PayloadFilter(TokenStream input, string fieldName) : base(input)
 		{
 		  this.FieldName = fieldName;
-		  PayAtt = addAttribute(typeof(PayloadAttribute));
+		  PayAtt = AddAttribute<PayloadAttribute>();
 		}
 
 		public override bool IncrementToken()
 		{
 		  bool result = false;
-		  if (input.IncrementToken())
+		  if (Input.IncrementToken())
 		  {
 			if (NumSeen % 2 == 0)
 			{
@@ -90,14 +90,14 @@ namespace Lucene.Net.Search.Payloads
 
 		public override void Reset()
 		{
-		  base.reset();
+		  base.Reset();
 		  this.NumSeen = 0;
 		}
 	  }
 
 	  private PayloadNearQuery NewPhraseQuery(string fieldName, string phrase, bool inOrder, PayloadFunction function)
 	  {
-		string[] words = phrase.Split("[\\s]+", true);
+		string[] words = phrase.Split("[\\s]+".ToCharArray());
 		SpanQuery[] clauses = new SpanQuery[words.Length];
 		for (int i = 0;i < clauses.Length;i++)
 		{
@@ -110,21 +110,21 @@ namespace Lucene.Net.Search.Payloads
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).setSimilarity(Similarity));
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(Similarity));
 		//writer.infoStream = System.out;
 		for (int i = 0; i < 1000; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("field", English.intToEnglish(i), Field.Store.YES));
-		  string txt = English.intToEnglish(i) + ' ' + English.intToEnglish(i + 1);
-		  doc.add(newTextField("field2", txt, Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
+		  string txt = English.IntToEnglish(i) + ' ' + English.IntToEnglish(i + 1);
+		  doc.Add(NewTextField("field2", txt, Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		Searcher = newSearcher(Reader);
+		Searcher = NewSearcher(Reader);
 		Searcher.Similarity = Similarity;
 	  }
 
@@ -133,9 +133,9 @@ namespace Lucene.Net.Search.Payloads
 	  public static void AfterClass()
 	  {
 		Searcher = null;
-		Reader.close();
+		Reader.Dispose();
 		Reader = null;
-		Directory.close();
+		Directory.Dispose();
 		Directory = null;
 	  }
 
@@ -145,36 +145,36 @@ namespace Lucene.Net.Search.Payloads
 		TopDocs hits;
 
 		query = NewPhraseQuery("field", "twenty two", true, new AveragePayloadFunction());
-		QueryUtils.check(query);
+		QueryUtils.Check(query);
 
 		// all 10 hits should have score = 3 because adjacent terms have payloads of 2,4
 		// and all the similarity factors are set to 1
-		hits = Searcher.search(query, null, 100);
-		Assert.IsTrue("hits is null and it shouldn't be", hits != null);
-		Assert.IsTrue("should be 10 hits", hits.totalHits == 10);
-		for (int j = 0; j < hits.scoreDocs.length; j++)
+		hits = Searcher.Search(query, null, 100);
+		Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
+		Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+		for (int j = 0; j < hits.ScoreDocs.Length; j++)
 		{
-		  ScoreDoc doc = hits.scoreDocs[j];
-		  Assert.IsTrue(doc.score + " does not equal: " + 3, doc.score == 3);
+		  ScoreDoc doc = hits.ScoreDocs[j];
+          Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 		}
 		for (int i = 1;i < 10;i++)
 		{
-		  query = NewPhraseQuery("field", English.intToEnglish(i) + " hundred", true, new AveragePayloadFunction());
+		  query = NewPhraseQuery("field", English.IntToEnglish(i) + " hundred", true, new AveragePayloadFunction());
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: run query=" + query);
 		  }
 		  // all should have score = 3 because adjacent terms have payloads of 2,4
 		  // and all the similarity factors are set to 1
-		  hits = Searcher.search(query, null, 100);
-		  Assert.IsTrue("hits is null and it shouldn't be", hits != null);
-		  Assert.AreEqual("should be 100 hits", 100, hits.totalHits);
-		  for (int j = 0; j < hits.scoreDocs.length; j++)
+		  hits = Searcher.Search(query, null, 100);
+		  Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
+		  Assert.AreEqual(100, hits.TotalHits, "should be 100 hits");
+		  for (int j = 0; j < hits.ScoreDocs.Length; j++)
 		  {
-			ScoreDoc doc = hits.scoreDocs[j];
+			ScoreDoc doc = hits.ScoreDocs[j];
 			//        System.out.println("Doc: " + doc.toString());
-			//        System.out.println("Explain: " + searcher.explain(query, doc.doc));
-			Assert.IsTrue(doc.score + " does not equal: " + 3, doc.score == 3);
+			//        System.out.println("Explain: " + searcher.Explain(query, doc.Doc));
+			Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 		  }
 		}
 	  }
@@ -192,12 +192,12 @@ namespace Lucene.Net.Search.Payloads
 		clauses[1] = q2;
 		query = new PayloadNearQuery(clauses, 10, false);
 		//System.out.println(query.toString());
-		Assert.AreEqual(12, Searcher.search(query, null, 100).totalHits);
+		Assert.AreEqual(12, Searcher.Search(query, null, 100).TotalHits);
 		/*
-		System.out.println(hits.totalHits);
-		for (int j = 0; j < hits.scoreDocs.length; j++) {
-		  ScoreDoc doc = hits.scoreDocs[j];
-		  System.out.println("doc: "+doc.doc+", score: "+doc.score);
+		System.out.println(hits.TotalHits);
+		for (int j = 0; j < hits.ScoreDocs.Length; j++) {
+		  ScoreDoc doc = hits.ScoreDocs[j];
+		  System.out.println("doc: "+doc.Doc+", score: "+doc.Score);
 		}
 		*/
 	  }
@@ -208,20 +208,20 @@ namespace Lucene.Net.Search.Payloads
 		TopDocs hits;
 
 		query = NewPhraseQuery("field", "twenty two", true, new AveragePayloadFunction());
-		QueryUtils.check(query);
+		QueryUtils.Check(query);
 		// all 10 hits should have score = 3 because adjacent terms have payloads of 2,4
 		// and all the similarity factors are set to 1
-		hits = Searcher.search(query, null, 100);
-		Assert.IsTrue("hits is null and it shouldn't be", hits != null);
-		Assert.IsTrue("should be 10 hits", hits.totalHits == 10);
-		for (int j = 0; j < hits.scoreDocs.length; j++)
+		hits = Searcher.Search(query, null, 100);
+		Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
+		Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+		for (int j = 0; j < hits.ScoreDocs.Length; j++)
 		{
-		  ScoreDoc doc = hits.scoreDocs[j];
-		  Assert.IsTrue(doc.score + " does not equal: " + 3, doc.score == 3);
-		  Explanation explain = Searcher.explain(query, hits.scoreDocs[j].doc);
+		  ScoreDoc doc = hits.ScoreDocs[j];
+		  Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
+		  Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
 		  string exp = explain.ToString();
-		  Assert.IsTrue(exp, exp.IndexOf("AveragePayloadFunction") > -1);
-		  Assert.IsTrue(hits.scoreDocs[j].score + " explain value does not equal: " + 3, explain.Value == 3f);
+		  Assert.IsTrue(exp.IndexOf("AveragePayloadFunction") > -1, exp);
+		  Assert.IsTrue(explain.Value == 3f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 3);
 		}
 	  }
 	  public virtual void TestMaxFunction()
@@ -230,19 +230,19 @@ namespace Lucene.Net.Search.Payloads
 		TopDocs hits;
 
 		query = NewPhraseQuery("field", "twenty two", true, new MaxPayloadFunction());
-		QueryUtils.check(query);
+		QueryUtils.Check(query);
 		// all 10 hits should have score = 4 (max payload value)
-		hits = Searcher.search(query, null, 100);
-		Assert.IsTrue("hits is null and it shouldn't be", hits != null);
-		Assert.IsTrue("should be 10 hits", hits.totalHits == 10);
-		for (int j = 0; j < hits.scoreDocs.length; j++)
+		hits = Searcher.Search(query, null, 100);
+		Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
+		Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+		for (int j = 0; j < hits.ScoreDocs.Length; j++)
 		{
-		  ScoreDoc doc = hits.scoreDocs[j];
-		  Assert.IsTrue(doc.score + " does not equal: " + 4, doc.score == 4);
-		  Explanation explain = Searcher.explain(query, hits.scoreDocs[j].doc);
+		  ScoreDoc doc = hits.ScoreDocs[j];
+		  Assert.IsTrue(doc.Score == 4, doc.Score + " does not equal: " + 4);
+		  Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
 		  string exp = explain.ToString();
-		  Assert.IsTrue(exp, exp.IndexOf("MaxPayloadFunction") > -1);
-		  Assert.IsTrue(hits.scoreDocs[j].score + " explain value does not equal: " + 4, explain.Value == 4f);
+		  Assert.IsTrue(exp.IndexOf("MaxPayloadFunction") > -1, exp);
+		  Assert.IsTrue(explain.Value == 4f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 4);
 		}
 	  }
 	  public virtual void TestMinFunction()
@@ -251,19 +251,19 @@ namespace Lucene.Net.Search.Payloads
 		TopDocs hits;
 
 		query = NewPhraseQuery("field", "twenty two", true, new MinPayloadFunction());
-		QueryUtils.check(query);
+		QueryUtils.Check(query);
 		// all 10 hits should have score = 2 (min payload value)
-		hits = Searcher.search(query, null, 100);
-		Assert.IsTrue("hits is null and it shouldn't be", hits != null);
-		Assert.IsTrue("should be 10 hits", hits.totalHits == 10);
-		for (int j = 0; j < hits.scoreDocs.length; j++)
+		hits = Searcher.Search(query, null, 100);
+		Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
+		Assert.IsTrue(hits.TotalHits == 10, "should be 10 hits");
+		for (int j = 0; j < hits.ScoreDocs.Length; j++)
 		{
-		  ScoreDoc doc = hits.scoreDocs[j];
-		  Assert.IsTrue(doc.score + " does not equal: " + 2, doc.score == 2);
-		  Explanation explain = Searcher.explain(query, hits.scoreDocs[j].doc);
+		  ScoreDoc doc = hits.ScoreDocs[j];
+		  Assert.IsTrue(doc.Score == 2, doc.Score + " does not equal: " + 2);
+		  Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
 		  string exp = explain.ToString();
-		  Assert.IsTrue(exp, exp.IndexOf("MinPayloadFunction") > -1);
-		  Assert.IsTrue(hits.scoreDocs[j].score + " explain value does not equal: " + 2, explain.Value == 2f);
+		  Assert.IsTrue(exp.IndexOf("MinPayloadFunction") > -1, exp);
+		  Assert.IsTrue(explain.Value == 2f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 2);
 		}
 	  }
 	  private SpanQuery[] Clauses
@@ -281,7 +281,7 @@ namespace Lucene.Net.Search.Payloads
 	  }
 	  private SpanNearQuery SpanNearQuery(string fieldName, string words)
 	  {
-		string[] wordList = words.Split("[\\s]+", true);
+		string[] wordList = words.Split("[\\s]+".ToCharArray());
 		SpanQuery[] clauses = new SpanQuery[wordList.Length];
 		for (int i = 0;i < clauses.Length;i++)
 		{
@@ -295,14 +295,14 @@ namespace Lucene.Net.Search.Payloads
 		PayloadNearQuery query;
 		TopDocs hits;
 		query = NewPhraseQuery("field", "nine hundred ninety nine", true, new AveragePayloadFunction());
-		hits = Searcher.search(query, null, 100);
-		Assert.IsTrue("hits is null and it shouldn't be", hits != null);
-		ScoreDoc doc = hits.scoreDocs[0];
+		hits = Searcher.Search(query, null, 100);
+		Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
+		ScoreDoc doc = hits.ScoreDocs[0];
 		//    System.out.println("Doc: " + doc.toString());
-		//    System.out.println("Explain: " + searcher.explain(query, doc.doc));
-		Assert.IsTrue("there should only be one hit", hits.totalHits == 1);
+		//    System.out.println("Explain: " + searcher.Explain(query, doc.Doc));
+		Assert.IsTrue(hits.TotalHits == 1, "there should only be one hit");
 		// should have score = 3 because adjacent terms have payloads of 2,4
-		Assert.IsTrue(doc.score + " does not equal: " + 3, doc.score == 3);
+		Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 	  }
 
 	  public virtual void TestComplexNested()
@@ -318,15 +318,15 @@ namespace Lucene.Net.Search.Payloads
 		SpanQuery q4 = NewPhraseQuery("field", "hundred nine", false, new AveragePayloadFunction());
 		SpanQuery[] clauses = new SpanQuery[] {new PayloadNearQuery(new SpanQuery[] {q1,q2}, 0, true), new PayloadNearQuery(new SpanQuery[] {q3,q4}, 0, false)};
 		query = new PayloadNearQuery(clauses, 0, false);
-		hits = Searcher.search(query, null, 100);
-		Assert.IsTrue("hits is null and it shouldn't be", hits != null);
+		hits = Searcher.Search(query, null, 100);
+		Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
 		// should be only 1 hit - doc 999
-		Assert.IsTrue("should only be one hit", hits.scoreDocs.length == 1);
+		Assert.IsTrue(hits.ScoreDocs.Length == 1, "should only be one hit");
 		// the score should be 3 - the average of all the underlying payloads
-		ScoreDoc doc = hits.scoreDocs[0];
+		ScoreDoc doc = hits.ScoreDocs[0];
 		//    System.out.println("Doc: " + doc.toString());
-		//    System.out.println("Explain: " + searcher.explain(query, doc.doc));
-		Assert.IsTrue(doc.score + " does not equal: " + 3, doc.score == 3);
+		//    System.out.println("Explain: " + searcher.Explain(query, doc.Doc));
+		Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 	  }
 
 	  internal class BoostingSimilarity : DefaultSimilarity
@@ -345,7 +345,7 @@ namespace Lucene.Net.Search.Payloads
 		public override float ScorePayload(int docId, int start, int end, BytesRef payload)
 		{
 		  //we know it is size 4 here, so ignore the offset/length
-		  return payload.bytes[payload.offset];
+		  return payload.Bytes[payload.Offset];
 		}
 
 		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

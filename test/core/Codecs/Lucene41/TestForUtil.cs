@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
+    using System;
 
 	//using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
 
@@ -87,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  forUtil.SkipBlock(@in);
 			  continue;
 			}
-            int[] restored = new int[Lucene41.ForUtil.MAX_DATA_SIZE.MAX_DATA_SIZE];
+            int[] restored = new int[Lucene41.ForUtil.MAX_DATA_SIZE];
 			forUtil.ReadBlock(@in, new sbyte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
 			AssertArrayEquals(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE), Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
 		  }

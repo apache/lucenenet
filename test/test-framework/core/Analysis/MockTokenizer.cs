@@ -300,9 +300,9 @@ namespace Lucene.Net.Analysis
 		StreamState = State.RESET;
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
-		base.Close();
+		base.Dispose();
 		// in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
 		// these tests should disable this check, by default we check the normal workflow.
 		// TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
@@ -310,7 +310,7 @@ namespace Lucene.Net.Analysis
 		StreamState = State.CLOSE;
 	  }
 
-	  internal override bool SetReaderTestPoint()
+	  internal bool SetReaderTestPoint()
 	  {
 		Debug.Assert(!EnableChecks_Renamed || StreamState == State.CLOSE, "setReader() called in wrong state: " + StreamState);
 		StreamState = State.SETREADER;

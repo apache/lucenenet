@@ -205,7 +205,7 @@ namespace Lucene.Net.Analysis
 	  /// some internal state will not be correctly reset (e.g., <seealso cref="Tokenizer"/> will
 	  /// throw <seealso cref="IllegalStateException"/> on reuse).
 	  /// </summary>
-	  public void Dispose()
+	  public virtual void Dispose()
 	  {
 	  }
 

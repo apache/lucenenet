@@ -34,9 +34,9 @@ namespace Lucene.Net.Search.Spans
 	using English = Lucene.Net.Util.English;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using AfterClass = org.junit.AfterClass;
-	using BeforeClass = org.junit.BeforeClass;
-	using Test = org.junit.Test;
+    using Lucene.Net.Util;
+    using System.IO;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Tests basic search capabilities.
@@ -65,15 +65,15 @@ namespace Lucene.Net.Search.Spans
 		public SimplePayloadFilter(TokenStream input) : base(input)
 		{
 		  Pos = 0;
-		  PayloadAttr = input.addAttribute(typeof(PayloadAttribute));
-		  TermAttr = input.addAttribute(typeof(CharTermAttribute));
+		  PayloadAttr = input.AddAttribute<PayloadAttribute>();
+		  TermAttr = input.AddAttribute<CharTermAttribute>();
 		}
 
 		public override bool IncrementToken()
 		{
-		  if (input.IncrementToken())
+		  if (Input.IncrementToken())
 		  {
-			PayloadAttr.Payload = new BytesRef(("pos: " + Pos).getBytes(StandardCharsets.UTF_8));
+			PayloadAttr.Payload = new BytesRef(("pos: " + Pos).GetBytes(IOUtils.CHARSET_UTF_8));
 			Pos++;
 			return true;
 		  }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Spans
 
 		public override void Reset()
 		{
-		  base.reset();
+		  base.Reset();
 		  Pos = 0;
 		}
 	  }
@@ -98,18 +98,18 @@ namespace Lucene.Net.Search.Spans
 	  {
 		SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory, newIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).setMaxBufferedDocs(TestUtil.Next(random(), 100, 1000)).setMergePolicy(newLogMergePolicy()));
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 		//writer.infoStream = System.out;
 		for (int i = 0; i < 2000; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newTextField("field", English.intToEnglish(i), Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
 		  {
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 			return new TokenStreamComponents(tokenizer, new SimplePayloadFilter(tokenizer));
@@ -129,8 +129,8 @@ namespace Lucene.Net.Search.Spans
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-		Reader.close();
-		Directory.close();
+		Reader.Dispose();
+		Directory.Dispose();
 		Searcher = null;
 		Reader = null;
 		Directory = null;
@@ -158,8 +158,8 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestPhrase()
 	  {
 		PhraseQuery query = new PhraseQuery();
-		query.add(new Term("field", "seventy"));
-		query.add(new Term("field", "seven"));
+		query.Add(new Term("field", "seventy"));
+		query.Add(new Term("field", "seven"));
 		CheckHits(query, new int[] {77, 177, 277, 377, 477, 577, 677, 777, 877, 977, 1077, 1177, 1277, 1377, 1477, 1577, 1677, 1777, 1877, 1977});
 	  }
 
@@ -168,8 +168,8 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestPhrase2()
 	  {
 		PhraseQuery query = new PhraseQuery();
-		query.add(new Term("field", "seventish"));
-		query.add(new Term("field", "sevenon"));
+		query.Add(new Term("field", "seventish"));
+		query.Add(new Term("field", "sevenon"));
 		CheckHits(query, new int[] {});
 	  }
 
@@ -178,8 +178,8 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestBoolean()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term("field", "seventy")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term("field", "seven")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term("field", "seventy")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term("field", "seven")), BooleanClause.Occur_e.MUST);
 		CheckHits(query, new int[] {77, 177, 277, 377, 477, 577, 677, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 877, 977, 1077, 1177, 1277, 1377, 1477, 1577, 1677, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1877, 1977});
 	  }
 
@@ -188,8 +188,8 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestBoolean2()
 	  {
 		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(new Term("field", "sevento")), BooleanClause.Occur_e.MUST);
-		query.add(new TermQuery(new Term("field", "sevenly")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term("field", "sevento")), BooleanClause.Occur_e.MUST);
+		query.Add(new TermQuery(new Term("field", "sevenly")), BooleanClause.Occur_e.MUST);
 		CheckHits(query, new int[] {});
 	  }
 
@@ -202,12 +202,12 @@ namespace Lucene.Net.Search.Spans
 		SpanNearQuery query = new SpanNearQuery(new SpanQuery[] {term1, term2}, 0, true);
 		CheckHits(query, new int[] {77, 177, 277, 377, 477, 577, 677, 777, 877, 977, 1077, 1177, 1277, 1377, 1477, 1577, 1677, 1777, 1877, 1977});
 
-		Assert.IsTrue(Searcher.explain(query, 77).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 977).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 77).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 977).Value > 0.0f);
 
-		QueryUtils.check(term1);
-		QueryUtils.check(term2);
-		QueryUtils.checkUnequal(term1,term2);
+		QueryUtils.Check(term1);
+		QueryUtils.Check(term2);
+		QueryUtils.CheckUnequal(term1,term2);
 	  }
 
 	  public virtual void TestSpanTermQuery()
@@ -249,8 +249,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891});
 
-		Assert.IsTrue(Searcher.explain(query, 801).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 891).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -268,8 +268,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891});
 
-		Assert.IsTrue(Searcher.explain(query, 801).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 891).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -289,8 +289,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {801, 821, 831, 851, 871, 891, 1801, 1821, 1831, 1851, 1871, 1891});
 
-		Assert.IsTrue(Searcher.explain(query, 801).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 891).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -308,8 +308,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891});
 
-		Assert.IsTrue(Searcher.explain(query, 801).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 891).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search.Spans
 		int n = 5;
 		SpanTermQuery hun = new SpanTermQuery(new Term("field", "hundred"));
 		SpanTermQuery term40 = new SpanTermQuery(new Term("field", "forty"));
-		SpanTermQuery term40c = (SpanTermQuery)term40.clone();
+		SpanTermQuery term40c = (SpanTermQuery)term40.Clone();
 
 		SpanFirstQuery include = new SpanFirstQuery(term40, n);
 		SpanNearQuery near = new SpanNearQuery(new SpanQuery[]{hun, term40c}, n - 1, true);
@@ -341,8 +341,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {840, 842, 843, 844, 845, 846, 847, 848, 849, 1840, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849});
 
-		Assert.IsTrue(Searcher.explain(query, 840).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 1842).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 840).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 1842).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -357,8 +357,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {840, 841, 842, 843, 844, 845, 846, 847, 848, 849});
 
-		Assert.IsTrue(Searcher.explain(query, 840).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 849).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 840).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 849).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -377,8 +377,8 @@ namespace Lucene.Net.Search.Spans
 
 		 CheckHits(query, new int[] {801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891});
 
-		 Assert.IsTrue(Searcher.explain(query, 801).Value > 0.0f);
-		 Assert.IsTrue(Searcher.explain(query, 891).Value > 0.0f);
+		 Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
+		 Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -395,8 +395,8 @@ namespace Lucene.Net.Search.Spans
 
 		 CheckHits(query, new int[] {42, 242, 342, 442, 542, 642, 742, 842, 942});
 
-		 Assert.IsTrue(Searcher.explain(query, 242).Value > 0.0f);
-		 Assert.IsTrue(Searcher.explain(query, 942).Value > 0.0f);
+		 Assert.IsTrue(Searcher.Explain(query, 242).Value > 0.0f);
+		 Assert.IsTrue(Searcher.Explain(query, 942).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -408,8 +408,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {5, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599});
 
-		Assert.IsTrue(Searcher.explain(query, 5).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 599).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 5).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 599).Value > 0.0f);
 
 	  }
 
@@ -421,8 +421,8 @@ namespace Lucene.Net.Search.Spans
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
 		query = new SpanPositionRangeQuery(term1, 1, 2);
 		CheckHits(query, new int[] {25,35, 45, 55, 65, 75, 85, 95});
-		Assert.IsTrue(Searcher.explain(query, 25).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 95).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 25).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 95).Value > 0.0f);
 
 		query = new SpanPositionRangeQuery(term1, 0, 1);
 		CheckHits(query, new int[] {5, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599});
@@ -436,10 +436,10 @@ namespace Lucene.Net.Search.Spans
 	  public virtual void TestSpanPayloadCheck()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
-		BytesRef pay = new BytesRef(("pos: " + 5).getBytes(StandardCharsets.UTF_8));
-		SpanQuery query = new SpanPayloadCheckQuery(term1, Collections.singletonList(pay.bytes));
+		BytesRef pay = new BytesRef(("pos: " + 5).GetBytes(IOUtils.CHARSET_UTF_8));
+		SpanQuery query = new SpanPayloadCheckQuery(term1, Collections.singletonList(pay.Bytes));
 		CheckHits(query, new int[] {1125, 1135, 1145, 1155, 1165, 1175, 1185, 1195, 1225, 1235, 1245, 1255, 1265, 1275, 1285, 1295, 1325, 1335, 1345, 1355, 1365, 1375, 1385, 1395, 1425, 1435, 1445, 1455, 1465, 1475, 1485, 1495, 1525, 1535, 1545, 1555, 1565, 1575, 1585, 1595, 1625, 1635, 1645, 1655, 1665, 1675, 1685, 1695, 1725, 1735, 1745, 1755, 1765, 1775, 1785, 1795, 1825, 1835, 1845, 1855, 1865, 1875, 1885, 1895, 1925, 1935, 1945, 1955, 1965, 1975, 1985, 1995});
-		Assert.IsTrue(Searcher.explain(query, 1125).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 1125).Value > 0.0f);
 
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "hundred"));
 		SpanNearQuery snq;
@@ -450,11 +450,11 @@ namespace Lucene.Net.Search.Spans
 		clauses[0] = term1;
 		clauses[1] = term2;
 		snq = new SpanNearQuery(clauses, 0, true);
-		pay = new BytesRef(("pos: " + 0).getBytes(StandardCharsets.UTF_8));
-		pay2 = new BytesRef(("pos: " + 1).getBytes(StandardCharsets.UTF_8));
-		list = new List<>();
-		list.Add(pay.bytes);
-		list.Add(pay2.bytes);
+		pay = new BytesRef(("pos: " + 0).GetBytes(IOUtils.CHARSET_UTF_8));
+		pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));
+		list = new List<sbyte[]>();
+		list.Add(pay.Bytes);
+		list.Add(pay2.Bytes);
 		query = new SpanNearPayloadCheckQuery(snq, list);
 		CheckHits(query, new int[] {500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599});
 		clauses = new SpanQuery[3];
@@ -462,13 +462,13 @@ namespace Lucene.Net.Search.Spans
 		clauses[1] = term2;
 		clauses[2] = new SpanTermQuery(new Term("field", "five"));
 		snq = new SpanNearQuery(clauses, 0, true);
-		pay = new BytesRef(("pos: " + 0).getBytes(StandardCharsets.UTF_8));
-		pay2 = new BytesRef(("pos: " + 1).getBytes(StandardCharsets.UTF_8));
-		BytesRef pay3 = new BytesRef(("pos: " + 2).getBytes(StandardCharsets.UTF_8));
+		pay = new BytesRef(("pos: " + 0).GetBytes(IOUtils.CHARSET_UTF_8));
+		pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));
+		BytesRef pay3 = new BytesRef(("pos: " + 2).GetBytes(IOUtils.CHARSET_UTF_8));
 		list = new List<>();
-		list.Add(pay.bytes);
-		list.Add(pay2.bytes);
-		list.Add(pay3.bytes);
+		list.Add(pay.Bytes);
+		list.Add(pay2.Bytes);
+		list.Add(pay3.Bytes);
 		query = new SpanNearPayloadCheckQuery(snq, list);
 		CheckHits(query, new int[] {505});
 	  }
@@ -493,14 +493,14 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[]{1103, 1203,1303,1403,1503,1603,1703,1803,1903});
 
 		ICollection<sbyte[]> payloads = new List<sbyte[]>();
-		BytesRef pay = new BytesRef(("pos: " + 0).getBytes(StandardCharsets.UTF_8));
-		BytesRef pay2 = new BytesRef(("pos: " + 1).getBytes(StandardCharsets.UTF_8));
-		BytesRef pay3 = new BytesRef(("pos: " + 3).getBytes(StandardCharsets.UTF_8));
-		BytesRef pay4 = new BytesRef(("pos: " + 4).getBytes(StandardCharsets.UTF_8));
-		payloads.Add(pay.bytes);
-		payloads.Add(pay2.bytes);
-		payloads.Add(pay3.bytes);
-		payloads.Add(pay4.bytes);
+		BytesRef pay = new BytesRef(("pos: " + 0).GetBytes(IOUtils.CHARSET_UTF_8));
+		BytesRef pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));
+		BytesRef pay3 = new BytesRef(("pos: " + 3).GetBytes(IOUtils.CHARSET_UTF_8));
+		BytesRef pay4 = new BytesRef(("pos: " + 4).GetBytes(IOUtils.CHARSET_UTF_8));
+        payloads.Add(pay.Bytes);
+        payloads.Add(pay2.Bytes);
+        payloads.Add(pay3.Bytes);
+        payloads.Add(pay4.Bytes);
 		query = new SpanNearPayloadCheckQuery(oneThousHunThree, payloads);
 		CheckHits(query, new int[]{1103, 1203,1303,1403,1503,1603,1703,1803,1903});
 
@@ -522,8 +522,8 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {33, 47, 133, 147, 233, 247, 333, 347, 433, 447, 533, 547, 633, 647, 733, 747, 833, 847, 933, 947, 1033, 1047, 1133, 1147, 1233, 1247, 1333, 1347, 1433, 1447, 1533, 1547, 1633, 1647, 1733, 1747, 1833, 1847, 1933, 1947});
 
-		Assert.IsTrue(Searcher.explain(query, 33).Value > 0.0f);
-		Assert.IsTrue(Searcher.explain(query, 947).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 33).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 947).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search.Spans
 
 		CheckHits(query, new int[] {333, 1333});
 
-		Assert.IsTrue(Searcher.explain(query, 333).Value > 0.0f);
+		Assert.IsTrue(Searcher.Explain(query, 333).Value > 0.0f);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -596,16 +596,16 @@ namespace Lucene.Net.Search.Spans
 		Spans s1 = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, t1);
 		Spans s2 = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, t2);
 
-		Assert.IsTrue(s1.next());
-		Assert.IsTrue(s2.next());
+		Assert.IsTrue(s1.Next());
+		Assert.IsTrue(s2.Next());
 
 		bool hasMore = true;
 
 		do
 		{
-		  hasMore = SkipToAccoringToJavaDocs(s1, s1.doc() + 1);
-		  Assert.AreEqual(hasMore, s2.skipTo(s2.doc() + 1));
-		  Assert.AreEqual(s1.doc(), s2.doc());
+		  hasMore = SkipToAccoringToJavaDocs(s1, s1.Doc() + 1);
+		  Assert.AreEqual(hasMore, s2.SkipTo(s2.Doc() + 1));
+		  Assert.AreEqual(s1.Doc(), s2.Doc());
 		} while (hasMore);
 	  }
 
@@ -626,18 +626,18 @@ namespace Lucene.Net.Search.Spans
 	  {
 		do
 		{
-		  if (!s.next())
+		  if (!s.Next())
 		  {
 			return false;
 		  }
-		} while (target > s.doc());
+		} while (target > s.Doc());
 		return true;
 
 	  }
 
 	  private void CheckHits(Query query, int[] results)
 	  {
-		CheckHits.checkHits(random(), query, "field", Searcher, results);
+		Lucene.Net.Search.CheckHits.CheckHits(Random(), query, "field", Searcher, results);
 	  }
 	}
 

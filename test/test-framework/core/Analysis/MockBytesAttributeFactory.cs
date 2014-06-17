@@ -21,7 +21,6 @@ namespace Lucene.Net.Analysis
 	 */
 
     using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
 	using AttributeSource = Lucene.Net.Util.AttributeSource;
 
 	/// <summary>
@@ -30,11 +29,11 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public class MockBytesAttributeFactory : AttributeSource.AttributeFactory
 	{
-	  private readonly AttributeSource.AttributeFactory @delegate = AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
+	  private readonly AttributeSource.AttributeFactory @delegate = DEFAULT_ATTRIBUTE_FACTORY;
 
 	  public override Attribute CreateAttributeInstance(Type attClass)
 	  {
-		return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? (Attribute)(IAttribute)new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance(attClass);
+		return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance(attClass);
 	  }
 
 	}

@@ -39,6 +39,7 @@ namespace Lucene.Net.Search
 	using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
 	using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
 	using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
+    using NUnit.Framework;
 
 	public class TestAutomatonQuery : LuceneTestCase
 	{
@@ -50,31 +51,31 @@ namespace Lucene.Net.Search
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Directory = newDirectory();
-		RandomIndexWriter writer = new RandomIndexWriter(random(), Directory);
+		base.SetUp();
+		Directory = NewDirectory();
+		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
 		Document doc = new Document();
-		Field titleField = newTextField("title", "some title", Field.Store.NO);
-		Field field = newTextField(FN, "this is document one 2345", Field.Store.NO);
-		Field footerField = newTextField("footer", "a footer", Field.Store.NO);
-		doc.add(titleField);
-		doc.add(field);
-		doc.add(footerField);
-		writer.addDocument(doc);
+		Field titleField = NewTextField("title", "some title", Field.Store.NO);
+		Field field = NewTextField(FN, "this is document one 2345", Field.Store.NO);
+		Field footerField = NewTextField("footer", "a footer", Field.Store.NO);
+		doc.Add(titleField);
+		doc.Add(field);
+		doc.Add(footerField);
+		writer.AddDocument(doc);
 		field.StringValue = "some text from doc two a short piece 5678.91";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		field.StringValue = "doc three has some different stuff" + " with numbers 1234 5678.9 and letter b";
-		writer.addDocument(doc);
+		writer.AddDocument(doc);
 		Reader = writer.Reader;
-		Searcher = newSearcher(Reader);
-		writer.close();
+		Searcher = NewSearcher(Reader);
+		writer.Close();
 	  }
 
 	  public override void TearDown()
 	  {
-		Reader.close();
-		Directory.close();
-		base.tearDown();
+		Reader.Dispose();
+		Directory.Dispose();
+		base.TearDown();
 	  }
 
 	  private Term NewTerm(string value)
@@ -88,23 +89,23 @@ namespace Lucene.Net.Search
 		{
 		  Console.WriteLine("TEST: run aq=" + query);
 		}
-		return Searcher.search(query, 5).totalHits;
+		return Searcher.Search(query, 5).TotalHits;
 	  }
 
 	  private void AssertAutomatonHits(int expected, Automaton automaton)
 	  {
 		AutomatonQuery query = new AutomatonQuery(NewTerm("bogus"), automaton);
 
-		query.RewriteMethod = MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE;
+		query.SetRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-		query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE;
+        query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-		query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
+        query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 
-		query.RewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
+        query.SetRewriteMethod(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
 		Assert.AreEqual(expected, AutomatonQueryNrHits(query));
 	  }
 
@@ -113,18 +114,18 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual void TestBasicAutomata()
 	  {
-		AssertAutomatonHits(0, BasicAutomata.makeEmpty());
-		AssertAutomatonHits(0, BasicAutomata.makeEmptyString());
-		AssertAutomatonHits(2, BasicAutomata.makeAnyChar());
-		AssertAutomatonHits(3, BasicAutomata.makeAnyString());
-		AssertAutomatonHits(2, BasicAutomata.makeString("doc"));
-		AssertAutomatonHits(1, BasicAutomata.makeChar('a'));
-		AssertAutomatonHits(2, BasicAutomata.makeCharRange('a', 'b'));
-		AssertAutomatonHits(2, BasicAutomata.makeInterval(1233, 2346, 0));
-		AssertAutomatonHits(1, BasicAutomata.makeInterval(0, 2000, 0));
-		AssertAutomatonHits(2, BasicOperations.union(BasicAutomata.makeChar('a'), BasicAutomata.makeChar('b')));
-		AssertAutomatonHits(0, BasicOperations.intersection(BasicAutomata.makeChar('a'), BasicAutomata.makeChar('b')));
-		AssertAutomatonHits(1, BasicOperations.minus(BasicAutomata.makeCharRange('a', 'b'), BasicAutomata.makeChar('a')));
+		AssertAutomatonHits(0, BasicAutomata.MakeEmpty());
+		AssertAutomatonHits(0, BasicAutomata.MakeEmptyString());
+		AssertAutomatonHits(2, BasicAutomata.MakeAnyChar());
+		AssertAutomatonHits(3, BasicAutomata.MakeAnyString());
+		AssertAutomatonHits(2, BasicAutomata.MakeString("doc"));
+		AssertAutomatonHits(1, BasicAutomata.MakeChar('a'));
+		AssertAutomatonHits(2, BasicAutomata.MakeCharRange('a', 'b'));
+		AssertAutomatonHits(2, BasicAutomata.MakeInterval(1233, 2346, 0));
+		AssertAutomatonHits(1, BasicAutomata.MakeInterval(0, 2000, 0));
+		AssertAutomatonHits(2, BasicOperations.Union(BasicAutomata.MakeChar('a'), BasicAutomata.MakeChar('b')));
+		AssertAutomatonHits(0, BasicOperations.Intersection(BasicAutomata.MakeChar('a'), BasicAutomata.MakeChar('b')));
+		AssertAutomatonHits(1, BasicOperations.Minus(BasicAutomata.MakeCharRange('a', 'b'), BasicAutomata.MakeChar('a')));
 	  }
 
 	  /// <summary>
@@ -135,21 +136,21 @@ namespace Lucene.Net.Search
 	  {
 		// accept this or three, the union is an NFA (two transitions for 't' from
 		// initial state)
-		Automaton nfa = BasicOperations.union(BasicAutomata.makeString("this"), BasicAutomata.makeString("three"));
+		Automaton nfa = BasicOperations.Union(BasicAutomata.MakeString("this"), BasicAutomata.MakeString("three"));
 		AssertAutomatonHits(2, nfa);
 	  }
 
 	  public virtual void TestEquals()
 	  {
-		AutomatonQuery a1 = new AutomatonQuery(NewTerm("foobar"), BasicAutomata.makeString("foobar"));
+		AutomatonQuery a1 = new AutomatonQuery(NewTerm("foobar"), BasicAutomata.MakeString("foobar"));
 		// reference to a1
 		AutomatonQuery a2 = a1;
 		// same as a1 (accepts the same language, same term)
-		AutomatonQuery a3 = new AutomatonQuery(NewTerm("foobar"), BasicOperations.concatenate(BasicAutomata.makeString("foo"), BasicAutomata.makeString("bar")));
+		AutomatonQuery a3 = new AutomatonQuery(NewTerm("foobar"), BasicOperations.Concatenate(BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar")));
 		// different than a1 (same term, but different language)
-		AutomatonQuery a4 = new AutomatonQuery(NewTerm("foobar"), BasicAutomata.makeString("different"));
+		AutomatonQuery a4 = new AutomatonQuery(NewTerm("foobar"), BasicAutomata.MakeString("different"));
 		// different than a1 (different term, same language)
-		AutomatonQuery a5 = new AutomatonQuery(NewTerm("blah"), BasicAutomata.makeString("foobar"));
+		AutomatonQuery a5 = new AutomatonQuery(NewTerm("blah"), BasicAutomata.MakeString("foobar"));
 
 		Assert.AreEqual(a1.GetHashCode(), a2.GetHashCode());
 		Assert.AreEqual(a1, a2);
@@ -176,9 +177,9 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual void TestRewriteSingleTerm()
 	  {
-		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.makeString("piece"));
-		Terms terms = MultiFields.getTerms(Searcher.IndexReader, FN);
-		Assert.IsTrue(aq.getTermsEnum(terms) is SingleTermsEnum);
+		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.MakeString("piece"));
+		Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
+		Assert.IsTrue(aq.GetTermsEnum(terms) is SingleTermsEnum);
 		Assert.AreEqual(1, AutomatonQueryNrHits(aq));
 	  }
 
@@ -188,12 +189,12 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual void TestRewritePrefix()
 	  {
-		Automaton pfx = BasicAutomata.makeString("do");
-		pfx.expandSingleton(); // expand singleton representation for testing
-		Automaton prefixAutomaton = BasicOperations.concatenate(pfx, BasicAutomata.makeAnyString());
+		Automaton pfx = BasicAutomata.MakeString("do");
+		pfx.ExpandSingleton(); // expand singleton representation for testing
+		Automaton prefixAutomaton = BasicOperations.Concatenate(pfx, BasicAutomata.MakeAnyString());
 		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), prefixAutomaton);
-		Terms terms = MultiFields.getTerms(Searcher.IndexReader, FN);
-		Assert.IsTrue(aq.getTermsEnum(terms) is PrefixTermsEnum);
+		Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
+		Assert.IsTrue(aq.GetTermsEnum(terms) is PrefixTermsEnum);
 		Assert.AreEqual(3, AutomatonQueryNrHits(aq));
 	  }
 
@@ -202,11 +203,11 @@ namespace Lucene.Net.Search
 	  /// </summary>
 	  public virtual void TestEmptyOptimization()
 	  {
-		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.makeEmpty());
+		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.MakeEmpty());
 		// not yet available: Assert.IsTrue(aq.getEnum(searcher.getIndexReader())
 		// instanceof EmptyTermEnum);
-		Terms terms = MultiFields.getTerms(Searcher.IndexReader, FN);
-		assertSame(TermsEnum.EMPTY, aq.getTermsEnum(terms));
+		Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
+		assertSame(TermsEnum.EMPTY, aq.GetTermsEnum(terms));
 		Assert.AreEqual(0, AutomatonQueryNrHits(aq));
 	  }
 
@@ -215,10 +216,10 @@ namespace Lucene.Net.Search
 		AutomatonQuery[] queries = new AutomatonQuery[1000];
 		for (int i = 0; i < queries.Length; i++)
 		{
-		  queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.randomAutomaton(random()));
+		  queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random()));
 		}
 		CountDownLatch startingGun = new CountDownLatch(1);
-		int numThreads = TestUtil.Next(random(), 2, 5);
+		int numThreads = TestUtil.NextInt(Random(), 2, 5);
 		Thread[] threads = new Thread[numThreads];
 		for (int threadID = 0; threadID < numThreads; threadID++)
 		{
@@ -259,7 +260,7 @@ namespace Lucene.Net.Search
 			}
 			catch (Exception e)
 			{
-			  Rethrow.rethrow(e);
+			  Rethrow.DoRethrow(e);
 			}
 		  }
 	  }

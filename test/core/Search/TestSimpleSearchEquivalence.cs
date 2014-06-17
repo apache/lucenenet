@@ -39,8 +39,8 @@ namespace Lucene.Net.Search
 		Term t2 = randomTerm();
 		TermQuery q1 = new TermQuery(t1);
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.SHOULD);
-		q2.add(new TermQuery(t2), Occur.SHOULD);
+		q2.Add(new TermQuery(t1), Occur.SHOULD);
+		q2.Add(new TermQuery(t2), Occur.SHOULD);
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -52,8 +52,8 @@ namespace Lucene.Net.Search
 		Term t2 = randomTerm();
 		TermQuery q1 = new TermQuery(t1);
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.MUST);
-		q2.add(new TermQuery(t2), Occur.SHOULD);
+		q2.Add(new TermQuery(t1), Occur.MUST);
+		q2.Add(new TermQuery(t2), Occur.SHOULD);
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -64,8 +64,8 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		BooleanQuery q1 = new BooleanQuery();
-		q1.add(new TermQuery(t1), Occur.MUST);
-		q1.add(new TermQuery(t2), Occur.MUST_NOT);
+		q1.Add(new TermQuery(t1), Occur.MUST);
+		q1.Add(new TermQuery(t2), Occur.MUST_NOT);
 		TermQuery q2 = new TermQuery(t1);
 		assertSubsetOf(q1, q2);
 	  }
@@ -77,11 +77,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		BooleanQuery q1 = new BooleanQuery();
-		q1.add(new TermQuery(t1), Occur.SHOULD);
-		q1.add(new TermQuery(t2), Occur.SHOULD);
+		q1.Add(new TermQuery(t1), Occur.SHOULD);
+		q1.Add(new TermQuery(t2), Occur.SHOULD);
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.SHOULD);
-		q2.add(new TermQuery(t2), Occur.SHOULD);
+		q2.Add(new TermQuery(t1), Occur.SHOULD);
+		q2.Add(new TermQuery(t2), Occur.SHOULD);
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -92,11 +92,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		BooleanQuery q1 = new BooleanQuery();
-		q1.add(new TermQuery(t1), Occur.SHOULD);
-		q1.add(new TermQuery(t2), Occur.SHOULD);
+		q1.Add(new TermQuery(t1), Occur.SHOULD);
+		q1.Add(new TermQuery(t2), Occur.SHOULD);
 		DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.5f);
-		q2.add(new TermQuery(t1));
-		q2.add(new TermQuery(t2));
+		q2.Add(new TermQuery(t1));
+		q2.Add(new TermQuery(t2));
 		assertSameSet(q1, q2);
 	  }
 
@@ -107,11 +107,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2);
+		q1.Add(t1);
+		q1.Add(t2);
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.MUST);
-		q2.add(new TermQuery(t2), Occur.MUST);
+		q2.Add(new TermQuery(t1), Occur.MUST);
+		q2.Add(new TermQuery(t2), Occur.MUST);
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -122,11 +122,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2, 2);
+		q1.Add(t1);
+		q1.Add(t2, 2);
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.MUST);
-		q2.add(new TermQuery(t2), Occur.MUST);
+		q2.Add(new TermQuery(t1), Occur.MUST);
+		q2.Add(new TermQuery(t2), Occur.MUST);
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -137,11 +137,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2);
+		q1.Add(t1);
+		q1.Add(t2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2);
+		q2.Add(t1);
+		q2.Add(t2);
 		q2.Slop = 1;
 		assertSubsetOf(q1, q2);
 	  }
@@ -153,11 +153,11 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2, 2);
+		q1.Add(t1);
+		q1.Add(t2, 2);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2, 2);
+		q2.Add(t1);
+		q2.Add(t2, 2);
 		q2.Slop = 1;
 		assertSubsetOf(q1, q2);
 	  }
@@ -169,12 +169,12 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2);
+		q1.Add(t1);
+		q1.Add(t2);
 		Term t3 = randomTerm();
 		MultiPhraseQuery q2 = new MultiPhraseQuery();
-		q2.add(t1);
-		q2.add(new Term[] {t2, t3});
+		q2.Add(t1);
+		q2.Add(new Term[] {t2, t3});
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -185,12 +185,12 @@ namespace Lucene.Net.Search
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2, 2);
+		q1.Add(t1);
+		q1.Add(t2, 2);
 		Term t3 = randomTerm();
 		MultiPhraseQuery q2 = new MultiPhraseQuery();
-		q2.add(t1);
-		q2.add(new Term[] {t2, t3}, 2);
+		q2.Add(t1);
+		q2.Add(new Term[] {t2, t3}, 2);
 		assertSubsetOf(q1, q2);
 	  }
 
@@ -207,12 +207,12 @@ namespace Lucene.Net.Search
 		  t2 = randomTerm();
 		} while (t1.Equals(t2));
 		PhraseQuery q1 = new PhraseQuery();
-		q1.add(t1);
-		q1.add(t2);
+		q1.Add(t1);
+		q1.Add(t2);
 		q1.Slop = int.MaxValue;
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.MUST);
-		q2.add(new TermQuery(t2), Occur.MUST);
+		q2.Add(new TermQuery(t1), Occur.MUST);
+		q2.Add(new TermQuery(t2), Occur.MUST);
 		assertSameSet(q1, q2);
 	  }
 	}

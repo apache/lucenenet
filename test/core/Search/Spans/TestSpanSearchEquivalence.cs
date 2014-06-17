@@ -46,8 +46,8 @@ namespace Lucene.Net.Search.Spans
 		Term t1 = randomTerm();
 		Term t2 = randomTerm();
 		BooleanQuery q1 = new BooleanQuery();
-		q1.add(new TermQuery(t1), Occur.SHOULD);
-		q1.add(new TermQuery(t2), Occur.SHOULD);
+		q1.Add(new TermQuery(t1), Occur.SHOULD);
+		q1.Add(new TermQuery(t2), Occur.SHOULD);
 		SpanOrQuery q2 = new SpanOrQuery(new SpanTermQuery(t1), new SpanTermQuery(t2));
 		assertSameSet(q1, q2);
 	  }
@@ -78,8 +78,8 @@ namespace Lucene.Net.Search.Spans
 		SpanQuery[] subquery = new SpanQuery[] {new SpanTermQuery(t1), new SpanTermQuery(t2)};
 		SpanNearQuery q1 = new SpanNearQuery(subquery, 0, true);
 		PhraseQuery q2 = new PhraseQuery();
-		q2.add(t1);
-		q2.add(t2);
+		q2.Add(t1);
+		q2.Add(t2);
 		assertSameSet(q1, q2);
 	  }
 
@@ -92,8 +92,8 @@ namespace Lucene.Net.Search.Spans
 		SpanQuery[] subquery = new SpanQuery[] {new SpanTermQuery(t1), new SpanTermQuery(t2)};
 		SpanNearQuery q1 = new SpanNearQuery(subquery, int.MaxValue, false);
 		BooleanQuery q2 = new BooleanQuery();
-		q2.add(new TermQuery(t1), Occur.MUST);
-		q2.add(new TermQuery(t2), Occur.MUST);
+		q2.Add(new TermQuery(t1), Occur.MUST);
+		q2.Add(new TermQuery(t2), Occur.MUST);
 		assertSameSet(q1, q2);
 	  }
 

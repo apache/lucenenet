@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false, 5);
 			return new TokenStreamComponents(t, t);
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis
 			  this.Limit = limit;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, Dfa, Lowercase, Limit);
 			return new TokenStreamComponents(t, t);
@@ -329,17 +329,17 @@ namespace Lucene.Net.Analysis
 		  }
 
 
-          protected internal override TextReader WrapReader(string fieldName, StreamReader reader)
+          protected override TextReader WrapReader(string fieldName, TextReader reader)
 		  {
 			return new MockCharFilter(reader, 7);
 		  }
 
-		  protected internal override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
+		  protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
 		  {
 			return components;
 		  }
 
-		  protected internal override Analyzer GetWrappedAnalyzer(string fieldName)
+		  protected override Analyzer GetWrappedAnalyzer(string fieldName)
 		  {
 			return @delegate;
 		  }
@@ -401,7 +401,7 @@ namespace Lucene.Net.Analysis
 			  this.@delegate = @delegate;
 		  }
 
-		  protected internal override Analyzer GetWrappedAnalyzer(string fieldName)
+		  protected override Analyzer GetWrappedAnalyzer(string fieldName)
 		  {
 			return @delegate;
 		  }

@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Compressing
 	/// http://code.google.com/p/lz4/
 	/// http://fastcompression.blogspot.fr/p/lz4.html
 	/// </summary>
-	internal sealed class LZ4
+	public sealed class LZ4
 	{
 
 	  private LZ4()
@@ -41,9 +41,9 @@ namespace Lucene.Net.Codecs.Compressing
 	  }
 
 	  internal const int MEMORY_USAGE = 14;
-	  internal const int MIN_MATCH = 4; // minimum length of a match
+	  public const int MIN_MATCH = 4; // minimum length of a match
 	  internal static readonly int MAX_DISTANCE = 1 << 16; // maximum distance of a reference
-	  internal const int LAST_LITERALS = 5; // the last 5 bytes must be encoded as literals
+	  public const int LAST_LITERALS = 5; // the last 5 bytes must be encoded as literals
 	  internal const int HASH_LOG_HC = 15; // log size of the dictionary for compressHC
 	  internal static readonly int HASH_TABLE_SIZE_HC = 1 << HASH_LOG_HC;
 	  internal static readonly int OPTIMAL_ML = 0x0F + 4 - 1; // match length that doesn't require an additional byte
@@ -98,15 +98,11 @@ namespace Lucene.Net.Codecs.Compressing
 	  /// </summary>
 	  public static int Decompress(DataInput compressed, int decompressedLen, sbyte[] dest, int dOff)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int destEnd = dest.length;
 		int destEnd = dest.Length;
 
 		do
 		{
 		  // literals
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int token = compressed.readByte() & 0xFF;
 		  int token = compressed.ReadByte() & 0xFF;
 		  int literalLen = (int)((uint)token >> 4);
 
@@ -131,8 +127,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 
 		  // matchs
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchDec = (compressed.readByte() & 0xFF) | ((compressed.readByte() & 0xFF) << 8);
 		  int matchDec = (compressed.ReadByte() & 0xFF) | ((compressed.ReadByte() & 0xFF) << 8);
 		  Debug.Assert(matchDec > 0);
 
@@ -149,8 +143,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  matchLen += MIN_MATCH;
 
 		  // copying a multiple of 8 bytes can make decompression from 5% to 10% faster
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int fastLen = (matchLen + 7) & 0xFFFFFFF8;
 		  int fastLen = (matchLen + 7) & unchecked((int)0xFFFFFFF8);
 		  if (matchDec < matchLen || dOff + fastLen > destEnd)
 		  {
@@ -197,27 +189,19 @@ namespace Lucene.Net.Codecs.Compressing
 
 	  private static void EncodeLastLiterals(sbyte[] bytes, int anchor, int literalLen, DataOutput @out)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int token = Math.min(literalLen, 0x0F) << 4;
 		int token = Math.Min(literalLen, 0x0F) << 4;
 		EncodeLiterals(bytes, token, anchor, literalLen, @out);
 	  }
 
 	  private static void EncodeSequence(sbyte[] bytes, int anchor, int matchRef, int matchOff, int matchLen, DataOutput @out)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int literalLen = matchOff - anchor;
 		int literalLen = matchOff - anchor;
 		Debug.Assert(matchLen >= 4);
 		// encode token
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int token = (Math.min(literalLen, 0x0F) << 4) | Math.min(matchLen - 4, 0x0F);
 		int token = (Math.Min(literalLen, 0x0F) << 4) | Math.Min(matchLen - 4, 0x0F);
 		EncodeLiterals(bytes, token, anchor, literalLen, @out);
 
 		// encode match dec
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchDec = matchOff - matchRef;
 		int matchDec = matchOff - matchRef;
 		Debug.Assert(matchDec > 0 && matchDec < 1 << 16);
 		@out.WriteByte((sbyte) matchDec);
@@ -230,7 +214,7 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 	  }
 
-	  internal sealed class HashTable
+	    public sealed class HashTable
 	  {
 		internal int HashLog;
 		internal PackedInts.Mutable hashTable;
@@ -260,11 +244,7 @@ namespace Lucene.Net.Codecs.Compressing
 	  public static void Compress(sbyte[] bytes, int off, int len, DataOutput @out, HashTable ht)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int base = off;
 		int @base = off;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = off + len;
 		int end = off + len;
 
 		int anchor = off++;
@@ -272,18 +252,10 @@ namespace Lucene.Net.Codecs.Compressing
 		if (len > LAST_LITERALS + MIN_MATCH)
 		{
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = end - LAST_LITERALS;
 		  int limit = end - LAST_LITERALS;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLimit = limit - MIN_MATCH;
 		  int matchLimit = limit - MIN_MATCH;
 		  ht.Reset(len);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int hashLog = ht.hashLog;
 		  int hashLog = ht.HashLog;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Mutable hashTable = ht.hashTable;
 		  PackedInts.Mutable hashTable = ht.hashTable;
 
 		  while (off <= limit)
@@ -296,11 +268,7 @@ namespace Lucene.Net.Codecs.Compressing
 			  {
 				goto mainBreak;
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = readInt(bytes, off);
 			  int v = ReadInt(bytes, off);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int h = hash(v, hashLog);
 			  int h = Hash(v, hashLog);
 			  @ref = @base + (int) hashTable.Get(h);
 			  Debug.Assert(PackedInts.BitsRequired(off - @base) <= hashTable.BitsPerValue);
@@ -313,8 +281,6 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 
 			// compute match length
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLen = MIN_MATCH + commonBytes(bytes, ref + MIN_MATCH, off + MIN_MATCH, limit);
 			int matchLen = MIN_MATCH + CommonBytes(bytes, @ref + MIN_MATCH, off + MIN_MATCH, limit);
 
 			EncodeSequence(bytes, anchor, @ref, off, matchLen, @out);
@@ -326,8 +292,6 @@ namespace Lucene.Net.Codecs.Compressing
 		}
 
 		// last literals
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int literalLen = end - anchor;
 		int literalLen = end - anchor;
 		Debug.Assert(literalLen >= LAST_LITERALS || literalLen == len);
 		EncodeLastLiterals(bytes, anchor, end - anchor, @out);
@@ -357,7 +321,7 @@ namespace Lucene.Net.Codecs.Compressing
 		m2.@ref = m1.@ref;
 	  }
 
-	  internal sealed class HCHashTable
+	    public sealed class HCHashTable
 	  {
 		internal const int MAX_ATTEMPTS = 256;
 		internal static readonly int MASK = MAX_DISTANCE - 1;
@@ -382,11 +346,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 		internal int HashPointer(sbyte[] bytes, int off)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = readInt(bytes, off);
 		  int v = ReadInt(bytes, off);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int h = hashHC(v);
 		  int h = HashHC(v);
 		  return HashTable[h];
 		}
@@ -398,11 +358,7 @@ namespace Lucene.Net.Codecs.Compressing
 
 		internal void AddHash(sbyte[] bytes, int off)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = readInt(bytes, off);
 		  int v = ReadInt(bytes, off);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int h = hashHC(v);
 		  int h = HashHC(v);
 		  int delta = off - HashTable[h];
 		  Debug.Assert(delta > 0, delta.ToString());
@@ -452,8 +408,6 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 			if (buf[@ref + match.Len] == buf[off + match.Len] && ReadIntEquals(buf, @ref, off))
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLen = MIN_MATCH + commonBytes(buf, ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
 			  int matchLen = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
 			  if (matchLen > match.Len)
 			  {
@@ -467,8 +421,6 @@ namespace Lucene.Net.Codecs.Compressing
 		  if (repl != 0)
 		  {
 			int ptr = off;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int end = off + repl - (MIN_MATCH - 1);
 			int end = off + repl - (MIN_MATCH - 1);
 			while (ptr < end - delta)
 			{
@@ -493,8 +445,6 @@ namespace Lucene.Net.Codecs.Compressing
 
 		  Insert(off, buf);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delta = off - startLimit;
 		  int delta = off - startLimit;
 		  int @ref = HashPointer(buf, off);
 		  for (int i = 0; i < MAX_ATTEMPTS; ++i)
@@ -505,14 +455,8 @@ namespace Lucene.Net.Codecs.Compressing
 			}
 			if (buf[@ref - delta + match.Len] == buf[startLimit + match.Len] && ReadIntEquals(buf, @ref, off))
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLenForward = MIN_MATCH + commonBytes(buf, ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
 			  int matchLenForward = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLenBackward = commonBytesBackward(buf, ref, off, base, startLimit);
 			  int matchLenBackward = CommonBytesBackward(buf, @ref, off, @base, startLimit);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLen = matchLenBackward + matchLenForward;
 			  int matchLen = matchLenBackward + matchLenForward;
 			  if (matchLen > match.Len)
 			  {
@@ -541,31 +485,17 @@ namespace Lucene.Net.Codecs.Compressing
 	  public static void CompressHC(sbyte[] src, int srcOff, int srcLen, DataOutput @out, HCHashTable ht)
 	  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int srcEnd = srcOff + srcLen;
 		int srcEnd = srcOff + srcLen;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int matchLimit = srcEnd - LAST_LITERALS;
 		int matchLimit = srcEnd - LAST_LITERALS;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int mfLimit = matchLimit - MIN_MATCH;
 		int mfLimit = matchLimit - MIN_MATCH;
 
 		int sOff = srcOff;
 		int anchor = sOff++;
 
 		ht.Reset(srcOff);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Match match0 = new Match();
 		Match match0 = new Match();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Match match1 = new Match();
 		Match match1 = new Match();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Match match2 = new Match();
 		Match match2 = new Match();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Match match3 = new Match();
 		Match match3 = new Match();
 
 		while (sOff <= mfLimit)
@@ -618,8 +548,6 @@ namespace Lucene.Net.Codecs.Compressing
 				{
 				  newMatchLen = match2.Start - match1.Start + match2.Len - MIN_MATCH;
 				}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int correction = newMatchLen - (match2.start - match1.start);
 				int correction = newMatchLen - (match2.Start - match1.Start);
 				if (correction > 0)
 				{
@@ -649,8 +577,6 @@ namespace Lucene.Net.Codecs.Compressing
 				{
 				  if (match2.Start < match1.End())
 				  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int correction = match1.end() - match2.start;
 					int correction = match1.End() - match2.Start;
 					match2.Fix(correction);
 					if (match2.Len < MIN_MATCH)
@@ -685,8 +611,6 @@ namespace Lucene.Net.Codecs.Compressing
 				  {
 					match1.Len = match2.End() - match1.Start - MIN_MATCH;
 				  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int correction = match1.end() - match2.start;
 				  int correction = match1.End() - match2.Start;
 				  match2.Fix(correction);
 				}

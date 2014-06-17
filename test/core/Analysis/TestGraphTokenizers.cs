@@ -35,6 +35,7 @@ namespace Lucene.Net.Analysis
     using Lucene.Net.Support;
     using System.IO;
 
+    [TestFixture]
 	public class TestGraphTokenizers : BaseTokenStreamTestCase
 	{
 
@@ -174,6 +175,7 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterBasic()
 	  {
 
@@ -202,7 +204,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -210,6 +212,7 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterOnGraphInput()
 	  {
 		for (int iter = 0;iter < 100 * RANDOM_MULTIPLIER;iter++)
@@ -237,7 +240,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new GraphTokenizer(reader);
 			TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -292,6 +295,7 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterBeforeHoles()
 	  {
 		for (int iter = 0;iter < 100 * RANDOM_MULTIPLIER;iter++)
@@ -323,7 +327,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -332,6 +336,7 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterAfterHoles()
 	  {
 		for (int iter = 0;iter < 100 * RANDOM_MULTIPLIER;iter++)
@@ -363,7 +368,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t2 = new RemoveATokens(t);
@@ -372,6 +377,7 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterRandom()
 	  {
 		for (int iter = 0;iter < 10 * RANDOM_MULTIPLIER;iter++)
@@ -400,7 +406,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t2 = new MockGraphTokenFilter(Random(), t);
@@ -409,6 +415,7 @@ namespace Lucene.Net.Analysis
 	  }
 
 	  // Two MockGraphTokenFilters
+      [Test]
 	  public virtual void TestDoubleMockGraphTokenFilterRandom()
 	  {
 		for (int iter = 0;iter < 10 * RANDOM_MULTIPLIER;iter++)
@@ -437,7 +444,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t1 = new MockGraphTokenFilter(Random(), t);
@@ -446,6 +453,7 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterBeforeHolesRandom()
 	  {
 		for (int iter = 0;iter < 10 * RANDOM_MULTIPLIER;iter++)
@@ -474,7 +482,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t1 = new MockGraphTokenFilter(Random(), t);
@@ -483,6 +491,7 @@ namespace Lucene.Net.Analysis
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestMockGraphTokenFilterAfterHolesRandom()
 	  {
 		for (int iter = 0;iter < 10 * RANDOM_MULTIPLIER;iter++)
@@ -511,7 +520,7 @@ namespace Lucene.Net.Analysis
 			  this.OuterInstance = outerInstance;
 		  }
 
-          protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			TokenStream t1 = new MockHoleInjectingTokenFilter(Random(), t);
@@ -536,6 +545,7 @@ namespace Lucene.Net.Analysis
 		return t;
 	  }
 
+      [Test]
 	  public virtual void TestSingleToken()
 	  {
 
@@ -545,6 +555,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestMultipleHoles()
 	  {
 		TokenStream ts = new CannedTokenStream(new Token[] {Token("a", 1, 1), Token("b", 3, 1)});
@@ -553,6 +564,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestSynOverMultipleHoles()
 	  {
 		TokenStream ts = new CannedTokenStream(new Token[] {Token("a", 1, 1), Token("x", 0, 3), Token("b", 3, 1)});
@@ -599,6 +611,7 @@ namespace Lucene.Net.Analysis
 		return BasicAutomata.MakeString(s);
 	  }
 
+      [Test]
 	  public virtual void TestTwoTokens()
 	  {
 
@@ -610,6 +623,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestHole()
 	  {
 
@@ -622,6 +636,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestOverlappedTokensSausage()
 	  {
 
@@ -634,6 +649,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestOverlappedTokensLattice()
 	  {
 
@@ -647,6 +663,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestSynOverHole()
 	  {
 
@@ -658,6 +675,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestSynOverHole2()
 	  {
 
@@ -667,6 +685,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestOverlappedTokensLattice2()
 	  {
 
@@ -679,6 +698,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(BasicOperations.SameLanguage(expected, actual));
 	  }
 
+      [Test]
 	  public virtual void TestToDot()
 	  {
 		TokenStream ts = new CannedTokenStream(new Token[] {Token("abc", 1, 1, 0, 4)});
@@ -687,6 +707,7 @@ namespace Lucene.Net.Analysis
 		Assert.IsTrue(w.ToString().IndexOf("abc / abcd") != -1);
 	  }
 
+      [Test]
 	  public virtual void TestStartsWithHole()
 	  {
 		TokenStream ts = new CannedTokenStream(new Token[] {Token("abc", 2, 1)});
@@ -698,6 +719,7 @@ namespace Lucene.Net.Analysis
 
 	  // TODO: testEndsWithHole... but we need posInc to set in TS.end()
 
+      [Test]
 	  public virtual void TestSynHangingOverEnd()
 	  {
 		TokenStream ts = new CannedTokenStream(new Token[] {Token("a", 1, 1), Token("X", 0, 10)});
