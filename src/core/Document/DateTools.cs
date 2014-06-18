@@ -226,12 +226,8 @@ namespace Lucene.Net.Document
 	  /// <param name="resolution"> The desired resolution of the date to be returned </param>
 	  /// <returns> the date with all values more precise than <code>resolution</code>
 	  ///  set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT </returns>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("fallthrough") public static long round(long time, Resolution resolution)
 	  public static long Round(long time, Resolution resolution)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Calendar calInstance = TL_CAL.get();
           DateTime dt = new DateTime(time * TimeSpan.TicksPerMillisecond);
 
           if (resolution == Resolution.YEAR)

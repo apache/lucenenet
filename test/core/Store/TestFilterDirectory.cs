@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -22,26 +25,27 @@ namespace Lucene.Net.Store
 
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using Test = org.junit.Test;
 
+    [TestFixture]
 	public class TestFilterDirectory : LuceneTestCase
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testOverrides() throws Exception
+      [Test]
 	  public virtual void TestOverrides()
 	  {
 		// verify that all methods of Directory are overridden by FilterDirectory,
 		// except those under the 'exclude' list
-		Set<Method> exclude = new HashSet<Method>();
-		exclude.add(typeof(Directory).getMethod("copy", typeof(Directory), typeof(string), typeof(string), typeof(IOContext)));
-		exclude.add(typeof(Directory).getMethod("createSlicer", typeof(string), typeof(IOContext)));
-		exclude.add(typeof(Directory).getMethod("openChecksumInput", typeof(string), typeof(IOContext)));
-		foreach (Method m in typeof(FilterDirectory).Methods)
+		HashSet<MethodInfo> exclude = new HashSet<MethodInfo>();
+		exclude.Add(typeof(Directory).GetMethod("Copy", new Type[] {typeof(Directory), typeof(string), typeof(string), typeof(IOContext)}));
+        exclude.Add(typeof(Directory).GetMethod("CreateSlicer", new Type[] {typeof(string), typeof(IOContext)}));
+        exclude.Add(typeof(Directory).GetMethod("OpenChecksumInput", new Type[] {typeof(string), typeof(IOContext)}));
+		foreach (MethodInfo m in typeof(FilterDirectory).GetMethods())
 		{
-		  if (m.DeclaringClass == typeof(Directory))
+		  if (m.DeclaringType == typeof(Directory))
 		  {
-			Assert.IsTrue("method " + m.Name + " not overridden!", exclude.contains(m));
+			Assert.IsTrue(exclude.Contains(m), "method " + m.Name + " not overridden!");
 		  }
 		}
 	  }

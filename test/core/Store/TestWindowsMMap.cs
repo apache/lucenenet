@@ -1,4 +1,7 @@
+using System.IO;
 using System.Text;
+using Lucene.Net.Index;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -33,23 +36,25 @@ namespace Lucene.Net.Store
 	using OpenMode = Lucene.Net.Index.IndexWriterConfig.OpenMode_e;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 
+    [TestFixture]
 	public class TestWindowsMMap : LuceneTestCase
 	{
 
 	  private const string Alphabet = "abcdefghijklmnopqrstuvwzyz";
 
+      [SetUp]
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 	  }
 
 	  private string RandomToken()
 	  {
-		int tl = 1 + random().Next(7);
+		int tl = 1 + Random().Next(7);
 		StringBuilder sb = new StringBuilder();
 		for (int cx = 0; cx < tl; cx++)
 		{
-		  int c = random().Next(25);
+		  int c = Random().Next(25);
 		  sb.Append(Alphabet.Substring(c, 1));
 		}
 		return sb.ToString();
@@ -57,7 +62,7 @@ namespace Lucene.Net.Store
 
 	  private string RandomField()
 	  {
-		int fl = 1 + random().Next(3);
+		int fl = 1 + Random().Next(3);
 		StringBuilder fb = new StringBuilder();
 		for (int fx = 0; fx < fl; fx++)
 		{
@@ -67,50 +72,50 @@ namespace Lucene.Net.Store
 		return fb.ToString();
 	  }
 
+      [Test]
 	  public virtual void TestMmapIndex()
 	  {
 		// sometimes the directory is not cleaned by rmDir, because on Windows it
 		// may take some time until the files are finally dereferenced. So clean the
 		// directory up front, or otherwise new IndexWriter will fail.
-		File dirPath = createTempDir("testLuceneMmap");
+		DirectoryInfo dirPath = CreateTempDir("testLuceneMmap");
 		RmDir(dirPath);
 		MMapDirectory dir = new MMapDirectory(dirPath, null);
 
 		// plan to add a set of useful stopwords, consider changing some of the
 		// interior filters.
-		MockAnalyzer analyzer = new MockAnalyzer(random());
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
 		// TODO: something about lock timeouts and leftover locks.
-		IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
-		   .setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
-		writer.commit();
-		IndexReader reader = DirectoryReader.open(dir);
-		IndexSearcher searcher = newSearcher(reader);
+		IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		writer.Commit();
+		IndexReader reader = DirectoryReader.Open(dir);
+		IndexSearcher searcher = NewSearcher(reader);
 
-		int num = atLeast(1000);
+		int num = AtLeast(1000);
 		for (int dx = 0; dx < num; dx++)
 		{
 		  string f = RandomField();
 		  Document doc = new Document();
-		  doc.add(newTextField("data", f, Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewTextField("data", f, Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
 
-		reader.close();
-		writer.close();
+		reader.Dispose();
+		writer.Dispose();
 		RmDir(dirPath);
 	  }
 
-	  private void RmDir(File dir)
+	  private void RmDir(DirectoryInfo dir)
 	  {
-		if (!dir.exists())
+		if (!dir.Exists)
 		{
 		  return;
 		}
-		foreach (File file in dir.listFiles())
+		foreach (FileInfo file in dir.GetFiles())
 		{
-		  file.delete();
+		  file.Delete();
 		}
-		dir.delete();
+		dir.Delete();
 	  }
 	}
 

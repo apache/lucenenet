@@ -1,5 +1,8 @@
 using System;
+using System.IO;
 using System.Threading;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -25,7 +28,6 @@ namespace Lucene.Net.Store
 	using Field = Lucene.Net.Document.Field;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -40,81 +42,90 @@ namespace Lucene.Net.Store
 	/// JUnit testcase to test RAMDirectory. RAMDirectory itself is used in many testcases,
 	/// but not one of them uses an different constructor other than the default constructor.
 	/// </summary>
-	public class TestRAMDirectory : LuceneTestCase
+	[TestFixture]
+    public class TestRAMDirectory : LuceneTestCase
 	{
 
-	  private File IndexDir = null;
+	  private DirectoryInfo IndexDir = null;
 
 	  // add enough document so that the index will be larger than RAMDirectory.READ_BUFFER_SIZE
 	  private readonly int DocsToAdd = 500;
 
 	  // setup the index
+      [SetUp]
 	  public override void SetUp()
 	  {
-		base.setUp();
-		IndexDir = createTempDir("RAMDirIndex");
+		base.SetUp();
+		//IndexDir = CreateTempDir("RAMDirIndex");
+        string tempDir = Path.GetTempPath();
+        if (tempDir == null)
+            throw new IOException("java.io.tmpdir undefined, cannot run test");
+        IndexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
 
-		Directory dir = newFSDirectory(IndexDir);
-		IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		Directory dir = NewFSDirectory(IndexDir);
+		IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 		// add some documents
 		Document doc = null;
 		for (int i = 0; i < DocsToAdd; i++)
 		{
 		  doc = new Document();
-		  doc.add(newStringField("content", English.intToEnglish(i).Trim(), Field.Store.YES));
-		  writer.addDocument(doc);
+		  doc.Add(NewStringField("content", English.IntToEnglish(i).Trim(), Field.Store.YES));
+		  writer.AddDocument(doc);
 		}
-		Assert.AreEqual(DocsToAdd, writer.maxDoc());
-		writer.close();
-		dir.close();
+		Assert.AreEqual(DocsToAdd, writer.MaxDoc());
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
-	  public virtual void TestRAMDirectory()
+
+      [Test]
+	  public virtual void TestRAMDirectoryMem()
 	  {
 
-		Directory dir = newFSDirectory(IndexDir);
-		MockDirectoryWrapper ramDir = new MockDirectoryWrapper(random(), new RAMDirectory(dir, newIOContext(random())));
+		Directory dir = NewFSDirectory(IndexDir);
+		MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random())));
 
 		// close the underlaying directory
-		dir.close();
+		dir.Dispose();
 
 		// Check size
-		Assert.AreEqual(ramDir.sizeInBytes(), ramDir.RecomputedSizeInBytes);
+		Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);
 
 		// open reader to test document count
-		IndexReader reader = DirectoryReader.open(ramDir);
-		Assert.AreEqual(DocsToAdd, reader.numDocs());
+		IndexReader reader = DirectoryReader.Open(ramDir);
+		Assert.AreEqual(DocsToAdd, reader.NumDocs());
 
 		// open search zo check if all doc's are there
-		IndexSearcher searcher = newSearcher(reader);
+		IndexSearcher searcher = NewSearcher(reader);
 
 		// search for all documents
 		for (int i = 0; i < DocsToAdd; i++)
 		{
-		  Document doc = searcher.doc(i);
-		  Assert.IsTrue(doc.getField("content") != null);
+		  Document doc = searcher.Doc(i);
+		  Assert.IsTrue(doc.GetField("content") != null);
 		}
 
 		// cleanup
-		reader.close();
+		reader.Dispose();
 	  }
 
 	  private readonly int NumThreads = 10;
 	  private readonly int DocsPerThread = 40;
 
+      [Test]
 	  public virtual void TestRAMDirectorySize()
 	  {
 
-		Directory dir = newFSDirectory(IndexDir);
-		MockDirectoryWrapper ramDir = new MockDirectoryWrapper(random(), new RAMDirectory(dir, newIOContext(random())));
-		dir.close();
+		Directory dir = NewFSDirectory(IndexDir);
+		MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random())));
+		dir.Dispose();
 
-		IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
-		writer.forceMerge(1);
+		IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND));
+		writer.ForceMerge(1);
 
-		Assert.AreEqual(ramDir.sizeInBytes(), ramDir.RecomputedSizeInBytes);
+		Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);
 
-		Thread[] threads = new Thread[NumThreads];
+		ThreadClass[] threads = new ThreadClass[NumThreads];
 		for (int i = 0; i < NumThreads; i++)
 		{
 		  int num = i;
@@ -129,13 +140,13 @@ namespace Lucene.Net.Store
 		  threads[i].Join();
 		}
 
-		writer.forceMerge(1);
-		Assert.AreEqual(ramDir.sizeInBytes(), ramDir.RecomputedSizeInBytes);
+		writer.ForceMerge(1);
+		Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);
 
-		writer.close();
+		writer.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestRAMDirectory OuterInstance;
 
@@ -154,70 +165,73 @@ namespace Lucene.Net.Store
 			for (int j = 1; j < OuterInstance.DocsPerThread; j++)
 			{
 			  Document doc = new Document();
-			  doc.add(newStringField("sizeContent", English.intToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
+			  doc.Add(NewStringField("sizeContent", English.IntToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
 			  try
 			  {
-				Writer.addDocument(doc);
+				Writer.AddDocument(doc);
 			  }
 			  catch (IOException e)
 			  {
-				throw new Exception(e);
+				throw new Exception(e.Message, e);
 			  }
 			}
 		  }
 	  }
-
+       
+      [TearDown]
 	  public override void TearDown()
 	  {
 		// cleanup 
-		if (IndexDir != null && IndexDir.exists())
+		if (IndexDir != null && IndexDir.Exists)
 		{
 		  RmDir(IndexDir);
 		}
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  // LUCENE-1196
+      [Test]
 	  public virtual void TestIllegalEOF()
 	  {
 		RAMDirectory dir = new RAMDirectory();
-		IndexOutput o = dir.createOutput("out", newIOContext(random()));
+		IndexOutput o = dir.CreateOutput("out", NewIOContext(Random()));
 		sbyte[] b = new sbyte[1024];
-		o.writeBytes(b, 0, 1024);
-		o.close();
-		IndexInput i = dir.openInput("out", newIOContext(random()));
-		i.seek(1024);
-		i.close();
-		dir.close();
+		o.WriteBytes(b, 0, 1024);
+		o.Dispose();
+		IndexInput i = dir.OpenInput("out", NewIOContext(Random()));
+		i.Seek(1024);
+		i.Dispose();
+		dir.Dispose();
 	  }
 
-	  private void RmDir(File dir)
+      private void RmDir(DirectoryInfo dir)
 	  {
-		File[] files = dir.listFiles();
+		FileInfo[] files = dir.GetFiles();
 		for (int i = 0; i < files.Length; i++)
 		{
-		  files[i].delete();
+		  files[i].Delete();
 		}
-		dir.delete();
+		dir.Delete();
 	  }
 
 	  // LUCENE-2852
+      [Test]
 	  public virtual void TestSeekToEOFThenBack()
 	  {
 		RAMDirectory dir = new RAMDirectory();
 
-		IndexOutput o = dir.createOutput("out", newIOContext(random()));
+		IndexOutput o = dir.CreateOutput("out", NewIOContext(Random()));
 		sbyte[] bytes = new sbyte[3 * RAMInputStream.BUFFER_SIZE];
-		o.writeBytes(bytes, 0, bytes.Length);
-		o.close();
+		o.WriteBytes(bytes, 0, bytes.Length);
+		o.Dispose();
 
-		IndexInput i = dir.openInput("out", newIOContext(random()));
-		i.seek(2 * RAMInputStream.BUFFER_SIZE-1);
-		i.seek(3 * RAMInputStream.BUFFER_SIZE);
-		i.seek(RAMInputStream.BUFFER_SIZE);
-		i.readBytes(bytes, 0, 2 * RAMInputStream.BUFFER_SIZE);
-		i.close();
-		dir.close();
+		IndexInput i = dir.OpenInput("out", NewIOContext(Random()));
+		i.Seek(2 * RAMInputStream.BUFFER_SIZE-1);
+		i.Seek(3 * RAMInputStream.BUFFER_SIZE);
+		i.Seek(RAMInputStream.BUFFER_SIZE);
+		i.ReadBytes(bytes, 0, 2 * RAMInputStream.BUFFER_SIZE);
+		i.Dispose();
+		dir.Dispose();
 	  }
 	}
 

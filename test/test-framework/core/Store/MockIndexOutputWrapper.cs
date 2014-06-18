@@ -37,7 +37,7 @@ namespace Lucene.Net.Store
 	  private bool First = true;
 	  internal readonly string Name;
 
-	  internal sbyte[] SingleByte = new sbyte[1];
+	  internal byte[] SingleByte = new byte[1];
 
 	  /// <summary>
 	  /// Construct an empty output buffer. </summary>
@@ -57,7 +57,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  private void CheckDiskFull(sbyte[] b, int offset, DataInput @in, long len)
+	  private void CheckDiskFull(byte[] b, int offset, DataInput @in, long len)
 	  {
 		long freeSpace = Dir.MaxSize == 0 ? 0 : Dir.MaxSize - Dir.SizeInBytes();
 		long realUsage = 0;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		try
 		{
@@ -133,13 +133,13 @@ namespace Lucene.Net.Store
 		@delegate.Flush();
 	  }
 
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		SingleByte[0] = b;
 		WriteBytes(SingleByte, 0, 1);
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int len)
+	  public override void WriteBytes(byte[] b, int offset, int len)
 	  {
 		CheckCrashed();
 		CheckDiskFull(b, offset, null, len);

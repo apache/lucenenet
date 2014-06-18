@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 		// guarded by Reentrant lock
 		internal bool IsActive = true;
 
-		internal ThreadState(DocumentsWriterPerThread dpwt)
+		public ThreadState(DocumentsWriterPerThread dpwt)
 		{
 		  this.Dwpt = dpwt;
 		}
@@ -156,12 +156,12 @@ namespace Lucene.Net.Index
 	  }
 
 	  private ThreadState[] ThreadStates;
-	  private volatile int NumThreadStatesActive;
+      private volatile int NumThreadStatesActive;
 
 	  /// <summary>
 	  /// Creates a new <seealso cref="DocumentsWriterPerThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
 	  /// </summary>
-	  internal DocumentsWriterPerThreadPool(int maxNumThreadStates)
+	  public DocumentsWriterPerThreadPool(int maxNumThreadStates)
 	  {
 		if (maxNumThreadStates < 1)
 		{
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
 	  /// Returns the max number of <seealso cref="ThreadState"/> instances available in this
 	  /// <seealso cref="DocumentsWriterPerThreadPool"/>
 	  /// </summary>
-	  internal virtual int MaxThreadStates
+	  public virtual int MaxThreadStates
 	  {
 		  get
 		  {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Returns the active number of <seealso cref="ThreadState"/> instances.
 	  /// </summary>
-	  internal virtual int ActiveThreadState
+	  public virtual int ActiveThreadState
 	  {
 		  get
 		  {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  /// <returns> a new <seealso cref="ThreadState"/> iff any new state is available otherwise
 	  ///         <code>null</code> </returns>
-	  internal virtual ThreadState NewThreadState()
+	  public virtual ThreadState NewThreadState()
 	  {
 		  lock (this)
 		  {

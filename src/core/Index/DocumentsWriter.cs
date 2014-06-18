@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using InfoStream = Lucene.Net.Util.InfoStream;
-using Lucene.Net.Support;
+    using Lucene.Net.Support;
     using System.Collections.Concurrent;
 
 	/// <summary>
@@ -102,8 +102,7 @@ using Lucene.Net.Support;
 	/// deleted so that the document is always atomically ("all
 	/// or none") added to the index.
 	/// </summary>
-
-	internal sealed class DocumentsWriter : IDisposable
+	public sealed class DocumentsWriter : IDisposable
 	{
 	  private readonly Directory Directory;
 

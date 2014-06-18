@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -38,19 +41,21 @@ namespace Lucene.Net.Store
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [TestFixture]
 	public class TestNRTCachingDirectory : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestNRTAndCommit()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 		NRTCachingDirectory cachedDir = new NRTCachingDirectory(dir, 2.0, 25.0);
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-		RandomIndexWriter w = new RandomIndexWriter(random(), cachedDir, conf);
-		LineFileDocs docs = new LineFileDocs(random(), defaultCodecSupportsDocValues());
-		int numDocs = TestUtil.Next(random(), 100, 400);
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+		RandomIndexWriter w = new RandomIndexWriter(Random(), cachedDir, conf);
+		LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+		int numDocs = TestUtil.NextInt(Random(), 100, 400);
 
 		if (VERBOSE)
 		{
@@ -61,56 +66,56 @@ namespace Lucene.Net.Store
 		DirectoryReader r = null;
 		for (int docCount = 0;docCount < numDocs;docCount++)
 		{
-		  Document doc = docs.nextDoc();
-		  ids.Add(new BytesRef(doc.get("docid")));
-		  w.addDocument(doc);
-		  if (random().Next(20) == 17)
+		  Document doc = docs.NextDoc();
+		  ids.Add(new BytesRef(doc.Get("docid")));
+		  w.AddDocument(doc);
+		  if (Random().Next(20) == 17)
 		  {
 			if (r == null)
 			{
-			  r = DirectoryReader.open(w.w, false);
+			  r = DirectoryReader.Open(w.w, false);
 			}
 			else
 			{
-			  DirectoryReader r2 = DirectoryReader.openIfChanged(r);
+			  DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 			  if (r2 != null)
 			  {
-				r.close();
+				r.Dispose();
 				r = r2;
 			  }
 			}
-			Assert.AreEqual(1 + docCount, r.numDocs());
-			IndexSearcher s = newSearcher(r);
+			Assert.AreEqual(1 + docCount, r.NumDocs());
+			IndexSearcher s = NewSearcher(r);
 			// Just make sure search can run; we can't assert
 			// totHits since it could be 0
-			TopDocs hits = s.search(new TermQuery(new Term("body", "the")), 10);
+			TopDocs hits = s.Search(new TermQuery(new Term("body", "the")), 10);
 			// System.out.println("tot hits " + hits.totalHits);
 		  }
 		}
 
 		if (r != null)
 		{
-		  r.close();
+		  r.Dispose();
 		}
 
 		// Close should force cache to clear since all files are sync'd
-		w.close();
+		w.Close();
 
-		string[] cachedFiles = cachedDir.listCachedFiles();
+		string[] cachedFiles = cachedDir.ListCachedFiles();
 		foreach (string file in cachedFiles)
 		{
 		  Console.WriteLine("FAIL: cached file " + file + " remains after sync");
 		}
 		Assert.AreEqual(0, cachedFiles.Length);
 
-		r = DirectoryReader.open(dir);
+		r = DirectoryReader.Open(dir);
 		foreach (BytesRef id in ids)
 		{
-		  Assert.AreEqual(1, r.docFreq(new Term("docid", id)));
+		  Assert.AreEqual(1, r.DocFreq(new Term("docid", id)));
 		}
-		r.close();
-		cachedDir.close();
-		docs.close();
+		r.Dispose();
+		cachedDir.Dispose();
+        docs.Close();
 	  }
 
 	  // NOTE: not a test; just here to make sure the code frag
@@ -119,75 +124,85 @@ namespace Lucene.Net.Store
 	  {
 		Analyzer analyzer = null;
 
-		Directory fsDir = FSDirectory.open(new File("/path/to/index"));
+		Directory fsDir = FSDirectory.Open(new DirectoryInfo("/path/to/index"));
 		NRTCachingDirectory cachedFSDir = new NRTCachingDirectory(fsDir, 2.0, 25.0);
 		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 		IndexWriter writer = new IndexWriter(cachedFSDir, conf);
 	  }
 
+      [Test]
 	  public virtual void TestDeleteFile()
 	  {
-		Directory dir = new NRTCachingDirectory(newDirectory(), 2.0, 25.0);
-		dir.createOutput("foo.txt", IOContext.DEFAULT).close();
-		dir.deleteFile("foo.txt");
-		Assert.AreEqual(0, dir.listAll().length);
-		dir.close();
+		Directory dir = new NRTCachingDirectory(NewDirectory(), 2.0, 25.0);
+		dir.CreateOutput("foo.txt", IOContext.DEFAULT).Dispose();
+		dir.DeleteFile("foo.txt");
+		Assert.AreEqual(0, dir.ListAll().Length);
+		dir.Dispose();
 	  }
 
 	  // LUCENE-3382 -- make sure we get exception if the directory really does not exist.
+      [Test]
 	  public virtual void TestNoDir()
 	  {
-		File tempDir = createTempDir("doesnotexist");
-		TestUtil.rm(tempDir);
-		Directory dir = new NRTCachingDirectory(newFSDirectory(tempDir), 2.0, 25.0);
+		//Directory tempDir = CreateTempDir("doesnotexist");
+
+        string tempDir = Path.GetTempPath();
+        if (tempDir == null)
+            throw new IOException("java.io.tmpdir undefined, cannot run test");
+        DirectoryInfo TempDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
+
+		TestUtil.Rm(TempDir);
+		Directory dir = new NRTCachingDirectory(NewFSDirectory(TempDir), 2.0, 25.0);
 		try
 		{
-		  DirectoryReader.open(dir);
+		  DirectoryReader.Open(dir);
 		  Assert.Fail("did not hit expected exception");
 		}
 		catch (NoSuchDirectoryException nsde)
 		{
 		  // expected
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-3382 test that we can add a file, and then when we call list() we get it back
+      [Test]
 	  public virtual void TestDirectoryFilter()
 	  {
-		Directory dir = new NRTCachingDirectory(newFSDirectory(createTempDir("foo")), 2.0, 25.0);
+		Directory dir = new NRTCachingDirectory(NewFSDirectory(CreateTempDir("foo")), 2.0, 25.0);
 		string name = "file";
 		try
 		{
-		  dir.createOutput(name, newIOContext(random())).close();
-		  Assert.IsTrue(slowFileExists(dir, name));
-		  Assert.IsTrue(Arrays.asList(dir.listAll()).contains(name));
+		  dir.CreateOutput(name, NewIOContext(Random())).Dispose();
+		  Assert.IsTrue(SlowFileExists(dir, name));
+		  Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
 		}
 		finally
 		{
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
 	  // LUCENE-3382 test that delegate compound files correctly.
+      [Test]
 	  public virtual void TestCompoundFileAppendTwice()
 	  {
-		Directory newDir = new NRTCachingDirectory(newDirectory(), 2.0, 25.0);
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
+		Directory newDir = new NRTCachingDirectory(NewDirectory(), 2.0, 25.0);
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
 		CreateSequenceFile(newDir, "d1", (sbyte) 0, 15);
-		IndexOutput @out = csw.createOutput("d.xyz", newIOContext(random()));
-		@out.writeInt(0);
-		@out.close();
-		Assert.AreEqual(1, csw.listAll().length);
-		Assert.AreEqual("d.xyz", csw.listAll()[0]);
+		IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
+		@out.WriteInt(0);
+		@out.Dispose();
+		Assert.AreEqual(1, csw.ListAll().Length);
+		Assert.AreEqual("d.xyz", csw.ListAll()[0]);
 
-		csw.close();
+		csw.Dispose();
 
-		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
-		Assert.AreEqual(1, cfr.listAll().length);
-		Assert.AreEqual("d.xyz", cfr.listAll()[0]);
-		cfr.close();
-		newDir.close();
+		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+		Assert.AreEqual(1, cfr.ListAll().Length);
+		Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
+		cfr.Dispose();
+		newDir.Dispose();
 	  }
 
 	  /// <summary>
@@ -197,13 +212,13 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
 	  {
-		  IndexOutput os = dir.createOutput(name, newIOContext(random()));
+		  IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
 		  for (int i = 0; i < size; i++)
 		  {
-			  os.writeByte(start);
+			  os.WriteByte(start);
 			  start++;
 		  }
-		  os.close();
+		  os.Dispose();
 	  }
 	}
 

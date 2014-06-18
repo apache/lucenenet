@@ -1,4 +1,8 @@
 using System;
+using System.IO;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -23,8 +27,7 @@ namespace Lucene.Net.Store
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 
-	using Test = org.junit.Test;
-
+    [TestFixture]
 	public class TestCopyBytes : LuceneTestCase
 	{
 
@@ -35,21 +38,22 @@ namespace Lucene.Net.Store
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testCopyBytes() throws Exception
-	  public virtual void TestCopyBytes()
+      [Test]
+	  public virtual void TestCopyBytesMem()
 	  {
-		int num = atLeast(10);
+		int num = AtLeast(10);
 		for (int iter = 0; iter < num; iter++)
 		{
-		  Directory dir = newDirectory();
+		  Directory dir = NewDirectory();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: iter=" + iter + " dir=" + dir);
 		  }
 
 		  // make random file
-		  IndexOutput @out = dir.createOutput("test", newIOContext(random()));
-		  sbyte[] bytes = new sbyte[TestUtil.Next(random(), 1, 77777)];
-		  int size = TestUtil.Next(random(), 1, 1777777);
+		  IndexOutput @out = dir.CreateOutput("test", NewIOContext(Random()));
+		  sbyte[] bytes = new sbyte[TestUtil.NextInt(Random(), 1, 77777)];
+		  int size = TestUtil.NextInt(Random(), 1, 1777777);
 		  int upto = 0;
 		  int byteUpto = 0;
 		  while (upto < size)
@@ -58,55 +62,55 @@ namespace Lucene.Net.Store
 			upto++;
 			if (byteUpto == bytes.Length)
 			{
-			  @out.writeBytes(bytes, 0, bytes.Length);
+			  @out.WriteBytes(bytes, 0, bytes.Length);
 			  byteUpto = 0;
 			}
 		  }
 
-		  @out.writeBytes(bytes, 0, byteUpto);
+		  @out.WriteBytes(bytes, 0, byteUpto);
 		  Assert.AreEqual(size, @out.FilePointer);
-		  @out.close();
-		  Assert.AreEqual(size, dir.fileLength("test"));
+		  @out.Dispose();
+		  Assert.AreEqual(size, dir.FileLength("test"));
 
 		  // copy from test -> test2
-		  IndexInput @in = dir.openInput("test", newIOContext(random()));
+		  IndexInput @in = dir.OpenInput("test", NewIOContext(Random()));
 
-		  @out = dir.createOutput("test2", newIOContext(random()));
+		  @out = dir.CreateOutput("test2", NewIOContext(Random()));
 
 		  upto = 0;
 		  while (upto < size)
 		  {
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  @out.writeByte(@in.readByte());
+			  @out.WriteByte(@in.ReadByte());
 			  upto++;
 			}
 			else
 			{
-			  int chunk = Math.Min(TestUtil.Next(random(), 1, bytes.Length), size - upto);
-			  @out.copyBytes(@in, chunk);
+			  int chunk = Math.Min(TestUtil.NextInt(Random(), 1, bytes.Length), size - upto);
+			  @out.CopyBytes(@in, chunk);
 			  upto += chunk;
 			}
 		  }
 		  Assert.AreEqual(size, upto);
-		  @out.close();
-		  @in.close();
+		  @out.Dispose();
+		  @in.Dispose();
 
 		  // verify
-		  IndexInput in2 = dir.openInput("test2", newIOContext(random()));
+		  IndexInput in2 = dir.OpenInput("test2", NewIOContext(Random()));
 		  upto = 0;
 		  while (upto < size)
 		  {
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  sbyte v = in2.readByte();
+			  sbyte v = in2.ReadSByte();
 			  Assert.AreEqual(Value(upto), v);
 			  upto++;
 			}
 			else
 			{
-			  int limit = Math.Min(TestUtil.Next(random(), 1, bytes.Length), size - upto);
-			  in2.readBytes(bytes, 0, limit);
+			  int limit = Math.Min(TestUtil.NextInt(Random(), 1, bytes.Length), size - upto);
+			  in2.ReadBytes(bytes, 0, limit);
 			  for (int byteIdx = 0; byteIdx < limit; byteIdx++)
 			  {
 				Assert.AreEqual(Value(upto), bytes[byteIdx]);
@@ -114,38 +118,39 @@ namespace Lucene.Net.Store
 			  }
 			}
 		  }
-		  in2.close();
+		  in2.Dispose();
 
-		  dir.deleteFile("test");
-		  dir.deleteFile("test2");
+		  dir.DeleteFile("test");
+		  dir.DeleteFile("test2");
 
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
 	  // LUCENE-3541
+      [Test]
 	  public virtual void TestCopyBytesWithThreads()
 	  {
-		int datalen = TestUtil.Next(random(), 101, 10000);
-		sbyte[] data = new sbyte[datalen];
-		random().nextBytes(data);
+		int datalen = TestUtil.NextInt(Random(), 101, 10000);
+		byte[] data = new byte[datalen];
+		Random().NextBytes(data);
 
-		Directory d = newDirectory();
-		IndexOutput output = d.createOutput("data", IOContext.DEFAULT);
-		output.writeBytes(data, 0, datalen);
-		output.close();
+		Directory d = NewDirectory();
+		IndexOutput output = d.CreateOutput("data", IOContext.DEFAULT);
+		output.WriteBytes(data, 0, datalen);
+		output.Dispose();
 
-		IndexInput input = d.openInput("data", IOContext.DEFAULT);
-		IndexOutput outputHeader = d.createOutput("header", IOContext.DEFAULT);
+		IndexInput input = d.OpenInput("data", IOContext.DEFAULT);
+		IndexOutput outputHeader = d.CreateOutput("header", IOContext.DEFAULT);
 		// copy our 100-byte header
-		outputHeader.copyBytes(input, 100);
-		outputHeader.close();
+		outputHeader.CopyBytes(input, 100);
+		outputHeader.Dispose();
 
 		// now make N copies of the remaining bytes
 		CopyThread[] copies = new CopyThread[10];
 		for (int i = 0; i < copies.Length; i++)
 		{
-		  copies[i] = new CopyThread(input.clone(), d.createOutput("copy" + i, IOContext.DEFAULT));
+		  copies[i] = new CopyThread((IndexInput) input.Clone(), d.CreateOutput("copy" + i, IOContext.DEFAULT));
 		}
 
 		for (int i = 0; i < copies.Length; i++)
@@ -160,19 +165,19 @@ namespace Lucene.Net.Store
 
 		for (int i = 0; i < copies.Length; i++)
 		{
-		  IndexInput copiedData = d.openInput("copy" + i, IOContext.DEFAULT);
+		  IndexInput copiedData = d.OpenInput("copy" + i, IOContext.DEFAULT);
 		  sbyte[] dataCopy = new sbyte[datalen];
 		  Array.Copy(data, 0, dataCopy, 0, 100); // copy the header for easy testing
-		  copiedData.readBytes(dataCopy, 100, datalen - 100);
-		  assertArrayEquals(data, dataCopy);
-		  copiedData.close();
+		  copiedData.ReadBytes(dataCopy, 100, datalen - 100);
+		  Assert.AreEqual(data, dataCopy);
+		  copiedData.Dispose();
 		}
-		input.close();
-		d.close();
-
+		input.Dispose();
+		d.Dispose();
+        
 	  }
 
-	  internal class CopyThread : System.Threading.Thread
+	  internal class CopyThread : ThreadClass
 	  {
 		internal readonly IndexInput Src;
 		internal readonly IndexOutput Dst;
@@ -187,12 +192,12 @@ namespace Lucene.Net.Store
 		{
 		  try
 		  {
-			Dst.copyBytes(Src, Src.length() - 100);
-			Dst.close();
+			Dst.CopyBytes(Src, Src.Length() - 100);
+			Dst.Dispose();
 		  }
 		  catch (IOException ex)
 		  {
-			throw new Exception(ex);
+			throw new Exception(ex.Message, ex);
 		  }
 		}
 	  }

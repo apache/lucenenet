@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -35,15 +36,16 @@ namespace Lucene.Net.Index
 	  private readonly Random Random;
 	  private readonly int MaxRetry;
 
-	  public RandomDocumentsWriterPerThreadPool(int maxNumPerThreads, Random random) : base(maxNumPerThreads)
+	  public RandomDocumentsWriterPerThreadPool(int maxNumPerThreads, Random random) 
+          : base(maxNumPerThreads)
 	  {
 		Debug.Assert(MaxThreadStates >= 1);
 		States = new ThreadState[maxNumPerThreads];
-		this.Random = new Random(random.nextLong());
+		this.Random = new Random(random.Next());
 		this.MaxRetry = 1 + random.Next(10);
 	  }
 
-	  internal override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+	  internal ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
 	  {
 		ThreadState threadState = null;
 		if (ActiveThreadState == 0)
@@ -52,7 +54,7 @@ namespace Lucene.Net.Index
 		  {
 			if (ActiveThreadState == 0)
 			{
-			  threadState = States[0] = newThreadState();
+			  threadState = States[0] = NewThreadState();
 			  return threadState;
 			}
 		  }
@@ -67,7 +69,7 @@ namespace Lucene.Net.Index
 			Debug.Assert(threadState != null);
 		  }
 
-		  if (threadState.tryLock())
+		  if (threadState.TryLock())
 		  {
 			return threadState;
 		  }
@@ -86,7 +88,7 @@ namespace Lucene.Net.Index
 
 		lock (this)
 		{
-		  ThreadState newThreadState = newThreadState();
+		  ThreadState newThreadState = NewThreadState();
 		  if (newThreadState != null) // did we get a new state?
 		  {
 			threadState = States[ActiveThreadState - 1] = newThreadState;
@@ -96,7 +98,7 @@ namespace Lucene.Net.Index
 		  // if no new state is available lock the random one
 		}
 		Debug.Assert(threadState != null);
-		threadState.@lock();
+		threadState.@Lock();
 		return threadState;
 	  }
 

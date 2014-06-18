@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Store
 {
@@ -45,6 +46,8 @@ namespace Lucene.Net.Store
 	public abstract class Directory : IDisposable
 	{
 
+      protected volatile bool isOpen = true;
+
 	  /// <summary>
 	  /// Returns an array of strings, one for each file in the directory.
 	  /// </summary>
@@ -56,8 +59,7 @@ namespace Lucene.Net.Store
 	  /// <summary>
 	  /// Returns true iff a file with the given name exists.
 	  /// </summary>
-	  ///  @deprecated this method will be removed in 5.0  
-	  [Obsolete("this method will be removed in 5.0")]
+	  ///  @deprecated this method will be removed in 5.0 
 	  public abstract bool FileExists(string name);
 
 	  /// <summary>
@@ -274,8 +276,10 @@ namespace Lucene.Net.Store
 	  }
 
 	  /// <exception cref="AlreadyClosedException"> if this Directory is closed </exception>
-	  protected internal virtual void EnsureOpen()
+	  public virtual void EnsureOpen()
 	  {
+          if (!isOpen)
+              throw new AlreadyClosedException("this Directory is closed");
 	  }
 
 	  /// <summary>
@@ -325,7 +329,8 @@ namespace Lucene.Net.Store
 		internal long FileOffset;
 		internal long Length_Renamed;
 
-		internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length) : this(sliceDescription, @base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
+		internal SlicedIndexInput(string sliceDescription, IndexInput @base, long fileOffset, long length) 
+            : this(sliceDescription, @base, fileOffset, length, BufferedIndexInput.BUFFER_SIZE)
 		{
 		}
 
@@ -365,10 +370,8 @@ namespace Lucene.Net.Store
 		/// <summary>
 		/// Expert: implements seek.  Sets current position in this file, where
 		///  the next <seealso cref="#readInternal(byte[],int,int)"/> will occur. </summary>
-		/// <seealso cref= #readInternal(byte[],int,int) </seealso>
+		/// <seealso> cref= #readInternal(byte[],int,int) </seealso>
 		protected internal override void SeekInternal(long pos)
-		/// <summary>
-		/// Closes the stream to further operations. </summary>
 		{
 		}
 		public override void Dispose()
@@ -381,6 +384,11 @@ namespace Lucene.Net.Store
 		  return Length_Renamed;
 		}
 	  }
+
+	    public bool IsOpen
+	    {
+	        get { return IsOpen; }
+	    }
 	}
 
 }

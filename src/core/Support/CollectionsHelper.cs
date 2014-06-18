@@ -237,6 +237,13 @@ namespace Lucene.Net.Support
             return true;
         }
 
+        public static ISet<T> Singleton<T>(T single)
+        {
+            T[] singletonArr = new T[]{single};
+            HashSet<T> singleton = new HashSet<T>(singletonArr);
+            return singleton;
+        }
+
         /// <summary>
         /// Sorts an IList collections
         /// </summary>

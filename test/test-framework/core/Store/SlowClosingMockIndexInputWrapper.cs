@@ -35,7 +35,7 @@ namespace Lucene.Net.Store
 	  {
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		try
 		{
@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  base.Close();
+		  base.Dispose();
 		}
 	  }
 	}

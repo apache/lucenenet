@@ -1,4 +1,8 @@
 using System;
+using System.IO;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -21,23 +25,25 @@ namespace Lucene.Net.Store
 	 */
 
 
-	using Throttling = Lucene.Net.Store.MockDirectoryWrapper.Throttling;
+	using Throttling = Lucene.Net.Store.MockDirectoryWrapper.Throttling_e;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [TestFixture]
 	public class TestDirectory : LuceneTestCase
 	{
+      [Test]
 	  public virtual void TestDetectClose()
 	  {
-		File tempDir = createTempDir(LuceneTestCase.TestClass.SimpleName);
+	    DirectoryInfo tempDir = new System.IO.DirectoryInfo(AppSettings.Get("tempDir", System.IO.Path.GetTempPath()));//CreateTempDir(LuceneTestCase.TestClass.SimpleName);
 		Directory[] dirs = new Directory[] {new RAMDirectory(), new SimpleFSDirectory(tempDir), new NIOFSDirectory(tempDir)};
 
 		foreach (Directory dir in dirs)
 		{
-		  dir.close();
+		  dir.Dispose();
 		  try
 		  {
-			dir.createOutput("test", newIOContext(random()));
+			dir.CreateOutput("test", NewIOContext(Random()));
 			Assert.Fail("did not hit expected exception");
 		  }
 		  catch (AlreadyClosedException ace)
@@ -50,9 +56,10 @@ namespace Lucene.Net.Store
 	  // try this seed: 7D7E036AD12927F5:93333EF9E6DE44DE
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Nightly public void testThreadSafety() throws Exception
+      [Test]
 	  public virtual void TestThreadSafety()
 	  {
-		BaseDirectoryWrapper dir = newDirectory();
+		BaseDirectoryWrapper dir = NewDirectory();
 		dir.CheckIndexOnClose = false; // we arent making an index
 		if (dir is MockDirectoryWrapper)
 		{
@@ -64,109 +71,106 @@ namespace Lucene.Net.Store
 		  Console.WriteLine(dir);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Local classes are not converted by Java to C# Converter:
-//		class TheThread extends Thread
-	//	{
-	//	  private String name;
-	//
-	//	  public TheThread(String name)
-	//	  {
-	//		this.name = name;
-	//	  }
-	//
-	//	  @@Override public void run()
-	//	  {
-	//		for (int i = 0; i < 3000; i++)
-	//		{
-	//		  String fileName = this.name + i;
-	//		  try
-	//		  {
-	//			//System.out.println("create:" + fileName);
-	//			IndexOutput output = dir.createOutput(fileName, newIOContext(random()));
-	//			output.close();
-	//			Assert.IsTrue(slowFileExists(dir, fileName));
-	//		  }
-	//		  catch (IOException e)
-	//		  {
-	//			throw new RuntimeException(e);
-	//		  }
-	//		}
-	//	  }
-	//	};
+		TheThread theThread = new TheThread("t1", dir);
+		TheThread2 theThread2 = new TheThread2("t2", dir);
+		theThread.Start();
+		theThread2.Start();
 
-//JAVA TO C# CONVERTER TODO TASK: Local classes are not converted by Java to C# Converter:
-//		class TheThread2 extends Thread
-	//	{
-	//	  private String name;
-	//
-	//	  public TheThread2(String name)
-	//	  {
-	//		this.name = name;
-	//	  }
-	//
-	//	  @@Override public void run()
-	//	  {
-	//		for (int i = 0; i < 10000; i++)
-	//		{
-	//		  try
-	//		  {
-	//			String[] files = dir.listAll();
-	//			for (String file : files)
-	//			{
-	//			  //System.out.println("file:" + file);
-	//			 try
-	//			 {
-	//			  IndexInput input = dir.openInput(file, newIOContext(random()));
-	//			  input.close();
-	//			  }
-	//			  catch (FileNotFoundException | NoSuchFileException e)
-	//			  {
-	//				// ignore
-	//			  }
-	//			  catch (IOException e)
-	//			  {
-	//				if (e.getMessage().contains("still open for writing"))
-	//				{
-	//				  // ignore
-	//				}
-	//				else
-	//				{
-	//				  throw new RuntimeException(e);
-	//				}
-	//			  }
-	//			  if (random().nextBoolean())
-	//			  {
-	//				break;
-	//			  }
-	//			}
-	//		  }
-	//		  catch (IOException e)
-	//		  {
-	//			throw new RuntimeException(e);
-	//		  }
-	//		}
-	//	  }
-	//	};
+		theThread.Join();
+		theThread2.Join();
 
-		TheThread theThread = new TheThread("t1");
-		TheThread2 theThread2 = new TheThread2("t2");
-		theThread.start();
-		theThread2.start();
-
-		theThread.join();
-		theThread2.join();
-
-		dir.close();
+		dir.Dispose();
 	  }
 
+        private class TheThread : ThreadClass
+        {
+            private string name;
+            private BaseDirectoryWrapper outerBDWrapper;
+
+            public TheThread(string name, BaseDirectoryWrapper baseDirectoryWrapper)
+            {
+                this.name = name;
+                outerBDWrapper = baseDirectoryWrapper;
+            }
+
+            public override void Run()
+            {
+                for (int i = 0; i < 3000; ++i)
+                {
+                    string fileName = this.name + i;
+
+                    try
+                    {
+                        IndexOutput output = outerBDWrapper.CreateOutput(fileName, NewIOContext(Random()));
+                        output.Dispose();
+                        Assert.IsTrue(SlowFileExists(outerBDWrapper, fileName));
+                    }
+                    catch (IOException e)
+                    {
+                        throw new Exception(e.Message, e);
+                    }
+                }
+            }
+        }
+
+        private class TheThread2 : ThreadClass
+        {
+            private string name;
+            private BaseDirectoryWrapper outerBDWrapper;
+
+            public TheThread2(string name, BaseDirectoryWrapper baseDirectoryWrapper)
+            {
+                this.name = name;
+                outerBDWrapper = baseDirectoryWrapper;
+            }
+
+            public override void Run()
+            {
+                for (int i = 0; i < 10000; i++)
+                {
+                    try
+                    {
+                        string[] files = outerBDWrapper.ListAll();
+                        foreach (string file in files)
+                        {
+                            try
+                            {
+                                IndexInput input = outerBDWrapper.OpenInput(file, NewIOContext(Random()));
+                            }
+                            catch (FileNotFoundException fne)
+                            {
+
+                            }
+                            catch (IOException e)
+                            {
+                                if (!e.Message.Contains("still open for writing"))
+                                {
+                                    throw new Exception(e.Message, e);
+                                }
+                            }
+                            if (Random().NextBoolean())
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    catch (IOException e)
+                    {
+                        throw new Exception(e.Message, e);
+                    }
+                }
+            }
+
+        }
 
 	  // Test that different instances of FSDirectory can coexist on the same
 	  // path, can read, write, and lock files.
+      [Test]
 	  public virtual void TestDirectInstantiation()
 	  {
-		File path = createTempDir("testDirectInstantiation");
+		DirectoryInfo path = CreateTempDir("testDirectInstantiation");
 
-		const sbyte[] largeBuffer = new sbyte[random().Next(256 * 1024)], largeReadBuffer = new sbyte[largeBuffer.Length];
+		sbyte[] largeBuffer = new sbyte[Random().Next(256 * 1024)], largeReadBuffer = new sbyte[largeBuffer.Length];
 		for (int i = 0; i < largeBuffer.Length; i++)
 		{
 		  largeBuffer[i] = (sbyte) i; // automatically loops with modulo
@@ -177,20 +181,20 @@ namespace Lucene.Net.Store
 		for (int i = 0; i < dirs.Length; i++)
 		{
 		  FSDirectory dir = dirs[i];
-		  dir.ensureOpen();
+		  dir.EnsureOpen();
 		  string fname = "foo." + i;
 		  string lockname = "foo" + i + ".lck";
-		  IndexOutput @out = dir.createOutput(fname, newIOContext(random()));
-		  @out.writeByte((sbyte)i);
-		  @out.writeBytes(largeBuffer, largeBuffer.Length);
-		  @out.close();
+		  IndexOutput @out = dir.CreateOutput(fname, NewIOContext(Random()));
+		  @out.WriteByte((sbyte)i);
+		  @out.WriteBytes(largeBuffer, largeBuffer.Length);
+		  @out.Dispose();
 
 		  for (int j = 0; j < dirs.Length; j++)
 		  {
 			FSDirectory d2 = dirs[j];
-			d2.ensureOpen();
-			Assert.IsTrue(slowFileExists(d2, fname));
-			Assert.AreEqual(1 + largeBuffer.Length, d2.fileLength(fname));
+			d2.EnsureOpen();
+			Assert.IsTrue(SlowFileExists(d2, fname));
+			Assert.AreEqual(1 + largeBuffer.Length, d2.FileLength(fname));
 
 			// don't do read tests if unmapping is not supported!
 			if (d2 is MMapDirectory && !((MMapDirectory) d2).UseUnmap)
@@ -198,39 +202,39 @@ namespace Lucene.Net.Store
 			  continue;
 			}
 
-			IndexInput input = d2.openInput(fname, newIOContext(random()));
-			Assert.AreEqual((sbyte)i, input.readByte());
+			IndexInput input = d2.OpenInput(fname, NewIOContext(Random()));
+			Assert.AreEqual((sbyte)i, input.ReadByte());
 			// read array with buffering enabled
-			Arrays.fill(largeReadBuffer, (sbyte)0);
-			input.readBytes(largeReadBuffer, 0, largeReadBuffer.Length, true);
-			assertArrayEquals(largeBuffer, largeReadBuffer);
+			Arrays.Fill(largeReadBuffer, (sbyte)0);
+			input.ReadBytes(largeReadBuffer, 0, largeReadBuffer.Length, true);
+			Assert.AreEqual(largeBuffer, largeReadBuffer);
 			// read again without using buffer
-			input.seek(1L);
-			Arrays.fill(largeReadBuffer, (sbyte)0);
-			input.readBytes(largeReadBuffer, 0, largeReadBuffer.Length, false);
-			assertArrayEquals(largeBuffer, largeReadBuffer);
-			input.close();
+			input.Seek(1L);
+			Arrays.Fill(largeReadBuffer, (sbyte)0);
+			input.ReadBytes(largeReadBuffer, 0, largeReadBuffer.Length, false);
+            Assert.AreEqual(largeBuffer, largeReadBuffer);
+			input.Dispose();
 		  }
 
 		  // delete with a different dir
-		  dirs[(i + 1) % dirs.Length].deleteFile(fname);
+		  dirs[(i + 1) % dirs.Length].DeleteFile(fname);
 
 		  for (int j = 0; j < dirs.Length; j++)
 		  {
 			FSDirectory d2 = dirs[j];
-			Assert.IsFalse(slowFileExists(d2, fname));
+			Assert.IsFalse(SlowFileExists(d2, fname));
 		  }
 
-		  Lock @lock = dir.makeLock(lockname);
-		  Assert.IsTrue(@lock.obtain());
+		  Lock @lock = dir.MakeLock(lockname);
+		  Assert.IsTrue(@lock.Obtain());
 
 		  for (int j = 0; j < dirs.Length; j++)
 		  {
 			FSDirectory d2 = dirs[j];
-			Lock lock2 = d2.makeLock(lockname);
+			Lock lock2 = d2.MakeLock(lockname);
 			try
 			{
-			  Assert.IsFalse(lock2.obtain(1));
+			  Assert.IsFalse(lock2.Obtain(1));
 			}
 			catch (LockObtainFailedException e)
 			{
@@ -238,52 +242,55 @@ namespace Lucene.Net.Store
 			}
 		  }
 
-		  @lock.close();
+		  @lock.Dispose();
 
 		  // now lock with different dir
-		  @lock = dirs[(i + 1) % dirs.Length].makeLock(lockname);
-		  Assert.IsTrue(@lock.obtain());
-		  @lock.close();
+		  @lock = dirs[(i + 1) % dirs.Length].MakeLock(lockname);
+		  Assert.IsTrue(@lock.Obtain());
+		  @lock.Dispose();
 		}
 
 		for (int i = 0; i < dirs.Length; i++)
 		{
 		  FSDirectory dir = dirs[i];
-		  dir.ensureOpen();
-		  dir.close();
-		  Assert.IsFalse(dir.isOpen);
+		  dir.EnsureOpen();
+		  dir.Dispose();
+		  Assert.IsFalse(dir.IsOpen);
 		}
 
-		TestUtil.rm(path);
+		TestUtil.Rm(path);
 	  }
 
 	  // LUCENE-1464
+      [Test]
 	  public virtual void TestDontCreate()
 	  {
-		File path = new File(createTempDir(LuceneTestCase.TestClass.SimpleName), "doesnotexist");
+		DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tmpDir", ""), "doesnotexist"));
 		try
 		{
-		  Assert.IsTrue(!path.exists());
+		  Assert.IsTrue(!path.Exists);
 		  Directory dir = new SimpleFSDirectory(path, null);
-		  Assert.IsTrue(!path.exists());
-		  dir.close();
+		  Assert.IsTrue(!path.Exists);
+		  dir.Dispose();
 		}
 		finally
 		{
-		  TestUtil.rm(path);
+		  TestUtil.Rm(path);
 		}
 	  }
 
 	  // LUCENE-1468
+      [Test]
 	  public virtual void TestRAMDirectoryFilter()
 	  {
 		CheckDirectoryFilter(new RAMDirectory());
 	  }
 
 	  // LUCENE-1468
+      [Test]
 	  public virtual void TestFSDirectoryFilter()
 	  {
-		CheckDirectoryFilter(newFSDirectory(createTempDir("test")));
+		CheckDirectoryFilter(NewFSDirectory(CreateTempDir("test")));
 	  }
 
 	  // LUCENE-1468
@@ -292,46 +299,52 @@ namespace Lucene.Net.Store
 		string name = "file";
 		try
 		{
-		  dir.createOutput(name, newIOContext(random())).close();
-		  Assert.IsTrue(slowFileExists(dir, name));
-		  Assert.IsTrue(Arrays.asList(dir.listAll()).contains(name));
+		  dir.CreateOutput(name, NewIOContext(Random())).Dispose();
+		  Assert.IsTrue(SlowFileExists(dir, name));
+		  Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
 		}
 		finally
 		{
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
 	  // LUCENE-1468
+      [Test]
 	  public virtual void TestCopySubdir()
 	  {
-		File path = createTempDir("testsubdir");
+		//File path = CreateTempDir("testsubdir");
+        DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "testsubdir"));
 		try
 		{
-		  path.mkdirs();
-		  (new File(path, "subdir")).mkdirs();
-		  Directory fsDir = new SimpleFSDirectory(path, null);
-		  Assert.AreEqual(0, (new RAMDirectory(fsDir, newIOContext(random()))).listAll().length);
+          //path.mkdirs();
+          System.IO.Directory.CreateDirectory(path.FullName);
+		  //(new File(path, "subdir")).mkdirs();
+          System.IO.Directory.CreateDirectory(new DirectoryInfo(Path.Combine(path.FullName, "subdir")).FullName);
+          Directory fsDir = new SimpleFSDirectory(path, null);
+		  Assert.AreEqual(0, (new RAMDirectory(fsDir, NewIOContext(Random()))).ListAll().Length);
 		}
 		finally
 		{
-		  TestUtil.rm(path);
+		  TestUtil.Rm(path);
 		}
 	  }
 
 	  // LUCENE-1468
+      [Test]
 	  public virtual void TestNotDirectory()
 	  {
-		File path = createTempDir("testnotdir");
+		//File path = CreateTempDir("testnotdir");
+        DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "testnotdir"));
 		Directory fsDir = new SimpleFSDirectory(path, null);
 		try
 		{
-		  IndexOutput @out = fsDir.createOutput("afile", newIOContext(random()));
-		  @out.close();
-		  Assert.IsTrue(slowFileExists(fsDir, "afile"));
+		  IndexOutput @out = fsDir.CreateOutput("afile", NewIOContext(Random()));
+		  @out.Dispose();
+		  Assert.IsTrue(SlowFileExists(fsDir, "afile"));
 		  try
 		  {
-			new SimpleFSDirectory(new File(path, "afile"), null);
+            new SimpleFSDirectory(new DirectoryInfo(Path.Combine(path.FullName, "afile")), null);
 			Assert.Fail("did not hit expected exception");
 		  }
 		  catch (NoSuchDirectoryException nsde)
@@ -341,44 +354,53 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  fsDir.close();
-		  TestUtil.rm(path);
+		  fsDir.Dispose();
+		  TestUtil.Rm(path);
 		}
 	  }
 
+      [Test]
 	  public virtual void TestFsyncDoesntCreateNewFiles()
 	  {
-		File path = createTempDir("nocreate");
-		Console.WriteLine(path.AbsolutePath);
+		//File path = CreateTempDir("nocreate");
+        DirectoryInfo path = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "nocreate"));
+		Console.WriteLine(path.FullName);
 		Directory fsdir = new SimpleFSDirectory(path);
 
 		// write a file
-		IndexOutput @out = fsdir.createOutput("afile", newIOContext(random()));
-		@out.writeString("boo");
-		@out.close();
+		IndexOutput @out = fsdir.CreateOutput("afile", NewIOContext(Random()));
+		@out.WriteString("boo");
+		@out.Dispose();
 
 		// delete it
-		Assert.IsTrue((new File(path, "afile")).delete());
+	    try
+	    {
+	            new DirectoryInfo(Path.Combine(path.FullName, "afile")).Delete();
+	    }
+	    catch (Exception)
+	    {
+	            Assert.Fail("Deletion of new Directory should never fail.");
+	    }
+
 
 		// directory is empty
-		Assert.AreEqual(0, fsdir.listAll().length);
+		Assert.AreEqual(0, fsdir.ListAll().Length);
 
 		// fsync it
 		try
 		{
-		  fsdir.sync(Collections.singleton("afile"));
-		  Assert.Fail("didn't get expected exception, instead fsync created new files: " + Arrays.asList(fsdir.listAll()));
+		  fsdir.Sync(CollectionsHelper.Singleton("afile"));
+		  Assert.Fail("didn't get expected exception, instead fsync created new files: " + Arrays.AsList(fsdir.ListAll()));
 		}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (FileNotFoundException | NoSuchFileException expected)
+		catch (FileNotFoundException /*| NoSuchFileException*/ expected)
 		{
 		  // ok
 		}
 
 		// directory is still empty
-		Assert.AreEqual(0, fsdir.listAll().length);
+		Assert.AreEqual(0, fsdir.ListAll().Length);
 
-		fsdir.close();
+		fsdir.Dispose();
 	  }
 	}
 

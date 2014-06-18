@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
 	public class RAMDirectory : BaseDirectory
 	{
 	  protected internal readonly IDictionary<string, RAMFile> FileMap = new ConcurrentDictionary<string, RAMFile>();
-	  protected internal readonly AtomicLong SizeInBytes_Renamed = new AtomicLong();
+	  protected internal readonly AtomicLong sizeInBytes = new AtomicLong();
 
 	  // *****
 	  // Lock acquisition sequence:  RAMDirectory, then RAMFile
@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 	  public long SizeInBytes()
 	  {
 		EnsureOpen();
-		return SizeInBytes_Renamed.Get();
+		return sizeInBytes.Get();
 	  }
 
 	  /// <summary>
@@ -176,7 +176,7 @@ namespace Lucene.Net.Store
 		if (file != null)
 		{
 		  file.Directory = null;
-          SizeInBytes_Renamed.AddAndGet(-file.SizeInBytes_Renamed);
+          sizeInBytes.AddAndGet(-file.SizeInBytes_Renamed);
 		}
 		else
 		{
@@ -193,7 +193,7 @@ namespace Lucene.Net.Store
         RAMFile existing = FileMap[name];
 		if (existing != null)
 		{
-		  SizeInBytes_Renamed.AddAndGet(-existing.SizeInBytes_Renamed);
+		  sizeInBytes.AddAndGet(-existing.SizeInBytes_Renamed);
 		  existing.Directory = null;
 		}
 		FileMap[name] = file;

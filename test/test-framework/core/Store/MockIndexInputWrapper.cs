@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
 		this.@delegate = @delegate;
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		try
 		{
@@ -74,7 +74,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	  public override MockIndexInputWrapper Clone()
+	  public override object Clone()
 	  {
 		EnsureOpen();
 		Dir.InputCloneCount_Renamed.IncrementAndGet();
@@ -125,13 +125,13 @@ namespace Lucene.Net.Store
 		return @delegate.ReadByte();
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len)
+	  public override void ReadBytes(byte[] b, int offset, int len)
 	  {
 		EnsureOpen();
 		@delegate.ReadBytes(b, offset, len);
 	  }
 
-	  public override void ReadBytes(sbyte[] b, int offset, int len, bool useBuffer)
+	  public override void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
 	  {
 		EnsureOpen();
 		@delegate.ReadBytes(b, offset, len, useBuffer);

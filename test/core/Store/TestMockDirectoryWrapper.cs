@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -24,86 +26,90 @@ namespace Lucene.Net.Store
 	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestMockDirectoryWrapper : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestFailIfIndexWriterNotClosed()
 	  {
-		MockDirectoryWrapper dir = newMockDirectory();
+		MockDirectoryWrapper dir = NewMockDirectory();
 		IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
 		try
 		{
-		  dir.close();
+		  dir.Dispose();
 		  Assert.Fail();
 		}
 		catch (Exception expected)
 		{
-		  Assert.IsTrue(expected.Message.contains("there are still open locks"));
+		  Assert.IsTrue(expected.Message.Contains("there are still open locks"));
 		}
-		iw.close();
-		dir.close();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestFailIfIndexWriterNotClosedChangeLockFactory()
 	  {
-		MockDirectoryWrapper dir = newMockDirectory();
+		MockDirectoryWrapper dir = NewMockDirectory();
 		dir.LockFactory = new SingleInstanceLockFactory();
 		IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
 		try
 		{
-		  dir.close();
+		  dir.Dispose();
 		  Assert.Fail();
 		}
 		catch (Exception expected)
 		{
-		  Assert.IsTrue(expected.Message.contains("there are still open locks"));
+		  Assert.IsTrue(expected.Message.Contains("there are still open locks"));
 		}
-		iw.close();
-		dir.close();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestDiskFull()
 	  {
 		// test writeBytes
-		MockDirectoryWrapper dir = newMockDirectory();
+		MockDirectoryWrapper dir = NewMockDirectory();
 		dir.MaxSizeInBytes = 3;
 		sbyte[] bytes = new sbyte[] {1, 2};
-		IndexOutput @out = dir.createOutput("foo", IOContext.DEFAULT);
-		@out.writeBytes(bytes, bytes.Length); // first write should succeed
+		IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
+		@out.WriteBytes(bytes, bytes.Length); // first write should succeed
 		// flush() to ensure the written bytes are not buffered and counted
 		// against the directory size
-		@out.flush();
+		@out.Flush();
 		try
 		{
-		  @out.writeBytes(bytes, bytes.Length);
+		  @out.WriteBytes(bytes, bytes.Length);
 		  Assert.Fail("should have failed on disk full");
 		}
 		catch (IOException e)
 		{
 		  // expected
 		}
-		@out.close();
-		dir.close();
+		@out.Dispose();
+		dir.Dispose();
 
 		// test copyBytes
-		dir = newMockDirectory();
+		dir = NewMockDirectory();
 		dir.MaxSizeInBytes = 3;
-		@out = dir.createOutput("foo", IOContext.DEFAULT);
-		@out.copyBytes(new ByteArrayDataInput(bytes), bytes.Length); // first copy should succeed
+		@out = dir.CreateOutput("foo", IOContext.DEFAULT);
+		@out.CopyBytes(new ByteArrayDataInput((byte[])(Array)bytes), bytes.Length); // first copy should succeed
 		// flush() to ensure the written bytes are not buffered and counted
 		// against the directory size
-		@out.flush();
+		@out.Flush();
 		try
 		{
-		  @out.copyBytes(new ByteArrayDataInput(bytes), bytes.Length);
+		  @out.CopyBytes(new ByteArrayDataInput((byte[])(Array)bytes), bytes.Length);
 		  Assert.Fail("should have failed on disk full");
 		}
 		catch (IOException e)
 		{
 		  // expected
 		}
-		@out.close();
-		dir.close();
+		@out.Dispose();
+		dir.Dispose();
 	  }
 
 	}

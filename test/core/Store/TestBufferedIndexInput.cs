@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -36,29 +39,30 @@ namespace Lucene.Net.Store
 	using TermQuery = Lucene.Net.Search.TermQuery;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
+    [TestFixture]
 	public class TestBufferedIndexInput : LuceneTestCase
 	{
 
-	  private static void WriteBytes(File aFile, long size)
+	  private static void WriteBytes(FileInfo aFile, long size)
 	  {
-		OutputStream stream = null;
+		Stream ostream = null;
 		try
 		{
-		  stream = new FileOutputStream(aFile);
+		  //ostream = new FileOutputStream(aFile);
+		  ostream = new FileStream(aFile.FullName, FileMode.Create);
 		  for (int i = 0; i < size; i++)
 		  {
-			stream.write(Byten(i));
+			ostream.WriteByte(Byten(i));
 		  }
-		  stream.flush();
+		  ostream.Flush();
 		}
 		finally
 		{
-		  if (stream != null)
+		  if (ostream != null)
 		  {
-			stream.close();
+			ostream.Close();
 		  }
 		}
 	  }
@@ -74,7 +78,7 @@ namespace Lucene.Net.Store
 		MyBufferedIndexInput input = new MyBufferedIndexInput();
 		for (int i = 0; i < BufferedIndexInput.BUFFER_SIZE * 10; i++)
 		{
-		  Assert.AreEqual(input.readByte(), Byten(i));
+		  Assert.AreEqual(input.ReadByte(), Byten(i));
 		}
 	  }
 
@@ -82,10 +86,11 @@ namespace Lucene.Net.Store
 	  // larger than the buffer size), and see that it returns the bytes we expect.
 	  // Our input comes from a dynamically generated "file" -
 	  // see MyBufferedIndexInput below.
+      [Test]
 	  public virtual void TestReadBytes()
 	  {
 		MyBufferedIndexInput input = new MyBufferedIndexInput();
-		RunReadBytes(input, BufferedIndexInput.BUFFER_SIZE, random());
+		RunReadBytes(input, BufferedIndexInput.BUFFER_SIZE, Random());
 	  }
 
 	  private void RunReadBytesAndClose(IndexInput input, int bufferSize, Random r)
@@ -96,7 +101,7 @@ namespace Lucene.Net.Store
 		}
 		finally
 		{
-		  input.close();
+		  input.Dispose();
 		}
 	  }
 
@@ -113,7 +118,7 @@ namespace Lucene.Net.Store
 		  {
 			// wrap
 			pos = 0;
-			input.seek(0L);
+			input.Seek(0L);
 		  }
 		}
 		// wildly fluctuating size:
@@ -126,7 +131,7 @@ namespace Lucene.Net.Store
 		  {
 			// wrap
 			pos = 0;
-			input.seek(0L);
+			input.Seek(0L);
 		  }
 		}
 		// constant small size (7 bytes):
@@ -138,7 +143,7 @@ namespace Lucene.Net.Store
 		  {
 			// wrap
 			pos = 0;
-			input.seek(0L);
+			input.Seek(0L);
 		  }
 		}
 	  }
@@ -150,7 +155,7 @@ namespace Lucene.Net.Store
 		// Just to see that "offset" is treated properly in readBytes(), we
 		// add an arbitrary offset at the beginning of the array
 		int offset = size % 10; // arbitrary
-		Buffer = ArrayUtil.grow(Buffer, offset + size);
+		Buffer = ArrayUtil.Grow(Buffer, offset + size);
 		Assert.AreEqual(pos, input.FilePointer);
 		long left = TEST_FILE_LENGTH - input.FilePointer;
 		if (left <= 0)
@@ -161,17 +166,18 @@ namespace Lucene.Net.Store
 		{
 		  size = (int) left;
 		}
-		input.readBytes(Buffer, offset, size);
+		input.ReadBytes(Buffer, offset, size);
 		Assert.AreEqual(pos + size, input.FilePointer);
 		for (int i = 0; i < size; i++)
 		{
-		  Assert.AreEqual("pos=" + i + " filepos=" + (pos + i), Byten(pos + i), Buffer[offset + i]);
+		  Assert.AreEqual(Byten(pos + i), Buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
 		}
 	  }
 
 	  // this tests that attempts to readBytes() past an EOF will fail, while
 	  // reads up to the EOF will succeed. The EOF is determined by the
 	  // BufferedIndexInput's arbitrary length() value.
+      [Test]
 	  public virtual void TestEOF()
 	  {
 		 MyBufferedIndexInput input = new MyBufferedIndexInput(1024);
@@ -180,19 +186,19 @@ namespace Lucene.Net.Store
 		 // go back and see that we can't read more than that, for small and
 		 // large overflows:
 		 int pos = (int)input.Length() - 10;
-		 input.seek(pos);
+		 input.Seek(pos);
 		 CheckReadBytes(input, 10, pos);
-		 input.seek(pos);
+		 input.Seek(pos);
 		 try
 		 {
-		   CheckReadBytes(input, 11, pos);
+		       CheckReadBytes(input, 11, pos);
 			   Assert.Fail("Block read past end of file");
 		 }
 		   catch (IOException e)
 		   {
 			   /* success */
 		   }
-		 input.seek(pos);
+		 input.Seek(pos);
 		 try
 		 {
 		   CheckReadBytes(input, 50, pos);
@@ -202,7 +208,7 @@ namespace Lucene.Net.Store
 		   {
 			   /* success */
 		   }
-		 input.seek(pos);
+		 input.Seek(pos);
 		 try
 		 {
 		   CheckReadBytes(input, 100000, pos);
@@ -216,9 +222,9 @@ namespace Lucene.Net.Store
 
 		// byten emulates a file - byten(n) returns the n'th byte in that file.
 		// MyBufferedIndexInput reads this "file".
-		private static sbyte Byten(long n)
+		private static byte Byten(long n)
 		{
-		  return (sbyte)(n * n % 256);
+		  return (byte)(n * n % 256);
 		}
 
 		private class MyBufferedIndexInput : BufferedIndexInput
@@ -234,7 +240,7 @@ namespace Lucene.Net.Store
 		  {
 			// an infinite file
 		  }
-		  protected internal override void ReadInternal(sbyte[] b, int offset, int length)
+		  protected override void ReadInternal(byte[] b, int offset, int length)
 		  {
 			for (int i = offset; i < offset + length; i++)
 			{
@@ -242,12 +248,12 @@ namespace Lucene.Net.Store
 			}
 		  }
 
-		  protected internal override void SeekInternal(long pos)
+		  protected override void SeekInternal(long pos)
 		  {
 			this.Pos = pos;
 		  }
 
-		  public override void Close()
+		  public override void Dispose()
 		  {
 		  }
 
@@ -257,60 +263,62 @@ namespace Lucene.Net.Store
 		  }
 		}
 
+        [Test]
 		public virtual void TestSetBufferSize()
 		{
-		  File indexDir = createTempDir("testSetBufferSize");
-		  MockFSDirectory dir = new MockFSDirectory(indexDir, random());
+		  //File indexDir = CreateTempDir("testSetBufferSize");
+          DirectoryInfo indexDir = new DirectoryInfo(Path.Combine(AppSettings.Get("tempDir", ""), "testSetBufferSize"));
+		  MockFSDirectory dir = new MockFSDirectory(indexDir, Random());
 		  try
 		  {
-			IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setOpenMode(IndexWriterConfig.OpenMode_e.CREATE).setMergePolicy(newLogMergePolicy(false)));
+			IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy(false)));
 			for (int i = 0;i < 37;i++)
 			{
 			  Document doc = new Document();
-			  doc.add(newTextField("content", "aaa bbb ccc ddd" + i, Field.Store.YES));
-			  doc.add(newTextField("id", "" + i, Field.Store.YES));
-			  writer.addDocument(doc);
+			  doc.Add(NewTextField("content", "aaa bbb ccc ddd" + i, Field.Store.YES));
+			  doc.Add(NewTextField("id", "" + i, Field.Store.YES));
+			  writer.AddDocument(doc);
 			}
 
 			dir.AllIndexInputs.Clear();
 
-			IndexReader reader = DirectoryReader.open(writer, true);
+			IndexReader reader = DirectoryReader.Open(writer, true);
 			Term aaa = new Term("content", "aaa");
 			Term bbb = new Term("content", "bbb");
 
-			reader.close();
+			reader.Dispose();
 
 			dir.TweakBufferSizes();
-			writer.deleteDocuments(new Term("id", "0"));
-			reader = DirectoryReader.open(writer, true);
-			IndexSearcher searcher = newSearcher(reader);
-			ScoreDoc[] hits = searcher.search(new TermQuery(bbb), null, 1000).scoreDocs;
+			writer.DeleteDocuments(new Term("id", "0"));
+			reader = DirectoryReader.Open(writer, true);
+			IndexSearcher searcher = NewSearcher(reader);
+			ScoreDoc[] hits = searcher.Search(new TermQuery(bbb), null, 1000).ScoreDocs;
 			dir.TweakBufferSizes();
 			Assert.AreEqual(36, hits.Length);
 
-			reader.close();
+			reader.Dispose();
 
 			dir.TweakBufferSizes();
-			writer.deleteDocuments(new Term("id", "4"));
-			reader = DirectoryReader.open(writer, true);
-			searcher = newSearcher(reader);
+			writer.DeleteDocuments(new Term("id", "4"));
+			reader = DirectoryReader.Open(writer, true);
+			searcher = NewSearcher(reader);
 
-			hits = searcher.search(new TermQuery(bbb), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(bbb), null, 1000).ScoreDocs;
 			dir.TweakBufferSizes();
 			Assert.AreEqual(35, hits.Length);
 			dir.TweakBufferSizes();
-			hits = searcher.search(new TermQuery(new Term("id", "33")), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(new Term("id", "33")), null, 1000).ScoreDocs;
 			dir.TweakBufferSizes();
 			Assert.AreEqual(1, hits.Length);
-			hits = searcher.search(new TermQuery(aaa), null, 1000).scoreDocs;
+			hits = searcher.Search(new TermQuery(aaa), null, 1000).ScoreDocs;
 			dir.TweakBufferSizes();
 			Assert.AreEqual(35, hits.Length);
-			writer.close();
-			reader.close();
+			writer.Dispose();
+			reader.Dispose();
 		  }
 		  finally
 		  {
-			TestUtil.rm(indexDir);
+			TestUtil.Rm(indexDir);
 		  }
 		}
 
@@ -323,10 +331,10 @@ namespace Lucene.Net.Store
 
 		  internal Directory Dir;
 
-		  public MockFSDirectory(File path, Random rand)
+		  public MockFSDirectory(DirectoryInfo path, Random rand)
 		  {
 			this.Rand = rand;
-			lockFactory = NoLockFactory.NoLockFactory;
+			LockFactory = NoLockFactory.DoNoLockFactory;
 			Dir = new SimpleFSDirectory(path, null);
 		  }
 
@@ -347,40 +355,40 @@ namespace Lucene.Net.Store
 		  {
 			// Make random changes to buffer size
 			//bufferSize = 1+Math.abs(rand.nextInt() % 10);
-			IndexInput f = Dir.openInput(name, context);
+			IndexInput f = Dir.OpenInput(name, context);
 			AllIndexInputs.Add(f);
 			return f;
 		  }
 
 		  public override IndexOutput CreateOutput(string name, IOContext context)
 		  {
-			return Dir.createOutput(name, context);
+			return Dir.CreateOutput(name, context);
 		  }
 
-		  public override void Close()
+		  public override void Dispose()
 		  {
-			Dir.close();
+			Dir.Dispose();
 		  }
 
 		  public override void DeleteFile(string name)
 		  {
-			Dir.deleteFile(name);
+			Dir.DeleteFile(name);
 		  }
 		  public override bool FileExists(string name)
 		  {
-			return Dir.fileExists(name);
+			return Dir.FileExists(name);
 		  }
 		  public override string[] ListAll()
 		  {
-			return Dir.listAll();
+			return Dir.ListAll();
 		  }
 		  public override void Sync(ICollection<string> names)
 		  {
-			Dir.sync(names);
+			Dir.Sync(names);
 		  }
 		  public override long FileLength(string name)
 		  {
-			return Dir.fileLength(name);
+			return Dir.FileLength(name);
 		  }
 		}
 	}

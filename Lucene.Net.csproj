@@ -9566,6 +9566,7 @@
     <Compile Include="src\core\Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="src\core\Support\PriorityQueue.cs" />
     <Compile Include="src\core\Support\ReentrantLock.cs" />
+    <Compile Include="src\core\Support\SetExtensions.cs" />
     <Compile Include="src\core\Support\StringBuilderExtensions.cs" />
     <Compile Include="src\core\Support\StringCharSequenceWrapper.cs" />
     <Compile Include="src\core\Support\StringSupport.cs" />

@@ -69,7 +69,7 @@ namespace Lucene.Net.Store
 	  }
 
 
-	  protected internal override sealed void EnsureOpen()
+	  public override sealed void EnsureOpen()
 	  {
 		if (!IsOpen)
 		{

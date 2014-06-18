@@ -31,8 +31,8 @@ namespace Lucene.Net.Store
 	/// this, you should also run <seealso cref="LockVerifyServer"/> on the
 	/// host & port matching what you pass to the constructor.
 	/// </summary>
-	/// <seealso cref= LockVerifyServer </seealso>
-	/// <seealso cref= LockStressTest </seealso>
+	/// <seealso> cref= LockVerifyServer </seealso>
+	/// <seealso> cref= LockStressTest </seealso>
 
 	public class VerifyingLockFactory : LockFactory
 	{
@@ -53,7 +53,7 @@ namespace Lucene.Net.Store
 		    this.@lock = @lock;
 		}
 
-		internal virtual void Verify(sbyte message)
+		private void Verify(sbyte message)
 		{
           OuterInstance.@out.WriteByte((byte)message);
 		  OuterInstance.@out.Flush();

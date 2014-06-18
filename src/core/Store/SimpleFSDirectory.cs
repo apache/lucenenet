@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
 	  /// Reads bytes with <seealso cref="RandomAccessFile#seek(long)"/> followed by
 	  /// <seealso cref="RandomAccessFile#read(byte[], int, int)"/>.  
 	  /// </summary>
-	  protected internal class SimpleFSIndexInput : BufferedIndexInput
+	  public class SimpleFSIndexInput : BufferedIndexInput
 	  {
 		/// <summary>
 		/// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
@@ -133,7 +133,7 @@ namespace Lucene.Net.Store
 		protected internal readonly FileStream File;
 		/// <summary>
 		/// is this instance a clone and hence does not own the file to close it </summary>
-		internal bool IsClone = false;
+		public bool IsClone = false;
 		/// <summary>
 		/// start offset: non-zero in the slice case </summary>
 		protected internal readonly long Off;
@@ -218,14 +218,14 @@ namespace Lucene.Net.Store
 		protected internal override void SeekInternal(long position)
 		{
 		}
-          /* LUCENE TO-DO Removing until need is shown
-		internal virtual bool FDValid
+
+	      public virtual bool FDValid
 		{
 			get
 			{
-			  return File.FD.valid();
+			    return File != null;// File.FD.valid();
 			}
-		}*/
+		}
 	  }
 	}
 

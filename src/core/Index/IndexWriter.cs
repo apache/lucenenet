@@ -5980,7 +5980,7 @@ namespace Lucene.Net.Index
 	  /// encoded inside the <seealso cref="#process(IndexWriter, boolean, boolean)"/> method.
 	  /// 
 	  /// </summary>
-	  internal interface Event
+	  public interface Event
 	  {
 
 		/// <summary>

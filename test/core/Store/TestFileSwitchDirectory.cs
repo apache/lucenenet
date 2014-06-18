@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -32,130 +35,135 @@ namespace Lucene.Net.Store
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [TestFixture]
 	public class TestFileSwitchDirectory : LuceneTestCase
 	{
 	  /// <summary>
 	  /// Test if writing doc stores to disk and everything else to ram works.
 	  /// </summary>
+      [Test]
 	  public virtual void TestBasic()
 	  {
-		Set<string> fileExtensions = new HashSet<string>();
-		fileExtensions.add(Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
-		fileExtensions.add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
+		HashSet<string> fileExtensions = new HashSet<string>();
+		fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
+		fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
 
-		MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(random(), new RAMDirectory());
+		MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
 		primaryDir.CheckIndexOnClose = false; // only part of an index
-		MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(random(), new RAMDirectory());
+		MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
 		secondaryDir.CheckIndexOnClose = false; // only part of an index
 
 		FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
 		// for now we wire Lucene40Codec because we rely upon its specific impl
 		bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-		IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random()))).setMergePolicy(newLogMergePolicy(false)).setCodec(Codec.forName("Lucene40")).setUseCompoundFile(false));
+		IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
 		TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
-		IndexReader reader = DirectoryReader.open(writer, true);
-		Assert.AreEqual(100, reader.maxDoc());
-		writer.commit();
+		IndexReader reader = DirectoryReader.Open(writer, true);
+		Assert.AreEqual(100, reader.MaxDoc());
+		writer.Commit();
 		// we should see only fdx,fdt files here
-		string[] files = primaryDir.listAll();
+		string[] files = primaryDir.ListAll();
 		Assert.IsTrue(files.Length > 0);
 		for (int x = 0; x < files.Length; x++)
 		{
-		  string ext = FileSwitchDirectory.getExtension(files[x]);
-		  Assert.IsTrue(fileExtensions.contains(ext));
+		  string ext = FileSwitchDirectory.GetExtension(files[x]);
+		  Assert.IsTrue(fileExtensions.Contains(ext));
 		}
-		files = secondaryDir.listAll();
+		files = secondaryDir.ListAll();
 		Assert.IsTrue(files.Length > 0);
 		// we should not see fdx,fdt files here
 		for (int x = 0; x < files.Length; x++)
 		{
-		  string ext = FileSwitchDirectory.getExtension(files[x]);
-		  Assert.IsFalse(fileExtensions.contains(ext));
+		  string ext = FileSwitchDirectory.GetExtension(files[x]);
+		  Assert.IsFalse(fileExtensions.Contains(ext));
 		}
-		reader.close();
-		writer.close();
+		reader.Dispose();
+		writer.Dispose();
 
-		files = fsd.listAll();
+		files = fsd.ListAll();
 		for (int i = 0;i < files.Length;i++)
 		{
 		  Assert.IsNotNull(files[i]);
 		}
-		fsd.close();
+		fsd.Dispose();
 		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
 	  }
 
-	  private Directory NewFSSwitchDirectory(Set<string> primaryExtensions)
+	  private Directory NewFSSwitchDirectory(ISet<string> primaryExtensions)
 	  {
-		File primDir = createTempDir("foo");
-		File secondDir = createTempDir("bar");
+		DirectoryInfo primDir = CreateTempDir("foo");
+        DirectoryInfo secondDir = CreateTempDir("bar");
 		return NewFSSwitchDirectory(primDir, secondDir, primaryExtensions);
 	  }
 
-	  private Directory NewFSSwitchDirectory(File aDir, File bDir, Set<string> primaryExtensions)
+      private Directory NewFSSwitchDirectory(DirectoryInfo aDir, DirectoryInfo bDir, ISet<string> primaryExtensions)
 	  {
 		Directory a = new SimpleFSDirectory(aDir);
 		Directory b = new SimpleFSDirectory(bDir);
 		FileSwitchDirectory switchDir = new FileSwitchDirectory(primaryExtensions, a, b, true);
-		return new MockDirectoryWrapper(random(), switchDir);
+		return new MockDirectoryWrapper(Random(), switchDir);
 	  }
 
 	  // LUCENE-3380 -- make sure we get exception if the directory really does not exist.
+      [Test]
 	  public virtual void TestNoDir()
 	  {
-		File primDir = createTempDir("foo");
-		File secondDir = createTempDir("bar");
-		TestUtil.rm(primDir);
-		TestUtil.rm(secondDir);
-		Directory dir = NewFSSwitchDirectory(primDir, secondDir, Collections.emptySet<string>());
+		DirectoryInfo primDir = CreateTempDir("foo");
+        DirectoryInfo secondDir = CreateTempDir("bar");
+		TestUtil.Rm(primDir);
+		TestUtil.Rm(secondDir);
+		Directory dir = NewFSSwitchDirectory(primDir, secondDir, new HashSet<string>());
 		try
 		{
-		  DirectoryReader.open(dir);
+		  DirectoryReader.Open(dir);
 		  Assert.Fail("did not hit expected exception");
 		}
 		catch (NoSuchDirectoryException nsde)
 		{
 		  // expected
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-3380 test that we can add a file, and then when we call list() we get it back
+      [Test]
 	  public virtual void TestDirectoryFilter()
 	  {
-		Directory dir = NewFSSwitchDirectory(Collections.emptySet<string>());
+		Directory dir = NewFSSwitchDirectory(new HashSet<string>());
 		string name = "file";
 		try
 		{
-		  dir.createOutput(name, newIOContext(random())).close();
-		  Assert.IsTrue(slowFileExists(dir, name));
-		  Assert.IsTrue(Arrays.asList(dir.listAll()).contains(name));
+		  dir.CreateOutput(name, NewIOContext(Random())).Dispose();
+		  Assert.IsTrue(SlowFileExists(dir, name));
+		  Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
 		}
 		finally
 		{
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
 	  // LUCENE-3380 test that delegate compound files correctly.
+      [Test]
 	  public virtual void TestCompoundFileAppendTwice()
 	  {
-		Directory newDir = NewFSSwitchDirectory(Collections.singleton("cfs"));
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), true);
+		Directory newDir = NewFSSwitchDirectory(CollectionsHelper.Singleton("cfs"));
+		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
 		CreateSequenceFile(newDir, "d1", (sbyte) 0, 15);
-		IndexOutput @out = csw.createOutput("d.xyz", newIOContext(random()));
-		@out.writeInt(0);
-		@out.close();
-		Assert.AreEqual(1, csw.listAll().length);
-		Assert.AreEqual("d.xyz", csw.listAll()[0]);
+		IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
+		@out.WriteInt(0);
+		@out.Dispose();
+		Assert.AreEqual(1, csw.ListAll().Length);
+		Assert.AreEqual("d.xyz", csw.ListAll()[0]);
 
-		csw.close();
+		csw.Dispose();
 
-		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", newIOContext(random()), false);
-		Assert.AreEqual(1, cfr.listAll().length);
-		Assert.AreEqual("d.xyz", cfr.listAll()[0]);
-		cfr.close();
-		newDir.close();
+		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+		Assert.AreEqual(1, cfr.ListAll().Length);
+		Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
+		cfr.Dispose();
+		newDir.Dispose();
 	  }
 
 	  /// <summary>
@@ -165,13 +173,13 @@ namespace Lucene.Net.Store
 	  /// </summary>
 	  private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
 	  {
-		  IndexOutput os = dir.createOutput(name, newIOContext(random()));
+		  IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
 		  for (int i = 0; i < size; i++)
 		  {
-			  os.writeByte(start);
+			  os.WriteByte(start);
 			  start++;
 		  }
-		  os.close();
+		  os.Dispose();
 	  }
 
 	}

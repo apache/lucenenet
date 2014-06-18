@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class RAMOutputStream : IndexOutput
 	{
-	  internal const int BUFFER_SIZE = 1024;
+	    public const int BUFFER_SIZE = 1024;
 
 	  private RAMFile File;
 

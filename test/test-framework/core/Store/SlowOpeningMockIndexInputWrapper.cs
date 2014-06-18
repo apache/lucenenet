@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
 		{
 		  try
 		  {
-			base.Close();
+			base.Dispose();
 		  } // we didnt open successfully
 		  catch (Exception)
 		  {

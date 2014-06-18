@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -26,6 +27,7 @@ namespace Lucene.Net.Store
 
 	/// <summary>
 	/// Test huge RAMFile with more than Integer.MAX_VALUE bytes. </summary>
+	[TestFixture]
 	public class TestHugeRamFile : LuceneTestCase
 	{
 
@@ -38,29 +40,30 @@ namespace Lucene.Net.Store
 	  private class DenseRAMFile : RAMFile
 	  {
 		internal long Capacity = 0;
-		internal Dictionary<int?, sbyte[]> SingleBuffers = new Dictionary<int?, sbyte[]>();
-		protected internal override sbyte[] NewBuffer(int size)
+		internal Dictionary<int, byte[]> SingleBuffers = new Dictionary<int, byte[]>();
+		protected override byte[] NewBuffer(int size)
 		{
 		  Capacity += size;
 		  if (Capacity <= MAX_VALUE)
 		  {
 			// below maxint we reuse buffers
-			sbyte[] buf = SingleBuffers[Convert.ToInt32(size)];
+			byte[] buf = SingleBuffers[Convert.ToInt32(size)];
 			if (buf == null)
 			{
-			  buf = new sbyte[size];
+			  buf = new byte[size];
 			  //System.out.println("allocate: "+size);
 			  SingleBuffers[Convert.ToInt32(size)] = buf;
 			}
 			return buf;
 		  }
-		  //System.out.println("allocate: "+size); System.out.flush();
-		  return new sbyte[size];
+		  //System.out.println("allocate: "+size); System.out.Flush();
+		  return new byte[size];
 		}
 	  }
 
 	  /// <summary>
 	  /// Test huge RAMFile with more than Integer.MAX_VALUE bytes. (LUCENE-957) </summary>
+      [Test]
 	  public virtual void TestHugeFile()
 	  {
 		DenseRAMFile f = new DenseRAMFile();
@@ -77,15 +80,15 @@ namespace Lucene.Net.Store
 		  b2[i] = (sbyte)(i & 0x0003F);
 		}
 		long n = 0;
-		Assert.AreEqual("output length must match",n,@out.length());
+		Assert.AreEqual(n,@out.Length, "output length must match");
 		while (n <= MAX_VALUE - b1.Length)
 		{
-		  @out.writeBytes(b1,0,b1.Length);
-		  @out.flush();
+		  @out.WriteBytes(b1,0,b1.Length);
+		  @out.Flush();
 		  n += b1.Length;
-		  Assert.AreEqual("output length must match",n,@out.length());
+		  Assert.AreEqual(n,@out.Length, "output length must match");
 		}
-		//System.out.println("after writing b1's, length = "+out.length()+" (MAX_VALUE="+MAX_VALUE+")");
+		//System.out.println("after writing b1's, length = "+out.Length()+" (MAX_VALUE="+MAX_VALUE+")");
 		int m = b2.Length;
 		long L = 12;
 		for (int j = 0; j < L; j++)
@@ -94,26 +97,26 @@ namespace Lucene.Net.Store
 		  {
 			b2[i]++;
 		  }
-		  @out.writeBytes(b2,0,m);
-		  @out.flush();
+		  @out.WriteBytes(b2,0,m);
+		  @out.Flush();
 		  n += m;
-		  Assert.AreEqual("output length must match",n,@out.length());
+		  Assert.AreEqual(n,@out.Length, "output length must match");
 		}
-		@out.close();
+		@out.Dispose();
 		// input part
 		RAMInputStream @in = new RAMInputStream("testcase", f);
-		Assert.AreEqual("input length must match",n,@in.length());
-		//System.out.println("input length = "+in.length()+" % 1024 = "+in.length()%1024);
+		Assert.AreEqual(n,@in.Length(), "input length must match");
+		//System.out.println("input length = "+in.Length()+" % 1024 = "+in.Length()%1024);
 		for (int j = 0; j < L; j++)
 		{
 		  long loc = n - (L - j) * m;
-		  @in.seek(loc / 3);
-		  @in.seek(loc);
+		  @in.Seek(loc / 3);
+		  @in.Seek(loc);
 		  for (int i = 0; i < m; i++)
 		  {
-			sbyte bt = @in.readByte();
+			sbyte bt = @in.ReadSByte();
 			sbyte expected = (sbyte)(1 + j + (i & 0x0003F));
-			Assert.AreEqual("must read same value that was written! j=" + j + " i=" + i,expected,bt);
+			Assert.AreEqual(expected,bt, "must read same value that was written! j=" + j + " i=" + i);
 		  }
 		}
 	  }

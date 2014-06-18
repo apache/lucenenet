@@ -147,7 +147,7 @@ namespace org.apache.lucene
 
 		w.Dispose();
 
-		dir.Close();
+		dir.Dispose();
 	  }
 	}
 

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using NUnit.Framework;
 
 namespace Lucene.Net.Store
 {
@@ -38,28 +40,31 @@ namespace Lucene.Net.Store
 	/// values, it's necessary to access a file >
 	/// Integer.MAX_VALUE in size using multiple byte buffers.
 	/// </summary>
+	[TestFixture]
 	public class TestMultiMMap : LuceneTestCase
 	{
 
+      [SetUp]
 	  public override void SetUp()
 	  {
-		base.setUp();
-		assumeTrue("test requires a jre that supports unmapping", MMapDirectory.UNMAP_SUPPORTED);
+		base.SetUp();
+		AssumeTrue("test requires a jre that supports unmapping", MMapDirectory.UNMAP_SUPPORTED);
 	  }
 
+      [Test]
 	  public virtual void TestCloneSafety()
 	  {
-		MMapDirectory mmapDir = new MMapDirectory(createTempDir("testCloneSafety"));
-		IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
-		io.writeVInt(5);
-		io.close();
-		IndexInput one = mmapDir.openInput("bytes", IOContext.DEFAULT);
-		IndexInput two = one.clone();
-		IndexInput three = two.clone(); // clone of clone
-		one.close();
+		MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSafety"));
+		IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+		io.WriteVInt(5);
+		io.Dispose();
+		IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
+		IndexInput two = (IndexInput)one.Clone();
+		IndexInput three = (IndexInput) two.Clone(); // clone of clone
+		one.Dispose();
 		try
 		{
-		  one.readVInt();
+		  one.ReadVInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
@@ -68,7 +73,7 @@ namespace Lucene.Net.Store
 		}
 		try
 		{
-		  two.readVInt();
+		  two.ReadVInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
@@ -77,62 +82,64 @@ namespace Lucene.Net.Store
 		}
 		try
 		{
-		  three.readVInt();
+		  three.ReadVInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
 		{
 		  // pass
 		}
-		two.close();
-		three.close();
+		two.Dispose();
+		three.Dispose();
 		// test double close of master:
-		one.close();
-		mmapDir.close();
+		one.Dispose();
+		mmapDir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestCloneClose()
 	  {
-		MMapDirectory mmapDir = new MMapDirectory(createTempDir("testCloneClose"));
-		IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
-		io.writeVInt(5);
-		io.close();
-		IndexInput one = mmapDir.openInput("bytes", IOContext.DEFAULT);
-		IndexInput two = one.clone();
-		IndexInput three = two.clone(); // clone of clone
-		two.close();
-		Assert.AreEqual(5, one.readVInt());
+		MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneClose"));
+		IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+		io.WriteVInt(5);
+		io.Dispose();
+		IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
+		IndexInput two = (IndexInput) one.Clone();
+		IndexInput three = (IndexInput) two.Clone(); // clone of clone
+		two.Dispose();
+		Assert.AreEqual(5, one.ReadVInt());
 		try
 		{
-		  two.readVInt();
+		  two.ReadVInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
 		{
 		  // pass
 		}
-		Assert.AreEqual(5, three.readVInt());
-		one.close();
-		three.close();
-		mmapDir.close();
+		Assert.AreEqual(5, three.ReadVInt());
+		one.Dispose();
+		three.Dispose();
+		mmapDir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestCloneSliceSafety()
 	  {
-		MMapDirectory mmapDir = new MMapDirectory(createTempDir("testCloneSliceSafety"));
-		IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
-		io.writeInt(1);
-		io.writeInt(2);
-		io.close();
-		IndexInputSlicer slicer = mmapDir.createSlicer("bytes", newIOContext(random()));
-		IndexInput one = slicer.openSlice("first int", 0, 4);
-		IndexInput two = slicer.openSlice("second int", 4, 4);
-		IndexInput three = one.clone(); // clone of clone
-		IndexInput four = two.clone(); // clone of clone
-		slicer.close();
+		MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSliceSafety"));
+		IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+		io.WriteInt(1);
+		io.WriteInt(2);
+		io.Dispose();
+		IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+		IndexInput one = slicer.OpenSlice("first int", 0, 4);
+		IndexInput two = slicer.OpenSlice("second int", 4, 4);
+		IndexInput three = (IndexInput) one.Clone(); // clone of clone
+		IndexInput four = (IndexInput) two.Clone(); // clone of clone
+		slicer.Dispose();
 		try
 		{
-		  one.readInt();
+		  one.ReadInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
@@ -141,7 +148,7 @@ namespace Lucene.Net.Store
 		}
 		try
 		{
-		  two.readInt();
+		  two.ReadInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
@@ -150,7 +157,7 @@ namespace Lucene.Net.Store
 		}
 		try
 		{
-		  three.readInt();
+		  three.ReadInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
@@ -159,199 +166,207 @@ namespace Lucene.Net.Store
 		}
 		try
 		{
-		  four.readInt();
+		  four.ReadInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
 		{
 		  // pass
 		}
-		one.close();
-		two.close();
-		three.close();
-		four.close();
+		one.Dispose();
+		two.Dispose();
+		three.Dispose();
+		four.Dispose();
 		// test double-close of slicer:
-		slicer.close();
-		mmapDir.close();
+		slicer.Dispose();
+		mmapDir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestCloneSliceClose()
 	  {
-		MMapDirectory mmapDir = new MMapDirectory(createTempDir("testCloneSliceClose"));
-		IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
-		io.writeInt(1);
-		io.writeInt(2);
-		io.close();
-		IndexInputSlicer slicer = mmapDir.createSlicer("bytes", newIOContext(random()));
-		IndexInput one = slicer.openSlice("first int", 0, 4);
-		IndexInput two = slicer.openSlice("second int", 4, 4);
-		one.close();
+		MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSliceClose"));
+		IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+		io.WriteInt(1);
+		io.WriteInt(2);
+		io.Dispose();
+		IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+		IndexInput one = slicer.OpenSlice("first int", 0, 4);
+		IndexInput two = slicer.OpenSlice("second int", 4, 4);
+		one.Dispose();
 		try
 		{
-		  one.readInt();
+		  one.ReadInt();
 		  Assert.Fail("Must throw AlreadyClosedException");
 		}
 		catch (AlreadyClosedException ignore)
 		{
 		  // pass
 		}
-		Assert.AreEqual(2, two.readInt());
+		Assert.AreEqual(2, two.ReadInt());
 		// reopen a new slice "one":
-		one = slicer.openSlice("first int", 0, 4);
-		Assert.AreEqual(1, one.readInt());
-		one.close();
-		two.close();
-		slicer.close();
-		mmapDir.close();
+		one = slicer.OpenSlice("first int", 0, 4);
+		Assert.AreEqual(1, one.ReadInt());
+		one.Dispose();
+		two.Dispose();
+		slicer.Dispose();
+		mmapDir.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestSeekZero()
 	  {
 		for (int i = 0; i < 31; i++)
 		{
-		  MMapDirectory mmapDir = new MMapDirectory(createTempDir("testSeekZero"), null, 1 << i);
-		  IndexOutput io = mmapDir.createOutput("zeroBytes", newIOContext(random()));
-		  io.close();
-		  IndexInput ii = mmapDir.openInput("zeroBytes", newIOContext(random()));
-		  ii.seek(0L);
-		  ii.close();
-		  mmapDir.close();
+		  MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekZero"), null, 1 << i);
+		  IndexOutput io = mmapDir.CreateOutput("zeroBytes", NewIOContext(Random()));
+		  io.Dispose();
+		  IndexInput ii = mmapDir.OpenInput("zeroBytes", NewIOContext(Random()));
+		  ii.Seek(0L);
+		  ii.Dispose();
+		  mmapDir.Dispose();
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSeekSliceZero()
 	  {
 		for (int i = 0; i < 31; i++)
 		{
-		  MMapDirectory mmapDir = new MMapDirectory(createTempDir("testSeekSliceZero"), null, 1 << i);
-		  IndexOutput io = mmapDir.createOutput("zeroBytes", newIOContext(random()));
-		  io.close();
-		  IndexInputSlicer slicer = mmapDir.createSlicer("zeroBytes", newIOContext(random()));
-		  IndexInput ii = slicer.openSlice("zero-length slice", 0, 0);
-		  ii.seek(0L);
-		  ii.close();
-		  slicer.close();
-		  mmapDir.close();
+		  MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekSliceZero"), null, 1 << i);
+		  IndexOutput io = mmapDir.CreateOutput("zeroBytes", NewIOContext(Random()));
+		  io.Dispose();
+		  IndexInputSlicer slicer = mmapDir.CreateSlicer("zeroBytes", NewIOContext(Random()));
+		  IndexInput ii = slicer.OpenSlice("zero-length slice", 0, 0);
+		  ii.Seek(0L);
+		  ii.Dispose();
+		  slicer.Dispose();
+		  mmapDir.Dispose();
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSeekEnd()
 	  {
 		for (int i = 0; i < 17; i++)
 		{
-		  MMapDirectory mmapDir = new MMapDirectory(createTempDir("testSeekEnd"), null, 1 << i);
-		  IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
+		  MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekEnd"), null, 1 << i);
+		  IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
 		  sbyte[] bytes = new sbyte[1 << i];
-		  random().nextBytes(bytes);
-		  io.writeBytes(bytes, bytes.Length);
-		  io.close();
-		  IndexInput ii = mmapDir.openInput("bytes", newIOContext(random()));
+          Random().NextBytes((byte[])(Array)bytes);
+		  io.WriteBytes(bytes, bytes.Length);
+		  io.Dispose();
+		  IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
 		  sbyte[] actual = new sbyte[1 << i];
-		  ii.readBytes(actual, 0, actual.Length);
+		  ii.ReadBytes(actual, 0, actual.Length);
 		  Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
-		  ii.seek(1 << i);
-		  ii.close();
-		  mmapDir.close();
+		  ii.Seek(1 << i);
+		  ii.Dispose();
+		  mmapDir.Dispose();
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSeekSliceEnd()
 	  {
 		for (int i = 0; i < 17; i++)
 		{
-		  MMapDirectory mmapDir = new MMapDirectory(createTempDir("testSeekSliceEnd"), null, 1 << i);
-		  IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
+		  MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekSliceEnd"), null, 1 << i);
+		  IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
 		  sbyte[] bytes = new sbyte[1 << i];
-		  random().nextBytes(bytes);
-		  io.writeBytes(bytes, bytes.Length);
-		  io.close();
-		  IndexInputSlicer slicer = mmapDir.createSlicer("bytes", newIOContext(random()));
-		  IndexInput ii = slicer.openSlice("full slice", 0, bytes.Length);
+		  Random().NextBytes((byte[])(Array)bytes);
+		  io.WriteBytes(bytes, bytes.Length);
+		  io.Dispose();
+		  IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+		  IndexInput ii = slicer.OpenSlice("full slice", 0, bytes.Length);
 		  sbyte[] actual = new sbyte[1 << i];
-		  ii.readBytes(actual, 0, actual.Length);
+		  ii.ReadBytes(actual, 0, actual.Length);
 		  Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
-		  ii.seek(1 << i);
-		  ii.close();
-		  slicer.close();
-		  mmapDir.close();
+		  ii.Seek(1 << i);
+		  ii.Dispose();
+		  slicer.Dispose();
+		  mmapDir.Dispose();
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSeeking()
 	  {
 		for (int i = 0; i < 10; i++)
 		{
-		  MMapDirectory mmapDir = new MMapDirectory(createTempDir("testSeeking"), null, 1 << i);
-		  IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
+		  MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeeking"), null, 1 << i);
+		  IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
 		  sbyte[] bytes = new sbyte[1 << (i + 1)]; // make sure we switch buffers
-		  random().nextBytes(bytes);
-		  io.writeBytes(bytes, bytes.Length);
-		  io.close();
-		  IndexInput ii = mmapDir.openInput("bytes", newIOContext(random()));
+          Random().NextBytes((byte[])(Array)bytes);
+		  io.WriteBytes(bytes, bytes.Length);
+		  io.Dispose();
+		  IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
 		  sbyte[] actual = new sbyte[1 << (i + 1)]; // first read all bytes
-		  ii.readBytes(actual, 0, actual.Length);
+		  ii.ReadBytes(actual, 0, actual.Length);
 		  Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
 		  for (int sliceStart = 0; sliceStart < bytes.Length; sliceStart++)
 		  {
 			for (int sliceLength = 0; sliceLength < bytes.Length - sliceStart; sliceLength++)
 			{
 			  sbyte[] slice = new sbyte[sliceLength];
-			  ii.seek(sliceStart);
-			  ii.readBytes(slice, 0, slice.Length);
+			  ii.Seek(sliceStart);
+			  ii.ReadBytes(slice, 0, slice.Length);
 			  Assert.AreEqual(new BytesRef(bytes, sliceStart, sliceLength), new BytesRef(slice));
 			}
 		  }
-		  ii.close();
-		  mmapDir.close();
+		  ii.Dispose();
+		  mmapDir.Dispose();
 		}
 	  }
 
 	  // note instead of seeking to offset and reading length, this opens slices at the 
 	  // the various offset+length and just does readBytes.
+      [Test]
 	  public virtual void TestSlicedSeeking()
 	  {
 		for (int i = 0; i < 10; i++)
 		{
-		  MMapDirectory mmapDir = new MMapDirectory(createTempDir("testSlicedSeeking"), null, 1 << i);
-		  IndexOutput io = mmapDir.createOutput("bytes", newIOContext(random()));
+		  MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSlicedSeeking"), null, 1 << i);
+		  IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
 		  sbyte[] bytes = new sbyte[1 << (i + 1)]; // make sure we switch buffers
-		  random().nextBytes(bytes);
-		  io.writeBytes(bytes, bytes.Length);
-		  io.close();
-		  IndexInput ii = mmapDir.openInput("bytes", newIOContext(random()));
+          Random().NextBytes((byte[])(Array)bytes);
+		  io.WriteBytes(bytes, bytes.Length);
+		  io.Dispose();
+		  IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
 		  sbyte[] actual = new sbyte[1 << (i + 1)]; // first read all bytes
-		  ii.readBytes(actual, 0, actual.Length);
-		  ii.close();
+		  ii.ReadBytes(actual, 0, actual.Length);
+		  ii.Dispose();
 		  Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
-		  IndexInputSlicer slicer = mmapDir.createSlicer("bytes", newIOContext(random()));
+		  IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
 		  for (int sliceStart = 0; sliceStart < bytes.Length; sliceStart++)
 		  {
 			for (int sliceLength = 0; sliceLength < bytes.Length - sliceStart; sliceLength++)
 			{
 			  sbyte[] slice = new sbyte[sliceLength];
-			  IndexInput input = slicer.openSlice("bytesSlice", sliceStart, slice.Length);
-			  input.readBytes(slice, 0, slice.Length);
-			  input.close();
+			  IndexInput input = slicer.OpenSlice("bytesSlice", sliceStart, slice.Length);
+			  input.ReadBytes(slice, 0, slice.Length);
+			  input.Dispose();
 			  Assert.AreEqual(new BytesRef(bytes, sliceStart, sliceLength), new BytesRef(slice));
 			}
 		  }
-		  slicer.close();
-		  mmapDir.close();
+		  slicer.Dispose();
+		  mmapDir.Dispose();
 		}
 	  }
 
+      [Test]
 	  public virtual void TestRandomChunkSizes()
 	  {
-		int num = atLeast(10);
+		int num = AtLeast(10);
 		for (int i = 0; i < num; i++)
 		{
-		  AssertChunking(random(), TestUtil.Next(random(), 20, 100));
+		  AssertChunking(Random(), TestUtil.NextInt(Random(), 20, 100));
 		}
 	  }
 
 	  private void AssertChunking(Random random, int chunkSize)
 	  {
-		File path = createTempDir("mmap" + chunkSize);
+		DirectoryInfo path = CreateTempDir("mmap" + chunkSize);
 		MMapDirectory mmapDir = new MMapDirectory(path, null, chunkSize);
 		// we will map a lot, try to turn on the unmap hack
 		if (MMapDirectory.UNMAP_SUPPORTED)
@@ -359,31 +374,31 @@ namespace Lucene.Net.Store
 		  mmapDir.UseUnmap = true;
 		}
 		MockDirectoryWrapper dir = new MockDirectoryWrapper(random, mmapDir);
-		RandomIndexWriter writer = new RandomIndexWriter(random, dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setMergePolicy(newLogMergePolicy()));
+		RandomIndexWriter writer = new RandomIndexWriter(random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
 		Document doc = new Document();
-		Field docid = newStringField("docid", "0", Field.Store.YES);
-		Field junk = newStringField("junk", "", Field.Store.YES);
-		doc.add(docid);
-		doc.add(junk);
+		Field docid = NewStringField("docid", "0", Field.Store.YES);
+		Field junk = NewStringField("junk", "", Field.Store.YES);
+		doc.Add(docid);
+		doc.Add(junk);
 
 		int numDocs = 100;
 		for (int i = 0; i < numDocs; i++)
 		{
 		  docid.StringValue = "" + i;
-		  junk.StringValue = TestUtil.randomUnicodeString(random);
-		  writer.addDocument(doc);
+		  junk.StringValue = TestUtil.RandomUnicodeString(random);
+		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.close();
+		writer.Close();
 
-		int numAsserts = atLeast(100);
+		int numAsserts = AtLeast(100);
 		for (int i = 0; i < numAsserts; i++)
 		{
 		  int docID = random.Next(numDocs);
-		  Assert.AreEqual("" + docID, reader.document(docID).get("docid"));
+		  Assert.AreEqual("" + docID, reader.Document(docID).Get("docid"));
 		}
-		reader.close();
-		dir.close();
+		reader.Dispose();
+		dir.Dispose();
 	  }
 	}
 

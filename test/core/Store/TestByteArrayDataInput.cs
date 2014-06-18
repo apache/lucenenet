@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Store
 {
 
@@ -20,18 +22,20 @@ namespace Lucene.Net.Store
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestByteArrayDataInput : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestBasic()
 	  {
-		sbyte[] bytes = new sbyte[] {1, 65};
+		byte[] bytes = new byte[] {1, 65};
 		ByteArrayDataInput @in = new ByteArrayDataInput(bytes);
-		Assert.AreEqual("A", @in.readString());
+		Assert.AreEqual("A", @in.ReadString());
 
-		bytes = new sbyte[] {1, 1, 65};
-		@in.reset(bytes, 1, 2);
-		Assert.AreEqual("A", @in.readString());
+		bytes = new byte[] {1, 1, 65};
+		@in.Reset(bytes, 1, 2);
+		Assert.AreEqual("A", @in.ReadString());
 	  }
 	}
 

@@ -92,39 +92,62 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  /// <exception cref="IOException"> if any of the given files (or their subhierarchy files in case
 	  /// of directories) cannot be removed. </exception>
-	  public static void Rm(params FileInfo[] locations)
+	  public static void Rm(params DirectoryInfo[] locations)
 	  {
-		LinkedHashSet<FileInfo> unremoved = Rm(new LinkedHashSet<FileInfo>(), locations);
-		if (!unremoved.Empty)
+        HashSet<FileSystemInfo> unremoved = Rm(new HashSet<FileSystemInfo>(), locations);
+		if (unremoved.Count <= 0)
 		{
 		  StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
-		  foreach (File f in unremoved)
+		  foreach (FileInfo f in unremoved)
 		  {
-			b.Append("   ").Append(f.AbsolutePath).Append("\n");
+			b.Append("   ").Append(f.FullName).Append("\n");
 		  }
-		  throw new System.IO.IOException(b.ToString());
+		  throw new IOException(b.ToString());
 		}
 	  }
 
-      private static LinkedHashSet<FileInfo> Rm(LinkedHashSet<FileInfo> unremoved, params FileInfo[] locations)
+      private static HashSet<FileSystemInfo> Rm(HashSet<FileSystemInfo> unremoved, params DirectoryInfo[] locations)
 	  {
-		foreach (FileInfo location in locations)
+		foreach (DirectoryInfo location in locations)
 		{
 		  if (location.Exists)
 		  {
-			if (location.Directory)
-			{
-			  Rm(unremoved, location.listFiles());
-			}
+			// Try to delete all of the files in the directory
+            Rm(unremoved, location.GetFiles());
 
-			if (!location.delete())
-			{
-			  unremoved.add(location);
-			}
+            //Delete will throw if not empty when deleted
+		    try
+		    {
+		        location.Delete();
+		    }
+		    catch (Exception delFailed)
+		    {
+		        unremoved.Add(location);
+		    }
 		  }
 		}
 		return unremoved;
 	  }
+
+      private static HashSet<FileSystemInfo> Rm(HashSet<FileSystemInfo> unremoved, params FileInfo[] locations)
+	  {
+	      foreach (FileInfo file in locations)
+	      {
+	          if (file.Exists)
+	          {
+                  try
+                  {
+                      file.Delete();
+                  }
+                  catch (Exception delFailed)
+                  {
+                      unremoved.Add(file);
+                  }
+	          }
+	      }
+
+          return unremoved;
+	  } 
 
 	  /// <summary>
 	  /// Convenience method unzipping zipName into destDir, cleaning up 
@@ -429,7 +452,7 @@ namespace Lucene.Net.Util
 		  }
 		  else
 		  {
-			regexp.Append(RandomPicks.randomFrom(r, Ops));
+			regexp.Append(RandomInts.RandomFrom(r, Ops));
 		  }
 		}
 		return regexp.ToString();
@@ -1154,7 +1177,7 @@ namespace Lucene.Net.Util
 		  {
 		  }
 
-		  protected internal override bool UseRandomAccess(Bits bits, int firstFilterDoc)
+		  protected override bool UseRandomAccess(Bits bits, int firstFilterDoc)
 		  {
 			return LuceneTestCase.Random().NextBoolean();
 		  }
@@ -1203,7 +1226,7 @@ namespace Lucene.Net.Util
 		  int wordLength = -1;
 		  while (wordLength < 0)
 		  {
-			wordLength = (int)(random.nextGaussian() * 3 + avgWordLength);
+			wordLength = (int)(random.NextDouble() * 3 + avgWordLength);
 		  }
 		  wordLength = Math.Min(wordLength, maxLength - sb.Length);
 		  sb.Append(RandomSubString(random, wordLength, simple));

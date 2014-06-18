@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
 	  /// <param name="clazzName"> The name of the FSDirectory class to load </param>
 	  /// <param name="file"> The file to be used as parameter constructor </param>
 	  /// <returns> the new FSDirectory instance </returns>
-	  public static FSDirectory NewFSDirectory(string clazzName, Directory dir)
+	  public static FSDirectory NewFSDirectory(string clazzName, DirectoryInfo dir)
 	  {
 		try
 		{
@@ -110,7 +110,7 @@ namespace Lucene.Net.Util
 	  /// <exception cref="InstantiationException"> If the class is abstract or an interface. </exception>
 	  /// <exception cref="IllegalAccessException"> If the constructor does not have public visibility. </exception>
 	  /// <exception cref="InvocationTargetException"> If the constructor throws an exception </exception>
-	  public static FSDirectory NewFSDirectory(Type clazz, Directory dir)
+	  public static FSDirectory NewFSDirectory(Type clazz, DirectoryInfo dir)
 	  {
 		// Assuming every FSDirectory has a ctor(File):
 		//Constructor<?> ctor = clazz.GetConstructor(typeof(File));

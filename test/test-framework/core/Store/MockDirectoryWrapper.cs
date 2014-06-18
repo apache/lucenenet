@@ -241,13 +241,13 @@ namespace Lucene.Net.Store
 			  {
 				// randomly fail with IOE on any file
 				MaybeThrowIOException(name);
-				@in.Sync(Collections.singleton(name));
+				@in.Sync(new string[] {name});
 				UnSyncedFiles.Remove(name);
 			  }
 			}
 			else
 			{
-			  UnSyncedFiles.removeAll(names);
+			  UnSyncedFiles.RemoveAll(names);
 			}
 		  }
 	  }
@@ -544,13 +544,13 @@ namespace Lucene.Net.Store
 			{
 			  if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper) ent.Key).Name.Equals(name))
 			  {
-				t.initCause(ent.Value);
-				break;
+                  t = new Exception(ent.Value.Message, ent.Value);
+				  break;
 			  }
 			  else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper) ent.Key).Name.Equals(name))
 			  {
-				t.initCause(ent.Value);
-				break;
+                  t = new Exception(ent.Value.Message, ent.Value);
+				  break;
 			  }
 			}
 			return t;
@@ -673,7 +673,7 @@ namespace Lucene.Net.Store
 			{
 			  RAMDirectory ramdir = (RAMDirectory) @in;
 			  RAMFile file = new RAMFile(ramdir);
-			  RAMFile existing = ramdir.FileMap.get(name);
+			  RAMFile existing = ramdir.FileMap[name];
         
 			  // Enforce write once:
 			  if (existing != null && !name.Equals("segments.gen") && PreventDoubleWrite_Renamed)
@@ -684,7 +684,7 @@ namespace Lucene.Net.Store
 			  {
 				if (existing != null)
 				{
-				  ramdir.SizeInBytes().GetAndAdd(-existing.SizeInBytes);
+				  ramdir.sizeInBytes.GetAndAdd(-existing.SizeInBytes);
 				  existing.Directory = null;
 				}
 				ramdir.FileMap[name] = file;
@@ -717,7 +717,7 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  private enum Handle
+	  internal enum Handle
 	  {
 		Input,
 		Output,
@@ -882,7 +882,7 @@ namespace Lucene.Net.Store
 		  }
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		  lock (this)
 		  {
@@ -900,11 +900,9 @@ namespace Lucene.Net.Store
 			  // print the first one as its very verbose otherwise
 			  Exception cause = null;
 			  IEnumerator<Exception> stacktraces = OpenFileHandles.Values.GetEnumerator();
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-			  if (stacktraces.hasNext())
+			  if (stacktraces.MoveNext())
 			  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-				cause = stacktraces.next();
+				cause = stacktraces.Current;
 			  }
 			  // RuntimeException instead ofSystem.IO.IOException because
 			  // super() does not throwSystem.IO.IOException currently:
@@ -938,7 +936,7 @@ namespace Lucene.Net.Store
 				{
 				  // now look for unreferenced files: discount ones that we tried to delete but could not
 				  HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
-				  allFiles.removeAll(pendingDeletions);
+				  allFiles.RemoveAll(pendingDeletions);
 				  string[] startFiles = allFiles.ToArray(/*new string[0]*/);
 				  IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
 				  iwc.SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
@@ -1316,6 +1314,7 @@ namespace Lucene.Net.Store
 		  private IndexInputSlicer DelegateHandle;
 
 		  public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
+              : base(outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Name = name;
@@ -1324,14 +1323,17 @@ namespace Lucene.Net.Store
 
 
 		  private bool isClosed;
-		  public override void Close()
+		  public override void Dispose(bool disposing)
 		  {
-			if (!isClosed)
-			{
-			  DelegateHandle.Dispose();
-			  OuterInstance.RemoveOpenFile(this, Name);
-			  isClosed = true;
-			}
+		      if (disposing)
+		      {
+                  if (!isClosed)
+                  {
+                      DelegateHandle.Dispose();
+                      OuterInstance.RemoveOpenFile(this, Name);
+                      isClosed = true;
+                  }   
+		      }
 		  }
 
 		  public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
@@ -1358,20 +1360,24 @@ namespace Lucene.Net.Store
 
 		internal readonly IndexOutput Io;
 
-		public BufferedIndexOutputWrapper(MockDirectoryWrapper outerInstance, int bufferSize, IndexOutput io) : base(bufferSize)
+		public BufferedIndexOutputWrapper(MockDirectoryWrapper outerInstance, int bufferSize, IndexOutput io) 
+            : base(bufferSize)
 		{
 			this.OuterInstance = outerInstance;
-		  this.Io = io;
+		    this.Io = io;
 		}
 
-		public override long Length()
+		public override long Length
 		{
-		  return Io.Length;
+		    get
+		    {
+                return Io.Length;
+		    }
 		}
 
-		protected internal override void FlushBuffer(sbyte[] b, int offset, int len)
+		protected override void FlushBuffer(byte[] b, int offset, int len)
 		{
-		  Io.WriteBytes(b, offset, len);
+		    Io.WriteBytes(b, offset, len);
 		}
 
 		public override void Seek(long pos)
@@ -1392,7 +1398,7 @@ namespace Lucene.Net.Store
 		  }
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  try
 		  {

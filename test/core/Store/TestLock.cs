@@ -1,3 +1,6 @@
+using System.IO;
+using NUnit.Framework;
+
 namespace Lucene.Net.Store
 {
 
@@ -21,9 +24,10 @@ namespace Lucene.Net.Store
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestLock : LuceneTestCase
 	{
-
+        [Test]
 		public virtual void TestObtain()
 		{
 			LockMock @lock = new LockMock(this);
@@ -31,12 +35,12 @@ namespace Lucene.Net.Store
 
 			try
 			{
-				@lock.obtain(Lock.LOCK_POLL_INTERVAL);
+				@lock.Obtain(Lock.LOCK_POLL_INTERVAL);
 				Assert.Fail("Should have failed to obtain lock");
 			}
 			catch (IOException e)
 			{
-				Assert.AreEqual("should attempt to lock more than once", @lock.LockAttempts, 2);
+				Assert.AreEqual(@lock.LockAttempts, 2, "should attempt to lock more than once");
 			}
 		}
 

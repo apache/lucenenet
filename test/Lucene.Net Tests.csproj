@@ -967,7 +967,7 @@
     <Compile Include="core\Search\TestWildcardRandom.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Search\ThreadClass.cs" />
+    <Compile Include="core\Store\TestBufferedChecksum.cs" />
     <Compile Include="core\Store\TestBufferedIndexInput.cs">
       <SubType>Code</SubType>
     </Compile>

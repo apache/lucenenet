@@ -38,7 +38,7 @@ namespace Lucene.Net.Store
 	  {
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		IsOpen = false;
 		if (CheckIndexOnClose_Renamed && DirectoryReader.IndexExists(this))

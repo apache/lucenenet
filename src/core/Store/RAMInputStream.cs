@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
 	/// </summary>
 	public class RAMInputStream : IndexInput, ICloneable
 	{
-	  internal const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
+	    public const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
 
 	  private RAMFile File;
 	  private long Length_Renamed;

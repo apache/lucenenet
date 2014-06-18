@@ -36,7 +36,7 @@ namespace Lucene.Net.Store
 	  {
 	  }
 
-	  internal RAMFile(RAMDirectory directory)
+	  public RAMFile(RAMDirectory directory)
 	  {
 		this.Directory = directory;
 	  }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
 
 		if (Directory != null)
 		{
-		  Directory.SizeInBytes_Renamed.AddAndGet(size);
+		  Directory.sizeInBytes.AddAndGet(size);
 		}
 		return buffer;
 	  }
