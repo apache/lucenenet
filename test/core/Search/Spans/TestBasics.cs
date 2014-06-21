@@ -50,7 +50,8 @@ namespace Lucene.Net.Search.Spans
 	/// testing of the indexing and search code.
 	/// 
 	/// </summary>
-	public class TestBasics : LuceneTestCase
+	[TestFixture]
+    public class TestBasics : LuceneTestCase
 	{
 	  private static IndexSearcher Searcher;
 	  private static IndexReader Reader;
@@ -94,7 +95,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 
@@ -118,7 +120,7 @@ namespace Lucene.Net.Search.Spans
 		  {
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 			return new TokenStreamComponents(tokenizer, new SimplePayloadFilter(tokenizer));
@@ -127,7 +129,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Reader.Dispose();
 		Directory.Dispose();
@@ -139,7 +142,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testTerm() throws Exception
-	  public virtual void TestTerm()
+      [Test]
+      public virtual void TestTerm()
 	  {
 		Query query = new TermQuery(new Term("field", "seventy"));
 		CheckHits(query, new int[] {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1170, 1171, 1172, 1173, 1174, 1175, 1176, 1177, 1178, 1179, 1270, 1271, 1272, 1273, 1274, 1275, 1276, 1277, 1278, 1279, 1370, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379, 1470, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 1570, 1571, 1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1670, 1671, 1672, 1673, 1674, 1675, 1676, 1677, 1678, 1679, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1870, 1871, 1872, 1873, 1874, 1875, 1876, 1877, 1878, 1879, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979});
@@ -147,7 +151,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testTerm2() throws Exception
-	  public virtual void TestTerm2()
+      [Test]
+      public virtual void TestTerm2()
 	  {
 		Query query = new TermQuery(new Term("field", "seventish"));
 		CheckHits(query, new int[] {});
@@ -155,7 +160,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testPhrase() throws Exception
-	  public virtual void TestPhrase()
+      [Test]
+      public virtual void TestPhrase()
 	  {
 		PhraseQuery query = new PhraseQuery();
 		query.Add(new Term("field", "seventy"));
@@ -165,7 +171,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testPhrase2() throws Exception
-	  public virtual void TestPhrase2()
+      [Test]
+      public virtual void TestPhrase2()
 	  {
 		PhraseQuery query = new PhraseQuery();
 		query.Add(new Term("field", "seventish"));
@@ -175,7 +182,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBoolean() throws Exception
-	  public virtual void TestBoolean()
+      [Test]
+      public virtual void TestBoolean()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term("field", "seventy")), BooleanClause.Occur_e.MUST);
@@ -185,7 +193,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBoolean2() throws Exception
-	  public virtual void TestBoolean2()
+      [Test]
+      public virtual void TestBoolean2()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term("field", "sevento")), BooleanClause.Occur_e.MUST);
@@ -195,7 +204,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNearExact() throws Exception
-	  public virtual void TestSpanNearExact()
+      [Test]
+      public virtual void TestSpanNearExact()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "seventy"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "seven"));
@@ -210,7 +220,8 @@ namespace Lucene.Net.Search.Spans
 		QueryUtils.CheckUnequal(term1,term2);
 	  }
 
-	  public virtual void TestSpanTermQuery()
+      [Test]
+      public virtual void TestSpanTermQuery()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "seventy"));
 		CheckHits(term1, new int[] {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1170, 1270, 1370, 1470, 1570, 1670, 1770, 1870, 1970, 1171, 1172, 1173, 1174, 1175, 1176, 1177, 1178, 1179, 1271, 1272, 1273, 1274, 1275, 1276, 1277, 1278, 1279, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 1571, 1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1671, 1672, 1673, 1674, 1675, 1676, 1677, 1678, 1679, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1871, 1872, 1873, 1874, 1875, 1876, 1877, 1878, 1879, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979});
@@ -218,7 +229,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNearUnordered() throws Exception
-	  public virtual void TestSpanNearUnordered()
+      [Test]
+      public virtual void TestSpanNearUnordered()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "nine"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "six"));
@@ -229,7 +241,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNearOrdered() throws Exception
-	  public virtual void TestSpanNearOrdered()
+      [Test]
+      public virtual void TestSpanNearOrdered()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "nine"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "six"));
@@ -239,7 +252,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNot() throws Exception
-	  public virtual void TestSpanNot()
+      [Test]
+      public virtual void TestSpanNot()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
@@ -255,7 +269,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanWithMultipleNotSingle() throws Exception
-	  public virtual void TestSpanWithMultipleNotSingle()
+      [Test]
+      public virtual void TestSpanWithMultipleNotSingle()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
@@ -274,7 +289,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanWithMultipleNotMany() throws Exception
-	  public virtual void TestSpanWithMultipleNotMany()
+      [Test]
+      public virtual void TestSpanWithMultipleNotMany()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
@@ -295,7 +311,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNpeInSpanNearWithSpanNot() throws Exception
-	  public virtual void TestNpeInSpanNearWithSpanNot()
+      [Test]
+      public virtual void TestNpeInSpanNearWithSpanNot()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "one"));
@@ -314,7 +331,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNpeInSpanNearInSpanFirstInSpanNot() throws Exception
-	  public virtual void TestNpeInSpanNearInSpanFirstInSpanNot()
+      [Test]
+      public virtual void TestNpeInSpanNearInSpanFirstInSpanNot()
 	  {
 		int n = 5;
 		SpanTermQuery hun = new SpanTermQuery(new Term("field", "hundred"));
@@ -331,7 +349,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNotWindowOne() throws Exception
-	  public virtual void TestSpanNotWindowOne()
+      [Test]
+      public virtual void TestSpanNotWindowOne()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "forty"));
@@ -347,7 +366,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNotWindowTwoBefore() throws Exception
-	  public virtual void TestSpanNotWindowTwoBefore()
+      [Test]
+      public virtual void TestSpanNotWindowTwoBefore()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "forty"));
@@ -363,7 +383,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNotWindowNeg() throws Exception
-	  public virtual void TestSpanNotWindowNeg()
+      [Test]
+      public virtual void TestSpanNotWindowNeg()
 	  {
 		 //test handling of invalid window < 0
 		 SpanTermQuery term1 = new SpanTermQuery(new Term("field", "eight"));
@@ -383,7 +404,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNotWindowDoubleExcludesBefore() throws Exception
-	  public virtual void TestSpanNotWindowDoubleExcludesBefore()
+      [Test]
+      public virtual void TestSpanNotWindowDoubleExcludesBefore()
 	  {
 		 //test hitting two excludes before an include
 		 SpanTermQuery term1 = new SpanTermQuery(new Term("field", "forty"));
@@ -401,7 +423,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanFirst() throws Exception
-	  public virtual void TestSpanFirst()
+      [Test]
+      public virtual void TestSpanFirst()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
 		SpanFirstQuery query = new SpanFirstQuery(term1, 1);
@@ -415,7 +438,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanPositionRange() throws Exception
-	  public virtual void TestSpanPositionRange()
+      [Test]
+      public virtual void TestSpanPositionRange()
 	  {
 		SpanPositionRangeQuery query;
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
@@ -433,11 +457,12 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanPayloadCheck() throws Exception
-	  public virtual void TestSpanPayloadCheck()
+      [Test]
+      public virtual void TestSpanPayloadCheck()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
 		BytesRef pay = new BytesRef(("pos: " + 5).GetBytes(IOUtils.CHARSET_UTF_8));
-		SpanQuery query = new SpanPayloadCheckQuery(term1, Collections.singletonList(pay.Bytes));
+		SpanQuery query = new SpanPayloadCheckQuery(term1, new List<sbyte[]>(){pay.Bytes});
 		CheckHits(query, new int[] {1125, 1135, 1145, 1155, 1165, 1175, 1185, 1195, 1225, 1235, 1245, 1255, 1265, 1275, 1285, 1295, 1325, 1335, 1345, 1355, 1365, 1375, 1385, 1395, 1425, 1435, 1445, 1455, 1465, 1475, 1485, 1495, 1525, 1535, 1545, 1555, 1565, 1575, 1585, 1595, 1625, 1635, 1645, 1655, 1665, 1675, 1685, 1695, 1725, 1735, 1745, 1755, 1765, 1775, 1785, 1795, 1825, 1835, 1845, 1855, 1865, 1875, 1885, 1895, 1925, 1935, 1945, 1955, 1965, 1975, 1985, 1995});
 		Assert.IsTrue(Searcher.Explain(query, 1125).Value > 0.0f);
 
@@ -465,7 +490,7 @@ namespace Lucene.Net.Search.Spans
 		pay = new BytesRef(("pos: " + 0).GetBytes(IOUtils.CHARSET_UTF_8));
 		pay2 = new BytesRef(("pos: " + 1).GetBytes(IOUtils.CHARSET_UTF_8));
 		BytesRef pay3 = new BytesRef(("pos: " + 2).GetBytes(IOUtils.CHARSET_UTF_8));
-		list = new List<>();
+		list = new List<sbyte[]>();
 		list.Add(pay.Bytes);
 		list.Add(pay2.Bytes);
 		list.Add(pay3.Bytes);
@@ -473,7 +498,8 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {505});
 	  }
 
-	  public virtual void TestComplexSpanChecks()
+      [Test]
+      public virtual void TestComplexSpanChecks()
 	  {
 		SpanTermQuery one = new SpanTermQuery(new Term("field", "one"));
 		SpanTermQuery thous = new SpanTermQuery(new Term("field", "thousand"));
@@ -509,7 +535,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanOr() throws Exception
-	  public virtual void TestSpanOr()
+      [Test]
+      public virtual void TestSpanOr()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "thirty"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "three"));
@@ -528,7 +555,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanExactNested() throws Exception
-	  public virtual void TestSpanExactNested()
+      [Test]
+      public virtual void TestSpanExactNested()
 	  {
 		SpanTermQuery term1 = new SpanTermQuery(new Term("field", "three"));
 		SpanTermQuery term2 = new SpanTermQuery(new Term("field", "hundred"));
@@ -546,7 +574,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanNearOr() throws Exception
-	  public virtual void TestSpanNearOr()
+      [Test]
+      public virtual void TestSpanNearOr()
 	  {
 
 		SpanTermQuery t1 = new SpanTermQuery(new Term("field","six"));
@@ -565,7 +594,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpanComplex1() throws Exception
-	  public virtual void TestSpanComplex1()
+      [Test]
+      public virtual void TestSpanComplex1()
 	  {
 
 		SpanTermQuery t1 = new SpanTermQuery(new Term("field","six"));
@@ -589,7 +619,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSpansSkipTo() throws Exception
-	  public virtual void TestSpansSkipTo()
+      [Test]
+      public virtual void TestSpansSkipTo()
 	  {
 		SpanTermQuery t1 = new SpanTermQuery(new Term("field", "seventy"));
 		SpanTermQuery t2 = new SpanTermQuery(new Term("field", "seventy"));
@@ -637,7 +668,7 @@ namespace Lucene.Net.Search.Spans
 
 	  private void CheckHits(Query query, int[] results)
 	  {
-		Lucene.Net.Search.CheckHits.CheckHits(Random(), query, "field", Searcher, results);
+		Lucene.Net.Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results);
 	  }
 	}
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +33,6 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using Lucene.Net.Support;

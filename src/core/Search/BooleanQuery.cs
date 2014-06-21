@@ -220,20 +220,20 @@ namespace Lucene.Net.Search
 
 		public BooleanWeight(BooleanQuery outerInstance, IndexSearcher searcher, bool disableCoord)
 		{
-			this.OuterInstance = outerInstance;
-		  this.Similarity = searcher.Similarity;
-		  this.DisableCoord = disableCoord;
-		  Weights = new List<Weight>(outerInstance.clauses.Count);
-		  for (int i = 0 ; i < outerInstance.clauses.Count; i++)
-		  {
-			BooleanClause c = outerInstance.clauses[i];
-			Weight w = c.Query.CreateWeight(searcher);
-			Weights.Add(w);
-			if (!c.Prohibited)
-			{
-			  MaxCoord++;
-			}
-		  }
+			  this.OuterInstance = outerInstance;
+		      this.Similarity = searcher.Similarity;
+		      this.DisableCoord = disableCoord;
+		      Weights = new List<Weight>(outerInstance.clauses.Count);
+		      for (int i = 0 ; i < outerInstance.clauses.Count; i++)
+		      {
+			    BooleanClause c = outerInstance.clauses[i];
+			    Weight w = c.Query.CreateWeight(searcher);
+			    Weights.Add(w);
+			    if (!c.Prohibited)
+			    {
+			      MaxCoord++;
+			    }
+		      }
 		}
 
 		public override Query Query

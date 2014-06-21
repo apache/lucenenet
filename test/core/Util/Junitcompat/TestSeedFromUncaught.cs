@@ -1,5 +1,7 @@
 using System;
 using System.Threading;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.junitcompat
 {
@@ -39,12 +41,12 @@ namespace Lucene.Net.Util.junitcompat
 //ORIGINAL LINE: @Test public void testFoo() throws Exception
 		public virtual void TestFoo()
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper(this);
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper(this);
 		  t.Start();
 		  t.Join();
 		}
 
-		private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+		private class ThreadAnonymousInnerClassHelper : ThreadClass
 		{
 			private readonly ThrowInUncaught OuterInstance;
 
@@ -60,7 +62,7 @@ namespace Lucene.Net.Util.junitcompat
 		}
 	  }
 
-	  public TestSeedFromUncaught() : base(true); / / suppress normal output.
+	  public TestSeedFromUncaught() : base(true) // suppress normal output.
 	  {
 	  }
 
@@ -72,11 +74,11 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestUncaughtDumpsSeed()
 	  {
 		Result result = JUnitCore.runClasses(typeof(ThrowInUncaught));
-		Assert.Assert.AreEqual(1, result.FailureCount);
-		Failure f = result.Failures.get(0);
+		Assert.AreEqual(1, result.FailureCount);
+		Failure f = result.Failures.Get(0);
 		string trace = f.Trace;
-		Assert.Assert.IsTrue(trace.Contains("SeedInfo.seed("));
-		Assert.Assert.IsTrue(trace.Contains("foobar"));
+		Assert.IsTrue(trace.Contains("SeedInfo.seed("));
+		Assert.IsTrue(trace.Contains("foobar"));
 	  }
 	}
 

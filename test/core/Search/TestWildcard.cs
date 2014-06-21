@@ -36,14 +36,17 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// TestWildcard tests the '*' and '?' wildcard characters.
 	/// </summary>
+    [TestFixture]
 	public class TestWildcard : LuceneTestCase
 	{
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 	  }
 
+      [Test]
 	  public virtual void TestEquals()
 	  {
 		WildcardQuery wq1 = new WildcardQuery(new Term("field", "b*a"));
@@ -70,6 +73,7 @@ namespace Lucene.Net.Search
 	  /// TermQuery. The boost should be preserved, and the rewrite should return
 	  /// a ConstantScoreQuery if the WildcardQuery had a ConstantScore rewriteMethod.
 	  /// </summary>
+      [Test]
 	  public virtual void TestTermWithoutWildcard()
 	  {
 		  Directory indexStore = GetIndexStore("field", new string[]{"nowildcard", "nowildcardx"});
@@ -109,7 +113,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Tests if a WildcardQuery with an empty term is rewritten to an empty BooleanQuery
 	  /// </summary>
-	  public virtual void TestEmptyTerm()
+      [Test]
+      public virtual void TestEmptyTerm()
 	  {
 		Directory indexStore = GetIndexStore("field", new string[]{"nowildcard", "nowildcardx"});
 		IndexReader reader = DirectoryReader.Open(indexStore);
@@ -130,7 +135,8 @@ namespace Lucene.Net.Search
 	  /// rewritten to a single PrefixQuery. The boost and rewriteMethod should be
 	  /// preserved.
 	  /// </summary>
-	  public virtual void TestPrefixTerm()
+	  [Test]
+      public virtual void TestPrefixTerm()
 	  {
 		Directory indexStore = GetIndexStore("field", new string[]{"prefix", "prefixx"});
 		IndexReader reader = DirectoryReader.Open(indexStore);
@@ -152,7 +158,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Tests Wildcard queries with an asterisk.
 	  /// </summary>
-	  public virtual void TestAsterisk()
+      [Test]
+      public virtual void TestAsterisk()
 	  {
 		Directory indexStore = GetIndexStore("body", new string[] {"metal", "metals"});
 		IndexReader reader = DirectoryReader.Open(indexStore);
@@ -192,7 +199,9 @@ namespace Lucene.Net.Search
 	  /// Tests Wildcard queries with a question mark.
 	  /// </summary>
 	  /// <exception cref="IOException"> if an error occurs </exception>
-	  public virtual void TestQuestionmark()
+
+      [Test]
+      public virtual void TestQuestionmark()
 	  {
 		Directory indexStore = GetIndexStore("body", new string[] {"metal", "metals", "mXtals", "mXtXls"});
 		IndexReader reader = DirectoryReader.Open(indexStore);
@@ -217,7 +226,9 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Tests if wildcard escaping works
 	  /// </summary>
-	  public virtual void TestEscapes()
+
+      [Test]
+      public virtual void TestEscapes()
 	  {
 		Directory indexStore = GetIndexStore("field", new string[]{"foo*bar", "foo??bar", "fooCDbar", "fooSOMETHINGbar", "foo\\"});
 		IndexReader reader = DirectoryReader.Open(indexStore);
@@ -274,7 +285,8 @@ namespace Lucene.Net.Search
 	  /// Although placed here, it also tests prefix queries, verifying that
 	  /// prefix queries are not parsed into wild card queries, and viceversa.
 	  /// </summary>
-	  public virtual void TestParsingAndSearching()
+      [Test]
+      public virtual void TestParsingAndSearching()
 	  {
 		string field = "content";
 		string[] docs = new string[] {"\\ abcdefg1", "\\x00079 hijklmn1", "\\\\ opqrstu1"};

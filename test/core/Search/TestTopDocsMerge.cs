@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
-
+    [TestFixture]
 	public class TestTopDocsMerge : LuceneTestCase
 	{
 
@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
 
 		public ShardSearcher(AtomicReaderContext ctx, IndexReaderContext parent) : base(parent)
 		{
-		  this.Ctx = Collections.singletonList(ctx);
+		  this.Ctx = new List<AtomicReaderContext>{ctx};
 		}
 
 		public virtual void Search(Weight weight, Collector collector)
@@ -68,12 +68,14 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestSort_1()
+      [Test]
+      public virtual void TestSort_1()
 	  {
 		TestSort(false);
 	  }
 
-	  public virtual void TestSort_2()
+      [Test]
+      public virtual void TestSort_2()
 	  {
 		TestSort(true);
 	  }
@@ -119,7 +121,7 @@ namespace Lucene.Net.Search
 			Document doc = new Document();
 			doc.Add(NewStringField("string", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
 			doc.Add(NewTextField("text", content[Random().Next(content.Length)], Field.Store.NO));
-			doc.Add(new FloatField("float", Random().NextFloat(), Field.Store.NO));
+			doc.Add(new FloatField("float", (float)Random().NextDouble(), Field.Store.NO));
 			int intValue;
 			if (Random().Next(100) == 17)
 			{

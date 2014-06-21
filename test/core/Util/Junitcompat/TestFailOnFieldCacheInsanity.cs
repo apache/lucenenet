@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Util.junitcompat
 {
 
@@ -23,14 +25,9 @@ namespace Lucene.Net.Util.junitcompat
 	using AtomicReader = Lucene.Net.Index.AtomicReader;
 	using IndexReader = Lucene.Net.Index.IndexReader;
 	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-	using FieldCache = Lucene.Net.Search.FieldCache;
+	using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
 	using Directory = Lucene.Net.Store.Directory;
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-	using Assert = org.junit.Assert;
-	using Test = org.junit.Test;
-	using JUnitCore = org.junit.runner.JUnitCore;
-	using Result = org.junit.runner.Result;
-	using Failure = org.junit.runner.notification.Failure;
 
 	public class TestFailOnFieldCacheInsanity : WithNestedTests
 	{
@@ -40,32 +37,31 @@ namespace Lucene.Net.Util.junitcompat
 
 	  public class Nested1 : WithNestedTests.AbstractNestedTest
 	  {
-		internal Directory d;
-		internal IndexReader r;
-		internal AtomicReader SubR;
+		    internal Directory d;
+		    internal IndexReader r;
+		    internal AtomicReader SubR;
 
-		internal virtual void MakeIndex()
-		{
-		  // we use RAMDirectory here, because we dont want to stay on open files on Windows:
-		  d = new RAMDirectory();
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("resource") Lucene.Net.Index.RandomIndexWriter w = new Lucene.Net.Index.RandomIndexWriter(random(), d);
-		  RandomIndexWriter w = new RandomIndexWriter(random(), d);
-		  Document doc = new Document();
-		  doc.add(newField("ints", "1", StringField.TYPE_NOT_STORED));
-		  w.addDocument(doc);
-		  w.forceMerge(1);
-		  r = w.Reader;
-		  w.close();
+		    internal virtual void MakeIndex()
+		    {
+		      // we use RAMDirectory here, because we dont want to stay on open files on Windows:
+		      d = new RAMDirectory();
+		      RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+		      Document doc = new Document();
+		      doc.Add(newField("ints", "1", StringField.TYPE_NOT_STORED));
+		      w.AddDocument(doc);
+		      w.ForceMerge(1);
+		      r = w.Reader;
+		      w.Close();
 
-		  SubR = r.leaves().get(0).reader();
-		}
+		      SubR = (AtomicReader)(r.Leaves()[0]).Reader();
+            }
+	   }
 
 		public virtual void TestDummy()
 		{
 		  MakeIndex();
-		  Assert.IsNotNull(FieldCache.DEFAULT.getTermsIndex(SubR, "ints"));
-		  Assert.IsNotNull(FieldCache.DEFAULT.getTerms(SubR, "ints", false));
+		  Assert.IsNotNull(FieldCache_Fields.DEFAULT.getTermsIndex(SubR, "ints"));
+          Assert.IsNotNull(FieldCache_Fields.DEFAULT.GetTerms(SubR, "ints", false));
 		  // NOTE: do not close reader/directory, else it
 		  // purges FC entries
 		}
@@ -85,7 +81,7 @@ namespace Lucene.Net.Util.junitcompat
 			break;
 		  }
 		}
-		Assert.Assert.IsTrue(insane);
+		Assert.IsTrue(insane);
 	  }
 	}
 

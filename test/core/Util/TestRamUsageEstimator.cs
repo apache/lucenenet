@@ -1,4 +1,6 @@
 using System;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -45,7 +47,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestStaticOverloads()
 	  {
-		Random rnd = random();
+		Random rnd = Random();
 		{
 		  sbyte[] array = new sbyte[rnd.Next(1024)];
 		  Assert.AreEqual(sizeOf(array), sizeOf((object) array));

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +33,6 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using Lucene.Net.Randomized.Generators;
@@ -75,19 +75,19 @@ namespace Lucene.Net.Index
 		AtomicReader ar = (AtomicReader)r.Leaves()[0].Reader();
 
 		int numThreads = TestUtil.NextInt(Random(), 2, 5);
-		IList<Thread> threads = new List<Thread>();
+        IList<ThreadClass> threads = new List<ThreadClass>();
 		CountDownLatch startingGun = new CountDownLatch(1);
 		for (int t = 0;t < numThreads;t++)
 		{
 		  Random threadRandom = new Random(Random().Next());
-		  Thread thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
+		  ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
 		  thread.Start();
 		  threads.Add(thread);
 		}
 
 		startingGun.countDown();
 
-		foreach (Thread thread in threads)
+        foreach (ThreadClass thread in threads)
 		{
 		  thread.Join();
 		}

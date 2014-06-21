@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestTopDocsCollector : LuceneTestCase
 	{
 
@@ -40,7 +41,7 @@ namespace Lucene.Net.Search
 		{
 		}
 
-		protected internal override TopDocs NewTopDocs(ScoreDoc[] results, int start)
+		protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
 		{
 		  if (results == null)
 		  {
@@ -111,6 +112,7 @@ namespace Lucene.Net.Search
 		return tdc;
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -127,6 +129,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -135,6 +138,7 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void TestInvalidArguments()
 	  {
 		int numResults = 5;
@@ -157,19 +161,22 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestZeroResults()
+      [Test]
+      public virtual void TestZeroResults()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = new MyTopsDocCollector(5);
 		Assert.AreEqual(0, tdc.TopDocs(0, 1).ScoreDocs.Length);
 	  }
 
-	  public virtual void TestFirstResultsPage()
+      [Test]
+      public virtual void TestFirstResultsPage()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		Assert.AreEqual(10, tdc.TopDocs(0, 10).ScoreDocs.Length);
 	  }
 
-	  public virtual void TestSecondResultsPages()
+      [Test]
+      public virtual void TestSecondResultsPages()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		// ask for more results than are available
@@ -184,13 +191,15 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(4, tdc.TopDocs(10, 4).ScoreDocs.Length);
 	  }
 
-	  public virtual void TestGetAllResults()
+      [Test]
+      public virtual void TestGetAllResults()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		Assert.AreEqual(15, tdc.TopDocs().ScoreDocs.Length);
 	  }
 
-	  public virtual void TestGetResultsFromStart()
+      [Test]
+      public virtual void TestGetResultsFromStart()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		// should bring all results
@@ -201,7 +210,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(5, tdc.TopDocs(10).ScoreDocs.Length);
 	  }
 
-	  public virtual void TestMaxScore()
+      [Test]
+      public virtual void TestMaxScore()
 	  {
 		// ask for all results
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
@@ -216,7 +226,8 @@ namespace Lucene.Net.Search
 
 	  // this does not test the PQ's correctness, but whether topDocs()
 	  // implementations return the results in decreasing score order.
-	  public virtual void TestResultsOrder()
+      [Test]
+      public virtual void TestResultsOrder()
 	  {
 		TopDocsCollector<ScoreDoc> tdc = DoSearch(15);
 		ScoreDoc[] sd = tdc.TopDocs().ScoreDocs;

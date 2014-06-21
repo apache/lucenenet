@@ -23,7 +23,6 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using System.IO;
 
 	public class TestCodecHoldsOpenFiles : LuceneTestCase

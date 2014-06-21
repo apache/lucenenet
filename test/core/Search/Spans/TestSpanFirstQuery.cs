@@ -32,9 +32,11 @@ namespace Lucene.Net.Search.Spans
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSpanFirstQuery : LuceneTestCase
 	{
-	  public virtual void TestStartPositions()
+      [Test]
+      public virtual void TestStartPositions()
 	  {
 		Directory dir = NewDirectory();
 

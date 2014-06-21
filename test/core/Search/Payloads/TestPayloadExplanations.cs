@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search.Payloads
 {
 
@@ -27,10 +29,12 @@ namespace Lucene.Net.Search.Payloads
 	/// <summary>
 	/// TestExplanations subclass focusing on payload queries
 	/// </summary>
-	public class TestPayloadExplanations : TestExplanations
+	[TestFixture]
+    public class TestPayloadExplanations : TestExplanations
 	{
 	  private PayloadFunction[] Functions = new PayloadFunction[] {new AveragePayloadFunction(), new MinPayloadFunction(), new MaxPayloadFunction()};
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -61,7 +65,8 @@ namespace Lucene.Net.Search.Payloads
 
 	  /* simple PayloadTermQueries */
 
-	  public virtual void TestPT1()
+      [Test]
+      public virtual void TestPT1()
 	  {
 		foreach (PayloadFunction fn in Functions)
 		{
@@ -70,7 +75,8 @@ namespace Lucene.Net.Search.Payloads
 		}
 	  }
 
-	  public virtual void TestPT2()
+      [Test]
+      public virtual void TestPT2()
 	  {
 		foreach (PayloadFunction fn in Functions)
 		{
@@ -83,7 +89,8 @@ namespace Lucene.Net.Search.Payloads
 		}
 	  }
 
-	  public virtual void TestPT4()
+      [Test]
+      public virtual void TestPT4()
 	  {
 		foreach (PayloadFunction fn in Functions)
 		{
@@ -92,7 +99,8 @@ namespace Lucene.Net.Search.Payloads
 		}
 	  }
 
-	  public virtual void TestPT5()
+      [Test]
+      public virtual void TestPT5()
 	  {
 		foreach (PayloadFunction fn in Functions)
 		{

@@ -31,7 +31,6 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
 	/// <summary>
@@ -39,12 +38,15 @@ namespace Lucene.Net.Search
 	/// Generates random wildcards according to patterns,
 	/// and validates the correct number of hits are returned.
 	/// </summary>
+    
+    [TestFixture]
 	public class TestWildcardRandom : LuceneTestCase
 	{
 	  private IndexSearcher Searcher;
 	  private IndexReader Reader;
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -107,6 +109,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(numHits, docs.TotalHits, "Incorrect hits for pattern: " + pattern);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -114,6 +117,7 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void TestWildcards()
 	  {
 		  ;

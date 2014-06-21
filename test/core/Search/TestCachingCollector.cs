@@ -23,7 +23,8 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-	public class TestCachingCollector : LuceneTestCase
+	[TestFixture]
+    public class TestCachingCollector : LuceneTestCase
 	{
 
 	  private const double ONE_BYTE = 1.0 / (1024 * 1024); // 1 byte out of MB
@@ -93,7 +94,8 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestBasic()
+      [Test]
+      public virtual void TestBasic()
 	  {
 		foreach (bool cacheScores in new bool[] {false, true})
 		{
@@ -147,7 +149,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestIllegalStateOnReplay()
+      [Test]
+      public virtual void TestIllegalStateOnReplay()
 	  {
 		CachingCollector cc = CachingCollector.Create(new NoOpCollector(false), true, 50 * ONE_BYTE);
 		cc.Scorer = new MockScorer();
@@ -171,7 +174,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestIllegalCollectorOnReplay()
+      [Test]
+      public virtual void TestIllegalCollectorOnReplay()
 	  {
 		// tests that the Collector passed to replay() has an out-of-order mode that
 		// is valid with the Collector passed to the ctor
@@ -205,7 +209,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestCachedArraysAllocation()
+      [Test]
+      public virtual void TestCachedArraysAllocation()
 	  {
 		// tests the cached arrays allocation -- if the 'nextLength' was too high,
 		// caching would terminate even if a smaller length would suffice.
@@ -229,7 +234,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestNoWrappedCollector()
+      [Test]
+      public virtual void TestNoWrappedCollector()
 	  {
 		foreach (bool cacheScores in new bool[] {false, true})
 		{

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-	using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
+	//using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
 		}
 		writer.Commit();
         writer.Close();
-        docs.Close();
+        docs.Dispose();
 	  }
 
 
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
 		  throw new System.NotSupportedException();
 		}
 
-		public override SimScorer SimScorer(SimWeight weight, AtomicReaderContext context)
+		public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
 		{
 		  throw new System.NotSupportedException();
 		}

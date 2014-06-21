@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
 	  /// Only here to compare the implementation with <seealso cref="#select(long,int)"/>,
 	  /// normally <seealso cref="Long#bitCount"/> is preferable. </summary>
 	  /// <returns> The total number of 1 bits in x. </returns>
-	  internal static int BitCount(long x)
+	  public static int BitCount(long x)
 	  {
 		// Step 0 leaves in each pair of bits the number of ones originally contained in that pair:
 		x = x - ((int)((uint)(x & unchecked((long)0xAAAAAAAAAAAAAAAAL)) >> 1));

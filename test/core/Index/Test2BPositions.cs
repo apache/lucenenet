@@ -31,7 +31,6 @@ namespace Lucene.Net.Index
 	using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TimeUnits = Lucene.Net.Util.TimeUnits;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;

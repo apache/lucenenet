@@ -154,7 +154,7 @@ namespace Lucene.Net.Util.Packed
 
 	  private static void TstEqual(string mes, long[] exp, long[] act)
 	  {
-		Assert.AreEqual(mes + ".length", exp.Length, act.Length);
+		Assert.AreEqual(mes + ".Length", exp.Length, act.Length);
 		for (int i = 0; i < exp.Length; i++)
 		{
 		  if (exp[i] != act[i])

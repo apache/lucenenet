@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -29,7 +30,7 @@ namespace Lucene.Net.Util
 			{
 			}
 
-			protected internal override bool LessThan(int? a, int? b)
+			public override bool LessThan(int? a, int? b)
 			{
 				return (a < b);
 			}
@@ -37,7 +38,7 @@ namespace Lucene.Net.Util
 
 		public virtual void TestPQ()
 		{
-			TestPQ(atLeast(10000), random());
+			TestPQ(AtLeast(10000), Random());
 		}
 
 		public static void TestPQ(int count, Random gen)
@@ -49,7 +50,7 @@ namespace Lucene.Net.Util
 			{
 				int next = gen.Next();
 				sum += next;
-				pq.add(next);
+				pq.Add(next);
 			}
 
 			//      Date end = new Date();
@@ -62,7 +63,7 @@ namespace Lucene.Net.Util
 			int last = int.MinValue;
 			for (int i = 0; i < count; i++)
 			{
-				int? next = pq.pop();
+				int? next = pq.Pop();
 				Assert.IsTrue((int)next >= last);
 				last = (int)next;
 				sum2 += last;
@@ -78,25 +79,25 @@ namespace Lucene.Net.Util
 		public virtual void TestClear()
 		{
 			PriorityQueue<int?> pq = new IntegerQueue(3);
-			pq.add(2);
-			pq.add(3);
-			pq.add(1);
-			Assert.AreEqual(3, pq.size());
-			pq.clear();
-			Assert.AreEqual(0, pq.size());
+			pq.Add(2);
+			pq.Add(3);
+			pq.Add(1);
+			Assert.AreEqual(3, pq.Size());
+			pq.Clear();
+			Assert.AreEqual(0, pq.Size());
 		}
 
 		public virtual void TestFixedSize()
 		{
 			PriorityQueue<int?> pq = new IntegerQueue(3);
-			pq.insertWithOverflow(2);
-			pq.insertWithOverflow(3);
-			pq.insertWithOverflow(1);
-			pq.insertWithOverflow(5);
-			pq.insertWithOverflow(7);
-			pq.insertWithOverflow(1);
-			Assert.AreEqual(3, pq.size());
-			Assert.AreEqual((int?) 3, pq.top());
+			pq.InsertWithOverflow(2);
+			pq.InsertWithOverflow(3);
+			pq.InsertWithOverflow(1);
+			pq.InsertWithOverflow(5);
+			pq.InsertWithOverflow(7);
+			pq.InsertWithOverflow(1);
+			Assert.AreEqual(3, pq.Size());
+			Assert.AreEqual((int?) 3, pq.Top());
 		}
 
 		public virtual void TestInsertWithOverflow()
@@ -110,14 +111,14 @@ namespace Lucene.Net.Util
 		  int? i5 = 7;
 		  int? i6 = 1;
 
-		  assertNull(pq.insertWithOverflow(i1));
-		  assertNull(pq.insertWithOverflow(i2));
-		  assertNull(pq.insertWithOverflow(i3));
-		  assertNull(pq.insertWithOverflow(i4));
-		  Assert.IsTrue(pq.insertWithOverflow(i5) == i3); // i3 should have been dropped
-		  Assert.IsTrue(pq.insertWithOverflow(i6) == i6); // i6 should not have been inserted
-		  Assert.AreEqual(size, pq.size());
-		  Assert.AreEqual((int?) 2, pq.top());
+		  Assert.IsNull(pq.InsertWithOverflow(i1));
+		  Assert.IsNull(pq.InsertWithOverflow(i2));
+		  Assert.IsNull(pq.InsertWithOverflow(i3));
+		  Assert.IsNull(pq.InsertWithOverflow(i4));
+		  Assert.IsTrue(pq.InsertWithOverflow(i5) == i3); // i3 should have been dropped
+		  Assert.IsTrue(pq.InsertWithOverflow(i6) == i6); // i6 should not have been inserted
+		  Assert.AreEqual(size, pq.Size());
+		  Assert.AreEqual((int?) 2, pq.Top());
 		}
 
 	}

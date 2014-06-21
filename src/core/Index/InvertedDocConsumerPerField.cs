@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-	internal abstract class InvertedDocConsumerPerField
+    public abstract class InvertedDocConsumerPerField
 	{
 
 	  // Called once per field, and is given all IndexableField

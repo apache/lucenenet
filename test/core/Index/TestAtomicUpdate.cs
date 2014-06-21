@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -199,7 +200,7 @@ namespace Lucene.Net.Index
 		directory.Dispose();
 
 		// Second in an FSDirectory:
-		Directory dirPath = CreateTempDir("lucene.test.atomic");
+		DirectoryInfo dirPath = CreateTempDir("lucene.test.atomic");
 		directory = NewFSDirectory(dirPath);
 		RunTest(directory);
 		directory.Dispose();

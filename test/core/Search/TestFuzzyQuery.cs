@@ -38,10 +38,12 @@ namespace Lucene.Net.Search
 	/// Tests <seealso cref="FuzzyQuery"/>.
 	/// 
 	/// </summary>
-	public class TestFuzzyQuery : LuceneTestCase
+	[TestFixture]
+    public class TestFuzzyQuery : LuceneTestCase
 	{
 
-	  public virtual void TestFuzziness()
+      [Test]
+      public virtual void TestFuzziness()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
@@ -196,7 +198,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void Test2()
+      [Test]
+      public virtual void Test2()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false));
@@ -239,7 +242,8 @@ namespace Lucene.Net.Search
 	  /// FuzzyQuery optimizes itself around this information, if the attribute
 	  /// is not implemented correctly, there will be problems!
 	  /// </summary>
-	  public virtual void TestTieBreaker()
+      [Test]
+      public virtual void TestTieBreaker()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
@@ -276,7 +280,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Test the TopTermsBoostOnlyBooleanQueryRewrite rewrite method. </summary>
-	  public virtual void TestBoostOnlyRewrite()
+      [Test]
+      public virtual void TestBoostOnlyRewrite()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
@@ -300,7 +305,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void TestGiga()
+      [Test]
+      public virtual void TestGiga()
 	  {
 
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -338,7 +344,8 @@ namespace Lucene.Net.Search
 		index.Dispose();
 	  }
 
-	  public virtual void TestDistanceAsEditsSearching()
+      [Test]
+      public virtual void TestDistanceAsEditsSearching()
 	  {
 		Directory index = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), index);

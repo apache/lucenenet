@@ -1,3 +1,6 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -23,7 +26,7 @@ namespace Lucene.Net.Util
 	{
 	  private void TstRank(long x)
 	  {
-		Assert.AreEqual("rank(" + x + ")", long.bitCount(x), BroadWord.bitCount(x));
+		Assert.AreEqual(Number.BitCount(x), BroadWord.BitCount(x), "rank(" + x + ")");
 	  }
 
 	  public virtual void TestRank1()
@@ -33,13 +36,13 @@ namespace Lucene.Net.Util
 		TstRank(3L);
 		TstRank(0x100L);
 		TstRank(0x300L);
-		TstRank(0x8000000000000001L);
+		TstRank(unchecked((long)0x8000000000000001L));
 	  }
 
 	  private void TstSelect(long x, int r, int exp)
 	  {
-		Assert.AreEqual("selectNaive(" + x + "," + r + ")", exp, BroadWord.selectNaive(x, r));
-		Assert.AreEqual("select(" + x + "," + r + ")", exp, BroadWord.select(x, r));
+		Assert.AreEqual(exp, BroadWord.SelectNaive(x, r), "selectNaive(" + x + "," + r + ")");
+		Assert.AreEqual(exp, BroadWord.Select(x, r), "select(" + x + "," + r + ")");
 	  }
 
 	  public virtual void TestSelectFromZero()
@@ -88,7 +91,7 @@ namespace Lucene.Net.Util
 	  {
 		for (int i = 0; i < 64; i++)
 		{
-		  TstSelect(0xFFFFFFFFFFFFFFFFL,i + 1,i);
+		  TstSelect(unchecked((long)0xFFFFFFFFFFFFFFFFL),i + 1,i);
 		}
 	  }
 	  public virtual void TestPerfSelectAllBitsBroad()
@@ -97,7 +100,7 @@ namespace Lucene.Net.Util
 		{
 		  for (int i = 0; i < 64; i++)
 		  {
-			Assert.AreEqual(i, BroadWord.select(0xFFFFFFFFFFFFFFFFL, i + 1));
+			Assert.AreEqual(i, BroadWord.Select(unchecked((long)0xFFFFFFFFFFFFFFFFL), i + 1));
 		  }
 		}
 	  }
@@ -107,7 +110,7 @@ namespace Lucene.Net.Util
 		{
 		  for (int i = 0; i < 64; i++)
 		  {
-			Assert.AreEqual(i, BroadWord.selectNaive(0xFFFFFFFFFFFFFFFFL, i + 1));
+			Assert.AreEqual(i, BroadWord.SelectNaive(unchecked((long)0xFFFFFFFFFFFFFFFFL), i + 1));
 		  }
 		}
 	  }
@@ -120,7 +123,7 @@ namespace Lucene.Net.Util
 		  {
 			long ii = i * BroadWord.L8_L;
 			long jj = j * BroadWord.L8_L;
-			Assert.AreEqual(ToStringUtils.longHex(ii) + " < " + ToStringUtils.longHex(jj), ToStringUtils.longHex((i < j) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.longHex(BroadWord.smallerUpTo7_8(ii,jj)));
+			Assert.AreEqual(ToStringUtils.LongHex(ii) + " < " + ToStringUtils.LongHex(jj), ToStringUtils.LongHex((i < j) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.SmallerUpTo7_8(ii,jj)));
 		  }
 		}
 	  }
@@ -134,7 +137,7 @@ namespace Lucene.Net.Util
 		  {
 			long ii = i * BroadWord.L8_L;
 			long jj = j * BroadWord.L8_L;
-			Assert.AreEqual(ToStringUtils.longHex(ii) + " < " + ToStringUtils.longHex(jj), ToStringUtils.longHex((i < j) ? (0x80L * BroadWord.L8_L): 0x0L), ToStringUtils.longHex(BroadWord.smalleru_8(ii,jj)));
+			Assert.AreEqual(ToStringUtils.LongHex(ii) + " < " + ToStringUtils.LongHex(jj), ToStringUtils.LongHex((i < j) ? (0x80L * BroadWord.L8_L): 0x0L), ToStringUtils.LongHex(BroadWord.Smalleru_8(ii,jj)));
 		  }
 		}
 	  }
@@ -145,7 +148,7 @@ namespace Lucene.Net.Util
 		for (long i = 0x0L; i <= 0xFFL; i++)
 		{
 		  long ii = i * BroadWord.L8_L;
-		  Assert.AreEqual(ToStringUtils.longHex(ii) + " <> 0", ToStringUtils.longHex((i != 0L) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.longHex(BroadWord.notEquals0_8(ii)));
+		  Assert.AreEqual(ToStringUtils.LongHex(ii) + " <> 0", ToStringUtils.LongHex((i != 0L) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.NotEquals0_8(ii)));
 		}
 	  }
 	}

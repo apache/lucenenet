@@ -45,9 +45,8 @@ namespace Lucene.Net.Search
     using System.Collections.Generic;
     using System.IO;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestQueryRescorer extends Lucene.Net.Util.LuceneTestCase
-	public class TestQueryRescorer : LuceneTestCase
+    [TestFixture]
+    public class TestQueryRescorer : LuceneTestCase
 	{
 
 	  private IndexSearcher GetSearcher(IndexReader r)
@@ -60,7 +59,8 @@ namespace Lucene.Net.Search
 		return searcher;
 	  }
 
-	  public virtual void TestBasic()
+      [Test]
+      public virtual void TestBasic()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -118,7 +118,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestCustomCombine()
+      [Test]
+      public virtual void TestCustomCombine()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -174,7 +175,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+		  protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
 		  {
 			float score = firstPassScore;
 			if (secondPassMatches)
@@ -185,7 +186,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestExplain()
+      [Test]
+      public virtual void TestExplain()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -260,7 +262,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+		  protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
 		  {
 			float score = firstPassScore;
 			if (secondPassMatches)
@@ -271,7 +273,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestMissingSecondPassScore()
+      [Test]
+      public virtual void TestMissingSecondPassScore()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -327,7 +330,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		Directory dir = NewDirectory();
 		int numDocs = AtLeast(1000);
@@ -399,7 +403,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
+		  protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
 		  {
 			return secondPassScore;
 		  }
@@ -590,12 +594,12 @@ namespace Lucene.Net.Search
 		  return Number.FloatToIntBits(Boost) == Number.FloatToIntBits(other.Boost) && Reverse == other.Reverse && Arrays.Equals(IdToNum, other.IdToNum);
 		}
 
-		public override Query Clone()
+		public override object Clone()
 		{
 		  return new FixedScoreQuery(IdToNum, Reverse);
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  int PRIME = 31;
 		  int hash = base.GetHashCode();

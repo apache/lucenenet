@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(field != null);
 		Assert.IsTrue(field.FieldType().StoreTermVectors);
 
-		Assert.IsFalse(field.FieldType().OmitsNorms);
+		Assert.IsFalse(field.FieldType().OmitNorms);
         Assert.IsTrue(field.FieldType().IndexOptionsValue == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
 		field = (Field) doc.GetField(DocHelper.TEXT_FIELD_3_KEY);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 		field = (Field) doc.GetField(DocHelper.NO_TF_KEY);
 		Assert.IsTrue(field != null);
 		Assert.IsFalse(field.FieldType().StoreTermVectors);
-		Assert.IsFalse(field.FieldType().OmitsNorms);
+		Assert.IsFalse(field.FieldType().OmitNorms);
         Assert.IsTrue(field.FieldType().IndexOptionsValue == IndexOptions.DOCS_ONLY);
 
 		DocumentStoredFieldVisitor visitor = new DocumentStoredFieldVisitor(DocHelper.TEXT_FIELD_3_KEY);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 		public FaultyFSDirectory(DirectoryInfo dir)
 		{
 		  FsDir = NewFSDirectory(dir);
-		  lockFactory = FsDir.LockFactory;
+		  LockFactory = FsDir.LockFactory;
 		}
 		public override IndexInput OpenInput(string name, IOContext context)
 		{
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 		}
 		public override bool FileExists(string name)
 		{
-		  return FsDir.fileExists(name);
+		  return FsDir.FileExists(name);
 		}
 		public override void DeleteFile(string name)
 		{
@@ -148,9 +148,9 @@ namespace Lucene.Net.Index
 		}
 		public override void Sync(ICollection<string> names)
 		{
-		  FsDir.sync(names);
+		  FsDir.Sync(names);
 		}
-		public override void Close()
+		public override void Dispose()
 		{
 		  FsDir.Dispose();
 		}
@@ -172,26 +172,27 @@ namespace Lucene.Net.Index
 			throw new IOException("Simulated network outage");
 		  }
 		}
-		public override void ReadInternal(sbyte[] b, int offset, int length)
+		protected override void ReadInternal(byte[] b, int offset, int length)
 		{
 		  SimOutage();
 		  @delegate.Seek(FilePointer);
 		  @delegate.ReadBytes(b, offset, length);
 		}
-		public override void SeekInternal(long pos)
+
+	    protected override void SeekInternal(long pos)
 		{
 		}
 		public override long Length()
 		{
 		  return @delegate.Length();
 		}
-		public override void Close()
+		public override void Dispose()
 		{
 		  @delegate.Dispose();
 		}
-		public override FaultyIndexInput Clone()
+		public override object Clone()
 		{
-		  FaultyIndexInput i = new FaultyIndexInput(@delegate.Clone());
+		  FaultyIndexInput i = new FaultyIndexInput((IndexInput) @delegate.Clone());
 		  // seek the clone to our current position
 		  try
 		  {

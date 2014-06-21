@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
 	///  TermVectorsConsumer}, write their own byte streams
 	///  under each term.
 	/// </summary>
-	internal sealed class TermsHash : InvertedDocConsumer
+	public sealed class TermsHash : InvertedDocConsumer
 	{
 
 	  internal readonly TermsHashConsumer Consumer;

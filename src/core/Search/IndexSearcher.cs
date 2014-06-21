@@ -851,8 +851,8 @@ namespace Lucene.Net.Search
 			Hq.Scorer = FakeScorer;
 			foreach (ScoreDoc scoreDoc in docs.ScoreDocs)
 			{
-			  FakeScorer.Doc = scoreDoc.Doc - @base;
-			  FakeScorer.Score_Renamed = scoreDoc.Score;
+			  FakeScorer.doc = scoreDoc.Doc - @base;
+			  FakeScorer.score = scoreDoc.Score;
 			  Hq.Collect(scoreDoc.Doc - @base);
 			}
 

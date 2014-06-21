@@ -45,12 +45,14 @@ namespace Lucene.Net.Search
 	using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using Lucene.Net.Randomized.Generators;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Create an index with random unicode terms
 	/// Generates random regexps, and validates against a simple impl.
 	/// </summary>
-	public class TestRegexpRandom2 : LuceneTestCase
+	[TestFixture]
+    public class TestRegexpRandom2 : LuceneTestCase
 	{
 	  protected internal IndexSearcher Searcher1;
 	  protected internal IndexSearcher Searcher2;
@@ -58,6 +60,7 @@ namespace Lucene.Net.Search
 	  private Directory Dir;
 	  protected internal string FieldName;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -94,6 +97,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -116,7 +120,7 @@ namespace Lucene.Net.Search
 		  Automaton = re.ToAutomaton();
 		}
 
-		protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+		public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		{
 		  return new SimpleAutomatonTermsEnum(this, terms.Iterator(null));
 		}
@@ -147,7 +151,7 @@ namespace Lucene.Net.Search
 			InitialSeekTerm = new BytesRef("");
 		  }
 
-		  protected internal override AcceptStatus Accept(BytesRef term)
+		  protected override AcceptStatus Accept(BytesRef term)
 		  {
 			UnicodeUtil.UTF8toUTF16(term.Bytes, term.Offset, term.Length, Utf16);
 			return RunAutomaton.Run(Utf16.Chars, 0, Utf16.Length) ? AcceptStatus.YES : AcceptStatus.NO;
@@ -162,7 +166,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test a bunch of random regular expressions </summary>
-	  public virtual void TestRegexps()
+      [Test]
+      public virtual void TestRegexps()
 	  {
 		// we generate aweful regexps: good for testing.
 		// but for preflex codec, the test can be very slow, so use less iterations.

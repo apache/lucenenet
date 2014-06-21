@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	public class TestIndexWriterOnJRECrash : TestNRTThreads
 	{
-	  private File TempDir;
+	  private DirectoryInfo TempDir;
 
 	  public override void SetUp()
 	  {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Override @Nightly public void testNRTThreads() throws Exception
-	  public override void TestNRTThreads()
+	  public override void TestNRTThreads_Mem()
 	  {
 		// if we are not the fork
 		if (System.getProperty("tests.crashmode") == null)
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
 		  // run the test until we crash.
 		  for (int i = 0; i < 1000; i++)
 		  {
-			base.TestNRTThreads();
+			base.TestNRTThreads_Mem();
 		  }
 		}
 	  }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
 	  {
 		public static Thread Start(InputStream from, OutputStream to)
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper2(from, to);
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper2(from, to);
 		  t.Start();
 		  return t;
 		}
@@ -195,9 +195,9 @@ namespace Lucene.Net.Index
 	  /// Recursively looks for indexes underneath <code>file</code>,
 	  /// and runs checkindex on them. returns true if it found any indexes.
 	  /// </summary>
-	  public virtual bool CheckIndexes(File file)
+	  public virtual bool CheckIndexes(DirectoryInfo file)
 	  {
-		if (file.Directory)
+		if (file.IsDirectory)
 		{
 		  BaseDirectoryWrapper dir = NewFSDirectory(file);
 		  dir.CheckIndexOnClose = false; // don't double-checkindex
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
 			return true;
 		  }
 		  dir.Dispose();
-		  foreach (File f in file.ListFiles())
+		  foreach (FileInfo f in file.ListAll())
 		  {
 			if (CheckIndexes(f))
 			{

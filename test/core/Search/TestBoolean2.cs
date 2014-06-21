@@ -43,7 +43,8 @@ namespace Lucene.Net.Search
 	/// Test BooleanQuery2 against BooleanQuery by overriding the standard query parser.
 	/// this also tests the scoring order of BooleanQuery.
 	/// </summary>
-	public class TestBoolean2 : LuceneTestCase
+	[TestFixture]
+    public class TestBoolean2 : LuceneTestCase
 	{
 	  private static IndexSearcher Searcher;
 	  private static IndexSearcher BigSearcher;
@@ -58,7 +59,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -118,7 +120,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Reader.Dispose();
 		LittleReader.Dispose();
@@ -151,7 +154,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries01() throws Exception
-	  public virtual void TestQueries01()
+      [Test]
+      public virtual void TestQueries01()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -162,7 +166,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries02() throws Exception
-	  public virtual void TestQueries02()
+      [Test]
+      public virtual void TestQueries02()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -173,7 +178,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries03() throws Exception
-	  public virtual void TestQueries03()
+      [Test]
+      public virtual void TestQueries03()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.SHOULD);
@@ -184,7 +190,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries04() throws Exception
-	  public virtual void TestQueries04()
+      [Test]
+      public virtual void TestQueries04()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.SHOULD);
@@ -195,7 +202,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries05() throws Exception
-	  public virtual void TestQueries05()
+      [Test]
+      public virtual void TestQueries05()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -206,7 +214,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries06() throws Exception
-	  public virtual void TestQueries06()
+      [Test]
+      public virtual void TestQueries06()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -218,7 +227,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries07() throws Exception
-	  public virtual void TestQueries07()
+      [Test]
+      public virtual void TestQueries07()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST_NOT);
@@ -230,7 +240,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries08() throws Exception
-	  public virtual void TestQueries08()
+      [Test]
+      public virtual void TestQueries08()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -242,7 +253,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries09() throws Exception
-	  public virtual void TestQueries09()
+      [Test]
+      public virtual void TestQueries09()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -255,7 +267,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testQueries10() throws Exception
-	  public virtual void TestQueries10()
+      [Test]
+      public virtual void TestQueries10()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(field, "w3")), BooleanClause.Occur_e.MUST);
@@ -293,7 +306,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRandomQueries() throws Exception
-	  public virtual void TestRandomQueries()
+      [Test]
+      public virtual void TestRandomQueries()
 	  {
 		string[] vals = new string[] {"w1","w2","w3","w4","w5","xx","yy","zzz"};
 

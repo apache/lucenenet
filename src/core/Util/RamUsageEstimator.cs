@@ -616,13 +616,13 @@ namespace Lucene.Net.Util
 	      {
 		    return HumanReadableUnits(SizeOf(@object));
 	      }
-        /*
+        
 	      /// <summary>
 	      /// An identity hash set implemented using open addressing. No null keys are allowed.
 	      /// 
 	      /// TODO: If this is useful outside this class, make it public - needs some work
 	      /// </summary>
-	      internal sealed class IdentityHashSet<KType> : IEnumerable<KType>
+	      public sealed class IdentityHashSet<KType> : IEnumerable<KType>
 	      {
 		    /// <summary>
 		    /// Default load factor.
@@ -764,7 +764,7 @@ namespace Lucene.Net.Util
 		      /*
 		       * Rehash all assigned slots from the old hash table.
 		       */
-		      /*int mask = Keys.Length - 1;
+		      int mask = Keys.Length - 1;
 		      for (int i = 0; i < oldKeys.Length; i++)
 		      {
 			    object key = oldKeys[i];
@@ -846,41 +846,54 @@ namespace Lucene.Net.Util
 			    }
 		    }
 
-            /*LUCENE TO-DO Get enumerator is already handled by default
 		    public IEnumerator<KType> GetEnumerator()
 		    {
 		      return new IteratorAnonymousInnerClassHelper(this);
 		    }
 
+	        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	        {
+	            return GetEnumerator();
+	        }
+
 		    private class IteratorAnonymousInnerClassHelper : IEnumerator<KType>
 		    {
-			    private readonly IdentityHashSet OuterInstance;
+                private readonly IdentityHashSet<KType> OuterInstance;
 
-			    public IteratorAnonymousInnerClassHelper(IdentityHashSet outerInstance)
+			    public IteratorAnonymousInnerClassHelper(IdentityHashSet<KType> outerInstance)
 			    {
 				    this.OuterInstance = outerInstance;
 				    pos = -1;
-				    nextElement = fetchNext();
+				    nextElement = FetchNext();
 			    }
 
 			    internal int pos;
 			    internal object nextElement;
+		        internal KType current;
 
-			    public virtual bool HasNext()
-			    {
-			      return nextElement != null;
-			    }
 
-			    public override KType Next()
-			    {
-			      object r = this.nextElement;
-			      if (r == null)
-			      {
-                      throw new System.NotSupportedException();
-			      }
-			      this.nextElement = fetchNext();
-			      return (KType) r;
-			    }
+		        public bool MoveNext()
+		        {
+                    object r = nextElement;
+		            if (nextElement == null)
+		            {
+		                return false;
+		            }
+
+		            nextElement = FetchNext();
+		            current = (KType)r;
+		            return true;
+		        }
+
+		        public KType Current
+		        {
+		            get { return current; }
+		        }
+
+		        object System.Collections.IEnumerator.Current
+		        {
+		            get { return Current; }
+		        }
 
 			    private object FetchNext()
 			    {
@@ -893,12 +906,17 @@ namespace Lucene.Net.Util
 			      return (pos >= OuterInstance.Keys.Length ? null : OuterInstance.Keys[pos]);
 			    }
 
-			    public virtual void Remove()
-			    {
-			      throw new System.NotSupportedException();
-			    }
+		        public void Reset()
+		        {
+		            throw new NotImplementedException();
+		        }
+
+		        public void Dispose()
+		        {
+		            
+		        }
 		    }
-	      }*/
+	      }
 	}
 
 }

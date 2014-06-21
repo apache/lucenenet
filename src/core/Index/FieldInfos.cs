@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
 		return ByNumber[fieldNumber];
 	  }
 
-	  internal sealed class FieldNumbers
+	  public sealed class FieldNumbers
 	  {
 
 		internal readonly IDictionary<int?, string> NumberToName;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
 		// we silently discard the norm but this is badly trappy
 		internal int LowestUnassignedFieldNumber = -1;
 
-		internal FieldNumbers()
+		public FieldNumbers()
 		{
 		  this.NameToNumber = new Dictionary<string, int?>();
 		  this.NumberToName = new Dictionary<int?, string>();
@@ -325,7 +325,7 @@ namespace Lucene.Net.Index
 		internal readonly Dictionary<string, FieldInfo> ByName = new Dictionary<string, FieldInfo>();
 		internal readonly FieldNumbers GlobalFieldNumbers;
 
-		internal Builder() : this(new FieldNumbers())
+		public Builder() : this(new FieldNumbers())
 		{
 		}
 
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
 		  return ByName[fieldName];
 		}
 
-		internal FieldInfos Finish()
+	      public FieldInfos Finish()
 		{
             return new FieldInfos(ByName.Values.ToArray());
 		}

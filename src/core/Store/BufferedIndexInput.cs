@@ -406,7 +406,7 @@ namespace Lucene.Net.Store
 	  /// Expert: implements seek.  Sets current position in this file, where the
 	  /// next <seealso cref="#readInternal(byte[],int,int)"/> will occur. </summary>
 	  /// <seealso cref= #readInternal(byte[],int,int) </seealso>
-	  protected internal abstract void SeekInternal(long pos);
+	  protected abstract void SeekInternal(long pos);
 
 	  public override object Clone()
 	  {

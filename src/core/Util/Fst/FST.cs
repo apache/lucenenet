@@ -175,112 +175,8 @@ namespace Lucene.Net.Util.Fst
 	  private Arc<T>[] AssertingCachedRootArcs; // only set wit assert
 
 
-	  /// <summary>
-	  /// Represents a single arc. </summary>
-	  public sealed class Arc<T>
-	  {
-		public int Label;
-		public T Output;
-
-		// From node (ord or address); currently only used when
-		// building an FST w/ willPackFST=true:
-		internal long Node;
-
-		/// <summary>
-		/// To node (ord or address) </summary>
-		public long Target;
-
-		internal sbyte Flags;
-		public T NextFinalOutput;
-
-		// address (into the byte[]), or ord/address if label == END_LABEL
-		internal long NextArc;
-
-		// this is non-zero if current arcs are fixed array:
-		internal long PosArcsStart;
-		internal int BytesPerArc;
-		internal int ArcIdx;
-		internal int NumArcs;
-
-		/// <summary>
-		/// Returns this </summary>
-		public Arc<T> CopyFrom(Arc<T> other)
-		{
-		  Node = other.Node;
-		  Label = other.Label;
-		  Target = other.Target;
-		  Flags = other.Flags;
-		  Output = other.Output;
-		  NextFinalOutput = other.NextFinalOutput;
-		  NextArc = other.NextArc;
-		  BytesPerArc = other.BytesPerArc;
-		  if (BytesPerArc != 0)
-		  {
-			PosArcsStart = other.PosArcsStart;
-			ArcIdx = other.ArcIdx;
-			NumArcs = other.NumArcs;
-		  }
-		  return this;
-		}
-
-		internal bool Flag(int flag)
-		{
-		  return FST<T>.Flag(Flags, flag);
-		}
-
-		public bool Last
-		{
-			get
-			{
-			  return Flag(BIT_LAST_ARC);
-			}
-		}
-
-		public bool Final
-		{
-			get
-			{
-			  return Flag(BIT_FINAL_ARC);
-			}
-		}
-
-		public override string ToString()
-		{
-		  StringBuilder b = new StringBuilder();
-		  b.Append("node=" + Node);
-		  b.Append(" target=" + Target);
-		  b.Append(" label=0x" + Label.ToString("x"));
-		  if (Flag(BIT_FINAL_ARC))
-		  {
-			b.Append(" final");
-		  }
-		  if (Flag(BIT_LAST_ARC))
-		  {
-			b.Append(" last");
-		  }
-		  if (Flag(BIT_TARGET_NEXT))
-		  {
-			b.Append(" targetNext");
-		  }
-		  if (Flag(BIT_STOP_NODE))
-		  {
-			b.Append(" stop");
-		  }
-		  if (Flag(BIT_ARC_HAS_OUTPUT))
-		  {
-			b.Append(" output=" + Output);
-		  }
-		  if (Flag(BIT_ARC_HAS_FINAL_OUTPUT))
-		  {
-			b.Append(" nextFinalOutput=" + NextFinalOutput);
-		  }
-		  if (BytesPerArc != 0)
-		  {
-			b.Append(" arcArray(idx=" + ArcIdx + " of " + NumArcs + ")");
-		  }
-		  return b.ToString();
-		}
-	  }
+	 
+	  
 
 	  internal static bool Flag(int flags, int bit)
 	  {
@@ -456,7 +352,7 @@ namespace Lucene.Net.Util.Fst
 		return size;
 	  }
 
-	  internal void Finish(long newStartNode)
+	    public void Finish(long newStartNode)
 	  {
 		if (StartNode != -1)
 		{
@@ -487,8 +383,6 @@ namespace Lucene.Net.Util.Fst
 	  }
 
 	  // Caches first 128 labels
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private void cacheRootArcs() throws java.io.IOException
 	  private void CacheRootArcs()
 	  {
 		CachedRootArcs = (Arc<T>[]) new Arc<T>[0x80];
@@ -526,8 +420,6 @@ namespace Lucene.Net.Util.Fst
 		}
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) private boolean setAssertingRootArcs(Arc<T>[] arcs) throws java.io.IOException
 	  private bool SetAssertingRootArcs(Arc<T>[] arcs)
 	  {
 		AssertingCachedRootArcs = (Arc<T>[]) new Arc<T>[arcs.Length];
@@ -642,8 +534,6 @@ namespace Lucene.Net.Util.Fst
 		{
 		  @out.WriteByte((sbyte) 0);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte t;
 		sbyte t;
 		if (inputType == INPUT_TYPE.BYTE1)
 		{
@@ -772,7 +662,7 @@ namespace Lucene.Net.Util.Fst
 
 	  // serializes new node by appending its bytes to the end
 	  // of the current byte[]
-      internal long AddNode(Builder<T>.UnCompiledNode<T> nodeIn)
+	    public long AddNode(Builder<T>.UnCompiledNode<T> nodeIn)
 	  {
 
 		//System.out.println("FST.addNode pos=" + bytes.getPosition() + " numArcs=" + nodeIn.numArcs);
@@ -812,7 +702,7 @@ namespace Lucene.Net.Util.Fst
 		  Builder<T>.Arc<T> arc = nodeIn.Arcs[arcIdx];
 		  Builder<T>.CompiledNode target = (Builder<T>.CompiledNode) arc.Target;
 		  int flags = 0;
-		  //System.out.println("  arc " + arcIdx + " label=" + arc.label + " -> target=" + target.node);
+		  //System.out.println("  arc " + arcIdx + " label=" + arc.Label + " -> target=" + target.Node);
 
 		  if (arcIdx == lastArc)
 		  {
@@ -859,7 +749,7 @@ namespace Lucene.Net.Util.Fst
 		  Bytes.WriteByte((sbyte) flags);
 		  WriteLabel(Bytes, arc.Label);
 
-		  // System.out.println("  write arc: label=" + (char) arc.label + " flags=" + flags + " target=" + target.node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.output));
+		  // System.out.println("  write arc: label=" + (char) arc.Label + " flags=" + flags + " target=" + target.Node + " pos=" + bytes.getPosition() + " output=" + outputs.outputToString(arc.Output));
 
           if ((object)arc.Output != (object)NO_OUTPUT)
 		  {
@@ -1131,7 +1021,7 @@ namespace Lucene.Net.Util.Fst
 	  public Arc<T> ReadFirstTargetArc(Arc<T> follow, Arc<T> arc, FST.BytesReader @in)
 	  {
 		//int pos = address;
-		//System.out.println("    readFirstTarget follow.target=" + follow.target + " isFinal=" + follow.isFinal());
+		//System.out.println("    readFirstTarget follow.target=" + follow.Target + " isFinal=" + follow.isFinal());
 		if (follow.Final)
 		{
 		  // Insert "fake" final first arc:
@@ -1149,7 +1039,7 @@ namespace Lucene.Net.Util.Fst
 			arc.NextArc = follow.Target;
 		  }
 		  arc.Target = FINAL_END_NODE;
-		  //System.out.println("    insert isFinal; nextArc=" + follow.target + " isLast=" + arc.isLast() + " output=" + outputs.outputToString(arc.output));
+		  //System.out.println("    insert isFinal; nextArc=" + follow.Target + " isLast=" + arc.isLast() + " output=" + outputs.outputToString(arc.Output));
 		  return arc;
 		}
 		else
@@ -1201,7 +1091,7 @@ namespace Lucene.Net.Util.Fst
 	  /// </summary>
 	  /// <returns> Returns <code>true</code> if <code>arc</code> points to a state in an
 	  /// expanded array format. </returns>
-	  internal bool IsExpandedTarget(Arc<T> follow, BytesReader @in)
+	  public bool IsExpandedTarget(Arc<T> follow, BytesReader @in)
 	  {
 		if (!TargetHasArcs(follow))
 		{
@@ -1702,27 +1592,27 @@ namespace Lucene.Net.Util.Fst
 	      //  System.out.println("  " + Util.toBytesRef(ent.chain, new BytesRef()));
 	      //  }
 	      final ArcAndState<T> arcAndState = queue.get(queue.size()-1);
-	      seen.set(arcAndState.arc.node);
+	      seen.set(arcAndState.arc.Node);
 	      final BytesRef br = Util.toBytesRef(arcAndState.chain, new BytesRef());
 	      if (br.length > 0 && br.bytes[br.length-1] == -1) {
 	        br.length--;
 	      }
-	      //System.out.println("  top node=" + arcAndState.arc.target + " chain=" + br.utf8ToString());
+	      //System.out.println("  top node=" + arcAndState.arc.Target + " chain=" + br.utf8ToString());
 	      if (targetHasArcs(arcAndState.arc) && !seen.get(arcAndState.arc.target)) {
 	        // push
 	        readFirstTargetArc(arcAndState.arc, scratchArc);
-	        //System.out.println("  push label=" + (char) scratchArc.label);
-	        //System.out.println("    tonode=" + scratchArc.target + " last?=" + scratchArc.isLast());
+	        //System.out.println("  push label=" + (char) scratchArc.Label);
+	        //System.out.println("    tonode=" + scratchArc.Target + " last?=" + scratchArc.isLast());
 	        
 	        final IntsRef chain = IntsRef.deepCopyOf(arcAndState.chain);
 	        chain.grow(1+chain.length);
 	        // TODO
-	        //assert scratchArc.label != END_LABEL;
-	        chain.ints[chain.length] = scratchArc.label;
+	        //assert scratchArc.Label != END_LABEL;
+	        chain.ints[chain.length] = scratchArc.Label;
 	        chain.length++;
 	
 	        if (scratchArc.isLast()) {
-	          if (scratchArc.target != -1 && inCounts[scratchArc.target] == 1) {
+	          if (scratchArc.Target != -1 && inCounts[scratchArc.target] == 1) {
 	            //System.out.println("    append");
 	          } else {
 	            if (arcAndState.chain.length > 1) {
@@ -1745,10 +1635,10 @@ namespace Lucene.Net.Util.Fst
 	              System.out.println("chain: " + Util.toBytesRef(arcAndState.chain, new BytesRef()));
 	            }
 	          }
-	          if (scratchArc.target != -1 && inCounts[scratchArc.target] != 1) {
+	          if (scratchArc.Target != -1 && inCounts[scratchArc.target] != 1) {
 	            chain.length = 0;
 	          } else {
-	            chain.ints[0] = scratchArc.label;
+	            chain.ints[0] = scratchArc.Label;
 	            chain.length = 1;
 	          }
 	        }
@@ -1758,9 +1648,9 @@ namespace Lucene.Net.Util.Fst
 	      } else if (!arcAndState.arc.isLast()) {
 	        // next
 	        readNextArc(arcAndState.arc);
-	        //System.out.println("  next label=" + (char) arcAndState.arc.label + " len=" + arcAndState.chain.length);
+	        //System.out.println("  next label=" + (char) arcAndState.arc.Label + " len=" + arcAndState.chain.length);
 	        if (arcAndState.chain.length != 0) {
-	          arcAndState.chain.ints[arcAndState.chain.length-1] = arcAndState.arc.label;
+	          arcAndState.chain.ints[arcAndState.chain.length-1] = arcAndState.arc.Label;
 	        }
 	      } else {
 	        if (arcAndState.chain.length > 1) {
@@ -1776,10 +1666,10 @@ namespace Lucene.Net.Util.Fst
 	        if (queue.size() > 0) {
 	          final ArcAndState<T> arcAndState2 = queue.get(queue.size()-1);
 	          readNextArc(arcAndState2.arc);
-	          //System.out.println("  read next=" + (char) arcAndState2.arc.label + " queue=" + queue.size());
-	          assert arcAndState2.arc.label != END_LABEL;
+	          //System.out.println("  read next=" + (char) arcAndState2.arc.Label + " queue=" + queue.size());
+	          assert arcAndState2.arc.Label != END_LABEL;
 	          if (arcAndState2.chain.length != 0) {
-	            arcAndState2.chain.ints[arcAndState2.chain.length-1] = arcAndState2.arc.label;
+	            arcAndState2.chain.ints[arcAndState2.chain.length-1] = arcAndState2.arc.Label;
 	          }
 	        }
 	      }
@@ -1878,7 +1768,7 @@ namespace Lucene.Net.Util.Fst
 		{
 		  NodeAndInCount n = q.Pop();
 		  topNodeMap[n.Node] = downTo;
-		  //System.out.println("map node=" + n.node + " inCount=" + n.count + " to newID=" + downTo);
+		  //System.out.println("map node=" + n.Node + " inCount=" + n.count + " to newID=" + downTo);
 		}
 
 		// +1 because node ords start at 1 (0 is reserved as stop node):
@@ -1990,7 +1880,7 @@ namespace Lucene.Net.Util.Fst
 				  flags += (sbyte)BIT_LAST_ARC;
 				}
 				/*
-				if (!useArcArray && nodeUpto < nodes.length-1 && arc.target == nodes[nodeUpto+1]) {
+				if (!useArcArray && nodeUpto < nodes.length-1 && arc.Target == nodes[nodeUpto+1]) {
 				  flags += BIT_TARGET_NEXT;
 				}
 				*/
@@ -2297,17 +2187,17 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// <see cref="UnCompiledNode"/>
         /// </summary>
-        internal const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
+        public const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
 
         /// <summary>
         /// <see cref="UnCompiledNode"/>
         /// </summary>
-        internal const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
+        public const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
 
         /// <summary>
         /// <see cref="UnCompiledNode"/>
         /// </summary>
-        internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
+        public const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
 
         // Increment version to change it
         internal const string FILE_FORMAT_NAME = "FST";
@@ -2377,7 +2267,7 @@ namespace Lucene.Net.Util.Fst
         /// Represents a single arc.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public sealed class Arc<T>
+        public class Arc<T>
         {
             public int Label { get; set; }
             public T Output { get; set; }
@@ -2433,14 +2323,14 @@ namespace Lucene.Net.Util.Fst
                 return FST<T>.Flag(Flags, flag);
             }
 
-            public bool IsLast()
+            public bool Last
             {
-                return Flag(BIT_LAST_ARC);
+                get { return Flag(BIT_LAST_ARC); }
             }
 
-            public bool IsFinal()
+            public bool Final
             {
-                return Flag(BIT_FINAL_ARC);
+                get { return Flag(BIT_FINAL_ARC); }
             }
 
             public override string ToString()

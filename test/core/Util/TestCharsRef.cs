@@ -1,4 +1,7 @@
+using System;
 using System.Text;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -24,23 +27,23 @@ namespace Lucene.Net.Util
 	{
 	  public virtual void TestUTF16InUTF8Order()
 	  {
-		int numStrings = atLeast(1000);
+		int numStrings = AtLeast(1000);
 		BytesRef[] utf8 = new BytesRef[numStrings];
 		CharsRef[] utf16 = new CharsRef[numStrings];
 
 		for (int i = 0; i < numStrings; i++)
 		{
-		  string s = TestUtil.randomUnicodeString(random());
+		  string s = TestUtil.RandomUnicodeString(Random());
 		  utf8[i] = new BytesRef(s);
 		  utf16[i] = new CharsRef(s);
 		}
 
-		Arrays.sort(utf8);
-		Arrays.sort(utf16, CharsRef.UTF16SortedAsUTF8Comparator);
+		Array.Sort(utf8);
+		Array.Sort(utf16, CharsRef.UTF16SortedAsUTF8Comparer);
 
 		for (int i = 0; i < numStrings; i++)
 		{
-		  Assert.AreEqual(utf8[i].utf8ToString(), utf16[i].ToString());
+		  Assert.AreEqual(utf8[i].Utf8ToString(), utf16[i].ToString());
 		}
 	  }
 
@@ -48,14 +51,14 @@ namespace Lucene.Net.Util
 	  {
 		CharsRef @ref = new CharsRef();
 		StringBuilder builder = new StringBuilder();
-		int numStrings = atLeast(10);
+		int numStrings = AtLeast(10);
 		for (int i = 0; i < numStrings; i++)
 		{
-		  char[] charArray = TestUtil.randomRealisticUnicodeString(random(), 1, 100).ToCharArray();
-		  int offset = random().Next(charArray.Length);
+		  char[] charArray = TestUtil.RandomRealisticUnicodeString(Random(), 1, 100).ToCharArray();
+		  int offset = Random().Next(charArray.Length);
 		  int length = charArray.Length - offset;
 		  builder.Append(charArray, offset, length);
-		  @ref.append(charArray, offset, length);
+		  @ref.Append(charArray, offset, length);
 		}
 
 		Assert.AreEqual(builder.ToString(), @ref.ToString());
@@ -63,15 +66,15 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestCopy()
 	  {
-		int numIters = atLeast(10);
+		int numIters = AtLeast(10);
 		for (int i = 0; i < numIters; i++)
 		{
 		  CharsRef @ref = new CharsRef();
-		  char[] charArray = TestUtil.randomRealisticUnicodeString(random(), 1, 100).ToCharArray();
-		  int offset = random().Next(charArray.Length);
+		  char[] charArray = TestUtil.RandomRealisticUnicodeString(Random(), 1, 100).ToCharArray();
+		  int offset = Random().Next(charArray.Length);
 		  int length = charArray.Length - offset;
 		  string str = new string(charArray, offset, length);
-		  @ref.copyChars(charArray, offset, length);
+		  @ref.CopyChars(charArray, offset, length);
 		  Assert.AreEqual(str, @ref.ToString());
 		}
 
@@ -82,7 +85,7 @@ namespace Lucene.Net.Util
 	  {
 		char[] chars = new char[] {'a', 'b', 'c', 'd'};
 		CharsRef c = new CharsRef(chars, 1, 3); // bcd
-		c.append(new char[] {'e'}, 0, 1);
+		c.Append(new char[] {'e'}, 0, 1);
 		Assert.AreEqual("bcde", c.ToString());
 	  }
 
@@ -92,7 +95,7 @@ namespace Lucene.Net.Util
 		char[] chars = new char[] {'a', 'b', 'c', 'd'};
 		CharsRef c = new CharsRef(chars, 1, 3); // bcd
 		char[] otherchars = new char[] {'b', 'c', 'd', 'e'};
-		c.copyChars(otherchars, 0, 4);
+		c.CopyChars(otherchars, 0, 4);
 		Assert.AreEqual("bcde", c.ToString());
 	  }
 
@@ -102,7 +105,7 @@ namespace Lucene.Net.Util
 		char[] chars = new char[] {'a', 'b', 'c', 'd'};
 		CharsRef c = new CharsRef(chars, 1, 3); // bcd
 		char[] otherchars = new char[] {'b', 'c', 'd', 'e'};
-		c.copyChars(new CharsRef(otherchars, 0, 4));
+		c.CopyChars(new CharsRef(otherchars, 0, 4));
 		Assert.AreEqual("bcde", c.ToString());
 	  }
 
@@ -111,11 +114,11 @@ namespace Lucene.Net.Util
 	  {
 		CharsRef c = new CharsRef("abc");
 
-		Assert.AreEqual('b', c[1]);
+		Assert.AreEqual('b', c.CharAt(1));
 
 		try
 		{
-		  c[-1];
+		  c.CharAt(-1);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -125,7 +128,7 @@ namespace Lucene.Net.Util
 
 		try
 		{
-		  c[3];
+		  c.CharAt(3);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -138,29 +141,29 @@ namespace Lucene.Net.Util
 	  // LUCENE-4671: fix subSequence
 	  public virtual void TestCharSequenceSubSequence()
 	  {
-		CharSequence[] sequences = new CharSequence[] {new CharsRef("abc"), new CharsRef("0abc".ToCharArray(), 1, 3), new CharsRef("abc0".ToCharArray(), 0, 3), new CharsRef("0abc0".ToCharArray(), 1, 3)};
+		ICharSequence[] sequences = {new CharsRef("abc"), new CharsRef("0abc".ToCharArray(), 1, 3), new CharsRef("abc0".ToCharArray(), 0, 3), new CharsRef("0abc0".ToCharArray(), 1, 3)};
 
-		foreach (CharSequence c in sequences)
+		foreach (ICharSequence c in sequences)
 		{
 		  DoTestSequence(c);
 		}
 	  }
 
-	  private void DoTestSequence(CharSequence c)
+	  private void DoTestSequence(ICharSequence c)
 	  {
 
 		// slice
-		Assert.AreEqual("a", c.subSequence(0, 1).ToString());
+		Assert.AreEqual("a", c.SubSequence(0, 1).ToString());
 		// mid subsequence
-		Assert.AreEqual("b", c.subSequence(1, 2).ToString());
+		Assert.AreEqual("b", c.SubSequence(1, 2).ToString());
 		// end subsequence
-		Assert.AreEqual("bc", c.subSequence(1, 3).ToString());
+		Assert.AreEqual("bc", c.SubSequence(1, 3).ToString());
 		// empty subsequence
-		Assert.AreEqual("", c.subSequence(0, 0).ToString());
+		Assert.AreEqual("", c.SubSequence(0, 0).ToString());
 
 		try
 		{
-		  c.subSequence(-1, 1);
+		  c.SubSequence(-1, 1);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -170,7 +173,7 @@ namespace Lucene.Net.Util
 
 		try
 		{
-		  c.subSequence(0, -1);
+		  c.SubSequence(0, -1);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -180,7 +183,7 @@ namespace Lucene.Net.Util
 
 		try
 		{
-		  c.subSequence(0, 4);
+		  c.SubSequence(0, 4);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)
@@ -190,7 +193,7 @@ namespace Lucene.Net.Util
 
 		try
 		{
-		  c.subSequence(2, 1);
+		  c.SubSequence(2, 1);
 		  Assert.Fail();
 		}
 		catch (System.IndexOutOfRangeException expected)

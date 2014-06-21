@@ -29,6 +29,7 @@ namespace Lucene.Net.Util
 	using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
+    using Lucene.Net.Randomized.Generators;
     using System.Threading;
 
 	/// <summary>
@@ -64,13 +65,13 @@ namespace Lucene.Net.Util
 	  {
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		  lock (this)
 		  {
 			if (Reader != null)
 			{
-			  Reader.close();
+			  Reader.Close();
 			  Reader = null;
 			}
 		  }
@@ -82,7 +83,7 @@ namespace Lucene.Net.Util
 		{
 		  return 0L;
 		}
-		return (random.nextLong() & long.MaxValue) % (size / 3);
+		return (random.NextLong() & long.MaxValue) % (size / 3);
 	  }
 
 	  private void Open(Random random)
@@ -138,7 +139,7 @@ namespace Lucene.Net.Util
 			  {
 				Console.WriteLine("TEST: LineFileDocs: stream skip to fp=" + seekTo + " on open");
 			  }
-			  @is.skip(seekTo);
+			  @is.Skip(seekTo);
 			}
         
 			// if we seeked somewhere, read until newline char
@@ -166,7 +167,7 @@ namespace Lucene.Net.Util
 	  {
 		  lock (this)
 		  {
-			Close();
+			Dispose();
 			Open(random);
 			Id.Set(0);
 		  }
@@ -237,13 +238,13 @@ namespace Lucene.Net.Util
 			{
 			  Console.WriteLine("TEST: LineFileDocs: now rewind file...");
 			}
-			Close();
+			Dispose();
 			Open(null);
 			line = Reader.readLine();
 		  }
 		}
 
-		DocState docState = ThreadDocs.get();
+		DocState docState = ThreadDocs.Get();
 		if (docState == null)
 		{
 		  docState = new DocState(UseDocValues);

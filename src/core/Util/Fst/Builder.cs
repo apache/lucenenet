@@ -97,7 +97,8 @@ namespace Lucene.Net.Util.Fst
 	  /// boolean, int, Outputs, FreezeTail, boolean, float,
 	  /// boolean, int)} with pruning options turned off.
 	  /// </summary>
-	  public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs) : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
+	  public Builder(FST<T>.INPUT_TYPE inputType, Outputs<T> outputs) 
+          : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInts.COMPACT, true, 15)
 	  {
 	  }
 
@@ -537,7 +538,7 @@ namespace Lucene.Net.Util.Fst
 			CompileAllTargets(root, LastInput.Length);
 		  }
 		}
-		//if (DEBUG) System.out.println("  builder.finish root.isFinal=" + root.isFinal + " root.output=" + root.output);
+		//if (DEBUG) System.out.println("  builder.finish root.isFinal=" + root.isFinal + " root.Output=" + root.Output);
 		Fst.Finish(CompileNode(root, LastInput.Length).Node);
 
 		if (DoPackFST)
@@ -561,7 +562,7 @@ namespace Lucene.Net.Util.Fst
 			UnCompiledNode<T> n = (UnCompiledNode<T>) arc.Target;
 			if (n.NumArcs == 0)
 			{
-			  //System.out.println("seg=" + segment + "        FORCE final arc=" + (char) arc.label);
+			  //System.out.println("seg=" + segment + "        FORCE final arc=" + (char) arc.Label);
 			  arc.IsFinal = n.IsFinal = true;
 			}
 			arc.Target = CompileNode(n, tailLength - 1);
@@ -594,9 +595,9 @@ namespace Lucene.Net.Util.Fst
 		return Fst.SizeInBytes();
 	  }
 
-	  internal sealed class CompiledNode : Node
+	    public sealed class CompiledNode : Node
 	  {
-		internal long Node;
+	        public long Node;
 		public bool Compiled
 		{
 			get
@@ -667,7 +668,7 @@ namespace Lucene.Net.Util.Fst
 		public void AddArc(int label, Node target)
 		{
 		  Debug.Assert(label >= 0);
-		  Debug.Assert(NumArcs == 0 || label > Arcs[NumArcs - 1].Label, "arc[-1].label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
+		  Debug.Assert(NumArcs == 0 || label > Arcs[NumArcs - 1].Label, "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
 		  if (NumArcs == Arcs.Length)
 		  {
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -696,9 +697,9 @@ namespace Lucene.Net.Util.Fst
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final Arc<T> arc = arcs[numArcs-1];
 		  Arc<S> arc = Arcs[NumArcs - 1];
-		  Debug.Assert(arc.Label == labelToMatch, "arc.label=" + arc.Label + " vs " + labelToMatch);
+		  Debug.Assert(arc.Label == labelToMatch, "arc.Label=" + arc.Label + " vs " + labelToMatch);
 		  arc.Target = target;
-		  //assert target.node != -2;
+		  //assert target.Node != -2;
 		  arc.NextFinalOutput = nextFinalOutput;
 		  arc.IsFinal = isFinal;
 		}

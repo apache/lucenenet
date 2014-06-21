@@ -27,11 +27,11 @@ namespace Lucene.Net.Util.Automaton
 	  /// the minimal and non-minimal are compared to ensure they are the same. </summary>
 	  public virtual void Test()
 	  {
-		int num = atLeast(200);
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
-		  Automaton a = AutomatonTestUtil.randomAutomaton(random());
-		  Automaton b = a.clone();
+		  Automaton a = AutomatonTestUtil.randomAutomaton(Random());
+		  Automaton b = a.Clone();
 		  MinimizationOperations.minimize(b);
 		  Assert.IsTrue(BasicOperations.sameLanguage(a, b));
 		}
@@ -44,12 +44,12 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public virtual void TestAgainstBrzozowski()
 	  {
-		int num = atLeast(200);
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
-		  Automaton a = AutomatonTestUtil.randomAutomaton(random());
+		  Automaton a = AutomatonTestUtil.randomAutomaton(Random());
 		  AutomatonTestUtil.minimizeSimple(a);
-		  Automaton b = a.clone();
+		  Automaton b = a.Clone();
 		  MinimizationOperations.minimize(b);
 		  Assert.IsTrue(BasicOperations.sameLanguage(a, b));
 		  Assert.AreEqual(a.NumberOfStates, b.NumberOfStates);
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// n^2 space usage in Hopcroft minimization? </summary>
 	  public virtual void TestMinimizeHuge()
 	  {
-		(new RegExp("+-*(A|.....|BC)*]", RegExp.NONE)).toAutomaton();
+		(new RegExp("+-*(A|.....|BC)*]", RegExp.NONE)).ToAutomaton();
 	  }
 	}
 

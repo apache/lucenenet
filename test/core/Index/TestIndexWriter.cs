@@ -937,12 +937,12 @@ namespace Lucene.Net.Index
 		internal bool AfterWasCalled;
 		internal bool BeforeWasCalled;
 
-		public override void DoAfterFlush()
+		protected override void DoAfterFlush()
 		{
 		  AfterWasCalled = true;
 		}
 
-		protected internal override void DoBeforeFlush()
+		protected override void DoBeforeFlush()
 		{
 		  BeforeWasCalled = true;
 		}
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Index
 		// up front... else we can see a false failure if 2nd
 		// interrupt arrives while class loader is trying to
 		// init this class (in servicing a first interrupt):
-		Assert.IsTrue((new ThreadInterruptedException(new ThreadInterruptedException("Thread interrupted"))).InnerException is ThreadInterruptedException);
+		Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
 
 		// issue 300 interrupts to child thread
 		int numInterrupts = AtLeast(300);
@@ -1419,7 +1419,7 @@ namespace Lucene.Net.Index
 		// up front... else we can see a false failure if 2nd
 		// interrupt arrives while class loader is trying to
 		// init this class (in servicing a first interrupt):
-		Assert.IsTrue((new ThreadInterruptedException(new ThreadInterruptedException("Thread interrupted"))).InnerException is ThreadInterruptedException);
+		Assert.IsTrue((new ThreadInterruptedException(new Exception("Thread interrupted"))).InnerException is ThreadInterruptedException);
 
 		// issue 300 interrupts to child thread
 		int numInterrupts = AtLeast(300);
@@ -1669,7 +1669,7 @@ namespace Lucene.Net.Index
 		// in case a deletion policy which holds onto commits is used.
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
-		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.DelPolicy;
 
 		// First commit
 		Document doc = new Document();
@@ -1850,7 +1850,7 @@ namespace Lucene.Net.Index
 
 	  internal sealed class StringSplitAnalyzer : Analyzer
 	  {
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  return new TokenStreamComponents(new StringSplitTokenizer(reader));
 		}
@@ -1982,7 +1982,7 @@ namespace Lucene.Net.Index
 		w.Close();
 		Assert.AreEqual(1, reader.DocFreq(new Term("content", bigTerm)));
 
-		SortedDocValues dti = FieldCache_Fields.DEFAULT.GetTermsIndex(SlowCompositeReaderWrapper.Wrap(reader), "content", Random().nextFloat() * PackedInts.FAST);
+		SortedDocValues dti = FieldCache_Fields.DEFAULT.GetTermsIndex(SlowCompositeReaderWrapper.Wrap(reader), "content", (float)Random().NextDouble() * PackedInts.FAST);
 		Assert.AreEqual(4, dti.ValueCount);
 		BytesRef br = new BytesRef();
 		dti.LookupOrd(2, br);
@@ -2198,7 +2198,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			throw new InvalidOperationException("don't invoke me!");
 		  }
@@ -2271,7 +2271,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader);
 			TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
@@ -2315,7 +2315,7 @@ namespace Lucene.Net.Index
 			  this.SecondSet = secondSet;
 		  }
 
-		  protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader);
 			TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
@@ -2548,6 +2548,11 @@ namespace Lucene.Net.Index
 		  return DocList.GetEnumerator();
 		  //return new IteratorAnonymousInnerClassHelper(this, docIter);
 		}
+
+	      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	      {
+	          return GetEnumerator();
+	      }
           /*
 		private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
 		{
@@ -2740,7 +2745,7 @@ namespace Lucene.Net.Index
 			  this.IwRef = iwRef;
 		  }
 
-		  public override void Apply(string message)
+		  public void Apply(string message)
 		  {
 			if ("startCommitMerge".Equals(message))
 			{

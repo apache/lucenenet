@@ -286,7 +286,7 @@ namespace Lucene.Net.Search
 			  indexSearcher.Similarity = s.Similarity;
 			  Weight w = indexSearcher.CreateNormalizedWeight(q);
 			  AtomicReaderContext ctx = (AtomicReaderContext)previousReader.Context;
-			  Scorer scorer = w.Scorer(ctx, ctx.Reader().LiveDocs);
+			  Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader()).LiveDocs);
 			  if (scorer != null)
 			  {
 				bool more = scorer.Advance(lastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
 			  {
 				Weight w = s.CreateNormalizedWeight(q);
 				AtomicReaderContext context = ReaderContextArray[leafPtr];
-				scorer = w.Scorer(context, context.Reader().LiveDocs);
+				scorer = w.Scorer(context, ((AtomicReader)context.Reader()).LiveDocs);
 			  }
 
 			  int op = Order[(Opidx[0]++) % Order.Length];
@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 				  indexSearcher.Similarity = s.Similarity;
 				  Weight w = indexSearcher.CreateNormalizedWeight(q);
 				  AtomicReaderContext ctx = (AtomicReaderContext)indexSearcher.TopReaderContext;
-				  Scorer scorer = w.Scorer(ctx, ctx.Reader().LiveDocs);
+				  Scorer scorer = w.Scorer(ctx, ((AtomicReader)ctx.Reader()).LiveDocs);
 				  if (scorer != null)
 				  {
 					bool more = scorer.Advance(LastDoc[0] + 1) != DocIdSetIterator.NO_MORE_DOCS;
@@ -516,7 +516,7 @@ namespace Lucene.Net.Search
     
 				LastReader[0] = (AtomicReader)value.Reader();
 				LastDoc[0] = -1;
-				liveDocs = value.Reader().LiveDocs;
+				liveDocs = ((AtomicReader)value.Reader()).LiveDocs;
 			  }
 		  }
 		  public override bool AcceptsDocsOutOfOrder()

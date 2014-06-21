@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
 
 	public class TestNewestSegment : LuceneTestCase
 	{
-	  public virtual void TestNewestSegment()
+	  public virtual void TestNewestSegment_Mem()
 	  {
 		Directory directory = NewDirectory();
 		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

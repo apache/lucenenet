@@ -43,10 +43,10 @@ namespace Lucene.Net.Util.Packed
 
 	  public virtual void TestByteCount()
 	  {
-		int iters = atLeast(3);
+		int iters = AtLeast(3);
 		for (int i = 0; i < iters; ++i)
 		{
-		  int valueCount = RandomInts.randomIntBetween(random(), 1, int.MaxValue);
+		  int valueCount = RandomInts.randomIntBetween(Random(), 1, int.MaxValue);
 		  foreach (PackedInts.Format format in PackedInts.Format.values())
 		  {
 			for (int bpv = 1; bpv <= 64; ++bpv)
@@ -82,17 +82,17 @@ namespace Lucene.Net.Util.Packed
 
 	  public virtual void TestPackedInts()
 	  {
-		int num = atLeast(3);
+		int num = AtLeast(3);
 		for (int iter = 0; iter < num; iter++)
 		{
 		  for (int nbits = 1;nbits <= 64;nbits++)
 		  {
 			long maxValue = PackedInts.maxValue(nbits);
-			int valueCount = TestUtil.Next(random(), 1, 600);
-			int bufferSize = random().nextBoolean() ? TestUtil.Next(random(), 0, 48) : TestUtil.Next(random(), 0, 4096);
-			Directory d = newDirectory();
+			int valueCount = TestUtil.NextInt(Random(), 1, 600);
+			int bufferSize = Random().NextBoolean() ? TestUtil.NextInt(Random(), 0, 48) : TestUtil.NextInt(Random(), 0, 4096);
+			Directory d = NewDirectory();
 
-			IndexOutput @out = d.createOutput("out.bin", newIOContext(random()));
+			IndexOutput @out = d.CreateOutput("out.bin", newIOContext(Random()));
 			float acceptableOverhead;
 			if (iter == 0)
 			{
@@ -101,53 +101,53 @@ namespace Lucene.Net.Util.Packed
 			}
 			else
 			{
-			  acceptableOverhead = random().nextFloat();
+			  acceptableOverhead = Random().nextFloat();
 			}
 			PackedInts.Writer w = PackedInts.getWriter(@out, valueCount, nbits, acceptableOverhead);
 			long startFp = @out.FilePointer;
 
-			int actualValueCount = random().nextBoolean() ? valueCount : TestUtil.Next(random(), 0, valueCount);
+			int actualValueCount = Random().NextBoolean() ? valueCount : TestUtil.NextInt(Random(), 0, valueCount);
 			long[] values = new long[valueCount];
 			for (int i = 0;i < actualValueCount;i++)
 			{
 			  if (nbits == 64)
 			  {
-				values[i] = random().nextLong();
+				values[i] = Random().NextLong();
 			  }
 			  else
 			  {
-				values[i] = TestUtil.nextLong(random(), 0, maxValue);
+				values[i] = TestUtil.NextLong(Random(), 0, maxValue);
 			  }
-			  w.add(values[i]);
+			  w.Add(values[i]);
 			}
-			w.finish();
+			w.Finish();
 			long fp = @out.FilePointer;
-			@out.close();
+			@out.Dispose();
 
 			// ensure that finish() added the (valueCount-actualValueCount) missing values
 			long bytes = w.Format.byteCount(PackedInts.VERSION_CURRENT, valueCount, w.bitsPerValue);
 			Assert.AreEqual(bytes, fp - startFp);
 
 			{ // test header
-			  IndexInput @in = d.openInput("out.bin", newIOContext(random()));
+			  IndexInput @in = d.OpenInput("out.bin", newIOContext(Random()));
 			  // header = codec header | bitsPerValue | valueCount | format
 			  CodecUtil.checkHeader(@in, PackedInts.CODEC_NAME, PackedInts.VERSION_START, PackedInts.VERSION_CURRENT); // codec header
 			  Assert.AreEqual(w.bitsPerValue, @in.readVInt());
 			  Assert.AreEqual(valueCount, @in.readVInt());
 			  Assert.AreEqual(w.Format.Id, @in.readVInt());
 			  Assert.AreEqual(startFp, @in.FilePointer);
-			  @in.close();
+			  @in.Dispose();
 			}
 
 			{ // test reader
-			  IndexInput @in = d.openInput("out.bin", newIOContext(random()));
+			  IndexInput @in = d.OpenInput("out.bin", newIOContext(Random()));
 			  PackedInts.Reader r = PackedInts.getReader(@in);
 			  Assert.AreEqual(fp, @in.FilePointer);
 			  for (int i = 0;i < valueCount;i++)
 			  {
-				Assert.AreEqual("index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name, values[i], r.get(i));
+				Assert.AreEqual("index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name, values[i], r.Get(i));
 			  }
-			  @in.close();
+			  @in.Dispose();
 
 			  long expectedBytesUsed = RamUsageEstimator.sizeOf(r);
 			  long computedBytesUsed = r.ramBytesUsed();
@@ -155,64 +155,64 @@ namespace Lucene.Net.Util.Packed
 			}
 
 			{ // test reader iterator next
-			  IndexInput @in = d.openInput("out.bin", newIOContext(random()));
+			  IndexInput @in = d.OpenInput("out.bin", newIOContext(Random()));
 			  PackedInts.ReaderIterator r = PackedInts.getReaderIterator(@in, bufferSize);
 			  for (int i = 0;i < valueCount;i++)
 			  {
-				Assert.AreEqual("index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name, values[i], r.next());
-				Assert.AreEqual(i, r.ord());
+				Assert.AreEqual("index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name, values[i], r.Next());
+				Assert.AreEqual(i, r.Ord());
 			  }
 			  Assert.AreEqual(fp, @in.FilePointer);
-			  @in.close();
+			  @in.Dispose();
 			}
 
 			{ // test reader iterator bulk next
-			  IndexInput @in = d.openInput("out.bin", newIOContext(random()));
+			  IndexInput @in = d.OpenInput("out.bin", newIOContext(Random()));
 			  PackedInts.ReaderIterator r = PackedInts.getReaderIterator(@in, bufferSize);
 			  int i = 0;
 			  while (i < valueCount)
 			  {
-				int count = TestUtil.Next(random(), 1, 95);
-				LongsRef next = r.next(count);
-				for (int k = 0; k < next.length; ++k)
+				int count = TestUtil.NextInt(Random(), 1, 95);
+				LongsRef next = r.Next(count);
+				for (int k = 0; k < next.Length; ++k)
 				{
-				  Assert.AreEqual("index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name, values[i + k], next.longs[next.offset + k]);
+				  Assert.AreEqual("index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name, values[i + k], next.longs[next.Offset + k]);
 				}
-				i += next.length;
+				i += next.Length;
 			  }
 			  Assert.AreEqual(fp, @in.FilePointer);
-			  @in.close();
+			  @in.Dispose();
 			}
 
 			{ // test direct reader get
-			  IndexInput @in = d.openInput("out.bin", newIOContext(random()));
+			  IndexInput @in = d.OpenInput("out.bin", newIOContext(Random()));
 			  PackedInts.Reader intsEnum = PackedInts.getDirectReader(@in);
 			  for (int i = 0; i < valueCount; i++)
 			  {
 				string msg = "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + intsEnum.GetType().Name;
-				int index = random().Next(valueCount);
-				Assert.AreEqual(msg, values[index], intsEnum.get(index));
+				int index = Random().Next(valueCount);
+				Assert.AreEqual(msg, values[index], intsEnum.Get(index));
 			  }
-			  intsEnum.get(intsEnum.size() - 1);
+			  intsEnum.Get(intsEnum.Size() - 1);
 			  Assert.AreEqual(fp, @in.FilePointer);
-			  @in.close();
+			  @in.Dispose();
 			}
-			d.close();
+			d.Dispose();
 		  }
 		}
 	  }
 
 	  public virtual void TestEndPointer()
 	  {
-		Directory dir = newDirectory();
-		int valueCount = RandomInts.randomIntBetween(random(), 1, 1000);
-		IndexOutput @out = dir.createOutput("tests.bin", newIOContext(random()));
+		Directory dir = NewDirectory();
+		int valueCount = RandomInts.randomIntBetween(Random(), 1, 1000);
+		IndexOutput @out = dir.CreateOutput("tests.bin", newIOContext(Random()));
 		for (int i = 0; i < valueCount; ++i)
 		{
 		  @out.writeLong(0);
 		}
-		@out.close();
-		IndexInput @in = dir.openInput("tests.bin", newIOContext(random()));
+		@out.Dispose();
+		IndexInput @in = dir.OpenInput("tests.bin", newIOContext(Random()));
 		for (int version = PackedInts.VERSION_START; version <= PackedInts.VERSION_CURRENT; ++version)
 		{
 		  for (int bpv = 1; bpv <= 64; ++bpv)
@@ -228,17 +228,17 @@ namespace Lucene.Net.Util.Packed
 
 			  // test iterator
 			  @in.seek(0L);
-			  PackedInts.ReaderIterator it = PackedInts.getReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.randomIntBetween(random(), 1, 1 << 16));
+			  PackedInts.ReaderIterator it = PackedInts.getReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.randomIntBetween(Random(), 1, 1 << 16));
 			  for (int i = 0; i < valueCount; ++i)
 			  {
-				it.next();
+				it.Next();
 			  }
 			  Assert.AreEqual(msg, byteCount, @in.FilePointer);
 
 			  // test direct reader
 			  @in.seek(0L);
 			  PackedInts.Reader directReader = PackedInts.getDirectReaderNoHeader(@in, format, version, valueCount, bpv);
-			  directReader.get(valueCount - 1);
+			  directReader.Get(valueCount - 1);
 			  Assert.AreEqual(msg, byteCount, @in.FilePointer);
 
 			  // test reader
@@ -248,8 +248,8 @@ namespace Lucene.Net.Util.Packed
 			}
 		  }
 		}
-		@in.close();
-		dir.close();
+		@in.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestControlledEquality()
@@ -260,9 +260,9 @@ namespace Lucene.Net.Util.Packed
 		IList<PackedInts.Mutable> packedInts = CreatePackedInts(VALUE_COUNT, BITS_PER_VALUE);
 		foreach (PackedInts.Mutable packedInt in packedInts)
 		{
-		  for (int i = 0 ; i < packedInt.size() ; i++)
+		  for (int i = 0 ; i < packedInt.Size() ; i++)
 		  {
-			packedInt.set(i, i + 1);
+			packedInt.Set(i, i + 1);
 		  }
 		}
 		AssertListEquality(packedInts);
@@ -270,16 +270,16 @@ namespace Lucene.Net.Util.Packed
 
 	  public virtual void TestRandomBulkCopy()
 	  {
-		int numIters = atLeast(3);
+		int numIters = AtLeast(3);
 		for (int iter = 0;iter < numIters;iter++)
 		{
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("\nTEST: iter=" + iter);
 		  }
-		  int valueCount = atLeast(100000);
-		  int bits1 = TestUtil.Next(random(), 1, 64);
-		  int bits2 = TestUtil.Next(random(), 1, 64);
+		  int valueCount = AtLeast(100000);
+		  int bits1 = TestUtil.NextInt(Random(), 1, 64);
+		  int bits2 = TestUtil.NextInt(Random(), 1, 64);
 		  if (bits1 > bits2)
 		  {
 			int tmp = bits1;
@@ -297,9 +297,9 @@ namespace Lucene.Net.Util.Packed
 		  long maxValue = PackedInts.maxValue(bits1);
 		  for (int i = 0;i < valueCount;i++)
 		  {
-			long val = TestUtil.nextLong(random(), 0, maxValue);
-			packed1.set(i, val);
-			packed2.set(i, val);
+			long val = TestUtil.NextLong(Random(), 0, maxValue);
+			packed1.Set(i, val);
+			packed2.Set(i, val);
 		  }
 
 		  long[] buffer = new long[valueCount];
@@ -307,8 +307,8 @@ namespace Lucene.Net.Util.Packed
 		  // Copy random slice over, 20 times:
 		  for (int iter2 = 0;iter2 < 20;iter2++)
 		  {
-			int start = random().Next(valueCount - 1);
-			int len = TestUtil.Next(random(), 1, valueCount - start);
+			int start = Random().Next(valueCount - 1);
+			int len = TestUtil.NextInt(Random(), 1, valueCount - start);
 			int offset;
 			if (VERBOSE)
 			{
@@ -320,44 +320,44 @@ namespace Lucene.Net.Util.Packed
 			}
 			else
 			{
-			  offset = random().Next(valueCount - len);
+			  offset = Random().Next(valueCount - len);
 			}
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  int got = packed1.get(start, buffer, offset, len);
+			  int got = packed1.Get(start, buffer, offset, len);
 			  Assert.IsTrue(got <= len);
-			  int sot = packed2.set(start, buffer, offset, got);
+			  int sot = packed2.Set(start, buffer, offset, got);
 			  Assert.IsTrue(sot <= got);
 			}
 			else
 			{
-			  PackedInts.copy(packed1, offset, packed2, offset, len, random().Next(10 * len));
+			  PackedInts.Copy(packed1, offset, packed2, offset, len, Random().Next(10 * len));
 			}
 
 			/*
 			for(int i=0;i<valueCount;i++) {
-			  Assert.AreEqual("value " + i, packed1.get(i), packed2.get(i));
+			  Assert.AreEqual("value " + i, packed1.Get(i), packed2.Get(i));
 			}
 			*/
 		  }
 
 		  for (int i = 0;i < valueCount;i++)
 		  {
-			Assert.AreEqual("value " + i, packed1.get(i), packed2.get(i));
+			Assert.AreEqual("value " + i, packed1.Get(i), packed2.Get(i));
 		  }
 		}
 	  }
 
 	  public virtual void TestRandomEquality()
 	  {
-		int numIters = atLeast(2);
+		int numIters = AtLeast(2);
 		for (int i = 0; i < numIters; ++i)
 		{
-		  int valueCount = TestUtil.Next(random(), 1, 300);
+		  int valueCount = TestUtil.NextInt(Random(), 1, 300);
 
 		  for (int bitsPerValue = 1 ; bitsPerValue <= 64 ; bitsPerValue++)
 		  {
-			AssertRandomEquality(valueCount, bitsPerValue, random().nextLong());
+			AssertRandomEquality(valueCount, bitsPerValue, Random().NextLong());
 		  }
 		}
 	  }
@@ -421,11 +421,11 @@ namespace Lucene.Net.Util.Packed
 	  private static void Fill(PackedInts.Mutable packedInt, long maxValue, long randomSeed)
 	  {
 		Random rnd2 = new Random(randomSeed);
-		for (int i = 0 ; i < packedInt.size() ; i++)
+		for (int i = 0 ; i < packedInt.Size() ; i++)
 		{
-		  long value = TestUtil.nextLong(rnd2, 0, maxValue);
-		  packedInt.set(i, value);
-		  Assert.AreEqual(string.format(Locale.ROOT, "The set/get of the value at index %d should match for %s", i, packedInt.GetType().Name), value, packedInt.get(i));
+		  long value = TestUtil.NextLong(rnd2, 0, maxValue);
+		  packedInt.Set(i, value);
+		  Assert.AreEqual(string.format(Locale.ROOT, "The set/get of the value at index %d should match for %s", i, packedInt.GetType().Name), value, packedInt.Get(i));
 		}
 	  }
 
@@ -441,16 +441,16 @@ namespace Lucene.Net.Util.Packed
 		  return;
 		}
 		PackedInts.Reader @base = packedInts[0];
-		int valueCount = @base.size();
+		int valueCount = @base.Size();
 		foreach (PackedInts.Reader packedInt in packedInts)
 		{
-		  Assert.AreEqual(message + ". The number of values should be the same ", valueCount, packedInt.size());
+		  Assert.AreEqual(message + ". The number of values should be the same ", valueCount, packedInt.Size());
 		}
 		for (int i = 0 ; i < valueCount ; i++)
 		{
 		  for (int j = 1 ; j < packedInts.Count ; j++)
 		  {
-			Assert.AreEqual(string.format(Locale.ROOT, "%s. The value at index %d should be the same for %s and %s", message, i, @base.GetType().Name, packedInts[j].GetType().Name), @base.get(i), packedInts[j].get(i));
+			Assert.AreEqual(string.format(Locale.ROOT, "%s. The value at index %d should be the same for %s and %s", message, i, @base.GetType().Name, packedInts[j].GetType().Name), @base.Get(i), packedInts[j].Get(i));
 		  }
 		}
 	  }
@@ -459,34 +459,34 @@ namespace Lucene.Net.Util.Packed
 	  {
 		for (int bitsPerValue = 1; bitsPerValue <= 64; ++bitsPerValue)
 		{
-		  Directory dir = newDirectory();
-		  IndexOutput @out = dir.createOutput("out", newIOContext(random()));
+		  Directory dir = NewDirectory();
+		  IndexOutput @out = dir.CreateOutput("out", newIOContext(Random()));
 		  PackedInts.Writer w = PackedInts.getWriter(@out, 1, bitsPerValue, PackedInts.DEFAULT);
 		  long value = 17L & PackedInts.maxValue(bitsPerValue);
-		  w.add(value);
-		  w.finish();
+		  w.Add(value);
+		  w.Finish();
 		  long end = @out.FilePointer;
-		  @out.close();
+		  @out.Dispose();
 
-		  IndexInput @in = dir.openInput("out", newIOContext(random()));
+		  IndexInput @in = dir.OpenInput("out", newIOContext(Random()));
 		  Reader reader = PackedInts.getReader(@in);
 		  string msg = "Impl=" + w.GetType().Name + ", bitsPerValue=" + bitsPerValue;
-		  Assert.AreEqual(msg, 1, reader.size());
-		  Assert.AreEqual(msg, value, reader.get(0));
+		  Assert.AreEqual(msg, 1, reader.Size());
+		  Assert.AreEqual(msg, value, reader.Get(0));
 		  Assert.AreEqual(msg, end, @in.FilePointer);
-		  @in.close();
+		  @in.Dispose();
 
-		  dir.close();
+		  dir.Dispose();
 		}
 	  }
 
 	  public virtual void TestSecondaryBlockChange()
 	  {
 		PackedInts.Mutable mutable = new Packed64(26, 5);
-		mutable.set(24, 31);
-		Assert.AreEqual("The value #24 should be correct", 31, mutable.get(24));
-		mutable.set(4, 16);
-		Assert.AreEqual("The value #24 should remain unchanged", 31, mutable.get(24));
+		mutable.Set(24, 31);
+		Assert.AreEqual("The value #24 should be correct", 31, mutable.Get(24));
+		mutable.Set(4, 16);
+		Assert.AreEqual("The value #24 should remain unchanged", 31, mutable.Get(24));
 	  }
 
 	  /*
@@ -517,8 +517,8 @@ namespace Lucene.Net.Util.Packed
 		}
 		if (p64 != null)
 		{
-		  p64.set(INDEX - 1, 1);
-		  Assert.AreEqual("The value at position " + (INDEX - 1) + " should be correct for Packed64", 1, p64.get(INDEX - 1));
+		  p64.Set(INDEX - 1, 1);
+		  Assert.AreEqual("The value at position " + (INDEX - 1) + " should be correct for Packed64", 1, p64.Get(INDEX - 1));
 		  p64 = null;
 		}
 
@@ -533,8 +533,8 @@ namespace Lucene.Net.Util.Packed
 		}
 		if (p64sb != null)
 		{
-		  p64sb.set(INDEX - 1, 1);
-		  Assert.AreEqual("The value at position " + (INDEX - 1) + " should be correct for " + p64sb.GetType().Name, 1, p64sb.get(INDEX - 1));
+		  p64sb.Set(INDEX - 1, 1);
+		  Assert.AreEqual("The value at position " + (INDEX - 1) + " should be correct for " + p64sb.GetType().Name, 1, p64sb.Get(INDEX - 1));
 		}
 
 		int index = int.MaxValue / 24 + 1;
@@ -549,8 +549,8 @@ namespace Lucene.Net.Util.Packed
 		}
 		if (p8 != null)
 		{
-		  p8.set(index - 1, 1);
-		  Assert.AreEqual("The value at position " + (index - 1) + " should be correct for Packed8ThreeBlocks", 1, p8.get(index - 1));
+		  p8.Set(index - 1, 1);
+		  Assert.AreEqual("The value at position " + (index - 1) + " should be correct for Packed8ThreeBlocks", 1, p8.Get(index - 1));
 		  p8 = null;
 		}
 
@@ -566,8 +566,8 @@ namespace Lucene.Net.Util.Packed
 		}
 		if (p16 != null)
 		{
-		  p16.set(index - 1, 1);
-		  Assert.AreEqual("The value at position " + (index - 1) + " should be correct for Packed16ThreeBlocks", 1, p16.get(index - 1));
+		  p16.Set(index - 1, 1);
+		  Assert.AreEqual("The value at position " + (index - 1) + " should be correct for Packed16ThreeBlocks", 1, p16.Get(index - 1));
 		  p16 = null;
 		}
 	  }
@@ -575,26 +575,26 @@ namespace Lucene.Net.Util.Packed
 	  public virtual void TestFill()
 	  {
 		const int valueCount = 1111;
-		int from = random().Next(valueCount + 1);
-		int to = from + random().Next(valueCount + 1 - from);
+		int from = Random().Next(valueCount + 1);
+		int to = from + Random().Next(valueCount + 1 - from);
 		for (int bpv = 1; bpv <= 64; ++bpv)
 		{
-		  long val = TestUtil.nextLong(random(), 0, PackedInts.maxValue(bpv));
+		  long val = TestUtil.NextLong(Random(), 0, PackedInts.maxValue(bpv));
 		  IList<PackedInts.Mutable> packedInts = CreatePackedInts(valueCount, bpv);
 		  foreach (PackedInts.Mutable ints in packedInts)
 		  {
 			string msg = ints.GetType().Name + " bpv=" + bpv + ", from=" + from + ", to=" + to + ", val=" + val;
-			ints.fill(0, ints.size(), 1);
+			ints.fill(0, ints.Size(), 1);
 			ints.fill(from, to, val);
-			for (int i = 0; i < ints.size(); ++i)
+			for (int i = 0; i < ints.Size(); ++i)
 			{
 			  if (i >= from && i < to)
 			  {
-				Assert.AreEqual(msg + ", i=" + i, val, ints.get(i));
+				Assert.AreEqual(msg + ", i=" + i, val, ints.Get(i));
 			  }
 			  else
 			  {
-				Assert.AreEqual(msg + ", i=" + i, 1, ints.get(i));
+				Assert.AreEqual(msg + ", i=" + i, 1, ints.Get(i));
 			  }
 			}
 		  }
@@ -604,20 +604,20 @@ namespace Lucene.Net.Util.Packed
 	  public virtual void TestPackedIntsNull()
 	  {
 		// must be > 10 for the bulk reads below
-		int size = TestUtil.Next(random(), 11, 256);
+		int size = TestUtil.NextInt(Random(), 11, 256);
 		Reader packedInts = new PackedInts.NullReader(size);
-		Assert.AreEqual(0, packedInts.get(TestUtil.Next(random(), 0, size - 1)));
+		Assert.AreEqual(0, packedInts.Get(TestUtil.NextInt(Random(), 0, size - 1)));
 		long[] arr = new long[size + 10];
 		int r;
 		Arrays.fill(arr, 1);
-		r = packedInts.get(0, arr, 0, size - 1);
+		r = packedInts.Get(0, arr, 0, size - 1);
 		Assert.AreEqual(size - 1, r);
 		for (r--; r >= 0; r--)
 		{
 		  Assert.AreEqual(0, arr[r]);
 		}
 		Arrays.fill(arr, 1);
-		r = packedInts.get(10, arr, 0, size + 10);
+		r = packedInts.Get(10, arr, 0, size + 10);
 		Assert.AreEqual(size - 10, r);
 		for (int i = 0; i < size - 10; i++)
 		{
@@ -629,9 +629,9 @@ namespace Lucene.Net.Util.Packed
 	  public virtual void TestBulkGet()
 	  {
 		const int valueCount = 1111;
-		int index = random().Next(valueCount);
-		int len = TestUtil.Next(random(), 1, valueCount * 2);
-		int off = random().Next(77);
+		int index = Random().Next(valueCount);
+		int len = TestUtil.NextInt(Random(), 1, valueCount * 2);
+		int off = Random().Next(77);
 
 		for (int bpv = 1; bpv <= 64; ++bpv)
 		{
@@ -640,24 +640,24 @@ namespace Lucene.Net.Util.Packed
 
 		  foreach (PackedInts.Mutable ints in packedInts)
 		  {
-			for (int i = 0; i < ints.size(); ++i)
+			for (int i = 0; i < ints.Size(); ++i)
 			{
-			  ints.set(i, (31L * i - 1099) & mask);
+			  ints.Set(i, (31L * i - 1099) & mask);
 			}
 			long[] arr = new long[off + len];
 
 			string msg = ints.GetType().Name + " valueCount=" + valueCount + ", index=" + index + ", len=" + len + ", off=" + off;
-			int gets = ints.get(index, arr, off, len);
+			int gets = ints.Get(index, arr, off, len);
 			Assert.IsTrue(msg, gets > 0);
 			Assert.IsTrue(msg, gets <= len);
-			Assert.IsTrue(msg, gets <= ints.size() - index);
+			Assert.IsTrue(msg, gets <= ints.Size() - index);
 
 			for (int i = 0; i < arr.Length; ++i)
 			{
 			  string m = msg + ", i=" + i;
 			  if (i >= off && i < off + gets)
 			  {
-				Assert.AreEqual(m, ints.get(i - off + index), arr[i]);
+				Assert.AreEqual(m, ints.Get(i - off + index), arr[i]);
 			  }
 			  else
 			  {
@@ -671,9 +671,9 @@ namespace Lucene.Net.Util.Packed
 	  public virtual void TestBulkSet()
 	  {
 		const int valueCount = 1111;
-		int index = random().Next(valueCount);
-		int len = TestUtil.Next(random(), 1, valueCount * 2);
-		int off = random().Next(77);
+		int index = Random().Next(valueCount);
+		int len = TestUtil.NextInt(Random(), 1, valueCount * 2);
+		int off = Random().Next(77);
 		long[] arr = new long[off + len];
 
 		for (int bpv = 1; bpv <= 64; ++bpv)
@@ -688,20 +688,20 @@ namespace Lucene.Net.Util.Packed
 		  foreach (PackedInts.Mutable ints in packedInts)
 		  {
 			string msg = ints.GetType().Name + " valueCount=" + valueCount + ", index=" + index + ", len=" + len + ", off=" + off;
-			int sets = ints.set(index, arr, off, len);
+			int sets = ints.Set(index, arr, off, len);
 			Assert.IsTrue(msg, sets > 0);
 			Assert.IsTrue(msg, sets <= len);
 
-			for (int i = 0; i < ints.size(); ++i)
+			for (int i = 0; i < ints.Size(); ++i)
 			{
 			  string m = msg + ", i=" + i;
 			  if (i >= index && i < index + sets)
 			  {
-				Assert.AreEqual(m, arr[off - index + i], ints.get(i));
+				Assert.AreEqual(m, arr[off - index + i], ints.Get(i));
 			  }
 			  else
 			  {
-				Assert.AreEqual(m, 0, ints.get(i));
+				Assert.AreEqual(m, 0, ints.Get(i));
 			  }
 			}
 		  }
@@ -710,35 +710,35 @@ namespace Lucene.Net.Util.Packed
 
 	  public virtual void TestCopy()
 	  {
-		int valueCount = TestUtil.Next(random(), 5, 600);
-		int off1 = random().Next(valueCount);
-		int off2 = random().Next(valueCount);
-		int len = random().Next(Math.Min(valueCount - off1, valueCount - off2));
-		int mem = random().Next(1024);
+		int valueCount = TestUtil.NextInt(Random(), 5, 600);
+		int off1 = Random().Next(valueCount);
+		int off2 = Random().Next(valueCount);
+		int len = Random().Next(Math.Min(valueCount - off1, valueCount - off2));
+		int mem = Random().Next(1024);
 
 		for (int bpv = 1; bpv <= 64; ++bpv)
 		{
 		  long mask = PackedInts.maxValue(bpv);
 		  foreach (PackedInts.Mutable r1 in CreatePackedInts(valueCount, bpv))
 		  {
-			for (int i = 0; i < r1.size(); ++i)
+			for (int i = 0; i < r1.Size(); ++i)
 			{
-			  r1.set(i, (31L * i - 1023) & mask);
+			  r1.Set(i, (31L * i - 1023) & mask);
 			}
 			foreach (PackedInts.Mutable r2 in CreatePackedInts(valueCount, bpv))
 			{
 			  string msg = "src=" + r1 + ", dest=" + r2 + ", srcPos=" + off1 + ", destPos=" + off2 + ", len=" + len + ", mem=" + mem;
-			  PackedInts.copy(r1, off1, r2, off2, len, mem);
-			  for (int i = 0; i < r2.size(); ++i)
+			  PackedInts.Copy(r1, off1, r2, off2, len, mem);
+			  for (int i = 0; i < r2.Size(); ++i)
 			  {
 				string m = msg + ", i=" + i;
 				if (i >= off2 && i < off2 + len)
 				{
-				  Assert.AreEqual(m, r1.get(i - off2 + off1), r2.get(i));
+				  Assert.AreEqual(m, r1.Get(i - off2 + off1), r2.Get(i));
 				}
 				else
 				{
-				  Assert.AreEqual(m, 0, r2.get(i));
+				  Assert.AreEqual(m, 0, r2.Get(i));
 				}
 			  }
 			}
@@ -748,148 +748,148 @@ namespace Lucene.Net.Util.Packed
 
 	  public virtual void TestGrowableWriter()
 	  {
-		int valueCount = 113 + random().Next(1111);
+		int valueCount = 113 + Random().Next(1111);
 		GrowableWriter wrt = new GrowableWriter(1, valueCount, PackedInts.DEFAULT);
-		wrt.set(4, 2);
-		wrt.set(7, 10);
-		wrt.set(valueCount - 10, 99);
-		wrt.set(99, 999);
-		wrt.set(valueCount - 1, 1 << 10);
-		Assert.AreEqual(1 << 10, wrt.get(valueCount - 1));
-		wrt.set(99, (1 << 23) - 1);
-		Assert.AreEqual(1 << 10, wrt.get(valueCount - 1));
-		wrt.set(1, long.MaxValue);
-		wrt.set(2, -3);
+		wrt.Set(4, 2);
+		wrt.Set(7, 10);
+		wrt.Set(valueCount - 10, 99);
+		wrt.Set(99, 999);
+		wrt.Set(valueCount - 1, 1 << 10);
+		Assert.AreEqual(1 << 10, wrt.Get(valueCount - 1));
+		wrt.Set(99, (1 << 23) - 1);
+		Assert.AreEqual(1 << 10, wrt.Get(valueCount - 1));
+		wrt.Set(1, long.MaxValue);
+		wrt.Set(2, -3);
 		Assert.AreEqual(64, wrt.BitsPerValue);
-		Assert.AreEqual(1 << 10, wrt.get(valueCount - 1));
-		Assert.AreEqual(long.MaxValue, wrt.get(1));
-		Assert.AreEqual(-3L, wrt.get(2));
-		Assert.AreEqual(2, wrt.get(4));
-		Assert.AreEqual((1 << 23) - 1, wrt.get(99));
-		Assert.AreEqual(10, wrt.get(7));
-		Assert.AreEqual(99, wrt.get(valueCount - 10));
-		Assert.AreEqual(1 << 10, wrt.get(valueCount - 1));
+		Assert.AreEqual(1 << 10, wrt.Get(valueCount - 1));
+		Assert.AreEqual(long.MaxValue, wrt.Get(1));
+		Assert.AreEqual(-3L, wrt.Get(2));
+		Assert.AreEqual(2, wrt.Get(4));
+		Assert.AreEqual((1 << 23) - 1, wrt.Get(99));
+		Assert.AreEqual(10, wrt.Get(7));
+		Assert.AreEqual(99, wrt.Get(valueCount - 10));
+		Assert.AreEqual(1 << 10, wrt.Get(valueCount - 1));
 		Assert.AreEqual(RamUsageEstimator.sizeOf(wrt), wrt.ramBytesUsed());
 	  }
 
 	  public virtual void TestPagedGrowableWriter()
 	  {
-		int pageSize = 1 << (TestUtil.Next(random(), 6, 30));
+		int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
 		// supports 0 values?
-		PagedGrowableWriter writer = new PagedGrowableWriter(0, pageSize, TestUtil.Next(random(), 1, 64), random().nextFloat());
-		Assert.AreEqual(0, writer.size());
+		PagedGrowableWriter writer = new PagedGrowableWriter(0, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().nextFloat());
+		Assert.AreEqual(0, writer.Size());
 
 		// compare against AppendingDeltaPackedLongBuffer
 		AppendingDeltaPackedLongBuffer buf = new AppendingDeltaPackedLongBuffer();
-		int size = random().Next(1000000);
+		int size = Random().Next(1000000);
 		long max = 5;
 		for (int i = 0; i < size; ++i)
 		{
-		  buf.add(TestUtil.nextLong(random(), 0, max));
-		  if (rarely())
+		  buf.Add(TestUtil.NextLong(Random(), 0, max));
+		  if (Rarely())
 		  {
-			max = PackedInts.maxValue(rarely() ? TestUtil.Next(random(), 0, 63) : TestUtil.Next(random(), 0, 31));
+			max = PackedInts.maxValue(Rarely() ? TestUtil.NextInt(Random(), 0, 63) : TestUtil.NextInt(Random(), 0, 31));
 		  }
 		}
-		writer = new PagedGrowableWriter(size, pageSize, TestUtil.Next(random(), 1, 64), random().nextFloat());
-		Assert.AreEqual(size, writer.size());
+		writer = new PagedGrowableWriter(size, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().nextFloat());
+		Assert.AreEqual(size, writer.Size());
 		for (int i = size - 1; i >= 0; --i)
 		{
-		  writer.set(i, buf.get(i));
+		  writer.Set(i, buf.Get(i));
 		}
 		for (int i = 0; i < size; ++i)
 		{
-		  Assert.AreEqual(buf.get(i), writer.get(i));
+		  Assert.AreEqual(buf.Get(i), writer.Get(i));
 		}
 
 		// test ramBytesUsed
 		Assert.AreEqual(RamUsageEstimator.sizeOf(writer), writer.ramBytesUsed(), 8);
 
 		// test copy
-		PagedGrowableWriter copy = writer.resize(TestUtil.nextLong(random(), writer.size() / 2, writer.size() * 3 / 2));
-		for (long i = 0; i < copy.size(); ++i)
+		PagedGrowableWriter copy = writer.resize(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
+		for (long i = 0; i < copy.Size(); ++i)
 		{
-		  if (i < writer.size())
+		  if (i < writer.Size())
 		  {
-			Assert.AreEqual(writer.get(i), copy.get(i));
+			Assert.AreEqual(writer.Get(i), copy.Get(i));
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, copy.get(i));
+			Assert.AreEqual(0, copy.Get(i));
 		  }
 		}
 
 		// test grow
-		PagedGrowableWriter grow = writer.grow(TestUtil.nextLong(random(), writer.size() / 2, writer.size() * 3 / 2));
-		for (long i = 0; i < grow.size(); ++i)
+		PagedGrowableWriter grow = writer.grow(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
+		for (long i = 0; i < grow.Size(); ++i)
 		{
-		  if (i < writer.size())
+		  if (i < writer.Size())
 		  {
-			Assert.AreEqual(writer.get(i), grow.get(i));
+			Assert.AreEqual(writer.Get(i), grow.Get(i));
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, grow.get(i));
+			Assert.AreEqual(0, grow.Get(i));
 		  }
 		}
 	  }
 
 	  public virtual void TestPagedMutable()
 	  {
-		int bitsPerValue = TestUtil.Next(random(), 1, 64);
+		int bitsPerValue = TestUtil.NextInt(Random(), 1, 64);
 		long max = PackedInts.maxValue(bitsPerValue);
-		int pageSize = 1 << (TestUtil.Next(random(), 6, 30));
+		int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
 		// supports 0 values?
-		PagedMutable writer = new PagedMutable(0, pageSize, bitsPerValue, random().nextFloat() / 2);
-		Assert.AreEqual(0, writer.size());
+		PagedMutable writer = new PagedMutable(0, pageSize, bitsPerValue, Random().nextFloat() / 2);
+		Assert.AreEqual(0, writer.Size());
 
 		// compare against AppendingDeltaPackedLongBuffer
 		AppendingDeltaPackedLongBuffer buf = new AppendingDeltaPackedLongBuffer();
-		int size = random().Next(1000000);
+		int size = Random().Next(1000000);
 
 		for (int i = 0; i < size; ++i)
 		{
-		  buf.add(bitsPerValue == 64 ? random().nextLong() : TestUtil.nextLong(random(), 0, max));
+		  buf.Add(bitsPerValue == 64 ? Random().NextLong() : TestUtil.NextLong(Random(), 0, max));
 		}
-		writer = new PagedMutable(size, pageSize, bitsPerValue, random().nextFloat());
-		Assert.AreEqual(size, writer.size());
+		writer = new PagedMutable(size, pageSize, bitsPerValue, Random().nextFloat());
+		Assert.AreEqual(size, writer.Size());
 		for (int i = size - 1; i >= 0; --i)
 		{
-		  writer.set(i, buf.get(i));
+		  writer.Set(i, buf.Get(i));
 		}
 		for (int i = 0; i < size; ++i)
 		{
-		  Assert.AreEqual(buf.get(i), writer.get(i));
+		  Assert.AreEqual(buf.Get(i), writer.Get(i));
 		}
 
 		// test ramBytesUsed
 		Assert.AreEqual(RamUsageEstimator.sizeOf(writer) - RamUsageEstimator.sizeOf(writer.format), writer.ramBytesUsed());
 
 		// test copy
-		PagedMutable copy = writer.resize(TestUtil.nextLong(random(), writer.size() / 2, writer.size() * 3 / 2));
-		for (long i = 0; i < copy.size(); ++i)
+		PagedMutable copy = writer.resize(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
+		for (long i = 0; i < copy.Size(); ++i)
 		{
-		  if (i < writer.size())
+		  if (i < writer.Size())
 		  {
-			Assert.AreEqual(writer.get(i), copy.get(i));
+			Assert.AreEqual(writer.Get(i), copy.Get(i));
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, copy.get(i));
+			Assert.AreEqual(0, copy.Get(i));
 		  }
 		}
 
 		// test grow
-		PagedMutable grow = writer.grow(TestUtil.nextLong(random(), writer.size() / 2, writer.size() * 3 / 2));
-		for (long i = 0; i < grow.size(); ++i)
+		PagedMutable grow = writer.grow(TestUtil.NextLong(Random(), writer.Size() / 2, writer.Size() * 3 / 2));
+		for (long i = 0; i < grow.Size(); ++i)
 		{
-		  if (i < writer.size())
+		  if (i < writer.Size())
 		  {
-			Assert.AreEqual(writer.get(i), grow.get(i));
+			Assert.AreEqual(writer.Get(i), grow.Get(i));
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, grow.get(i));
+			Assert.AreEqual(0, grow.Get(i));
 		  }
 		}
 	  }
@@ -899,29 +899,29 @@ namespace Lucene.Net.Util.Packed
 //ORIGINAL LINE: @Ignore public void testPagedGrowableWriterOverflow()
 	  public virtual void TestPagedGrowableWriterOverflow()
 	  {
-		long size = TestUtil.nextLong(random(), 2 * (long) int.MaxValue, 3 * (long) int.MaxValue);
-		int pageSize = 1 << (TestUtil.Next(random(), 16, 30));
-		PagedGrowableWriter writer = new PagedGrowableWriter(size, pageSize, 1, random().nextFloat());
-		long index = TestUtil.nextLong(random(), (long) int.MaxValue, size - 1);
-		writer.set(index, 2);
-		Assert.AreEqual(2, writer.get(index));
+		long size = TestUtil.NextLong(Random(), 2 * (long) int.MaxValue, 3 * (long) int.MaxValue);
+		int pageSize = 1 << (TestUtil.NextInt(Random(), 16, 30));
+		PagedGrowableWriter writer = new PagedGrowableWriter(size, pageSize, 1, Random().nextFloat());
+		long index = TestUtil.NextLong(Random(), (long) int.MaxValue, size - 1);
+		writer.Set(index, 2);
+		Assert.AreEqual(2, writer.Get(index));
 		for (int i = 0; i < 1000000; ++i)
 		{
-		  long idx = TestUtil.nextLong(random(), 0, size);
+		  long idx = TestUtil.NextLong(Random(), 0, size);
 		  if (idx == index)
 		  {
-			Assert.AreEqual(2, writer.get(idx));
+			Assert.AreEqual(2, writer.Get(idx));
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, writer.get(idx));
+			Assert.AreEqual(0, writer.Get(idx));
 		  }
 		}
 	  }
 
 	  public virtual void TestSave()
 	  {
-		int valueCount = TestUtil.Next(random(), 1, 2048);
+		int valueCount = TestUtil.NextInt(Random(), 1, 2048);
 		for (int bpv = 1; bpv <= 64; ++bpv)
 		{
 		  int maxValue = (int) Math.Min(PackedInts.maxValue(31), PackedInts.maxValue(bpv));
@@ -929,19 +929,19 @@ namespace Lucene.Net.Util.Packed
 		  IList<PackedInts.Mutable> packedInts = CreatePackedInts(valueCount, bpv);
 		  foreach (PackedInts.Mutable mutable in packedInts)
 		  {
-			for (int i = 0; i < mutable.size(); ++i)
+			for (int i = 0; i < mutable.Size(); ++i)
 			{
-			  mutable.set(i, random().Next(maxValue));
+			  mutable.Set(i, Random().Next(maxValue));
 			}
 
-			IndexOutput @out = directory.createOutput("packed-ints.bin", IOContext.DEFAULT);
-			mutable.save(@out);
-			@out.close();
+			IndexOutput @out = directory.CreateOutput("packed-ints.bin", IOContext.DEFAULT);
+			mutable.Save(@out);
+			@out.Dispose();
 
-			IndexInput @in = directory.openInput("packed-ints.bin", IOContext.DEFAULT);
+			IndexInput @in = directory.OpenInput("packed-ints.bin", IOContext.DEFAULT);
 			PackedInts.Reader reader = PackedInts.getReader(@in);
 			Assert.AreEqual(mutable.BitsPerValue, reader.BitsPerValue);
-			Assert.AreEqual(valueCount, reader.size());
+			Assert.AreEqual(valueCount, reader.Size());
 			if (mutable is Packed64SingleBlock)
 			{
 			  // make sure that we used the right format so that the reader has
@@ -955,12 +955,12 @@ namespace Lucene.Net.Util.Packed
 			}
 			for (int i = 0; i < valueCount; ++i)
 			{
-			  Assert.AreEqual(mutable.get(i), reader.get(i));
+			  Assert.AreEqual(mutable.Get(i), reader.Get(i));
 			}
-			@in.close();
+			@in.Dispose();
 			directory.deleteFile("packed-ints.bin");
 		  }
-		  directory.close();
+		  directory.Dispose();
 		}
 	  }
 
@@ -987,19 +987,19 @@ namespace Lucene.Net.Util.Packed
 			Assert.AreEqual(byteBlockCount, decoder.byteBlockCount());
 			Assert.AreEqual(byteValueCount, decoder.byteValueCount());
 
-			int longIterations = random().Next(100);
+			int longIterations = Random().Next(100);
 			int byteIterations = longIterations * longValueCount / byteValueCount;
 			Assert.AreEqual(longIterations * longValueCount, byteIterations * byteValueCount);
-			int blocksOffset = random().Next(100);
-			int valuesOffset = random().Next(100);
-			int blocksOffset2 = random().Next(100);
+			int blocksOffset = Random().Next(100);
+			int valuesOffset = Random().Next(100);
+			int blocksOffset2 = Random().Next(100);
 			int blocksLen = longIterations * longBlockCount;
 
 			// 1. generate random inputs
 			long[] blocks = new long[blocksOffset + blocksLen];
 			for (int i = 0; i < blocks.Length; ++i)
 			{
-			  blocks[i] = random().nextLong();
+			  blocks[i] = Random().NextLong();
 			  if (format == PackedInts.Format.PACKED_SINGLE_BLOCK && 64 % bpv != 0)
 			  {
 				// clear highest bits for packed
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Util.Packed
 
 			// 2. decode
 			long[] values = new long[valuesOffset + longIterations * longValueCount];
-			decoder.decode(blocks, blocksOffset, values, valuesOffset, longIterations);
+			decoder.Decode(blocks, blocksOffset, values, valuesOffset, longIterations);
 			foreach (long value in values)
 			{
 			  Assert.IsTrue(value <= PackedInts.maxValue(bpv));
@@ -1020,7 +1020,7 @@ namespace Lucene.Net.Util.Packed
 			if (bpv <= 32)
 			{
 			  intValues = new int[values.Length];
-			  decoder.decode(blocks, blocksOffset, intValues, valuesOffset, longIterations);
+			  decoder.Decode(blocks, blocksOffset, intValues, valuesOffset, longIterations);
 			  Assert.IsTrue(Equals(intValues, values));
 			}
 			else
@@ -1030,21 +1030,21 @@ namespace Lucene.Net.Util.Packed
 
 			// 3. re-encode
 			long[] blocks2 = new long[blocksOffset2 + blocksLen];
-			encoder.encode(values, valuesOffset, blocks2, blocksOffset2, longIterations);
+			encoder.Encode(values, valuesOffset, blocks2, blocksOffset2, longIterations);
 			assertArrayEquals(msg, Arrays.copyOfRange(blocks, blocksOffset, blocks.Length), Arrays.copyOfRange(blocks2, blocksOffset2, blocks2.Length));
 			// test encoding from int[]
 			if (bpv <= 32)
 			{
 			  long[] blocks3 = new long[blocks2.Length];
-			  encoder.encode(intValues, valuesOffset, blocks3, blocksOffset2, longIterations);
+			  encoder.Encode(intValues, valuesOffset, blocks3, blocksOffset2, longIterations);
 			  assertArrayEquals(msg, blocks2, blocks3);
 			}
 
 			// 4. byte[] decoding
 			sbyte[] byteBlocks = new sbyte[8 * blocks.Length];
-			ByteBuffer.wrap(byteBlocks).asLongBuffer().put(blocks);
+			ByteBuffer.Wrap(byteBlocks).asLongBuffer().put(blocks);
 			long[] values2 = new long[valuesOffset + longIterations * longValueCount];
-			decoder.decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
+			decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
 			foreach (long value in values2)
 			{
 			  Assert.IsTrue(msg, value <= PackedInts.maxValue(bpv));
@@ -1054,19 +1054,19 @@ namespace Lucene.Net.Util.Packed
 			if (bpv <= 32)
 			{
 			  int[] intValues2 = new int[values2.Length];
-			  decoder.decode(byteBlocks, blocksOffset * 8, intValues2, valuesOffset, byteIterations);
+			  decoder.Decode(byteBlocks, blocksOffset * 8, intValues2, valuesOffset, byteIterations);
 			  Assert.IsTrue(msg, Equals(intValues2, values2));
 			}
 
 			// 5. byte[] encoding
 			sbyte[] blocks3 = new sbyte[8 * (blocksOffset2 + blocksLen)];
-			encoder.encode(values, valuesOffset, blocks3, 8 * blocksOffset2, byteIterations);
-			Assert.AreEqual(msg, LongBuffer.wrap(blocks2), ByteBuffer.wrap(blocks3).asLongBuffer());
+			encoder.Encode(values, valuesOffset, blocks3, 8 * blocksOffset2, byteIterations);
+			Assert.AreEqual(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3).asLongBuffer());
 			// test encoding from int[]
 			if (bpv <= 32)
 			{
 			  sbyte[] blocks4 = new sbyte[blocks3.Length];
-			  encoder.encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
+			  encoder.Encode(intValues, valuesOffset, blocks4, 8 * blocksOffset2, byteIterations);
 			  assertArrayEquals(msg, blocks3, blocks4);
 			}
 		  }
@@ -1100,15 +1100,15 @@ namespace Lucene.Net.Util.Packed
 	  public virtual void TestAppendingLongBuffer()
 	  {
 
-		long[] arr = new long[RandomInts.randomIntBetween(random(), 1, 1000000)];
+		long[] arr = new long[RandomInts.randomIntBetween(Random(), 1, 1000000)];
 		float[] ratioOptions = new float[]{PackedInts.DEFAULT, PackedInts.COMPACT, PackedInts.FAST};
-		foreach (int bpv in new int[]{0, 1, 63, 64, RandomInts.randomIntBetween(random(), 2, 62)})
+		foreach (int bpv in new int[]{0, 1, 63, 64, RandomInts.randomIntBetween(Random(), 2, 62)})
 		{
 		  foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
 		  {
-			int pageSize = 1 << TestUtil.Next(random(), 6, 20);
-			int initialPageCount = TestUtil.Next(random(), 0, 16);
-			float acceptableOverheadRatio = ratioOptions[TestUtil.Next(random(), 0, ratioOptions.Length - 1)];
+			int pageSize = 1 << TestUtil.NextInt(Random(), 6, 20);
+			int initialPageCount = TestUtil.NextInt(Random(), 0, 16);
+			float acceptableOverheadRatio = ratioOptions[TestUtil.NextInt(Random(), 0, ratioOptions.Length - 1)];
 			AbstractAppendingLongBuffer buf;
 			int inc;
 			switch (dataType)
@@ -1123,7 +1123,7 @@ namespace Lucene.Net.Util.Packed
 				break;
 			  case Lucene.Net.Util.Packed.TestPackedInts.DataType.MONOTONIC:
 				buf = new MonotonicAppendingLongBuffer(initialPageCount, pageSize, acceptableOverheadRatio);
-				inc = TestUtil.Next(random(), -1000, 1000);
+				inc = TestUtil.NextInt(Random(), -1000, 1000);
 				break;
 			  default:
 				throw new Exception("added a type and forgot to add it here?");
@@ -1132,7 +1132,7 @@ namespace Lucene.Net.Util.Packed
 
 			if (bpv == 0)
 			{
-			  arr[0] = random().nextLong();
+			  arr[0] = Random().NextLong();
 			  for (int i = 1; i < arr.Length; ++i)
 			  {
 				arr[i] = arr[i - 1] + inc;
@@ -1142,61 +1142,61 @@ namespace Lucene.Net.Util.Packed
 			{
 			  for (int i = 0; i < arr.Length; ++i)
 			  {
-				arr[i] = random().nextLong();
+				arr[i] = Random().NextLong();
 			  }
 			}
 			else
 			{
-			  long minValue = TestUtil.nextLong(random(), long.MinValue, long.MaxValue - PackedInts.maxValue(bpv));
+			  long minValue = TestUtil.NextLong(Random(), long.MinValue, long.MaxValue - PackedInts.maxValue(bpv));
 			  for (int i = 0; i < arr.Length; ++i)
 			  {
-				arr[i] = minValue + inc * i + random().nextLong() & PackedInts.maxValue(bpv); // TestUtil.nextLong is too slow
+				arr[i] = minValue + inc * i + Random().NextLong() & PackedInts.maxValue(bpv); // TestUtil.nextLong is too slow
 			  }
 			}
 
 			for (int i = 0; i < arr.Length; ++i)
 			{
-			  buf.add(arr[i]);
+			  buf.Add(arr[i]);
 			}
-			Assert.AreEqual(arr.Length, buf.size());
-			if (random().nextBoolean())
+			Assert.AreEqual(arr.Length, buf.Size());
+			if (Random().NextBoolean())
 			{
-			  buf.freeze();
-			  if (random().nextBoolean())
+			  buf.Freeze();
+			  if (Random().NextBoolean())
 			  {
 				// Make sure double freeze doesn't break anything
-				buf.freeze();
+				buf.Freeze();
 			  }
 			}
-			Assert.AreEqual(arr.Length, buf.size());
+			Assert.AreEqual(arr.Length, buf.Size());
 
 			for (int i = 0; i < arr.Length; ++i)
 			{
-			  Assert.AreEqual(arr[i], buf.get(i));
+			  Assert.AreEqual(arr[i], buf.Get(i));
 			}
 
 			AbstractAppendingLongBuffer.Iterator it = buf.GetEnumerator();
 			for (int i = 0; i < arr.Length; ++i)
 			{
-			  if (random().nextBoolean())
+			  if (Random().NextBoolean())
 			  {
 				Assert.IsTrue(it.hasNext());
 			  }
-			  Assert.AreEqual(arr[i], it.next());
+			  Assert.AreEqual(arr[i], it.Next());
 			}
 			Assert.IsFalse(it.hasNext());
 
 
 			long[] target = new long[arr.Length + 1024]; // check the request for more is OK.
-			for (int i = 0; i < arr.Length; i += TestUtil.Next(random(), 0, 10000))
+			for (int i = 0; i < arr.Length; i += TestUtil.NextInt(Random(), 0, 10000))
 			{
-			  int lenToRead = random().Next(buf.pageSize() * 2) + 1;
+			  int lenToRead = Random().Next(buf.pageSize() * 2) + 1;
 			  lenToRead = Math.Min(lenToRead, target.Length - i);
 			  int lenToCheck = Math.Min(lenToRead, arr.Length - i);
 			  int off = i;
 			  while (off < arr.Length && lenToRead > 0)
 			  {
-				int read = buf.get(off, target, off, lenToRead);
+				int read = buf.Get(off, target, off, lenToRead);
 				Assert.IsTrue(read > 0);
 				Assert.IsTrue(read <= lenToRead);
 				lenToRead -= read;
@@ -1218,26 +1218,26 @@ namespace Lucene.Net.Util.Packed
 
 	  public virtual void TestPackedInputOutput()
 	  {
-		long[] longs = new long[random().Next(8192)];
+		long[] longs = new long[Random().Next(8192)];
 		int[] bitsPerValues = new int[longs.Length];
 		bool[] skip = new bool[longs.Length];
 		for (int i = 0; i < longs.Length; ++i)
 		{
-		  int bpv = RandomInts.randomIntBetween(random(), 1, 64);
-		  bitsPerValues[i] = random().nextBoolean() ? bpv : TestUtil.Next(random(), bpv, 64);
+		  int bpv = RandomInts.randomIntBetween(Random(), 1, 64);
+		  bitsPerValues[i] = Random().NextBoolean() ? bpv : TestUtil.NextInt(Random(), bpv, 64);
 		  if (bpv == 64)
 		  {
-			longs[i] = random().nextLong();
+			longs[i] = Random().NextLong();
 		  }
 		  else
 		  {
-			longs[i] = TestUtil.nextLong(random(), 0, PackedInts.maxValue(bpv));
+			longs[i] = TestUtil.NextLong(Random(), 0, PackedInts.maxValue(bpv));
 		  }
-		  skip[i] = rarely();
+		  skip[i] = Rarely();
 		}
 
-		Directory dir = newDirectory();
-		IndexOutput @out = dir.createOutput("out.bin", IOContext.DEFAULT);
+		Directory dir = NewDirectory();
+		IndexOutput @out = dir.CreateOutput("out.bin", IOContext.DEFAULT);
 		PackedDataOutput pout = new PackedDataOutput(@out);
 		long totalBits = 0;
 		for (int i = 0; i < longs.Length; ++i)
@@ -1252,8 +1252,8 @@ namespace Lucene.Net.Util.Packed
 		}
 		pout.flush();
 		Assert.AreEqual((long) Math.Ceiling((double) totalBits / 8), @out.FilePointer);
-		@out.close();
-		IndexInput @in = dir.openInput("out.bin", IOContext.READONCE);
+		@out.Dispose();
+		IndexInput @in = dir.OpenInput("out.bin", IOContext.READONCE);
 		PackedDataInput pin = new PackedDataInput(@in);
 		for (int i = 0; i < longs.Length; ++i)
 		{
@@ -1264,17 +1264,17 @@ namespace Lucene.Net.Util.Packed
 		  }
 		}
 		Assert.AreEqual((long) Math.Ceiling((double) totalBits / 8), @in.FilePointer);
-		@in.close();
-		dir.close();
+		@in.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestBlockPackedReaderWriter()
 	  {
-		int iters = atLeast(2);
+		int iters = AtLeast(2);
 		for (int iter = 0; iter < iters; ++iter)
 		{
-		  int blockSize = 1 << TestUtil.Next(random(), 6, 18);
-		  int valueCount = random().Next(1 << 18);
+		  int blockSize = 1 << TestUtil.NextInt(Random(), 6, 18);
+		  int valueCount = Random().Next(1 << 18);
 		  long[] values = new long[valueCount];
 		  long minValue = 0;
 		  int bpv = 0;
@@ -1282,8 +1282,8 @@ namespace Lucene.Net.Util.Packed
 		  {
 			if (i % blockSize == 0)
 			{
-			  minValue = rarely() ? random().Next(256) : rarely() ? - 5 : random().nextLong();
-			  bpv = random().Next(65);
+			  minValue = Rarely() ? Random().Next(256) : Rarely() ? - 5 : Random().NextLong();
+			  bpv = Random().Next(65);
 			}
 			if (bpv == 0)
 			{
@@ -1291,57 +1291,57 @@ namespace Lucene.Net.Util.Packed
 			}
 			else if (bpv == 64)
 			{
-			  values[i] = random().nextLong();
+			  values[i] = Random().NextLong();
 			}
 			else
 			{
-			  values[i] = minValue + TestUtil.nextLong(random(), 0, (1L << bpv) - 1);
+			  values[i] = minValue + TestUtil.NextLong(Random(), 0, (1L << bpv) - 1);
 			}
 		  }
 
-		  Directory dir = newDirectory();
-		  IndexOutput @out = dir.createOutput("out.bin", IOContext.DEFAULT);
+		  Directory dir = NewDirectory();
+		  IndexOutput @out = dir.CreateOutput("out.bin", IOContext.DEFAULT);
 		  BlockPackedWriter writer = new BlockPackedWriter(@out, blockSize);
 		  for (int i = 0; i < valueCount; ++i)
 		  {
-			Assert.AreEqual(i, writer.ord());
-			writer.add(values[i]);
+			Assert.AreEqual(i, writer.Ord());
+			writer.Add(values[i]);
 		  }
-		  Assert.AreEqual(valueCount, writer.ord());
-		  writer.finish();
-		  Assert.AreEqual(valueCount, writer.ord());
+		  Assert.AreEqual(valueCount, writer.Ord());
+		  writer.Finish();
+		  Assert.AreEqual(valueCount, writer.Ord());
 		  long fp = @out.FilePointer;
-		  @out.close();
+		  @out.Dispose();
 
-		  IndexInput in1 = dir.openInput("out.bin", IOContext.DEFAULT);
+		  IndexInput in1 = dir.OpenInput("out.bin", IOContext.DEFAULT);
 		  sbyte[] buf = new sbyte[(int) fp];
-		  in1.readBytes(buf, 0, (int) fp);
+		  in1.ReadBytes(buf, 0, (int) fp);
 		  in1.seek(0L);
 		  ByteArrayDataInput in2 = new ByteArrayDataInput(buf);
-		  DataInput @in = random().nextBoolean() ? in1 : in2;
+		  DataInput @in = Random().NextBoolean() ? in1 : in2;
 		  BlockPackedReaderIterator it = new BlockPackedReaderIterator(@in, PackedInts.VERSION_CURRENT, blockSize, valueCount);
 		  for (int i = 0; i < valueCount;)
 		  {
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  Assert.AreEqual("" + i, values[i], it.next());
+			  Assert.AreEqual("" + i, values[i], it.Next());
 			  ++i;
 			}
 			else
 			{
-			  LongsRef nextValues = it.next(TestUtil.Next(random(), 1, 1024));
-			  for (int j = 0; j < nextValues.length; ++j)
+			  LongsRef nextValues = it.Next(TestUtil.NextInt(Random(), 1, 1024));
+			  for (int j = 0; j < nextValues.Length; ++j)
 			  {
-				Assert.AreEqual("" + (i + j), values[i + j], nextValues.longs[nextValues.offset + j]);
+				Assert.AreEqual("" + (i + j), values[i + j], nextValues.longs[nextValues.Offset + j]);
 			  }
-			  i += nextValues.length;
+			  i += nextValues.Length;
 			}
-			Assert.AreEqual(i, it.ord());
+			Assert.AreEqual(i, it.Ord());
 		  }
 		  Assert.AreEqual(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput) @in).Position : ((IndexInput) @in).FilePointer);
 		  try
 		  {
-			it.next();
+			it.Next();
 			Assert.IsTrue(false);
 		  }
 		  catch (IOException e)
@@ -1361,17 +1361,17 @@ namespace Lucene.Net.Util.Packed
 		  int i = 0;
 		  while (true)
 		  {
-			int skip = TestUtil.Next(random(), 0, valueCount - i);
+			int skip = TestUtil.NextInt(Random(), 0, valueCount - i);
 			it2.skip(skip);
 			i += skip;
-			Assert.AreEqual(i, it2.ord());
+			Assert.AreEqual(i, it2.Ord());
 			if (i == valueCount)
 			{
 			  break;
 			}
 			else
 			{
-			  Assert.AreEqual(values[i], it2.next());
+			  Assert.AreEqual(values[i], it2.Next());
 			  ++i;
 			}
 		  }
@@ -1387,62 +1387,62 @@ namespace Lucene.Net.Util.Packed
 		  }
 
 		  in1.seek(0L);
-		  BlockPackedReader reader = new BlockPackedReader(in1, PackedInts.VERSION_CURRENT, blockSize, valueCount, random().nextBoolean());
-		  Assert.AreEqual(in1.FilePointer, in1.length());
+		  BlockPackedReader reader = new BlockPackedReader(in1, PackedInts.VERSION_CURRENT, blockSize, valueCount, Random().NextBoolean());
+		  Assert.AreEqual(in1.FilePointer, in1.Length());
 		  for (i = 0; i < valueCount; ++i)
 		  {
-			Assert.AreEqual("i=" + i, values[i], reader.get(i));
+			Assert.AreEqual("i=" + i, values[i], reader.Get(i));
 		  }
-		  in1.close();
-		  dir.close();
+		  in1.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
 	  public virtual void TestMonotonicBlockPackedReaderWriter()
 	  {
-		int iters = atLeast(2);
+		int iters = AtLeast(2);
 		for (int iter = 0; iter < iters; ++iter)
 		{
-		  int blockSize = 1 << TestUtil.Next(random(), 6, 18);
-		  int valueCount = random().Next(1 << 18);
+		  int blockSize = 1 << TestUtil.NextInt(Random(), 6, 18);
+		  int valueCount = Random().Next(1 << 18);
 		  long[] values = new long[valueCount];
 		  if (valueCount > 0)
 		  {
-			values[0] = random().nextBoolean() ? random().Next(10) : random().Next(int.MaxValue);
-			int maxDelta = random().Next(64);
+			values[0] = Random().NextBoolean() ? Random().Next(10) : Random().Next(int.MaxValue);
+			int maxDelta = Random().Next(64);
 			for (int i = 1; i < valueCount; ++i)
 			{
-			  if (random().NextDouble() < 0.1d)
+			  if (Random().NextDouble() < 0.1d)
 			  {
-				maxDelta = random().Next(64);
+				maxDelta = Random().Next(64);
 			  }
-			  values[i] = Math.Max(0, values[i - 1] + TestUtil.Next(random(), -16, maxDelta));
+			  values[i] = Math.Max(0, values[i - 1] + TestUtil.NextInt(Random(), -16, maxDelta));
 			}
 		  }
 
-		  Directory dir = newDirectory();
-		  IndexOutput @out = dir.createOutput("out.bin", IOContext.DEFAULT);
+		  Directory dir = NewDirectory();
+		  IndexOutput @out = dir.CreateOutput("out.bin", IOContext.DEFAULT);
 		  MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(@out, blockSize);
 		  for (int i = 0; i < valueCount; ++i)
 		  {
-			Assert.AreEqual(i, writer.ord());
-			writer.add(values[i]);
+			Assert.AreEqual(i, writer.Ord());
+			writer.Add(values[i]);
 		  }
-		  Assert.AreEqual(valueCount, writer.ord());
-		  writer.finish();
-		  Assert.AreEqual(valueCount, writer.ord());
+		  Assert.AreEqual(valueCount, writer.Ord());
+		  writer.Finish();
+		  Assert.AreEqual(valueCount, writer.Ord());
 		  long fp = @out.FilePointer;
-		  @out.close();
+		  @out.Dispose();
 
-		  IndexInput @in = dir.openInput("out.bin", IOContext.DEFAULT);
-		  MonotonicBlockPackedReader reader = new MonotonicBlockPackedReader(@in, PackedInts.VERSION_CURRENT, blockSize, valueCount, random().nextBoolean());
+		  IndexInput @in = dir.OpenInput("out.bin", IOContext.DEFAULT);
+		  MonotonicBlockPackedReader reader = new MonotonicBlockPackedReader(@in, PackedInts.VERSION_CURRENT, blockSize, valueCount, Random().NextBoolean());
 		  Assert.AreEqual(fp, @in.FilePointer);
 		  for (int i = 0; i < valueCount; ++i)
 		  {
-			Assert.AreEqual("i=" + i, values[i], reader.get(i));
+			Assert.AreEqual("i=" + i, values[i], reader.Get(i));
 		  }
-		  @in.close();
-		  dir.close();
+		  @in.Dispose();
+		  dir.Dispose();
 		}
 	  }
 
@@ -1450,16 +1450,16 @@ namespace Lucene.Net.Util.Packed
 //ORIGINAL LINE: @Nightly public void testBlockReaderOverflow() throws java.io.IOException
 	  public virtual void TestBlockReaderOverflow()
 	  {
-		long valueCount = TestUtil.nextLong(random(), 1L + int.MaxValue, (long) int.MaxValue * 2);
-		int blockSize = 1 << TestUtil.Next(random(), 20, 22);
-		Directory dir = newDirectory();
-		IndexOutput @out = dir.createOutput("out.bin", IOContext.DEFAULT);
+		long valueCount = TestUtil.NextLong(Random(), 1L + int.MaxValue, (long) int.MaxValue * 2);
+		int blockSize = 1 << TestUtil.NextInt(Random(), 20, 22);
+		Directory dir = NewDirectory();
+		IndexOutput @out = dir.CreateOutput("out.bin", IOContext.DEFAULT);
 		BlockPackedWriter writer = new BlockPackedWriter(@out, blockSize);
-		long value = random().Next() & 0xFFFFFFFFL;
-		long valueOffset = TestUtil.nextLong(random(), 0, valueCount - 1);
+		long value = Random().Next() & 0xFFFFFFFFL;
+		long valueOffset = TestUtil.NextLong(Random(), 0, valueCount - 1);
 		for (long i = 0; i < valueCount;)
 		{
-		  Assert.AreEqual(i, writer.ord());
+		  Assert.AreEqual(i, writer.Ord());
 		  if ((i & (blockSize - 1)) == 0 && (i + blockSize < valueOffset || i > valueOffset && i + blockSize < valueCount))
 		  {
 			writer.addBlockOfZeros();
@@ -1467,38 +1467,38 @@ namespace Lucene.Net.Util.Packed
 		  }
 		  else if (i == valueOffset)
 		  {
-			writer.add(value);
+			writer.Add(value);
 			++i;
 		  }
 		  else
 		  {
-			writer.add(0);
+			writer.Add(0);
 			++i;
 		  }
 		}
-		writer.finish();
-		@out.close();
-		IndexInput @in = dir.openInput("out.bin", IOContext.DEFAULT);
+		writer.Finish();
+		@out.Dispose();
+		IndexInput @in = dir.OpenInput("out.bin", IOContext.DEFAULT);
 		BlockPackedReaderIterator it = new BlockPackedReaderIterator(@in, PackedInts.VERSION_CURRENT, blockSize, valueCount);
 		it.skip(valueOffset);
-		Assert.AreEqual(value, it.next());
+		Assert.AreEqual(value, it.Next());
 		@in.seek(0L);
-		BlockPackedReader reader = new BlockPackedReader(@in, PackedInts.VERSION_CURRENT, blockSize, valueCount, random().nextBoolean());
-		Assert.AreEqual(value, reader.get(valueOffset));
+		BlockPackedReader reader = new BlockPackedReader(@in, PackedInts.VERSION_CURRENT, blockSize, valueCount, Random().NextBoolean());
+		Assert.AreEqual(value, reader.Get(valueOffset));
 		for (int i = 0; i < 5; ++i)
 		{
-		  long offset = TestUtil.nextLong(random(), 0, valueCount - 1);
+		  long offset = TestUtil.NextLong(Random(), 0, valueCount - 1);
 		  if (offset == valueOffset)
 		  {
-			Assert.AreEqual(value, reader.get(offset));
+			Assert.AreEqual(value, reader.Get(offset));
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, reader.get(offset));
+			Assert.AreEqual(0, reader.Get(offset));
 		  }
 		}
-		@in.close();
-		dir.close();
+		@in.Dispose();
+		dir.Dispose();
 	  }
 
 	}

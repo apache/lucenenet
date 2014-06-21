@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
 	/// An <seealso cref="InPlaceMergeSorter"/> for object arrays.
 	/// @lucene.internal
 	/// </summary>
-	internal sealed class ArrayInPlaceMergeSorter<T> : InPlaceMergeSorter
+	public sealed class ArrayInPlaceMergeSorter<T> : InPlaceMergeSorter
 	{
 
 	  private readonly T[] Arr;

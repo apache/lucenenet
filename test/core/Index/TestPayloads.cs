@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
 				FieldToData[field] = new PayloadData(data, offset, length);
 			}
 
-			public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+			protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 			{
 				PayloadData payload = FieldToData[fieldName];
 				Tokenizer ts = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
 				return new TokenStreamComponents(ts, tokenStream);
 			}
 
-			private class PayloadData
+		    internal class PayloadData
 			{
 				internal sbyte[] Data;
 				internal int Offset;
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
 				return true;
 			}
 
-			public override void Close()
+			public override void Dispose()
 			{
 				Pool.Release(Payload);
 			}

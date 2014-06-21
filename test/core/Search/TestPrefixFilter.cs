@@ -31,9 +31,11 @@ namespace Lucene.Net.Search
 	/// Tests <seealso cref="PrefixFilter"/> class.
 	/// 
 	/// </summary>
-	public class TestPrefixFilter : LuceneTestCase
+	[TestFixture]
+    public class TestPrefixFilter : LuceneTestCase
 	{
-	  public virtual void TestPrefixFilter()
+      [Test]
+      public virtual void TestPrefixFilter_Mem()
 	  {
 		Directory directory = NewDirectory();
 

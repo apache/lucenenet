@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < num; i++)
 		{
 		  Document doc = docs.NextDoc();
-		  float nextFloat = Random().nextFloat();
+		  float nextFloat = (float)Random().NextDouble();
 		  Field f = new TextField(FloatTestField, "" + nextFloat, Field.Store.YES);
 		  f.Boost = nextFloat;
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
 		}
 		open.Dispose();
 		dir.Dispose();
-        docs.Close();
+        docs.Dispose();
 	  }
 
 	  public class MySimProvider : PerFieldSimilarityWrapper
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 		  throw new System.NotSupportedException();
 		}
 
-		public override SimScorer SimScorer(SimWeight weight, AtomicReaderContext context)
+		public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
 		{
 		  throw new System.NotSupportedException();
 		}

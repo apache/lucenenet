@@ -27,11 +27,11 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public virtual void TestIsFinite()
 	  {
-		int num = atLeast(200);
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
-		  Automaton a = AutomatonTestUtil.randomAutomaton(random());
-		  Automaton b = a.clone();
+		  Automaton a = AutomatonTestUtil.randomAutomaton(Random());
+		  Automaton b = a.Clone();
 		  Assert.AreEqual(AutomatonTestUtil.isFiniteSlow(a), SpecialOperations.isFinite(b));
 		}
 	  }
@@ -44,13 +44,13 @@ namespace Lucene.Net.Util.Automaton
 		Automaton a = BasicOperations.union(BasicAutomata.makeString("dog"), BasicAutomata.makeString("duck"));
 		MinimizationOperations.minimize(a);
 		Set<IntsRef> strings = SpecialOperations.getFiniteStrings(a, -1);
-		Assert.AreEqual(2, strings.size());
+		Assert.AreEqual(2, strings.Size());
 		IntsRef dog = new IntsRef();
-		Util.toIntsRef(new BytesRef("dog"), dog);
-		Assert.IsTrue(strings.contains(dog));
+		Util.ToIntsRef(new BytesRef("dog"), dog);
+		Assert.IsTrue(strings.Contains(dog));
 		IntsRef duck = new IntsRef();
-		Util.toIntsRef(new BytesRef("duck"), duck);
-		Assert.IsTrue(strings.contains(duck));
+		Util.ToIntsRef(new BytesRef("duck"), duck);
+		Assert.IsTrue(strings.Contains(duck));
 	  }
 	}
 

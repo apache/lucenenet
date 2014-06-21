@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -25,11 +27,11 @@ namespace Lucene.Net.Util
 	  {
 		foreach (Version v in Version.values())
 		{
-		  Assert.IsTrue("LUCENE_CURRENT must be always onOrAfter(" + v + ")", Version.LUCENE_CURRENT.onOrAfter(v));
+		  Assert.IsTrue(Version.LUCENE_CURRENT.OnOrAfter(v), "LUCENE_CURRENT must be always onOrAfter(" + v + ")");
 		}
-		Assert.IsTrue(Version.LUCENE_40.onOrAfter(Version.LUCENE_31));
-		Assert.IsTrue(Version.LUCENE_40.onOrAfter(Version.LUCENE_40));
-		Assert.IsFalse(Version.LUCENE_30.onOrAfter(Version.LUCENE_31));
+		Assert.IsTrue(Version.LUCENE_40.OnOrAfter(Version.LUCENE_31));
+		Assert.IsTrue(Version.LUCENE_40.OnOrAfter(Version.LUCENE_40));
+		Assert.IsFalse(Version.LUCENE_30.OnOrAfter(Version.LUCENE_31));
 	  }
 
 	  public virtual void TestParseLeniently()

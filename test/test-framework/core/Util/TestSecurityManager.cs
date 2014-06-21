@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
 		AccessController.doPrivileged(new PrivilegedActionAnonymousInnerClassHelper(this, status));
 
 		// we passed the stack check, delegate to super, so default policy can still deny permission:
-		base.checkExit(status);
+		base.CheckExit(status);
 	  }
 
 	  private class PrivilegedActionAnonymousInnerClassHelper : PrivilegedAction<Void>

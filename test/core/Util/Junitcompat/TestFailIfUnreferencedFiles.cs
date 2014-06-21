@@ -1,4 +1,6 @@
 using System;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.junitcompat
 {
@@ -26,12 +28,12 @@ namespace Lucene.Net.Util.junitcompat
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-	using Assert = org.junit.Assert;
+	/*using Assert = org.junit.Assert;
 	using Test = org.junit.Test;
 	using JUnitCore = org.junit.runner.JUnitCore;
 	using Result = org.junit.runner.Result;
 	using Failure = org.junit.runner.notification.Failure;
-	using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;
+	using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;*/
 
 	// LUCENE-4456: Test that we fail if there are unreferenced files
 	public class TestFailIfUnreferencedFiles : WithNestedTests
@@ -44,22 +46,22 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		public virtual void TestDummy()
 		{
-		  MockDirectoryWrapper dir = newMockDirectory();
+		  MockDirectoryWrapper dir = NewMockDirectory();
 		  dir.AssertNoUnrefencedFilesOnClose = true;
-		  IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
-		  iw.addDocument(new Document());
-		  iw.close();
-		  IndexOutput output = dir.createOutput("_hello.world", IOContext.DEFAULT);
+		  IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null));
+		  iw.AddDocument(new Document());
+		  iw.Dispose();
+		  IndexOutput output = dir.CreateOutput("_hello.world", IOContext.DEFAULT);
 		  output.writeString("i am unreferenced!");
-		  output.close();
-		  dir.sync(Collections.singleton("_hello.world"));
-		  dir.close();
+		  output.Dispose();
+		  dir.Sync(CollectionsHelper.Singleton("_hello.world"));
+		  dir.Dispose();
 		}
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFailIfUnreferencedFiles()
-	  public virtual void TestFailIfUnreferencedFiles()
+	  public virtual void TestFailIfUnreferencedFilesMem()
 	  {
 		Result r = JUnitCore.runClasses(typeof(Nested1));
 		RandomizedTest.assumeTrue("Ignoring nested test, very likely zombie threads present.", r.IgnoreCount == 0);
@@ -70,8 +72,8 @@ namespace Lucene.Net.Util.junitcompat
 		  Console.WriteLine(f.Trace);
 		}
 
-		Assert.Assert.AreEqual("Expected exactly one failure.", 1, r.FailureCount);
-		Assert.Assert.IsTrue("Expected unreferenced files assertion.", r.Failures.get(0).Trace.contains("unreferenced files:"));
+		Assert.AreEqual(1, r.FailureCount, "Expected exactly one failure.");
+		Assert.IsTrue(r.Failures.Get(0).Trace.Contains("unreferenced files:"), "Expected unreferenced files assertion.");
 	  }
 	}
 

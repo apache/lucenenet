@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -27,7 +30,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestLookup()
 	  {
-		Codec codec = Codec.forName("Lucene46");
+		Codec codec = Codec.ForName("Lucene46");
 		Assert.AreEqual("Lucene46", codec.Name);
 	  }
 
@@ -36,7 +39,7 @@ namespace Lucene.Net.Util
 	  {
 		try
 		{
-		  Codec.forName("dskfdskfsdfksdfdsf");
+		  Codec.ForName("dskfdskfsdfksdfdsf");
 		  Assert.Fail();
 		}
 		catch (System.ArgumentException expected)
@@ -46,8 +49,8 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestAvailableServices()
 	  {
-		Set<string> codecs = Codec.availableCodecs();
-		Assert.IsTrue(codecs.contains("Lucene46"));
+		ISet<string> codecs = Codec.AvailableCodecs();
+		Assert.IsTrue(codecs.Contains("Lucene46"));
 	  }
 	}
 

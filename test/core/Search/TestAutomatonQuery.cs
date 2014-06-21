@@ -1,5 +1,7 @@
 using System;
 using System.Threading;
+using Apache.NMS.Util;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -41,7 +43,8 @@ namespace Lucene.Net.Search
 	using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
     using NUnit.Framework;
 
-	public class TestAutomatonQuery : LuceneTestCase
+	[TestFixture]
+    public class TestAutomatonQuery : LuceneTestCase
 	{
 	  private Directory Directory;
 	  private IndexReader Reader;
@@ -49,6 +52,7 @@ namespace Lucene.Net.Search
 
 	  private readonly string FN = "field";
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -71,6 +75,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -112,7 +117,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Test some very simple automata.
 	  /// </summary>
-	  public virtual void TestBasicAutomata()
+      [Test]
+      public virtual void TestBasicAutomata()
 	  {
 		AssertAutomatonHits(0, BasicAutomata.MakeEmpty());
 		AssertAutomatonHits(0, BasicAutomata.MakeEmptyString());
@@ -132,7 +138,8 @@ namespace Lucene.Net.Search
 	  /// Test that a nondeterministic automaton works correctly. (It should will be
 	  /// determinized)
 	  /// </summary>
-	  public virtual void TestNFA()
+      [Test]
+      public virtual void TestNFA()
 	  {
 		// accept this or three, the union is an NFA (two transitions for 't' from
 		// initial state)
@@ -140,7 +147,8 @@ namespace Lucene.Net.Search
 		AssertAutomatonHits(2, nfa);
 	  }
 
-	  public virtual void TestEquals()
+      [Test]
+      public virtual void TestEquals()
 	  {
 		AutomatonQuery a1 = new AutomatonQuery(NewTerm("foobar"), BasicAutomata.MakeString("foobar"));
 		// reference to a1
@@ -175,7 +183,8 @@ namespace Lucene.Net.Search
 	  /// Test that rewriting to a single term works as expected, preserves
 	  /// MultiTermQuery semantics.
 	  /// </summary>
-	  public virtual void TestRewriteSingleTerm()
+      [Test]
+      public virtual void TestRewriteSingleTerm()
 	  {
 		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.MakeString("piece"));
 		Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
@@ -187,7 +196,8 @@ namespace Lucene.Net.Search
 	  /// Test that rewriting to a prefix query works as expected, preserves
 	  /// MultiTermQuery semantics.
 	  /// </summary>
-	  public virtual void TestRewritePrefix()
+      [Test]
+      public virtual void TestRewritePrefix()
 	  {
 		Automaton pfx = BasicAutomata.MakeString("do");
 		pfx.ExpandSingleton(); // expand singleton representation for testing
@@ -201,17 +211,19 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Test handling of the empty language
 	  /// </summary>
-	  public virtual void TestEmptyOptimization()
+      [Test]
+      public virtual void TestEmptyOptimization()
 	  {
 		AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.MakeEmpty());
 		// not yet available: Assert.IsTrue(aq.getEnum(searcher.getIndexReader())
 		// instanceof EmptyTermEnum);
 		Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
-		assertSame(TermsEnum.EMPTY, aq.GetTermsEnum(terms));
+		AssertSame(TermsEnum.EMPTY, aq.GetTermsEnum(terms));
 		Assert.AreEqual(0, AutomatonQueryNrHits(aq));
 	  }
 
-	  public virtual void TestHashCodeWithThreads()
+      [Test]
+      public virtual void TestHashCodeWithThreads()
 	  {
 		AutomatonQuery[] queries = new AutomatonQuery[1000];
 		for (int i = 0; i < queries.Length; i++)
@@ -220,21 +232,21 @@ namespace Lucene.Net.Search
 		}
 		CountDownLatch startingGun = new CountDownLatch(1);
 		int numThreads = TestUtil.NextInt(Random(), 2, 5);
-		Thread[] threads = new Thread[numThreads];
+		ThreadClass[] threads = new ThreadClass[numThreads];
 		for (int threadID = 0; threadID < numThreads; threadID++)
 		{
-		  Thread thread = new ThreadAnonymousInnerClassHelper(this, queries, startingGun);
+		  ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, queries, startingGun);
 		  threads[threadID] = thread;
 		  thread.Start();
 		}
 		startingGun.countDown();
-		foreach (Thread thread in threads)
+		foreach (ThreadClass thread in threads)
 		{
 		  thread.Join();
 		}
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestAutomatonQuery OuterInstance;
 

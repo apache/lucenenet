@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Index
 {
 
@@ -28,7 +30,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoMergeScheduler() throws Exception
-	  public virtual void TestNoMergeScheduler()
+	  public virtual void TestNoMergeScheduler_Mem()
 	  {
 		MergeScheduler ms = NoMergeScheduler.INSTANCE;
 		ms.Dispose();

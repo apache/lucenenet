@@ -43,7 +43,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Tests the DocTermOrdsRewriteMethod
 	/// </summary>
-	public class TestDocTermOrdsRewriteMethod : LuceneTestCase
+	[TestFixture]
+    public class TestDocTermOrdsRewriteMethod : LuceneTestCase
 	{
 	  protected internal IndexSearcher Searcher1;
 	  protected internal IndexSearcher Searcher2;
@@ -51,6 +52,7 @@ namespace Lucene.Net.Search
 	  private Directory Dir;
 	  protected internal string FieldName;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -101,6 +103,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -110,7 +113,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test a bunch of random regular expressions </summary>
-	  public virtual void TestRegexps()
+      [Test]
+      public virtual void TestRegexps()
 	  {
 		int num = AtLeast(1000);
 		for (int i = 0; i < num; i++)
@@ -140,7 +144,8 @@ namespace Lucene.Net.Search
 		CheckHits.CheckEqual(inverted, invertedDocs.ScoreDocs, docValuesDocs.ScoreDocs);
 	  }
 
-	  public virtual void TestEquals()
+      [Test]
+      public virtual void TestEquals()
 	  {
 		RegexpQuery a1 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);
 		RegexpQuery a2 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);

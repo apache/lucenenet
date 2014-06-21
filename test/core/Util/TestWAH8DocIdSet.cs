@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -27,29 +29,29 @@ namespace Lucene.Net.Util
 
 	  public override WAH8DocIdSet CopyOf(BitArray bs, int length)
 	  {
-		int indexInterval = TestUtil.Next(random(), 8, 256);
-		WAH8DocIdSet.Builder builder = (new WAH8DocIdSet.Builder()).setIndexInterval(indexInterval);
-		for (int i = bs.nextSetBit(0); i != -1; i = bs.nextSetBit(i + 1))
+		int indexInterval = TestUtil.NextInt(Random(), 8, 256);
+		WAH8DocIdSet.Builder builder = (new WAH8DocIdSet.Builder()).SetIndexInterval(indexInterval);
+		for (int i = bs.NextSetBit(0); i != -1; i = bs.NextSetBit(i + 1))
 		{
-		  builder.add(i);
+		  builder.Add(i);
 		}
-		return builder.build();
+		return builder.Build();
 	  }
 
 	  public override void AssertEquals(int numBits, BitArray ds1, WAH8DocIdSet ds2)
 	  {
-		base.Assert.AreEqual(numBits, ds1, ds2);
-		Assert.AreEqual(ds1.cardinality(), ds2.cardinality());
+		base.AssertEquals(numBits, ds1, ds2);
+        Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
 	  }
 
 	  public virtual void TestUnion()
 	  {
-		int numBits = TestUtil.Next(random(), 100, 1 << 20);
-		int numDocIdSets = TestUtil.Next(random(), 0, 4);
+		int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
+		int numDocIdSets = TestUtil.NextInt(Random(), 0, 4);
 		IList<BitArray> fixedSets = new List<BitArray>(numDocIdSets);
 		for (int i = 0; i < numDocIdSets; ++i)
 		{
-		  fixedSets.Add(randomSet(numBits, random().nextFloat() / 16));
+		  fixedSets.Add(RandomSet(numBits, (float)Random().NextDouble() / 16));
 		}
 		IList<WAH8DocIdSet> compressedSets = new List<WAH8DocIdSet>(numDocIdSets);
 		foreach (BitArray set in fixedSets)
@@ -57,11 +59,11 @@ namespace Lucene.Net.Util
 		  compressedSets.Add(CopyOf(set, numBits));
 		}
 
-		WAH8DocIdSet union = WAH8DocIdSet.union(compressedSets);
+		WAH8DocIdSet union = WAH8DocIdSet.Union(compressedSets);
 		BitArray expected = new BitArray(numBits);
 		foreach (BitArray set in fixedSets)
 		{
-		  for (int doc = set.nextSetBit(0); doc != -1; doc = set.nextSetBit(doc + 1))
+		  for (int doc = set.NextSetBit(0); doc != -1; doc = set.NextSetBit(doc + 1))
 		  {
 			expected.Set(doc, true);
 		  }
@@ -71,12 +73,12 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestIntersection()
 	  {
-		int numBits = TestUtil.Next(random(), 100, 1 << 20);
-		int numDocIdSets = TestUtil.Next(random(), 1, 4);
+		int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
+		int numDocIdSets = TestUtil.NextInt(Random(), 1, 4);
 		IList<BitArray> fixedSets = new List<BitArray>(numDocIdSets);
 		for (int i = 0; i < numDocIdSets; ++i)
 		{
-		  fixedSets.Add(randomSet(numBits, random().nextFloat()));
+		  fixedSets.Add(RandomSet(numBits, (float)Random().NextDouble()));
 		}
 		IList<WAH8DocIdSet> compressedSets = new List<WAH8DocIdSet>(numDocIdSets);
 		foreach (BitArray set in fixedSets)
@@ -84,21 +86,21 @@ namespace Lucene.Net.Util
 		  compressedSets.Add(CopyOf(set, numBits));
 		}
 
-		WAH8DocIdSet union = WAH8DocIdSet.intersect(compressedSets);
+		WAH8DocIdSet union = WAH8DocIdSet.Intersect(compressedSets);
 		BitArray expected = new BitArray(numBits);
 		expected.Set(0, expected.Count);
 		foreach (BitArray set in fixedSets)
 		{
-		  for (int previousDoc = -1, doc = set.nextSetBit(0); ; previousDoc = doc, doc = set.nextSetBit(doc + 1))
+		  for (int previousDoc = -1, doc = set.NextSetBit(0); ; previousDoc = doc, doc = set.NextSetBit(doc + 1))
 		  {
 			if (doc == -1)
 			{
-			  expected.clear(previousDoc + 1, set.Count);
+			  expected.Clear(previousDoc + 1, set.Count);
 			  break;
 			}
 			else
 			{
-			  expected.clear(previousDoc + 1, doc);
+			  expected.Clear(previousDoc + 1, doc);
 			}
 		  }
 		}

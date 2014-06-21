@@ -1,3 +1,4 @@
+using NUnit.Framework;
 namespace Lucene.Net.Util
 {
 
@@ -25,14 +26,14 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return " (LUCENE_MAIN_VERSION=" + Constants.LUCENE_MAIN_VERSION + ", LUCENE_MAIN_VERSION(without alpha/beta)=" + Constants.mainVersionWithoutAlphaBeta() + ", LUCENE_VERSION=" + Constants.LUCENE_VERSION + ")";
+			return " (LUCENE_MAIN_VERSION=" + Constants.LUCENE_MAIN_VERSION + ", LUCENE_MAIN_VERSION(without alpha/beta)=" + Constants.MainVersionWithoutAlphaBeta() + ", LUCENE_VERSION=" + Constants.LUCENE_VERSION + ")";
 		  }
 	  }
 
 	  public virtual void TestLuceneMainVersionConstant()
 	  {
-		Assert.IsTrue("LUCENE_MAIN_VERSION does not follow pattern: 'x.y' (stable release) or 'x.y.0.z' (alpha/beta version)" + VersionDetails, Constants.LUCENE_MAIN_VERSION.matches("\\d+\\.\\d+(|\\.0\\.\\d+)"));
-		Assert.IsTrue("LUCENE_VERSION does not start with LUCENE_MAIN_VERSION (without alpha/beta marker)" + VersionDetails, Constants.LUCENE_VERSION.StartsWith(Constants.mainVersionWithoutAlphaBeta()));
+		Assert.IsTrue(Constants.LUCENE_MAIN_VERSION.matches("\\d+\\.\\d+(|\\.0\\.\\d+)"), "LUCENE_MAIN_VERSION does not follow pattern: 'x.y' (stable release) or 'x.y.0.z' (alpha/beta version)" + VersionDetails);
+		Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(Constants.MainVersionWithoutAlphaBeta()), "LUCENE_VERSION does not start with LUCENE_MAIN_VERSION (without alpha/beta marker)" + VersionDetails);
 	  }
 
 	  public virtual void TestBuildSetup()
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util
 		// remove anything after a "-" from the version string:
 		version = version.replaceAll("-.*$", "");
 		string versionConstant = Constants.LUCENE_VERSION.replaceAll("-.*$", "");
-		Assert.IsTrue("LUCENE_VERSION should share the same prefix with lucene.version test property ('" + version + "')." + VersionDetails, versionConstant.StartsWith(version) || version.StartsWith(versionConstant));
+		Assert.IsTrue(versionConstant.StartsWith(version) || version.StartsWith(versionConstant), "LUCENE_VERSION should share the same prefix with lucene.version test property ('" + version + "')." + VersionDetails);
 	  }
 
 	}

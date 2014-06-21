@@ -29,7 +29,7 @@ namespace Lucene.Net.Util.Packed
 
 	  public override EliasFanoDocIdSet CopyOf(BitArray bs, int numBits)
 	  {
-		EliasFanoDocIdSet set = new EliasFanoDocIdSet(bs.cardinality(), numBits - 1);
+		EliasFanoDocIdSet set = new EliasFanoDocIdSet(bs.Cardinality(), numBits - 1);
 		set.encodeFromDisi(new DocIdSetIteratorAnonymousInnerClassHelper(this, bs, numBits));
 		return set;
 	  }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
 
 		  public override int NextDoc()
 		  {
-			doc = Bs.nextSetBit(doc + 1);
+			doc = Bs.NextSetBit(doc + 1);
 			if (doc == -1)
 			{
 			  doc = NO_MORE_DOCS;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util.Packed
 
 		  public override long Cost()
 		  {
-			return Bs.cardinality();
+			return Bs.Cardinality();
 		  }
 
 		  public override int Advance(int target)

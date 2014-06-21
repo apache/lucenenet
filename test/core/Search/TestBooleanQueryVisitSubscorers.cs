@@ -38,7 +38,8 @@ namespace Lucene.Net.Search
 
 	// TODO: refactor to a base class, that collects freqs from the scorer tree
 	// and test all queries with it
-	public class TestBooleanQueryVisitSubscorers : LuceneTestCase
+	[TestFixture]
+    public class TestBooleanQueryVisitSubscorers : LuceneTestCase
 	{
 	  internal Analyzer Analyzer;
 	  internal IndexReader Reader;
@@ -48,6 +49,7 @@ namespace Lucene.Net.Search
 	  internal const string F1 = "title";
 	  internal const string F2 = "body";
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -64,6 +66,7 @@ namespace Lucene.Net.Search
 		Searcher = NewSearcher(Reader);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -71,6 +74,7 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void TestDisjunctions()
 	  {
 		BooleanQuery bq = new BooleanQuery();
@@ -84,7 +88,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(2, (int)tfs[2]); // f2:search + f2:lucene
 	  }
 
-	  public virtual void TestNestedDisjunctions()
+      [Test]
+      public virtual void TestNestedDisjunctions()
 	  {
 		BooleanQuery bq = new BooleanQuery();
 		bq.Add(new TermQuery(new Term(F1, "lucene")), BooleanClause.Occur_e.SHOULD);
@@ -99,7 +104,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(2, (int)tfs[2]); // f2:search + f2:lucene
 	  }
 
-	  public virtual void TestConjunctions()
+      [Test]
+      public virtual void TestConjunctions()
 	  {
 		BooleanQuery bq = new BooleanQuery();
 		bq.Add(new TermQuery(new Term(F2, "lucene")), BooleanClause.Occur_e.MUST);

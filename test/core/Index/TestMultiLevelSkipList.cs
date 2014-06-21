@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
 	  private class PayloadAnalyzer : Analyzer
 	  {
 		internal readonly AtomicInteger PayloadCount = new AtomicInteger(-1);
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
 		  return new TokenStreamComponents(tokenizer, new PayloadFilter(PayloadCount, tokenizer));
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
 		  this.Input.ReadBytes(b, offset, len);
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  this.Input.Dispose();
 		}
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
 		  return this.Input.Length();
 		}
 
-		public override CountingStream Clone()
+		public override object Clone()
 		{
 		  return new CountingStream(OuterInstance, (IndexInput)this.Input.Clone());
 		}

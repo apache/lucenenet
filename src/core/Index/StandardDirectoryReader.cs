@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	using IOContext = Lucene.Net.Store.IOContext;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 
-	internal sealed class StandardDirectoryReader : DirectoryReader
+    public sealed class StandardDirectoryReader : DirectoryReader
 	{
 
 	  private readonly IndexWriter Writer;

@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestLongPostings()
+	  public virtual void TestLongPostings_Mem()
 	  {
 		// Don't use TestUtil.getTempDir so that we own the
 		// randomness (ie same seed will point to same dir):
@@ -253,10 +253,10 @@ namespace Lucene.Net.Index
 				  Assert.AreEqual(pos, postings.NextPosition());
 				  if (Random().NextBoolean())
 				  {
-					postings.Payload;
+					var dummy = postings.Payload;
 					if (Random().NextBoolean())
 					{
-					  postings.Payload; // get it again
+					  dummy = postings.Payload; // get it again
 					}
 				  }
 				}
@@ -316,10 +316,10 @@ namespace Lucene.Net.Index
 				  Assert.AreEqual(pos, postings.NextPosition());
 				  if (Random().NextBoolean())
 				  {
-					postings.Payload;
+					var dummy = postings.Payload;
 					if (Random().NextBoolean())
 					{
-					  postings.Payload; // get it again
+					  dummy = postings.Payload; // get it again
 					}
 				  }
 				}

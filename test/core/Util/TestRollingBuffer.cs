@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Util
 	  {
 		public int Pos;
 
-		public override void Reset()
+		public void Reset()
 		{
 		  Pos = -1;
 		}
@@ -42,15 +43,15 @@ namespace Lucene.Net.Util
 		{
 
 		  int freeBeforePos = 0;
-		  int maxPos = atLeast(10000);
+		  int maxPos = AtLeast(10000);
 		  FixedBitSet posSet = new FixedBitSet(maxPos + 1000);
 		  int posUpto = 0;
-		  Random random = random();
+		  Random random = Random();
 		  while (freeBeforePos < maxPos)
 		  {
 			if (random.Next(4) == 1)
 			{
-			  int limit = rarely() ? 1000 : 20;
+			  int limit = Rarely() ? 1000 : 20;
 			  int inc = random.Next(limit);
 			  int pos = freeBeforePos + inc;
 			  posUpto = Math.Max(posUpto, pos);
@@ -58,8 +59,8 @@ namespace Lucene.Net.Util
 			  {
 				Console.WriteLine("  check pos=" + pos + " posUpto=" + posUpto);
 			  }
-			  Position posData = buffer.get(pos);
-			  if (!posSet.getAndSet(pos))
+			  Position posData = buffer.Get(pos);
+			  if (!posSet.GetAndSet(pos))
 			  {
 				Assert.AreEqual(-1, posData.Pos);
 				posData.Pos = pos;
@@ -79,11 +80,11 @@ namespace Lucene.Net.Util
 			  {
 				Console.WriteLine("  freeBeforePos=" + freeBeforePos);
 			  }
-			  buffer.freeBefore(freeBeforePos);
+			  buffer.FreeBefore(freeBeforePos);
 			}
 		  }
 
-		  buffer.reset();
+		  buffer.Reset();
 		}
 	  }
 
@@ -96,7 +97,7 @@ namespace Lucene.Net.Util
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override Position NewInstance()
+		  protected override Position NewInstance()
 		  {
 			Position pos = new Position();
 			pos.Pos = -1;

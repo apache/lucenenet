@@ -37,11 +37,13 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestBooleanScorer : LuceneTestCase
 	{
 	  private const string FIELD = "category";
 
-	  public virtual void TestMethod()
+      [Test]
+      public virtual void TestMethod()
 	  {
 		Directory directory = NewDirectory();
 
@@ -72,7 +74,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void TestEmptyBucketWithMoreDocs()
+      [Test]
+      public virtual void TestEmptyBucketWithMoreDocs()
 	  {
 		// this test checks the logic of nextDoc() when all sub scorers have docs
 		// beyond the first bucket (for example). Currently, the code relies on the
@@ -91,7 +94,7 @@ namespace Lucene.Net.Search
             new BulkScorerAnonymousInnerClassHelper()
         };
 
-		BooleanScorer bs = new BooleanScorer(weight, false, 1, Arrays.AsList(scorers), Collections.emptyList<BulkScorer>(), scorers.Length);
+		BooleanScorer bs = new BooleanScorer(weight, false, 1, Arrays.AsList(scorers), new List<BulkScorer>(), scorers.Length);
 
 		IList<int> hits = new List<int>();
 		bs.Score(new CollectorAnonymousInnerClassHelper(this, hits));
@@ -105,13 +108,13 @@ namespace Lucene.Net.Search
       private class BulkScorerAnonymousInnerClassHelper : BulkScorer{
             private int doc = -1;
 
-            public bool Score(Collector c, int maxDoc) {
+            public override bool Score(Collector c, int maxDoc) {
                 Debug.Assert(doc == -1); 
                 doc = 3000; 
                 FakeScorer fs = new FakeScorer(); 
-                fs.Doc = doc; 
+                fs.SetDoc(doc); 
                 fs.SetScore(1.0f); 
-                c.SetScorer(fs); 
+                c.Scorer = fs; 
                 c.Collect(3000); 
                 return false;
             }
@@ -156,7 +159,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestMoreThan32ProhibitedClauses()
+      [Test]
+      public virtual void TestMoreThan32ProhibitedClauses()
 	  {
 		Directory d = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
@@ -313,7 +317,8 @@ namespace Lucene.Net.Search
 	  /// Make sure BooleanScorer can embed another
 	  ///  BooleanScorer. 
 	  /// </summary>
-	  public virtual void TestEmbeddedBooleanScorer()
+      [Test]
+      public virtual void TestEmbeddedBooleanScorer()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);

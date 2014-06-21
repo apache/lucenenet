@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Index
 {
 
@@ -24,7 +26,6 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 
 	/// <summary>
 	/// this tests the patch for issue #LUCENE-715 (IndexWriter does not
@@ -34,22 +35,20 @@ namespace Lucene.Net.Index
 	public class TestIndexWriterLockRelease : LuceneTestCase
 	{
 
-	  public virtual void TestIndexWriterLockRelease()
+	  public virtual void TestIndexWriterLockRelease_Mem()
 	  {
 		Directory dir = NewFSDirectory(CreateTempDir("testLockRelease"));
 		try
 		{
 		  new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode_e.APPEND));
 		}
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		catch (FileNotFoundException | NoSuchFileException e)
+		catch (FileNotFoundException /*| NoSuchFileException*/ e)
 		{
 		  try
 		  {
 			new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode_e.APPEND));
 		  }
-//JAVA TO C# CONVERTER TODO TASK: There is no equivalent in C# to Java 'multi-catch' syntax:
-		  catch (FileNotFoundException | NoSuchFileException e1)
+		  catch (FileNotFoundException /*| NoSuchFileException*/ e1)
 		  {
 		  }
 		}

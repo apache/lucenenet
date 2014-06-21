@@ -265,7 +265,7 @@ using NUnit.Framework;
 		MergePolicy mp = conf.MergePolicy;
 		mp.NoCFSRatio = 1.0;
 		IndexWriter writer = new IndexWriter(dir, conf);
-		ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy) writer.Config.DelPolicy;
 		IDictionary<string, string> commitData = new Dictionary<string, string>();
 		commitData["commitTime"] = Convert.ToString(DateTime.Now.Millisecond);
 		writer.CommitData = commitData;
@@ -283,7 +283,7 @@ using NUnit.Framework;
 		  mp = conf.MergePolicy;
 		  mp.NoCFSRatio = 1.0;
 		  writer = new IndexWriter(dir, conf);
-		  policy = (ExpirationTimeDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		  policy = (ExpirationTimeDeletionPolicy) writer.Config.DelPolicy;
 		  for (int j = 0;j < 17;j++)
 		  {
 			AddDoc(writer);
@@ -361,7 +361,7 @@ using NUnit.Framework;
 		  MergePolicy mp = conf.MergePolicy;
 		  mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
 		  IndexWriter writer = new IndexWriter(dir, conf);
-		  KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		  KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy) writer.Config.DelPolicy;
 		  for (int i = 0;i < 107;i++)
 		  {
 			AddDoc(writer);
@@ -384,7 +384,7 @@ using NUnit.Framework;
 			  Console.WriteLine("TEST: open writer for forceMerge");
 			}
 			writer = new IndexWriter(dir, conf);
-			policy = (KeepAllDeletionPolicy) writer.Config.IndexDeletionPolicy;
+			policy = (KeepAllDeletionPolicy) writer.Config.DelPolicy;
 			writer.ForceMerge(1);
 			writer.Dispose();
 		  }
@@ -444,7 +444,7 @@ using NUnit.Framework;
 		Directory dir = NewDirectory();
 
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new KeepAllDeletionPolicy(this, dir)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
-		KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		KeepAllDeletionPolicy policy = (KeepAllDeletionPolicy) writer.Config.DelPolicy;
 		for (int i = 0;i < 10;i++)
 		{
 		  AddDoc(writer);
@@ -555,7 +555,7 @@ using NUnit.Framework;
 		  MergePolicy mp = conf.MergePolicy;
 		  mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
 		  IndexWriter writer = new IndexWriter(dir, conf);
-		  KeepNoneOnInitDeletionPolicy policy = (KeepNoneOnInitDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		  KeepNoneOnInitDeletionPolicy policy = (KeepNoneOnInitDeletionPolicy) writer.Config.DelPolicy;
 		  for (int i = 0;i < 107;i++)
 		  {
 			AddDoc(writer);
@@ -566,7 +566,7 @@ using NUnit.Framework;
 		  mp = conf.MergePolicy;
 		  mp.NoCFSRatio = 1.0;
 		  writer = new IndexWriter(dir, conf);
-		  policy = (KeepNoneOnInitDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		  policy = (KeepNoneOnInitDeletionPolicy) writer.Config.DelPolicy;
 		  writer.ForceMerge(1);
 		  writer.Dispose();
 
@@ -605,7 +605,7 @@ using NUnit.Framework;
 			MergePolicy mp = conf.MergePolicy;
 			mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
 			IndexWriter writer = new IndexWriter(dir, conf);
-			policy = (KeepLastNDeletionPolicy) writer.Config.IndexDeletionPolicy;
+			policy = (KeepLastNDeletionPolicy) writer.Config.DelPolicy;
 			for (int i = 0;i < 17;i++)
 			{
 			  AddDoc(writer);
@@ -670,7 +670,7 @@ using NUnit.Framework;
 		  MergePolicy mp = conf.MergePolicy;
 		  mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
 		  IndexWriter writer = new IndexWriter(dir, conf);
-		  KeepLastNDeletionPolicy policy = (KeepLastNDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		  KeepLastNDeletionPolicy policy = (KeepLastNDeletionPolicy) writer.Config.DelPolicy;
 		  writer.Dispose();
 		  Term searchTerm = new Term("content", "aaa");
 		  Query query = new TermQuery(searchTerm);
@@ -682,7 +682,7 @@ using NUnit.Framework;
 			mp = conf.MergePolicy;
 			mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
 			writer = new IndexWriter(dir, conf);
-			policy = (KeepLastNDeletionPolicy) writer.Config.IndexDeletionPolicy;
+			policy = (KeepLastNDeletionPolicy) writer.Config.DelPolicy;
 			for (int j = 0;j < 17;j++)
 			{
 			  AddDocWithID(writer, i * (N + 1) + j);
@@ -691,7 +691,7 @@ using NUnit.Framework;
 			writer.Dispose();
 			conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetIndexDeletionPolicy(policy).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
 			writer = new IndexWriter(dir, conf);
-			policy = (KeepLastNDeletionPolicy) writer.Config.IndexDeletionPolicy;
+			policy = (KeepLastNDeletionPolicy) writer.Config.DelPolicy;
 			writer.DeleteDocuments(new Term("id", "" + (i * (N + 1) + 3)));
 			// this is a commit
 			writer.Dispose();
@@ -702,7 +702,7 @@ using NUnit.Framework;
 			reader.Dispose();
 
 			writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode_e.CREATE).SetIndexDeletionPolicy(policy));
-			policy = (KeepLastNDeletionPolicy) writer.Config.IndexDeletionPolicy;
+			policy = (KeepLastNDeletionPolicy) writer.Config.DelPolicy;
 			// this will not commit: there are no changes
 			// pending because we opened for "create":
 			writer.Dispose();

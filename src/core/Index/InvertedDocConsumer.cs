@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 	 */
 
 
-	internal abstract class InvertedDocConsumer
+    public abstract class InvertedDocConsumer
 	{
 
 	  /// <summary>

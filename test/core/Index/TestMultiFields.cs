@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
 		  w.KeepFullyDeletedSegments = true;
 
 		  IDictionary<BytesRef, IList<int?>> docs = new Dictionary<BytesRef, IList<int?>>();
-		  Set<int?> deleted = new HashSet<int?>();
+		  HashSet<int?> deleted = new HashSet<int?>();
 		  IList<BytesRef> terms = new List<BytesRef>();
 
 		  int numDocs = TestUtil.NextInt(Random(), 1, 100 * RANDOM_MULTIPLIER);
@@ -64,7 +65,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("TEST: onlyUniqueTerms=" + onlyUniqueTerms + " numDocs=" + numDocs);
 		  }
-		  Set<BytesRef> uniqueTerms = new HashSet<BytesRef>();
+		  HashSet<BytesRef> uniqueTerms = new HashSet<BytesRef>();
 		  for (int i = 0;i < numDocs;i++)
 		  {
 
@@ -108,12 +109,12 @@ namespace Lucene.Net.Index
 
 		  if (VERBOSE)
 		  {
-			IList<BytesRef> termsList = new List<BytesRef>(uniqueTerms);
-			termsList.Sort(BytesRef.UTF8SortedAsUTF16Comparator);
+			List<BytesRef> termsList = new List<BytesRef>(uniqueTerms);
+			termsList.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
 			Console.WriteLine("TEST: terms in UTF16 order:");
 			foreach (BytesRef b in termsList)
 			{
-			  Console.WriteLine("  " + UnicodeUtil.toHexString(b.Utf8ToString()) + " " + b);
+			  Console.WriteLine("  " + UnicodeUtil.ToHexString(b.Utf8ToString()) + " " + b);
 			  foreach (int docID in docs[b])
 			  {
 				if (deleted.Contains(docID))
@@ -146,7 +147,7 @@ namespace Lucene.Net.Index
 			BytesRef term = terms[Random().Next(terms.Count)];
 			if (VERBOSE)
 			{
-			  Console.WriteLine("TEST: seek term=" + UnicodeUtil.toHexString(term.Utf8ToString()) + " " + term);
+			  Console.WriteLine("TEST: seek term=" + UnicodeUtil.ToHexString(term.Utf8ToString()) + " " + term);
 			}
 
 			DocsEnum docsEnum = TestUtil.Docs(Random(), reader, "field", term, liveDocs, null, DocsEnum.FLAG_NONE);
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index
 		w.AddDocument(d);
 		IndexReader r = w.Reader;
 		w.Dispose();
-		DocsEnum de = MultiFields.getTermDocsEnum(r, null, "f", new BytesRef("j"));
+		DocsEnum de = MultiFields.GetTermDocsEnum(r, null, "f", new BytesRef("j"));
 		Assert.AreEqual(0, de.NextDoc());
 		Assert.AreEqual(1, de.NextDoc());
 		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());

@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Similarities
 	  /// <param name="freq"> the term frequency. </param>
 	  /// <param name="docLen"> the document length. </param>
 	  /// <returns> the score. </returns>
-	  protected internal abstract float Score(BasicStats stats, float freq, float docLen);
+	  public abstract float Score(BasicStats stats, float freq, float docLen);
 
 	  /// <summary>
 	  /// Subclasses should implement this method to explain the score. {@code expl}
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search.Similarities
 	  /// <param name="freq"> the term frequency and its explanation. </param>
 	  /// <param name="docLen"> the document length. </param>
 	  /// <returns> the explanation. </returns>
-	  protected internal virtual Explanation Explain(BasicStats stats, int doc, Explanation freq, float docLen)
+	  public virtual Explanation Explain(BasicStats stats, int doc, Explanation freq, float docLen)
 	  {
 		Explanation result = new Explanation();
 		result.Value = Score(stats, freq.Value, docLen);
@@ -210,14 +210,14 @@ namespace Lucene.Net.Search.Similarities
 		  for (int i = 0; i < subScorers.Length; i++)
 		  {
 			BasicStats basicstats = (BasicStats) subStats[i];
-			subScorers[i] = new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.Field));
+			subScorers[i] = new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.field));
 		  }
 		  return new MultiSimilarity.MultiSimScorer(subScorers);
 		}
 		else
 		{
 		  BasicStats basicstats = (BasicStats) stats;
-		  return new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.Field));
+		  return new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.field));
 		}
 	  }
 

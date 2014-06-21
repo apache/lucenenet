@@ -38,6 +38,7 @@ namespace Lucene.Net.Search.Payloads
     using System.IO;
     using NUnit.Framework;
 	
+    [TestFixture]
     public class TestPayloadTermQuery : LuceneTestCase
 	{
 	  private static IndexSearcher Searcher;
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search.Payloads
 		{
 		}
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(result, fieldName));
@@ -113,7 +114,8 @@ namespace Lucene.Net.Search.Payloads
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(Similarity).SetMergePolicy(NewLogMergePolicy()));
@@ -137,7 +139,8 @@ namespace Lucene.Net.Search.Payloads
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -146,7 +149,8 @@ namespace Lucene.Net.Search.Payloads
 		Directory = null;
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		PayloadTermQuery query = new PayloadTermQuery(new Term("field", "seventy"), new MaxPayloadFunction());
 		TopDocs hits = Searcher.Search(query, null, 100);
@@ -173,7 +177,8 @@ namespace Lucene.Net.Search.Payloads
 
 	  }
 
-	  public virtual void TestQuery()
+      [Test]
+      public virtual void TestQuery()
 	  {
 		PayloadTermQuery boostingFuncTermQuery = new PayloadTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"), new MaxPayloadFunction());
 		QueryUtils.Check(boostingFuncTermQuery);
@@ -187,7 +192,8 @@ namespace Lucene.Net.Search.Payloads
 		QueryUtils.CheckUnequal(boostingFuncTermQuery, boostingFuncTermQuery2);
 	  }
 
-	  public virtual void TestMultipleMatchesPerDoc()
+      [Test]
+      public virtual void TestMultipleMatchesPerDoc()
 	  {
 		PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"), new MaxPayloadFunction());
 		TopDocs hits = Searcher.Search(query, null, 100);
@@ -230,7 +236,8 @@ namespace Lucene.Net.Search.Payloads
 	  }
 
 	  //Set includeSpanScore to false, in which case just the payload score comes through.
-	  public virtual void TestIgnoreSpanScorer()
+      [Test]
+      public virtual void TestIgnoreSpanScorer()
 	  {
 		PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"), new MaxPayloadFunction(), false);
 
@@ -276,7 +283,8 @@ namespace Lucene.Net.Search.Payloads
 		reader.Dispose();
 	  }
 
-	  public virtual void TestNoMatch()
+      [Test]
+      public virtual void TestNoMatch()
 	  {
 		PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.FIELD, "junk"), new MaxPayloadFunction());
 		TopDocs hits = Searcher.Search(query, null, 100);
@@ -285,7 +293,8 @@ namespace Lucene.Net.Search.Payloads
 
 	  }
 
-	  public virtual void TestNoPayload()
+      [Test]
+      public virtual void TestNoPayload()
 	  {
 		PayloadTermQuery q1 = new PayloadTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "zero"), new MaxPayloadFunction());
 		PayloadTermQuery q2 = new PayloadTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "foo"), new MaxPayloadFunction());

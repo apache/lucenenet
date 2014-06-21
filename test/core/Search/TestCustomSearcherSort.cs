@@ -34,7 +34,8 @@ namespace Lucene.Net.Search
 
 	/// <summary>
 	/// Unit test for sorting code. </summary>
-	public class TestCustomSearcherSort : LuceneTestCase
+	[TestFixture]
+    public class TestCustomSearcherSort : LuceneTestCase
 	{
 
 	  private Directory Index = null;
@@ -46,7 +47,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Create index and query for test cases.
 	  /// </summary>
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		INDEX_SIZE = AtLeast(2000);
@@ -75,7 +77,8 @@ namespace Lucene.Net.Search
 		Query = new TermQuery(new Term("content", "test"));
 	  }
 
-	  public override void TearDown()
+	  [TearDown]
+      public override void TearDown()
 	  {
 		Reader.Dispose();
 		Index.Dispose();
@@ -85,7 +88,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Run the test using two CustomSearcher instances.
 	  /// </summary>
-	  public virtual void TestFieldSortCustomSearcher()
+      [Test]
+      public virtual void TestFieldSortCustomSearcher()
 	  {
 		// log("Run testFieldSortCustomSearcher");
 		// define the sort criteria
@@ -98,7 +102,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Run the test using one CustomSearcher wrapped by a MultiSearcher.
 	  /// </summary>
-	  public virtual void TestFieldSortSingleSearcher()
+      [Test]
+      public virtual void TestFieldSortSingleSearcher()
 	  {
 		// log("Run testFieldSortSingleSearcher");
 		// define the sort criteria
@@ -246,7 +251,7 @@ namespace Lucene.Net.Search
 		{
 			get
 			{
-			  return DateTools.TimeToString(@base.TimeInMillis + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
+			  return DateTools.TimeToString(@base.Millisecond + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
 			}
 		}
 	  }

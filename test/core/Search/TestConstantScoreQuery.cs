@@ -35,10 +35,12 @@ namespace Lucene.Net.Search
 	/// this class only tests some basic functionality in CSQ, the main parts are mostly
 	/// tested by MultiTermQuery tests, explanations seems to be tested in TestExplanations! 
 	/// </summary>
-	public class TestConstantScoreQuery : LuceneTestCase
+	[TestFixture]
+    public class TestConstantScoreQuery : LuceneTestCase
 	{
 
-	  public virtual void TestCSQ()
+      [Test]
+      public virtual void TestCSQ()
 	  {
 		Query q1 = new ConstantScoreQuery(new TermQuery(new Term("a", "b")));
 		Query q2 = new ConstantScoreQuery(new TermQuery(new Term("a", "c")));
@@ -114,7 +116,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestWrapped2Times()
+      [Test]
+      public virtual void TestWrapped2Times()
 	  {
 		Directory directory = null;
 		IndexReader reader = null;
@@ -184,7 +187,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestConstantScoreQueryAndFilter()
+      [Test]
+      public virtual void TestConstantScoreQueryAndFilter()
 	  {
 		Directory d = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
@@ -214,7 +218,8 @@ namespace Lucene.Net.Search
 
 	  // LUCENE-5307
 	  // don't reuse the scorer of filters since they have been created with bulkScorer=false
-	  public virtual void TestQueryWrapperFilter()
+      [Test]
+      public virtual void TestQueryWrapperFilter()
 	  {
 		Directory d = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d);

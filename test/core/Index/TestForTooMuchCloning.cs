@@ -31,7 +31,6 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
 	public class TestForTooMuchCloning : LuceneTestCase

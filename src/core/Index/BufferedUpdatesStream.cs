@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 	 * track which BufferedDeletes packets to apply to any given
 	 * segment. */
 
-	internal class BufferedUpdatesStream
+    public class BufferedUpdatesStream
 	{
 
 	  // TODO: maybe linked list?

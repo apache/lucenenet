@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 		this.Compiled = new CompiledAutomaton(automaton);
 	  }
 
-	  protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+	  public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 	  {
 		return Compiled.GetTermsEnum(terms);
 	  }

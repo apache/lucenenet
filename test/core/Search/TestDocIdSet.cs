@@ -32,9 +32,11 @@ namespace Lucene.Net.Search
     using Lucene.Net.Support;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestDocIdSet : LuceneTestCase
 	{
-	  public virtual void TestFilteredDocIdSet()
+      [Test]
+      public virtual void TestFilteredDocIdSet()
 	  {
 		const int maxdoc = 10;
 		DocIdSet innerSet = new DocIdSetAnonymousInnerClassHelper(this, maxdoc);
@@ -84,7 +86,7 @@ namespace Lucene.Net.Search
 		  }
 
 
-		  public override DocIdSetIterator Iterator()
+		  public override DocIdSetIterator GetIterator()
 		  {
 			return new DocIdSetIteratorAnonymousInnerClassHelper(this);
 		  }
@@ -134,13 +136,14 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool Match(int docid)
+		  protected override bool Match(int docid)
 		  {
 			return docid % 2 == 0; //validate only even docids
 		  }
 	  }
 
-	  public virtual void TestNullDocIdSet()
+      [Test]
+      public virtual void TestNullDocIdSet()
 	  {
 		// Tests that if a Filter produces a null DocIdSet, which is given to
 		// IndexSearcher, everything works fine. this came up in LUCENE-1754.
@@ -179,7 +182,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestNullIteratorFilteredDocIdSet()
+      [Test]
+      public virtual void TestNullIteratorFilteredDocIdSet()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -225,7 +229,7 @@ namespace Lucene.Net.Search
 				  this.OuterInstance = outerInstance;
 			  }
 
-			  public override DocIdSetIterator Iterator()
+			  public override DocIdSetIterator GetIterator()
 			  {
 				return null;
 			  }
@@ -240,7 +244,7 @@ namespace Lucene.Net.Search
                   this.OuterInstance = outerInstance;
 			  }
 
-			  protected internal override bool Match(int docid)
+			  protected override bool Match(int docid)
 			  {
 				return true;
 			  }

@@ -37,7 +37,8 @@ namespace Lucene.Net.Search
 	/// 
 	/// Line 273, end=8192, subScorerDocID=11378, then more got false?
 	/// </summary>
-	public class TestPrefixInBooleanQuery : LuceneTestCase
+	[TestFixture]
+    public class TestPrefixInBooleanQuery : LuceneTestCase
 	{
 
 	  private const string FIELD = "name";
@@ -47,7 +48,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
@@ -80,7 +82,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -89,17 +92,20 @@ namespace Lucene.Net.Search
 		Directory = null;
 	  }
 
-	  public virtual void TestPrefixQuery()
+      [Test]
+      public virtual void TestPrefixQuery()
 	  {
 		Query query = new PrefixQuery(new Term(FIELD, "tang"));
 		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 	  }
-	  public virtual void TestTermQuery()
+      [Test]
+      public virtual void TestTermQuery()
 	  {
 		Query query = new TermQuery(new Term(FIELD, "tangfulin"));
 		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 	  }
-	  public virtual void TestTermBooleanQuery()
+      [Test]
+      public virtual void TestTermBooleanQuery()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(FIELD, "tangfulin")), BooleanClause.Occur_e.SHOULD);
@@ -107,7 +113,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
 
 	  }
-	  public virtual void TestPrefixBooleanQuery()
+      [Test]
+      public virtual void TestPrefixBooleanQuery()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new PrefixQuery(new Term(FIELD, "tang")), BooleanClause.Occur_e.SHOULD);

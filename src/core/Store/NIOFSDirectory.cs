@@ -265,7 +265,7 @@ namespace Lucene.Net.Store
 		  }
 		}
 
-		protected internal override void SeekInternal(long pos)
+		protected override void SeekInternal(long pos)
 		{
 		}
 	  }

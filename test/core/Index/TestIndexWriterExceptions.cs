@@ -110,6 +110,11 @@ namespace Lucene.Net.Index
 		  return new IteratorAnonymousInnerClassHelper(this);
 		}
 
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	    {
+	      return GetEnumerator();
+	    }
+
 		private class IteratorAnonymousInnerClassHelper : IEnumerator<Document>
 		{
 			private readonly DocCopyIterator OuterInstance;
@@ -120,22 +125,38 @@ namespace Lucene.Net.Index
 			}
 
 			internal int upto;
+		    private Document current;
 
-			public virtual bool HasNext()
+
+		    public bool MoveNext()
+		    {
+		        if (upto >= OuterInstance.Count)
+		        {
+		            return false;
+		        }
+
+		        upto++;
+		        current = OuterInstance.Doc;
+		        return true;
+		    }
+
+		    public Document Current
+		    {
+		        get { return current; }
+		    }
+
+		    object System.Collections.IEnumerator.Current
+		    {
+		        get { return Current; }
+		    }
+
+			public void Reset()
 			{
-			  return upto < OuterInstance.Count;
+			  throw new NotImplementedException();
 			}
 
-			public virtual Document Next()
-			{
-			  upto++;
-			  return OuterInstance.Doc;
-			}
+            public void Dispose() { }
 
-			public virtual void Remove()
-			{
-			  throw new System.NotSupportedException();
-			}
 		}
 	  }
 
@@ -193,7 +214,7 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine(Thread.CurrentThread.Name + ": TEST: IndexerThread: cycle");
 			}
-			OuterInstance.DoFail.Set(this);
+			OuterInstance.DoFail.Value = (this.Instance);
 			string id = "" + r.Next(50);
 			idField.StringValue = id;
 			Term idTerm = new Term("id", id);
@@ -235,7 +256,7 @@ namespace Lucene.Net.Index
 			  break;
 			}
 
-			OuterInstance.DoFail.Set(null);
+			OuterInstance.DoFail.Value = (null);
 
 			// After a possible exception (above) I should be able
 			// to add a new document without hitting an
@@ -267,9 +288,9 @@ namespace Lucene.Net.Index
 		  }
 
 		internal Random r = new Random(Random().Next());
-		public override void Apply(string name)
+		public void Apply(string name)
 		{
-		  if (OuterInstance.DoFail.Get() != null && !name.Equals("startDoFlush") && r.Next(40) == 17)
+		  if (OuterInstance.DoFail.Value != null && !name.Equals("startDoFlush") && r.Next(40) == 17)
 		  {
 			if (VERBOSE)
 			{
@@ -396,7 +417,7 @@ namespace Lucene.Net.Index
 	  {
 		internal bool DoFail;
 
-		public override void Apply(string name)
+		public void Apply(string name)
 		{
 		  if (DoFail && name.Equals("DocumentsWriterPerThread addDocument start"))
 		  {
@@ -495,7 +516,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -507,7 +528,7 @@ namespace Lucene.Net.Index
 	  {
 		internal bool DoFail;
 		internal bool Failed;
-		public override void Apply(string name)
+		public void Apply(string name)
 		{
 		  if (DoFail && name.Equals("startMergeInit"))
 		  {
@@ -612,7 +633,7 @@ namespace Lucene.Net.Index
 		  }
 
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 			tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -845,7 +866,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -943,7 +964,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 			tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
@@ -1266,7 +1287,7 @@ namespace Lucene.Net.Index
 			return true;
 		  }
 
-		  public override void Close()
+		  public override void Dispose()
 		  {
 		  }
 	  }
@@ -1936,42 +1957,42 @@ namespace Lucene.Net.Index
 		  }
 
 
-		  public override string Name()
+		  public string Name()
 		  {
 			return "foo";
 		  }
 
-		  public override IndexableFieldType FieldType()
+		  public IndexableFieldType FieldType()
 		  {
 			return StringField.TYPE_NOT_STORED;
 		  }
 
-		  public override float Boost()
+		  public float Boost()
 		  {
 			return 5f;
 		  }
 
-		  public override BytesRef BinaryValue()
+		  public BytesRef BinaryValue()
 		  {
 			return null;
 		  }
 
-		  public override string StringValue()
+		  public string StringValue()
 		  {
 			return "baz";
 		  }
 
-		  public override TextReader ReaderValue()
+		  public TextReader ReaderValue()
 		  {
 			return null;
 		  }
 
-		  public override Number NumericValue()
+		  public Number NumericValue()
 		  {
 			return null;
 		  }
 
-		  public override TokenStream TokenStream(Analyzer analyzer)
+		  public TokenStream TokenStream(Analyzer analyzer)
 		  {
 			return null;
 		  }
@@ -2370,7 +2391,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override void HandleMergeException(Exception exc)
+		  protected override void HandleMergeException(Exception exc)
 		  {
 			// suppress only FakeIOException:
 			if (!(exc is MockDirectoryWrapper.FakeIOException))
@@ -2459,7 +2480,7 @@ namespace Lucene.Net.Index
 			return true;
 		  }
 
-		  public override void Close()
+		  public override void Dispose()
 		  {
 		  }
 	  }

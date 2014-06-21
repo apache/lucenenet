@@ -28,7 +28,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 	  }
 
 	  private const int MAX_UNICODE = 0x10FFFF;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		char[] chars = char.toChars(code);
 		UnicodeUtil.UTF16toUTF8(chars, 0, chars.Length, b);
-		return a.run(b.bytes, 0, b.length);
+		return a.run(b.Bytes, 0, b.Length);
 	  }
 
 	  private void TestOne(Random r, ByteRunAutomaton a, int startCode, int endCode, int iters)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  for (int iter = 0;iter < iters;iter++)
 		  {
-			int x = TestUtil.Next(r, 0, invalidRange - 1);
+			int x = TestUtil.NextInt(r, 0, invalidRange - 1);
 			int code;
 			if (x >= startCode)
 			{
@@ -132,13 +132,13 @@ namespace Lucene.Net.Util.Automaton
 		switch (r.Next(4))
 		{
 		case 0:
-		  return TestUtil.Next(r, 0, 128);
+		  return TestUtil.NextInt(r, 0, 128);
 		case 1:
-		  return TestUtil.Next(r, 128, 2048);
+		  return TestUtil.NextInt(r, 128, 2048);
 		case 2:
-		  return TestUtil.Next(r, 2048, 65536);
+		  return TestUtil.NextInt(r, 2048, 65536);
 		default:
-		  return TestUtil.Next(r, 65536, 1 + MAX_UNICODE);
+		  return TestUtil.NextInt(r, 65536, 1 + MAX_UNICODE);
 		}
 	  }
 
@@ -149,9 +149,9 @@ namespace Lucene.Net.Util.Automaton
 
 	  public virtual void TestRandomRanges()
 	  {
-		Random r = random();
-		int ITERS = atLeast(10);
-		int ITERS_PER_DFA = atLeast(100);
+		Random r = Random();
+		int ITERS = AtLeast(10);
+		int ITERS_PER_DFA = AtLeast(100);
 		for (int iter = 0;iter < ITERS;iter++)
 		{
 		  int x1 = GetCodeStart(r);
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util.Automaton
 	  public virtual void TestSpecialCase()
 	  {
 		RegExp re = new RegExp(".?");
-		Automaton automaton = re.toAutomaton();
+		Automaton automaton = re.ToAutomaton();
 		CharacterRunAutomaton cra = new CharacterRunAutomaton(automaton);
 		ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
 		// make sure character dfa accepts empty string
@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		RegExp re = new RegExp(".+\u0775");
 		string input = "\ufadc\ufffd\ub80b\uda5a\udc68\uf234\u0056\uda5b\udcc1\ufffd\ufffd\u0775";
-		Automaton automaton = re.toAutomaton();
+		Automaton automaton = re.ToAutomaton();
 		CharacterRunAutomaton cra = new CharacterRunAutomaton(automaton);
 		ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
 
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		RegExp re = new RegExp("(\\鯺)*(.)*\\Ӕ");
 		string input = "\u5cfd\ufffd\ub2f7\u0033\ue304\u51d7\u3692\udb50\udfb3\u0576\udae2\udc62\u0053\u0449\u04d4";
-		Automaton automaton = re.toAutomaton();
+		Automaton automaton = re.ToAutomaton();
 		CharacterRunAutomaton cra = new CharacterRunAutomaton(automaton);
 		ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
 
@@ -231,10 +231,10 @@ namespace Lucene.Net.Util.Automaton
 
 	  public virtual void TestRandomRegexes()
 	  {
-		int num = atLeast(250);
+		int num = AtLeast(250);
 		for (int i = 0; i < num; i++)
 		{
-		  AssertAutomaton((new RegExp(AutomatonTestUtil.randomRegexp(random()), RegExp.NONE)).toAutomaton());
+		  AssertAutomaton((new RegExp(AutomatonTestUtil.randomRegexp(Random()), RegExp.NONE)).ToAutomaton());
 		}
 	  }
 
@@ -244,19 +244,19 @@ namespace Lucene.Net.Util.Automaton
 		ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
 		AutomatonTestUtil.RandomAcceptedStrings ras = new AutomatonTestUtil.RandomAcceptedStrings(automaton);
 
-		int num = atLeast(1000);
+		int num = AtLeast(1000);
 		for (int i = 0; i < num; i++)
 		{
 		  string @string;
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			// likely not accepted
-			@string = TestUtil.randomUnicodeString(random());
+			@string = TestUtil.RandomUnicodeString(Random());
 		  }
 		  else
 		  {
 			// will be accepted
-			int[] codepoints = ras.getRandomAcceptedString(random());
+			int[] codepoints = ras.getRandomAcceptedString(Random());
 			try
 			{
 			  @string = UnicodeUtil.newString(codepoints, 0, codepoints.Length);

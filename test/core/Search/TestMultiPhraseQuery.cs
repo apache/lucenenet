@@ -49,10 +49,12 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class TestMultiPhraseQuery : LuceneTestCase
+	[TestFixture]
+    public class TestMultiPhraseQuery : LuceneTestCase
 	{
 
-	  public virtual void TestPhrasePrefix()
+      [Test]
+      public virtual void TestPhrasePrefix()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -153,7 +155,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-2580
-	  public virtual void TestTall()
+      [Test]
+      public virtual void TestTall()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -174,7 +177,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Ignore public void testMultiSloppyWithRepeats() throws java.io.IOException
-	  public virtual void TestMultiSloppyWithRepeats() //LUCENE-3821 fixes sloppy phrase scoring, except for this known problem
+      [Test]
+      public virtual void TestMultiSloppyWithRepeats() //LUCENE-3821 fixes sloppy phrase scoring, except for this known problem
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -195,7 +199,8 @@ namespace Lucene.Net.Search
 		indexStore.Dispose();
 	  }
 
-	  public virtual void TestMultiExactWithRepeats()
+      [Test]
+      public virtual void TestMultiExactWithRepeats()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -219,7 +224,8 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 	  }
 
-	  public virtual void TestBooleanQueryContainingSingleTermPrefixQuery()
+      [Test]
+      public virtual void TestBooleanQueryContainingSingleTermPrefixQuery()
 	  {
 		// this tests against bug 33161 (now fixed)
 		// In order to cause the bug, the outer query must have more than one term
@@ -254,7 +260,8 @@ namespace Lucene.Net.Search
 		indexStore.Dispose();
 	  }
 
-	  public virtual void TestPhrasePrefixWithBooleanQuery()
+      [Test]
+      public virtual void TestPhrasePrefixWithBooleanQuery()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -281,7 +288,8 @@ namespace Lucene.Net.Search
 		indexStore.Dispose();
 	  }
 
-	  public virtual void TestNoDocs()
+      [Test]
+      public virtual void TestNoDocs()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -303,7 +311,8 @@ namespace Lucene.Net.Search
 		indexStore.Dispose();
 	  }
 
-	  public virtual void TestHashCodeAndEquals()
+      [Test]
+      public virtual void TestHashCodeAndEquals()
 	  {
 		MultiPhraseQuery query1 = new MultiPhraseQuery();
 		MultiPhraseQuery query2 = new MultiPhraseQuery();
@@ -341,12 +350,14 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-2526
-	  public virtual void TestEmptyToString()
+      [Test]
+      public virtual void TestEmptyToString()
 	  {
 		(new MultiPhraseQuery()).ToString();
 	  }
 
-	  public virtual void TestCustomIDF()
+      [Test]
+      public virtual void TestCustomIDF()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
@@ -383,7 +394,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestZeroPosIncr()
+      [Test]
+      public virtual void TestZeroPosIncr()
 	  {
 		Directory dir = new RAMDirectory();
 		Token[] tokens = new Token[3];
@@ -459,7 +471,8 @@ namespace Lucene.Net.Search
 	  /// using query parser, MPQ will be created, and will not be strict about having all query terms 
 	  /// in each position - one of each position is sufficient (OR logic)
 	  /// </summary>
-	  public virtual void TestZeroPosIncrSloppyParsedAnd()
+      [Test]
+      public virtual void TestZeroPosIncrSloppyParsedAnd()
 	  {
 		MultiPhraseQuery q = new MultiPhraseQuery();
 		q.Add(new Term[]{new Term("field", "a"), new Term("field", "1")}, -1);
@@ -508,7 +521,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// PQ AND Mode - Manually creating a phrase query
 	  /// </summary>
-	  public virtual void TestZeroPosIncrSloppyPqAnd()
+      [Test]
+      public virtual void TestZeroPosIncrSloppyPqAnd()
 	  {
 		PhraseQuery pq = new PhraseQuery();
 		int pos = -1;
@@ -527,7 +541,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// MPQ AND Mode - Manually creating a multiple phrase query
 	  /// </summary>
-	  public virtual void TestZeroPosIncrSloppyMpqAnd()
+      [Test]
+      public virtual void TestZeroPosIncrSloppyMpqAnd()
 	  {
 		MultiPhraseQuery mpq = new MultiPhraseQuery();
 		int pos = -1;
@@ -546,10 +561,11 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// MPQ Combined AND OR Mode - Manually creating a multiple phrase query
 	  /// </summary>
-	  public virtual void TestZeroPosIncrSloppyMpqAndOrMatch()
+      [Test]
+      public virtual void TestZeroPosIncrSloppyMpqAndOrMatch()
 	  {
 		MultiPhraseQuery mpq = new MultiPhraseQuery();
-		foreach (Token tap[] in INCR_0_QUERY_TOKENS_AND_OR_MATCH)
+		foreach (Token[] tap in INCR_0_QUERY_TOKENS_AND_OR_MATCH)
 		{
 		  Term[] terms = TapTerms(tap);
 		  int pos = tap[0].PositionIncrement - 1;
@@ -565,10 +581,11 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// MPQ Combined AND OR Mode - Manually creating a multiple phrase query - with no match
 	  /// </summary>
-	  public virtual void TestZeroPosIncrSloppyMpqAndOrNoMatch()
+      [Test]
+      public virtual void TestZeroPosIncrSloppyMpqAndOrNoMatch()
 	  {
 		MultiPhraseQuery mpq = new MultiPhraseQuery();
-		foreach (Token tap[] in INCR_0_QUERY_TOKENS_AND_OR_NO_MATCHN)
+		foreach (Token[] tap in INCR_0_QUERY_TOKENS_AND_OR_NO_MATCHN)
 		{
 		  Term[] terms = TapTerms(tap);
 		  int pos = tap[0].PositionIncrement - 1;
@@ -589,7 +606,8 @@ namespace Lucene.Net.Search
 		return terms;
 	  }
 
-	  public virtual void TestNegativeSlop()
+      [Test]
+      public virtual void TestNegativeSlop()
 	  {
 		MultiPhraseQuery query = new MultiPhraseQuery();
 		query.Add(new Term("field", "two"));

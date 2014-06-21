@@ -26,9 +26,11 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestTopScoreDocCollector : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestOutOfOrderCollection()
 	  {
 		Directory dir = NewDirectory();

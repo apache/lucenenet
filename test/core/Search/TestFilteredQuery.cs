@@ -50,7 +50,8 @@ namespace Lucene.Net.Search
 	/// 
 	/// @since   1.4
 	/// </summary>
-	public class TestFilteredQuery : LuceneTestCase
+	[TestFixture]
+    public class TestFilteredQuery : LuceneTestCase
 	{
 
 	  private IndexSearcher Searcher;
@@ -59,6 +60,7 @@ namespace Lucene.Net.Search
 	  private Query Query;
 	  private Filter Filter;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -130,6 +132,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -137,7 +140,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestFilteredQuery()
+      [Test]
+	  public virtual void TestFilteredQuery_Mem()
 	  {
 		// force the filter to be executed as bits
 		TFilteredQuery(true);
@@ -240,7 +244,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// this tests FilteredQuery's rewrite correctness
 	  /// </summary>
-	  public virtual void TestRangeQuery()
+      [Test]
+      public virtual void TestRangeQuery()
 	  {
 		// force the filter to be executed as bits
 		TRangeQuery(true);
@@ -257,7 +262,8 @@ namespace Lucene.Net.Search
 		QueryUtils.Check(Random(), filteredquery,Searcher);
 	  }
 
-	  public virtual void TestBooleanMUST()
+      [Test]
+      public virtual void TestBooleanMUST()
 	  {
 		// force the filter to be executed as bits
 		TBooleanMUST(true);
@@ -277,7 +283,8 @@ namespace Lucene.Net.Search
 		QueryUtils.Check(Random(), query,Searcher);
 	  }
 
-	  public virtual void TestBooleanSHOULD()
+      [Test]
+      public virtual void TestBooleanSHOULD()
 	  {
 		// force the filter to be executed as bits
 		TBooleanSHOULD(true);
@@ -299,7 +306,8 @@ namespace Lucene.Net.Search
 
 	  // Make sure BooleanQuery, which does out-of-order
 	  // scoring, inside FilteredQuery, works
-	  public virtual void TestBoolean2()
+      [Test]
+      public virtual void TestBoolean2()
 	  {
 		// force the filter to be executed as bits
 		TBoolean2(true);
@@ -318,7 +326,8 @@ namespace Lucene.Net.Search
 		QueryUtils.Check(Random(), query, Searcher);
 	  }
 
-	  public virtual void TestChainedFilters()
+      [Test]
+      public virtual void TestChainedFilters()
 	  {
 		// force the filter to be executed as bits
 		TChainedFilters(true);
@@ -340,7 +349,8 @@ namespace Lucene.Net.Search
 		QueryUtils.Check(Random(), query, Searcher);
 	  }
 
-	  public virtual void TestEqualsHashcode()
+      [Test]
+      public virtual void TestEqualsHashcode()
 	  {
 		// some tests before, if the used queries and filters work:
 		Assert.AreEqual(new PrefixFilter(new Term("field", "o")), new PrefixFilter(new Term("field", "o")));
@@ -356,7 +366,8 @@ namespace Lucene.Net.Search
 	   );
 	  }
 
-	  public virtual void TestInvalidArguments()
+      [Test]
+      public virtual void TestInvalidArguments()
 	  {
 		try
 		{
@@ -395,12 +406,12 @@ namespace Lucene.Net.Search
 	  private void AssertRewrite(FilteredQuery fq, Type clazz)
 	  {
 		// assign crazy boost to FQ
-		float boost = Random().NextFloat() * 100.0f;
+		float boost = (float)Random().NextDouble() * 100.0f;
 		fq.Boost = boost;
 
 
 		// assign crazy boost to inner
-		float innerBoost = Random().NextFloat() * 100.0f;
+		float innerBoost = (float)Random().NextDouble() * 100.0f;
 		fq.Query.Boost = innerBoost;
 
 		// check the class and boosts of rewritten query
@@ -418,21 +429,23 @@ namespace Lucene.Net.Search
 		}
 
 		// check that the original query was not modified
-		Assert.AreEqual(boost, fq.Boost, 1.E-5f);
-		Assert.AreEqual(innerBoost, fq.Query.Boost, 1.E-5f);
+		Assert.AreEqual(boost, fq.Boost, 1E-5f);
+		Assert.AreEqual(innerBoost, fq.Query.Boost, 1E-5f);
 	  }
 
-	  public virtual void TestRewrite()
+      [Test]
+      public virtual void TestRewrite()
 	  {
 		AssertRewrite(new FilteredQuery(new TermQuery(new Term("field", "one")), new PrefixFilter(new Term("field", "o")), RandomFilterStrategy()), typeof(FilteredQuery));
 		AssertRewrite(new FilteredQuery(new PrefixQuery(new Term("field", "one")), new PrefixFilter(new Term("field", "o")), RandomFilterStrategy()), typeof(FilteredQuery));
 	  }
 
-	  public virtual void TestGetFilterStrategy()
+      [Test]
+      public virtual void TestGetFilterStrategy()
 	  {
 		FilterStrategy randomFilterStrategy = RandomFilterStrategy();
 		FilteredQuery filteredQuery = new FilteredQuery(new TermQuery(new Term("field", "one")), new PrefixFilter(new Term("field", "o")), randomFilterStrategy);
-		assertSame(randomFilterStrategy, filteredQuery.FilterStrategy);
+		AssertSame(randomFilterStrategy, filteredQuery.FilterStrategy);
 	  }
 
 	  private static FilteredQuery.FilterStrategy RandomFilterStrategy(Random random, bool useRandomAccess)
@@ -450,7 +463,7 @@ namespace Lucene.Net.Search
 		  {
 		  }
 
-		  protected internal override bool UseRandomAccess(Bits bits, int firstFilterDoc)
+		  protected override bool UseRandomAccess(Bits bits, int firstFilterDoc)
 		  {
 			return true;
 		  }
@@ -460,7 +473,8 @@ namespace Lucene.Net.Search
 	   * Test if the QueryFirst strategy calls the bits only if the document has
 	   * been matched by the query and not otherwise
 	   */
-	  public virtual void TestQueryFirstFilterStrategy()
+      [Test]
+      public virtual void TestQueryFirstFilterStrategy()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -555,20 +569,20 @@ namespace Lucene.Net.Search
 				  }
 
 
-				  public override bool Get(int index)
+				  public bool Get(int index)
 				  {
 					Assert.IsTrue(OuterInstance.BitSet.Get(index), "filter was called for a non-matching doc");
 					return OuterInstance.BitSet.Get(index);
 				  }
 
-				  public override int Length()
+				  public int Length()
 				  {
 					return OuterInstance.BitSet.Length;
 				  }
 
 			  }
 
-			  public override DocIdSetIterator Iterator()
+			  public override DocIdSetIterator GetIterator()
 			  {
 				Assert.IsTrue(NullBitset, "iterator should not be called if bitset is present");
 				return Reader.TermDocsEnum(new Term("field", "0"));
@@ -581,7 +595,8 @@ namespace Lucene.Net.Search
 	   * Test if the leapfrog strategy works correctly in terms
 	   * of advancing / next the right thing first
 	   */
-	  public virtual void TestLeapFrogStrategy()
+      [Test]
+      public virtual void TestLeapFrogStrategy()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -645,7 +660,7 @@ namespace Lucene.Net.Search
 			  {
 				 return null;
 			  }
-			  public override DocIdSetIterator Iterator()
+			  public override DocIdSetIterator GetIterator()
 			  {
 				DocsEnum termDocsEnum = ((AtomicReader)Context.Reader()).TermDocsEnum(new Term("field", "0"));
 				if (termDocsEnum == null)

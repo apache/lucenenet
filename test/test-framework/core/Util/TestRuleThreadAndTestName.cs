@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
 	{
 	  /// <summary>
 	  /// The thread executing the current test case. </summary>
-	  /// <seealso cref= LuceneTestCase#isTestThread() </seealso>
+	  /// <seealso> cref= LuceneTestCase#isTestThread() </seealso>
 	  public volatile Thread TestCaseThread;
 
 	  /// <summary>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
 			  OuterInstance.TestCaseThread = current;
 			  OuterInstance.TestMethodName = Description.MethodName;
 
-			  @base.evaluate();
+			  @base.Evaluate();
 			}
 			finally
 			{

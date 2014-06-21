@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestRepeatedMessage()
 	  {
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains(" -Dtests.method=testMe "));
+		Assert.IsTrue(syserr.Contains(" -Dtests.method=testMe "));
 	  }
 
 	  private string RunAndReturnSyserr()

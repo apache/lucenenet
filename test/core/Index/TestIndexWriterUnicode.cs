@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
 		  last.CopyBytes(term);
 
 		  string s = term.Utf8ToString();
-		  Assert.IsTrue("term " + TermDesc(s) + " was not added to index (count=" + allTerms.Count + ")", allTerms.Contains(s));
+		  Assert.IsTrue(allTerms.Contains(s), "term " + TermDesc(s) + " was not added to index (count=" + allTerms.Count + ")");
 		  seenTerms.Add(s);
 		}
 

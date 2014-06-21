@@ -35,10 +35,12 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class TestDocBoost : LuceneTestCase
+	[TestFixture]
+    public class TestDocBoost : LuceneTestCase
 	{
 
-	  public virtual void TestDocBoost()
+      [Test]
+      public virtual void TestDocBoost_Mem()
 	  {
 		Directory store = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));

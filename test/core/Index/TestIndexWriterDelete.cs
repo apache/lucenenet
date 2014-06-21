@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -326,7 +327,7 @@ namespace Lucene.Net.Index
 		Directory dir = NewDirectory();
 		RandomIndexWriter modifier = new RandomIndexWriter(Random(), dir);
 		int numThreads = AtLeast(2);
-		Thread[] threads = new Thread[numThreads];
+        ThreadClass[] threads = new ThreadClass[numThreads];
 		CountDownLatch latch = new CountDownLatch(1);
 		CountDownLatch doneLatch = new CountDownLatch(numThreads);
 		for (int i = 0; i < numThreads; i++)
@@ -346,7 +347,7 @@ namespace Lucene.Net.Index
 		}
 
 		modifier.DeleteAll();
-		foreach (Thread thread in threads)
+        foreach (ThreadClass thread in threads)
 		{
 		  thread.Join();
 		}
@@ -1174,7 +1175,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-          public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
 		  }
@@ -1339,7 +1340,7 @@ namespace Lucene.Net.Index
 			  this.SawAfterFlush = sawAfterFlush;
 		  }
 
-		  public override void DoAfterFlush()
+		  protected override void DoAfterFlush()
 		  {
 			Assert.IsTrue(Closing.Get() || DocsInSegment.Get() >= 7, "only " + DocsInSegment.Get() + " in segment");
 			DocsInSegment.Set(0);

@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.junitcompat
 {
@@ -20,12 +21,12 @@ namespace Lucene.Net.Util.junitcompat
 	 * limitations under the License.
 	 */
 
-	using Assert = org.junit.Assert;
+	/*using Assert = org.junit.Assert;
 	using Test = org.junit.Test;
 	using JUnitCore = org.junit.runner.JUnitCore;
 	using Result = org.junit.runner.Result;
 	using Failure = org.junit.runner.notification.Failure;
-
+    */
 	/// <summary>
 	/// Ensures proper functions of <seealso cref="LuceneTestCase#setUp()"/>
 	/// and <seealso cref="LuceneTestCase#tearDown()"/>.
@@ -73,9 +74,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestSetupChaining()
 	  {
 		Result result = JUnitCore.runClasses(typeof(NestedSetupChain));
-		Assert.Assert.AreEqual(1, result.FailureCount);
-		Failure failure = result.Failures.get(0);
-		Assert.Assert.IsTrue(failure.Message.contains("One of the overrides of setUp does not propagate the call."));
+		Assert.AreEqual(1, result.FailureCount);
+		Failure failure = result.Failures.Get(0);
+		Assert.IsTrue(failure.Message.Contains("One of the overrides of setUp does not propagate the call."));
 	  }
 
 	  /// <summary>
@@ -86,9 +87,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestTeardownChaining()
 	  {
 		Result result = JUnitCore.runClasses(typeof(NestedTeardownChain));
-		Assert.Assert.AreEqual(1, result.FailureCount);
-		Failure failure = result.Failures.get(0);
-		Assert.Assert.IsTrue(failure.Message.contains("One of the overrides of tearDown does not propagate the call."));
+		Assert.AreEqual(1, result.FailureCount);
+		Failure failure = result.Failures.Get(0);
+		Assert.IsTrue(failure.Message.Contains("One of the overrides of tearDown does not propagate the call."));
 	  }
 	}
 

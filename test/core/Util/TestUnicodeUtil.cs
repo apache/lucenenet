@@ -1,4 +1,6 @@
 using System;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -92,34 +94,34 @@ namespace Lucene.Net.Util
 	  public virtual void TestCodePointCount()
 	  {
 		// Check invalid codepoints.
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0x80, 'z', 'z', 'z'));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xc0 - 1, 'z', 'z', 'z'));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0x80, 'z', 'z', 'z'));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xc0 - 1, 'z', 'z', 'z'));
 		// Check 5-byte and longer sequences.
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xf8, 'z', 'z', 'z'));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xfc, 'z', 'z', 'z'));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xf8, 'z', 'z', 'z'));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xfc, 'z', 'z', 'z'));
 		// Check improperly terminated codepoints.
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xc2));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xe2));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xe2, 0x82));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xf0));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xf0, 0xa4));
-		AssertcodePointCountThrowsAssertionOn(asByteArray('z', 0xf0, 0xa4, 0xad));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xc2));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xe2));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xe2, 0x82));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xf0));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xf0, 0xa4));
+		AssertcodePointCountThrowsAssertionOn(AsByteArray('z', 0xf0, 0xa4, 0xad));
 
 		// Check some typical examples (multibyte).
-		Assert.AreEqual(0, UnicodeUtil.codePointCount(new BytesRef(asByteArray())));
-		Assert.AreEqual(3, UnicodeUtil.codePointCount(new BytesRef(asByteArray('z', 'z', 'z'))));
-		Assert.AreEqual(2, UnicodeUtil.codePointCount(new BytesRef(asByteArray('z', 0xc2, 0xa2))));
-		Assert.AreEqual(2, UnicodeUtil.codePointCount(new BytesRef(asByteArray('z', 0xe2, 0x82, 0xac))));
-		Assert.AreEqual(2, UnicodeUtil.codePointCount(new BytesRef(asByteArray('z', 0xf0, 0xa4, 0xad, 0xa2))));
+		Assert.AreEqual(0, UnicodeUtil.CodePointCount(new BytesRef(AsByteArray())));
+        Assert.AreEqual(3, UnicodeUtil.CodePointCount(new BytesRef(AsByteArray('z', 'z', 'z'))));
+        Assert.AreEqual(2, UnicodeUtil.CodePointCount(new BytesRef(AsByteArray('z', 0xc2, 0xa2))));
+        Assert.AreEqual(2, UnicodeUtil.CodePointCount(new BytesRef(AsByteArray('z', 0xe2, 0x82, 0xac))));
+        Assert.AreEqual(2, UnicodeUtil.CodePointCount(new BytesRef(AsByteArray('z', 0xf0, 0xa4, 0xad, 0xa2))));
 
 		// And do some random stuff.
 		BytesRef utf8 = new BytesRef(20);
-		int num = atLeast(50000);
+		int num = AtLeast(50000);
 		for (int i = 0; i < num; i++)
 		{
-		  string s = TestUtil.randomUnicodeString(random());
+		  string s = TestUtil.RandomUnicodeString(Random());
 		  UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8);
-		  Assert.AreEqual(s.codePointCount(0, s.Length), UnicodeUtil.codePointCount(utf8));
+		  Assert.AreEqual(s.CodePointCount(0, s.Length), UnicodeUtil.CodePointCount(utf8));
 		}
 	  }
 
@@ -138,7 +140,7 @@ namespace Lucene.Net.Util
 		bool threwAssertion = false;
 		try
 		{
-		  UnicodeUtil.codePointCount(new BytesRef(bytes));
+		  UnicodeUtil.CodePointCount(new BytesRef(bytes));
 		}
 		catch (System.ArgumentException e)
 		{
@@ -152,10 +154,10 @@ namespace Lucene.Net.Util
 		BytesRef utf8 = new BytesRef(20);
 		IntsRef utf32 = new IntsRef(20);
 		int[] codePoints = new int[20];
-		int num = atLeast(50000);
+		int num = AtLeast(50000);
 		for (int i = 0; i < num; i++)
 		{
-		  string s = TestUtil.randomUnicodeString(random());
+		  string s = TestUtil.RandomUnicodeString(Random());
 		  UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8);
 		  UnicodeUtil.UTF8toUTF32(utf8, utf32);
 
@@ -163,11 +165,11 @@ namespace Lucene.Net.Util
 		  int intUpto = 0;
 		  while (charUpto < s.Length)
 		  {
-			int cp = s.codePointAt(charUpto);
+			int cp = s.CodePointAt(charUpto);
 			codePoints[intUpto++] = cp;
-			charUpto += char.charCount(cp);
+			charUpto += Character.CharCount(cp);
 		  }
-		  if (!ArrayUtil.Equals(codePoints, 0, utf32.ints, utf32.offset, intUpto))
+		  if (!ArrayUtil.Equals(codePoints, 0, utf32.Ints, utf32.Offset, intUpto))
 		  {
 			Console.WriteLine("FAILED");
 			for (int j = 0;j < s.Length;j++)
@@ -175,10 +177,10 @@ namespace Lucene.Net.Util
 			  Console.WriteLine("  char[" + j + "]=" + s[j].ToString("x"));
 			}
 			Console.WriteLine();
-			Assert.AreEqual(intUpto, utf32.length);
+			Assert.AreEqual(intUpto, utf32.Length);
 			for (int j = 0;j < intUpto;j++)
 			{
-			  Console.WriteLine("  " + utf32.ints[j].ToString("x") + " vs " + codePoints[j].ToString("x"));
+			  Console.WriteLine("  " + utf32.Ints[j].ToString("x") + " vs " + codePoints[j].ToString("x"));
 			}
 			Assert.Fail("mismatch");
 		  }
@@ -187,9 +189,9 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestNewString()
 	  {
-		int[] codePoints = new int[] {char.toCodePoint(char.MIN_HIGH_SURROGATE, char.MAX_LOW_SURROGATE), char.toCodePoint(char.MAX_HIGH_SURROGATE, char.MIN_LOW_SURROGATE), char.MAX_HIGH_SURROGATE, 'A', -1};
+		int[] codePoints = new int[] {Character.ToCodePoint(Character.MIN_HIGH_SURROGATE, Character.MAX_LOW_SURROGATE), Character.ToCodePoint(Character.MAX_HIGH_SURROGATE, Character.MIN_LOW_SURROGATE), Character.MAX_HIGH_SURROGATE, 'A', -1};
 
-		string cpString = "" + char.MIN_HIGH_SURROGATE + char.MAX_LOW_SURROGATE + char.MAX_HIGH_SURROGATE + char.MIN_LOW_SURROGATE + char.MAX_HIGH_SURROGATE + 'A';
+        string cpString = "" + Character.MIN_HIGH_SURROGATE + Character.MAX_LOW_SURROGATE + Character.MAX_HIGH_SURROGATE + Character.MIN_LOW_SURROGATE + Character.MAX_HIGH_SURROGATE + 'A';
 
 		int[][] tests = new int[][] {new int[] {0, 1, 0, 2}, new int[] {0, 2, 0, 4}, new int[] {1, 1, 2, 2}, new int[] {1, 2, 2, 3}, new int[] {1, 3, 2, 4}, new int[] {2, 2, 4, 2}, new int[] {2, 3, 0, -1}, new int[] {4, 5, 0, -1}, new int[] {3, -1, 0, -1}};
 
@@ -203,7 +205,7 @@ namespace Lucene.Net.Util
 
 		  try
 		  {
-			string str = UnicodeUtil.newString(codePoints, s, c);
+			string str = UnicodeUtil.NewString(codePoints, s, c);
 			Assert.IsFalse(rc == -1);
 			Assert.AreEqual(cpString.Substring(rs, rc), str);
 			continue;
@@ -222,14 +224,14 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestUTF8UTF16CharsRef()
 	  {
-		int num = atLeast(3989);
+		int num = AtLeast(3989);
 		for (int i = 0; i < num; i++)
 		{
-		  string unicode = TestUtil.randomRealisticUnicodeString(random());
+		  string unicode = TestUtil.RandomRealisticUnicodeString(Random());
 		  BytesRef @ref = new BytesRef(unicode);
-		  char[] arr = new char[1 + random().Next(100)];
-		  int offset = random().Next(arr.Length);
-		  int len = random().Next(arr.Length - offset);
+		  char[] arr = new char[1 + Random().Next(100)];
+		  int offset = Random().Next(arr.Length);
+		  int len = Random().Next(arr.Length - offset);
 		  CharsRef cRef = new CharsRef(arr, offset, len);
 		  UnicodeUtil.UTF8toUTF16(@ref, cRef);
 		  Assert.AreEqual(cRef.ToString(), unicode);

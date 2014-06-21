@@ -25,6 +25,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestPositiveScoresOnlyCollector : LuceneTestCase
 	{
 
@@ -70,7 +71,8 @@ namespace Lucene.Net.Search
 	  // The scores must have positive as well as negative values
 	  private static readonly float[] Scores = new float[] {0.7767749f, -1.7839992f, 8.9925785f, 7.9608946f, -0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, -8.108544f, 4.961808f, 2.2423935f, -7.285586f, 4.6699767f};
 
-	  public virtual void TestNegativeScores()
+      [Test]
+      public virtual void TestNegativeScores()
 	  {
 
 		// The Top*Collectors previously filtered out documents with <= scores. this

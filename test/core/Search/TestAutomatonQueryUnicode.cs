@@ -34,7 +34,8 @@ namespace Lucene.Net.Search
 	/// specifically enumerating strings/indexes containing supplementary characters,
 	/// and the differences between UTF-8/UTF-32 and UTF-16 binary sort order.
 	/// </summary>
-	public class TestAutomatonQueryUnicode : LuceneTestCase
+	[TestFixture]
+    public class TestAutomatonQueryUnicode : LuceneTestCase
 	{
 	  private IndexReader Reader;
 	  private IndexSearcher Searcher;
@@ -42,7 +43,8 @@ namespace Lucene.Net.Search
 
 	  private readonly string FN = "field";
 
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		Directory = NewDirectory();
@@ -84,6 +86,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -124,7 +127,8 @@ namespace Lucene.Net.Search
 	  /// this expression matches something either starting with the arabic
 	  /// presentation forms block, or a supplementary character.
 	  /// </summary>
-	  public virtual void TestSortOrder()
+      [Test]
+      public virtual void TestSortOrder()
 	  {
 		Automaton a = (new RegExp("((\uD866\uDF05)|\uFB94).*")).ToAutomaton();
 		AssertAutomatonHits(2, a);

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -499,7 +500,7 @@ namespace Lucene.Net.Index
 
 		CountDownLatch startingGun = new CountDownLatch(1);
 		AtomicBoolean hitExc = new AtomicBoolean();
-		Thread[] threads = new Thread[3];
+        ThreadClass[] threads = new ThreadClass[3];
 		for (int i = 0;i < 3;i++)
 		{
 		  Field field;
@@ -524,7 +525,7 @@ namespace Lucene.Net.Index
 
 		startingGun.countDown();
 
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
@@ -533,7 +534,7 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestDocValuesIndexing OuterInstance;
 

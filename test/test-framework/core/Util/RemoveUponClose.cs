@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -39,14 +40,14 @@ namespace Lucene.Net.Util
 		this.FailureMarker = failureMarker;
 
 		StringBuilder b = new StringBuilder();
-		foreach (StackTraceElement e in Thread.CurrentThread.StackTrace)
+		foreach (StackTrace e in Thread.CurrentThread.StackTrace)
 		{
 		  b.Append('\t').Append(e.ToString()).Append('\n');
 		}
 		CreationStack = b.ToString();
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		// only if there were no other test failures.
 		if (FailureMarker.WasSuccessful())

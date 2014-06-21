@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
 
 		r.Dispose();
 		d.Dispose();
-        docs.Close();
+        docs.Dispose();
 	  }
 
 	  private void AddDoc(RandomIndexWriter w, ICollection<string> terms, IDictionary<BytesRef, int?> termToID, int id)

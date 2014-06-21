@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
 	/// An <seealso cref="IntroSorter"/> for object arrays.
 	/// @lucene.internal
 	/// </summary>
-	internal sealed class ArrayIntroSorter<T> : IntroSorter
+	public sealed class ArrayIntroSorter<T> : IntroSorter
 	{
 
 	  private readonly T[] Arr;

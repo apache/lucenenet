@@ -39,12 +39,14 @@ namespace Lucene.Net.Search
 	/// Generates random regexps according to simple patterns,
 	/// and validates the correct number of hits are returned.
 	/// </summary>
-	public class TestRegexpRandom : LuceneTestCase
+    [TestFixture]
+    public class TestRegexpRandom : LuceneTestCase
 	{
 	  private IndexSearcher Searcher;
 	  private IndexReader Reader;
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -99,6 +101,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(numHits, docs.TotalHits, "Incorrect hits for pattern: " + pattern);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -106,7 +109,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestRegexps()
+      [Test]
+      public virtual void TestRegexps()
 	  {
 		int num = AtLeast(1);
 		for (int i = 0; i < num; i++)

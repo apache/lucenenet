@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
 	  // to allow users to query an IndexWriter settings.
 	  private readonly LiveIndexWriterConfig Config_Renamed;
 
-	  internal virtual DirectoryReader Reader
+	  public virtual DirectoryReader Reader
 	  {
 		  get
 		  {
@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
 	  /// changes made so far by this IndexWriter instance
 	  /// </returns>
 	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-	  internal virtual DirectoryReader GetReader(bool applyAllDeletes)
+	  public virtual DirectoryReader GetReader(bool applyAllDeletes)
 	  {
 		EnsureOpen();
 
@@ -451,8 +451,7 @@ namespace Lucene.Net.Index
 	  ///  places if it is in "near real-time mode" (getReader()
 	  ///  has been called on this instance). 
 	  /// </summary>
-
-	  internal class ReaderPool : IDisposable
+	  public class ReaderPool : IDisposable
 	  {
 		  private readonly IndexWriter OuterInstance;
 
@@ -903,7 +902,7 @@ namespace Lucene.Net.Index
 		  // KeepOnlyLastCommitDeleter:
 		  lock (this)
 		  {
-			Deleter = new IndexFileDeleter(directory, Config_Renamed.IndexDeletionPolicy, SegmentInfos, infoStream, this, initialIndexExists);
+			Deleter = new IndexFileDeleter(directory, Config_Renamed.DelPolicy, SegmentInfos, infoStream, this, initialIndexExists);
 		  }
 
 		  if (Deleter.StartingCommitDeleted)
@@ -1926,7 +1925,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // for test purpose
-	  internal int SegmentCount
+	  public int SegmentCount
 	  {
 		  get
 		  {
@@ -1938,7 +1937,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // for test purpose
-	  internal int NumBufferedDocuments
+	    public int NumBufferedDocuments
 	  {
 		  get
 		  {
@@ -1962,7 +1961,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // for test purpose
-	  internal int GetDocCount(int i)
+	    public int GetDocCount(int i)
 	  {
 		  lock (this)
 		  {
@@ -1978,7 +1977,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // for test purpose
-	  internal int FlushCount
+	    public int FlushCount
 	  {
 		  get
 		  {
@@ -1987,7 +1986,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // for test purpose
-	  internal int FlushDeletesCount
+	    public int FlushDeletesCount
 	  {
 		  get
 		  {
@@ -2259,8 +2258,6 @@ namespace Lucene.Net.Index
 		  newMergesFound = spec != null;
 		  if (newMergesFound)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numMerges = spec.merges.size();
 			int numMerges = spec.Merges.Count;
 			for (int i = 0;i < numMerges;i++)
 			{
@@ -2273,8 +2270,6 @@ namespace Lucene.Net.Index
 
 		if (spec != null && doWait)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numMerges = spec.merges.size();
 		  int numMerges = spec.Merges.Count;
 		  lock (this)
 		  {
@@ -2293,8 +2288,6 @@ namespace Lucene.Net.Index
 			  running = false;
 			  for (int i = 0;i < numMerges;i++)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergePolicy.OneMerge merge = spec.merges.get(i);
 				MergePolicy.OneMerge merge = spec.Merges[i];
 				if (PendingMerges.Contains(merge) || RunningMerges.Contains(merge))
 				{
@@ -2419,8 +2412,6 @@ namespace Lucene.Net.Index
 			newMergesFound = spec != null;
 			if (newMergesFound)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numMerges = spec.merges.size();
 			  int numMerges = spec.Merges.Count;
 			  for (int i = 0;i < numMerges;i++)
 			  {
@@ -2902,8 +2893,6 @@ namespace Lucene.Net.Index
 			  }
 			  // Publishing the segment must be synched on IW -> BDS to make the sure
 			  // that no merge prunes away the seg. private delete packet
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long nextGen;
 			  long nextGen;
 			  if (packet != null && packet.Any())
 			  {
@@ -3211,8 +3200,6 @@ namespace Lucene.Net.Index
 		  Flush(false, true);
 
 		  string mergedName = NewSegmentName();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<AtomicReader> mergeReaders = new java.util.ArrayList<>();
 		  IList<AtomicReader> mergeReaders = new List<AtomicReader>();
 		  foreach (IndexReader indexReader in readers)
 		  {
@@ -3223,8 +3210,6 @@ namespace Lucene.Net.Index
 			}
 		  }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.IOContext context = new Lucene.Net.Store.IOContext(new Lucene.Net.Store.MergeInfo(numDocs, -1, true, -1));
 		  IOContext context = new IOContext(new MergeInfo(numDocs, -1, true, -1));
 
 		  // TODO: somehow we should fix this merge so it's
@@ -3840,7 +3825,7 @@ namespace Lucene.Net.Index
 	  /// <param name="triggerMerge"> if true, we may merge segments (if
 	  ///  deletes or docs were flushed) if necessary </param>
 	  /// <param name="applyAllDeletes"> whether pending deletes should also </param>
-	  protected internal void Flush(bool triggerMerge, bool applyAllDeletes)
+	  public void Flush(bool triggerMerge, bool applyAllDeletes)
 	  {
 
 		// NOTE: this method cannot be sync'd because
@@ -3876,8 +3861,6 @@ namespace Lucene.Net.Index
               infoStream.Message("IW", "  start flush: applyAllDeletes=" + applyAllDeletes);
               infoStream.Message("IW", "  index before flush " + SegString());
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean anySegmentFlushed;
 		  bool anySegmentFlushed;
 
 		  lock (FullFlushLock)
@@ -3949,8 +3932,6 @@ namespace Lucene.Net.Index
 		  lock (this)
 		  {
 			flushDeletesCount.IncrementAndGet();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BufferedUpdatesStream.ApplyDeletesResult result;
 			BufferedUpdatesStream.ApplyDeletesResult result;
 			result = BufferedUpdatesStream.ApplyDeletesAndUpdates(readerPool, SegmentInfos.AsList());
 			if (result.AnyDeletes)
@@ -3992,7 +3973,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // for testing only
-	  internal virtual DocumentsWriter DocsWriter
+	    public virtual DocumentsWriter DocsWriter
 	  {
 		  get
 		  {
@@ -4115,8 +4096,6 @@ namespace Lucene.Net.Index
         
 			Debug.Assert(TestPoint("startCommitMergeDeletes"));
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> sourceSegments = merge.segments;
 			IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 
             if (infoStream.IsEnabled("IW"))
@@ -4130,42 +4109,22 @@ namespace Lucene.Net.Index
 			long minGen = long.MaxValue;
         
 			// Lazy init (only when we find a delete to carry over):
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergedDeletesAndUpdates holder = new MergedDeletesAndUpdates();
 			MergedDeletesAndUpdates holder = new MergedDeletesAndUpdates();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocValuesFieldUpdates.Container mergedDVUpdates = new DocValuesFieldUpdates.Container();
 			DocValuesFieldUpdates.Container mergedDVUpdates = new DocValuesFieldUpdates.Container();
         
 			for (int i = 0; i < sourceSegments.Count; i++)
 			{
 			  SegmentCommitInfo info = sourceSegments[i];
 			  minGen = Math.Min(info.BufferedDeletesGen, minGen);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docCount = info.info.getDocCount();
 			  int docCount = info.Info.DocCount;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits prevLiveDocs = merge.readers.get(i).getLiveDocs();
 			  Bits prevLiveDocs = merge.Readers[i].LiveDocs;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, false);
 			  ReadersAndUpdates rld = readerPool.Get(info, false);
 			  // We hold a ref so it should still be in the pool:
 			  Debug.Assert(rld != null, "seg=" + info.Info.Name);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits currentLiveDocs = rld.getLiveDocs();
 			  Bits currentLiveDocs = rld.LiveDocs;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Map<String,DocValuesFieldUpdates> mergingFieldUpdates = rld.getMergingFieldUpdates();
 			  IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String[] mergingFields;
 			  string[] mergingFields;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocValuesFieldUpdates[] dvFieldUpdates;
 			  DocValuesFieldUpdates[] dvFieldUpdates;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocValuesFieldUpdates.Iterator[] updatesIters;
 			  DocValuesFieldUpdates.Iterator[] updatesIters;
 			  if (mergingFieldUpdates.Count == 0)
 			  {
@@ -4413,8 +4372,6 @@ namespace Lucene.Net.Index
 			  return false;
 			}
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates mergedUpdates = merge.info.info.getDocCount() == 0 ? null : commitMergedDeletesAndUpdates(merge, mergeState);
 			ReadersAndUpdates mergedUpdates = merge.Info_Renamed.Info.DocCount == 0 ? null : CommitMergedDeletesAndUpdates(merge, mergeState);
 		//    System.out.println("[" + Thread.currentThread().getName() + "] IW.commitMerge: mergedDeletes=" + mergedDeletes);
         
@@ -4425,8 +4382,6 @@ namespace Lucene.Net.Index
         
 			Debug.Assert(!SegmentInfos.Contains(merge.Info_Renamed));
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean allDeleted = merge.segments.size() == 0 || merge.info.info.getDocCount() == 0 || (mergedUpdates != null && mergedUpdates.getPendingDeleteCount() == merge.info.info.getDocCount());
 			bool allDeleted = merge.Segments.Count == 0 || merge.Info_Renamed.Info.DocCount == 0 || (mergedUpdates != null && mergedUpdates.PendingDeleteCount == merge.Info_Renamed.Info.DocCount);
 
             if (infoStream.IsEnabled("IW"))
@@ -4437,8 +4392,6 @@ namespace Lucene.Net.Index
 			  }
 			}
         
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean dropSegment = allDeleted && !keepFullyDeletedSegments;
 			bool dropSegment = allDeleted && !KeepFullyDeletedSegments_Renamed;
         
 			// If we merged no segments then we better be dropping
@@ -4580,8 +4533,6 @@ namespace Lucene.Net.Index
 
 		bool success = false;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long t0 = System.currentTimeMillis();
         long t0 = DateTime.Now.Millisecond;
 
 		try
@@ -4756,12 +4707,8 @@ namespace Lucene.Net.Index
 			{
 			  if (info.Info.DocCount > 0)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delCount = numDeletedDocs(info);
 				int delCount = NumDeletedDocs(info);
 				Debug.Assert(delCount <= info.Info.DocCount);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double delRatio = ((double) delCount)/info.info.getDocCount();
 				double delRatio = ((double) delCount) / info.Info.DocCount;
 				merge.EstimatedMergeBytes += (long)(info.SizeInBytes() * (1.0 - delRatio));
 				merge.TotalMergeBytes += info.SizeInBytes();
@@ -4835,8 +4782,6 @@ namespace Lucene.Net.Index
 			// could pre-pool them somehow in that case...
         
 			// Lock order: IW -> BD
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final BufferedUpdatesStream.ApplyDeletesResult result = bufferedUpdatesStream.applyDeletesAndUpdates(readerPool, merge.segments);
 			BufferedUpdatesStream.ApplyDeletesResult result = BufferedUpdatesStream.ApplyDeletesAndUpdates(readerPool, merge.Segments);
         
 			if (result.AnyDeletes)
@@ -4866,8 +4811,6 @@ namespace Lucene.Net.Index
 			// Bind a new segment name here so even with
 			// ConcurrentMergePolicy we keep deterministic segment
 			// names.
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String mergeSegmentName = newSegmentName();
 			string mergeSegmentName = NewSegmentName();
 			SegmentInfo si = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, Codec, null);
 			IDictionary<string, string> details = new Dictionary<string, string>();
@@ -4906,7 +4849,6 @@ namespace Lucene.Net.Index
 		diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
 		if (details != null)
 		{
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
 		  diagnostics.PutAll(details);
 		}
 		info.Diagnostics = diagnostics;
@@ -4916,7 +4858,7 @@ namespace Lucene.Net.Index
 	  /// Does fininishing for a merge, which is fast but holds
 	  ///  the synchronized lock on IndexWriter instance. 
 	  /// </summary>
-	  internal void MergeFinish(MergePolicy.OneMerge merge)
+	  public void MergeFinish(MergePolicy.OneMerge merge)
 	  {
 		  lock (this)
 		  {
@@ -4929,8 +4871,6 @@ namespace Lucene.Net.Index
 			// exception inside mergeInit
 			if (merge.RegisterDone)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> sourceSegments = merge.segments;
 			  IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 			  foreach (SegmentCommitInfo info in sourceSegments)
 			  {
@@ -4947,8 +4887,6 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numSegments = merge.readers.size();
 			int numSegments = merge.Readers.Count;
 			Exception th = null;
         
@@ -4956,15 +4894,11 @@ namespace Lucene.Net.Index
         
 			for (int i = 0; i < numSegments; i++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentReader sr = merge.readers.get(i);
 			  SegmentReader sr = merge.Readers[i];
 			  if (sr != null)
 			  {
 				try
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(sr.getSegmentInfo(), false);
 				  ReadersAndUpdates rld = readerPool.Get(sr.SegmentInfo, false);
 				  // We still hold a ref so it should not have been removed:
 				  Debug.Assert(rld != null);
@@ -5012,19 +4946,13 @@ namespace Lucene.Net.Index
 
 		merge.CheckAborted(directory);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String mergedName = merge.info.info.name;
 		string mergedName = merge.Info_Renamed.Info.Name;
 
 		IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 
 		IOContext context = new IOContext(merge.MergeInfo);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final MergeState.CheckAbort checkAbort = new MergeState.CheckAbort(merge, directory);
 		MergeState.CheckAbort checkAbort = new MergeState.CheckAbort(merge, directory);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.TrackingDirectoryWrapper dirWrapper = new Lucene.Net.Store.TrackingDirectoryWrapper(directory);
 		TrackingDirectoryWrapper dirWrapper = new TrackingDirectoryWrapper(directory);
 
 		if (infoStream.IsEnabled("IW"))
@@ -5043,23 +4971,15 @@ namespace Lucene.Net.Index
 		  while (segUpto < sourceSegments.Count)
 		  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentCommitInfo info = sourceSegments.get(segUpto);
 			SegmentCommitInfo info = sourceSegments[segUpto];
 
 			// Hold onto the "live" reader; we will use this to
 			// commit merged deletes
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ReadersAndUpdates rld = readerPool.get(info, true);
 			ReadersAndUpdates rld = readerPool.Get(info, true);
 
 			// Carefully pull the most recent live docs and reader
 			SegmentReader reader;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs;
 			Bits liveDocs;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int delCount;
 			int delCount;
 
 			lock (this)
@@ -5126,8 +5046,6 @@ namespace Lucene.Net.Index
 
 		  // we pass merge.getMergeReaders() instead of merge.readers to allow the
 		  // OneMerge to return a view over the actual segments to merge
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SegmentMerger merger = new SegmentMerger(merge.getMergeReaders(), merge.info.info, infoStream, dirWrapper, config.getTermIndexInterval(), checkAbort, globalFieldNumberMap, context, config.getCheckIntegrityAtMerge());
 		  SegmentMerger merger = new SegmentMerger(merge.MergeReaders, merge.Info_Renamed.Info, infoStream, dirWrapper, Config_Renamed.TermIndexInterval, checkAbort, GlobalFieldNumberMap, context, Config_Renamed.CheckIntegrityAtMerge);
 
 		  merge.CheckAborted(directory);
@@ -5355,7 +5273,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // For test purposes.
-	  internal int BufferedDeleteTermsSize
+	    public int BufferedDeleteTermsSize
 	  {
 		  get
 		  {
@@ -5364,7 +5282,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // For test purposes.
-	  internal int NumBufferedDeleteTerms
+	    public int NumBufferedDeleteTerms
 	  {
 		  get
 		  {
@@ -5373,7 +5291,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  // utility routines for tests
-	  internal virtual SegmentCommitInfo NewestSegment()
+	    public virtual SegmentCommitInfo NewestSegment()
 	  {
 		  lock (this)
 		  {
@@ -5405,8 +5323,6 @@ namespace Lucene.Net.Index
 	  {
 		  lock (this)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final StringBuilder buffer = new StringBuilder();
 			StringBuilder buffer = new StringBuilder();
 			foreach (SegmentCommitInfo info in infos)
 			{
@@ -5462,7 +5378,7 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// @lucene.internal 
 	  /// </summary>
-	  internal virtual bool KeepFullyDeletedSegments
+	  public virtual bool KeepFullyDeletedSegments
 	  {
 		  set
 		  {
@@ -5598,8 +5514,6 @@ namespace Lucene.Net.Index
 			// this call can take a long time -- 10s of seconds
 			// or more.  We do it without syncing on this:
 			bool success = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.Collection<String> filesToSync;
 			ICollection<string> filesToSync;
 			try
 			{
@@ -5756,7 +5670,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal virtual bool Closed
+	    public virtual bool Closed
 	  {
 		  get
 		  {
@@ -5817,7 +5731,7 @@ namespace Lucene.Net.Index
 	  /// deletion files, this SegmentInfo must not reference such files when this
 	  /// method is called, because they are not allowed within a compound file.
 	  /// </summary>
-	  internal static ICollection<string> CreateCompoundFile(InfoStream infoStream, Directory directory, CheckAbort checkAbort, SegmentInfo info, IOContext context)
+	  public static ICollection<string> CreateCompoundFile(InfoStream infoStream, Directory directory, CheckAbort checkAbort, SegmentInfo info, IOContext context)
 	  {
 
 		string fileName = Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION);

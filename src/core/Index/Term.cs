@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
 	  /// example, you should clone a copy rather than pass reused bytes from
 	  /// a TermsEnum.
 	  /// </summary>
-	  internal void Set(string fld, BytesRef bytes)
+	  public void Set(string fld, BytesRef bytes)
 	  {
 		Field_Renamed = fld;
 		this.Bytes_Renamed = bytes;

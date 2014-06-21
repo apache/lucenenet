@@ -1,5 +1,7 @@
 using System;
 using System.Threading;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -21,13 +23,10 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-	using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
-	using Test = org.junit.Test;
-
 	public class TestSetOnce : LuceneTestCase
 	{
 
-	  private sealed class SetOnceThread : System.Threading.Thread
+	  private sealed class SetOnceThread : ThreadClass
 	  {
 		internal SetOnce<int?> Set;
 		internal bool Success = false;
@@ -35,18 +34,18 @@ namespace Lucene.Net.Util
 
 		public SetOnceThread(Random random)
 		{
-		  RAND = new Random(random.nextLong());
+		  RAND = new Random(random.Next());
 		}
 
 		public override void Run()
 		{
 		  try
 		  {
-			sleep(RAND.Next(10)); // sleep for a short time
-			Set.set(new int?(Convert.ToInt32(Name.Substring(2))));
+			Sleep(RAND.Next(10)); // sleep for a short time
+			Set.Set(new int?(Convert.ToInt32(Name.Substring(2))));
 			Success = true;
 		  }
-		  catch (InterruptedException e)
+		  catch (ThreadInterruptedException e)
 		  {
 			// ignore
 		  }
@@ -64,7 +63,7 @@ namespace Lucene.Net.Util
 	  public virtual void TestEmptyCtor()
 	  {
 		SetOnce<int?> set = new SetOnce<int?>();
-		assertNull(set.get());
+		Assert.IsNull(set.Get());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -72,18 +71,18 @@ namespace Lucene.Net.Util
 	  public virtual void TestSettingCtor()
 	  {
 		SetOnce<int?> set = new SetOnce<int?>(new int?(5));
-		Assert.AreEqual(5, (int)set.get());
-		set.set(new int?(7));
+		Assert.AreEqual(5, (int)set.Get());
+		set.Set(new int?(7));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test(expected=Lucene.Net.Util.SetOnce.AlreadySetException.class) public void testSetOnce() throws Exception
-	  public virtual void TestSetOnce()
+	  public virtual void TestSetOnce_mem()
 	  {
 		SetOnce<int?> set = new SetOnce<int?>();
-		set.set(new int?(5));
-		Assert.AreEqual(5, (int)set.get());
-		set.set(new int?(7));
+		set.Set(new int?(5));
+		Assert.AreEqual(5, (int)set.Get());
+		set.Set(new int?(7));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -94,17 +93,17 @@ namespace Lucene.Net.Util
 		SetOnceThread[] threads = new SetOnceThread[10];
 		for (int i = 0; i < threads.Length; i++)
 		{
-		  threads[i] = new SetOnceThread(random());
+		  threads[i] = new SetOnceThread(Random());
 		  threads[i].Name = "t-" + (i + 1);
 		  threads[i].Set = set;
 		}
 
-		foreach (Thread t in threads)
+		foreach (ThreadClass t in threads)
 		{
 		  t.Start();
 		}
 
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
@@ -114,7 +113,7 @@ namespace Lucene.Net.Util
 		  if (t.Success)
 		  {
 			int expectedVal = Convert.ToInt32(t.Name.Substring(2));
-			Assert.AreEqual("thread " + t.Name, expectedVal, (int)t.Set.get());
+			Assert.AreEqual(expectedVal, t.Set.Get(), "thread " + t.Name);
 		  }
 		}
 	  }

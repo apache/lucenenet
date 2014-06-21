@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 	using IntBlockPool = Lucene.Net.Util.IntBlockPool;
 	using MutableBits = Lucene.Net.Util.MutableBits;
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-using System.Globalization;
+    using System.Globalization;
     using Lucene.Net.Util;
     using Lucene.Net.Support;
 
@@ -102,7 +102,7 @@ using System.Globalization;
 		  }
 	  }
 
-	  internal class DocState
+	  public class DocState
 	  {
 		internal readonly DocumentsWriterPerThread DocWriter;
 		internal Analyzer Analyzer;
@@ -251,8 +251,6 @@ using System.Globalization;
 
 	  internal virtual bool CheckAndResetHasAborted()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean retval = hasAborted;
 		bool retval = HasAborted;
 		HasAborted = false;
 		return retval;
@@ -692,7 +690,7 @@ using System.Globalization;
 		  }
 	  }
 
-	  internal virtual long BytesUsed()
+	  public virtual long BytesUsed()
 	  {
 		return bytesUsed.Get() + PendingUpdates.BytesUsed.Get();
 	  }

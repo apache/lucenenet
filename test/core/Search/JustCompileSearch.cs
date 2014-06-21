@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 
@@ -34,7 +36,7 @@ namespace Lucene.Net.Search
 	/// class, one of the implementations here will fail to compile and so we know
 	/// back-compat policy was violated.
 	/// </summary>
-	internal sealed class JustCompileSearch
+    internal sealed class JustCompileSearch
 	{
 
 	  private const string UNSUPPORTED_MSG = "unsupported: used for back-compat testing only !";
@@ -73,7 +75,7 @@ namespace Lucene.Net.Search
 	  internal sealed class JustCompileDocIdSet : DocIdSet
 	  {
 
-		public override DocIdSetIterator Iterator()
+		public override DocIdSetIterator GetIterator()
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
@@ -107,12 +109,12 @@ namespace Lucene.Net.Search
 	  internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache_Fields.ILongParser
 	  {
 
-		public override long ParseLong(BytesRef @string)
+		public long ParseLong(BytesRef @string)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
 
-		public override TermsEnum TermsEnum(Terms terms)
+		public TermsEnum TermsEnum(Terms terms)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
@@ -122,12 +124,12 @@ namespace Lucene.Net.Search
       internal sealed class JustCompileExtendedFieldCacheDoubleParser : FieldCache_Fields.IDoubleParser
 	  {
 
-		public override double ParseDouble(BytesRef term)
+		public double ParseDouble(BytesRef term)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
 
-		public override TermsEnum TermsEnum(Terms terms)
+		public TermsEnum TermsEnum(Terms terms)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
@@ -168,7 +170,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-		public override FieldComparator<object> SetNextReader(AtomicReaderContext context)
+		public override FieldComparator SetNextReader(AtomicReaderContext context)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
@@ -212,7 +214,7 @@ namespace Lucene.Net.Search
 		{
 		}
 
-		protected internal override bool Match(int docid)
+		protected override bool Match(int docid)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
@@ -226,7 +228,7 @@ namespace Lucene.Net.Search
 		{
 		}
 
-		protected internal override bool Match(int doc)
+		protected override bool Match(int doc)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
@@ -293,7 +295,7 @@ namespace Lucene.Net.Search
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}
 
-		public override SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
+		public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
 		{
 		  throw new System.NotSupportedException(UNSUPPORTED_MSG);
 		}

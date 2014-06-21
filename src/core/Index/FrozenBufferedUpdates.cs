@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	/// structure to hold them. We don't hold docIDs because these are applied on
 	/// flush.
 	/// </summary>
-	internal class FrozenBufferedUpdates
+	public class FrozenBufferedUpdates
 	{
 
 	  /* Query we often undercount (say 24 bytes), plus int. */
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
 		return s;
 	  }
 
-	  internal virtual bool Any()
+	  public virtual bool Any()
 	  {
 		return TermCount > 0 || Queries.Length > 0 || NumericDVUpdates.Length > 0 || BinaryDVUpdates.Length > 0;
 	  }

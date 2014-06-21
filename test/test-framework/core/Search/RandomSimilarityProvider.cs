@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -77,7 +78,8 @@ namespace Lucene.Net.Search
 		CoordType = random.Next(3);
 		ShouldQueryNorm = random.NextBoolean();
 		KnownSims = new List<Similarity>(AllSims);
-		Collections.shuffle(KnownSims, random);
+        KnownSims = CollectionsHelper.Shuffle(KnownSims);
+		//Collections.shuffle(KnownSims, random);
 	  }
 
 	  public override float Coord(int overlap, int maxOverlap)

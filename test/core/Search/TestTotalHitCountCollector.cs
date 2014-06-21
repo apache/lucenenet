@@ -27,10 +27,12 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestTotalHitCountCollector : LuceneTestCase
 	{
 
-	  public virtual void TestBasics()
+	  [Test]
+      public virtual void TestBasics()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);

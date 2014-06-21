@@ -44,13 +44,13 @@ namespace Lucene.Net.Util
 	  {
 		  get
 		  {
-			return Failures_Renamed.get();
+			return Failures_Renamed.Get();
 		  }
 	  }
 
 	  public static void ResetFailures()
 	  {
-		Failures_Renamed.set(0);
+		Failures_Renamed.Set(0);
 	  }
 	}
 

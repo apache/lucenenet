@@ -28,7 +28,8 @@ namespace Lucene.Net.Util
 
 	public sealed class ThreadInterruptedException : Exception
 	{
-	  public ThreadInterruptedException(ThreadInterruptedException ie) : base(ie.ToString(), ie)
+        public ThreadInterruptedException(Exception ie)
+            : base(ie.ToString(), ie)
 	  {
 	  }
 	}

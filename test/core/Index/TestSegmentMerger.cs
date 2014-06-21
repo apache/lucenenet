@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Index
 {
 
@@ -28,7 +30,6 @@ namespace Lucene.Net.Index
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using InfoStream = Lucene.Net.Util.InfoStream;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 

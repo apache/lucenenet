@@ -47,6 +47,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
+      [TestFixtureSetUp]
 	  public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
@@ -90,6 +91,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
+      [TestFixtureTearDown]
 	  public static void AfterClass()
 	  {
 		Reader.Dispose();
@@ -100,6 +102,7 @@ namespace Lucene.Net.Search
 
 	  // In a single doc, for the same field, mix the term
 	  // vectors up
+      [Test]
 	  public virtual void TestMixedVectrosVectors()
 	  {
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetOpenMode(OpenMode.CREATE));
@@ -136,7 +139,7 @@ namespace Lucene.Net.Search
 		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(1, hits.Length);
 
-		Fields vectors = searcher.Reader.GetTermVectors(hits[0].Doc);
+		Fields vectors = searcher.IndexReader.GetTermVectors(hits[0].Doc);
 		Assert.IsNotNull(vectors);
 		Assert.AreEqual(1, vectors.Size());
 		Terms vector = vectors.Terms("field");
@@ -202,6 +205,7 @@ namespace Lucene.Net.Search
 		r.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestFullMergeAddDocs()
 	  {
 		Directory target = NewDirectory();
@@ -219,6 +223,7 @@ namespace Lucene.Net.Search
 		target.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestFullMergeAddIndexesDir()
 	  {
 		Directory[] input = new Directory[] {NewDirectory(), NewDirectory()};
@@ -239,6 +244,7 @@ namespace Lucene.Net.Search
 		IOUtils.Close(target, input[0], input[1]);
 	  }
 
+      [Test]
 	  public virtual void TestFullMergeAddIndexesReader()
 	  {
 		Directory[] input = new Directory[] {NewDirectory(), NewDirectory()};

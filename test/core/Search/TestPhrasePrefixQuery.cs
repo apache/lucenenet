@@ -37,11 +37,13 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// this class tests PhrasePrefixQuery class.
 	/// </summary>
-	public class TestPhrasePrefixQuery : LuceneTestCase
+	[TestFixture]
+    public class TestPhrasePrefixQuery : LuceneTestCase
 	{
 
 	  ///   
-	  public virtual void TestPhrasePrefix()
+      [Test]
+      public virtual void TestPhrasePrefix()
 	  {
 		Directory indexStore = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);

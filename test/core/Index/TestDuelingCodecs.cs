@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
 		  writer.AddDocument(document);
 		}
 
-        lineFileDocs.Close();
+        lineFileDocs.Dispose();
 	  }
 
 	  /// <summary>

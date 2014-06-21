@@ -34,14 +34,15 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using System.IO;
 
-
+    [TestFixture]
 	public class FuzzyTermOnShortTermsTest : LuceneTestCase
 	{
 	   private const string FIELD = "field";
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void test() throws Exception
-	   public virtual void Test()
+       [Test]
+       public virtual void Test()
 	   {
 		  // proves rule that edit distance between the two terms
 		  // must be > smaller term for there to be a match
@@ -90,7 +91,7 @@ namespace Lucene.Net.Search
 		   {
 		   }
 
-		   public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		   protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		   {
 			  Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 			  return new TokenStreamComponents(tokenizer, tokenizer);

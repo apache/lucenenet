@@ -1105,8 +1105,8 @@ namespace Lucene.Net.Index
 	  {
 		Directory dir = NewDirectory();
 		AtomicBoolean didWarm = new AtomicBoolean();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetReaderPooling(true).setMergedSegmentWarmer(new IndexReaderWarmerAnonymousInnerClassHelper(this, didWarm)).
-				setMergePolicy(NewLogMergePolicy(10)));
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetReaderPooling(true).SetMergedSegmentWarmer(new IndexReaderWarmerAnonymousInnerClassHelper(this, didWarm)).
+				SetMergePolicy(NewLogMergePolicy(10)));
 
 		Document doc = new Document();
 		doc.Add(NewStringField("foo", "bar", Field.Store.NO));
@@ -1146,7 +1146,7 @@ namespace Lucene.Net.Index
 		Directory dir = NewDirectory();
 		AtomicBoolean didWarm = new AtomicBoolean();
 		InfoStream infoStream = new InfoStreamAnonymousInnerClassHelper(this, didWarm);
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetReaderPooling(true).setInfoStream(infoStream).setMergedSegmentWarmer(new SimpleMergedSegmentWarmer(infoStream)).SetMergePolicy(NewLogMergePolicy(10)));
+		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetReaderPooling(true).SetInfoStream(infoStream).SetMergedSegmentWarmer(new SimpleMergedSegmentWarmer(infoStream)).SetMergePolicy(NewLogMergePolicy(10)));
 
 		Document doc = new Document();
 		doc.Add(NewStringField("foo", "bar", Field.Store.NO));
@@ -1172,7 +1172,7 @@ namespace Lucene.Net.Index
 			  this.DidWarm = didWarm;
 		  }
 
-		  public override void Close()
+		  public override void Dispose()
 		  {
 		  }
 		  public override void Message(string component, string message)

@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestSubScorerFreqs : LuceneTestCase
 	{
 
@@ -39,6 +40,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void makeIndex() throws Exception
+      [TestFixtureSetUp]
 	  public static void MakeIndex()
 	  {
 		Dir = new RAMDirectory();
@@ -62,6 +64,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void finish() throws Exception
+      [TestFixtureTearDown]
 	  public static void Finish()
 	  {
 		s.IndexReader.Dispose();
@@ -81,7 +84,7 @@ namespace Lucene.Net.Search
 		internal readonly ISet<string> Relationships;
 
 		public CountingCollector(Collector other) 
-            : this(other, new HashSet<string>("MUST", "SHOULD", "MUST_NOT"))
+            : this(other, new HashSet<string>{"MUST", "SHOULD", "MUST_NOT"})
 		{
 		}
 
@@ -145,6 +148,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testTermQuery() throws Exception
+      [Test]
 	  public virtual void TestTermQuery()
 	  {
 		TermQuery q = new TermQuery(new Term("f", "d"));
@@ -166,6 +170,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBooleanQuery() throws Exception
+      [Test]
 	  public virtual void TestBooleanQuery()
 	  {
 		TermQuery aQuery = new TermQuery(new Term("f", "a"));
@@ -186,8 +191,7 @@ namespace Lucene.Net.Search
 		// see http://docs.oracle.com/javase/7/docs/api/java/lang/SafeVarargs.html
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("unchecked") final Iterable<Set<String>> occurList = Arrays.AsList(Collections.singleton("MUST"), new HashSet<>(Arrays.AsList("MUST", "SHOULD"))
-		IEnumerable<HashSet<string>> occurList = Arrays.AsList(Collections.singleton("MUST"), new HashSet<HashSet<string>>("MUST", "SHOULD")
-	   );
+		IEnumerable<HashSet<string>> occurList = Arrays.AsList(CollectionsHelper.Singleton("MUST"), new HashSet<string>{"MUST", "SHOULD"});
 
 		foreach (HashSet<string> occur in occurList)
 		{
@@ -221,6 +225,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testPhraseQuery() throws Exception
+      [Test]
 	  public virtual void TestPhraseQuery()
 	  {
 		PhraseQuery q = new PhraseQuery();

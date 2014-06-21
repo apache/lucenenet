@@ -81,10 +81,10 @@ namespace Lucene.Net.Search
 			docBase = readerContext.DocBase;
 		  }
 
-		  fakeScorer.Score_Renamed = hit.Score;
-		  fakeScorer.Doc = docID - docBase;
+		  fakeScorer.score = hit.Score;
+		  fakeScorer.doc = docID - docBase;
 
-		  collector.Collect(fakeScorer.Doc);
+		  collector.Collect(fakeScorer.doc);
 
 		  hitUpto++;
 		}

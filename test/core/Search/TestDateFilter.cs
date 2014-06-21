@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
 
@@ -33,11 +35,13 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class TestDateFilter : LuceneTestCase
+	[TestFixture]
+    public class TestDateFilter : LuceneTestCase
 	{
 
 	  /// 
-	  public virtual void TestBefore()
+	  [TestFixtureSetUp]
+      public virtual void TestBefore()
 	  {
 		// create an index
 		Directory indexStore = NewDirectory();
@@ -94,7 +98,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  /// 
-	  public virtual void TestAfter()
+	  [TestFixtureTearDown]
+      public virtual void TestAfter()
 	  {
 		// create an index
 		Directory indexStore = NewDirectory();

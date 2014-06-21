@@ -1,5 +1,4 @@
 using System.Collections;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +15,9 @@ using System.Collections;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -29,9 +31,9 @@ namespace Lucene.Net.Util
 	  public override OpenBitSet CopyOf(BitArray bs, int length)
 	  {
 		OpenBitSet set = new OpenBitSet(length);
-		for (int doc = bs.nextSetBit(0); doc != -1; doc = bs.nextSetBit(doc + 1))
+		for (int doc = bs.NextSetBit(0); doc != -1; doc = bs.NextSetBit(doc + 1))
 		{
-		  set.set(doc);
+		  set.Set(doc);
 		}
 		return set;
 	  }
@@ -41,11 +43,11 @@ namespace Lucene.Net.Util
 		int max = a.Count;
 		for (int i = 0; i < max; i++)
 		{
-		  if (a.Get(i) != b.get(i))
+		  if (a.Get(i) != b.Get(i))
 		  {
 			Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
 		  }
-		  if (a.Get(i) != b.get((long) i))
+		  if (a.Get(i) != b.Get((long) i))
 		  {
 			Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
 		  }
@@ -56,11 +58,11 @@ namespace Lucene.Net.Util
 	  {
 		for (int i = 0; i < max; i++)
 		{
-		  if (a.Get(i) != b.fastGet(i))
+		  if (a.Get(i) != b.FastGet(i))
 		  {
 			Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
 		  }
-		  if (a.Get(i) != b.fastGet((long) i))
+		  if (a.Get(i) != b.FastGet((long) i))
 		  {
 			Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
 		  }
@@ -72,8 +74,8 @@ namespace Lucene.Net.Util
 		int aa = -1, bb = -1;
 		do
 		{
-		  aa = a.nextSetBit(aa + 1);
-		  bb = b.nextSetBit(bb + 1);
+		  aa = a.NextSetBit(aa + 1);
+		  bb = b.NextSetBit(bb + 1);
 		  Assert.AreEqual(aa,bb);
 		} while (aa >= 0);
 	  }
@@ -83,47 +85,47 @@ namespace Lucene.Net.Util
 		int aa = -1, bb = -1;
 		do
 		{
-		  aa = a.nextSetBit(aa + 1);
-		  bb = (int) b.nextSetBit((long)(bb + 1));
+		  aa = a.NextSetBit(aa + 1);
+		  bb = (int) b.NextSetBit((long)(bb + 1));
 		  Assert.AreEqual(aa,bb);
 		} while (aa >= 0);
 	  }
 
 	  internal virtual void DoPrevSetBit(BitArray a, OpenBitSet b)
 	  {
-		int aa = a.Count + random().Next(100);
+		int aa = a.Count + Random().Next(100);
 		int bb = aa;
 		do
 		{
-		  // aa = a.prevSetBit(aa-1);
+		  // aa = a.PrevSetBit(aa-1);
 		  aa--;
 		  while ((aa >= 0) && (!a.Get(aa)))
 		  {
 			aa--;
 		  }
-		  bb = b.prevSetBit(bb - 1);
+		  bb = b.PrevSetBit(bb - 1);
 		  Assert.AreEqual(aa,bb);
 		} while (aa >= 0);
 	  }
 
 	  internal virtual void DoPrevSetBitLong(BitArray a, OpenBitSet b)
 	  {
-		int aa = a.Count + random().Next(100);
+		int aa = a.Count + Random().Next(100);
 		int bb = aa;
 		do
 		{
-		  // aa = a.prevSetBit(aa-1);
+		  // aa = a.PrevSetBit(aa-1);
 		  aa--;
 		  while ((aa >= 0) && (!a.Get(aa)))
 		  {
 			aa--;
 		  }
-		  bb = (int) b.prevSetBit((long)(bb - 1));
+		  bb = (int) b.PrevSetBit((long)(bb - 1));
 		  Assert.AreEqual(aa,bb);
 		} while (aa >= 0);
 	  }
 
-	  // test interleaving different OpenBitSetIterator.next()/skipTo()
+	  // test interleaving different OpenBitSetIterator.Next()/skipTo()
 	  internal virtual void DoIterate(BitArray a, OpenBitSet b, int mode)
 	  {
 		if (mode == 1)
@@ -142,8 +144,8 @@ namespace Lucene.Net.Util
 		OpenBitSetIterator iterator = new OpenBitSetIterator(b);
 		do
 		{
-		  aa = a.nextSetBit(aa + 1);
-		  bb = random().nextBoolean() ? iterator.nextDoc() : iterator.advance(bb + 1);
+		  aa = a.NextSetBit(aa + 1);
+		  bb = Random().NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
 		  Assert.AreEqual(aa == -1 ? DocIdSetIterator.NO_MORE_DOCS : aa, bb);
 		} while (aa >= 0);
 	  }
@@ -154,8 +156,8 @@ namespace Lucene.Net.Util
 		OpenBitSetIterator iterator = new OpenBitSetIterator(b);
 		do
 		{
-		  aa = a.nextSetBit(aa + 1);
-		  bb = random().nextBoolean() ? iterator.nextDoc() : iterator.advance(bb + 1);
+		  aa = a.NextSetBit(aa + 1);
+		  bb = Random().NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
 		  Assert.AreEqual(aa == -1 ? DocIdSetIterator.NO_MORE_DOCS : aa, bb);
 		} while (aa >= 0);
 	  }
@@ -167,59 +169,59 @@ namespace Lucene.Net.Util
 
 		for (int i = 0; i < iter; i++)
 		{
-		  int sz = random().Next(maxSize);
+		  int sz = Random().Next(maxSize);
 		  BitArray a = new BitArray(sz);
 		  OpenBitSet b = new OpenBitSet(sz);
 
 		  // test the various ways of setting bits
 		  if (sz > 0)
 		  {
-			int nOper = random().Next(sz);
+			int nOper = Random().Next(sz);
 			for (int j = 0; j < nOper; j++)
 			{
 			  int idx;
 
-			  idx = random().Next(sz);
+			  idx = Random().Next(sz);
 			  a.Set(idx, true);
-			  b.fastSet(idx);
+			  b.FastSet(idx);
 
-			  idx = random().Next(sz);
+			  idx = Random().Next(sz);
 			  a.Set(idx, true);
-			  b.fastSet((long) idx);
+			  b.FastSet((long) idx);
 
-			  idx = random().Next(sz);
+			  idx = Random().Next(sz);
 			  a.Set(idx, false);
-			  b.fastClear(idx);
+			  b.FastClear(idx);
 
-			  idx = random().Next(sz);
+			  idx = Random().Next(sz);
 			  a.Set(idx, false);
-			  b.fastClear((long) idx);
+			  b.FastClear((long) idx);
 
-			  idx = random().Next(sz);
+			  idx = Random().Next(sz);
 			  a.Set(idx, !a.Get(idx));
-			  b.fastFlip(idx);
+			  b.FastFlip(idx);
 
-			  bool val = b.flipAndGet(idx);
-			  bool val2 = b.flipAndGet(idx);
+			  bool val = b.FlipAndGet(idx);
+			  bool val2 = b.FlipAndGet(idx);
 			  Assert.IsTrue(val != val2);
 
-			  idx = random().Next(sz);
+			  idx = Random().Next(sz);
 			  a.Set(idx, !a.Get(idx));
-			  b.fastFlip((long) idx);
+			  b.FastFlip((long) idx);
 
-			  val = b.flipAndGet((long) idx);
-			  val2 = b.flipAndGet((long) idx);
+			  val = b.FlipAndGet((long) idx);
+			  val2 = b.FlipAndGet((long) idx);
 			  Assert.IsTrue(val != val2);
 
-			  val = b.getAndSet(idx);
+			  val = b.GetAndSet(idx);
 			  Assert.IsTrue(val2 == val);
-			  Assert.IsTrue(b.get(idx));
+			  Assert.IsTrue(b.Get(idx));
 
 			  if (!val)
 			  {
-				  b.fastClear(idx);
+				  b.FastClear(idx);
 			  }
-			  Assert.IsTrue(b.get(idx) == val);
+			  Assert.IsTrue(b.Get(idx) == val);
 			}
 		  }
 
@@ -229,21 +231,21 @@ namespace Lucene.Net.Util
 
 		  // test ranges, including possible extension
 		  int fromIndex, toIndex;
-		  fromIndex = random().Next(sz + 80);
-		  toIndex = fromIndex + random().Next((sz >> 1) + 1);
-		  BitArray aa = (BitArray)a.clone();
-		  aa.flip(fromIndex,toIndex);
-		  OpenBitSet bb = b.clone();
-		  bb.flip(fromIndex,toIndex);
+		  fromIndex = Random().Next(sz + 80);
+		  toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+		  BitArray aa = (BitArray)a.Clone();
+		  aa.Flip(fromIndex,toIndex);
+		  OpenBitSet bb = (OpenBitSet) b.Clone();
+		  bb.Flip(fromIndex,toIndex);
 
 		  DoIterate(aa,bb, mode); // a problem here is from flip or doIterate
 
-		  fromIndex = random().Next(sz + 80);
-		  toIndex = fromIndex + random().Next((sz >> 1) + 1);
-		  aa = (BitArray)a.clone();
-		  aa.clear(fromIndex,toIndex);
-		  bb = b.clone();
-		  bb.clear(fromIndex,toIndex);
+		  fromIndex = Random().Next(sz + 80);
+		  toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+		  aa = (BitArray)a.Clone();
+		  aa.Clear(fromIndex,toIndex);
+		  bb = (OpenBitSet) b.Clone();
+		  bb.Clear(fromIndex,toIndex);
 
 		  DoNextSetBit(aa,bb); // a problem here is from clear() or nextSetBit
 		  DoNextSetBitLong(aa,bb);
@@ -251,12 +253,12 @@ namespace Lucene.Net.Util
 		  DoPrevSetBit(aa,bb);
 		  DoPrevSetBitLong(aa,bb);
 
-		  fromIndex = random().Next(sz + 80);
-		  toIndex = fromIndex + random().Next((sz >> 1) + 1);
-		  aa = (BitArray)a.clone();
+		  fromIndex = Random().Next(sz + 80);
+		  toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+		  aa = (BitArray)a.Clone();
 		  aa.Set(fromIndex,toIndex);
-		  bb = b.clone();
-		  bb.set(fromIndex,toIndex);
+		  bb = (OpenBitSet) b.Clone();
+		  bb.Set(fromIndex,toIndex);
 
 		  DoNextSetBit(aa,bb); // a problem here is from set() or nextSetBit
 		  DoNextSetBitLong(aa,bb);
@@ -268,42 +270,42 @@ namespace Lucene.Net.Util
 		  {
 			Assert.AreEqual(a.Equals(a0), b.Equals(b0));
 
-			Assert.AreEqual(a.cardinality(), b.cardinality());
+			Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
-			BitArray a_and = (BitArray)a.clone();
+			BitArray a_and = (BitArray)a.Clone();
 			a_and = a_and.And(a0);
-			BitArray a_or = (BitArray)a.clone();
+			BitArray a_or = (BitArray)a.Clone();
 			a_or = a_or.Or(a0);
-			BitArray a_xor = (BitArray)a.clone();
+			BitArray a_xor = (BitArray)a.Clone();
 			a_xor = a_xor.Xor(a0);
-			BitArray a_andn = (BitArray)a.clone();
-			a_andn.andNot(a0);
+			BitArray a_andn = (BitArray)a.Clone();
+			a_andn.AndNot(a0);
 
-			OpenBitSet b_and = b.clone();
+			OpenBitSet b_and = (OpenBitSet) b.Clone();
 			Assert.AreEqual(b,b_and);
-			b_and.and(b0);
-			OpenBitSet b_or = b.clone();
-			b_or.or(b0);
-			OpenBitSet b_xor = b.clone();
-			b_xor.xor(b0);
-			OpenBitSet b_andn = b.clone();
-			b_andn.andNot(b0);
+			b_and.And(b0);
+			OpenBitSet b_or = (OpenBitSet) b.Clone();
+			b_or.Or(b0);
+			OpenBitSet b_xor = (OpenBitSet) b.Clone();
+			b_xor.Xor(b0);
+			OpenBitSet b_andn = (OpenBitSet) b.Clone();
+			b_andn.AndNot(b0);
 
 			DoIterate(a_and,b_and, mode);
 			DoIterate(a_or,b_or, mode);
 			DoIterate(a_xor,b_xor, mode);
 			DoIterate(a_andn,b_andn, mode);
 
-			Assert.AreEqual(a_and.cardinality(), b_and.cardinality());
-			Assert.AreEqual(a_or.cardinality(), b_or.cardinality());
-			Assert.AreEqual(a_xor.cardinality(), b_xor.cardinality());
-			Assert.AreEqual(a_andn.cardinality(), b_andn.cardinality());
+			Assert.AreEqual(a_and.Cardinality(), b_and.Cardinality());
+			Assert.AreEqual(a_or.Cardinality(), b_or.Cardinality());
+			Assert.AreEqual(a_xor.Cardinality(), b_xor.Cardinality());
+			Assert.AreEqual(a_andn.Cardinality(), b_andn.Cardinality());
 
 			// test non-mutating popcounts
-			Assert.AreEqual(b_and.cardinality(), OpenBitSet.intersectionCount(b,b0));
-			Assert.AreEqual(b_or.cardinality(), OpenBitSet.unionCount(b,b0));
-			Assert.AreEqual(b_xor.cardinality(), OpenBitSet.xorCount(b,b0));
-			Assert.AreEqual(b_andn.cardinality(), OpenBitSet.andNotCount(b,b0));
+			Assert.AreEqual(b_and.Cardinality(), OpenBitSet.IntersectionCount(b,b0));
+			Assert.AreEqual(b_or.Cardinality(), OpenBitSet.UnionCount(b,b0));
+			Assert.AreEqual(b_xor.Cardinality(), OpenBitSet.XorCount(b,b0));
+			Assert.AreEqual(b_andn.Cardinality(), OpenBitSet.AndNotCount(b,b0));
 		  }
 
 		  a0 = a;
@@ -315,13 +317,13 @@ namespace Lucene.Net.Util
 	  // larger testsuite.
 	  public virtual void TestSmall()
 	  {
-		DoRandomSets(atLeast(1200), atLeast(1000), 1);
-		DoRandomSets(atLeast(1200), atLeast(1000), 2);
+		DoRandomSets(AtLeast(1200), AtLeast(1000), 1);
+		DoRandomSets(AtLeast(1200), AtLeast(1000), 2);
 	  }
 
 	  // uncomment to run a bigger test (~2 minutes).
 	  /*
-	  public void testBig() {
+	  public void TestBig() {
 	    doRandomSets(2000,200000, 1);
 	    doRandomSets(2000,200000, 2);
 	  }
@@ -333,16 +335,16 @@ namespace Lucene.Net.Util
 		OpenBitSet b2 = new OpenBitSet(2222);
 		Assert.IsTrue(b1.Equals(b2));
 		Assert.IsTrue(b2.Equals(b1));
-		b1.set(10);
+		b1.Set(10);
 		Assert.IsFalse(b1.Equals(b2));
 		Assert.IsFalse(b2.Equals(b1));
-		b2.set(10);
+		b2.Set(10);
 		Assert.IsTrue(b1.Equals(b2));
 		Assert.IsTrue(b2.Equals(b1));
-		b2.set(2221);
+		b2.Set(2221);
 		Assert.IsFalse(b1.Equals(b2));
 		Assert.IsFalse(b2.Equals(b1));
-		b1.set(2221);
+		b1.Set(2221);
 		Assert.IsTrue(b1.Equals(b2));
 		Assert.IsTrue(b2.Equals(b1));
 
@@ -354,8 +356,8 @@ namespace Lucene.Net.Util
 	  {
 		OpenBitSet bs1 = new OpenBitSet(200);
 		OpenBitSet bs2 = new OpenBitSet(64);
-		bs1.set(3);
-		bs2.set(3);
+		bs1.Set(3);
+		bs2.Set(3);
 		Assert.AreEqual(bs1, bs2);
 		Assert.AreEqual(bs1.GetHashCode(), bs2.GetHashCode());
 	  }
@@ -366,7 +368,7 @@ namespace Lucene.Net.Util
 		OpenBitSet bs = new OpenBitSet();
 		foreach (int e in a)
 		{
-		  bs.set(e);
+		  bs.Set(e);
 		}
 		return bs;
 	  }
@@ -398,34 +400,34 @@ namespace Lucene.Net.Util
 	  public virtual void TestEnsureCapacity()
 	  {
 		OpenBitSet bits = new OpenBitSet(1);
-		int bit = random().Next(100) + 10;
-		bits.ensureCapacity(bit); // make room for more bits
-		bits.fastSet(bit - 1);
-		Assert.IsTrue(bits.fastGet(bit - 1));
-		bits.ensureCapacity(bit + 1);
-		bits.fastSet(bit);
-		Assert.IsTrue(bits.fastGet(bit));
-		bits.ensureCapacity(3); // should not change numBits nor grow the array
-		bits.fastSet(3);
-		Assert.IsTrue(bits.fastGet(3));
-		bits.fastSet(bit - 1);
-		Assert.IsTrue(bits.fastGet(bit - 1));
+		int bit = Random().Next(100) + 10;
+		bits.EnsureCapacity(bit); // make room for more bits
+		bits.FastSet(bit - 1);
+		Assert.IsTrue(bits.FastGet(bit - 1));
+		bits.EnsureCapacity(bit + 1);
+		bits.FastSet(bit);
+		Assert.IsTrue(bits.FastGet(bit));
+		bits.EnsureCapacity(3); // should not change numBits nor grow the array
+		bits.FastSet(3);
+		Assert.IsTrue(bits.FastGet(3));
+		bits.FastSet(bit - 1);
+		Assert.IsTrue(bits.FastGet(bit - 1));
 
 		// test ensureCapacityWords
-		int numWords = random().Next(10) + 2; // make sure we grow the array (at least 128 bits)
-		bits.ensureCapacityWords(numWords);
-		bit = TestUtil.Next(random(), 127, (numWords << 6) - 1); // pick a bit >= to 128, but still within range
-		bits.fastSet(bit);
-		Assert.IsTrue(bits.fastGet(bit));
-		bits.fastClear(bit);
-		Assert.IsFalse(bits.fastGet(bit));
-		bits.fastFlip(bit);
-		Assert.IsTrue(bits.fastGet(bit));
-		bits.ensureCapacityWords(2); // should not change numBits nor grow the array
-		bits.fastSet(3);
-		Assert.IsTrue(bits.fastGet(3));
-		bits.fastSet(bit - 1);
-		Assert.IsTrue(bits.fastGet(bit - 1));
+		int numWords = Random().Next(10) + 2; // make sure we grow the array (at least 128 bits)
+		bits.EnsureCapacityWords(numWords);
+		bit = TestUtil.NextInt(Random(), 127, (numWords << 6) - 1); // pick a bit >= to 128, but still within range
+		bits.FastSet(bit);
+		Assert.IsTrue(bits.FastGet(bit));
+		bits.FastClear(bit);
+		Assert.IsFalse(bits.FastGet(bit));
+		bits.FastFlip(bit);
+		Assert.IsTrue(bits.FastGet(bit));
+		bits.EnsureCapacityWords(2); // should not change numBits nor grow the array
+		bits.FastSet(3);
+		Assert.IsTrue(bits.FastGet(3));
+		bits.FastSet(bit - 1);
+		Assert.IsTrue(bits.FastGet(bit - 1));
 	  }
 
 	}

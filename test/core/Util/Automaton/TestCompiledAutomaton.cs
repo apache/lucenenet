@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Automaton
 		  terms.Add(new BytesRef(s));
 		}
 		terms.Sort();
-		Automaton a = DaciukMihovAutomatonBuilder.build(terms);
+		Automaton a = DaciukMihovAutomatonBuilder.Build(terms);
 		return new CompiledAutomaton(a, true, false);
 	  }
 
@@ -44,12 +44,12 @@ namespace Lucene.Net.Util.Automaton
 		BytesRef result = c.floor(b, b);
 		if (expected == null)
 		{
-		  assertNull(result);
+		  Assert.IsNull(result);
 		}
 		else
 		{
 		  Assert.IsNotNull(result);
-		  Assert.AreEqual("actual=" + result.utf8ToString() + " vs expected=" + expected + " (input=" + input + ")", result, new BytesRef(expected));
+		  Assert.AreEqual("actual=" + result.Utf8ToString() + " vs expected=" + expected + " (input=" + input + ")", result, new BytesRef(expected));
 		}
 	  }
 
@@ -68,14 +68,14 @@ namespace Lucene.Net.Util.Automaton
 		  Console.WriteLine("\nTEST: terms in unicode order");
 		  foreach (BytesRef t in termBytes)
 		  {
-			Console.WriteLine("  " + t.utf8ToString());
+			Console.WriteLine("  " + t.Utf8ToString());
 		  }
 		  //System.out.println(c.utf8.toDot());
 		}
 
 		for (int iter = 0;iter < 100 * RANDOM_MULTIPLIER;iter++)
 		{
-		  string s = random().Next(10) == 1 ? terms[random().Next(terms.Length)] : RandomString();
+		  string s = Random().Next(10) == 1 ? terms[Random().Next(terms.Length)] : RandomString();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("\nTEST: floor(" + s + ")");
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util.Automaton
 			}
 			else
 			{
-			  expected = termBytes[loc - 1].utf8ToString();
+			  expected = termBytes[loc - 1].Utf8ToString();
 			}
 		  }
 		  if (VERBOSE)
@@ -109,19 +109,19 @@ namespace Lucene.Net.Util.Automaton
 
 	  public virtual void TestRandom()
 	  {
-		int numTerms = atLeast(400);
+		int numTerms = AtLeast(400);
 		Set<string> terms = new HashSet<string>();
-		while (terms.size() != numTerms)
+		while (terms.Size() != numTerms)
 		{
-		  terms.add(RandomString());
+		  terms.Add(RandomString());
 		}
-		TestTerms(terms.toArray(new string[terms.size()]));
+		TestTerms(terms.toArray(new string[terms.Size()]));
 	  }
 
 	  private string RandomString()
 	  {
 		// return TestUtil.randomSimpleString(random);
-		return TestUtil.randomRealisticUnicodeString(random());
+		return TestUtil.RandomRealisticUnicodeString(Random());
 	  }
 
 	  public virtual void TestBasic()

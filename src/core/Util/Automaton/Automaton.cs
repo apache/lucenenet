@@ -253,6 +253,8 @@ namespace Lucene.Net.Util.Automaton
 			ExpandSingleton();
 			return Initial;
 		  }
+
+	      set { Initial = value; }
 	  }
 
 	  /// <summary>
@@ -454,8 +456,6 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public virtual void Reduce()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] states = getNumberedStates();
 		State[] states = NumberedStates;
 		if (IsSingleton)
 		{
@@ -470,7 +470,7 @@ namespace Lucene.Net.Util.Automaton
 	  /// <summary>
 	  /// Returns sorted array of all interval start points.
 	  /// </summary>
-	  internal virtual int[] StartPoints
+	  public virtual int[] StartPoints
 	  {
 		  get
 		  {

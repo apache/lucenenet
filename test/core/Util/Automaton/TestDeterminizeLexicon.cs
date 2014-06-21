@@ -33,14 +33,14 @@ namespace Lucene.Net.Util.Automaton
 
 	  public virtual void TestLexicon()
 	  {
-		int num = atLeast(1);
+		int num = AtLeast(1);
 		for (int i = 0; i < num; i++)
 		{
 		  Automata.Clear();
 		  Terms.Clear();
 		  for (int j = 0; j < 5000; j++)
 		  {
-			string randomString = TestUtil.randomUnicodeString(random());
+			string randomString = TestUtil.RandomUnicodeString(Random());
 			Terms.Add(randomString);
 			Automata.Add(BasicAutomata.makeString(randomString));
 		  }
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  public virtual void AssertLexicon()
 	  {
-		Collections.shuffle(Automata, random());
+		Collections.shuffle(Automata, Random());
 		Automaton lex = BasicOperations.union(Automata);
 		lex.determinize();
 		Assert.IsTrue(SpecialOperations.isFinite(lex));

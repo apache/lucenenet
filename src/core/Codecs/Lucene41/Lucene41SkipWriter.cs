@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		this.FieldHasPayloads = fieldHasPayloads;
 	  }
 
-	  protected internal override void ResetSkip()
+	  public override void ResetSkip()
 	  {
 		base.ResetSkip();
 		CollectionsHelper.Fill(LastSkipDoc, 0);

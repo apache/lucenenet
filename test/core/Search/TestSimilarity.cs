@@ -37,7 +37,8 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class TestSimilarity : LuceneTestCase
+	[TestFixture]
+    public class TestSimilarity : LuceneTestCase
 	{
 
 	  public class SimpleSimilarity : DefaultSimilarity
@@ -72,7 +73,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestSimilarity()
+      [Test]
+      public virtual void TestSimilarity_Mem()
 	  {
 		Directory store = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetSimilarity(new SimpleSimilarity()));

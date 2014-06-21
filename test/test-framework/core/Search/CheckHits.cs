@@ -106,14 +106,14 @@ namespace Lucene.Net.Search
 		Collector c = new SetCollector(actual);
 
 		searcher.Search(query, c);
-		Assert.AreEqual("Simple: " + query.ToString(defaultFieldName), correct, actual);
+		Assert.AreEqual(correct, actual, "Simple: " + query.ToString(defaultFieldName));
 
 		for (int i = -1; i < 2; i++)
 		{
 		  actual.Clear();
 		  IndexSearcher s = QueryUtils.WrapUnderlyingReader(random, searcher, i);
 		  s.Search(query, c);
-		  Assert.AreEqual("Wrap Reader " + i + ": " + query.ToString(defaultFieldName), correct, actual);
+		  Assert.AreEqual(correct, actual, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
 		}
 	  }
 
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 	  /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
 	  /// <param name="results"> a list of documentIds that must match the query </param>
 	  /// <seealso cref= #checkHitCollector </seealso>
-	  public static void CheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
+	  public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
 	  {
 
 		ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
 	  public static void VerifyExplanation(string q, int doc, float score, bool deep, Explanation expl)
 	  {
 		float value = expl.Value;
-		Assert.AreEqual(q + ": score(doc=" + doc + ")=" + score + " != explanationScore=" + value + " Explanation: " + expl, score,value,ExplainToleranceDelta(score, value));
+		Assert.AreEqual(score,value,ExplainToleranceDelta(score, value), q + ": score(doc=" + doc + ")=" + score + " != explanationScore=" + value + " Explanation: " + expl);
 
 		if (!deep)
 		{
@@ -433,7 +433,7 @@ namespace Lucene.Net.Search
 			{
 				Assert.IsTrue(false, "should never get here!");
 			}
-			Assert.AreEqual(q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl, combined,value,ExplainToleranceDelta(combined, value));
+			Assert.AreEqual(combined,value,ExplainToleranceDelta(combined, value), q + ": actual subDetails combined==" + combined + " != value=" + value + " Explanation: " + expl);
 		  }
 		}
 	  }

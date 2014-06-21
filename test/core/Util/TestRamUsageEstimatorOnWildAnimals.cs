@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -17,8 +19,6 @@ namespace Lucene.Net.Util
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-	using Assert = org.junit.Assert;
 
 	/// <summary>
 	/// Check large and special graphs. 
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
 			{
 			  last = (last.Next = new ListElement());
 			}
-			RamUsageEstimator.sizeOf(first); // cause SOE or pass.
+			RamUsageEstimator.SizeOf(first); // cause SOE or pass.
 			lower = mid;
 		  }
 		  catch (StackOverflowError e)
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
 
 		if (lower + 1 < UPPERLIMIT)
 		{
-		  Assert.Assert.Fail("Max object chain length till stack overflow: " + lower);
+		  Assert.Fail("Max object chain length till stack overflow: " + lower);
 		}
 	  }
 	}

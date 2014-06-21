@@ -36,6 +36,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestConjunctions : LuceneTestCase
 	{
 	  internal Analyzer Analyzer;
@@ -46,6 +47,7 @@ namespace Lucene.Net.Search
 	  internal const string F1 = "title";
 	  internal const string F2 = "body";
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -71,7 +73,8 @@ namespace Lucene.Net.Search
 		return doc;
 	  }
 
-	  public virtual void TestTermConjunctionsWithOmitTF()
+      [Test]
+      public virtual void TestTermConjunctionsWithOmitTF()
 	  {
 		BooleanQuery bq = new BooleanQuery();
 		bq.Add(new TermQuery(new Term(F1, "nutch")), BooleanClause.Occur_e.MUST);
@@ -81,6 +84,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(3F, td.ScoreDocs[0].Score, 0.001F); // f1:nutch + f2:is + f2:is
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -124,7 +128,7 @@ namespace Lucene.Net.Search
 			}
 		}
 
-		public override SimScorer SimScorer(SimWeight weight, AtomicReaderContext context)
+		public override SimScorer DoSimScorer(SimWeight weight, AtomicReaderContext context)
 		{
 		  return new SimScorerAnonymousInnerClassHelper(this);
 		}

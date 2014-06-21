@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -313,7 +314,7 @@ namespace Lucene.Net.Index
 		IndexWriter w = new IndexWriter(dir, iwc);
 		Document doc = new Document();
 		doc.Add(NewField("field", "field", TextField.TYPE_NOT_STORED));
-		while (enoughMergesWaiting.Count != 0 && !failed.Get())
+		while (enoughMergesWaiting.Remaining != 0 && !failed.Get())
 		{
 		  for (int i = 0;i < 10;i++)
 		  {
@@ -343,7 +344,7 @@ namespace Lucene.Net.Index
 		  }
 
 
-		  protected internal override void DoMerge(MergePolicy.OneMerge merge)
+		  protected override void DoMerge(MergePolicy.OneMerge merge)
 		  {
 			try
 			{
@@ -393,7 +394,7 @@ namespace Lucene.Net.Index
 		  SetMaxMergesAndThreads(5, 5);
 		}
 
-		public override void DoMerge(MergePolicy.OneMerge merge)
+		protected override void DoMerge(MergePolicy.OneMerge merge)
 		{
 		  TotMergedBytes += merge.TotalBytesSize();
 		  base.DoMerge(merge);

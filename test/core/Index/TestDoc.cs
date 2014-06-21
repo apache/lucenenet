@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -45,9 +46,9 @@ namespace Lucene.Net.Index
 	public class TestDoc : LuceneTestCase
 	{
 
-		private File WorkDir;
-		private File IndexDir;
-		private LinkedList<File> Files;
+		private DirectoryInfo WorkDir;
+        private DirectoryInfo IndexDir;
+		private LinkedList<FileInfo> Files;
 
 		/// <summary>
 		/// Set the test case. this test case needs
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
 			Directory directory = NewFSDirectory(IndexDir);
 			directory.Dispose();
 
-			Files = new LinkedList<>();
+			Files = new LinkedList<FileInfo>();
 			Files.AddLast(CreateOutput("test.txt", "this is the first test file"));
 
 			Files.AddLast(CreateOutput("test2.txt", "this is the second test file"));
@@ -196,7 +197,7 @@ namespace Lucene.Net.Index
 
 	   private SegmentCommitInfo IndexDoc(IndexWriter writer, string fileName)
 	   {
-		  File file = new File(WorkDir, fileName);
+		  FileInfo file = new FileInfo(WorkDir, fileName);
 		  Document doc = new Document();
 		  InputStreamReader @is = new InputStreamReader(new FileInputStream(file), IOUtils.CHARSET_UTF_8);
 		  doc.Add(new TextField("contents", @is));

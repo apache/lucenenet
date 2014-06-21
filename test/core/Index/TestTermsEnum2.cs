@@ -34,7 +34,6 @@ namespace Lucene.Net.Index
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using Lucene.Net.Util.Automaton;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;

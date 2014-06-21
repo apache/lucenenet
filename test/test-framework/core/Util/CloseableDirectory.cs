@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
 	/// <summary>
 	/// Attempts to close a <seealso cref="BaseDirectoryWrapper"/>.
 	/// </summary>
-	/// <seealso cref= LuceneTestCase#newDirectory(java.util.Random) </seealso>
+	/// <seealso> cref= LuceneTestCase#newDirectory(java.util.Random) </seealso>
 	internal sealed class IDisposableDirectory : IDisposable
 	{
 	  private readonly BaseDirectoryWrapper Dir;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
 		this.FailureMarker = failureMarker;
 	  }
 
-	  public override void Close()
+	  public void Dispose()
 	  {
 		// We only attempt to check open/closed state if there were no other test
 		// failures.

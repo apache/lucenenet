@@ -34,6 +34,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestMultiTermConstantScore : BaseTestRangeFilter
 	{
 
@@ -46,12 +47,13 @@ namespace Lucene.Net.Search
 
 	  public static void AssertEquals(string m, int e, int a)
 	  {
-		Assert.AreEqual(m, e, a);
+		Assert.AreEqual(e, a, m);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		string[] data = new string[] {"A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6"};
 
@@ -78,7 +80,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Reader.Dispose();
 		Small.Dispose();
@@ -130,7 +133,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBasics() throws java.io.IOException
-	  public virtual void TestBasics()
+      [Test]
+      public virtual void TestBasics()
 	  {
 		QueryUtils.Check(Csrq("data", "1", "6", T, T));
 		QueryUtils.Check(Csrq("data", "A", "Z", T, T));
@@ -145,7 +149,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testEqualScores() throws java.io.IOException
-	  public virtual void TestEqualScores()
+      [Test]
+      public virtual void TestEqualScores()
 	  {
 		// NOTE: uses index build in *this* setUp
 
@@ -183,7 +188,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testEqualScoresWhenNoHits() throws java.io.IOException
-	  public virtual void TestEqualScoresWhenNoHits() // Test for LUCENE-5245: Empty MTQ rewrites should have a consistent norm, so always need to return a CSQ!
+      [Test]
+      public virtual void TestEqualScoresWhenNoHits() // Test for LUCENE-5245: Empty MTQ rewrites should have a consistent norm, so always need to return a CSQ!
 	  {
 		// NOTE: uses index build in *this* setUp
 
@@ -230,7 +236,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBoost() throws java.io.IOException
-	  public virtual void TestBoost()
+      [Test]
+      public virtual void TestBoost()
 	  {
 		// NOTE: uses index build in *this* setUp
 
@@ -323,7 +330,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBooleanOrderUnAffected() throws java.io.IOException
-	  public virtual void TestBooleanOrderUnAffected()
+      [Test]
+      public virtual void TestBooleanOrderUnAffected()
 	  {
 		// NOTE: uses index build in *this* setUp
 
@@ -355,7 +363,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeQueryId() throws java.io.IOException
-	  public virtual void TestRangeQueryId()
+      [Test]
+      public virtual void TestRangeQueryId()
 	  {
 		// NOTE: uses index build in *super* setUp
 
@@ -490,7 +499,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeQueryRand() throws java.io.IOException
-	  public virtual void TestRangeQueryRand()
+      [Test]
+      public virtual void TestRangeQueryRand()
 	  {
 		// NOTE: uses index build in *super* setUp
 

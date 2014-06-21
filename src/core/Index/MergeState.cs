@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 		  return Build(maxDoc, liveDocs);
 		}
 
-		internal static DocMap Build(int maxDoc, Bits liveDocs)
+		public static DocMap Build(int maxDoc, Bits liveDocs)
 		{
 		  Debug.Assert(liveDocs != null);
 		  MonotonicAppendingLongBuffer docMap = new MonotonicAppendingLongBuffer();
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
 		/// If you use this: IW.close(false) cannot abort your merge!
 		/// @lucene.internal 
 		/// </summary>
-		internal static readonly MergeState.CheckAbort NONE = new CheckAbortAnonymousInnerClassHelper();
+		public static readonly MergeState.CheckAbort NONE = new CheckAbortAnonymousInnerClassHelper();
 
 		private class CheckAbortAnonymousInnerClassHelper : MergeState.CheckAbort
 		{

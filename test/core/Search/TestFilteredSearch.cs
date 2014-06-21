@@ -37,13 +37,14 @@ namespace Lucene.Net.Search
 
 
 
-	/// 
+	[TestFixture]
 	public class TestFilteredSearch : LuceneTestCase
 	{
 
 	  private const string FIELD = "category";
 
-	  public virtual void TestFilteredSearch()
+      [Test]
+      public virtual void TestFilteredSearch_Mem()
 	  {
 		bool enforceSingleSegment = true;
 		Directory directory = NewDirectory();

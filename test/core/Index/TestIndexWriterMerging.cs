@@ -311,14 +311,14 @@ namespace Lucene.Net.Index
 				}
 				for (int i = 0;i < merge.Segments.Count;i++)
 				{
-				  Debug.Assert(merge.Segments[i].info.DocCount < 20);
+				  Debug.Assert(merge.Segments[i].Info.DocCount < 20);
 				}
 				writer.Merge(merge);
 			  }
 			}
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		}
 	  }

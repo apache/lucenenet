@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	using BytesStartArray = Lucene.Net.Util.BytesRefHash.BytesStartArray;
 	using MaxBytesLengthExceededException = Lucene.Net.Util.BytesRefHash.MaxBytesLengthExceededException;
 
-	internal sealed class TermsHashPerField : InvertedDocConsumerPerField
+    public sealed class TermsHashPerField : InvertedDocConsumerPerField
 	{
 	  private const int HASH_INIT_SIZE = 4;
 

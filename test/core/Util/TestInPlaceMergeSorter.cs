@@ -18,9 +18,9 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-	using RunWith = org.junit.runner.RunWith;
+	/*using RunWith = org.junit.runner.RunWith;
 
-	using RandomizedRunner = com.carrotsearch.randomizedtesting.RandomizedRunner;
+	using RandomizedRunner = com.carrotsearch.randomizedtesting.RandomizedRunner;*/
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @RunWith(RandomizedRunner.class) public class TestInPlaceMergeSorter extends BaseSortTestCase
@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
 
 	  public override Sorter NewSorter(Entry[] arr)
 	  {
-		return new ArrayInPlaceMergeSorter<>(arr, ArrayUtil.naturalComparator<Entry>());
+		return new ArrayInPlaceMergeSorter<Entry>(arr, ArrayUtil.naturalComparator<Entry>());
 	  }
 
 	}

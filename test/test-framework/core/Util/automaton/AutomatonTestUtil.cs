@@ -242,15 +242,15 @@ namespace Lucene.Net.Util.Automaton
 			for (int i = 0;i < s.numTransitions;i++)
 			{
 			  Transition t = s.TransitionsArray[i];
-			  IList<ArrivingTransition> tl = allArriving[t.To];
+			  IList<ArrivingTransition> tl = allArriving[t.Dest];
 			  if (tl == null)
 			  {
 				tl = new List<ArrivingTransition>();
-				allArriving[t.To] = tl;
+                allArriving[t.Dest] = tl;
 			  }
 			  tl.Add(new ArrivingTransition(s, t));
 			}
-			if (s.accept)
+			if (s.Accept)
 			{
 			  q.AddLast(s);
 			  seen.Add(s);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Util.Automaton
           if (!String.IsNullOrEmpty(a.Singleton))
 		  {
 			// accepts only one
-			string s = a.singleton;
+			string s = a.Singleton;
 
 			int charUpto = 0;
 			while (charUpto < s.Length)
@@ -300,12 +300,12 @@ namespace Lucene.Net.Util.Automaton
 		  else
 		  {
 
-			State s = a.Initial;
+			State s = a.InitialState;
 
 			while (true)
 			{
 
-			  if (s.accept)
+			  if (s.Accept)
 			  {
 				if (s.numTransitions == 0)
 				{
@@ -357,7 +357,7 @@ namespace Lucene.Net.Util.Automaton
                   t = s.TransitionsArray[r.Next(s.numTransitions)];
 			  }
 			  soFar.Add(GetRandomCodePoint(r, t));
-			  s = t.To;
+			  s = t.Dest;
 			}
 		  }
 
@@ -448,12 +448,12 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public static void DeterminizeSimple(Automaton a)
 	  {
-		if (a.deterministic || a.Singleton)
+		if (a.Deterministic || a.Singleton != null)
 		{
 		  return;
 		}
 		HashSet<State> initialset = new HashSet<State>();
-		initialset.Add(a.Initial);
+		initialset.Add(a.InitialState);
 		DeterminizeSimple(a, initialset);
 	  }
 
@@ -470,8 +470,8 @@ namespace Lucene.Net.Util.Automaton
         IDictionary<ISet<State>, State> newstate = new Dictionary<ISet<State>, State>();
 		sets[initialset] = initialset;
 		worklist.AddLast(initialset);
-		a.Initial = new State();
-		newstate[initialset] = a.Initial;
+		a.InitialState = new State();
+        newstate[initialset] = a.InitialState;
 		while (worklist.Count > 0)
 		{
           ISet<State> s = worklist.First.Value;
@@ -479,9 +479,9 @@ namespace Lucene.Net.Util.Automaton
 		  State r = newstate[s];
 		  foreach (State q in s)
 		  {
-			if (q.accept)
+			if (q.Accept)
 			{
-			  r.accept = true;
+			  r.Accept = true;
 			  break;
 			}
 		  }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Util.Automaton
 			  {
 				if (t.Min <= points[n] && points[n] <= t.Max)
 				{
-				  p.Add(t.To);
+				  p.Add(t.Dest);
 				}
 			  }
 			}
@@ -518,7 +518,7 @@ namespace Lucene.Net.Util.Automaton
 			r.AddTransition(new Transition(min, max, q_));
 		  }
 		}
-		a.deterministic = true;
+		a.Deterministic = true;
 		a.ClearNumberedStates();
 		a.RemoveDeadTransitions();
 	  }
@@ -535,7 +535,7 @@ namespace Lucene.Net.Util.Automaton
 		{
 			return true;
 		}
-		return IsFiniteSlow(a.Initial, new HashSet<State>());
+		return IsFiniteSlow(a.InitialState, new HashSet<State>());
 	  }
 
 	  /// <summary>
@@ -549,7 +549,7 @@ namespace Lucene.Net.Util.Automaton
 		path.Add(s);
 		foreach (Transition t in s.Transitions)
 		{
-		  if (path.Contains(t.To) || !IsFiniteSlow(t.To, path))
+		  if (path.Contains(t.Dest) || !IsFiniteSlow(t.Dest, path))
 		  {
 			  return false;
 		  }

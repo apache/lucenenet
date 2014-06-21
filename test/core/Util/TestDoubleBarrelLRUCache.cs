@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
 
@@ -30,39 +32,39 @@ namespace Lucene.Net.Util
 
 		for (int i = 0; i < n; i++)
 		{
-		  cache.put(new CloneableInteger(i), dummy);
+		  cache.Put(new CloneableInteger(i), dummy);
 		}
 
 		// access every 2nd item in cache
 		for (int i = 0; i < n; i += 2)
 		{
-		  Assert.IsNotNull(cache.get(new CloneableInteger(i)));
+		  Assert.IsNotNull(cache.Get(new CloneableInteger(i)));
 		}
 
 		// add n/2 elements to cache, the ones that weren't
 		// touched in the previous loop should now be thrown away
 		for (int i = n; i < n + (n / 2); i++)
 		{
-		  cache.put(new CloneableInteger(i), dummy);
+            cache.Put(new CloneableInteger(i), dummy);
 		}
 
 		// access every 4th item in cache
 		for (int i = 0; i < n; i += 4)
 		{
-		  Assert.IsNotNull(cache.get(new CloneableInteger(i)));
+		  Assert.IsNotNull(cache.Get(new CloneableInteger(i)));
 		}
 
 		// add 3/4n elements to cache, the ones that weren't
 		// touched in the previous loops should now be thrown away
 		for (int i = n; i < n + (n * 3 / 4); i++)
 		{
-		  cache.put(new CloneableInteger(i), dummy);
+            cache.Put(new CloneableInteger(i), dummy);
 		}
 
 		// access every 4th item in cache
 		for (int i = 0; i < n; i += 4)
 		{
-		  Assert.IsNotNull(cache.get(new CloneableInteger(i)));
+		  Assert.IsNotNull(cache.Get(new CloneableInteger(i)));
 		}
 	  }
 
@@ -72,7 +74,7 @@ namespace Lucene.Net.Util
 		TestCache(new DoubleBarrelLRUCache<CloneableInteger, object>(n), n);
 	  }
 
-	  private class CacheThread : System.Threading.Thread
+	  private class CacheThread : ThreadClass
 	  {
 		  private readonly TestDoubleBarrelLRUCache OuterInstance;
 
@@ -101,10 +103,10 @@ namespace Lucene.Net.Util
 			while (true)
 			{
 			  CloneableObject obj = Objs[(int)((count / 2) % limit)];
-			  object v = c.get(obj);
+			  object v = c.Get(obj);
 			  if (v == null)
 			  {
-				c.put(new CloneableObject(obj), obj);
+				c.Put(new CloneableObject(obj), obj);
 				miss++;
 			  }
 			  else
@@ -114,19 +116,19 @@ namespace Lucene.Net.Util
 			  }
 			  if ((++count % 10000) == 0)
 			  {
-				if (System.currentTimeMillis() >= EndTime)
+				if (DateTime.Now.Millisecond >= EndTime)
 				{
 				  break;
 				}
 			  }
 			}
 
-			outerInstance.AddResults(miss, hit);
+			OuterInstance.AddResults(miss, hit);
 		  }
 		  catch (Exception t)
 		  {
 			Failed = true;
-			throw new Exception(t);
+			throw new Exception(t.Message, t);
 		  }
 		}
 	  }
@@ -153,7 +155,7 @@ namespace Lucene.Net.Util
 		}
 
 		CacheThread[] threads = new CacheThread[NUM_THREADS];
-		long endTime = System.currentTimeMillis() + 1000L;
+		long endTime = DateTime.Now.Millisecond + 1000L;
 		for (int i = 0;i < NUM_THREADS;i++)
 		{
 		  threads[i] = new CacheThread(this, c, objs, endTime);
@@ -181,12 +183,12 @@ namespace Lucene.Net.Util
 		  return this.Value.Equals(((CloneableObject) other).Value);
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return Value.GetHashCode();
 		}
 
-		public override CloneableObject Clone()
+		public override DoubleBarrelLRUCache.CloneableKey Clone()
 		{
 		  return new CloneableObject(Value);
 		}
@@ -206,12 +208,12 @@ namespace Lucene.Net.Util
 		  return this.Value.Equals(((CloneableInteger) other).Value);
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return Value.GetHashCode();
 		}
 
-		public override CloneableInteger Clone()
+        public override DoubleBarrelLRUCache.CloneableKey Clone()
 		{
 		  return new CloneableInteger(Value);
 		}

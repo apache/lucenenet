@@ -37,7 +37,7 @@ namespace Lucene.Net.Util.junitcompat
 		internal static File File;
 		public virtual void TestDummy()
 		{
-		  File = createTempDir("leftover");
+		  File = CreateTempDir("leftover");
 		  Assert.Fail();
 		}
 	  }
@@ -47,8 +47,8 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestLeaveFilesIfTestFails()
 	  {
 		Result r = JUnitCore.runClasses(typeof(Nested1));
-		Assert.Assert.AreEqual(1, r.FailureCount);
-		Assert.Assert.IsTrue(Nested1.File != null && Nested1.File.exists());
+		Assert.AreEqual(1, r.FailureCount);
+		Assert.IsTrue(Nested1.File != null && Nested1.File.Exists());
 		Nested1.File.delete();
 	  }
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.junitcompat
 //ORIGINAL LINE: @SuppressWarnings("deprecation") public void testDummy() throws Exception
 		public virtual void TestDummy()
 		{
-		  File = new File(createTempDir("leftover"), "child.locked");
+		  File = new File(CreateTempDir("leftover"), "child.locked");
 		  OpenFile = new RandomAccessFile(File, "rw");
 
 		  Parent = LuceneTestCase.BaseTempDirForTestClass;
@@ -77,9 +77,9 @@ namespace Lucene.Net.Util.junitcompat
 		RandomizedTest.assumeFalse(LuceneTestCase.LEAVE_TEMPORARY);
 
 		Result r = JUnitCore.runClasses(typeof(Nested2));
-		Assert.Assert.AreEqual(1, r.FailureCount);
+		Assert.AreEqual(1, r.FailureCount);
 
-		Nested2.OpenFile.close();
+		Nested2.OpenFile.Dispose();
 		TestUtil.rm(Nested2.Parent);
 	  }
 	}

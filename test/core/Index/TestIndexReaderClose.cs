@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 		  this.Count = count;
 		}
 
-		public override void OnClose(IndexReader reader)
+		public void OnClose(IndexReader reader)
 		{
 		  Count.DecrementAndGet();
 		}
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 	  private sealed class FaultyListener : IndexReader.ReaderClosedListener
 	  {
 
-		public override void OnClose(IndexReader reader)
+		public void OnClose(IndexReader reader)
 		{
 		  throw new InvalidOperationException("GRRRRRRRRRRRR!");
 		}

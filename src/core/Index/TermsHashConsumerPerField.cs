@@ -24,8 +24,7 @@ namespace Lucene.Net.Index
 	///  table and provides an API for writing bytes into
 	///  multiple streams for each unique Token. 
 	/// </summary>
-
-	internal abstract class TermsHashConsumerPerField
+	public abstract class TermsHashConsumerPerField
 	{
 	  internal abstract bool Start(IndexableField[] fields, int count);
 	  internal abstract void Finish();

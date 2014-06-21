@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -81,11 +82,11 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(uniqueValues, bd1.Terms.Keys);
 		Assert.AreEqual(uniqueValues, bd2.Terms.Keys);
 		HashSet<Term> frozenSet = new HashSet<Term>();
-		foreach (Term t in queue.FreezeGlobalBuffer(null).termsIterable())
+		foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
 		{
 		  BytesRef bytesRef = new BytesRef();
-		  bytesRef.CopyBytes(t.Bytes);
-		  frozenSet.Add(new Term(t.Field, bytesRef));
+		  bytesRef.CopyBytes(t.Bytes());
+		  frozenSet.Add(new Term(t.Field(), bytesRef));
 		}
 		Assert.AreEqual(uniqueValues, frozenSet);
 		Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
@@ -95,7 +96,7 @@ namespace Lucene.Net.Index
 	  {
 		for (int i = start; i <= end; i++)
 		{
-		  Assert.AreEqual(Convert.ToInt32(end), deletes.Terms.Get(new Term("id", ids[i].ToString())));
+		  Assert.AreEqual(Convert.ToInt32(end), deletes.Terms[new Term("id", ids[i].ToString())]);
 		}
 	  }
 
@@ -238,14 +239,14 @@ namespace Lucene.Net.Index
 		}
 		queue.TryApplyGlobalSlice();
 		HashSet<Term> frozenSet = new HashSet<Term>();
-		foreach (Term t in queue.FreezeGlobalBuffer(null).termsIterable())
+		foreach (Term t in queue.FreezeGlobalBuffer(null).TermsIterable())
 		{
 		  BytesRef bytesRef = new BytesRef();
-		  bytesRef.CopyBytes(t.Bytes);
-		  frozenSet.Add(new Term(t.Field, bytesRef));
+		  bytesRef.CopyBytes(t.Bytes());
+		  frozenSet.Add(new Term(t.Field(), bytesRef));
 		}
 		Assert.AreEqual(0, queue.NumGlobalTermDeletes(), "num deletes must be 0 after freeze");
-		Assert.AreEqual(uniqueValues.Size(), frozenSet.Size());
+		Assert.AreEqual(uniqueValues.Count, frozenSet.Count);
 		Assert.AreEqual(uniqueValues, frozenSet);
 
 	  }

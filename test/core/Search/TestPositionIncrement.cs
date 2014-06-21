@@ -54,12 +54,14 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class TestPositionIncrement : LuceneTestCase
+	[TestFixture]
+    public class TestPositionIncrement : LuceneTestCase
 	{
 
 	  internal const bool VERBOSE = false;
 
-	  public virtual void TestSetPosition()
+      [Test]
+      public virtual void TestSetPosition()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 		Directory store = NewDirectory();
@@ -177,7 +179,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-          public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+          protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(this, reader));
 		  }
@@ -190,8 +192,8 @@ namespace Lucene.Net.Search
                   : base(reader)
 			  {
 				  this.OuterInstance = outerInstance;
-				  TOKENS = {"1", "2", "3", "4", "5"};
-				  INCREMENTS = {1, 2, 1, 0, 1};
+				  TOKENS = new string[]{"1", "2", "3", "4", "5"};
+				  INCREMENTS = new int[]{1, 2, 1, 0, 1};
 				  i = 0;
 				  posIncrAtt = AddAttribute<PositionIncrementAttribute>();
 				  termAtt = AddAttribute<CharTermAttribute>();
@@ -229,7 +231,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestPayloadsPos0()
+      [Test]
+      public virtual void TestPayloadsPos0()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, new MockPayloadAnalyzer());
@@ -267,7 +270,7 @@ namespace Lucene.Net.Search
 		{
 		  Console.WriteLine("\ngetPayloadSpans test");
 		}
-		Spans pspans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
+		Search.Spans.Spans pspans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 		while (pspans.Next())
 		{
 		  if (VERBOSE)
@@ -289,7 +292,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(5, count);
 
 		// System.out.println("\ngetSpans test");
-		Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
+        Search.Spans.Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 		count = 0;
 		sawZero = false;
 		while (spans.Next())

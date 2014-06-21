@@ -113,8 +113,6 @@ namespace Lucene.Net.Index
 		SegDocValues = new SegmentDocValues();
 
 		bool success = false;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.Codec codec = si.info.getCodec();
 		Codec codec = si.Info.Codec;
 		try
 		{
@@ -181,8 +179,6 @@ namespace Lucene.Net.Index
 		bool success = false;
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Codecs.Codec codec = si.info.getCodec();
 		  Codec codec = si.Info.Codec;
 		  if (si.FieldInfosGen == -1)
 		  {
@@ -239,13 +235,9 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// @lucene.internal
 	  /// </summary>
-	  internal static FieldInfos ReadFieldInfos(SegmentCommitInfo info)
+	  public static FieldInfos ReadFieldInfos(SegmentCommitInfo info)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Store.Directory dir;
 		Directory dir;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean closeDir;
 		bool closeDir;
 		if (info.FieldInfosGen == -1 && info.Info.UseCompoundFile)
 		{
@@ -262,8 +254,6 @@ namespace Lucene.Net.Index
 
 		try
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final String segmentSuffix = info.getFieldInfosGen() == -1 ? "" : Long.toString(info.getFieldInfosGen(), Character.MAX_RADIX);
 		  string segmentSuffix = info.FieldInfosGen == -1 ? "" : Convert.ToString(info.FieldInfosGen, Character.MAX_RADIX);
 		  return info.Info.Codec.FieldInfosFormat().FieldInfosReader.Read(dir, info.Info.Name, segmentSuffix, IOContext.READONCE);
 		}
@@ -281,8 +271,6 @@ namespace Lucene.Net.Index
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final java.util.Map<Long,java.util.List<FieldInfo>> genInfos = new java.util.HashMap<>();
 			IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
 			foreach (FieldInfo fi in FieldInfos_Renamed)
 			{

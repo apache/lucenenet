@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
 	  // see Constants.LUCENE_MAIN_VERSION.
 	  private string Version_Renamed;
 
-	  internal IDictionary<string, string> Diagnostics
+	  public IDictionary<string, string> Diagnostics
 	  {
 		  set
 		  {
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  /// <param name="isCompoundFile"> true if this is a compound file;
 	  /// else, false </param>
-	  internal bool UseCompoundFile
+	  public bool UseCompoundFile
 	  {
 		  set
 		  {

@@ -3,6 +3,7 @@ namespace Lucene.Net.Search
 
 	using Term = Lucene.Net.Index.Term;
 	using Occur = Lucene.Net.Search.BooleanClause.Occur_e;
+    using NUnit.Framework;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +25,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Basic equivalence tests for core queries
 	/// </summary>
-	public class TestSimpleSearchEquivalence : SearchEquivalenceTestBase
+	[TestFixture]
+    public class TestSimpleSearchEquivalence : SearchEquivalenceTestBase
 	{
 
 	  // TODO: we could go a little crazy for a lot of these,
@@ -33,109 +35,117 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// A ⊆ (A B) </summary>
-	  public virtual void TestTermVersusBooleanOr()
+      [Test]
+      public virtual void TestTermVersusBooleanOr()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		TermQuery q1 = new TermQuery(t1);
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.SHOULD);
 		q2.Add(new TermQuery(t2), Occur.SHOULD);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// A ⊆ (+A B) </summary>
-	  public virtual void TestTermVersusBooleanReqOpt()
+      [Test]
+      public virtual void TestTermVersusBooleanReqOpt()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		TermQuery q1 = new TermQuery(t1);
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.MUST);
 		q2.Add(new TermQuery(t2), Occur.SHOULD);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// (A -B) ⊆ A </summary>
-	  public virtual void TestBooleanReqExclVersusTerm()
+      [Test]
+      public virtual void TestBooleanReqExclVersusTerm()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		BooleanQuery q1 = new BooleanQuery();
 		q1.Add(new TermQuery(t1), Occur.MUST);
 		q1.Add(new TermQuery(t2), Occur.MUST_NOT);
 		TermQuery q2 = new TermQuery(t1);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// (+A +B) ⊆ (A B) </summary>
-	  public virtual void TestBooleanAndVersusBooleanOr()
+      [Test]
+      public virtual void TestBooleanAndVersusBooleanOr()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		BooleanQuery q1 = new BooleanQuery();
 		q1.Add(new TermQuery(t1), Occur.SHOULD);
 		q1.Add(new TermQuery(t2), Occur.SHOULD);
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.SHOULD);
 		q2.Add(new TermQuery(t2), Occur.SHOULD);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// (A B) = (A | B) </summary>
-	  public virtual void TestDisjunctionSumVersusDisjunctionMax()
+      [Test]
+      public virtual void TestDisjunctionSumVersusDisjunctionMax()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		BooleanQuery q1 = new BooleanQuery();
 		q1.Add(new TermQuery(t1), Occur.SHOULD);
 		q1.Add(new TermQuery(t2), Occur.SHOULD);
 		DisjunctionMaxQuery q2 = new DisjunctionMaxQuery(0.5f);
 		q2.Add(new TermQuery(t1));
 		q2.Add(new TermQuery(t2));
-		assertSameSet(q1, q2);
+		AssertSameSet(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// "A B" ⊆ (+A +B) </summary>
-	  public virtual void TestExactPhraseVersusBooleanAnd()
+      [Test]
+      public virtual void TestExactPhraseVersusBooleanAnd()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2);
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.MUST);
 		q2.Add(new TermQuery(t2), Occur.MUST);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// same as above, with posincs </summary>
-	  public virtual void TestExactPhraseVersusBooleanAndWithHoles()
+      [Test]
+      public virtual void TestExactPhraseVersusBooleanAndWithHoles()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2, 2);
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.MUST);
 		q2.Add(new TermQuery(t2), Occur.MUST);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// "A B" ⊆ "A B"~1 </summary>
-	  public virtual void TestPhraseVersusSloppyPhrase()
+      [Test]
+      public virtual void TestPhraseVersusSloppyPhrase()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2);
@@ -143,15 +153,16 @@ namespace Lucene.Net.Search
 		q2.Add(t1);
 		q2.Add(t2);
 		q2.Slop = 1;
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// same as above, with posincs </summary>
-	  public virtual void TestPhraseVersusSloppyPhraseWithHoles()
+      [Test]
+      public virtual void TestPhraseVersusSloppyPhraseWithHoles()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2, 2);
@@ -159,52 +170,55 @@ namespace Lucene.Net.Search
 		q2.Add(t1);
 		q2.Add(t2, 2);
 		q2.Slop = 1;
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// "A B" ⊆ "A (B C)" </summary>
-	  public virtual void TestExactPhraseVersusMultiPhrase()
+      [Test]
+      public virtual void TestExactPhraseVersusMultiPhrase()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2);
-		Term t3 = randomTerm();
+		Term t3 = RandomTerm();
 		MultiPhraseQuery q2 = new MultiPhraseQuery();
 		q2.Add(t1);
 		q2.Add(new Term[] {t2, t3});
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// same as above, with posincs </summary>
-	  public virtual void TestExactPhraseVersusMultiPhraseWithHoles()
+      [Test]
+      public virtual void TestExactPhraseVersusMultiPhraseWithHoles()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2, 2);
-		Term t3 = randomTerm();
+		Term t3 = RandomTerm();
 		MultiPhraseQuery q2 = new MultiPhraseQuery();
 		q2.Add(t1);
 		q2.Add(new Term[] {t2, t3}, 2);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// "A B"~∞ = +A +B if A != B </summary>
-	  public virtual void TestSloppyPhraseVersusBooleanAnd()
+      [Test]
+      public virtual void TestSloppyPhraseVersusBooleanAnd()
 	  {
-		Term t1 = randomTerm();
+		Term t1 = RandomTerm();
 		Term t2 = null;
 		// semantics differ from SpanNear: SloppyPhrase handles repeats,
 		// so we must ensure t1 != t2
 		do
 		{
-		  t2 = randomTerm();
+		  t2 = RandomTerm();
 		} while (t1.Equals(t2));
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
@@ -213,7 +227,7 @@ namespace Lucene.Net.Search
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.MUST);
 		q2.Add(new TermQuery(t2), Occur.MUST);
-		assertSameSet(q1, q2);
+		AssertSameSet(q1, q2);
 	  }
 	}
 

@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 
 		  public override TermsEnum Iterator(TermsEnum reuse)
 		  {
-			return new TestTermsEnum(base.iterator(reuse));
+			return new TestTermsEnum(base.Iterator(reuse));
 		  }
 		}
 

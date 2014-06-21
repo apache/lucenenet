@@ -1,4 +1,7 @@
 using System;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -36,58 +39,58 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestCos()
 	  {
-		Assert.IsTrue(double.IsNaN(cos(double.NaN)));
-		Assert.IsTrue(double.IsNaN(cos(double.NegativeInfinity)));
-		Assert.IsTrue(double.IsNaN(cos(double.PositiveInfinity)));
-		Assert.AreEqual(Math.Cos(1), cos(1), COS_DELTA);
-		Assert.AreEqual(Math.Cos(0), cos(0), COS_DELTA);
-		Assert.AreEqual(Math.Cos(Math.PI / 2), cos(Math.PI / 2), COS_DELTA);
-		Assert.AreEqual(Math.Cos(-Math.PI / 2), cos(-Math.PI / 2), COS_DELTA);
-		Assert.AreEqual(Math.Cos(Math.PI / 4), cos(Math.PI / 4), COS_DELTA);
-		Assert.AreEqual(Math.Cos(-Math.PI / 4), cos(-Math.PI / 4), COS_DELTA);
-		Assert.AreEqual(Math.Cos(Math.PI * 2 / 3), cos(Math.PI * 2 / 3), COS_DELTA);
-		Assert.AreEqual(Math.Cos(-Math.PI * 2 / 3), cos(-Math.PI * 2 / 3), COS_DELTA);
-		Assert.AreEqual(Math.Cos(Math.PI / 6), cos(Math.PI / 6), COS_DELTA);
-		Assert.AreEqual(Math.Cos(-Math.PI / 6), cos(-Math.PI / 6), COS_DELTA);
+		Assert.IsTrue(double.IsNaN(Math.Cos(double.NaN)));
+		Assert.IsTrue(double.IsNaN(Math.Cos(double.NegativeInfinity)));
+		Assert.IsTrue(double.IsNaN(Math.Cos(double.PositiveInfinity)));
+		Assert.AreEqual(Math.Cos(1), Math.Cos(1), COS_DELTA);
+		Assert.AreEqual(Math.Cos(0), Math.Cos(0), COS_DELTA);
+		Assert.AreEqual(Math.Cos(Math.PI / 2), Math.Cos(Math.PI / 2), COS_DELTA);
+		Assert.AreEqual(Math.Cos(-Math.PI / 2), Math.Cos(-Math.PI / 2), COS_DELTA);
+		Assert.AreEqual(Math.Cos(Math.PI / 4), Math.Cos(Math.PI / 4), COS_DELTA);
+		Assert.AreEqual(Math.Cos(-Math.PI / 4), Math.Cos(-Math.PI / 4), COS_DELTA);
+		Assert.AreEqual(Math.Cos(Math.PI * 2 / 3), Math.Cos(Math.PI * 2 / 3), COS_DELTA);
+		Assert.AreEqual(Math.Cos(-Math.PI * 2 / 3), Math.Cos(-Math.PI * 2 / 3), COS_DELTA);
+		Assert.AreEqual(Math.Cos(Math.PI / 6), Math.Cos(Math.PI / 6), COS_DELTA);
+		Assert.AreEqual(Math.Cos(-Math.PI / 6), Math.Cos(-Math.PI / 6), COS_DELTA);
 
 		// testing purely random longs is inefficent, as for stupid parameters we just 
 		// pass thru to Math.cos() instead of doing some huperduper arg reduction
 		for (int i = 0; i < 10000; i++)
 		{
-		  double d = random().NextDouble() * SloppyMath.SIN_COS_MAX_VALUE_FOR_INT_MODULO;
-		  if (random().nextBoolean())
+		  double d = Random().NextDouble() * SloppyMath.SIN_COS_MAX_VALUE_FOR_INT_MODULO;
+		  if (Random().NextBoolean())
 		  {
 			d = -d;
 		  }
-		  Assert.AreEqual(Math.Cos(d), cos(d), COS_DELTA);
+		  Assert.AreEqual(Math.Cos(d), Math.Cos(d), COS_DELTA);
 		}
 	  }
 
 	  public virtual void TestAsin()
 	  {
-		Assert.IsTrue(double.IsNaN(asin(double.NaN)));
-		Assert.IsTrue(double.IsNaN(asin(2)));
-		Assert.IsTrue(double.IsNaN(asin(-2)));
-		Assert.AreEqual(-Math.PI / 2, asin(-1), ASIN_DELTA);
-		Assert.AreEqual(-Math.PI / 3, asin(-0.8660254), ASIN_DELTA);
-		Assert.AreEqual(-Math.PI / 4, asin(-0.7071068), ASIN_DELTA);
-		Assert.AreEqual(-Math.PI / 6, asin(-0.5), ASIN_DELTA);
-		Assert.AreEqual(0, asin(0), ASIN_DELTA);
-		Assert.AreEqual(Math.PI / 6, asin(0.5), ASIN_DELTA);
-		Assert.AreEqual(Math.PI / 4, asin(0.7071068), ASIN_DELTA);
-		Assert.AreEqual(Math.PI / 3, asin(0.8660254), ASIN_DELTA);
-		Assert.AreEqual(Math.PI / 2, asin(1), ASIN_DELTA);
+		Assert.IsTrue(double.IsNaN(Math.Asin(double.NaN)));
+		Assert.IsTrue(double.IsNaN(Math.Asin(2)));
+		Assert.IsTrue(double.IsNaN(Math.Asin(-2)));
+		Assert.AreEqual(-Math.PI / 2, Math.Asin(-1), ASIN_DELTA);
+		Assert.AreEqual(-Math.PI / 3, Math.Asin(-0.8660254), ASIN_DELTA);
+		Assert.AreEqual(-Math.PI / 4, Math.Asin(-0.7071068), ASIN_DELTA);
+		Assert.AreEqual(-Math.PI / 6, Math.Asin(-0.5), ASIN_DELTA);
+		Assert.AreEqual(0, Math.Asin(0), ASIN_DELTA);
+		Assert.AreEqual(Math.PI / 6, Math.Asin(0.5), ASIN_DELTA);
+		Assert.AreEqual(Math.PI / 4, Math.Asin(0.7071068), ASIN_DELTA);
+		Assert.AreEqual(Math.PI / 3, Math.Asin(0.8660254), ASIN_DELTA);
+		Assert.AreEqual(Math.PI / 2, Math.Asin(1), ASIN_DELTA);
 		// only values -1..1 are useful
 		for (int i = 0; i < 10000; i++)
 		{
-		  double d = random().NextDouble();
-		  if (random().nextBoolean())
+		  double d = Random().NextDouble();
+		  if (Random().NextBoolean())
 		  {
 			d = -d;
 		  }
-		  Assert.AreEqual(Math.Asin(d), asin(d), ASIN_DELTA);
-		  Assert.IsTrue(asin(d) >= -Math.PI / 2);
-		  Assert.IsTrue(asin(d) <= Math.PI / 2);
+		  Assert.AreEqual(Math.Asin(d), Math.Asin(d), ASIN_DELTA);
+		  Assert.IsTrue(Math.Asin(d) >= -Math.PI / 2);
+		  Assert.IsTrue(Math.Asin(d) <= Math.PI / 2);
 		}
 	  }
 
@@ -112,7 +115,7 @@ namespace Lucene.Net.Util
 		double halfCircle = earthRadiusKMs * Math.PI;
 		Assert.AreEqual(halfCircle, haversin(0, 0, 0, 180), 0D);
 
-		Random r = random();
+		Random r = Random();
 		double randomLat1 = 40.7143528 + (r.Next(10) - 5) * 360;
 		double randomLon1 = -74.0059731 + (r.Next(10) - 5) * 360;
 

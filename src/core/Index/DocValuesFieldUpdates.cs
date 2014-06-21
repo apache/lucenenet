@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  internal class Container
+	    public class Container
 	  {
 
 		internal readonly IDictionary<string, NumericDocValuesFieldUpdates> NumericDVUpdates = new Dictionary<string, NumericDocValuesFieldUpdates>();

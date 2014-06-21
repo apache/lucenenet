@@ -3,38 +3,40 @@ using System;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using Term = Lucene.Net.Index.Term;
-	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Term = Lucene.Net.Index.Term;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
 	/// <summary>
 	/// random sloppy phrase query tests
 	/// </summary>
+    [TestFixture]
 	public class TestSloppyPhraseQuery2 : SearchEquivalenceTestBase
 	{
 	  /// <summary>
 	  /// "A B"~N ⊆ "A B"~N+1 </summary>
+      [Test]
 	  public virtual void TestIncreasingSloppiness()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2);
@@ -45,16 +47,17 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// same as the above with posincr </summary>
-	  public virtual void TestIncreasingSloppinessWithHoles()
+      [Test]
+      public virtual void TestIncreasingSloppinessWithHoles()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2, 2);
@@ -65,17 +68,18 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// "A B C"~N ⊆ "A B C"~N+1 </summary>
-	  public virtual void TestIncreasingSloppiness3()
+      [Test]
+      public virtual void TestIncreasingSloppiness3()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
-		Term t3 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
+		Term t3 = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t1);
 		q1.Add(t2);
@@ -88,17 +92,18 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// same as the above with posincr </summary>
-	  public virtual void TestIncreasingSloppiness3WithHoles()
+      [Test]
+      public virtual void TestIncreasingSloppiness3WithHoles()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
-		Term t3 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
+		Term t3 = RandomTerm();
 		int pos1 = 1 + Random().Next(3);
 		int pos2 = pos1 + 1 + Random().Next(3);
 		PhraseQuery q1 = new PhraseQuery();
@@ -113,15 +118,16 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// "A A"~N ⊆ "A A"~N+1 </summary>
-	  public virtual void TestRepetitiveIncreasingSloppiness()
+      [Test]
+      public virtual void TestRepetitiveIncreasingSloppiness()
 	  {
-		Term t = randomTerm();
+		Term t = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t);
 		q1.Add(t);
@@ -132,15 +138,16 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// same as the above with posincr </summary>
-	  public virtual void TestRepetitiveIncreasingSloppinessWithHoles()
+      [Test]
+      public virtual void TestRepetitiveIncreasingSloppinessWithHoles()
 	  {
-		Term t = randomTerm();
+		Term t = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t);
 		q1.Add(t, 2);
@@ -151,15 +158,16 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// "A A A"~N ⊆ "A A A"~N+1 </summary>
-	  public virtual void TestRepetitiveIncreasingSloppiness3()
+      [Test]
+      public virtual void TestRepetitiveIncreasingSloppiness3()
 	  {
-		Term t = randomTerm();
+		Term t = RandomTerm();
 		PhraseQuery q1 = new PhraseQuery();
 		q1.Add(t);
 		q1.Add(t);
@@ -172,15 +180,16 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// same as the above with posincr </summary>
-	  public virtual void TestRepetitiveIncreasingSloppiness3WithHoles()
+      [Test]
+      public virtual void TestRepetitiveIncreasingSloppiness3WithHoles()
 	  {
-		Term t = randomTerm();
+		Term t = RandomTerm();
 		int pos1 = 1 + Random().Next(3);
 		int pos2 = pos1 + 1 + Random().Next(3);
 		PhraseQuery q1 = new PhraseQuery();
@@ -195,26 +204,27 @@ namespace Lucene.Net.Search
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
 	  /// <summary>
 	  /// MultiPhraseQuery~N ⊆ MultiPhraseQuery~N+1 </summary>
-	  public virtual void TestRandomIncreasingSloppiness()
+      [Test]
+      public virtual void TestRandomIncreasingSloppiness()
 	  {
-		long seed = Random().NextLong();
+		int seed = Random().Next();
 		MultiPhraseQuery q1 = RandomPhraseQuery(seed);
 		MultiPhraseQuery q2 = RandomPhraseQuery(seed);
 		for (int i = 0; i < 10; i++)
 		{
 		  q1.Slop = i;
 		  q2.Slop = i + 1;
-		  assertSubsetOf(q1, q2);
+		  AssertSubsetOf(q1, q2);
 		}
 	  }
 
-	  private MultiPhraseQuery RandomPhraseQuery(long seed)
+	  private MultiPhraseQuery RandomPhraseQuery(int seed)
 	  {
 		Random random = new Random(seed);
 		int length = TestUtil.NextInt(random, 2, 5);

@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -42,7 +43,8 @@ namespace Lucene.Net.Search.Payloads
 	/// 
 	/// 
 	/// 
-	public class PayloadHelper
+	[TestFixture]
+    public class PayloadHelper
 	{
 
 	  private sbyte[] PayloadField = new sbyte[]{1};
@@ -64,7 +66,7 @@ namespace Lucene.Net.Search.Payloads
 			this.OuterInstance = outerInstance;
 		}
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result, fieldName));
@@ -149,7 +151,8 @@ namespace Lucene.Net.Search.Payloads
 		searcher.Similarity = similarity;
 		return searcher;
 	  }
-
+      
+      [TearDown]
 	  public virtual void TearDown()
 	  {
 		Reader.Dispose();

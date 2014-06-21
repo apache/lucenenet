@@ -133,7 +133,7 @@ namespace Lucene.Net.Util
 	  /// order to reuse this <seealso cref="BytesRefHash"/> instance.
 	  /// </p>
 	  /// </summary>
-	  internal int[] Compact()
+	  public int[] Compact()
 	  {
 		Debug.Assert(BytesStart != null, "bytesStart is null - not initialized");
 		int upto = 0;

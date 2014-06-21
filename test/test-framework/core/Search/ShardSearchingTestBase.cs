@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  private class FieldAndShardVersion
+	    internal class FieldAndShardVersion
 	  {
 		internal readonly long Version;
 		internal readonly int NodeID;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 		  this.Field = field;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return (int)(Version * NodeID + Field.GetHashCode());
 		}
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  private class TermAndShardVersion
+	    internal class TermAndShardVersion
 	  {
 		internal readonly long Version;
 		internal readonly int NodeID;
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
 		  this.Term = term;
 		}
 
-		public override int HashCode()
+		public override int GetHashCode()
 		{
 		  return (int)(Version * NodeID + Term.GetHashCode());
 		}
@@ -636,7 +636,7 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		public override void Close()
+		public void Dispose()
 		{
 		  if (CurrentShardSearcher != null)
 		  {
@@ -762,7 +762,7 @@ namespace Lucene.Net.Search
 		ChangeIndicesThread.Join();
 		foreach (NodeState node in Nodes)
 		{
-		  node.Close();
+		  node.Dispose();
 		}
 	  }
 

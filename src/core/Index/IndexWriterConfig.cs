@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
 		  // Mostly shallow clone, but do a deepish clone of
 		  // certain objects that have state that cannot be shared
 		  // across IW instances:
-		  clone.DelPolicy = (IndexDeletionPolicy)DelPolicy.Clone();
+		  clone.delPolicy = (IndexDeletionPolicy)delPolicy.Clone();
 		  clone.flushPolicy = (FlushPolicy)flushPolicy.Clone();
 		  clone.indexerThreadPool = (DocumentsWriterPerThreadPool)indexerThreadPool.Clone();
 		  // we clone the infoStream because some impls might have state variables
@@ -259,15 +259,15 @@ namespace Lucene.Net.Index
 		{
 		  throw new System.ArgumentException("indexDeletionPolicy must not be null");
 		}
-		this.DelPolicy = delPolicy;
+		this.delPolicy = delPolicy;
 		return this;
 	  }
 
-	  public override IndexDeletionPolicy IndexDeletionPolicy
+	  public override IndexDeletionPolicy DelPolicy
 	  {
 		  get
 		  {
-			return DelPolicy;
+			return delPolicy;
 		  }
 	  }
 
@@ -429,7 +429,7 @@ namespace Lucene.Net.Index
 	  /// <p>
 	  /// NOTE: this only takes effect when IndexWriter is first created.</p>
 	  /// </summary>
-	  internal IndexWriterConfig SetIndexerThreadPool(DocumentsWriterPerThreadPool threadPool)
+	  public IndexWriterConfig SetIndexerThreadPool(DocumentsWriterPerThreadPool threadPool)
 	  {
 		if (threadPool == null)
 		{
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
 		return this;
 	  }
 
-	  internal override DocumentsWriterPerThreadPool IndexerThreadPool
+	    public override DocumentsWriterPerThreadPool IndexerThreadPool
 	  {
 		  get
 		  {
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// <p>Only takes effect when IndexWriter is first created. 
 	  /// </summary>
-	  internal IndexWriterConfig SetIndexingChain(IndexingChain indexingChain)
+	  public IndexWriterConfig SetIndexingChain(IndexingChain indexingChain)
 	  {
 		if (indexingChain == null)
 		{
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
 		return this;
 	  }
 
-	  internal override IndexingChain IndexingChain
+	    public override IndexingChain IndexingChain
 	  {
 		  get
 		  {
@@ -532,7 +532,7 @@ namespace Lucene.Net.Index
 	  /// <seealso cref= #setMaxBufferedDeleteTerms(int) </seealso>
 	  /// <seealso cref= #setMaxBufferedDocs(int) </seealso>
 	  /// <seealso cref= #setRAMBufferSizeMB(double) </seealso>
-	  internal IndexWriterConfig SetFlushPolicy(FlushPolicy flushPolicy)
+	  public IndexWriterConfig SetFlushPolicy(FlushPolicy flushPolicy)
 	  {
 		if (flushPolicy == null)
 		{
@@ -570,7 +570,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal override FlushPolicy FlushPolicy
+	    public override FlushPolicy FlushPolicy
 	  {
 		  get
 		  {

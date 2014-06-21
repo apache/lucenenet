@@ -1,10 +1,10 @@
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-    //LUCENE TO-DO: Iterators are not needed. System.Linq uses enumerators plenty well
-    /*
+
 	/// <summary>
 	/// Licensed to the Apache Software Foundation (ASF) under one or more
 	/// contributor license agreements. See the NOTICE file distributed with this
@@ -25,12 +25,13 @@ namespace Lucene.Net.Util
 	/// <summary>
 	/// An <seealso cref="Iterator"/> implementation that filters elements with a boolean predicate. </summary>
 	/// <seealso cref= #predicateFunction </seealso>
-	public abstract class FilterIterator<T> : Iterator<T>
+	public abstract class FilterIterator<T> : IEnumerator<T>
 	{
 
-	  private readonly IEnumerator<T> Iterator;
+	  private readonly IEnumerator<T> iter;
 	  private T next = default(T);
 	  private bool NextIsSet = false;
+      private T current = default(T);
 
 	  /// <summary>
 	  /// returns true, if this element should be returned by <seealso cref="#next()"/>. </summary>
@@ -38,42 +39,39 @@ namespace Lucene.Net.Util
 
 	  public FilterIterator(IEnumerator<T> baseIterator)
 	  {
-		this.Iterator = baseIterator;
+		this.iter = baseIterator;
 	  }
 
-	  public override bool HasNext()
+	  public bool MoveNext()
 	  {
-		return NextIsSet || SetNext();
+	      if (!(NextIsSet || SetNext()))
+	      {
+	          return false;
+	      }
+	             
+          Debug.Assert(NextIsSet);
+	      try
+	      {
+	          current = next;
+	      }
+	      finally
+	      {
+	          NextIsSet = false;
+	          next = default(T);
+	      }
+	      return true;
 	  }
 
-	  public override T Next()
+	  public void Reset()
 	  {
-		if (!HasNext())
-		{
-		  throw new NoSuchElementException();
-		}
-		Debug.Assert(NextIsSet);
-		try
-		{
-		  return next;
-		}
-		finally
-		{
-		  NextIsSet = false;
-		  next = default(T);
-		}
-	  }
-
-	  public override void Remove()
-	  {
-		throw new System.NotSupportedException();
+		throw new NotImplementedException();
 	  }
 
 	  private bool SetNext()
 	  {
-		while (Iterator.MoveNext())
+		while (iter.MoveNext())
 		{
-		  T @object = Iterator.Current;
+		  T @object = iter.Current;
 		  if (PredicateFunction(@object))
 		  {
 			next = @object;
@@ -83,6 +81,18 @@ namespace Lucene.Net.Util
 		}
 		return false;
 	  }
+
+	    public T Current
+	    {
+	        get { return current; }
+	    }
+
+        object System.Collections.IEnumerator.Current
+        {
+	        get { return Current; }
+        }
+
+        public void Dispose() { }
 	}
-    */
+    
 }

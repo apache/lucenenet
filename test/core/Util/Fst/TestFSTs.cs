@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -43,25 +45,25 @@ namespace Lucene.Net.Util.Fst
 	using IndexInput = Lucene.Net.Store.IndexInput;
 	using IndexOutput = Lucene.Net.Store.IndexOutput;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-	using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
+	//using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using Automaton = Lucene.Net.Util.Automaton.Automaton;
 	using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 	using RegExp = Lucene.Net.Util.Automaton.RegExp;
-	using InputOutput = Lucene.Net.Util.Fst.BytesRefFSTEnum.InputOutput;
-	using Arc = Lucene.Net.Util.Fst.FST.Arc;
+	//using InputOutput = Lucene.Net.Util.Fst.BytesRefFSTEnum.InputOutput;
+	//using Arc = Lucene.Net.Util.Fst.FST.Arc;
 	using BytesReader = Lucene.Net.Util.Fst.FST.BytesReader;
-	using Pair = Lucene.Net.Util.Fst.PairOutputs.Pair;
-	using Result = Lucene.Net.Util.Fst.Util.Result;
+	using Pair = Lucene.Net.Util.Fst.PairOutputs<long, long>.Pair<long, long>;
+    using ResultLong = Lucene.Net.Util.Fst.Util.Result<long>;
+    using ResultPair = Lucene.Net.Util.Fst.Util.Result<long>;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
+    using Lucene.Net.Support;
+    using NUnit.Framework;
 
-
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.Fst.FSTTester.getRandomString;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.Fst.FSTTester.simpleRandomString;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.Fst.FSTTester.toIntsRef;
+    /*
+	import static Lucene.Net.Util.Fst.FSTTester.GetRandomString;
+	import static Lucene.Net.Util.Fst.FSTTester.SimpleRandomString;
+	import static Lucene.Net.Util.Fst.FSTTester.ToIntsRef;*/
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) @Slow public class TestFSTs extends Lucene.Net.Util.LuceneTestCase
@@ -72,8 +74,8 @@ namespace Lucene.Net.Util.Fst
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		Dir = newMockDirectory();
+		base.SetUp();
+		Dir = NewMockDirectory();
 		Dir.PreventDoubleWrite = false;
 	  }
 
@@ -82,9 +84,9 @@ namespace Lucene.Net.Util.Fst
 		// can be null if we force simpletext (funky, some kind of bug in test runner maybe)
 		if (Dir != null)
 		{
-			Dir.close();
+			Dir.Dispose();
 		}
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  public virtual void TestBasicFSA()
@@ -102,13 +104,13 @@ namespace Lucene.Net.Util.Fst
 
 		  for (int idx = 0;idx < strings.Length;idx++)
 		  {
-			terms[idx] = toIntsRef(strings[idx], inputMode);
+			terms[idx] = ToIntsRef(strings[idx], inputMode);
 		  }
 		  for (int idx = 0;idx < strings2.Length;idx++)
 		  {
-			terms2[idx] = toIntsRef(strings2[idx], inputMode);
+			terms2[idx] = ToIntsRef(strings2[idx], inputMode);
 		  }
-		  Arrays.sort(terms2);
+		  Arrays.Sort(terms2);
 
 		  DoTest(inputMode, terms);
 
@@ -118,12 +120,12 @@ namespace Lucene.Net.Util.Fst
 		  {
 			Outputs<object> outputs = NoOutputs.Singleton;
 			object NO_OUTPUT = outputs.NoOutput;
-			IList<FSTTester.InputOutput<object>> pairs = new List<FSTTester.InputOutput<object>>(terms2.Length);
+			IList<FSTTester<object>.InputOutput<object>> pairs = new List<FSTTester<object>.InputOutput<object>>(terms2.Length);
 			foreach (IntsRef term in terms2)
 			{
-			  pairs.Add(new FSTTester.InputOutput<>(term, NO_OUTPUT));
+                pairs.Add(new FSTTester<object>.InputOutput<object>(term, NO_OUTPUT));
 			}
-			FST<object> fst = (new FSTTester<object>(random(), Dir, inputMode, pairs, outputs, false)).doTest(0, 0, false);
+			FST<object> fst = (new FSTTester<object>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
 			Assert.IsNotNull(fst);
 			Assert.AreEqual(22, fst.NodeCount);
 			Assert.AreEqual(27, fst.ArcCount);
@@ -132,12 +134,12 @@ namespace Lucene.Net.Util.Fst
 		  // FST ord pos int
 		  {
 			PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-			IList<FSTTester.InputOutput<long?>> pairs = new List<FSTTester.InputOutput<long?>>(terms2.Length);
+			IList<FSTTester<long>.InputOutput<long>> pairs = new List<FSTTester<long>.InputOutput<long>>(terms2.Length);
 			for (int idx = 0;idx < terms2.Length;idx++)
 			{
-			  pairs.Add(new FSTTester.InputOutput<>(terms2[idx], (long) idx));
+			  pairs.Add(new FSTTester<long>.InputOutput<long>(terms2[idx], (long) idx));
 			}
-			FST<long?> fst = (new FSTTester<long?>(random(), Dir, inputMode, pairs, outputs, true)).doTest(0, 0, false);
+			FST<long> fst = (new FSTTester<long>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(0, 0, false);
 			Assert.IsNotNull(fst);
 			Assert.AreEqual(22, fst.NodeCount);
 			Assert.AreEqual(27, fst.ArcCount);
@@ -147,13 +149,13 @@ namespace Lucene.Net.Util.Fst
 		  {
 			ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
 			BytesRef NO_OUTPUT = outputs.NoOutput;
-			IList<FSTTester.InputOutput<BytesRef>> pairs = new List<FSTTester.InputOutput<BytesRef>>(terms2.Length);
+			IList<FSTTester<BytesRef>.InputOutput<BytesRef>> pairs = new List<FSTTester<BytesRef>.InputOutput<BytesRef>>(terms2.Length);
 			for (int idx = 0;idx < terms2.Length;idx++)
 			{
-			  BytesRef output = random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
-			  pairs.Add(new FSTTester.InputOutput<>(terms2[idx], output));
+			  BytesRef output = Random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
+			  pairs.Add(new FSTTester<BytesRef>.InputOutput<BytesRef>(terms2[idx], output));
 			}
-			FST<BytesRef> fst = (new FSTTester<BytesRef>(random(), Dir, inputMode, pairs, outputs, false)).doTest(0, 0, false);
+			FST<BytesRef> fst = (new FSTTester<BytesRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
 			Assert.IsNotNull(fst);
 			Assert.AreEqual(24, fst.NodeCount);
 			Assert.AreEqual(30, fst.ArcCount);
@@ -170,95 +172,95 @@ namespace Lucene.Net.Util.Fst
 		{
 		  Outputs<object> outputs = NoOutputs.Singleton;
 		  object NO_OUTPUT = outputs.NoOutput;
-		  IList<FSTTester.InputOutput<object>> pairs = new List<FSTTester.InputOutput<object>>(terms.Length);
+		  IList<FSTTester<object>.InputOutput<object>> pairs = new List<FSTTester<object>.InputOutput<object>>(terms.Length);
 		  foreach (IntsRef term in terms)
 		  {
-			pairs.Add(new FSTTester.InputOutput<>(term, NO_OUTPUT));
+			pairs.Add(new FSTTester<object>.InputOutput<object>(term, NO_OUTPUT));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, false)).doTest(true);
+          (new FSTTester<object>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
 		}
 
 		// PositiveIntOutput (ord)
 		{
 		  PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		  IList<FSTTester.InputOutput<long?>> pairs = new List<FSTTester.InputOutput<long?>>(terms.Length);
+		  IList<FSTTester<long>.InputOutput<long>> pairs = new List<FSTTester<long>.InputOutput<long>>(terms.Length);
 		  for (int idx = 0;idx < terms.Length;idx++)
 		  {
-			pairs.Add(new FSTTester.InputOutput<>(terms[idx], (long) idx));
+			pairs.Add(new FSTTester<long>.InputOutput<long>(terms[idx], (long) idx));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, true)).doTest(true);
+		  (new FSTTester<long>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(true);
 		}
 
 		// PositiveIntOutput (random monotonically increasing positive number)
 		{
 		  PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		  IList<FSTTester.InputOutput<long?>> pairs = new List<FSTTester.InputOutput<long?>>(terms.Length);
+		  IList<FSTTester<long>.InputOutput<long>> pairs = new List<FSTTester<long>.InputOutput<long>>(terms.Length);
 		  long lastOutput = 0;
 		  for (int idx = 0;idx < terms.Length;idx++)
 		  {
-			long value = lastOutput + TestUtil.Next(random(), 1, 1000);
+			long value = lastOutput + TestUtil.NextInt(Random(), 1, 1000);
 			lastOutput = value;
-			pairs.Add(new FSTTester.InputOutput<>(terms[idx], value));
+			pairs.Add(new FSTTester<long>.InputOutput<long>(terms[idx], value));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, true)).doTest(true);
+		  (new FSTTester<long>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(true);
 		}
 
 		// PositiveIntOutput (random positive number)
 		{
 		  PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		  IList<FSTTester.InputOutput<long?>> pairs = new List<FSTTester.InputOutput<long?>>(terms.Length);
+		  IList<FSTTester<long>.InputOutput<long>> pairs = new List<FSTTester<long>.InputOutput<long>>(terms.Length);
 		  for (int idx = 0;idx < terms.Length;idx++)
 		  {
-			pairs.Add(new FSTTester.InputOutput<>(terms[idx], TestUtil.nextLong(random(), 0, long.MaxValue)));
+			pairs.Add(new FSTTester<long>.InputOutput<long>(terms[idx], TestUtil.NextLong(Random(), 0, long.MaxValue)));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, false)).doTest(true);
+		  (new FSTTester<long>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
 		}
 
 		// Pair<ord, (random monotonically increasing positive number>
 		{
 		  PositiveIntOutputs o1 = PositiveIntOutputs.Singleton;
 		  PositiveIntOutputs o2 = PositiveIntOutputs.Singleton;
-		  PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(o1, o2);
-		  IList<FSTTester.InputOutput<PairOutputs.Pair<long?, long?>>> pairs = new List<FSTTester.InputOutput<PairOutputs.Pair<long?, long?>>>(terms.Length);
+		  PairOutputs<long, long> outputs = new PairOutputs<long, long>(o1, o2);
+		  IList<FSTTester<Pair>.InputOutput<Pair>> pairs = new List<FSTTester<Pair>.InputOutput<Pair>>(terms.Length);
 		  long lastOutput = 0;
 		  for (int idx = 0;idx < terms.Length;idx++)
 		  {
-			long value = lastOutput + TestUtil.Next(random(), 1, 1000);
+			long value = lastOutput + TestUtil.NextInt(Random(), 1, 1000);
 			lastOutput = value;
-			pairs.Add(new FSTTester.InputOutput<>(terms[idx], outputs.newPair((long) idx, value)));
+			pairs.Add(new FSTTester<Pair>.InputOutput<Pair>(terms[idx], outputs.NewPair((long) idx, value)));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, false)).doTest(true);
+		  (new FSTTester<Pair>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
 		}
 
 		// Sequence-of-bytes
 		{
 		  ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
 		  BytesRef NO_OUTPUT = outputs.NoOutput;
-		  IList<FSTTester.InputOutput<BytesRef>> pairs = new List<FSTTester.InputOutput<BytesRef>>(terms.Length);
+		  IList<FSTTester<BytesRef>.InputOutput<BytesRef>> pairs = new List<FSTTester<BytesRef>.InputOutput<BytesRef>>(terms.Length);
 		  for (int idx = 0;idx < terms.Length;idx++)
 		  {
-			BytesRef output = random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
-			pairs.Add(new FSTTester.InputOutput<>(terms[idx], output));
+			BytesRef output = Random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
+			pairs.Add(new FSTTester<BytesRef>.InputOutput<BytesRef>(terms[idx], output));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, false)).doTest(true);
+		  (new FSTTester<BytesRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
 		}
 
 		// Sequence-of-ints
 		{
 		  IntSequenceOutputs outputs = IntSequenceOutputs.Singleton;
-		  IList<FSTTester.InputOutput<IntsRef>> pairs = new List<FSTTester.InputOutput<IntsRef>>(terms.Length);
+		  IList<FSTTester<IntsRef>.InputOutput<IntsRef>> pairs = new List<FSTTester<IntsRef>.InputOutput<IntsRef>>(terms.Length);
 		  for (int idx = 0;idx < terms.Length;idx++)
 		  {
 			string s = Convert.ToString(idx);
 			IntsRef output = new IntsRef(s.Length);
-			output.length = s.Length;
-			for (int idx2 = 0;idx2 < output.length;idx2++)
+			output.Length = s.Length;
+			for (int idx2 = 0;idx2 < output.Length;idx2++)
 			{
-			  output.ints[idx2] = s[idx2];
+			  output.Ints[idx2] = s[idx2];
 			}
-			pairs.Add(new FSTTester.InputOutput<>(terms[idx], output));
+			pairs.Add(new FSTTester<IntsRef>.InputOutput<IntsRef>(terms[idx], output));
 		  }
-		  (new FSTTester<>(random(), Dir, inputMode, pairs, outputs, false)).doTest(true);
+		  (new FSTTester<IntsRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
 		}
 
 	  }
@@ -266,7 +268,7 @@ namespace Lucene.Net.Util.Fst
 
 	  public virtual void TestRandomWords()
 	  {
-		TestRandomWords(1000, atLeast(2));
+		TestRandomWords(1000, AtLeast(2));
 		//testRandomWords(100, 1);
 	  }
 
@@ -284,7 +286,7 @@ namespace Lucene.Net.Util.Fst
 
 	  private void TestRandomWords(int maxNumWords, int numIter)
 	  {
-		Random random = new Random(random().nextLong());
+		Random random = new Random(Random().Next());
 		for (int iter = 0;iter < numIter;iter++)
 		{
 		  if (VERBOSE)
@@ -294,14 +296,14 @@ namespace Lucene.Net.Util.Fst
 		  for (int inputMode = 0;inputMode < 2;inputMode++)
 		  {
 			int numWords = random.Next(maxNumWords + 1);
-			Set<IntsRef> termsSet = new HashSet<IntsRef>();
+			HashSet<IntsRef> termsSet = new HashSet<IntsRef>();
 			IntsRef[] terms = new IntsRef[numWords];
-			while (termsSet.size() < numWords)
+			while (termsSet.Count < numWords)
 			{
-			  string term = getRandomString(random);
-			  termsSet.add(toIntsRef(term, inputMode));
+			  string term = GetRandomString(random);
+			  termsSet.Add(ToIntsRef(term, inputMode));
 			}
-			DoTest(inputMode, termsSet.toArray(new IntsRef[termsSet.size()]));
+			DoTest(inputMode, termsSet.ToArray(new IntsRef[termsSet.Count]));
 		  }
 		}
 	  }
@@ -310,7 +312,7 @@ namespace Lucene.Net.Util.Fst
 //ORIGINAL LINE: @Nightly public void testBigSet() throws java.io.IOException
 	  public virtual void TestBigSet()
 	  {
-		TestRandomWords(TestUtil.Next(random(), 50000, 60000), 1);
+		TestRandomWords(TestUtil.NextInt(Random(), 50000, 60000), 1);
 	  }
 
 	  // Build FST for all unique terms in the test line docs
@@ -318,32 +320,32 @@ namespace Lucene.Net.Util.Fst
 	  public virtual void TestRealTerms()
 	  {
 
-		LineFileDocs docs = new LineFileDocs(random(), defaultCodecSupportsDocValues());
-		int RUN_TIME_MSEC = atLeast(500);
-		MockAnalyzer analyzer = new MockAnalyzer(random());
-		analyzer.MaxTokenLength = TestUtil.Next(random(), 1, IndexWriter.MAX_TERM_LENGTH);
+		LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+		int RUN_TIME_MSEC = AtLeast(500);
+		MockAnalyzer analyzer = new MockAnalyzer(Random());
+		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
-		IndexWriterConfig conf = newIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).setMaxBufferedDocs(-1).setRAMBufferSizeMB(64);
-		File tempDir = createTempDir("fstlines");
-		Directory dir = newFSDirectory(tempDir);
+		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(-1).SetRAMBufferSizeMB(64);
+		DirectoryInfo tempDir = CreateTempDir("fstlines");
+		Directory dir = NewFSDirectory(tempDir);
 		IndexWriter writer = new IndexWriter(dir, conf);
-		long stopTime = System.currentTimeMillis() + RUN_TIME_MSEC;
+		long stopTime = DateTime.Now.Millisecond + RUN_TIME_MSEC;
 		Document doc;
 		int docCount = 0;
-		while ((doc = docs.nextDoc()) != null && System.currentTimeMillis() < stopTime)
+		while ((doc = docs.NextDoc()) != null && DateTime.Now.Millisecond < stopTime)
 		{
-		  writer.addDocument(doc);
+		  writer.AddDocument(doc);
 		  docCount++;
 		}
-		IndexReader r = DirectoryReader.open(writer, true);
-		writer.close();
+		IndexReader r = DirectoryReader.Open(writer, true);
+		writer.Dispose();
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
 
-		bool doRewrite = random().nextBoolean();
+		bool doRewrite = Random().NextBoolean();
 
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doRewrite, PackedInts.DEFAULT, true, 15);
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doRewrite, PackedInts.DEFAULT, true, 15);
 
-		bool storeOrd = random().nextBoolean();
+		bool storeOrd = Random().NextBoolean();
 		if (VERBOSE)
 		{
 		  if (storeOrd)
@@ -355,11 +357,11 @@ namespace Lucene.Net.Util.Fst
 			Console.WriteLine("FST stores docFreq");
 		  }
 		}
-		Terms terms = MultiFields.getTerms(r, "body");
+		Terms terms = MultiFields.GetTerms(r, "body");
 		if (terms != null)
 		{
 		  IntsRef scratchIntsRef = new IntsRef();
-		  TermsEnum termsEnum = terms.iterator(null);
+		  TermsEnum termsEnum = terms.Iterator(null);
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: got termsEnum=" + termsEnum);
@@ -367,22 +369,22 @@ namespace Lucene.Net.Util.Fst
 		  BytesRef term;
 		  int ord = 0;
 
-		  Automaton automaton = (new RegExp(".*", RegExp.NONE)).toAutomaton();
-		  TermsEnum termsEnum2 = terms.intersect(new CompiledAutomaton(automaton, false, false), null);
+		  Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton();
+		  TermsEnum termsEnum2 = terms.Intersect(new CompiledAutomaton(automaton, false, false), null);
 
-		  while ((term = termsEnum.next()) != null)
+		  while ((term = termsEnum.Next()) != null)
 		  {
-			BytesRef term2 = termsEnum2.next();
+			BytesRef term2 = termsEnum2.Next();
 			Assert.IsNotNull(term2);
 			Assert.AreEqual(term, term2);
-			Assert.AreEqual(termsEnum.docFreq(), termsEnum2.docFreq());
-			Assert.AreEqual(termsEnum.totalTermFreq(), termsEnum2.totalTermFreq());
+			Assert.AreEqual(termsEnum.DocFreq(), termsEnum2.DocFreq());
+			Assert.AreEqual(termsEnum.TotalTermFreq(), termsEnum2.TotalTermFreq());
 
 			if (ord == 0)
 			{
 			  try
 			  {
-				termsEnum.ord();
+				termsEnum.Ord();
 			  }
 			  catch (System.NotSupportedException uoe)
 			  {
@@ -400,43 +402,43 @@ namespace Lucene.Net.Util.Fst
 			}
 			else
 			{
-			  output = termsEnum.docFreq();
+			  output = termsEnum.DocFreq();
 			}
-			builder.add(Util.toIntsRef(term, scratchIntsRef), (long) output);
+			builder.Add(Util.ToIntsRef(term, scratchIntsRef), (long) output);
 			ord++;
 			if (VERBOSE && ord % 100000 == 0 && LuceneTestCase.TEST_NIGHTLY)
 			{
 			  Console.WriteLine(ord + " terms...");
 			}
 		  }
-		  FST<long?> fst = builder.finish();
+		  FST<long> fst = builder.Finish();
 		  if (VERBOSE)
 		  {
-			Console.WriteLine("FST: " + docCount + " docs; " + ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs;" + " " + fst.sizeInBytes() + " bytes");
+			Console.WriteLine("FST: " + docCount + " docs; " + ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs;" + " " + fst.SizeInBytes() + " bytes");
 		  }
 
 		  if (ord > 0)
 		  {
-			Random random = new Random(random().nextLong());
+			Random random = new Random(Random().Next());
 			// Now confirm BytesRefFSTEnum and TermsEnum act the
 			// same:
-			BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
-			int num = atLeast(1000);
+			BytesRefFSTEnum<long> fstEnum = new BytesRefFSTEnum<long>(fst);
+			int num = AtLeast(1000);
 			for (int iter = 0;iter < num;iter++)
 			{
-			  BytesRef randomTerm = new BytesRef(getRandomString(random));
+			  BytesRef randomTerm = new BytesRef(GetRandomString(random));
 
 			  if (VERBOSE)
 			  {
-				Console.WriteLine("TEST: seek non-exist " + randomTerm.utf8ToString() + " " + randomTerm);
+				Console.WriteLine("TEST: seek non-exist " + randomTerm.Utf8ToString() + " " + randomTerm);
 			  }
 
-			  TermsEnum.SeekStatus seekResult = termsEnum.seekCeil(randomTerm);
-			  InputOutput<long?> fstSeekResult = fstEnum.seekCeil(randomTerm);
+			  TermsEnum.SeekStatus seekResult = termsEnum.SeekCeil(randomTerm);
+			  BytesRefFSTEnum<long>.InputOutput<long> fstSeekResult = fstEnum.SeekCeil(randomTerm);
 
 			  if (seekResult == TermsEnum.SeekStatus.END)
 			  {
-				assertNull("got " + (fstSeekResult == null ? "null" : fstSeekResult.input.utf8ToString()) + " but expected null", fstSeekResult);
+				Assert.IsNull(fstSeekResult.Equals, "got " + (fstSeekResult == null ? "null" : fstSeekResult.Input.Utf8ToString()) + " but expected null");
 			  }
 			  else
 			  {
@@ -448,16 +450,16 @@ namespace Lucene.Net.Util.Fst
 					Console.WriteLine("TEST: next");
 					if (storeOrd)
 					{
-					  Console.WriteLine("  ord=" + termsEnum.ord());
+					  Console.WriteLine("  ord=" + termsEnum.Ord());
 					}
 				  }
-				  if (termsEnum.next() != null)
+				  if (termsEnum.Next() != null)
 				  {
 					if (VERBOSE)
 					{
-					  Console.WriteLine("  term=" + termsEnum.term().utf8ToString());
+					  Console.WriteLine("  term=" + termsEnum.Term().Utf8ToString());
 					}
-					Assert.IsNotNull(fstEnum.next());
+					Assert.IsNotNull(fstEnum.Next());
 					AssertSame(termsEnum, fstEnum, storeOrd);
 				  }
 				  else
@@ -466,10 +468,10 @@ namespace Lucene.Net.Util.Fst
 					{
 					  Console.WriteLine("  end!");
 					}
-					BytesRefFSTEnum.InputOutput<long?> nextResult = fstEnum.next();
+					BytesRefFSTEnum<long>.InputOutput<long> nextResult = fstEnum.Next();
 					if (nextResult != null)
 					{
-					  Console.WriteLine("expected null but got: input=" + nextResult.input.utf8ToString() + " output=" + outputs.outputToString(nextResult.output));
+					  Console.WriteLine("expected null but got: input=" + nextResult.Input.Utf8ToString() + " output=" + outputs.OutputToString(nextResult.Output));
 					  Assert.Fail();
 					}
 					break;
@@ -481,29 +483,29 @@ namespace Lucene.Net.Util.Fst
 		  }
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
-	  private void assertSame<T1>(TermsEnum termsEnum, BytesRefFSTEnum<T1> fstEnum, bool storeOrd)
+	  private void AssertSame<T1>(TermsEnum termsEnum, BytesRefFSTEnum<T1> fstEnum, bool storeOrd)
 	  {
-		if (termsEnum.term() == null)
+		if (termsEnum.Term() == null)
 		{
-		  assertNull(fstEnum.current());
+		  Assert.IsNull(fstEnum.Current());
 		}
 		else
 		{
-		  Assert.IsNotNull(fstEnum.current());
-		  Assert.AreEqual(termsEnum.term().utf8ToString() + " != " + fstEnum.current().input.utf8ToString(), termsEnum.term(), fstEnum.current().input);
+		  Assert.IsNotNull(fstEnum.Current());
+		  Assert.AreEqual(termsEnum.Term(), fstEnum.Current().Input, termsEnum.Term().Utf8ToString() + " != " + fstEnum.Current().Input.Utf8ToString());
 		  if (storeOrd)
 		  {
 			// fst stored the ord
-			Assert.AreEqual("term=" + termsEnum.term().utf8ToString() + " " + termsEnum.term(), termsEnum.ord(), (long)((long?) fstEnum.current().output));
+			Assert.AreEqual(termsEnum.Ord(), fstEnum.Current().Output, "term=" + termsEnum.Term().Utf8ToString() + " " + termsEnum.Term());
 		  }
 		  else
 		  {
 			// fst stored the docFreq
-			Assert.AreEqual("term=" + termsEnum.term().utf8ToString() + " " + termsEnum.term(), termsEnum.docFreq(), (int)((long)((long?) fstEnum.current().output)));
+			Assert.AreEqual(termsEnum.DocFreq(), fstEnum.Current().Output, "term=" + termsEnum.Term().Utf8ToString() + " " + termsEnum.Term());
 		  }
 		}
 	  }
@@ -525,7 +527,7 @@ namespace Lucene.Net.Util.Fst
 		  this.Outputs = outputs;
 		  this.DoPack = doPack;
 
-		  Builder = new Builder<>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 0, prune, prune == 0, true, int.MaxValue, outputs, null, doPack, PackedInts.DEFAULT, !noArcArrays, 15);
+		  Builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 0, prune, prune == 0, true, int.MaxValue, outputs, null, doPack, PackedInts.DEFAULT, !noArcArrays, 15);
 		}
 
 		protected internal abstract T GetOutput(IntsRef input, int ord);
@@ -536,7 +538,7 @@ namespace Lucene.Net.Util.Fst
 		  try
 		  {
 			IntsRef intsRef = new IntsRef(10);
-			long tStart = System.currentTimeMillis();
+			long tStart = DateTime.Now.Millisecond;
 			int ord = 0;
 			while (true)
 			{
@@ -545,13 +547,13 @@ namespace Lucene.Net.Util.Fst
 			  {
 				break;
 			  }
-			  toIntsRef(w, InputMode, intsRef);
-			  Builder.add(intsRef, GetOutput(intsRef, ord));
+              ToIntsRef(w, InputMode, intsRef);
+			  Builder.Add(intsRef, GetOutput(intsRef, ord));
 
 			  ord++;
 			  if (ord % 500000 == 0)
 			  {
-				Console.WriteLine(string.format(Locale.ROOT, "%6.2fs: %9d...", ((System.currentTimeMillis() - tStart) / 1000.0), ord));
+				Console.WriteLine(string.format(Locale.ROOT, "%6.2fs: %9d...", ((DateTime.Now.Millisecond - tStart) / 1000.0), ord));
 			  }
 			  if (ord >= limit)
 			  {
@@ -559,12 +561,12 @@ namespace Lucene.Net.Util.Fst
 			  }
 			}
 
-			long tMid = System.currentTimeMillis();
+			long tMid = DateTime.Now.Millisecond;
 			Console.WriteLine(((tMid - tStart) / 1000.0) + " sec to add all terms");
 
 			Debug.Assert(Builder.TermCount == ord);
-			FST<T> fst = Builder.finish();
-			long tEnd = System.currentTimeMillis();
+			FST<T> fst = Builder.Finish();
+			long tEnd = DateTime.Now.Millisecond;
 			Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");
 			if (fst == null)
 			{
@@ -577,19 +579,19 @@ namespace Lucene.Net.Util.Fst
 			  return;
 			}
 
-			Console.WriteLine(ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs; " + fst.ArcWithOutputCount + " arcs w/ output; tot size " + fst.sizeInBytes());
+			Console.WriteLine(ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs; " + fst.ArcWithOutputCount + " arcs w/ output; tot size " + fst.SizeInBytes());
 			if (fst.NodeCount < 100)
 			{
 			  Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"), StandardCharsets.UTF_8);
 			  Util.toDot(fst, w, false, false);
-			  w.close();
+			  w.Dispose();
 			  Console.WriteLine("Wrote FST to out.dot");
 			}
 
-			Directory dir = FSDirectory.open(new File(DirOut));
-			IndexOutput @out = dir.createOutput("fst.bin", IOContext.DEFAULT);
-			fst.save(@out);
-			@out.close();
+			Directory dir = FSDirectory.Open(new File(DirOut));
+			IndexOutput @out = dir.CreateOutput("fst.bin", IOContext.DEFAULT);
+			fst.Save(@out);
+			@out.Dispose();
 			Console.WriteLine("Saved FST to fst.bin.");
 
 			if (!verify)
@@ -598,9 +600,9 @@ namespace Lucene.Net.Util.Fst
 			}
 
 			/*
-			IndexInput in = dir.openInput("fst.bin", IOContext.DEFAULT);
+			IndexInput in = dir.OpenInput("fst.bin", IOContext.DEFAULT);
 			fst = new FST<T>(in, outputs);
-			in.close();
+			in.Dispose();
 			*/
 
 			Console.WriteLine("\nNow verify...");
@@ -609,11 +611,11 @@ namespace Lucene.Net.Util.Fst
 			{
 			  for (int iter = 0;iter < 2;iter++)
 			  {
-				@is.close();
+				@is.Close();
 				@is = new BufferedReader(new InputStreamReader(new FileInputStream(WordsFileIn), StandardCharsets.UTF_8), 65536);
 
 				ord = 0;
-				tStart = System.currentTimeMillis();
+				tStart = DateTime.Now.Millisecond;
 				while (true)
 				{
 				  string w = @is.readLine();
@@ -621,27 +623,25 @@ namespace Lucene.Net.Util.Fst
 				  {
 					break;
 				  }
-				  toIntsRef(w, InputMode, intsRef);
+				  ToIntsRef(w, InputMode, intsRef);
 				  if (iter == 0)
 				  {
 					T expected = GetOutput(intsRef, ord);
-					T actual = Util.get(fst, intsRef);
+					T actual = Util.Get(fst, intsRef);
 					if (actual == null)
 					{
 					  throw new Exception("unexpected null output on input=" + w);
 					}
 					if (!actual.Equals(expected))
 					{
-					  throw new Exception("wrong output (got " + Outputs.outputToString(actual) + " but expected " + Outputs.outputToString(expected) + ") on input=" + w);
+					  throw new Exception("wrong output (got " + Outputs.OutputToString(actual) + " but expected " + Outputs.OutputToString(expected) + ") on input=" + w);
 					}
 				  }
 				  else
 				  {
 					// Get by output
-					long? output = (long?) GetOutput(intsRef, ord);
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") final Lucene.Net.Util.IntsRef actual = Util.getByOutput((FST<Long>) fst, output.longValue());
-					IntsRef actual = Util.getByOutput((FST<long?>) fst, (long)output);
+					long output = GetOutput(intsRef, ord);
+					IntsRef actual = Util.GetByOutput((FST<T>) fst, (long)output);
 					if (actual == null)
 					{
 					  throw new Exception("unexpected null input from output=" + output);
@@ -655,7 +655,7 @@ namespace Lucene.Net.Util.Fst
 				  ord++;
 				  if (ord % 500000 == 0)
 				  {
-					Console.WriteLine(((System.currentTimeMillis() - tStart) / 1000.0) + "s: " + ord + "...");
+					Console.WriteLine(((DateTime.Now.Millisecond - tStart) / 1000.0) + "s: " + ord + "...");
 				  }
 				  if (ord >= limit)
 				  {
@@ -663,7 +663,7 @@ namespace Lucene.Net.Util.Fst
 				  }
 				}
 
-				double totSec = ((System.currentTimeMillis() - tStart) / 1000.0);
+				double totSec = ((DateTime.Now.Millisecond - tStart) / 1000.0);
 				Console.WriteLine("Verify " + (iter == 1 ? "(by output) " : "") + "took " + totSec + " sec + (" + (int)((totSec * 1000000000 / ord)) + " nsec per lookup)");
 
 				if (!verifyByOutput)
@@ -679,7 +679,7 @@ namespace Lucene.Net.Util.Fst
 		  }
 		  finally
 		  {
-			@is.close();
+			@is.Dispose();
 		  }
 		}
 	  }
@@ -782,82 +782,79 @@ namespace Lucene.Net.Util.Fst
 		  // Store both ord & docFreq:
 		  PositiveIntOutputs o1 = PositiveIntOutputs.Singleton;
 		  PositiveIntOutputs o2 = PositiveIntOutputs.Singleton;
-		  PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(o1, o2);
-		  new VisitTermsAnonymousInnerClassHelper(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
-		  .run(limit, verify, false);
+		  PairOutputs<long, long> outputs = new PairOutputs<long, long>(o1, o2);
+		  new VisitTermsAnonymousInnerClassHelper(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, false);
 		}
 		else if (storeOrds)
 		{
 		  // Store only ords
 		  PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		  new VisitTermsAnonymousInnerClassHelper2(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
-		  .run(limit, verify, true);
+		  new VisitTermsAnonymousInnerClassHelper2(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, true);
 		}
 		else if (storeDocFreqs)
 		{
 		  // Store only docFreq
 		  PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		  new VisitTermsAnonymousInnerClassHelper3(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
-		  .run(limit, verify, false);
+		  new VisitTermsAnonymousInnerClassHelper3(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays).Run(limit, verify, false);
 		}
 		else
 		{
 		  // Store nothing
 		  NoOutputs outputs = NoOutputs.Singleton;
 		  object NO_OUTPUT = outputs.NoOutput;
-		  new VisitTermsAnonymousInnerClassHelper4(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays, NO_OUTPUT)
-		  .run(limit, verify, false);
+		  new VisitTermsAnonymousInnerClassHelper4(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays, NO_OUTPUT).Run(limit, verify, false);
 		}
 	  }
 
-	  private class VisitTermsAnonymousInnerClassHelper : VisitTerms<PairOutputs.Pair<long?, long?>>
+	  private class VisitTermsAnonymousInnerClassHelper : VisitTerms<Pair>
 	  {
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private PairOutputs<long?, long?> outputs;
-		  private PairOutputs<long?, long?> Outputs;
+		  private PairOutputs<long, long> Outputs;
 
-		  public VisitTermsAnonymousInnerClassHelper<T1>(string dirOut, string wordsFileIn, int inputMode, int prune, PairOutputs<T1> outputs, bool doPack, bool noArcArrays) : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
+		  public VisitTermsAnonymousInnerClassHelper(string dirOut, string wordsFileIn, int inputMode, int prune, PairOutputs<long, long> outputs, bool doPack, bool noArcArrays) 
+                : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
 		  {
 			  this.Outputs = outputs;
 		  }
 
 		  internal Random rand;
-		  public override PairOutputs.Pair<long?, long?> GetOutput(IntsRef input, int ord)
+		  protected internal override Pair GetOutput(IntsRef input, int ord)
 		  {
 			if (ord == 0)
 			{
 			  rand = new Random(17);
 			}
-			return Outputs.newPair((long) ord, (long) TestUtil.Next(rand, 1, 5000));
+			return Outputs.NewPair((long) ord, (long) TestUtil.NextInt(rand, 1, 5000));
 		  }
 	  }
 
-	  private class VisitTermsAnonymousInnerClassHelper2 : VisitTerms<long?>
+	  private class VisitTermsAnonymousInnerClassHelper2 : VisitTerms<long>
 	  {
-		  public VisitTermsAnonymousInnerClassHelper2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveIntOutputs outputs, bool doPack, bool noArcArrays) : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
+		  public VisitTermsAnonymousInnerClassHelper2(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveIntOutputs outputs, bool doPack, bool noArcArrays) 
+              : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
 		  {
 		  }
 
-		  public override long? GetOutput(IntsRef input, int ord)
+		  protected internal override long GetOutput(IntsRef input, int ord)
 		  {
 			return (long) ord;
 		  }
 	  }
 
-	  private class VisitTermsAnonymousInnerClassHelper3 : VisitTerms<long?>
+	  private class VisitTermsAnonymousInnerClassHelper3 : VisitTerms<long>
 	  {
-		  public VisitTermsAnonymousInnerClassHelper3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveIntOutputs outputs, bool doPack, bool noArcArrays) : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
+		  public VisitTermsAnonymousInnerClassHelper3(string dirOut, string wordsFileIn, int inputMode, int prune, PositiveIntOutputs outputs, bool doPack, bool noArcArrays) 
+              : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
 		  {
 		  }
 
 		  internal Random rand;
-		  public override long? GetOutput(IntsRef input, int ord)
+		  protected internal override long GetOutput(IntsRef input, int ord)
 		  {
 			if (ord == 0)
 			{
 			  rand = new Random(17);
 			}
-			return (long) TestUtil.Next(rand, 1, 5000);
+			return (long) TestUtil.NextInt(rand, 1, 5000);
 		  }
 	  }
 
@@ -865,12 +862,13 @@ namespace Lucene.Net.Util.Fst
 	  {
 		  private object NO_OUTPUT;
 
-		  public VisitTermsAnonymousInnerClassHelper4(string dirOut, string wordsFileIn, int inputMode, int prune, NoOutputs outputs, bool doPack, bool noArcArrays, object NO_OUTPUT) : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
+		  public VisitTermsAnonymousInnerClassHelper4(string dirOut, string wordsFileIn, int inputMode, int prune, NoOutputs outputs, bool doPack, bool noArcArrays, object NO_OUTPUT) 
+              : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
 		  {
 			  this.NO_OUTPUT = NO_OUTPUT;
 		  }
 
-		  public override object GetOutput(IntsRef input, int ord)
+		  protected internal override object GetOutput(IntsRef input, int ord)
 		  {
 			return NO_OUTPUT;
 		  }
@@ -880,10 +878,10 @@ namespace Lucene.Net.Util.Fst
 	  {
 		Outputs<object> outputs = NoOutputs.Singleton;
 		Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
-		b.add(Util.toIntsRef(new BytesRef("foobar"), new IntsRef()), outputs.NoOutput);
-		BytesRefFSTEnum<object> fstEnum = new BytesRefFSTEnum<object>(b.finish());
-		assertNull(fstEnum.seekFloor(new BytesRef("foo")));
-		assertNull(fstEnum.seekCeil(new BytesRef("foobaz")));
+		b.Add(Util.ToIntsRef(new BytesRef("foobar"), new IntsRef()), outputs.NoOutput);
+		BytesRefFSTEnum<object> fstEnum = new BytesRefFSTEnum<object>(b.Finish());
+		Assert.IsNull(fstEnum.SeekFloor(new BytesRef("foo")));
+		Assert.IsNull(fstEnum.SeekCeil(new BytesRef("foobaz")));
 	  }
 
 
@@ -895,21 +893,21 @@ namespace Lucene.Net.Util.Fst
 		IntsRef ints = new IntsRef();
 		for (int i = 0; i < 10; i++)
 		{
-		  b.add(Util.toIntsRef(new BytesRef(str), ints), outputs.NoOutput);
+		  b.Add(Util.ToIntsRef(new BytesRef(str), ints), outputs.NoOutput);
 		}
-		FST<object> fst = b.finish();
+		FST<object> fst = b.Finish();
 
 		// count the input paths
 		int count = 0;
 		BytesRefFSTEnum<object> fstEnum = new BytesRefFSTEnum<object>(fst);
-		while (fstEnum.next() != null)
+		while (fstEnum.Next() != null)
 		{
 		  count++;
 		}
 		Assert.AreEqual(1, count);
 
-		Assert.IsNotNull(Util.get(fst, new BytesRef(str)));
-		assertNull(Util.get(fst, new BytesRef("foobaz")));
+		Assert.IsNotNull(Util.Get(fst, new BytesRef(str)));
+		Assert.IsNull(Util.Get(fst, new BytesRef("foobaz")));
 	  }
 
 	  /*
@@ -935,20 +933,20 @@ namespace Lucene.Net.Util.Fst
 	    Arrays.sort(strings);
 	    final IntsRef scratch = new IntsRef();
 	    for(String s : strings) {
-	      builder.add(Util.toIntsRef(new BytesRef(s), scratch), outputs.getNoOutput());
+	      builder.Add(Util.ToIntsRef(new BytesRef(s), scratch), outputs.getNoOutput());
 	    }
-	    final FST<Object> fst = builder.finish();
+	    final FST<Object> fst = builder.Finish();
 	    System.out.println("DOT before rewrite");
 	    Writer w = new OutputStreamWriter(new FileOutputStream("/mnt/scratch/before.dot"));
 	    Util.toDot(fst, w, false, false);
-	    w.close();
+	    w.Dispose();
 	
 	    final FST<Object> rewrite = new FST<Object>(fst, 1, 100);
 	
 	    System.out.println("DOT after rewrite");
 	    w = new OutputStreamWriter(new FileOutputStream("/mnt/scratch/after.dot"));
 	    Util.toDot(rewrite, w, false, false);
-	    w.close();
+	    w.Dispose();
 	  }
 	  */
 
@@ -963,48 +961,48 @@ namespace Lucene.Net.Util.Fst
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
 
 		// Build an FST mapping BytesRef -> Long
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, outputs);
 
 		BytesRef a = new BytesRef("a");
 		BytesRef b = new BytesRef("b");
 		BytesRef c = new BytesRef("c");
 
-		builder.add(Util.toIntsRef(a, new IntsRef()), 17L);
-		builder.add(Util.toIntsRef(b, new IntsRef()), 42L);
-		builder.add(Util.toIntsRef(c, new IntsRef()), 13824324872317238L);
+		builder.Add(Util.ToIntsRef(a, new IntsRef()), 17L);
+		builder.Add(Util.ToIntsRef(b, new IntsRef()), 42L);
+		builder.Add(Util.ToIntsRef(c, new IntsRef()), 13824324872317238L);
 
-		FST<long?> fst = builder.finish();
+		FST<long> fst = builder.Finish();
 
-		Assert.AreEqual(13824324872317238L, (long) Util.get(fst, c));
-		Assert.AreEqual(42, (long) Util.get(fst, b));
-		Assert.AreEqual(17, (long) Util.get(fst, a));
+		Assert.AreEqual(13824324872317238L, (long) Util.Get(fst, c));
+		Assert.AreEqual(42, (long) Util.Get(fst, b));
+		Assert.AreEqual(17, (long) Util.Get(fst, a));
 
-		BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
-		BytesRefFSTEnum.InputOutput<long?> seekResult;
-		seekResult = fstEnum.seekFloor(a);
+		BytesRefFSTEnum<long> fstEnum = new BytesRefFSTEnum<long>(fst);
+	    BytesRefFSTEnum<long>.InputOutput<long> seekResult;
+		seekResult = fstEnum.SeekFloor(a);
 		Assert.IsNotNull(seekResult);
-		Assert.AreEqual(17, (long) seekResult.output);
+		Assert.AreEqual(17, (long) seekResult.Output);
 
 		// goes to a
-		seekResult = fstEnum.seekFloor(new BytesRef("aa"));
+		seekResult = fstEnum.SeekFloor(new BytesRef("aa"));
 		Assert.IsNotNull(seekResult);
-		Assert.AreEqual(17, (long) seekResult.output);
+		Assert.AreEqual(17, (long) seekResult.Output);
 
 		// goes to b
-		seekResult = fstEnum.seekCeil(new BytesRef("aa"));
+		seekResult = fstEnum.SeekCeil(new BytesRef("aa"));
 		Assert.IsNotNull(seekResult);
-		Assert.AreEqual(b, seekResult.input);
-		Assert.AreEqual(42, (long) seekResult.output);
+		Assert.AreEqual(b, seekResult.Input);
+		Assert.AreEqual(42, (long) seekResult.Output);
 
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("c"), new IntsRef()), Util.getByOutput(fst, 13824324872317238L));
-		assertNull(Util.getByOutput(fst, 47));
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("b"), new IntsRef()), Util.getByOutput(fst, 42));
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("a"), new IntsRef()), Util.getByOutput(fst, 17));
+		Assert.AreEqual(Util.ToIntsRef(new BytesRef("c"), new IntsRef()), Util.GetByOutput(fst, 13824324872317238L));
+		Assert.IsNull(Util.GetByOutput(fst, 47));
+		Assert.AreEqual(Util.ToIntsRef(new BytesRef("b"), new IntsRef()), Util.GetByOutput(fst, 42));
+		Assert.AreEqual(Util.ToIntsRef(new BytesRef("a"), new IntsRef()), Util.GetByOutput(fst, 17));
 	  }
 
 	  public virtual void TestPrimaryKeys()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
 		for (int cycle = 0;cycle < 2;cycle++)
 		{
@@ -1012,102 +1010,102 @@ namespace Lucene.Net.Util.Fst
 		  {
 			Console.WriteLine("TEST: cycle=" + cycle);
 		  }
-		  RandomIndexWriter w = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
+		  RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 		  Document doc = new Document();
-		  Field idField = newStringField("id", "", Field.Store.NO);
-		  doc.add(idField);
+		  Field idField = NewStringField("id", "", Field.Store.NO);
+		  doc.Add(idField);
 
-		  int NUM_IDS = atLeast(200);
+		  int NUM_IDS = AtLeast(200);
 		  //final int NUM_IDS = (int) (377 * (1.0+random.nextDouble()));
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TEST: NUM_IDS=" + NUM_IDS);
 		  }
-		  Set<string> allIDs = new HashSet<string>();
+		  HashSet<string> allIDs = new HashSet<string>();
 		  for (int id = 0;id < NUM_IDS;id++)
 		  {
 			string idString;
 			if (cycle == 0)
 			{
 			  // PKs are assigned sequentially
-			  idString = string.format(Locale.ROOT, "%07d", id);
+			  idString = string.Format(Locale.ROOT, "%07d", id);
 			}
 			else
 			{
 			  while (true)
 			  {
-				string s = Convert.ToString(random().nextLong());
-				if (!allIDs.contains(s))
+				string s = Convert.ToString(Random().NextLong());
+				if (!allIDs.Contains(s))
 				{
 				  idString = s;
 				  break;
 				}
 			  }
 			}
-			allIDs.add(idString);
+			allIDs.Add(idString);
 			idField.StringValue = idString;
-			w.addDocument(doc);
+			w.AddDocument(doc);
 		  }
 
 		  //w.forceMerge(1);
 
 		  // turn writer into reader:
 		  IndexReader r = w.Reader;
-		  IndexSearcher s = newSearcher(r);
-		  w.close();
+		  IndexSearcher idxS = NewSearcher(r);
+		  w.Close();
 
 		  IList<string> allIDsList = new List<string>(allIDs);
 		  IList<string> sortedAllIDsList = new List<string>(allIDsList);
 		  sortedAllIDsList.Sort();
 
 		  // Sprinkle in some non-existent PKs:
-		  Set<string> outOfBounds = new HashSet<string>();
+		  HashSet<string> outOfBounds = new HashSet<string>();
 		  for (int idx = 0;idx < NUM_IDS / 10;idx++)
 		  {
 			string idString;
 			if (cycle == 0)
 			{
-			  idString = string.format(Locale.ROOT, "%07d", (NUM_IDS + idx));
+			  idString = string.Format(Locale.ROOT, "%07d", (NUM_IDS + idx));
 			}
 			else
 			{
 			  while (true)
 			  {
-				idString = Convert.ToString(random().nextLong());
-				if (!allIDs.contains(idString))
+				idString = Convert.ToString(Random().NextLong());
+				if (!allIDs.Contains(idString))
 				{
 				  break;
 				}
 			  }
 			}
-			outOfBounds.add(idString);
+			outOfBounds.Add(idString);
 			allIDsList.Add(idString);
 		  }
 
 		  // Verify w/ TermQuery
 		  for (int iter = 0;iter < 2 * NUM_IDS;iter++)
 		  {
-			string id = allIDsList[random().Next(allIDsList.Count)];
-			bool exists = !outOfBounds.contains(id);
+			string id = allIDsList[Random().Next(allIDsList.Count)];
+			bool exists = !outOfBounds.Contains(id);
 			if (VERBOSE)
 			{
 			  Console.WriteLine("TEST: TermQuery " + (exists ? "" : "non-exist ") + " id=" + id);
 			}
-			Assert.AreEqual((exists ? "" : "non-exist ") + "id=" + id, exists ? 1 : 0, s.search(new TermQuery(new Term("id", id)), 1).totalHits);
+			Assert.AreEqual(exists ? 1 : 0, idxS.Search(new TermQuery(new Term("id", id)), 1).TotalHits, (exists ? "" : "non-exist ") + "id=" + id);
 		  }
 
 		  // Verify w/ MultiTermsEnum
-		  TermsEnum termsEnum = MultiFields.getTerms(r, "id").iterator(null);
+		  TermsEnum termsEnum = MultiFields.GetTerms(r, "id").Iterator(null);
 		  for (int iter = 0;iter < 2 * NUM_IDS;iter++)
 		  {
 			string id;
 			string nextID;
 			bool exists;
 
-			if (random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  id = allIDsList[random().Next(allIDsList.Count)];
-			  exists = !outOfBounds.contains(id);
+			  id = allIDsList[Random().Next(allIDsList.Count)];
+			  exists = !outOfBounds.Contains(id);
 			  nextID = null;
 			  if (VERBOSE)
 			  {
@@ -1118,11 +1116,11 @@ namespace Lucene.Net.Util.Fst
 			{
 			  // Pick ID between two IDs:
 			  exists = false;
-			  int idv = random().Next(NUM_IDS - 1);
+			  int idv = Random().Next(NUM_IDS - 1);
 			  if (cycle == 0)
 			  {
-				id = string.format(Locale.ROOT, "%07da", idv);
-				nextID = string.format(Locale.ROOT, "%07d", idv + 1);
+				id = string.Format(Locale.ROOT, "%07da", idv);
+				nextID = string.Format(Locale.ROOT, "%07d", idv + 1);
 			  }
 			  else
 			  {
@@ -1138,7 +1136,7 @@ namespace Lucene.Net.Util.Fst
 			TermsEnum.SeekStatus status;
 			if (nextID == null)
 			{
-			  if (termsEnum.seekExact(new BytesRef(id)))
+			  if (termsEnum.SeekExact(new BytesRef(id)))
 			  {
 				status = TermsEnum.SeekStatus.FOUND;
 			  }
@@ -1149,13 +1147,13 @@ namespace Lucene.Net.Util.Fst
 			}
 			else
 			{
-			  status = termsEnum.seekCeil(new BytesRef(id));
+			  status = termsEnum.SeekCeil(new BytesRef(id));
 			}
 
 			if (nextID != null)
 			{
 			  Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, status);
-			  Assert.AreEqual("expected=" + nextID + " actual=" + termsEnum.term().utf8ToString(), new BytesRef(nextID), termsEnum.term());
+			  Assert.AreEqual(new BytesRef(nextID), termsEnum.Term(), "expected=" + nextID + " actual=" + termsEnum.Term().Utf8ToString());
 			}
 			else if (!exists)
 			{
@@ -1167,36 +1165,36 @@ namespace Lucene.Net.Util.Fst
 			}
 		  }
 
-		  r.close();
+		  r.Dispose();
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestRandomTermLookup()
 	  {
-		Directory dir = newDirectory();
+		Directory dir = NewDirectory();
 
-		RandomIndexWriter w = new RandomIndexWriter(random(), dir, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode.CREATE));
 		Document doc = new Document();
-		Field f = newStringField("field", "", Field.Store.NO);
-		doc.add(f);
+		Field f = NewStringField("field", "", Field.Store.NO);
+		doc.Add(f);
 
-		int NUM_TERMS = (int)(1000 * RANDOM_MULTIPLIER * (1 + random().NextDouble()));
+		int NUM_TERMS = (int)(1000 * RANDOM_MULTIPLIER * (1 + Random().NextDouble()));
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: NUM_TERMS=" + NUM_TERMS);
 		}
 
-		Set<string> allTerms = new HashSet<string>();
-		while (allTerms.size() < NUM_TERMS)
+		HashSet<string> allTerms = new HashSet<string>();
+		while (allTerms.Count < NUM_TERMS)
 		{
-		  allTerms.add(simpleRandomString(random()));
+		  allTerms.Add(SimpleRandomString(Random()));
 		}
 
 		foreach (string term in allTerms)
 		{
 		  f.StringValue = term;
-		  w.addDocument(doc);
+		  w.AddDocument(doc);
 		}
 
 		// turn writer into reader:
@@ -1209,11 +1207,11 @@ namespace Lucene.Net.Util.Fst
 		{
 		  Console.WriteLine("TEST: got reader=" + r);
 		}
-		IndexSearcher s = newSearcher(r);
-		w.close();
+		IndexSearcher s = NewSearcher(r);
+		w.Close();
 
 		IList<string> allTermsList = new List<string>(allTerms);
-		Collections.shuffle(allTermsList, random());
+	    allTermsList = CollectionsHelper.Shuffle(allTermsList);
 
 		// verify exact lookup
 		foreach (string term in allTermsList)
@@ -1222,11 +1220,11 @@ namespace Lucene.Net.Util.Fst
 		  {
 			Console.WriteLine("TEST: term=" + term);
 		  }
-		  Assert.AreEqual("term=" + term, 1, s.search(new TermQuery(new Term("field", term)), 1).totalHits);
+		  Assert.AreEqual(s.Search(new TermQuery(new Term("field", term)), 1).TotalHits, 1, "term=" + term);
 		}
 
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 
@@ -1237,100 +1235,103 @@ namespace Lucene.Net.Util.Fst
 	  /// <seealso cref= "https://issues.apache.org/jira/browse/LUCENE-2933" </seealso>
 	  public virtual void TestExpandedCloseToRoot()
 	  {
-//JAVA TO C# CONVERTER TODO TASK: Local classes are not converted by Java to C# Converter:
-//		class SyntheticData
-	//	{
-	//	  FST<Object> compile(String[] lines) throws IOException
-	//	  {
-	//		final NoOutputs outputs = NoOutputs.getSingleton();
-	//		final Object nothing = outputs.getNoOutput();
-	//		final Builder<Object> b = new Builder<>(FST.INPUT_TYPE.BYTE1, outputs);
-	//
-	//		int line = 0;
-	//		final BytesRef term = new BytesRef();
-	//		final IntsRef scratchIntsRef = new IntsRef();
-	//		while (line < lines.length)
-	//		{
-	//		  String w = lines[line++];
-	//		  if (w == null)
-	//		  {
-	//			break;
-	//		  }
-	//		  term.copyChars(w);
-	//		  b.add(Util.toIntsRef(term, scratchIntsRef), nothing);
-	//		}
-	//
-	//		return b.finish();
-	//	  }
-	//
-	//	  void generate(ArrayList<String> @out, StringBuilder b, char from, char to, int depth)
-	//	  {
-	//		if (depth == 0 || from == to)
-	//		{
-	//		  String seq = b.toString() + "_" + @out.size() + "_end";
-	//		  @out.add(seq);
-	//		}
-	//		else
-	//		{
-	//		  for (char c = from; c <= to; c++)
-	//		  {
-	//			b.append(c);
-	//			generate(@out, b, from, c == to ? to : from, depth - 1);
-	//			b.deleteCharAt(b.length() - 1);
-	//		  }
-	//		}
-	//	  }
-	//
-	//	  public int verifyStateAndBelow(FST<Object> fst, Arc<Object> arc, int depth) throws IOException
-	//	  {
-	//		if (FST.targetHasArcs(arc))
-	//		{
-	//		  int childCount = 0;
-	//		  BytesReader fstReader = fst.getBytesReader();
-	//		  for (arc = fst.readFirstTargetArc(arc, arc, fstReader); arc = fst.readNextArc(arc, fstReader), childCount++)
-	//		  {
-	//			boolean expanded = fst.isExpandedTarget(arc, fstReader);
-	//			int children = verifyStateAndBelow(fst, new FST.Arc<>().copyFrom(arc), depth + 1);
-	//
-	//			Assert.AreEqual(expanded, (depth <= FST.FIXED_ARRAY_SHALLOW_DISTANCE && children >= FST.FIXED_ARRAY_NUM_ARCS_SHALLOW) || children >= FST.FIXED_ARRAY_NUM_ARCS_DEEP);
-	//			if (arc.isLast())
-	//				break;
-	//		  }
-	//
-	//		  return childCount;
-	//		}
-	//		return 0;
-	//	  }
-	//	}
+		    // Sanity check.
+		    Assert.IsTrue(FST.FIXED_ARRAY_NUM_ARCS_SHALLOW < FST.FIXED_ARRAY_NUM_ARCS_DEEP);
+		    Assert.IsTrue(FST.FIXED_ARRAY_SHALLOW_DISTANCE >= 0);
 
-		// Sanity check.
-		Assert.IsTrue(FST.FIXED_ARRAY_NUM_ARCS_SHALLOW < FST.FIXED_ARRAY_NUM_ARCS_DEEP);
-		Assert.IsTrue(FST.FIXED_ARRAY_SHALLOW_DISTANCE >= 0);
+		    SyntheticData s = new SyntheticData();
 
-		SyntheticData s = new SyntheticData();
+		    List<string> @out = new List<string>();
+		    StringBuilder b = new StringBuilder();
+		    s.Generate(@out, b, 'a', 'i', 10);
+		    string[] input = @out.ToArray();
+		    Arrays.sort(input);
+		    FST<object> fst = s.Compile(input);
+		    FST.Arc<object> arc = fst.GetFirstArc(new FST.Arc<object>());
+		    s.VerifyStateAndBelow(fst, arc, 1);
+	  }
 
-		List<string> @out = new List<string>();
-		StringBuilder b = new StringBuilder();
-		s.generate(@out, b, 'a', 'i', 10);
-		string[] input = @out.ToArray();
-		Arrays.sort(input);
-		FST<object> fst = s.compile(input);
-		FST.Arc<object> arc = fst.getFirstArc(new FST.Arc<object>());
-		s.verifyStateAndBelow(fst, arc, 1);
+      private class SyntheticData
+	  {
+          public FST<object> Compile(string[] lines)
+          {
+              NoOutputs outputs = Fst.NoOutputs.Singleton;
+              object nothing = outputs.NoOutput;
+              Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
+
+              int line = 0;
+              BytesRef term = new BytesRef();
+              IntsRef scratchIntsRef= new IntsRef();
+
+              while (line < lines.Length)
+              {
+                  string w = lines[line++];
+                  if (w == null)
+                  {
+                      break;
+                  }
+                  term.CopyChars(w);
+                  b.Add(Util.ToIntsRef(term, scratchIntsRef), nothing);
+              }
+
+              return b.Finish();
+          }
+
+          public void Generate(IList<string> @out, StringBuilder b, char from, char to, int depth)
+          {
+              if (depth == 0 || from == to)
+              {
+                  string seq = b.ToString() + "_" + @out.Count + "_end";
+                  @out.Add(seq);
+              }
+              else
+              {
+                  for (char c = from; c <= to; c++)
+                  {
+                      b.Append(c);
+                      Generate(@out, b, from, c == to ? to : from, depth - 1);
+                      b.Remove(b.Length - 1, 1);//remove last char
+                  }
+              }
+          }
+
+          public int VerifyStateAndBelow(FST<object> fst, FST.Arc<object> arc, int depth)
+          {
+              if (FST<object>.TargetHasArcs(arc))
+              {
+                  int childCount = 0;
+                  BytesReader fstReader = fst.GetBytesReader;
+                  for (arc = fst.ReadFirstTargetArc(arc, arc, fstReader);
+                      (arc = fst.ReadNextArc(arc, fstReader)) != null;
+                      childCount++)
+                  {
+                      bool expanded = fst.IsExpandedTarget(arc, fstReader);
+                      int children = VerifyStateAndBelow(fst, new FST.Arc<object>().CopyFrom(arc), depth + 1);
+
+                      Assert.AreEqual(expanded, (depth <= FST.FIXED_ARRAY_SHALLOW_DISTANCE && children >= FST.FIXED_ARRAY_NUM_ARCS_SHALLOW) || children >= FST.FIXED_ARRAY_NUM_ARCS_DEEP);
+                      if (arc.Last)
+                      {
+                          break;
+                      }
+                  }
+                  return childCount;
+              }
+              return 0;
+          }
 	  }
 
 	  public virtual void TestFinalOutputOnEndState()
 	  {
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
 
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE4, 2, 0, true, true, int.MaxValue, outputs, null, random().nextBoolean(), PackedInts.DEFAULT, true, 15);
-		builder.add(Util.toUTF32("stat", new IntsRef()), 17L);
-		builder.add(Util.toUTF32("station", new IntsRef()), 10L);
-		FST<long?> fst = builder.finish();
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE4, 2, 0, true, true, int.MaxValue, outputs, null, Random().NextBoolean(), PackedInts.DEFAULT, true, 15);
+		builder.Add(Util.ToUTF32("stat", new IntsRef()), 17L);
+		builder.Add(Util.ToUTF32("station", new IntsRef()), 10L);
+		FST<long> fst = builder.Finish();
 		//Writer w = new OutputStreamWriter(new FileOutputStream("/x/tmp3/out.dot"));
 		StringWriter w = new StringWriter();
 		Util.toDot(fst, w, false, false);
-		w.close();
+		w.Dispose();
 		//System.out.println(w.toString());
 		Assert.IsTrue(w.ToString().IndexOf("label=\"t/[7]\"") != -1);
 	  }
@@ -1338,15 +1339,15 @@ namespace Lucene.Net.Util.Fst
 	  public virtual void TestInternalFinalState()
 	  {
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		bool willRewrite = random().nextBoolean();
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
-		builder.add(Util.toIntsRef(new BytesRef("stat"), new IntsRef()), outputs.NoOutput);
-		builder.add(Util.toIntsRef(new BytesRef("station"), new IntsRef()), outputs.NoOutput);
-		FST<long?> fst = builder.finish();
+		bool willRewrite = Random().NextBoolean();
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
+		builder.Add(Util.ToIntsRef(new BytesRef("stat"), new IntsRef()), outputs.NoOutput);
+		builder.Add(Util.ToIntsRef(new BytesRef("station"), new IntsRef()), outputs.NoOutput);
+		FST<long> fst = builder.Finish();
 		StringWriter w = new StringWriter();
 		//Writer w = new OutputStreamWriter(new FileOutputStream("/x/tmp/out.dot"));
 		Util.toDot(fst, w, false, false);
-		w.close();
+		w.Dispose();
 		//System.out.println(w.toString());
 
 		// check for accept state at label t
@@ -1360,209 +1361,211 @@ namespace Lucene.Net.Util.Fst
 	  public virtual void TestNonFinalStopNode()
 	  {
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		long? nothing = outputs.NoOutput;
-		Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+		long nothing = outputs.NoOutput;
+		Builder<long> b = new Builder<long>(FST.INPUT_TYPE.BYTE1, outputs);
 
-		FST<long?> fst = new FST<long?>(FST.INPUT_TYPE.BYTE1, outputs, false, PackedInts.COMPACT, true, 15);
+		FST<long> fst = new FST<long>(FST.INPUT_TYPE.BYTE1, outputs, false, PackedInts.COMPACT, true, 15);
 
-		Builder.UnCompiledNode<long?> rootNode = new Builder.UnCompiledNode<long?>(b, 0);
+		Builder<long>.UnCompiledNode<long> rootNode = new Builder<long>.UnCompiledNode<long>(b, 0);
 
 		// Add final stop node
 		{
-		  Builder.UnCompiledNode<long?> node = new Builder.UnCompiledNode<long?>(b, 0);
-		  node.isFinal = true;
-		  rootNode.addArc('a', node);
-		  Builder.CompiledNode frozen = new Builder.CompiledNode();
-		  frozen.node = fst.addNode(node);
-		  rootNode.arcs[0].nextFinalOutput = 17L;
-		  rootNode.arcs[0].isFinal = true;
-		  rootNode.arcs[0].output = nothing;
-		  rootNode.arcs[0].target = frozen;
+		  Builder<long>.UnCompiledNode<long> node = new Builder<long>.UnCompiledNode<long>(b, 0);
+		  node.IsFinal = true;
+		  rootNode.AddArc('a', node);
+		  Builder<long>.CompiledNode frozen = new Builder<long>.CompiledNode();
+		  frozen.Node = fst.AddNode(node);
+		  rootNode.Arcs[0].NextFinalOutput = 17L;
+		  rootNode.Arcs[0].IsFinal = true;
+		  rootNode.Arcs[0].Output = nothing;
+		  rootNode.Arcs[0].Target= frozen;
 		}
 
 		// Add non-final stop node
 		{
-		  Builder.UnCompiledNode<long?> node = new Builder.UnCompiledNode<long?>(b, 0);
-		  rootNode.addArc('b', node);
-		  Builder.CompiledNode frozen = new Builder.CompiledNode();
-		  frozen.node = fst.addNode(node);
-		  rootNode.arcs[1].nextFinalOutput = nothing;
-		  rootNode.arcs[1].output = 42L;
-		  rootNode.arcs[1].target = frozen;
+		  Builder<long>.UnCompiledNode<long> node = new Builder<long>.UnCompiledNode<long>(b, 0);
+		  rootNode.AddArc('b', node);
+		  Builder<long>.CompiledNode frozen = new Builder<long>.CompiledNode();
+		  frozen.Node = fst.AddNode(node);
+		  rootNode.Arcs[1].NextFinalOutput = nothing;
+		  rootNode.Arcs[1].Output = 42L;
+		  rootNode.Arcs[1].Target = frozen;
 		}
 
-		fst.finish(fst.addNode(rootNode));
+		fst.Finish(fst.AddNode(rootNode));
 
 		StringWriter w = new StringWriter();
 		//Writer w = new OutputStreamWriter(new FileOutputStream("/x/tmp3/out.dot"));
 		Util.toDot(fst, w, false, false);
-		w.close();
+		w.Dispose();
 
 		CheckStopNodes(fst, outputs);
 
 		// Make sure it still works after save/load:
-		Directory dir = newDirectory();
-		IndexOutput @out = dir.createOutput("fst", IOContext.DEFAULT);
-		fst.save(@out);
-		@out.close();
+		Directory dir = NewDirectory();
+		IndexOutput @out = dir.CreateOutput("fst", IOContext.DEFAULT);
+		fst.Save(@out);
+		@out.Dispose();
 
-		IndexInput @in = dir.openInput("fst", IOContext.DEFAULT);
-		FST<long?> fst2 = new FST<long?>(@in, outputs);
+		IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
+		FST<long> fst2 = new FST<long>(@in, outputs);
 		CheckStopNodes(fst2, outputs);
-		@in.close();
-		dir.close();
+		@in.Dispose();
+		dir.Dispose();
 	  }
 
-	  private void CheckStopNodes(FST<long?> fst, PositiveIntOutputs outputs)
+	  private void CheckStopNodes(FST<long> fst, PositiveIntOutputs outputs)
 	  {
 		long? nothing = outputs.NoOutput;
-		FST.Arc<long?> startArc = fst.getFirstArc(new FST.Arc<long?>());
-		Assert.AreEqual(nothing, startArc.output);
-		Assert.AreEqual(nothing, startArc.nextFinalOutput);
+		FST.Arc<long> startArc = fst.GetFirstArc(new FST.Arc<long>());
+		Assert.AreEqual(nothing, startArc.Output);
+		Assert.AreEqual(nothing, startArc.NextFinalOutput);
 
-		FST.Arc<long?> arc = fst.readFirstTargetArc(startArc, new FST.Arc<long?>(), fst.BytesReader);
-		Assert.AreEqual('a', arc.label);
-		Assert.AreEqual(17, (long)arc.nextFinalOutput);
+		FST.Arc<long> arc = fst.ReadFirstTargetArc(startArc, new FST.Arc<long>(), fst.GetBytesReader);
+		Assert.AreEqual('a', arc.Label);
+		Assert.AreEqual(17, (long)arc.NextFinalOutput);
 		Assert.IsTrue(arc.Final);
 
-		arc = fst.readNextArc(arc, fst.BytesReader);
-		Assert.AreEqual('b', arc.label);
+		arc = fst.ReadNextArc(arc, fst.GetBytesReader);
+		Assert.AreEqual('b', arc.Label);
 		Assert.IsFalse(arc.Final);
-		Assert.AreEqual(42, (long)arc.output);
+		Assert.AreEqual(42, (long)arc.Output);
 	  }
 
-	  internal static readonly IComparer<long?> minLongComparator = new ComparatorAnonymousInnerClassHelper();
+	  internal static readonly IComparer<long> minLongComparator = new ComparatorAnonymousInnerClassHelper();
 
-	  private class ComparatorAnonymousInnerClassHelper : IComparer<long?>
+	  private class ComparatorAnonymousInnerClassHelper : IComparer<long>
 	  {
 		  public ComparatorAnonymousInnerClassHelper()
 		  {
 		  }
 
-		  public virtual int Compare(long? left, long? right)
+		  public virtual int Compare(long left, long right)
 		  {
-			return left.compareTo(right);
+			return left.CompareTo(right);
 		  }
 	  }
 
 	  public virtual void TestShortestPaths()
 	  {
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, outputs);
 
 		IntsRef scratch = new IntsRef();
-		builder.add(Util.toIntsRef(new BytesRef("aab"), scratch), 22L);
-		builder.add(Util.toIntsRef(new BytesRef("aac"), scratch), 7L);
-		builder.add(Util.toIntsRef(new BytesRef("ax"), scratch), 17L);
-		FST<long?> fst = builder.finish();
+		builder.Add(Util.ToIntsRef(new BytesRef("aab"), scratch), 22L);
+		builder.Add(Util.ToIntsRef(new BytesRef("aac"), scratch), 7L);
+		builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), 17L);
+		FST<long> fst = builder.Finish();
 		//Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
 		//Util.toDot(fst, w, false, false);
-		//w.close();
+		//w.Dispose();
 
-		Util.TopResults<long?> res = Util.shortestPaths(fst, fst.getFirstArc(new FST.Arc<long?>()), outputs.NoOutput, minLongComparator, 3, true);
-		Assert.IsTrue(res.isComplete);
-		Assert.AreEqual(3, res.topN.size());
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("aac"), scratch), res.topN.get(0).input);
-		Assert.AreEqual(7L, (long)res.topN.get(0).output);
+		Util.TopResults<long> res = Util.shortestPaths(fst, fst.GetFirstArc(new FST.Arc<long>()), outputs.NoOutput, minLongComparator, 3, true);
+		Assert.IsTrue(res.IsComplete);
+		Assert.AreEqual(3, res.TopN.Count);
+        Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
+        Assert.AreEqual(7L, (long)res.TopN[0].Output);
 
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("ax"), scratch), res.topN.get(1).input);
-		Assert.AreEqual(17L,(long)res.topN.get(1).output);
+        Assert.AreEqual(Util.ToIntsRef(new BytesRef("ax"), scratch), res.TopN[1].Input);
+        Assert.AreEqual(17L, (long)res.TopN[1].Output);
 
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("aab"), scratch), res.topN.get(2).input);
-		Assert.AreEqual(22L, (long)res.topN.get(2).output);
+        Assert.AreEqual(Util.ToIntsRef(new BytesRef("aab"), scratch), res.TopN[2].Input);
+        Assert.AreEqual(22L, (long)res.TopN[2].Output);
 	  }
 
 	  public virtual void TestRejectNoLimits()
 	  {
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, outputs);
 
 		IntsRef scratch = new IntsRef();
-		builder.add(Util.toIntsRef(new BytesRef("aab"), scratch), 22L);
-		builder.add(Util.toIntsRef(new BytesRef("aac"), scratch), 7L);
-		builder.add(Util.toIntsRef(new BytesRef("adcd"), scratch), 17L);
-		builder.add(Util.toIntsRef(new BytesRef("adcde"), scratch), 17L);
+		builder.Add(Util.ToIntsRef(new BytesRef("aab"), scratch), 22L);
+		builder.Add(Util.ToIntsRef(new BytesRef("aac"), scratch), 7L);
+		builder.Add(Util.ToIntsRef(new BytesRef("adcd"), scratch), 17L);
+		builder.Add(Util.ToIntsRef(new BytesRef("adcde"), scratch), 17L);
 
-		builder.add(Util.toIntsRef(new BytesRef("ax"), scratch), 17L);
-		FST<long?> fst = builder.finish();
+		builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), 17L);
+		FST<long> fst = builder.Finish();
 		AtomicInteger rejectCount = new AtomicInteger();
-		Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparator, rejectCount);
+		Util.TopNSearcher<long> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparator, rejectCount);
 
-		searcher.addStartPaths(fst.getFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new IntsRef());
-		Util.TopResults<long?> res = searcher.search();
-		Assert.AreEqual(rejectCount.get(), 4);
-		Assert.IsTrue(res.isComplete); // rejected(4) + topN(2) <= maxQueueSize(6)
+		searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long>()), outputs.NoOutput, true, new IntsRef());
+		Util.TopResults<long> res = searcher.Search();
+		Assert.AreEqual(rejectCount.Get(), 4);
+		Assert.IsTrue(res.IsComplete); // rejected(4) + topN(2) <= maxQueueSize(6)
 
-		Assert.AreEqual(1, res.topN.size());
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("aac"), scratch), res.topN.get(0).input);
-		Assert.AreEqual(7L, (long)res.topN.get(0).output);
-		rejectCount.set(0);
+		Assert.AreEqual(1, res.TopN.Count);
+		Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
+		Assert.AreEqual(7L, (long)res.TopN[0].Output);
+		rejectCount.Set(0);
 		searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparator, rejectCount);
 
-		searcher.addStartPaths(fst.getFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new IntsRef());
-		res = searcher.search();
-		Assert.AreEqual(rejectCount.get(), 4);
-		Assert.IsFalse(res.isComplete); // rejected(4) + topN(2) > maxQueueSize(5)
+		searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long>()), outputs.NoOutput, true, new IntsRef());
+		res = searcher.Search();
+		Assert.AreEqual(rejectCount.Get(), 4);
+		Assert.IsFalse(res.IsComplete); // rejected(4) + topN(2) > maxQueueSize(5)
 	  }
 
-	  private class TopNSearcherAnonymousInnerClassHelper : Util.TopNSearcher<long?>
+	  private class TopNSearcherAnonymousInnerClassHelper : Util.TopNSearcher<long>
 	  {
 		  private readonly TestFSTs OuterInstance;
 
 		  private AtomicInteger RejectCount;
 
-		  public TopNSearcherAnonymousInnerClassHelper<T1>(TestFSTs outerInstance, FST<T1> fst, UnknownType minLongComparator, AtomicInteger rejectCount) : base(fst, 2, 6, minLongComparator)
+          public TopNSearcherAnonymousInnerClassHelper(TestFSTs outerInstance, FST<long> fst, IComparer<long> minLongComparator, AtomicInteger rejectCount) 
+              : base(fst, 2, 6, minLongComparator)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.RejectCount = rejectCount;
 		  }
 
-		  protected internal override bool AcceptResult(IntsRef input, long? output)
+		  protected override bool AcceptResult(IntsRef input, long output)
 		  {
 			bool accept = (int)output == 7;
 			if (!accept)
 			{
-			  RejectCount.incrementAndGet();
+			  RejectCount.IncrementAndGet();
 			}
 			return accept;
 		  }
 	  }
 
-	  private class TopNSearcherAnonymousInnerClassHelper2 : Util.TopNSearcher<long?>
+	  private class TopNSearcherAnonymousInnerClassHelper2 : Util.TopNSearcher<long>
 	  {
 		  private readonly TestFSTs OuterInstance;
 
 		  private AtomicInteger RejectCount;
 
-		  public TopNSearcherAnonymousInnerClassHelper2<T1>(TestFSTs outerInstance, FST<T1> fst, UnknownType minLongComparator, AtomicInteger rejectCount) : base(fst, 2, 5, minLongComparator)
+          public TopNSearcherAnonymousInnerClassHelper2(TestFSTs outerInstance, FST<long> fst, IComparer<long> minLongComparator, AtomicInteger rejectCount) 
+              : base(fst, 2, 5, minLongComparator)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.RejectCount = rejectCount;
 		  }
 
-		  protected internal override bool AcceptResult(IntsRef input, long? output)
+		  protected override bool AcceptResult(IntsRef input, long output)
 		  {
 			bool accept = (int)output == 7;
 			if (!accept)
 			{
-			  RejectCount.incrementAndGet();
+			  RejectCount.IncrementAndGet();
 			}
 			return accept;
 		  }
 	  }
 
 	  // compares just the weight side of the pair
-	  internal static readonly IComparer<Pair<long?, long?>> minPairWeightComparator = new ComparatorAnonymousInnerClassHelper2();
+	  internal static readonly IComparer<Pair> minPairWeightComparator = new ComparatorAnonymousInnerClassHelper2();
 
-	  private class ComparatorAnonymousInnerClassHelper2 : IComparer<Pair<long?, long?>>
+	  private class ComparatorAnonymousInnerClassHelper2 : IComparer<Pair>
 	  {
 		  public ComparatorAnonymousInnerClassHelper2()
 		  {
 		  }
 
-		  public virtual int Compare(Pair<long?, long?> left, Pair<long?, long?> right)
+		  public virtual int Compare(Pair left, Pair right)
 		  {
-			return left.output1.compareTo(right.output1);
+			return left.Output1.CompareTo(right.Output1);
 		  }
 	  }
 
@@ -1571,46 +1574,46 @@ namespace Lucene.Net.Util.Fst
 	  public virtual void TestShortestPathsWFST()
 	  {
 
-		PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveIntOutputs.Singleton, PositiveIntOutputs.Singleton); // output -  weight
+		PairOutputs<long, long> outputs = new PairOutputs<long, long>(PositiveIntOutputs.Singleton, PositiveIntOutputs.Singleton); // output -  weight
 
-		Builder<Pair<long?, long?>> builder = new Builder<Pair<long?, long?>>(FST.INPUT_TYPE.BYTE1, outputs);
+		Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 
 		IntsRef scratch = new IntsRef();
-		builder.add(Util.toIntsRef(new BytesRef("aab"), scratch), outputs.newPair(22L, 57L));
-		builder.add(Util.toIntsRef(new BytesRef("aac"), scratch), outputs.newPair(7L, 36L));
-		builder.add(Util.toIntsRef(new BytesRef("ax"), scratch), outputs.newPair(17L, 85L));
-		FST<Pair<long?, long?>> fst = builder.finish();
+		builder.Add(Util.ToIntsRef(new BytesRef("aab"), scratch), outputs.NewPair(22L, 57L));
+		builder.Add(Util.ToIntsRef(new BytesRef("aac"), scratch), outputs.NewPair(7L, 36L));
+		builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), outputs.NewPair(17L, 85L));
+		FST<Pair> fst = builder.Finish();
 		//Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
 		//Util.toDot(fst, w, false, false);
-		//w.close();
+		//w.Dispose();
 
-		Util.TopResults<Pair<long?, long?>> res = Util.shortestPaths(fst, fst.getFirstArc(new FST.Arc<Pair<long?, long?>>()), outputs.NoOutput, minPairWeightComparator, 3, true);
-		Assert.IsTrue(res.isComplete);
-		Assert.AreEqual(3, res.topN.size());
+        Util.TopResults<Pair> res = Util.shortestPaths(fst, fst.GetFirstArc(new FST.Arc<Pair>()), outputs.NoOutput, minPairWeightComparator, 3, true);
+		Assert.IsTrue(res.IsComplete);
+		Assert.AreEqual(3, res.TopN.Count);
 
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("aac"), scratch), res.topN.get(0).input);
-		Assert.AreEqual(7L, (long)res.topN.get(0).output.output1); // weight
-		Assert.AreEqual(36L, (long)res.topN.get(0).output.output2); // output
+		Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
+        Assert.AreEqual(7L, (long)res.TopN[0].Output.Output1); // weight
+        Assert.AreEqual(36L, (long)res.TopN[0].Output.Output2); // output
 
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("ax"), scratch), res.topN.get(1).input);
-		Assert.AreEqual(17L, (long)res.topN.get(1).output.output1); // weight
-		Assert.AreEqual(85L, (long)res.topN.get(1).output.output2); // output
+        Assert.AreEqual(Util.ToIntsRef(new BytesRef("ax"), scratch), res.TopN[1].Input);
+        Assert.AreEqual(17L, (long)res.TopN[1].Output.Output1); // weight
+        Assert.AreEqual(85L, (long)res.TopN[1].Output.Output2); // output
 
-		Assert.AreEqual(Util.toIntsRef(new BytesRef("aab"), scratch), res.topN.get(2).input);
-		Assert.AreEqual(22L, (long)res.topN.get(2).output.output1); // weight
-		Assert.AreEqual(57L, (long)res.topN.get(2).output.output2); // output
+		Assert.AreEqual(Util.ToIntsRef(new BytesRef("aab"), scratch), res.TopN[2].Input);
+		Assert.AreEqual(22L, (long)res.TopN[2].Output.Output1); // weight
+		Assert.AreEqual(57L, (long)res.TopN[2].Output.Output2); // output
 	  }
 
 	  public virtual void TestShortestPathsRandom()
 	  {
-		Random random = random();
-		int numWords = atLeast(1000);
+		Random random = Random();
+		int numWords = AtLeast(1000);
 
-		SortedDictionary<string, long?> slowCompletor = new SortedDictionary<string, long?>();
+		SortedDictionary<string, long> slowCompletor = new SortedDictionary<string, long>();
 		SortedSet<string> allPrefixes = new SortedSet<string>();
 
 		PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
-		Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+		Builder<long> builder = new Builder<long>(FST.INPUT_TYPE.BYTE1, outputs);
 		IntsRef scratch = new IntsRef();
 
 		for (int i = 0; i < numWords; i++)
@@ -1618,7 +1621,7 @@ namespace Lucene.Net.Util.Fst
 		  string s;
 		  while (true)
 		  {
-			s = TestUtil.randomSimpleString(random);
+			s = TestUtil.RandomSimpleString(random);
 			if (!slowCompletor.ContainsKey(s))
 			{
 			  break;
@@ -1629,91 +1632,91 @@ namespace Lucene.Net.Util.Fst
 		  {
 			allPrefixes.Add(s.Substring(0, j));
 		  }
-		  int weight = TestUtil.Next(random, 1, 100); // weights 1..100
+		  int weight = TestUtil.NextInt(random, 1, 100); // weights 1..100
 		  slowCompletor[s] = (long)weight;
 		}
 
-		foreach (KeyValuePair<string, long?> e in slowCompletor)
+		foreach (KeyValuePair<string, long> e in slowCompletor)
 		{
 		  //System.out.println("add: " + e);
-		  builder.add(Util.toIntsRef(new BytesRef(e.Key), scratch), e.Value);
+		  builder.Add(Util.ToIntsRef(new BytesRef(e.Key), scratch), e.Value);
 		}
 
-		FST<long?> fst = builder.finish();
+		FST<long> fst = builder.Finish();
 		//System.out.println("SAVE out.dot");
 		//Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
 		//Util.toDot(fst, w, false, false);
-		//w.close();
+		//w.Dispose();
 
-		BytesReader reader = fst.BytesReader;
+		BytesReader reader = fst.GetBytesReader;
 
-		//System.out.println("testing: " + allPrefixes.size() + " prefixes");
+		//System.out.println("testing: " + allPrefixes.Size() + " prefixes");
 		foreach (string prefix in allPrefixes)
 		{
 		  // 1. run prefix against fst, then complete by value
 		  //System.out.println("TEST: " + prefix);
 
 		  long prefixOutput = 0;
-		  FST.Arc<long?> arc = fst.getFirstArc(new FST.Arc<long?>());
+		  FST.Arc<long> arc = fst.GetFirstArc(new FST.Arc<long>());
 		  for (int idx = 0;idx < prefix.Length;idx++)
 		  {
-			if (fst.findTargetArc((int) prefix[idx], arc, arc, reader) == null)
+			if (fst.FindTargetArc((int) prefix[idx], arc, arc, reader) == null)
 			{
 			  Assert.Fail();
 			}
-			prefixOutput += arc.output;
+			prefixOutput += arc.Output;
 		  }
 
-		  int topN = TestUtil.Next(random, 1, 10);
+		  int topN = TestUtil.NextInt(random, 1, 10);
 
-		  Util.TopResults<long?> r = Util.shortestPaths(fst, arc, fst.outputs.NoOutput, minLongComparator, topN, true);
-		  Assert.IsTrue(r.isComplete);
+		  Util.TopResults<long> r = Util.shortestPaths(fst, arc, fst.Outputs.NoOutput, minLongComparator, topN, true);
+		  Assert.IsTrue(r.IsComplete);
 
 		  // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
-		  IList<Result<long?>> matches = new List<Result<long?>>();
+          IList<ResultLong> matches = new List<ResultLong>();
 
 		  // TODO: could be faster... but its slowCompletor for a reason
-		  foreach (KeyValuePair<string, long?> e in slowCompletor)
+		  foreach (KeyValuePair<string, long> e in slowCompletor)
 		  {
 			if (e.Key.StartsWith(prefix))
 			{
 			  //System.out.println("  consider " + e.getKey());
-			  matches.Add(new Result<>(Util.toIntsRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), e.Value - prefixOutput));
+			  matches.Add(new ResultLong(Util.ToIntsRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), e.Value - prefixOutput));
 			}
 		  }
 
 		  Assert.IsTrue(matches.Count > 0);
-		  matches.Sort(new TieBreakByInputComparator<>(minLongComparator));
+		  matches.Sort(new TieBreakByInputComparator(minLongComparator));
 		  if (matches.Count > topN)
 		  {
-			matches.subList(topN, matches.Count).clear();
+			matches.SubList(topN, matches.Count).Clear();
 		  }
 
-		  Assert.AreEqual(matches.Count, r.topN.size());
+		  Assert.AreEqual(matches.Count, r.TopN.Count);
 
-		  for (int hit = 0;hit < r.topN.size();hit++)
+		  for (int hit = 0;hit < r.TopN.Count;hit++)
 		  {
 			//System.out.println("  check hit " + hit);
-			Assert.AreEqual(matches[hit].input, r.topN.get(hit).input);
-			Assert.AreEqual(matches[hit].output, r.topN.get(hit).output);
+			Assert.AreEqual(matches[hit].Input, r.TopN[hit].Input);
+            Assert.AreEqual(matches[hit].Output, r.TopN[hit].Output);
 		  }
 		}
 	  }
 
-	  private class TieBreakByInputComparator<T> : Comparator<Result<T>>
+      private class TieBreakByInputComparator : IComparer<ResultLong>
 	  {
-		internal readonly IComparer<T> Comparator;
-		public TieBreakByInputComparator(IComparer<T> comparator)
+		internal readonly IComparer<ResultLong> Comparator;
+        public TieBreakByInputComparator(IComparer<ResultLong> comparator)
 		{
 		  this.Comparator = comparator;
 		}
 
-		public virtual int Compare(Result<T> a, Result<T> b)
+        public virtual int Compare(ResultLong a, ResultLong b)
 		{
-		  int cmp = Comparator.Compare(a.output, b.output);
+		  int cmp = Comparator.Compare(a.Output, b.Output);
 		  if (cmp == 0)
 		  {
-			return a.input.compareTo(b.input);
+			return a.Input.CompareTo(b.Input);
 		  }
 		  else
 		  {
@@ -1742,22 +1745,22 @@ namespace Lucene.Net.Util.Fst
 	  /// like testShortestPathsRandom, but uses pairoutputs so we have both a weight and an output </summary>
 	  public virtual void TestShortestPathsWFSTRandom()
 	  {
-		int numWords = atLeast(1000);
+		int numWords = AtLeast(1000);
 
 		SortedDictionary<string, TwoLongs> slowCompletor = new SortedDictionary<string, TwoLongs>();
 		SortedSet<string> allPrefixes = new SortedSet<string>();
 
-		PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveIntOutputs.Singleton, PositiveIntOutputs.Singleton); // output -  weight
-		Builder<Pair<long?, long?>> builder = new Builder<Pair<long?, long?>>(FST.INPUT_TYPE.BYTE1, outputs);
+		PairOutputs<long, long> outputs = new PairOutputs<long, long>(PositiveIntOutputs.Singleton, PositiveIntOutputs.Singleton); // output -  weight
+		Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 		IntsRef scratch = new IntsRef();
 
-		Random random = random();
+		Random random = Random();
 		for (int i = 0; i < numWords; i++)
 		{
 		  string s;
 		  while (true)
 		  {
-			s = TestUtil.randomSimpleString(random);
+			s = TestUtil.RandomSimpleString(random);
 			if (!slowCompletor.ContainsKey(s))
 			{
 			  break;
@@ -1768,8 +1771,8 @@ namespace Lucene.Net.Util.Fst
 		  {
 			allPrefixes.Add(s.Substring(0, j));
 		  }
-		  int weight = TestUtil.Next(random, 1, 100); // weights 1..100
-		  int output = TestUtil.Next(random, 0, 500); // outputs 0..500
+		  int weight = TestUtil.NextInt(random, 1, 100); // weights 1..100
+		  int output = TestUtil.NextInt(random, 0, 500); // outputs 0..500
 		  slowCompletor[s] = new TwoLongs(this, weight, output);
 		}
 
@@ -1778,40 +1781,40 @@ namespace Lucene.Net.Util.Fst
 		  //System.out.println("add: " + e);
 		  long weight = e.Value.a;
 		  long output = e.Value.b;
-		  builder.add(Util.toIntsRef(new BytesRef(e.Key), scratch), outputs.newPair(weight, output));
+		  builder.Add(Util.ToIntsRef(new BytesRef(e.Key), scratch), outputs.NewPair(weight, output));
 		}
 
-		FST<Pair<long?, long?>> fst = builder.finish();
+		FST<Pair> fst = builder.Finish();
 		//System.out.println("SAVE out.dot");
 		//Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
 		//Util.toDot(fst, w, false, false);
-		//w.close();
+		//w.Dispose();
 
-		BytesReader reader = fst.BytesReader;
+		BytesReader reader = fst.GetBytesReader;
 
-		//System.out.println("testing: " + allPrefixes.size() + " prefixes");
+		//System.out.println("testing: " + allPrefixes.Size() + " prefixes");
 		foreach (string prefix in allPrefixes)
 		{
 		  // 1. run prefix against fst, then complete by value
 		  //System.out.println("TEST: " + prefix);
 
-		  Pair<long?, long?> prefixOutput = outputs.NoOutput;
-		  FST.Arc<Pair<long?, long?>> arc = fst.getFirstArc(new FST.Arc<Pair<long?, long?>>());
+		  Pair prefixOutput = outputs.NoOutput;
+		  FST.Arc<Pair> arc = fst.GetFirstArc(new FST.Arc<Pair>());
 		  for (int idx = 0;idx < prefix.Length;idx++)
 		  {
-			if (fst.findTargetArc((int) prefix[idx], arc, arc, reader) == null)
+			if (fst.FindTargetArc((int) prefix[idx], arc, arc, reader) == null)
 			{
 			  Assert.Fail();
 			}
-			prefixOutput = outputs.add(prefixOutput, arc.output);
+			prefixOutput = outputs.Add(prefixOutput, arc.Output);
 		  }
 
-		  int topN = TestUtil.Next(random, 1, 10);
+		  int topN = TestUtil.NextInt(random, 1, 10);
 
-		  Util.TopResults<Pair<long?, long?>> r = Util.shortestPaths(fst, arc, fst.outputs.NoOutput, minPairWeightComparator, topN, true);
-		  Assert.IsTrue(r.isComplete);
+		  Util.TopResults<Pair> r = Util.shortestPaths(fst, arc, fst.Outputs.NoOutput, minPairWeightComparator, topN, true);
+		  Assert.IsTrue(r.IsComplete);
 		  // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion
-		  IList<Result<Pair<long?, long?>>> matches = new List<Result<Pair<long?, long?>>>();
+          IList<ResultPair> matches = new List<ResultPair>();
 
 		  // TODO: could be faster... but its slowCompletor for a reason
 		  foreach (KeyValuePair<string, TwoLongs> e in slowCompletor)
@@ -1819,24 +1822,24 @@ namespace Lucene.Net.Util.Fst
 			if (e.Key.StartsWith(prefix))
 			{
 			  //System.out.println("  consider " + e.getKey());
-			  matches.Add(new Result<>(Util.toIntsRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), outputs.newPair(e.Value.a - prefixOutput.output1, e.Value.b - prefixOutput.output2)));
+			  matches.Add(new ResultPair(Util.ToIntsRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), outputs.NewPair(e.Value.a - prefixOutput.Output1, e.Value.b - prefixOutput.Output2)));
 			}
 		  }
 
 		  Assert.IsTrue(matches.Count > 0);
-		  matches.Sort(new TieBreakByInputComparator<>(minPairWeightComparator));
+		  matches.Sort(new TieBreakByInputComparator(minPairWeightComparator));
 		  if (matches.Count > topN)
 		  {
-			matches.subList(topN, matches.Count).clear();
+			matches.SubList(topN, matches.Count).Clear();
 		  }
 
-		  Assert.AreEqual(matches.Count, r.topN.size());
+		  Assert.AreEqual(matches.Count, r.TopN.Count);
 
-		  for (int hit = 0;hit < r.topN.size();hit++)
+		  for (int hit = 0;hit < r.TopN.Count;hit++)
 		  {
 			//System.out.println("  check hit " + hit);
-			Assert.AreEqual(matches[hit].input, r.topN.get(hit).input);
-			Assert.AreEqual(matches[hit].output, r.topN.get(hit).output);
+			Assert.AreEqual(matches[hit].Input, r.TopN[hit].Input);
+            Assert.AreEqual(matches[hit].Output, r.TopN[hit].Output);
 		  }
 		}
 	  }
@@ -1848,27 +1851,27 @@ namespace Lucene.Net.Util.Fst
 
 		sbyte[] bytes = new sbyte[300];
 		IntsRef input = new IntsRef();
-		input.grow(1);
-		input.length = 1;
+		input.Grow(1);
+		input.Length = 1;
 		BytesRef output = new BytesRef(bytes);
 		for (int arc = 0;arc < 6;arc++)
 		{
-		  input.ints[0] = arc;
-		  output.bytes[0] = (sbyte) arc;
-		  builder.add(input, BytesRef.deepCopyOf(output));
+		  input.Ints[0] = arc;
+		  output.Bytes[0] = (sbyte) arc;
+		  builder.Add(input, BytesRef.DeepCopyOf(output));
 		}
 
-		FST<BytesRef> fst = builder.finish();
+		FST<BytesRef> fst = builder.Finish();
 		for (int arc = 0;arc < 6;arc++)
 		{
-		  input.ints[0] = arc;
-		  BytesRef result = Util.get(fst, input);
+		  input.Ints[0] = arc;
+		  BytesRef result = Util.Get(fst, input);
 		  Assert.IsNotNull(result);
-		  Assert.AreEqual(300, result.length);
-		  Assert.AreEqual(result.bytes[result.offset], arc);
-		  for (int byteIDX = 1;byteIDX < result.length;byteIDX++)
+		  Assert.AreEqual(300, result.Length);
+		  Assert.AreEqual(result.Bytes[result.Offset], arc);
+		  for (int byteIDX = 1;byteIDX < result.Length;byteIDX++)
 		  {
-			Assert.AreEqual(0, result.bytes[result.offset + byteIDX]);
+			Assert.AreEqual(0, result.Bytes[result.Offset + byteIDX]);
 		  }
 		}
 	  }

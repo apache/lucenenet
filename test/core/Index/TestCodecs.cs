@@ -137,49 +137,59 @@ namespace Lucene.Net.Index
 			}
 
 
-			public override bool Indexed()
+			public bool Indexed
 			{
-				return true;
+			    get { return true; }
+                set { }
 			}
-			public override bool Stored()
+			public bool Stored
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override bool Tokenized()
+			public bool Tokenized
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override bool StoreTermVectors()
+			public bool StoreTermVectors
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override bool StoreTermVectorOffsets()
+			public bool StoreTermVectorOffsets
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override bool StoreTermVectorPositions()
+			public bool StoreTermVectorPositions
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override bool StoreTermVectorPayloads()
+			public bool StoreTermVectorPayloads
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override bool OmitNorms()
+			public bool OmitNorms
 			{
-				return false;
+			    get { return false; }
+			    set { }
 			}
-			public override IndexOptions_e IndexOptions()
+			public IndexOptions_e? IndexOptionsValue
 			{
-				return OmitTF ? IndexOptions_e.DOCS_ONLY : IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+			    get { return OmitTF ? IndexOptions_e.DOCS_ONLY : IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS; }
+			    set { }
 			}
-			public override DocValuesType_e? DocValueType()
+			public DocValuesType_e? DocValueType
 			{
-				return null;
+			    get { return null; }
+			    set { }
 			}
 		}
 
-		public override int CompareTo(FieldData other)
+		public int CompareTo(FieldData other)
 		{
 		  return FieldInfo.Name.CompareTo(other.FieldInfo.Name);
 		}

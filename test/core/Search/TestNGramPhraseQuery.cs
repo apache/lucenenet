@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestNGramPhraseQuery : LuceneTestCase
 	{
 
@@ -34,7 +35,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
@@ -44,7 +46,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Reader.Dispose();
 		Reader = null;
@@ -52,7 +55,8 @@ namespace Lucene.Net.Search
 		Directory = null;
 	  }
 
-	  public virtual void TestRewrite()
+      [Test]
+      public virtual void TestRewrite()
 	  {
 		// bi-gram test ABC => AB/BC => AB/BC
 		PhraseQuery pq1 = new NGramPhraseQuery(2);

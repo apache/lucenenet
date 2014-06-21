@@ -36,6 +36,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestMultiTermQueryRewrites : LuceneTestCase
 	{
 
@@ -45,7 +46,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Dir = NewDirectory();
 		Sdir1 = NewDirectory();
@@ -80,7 +82,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Reader.Dispose();
 		MultiReader.Dispose();
@@ -146,7 +149,8 @@ namespace Lucene.Net.Search
 		CheckBooleanQueryOrder(q3);
 	  }
 
-	  public virtual void TestRewritesWithDuplicateTerms()
+      [Test]
+      public virtual void TestRewritesWithDuplicateTerms()
 	  {
 		CheckDuplicateTerms(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 
@@ -202,7 +206,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+		  public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		  {
 			return new TermRangeTermsEnumAnonymousInnerClassHelper(this, terms.Iterator(null), new BytesRef("2"), new BytesRef("7"));
 		  }
@@ -220,7 +224,7 @@ namespace Lucene.Net.Search
 
 			  internal readonly BoostAttribute boostAtt;
 
-			  protected internal override AcceptStatus Accept(BytesRef term)
+			  protected override AcceptStatus Accept(BytesRef term)
 			  {
 				boostAtt.Boost = Convert.ToSingle(term.Utf8ToString());
 				return base.Accept(term);
@@ -233,7 +237,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestBoosts()
+      [Test]
+      public virtual void TestBoosts()
 	  {
 		CheckBoosts(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 
@@ -281,7 +286,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestMaxClauseLimitations()
+      [Test]
+      public virtual void TestMaxClauseLimitations()
 	  {
 		CheckMaxClauseLimitation(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
 		CheckMaxClauseLimitation(MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);

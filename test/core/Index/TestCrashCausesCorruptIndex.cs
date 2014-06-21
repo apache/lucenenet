@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
 		// writes segments_1:
 		indexWriter.Commit();
 
-		crashAfterCreateOutput.CrashAfterCreateOutput = "segments_2";
+		crashAfterCreateOutput.GetCrashAfterCreateOutput = "segments_2";
 		indexWriter.AddDocument(Document);
 		try
 		{
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
 		  LockFactory = realDirectory.LockFactory;
 		}
 
-		public virtual string CrashAfterCreateOutput
+		public virtual string GetCrashAfterCreateOutput
 		{
 			set
 			{

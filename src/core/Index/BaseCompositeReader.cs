@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
 		return this.Starts[readerIndex];
 	  }
 
-      protected internal override IList<IndexReader> GetSequentialSubReaders()
+      public override IList<IndexReader> GetSequentialSubReaders()
       {
           return (IList<IndexReader>)SubReadersList;
       }

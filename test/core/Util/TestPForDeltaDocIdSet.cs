@@ -1,4 +1,6 @@
 using System.Collections;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -26,18 +28,18 @@ namespace Lucene.Net.Util
 
 	  public override PForDeltaDocIdSet CopyOf(BitArray bs, int length)
 	  {
-		PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).setIndexInterval(TestUtil.Next(random(), 1, 20));
-		for (int doc = bs.nextSetBit(0); doc != -1; doc = bs.nextSetBit(doc + 1))
+		PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt(Random(), 1, 20));
+		for (int doc = bs.NextSetBit(0); doc != -1; doc = bs.NextSetBit(doc + 1))
 		{
-		  builder.add(doc);
+		  builder.Add(doc);
 		}
-		return builder.build();
+		return builder.Build();
 	  }
 
 	  public override void AssertEquals(int numBits, BitArray ds1, PForDeltaDocIdSet ds2)
 	  {
-		base.Assert.AreEqual(numBits, ds1, ds2);
-		Assert.AreEqual(ds1.cardinality(), ds2.cardinality());
+		base.AssertEquals(numBits, ds1, ds2);
+		Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
 	  }
 
 	}

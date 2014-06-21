@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
 	/// A <seealso cref="TimSorter"/> for object arrays.
 	/// @lucene.internal
 	/// </summary>
-	internal sealed class ArrayTimSorter<T> : TimSorter
+	public sealed class ArrayTimSorter<T> : TimSorter
 	{
 
 	  private readonly IComparer<T> Comparator;

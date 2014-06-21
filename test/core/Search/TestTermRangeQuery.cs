@@ -35,25 +35,28 @@ namespace Lucene.Net.Search
     using System.Collections.Generic;
     using System.IO;
 
-
+    [TestFixture]
 	public class TestTermRangeQuery : LuceneTestCase
 	{
 
 	  private int DocCount = 0;
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 		Dir = NewDirectory();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Dir.Dispose();
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void TestExclusive()
 	  {
 		Query query = TermRangeQuery.NewStringRange("content", "A", "C", false, false);
@@ -79,6 +82,7 @@ namespace Lucene.Net.Search
 		reader.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestInclusive()
 	  {
 		Query query = TermRangeQuery.NewStringRange("content", "A", "C", true, true);
@@ -105,6 +109,7 @@ namespace Lucene.Net.Search
 		reader.Dispose();
 	  }
 
+      [Test]
 	  public virtual void TestAllDocs()
 	  {
 		InitializeIndex(new string[]{"A", "B", "C", "D"});
@@ -131,7 +136,8 @@ namespace Lucene.Net.Search
 	  /// this test should not be here, but it tests the fuzzy query rewrite mode (TOP_TERMS_SCORING_BOOLEAN_REWRITE)
 	  /// with constant score and checks, that only the lower end of terms is put into the range 
 	  /// </summary>
-	  public virtual void TestTopTermsRewrite()
+      [Test]
+      public virtual void TestTopTermsRewrite()
 	  {
 		InitializeIndex(new string[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"});
 
@@ -170,6 +176,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(0, allowedTerms.Count);
 	  }
 
+      [Test]
 	  public virtual void TestEqualsHashcode()
 	  {
 		Query query = TermRangeQuery.NewStringRange("content", "A", "C", true, true);
@@ -253,7 +260,7 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  return new TokenStreamComponents(new SingleCharTokenizer(reader));
 		}
@@ -294,6 +301,7 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-38
+      [Test]
 	  public virtual void TestExclusiveLowerNull()
 	  {
 		Analyzer analyzer = new SingleCharAnalyzer();
@@ -330,6 +338,7 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-38
+      [Test]
 	  public virtual void TestInclusiveLowerNull()
 	  {
 		//http://issues.apache.org/jira/browse/LUCENE-38

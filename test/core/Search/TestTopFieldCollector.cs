@@ -27,12 +27,14 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestTopFieldCollector : LuceneTestCase
 	{
 	  private IndexSearcher @is;
 	  private IndexReader Ir;
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -49,6 +51,7 @@ namespace Lucene.Net.Search
 		@is = NewSearcher(Ir);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Ir.Dispose();
@@ -56,6 +59,7 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void TestSortWithoutFillFields()
 	  {
 
@@ -81,6 +85,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSortWithoutScoreTracking()
 	  {
 
@@ -103,6 +108,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSortWithScoreNoMaxScoreTracking()
 	  {
 
@@ -126,6 +132,7 @@ namespace Lucene.Net.Search
 	  }
 
 	  // MultiComparatorScoringNoMaxScoreCollector
+      [Test]
 	  public virtual void TestSortWithScoreNoMaxScoreTrackingMulti()
 	  {
 
@@ -148,6 +155,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
+      [Test]
 	  public virtual void TestSortWithScoreAndMaxScoreTracking()
 	  {
 
@@ -170,7 +178,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestOutOfOrderDocsScoringSort()
+      [Test]
+      public virtual void TestOutOfOrderDocsScoringSort()
 	  {
 
 		// Two Sort criteria to instantiate the multi/single comparators.
@@ -203,7 +212,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // OutOfOrderMulti*Collector
-	  public virtual void TestOutOfOrderDocsScoringSortMulti()
+      [Test]
+      public virtual void TestOutOfOrderDocsScoringSortMulti()
 	  {
 
 		// Two Sort criteria to instantiate the multi/single comparators.
@@ -235,7 +245,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestSortWithScoreAndMaxScoreTrackingNoResults()
+      [Test]
+      public virtual void TestSortWithScoreAndMaxScoreTrackingNoResults()
 	  {
 
 		// Two Sort criteria to instantiate the multi/single comparators.

@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search.Spans
 {
 
@@ -24,7 +26,8 @@ namespace Lucene.Net.Search.Spans
 	/// <summary>
 	/// Basic equivalence tests for span queries
 	/// </summary>
-	public class TestSpanSearchEquivalence : SearchEquivalenceTestBase
+	[TestFixture]
+    public class TestSpanSearchEquivalence : SearchEquivalenceTestBase
 	{
 
 	  // TODO: we could go a little crazy for a lot of these,
@@ -33,92 +36,100 @@ namespace Lucene.Net.Search.Spans
 
 	  /// <summary>
 	  /// SpanTermQuery(A) = TermQuery(A) </summary>
-	  public virtual void TestSpanTermVersusTerm()
+      [Test]
+      public virtual void TestSpanTermVersusTerm()
 	  {
-		Term t1 = randomTerm();
-		assertSameSet(new TermQuery(t1), new SpanTermQuery(t1));
+		Term t1 = RandomTerm();
+		AssertSameSet(new TermQuery(t1), new SpanTermQuery(t1));
 	  }
 
 	  /// <summary>
 	  /// SpanOrQuery(A, B) = (A B) </summary>
-	  public virtual void TestSpanOrVersusBoolean()
+      [Test]
+      public virtual void TestSpanOrVersusBoolean()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		BooleanQuery q1 = new BooleanQuery();
 		q1.Add(new TermQuery(t1), Occur.SHOULD);
 		q1.Add(new TermQuery(t2), Occur.SHOULD);
 		SpanOrQuery q2 = new SpanOrQuery(new SpanTermQuery(t1), new SpanTermQuery(t2));
-		assertSameSet(q1, q2);
+		AssertSameSet(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// SpanNotQuery(A, B) ⊆ SpanTermQuery(A) </summary>
-	  public virtual void TestSpanNotVersusSpanTerm()
+      [Test]
+      public virtual void TestSpanNotVersusSpanTerm()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
-		assertSubsetOf(new SpanNotQuery(new SpanTermQuery(t1), new SpanTermQuery(t2)), new SpanTermQuery(t1));
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
+		AssertSubsetOf(new SpanNotQuery(new SpanTermQuery(t1), new SpanTermQuery(t2)), new SpanTermQuery(t1));
 	  }
 
 	  /// <summary>
 	  /// SpanFirstQuery(A, 10) ⊆ SpanTermQuery(A) </summary>
-	  public virtual void TestSpanFirstVersusSpanTerm()
+      [Test]
+      public virtual void TestSpanFirstVersusSpanTerm()
 	  {
-		Term t1 = randomTerm();
-		assertSubsetOf(new SpanFirstQuery(new SpanTermQuery(t1), 10), new SpanTermQuery(t1));
+		Term t1 = RandomTerm();
+		AssertSubsetOf(new SpanFirstQuery(new SpanTermQuery(t1), 10), new SpanTermQuery(t1));
 	  }
 
 	  /// <summary>
 	  /// SpanNearQuery([A, B], 0, true) = "A B" </summary>
-	  public virtual void TestSpanNearVersusPhrase()
+      [Test]
+      public virtual void TestSpanNearVersusPhrase()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		SpanQuery[] subquery = new SpanQuery[] {new SpanTermQuery(t1), new SpanTermQuery(t2)};
 		SpanNearQuery q1 = new SpanNearQuery(subquery, 0, true);
 		PhraseQuery q2 = new PhraseQuery();
 		q2.Add(t1);
 		q2.Add(t2);
-		assertSameSet(q1, q2);
+		AssertSameSet(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// SpanNearQuery([A, B], ∞, false) = +A +B </summary>
-	  public virtual void TestSpanNearVersusBooleanAnd()
+      [Test]
+      public virtual void TestSpanNearVersusBooleanAnd()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		SpanQuery[] subquery = new SpanQuery[] {new SpanTermQuery(t1), new SpanTermQuery(t2)};
 		SpanNearQuery q1 = new SpanNearQuery(subquery, int.MaxValue, false);
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new TermQuery(t1), Occur.MUST);
 		q2.Add(new TermQuery(t2), Occur.MUST);
-		assertSameSet(q1, q2);
+		AssertSameSet(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// SpanNearQuery([A B], 0, false) ⊆ SpanNearQuery([A B], 1, false) </summary>
-	  public virtual void TestSpanNearVersusSloppySpanNear()
+      [Test]
+      public virtual void TestSpanNearVersusSloppySpanNear()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		SpanQuery[] subquery = new SpanQuery[] {new SpanTermQuery(t1), new SpanTermQuery(t2)};
 		SpanNearQuery q1 = new SpanNearQuery(subquery, 0, false);
 		SpanNearQuery q2 = new SpanNearQuery(subquery, 1, false);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 
 	  /// <summary>
 	  /// SpanNearQuery([A B], 3, true) ⊆ SpanNearQuery([A B], 3, false) </summary>
-	  public virtual void TestSpanNearInOrderVersusOutOfOrder()
+      [Test]
+      public virtual void TestSpanNearInOrderVersusOutOfOrder()
 	  {
-		Term t1 = randomTerm();
-		Term t2 = randomTerm();
+		Term t1 = RandomTerm();
+		Term t2 = RandomTerm();
 		SpanQuery[] subquery = new SpanQuery[] {new SpanTermQuery(t1), new SpanTermQuery(t2)};
 		SpanNearQuery q1 = new SpanNearQuery(subquery, 3, true);
 		SpanNearQuery q2 = new SpanNearQuery(subquery, 3, false);
-		assertSubsetOf(q1, q2);
+		AssertSubsetOf(q1, q2);
 	  }
 	}
 

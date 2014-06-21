@@ -34,14 +34,14 @@ namespace Lucene.Net.Util
 		AttributeSource src = new AttributeSource();
 		CharTermAttribute termAtt = src.addAttribute(typeof(CharTermAttribute));
 		TypeAttribute typeAtt = src.addAttribute(typeof(TypeAttribute));
-		termAtt.append("TestTerm");
+		termAtt.Append("TestTerm");
 		typeAtt.Type = "TestType";
 		int hashCode = src.GetHashCode();
 
 		AttributeSource.State state = src.captureState();
 
 		// modify the attributes
-		termAtt.SetEmpty().append("AnotherTestTerm");
+		termAtt.SetEmpty().Append("AnotherTestTerm");
 		typeAtt.Type = "AnotherTestType";
 		Assert.IsTrue("Hash code should be different", hashCode != src.GetHashCode());
 
@@ -95,9 +95,9 @@ namespace Lucene.Net.Util
 		AttributeSource clone = src.cloneAttributes();
 		IEnumerator<Type> it = clone.AttributeClassesIterator;
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("FlagsAttribute must be the first attribute", typeof(FlagsAttribute), it.next());
+		Assert.AreEqual("FlagsAttribute must be the first attribute", typeof(FlagsAttribute), it.Next());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("TypeAttribute must be the second attribute", typeof(TypeAttribute), it.next());
+		Assert.AreEqual("TypeAttribute must be the second attribute", typeof(TypeAttribute), it.Next());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		Assert.IsFalse("No more attributes", it.hasNext());
 
@@ -172,7 +172,7 @@ namespace Lucene.Net.Util
 	  public virtual void TestLUCENE_3042()
 	  {
 		AttributeSource src1 = new AttributeSource();
-		src1.addAttribute(typeof(CharTermAttribute)).append("foo");
+		src1.addAttribute(typeof(CharTermAttribute)).Append("foo");
 		int hash1 = src1.GetHashCode(); // this triggers a cached state
 		AttributeSource src2 = new AttributeSource(src1);
 		src2.addAttribute(typeof(TypeAttribute)).Type = "bar";

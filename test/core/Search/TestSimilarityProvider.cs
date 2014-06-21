@@ -37,12 +37,14 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSimilarityProvider : LuceneTestCase
 	{
 	  private Directory Directory;
 	  private DirectoryReader Reader;
 	  private IndexSearcher Searcher;
 
+    [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -68,6 +70,7 @@ namespace Lucene.Net.Search
 		Searcher.Similarity = sim;
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -75,7 +78,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestBasics()
+      [Test]
+      public virtual void TestBasics()
 	  {
 		// sanity check of norms writer
 		// TODO: generalize
@@ -97,27 +101,29 @@ namespace Lucene.Net.Search
 
 	  private class ExampleSimilarityProvider : PerFieldSimilarityWrapper
 	  {
-		  private readonly TestSimilarityProvider OuterInstance;
+            private readonly TestSimilarityProvider OuterInstance;
 
-		  public ExampleSimilarityProvider(TestSimilarityProvider outerInstance)
-		  {
-			  this.OuterInstance = outerInstance;
-		  }
+            public ExampleSimilarityProvider(TestSimilarityProvider outerInstance)
+            {
+	            this.OuterInstance = outerInstance;
+                Sim1 = new Sim1(OuterInstance);
+                Sim2 = new Sim2(OuterInstance);
+            }
 
-		internal Similarity Sim1 = new Sim1(OuterInstance);
-		internal Similarity Sim2 = new Sim2(OuterInstance);
+            private Similarity Sim1;
+            private Similarity Sim2;
 
-		public override Similarity Get(string field)
-		{
-		  if (field.Equals("foo"))
-		  {
-			return Sim1;
-		  }
-		  else
-		  {
-			return Sim2;
-		  }
-		}
+            public override Similarity Get(string field)
+            {
+                if (field.Equals("foo"))
+                {
+                    return Sim1;
+                }
+                else
+                {
+                    return Sim2;
+                }
+            }
 	  }
 
 	  private class Sim1 : TFIDFSimilarity

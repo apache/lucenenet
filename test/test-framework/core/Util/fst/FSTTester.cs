@@ -225,7 +225,7 @@ namespace Lucene.Net.Util.Fst
 	  private T Run(FST<T> fst, IntsRef term, int[] prefixLength)
 	  {
 		Debug.Assert(prefixLength == null || prefixLength.Length == 1);
-		FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
+		FST<T>.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
 		T NO_OUTPUT = fst.Outputs.NoOutput;
 		T output = NO_OUTPUT;
 		FST.BytesReader fstReader = fst.GetBytesReader;
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util.Fst
 		  int label;
 		  if (i == term.Length)
 		  {
-			label = FST.END_LABEL;
+			label = FST<T>.END_LABEL;
 		  }
 		  else
 		  {
@@ -268,7 +268,7 @@ namespace Lucene.Net.Util.Fst
 
 	  private T RandomAcceptedWord(FST<T> fst, IntsRef @in)
 	  {
-		FST.Arc<T> arc = fst.getFirstArc(new FST.Arc<T>());
+		FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
 
 		IList<FST.Arc<T>> arcs = new List<FST.Arc<T>>();
 		@in.Length = 0;
@@ -280,11 +280,11 @@ namespace Lucene.Net.Util.Fst
 		while (true)
 		{
 		  // read all arcs:
-		  fst.readFirstTargetArc(arc, arc, fstReader);
+		  fst.ReadFirstTargetArc(arc, arc, fstReader);
 		  arcs.Add((new FST.Arc<T>()).CopyFrom(arc));
 		  while (!arc.Last)
 		  {
-			fst.readNextArc(arc, fstReader);
+			fst.ReadNextArc(arc, fstReader);
 			arcs.Add((new FST.Arc<T>()).CopyFrom(arc));
 		  }
 
@@ -296,7 +296,7 @@ namespace Lucene.Net.Util.Fst
 		  output = fst.Outputs.Add(output, arc.Output);
 
 		  // append label
-		  if (arc.Label == FST.END_LABEL)
+		  if (arc.Label == FST<T>.END_LABEL)
 		  {
 			break;
 		  }
@@ -338,9 +338,9 @@ namespace Lucene.Net.Util.Fst
 		{
 		  if (pair.Output is IList)
 		  {
-			IList<long?> longValues = (IList<long?>) pair.Output;
+			IList<long> longValues = (IList<long>) pair.Output;
 			Builder<object> builderObject = (Builder<object>) builder;
-			foreach (long? value in longValues)
+			foreach (long value in longValues)
 			{
 			  builderObject.Add(pair.Input, value);
 			}
@@ -476,9 +476,9 @@ namespace Lucene.Net.Util.Fst
 			Assert.IsTrue(OutputsEqual(pair.Output, output));
 
 			// verify enum's next
-			IntsRefFSTEnum.InputOutput<T> t = fstEnum.next();
+			IntsRefFSTEnum<T>.InputOutput<T> t = fstEnum.Next();
 			Assert.IsNotNull(t);
-			Assert.AreEqual("expected input=" + InputToString(inputMode, term) + " but fstEnum returned " + InputToString(inputMode, t.input), term, t.input);
+			Assert.AreEqual(term, t.Input, "expected input=" + InputToString(inputMode, term) + " but fstEnum returned " + InputToString(inputMode, t.Input));
 			Assert.IsTrue(OutputsEqual(pair.Output, t.Output));
 		  }
 		  Assert.IsNull(fstEnum.Next());
@@ -554,7 +554,7 @@ namespace Lucene.Net.Util.Fst
 				pos = -(pos + 1);
 				// ok doesn't exist
 				//System.out.println("  seek " + inputToString(inputMode, term));
-				IntsRefFSTEnum.InputOutput<T> seekResult;
+				IntsRefFSTEnum<T>.InputOutput<T> seekResult;
 				if (Random.Next(3) == 0)
 				{
 				  if (LuceneTestCase.VERBOSE)
@@ -585,19 +585,19 @@ namespace Lucene.Net.Util.Fst
 				if (pos != -1 && pos < Pairs.Count)
 				{
 				  //System.out.println("    got " + inputToString(inputMode,seekResult.input) + " output=" + fst.Outputs.outputToString(seekResult.Output));
-				  Assert.IsNotNull("got null but expected term=" + InputToString(inputMode, Pairs[pos].Input), seekResult);
+				  Assert.IsNotNull(seekResult, "got null but expected term=" + InputToString(inputMode, Pairs[pos].Input));
 				  if (LuceneTestCase.VERBOSE)
 				  {
-					Console.WriteLine("    got " + InputToString(inputMode, seekResult.input));
+					Console.WriteLine("    got " + InputToString(inputMode, seekResult.Input));
 				  }
-				  Assert.AreEqual("expected " + InputToString(inputMode, Pairs[pos].Input) + " but got " + InputToString(inputMode, seekResult.input), Pairs[pos].Input, seekResult.input);
+                  Assert.AreEqual("expected " + InputToString(inputMode, Pairs[pos].Input) + " but got " + InputToString(inputMode, seekResult.Input), Pairs[pos].Input, seekResult.input);
 				  Assert.IsTrue(OutputsEqual(Pairs[pos].Output, seekResult.Output));
 				}
 				else
 				{
 				  // seeked before start or beyond end
 				  //System.out.println("seek=" + seekTerm);
-				  Assert.IsNull("expected null but got " + (seekResult == null ? "null" : InputToString(inputMode, seekResult.input)), seekResult);
+				  Assert.IsNull(seekResult, "expected null but got " + (seekResult == null ? "null" : InputToString(inputMode, seekResult.Input)));
 				  if (LuceneTestCase.VERBOSE)
 				  {
 					Console.WriteLine("    got null");
@@ -612,7 +612,7 @@ namespace Lucene.Net.Util.Fst
 		  {
 			// seek to term that does exist:
 			InputOutput<T> pair = Pairs[Random.Next(Pairs.Count)];
-			IntsRefFSTEnum.InputOutput<T> seekResult;
+			IntsRefFSTEnum<T>.InputOutput<T> seekResult;
 			if (Random.Next(3) == 2)
 			{
 			  if (LuceneTestCase.VERBOSE)
@@ -638,7 +638,7 @@ namespace Lucene.Net.Util.Fst
 			  seekResult = fstEnum_.SeekCeil(pair.Input);
 			}
 			Assert.IsNotNull(seekResult);
-			Assert.AreEqual("got " + InputToString(inputMode, seekResult.input) + " but expected " + InputToString(inputMode, pair.Input), pair.Input, seekResult.input);
+            Assert.AreEqual(pair.Input, seekResult.Input, "got " + InputToString(inputMode, seekResult.Input) + " but expected " + InputToString(inputMode, pair.Input));
 			Assert.IsTrue(OutputsEqual(pair.Output, seekResult.Output));
 		  }
 		}
@@ -952,14 +952,14 @@ namespace Lucene.Net.Util.Fst
 		  Console.WriteLine("TEST: check pruned enum");
 		}
 		IntsRefFSTEnum<T> fstEnum = new IntsRefFSTEnum<T>(fst);
-		IntsRefFSTEnum.InputOutput<T> current;
+		IntsRefFSTEnum<T>.InputOutput<T> current;
 		while ((current = fstEnum.Next()) != null)
 		{
 		  if (LuceneTestCase.VERBOSE)
 		  {
-			Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.input, false) + " output=" + Outputs.OutputToString(current.Output));
+			Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + Outputs.OutputToString(current.Output));
 		  }
-		  CountMinOutput<T> cmo = prefixes[current.input];
+		  CountMinOutput<T> cmo = prefixes[current.Input];
 		  Assert.IsNotNull(cmo);
 		  Assert.IsTrue(cmo.IsLeaf || cmo.IsFinal);
 		  //if (cmo.isFinal && !cmo.isLeaf) {

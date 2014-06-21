@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 		// if the caller asks for in-order scoring or if the weight does not support
 		// out-of order scoring then collection will have to happen in-order.
 		Scorer inScorer = @in.Scorer(context, acceptDocs);
-		return AssertingScorer.Wrap(new Random(Random.nextLong()), inScorer);
+		return AssertingScorer.Wrap(new Random(Random.Next()), inScorer);
 	  }
 
 	  public override BulkScorer BulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, Bits acceptDocs)
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 		{
 		  // The incoming scorer already has a specialized
 		  // implementation for BulkScorer, so we should use it:
-		  inScorer = AssertingBulkScorer.Wrap(new Random(Random.nextLong()), inScorer);
+		  inScorer = AssertingBulkScorer.Wrap(new Random(Random.Next()), inScorer);
 		}
 		else if (Random.NextBoolean())
 		{
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 		  // The caller claims it can handle out-of-order
 		  // docs; let's confirm that by pulling docs and
 		  // randomly shuffling them before collection:
-		  inScorer = new AssertingBulkOutOfOrderScorer(new Random(Random.nextLong()), inScorer);
+		  inScorer = new AssertingBulkOutOfOrderScorer(new Random(Random.Next()), inScorer);
 		}
 		return inScorer;
 	  }

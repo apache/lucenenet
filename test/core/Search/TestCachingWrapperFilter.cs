@@ -40,6 +40,7 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Index;
 
+    [TestFixture]
 	public class TestCachingWrapperFilter : LuceneTestCase
 	{
 	  internal Directory Dir;
@@ -47,6 +48,7 @@ namespace Lucene.Net.Search
 	  internal IndexSearcher @is;
 	  internal RandomIndexWriter Iw;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -70,6 +72,7 @@ namespace Lucene.Net.Search
 		@is = NewSearcher(Ir);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		IOUtils.Close(Iw, Ir, Dir);
@@ -92,7 +95,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test null iterator </summary>
-	  public virtual void TestEmpty()
+      [Test]
+      public virtual void TestEmpty()
 	  {
 		Query query = new BooleanQuery();
 		Filter expected = new QueryWrapperFilter(query);
@@ -102,7 +106,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test iterator returns NO_MORE_DOCS </summary>
-	  public virtual void TestEmpty2()
+      [Test]
+      public virtual void TestEmpty2()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term("id", "0")), BooleanClause.Occur_e.MUST);
@@ -114,7 +119,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test null docidset </summary>
-	  public virtual void TestEmpty3()
+      [Test]
+      public virtual void TestEmpty3()
 	  {
 		Filter expected = new PrefixFilter(new Term("bogusField", "bogusVal"));
 		Filter actual = new CachingWrapperFilter(expected);
@@ -123,7 +129,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test iterator returns single document </summary>
-	  public virtual void TestSingle()
+      [Test]
+      public virtual void TestSingle()
 	  {
 		for (int i = 0; i < 10; i++)
 		{
@@ -137,7 +144,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test sparse filters (match single documents) </summary>
-	  public virtual void TestSparse()
+      [Test]
+      public virtual void TestSparse()
 	  {
 		for (int i = 0; i < 10; i++)
 		{
@@ -152,7 +160,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test dense filters (match entire index) </summary>
-	  public virtual void TestDense()
+      [Test]
+      public virtual void TestDense()
 	  {
 		Query query = new MatchAllDocsQuery();
 		Filter expected = new QueryWrapperFilter(query);
@@ -160,7 +169,8 @@ namespace Lucene.Net.Search
 		AssertFilterEquals(expected, actual);
 	  }
 
-	  public virtual void TestCachingWorks()
+      [Test]
+      public virtual void TestCachingWorks()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -187,7 +197,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestNullDocIdSet()
+      [Test]
+      public virtual void TestNullDocIdSet()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -224,7 +235,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestNullDocIdSetIterator()
+      [Test]
+      public virtual void TestNullDocIdSetIterator()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -269,7 +281,7 @@ namespace Lucene.Net.Search
 				  this.OuterInstance = outerInstance;
 			  }
 
-			  public override DocIdSetIterator Iterator()
+			  public override DocIdSetIterator GetIterator()
 			  {
 				return null;
 			  }
@@ -289,7 +301,7 @@ namespace Lucene.Net.Search
 		}
 		if (cachedSet == null)
 		{
-		  Assert.IsTrue(originalSet == null || originalSet.GetEnumerator() == null);
+		  Assert.IsTrue(originalSet == null || originalSet.GetIterator() == null);
 		}
 		else
 		{
@@ -307,7 +319,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestIsCacheAble()
+      [Test]
+      public virtual void TestIsCacheAble()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -344,7 +357,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestEnforceDeletions()
+      [Test]
+      public virtual void TestEnforceDeletions()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(NewLogMergePolicy(10)));

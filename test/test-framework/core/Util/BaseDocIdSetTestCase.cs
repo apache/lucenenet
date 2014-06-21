@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Util
 		BitArray set = new BitArray(numBits);
 		if (numBitsSet == numBits)
 		{
-		  set.Set(0, numBits);
+            set.Set(0, numBits != 0); //convert int to boolean
 		}
 		else
 		{
@@ -118,7 +119,7 @@ namespace Lucene.Net.Util
 	  {
 		int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
 		// test various random sets with various load factors
-        foreach (float percentSet in new float[] { 0f, 0.0001f, Random().nextFloat() / 2, 0.9f, 1f })
+        foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random().NextDouble() / 2, 0.9f, 1f })
 		{
 		  BitArray set = RandomSet(numBits, percentSet);
 		  T copy = CopyOf(set, numBits);
@@ -159,7 +160,7 @@ namespace Lucene.Net.Util
 		else
 		{
 		  Assert.AreEqual(-1, it2.DocID());
-		  for (int doc = ds1.nextSetBit(0); doc != -1; doc = ds1.nextSetBit(doc + 1))
+          for (int doc = ds1.NextSetBit(0); doc != -1; doc = ds1.NextSetBit(doc + 1))
 		  {
 			Assert.AreEqual(doc, it2.NextDoc());
 			Assert.AreEqual(doc, it2.DocID());
@@ -172,7 +173,7 @@ namespace Lucene.Net.Util
 		it2 = ds2.GetIterator();
 		if (it2 == null)
 		{
-		  Assert.AreEqual(-1, ds1.nextSetBit(0));
+            Assert.AreEqual(-1, ds1.NextSetBit(0));
 		}
 		else
 		{
@@ -180,7 +181,7 @@ namespace Lucene.Net.Util
 		  {
 			if (Random().NextBoolean())
 			{
-			  doc = ds1.nextSetBit(doc + 1);
+			  doc = ds1.NextSetBit(doc + 1);
 			  if (doc == -1)
 			  {
 				doc = DocIdSetIterator.NO_MORE_DOCS;
@@ -191,7 +192,7 @@ namespace Lucene.Net.Util
 			else
 			{
 			  int target = doc + 1 + Random().Next(Random().NextBoolean() ? 64 : Math.Max(numBits / 8, 1));
-			  doc = ds1.nextSetBit(target);
+              doc = ds1.NextSetBit(target);
 			  if (doc == -1)
 			  {
 				doc = DocIdSetIterator.NO_MORE_DOCS;
@@ -203,7 +204,7 @@ namespace Lucene.Net.Util
 		}
 
 		// bits()
-		Bits bits = ds2.bits();
+		Bits bits = ds2.GetBits();
 		if (bits != null)
 		{
 		  // test consistency between bits and iterator

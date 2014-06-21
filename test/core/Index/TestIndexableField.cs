@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -50,70 +51,90 @@ namespace Lucene.Net.Index
 		  private readonly TestIndexableField OuterInstance;
 
 
-		internal readonly int Counter;
-		internal readonly IndexableFieldType fieldType = new IndexableFieldTypeAnonymousInnerClassHelper();
+		  internal readonly int Counter;
+	      internal readonly IndexableFieldType fieldType;
+
+	      public MyField()
+	      {
+	          fieldType = new IndexableFieldTypeAnonymousInnerClassHelper(this);
+	      }
 
 		private class IndexableFieldTypeAnonymousInnerClassHelper : IndexableFieldType
 		{
-			public IndexableFieldTypeAnonymousInnerClassHelper()
+		    private MyField OuterInstance;
+			public IndexableFieldTypeAnonymousInnerClassHelper(MyField outerInstance)
 			{
+			    OuterInstance = outerInstance;
 			}
 
-			public override bool Indexed()
+			public bool Indexed
 			{
-			  return (OuterInstance.Counter % 10) != 3;
+			    get { return (OuterInstance.Counter % 10) != 3; }
+                set { }
 			}
 
-			public override bool Stored()
+			public bool Stored
 			{
-			  return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter % 10) == 3;
+			    get { return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter%10) == 3; }
+                set { }
 			}
 
-			public override bool Tokenized()
+			public bool Tokenized
 			{
-			  return true;
+			    get { return true; }
+                set { }
 			}
 
-			public override bool StoreTermVectors()
+			public bool StoreTermVectors
 			{
-			  return indexed() && OuterInstance.Counter % 2 == 1 && OuterInstance.Counter % 10 != 9;
+			    get { return Indexed && OuterInstance.Counter%2 == 1 && OuterInstance.Counter%10 != 9; }
+                set { }
 			}
 
-			public override bool StoreTermVectorOffsets()
+			public bool StoreTermVectorOffsets
 			{
-			  return storeTermVectors() && OuterInstance.Counter % 10 != 9;
+			    get { return StoreTermVectors && OuterInstance.Counter%10 != 9; }
+                set { }
 			}
 
-			public override bool StoreTermVectorPositions()
+			public bool StoreTermVectorPositions
 			{
-			  return storeTermVectors() && OuterInstance.Counter % 10 != 9;
+			    get { return StoreTermVectors && OuterInstance.Counter%10 != 9; }
+                set { }
 			}
 
-			public override bool StoreTermVectorPayloads()
+			public bool StoreTermVectorPayloads
 			{
-			  if (Codec.Default is Lucene3xCodec)
-			  {
-				return false; // 3.x doesnt support
-			  }
-			  else
-			  {
-				return storeTermVectors() && OuterInstance.Counter % 10 != 9;
-			  }
+			    get
+			    {
+			       if (Codec.Default is Lucene3xCodec)
+			      {
+				    return false; // 3.x doesnt support
+			      }
+			      else
+			      {
+				    return StoreTermVectors && OuterInstance.Counter % 10 != 9;
+			      } 
+			    }
+                set { }
 			}
 
-			public override bool OmitNorms()
+			public bool OmitNorms
 			{
-			  return false;
+			    get { return false; }
+                set { }
 			}
 
-			public override FieldInfo.IndexOptions_e IndexOptions()
+			public FieldInfo.IndexOptions_e? IndexOptionsValue
 			{
-			  return FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS;
+			    get { return FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS; }
+                set { }
 			}
 
-			public override DocValuesType DocValueType()
+			public DocValuesType? DocValueType
 			{
-			  return null;
+			    get { return null; }
+                set { }
 			}
 		}
 
@@ -123,17 +144,17 @@ namespace Lucene.Net.Index
 		  this.Counter = counter;
 		}
 
-		public override string Name()
+		public string Name()
 		{
 		  return "f" + Counter;
 		}
 
-		public override float Boost()
+		public float GetBoost()
 		{
-		  return 1.0f + Random().nextFloat();
+		  return 1.0f + (float)Random().NextDouble();
 		}
 
-		public override BytesRef BinaryValue()
+		public BytesRef BinaryValue()
 		{
 		  if ((Counter % 10) == 3)
 		  {
@@ -150,44 +171,51 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		public override string StringValue()
+		public string StringValue
 		{
-		  int fieldID = Counter % 10;
-		  if (fieldID != 3 && fieldID != 7)
-		  {
-			return "text " + Counter;
-		  }
-		  else
-		  {
-			return null;
-		  }
+		    get
+		    {
+                int fieldID = Counter % 10;
+                if (fieldID != 3 && fieldID != 7)
+                {
+                    return "text " + Counter;
+                }
+                else
+                {
+                    return null;
+                }
+		    }
 		}
 
-		public override Reader ReaderValue()
+		public TextReader ReaderValue
 		{
-		  if (Counter % 10 == 7)
-		  {
-			return new StringReader("text " + Counter);
-		  }
-		  else
-		  {
-			return null;
-		  }
+		    get
+		    {
+		          if (Counter % 10 == 7)
+		          {
+			        return new StringReader("text " + Counter);
+		          }
+		          else
+		          {
+			        return null;
+		          }
+		    }
+            
 		}
 
-		public override Number NumericValue()
+		public object NumericValue
 		{
-		  return null;
+		    get { return null; }
 		}
 
-		public override IndexableFieldType FieldType()
+		public IndexableFieldType FieldType()
 		{
 		  return fieldType;
 		}
 
-		public override TokenStream TokenStream(Analyzer analyzer)
+		public TokenStream GetTokenStream(Analyzer analyzer)
 		{
-		  return ReaderValue() != null ? analyzer.TokenStream(Name(), ReaderValue()) : analyzer.TokenStream(Name(), new StringReader(StringValue()));
+		  return ReaderValue != null ? analyzer.TokenStream(Name(), ReaderValue) : analyzer.TokenStream(Name(), new StringReader(StringValue));
 		}
 	  }
 
@@ -356,43 +384,65 @@ namespace Lucene.Net.Index
 
 		  public virtual IEnumerator<IndexableField> GetEnumerator()
 		  {
-			return new IteratorAnonymousInnerClassHelper(this);
+			return new IteratorAnonymousInnerClassHelper(this, OuterInstance);
 		  }
+
+	      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	      {
+	          return GetEnumerator();
+	      }
 
 		  private class IteratorAnonymousInnerClassHelper : IEnumerator<IndexableField>
 		  {
 			  private readonly IterableAnonymousInnerClassHelper OuterInstance;
+              private readonly TestIndexableField OuterTextIndexableField;
 
-			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
+			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, TestIndexableField outerTextIndexableField)
 			  {
-				  this.outerInstance = outerInstance;
+				  this.OuterInstance = outerInstance;
+			      OuterTextIndexableField = outerTextIndexableField;
 			  }
 
 			  internal int fieldUpto;
+		      private IndexableField current;
 
-			  public virtual bool HasNext()
-			  {
-				return fieldUpto < OuterInstance.FieldCount;
-			  }
+		      public bool MoveNext()
+		      {
+		          if (fieldUpto >= OuterInstance.FieldCount)
+		          {
+		              return false;
+		          }
 
-			  public virtual IndexableField Next()
-			  {
-				Debug.Assert(fieldUpto < OuterInstance.FieldCount);
-				if (fieldUpto == 0)
-				{
-				  fieldUpto = 1;
-				  return NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
-				}
-				else
-				{
-				  return new MyField(OuterInstance, OuterInstance.FinalBaseCount + (fieldUpto++-1));
-				}
-			  }
+                  Debug.Assert(fieldUpto < OuterInstance.FieldCount);
+                  if (fieldUpto == 0)
+                  {
+                      fieldUpto = 1;
+                      current =  NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
+                  }
+                  else
+                  {
+                      current = new MyField(OuterTextIndexableField, OuterInstance.FinalBaseCount + (fieldUpto++ - 1));
+                  }
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+		          return true;
+		      }
+
+		      public IndexableField Current
+		      {
+		          get { return current; }
+		      }
+
+		      object System.Collections.IEnumerator.Current
+		      {
+		          get { return Current; }
+		      }
+
+              public void Dispose() { }
+
+		      public void Reset()
+		      {
+		          throw new NotImplementedException();
+		      }
 		  }
 	  }
 	}

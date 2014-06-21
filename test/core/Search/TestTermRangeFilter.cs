@@ -21,7 +21,6 @@ namespace Lucene.Net.Search
 
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Term = Lucene.Net.Index.Term;
-    using Test = org.junit.Test;
 
 	/// <summary>
 	/// A basic 'positive' Unit test class for the TermRangeFilter class.
@@ -32,11 +31,13 @@ namespace Lucene.Net.Search
 	/// adequately test 'negative' results. It also does not test that garbage in
 	/// results in an Exception.
 	/// </summary>
+    [TestFixture]
 	public class TestTermRangeFilter : BaseTestRangeFilter
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeFilterId() throws java.io.IOException
+      [Test]
 	  public virtual void TestRangeFilterId()
 	  {
 		IndexReader reader = SignedIndexReader;
@@ -120,6 +121,7 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeFilterRand() throws java.io.IOException
+      [Test]
 	  public virtual void TestRangeFilterRand()
 	  {
 

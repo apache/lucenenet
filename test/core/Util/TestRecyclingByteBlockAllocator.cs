@@ -1,11 +1,10 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
-	using Before = org.junit.Before;
-	using Test = org.junit.Test;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -34,12 +33,12 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: @Override @Before public void setUp() throws Exception
 	  public override void SetUp()
 	  {
-		base.setUp();
+		base.SetUp();
 	  }
 
 	  private RecyclingByteBlockAllocator NewAllocator()
 	  {
-		return new RecyclingByteBlockAllocator(1 << (2 + random().Next(15)), random().Next(97), Counter.newCounter());
+		return new RecyclingByteBlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Counter.NewCounter());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -53,15 +52,15 @@ namespace Lucene.Net.Util
 		Assert.IsNotNull(block);
 		int size = block.Length;
 
-		int num = atLeast(97);
+		int num = AtLeast(97);
 		for (int i = 0; i < num; i++)
 		{
 		  block = allocator.ByteBlock;
 		  Assert.IsNotNull(block);
 		  Assert.AreEqual(size, block.Length);
-		  Assert.IsTrue("block is returned twice", set.Add(block));
-		  Assert.AreEqual(size * (i + 2), allocator.bytesUsed()); // zero based + 1
-		  Assert.AreEqual(0, allocator.numBufferedBlocks());
+		  Assert.IsTrue(set.Add(block), "block is returned twice");
+		  Assert.AreEqual(size * (i + 2), allocator.BytesUsed()); // zero based + 1
+		  Assert.AreEqual(0, allocator.NumBufferedBlocks());
 		}
 	  }
 
@@ -77,31 +76,32 @@ namespace Lucene.Net.Util
 		Assert.IsNotNull(block);
 		int size = block.Length;
 
-		int numIters = atLeast(97);
+		int numIters = AtLeast(97);
 		for (int i = 0; i < numIters; i++)
 		{
-		  int num = 1 + random().Next(39);
+		  int num = 1 + Random().Next(39);
 		  for (int j = 0; j < num; j++)
 		  {
 			block = allocator.ByteBlock;
 			Assert.IsNotNull(block);
 			Assert.AreEqual(size, block.Length);
-			Assert.IsTrue("block is returned twice", allocated.Add(block));
-			Assert.AreEqual(size * (allocated.Count + allocator.numBufferedBlocks()), allocator.bytesUsed());
+			Assert.IsTrue(allocated.Add(block), "block is returned twice");
+			Assert.AreEqual(size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed());
 		  }
-		  sbyte[][] array = allocated.toArray(new sbyte[0][]);
-		  int begin = random().Next(array.Length);
-		  int end = begin + random().Next(array.Length - begin);
+		  sbyte[][] array = allocated.ToArray(/*new sbyte[0][]*/);
+		  int begin = Random().Next(array.Length);
+		  int end = begin + Random().Next(array.Length - begin);
 		  IList<sbyte[]> selected = new List<sbyte[]>();
 		  for (int j = begin; j < end; j++)
 		  {
 			selected.Add(array[j]);
 		  }
-		  allocator.recycleByteBlocks(array, begin, end);
+		  allocator.RecycleByteBlocks(array, begin, end);
 		  for (int j = begin; j < end; j++)
 		  {
-			assertNull(array[j]);
-			sbyte[] b = selected.Remove(0);
+			Assert.IsNull(array[j]);
+			sbyte[] b = selected[0];
+            selected.RemoveAt(0);
 			Assert.IsTrue(allocated.Remove(b));
 		  }
 		}
@@ -119,37 +119,37 @@ namespace Lucene.Net.Util
 		Assert.IsNotNull(block);
 		int size = block.Length;
 
-		int numIters = atLeast(97);
+		int numIters = AtLeast(97);
 		for (int i = 0; i < numIters; i++)
 		{
-		  int num = 1 + random().Next(39);
+		  int num = 1 + Random().Next(39);
 		  for (int j = 0; j < num; j++)
 		  {
 			block = allocator.ByteBlock;
 			freeButAllocated = Math.Max(0, freeButAllocated - 1);
 			Assert.IsNotNull(block);
 			Assert.AreEqual(size, block.Length);
-			Assert.IsTrue("block is returned twice", allocated.Add(block));
-			Assert.AreEqual(size * (allocated.Count + allocator.numBufferedBlocks()), allocator.bytesUsed());
+			Assert.IsTrue(allocated.Add(block), "block is returned twice");
+			Assert.AreEqual(size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed());
 		  }
 
-		  sbyte[][] array = allocated.toArray(new sbyte[0][]);
-		  int begin = random().Next(array.Length);
-		  int end = begin + random().Next(array.Length - begin);
+		  sbyte[][] array = allocated.ToArray(/*new sbyte[0][]*/);
+		  int begin = Random().Next(array.Length);
+		  int end = begin + Random().Next(array.Length - begin);
 		  for (int j = begin; j < end; j++)
 		  {
 			sbyte[] b = array[j];
 			Assert.IsTrue(allocated.Remove(b));
 		  }
-		  allocator.recycleByteBlocks(array, begin, end);
+		  allocator.RecycleByteBlocks(array, begin, end);
 		  for (int j = begin; j < end; j++)
 		  {
-			assertNull(array[j]);
+			Assert.IsNull(array[j]);
 		  }
 		  // randomly free blocks
-		  int numFreeBlocks = allocator.numBufferedBlocks();
-		  int freeBlocks = allocator.freeBlocks(random().Next(7 + allocator.maxBufferedBlocks()));
-		  Assert.AreEqual(allocator.numBufferedBlocks(), numFreeBlocks - freeBlocks);
+		  int numFreeBlocks = allocator.NumBufferedBlocks();
+		  int freeBlocks = allocator.FreeBlocks(Random().Next(7 + allocator.MaxBufferedBlocks()));
+		  Assert.AreEqual(allocator.NumBufferedBlocks(), numFreeBlocks - freeBlocks);
 		}
 	  }
 	}

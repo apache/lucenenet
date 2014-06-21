@@ -22,7 +22,6 @@ namespace Lucene.Net.Index
 	 */
 
 	using Lucene.Net.Util;
-	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 	using Lucene.Net.Store;
 	using Lucene.Net.Search;
 	using Lucene.Net.Analysis;
@@ -108,12 +107,12 @@ namespace Lucene.Net.Index
 
 		private sealed class MyTermAttributeImpl : Attribute, TermToBytesRefAttribute
 		{
-		  public override void FillBytesRef()
+		  public void FillBytesRef()
 		  {
 			// no-op: the bytes was already filled by our owner's incrementToken
 		  }
 
-		  public override BytesRef BytesRef
+		  public BytesRef BytesRef
 		  {
 			  get
 			  {
@@ -130,7 +129,7 @@ namespace Lucene.Net.Index
 			return other == this;
 		  }
 
-		  public override int HashCode()
+		  public override int GetHashCode()
 		  {
 			return RuntimeHelpers.GetHashCode(this);
 		  }
@@ -139,7 +138,7 @@ namespace Lucene.Net.Index
 		  {
 		  }
 
-		  public override MyTermAttributeImpl Clone()
+		  public override object Clone()
 		  {
 			throw new System.NotSupportedException();
 		  }
@@ -171,7 +170,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test2BTerms() throws java.io.IOException
-	  public virtual void Test2BTerms()
+	  public virtual void Test2BTerms_Mem()
 	  {
 
 		if ("Lucene3x".Equals(Codec.Default.Name))

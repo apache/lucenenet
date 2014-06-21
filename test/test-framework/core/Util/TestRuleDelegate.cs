@@ -1,3 +1,5 @@
+using Apache.NMS.Util;
+
 namespace Lucene.Net.Util
 {
 
@@ -26,7 +28,7 @@ namespace Lucene.Net.Util
 	/// A <seealso cref="TestRule"/> that delegates to another <seealso cref="TestRule"/> via a delegate
 	/// contained in a an <seealso cref="AtomicReference"/>.
 	/// </summary>
-	internal sealed class TestRuleDelegate<T> : TestRule where T : org.junit.rules.TestRule
+	internal sealed class TestRuleDelegate<T> : TestRule where T : TestRule
 	{
 	  private AtomicReference<T> @delegate;
 
@@ -37,10 +39,10 @@ namespace Lucene.Net.Util
 
 	  public override Statement Apply(Statement s, Description d)
 	  {
-		return @delegate.get().apply(s, d);
+		return @delegate.GetType().apply(s, d);
 	  }
 
-	  internal static TestRuleDelegate<T> of<T>(AtomicReference<T> @delegate) where T : org.junit.rules.TestRule
+	  internal static TestRuleDelegate<T> of<T>(AtomicReference<T> @delegate) where T : TestRule
 	  {
 		return new TestRuleDelegate<T>(@delegate);
 	  }

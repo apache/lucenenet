@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Search
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    [TestFixture]
 	public class TestScorerPerf : LuceneTestCase
 	{
 	  internal bool Validate = true; // set to false when doing performance testing
@@ -49,7 +50,7 @@ namespace Lucene.Net.Search
 	  internal Directory d;
 
 	  // TODO: this should be setUp()....
-	  public virtual void CreateDummySearcher()
+      public virtual void CreateDummySearcher()
 	  {
 		  // Create a dummy index with nothing in it.
 		// this could possibly fail if Lucene starts checking for docid ranges...
@@ -60,7 +61,8 @@ namespace Lucene.Net.Search
 		r = DirectoryReader.Open(d);
 		s = NewSearcher(r);
 	  }
-
+        
+      [SetUp]
 	  public virtual void CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
 	  {
 		int[] freq = new int[nTerms];
@@ -170,7 +172,7 @@ namespace Lucene.Net.Search
 		public virtual void Collect(int doc, float score)
 		{
 
-		  Pos = Answer.nextSetBit(Pos + 1);
+		  Pos = Answer.NextSetBit(Pos + 1);
 		  if (Pos != doc + DocBase)
 		  {
 			throw new Exception("Expected doc " + Pos + " but got " + doc + DocBase);
@@ -306,11 +308,11 @@ namespace Lucene.Net.Search
 			tnum = Random().Next(termsInIndex);
 			if (termflag.Get(tnum))
 			{
-				tnum = termflag.nextClearBit(tnum);
+				tnum = termflag.NextClearBit(tnum);
 			}
 			if (tnum < 0 || tnum >= termsInIndex)
 			{
-				tnum = termflag.nextClearBit(0);
+				tnum = termflag.NextClearBit(0);
 			}
 			termflag.Set(tnum, true);
 			Query tq = new TermQuery(Terms[tnum]);
@@ -352,11 +354,11 @@ namespace Lucene.Net.Search
 			tnum = Random().Next(termsInIndex);
 			if (termflag.Get(tnum))
 			{
-				tnum = termflag.nextClearBit(tnum);
+				tnum = termflag.NextClearBit(tnum);
 			}
 			if (tnum < 0 || tnum >= 25)
 			{
-				tnum = termflag.nextClearBit(0);
+				tnum = termflag.NextClearBit(0);
 			}
 			termflag.Set(tnum, true);
 			Query tq = new TermQuery(Terms[tnum]);
@@ -404,7 +406,8 @@ namespace Lucene.Net.Search
 		}
 
 
-	  public virtual void TestConjunctions()
+      [Test]
+      public virtual void TestConjunctions()
 	  {
 		// test many small sets... the bugs will be found on boundary conditions
 		CreateDummySearcher();

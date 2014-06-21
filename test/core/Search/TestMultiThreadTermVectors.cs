@@ -37,12 +37,14 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestMultiThreadTermVectors : LuceneTestCase
 	{
 	  private Directory Directory;
 	  public int NumDocs = 100;
 	  public int NumThreads = 3;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -64,13 +66,15 @@ namespace Lucene.Net.Search
 
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Directory.Dispose();
 		base.TearDown();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 
 		IndexReader reader = null;
@@ -181,7 +185,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public override void Run()
+      [Test]
+      public override void Run()
 	  {
 		  try
 		  {

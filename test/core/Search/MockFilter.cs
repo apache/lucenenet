@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 
@@ -23,6 +25,7 @@ namespace Lucene.Net.Search
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 	using Bits = Lucene.Net.Util.Bits;
 
+    [TestFixture]
 	public class MockFilter : Filter
 	{
 	  private bool WasCalled_Renamed;

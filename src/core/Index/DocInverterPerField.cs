@@ -32,8 +32,7 @@ namespace Lucene.Net.Index
 	/// (InvertedDocConsumerPerField).  It also interacts with an
 	/// endConsumer (InvertedDocEndConsumerPerField).
 	/// </summary>
-
-	internal sealed class DocInverterPerField : DocFieldConsumerPerField
+	public sealed class DocInverterPerField : DocFieldConsumerPerField
 	{
 
 	  internal readonly FieldInfo fieldInfo;

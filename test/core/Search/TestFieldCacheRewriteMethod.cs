@@ -25,7 +25,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Tests the FieldcacheRewriteMethod with random regular expressions
 	/// </summary>
-	public class TestFieldCacheRewriteMethod : TestRegexpRandom2
+	[TestFixture]
+    public class TestFieldCacheRewriteMethod : TestRegexpRandom2
 	{
 
 	  /// <summary>
@@ -44,7 +45,8 @@ namespace Lucene.Net.Search
 		CheckHits.CheckEqual(fieldCache, fieldCacheDocs.ScoreDocs, filterDocs.ScoreDocs);
 	  }
 
-	  public virtual void TestEquals()
+      [Test]
+      public virtual void TestEquals()
 	  {
 		RegexpQuery a1 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);
 		RegexpQuery a2 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);

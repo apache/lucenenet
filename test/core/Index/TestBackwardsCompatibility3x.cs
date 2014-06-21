@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -125,7 +126,7 @@ namespace Lucene.Net.Index
 		OldIndexDirs = new Dictionary<string, Directory>();
 		foreach (string name in names)
 		{
-		  Directory dir = CreateTempDir(name);
+		  DirectoryInfo dir = CreateTempDir(name);
           FileInfo dataFile = new FileInfo(typeof(TestBackwardsCompatibility3x).getResource("index." + name + ".zip").toURI());
 		  TestUtil.Unzip(dataFile, dir);
 		  OldIndexDirs[name] = NewFSDirectory(dir);
@@ -153,7 +154,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("TEST: index " + UnsupportedNames[i]);
 		  }
-		  Directory oldIndexDir = CreateTempDir(UnsupportedNames[i]);
+		  DirectoryInfo oldIndexDir = CreateTempDir(UnsupportedNames[i]);
 		  TestUtil.Unzip(GetDataFile("unsupported." + UnsupportedNames[i] + ".zip"), oldIndexDir);
 		  BaseDirectoryWrapper dir = NewFSDirectory(oldIndexDir);
 		  // don't checkindex, these are intentionally not supported
@@ -579,7 +580,7 @@ namespace Lucene.Net.Index
 	  public virtual FileInfo CreateIndex(string dirName, bool doCFS, bool fullyMerged)
 	  {
 		// we use a real directory name that is not cleaned up, because this method is only used to create backwards indexes:
-		Directory indexDir = new Directory("/tmp/4x", dirName);
+		DirectoryInfo indexDir = new DirectoryInfo("/tmp/4x", dirName);
 		TestUtil.Rm(indexDir);
 		Directory dir = NewFSDirectory(indexDir);
 		LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
@@ -921,7 +922,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestSurrogates()
 	  {
-		Directory oldIndexDir = CreateTempDir("surrogates");
+		DirectoryInfo oldIndexDir = CreateTempDir("surrogates");
 		TestUtil.Unzip(GetDataFile(SurrogatesIndexName), oldIndexDir);
 		Directory dir = NewFSDirectory(oldIndexDir);
 		// TODO: more tests
@@ -979,7 +980,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestNegativePositions()
 	  {
-		Directory oldIndexDir = CreateTempDir("negatives");
+		DirectoryInfo oldIndexDir = CreateTempDir("negatives");
 		TestUtil.Unzip(GetDataFile(Bogus24IndexName), oldIndexDir);
 		Directory dir = NewFSDirectory(oldIndexDir);
 		DirectoryReader ir = DirectoryReader.Open(dir);

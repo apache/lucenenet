@@ -137,7 +137,7 @@ namespace Lucene.Net.Util.junitcompat
 			  case Lucene.Net.Util.junitcompat.SoreType.ERROR:
 				throw new Exception(pt.ToString());
 			  case Lucene.Net.Util.junitcompat.SoreType.FAILURE:
-				Assert.Assert.IsTrue(pt.ToString(), false);
+				Assert.IsTrue(pt.ToString(), false);
 				throw new Exception("unreachable");
 			}
 		  }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.BEFORE_CLASS;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Length == 0);
+		Assert.IsTrue(RunAndReturnSyserr().Length == 0);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -167,7 +167,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.INITIALIZER;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Length == 0);
+		Assert.IsTrue(RunAndReturnSyserr().Length == 0);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.RULE;
-		Assert.Assert.AreEqual("", RunAndReturnSyserr());
+		Assert.AreEqual("", RunAndReturnSyserr());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -185,7 +185,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.BEFORE;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Length == 0);
+		Assert.IsTrue(RunAndReturnSyserr().Length == 0);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -194,7 +194,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.TEST;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Length == 0);
+		Assert.IsTrue(RunAndReturnSyserr().Length == 0);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.AFTER;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Length == 0);
+		Assert.IsTrue(RunAndReturnSyserr().Length == 0);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -212,7 +212,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ASSUMPTION;
 		@where = SorePoint.AFTER_CLASS;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Length == 0);
+		Assert.IsTrue(RunAndReturnSyserr().Length == 0);
 	  }
 
 	  /*
@@ -225,7 +225,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.FAILURE;
 		@where = SorePoint.BEFORE_CLASS;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -234,7 +234,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.FAILURE;
 		@where = SorePoint.INITIALIZER;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -246,9 +246,9 @@ namespace Lucene.Net.Util.junitcompat
 
 		string syserr = RunAndReturnSyserr();
 
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -258,9 +258,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.FAILURE;
 		@where = SorePoint.BEFORE;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -270,9 +270,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.FAILURE;
 		@where = SorePoint.TEST;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -282,9 +282,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.FAILURE;
 		@where = SorePoint.AFTER;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.FAILURE;
 		@where = SorePoint.AFTER_CLASS;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
 	  }
 
 	  /*
@@ -306,7 +306,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ERROR;
 		@where = SorePoint.BEFORE_CLASS;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -315,7 +315,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ERROR;
 		@where = SorePoint.INITIALIZER;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -325,9 +325,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.ERROR;
 		@where = SorePoint.RULE;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -337,9 +337,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.ERROR;
 		@where = SorePoint.BEFORE;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -349,9 +349,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.ERROR;
 		@where = SorePoint.TEST;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -361,9 +361,9 @@ namespace Lucene.Net.Util.junitcompat
 		Type = SoreType.ERROR;
 		@where = SorePoint.AFTER;
 		string syserr = RunAndReturnSyserr();
-		Assert.Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtests.method=test"));
-		Assert.Assert.IsTrue(Arrays.asList(syserr.Split("\\s", true)).contains("-Dtestcase=" + typeof(Nested).SimpleName));
+		Assert.IsTrue(syserr.Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtests.method=test"));
+		Assert.IsTrue(Arrays.AsList(syserr.Split("\\s", true)).Contains("-Dtestcase=" + typeof(Nested).SimpleName));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -372,7 +372,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		Type = SoreType.ERROR;
 		@where = SorePoint.AFTER_CLASS;
-		Assert.Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
+		Assert.IsTrue(RunAndReturnSyserr().Contains("NOTE: reproduce with:"));
 	  }
 
 	  private string RunAndReturnSyserr()

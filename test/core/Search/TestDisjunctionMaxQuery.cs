@@ -49,7 +49,8 @@ namespace Lucene.Net.Search
 	/// Test of the DisjunctionMaxQuery.
 	/// 
 	/// </summary>
-	public class TestDisjunctionMaxQuery : LuceneTestCase
+	[TestFixture]
+    public class TestDisjunctionMaxQuery : LuceneTestCase
 	{
 
 	  /// <summary>
@@ -107,6 +108,7 @@ namespace Lucene.Net.Search
 		NonAnalyzedType.Tokenized = false;
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -168,6 +170,7 @@ namespace Lucene.Net.Search
 		s.Similarity = Sim;
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		r.Dispose();
@@ -175,7 +178,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestSkipToFirsttimeMiss()
+      [Test]
+      public virtual void TestSkipToFirsttimeMiss()
 	  {
 		DisjunctionMaxQuery dq = new DisjunctionMaxQuery(0.0f);
 		dq.Add(Tq("id", "d1"));
@@ -193,7 +197,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestSkipToFirsttimeHit()
+      [Test]
+      public virtual void TestSkipToFirsttimeHit()
 	  {
 		DisjunctionMaxQuery dq = new DisjunctionMaxQuery(0.0f);
 		dq.Add(Tq("dek", "albino"));
@@ -207,7 +212,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual("found wrong docid", "d4", r.Document(ds.DocID()).Get("id"));
 	  }
 
-	  public virtual void TestSimpleEqualScores1()
+      [Test]
+      public virtual void TestSimpleEqualScores1()
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
@@ -235,7 +241,8 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestSimpleEqualScores2()
+      [Test]
+      public virtual void TestSimpleEqualScores2()
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
@@ -262,7 +269,8 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestSimpleEqualScores3()
+      [Test]
+      public virtual void TestSimpleEqualScores3()
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.0f);
@@ -291,7 +299,8 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestSimpleTiebreaker()
+      [Test]
+      public virtual void TestSimpleTiebreaker()
 	  {
 
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.01f);
@@ -318,7 +327,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestBooleanRequiredEqualScores()
+      [Test]
+      public virtual void TestBooleanRequiredEqualScores()
 	  {
 
 		BooleanQuery q = new BooleanQuery();
@@ -358,7 +368,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestBooleanOptionalNoTiebreaker()
+      [Test]
+      public virtual void TestBooleanOptionalNoTiebreaker()
 	  {
 
 		BooleanQuery q = new BooleanQuery();
@@ -397,7 +408,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestBooleanOptionalWithTiebreaker()
+      [Test]
+      public virtual void TestBooleanOptionalWithTiebreaker()
 	  {
 
 		BooleanQuery q = new BooleanQuery();
@@ -450,7 +462,8 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestBooleanOptionalWithTiebreakerAndBoost()
+      [Test]
+      public virtual void TestBooleanOptionalWithTiebreakerAndBoost()
 	  {
 
 		BooleanQuery q = new BooleanQuery();
@@ -503,7 +516,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-4477 / LUCENE-4401:
-	  public virtual void TestBooleanSpanQuery()
+      [Test]
+      public virtual void TestBooleanSpanQuery()
 	  {
 		int hits = 0;
 		Directory directory = NewDirectory();

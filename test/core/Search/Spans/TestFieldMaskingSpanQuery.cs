@@ -32,6 +32,7 @@ namespace Lucene.Net.Search.Spans
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestFieldMaskingSpanQuery : LuceneTestCase
 	{
 
@@ -56,7 +57,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -77,7 +79,8 @@ namespace Lucene.Net.Search.Spans
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -91,7 +94,8 @@ namespace Lucene.Net.Search.Spans
 		CheckHits.CheckHitCollector(Random(), q, null, Searcher, docs);
 	  }
 
-	  public virtual void TestRewrite0()
+      [Test]
+      public virtual void TestRewrite0()
 	  {
 		SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
 		q.Boost = 8.7654321f;
@@ -104,7 +108,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(1, terms.Count);
 	  }
 
-	  public virtual void TestRewrite1()
+      [Test]
+      public virtual void TestRewrite1()
 	  {
 		// mask an anon SpanQuery class that rewrites to something else.
 		SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQueryAnonymousInnerClassHelper(this, new Term("last", "sally")), "first");
@@ -122,7 +127,8 @@ namespace Lucene.Net.Search.Spans
 	  {
 		  private readonly TestFieldMaskingSpanQuery OuterInstance;
 
-		  public SpanTermQueryAnonymousInnerClassHelper(TestFieldMaskingSpanQuery outerInstance, Term org) : base(Term)
+		  public SpanTermQueryAnonymousInnerClassHelper(TestFieldMaskingSpanQuery outerInstance, Term term) 
+              : base(term)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
@@ -133,7 +139,8 @@ namespace Lucene.Net.Search.Spans
 		  }
 	  }
 
-	  public virtual void TestRewrite2()
+      [Test]
+      public virtual void TestRewrite2()
 	  {
 		SpanQuery q1 = new SpanTermQuery(new Term("last", "smith"));
 		SpanQuery q2 = new SpanTermQuery(new Term("last", "jones"));
@@ -147,7 +154,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(2, set.Count);
 	  }
 
-	  public virtual void TestEquality1()
+      [Test]
+      public virtual void TestEquality1()
 	  {
 		SpanQuery q1 = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
 		SpanQuery q2 = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
@@ -168,13 +176,15 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestNoop0()
+      [Test]
+      public virtual void TestNoop0()
 	  {
 		SpanQuery q1 = new SpanTermQuery(new Term("last", "sally"));
 		SpanQuery q = new FieldMaskingSpanQuery(q1, "first");
 		Check(q, new int[] { }); // :EMPTY:
 	  }
-	  public virtual void TestNoop1()
+      [Test]
+      public virtual void TestNoop1()
 	  {
 		SpanQuery q1 = new SpanTermQuery(new Term("last", "smith"));
 		SpanQuery q2 = new SpanTermQuery(new Term("last", "jones"));
@@ -184,7 +194,8 @@ namespace Lucene.Net.Search.Spans
 		Check(q, new int[] {1, 2});
 	  }
 
-	  public virtual void TestSimple1()
+      [Test]
+      public virtual void TestSimple1()
 	  {
 		SpanQuery q1 = new SpanTermQuery(new Term("first", "james"));
 		SpanQuery q2 = new SpanTermQuery(new Term("last", "jones"));
@@ -199,7 +210,8 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestSimple2()
+      [Test]
+      public virtual void TestSimple2()
 	  {
 		AssumeTrue("Broken scoring: LUCENE-3723", Searcher.Similarity is TFIDFSimilarity);
 		SpanQuery q1 = new SpanTermQuery(new Term("gender", "female"));
@@ -210,7 +222,8 @@ namespace Lucene.Net.Search.Spans
 		Check(q, new int[] {2, 4});
 	  }
 
-	  public virtual void TestSpans0()
+      [Test]
+      public virtual void TestSpans0()
 	  {
 		SpanQuery q1 = new SpanTermQuery(new Term("gender", "female"));
 		SpanQuery q2 = new SpanTermQuery(new Term("first", "james"));
@@ -249,7 +262,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(false, span.Next());
 	  }
 
-	  public virtual void TestSpans1()
+      [Test]
+      public virtual void TestSpans1()
 	  {
 		SpanQuery q1 = new SpanTermQuery(new Term("first", "sally"));
 		SpanQuery q2 = new SpanTermQuery(new Term("first", "james"));
@@ -271,7 +285,8 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestSpans2()
+      [Test]
+      public virtual void TestSpans2()
 	  {
 		AssumeTrue("Broken scoring: LUCENE-3723", Searcher.Similarity is TFIDFSimilarity);
 		SpanQuery qA1 = new SpanTermQuery(new Term("gender", "female"));

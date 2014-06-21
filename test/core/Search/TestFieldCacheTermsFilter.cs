@@ -35,9 +35,11 @@ namespace Lucene.Net.Search
 	/// A basic unit test for FieldCacheTermsFilter
 	/// </summary>
 	/// <seealso cref= Lucene.Net.Search.FieldCacheTermsFilter </seealso>
-	public class TestFieldCacheTermsFilter : LuceneTestCase
+	[TestFixture]
+    public class TestFieldCacheTermsFilter : LuceneTestCase
 	{
-	  public virtual void TestMissingTerms()
+      [Test]
+      public virtual void TestMissingTerms()
 	  {
 		string fieldName = "field1";
 		Directory rd = NewDirectory();

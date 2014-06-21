@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -40,7 +42,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Tests the DocTermOrdsRangeFilter
 	/// </summary>
-	public class TestDocTermOrdsRangeFilter : LuceneTestCase
+	[TestFixture]
+    public class TestDocTermOrdsRangeFilter : LuceneTestCase
 	{
 	  protected internal IndexSearcher Searcher1;
 	  protected internal IndexSearcher Searcher2;
@@ -48,6 +51,7 @@ namespace Lucene.Net.Search
 	  private Directory Dir;
 	  protected internal string FieldName;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -98,6 +102,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -107,7 +112,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test a bunch of random ranges </summary>
-	  public virtual void TestRanges()
+      [Test]
+      public virtual void TestRanges()
 	  {
 		int num = AtLeast(1000);
 		for (int i = 0; i < num; i++)

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -21,8 +23,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-	using Test = org.junit.Test;
-
 	/// 
 	/// 
 	/// 
@@ -34,22 +34,22 @@ namespace Lucene.Net.Util
 	  public virtual void Test()
 	  {
 		SentinelIntSet set = new SentinelIntSet(10, -1);
-		Assert.IsFalse(set.exists(50));
-		set.put(50);
-		Assert.IsTrue(set.exists(50));
-		Assert.AreEqual(1, set.size());
-		Assert.AreEqual(-11, set.find(10));
-		Assert.AreEqual(1, set.size());
-		set.clear();
-		Assert.AreEqual(0, set.size());
-		Assert.AreEqual(50, set.hash(50));
+		Assert.IsFalse(set.Exists(50));
+		set.Put(50);
+		Assert.IsTrue(set.Exists(50));
+		Assert.AreEqual(1, set.Size());
+		Assert.AreEqual(-11, set.Find(10));
+		Assert.AreEqual(1, set.Size());
+		set.Clear();
+		Assert.AreEqual(0, set.Size());
+		Assert.AreEqual(50, set.Hash(50));
 		//force a rehash
 		for (int i = 0; i < 20; i++)
 		{
-		  set.put(i);
+		  set.Put(i);
 		}
-		Assert.AreEqual(20, set.size());
-		Assert.AreEqual(24, set.rehashCount);
+		Assert.AreEqual(20, set.Size());
+		Assert.AreEqual(24, set.RehashCount);
 	  }
 
 
@@ -59,24 +59,24 @@ namespace Lucene.Net.Util
 	  {
 		for (int i = 0; i < 10000; i++)
 		{
-		  int initSz = random().Next(20);
-		  int num = random().Next(30);
-		  int maxVal = (random().nextBoolean() ? random().Next(50) : random().Next(int.MaxValue)) + 1;
+		  int initSz = Random().Next(20);
+		  int num = Random().Next(30);
+		  int maxVal = (Random().NextBoolean() ? Random().Next(50) : Random().Next(int.MaxValue)) + 1;
 
-		  HashSet<int?> a = new HashSet<int?>(initSz);
+		  HashSet<int> a = new HashSet<int>(initSz);
 		  SentinelIntSet b = new SentinelIntSet(initSz, -1);
 
 		  for (int j = 0; j < num; j++)
 		  {
-			int val = random().Next(maxVal);
+			int val = Random().Next(maxVal);
 			bool exists = !a.Add(val);
-			bool existsB = b.exists(val);
+			bool existsB = b.Exists(val);
 			Assert.AreEqual(exists, existsB);
-			int slot = b.find(val);
+			int slot = b.Find(val);
 			Assert.AreEqual(exists, slot >= 0);
-			b.put(val);
+			b.Put(val);
 
-			Assert.AreEqual(a.Count, b.size());
+			Assert.AreEqual(a.Count, b.Size());
 		  }
 
 		}

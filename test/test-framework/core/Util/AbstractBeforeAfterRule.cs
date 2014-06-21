@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
 
 			try
 			{
-			  outerInstance.Before();
+			  OuterInstance.Before();
 			  s.evaluate();
 			}
 			catch (Exception t)
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
 
 			try
 			{
-			  outerInstance.After();
+                OuterInstance.After();
 			}
 			catch (Exception t)
 			{

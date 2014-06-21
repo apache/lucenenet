@@ -34,17 +34,20 @@ namespace Lucene.Net.Search
 	/// Tests MatchAllDocsQuery.
 	/// 
 	/// </summary>
-	public class TestMatchAllDocsQuery : LuceneTestCase
+	[TestFixture]
+    public class TestMatchAllDocsQuery : LuceneTestCase
 	{
 	  private Analyzer Analyzer;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 		Analyzer = new MockAnalyzer(Random());
 	  }
 
-	  public virtual void TestQuery()
+      [Test]
+      public virtual void TestQuery()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, Analyzer).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()));
@@ -89,7 +92,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestEquals()
+      [Test]
+      public virtual void TestEquals()
 	  {
 		Query q1 = new MatchAllDocsQuery();
 		Query q2 = new MatchAllDocsQuery();

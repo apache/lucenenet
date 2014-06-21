@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
 		// Make sure ArrayUtil hits Integer.MAX_VALUE, if we insist:
 		while (currentSize != int.MaxValue)
 		{
-		  int nextSize = ArrayUtil.oversize(1 + currentSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
+		  int nextSize = ArrayUtil.Oversize(1 + currentSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
 		  Assert.IsTrue(nextSize > currentSize);
 		  if (currentSize > 0)
 		  {
@@ -50,20 +50,20 @@ namespace Lucene.Net.Util
 		// intentionally pass invalid elemSizes:
 		for (int elemSize = 0;elemSize < 10;elemSize++)
 		{
-		  Assert.AreEqual(int.MaxValue, ArrayUtil.oversize(int.MaxValue, elemSize));
-		  Assert.AreEqual(int.MaxValue, ArrayUtil.oversize(int.MaxValue-1, elemSize));
+		  Assert.AreEqual(int.MaxValue, ArrayUtil.Oversize(int.MaxValue, elemSize));
+		  Assert.AreEqual(int.MaxValue, ArrayUtil.Oversize(int.MaxValue-1, elemSize));
 		}
 	  }
 
 	  public virtual void TestInvalidElementSizes()
 	  {
-		Random rnd = random();
-		int num = atLeast(10000);
+		Random rnd = Random();
+		int num = AtLeast(10000);
 		for (int iter = 0; iter < num; iter++)
 		{
 		  int minTargetSize = rnd.Next(int.MaxValue);
 		  int elemSize = rnd.Next(11);
-		  int v = ArrayUtil.oversize(minTargetSize, elemSize);
+		  int v = ArrayUtil.Oversize(minTargetSize, elemSize);
 		  Assert.IsTrue(v >= minTargetSize);
 		}
 	  }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
 
 	  private int?[] CreateRandomArray(int maxSize)
 	  {
-		Random rnd = random();
+		Random rnd = Random();
 		int?[] a = new int?[rnd.Next(maxSize) + 1];
 		for (int i = 0; i < a.Length; i++)
 		{
@@ -158,16 +158,16 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestIntroSort()
 	  {
-		int num = atLeast(50);
+		int num = AtLeast(50);
 		for (int i = 0; i < num; i++)
 		{
-		  int?[] a1 = CreateRandomArray(2000), a2 = a1.clone();
+		  int?[] a1 = CreateRandomArray(2000), a2 = a1.Clone();
 		  ArrayUtil.IntroSort(a1);
 		  Arrays.sort(a2);
 		  assertArrayEquals(a2, a1);
 
 		  a1 = CreateRandomArray(2000);
-		  a2 = a1.clone();
+		  a2 = a1.Clone();
 		  ArrayUtil.IntroSort(a1, Collections.reverseOrder());
 		  Arrays.sort(a2, Collections.reverseOrder());
 		  assertArrayEquals(a2, a1);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
 
 	  private int?[] CreateSparseRandomArray(int maxSize)
 	  {
-		Random rnd = random();
+		Random rnd = Random();
 		int?[] a = new int?[rnd.Next(maxSize) + 1];
 		for (int i = 0; i < a.Length; i++)
 		{
@@ -192,10 +192,10 @@ namespace Lucene.Net.Util
 	  // this is a test for LUCENE-3054 (which fails without the merge sort fall back with stack overflow in most cases)
 	  public virtual void TestQuickToHeapSortFallback()
 	  {
-		int num = atLeast(50);
+		int num = AtLeast(50);
 		for (int i = 0; i < num; i++)
 		{
-		  int?[] a1 = CreateSparseRandomArray(40000), a2 = a1.clone();
+		  int?[] a1 = CreateSparseRandomArray(40000), a2 = a1.Clone();
 		  ArrayUtil.IntroSort(a1);
 		  Arrays.sort(a2);
 		  assertArrayEquals(a2, a1);
@@ -204,16 +204,16 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestTimSort()
 	  {
-		int num = atLeast(50);
+		int num = AtLeast(50);
 		for (int i = 0; i < num; i++)
 		{
-		  int?[] a1 = CreateRandomArray(2000), a2 = a1.clone();
+		  int?[] a1 = CreateRandomArray(2000), a2 = a1.Clone();
 		  ArrayUtil.timSort(a1);
 		  Arrays.sort(a2);
 		  assertArrayEquals(a2, a1);
 
 		  a1 = CreateRandomArray(2000);
-		  a2 = a1.clone();
+		  a2 = a1.Clone();
 		  ArrayUtil.timSort(a1, Collections.reverseOrder());
 		  Arrays.sort(a2, Collections.reverseOrder());
 		  assertArrayEquals(a2, a1);
@@ -247,7 +247,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestMergeSortStability()
 	  {
-		Random rnd = random();
+		Random rnd = Random();
 		Item[] items = new Item[100];
 		for (int i = 0; i < items.Length; i++)
 		{
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
 		  // so they should always be in order after sorting.
 		  // The other half has defined order, but no (-1) value (they should appear after
 		  // all above, when sorted).
-		  bool equal = rnd.nextBoolean();
+		  bool equal = rnd.NextBoolean();
 		  items[i] = new Item(equal ? (i + 1) : -1, equal ? 0 : (rnd.Next(1000) + 1));
 		}
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestTimSortStability()
 	  {
-		Random rnd = random();
+		Random rnd = Random();
 		Item[] items = new Item[100];
 		for (int i = 0; i < items.Length; i++)
 		{
@@ -294,7 +294,7 @@ namespace Lucene.Net.Util
 		  // so they should always be in order after sorting.
 		  // The other half has defined order, but no (-1) value (they should appear after
 		  // all above, when sorted).
-		  bool equal = rnd.nextBoolean();
+		  bool equal = rnd.NextBoolean();
 		  items[i] = new Item(equal ? (i + 1) : -1, equal ? 0 : (rnd.Next(1000) + 1));
 		}
 

@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 		}
 		//System.out.println("commit1");
 		writer.Commit();
-		Assert.AreEqual(1, writer.SegmentInfos.Size());
+		Assert.AreEqual(1, writer.SegmentCount);
 		for (int x = 5; x < 10; x++)
 		{
 		  writer.AddDocument(DocHelper.CreateDocument(x, "2", 2));
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 		}
 		//System.out.println("commit2");
 		writer.Commit();
-		Assert.AreEqual(2, writer.SegmentInfos.Size());
+        Assert.AreEqual(2, writer.SegmentCount);
 
 		for (int x = 10; x < 15; x++)
 		{
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
 		fsmp.Length = 2;
 		writer.MaybeMerge();
 
-		Assert.AreEqual(2, writer.SegmentInfos.Size());
+		Assert.AreEqual(2, writer.SegmentCount);
 
 		// id:2 shouldn't exist anymore because
 		// it's been applied in the merge and now it's gone
@@ -281,10 +281,10 @@ namespace Lucene.Net.Index
 		  this.UseCompoundFile_Renamed = useCompoundFile;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		}
-		public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
+		public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
 		{
 		  MergeSpecification ms = new MergeSpecification();
 		  if (DoMerge)

@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Util.junitcompat
 {
 
@@ -46,8 +48,8 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestCorrectCodecReported()
 	  {
 		Result r = JUnitCore.runClasses(typeof(Nested1));
-		Assert.Assert.AreEqual(1, r.FailureCount);
-		Assert.Assert.IsTrue(base.SysErr, base.SysErr.Contains("codec=" + Nested1.CodecName));
+		Assert.AreEqual(1, r.FailureCount);
+		Assert.IsTrue(base.SysErr().Contains("codec=" + Nested1.CodecName), base.SysErr());
 	  }
 	}
 

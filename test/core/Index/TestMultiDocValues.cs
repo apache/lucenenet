@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -30,7 +31,6 @@ namespace Lucene.Net.Index
 	using Bits = Lucene.Net.Util.Bits;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using NUnit.Framework;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  @ref.copyChars(TestUtil.RandomUnicodeString(Random()));
+		  @ref.CopyChars(TestUtil.RandomUnicodeString(Random()));
 		  iw.AddDocument(doc);
 		  if (Random().Next(17) == 0)
 		  {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  @ref.copyChars(TestUtil.RandomUnicodeString(Random()));
+		  @ref.CopyChars(TestUtil.RandomUnicodeString(Random()));
 		  if (DefaultCodecSupportsDocsWithField() && Random().Next(7) == 0)
 		  {
 			iw.AddDocument(new Document());
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  // check ord
-		  Assert.AreEqual(single.getOrd(i), multi.getOrd(i));
+		  Assert.AreEqual(single.GetOrd(i), multi.GetOrd(i));
 		  // check value
 		  single.Get(i, expected);
 		  multi.Get(i, actual);
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
 		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; i++)
 		{
-		  @ref.copyChars(TestUtil.RandomSimpleString(Random(), 2));
+		  @ref.CopyChars(TestUtil.RandomSimpleString(Random(), 2));
 		  iw.AddDocument(doc);
 		  if (Random().Next(17) == 0)
 		  {
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
 		for (int i = 0; i < numDocs; i++)
 		{
 		  // check ord
-		  Assert.AreEqual(single.getOrd(i), multi.getOrd(i));
+		  Assert.AreEqual(single.GetOrd(i), multi.GetOrd(i));
 		  // check ord value
 		  single.Get(i, expected);
 		  multi.Get(i, actual);
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
 		AtomicReader merged = GetOnlySegmentReader(ir2);
         iw.Close();
 
-		SortedSetDocValues multi = MultiDocValues.getSortedSetValues(ir, "bytes");
+		SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
 		SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
 		if (multi == null)
 		{
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
 		AtomicReader merged = GetOnlySegmentReader(ir2);
         iw.Close();
 
-		SortedSetDocValues multi = MultiDocValues.getSortedSetValues(ir, "bytes");
+		SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
 		SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
 		if (multi == null)
 		{

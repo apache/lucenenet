@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Similarities
 		this.Normalization_Renamed = normalization;
 	  }
 
-	  protected internal override float Score(BasicStats stats, float freq, float docLen)
+	    public override float Score(BasicStats stats, float freq, float docLen)
 	  {
 		return stats.TotalBoost * Distribution_Renamed.Score(stats, Normalization_Renamed.Tfn(stats, freq, docLen), Lambda_Renamed.CalculateLambda(stats));
 	  }

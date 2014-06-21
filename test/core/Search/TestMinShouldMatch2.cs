@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Search
 {
@@ -48,7 +49,8 @@ namespace Lucene.Net.Search
 	/// tests BooleanScorer2's minShouldMatch </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Appending", "Lucene3x", "Lucene40", "Lucene41"}) public class TestMinShouldMatch2 extends Lucene.Net.Util.LuceneTestCase
-	public class TestMinShouldMatch2 : LuceneTestCase
+	[TestFixture]
+    public class TestMinShouldMatch2 : LuceneTestCase
 	{
 	  internal static Directory Dir;
 	  internal static DirectoryReader r;
@@ -62,7 +64,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir);
@@ -109,7 +112,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		atomicReader.Dispose();
 		Dir.Dispose();
@@ -144,11 +148,11 @@ namespace Lucene.Net.Search
 
 		if (slow)
 		{
-		  return new SlowMinShouldMatchScorer(weight, (AtomicReader)atomicReader, Searcher);
+		  return new SlowMinShouldMatchScorer(weight, atomicReader, Searcher);
 		}
 		else
 		{
-		  return weight.Scorer(((AtomicReader)atomicReader).Context, null);
+		  return weight.Scorer((AtomicReaderContext)atomicReader.Context, null);
 		}
 	  }
 
@@ -194,7 +198,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// simple test for next(): minShouldMatch=2 on 3 terms (one common, one medium, one rare) </summary>
-	  public virtual void TestNextCMR2()
+      [Test]
+      public virtual void TestNextCMR2()
 	  {
 		for (int common = 0; common < CommonTerms.Length; common++)
 		{
@@ -212,7 +217,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// simple test for advance(): minShouldMatch=2 on 3 terms (one common, one medium, one rare) </summary>
-	  public virtual void TestAdvanceCMR2()
+      [Test]
+      public virtual void TestAdvanceCMR2()
 	  {
 		for (int amount = 25; amount < 200; amount += 25)
 		{
@@ -233,7 +239,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test next with giant bq of all terms with varying minShouldMatch </summary>
-	  public virtual void TestNextAllTerms()
+      [Test]
+      public virtual void TestNextAllTerms()
 	  {
 		IList<string> termsList = new List<string>();
 		termsList.AddRange(Arrays.AsList(CommonTerms));
@@ -251,7 +258,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test advance with giant bq of all terms with varying minShouldMatch </summary>
-	  public virtual void TestAdvanceAllTerms()
+      [Test]
+      public virtual void TestAdvanceAllTerms()
 	  {
 		IList<string> termsList = new List<string>();
 		termsList.AddRange(Arrays.AsList(CommonTerms));
@@ -272,7 +280,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test next with varying numbers of terms with varying minShouldMatch </summary>
-	  public virtual void TestNextVaryingNumberOfTerms()
+      [Test]
+      public virtual void TestNextVaryingNumberOfTerms()
 	  {
 		IList<string> termsList = new List<string>();
 		termsList.AddRange(Arrays.AsList(CommonTerms));
@@ -294,7 +303,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test advance with varying numbers of terms with varying minShouldMatch </summary>
-	  public virtual void TestAdvanceVaryingNumberOfTerms()
+      [Test]
+      public virtual void TestAdvanceVaryingNumberOfTerms()
 	  {
 		IList<string> termsList = new List<string>();
 		termsList.AddRange(Arrays.AsList(CommonTerms));
@@ -354,10 +364,10 @@ namespace Lucene.Net.Search
 			  bool success = Ords.Add(ord);
 			  Debug.Assert(success); // no dups
 			  TermContext context = TermContext.Build(reader.Context, term);
-			  SimWeight w = weight.similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
+			  SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
 			  var dummy = w.ValueForNormalization; // ignored
 			  w.Normalize(1F, 1F);
-			  Sims[(int)ord] = weight.similarity.SimScorer(w, reader.Context);
+			  Sims[(int)ord] = weight.Similarity.SimScorer(w, reader.Context);
 			}
 		  }
 		}

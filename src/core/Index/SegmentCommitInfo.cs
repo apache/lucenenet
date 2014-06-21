@@ -114,7 +114,6 @@ namespace Lucene.Net.Index
 		  set
 		  {
 			this.GenUpdatesFiles_Renamed.Clear();
-	//JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'putAll' method:
 			this.GenUpdatesFiles_Renamed.PutAll(value);
 		  }
 	  }

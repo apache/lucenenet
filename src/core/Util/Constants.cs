@@ -175,7 +175,7 @@ namespace Lucene.Net.Util
 	  /// Returns a LUCENE_MAIN_VERSION without any ALPHA/BETA qualifier
 	  /// Used by test only!
 	  /// </summary>
-	  internal static string MainVersionWithoutAlphaBeta()
+	  public static string MainVersionWithoutAlphaBeta()
 	  {
 		string[] parts = LUCENE_MAIN_VERSION.Split("\\.", true);
 		if (parts.Length == 4 && "0".Equals(parts[2]))

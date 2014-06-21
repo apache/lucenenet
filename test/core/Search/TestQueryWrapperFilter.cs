@@ -31,10 +31,12 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestQueryWrapperFilter : LuceneTestCase
 	{
 
-	  public virtual void TestBasic()
+      [Test]
+      public virtual void TestBasic()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -86,7 +88,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		Directory d = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
@@ -132,7 +135,8 @@ namespace Lucene.Net.Search
 		d.Dispose();
 	  }
 
-	  public virtual void TestThousandDocuments()
+      [Test]
+      public virtual void TestThousandDocuments()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);

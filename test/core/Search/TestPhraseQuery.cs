@@ -46,7 +46,8 @@ namespace Lucene.Net.Search
 	// @ThreadLeaks(linger = 1000, leakedThreadsBelongToSuite = true)
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Seed("AFD1E7E84B35D2B1") public class TestPhraseQuery extends LuceneTestCase
-	public class TestPhraseQuery : LuceneTestCase
+	[TestFixture]
+    public class TestPhraseQuery : LuceneTestCase
 	{
 
 	  /// <summary>
@@ -60,7 +61,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
@@ -94,7 +96,7 @@ namespace Lucene.Net.Search
 		  {
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
 		  }
@@ -105,6 +107,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -113,7 +116,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -122,7 +126,8 @@ namespace Lucene.Net.Search
 		Directory = null;
 	  }
 
-	  public virtual void TestNotCloseEnough()
+      [Test]
+      public virtual void TestNotCloseEnough()
 	  {
 		Query.Slop = 2;
 		Query.Add(new Term("field", "one"));
@@ -132,7 +137,8 @@ namespace Lucene.Net.Search
 		QueryUtils.Check(Random(), Query,Searcher);
 	  }
 
-	  public virtual void TestBarelyCloseEnough()
+      [Test]
+      public virtual void TestBarelyCloseEnough()
 	  {
 		Query.Slop = 3;
 		Query.Add(new Term("field", "one"));
@@ -145,7 +151,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// Ensures slop of 0 works for exact matches, but not reversed
 	  /// </summary>
-	  public virtual void TestExact()
+      [Test]
+      public virtual void TestExact()
 	  {
 		// slop is zero by default
 		Query.Add(new Term("field", "four"));
@@ -163,7 +170,8 @@ namespace Lucene.Net.Search
 		QueryUtils.Check(Random(), Query,Searcher);
 	  }
 
-	  public virtual void TestSlop1()
+      [Test]
+      public virtual void TestSlop1()
 	  {
 		// Ensures slop of 1 works with terms in order.
 		Query.Slop = 1;
@@ -188,7 +196,8 @@ namespace Lucene.Net.Search
 	  /// <summary>
 	  /// As long as slop is at least 2, terms can be reversed
 	  /// </summary>
-	  public virtual void TestOrderDoesntMatter()
+      [Test]
+      public virtual void TestOrderDoesntMatter()
 	  {
 		Query.Slop = 2; // must be at least two for reverse order match
 		Query.Add(new Term("field", "two"));
@@ -212,7 +221,8 @@ namespace Lucene.Net.Search
 	  /// slop is the total number of positional moves allowed
 	  /// to line up a phrase
 	  /// </summary>
-	  public virtual void TestMulipleTerms()
+      [Test]
+      public virtual void TestMulipleTerms()
 	  {
 		Query.Slop = 2;
 		Query.Add(new Term("field", "one"));
@@ -240,7 +250,8 @@ namespace Lucene.Net.Search
 
 	  }
 
-	  public virtual void TestPhraseQueryWithStopAnalyzer()
+      [Test]
+      public virtual void TestPhraseQueryWithStopAnalyzer()
 	  {
 		Directory directory = NewDirectory();
 		Analyzer stopAnalyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
@@ -265,7 +276,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void TestPhraseQueryInConjunctionScorer()
+      [Test]
+      public virtual void TestPhraseQueryInConjunctionScorer()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);
@@ -350,7 +362,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void TestSlopScoring()
+      [Test]
+      public virtual void TestSlopScoring()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
@@ -391,7 +404,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void TestToString()
+      [Test]
+      public virtual void TestToString()
 	  {
 		PhraseQuery q = new PhraseQuery(); // Query "this hi this is a test is"
 		q.Add(new Term("field", "hi"), 1);
@@ -402,7 +416,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(q.ToString(), "field:\"? hi|hello ? ? ? test\"");
 	  }
 
-	  public virtual void TestWrappedPhrase()
+      [Test]
+      public virtual void TestWrappedPhrase()
 	  {
 		Query.Add(new Term("repeated", "first"));
 		Query.Add(new Term("repeated", "part"));
@@ -422,7 +437,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // work on two docs like this: "phrase exist notexist exist found"
-	  public virtual void TestNonExistingPhrase()
+      [Test]
+      public virtual void TestNonExistingPhrase()
 	  {
 		// phrase without repetitions that exists in 2 docs
 		Query.Add(new Term("nonexist", "phrase"));
@@ -479,7 +495,8 @@ namespace Lucene.Net.Search
 	  /// Also, in this case order in query does not matter. 
 	  /// Also, when an exact match is found, both sloppy scorer and exact scorer scores the same.   
 	  /// </summary>
-	  public virtual void TestPalyndrome2()
+      [Test]
+      public virtual void TestPalyndrome2()
 	  {
 
 		// search on non palyndrome, find phrase with no slop, using exact phrase scorer
@@ -540,7 +557,8 @@ namespace Lucene.Net.Search
 	  /// Also, in this case order in query does not matter. 
 	  /// Also, when an exact match is found, both sloppy scorer and exact scorer scores the same.   
 	  /// </summary>
-	  public virtual void TestPalyndrome3()
+      [Test]
+      public virtual void TestPalyndrome3()
 	  {
 
 		// search on non palyndrome, find phrase with no slop, using exact phrase scorer
@@ -603,7 +621,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-1280
-	  public virtual void TestEmptyPhraseQuery()
+      [Test]
+      public virtual void TestEmptyPhraseQuery()
 	  {
 		BooleanQuery q2 = new BooleanQuery();
 		q2.Add(new PhraseQuery(), BooleanClause.Occur_e.MUST);
@@ -611,7 +630,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  /* test that a single term is rewritten to a term query */
-	  public virtual void TestRewrite()
+      [Test]
+      public virtual void TestRewrite()
 	  {
 		PhraseQuery pq = new PhraseQuery();
 		pq.Add(new Term("foo", "bar"));
@@ -619,7 +639,8 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(rewritten is TermQuery);
 	  }
 
-	  public virtual void TestRandomPhrases()
+      [Test]
+      public virtual void TestRandomPhrases()
 	  {
 		Directory dir = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -736,7 +757,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestNegativeSlop()
+      [Test]
+      public virtual void TestNegativeSlop()
 	  {
 		PhraseQuery query = new PhraseQuery();
 		query.Add(new Term("field", "two"));

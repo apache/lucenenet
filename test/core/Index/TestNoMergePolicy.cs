@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoMergePolicy() throws Exception
-	  public virtual void TestNoMergePolicy()
+	  public virtual void TestNoMergePolicy_Mem()
 	  {
 		MergePolicy mp = NoMergePolicy.NO_COMPOUND_FILES;
 		Assert.IsNull(mp.FindMerges(null, (SegmentInfos)null));

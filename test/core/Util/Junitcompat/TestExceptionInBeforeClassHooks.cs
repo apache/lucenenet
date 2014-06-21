@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.junitcompat
 {
@@ -21,7 +23,7 @@ namespace Lucene.Net.Util.junitcompat
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    /*
 
 	using Assert = junit.framework.Assert;
 
@@ -31,7 +33,7 @@ namespace Lucene.Net.Util.junitcompat
 	using JUnitCore = org.junit.runner.JUnitCore;
 	using Result = org.junit.runner.Result;
 	using Failure = org.junit.runner.notification.Failure;
-
+    */
 	public class TestExceptionInBeforeClassHooks : WithNestedTests
 	{
 	  public TestExceptionInBeforeClassHooks() : base(true)
@@ -44,12 +46,12 @@ namespace Lucene.Net.Util.junitcompat
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 		public static void BeforeClass()
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper();
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper();
 		  t.Start();
 		  t.Join();
 		}
 
-		private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+		private class ThreadAnonymousInnerClassHelper : ThreadClass
 		{
 			public ThreadAnonymousInnerClassHelper()
 			{
@@ -70,12 +72,12 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		public virtual void Test1()
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper(this);
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper(this);
 		  t.Start();
 		  t.Join();
 		}
 
-		private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+        private class ThreadAnonymousInnerClassHelper : ThreadClass
 		{
 			private readonly Nested2 OuterInstance;
 
@@ -92,12 +94,12 @@ namespace Lucene.Net.Util.junitcompat
 
 		public virtual void Test2()
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper2(this);
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper2(this);
 		  t.Start();
 		  t.Join();
 		}
 
-		private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 		{
 			private readonly Nested2 OuterInstance;
 
@@ -114,12 +116,12 @@ namespace Lucene.Net.Util.junitcompat
 
 		public virtual void Test3()
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper3(this);
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper3(this);
 		  t.Start();
 		  t.Join();
 		}
 
-		private class ThreadAnonymousInnerClassHelper3 : System.Threading.Thread
+        private class ThreadAnonymousInnerClassHelper3 : ThreadClass
 		{
 			private readonly Nested2 OuterInstance;
 
@@ -141,12 +143,12 @@ namespace Lucene.Net.Util.junitcompat
 //ORIGINAL LINE: @Before public void runBeforeTest() throws Exception
 		public virtual void RunBeforeTest()
 		{
-		  Thread t = new ThreadAnonymousInnerClassHelper(this);
+		  ThreadClass t = new ThreadAnonymousInnerClassHelper(this);
 		  t.Start();
 		  t.Join();
 		}
 
-		private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+        private class ThreadAnonymousInnerClassHelper : ThreadClass
 		{
 			private readonly Nested3 OuterInstance;
 
@@ -171,9 +173,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestExceptionInBeforeClassFailsTheTest()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(Nested1));
-		Assert.Assert.AreEqual(1, runClasses.FailureCount);
-		Assert.Assert.AreEqual(1, runClasses.RunCount);
-		Assert.Assert.IsTrue(runClasses.Failures.get(0).Trace.contains("foobar"));
+		Assert.AreEqual(1, runClasses.FailureCount);
+		Assert.AreEqual(1, runClasses.RunCount);
+		Assert.IsTrue(runClasses.Failures.Get(0).Trace.Contains("foobar"));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -181,8 +183,8 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestExceptionWithinTestFailsTheTest()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(Nested2));
-		Assert.Assert.AreEqual(3, runClasses.FailureCount);
-		Assert.Assert.AreEqual(3, runClasses.RunCount);
+		Assert.AreEqual(3, runClasses.FailureCount);
+		Assert.AreEqual(3, runClasses.RunCount);
 
 		List<string> foobars = new List<string>();
 		foreach (Failure f in runClasses.Failures)
@@ -195,7 +197,7 @@ namespace Lucene.Net.Util.junitcompat
 		}
 
 		foobars.Sort();
-		Assert.Assert.AreEqual("[foobar1, foobar2, foobar3]", Arrays.ToString(foobars.ToArray()));
+		Assert.AreEqual("[foobar1, foobar2, foobar3]", Arrays.ToString(foobars.ToArray()));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -203,9 +205,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestExceptionWithinBefore()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(Nested3));
-		Assert.Assert.AreEqual(1, runClasses.FailureCount);
-		Assert.Assert.AreEqual(1, runClasses.RunCount);
-		Assert.Assert.IsTrue(runClasses.Failures.get(0).Trace.contains("foobar"));
+		Assert.AreEqual(1, runClasses.FailureCount);
+		Assert.AreEqual(1, runClasses.RunCount);
+		Assert.IsTrue(runClasses.Failures.Get(0).Trace.Contains("foobar"));
 	  }
 
 	}

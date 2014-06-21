@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Util
 {
@@ -153,7 +154,7 @@ namespace Lucene.Net.Util
 	  /// Convenience method unzipping zipName into destDir, cleaning up 
 	  /// destDir first. 
 	  /// </summary>
-	  public static void Unzip(FileInfo zipName, FileInfo destDir)
+      public static void Unzip(FileInfo zipName, DirectoryInfo destDir)
 	  {
 		Rm(destDir);
 		destDir.mkdir();
@@ -647,13 +648,13 @@ namespace Lucene.Net.Util
 		  switch (NextInt(random, 0, 2))
 		  {
 			case 0:
-				builder.appendCodePoint(char.ToUpper(codePoint));
+				builder.Append(char.ToUpper(codePoint));
 				break;
 			case 1:
-				builder.appendCodePoint(char.ToLower(codePoint));
+                builder.Append(char.ToLower(codePoint));
 				break;
 			case 2: // leave intact
-				builder.appendCodePoint(codePoint);
+                builder.Append(codePoint);
 			break;
 		  }
 		}
@@ -687,7 +688,7 @@ namespace Lucene.Net.Util
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < end; i++)
 		{
-		  sb.appendCodePoint(NextInt(r, BlockStarts[block], BlockEnds[block]));
+            sb.Append(NextInt(r, BlockStarts[block], BlockEnds[block]));
 		}
 		return sb.ToString();
 	  }
@@ -928,7 +929,13 @@ namespace Lucene.Net.Util
 			  this.Map = map;
 		  }
 
-		  public override void Reflect(Type attClass, string key, object value)
+	      public void Reflect<T>(string key, object value)
+              where T : IAttribute
+	      {
+	          Reflect(typeof (T), key, value);
+	      }
+
+		  public void Reflect(Type attClass, string key, object value)
 		  {
 			Map[attClass.Name + '#' + key] = value;
 		  }
@@ -936,9 +943,9 @@ namespace Lucene.Net.Util
 
 	  public static void AssertEquals(TopDocs expected, TopDocs actual)
 	  {
-		Assert.AreEqual(expected.TotalHits, actual.TotalHits, "wrong total hits", );
+		Assert.AreEqual(expected.TotalHits, actual.TotalHits, "wrong total hits");
 		Assert.AreEqual(expected.MaxScore, actual.MaxScore, "wrong maxScore");
-		Assert.AreEqual(expected.ScoreDocs.Length, actual.ScoreDocs.Length, "wrong hit count", );
+		Assert.AreEqual(expected.ScoreDocs.Length, actual.ScoreDocs.Length, "wrong hit count");
 		for (int hitIDX = 0;hitIDX < expected.ScoreDocs.Length;hitIDX++)
 		{
 		  ScoreDoc expectedSD = expected.ScoreDocs[hitIDX];
@@ -1094,7 +1101,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// Shutdown <seealso cref="ExecutorService"/> and wait for its.
 	  /// </summary>
-	  public static void ShutdownExecutorService(ExecutorService ex)
+	  public static void ShutdownExecutorService(TaskScheduler ex)
 	  {
 		if (ex != null)
 		{

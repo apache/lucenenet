@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -20,8 +23,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-	using Assert = org.junit.Assert;
-	using Test = org.junit.Test;
 
 	public class TestIdentityHashSet : LuceneTestCase
 	{
@@ -29,8 +30,8 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: @Test public void testCheck()
 	  public virtual void TestCheck()
 	  {
-		Random rnd = random();
-		Set<object> jdk = Collections.newSetFromMap(new IdentityHashMap<object, bool?>());
+		Random rnd = Random();
+		ISet<object> jdk = CollectionsHelper.NewSetFromMap(new IdentityHashMap<object, bool?>());
 		RamUsageEstimator.IdentityHashSet<object> us = new RamUsageEstimator.IdentityHashSet<object>();
 
 		int max = 100000;
@@ -40,22 +41,22 @@ namespace Lucene.Net.Util
 		  // some of these will be interned and some will not so there will be collisions.
 		  int? v = rnd.Next(threshold);
 
-		  bool e1 = jdk.contains(v);
-		  bool e2 = us.contains(v);
-		  Assert.Assert.AreEqual(e1, e2);
+		  bool e1 = jdk.Contains(v);
+		  bool e2 = us.Contains(v);
+		  Assert.AreEqual(e1, e2);
 
-		  e1 = jdk.add(v);
-		  e2 = us.add(v);
-		  Assert.Assert.AreEqual(e1, e2);
+		  e1 = jdk.Add(v);
+		  e2 = us.Add(v);
+		  Assert.AreEqual(e1, e2);
 		}
 
-		Set<object> collected = Collections.newSetFromMap(new IdentityHashMap<object, bool?>());
+        ISet<object> collected = CollectionsHelper.NewSetFromMap(new IdentityHashMap<object, bool?>());
 		foreach (object o in us)
 		{
-		  collected.add(o);
+		  collected.Add(o);
 		}
 
-		Assert.Assert.AreEqual(collected, jdk);
+		Assert.AreEqual(collected, jdk);
 	  }
 	}
 

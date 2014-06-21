@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Search
 {
@@ -40,10 +41,12 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestSameScoresWithThreads : LuceneTestCase
 	{
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -91,15 +94,15 @@ namespace Lucene.Net.Search
 		{
 		  CountDownLatch startingGun = new CountDownLatch(1);
 		  int numThreads = TestUtil.NextInt(Random(), 2, 5);
-		  Thread[] threads = new Thread[numThreads];
+          ThreadClass[] threads = new ThreadClass[numThreads];
 		  for (int threadID = 0;threadID < numThreads;threadID++)
 		  {
-			Thread thread = new ThreadAnonymousInnerClassHelper(this, s, answers, startingGun);
+			ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, s, answers, startingGun);
 			threads[threadID] = thread;
 			thread.Start();
 		  }
 		  startingGun.countDown();
-		  foreach (Thread thread in threads)
+          foreach (ThreadClass thread in threads)
 		  {
 			thread.Join();
 		  }
@@ -108,7 +111,7 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestSameScoresWithThreads OuterInstance;
 
@@ -132,7 +135,7 @@ namespace Lucene.Net.Search
 			  for (int i = 0;i < 20;i++)
 			  {
 //JAVA TO C# CONVERTER TODO TASK: There is no .NET Dictionary equivalent to the Java 'entrySet' method:
-				IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers.entrySet());
+				IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers.EntrySet());
                 shuffled = CollectionsHelper.Shuffle(shuffled);
 				foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)
 				{

@@ -33,10 +33,12 @@ namespace Lucene.Net.Search
 	/// 
 	/// 
 	/// </summary>
-	public class TestNot : LuceneTestCase
+	[TestFixture]
+    public class TestNot : LuceneTestCase
 	{
 
-	  public virtual void TestNot()
+      [Test]
+      public virtual void TestNot_Mem()
 	  {
 		Directory store = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), store);

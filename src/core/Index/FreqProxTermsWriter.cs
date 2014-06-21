@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
 	using CollectionUtil = Lucene.Net.Util.CollectionUtil;
 	using IOUtils = Lucene.Net.Util.IOUtils;
 
-	internal sealed class FreqProxTermsWriter : TermsHashConsumer
+    public sealed class FreqProxTermsWriter : TermsHashConsumer
 	{
 
       public override void Abort()

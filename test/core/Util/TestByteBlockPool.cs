@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -25,43 +27,43 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestReadAndWrite()
 	  {
-		Counter bytesUsed = Counter.newCounter();
+		Counter bytesUsed = Counter.NewCounter();
 		ByteBlockPool pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
-		pool.nextBuffer();
-		bool reuseFirst = random().nextBoolean();
+		pool.NextBuffer();
+		bool reuseFirst = Random().NextBoolean();
 		for (int j = 0; j < 2; j++)
 		{
 
 		  IList<BytesRef> list = new List<BytesRef>();
-		  int maxLength = atLeast(500);
-		  int numValues = atLeast(100);
+		  int maxLength = AtLeast(500);
+		  int numValues = AtLeast(100);
 		  BytesRef @ref = new BytesRef();
 		  for (int i = 0; i < numValues; i++)
 		  {
-			string value = TestUtil.randomRealisticUnicodeString(random(), maxLength);
+			string value = TestUtil.RandomRealisticUnicodeString(Random(), maxLength);
 			list.Add(new BytesRef(value));
-			@ref.copyChars(value);
-			pool.append(@ref);
+			@ref.CopyChars(value);
+			pool.Append(@ref);
 		  }
 		  // verify
 		  long position = 0;
 		  foreach (BytesRef expected in list)
 		  {
-			@ref.grow(expected.length);
-			@ref.length = expected.length;
-			pool.readBytes(position, @ref.bytes, @ref.offset, @ref.length);
+			@ref.Grow(expected.Length);
+			@ref.Length = expected.Length;
+			pool.ReadBytes(position, @ref.Bytes, @ref.Offset, @ref.Length);
 			Assert.AreEqual(expected, @ref);
-			position += @ref.length;
+			position += @ref.Length;
 		  }
-		  pool.reset(random().nextBoolean(), reuseFirst);
+		  pool.Reset(Random().NextBoolean(), reuseFirst);
 		  if (reuseFirst)
 		  {
-			Assert.AreEqual(ByteBlockPool.BYTE_BLOCK_SIZE, bytesUsed.get());
+			Assert.AreEqual(ByteBlockPool.BYTE_BLOCK_SIZE, bytesUsed.Get());
 		  }
 		  else
 		  {
-			Assert.AreEqual(0, bytesUsed.get());
-			pool.nextBuffer(); // prepare for next iter
+			Assert.AreEqual(0, bytesUsed.Get());
+			pool.NextBuffer(); // prepare for next iter
 		  }
 		}
 	  }

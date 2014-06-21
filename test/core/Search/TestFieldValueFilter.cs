@@ -31,10 +31,12 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
 
 	/// 
-	public class TestFieldValueFilter : LuceneTestCase
+	[TestFixture]
+    public class TestFieldValueFilter : LuceneTestCase
 	{
 
-	  public virtual void TestFieldValueFilterNoValue()
+      [Test]
+      public virtual void TestFieldValueFilterNoValue()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -64,7 +66,8 @@ namespace Lucene.Net.Search
 		directory.Dispose();
 	  }
 
-	  public virtual void TestFieldValueFilter()
+      [Test]
+      public virtual void TestFieldValueFilter_Mem()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

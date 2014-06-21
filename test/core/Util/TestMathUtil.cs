@@ -1,4 +1,8 @@
+using System;
 using System.Diagnostics;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -20,9 +24,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
-
 	public class TestMathUtil : LuceneTestCase
 	{
 
@@ -30,16 +31,16 @@ namespace Lucene.Net.Util
 
 	  internal static long RandomLong()
 	  {
-		if (random().nextBoolean())
+		if (Random().NextBoolean())
 		{
 		  long l = 1;
-		  if (random().nextBoolean())
+		  if (Random().NextBoolean())
 		  {
 			l *= -1;
 		  }
 		  foreach (long i in PRIMES)
 		  {
-			int m = random().Next(3);
+			int m = Random().Next(3);
 			for (int j = 0; j < m; ++j)
 			{
 			  l *= i;
@@ -47,13 +48,13 @@ namespace Lucene.Net.Util
 		  }
 		  return l;
 		}
-		else if (random().nextBoolean())
+		else if (Random().NextBoolean())
 		{
-		  return random().nextLong();
+		  return Random().NextLong();
 		}
 		else
 		{
-		  return RandomPicks.randomFrom(random(), Arrays.asList(long.MinValue, long.MaxValue, 0L, -1L, 1L));
+		  return RandomInts.RandomFrom(Random(), Arrays.AsList(long.MinValue, long.MaxValue, 0L, -1L, 1L));
 		}
 	  }
 
@@ -61,18 +62,18 @@ namespace Lucene.Net.Util
 	  internal static long Gcd(long l1, long l2)
 	  {
 		System.Numerics.BigInteger gcd = System.Numerics.BigInteger.valueOf(l1).gcd(System.Numerics.BigInteger.valueOf(l2));
-		Debug.Assert(gcd.bitCount() <= 64);
+		Debug.Assert(gcd.BitCount() <= 64);
 		return (long)gcd;
 	  }
 
 	  public virtual void TestGCD()
 	  {
-		int iters = atLeast(100);
+		int iters = AtLeast(100);
 		for (int i = 0; i < iters; ++i)
 		{
 		  long l1 = RandomLong();
 		  long l2 = RandomLong();
-		  long gcd = MathUtil.gcd(l1, l2);
+		  long gcd = MathUtil.Gcd(l1, l2);
 		  long actualGcd = Gcd(l1, l2);
 		  Assert.AreEqual(actualGcd, gcd);
 		  if (gcd != 0)
@@ -90,105 +91,105 @@ namespace Lucene.Net.Util
 		long b = 50;
 		long c = 77;
 
-		Assert.AreEqual(0, MathUtil.gcd(0, 0));
-		Assert.AreEqual(b, MathUtil.gcd(0, b));
-		Assert.AreEqual(a, MathUtil.gcd(a, 0));
-		Assert.AreEqual(b, MathUtil.gcd(0, -b));
-		Assert.AreEqual(a, MathUtil.gcd(-a, 0));
+		Assert.AreEqual(0, MathUtil.Gcd(0, 0));
+		Assert.AreEqual(b, MathUtil.Gcd(0, b));
+		Assert.AreEqual(a, MathUtil.Gcd(a, 0));
+		Assert.AreEqual(b, MathUtil.Gcd(0, -b));
+		Assert.AreEqual(a, MathUtil.Gcd(-a, 0));
 
-		Assert.AreEqual(10, MathUtil.gcd(a, b));
-		Assert.AreEqual(10, MathUtil.gcd(-a, b));
-		Assert.AreEqual(10, MathUtil.gcd(a, -b));
-		Assert.AreEqual(10, MathUtil.gcd(-a, -b));
+		Assert.AreEqual(10, MathUtil.Gcd(a, b));
+		Assert.AreEqual(10, MathUtil.Gcd(-a, b));
+		Assert.AreEqual(10, MathUtil.Gcd(a, -b));
+		Assert.AreEqual(10, MathUtil.Gcd(-a, -b));
 
-		Assert.AreEqual(1, MathUtil.gcd(a, c));
-		Assert.AreEqual(1, MathUtil.gcd(-a, c));
-		Assert.AreEqual(1, MathUtil.gcd(a, -c));
-		Assert.AreEqual(1, MathUtil.gcd(-a, -c));
+		Assert.AreEqual(1, MathUtil.Gcd(a, c));
+		Assert.AreEqual(1, MathUtil.Gcd(-a, c));
+		Assert.AreEqual(1, MathUtil.Gcd(a, -c));
+		Assert.AreEqual(1, MathUtil.Gcd(-a, -c));
 
-		Assert.AreEqual(3L * (1L << 45), MathUtil.gcd(3L * (1L << 50), 9L * (1L << 45)));
-		Assert.AreEqual(1L << 45, MathUtil.gcd(1L << 45, long.MinValue));
+		Assert.AreEqual(3L * (1L << 45), MathUtil.Gcd(3L * (1L << 50), 9L * (1L << 45)));
+		Assert.AreEqual(1L << 45, MathUtil.Gcd(1L << 45, long.MinValue));
 
-		Assert.AreEqual(long.MaxValue, MathUtil.gcd(long.MaxValue, 0L));
-		Assert.AreEqual(long.MaxValue, MathUtil.gcd(-long.MaxValue, 0L));
-		Assert.AreEqual(1, MathUtil.gcd(60247241209L, 153092023L));
+		Assert.AreEqual(long.MaxValue, MathUtil.Gcd(long.MaxValue, 0L));
+		Assert.AreEqual(long.MaxValue, MathUtil.Gcd(-long.MaxValue, 0L));
+		Assert.AreEqual(1, MathUtil.Gcd(60247241209L, 153092023L));
 
-		Assert.AreEqual(long.MinValue, MathUtil.gcd(long.MinValue, 0));
-		Assert.AreEqual(long.MinValue, MathUtil.gcd(0, long.MinValue));
-		Assert.AreEqual(long.MinValue, MathUtil.gcd(long.MinValue, long.MinValue));
+		Assert.AreEqual(long.MinValue, MathUtil.Gcd(long.MinValue, 0));
+		Assert.AreEqual(long.MinValue, MathUtil.Gcd(0, long.MinValue));
+		Assert.AreEqual(long.MinValue, MathUtil.Gcd(long.MinValue, long.MinValue));
 	  }
 
 	  public virtual void TestAcoshMethod()
 	  {
 		// acosh(NaN) == NaN
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(double.NaN)));
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(double.NaN)));
 		// acosh(1) == +0
-		Assert.AreEqual(0, double.doubleToLongBits(MathUtil.acosh(1D)));
+		Assert.AreEqual(0, BitConverter.DoubleToInt64Bits(MathUtil.Acosh(1D)));
 		// acosh(POSITIVE_INFINITY) == POSITIVE_INFINITY
-		Assert.AreEqual(double.doubleToLongBits(double.PositiveInfinity), double.doubleToLongBits(MathUtil.acosh(double.PositiveInfinity)));
+        Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.PositiveInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Acosh(double.PositiveInfinity)));
 		// acosh(x) : x < 1 == NaN
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(0.9D))); // x < 1
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(0D))); // x == 0
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(-0D))); // x == -0
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(-0.9D))); // x < 0
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(-1D))); // x == -1
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(-10D))); // x < -1
-		Assert.IsTrue(double.IsNaN(MathUtil.acosh(double.NegativeInfinity))); // x == -Inf
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(0.9D))); // x < 1
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(0D))); // x == 0
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(-0D))); // x == -0
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(-0.9D))); // x < 0
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(-1D))); // x == -1
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(-10D))); // x < -1
+		Assert.IsTrue(double.IsNaN(MathUtil.Acosh(double.NegativeInfinity))); // x == -Inf
 
 		double epsilon = 0.000001;
-		Assert.AreEqual(0, MathUtil.acosh(1), epsilon);
-		Assert.AreEqual(1.5667992369724109, MathUtil.acosh(2.5), epsilon);
-		Assert.AreEqual(14.719378760739708, MathUtil.acosh(1234567.89), epsilon);
+		Assert.AreEqual(0, MathUtil.Acosh(1), epsilon);
+		Assert.AreEqual(1.5667992369724109, MathUtil.Acosh(2.5), epsilon);
+		Assert.AreEqual(14.719378760739708, MathUtil.Acosh(1234567.89), epsilon);
 	  }
 
 	  public virtual void TestAsinhMethod()
 	  {
 
 		// asinh(NaN) == NaN
-		Assert.IsTrue(double.IsNaN(MathUtil.asinh(double.NaN)));
+		Assert.IsTrue(double.IsNaN(MathUtil.Asinh(double.NaN)));
 		// asinh(+0) == +0
-		Assert.AreEqual(0, double.doubleToLongBits(MathUtil.asinh(0D)));
+		Assert.AreEqual(0, BitConverter.DoubleToInt64Bits(MathUtil.Asinh(0D)));
 		// asinh(-0) == -0
-		Assert.AreEqual(double.doubleToLongBits(-0D), double.doubleToLongBits(MathUtil.asinh(-0D)));
+		Assert.AreEqual(BitConverter.DoubleToInt64Bits(-0D), BitConverter.DoubleToInt64Bits(MathUtil.Asinh(-0D)));
 		// asinh(POSITIVE_INFINITY) == POSITIVE_INFINITY
-		Assert.AreEqual(double.doubleToLongBits(double.PositiveInfinity), double.doubleToLongBits(MathUtil.asinh(double.PositiveInfinity)));
+		Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.PositiveInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Asinh(double.PositiveInfinity)));
 		// asinh(NEGATIVE_INFINITY) == NEGATIVE_INFINITY
-		Assert.AreEqual(double.doubleToLongBits(double.NegativeInfinity), double.doubleToLongBits(MathUtil.asinh(double.NegativeInfinity)));
+		Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.NegativeInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Asinh(double.NegativeInfinity)));
 
 		double epsilon = 0.000001;
-		Assert.AreEqual(-14.719378760740035, MathUtil.asinh(-1234567.89), epsilon);
-		Assert.AreEqual(-1.6472311463710958, MathUtil.asinh(-2.5), epsilon);
-		Assert.AreEqual(-0.8813735870195429, MathUtil.asinh(-1), epsilon);
-		Assert.AreEqual(0, MathUtil.asinh(0), 0);
-		Assert.AreEqual(0.8813735870195429, MathUtil.asinh(1), epsilon);
-		Assert.AreEqual(1.6472311463710958, MathUtil.asinh(2.5), epsilon);
-		Assert.AreEqual(14.719378760740035, MathUtil.asinh(1234567.89), epsilon);
+		Assert.AreEqual(-14.719378760740035, MathUtil.Asinh(-1234567.89), epsilon);
+		Assert.AreEqual(-1.6472311463710958, MathUtil.Asinh(-2.5), epsilon);
+		Assert.AreEqual(-0.8813735870195429, MathUtil.Asinh(-1), epsilon);
+		Assert.AreEqual(0, MathUtil.Asinh(0), 0);
+		Assert.AreEqual(0.8813735870195429, MathUtil.Asinh(1), epsilon);
+		Assert.AreEqual(1.6472311463710958, MathUtil.Asinh(2.5), epsilon);
+		Assert.AreEqual(14.719378760740035, MathUtil.Asinh(1234567.89), epsilon);
 	  }
 
 	  public virtual void TestAtanhMethod()
 	  {
 		// atanh(NaN) == NaN
-		Assert.IsTrue(double.IsNaN(MathUtil.atanh(double.NaN)));
+		Assert.IsTrue(double.IsNaN(MathUtil.Atanh(double.NaN)));
 		// atanh(+0) == +0
-		Assert.AreEqual(0, double.doubleToLongBits(MathUtil.atanh(0D)));
+		Assert.AreEqual(0, BitConverter.DoubleToInt64Bits(MathUtil.Atanh(0D)));
 		// atanh(-0) == -0
-		Assert.AreEqual(double.doubleToLongBits(-0D), double.doubleToLongBits(MathUtil.atanh(-0D)));
+		Assert.AreEqual(BitConverter.DoubleToInt64Bits(-0D), BitConverter.DoubleToInt64Bits(MathUtil.Atanh(-0D)));
 		// atanh(1) == POSITIVE_INFINITY
-		Assert.AreEqual(double.doubleToLongBits(double.PositiveInfinity), double.doubleToLongBits(MathUtil.atanh(1D)));
+		Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.PositiveInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Atanh(1D)));
 		// atanh(-1) == NEGATIVE_INFINITY
-		Assert.AreEqual(double.doubleToLongBits(double.NegativeInfinity), double.doubleToLongBits(MathUtil.atanh(-1D)));
+		Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.NegativeInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Atanh(-1D)));
 		// atanh(x) : Math.abs(x) > 1 == NaN
-		Assert.IsTrue(double.IsNaN(MathUtil.atanh(1.1D))); // x > 1
-		Assert.IsTrue(double.IsNaN(MathUtil.atanh(double.PositiveInfinity))); // x == Inf
-		Assert.IsTrue(double.IsNaN(MathUtil.atanh(-1.1D))); // x < -1
-		Assert.IsTrue(double.IsNaN(MathUtil.atanh(double.NegativeInfinity))); // x == -Inf
+		Assert.IsTrue(double.IsNaN(MathUtil.Atanh(1.1D))); // x > 1
+		Assert.IsTrue(double.IsNaN(MathUtil.Atanh(double.PositiveInfinity))); // x == Inf
+		Assert.IsTrue(double.IsNaN(MathUtil.Atanh(-1.1D))); // x < -1
+		Assert.IsTrue(double.IsNaN(MathUtil.Atanh(double.NegativeInfinity))); // x == -Inf
 
 		double epsilon = 0.000001;
-		Assert.AreEqual(double.NegativeInfinity, MathUtil.atanh(-1), 0);
-		Assert.AreEqual(-0.5493061443340549, MathUtil.atanh(-0.5), epsilon);
-		Assert.AreEqual(0, MathUtil.atanh(0), 0);
-		Assert.AreEqual(0.5493061443340549, MathUtil.atanh(0.5), epsilon);
-		Assert.AreEqual(double.PositiveInfinity, MathUtil.atanh(1), 0);
+		Assert.AreEqual(double.NegativeInfinity, MathUtil.Atanh(-1), 0);
+		Assert.AreEqual(-0.5493061443340549, MathUtil.Atanh(-0.5), epsilon);
+		Assert.AreEqual(0, MathUtil.Atanh(0), 0);
+		Assert.AreEqual(0.5493061443340549, MathUtil.Atanh(0.5), epsilon);
+		Assert.AreEqual(double.PositiveInfinity, MathUtil.Atanh(1), 0);
 	  }
 
 	}

@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 
@@ -28,20 +30,23 @@ namespace Lucene.Net.Search
 	/// on the assumption that if the explanations work out right for them,
 	/// they should work for anything.
 	/// </summary>
-	public class TestComplexExplanations : TestExplanations
+	[TestFixture]
+    public class TestComplexExplanations : TestExplanations
 	{
 
 	  /// <summary>
 	  /// Override the Similarity used in our searcher with one that plays
 	  /// nice with boosts of 0.0
 	  /// </summary>
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		Searcher.Similarity = CreateQnorm1Similarity();
 	  }
 
-	  public override void TearDown()
+	  [TearDown]
+      public override void TearDown()
 	  {
 		Searcher.Similarity = IndexSearcher.DefaultSimilarity;
 		base.TearDown();
@@ -66,7 +71,8 @@ namespace Lucene.Net.Search
 	  }
 
 
-	  public virtual void Test1()
+      [Test]
+      public virtual void Test1()
 	  {
 
 		BooleanQuery q = new BooleanQuery();
@@ -123,7 +129,8 @@ namespace Lucene.Net.Search
 		Qtest(q, new int[] {0,1,2});
 	  }
 
-	  public virtual void Test2()
+      [Test]
+      public virtual void Test2()
 	  {
 
 		BooleanQuery q = new BooleanQuery();
@@ -190,35 +197,40 @@ namespace Lucene.Net.Search
 	  // complex, and they expose weakness in dealing with queries that match
 	  // with scores of 0 wrapped in other queries
 
-	  public virtual void TestT3()
+      [Test]
+      public virtual void TestT3()
 	  {
 		TermQuery query = new TermQuery(new Term(FIELD, "w1"));
 		query.Boost = 0;
 		Bqtest(query, new int[] {0,1,2,3});
 	  }
 
-	  public virtual void TestMA3()
+      [Test]
+      public virtual void TestMA3()
 	  {
 		Query q = new MatchAllDocsQuery();
 		q.Boost = 0;
 		Bqtest(q, new int[] {0,1,2,3});
 	  }
 
-	  public virtual void TestFQ5()
+      [Test]
+      public virtual void TestFQ5()
 	  {
 		TermQuery query = new TermQuery(new Term(FIELD, "xx"));
 		query.Boost = 0;
 		Bqtest(new FilteredQuery(query, new ItemizedFilter(new int[] {1,3})), new int[] {3});
 	  }
 
-	  public virtual void TestCSQ4()
+      [Test]
+      public virtual void TestCSQ4()
 	  {
 		Query q = new ConstantScoreQuery(new ItemizedFilter(new int[] {3}));
 		q.Boost = 0;
 		Bqtest(q, new int[] {3});
 	  }
 
-	  public virtual void TestDMQ10()
+      [Test]
+      public virtual void TestDMQ10()
 	  {
 		DisjunctionMaxQuery q = new DisjunctionMaxQuery(0.5f);
 
@@ -238,7 +250,8 @@ namespace Lucene.Net.Search
 		Bqtest(q, new int[] {0,2,3});
 	  }
 
-	  public virtual void TestMPQ7()
+      [Test]
+      public virtual void TestMPQ7()
 	  {
 		MultiPhraseQuery q = new MultiPhraseQuery();
 		q.Add(Ta(new string[] {"w1"}));
@@ -248,7 +261,8 @@ namespace Lucene.Net.Search
 		Bqtest(q, new int[] {0,1,2});
 	  }
 
-	  public virtual void TestBQ12()
+      [Test]
+      public virtual void TestBQ12()
 	  {
 		// NOTE: using qtest not bqtest
 		BooleanQuery query = new BooleanQuery();
@@ -259,7 +273,8 @@ namespace Lucene.Net.Search
 
 		Qtest(query, new int[] {0,1,2,3});
 	  }
-	  public virtual void TestBQ13()
+      [Test]
+      public virtual void TestBQ13()
 	  {
 		// NOTE: using qtest not bqtest
 		BooleanQuery query = new BooleanQuery();
@@ -270,7 +285,8 @@ namespace Lucene.Net.Search
 
 		Qtest(query, new int[] {1,2,3});
 	  }
-	  public virtual void TestBQ18()
+      [Test]
+      public virtual void TestBQ18()
 	  {
 		// NOTE: using qtest not bqtest
 		BooleanQuery query = new BooleanQuery();
@@ -281,7 +297,8 @@ namespace Lucene.Net.Search
 
 		Qtest(query, new int[] {0,1,2,3});
 	  }
-	  public virtual void TestBQ21()
+      [Test]
+      public virtual void TestBQ21()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		query.Add(new TermQuery(new Term(FIELD, "w1")), Occur.MUST);
@@ -290,7 +307,8 @@ namespace Lucene.Net.Search
 
 		Bqtest(query, new int[] {0,1,2,3});
 	  }
-	  public virtual void TestBQ22()
+      [Test]
+      public virtual void TestBQ22()
 	  {
 		BooleanQuery query = new BooleanQuery();
 		TermQuery boostedQuery = new TermQuery(new Term(FIELD, "w1"));
@@ -302,46 +320,53 @@ namespace Lucene.Net.Search
 		Bqtest(query, new int[] {0,1,2,3});
 	  }
 
-	  public virtual void TestST3()
+      [Test]
+      public virtual void TestST3()
 	  {
 		SpanQuery q = St("w1");
 		q.Boost = 0;
 		Bqtest(q, new int[] {0,1,2,3});
 	  }
-	  public virtual void TestST6()
+      [Test]
+      public virtual void TestST6()
 	  {
 		SpanQuery q = St("xx");
 		q.Boost = 0;
 		Qtest(q, new int[] {2,3});
 	  }
 
-	  public virtual void TestSF3()
+      [Test]
+      public virtual void TestSF3()
 	  {
 		SpanQuery q = Sf(("w1"),1);
 		q.Boost = 0;
 		Bqtest(q, new int[] {0,1,2,3});
 	  }
-	  public virtual void TestSF7()
+      [Test]
+      public virtual void TestSF7()
 	  {
 		SpanQuery q = Sf(("xx"),3);
 		q.Boost = 0;
 		Bqtest(q, new int[] {2,3});
 	  }
 
-	  public virtual void TestSNot3()
+      [Test]
+      public virtual void TestSNot3()
 	  {
 		SpanQuery q = Snot(Sf("w1",10),St("QQ"));
 		q.Boost = 0;
 		Bqtest(q, new int[] {0,1,2,3});
 	  }
-	  public virtual void TestSNot6()
+      [Test]
+      public virtual void TestSNot6()
 	  {
 		SpanQuery q = Snot(Sf("w1",10),St("xx"));
 		q.Boost = 0;
 		Bqtest(q, new int[] {0,1,2,3});
 	  }
 
-	  public virtual void TestSNot8()
+      [Test]
+      public virtual void TestSNot8()
 	  {
 		// NOTE: using qtest not bqtest
 		SpanQuery f = Snear("w1","w3",10,true);
@@ -349,7 +374,8 @@ namespace Lucene.Net.Search
 		SpanQuery q = Snot(f, St("xx"));
 		Qtest(q, new int[] {0,1,3});
 	  }
-	  public virtual void TestSNot9()
+      [Test]
+      public virtual void TestSNot9()
 	  {
 		// NOTE: using qtest not bqtest
 		SpanQuery t = St("xx");
@@ -357,10 +383,6 @@ namespace Lucene.Net.Search
 		SpanQuery q = Snot(Snear("w1","w3",10,true), t);
 		Qtest(q, new int[] {0,1,3});
 	  }
-
-
-
-
 
 	}
 

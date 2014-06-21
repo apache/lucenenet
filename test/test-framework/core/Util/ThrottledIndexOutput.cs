@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -38,7 +39,7 @@ namespace Lucene.Net.Util
 	  private long PendingBytes;
 	  private long MinBytesWritten;
 	  private long TimeElapsed;
-	  private readonly sbyte[] Bytes = new sbyte[1];
+	  private readonly byte[] Bytes = new byte[1];
 
 	  public virtual ThrottledIndexOutput NewFromDelegate(IndexOutput output)
 	  {
@@ -75,7 +76,7 @@ namespace Lucene.Net.Util
 		@delegate.Flush();
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 		try
 		{
@@ -101,25 +102,20 @@ namespace Lucene.Net.Util
 		@delegate.Seek(pos);
 	  }
 
-	  public override long Length()
-	  {
-		return @delegate.Length;
-	  }
-
-	  public override void WriteByte(sbyte b)
+	  public override void WriteByte(byte b)
 	  {
 		Bytes[0] = b;
 		WriteBytes(Bytes, 0, 1);
 	  }
 
-	  public override void WriteBytes(sbyte[] b, int offset, int length)
+	  public override void WriteBytes(byte[] b, int offset, int length)
 	  {
-		long before = System.nanoTime();
+		long before = DateTime.Now.Ticks;
 		// TODO: sometimes, write only half the bytes, then
 		// sleep, then 2nd half, then sleep, so we sometimes
 		// interrupt having only written not all bytes
 		@delegate.WriteBytes(b, offset, length);
-		TimeElapsed += System.nanoTime() - before;
+        TimeElapsed += (DateTime.Now.Ticks - before)*100;
 		PendingBytes += length;
 		Sleep(GetDelay(false));
 	  }
@@ -150,7 +146,7 @@ namespace Lucene.Net.Util
 		}
 		try
 		{
-		  Thread.Sleep(ms);
+		  Thread.Sleep(new TimeSpan(ms));
 		}
 		catch (ThreadInterruptedException e)
 		{
@@ -164,6 +160,11 @@ namespace Lucene.Net.Util
 		  {
 			@delegate.Length = value;
 		  }
+
+	      get
+	      {
+              return @delegate.Length;	          
+	      }
 	  }
 
 	  public override void CopyBytes(DataInput input, long numBytes)

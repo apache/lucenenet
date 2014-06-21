@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.junitcompat
 {
@@ -21,13 +22,13 @@ namespace Lucene.Net.Util.junitcompat
 	 */
 
 	using Directory = Lucene.Net.Store.Directory;
-	using Assert = org.junit.Assert;
+	/*using Assert = org.junit.Assert;
 	using Test = org.junit.Test;
 	using JUnitCore = org.junit.runner.JUnitCore;
 	using Result = org.junit.runner.Result;
 	using Failure = org.junit.runner.notification.Failure;
 
-	using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;
+	using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;*/
 
 	public class TestFailIfDirectoryNotClosed : WithNestedTests
 	{
@@ -39,7 +40,7 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		public virtual void TestDummy()
 		{
-		  Directory dir = newDirectory();
+		  Directory dir = NewDirectory();
 		  Console.WriteLine(dir.ToString());
 		}
 	  }
@@ -55,8 +56,8 @@ namespace Lucene.Net.Util.junitcompat
 		{
 		  Console.WriteLine("Failure: " + f);
 		}
-		Assert.Assert.AreEqual(1, r.FailureCount);
-		Assert.Assert.IsTrue(r.Failures.get(0).ToString().Contains("Resource in scope SUITE failed to close"));
+		Assert.AreEqual(1, r.FailureCount);
+		Assert.IsTrue(r.Failures.Get(0).ToString().Contains("Resource in scope SUITE failed to close"));
 	  }
 	}
 

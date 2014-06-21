@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +16,8 @@ using System.Collections.Generic;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -24,24 +26,12 @@ namespace Lucene.Net.Util
 	public class TestFilterIterator : LuceneTestCase
 	{
 
-	  private static readonly Set<string> Set = new SortedSet<string>(Arrays.asList("a", "b", "c"));
+	  private static readonly SortedSet<string> Set = new SortedSet<string>(Arrays.AsList("a", "b", "c"));
 
-	  private static void assertNoMore<T1>(IEnumerator<T1> it)
+	  private static void AssertNoMore<T1>(IEnumerator<T1> it)
 	  {
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(it.hasNext());
-		try
-		{
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  it.next();
-		  Assert.Fail("Should throw NoSuchElementException");
-		}
-		catch (NoSuchElementException nsee)
-		{
-		  // pass
-		}
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(it.hasNext());
+		Assert.IsFalse(it.MoveNext());
+        Assert.IsFalse(it.MoveNext());
 	  }
 
 	  public virtual void TestEmpty()
@@ -54,12 +44,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return false;
 		  }
@@ -68,10 +59,8 @@ namespace Lucene.Net.Util
 	  public virtual void TestA1()
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper2(this, Set.GetEnumerator());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("a", it.next());
+		Assert.IsTrue(it.MoveNext());
+		Assert.AreEqual("a", it.Current);
 		AssertNoMore(it);
 	  }
 
@@ -79,12 +68,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper2(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper2(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return "a".Equals(s);
 		  }
@@ -94,8 +84,8 @@ namespace Lucene.Net.Util
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper3(this, Set.GetEnumerator());
 		// this time without check: Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("a", it.next());
+	    it.MoveNext();
+		Assert.AreEqual("a", it.Current);
 		AssertNoMore(it);
 	  }
 
@@ -103,12 +93,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper3(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper3(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return "a".Equals(s);
 		  }
@@ -117,10 +108,8 @@ namespace Lucene.Net.Util
 	  public virtual void TestB1()
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper4(this, Set.GetEnumerator());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("b", it.next());
+		Assert.IsTrue(it.MoveNext());
+		Assert.AreEqual("b", it.Current);
 		AssertNoMore(it);
 	  }
 
@@ -128,12 +117,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper4(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper4(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return "b".Equals(s);
 		  }
@@ -143,8 +133,8 @@ namespace Lucene.Net.Util
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper5(this, Set.GetEnumerator());
 		// this time without check: Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("b", it.next());
+		it.MoveNext();
+        Assert.AreEqual("b", it.Current);
 		AssertNoMore(it);
 	  }
 
@@ -152,12 +142,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper5(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper5(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return "b".Equals(s);
 		  }
@@ -166,18 +157,12 @@ namespace Lucene.Net.Util
 	  public virtual void TestAll1()
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper6(this, Set.GetEnumerator());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("a", it.next());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("b", it.next());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("c", it.next());
+		Assert.IsTrue(it.MoveNext());
+		Assert.AreEqual("a", it.Current);
+        Assert.IsTrue(it.MoveNext());
+        Assert.AreEqual("b", it.Current);
+        Assert.IsTrue(it.MoveNext());
+        Assert.AreEqual("c", it.Current);
 		AssertNoMore(it);
 	  }
 
@@ -185,12 +170,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper6(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper6(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return true;
 		  }
@@ -199,12 +185,12 @@ namespace Lucene.Net.Util
 	  public virtual void TestAll2()
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper7(this, Set.GetEnumerator());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("a", it.next());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("b", it.next());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("c", it.next());
+		it.MoveNext();
+        Assert.AreEqual("a", it.Current);
+        it.MoveNext();
+        Assert.AreEqual("b", it.Current);
+        it.MoveNext();
+        Assert.AreEqual("c", it.Current);
 		AssertNoMore(it);
 	  }
 
@@ -212,12 +198,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper7(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper7(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return true;
 		  }
@@ -226,14 +213,14 @@ namespace Lucene.Net.Util
 	  public virtual void TestUnmodifiable()
 	  {
 		IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper8(this, Set.GetEnumerator());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.AreEqual("a", it.next());
+		it.MoveNext();
+        Assert.AreEqual("a", it.Current);
 		try
 		{
-		  it.remove();
+		  it.Reset();
 		  Assert.Fail("Should throw UnsupportedOperationException");
 		}
-		catch (System.NotSupportedException oue)
+		catch (NotImplementedException)
 		{
 		  // pass
 		}
@@ -243,12 +230,13 @@ namespace Lucene.Net.Util
 	  {
 		  private readonly TestFilterIterator OuterInstance;
 
-		  public FilterIteratorAnonymousInnerClassHelper8(TestFilterIterator outerInstance, UnknownType iterator) : base(iterator)
+          public FilterIteratorAnonymousInnerClassHelper8(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+              : base(iterator)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override bool PredicateFunction(string s)
+		  protected override bool PredicateFunction(string s)
 		  {
 			return true;
 		  }

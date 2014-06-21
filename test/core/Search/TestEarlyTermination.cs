@@ -27,12 +27,14 @@ namespace Lucene.Net.Search
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestEarlyTermination : LuceneTestCase
 	{
 
 	  internal Directory Dir;
 	  internal RandomIndexWriter Writer;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -49,6 +51,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		base.TearDown();
@@ -56,7 +59,8 @@ namespace Lucene.Net.Search
 		Dir.Dispose();
 	  }
 
-	  public virtual void TestEarlyTermination()
+      [Test]
+      public virtual void TestEarlyTermination_Mem()
 	  {
 		int iters = AtLeast(5);
 		IndexReader reader = Writer.Reader;

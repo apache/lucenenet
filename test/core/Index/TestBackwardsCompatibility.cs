@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -199,7 +200,7 @@ namespace Lucene.Net.Index
         OldIndexDirs = new Dictionary<string, Directory>();
 		foreach (string name in names)
 		{
-		  Directory dir = CreateTempDir(name);
+		  DirectoryInfo dir = CreateTempDir(name);
 		  FileInfo dataFile = new FileInfo(typeof(TestBackwardsCompatibility).GetResource("index." + name + ".zip").toURI());
 		  TestUtil.Unzip(dataFile, dir);
 		  OldIndexDirs[name] = NewFSDirectory(dir);
@@ -227,7 +228,7 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("TEST: index " + UnsupportedNames[i]);
 		  }
-          Directory oldIndxeDir = CreateTempDir(UnsupportedNames[i]);
+          DirectoryInfo oldIndxeDir = CreateTempDir(UnsupportedNames[i]);
 		  TestUtil.Unzip(GetDataFile("unsupported." + UnsupportedNames[i] + ".zip"), oldIndxeDir);
 		  BaseDirectoryWrapper dir = NewFSDirectory(oldIndxeDir);
 		  // don't checkindex, these are intentionally not supported
@@ -916,11 +917,11 @@ namespace Lucene.Net.Index
 
 		foreach (string name in OldIndexDirs.Keys)
 		{
-		  Directory dir = CreateTempDir(name);
+		  DirectoryInfo dir = CreateTempDir(name);
           FileInfo dataFile = new FileInfo(typeof(TestBackwardsCompatibility).GetResource("index." + name + ".zip").toURI());
-		  TestUtil.unzip(dataFile, dir);
+		  TestUtil.Unzip(dataFile, dir);
 
-		  string path = dir.AbsolutePath;
+		  string path = dir.FullName;
 
 		  IList<string> args = new List<string>();
 		  if (Random().NextBoolean())
@@ -1020,7 +1021,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestMoreTerms()
 	  {
-		Directory oldIndexDir = CreateTempDir("moreterms");
+		DirectoryInfo oldIndexDir = CreateTempDir("moreterms");
 		TestUtil.Unzip(GetDataFile(MoreTermsIndex), oldIndexDir);
 		Directory dir = NewFSDirectory(oldIndexDir);
 		// TODO: more tests

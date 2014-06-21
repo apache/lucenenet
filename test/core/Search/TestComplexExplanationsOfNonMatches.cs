@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 
@@ -23,7 +25,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// subclass of TestSimpleExplanations that verifies non matches.
 	/// </summary>
-	public class TestComplexExplanationsOfNonMatches : TestComplexExplanations
+	[TestFixture]
+    public class TestComplexExplanationsOfNonMatches : TestComplexExplanations
 	{
 
 	  /// <summary>

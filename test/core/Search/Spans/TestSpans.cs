@@ -40,7 +40,8 @@ namespace Lucene.Net.Search.Spans
     using NUnit.Framework;
     using Lucene.Net.Index;
 
-	public class TestSpans : LuceneTestCase
+	[TestFixture]
+    public class TestSpans : LuceneTestCase
 	{
 	  private IndexSearcher Searcher;
 	  private IndexReader Reader;
@@ -48,6 +49,7 @@ namespace Lucene.Net.Search.Spans
 
 	  public const string field = "field";
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -64,6 +66,7 @@ namespace Lucene.Net.Search.Spans
 		Searcher = NewSearcher(Reader);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -80,7 +83,7 @@ namespace Lucene.Net.Search.Spans
 
 	  private void CheckHits(Query query, int[] results)
 	  {
-		CheckHits.CheckHits(Random(), query, field, Searcher, results);
+		Search.CheckHits.DoCheckHits(Random(), query, field, Searcher, results);
 	  }
 
 	  private void OrderedSlopTest3SQ(SpanQuery q1, SpanQuery q2, SpanQuery q3, int slop, int[] expectedDocs)
@@ -105,77 +108,92 @@ namespace Lucene.Net.Search.Spans
 		OrderedSlopTest3SQ(MakeSpanTermQuery("u2"), MakeSpanTermQuery("u2"), MakeSpanTermQuery("u1"), slop, expectedDocs);
 	  }
 
+      [Test]
 	  public virtual void TestSpanNearOrdered01()
 	  {
 		OrderedSlopTest3(0, new int[] {0});
 	  }
 
-	  public virtual void TestSpanNearOrdered02()
+      [Test]
+      public virtual void TestSpanNearOrdered02()
 	  {
 		OrderedSlopTest3(1, new int[] {0,1});
 	  }
 
-	  public virtual void TestSpanNearOrdered03()
+      [Test]
+      public virtual void TestSpanNearOrdered03()
 	  {
 		OrderedSlopTest3(2, new int[] {0,1,2});
 	  }
 
-	  public virtual void TestSpanNearOrdered04()
+      [Test]
+      public virtual void TestSpanNearOrdered04()
 	  {
 		OrderedSlopTest3(3, new int[] {0,1,2,3});
 	  }
 
-	  public virtual void TestSpanNearOrdered05()
+      [Test]
+      public virtual void TestSpanNearOrdered05()
 	  {
 		OrderedSlopTest3(4, new int[] {0,1,2,3});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual01()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual01()
 	  {
 		OrderedSlopTest3Equal(0, new int[] {});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual02()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual02()
 	  {
 		OrderedSlopTest3Equal(1, new int[] {1});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual03()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual03()
 	  {
 		OrderedSlopTest3Equal(2, new int[] {1});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual04()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual04()
 	  {
 		OrderedSlopTest3Equal(3, new int[] {1,3});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual11()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual11()
 	  {
 		OrderedSlopTest1Equal(0, new int[] {4});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual12()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual12()
 	  {
 		OrderedSlopTest1Equal(0, new int[] {4});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual13()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual13()
 	  {
 		OrderedSlopTest1Equal(1, new int[] {4,5,6});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual14()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual14()
 	  {
 		OrderedSlopTest1Equal(2, new int[] {4,5,6,7});
 	  }
 
-	  public virtual void TestSpanNearOrderedEqual15()
+      [Test]
+      public virtual void TestSpanNearOrderedEqual15()
 	  {
 		OrderedSlopTest1Equal(3, new int[] {4,5,6,7});
 	  }
 
-	  public virtual void TestSpanNearOrderedOverlap()
+      [Test]
+      public virtual void TestSpanNearOrderedOverlap()
 	  {
 		bool ordered = true;
 		int slop = 1;
@@ -196,7 +214,8 @@ namespace Lucene.Net.Search.Spans
 	  }
 
 
-	  public virtual void TestSpanNearUnOrdered()
+      [Test]
+      public virtual void TestSpanNearUnOrdered()
 	  {
 
 		//See http://www.gossamer-threads.com/lists/lucene/java-dev/52270 for discussion about this test
@@ -302,7 +321,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(end, spans.End(), "end");
 	  }
 
-	  public virtual void TestSpanOrEmpty()
+      [Test]
+      public virtual void TestSpanOrEmpty()
 	  {
 		Spans spans = OrSpans(new string[0]);
 		Assert.IsFalse(spans.Next(), "empty next");
@@ -312,14 +332,16 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(a.Equals(b), "empty should equal");
 	  }
 
-	  public virtual void TestSpanOrSingle()
+      [Test]
+      public virtual void TestSpanOrSingle()
 	  {
 		Spans spans = OrSpans(new string[] {"w5"});
 		TstNextSpans(spans, 0, 4, 5);
 		Assert.IsFalse(spans.Next(), "final next");
 	  }
 
-	  public virtual void TestSpanOrMovesForward()
+      [Test]
+      public virtual void TestSpanOrMovesForward()
 	  {
 		Spans spans = OrSpans(new string[] {"w1", "xx"});
 
@@ -337,7 +359,8 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestSpanOrDouble()
+      [Test]
+      public virtual void TestSpanOrDouble()
 	  {
 		Spans spans = OrSpans(new string[] {"w5", "yy"});
 		TstNextSpans(spans, 0, 4, 5);
@@ -347,7 +370,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsFalse(spans.Next(), "final next");
 	  }
 
-	  public virtual void TestSpanOrDoubleSkip()
+      [Test]
+      public virtual void TestSpanOrDoubleSkip()
 	  {
 		Spans spans = OrSpans(new string[] {"w5", "yy"});
 		Assert.IsTrue(spans.SkipTo(3), "initial skipTo");
@@ -358,7 +382,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsFalse(spans.Next(), "final next");
 	  }
 
-	  public virtual void TestSpanOrUnused()
+      [Test]
+      public virtual void TestSpanOrUnused()
 	  {
 		Spans spans = OrSpans(new string[] {"w5", "unusedTerm", "yy"});
 		TstNextSpans(spans, 0, 4, 5);
@@ -368,7 +393,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsFalse(spans.Next(), "final next");
 	  }
 
-	  public virtual void TestSpanOrTripleSameDoc()
+      [Test]
+      public virtual void TestSpanOrTripleSameDoc()
 	  {
 		Spans spans = OrSpans(new string[] {"t1", "t2", "t3"});
 		TstNextSpans(spans, 11, 0, 1);
@@ -380,7 +406,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsFalse(spans.Next(), "final next");
 	  }
 
-	  public virtual void TestSpanScorerZeroSloppyFreq()
+      [Test]
+      public virtual void TestSpanScorerZeroSloppyFreq()
 	  {
 		bool ordered = true;
 		int slop = 1;
@@ -469,7 +496,8 @@ namespace Lucene.Net.Search.Spans
 	  }
 
 	  // LUCENE-1404
-	  public virtual void TestNPESpanQuery()
+      [Test]
+      public virtual void TestNPESpanQuery()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -498,7 +526,8 @@ namespace Lucene.Net.Search.Spans
 	  }
 
 
-	  public virtual void TestSpanNots()
+      [Test]
+      public virtual void TestSpanNots()
 	  {
 		 Assert.AreEqual(0, SpanCount("s2", "s2", 0, 0), 0, "SpanNotIncludeExcludeSame1");
 		 Assert.AreEqual(0, SpanCount("s2", "s2", 10, 10), 0, "SpanNotIncludeExcludeSame2");

@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -111,7 +112,7 @@ namespace Lucene.Net.Index
 			Term term = new Term("id");
 			for (int i = 0; i < NumOps && !Holder.Stop; i++)
 			{
-			  float nextOp = random.NextDouble();
+			  float nextOp = (float)random.NextDouble();
 			  if (nextOp < 0.3)
 			  {
 				term.Set("id", new BytesRef("1"));
@@ -241,9 +242,9 @@ namespace Lucene.Net.Index
 				  {
 					Failed = e;
 				  }
-				  return;
 				}
 			  }
+			    return;
 			}
 		  }
 		}

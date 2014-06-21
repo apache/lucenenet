@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Similarities
 	  {
 	  }
 
-	  protected internal override float Score(BasicStats stats, float freq, float docLen)
+	    public override float Score(BasicStats stats, float freq, float docLen)
 	  {
 		float score = stats.TotalBoost * (float)(Math.Log(1 + freq / (Mu_Renamed * ((LMStats)stats).CollectionProbability)) + Math.Log(Mu_Renamed / (docLen + Mu_Renamed)));
 		return score > 0.0f ? score : 0.0f;

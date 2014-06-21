@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 	// Used by IndexWriter to hold open SegmentReaders (for
 	// searching or merging), plus pending deletes and updates,
 	// for a given segment
-	internal class ReadersAndUpdates
+    public class ReadersAndUpdates
 	{
 	  // Not final because we replace (clone) when we need to
 	  // change it and it's been shared:

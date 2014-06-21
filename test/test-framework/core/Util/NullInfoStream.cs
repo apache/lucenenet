@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
 		return true; // to actually enable logging, we just ignore on message()
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
 	}

@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 	  ///  is no longer public, code that wants to get all <seealso cref="AtomicReader"/>s
 	  ///  this composite is composed of should use <seealso cref="IndexReader#leaves()"/>. </summary>
 	  /// <seealso cref= IndexReader#leaves() </seealso>
-	  protected internal abstract IList<IndexReader> GetSequentialSubReaders();
+	  public abstract IList<IndexReader> GetSequentialSubReaders();
 
 	  public override sealed IndexReaderContext Context
 	  {

@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
 		DirectoryReader ir1, ir2;
 		// close subreaders, ParallelReader will not change refCounts, but close on its own close
 		ParallelCompositeReader pr = new ParallelCompositeReader(ir1 = DirectoryReader.Open(dir1), ir2 = DirectoryReader.Open(dir2));
-		IndexReader psub1 = pr.GetSequentialSubReaders().Get(0);
+		IndexReader psub1 = pr.GetSequentialSubReaders()[0];
 		// check RefCounts
 		Assert.AreEqual(1, ir1.RefCount);
 		Assert.AreEqual(1, ir2.RefCount);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
 
 		// don't close subreaders, so ParallelReader will increment refcounts
 		ParallelCompositeReader pr = new ParallelCompositeReader(false, ir1, ir2);
-		IndexReader psub1 = pr.GetSequentialSubReaders().Get(0);
+		IndexReader psub1 = pr.GetSequentialSubReaders()[0];
 		// check RefCounts
 		Assert.AreEqual(2, ir1.RefCount);
 		Assert.AreEqual(2, ir2.RefCount);
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 			  this.ListenerClosedCount = listenerClosedCount;
 		  }
 
-		  public override void OnClose(IndexReader reader)
+		  public void OnClose(IndexReader reader)
 		  {
 			ListenerClosedCount[0]++;
 		  }
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
 			  this.ListenerClosedCount = listenerClosedCount;
 		  }
 
-		  public override void OnClose(IndexReader reader)
+		  public void OnClose(IndexReader reader)
 		  {
 			ListenerClosedCount[0]++;
 		  }
@@ -226,12 +226,12 @@ namespace Lucene.Net.Index
 	  {
 		Directory dir1 = GetDir1(Random());
 		CompositeReader ir1 = DirectoryReader.Open(dir1);
-		Assert.AreEqual(1, ir1.GetSequentialSubReaders().Get(0).RefCount);
+		Assert.AreEqual(1, ir1.GetSequentialSubReaders()[0].RefCount);
 
 		// with overlapping
 		ParallelCompositeReader pr = new ParallelCompositeReader(true, new CompositeReader[] {ir1}, new CompositeReader[] {ir1});
 
-		IndexReader psub = pr.GetSequentialSubReaders().Get(0);
+        IndexReader psub = pr.GetSequentialSubReaders()[0];
 		Assert.AreEqual(1, psub.RefCount);
 
 		ir1.Dispose();

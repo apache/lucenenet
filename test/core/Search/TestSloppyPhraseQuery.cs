@@ -34,6 +34,7 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSloppyPhraseQuery : LuceneTestCase
 	{
 
@@ -60,7 +61,8 @@ namespace Lucene.Net.Search
 	  /// QUERY_4 has a fuzzy (len=1) match to DOC_4, so all slop values > 0 should succeed.
 	  /// But only the 3rd sequence of A's in DOC_4 will do.
 	  /// </summary>
-	  public virtual void TestDoc4_Query4_All_Slops_Should_match()
+      [Test]
+      public virtual void TestDoc4_Query4_All_Slops_Should_match()
 	  {
 		for (int slop = 0; slop < 30; slop++)
 		{
@@ -74,7 +76,8 @@ namespace Lucene.Net.Search
 	  /// QUERY_1 has an exact match to DOC_1, so all slop values should succeed.
 	  /// Before LUCENE-1310, a slop value of 1 did not succeed.
 	  /// </summary>
-	  public virtual void TestDoc1_Query1_All_Slops_Should_match()
+      [Test]
+      public virtual void TestDoc1_Query1_All_Slops_Should_match()
 	  {
 		for (int slop = 0; slop < 30; slop++)
 		{
@@ -89,7 +92,8 @@ namespace Lucene.Net.Search
 	  /// 6 should be the minimum slop to make QUERY_1 match DOC_2.
 	  /// Before LUCENE-1310, 7 was the minimum.
 	  /// </summary>
-	  public virtual void TestDoc2_Query1_Slop_6_or_more_Should_match()
+      [Test]
+      public virtual void TestDoc2_Query1_Slop_6_or_more_Should_match()
 	  {
 		for (int slop = 0; slop < 30; slop++)
 		{
@@ -108,7 +112,8 @@ namespace Lucene.Net.Search
 	  /// QUERY_2 has an exact match to DOC_2, so all slop values should succeed.
 	  /// Before LUCENE-1310, 0 succeeds, 1 through 7 fail, and 8 or greater succeeds.
 	  /// </summary>
-	  public virtual void TestDoc2_Query2_All_Slops_Should_match()
+      [Test]
+      public virtual void TestDoc2_Query2_All_Slops_Should_match()
 	  {
 		for (int slop = 0; slop < 30; slop++)
 		{
@@ -122,7 +127,8 @@ namespace Lucene.Net.Search
 	  /// Test DOC_3 and QUERY_1.
 	  /// QUERY_1 has an exact match to DOC_3, so all slop values should succeed.
 	  /// </summary>
-	  public virtual void TestDoc3_Query1_All_Slops_Should_match()
+      [Test]
+      public virtual void TestDoc3_Query1_All_Slops_Should_match()
 	  {
 		for (int slop = 0; slop < 30; slop++)
 		{
@@ -134,7 +140,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// LUCENE-3412 </summary>
-	  public virtual void TestDoc5_Query5_Any_Slop_Should_be_consistent()
+      [Test]
+      public virtual void TestDoc5_Query5_Any_Slop_Should_be_consistent()
 	  {
 		int nRepeats = 5;
 		for (int slop = 0; slop < 3; slop++)
@@ -279,7 +286,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-3215
-	  public virtual void TestSlopWithHoles()
+      [Test]
+      public virtual void TestSlopWithHoles()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -315,7 +323,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-3215
-	  public virtual void TestInfiniteFreq1()
+      [Test]
+      public virtual void TestInfiniteFreq1()
 	  {
 		string document = "drug druggy drug drug drug";
 
@@ -339,7 +348,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-3215
-	  public virtual void TestInfiniteFreq2()
+      [Test]
+      public virtual void TestInfiniteFreq2()
 	  {
 		string document = "So much fun to be had in my head " + "No more sunshine " + "So much fun just lying in my bed " + "No more sunshine " + "I can't face the sunlight and the dirt outside " + "Wanna stay in 666 where this darkness don't lie " + "Drug drug druggy " + "Got a feeling sweet like honey " + "Drug drug druggy " + "Need sensation like my baby " + "Show me your scars you're so aware " + "I'm not barbaric I just care " + "Drug drug drug " + "I need a reflection to prove I exist " + "No more sunshine " + "I am a victim of designer blitz " + "No more sunshine " + "Dance like a robot when you're chained at the knee " + "The C.I.A say you're all they'll ever need " + "Drug drug druggy " + "Got a feeling sweet like honey " + "Drug drug druggy " + "Need sensation like my baby " + "Snort your lines you're so aware " + "I'm not barbaric I just care " + "Drug drug druggy " + "Got a feeling sweet like honey " + "Drug drug druggy " + "Need sensation like my baby";
 

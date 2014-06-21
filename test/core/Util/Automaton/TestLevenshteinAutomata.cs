@@ -47,7 +47,7 @@ namespace Lucene.Net.Util.Automaton
 	  // LUCENE-3094
 	  public virtual void TestNoWastedStates()
 	  {
-		AutomatonTestUtil.assertNoDetachedStates((new LevenshteinAutomata("abc", false)).toAutomaton(1));
+		AutomatonTestUtil.assertNoDetachedStates((new LevenshteinAutomata("abc", false)).ToAutomaton(1));
 	  }
 
 	  /// <summary>
@@ -79,8 +79,8 @@ namespace Lucene.Net.Util.Automaton
 		Automaton[] tautomata = new Automaton[maxDistance + 1];
 		for (int n = 0; n < automata.Length; n++)
 		{
-		  automata[n] = builder.toAutomaton(n);
-		  tautomata[n] = tbuilder.toAutomaton(n);
+		  automata[n] = builder.ToAutomaton(n);
+		  tautomata[n] = tbuilder.ToAutomaton(n);
 		  Assert.IsNotNull(automata[n]);
 		  Assert.IsNotNull(tautomata[n]);
 		  Assert.IsTrue(automata[n].Deterministic);
@@ -295,8 +295,8 @@ namespace Lucene.Net.Util.Automaton
 
 		  /*
 		     The difference between this impl. and the previous is that, rather
-		     than creating and retaining a matrix of size s.length()+1 by t.length()+1,
-		     we maintain two single-dimensional arrays of length s.length()+1.  The first, d,
+		     than creating and retaining a matrix of size s.Length()+1 by t.Length()+1,
+		     we maintain two single-dimensional arrays of length s.Length()+1.  The first, d,
 		     is the 'current working' distance array that maintains the newest distance cost
 		     counts as we iterate through the characters of String s.  Each time we increment
 		     the index of String t we are comparing, d is copied to p, the second int[].  Doing so

@@ -26,8 +26,7 @@ namespace Lucene.Net.Index
 	///  separately, from a Document, and accepts a
 	///  InvertedTermsConsumer to process those terms. 
 	/// </summary>
-
-	internal sealed class DocInverter : DocFieldConsumer
+	public sealed class DocInverter : DocFieldConsumer
 	{
 
 	  internal readonly InvertedDocConsumer Consumer;

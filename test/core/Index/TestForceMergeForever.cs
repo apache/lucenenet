@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(w.MergeCount.Get() <= 1, "merge count is " + w.MergeCount.Get());
 		w.Dispose();
 		d.Dispose();
-        docs.Close();
+        docs.Dispose();
 	  }
 
 	  private class ThreadAnonymousInnerClassHelper : ThreadClass

@@ -54,9 +54,9 @@ namespace Lucene.Net.Util.junitcompat
 //ORIGINAL LINE: @BeforeClass public static void setup()
 		public static void Setup()
 		{
-		  Seed = RandomizedContext.current().RunnerSeedAsString;
+		  Seed = RandomizedContext.Current().RunnerSeedAsString;
 
-		  Random rnd = random();
+		  Random rnd = Random();
 		  PickString = TestUtil.randomSimpleString(rnd);
 
 		  DefaultLocale = Locale.Default;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestSetupWithoutLocale()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(Nested));
-		Assert.Assert.AreEqual(0, runClasses.FailureCount);
+		Assert.AreEqual(0, runClasses.FailureCount);
 
 		string s1 = Nested.PickString;
 		System.setProperty("tests.seed", Nested.Seed);
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.junitcompat
 		JUnitCore.runClasses(typeof(Nested));
 		string s2 = Nested.PickString;
 
-		Assert.Assert.AreEqual(s1, s2);
+		Assert.AreEqual(s1, s2);
 	  }
 	}
 

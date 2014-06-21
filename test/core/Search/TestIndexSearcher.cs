@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
@@ -34,11 +35,13 @@ namespace Lucene.Net.Search
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestIndexSearcher : LuceneTestCase
 	{
 	  internal Directory Dir;
 	  internal IndexReader Reader;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -55,6 +58,7 @@ namespace Lucene.Net.Search
 		iw.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		base.TearDown();
@@ -63,9 +67,10 @@ namespace Lucene.Net.Search
 	  }
 
 	  // should not throw exception
-	  public virtual void TestHugeN()
+      [Test]
+      public virtual void TestHugeN()
 	  {
-		ExecutorService service = new ThreadPoolExecutor(4, 4, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("TestIndexSearcher"));
+		TaskScheduler service = new ThreadPoolExecutor(4, 4, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("TestIndexSearcher"));
 
 		IndexSearcher[] searchers = new IndexSearcher[] {new IndexSearcher(Reader), new IndexSearcher(Reader, service)};
 		Query[] queries = new Query[] {new MatchAllDocsQuery(), new TermQuery(new Term("field", "1"))};
@@ -112,7 +117,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSearchAfterPassedMaxDoc() throws Exception
-	  public virtual void TestSearchAfterPassedMaxDoc()
+      [Test]
+      public virtual void TestSearchAfterPassedMaxDoc()
 	  {
 		// LUCENE-5128: ensure we get a meaningful message if searchAfter exceeds maxDoc
 		Directory dir = NewDirectory();

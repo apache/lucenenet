@@ -88,14 +88,14 @@ namespace Lucene.Net.Util.junitcompat
 	  {
 		public virtual void TestMethod1()
 		{
-		  if (System.Properties.get(PROP_KEY1) != null)
+		  if (System.Properties.Get(PROP_KEY1) != null)
 		  {
 			throw new Exception("Will pass.");
 		  }
 
 		  Properties properties = System.Properties;
 		  properties.put(PROP_KEY1, new object());
-		  Assert.Assert.IsTrue(System.Properties.get(PROP_KEY1) != null);
+		  Assert.IsTrue(System.Properties.Get(PROP_KEY1) != null);
 		}
 
 		public virtual void TestMethod2()
@@ -137,9 +137,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestRuleInvariantBeforeClass()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(InBeforeClass));
-		Assert.Assert.AreEqual(1, runClasses.FailureCount);
-		Assert.Assert.IsTrue(runClasses.Failures.get(0).Message.contains(PROP_KEY1));
-		Assert.assertNull(System.getProperty(PROP_KEY1));
+		Assert.AreEqual(1, runClasses.FailureCount);
+		Assert.IsTrue(runClasses.Failures.Get(0).Message.Contains(PROP_KEY1));
+		Assert.IsNull(System.getProperty(PROP_KEY1));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -147,9 +147,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestRuleInvariantAfterClass()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(InAfterClass));
-		Assert.Assert.AreEqual(1, runClasses.FailureCount);
-		Assert.Assert.IsTrue(runClasses.Failures.get(0).Message.contains(PROP_KEY1));
-		Assert.assertNull(System.getProperty(PROP_KEY1));
+		Assert.AreEqual(1, runClasses.FailureCount);
+		Assert.IsTrue(runClasses.Failures.Get(0).Message.Contains(PROP_KEY1));
+		Assert.IsNull(System.getProperty(PROP_KEY1));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -157,12 +157,12 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestRuleInvariantInTestMethod()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(InTestMethod));
-		Assert.Assert.AreEqual(2, runClasses.FailureCount);
+		Assert.AreEqual(2, runClasses.FailureCount);
 		foreach (Failure f in runClasses.Failures)
 		{
-		  Assert.Assert.IsTrue(f.Message.contains(PROP_KEY1));
+		  Assert.IsTrue(f.Message.Contains(PROP_KEY1));
 		}
-		Assert.assertNull(System.getProperty(PROP_KEY1));
+		Assert.IsNull(System.getProperty(PROP_KEY1));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -170,9 +170,9 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestNonStringProperties()
 	  {
 		Result runClasses = JUnitCore.runClasses(typeof(NonStringProperties));
-		Assert.Assert.AreEqual(1, runClasses.FailureCount);
-		Assert.Assert.IsTrue(runClasses.Failures.get(0).Message.contains("Will pass"));
-		Assert.Assert.AreEqual(3, runClasses.RunCount);
+		Assert.AreEqual(1, runClasses.FailureCount);
+		Assert.IsTrue(runClasses.Failures.Get(0).Message.Contains("Will pass"));
+		Assert.AreEqual(3, runClasses.RunCount);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -183,8 +183,8 @@ namespace Lucene.Net.Util.junitcompat
 		try
 		{
 		  Result runClasses = JUnitCore.runClasses(typeof(IgnoredProperty));
-		  Assert.Assert.AreEqual(0, runClasses.FailureCount);
-		  Assert.Assert.AreEqual(VALUE1, System.getProperty(PROP_KEY1));
+		  Assert.AreEqual(0, runClasses.FailureCount);
+		  Assert.AreEqual(VALUE1, System.getProperty(PROP_KEY1));
 		}
 		finally
 		{

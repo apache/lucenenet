@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -432,7 +433,7 @@ namespace Lucene.Net.Index
 	public virtual void TestFilesOpenClose()
 	{
 		  // Create initial data set
-		  File dirFile = CreateTempDir("TestIndexReader.testFilesOpenClose");
+		  DirectoryInfo dirFile = CreateTempDir("TestIndexReader.testFilesOpenClose");
 		  Directory dir = NewFSDirectory(dirFile);
 		  IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		  AddDoc(writer, "test");
@@ -462,7 +463,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestOpenReaderAfterDelete()
 	  {
-		File dirFile = CreateTempDir("deletetest");
+		DirectoryInfo dirFile = CreateTempDir("deletetest");
 		Directory dir = NewFSDirectory(dirFile);
 		try
 		{
@@ -474,7 +475,7 @@ namespace Lucene.Net.Index
 		  // expected
 		}
 
-		dirFile.delete();
+		dirFile.Delete();
 
 		// Make sure we still get a CorruptIndexException (not NPE):
 		try
@@ -727,7 +728,7 @@ namespace Lucene.Net.Index
 	  // good exception
 	  public virtual void TestNoDir()
 	  {
-		File tempDir = CreateTempDir("doesnotexist");
+		DirectoryInfo tempDir = CreateTempDir("doesnotexist");
 		TestUtil.Rm(tempDir);
 		Directory dir = NewFSDirectory(tempDir);
 		try
@@ -912,7 +913,7 @@ namespace Lucene.Net.Index
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
-		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.IndexDeletionPolicy;
+		SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy) writer.Config.DelPolicy;
 		writer.AddDocument(new Document());
 		writer.Commit();
 		sdp.Snapshot();
@@ -1078,7 +1079,7 @@ namespace Lucene.Net.Index
 			  this.CloseCount = closeCount;
 		  }
 
-		  public override void OnClose(IndexReader reader)
+		  public void OnClose(IndexReader reader)
 		  {
 			CloseCount[0]++;
 		  }
@@ -1263,8 +1264,8 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestIndexExistsOnNonExistentDirectory()
 	  {
-		File tempDir = CreateTempDir("testIndexExistsOnNonExistentDirectory");
-		tempDir.delete();
+		DirectoryInfo tempDir = CreateTempDir("testIndexExistsOnNonExistentDirectory");
+		tempDir.Delete();
 		Directory dir = NewFSDirectory(tempDir);
 		Console.WriteLine("dir=" + dir);
 		Assert.IsFalse(DirectoryReader.IndexExists(dir));

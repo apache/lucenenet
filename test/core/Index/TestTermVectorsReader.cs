@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
 	  private FieldInfos FieldInfos = new FieldInfos(new FieldInfo[0]);
 	  private static int TERM_FREQ = 3;
 
-	  private class TestToken : IComparable<TestToken>
+	  internal class TestToken : IComparable<TestToken>
 	  {
 		  private readonly TestTermVectorsReader OuterInstance;
 
@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  return new TokenStreamComponents(new MyTokenizer(OuterInstance, reader));
 		}

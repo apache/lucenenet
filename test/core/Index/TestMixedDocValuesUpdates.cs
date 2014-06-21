@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -269,7 +270,7 @@ namespace Lucene.Net.Index
 		AtomicInteger numUpdates = new AtomicInteger(AtLeast(100));
 
 		// same thread updates a field as well as reopens
-		Thread[] threads = new Thread[numThreads];
+        ThreadClass[] threads = new ThreadClass[numThreads];
 		for (int i = 0; i < threads.Length; i++)
 		{
 		  string f = "f" + i;
@@ -277,7 +278,7 @@ namespace Lucene.Net.Index
 		  threads[i] = new ThreadAnonymousInnerClassHelper(this, "UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
 		}
 
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 			t.Start();
 		}

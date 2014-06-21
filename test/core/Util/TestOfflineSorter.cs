@@ -1,43 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
 
-	using BufferSize = Lucene.Net.Util.OfflineSorter.BufferSize;
-	using ByteSequencesWriter = Lucene.Net.Util.OfflineSorter.ByteSequencesWriter;
-	using SortInfo = Lucene.Net.Util.OfflineSorter.SortInfo;
+    using BufferSize = Lucene.Net.Util.OfflineSorter.BufferSize;
+    using ByteSequencesWriter = Lucene.Net.Util.OfflineSorter.ByteSequencesWriter;
+    using SortInfo = Lucene.Net.Util.OfflineSorter.SortInfo;
 
 	/// <summary>
 	/// Tests for on-disk merge sorting.
 	/// </summary>
 	public class TestOfflineSorter : LuceneTestCase
 	{
-	  private File TempDir;
+	  private DirectoryInfo TempDir;
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		TempDir = createTempDir("mergesort");
-		TestUtil.rm(TempDir);
+		base.SetUp();
+		TempDir = CreateTempDir("mergesort");
+		TestUtil.Rm(TempDir);
 		TempDir.mkdirs();
 	  }
 
@@ -45,9 +48,9 @@ namespace Lucene.Net.Util
 	  {
 		if (TempDir != null)
 		{
-		  TestUtil.rm(TempDir);
+		  TestUtil.Rm(TempDir);
 		}
-		base.tearDown();
+		base.TearDown();
 	  }
 
 	  public virtual void TestEmpty()
@@ -57,7 +60,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestSingleLine()
 	  {
-		CheckSort(new OfflineSorter(), new sbyte [][] {"Single line only.".getBytes(StandardCharsets.UTF_8)});
+		CheckSort(new OfflineSorter(), new sbyte [][] {"Single line only.".GetBytes(IOUtils.CHARSET_UTF_8)});
 	  }
 
 	  public virtual void TestIntermediateMerges()
@@ -87,8 +90,8 @@ namespace Lucene.Net.Util
 		List<sbyte[]> data = new List<sbyte[]>();
 		while (howMuchData > 0)
 		{
-		  sbyte[] current = new sbyte [random().Next(256)];
-		  random().nextBytes(current);
+		  sbyte[] current = new sbyte [Random().Next(256)];
+		  Random().NextBytes(current);
 		  data.Add(current);
 		  howMuchData -= current.Length;
 		}
@@ -104,7 +107,7 @@ namespace Lucene.Net.Util
 		  {
 		  }
 
-		  public virtual int Compare(sbyte[] left, sbyte[] right)
+		  public virtual int Compare(byte[] left, byte[] right)
 		  {
 			int max = Math.Min(left.Length, right.Length);
 			for (int i = 0, j = 0; i < max; i++, j++)
@@ -125,12 +128,12 @@ namespace Lucene.Net.Util
 	  {
 		File unsorted = WriteAll("unsorted", data);
 
-		Arrays.sort(data, unsignedByteOrderComparator);
+		Arrays.Sort(data, unsignedByteOrderComparator);
 		File golden = WriteAll("golden", data);
 
 		File sorted = new File(TempDir, "sorted");
 		OfflineSorter.SortInfo sortInfo = sort.sort(unsorted, sorted);
-		//System.out.println("Input size [MB]: " + unsorted.length() / (1024 * 1024));
+		//System.out.println("Input size [MB]: " + unsorted.Length() / (1024 * 1024));
 		//System.out.println(sortInfo);
 
 		AssertFilesIdentical(golden, sorted);
@@ -142,7 +145,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  private void AssertFilesIdentical(File golden, File sorted)
 	  {
-		Assert.AreEqual(golden.length(), sorted.length());
+		Assert.AreEqual(golden.Length(), sorted.Length());
 
 		sbyte[] buf1 = new sbyte [64 * 1024];
 		sbyte[] buf2 = new sbyte [64 * 1024];
@@ -168,16 +171,16 @@ namespace Lucene.Net.Util
 		{
 		  w.write(datum);
 		}
-		w.close();
+		w.Dispose();
 		return file;
 	  }
 
 	  public virtual void TestRamBuffer()
 	  {
-		int numIters = atLeast(10000);
+		int numIters = AtLeast(10000);
 		for (int i = 0; i < numIters; i++)
 		{
-		  OfflineSorter.BufferSize.megabytes(1 + random().Next(2047));
+		  OfflineSorter.BufferSize.megabytes(1 + Random().Next(2047));
 		}
 		OfflineSorter.BufferSize.megabytes(2047);
 		OfflineSorter.BufferSize.megabytes(1);

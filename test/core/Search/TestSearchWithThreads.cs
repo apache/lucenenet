@@ -37,12 +37,14 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestSearchWithThreads extends Lucene.Net.Util.LuceneTestCase
-	public class TestSearchWithThreads : LuceneTestCase
+	[TestFixture]
+    public class TestSearchWithThreads : LuceneTestCase
 	{
 	  internal int NUM_DOCS;
 	  internal readonly int NUM_SEARCH_THREADS = 5;
 	  internal int RUN_TIME_MSEC;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -50,7 +52,8 @@ namespace Lucene.Net.Search
 		RUN_TIME_MSEC = AtLeast(1000);
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);

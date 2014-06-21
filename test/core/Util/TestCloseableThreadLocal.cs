@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -25,7 +27,7 @@ namespace Lucene.Net.Util
 	  public virtual void TestInitValue()
 	  {
 		InitValueThreadLocal tl = new InitValueThreadLocal(this);
-		string str = (string)tl.get();
+		string str = (string)tl.Get();
 		Assert.AreEqual(TEST_VALUE, str);
 	  }
 
@@ -34,8 +36,8 @@ namespace Lucene.Net.Util
 		// Tests that null can be set as a valid value (LUCENE-1805). this
 		// previously failed in get().
 		IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
-		ctl.set(null);
-		assertNull(ctl.get());
+		ctl.Set(null);
+		Assert.IsNull(ctl.Get());
 	  }
 
 	  public virtual void TestDefaultValueWithoutSetting()
@@ -43,7 +45,7 @@ namespace Lucene.Net.Util
 		// LUCENE-1805: make sure default get returns null,
 		// twice in a row
 		IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
-		assertNull(ctl.get());
+		Assert.IsNull(ctl.Get());
 	  }
 
 	  public class InitValueThreadLocal : IDisposableThreadLocal<object>
@@ -55,7 +57,7 @@ namespace Lucene.Net.Util
 			  this.OuterInstance = outerInstance;
 		  }
 
-		protected internal override object InitialValue()
+		protected override object InitialValue()
 		{
 		  return TEST_VALUE;
 		}

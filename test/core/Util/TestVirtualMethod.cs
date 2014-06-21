@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -85,8 +86,6 @@ namespace Lucene.Net.Util
 		Assert.AreEqual(0, VirtualMethod.compareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) public void testExceptions()
 	  public virtual void TestExceptions()
 	  {
 		try

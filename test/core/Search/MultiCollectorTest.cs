@@ -22,6 +22,7 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class MultiCollectorTest : LuceneTestCase
 	{
 
@@ -64,7 +65,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNullCollectors() throws Exception
-	  public virtual void TestNullCollectors()
+      [Test]
+      public virtual void TestNullCollectors()
 	  {
 		// Tests that the collector rejects all null collectors.
 		try
@@ -89,17 +91,19 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSingleCollector() throws Exception
-	  public virtual void TestSingleCollector()
+      [Test]
+      public virtual void TestSingleCollector()
 	  {
 		// Tests that if a single Collector is input, it is returned (and not MultiCollector).
 		DummyCollector dc = new DummyCollector();
-		assertSame(dc, MultiCollector.Wrap(dc));
-		assertSame(dc, MultiCollector.Wrap(dc, null));
+		AssertSame(dc, MultiCollector.Wrap(dc));
+		AssertSame(dc, MultiCollector.Wrap(dc, null));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testCollector() throws Exception
-	  public virtual void TestCollector()
+      [Test]
+      public virtual void TestCollector()
 	  {
 		// Tests that the collector delegates calls to input collectors properly.
 

@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
 		  this.RollbackPoint = rollbackPoint;
 		}
 
-		public override void OnCommit(IList<IndexCommit> commits)
+        public override void OnCommit(IList<IndexCommit> commits)
 		{
 		}
 

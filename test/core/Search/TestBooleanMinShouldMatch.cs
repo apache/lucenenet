@@ -35,7 +35,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Test that BooleanQuery.setMinimumNumberShouldMatch works.
 	/// </summary>
-	public class TestBooleanMinShouldMatch : LuceneTestCase
+	[TestFixture]
+    public class TestBooleanMinShouldMatch : LuceneTestCase
 	{
 
 		private static Directory Index;
@@ -44,7 +45,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-		public static void BeforeClass()
+		[TestFixtureSetUp]
+        public static void BeforeClass()
 		{
 			string[] data = new string [] {"A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6"};
 
@@ -71,7 +73,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-		public static void AfterClass()
+		[TestFixtureTearDown]
+        public static void AfterClass()
 		{
 		  s = null;
 		  r.Dispose();
@@ -104,7 +107,8 @@ namespace Lucene.Net.Search
 			QueryUtils.Check(Random(), q,s);
 		}
 
-		public virtual void TestAllOptional()
+        [Test]
+        public virtual void TestAllOptional()
 		{
 
 			BooleanQuery q = new BooleanQuery();
@@ -116,7 +120,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 2);
 		}
 
-		public virtual void TestOneReqAndSomeOptional()
+        [Test]
+        public virtual void TestOneReqAndSomeOptional()
 		{
 
 			/* one required, some optional */
@@ -131,7 +136,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 5);
 		}
 
-		public virtual void TestSomeReqAndSomeOptional()
+        [Test]
+        public virtual void TestSomeReqAndSomeOptional()
 		{
 
 			/* two required, some optional */
@@ -147,7 +153,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 5);
 		}
 
-		public virtual void TestOneProhibAndSomeOptional()
+        [Test]
+        public virtual void TestOneProhibAndSomeOptional()
 		{
 
 			/* one prohibited, some optional */
@@ -162,7 +169,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestSomeProhibAndSomeOptional()
+        [Test]
+        public virtual void TestSomeProhibAndSomeOptional()
 		{
 
 			/* two prohibited, some optional */
@@ -178,7 +186,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestOneReqOneProhibAndSomeOptional()
+        [Test]
+        public virtual void TestOneReqOneProhibAndSomeOptional()
 		{
 
 			/* one required, one prohibited, some optional */
@@ -195,7 +204,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestSomeReqOneProhibAndSomeOptional()
+        [Test]
+        public virtual void TestSomeReqOneProhibAndSomeOptional()
 		{
 
 			/* two required, one prohibited, some optional */
@@ -213,7 +223,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestOneReqSomeProhibAndSomeOptional()
+        [Test]
+        public virtual void TestOneReqSomeProhibAndSomeOptional()
 		{
 
 			/* one required, two prohibited, some optional */
@@ -231,7 +242,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestSomeReqSomeProhibAndSomeOptional()
+        [Test]
+        public virtual void TestSomeReqSomeProhibAndSomeOptional()
 		{
 
 			/* two required, two prohibited, some optional */
@@ -250,7 +262,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestMinHigherThenNumOptional()
+        [Test]
+        public virtual void TestMinHigherThenNumOptional()
 		{
 
 			/* two required, two prohibited, some optional */
@@ -269,7 +282,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 0);
 		}
 
-		public virtual void TestMinEqualToNumOptional()
+        [Test]
+        public virtual void TestMinEqualToNumOptional()
 		{
 
 			/* two required, two optional */
@@ -284,7 +298,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestOneOptionalEqualToMin()
+        [Test]
+        public virtual void TestOneOptionalEqualToMin()
 		{
 
 			/* two required, one optional */
@@ -298,7 +313,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 1);
 		}
 
-		public virtual void TestNoOptionalButMin()
+        [Test]
+        public virtual void TestNoOptionalButMin()
 		{
 
 			/* two required, no optional */
@@ -311,7 +327,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 0);
 		}
 
-		public virtual void TestNoOptionalButMin2()
+        [Test]
+        public virtual void TestNoOptionalButMin2()
 		{
 
 			/* one required, no optional */
@@ -323,7 +340,8 @@ namespace Lucene.Net.Search
 			VerifyNrHits(q, 0);
 		}
 
-		public virtual void TestRandomQueries()
+        [Test]
+        public virtual void TestRandomQueries()
 		{
 		  const string field = "data";
 		  string[] vals = new string[] {"1","2","3","4","5","6","A","Z","B","Y","Z","X","foo"};
@@ -431,7 +449,8 @@ namespace Lucene.Net.Search
 		  }
 		}
 
-		public virtual void TestRewriteCoord1()
+        [Test]
+        public virtual void TestRewriteCoord1()
 		{
 		  Similarity oldSimilarity = s.Similarity;
 		  try
@@ -467,7 +486,8 @@ namespace Lucene.Net.Search
 			}
 		}
 
-		public virtual void TestRewriteNegate()
+        [Test]
+        public virtual void TestRewriteNegate()
 		{
 		  Similarity oldSimilarity = s.Similarity;
 		  try

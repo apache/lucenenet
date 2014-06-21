@@ -43,11 +43,13 @@ namespace Lucene.Net.Search
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocValuesScoring extends Lucene.Net.Util.LuceneTestCase
-	public class TestDocValuesScoring : LuceneTestCase
+	[TestFixture]
+    public class TestDocValuesScoring : LuceneTestCase
 	{
 	  private const float SCORE_EPSILON = 0.001f; // for comparing floats
 
-	  public virtual void TestSimple()
+      [Test]
+      public virtual void TestSimple()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -179,9 +181,9 @@ namespace Lucene.Net.Search
 		  return Sim.ComputeWeight(queryBoost, collectionStats, termStats);
 		}
 
-		public override SimScorer SimScorer(SimWeight stats, AtomicReaderContext context)
+		public override SimScorer DoSimScorer(SimWeight stats, AtomicReaderContext context)
 		{
-		  SimScorer sub = Sim.SimScorer(stats, context);
+		  SimScorer sub = Sim.DoSimScorer(stats, context);
 		  FieldCache_Fields.Floats values = FieldCache_Fields.DEFAULT.GetFloats((AtomicReader)context.Reader(), BoostField, false);
 
 		  return new SimScorerAnonymousInnerClassHelper(this, sub, values);

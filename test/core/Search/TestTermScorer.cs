@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Index;
 
+    [TestFixture]
 	public class TestTermScorer : LuceneTestCase
 	{
 	  protected internal Directory Directory;
@@ -44,6 +45,7 @@ namespace Lucene.Net.Search
 	  protected internal IndexSearcher IndexSearcher;
 	  protected internal IndexReader IndexReader;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -62,6 +64,7 @@ namespace Lucene.Net.Search
 		IndexSearcher.Similarity = new DefaultSimilarity();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		IndexReader.Dispose();
@@ -69,6 +72,7 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void Test()
 	  {
 
@@ -151,6 +155,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
+      [Test]
 	  public virtual void TestNext()
 	  {
 
@@ -168,6 +173,7 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(ts.NextDoc() == DocIdSetIterator.NO_MORE_DOCS, "next returned a doc and it should not have");
 	  }
 
+      [Test]
 	  public virtual void TestAdvance()
 	  {
 

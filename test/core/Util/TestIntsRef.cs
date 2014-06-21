@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -23,18 +25,18 @@ namespace Lucene.Net.Util
 	  public virtual void TestEmpty()
 	  {
 		IntsRef i = new IntsRef();
-		Assert.AreEqual(IntsRef.EMPTY_INTS, i.ints);
-		Assert.AreEqual(0, i.offset);
-		Assert.AreEqual(0, i.length);
+		Assert.AreEqual(IntsRef.EMPTY_INTS, i.Ints);
+		Assert.AreEqual(0, i.Offset);
+		Assert.AreEqual(0, i.Length);
 	  }
 
 	  public virtual void TestFromInts()
 	  {
 		int[] ints = new int[] {1, 2, 3, 4};
 		IntsRef i = new IntsRef(ints, 0, 4);
-		Assert.AreEqual(ints, i.ints);
-		Assert.AreEqual(0, i.offset);
-		Assert.AreEqual(4, i.length);
+		Assert.AreEqual(ints, i.Ints);
+		Assert.AreEqual(0, i.Offset);
+		Assert.AreEqual(4, i.Length);
 
 		IntsRef i2 = new IntsRef(ints, 1, 3);
 		Assert.AreEqual(new IntsRef(new int[] {2, 3, 4}, 0, 3), i2);

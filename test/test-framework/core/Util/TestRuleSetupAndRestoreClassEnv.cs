@@ -26,25 +26,15 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
     /*
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.INFOSTREAM;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.TEST_CODEC;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.TEST_DOCVALUESFORMAT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.TEST_POSTINGSFORMAT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.VERBOSE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.assumeFalse;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.localeForName;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.random;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.randomLocale;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Util.LuceneTestCase.randomTimeZone;*/
 
 
@@ -169,7 +159,7 @@ namespace Lucene.Net.Util
 		  InfoStream.Default = new NullInfoStream();
 		}
 
-		Type targetClass = RandomizedContext.Current.TargetClass;
+		Type targetClass = RandomizedContext.Current.GetTargetType;
 		AvoidCodecs = new HashSet<string>();
 		if (targetClass.isAnnotationPresent(typeof(SuppressCodecs)))
 		{
@@ -281,7 +271,7 @@ namespace Lucene.Net.Util
 
 		// Always pick a random one for consistency (whether tests.locale was specified or not).
 		SavedLocale = Locale.Default;
-		Locale randomLocale = randomLocale(random);
+		Locale randomLocale = RandomLocale(random);
 		Locale = testLocale.Equals("random") ? randomLocale : localeForName(testLocale);
 		Locale.Default = Locale;
 
@@ -289,10 +279,10 @@ namespace Lucene.Net.Util
 		// So store the original property value and restore it at end.
 		RestoreProperties["user.timezone"] = System.getProperty("user.timezone");
 		SavedTimeZone = TimeZone.Default;
-		TimeZone randomTimeZone = randomTimeZone(Random());
+		TimeZone randomTimeZone = RandomTimeZone(random);
 		TimeZone = testTimeZone.Equals("random") ? randomTimeZone : TimeZone.getTimeZone(testTimeZone);
 		TimeZone.Default = TimeZone;
-		Similarity = Random().NextBoolean() ? new DefaultSimilarity() : new RandomSimilarityProvider(new Random());
+        Similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(new Random());
 
 		// Check codec restrictions once at class level.
 		try

@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
 	 * limitations under the License.
 	 */
 
-	internal abstract class DocFieldConsumerPerField
+    public abstract class DocFieldConsumerPerField
 	{
 	  /// <summary>
 	  /// Processes all occurrences of a single field </summary>

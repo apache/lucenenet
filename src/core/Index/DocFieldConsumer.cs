@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 	 */
 
 
-	internal abstract class DocFieldConsumer
+    public abstract class DocFieldConsumer
 	{
 	  /// <summary>
 	  /// Called when DocumentsWriterPerThread decides to create a new

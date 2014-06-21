@@ -49,7 +49,8 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Tests IndexSearcher's searchAfter() method
 	/// </summary>
-	public class TestSearchAfter : LuceneTestCase
+	[TestFixture]
+    public class TestSearchAfter : LuceneTestCase
 	{
 	  private Directory Dir;
 	  private IndexReader Reader;
@@ -59,6 +60,7 @@ namespace Lucene.Net.Search
 	  private int Iter;
 	  private IList<SortField> AllSortFields;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -105,7 +107,7 @@ namespace Lucene.Net.Search
 		  else if (sf.Type == SortField.Type_e.FLOAT)
 		  {
 			SortField sf2 = new SortField(sf.Field, SortField.Type_e.FLOAT, sf.Reverse);
-			sf2.MissingValue = Random().NextFloat();
+			sf2.MissingValue = (float)Random().NextDouble();
 			AllSortFields.Add(sf2);
 		  }
 		  else if (sf.Type == SortField.Type_e.DOUBLE)
@@ -129,7 +131,7 @@ namespace Lucene.Net.Search
 		  fields.Add(new IntField("int", Random().Next(), Field.Store.NO));
 		  fields.Add(new LongField("long", Random().NextLong(), Field.Store.NO));
 
-		  fields.Add(new FloatField("float", Random().NextFloat(), Field.Store.NO));
+          fields.Add(new FloatField("float", (float)Random().NextDouble(), Field.Store.NO));
 		  fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
 		  fields.Add(NewStringField("bytes", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
 		  fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
@@ -138,7 +140,7 @@ namespace Lucene.Net.Search
 		  if (SupportsDocValues)
 		  {
 			fields.Add(new NumericDocValuesField("intdocvalues", Random().Next()));
-			fields.Add(new FloatDocValuesField("floatdocvalues", Random().NextFloat()));
+            fields.Add(new FloatDocValuesField("floatdocvalues", (float)Random().NextDouble()));
 			fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
 			fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
 			fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
@@ -178,6 +180,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -185,7 +188,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestQueries()
+      [Test]
+      public virtual void TestQueries()
 	  {
 		// because the first page has a null 'after', we get a normal collector.
 		// so we need to run the test a few times to ensure we will collect multiple

@@ -2,29 +2,32 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using Apache.NMS.Util;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    using NUnit.Framework;
+    /*
+         * Licensed to the Apache Software Foundation (ASF) under one or more
+         * contributor license agreements.  See the NOTICE file distributed with
+         * this work for additional information regarding copyright ownership.
+         * The ASF licenses this file to You under the Apache License, Version 2.0
+         * (the "License"); you may not use this file except in compliance with
+         * the License.  You may obtain a copy of the License at
+         *
+         *     http://www.apache.org/licenses/LICENSE-2.0
+         *
+         * Unless required by applicable law or agreed to in writing, software
+         * distributed under the License is distributed on an "AS IS" BASIS,
+         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         * See the License for the specific language governing permissions and
+         * limitations under the License.
+         */
 
-	using WithNestedTests = Lucene.Net.Util.junitcompat.WithNestedTests;
-	using Assert = org.junit.Assert;
+    using WithNestedTests = Lucene.Net.Util.junitcompat.WithNestedTests;
+	/*using Assert = org.junit.Assert;
 	using BeforeClass = org.junit.BeforeClass;
 	using Rule = org.junit.Rule;
 	using Test = org.junit.Test;
@@ -42,7 +45,7 @@ namespace Lucene.Net.Util
 	using ThreadLeakZombies = com.carrotsearch.randomizedtesting.annotations.ThreadLeakZombies;
 	using Consequence = com.carrotsearch.randomizedtesting.annotations.ThreadLeakZombies.Consequence;
 	using SystemPropertiesInvariantRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesInvariantRule;
-	using SystemPropertiesRestoreRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesRestoreRule;
+	using SystemPropertiesRestoreRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesRestoreRule;*/
 
 	/// <seealso cref= TestRuleIgnoreAfterMaxFailures </seealso>
 	/// <seealso cref= SystemPropertiesInvariantRule </seealso>
@@ -68,7 +71,7 @@ namespace Lucene.Net.Util
 		public virtual void TestFailSometimes()
 		{
 		  NumIters++;
-		  bool fail = random().Next(5) == 0;
+		  bool fail = Random().Next(5) == 0;
 		  if (fail)
 		  {
 			  NumFails++;
@@ -86,19 +89,19 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: @Test public void testMaxFailures()
 	  public virtual void TestMaxFailures()
 	  {
-		LuceneTestCase.replaceMaxFailureRule(new TestRuleIgnoreAfterMaxFailures(2));
+		LuceneTestCase.ReplaceMaxFailureRule(new TestRuleIgnoreAfterMaxFailures(2));
 		JUnitCore core = new JUnitCore();
 		StringBuilder results = new StringBuilder();
 		core.addListener(new RunListenerAnonymousInnerClassHelper(this, results));
 
 		Result result = core.run(typeof(Nested));
-		Assert.Assert.AreEqual(500, result.RunCount);
-		Assert.Assert.AreEqual(0, result.IgnoreCount);
-		Assert.Assert.AreEqual(2, result.FailureCount);
+		Assert.AreEqual(500, result.RunCount);
+		Assert.AreEqual(0, result.IgnoreCount);
+		Assert.AreEqual(2, result.FailureCount);
 
 		// Make sure we had exactly two failures followed by assumption-failures
 		// resulting from ignored tests.
-		Assert.Assert.IsTrue(results.ToString(), results.ToString().matches("(S*F){2}A+"));
+		Assert.IsTrue(results.ToString(), results.ToString().matches("(S*F){2}A+"));
 	  }
 
 	  private class RunListenerAnonymousInnerClassHelper : RunListener
@@ -165,7 +168,7 @@ namespace Lucene.Net.Util
 		  }
 		}
 
-		private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+		private class ThreadAnonymousInnerClassHelper : ThreadClass
 		{
 			private readonly Nested2 OuterInstance;
 
@@ -195,7 +198,7 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: @Test public void testZombieThreadFailures() throws Exception
 	  public virtual void TestZombieThreadFailures()
 	  {
-		LuceneTestCase.replaceMaxFailureRule(new TestRuleIgnoreAfterMaxFailures(1));
+		LuceneTestCase.ReplaceMaxFailureRule(new TestRuleIgnoreAfterMaxFailures(1));
 		JUnitCore core = new JUnitCore();
 		StringBuilder results = new StringBuilder();
 		core.addListener(new RunListenerAnonymousInnerClassHelper(this, results));
@@ -208,8 +211,8 @@ namespace Lucene.Net.Util
 		}
 
 		base.PrevSysOut.println(results.ToString());
-		Assert.Assert.AreEqual(Nested2.TOTAL_ITERS, result.RunCount);
-		Assert.Assert.AreEqual(results.ToString(), "SFAAAAAAAA", results.ToString());
+		Assert.AreEqual(Nested2.TOTAL_ITERS, result.RunCount);
+		Assert.AreEqual(results.ToString(), "SFAAAAAAAA", results.ToString());
 	  }
 
 	  private class RunListenerAnonymousInnerClassHelper : RunListener

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 	public class TestSumDocFreq : LuceneTestCase
 	{
 
-	  public virtual void TestSumDocFreq()
+	  public virtual void TestSumDocFreq_Mem()
 	  {
 		int numDocs = AtLeast(500);
 

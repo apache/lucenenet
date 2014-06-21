@@ -303,7 +303,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(CheckConsistency());
 	  }
 
-	  internal void SetStorePayloads()
+	    public void SetStorePayloads()
 	  {
         if (indexed && (int)IndexOptionsValue.GetValueOrDefault() >= (int)FieldInfo.IndexOptions_e.DOCS_AND_FREQS_AND_POSITIONS)
 		{

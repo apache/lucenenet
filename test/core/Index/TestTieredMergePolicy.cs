@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	public class TestTieredMergePolicy : BaseMergePolicyTestCase
 	{
 
-	  public virtual MergePolicy MergePolicy()
+	  protected internal override MergePolicy MergePolicy()
 	  {
 		return NewTieredMergePolicy();
 	  }

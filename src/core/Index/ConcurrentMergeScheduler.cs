@@ -736,14 +736,14 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Used for testing </summary>
-	  internal virtual void SetSuppressExceptions()
+	  public virtual void SetSuppressExceptions()
 	  {
 		SuppressExceptions = true;
 	  }
 
 	  /// <summary>
 	  /// Used for testing </summary>
-	  internal virtual void ClearSuppressExceptions()
+	  public virtual void ClearSuppressExceptions()
 	  {
 		SuppressExceptions = false;
 	  }

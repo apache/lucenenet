@@ -52,10 +52,10 @@ namespace Lucene.Net.Index
 
 	  // modified by IndexWriterConfig
 	  /// <summary>
-	  /// <seealso cref="IndexDeletionPolicy"/> controlling when commit
+	  /// <seealso cref="DelPolicy"/> controlling when commit
 	  ///  points are deleted. 
 	  /// </summary>
-	  protected internal volatile IndexDeletionPolicy DelPolicy;
+	  protected internal volatile IndexDeletionPolicy delPolicy;
 
 	  /// <summary>
 	  /// <seealso cref="IndexCommit"/> that <seealso cref="IndexWriter"/> is
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 		readerTermsIndexDivisor = IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR;
 		mergedSegmentWarmer = null;
 		termIndexInterval = IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL; // TODO: this should be private to the codec, not settable here
-		DelPolicy = new KeepOnlyLastCommitDeletionPolicy();
+		delPolicy = new KeepOnlyLastCommitDeletionPolicy();
 		Commit = null;
 		useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
 		openMode = OpenMode_e.CREATE_OR_APPEND;
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
 		termIndexInterval = config.TermIndexInterval;
 		MatchVersion = config.MatchVersion;
 		analyzer = config.Analyzer;
-		DelPolicy = config.IndexDeletionPolicy;
+		delPolicy = config.DelPolicy;
 		Commit = config.IndexCommit;
 		openMode = config.OpenMode;
 		similarity = config.Similarity;
@@ -506,15 +506,15 @@ namespace Lucene.Net.Index
 	  }
 
 	  /// <summary>
-	  /// Returns the <seealso cref="IndexDeletionPolicy"/> specified in
+	  /// Returns the <seealso cref="DelPolicy"/> specified in
 	  /// <seealso cref="IndexWriterConfig#setIndexDeletionPolicy(IndexDeletionPolicy)"/> or
 	  /// the default <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>/
 	  /// </summary>
-	  public virtual IndexDeletionPolicy IndexDeletionPolicy
+	  public virtual IndexDeletionPolicy DelPolicy
 	  {
 		  get
 		  {
-			return DelPolicy;
+			return delPolicy;
 		  }
 	  }
 
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  /// <seealso cref= IndexWriterConfig#setIndexerThreadPool(DocumentsWriterPerThreadPool) </seealso>
 	  /// <returns> the configured <seealso cref="DocumentsWriterPerThreadPool"/> instance. </returns>
-	  internal virtual DocumentsWriterPerThreadPool IndexerThreadPool
+	  public virtual DocumentsWriterPerThreadPool IndexerThreadPool
 	  {
 		  get
 		  {
@@ -637,7 +637,7 @@ namespace Lucene.Net.Index
 	  /// Returns the indexing chain set on
 	  /// <seealso cref="IndexWriterConfig#setIndexingChain(IndexingChain)"/>.
 	  /// </summary>
-	  internal virtual IndexingChain IndexingChain
+	  public virtual IndexingChain IndexingChain
 	  {
 		  get
 		  {
@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
 	  }
 
 	  /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
-	  internal virtual FlushPolicy FlushPolicy
+	  public virtual FlushPolicy FlushPolicy
 	  {
 		  get
 		  {
@@ -753,7 +753,7 @@ namespace Lucene.Net.Index
 		sb.Append("mergedSegmentWarmer=").Append(MergedSegmentWarmer).Append("\n");
 		sb.Append("readerTermsIndexDivisor=").Append(ReaderTermsIndexDivisor).Append("\n");
 		sb.Append("termIndexInterval=").Append(TermIndexInterval).Append("\n"); // TODO: this should be private to the codec, not settable here
-		sb.Append("delPolicy=").Append(IndexDeletionPolicy.GetType().Name).Append("\n");
+		sb.Append("delPolicy=").Append(DelPolicy.GetType().Name).Append("\n");
 		IndexCommit commit = IndexCommit;
 		sb.Append("commit=").Append(commit == null ? "null" : commit.ToString()).Append("\n");
 		sb.Append("openMode=").Append(OpenMode).Append("\n");

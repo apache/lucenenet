@@ -41,7 +41,8 @@ namespace Lucene.Net.Search.Spans
 	/// work correctly in a BooleanQuery.
 	/// 
 	/// </summary>
-	public class TestSpansAdvanced : LuceneTestCase
+	[TestFixture]
+    public class TestSpansAdvanced : LuceneTestCase
 	{
 
 	  // location to the index
@@ -56,7 +57,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Initializes the tests by adding 4 identical documents to the index.
 	  /// </summary>
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		// create test index
@@ -72,6 +74,7 @@ namespace Lucene.Net.Search.Spans
 		Searcher.Similarity = new DefaultSimilarity();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -98,7 +101,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Tests two span queries.
 	  /// </summary>
-	  public virtual void TestBooleanQueryWithSpanQueries()
+      [Test]
+      public virtual void TestBooleanQueryWithSpanQueries()
 	  {
 
 		DoTestBooleanQueryWithSpanQueries(Searcher, 0.3884282f);
@@ -136,14 +140,13 @@ namespace Lucene.Net.Search.Spans
 		// hits normalizes and throws things off if one score is greater than 1.0
 		TopDocs topdocs = s.Search(query, null, 10000);
 
-		/// <summary>
-		///***
+		/*
 		/// // display the hits System.out.println(hits.Length() +
 		/// " hits for search: \"" + description + '\"'); for (int i = 0; i <
 		/// hits.Length(); i++) { System.out.println("  " + FIELD_ID + ':' +
 		/// hits.Doc(i).Get(FIELD_ID) + " (score:" + hits.Score(i) + ')'); }
 		/// ****
-		/// </summary>
+		*/
 
 		// did we get the hits we expected
 		Assert.AreEqual(expectedIds.Length, topdocs.TotalHits);

@@ -29,7 +29,6 @@ namespace Lucene.Net.Search
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using Directory = Lucene.Net.Store.Directory;
-	using Test = org.junit.Test;
     using NUnit.Framework;
 
 	/// <summary>
@@ -41,12 +40,14 @@ namespace Lucene.Net.Search
 	/// nor does it adequately test 'negative' results.  It also does not test
 	/// that garbage in results in an Exception.
 	/// </summary>
-	public class TestFieldCacheRangeFilter : BaseTestRangeFilter
+	[TestFixture]
+    public class TestFieldCacheRangeFilter : BaseTestRangeFilter
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeFilterId() throws java.io.IOException
-	  public virtual void TestRangeFilterId()
+      [Test]
+      public virtual void TestRangeFilterId()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -132,7 +133,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterRand() throws java.io.IOException
-	  public virtual void TestFieldCacheRangeFilterRand()
+      [Test]
+      public virtual void TestFieldCacheRangeFilterRand()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -198,7 +200,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterShorts() throws java.io.IOException
-	  public virtual void TestFieldCacheRangeFilterShorts()
+      [Test]
+      public virtual void TestFieldCacheRangeFilterShorts()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -290,7 +293,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterInts() throws java.io.IOException
-	  public virtual void TestFieldCacheRangeFilterInts()
+      [Test]
+      public virtual void TestFieldCacheRangeFilterInts()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -383,7 +387,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterLongs() throws java.io.IOException
-	  public virtual void TestFieldCacheRangeFilterLongs()
+      [Test]
+      public virtual void TestFieldCacheRangeFilterLongs()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -478,7 +483,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterFloats() throws java.io.IOException
-	  public virtual void TestFieldCacheRangeFilterFloats()
+      [Test]
+      public virtual void TestFieldCacheRangeFilterFloats()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -509,7 +515,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFieldCacheRangeFilterDoubles() throws java.io.IOException
-	  public virtual void TestFieldCacheRangeFilterDoubles()
+      [Test]
+      public virtual void TestFieldCacheRangeFilterDoubles()
 	  {
 
 		IndexReader reader = SignedIndexReader;
@@ -541,7 +548,8 @@ namespace Lucene.Net.Search
 	  // test using a sparse index (with deleted docs).
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSparseIndex() throws java.io.IOException
-	  public virtual void TestSparseIndex()
+      [Test]
+      public virtual void TestSparseIndex()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

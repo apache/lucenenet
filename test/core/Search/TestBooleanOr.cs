@@ -31,6 +31,7 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestBooleanOr : LuceneTestCase
 	{
 
@@ -53,7 +54,8 @@ namespace Lucene.Net.Search
 		return Searcher.Search(q, null, 1000).TotalHits;
 	  }
 
-	  public virtual void TestElements()
+      [Test]
+      public virtual void TestElements()
 	  {
 		Assert.AreEqual(1, Search(T1));
 		Assert.AreEqual(1, Search(T2));
@@ -65,7 +67,8 @@ namespace Lucene.Net.Search
 	  /// <code>T:files T:deleting C:production C:optimize </code>
 	  /// it works.
 	  /// </summary>
-	  public virtual void TestFlat()
+      [Test]
+      public virtual void TestFlat()
 	  {
 		BooleanQuery q = new BooleanQuery();
 		q.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
@@ -79,7 +82,8 @@ namespace Lucene.Net.Search
 	  /// <code>(T:files T:deleting) (+C:production +C:optimize)</code>
 	  /// it works.
 	  /// </summary>
-	  public virtual void TestParenthesisMust()
+      [Test]
+      public virtual void TestParenthesisMust()
 	  {
 		BooleanQuery q3 = new BooleanQuery();
 		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
@@ -97,7 +101,8 @@ namespace Lucene.Net.Search
 	  /// <code>(T:files T:deleting) +(C:production C:optimize)</code>
 	  /// not working. results NO HIT.
 	  /// </summary>
-	  public virtual void TestParenthesisMust2()
+      [Test]
+      public virtual void TestParenthesisMust2()
 	  {
 		BooleanQuery q3 = new BooleanQuery();
 		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
@@ -115,7 +120,8 @@ namespace Lucene.Net.Search
 	  /// <code>(T:files T:deleting) (C:production C:optimize)</code>
 	  /// not working. results NO HIT.
 	  /// </summary>
-	  public virtual void TestParenthesisShould()
+      [Test]
+      public virtual void TestParenthesisShould()
 	  {
 		BooleanQuery q3 = new BooleanQuery();
 		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
@@ -129,6 +135,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(1, Search(q2));
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -154,6 +161,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -161,7 +169,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestBooleanScorerMax()
+      [Test]
+      public virtual void TestBooleanScorerMax()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -209,14 +218,14 @@ namespace Lucene.Net.Search
 	  {
 		  private readonly TestBooleanOr OuterInstance;
 
-		  private BulkScorer Scorer;
+		  private BulkScorer scorer;
 		  private FixedBitSet Hits;
 		  private AtomicInteger End;
 
 		  public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInteger end)
 		  {
 			  this.OuterInstance = outerInstance;
-			  this.Scorer = scorer;
+			  this.scorer = scorer;
 			  this.Hits = hits;
 			  this.End = end;
 		  }

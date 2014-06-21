@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 
@@ -44,7 +46,8 @@ namespace Lucene.Net.Search
 	/// </p>
 	/// </summary>
 	/// <seealso cref= "Subclasses for actual tests" </seealso>
-	public class TestExplanations : LuceneTestCase
+	[TestFixture]
+    public class TestExplanations : LuceneTestCase
 	{
 	  protected internal static IndexSearcher Searcher;
 	  protected internal static IndexReader Reader;
@@ -58,7 +61,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClassTestExplanations() throws Exception
-	  public static void AfterClassTestExplanations()
+	  [TestFixtureTearDown]
+      public static void AfterClassTestExplanations()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -69,7 +73,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClassTestExplanations() throws Exception
-	  public static void BeforeClassTestExplanations()
+	  [TestFixtureSetUp]
+      public static void BeforeClassTestExplanations()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -244,7 +249,8 @@ namespace Lucene.Net.Search
 	  /// Placeholder: JUnit freaks if you don't have one test ... making
 	  /// class abstract doesn't help
 	  /// </summary>
-	  public virtual void TestNoop()
+      [Test]
+      public virtual void TestNoop()
 	  {
 		/* NOOP */
 	  }

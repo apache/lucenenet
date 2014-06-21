@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Index
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
 		UseNonNrtReaders = Random().NextBoolean();
 	  }
 
-	  protected internal override void DoSearching(ExecutorService es, long stopTime)
+	  protected internal override void DoSearching(TaskScheduler es, long stopTime)
 	  {
 
 		bool anyOpenDelFiles = false;
@@ -129,7 +130,7 @@ namespace Lucene.Net.Index
 		return @in;
 	  }
 
-	  protected internal override void DoAfterWriter(ExecutorService es)
+	  protected internal override void DoAfterWriter(TaskScheduler es)
 	  {
 		// Force writer to do reader pooling, always, so that
 		// all merged segments, even for merges before
@@ -181,7 +182,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestNRTThreads()
+	  public virtual void TestNRTThreads_Mem()
 	  {
 		RunTest("TestNRTThreads");
 	  }

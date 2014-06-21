@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Payloads
     using System.IO;
     using NUnit.Framework;
 
-
+    [TestFixture]
 	public class TestPayloadNearQuery : LuceneTestCase
 	{
 	  private static IndexSearcher Searcher;
@@ -50,7 +50,7 @@ namespace Lucene.Net.Search.Payloads
 
 	  private class PayloadAnalyzer : Analyzer
 	  {
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(result, fieldName));
@@ -108,7 +108,8 @@ namespace Lucene.Net.Search.Payloads
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(Similarity));
@@ -130,7 +131,8 @@ namespace Lucene.Net.Search.Payloads
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -139,7 +141,8 @@ namespace Lucene.Net.Search.Payloads
 		Directory = null;
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		PayloadNearQuery query;
 		TopDocs hits;
@@ -180,7 +183,8 @@ namespace Lucene.Net.Search.Payloads
 	  }
 
 
-	  public virtual void TestPayloadNear()
+      [Test]
+      public virtual void TestPayloadNear()
 	  {
 		SpanNearQuery q1, q2;
 		PayloadNearQuery query;
@@ -202,7 +206,8 @@ namespace Lucene.Net.Search.Payloads
 		*/
 	  }
 
-	  public virtual void TestAverageFunction()
+      [Test]
+      public virtual void TestAverageFunction()
 	  {
 		PayloadNearQuery query;
 		TopDocs hits;
@@ -224,7 +229,8 @@ namespace Lucene.Net.Search.Payloads
 		  Assert.IsTrue(explain.Value == 3f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 3);
 		}
 	  }
-	  public virtual void TestMaxFunction()
+      [Test]
+      public virtual void TestMaxFunction()
 	  {
 		PayloadNearQuery query;
 		TopDocs hits;
@@ -245,7 +251,8 @@ namespace Lucene.Net.Search.Payloads
 		  Assert.IsTrue(explain.Value == 4f, hits.ScoreDocs[j].Score + " explain value does not equal: " + 4);
 		}
 	  }
-	  public virtual void TestMinFunction()
+      [Test]
+      public virtual void TestMinFunction()
 	  {
 		PayloadNearQuery query;
 		TopDocs hits;
@@ -290,7 +297,8 @@ namespace Lucene.Net.Search.Payloads
 		return new SpanNearQuery(clauses, 10000, false);
 	  }
 
-	  public virtual void TestLongerSpan()
+      [Test]
+      public virtual void TestLongerSpan()
 	  {
 		PayloadNearQuery query;
 		TopDocs hits;
@@ -305,7 +313,8 @@ namespace Lucene.Net.Search.Payloads
 		Assert.IsTrue(doc.Score == 3, doc.Score + " does not equal: " + 3);
 	  }
 
-	  public virtual void TestComplexNested()
+      [Test]
+      public virtual void TestComplexNested()
 	  {
 		PayloadNearQuery query;
 		TopDocs hits;

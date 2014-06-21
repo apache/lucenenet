@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Index
 {
@@ -92,7 +93,7 @@ using System.IO;
 	  }
 
 	  // Called once to run searching
-	  protected internal abstract void DoSearching(ExecutorService es, long stopTime);
+	  protected internal abstract void DoSearching(TaskScheduler es, long stopTime);
 
 	  protected internal virtual Directory GetDirectory(Directory @in)
 	  {
@@ -128,20 +129,20 @@ using System.IO;
 	  {
 	  }
 
-	  private Thread[] LaunchIndexingThreads(LineFileDocs docs, int numThreads, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
+      private ThreadClass[] LaunchIndexingThreads(LineFileDocs docs, int numThreads, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
 	  {
-		Thread[] threads = new Thread[numThreads];
+        ThreadClass[] threads = new ThreadClass[numThreads];
 		for (int thread = 0;thread < numThreads;thread++)
 		{
 		  threads[thread] = new ThreadAnonymousInnerClassHelper(this, docs, stopTime, delIDs, delPackIDs, allSubDocs);
-		  threads[thread].Daemon = true;
+		  threads[thread].SetDaemon(true);
 		  threads[thread].Start();
 		}
 
 		return threads;
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
 
@@ -397,7 +398,7 @@ using System.IO;
 	  protected internal virtual void RunSearchThreads(long stopTimeMS)
 	  {
 		int numThreads = TestUtil.NextInt(Random(), 1, 5);
-		Thread[] searchThreads = new Thread[numThreads];
+        ThreadClass[] searchThreads = new ThreadClass[numThreads];
 		AtomicInteger totHits = new AtomicInteger();
 
 		// silly starting guess:
@@ -407,7 +408,7 @@ using System.IO;
 		for (int thread = 0;thread < searchThreads.Length;thread++)
 		{
 		  searchThreads[thread] = new ThreadAnonymousInnerClassHelper2(this, stopTimeMS, totHits, totTermCount);
-		  searchThreads[thread].Daemon = true;
+		  searchThreads[thread].SetDaemon(true);
 		  searchThreads[thread].Start();
 		}
 
@@ -422,7 +423,7 @@ using System.IO;
 		}
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+      private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 	  {
 		  private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
 
@@ -463,7 +464,7 @@ using System.IO;
 					Assert.IsNotNull(source);
 					if (source.Equals("merge"))
 					{
-					  Assert.IsTrue("sub reader " + sub + " wasn't warmed: warmed=" + OuterInstance.Warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo, !OuterInstance.AssertMergedSegmentsWarmed || OuterInstance.Warmed.ContainsKey(segReader.core));
+                        Assert.IsTrue(!OuterInstance.AssertMergedSegmentsWarmed || OuterInstance.Warmed.ContainsKey((SegmentCoreReaders)segReader.CoreCacheKey), "sub reader " + sub + " wasn't warmed: warmed=" + OuterInstance.Warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo);
 					}
 				  }
 				  if (s.IndexReader.NumDocs() > 0)
@@ -532,7 +533,7 @@ using System.IO;
 		  }
 	  }
 
-	  protected internal virtual void DoAfterWriter(ExecutorService es)
+	  protected internal virtual void DoAfterWriter(TaskScheduler es)
 	  {
 	  }
 
@@ -554,9 +555,9 @@ using System.IO;
 
 		long t0 = DateTime.Now.Millisecond;
 
-		Random random = new Random(Random().nextLong());
+		Random random = new Random(Random().Next());
 		LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
-		File tempDir = CreateTempDir(testName);
+		DirectoryInfo tempDir = CreateTempDir(testName);
 		Dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
 		if (Dir is BaseDirectoryWrapper)
 		{
@@ -595,7 +596,7 @@ using System.IO;
 		Writer = new IndexWriter(Dir, conf);
 		TestUtil.ReduceOpenFiles(Writer);
 
-		ExecutorService es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory(testName));
+		TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory(testName));
 
 		DoAfterWriter(es);
 
@@ -609,7 +610,7 @@ using System.IO;
 
 		long stopTime = DateTime.Now.Millisecond + RUN_TIME_SEC * 1000;
 
-		Thread[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs);
+		ThreadClass[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs);
 
 		if (VERBOSE)
 		{
@@ -729,7 +730,7 @@ using System.IO;
 		// Verify: make sure all not-deleted docs are in fact
 		// not deleted:
 		int endID = Convert.ToInt32(docs.NextDoc().Get("docid"));
-		docs.Close();
+		docs.Dispose();
 
 		for (int id = 0;id < endID;id++)
 		{

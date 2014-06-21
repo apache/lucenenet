@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Similarities
 		this.Normalization_Renamed = normalization;
 	  }
 
-	  protected internal override float Score(BasicStats stats, float freq, float docLen)
+	    public override float Score(BasicStats stats, float freq, float docLen)
 	  {
 		float tfn = Normalization_Renamed.Tfn(stats, freq, docLen);
 		return stats.TotalBoost * BasicModel_Renamed.Score(stats, tfn) * AfterEffect_Renamed.Score(stats, tfn);

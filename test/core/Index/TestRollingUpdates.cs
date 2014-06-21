@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRollingUpdates() throws Exception
-	  public virtual void TestRollingUpdates()
+	  public virtual void TestRollingUpdates_Mem()
 	  {
 		Random random = new Random(Random().Next());
 		BaseDirectoryWrapper dir = NewDirectory();
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
 
 		TestIndexWriter.AssertNoUnreferencedFiles(dir, "leftover files after rolling updates");
 
-        docs.Close();
+        docs.Dispose();
 
 		// LUCENE-4455:
 		SegmentInfos infos = new SegmentInfos();
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
 		IndexReader open = DirectoryReader.Open(dir);
 		Assert.AreEqual(1, open.NumDocs());
 		open.Dispose();
-        docs.Close();
+        docs.Dispose();
 		dir.Dispose();
 	  }
 

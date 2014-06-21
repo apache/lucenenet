@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 		  }
 
 
-		public override void Apply(string name)
+		public void Apply(string name)
 		{
 		  //      if (name.equals("startCommit")) {
 		  if (Random().Next(4) == 2)
@@ -799,7 +799,7 @@ namespace Lucene.Net.Index
 		Assert.IsFalse(fieldsEnum2.MoveNext());
 	  }
 
-	  private class IndexingThread : ThreadClass
+	    internal class IndexingThread : ThreadClass
 	  {
 		  private readonly TestStressIndexing2 OuterInstance;
 

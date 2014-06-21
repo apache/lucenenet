@@ -321,14 +321,14 @@ namespace Lucene.Net.Search
 	  /// provide attributes, the rewrite method uses to inform about e.g. maximum competitive boosts.
 	  /// this is currently only used by <seealso cref="TopTermsRewrite"/>
 	  /// </summary>
-	  protected internal abstract TermsEnum GetTermsEnum(Terms terms, AttributeSource atts);
+	  public abstract TermsEnum GetTermsEnum(Terms terms, AttributeSource atts);
 
 	  /// <summary>
 	  /// Convenience method, if no attributes are needed:
 	  /// this simply passes empty attributes and is equal to:
 	  /// <code>getTermsEnum(terms, new AttributeSource())</code>
 	  /// </summary>
-	  protected internal TermsEnum GetTermsEnum(Terms terms)
+      public TermsEnum GetTermsEnum(Terms terms)
 	  {
 		return GetTermsEnum(terms, new AttributeSource());
 	  }

@@ -38,11 +38,13 @@ namespace Lucene.Net.Search.Similarities
 	/// <summary>
 	/// Tests against all the similarities we have
 	/// </summary>
-	public class TestSimilarity2 : LuceneTestCase
+	[TestFixture]
+    public class TestSimilarity2 : LuceneTestCase
 	{
 	  internal IList<Similarity> Sims;
 
-	  public override void SetUp()
+      [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		Sims = new List<Similarity>();
@@ -78,7 +80,8 @@ namespace Lucene.Net.Search.Similarities
 	  /// because of stupid things like querynorm, its possible we computeStats on a field that doesnt exist at all
 	  ///  test this against a totally empty index, to make sure sims handle it
 	  /// </summary>
-	  public virtual void TestEmptyIndex()
+      [Test]
+      public virtual void TestEmptyIndex()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -97,7 +100,8 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// similar to the above, but ORs the query with a real field </summary>
-	  public virtual void TestEmptyField()
+      [Test]
+      public virtual void TestEmptyField()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -122,7 +126,8 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// similar to the above, however the field exists, but we query with a term that doesnt exist too </summary>
-	  public virtual void TestEmptyTerm()
+      [Test]
+      public virtual void TestEmptyTerm()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -147,7 +152,8 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// make sure we can retrieve when norms are disabled </summary>
-	  public virtual void TestNoNorms()
+      [Test]
+      public virtual void TestNoNorms()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -174,7 +180,8 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// make sure all sims work if TF is omitted </summary>
-	  public virtual void TestOmitTF()
+      [Test]
+      public virtual void TestOmitTF()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -202,7 +209,8 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// make sure all sims work if TF and norms is omitted </summary>
-	  public virtual void TestOmitTFAndNorms()
+      [Test]
+      public virtual void TestOmitTFAndNorms()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -231,7 +239,8 @@ namespace Lucene.Net.Search.Similarities
 
 	  /// <summary>
 	  /// make sure all sims work with spanOR(termX, termY) where termY does not exist </summary>
-	  public virtual void TestCrazySpans()
+      [Test]
+      public virtual void TestCrazySpans()
 	  {
 		// The problem: "normal" lucene queries create scorers, returning null if terms dont exist
 		// this means they never score a term that does not exist.

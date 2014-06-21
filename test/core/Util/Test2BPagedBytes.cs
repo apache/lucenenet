@@ -35,50 +35,50 @@ namespace Lucene.Net.Util
 
 	  public virtual void Test()
 	  {
-		BaseDirectoryWrapper dir = newFSDirectory(createTempDir("test2BPagedBytes"));
+		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("test2BPagedBytes"));
 		if (dir is MockDirectoryWrapper)
 		{
 		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
 		}
 		PagedBytes pb = new PagedBytes(15);
-		IndexOutput dataOutput = dir.createOutput("foo", IOContext.DEFAULT);
+		IndexOutput dataOutput = dir.CreateOutput("foo", IOContext.DEFAULT);
 		long netBytes = 0;
-		long seed = random().nextLong();
+		long seed = Random().NextLong();
 		long lastFP = 0;
 		Random r2 = new Random(seed);
 		while (netBytes < 1.1 * int.MaxValue)
 		{
-		  int numBytes = TestUtil.Next(r2, 1, 32768);
+		  int numBytes = TestUtil.NextInt(r2, 1, 32768);
 		  sbyte[] bytes = new sbyte[numBytes];
-		  r2.nextBytes(bytes);
-		  dataOutput.writeBytes(bytes, bytes.Length);
+		  r2.NextBytes(bytes);
+		  dataOutput.WriteBytes(bytes, bytes.Length);
 		  long fp = dataOutput.FilePointer;
 		  Debug.Assert(fp == lastFP + numBytes);
 		  lastFP = fp;
 		  netBytes += numBytes;
 		}
-		dataOutput.close();
-		IndexInput input = dir.openInput("foo", IOContext.DEFAULT);
-		pb.copy(input, input.length());
-		input.close();
-		PagedBytes.Reader reader = pb.freeze(true);
+		dataOutput.Dispose();
+		IndexInput input = dir.OpenInput("foo", IOContext.DEFAULT);
+		pb.Copy(input, input.Length());
+		input.Dispose();
+		PagedBytes.Reader reader = pb.Freeze(true);
 
 		r2 = new Random(seed);
 		netBytes = 0;
 		while (netBytes < 1.1 * int.MaxValue)
 		{
-		  int numBytes = TestUtil.Next(r2, 1, 32768);
+		  int numBytes = TestUtil.NextInt(r2, 1, 32768);
 		  sbyte[] bytes = new sbyte[numBytes];
-		  r2.nextBytes(bytes);
+		  r2.NextBytes(bytes);
 		  BytesRef expected = new BytesRef(bytes);
 
 		  BytesRef actual = new BytesRef();
-		  reader.fillSlice(actual, netBytes, numBytes);
+		  reader.FillSlice(actual, netBytes, numBytes);
 		  Assert.AreEqual(expected, actual);
 
 		  netBytes += numBytes;
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 	}
 

@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+	  public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 	  {
 		if (MaxEdits_Renamed == 0 || PrefixLength_Renamed >= Term_Renamed.Text().Length) // can only match if it's exact
 		{

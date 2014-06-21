@@ -1,4 +1,6 @@
 using System;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -42,27 +44,27 @@ namespace Lucene.Net.Index
 		Directory dir = NewDirectory();
 		AtomicBoolean mayMerge = new AtomicBoolean(true);
 		MergeScheduler mergeScheduler = new SerialMergeSchedulerAnonymousInnerClassHelper(this, mayMerge);
-		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).setMergeScheduler(mergeScheduler).setMergePolicy(MergePolicy()));
-		writer.Config.MergePolicy.NoCFSRatio = Random().nextBoolean() ? 0 : 1;
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(mergeScheduler).SetMergePolicy(MergePolicy()));
+		writer.Config.MergePolicy.NoCFSRatio = Random().NextBoolean() ? 0 : 1;
 		int numSegments = TestUtil.NextInt(Random(), 2, 20);
 		for (int i = 0; i < numSegments; ++i)
 		{
 		  int numDocs = TestUtil.NextInt(Random(), 1, 5);
 		  for (int j = 0; j < numDocs; ++j)
 		  {
-			writer.addDocument(new Document());
+			writer.AddDocument(new Document());
 		  }
-		  writer.Reader.close();
+		  writer.Reader.Dispose();
 		}
 		for (int i = 5; i >= 0; --i)
 		{
 		  int segmentCount = writer.SegmentCount;
 		  int maxNumSegments = i == 0 ? 1 : TestUtil.NextInt(Random(), 1, 10);
-		  mayMerge.set(segmentCount > maxNumSegments);
-		  writer.forceMerge(maxNumSegments);
+		  mayMerge.Set(segmentCount > maxNumSegments);
+		  writer.ForceMerge(maxNumSegments);
 		}
-		writer.close();
-		dir.close();
+		writer.Dispose();
+		dir.Dispose();
 	  }
 
 	  private class SerialMergeSchedulerAnonymousInnerClassHelper : SerialMergeScheduler
@@ -81,11 +83,11 @@ namespace Lucene.Net.Index
 		  {
 			  lock (this)
 			  {
-				if (!MayMerge.get() && writer.NextMerge != null)
+				if (!MayMerge.Get() && writer.NextMerge != null)
 				{
-				  throw new AssertionError();
+				  throw new InvalidOperationException();
 				}
-				base.merge(writer, trigger, newMergesFound);
+				base.Merge(writer, trigger, newMergesFound);
 			  }
 		  }
 	  }

@@ -41,12 +41,14 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestSortRescorer extends Lucene.Net.Util.LuceneTestCase
+    [TestFixture]
 	public class TestSortRescorer : LuceneTestCase
 	{
 	  internal IndexSearcher Searcher;
 	  internal DirectoryReader Reader;
 	  internal Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -76,6 +78,7 @@ namespace Lucene.Net.Search
 		iw.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -83,6 +86,7 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
+      [Test]
 	  public virtual void TestBasic()
 	  {
 
@@ -117,7 +121,8 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(expl.Contains("body:contents in"));
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		Directory dir = NewDirectory();
 		int numDocs = AtLeast(1000);
@@ -160,7 +165,7 @@ namespace Lucene.Net.Search
 
 		int reverseInt = reverse ? - 1 : 1;
 
-		Arrays.Sort(expected, new ComparatorAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
+		Array.Sort(expected, new ComparatorAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
 
 		bool fail = false;
 		for (int i = 0;i < numHits;i++)

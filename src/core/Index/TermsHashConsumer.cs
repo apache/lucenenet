@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 	 */
 
 
-	internal abstract class TermsHashConsumer
+    public abstract class TermsHashConsumer
 	{
 	  public abstract void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state);
       public abstract void Abort();

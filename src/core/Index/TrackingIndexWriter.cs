@@ -72,7 +72,7 @@ using System.Collections.Generic;
 	  ///  IndexWriter#updateDocument(Term,Iterable)} and
 	  ///  returns the generation that reflects this change. 
 	  /// </summary>
-	  public virtual long UpdateDocument<T1>(Term t, IEnumerable<IndexableField> d)
+	  public virtual long UpdateDocument(Term t, IEnumerable<IndexableField> d)
 	  {
 		Writer.UpdateDocument(t, d);
 		// Return gen as of when indexing finished:
@@ -84,7 +84,7 @@ using System.Collections.Generic;
 	  ///  IndexWriter#updateDocuments(Term,Iterable,Analyzer)}
 	  ///  and returns the generation that reflects this change. 
 	  /// </summary>
-      public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
+      public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IndexableField>> docs, Analyzer a)
 	  {
 		Writer.UpdateDocuments(t, docs, a);
 		// Return gen as of when indexing finished:
@@ -96,7 +96,7 @@ using System.Collections.Generic;
 	  ///  IndexWriter#updateDocuments(Term,Iterable)} and returns
 	  ///  the generation that reflects this change. 
 	  /// </summary>
-      public virtual long UpdateDocuments<T1>(Term t, IEnumerable<IEnumerable<IndexableField>> docs)
+      public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IndexableField>> docs)
 	  {
 		Writer.UpdateDocuments(t, docs);
 		// Return gen as of when indexing finished:

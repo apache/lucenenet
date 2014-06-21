@@ -41,7 +41,7 @@ using Lucene.Net.Support;
 	public class TestDirectoryReaderReopen : LuceneTestCase
 	{
 
-	  public virtual void TestReopen()
+	  public virtual void TestReopen_Mem()
 	  {
 		Directory dir1 = NewDirectory();
 
@@ -454,7 +454,7 @@ using Lucene.Net.Support;
 		  }
 	  }
 
-	  private class ReaderCouple
+	    internal class ReaderCouple
 	  {
 		internal ReaderCouple(DirectoryReader r1, DirectoryReader r2)
 		{
@@ -669,7 +669,7 @@ using Lucene.Net.Support;
 		{
 		  // we cannot use reader context here, as reader is
 		  // already closed and calling getTopReaderContext() throws AlreadyClosed!
-		  IList<IndexReader> subReaders = ((CompositeReader) reader).GetSequentialSubReaders;
+		  IList<IndexReader> subReaders = ((CompositeReader) reader).GetSequentialSubReaders();
 		  foreach (IndexReader r in subReaders)
 		  {
 			AssertReaderClosed(r, checkSubReaders);

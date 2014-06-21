@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 	  // we need to track scorers using a weak hash map because otherwise we
 	  // could loose references because of eg.
 	  // AssertingScorer.Score(Collector) which needs to delegate to work correctly
-	  private static IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = Collections.synchronizedMap(new WeakHashMap<Scorer, WeakReference<AssertingScorer>>());
+	  private static IDictionary<Scorer, WeakReference> ASSERTING_INSTANCES = Collections.synchronizedMap(new WeakHashMap<Scorer, WeakReference>());
 
 	  public static Scorer Wrap(Random random, Scorer other)
 	  {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
 		  return other;
 		}
 		AssertingScorer assertScorer = new AssertingScorer(random, other);
-		ASSERTING_INSTANCES[other] = new WeakReference<>(assertScorer);
+		ASSERTING_INSTANCES[other] = new WeakReference(assertScorer);
 		return assertScorer;
 	  }
 
@@ -52,8 +52,8 @@ namespace Lucene.Net.Search
 		{
 		  return other;
 		}
-		WeakReference<AssertingScorer> assertingScorerRef = ASSERTING_INSTANCES[other];
-		AssertingScorer assertingScorer = assertingScorerRef == null ? null : assertingScorerRef.get();
+		WeakReference assertingScorerRef = ASSERTING_INSTANCES[other];
+        AssertingScorer assertingScorer = assertingScorerRef == null ? null : (AssertingScorer)assertingScorerRef.Target;
 		if (assertingScorer == null)
 		{
 		  // can happen in case of memory pressure or if
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 			// collectors (e.g. ToParentBlockJoinCollector) that
 			// need to walk the scorer tree will miss/skip the
 			// Scorer we wrap:
-			return Collections.singletonList(new ChildScorer(@in, "SHOULD"));
+            return new List<ChildScorer>() { new ChildScorer(@in, "SHOULD") };
 		  }
 	  }
 

@@ -32,13 +32,15 @@ namespace Lucene.Net.Search
 	using BytesRef = Lucene.Net.Util.BytesRef;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestElevationComparator : LuceneTestCase
 	{
 
 	  private readonly IDictionary<BytesRef, int?> Priority = new Dictionary<BytesRef, int?>();
 
-	  //@Test
-	  public virtual void TestSorting()
+	  
+      [Test]
+      public virtual void TestSorting()
 	  {
 		Directory directory = NewDirectory();
 		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(1000)).SetSimilarity(new DefaultSimilarity()));
@@ -144,12 +146,12 @@ namespace Lucene.Net.Search
 	   this.Priority = boosts;
 	  }
 
-	  public override FieldComparator<int?> NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
+	  public override FieldComparator NewComparator(string fieldname, int numHits, int sortPos, bool reversed)
 	  {
 	   return new FieldComparatorAnonymousInnerClassHelper(this, fieldname, numHits);
 	  }
 
-	 private class FieldComparatorAnonymousInnerClassHelper : FieldComparator<int?>
+	 private class FieldComparatorAnonymousInnerClassHelper : FieldComparator
 	 {
 		 private readonly ElevationComparatorSource OuterInstance;
 
@@ -184,7 +186,7 @@ namespace Lucene.Net.Search
 			 }
 		 }
 
-		 public override int? TopValue
+		 public override object TopValue
 		 {
 			 set
 			 {
@@ -217,13 +219,13 @@ namespace Lucene.Net.Search
 		   values[slot] = DocVal(doc);
 		 }
 
-		 public override FieldComparator<int?> SetNextReader(AtomicReaderContext context)
+		 public override FieldComparator SetNextReader(AtomicReaderContext context)
 		 {
 		   idIndex = FieldCache_Fields.DEFAULT.GetTermsIndex((AtomicReader)context.Reader(), Fieldname);
 		   return this;
 		 }
 
-		 public override int? Value(int slot)
+		 public override object Value(int slot)
 		 {
 		   return Convert.ToInt32(values[slot]);
 		 }

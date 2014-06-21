@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
@@ -37,22 +38,23 @@ namespace Lucene.Net.Search
 	  internal readonly Random Random;
 	  public AssertingIndexSearcher(Random random, IndexReader r) : base(r)
 	  {
-		this.Random = new Random(random.nextLong());
+		this.Random = new Random(random.Next());
 	  }
 
 	  public AssertingIndexSearcher(Random random, IndexReaderContext context) : base(context)
 	  {
-		this.Random = new Random(random.nextLong());
+		this.Random = new Random(random.Next());
 	  }
 
-	  public AssertingIndexSearcher(Random random, IndexReader r, ExecutorService ex) : base(r, ex)
+	  public AssertingIndexSearcher(Random random, IndexReader r, TaskScheduler ex) : base(r, ex)
 	  {
-		this.Random = new Random(random.nextLong());
+		this.Random = new Random(random.Next());
 	  }
 
-	  public AssertingIndexSearcher(Random random, IndexReaderContext context, ExecutorService ex) : base(context, ex)
+      public AssertingIndexSearcher(Random random, IndexReaderContext context, TaskScheduler ex)
+          : base(context, ex)
 	  {
-		this.Random = new Random(random.nextLong());
+		this.Random = new Random(random.Next());
 	  }
 
 	  /// <summary>
@@ -97,7 +99,7 @@ namespace Lucene.Net.Search
 		return rewritten;
 	  }
 
-	  protected internal override Query WrapFilter(Query query, Filter filter)
+	  protected override Query WrapFilter(Query query, Filter filter)
 	  {
 		if (Random.NextBoolean())
 		{
@@ -106,7 +108,7 @@ namespace Lucene.Net.Search
 		return (filter == null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(Random));
 	  }
 
-	  protected internal override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
+	  protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
 	  {
 		// TODO: shouldn't we AssertingCollector.wrap(collector) here?
 		base.Search(leaves, AssertingWeight.Wrap(Random, weight), collector);

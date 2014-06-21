@@ -26,6 +26,7 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestScoreCachingWrappingScorer : LuceneTestCase
 	{
 
@@ -124,7 +125,8 @@ namespace Lucene.Net.Search
 
 	  private static readonly float[] Scores = new float[] {0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f};
 
-	  public virtual void TestGetScores()
+      [Test]
+      public virtual void TestGetScores()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory);

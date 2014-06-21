@@ -1,10 +1,9 @@
 using System;
 using System.Text;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
-
-	using BeforeClass = org.junit.BeforeClass;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -34,21 +33,21 @@ namespace Lucene.Net.Util
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  public static void BeforeClass()
 	  {
-		NUM_RANDOM_TESTS = atLeast(200);
-		MAX_RANDOM_BINARY_LENGTH = atLeast(300);
+		NUM_RANDOM_TESTS = AtLeast(200);
+		MAX_RANDOM_BINARY_LENGTH = AtLeast(300);
 	  }
 
 	  public virtual void TestSingleBinaryRoundTrip()
 	  {
 		sbyte[] binary = new sbyte[] {(sbyte) 0x23, unchecked((sbyte) 0x98), (sbyte) 0x13, unchecked((sbyte) 0xE4), (sbyte) 0x76, (sbyte) 0x41, unchecked((sbyte) 0xB2), unchecked((sbyte) 0xC9), (sbyte) 0x7F, (sbyte) 0x0A, unchecked((sbyte) 0xA6), unchecked((sbyte) 0xD8)};
 
-		int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, binary.Length);
+		int encodedLen = IndexableBinaryStringTools.GetEncodedLength(binary, 0, binary.Length);
 		char[] encoded = new char[encodedLen];
-		IndexableBinaryStringTools.encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
+		IndexableBinaryStringTools.Encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
 
-		int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encoded.Length);
+		int decodedLen = IndexableBinaryStringTools.GetDecodedLength(encoded, 0, encoded.Length);
 		sbyte[] decoded = new sbyte[decodedLen];
-		IndexableBinaryStringTools.decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
+		IndexableBinaryStringTools.Decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
 
 		Assert.AreEqual("Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "original: " + BinaryDump(binary, binary.Length) + System.getProperty("line.separator") + " encoded: " + CharArrayDump(encoded, encoded.Length) + System.getProperty("line.separator") + " decoded: " + BinaryDump(decoded, decoded.Length), BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length));
 	  }
@@ -64,39 +63,39 @@ namespace Lucene.Net.Util
 
 		for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
 		{
-		  int numBytes1 = random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+		  int numBytes1 = Random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
 
 		  for (int byteNum = 0; byteNum < numBytes1; ++byteNum)
 		  {
-			int randomInt = random().Next(0x100);
+			int randomInt = Random().Next(0x100);
 			originalArray1[byteNum] = (sbyte) randomInt;
 			originalString1[byteNum] = (char) randomInt;
 		  }
 
-		  int numBytes2 = random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+		  int numBytes2 = Random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
 
 		  for (int byteNum = 0; byteNum < numBytes2; ++byteNum)
 		  {
-			int randomInt = random().Next(0x100);
+			int randomInt = Random().Next(0x100);
 			original2[byteNum] = (sbyte) randomInt;
 			originalString2[byteNum] = (char) randomInt;
 		  }
 		  int originalComparison = (new string(originalString1, 0, numBytes1)).CompareTo(new string(originalString2, 0, numBytes2));
 		  originalComparison = originalComparison < 0 ? - 1 : originalComparison > 0 ? 1 : 0;
 
-		  int encodedLen1 = IndexableBinaryStringTools.getEncodedLength(originalArray1, 0, numBytes1);
+		  int encodedLen1 = IndexableBinaryStringTools.GetEncodedLength(originalArray1, 0, numBytes1);
 		  if (encodedLen1 > encoded1.Length)
 		  {
-			encoded1 = new char[ArrayUtil.oversize(encodedLen1, RamUsageEstimator.NUM_BYTES_CHAR)];
+			encoded1 = new char[ArrayUtil.Oversize(encodedLen1, RamUsageEstimator.NUM_BYTES_CHAR)];
 		  }
-		  IndexableBinaryStringTools.encode(originalArray1, 0, numBytes1, encoded1, 0, encodedLen1);
+		  IndexableBinaryStringTools.Encode(originalArray1, 0, numBytes1, encoded1, 0, encodedLen1);
 
-		  int encodedLen2 = IndexableBinaryStringTools.getEncodedLength(original2, 0, numBytes2);
+		  int encodedLen2 = IndexableBinaryStringTools.GetEncodedLength(original2, 0, numBytes2);
 		  if (encodedLen2 > encoded2.Length)
 		  {
-			encoded2 = new char[ArrayUtil.oversize(encodedLen2, RamUsageEstimator.NUM_BYTES_CHAR)];
+			encoded2 = new char[ArrayUtil.Oversize(encodedLen2, RamUsageEstimator.NUM_BYTES_CHAR)];
 		  }
-		  IndexableBinaryStringTools.encode(original2, 0, numBytes2, encoded2, 0, encodedLen2);
+		  IndexableBinaryStringTools.Encode(original2, 0, numBytes2, encoded2, 0, encodedLen2);
 
 		  int encodedComparison = (new string(encoded1, 0, encodedLen1)).CompareTo(new string(encoded2, 0, encodedLen2));
 		  encodedComparison = encodedComparison < 0 ? - 1 : encodedComparison > 0 ? 1 : 0;
@@ -109,28 +108,28 @@ namespace Lucene.Net.Util
 	  {
 		sbyte[] binary = new sbyte[0];
 
-		int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, binary.Length);
+		int encodedLen = IndexableBinaryStringTools.GetEncodedLength(binary, 0, binary.Length);
 		char[] encoded = new char[encodedLen];
-		IndexableBinaryStringTools.encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
+		IndexableBinaryStringTools.Encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
 
-		int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encoded.Length);
+		int decodedLen = IndexableBinaryStringTools.GetDecodedLength(encoded, 0, encoded.Length);
 		sbyte[] decoded = new sbyte[decodedLen];
-		IndexableBinaryStringTools.decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
+		IndexableBinaryStringTools.Decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
 
-		Assert.AreEqual("decoded empty input was not empty", decoded.Length, 0);
+		Assert.AreEqual(decoded.Length, 0, "decoded empty input was not empty");
 	  }
 
 	  public virtual void TestAllNullInput()
 	  {
 		sbyte[] binary = new sbyte[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-		int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, binary.Length);
+		int encodedLen = IndexableBinaryStringTools.GetEncodedLength(binary, 0, binary.Length);
 		char[] encoded = new char[encodedLen];
-		IndexableBinaryStringTools.encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
+		IndexableBinaryStringTools.Encode(binary, 0, binary.Length, encoded, 0, encoded.Length);
 
-		int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encoded.Length);
+		int decodedLen = IndexableBinaryStringTools.GetDecodedLength(encoded, 0, encoded.Length);
 		sbyte[] decoded = new sbyte[decodedLen];
-		IndexableBinaryStringTools.decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
+		IndexableBinaryStringTools.Decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
 
 		Assert.AreEqual("Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "  original: " + BinaryDump(binary, binary.Length) + System.getProperty("line.separator") + "decodedBuf: " + BinaryDump(decoded, decoded.Length), BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length));
 	  }
@@ -142,22 +141,22 @@ namespace Lucene.Net.Util
 		sbyte[] decoded = new sbyte[MAX_RANDOM_BINARY_LENGTH];
 		for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
 		{
-		  int numBytes = random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+		  int numBytes = Random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
 
 		  for (int byteNum = 0; byteNum < numBytes; ++byteNum)
 		  {
-			binary[byteNum] = (sbyte) random().Next(0x100);
+			binary[byteNum] = (sbyte) Random().Next(0x100);
 		  }
 
-		  int encodedLen = IndexableBinaryStringTools.getEncodedLength(binary, 0, numBytes);
+		  int encodedLen = IndexableBinaryStringTools.GetEncodedLength(binary, 0, numBytes);
 		  if (encoded.Length < encodedLen)
 		  {
-			encoded = new char[ArrayUtil.oversize(encodedLen, RamUsageEstimator.NUM_BYTES_CHAR)];
+			encoded = new char[ArrayUtil.Oversize(encodedLen, RamUsageEstimator.NUM_BYTES_CHAR)];
 		  }
-		  IndexableBinaryStringTools.encode(binary, 0, numBytes, encoded, 0, encodedLen);
+		  IndexableBinaryStringTools.Encode(binary, 0, numBytes, encoded, 0, encodedLen);
 
-		  int decodedLen = IndexableBinaryStringTools.getDecodedLength(encoded, 0, encodedLen);
-		  IndexableBinaryStringTools.decode(encoded, 0, encodedLen, decoded, 0, decodedLen);
+		  int decodedLen = IndexableBinaryStringTools.GetDecodedLength(encoded, 0, encodedLen);
+		  IndexableBinaryStringTools.Decode(encoded, 0, encodedLen, decoded, 0, decodedLen);
 
 		  Assert.AreEqual("Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "  original: " + BinaryDump(binary, numBytes) + System.getProperty("line.separator") + "encodedBuf: " + CharArrayDump(encoded, encodedLen) + System.getProperty("line.separator") + "decodedBuf: " + BinaryDump(decoded, decodedLen), BinaryDump(binary, numBytes), BinaryDump(decoded, decodedLen));
 		}

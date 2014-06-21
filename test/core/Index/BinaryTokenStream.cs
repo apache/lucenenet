@@ -66,12 +66,12 @@ namespace Lucene.Net.Index
 	  {
 		internal BytesRef Bytes;
 
-		public override void FillBytesRef()
+		public void FillBytesRef()
 		{
 		  // no-op: the bytes was already filled by our owner's incrementToken
 		}
 
-		public override BytesRef BytesRef
+		public BytesRef BytesRef
 		{
 			get
 			{

@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 	  }
 
 	  // for testing
-	  internal int HitCount, MissCount;
+	  public int HitCount, MissCount;
 
 	  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 	  {

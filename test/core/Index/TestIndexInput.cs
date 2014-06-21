@@ -22,7 +22,6 @@ namespace Lucene.Net.Index
 
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
 	using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
 	using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
 	using DataInput = Lucene.Net.Store.DataInput;
@@ -36,12 +35,12 @@ namespace Lucene.Net.Index
 	public class TestIndexInput : LuceneTestCase
 	{
 
-        internal static readonly sbyte[] READ_TEST_BYTES = new sbyte[] { unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), 0x7F, unchecked((sbyte)0x80), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0x81), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x0F, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x7F, 0x06, (sbyte)'L', (sbyte)'u', (sbyte)'c', (sbyte)'e', (sbyte)'n', (sbyte)'e', 0x02, unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), 0x0A, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'n', (sbyte)'e', 0x03, unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), 0x0C, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x04, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), 0x08, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), 0x0E, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x01, 0x00, 0x08, (sbyte)'L', (sbyte)'u', 0x00, (sbyte)'c', (sbyte)'e', 0x00, (sbyte)'n', (sbyte)'e', unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x17, (sbyte)0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x01 };
+      internal static readonly sbyte[] READ_TEST_BYTES = new sbyte[] { unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), 0x7F, unchecked((sbyte)0x80), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0x81), unchecked((sbyte)0x80), 0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x0F, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x07, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x7F, 0x06, (sbyte)'L', (sbyte)'u', (sbyte)'c', (sbyte)'e', (sbyte)'n', (sbyte)'e', 0x02, unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), 0x0A, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xC2), unchecked((sbyte)0xBF), (sbyte)'n', (sbyte)'e', 0x03, unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), 0x0C, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xE2), unchecked((sbyte)0x98), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x04, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), 0x08, unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), 0x0E, (sbyte)'L', (sbyte)'u', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x84), unchecked((sbyte)0x9E), (sbyte)'c', (sbyte)'e', unchecked((sbyte)0xF0), unchecked((sbyte)0x9D), unchecked((sbyte)0x85), unchecked((sbyte)0xA0), (sbyte)'n', (sbyte)'e', 0x01, 0x00, 0x08, (sbyte)'L', (sbyte)'u', 0x00, (sbyte)'c', (sbyte)'e', 0x00, (sbyte)'n', (sbyte)'e', unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x17, (sbyte)0x01, unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), unchecked((sbyte)0xFF), (sbyte)0x01 };
 
 	  internal static readonly int COUNT = RANDOM_MULTIPLIER * 65536;
 	  internal static int[] INTS;
 	  internal static long[] LONGS;
-	  internal static sbyte[] RANDOM_TEST_BYTES;
+	  internal static byte[] RANDOM_TEST_BYTES;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws java.io.IOException
@@ -50,7 +49,7 @@ namespace Lucene.Net.Index
 		Random random = Random();
 		INTS = new int[COUNT];
 		LONGS = new long[COUNT];
-		RANDOM_TEST_BYTES = new sbyte[COUNT * (5 + 4 + 9 + 8)];
+		RANDOM_TEST_BYTES = new byte[COUNT * (5 + 4 + 9 + 8)];
 		ByteArrayDataOutput bdo = new ByteArrayDataOutput(RANDOM_TEST_BYTES);
 		for (int i = 0; i < COUNT; i++)
 		{
@@ -149,7 +148,7 @@ namespace Lucene.Net.Index
 		IndexInput @is = new MockIndexInput(READ_TEST_BYTES);
 		CheckReads(@is, typeof(IOException));
 		@is.Dispose();
-		@is = new MockIndexInput(RANDOM_TEST_BYTES);
+		@is = new MockIndexInput((sbyte[])(Array)RANDOM_TEST_BYTES);
 		CheckRandomReads(@is);
 		@is.Dispose();
 	  }
@@ -177,7 +176,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestByteArrayDataInput()
 	  {
-		ByteArrayDataInput @is = new ByteArrayDataInput(READ_TEST_BYTES);
+		ByteArrayDataInput @is = new ByteArrayDataInput((byte[])(Array)READ_TEST_BYTES);
 		CheckReads(@is, typeof(Exception));
 		@is = new ByteArrayDataInput(RANDOM_TEST_BYTES);
 		CheckRandomReads(@is);

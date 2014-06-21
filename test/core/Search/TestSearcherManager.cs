@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Lucene.Net_Tests.core.Search;
+using System.Threading.Tasks;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Search
 {
@@ -46,14 +47,16 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestSearcherManager extends Lucene.Net.Index.ThreadedIndexingAndSearchingTestCase
-	public class TestSearcherManager : ThreadedIndexingAndSearchingTestCase
+	[TestFixture]
+    public class TestSearcherManager : ThreadedIndexingAndSearchingTestCase
 	{
 
 	  internal bool WarmCalled;
 
 	  private SearcherLifetimeManager.Pruner Pruner;
 
-	  public virtual void TestSearcherManager()
+      [Test]
+      public virtual void TestSearcherManager_Mem()
 	  {
 		Pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt(Random(), 1, 20) : 1);
 		RunTest("TestSearcherManager");
@@ -77,7 +80,7 @@ namespace Lucene.Net.Search
 	  private readonly IList<long> PastSearchers = new List<long>();
 	  private bool IsNRT;
 
-	  protected internal override void DoAfterWriter(ExecutorService es)
+	  protected internal override void DoAfterWriter(TaskScheduler es)
 	  {
 		SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper(this, es);
 		if (Random().NextBoolean())
@@ -104,9 +107,9 @@ namespace Lucene.Net.Search
 	  {
 		  private readonly TestSearcherManager OuterInstance;
 
-		  private ExecutorService Es;
+		  private TaskScheduler Es;
 
-		  public SearcherFactoryAnonymousInnerClassHelper(TestSearcherManager outerInstance, ExecutorService es)
+          public SearcherFactoryAnonymousInnerClassHelper(TestSearcherManager outerInstance, TaskScheduler es)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.Es = es;
@@ -121,7 +124,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  protected internal override void DoSearching(ExecutorService es, long stopTime)
+      protected internal override void DoSearching(TaskScheduler es, long stopTime)
 	  {
 
 		ThreadClass reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
@@ -229,7 +232,7 @@ namespace Lucene.Net.Search
 			  s = Mgr.Acquire();
 			  if (s.IndexReader.NumDocs() != 0)
 			  {
-				long? token = LifetimeMGR.Record(s);
+				long token = LifetimeMGR.Record(s);
 				lock (PastSearchers)
 				{
 				  if (!PastSearchers.Contains(token))
@@ -260,7 +263,8 @@ namespace Lucene.Net.Search
 		LifetimeMGR.Dispose();
 	  }
 
-	  public virtual void TestIntermediateClose()
+      [Test]
+      public virtual void TestIntermediateClose()
 	  {
 		Directory dir = NewDirectory();
 		// Test can deadlock if we use SMS:
@@ -270,7 +274,7 @@ namespace Lucene.Net.Search
 		CountDownLatch awaitEnterWarm = new CountDownLatch(1);
 		CountDownLatch awaitClose = new CountDownLatch(1);
 		AtomicBoolean triedReopen = new AtomicBoolean(false);
-		ExecutorService es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
+        TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
 		SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
 		SearcherManager searcherManager = Random().NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random().NextBoolean(), factory);
 		if (VERBOSE)
@@ -332,9 +336,9 @@ namespace Lucene.Net.Search
 		  private CountDownLatch AwaitEnterWarm;
 		  private CountDownLatch AwaitClose;
 		  private AtomicBoolean TriedReopen;
-		  private ExecutorService Es;
+          private TaskScheduler Es;
 
-		  public SearcherFactoryAnonymousInnerClassHelper2(TestSearcherManager outerInstance, CountDownLatch awaitEnterWarm, CountDownLatch awaitClose, AtomicBoolean triedReopen, ExecutorService es)
+          public SearcherFactoryAnonymousInnerClassHelper2(TestSearcherManager outerInstance, CountDownLatch awaitEnterWarm, CountDownLatch awaitClose, AtomicBoolean triedReopen, TaskScheduler es)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.AwaitEnterWarm = awaitEnterWarm;
@@ -410,7 +414,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestCloseTwice()
+      [Test]
+      public virtual void TestCloseTwice()
 	  {
 		// test that we can close SM twice (per IDisposable's contract).
 		Directory dir = NewDirectory();
@@ -421,7 +426,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestReferenceDecrementIllegally()
+      [Test]
+      public virtual void TestReferenceDecrementIllegally()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new ConcurrentMergeScheduler()));
@@ -455,7 +461,8 @@ namespace Lucene.Net.Search
 	  }
 
 
-	  public virtual void TestEnsureOpen()
+      [Test]
+      public virtual void TestEnsureOpen()
 	  {
 		Directory dir = NewDirectory();
 		(new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null))).Dispose();
@@ -488,7 +495,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestListenerCalled()
+      [Test]
+      public virtual void TestListenerCalled()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -517,10 +525,10 @@ namespace Lucene.Net.Search
 			  this.AfterRefreshCalled = afterRefreshCalled;
 		  }
 
-		  public override void BeforeRefresh()
+		  public void BeforeRefresh()
 		  {
 		  }
-		  public override void AfterRefresh(bool didRefresh)
+		  public void AfterRefresh(bool didRefresh)
 		  {
 			if (didRefresh)
 			{
@@ -529,7 +537,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestEvilSearcherFactory()
+      [Test]
+      public virtual void TestEvilSearcherFactory()
 	  {
 		Random random = Random();
 		Directory dir = NewDirectory();
@@ -579,7 +588,8 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  public virtual void TestMaybeRefreshBlockingLock()
+      [Test]
+      public virtual void TestMaybeRefreshBlockingLock()
 	  {
 		// make sure that maybeRefreshBlocking releases the lock, otherwise other
 		// threads cannot obtain it.

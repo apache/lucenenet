@@ -44,6 +44,7 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Index;
 
+    [TestFixture]
 	public class TestNumericRangeQuery32 : LuceneTestCase
 	{
 	  // distance of entries
@@ -59,7 +60,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		NoDocs = AtLeast(4096);
 		Distance = (1 << 30) / NoDocs;
@@ -129,7 +131,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Searcher = null;
 		Reader.Dispose();
@@ -138,6 +141,7 @@ namespace Lucene.Net.Search
 		Directory = null;
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -190,28 +194,32 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRange_8bit() throws Exception
-	  public virtual void TestRange_8bit()
+      [Test]
+      public virtual void TestRange_8bit()
 	  {
 		TestRange(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRange_4bit() throws Exception
-	  public virtual void TestRange_4bit()
+      [Test]
+      public virtual void TestRange_4bit()
 	  {
 		TestRange(4);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRange_2bit() throws Exception
-	  public virtual void TestRange_2bit()
+      [Test]
+      public virtual void TestRange_2bit()
 	  {
 		TestRange(2);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testInverseRange() throws Exception
-	  public virtual void TestInverseRange()
+      [Test]
+      public virtual void TestInverseRange()
 	  {
 		AtomicReaderContext context = (AtomicReaderContext)SlowCompositeReaderWrapper.Wrap(Reader).Context;
 		NumericRangeFilter<int> f = NumericRangeFilter.NewIntRange("field8", 8, 1000, -1000, true, true);
@@ -224,7 +232,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testOneMatchQuery() throws Exception
-	  public virtual void TestOneMatchQuery()
+      [Test]
+      public virtual void TestOneMatchQuery()
 	  {
 		NumericRangeQuery<int> q = NumericRangeQuery.NewIntRange("ascfield8", 8, 1000, 1000, true, true);
 		TopDocs topDocs = Searcher.Search(q, NoDocs);
@@ -261,21 +270,24 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testLeftOpenRange_8bit() throws Exception
-	  public virtual void TestLeftOpenRange_8bit()
+      [Test]
+      public virtual void TestLeftOpenRange_8bit()
 	  {
 		TestLeftOpenRange(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testLeftOpenRange_4bit() throws Exception
-	  public virtual void TestLeftOpenRange_4bit()
+      [Test]
+      public virtual void TestLeftOpenRange_4bit()
 	  {
 		TestLeftOpenRange(4);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testLeftOpenRange_2bit() throws Exception
-	  public virtual void TestLeftOpenRange_2bit()
+      [Test]
+      public virtual void TestLeftOpenRange_2bit()
 	  {
 		TestLeftOpenRange(2);
 	  }
@@ -308,14 +320,16 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRightOpenRange_8bit() throws Exception
-	  public virtual void TestRightOpenRange_8bit()
+      [Test]
+      public virtual void TestRightOpenRange_8bit()
 	  {
 		TestRightOpenRange(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRightOpenRange_4bit() throws Exception
-	  public virtual void TestRightOpenRange_4bit()
+      [Test]
+      public virtual void TestRightOpenRange_4bit()
 	  {
 		TestRightOpenRange(4);
 	  }
@@ -329,7 +343,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testInfiniteValues() throws Exception
-	  public virtual void TestInfiniteValues()
+      [Test]
+      public virtual void TestInfiniteValues()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -468,7 +483,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testEmptyEnums() throws Exception
-	  public virtual void TestEmptyEnums()
+      [Test]
+      public virtual void TestEmptyEnums()
 	  {
 		int count = 3000;
 		int lower = (Distance * 3 / 2) + StartOffset, upper = lower + count * Distance + (Distance / 3);
@@ -522,28 +538,32 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRandomTrieAndClassicRangeQuery_8bit() throws Exception
-	  public virtual void TestRandomTrieAndClassicRangeQuery_8bit()
+      [Test]
+      public virtual void TestRandomTrieAndClassicRangeQuery_8bit()
 	  {
 		TestRandomTrieAndClassicRangeQuery(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRandomTrieAndClassicRangeQuery_4bit() throws Exception
-	  public virtual void TestRandomTrieAndClassicRangeQuery_4bit()
+      [Test]
+      public virtual void TestRandomTrieAndClassicRangeQuery_4bit()
 	  {
 		TestRandomTrieAndClassicRangeQuery(4);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRandomTrieAndClassicRangeQuery_2bit() throws Exception
-	  public virtual void TestRandomTrieAndClassicRangeQuery_2bit()
+      [Test]
+      public virtual void TestRandomTrieAndClassicRangeQuery_2bit()
 	  {
 		TestRandomTrieAndClassicRangeQuery(2);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRandomTrieAndClassicRangeQuery_NoTrie() throws Exception
-	  public virtual void TestRandomTrieAndClassicRangeQuery_NoTrie()
+      [Test]
+      public virtual void TestRandomTrieAndClassicRangeQuery_NoTrie()
 	  {
 		TestRandomTrieAndClassicRangeQuery(int.MaxValue);
 	  }
@@ -584,21 +604,24 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeSplit_8bit() throws Exception
-	  public virtual void TestRangeSplit_8bit()
+      [Test]
+      public virtual void TestRangeSplit_8bit()
 	  {
 		TestRangeSplit(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeSplit_4bit() throws Exception
-	  public virtual void TestRangeSplit_4bit()
+      [Test]
+      public virtual void TestRangeSplit_4bit()
 	  {
 		TestRangeSplit(4);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRangeSplit_2bit() throws Exception
-	  public virtual void TestRangeSplit_2bit()
+      [Test]
+      public virtual void TestRangeSplit_2bit()
 	  {
 		TestRangeSplit(2);
 	  }
@@ -621,21 +644,24 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFloatRange_8bit() throws Exception
-	  public virtual void TestFloatRange_8bit()
+      [Test]
+      public virtual void TestFloatRange_8bit()
 	  {
 		TestFloatRange(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFloatRange_4bit() throws Exception
-	  public virtual void TestFloatRange_4bit()
+      [Test]
+      public virtual void TestFloatRange_4bit()
 	  {
 		TestFloatRange(4);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFloatRange_2bit() throws Exception
-	  public virtual void TestFloatRange_2bit()
+      [Test]
+      public virtual void TestFloatRange_2bit()
 	  {
 		TestFloatRange(2);
 	  }
@@ -676,28 +702,32 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSorting_8bit() throws Exception
-	  public virtual void TestSorting_8bit()
+      [Test]
+      public virtual void TestSorting_8bit()
 	  {
 		TestSorting(8);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSorting_4bit() throws Exception
-	  public virtual void TestSorting_4bit()
+      [Test]
+      public virtual void TestSorting_4bit()
 	  {
 		TestSorting(4);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSorting_2bit() throws Exception
-	  public virtual void TestSorting_2bit()
+      [Test]
+      public virtual void TestSorting_2bit()
 	  {
 		TestSorting(2);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testEqualsAndHash() throws Exception
-	  public virtual void TestEqualsAndHash()
+      [Test]
+      public virtual void TestEqualsAndHash()
 	  {
 		QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test1", 4, 10, 20, true, true));
 		QueryUtils.CheckHashEquals(NumericRangeQuery.NewIntRange("test2", 4, 10, 20, false, true));

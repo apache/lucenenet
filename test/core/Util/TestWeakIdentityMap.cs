@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestSimpleHashMap()
 	  {
-		WeakIdentityMap<string, string> map = WeakIdentityMap.newHashMap(random().nextBoolean());
+		WeakIdentityMap<string, string> map = WeakIdentityMap.newHashMap(Random().NextBoolean());
 		// we keep strong references to the keys,
 		// so WeakIdentityMap will not forget about them:
 		string key1 = new string("foo");
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		  Assert.IsTrue(it.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  assertNull(it.next());
+		  Assert.IsNull(it.Next());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
 		  Assert.IsFalse(it.hasNext());
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
@@ -59,12 +59,12 @@ namespace Lucene.Net.Util
 		map.put(key1, "bar1");
 		map.put(key2, "bar2");
 
-		Assert.AreEqual(3, map.size());
+		Assert.AreEqual(3, map.Size());
 
-		Assert.AreEqual("bar1", map.get(key1));
-		Assert.AreEqual("bar2", map.get(key2));
-		Assert.AreEqual(null, map.get(key3));
-		Assert.AreEqual("null", map.get(null));
+		Assert.AreEqual("bar1", map.Get(key1));
+		Assert.AreEqual("bar2", map.Get(key2));
+		Assert.AreEqual(null, map.Get(key3));
+		Assert.AreEqual("null", map.Get(null));
 
 		Assert.IsTrue(map.containsKey(key1));
 		Assert.IsTrue(map.containsKey(key2));
@@ -76,12 +76,12 @@ namespace Lucene.Net.Util
 		map.put(key2, "bar2");
 		map.put(null, "null");
 
-		Assert.AreEqual(3, map.size());
+		Assert.AreEqual(3, map.Size());
 
-		Assert.AreEqual("bar1", map.get(key1));
-		Assert.AreEqual("bar2", map.get(key2));
-		Assert.AreEqual(null, map.get(key3));
-		Assert.AreEqual("null", map.get(null));
+		Assert.AreEqual("bar1", map.Get(key1));
+		Assert.AreEqual("bar2", map.Get(key2));
+		Assert.AreEqual(null, map.Get(key3));
+		Assert.AreEqual("null", map.Get(null));
 
 		Assert.IsTrue(map.containsKey(key1));
 		Assert.IsTrue(map.containsKey(key2));
@@ -89,13 +89,13 @@ namespace Lucene.Net.Util
 		Assert.IsTrue(map.containsKey(null));
 
 		map.remove(null);
-		Assert.AreEqual(2, map.size());
+		Assert.AreEqual(2, map.Size());
 		map.remove(key1);
-		Assert.AreEqual(1, map.size());
+		Assert.AreEqual(1, map.Size());
 		map.put(key1, "bar1");
 		map.put(key2, "bar2");
 		map.put(key3, "bar3");
-		Assert.AreEqual(3, map.size());
+		Assert.AreEqual(3, map.Size());
 
 		int c = 0, keysAssigned = 0;
 		for (IEnumerator<string> it = map.keyIterator(); it.MoveNext();)
@@ -123,14 +123,14 @@ namespace Lucene.Net.Util
 		key1 = key2 = key3 = null;
 
 		// check that GC does not cause problems in reap() method, wait 1 second and let GC work:
-		int size = map.size();
+		int size = map.Size();
 		for (int i = 0; size > 0 && i < 10; i++)
 		{
 			try
 			{
 		  System.runFinalization();
 		  System.gc();
-		  int newSize = map.size();
+		  int newSize = map.Size();
 		  Assert.IsTrue("previousSize(" + size + ")>=newSize(" + newSize + ")", size >= newSize);
 		  size = newSize;
 		  Thread.Sleep(100L);
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
 			Assert.IsNotNull(it.Current);
 			c++;
 		  }
-		  newSize = map.size();
+		  newSize = map.Size();
 		  Assert.IsTrue("previousSize(" + size + ")>=iteratorSize(" + c + ")", size >= c);
 		  Assert.IsTrue("iteratorSize(" + c + ")>=newSize(" + newSize + ")", c >= newSize);
 		  size = newSize;
@@ -150,8 +150,8 @@ namespace Lucene.Net.Util
 		}
 		}
 
-		map.clear();
-		Assert.AreEqual(0, map.size());
+		map.Clear();
+		Assert.AreEqual(0, map.Size());
 		Assert.IsTrue(map.Empty);
 
 		IEnumerator<string> it = map.keyIterator();
@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
 		try
 		{
 //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		  it.next();
+		  it.Next();
 		  Assert.Fail("Should throw NoSuchElementException");
 		}
 		catch (NoSuchElementException nse)
@@ -171,10 +171,10 @@ namespace Lucene.Net.Util
 		key2 = new string("foo");
 		map.put(key1, "bar1");
 		map.put(key2, "bar2");
-		Assert.AreEqual(2, map.size());
+		Assert.AreEqual(2, map.Size());
 
-		map.clear();
-		Assert.AreEqual(0, map.size());
+		map.Clear();
+		Assert.AreEqual(0, map.Size());
 		Assert.IsTrue(map.Empty);
 	  }
 
@@ -183,20 +183,20 @@ namespace Lucene.Net.Util
 		// don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:
 		const int threadCount = 8, keyCount = 1024;
 		ExecutorService exec = Executors.newFixedThreadPool(threadCount, new NamedThreadFactory("testConcurrentHashMap"));
-		WeakIdentityMap<object, int?> map = WeakIdentityMap.newConcurrentHashMap(random().nextBoolean());
+		WeakIdentityMap<object, int?> map = WeakIdentityMap.newConcurrentHashMap(Random().NextBoolean());
 		// we keep strong references to the keys,
 		// so WeakIdentityMap will not forget about them:
 		AtomicReferenceArray<object> keys = new AtomicReferenceArray<object>(keyCount);
 		for (int j = 0; j < keyCount; j++)
 		{
-		  keys.set(j, new object());
+		  keys.Set(j, new object());
 		}
 
 		try
 		{
 		  for (int t = 0; t < threadCount; t++)
 		  {
-			Random rnd = new Random(random().nextLong());
+			Random rnd = new Random(Random().NextLong());
 			exec.execute(new RunnableAnonymousInnerClassHelper(this, keyCount, map, keys, rnd));
 		  }
 		}
@@ -209,18 +209,18 @@ namespace Lucene.Net.Util
 		// clear strong refs
 		for (int j = 0; j < keyCount; j++)
 		{
-		  keys.set(j, null);
+		  keys.Set(j, null);
 		}
 
 		// check that GC does not cause problems in reap() method:
-		int size = map.size();
+		int size = map.Size();
 		for (int i = 0; size > 0 && i < 10; i++)
 		{
 			try
 			{
 		  System.runFinalization();
 		  System.gc();
-		  int newSize = map.size();
+		  int newSize = map.Size();
 		  Assert.IsTrue("previousSize(" + size + ")>=newSize(" + newSize + ")", size >= newSize);
 		  size = newSize;
 		  Thread.Sleep(100L);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util
 			Assert.IsNotNull(it.Current);
 			c++;
 		  }
-		  newSize = map.size();
+		  newSize = map.Size();
 		  Assert.IsTrue("previousSize(" + size + ")>=iteratorSize(" + c + ")", size >= c);
 		  Assert.IsTrue("iteratorSize(" + c + ")>=newSize(" + newSize + ")", c >= newSize);
 		  size = newSize;
@@ -263,28 +263,28 @@ namespace Lucene.Net.Util
 
 		  public override void Run()
 		  {
-			int count = atLeast(Rnd, 10000);
+			int count = AtLeast(Rnd, 10000);
 			for (int i = 0; i < count; i++)
 			{
 			  int j = Rnd.Next(KeyCount);
 			  switch (Rnd.Next(5))
 			  {
 				case 0:
-				  Map.put(Keys.get(j), Convert.ToInt32(j));
+				  Map.put(Keys.Get(j), Convert.ToInt32(j));
 				  break;
 				case 1:
-				  int? v = Map.get(Keys.get(j));
+				  int? v = Map.Get(Keys.Get(j));
 				  if (v != null)
 				  {
 					Assert.AreEqual(j, (int)v);
 				  }
 				  break;
 				case 2:
-				  Map.remove(Keys.get(j));
+				  Map.remove(Keys.Get(j));
 				  break;
 				case 3:
 				  // renew key, the old one will be GCed at some time:
-				  Keys.set(j, new object());
+				  Keys.Set(j, new object());
 				  break;
 				case 4:
 				  // check iterator still working

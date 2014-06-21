@@ -34,7 +34,8 @@ namespace Lucene.Net.Search
 	/// Test date sorting, i.e. auto-sorting of fields with type "long".
 	/// See http://issues.apache.org/jira/browse/LUCENE-1045 
 	/// </summary>
-	public class TestDateSort : LuceneTestCase
+	[TestFixture]
+    public class TestDateSort : LuceneTestCase
 	{
 
 	  private const string TEXT_FIELD = "text";
@@ -43,6 +44,7 @@ namespace Lucene.Net.Search
 	  private Directory Directory;
 	  private IndexReader Reader;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -67,6 +69,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -74,7 +77,8 @@ namespace Lucene.Net.Search
 		base.TearDown();
 	  }
 
-	  public virtual void TestReverseDateSort()
+      [Test]
+      public virtual void TestReverseDateSort()
 	  {
 		IndexSearcher searcher = NewSearcher(Reader);
 

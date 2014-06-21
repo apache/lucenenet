@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 
 	  protected internal override bool CodecAcceptsHugeBinaryValues(string field)
 	  {
-		return TestUtil.fieldSupportsHugeBinaryDocValues(field);
+		return TestUtil.FieldSupportsHugeBinaryDocValues(field);
 	  }
 	}
 

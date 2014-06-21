@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
 		  }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
 			  this.Length = length;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
 			return new TokenStreamComponents(tokenizer, new MockFixedLengthPayloadFilter(Random(), tokenizer, Length));

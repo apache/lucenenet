@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -32,9 +34,9 @@ namespace Lucene.Net.Util.Automaton
 	  public virtual void TestStringUnion()
 	  {
 		IList<BytesRef> strings = new List<BytesRef>();
-		for (int i = RandomInts.randomIntBetween(random(), 0, 1000); --i >= 0;)
+		for (int i = RandomInts.NextIntBetween(Random(), 0, 1000); --i >= 0;)
 		{
-		  strings.Add(new BytesRef(TestUtil.randomUnicodeString(random())));
+		  strings.Add(new BytesRef(TestUtil.RandomUnicodeString(Random())));
 		}
 
 		strings.Sort();
@@ -49,7 +51,7 @@ namespace Lucene.Net.Util.Automaton
 		int i = 0;
 		foreach (BytesRef bref in strings)
 		{
-		  eachIndividual[i++] = BasicAutomata.makeString(bref.utf8ToString());
+		  eachIndividual[i++] = BasicAutomata.makeString(bref.Utf8ToString());
 		}
 		return BasicOperations.union(eachIndividual);
 	  }
@@ -134,13 +136,13 @@ namespace Lucene.Net.Util.Automaton
 
 	  public virtual void TestGetRandomAcceptedString()
 	  {
-		int ITER1 = atLeast(100);
-		int ITER2 = atLeast(100);
+		int ITER1 = AtLeast(100);
+		int ITER2 = AtLeast(100);
 		for (int i = 0;i < ITER1;i++)
 		{
 
-		  RegExp re = new RegExp(AutomatonTestUtil.randomRegexp(random()), RegExp.NONE);
-		  Automaton a = re.toAutomaton();
+		  RegExp re = new RegExp(AutomatonTestUtil.randomRegexp(Random()), RegExp.NONE);
+		  Automaton a = re.ToAutomaton();
 		  Assert.IsFalse(BasicOperations.isEmpty(a));
 
 		  AutomatonTestUtil.RandomAcceptedStrings rx = new AutomatonTestUtil.RandomAcceptedStrings(a);
@@ -149,7 +151,7 @@ namespace Lucene.Net.Util.Automaton
 			int[] acc = null;
 			try
 			{
-			  acc = rx.getRandomAcceptedString(random());
+			  acc = rx.getRandomAcceptedString(Random());
 			  string s = UnicodeUtil.newString(acc, 0, acc.Length);
 			  Assert.IsTrue(BasicOperations.run(a, s));
 			}

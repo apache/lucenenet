@@ -1,3 +1,6 @@
+using System.IO;
+using NUnit.Framework;
+
 namespace Lucene.Net.Util
 {
 
@@ -42,91 +45,91 @@ namespace Lucene.Net.Util
 	  public virtual void TestTerm()
 	  {
 		TermQuery expected = new TermQuery(new Term("field", "test"));
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "test"));
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "test"));
 	  }
 
 	  public virtual void TestBoolean()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur_e.SHOULD);
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "foo bar"));
+		expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur_e.SHOULD);
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "foo bar"));
 	  }
 
 	  public virtual void TestBooleanMust()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.MUST);
-		expected.add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur_e.MUST);
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "foo bar", BooleanClause.Occur_e.MUST));
+		expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.MUST);
+		expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur_e.MUST);
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "foo bar", BooleanClause.Occur_e.MUST));
 	  }
 
 	  public virtual void TestMinShouldMatchNone()
 	  {
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		Assert.AreEqual(builder.createBooleanQuery("field", "one two three four"), builder.createMinShouldMatchQuery("field", "one two three four", 0f));
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.AreEqual(builder.CreateBooleanQuery("field", "one two three four"), builder.CreateMinShouldMatchQuery("field", "one two three four", 0f));
 	  }
 
 	  public virtual void TestMinShouldMatchAll()
 	  {
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		Assert.AreEqual(builder.createBooleanQuery("field", "one two three four", BooleanClause.Occur_e.MUST), builder.createMinShouldMatchQuery("field", "one two three four", 1f));
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.AreEqual(builder.CreateBooleanQuery("field", "one two three four", BooleanClause.Occur_e.MUST), builder.CreateMinShouldMatchQuery("field", "one two three four", 1f));
 	  }
 
 	  public virtual void TestMinShouldMatch()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "one")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "two")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "three")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "four")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "one")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "two")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "three")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "four")), BooleanClause.Occur_e.SHOULD);
 		expected.MinimumNumberShouldMatch = 0;
 
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.1f));
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.24f));
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.1f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.24f));
 
 		expected.MinimumNumberShouldMatch = 1;
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.25f));
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.49f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.25f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.49f));
 
 		expected.MinimumNumberShouldMatch = 2;
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.5f));
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.74f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.5f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.74f));
 
 		expected.MinimumNumberShouldMatch = 3;
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.75f));
-		Assert.AreEqual(expected, builder.createMinShouldMatchQuery("field", "one two three four", 0.99f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.75f));
+		Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.99f));
 	  }
 
 	  public virtual void TestPhraseQueryPositionIncrements()
 	  {
 		PhraseQuery expected = new PhraseQuery();
-		expected.add(new Term("field", "1"));
-		expected.add(new Term("field", "2"), 2);
+		expected.Add(new Term("field", "1"));
+		expected.Add(new Term("field", "2"), 2);
 
-		CharacterRunAutomaton stopList = new CharacterRunAutomaton((new RegExp("[sS][tT][oO][pP]")).toAutomaton());
+		CharacterRunAutomaton stopList = new CharacterRunAutomaton((new RegExp("[sS][tT][oO][pP]")).ToAutomaton());
 
-		Analyzer analyzer = new MockAnalyzer(random(), MockTokenizer.WHITESPACE, false, stopList);
+		Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false, stopList);
 
 		QueryBuilder builder = new QueryBuilder(analyzer);
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "1 stop 2"));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "1 stop 2"));
 	  }
 
 	  public virtual void TestEmpty()
 	  {
-		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(random()));
-		assertNull(builder.createBooleanQuery("field", ""));
+		QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+		Assert.IsNull(builder.CreateBooleanQuery("field", ""));
 	  }
 
 	  /// <summary>
 	  /// adds synonym of "dog" for "dogs". </summary>
 	  internal class MockSynonymAnalyzer : Analyzer
 	  {
-		protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  MockTokenizer tokenizer = new MockTokenizer(reader);
 		  return new TokenStreamComponents(tokenizer, new MockSynonymFilter(tokenizer));
@@ -138,8 +141,8 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  protected internal class MockSynonymFilter : TokenFilter
 	  {
-		internal CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
-		internal PositionIncrementAttribute PosIncAtt = addAttribute(typeof(PositionIncrementAttribute));
+		internal CharTermAttribute TermAtt = AddAttribute(typeof(CharTermAttribute));
+        internal PositionIncrementAttribute PosIncAtt = AddAttribute(typeof(PositionIncrementAttribute));
 		internal bool AddSynonym = false;
 
 		public MockSynonymFilter(TokenStream input) : base(input)
@@ -151,13 +154,13 @@ namespace Lucene.Net.Util
 		  if (AddSynonym) // inject our synonym
 		  {
 			ClearAttributes();
-			TermAtt.SetEmpty().append("dog");
+			TermAtt.SetEmpty().Append("dog");
 			PosIncAtt.PositionIncrement = 0;
 			AddSynonym = false;
 			return true;
 		  }
 
-		  if (input.IncrementToken())
+		  if (Input.IncrementToken())
 		  {
 			AddSynonym = TermAtt.ToString().Equals("dogs");
 			return true;
@@ -174,13 +177,13 @@ namespace Lucene.Net.Util
 	  public virtual void TestSynonyms()
 	  {
 		BooleanQuery expected = new BooleanQuery(true);
-		expected.add(new TermQuery(new Term("field", "dogs")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "dog")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "dogs")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "dog")), BooleanClause.Occur_e.SHOULD);
 		QueryBuilder builder = new QueryBuilder(new MockSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "dogs"));
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "dogs"));
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "dogs", BooleanClause.Occur_e.MUST));
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "dogs"));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "dogs"));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "dogs"));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "dogs", BooleanClause.Occur_e.MUST));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "dogs"));
 	  }
 
 	  /// <summary>
@@ -188,29 +191,30 @@ namespace Lucene.Net.Util
 	  public virtual void TestSynonymsPhrase()
 	  {
 		MultiPhraseQuery expected = new MultiPhraseQuery();
-		expected.add(new Term("field", "old"));
-		expected.add(new Term[] {new Term("field", "dogs"), new Term("field", "dog")});
+		expected.Add(new Term("field", "old"));
+		expected.Add(new Term[] {new Term("field", "dogs"), new Term("field", "dog")});
 		QueryBuilder builder = new QueryBuilder(new MockSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "old dogs"));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "old dogs"));
 	  }
 
 	  protected internal class SimpleCJKTokenizer : Tokenizer
 	  {
-		internal CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
+          internal CharTermAttribute TermAtt = AddAttribute(typeof(CharTermAttribute));
 
-		public SimpleCJKTokenizer(Reader input) : base(input)
+		public SimpleCJKTokenizer(TextReader input) 
+            : base(input)
 		{
 		}
 
 		public override bool IncrementToken()
 		{
-		  int ch = input.read();
+		  int ch = Input.Read();
 		  if (ch < 0)
 		  {
 			return false;
 		  }
 		  ClearAttributes();
-		  TermAtt.SetEmpty().append((char) ch);
+		  TermAtt.SetEmpty().Append((char) ch);
 		  return true;
 		}
 	  }
@@ -224,7 +228,7 @@ namespace Lucene.Net.Util
 			  this.OuterInstance = outerInstance;
 		  }
 
-		public override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  return new TokenStreamComponents(new SimpleCJKTokenizer(reader));
 		}
@@ -236,11 +240,11 @@ namespace Lucene.Net.Util
 		SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer(this);
 
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
 
 		QueryBuilder builder = new QueryBuilder(analyzer);
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "中国"));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "中国"));
 	  }
 
 	  public virtual void TestCJKPhrase()
@@ -249,11 +253,11 @@ namespace Lucene.Net.Util
 		SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer(this);
 
 		PhraseQuery expected = new PhraseQuery();
-		expected.add(new Term("field", "中"));
-		expected.add(new Term("field", "国"));
+		expected.Add(new Term("field", "中"));
+		expected.Add(new Term("field", "国"));
 
 		QueryBuilder builder = new QueryBuilder(analyzer);
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "中国"));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "中国"));
 	  }
 
 	  public virtual void TestCJKSloppyPhrase()
@@ -263,11 +267,11 @@ namespace Lucene.Net.Util
 
 		PhraseQuery expected = new PhraseQuery();
 		expected.Slop = 3;
-		expected.add(new Term("field", "中"));
-		expected.add(new Term("field", "国"));
+		expected.Add(new Term("field", "中"));
+		expected.Add(new Term("field", "国"));
 
 		QueryBuilder builder = new QueryBuilder(analyzer);
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "中国", 3));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "中国", 3));
 	  }
 
 	  /// <summary>
@@ -275,8 +279,8 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  protected internal class MockCJKSynonymFilter : TokenFilter
 	  {
-		internal CharTermAttribute TermAtt = addAttribute(typeof(CharTermAttribute));
-		internal PositionIncrementAttribute PosIncAtt = addAttribute(typeof(PositionIncrementAttribute));
+		internal CharTermAttribute TermAtt = AddAttribute<CharTermAttribute>();
+        internal PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute>();
 		internal bool AddSynonym = false;
 
 		public MockCJKSynonymFilter(TokenStream input) : base(input)
@@ -288,13 +292,13 @@ namespace Lucene.Net.Util
 		  if (AddSynonym) // inject our synonym
 		  {
 			ClearAttributes();
-			TermAtt.SetEmpty().append("國");
+			TermAtt.SetEmpty().Append("國");
 			PosIncAtt.PositionIncrement = 0;
 			AddSynonym = false;
 			return true;
 		  }
 
-		  if (input.IncrementToken())
+		  if (Input.IncrementToken())
 		  {
 			AddSynonym = TermAtt.ToString().Equals("国");
 			return true;
@@ -308,7 +312,7 @@ namespace Lucene.Net.Util
 
 	  internal class MockCJKSynonymAnalyzer : Analyzer
 	  {
-		protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer tokenizer = new SimpleCJKTokenizer(reader);
 		  return new TokenStreamComponents(tokenizer, new MockCJKSynonymFilter(tokenizer));
@@ -320,12 +324,12 @@ namespace Lucene.Net.Util
 	  public virtual void TestCJKSynonym()
 	  {
 		BooleanQuery expected = new BooleanQuery(true);
-		expected.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		expected.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
 		QueryBuilder builder = new QueryBuilder(new MockCJKSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "国"));
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "国"));
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "国", BooleanClause.Occur_e.MUST));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "国"));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "国"));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "国", BooleanClause.Occur_e.MUST));
 	  }
 
 	  /// <summary>
@@ -333,13 +337,13 @@ namespace Lucene.Net.Util
 	  public virtual void TestCJKSynonymsOR()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.SHOULD);
 		BooleanQuery inner = new BooleanQuery(true);
-		inner.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		inner.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
-		expected.add(inner, BooleanClause.Occur_e.SHOULD);
+		inner.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		inner.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(inner, BooleanClause.Occur_e.SHOULD);
 		QueryBuilder builder = new QueryBuilder(new MockCJKSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "中国"));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "中国"));
 	  }
 
 	  /// <summary>
@@ -347,17 +351,17 @@ namespace Lucene.Net.Util
 	  public virtual void TestCJKSynonymsOR2()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.SHOULD);
 		BooleanQuery inner = new BooleanQuery(true);
-		inner.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		inner.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
-		expected.add(inner, BooleanClause.Occur_e.SHOULD);
+		inner.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		inner.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(inner, BooleanClause.Occur_e.SHOULD);
 		BooleanQuery inner2 = new BooleanQuery(true);
-		inner2.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		inner2.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
-		expected.add(inner2, BooleanClause.Occur_e.SHOULD);
+		inner2.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		inner2.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(inner2, BooleanClause.Occur_e.SHOULD);
 		QueryBuilder builder = new QueryBuilder(new MockCJKSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "中国国"));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "中国国"));
 	  }
 
 	  /// <summary>
@@ -365,13 +369,13 @@ namespace Lucene.Net.Util
 	  public virtual void TestCJKSynonymsAND()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.MUST);
+		expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.MUST);
 		BooleanQuery inner = new BooleanQuery(true);
-		inner.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		inner.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
-		expected.add(inner, BooleanClause.Occur_e.MUST);
+		inner.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		inner.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(inner, BooleanClause.Occur_e.MUST);
 		QueryBuilder builder = new QueryBuilder(new MockCJKSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "中国", BooleanClause.Occur_e.MUST));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "中国", BooleanClause.Occur_e.MUST));
 	  }
 
 	  /// <summary>
@@ -379,17 +383,17 @@ namespace Lucene.Net.Util
 	  public virtual void TestCJKSynonymsAND2()
 	  {
 		BooleanQuery expected = new BooleanQuery();
-		expected.add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.MUST);
+		expected.Add(new TermQuery(new Term("field", "中")), BooleanClause.Occur_e.MUST);
 		BooleanQuery inner = new BooleanQuery(true);
-		inner.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		inner.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
-		expected.add(inner, BooleanClause.Occur_e.MUST);
+		inner.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		inner.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(inner, BooleanClause.Occur_e.MUST);
 		BooleanQuery inner2 = new BooleanQuery(true);
-		inner2.add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
-		inner2.add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
-		expected.add(inner2, BooleanClause.Occur_e.MUST);
+		inner2.Add(new TermQuery(new Term("field", "国")), BooleanClause.Occur_e.SHOULD);
+		inner2.Add(new TermQuery(new Term("field", "國")), BooleanClause.Occur_e.SHOULD);
+		expected.Add(inner2, BooleanClause.Occur_e.MUST);
 		QueryBuilder builder = new QueryBuilder(new MockCJKSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createBooleanQuery("field", "中国国", BooleanClause.Occur_e.MUST));
+		Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "中国国", BooleanClause.Occur_e.MUST));
 	  }
 
 	  /// <summary>
@@ -397,12 +401,12 @@ namespace Lucene.Net.Util
 	  public virtual void TestCJKSynonymsPhrase()
 	  {
 		MultiPhraseQuery expected = new MultiPhraseQuery();
-		expected.add(new Term("field", "中"));
-		expected.add(new Term[] {new Term("field", "国"), new Term("field", "國")});
+		expected.Add(new Term("field", "中"));
+		expected.Add(new Term[] {new Term("field", "国"), new Term("field", "國")});
 		QueryBuilder builder = new QueryBuilder(new MockCJKSynonymAnalyzer());
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "中国"));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "中国"));
 		expected.Slop = 3;
-		Assert.AreEqual(expected, builder.createPhraseQuery("field", "中国", 3));
+		Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "中国", 3));
 	  }
 	}
 

@@ -33,9 +33,11 @@ namespace Lucene.Net.Search
 	/// Tests <seealso cref="PrefixQuery"/> class.
 	/// 
 	/// </summary>
-	public class TestPrefixQuery : LuceneTestCase
+	[TestFixture]
+    public class TestPrefixQuery : LuceneTestCase
 	{
-	  public virtual void TestPrefixQuery()
+      [Test]
+      public virtual void TestPrefixQuery_Mem()
 	  {
 		Directory directory = NewDirectory();
 

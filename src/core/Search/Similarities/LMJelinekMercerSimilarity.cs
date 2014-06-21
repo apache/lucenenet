@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Similarities
 		this.Lambda_Renamed = lambda;
 	  }
 
-	  protected internal override float Score(BasicStats stats, float freq, float docLen)
+	    public override float Score(BasicStats stats, float freq, float docLen)
 	  {
 		return stats.TotalBoost * (float)Math.Log(1 + ((1 - Lambda_Renamed) * freq / docLen) / (Lambda_Renamed * ((LMStats)stats).CollectionProbability));
 	  }

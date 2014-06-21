@@ -36,7 +36,8 @@ namespace Lucene.Net.Search.Spans
 	/// functionality.
 	/// 
 	/// </summary>
-	public class TestSpansAdvanced2 : TestSpansAdvanced
+	[TestFixture]
+    public class TestSpansAdvanced2 : TestSpansAdvanced
 	{
 	  internal IndexSearcher Searcher2;
 	  internal IndexReader Reader2;
@@ -44,7 +45,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Initializes the tests by adding documents to the index.
 	  /// </summary>
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 
@@ -62,6 +64,7 @@ namespace Lucene.Net.Search.Spans
 		Searcher2.Similarity = new DefaultSimilarity();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader2.Dispose();
@@ -71,7 +74,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Verifies that the index has the correct number of documents.
 	  /// </summary>
-	  public virtual void TestVerifyIndex()
+      [Test]
+      public virtual void TestVerifyIndex()
 	  {
 		IndexReader reader = DirectoryReader.Open(MDirectory);
 		Assert.AreEqual(8, reader.NumDocs());
@@ -81,7 +85,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Tests a single span query that matches multiple documents.
 	  /// </summary>
-	  public virtual void TestSingleSpanQuery()
+      [Test]
+      public virtual void TestSingleSpanQuery()
 	  {
 
 		Query spanQuery = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
@@ -93,7 +98,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Tests a single span query that matches multiple documents.
 	  /// </summary>
-	  public virtual void TestMultipleDifferentSpanQueries()
+      [Test]
+      public virtual void TestMultipleDifferentSpanQueries()
 	  {
 
 		Query spanQuery1 = new SpanTermQuery(new Term(FIELD_TEXT, "should"));
@@ -111,7 +117,8 @@ namespace Lucene.Net.Search.Spans
 	  /// <summary>
 	  /// Tests two span queries.
 	  /// </summary>
-	  public override void TestBooleanQueryWithSpanQueries()
+      [Test]
+      public override void TestBooleanQueryWithSpanQueries()
 	  {
 
 		DoTestBooleanQueryWithSpanQueries(Searcher2, 0.73500174f);

@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  public static void AfterClass()
 	  {
-          LineDocFile.Close();
+          LineDocFile.Dispose();
 		LineDocFile = null;
 	  }
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetFlushPolicy(flushPolicy);
 		int numDWPT = 1 + AtLeast(2);
 		DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
-		iwc.IndexerThreadPool = threadPool;
+		iwc.SetIndexerThreadPool(threadPool);
 		iwc.SetRAMBufferSizeMB(maxRamMB);
 		iwc.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
 		}
 		if (ensureNotStalled)
 		{
-		  Assert.IsFalse(docsWriter.FlushControl.stallControl.wasStalled());
+		  Assert.IsFalse(docsWriter.FlushControl.StallControl.WasStalled());
 		}
 		writer.Dispose();
 		Assert.AreEqual(0, flushControl.ActiveBytes());
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
 
 		  int numDWPT = 1 + AtLeast(2);
 		  DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
-		  iwc.IndexerThreadPool = threadPool;
+		  iwc.SetIndexerThreadPool(threadPool);
 		  iwc.SetMaxBufferedDocs(2 + AtLeast(10));
 		  iwc.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		  iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
@@ -180,11 +180,11 @@ namespace Lucene.Net.Index
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
-		iwc.FlushPolicy = flushPolicy;
+		iwc.SetFlushPolicy(flushPolicy);
 
 		int numDWPT = 1 + Random().Next(8);
 		DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
-		iwc.IndexerThreadPool = threadPool;
+		iwc.SetIndexerThreadPool(threadPool);
 
 		IndexWriter writer = new IndexWriter(dir, iwc);
 		flushPolicy = (MockDefaultFlushPolicy) writer.Config.FlushPolicy;
@@ -225,8 +225,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(numDocumentsToIndex, r.MaxDoc());
 		if (!flushPolicy.FlushOnRAM())
 		{
-		  Assert.IsFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.stallControl.wasStalled());
-		  Assert.IsFalse("never block if we don't flush on RAM", docsWriter.FlushControl.stallControl.HasBlocked());
+		  Assert.IsFalse("never stall if we don't flush on RAM", docsWriter.FlushControl.StallControl.WasStalled());
+		  Assert.IsFalse("never block if we don't flush on RAM", docsWriter.FlushControl.StallControl.HasBlocked());
 		}
 		r.Dispose();
 		writer.Dispose();
@@ -248,10 +248,10 @@ namespace Lucene.Net.Index
 		  iwc.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		  iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 		  FlushPolicy flushPolicy = new FlushByRamOrCountsPolicy();
-		  iwc.FlushPolicy = flushPolicy;
+		  iwc.SetFlushPolicy(flushPolicy);
 
 		  DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numThreads[i] == 1 ? 1 : 2);
-		  iwc.IndexerThreadPool = threadPool;
+		  iwc.SetIndexerThreadPool(threadPool);
 		  // with such a small ram buffer we should be stalled quiet quickly
 		  iwc.SetRAMBufferSizeMB(0.25);
 		  IndexWriter writer = new IndexWriter(dir, iwc);
@@ -274,11 +274,11 @@ namespace Lucene.Net.Index
 		  Assert.AreEqual(numDocumentsToIndex, writer.MaxDoc());
 		  if (numThreads[i] == 1)
 		  {
-			Assert.IsFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.stallControl.HasBlocked());
+			Assert.IsFalse("single thread must not block numThreads: " + numThreads[i], docsWriter.FlushControl.StallControl.HasBlocked());
 		  }
-		  if (docsWriter.FlushControl.peakNetBytes > (2d * iwc.RAMBufferSizeMB * 1024d * 1024d))
+		  if (docsWriter.FlushControl.PeakNetBytes > (2d * iwc.RAMBufferSizeMB * 1024d * 1024d))
 		  {
-			Assert.IsTrue(docsWriter.FlushControl.stallControl.wasStalled());
+			Assert.IsTrue(docsWriter.FlushControl.StallControl.WasStalled());
 		  }
 		  AssertActiveBytesAfter(flushControl);
 		  writer.Dispose(true);
@@ -293,9 +293,9 @@ namespace Lucene.Net.Index
 		while (allActiveThreads.MoveNext())
 		{
 		  ThreadState next = allActiveThreads.Current;
-		  if (next.Dwpt != null)
+          if (next.DocumentsWriterPerThread != null)
 		  {
-			bytesUsed += next.Dwpt.bytesUsed();
+			bytesUsed += next.DocumentsWriterPerThread.BytesUsed();
 		  }
 		}
 		Assert.AreEqual(bytesUsed, flushControl.ActiveBytes());
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
 		  {
 			toFlush = state;
 		  }
-		  else if (FlushOnDeleteTerms() && state.Dwpt.pendingUpdates.numTermDeletes.Get() >= IWConfig.MaxBufferedDeleteTerms)
+          else if (FlushOnDeleteTerms() && state.DocumentsWriterPerThread.NumDeleteTerms() >= IWConfig.MaxBufferedDeleteTerms)
 		  {
 			toFlush = state;
 		  }
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index
 		  {
 			toFlush = state;
 		  }
-		  else if (FlushOnDocCount() && state.Dwpt.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
+		  else if (FlushOnDocCount() && state.DocumentsWriterPerThread.NumDocsInRAM >= IWConfig.MaxBufferedDocs)
 		  {
 			toFlush = state;
 		  }
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
 		  else
 		  {
 			PeakBytesWithoutFlush = Math.Max(activeBytes, PeakBytesWithoutFlush);
-			PeakDocCountWithoutFlush = Math.Max(state.Dwpt.NumDocsInRAM, PeakDocCountWithoutFlush);
+            PeakDocCountWithoutFlush = Math.Max(state.DocumentsWriterPerThread.NumDocsInRAM, PeakDocCountWithoutFlush);
 		  }
 
 		  foreach (ThreadState threadState in notPending)

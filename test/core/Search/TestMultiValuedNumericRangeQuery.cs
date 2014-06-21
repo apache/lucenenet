@@ -28,9 +28,9 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestMultiValuedNumericRangeQuery : LuceneTestCase
 	{
 
@@ -40,7 +40,8 @@ namespace Lucene.Net.Search
 	  /// NumericRangeQuery (see SOLR-1322 for discussion) and the multiple precision terms per numeric value
 	  /// do not interfere with multiple numeric values.
 	  /// </summary>
-	  public virtual void TestMultiValuedNRQ()
+      [Test]
+      public virtual void TestMultiValuedNRQ()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));

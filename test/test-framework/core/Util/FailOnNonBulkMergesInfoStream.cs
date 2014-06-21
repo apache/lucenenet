@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
 	public class FailOnNonBulkMergesInfoStream : InfoStream
 	{
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
 

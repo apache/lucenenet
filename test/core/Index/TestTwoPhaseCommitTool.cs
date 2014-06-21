@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 		  this.FailOnRollback = failOnRollback;
 		}
 
-		public override void PrepareCommit()
+		public void PrepareCommit()
 		{
 		  PrepareCommit(null);
 		}
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		public override void Commit()
+		public void Commit()
 		{
 		  Commit(null);
 		}
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		public override void Rollback()
+		public void Rollback()
 		{
 		  RollbackCalled = true;
 		  if (FailOnRollback)

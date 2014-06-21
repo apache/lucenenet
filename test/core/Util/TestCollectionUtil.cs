@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -25,29 +27,29 @@ namespace Lucene.Net.Util
 	public class TestCollectionUtil : LuceneTestCase
 	{
 
-	  private IList<int?> CreateRandomList(int maxSize)
+	  private List<int> CreateRandomList(int maxSize)
 	  {
-		Random rnd = random();
-		int?[] a = new int?[rnd.Next(maxSize) + 1];
+		Random rnd = Random();
+		int[] a = new int[rnd.Next(maxSize) + 1];
 		for (int i = 0; i < a.Length; i++)
 		{
 		  a[i] = Convert.ToInt32(rnd.Next(a.Length));
 		}
-		return Arrays.asList(a);
+		return Arrays.AsList(a);
 	  }
 
 	  public virtual void TestIntroSort()
 	  {
-		for (int i = 0, c = atLeast(500); i < c; i++)
+		for (int i = 0, c = AtLeast(500); i < c; i++)
 		{
-		  IList<int?> list1 = CreateRandomList(2000), list2 = new List<int?>(list1);
+		  List<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
 		  CollectionUtil.IntroSort(list1);
 		  list2.Sort();
 		  Assert.AreEqual(list2, list1);
 
 		  list1 = CreateRandomList(2000);
-		  list2 = new List<>(list1);
-		  CollectionUtil.introSort(list1, Collections.reverseOrder());
+		  list2 = new List<int>(list1);
+		  CollectionUtil.IntroSort(list1, Collections.reverseOrder());
 		  list2.Sort(Collections.reverseOrder());
 		  Assert.AreEqual(list2, list1);
 		  // reverse back, so we can test that completely backwards sorted array (worst case) is working:
@@ -59,20 +61,20 @@ namespace Lucene.Net.Util
 
 	  public virtual void TestTimSort()
 	  {
-		for (int i = 0, c = atLeast(500); i < c; i++)
+		for (int i = 0, c = AtLeast(500); i < c; i++)
 		{
-		  IList<int?> list1 = CreateRandomList(2000), list2 = new List<int?>(list1);
-		  CollectionUtil.timSort(list1);
+		  List<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
+		  CollectionUtil.TimSort(list1);
 		  list2.Sort();
 		  Assert.AreEqual(list2, list1);
 
 		  list1 = CreateRandomList(2000);
-		  list2 = new List<>(list1);
-		  CollectionUtil.timSort(list1, Collections.reverseOrder());
+		  list2 = new List<int>(list1);
+		  CollectionUtil.TimSort(list1, Collections.reverseOrder());
 		  list2.Sort(Collections.reverseOrder());
 		  Assert.AreEqual(list2, list1);
 		  // reverse back, so we can test that completely backwards sorted array (worst case) is working:
-		  CollectionUtil.timSort(list1);
+		  CollectionUtil.TimSort(list1);
 		  list2.Sort();
 		  Assert.AreEqual(list2, list1);
 		}
@@ -81,29 +83,29 @@ namespace Lucene.Net.Util
 	  public virtual void TestEmptyListSort()
 	  {
 		// should produce no exceptions
-		IList<int?> list = Arrays.asList(new int?[0]); // LUCENE-2989
+		IList<int> list = Arrays.AsList(new int[0]); // LUCENE-2989
 		CollectionUtil.IntroSort(list);
-		CollectionUtil.timSort(list);
-		CollectionUtil.introSort(list, Collections.reverseOrder());
-		CollectionUtil.timSort(list, Collections.reverseOrder());
+		CollectionUtil.TimSort(list);
+		CollectionUtil.IntroSort(list, Collections.reverseOrder());
+		CollectionUtil.TimSort(list, Collections.reverseOrder());
 
 		// check that empty non-random access lists pass sorting without ex (as sorting is not needed)
-		list = new LinkedList<>();
+		list = new List<int>();
 		CollectionUtil.IntroSort(list);
-		CollectionUtil.timSort(list);
-		CollectionUtil.introSort(list, Collections.reverseOrder());
-		CollectionUtil.timSort(list, Collections.reverseOrder());
+		CollectionUtil.TimSort(list);
+		CollectionUtil.IntroSort(list, Collections.reverseOrder());
+		CollectionUtil.TimSort(list, Collections.reverseOrder());
 	  }
 
 	  public virtual void TestOneElementListSort()
 	  {
 		// check that one-element non-random access lists pass sorting without ex (as sorting is not needed)
-		IList<int?> list = new LinkedList<int?>();
+		IList<int> list = new List<int>();
 		list.Add(1);
 		CollectionUtil.IntroSort(list);
-		CollectionUtil.timSort(list);
-		CollectionUtil.introSort(list, Collections.reverseOrder());
-		CollectionUtil.timSort(list, Collections.reverseOrder());
+		CollectionUtil.TimSort(list);
+		CollectionUtil.IntroSort(list, Collections.reverseOrder());
+		CollectionUtil.TimSort(list, Collections.reverseOrder());
 	  }
 
 	}

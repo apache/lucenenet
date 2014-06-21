@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 	public class TestStressAdvance : LuceneTestCase
 	{
 
-	  public virtual void TestStressAdvance()
+	  public virtual void TestStressAdvance_Mem()
 	  {
 		for (int iter = 0;iter < 3;iter++)
 		{

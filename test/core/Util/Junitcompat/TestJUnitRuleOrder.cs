@@ -125,7 +125,7 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestRuleOrder()
 	  {
 		JUnitCore.runClasses(typeof(Nested));
-		Assert.Assert.AreEqual(Arrays.ToString(Stack.ToArray()), "[@Rule before, @Before, @After, @Rule after, @AfterClass]");
+		Assert.AreEqual(Arrays.ToString(Stack.ToArray()), "[@Rule before, @Before, @After, @Rule after, @AfterClass]");
 	  }
 	}
 

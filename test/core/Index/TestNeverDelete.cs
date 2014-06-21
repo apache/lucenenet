@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -40,7 +42,7 @@ namespace Lucene.Net.Index
 
 	  public virtual void TestIndexing()
 	  {
-		File tmpDir = CreateTempDir("TestNeverDelete");
+		DirectoryInfo tmpDir = CreateTempDir("TestNeverDelete");
 		BaseDirectoryWrapper d = NewFSDirectory(tmpDir);
 
 		// We want to "see" files removed if Lucene removed
@@ -73,11 +75,11 @@ namespace Lucene.Net.Index
 		  {
 			Console.WriteLine("TEST: check files: " + ic.FileNames);
 		  }
-		  allFiles.addAll(ic.FileNames);
+		  allFiles.AddAll(ic.FileNames);
 		  // Make sure no old files were removed
 		  foreach (string fileName in allFiles)
 		  {
-			Assert.IsTrue("file " + fileName + " does not exist", SlowFileExists(d, fileName));
+			Assert.IsTrue(SlowFileExists(d, fileName), "file " + fileName + " does not exist");
 		  }
 		  DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
 		  if (r2 != null)

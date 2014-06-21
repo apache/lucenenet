@@ -35,18 +35,20 @@ namespace Lucene.Net.Search
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using StringHelper = Lucene.Net.Util.StringHelper;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Create an index with random unicode terms
 	/// Generates random prefix queries, and validates against a simple impl.
 	/// </summary>
-	public class TestPrefixRandom : LuceneTestCase
+	[TestFixture]
+    public class TestPrefixRandom : LuceneTestCase
 	{
 	  private IndexSearcher Searcher;
 	  private IndexReader Reader;
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -71,6 +73,7 @@ namespace Lucene.Net.Search
 		writer.Close();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -92,7 +95,7 @@ namespace Lucene.Net.Search
 		  Prefix = term.Bytes();
 		}
 
-		protected internal override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
+		public override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
 		{
 		  return new SimplePrefixTermsEnum(this, terms.Iterator(null), Prefix);
 		}
@@ -110,7 +113,7 @@ namespace Lucene.Net.Search
 			InitialSeekTerm = new BytesRef("");
 		  }
 
-		  protected internal override AcceptStatus Accept(BytesRef term)
+		  protected override AcceptStatus Accept(BytesRef term)
 		  {
 			return StringHelper.StartsWith(term, Prefix) ? AcceptStatus.YES : AcceptStatus.NO;
 		  }
@@ -124,7 +127,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// test a bunch of random prefixes </summary>
-	  public virtual void TestPrefixes()
+      [Test]
+      public virtual void TestPrefixes()
 	  {
 		  int num = AtLeast(100);
 		  for (int i = 0; i < num; i++)
@@ -137,7 +141,8 @@ namespace Lucene.Net.Search
 	  /// check that the # of hits is the same as from a very
 	  /// simple prefixquery implementation.
 	  /// </summary>
-	  private void AssertSame(string prefix)
+      [Test]
+      private void AssertSame(string prefix)
 	  {
 		PrefixQuery smart = new PrefixQuery(new Term("field", prefix));
 		DumbPrefixQuery dumb = new DumbPrefixQuery(this, new Term("field", prefix));

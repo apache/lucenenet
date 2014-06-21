@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
@@ -46,10 +47,12 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestBooleanQuery : LuceneTestCase
 	{
 
-	  public virtual void TestEquality()
+      [Test]
+      public virtual void TestEquality()
 	  {
 		BooleanQuery bq1 = new BooleanQuery();
 		bq1.Add(new TermQuery(new Term("field", "value1")), BooleanClause.Occur_e.SHOULD);
@@ -70,7 +73,8 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(bq1, bq2);
 	  }
 
-	  public virtual void TestException()
+      [Test]
+      public virtual void TestException()
 	  {
 		try
 		{
@@ -84,7 +88,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-1630
-	  public virtual void TestNullOrSubScorer()
+      [Test]
+      public virtual void TestNullOrSubScorer()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -149,7 +154,8 @@ namespace Lucene.Net.Search
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDeMorgan()
+      [Test]
+      public virtual void TestDeMorgan()
 	  {
 		Directory dir1 = NewDirectory();
 		RandomIndexWriter iw1 = new RandomIndexWriter(Random(), dir1);
@@ -177,7 +183,7 @@ namespace Lucene.Net.Search
 		IndexSearcher searcher = NewSearcher(multireader);
 		Assert.AreEqual(0, searcher.Search(query, 10).TotalHits);
 
-		ExecutorService es = Executors.newCachedThreadPool(new NamedThreadFactory("NRT search threads"));
+		TaskScheduler es = Executors.newCachedThreadPool(new NamedThreadFactory("NRT search threads"));
 		searcher = new IndexSearcher(multireader, es);
 		if (VERBOSE)
 		{
@@ -194,7 +200,8 @@ namespace Lucene.Net.Search
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestBS2DisjunctionNextVsAdvance()
+      [Test]
+      public virtual void TestBS2DisjunctionNextVsAdvance()
 	  {
 		Directory d = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
@@ -257,7 +264,7 @@ namespace Lucene.Net.Search
 
 		  Weight weight = s.CreateNormalizedWeight(q);
 
-		  Scorer scorer = weight.Scorer(s.LeafContexts.Get(0), null);
+          Scorer scorer = weight.Scorer(s.LeafContexts[0], null);
 
 		  // First pass: just use .NextDoc() to gather all hits
 		  IList<ScoreDoc> hits = new List<ScoreDoc>();
@@ -277,7 +284,7 @@ namespace Lucene.Net.Search
 		  {
 
 			weight = s.CreateNormalizedWeight(q);
-			scorer = weight.Scorer(s.LeafContexts.Get(0), null);
+			scorer = weight.Scorer(s.LeafContexts[0], null);
 
 			if (VERBOSE)
 			{
@@ -325,7 +332,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-4477 / LUCENE-4401:
-	  public virtual void TestBooleanSpanQuery()
+      [Test]
+      public virtual void TestBooleanSpanQuery()
 	  {
 		bool failed = false;
 		int hits = 0;
@@ -362,7 +370,8 @@ namespace Lucene.Net.Search
 	  }
 
 	  // LUCENE-5487
-	  public virtual void TestInOrderWithMinShouldMatch()
+      [Test]
+      public virtual void TestInOrderWithMinShouldMatch()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -391,7 +400,7 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
+		  protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, Collector collector)
 		  {
 			Assert.AreEqual(-1, collector.GetType().Name.IndexOf("OutOfOrder"));
 			base.Search(leaves, weight, collector);

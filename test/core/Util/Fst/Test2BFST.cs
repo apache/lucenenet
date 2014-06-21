@@ -41,9 +41,9 @@ namespace Lucene.Net.Util.Fst
 	  {
 		int[] ints = new int[7];
 		IntsRef input = new IntsRef(ints, 0, ints.Length);
-		long seed = random().nextLong();
+		long seed = Random().NextLong();
 
-		Directory dir = new MMapDirectory(createTempDir("2BFST"));
+		Directory dir = new MMapDirectory(CreateTempDir("2BFST"));
 
 		for (int doPackIter = 0;doPackIter < 2;doPackIter++)
 		{
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util.Fst
 			  {
 				ints2[i] = r.Next(256);
 			  }
-			  b.add(input2, NO_OUTPUT);
+			  b.Add(input2, NO_OUTPUT);
 			  count++;
 			  if (count % 100000 == 0)
 			  {
@@ -81,11 +81,11 @@ namespace Lucene.Net.Util.Fst
 			  NextInput(r, ints2);
 			}
 
-			FST<object> fst = b.finish();
+			FST<object> fst = b.Finish();
 
 			for (int verify = 0;verify < 2;verify++)
 			{
-			  Console.WriteLine("\nTEST: now verify [fst size=" + fst.sizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
+			  Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
 			  Arrays.fill(ints2, 0);
 			  r = new Random(seed);
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util.Fst
 				{
 				  ints2[j] = r.Next(256);
 				}
-				Assert.AreEqual(NO_OUTPUT, Util.get(fst, input2));
+				Assert.AreEqual(NO_OUTPUT, Util.Get(fst, input2));
 				NextInput(r, ints2);
 			  }
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util.Fst
 			  int upto = 0;
 			  while (true)
 			  {
-				IntsRefFSTEnum.InputOutput<object> pair = fstEnum.next();
+				IntsRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
 				if (pair == null)
 				{
 				  break;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Fst
 				  ints2[j] = r.Next(256);
 				}
 				Assert.AreEqual(input2, pair.input);
-				Assert.AreEqual(NO_OUTPUT, pair.output);
+				Assert.AreEqual(NO_OUTPUT, pair.Output);
 				upto++;
 				NextInput(r, ints2);
 			  }
@@ -131,12 +131,12 @@ namespace Lucene.Net.Util.Fst
 			  if (verify == 0)
 			  {
 				Console.WriteLine("\nTEST: save/load FST and re-verify");
-				IndexOutput @out = dir.createOutput("fst", IOContext.DEFAULT);
-				fst.save(@out);
-				@out.close();
-				IndexInput @in = dir.openInput("fst", IOContext.DEFAULT);
+				IndexOutput @out = dir.CreateOutput("fst", IOContext.DEFAULT);
+				fst.Save(@out);
+				@out.Dispose();
+				IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
 				fst = new FST<>(@in, outputs);
-				@in.close();
+				@in.Dispose();
 			  }
 			  else
 			  {
@@ -159,9 +159,9 @@ namespace Lucene.Net.Util.Fst
 			Random r = new Random(seed);
 			while (true)
 			{
-			  r.nextBytes(outputBytes);
+			  r.NextBytes(outputBytes);
 			  //System.out.println("add: " + input + " -> " + output);
-			  b.add(input, BytesRef.deepCopyOf(output));
+			  b.Add(input, BytesRef.deepCopyOf(output));
 			  count++;
 			  if (count % 1000000 == 0)
 			  {
@@ -174,11 +174,11 @@ namespace Lucene.Net.Util.Fst
 			  NextInput(r, ints);
 			}
 
-			FST<BytesRef> fst = b.finish();
+			FST<BytesRef> fst = b.Finish();
 			for (int verify = 0;verify < 2;verify++)
 			{
 
-			  Console.WriteLine("\nTEST: now verify [fst size=" + fst.sizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
+			  Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
 			  r = new Random(seed);
 			  Arrays.fill(ints, 0);
@@ -189,8 +189,8 @@ namespace Lucene.Net.Util.Fst
 				{
 				  Console.WriteLine(i + "...: ");
 				}
-				r.nextBytes(outputBytes);
-				Assert.AreEqual(output, Util.get(fst, input));
+				r.NextBytes(outputBytes);
+				Assert.AreEqual(output, Util.Get(fst, input));
 				NextInput(r, ints);
 			  }
 
@@ -202,14 +202,14 @@ namespace Lucene.Net.Util.Fst
 			  int upto = 0;
 			  while (true)
 			  {
-				IntsRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.next();
+				IntsRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
 				if (pair == null)
 				{
 				  break;
 				}
 				Assert.AreEqual(input, pair.input);
-				r.nextBytes(outputBytes);
-				Assert.AreEqual(output, pair.output);
+				r.NextBytes(outputBytes);
+				Assert.AreEqual(output, pair.Output);
 				upto++;
 				NextInput(r, ints);
 			  }
@@ -218,12 +218,12 @@ namespace Lucene.Net.Util.Fst
 			  if (verify == 0)
 			  {
 				Console.WriteLine("\nTEST: save/load FST and re-verify");
-				IndexOutput @out = dir.createOutput("fst", IOContext.DEFAULT);
-				fst.save(@out);
-				@out.close();
-				IndexInput @in = dir.openInput("fst", IOContext.DEFAULT);
+				IndexOutput @out = dir.CreateOutput("fst", IOContext.DEFAULT);
+				fst.Save(@out);
+				@out.Dispose();
+				IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
 				fst = new FST<>(@in, outputs);
-				@in.close();
+				@in.Dispose();
 			  }
 			  else
 			  {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Util.Fst
 			while (true)
 			{
 			  //System.out.println("add: " + input + " -> " + output);
-			  b.add(input, output);
+			  b.Add(input, output);
 			  output += 1 + r.Next(10);
 			  count++;
 			  if (count % 1000000 == 0)
@@ -261,12 +261,12 @@ namespace Lucene.Net.Util.Fst
 			  NextInput(r, ints);
 			}
 
-			FST<long?> fst = b.finish();
+			FST<long?> fst = b.Finish();
 
 			for (int verify = 0;verify < 2;verify++)
 			{
 
-			  Console.WriteLine("\nTEST: now verify [fst size=" + fst.sizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
+			  Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
 			  Arrays.fill(ints, 0);
 
@@ -280,9 +280,9 @@ namespace Lucene.Net.Util.Fst
 				}
 
 				// forward lookup:
-				Assert.AreEqual(output, (long)Util.get(fst, input));
+				Assert.AreEqual(output, (long)Util.Get(fst, input));
 				// reverse lookup:
-				Assert.AreEqual(input, Util.getByOutput(fst, output));
+				Assert.AreEqual(input, Util.GetByOutput(fst, output));
 				output += 1 + r.Next(10);
 				NextInput(r, ints);
 			  }
@@ -296,13 +296,13 @@ namespace Lucene.Net.Util.Fst
 			  output = 1;
 			  while (true)
 			  {
-				IntsRefFSTEnum.InputOutput<long?> pair = fstEnum.next();
+				IntsRefFSTEnum.InputOutput<long?> pair = fstEnum.Next();
 				if (pair == null)
 				{
 				  break;
 				}
 				Assert.AreEqual(input, pair.input);
-				Assert.AreEqual(output, (long)pair.output);
+				Assert.AreEqual(output, (long)pair.Output);
 				output += 1 + r.Next(10);
 				upto++;
 				NextInput(r, ints);
@@ -312,12 +312,12 @@ namespace Lucene.Net.Util.Fst
 			  if (verify == 0)
 			  {
 				Console.WriteLine("\nTEST: save/load FST and re-verify");
-				IndexOutput @out = dir.createOutput("fst", IOContext.DEFAULT);
-				fst.save(@out);
-				@out.close();
-				IndexInput @in = dir.openInput("fst", IOContext.DEFAULT);
+				IndexOutput @out = dir.CreateOutput("fst", IOContext.DEFAULT);
+				fst.Save(@out);
+				@out.Dispose();
+				IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
 				fst = new FST<>(@in, outputs);
-				@in.close();
+				@in.Dispose();
 			  }
 			  else
 			  {
@@ -326,7 +326,7 @@ namespace Lucene.Net.Util.Fst
 			}
 		  }
 		}
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  private void NextInput(Random r, int[] ints)

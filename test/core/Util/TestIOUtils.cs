@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -33,7 +35,7 @@ namespace Lucene.Net.Util
 		  this.i = i;
 		}
 
-		public override void Close()
+		public void Dispose()
 		{
 		  throw new IOException("TEST-IO-EXCEPTION-" + i);
 		}
@@ -58,17 +60,17 @@ namespace Lucene.Net.Util
 		{
 		  Assert.AreEqual("BASE-EXCEPTION", e1.Message);
 		  StringWriter sw = new StringWriter();
-		  PrintWriter pw = new PrintWriter(sw);
+          StreamWriter pw = new StreamWriter(sw);
 		  e1.printStackTrace(pw);
-		  pw.flush();
+		  pw.Flush();
 		  string trace = sw.ToString();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TestIOUtils.testSuppressedExceptions: Thrown Exception stack trace:");
 			Console.WriteLine(trace);
 		  }
-		  Assert.IsTrue("Stack trace does not contain first suppressed Exception: " + trace, trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-1"));
-		  Assert.IsTrue("Stack trace does not contain second suppressed Exception: " + trace, trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-2"));
+		  Assert.IsTrue(trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-1"), "Stack trace does not contain first suppressed Exception: " + trace);
+		  Assert.IsTrue(trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain second suppressed Exception: " + trace);
 		}
 		catch (IOException e2)
 		{
@@ -88,16 +90,16 @@ namespace Lucene.Net.Util
 		{
 		  Assert.AreEqual("TEST-IO-EXCEPTION-1", e2.Message);
 		  StringWriter sw = new StringWriter();
-		  PrintWriter pw = new PrintWriter(sw);
+          StreamWriter pw = new StreamWriter(sw);
 		  e2.printStackTrace(pw);
-		  pw.flush();
+		  pw.Flush();
 		  string trace = sw.ToString();
 		  if (VERBOSE)
 		  {
 			Console.WriteLine("TestIOUtils.testSuppressedExceptions: Thrown Exception stack trace:");
 			Console.WriteLine(trace);
 		  }
-		  Assert.IsTrue("Stack trace does not contain suppressed Exception: " + trace, trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-2"));
+		  Assert.IsTrue(trace.Contains("java.io.IOException: TEST-IO-EXCEPTION-2"), "Stack trace does not contain suppressed Exception: " + trace);
 		}
 	  }
 

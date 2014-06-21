@@ -37,13 +37,15 @@ namespace Lucene.Net.Search
 	/// <summary>
 	/// Some simple regex tests, mostly converted from contrib's TestRegexQuery.
 	/// </summary>
-	public class TestRegexpQuery : LuceneTestCase
+	[TestFixture]
+    public class TestRegexpQuery : LuceneTestCase
 	{
 	  private IndexSearcher Searcher;
 	  private IndexReader Reader;
 	  private Directory Directory;
 	  private readonly string FN = "field";
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -57,6 +59,7 @@ namespace Lucene.Net.Search
 		Searcher = NewSearcher(Reader);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -75,35 +78,41 @@ namespace Lucene.Net.Search
 		return Searcher.Search(query, 5).TotalHits;
 	  }
 
-	  public virtual void TestRegex1()
+      [Test]
+      public virtual void TestRegex1()
 	  {
 		Assert.AreEqual(1, RegexQueryNrHits("q.[aeiou]c.*"));
 	  }
 
-	  public virtual void TestRegex2()
+      [Test]
+      public virtual void TestRegex2()
 	  {
 		Assert.AreEqual(0, RegexQueryNrHits(".[aeiou]c.*"));
 	  }
 
-	  public virtual void TestRegex3()
+      [Test]
+      public virtual void TestRegex3()
 	  {
 		Assert.AreEqual(0, RegexQueryNrHits("q.[aeiou]c"));
 	  }
 
-	  public virtual void TestNumericRange()
+      [Test]
+      public virtual void TestNumericRange()
 	  {
 		Assert.AreEqual(1, RegexQueryNrHits("<420000-600000>"));
 		Assert.AreEqual(0, RegexQueryNrHits("<493433-600000>"));
 	  }
 
-	  public virtual void TestRegexComplement()
+      [Test]
+      public virtual void TestRegexComplement()
 	  {
 		Assert.AreEqual(1, RegexQueryNrHits("4934~[3]"));
 		// not the empty lang, i.e. match all docs
 		Assert.AreEqual(1, RegexQueryNrHits("~#"));
 	  }
 
-	  public virtual void TestCustomProvider()
+      [Test]
+      public virtual void TestCustomProvider()
 	  {
 		AutomatonProvider myProvider = new AutomatonProviderAnonymousInnerClassHelper(this);
 		RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExp.ALL, myProvider);
@@ -123,7 +132,7 @@ namespace Lucene.Net.Search
 			// automaton that matches quick or brown
 		  private Automaton quickBrownAutomaton;
 
-		  public override Automaton GetAutomaton(string name)
+		  public Automaton GetAutomaton(string name)
 		  {
 			if (name.Equals("quickBrown"))
 			{
@@ -142,7 +151,8 @@ namespace Lucene.Net.Search
 	  /// necessary to test that 4934 itself is ok before trying to append more
 	  /// characters.
 	  /// </summary>
-	  public virtual void TestBacktracking()
+      [Test]
+      public virtual void TestBacktracking()
 	  {
 		Assert.AreEqual(1, RegexQueryNrHits("4934[314]"));
 	  }

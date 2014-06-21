@@ -26,9 +26,9 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public sealed class FakeScorer : Scorer
 	{
-	  internal float Score_Renamed;
-	  internal int Doc = -1;
-	  internal int Freq_Renamed = 1;
+	  internal float score;
+	  internal int doc = -1;
+	  internal int freq = 1;
 
 	  public FakeScorer() : base(null)
 	  {
@@ -41,13 +41,28 @@ namespace Lucene.Net.Search
 
 	  public override int DocID()
 	  {
-		return Doc;
+		return doc;
 	  }
 
 	  public override int Freq()
 	  {
-		return Freq_Renamed;
+		return freq;
 	  }
+
+	    public void SetFreq(int value)
+	    {
+	        freq = value;
+	    }
+
+	    public void SetDoc(int value)
+	    {
+	        doc = value;
+	    }
+
+	    public void SetScore(float value)
+	    {
+	        score = value;
+	    }
 
 	  public override int NextDoc()
 	  {
@@ -56,7 +71,7 @@ namespace Lucene.Net.Search
 
 	  public override float Score()
 	  {
-		return Score_Renamed;
+		return score;
 	  }
 
 	  public override long Cost()

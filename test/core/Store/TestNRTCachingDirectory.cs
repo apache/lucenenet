@@ -115,7 +115,7 @@ namespace Lucene.Net.Store
 		}
 		r.Dispose();
 		cachedDir.Dispose();
-        docs.Close();
+        docs.Dispose();
 	  }
 
 	  // NOTE: not a test; just here to make sure the code frag

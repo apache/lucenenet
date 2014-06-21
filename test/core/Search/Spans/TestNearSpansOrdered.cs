@@ -31,6 +31,7 @@ namespace Lucene.Net.Search.Spans
     using NUnit.Framework;
     using Lucene.Net.Index;
 
+    [TestFixture]
 	public class TestNearSpansOrdered : LuceneTestCase
 	{
 	  protected internal IndexSearcher Searcher;
@@ -39,6 +40,7 @@ namespace Lucene.Net.Search.Spans
 
 	  public const string FIELD = "field";
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -46,6 +48,7 @@ namespace Lucene.Net.Search.Spans
 		base.TearDown();
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -73,10 +76,11 @@ namespace Lucene.Net.Search.Spans
 		return MakeQuery("w1","w2","w3",1,true);
 	  }
 
-	  public virtual void TestSpanNearQuery()
+      [Test]
+      public virtual void TestSpanNearQuery()
 	  {
 		SpanNearQuery q = MakeQuery();
-		CheckHits.CheckHits(Random(), q, FIELD, Searcher, new int[] {0,1});
+		CheckHits.DoCheckHits(Random(), q, FIELD, Searcher, new int[] {0,1});
 	  }
 
 	  public virtual string s(Spans span)
@@ -88,7 +92,8 @@ namespace Lucene.Net.Search.Spans
 		return "s(" + doc + "," + start + "," + end + ")";
 	  }
 
-	  public virtual void TestNearSpansNext()
+      [Test]
+      public virtual void TestNearSpansNext()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
@@ -104,7 +109,8 @@ namespace Lucene.Net.Search.Spans
 	  /// same as next -- it's only applicable in this case since we know doc
 	  /// does not contain more than one span
 	  /// </summary>
-	  public virtual void TestNearSpansSkipToLikeNext()
+      [Test]
+      public virtual void TestNearSpansSkipToLikeNext()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
@@ -115,7 +121,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(false, span.SkipTo(2));
 	  }
 
-	  public virtual void TestNearSpansNextThenSkipTo()
+      [Test]
+      public virtual void TestNearSpansNextThenSkipTo()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
@@ -126,7 +133,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(false, span.Next());
 	  }
 
-	  public virtual void TestNearSpansNextThenSkipPast()
+      [Test]
+      public virtual void TestNearSpansNextThenSkipPast()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
@@ -135,14 +143,16 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(false, span.SkipTo(2));
 	  }
 
-	  public virtual void TestNearSpansSkipPast()
+      [Test]
+      public virtual void TestNearSpansSkipPast()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
 		Assert.AreEqual(false, span.SkipTo(2));
 	  }
 
-	  public virtual void TestNearSpansSkipTo0()
+      [Test]
+      public virtual void TestNearSpansSkipTo0()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
@@ -150,7 +160,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(s(0,0,3), s(span));
 	  }
 
-	  public virtual void TestNearSpansSkipTo1()
+      [Test]
+      public virtual void TestNearSpansSkipTo1()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
@@ -162,7 +173,8 @@ namespace Lucene.Net.Search.Spans
 	  /// not a direct test of NearSpans, but a demonstration of how/when
 	  /// this causes problems
 	  /// </summary>
-	  public virtual void TestSpanNearScorerSkipTo1()
+      [Test]
+      public virtual void TestSpanNearScorerSkipTo1()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Weight w = Searcher.CreateNormalizedWeight(q);
@@ -176,7 +188,8 @@ namespace Lucene.Net.Search.Spans
 	  /// not a direct test of NearSpans, but a demonstration of how/when
 	  /// this causes problems
 	  /// </summary>
-	  public virtual void TestSpanNearScorerExplain()
+      [Test]
+      public virtual void TestSpanNearScorerExplain()
 	  {
 		SpanNearQuery q = MakeQuery();
 		Explanation e = Searcher.Explain(q, 1);

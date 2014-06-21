@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Lucene.Net.Search.Spans
 {
 
-	/// <summary>
+	/*
 	/// Copyright 2004 The Apache Software Foundation
 	/// 
 	/// Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ namespace Lucene.Net.Search.Spans
 	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	/// See the License for the specific language governing permissions and
 	/// limitations under the License.
-	/// </summary>
+	*/
 
 
 	using Analyzer = Lucene.Net.Analysis.Analyzer;
@@ -46,6 +46,7 @@ namespace Lucene.Net.Search.Spans
     using Lucene.Net.Util;
     using System.IO;
 
+    [TestFixture]
 	public class TestPayloadSpans : LuceneTestCase
 	{
 	  private IndexSearcher Searcher_Renamed;
@@ -54,6 +55,7 @@ namespace Lucene.Net.Search.Spans
 	  private IndexReader CloseIndexReader;
 	  private Directory Directory;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -62,7 +64,8 @@ namespace Lucene.Net.Search.Spans
 		IndexReader = Searcher_Renamed.IndexReader;
 	  }
 
-	  public virtual void TestSpanTermQuery()
+      [Test]
+      public virtual void TestSpanTermQuery()
 	  {
 		SpanTermQuery stq;
 		Spans spans;
@@ -77,7 +80,8 @@ namespace Lucene.Net.Search.Spans
 		CheckSpans(spans, 100, 0, 0, 0);
 	  }
 
-	  public virtual void TestSpanFirst()
+      [Test]
+      public virtual void TestSpanFirst()
 	  {
 
 		SpanQuery match;
@@ -100,7 +104,8 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestSpanNot()
+      [Test]
+      public virtual void TestSpanNot()
 	  {
 		SpanQuery[] clauses = new SpanQuery[2];
 		clauses[0] = new SpanTermQuery(new Term(PayloadHelper.FIELD, "one"));
@@ -125,7 +130,8 @@ namespace Lucene.Net.Search.Spans
 		directory.Dispose();
 	  }
 
-	  public virtual void TestNestedSpans()
+      [Test]
+      public virtual void TestNestedSpans()
 	  {
 		SpanTermQuery stq;
 		Spans spans;
@@ -183,7 +189,8 @@ namespace Lucene.Net.Search.Spans
 		Directory.Dispose();
 	  }
 
-	  public virtual void TestFirstClauseWithoutPayload()
+      [Test]
+      public virtual void TestFirstClauseWithoutPayload()
 	  {
 		Spans spans;
 		IndexSearcher searcher = Searcher;
@@ -216,7 +223,8 @@ namespace Lucene.Net.Search.Spans
 		Directory.Dispose();
 	  }
 
-	  public virtual void TestHeavilyNestedSpanQuery()
+      [Test]
+      public virtual void TestHeavilyNestedSpanQuery()
 	  {
 		Spans spans;
 		IndexSearcher searcher = Searcher;
@@ -254,7 +262,8 @@ namespace Lucene.Net.Search.Spans
 		Directory.Dispose();
 	  }
 
-	  public virtual void TestShrinkToAfterShortestMatch()
+      [Test]
+      public virtual void TestShrinkToAfterShortestMatch()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
@@ -294,7 +303,8 @@ namespace Lucene.Net.Search.Spans
 		directory.Dispose();
 	  }
 
-	  public virtual void TestShrinkToAfterShortestMatch2()
+      [Test]
+      public virtual void TestShrinkToAfterShortestMatch2()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
@@ -332,7 +342,8 @@ namespace Lucene.Net.Search.Spans
 		directory.Dispose();
 	  }
 
-	  public virtual void TestShrinkToAfterShortestMatch3()
+      [Test]
+      public virtual void TestShrinkToAfterShortestMatch3()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
@@ -379,7 +390,8 @@ namespace Lucene.Net.Search.Spans
 		directory.Dispose();
 	  }
 
-	  public virtual void TestPayloadSpanUtil()
+      [Test]
+      public virtual void TestPayloadSpanUtil()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(Similarity));
@@ -511,7 +523,7 @@ namespace Lucene.Net.Search.Spans
 		  }
 
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));
@@ -582,7 +594,7 @@ namespace Lucene.Net.Search.Spans
 		  }
 
 
-		public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		{
 		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
 		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));

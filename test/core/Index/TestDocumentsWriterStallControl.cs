@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -114,7 +115,7 @@ namespace Lucene.Net.Index
 			  Ctrl.UpdateStalled(Random().Next(StallProbability) == 0);
 			  if (Random().Next(5) == 0) // thread 0 only updates
 			  {
-				Ctrl.waitIfStalled();
+				Ctrl.WaitIfStalled();
 			  }
 			}
 		  }
@@ -180,7 +181,7 @@ namespace Lucene.Net.Index
 		  }
 		  Assert.IsFalse(checkPoint.Get());
 		  Assert.AreEqual(0, sync.Waiter.Count);
-		  if (checkPointProbability >= Random().nextFloat())
+		  if (checkPointProbability >= (float)Random().NextDouble())
 		  {
 			sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
 			checkPoint.Set(true);
@@ -271,7 +272,7 @@ namespace Lucene.Net.Index
 		  {
 			while (!Stop.Get())
 			{
-			  Ctrl.waitIfStalled();
+			  Ctrl.WaitIfStalled();
 			  if (CheckPoint.Get())
 			  {
 				try
@@ -329,7 +330,7 @@ namespace Lucene.Net.Index
 			  }
 			  if (CheckPoint.Get())
 			  {
-				Sync.UpdateJoin.countDown();
+				Sync.UpdateJoin.CountDown();
 				try
 				{
 				  Assert.IsTrue(Sync.@await());
@@ -339,11 +340,11 @@ namespace Lucene.Net.Index
 				  Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Count);
 				  throw new ThreadInterruptedException(e);
 				}
-				Sync.LeftCheckpoint.countDown();
+				Sync.LeftCheckpoint.CountDown();
 			  }
 			  if (Random().NextBoolean())
 			  {
-				Thread.@yield();
+				Thread.@Yield();
 			  }
 			}
 		  }
@@ -353,7 +354,7 @@ namespace Lucene.Net.Index
 			Console.Write(e.StackTrace);
 			Exceptions.Add(e);
 		  }
-		  Sync.UpdateJoin.countDown();
+          Sync.UpdateJoin.CountDown();
 		}
 
 	  }
@@ -389,26 +390,26 @@ namespace Lucene.Net.Index
 
       public static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
 	  {
-		ThreadClass[] array = new Thread[num];
+		ThreadClass[] array = new ThreadClass[num];
 		for (int i = 0; i < array.Length; i++)
 		{
-		  array[i] = new ThreadAnonymousInnerClassHelper(ctrl);
+		  array[i] = new ThreadAnonymousInnerClassHelper2(ctrl);
 		}
 		return array;
 	  }
 
-      private class ThreadAnonymousInnerClassHelper : ThreadClass
+      private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 	  {
 		  private DocumentsWriterStallControl Ctrl;
 
-		  public ThreadAnonymousInnerClassHelper(DocumentsWriterStallControl ctrl)
+		  public ThreadAnonymousInnerClassHelper2(DocumentsWriterStallControl ctrl)
 		  {
 			  this.Ctrl = ctrl;
 		  }
 
 		  public override void Run()
 		  {
-			Ctrl.waitIfStalled();
+			Ctrl.WaitIfStalled();
 		  }
 	  }
 
@@ -416,12 +417,12 @@ namespace Lucene.Net.Index
 	  /// Waits for all incoming threads to be in wait()
 	  ///  methods. 
 	  /// </summary>
-	  public static void AwaitState(Thread.State state, params Thread[] threads)
+	  public static void AwaitState(Thread.State state, params ThreadClass[] threads)
 	  {
 		while (true)
 		{
 		  bool done = true;
-		  foreach (Thread thread in threads)
+          foreach (ThreadClass thread in threads)
 		  {
 			if (thread.State != state)
 			{
@@ -435,7 +436,7 @@ namespace Lucene.Net.Index
 		  }
 		  if (Random().NextBoolean())
 		  {
-			Thread.@yield();
+			Thread.@Yield();
 		  }
 		  else
 		  {
@@ -444,7 +445,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private sealed class Synchronizer
+	    public sealed class Synchronizer
 	  {
 		internal volatile CountDownLatch Waiter;
 		internal volatile CountDownLatch UpdateJoin;

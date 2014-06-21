@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
 
 	  public override Weight CreateWeight(IndexSearcher searcher)
 	  {
-		return AssertingWeight.Wrap(new Random(Random.nextLong()), @in.CreateWeight(searcher));
+		return AssertingWeight.Wrap(new Random(Random.Next()), @in.CreateWeight(searcher));
 	  }
 
 	  public override void ExtractTerms(ISet<Term> terms)
@@ -73,14 +73,14 @@ namespace Lucene.Net.Search
 		return this.@in.Equals(that.@in);
 	  }
 
-	  public override int HashCode()
+	  public override int GetHashCode()
 	  {
 		return -@in.GetHashCode();
 	  }
 
-	  public override Query Clone()
+	  public override object Clone()
 	  {
-		return Wrap(new Random(Random.nextLong()), (Query)@in.Clone());
+		return Wrap(new Random(Random.Next()), (Query)@in.Clone());
 	  }
 
 	  public override Query Rewrite(IndexReader reader)
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 		}
 		else
 		{
-		  return Wrap(new Random(Random.nextLong()), rewritten);
+		  return Wrap(new Random(Random.Next()), rewritten);
 		}
 	  }
 

@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 			Length_Renamed = bytes.Length;
 		}
 
-		protected internal override void ReadInternal(sbyte[] dest, int destOffset, int len)
+		protected override void ReadInternal(byte[] dest, int destOffset, int len)
 		{
 			int remainder = len;
 			int start = Pointer;
@@ -57,12 +57,12 @@ namespace Lucene.Net.Index
 			Pointer += len;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 			// ignore
 		}
 
-		protected internal override void SeekInternal(long pos)
+		protected override void SeekInternal(long pos)
 		{
 			Pointer = (int) pos;
 		}

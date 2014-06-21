@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
 				this.OuterInstance = outerInstance;
 			}
 
-			public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+			protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 			{
 			  return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
 			}
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 				  this.Input.ReadBytes(b, offset, len);
 			  }
 
-			  public override void Close()
+			  public override void Dispose()
 			  {
 				  this.Input.Dispose();
 			  }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
 				  return this.Input.Length();
 			  }
 
-			  public override SeeksCountingStream Clone()
+			  public override object Clone()
 			  {
 				  return new SeeksCountingStream(OuterInstance, (IndexInput)this.Input.Clone());
 			  }

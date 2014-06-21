@@ -2,8 +2,6 @@ namespace Lucene.Net.Util.junitcompat
 {
 
 
-	using TestGroup = com.carrotsearch.randomizedtesting.annotations.TestGroup;
-
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -49,7 +47,8 @@ namespace Lucene.Net.Util.junitcompat
 	  }
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Documented @Inherited @Retention(RetentionPolicy.RUNTIME) @TestGroup(enabled = false) public class Jira extends System.Attribute
-	  public class Jira : System.Attribute
+	 /* LUCENE TODO: Not used
+      public class Jira : System.Attribute
 	  {
 		  private readonly TestGroupFiltering OuterInstance;
 
@@ -59,26 +58,26 @@ namespace Lucene.Net.Util.junitcompat
 		  }
 
 		string bug();
-	  }
+	  }*/
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Foo public void testFoo()
-	  public void testFoo()
+	  public void TestFoo()
 	  {
 	  }
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Foo @Bar public void testFooBar()
-	  public void testFooBar()
+	  public void TestFooBar()
 	  {
 	  }
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Bar public void testBar()
-	  public void testBar()
+	  public void TestBar()
 	  {
 	  }
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Jira(bug = "JIRA bug reference") public void testJira()
-	  public void testJira()
+	  public void TestJira()
 	  {
 	  }
 	}

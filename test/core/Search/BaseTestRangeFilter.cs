@@ -33,6 +33,7 @@ namespace Lucene.Net.Search
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class BaseTestRangeFilter : LuceneTestCase
 	{
 
@@ -97,7 +98,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClassBaseTestRangeFilter() throws Exception
-	  public static void BeforeClassBaseTestRangeFilter()
+	  [TestFixtureSetUp]
+      public static void BeforeClassBaseTestRangeFilter()
 	  {
 		MaxId = AtLeast(500);
 		SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
@@ -108,7 +110,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClassBaseTestRangeFilter() throws Exception
-	  public static void AfterClassBaseTestRangeFilter()
+	  [TestFixtureTearDown]
+      public static void AfterClassBaseTestRangeFilter()
 	  {
 		SignedIndexReader.Dispose();
 		UnsignedIndexReader.Dispose();
@@ -187,7 +190,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testPad()
-	  public virtual void TestPad()
+      [Test]
+      public virtual void TestPad()
 	  {
 
 		int[] tests = new int[] {-9999999, -99560, -100, -3, -1, 0, 3, 9, 10, 1000, 999999999};

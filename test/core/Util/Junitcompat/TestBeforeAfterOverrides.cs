@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Util.junitcompat
 {
 
@@ -84,8 +86,8 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestBefore()
 	  {
 		Result result = JUnitCore.runClasses(typeof(Before3));
-		Assert.Assert.AreEqual(1, result.FailureCount);
-		Assert.Assert.IsTrue(result.Failures.get(0).Trace.contains("There are overridden methods"));
+		Assert.AreEqual(1, result.FailureCount);
+		Assert.IsTrue(result.Failures.Get(0).Trace.Contains("There are overridden methods"));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -93,8 +95,8 @@ namespace Lucene.Net.Util.junitcompat
 	  public virtual void TestAfter()
 	  {
 		Result result = JUnitCore.runClasses(typeof(Before3));
-		Assert.Assert.AreEqual(1, result.FailureCount);
-		Assert.Assert.IsTrue(result.Failures.get(0).Trace.contains("There are overridden methods"));
+		Assert.AreEqual(1, result.FailureCount);
+		Assert.IsTrue(result.Failures.Get(0).Trace.Contains("There are overridden methods"));
 	  }
 	}
 

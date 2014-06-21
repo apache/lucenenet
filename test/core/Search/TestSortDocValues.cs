@@ -40,13 +40,15 @@ namespace Lucene.Net.Search
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "Appending", "Lucene40", "Lucene41", "Lucene42"}) public class TestSortDocValues extends Lucene.Net.Util.LuceneTestCase
+    [TestFixture]
 	public class TestSortDocValues : LuceneTestCase
 	{
+        [SetUp]
 		public override void SetUp()
 		{
-		base.SetUp();
-		// ensure there is nothing in fieldcache before test starts
-		FieldCache_Fields.DEFAULT.PurgeAllCaches();
+		    base.SetUp();
+		    // ensure there is nothing in fieldcache before test starts
+		    FieldCache_Fields.DEFAULT.PurgeAllCaches();
 		}
 
 	  private void AssertNoFieldCaches()
@@ -57,7 +59,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type string </summary>
-	  public virtual void TestString()
+      [Test]
+      public virtual void TestString()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -88,7 +91,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests reverse sorting on type string </summary>
-	  public virtual void TestStringReverse()
+      [Test]
+      public virtual void TestStringReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -119,7 +123,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type string_val </summary>
-	  public virtual void TestStringVal()
+      [Test]
+      public virtual void TestStringVal()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -150,7 +155,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests reverse sorting on type string_val </summary>
-	  public virtual void TestStringValReverse()
+      [Test]
+      public virtual void TestStringValReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -181,7 +187,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type string_val, but with a SortedDocValuesField </summary>
-	  public virtual void TestStringValSorted()
+      [Test]
+      public virtual void TestStringValSorted()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -212,7 +219,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests reverse sorting on type string_val, but with a SortedDocValuesField </summary>
-	  public virtual void TestStringValReverseSorted()
+      [Test]
+      public virtual void TestStringValReverseSorted()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -243,7 +251,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type byte </summary>
-	  public virtual void TestByte()
+      [Test]
+      public virtual void TestByte()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -279,7 +288,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type byte in reverse </summary>
-	  public virtual void TestByteReverse()
+      [Test]
+      public virtual void TestByteReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -315,7 +325,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type short </summary>
-	  public virtual void TestShort()
+      [Test]
+      public virtual void TestShort()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -351,7 +362,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type short in reverse </summary>
-	  public virtual void TestShortReverse()
+      [Test]
+      public virtual void TestShortReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -387,7 +399,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type int </summary>
-	  public virtual void TestInt()
+      [Test]
+      public virtual void TestInt()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -423,7 +436,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type int in reverse </summary>
-	  public virtual void TestIntReverse()
+      [Test]
+      public virtual void TestIntReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -459,7 +473,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type int with a missing value </summary>
-	  public virtual void TestIntMissing()
+      [Test]
+      public virtual void TestIntMissing()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -492,7 +507,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type int, specifying the missing value should be treated as Integer.MAX_VALUE </summary>
-	  public virtual void TestIntMissingLast()
+      [Test]
+      public virtual void TestIntMissingLast()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -527,7 +543,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type long </summary>
-	  public virtual void TestLong()
+      [Test]
+      public virtual void TestLong()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -563,7 +580,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type long in reverse </summary>
-	  public virtual void TestLongReverse()
+      [Test]
+      public virtual void TestLongReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -599,7 +617,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type long with a missing value </summary>
-	  public virtual void TestLongMissing()
+      [Test]
+      public virtual void TestLongMissing()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -632,7 +651,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type long, specifying the missing value should be treated as Long.MAX_VALUE </summary>
-	  public virtual void TestLongMissingLast()
+      [Test]
+      public virtual void TestLongMissingLast()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -667,7 +687,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type float </summary>
-	  public virtual void TestFloat()
+      [Test]
+      public virtual void TestFloat()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -703,7 +724,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type float in reverse </summary>
-	  public virtual void TestFloatReverse()
+      [Test]
+      public virtual void TestFloatReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -739,7 +761,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type float with a missing value </summary>
-	  public virtual void TestFloatMissing()
+      [Test]
+      public virtual void TestFloatMissing()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -772,7 +795,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type float, specifying the missing value should be treated as Float.MAX_VALUE </summary>
-	  public virtual void TestFloatMissingLast()
+      [Test]
+      public virtual void TestFloatMissingLast()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -807,7 +831,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type double </summary>
-	  public virtual void TestDouble()
+      [Test]
+      public virtual void TestDouble()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -848,7 +873,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type double with +/- zero </summary>
-	  public virtual void TestDoubleSignedZero()
+      [Test]
+      public virtual void TestDoubleSignedZero()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -879,7 +905,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type double in reverse </summary>
-	  public virtual void TestDoubleReverse()
+      [Test]
+      public virtual void TestDoubleReverse()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -920,7 +947,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type double with a missing value </summary>
-	  public virtual void TestDoubleMissing()
+      [Test]
+      public virtual void TestDoubleMissing()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -958,7 +986,8 @@ namespace Lucene.Net.Search
 
 	  /// <summary>
 	  /// Tests sorting on type double, specifying the missing value should be treated as Double.MAX_VALUE </summary>
-	  public virtual void TestDoubleMissingLast()
+      [Test]
+      public virtual void TestDoubleMissingLast()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);

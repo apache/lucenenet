@@ -1,3 +1,5 @@
+using Lucene.Net.Document;
+
 namespace Lucene.Net.Search.Similarities
 {
 
@@ -26,7 +28,7 @@ namespace Lucene.Net.Search.Similarities
 	/// </summary>
 	public class BasicStats : Similarity.SimWeight
 	{
-	  internal readonly string Field;
+	  protected internal readonly string field;
 	  /// <summary>
 	  /// The number of documents. </summary>
 	  protected internal long NumberOfDocuments_Renamed;
@@ -62,7 +64,7 @@ namespace Lucene.Net.Search.Similarities
 	  /// Constructor. Sets the query boost. </summary>
 	  public BasicStats(string field, float queryBoost)
 	  {
-		this.Field = field;
+		this.field = field;
 		this.QueryBoost = queryBoost;
 		this.TotalBoost_Renamed = queryBoost;
 	  }
@@ -144,6 +146,10 @@ namespace Lucene.Net.Search.Similarities
 		  }
 	  }
 
+	    public virtual string Field
+	    {
+	        get { return field; }
+	    }
 
 	  // -------------------------- Boost-related stuff --------------------------
 

@@ -46,7 +46,8 @@ namespace Lucene.Net.Search
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestShardSearching extends ShardSearchingTestBase
-	public class TestShardSearching : ShardSearchingTestBase
+	[TestFixture]
+    public class TestShardSearching : ShardSearchingTestBase
 	{
 
 	  private class PreviousSearchState
@@ -71,7 +72,8 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  public virtual void TestSimple()
+      [Test]
+      public virtual void TestSimple()
 	  {
 		int numNodes = TestUtil.NextInt(Random(), 1, 10);
 

@@ -1,9 +1,10 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
 
-	/// <summary>
+	/*
 	/// Copyright 2009 The Apache Software Foundation
 	/// 
 	/// Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +18,13 @@ namespace Lucene.Net.Util
 	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	/// See the License for the specific language governing permissions and
 	/// limitations under the License.
-	/// </summary>
+	*/
 
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
-	using FieldCache = Lucene.Net.Search.FieldCache;
+    using FieldCache = Lucene.Net.Search.FieldCache;
+    using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
 	using AtomicReader = Lucene.Net.Index.AtomicReader;
 	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 	using MultiReader = Lucene.Net.Index.MultiReader;
@@ -44,12 +46,12 @@ namespace Lucene.Net.Util
 
 	  public override void SetUp()
 	  {
-		base.setUp();
-		DirA = newDirectory();
-		DirB = newDirectory();
+		base.SetUp();
+		DirA = NewDirectory();
+		DirB = NewDirectory();
 
-		IndexWriter wA = new IndexWriter(DirA, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
-		IndexWriter wB = new IndexWriter(DirB, newIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random())));
+		IndexWriter wA = new IndexWriter(DirA, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+		IndexWriter wB = new IndexWriter(DirB, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
 		long theLong = long.MaxValue;
 		double theDouble = double.MaxValue;
@@ -60,111 +62,111 @@ namespace Lucene.Net.Util
 		for (int i = 0; i < NUM_DOCS; i++)
 		{
 		  Document doc = new Document();
-		  doc.add(newStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
-		  doc.add(newStringField("theDouble", Convert.ToString(theDouble--), Field.Store.NO));
-		  doc.add(newStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
-		  doc.add(newStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
-		  doc.add(newStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));
-		  doc.add(newStringField("theFloat", Convert.ToString(theFloat--), Field.Store.NO));
+		  doc.Add(NewStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
+		  doc.Add(NewStringField("theDouble", Convert.ToString(theDouble--), Field.Store.NO));
+		  doc.Add(NewStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
+		  doc.Add(NewStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
+		  doc.Add(NewStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));
+		  doc.Add(NewStringField("theFloat", Convert.ToString(theFloat--), Field.Store.NO));
 		  if (0 == i % 3)
 		  {
-			wA.addDocument(doc);
+			wA.AddDocument(doc);
 		  }
 		  else
 		  {
-			wB.addDocument(doc);
+			wB.AddDocument(doc);
 		  }
 		}
-		wA.close();
-		wB.close();
-		DirectoryReader rA = DirectoryReader.open(DirA);
-		ReaderA = SlowCompositeReaderWrapper.wrap(rA);
-		ReaderAclone = SlowCompositeReaderWrapper.wrap(rA);
-		ReaderA = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(DirA));
-		ReaderB = SlowCompositeReaderWrapper.wrap(DirectoryReader.open(DirB));
-		ReaderX = SlowCompositeReaderWrapper.wrap(new MultiReader(ReaderA, ReaderB));
+		wA.Dispose();
+		wB.Dispose();
+		DirectoryReader rA = DirectoryReader.Open(DirA);
+		ReaderA = SlowCompositeReaderWrapper.Wrap(rA);
+		ReaderAclone = SlowCompositeReaderWrapper.Wrap(rA);
+		ReaderA = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(DirA));
+		ReaderB = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(DirB));
+		ReaderX = SlowCompositeReaderWrapper.Wrap(new MultiReader(ReaderA, ReaderB));
 	  }
 
 	  public override void TearDown()
 	  {
-		ReaderA.close();
-		ReaderAclone.close();
-		ReaderB.close();
-		ReaderX.close();
-		DirA.close();
-		DirB.close();
-		base.tearDown();
+		ReaderA.Dispose();
+		ReaderAclone.Dispose();
+		ReaderB.Dispose();
+		ReaderX.Dispose();
+		DirA.Dispose();
+		DirB.Dispose();
+		base.TearDown();
 	  }
 
 	  public virtual void TestSanity()
 	  {
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
 
-		cache.getDoubles(ReaderA, "theDouble", false);
-		cache.getDoubles(ReaderA, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
-		cache.getDoubles(ReaderAclone, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
-		cache.getDoubles(ReaderB, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
+		cache.GetDoubles(ReaderA, "theDouble", false);
+        cache.GetDoubles(ReaderA, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, false);
+        cache.GetDoubles(ReaderAclone, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, false);
+        cache.GetDoubles(ReaderB, "theDouble", FieldCache_Fields.DEFAULT_DOUBLE_PARSER, false);
 
-		cache.getInts(ReaderX, "theInt", false);
-		cache.getInts(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
+        cache.GetInts(ReaderX, "theInt", false);
+        cache.GetInts(ReaderX, "theInt", FieldCache_Fields.DEFAULT_INT_PARSER, false);
 
 		// // // 
 
-		Insanity[] insanity = FieldCacheSanityChecker.checkSanity(cache.CacheEntries);
+		Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
 
 		if (0 < insanity.Length)
 		{
-		  dumpArray(TestClass.Name + "#" + TestName + " INSANITY", insanity, System.err);
+		  DumpArray(TestClass.Name + "#" + TestName + " INSANITY", insanity, System.err);
 		}
 
-		Assert.AreEqual("shouldn't be any cache insanity", 0, insanity.Length);
-		cache.purgeAllCaches();
+		Assert.AreEqual(0, insanity.Length, "shouldn't be any cache insanity");
+		cache.PurgeAllCaches();
 	  }
 
 	  public virtual void TestInsanity1()
 	  {
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
 
-		cache.getInts(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
-		cache.getTerms(ReaderX, "theInt", false);
-		cache.getBytes(ReaderX, "theByte", false);
+        cache.GetInts(ReaderX, "theInt", FieldCache_Fields.DEFAULT_INT_PARSER, false);
+		cache.GetTerms(ReaderX, "theInt", false);
+		cache.GetBytes(ReaderX, "theByte", false);
 
 		// // // 
 
-		Insanity[] insanity = FieldCacheSanityChecker.checkSanity(cache.CacheEntries);
+		Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
 
-		Assert.AreEqual("wrong number of cache errors", 1, insanity.Length);
-		Assert.AreEqual("wrong type of cache error", InsanityType.VALUEMISMATCH, insanity[0].Type);
-		Assert.AreEqual("wrong number of entries in cache error", 2, insanity[0].CacheEntries.length);
+		Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
+		Assert.AreEqual(InsanityType.VALUEMISMATCH, insanity[0].Type, "wrong type of cache error");
+		Assert.AreEqual(2, insanity[0].CacheEntries.Length, "wrong number of entries in cache error");
 
 		// we expect bad things, don't let tearDown complain about them
-		cache.purgeAllCaches();
+		cache.PurgeAllCaches();
 	  }
 
 	  public virtual void TestInsanity2()
 	  {
-		FieldCache cache = FieldCache.DEFAULT;
-		cache.purgeAllCaches();
+		FieldCache cache = FieldCache_Fields.DEFAULT;
+		cache.PurgeAllCaches();
 
-		cache.getTerms(ReaderA, "theInt", false);
-		cache.getTerms(ReaderB, "theInt", false);
-		cache.getTerms(ReaderX, "theInt", false);
+		cache.GetTerms(ReaderA, "theInt", false);
+		cache.GetTerms(ReaderB, "theInt", false);
+		cache.GetTerms(ReaderX, "theInt", false);
 
-		cache.getBytes(ReaderX, "theByte", false);
+		cache.GetBytes(ReaderX, "theByte", false);
 
 
 		// // // 
 
-		Insanity[] insanity = FieldCacheSanityChecker.checkSanity(cache.CacheEntries);
+		Insanity[] insanity = FieldCacheSanityChecker.CheckSanity(cache.CacheEntries);
 
-		Assert.AreEqual("wrong number of cache errors", 1, insanity.Length);
-		Assert.AreEqual("wrong type of cache error", InsanityType.SUBREADER, insanity[0].Type);
-		Assert.AreEqual("wrong number of entries in cache error", 3, insanity[0].CacheEntries.length);
+		Assert.AreEqual(1, insanity.Length, "wrong number of cache errors");
+		Assert.AreEqual(InsanityType.SUBREADER, insanity[0].Type, "wrong type of cache error");
+		Assert.AreEqual(3, insanity[0].CacheEntries.Length, "wrong number of entries in cache error");
 
 		// we expect bad things, don't let tearDown complain about them
-		cache.purgeAllCaches();
+		cache.PurgeAllCaches();
 	  }
 
 	}

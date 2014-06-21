@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
 			  this.PercentDocs = percentDocs;
 		  }
 
-		  public override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+		  protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
 		  {
 			return new TokenStreamComponents(new RepeatingTokenizer(reader, Val, Random, PercentDocs, MaxTF));
 		  }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -35,10 +37,12 @@ namespace Lucene.Net.Search
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-using NUnit.Framework;
+    using NUnit.Framework;
 
+    [TestFixture]
 	public class TestLiveFieldValues : LuceneTestCase
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 
@@ -72,15 +76,15 @@ using NUnit.Framework;
 		for (int t = 0;t < numThreads;t++)
 		{
 		  int threadID = t;
-		  Random threadRandom = new Random(Random().NextLong());
-		  Thread thread = new ThreadAnonymousInnerClassHelper(this, w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
+		  Random threadRandom = new Random(Random().Next());
+		  ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
 		  threads.Add(thread);
 		  thread.Start();
 		}
 
 		startingGun.countDown();
 
-		foreach (Thread thread in threads)
+		foreach (ThreadClass thread in threads)
 		{
 		  thread.Join();
 		}
@@ -134,15 +138,13 @@ using NUnit.Framework;
 		  }
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly TestLiveFieldValues OuterInstance;
 
 		  private IndexWriter w;
 		  private SearcherManager Mgr;
 		  private int? Missing;
-//JAVA TO C# CONVERTER TODO TASK: Java wildcard generics are not converted to .NET:
-//ORIGINAL LINE: private LiveFieldValues<IndexSearcher, int?> rt;
 		  private LiveFieldValues<IndexSearcher, int?> Rt;
 		  private CountDownLatch StartingGun;
 		  private int Iters;
@@ -173,6 +175,7 @@ using NUnit.Framework;
 		  }
 
 
+          [Test]
 		  public override void Run()
 		  {
 			try
@@ -241,7 +244,7 @@ using NUnit.Framework;
 				  {
 					expected = null;
 				  }
-				  Assert.AreEqual("id=" + randomID, expected, Rt.Get(randomID));
+				  Assert.AreEqual(expected, Rt.Get(randomID), "id=" + randomID);
 				}
 			  }
 			}

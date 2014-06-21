@@ -29,10 +29,10 @@ namespace Lucene.Net.Util.Automaton
 	  /// test a bunch of random regular expressions </summary>
 	  public virtual void TestRegexps()
 	  {
-		  int num = atLeast(500);
+		  int num = AtLeast(500);
 		  for (int i = 0; i < num; i++)
 		  {
-			AssertAutomaton((new RegExp(AutomatonTestUtil.randomRegexp(random()), RegExp.NONE)).toAutomaton());
+			AssertAutomaton((new RegExp(AutomatonTestUtil.randomRegexp(Random()), RegExp.NONE)).ToAutomaton());
 		  }
 	  }
 
@@ -40,11 +40,11 @@ namespace Lucene.Net.Util.Automaton
 	  /// test against a simple, unoptimized det </summary>
 	  public virtual void TestAgainstSimple()
 	  {
-		int num = atLeast(200);
+		int num = AtLeast(200);
 		for (int i = 0; i < num; i++)
 		{
-		  Automaton a = AutomatonTestUtil.randomAutomaton(random());
-		  Automaton b = a.clone();
+		  Automaton a = AutomatonTestUtil.randomAutomaton(Random());
+		  Automaton b = a.Clone();
 		  AutomatonTestUtil.determinizeSimple(a);
 		  b.deterministic = false; // force det
 		  b.determinize();
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util.Automaton
 
 	  private static void AssertAutomaton(Automaton a)
 	  {
-		Automaton clone = a.clone();
+		Automaton clone = a.Clone();
 		// complement(complement(a)) = a
 		Automaton equivalent = BasicOperations.complement(BasicOperations.complement(a));
 		Assert.IsTrue(BasicOperations.sameLanguage(a, equivalent));

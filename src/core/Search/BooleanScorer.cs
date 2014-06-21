@@ -272,9 +272,9 @@ namespace Lucene.Net.Search
 
 			  if (Current.Coord >= MinNrShouldMatch)
 			  {
-				fs.Score_Renamed = (float)(Current.Score * CoordFactors[Current.Coord]);
-				fs.Doc = Current.Doc;
-				fs.Freq_Renamed = Current.Coord;
+				fs.score = (float)(Current.Score * CoordFactors[Current.Coord]);
+				fs.doc = Current.Doc;
+				fs.freq = Current.Coord;
 				collector.Collect(Current.Doc);
 			  }
 			}

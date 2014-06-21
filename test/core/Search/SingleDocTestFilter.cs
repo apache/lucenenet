@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
 
@@ -22,6 +24,7 @@ namespace Lucene.Net.Search
 	using Bits = Lucene.Net.Util.Bits;
 	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
 
+    [TestFixture]
 	public class SingleDocTestFilter : Filter
 	{
 	  private int Doc;

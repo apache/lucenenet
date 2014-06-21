@@ -84,15 +84,16 @@ using Query = Lucene.Net.Search.Query;
 
 	  internal readonly long Generation;
 
-	  internal DocumentsWriterDeleteQueue() : this(0)
+	  public DocumentsWriterDeleteQueue() : this(0)
 	  {
 	  }
 
-	  internal DocumentsWriterDeleteQueue(long generation) : this(new BufferedUpdates(), generation)
+      public DocumentsWriterDeleteQueue(long generation)
+          : this(new BufferedUpdates(), generation)
 	  {
 	  }
 
-	  internal DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation)
+      public DocumentsWriterDeleteQueue(BufferedUpdates globalBufferedUpdates, long generation)
 	  {
 		this.GlobalBufferedUpdates = globalBufferedUpdates;
 		this.Generation = generation;
@@ -104,13 +105,13 @@ using Query = Lucene.Net.Search.Query;
 		GlobalSlice = new DeleteSlice(Tail);
 	  }
 
-	  internal void AddDelete(params Query[] queries)
+	  public void AddDelete(params Query[] queries)
 	  {
 		Add(new QueryArrayNode(queries));
 		TryApplyGlobalSlice();
 	  }
 
-	  internal void AddDelete(params Term[] terms)
+	  public void AddDelete(params Term[] terms)
 	  {
 		Add(new TermArrayNode(terms));
 		TryApplyGlobalSlice();
@@ -131,7 +132,7 @@ using Query = Lucene.Net.Search.Query;
 	  /// <summary>
 	  /// invariant for document update
 	  /// </summary>
-	  internal void Add(Term term, DeleteSlice slice)
+	  public void Add(Term term, DeleteSlice slice)
 	  {
 		TermNode termNode = new TermNode(term);
 		Add(termNode);
@@ -194,7 +195,7 @@ using Query = Lucene.Net.Search.Query;
 		}
 	  }
 
-	  internal bool AnyChanges()
+	  public bool AnyChanges()
 	  {
 		GlobalBufferLock.@Lock();
 		try
@@ -212,7 +213,7 @@ using Query = Lucene.Net.Search.Query;
 		}
 	  }
 
-	  internal void TryApplyGlobalSlice()
+	  public void TryApplyGlobalSlice()
 	  {
 		if (GlobalBufferLock.TryLock())
 		{
@@ -237,7 +238,7 @@ using Query = Lucene.Net.Search.Query;
 		}
 	  }
 
-	  internal FrozenBufferedUpdates FreezeGlobalBuffer(DeleteSlice callerSlice)
+	  public FrozenBufferedUpdates FreezeGlobalBuffer(DeleteSlice callerSlice)
 	  {
 		GlobalBufferLock.@Lock();
 		/*
@@ -271,12 +272,12 @@ using Query = Lucene.Net.Search.Query;
 		}
 	  }
 
-	  internal DeleteSlice NewSlice()
+	  public DeleteSlice NewSlice()
 	  {
 		return new DeleteSlice(Tail);
 	  }
 
-	  internal bool UpdateSlice(DeleteSlice slice)
+	  public bool UpdateSlice(DeleteSlice slice)
 	  {
 		if (slice.SliceTail != Tail) // If we are the same just
 		{
@@ -286,7 +287,7 @@ using Query = Lucene.Net.Search.Query;
 		return false;
 	  }
 
-	  internal class DeleteSlice
+	  public class DeleteSlice
 	  {
 		// No need to be volatile, slices are thread captive (only accessed by one thread)!
 		internal Node SliceHead; // we don't apply this one
@@ -303,7 +304,7 @@ using Query = Lucene.Net.Search.Query;
 		  SliceHead = SliceTail = currentTail;
 		}
 
-		internal virtual void Apply(BufferedUpdates del, int docIDUpto)
+		public virtual void Apply(BufferedUpdates del, int docIDUpto)
 		{
 		  if (SliceHead == SliceTail)
 		  {
@@ -337,7 +338,7 @@ using Query = Lucene.Net.Search.Query;
 		/// Returns <code>true</code> iff the given item is identical to the item
 		/// hold by the slices tail, otherwise <code>false</code>.
 		/// </summary>
-		internal virtual bool IsTailItem(object item)
+		public virtual bool IsTailItem(object item)
 		{
 		  return SliceTail.Item == item;
 		}
@@ -356,7 +357,7 @@ using Query = Lucene.Net.Search.Query;
 		return GlobalBufferedUpdates.NumTermDeletes.Get();
 	  }
 
-	  internal void Clear()
+	  public void Clear()
 	  {
 		GlobalBufferLock.@Lock();
 		try

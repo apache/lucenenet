@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 
@@ -55,7 +56,7 @@ namespace Lucene.Net.Util
 	  public virtual void AssertSorted(Entry[] original, Entry[] sorted)
 	  {
 		Assert.AreEqual(original.Length, sorted.Length);
-		Entry[] actuallySorted = Arrays.copyOf(original, original.Length);
+		Entry[] actuallySorted = Arrays.CopyOf(original, original.Length);
 		Array.Sort(actuallySorted);
 		for (int i = 0; i < original.Length; ++i)
 		{
@@ -69,12 +70,12 @@ namespace Lucene.Net.Util
 
 	  public virtual void Test(Entry[] arr)
 	  {
-		int o = random().Next(1000);
-		Entry[] toSort = new Entry[o + arr.Length + random().Next(3)];
+		int o = Random().Next(1000);
+		Entry[] toSort = new Entry[o + arr.Length + Random().Next(3)];
 		Array.Copy(arr, 0, toSort, o, arr.Length);
 		Sorter sorter = NewSorter(toSort);
 		sorter.Sort(o, o + arr.Length);
-		AssertSorted(arr, Arrays.copyOfRange(toSort, o, o + arr.Length));
+		AssertSorted(arr, Arrays.CopyOfRange(toSort, o, o + arr.Length));
 	  }
 
 	  internal enum Strategy
@@ -87,7 +88,7 @@ namespace Lucene.Net.Util
 		ASCENDING_SEQUENCES,
 		MOSTLY_ASCENDING
       }
-	  public abstract void set(Entry[] arr, int i);
+	  public abstract void Set(Entry[] arr, int i);
 
 	}
 

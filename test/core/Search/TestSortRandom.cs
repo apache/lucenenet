@@ -43,9 +43,11 @@ namespace Lucene.Net.Search
 
 	/// <summary>
 	/// random sorting tests </summary>
+    [TestFixture]
 	public class TestSortRandom : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestRandomStringSort()
 	  {
 		Random random = new Random(Random().Next());
@@ -185,7 +187,7 @@ namespace Lucene.Net.Search
 			sort = new Sort(sf, SortField.FIELD_DOC);
 		  }
 		  int hitCount = TestUtil.NextInt(random, 1, r.MaxDoc() + 20);
-		  RandomFilter f = new RandomFilter(random, random.NextFloat(), docValues);
+		  RandomFilter f = new RandomFilter(random, (float)random.NextDouble(), docValues);
 		  int queryType = random.Next(3);
 		  if (queryType == 0)
 		  {
@@ -349,7 +351,7 @@ namespace Lucene.Net.Search
 		  FixedBitSet bits = new FixedBitSet(maxDoc);
 		  for (int docID = 0;docID < maxDoc;docID++)
 		  {
-			if (Random.NextFloat() <= Density && (acceptDocs == null || acceptDocs.Get(docID)))
+			if ((float)Random.NextDouble() <= Density && (acceptDocs == null || acceptDocs.Get(docID)))
 			{
 			  bits.Set(docID);
 			  //System.out.println("  acc id=" + idSource.Get(docID) + " docID=" + docID + " id=" + idSource.Get(docID) + " v=" + docValues.Get(idSource.Get(docID)).Utf8ToString());

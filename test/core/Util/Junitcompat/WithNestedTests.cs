@@ -30,12 +30,12 @@ namespace Lucene.Net.Util.junitcompat
 	using Rule = org.junit.Rule;
 	using RuleChain = org.junit.rules.RuleChain;
 	using TestRule = org.junit.rules.TestRule;
-
+    /*
 	using RandomizedRunner = com.carrotsearch.randomizedtesting.RandomizedRunner;
 	using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;
 	using SysGlobals = com.carrotsearch.randomizedtesting.SysGlobals;
 	using SystemPropertiesRestoreRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesRestoreRule;
-	using TestRuleAdapter = com.carrotsearch.randomizedtesting.rules.TestRuleAdapter;
+	using TestRuleAdapter = com.carrotsearch.randomizedtesting.rules.TestRuleAdapter;*/
 
 	/// <summary>
 	/// An abstract test class that prepares nested test classes to run.
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util.junitcompat
             
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Before public final void before()
-			public final void before()
+			public void before()
 			if (SuppressOutputStreams)
 			{
 			PrevSysOut = System.out;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util.junitcompat
             
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @After public final void after()
-			public final void after()
+			public void after()
 			if (SuppressOutputStreams)
 			{
 			System.out.flush();
@@ -103,12 +103,12 @@ namespace Lucene.Net.Util.junitcompat
 			System.Err = PrevSysErr;
             
 			protected string SysOut
-			Assert.Assert.IsTrue(SuppressOutputStreams);
+			Assert.IsTrue(SuppressOutputStreams);
 			System.out.flush();
 			return new string(Sysout.toByteArray(), StandardCharsets.UTF_8);
             
 			protected string SysErr
-			Assert.Assert.IsTrue(SuppressOutputStreams);
+			Assert.IsTrue(SuppressOutputStreams);
 			System.err.flush();
 			return new string(Syserr.toByteArray(), StandardCharsets.UTF_8);
 	}

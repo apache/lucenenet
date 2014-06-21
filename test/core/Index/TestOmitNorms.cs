@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
 	{
 	  // Tests whether the DocumentWriter correctly enable the
 	  // omitNorms bit in the FieldInfo
-	  public virtual void TestOmitNorms()
+	  public virtual void TestOmitNorms_Mem()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());

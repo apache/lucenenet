@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Apache.NMS.Util;
 
 namespace Lucene.Net.Index
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
-	using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
+	//using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
@@ -631,13 +632,13 @@ namespace Lucene.Net.Index
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
 		analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
-		writerRef.Set(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
+		writerRef.Value = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 		LineFileDocs docs = new LineFileDocs(Random());
-		Thread[] threads = new Thread[threadCount];
+        ThreadClass[] threads = new ThreadClass[threadCount];
 		int iters = AtLeast(100);
 		AtomicBoolean failed = new AtomicBoolean();
-		Lock rollbackLock = new ReentrantLock();
-		Lock commitLock = new ReentrantLock();
+        ReentrantLock rollbackLock = new ReentrantLock();
+        ReentrantLock commitLock = new ReentrantLock();
 		for (int threadID = 0;threadID < threadCount;threadID++)
 		{
 		  threads[threadID] = new ThreadAnonymousInnerClassHelper(this, d, writerRef, docs, iters, failed, rollbackLock, commitLock);
@@ -650,7 +651,7 @@ namespace Lucene.Net.Index
 		}
 
 		Assert.IsTrue(!failed.Get());
-		writerRef.Get().Dispose();
+		writerRef.Value.Dispose();
 		d.Dispose();
 	  }
 
@@ -663,10 +664,10 @@ namespace Lucene.Net.Index
 		  private LineFileDocs Docs;
 		  private int Iters;
 		  private AtomicBoolean Failed;
-		  private Lock RollbackLock;
-		  private Lock CommitLock;
+          private ReentrantLock RollbackLock;
+          private ReentrantLock CommitLock;
 
-		  public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, Lock rollbackLock, Lock commitLock)
+          public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.d = d;
@@ -689,19 +690,19 @@ namespace Lucene.Net.Index
 				switch (x)
 				{
 				case 0:
-				  RollbackLock.@lock();
+				  RollbackLock.@Lock();
 				  if (VERBOSE)
 				  {
 					Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now rollback");
 				  }
 				  try
 				  {
-					WriterRef.Get().Rollback();
+                    WriterRef.Value.Rollback();
 					if (VERBOSE)
 					{
 					  Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
 					}
-					WriterRef.Set(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))));
+                    WriterRef.Value = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 				  }
 				  finally
 				  {
@@ -709,7 +710,7 @@ namespace Lucene.Net.Index
 				  }
 				  break;
 				case 1:
-				  CommitLock.@lock();
+				  CommitLock.@Lock();
 				  if (VERBOSE)
 				  {
 					Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now commit");
@@ -718,9 +719,9 @@ namespace Lucene.Net.Index
 				  {
 					if (Random().NextBoolean())
 					{
-					  WriterRef.Get().PrepareCommit();
+					  WriterRef.Value.PrepareCommit();
 					}
-					WriterRef.Get().Commit();
+                    WriterRef.Value.Commit();
 				  }
 				  catch (AlreadyClosedException ace)
 				  {
@@ -742,7 +743,7 @@ namespace Lucene.Net.Index
 				  }
 				  try
 				  {
-					WriterRef.Get().AddDocument(Docs.NextDoc());
+					WriterRef.Value.AddDocument(Docs.NextDoc());
 				  }
 				  catch (AlreadyClosedException ace)
 				  {

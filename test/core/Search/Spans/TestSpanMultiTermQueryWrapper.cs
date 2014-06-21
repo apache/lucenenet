@@ -30,12 +30,14 @@ namespace Lucene.Net.Search.Spans
 	/// <summary>
 	/// Tests for <seealso cref="SpanMultiTermQueryWrapper"/>, wrapping a few MultiTermQueries.
 	/// </summary>
-	public class TestSpanMultiTermQueryWrapper : LuceneTestCase
+	[TestFixture]
+    public class TestSpanMultiTermQueryWrapper : LuceneTestCase
 	{
 	  private Directory Directory;
 	  private IndexReader Reader;
 	  private IndexSearcher Searcher;
-
+      
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -56,6 +58,7 @@ namespace Lucene.Net.Search.Spans
 		Searcher = NewSearcher(Reader);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -63,7 +66,8 @@ namespace Lucene.Net.Search.Spans
 		base.TearDown();
 	  }
 
-	  public virtual void TestWildcard()
+      [Test]
+      public virtual void TestWildcard()
 	  {
 		WildcardQuery wq = new WildcardQuery(new Term("field", "bro?n"));
         SpanQuery swq = new SpanMultiTermQueryWrapper<MultiTermQuery>(wq);
@@ -72,7 +76,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(1, Searcher.Search(sfq, 10).TotalHits);
 	  }
 
-	  public virtual void TestPrefix()
+      [Test]
+      public virtual void TestPrefix()
 	  {
 		WildcardQuery wq = new WildcardQuery(new Term("field", "extrem*"));
         SpanQuery swq = new SpanMultiTermQueryWrapper<MultiTermQuery>(wq);
@@ -81,7 +86,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(1, Searcher.Search(sfq, 10).TotalHits);
 	  }
 
-	  public virtual void TestFuzzy()
+      [Test]
+      public virtual void TestFuzzy()
 	  {
 		FuzzyQuery fq = new FuzzyQuery(new Term("field", "broan"));
         SpanQuery sfq = new SpanMultiTermQueryWrapper<MultiTermQuery>(fq);
@@ -90,7 +96,8 @@ namespace Lucene.Net.Search.Spans
 		Assert.AreEqual(2, Searcher.Search(sprq, 10).TotalHits);
 	  }
 
-	  public virtual void TestFuzzy2()
+      [Test]
+      public virtual void TestFuzzy2()
 	  {
 		// maximum of 1 term expansion
 		FuzzyQuery fq = new FuzzyQuery(new Term("field", "broan"), 1, 0, 1, false);
@@ -99,7 +106,8 @@ namespace Lucene.Net.Search.Spans
 		SpanPositionRangeQuery sprq = new SpanPositionRangeQuery(sfq, 0, 100);
 		Assert.AreEqual(1, Searcher.Search(sprq, 10).TotalHits);
 	  }
-	  public virtual void TestNoSuchMultiTermsInNear()
+      [Test]
+      public virtual void TestNoSuchMultiTermsInNear()
 	  {
 		//test to make sure non existent multiterms aren't throwing null pointer exceptions  
 		FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
@@ -136,7 +144,8 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestNoSuchMultiTermsInNotNear()
+      [Test]
+      public virtual void TestNoSuchMultiTermsInNotNear()
 	  {
 		//test to make sure non existent multiterms aren't throwing non-matching field exceptions  
 		FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
@@ -170,7 +179,8 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-	  public virtual void TestNoSuchMultiTermsInOr()
+      [Test]
+      public virtual void TestNoSuchMultiTermsInOr()
 	  {
 		//test to make sure non existent multiterms aren't throwing null pointer exceptions  
 		FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);
@@ -208,7 +218,8 @@ namespace Lucene.Net.Search.Spans
 	  }
 
 
-	  public virtual void TestNoSuchMultiTermsInSpanFirst()
+      [Test]
+      public virtual void TestNoSuchMultiTermsInSpanFirst()
 	  {
 		//this hasn't been a problem  
 		FuzzyQuery fuzzyNoSuch = new FuzzyQuery(new Term("field", "noSuch"), 1, 0, 1, false);

@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 	  private volatile bool Stalled;
 	  private int NumWaiting; // only with assert
 	  private bool WasStalled_Renamed; // only with assert
-	  private readonly IDictionary<Thread, bool?> Waiting = new IdentityHashMap<Thread, bool?>(); // only with assert
+      private readonly IDictionary<ThreadClass, bool?> Waiting = new IdentityHashMap<ThreadClass, bool?>(); // only with assert
 
 	  /// <summary>
 	  /// Update the stalled flag status. this method will set the stalled flag to
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
 	  /// <seealso cref="DocumentsWriterStallControl"/> to healthy and release all threads
 	  /// waiting on <seealso cref="#waitIfStalled()"/>
 	  /// </summary>
-	  internal void UpdateStalled(bool stalled)
+	  public void UpdateStalled(bool stalled)
 	  {
 		  lock (this)
 		  {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 	  /// Blocks if documents writing is currently in a stalled state. 
 	  /// 
 	  /// </summary>
-	  internal void WaitIfStalled()
+	  public void WaitIfStalled()
 	  {
 		if (Stalled)
 		{
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  internal bool AnyStalledThreads()
+	    public bool AnyStalledThreads()
 	  {
 		return Stalled;
 	  }
@@ -117,11 +117,11 @@ namespace Lucene.Net.Index
 	  {
 		NumWaiting--;
         //LUCENE TO-DO
-        Debug.Assert(Waiting.Remove(Thread.CurrentThread) != false);
+        Debug.Assert(Waiting.Remove(ThreadClass.Current()) != false);
 		return NumWaiting >= 0;
 	  }
 
-	  internal bool HasBlocked() // for tests
+	  public bool HasBlocked() // for tests
 	  {
 		  lock (this)
 		  {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal bool Healthy
+	  public bool Healthy
 	  {
 		  get
 		  {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal bool IsThreadQueued(Thread t) // for tests
+	  public bool IsThreadQueued(ThreadClass t) // for tests
 	  {
 		  lock (this)
 		  {
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  internal bool WasStalled() // for tests
+	  public bool WasStalled() // for tests
 	  {
 		  lock (this)
 		  {

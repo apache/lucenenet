@@ -104,7 +104,6 @@ namespace Lucene.Net.Util
 		return a << commonTrailingZeros;
 	  }
 
-      /*Lucene TO-DO Commented for now, never actually used
 
 	  /// <summary>
 	  /// Calculates inverse hyperbolic sine of a {@code double} value.
@@ -120,7 +119,7 @@ namespace Lucene.Net.Util
 	  {
 		double sign;
 		// check the sign bit of the raw representation to handle -0
-		if (double.doubleToRawLongBits(a) < 0)
+        if (BitConverter.DoubleToInt64Bits(a) < 0)
 		{
 		  a = Math.Abs(a);
 		  sign = -1.0d;
@@ -165,7 +164,7 @@ namespace Lucene.Net.Util
 	  {
 		double mult;
 		// check the sign bit of the raw representation to handle -0
-		if (double.doubleToRawLongBits(a) < 0)
+		if (BitConverter.DoubleToInt64Bits(a) < 0)
 		{
 		  a = Math.Abs(a);
 		  mult = -0.5d;
@@ -176,7 +175,6 @@ namespace Lucene.Net.Util
 		}
 		return mult * Math.Log((1.0d + a) / (1.0d - a));
 	  }
-      */
 
 	}
 
