@@ -40,6 +40,7 @@ namespace Lucene.Net.Search
     {
         Directory _Dir = new RAMDirectory();
         IndexReader _Reader;
+        IndexSearcher _Searcher;
 
         [SetUp]
         public void SetUp()
@@ -57,6 +58,7 @@ namespace Lucene.Net.Search
             writer.Close();
 
             _Reader = IndexReader.Open(_Dir, true);
+            _Searcher = new IndexSearcher(_Dir, true);
         }
 
         void AddDoc(IndexWriter writer, string lang, string source, string group, string text)
@@ -277,6 +279,64 @@ namespace Lucene.Net.Search
                 }
             }
             
+        }
+
+        [Test]
+        public void TestFastSearch1()
+        {
+            Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "text", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("block*");
+
+            var hits = FastFacetedSearch.Search(query, _Searcher, "category");
+
+            Assert.AreEqual(3, hits.Length);
+            Assert.AreEqual(4, hits.Sum(h => h.Value));
+
+            foreach (var hpg in hits)
+            {
+                if (hpg.Key == "politics")
+                {
+                    Assert.AreEqual(1, hpg.Value);
+                }
+                else if (hpg.Key == "tech")
+                {
+                    Assert.AreEqual(2, hpg.Value);
+                }
+                else //if (hpg.Key == "sport")
+                {
+                    Assert.AreEqual(1, hpg.Value);
+                }
+            }
+        }
+
+        [Test]
+        public void TestFastSearch2()
+        {
+            Query query = new MatchAllDocsQuery();
+
+            var hits = FastFacetedSearch.Search(query, _Searcher, "category");
+
+            Assert.AreEqual(4, hits.Length);
+            Assert.AreEqual(7, hits.Sum(h => h.Value));
+        }
+
+        [Test]
+        public void TestFastSearch3()
+        {
+            Query query = new MatchAllDocsQuery();
+
+            var hits = FastFacetedSearch.Search(query, _Searcher, "nosuchfield");
+
+            Assert.AreEqual(0, hits.Length);
+        }
+
+        [Test]
+        public void TestFastSearch4()
+        {
+            Query query = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, "text", new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_29)).Parse("a");
+
+            var hits = FastFacetedSearch.Search(query, _Searcher, "category");
+
+            Assert.AreEqual(0, hits.Length, "Unexpected TotalHitCount");
         }
 
         [Test]

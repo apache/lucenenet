@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Support;
 using Double = Lucene.Net.Support.Double;
@@ -83,6 +84,19 @@ namespace Lucene.Net.Search
         {
             this.order = values;
             this.lookup = lookup;
+        }
+    }
+    /// <summary>Expert: Stores term text values and document ordering data. </summary>
+    public class MultiStringIndex : StringIndex
+    {
+        /// <summary>For each document, an indexes into the lookup array. </summary>
+        new public List<int>[] order;
+
+        /// <summary>Creates one of these objects </summary>
+        public MultiStringIndex(List<int>[] values, System.String[] lookup)
+            :base(null, lookup)
+        {
+            this.order = values;
         }
     }
     /// <summary> EXPERT: A unique Identifier/Description for each item in the FieldCache. 
@@ -588,6 +602,8 @@ namespace Lucene.Net.Search
         /// </returns>
         /// <throws>  IOException  If any error occurs. </throws>
         StringIndex GetStringIndex(IndexReader reader, System.String field);
+
+        MultiStringIndex GetMultiStringIndex(IndexReader reader, System.String field);
 
         /// <summary> EXPERT: Generates an array of CacheEntry objects representing all items 
         /// currently in the FieldCache.
