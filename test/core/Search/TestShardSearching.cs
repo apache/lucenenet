@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
 		  this.Sort = sort;
 		  this.Query = query;
 		  this.NumHitsPaged = numHitsPaged;
-		  SearchTimeNanos = System.nanoTime();
+		  SearchTimeNanos = TimeHelper.NanoTime();
 		}
 	  }
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 
 		List<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
 		List<BytesRef> terms = null;
-		while (System.nanoTime() < endTimeNanos)
+		while (TimeHelper.NanoTime() < EndTimeNanos)
 		{
 
 		  bool doFollowon = priorSearches.Count > 0 && Random().Next(7) == 1;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
 
 			if (VERBOSE)
 			{
-			  Console.WriteLine("\nTEST: follow-on query age=" + ((System.nanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
+			  Console.WriteLine("\nTEST: follow-on query age=" + ((TimeHelper.NanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
 			}
 
 			try

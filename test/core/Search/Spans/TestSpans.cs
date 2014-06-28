@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Spans
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		Searcher = NewSearcher(Reader);
 	  }
 

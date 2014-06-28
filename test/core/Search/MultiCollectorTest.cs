@@ -96,8 +96,8 @@ namespace Lucene.Net.Search
 	  {
 		// Tests that if a single Collector is input, it is returned (and not MultiCollector).
 		DummyCollector dc = new DummyCollector();
-		AssertSame(dc, MultiCollector.Wrap(dc));
-		AssertSame(dc, MultiCollector.Wrap(dc, null));
+		Assert.AreSame(dc, MultiCollector.Wrap(dc));
+		Assert.AreSame(dc, MultiCollector.Wrap(dc, null));
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

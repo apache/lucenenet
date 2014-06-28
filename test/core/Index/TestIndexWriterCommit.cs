@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using System.IO;
 
+    [TestFixture]
 	public class TestIndexWriterCommit : LuceneTestCase
 	{
 	  /*
@@ -46,6 +47,7 @@ namespace Lucene.Net.Index
 	   * add a bunch of docs, making sure reader does not see
 	   * these docs until writer is closed.
 	   */
+      [Test]
 	  public virtual void TestCommitOnClose()
 	  {
 		  Directory dir = NewDirectory();
@@ -101,7 +103,8 @@ namespace Lucene.Net.Index
 	   * nothing was added.  Then verify we can open the index
 	   * and add docs to it.
 	   */
-	  public virtual void TestCommitOnCloseAbort()
+      [Test]
+      public virtual void TestCommitOnCloseAbort()
 	  {
 		Directory dir = NewDirectory();
         IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10));
@@ -184,7 +187,8 @@ namespace Lucene.Net.Index
 	   * file.  We check this by using MockDirectoryWrapper to
 	   * measure max temp disk space used.
 	   */
-	  public virtual void TestCommitOnCloseDiskUsage()
+      [Test]
+      public virtual void TestCommitOnCloseDiskUsage()
 	  {
 		// MemoryCodec, since it uses FST, is not necessarily
 		// "additive", ie if you add up N small FSTs, then merge
@@ -284,7 +288,8 @@ namespace Lucene.Net.Index
 	   * "commit on close" works correctly both for rollback()
 	   * and close().
 	   */
-	  public virtual void TestCommitOnCloseForceMerge()
+      [Test]
+      public virtual void TestCommitOnCloseForceMerge()
 	  {
 		Directory dir = NewDirectory();
 		// Must disable throwing exc on double-write: this
@@ -349,7 +354,8 @@ namespace Lucene.Net.Index
 	  // LUCENE-2095: make sure with multiple threads commit
 	  // doesn't return until all changes are in fact in the
 	  // index
-	  public virtual void TestCommitThreadSafety()
+      [Test]
+      public virtual void TestCommitThreadSafety()
 	  {
 		const int NUM_THREADS = 5;
 		const double RUN_SEC = 0.5;
@@ -371,7 +377,7 @@ namespace Lucene.Net.Index
 		  threads[i].Join();
 		}
 		Assert.IsFalse(failed.Get());
-        w.Close();
+        w.Dispose();
 		dir.Dispose();
 	  }
 
@@ -435,7 +441,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1044: test writer.Commit() when ac=false
-	  public virtual void TestForceCommit()
+      [Test]
+      public virtual void TestForceCommit()
 	  {
 		Directory dir = NewDirectory();
 
@@ -474,7 +481,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestFutureCommit()
+      [Test]
+      public virtual void TestFutureCommit()
 	  {
 		Directory dir = NewDirectory();
 
@@ -533,7 +541,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestZeroCommits()
+      [Test]
+      public virtual void TestZeroCommits()
 	  {
 		// Tests that if we don't call commit(), the directory has 0 commits. this has
 		// changed since LUCENE-2386, where before IW would always commit on a fresh
@@ -556,7 +565,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1274: test writer.PrepareCommit()
-	  public virtual void TestPrepareCommit()
+      [Test]
+      public virtual void TestPrepareCommit()
 	  {
 		Directory dir = NewDirectory();
 
@@ -612,7 +622,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1274: test writer.PrepareCommit()
-	  public virtual void TestPrepareCommitRollback()
+      [Test]
+      public virtual void TestPrepareCommitRollback()
 	  {
 		Directory dir = NewDirectory();
 		if (dir is MockDirectoryWrapper)
@@ -670,7 +681,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1274
-	  public virtual void TestPrepareCommitNoChanges()
+      [Test]
+      public virtual void TestPrepareCommitNoChanges()
 	  {
 		Directory dir = NewDirectory();
 
@@ -686,7 +698,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1382
-	  public virtual void TestCommitUserData()
+      [Test]
+      public virtual void TestCommitUserData()
 	  {
 		Directory dir = NewDirectory();
         IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));

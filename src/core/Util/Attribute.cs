@@ -47,6 +47,7 @@ namespace Lucene.Net.Util
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -120,26 +121,28 @@ namespace Lucene.Net.Util
                 throw new NotSupportedException(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
             }
 
-            object target = interfaces.First.Value.GetType();
+            var interf = interfaces.First().GetType();
+
+            /*object target = interfaces.First.Value;
 
             if (target == null)
                 return;
 
-            Type interf = target as Type;
+            Type interf = target.GetType();// as Type;*/
 
-            FieldInfo[] fields = clazz.GetFields(BindingFlags.Instance | BindingFlags.Public);
-
+            FieldInfo[] fields = clazz.GetFields();// GetFields(BindingFlags.Instance | BindingFlags.Public);
             try
             {
                 for (int i = 0; i < fields.Length; i++)
                 {
                     FieldInfo f = fields[i];
-
+                    if (f.IsStatic) continue;
                     reflector.Reflect(interf, f.Name, f.GetValue(this));
                 }
             }
-            catch
+            catch (UnauthorizedAccessException uae)
             {
+                throw new Exception(uae.Message, uae);
             }
         }
 

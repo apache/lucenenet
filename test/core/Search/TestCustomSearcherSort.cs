@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 		Query = new TermQuery(new Term("content", "test"));
 	  }
 
@@ -244,7 +245,7 @@ namespace Lucene.Net.Search
 
 		internal Random Random;
 		// we use the default Locale/TZ since LuceneTestCase randomizes it
-		internal DateTime @base = new GregorianCalendar(TimeZone.Default, Locale.Default);
+	    internal DateTime @base = new DateTime(1970, 1, 1, new GregorianCalendar());
 
 		// Just to generate some different Lucene Date strings
 		internal virtual string LuceneDate

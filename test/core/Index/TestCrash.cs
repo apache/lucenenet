@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestCrash : LuceneTestCase
 	{
 
@@ -70,7 +71,8 @@ namespace Lucene.Net.Index
 		dir.ClearCrash();
 	  }
 
-	  public virtual void TestCrashWhileIndexing()
+      [Test]
+      public virtual void TestCrashWhileIndexing()
 	  {
 		// this test relies on being able to open a reader before any commit
 		// happened, so we must create an initial commit just to allow that, but
@@ -94,11 +96,12 @@ namespace Lucene.Net.Index
 		Directory dir2 = NewDirectory(dir);
 		dir.Dispose();
 
-        (new RandomIndexWriter(Random(), dir2)).Close();
+        (new RandomIndexWriter(Random(), dir2)).Dispose();
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestWriterAfterCrash()
+      [Test]
+      public virtual void TestWriterAfterCrash()
 	  {
 		// this test relies on being able to open a reader before any commit
 		// happened, so we must create an initial commit just to allow that, but
@@ -128,11 +131,12 @@ namespace Lucene.Net.Index
 		Directory dir2 = NewDirectory(dir);
 		dir.Dispose();
 
-        (new RandomIndexWriter(Random(), dir2)).Close();
+        (new RandomIndexWriter(Random(), dir2)).Dispose();
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestCrashAfterReopen()
+      [Test]
+      public virtual void TestCrashAfterReopen()
 	  {
 		IndexWriter writer = InitIndex(Random(), false);
 		MockDirectoryWrapper dir = (MockDirectoryWrapper) writer.Directory;
@@ -165,11 +169,12 @@ namespace Lucene.Net.Index
 		Directory dir2 = NewDirectory(dir);
 		dir.Dispose();
 
-        (new RandomIndexWriter(Random(), dir2)).Close();
+        (new RandomIndexWriter(Random(), dir2)).Dispose();
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestCrashAfterClose()
+      [Test]
+      public virtual void TestCrashAfterClose()
 	  {
 
 		IndexWriter writer = InitIndex(Random(), false);
@@ -191,7 +196,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestCrashAfterCloseNoWait()
+      [Test]
+      public virtual void TestCrashAfterCloseNoWait()
 	  {
 
 		IndexWriter writer = InitIndex(Random(), false);

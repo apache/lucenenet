@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		}
 
 		s = NewSearcher(w.Reader);
-		w.Close();
+		w.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -189,9 +189,7 @@ namespace Lucene.Net.Search
 
 		// Only needed in Java6; Java7+ has a @SafeVarargs annotated Arrays#asList()!
 		// see http://docs.oracle.com/javase/7/docs/api/java/lang/SafeVarargs.html
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") final Iterable<Set<String>> occurList = Arrays.AsList(Collections.singleton("MUST"), new HashSet<>(Arrays.AsList("MUST", "SHOULD"))
-		IEnumerable<HashSet<string>> occurList = Arrays.AsList(CollectionsHelper.Singleton("MUST"), new HashSet<string>{"MUST", "SHOULD"});
+        IEnumerable<ISet<string>> occurList = Arrays.AsList(CollectionsHelper.Singleton("MUST"), new HashSet<string>(Arrays.AsList("MUST", "SHOULD")));
 
 		foreach (HashSet<string> occur in occurList)
 		{

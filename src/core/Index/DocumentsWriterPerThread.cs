@@ -59,6 +59,11 @@ namespace Lucene.Net.Index
 
 	  internal static readonly IndexingChain defaultIndexingChain = new IndexingChainAnonymousInnerClassHelper();
 
+	    public static IndexingChain DefaultIndexingChain
+	    {
+	        get { return defaultIndexingChain; }
+	    }
+
 	  private class IndexingChainAnonymousInnerClassHelper : IndexingChain
 	  {
 		  public IndexingChainAnonymousInnerClassHelper()

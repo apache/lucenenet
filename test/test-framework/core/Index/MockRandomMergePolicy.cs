@@ -37,18 +37,18 @@ namespace Lucene.Net.Index
 	  {
 		// fork a private random, since we are called
 		// unpredictably from threads:
-		this.Random = new Random(random.nextLong());
+		this.Random = new Random(random.Next());
 	  }
 
-	  public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
+	  public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
 	  {
 		MergeSpecification mergeSpec = null;
 		//System.out.println("MRMP: findMerges sis=" + segmentInfos);
 
 		int numSegments = segmentInfos.Size();
 
-		List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
-		ICollection<SegmentCommitInfo> merging = writer.get().MergingSegments;
+		IList<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
+		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
 
 		foreach (SegmentCommitInfo sipc in segmentInfos)
 		{
@@ -62,8 +62,7 @@ namespace Lucene.Net.Index
 
 		if (numSegments > 1 && (numSegments > 30 || Random.Next(5) == 3))
 		{
-
-		  Collections.shuffle(segments, Random);
+          segments = CollectionsHelper.Shuffle(segments);
 
 		  // TODO: sometimes make more than 1 merge?
 		  mergeSpec = new MergeSpecification();
@@ -77,7 +76,7 @@ namespace Lucene.Net.Index
 	  public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
 	  {
 
-		List<SegmentCommitInfo> eligibleSegments = new List<SegmentCommitInfo>();
+		IList<SegmentCommitInfo> eligibleSegments = new List<SegmentCommitInfo>();
 		foreach (SegmentCommitInfo info in segmentInfos)
 		{
 		  if (segmentsToMerge.ContainsKey(info))
@@ -93,7 +92,7 @@ namespace Lucene.Net.Index
 		  mergeSpec = new MergeSpecification();
 		  // Already shuffled having come out of a set but
 		  // shuffle again for good measure:
-		  Collections.shuffle(eligibleSegments, Random);
+          eligibleSegments = CollectionsHelper.Shuffle(eligibleSegments);
 		  int upto = 0;
 		  while (upto < eligibleSegments.Count)
 		  {
@@ -122,7 +121,7 @@ namespace Lucene.Net.Index
 		return FindMerges(null, segmentInfos);
 	  }
 
-	  public override void Close()
+	  public override void Dispose()
 	  {
 	  }
 

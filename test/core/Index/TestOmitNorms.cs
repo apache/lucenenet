@@ -30,10 +30,12 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestOmitNorms : LuceneTestCase
 	{
 	  // Tests whether the DocumentWriter correctly enable the
 	  // omitNorms bit in the FieldInfo
+      [Test]
 	  public virtual void TestOmitNorms_Mem()
 	  {
 		Directory ram = NewDirectory();
@@ -80,7 +82,8 @@ namespace Lucene.Net.Index
 
 	  // Tests whether merging of docs that have different
 	  // omitNorms for the same field works
-	  public virtual void TestMixedMerge()
+      [Test]
+      public virtual void TestMixedMerge()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -133,7 +136,8 @@ namespace Lucene.Net.Index
 	  // Make sure first adding docs that do not omitNorms for
 	  // field X, then adding docs that do omitNorms for that same
 	  // field, 
-	  public virtual void TestMixedRAM()
+      [Test]
+      public virtual void TestMixedRAM()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -187,7 +191,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Verifies no *.nrm exists when all fields omit norms:
-	  public virtual void TestNoNrmFile()
+      [Test]
+      public virtual void TestNoNrmFile()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -226,7 +231,8 @@ namespace Lucene.Net.Index
 	  /// Internally checks that MultiNorms.norms() is consistent (returns the same bytes)
 	  /// as the fully merged equivalent.
 	  /// </summary>
-	  public virtual void TestOmitNormsCombos()
+      [Test]
+      public virtual void TestOmitNormsCombos()
 	  {
 		// indexed with norms
 		FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -315,7 +321,7 @@ namespace Lucene.Net.Index
 		}
 		ir1.Dispose();
 		ir2.Dispose();
-        riw.Close();
+        riw.Dispose();
 		dir.Dispose();
 		return norms1;
 	  }

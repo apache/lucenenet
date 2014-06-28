@@ -40,10 +40,12 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test4GBStoredFields extends Lucene.Net.Util.LuceneTestCase
+    [TestFixture]
 	public class Test4GBStoredFields : LuceneTestCase
 	{
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Nightly public void test() throws Exception
+        [Test]
 		public virtual void Test()
 		{
 		    MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));

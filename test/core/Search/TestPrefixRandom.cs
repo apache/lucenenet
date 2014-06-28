@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 		}
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
       [TearDown]

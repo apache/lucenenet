@@ -292,6 +292,12 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
+        //For unit tests
+	    public bool BufferedUpdatesStreamAny
+	    {
+	        get { return BufferedUpdatesStream.Any(); }
+	    }
+
 	  /// <summary>
 	  /// Expert: returns a readonly reader, covering all
 	  /// committed as well as un-committed changes to the index.

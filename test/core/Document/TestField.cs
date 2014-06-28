@@ -317,7 +317,7 @@ namespace Lucene.Net.Document
       [Test]
 	  public virtual void TestStoredFieldBytes()
 	  {
-        Field[] fields = new Field[] { new StoredField("foo", "bar".ToSbyteArray(Encoding.UTF8)), new StoredField("foo", "bar".ToSbyteArray(Encoding.UTF8), 0, 3), new StoredField("foo", new BytesRef("bar")) };
+        Field[] fields = new Field[] { new StoredField("foo", "bar".GetBytes(Encoding.UTF8)), new StoredField("foo", "bar".GetBytes(Encoding.UTF8), 0, 3), new StoredField("foo", new BytesRef("bar")) };
 
 		foreach (Field field in fields)
 		{

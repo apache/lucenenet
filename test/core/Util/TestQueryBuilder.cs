@@ -141,9 +141,9 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  protected internal class MockSynonymFilter : TokenFilter
 	  {
-		internal CharTermAttribute TermAtt = AddAttribute(typeof(CharTermAttribute));
-        internal PositionIncrementAttribute PosIncAtt = AddAttribute(typeof(PositionIncrementAttribute));
-		internal bool AddSynonym = false;
+	      internal CharTermAttribute TermAtt;// = AddAttribute(typeof(CharTermAttribute));
+	      internal PositionIncrementAttribute PosIncAtt;// = AddAttribute(typeof(PositionIncrementAttribute));
+		  internal bool AddSynonym = false;
 
 		public MockSynonymFilter(TokenStream input) : base(input)
 		{
@@ -199,7 +199,7 @@ namespace Lucene.Net.Util
 
 	  protected internal class SimpleCJKTokenizer : Tokenizer
 	  {
-          internal CharTermAttribute TermAtt = AddAttribute(typeof(CharTermAttribute));
+	      internal CharTermAttribute TermAtt;// = AddAttribute(typeof(CharTermAttribute));
 
 		public SimpleCJKTokenizer(TextReader input) 
             : base(input)
@@ -279,8 +279,8 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  protected internal class MockCJKSynonymFilter : TokenFilter
 	  {
-		internal CharTermAttribute TermAtt = AddAttribute<CharTermAttribute>();
-        internal PositionIncrementAttribute PosIncAtt = AddAttribute<PositionIncrementAttribute>();
+	      internal CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+	      internal PositionIncrementAttribute PosIncAtt;// = AddAttribute<PositionIncrementAttribute>();
 		internal bool AddSynonym = false;
 
 		public MockCJKSynonymFilter(TokenStream input) : base(input)

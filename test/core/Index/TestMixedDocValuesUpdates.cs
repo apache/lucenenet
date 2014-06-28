@@ -44,9 +44,11 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Appending","Lucene3x","Lucene40","Lucene41","Lucene42","Lucene45"}) public class TestMixedDocValuesUpdates extends Lucene.Net.Util.LuceneTestCase
-	public class TestMixedDocValuesUpdates : LuceneTestCase
+	[TestFixture]
+    public class TestMixedDocValuesUpdates : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestManyReopensAndFields()
 	  {
 		Directory dir = NewDirectory();
@@ -225,7 +227,8 @@ namespace Lucene.Net.Index
 		IOUtils.Close(writer, reader, dir);
 	  }
 
-	  public virtual void TestStressMultiThreading()
+      [Test]
+      public virtual void TestStressMultiThreading()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -446,7 +449,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestUpdateDifferentDocsInDifferentGens()
+      [Test]
+      public virtual void TestUpdateDifferentDocsInDifferentGens()
 	  {
 		// update same document multiple times across generations
 		Directory dir = NewDirectory();
@@ -490,7 +494,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestTonsOfUpdates()
+      [Test]
+      public virtual void TestTonsOfUpdates()
 	  {
 		// LUCENE-5248: make sure that when there are many updates, we don't use too much RAM
 		Directory dir = NewDirectory();

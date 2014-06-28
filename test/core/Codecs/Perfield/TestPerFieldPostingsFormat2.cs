@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  dateField.StringValue = Convert.ToString(Random().Next(100));
 		  iw.AddDocument(doc);
 		}
-		iw.Close();
+		iw.Dispose();
 		dir.Dispose(); // checkindex
 	  }
 	}

@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		//Assert.IsTrue(Pattern.matches("01\\d+", t));
         //Assert.IsTrue(Pattern.matches("34", t.SubSequence(3, 5)));
 
-        Assert.AreEqual(s.Substring(3, 7), t.SubSequence(3, 7).ToString());
+        Assert.AreEqual(s.Substring(3, 4), t.SubSequence(3, 7).ToString());
 
 		for (int i = 0; i < s.Length; i++)
 		{

@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestFlushByRamOrCountsPolicy : LuceneTestCase
 	{
 
@@ -40,26 +41,30 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
           LineDocFile.Dispose();
 		LineDocFile = null;
 	  }
 
-	  public virtual void TestFlushByRam()
+      [Test]
+      public virtual void TestFlushByRam()
 	  {
 		double ramBuffer = (TEST_NIGHTLY ? 1 : 10) + AtLeast(2) + Random().NextDouble();
 		RunFlushByRam(1 + Random().Next(TEST_NIGHTLY ? 5 : 1), ramBuffer, false);
 	  }
 
-	  public virtual void TestFlushByRamLargeBuffer()
+      [Test]
+      public virtual void TestFlushByRamLargeBuffer()
 	  {
 		// with a 256 mb ram buffer we should never stall
 		RunFlushByRam(1 + Random().Next(TEST_NIGHTLY ? 5 : 1), 256d, true);
@@ -121,7 +126,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestFlushDocCount()
+      [Test]
+      public virtual void TestFlushDocCount()
 	  {
 		int[] numThreads = new int[] {2 + AtLeast(1), 1};
 		for (int i = 0; i < numThreads.Length; i++)
@@ -172,7 +178,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		int numThreads = 1 + Random().Next(8);
 		int numDocumentsToIndex = 50 + AtLeast(70);
@@ -233,7 +240,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestStallControl()
+      [Test]
+      public virtual void TestStallControl()
 	  {
 
 		int[] numThreads = new int[] {4 + Random().Next(8), 1};

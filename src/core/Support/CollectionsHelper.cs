@@ -23,6 +23,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Support
 {
@@ -66,6 +67,14 @@ namespace Lucene.Net.Support
             }
         }
 
+        public static void AddAll<T>(ISet<T> set, IEnumerable<T> itemsToAdd)
+        {
+            foreach (var item in itemsToAdd)
+            {
+                set.Add(item);
+            }
+        }
+
         public static void AddAll(System.Collections.Hashtable hashtable, System.Collections.ICollection items)
         {
             System.Collections.IEnumerator iter = items.GetEnumerator();
@@ -74,14 +83,6 @@ namespace Lucene.Net.Support
             {
                 item = iter.Current;
                 hashtable.Add(item, item);
-            }
-        }
-
-        public static void AddAll<T>(ISet<T> set, IEnumerable<T> itemsToAdd)
-        {
-            foreach (var item in itemsToAdd)
-            {
-                set.Add(item);
             }
         }
 
@@ -357,6 +358,23 @@ namespace Lucene.Net.Support
                 }
             }
             return result;
+        }
+
+        public static bool Equals<TKey, TValue>(Dictionary<TKey, TValue> first, Dictionary<TKey, TValue> second)
+        {
+            if (first == second) return true;
+            if ((first == null) || (second == null)) return false;
+            if (first.Count != second.Count) return false;
+
+            var comparer = EqualityComparer<TValue>.Default;
+
+            foreach (var kvp in first)
+            {
+                TValue secondValue;
+                if (!second.TryGetValue(kvp.Key, out secondValue)) return false;
+                if (!comparer.Equals(kvp.Value, secondValue)) return false;
+            }
+            return true;
         }
 
         public static void Swap<T>(IList<T> list, int index1, int index2)

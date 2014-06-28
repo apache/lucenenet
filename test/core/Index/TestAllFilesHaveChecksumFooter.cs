@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -36,8 +37,10 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Test that a plain default puts CRC32 footers in all files.
 	/// </summary>
+	[TestFixture]
 	public class TestAllFilesHaveChecksumFooter : LuceneTestCase
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
@@ -66,7 +69,7 @@ namespace Lucene.Net.Index
 			riw.DeleteDocuments(new Term("id", Convert.ToString(i)));
 		  }
 		}
-        riw.Close();
+        riw.Dispose();
 		CheckHeaders(dir);
 		dir.Dispose();
 	  }

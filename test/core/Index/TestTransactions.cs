@@ -35,6 +35,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestTransactions : LuceneTestCase
 	{
 
@@ -264,7 +265,8 @@ namespace Lucene.Net.Index
         writer.Dispose();
 	  }
 
-	  public virtual void TestTransactions_Mem()
+      [Test]
+      public virtual void TestTransactions_Mem()
 	  {
 		// we cant use non-ramdir on windows, because this test needs to double-write.
 		MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random(), new RAMDirectory());

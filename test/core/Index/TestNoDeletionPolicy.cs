@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Index
 {
 
@@ -27,20 +29,23 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestNoDeletionPolicy : LuceneTestCase
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoDeletionPolicy() throws Exception
-	  public virtual void TestNoDeletionPolicy()
+      [Test]
+	  public virtual void TestNoDeletionPolicy_Mem()
 	  {
 		IndexDeletionPolicy idp = NoDeletionPolicy.INSTANCE;
-		idp.OnInit(null);
-		idp.OnCommit(null);
+		idp.OnInit<IndexCommit>(null);
+		idp.OnCommit<IndexCommit>(null);
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFinalSingleton() throws Exception
+      [Test]
 	  public virtual void TestFinalSingleton()
 	  {
 		Assert.IsTrue(Modifier.isFinal(typeof(NoDeletionPolicy).Modifiers));
@@ -53,7 +58,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMethodsOverridden() throws Exception
-	  public virtual void TestMethodsOverridden()
+      [Test]
+      public virtual void TestMethodsOverridden()
 	  {
 		// Ensures that all methods of IndexDeletionPolicy are
 		// overridden/implemented. That's important to ensure that NoDeletionPolicy 
@@ -77,7 +83,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testAllCommitsRemain() throws Exception
-	  public virtual void TestAllCommitsRemain()
+      [Test]
+      public virtual void TestAllCommitsRemain()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));

@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
 		  // okay, all terms must belong to the same field
 		}
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		indexStore.Dispose();
 	  }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 		Add("blueberry chocolate pie", writer);
 		Add("blueberry chocolate tart", writer);
 		IndexReader r = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(r);
 		MultiPhraseQuery q = new MultiPhraseQuery();
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
 		Add("a b c d e f g h i k", writer);
 		IndexReader r = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(r);
 
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore);
 		Add("a b c d e f g h i k", writer);
 		IndexReader r = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(r);
 		MultiPhraseQuery q = new MultiPhraseQuery();
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search
 		// just make sure no exc:
 		searcher.Explain(q, 0);
 
-        writer.Close();
+        writer.Dispose();
 		reader.Dispose();
 		indexStore.Dispose();
 	  }
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search
 		// exception will be thrown here without fix for #35626:
 		ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length, "Wrong number of hits");
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		indexStore.Dispose();
 	  }
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search
 		// just make sure no exc:
 		searcher.Explain(q, 0);
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		indexStore.Dispose();
 	  }
@@ -374,7 +374,7 @@ namespace Lucene.Net.Search
 		Weight weight = query.CreateWeight(searcher);
 		Assert.AreEqual(10f * 10f, weight.ValueForNormalization, 0.001f);
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		indexStore.Dispose();
 	  }
@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
 		doc.Add(new TextField("field", new CannedTokenStream(tokens)));
 		writer.AddDocument(doc);
 		IndexReader r = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		IndexSearcher s = NewSearcher(r);
 		MultiPhraseQuery mpq = new MultiPhraseQuery();
 		//mpq.setSlop(1);

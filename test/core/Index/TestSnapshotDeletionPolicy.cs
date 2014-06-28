@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 	// this was developed for Lucene In Action,
 	// http://lucenebook.com
 	//
-
+    [TestFixture]
 	public class TestSnapshotDeletionPolicy : LuceneTestCase
 	{
 	  public const string INDEX_PATH = "test.snapshots";
@@ -311,7 +311,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testBasicSnapshots() throws Exception
-	  public virtual void TestBasicSnapshots()
+      [Test]
+      public virtual void TestBasicSnapshots()
 	  {
 		int numSnapshots = 3;
 
@@ -340,7 +341,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMultiThreadedSnapshotting() throws Exception
-	  public virtual void TestMultiThreadedSnapshotting()
+      [Test]
+      public virtual void TestMultiThreadedSnapshotting()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
@@ -414,7 +416,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testRollbackToOldSnapshot() throws Exception
-	  public virtual void TestRollbackToOldSnapshot()
+      [Test]
+      public virtual void TestRollbackToOldSnapshot()
 	  {
 		int numSnapshots = 2;
 		Directory dir = NewDirectory();
@@ -441,7 +444,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testReleaseSnapshot() throws Exception
-	  public virtual void TestReleaseSnapshot()
+      [Test]
+      public virtual void TestReleaseSnapshot()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
@@ -464,7 +468,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSnapshotLastCommitTwice() throws Exception
-	  public virtual void TestSnapshotLastCommitTwice()
+      [Test]
+      public virtual void TestSnapshotLastCommitTwice()
 	  {
 		Directory dir = NewDirectory();
 
@@ -492,7 +497,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMissingCommits() throws Exception
-	  public virtual void TestMissingCommits()
+      [Test]
+      public virtual void TestMissingCommits()
 	  {
 		// Tests the behavior of SDP when commits that are given at ctor are missing
 		// on onInit().

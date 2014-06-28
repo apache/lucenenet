@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -42,7 +43,8 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Tests for IndexWriter when the disk runs out of space
 	/// </summary>
-	public class TestIndexWriterOnDiskFull : LuceneTestCase
+	[TestFixture]
+    public class TestIndexWriterOnDiskFull : LuceneTestCase
 	{
 
 	  /*
@@ -50,6 +52,7 @@ namespace Lucene.Net.Index
 	   * full exception in addDocument.
 	   * TODO: how to do this on windows with FSDirectory?
 	   */
+      [Test]
 	  public virtual void TestAddDocumentOnDiskFull()
 	  {
 
@@ -175,7 +178,8 @@ namespace Lucene.Net.Index
 	  either all or none of the incoming documents were in
 	  fact added.
 	   */
-	  public virtual void TestAddIndexOnDiskFull()
+      [Test]
+      public virtual void TestAddIndexOnDiskFull()
 	  {
 		// MemoryCodec, since it uses FST, is not necessarily
 		// "additive", ie if you add up N small FSTs, then merge
@@ -565,25 +569,28 @@ namespace Lucene.Net.Index
 		  {
 			return;
 		  }
-		  string[] trace = (new Exception()).StackTrace;
-		  for (int i = 0; i < trace.Length; i++)
-		  {
-			if (typeof(SegmentMerger).Name.Equals(trace[i].ClassName) && "mergeTerms".Equals(trace[i].MethodName) && !DidFail1)
-			{
-			  DidFail1 = true;
-			  throw new IOException("fake disk full during mergeTerms");
-			}
-			if (typeof(LiveDocsFormat).Name.Equals(trace[i].ClassName) && "writeLiveDocs".Equals(trace[i].MethodName) && !DidFail2)
-			{
-			  DidFail2 = true;
-			  throw new IOException("fake disk full while writing LiveDocs");
-			}
-		  }
+
+		    var trace = new StackTrace(new Exception());
+		    foreach (var frame in trace.GetFrames())
+		    {
+		        var method = frame.GetMethod();
+                if (typeof(SegmentMerger).Name.Equals(frame.GetType().Name) && "mergeTerms".Equals(method.Name) && !DidFail1)
+                {
+                    DidFail1 = true;
+                    throw new IOException("fake disk full during mergeTerms");
+                }
+                if (typeof(LiveDocsFormat).Name.Equals(frame.GetType().Name) && "writeLiveDocs".Equals(method.Name) && !DidFail2)
+                {
+                    DidFail2 = true;
+                    throw new IOException("fake disk full while writing LiveDocs");
+                }
+		    }
 		}
 	  }
 
 	  // LUCENE-2593
-	  public virtual void TestCorruptionAfterDiskFullDuringMerge()
+      [Test]
+      public virtual void TestCorruptionAfterDiskFullDuringMerge()
 	  {
 		MockDirectoryWrapper dir = NewMockDirectory();
 		//IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setReaderPooling(true));
@@ -626,7 +633,8 @@ namespace Lucene.Net.Index
 	  // LUCENE-1130: make sure immeidate disk full on creating
 	  // an IndexWriter (hit during DW.ThreadState.Init()) is
 	  // OK:
-	  public virtual void TestImmediateDiskFull()
+      [Test]
+      public virtual void TestImmediateDiskFull()
 	  {
 		MockDirectoryWrapper dir = NewMockDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergeScheduler(new ConcurrentMergeScheduler()));

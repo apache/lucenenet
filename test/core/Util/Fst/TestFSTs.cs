@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Lucene.Net.Randomized.Generators;
 
@@ -110,7 +111,7 @@ namespace Lucene.Net.Util.Fst
 		  {
 			terms2[idx] = ToIntsRef(strings2[idx], inputMode);
 		  }
-		  Arrays.Sort(terms2);
+		  Array.Sort(terms2);
 
 		  DoTest(inputMode, terms);
 
@@ -166,7 +167,7 @@ namespace Lucene.Net.Util.Fst
 	  // given set of terms, test the different outputs for them
 	  private void DoTest(int inputMode, IntsRef[] terms)
 	  {
-		Arrays.sort(terms);
+		Array.Sort(terms);
 
 		// NoOutputs (simple FSA)
 		{
@@ -303,7 +304,7 @@ namespace Lucene.Net.Util.Fst
 			  string term = GetRandomString(random);
 			  termsSet.Add(ToIntsRef(term, inputMode));
 			}
-			DoTest(inputMode, termsSet.ToArray(new IntsRef[termsSet.Count]));
+			DoTest(inputMode, termsSet.ToArray(/*new IntsRef[termsSet.Count]*/));
 		  }
 		}
 	  }
@@ -438,7 +439,7 @@ namespace Lucene.Net.Util.Fst
 
 			  if (seekResult == TermsEnum.SeekStatus.END)
 			  {
-				Assert.IsNull(fstSeekResult.Equals, "got " + (fstSeekResult == null ? "null" : fstSeekResult.Input.Utf8ToString()) + " but expected null");
+				Assert.IsNull(fstSeekResult.Equals(), "got " + (fstSeekResult == null ? "null" : fstSeekResult.Input.Utf8ToString()) + " but expected null");
 			  }
 			  else
 			  {
@@ -1052,7 +1053,7 @@ namespace Lucene.Net.Util.Fst
 		  // turn writer into reader:
 		  IndexReader r = w.Reader;
 		  IndexSearcher idxS = NewSearcher(r);
-		  w.Close();
+		  w.Dispose();
 
 		  IList<string> allIDsList = new List<string>(allIDs);
 		  IList<string> sortedAllIDsList = new List<string>(allIDsList);
@@ -1208,7 +1209,7 @@ namespace Lucene.Net.Util.Fst
 		  Console.WriteLine("TEST: got reader=" + r);
 		}
 		IndexSearcher s = NewSearcher(r);
-		w.Close();
+		w.Dispose();
 
 		IList<string> allTermsList = new List<string>(allTerms);
 	    allTermsList = CollectionsHelper.Shuffle(allTermsList);

@@ -43,6 +43,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestIndexableField : LuceneTestCase
 	{
 
@@ -221,7 +222,8 @@ namespace Lucene.Net.Index
 
 	  // Silly test showing how to index documents w/o using Lucene's core
 	  // Document nor Field class
-	  public virtual void TestArbitraryFields()
+      [Test]
+      public virtual void TestArbitraryFields()
 	  {
 
 		Directory dir = NewDirectory();
@@ -253,7 +255,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		IndexSearcher s = NewSearcher(r);
 		int counter = 0;

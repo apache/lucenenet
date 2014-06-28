@@ -331,7 +331,7 @@ namespace Lucene.Net.Search
 		}
 	  }
 
-	  protected internal class ConstantScorer : Scorer
+	  public class ConstantScorer : Scorer
 	  {
 		  private readonly ConstantScoreQuery OuterInstance;
 
@@ -344,6 +344,11 @@ namespace Lucene.Net.Search
 		  this.TheScore = theScore;
 		  this.DocIdSetIterator = docIdSetIterator;
 		}
+
+	      public string GetDocIDIteratorTypeName()
+	      {
+	          return DocIdSetIterator.GetType().Name;
+	      }
 
 		public override int NextDoc()
 		{
@@ -418,8 +423,6 @@ namespace Lucene.Net.Search
 		}
 		if (o is ConstantScoreQuery)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final ConstantScoreQuery other = (ConstantScoreQuery) o;
 		  ConstantScoreQuery other = (ConstantScoreQuery) o;
 		  return ((this.filter == null) ? other.filter == null : this.filter.Equals(other.filter)) && ((this.query == null) ? other.query == null : this.query.Equals(other.query));
 		}

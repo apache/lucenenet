@@ -33,13 +33,15 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestParallelCompositeReader : LuceneTestCase
 	{
 
 	  private IndexSearcher Parallel_Renamed, Single_Renamed;
 	  private Directory Dir, Dir1, Dir2;
 
-	  public virtual void TestQueries()
+      [Test]
+      public virtual void TestQueries()
 	  {
 		Single_Renamed = Single(Random(), false);
 		Parallel_Renamed = Parallel(Random(), false);
@@ -58,7 +60,8 @@ namespace Lucene.Net.Index
 		Dir2 = null;
 	  }
 
-	  public virtual void TestQueriesCompositeComposite()
+      [Test]
+      public virtual void TestQueriesCompositeComposite()
 	  {
 		Single_Renamed = Single(Random(), true);
 		Parallel_Renamed = Parallel(Random(), true);
@@ -94,7 +97,8 @@ namespace Lucene.Net.Index
 		QueryTest(bq1);
 	  }
 
-	  public virtual void TestRefCounts1()
+      [Test]
+      public virtual void TestRefCounts1()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -114,7 +118,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestRefCounts2()
+      [Test]
+      public virtual void TestRefCounts2()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -142,7 +147,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // closeSubreaders=false
-	  public virtual void TestReaderClosedListener1()
+      [Test]
+      public virtual void TestReaderClosedListener1()
 	  {
 		Directory dir1 = GetDir1(Random());
 		CompositeReader ir1 = DirectoryReader.Open(dir1);
@@ -183,7 +189,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // closeSubreaders=true
-	  public virtual void TestReaderClosedListener2()
+      [Test]
+      public virtual void TestReaderClosedListener2()
 	  {
 		Directory dir1 = GetDir1(Random());
 		CompositeReader ir1 = DirectoryReader.Open(dir1);
@@ -222,7 +229,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestCloseInnerReader()
+      [Test]
+      public virtual void TestCloseInnerReader()
 	  {
 		Directory dir1 = GetDir1(Random());
 		CompositeReader ir1 = DirectoryReader.Open(dir1);
@@ -263,7 +271,8 @@ namespace Lucene.Net.Index
 		dir1.Dispose();
 	  }
 
-	  public virtual void TestIncompatibleIndexes1()
+      [Test]
+      public virtual void TestIncompatibleIndexes1()
 	  {
 		// two documents:
 		Directory dir1 = GetDir1(Random());
@@ -306,7 +315,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestIncompatibleIndexes2()
+      [Test]
+      public virtual void TestIncompatibleIndexes2()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetInvalidStructuredDir2(Random());
@@ -341,7 +351,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestIncompatibleIndexes3()
+      [Test]
+      public virtual void TestIncompatibleIndexes3()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -376,7 +387,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestIgnoreStoredFields()
+      [Test]
+      public virtual void TestIgnoreStoredFields()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -440,7 +452,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestToString()
+      [Test]
+      public virtual void TestToString()
 	  {
 		Directory dir1 = GetDir1(Random());
 		CompositeReader ir1 = DirectoryReader.Open(dir1);
@@ -453,7 +466,8 @@ namespace Lucene.Net.Index
 		dir1.Dispose();
 	  }
 
-	  public virtual void TestToStringCompositeComposite()
+      [Test]
+      public virtual void TestToStringCompositeComposite()
 	  {
 		Directory dir1 = GetDir1(Random());
 		CompositeReader ir1 = DirectoryReader.Open(dir1);

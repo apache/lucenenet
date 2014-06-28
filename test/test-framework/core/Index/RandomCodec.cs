@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Index
 {
@@ -27,27 +28,27 @@ namespace Lucene.Net.Index
 	using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
 	using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
 	using AssertingPostingsFormat = Lucene.Net.Codecs.asserting.AssertingPostingsFormat;
-	using TestBloomFilteredLucene41Postings = Lucene.Net.Codecs.bloom.TestBloomFilteredLucene41Postings;
-	using DiskDocValuesFormat = Lucene.Net.Codecs.diskdv.DiskDocValuesFormat;
+	//using TestBloomFilteredLucene41Postings = Lucene.Net.Codecs.bloom.TestBloomFilteredLucene41Postings;
+	//using DiskDocValuesFormat = Lucene.Net.Codecs.diskdv.DiskDocValuesFormat;
 	using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
-	using Lucene41WithOrds = Lucene.Net.Codecs.Lucene41ords.Lucene41WithOrds;
+	//using Lucene41WithOrds = Lucene.Net.Codecs.Lucene41ords.Lucene41WithOrds;
 	using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
 	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-	using DirectPostingsFormat = Lucene.Net.Codecs.memory.DirectPostingsFormat;
-	using MemoryDocValuesFormat = Lucene.Net.Codecs.memory.MemoryDocValuesFormat;
-	using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
-	using MockFixedIntBlockPostingsFormat = Lucene.Net.Codecs.mockintblock.MockFixedIntBlockPostingsFormat;
-	using MockVariableIntBlockPostingsFormat = Lucene.Net.Codecs.mockintblock.MockVariableIntBlockPostingsFormat;
-	using MockRandomPostingsFormat = Lucene.Net.Codecs.mockrandom.MockRandomPostingsFormat;
-	using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
-	using NestedPulsingPostingsFormat = Lucene.Net.Codecs.nestedpulsing.NestedPulsingPostingsFormat;
-	using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
-	using SimpleTextDocValuesFormat = Lucene.Net.Codecs.simpletext.SimpleTextDocValuesFormat;
-	using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;
-	using FSTOrdPostingsFormat = Lucene.Net.Codecs.memory.FSTOrdPostingsFormat;
-	using FSTOrdPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTOrdPulsing41PostingsFormat;
-	using FSTPostingsFormat = Lucene.Net.Codecs.memory.FSTPostingsFormat;
-	using FSTPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTPulsing41PostingsFormat;
+	//using DirectPostingsFormat = Lucene.Net.Codecs.memory.DirectPostingsFormat;
+	//using MemoryDocValuesFormat = Lucene.Net.Codecs.memory.MemoryDocValuesFormat;
+	//using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
+	//using MockFixedIntBlockPostingsFormat = Lucene.Net.Codecs.mockintblock.MockFixedIntBlockPostingsFormat;
+	//using MockVariableIntBlockPostingsFormat = Lucene.Net.Codecs.mockintblock.MockVariableIntBlockPostingsFormat;
+	//using MockRandomPostingsFormat = Lucene.Net.Codecs.mockrandom.MockRandomPostingsFormat;
+	//using MockSepPostingsFormat = Lucene.Net.Codecs.mocksep.MockSepPostingsFormat;
+	//using NestedPulsingPostingsFormat = Lucene.Net.Codecs.nestedpulsing.NestedPulsingPostingsFormat;
+	//using Pulsing41PostingsFormat = Lucene.Net.Codecs.pulsing.Pulsing41PostingsFormat;
+	//using SimpleTextDocValuesFormat = Lucene.Net.Codecs.simpletext.SimpleTextDocValuesFormat;
+	//using SimpleTextPostingsFormat = Lucene.Net.Codecs.simpletext.SimpleTextPostingsFormat;
+	//using FSTOrdPostingsFormat = Lucene.Net.Codecs.memory.FSTOrdPostingsFormat;
+	//using FSTOrdPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTOrdPulsing41PostingsFormat;
+	//using FSTPostingsFormat = Lucene.Net.Codecs.memory.FSTPostingsFormat;
+	//using FSTPulsing41PostingsFormat = Lucene.Net.Codecs.memory.FSTPulsing41PostingsFormat;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Support;
@@ -84,8 +85,8 @@ namespace Lucene.Net.Index
 	  // note: we have to sync this map even though its just for debugging/toString, 
 	  // otherwise DWPT's .toString() calls that iterate over the map can 
 	  // cause concurrentmodificationexception if indexwriter's infostream is on
-	  private IDictionary<string, PostingsFormat> PreviousMappings = Collections.synchronizedMap(new Dictionary<string, PostingsFormat>());
-	  private IDictionary<string, DocValuesFormat> PreviousDVMappings = Collections.synchronizedMap(new Dictionary<string, DocValuesFormat>());
+      private IDictionary<string, PostingsFormat> PreviousMappings = new ConcurrentHashMapWrapper<string, PostingsFormat>(new Dictionary<string, PostingsFormat>());
+	  private IDictionary<string, DocValuesFormat> PreviousDVMappings = new ConcurrentHashMapWrapper<string, DocValuesFormat>(new Dictionary<string, DocValuesFormat>());
 	  private readonly int PerFieldSeed;
 
 	  public override PostingsFormat GetPostingsFormatForField(string name)
@@ -94,11 +95,11 @@ namespace Lucene.Net.Index
 		if (codec == null)
 		{
 		  codec = Formats[Math.Abs(PerFieldSeed ^ name.GetHashCode()) % Formats.Count];
-		  if (codec is SimpleTextPostingsFormat && PerFieldSeed % 5 != 0)
+		  /*if (codec is SimpleTextPostingsFormat && PerFieldSeed % 5 != 0)
 		  {
 			// make simpletext rarer, choose again
-			codec = Formats[Math.Abs(PerFieldSeed ^ name.ToUpper(Locale.ROOT).GetHashCode()) % Formats.Count];
-		  }
+			codec = Formats[Math.Abs(PerFieldSeed ^ name.ToUpper(CultureInfo.InvariantCulture).GetHashCode()) % Formats.Count];
+		  }*/
 		  PreviousMappings[name] = codec;
 		  // Safety:
 		  Debug.Assert(PreviousMappings.Count < 10000, "test went insane");
@@ -112,11 +113,11 @@ namespace Lucene.Net.Index
 		if (codec == null)
 		{
 		  codec = DvFormats[Math.Abs(PerFieldSeed ^ name.GetHashCode()) % DvFormats.Count];
-		  if (codec is SimpleTextDocValuesFormat && PerFieldSeed % 5 != 0)
+		  /*if (codec is SimpleTextDocValuesFormat && PerFieldSeed % 5 != 0)
 		  {
 			// make simpletext rarer, choose again
-			codec = DvFormats[Math.Abs(PerFieldSeed ^ name.ToUpper(Locale.ROOT).GetHashCode()) % DvFormats.Count];
-		  }
+			codec = DvFormats[Math.Abs(PerFieldSeed ^ name.ToUpper(CultureInfo.InvariantCulture).GetHashCode()) % DvFormats.Count];
+		  }*/
 		  PreviousDVMappings[name] = codec;
 		  // Safety:
 		  Debug.Assert(PreviousDVMappings.Count < 10000, "test went insane");
@@ -133,13 +134,13 @@ namespace Lucene.Net.Index
 		int maxItemsPerBlock = 2 * (Math.Max(2, minItemsPerBlock - 1)) + random.Next(100);
 		int lowFreqCutoff = TestUtil.NextInt(random, 2, 100);
 
-		Add(avoidCodecs, new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock), new FSTPostingsFormat(), new FSTOrdPostingsFormat(), new FSTPulsing41PostingsFormat(1 + random.Next(20)), new FSTOrdPulsing41PostingsFormat(1 + random.Next(20)), new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock), LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : lowFreqCutoff)), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new TestBloomFilteredLucene41Postings(), new MockSepPostingsFormat(), new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)), new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), new MockRandomPostingsFormat(random), new NestedPulsingPostingsFormat(), new Lucene41WithOrds(), new SimpleTextPostingsFormat(), new AssertingPostingsFormat(), new MemoryPostingsFormat(true, random.nextFloat()), new MemoryPostingsFormat(false, random.nextFloat()));
+		Add(avoidCodecs, new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock)/*, new FSTPostingsFormat(), new FSTOrdPostingsFormat(), new FSTPulsing41PostingsFormat(1 + random.Next(20)), new FSTOrdPulsing41PostingsFormat(1 + random.Next(20)), new DirectPostingsFormat(LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : maxItemsPerBlock), LuceneTestCase.Rarely(random) ? 1 : (LuceneTestCase.Rarely(random) ? int.MaxValue : lowFreqCutoff)), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new Pulsing41PostingsFormat(1 + random.Next(20), minItemsPerBlock, maxItemsPerBlock), new TestBloomFilteredLucene41Postings(), new MockSepPostingsFormat(), new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)), new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), new MockRandomPostingsFormat(random), new NestedPulsingPostingsFormat(), new Lucene41WithOrds(), new SimpleTextPostingsFormat(), new AssertingPostingsFormat(), new MemoryPostingsFormat(true, random.nextFloat()), new MemoryPostingsFormat(false, random.nextFloat())*/);
 			// add pulsing again with (usually) different parameters
 			//TODO as a PostingsFormat which wraps others, we should allow TestBloomFilteredLucene41Postings to be constructed 
 			//with a choice of concrete PostingsFormats. Maybe useful to have a generic means of marking and dealing 
 			//with such "wrapper" classes?
 
-		AddDocValues(avoidCodecs, new Lucene45DocValuesFormat(), new DiskDocValuesFormat(), new MemoryDocValuesFormat(), new SimpleTextDocValuesFormat(), new AssertingDocValuesFormat());
+		AddDocValues(avoidCodecs, new Lucene45DocValuesFormat(), /*new DiskDocValuesFormat(), new MemoryDocValuesFormat(), new SimpleTextDocValuesFormat(),*/ new AssertingDocValuesFormat());
 
         Formats = CollectionsHelper.Shuffle(Formats);
         DvFormats = CollectionsHelper.Shuffle(DvFormats);
@@ -155,7 +156,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public RandomCodec(Random random) : this(random, CollectionsHelper.EmptySet<string> ())
+	  public RandomCodec(Random random) : this(random, new HashSet<string> ())
 	  {
 	  }
 

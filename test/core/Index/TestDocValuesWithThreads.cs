@@ -40,9 +40,11 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using System.IO;
 
+    [TestFixture]
 	public class TestDocValuesWithThreads : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
@@ -171,7 +173,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void Test2()
+      [Test]
+      public virtual void Test2()
 	  {
 		Random random = Random();
 		int NUM_DOCS = AtLeast(100);
@@ -230,7 +233,7 @@ namespace Lucene.Net.Index
 
 		writer.ForceMerge(1);
 		DirectoryReader r = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		AtomicReader sr = GetOnlySegmentReader(r);
 

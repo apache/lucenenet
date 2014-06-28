@@ -44,7 +44,8 @@ namespace Lucene.Net.Index
 	/// testcases.
 	/// 
 	/// </summary>
-	public class TestMultiLevelSkipList : LuceneTestCase
+	[TestFixture]
+    public class TestMultiLevelSkipList : LuceneTestCase
 	{
 
 	  internal class CountingRAMDirectory : MockDirectoryWrapper
@@ -69,13 +70,15 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Override @Before public void setUp() throws Exception
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		Counter = 0;
 	  }
 
-	  public virtual void TestSimpleSkip()
+      [Test]
+      public virtual void TestSimpleSkip()
 	  {
 		Directory dir = new CountingRAMDirectory(this, new RAMDirectory());
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())).SetMergePolicy(NewLogMergePolicy()));

@@ -34,7 +34,8 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
-	public class TestIndexWriterNRTIsCurrent : LuceneTestCase
+	[TestFixture]
+    public class TestIndexWriterNRTIsCurrent : LuceneTestCase
 	{
 
 	  public class ReaderHolder
@@ -43,7 +44,8 @@ namespace Lucene.Net.Index
 		internal volatile bool Stop = false;
 	  }
 
-	  public virtual void TestIsCurrentWithThreads()
+      [Test]
+      public virtual void TestIsCurrentWithThreads()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));

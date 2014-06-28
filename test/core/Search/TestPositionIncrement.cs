@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Search
 {
@@ -70,7 +71,7 @@ namespace Lucene.Net.Search
 		d.Add(NewTextField("field", "bogus", Field.Store.YES));
 		writer.AddDocument(d);
 		IndexReader reader = writer.Reader;
-		writer.Clear();
+		writer.Dispose();
 
 
 		IndexSearcher searcher = NewSearcher(reader);
@@ -284,7 +285,7 @@ namespace Lucene.Net.Search
 			count++;
 			if (VERBOSE)
 			{
-			  Console.WriteLine("  payload: " + new string(bytes, IOUtils.CHARSET_UTF_8));
+			  Console.WriteLine("  payload: " + Encoding.UTF8.GetString((byte[])(Array)bytes));
 			}
 		  }
 		}
@@ -313,13 +314,13 @@ namespace Lucene.Net.Search
 		count = pls.Count;
 		foreach (sbyte[] bytes in pls)
 		{
-		  string s = new string(bytes, IOUtils.CHARSET_UTF_8);
+          string s = Encoding.UTF8.GetString((byte[])(Array)bytes);
 		  //System.out.println(s);
 		  sawZero |= s.Equals("pos: 0");
 		}
 		Assert.AreEqual(5, count);
 		Assert.IsTrue(sawZero);
-		writer.Close();
+		writer.Dispose();
 		@is.IndexReader.Dispose();
 		dir.Dispose();
 	  }

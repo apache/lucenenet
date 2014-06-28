@@ -1042,7 +1042,7 @@ namespace Lucene.Net.Util.Packed
 
 			// 4. byte[] decoding
 			sbyte[] byteBlocks = new sbyte[8 * blocks.Length];
-			ByteBuffer.Wrap(byteBlocks).asLongBuffer().put(blocks);
+			ByteBuffer.Wrap(byteBlocks).asLongBuffer().Put(blocks);
 			long[] values2 = new long[valuesOffset + longIterations * longValueCount];
 			decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
 			foreach (long value in values2)

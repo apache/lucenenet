@@ -496,7 +496,7 @@ namespace Lucene.Net.Store
 		{
 		  this.Parent = parent;
 		  this.Name = name;
-		  File = new FileStream (Path.Combine(parent.Directory_Renamed.FullName, name), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		  File = new FileStream (Path.Combine(parent.Directory_Renamed.FullName, name), FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite);
 		  IsOpen = true;
 		}
 

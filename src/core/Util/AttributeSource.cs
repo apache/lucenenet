@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
               {
                   return (Attribute)System.Activator.CreateInstance(GetClassForInterface(attClass));
               }
-              catch (Exception)
+              catch (ArgumentException)
               {
                   throw new System.ArgumentException("Could not instantiate implementing class for " + attClass.Name);
               }
@@ -312,12 +312,13 @@ namespace Lucene.Net.Util
 		}
 	  }
 
-      public virtual T AddAttribute<T>() where T : IAttribute 
+      public virtual T AddAttribute<T>() 
+          where T : IAttribute 
       {
           var attClass = typeof(T);
           if (!Attributes.ContainsKey(attClass))
           {
-               if (!(attClass.IsInterface &&  typeof(Attribute).IsAssignableFrom(attClass))) 
+               if (!(attClass.IsInterface &&  typeof(IAttribute).IsAssignableFrom(attClass))) 
                 {
                     throw new ArgumentException("AddAttribute() only accepts an interface that extends Attribute, but " + attClass.FullName + " does not fulfil this contract."
                     );

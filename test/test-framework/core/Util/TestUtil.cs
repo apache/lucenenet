@@ -1,8 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Zip;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Util
 {
@@ -44,7 +47,7 @@ namespace Lucene.Net.Util
 	using SortedDocValuesField = Lucene.Net.Document.SortedDocValuesField;
 	using AtomicReader = Lucene.Net.Index.AtomicReader;
 	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using CheckIndex = Lucene.Net.Index.CheckIndex;
+	//using CheckIndex = Lucene.Net.Index.CheckIndex;
 	using DocValuesStatus = Lucene.Net.Index.CheckIndex.Status.DocValuesStatus;
 	using FieldNormStatus = Lucene.Net.Index.CheckIndex.Status.FieldNormStatus;
 	using StoredFieldStatus = Lucene.Net.Index.CheckIndex.Status.StoredFieldStatus;
@@ -96,7 +99,7 @@ namespace Lucene.Net.Util
 	  public static void Rm(params DirectoryInfo[] locations)
 	  {
         HashSet<FileSystemInfo> unremoved = Rm(new HashSet<FileSystemInfo>(), locations);
-		if (unremoved.Count <= 0)
+		if (unremoved.Count != 0)
 		{
 		  StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
 		  foreach (FileInfo f in unremoved)
@@ -157,8 +160,57 @@ namespace Lucene.Net.Util
       public static void Unzip(FileInfo zipName, DirectoryInfo destDir)
 	  {
 		Rm(destDir);
-		destDir.mkdir();
+	    destDir.CreateSubdirectory(destDir.FullName);// mkdir();
 
+	      using (ZipInputStream s = new ZipInputStream(File.OpenRead(zipName.FullName)))
+	      {
+	          ZipEntry entry;
+	          while ((entry = s.GetNextEntry()) != null)
+	          {
+                  string directoryName  = Path.GetDirectoryName(entry.Name); //Directory where file is stored
+                  string fileName       = Path.GetFileName(entry.Name); //Name of file (if it is one)
+                  DirectoryInfo targetDir = new DirectoryInfo(Path.Combine(destDir.FullName, entry.Name));
+	              if (entry.IsDirectory)
+	              {
+	                  targetDir.Create();
+	              }
+	              else
+	              {
+	                  if (targetDir.Parent != null)
+	                  {
+                          // be on the safe side: do not rely on that directories are always extracted
+                          // before their children (although this makes sense, but is it guaranteed?)
+	                      targetDir.Parent.Create();
+	                  }
+
+	                  if (fileName != String.Empty)
+	                  {
+	                      using (FileStream streamWriter = File.Create(entry.Name))
+	                      {
+                              int size = 2048;
+                              byte[] data = new byte[2048];
+                              while (true)
+                              {
+                                  size = s.Read(data, 0, data.Length);
+                                  if (size > 0)
+                                  {
+                                      streamWriter.Write(data, 0, size);
+                                  }
+                                  else
+                                  {
+                                      break;
+                                  }
+                              }
+	                      }
+	                  }
+	              }
+	          }
+
+
+	      }
+
+
+         /* 
 		ZipFile zipFile = new ZipFile(zipName);
         IEnumerator<FileInfo> entries = zipFile.entries();
 
@@ -166,12 +218,13 @@ namespace Lucene.Net.Util
 		{
 		  ZipEntry entry = entries.Current;
 
-		  InputStream @in = zipFile.getInputStream(entry);
-          FileInfo targetFile = new FileInfo(destDir, entry.Name);
+		  Stream @in = zipFile.getInputStream(entry);
+          DirectoryInfo targetFile = new DirectoryInfo(destDir, entry.Name);
 		  if (entry.Directory)
 		  {
 			// allow unzipping with directory structure
-			targetFile.mkdirs();
+			//targetFile.mkdirs();
+		      targetFile.Create();
 		  }
 		  else
 		  {
@@ -181,21 +234,21 @@ namespace Lucene.Net.Util
 			  // before their children (although this makes sense, but is it guaranteed?)
 			  targetFile.ParentFile.mkdirs();
 			}
-			OutputStream @out = new BufferedOutputStream(new FileOutputStream(targetFile));
+			Stream @out = new BufferedOutputStream(new FileOutputStream(targetFile));
 
-			sbyte[] buffer = new sbyte[8192];
+			byte[] buffer = new byte[8192];
 			int len;
-			while ((len = @in.read(buffer)) >= 0)
+			while ((len = @in.Read(buffer, 0, buffer.Length)) >= 0)
 			{
-			  @out.write(buffer, 0, len);
+			  @out.Write(buffer, 0, len);
 			}
 
-			@in.close();
-			@out.close();
+			@in.Close();
+			@out.Close();
 		  }
 		}
 
-		zipFile.close();
+		zipFile.close();*/
 	  }
 
 	  public static void SyncConcurrentMerges(IndexWriter writer)
@@ -223,22 +276,22 @@ namespace Lucene.Net.Util
 
 	  public static CheckIndex.Status CheckIndex(Directory dir, bool crossCheckTermVectors)
 	  {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+		MemoryStream bos = new MemoryStream(1024);
 		CheckIndex checker = new CheckIndex(dir);
 		checker.CrossCheckTermVectors = crossCheckTermVectors;
-		checker.SetInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
-		CheckIndex.Status indexStatus = checker.CheckIndex(null);
+		checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8), false);
+		CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
 		if (indexStatus == null || indexStatus.Clean == false)
 		{
 		  Console.WriteLine("CheckIndex failed");
-		  Console.WriteLine(bos.ToString(IOUtils.UTF_8));
+		  Console.WriteLine(bos.ToString());
 		  throw new Exception("CheckIndex failed");
 		}
 		else
 		{
 		  if (LuceneTestCase.INFOSTREAM)
 		  {
-			Console.WriteLine(bos.ToString(IOUtils.UTF_8));
+			Console.WriteLine(bos.ToString());
 		  }
 		  return indexStatus;
 		}
@@ -258,27 +311,27 @@ namespace Lucene.Net.Util
 
 	  public static void CheckReader(AtomicReader reader, bool crossCheckTermVectors)
 	  {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
-		PrintStream infoStream = new PrintStream(bos, false, IOUtils.UTF_8);
+		MemoryStream bos = new MemoryStream(1024);
+        StreamWriter infoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
 
 		reader.CheckIntegrity();
-		CheckIndex.Status.FieldNormStatus fieldNormStatus = CheckIndex.testFieldNorms(reader, infoStream);
-		CheckIndex.Status.TermIndexStatus termIndexStatus = CheckIndex.testPostings(reader, infoStream);
-		CheckIndex.Status.StoredFieldStatus storedFieldStatus = CheckIndex.testStoredFields(reader, infoStream);
-		CheckIndex.Status.TermVectorStatus termVectorStatus = CheckIndex.testTermVectors(reader, infoStream, false, crossCheckTermVectors);
-		CheckIndex.Status.DocValuesStatus docValuesStatus = CheckIndex.testDocValues(reader, infoStream);
+		CheckIndex.Status.FieldNormStatus fieldNormStatus = Index.CheckIndex.TestFieldNorms(reader, infoStream);
+        CheckIndex.Status.TermIndexStatus termIndexStatus = Index.CheckIndex.TestPostings(reader, infoStream);
+        CheckIndex.Status.StoredFieldStatus storedFieldStatus = Index.CheckIndex.TestStoredFields(reader, infoStream);
+        CheckIndex.Status.TermVectorStatus termVectorStatus = Index.CheckIndex.TestTermVectors(reader, infoStream, false, crossCheckTermVectors);
+        CheckIndex.Status.DocValuesStatus docValuesStatus = Index.CheckIndex.TestDocValues(reader, infoStream);
 
-		if (fieldNormStatus.error != null || termIndexStatus.error != null || storedFieldStatus.error != null || termVectorStatus.error != null || docValuesStatus.error != null)
+        if (fieldNormStatus.Error != null || termIndexStatus.Error != null || storedFieldStatus.Error != null || termVectorStatus.Error != null || docValuesStatus.Error != null)
 		{
 		  Console.WriteLine("CheckReader failed");
-		  Console.WriteLine(bos.ToString(IOUtils.UTF_8));
+		  Console.WriteLine(bos.ToString());
 		  throw new Exception("CheckReader failed");
 		}
 		else
 		{
 		  if (LuceneTestCase.INFOSTREAM)
 		  {
-			Console.WriteLine(bos.ToString(IOUtils.UTF_8));
+			Console.WriteLine(bos.ToString());
 		  }
 		}
 	  }
@@ -295,16 +348,16 @@ namespace Lucene.Net.Util
 	  public static long NextLong(Random r, long start, long end)
 	  {
 		Debug.Assert(end >= start);
-		System.Numerics.BigInteger range = System.Numerics.BigInteger.valueOf(end) + System.Numerics.BigInteger.valueOf(1) - System.Numerics.BigInteger.valueOf(start);
-		if (range.compareTo(System.Numerics.BigInteger.valueOf(int.MaxValue)) <= 0)
+		BigInteger range = (BigInteger)end + (BigInteger)1 - (BigInteger)start;
+		if (range.CompareTo((BigInteger)int.MaxValue) <= 0)
 		{
 		  return start + r.Next((int)range);
 		}
 		else
 		{
 		  // probably not evenly distributed when range is large, but OK for tests
-		  System.Numerics.BigInteger augend = (new decimal(range)) * (new decimal(r.NextDouble())).toBigInteger();
-		  long result = System.Numerics.BigInteger.valueOf(start) + (long)augend;
+		  BigInteger augend = new BigInteger(new decimal(end+1-start) * (new decimal(r.NextDouble())));
+		  long result = start + (long)augend;
 		  Debug.Assert(result >= start);
 		  Debug.Assert(result <= end);
 		  return result;
@@ -648,10 +701,10 @@ namespace Lucene.Net.Util
 		  switch (NextInt(random, 0, 2))
 		  {
 			case 0:
-				builder.Append(char.ToUpper(codePoint));
+				builder.Append(char.ToUpper((char)codePoint));
 				break;
 			case 1:
-                builder.Append(char.ToLower(codePoint));
+                builder.Append(char.ToLower((char)codePoint));
 				break;
 			case 2: // leave intact
                 builder.Append(codePoint);
@@ -916,8 +969,8 @@ namespace Lucene.Net.Util
 	  public static void AssertAttributeReflection<T>(Attribute att, IDictionary<string, T> reflectedValues)
 	  {
 		IDictionary<string, object> map = new Dictionary<string, object>();
-		att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
-		Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
+        att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
+        Assert.IsTrue(CollectionsHelper.Equals((Dictionary<string, object>)reflectedValues, (Dictionary<string, object>)map), "Reflection does not produce same map");
 	  }
 
 	  private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
@@ -955,7 +1008,7 @@ namespace Lucene.Net.Util
 		  if (expectedSD is FieldDoc)
 		  {
 			Assert.IsTrue(actualSD is FieldDoc);
-			AssertArrayEquals(((FieldDoc) expectedSD).Fields, ((FieldDoc) actualSD).Fields, "wrong sort field values");
+			Assert.AreEqual(((FieldDoc) expectedSD).Fields, ((FieldDoc) actualSD).Fields, "wrong sort field values");
 		  }
 		  else
 		  {
@@ -976,7 +1029,7 @@ namespace Lucene.Net.Util
 		  Field field1 = (Field) f;
 		  Field field2;
 		  DocValuesType_e? dvType = field1.FieldType().DocValueType;
-          NumericType numType = field1.FieldType().NumericValue;
+          NumericType numType = field1.FieldType().NumericTypeValue;
 		  if (dvType != null)
 		  {
 			switch (dvType)
@@ -1087,14 +1140,14 @@ namespace Lucene.Net.Util
 	  {
 		switch (random.Next(5))
 		{
-		case 4:
-		  CharsRef chars = new CharsRef(@ref.Length);
-		  UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
-		  return chars;
-		case 3:
-		  return CharBuffer.wrap(@ref.Utf8ToString());
-		default:
-		  return new StringCharSequenceWrapper(@ref.Utf8ToString());
+		    case 4:
+		      CharsRef chars = new CharsRef(@ref.Length);
+		      UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
+		      return chars;
+		    //case 3:
+		      //return CharBuffer.wrap(@ref.Utf8ToString());
+		    default:
+		      return new StringCharSequenceWrapper(@ref.Utf8ToString());
 		}
 	  }
 
@@ -1103,7 +1156,7 @@ namespace Lucene.Net.Util
 	  /// </summary>
 	  public static void ShutdownExecutorService(TaskScheduler ex)
 	  {
-		if (ex != null)
+		/*if (ex != null)
 		{
 		  try
 		  {
@@ -1116,7 +1169,7 @@ namespace Lucene.Net.Util
 			Console.Error.WriteLine("Could not properly shutdown executor service.");
             Console.Error.WriteLine(e.StackTrace);
 		  }
-		}
+		}*/
 	  }
 
 	  /// <summary>
@@ -1124,7 +1177,8 @@ namespace Lucene.Net.Util
 	  /// when applying random patterns to longer strings as certain types of patterns
 	  /// may explode into exponential times in backtracking implementations (such as Java's).
 	  /// </summary>
-	  public static Pattern RandomPattern(Random random)
+	  /* LUCENE TODO: not called as of now
+      public static Pattern RandomPattern(Random random)
 	  {
 		const string nonBmpString = "AB\uD840\uDC00C";
 		while (true)
@@ -1155,7 +1209,7 @@ namespace Lucene.Net.Util
 			// Loop trying until we hit something that compiles.
 		  }
 		}
-	  }
+	  }*/
 
 
 	  public static FilteredQuery.FilterStrategy RandomFilterStrategy(Random random)

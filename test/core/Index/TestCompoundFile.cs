@@ -40,10 +40,12 @@ namespace Lucene.Net.Index
 //JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
 	import static Lucene.Net.Store.TestHelper.isSimpleFSIndexInputOpen;*/
 
+    [TestFixture]
 	public class TestCompoundFile : LuceneTestCase
 	{
 		private Directory Dir;
 
+        [SetUp]
 		public override void SetUp()
 		{
 		   base.SetUp();
@@ -52,6 +54,7 @@ namespace Lucene.Net.Index
 		   Dir = new SimpleFSDirectory(file,null);
 		}
 
+        [TearDown]
 		public override void TearDown()
 		{
 		   Dir.Dispose();
@@ -171,7 +174,8 @@ namespace Lucene.Net.Index
 		/// this test creates compound file based on a single file.
 		///  Files of different sizes are tested: 0, 1, 10, 100 bytes.
 		/// </summary>
-		public virtual void TestSingleFile()
+        [Test]
+        public virtual void TestSingleFile()
 		{
 			int[] data = new int[] {0, 1, 10, 100};
 			for (int i = 0; i < data.Length; i++)
@@ -198,7 +202,8 @@ namespace Lucene.Net.Index
 		/// this test creates compound file based on two files.
 		/// 
 		/// </summary>
-		public virtual void TestTwoFiles()
+        [Test]
+        public virtual void TestTwoFiles()
 		{
 			CreateSequenceFile(Dir, "d1", (sbyte) 0, 15);
 			CreateSequenceFile(Dir, "d2", (sbyte) 0, 114);
@@ -232,7 +237,8 @@ namespace Lucene.Net.Index
 		///  logic in the file reading code. For this the chunk variable is set to
 		///  the length of the buffer used internally by the compound file logic.
 		/// </summary>
-		public virtual void TestRandomFiles()
+        [Test]
+        public virtual void TestRandomFiles()
 		{
 			// Setup the test segment
 			string segment = "test";
@@ -297,7 +303,8 @@ namespace Lucene.Net.Index
 		}
 
 
-		public virtual void TestReadAfterClose()
+        [Test]
+        public virtual void TestReadAfterClose()
 		{
 			Demo_FSIndexInputBug(Dir, "test");
 		}
@@ -340,7 +347,8 @@ namespace Lucene.Net.Index
 			}
 		}
 
-		public virtual void TestClonedStreamsClosing()
+        [Test]
+        public virtual void TestClonedStreamsClosing()
 		{
 			SetUp_2();
 			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
@@ -349,8 +357,8 @@ namespace Lucene.Net.Index
 			IndexInput expected = Dir.OpenInput("f11", NewIOContext(Random()));
 
 			// this test only works for FSIndexInput
-			Assert.IsTrue(isSimpleFSIndexInput(expected));
-			Assert.IsTrue(isSimpleFSIndexInputOpen(expected));
+			Assert.IsTrue(IsSimpleFSIndexInput(expected));
+			Assert.IsTrue(IsSimpleFSIndexInputOpen(expected));
 
 			IndexInput one = cr.OpenInput("f11", NewIOContext(Random()));
 
@@ -394,7 +402,8 @@ namespace Lucene.Net.Index
 		/// this test opens two files from a compound stream and verifies that
 		///  their file positions are independent of each other.
 		/// </summary>
-		public virtual void TestRandomAccess()
+        [Test]
+        public virtual void TestRandomAccess()
 		{
 			SetUp_2();
 			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
@@ -475,7 +484,8 @@ namespace Lucene.Net.Index
 		/// this test opens two files from a compound stream and verifies that
 		///  their file positions are independent of each other.
 		/// </summary>
-		public virtual void TestRandomAccessClones()
+        [Test]
+        public virtual void TestRandomAccessClones()
 		{
 			SetUp_2();
 			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
@@ -553,7 +563,8 @@ namespace Lucene.Net.Index
 		}
 
 
-		public virtual void TestFileNotFound()
+        [Test]
+        public virtual void TestFileNotFound()
 		{
 			SetUp_2();
 			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
@@ -575,7 +586,8 @@ namespace Lucene.Net.Index
 		}
 
 
-		public virtual void TestReadPastEOF()
+        [Test]
+        public virtual void TestReadPastEOF()
 		{
 			SetUp_2();
 			CompoundFileDirectory cr = new CompoundFileDirectory(Dir, "f.comp", NewIOContext(Random()), false);
@@ -615,7 +627,8 @@ namespace Lucene.Net.Index
 		/// this test that writes larger than the size of the buffer output
 		/// will correctly increment the file pointer.
 		/// </summary>
-		public virtual void TestLargeWrites()
+        [Test]
+        public virtual void TestLargeWrites()
 		{
 			IndexOutput os = Dir.CreateOutput("testBufferStart.txt", NewIOContext(Random()));
 
@@ -639,7 +652,8 @@ namespace Lucene.Net.Index
 
 		}
 
-	   public virtual void TestAddExternalFile()
+        [Test]
+        public virtual void TestAddExternalFile()
 	   {
 		   CreateSequenceFile(Dir, "d1", (sbyte) 0, 15);
 
@@ -661,6 +675,7 @@ namespace Lucene.Net.Index
 	   }
 
 
+      [Test]
 	  public virtual void TestAppend()
 	  {
 		Directory newDir = NewDirectory();
@@ -707,7 +722,8 @@ namespace Lucene.Net.Index
 		newDir.Dispose();
 	  }
 
-	  public virtual void TestAppendTwice()
+      [Test]
+      public virtual void TestAppendTwice()
 	  {
 		Directory newDir = NewDirectory();
 		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
@@ -727,7 +743,8 @@ namespace Lucene.Net.Index
 		newDir.Dispose();
 	  }
 
-	  public virtual void TestEmptyCFS()
+      [Test]
+      public virtual void TestEmptyCFS()
 	  {
 		Directory newDir = NewDirectory();
 		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
@@ -740,7 +757,8 @@ namespace Lucene.Net.Index
 		newDir.Dispose();
 	  }
 
-	  public virtual void TestReadNestedCFP()
+      [Test]
+      public virtual void TestReadNestedCFP()
 	  {
 		Directory newDir = NewDirectory();
 		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
@@ -776,7 +794,8 @@ namespace Lucene.Net.Index
 		newDir.Dispose();
 	  }
 
-	  public virtual void TestDoubleClose()
+      [Test]
+      public virtual void TestDoubleClose()
 	  {
 		Directory newDir = NewDirectory();
 		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
@@ -802,7 +821,8 @@ namespace Lucene.Net.Index
 
 	  // Make sure we don't somehow use more than 1 descriptor
 	  // when reading a CFS with many subs:
-	  public virtual void TestManySubFiles()
+      [Test]
+      public virtual void TestManySubFiles()
 	  {
 
 		Directory d = NewFSDirectory(CreateTempDir("CFSManySubFiles"));
@@ -843,7 +863,8 @@ namespace Lucene.Net.Index
 		d.Dispose();
 	  }
 
-	  public virtual void TestListAll()
+      [Test]
+      public virtual void TestListAll()
 	  {
 		Directory dir = NewDirectory();
 		// riw should sometimes create docvalues fields, etc
@@ -864,7 +885,7 @@ namespace Lucene.Net.Index
 			riw.Commit();
 		  }
 		}
-		riw.Close();
+		riw.Dispose();
 		CheckFiles(dir);
 		dir.Dispose();
 	  }

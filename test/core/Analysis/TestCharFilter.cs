@@ -30,35 +30,35 @@ namespace Lucene.Net.Analysis
       [Test]
 	  public virtual void TestCharFilter1()
 	  {
-		CharFilter cs = new CharFilter1(new StreamReader(""));
+		CharFilter cs = new CharFilter1(new StringReader(""));
 		Assert.AreEqual(1, cs.CorrectOffset(0), "corrected offset is invalid");
 	  }
 
       [Test]
       public virtual void TestCharFilter2()
 	  {
-		CharFilter cs = new CharFilter2(new StreamReader(""));
+          CharFilter cs = new CharFilter2(new StringReader(""));
 		Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
 	  }
 
       [Test]
       public virtual void TestCharFilter12()
 	  {
-		CharFilter cs = new CharFilter2(new CharFilter1(new StreamReader("")));
+          CharFilter cs = new CharFilter2(new CharFilter1(new StringReader("")));
 		Assert.AreEqual(3, cs.CorrectOffset(0), "corrected offset is invalid");
 	  }
 
       [Test]
 	  public virtual void TestCharFilter11()
 	  {
-		CharFilter cs = new CharFilter1(new CharFilter1(new StreamReader("")));
+          CharFilter cs = new CharFilter1(new CharFilter1(new StringReader("")));
 		Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
 	  }
 
 	  internal class CharFilter1 : CharFilter
 	  {
 
-		protected internal CharFilter1(StreamReader @in) 
+          protected internal CharFilter1(TextReader @in) 
             : base(@in)
 		{
 		}
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis
 	  internal class CharFilter2 : CharFilter
 	  {
 
-          protected internal CharFilter2(StreamReader @in)
+          protected internal CharFilter2(TextReader @in)
               : base(@in)
 		{
 		}

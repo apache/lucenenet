@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		Searcher = NewSearcher(Reader);
 	  }
 

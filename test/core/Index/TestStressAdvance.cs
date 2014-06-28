@@ -27,9 +27,11 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Document;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestStressAdvance : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestStressAdvance_Mem()
 	  {
 		for (int iter = 0;iter < 3;iter++)
@@ -107,7 +109,7 @@ namespace Lucene.Net.Index
 			TestOne(de, bDocIDs);
 		  }
 
-          w.Close();
+          w.Dispose();
 		  r.Dispose();
 		  dir.Dispose();
 		}

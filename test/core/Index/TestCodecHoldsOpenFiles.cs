@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Index
 {
 
@@ -25,8 +27,10 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using System.IO;
 
+    [TestFixture]
 	public class TestCodecHoldsOpenFiles : LuceneTestCase
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 		Directory d = NewDirectory();
@@ -40,7 +44,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		foreach (string fileName in d.ListAll())
 		{

@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Lucene.Net.Search
 {
-
+    
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
 	 * contributor license agreements.  See the NOTICE file distributed with
@@ -21,8 +21,7 @@ namespace Lucene.Net.Search
 	 * limitations under the License.
 	 */
 
-    /*LUCENE TO-DO Removing until use is proven
-	
+	/*
     using IndexWriter = Lucene.Net.Index.IndexWriter;
 	using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 	using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
@@ -45,25 +44,26 @@ namespace Lucene.Net.Search
 	/// </summary>
 
 	public class ControlledRealTimeReopenThread<T> : ThreadClass, IDisposable
+        where T : class
 	{
-		private bool InstanceFieldsInitialized = false;
+		/*private bool InstanceFieldsInitialized = false;
 
 		private void InitializeInstanceFields()
 		{
 			ReopenCond = ReopenLock.newCondition();
-		}
-
+		}*/
+    /*
 	  private readonly ReferenceManager<T> Manager;
 	  private readonly long TargetMaxStaleNS;
 	  private readonly long TargetMinStaleNS;
 	  private readonly TrackingIndexWriter Writer;
 	  private volatile bool Finish;
-	  private volatile long WaitingGen;
-	  private volatile long SearchingGen;
+	  private long WaitingGen;
+	  private long SearchingGen;
 	  private long RefreshStartGen;
 
 	  private readonly ReentrantLock ReopenLock = new ReentrantLock();
-	  private Condition ReopenCond;
+	  private ManualResetEvent ReopenCond = new ManualResetEvent(false);
 
 	  /// <summary>
 	  /// Create ControlledRealTimeReopenThread, to periodically
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
 	  ///        become visible. </param>
 	  public ControlledRealTimeReopenThread(TrackingIndexWriter writer, ReferenceManager<T> manager, double targetMaxStaleSec, double targetMinStaleSec)
 	  {
-		  if (!InstanceFieldsInitialized)
+		  /*if (!InstanceFieldsInitialized)
 		  {
 			  InitializeInstanceFields();
 			  InstanceFieldsInitialized = true;
@@ -100,18 +100,18 @@ namespace Lucene.Net.Search
 
 	  private class HandleRefresh : ReferenceManager.RefreshListener
 	  {
-		  private readonly ControlledRealTimeReopenThread OuterInstance;
+		  private readonly ControlledRealTimeReopenThread<T> OuterInstance;
 
-		  public HandleRefresh(ControlledRealTimeReopenThread outerInstance)
+		  public HandleRefresh(ControlledRealTimeReopenThread<T> outerInstance)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		public override void BeforeRefresh()
+		public void BeforeRefresh()
 		{
 		}
 
-		public override void AfterRefresh(bool didRefresh)
+		public void AfterRefresh(bool didRefresh)
 		{
             OuterInstance.RefreshDone();
 		}
@@ -124,9 +124,9 @@ namespace Lucene.Net.Search
 			SearchingGen = RefreshStartGen;
 			Monitor.PulseAll(this);
 		  }
-	  }
-
-	  public override void Close()
+	  }*/
+/*
+	  public void Dispose()
 	  {
 		  lock (this)
 		  {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
 			ReopenLock.Lock();
 			try
 			{
-			  ReopenCond.signal();
+			  ReopenCond.Set();
 			}
 			finally
 			{
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
 	  public virtual void WaitForGeneration(long targetGen)
 	  {
 		WaitForGeneration(targetGen, -1);
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Waits for the target generation to become visible in
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search
 	  ///          maximum milliseconds to wait, or -1 to wait indefinitely </param>
 	  /// <returns> true if the targetGeneration is now available,
 	  ///         or false if maxMS wait time was exceeded </returns>
-	  public virtual bool WaitForGeneration(long targetGen, int maxMS)
+	  /*public virtual bool WaitForGeneration(long targetGen, int maxMS)
 	  {
 		  lock (this)
 		  {
@@ -214,14 +214,14 @@ namespace Lucene.Net.Search
         
 			  try
 			  {
-				ReopenCond.signal();
+				ReopenCond.Set();
 			  }
 			  finally
 			  {
 				ReopenLock.Unlock();
 			  }
-        
-			  long startMS = System.nanoTime() / 1000000;
+
+			  long startMS = DateTime.Now.Millisecond;//System.nanoTime() / 1000000;
         
 			  while (targetGen > SearchingGen)
 			  {
@@ -231,7 +231,7 @@ namespace Lucene.Net.Search
 				}
 				else
 				{
-				  long msLeft = (startMS + maxMS) - (System.nanoTime()) / 1000000;
+				  long msLeft = (startMS + maxMS) - DateTime.Now.Millisecond;//(System.nanoTime()) / 1000000;
 				  if (msLeft <= 0)
 				  {
 					return false;
@@ -246,8 +246,8 @@ namespace Lucene.Net.Search
         
 			return true;
 		  }
-	  }
-
+	  }*/
+/*
 	  public override void Run()
 	  {
 		// TODO: maybe use private thread ticktock timer, in
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
 
 			  if (sleepNS > 0)
 			  {
-				ReopenCond.awaitNanos(sleepNS);
+				ReopenCond.AwaitNanos(sleepNS);
 			  }
 			  else
 			  {
@@ -316,6 +316,6 @@ namespace Lucene.Net.Search
 		  }
 		}
 	  }
-	}*/
-
+	}
+    */
 }

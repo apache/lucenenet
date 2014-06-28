@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
@@ -79,9 +81,9 @@ namespace Lucene.Net.Index
 
 		try
 		{
-		  LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".getBytes("UTF8");
+		  LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".GetBytes(IOUtils.CHARSET_UTF_8);
 		}
-		catch (UnsupportedEncodingException e)
+		catch (EncoderFallbackException e)
 		{
 		}
 		LazyFieldBinary = new StoredField(LAZY_FIELD_BINARY_KEY, LAZY_FIELD_BINARY_BYTES);

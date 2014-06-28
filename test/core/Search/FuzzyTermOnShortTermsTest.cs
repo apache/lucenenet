@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
 			 writer.AddDocument(d);
 
 		  }
-		  writer.Close();
+		  writer.Dispose();
 		  return directory;
 	   }
 	}

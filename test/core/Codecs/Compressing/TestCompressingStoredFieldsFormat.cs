@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  }
 		  // Only one .fdt and one .fdx files must have been found
 		  Assert.AreEqual(2, counter);
-		  iw.Close();
+		  iw.Dispose();
 		  dir.Dispose();
 		}
 	  }

@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Index
 {
 
@@ -27,7 +29,8 @@ namespace Lucene.Net.Index
 	/// other specific instantiations since we want to test some test-only impls
 	/// like Asserting, as well as make it easy to write a codec and pass -Dtests.codec
 	/// </summary>
-	public class TestStoredFieldsFormat : BaseStoredFieldsFormatTestCase
+	[TestFixture]
+    public class TestStoredFieldsFormat : BaseStoredFieldsFormatTestCase
 	{
 
 	  protected internal override Codec Codec
@@ -38,7 +41,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public override void TestWriteReadMerge()
+      [Test]
+      public override void TestWriteReadMerge()
 	  {
 		AssumeFalse("impersonation isnt good enough", Codec is Lucene3xCodec);
 		// this test tries to switch up between the codec and another codec.

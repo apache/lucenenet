@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -34,6 +36,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Util;
 
+    [TestFixture]
 	public class TestIndexWriterUnicode : LuceneTestCase
 	{
 
@@ -126,7 +129,7 @@ namespace Lucene.Net.Index
 
 	  private string AsUnicodeChar(char c)
 	  {
-		return "U+" + c.ToString("x");
+		return "U+" + c.ToString("X");
 	  }
 
 	  private string TermDesc(string s)
@@ -183,7 +186,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-510
-	  public virtual void TestRandomUnicodeStrings()
+      [Test]
+      public virtual void TestRandomUnicodeStrings()
 	  {
 		char[] buffer = new char[20];
 		char[] expected = new char[20];
@@ -217,7 +221,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-510
-	  public virtual void TestAllUnicodeChars()
+      [Test]
+      public virtual void TestAllUnicodeChars()
 	  {
 
 		BytesRef utf8 = new BytesRef(10);
@@ -246,13 +251,13 @@ namespace Lucene.Net.Index
 		  UnicodeUtil.UTF16toUTF8(chars, 0, len, utf8);
 
 		  string s1 = new string(chars, 0, len);
-		  string s2 = new string(utf8.Bytes, 0, utf8.Length, IOUtils.CHARSET_UTF_8);
+		  string s2 = Encoding.UTF8.GetString((byte[])(Array)utf8.Bytes);
 		  Assert.AreEqual("codepoint " + ch, s1, s2);
 
 		  UnicodeUtil.UTF8toUTF16(utf8.Bytes, 0, utf8.Length, utf16);
 		  Assert.AreEqual("codepoint " + ch, s1, new string(utf16.Chars, 0, utf16.Length));
 
-		  sbyte[] b = s1.getBytes(IOUtils.CHARSET_UTF_8);
+		  sbyte[] b = s1.GetBytes(IOUtils.CHARSET_UTF_8);
 		  Assert.AreEqual(utf8.Length, b.Length);
 		  for (int j = 0;j < utf8.Length;j++)
 		  {
@@ -261,7 +266,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestEmbeddedFFFF()
+      [Test]
+      public virtual void TestEmbeddedFFFF()
 	  {
 		Directory d = NewDirectory();
 		IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -279,7 +285,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-510
-	  public virtual void TestInvalidUTF16()
+      [Test]
+      public virtual void TestInvalidUTF16()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestIndexWriter.StringSplitAnalyzer()));
@@ -306,7 +313,8 @@ namespace Lucene.Net.Index
 
 	  // Make sure terms, including ones with surrogate pairs,
 	  // sort in codepoint sort order by default
-	  public virtual void TestTermUTF16SortOrder()
+      [Test]
+      public virtual void TestTermUTF16SortOrder()
 	  {
 		Random rnd = Random();
 		Directory dir = NewDirectory();
@@ -376,7 +384,7 @@ namespace Lucene.Net.Index
 		CheckTermsOrder(r, allTerms, true);
 		r.Dispose();
 
-        writer.Close();
+        writer.Dispose();
 		dir.Dispose();
 	  }
 	}

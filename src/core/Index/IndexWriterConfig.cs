@@ -253,13 +253,13 @@ namespace Lucene.Net.Index
 	  /// 
 	  /// <p>Only takes effect when IndexWriter is first created. 
 	  /// </summary>
-	  public IndexWriterConfig SetIndexDeletionPolicy(IndexDeletionPolicy delPolicy)
+	  public IndexWriterConfig SetIndexDeletionPolicy(IndexDeletionPolicy deletionPolicy)
 	  {
-		if (delPolicy == null)
+		if (deletionPolicy == null)
 		{
 		  throw new System.ArgumentException("indexDeletionPolicy must not be null");
 		}
-		this.delPolicy = delPolicy;
+		this.delPolicy = deletionPolicy;
 		return this;
 	  }
 

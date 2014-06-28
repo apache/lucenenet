@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Compatibility;
 
@@ -40,7 +43,7 @@ namespace Lucene.Net.Util
 	public class LineFileDocs : IDisposable
 	{
 
-	  private BufferedReader Reader;
+	  private StreamReader Reader;
 	  private static readonly int BUFFER_SIZE = 1 << 16; // 64K
 	  private readonly AtomicInteger Id = new AtomicInteger();
 	  private readonly string Path;
@@ -90,44 +93,49 @@ namespace Lucene.Net.Util
 	  {
 		  lock (this)
 		  {
-			InputStream @is = this.GetType().getResourceAsStream(Path);
-			bool needSkip = true;
-			long size = 0L, seekTo = 0L;
-			if (@is == null)
-			{
-			  // if its not in classpath, we load it as absolute filesystem path (e.g. Hudson's home dir)
-			  File file = new File(Path);
-			  size = file.length();
-			  if (Path.EndsWith(".gz"))
-			  {
-				// if it is a gzip file, we need to use InputStream and slowly skipTo:
-				@is = new FileInputStream(file);
-			  }
-			  else
-			  {
-				// optimized seek using RandomAccessFile:
-				seekTo = RandomSeekPos(random, size);
-				FileChannel channel = (new RandomAccessFile(Path, "r")).Channel;
-				if (LuceneTestCase.VERBOSE)
-				{
-				  Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
-				}
-				channel.position(seekTo);
-				@is = Channels.newInputStream(channel);
-				needSkip = false;
-			  }
-			}
-			else
-			{
-			  // if the file comes from Classpath:
-			  size = @is.available();
-			}
+		      Stream @is;
+		      bool needSkip = true, failed = false;
+		      long size = 0L, seekTo = 0L;
+		      try
+		      {
+                  @is = new FileStream(Path, FileMode.Open);
+		      }
+		      catch (Exception FSfail)
+		      {
+		          failed = true;
+                  // if its not in classpath, we load it as absolute filesystem path (e.g. Hudson's home dir)
+                  FileInfo file = new FileInfo(Path);
+                  size = file.Length;
+                  if (Path.EndsWith(".gz"))
+                  {
+                      // if it is a gzip file, we need to use InputStream and slowly skipTo:
+                      @is = new FileStream(file.FullName, FileMode.Append);
+                  }
+                  else
+                  {
+                      // optimized seek using RandomAccessFile:
+                      seekTo = RandomSeekPos(random, size);
+                      FileStream channel = new FileStream(Path, FileMode.Open);
+                      if (LuceneTestCase.VERBOSE)
+                      {
+                          Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
+                      }
+                      channel.Position = seekTo;
+                      @is = new FileStream(channel.ToString(), FileMode.Append);
+                      needSkip = false;
+                  }
+		      }
+		      if (!failed)
+		      {
+                  // if the file comes from Classpath:
+		          size = @is.Length;// available();
+		      }
         
 			if (Path.EndsWith(".gz"))
 			{
-			  @is = new GZIPInputStream(@is);
+			  @is = new GZipStream(@is, CompressionMode.Decompress);
 			  // guestimate:
-			  size *= 2.8;
+			  size = (long) (size*2.8);
 			}
         
 			// If we only have an InputStream, we need to seek now,
@@ -139,26 +147,28 @@ namespace Lucene.Net.Util
 			  {
 				Console.WriteLine("TEST: LineFileDocs: stream skip to fp=" + seekTo + " on open");
 			  }
-			  @is.Skip(seekTo);
+			  @is.Position = seekTo;
 			}
         
 			// if we seeked somewhere, read until newline char
 			if (seekTo > 0L)
 			{
 			  int b;
+              byte[] bytes = new byte[sizeof(int)];
 			  do
 			  {
-				b = @is.read();
+			      @is.Read(bytes, 0, sizeof (int));
+			      b = BitConverter.ToInt32(bytes, 0);
 			  } while (b >= 0 && b != 13 && b != 10);
 			}
         
-			CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
-			Reader = new BufferedReader(new InputStreamReader(@is, decoder), BUFFER_SIZE);
+			//CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
+			Reader = new StreamReader(@is.ToString());//, BUFFER_SIZE);
         
 			if (seekTo > 0L)
 			{
 			  // read one more line, to make sure we are not inside a Windows linebreak (\r\n):
-			  Reader.readLine();
+			  Reader.ReadLine();
 			}
 		  }
 	  }
@@ -230,7 +240,7 @@ namespace Lucene.Net.Util
 		string line;
 		lock (this)
 		{
-		  line = Reader.readLine();
+		  line = Reader.ReadLine();
 		  if (line == null)
 		  {
 			// Always rewind at end:
@@ -240,15 +250,15 @@ namespace Lucene.Net.Util
 			}
 			Dispose();
 			Open(null);
-			line = Reader.readLine();
+			line = Reader.ReadLine();
 		  }
 		}
 
-		DocState docState = ThreadDocs.Get();
+		DocState docState = ThreadDocs.Value;
 		if (docState == null)
 		{
 		  docState = new DocState(UseDocValues);
-		  ThreadDocs.set(docState);
+		  ThreadDocs.Value = docState;
 		}
 
 		int spot = line.IndexOf(SEP);

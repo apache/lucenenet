@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "value", Field.Store.NO));
 		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		TermQuery termQuery = new TermQuery(new Term("field", "value"));
 
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
 		}
 
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 		TopDocs hits = NewSearcher(r).Search(new MatchAllDocsQuery(), new QueryWrapperFilter(new TermQuery(new Term("field", "a"))), numDocs);
 		Assert.AreEqual(aDocs.Count, hits.TotalHits);
 		foreach (ScoreDoc sd in hits.ScoreDocs)
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 		}
 
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 

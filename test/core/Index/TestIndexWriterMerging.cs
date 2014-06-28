@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Lucene.Net.Index
 {
-	/// <summary>
+	/*
 	/// Copyright 2006 The Apache Software Foundation
 	/// 
 	/// Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
 	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	/// See the License for the specific language governing permissions and
 	/// limitations under the License.
-	/// </summary>
+	*/
 
 	using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 	using Directory = Lucene.Net.Store.Directory;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
 
 
-
+    [TestFixture]
 	public class TestIndexWriterMerging : LuceneTestCase
 	{
 
@@ -42,6 +42,7 @@ namespace Lucene.Net.Index
 	  /// Tests that index merging (specifically addIndexes(Directory...)) doesn't
 	  /// change the index order of documents.
 	  /// </summary>
+      [Test]
 	  public virtual void TestLucene()
 	  {
 		int num = 100;
@@ -116,7 +117,8 @@ namespace Lucene.Net.Index
 
 	  // LUCENE-325: test forceMergeDeletes, when 2 singular merges
 	  // are required
-	  public virtual void TestForceMergeDeletes()
+      [Test]
+      public virtual void TestForceMergeDeletes()
 	  {
 		Directory dir = NewDirectory();
         IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH));
@@ -173,7 +175,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-325: test forceMergeDeletes, when many adjacent merges are required
-	  public virtual void TestForceMergeDeletes2()
+      [Test]
+      public virtual void TestForceMergeDeletes2()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
@@ -232,7 +235,8 @@ namespace Lucene.Net.Index
 
 	  // LUCENE-325: test forceMergeDeletes without waiting, when
 	  // many adjacent merges are required
-	  public virtual void TestForceMergeDeletes3()
+      [Test]
+      public virtual void TestForceMergeDeletes3()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
@@ -324,7 +328,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1013
-	  public virtual void TestSetMaxMergeDocs()
+      [Test]
+      public virtual void TestSetMaxMergeDocs()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new MyMergeScheduler(this)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
@@ -346,7 +351,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestNoWaitClose()
+      [Test]
+      public virtual void TestNoWaitClose()
 	  {
 		Directory directory = NewDirectory();
 

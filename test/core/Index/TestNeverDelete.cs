@@ -37,9 +37,11 @@ namespace Lucene.Net.Index
 	// Make sure if you use NoDeletionPolicy that no file
 	// referenced by a commit point is ever deleted
 
+    [TestFixture]
 	public class TestNeverDelete : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestIndexing()
 	  {
 		DirectoryInfo tmpDir = CreateTempDir("TestNeverDelete");
@@ -95,7 +97,7 @@ namespace Lucene.Net.Index
 		{
 		  t.Join();
 		}
-        w.Close();
+        w.Dispose();
 		d.Dispose();
 
 		TestUtil.Rm(tmpDir);

@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSegmentReader : LuceneTestCase
 	{
 	  private Directory Dir;
@@ -37,7 +38,8 @@ namespace Lucene.Net.Index
 	  private SegmentReader Reader = null;
 
 	  //TODO: Setup the reader w/ multiple documents
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		Dir = NewDirectory();
@@ -46,14 +48,16 @@ namespace Lucene.Net.Index
 		Reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IOContext.READ);
 	  }
 
-	  public override void TearDown()
+	  [TearDown]
+      public override void TearDown()
 	  {
 		Reader.Dispose();
 		Dir.Dispose();
 		base.TearDown();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Assert.IsTrue(Dir != null);
 		Assert.IsTrue(Reader != null);
@@ -61,7 +65,8 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(DocHelper.NumFields(TestDoc) == DocHelper.All.Count);
 	  }
 
-	  public virtual void TestDocument()
+      [Test]
+      public virtual void TestDocument()
 	  {
 		Assert.IsTrue(Reader.NumDocs() == 1);
 		Assert.IsTrue(Reader.MaxDoc() >= 1);
@@ -78,7 +83,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestGetFieldNameVariations()
+      [Test]
+      public virtual void TestGetFieldNameVariations()
 	  {
 		ICollection<string> allFieldNames = new HashSet<string>();
 		ICollection<string> indexedFieldNames = new HashSet<string>();
@@ -127,7 +133,8 @@ namespace Lucene.Net.Index
         Assert.IsTrue(noTVFieldNames.Count == DocHelper.Notermvector.Count);
 	  }
 
-	  public virtual void TestTerms()
+      [Test]
+      public virtual void TestTerms()
 	  {
 		Fields fields = MultiFields.GetFields(Reader);
 		foreach (string field in fields)
@@ -160,7 +167,8 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(positions.NextPosition() >= 0);
 	  }
 
-	  public virtual void TestNorms()
+      [Test]
+      public virtual void TestNorms()
 	  {
 		//TODO: Not sure how these work/should be tested
 	/*
@@ -197,7 +205,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestTermVectors()
+      [Test]
+      public virtual void TestTermVectors()
 	  {
 		Terms result = Reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
 		Assert.IsNotNull(result);
@@ -216,7 +225,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(3, results.Size(), "We do not have 3 term freq vectors");
 	  }
 
-	  public virtual void TestOutOfBoundsAccess()
+      [Test]
+      public virtual void TestOutOfBoundsAccess()
 	  {
 		int numDocs = Reader.MaxDoc();
 		try

@@ -25,6 +25,7 @@ namespace Lucene.Net.Index
 
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestIsCurrent : LuceneTestCase
 	{
 
@@ -32,6 +33,7 @@ namespace Lucene.Net.Index
 
 	  private Directory Directory;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -47,10 +49,11 @@ namespace Lucene.Net.Index
 		Writer.Commit();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		base.TearDown();
-        Writer.Close();
+        Writer.Dispose();
 		Directory.Dispose();
 	  }
 
@@ -59,7 +62,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDeleteByTermIsCurrent() throws java.io.IOException
-	  public virtual void TestDeleteByTermIsCurrent()
+      [Test]
+      public virtual void TestDeleteByTermIsCurrent()
 	  {
 
 		// get reader
@@ -86,7 +90,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDeleteAllIsCurrent() throws java.io.IOException
-	  public virtual void TestDeleteAllIsCurrent()
+      [Test]
+      public virtual void TestDeleteAllIsCurrent()
 	  {
 
 		// get reader

@@ -37,21 +37,21 @@ namespace Lucene.Net.Index
 	  public AssertingAtomicReader(AtomicReader @in) : base(@in)
 	  {
 		// check some basic reader sanity
-		Debug.Assert(@in.maxDoc() >= 0);
-		Debug.Assert(@in.numDocs() <= @in.maxDoc());
-		Debug.Assert(@in.numDeletedDocs() + @in.numDocs() == @in.maxDoc());
-		Debug.Assert(!@in.hasDeletions() || @in.numDeletedDocs() > 0 && @in.numDocs() < @in.maxDoc());
+		Debug.Assert(@in.MaxDoc() >= 0);
+		Debug.Assert(@in.NumDocs() <= @in.MaxDoc());
+		Debug.Assert(@in.NumDeletedDocs() + @in.NumDocs() == @in.MaxDoc());
+		Debug.Assert(!@in.HasDeletions() || @in.NumDeletedDocs() > 0 && @in.NumDocs() < @in.MaxDoc());
 	  }
 
 	  public override Fields Fields()
 	  {
-		Fields fields = base.fields();
+		Fields fields = base.Fields();
 		return fields == null ? null : new AssertingFields(fields);
 	  }
 
 	  public override Fields GetTermVectors(int docID)
 	  {
-		Fields fields = base.getTermVectors(docID);
+		Fields fields = base.GetTermVectors(docID);
 		return fields == null ? null : new AssertingFields(fields);
 	  }
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 		{
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
 		  IEnumerator<string> iterator = base.GetEnumerator();
 		  Debug.Assert(iterator != null);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
 
 		public override Terms Terms(string field)
 		{
-		  Terms terms = base.terms(field);
+		  Terms terms = base.Terms(field);
 		  return terms == null ? null : new AssertingTerms(terms);
 		}
 	  }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
 
 		public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
 		{
-		  TermsEnum termsEnum = @in.intersect(automaton, bytes);
+		  TermsEnum termsEnum = @in.Intersect(automaton, bytes);
 		  Debug.Assert(termsEnum != null);
 		  Debug.Assert(bytes == null || bytes.Valid);
 		  return new AssertingTermsEnum(termsEnum);
@@ -101,9 +101,9 @@ namespace Lucene.Net.Index
 		  // and randomly *not* unwrap?
 		  if (reuse is AssertingTermsEnum)
 		  {
-			reuse = ((AssertingTermsEnum) reuse).@in;
+              reuse = ((AssertingTermsEnum)reuse).TermsEnumIn_Nunit();
 		  }
-		  TermsEnum termsEnum = base.iterator(reuse);
+		  TermsEnum termsEnum = base.Iterator(reuse);
 		  Debug.Assert(termsEnum != null);
 		  return new AssertingTermsEnum(termsEnum);
 		}
@@ -111,43 +111,45 @@ namespace Lucene.Net.Index
 
 	  internal class AssertingTermsEnum : FilterTermsEnum
 	  {
-		private enum State
+	    internal enum State_e
 		{
 			INITIAL,
 			POSITIONED,
 			UNPOSITIONED
 		}
-		internal State State = State.INITIAL;
+        internal State_e State = State_e.INITIAL;
 
 		public AssertingTermsEnum(TermsEnum @in) : base(@in)
 		{
 		}
 
+	      
+
 		public override DocsEnum Docs(Bits liveDocs, DocsEnum reuse, int flags)
 		{
-		  Debug.Assert(State == State.POSITIONED, "docs(...) called on unpositioned TermsEnum");
+            Debug.Assert(State == State_e.POSITIONED, "docs(...) called on unpositioned TermsEnum");
 
 		  // TODO: should we give this thing a random to be super-evil,
 		  // and randomly *not* unwrap?
 		  if (reuse is AssertingDocsEnum)
 		  {
-			reuse = ((AssertingDocsEnum) reuse).@in;
+              reuse = ((AssertingDocsEnum)reuse).DocsEnumIn_Nunit();
 		  }
-		  DocsEnum docs = base.docs(liveDocs, reuse, flags);
+		  DocsEnum docs = base.Docs(liveDocs, reuse, flags);
 		  return docs == null ? null : new AssertingDocsEnum(docs);
 		}
 
 		public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
 		{
-		  Debug.Assert(State == State.POSITIONED, "docsAndPositions(...) called on unpositioned TermsEnum");
+            Debug.Assert(State == State_e.POSITIONED, "docsAndPositions(...) called on unpositioned TermsEnum");
 
 		  // TODO: should we give this thing a random to be super-evil,
 		  // and randomly *not* unwrap?
 		  if (reuse is AssertingDocsAndPositionsEnum)
 		  {
-			reuse = ((AssertingDocsAndPositionsEnum) reuse).@in;
+              reuse = ((AssertingDocsAndPositionsEnum)reuse).DocsEnumIn_Nunit();
 		  }
-		  DocsAndPositionsEnum docs = base.docsAndPositions(liveDocs, reuse, flags);
+		  DocsAndPositionsEnum docs = base.DocsAndPositions(liveDocs, reuse, flags);
 		  return docs == null ? null : new AssertingDocsAndPositionsEnum(docs);
 		}
 
@@ -155,63 +157,63 @@ namespace Lucene.Net.Index
 		// someone should not call next() after it returns null!!!!
 		public override BytesRef Next()
 		{
-		  Debug.Assert(State == State.INITIAL || State == State.POSITIONED, "next() called on unpositioned TermsEnum");
-		  BytesRef result = base.next();
+            Debug.Assert(State == State_e.INITIAL || State == State_e.POSITIONED, "next() called on unpositioned TermsEnum");
+		  BytesRef result = base.Next();
 		  if (result == null)
 		  {
-			State = State.UNPOSITIONED;
+              State = State_e.UNPOSITIONED;
 		  }
 		  else
 		  {
 			Debug.Assert(result.Valid);
-			State = State.POSITIONED;
+            State = State_e.POSITIONED;
 		  }
 		  return result;
 		}
 
 		public override long Ord()
 		{
-		  Debug.Assert(State == State.POSITIONED, "ord() called on unpositioned TermsEnum");
-		  return base.ord();
+            Debug.Assert(State == State_e.POSITIONED, "Ord() called on unpositioned TermsEnum");
+		  return base.Ord();
 		}
 
 		public override int DocFreq()
 		{
-		  Debug.Assert(State == State.POSITIONED, "docFreq() called on unpositioned TermsEnum");
-		  return base.docFreq();
+		  Debug.Assert(State == State_e.POSITIONED, "DocFreq() called on unpositioned TermsEnum");
+		  return base.DocFreq();
 		}
 
 		public override long TotalTermFreq()
 		{
-		  Debug.Assert(State == State.POSITIONED, "totalTermFreq() called on unpositioned TermsEnum");
-		  return base.totalTermFreq();
+		  Debug.Assert(State == State_e.POSITIONED, "totalTermFreq() called on unpositioned TermsEnum");
+		  return base.TotalTermFreq();
 		}
 
 		public override BytesRef Term()
 		{
-		  Debug.Assert(State == State.POSITIONED, "term() called on unpositioned TermsEnum");
-		  BytesRef ret = base.term();
+		  Debug.Assert(State == State_e.POSITIONED, "term() called on unpositioned TermsEnum");
+		  BytesRef ret = base.Term();
 		  Debug.Assert(ret == null || ret.Valid);
 		  return ret;
 		}
 
 		public override void SeekExact(long ord)
 		{
-		  base.seekExact(ord);
-		  State = State.POSITIONED;
+		  base.SeekExact(ord);
+		  State = State_e.POSITIONED;
 		}
 
 		public override SeekStatus SeekCeil(BytesRef term)
 		{
 		  Debug.Assert(term.Valid);
-		  SeekStatus result = base.seekCeil(term);
+		  SeekStatus result = base.SeekCeil(term);
 		  if (result == SeekStatus.END)
 		  {
-			State = State.UNPOSITIONED;
+			State = State_e.UNPOSITIONED;
 		  }
 		  else
 		  {
-			State = State.POSITIONED;
+			State = State_e.POSITIONED;
 		  }
 		  return result;
 		}
@@ -219,29 +221,29 @@ namespace Lucene.Net.Index
 		public override bool SeekExact(BytesRef text)
 		{
 		  Debug.Assert(text.Valid);
-		  if (base.seekExact(text))
+		  if (base.SeekExact(text))
 		  {
-			State = State.POSITIONED;
+			State = State_e.POSITIONED;
 			return true;
 		  }
 		  else
 		  {
-			State = State.UNPOSITIONED;
+			State = State_e.UNPOSITIONED;
 			return false;
 		  }
 		}
 
 		public override TermState TermState()
 		{
-		  Debug.Assert(State == State.POSITIONED, "termState() called on unpositioned TermsEnum");
-		  return base.termState();
+		  Debug.Assert(State == State_e.POSITIONED, "termState() called on unpositioned TermsEnum");
+		  return base.TermState();
 		}
 
 		public override void SeekExact(BytesRef term, TermState state)
 		{
 		  Debug.Assert(term.Valid);
-		  base.seekExact(term, state);
-		  this.State = State.POSITIONED;
+		  base.SeekExact(term, state);
+		  this.State = State_e.POSITIONED;
 		}
 	  }
 
@@ -259,15 +261,17 @@ namespace Lucene.Net.Index
 		internal DocsEnumState State = DocsEnumState.START;
 		internal int Doc;
 
-		public AssertingDocsEnum(DocsEnum @in) : this(@in, true)
+		public AssertingDocsEnum(DocsEnum @in) 
+            : this(@in, true)
 		{
 		}
 
-		public AssertingDocsEnum(DocsEnum @in, bool failOnUnsupportedDocID) : base(@in)
+		public AssertingDocsEnum(DocsEnum @in, bool failOnUnsupportedDocID) 
+            : base(@in)
 		{
 		  try
 		  {
-			int docid = @in.docID();
+			int docid = @in.DocID();
 			Debug.Assert(docid == -1, @in.GetType() + ": invalid initial doc id: " + docid);
 		  }
 		  catch (System.NotSupportedException e)
@@ -283,7 +287,7 @@ namespace Lucene.Net.Index
 		public override int NextDoc()
 		{
 		  Debug.Assert(State != DocsEnumState.FINISHED, "nextDoc() called after NO_MORE_DOCS");
-		  int nextDoc = base.nextDoc();
+		  int nextDoc = base.NextDoc();
 		  Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc + " " + @in);
 		  if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
 		  {
@@ -293,7 +297,7 @@ namespace Lucene.Net.Index
 		  {
 			State = DocsEnumState.ITERATING;
 		  }
-		  Debug.Assert(base.docID() == nextDoc);
+		  Debug.Assert(base.DocID() == nextDoc);
 		  return Doc = nextDoc;
 		}
 
@@ -301,7 +305,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(State != DocsEnumState.FINISHED, "advance() called after NO_MORE_DOCS");
 		  Debug.Assert(target > Doc, "target must be > docID(), got " + target + " <= " + Doc);
-		  int advanced = base.advance(target);
+		  int advanced = base.Advance(target);
 		  Debug.Assert(advanced >= target, "backwards advance from: " + target + " to: " + advanced);
 		  if (advanced == DocIdSetIterator.NO_MORE_DOCS)
 		  {
@@ -311,13 +315,13 @@ namespace Lucene.Net.Index
 		  {
 			State = DocsEnumState.ITERATING;
 		  }
-		  Debug.Assert(base.docID() == advanced);
+		  Debug.Assert(base.DocID() == advanced);
 		  return Doc = advanced;
 		}
 
 		public override int DocID()
 		{
-		  Debug.Assert(Doc == base.docID(), " invalid docID() in " + @in.GetType() + " " + base.docID() + " instead of " + Doc);
+		  Debug.Assert(Doc == base.DocID(), " invalid docID() in " + @in.GetType() + " " + base.DocID() + " instead of " + Doc);
 		  return Doc;
 		}
 
@@ -325,7 +329,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(State != DocsEnumState.START, "freq() called before nextDoc()/advance()");
 		  Debug.Assert(State != DocsEnumState.FINISHED, "freq() called after NO_MORE_DOCS");
-		  int freq = base.freq();
+		  int freq = base.Freq();
 		  Debug.Assert(freq > 0);
 		  return freq;
 		}
@@ -338,9 +342,10 @@ namespace Lucene.Net.Index
 		internal int PositionCount = 0;
 		internal int Doc;
 
-		public AssertingDocsAndPositionsEnum(DocsAndPositionsEnum @in) : base(@in)
+		public AssertingDocsAndPositionsEnum(DocsAndPositionsEnum @in) 
+            : base(@in)
 		{
-		  int docid = @in.docID();
+		  int docid = @in.DocID();
 		  Debug.Assert(docid == -1, "invalid initial doc id: " + docid);
 		  Doc = -1;
 		}
@@ -348,7 +353,7 @@ namespace Lucene.Net.Index
 		public override int NextDoc()
 		{
 		  Debug.Assert(State != DocsEnumState.FINISHED, "nextDoc() called after NO_MORE_DOCS");
-		  int nextDoc = base.nextDoc();
+		  int nextDoc = base.NextDoc();
 		  Debug.Assert(nextDoc > Doc, "backwards nextDoc from " + Doc + " to " + nextDoc);
 		  PositionCount = 0;
 		  if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
@@ -359,9 +364,9 @@ namespace Lucene.Net.Index
 		  else
 		  {
 			State = DocsEnumState.ITERATING;
-			PositionMax = base.freq();
+			PositionMax = base.Freq();
 		  }
-		  Debug.Assert(base.docID() == nextDoc);
+		  Debug.Assert(base.DocID() == nextDoc);
 		  return Doc = nextDoc;
 		}
 
@@ -369,7 +374,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(State != DocsEnumState.FINISHED, "advance() called after NO_MORE_DOCS");
 		  Debug.Assert(target > Doc, "target must be > docID(), got " + target + " <= " + Doc);
-		  int advanced = base.advance(target);
+		  int advanced = base.Advance(target);
 		  Debug.Assert(advanced >= target, "backwards advance from: " + target + " to: " + advanced);
 		  PositionCount = 0;
 		  if (advanced == DocIdSetIterator.NO_MORE_DOCS)
@@ -380,15 +385,15 @@ namespace Lucene.Net.Index
 		  else
 		  {
 			State = DocsEnumState.ITERATING;
-			PositionMax = base.freq();
+			PositionMax = base.Freq();
 		  }
-		  Debug.Assert(base.docID() == advanced);
+		  Debug.Assert(base.DocID() == advanced);
 		  return Doc = advanced;
 		}
 
 		public override int DocID()
 		{
-		  Debug.Assert(Doc == base.docID(), " invalid docID() in " + @in.GetType() + " " + base.docID() + " instead of " + Doc);
+		  Debug.Assert(Doc == base.DocID(), " invalid docID() in " + @in.GetType() + " " + base.DocID() + " instead of " + Doc);
 		  return Doc;
 		}
 
@@ -396,7 +401,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(State != DocsEnumState.START, "freq() called before nextDoc()/advance()");
 		  Debug.Assert(State != DocsEnumState.FINISHED, "freq() called after NO_MORE_DOCS");
-		  int freq = base.freq();
+		  int freq = base.Freq();
 		  Debug.Assert(freq > 0);
 		  return freq;
 		}
@@ -406,7 +411,7 @@ namespace Lucene.Net.Index
 		  Debug.Assert(State != DocsEnumState.START, "nextPosition() called before nextDoc()/advance()");
 		  Debug.Assert(State != DocsEnumState.FINISHED, "nextPosition() called after NO_MORE_DOCS");
 		  Debug.Assert(PositionCount < PositionMax, "nextPosition() called more than freq() times!");
-		  int position = base.nextPosition();
+		  int position = base.NextPosition();
 		  Debug.Assert(position >= 0 || position == -1, "invalid position: " + position);
 		  PositionCount++;
 		  return position;
@@ -436,7 +441,7 @@ namespace Lucene.Net.Index
 			  Debug.Assert(State != DocsEnumState.FINISHED, "getPayload() called after NO_MORE_DOCS");
 			  Debug.Assert(PositionCount > 0, "getPayload() called before nextPosition()!");
 			  BytesRef payload = base.Payload;
-			  Debug.Assert(payload == null || payload.Valid && payload.length > 0, "getPayload() returned payload with invalid length!");
+			  Debug.Assert(payload == null || payload.Valid && payload.Length > 0, "getPayload() returned payload with invalid length!");
 			  return payload;
 			}
 		}
@@ -458,7 +463,7 @@ namespace Lucene.Net.Index
 		public override long Get(int docID)
 		{
 		  Debug.Assert(docID >= 0 && docID < MaxDoc);
-		  return @in.get(docID);
+		  return @in.Get(docID);
 		}
 	  }
 
@@ -479,7 +484,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(docID >= 0 && docID < MaxDoc);
 		  Debug.Assert(result.Valid);
-		  @in.get(docID, result);
+		  @in.Get(docID, result);
 		  Debug.Assert(result.Valid);
 		}
 	  }
@@ -503,7 +508,7 @@ namespace Lucene.Net.Index
 		public override int GetOrd(int docID)
 		{
 		  Debug.Assert(docID >= 0 && docID < MaxDoc);
-		  int ord = @in.getOrd(docID);
+		  int ord = @in.GetOrd(docID);
 		  Debug.Assert(ord >= -1 && ord < ValueCount_Renamed);
 		  return ord;
 		}
@@ -512,7 +517,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(ord >= 0 && ord < ValueCount_Renamed);
 		  Debug.Assert(result.Valid);
-		  @in.lookupOrd(ord, result);
+          @in.LookupOrd(ord, result);
 		  Debug.Assert(result.Valid);
 		}
 
@@ -530,14 +535,14 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(docID >= 0 && docID < MaxDoc);
 		  Debug.Assert(result.Valid);
-		  @in.get(docID, result);
+		  @in.Get(docID, result);
 		  Debug.Assert(result.Valid);
 		}
 
 		public override int LookupTerm(BytesRef key)
 		{
 		  Debug.Assert(key.Valid);
-		  int result = @in.lookupTerm(key);
+		  int result = @in.LookupTerm(key);
 		  Debug.Assert(result < ValueCount_Renamed);
 		  Debug.Assert(key.Valid);
 		  return result;
@@ -564,7 +569,7 @@ namespace Lucene.Net.Index
 		public override long NextOrd()
 		{
 		  Debug.Assert(LastOrd != NO_MORE_ORDS);
-		  long ord = @in.nextOrd();
+		  long ord = @in.NextOrd();
 		  Debug.Assert(ord < ValueCount_Renamed);
 		  Debug.Assert(ord == NO_MORE_ORDS || ord > LastOrd);
 		  LastOrd = ord;
@@ -585,7 +590,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(ord >= 0 && ord < ValueCount_Renamed);
 		  Debug.Assert(result.Valid);
-		  @in.lookupOrd(ord, result);
+		  @in.LookupOrd(ord, result);
 		  Debug.Assert(result.Valid);
 		}
 
@@ -602,7 +607,7 @@ namespace Lucene.Net.Index
 		public override long LookupTerm(BytesRef key)
 		{
 		  Debug.Assert(key.Valid);
-		  long result = @in.lookupTerm(key);
+		  long result = @in.LookupTerm(key);
 		  Debug.Assert(result < ValueCount_Renamed);
 		  Debug.Assert(key.Valid);
 		  return result;
@@ -611,85 +616,85 @@ namespace Lucene.Net.Index
 
 	  public override NumericDocValues GetNumericDocValues(string field)
 	  {
-		NumericDocValues dv = base.getNumericDocValues(field);
-		FieldInfo fi = FieldInfos.fieldInfo(field);
+		NumericDocValues dv = base.GetNumericDocValues(field);
+		FieldInfo fi = FieldInfos.FieldInfo(field);
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.NUMERIC);
-		  return new AssertingNumericDocValues(dv, maxDoc());
+		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.NUMERIC);
+		  return new AssertingNumericDocValues(dv, MaxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.NUMERIC);
+		  Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType_e.NUMERIC);
 		  return null;
 		}
 	  }
 
 	  public override BinaryDocValues GetBinaryDocValues(string field)
 	  {
-		BinaryDocValues dv = base.getBinaryDocValues(field);
-		FieldInfo fi = FieldInfos.fieldInfo(field);
+		BinaryDocValues dv = base.GetBinaryDocValues(field);
+		FieldInfo fi = FieldInfos.FieldInfo(field);
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.BINARY);
-		  return new AssertingBinaryDocValues(dv, maxDoc());
+		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.BINARY);
+		  return new AssertingBinaryDocValues(dv, MaxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.BINARY);
+		  Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType_e.BINARY);
 		  return null;
 		}
 	  }
 
 	  public override SortedDocValues GetSortedDocValues(string field)
 	  {
-		SortedDocValues dv = base.getSortedDocValues(field);
-		FieldInfo fi = FieldInfos.fieldInfo(field);
+		SortedDocValues dv = base.GetSortedDocValues(field);
+		FieldInfo fi = FieldInfos.FieldInfo(field);
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.SORTED);
-		  return new AssertingSortedDocValues(dv, maxDoc());
+		  Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.SORTED);
+		  return new AssertingSortedDocValues(dv, MaxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.SORTED);
+            Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType_e.SORTED);
 		  return null;
 		}
 	  }
 
 	  public override SortedSetDocValues GetSortedSetDocValues(string field)
 	  {
-		SortedSetDocValues dv = base.getSortedSetDocValues(field);
-		FieldInfo fi = FieldInfos.fieldInfo(field);
+		SortedSetDocValues dv = base.GetSortedSetDocValues(field);
+		FieldInfo fi = FieldInfos.FieldInfo(field);
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.DocValuesType_e == FieldInfo.DocValuesType_e.SORTED_SET);
-		  return new AssertingSortedSetDocValues(dv, maxDoc());
+          Debug.Assert(fi.DocValuesType == FieldInfo.DocValuesType_e.SORTED_SET);
+		  return new AssertingSortedSetDocValues(dv, MaxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.DocValuesType_e != FieldInfo.DocValuesType_e.SORTED_SET);
+            Debug.Assert(fi == null || fi.DocValuesType != FieldInfo.DocValuesType_e.SORTED_SET);
 		  return null;
 		}
 	  }
 
 	  public override NumericDocValues GetNormValues(string field)
 	  {
-		NumericDocValues dv = base.getNormValues(field);
-		FieldInfo fi = FieldInfos.fieldInfo(field);
+		NumericDocValues dv = base.GetNormValues(field);
+		FieldInfo fi = FieldInfos.FieldInfo(field);
 		if (dv != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.hasNorms());
-		  return new AssertingNumericDocValues(dv, maxDoc());
+		  Debug.Assert(fi.HasNorms());
+		  return new AssertingNumericDocValues(dv, MaxDoc());
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.hasNorms() == false);
+		  Debug.Assert(fi == null || fi.HasNorms() == false);
 		  return null;
 		}
 	  }
@@ -705,15 +710,15 @@ namespace Lucene.Net.Index
 		  this.@in = @in;
 		}
 
-		public override bool Get(int index)
+		public bool Get(int index)
 		{
 		  Debug.Assert(index >= 0 && index < Length());
-		  return @in.get(index);
+		  return @in.Get(index);
 		}
 
-		public override int Length()
+		public int Length()
 		{
-		  return @in.length();
+		  return @in.Length();
 		}
 	  }
 
@@ -724,13 +729,13 @@ namespace Lucene.Net.Index
 			Bits liveDocs = base.LiveDocs;
 			if (liveDocs != null)
 			{
-			  Debug.Assert(maxDoc() == liveDocs.length());
+			  Debug.Assert(MaxDoc() == liveDocs.Length());
 			  liveDocs = new AssertingBits(liveDocs);
 			}
 			else
 			{
-			  Debug.Assert(maxDoc() == numDocs());
-			  Debug.Assert(!hasDeletions());
+			  Debug.Assert(MaxDoc() == NumDocs());
+			  Debug.Assert(!HasDeletions());
 			}
 			return liveDocs;
 		  }
@@ -738,18 +743,18 @@ namespace Lucene.Net.Index
 
 	  public override Bits GetDocsWithField(string field)
 	  {
-		Bits docsWithField = base.getDocsWithField(field);
-		FieldInfo fi = FieldInfos.fieldInfo(field);
+		Bits docsWithField = base.GetDocsWithField(field);
+		FieldInfo fi = FieldInfos.FieldInfo(field);
 		if (docsWithField != null)
 		{
 		  Debug.Assert(fi != null);
-		  Debug.Assert(fi.hasDocValues());
-		  Debug.Assert(maxDoc() == docsWithField.length());
+		  Debug.Assert(fi.HasDocValues());
+		  Debug.Assert(MaxDoc() == docsWithField.Length());
 		  docsWithField = new AssertingBits(docsWithField);
 		}
 		else
 		{
-		  Debug.Assert(fi == null || fi.hasDocValues() == false);
+		  Debug.Assert(fi == null || fi.HasDocValues() == false);
 		}
 		return docsWithField;
 	  }

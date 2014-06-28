@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Search;
 
-
+    [TestFixture]
 	public class TestTryDelete : LuceneTestCase
 	{
 	  private static IndexWriter GetWriter(Directory directory)
@@ -72,7 +72,8 @@ namespace Lucene.Net.Index
 		return directory;
 	  }
 
-	  public virtual void TestTryDeleteDocument()
+      [Test]
+      public virtual void TestTryDeleteDocument()
 	  {
 		Directory directory = CreateIndex();
 
@@ -120,7 +121,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(0, topDocs.TotalHits);
 	  }
 
-	  public virtual void TestTryDeleteDocumentCloseAndReopen()
+      [Test]
+      public virtual void TestTryDeleteDocumentCloseAndReopen()
 	  {
 		Directory directory = CreateIndex();
 
@@ -160,7 +162,8 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  public virtual void TestDeleteDocuments()
+      [Test]
+      public virtual void TestDeleteDocuments()
 	  {
 		Directory directory = CreateIndex();
 

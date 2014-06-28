@@ -25,13 +25,15 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class Test2BDocs : LuceneTestCase
 	{
 	  internal static Directory Dir;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Dir = NewFSDirectory(CreateTempDir("2Bdocs"));
 		IndexWriter iw = new IndexWriter(Dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -46,13 +48,15 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Dir.Dispose();
 		Dir = null;
 	  }
 
-	  public virtual void TestOverflow()
+      [Test]
+      public virtual void TestOverflow()
 	  {
 		DirectoryReader ir = DirectoryReader.Open(Dir);
 		IndexReader[] subReaders = new IndexReader[8192];
@@ -69,7 +73,8 @@ namespace Lucene.Net.Index
 		ir.Dispose();
 	  }
 
-	  public virtual void TestExactlyAtLimit()
+      [Test]
+      public virtual void TestExactlyAtLimit()
 	  {
 		Directory dir2 = NewFSDirectory(CreateTempDir("2BDocs2"));
 		IndexWriter iw = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));

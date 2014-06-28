@@ -87,7 +87,7 @@ namespace Lucene.Net.Document
 		string stringFldStoredTest = docFromReader.Get("stringStored");
 		Assert.IsTrue(stringFldStoredTest.Equals(BinaryValStored));
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Document
       [Test]
 	  public virtual void TestCompressionTools()
 	  {
-		IndexableField binaryFldCompressed = new StoredField("binaryCompressed", (sbyte[])(Array)CompressionTools.Compress(BinaryValCompressed.ToSbyteArray(Encoding.UTF8)));
+		IndexableField binaryFldCompressed = new StoredField("binaryCompressed", (sbyte[])(Array)CompressionTools.Compress(BinaryValCompressed.GetBytes(Encoding.UTF8)));
         IndexableField stringFldCompressed = new StoredField("stringCompressed", (sbyte[])(Array)CompressionTools.CompressString(BinaryValCompressed));
 
 		Document doc = new Document();
@@ -122,7 +122,7 @@ namespace Lucene.Net.Document
 		Assert.IsTrue(binaryFldCompressedTest.Equals(BinaryValCompressed));
 		Assert.IsTrue(CompressionTools.DecompressString(docFromReader.GetBinaryValue("stringCompressed")).Equals(BinaryValCompressed));
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }

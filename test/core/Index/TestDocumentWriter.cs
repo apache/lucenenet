@@ -38,28 +38,33 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestDocumentWriter : LuceneTestCase
 	{
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 		Dir = NewDirectory();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Dir.Dispose();
 		base.TearDown();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Assert.IsTrue(Dir != null);
 	  }
 
-	  public virtual void TestAddDocument()
+      [Test]
+      public virtual void TestAddDocument()
 	  {
 		Document testDoc = new Document();
 		DocHelper.SetupDoc(testDoc);
@@ -109,7 +114,8 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestPositionIncrementGap()
+      [Test]
+      public virtual void TestPositionIncrementGap()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 
@@ -154,7 +160,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestTokenReuse()
+      [Test]
+      public virtual void TestTokenReuse()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
 
@@ -261,7 +268,8 @@ namespace Lucene.Net.Index
 	  }
 
 
-	  public virtual void TestPreAnalyzedField()
+      [Test]
+      public virtual void TestPreAnalyzedField()
 	  {
 		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 		Document doc = new Document();
@@ -328,7 +336,8 @@ namespace Lucene.Net.Index
 	  /// Test adding two fields with the same name, but 
 	  /// with different term vector setting (LUCENE-766).
 	  /// </summary>
-	  public virtual void TestMixedTermVectorSettingsSameField()
+      [Test]
+      public virtual void TestMixedTermVectorSettingsSameField()
 	  {
 		Document doc = new Document();
 		// f1 first without tv then with tv
@@ -365,7 +374,8 @@ namespace Lucene.Net.Index
 	  /// the other stored only. The omitNorms and omitTermFreqAndPositions setting
 	  /// of the stored field should not affect the indexed one (LUCENE-1590)
 	  /// </summary>
-	  public virtual void TestLUCENE_1590()
+      [Test]
+      public virtual void TestLUCENE_1590()
 	  {
 		Document doc = new Document();
 		// f1 has no norms

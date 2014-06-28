@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -61,6 +62,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestIndexWriterExceptions : LuceneTestCase
 	{
 
@@ -302,7 +304,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestRandomExceptions()
+      [Test]
+      public virtual void TestRandomExceptions()
 	  {
 		if (VERBOSE)
 		{
@@ -357,7 +360,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandomExceptionsThreads()
+      [Test]
+      public virtual void TestRandomExceptionsThreads()
 	  {
 		Directory dir = NewDirectory();
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -457,7 +461,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestExceptionDocumentsWriterInit()
+      [Test]
+      public virtual void TestExceptionDocumentsWriterInit()
 	  {
 		Directory dir = NewDirectory();
 		TestPoint2 testPoint = new TestPoint2();
@@ -480,7 +485,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1208
-	  public virtual void TestExceptionJustBeforeFlush()
+      [Test]
+      public virtual void TestExceptionJustBeforeFlush()
 	  {
 		Directory dir = NewDirectory();
         IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2), new TestPoint1(this));
@@ -540,7 +546,8 @@ namespace Lucene.Net.Index
 
 
 	  // LUCENE-1210
-	  public virtual void TestExceptionOnMergeInit()
+      [Test]
+      public virtual void TestExceptionOnMergeInit()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
@@ -572,7 +579,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1072
-	  public virtual void TestExceptionFromTokenStream()
+      [Test]
+      public virtual void TestExceptionFromTokenStream()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new TEFTSAnalyzerAnonymousInnerClassHelper(this));
@@ -689,24 +697,25 @@ namespace Lucene.Net.Index
 		{
 		  if (DoFail)
 		  {
-			string[] trace = (new Exception()).StackTrace;
-			bool sawAppend = false;
-			bool sawFlush = false;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if (sawAppend && sawFlush)
-			  {
-				break;
-			  }
-			  if (typeof(FreqProxTermsWriterPerField).Name.Equals(trace[i].ClassName) && "flush".Equals(trace[i].MethodName))
-			  {
-				sawAppend = true;
-			  }
-			  if ("flush".Equals(trace[i].MethodName))
-			  {
-				sawFlush = true;
-			  }
-			}
+		      var trace = new StackTrace(new Exception());
+              bool sawAppend = false;
+              bool sawFlush = false;
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+                  if (sawAppend && sawFlush)
+                  {
+                      break;
+                  }
+                  if (typeof(FreqProxTermsWriterPerField).Name.Equals(frame.GetType().Name) && "Flush".Equals(method.Name))
+                  {
+                      sawAppend = true;
+                  }
+                  if ("Flush".Equals(method.Name))
+                  {
+                      sawFlush = true;
+                  }
+		      }
 
 			if (sawAppend && sawFlush && Count++ >= 30)
 			{
@@ -719,7 +728,8 @@ namespace Lucene.Net.Index
 
 	  // LUCENE-1072: make sure an errant exception on flushing
 	  // one segment only takes out those docs in that one flush
-	  public virtual void TestDocumentsWriterAbort()
+      [Test]
+      public virtual void TestDocumentsWriterAbort()
 	  {
 		MockDirectoryWrapper dir = NewMockDirectory();
 		FailOnlyOnFlush failure = new FailOnlyOnFlush();
@@ -752,7 +762,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDocumentsWriterExceptions()
+      [Test]
+      public virtual void TestDocumentsWriterExceptions()
 	  {
 		Analyzer analyzer = new TDWEAnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
@@ -874,7 +885,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestDocumentsWriterExceptionThreads()
+      [Test]
+      public virtual void TestDocumentsWriterExceptionThreads()
 	  {
 		Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
@@ -1040,20 +1052,22 @@ namespace Lucene.Net.Index
 		{
 		  if (DoFail)
 		  {
-			string[] trace = (new Exception()).StackTrace;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if (DoFail && typeof(MockDirectoryWrapper).Name.Equals(trace[i].ClassName) && "sync".Equals(trace[i].MethodName))
-			  {
-				DidFail = true;
-				if (VERBOSE)
-				{
-				  Console.WriteLine("TEST: now throw exc:");
-                  Console.WriteLine((new Exception()).StackTrace);
-				}
-				throw new IOException("now failing on purpose during sync");
-			  }
-			}
+
+		      var trace = new StackTrace(new Exception());
+              foreach (var frame in trace.GetFrames())
+              {
+                  var method = frame.GetMethod();
+                  if (DoFail && typeof(MockDirectoryWrapper).Name.Equals(frame.GetType().Name) && "Sync".Equals(method.Name))
+                  {
+                      DidFail = true;
+                      if (VERBOSE)
+                      {
+                          Console.WriteLine("TEST: now throw exc:");
+                          Console.WriteLine((new Exception()).StackTrace);
+                      }
+                      throw new IOException("now failing on purpose during sync");
+                  }
+              }
 		  }
 		}
 	  }
@@ -1068,7 +1082,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1044: test exception during sync
-	  public virtual void TestExceptionDuringSync()
+      [Test]
+      public virtual void TestExceptionDuringSync()
 	  {
 		MockDirectoryWrapper dir = NewMockDirectory();
 		FailOnlyInSync failure = new FailOnlyInSync();
@@ -1120,30 +1135,31 @@ namespace Lucene.Net.Index
 
 		public override void Eval(MockDirectoryWrapper dir)
 		{
-		  string[] trace = (new Exception()).StackTrace;
-		  bool isCommit = false;
-		  bool isDelete = false;
-		  bool isInGlobalFieldMap = false;
-		  for (int i = 0; i < trace.Length; i++)
-		  {
-			if (isCommit && isDelete && isInGlobalFieldMap)
-			{
-			  break;
-			}
-			if (typeof(SegmentInfos).Name.Equals(trace[i].ClassName) && Stage.Equals(trace[i].MethodName))
-			{
-			  isCommit = true;
-			}
-			if (typeof(MockDirectoryWrapper).Name.Equals(trace[i].ClassName) && "deleteFile".Equals(trace[i].MethodName))
-			{
-			  isDelete = true;
-			}
-			if (typeof(SegmentInfos).Name.Equals(trace[i].ClassName) && "writeGlobalFieldMap".Equals(trace[i].MethodName))
-			{
-			  isInGlobalFieldMap = true;
-			}
+		    var trace = new StackTrace(new Exception());
+            bool isCommit = false;
+            bool isDelete = false;
+            bool isInGlobalFieldMap = false;
+		    foreach (var frame in trace.GetFrames())
+		    {
+		        var method = frame.GetMethod();
+                if (isCommit && isDelete && isInGlobalFieldMap)
+                {
+                    break;
+                }
+                if (typeof(SegmentInfos).Name.Equals(frame.GetType().Name) && Stage.Equals(method.Name))
+                {
+                    isCommit = true;
+                }
+                if (typeof(MockDirectoryWrapper).Name.Equals(frame.GetType().Name) && "DeleteFile".Equals(method.Name))
+                {
+                    isDelete = true;
+                }
+                if (typeof(SegmentInfos).Name.Equals(frame.GetType().Name) && "WriteGlobalFieldMap".Equals(method.Name))
+                {
+                    isInGlobalFieldMap = true;
+                }
+		    }
 
-		  }
 		  if (isInGlobalFieldMap && DontFailDuringGlobalFieldMap)
 		  {
 			isCommit = false;
@@ -1164,7 +1180,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestExceptionsDuringCommit()
+      [Test]
+      public virtual void TestExceptionsDuringCommit()
 	  {
 		FailOnlyInCommit[] failures = new FailOnlyInCommit[] {new FailOnlyInCommit(false, FailOnlyInCommit.PREPARE_STAGE), new FailOnlyInCommit(true, FailOnlyInCommit.PREPARE_STAGE), new FailOnlyInCommit(false, FailOnlyInCommit.FINISH_STAGE)};
 
@@ -1198,7 +1215,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestForceMergeExceptions()
+      [Test]
+      public virtual void TestForceMergeExceptions()
 	  {
 		Directory startDir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
@@ -1241,7 +1259,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1429
-	  public virtual void TestOutOfMemoryErrorCausesCloseToFail()
+      [Test]
+      public virtual void TestOutOfMemoryErrorCausesCloseToFail()
 	  {
 
 		AtomicBoolean thrown = new AtomicBoolean(false);
@@ -1298,7 +1317,7 @@ namespace Lucene.Net.Index
 
 		internal bool DoFail;
 
-		public override void Apply(string name)
+		public void Apply(string name)
 		{
 		  if (DoFail && name.Equals("rollback before checkpoint"))
 		  {
@@ -1308,7 +1327,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1347
-	  public virtual void TestRollbackExceptionHang()
+      [Test]
+      public virtual void TestRollbackExceptionHang()
 	  {
 		Directory dir = NewDirectory();
 		TestPoint4 testPoint = new TestPoint4();
@@ -1333,7 +1353,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1044: Simulate checksum error in segments_N
-	  public virtual void TestSegmentsChecksumError()
+      [Test]
+      public virtual void TestSegmentsChecksumError()
 	  {
 		Directory dir = NewDirectory();
 
@@ -1382,7 +1403,8 @@ namespace Lucene.Net.Index
 	  // Simulate a corrupt index by removing last byte of
 	  // latest segments file and make sure we get an
 	  // IOException trying to open the index:
-	  public virtual void TestSimulatedCorruptIndex1()
+      [Test]
+      public virtual void TestSimulatedCorruptIndex1()
 	  {
 		  BaseDirectoryWrapper dir = NewDirectory();
 		  dir.CheckIndexOnClose = false; // we are corrupting it!
@@ -1435,7 +1457,8 @@ namespace Lucene.Net.Index
 	  // Simulate a corrupt index by removing one of the cfs
 	  // files and make sure we get an IOException trying to
 	  // open the index:
-	  public virtual void TestSimulatedCorruptIndex2()
+      [Test]
+      public virtual void TestSimulatedCorruptIndex2()
 	  {
 		BaseDirectoryWrapper dir = NewDirectory();
 		dir.CheckIndexOnClose = false; // we are corrupting it!
@@ -1492,7 +1515,8 @@ namespace Lucene.Net.Index
 	  // file: make sure we can still open the index (ie,
 	  // gracefully fallback to the previous segments file),
 	  // and that we can add to the index:
-	  public virtual void TestSimulatedCrashedWriter()
+      [Test]
+      public virtual void TestSimulatedCrashedWriter()
 	  {
 		  Directory dir = NewDirectory();
 		  if (dir is MockDirectoryWrapper)
@@ -1563,7 +1587,8 @@ namespace Lucene.Net.Index
 		  dir.Dispose();
 	  }
 
-	  public virtual void TestTermVectorExceptions()
+      [Test]
+      public virtual void TestTermVectorExceptions()
 	  {
 		FailOnTermVectors[] failures = new FailOnTermVectors[] {new FailOnTermVectors(FailOnTermVectors.AFTER_INIT_STAGE), new FailOnTermVectors(FailOnTermVectors.INIT_STAGE)};
 		int num = AtLeast(1);
@@ -1656,16 +1681,17 @@ namespace Lucene.Net.Index
 		public override void Eval(MockDirectoryWrapper dir)
 		{
 
-		  string[] trace = (new Exception()).StackTrace;
-		  bool fail = false;
-		  for (int i = 0; i < trace.Length; i++)
-		  {
-			if (typeof(TermVectorsConsumer).Name.Equals(trace[i].ClassName) && Stage.Equals(trace[i].MethodName))
-			{
-			  fail = true;
-			  break;
-			}
-		  }
+		    var trace = new StackTrace(new Exception());
+            bool fail = false;
+            foreach (var frame in trace.GetFrames())
+		    {
+		        var method = frame.GetMethod();
+                if (typeof(TermVectorsConsumer).Name.Equals(frame.GetType().Name) && Stage.Equals(method.Name))
+                {
+                    fail = true;
+                    break;
+                }
+		    }
 
 		  if (fail)
 		  {
@@ -1674,7 +1700,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestAddDocsNonAbortingException()
+      [Test]
+      public virtual void TestAddDocsNonAbortingException()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -1723,7 +1750,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		IndexSearcher s = NewSearcher(r);
 		PhraseQuery pq = new PhraseQuery();
@@ -1740,7 +1767,8 @@ namespace Lucene.Net.Index
 	  }
 
 
-	  public virtual void TestUpdateDocsNonAbortingException()
+      [Test]
+      public virtual void TestUpdateDocsNonAbortingException()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -1813,7 +1841,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		IndexSearcher s = NewSearcher(r);
 		PhraseQuery pq = new PhraseQuery();
@@ -1837,20 +1865,22 @@ namespace Lucene.Net.Index
 		{
 		  if (DoFail && name.StartsWith("segments_"))
 		  {
-			string[] trace = (new Exception()).StackTrace;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if ("read".Equals(trace[i].MethodName))
-			  {
-				throw new System.NotSupportedException("expected UOE");
-			  }
-			}
+		      var trace = new StackTrace(new Exception());
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+		          if ("Read".Equals(method.Name))
+		          {
+		              throw new System.NotSupportedException("expected UOE");
+		          }
+		      }
 		  }
 		  return base.OpenInput(name, context);
 		}
 	  }
 
-	  public virtual void TestExceptionOnCtor()
+      [Test]
+      public virtual void TestExceptionOnCtor()
 	  {
 		UOEDirectory uoe = new UOEDirectory();
 		Directory d = new MockDirectoryWrapper(Random(), uoe);
@@ -1871,7 +1901,8 @@ namespace Lucene.Net.Index
 		d.Dispose();
 	  }
 
-	  public virtual void TestIllegalPositions()
+      [Test]
+      public virtual void TestIllegalPositions()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -1896,7 +1927,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestLegalbutVeryLargePositions()
+      [Test]
+      public virtual void TestLegalbutVeryLargePositions()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -1915,7 +1947,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestBoostOmitNorms()
+      [Test]
+      public virtual void TestBoostOmitNorms()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1967,7 +2000,7 @@ namespace Lucene.Net.Index
 			return StringField.TYPE_NOT_STORED;
 		  }
 
-		  public float Boost()
+		  public float GetBoost()
 		  {
 			return 5f;
 		  }
@@ -1977,22 +2010,33 @@ namespace Lucene.Net.Index
 			return null;
 		  }
 
-		  public string StringValue()
+		  public string StringValue
 		  {
-			return "baz";
+		      get
+		      {
+                  return "baz";
+		      }
+			
 		  }
 
-		  public TextReader ReaderValue()
+		  public TextReader ReaderValue
 		  {
-			return null;
+		      get
+		      {
+                  return null;
+              }
 		  }
 
-		  public Number NumericValue()
+		  public object NumericValue
 		  {
-			return null;
+		      get
+		      {
+		          return null;
+		      }
+			
 		  }
 
-		  public TokenStream TokenStream(Analyzer analyzer)
+		  public TokenStream GetTokenStream(Analyzer analyzer)
 		  {
 			return null;
 		  }
@@ -2000,7 +2044,8 @@ namespace Lucene.Net.Index
 
 	  // See LUCENE-4870 TooManyOpenFiles errors are thrown as
 	  // FNFExceptions which can trigger data loss.
-	  public virtual void TestTooManyFileException()
+      [Test]
+      public virtual void TestTooManyFileException()
 	  {
 
 		// Create failure that throws Too many open files exception randomly
@@ -2069,7 +2114,7 @@ namespace Lucene.Net.Index
 
 		  public override MockDirectoryWrapper.Failure Reset()
 		  {
-			OuterInstance.DoFail = false;
+			DoFail = false;
 			return this;
 		  }
 
@@ -2089,7 +2134,8 @@ namespace Lucene.Net.Index
 	  // full), and then the exception stops (e.g., disk frees
 	  // up), so we successfully close IW or open an NRT
 	  // reader, we don't lose any deletes or updates:
-	  public virtual void TestNoLostDeletesOrUpdates()
+      [Test]
+      public virtual void TestNoLostDeletesOrUpdates()
 	  {
 		int deleteCount = 0;
 		int docBase = 0;
@@ -2215,7 +2261,7 @@ namespace Lucene.Net.Index
 				Console.WriteLine("  now close writer");
 			  }
 			  doClose = true;
-			  w.Close();
+			  w.Dispose();
 			  w = null;
 			}
 
@@ -2248,7 +2294,7 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("  now 2nd close writer");
 			}
-			w.Close();
+			w.Dispose();
 			w = null;
 		  }
 
@@ -2306,7 +2352,7 @@ namespace Lucene.Net.Index
 			{
 			  Console.WriteLine("TEST: close writer");
 			}
-			w.Close();
+			w.Dispose();
 			w = null;
 		  }
 
@@ -2315,7 +2361,7 @@ namespace Lucene.Net.Index
 
 		if (w != null)
 		{
-		  w.Close();
+		  w.Dispose();
 		}
 
 		// Final verify:
@@ -2343,26 +2389,22 @@ namespace Lucene.Net.Index
 
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
-			string[] trace = (new Exception()).StackTrace;
-			if (ShouldFail.Get() == false)
-			{
-			  return;
-			}
-
-			bool sawSeal = false;
-			bool sawWrite = false;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if ("sealFlushedSegment".Equals(trace[i].MethodName))
-			  {
-				sawSeal = true;
-				break;
-			  }
-			  if ("writeLiveDocs".Equals(trace[i].MethodName) || "writeFieldUpdates".Equals(trace[i].MethodName))
-			  {
-				sawWrite = true;
-			  }
-			}
+		      var trace = new StackTrace(new Exception());
+		      bool sawSeal = false;
+			  bool sawWrite = false;
+              foreach (var frame in trace.GetFrames())
+		      {
+                  var method = frame.GetMethod();
+                  if ("SealFlushedSegment".Equals(method.Name))
+                  {
+                      sawSeal = true;
+                      break;
+                  }
+                  if ("WriteLiveDocs".Equals(method.Name) || "WriteFieldUpdates".Equals(method.Name))
+                  {
+                      sawWrite = true;
+                  }
+		      }
 
 			// Don't throw exc if we are "flushing", else
 			// the segment is aborted and docs are lost:
@@ -2401,7 +2443,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestExceptionDuringRollback()
+      [Test]
+      public virtual void TestExceptionDuringRollback()
 	  {
 		// currently: fail in two different places
 		string messageToFailOn = Random().NextBoolean() ? "rollback: done finish merges" : "rollback before checkpoint";
@@ -2485,7 +2528,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestRandomExceptionDuringRollback()
+      [Test]
+      public virtual void TestRandomExceptionDuringRollback()
 	  {
 		// fail in random places on i/o
 		int numIters = RANDOM_MULTIPLIER * 75;
@@ -2552,17 +2596,17 @@ namespace Lucene.Net.Index
 
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
-			bool maybeFail = false;
-			string[] trace = (new Exception()).StackTrace;
-
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if ("rollbackInternal".Equals(trace[i].MethodName))
-			  {
-				maybeFail = true;
-				break;
-			  }
-			}
+		      bool maybeFail = false;
+		      var trace = new StackTrace(new Exception());
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+                  if ("RollbackInternal".Equals(method.Name))
+                  {
+                      maybeFail = true;
+                      break;
+                  }
+		      }
 
 			if (maybeFail && Random().Next(10) == 0)
 			{

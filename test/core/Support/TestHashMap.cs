@@ -207,7 +207,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual("MyString", dict[2]);
             Assert.AreEqual("OtherString", dict[0]);
             Assert.AreEqual(2, dict.Count);
-            Assert.AreEqual(2, dict._dict.Count, "0 (default(int)) was not stored in internal dict!");
+            Assert.AreEqual(2, dict.Count, "0 (default(int)) was not stored in internal dict!");
         }
     }
 }

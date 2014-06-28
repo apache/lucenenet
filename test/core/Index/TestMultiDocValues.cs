@@ -39,9 +39,11 @@ namespace Lucene.Net.Index
 	/// Tests MultiDocValues versus ordinary segment merging </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestMultiDocValues extends Lucene.Net.Util.LuceneTestCase
-	public class TestMultiDocValues : LuceneTestCase
+	[TestFixture]
+    public class TestMultiDocValues : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestNumerics()
 	  {
 		Directory dir = NewDirectory();
@@ -67,7 +69,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		NumericDocValues multi = MultiDocValues.GetNumericValues(ir, "numbers");
 		NumericDocValues single = merged.GetNumericDocValues("numbers");
@@ -80,7 +82,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestBinary()
+      [Test]
+      public virtual void TestBinary()
 	  {
 		Directory dir = NewDirectory();
 		Document doc = new Document();
@@ -106,7 +109,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		BinaryDocValues multi = MultiDocValues.GetBinaryValues(ir, "bytes");
 		BinaryDocValues single = merged.GetBinaryDocValues("bytes");
@@ -123,7 +126,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestSorted()
+      [Test]
+      public virtual void TestSorted()
 	  {
 		Directory dir = NewDirectory();
 		Document doc = new Document();
@@ -153,7 +157,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		SortedDocValues multi = MultiDocValues.GetSortedValues(ir, "bytes");
 		SortedDocValues single = merged.GetSortedDocValues("bytes");
@@ -175,7 +179,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // tries to make more dups than testSorted
-	  public virtual void TestSortedWithLotsOfDups()
+      [Test]
+      public virtual void TestSortedWithLotsOfDups()
 	  {
 		Directory dir = NewDirectory();
 		Document doc = new Document();
@@ -201,7 +206,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		SortedDocValues multi = MultiDocValues.GetSortedValues(ir, "bytes");
 		SortedDocValues single = merged.GetSortedDocValues("bytes");
@@ -222,7 +227,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestSortedSet()
+      [Test]
+      public virtual void TestSortedSet()
 	  {
 		AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
 		Directory dir = NewDirectory();
@@ -250,7 +256,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
 		SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
@@ -298,7 +304,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // tries to make more dups than testSortedSet
-	  public virtual void TestSortedSetWithDups()
+      [Test]
+      public virtual void TestSortedSetWithDups()
 	  {
 		AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
 		Directory dir = NewDirectory();
@@ -326,7 +333,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		SortedSetDocValues multi = MultiDocValues.GetSortedSetValues(ir, "bytes");
 		SortedSetDocValues single = merged.GetSortedSetDocValues("bytes");
@@ -373,7 +380,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDocsWithField()
+      [Test]
+      public virtual void TestDocsWithField()
 	  {
 		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
 		Directory dir = NewDirectory();
@@ -401,7 +409,7 @@ namespace Lucene.Net.Index
 		iw.ForceMerge(1);
 		DirectoryReader ir2 = iw.Reader;
 		AtomicReader merged = GetOnlySegmentReader(ir2);
-        iw.Close();
+        iw.Dispose();
 
 		Bits multi = MultiDocValues.GetDocsWithField(ir, "numbers");
 		Bits single = merged.GetDocsWithField("numbers");

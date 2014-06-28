@@ -19,7 +19,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -9552,6 +9552,7 @@
     <Compile Include="src\core\Support\ConcurrentHashMap.cs" />
     <Compile Include="src\core\Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="src\core\Support\ConcurrentHashSet.cs" />
+    <Compile Include="src\core\Support\ConcurrentList.cs" />
     <Compile Include="src\core\Support\FileStreamExtensions.cs" />
     <Compile Include="src\core\Support\ICallable.cs" />
     <Compile Include="src\core\Support\ICharSequence.cs" />
@@ -9573,6 +9574,7 @@
     <Compile Include="src\core\Support\StringTokenizer.cs" />
     <Compile Include="src\core\Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="src\core\Support\ThreadFactory.cs" />
+    <Compile Include="src\core\Support\TimeHelper.cs" />
     <Compile Include="src\core\Support\UnmodifiableDictionary.cs" />
     <Compile Include="src\core\Support\CloseableThreadLocalProfiler.cs" />
     <Compile Include="src\core\Support\CollectionsHelper.cs" />

@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestParallelTermEnum : LuceneTestCase
 	{
 	  private AtomicReader Ir1;
@@ -39,6 +40,7 @@ namespace Lucene.Net.Index
 	  private Directory Rd1;
 	  private Directory Rd2;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -66,6 +68,7 @@ namespace Lucene.Net.Index
 		this.Ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Rd2));
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Ir1.Dispose();
@@ -93,7 +96,8 @@ namespace Lucene.Net.Index
 		Assert.IsNull(te.Next());
 	  }
 
-	  public virtual void Test1()
+      [Test]
+      public virtual void Test1()
 	  {
 		ParallelAtomicReader pr = new ParallelAtomicReader(Ir1, Ir2);
 

@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
 	/// Setup and restore suite-level environment (fine grained junk that 
 	/// doesn't fit anywhere else).
 	/// </summary>
-	internal sealed class TestRuleSetupAndRestoreClassEnv : AbstractBeforeAfterRule
+	internal sealed class TestRuleSetupAndRestoreClassEnv// : AbstractBeforeAfterRule
 	{
 	  /// <summary>
 	  /// Restore these system property values.
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
 		}
 	  }
 
-	  protected internal override void Before()
+	  /*protected internal override void Before()
 	  {
 		// enable this by default, for IDE consistency with ant tests (as its the default from ant)
 		// TODO: really should be in solr base classes, but some extend LTC directly.
@@ -294,7 +294,7 @@ namespace Lucene.Net.Util
 		  Console.Error.WriteLine("NOTE: " + e.Message + " Suppressed codecs: " + Arrays.ToString(AvoidCodecs.ToArray()));
 		  throw e;
 		}
-	  }
+	  }*/
 
 	  private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
 	  {
@@ -351,7 +351,7 @@ namespace Lucene.Net.Util
 	  /// <summary>
 	  /// After suite cleanup (always invoked).
 	  /// </summary>
-	  protected internal override void After()
+	  /*protected internal override void After()
 	  {
 		foreach (KeyValuePair<string, string> e in RestoreProperties)
 		{
@@ -376,7 +376,7 @@ namespace Lucene.Net.Util
 		{
 			TimeZone = SavedTimeZone;
 		}
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Should a given codec be avoided for the currently executing suite?

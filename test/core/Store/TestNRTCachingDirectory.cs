@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
 		}
 
 		// Close should force cache to clear since all files are sync'd
-		w.Close();
+		w.Dispose();
 
 		string[] cachedFiles = cachedDir.ListCachedFiles();
 		foreach (string file in cachedFiles)

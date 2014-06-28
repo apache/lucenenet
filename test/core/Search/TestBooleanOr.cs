@@ -158,7 +158,7 @@ namespace Lucene.Net.Search
 		Reader = writer.Reader;
 		//
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
       [TearDown]
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
 
 		riw.ForceMerge(1);
 		IndexReader r = riw.Reader;
-		riw.Close();
+		riw.Dispose();
 
 		IndexSearcher s = NewSearcher(r);
 		BooleanQuery bq = new BooleanQuery();

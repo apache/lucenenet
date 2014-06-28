@@ -33,13 +33,15 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Some tests for <seealso cref="ParallelAtomicReader"/>s with empty indexes
 	/// </summary>
-	public class TestParallelReaderEmptyIndex : LuceneTestCase
+	[TestFixture]
+    public class TestParallelReaderEmptyIndex : LuceneTestCase
 	{
 
 	  /// <summary>
 	  /// Creates two empty indexes and wraps a ParallelReader around. Adding this
 	  /// reader to a new index should not throw any exception.
 	  /// </summary>
+      [Test]
 	  public virtual void TestEmptyIndex()
 	  {
 		Directory rd1 = NewDirectory();
@@ -83,7 +85,8 @@ namespace Lucene.Net.Index
 	  /// to have TermVectors. Adding this index to another index should not throw
 	  /// any exception.
 	  /// </summary>
-	  public virtual void TestEmptyIndexWithVectors()
+      [Test]
+      public virtual void TestEmptyIndexWithVectors()
 	  {
 		Directory rd1 = NewDirectory();
 		{

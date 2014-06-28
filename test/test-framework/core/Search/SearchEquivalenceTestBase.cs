@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
 		Reader = iw.Reader;
 		S1 = NewSearcher(Reader);
 		S2 = NewSearcher(Reader);
-		iw.Close();
+		iw.Dispose();
 	  }
 
 	  [TearDown]
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(td1.TotalHits <= td2.TotalHits);
 
 		// fill the superset into a bitset
-		BitArray bitset = new BitArray();
+        BitArray bitset = new BitArray(td2.ScoreDocs.Length);
 		for (int i = 0; i < td2.ScoreDocs.Length; i++)
 		{
 		  bitset.Set(td2.ScoreDocs[i].Doc, true);

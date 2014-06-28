@@ -35,9 +35,11 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestMixedCodecs extends Lucene.Net.Util.LuceneTestCase
-	public class TestMixedCodecs : LuceneTestCase
+	[TestFixture]
+    public class TestMixedCodecs : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void Test()
 	  {
 
@@ -67,7 +69,7 @@ namespace Lucene.Net.Index
 			}
 			if (w != null)
 			{
-			  w.Close();
+			  w.Dispose();
 			}
 			w = new RandomIndexWriter(Random(), dir, iwc);
 			docsLeftInthisSegment = TestUtil.NextInt(Random(), 10, 100);
@@ -102,7 +104,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-        w.Close();
+        w.Dispose();
 		dir.Dispose();
 	  }
 	}

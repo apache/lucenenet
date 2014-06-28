@@ -8,14 +8,14 @@ namespace Lucene.Net.Support
 {
     public static class StringSupport
     {
-        public static sbyte[] ToSbyteArray(this string str, Encoding enc)
+        public static sbyte[] GetBytes(this string str, Encoding enc)
         {
             return (sbyte[]) (Array) enc.GetBytes(str);
         }
 
         public static BytesRef ToBytesRefArray(this string str, Encoding enc)
         {
-            return new BytesRef(str.ToSbyteArray(enc));
+            return new BytesRef(str.GetBytes(enc));
         }
     }
 }

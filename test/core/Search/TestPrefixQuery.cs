@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 		Assert.IsFalse(query.GetTermsEnum(terms) is PrefixTermsEnum);
 		hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(3, hits.Length, "everything");
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		directory.Dispose();
 	  }

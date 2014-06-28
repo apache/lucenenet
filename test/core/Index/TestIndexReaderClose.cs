@@ -29,10 +29,11 @@ namespace Lucene.Net.Index
     using System;
     using Lucene.Net.Support;
 
-
+    [TestFixture]
 	public class TestIndexReaderClose : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestCloseUnderException()
 	  {
 		int iters = 1000 + 1 + Random().Next(20);
@@ -115,7 +116,7 @@ namespace Lucene.Net.Index
 			  this.ThrowOnClose = throwOnClose;
 		  }
 
-		  protected internal override void DoClose()
+		  protected override void DoClose()
 		  {
 			base.DoClose();
 			if (ThrowOnClose)

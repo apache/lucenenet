@@ -56,13 +56,13 @@ namespace Lucene.Net.Codecs.Lucene41
 		Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		Iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
 		Iw = new RandomIndexWriter(Random(), Dir, (IndexWriterConfig)Iwc.Clone());
-		Iw.DoRandomForceMerge = false; // we will ourselves
+		Iw.RandomForceMerge = false; // we will ourselves
 	  }
 
       [TestFixtureTearDown]
 	  public override void TearDown()
 	  {
-		Iw.Close();
+		Iw.Dispose();
 		TestUtil.CheckIndex(Dir); // for some extra coverage, checkIndex before we forceMerge
 		Iwc.SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND);
 		IndexWriter iw = new IndexWriter(Dir, (IndexWriterConfig)Iwc.Clone());

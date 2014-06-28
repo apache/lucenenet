@@ -41,11 +41,12 @@ using NUnit.Framework;
 	  Verify we can read the pre-2.1 file format, do searches
 	  against it, and add documents to it.
 	*/
-
+    [TestFixture]
 	public class TestDeletionPolicy : LuceneTestCase
 	{
 
-	  private void VerifyCommitOrder(IList<IndexCommit> commits)
+	  private void VerifyCommitOrder<T>(IList<T> commits)
+          where T : IndexCommit
 	  {
 		if (commits.Count == 0)
 		{
@@ -78,12 +79,12 @@ using NUnit.Framework;
 		  this.Dir = dir;
 		}
 
-		public override void OnInit(IList<IndexCommit> commits)
+		public override void OnInit<T>(IList<T> commits)
 		{
 		  OuterInstance.VerifyCommitOrder(commits);
 		  NumOnInit++;
 		}
-		public override void OnCommit(IList<IndexCommit> commits)
+		public override void OnCommit<T>(IList<T> commits)
 		{
 		  IndexCommit lastCommit = commits[commits.Count - 1];
 		  DirectoryReader r = DirectoryReader.Open(Dir);
@@ -110,7 +111,7 @@ using NUnit.Framework;
 
 		internal int NumOnInit;
 		internal int NumOnCommit;
-		public override void OnInit(IList<IndexCommit> commits)
+		public override void OnInit<T>(IList<T> commits)
 		{
 		  OuterInstance.VerifyCommitOrder(commits);
 		  NumOnInit++;
@@ -121,7 +122,7 @@ using NUnit.Framework;
 			Assert.IsTrue(commit.Deleted);
 		  }
 		}
-		public override void OnCommit(IList<IndexCommit> commits)
+        public override void OnCommit<T>(IList<T> commits)
 		{
           OuterInstance.VerifyCommitOrder(commits);
 		  int size = commits.Count;
@@ -150,7 +151,7 @@ using NUnit.Framework;
 		  this.NumToKeep = numToKeep;
 		}
 
-		public override void OnInit(IList<IndexCommit> commits)
+		public override void OnInit<T>(IList<T> commits)
 		{
 		  if (VERBOSE)
 		  {
@@ -162,7 +163,7 @@ using NUnit.Framework;
 		  DoDeletes(commits, false);
 		}
 
-		public override void OnCommit(IList<IndexCommit> commits)
+		public override void OnCommit<T>(IList<T> commits)
 		{
 		  if (VERBOSE)
 		  {
@@ -172,7 +173,8 @@ using NUnit.Framework;
 		  DoDeletes(commits, true);
 		}
 
-		internal virtual void DoDeletes(IList<IndexCommit> commits, bool isCommit)
+		internal virtual void DoDeletes<T>(IList<T> commits, bool isCommit)
+            where T : IndexCommit
 		{
 
 		  // Assert that we really are only called for each new
@@ -221,7 +223,7 @@ using NUnit.Framework;
 		  this.ExpirationTimeSeconds = seconds;
 		}
 
-		public override void OnInit(IList<IndexCommit> commits)
+		public override void OnInit<T>(IList<T> commits)
 		{
 		  if (commits.Count == 0)
 		  {
@@ -231,7 +233,7 @@ using NUnit.Framework;
 		  OnCommit(commits);
 		}
 
-		public override void OnCommit(IList<IndexCommit> commits)
+		public override void OnCommit<T>(IList<T> commits)
 		{
 		  OuterInstance.VerifyCommitOrder(commits);
 
@@ -255,7 +257,8 @@ using NUnit.Framework;
 	  /*
 	   * Test "by time expiration" deletion policy:
 	   */
-	  public virtual void TestExpirationTimeDeletionPolicy()
+      [Test]
+      public virtual void TestExpirationTimeDeletionPolicy()
 	  {
 
 		const double SECONDS = 2.0;
@@ -343,7 +346,8 @@ using NUnit.Framework;
 	  /*
 	   * Test a silly deletion policy that keeps all commits around.
 	   */
-	  public virtual void TestKeepAllDeletionPolicy()
+      [Test]
+      public virtual void TestKeepAllDeletionPolicy()
 	  {
 		for (int pass = 0;pass < 2;pass++)
 		{
@@ -439,7 +443,8 @@ using NUnit.Framework;
 	  /* Uses KeepAllDeletionPolicy to keep all commits around,
 	   * then, opens a new IndexWriter on a previous commit
 	   * point. */
-	  public virtual void TestOpenPriorSnapshot()
+      [Test]
+      public virtual void TestOpenPriorSnapshot()
 	  {
 		Directory dir = NewDirectory();
 
@@ -542,7 +547,8 @@ using NUnit.Framework;
 	   * useful case eg where you want to build a big index and
 	   * you know there are no readers.
 	   */
-	  public virtual void TestKeepNoneOnInitDeletionPolicy()
+      [Test]
+      public virtual void TestKeepNoneOnInitDeletionPolicy()
 	  {
 		for (int pass = 0;pass < 2;pass++)
 		{
@@ -587,7 +593,8 @@ using NUnit.Framework;
 	  /*
 	   * Test a deletion policy that keeps last N commits.
 	   */
-	  public virtual void TestKeepLastNDeletionPolicy()
+      [Test]
+      public virtual void TestKeepLastNDeletionPolicy()
 	  {
 		const int N = 5;
 
@@ -655,7 +662,8 @@ using NUnit.Framework;
 	   * Test a deletion policy that keeps last N commits
 	   * around, through creates.
 	   */
-	  public virtual void TestKeepLastNDeletionPolicyWithCreates()
+      [Test]
+      public virtual void TestKeepLastNDeletionPolicyWithCreates()
 	  {
 
 		const int N = 10;

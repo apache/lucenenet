@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Index
 {
 
@@ -27,6 +29,7 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestSameTokenSamePosition : LuceneTestCase
 	{
 
@@ -34,6 +37,7 @@ namespace Lucene.Net.Index
 	  /// Attempt to reproduce an assertion error that happens
 	  /// only with the trunk version around April 2011.
 	  /// </summary>
+      [Test]
 	  public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
@@ -41,14 +45,15 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		doc.Add(new TextField("eng", new BugReproTokenStream()));
 		riw.AddDocument(doc);
-        riw.Close();
+        riw.Dispose();
 		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// Same as the above, but with more docs
 	  /// </summary>
-	  public virtual void TestMoreDocs()
+      [Test]
+      public virtual void TestMoreDocs()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir);
@@ -58,7 +63,7 @@ namespace Lucene.Net.Index
 		  doc.Add(new TextField("eng", new BugReproTokenStream()));
 		  riw.AddDocument(doc);
 		}
-        riw.Close();
+        riw.Dispose();
 		dir.Dispose();
 	  }
 	}

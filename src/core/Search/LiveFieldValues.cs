@@ -36,16 +36,17 @@ namespace Lucene.Net.Search
 	///  cannot in general know which thread "won". 
 	/// </summary>
 
-	public abstract class LiveFieldValues<T> : ReferenceManager.RefreshListener, IDisposable
-        where T : class
+	public abstract class LiveFieldValues<S,T> : ReferenceManager.RefreshListener, IDisposable
+        where S : class
+        where T : struct
 	{
 
 	  private volatile IDictionary<string, T> Current = new ConcurrentDictionary<string, T>();
 	  private volatile IDictionary<string, T> Old = new ConcurrentDictionary<string, T>();
-	  private readonly ReferenceManager<IndexSearcher> Mgr;
+	  private readonly ReferenceManager<S> Mgr;
 	  private readonly T MissingValue;
 
-      public LiveFieldValues(ReferenceManager<IndexSearcher> mgr, T missingValue)
+      public LiveFieldValues(ReferenceManager<S> mgr, T missingValue)
 	  {
 		this.MissingValue = missingValue;
 		this.Mgr = mgr;
@@ -120,7 +121,7 @@ namespace Lucene.Net.Search
 		  // the reader:
 		  return default(T);
 		}
-		else if (value != null)
+        else if ((object)value != (object)default(T))
 		{
 		  return value;
 		}
@@ -133,7 +134,7 @@ namespace Lucene.Net.Search
 			// the reader:
 			return default(T);
 		  }
-		  else if (value != null)
+          else if ((object)value != (object)default(T))
 		  {
 			return value;
 		  }
@@ -142,7 +143,7 @@ namespace Lucene.Net.Search
 			// It either does not exist in the index, or, it was
 			// already flushed & NRT reader was opened on the
 			// segment, so fallback to current searcher:
-			IndexSearcher s = Mgr.Acquire();
+			S s = Mgr.Acquire();
 			try
 			{
 			  return LookupFromSearcher(s, id);
@@ -161,7 +162,7 @@ namespace Lucene.Net.Search
 	  ///  go look up the value (eg, via doc values, field cache,
 	  ///  stored fields, etc.). 
 	  /// </summary>
-      protected internal abstract T LookupFromSearcher(IndexSearcher s, string id);
+      protected internal abstract T LookupFromSearcher(S s, string id);
 	}
 
 

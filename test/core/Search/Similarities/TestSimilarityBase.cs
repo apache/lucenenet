@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Similarities
 
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 
 		Sims = new List<SimilarityBase>();
 		foreach (BasicModel basicModel in BASIC_MODELS)

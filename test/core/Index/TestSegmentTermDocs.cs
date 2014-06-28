@@ -28,13 +28,15 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSegmentTermDocs : LuceneTestCase
 	{
 	  private Document TestDoc = new Document();
 	  private Directory Dir;
 	  private SegmentCommitInfo Info;
 
-	  public override void SetUp()
+      [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 		Dir = NewDirectory();
@@ -42,18 +44,21 @@ namespace Lucene.Net.Index
 		Info = DocHelper.WriteDoc(Random(), Dir, TestDoc);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Dir.Dispose();
 		base.TearDown();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Assert.IsTrue(Dir != null);
 	  }
 
-	  public virtual void TestTermDocs()
+      [Test]
+      public virtual void TestTermDocs()
 	  {
 		TestTermDocs(1);
 	  }
@@ -78,33 +83,35 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestBadSeek()
+      [Test]
+      public virtual void TestBadSeek()
 	  {
 		TestBadSeek(1);
 	  }
 
 	  public virtual void TestBadSeek(int indexDivisor)
 	  {
-	  {
-		  //After adding the document, we should be able to read it back in
-		  SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
-		  Assert.IsTrue(reader != null);
-		  DocsEnum termDocs = TestUtil.Docs(Random(), reader, "textField2", new BytesRef("bad"), reader.LiveDocs, null, 0);
+	      {
+		      //After adding the document, we should be able to read it back in
+		      SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
+		      Assert.IsTrue(reader != null);
+		      DocsEnum termDocs = TestUtil.Docs(Random(), reader, "textField2", new BytesRef("bad"), reader.LiveDocs, null, 0);
 
-		  Assert.IsNull(termDocs);
-		  reader.Dispose();
-		}
-		{
-		  //After adding the document, we should be able to read it back in
-		  SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
-		  Assert.IsTrue(reader != null);
-		  DocsEnum termDocs = TestUtil.Docs(Random(), reader, "junk", new BytesRef("bad"), reader.LiveDocs, null, 0);
-		  Assert.IsNull(termDocs);
-		  reader.Dispose();
-		}
-	  }
+		      Assert.IsNull(termDocs);
+		      reader.Dispose();
+		    }
+		    {
+		      //After adding the document, we should be able to read it back in
+		      SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
+		      Assert.IsTrue(reader != null);
+		      DocsEnum termDocs = TestUtil.Docs(Random(), reader, "junk", new BytesRef("bad"), reader.LiveDocs, null, 0);
+		      Assert.IsNull(termDocs);
+		      reader.Dispose();
+		    }
+	    }
 
-	  public virtual void TestSkipTo()
+      [Test]
+      public virtual void TestSkipTo()
 	  {
 		TestSkipTo(1);
 	  }
@@ -243,7 +250,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestIndexDivisor()
+      [Test]
+      public virtual void TestIndexDivisor()
 	  {
 		TestDoc = new Document();
 		DocHelper.SetupDoc(TestDoc);

@@ -389,7 +389,7 @@ namespace Lucene.Net.Store
 		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		int numAsserts = AtLeast(100);
 		for (int i = 0; i < numAsserts; i++)

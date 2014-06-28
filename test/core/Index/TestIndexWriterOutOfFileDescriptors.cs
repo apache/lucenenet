@@ -34,8 +34,10 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestIndexWriterOutOfFileDescriptors : LuceneTestCase
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 		MockDirectoryWrapper dir = NewMockFSDirectory(CreateTempDir("TestIndexWriterOutOfFileDescriptors"));

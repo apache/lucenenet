@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		Searcher = NewSearcher(Reader);
 	  }
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "the stop words are here", Field.Store.YES));
 		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 
@@ -329,7 +329,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 
 		reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		searcher = NewSearcher(reader);
 
@@ -381,7 +381,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc3);
 
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 		searcher.Similarity = new DefaultSimilarity();
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(1, hits.Length, "just sloppy enough");
 		float score1 = hits[0].Score;
 		//System.out.println("(sloppy) field: two three: "+score1);
-		Assert.AreEqual("exact scorer and sloppy scorer score the same when slop does not matter",score0, score1, SCORE_COMP_THRESH);
+		Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "exact scorer and sloppy scorer score the same when slop does not matter");
 		QueryUtils.Check(Random(), Query,Searcher);
 
 		// search ordered in palyndrome, find it twice
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(1, hits.Length, "just sloppy enough");
 		float score1 = hits[0].Score;
 		//System.out.println("(sloppy) field: one two three: "+score1);
-		Assert.AreEqual("exact scorer and sloppy scorer score the same when slop does not matter",score0, score1, SCORE_COMP_THRESH);
+		Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "exact scorer and sloppy scorer score the same when slop does not matter");
 		QueryUtils.Check(Random(), Query,Searcher);
 
 		// search ordered in palyndrome, find it twice
@@ -720,7 +720,7 @@ namespace Lucene.Net.Search
 
 		IndexReader reader = w.Reader;
 		IndexSearcher s = NewSearcher(reader);
-        w.Close();
+        w.Dispose();
 
 		// now search
 		int num = AtLeast(10);

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Randomized
 {
@@ -40,8 +41,8 @@ namespace Lucene.Net.Randomized
         private static readonly IdentityHashMap<ThreadGroup, RandomizedContext> contexts = 
             new IdentityHashMap<ThreadGroup, RandomizedContext>();
 
-        private readonly WeakDictionary<Thread, ThreadResources> threadResources
-            = new WeakDictionary<Thread, ThreadResources>();
+        private readonly WeakDictionary<ThreadClass, ThreadResources> threadResources
+            = new WeakDictionary<ThreadClass, ThreadResources>();
 
         private readonly ThreadGroup threadGroup;
         private Type suiteClass;
@@ -85,7 +86,7 @@ namespace Lucene.Net.Randomized
                 this.GuardDiposed();
                 lock (contextLock)
                 {
-                    var resource = threadResources[Thread.CurrentThread];
+                    var resource = threadResources[ThreadClass.Current()];
 
                     return resource;
                 }
@@ -99,11 +100,11 @@ namespace Lucene.Net.Randomized
             this.runner = runner; 
         }
 
-        public static RandomizedContext Current { get { return Context(Thread.CurrentThread); } }
+        public static RandomizedContext Current { get { return Context(ThreadClass.Current()); } }
 
-        private static RandomizedContext Context(Thread thread)
+        private static RandomizedContext Context(ThreadClass thread)
         {
-            var group = thread.GetThreadGroup();
+            var group = thread.Instance.GetThreadGroup();
 
             RandomizedContext context;
 
@@ -142,6 +143,7 @@ namespace Lucene.Net.Randomized
                 if (!context.threadResources.ContainsKey(thread))
                 {
                     var resources = new ThreadResources();
+
                     resources.Queue.Enqueue(context.runner.Randomness.Clone(thread));
 
                     context.threadResources.Add(thread, resources);
@@ -162,7 +164,7 @@ namespace Lucene.Net.Randomized
             lock(globalLock) {
                 var context = new RandomizedContext(tg, suiteClass, runner);
                 contexts.Add(tg, context);
-                context.threadResources.Add(Thread.CurrentThread, new ThreadResources());
+                context.threadResources.Add(ThreadClass.Current(), new ThreadResources());
                 return context;
             }
         }

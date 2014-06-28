@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
-
+    [TestFixture]
 	public class TestIndexInput : LuceneTestCase
 	{
 
@@ -44,7 +44,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws java.io.IOException
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Random random = Random();
 		INTS = new int[COUNT];
@@ -74,7 +75,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass()
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		INTS = null;
 		LONGS = null;
@@ -143,7 +145,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // this test only checks BufferedIndexInput because MockIndexInput extends BufferedIndexInput
-	  public virtual void TestBufferedIndexInputRead()
+      [Test]
+      public virtual void TestBufferedIndexInputRead()
 	  {
 		IndexInput @is = new MockIndexInput(READ_TEST_BYTES);
 		CheckReads(@is, typeof(IOException));
@@ -154,7 +157,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // this test checks the raw IndexInput methods as it uses RAMIndexInput which extends IndexInput directly
-	  public virtual void TestRawIndexInputRead()
+      [Test]
+      public virtual void TestRawIndexInputRead()
 	  {
 		Random random = Random();
 		RAMDirectory dir = new RAMDirectory();
@@ -174,7 +178,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestByteArrayDataInput()
+      [Test]
+      public virtual void TestByteArrayDataInput()
 	  {
 		ByteArrayDataInput @is = new ByteArrayDataInput((byte[])(Array)READ_TEST_BYTES);
 		CheckReads(@is, typeof(Exception));

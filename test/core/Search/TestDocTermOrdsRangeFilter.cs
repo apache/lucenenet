@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
 		Reader = writer.Reader;
 		Searcher1 = NewSearcher(Reader);
 		Searcher2 = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
       [TearDown]

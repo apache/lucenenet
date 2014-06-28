@@ -1,9 +1,10 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
 
-	/// <summary>
+	/*
 	/// Copyright 2006 The Apache Software Foundation
 	/// 
 	/// Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,7 @@ namespace Lucene.Net.Index
 	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	/// See the License for the specific language governing permissions and
 	/// limitations under the License.
-	/// </summary>
+	*/
 
 
 
@@ -79,7 +80,7 @@ namespace Lucene.Net.Index
 	  }
 	}
 
-
+    [TestFixture]
 	public class TestTermdocPerf : LuceneTestCase
 	{
 
@@ -167,10 +168,11 @@ namespace Lucene.Net.Index
 		return ret;
 	  }
 
-	  public virtual void TestTermDocPerf()
+      [Test]
+      public virtual void TestTermDocPerf()
 	  {
 		// performance test for 10% of documents containing a term
-		// doTest(100000, 10000,3,.1f);
+		DoTest(100000, 10000,3,.1f);
 	  }
 
 

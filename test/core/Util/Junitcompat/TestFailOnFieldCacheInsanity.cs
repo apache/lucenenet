@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.junitcompat
 		      w.AddDocument(doc);
 		      w.ForceMerge(1);
 		      r = w.Reader;
-		      w.Close();
+		      w.Dispose();
 
 		      SubR = (AtomicReader)(r.Leaves()[0]).Reader();
             }

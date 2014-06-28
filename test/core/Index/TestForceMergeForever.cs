@@ -30,6 +30,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestForceMergeForever : LuceneTestCase
 	{
 
@@ -59,7 +60,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Directory d = NewDirectory();
 		MockAnalyzer analyzer = new MockAnalyzer(Random());

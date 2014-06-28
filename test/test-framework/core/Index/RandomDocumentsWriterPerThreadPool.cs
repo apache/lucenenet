@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 		this.MaxRetry = 1 + random.Next(10);
 	  }
 
-	  internal ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+	  public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
 	  {
 		ThreadState threadState = null;
 		if (ActiveThreadState == 0)
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 		  if (newThreadState != null) // did we get a new state?
 		  {
 			threadState = States[ActiveThreadState - 1] = newThreadState;
-			Debug.Assert(threadState.HeldByCurrentThread);
+			//Debug.Assert(threadState.HeldByCurrentThread);
 			return threadState;
 		  }
 		  // if no new state is available lock the random one

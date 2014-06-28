@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 		}
 
 		Reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 		Searcher = NewSearcher(Reader);
 	  }
 

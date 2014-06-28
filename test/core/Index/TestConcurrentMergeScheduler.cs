@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Apache.NMS.Util;
 
@@ -39,6 +40,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using System.IO;
 
+    [TestFixture]
 	public class TestConcurrentMergeScheduler : LuceneTestCase
 	{
 
@@ -70,22 +72,24 @@ namespace Lucene.Net.Index
 		  {
 			bool isDoFlush = false;
 			bool isClose = false;
-			string[] trace = (new Exception()).StackTrace;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if (isDoFlush && isClose)
-			  {
-				break;
-			  }
-			  if ("flush".Equals(trace[i].MethodName))
-			  {
-				isDoFlush = true;
-			  }
-			  if ("close".Equals(trace[i].MethodName))
-			  {
-				isClose = true;
-			  }
-			}
+		      var trace = new StackTrace(new Exception());
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+                  if (isDoFlush && isClose)
+                  {
+                      break;
+                  }
+                  if ("flush".Equals(method.Name))
+                  {
+                      isDoFlush = true;
+                  }
+                  if ("close".Equals(method.Name))
+                  {
+                      isClose = true;
+                  }
+		      }
+
 			if (isDoFlush && !isClose && Random().NextBoolean())
 			{
 			  HitExc = true;
@@ -97,7 +101,8 @@ namespace Lucene.Net.Index
 
 	  // Make sure running BG merges still work fine even when
 	  // we are hitting exceptions during flushing.
-	  public virtual void TestFlushExceptions()
+      [Test]
+      public virtual void TestFlushExceptions()
 	  {
 		MockDirectoryWrapper directory = NewMockDirectory();
 		FailOnlyOnFlush failure = new FailOnlyOnFlush(this);
@@ -160,7 +165,8 @@ namespace Lucene.Net.Index
 
 	  // Test that deletes committed after a merge started and
 	  // before it finishes, are correctly merged back:
-	  public virtual void TestDeleteMerging()
+      [Test]
+      public virtual void TestDeleteMerging()
 	  {
 		Directory directory = NewDirectory();
 
@@ -208,7 +214,8 @@ namespace Lucene.Net.Index
 		directory.Dispose();
 	  }
 
-	  public virtual void TestNoExtraFiles()
+      [Test]
+      public virtual void TestNoExtraFiles()
 	  {
 		Directory directory = NewDirectory();
         IndexWriter writer = new IndexWriter(directory, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
@@ -239,7 +246,8 @@ namespace Lucene.Net.Index
 		directory.Dispose();
 	  }
 
-	  public virtual void TestNoWaitClose()
+      [Test]
+      public virtual void TestNoWaitClose()
 	  {
 		Directory directory = NewDirectory();
 		Document doc = new Document();
@@ -285,7 +293,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-4544
-	  public virtual void TestMaxMergeCount()
+      [Test]
+      public virtual void TestMaxMergeCount()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -401,7 +410,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestTotalBytesSize()
+      [Test]
+      public virtual void TestTotalBytesSize()
 	  {
 		Directory d = NewDirectory();
 		if (d is MockDirectoryWrapper)
@@ -429,7 +439,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		Assert.IsTrue(((TrackingCMS) w.w.Config.MergeScheduler).TotMergedBytes != 0);
-        w.Close();
+        w.Dispose();
 		d.Dispose();
 	  }
 	}

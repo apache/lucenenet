@@ -46,7 +46,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "Memory", "Direct", "SimpleText" }) @Slow public class TestNorms extends Lucene.Net.Util.LuceneTestCase
-	public class TestNorms : LuceneTestCase
+	[TestFixture]
+    public class TestNorms : LuceneTestCase
 	{
 	  internal readonly string ByteTestField = "normsTestByte";
 
@@ -102,7 +103,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1260
-	  public virtual void TestCustomEncoder()
+      [Test]
+      public virtual void TestCustomEncoder()
 	  {
 		Directory dir = NewDirectory();
 		MockAnalyzer analyzer = new MockAnalyzer(Random());
@@ -123,7 +125,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		NumericDocValues fooNorms = MultiDocValues.GetNormValues(reader, "foo");
 		for (int i = 0; i < reader.MaxDoc(); i++)
@@ -141,7 +143,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestMaxByteNorms()
+      [Test]
+      public virtual void TestMaxByteNorms()
 	  {
 		Directory dir = NewFSDirectory(CreateTempDir("TestNorms.testMaxByteNorms"));
 		BuildIndex(dir);
@@ -186,7 +189,7 @@ namespace Lucene.Net.Index
 		  }
 		}
 		writer.Commit();
-        writer.Close();
+        writer.Dispose();
         docs.Dispose();
 	  }
 

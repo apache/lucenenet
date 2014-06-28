@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewField("field", "one", ft5));
 		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 

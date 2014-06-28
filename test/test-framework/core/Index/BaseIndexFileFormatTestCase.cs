@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -31,7 +33,7 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Common tests to all index formats.
 	/// </summary>
-	internal abstract class BaseIndexFileFormatTestCase : LuceneTestCase
+	public abstract class BaseIndexFileFormatTestCase : LuceneTestCase
 	{
 
 	  /// <summary>
@@ -58,17 +60,16 @@ namespace Lucene.Net.Index
 	  /// Add random fields to the provided document. </summary>
 	  protected internal abstract void AddRandomFields(Document doc);
 
-	  private IDictionary<string, long?> BytesUsedByExtension(Directory d)
+	  private IDictionary<string, long> BytesUsedByExtension(Directory d)
 	  {
-		IDictionary<string, long?> bytesUsedByExtension = new Dictionary<string, long?>();
-		foreach (string file in d.listAll())
+		IDictionary<string, long> bytesUsedByExtension = new Dictionary<string, long>();
+		foreach (string file in d.ListAll())
 		{
-		  string ext = IndexFileNames.getExtension(file);
+		  string ext = IndexFileNames.GetExtension(file);
 		  long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
-		  bytesUsedByExtension[ext] = previousLength + d.fileLength(file);
+		  bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
 		}
-		bytesUsedByExtension.Keys.removeAll(ExcludedExtensionsFromByteCounts());
-
+		bytesUsedByExtension.Keys.RemoveAll(ExcludedExtensionsFromByteCounts());
 		return bytesUsedByExtension;
 	  }
 
@@ -78,7 +79,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
 	  protected internal virtual ICollection<string> ExcludedExtensionsFromByteCounts()
 	  {
-		return new HashSet<string>(Arrays.asList(new string[] {"si", "lock"}));
+		return new HashSet<string>(Arrays.AsList(new string[] {"si", "lock"}));
 		// segment infos store various pieces of information that don't solely depend
 		// on the content of the index in the diagnostics (such as a timestamp) so we
 		// exclude this file from the bytes counts
@@ -93,7 +94,7 @@ namespace Lucene.Net.Index
 		// do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
 		MergePolicy mp = NewTieredMergePolicy();
 		mp.NoCFSRatio = 0;
-		IndexWriterConfig cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).setUseCompoundFile(false).setMergePolicy(mp);
+		IndexWriterConfig cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, cfg);
 		int numDocs = AtLeast(500);
 		for (int i = 0; i < numDocs; ++i)
@@ -104,23 +105,23 @@ namespace Lucene.Net.Index
 		}
 		w.ForceMerge(1);
 		w.Commit();
-		w.Close();
-		IndexReader reader = DirectoryReader.open(dir);
+		w.Dispose();
+		IndexReader reader = DirectoryReader.Open(dir);
 
 		Directory dir2 = NewDirectory();
 		mp = NewTieredMergePolicy();
 		mp.NoCFSRatio = 0;
-		cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).setUseCompoundFile(false).setMergePolicy(mp);
+		cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
 		w = new RandomIndexWriter(Random(), dir2, cfg);
 		w.AddIndexes(reader);
 		w.Commit();
-		w.Close();
+		w.Dispose();
 
 		Assert.AreEqual(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
 
-		reader.close();
-		dir.close();
-		dir2.close();
+		reader.Dispose();
+		dir.Dispose();
+		dir2.Dispose();
 	  }
 
 	}

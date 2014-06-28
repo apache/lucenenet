@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 		hits = searcher.Search(query, null, 1000).ScoreDocs;
 		Assert.AreEqual(0, hits.Length);
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		directory.Dispose();
 	  }

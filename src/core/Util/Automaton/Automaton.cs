@@ -3,6 +3,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Lucene.Net.Support;
 
@@ -518,8 +519,6 @@ namespace Lucene.Net.Util.Automaton
 			  }
 			}
 			// map<state, set<state>>
-	//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-	//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) java.util.Set<State> map[] = new java.util.Set[states.length];
 			ISet<State>[] map = new HashSet<State>[states.Length];
 			for (int i = 0; i < map.Length; i++)
 			{
@@ -558,8 +557,6 @@ namespace Lucene.Net.Util.Automaton
 	  /// </summary>
 	  public virtual void RemoveDeadTransitions()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] states = getNumberedStates();
 		State[] states = NumberedStates;
 		//clearHashCode();
 		if (IsSingleton)
@@ -580,8 +577,6 @@ namespace Lucene.Net.Util.Automaton
 		  int upto = 0;
 		  for (int i = 0;i < s.numTransitions;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = s.transitionsArray[i];
 			Transition t = s.TransitionsArray[i];
 			if (liveSet.Get(t.To.Number))
 			{

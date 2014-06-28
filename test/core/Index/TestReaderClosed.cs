@@ -30,11 +30,13 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestReaderClosed : LuceneTestCase
 	{
 	  private IndexReader Reader;
 	  private Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -54,10 +56,11 @@ namespace Lucene.Net.Index
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Assert.IsTrue(Reader.RefCount > 0);
 		IndexSearcher searcher = NewSearcher(Reader);
@@ -75,7 +78,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-3800
-	  public virtual void TestReaderChaining()
+      [Test]
+      public virtual void TestReaderChaining()
 	  {
 		Assert.IsTrue(Reader.RefCount > 0);
 		IndexReader wrappedReader = SlowCompositeReaderWrapper.Wrap(Reader);
@@ -100,6 +104,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Dir.Dispose();

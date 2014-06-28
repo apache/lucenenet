@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Similarities
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Similarities
 		doc.Add(NewTextField("foo", "bar", Field.Store.NO));
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.Close();
+		iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search.Similarities
 		doc.Add(NewTextField("foo", "bar", Field.Store.NO));
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Similarities
 		doc.Add(NewField("foo", "bar", ft));
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Similarities
 		doc.Add(f);
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search.Similarities
 		doc.Add(f);
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search.Similarities
 		doc.Add(NewField("foo", "bar", ft));
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		foreach (Similarity sim in Sims)

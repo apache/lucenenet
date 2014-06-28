@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -44,47 +45,49 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test2BPositions extends Lucene.Net.Util.LuceneTestCase
-	public class Test2BPositions : LuceneTestCase
+	[TestFixture]
+    public class Test2BPositions : LuceneTestCase
 	  // uses lots of space and takes a few minutes
 	{
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
-		public virtual void Test()
+        [Test]
+        public virtual void Test()
 		{
-		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));
-		if (dir is MockDirectoryWrapper)
-		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
-		}
+		    BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));
+		    if (dir is MockDirectoryWrapper)
+		    {
+		      ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+		    }
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		    IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	       .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
-		MergePolicy mp = w.Config.MergePolicy;
-		if (mp is LogByteSizeMergePolicy)
-		{
-		 // 1 petabyte:
-		 ((LogByteSizeMergePolicy) mp).MaxMergeMB = 1024 * 1024 * 1024;
-		}
+		    MergePolicy mp = w.Config.MergePolicy;
+		    if (mp is LogByteSizeMergePolicy)
+		    {
+		     // 1 petabyte:
+		     ((LogByteSizeMergePolicy) mp).MaxMergeMB = 1024 * 1024 * 1024;
+		    }
 
-		Document doc = new Document();
-		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.OmitNorms = true;
-		Field field = new Field("field", new MyTokenStream(), ft);
-		doc.Add(field);
+		    Document doc = new Document();
+		    FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+		    ft.OmitNorms = true;
+		    Field field = new Field("field", new MyTokenStream(), ft);
+		    doc.Add(field);
 
-		int numDocs = (int.MaxValue / 26) + 1;
-		for (int i = 0; i < numDocs; i++)
-		{
-		  w.AddDocument(doc);
-		  if (VERBOSE && i % 100000 == 0)
-		  {
-			Console.WriteLine(i + " of " + numDocs + "...");
-		  }
-		}
-		w.ForceMerge(1);
-		w.Dispose();
-		dir.Dispose();
+		    int numDocs = (int.MaxValue / 26) + 1;
+		    for (int i = 0; i < numDocs; i++)
+		    {
+		      w.AddDocument(doc);
+		      if (VERBOSE && i % 100000 == 0)
+		      {
+			    Console.WriteLine(i + " of " + numDocs + "...");
+		      }
+		    }
+		    w.ForceMerge(1);
+		    w.Dispose();
+		    dir.Dispose();
 		}
 
 	  public sealed class MyTokenStream : TokenStream

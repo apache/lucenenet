@@ -50,9 +50,11 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using System.IO;
 
+    [TestFixture]
 	public class TestAddIndexes : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestSimpleCase()
 	  {
 		// main directory
@@ -152,7 +154,8 @@ namespace Lucene.Net.Index
         aux4.Dispose();
 	  }
 
-	  public virtual void TestWithPendingDeletes()
+      [Test]
+      public virtual void TestWithPendingDeletes()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -190,7 +193,8 @@ namespace Lucene.Net.Index
         aux.Dispose();
 	  }
 
-	  public virtual void TestWithPendingDeletes2()
+      [Test]
+      public virtual void TestWithPendingDeletes2()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -230,7 +234,8 @@ namespace Lucene.Net.Index
         aux.Dispose();
 	  }
 
-	  public virtual void TestWithPendingDeletes3()
+      [Test]
+      public virtual void TestWithPendingDeletes3()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -271,7 +276,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // case 0: add self or exceed maxMergeDocs, expect exception
-	  public virtual void TestAddSelf()
+      [Test]
+      public virtual void TestAddSelf()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -316,7 +322,8 @@ namespace Lucene.Net.Index
 	  // in all the remaining tests, make the doc count of the oldest segment
 	  // in dir large so that it is never merged in addIndexes()
 	  // case 1: no tail segments
-	  public virtual void TestNoTailSegments()
+      [Test]
+      public virtual void TestNoTailSegments()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -340,7 +347,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // case 2: tail segments, invariants hold, no copy
-	  public virtual void TestNoCopySegments()
+      [Test]
+      public virtual void TestNoCopySegments()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -364,7 +372,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // case 3: tail segments, invariants hold, copy, invariants hold
-	  public virtual void TestNoMergeAfterCopy()
+      [Test]
+      public virtual void TestNoMergeAfterCopy()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -387,7 +396,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // case 4: tail segments, invariants hold, copy, invariants not hold
-	  public virtual void TestMergeAfterCopy()
+      [Test]
+      public virtual void TestMergeAfterCopy()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -422,7 +432,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // case 5: tail segments, invariants not hold
-	  public virtual void TestMoreMerges()
+      [Test]
+      public virtual void TestMoreMerges()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -563,7 +574,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1270
-	  public virtual void TestHangOnClose()
+      [Test]
+      public virtual void TestHangOnClose()
 	  {
 
 		Directory dir = NewDirectory();
@@ -804,7 +816,8 @@ namespace Lucene.Net.Index
 
 	  // LUCENE-1335: test simultaneous addIndexes & commits
 	  // from multiple threads
-	  public virtual void TestAddIndexesWithThreads()
+      [Test]
+      public virtual void TestAddIndexesWithThreads()
 	  {
 
 		int NUM_ITER = TEST_NIGHTLY ? 15 : 5;
@@ -856,7 +869,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1335: test simultaneous addIndexes & close
-	  public virtual void TestAddIndexesWithClose()
+      [Test]
+      public virtual void TestAddIndexesWithClose()
 	  {
 		const int NUM_COPY = 3;
 		CommitAndAddIndexes2 c = new CommitAndAddIndexes2(this, NUM_COPY);
@@ -958,7 +972,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1335: test simultaneous addIndexes & close
-	  public virtual void TestAddIndexesWithCloseNoWait()
+      [Test]
+      public virtual void TestAddIndexesWithCloseNoWait()
 	  {
 
 		const int NUM_COPY = 50;
@@ -986,7 +1001,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1335: test simultaneous addIndexes & close
-	  public virtual void TestAddIndexesWithRollback()
+      [Test]
+      public virtual void TestAddIndexesWithRollback()
 	  {
 
 		int NUM_COPY = TEST_NIGHTLY ? 50 : 5;
@@ -1011,7 +1027,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-2996: tests that addIndexes(IndexReader) applies existing deletes correctly.
-	  public virtual void TestExistingDeletes()
+      [Test]
+      public virtual void TestExistingDeletes()
 	  {
 		Directory[] dirs = new Directory[2];
 		for (int i = 0; i < dirs.Length; i++)
@@ -1062,7 +1079,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestSimpleCaseCustomCodec()
+      [Test]
+      public virtual void TestSimpleCaseCustomCodec()
 	  {
 		// main directory
 		Directory dir = NewDirectory();
@@ -1138,7 +1156,8 @@ namespace Lucene.Net.Index
 
 
 	  // LUCENE-2790: tests that the non CFS files were deleted by addIndexes
-	  public virtual void TestNonCFSLeftovers()
+      [Test]
+      public virtual void TestNonCFSLeftovers()
 	  {
 		Directory[] dirs = new Directory[2];
 		for (int i = 0; i < dirs.Length; i++)
@@ -1180,7 +1199,8 @@ namespace Lucene.Net.Index
 	  /*
 	   * simple test that ensures we getting expected exceptions 
 	   */
-	  public virtual void TestAddIndexMissingCodec()
+      [Test]
+      public virtual void TestAddIndexMissingCodec()
 	  {
 		BaseDirectoryWrapper toAdd = NewDirectory();
 		// Disable checkIndex, else we get an exception because
@@ -1232,7 +1252,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-3575
-	  public virtual void TestFieldNamesChanged()
+      [Test]
+      public virtual void TestFieldNamesChanged()
 	  {
 		Directory d1 = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d1);
@@ -1241,7 +1262,7 @@ namespace Lucene.Net.Index
 		doc.Add(NewStringField("id", "1", Field.Store.YES));
 		w.AddDocument(doc);
 		IndexReader r1 = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		Directory d2 = NewDirectory();
 		w = new RandomIndexWriter(Random(), d2);
@@ -1250,7 +1271,7 @@ namespace Lucene.Net.Index
 		doc.Add(NewStringField("id", "2", Field.Store.YES));
 		w.AddDocument(doc);
 		IndexReader r2 = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		Directory d3 = NewDirectory();
 		w = new RandomIndexWriter(Random(), d3);
@@ -1261,7 +1282,7 @@ namespace Lucene.Net.Index
         d2.Dispose();
 
 		IndexReader r3 = w.Reader;
-        w.Close();
+        w.Dispose();
 		Assert.AreEqual(2, r3.NumDocs());
 		for (int docID = 0;docID < 2;docID++)
 		{
@@ -1279,13 +1300,14 @@ namespace Lucene.Net.Index
         d3.Dispose();
 	  }
 
-	  public virtual void TestAddEmpty()
+      [Test]
+      public virtual void TestAddEmpty()
 	  {
 		Directory d1 = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d1);
 		MultiReader empty = new MultiReader();
 		w.AddIndexes(empty);
-        w.Close();
+        w.Dispose();
 		DirectoryReader dr = DirectoryReader.Open(d1);
 		foreach (AtomicReaderContext ctx in dr.Leaves())
 		{
@@ -1299,17 +1321,18 @@ namespace Lucene.Net.Index
 	  // deleted, as such segments are dropped. Still, to validate that addIndexes
 	  // works with such segments, or readers that end up in such state, we fake an
 	  // all deleted segment.
-	  public virtual void TestFakeAllDeleted()
+      [Test]
+      public virtual void TestFakeAllDeleted()
 	  {
 		Directory src = NewDirectory(), dest = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), src);
 		w.AddDocument(new Document());
 		IndexReader allDeletedReader = new AllDeletedFilterReader((AtomicReader)w.Reader.Leaves()[0].Reader());
-        w.Close();
+        w.Dispose();
 
 		w = new RandomIndexWriter(Random(), dest);
 		w.AddIndexes(allDeletedReader);
-        w.Close();
+        w.Dispose();
 		DirectoryReader dr = DirectoryReader.Open(src);
 		foreach (AtomicReaderContext ctx in dr.Leaves())
 		{
@@ -1325,7 +1348,8 @@ namespace Lucene.Net.Index
 	  /// Make sure an open IndexWriter on an incoming Directory
 	  ///  causes a LockObtainFailedException 
 	  /// </summary>
-	  public virtual void TestLocksBlock()
+      [Test]
+      public virtual void TestLocksBlock()
 	  {
 		Directory src = NewDirectory();
 		RandomIndexWriter w1 = new RandomIndexWriter(Random(), src);

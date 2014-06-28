@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  // expected exception
 		}
 		ir.Dispose();
-		iw.Close();
+		iw.Dispose();
         dir.Dispose();
 	  }
 	}

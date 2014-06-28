@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: setUp searcher=" + Searcher);

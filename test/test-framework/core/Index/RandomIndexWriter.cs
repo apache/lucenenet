@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
 	  public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, Random r)
 	  {
 		// Randomly calls Thread.yield so we mixup thread scheduling
-		Random random = new Random(r.nextLong());
+		Random random = new Random(r.Next());
 		return MockIndexWriter(dir, conf, new TestPointAnonymousInnerClassHelper(random));
 	  }
 
@@ -75,7 +76,7 @@ namespace Lucene.Net.Index
 		  {
 			if (Random.Next(4) == 2)
 			{
-			  Thread.@yield();
+			  Thread.@Yield();
 			}
 		  }
 	  }
@@ -109,7 +110,7 @@ namespace Lucene.Net.Index
 	  public RandomIndexWriter(Random r, Directory dir, IndexWriterConfig c)
 	  {
 		// TODO: this should be solved in a different way; Random should not be shared (!).
-		this.r = new Random(r.nextLong());
+		this.r = new Random(r.Next());
 		w = MockIndexWriter(dir, c, r);
 		FlushAt = TestUtil.NextInt(r, 10, 1000);
 		Codec = w.Config.Codec;
@@ -121,7 +122,7 @@ namespace Lucene.Net.Index
 
 		// Make sure we sometimes test indices that don't get
 		// any forced merges:
-		DoRandomForceMerge_Renamed = !(c.MergePolicy is NoMergePolicy) && r.nextBoolean();
+		DoRandomForceMerge_Renamed = !(c.MergePolicy is NoMergePolicy) && r.NextBoolean();
 	  }
 
 	  /// <summary>
@@ -162,11 +163,15 @@ namespace Lucene.Net.Index
 			  this.Doc = doc;
 		  }
 
-
-          public virtual IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
+          public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
 		  {
               return new IteratorAnonymousInnerClassHelper(this);
 		  }
+
+	      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	      {
+	          return GetEnumerator();
+	      }
 
           private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
 		  {
@@ -178,26 +183,36 @@ namespace Lucene.Net.Index
 			  }
 
 			  internal bool done;
+              private IEnumerable<IndexableField> current;
 
-			  public virtual bool HasNext()
-			  {
-				return !done;
-			  }
+              public bool MoveNext()
+              {
+                  if (done)
+                  {
+                      return false;
+                  }
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+                  done = true;
+                  current = OuterInstance.Doc;
+                  return true;
+              }
 
-			  public virtual IEnumerable<IndexableField> Next()
-			  {
-				if (done)
-				{
-				  throw new InvalidOperationException();
-				}
-				done = true;
-				return OuterInstance.Doc;
-			  }
+              public IEnumerable<IndexableField> Current
+              {
+                  get { return current; }
+              }
+
+              object System.Collections.IEnumerator.Current
+              {
+                  get { return Current; }
+              }
+
+              public void Reset()
+              {
+                  throw new NotImplementedException();
+              }
+
+              public void Dispose() { }
 		  }
 	  }
 
@@ -260,10 +275,15 @@ namespace Lucene.Net.Index
 		  }
 
 
-          public virtual IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
+          public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
 		  {
 			return new IteratorAnonymousInnerClassHelper2(this);
 		  }
+
+          System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+          {
+              return GetEnumerator();
+          }
 
           private class IteratorAnonymousInnerClassHelper2 : IEnumerator<IEnumerable<IndexableField>>
 		  {
@@ -275,27 +295,37 @@ namespace Lucene.Net.Index
 			  }
 
 			  internal bool done;
+              private IEnumerable<IndexableField> current;
 
-			  public virtual bool HasNext()
-			  {
-				return !done;
-			  }
+              public bool MoveNext()
+              {
+                  if (done)
+                  {
+                      return false;
+                  }
 
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException();
-			  }
+                  done = true;
+                  current = OuterInstance.Doc;
+                  return true;
+              }
 
-              public virtual IEnumerable<IndexableField> Next()
-			  {
-				if (done)
-				{
-				  throw new InvalidOperationException();
-				}
-				done = true;
-				return OuterInstance.Doc;
-			  }
-		  }
+              public IEnumerable<IndexableField> Current
+              {
+                  get { return current; }
+              }
+
+              object System.Collections.IEnumerator.Current
+              {
+                  get { return Current; }
+              }
+
+              public virtual void Reset()
+              {
+                  throw new NotImplementedException();
+              }
+
+              public void Dispose() { }
+          }
 	  }
 
 	  public virtual void AddIndexes(params Directory[] dirs)
@@ -369,7 +399,7 @@ namespace Lucene.Net.Index
 		w.ForceMergeDeletes();
 	  }
 
-	  public virtual bool DoRandomForceMerge
+	  public virtual bool RandomForceMerge
 	  {
 		  set
 		  {
@@ -390,7 +420,7 @@ namespace Lucene.Net.Index
 		if (DoRandomForceMerge_Renamed)
 		{
 		  int segCount = w.SegmentCount;
-		  if (r.nextBoolean() || segCount == 0)
+		  if (r.NextBoolean() || segCount == 0)
 		  {
 			// full forceMerge
 			if (LuceneTestCase.VERBOSE)
@@ -423,7 +453,7 @@ namespace Lucene.Net.Index
 		// If we are writing with PreFlexRW, force a full
 		// IndexReader.open so terms are sorted in codepoint
 		// order during searching:
-		if (!applyDeletions || !Codec.Name.Equals("Lucene3x") && r.nextBoolean())
+		if (!applyDeletions || !Codec.Name.Equals("Lucene3x") && r.NextBoolean())
 		{
 		  if (LuceneTestCase.VERBOSE)
 		  {
@@ -442,7 +472,7 @@ namespace Lucene.Net.Index
 			Console.WriteLine("RIW.getReader: open new reader");
 		  }
 		  w.Commit();
-		  if (r.nextBoolean())
+		  if (r.NextBoolean())
 		  {
 			return DirectoryReader.Open(w.Directory, TestUtil.NextInt(r, 1, 10));
 		  }
@@ -456,7 +486,7 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Close this writer. </summary>
 	  /// <seealso cref= IndexWriter#close() </seealso>
-	  public override void Close()
+	  public void Dispose()
 	  {
 		// if someone isn't using getReader() API, we want to be sure to
 		// forceMerge since presumably they might open a reader on the dir.
@@ -489,7 +519,7 @@ namespace Lucene.Net.Index
 		  this.TestPoint = testPoint;
 		}
 
-		public override void Close()
+		public override void Dispose()
 		{
 		  @delegate.Dispose();
 		}

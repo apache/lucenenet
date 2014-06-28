@@ -41,9 +41,11 @@ namespace Lucene.Net.Index
 
 	/// <summary>
 	/// tests for writing term vectors </summary>
-	public class TestTermVectorsWriter : LuceneTestCase
+	[TestFixture]
+    public class TestTermVectorsWriter : LuceneTestCase
 	{
 	  // LUCENE-1442
+      [Test]
 	  public virtual void TestDoubleOffsetCounting()
 	  {
 		Directory dir = NewDirectory();
@@ -104,7 +106,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1442
-	  public virtual void TestDoubleOffsetCounting2()
+      [Test]
+      public virtual void TestDoubleOffsetCounting2()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -140,7 +143,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1448
-	  public virtual void TestEndOffsetPositionCharAnalyzer()
+      [Test]
+      public virtual void TestEndOffsetPositionCharAnalyzer()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -176,7 +180,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1448
-	  public virtual void TestEndOffsetPositionWithCachingTokenFilter()
+      [Test]
+      public virtual void TestEndOffsetPositionWithCachingTokenFilter()
 	  {
 		Directory dir = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -228,7 +233,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1448
-	  public virtual void TestEndOffsetPositionStopFilter()
+      [Test]
+      public virtual void TestEndOffsetPositionStopFilter()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
@@ -264,7 +270,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1448
-	  public virtual void TestEndOffsetPositionStandard()
+      [Test]
+      public virtual void TestEndOffsetPositionStandard()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -309,7 +316,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1448
-	  public virtual void TestEndOffsetPositionStandardEmptyField()
+      [Test]
+      public virtual void TestEndOffsetPositionStandardEmptyField()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -348,7 +356,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1448
-	  public virtual void TestEndOffsetPositionStandardEmptyField2()
+      [Test]
+      public virtual void TestEndOffsetPositionStandardEmptyField2()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -392,7 +401,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1168
-	  public virtual void TestTermVectorCorruption()
+      [Test]
+      public virtual void TestTermVectorCorruption()
 	  {
 
 		Directory dir = NewDirectory();
@@ -441,7 +451,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1168
-	  public virtual void TestTermVectorCorruption2()
+      [Test]
+      public virtual void TestTermVectorCorruption2()
 	  {
 		Directory dir = NewDirectory();
 		for (int iter = 0;iter < 2;iter++)
@@ -480,7 +491,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1168
-	  public virtual void TestTermVectorCorruption3()
+      [Test]
+      public virtual void TestTermVectorCorruption3()
 	  {
 		Directory dir = NewDirectory();
         IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
@@ -523,7 +535,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1008
-	  public virtual void TestNoTermVectorAfterTermVector()
+      [Test]
+      public virtual void TestNoTermVectorAfterTermVector()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -553,7 +566,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1010
-	  public virtual void TestNoTermVectorAfterTermVectorMerge()
+      [Test]
+      public virtual void TestNoTermVectorAfterTermVectorMerge()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

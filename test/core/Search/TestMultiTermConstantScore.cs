@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 		}
 
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

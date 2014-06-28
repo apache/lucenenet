@@ -36,8 +36,10 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestBinaryTerms extends Lucene.Net.Util.LuceneTestCase
+    [TestFixture]
 	public class TestBinaryTerms : LuceneTestCase
 	{
+      [Test]
 	  public virtual void TestBinary()
 	  {
 		Directory dir = NewDirectory();
@@ -59,7 +61,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 
 		IndexSearcher @is = NewSearcher(ir);
 
@@ -77,7 +79,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestToString()
+      [Test]
+      public virtual void TestToString()
 	  {
 		Term term = new Term("foo", new BytesRef(new sbyte[] {unchecked((sbyte) 0xff), unchecked((sbyte) 0xfe)}));
 		Assert.AreEqual("foo:[ff fe]", term.ToString());

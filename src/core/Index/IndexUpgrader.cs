@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
 	  {
 		ParseArgs(args).Upgrade();
 	  }*/
-	  internal static IndexUpgrader ParseArgs(string[] args)
+	  public static IndexUpgrader ParseArgs(string[] args)
 	  {
 		string path = null;
 		bool deletePriorCommits = false;

@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 		}
 		IndexReader = SlowCompositeReaderWrapper.Wrap(writer.Reader);
-		writer.Close();
+		writer.Dispose();
 		IndexSearcher = NewSearcher(IndexReader);
 		IndexSearcher.Similarity = new DefaultSimilarity();
 	  }

@@ -30,18 +30,18 @@ namespace Lucene.Net.Analysis
 	///  exceptions, and spoon feed read chars. 
 	/// </summary>
 
-	public class MockReaderWrapper : StreamReader
+    public class MockReaderWrapper : StringReader
 	{
 
-      private readonly StreamReader @in;
+      private readonly StringReader @in;
 	  private readonly Random Random;
 
 	  private int ExcAtChar = -1;
 	  private int ReadSoFar;
 	  private bool ThrowExcNext_Renamed;
 
-      public MockReaderWrapper(Random random, StreamReader @in)
-          :base(@in.BaseStream)
+      public MockReaderWrapper(Random random, StringReader @in)
+          :base(@in.ToString())
 	  {
 		this.@in = @in;
 		this.Random = random;

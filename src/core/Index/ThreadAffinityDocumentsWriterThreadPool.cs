@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
 		Debug.Assert(MaxThreadStates >= 1);
 	  }
 
-	  internal override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+	  public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
 	  {
 		ThreadState threadState = ThreadBindings[requestingThread];
 		if (threadState != null && threadState.TryLock())

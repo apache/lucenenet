@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis
 	using BytesRef = Lucene.Net.Util.BytesRef;
     using Lucene.Net.Store;
     using NUnit.Framework;
-
+    
     [TestFixture]
 	public class TestCachingTokenFilter : BaseTokenStreamTestCase
 	{
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual(1, termPositions.Freq());
 		Assert.AreEqual(2, termPositions.NextPosition());
         reader.Dispose();
-		writer.Close();
+		writer.Dispose();
 		// 3) reset stream and consume tokens again
 		stream.Reset();
 		CheckTokens(stream);

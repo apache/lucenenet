@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 		  writer.DeleteDocuments(new Term("id", "" + docID));
 		  docStates[docID] = 2;
 		}
-		writer.Close();
+		writer.Dispose();
 		return docStates;
 	  }
 

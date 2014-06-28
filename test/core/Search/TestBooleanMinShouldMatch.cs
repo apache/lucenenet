@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
 
 			r = w.Reader;
 			s = NewSearcher(r);
-			w.Close();
+			w.Dispose();
 	//System.out.println("Set up " + getName());
 		}
 

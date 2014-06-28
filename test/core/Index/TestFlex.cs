@@ -25,10 +25,12 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Util;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestFlex : LuceneTestCase
 	{
 
 	  // Test non-flex API emulated on flex index
+      [Test]
 	  public virtual void TestNonFlex()
 	  {
 		Directory d = NewDirectory();
@@ -67,7 +69,8 @@ namespace Lucene.Net.Index
 		d.Dispose();
 	  }
 
-	  public virtual void TestTermOrd()
+      [Test]
+      public virtual void TestTermOrd()
 	  {
 		Directory d = NewDirectory();
 		IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));

@@ -196,6 +196,11 @@ namespace Lucene.Net.Index
 			this.@in = @in;
 		}
 
+        public TermsEnum TermsEnumIn_Nunit()
+        {
+            return @in;
+        }
+
 		public override AttributeSource Attributes()
 		{
 		  return @in.Attributes();
@@ -271,6 +276,11 @@ namespace Lucene.Net.Index
 		  this.@in = @in;
 		}
 
+        public DocsEnum DocsEnumIn_Nunit()
+        {
+            return @in;
+        }
+
 		public override AttributeSource Attributes()
 		{
 		  return @in.Attributes();
@@ -317,6 +327,11 @@ namespace Lucene.Net.Index
 		{
 		  this.@in = @in;
 		}
+
+        public DocsAndPositionsEnum DocsEnumIn_Nunit()
+        {
+            return @in;
+        }
 
 		public override AttributeSource Attributes()
 		{

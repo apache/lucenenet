@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene40
 		  // delete 1-100% of docs
 		  iw.DeleteDocuments(new Term("title", Terms[Random().Next(Terms.Length)]));
 		}
-		iw.Close();
+		iw.Dispose();
 		dir.Dispose(); // checkindex
 	  }
 

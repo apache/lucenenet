@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestFieldsReader : LuceneTestCase
 	{
 	  private static Directory Dir;
@@ -47,7 +48,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		TestDoc = new Document();
 		FieldInfos = new FieldInfos.Builder();
@@ -67,7 +69,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		Dir.Dispose();
 		Dir = null;
@@ -75,7 +78,8 @@ namespace Lucene.Net.Index
 		TestDoc = null;
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Assert.IsTrue(Dir != null);
 		Assert.IsTrue(FieldInfos != null);
@@ -207,7 +211,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-1262
-	  public virtual void TestExceptions()
+      [Test]
+      public virtual void TestExceptions()
 	  {
 		DirectoryInfo indexDir = CreateTempDir("testfieldswriterexceptions");
 

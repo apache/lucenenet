@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
-		writer.Close();
+		writer.Dispose();
 
 		IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
 		AtomicReaderContext context = (AtomicReaderContext) reader.Context;
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
-		writer.Close();
+		writer.Dispose();
 
 		IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
 		AtomicReaderContext context = (AtomicReaderContext) reader.Context;
@@ -211,7 +211,8 @@ namespace Lucene.Net.Search
 		CachingWrapperFilter cacher = new CachingWrapperFilter(filter);
 
 		// the caching filter should return the empty set constant
-		Assert.IsNull(cacher.GetDocIdSet(context, "second time", ((AtomicReader)context.Reader()).LiveDocs));
+        //Assert.IsNull(cacher.GetDocIdSet(context, "second time", ((AtomicReader)context.Reader()).LiveDocs));
+        Assert.IsNull(cacher.GetDocIdSet(context, ((AtomicReader)context.Reader()).LiveDocs));
 
 		reader.Dispose();
 		dir.Dispose();
@@ -240,7 +241,7 @@ namespace Lucene.Net.Search
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
-		writer.Close();
+		writer.Dispose();
 
 		IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
 		AtomicReaderContext context = (AtomicReaderContext) reader.Context;
@@ -325,7 +326,7 @@ namespace Lucene.Net.Search
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
 		writer.AddDocument(new Document());
-		writer.Close();
+		writer.Dispose();
 
 		IndexReader reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
 
@@ -490,7 +491,7 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(oldReader != null);
 
 		reader.Dispose();
-		writer.Close();
+		writer.Dispose();
 		dir.Dispose();
 	  }
 

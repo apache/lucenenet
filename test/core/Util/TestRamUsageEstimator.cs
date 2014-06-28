@@ -22,10 +22,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Util.RamUsageEstimator.*;
-
-	using RandomStrings = com.carrotsearch.randomizedtesting.generators.RandomStrings;
 
 	public class TestRamUsageEstimator : LuceneTestCase
 	{

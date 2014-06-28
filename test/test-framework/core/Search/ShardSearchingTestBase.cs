@@ -667,7 +667,7 @@ namespace Lucene.Net.Search
 		  {
 			LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
 			int numDocs = 0;
-			while (System.nanoTime() < OuterInstance.EndTimeNanos)
+            while (TimeHelper.NanoTime() < OuterInstance.EndTimeNanos)
 			{
 			  int what = Random().Next(3);
 			  NodeState node = OuterInstance.Nodes[Random().Next(OuterInstance.Nodes.Length)];
@@ -715,7 +715,7 @@ namespace Lucene.Net.Search
 	  protected internal virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
 	  {
 
-		EndTimeNanos = System.nanoTime() + (long)(runTimeSec * 1000000000);
+		EndTimeNanos = TimeHelper.NanoTime() + (long)(runTimeSec * 1000000000);
 		this.MaxSearcherAgeSeconds = maxSearcherAgeSeconds;
 
 		Nodes = new NodeState[numNodes];

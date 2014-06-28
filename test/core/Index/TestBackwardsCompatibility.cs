@@ -75,7 +75,8 @@ namespace Lucene.Net.Index
 	// Sep codec cannot yet handle the offsets in our 4.x index!
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene40", "Lucene41", "Appending", "Lucene42", "Lucene45"}) public class TestBackwardsCompatibility extends Lucene.Net.Util.LuceneTestCase
-	public class TestBackwardsCompatibility : LuceneTestCase
+	[TestFixture]
+    public class TestBackwardsCompatibility : LuceneTestCase
 	{
 
 	  // Uncomment these cases & run them on an older Lucene version,
@@ -191,7 +192,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		Assert.IsFalse(LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "test infra is broken!");
 		IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
@@ -209,7 +211,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
-	  public static void AfterClass()
+	  [TestFixtureTearDown]
+      public static void AfterClass()
 	  {
 		foreach (Directory d in OldIndexDirs.Values)
 		{
@@ -220,7 +223,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// this test checks that *only* IndexFormatTooOldExceptions are thrown when you open and operate on too old indexes! </summary>
-	  public virtual void TestUnsupportedOldIndexes()
+      [Test]
+      public virtual void TestUnsupportedOldIndexes()
 	  {
 		for (int i = 0;i < UnsupportedNames.Length;i++)
 		{
@@ -284,19 +288,20 @@ namespace Lucene.Net.Index
 			writer = null;
 		  }
 
-		  ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+		  MemoryStream bos = new MemoryStream(1024);
 		  CheckIndex checker = new CheckIndex(dir);
-		  checker.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
+		  checker.InfoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
 		  CheckIndex.Status indexStatus = checker.DoCheckIndex();
 		  Assert.IsFalse(indexStatus.Clean);
-		  Assert.IsTrue(bos.ToString(IOUtils.UTF_8).Contains(typeof(IndexFormatTooOldException).Name));
+		  Assert.IsTrue(bos.ToString().Contains(typeof(IndexFormatTooOldException).Name));
 
 		  dir.Dispose();
 		  TestUtil.Rm(oldIndxeDir);
 		}
 	  }
 
-	  public virtual void TestFullyMergeOldIndex()
+      [Test]
+      public virtual void TestFullyMergeOldIndex()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -313,7 +318,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestAddOldIndexes()
+      [Test]
+      public virtual void TestAddOldIndexes()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -334,7 +340,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestAddOldIndexesReader()
+      [Test]
+      public virtual void TestAddOldIndexesReader()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -350,7 +357,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestSearchOldIndex()
+      [Test]
+      public virtual void TestSearchOldIndex()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -358,7 +366,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestIndexOldIndexNoAdds()
+      [Test]
+      public virtual void TestIndexOldIndexNoAdds()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -368,7 +377,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestIndexOldIndex()
+      [Test]
+      public virtual void TestIndexOldIndex()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -619,10 +629,10 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual FileInfo CreateIndex(string dirName, bool doCFS, bool fullyMerged)
+	  public virtual DirectoryInfo CreateIndex(string dirName, bool doCFS, bool fullyMerged)
 	  {
 		// we use a real directory name that is not cleaned up, because this method is only used to create backwards indexes:
-		FileInfo indexDir = new FileInfo("/tmp/idx", dirName);
+        DirectoryInfo indexDir = new DirectoryInfo("/tmp/idx", dirName);
 		TestUtil.Rm(indexDir);
 		Directory dir = NewFSDirectory(indexDir);
 		LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
@@ -745,7 +755,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // flex: test basics of TermsEnum api on non-flex index
-	  public virtual void TestNextIntoWrongField()
+      [Test]
+      public virtual void TestNextIntoWrongField()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -788,13 +799,14 @@ namespace Lucene.Net.Index
 	  /// Test that we didn't forget to bump the current Constants.LUCENE_MAIN_VERSION.
 	  /// this is important so that we can determine which version of lucene wrote the segment.
 	  /// </summary>
-	  public virtual void TestOldVersions()
+      [Test]
+      public virtual void TestOldVersions()
 	  {
 		// first create a little index with the current code and get the version
 		Directory currentDir = NewDirectory();
 		RandomIndexWriter riw = new RandomIndexWriter(Random(), currentDir);
 		riw.AddDocument(new Document());
-		riw.Close();
+		riw.Dispose();
 		DirectoryReader ir = DirectoryReader.Open(currentDir);
 		SegmentReader air = (SegmentReader)ir.Leaves()[0].Reader();
 		string currentVersion = air.SegmentInfo.Info.Version;
@@ -820,7 +832,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestNumericFields()
+      [Test]
+      public virtual void TestNumericFields()
 	  {
 		foreach (string name in OldNames)
 		{
@@ -891,7 +904,8 @@ namespace Lucene.Net.Index
 		return infos.Size();
 	  }
 
-	  public virtual void TestUpgradeOldIndex()
+      [Test]
+      public virtual void TestUpgradeOldIndex()
 	  {
 		IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
 		names.AddRange(Arrays.AsList(OldNames));
@@ -912,7 +926,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestCommandLineArgs()
+      [Test]
+      public virtual void TestCommandLineArgs()
 	  {
 
 		foreach (string name in OldIndexDirs.Keys)
@@ -968,7 +983,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestUpgradeOldSingleSegmentIndexWithAdditions()
+      [Test]
+      public virtual void TestUpgradeOldSingleSegmentIndexWithAdditions()
 	  {
 		foreach (string name in OldSingleSegmentNames)
 		{
@@ -1019,7 +1035,8 @@ namespace Lucene.Net.Index
 
 	  public const string MoreTermsIndex = "moreterms.40.zip";
 
-	  public virtual void TestMoreTerms()
+      [Test]
+      public virtual void TestMoreTerms()
 	  {
 		DirectoryInfo oldIndexDir = CreateTempDir("moreterms");
 		TestUtil.Unzip(GetDataFile(MoreTermsIndex), oldIndexDir);

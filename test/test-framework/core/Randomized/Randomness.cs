@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Randomized
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Randomized
 
         public int Seed { get; protected set; }
 
-        public Randomness(Thread owner, int seed, params ISeedDecorator[] decorators)
+        public Randomness(ThreadClass owner, int seed, params ISeedDecorator[] decorators)
             :this(owner, seed, decorators.ToList())
         {
          
@@ -57,12 +58,12 @@ namespace Lucene.Net.Randomized
 
 
         public Randomness(int seed, params ISeedDecorator[] decorators)
-            : this(Thread.CurrentThread, seed, decorators)
+            : this(ThreadClass.Current(), seed, decorators)
         {
 
         }
 
-        protected Randomness(Thread owner, int seed, List<ISeedDecorator> decorators)
+        protected Randomness(ThreadClass owner, int seed, List<ISeedDecorator> decorators)
         {
             this.Seed = seed;
             this.decorators = decorators.ToList();
@@ -76,7 +77,7 @@ namespace Lucene.Net.Randomized
 
 
 
-        public Randomness Clone(Thread newOwner)
+        public Randomness Clone(ThreadClass newOwner)
         {
             return new Randomness(newOwner, this.Seed, this.decorators);
         }

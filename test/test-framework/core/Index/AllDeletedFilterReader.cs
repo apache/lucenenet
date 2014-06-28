@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace Lucene.Net.Index
 {
 
-	using Bits = Lucene.Net.Util.Bits;
+    using Lucene.Net.Util;
 
 	/*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -31,8 +31,8 @@ namespace Lucene.Net.Index
 
 	  public AllDeletedFilterReader(AtomicReader @in) : base(@in)
 	  {
-		LiveDocs_Renamed = new Bits.MatchNoBits(@in.maxDoc());
-		Debug.Assert(maxDoc() == 0 || hasDeletions());
+		LiveDocs_Renamed = new Bits_MatchNoBits(@in.MaxDoc());
+		Debug.Assert(MaxDoc() == 0 || HasDeletions());
 	  }
 
 	  public override Bits LiveDocs

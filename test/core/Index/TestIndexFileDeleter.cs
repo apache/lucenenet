@@ -39,9 +39,11 @@ namespace Lucene.Net.Index
 	  against it, and add documents to it.
 	*/
 
+    [TestFixture]
 	public class TestIndexFileDeleter : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestDeleteLeftoverFiles()
 	  {
 		Directory dir = NewDirectory();

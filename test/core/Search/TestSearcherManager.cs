@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  private class RunnableAnonymousInnerClassHelper : Runnable
+	  private class RunnableAnonymousInnerClassHelper : IThreadRunnable
 	  {
 		  private readonly TestSearcherManager OuterInstance;
 
@@ -383,7 +383,7 @@ namespace Lucene.Net.Search
 			  this.Exc = exc;
 		  }
 
-		  public override void Run()
+		  public void Run()
 		  {
 			try
 			{
@@ -565,7 +565,7 @@ namespace Lucene.Net.Search
 		{
 		  // expected
 		}
-		w.Close();
+		w.Dispose();
 		other.Dispose();
 		dir.Dispose();
 	  }
@@ -595,7 +595,7 @@ namespace Lucene.Net.Search
 		// threads cannot obtain it.
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
-		w.Close();
+		w.Dispose();
 
 		SearcherManager sm = new SearcherManager(dir, null);
 

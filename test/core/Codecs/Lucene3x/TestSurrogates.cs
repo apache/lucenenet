@@ -413,7 +413,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		DoTestSeekDoesNotExist(Random(), numField, fieldTerms, fieldTermsArray, reader);
 
 		reader.Dispose();
-		w.Close();
+		w.Dispose();
         dir.Dispose();
 	  }
 	}

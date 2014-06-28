@@ -43,7 +43,8 @@ namespace Lucene.Net.Index
 
 	/// <summary>
 	/// JUnit adaptation of an older test case DocTest. </summary>
-	public class TestDoc : LuceneTestCase
+	[TestFixture]
+    public class TestDoc : LuceneTestCase
 	{
 
 		private DirectoryInfo WorkDir;
@@ -54,7 +55,8 @@ namespace Lucene.Net.Index
 		/// Set the test case. this test case needs
 		///  a few text files created in the current working directory.
 		/// </summary>
-		public override void SetUp()
+		[SetUp]
+        public override void SetUp()
 		{
 			base.SetUp();
 			if (VERBOSE)
@@ -118,7 +120,8 @@ namespace Lucene.Net.Index
 		///        checkSegment(String name, ...) should be created that would
 		///        assert various things about the segment.
 		/// </summary>
-		public virtual void TestIndexAndMerge()
+        [Test]
+        public virtual void TestIndexAndMerge()
 		{
 		  StringWriter sw = new StringWriter();
           StreamWriter @out = new StreamWriter(sw, true);

@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
 		  sb.Remove(0, sb.Length);
 		}
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		long endTime = DateTime.Now.Millisecond;
 		if (VERBOSE)

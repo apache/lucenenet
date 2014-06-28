@@ -77,6 +77,7 @@ namespace Lucene.Net.Index
 	//   - skipTo(term)
 	//   - skipTo(doc)
 
+    [TestFixture]
 	public class TestCodecs : LuceneTestCase
 	{
 	  private static string[] FieldNames = new string[] {"one", "two", "three", "four"};
@@ -90,7 +91,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @BeforeClass public static void beforeClass()
-	  public static void BeforeClass()
+	  [TestFixtureSetUp]
+      public static void BeforeClass()
 	  {
 		NUM_TEST_ITER = AtLeast(20);
 	  }
@@ -364,7 +366,8 @@ namespace Lucene.Net.Index
 		return terms;
 	  }
 
-	  public virtual void TestFixedPostings()
+      [Test]
+      public virtual void TestFixedPostings()
 	  {
 		const int NUM_TERMS = 100;
 		TermData[] terms = new TermData[NUM_TERMS];
@@ -425,7 +428,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandomPostings()
+      [Test]
+      public virtual void TestRandomPostings()
 	  {
 		FieldInfos.Builder builder = new FieldInfos.Builder();
 
@@ -844,7 +848,8 @@ namespace Lucene.Net.Index
 		consumer.Dispose();
 	  }
 
-	  public virtual void TestDocsOnlyFreq()
+      [Test]
+      public virtual void TestDocsOnlyFreq()
 	  {
 		// tests that when fields are indexed with DOCS_ONLY, the Codec
 		// returns 1 in docsEnum.Freq()
@@ -876,7 +881,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDisableImpersonation()
+      [Test]
+      public virtual void TestDisableImpersonation()
 	  {
 		Codec[] oldCodecs = new Codec[] {new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec()};
 		Directory dir = NewDirectory();

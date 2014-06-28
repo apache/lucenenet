@@ -46,9 +46,11 @@ namespace Lucene.Net.Index
 	// TODO: somehow factor this with BagOfPostings? its almost the same
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Direct", "Memory", "Lucene3x"}) public class TestBagOfPositions extends Lucene.Net.Util.LuceneTestCase
-	public class TestBagOfPositions : LuceneTestCase // at night this makes like 200k/300k docs and will make Direct's heart beat!
+	[TestFixture]
+    public class TestBagOfPositions : LuceneTestCase // at night this makes like 200k/300k docs and will make Direct's heart beat!
 													  // Lucene3x doesnt have totalTermFreq, so the test isn't interesting there.
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 		IList<string> postingsList = new List<string>();
@@ -146,7 +148,7 @@ namespace Lucene.Net.Index
 		  // from a docsAndPositionsEnum.
 		}
 		ir.Dispose();
-        iw.Close();
+        iw.Dispose();
 		dir.Dispose();
 	  }
 

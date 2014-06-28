@@ -32,9 +32,11 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Tests for <seealso cref="DocumentsWriterStallControl"/>
 	/// </summary>
-	public class TestDocumentsWriterStallControl : LuceneTestCase
+	[TestFixture]
+    public class TestDocumentsWriterStallControl : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestSimpleStall()
 	  {
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
@@ -58,7 +60,8 @@ namespace Lucene.Net.Index
 		Join(waitThreads);
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 		ctrl.UpdateStalled(false);
@@ -121,7 +124,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestAccquireReleaseRace()
+      [Test]
+      public virtual void TestAccquireReleaseRace()
 	  {
 		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 		ctrl.UpdateStalled(false);
@@ -133,7 +137,7 @@ namespace Lucene.Net.Index
 		int numWaiters = AtLeast(1);
 		Synchronizer sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
         ThreadClass[] threads = new ThreadClass[numReleasers + numStallers + numWaiters];
-		IList<Exception> exceptions = Collections.synchronizedList(new List<Exception>());
+		IList<Exception> exceptions = new ConcurrentList<Exception>(new List<Exception>());
 		for (int i = 0; i < numReleasers; i++)
 		{
 		  threads[i] = new Updater(stop, checkPoint, ctrl, sync, true, exceptions);
@@ -180,7 +184,7 @@ namespace Lucene.Net.Index
 			sync.LeftCheckpoint.@await();
 		  }
 		  Assert.IsFalse(checkPoint.Get());
-		  Assert.AreEqual(0, sync.Waiter.Count);
+		  Assert.AreEqual(0, sync.Waiter.Remaining);
 		  if (checkPointProbability >= (float)Random().NextDouble())
 		  {
 			sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
@@ -281,7 +285,7 @@ namespace Lucene.Net.Index
 				}
 				catch (ThreadInterruptedException e)
 				{
-				  Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Count);
+				  Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Remaining);
 				  throw new ThreadInterruptedException(e);
 				}
 			  }
@@ -330,17 +334,17 @@ namespace Lucene.Net.Index
 			  }
 			  if (CheckPoint.Get())
 			  {
-				Sync.UpdateJoin.CountDown();
+				Sync.UpdateJoin.countDown();
 				try
 				{
 				  Assert.IsTrue(Sync.@await());
 				}
 				catch (ThreadInterruptedException e)
 				{
-				  Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Count);
+				  Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Remaining);
 				  throw new ThreadInterruptedException(e);
 				}
-				Sync.LeftCheckpoint.CountDown();
+                Sync.LeftCheckpoint.countDown();
 			  }
 			  if (Random().NextBoolean())
 			  {
@@ -354,7 +358,7 @@ namespace Lucene.Net.Index
 			Console.Write(e.StackTrace);
 			Exceptions.Add(e);
 		  }
-          Sync.UpdateJoin.CountDown();
+          Sync.UpdateJoin.countDown();
 		}
 
 	  }
@@ -445,7 +449,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	    public sealed class Synchronizer
+	  public sealed class Synchronizer
 	  {
 		internal volatile CountDownLatch Waiter;
 		internal volatile CountDownLatch UpdateJoin;

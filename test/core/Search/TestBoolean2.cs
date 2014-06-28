@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
           doc.Add(NewTextField(field, DocFields[i], Field.Store.NO));
 		  writer.AddDocument(doc);
 		}
-		writer.Close();
+		writer.Dispose();
 		LittleReader = DirectoryReader.Open(Directory);
 		Searcher = NewSearcher(LittleReader);
 		// this is intentionally using the baseline sim, because it compares against bigSearcher (which uses a random one)
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
 		  RandomIndexWriter w = new RandomIndexWriter(Random(), Dir2);
 		  w.AddIndexes(copy);
 		  docCount = w.MaxDoc();
-		  w.Close();
+		  w.Dispose();
 		  MulFactor *= 2;
 		} while (docCount < 3000);
 
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
 		}
 		Reader = riw.Reader;
 		BigSearcher = NewSearcher(Reader);
-		riw.Close();
+		riw.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:

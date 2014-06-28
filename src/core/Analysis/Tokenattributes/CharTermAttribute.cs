@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
           if (csq == null)
               return AppendNull();
 
-          int len = end - start + 1;
+          int len = end - start;
           csq.CopyTo(start, InternalResizeBuffer(TermLength + len), TermLength, len);
           Length += len;
 

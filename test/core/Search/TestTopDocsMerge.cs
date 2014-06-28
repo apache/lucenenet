@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 		  }
 
 		  reader = w.Reader;
-		  w.Close();
+		  w.Dispose();
 		}
 
 		// NOTE: sometimes reader has just one segment, which is

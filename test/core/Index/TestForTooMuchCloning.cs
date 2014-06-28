@@ -33,11 +33,13 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestForTooMuchCloning : LuceneTestCase
 	{
 
 	  // Make sure we don't clone IndexInputs too frequently
 	  // during merging:
+      [Test]
 	  public virtual void Test()
 	  {
 		// NOTE: if we see a fail on this test with "NestedPulsing" its because its 
@@ -61,7 +63,7 @@ namespace Lucene.Net.Index
 		  w.AddDocument(doc);
 		}
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		int cloneCount = dir.InputCloneCount;
 		//System.out.println("merge clone count=" + cloneCount);

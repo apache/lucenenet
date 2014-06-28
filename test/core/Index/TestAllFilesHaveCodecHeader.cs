@@ -37,8 +37,10 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Test that a plain default puts codec headers in all files.
 	/// </summary>
-	public class TestAllFilesHaveCodecHeader : LuceneTestCase
+	[TestFixture]
+    public class TestAllFilesHaveCodecHeader : LuceneTestCase
 	{
+      [Test]
 	  public virtual void Test()
 	  {
 		Directory dir = NewDirectory();
@@ -67,7 +69,7 @@ namespace Lucene.Net.Index
 		  //  riw.DeleteDocuments(new Term("id", Integer.toString(i)));
 		  // }
 		}
-        riw.Close();
+        riw.Dispose();
 		CheckHeaders(dir);
 		dir.Dispose();
 	  }

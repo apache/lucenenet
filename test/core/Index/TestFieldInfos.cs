@@ -30,11 +30,13 @@ namespace Lucene.Net.Index
 
 	//import org.cnlp.utils.properties.ResourceBundleHelper;
 
+    [TestFixture]
 	public class TestFieldInfos : LuceneTestCase
 	{
 
 	  private Document TestDoc = new Document();
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -71,7 +73,8 @@ namespace Lucene.Net.Index
 		return reader.Read(dir, filename, "", IOContext.DEFAULT);
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		string name = "testFile";
 		Directory dir = NewDirectory();
@@ -101,7 +104,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestReadOnly()
+      [Test]
+      public virtual void TestReadOnly()
 	  {
 		string name = "testFile";
 		Directory dir = NewDirectory();

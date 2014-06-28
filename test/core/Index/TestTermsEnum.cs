@@ -45,9 +45,11 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestTermsEnum extends Lucene.Net.Util.LuceneTestCase
-	public class TestTermsEnum : LuceneTestCase
+	[TestFixture]
+    public class TestTermsEnum : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void Test()
 	  {
 		Random random = new Random(Random().Next());
@@ -62,7 +64,7 @@ namespace Lucene.Net.Index
 		  w.AddDocument(docs.NextDoc());
 		}
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		List<BytesRef> terms = new List<BytesRef>();
 		TermsEnum termsEnum = MultiFields.GetTerms(r, "body").Iterator(null);
@@ -229,7 +231,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Tests Terms.intersect
-	  public virtual void TestIntersectRandom()
+      [Test]
+      public virtual void TestIntersectRandom()
 	  {
 
 		Directory dir = NewDirectory();
@@ -280,7 +283,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		// NOTE: intentional insanity!!
 		FieldCache_Fields.Ints docIDToID = FieldCache_Fields.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
@@ -462,7 +465,7 @@ namespace Lucene.Net.Index
 		  Close();
 		}
 		r = w.Reader;
-        w.Close();
+        w.Dispose();
 		return r;
 	  }
 
@@ -477,7 +480,8 @@ namespace Lucene.Net.Index
 		return r.DocFreq(new Term(FIELD, term));
 	  }
 
-	  public virtual void TestEasy()
+      [Test]
+      public virtual void TestEasy()
 	  {
 		// No floor arcs:
 		r = MakeIndex("aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa");
@@ -540,7 +544,8 @@ namespace Lucene.Net.Index
 	  //   - test same prefix has non-floor block and floor block (ie, has 2 long outputs on same term prefix)
 	  //   - term that's entirely in the index
 
-	  public virtual void TestFloorBlocks()
+      [Test]
+      public virtual void TestFloorBlocks()
 	  {
 		string[] terms = new string[] {"aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9", "aa", "xx"};
 		r = MakeIndex(terms);
@@ -594,7 +599,8 @@ namespace Lucene.Net.Index
 		Close();
 	  }
 
-	  public virtual void TestZeroTerms()
+      [Test]
+      public virtual void TestZeroTerms()
 	  {
 		d = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), d);
@@ -607,7 +613,7 @@ namespace Lucene.Net.Index
 		w.DeleteDocuments(new Term("field", "one"));
 		w.ForceMerge(1);
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 		Assert.AreEqual(1, r.NumDocs());
 		Assert.AreEqual(1, r.MaxDoc());
 		Terms terms = MultiFields.GetTerms(r, "field");
@@ -628,7 +634,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestRandomTerms()
+      [Test]
+      public virtual void TestRandomTerms()
 	  {
 		string[] terms = new string[TestUtil.NextInt(Random(), 1, AtLeast(1000))];
 		HashSet<string> seen = new HashSet<string>();
@@ -882,7 +889,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestIntersectBasic()
+      [Test]
+      public virtual void TestIntersectBasic()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -902,7 +910,7 @@ namespace Lucene.Net.Index
 
 		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 		AtomicReader sub = GetOnlySegmentReader(r);
 		Terms terms = sub.Fields().Terms("field");
 		Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton();
@@ -933,7 +941,8 @@ namespace Lucene.Net.Index
 		r.Dispose();
 		dir.Dispose();
 	  }
-	  public virtual void TestIntersectStartTerm()
+      [Test]
+      public virtual void TestIntersectStartTerm()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -957,7 +966,7 @@ namespace Lucene.Net.Index
 
 		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 		AtomicReader sub = GetOnlySegmentReader(r);
 		Terms terms = sub.Fields().Terms("field");
 
@@ -991,7 +1000,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestIntersectEmptyString()
+      [Test]
+      public virtual void TestIntersectEmptyString()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1012,7 +1022,7 @@ namespace Lucene.Net.Index
 
 		w.ForceMerge(1);
 		DirectoryReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 		AtomicReader sub = GetOnlySegmentReader(r);
 		Terms terms = sub.Fields().Terms("field");
 

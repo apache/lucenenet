@@ -863,8 +863,8 @@ namespace Lucene.Net.Analysis
 		}
 
 		int remainder = random.Next(10);
-		StreamReader reader = new StreamReader(text);
-		TokenStream ts = a.TokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+		StringReader reader = new StringReader(text);
+		TokenStream ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
 		CharTermAttribute termAtt = ts.HasAttribute(typeof(CharTermAttribute)) ? ts.GetAttribute<CharTermAttribute>() : null;
 		OffsetAttribute offsetAtt = ts.HasAttribute(typeof(OffsetAttribute)) ? ts.GetAttribute<OffsetAttribute>() : null;
 		PositionIncrementAttribute posIncAtt = ts.HasAttribute(typeof(PositionIncrementAttribute)) ? ts.GetAttribute<PositionIncrementAttribute>() : null;
@@ -923,7 +923,7 @@ namespace Lucene.Net.Analysis
 			  }
 			  // Throw an errant exception from the Reader:
 
-			  MockReaderWrapper evilReader = new MockReaderWrapper(random, new StreamReader(text));
+			  MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
 			  evilReader.ThrowExcAfterChar(random.Next(text.Length + 1));
 			  reader = evilReader;
 
@@ -975,8 +975,8 @@ namespace Lucene.Net.Analysis
 				Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis, only consuming " + numTokensToRead + " of " + tokens.Count + " tokens");
 			  }
 
-			  reader = new StreamReader(text);
-			  ts = a.TokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+			  reader = new StringReader(text);
+			  ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
 			  ts.Reset();
 			  for (int tokenCount = 0;tokenCount < numTokensToRead;tokenCount++)
 			  {
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Analysis
 		{
 		  Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis; " + tokens.Count + " tokens");
 		}
-		reader = new StreamReader(text);
+		reader = new StringReader(text);
 
 		long seed = random.Next();
 		random = new Random((int)seed);
@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Analysis
 		  reader = new MockReaderWrapper(random, reader);
 		}
 
-		ts = a.TokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader);
+        ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
 		if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
 		{
 		  // offset + pos + posLength + type
@@ -1059,7 +1059,7 @@ namespace Lucene.Net.Analysis
 
 		if (field != null)
 		{
-		  reader = new StreamReader(text);
+		  reader = new StringReader(text);
 		  random = new Random((int)seed);
 		  if (random.Next(30) == 7)
 		  {
@@ -1071,7 +1071,7 @@ namespace Lucene.Net.Analysis
 			reader = new MockReaderWrapper(random, reader);
 		  }
 
-		  field.ReaderValue = useCharFilter ? new MockCharFilter(reader, remainder) : reader;
+          field.ReaderValue = useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader;
 		}
 	  }
 

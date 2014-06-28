@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -94,7 +96,7 @@ namespace Lucene.Net.Index
         doc.Add(NewTextField("fieldname", text, Field.Store.YES));
         doc.Add(new NumericDocValuesField("dv", 5));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -110,7 +112,7 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv");
+		  NumericDocValues dv = ((AtomicReader)((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader()))).GetNumericDocValues("dv");
 		  Assert.Equals(5, dv.Get(hits.ScoreDocs[i].Doc));
 		}
 
@@ -128,7 +130,7 @@ namespace Lucene.Net.Index
 		doc.Add(NewTextField("fieldname", text, Field.Store.YES));
 		doc.Add(new FloatDocValuesField("dv", 5.7f));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -144,7 +146,7 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv");
+          NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetNumericDocValues("dv");
 		  Assert.Equals(Number.FloatToIntBits(5.7f), dv.Get(hits.ScoreDocs[i].Doc));
 		}
 
@@ -163,7 +165,7 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv1", 5));
 		doc.Add(new NumericDocValuesField("dv2", 17));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -179,9 +181,9 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv1");
+          NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetNumericDocValues("dv1");
 		  Assert.Equals(5, dv.Get(hits.ScoreDocs[i].Doc));
-		  dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv2");
+          dv = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetNumericDocValues("dv2");
 		  Assert.Equals(17, dv.Get(hits.ScoreDocs[i].Doc));
 		}
 
@@ -200,7 +202,7 @@ namespace Lucene.Net.Index
 		doc.Add(new BinaryDocValuesField("dv1", new BytesRef(longTerm)));
 		doc.Add(new BinaryDocValuesField("dv2", new BytesRef(text)));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -216,11 +218,11 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv1");
+          BinaryDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetBinaryDocValues("dv1");
 		  BytesRef scratch = new BytesRef();
 		  dv.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.Equals(new BytesRef(longTerm), scratch);
-		  dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv2");
+          dv = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetBinaryDocValues("dv2");
 		  dv.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.Equals(new BytesRef(text), scratch);
 		}
@@ -240,7 +242,7 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv1", 5));
 		doc.Add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -257,9 +259,9 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv1");
+          NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetNumericDocValues("dv1");
 		  Assert.Equals(5, dv.Get(hits.ScoreDocs[i].Doc));
-		  BinaryDocValues dv2 = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv2");
+		  BinaryDocValues dv2 = ((AtomicReader)((AtomicReader)ireader.Leaves()[0].Reader())).GetBinaryDocValues("dv2");
 		  dv2.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.Equals(new BytesRef("hello world"), scratch);
 		}
@@ -280,7 +282,7 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv2", 5));
 		doc.Add(new BinaryDocValuesField("dv3", new BytesRef("hello world")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -297,13 +299,13 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv1");
+		  SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv1");
 		  int ord = dv.GetOrd(0);
 		  dv.LookupOrd(ord, scratch);
 		  Assert.Equals(new BytesRef("hello hello"), scratch);
-		  NumericDocValues dv2 = ireader.Leaves().get(0).reader().GetNumericDocValues("dv2");
+		  NumericDocValues dv2 = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv2");
 		  Assert.Equals(5, dv2.Get(hits.ScoreDocs[i].Doc));
-		  BinaryDocValues dv3 = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv3");
+		  BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv3");
 		  dv3.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.Equals(new BytesRef("hello world"), scratch);
 		}
@@ -324,7 +326,7 @@ namespace Lucene.Net.Index
 		doc.Add(new SortedDocValuesField("dv2", new BytesRef("hello hello")));
 		doc.Add(new NumericDocValuesField("dv3", 5));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -341,13 +343,13 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv2");
+		  SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv2");
 		  int ord = dv.GetOrd(0);
 		  dv.LookupOrd(ord, scratch);
 		  Assert.Equals(new BytesRef("hello hello"), scratch);
-		  NumericDocValues dv2 = ireader.Leaves().get(0).reader().GetNumericDocValues("dv3");
+		  NumericDocValues dv2 = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv3");
 		  Assert.Equals(5, dv2.Get(hits.ScoreDocs[i].Doc));
-		  BinaryDocValues dv3 = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv1");
+		  BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv1");
 		  dv3.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.Equals(new BytesRef("hello world"), scratch);
 		}
@@ -371,12 +373,12 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv", 2));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv");
+		NumericDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv");
 		Assert.Equals(1, dv.Get(0));
 		Assert.Equals(2, dv.Get(1));
 
@@ -402,15 +404,15 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv", 99));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv");
+		NumericDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv");
 		for (int i = 0;i < 2;i++)
 		{
-		  Document doc2 = ireader.Leaves().get(0).reader().document(i);
+		  Document doc2 = ((AtomicReader)ireader.Leaves()[0].Reader()).Document(i);
 		  long expected;
 		  if (doc2.Get("id").Equals("0"))
 		  {
@@ -442,12 +444,12 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv", long.MaxValue));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv");
+		NumericDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv");
 		Assert.Equals(long.MinValue, dv.Get(0));
 		Assert.Equals(long.MaxValue, dv.Get(1));
 
@@ -470,12 +472,12 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv", 9062230939892376225L));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		NumericDocValues dv = ireader.Leaves().get(0).reader().GetNumericDocValues("dv");
+		NumericDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetNumericDocValues("dv");
 		Assert.Equals(-8841491950446638677L, dv.Get(0));
 		Assert.Equals(9062230939892376225L, dv.Get(1));
 
@@ -496,7 +498,7 @@ namespace Lucene.Net.Index
 		doc.Add(NewTextField("fieldname", text, Field.Store.YES));
 		doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello world")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -513,7 +515,7 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		  BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		  dv.Get(hits.ScoreDocs[i].Doc, scratch);
 		  Assert.Equals(new BytesRef("hello world"), scratch);
 		}
@@ -540,16 +542,16 @@ namespace Lucene.Net.Index
 		doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello 2")));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		for (int i = 0;i < 2;i++)
 		{
-		  Document doc2 = ireader.Leaves().get(0).reader().document(i);
+		  Document doc2 = ((AtomicReader)ireader.Leaves()[0].Reader()).Document(i);
 		  string expected;
 		  if (doc2.Get("id").Equals("0"))
 		  {
@@ -580,7 +582,7 @@ namespace Lucene.Net.Index
 		doc.Add(NewTextField("fieldname", text, Field.Store.YES));
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
@@ -597,7 +599,7 @@ namespace Lucene.Net.Index
 		  Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
 		  Assert.Equals(text, hitDoc.Get("fieldname"));
 		  Debug.Assert(ireader.Leaves().Count == 1);
-		  SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		  SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		  dv.LookupOrd(dv.GetOrd(hits.ScoreDocs[i].Doc), scratch);
 		  Assert.Equals(new BytesRef("hello world"), scratch);
 		}
@@ -621,12 +623,12 @@ namespace Lucene.Net.Index
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.LookupOrd(dv.GetOrd(0), scratch);
 		Assert.Equals("hello world 1", scratch.Utf8ToString());
@@ -655,12 +657,12 @@ namespace Lucene.Net.Index
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		Assert.Equals(2, dv.ValueCount);
 		BytesRef scratch = new BytesRef();
 		Assert.Equals(0, dv.GetOrd(0));
@@ -693,12 +695,12 @@ namespace Lucene.Net.Index
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		Assert.Equals(2, dv.ValueCount); // 2 ords
 		BytesRef scratch = new BytesRef();
 		dv.LookupOrd(0, scratch);
@@ -707,7 +709,7 @@ namespace Lucene.Net.Index
 		Assert.Equals(new BytesRef("hello world 2"), scratch);
 		for (int i = 0;i < 2;i++)
 		{
-		  Document doc2 = ireader.Leaves().get(0).reader().document(i);
+		  Document doc2 = ((AtomicReader)ireader.Leaves()[0].Reader()).Document(i);
 		  string expected;
 		  if (doc2.Get("id").Equals("0"))
 		  {
@@ -745,7 +747,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
 		if (DefaultCodecSupportsDocsWithField())
@@ -777,12 +779,12 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello\nworld\r1")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.Get(0, scratch);
 		Assert.Equals(new BytesRef("hello\nworld\r1"), scratch);
@@ -804,12 +806,12 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 		// 2nd doc missing the DV field
 		iwriter.AddDocument(new Document());
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.LookupOrd(dv.GetOrd(0), scratch);
 		Assert.Equals(new BytesRef("hello world 2"), scratch);
@@ -845,7 +847,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
 		Assert.Equals(3, dv.ValueCount);
@@ -910,12 +912,12 @@ namespace Lucene.Net.Index
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("")));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		SortedDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		SortedDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		Assert.Equals(0, dv.GetOrd(0));
 		Assert.Equals(0, dv.GetOrd(1));
@@ -941,12 +943,12 @@ namespace Lucene.Net.Index
 		doc.Add(new BinaryDocValuesField("dv", new BytesRef("")));
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.Get(0, scratch);
 		Assert.Equals("", scratch.Utf8ToString());
@@ -968,15 +970,15 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[32766];
 		BytesRef b = new BytesRef(bytes);
-		Random().nextBytes(bytes);
+		Random().NextBytes((byte[])(Array)bytes);
 		doc.Add(new BinaryDocValuesField("dv", b));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.Get(0, scratch);
 		Assert.Equals(new BytesRef(bytes), scratch);
@@ -996,15 +998,15 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		sbyte[] bytes = new sbyte[32766];
 		BytesRef b = new BytesRef(bytes);
-		Random().nextBytes(bytes);
+        Random().NextBytes((byte[])(Array)bytes);
 		doc.Add(new SortedDocValuesField("dv", b));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.Get(0, scratch);
 		Assert.Equals(new BytesRef(bytes), scratch);
@@ -1023,12 +1025,12 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		doc.Add(new BinaryDocValuesField("dv", new BytesRef("boo!")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		sbyte[] mybytes = new sbyte[20];
 		BytesRef scratch = new BytesRef(mybytes);
 		dv.Get(0, scratch);
@@ -1050,12 +1052,12 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("boo!")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		sbyte[] mybytes = new sbyte[20];
 		BytesRef scratch = new BytesRef(mybytes);
 		dv.Get(0, scratch);
@@ -1080,12 +1082,12 @@ namespace Lucene.Net.Index
 		doc = new Document();
 		doc.Add(new BinaryDocValuesField("dv", new BytesRef("bar!")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetBinaryDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetBinaryDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.Get(0, scratch);
 		Assert.Equals("foo!", scratch.Utf8ToString());
@@ -1114,12 +1116,12 @@ namespace Lucene.Net.Index
 		doc = new Document();
 		doc.Add(new SortedDocValuesField("dv", new BytesRef("bar!")));
 		iwriter.AddDocument(doc);
-		iwriter.Close();
+		iwriter.Dispose();
 
 		// Now search the index:
 		IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
 		Debug.Assert(ireader.Leaves().Count == 1);
-		BinaryDocValues dv = ireader.Leaves().get(0).reader().GetSortedDocValues("dv");
+		BinaryDocValues dv = ((AtomicReader)ireader.Leaves()[0].Reader()).GetSortedDocValues("dv");
 		BytesRef scratch = new BytesRef();
 		dv.Get(0, scratch);
 		Assert.Equals("foo!", scratch.Utf8ToString());
@@ -1248,7 +1250,7 @@ namespace Lucene.Net.Index
 		w.Commit();
 		IndexReader reader = w.Reader;
 		SortedDocValues docValues = MultiDocValues.GetSortedValues(reader, "field");
-		int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparator);
+		int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
 		BytesRef expected = new BytesRef();
 		BytesRef actual = new BytesRef();
 		Assert.Equals(hash.Size(), docValues.ValueCount);
@@ -1261,7 +1263,7 @@ namespace Lucene.Net.Index
 		  Assert.Equals(i, ord);
 		}
 		AtomicReader slowR = SlowCompositeReaderWrapper.Wrap(reader);
-		ISet<KeyValuePair<string, string>> entrySet = docToString.entrySet();
+		ISet<KeyValuePair<string, string>> entrySet = docToString.EntrySet();
 
 		foreach (KeyValuePair<string, string> entry in entrySet)
 		{
@@ -1274,7 +1276,7 @@ namespace Lucene.Net.Index
 		}
 
 		reader.Dispose();
-		w.Close();
+		w.Dispose();
         dir.Dispose();
 	  }
 
@@ -1351,13 +1353,13 @@ namespace Lucene.Net.Index
 		// 256 values
 		writer.ForceMerge(numDocs / 256);
 
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
 		foreach (AtomicReaderContext context in ir.Leaves())
 		{
-		  AtomicReader r = context.Reader();
+		  AtomicReader r = (AtomicReader)context.Reader();
 		  NumericDocValues docValues = r.GetNumericDocValues("dv");
 		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
@@ -1443,7 +1445,7 @@ namespace Lucene.Net.Index
 		// 256 values
 		writer.ForceMerge(numDocs / 256);
 
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
@@ -1567,9 +1569,9 @@ namespace Lucene.Net.Index
 			length = TestUtil.NextInt(Random(), minLength, maxLength);
 		  }
 		  sbyte[] buffer = new sbyte[length];
-		  Random().nextBytes(buffer);
-		  storedField.BytesValue = buffer;
-		  dvField.BytesValue = buffer;
+          Random().NextBytes((byte[])(Array)buffer);
+		  storedField.BytesValue = new BytesRef(buffer);
+		  dvField.BytesValue = new BytesRef(buffer);
 		  writer.AddDocument(doc);
 		  if (Random().Next(31) == 0)
 		  {
@@ -1584,7 +1586,7 @@ namespace Lucene.Net.Index
 		  int id = Random().Next(numDocs);
 		  writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
@@ -1651,9 +1653,9 @@ namespace Lucene.Net.Index
 			length = TestUtil.NextInt(Random(), minLength, maxLength);
 		  }
 		  sbyte[] buffer = new sbyte[length];
-		  Random().nextBytes(buffer);
-		  storedField.BytesValue = buffer;
-		  dvField.BytesValue = buffer;
+          Random().NextBytes((byte[])(Array)buffer);
+		  storedField.BytesValue = new BytesRef(buffer);
+		  dvField.BytesValue = new BytesRef(buffer);
 		  writer.AddDocument(doc);
 		  if (Random().Next(31) == 0)
 		  {
@@ -1668,7 +1670,7 @@ namespace Lucene.Net.Index
 		  int id = Random().Next(numDocs);
 		  writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
@@ -1732,19 +1734,19 @@ namespace Lucene.Net.Index
 		  int id = Random().Next(numDocs);
 		  writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
 		foreach (AtomicReaderContext context in ir.Leaves())
 		{
-		  AtomicReader r = context.Reader();
-		  SortedDocValues expected = FieldCache_Fields.DEFAULT.getTermsIndex(r, "indexed");
+		  AtomicReader r = (AtomicReader)context.Reader();
+		  SortedDocValues expected = FieldCache_Fields.DEFAULT.GetTermsIndex(r, "indexed");
 		  SortedDocValues actual = r.GetSortedDocValues("dv");
-		  Assert.Equals(r.maxDoc(), expected, actual);
+		  AssertEquals(r.MaxDoc(), expected, actual);
 		}
 		ir.Dispose();
-		dir.close();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestSortedFixedLengthVsStoredFields()
@@ -1796,7 +1798,7 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
@@ -1824,7 +1826,7 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
@@ -1869,7 +1871,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(2, dv.ValueCount);
@@ -1905,7 +1907,7 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
@@ -1937,7 +1939,7 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
@@ -1979,7 +1981,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(3, dv.ValueCount);
@@ -2025,7 +2027,7 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 		iwriter.ForceMerge(1);
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(1, dv.ValueCount);
@@ -2061,7 +2063,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(1, dv.ValueCount);
@@ -2096,7 +2098,7 @@ namespace Lucene.Net.Index
 
 		iwriter.ForceMerge(1);
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(1, dv.ValueCount);
@@ -2132,7 +2134,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(1, dv.ValueCount);
@@ -2170,7 +2172,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(0, dv.ValueCount);
@@ -2195,7 +2197,7 @@ namespace Lucene.Net.Index
 		iwriter.AddDocument(doc);
 
 		DirectoryReader ireader = iwriter.Reader;
-		iwriter.Close();
+		iwriter.Dispose();
 
 		SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 		Assert.Equals(3, dv.ValueCount);
@@ -2272,7 +2274,7 @@ namespace Lucene.Net.Index
 		  SortedSet<string> values = new SortedSet<string>();
 		  for (int v = 0; v < numValues; v++)
 		  {
-			values.add(TestUtil.RandomSimpleString(Random(), length));
+			values.Add(TestUtil.RandomSimpleString(Random(), length));
 		  }
 
 		  // add ordered to the stored field
@@ -2282,8 +2284,8 @@ namespace Lucene.Net.Index
 		  }
 
 		  // add in any order to the dv field
-		  List<string> unordered = new List<string>(values);
-		  Collections.shuffle(unordered, Random());
+		  IList<string> unordered = new List<string>(values);
+		  unordered = CollectionsHelper.Shuffle(unordered);
 		  foreach (string v in unordered)
 		  {
 			doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
@@ -2303,7 +2305,7 @@ namespace Lucene.Net.Index
 		  int id = Random().Next(numDocs);
 		  writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
@@ -2314,7 +2316,7 @@ namespace Lucene.Net.Index
 		  BytesRef scratch = new BytesRef();
 		  for (int i = 0; i < r.MaxDoc(); i++)
 		  {
-			string[] stringValues = r.Document(i).getValues("stored");
+			string[] stringValues = r.Document(i).GetValues("stored");
 			if (docValues != null)
 			{
 			  docValues.Document = i;
@@ -2376,7 +2378,7 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private void Assert.Equals(Bits expected, Bits actual)
+	  private void AssertEquals(Bits expected, Bits actual)
 	  {
 		Assert.Equals(expected.Length(), actual.Length());
 		for (int i = 0; i < expected.Length(); i++)
@@ -2385,12 +2387,12 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  private void Assert.Equals(int maxDoc, SortedDocValues expected, SortedDocValues actual)
+	  private void AssertEquals(int maxDoc, SortedDocValues expected, SortedDocValues actual)
 	  {
-		Assert.Equals(maxDoc, new SingletonSortedSetDocValues(expected), new SingletonSortedSetDocValues(actual));
+		AssertEquals(maxDoc, new SingletonSortedSetDocValues(expected), new SingletonSortedSetDocValues(actual));
 	  }
 
-	  private void Assert.Equals(int maxDoc, SortedSetDocValues expected, SortedSetDocValues actual)
+	  private void AssertEquals(int maxDoc, SortedSetDocValues expected, SortedSetDocValues actual)
 	  {
 		// can be null for the segment if no docs actually had any SortedDocValues
 		// in this case FC.getDocTermsOrds returns EMPTY
@@ -2424,10 +2426,10 @@ namespace Lucene.Net.Index
 		}
 
 		// compare termsenum
-		Assert.Equals(expected.ValueCount, expected.TermsEnum(), actual.TermsEnum());
+		AssertEquals(expected.ValueCount, expected.TermsEnum(), actual.TermsEnum());
 	  }
 
-	  private void Assert.Equals(long numOrds, TermsEnum expected, TermsEnum actual)
+	  private void AssertEquals(long numOrds, TermsEnum expected, TermsEnum actual)
 	  {
 		BytesRef @ref;
 
@@ -2532,16 +2534,16 @@ namespace Lucene.Net.Index
 		  }
 
 		  // add in any order to the indexed field
-		  List<string> unordered = new List<string>(values);
-		  Collections.shuffle(unordered, Random());
-		  foreach (string v in values)
+		  IList<string> unordered = new List<string>(values);
+          unordered = CollectionsHelper.Shuffle(unordered);
+          foreach (string v in unordered)
 		  {
 			doc.Add(NewStringField("indexed", v, Field.Store.NO));
 		  }
 
 		  // add in any order to the dv field
-		  List<string> unordered2 = new List<string>(values);
-		  Collections.shuffle(unordered2, Random());
+		  IList<string> unordered2 = new List<string>(values);
+          unordered2 = CollectionsHelper.Shuffle(unordered2);		  
 		  foreach (string v in unordered2)
 		  {
 			doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
@@ -2569,7 +2571,7 @@ namespace Lucene.Net.Index
 		  AtomicReader r = (AtomicReader)context.Reader();
 		  SortedSetDocValues expected = FieldCache_Fields.DEFAULT.GetDocTermOrds(r, "indexed");
 		  SortedSetDocValues actual = r.GetSortedSetDocValues("dv");
-		  Assert.Equals(r.MaxDoc(), expected, actual);
+		  AssertEquals(r.MaxDoc(), expected, actual);
 		}
 		ir.Dispose();
 
@@ -2580,10 +2582,10 @@ namespace Lucene.Net.Index
 		AtomicReader ar = GetOnlySegmentReader(ir);
 		SortedSetDocValues expected_ = FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "indexed");
 		SortedSetDocValues actual_ = ar.GetSortedSetDocValues("dv");
-		Assert.Equals(ir.MaxDoc(), expected_, actual_);
+		AssertEquals(ir.MaxDoc(), expected_, actual_);
         ir.Dispose();
 
-		writer.Close();
+		writer.Dispose();
         dir.Dispose();
 	  }
 
@@ -2687,11 +2689,11 @@ namespace Lucene.Net.Index
 		doc.Add(new StringField("id", "1", Field.Store.YES));
 		iw.AddDocument(doc);
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader ir = DirectoryReader.Open(directory);
 		Assert.Equals(1, ir.Leaves().Count);
-		AtomicReader ar = ir.Leaves().get(0).reader();
+		AtomicReader ar = (AtomicReader)ir.Leaves()[0].Reader();
 		NumericDocValues dv = ar.GetNumericDocValues("dv1");
 		Assert.Equals(0, dv.Get(0));
 		Assert.Equals(0, dv.Get(1));
@@ -2718,11 +2720,11 @@ namespace Lucene.Net.Index
 		doc.Add(new StringField("id", "1", Field.Store.YES));
 		iw.AddDocument(doc);
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader ir = DirectoryReader.Open(directory);
 		Assert.Equals(1, ir.Leaves().Count);
-		AtomicReader ar = ir.Leaves().get(0).reader();
+		AtomicReader ar = (AtomicReader)ir.Leaves()[0].Reader();
 		NumericDocValues dv = ar.GetNumericDocValues("dv1");
 		Assert.Equals(0, dv.Get(0));
 		Assert.Equals(0, dv.Get(1));
@@ -2753,11 +2755,11 @@ namespace Lucene.Net.Index
 		doc.Add(new NumericDocValuesField("dv1", 5));
 		iw.AddDocument(doc);
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader ir = DirectoryReader.Open(directory);
 		Assert.Equals(1, ir.Leaves().Count);
-		AtomicReader ar = ir.Leaves().get(0).reader();
+		AtomicReader ar = (AtomicReader)ir.Leaves()[0].Reader();
 		NumericDocValues dv = ar.GetNumericDocValues("dv1");
 		Assert.Equals(0, dv.Get(0));
 		Assert.Equals(0, dv.Get(1));
@@ -2785,11 +2787,11 @@ namespace Lucene.Net.Index
 		doc.Add(new StringField("id", "1", Field.Store.YES));
 		iw.AddDocument(doc);
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader ir = DirectoryReader.Open(directory);
 		Assert.Equals(1, ir.Leaves().Count);
-		AtomicReader ar = ir.Leaves().get(0).reader();
+        AtomicReader ar = (AtomicReader)ir.Leaves()[0].Reader();
 		BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
 		BytesRef @ref = new BytesRef();
 		dv.Get(0, @ref);
@@ -2819,11 +2821,11 @@ namespace Lucene.Net.Index
 		doc.Add(new StringField("id", "1", Field.Store.YES));
 		iw.AddDocument(doc);
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader ir = DirectoryReader.Open(directory);
 		Assert.Equals(1, ir.Leaves().Count);
-		AtomicReader ar = ir.Leaves().get(0).reader();
+        AtomicReader ar = (AtomicReader)ir.Leaves()[0].Reader();
 		BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
 		BytesRef @ref = new BytesRef();
 		dv.Get(0, @ref);
@@ -2857,11 +2859,11 @@ namespace Lucene.Net.Index
 		doc.Add(new BinaryDocValuesField("dv1", new BytesRef("boo")));
 		iw.AddDocument(doc);
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader ir = DirectoryReader.Open(directory);
 		Assert.Equals(1, ir.Leaves().Count);
-		AtomicReader ar = ir.Leaves().get(0).reader();
+        AtomicReader ar = (AtomicReader)ir.Leaves()[0].Reader();
 		BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
 		BytesRef @ref = new BytesRef();
 		dv.Get(0, @ref);
@@ -2928,7 +2930,7 @@ namespace Lucene.Net.Index
 			break;
 		  }
 		  sbyte[] bytes = new sbyte[numBytes];
-		  Random().nextBytes(bytes);
+		  Random().NextBytes((byte[])(Array)bytes);
 		  docBytes.Add(bytes);
 		  Document doc = new Document();
 		  BytesRef b = new BytesRef(bytes);
@@ -3050,7 +3052,7 @@ namespace Lucene.Net.Index
 			break;
 		  }
 		  sbyte[] bytes = new sbyte[numBytes];
-		  Random().nextBytes(bytes);
+		  Random().NextBytes((byte[])(Array)bytes);
 		  docBytes.Add(bytes);
 		  Document doc = new Document();
 		  BytesRef b = new BytesRef(bytes);
@@ -3108,11 +3110,11 @@ namespace Lucene.Net.Index
 		  idField.StringValue = Convert.ToString(i);
 		  int length = TestUtil.NextInt(Random(), 0, 8);
 		  sbyte[] buffer = new sbyte[length];
-		  Random().nextBytes(buffer);
-		  storedBinField.BytesValue = buffer;
-		  dvBinField.BytesValue = buffer;
-		  dvSortedField.BytesValue = buffer;
-		  long numericValue = Random().nextLong();
+          Random().NextBytes((byte[])(Array)buffer);
+		  storedBinField.BytesValue = new BytesRef(buffer);
+		  dvBinField.BytesValue = new BytesRef(buffer);
+		  dvSortedField.BytesValue = new BytesRef(buffer);
+		  long numericValue = Random().NextLong();
 		  storedNumericField.StringValue = Convert.ToString(numericValue);
 		  dvNumericField.LongValue = numericValue;
 		  writer.AddDocument(doc);
@@ -3129,12 +3131,12 @@ namespace Lucene.Net.Index
 		  int id = Random().Next(numDocs);
 		  writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
 		int numThreads = TestUtil.NextInt(Random(), 2, 7);
-		Thread[] threads = new Thread[numThreads];
+        ThreadClass[] threads = new ThreadClass[numThreads];
 		CountDownLatch startingGun = new CountDownLatch(1);
 
 		for (int i = 0; i < threads.Length; i++)
@@ -3143,7 +3145,7 @@ namespace Lucene.Net.Index
 		  threads[i].Start();
 		}
 		startingGun.countDown();
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
@@ -3151,7 +3153,7 @@ namespace Lucene.Net.Index
         dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly BaseDocValuesFormatTestCase OuterInstance;
 
@@ -3178,14 +3180,14 @@ namespace Lucene.Net.Index
 				NumericDocValues numerics = r.GetNumericDocValues("dvNum");
 				for (int j = 0; j < r.MaxDoc(); j++)
 				{
-				  BytesRef binaryValue = r.Document(j).getBinaryValue("storedBin");
+				  BytesRef binaryValue = r.Document(j).GetBinaryValue("storedBin");
 				  BytesRef scratch = new BytesRef();
 				  binaries.Get(j, scratch);
-				  OuterInstance.Assert.Equals(binaryValue, scratch);
+                  Assert.Equals(binaryValue, scratch);
 				  sorted.Get(j, scratch);
-				  OuterInstance.Assert.Equals(binaryValue, scratch);
+                  Assert.Equals(binaryValue, scratch);
 				  string expected = r.Document(j).Get("storedNum");
-				  outerInstance.Assert.Equals(Convert.ToInt64(expected), numerics.Get(j));
+                  Assert.Equals(Convert.ToInt64(expected), numerics.Get(j));
 				}
 			  }
 			  TestUtil.CheckReader(Ir);
@@ -3220,11 +3222,11 @@ namespace Lucene.Net.Index
 		  idField.StringValue = Convert.ToString(i);
 		  int length = TestUtil.NextInt(Random(), 0, 8);
 		  sbyte[] buffer = new sbyte[length];
-		  Random().nextBytes(buffer);
-		  storedBinField.BytesValue = buffer;
-		  dvBinField.BytesValue = buffer;
-		  dvSortedField.BytesValue = buffer;
-		  long numericValue = Random().nextLong();
+		  Random().NextBytes((byte[])(Array)buffer);
+		  storedBinField.BytesValue = new BytesRef(buffer);
+		  dvBinField.BytesValue = new BytesRef(buffer);
+		  dvSortedField.BytesValue = new BytesRef(buffer);
+		  long numericValue = Random().NextLong();
 		  storedNumericField.StringValue = Convert.ToString(numericValue);
 		  dvNumericField.LongValue = numericValue;
 		  Document doc = new Document();
@@ -3241,10 +3243,10 @@ namespace Lucene.Net.Index
 			doc.Add(dvNumericField);
 		  }
 		  int numSortedSetFields = Random().Next(3);
-		  Set<string> values = new SortedSet<string>();
+		  SortedSet<string> values = new SortedSet<string>();
 		  for (int j = 0; j < numSortedSetFields; j++)
 		  {
-			values.add(TestUtil.RandomSimpleString(Random()));
+			values.Add(TestUtil.RandomSimpleString(Random()));
 		  }
 		  foreach (string v in values)
 		  {
@@ -3265,12 +3267,12 @@ namespace Lucene.Net.Index
 		  int id = Random().Next(numDocs);
 		  writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
-		writer.Close();
+		writer.Dispose();
 
 		// compare
 		DirectoryReader ir = DirectoryReader.Open(dir);
 		int numThreads = TestUtil.NextInt(Random(), 2, 7);
-		Thread[] threads = new Thread[numThreads];
+        ThreadClass[] threads = new ThreadClass[numThreads];
 		CountDownLatch startingGun = new CountDownLatch(1);
 
 		for (int i = 0; i < threads.Length; i++)
@@ -3279,15 +3281,15 @@ namespace Lucene.Net.Index
 		  threads[i].Start();
 		}
 		startingGun.countDown();
-		foreach (Thread t in threads)
+        foreach (ThreadClass t in threads)
 		{
 		  t.Join();
 		}
 		ir.Dispose();
-		dir.close();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper2 : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper2 : ThreadClass
 	  {
 		  private readonly BaseDocValuesFormatTestCase OuterInstance;
 
@@ -3308,7 +3310,7 @@ namespace Lucene.Net.Index
 			  StartingGun.@await();
 			  foreach (AtomicReaderContext context in Ir.Leaves())
 			  {
-				AtomicReader r = context.reader();
+				AtomicReader r = (AtomicReader)context.Reader();
 				BinaryDocValues binaries = r.GetBinaryDocValues("dvBin");
 				Bits binaryBits = r.GetDocsWithField("dvBin");
 				SortedDocValues sorted = r.GetSortedDocValues("dvSorted");
@@ -3317,44 +3319,44 @@ namespace Lucene.Net.Index
 				Bits numericBits = r.GetDocsWithField("dvNum");
 				SortedSetDocValues sortedSet = r.GetSortedSetDocValues("dvSortedSet");
 				Bits sortedSetBits = r.GetDocsWithField("dvSortedSet");
-				for (int j = 0; j < r.maxDoc(); j++)
+				for (int j = 0; j < r.MaxDoc(); j++)
 				{
-				  BytesRef binaryValue = r.document(j).getBinaryValue("storedBin");
+				  BytesRef binaryValue = r.Document(j).GetBinaryValue("storedBin");
 				  if (binaryValue != null)
 				  {
 					if (binaries != null)
 					{
 					  BytesRef scratch = new BytesRef();
-					  binaries.get(j, scratch);
-					  outerInstance.Assert.Equals(binaryValue, scratch);
-					  sorted.get(j, scratch);
-					  outerInstance.Assert.Equals(binaryValue, scratch);
-					  Assert.IsTrue(binaryBits.get(j));
-					  Assert.IsTrue(sortedBits.get(j));
+					  binaries.Get(j, scratch);
+					  Assert.Equals(binaryValue, scratch);
+					  sorted.Get(j, scratch);
+                      Assert.Equals(binaryValue, scratch);
+					  Assert.IsTrue(binaryBits.Get(j));
+					  Assert.IsTrue(sortedBits.Get(j));
 					}
 				  }
 				  else if (binaries != null)
 				  {
-					Assert.IsFalse(binaryBits.get(j));
-					Assert.IsFalse(sortedBits.get(j));
-					outerInstance.Assert.Equals(-1, sorted.GetOrd(j));
+					Assert.IsFalse(binaryBits.Get(j));
+					Assert.IsFalse(sortedBits.Get(j));
+                    Assert.Equals(-1, sorted.GetOrd(j));
 				  }
 
-				  string number = r.document(j).get("storedNum");
+				  string number = r.Document(j).Get("storedNum");
 				  if (number != null)
 				  {
 					if (numerics != null)
 					{
-					  outerInstance.Assert.Equals(Convert.ToInt64(number), numerics.get(j));
+                        Assert.Equals(Convert.ToInt64(number), numerics.Get(j));
 					}
 				  }
 				  else if (numerics != null)
 				  {
-					Assert.IsFalse(numericBits.get(j));
-					outerInstance.Assert.Equals(0, numerics.get(j));
+					Assert.IsFalse(numericBits.Get(j));
+                    Assert.Equals(0, numerics.Get(j));
 				  }
 
-				  string[] values = r.document(j).getValues("storedSortedSet");
+				  string[] values = r.Document(j).GetValues("storedSortedSet");
 				  if (values.Length > 0)
 				  {
 					Assert.IsNotNull(sortedSet);
@@ -3362,19 +3364,19 @@ namespace Lucene.Net.Index
 					for (int k = 0; k < values.Length; k++)
 					{
 					  long ord = sortedSet.NextOrd();
-					  Assert.IsTrue(ord != SortedSetDocValues.SortedSetDocValues.NO_MORE_ORDS);
+					  Assert.IsTrue(ord != SortedSetDocValues.NO_MORE_ORDS);
 					  BytesRef value = new BytesRef();
 					  sortedSet.LookupOrd(ord, value);
-					  outerInstance.Assert.Equals(values[k], value.Utf8ToString());
+                      Assert.Equals(values[k], value.Utf8ToString());
 					}
-					outerInstance.Assert.Equals(SortedSetDocValues.SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
-					Assert.IsTrue(sortedSetBits.get(j));
+                    Assert.Equals(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
+					Assert.IsTrue(sortedSetBits.Get(j));
 				  }
 				  else if (sortedSet != null)
 				  {
 					sortedSet.Document = j;
-					outerInstance.Assert.Equals(SortedSetDocValues.SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
-					Assert.IsFalse(sortedSetBits.get(j));
+                    Assert.Equals(SortedSetDocValues.NO_MORE_ORDS, sortedSet.NextOrd());
+					Assert.IsFalse(sortedSetBits.Get(j));
 				  }
 				}
 			  }
@@ -3382,7 +3384,7 @@ namespace Lucene.Net.Index
 			}
 			catch (Exception e)
 			{
-			  throw new Exception(e);
+			  throw new Exception(e.Message, e);
 			}
 		  }
 	  }
@@ -3401,31 +3403,31 @@ namespace Lucene.Net.Index
 		  Directory dir = NewDirectory();
 		  RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		  BytesRef bytes = new BytesRef();
-		  bytes.bytes = new sbyte[1 << i];
+		  bytes.Bytes = new sbyte[1 << i];
 		  bytes.Length = 1 << i;
 		  for (int j = 0;j < 4;j++)
 		  {
-			Document doc = new Document();
-			doc.Add(new BinaryDocValuesField("field", bytes));
-			w.AddDocument(doc);
+			Document doc_ = new Document();
+			doc_.Add(new BinaryDocValuesField("field", bytes));
+			w.AddDocument(doc_);
 		  }
 		  Document doc = new Document();
 		  doc.Add(new StoredField("id", "5"));
 		  doc.Add(new BinaryDocValuesField("field", new BytesRef()));
 		  w.AddDocument(doc);
 		  IndexReader r = w.Reader;
-		  w.Close();
+		  w.Dispose();
 
-		  AtomicReader ar = SlowCompositeReaderWrapper.wrap(r);
+		  AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
 		  BinaryDocValues values = ar.GetBinaryDocValues("field");
 		  BytesRef result = new BytesRef();
 		  for (int j = 0;j < 5;j++)
 		  {
-			values.get(0, result);
+			values.Get(0, result);
 			Assert.IsTrue(result.Length == 0 || result.Length == 1 << i);
 		  }
-		  ar.close();
-		  dir.close();
+		  ar.Dispose();
+		  dir.Dispose();
 		}
 	  }
 

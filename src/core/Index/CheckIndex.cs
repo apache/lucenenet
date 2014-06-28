@@ -1759,8 +1759,6 @@ namespace Lucene.Net.Index
 	  private static void CheckSortedDocValues(string fieldName, AtomicReader reader, SortedDocValues dv, Bits docsWithField)
 	  {
 		CheckBinaryDocValues(fieldName, reader, dv, docsWithField);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int maxOrd = dv.getValueCount()-1;
 		int maxOrd = dv.ValueCount - 1;
 		FixedBitSet seenOrds = new FixedBitSet(dv.ValueCount);
 		int maxOrd2 = -1;
@@ -1815,8 +1813,6 @@ namespace Lucene.Net.Index
 
 	  private static void CheckSortedSetDocValues(string fieldName, AtomicReader reader, SortedSetDocValues dv, Bits docsWithField)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long maxOrd = dv.getValueCount()-1;
 		long maxOrd = dv.ValueCount - 1;
 		LongBitSet seenOrds = new LongBitSet(dv.ValueCount);
 		long maxOrd2 = -1;
@@ -1996,14 +1992,8 @@ namespace Lucene.Net.Index
 	  /// </summary>
       public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, StreamWriter infoStream, bool verbose, bool crossCheckTermVectors)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Status.TermVectorStatus status = new Status.TermVectorStatus();
 		Status.TermVectorStatus status = new Status.TermVectorStatus();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfos fieldInfos = reader.getFieldInfos();
 		FieldInfos fieldInfos = reader.FieldInfos;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits onlyDocIsDeleted = new Lucene.Net.Util.FixedBitSet(1);
 		Bits onlyDocIsDeleted = new FixedBitSet(1);
 
 		try
@@ -2020,12 +2010,8 @@ namespace Lucene.Net.Index
 		  DocsEnum postingsDocs = null;
 		  DocsAndPositionsEnum postingsPostings = null;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Bits liveDocs = reader.getLiveDocs();
 		  Bits liveDocs = reader.LiveDocs;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Fields postingsFields;
 		  Fields postingsFields;
 		  // TODO: testTermsIndex
 		  if (crossCheckTermVectors)
@@ -2059,8 +2045,6 @@ namespace Lucene.Net.Index
 			  CheckFields(tfv, onlyDocIsDeleted, 1, fieldInfos, false, true, infoStream, verbose);
 
 			  // Only agg stats if the doc is live:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean doStats = liveDocs == null || liveDocs.get(j);
 			  bool doStats = liveDocs == null || liveDocs.Get(j);
 			  if (doStats)
 			  {
@@ -2075,8 +2059,6 @@ namespace Lucene.Net.Index
 				}
 
 				// Make sure FieldInfo thinks this field is vector'd:
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final FieldInfo fieldInfo = fieldInfos.fieldInfo(field);
 				FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
 				if (!fieldInfo.HasVectors())
 				{
@@ -2087,14 +2069,8 @@ namespace Lucene.Net.Index
 				{
 				  Terms terms = tfv.Terms(field);
 				  termsEnum = terms.Iterator(termsEnum);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean postingsHasFreq = fieldInfo.getIndexOptions().compareTo(Lucene.Net.Index.FieldInfo.IndexOptions.DOCS_AND_FREQS) >= 0;
 				  bool postingsHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean postingsHasPayload = fieldInfo.hasPayloads();
 				  bool postingsHasPayload = fieldInfo.HasPayloads();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean vectorsHasPayload = terms.hasPayloads();
 				  bool vectorsHasPayload = terms.HasPayloads();
 
 				  Terms postingsTerms = postingsFields.Terms(field);
@@ -2104,8 +2080,6 @@ namespace Lucene.Net.Index
 				  }
 				  postingsTermsEnum = postingsTerms.Iterator(postingsTermsEnum);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean hasProx = terms.hasOffsets() || terms.hasPositions();
 				  bool hasProx = terms.HasOffsets() || terms.HasPositions();
 				  BytesRef term = null;
 				  while ((term = termsEnum.Next()) != null)
@@ -2124,8 +2098,6 @@ namespace Lucene.Net.Index
 					  postings = null;
 					}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocsEnum docs2;
 					DocsEnum docs2;
 					if (hasProx)
 					{
@@ -2138,8 +2110,6 @@ namespace Lucene.Net.Index
 					  docs2 = docs;
 					}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocsEnum postingsDocs2;
 					DocsEnum postingsDocs2;
 					if (!postingsTermsEnum.SeekExact(term))
 					{
@@ -2165,16 +2135,12 @@ namespace Lucene.Net.Index
 					  postingsDocs2 = postingsDocs;
 					}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int advanceDoc = postingsDocs2.advance(j);
 					int advanceDoc = postingsDocs2.Advance(j);
 					if (advanceDoc != j)
 					{
 					  throw new Exception("vector term=" + term + " field=" + field + ": doc=" + j + " was not found in postings (got: " + advanceDoc + ")");
 					}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int doc = docs2.nextDoc();
 					int doc = docs2.NextDoc();
 
 					if (doc != 0)
@@ -2184,8 +2150,6 @@ namespace Lucene.Net.Index
 
 					if (postingsHasFreq)
 					{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int tf = docs2.freq();
 					  int tf = docs2.Freq();
 					  if (postingsHasFreq && postingsDocs2.Freq() != tf)
 					  {
@@ -2334,7 +2298,7 @@ namespace Lucene.Net.Index
 		return AssertsOn_Renamed;
 	  }
 
-	  /// <summary>
+	  /*
 	  /// Command-line interface to check and fix an index.
 	  /// 
 	  ///  <p>
@@ -2366,7 +2330,7 @@ namespace Lucene.Net.Index
 	  ///  <p>
 	  ///                     this tool exits with exit code 1 if the index cannot be opened or has any
 	  ///                     corruption, else 0.
-	  /// </summary>
+	  */
 	  /*[STAThread]
       public static void Main(string[] args)
 	  {

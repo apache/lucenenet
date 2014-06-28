@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(1, s.Search(dmq, 10).TotalHits);
 
 		r.Dispose();
-		w.Close();
+		w.Dispose();
 		dir.Dispose();
 	  }
 
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
 		doc1.Add(NewTextField("field", "foo bar", Field.Store.NO));
 		iw1.AddDocument(doc1);
 		IndexReader reader1 = iw1.Reader;
-        iw1.Close();
+        iw1.Dispose();
 
 		Directory dir2 = NewDirectory();
 		RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2);
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
 		doc2.Add(NewTextField("field", "foo baz", Field.Store.NO));
 		iw2.AddDocument(doc2);
 		IndexReader reader2 = iw2.Reader;
-        iw2.Close();
+        iw2.Dispose();
 
 		BooleanQuery query = new BooleanQuery(); // Query: +foo -ba*
 		query.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.MUST);
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
 		w.ForceMerge(1);
 		IndexReader r = w.Reader;
 		IndexSearcher s = NewSearcher(r);
-		w.Close();
+		w.Dispose();
 
 		for (int iter = 0;iter < 10 * RANDOM_MULTIPLIER;iter++)
 		{
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "some text here", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 		IndexSearcher s = new IndexSearcherAnonymousInnerClassHelper(this, r);
 		BooleanQuery bq = new BooleanQuery();
 		bq.Add(new TermQuery(new Term("field", "some")), BooleanClause.Occur_e.SHOULD);

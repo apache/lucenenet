@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -33,7 +34,7 @@ namespace Lucene.Net.Search
 	  // we need to track scorers using a weak hash map because otherwise we
 	  // could loose references because of eg.
 	  // AssertingScorer.Score(Collector) which needs to delegate to work correctly
-	  private static IDictionary<Scorer, WeakReference> ASSERTING_INSTANCES = Collections.synchronizedMap(new WeakHashMap<Scorer, WeakReference>());
+      private static IDictionary<Scorer, WeakReference> ASSERTING_INSTANCES = new ConcurrentHashMapWrapper<Scorer, WeakReference>(new HashMap<Scorer, WeakReference>());
 
 	  public static Scorer Wrap(Random random, Scorer other)
 	  {
@@ -91,11 +92,11 @@ namespace Lucene.Net.Search
 	  {
 		switch (DocID())
 		{
-		case -1:
-		case NO_MORE_DOCS:
-		  return false;
-		default:
-		  return true;
+		    case -1:
+		    case NO_MORE_DOCS:
+		      return false;
+		    default:
+		      return true;
 		}
 	  }
 

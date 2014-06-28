@@ -257,8 +257,6 @@ namespace Lucene.Net.Store
 	  /// <seealso cref= DataInput#readString() </seealso>
 	  public virtual void WriteString(string s)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.BytesRef utf8Result = new Lucene.Net.Util.BytesRef(10);
 		BytesRef utf8Result = new BytesRef(10);
 		UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8Result);
 		WriteVInt(utf8Result.Length);
@@ -280,8 +278,6 @@ namespace Lucene.Net.Store
 		}
 		while (left > 0)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int toCopy;
 		  int toCopy;
 		  if (left > COPY_BUFFER_SIZE)
 		  {

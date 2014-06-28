@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
@@ -45,23 +47,24 @@ namespace Lucene.Net.Index
 
 	  public AlcoholicMergePolicy(TimeZone tz, Random random)
 	  {
-		this.Calendar = new GregorianCalendar(tz, Locale.ROOT);
-		Calendar.TimeInMillis = TestUtil.NextLong(random, 0, long.MaxValue);
+		this.Calendar = new DateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(random, 0, long.MaxValue), new GregorianCalendar());
+		//Calendar.= TestUtil.NextLong(random, 0, long.MaxValue);
 		this.Random = random;
-		maxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
+		MaxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
 	  }
 
-	  protected internal override long Size(SegmentCommitInfo info)
+	  protected override long Size(SegmentCommitInfo info)
 	  //@BlackMagic(level=Voodoo);
 	  {
-		int hourOfDay = Calendar.get(DateTime.HOUR_OF_DAY);
+		int hourOfDay = Calendar.Hour;
 		if (hourOfDay < 6 || hourOfDay > 20 || Random.Next(23) == 5)
 			// its 5 o'clock somewhere
 		{
 
           Drink.Drink_e[] values = Enum.GetValues(typeof(Drink.Drink_e)).Cast<Drink.Drink_e>().ToArray();
 		  // pick a random drink during the day
-		  return DrunkFactor(values[Random.Next(values.Length)]) * info.SizeInBytes();
+          var drink = values[Random.Next(values.Length)];
+		  return (long)Convert.ChangeType(drink, drink.GetTypeCode()) * info.SizeInBytes();
 		}
 
 		return info.SizeInBytes();
@@ -78,27 +81,6 @@ namespace Lucene.Net.Index
               Champagne = 21,
               WhiteRussian = 22,
               SingleMalt = 30
-          }
-
-          internal Drink_e[] GetEnumValues()
-          {
-              Drink_e[] values = new Drink_e[5];
-              for (int i = 0; i < NumDrinks; ++i)
-              {
-                  values[i] = 
-              }
-          }
-
-          long drunkFactor;
-
-          Drink(long drunkFactor)
-          {
-              this.drunkFactor = drunkFactor;
-          }
-
-          internal long DrunkFactor()
-          {
-
           }
       }
 

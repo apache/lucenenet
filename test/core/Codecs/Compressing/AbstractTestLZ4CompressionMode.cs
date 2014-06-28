@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs.Compressing
 	      public virtual void TestShortLiteralsAndMatchs()
 	      {
 		    // literals and matchs lengths <= 15
-		    sbyte[] decompressed = "1234562345673456745678910123".ToSbyteArray(Encoding.UTF8);
+		    sbyte[] decompressed = "1234562345673456745678910123".GetBytes(Encoding.UTF8);
 		    Test(decompressed);
 	      }
 

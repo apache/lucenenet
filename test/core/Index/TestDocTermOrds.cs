@@ -46,10 +46,11 @@ namespace Lucene.Net.Index
 	//   - test prefix
 	//   - test w/ cutoff
 	//   - crank docs way up so we get some merging sometimes
-
+    [TestFixture]
 	public class TestDocTermOrds : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestSimple()
 	  {
 		Directory dir = NewDirectory();
@@ -67,7 +68,7 @@ namespace Lucene.Net.Index
 		w.AddDocument(doc);
 
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
 		DocTermOrds dto = new DocTermOrds(ar, ar.LiveDocs, "field");
@@ -94,7 +95,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		Directory dir = NewDirectory();
 
@@ -163,7 +165,7 @@ namespace Lucene.Net.Index
 		}
 
 		DirectoryReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		if (VERBOSE)
 		{
@@ -194,7 +196,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandomWithPrefix()
+      [Test]
+      public virtual void TestRandomWithPrefix()
 	  {
 		Directory dir = NewDirectory();
 
@@ -275,7 +278,7 @@ namespace Lucene.Net.Index
 		}
 
 		DirectoryReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		if (VERBOSE)
 		{
@@ -429,7 +432,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestBackToTheFuture()
+      [Test]
+      public virtual void TestBackToTheFuture()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -460,7 +464,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestSortedTermsEnum()
+      [Test]
+      public virtual void TestSortedTermsEnum()
 	  {
 		Directory directory = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -482,7 +487,7 @@ namespace Lucene.Net.Index
 		iwriter.ForceMerge(1);
 
 		DirectoryReader ireader = iwriter.Reader;
-        iwriter.Close();
+        iwriter.Dispose();
 
 		AtomicReader ar = GetOnlySegmentReader(ireader);
 		SortedSetDocValues dv = FieldCache_Fields.DEFAULT.GetDocTermOrds(ar, "field");

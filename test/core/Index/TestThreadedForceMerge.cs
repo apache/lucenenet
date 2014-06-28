@@ -35,6 +35,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestThreadedForceMerge : LuceneTestCase
 	{
 
@@ -173,7 +174,8 @@ namespace Lucene.Net.Index
 	    Run above stress test against RAMDirectory and then
 	    FSDirectory.
 	  */
-	  public virtual void TestThreadedForceMerge_Mem()
+      [Test]
+      public virtual void TestThreadedForceMerge_Mem()
 	  {
 		Directory directory = NewDirectory();
 		RunTest(Random(), directory);

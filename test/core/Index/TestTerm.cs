@@ -21,9 +21,11 @@ namespace Lucene.Net.Index
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestTerm : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestEquals()
 	  {
 		Term @base = new Term("same", "same");

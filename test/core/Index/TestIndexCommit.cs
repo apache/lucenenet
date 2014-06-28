@@ -25,11 +25,13 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestIndexCommit : LuceneTestCase
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testEqualsHashCode() throws Exception
+      [Test]
 	  public virtual void TestEqualsHashCode()
 	  {
 		// LUCENE-2417: equals and hashCode() impl was inconsistent

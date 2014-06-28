@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -142,7 +144,7 @@ namespace Lucene.Net.Search
 		}
 
 		IndexReader r = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("  reader=" + r);
@@ -216,7 +218,7 @@ namespace Lucene.Net.Search
 		  }
 
 		  // Compute expected results:
-		  f.MatchValues.Sort(new ComparatorAnonymousInnerClassHelper(this, sortMissingLast));
+		  ((List<BytesRef>)f.MatchValues).Sort(new ComparatorAnonymousInnerClassHelper(this, sortMissingLast));
 
 		  if (reverse)
 		  {
@@ -333,7 +335,7 @@ namespace Lucene.Net.Search
 		internal readonly Random Random;
 		internal float Density;
 		internal readonly IList<BytesRef> DocValues;
-		public readonly List<BytesRef> MatchValues = Collections.synchronizedList(new List<BytesRef>());
+		public readonly IList<BytesRef> MatchValues = new ConcurrentList<BytesRef>(new List<BytesRef>());
 
 		// density should be 0.0 ... 1.0
 		public RandomFilter(Random random, float density, IList<BytesRef> docValues)

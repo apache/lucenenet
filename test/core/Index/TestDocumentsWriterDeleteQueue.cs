@@ -35,9 +35,11 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Unit test for <seealso cref="DocumentsWriterDeleteQueue"/>
 	/// </summary>
-	public class TestDocumentsWriterDeleteQueue : LuceneTestCase
+	[TestFixture]
+    public class TestDocumentsWriterDeleteQueue : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestUpdateDelteSlices()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
@@ -100,7 +102,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestClear()
+      [Test]
+      public virtual void TestClear()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
 		Assert.IsFalse(queue.AnyChanges());
@@ -133,7 +136,8 @@ namespace Lucene.Net.Index
 
 	  }
 
-	  public virtual void TestAnyChanges()
+      [Test]
+      public virtual void TestAnyChanges()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
 		int size = 200 + Random().Next(500) * RANDOM_MULTIPLIER;
@@ -165,7 +169,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestPartiallyAppliedGlobalSlice()
+      [Test]
+      public virtual void TestPartiallyAppliedGlobalSlice()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
 		Field field = typeof(DocumentsWriterDeleteQueue).GetDeclaredField("globalBufferLock");
@@ -203,7 +208,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestStressDeleteQueue()
+      [Test]
+      public virtual void TestStressDeleteQueue()
 	  {
 		DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
 		HashSet<Term> uniqueValues = new HashSet<Term>();

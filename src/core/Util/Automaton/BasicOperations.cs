@@ -426,7 +426,8 @@ namespace Lucene.Net.Util.Automaton
 			  if (t2[n2].Max_Renamed >= t1[n1].Min_Renamed)
 			  {
 				StatePair q = new StatePair(t1[n1].To, t2[n2].To);
-				StatePair r = newstates[q];
+				StatePair r;
+                newstates.TryGetValue(q, out r);
 				if (r == null)
 				{
 				  q.s = new State();

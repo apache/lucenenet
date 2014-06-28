@@ -292,7 +292,7 @@ namespace Lucene.Net.Document
 	  /// <exception cref="IllegalStateException"> if this FieldType is frozen against
 	  ///         future modifications. </exception>
 	  /// <seealso cref= #numericType() </seealso>
-	  public NumericType NumericTypeValue
+	  public virtual NumericType NumericTypeValue
 	  {
           get
           {

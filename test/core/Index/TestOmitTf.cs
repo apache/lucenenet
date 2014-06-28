@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
-
+    [TestFixture]
 	public class TestOmitTf : LuceneTestCase
 	{
 
@@ -95,14 +95,15 @@ namespace Lucene.Net.Index
 	  private static readonly FieldType OmitType = new FieldType(TextField.TYPE_NOT_STORED);
 	  private static readonly FieldType NormalType = new FieldType(TextField.TYPE_NOT_STORED);
 
-	  static TestOmitTf()
+      static TestOmitTf()
 	  {
 		OmitType.IndexOptionsValue = IndexOptions.DOCS_ONLY;
 	  }
 
 	  // Tests whether the DocumentWriter correctly enable the
 	  // omitTermFreqAndPositions bit in the FieldInfo
-	  public virtual void TestOmitTermFreqAndPositions()
+      [Test]
+      public virtual void TestOmitTermFreqAndPositions()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -148,7 +149,8 @@ namespace Lucene.Net.Index
 
 	  // Tests whether merging of docs that have different
 	  // omitTermFreqAndPositions for the same field works
-	  public virtual void TestMixedMerge()
+      [Test]
+      public virtual void TestMixedMerge()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -201,7 +203,8 @@ namespace Lucene.Net.Index
 	  // Make sure first adding docs that do not omitTermFreqAndPositions for
 	  // field X, then adding docs that do omitTermFreqAndPositions for that same
 	  // field, 
-	  public virtual void TestMixedRAM()
+      [Test]
+      public virtual void TestMixedRAM()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -252,7 +255,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Verifies no *.prx exists when all fields omit term freq:
-	  public virtual void TestNoPrxFile()
+      [Test]
+      public virtual void TestNoPrxFile()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -295,7 +299,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Test scores with one field with Term Freqs and one without, otherwise with equal content 
-	  public virtual void TestBasic()
+      [Test]
+      public virtual void TestBasic()
 	  {
 		Directory dir = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -565,7 +570,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// test that when freqs are omitted, that totalTermFreq and sumTotalTermFreq are -1 </summary>
-	  public virtual void TestStats()
+      [Test]
+      public virtual void TestStats()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -577,7 +583,7 @@ namespace Lucene.Net.Index
 		doc.Add(f);
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 		Assert.AreEqual(-1, ir.TotalTermFreq(new Term("foo", new BytesRef("bar"))));
 		Assert.AreEqual(-1, ir.GetSumTotalTermFreq("foo"));
 		ir.Dispose();

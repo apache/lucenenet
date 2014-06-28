@@ -4,7 +4,7 @@ using System.Threading;
 namespace Lucene.Net.Index
 {
 
-	/// <summary>
+	/*
 	/// Copyright 2004 The Apache Software Foundation
 	/// 
 	/// Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
 	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	/// See the License for the specific language governing permissions and
 	/// limitations under the License.
-	/// </summary>
+	*/
 
 	using Lucene.Net.Util;
 	using Lucene.Net.Store;
@@ -29,6 +29,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestStressIndexing : LuceneTestCase
 	{
 	  private abstract class TimedThread : ThreadClass
@@ -194,7 +195,8 @@ namespace Lucene.Net.Index
 	    Run above stress test against RAMDirectory and then
 	    FSDirectory.
 	  */
-	  public virtual void TestStressIndexAndSearching()
+      [Test]
+      public virtual void TestStressIndexAndSearching()
 	  {
 		Directory directory = NewDirectory();
 		if (directory is MockDirectoryWrapper)

@@ -159,7 +159,8 @@ namespace Lucene.Net.Document
 	  ///  <param name="value"> 32-bit integer value </param>
 	  ///  <param name="stored"> Store.YES if the content should also be stored </param>
 	  ///  <exception cref="IllegalArgumentException"> if the field name is null. </exception>
-	  public IntField(string name, int value, Store stored) : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
+      public IntField(string name, int value, Store stored) 
+          : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
 	  {
 		FieldsData = Convert.ToInt32(value);
 	  }

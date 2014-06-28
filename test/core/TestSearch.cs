@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using NUnit.Framework;
 
 namespace org.apache.lucene
 {

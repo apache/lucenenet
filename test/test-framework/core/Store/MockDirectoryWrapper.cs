@@ -673,7 +673,7 @@ namespace Lucene.Net.Store
 			{
 			  RAMDirectory ramdir = (RAMDirectory) @in;
 			  RAMFile file = new RAMFile(ramdir);
-			  RAMFile existing = ramdir.FileMap[name];
+              RAMFile existing = ramdir.GetNameFromFileMap_Nunit(name);
         
 			  // Enforce write once:
 			  if (existing != null && !name.Equals("segments.gen") && PreventDoubleWrite_Renamed)
@@ -684,10 +684,10 @@ namespace Lucene.Net.Store
 			  {
 				if (existing != null)
 				{
-				  ramdir.sizeInBytes.GetAndAdd(-existing.SizeInBytes);
-				  existing.Directory = null;
+                  ramdir.GetAndAddSizeInBytes_Nunit(-existing.SizeInBytes);
+                  existing.SetDirectory_Nunit(null);
 				}
-				ramdir.FileMap[name] = file;
+				ramdir.SetNameForFileMap_Nunit(name, file);
 			  }
 			}
 			//System.out.println(Thread.currentThread().getName() + ": MDW: create " + name);
@@ -818,7 +818,7 @@ namespace Lucene.Net.Store
 				  return SizeInBytes();
 				}
 				long size = 0;
-				foreach (RAMFile file in ((RAMDirectory)@in).FileMap.Values)
+                foreach (RAMFile file in ((RAMDirectory)@in).GetFileMapValues_Nunit())
 				{
 				  size += file.SizeInBytes;
 				}
@@ -845,7 +845,7 @@ namespace Lucene.Net.Store
 				  return SizeInBytes();
 				}
 				long size = 0;
-				foreach (RAMFile file in ((RAMDirectory)@in).FileMap.Values)
+                foreach (RAMFile file in ((RAMDirectory)@in).GetFileMapValues_Nunit())
 				{
 				  size += file.Length;
 				}
@@ -1138,16 +1138,16 @@ namespace Lucene.Net.Store
 			return this;
 		}
 
-		protected internal bool DoFail;
+        protected internal bool DoFail;
 
 		public virtual void SetDoFail()
 		{
-		  DoFail = true;
+            DoFail = true;
 		}
 
 		public virtual void ClearDoFail()
 		{
-		  DoFail = false;
+            DoFail = false;
 		}
 	  }
 

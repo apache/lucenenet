@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
@@ -29,8 +30,7 @@ namespace Lucene.Net.Index
 	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 	using TestUtil = Lucene.Net.Util.TestUtil;
 	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
+    using NUnit.Framework;
 
 	/// <summary>
 	/// Extends <seealso cref="BaseDocValuesFormatTestCase"/> to add compression checks. </summary>
@@ -40,9 +40,9 @@ namespace Lucene.Net.Index
 	  internal static long DirSize(Directory d)
 	  {
 		long size = 0;
-		foreach (string file in d.listAll())
+		foreach (string file in d.ListAll())
 		{
-		  size += d.fileLength(file);
+		  size += d.FileLength(file);
 		}
 		return size;
 	  }
@@ -54,34 +54,34 @@ namespace Lucene.Net.Index
 		IndexWriter iwriter = new IndexWriter(dir, iwc);
 
 		int uniqueValueCount = TestUtil.NextInt(Random(), 1, 256);
-		IList<long?> values = new List<long?>();
+		IList<long> values = new List<long>();
 
 		Document doc = new Document();
 		NumericDocValuesField dvf = new NumericDocValuesField("dv", 0);
-		doc.add(dvf);
+		doc.Add(dvf);
 		for (int i = 0; i < 300; ++i)
 		{
 		  long value;
 		  if (values.Count < uniqueValueCount)
 		  {
-			value = Random().nextLong();
+			value = Random().NextLong();
 			values.Add(value);
 		  }
 		  else
 		  {
-			value = RandomPicks.randomFrom(Random(), values);
+			value = RandomInts.RandomFrom(Random(), values);
 		  }
 		  dvf.LongValue = value;
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		}
-		iwriter.forceMerge(1);
+		iwriter.ForceMerge(1);
 		long size1 = DirSize(dir);
 		for (int i = 0; i < 20; ++i)
 		{
-		  dvf.LongValue = RandomPicks.randomFrom(Random(), values);
-		  iwriter.addDocument(doc);
+		  dvf.LongValue = RandomInts.RandomFrom(Random(), values);
+		  iwriter.AddDocument(doc);
 		}
-		iwriter.forceMerge(1);
+        iwriter.ForceMerge(1);
 		long size2 = DirSize(dir);
 		// make sure the new longs did not cost 8 bytes each
 		Assert.IsTrue(size2 < size1 + 8 * 20);
@@ -98,23 +98,23 @@ namespace Lucene.Net.Index
 
 		Document doc = new Document();
 		NumericDocValuesField dvf = new NumericDocValuesField("dv", 0);
-		doc.add(dvf);
+		doc.Add(dvf);
 		for (int i = 0; i < 300; ++i)
 		{
 		  dvf.LongValue = @base + Random().Next(1000) * day;
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		}
-		iwriter.forceMerge(1);
+		iwriter.ForceMerge(1);
 		long size1 = DirSize(dir);
 		for (int i = 0; i < 50; ++i)
 		{
 		  dvf.LongValue = @base + Random().Next(1000) * day;
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		}
-		iwriter.forceMerge(1);
+		iwriter.ForceMerge(1);
 		long size2 = DirSize(dir);
 		// make sure the new longs costed less than if they had only been packed
-		Assert.IsTrue(size2 < size1 + (PackedInts.bitsRequired(day) * 50) / 8);
+		Assert.IsTrue(size2 < size1 + (PackedInts.BitsRequired(day) * 50) / 8);
 	  }
 
 	  public virtual void TestSingleBigValueCompression()
@@ -125,17 +125,17 @@ namespace Lucene.Net.Index
 
 		Document doc = new Document();
 		NumericDocValuesField dvf = new NumericDocValuesField("dv", 0);
-		doc.add(dvf);
+		doc.Add(dvf);
 		for (int i = 0; i < 20000; ++i)
 		{
 		  dvf.LongValue = i & 1023;
-		  iwriter.addDocument(doc);
+		  iwriter.AddDocument(doc);
 		}
-		iwriter.forceMerge(1);
+		iwriter.ForceMerge(1);
 		long size1 = DirSize(dir);
 		dvf.LongValue = long.MaxValue;
-		iwriter.addDocument(doc);
-		iwriter.forceMerge(1);
+		iwriter.AddDocument(doc);
+		iwriter.ForceMerge(1);
 		long size2 = DirSize(dir);
 		// make sure the new value did not grow the bpv for every other value
 		Assert.IsTrue(size2 < size1 + (20000 * (63 - 10)) / 8);

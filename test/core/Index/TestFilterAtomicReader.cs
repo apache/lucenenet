@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace Lucene.Net.Index
 {
@@ -33,6 +34,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestFilterAtomicReader : LuceneTestCase
 	{
 
@@ -129,7 +131,8 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Tests the IndexReader.getFieldNames implementation </summary>
 	  /// <exception cref="Exception"> on error </exception>
-	  public virtual void TestFilterIndexReader()
+      [Test]
+      public virtual void TestFilterIndexReader()
 	  {
 		Directory directory = NewDirectory();
 
@@ -183,10 +186,9 @@ namespace Lucene.Net.Index
 	  private static void CheckOverrideMethods(Type clazz)
 	  {
 		Type superClazz = clazz.BaseType;
-		foreach (Method m in superClazz.GetMethods())
+		foreach (MethodInfo m in superClazz.GetMethods())
 		{
-		  int mods = m.Modifiers;
-		  if (Modifier.isStatic(mods) || Modifier.isAbstract(mods) || Modifier.isFinal(mods) || m.Synthetic || m.Name.Equals("attributes"))
+		  if (m.IsStatic || m.IsAbstract || m.IsFinal || /*m.Synthetic ||*/ m.Name.Equals("Attributes"))
 		  {
 			continue;
 		  }
@@ -195,7 +197,7 @@ namespace Lucene.Net.Index
 		  // methods to override to have a working impl minimal and prevents from some
 		  // traps: for example, think about having getCoreCacheKey delegate to the
 		  // filtered impl by default
-		  Method subM = clazz.GetMethod(m.Name, m.ParameterTypes);
+		  MethodInfo subM = clazz.GetMethod(m.Name, m.ParameterTypes);
 		  if (subM.DeclaringClass == clazz && m.DeclaringClass != typeof(object) && m.DeclaringClass != subM.DeclaringClass)
 		  {
 			Assert.Fail(clazz + " overrides " + m + " although it has a default impl");
@@ -203,7 +205,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestOverrideMethods()
+      [Test]
+      public virtual void TestOverrideMethods()
 	  {
 		CheckOverrideMethods(typeof(FilterAtomicReader));
 		CheckOverrideMethods(typeof(FilterAtomicReader.FilterFields));

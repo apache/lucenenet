@@ -37,9 +37,11 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// @lucene.experimental
 	/// </summary>
-	public class TestOmitPositions : LuceneTestCase
+	[TestFixture]
+    public class TestOmitPositions : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestBasic()
 	  {
 		Directory dir = NewDirectory();
@@ -55,7 +57,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader reader = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		Assert.IsNull(MultiFields.GetTermPositionsEnum(reader, null, "foo", new BytesRef("test")));
 
@@ -71,7 +73,8 @@ namespace Lucene.Net.Index
 
 	  // Tests whether the DocumentWriter correctly enable the
 	  // omitTermFreqAndPositions bit in the FieldInfo
-	  public virtual void TestPositions()
+      [Test]
+      public virtual void TestPositions()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -197,7 +200,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Verifies no *.prx exists when all fields omit term positions:
-	  public virtual void TestNoPrxFile()
+      [Test]
+      public virtual void TestNoPrxFile()
 	  {
 		Directory ram = NewDirectory();
 		Analyzer analyzer = new MockAnalyzer(Random());
@@ -242,7 +246,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// make sure we downgrade positions and payloads correctly </summary>
-	  public virtual void TestMixing()
+      [Test]
+      public virtual void TestMixing()
 	  {
 		// no positions
 		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
@@ -281,7 +286,7 @@ namespace Lucene.Net.Index
 		FieldInfos fis = MultiFields.GetMergedFieldInfos(ir);
 		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fis.FieldInfo("foo").IndexOptions);
 		Assert.IsFalse(fis.FieldInfo("foo").HasPayloads());
-        iw.Close();
+        iw.Dispose();
 		ir.Dispose();
 		dir.Dispose(); // checkindex
 	  }

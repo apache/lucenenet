@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(d2);
 
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		float[] scores = new float[4];
 

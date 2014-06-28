@@ -26,6 +26,7 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSizeBoundedForceMerge : LuceneTestCase
 	{
 
@@ -58,7 +59,8 @@ namespace Lucene.Net.Index
 		return conf;
 	  }
 
-	  public virtual void TestByteSizeLimit()
+      [Test]
+      public virtual void TestByteSizeLimit()
 	  {
 		// tests that the max merge size constraint is applied during forceMerge.
 		Directory dir = new RAMDirectory();
@@ -93,7 +95,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(3, sis.Size());
 	  }
 
-	  public virtual void TestNumDocsLimit()
+      [Test]
+      public virtual void TestNumDocsLimit()
 	  {
 		// tests that the max merge docs constraint is applied during forceMerge.
 		Directory dir = new RAMDirectory();
@@ -127,7 +130,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(3, sis.Size());
 	  }
 
-	  public virtual void TestLastSegmentTooLarge()
+      [Test]
+      public virtual void TestLastSegmentTooLarge()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -155,7 +159,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(2, sis.Size());
 	  }
 
-	  public virtual void TestFirstSegmentTooLarge()
+      [Test]
+      public virtual void TestFirstSegmentTooLarge()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -183,7 +188,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(2, sis.Size());
 	  }
 
-	  public virtual void TestAllSegmentsSmall()
+      [Test]
+      public virtual void TestAllSegmentsSmall()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -211,7 +217,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(1, sis.Size());
 	  }
 
-	  public virtual void TestAllSegmentsLarge()
+      [Test]
+      public virtual void TestAllSegmentsLarge()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -238,7 +245,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(3, sis.Size());
 	  }
 
-	  public virtual void TestOneLargeOneSmall()
+      [Test]
+      public virtual void TestOneLargeOneSmall()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -266,7 +274,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(4, sis.Size());
 	  }
 
-	  public virtual void TestMergeFactor()
+      [Test]
+      public virtual void TestMergeFactor()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -300,7 +309,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(4, sis.Size());
 	  }
 
-	  public virtual void TestSingleMergeableSegment()
+      [Test]
+      public virtual void TestSingleMergeableSegment()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -331,7 +341,8 @@ namespace Lucene.Net.Index
 		Assert.IsFalse(sis.Info(2).HasDeletions());
 	  }
 
-	  public virtual void TestSingleNonMergeableSegment()
+      [Test]
+      public virtual void TestSingleNonMergeableSegment()
 	  {
 		Directory dir = new RAMDirectory();
 
@@ -357,7 +368,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(1, sis.Size());
 	  }
 
-	  public virtual void TestSingleMergeableTooLargeSegment()
+      [Test]
+      public virtual void TestSingleMergeableTooLargeSegment()
 	  {
 		Directory dir = new RAMDirectory();
 

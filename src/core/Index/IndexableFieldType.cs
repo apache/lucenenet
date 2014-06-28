@@ -1,3 +1,5 @@
+using Lucene.Net.Document;
+
 namespace Lucene.Net.Index
 {
 
@@ -97,6 +99,8 @@ namespace Lucene.Net.Index
 	  /// recorded into the inverted index 
 	  /// </summary>
       IndexOptions_e? IndexOptionsValue { get; set; }
+
+      FieldType.NumericType NumericTypeValue { get; set; }
 
 	  /// <summary>
 	  /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value

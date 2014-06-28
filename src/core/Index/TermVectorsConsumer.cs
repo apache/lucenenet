@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 	using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using Lucene.Net.Support;
 
-	internal sealed class TermVectorsConsumer : TermsHashConsumer
+	public sealed class TermVectorsConsumer : TermsHashConsumer
 	{
 
 	  internal TermVectorsWriter Writer;

@@ -1,6 +1,12 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
+using Apache.NMS.Util;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -26,8 +32,8 @@ namespace Lucene.Net.Index
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using Codec = Lucene.Net.Codecs.Codec;
 	using StoredFieldsFormat = Lucene.Net.Codecs.StoredFieldsFormat;
-	using Lucene46Codec = Lucene.Net.Codecs.lucene46.Lucene46Codec;
-	using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
+	using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+	//using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
 	using Document = Lucene.Net.Document.Document;
 	using DoubleField = Lucene.Net.Document.DoubleField;
 	using Field = Lucene.Net.Document.Field;
@@ -40,7 +46,7 @@ namespace Lucene.Net.Index
 	using StoredField = Lucene.Net.Document.StoredField;
 	using StringField = Lucene.Net.Document.StringField;
 	using TextField = Lucene.Net.Document.TextField;
-	using FieldCache = Lucene.Net.Search.FieldCache;
+	using FieldCache_Fields = Lucene.Net.Search.FieldCache_Fields;
 	using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 	using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
 	using Query = Lucene.Net.Search.Query;
@@ -49,12 +55,9 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
 	using MMapDirectory = Lucene.Net.Store.MMapDirectory;
 	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-	using Throttling = Lucene.Net.Store.MockDirectoryWrapper.Throttling;
+	using Throttling_e = Lucene.Net.Store.MockDirectoryWrapper.Throttling_e;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using TestUtil = Lucene.Net.Util.TestUtil;
-
-	using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
-	using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
 
 	/// <summary>
 	/// Base class aiming at testing <seealso cref="StoredFieldsFormat stored fields formats"/>.
@@ -70,7 +73,7 @@ namespace Lucene.Net.Index
 		int numValues = Random().Next(3);
 		for (int i = 0; i < numValues; ++i)
 		{
-		  d.add(new StoredField("f", TestUtil.RandomSimpleString(Random(), 100)));
+		  d.Add(new StoredField("f", TestUtil.RandomSimpleString(Random(), 100)));
 		}
 	  }
 
@@ -78,7 +81,7 @@ namespace Lucene.Net.Index
 	  {
 		Directory dir = NewDirectory();
 		Random rand = Random();
-		RandomIndexWriter w = new RandomIndexWriter(rand, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).setMaxBufferedDocs(TestUtil.NextInt(rand, 5, 20)));
+		RandomIndexWriter w = new RandomIndexWriter(rand, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(rand, 5, 20)));
 		//w.w.setNoCFSRatio(0.0);
 		int docCount = AtLeast(200);
 		int fieldCount = TestUtil.NextInt(rand, 1, 5);
@@ -106,7 +109,7 @@ namespace Lucene.Net.Index
 		for (int i = 0;i < docCount;i++)
 		{
 		  Document doc = new Document();
-		  doc.add(idField);
+		  doc.Add(idField);
 		  string id = "" + i;
 		  idField.StringValue = id;
 		  docs[id] = doc;
@@ -121,7 +124,7 @@ namespace Lucene.Net.Index
 			if (rand.Next(4) != 3)
 			{
 			  s = TestUtil.RandomUnicodeString(rand, 1000);
-			  doc.add(NewField("f" + field, s, customType2));
+			  doc.Add(NewField("f" + field, s, customType2));
 			}
 			else
 			{
@@ -132,7 +135,7 @@ namespace Lucene.Net.Index
 		  if (rand.Next(50) == 17)
 		  {
 			// mixup binding of field name -> Number every so often
-			Collections.shuffle(fieldIDs);
+		    fieldIDs = CollectionsHelper.Shuffle(fieldIDs);
 		  }
 		  if (rand.Next(5) == 3 && i > 0)
 		  {
@@ -152,7 +155,7 @@ namespace Lucene.Net.Index
 		}
 		if (docs.Count > 0)
 		{
-		  string[] idsList = docs.Keys.toArray(new string[docs.Count]);
+		  string[] idsList = docs.Keys.ToArray(/*new string[docs.Count]*/);
 
 		  for (int x = 0;x < 2;x++)
 		  {
@@ -172,21 +175,21 @@ namespace Lucene.Net.Index
 			  {
 				Console.WriteLine("TEST: test id=" + testID);
 			  }
-			  TopDocs hits = s.search(new TermQuery(new Term("id", testID)), 1);
-			  Assert.AreEqual(1, hits.totalHits);
-			  Document doc = r.document(hits.scoreDocs[0].doc);
+			  TopDocs hits = s.Search(new TermQuery(new Term("id", testID)), 1);
+			  Assert.AreEqual(1, hits.TotalHits);
+			  Document doc = r.Document(hits.ScoreDocs[0].Doc);
 			  Document docExp = docs[testID];
 			  for (int i = 0;i < fieldCount;i++)
 			  {
-				Assert.AreEqual("doc " + testID + ", field f" + fieldCount + " is wrong", docExp.get("f" + i), doc.get("f" + i));
+				Assert.AreEqual("doc " + testID + ", field f" + fieldCount + " is wrong", docExp.Get("f" + i), doc.Get("f" + i));
 			  }
 			}
-			r.close();
+			r.Dispose();
 			w.ForceMerge(1);
 		  }
 		}
-		w.Close();
-		dir.close();
+		w.Dispose();
+		dir.Dispose();
 	  }
 
 	  // LUCENE-1727: make sure doc fields are stored in order
@@ -198,38 +201,31 @@ namespace Lucene.Net.Index
 
 		FieldType customType = new FieldType();
 		customType.Stored = true;
-		doc.add(NewField("zzz", "a b c", customType));
-		doc.add(NewField("aaa", "a b c", customType));
-		doc.add(NewField("zzz", "1 2 3", customType));
-		w.addDocument(doc);
+		doc.Add(NewField("zzz", "a b c", customType));
+		doc.Add(NewField("aaa", "a b c", customType));
+		doc.Add(NewField("zzz", "1 2 3", customType));
+		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		Document doc2 = r.document(0);
+		Document doc2 = r.Document(0);
 		IEnumerator<IndexableField> it = doc2.Fields.GetEnumerator();
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Field f = (Field) it.next();
-		Assert.AreEqual(f.name(), "zzz");
-		Assert.AreEqual(f.stringValue(), "a b c");
+		Assert.IsTrue(it.MoveNext());
+		Field f = (Field) it.Current;
+		Assert.AreEqual(f.Name(), "zzz");
+		Assert.AreEqual(f.StringValue, "a b c");
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		f = (Field) it.next();
-		Assert.AreEqual(f.name(), "aaa");
-		Assert.AreEqual(f.stringValue(), "a b c");
+		Assert.IsTrue(it.MoveNext());
+		f = (Field) it.Current;
+		Assert.AreEqual(f.Name(), "aaa");
+		Assert.AreEqual(f.StringValue, "a b c");
 
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsTrue(it.hasNext());
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		f = (Field) it.next();
-		Assert.AreEqual(f.name(), "zzz");
-		Assert.AreEqual(f.stringValue(), "1 2 3");
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
-		Assert.IsFalse(it.hasNext());
-		r.close();
-		w.close();
-		d.close();
+		Assert.IsTrue(it.MoveNext());
+		f = (Field) it.Current;
+		Assert.AreEqual(f.Name(), "zzz");
+		Assert.AreEqual(f.StringValue, "1 2 3");
+		Assert.IsFalse(it.MoveNext());
+		r.Dispose();
+		w.Dispose();
+		d.Dispose();
 	  }
 
 	  // LUCENE-1219
@@ -245,24 +241,24 @@ namespace Lucene.Net.Index
 
 		Document doc = new Document();
 		Field f = new StoredField("binary", b, 10, 17);
-		sbyte[] bx = f.binaryValue().bytes;
+		sbyte[] bx = f.BinaryValue().Bytes;
 		Assert.IsTrue(bx != null);
 		Assert.AreEqual(50, bx.Length);
-		Assert.AreEqual(10, f.binaryValue().offset);
-		Assert.AreEqual(17, f.binaryValue().length);
-		doc.add(f);
-		w.addDocument(doc);
-		w.close();
+		Assert.AreEqual(10, f.BinaryValue().Offset);
+		Assert.AreEqual(17, f.BinaryValue().Length);
+		doc.Add(f);
+		w.AddDocument(doc);
+		w.Dispose();
 
-		IndexReader ir = DirectoryReader.open(dir);
-		Document doc2 = ir.document(0);
-		IndexableField f2 = doc2.getField("binary");
-		b = f2.binaryValue().bytes;
+		IndexReader ir = DirectoryReader.Open(dir);
+		Document doc2 = ir.Document(0);
+		IndexableField f2 = doc2.GetField("binary");
+		b = f2.BinaryValue().Bytes;
 		Assert.IsTrue(b != null);
 		Assert.AreEqual(17, b.Length, 17);
 		Assert.AreEqual(87, b[0]);
-		ir.close();
-		dir.close();
+		ir.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestNumericField()
@@ -270,25 +266,25 @@ namespace Lucene.Net.Index
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		int numDocs = AtLeast(500);
-		Number[] answers = new Number[numDocs];
-		FieldType.NumericType[] typeAnswers = new FieldType.NumericType[numDocs];
+		object[] answers = new Number[numDocs];
+        FieldType.NumericType[] typeAnswers = new FieldType.NumericType[numDocs];
 		for (int id = 0;id < numDocs;id++)
 		{
 		  Document doc = new Document();
 		  Field nf;
 		  Field sf;
-		  Number answer;
-		  FieldType.NumericType typeAnswer;
-		  if (Random().nextBoolean())
+		  object answer;
+          FieldType.NumericType typeAnswer;
+		  if (Random().NextBoolean())
 		  {
 			// float/double
-			if (Random().nextBoolean())
+			if (Random().NextBoolean())
 			{
-			  float f = Random().nextFloat();
+			  float f = Random().NextFloat();
 			  answer = Convert.ToSingle(f);
 			  nf = new FloatField("nf", f, Field.Store.NO);
 			  sf = new StoredField("nf", f);
-			  typeAnswer = FieldType.NumericType.FLOAT;
+              typeAnswer = FieldType.NumericType.FLOAT;
 			}
 			else
 			{
@@ -296,57 +292,57 @@ namespace Lucene.Net.Index
 			  answer = Convert.ToDouble(d);
 			  nf = new DoubleField("nf", d, Field.Store.NO);
 			  sf = new StoredField("nf", d);
-			  typeAnswer = FieldType.NumericType.DOUBLE;
+              typeAnswer = FieldType.NumericType.DOUBLE;
 			}
 		  }
 		  else
 		  {
 			// int/long
-			if (Random().nextBoolean())
+			if (Random().NextBoolean())
 			{
 			  int i = Random().Next();
 			  answer = Convert.ToInt32(i);
 			  nf = new IntField("nf", i, Field.Store.NO);
 			  sf = new StoredField("nf", i);
-			  typeAnswer = FieldType.NumericType.INT;
+              typeAnswer = FieldType.NumericType.INT;
 			}
 			else
 			{
-			  long l = Random().nextLong();
+			  long l = Random().NextLong();
 			  answer = Convert.ToInt64(l);
 			  nf = new LongField("nf", l, Field.Store.NO);
 			  sf = new StoredField("nf", l);
-			  typeAnswer = FieldType.NumericType.LONG;
+              typeAnswer = FieldType.NumericType.LONG;
 			}
 		  }
-		  doc.add(nf);
-		  doc.add(sf);
+		  doc.Add(nf);
+		  doc.Add(sf);
 		  answers[id] = answer;
 		  typeAnswers[id] = typeAnswer;
 		  FieldType ft = new FieldType(IntField.TYPE_STORED);
 		  ft.NumericPrecisionStep = int.MaxValue;
-		  doc.add(new IntField("id", id, ft));
+		  doc.Add(new IntField("id", id, ft));
 		  w.AddDocument(doc);
 		}
 		DirectoryReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
-		Assert.AreEqual(numDocs, r.numDocs());
+		Assert.AreEqual(numDocs, r.NumDocs());
 
-		foreach (AtomicReaderContext ctx in r.leaves())
+		foreach (AtomicReaderContext ctx in r.Leaves())
 		{
-		  AtomicReader sub = ctx.reader();
-		  FieldCache.Ints ids = FieldCache.DEFAULT.getInts(sub, "id", false);
-		  for (int docID = 0;docID < sub.numDocs();docID++)
+		  AtomicReader sub = (AtomicReader)ctx.Reader();
+          FieldCache_Fields.Ints ids = FieldCache_Fields.DEFAULT.GetInts(sub, "id", false);
+		  for (int docID = 0;docID < sub.NumDocs();docID++)
 		  {
-			Document doc = sub.document(docID);
-			Field f = (Field) doc.getField("nf");
-			Assert.IsTrue("got f=" + f, f is StoredField);
-			Assert.AreEqual(answers[ids.get(docID)], f.numericValue());
+			Document doc = sub.Document(docID);
+			Field f = (Field) doc.GetField("nf");
+			Assert.IsTrue(f is StoredField, "got f=" + f);
+			Assert.AreEqual(answers[ids.Get(docID)], f.NumericValue);
 		  }
 		}
-		r.close();
-		dir.close();
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestIndexedBit()
@@ -356,36 +352,36 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		FieldType onlyStored = new FieldType();
 		onlyStored.Stored = true;
-		doc.add(new Field("field", "value", onlyStored));
-		doc.add(new StringField("field2", "value", Field.Store.YES));
+		doc.Add(new Field("field", "value", onlyStored));
+		doc.Add(new StringField("field2", "value", Field.Store.YES));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.Close();
-		Assert.IsFalse(r.document(0).getField("field").fieldType().indexed());
-		Assert.IsTrue(r.document(0).getField("field2").fieldType().indexed());
-		r.close();
-		dir.close();
+		w.Dispose();
+		Assert.IsFalse(r.Document(0).GetField("field").FieldType().Indexed);
+		Assert.IsTrue(r.Document(0).GetField("field2").FieldType().Indexed);
+		r.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestReadSkip()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-		iwConf.MaxBufferedDocs = RandomInts.randomIntBetween(Random(), 2, 30);
+		iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
 		FieldType ft = new FieldType();
 		ft.Stored = true;
-		ft.freeze();
+		ft.Freeze();
 
 		string @string = TestUtil.RandomSimpleString(Random(), 50);
-		sbyte[] bytes = @string.getBytes(StandardCharsets.UTF_8);
-		long l = Random().nextBoolean() ? Random().Next(42) : Random().nextLong();
-		int i = Random().nextBoolean() ? Random().Next(42) : Random().Next();
-		float f = Random().nextFloat();
+		sbyte[] bytes = @string.GetBytes(IOUtils.CHARSET_UTF_8);
+		long l = Random().NextBoolean() ? Random().Next(42) : Random().NextLong();
+		int i = Random().NextBoolean() ? Random().Next(42) : Random().Next();
+		float f = Random().NextFloat();
 		double d = Random().NextDouble();
 
-		IList<Field> fields = Arrays.asList(new Field("bytes", bytes, ft), new Field("string", @string, ft), new LongField("long", l, Field.Store.YES), new IntField("int", i, Field.Store.YES), new FloatField("float", f, Field.Store.YES), new DoubleField("double", d, Field.Store.YES)
+		IList<Field> fields = Arrays.AsList(new Field("bytes", bytes, ft), new Field("string", @string, ft), new LongField("long", l, Field.Store.YES), new IntField("int", i, Field.Store.YES), new FloatField("float", f, Field.Store.YES), new DoubleField("double", d, Field.Store.YES)
 	   );
 
 		for (int k = 0; k < 100; ++k)
@@ -393,73 +389,73 @@ namespace Lucene.Net.Index
 		  Document doc = new Document();
 		  foreach (Field fld in fields)
 		  {
-			doc.add(fld);
+			doc.Add(fld);
 		  }
-		  iw.w.addDocument(doc);
+		  iw.w.AddDocument(doc);
 		}
 		iw.Commit();
 
-		DirectoryReader reader = DirectoryReader.open(dir);
+		DirectoryReader reader = DirectoryReader.Open(dir);
 		int docID = Random().Next(100);
 		foreach (Field fld in fields)
 		{
-		  string fldName = fld.name();
-		  Document sDoc = reader.document(docID, Collections.singleton(fldName));
-		  IndexableField sField = sDoc.getField(fldName);
+		  string fldName = fld.Name();
+		  Document sDoc = reader.Document(docID, CollectionsHelper.Singleton(fldName));
+		  IndexableField sField = sDoc.GetField(fldName);
 		  if (typeof(Field).Equals(fld.GetType()))
 		  {
-			Assert.AreEqual(fld.binaryValue(), sField.binaryValue());
-			Assert.AreEqual(fld.stringValue(), sField.stringValue());
+			Assert.AreEqual(fld.BinaryValue(), sField.BinaryValue());
+			Assert.AreEqual(fld.StringValue, sField.StringValue);
 		  }
 		  else
 		  {
-			Assert.AreEqual(fld.numericValue(), sField.numericValue());
+			Assert.AreEqual(fld.NumericValue, sField.NumericValue);
 		  }
 		}
-		reader.close();
-		iw.Close();
-		dir.close();
+		reader.Dispose();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestEmptyDocs()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-		iwConf.MaxBufferedDocs = RandomInts.randomIntBetween(Random(), 2, 30);
+		iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
 		// make sure that the fact that documents might be empty is not a problem
 		Document emptyDoc = new Document();
-		int numDocs = Random().nextBoolean() ? 1 : AtLeast(1000);
+		int numDocs = Random().NextBoolean() ? 1 : AtLeast(1000);
 		for (int i = 0; i < numDocs; ++i)
 		{
 		  iw.AddDocument(emptyDoc);
 		}
 		iw.Commit();
-		DirectoryReader rd = DirectoryReader.open(dir);
+		DirectoryReader rd = DirectoryReader.Open(dir);
 		for (int i = 0; i < numDocs; ++i)
 		{
-		  Document doc = rd.document(i);
+		  Document doc = rd.Document(i);
 		  Assert.IsNotNull(doc);
-		  Assert.IsTrue(doc.Fields.Empty);
+		  Assert.IsTrue(doc.Fields.Count <= 0);
 		}
-		rd.close();
+		rd.Dispose();
 
-		iw.Close();
-		dir.close();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestConcurrentReads()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-		iwConf.MaxBufferedDocs = RandomInts.randomIntBetween(Random(), 2, 30);
+		iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
 		// make sure the readers are properly cloned
 		Document doc = new Document();
 		Field field = new StringField("fld", "", Field.Store.YES);
-		doc.add(field);
+		doc.Add(field);
 		int numDocs = AtLeast(1000);
 		for (int i = 0; i < numDocs; ++i)
 		{
@@ -468,35 +464,35 @@ namespace Lucene.Net.Index
 		}
 		iw.Commit();
 
-		DirectoryReader rd = DirectoryReader.open(dir);
+		DirectoryReader rd = DirectoryReader.Open(dir);
 		IndexSearcher searcher = new IndexSearcher(rd);
 		int concurrentReads = AtLeast(5);
 		int readsPerThread = AtLeast(50);
-		IList<Thread> readThreads = new List<Thread>();
+        IList<ThreadClass> readThreads = new List<ThreadClass>();
 		AtomicReference<Exception> ex = new AtomicReference<Exception>();
 		for (int i = 0; i < concurrentReads; ++i)
 		{
 		  readThreads.Add(new ThreadAnonymousInnerClassHelper(this, numDocs, rd, searcher, readsPerThread, ex, i));
 		}
-		foreach (Thread thread in readThreads)
+        foreach (ThreadClass thread in readThreads)
 		{
 		  thread.Start();
 		}
-		foreach (Thread thread in readThreads)
+        foreach (ThreadClass thread in readThreads)
 		{
 		  thread.Join();
 		}
-		rd.close();
-		if (ex.get() != null)
+		rd.Dispose();
+		if (ex.Value != null)
 		{
-		  throw ex.get();
+		  throw ex.Value;
 		}
 
-		iw.Close();
-		dir.close();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
-	  private class ThreadAnonymousInnerClassHelper : System.Threading.Thread
+	  private class ThreadAnonymousInnerClassHelper : ThreadClass
 	  {
 		  private readonly BaseStoredFieldsFormatTestCase OuterInstance;
 
@@ -506,6 +502,7 @@ namespace Lucene.Net.Index
 		  private int ReadsPerThread;
 		  private AtomicReference<Exception> Ex;
 		  private int i;
+          private readonly int[] queries;
 
 		  public ThreadAnonymousInnerClassHelper(BaseStoredFieldsFormatTestCase outerInstance, int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex, int i)
 		  {
@@ -516,19 +513,15 @@ namespace Lucene.Net.Index
 			  this.ReadsPerThread = readsPerThread;
 			  this.Ex = ex;
 			  this.i = i;
+
+              queries = new int[ReadsPerThread];
+		      for (int j = 0; j < queries.Length; ++j)
+		      {
+		          queries[j] = Random().NextIntBetween(0, NumDocs);
+		      }
 		  }
 
 
-		  internal int[] queries;
-
-//JAVA TO C# CONVERTER TODO TASK: Initialization blocks declared within anonymous inner classes are not converted:
-	//	  {
-	//		queries = new int[readsPerThread];
-	//		for (int i = 0; i < queries.length; ++i)
-	//		{
-	//		  queries[i] = random().nextInt(numDocs);
-	//		}
-	//	  }
 
 		  public override void Run()
 		  {
@@ -537,24 +530,25 @@ namespace Lucene.Net.Index
 			  Query query = new TermQuery(new Term("fld", "" + q));
 			  try
 			  {
-				TopDocs topDocs = Searcher.search(query, 1);
-				if (topDocs.totalHits != 1)
+				TopDocs topDocs = Searcher.Search(query, 1);
+				if (topDocs.TotalHits != 1)
 				{
-				  throw new IllegalStateException("Expected 1 hit, got " + topDocs.totalHits);
+				  throw new InvalidOperationException("Expected 1 hit, got " + topDocs.TotalHits);
 				}
-				Document sdoc = Rd.document(topDocs.scoreDocs[0].doc);
-				if (sdoc == null || sdoc.get("fld") == null)
+				Document sdoc = Rd.Document(topDocs.ScoreDocs[0].Doc);
+				if (sdoc == null || sdoc.Get("fld") == null)
 				{
-				  throw new IllegalStateException("Could not find document " + q);
+                    throw new InvalidOperationException("Could not find document " + q);
 				}
-				if (!Convert.ToString(q).Equals(sdoc.get("fld")))
+				if (!Convert.ToString(q).Equals(sdoc.Get("fld")))
 				{
-				  throw new IllegalStateException("Expected " + q + ", but got " + sdoc.get("fld"));
+                    throw new InvalidOperationException("Expected " + q + ", but got " + sdoc.Get("fld"));
 				}
 			  }
 			  catch (Exception e)
 			  {
-				Ex.compareAndSet(null, e);
+			      Ex.GetAndSet(e);
+				//Ex.compareAndSet(null, e);
 			  }
 			}
 		  }
@@ -574,24 +568,24 @@ namespace Lucene.Net.Index
 	  {
 		// get another codec, other than the default: so we are merging segments across different codecs
 		Codec otherCodec;
-		if ("SimpleText".Equals(Codec.Default.Name))
-		{
+		/*if ("SimpleText".Equals(Codec.Default.Name))
+		{*/
 		  otherCodec = new Lucene46Codec();
-		}
+		/*}
 		else
 		{
 		  otherCodec = new SimpleTextCodec();
-		}
+		}*/
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-		iwConf.MaxBufferedDocs = RandomInts.randomIntBetween(Random(), 2, 30);
-		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf.clone());
+		iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, (IndexWriterConfig)iwConf.Clone());
 
 		int docCount = AtLeast(200);
 		sbyte[][][] data = new sbyte [docCount][][];
 		for (int i = 0; i < docCount; ++i)
 		{
-		  int fieldCount = Rarely() ? RandomInts.randomIntBetween(Random(), 1, 500) : RandomInts.randomIntBetween(Random(), 1, 5);
+          int fieldCount = Rarely() ? RandomInts.NextIntBetween(Random(), 1, 500) : RandomInts.NextIntBetween(Random(), 1, 5);
 		  data[i] = new sbyte[fieldCount][];
 		  for (int j = 0; j < fieldCount; ++j)
 		  {
@@ -603,32 +597,32 @@ namespace Lucene.Net.Index
 
 		FieldType type = new FieldType(StringField.TYPE_STORED);
 		type.Indexed = false;
-		type.freeze();
+		type.Freeze();
 		IntField id = new IntField("id", 0, Field.Store.YES);
 		for (int i = 0; i < data.Length; ++i)
 		{
 		  Document doc = new Document();
-		  doc.add(id);
+		  doc.Add(id);
 		  id.IntValue = i;
 		  for (int j = 0; j < data[i].Length; ++j)
 		  {
 			Field f = new Field("bytes" + j, data[i][j], type);
-			doc.add(f);
+			doc.Add(f);
 		  }
-		  iw.w.addDocument(doc);
-		  if (Random().nextBoolean() && (i % (data.Length / 10) == 0))
+		  iw.w.AddDocument(doc);
+		  if (Random().NextBoolean() && (i % (data.Length / 10) == 0))
 		  {
-			iw.w.close();
+			iw.w.Dispose();
 			// test merging against a non-compressing codec
 			if (iwConf.Codec == otherCodec)
 			{
-			  iwConf.Codec = Codec.Default;
+			  iwConf.SetCodec(Codec.Default);
 			}
 			else
 			{
-			  iwConf.Codec = otherCodec;
+			  iwConf.SetCodec(otherCodec);
 			}
-			iw = new RandomIndexWriter(Random(), dir, iwConf.clone());
+			iw = new RandomIndexWriter(Random(), dir, (IndexWriterConfig) iwConf.Clone());
 		  }
 		}
 
@@ -636,43 +630,43 @@ namespace Lucene.Net.Index
 		{
 		  int min = Random().Next(data.Length);
 		  int max = min + Random().Next(20);
-		  iw.DeleteDocuments(NumericRangeQuery.newIntRange("id", min, max, true, false));
+		  iw.DeleteDocuments(NumericRangeQuery.NewIntRange("id", min, max, true, false));
 		}
 
 		iw.ForceMerge(2); // force merges with deletions
 
 		iw.Commit();
 
-		DirectoryReader ir = DirectoryReader.open(dir);
-		Assert.IsTrue(ir.numDocs() > 0);
+		DirectoryReader ir = DirectoryReader.Open(dir);
+		Assert.IsTrue(ir.NumDocs() > 0);
 		int numDocs = 0;
-		for (int i = 0; i < ir.maxDoc(); ++i)
+		for (int i = 0; i < ir.MaxDoc(); ++i)
 		{
-		  Document doc = ir.document(i);
+		  Document doc = ir.Document(i);
 		  if (doc == null)
 		  {
 			continue;
 		  }
 		  ++numDocs;
-		  int docId = (int)doc.getField("id").numericValue();
-		  Assert.AreEqual(data[docId].Length + 1, doc.Fields.size());
+		  int docId = (int)doc.GetField("id").NumericValue;
+		  Assert.AreEqual(data[docId].Length + 1, doc.Fields.Count);
 		  for (int j = 0; j < data[docId].Length; ++j)
 		  {
 			sbyte[] arr = data[docId][j];
-			BytesRef arr2Ref = doc.getBinaryValue("bytes" + j);
-			sbyte[] arr2 = Arrays.copyOfRange(arr2Ref.bytes, arr2Ref.offset, arr2Ref.offset + arr2Ref.length);
-			assertArrayEquals(arr, arr2);
+			BytesRef arr2Ref = doc.GetBinaryValue("bytes" + j);
+			sbyte[] arr2 = Arrays.CopyOfRange(arr2Ref.Bytes, arr2Ref.Offset, arr2Ref.Offset + arr2Ref.Length);
+			Assert.AreEqual(arr, arr2);
 		  }
 		}
-		Assert.IsTrue(ir.numDocs() <= numDocs);
-		ir.close();
+		Assert.IsTrue(ir.NumDocs() <= numDocs);
+		ir.Dispose();
 
 		iw.DeleteAll();
 		iw.Commit();
 		iw.ForceMerge(1);
 
-		iw.Close();
-		dir.close();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
@@ -685,12 +679,12 @@ namespace Lucene.Net.Index
 		// so if we get NRTCachingDir+SimpleText, we make massive stored fields and OOM (LUCENE-4484)
 		Directory dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("testBigDocuments")));
 		IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-		iwConf.MaxBufferedDocs = RandomInts.randomIntBetween(Random(), 2, 30);
+		iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
 		if (dir is MockDirectoryWrapper)
 		{
-		  ((MockDirectoryWrapper) dir).Throttling = MockDirectoryWrapper.Throttling.NEVER;
+		  ((MockDirectoryWrapper) dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
 		}
 
 		Document emptyDoc = new Document(); // emptyDoc
@@ -698,28 +692,28 @@ namespace Lucene.Net.Index
 		Document bigDoc2 = new Document(); // 1 very big field
 
 		Field idField = new StringField("id", "", Field.Store.NO);
-		emptyDoc.add(idField);
-		bigDoc1.add(idField);
-		bigDoc2.add(idField);
+		emptyDoc.Add(idField);
+		bigDoc1.Add(idField);
+		bigDoc2.Add(idField);
 
 		FieldType onlyStored = new FieldType(StringField.TYPE_STORED);
 		onlyStored.Indexed = false;
 
 		Field smallField = new Field("fld", RandomByteArray(Random().Next(10), 256), onlyStored);
-		int numFields = RandomInts.randomIntBetween(Random(), 500000, 1000000);
+		int numFields = RandomInts.NextIntBetween(Random(), 500000, 1000000);
 		for (int i = 0; i < numFields; ++i)
 		{
-		  bigDoc1.add(smallField);
+		  bigDoc1.Add(smallField);
 		}
 
-		Field bigField = new Field("fld", RandomByteArray(RandomInts.randomIntBetween(Random(), 1000000, 5000000), 2), onlyStored);
-		bigDoc2.add(bigField);
+        Field bigField = new Field("fld", RandomByteArray(RandomInts.NextIntBetween(Random(), 1000000, 5000000), 2), onlyStored);
+		bigDoc2.Add(bigField);
 
 		int numDocs = AtLeast(5);
 		Document[] docs = new Document[numDocs];
 		for (int i = 0; i < numDocs; ++i)
 		{
-		  docs[i] = RandomPicks.randomFrom(Random(), Arrays.asList(emptyDoc, bigDoc1, bigDoc2));
+		  docs[i] = RandomInts.RandomFrom(Random(), Arrays.AsList(emptyDoc, bigDoc1, bigDoc2));
 		}
 		for (int i = 0; i < numDocs; ++i)
 		{
@@ -732,37 +726,37 @@ namespace Lucene.Net.Index
 		}
 		iw.Commit();
 		iw.ForceMerge(1); // look at what happens when big docs are merged
-		DirectoryReader rd = DirectoryReader.open(dir);
+		DirectoryReader rd = DirectoryReader.Open(dir);
 		IndexSearcher searcher = new IndexSearcher(rd);
 		for (int i = 0; i < numDocs; ++i)
 		{
 		  Query query = new TermQuery(new Term("id", "" + i));
-		  TopDocs topDocs = searcher.search(query, 1);
-		  Assert.AreEqual("" + i, 1, topDocs.totalHits);
-		  Document doc = rd.document(topDocs.scoreDocs[0].doc);
+		  TopDocs topDocs = searcher.Search(query, 1);
+		  Assert.AreEqual(1, topDocs.TotalHits, "" + i);
+		  Document doc = rd.Document(topDocs.ScoreDocs[0].Doc);
 		  Assert.IsNotNull(doc);
-		  IndexableField[] fieldValues = doc.getFields("fld");
-		  Assert.AreEqual(docs[i].getFields("fld").length, fieldValues.Length);
+		  IndexableField[] fieldValues = doc.GetFields("fld");
+		  Assert.AreEqual(docs[i].GetFields("fld").Length, fieldValues.Length);
 		  if (fieldValues.Length > 0)
 		  {
-			Assert.AreEqual(docs[i].getFields("fld")[0].binaryValue(), fieldValues[0].binaryValue());
+			Assert.AreEqual(docs[i].GetFields("fld")[0].BinaryValue(), fieldValues[0].BinaryValue());
 		  }
 		}
-		rd.close();
-		iw.Close();
-		dir.close();
+		rd.Dispose();
+		iw.Dispose();
+		dir.Dispose();
 	  }
 
 	  public virtual void TestBulkMergeWithDeletes()
 	  {
 		int numDocs = AtLeast(200);
 		Directory dir = NewDirectory();
-		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).setMergePolicy(NoMergePolicy.COMPOUND_FILES));
+		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 		for (int i = 0; i < numDocs; ++i)
 		{
 		  Document doc = new Document();
-		  doc.add(new StringField("id", Convert.ToString(i), Field.Store.YES));
-		  doc.add(new StoredField("f", TestUtil.RandomSimpleString(Random())));
+		  doc.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
+		  doc.Add(new StoredField("f", TestUtil.RandomSimpleString(Random())));
 		  w.AddDocument(doc);
 		}
 		int deleteCount = TestUtil.NextInt(Random(), 5, numDocs);
@@ -772,13 +766,13 @@ namespace Lucene.Net.Index
 		  w.DeleteDocuments(new Term("id", Convert.ToString(id)));
 		}
 		w.Commit();
-		w.Close();
+		w.Dispose();
 		w = new RandomIndexWriter(Random(), dir);
 		w.ForceMerge(TestUtil.NextInt(Random(), 1, 3));
 		w.Commit();
-		w.Close();
+		w.Dispose();
 		TestUtil.CheckIndex(dir);
-		dir.close();
+		dir.Dispose();
 	  }
 
 	}

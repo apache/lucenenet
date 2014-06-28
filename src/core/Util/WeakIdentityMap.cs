@@ -62,7 +62,8 @@ namespace Lucene.Net.Util
 	/// 
 	/// @lucene.internal
 	/// </summary>
-	public sealed class WeakIdentityMap<K, V> where K : class
+	public sealed class WeakIdentityMap<K, V> 
+        where K : class
 	{
 	  //private readonly ReferenceQueue<object> queue = new ReferenceQueue<object>();
 	  private readonly IDictionary<IdentityWeakReference, V> BackingStore;

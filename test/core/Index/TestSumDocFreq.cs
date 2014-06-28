@@ -31,9 +31,11 @@ namespace Lucene.Net.Index
 	/// Tests <seealso cref="Terms#getSumDocFreq()"/>
 	/// @lucene.experimental
 	/// </summary>
-	public class TestSumDocFreq : LuceneTestCase
+	[TestFixture]
+    public class TestSumDocFreq : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestSumDocFreq_Mem()
 	  {
 		int numDocs = AtLeast(500);
@@ -71,7 +73,7 @@ namespace Lucene.Net.Index
 		  writer.DeleteDocuments(new Term("id", "" + Random().Next(numDocs)));
 		}
 		writer.ForceMerge(1);
-        writer.Close();
+        writer.Dispose();
 
 		ir = DirectoryReader.Open(dir);
 		AssertSumDocFreq(ir);

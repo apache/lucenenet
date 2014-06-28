@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Apache.NMS.Util;
 
@@ -53,7 +54,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") @Slow public class TestIndexWriterWithThreads extends Lucene.Net.Util.LuceneTestCase
-	public class TestIndexWriterWithThreads : LuceneTestCase
+	[TestFixture]
+    public class TestIndexWriterWithThreads : LuceneTestCase
 	{
 
 	  // Used by test cases below
@@ -153,7 +155,8 @@ namespace Lucene.Net.Index
 	  // LUCENE-1130: make sure immediate disk full on creating
 	  // an IndexWriter (hit during DW.ThreadState.Init()), with
 	  // multiple threads, is OK:
-	  public virtual void TestImmediateDiskFullWithThreads()
+      [Test]
+      public virtual void TestImmediateDiskFullWithThreads()
 	  {
 
 		int NUM_THREADS = 3;
@@ -202,7 +205,8 @@ namespace Lucene.Net.Index
 	  // threads are trying to add documents.  Strictly
 	  // speaking, this isn't valid us of Lucene's APIs, but we
 	  // still want to be robust to this case:
-	  public virtual void TestCloseWithThreads()
+      [Test]
+      public virtual void TestCloseWithThreads()
 	  {
 		int NUM_THREADS = 3;
 		int numIterations = TEST_NIGHTLY ? 7 : 3;
@@ -412,29 +416,32 @@ namespace Lucene.Net.Index
 
 		  if (DoFail)
 		  {
-			string[] trace = (new Exception()).StackTrace;
+            var trace = new StackTrace(new Exception());
 			bool sawAbortOrFlushDoc = false;
 			bool sawClose = false;
 			bool sawMerge = false;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if (sawAbortOrFlushDoc && sawMerge && sawClose)
-			  {
-				break;
-			  }
-			  if ("abort".Equals(trace[i].MethodName) || "finishDocument".Equals(trace[i].MethodName))
-			  {
-				sawAbortOrFlushDoc = true;
-			  }
-			  if ("merge".Equals(trace[i].MethodName))
-			  {
-				sawMerge = true;
-			  }
-			  if ("close".Equals(trace[i].MethodName))
-			  {
-				sawClose = true;
-			  }
-			}
+
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+                  if (sawAbortOrFlushDoc && sawMerge && sawClose)
+                  {
+                      break;
+                  }
+                  if ("Abort".Equals(method.Name) || "FinishDocument".Equals(method.Name))
+                  {
+                      sawAbortOrFlushDoc = true;
+                  }
+                  if ("Merge".Equals(method.Name))
+                  {
+                      sawMerge = true;
+                  }
+                  if ("Close".Equals(method.Name) || "Dispose".Equals(method.Name))
+                  {
+                      sawClose = true;
+                  }
+		      }
+
 			if (sawAbortOrFlushDoc && !sawClose && !sawMerge)
 			{
 			  if (OnlyOnce)
@@ -453,28 +460,32 @@ namespace Lucene.Net.Index
 
 	  // LUCENE-1130: make sure initial IOException, and then 2nd
 	  // IOException during rollback(), is OK:
-	  public virtual void TestIOExceptionDuringAbort()
+      [Test]
+      public virtual void TestIOExceptionDuringAbort()
 	  {
 		_testSingleThreadFailure(new FailOnlyOnAbortOrFlush(false));
 	  }
 
 	  // LUCENE-1130: make sure initial IOException, and then 2nd
 	  // IOException during rollback(), is OK:
-	  public virtual void TestIOExceptionDuringAbortOnlyOnce()
+      [Test]
+      public virtual void TestIOExceptionDuringAbortOnlyOnce()
 	  {
 		_testSingleThreadFailure(new FailOnlyOnAbortOrFlush(true));
 	  }
 
 	  // LUCENE-1130: make sure initial IOException, and then 2nd
 	  // IOException during rollback(), with multiple threads, is OK:
-	  public virtual void TestIOExceptionDuringAbortWithThreads()
+      [Test]
+      public virtual void TestIOExceptionDuringAbortWithThreads()
 	  {
 		_testMultipleThreadsFailure(new FailOnlyOnAbortOrFlush(false));
 	  }
 
 	  // LUCENE-1130: make sure initial IOException, and then 2nd
 	  // IOException during rollback(), with multiple threads, is OK:
-	  public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce()
+      [Test]
+      public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce()
 	  {
 		_testMultipleThreadsFailure(new FailOnlyOnAbortOrFlush(true));
 	  }
@@ -491,44 +502,49 @@ namespace Lucene.Net.Index
 		{
 		  if (DoFail)
 		  {
-			string[] trace = (new Exception()).StackTrace;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if ("flush".Equals(trace[i].MethodName) && "Lucene.Net.Index.DocFieldProcessor".Equals(trace[i].ClassName))
-			  {
-				if (OnlyOnce)
-				{
-				  DoFail = false;
-				}
-				//System.out.println(Thread.currentThread().getName() + ": NOW FAIL: onlyOnce=" + onlyOnce);
-				//new Throwable(Console.WriteLine().StackTrace);
-				throw new IOException("now failing on purpose");
-			  }
-			}
+		      var trace = new StackTrace(new Exception());
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+                  if ("Flush".Equals(method.Name) && "Lucene.Net.Index.DocFieldProcessor".Equals(frame.GetType().Name))
+                  {
+                      if (OnlyOnce)
+                      {
+                          DoFail = false;
+                      }
+                      //System.out.println(Thread.currentThread().getName() + ": NOW FAIL: onlyOnce=" + onlyOnce);
+                      //new Throwable(Console.WriteLine().StackTrace);
+                      throw new IOException("now failing on purpose");
+                  }
+		      }
 		  }
 		}
 	  }
 
 	  // LUCENE-1130: test IOException in writeSegment
-	  public virtual void TestIOExceptionDuringWriteSegment()
+      [Test]
+      public virtual void TestIOExceptionDuringWriteSegment()
 	  {
 		_testSingleThreadFailure(new FailOnlyInWriteSegment(false));
 	  }
 
 	  // LUCENE-1130: test IOException in writeSegment
-	  public virtual void TestIOExceptionDuringWriteSegmentOnlyOnce()
+      [Test]
+      public virtual void TestIOExceptionDuringWriteSegmentOnlyOnce()
 	  {
 		_testSingleThreadFailure(new FailOnlyInWriteSegment(true));
 	  }
 
 	  // LUCENE-1130: test IOException in writeSegment, with threads
-	  public virtual void TestIOExceptionDuringWriteSegmentWithThreads()
+      [Test]
+      public virtual void TestIOExceptionDuringWriteSegmentWithThreads()
 	  {
 		_testMultipleThreadsFailure(new FailOnlyInWriteSegment(false));
 	  }
 
 	  // LUCENE-1130: test IOException in writeSegment, with threads
-	  public virtual void TestIOExceptionDuringWriteSegmentWithThreadsOnlyOnce()
+      [Test]
+      public virtual void TestIOExceptionDuringWriteSegmentWithThreadsOnlyOnce()
 	  {
 		_testMultipleThreadsFailure(new FailOnlyInWriteSegment(true));
 	  }
@@ -537,7 +553,8 @@ namespace Lucene.Net.Index
 	  //  that we attempt to open at the same time.  As long as the first IndexWriter completes
 	  //  and closes before the second IndexWriter time's out trying to get the Lock,
 	  //  we should see both documents
-	  public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
+      [Test]
+      public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
 	  {
 		 Directory dir = NewDirectory();
 		 CountDownLatch oneIWConstructed = new CountDownLatch(1);
@@ -618,7 +635,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-4147
-	  public virtual void TestRollbackAndCommitWithThreads()
+      [Test]
+      public virtual void TestRollbackAndCommitWithThreads()
 	  {
 		BaseDirectoryWrapper d = NewDirectory();
 		if (d is MockDirectoryWrapper)

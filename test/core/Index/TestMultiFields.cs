@@ -29,9 +29,11 @@ namespace Lucene.Net.Index
 	using Lucene.Net.Analysis;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestMultiFields : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestRandom()
 	  {
 
@@ -183,7 +185,8 @@ namespace Lucene.Net.Index
 	  }
 	  */
 
-	  public virtual void TestSeparateEnums()
+      [Test]
+      public virtual void TestSeparateEnums()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -202,7 +205,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestTermDocsEnum()
+      [Test]
+      public virtual void TestTermDocsEnum()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

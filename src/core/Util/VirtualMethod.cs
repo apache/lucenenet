@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -21,7 +23,6 @@ namespace Lucene.Net.Util
 	 * limitations under the License.
 	 */
 
-    /*LUCENE TO-DO I don't think this class is needed
 	/// <summary>
 	/// A utility for keeping backwards compatibility on previously abstract methods
 	/// (or similar replacements).
@@ -59,7 +60,7 @@ namespace Lucene.Net.Util
 	public sealed class VirtualMethod<C>
 	{
 
-	  private static readonly ISet<Method> SingletonSet = Collections.synchronizedSet(new HashSet<Method>());
+	  private static readonly ISet<MethodInfo> SingletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
 
 	  private readonly Type BaseClass;
 	  private readonly string Method;
@@ -78,12 +79,12 @@ namespace Lucene.Net.Util
 		this.Parameters = parameters;
 		try
 		{
-		  if (!SingletonSet.Add(baseClass.getDeclaredMethod(method, parameters)))
+		  if (!SingletonSet.Add(baseClass.GetMethod(method, parameters)))
 		  {
 			throw new System.NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
 		  }
 		}
-		catch (NoSuchMethodException nsme)
+        catch (NotSupportedException nsme)
 		{
 		  throw new System.ArgumentException(baseClass.Name + " has no such method: " + nsme.Message);
 		}
@@ -95,8 +96,8 @@ namespace Lucene.Net.Util
 	  /// <returns> 0 iff not overridden, else the distance to the base class </returns>
 	  public int GetImplementationDistance(Type subclazz)
 	  {
-		int? distance = Cache.Get(subclazz);
-		if (distance == null)
+		int distance = Cache.Get(subclazz);
+		if (distance == default(int))
 		{
 		  // we have the slight chance that another thread may do the same, but who cares?
 		  Cache.Put(subclazz, distance = Convert.ToInt32(ReflectImplementationDistance(subclazz)));
@@ -130,10 +131,10 @@ namespace Lucene.Net.Util
 		  {
 			try
 			{
-			  clazz.getDeclaredMethod(Method, Parameters);
+			  clazz.GetMethod(Method, Parameters);
 			  overridden = true;
 			}
-			catch (NoSuchMethodException nsme)
+			catch (NotSupportedException nsme)
 			{
 			}
 		  }
@@ -159,6 +160,6 @@ namespace Lucene.Net.Util
 		return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
 	  }
 
-	}*/
+	}
 
 }

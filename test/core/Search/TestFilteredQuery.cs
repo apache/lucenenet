@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search
 		writer.ForceMerge(1);
 
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		Searcher = NewSearcher(Reader);
 
@@ -117,7 +118,7 @@ namespace Lucene.Net.Search
 		  {
 			if (acceptDocs == null)
 			{
-				acceptDocs = new Bits.MatchAllBits(5);
+				acceptDocs = new Bits_MatchAllBits(5);
 			}
 			BitArray bitset = new BitArray(5);
 			if (acceptDocs.Get(1))
@@ -219,8 +220,7 @@ namespace Lucene.Net.Search
 		  public override DocIdSet GetDocIdSet(AtomicReaderContext context, Bits acceptDocs)
 		  {
 			Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
-			BitArray bitset = new BitArray(5);
-			bitset.Set(0, 5);
+			BitArray bitset = new BitArray(5, true);
 			return new DocIdBitSet(bitset);
 		  }
 	  }
@@ -445,7 +445,7 @@ namespace Lucene.Net.Search
 	  {
 		FilterStrategy randomFilterStrategy = RandomFilterStrategy();
 		FilteredQuery filteredQuery = new FilteredQuery(new TermQuery(new Term("field", "one")), new PrefixFilter(new Term("field", "o")), randomFilterStrategy);
-		AssertSame(randomFilterStrategy, filteredQuery.FilterStrategy);
+		Assert.AreSame(randomFilterStrategy, filteredQuery.Strategy);
 	  }
 
 	  private static FilteredQuery.FilterStrategy RandomFilterStrategy(Random random, bool useRandomAccess)
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 		Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousInnerClassHelper3(this, reader), FilteredQuery.QUERY_FIRST_FILTER_STRATEGY);
@@ -550,7 +550,7 @@ namespace Lucene.Net.Search
 			  }
 
 
-			  public override Bits Bits()
+			  public override Bits GetBits()
 			  {
 				if (NullBitset)
 				{
@@ -614,7 +614,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		bool queryFirst = Random().NextBoolean();
 		IndexSearcher searcher = NewSearcher(reader);
 		Query query = new FilteredQuery(new TermQuery(new Term("field", "0")), new FilterAnonymousInnerClassHelper4(this, queryFirst), queryFirst ? FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY : Random()
@@ -656,7 +656,7 @@ namespace Lucene.Net.Search
 			  }
 
 
-			  public override Bits Bits()
+			  public override Bits GetBits()
 			  {
 				 return null;
 			  }

@@ -254,7 +254,7 @@ namespace Lucene.Net.Analysis
       [Test]
 	  public virtual void TestTokenAttributeFactory()
 	  {
-		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StreamReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
+		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
 
 		Assert.IsTrue( ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 

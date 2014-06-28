@@ -58,7 +58,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Appending","Lucene3x","Lucene40","Lucene41","Lucene42","Lucene45"}) public class TestNumericDocValuesUpdates extends Lucene.Net.Util.LuceneTestCase
-	public class TestNumericDocValuesUpdates : LuceneTestCase
+	[TestFixture]
+    public class TestNumericDocValuesUpdates : LuceneTestCase
 	{
 
 	  private Document Doc(int id)
@@ -72,7 +73,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdatesAreFlushed() throws java.io.IOException
-	  public virtual void TestUpdatesAreFlushed()
+      [Test]
+      public virtual void TestUpdatesAreFlushed()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetRAMBufferSizeMB(0.00000001));
@@ -96,7 +98,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSimple() throws Exception
-	  public virtual void TestSimple()
+      [Test]
+      public virtual void TestSimple()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -136,7 +139,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateFewSegments() throws Exception
-	  public virtual void TestUpdateFewSegments()
+      [Test]
+      public virtual void TestUpdateFewSegments()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -194,7 +198,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testReopen() throws Exception
-	  public virtual void TestReopen()
+      [Test]
+      public virtual void TestReopen()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -234,7 +239,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdatesAndDeletes() throws Exception
-	  public virtual void TestUpdatesAndDeletes()
+      [Test]
+      public virtual void TestUpdatesAndDeletes()
 	  {
 		// create an index with a segment with only deletes, a segment with both
 		// deletes and updates and a segment with only updates
@@ -294,7 +300,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdatesWithDeletes() throws Exception
-	  public virtual void TestUpdatesWithDeletes()
+      [Test]
+      public virtual void TestUpdatesWithDeletes()
 	  {
 		// update and delete different documents in the same commit session
 		Directory dir = NewDirectory();
@@ -335,7 +342,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateAndDeleteSameDocument() throws Exception
-	  public virtual void TestUpdateAndDeleteSameDocument()
+      [Test]
+      public virtual void TestUpdateAndDeleteSameDocument()
 	  {
 		// update and delete same document in same commit session
 		Directory dir = NewDirectory();
@@ -376,7 +384,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMultipleDocValuesTypes() throws Exception
-	  public virtual void TestMultipleDocValuesTypes()
+      [Test]
+      public virtual void TestMultipleDocValuesTypes()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -433,7 +442,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMultipleNumericDocValues() throws Exception
-	  public virtual void TestMultipleNumericDocValues()
+      [Test]
+      public virtual void TestMultipleNumericDocValues()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -470,7 +480,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDocumentWithNoValue() throws Exception
-	  public virtual void TestDocumentWithNoValue()
+      [Test]
+      public virtual void TestDocumentWithNoValue()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -506,7 +517,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUnsetValue() throws Exception
-	  public virtual void TestUnsetValue()
+      [Test]
+      public virtual void TestUnsetValue()
 	  {
 		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
 		Directory dir = NewDirectory();
@@ -549,7 +561,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestUnsetAllValues()
+      [Test]
+      public virtual void TestUnsetAllValues()
 	  {
 		AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
 		Directory dir = NewDirectory();
@@ -587,7 +600,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateNonNumericDocValuesField() throws Exception
-	  public virtual void TestUpdateNonNumericDocValuesField()
+      [Test]
+      public virtual void TestUpdateNonNumericDocValuesField()
 	  {
 		// we don't support adding new fields or updating existing non-numeric-dv
 		// fields through numeric updates
@@ -628,7 +642,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDifferentDVFormatPerField() throws Exception
-	  public virtual void TestDifferentDVFormatPerField()
+      [Test]
+      public virtual void TestDifferentDVFormatPerField()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -680,7 +695,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateSameDocMultipleTimes() throws Exception
-	  public virtual void TestUpdateSameDocMultipleTimes()
+      [Test]
+      public virtual void TestUpdateSameDocMultipleTimes()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -710,7 +726,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSegmentMerges() throws Exception
-	  public virtual void TestSegmentMerges()
+      [Test]
+      public virtual void TestSegmentMerges()
 	  {
 		Directory dir = NewDirectory();
 		Random random = Random();
@@ -793,7 +810,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateDocumentByMultipleTerms() throws Exception
-	  public virtual void TestUpdateDocumentByMultipleTerms()
+      [Test]
+      public virtual void TestUpdateDocumentByMultipleTerms()
 	  {
 		// make sure the order of updates is respected, even when multiple terms affect same document
 		Directory dir = NewDirectory();
@@ -825,7 +843,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testManyReopensAndFields() throws Exception
-	  public virtual void TestManyReopensAndFields()
+      [Test]
+      public virtual void TestManyReopensAndFields()
 	  {
 		Directory dir = NewDirectory();
 		Random random = Random();
@@ -958,7 +977,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateSegmentWithNoDocValues() throws Exception
-	  public virtual void TestUpdateSegmentWithNoDocValues()
+      [Test]
+      public virtual void TestUpdateSegmentWithNoDocValues()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1015,7 +1035,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateSegmentWithPostingButNoDocValues() throws Exception
-	  public virtual void TestUpdateSegmentWithPostingButNoDocValues()
+      [Test]
+      public virtual void TestUpdateSegmentWithPostingButNoDocValues()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1061,7 +1082,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateNumericDVFieldWithSameNameAsPostingField() throws Exception
-	  public virtual void TestUpdateNumericDVFieldWithSameNameAsPostingField()
+      [Test]
+      public virtual void TestUpdateNumericDVFieldWithSameNameAsPostingField()
 	  {
 		// this used to fail because FieldInfos.Builder neglected to update
 		// globalFieldMaps.docValueTypes map
@@ -1087,7 +1109,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateOldSegments() throws Exception
-	  public virtual void TestUpdateOldSegments()
+      [Test]
+      public virtual void TestUpdateOldSegments()
 	  {
 		Codec[] oldCodecs = new Codec[] {new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec()};
 		Directory dir = NewDirectory();
@@ -1127,7 +1150,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testStressMultiThreading() throws Exception
-	  public virtual void TestStressMultiThreading()
+      [Test]
+      public virtual void TestStressMultiThreading()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1342,7 +1366,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateDifferentDocsInDifferentGens() throws Exception
-	  public virtual void TestUpdateDifferentDocsInDifferentGens()
+      [Test]
+      public virtual void TestUpdateDifferentDocsInDifferentGens()
 	  {
 		// update same document multiple times across generations
 		Directory dir = NewDirectory();
@@ -1387,7 +1412,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testChangeCodec() throws Exception
-	  public virtual void TestChangeCodec()
+      [Test]
+      public virtual void TestChangeCodec()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1456,7 +1482,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testAddIndexes() throws Exception
-	  public virtual void TestAddIndexes()
+      [Test]
+      public virtual void TestAddIndexes()
 	  {
 		Directory dir1 = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1525,7 +1552,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDeleteUnusedUpdatesFiles() throws Exception
-	  public virtual void TestDeleteUnusedUpdatesFiles()
+      [Test]
+      public virtual void TestDeleteUnusedUpdatesFiles()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1560,7 +1588,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testTonsOfUpdates() throws Exception
-	  public virtual void TestTonsOfUpdates()
+      [Test]
+      public virtual void TestTonsOfUpdates()
 	  {
 		// LUCENE-5248: make sure that when there are many updates, we don't use too much RAM
 		Directory dir = NewDirectory();
@@ -1639,7 +1668,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdatesOrder() throws Exception
-	  public virtual void TestUpdatesOrder()
+      [Test]
+      public virtual void TestUpdatesOrder()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1668,7 +1698,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateAllDeletedSegment() throws Exception
-	  public virtual void TestUpdateAllDeletedSegment()
+      [Test]
+      public virtual void TestUpdateAllDeletedSegment()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1695,7 +1726,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testUpdateTwoNonexistingTerms() throws Exception
-	  public virtual void TestUpdateTwoNonexistingTerms()
+      [Test]
+      public virtual void TestUpdateTwoNonexistingTerms()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));

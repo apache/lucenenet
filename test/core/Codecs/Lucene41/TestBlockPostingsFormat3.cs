@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		  field8.StringValue = stringValue;
 		  iw.AddDocument(doc);
 		}
-		iw.Close();
+		iw.Dispose();
 		Verify(dir);
 		TestUtil.CheckIndex(dir); // for some extra coverage, checkIndex before we forceMerge
 		iwc.SetOpenMode(OpenMode_e.APPEND);

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -66,9 +67,9 @@ namespace Lucene.Net.Search
 		writer.ForceMerge(1);
 		swriter1.ForceMerge(1);
 		swriter2.ForceMerge(1);
-		writer.Close();
-        swriter1.Close();
-        swriter2.Close();
+		writer.Dispose();
+        swriter1.Dispose();
+        swriter2.Dispose();
 
 		Reader = DirectoryReader.Open(Dir);
 		Searcher = NewSearcher(Reader);
@@ -261,7 +262,7 @@ namespace Lucene.Net.Search
 		catch (BooleanQuery.TooManyClauses e)
 		{
 		  //  Maybe remove this assert in later versions, when internal API changes:
-		  Assert.AreEqual("Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()", "checkMaxClauseCount", e.StackTrace[0].MethodName);
+		  Assert.AreEqual("checkMaxClauseCount", new StackTrace(e).GetFrames()[0].GetMethod().Name, "Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()");
 		}
 		finally
 		{

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -27,9 +28,11 @@ namespace Lucene.Net.Index
     //using MergedIterator = Lucene.Net.Util.MergedIterator;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [TestFixture]
 	public class TestPrefixCodedTerms : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestEmpty()
 	  {
 		PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
@@ -37,7 +40,8 @@ namespace Lucene.Net.Index
 		Assert.IsFalse(pb.GetEnumerator().MoveNext());
 	  }
 
-	  public virtual void TestOne()
+      [Test]
+      public virtual void TestOne()
 	  {
 		Term term = new Term("foo", "bogus");
 		PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
@@ -48,7 +52,8 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(term, iterator.Current);
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		SortedSet<Term> terms = new SortedSet<Term>();
 		int nterms = AtLeast(10000);
@@ -76,7 +81,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("unchecked") public void testMergeOne()
-	  public virtual void TestMergeOne()
+      [Test]
+      public virtual void TestMergeOne()
 	  {
 		Term t1 = new Term("foo", "a");
 		PrefixCodedTerms.Builder b1 = new PrefixCodedTerms.Builder();
@@ -97,7 +103,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({"unchecked","rawtypes"}) public void testMergeRandom()
-	  public virtual void TestMergeRandom()
+      [Test]
+      public virtual void TestMergeRandom()
 	  {
 		PrefixCodedTerms[] pb = new PrefixCodedTerms[TestUtil.NextInt(Random(), 2, 10)];
 		SortedSet<Term> superSet = new SortedSet<Term>();

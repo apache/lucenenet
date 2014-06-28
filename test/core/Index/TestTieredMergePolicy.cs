@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestTieredMergePolicy : BaseMergePolicyTestCase
 	{
 
@@ -35,7 +36,8 @@ namespace Lucene.Net.Index
 		return NewTieredMergePolicy();
 	  }
 
-	  public virtual void TestForceMergeDeletes()
+      [Test]
+      public virtual void TestForceMergeDeletes()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -77,7 +79,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestPartialMerge()
+      [Test]
+      public virtual void TestPartialMerge()
 	  {
 		int num = AtLeast(10);
 		for (int iter = 0;iter < num;iter++)
@@ -124,7 +127,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestForceMergeDeletesMaxSegSize()
+      [Test]
+      public virtual void TestForceMergeDeletesMaxSegSize()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -134,7 +138,7 @@ namespace Lucene.Net.Index
 		conf.SetMergePolicy(tmp);
 
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
-		w.DoRandomForceMerge = false;
+		w.RandomForceMerge = false;
 
 		int numDocs = AtLeast(200);
 		for (int i = 0;i < numDocs;i++)
@@ -170,14 +174,15 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(numDocs - 1, r.NumDocs());
 		r.Dispose();
 
-        w.Close();
+        w.Dispose();
 
 		dir.Dispose();
 	  }
 
 	  private const double EPSILON = 1E-14;
 
-	  public virtual void TestSetters()
+      [Test]
+      public virtual void TestSetters()
 	  {
 		TieredMergePolicy tmp = new TieredMergePolicy();
 

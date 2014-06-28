@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Randomized
 {
@@ -39,7 +40,8 @@ namespace Lucene.Net.Randomized
         private volatile Boolean isDisposed = true;
 
 
-        public SingleThreadedRandom(Thread owner, Random @delegate):base(0)
+        public SingleThreadedRandom(ThreadClass owner, Random @delegate)
+            : base(0)
         {
             this.@delegate = @delegate;
             this.ownerRef = new WeakReference(owner);

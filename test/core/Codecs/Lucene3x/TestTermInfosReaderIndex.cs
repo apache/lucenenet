@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		  writer.AddDocument(document);
 		}
 		writer.ForceMerge(1);
-		writer.Close();
+		writer.Dispose();
 	  }
 
 	  private static string Text

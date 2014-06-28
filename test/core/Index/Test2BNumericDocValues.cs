@@ -36,10 +36,12 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @TimeoutSuite(millis = 80 * TimeUnits.HOUR) @Ignore("takes ~ 30 minutes") @SuppressCodecs("Lucene3x") public class Test2BNumericDocValues extends Lucene.Net.Util.LuceneTestCase
-	public class Test2BNumericDocValues : LuceneTestCase
+	[TestFixture]
+    public class Test2BNumericDocValues : LuceneTestCase
 	{
 
 	  // indexes Integer.MAX_VALUE docs with an increasing dv field
+      [Test]
 	  public virtual void TestNumerics()
 	  {
 		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BNumerics"));

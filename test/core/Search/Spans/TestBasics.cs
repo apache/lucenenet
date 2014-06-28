@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -111,7 +112,7 @@ namespace Lucene.Net.Search.Spans
 		}
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
 	  private class AnalyzerAnonymousInnerClassHelper : Analyzer

@@ -64,7 +64,7 @@ namespace Lucene.Net.Search.Spans
 		sfq = new SpanNotQuery(include, sfq);
 		Assert.AreEqual(1, searcher.Search(sfq, 10).TotalHits);
 
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }

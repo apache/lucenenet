@@ -354,7 +354,7 @@ using System.IO;
 				  {
 					Console.WriteLine(Thread.CurrentThread.Name + ": tot " + count + " deletes");
 				  }
-				  DelIDs.addAll(toDeleteIDs);
+				  DelIDs.AddAll(toDeleteIDs);
 				  toDeleteIDs.Clear();
 
 				  foreach (SubDocs subDocs in toDeleteSubDocs)
@@ -367,7 +367,7 @@ using System.IO;
 					{
 					  Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.SubIDs + " packID=" + subDocs.PackID);
 					}
-					DelIDs.addAll(subDocs.SubIDs);
+					DelIDs.AddAll(subDocs.SubIDs);
 					OuterInstance.DelCount.AddAndGet(subDocs.SubIDs.Count);
 				  }
 				  toDeleteSubDocs.Clear();
@@ -507,7 +507,7 @@ using System.IO;
 					  if ((seenTermCount + shift) % trigger == 0)
 					  {
 						//if (VERBOSE) {
-						//System.out.println(Thread.currentThread().getName() + " now search body:" + term.utf8ToString());
+						//System.out.println(Thread.currentThread().getName() + " now search body:" + term.Utf8ToString());
 						//}
 						TotHits.AddAndGet(OuterInstance.RunQuery(s, new TermQuery(new Term("body", term))));
 					  }
@@ -543,7 +543,8 @@ using System.IO;
 
 	  protected internal bool AssertMergedSegmentsWarmed = true;
 
-	  private readonly IDictionary<SegmentCoreReaders, bool?> Warmed = Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, bool?>());
+	    private readonly IDictionary<SegmentCoreReaders, bool?> Warmed = new ConcurrentHashMapWrapper<SegmentCoreReaders, bool?>(new HashMap<SegmentCoreReaders, bool?>());
+        // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, bool?>());
 
 	  public virtual void RunTest(string testName)
 	  {
@@ -596,7 +597,8 @@ using System.IO;
 		Writer = new IndexWriter(Dir, conf);
 		TestUtil.ReduceOpenFiles(Writer);
 
-		TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory(testName));
+		//TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory(testName));
+	    TaskScheduler es = null;
 
 		DoAfterWriter(es);
 
@@ -604,9 +606,9 @@ using System.IO;
 
 		int RUN_TIME_SEC = LuceneTestCase.TEST_NIGHTLY ? 300 : RANDOM_MULTIPLIER;
 
-		ISet<string> delIDs = Collections.synchronizedSet(new HashSet<string>());
-		ISet<string> delPackIDs = Collections.synchronizedSet(new HashSet<string>());
-		IList<SubDocs> allSubDocs = Collections.synchronizedList(new List<SubDocs>());
+		ISet<string> delIDs = new ConcurrentHashSet<string>(new HashSet<string>());
+		ISet<string> delPackIDs = new ConcurrentHashSet<string>(new HashSet<string>());
+		IList<SubDocs> allSubDocs = new ConcurrentList<SubDocs>(new List<SubDocs>());
 
 		long stopTime = DateTime.Now.Millisecond + RUN_TIME_SEC * 1000;
 
@@ -760,11 +762,11 @@ using System.IO;
 		// Cannot shutdown until after writer is closed because
 		// writer has merged segment warmer that uses IS to run
 		// searches, and that IS may be using this es!
-		if (es != null)
+		/*if (es != null)
 		{
 		  es.shutdown();
 		  es.awaitTermination(1, TimeUnit.SECONDS);
-		}
+		}*/
 
 		TestUtil.CheckIndex(Dir);
 		Dir.Dispose();
@@ -791,7 +793,7 @@ using System.IO;
 			{
 			  Console.WriteLine("TEST: now warm merged reader=" + reader);
 			}
-			OuterInstance.Warmed[((SegmentReader) reader).Core] = true;
+			OuterInstance.Warmed[(SegmentCoreReaders)reader.CoreCacheKey] = true;
 			int maxDoc = reader.MaxDoc();
 			Bits liveDocs = reader.LiveDocs;
 			int sum = 0;

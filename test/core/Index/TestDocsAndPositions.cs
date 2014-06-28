@@ -36,10 +36,12 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestDocsAndPositions : LuceneTestCase
 	{
 	  private string FieldName;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -49,7 +51,8 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// Simple testcase for <seealso cref="DocsAndPositionsEnum"/>
 	  /// </summary>
-	  public virtual void TestPositionsSimple()
+      [Test]
+      public virtual void TestPositionsSimple()
 	  {
 		Directory directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -62,7 +65,7 @@ namespace Lucene.Net.Index
 		  writer.AddDocument(doc);
 		}
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
@@ -116,7 +119,8 @@ namespace Lucene.Net.Index
 	  /// random. All positions for that number are saved up front and compared to
 	  /// the enums positions.
 	  /// </summary>
-	  public virtual void TestRandomPositions()
+      [Test]
+      public virtual void TestRandomPositions()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -152,7 +156,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		int num_ = AtLeast(13);
 		for (int i = 0; i < num_; i++)
@@ -209,7 +213,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandomDocs()
+      [Test]
+      public virtual void TestRandomDocs()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
@@ -237,7 +242,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
@@ -305,7 +310,8 @@ namespace Lucene.Net.Index
 	  /// tests retrieval of positions for terms that have a large number of
 	  /// occurrences to force test of buffer refill during positions iteration.
 	  /// </summary>
-	  public virtual void TestLargeNumberOfPositions()
+      [Test]
+      public virtual void TestLargeNumberOfPositions()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
@@ -333,7 +339,7 @@ namespace Lucene.Net.Index
 
 		// now do searches
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 
 		int num = AtLeast(13);
 		for (int i = 0; i < num; i++)
@@ -369,7 +375,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDocsEnumStart()
+      [Test]
+      public virtual void TestDocsEnumStart()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -390,12 +397,13 @@ namespace Lucene.Net.Index
 		docid = disi.DocID();
 		Assert.AreEqual(-1, docid);
 		Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-        writer.Close();
+        writer.Dispose();
 		r.Dispose();
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDocsAndPositionsEnumStart()
+      [Test]
+      public virtual void TestDocsAndPositionsEnumStart()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -416,7 +424,7 @@ namespace Lucene.Net.Index
 		docid = disi.DocID();
 		Assert.AreEqual(-1, docid);
 		Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-        writer.Close();
+        writer.Dispose();
 		r.Dispose();
 		dir.Dispose();
 	  }

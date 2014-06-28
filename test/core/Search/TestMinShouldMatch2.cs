@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
 		  iw.AddDocument(doc);
 		}
 		iw.ForceMerge(1);
-		iw.Close();
+		iw.Dispose();
 		r = DirectoryReader.Open(Dir);
 		atomicReader = GetOnlySegmentReader(r);
 		Searcher = new IndexSearcher(atomicReader);
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
 			  SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
 			  var dummy = w.ValueForNormalization; // ignored
 			  w.Normalize(1F, 1F);
-			  Sims[(int)ord] = weight.Similarity.SimScorer(w, reader.Context);
+			  Sims[(int)ord] = weight.Similarity.DoSimScorer(w, (AtomicReaderContext)reader.Context);
 			}
 		  }
 		}

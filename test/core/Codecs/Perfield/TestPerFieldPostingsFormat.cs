@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Perfield
       public override void TestMergeStability()
 	  {
 		  //LUCENE TO-DO
-          Assume.ReferenceEquals("The MockRandom PF randomizes content on the fly, so we can't check it", false);
+          AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
 	  }
 
 	}

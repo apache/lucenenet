@@ -671,9 +671,6 @@ namespace Lucene.Net.Util.Fst
 		  Debug.Assert(NumArcs == 0 || label > Arcs[NumArcs - 1].Label, "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
 		  if (NumArcs == Arcs.Length)
 		  {
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings({"rawtypes","unchecked"}) final Arc<T>[] newArcs = new Arc[Lucene.Net.Util.ArrayUtil.oversize(numArcs+1, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 			Arc<S>[] newArcs = new Arc<S>[ArrayUtil.Oversize(NumArcs + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			Array.Copy(Arcs, 0, newArcs, 0, Arcs.Length);
 			for (int arcIdx = NumArcs;arcIdx < newArcs.Length;arcIdx++)
@@ -682,8 +679,6 @@ namespace Lucene.Net.Util.Fst
 			}
 			Arcs = newArcs;
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Arc<T> arc = arcs[numArcs++];
 		  Arc<S> arc = Arcs[NumArcs++];
 		  arc.Label = label;
 		  arc.Target = target;
@@ -694,8 +689,6 @@ namespace Lucene.Net.Util.Fst
 		public void ReplaceLast(int labelToMatch, Node target, S nextFinalOutput, bool isFinal)
 		{
 		  Debug.Assert(NumArcs > 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Arc<T> arc = arcs[numArcs-1];
 		  Arc<S> arc = Arcs[NumArcs - 1];
 		  Debug.Assert(arc.Label == labelToMatch, "arc.Label=" + arc.Label + " vs " + labelToMatch);
 		  arc.Target = target;
@@ -716,8 +709,6 @@ namespace Lucene.Net.Util.Fst
 		{
 		  Debug.Assert(Owner.ValidOutput(newOutput));
 		  Debug.Assert(NumArcs > 0);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Arc<T> arc = arcs[numArcs-1];
 		  Arc<S> arc = Arcs[NumArcs - 1];
 		  Debug.Assert(arc.Label == labelToMatch);
 		  arc.Output = newOutput;

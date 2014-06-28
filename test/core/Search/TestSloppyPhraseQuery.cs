@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
 		Assert.AreEqual(expectedNumResults, c.TotalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");
 
 		//QueryUtils.Check(query,searcher);
-		writer.Close();
+		writer.Dispose();
 		reader.Dispose();
 		ramDir.Dispose();
 
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
 		f.StringValue = "drug druggy drug druggy drug";
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.Close();
+		iw.Dispose();
 		IndexSearcher @is = NewSearcher(ir);
 
 		PhraseQuery pq = new PhraseQuery();
@@ -334,7 +334,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-        iw.Close();
+        iw.Dispose();
 
 		IndexSearcher @is = NewSearcher(ir);
 		PhraseQuery pq = new PhraseQuery();
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search
 		 doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
 		 iw.AddDocument(doc);
 		 IndexReader ir = iw.Reader;
-         iw.Close();
+         iw.Dispose();
 
 		 IndexSearcher @is = NewSearcher(ir);
 

@@ -35,9 +35,11 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestCheckIndex : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestDeletedDocs()
 	  {
 		Directory dir = NewDirectory();
@@ -57,9 +59,9 @@ namespace Lucene.Net.Index
 		writer.DeleteDocuments(new Term("field","aaa5"));
 		writer.Dispose();
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+        MemoryStream bos = new MemoryStream(1024);
 		CheckIndex checker = new CheckIndex(dir);
-		checker.InfoStream = new PrintStream(bos, false, IOUtils.UTF_8);
+		checker.InfoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
 		if (VERBOSE)
 		{
             checker.InfoStream = (StreamWriter)Console.Out;
@@ -68,7 +70,7 @@ namespace Lucene.Net.Index
 		if (indexStatus.Clean == false)
 		{
 		  Console.WriteLine("CheckIndex failed");
-		  Console.WriteLine(bos.ToString(IOUtils.UTF_8));
+          Console.WriteLine(bos.ToString());
 		  Assert.Fail();
 		}
 
@@ -106,7 +108,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-4221: we have to let these thru, for now
-	  public virtual void TestBogusTermVectors()
+      [Test]
+      public virtual void TestBogusTermVectors()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));

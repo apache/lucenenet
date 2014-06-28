@@ -42,8 +42,8 @@ namespace Lucene.Net.Util
 	  /// <param name="threadNamePrefix"> the name prefix assigned to each thread created. </param>
 	  public NamedThreadFactory(string threadNamePrefix)
 	  {
-        this.ThreadNamePrefix = string.Format(CultureInfo.InvariantCulture, NAME_PATTERN,
-             CheckPrefix(threadNamePrefix), Interlocked.Increment(ref ThreadPoolNumber));
+            this.ThreadNamePrefix = string.Format(CultureInfo.InvariantCulture, NAME_PATTERN,
+            CheckPrefix(threadNamePrefix), Interlocked.Increment(ref ThreadPoolNumber));
 	  }
 
 	  private static string CheckPrefix(string prefix)

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
@@ -38,7 +39,8 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Test adding to the info stream when there's an exception thrown during field analysis.
 	/// </summary>
-	public class TestDocInverterPerFieldErrorInfo : LuceneTestCase
+	[TestFixture]
+    public class TestDocInverterPerFieldErrorInfo : LuceneTestCase
 	{
 	  private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
@@ -83,13 +85,14 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testInfoStreamGetsFieldName() throws Exception
-	  public virtual void TestInfoStreamGetsFieldName()
+      [Test]
+      public virtual void TestInfoStreamGetsFieldName()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer;
 		IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
-		ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
-		PrintStream infoPrintStream = new PrintStream(infoBytes, true, IOUtils.UTF_8);
+        MemoryStream infoBytes = new MemoryStream();
+        StreamWriter infoPrintStream = new StreamWriter(infoBytes.ToString(), true, IOUtils.CHARSET_UTF_8);
 		PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
 		c.InfoStream = printStreamInfoStream;
 		writer = new IndexWriter(dir, c);
@@ -103,7 +106,7 @@ namespace Lucene.Net.Index
 		catch (BadNews badNews)
 		{
 		  infoPrintStream.Flush();
-		  string infoStream = new string(infoBytes.toByteArray(), IOUtils.UTF_8);
+		  string infoStream = Encoding.UTF8.GetString(infoBytes.GetBuffer());
 		  Assert.IsTrue(infoStream.Contains("distinctiveFieldName"));
 		}
 
@@ -113,13 +116,14 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoExtraNoise() throws Exception
-	  public virtual void TestNoExtraNoise()
+      [Test]
+      public virtual void TestNoExtraNoise()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer;
 		IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
-		ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
-		PrintStream infoPrintStream = new PrintStream(infoBytes, true, IOUtils.UTF_8);
+        MemoryStream infoBytes = new MemoryStream();
+        StreamWriter infoPrintStream = new StreamWriter(infoBytes.ToString(), true, IOUtils.CHARSET_UTF_8);
 		PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
 		c.InfoStream = printStreamInfoStream;
 		writer = new IndexWriter(dir, c);
@@ -134,7 +138,7 @@ namespace Lucene.Net.Index
 		  Assert.Fail("Unwanted exception");
 		}
 		infoPrintStream.Flush();
-		string infoStream = new string(infoBytes.toByteArray(), IOUtils.UTF_8);
+	    string infoStream = Encoding.UTF8.GetString(infoBytes.GetBuffer());
 		Assert.IsFalse(infoStream.Contains("boringFieldName"));
 
 		writer.Dispose();

@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(Doc("solr", "solr is a very popular search server and is using lucene"));
 		writer.AddDocument(Doc("nutch", "nutch is an internet search engine with web crawler and is using lucene and hadoop"));
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		Searcher = NewSearcher(Reader);
 	  }
 

@@ -37,6 +37,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
 
+    [TestFixture]
 	public class TestCrashCausesCorruptIndex : LuceneTestCase
 	{
 
@@ -45,7 +46,8 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// LUCENE-3627: this test fails.
 	  /// </summary>
-	  public virtual void TestCrashCorruptsIndexing()
+      [Test]
+      public virtual void TestCrashCorruptsIndexing()
 	  {
 		Path = CreateTempDir("testCrashCorruptsIndexing");
 
@@ -63,7 +65,8 @@ namespace Lucene.Net.Index
 	  /// prepare for crashing.
 	  /// index 1 more document, and upon commit, creation of segments_2 will crash.
 	  /// </summary>
-	  private void IndexAndCrashOnCreateOutputSegments2()
+      [Test]
+      private void IndexAndCrashOnCreateOutputSegments2()
 	  {
 		Directory realDirectory = FSDirectory.Open(Path);
 		CrashAfterCreateOutput crashAfterCreateOutput = new CrashAfterCreateOutput(realDirectory);

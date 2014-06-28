@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -47,7 +48,7 @@ namespace Lucene.Net.Util.Automaton
 	  // LUCENE-3094
 	  public virtual void TestNoWastedStates()
 	  {
-		AutomatonTestUtil.assertNoDetachedStates((new LevenshteinAutomata("abc", false)).ToAutomaton(1));
+		AutomatonTestUtil.AssertNoDetachedStates((new LevenshteinAutomata("abc", false)).ToAutomaton(1));
 	  }
 
 	  /// <summary>
@@ -92,14 +93,14 @@ namespace Lucene.Net.Util.Automaton
 		  // check that the dfa for n-1 accepts a subset of the dfa for n
 		  if (n > 0)
 		  {
-			Assert.IsTrue(automata[n - 1].subsetOf(automata[n]));
-			Assert.IsTrue(automata[n - 1].subsetOf(tautomata[n]));
-			Assert.IsTrue(tautomata[n - 1].subsetOf(automata[n]));
-			Assert.IsTrue(tautomata[n - 1].subsetOf(tautomata[n]));
+			Assert.IsTrue(automata[n - 1].SubsetOf(automata[n]));
+			Assert.IsTrue(automata[n - 1].SubsetOf(tautomata[n]));
+			Assert.IsTrue(tautomata[n - 1].SubsetOf(automata[n]));
+			Assert.IsTrue(tautomata[n - 1].SubsetOf(tautomata[n]));
 			Assert.AreNotSame(automata[n - 1], automata[n]);
 		  }
 		  // check that Lev(N) is a subset of LevT(N)
-		  Assert.IsTrue(automata[n].subsetOf(tautomata[n]));
+		  Assert.IsTrue(automata[n].SubsetOf(tautomata[n]));
 		  // special checks for specific n
 		  switch (n)
 		  {

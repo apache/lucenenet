@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -28,19 +29,22 @@ namespace Lucene.Net.Index
     using System;
     using System.IO;
 
+    [TestFixture]
 	public class TestPersistentSnapshotDeletionPolicy : TestSnapshotDeletionPolicy
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Before @Override public void setUp() throws Exception
-	  public override void SetUp()
+	  [SetUp]
+      public override void SetUp()
 	  {
 		base.SetUp();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @After @Override public void tearDown() throws Exception
-	  public override void TearDown()
+	  [TearDown]
+      public override void TearDown()
 	  {
 		base.TearDown();
 	  }
@@ -52,7 +56,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testExistingSnapshots() throws Exception
-	  public virtual void TestExistingSnapshots()
+      [Test]
+      public virtual void TestExistingSnapshots()
 	  {
 		int numSnapshots = 3;
 		MockDirectoryWrapper dir = NewMockDirectory();
@@ -101,7 +106,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoSnapshotInfos() throws Exception
-	  public virtual void TestNoSnapshotInfos()
+      [Test]
+      public virtual void TestNoSnapshotInfos()
 	  {
 		Directory dir = NewDirectory();
 		new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode_e.CREATE);
@@ -110,7 +116,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMissingSnapshots() throws Exception
-	  public virtual void TestMissingSnapshots()
+      [Test]
+      public virtual void TestMissingSnapshots()
 	  {
 		Directory dir = NewDirectory();
 		try
@@ -125,7 +132,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestExceptionDuringSave()
+      [Test]
+      public virtual void TestExceptionDuringSave()
 	  {
 		MockDirectoryWrapper dir = NewMockDirectory();
 		dir.FailOn(new FailureAnonymousInnerClassHelper(this, dir));
@@ -169,20 +177,22 @@ namespace Lucene.Net.Index
 
 		  public override void Eval(MockDirectoryWrapper dir)
 		  {
-			string[] trace = Thread.CurrentThread.StackTrace;
-			for (int i = 0; i < trace.Length; i++)
-			{
-			  if (typeof(PersistentSnapshotDeletionPolicy).Name.Equals(trace[i].ClassName) && "persist".Equals(trace[i].MethodName))
-			  {
-				throw new IOException("now fail on purpose");
-			  }
-			}
+		      var trace = new StackTrace(new Exception());
+		      foreach (var frame in trace.GetFrames())
+		      {
+		          var method = frame.GetMethod();
+                  if (typeof(PersistentSnapshotDeletionPolicy).Name.Equals(frame.GetType().Name) && "Persist".Equals(trace[i].MethodName))
+                  {
+                      throw new IOException("now fail on purpose");
+                  }
+		      }
 		  }
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSnapshotRelease() throws Exception
-	  public virtual void TestSnapshotRelease()
+      [Test]
+      public virtual void TestSnapshotRelease()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), GetDeletionPolicy(dir)));
@@ -199,7 +209,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSnapshotReleaseByGeneration() throws Exception
-	  public virtual void TestSnapshotReleaseByGeneration()
+      [Test]
+      public virtual void TestSnapshotReleaseByGeneration()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), GetDeletionPolicy(dir)));

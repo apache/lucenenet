@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 	  public override void TearDown()
 	  {
 		base.TearDown();
-		Writer.Close();
+		Writer.Dispose();
 		Dir.Dispose();
 	  }
 

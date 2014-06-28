@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
       [TearDown]
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
 		// not yet available: Assert.IsTrue(aq.getEnum(searcher.getIndexReader())
 		// instanceof EmptyTermEnum);
 		Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
-		AssertSame(TermsEnum.EMPTY, aq.GetTermsEnum(terms));
+		Assert.AreSame(TermsEnum.EMPTY, aq.GetTermsEnum(terms));
 		Assert.AreEqual(0, AutomatonQueryNrHits(aq));
 	  }
 

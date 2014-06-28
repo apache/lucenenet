@@ -27,10 +27,12 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestIndexWriterMergePolicy : LuceneTestCase
 	{
 
 	  // Test the normal case
+      [Test]
 	  public virtual void TestNormalCase()
 	  {
 		Directory dir = NewDirectory();
@@ -48,7 +50,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Test to see if there is over merge
-	  public virtual void TestNoOverMerge()
+      [Test]
+      public virtual void TestNoOverMerge()
 	  {
 		Directory dir = NewDirectory();
 
@@ -71,7 +74,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Test the case where flush is forced after every addDoc
-	  public virtual void TestForceFlush()
+      [Test]
+      public virtual void TestForceFlush()
 	  {
 		Directory dir = NewDirectory();
 
@@ -97,7 +101,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Test the case where mergeFactor changes
-	  public virtual void TestMergeFactorChange()
+      [Test]
+      public virtual void TestMergeFactorChange()
 	  {
 		Directory dir = NewDirectory();
 
@@ -124,7 +129,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Test the case where both mergeFactor and maxBufferedDocs change
-	  public virtual void TestMaxBufferedDocsChange()
+      [Test]
+      public virtual void TestMaxBufferedDocsChange()
 	  {
 		Directory dir = NewDirectory();
 
@@ -171,7 +177,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // Test the case where a merge results in no doc at all
-	  public virtual void TestMergeDocCount0()
+      [Test]
+      public virtual void TestMergeDocCount0()
 	  {
 		Directory dir = NewDirectory();
 
@@ -264,7 +271,8 @@ namespace Lucene.Net.Index
 
 	  private const double EPSILON = 1E-14;
 
-	  public virtual void TestSetters()
+      [Test]
+      public virtual void TestSetters()
 	  {
 		AssertSetters(new LogByteSizeMergePolicy());
 		AssertSetters(new LogDocMergePolicy());

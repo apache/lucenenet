@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 
 
 	using Bits = Lucene.Net.Util.Bits;
-	using FilterIterator = Lucene.Net.Util.FilterIterator;
+	//using FilterIterator = Lucene.Net.Util.FilterIterator;
 
 	/// <summary>
 	/// A <seealso cref="FilterAtomicReader"/> that exposes only a subset
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 		f = new FieldFilterFields(this, f);
 		// we need to check for emptyness, so we can return
 		// null:
-		return f.GetEnumerator().hasNext() ? f : null;
+		return f.GetEnumerator().MoveNext() ? f : null;
 	  }
 
 	  public override void Document(int docID, StoredFieldVisitor visitor)
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
 		  return -1;
 		}
 
-		public override IEnumerator<string> Iterator()
+		public override IEnumerator<string> GetEnumerator()
 		{
 		  return new FilterIteratorAnonymousInnerClassHelper(this, base.GetEnumerator());
 		}
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
 				this.OuterInstance = outerInstance;
 			}
 
-			protected internal override bool PredicateFunction(string field)
+			protected override bool PredicateFunction(string field)
 			{
 			  return OuterInstance.OuterInstance.HasField(field);
 			}

@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		// Do ordinary BooleanQuery:
 		BooleanQuery bq = new BooleanQuery();
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		// Do ordinary BooleanQuery:
 		BooleanQuery bq = new BooleanQuery();
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		// Do ordinary BooleanQuery:
 		BooleanQuery bq = new BooleanQuery();
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		// Do ordinary BooleanQuery:
 		BooleanQuery bq = new BooleanQuery();
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
 		  w.AddDocument(doc);
 		}
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		IndexSearcher s = NewSearcher(r);
 		int numHits = TestUtil.NextInt(Random(), 1, numDocs);

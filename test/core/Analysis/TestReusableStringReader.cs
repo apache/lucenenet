@@ -49,8 +49,8 @@ namespace Lucene.Net.Analysis
 		Assert.AreEqual(0, reader.Read(buf, 1, 0));
 		Assert.AreEqual(3, reader.Read(buf, 1, 3));
 		Assert.AreEqual("foo", new string(buf, 1, 3));
-		//Assert.AreEqual(2, reader.Read(CharBuffer.wrap(buf, 2, 2)));
-		Assert.AreEqual("ba", new string(buf, 2, 2));
+		Assert.AreEqual(2, reader.Read(buf, 2, 2));
+        Assert.AreEqual("ba", new string(buf, 2, 2));
 		Assert.AreEqual('r', (char) reader.Read());
 		Assert.AreEqual(-1, reader.Read(buf, 2, 0));
 		reader.Close();

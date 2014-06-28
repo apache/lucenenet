@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 		/// Indexes documents, frequencies, positions and offsets.
 		/// Character offsets are encoded alongside the positions. 
 		/// </summary>
-		DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+		DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS 
 	  }
 
 	  /// <summary>

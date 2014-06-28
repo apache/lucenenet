@@ -33,6 +33,7 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestSegmentMerger : LuceneTestCase
 	{
 	  //The variables for the new merged segment
@@ -47,6 +48,7 @@ namespace Lucene.Net.Index
 	  private Document Doc2 = new Document();
 	  private SegmentReader Reader2 = null;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -61,6 +63,7 @@ namespace Lucene.Net.Index
 		Reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader1.Dispose();
@@ -71,7 +74,8 @@ namespace Lucene.Net.Index
 		base.TearDown();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		Assert.IsTrue(MergedDir != null);
 		Assert.IsTrue(Merge1Dir != null);
@@ -80,7 +84,8 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(Reader2 != null);
 	  }
 
-	  public virtual void TestMerge()
+      [Test]
+      public virtual void TestMerge()
 	  {
 		Codec codec = Codec.Default;
 		SegmentInfo si = new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, -1, false, codec, null);
@@ -153,7 +158,8 @@ namespace Lucene.Net.Index
 		return true;
 	  }
 
-	  public virtual void TestBuildDocMap()
+      [Test]
+      public virtual void TestBuildDocMap()
 	  {
 		int maxDoc = TestUtil.NextInt(Random(), 1, 128);
 		int numDocs = TestUtil.NextInt(Random(), 0, maxDoc);

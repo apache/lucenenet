@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -35,7 +36,8 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Compares one codec against another
 	/// </summary>
-	public class TestDuelingCodecs : LuceneTestCase
+	[TestFixture]
+    public class TestDuelingCodecs : LuceneTestCase
 	{
 	  private Directory LeftDir;
 	  private IndexReader LeftReader;
@@ -46,7 +48,8 @@ namespace Lucene.Net.Index
 	  private Codec RightCodec;
 
 	  private string Info; // for debugging
-
+     
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -91,9 +94,9 @@ namespace Lucene.Net.Index
 		CreateRandomIndex(numdocs, rightWriter, seed);
 
 		LeftReader = MaybeWrapReader(leftWriter.Reader);
-        leftWriter.Close();
+        leftWriter.Dispose();
 		RightReader = MaybeWrapReader(rightWriter.Reader);
-        rightWriter.Close();
+        rightWriter.Dispose();
 
 		// check that our readers are valid
 		TestUtil.CheckReader(LeftReader);
@@ -102,6 +105,7 @@ namespace Lucene.Net.Index
 		Info = "left: " + LeftCodec.ToString() + " / right: " + RightCodec.ToString();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		if (LeftReader != null)
@@ -161,7 +165,8 @@ namespace Lucene.Net.Index
 	  /// <summary>
 	  /// checks the two indexes are equivalent
 	  /// </summary>
-	  public virtual void TestEquals()
+      [Test]
+      public virtual void TestEquals()
 	  {
 		AssertReaderEquals(Info, LeftReader, RightReader);
 	  }

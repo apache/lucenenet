@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 	  {
 		Directory = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory);
-		writer.Close();
+		writer.Dispose();
 		Reader = DirectoryReader.Open(Directory);
 	  }
 
@@ -65,10 +65,10 @@ namespace Lucene.Net.Search
 
 		Query q = pq1.Rewrite(Reader);
 		Assert.IsTrue(q is NGramPhraseQuery);
-		assertSame(pq1, q);
+		Assert.AreSame(pq1, q);
 		pq1 = (NGramPhraseQuery)q;
-		assertArrayEquals(new Term[]{new Term("f", "AB"), new Term("f", "BC")}, pq1.Terms);
-		assertArrayEquals(new int[]{0, 1}, pq1.Positions);
+		Assert.AreEqual(new Term[]{new Term("f", "AB"), new Term("f", "BC")}, pq1.Terms);
+        Assert.AreEqual(new int[] { 0, 1 }, pq1.Positions);
 
 		// bi-gram test ABCD => AB/BC/CD => AB//CD
 		PhraseQuery pq2 = new NGramPhraseQuery(2);
@@ -80,8 +80,8 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(q is PhraseQuery);
 		Assert.AreNotSame(pq2, q);
 		pq2 = (PhraseQuery)q;
-		assertArrayEquals(new Term[]{new Term("f", "AB"), new Term("f", "CD")}, pq2.Terms);
-		assertArrayEquals(new int[]{0, 2}, pq2.Positions);
+        Assert.AreEqual(new Term[] { new Term("f", "AB"), new Term("f", "CD") }, pq2.Terms);
+        Assert.AreEqual(new int[] { 0, 2 }, pq2.Positions);
 
 		// tri-gram test ABCDEFGH => ABC/BCD/CDE/DEF/EFG/FGH => ABC///DEF//FGH
 		PhraseQuery pq3 = new NGramPhraseQuery(3);
@@ -96,8 +96,8 @@ namespace Lucene.Net.Search
 		Assert.IsTrue(q is PhraseQuery);
 		Assert.AreNotSame(pq3, q);
 		pq3 = (PhraseQuery)q;
-		assertArrayEquals(new Term[]{new Term("f", "ABC"), new Term("f", "DEF"), new Term("f", "FGH")}, pq3.Terms);
-		assertArrayEquals(new int[]{0, 3, 5}, pq3.Positions);
+        Assert.AreEqual(new Term[] { new Term("f", "ABC"), new Term("f", "DEF"), new Term("f", "FGH") }, pq3.Terms);
+        Assert.AreEqual(new int[] { 0, 3, 5 }, pq3.Positions);
 
 		// LUCENE-4970: boosting test
 		PhraseQuery pq4 = new NGramPhraseQuery(2);

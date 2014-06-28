@@ -29,25 +29,28 @@ namespace Lucene.Net.Index
 	using Directory = Lucene.Net.Store.Directory;
     using NUnit.Framework;
 
-
+    [TestFixture]
 	public class TestSegmentTermEnum : LuceneTestCase
 	{
 
 	  internal Directory Dir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 		Dir = NewDirectory();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Dir.Dispose();
 		base.TearDown();
 	  }
 
-	  public virtual void TestTermEnum()
+      [Test]
+      public virtual void TestTermEnum()
 	  {
 		IndexWriter writer = null;
 
@@ -76,7 +79,8 @@ namespace Lucene.Net.Index
 		VerifyDocFreq();
 	  }
 
-	  public virtual void TestPrevTermAtEnd()
+      [Test]
+      public virtual void TestPrevTermAtEnd()
 	  {
 		IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
 		AddDoc(writer, "aaa bbb");

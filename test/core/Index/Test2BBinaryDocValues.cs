@@ -39,10 +39,12 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @TimeoutSuite(millis = 80 * TimeUnits.HOUR) @Ignore("takes ~ 45 minutes") @SuppressCodecs("Lucene3x") public class Test2BBinaryDocValues extends Lucene.Net.Util.LuceneTestCase
-	public class Test2BBinaryDocValues : LuceneTestCase
+	[TestFixture]
+    public class Test2BBinaryDocValues : LuceneTestCase
 	{
 
 	  // indexes Integer.MAX_VALUE docs with a fixed binary field
+      [Test]
 	  public virtual void TestFixedBinary()
 	  {
 		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedBinary"));
@@ -104,7 +106,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // indexes Integer.MAX_VALUE docs with a variable binary field
-	  public virtual void TestVariableBinary()
+      [Test]
+      public virtual void TestVariableBinary()
 	  {
 		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BVariableBinary"));
 		if (dir is MockDirectoryWrapper)

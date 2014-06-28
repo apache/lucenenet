@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Lucene.Net.Util
 {
 
@@ -150,18 +152,43 @@ namespace Lucene.Net.Util
 
 
 //JAVA TO C# CONVERTER TODO TASK: Enums cannot contain methods in .NET:
-//	  public static Version parseLeniently(String version)
-	//  {
-	//	String parsedMatchVersion = version.toUpperCase(Locale.ROOT);
-	//	return Version.valueOf(parsedMatchVersion.replaceFirst("^(\\d)\\.(\\d)$", "LUCENE_$1$2"));
-	//  }
+
 	}
-	public static partial class EnumExtensionMethods
+	public static class VersionEnumExtensionMethods
 	{
+        private static Dictionary<string, Version> stringToEnum = new Dictionary<string, Version>()
+        {
+            {"LUCENE_30", Version.LUCENE_30},
+            {"LUCENE_31", Version.LUCENE_31},
+            {"LUCENE_32", Version.LUCENE_32},
+            {"LUCENE_33", Version.LUCENE_33},
+            {"LUCENE_34", Version.LUCENE_34},
+            {"LUCENE_35", Version.LUCENE_35},
+            {"LUCENE_36", Version.LUCENE_36},
+            {"LUCENE_40", Version.LUCENE_40},
+            {"LUCENE_41", Version.LUCENE_41},
+            {"LUCENE_42", Version.LUCENE_42},
+            {"LUCENE_43", Version.LUCENE_43},
+            {"LUCENE_44", Version.LUCENE_44},
+            {"LUCENE_45", Version.LUCENE_45},
+            {"LUCENE_46", Version.LUCENE_46},
+            {"LUCENE_47", Version.LUCENE_47},
+            {"LUCENE_48", Version.LUCENE_48},
+            {"LUCENE_CURRENT", Version.LUCENE_CURRENT}
+        };
+
 	  public static bool OnOrAfter(this Version instance, Version other)
 	  {
 		return other >= 0;
 	  }
+
+      public static Version ParseLeniently(string version)
+      {
+          string upperVersionString = version.ToUpper();
+          return stringToEnum[upperVersionString];
+      }
 	}
+
+    
 
 }

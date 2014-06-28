@@ -41,6 +41,11 @@ namespace Lucene.Net.Store
 		this.Directory = directory;
 	  }
 
+      public void SetDirectory_Nunit(RAMDirectory value)
+      {
+          Directory = value;
+      }
+
 	  // For non-stream access from thread that might be concurrent with writing
 	  public virtual long Length
 	  {

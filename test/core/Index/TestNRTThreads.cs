@@ -37,14 +37,16 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestNRTThreads extends ThreadedIndexingAndSearchingTestCase
-	public class TestNRTThreads : ThreadedIndexingAndSearchingTestCase
+	[TestFixture]
+    public class TestNRTThreads : ThreadedIndexingAndSearchingTestCase
 	{
 
 	  private bool UseNonNrtReaders = true;
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Before public void setUp() throws Exception
-	  public virtual void SetUp()
+	  [SetUp]
+      public virtual void SetUp()
 	  {
 		base.SetUp();
 		UseNonNrtReaders = Random().NextBoolean();
@@ -182,7 +184,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestNRTThreads_Mem()
+      [Test]
+      public virtual void TestNRTThreads_Mem()
 	  {
 		RunTest("TestNRTThreads");
 	  }

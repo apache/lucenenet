@@ -39,18 +39,17 @@ namespace Lucene.Net.Analysis
 	/// <seealso cref="Lucene.Net.Analysis Analysis package documentation"/>.
 	/// </summary>
 	// the way java.io.FilterReader should work!
-	public abstract class CharFilter : StreamReader
+	public abstract class CharFilter : TextReader
 	{
 	  /// <summary>
 	  /// The underlying character-input stream. 
 	  /// </summary>
-	  public readonly StreamReader Input;
+	  public readonly TextReader Input;
 
 	  /// <summary>
 	  /// Create a new CharFilter wrapping the provided reader. </summary>
 	  /// <param name="input"> a Reader, can also be a CharFilter for chaining. </param>
-	  protected CharFilter(StreamReader input)
-            : base(input.BaseStream)
+      protected CharFilter(TextReader input)
 	  {
 		this.Input = input;
 	  }

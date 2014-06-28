@@ -69,6 +69,26 @@ namespace Lucene.Net.Store
 		}
 	  }
 
+	    public RAMFile GetNameFromFileMap_Nunit(string name)
+	    {
+	        return FileMap[name];
+	    }
+
+	    public void SetNameForFileMap_Nunit(string name, RAMFile ramFile)
+	    {
+            FileMap[name] = ramFile;
+	    }
+
+	    public ICollection<RAMFile> GetFileMapValues_Nunit()
+	    {
+	        return FileMap.Values;
+	    }
+
+	    public void GetAndAddSizeInBytes_Nunit(long value)
+	    {
+	        sizeInBytes.AddAndGet(value);
+	    }
+
 	  /// <summary>
 	  /// Creates a new <code>RAMDirectory</code> instance from a different
 	  /// <code>Directory</code> implementation.  this can be used to load

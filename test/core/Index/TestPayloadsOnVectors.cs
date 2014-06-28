@@ -40,11 +40,13 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestPayloadsOnVectors extends Lucene.Net.Util.LuceneTestCase
-	public class TestPayloadsOnVectors : LuceneTestCase
+	[TestFixture]
+    public class TestPayloadsOnVectors : LuceneTestCase
 	{
 
 	  /// <summary>
 	  /// some docs have payload att, some not </summary>
+      [Test]
 	  public virtual void TestMixupDocs()
 	  {
 		Directory dir = NewDirectory();
@@ -85,14 +87,15 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(0, de.NextDoc());
 		Assert.AreEqual(0, de.NextPosition());
 		Assert.AreEqual(new BytesRef("test"), de.Payload);
-        writer.Close();
+        writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// some field instances have payload att, some not </summary>
-	  public virtual void TestMixupMultiValued()
+      [Test]
+      public virtual void TestMixupMultiValued()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -129,12 +132,13 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(0, de.NextDoc());
 		Assert.AreEqual(3, de.NextPosition());
 		Assert.AreEqual(new BytesRef("test"), de.Payload);
-        writer.Close();
+        writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }
 
-	  public virtual void TestPayloadsWithoutPositions()
+      [Test]
+      public virtual void TestPayloadsWithoutPositions()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -154,7 +158,7 @@ namespace Lucene.Net.Index
 		{
 		  // expected
 		}
-        writer.Close();
+        writer.Dispose();
 		dir.Dispose();
 	  }
 

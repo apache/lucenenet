@@ -23,6 +23,11 @@ namespace Lucene.Net.Randomized.Generators
             return random.NextDouble() > 0.5;
         }
 
+        public static float NextFloat(this Random random)
+        {
+            return (float) random.NextDouble();
+        }
+
         /* .NET has random.Next(max) which negates the need for randomInt(Random random, int max) as  */
 
         public static long NextLong(this Random random)
@@ -41,5 +46,6 @@ namespace Lucene.Net.Randomized.Generators
         {
             return set.ElementAt(rand.Next(0, set.Count - 1));
         }
+
     }
 }

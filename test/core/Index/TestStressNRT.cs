@@ -41,6 +41,7 @@ using Lucene.Net.Support;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestStressNRT : LuceneTestCase
 	{
 	  internal volatile DirectoryReader Reader;
@@ -70,7 +71,8 @@ using Lucene.Net.Support;
 		CommittedModel.PutAll(Model);
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		// update variables
 		int commitPercent = Random().Next(20);
@@ -143,7 +145,7 @@ using Lucene.Net.Support;
 		  thread.Join();
 		}
 
-		writer.Close();
+		writer.Dispose();
 		if (VERBOSE)
 		{
 		  Console.WriteLine("TEST: close reader=" + Reader);

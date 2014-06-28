@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Lucene.Net.Support;
 using Lucene.Net.Randomized;
@@ -435,7 +436,7 @@ namespace Lucene.Net.Util
 		      }
 		    }
 
-            IgnoreAfterMaxFailuresDelegate = new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
+            //IgnoreAfterMaxFailuresDelegate = new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
 		    //IgnoreAfterMaxFailures = TestRuleDelegate.Of(IgnoreAfterMaxFailuresDelegate);
 	      }
 
@@ -476,7 +477,7 @@ namespace Lucene.Net.Util
 	      /// <summary>
 	      /// Stores the currently class under test.
 	      /// </summary>
-	      private static TestRuleStoreClassName ClassNameRule;
+	      //private static TestRuleStoreClassName ClassNameRule;
 
 	      /// <summary>
 	      /// Class environment setup rule.
@@ -486,7 +487,7 @@ namespace Lucene.Net.Util
 	      /// <summary>
 	      /// Suite failure marker (any error in the test or suite scope).
 	      /// </summary>
-	      public static TestRuleMarkFailure SuiteFailureMarker;
+	      //public static TestRuleMarkFailure SuiteFailureMarker;
 
 	      /// <summary>
 	      /// Ignore tests after hitting a designated number of initial failures. this
@@ -498,7 +499,7 @@ namespace Lucene.Net.Util
 	      /// a (possibly) changing reference to <seealso cref="TestRuleIgnoreAfterMaxFailures"/> and we
 	      /// dispatch to its current value from the <seealso cref="#classRules"/> chain using <seealso cref="TestRuleDelegate"/>.  
 	      /// </summary>
-	      private static AtomicReference<TestRuleIgnoreAfterMaxFailures> IgnoreAfterMaxFailuresDelegate;
+	      //private static AtomicReference<TestRuleIgnoreAfterMaxFailures> IgnoreAfterMaxFailuresDelegate;
 
 	      //private static TestRule IgnoreAfterMaxFailures;
 
@@ -507,10 +508,10 @@ namespace Lucene.Net.Util
 	      /// <seealso cref="#ignoreAfterMaxFailuresDelegate"/> for some explanation why this method 
 	      /// is needed.
 	      /// </summary>
-	      public static TestRuleIgnoreAfterMaxFailures ReplaceMaxFailureRule(TestRuleIgnoreAfterMaxFailures newValue)
+	      /*public static TestRuleIgnoreAfterMaxFailures ReplaceMaxFailureRule(TestRuleIgnoreAfterMaxFailures newValue)
 	      {
 		    return IgnoreAfterMaxFailuresDelegate.GetAndSet(newValue);
-	      }
+	      }*/
 
 	      /// <summary>
 	      /// Max 10mb of static data stored in a test suite class after the suite is complete.
@@ -577,7 +578,7 @@ namespace Lucene.Net.Util
         // -----------------------------------------------------------------
         /// <summary>
         /// Enforces <seealso cref="#setUp()"/> and <seealso cref="#tearDown()"/> calls are chained. </summary>
-        private TestRuleSetupTeardownChained ParentChainCallRule = new TestRuleSetupTeardownChained();
+        /*private TestRuleSetupTeardownChained ParentChainCallRule = new TestRuleSetupTeardownChained();
 
         /// <summary>
         /// Save test thread and name. </summary>
@@ -585,7 +586,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Taint suite result with individual test failures. </summary>
-        private TestRuleMarkFailure TestFailureMarker = new TestRuleMarkFailure(SuiteFailureMarker);
+        private TestRuleMarkFailure TestFailureMarker = new TestRuleMarkFailure(SuiteFailureMarker);*/
 
         /// <summary>
         /// this controls how individual test rules are nested. It is important that
@@ -612,7 +613,7 @@ namespace Lucene.Net.Util
         public virtual void SetUp()
         {
             ///* LUCENE TO-DO: Not sure how to convert these
-		    ParentChainCallRule.SetupCalled = true;
+		    //ParentChainCallRule.SetupCalled = true;
         
         }
 
@@ -652,7 +653,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public static Random Random()
         {
-            return RandomizedContext.Current.Random;
+            return new Random();
+            //return RandomizedContext.Current.Random;
         }
 
             /// <summary>
@@ -660,20 +662,20 @@ namespace Lucene.Net.Util
             /// completes.
             /// </summary>
             /// <returns> <code>resource</code> (for call chaining). </returns>
-        public static T CloseAfterTest<T>(T resource)
+        /*public static T CloseAfterTest<T>(T resource)
         {
             return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.TEST);
-        }
+        }*/
 
         /// <summary>
         /// Registers a <seealso cref="IDisposable"/> resource that should be closed after the suite
         /// completes.
         /// </summary>
         /// <returns> <code>resource</code> (for call chaining). </returns>
-        public static T CloseAfterSuite<T>(T resource)
+        /*public static T CloseAfterSuite<T>(T resource)
         {
             return RandomizedContext.Current.CloseAtEnd(resource, LifecycleScope.SUITE);
-        }
+        }*/
 
 	    /// <summary>
 	    /// Return the current class being tested.
@@ -682,7 +684,8 @@ namespace Lucene.Net.Util
 	    {
 	        get
 	        {
-	            return ClassNameRule.TestClass;
+	            //return ClassNameRule.TestClass;
+	            return typeof (LuceneTestCase);
 	        }
 	    }
 
@@ -693,7 +696,8 @@ namespace Lucene.Net.Util
 	    {
 	        get
 	        {
-	            return ThreadAndTestNameRule.TestMethodName;
+	            //return ThreadAndTestNameRule.TestMethodName;
+	            return "LuceneTestCase";
 	        }
 	    }
 
@@ -717,10 +721,11 @@ namespace Lucene.Net.Util
         /// Returns true if and only if the calling thread is the primary thread 
         /// executing the test case. 
         /// </summary>
-        protected bool TestThread()
+        public static bool TestThread()
         {
-            Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
-            return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;
+            /*Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
+            return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;*/
+            return true;
         }
 
         /// <summary>
@@ -820,17 +825,17 @@ namespace Lucene.Net.Util
 
         public static void AssumeTrue(string msg, bool condition)
         {
-            RandomizedTest.AssumeTrue(msg, condition);
+            //RandomizedTest.AssumeTrue(msg, condition);
         }
 
         public static void AssumeFalse(string msg, bool condition)
         {
-            RandomizedTest.AssumeFalse(msg, condition);
+            //RandomizedTest.AssumeFalse(msg, condition);
         }
 
         public static void AssumeNoException(string msg, Exception e)
         {
-            RandomizedTest.AssumeNoException(msg, e);
+            //RandomizedTest.AssumeNoException(msg, e);
         }
 
         /// <summary>
@@ -1267,7 +1272,7 @@ namespace Lucene.Net.Util
             if (bare)
             {
                 BaseDirectoryWrapper @base = new BaseDirectoryWrapper(directory);
-                CloseAfterSuite(new IDisposableDirectory(@base, SuiteFailureMarker));
+                //CloseAfterSuite(new IDisposableDirectory(@base, SuiteFailureMarker));
                 return @base;
             }
             else
@@ -1275,7 +1280,7 @@ namespace Lucene.Net.Util
                 MockDirectoryWrapper mock = new MockDirectoryWrapper(random, directory);
 
                 mock.Throttling = TEST_THROTTLING;
-                CloseAfterSuite(new IDisposableDirectory(mock, SuiteFailureMarker));
+                //CloseAfterSuite(new IDisposableDirectory(mock, SuiteFailureMarker));
                 return mock;
             }
         }
@@ -1431,12 +1436,12 @@ namespace Lucene.Net.Util
                 if (clazz.IsSubclassOf(typeof(FSDirectory)))
                 {
                     DirectoryInfo dir = CreateTempDir("index-" + clazzName);
-                    dir.mkdirs(); // ensure it's created so we 'have' it.
-                    return NewFSDirectoryImpl(clazz.asSubclass(typeof(FSDirectory)), dir);
+                    dir.Create(); // ensure it's created so we 'have' it.
+                    return NewFSDirectoryImpl(typeof(FSDirectory), dir);
                 }
 
                 // try empty ctor
-                return clazz.newInstance();
+                return (Directory)Activator.CreateInstance(clazz);
             }
             catch (Exception e)
             {
@@ -1646,26 +1651,26 @@ namespace Lucene.Net.Util
             else
             {
                 int threads = 0;
-                ThreadPoolExecutor ex;
-                if (random.NextBoolean())
-                {
+                TaskScheduler ex;
+                /*if (random.NextBoolean())
+                {*/
                     ex = null;
-                }
+                /*}
                 else
                 {
                     threads = TestUtil.NextInt(random, 1, 8);
-                    ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("LuceneTestCase"));
+                    ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<IThreadRunnable>(), new NamedThreadFactory("LuceneTestCase"));
                     // uncomment to intensify LUCENE-3840
                     // ex.prestartAllCoreThreads();
-                }
-                if (ex != null)
+                }*/
+                /*if (ex != null)
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
-                    r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(this, ex));
-                }
+                    r.AddReaderClosedListener(new ReaderClosedListenerAnonymousInnerClassHelper(ex));
+                }*/
                 IndexSearcher ret;
                 if (wrapWithAssertions)
                 {
@@ -1689,7 +1694,7 @@ namespace Lucene.Net.Util
         {
             try
             {
-                return new FileInfo(this.GetType().GetResource(name).toURI());
+                return new FileInfo(Path.GetFileName(name));
             }
             catch (Exception e)
             {
@@ -1802,7 +1807,7 @@ namespace Lucene.Net.Util
                 string field = leftEnum.Current;
                 rightEnum.MoveNext();
                 Assert.AreEqual(field, rightEnum.Current, info);
-                AssertTermsEquals(leftReader, leftFields.Terms(field), rightFields.Terms(field), deep, input);
+                AssertTermsEquals(info, leftReader, leftFields.Terms(field), rightFields.Terms(field), deep);
             }
             Assert.IsFalse(rightEnum.MoveNext());
         }
@@ -2253,7 +2258,7 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                IComparer<IndexableField> comp = new ComparatorAnonymousInnerClassHelper(this);
+                System.Collections.IComparer comp = new ComparatorAnonymousInnerClassHelper(this);
                 CollectionsHelper.Sort(leftDoc.Fields, comp);
                 CollectionsHelper.Sort(rightDoc.Fields, comp);
 
@@ -2537,25 +2542,35 @@ namespace Lucene.Net.Util
             {
                 if (TempDirBase == null)
                 {
-                    FileInfo directory = new FileInfo(System.getProperty("tempDir", System.getProperty("java.io.tmpdir")));
-                    Debug.Assert(directory.Exists && directory.Directory != null && directory.CanWrite());
+                    DirectoryInfo directory = new DirectoryInfo(System.IO.Path.GetTempPath());
+                    //Debug.Assert(directory.Exists && directory.Directory != null && directory.CanWrite());
 
                     RandomizedContext ctx = RandomizedContext.Current;
                     Type clazz = ctx.GetTargetType;
                     string prefix = clazz.Name;
-                    prefix = prefix.replaceFirst("^org.apache.lucene.", "lucene.");
-                    prefix = prefix.replaceFirst("^org.apache.solr.", "solr.");
+                    /*prefix = prefix.replaceFirst("^org.apache.lucene.", "lucene.");
+                    prefix = prefix.replaceFirst("^org.apache.solr.", "solr.");*/
 
                     int attempt = 0;
-                    FileInfo f;
+                    DirectoryInfo f;
+                    bool iterate = true;
                     do
                     {
                         if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
                         {
                             throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + directory.FullName);
                         }
-                        f = new FileInfo(directory, prefix + "-" + ctx.RunnerSeed + "-" + string.Format(Locale.ENGLISH, "%03d", attempt));
-                    } while (!f.mkdirs());
+                        f = new DirectoryInfo(Path.Combine(directory.FullName, prefix + "-" + ctx.RunnerSeed + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt)));
+
+                        try
+                        {
+                            f.Create();
+                        }
+                        catch (IOException)
+                        {
+                            iterate = false;
+                        }
+                    } while (iterate);
 
                     TempDirBase = f;
                     RegisterToRemoveAfterSuite(TempDirBase);
@@ -2584,18 +2599,27 @@ namespace Lucene.Net.Util
         /// </summary>
         public static DirectoryInfo CreateTempDir(string prefix)
         {
-            Directory @base = BaseTempDirForTestClass();
+            DirectoryInfo @base = BaseTempDirForTestClass();
 
             int attempt = 0;
             DirectoryInfo f;
+            bool iterate = true;
             do
             {
                 if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
                 {
                     throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.FullName);
                 }
-                f = new FileInfo(@base, prefix + "-" + string.Format(Locale.ENGLISH, "%03d", attempt));
-            } while (!f.mkdirs());
+                f = new DirectoryInfo(Path.Combine(@base.FullName, prefix + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt)));
+                try
+                {
+                    f.Create();
+                }
+                catch (IOException exc)
+                {
+                    iterate = false;
+                }
+            } while (iterate);
 
             RegisterToRemoveAfterSuite(f);
             return f;
@@ -2621,7 +2645,7 @@ namespace Lucene.Net.Util
                 {
                     throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.FullName);
                 }
-                f = new FileInfo(@base, prefix + "-" + string.format(Locale.ENGLISH, "%03d", attempt) + suffix);
+                f = new FileInfo(Path.Combine(@base.FullName, prefix + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt) + suffix));
             } while (f.Create() == null);
 
             RegisterToRemoveAfterSuite(f);
@@ -2646,7 +2670,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Register temporary folder for removal after the suite completes.
         /// </summary>
-        private static void RegisterToRemoveAfterSuite(FileInfo f)
+        private static void RegisterToRemoveAfterSuite(FileSystemInfo f)
         {
             Debug.Assert(f != null);
 
@@ -2662,7 +2686,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static class TemporaryFilesCleanupRule : TestRuleAdapter
+        /*private static class TemporaryFilesCleanupRule : TestRuleAdapter
         {
             protected void Before()
             {
@@ -2682,7 +2706,7 @@ namespace Lucene.Net.Util
 
                     CleanupQueue.Reverse();
                     everything = new DirectoryInfo[CleanupQueue.Count];
-                    CleanupQueue.ToArray(/*everything*/);
+                    CleanupQueue.ToArray(everything);
                     CleanupQueue.Clear();
                 }
 
@@ -2714,19 +2738,17 @@ namespace Lucene.Net.Util
                     }
                 }
             }
-        }
+        }*/
     }
 
 
-    internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
+    /*internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.ReaderClosedListener
     {
-        private readonly LuceneTestCase outerInstance;
 
         private ThreadPoolExecutor ex;
 
-        public ReaderClosedListenerAnonymousInnerClassHelper(LuceneTestCase outerInstance, ThreadPoolExecutor ex)
+        public ReaderClosedListenerAnonymousInnerClassHelper(ThreadPoolExecutor ex)
         {
-            this.outerInstance = outerInstance;
             this.ex = ex;
         }
 
@@ -2734,9 +2756,9 @@ namespace Lucene.Net.Util
         {
             TestUtil.ShutdownExecutorService(ex);
         }
-    }
+    }*/
 
-    internal class ComparatorAnonymousInnerClassHelper : IComparer<IndexableField>
+    internal class ComparatorAnonymousInnerClassHelper : System.Collections.IComparer
     {
         private readonly LuceneTestCase outerInstance;
 
@@ -2745,9 +2767,9 @@ namespace Lucene.Net.Util
             this.outerInstance = outerInstance;
         }
 
-        public virtual int Compare(IndexableField arg0, IndexableField arg1)
+        public virtual int Compare(object arg0, object arg1)
         {
-            return arg0.Name().CompareTo(arg1.Name());
+            return ((IndexableField)arg0).Name().CompareTo(((IndexableField)arg1).Name());
         }
     }
 }

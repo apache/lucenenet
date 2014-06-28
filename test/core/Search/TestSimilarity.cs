@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(d1);
 		writer.AddDocument(d2);
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 		IndexSearcher searcher = NewSearcher(reader);
 		searcher.Similarity = new SimpleSimilarity();

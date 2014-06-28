@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
 
 		IndexReader reader = writer.Reader;
 		IndexSearcher searcher = NewSearcher(reader);
-		writer.Close();
+		writer.Dispose();
 
 		FuzzyQuery query = new FuzzyQuery(new Term("field", "aaaaa"), FuzzyQuery.DefaultMaxEdits, 0);
 		ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
 
 		IndexReader reader = writer.Reader;
 		IndexSearcher searcher = NewSearcher(reader);
-		writer.Close();
+		writer.Dispose();
 
 		FuzzyQuery query = new FuzzyQuery(new Term("field", "WEBER"), 2, 1);
 		//query.setRewriteMethod(FuzzyQuery.SCORING_BOOLEAN_QUERY_REWRITE);
@@ -272,8 +272,8 @@ namespace Lucene.Net.Search
 		mr.Dispose();
 		ir1.Dispose();
 		ir2.Dispose();
-		writer.Close();
-        writer2.Close();
+		writer.Dispose();
+        writer2.Dispose();
 		directory.Dispose();
 		directory2.Dispose();
 	  }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search
 
 		IndexReader reader = writer.Reader;
 		IndexSearcher searcher = NewSearcher(reader);
-        writer.Close();
+        writer.Dispose();
 
 		FuzzyQuery query = new FuzzyQuery(new Term("field", "lucene"));
 		query.SetRewriteMethod(new MultiTermQuery.TopTermsBoostOnlyBooleanQueryRewrite(50));
@@ -331,7 +331,7 @@ namespace Lucene.Net.Search
 		AddDoc("Brute willis", w);
 		AddDoc("B. willis", w);
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		Query q = new FuzzyQuery(new Term("field", "giga"), 0);
 
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
 		AddDoc("working", w);
 		IndexReader reader = w.Reader;
 		IndexSearcher searcher = NewSearcher(reader);
-        w.Close();
+        w.Dispose();
 
 		FuzzyQuery q = new FuzzyQuery(new Term("field", "fouba"), 2);
 		ScoreDoc[] hits = searcher.Search(q, 10).ScoreDocs;

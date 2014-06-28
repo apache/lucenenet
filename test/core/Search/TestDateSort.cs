@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(CreateDocument("Document 5", 1192209943000L));
 
 		Reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 	  }
 
       [TearDown]

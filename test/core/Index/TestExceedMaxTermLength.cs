@@ -35,7 +35,8 @@ namespace Lucene.Net.Index
 	/// too large
 	/// </summary>
 	/// <seealso cref= IndexWriter#MAX_TERM_LENGTH </seealso>
-	public class TestExceedMaxTermLength : LuceneTestCase
+	[TestFixture]
+    public class TestExceedMaxTermLength : LuceneTestCase
 	{
 
 	  private static readonly int MinTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
@@ -45,19 +46,22 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Before public void createDir()
-	  public virtual void CreateDir()
+	  [SetUp]
+      public virtual void CreateDir()
 	  {
 		Dir = NewDirectory();
 	  }
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @After public void destroyDir() throws java.io.IOException
-	  public virtual void DestroyDir()
+	  [TearDown]
+      public virtual void DestroyDir()
 	  {
 		Dir.Dispose();
 		Dir = null;
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 
 		IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

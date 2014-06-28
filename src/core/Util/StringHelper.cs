@@ -200,7 +200,7 @@ namespace Lucene.Net.Util
                       {
                           prop = prop.Substring(prop.Length - 8);
                       }
-                      good_fast_hash_seed = (int)Convert.ToInt64(prop, 16);
+                      good_fast_hash_seed = (int)Convert.ToInt32(prop, 16);
                   }
                   else
                   {

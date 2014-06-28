@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -122,7 +123,7 @@ namespace Lucene.Net.Search.Spans
 		doc.Add(NewTextField(PayloadHelper.FIELD, "one two three one four three", Field.Store.YES));
 		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 
 
 		CheckSpans(MultiSpansWrapper.Wrap(reader.Context, snq), 1,new int[]{2});
@@ -274,7 +275,7 @@ namespace Lucene.Net.Search.Spans
 
 		IndexReader reader = writer.Reader;
 		IndexSearcher @is = NewSearcher(reader);
-		writer.Close();
+		writer.Dispose();
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -292,7 +293,7 @@ namespace Lucene.Net.Search.Spans
 
 			foreach (sbyte [] payload in payloads)
 			{
-			  payloadSet.Add(new string(payload, IOUtils.CHARSET_UTF_8));
+			  payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
 			}
 		  }
 		}
@@ -314,7 +315,7 @@ namespace Lucene.Net.Search.Spans
 		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
 		IndexSearcher @is = NewSearcher(reader);
-		writer.Close();
+		writer.Dispose();
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -331,7 +332,7 @@ namespace Lucene.Net.Search.Spans
 			ICollection<sbyte[]> payloads = spans.Payload;
 			foreach (sbyte[] payload in payloads)
 			{
-			  payloadSet.Add(new string(payload, IOUtils.CHARSET_UTF_8));
+                payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
 			}
 		  }
 		}
@@ -353,7 +354,7 @@ namespace Lucene.Net.Search.Spans
 		writer.AddDocument(doc);
 		IndexReader reader = writer.Reader;
 		IndexSearcher @is = NewSearcher(reader);
-		writer.Close();
+		writer.Dispose();
 
 		SpanTermQuery stq1 = new SpanTermQuery(new Term("content", "a"));
 		SpanTermQuery stq2 = new SpanTermQuery(new Term("content", "k"));
@@ -371,7 +372,7 @@ namespace Lucene.Net.Search.Spans
 
 			foreach (sbyte [] payload in payloads)
 			{
-			  payloadSet.Add(new string(payload, IOUtils.CHARSET_UTF_8));
+                payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
 			}
 		  }
 		}
@@ -401,7 +402,7 @@ namespace Lucene.Net.Search.Spans
 		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		IndexSearcher searcher = NewSearcher(reader);
 
 		PayloadSpanUtil psu = new PayloadSpanUtil(searcher.TopReaderContext);
@@ -412,7 +413,7 @@ namespace Lucene.Net.Search.Spans
 		  Console.WriteLine("Num payloads:" + payloads.Count);
 		  foreach (sbyte [] bytes in payloads)
 		  {
-			Console.WriteLine(new string(bytes, IOUtils.CHARSET_UTF_8));
+              Console.WriteLine(Encoding.UTF8.GetString((byte[])(Array)bytes));
 		  }
 		}
 		reader.Dispose();
@@ -472,7 +473,7 @@ namespace Lucene.Net.Search.Spans
 			}
     
 			CloseIndexReader = writer.Reader;
-            writer.Close();
+            writer.Dispose();
     
 			IndexSearcher searcher = NewSearcher(CloseIndexReader);
 			return searcher;
@@ -497,7 +498,7 @@ namespace Lucene.Net.Search.Spans
 			  Console.WriteLine("payloads for span:" + payload.Count);
 			  foreach (sbyte [] bytes in payload)
 			  {
-				Console.WriteLine("doc:" + spans.Doc() + " s:" + spans.Start() + " e:" + spans.End() + " " + new string(bytes, IOUtils.CHARSET_UTF_8));
+                  Console.WriteLine("doc:" + spans.Doc() + " s:" + spans.Start() + " e:" + spans.End() + " " + Encoding.UTF8.GetString((byte[])(Array)bytes));
 			  }
 			}
 

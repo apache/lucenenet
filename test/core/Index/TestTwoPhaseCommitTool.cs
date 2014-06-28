@@ -27,6 +27,7 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using Lucene.Net.Randomized.Generators;
 
+    [TestFixture]
 	public class TestTwoPhaseCommitTool : LuceneTestCase
 	{
 
@@ -87,13 +88,15 @@ namespace Lucene.Net.Index
 		}
 	  }
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 		TwoPhaseCommitImpl.CommitCalled = false; // reset count before every test
 	  }
 
-	  public virtual void TestPrepareThenCommit()
+      [Test]
+      public virtual void TestPrepareThenCommit()
 	  {
 		// tests that prepareCommit() is called on all objects before commit()
 		TwoPhaseCommitImpl[] objects = new TwoPhaseCommitImpl[2];
@@ -106,7 +109,8 @@ namespace Lucene.Net.Index
 		TwoPhaseCommitTool.Execute(objects);
 	  }
 
-	  public virtual void TestRollback()
+      [Test]
+      public virtual void TestRollback()
 	  {
 		// tests that rollback is called if failure occurs at any stage
 		int numObjects = Random().Next(8) + 3; // between [3, 10]
@@ -140,7 +144,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestNullTPCs()
+      [Test]
+      public virtual void TestNullTPCs()
 	  {
 		int numObjects = Random().Next(4) + 3; // between [3, 6]
 		TwoPhaseCommit[] tpcs = new TwoPhaseCommit[numObjects];

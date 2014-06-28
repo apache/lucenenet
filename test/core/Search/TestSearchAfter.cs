@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
 		  }
 		}
 		Reader = iw.Reader;
-		iw.Close();
+		iw.Dispose();
 		Searcher = NewSearcher(Reader);
 		if (VERBOSE)
 		{

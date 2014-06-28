@@ -30,11 +30,13 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestNRTReaderWithThreads : LuceneTestCase
 	{
 	  internal AtomicInteger Seq = new AtomicInteger(1);
 
-	  public virtual void TestIndexing()
+      [Test]
+      public virtual void TestIndexing()
 	  {
 		Directory mainDir = NewDirectory();
 		if (mainDir is MockDirectoryWrapper)

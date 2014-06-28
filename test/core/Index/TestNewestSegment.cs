@@ -23,8 +23,10 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestNewestSegment : LuceneTestCase
 	{
+      [Test]
 	  public virtual void TestNewestSegment_Mem()
 	  {
 		Directory directory = NewDirectory();

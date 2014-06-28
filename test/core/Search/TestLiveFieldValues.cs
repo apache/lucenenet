@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using Apache.NMS.Util;
 using Lucene.Net.Support;
@@ -46,16 +48,16 @@ namespace Lucene.Net.Search
 	  public virtual void Test()
 	  {
 
-		Directory dir = newFSDirectory(createTempDir("livefieldupdates"));
+		Directory dir = NewFSDirectory(CreateTempDir("livefieldupdates"));
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
 		IndexWriter w = new IndexWriter(dir, iwc);
 
 		SearcherManager mgr = new SearcherManager(w, true, new SearcherFactoryAnonymousInnerClassHelper(this));
 
-		const int? missing = -1;
+		const int missing = -1;
 
-		LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(this, mgr);
+		LiveFieldValues<IndexSearcher, int> rt = new LiveFieldValuesAnonymousInnerClassHelper(this, mgr, missing);
 
 		int numThreads = TestUtil.NextInt(Random(), 2, 5);
 		if (VERBOSE)
@@ -64,7 +66,7 @@ namespace Lucene.Net.Search
 		}
 
 		CountDownLatch startingGun = new CountDownLatch(1);
-		IList<Thread> threads = new List<Thread>();
+		IList<ThreadClass> threads = new List<ThreadClass>();
 
 		int iters = AtLeast(1000);
 		int idCount = TestUtil.NextInt(Random(), 100, 10000);
@@ -112,28 +114,29 @@ namespace Lucene.Net.Search
 		  }
 	  }
 
-	  private class LiveFieldValuesAnonymousInnerClassHelper : LiveFieldValues<IndexSearcher, int?>
+      private class LiveFieldValuesAnonymousInnerClassHelper : LiveFieldValues<IndexSearcher, int>
 	  {
 		  private readonly TestLiveFieldValues OuterInstance;
 
-		  public LiveFieldValuesAnonymousInnerClassHelper(TestLiveFieldValues outerInstance, SearcherManager mgr) : base(mgr, missing)
+		  public LiveFieldValuesAnonymousInnerClassHelper(TestLiveFieldValues outerInstance, SearcherManager mgr, int missing) 
+              : base(mgr, missing)
 		  {
 			  this.OuterInstance = outerInstance;
 		  }
 
-		  protected internal override int? LookupFromSearcher(IndexSearcher s, string id)
+          protected override int LookupFromSearcher(IndexSearcher s, string id)
 		  {
 			TermQuery tq = new TermQuery(new Term("id", id));
 			TopDocs hits = s.Search(tq, 1);
 			Assert.IsTrue(hits.TotalHits <= 1);
 			if (hits.TotalHits == 0)
 			{
-			  return null;
+			  return default(int);
 			}
 			else
 			{
 			  Document doc = s.Doc(hits.ScoreDocs[0].Doc);
-			  return (int?) doc.GetField("field").NumericValue;
+			  return (int)doc.GetField("field").NumericValue;
 			}
 		  }
 	  }
@@ -145,7 +148,7 @@ namespace Lucene.Net.Search
 		  private IndexWriter w;
 		  private SearcherManager Mgr;
 		  private int? Missing;
-		  private LiveFieldValues<IndexSearcher, int?> Rt;
+		  private LiveFieldValues<IndexSearcher, int> Rt;
 		  private CountDownLatch StartingGun;
 		  private int Iters;
 		  private int IdCount;
@@ -156,7 +159,7 @@ namespace Lucene.Net.Search
 		  private int ThreadID;
 		  private Random ThreadRandom;
 
-		  public ThreadAnonymousInnerClassHelper<T1>(TestLiveFieldValues outerInstance, IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<T1> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
+          public ThreadAnonymousInnerClassHelper(TestLiveFieldValues outerInstance, IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int> rt, CountDownLatch startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
 		  {
 			  this.OuterInstance = outerInstance;
 			  this.w = w;
@@ -181,7 +184,7 @@ namespace Lucene.Net.Search
 			try
 			{
 			  IDictionary<string, int?> values = new Dictionary<string, int?>();
-			  IList<string> allIDs = Collections.synchronizedList(new List<string>());
+			  IList<string> allIDs = new ConcurrentList<string>(new List<string>());
 
 			  StartingGun.@await();
 			  for (int iter = 0; iter < Iters;iter++)
@@ -192,23 +195,24 @@ namespace Lucene.Net.Search
 				// same time:
 				if (ThreadRandom.NextDouble() <= AddChance)
 				{
-				  string id = string.format(Locale.ROOT, "%d_%04x", ThreadID, ThreadRandom.Next(IdCount));
-				  int? field = ThreadRandom.Next(int.MaxValue);
+				  string id = string.Format(CultureInfo.InvariantCulture, "%d_%04x", ThreadID, ThreadRandom.Next(IdCount));
+				  int field = ThreadRandom.Next(int.MaxValue);
 				  doc.Add(new StringField("id", id, Field.Store.YES));
 				  doc.Add(new IntField("field", (int)field, Field.Store.YES));
-				  w.updateDocument(new Term("id", id), doc);
+				  w.UpdateDocument(new Term("id", id), doc);
 				  Rt.Add(id, field);
-				  if (values.put(id, field) == null)
-				  {
-					allIDs.Add(id);
+				  if (values[id] == null)//Key didn't exist before
+                  {
+                      allIDs.Add(id);
 				  }
+                  values[id] = field;
 				}
 
 				if (allIDs.Count > 0 && ThreadRandom.NextDouble() <= DeleteChance)
 				{
 				  string randomID = allIDs[ThreadRandom.Next(allIDs.Count)];
 				  w.DeleteDocuments(new Term("id", randomID));
-				  Rt.delete(randomID);
+				  Rt.Delete(randomID);
 				  values[randomID] = Missing;
 				}
 

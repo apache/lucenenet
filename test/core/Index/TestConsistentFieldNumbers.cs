@@ -33,11 +33,13 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestConsistentFieldNumbers : LuceneTestCase
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSameFieldNumbersAcrossSegments() throws Exception
+      [Test]
 	  public virtual void TestSameFieldNumbersAcrossSegments()
 	  {
 		for (int i = 0; i < 2; i++)
@@ -107,7 +109,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testAddIndexes() throws Exception
-	  public virtual void TestAddIndexes()
+      [Test]
+      public virtual void TestAddIndexes()
 	  {
 		Directory dir1 = NewDirectory();
 		Directory dir2 = NewDirectory();
@@ -155,7 +158,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestFieldNumberGaps()
+      [Test]
+      public virtual void TestFieldNumberGaps()
 	  {
 		int numIters = AtLeast(13);
 		for (int i = 0; i < numIters; i++)
@@ -246,7 +250,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testManyFields() throws Exception
-	  public virtual void TestManyFields()
+      [Test]
+      public virtual void TestManyFields()
 	  {
 		int NUM_DOCS = AtLeast(200);
 		int MAX_FIELDS = AtLeast(50);

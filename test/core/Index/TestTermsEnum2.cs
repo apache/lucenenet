@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestTermsEnum2 : LuceneTestCase
 	{
 	  private Directory Dir;
@@ -48,6 +49,7 @@ namespace Lucene.Net.Index
 	  private Automaton TermsAutomaton; // automata of the same
 	  internal int NumIterations;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -74,9 +76,10 @@ namespace Lucene.Net.Index
 
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -86,7 +89,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// tests a pre-intersected automaton against the original </summary>
-	  public virtual void TestFiniteVersusInfinite()
+      [Test]
+      public virtual void TestFiniteVersusInfinite()
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
@@ -113,7 +117,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// seeks to every term accepted by some automata </summary>
-	  public virtual void TestSeeking()
+      [Test]
+      public virtual void TestSeeking()
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
@@ -146,7 +151,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// mixes up seek and next for all terms </summary>
-	  public virtual void TestSeekingAndNexting()
+      [Test]
+      public virtual void TestSeekingAndNexting()
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{
@@ -174,7 +180,8 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// tests intersect: TODO start at a random term! </summary>
-	  public virtual void TestIntersect()
+      [Test]
+      public virtual void TestIntersect()
 	  {
 		for (int i = 0; i < NumIterations; i++)
 		{

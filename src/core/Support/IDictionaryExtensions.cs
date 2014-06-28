@@ -14,5 +14,15 @@ namespace Lucene.Net.Support
                 dict[kvp.Key] = kvp.Value;
             }
         }
+
+        public static ISet<KeyValuePair<TKey, TValue>> EntrySet<TKey, TValue>(this IDictionary<TKey, TValue> dict)
+        {
+            ISet<KeyValuePair<TKey, TValue>> iset = new HashSet<KeyValuePair<TKey, TValue>>();
+            foreach (KeyValuePair<TKey, TValue> kvp in dict)
+            {
+                iset.Add(kvp);
+            }
+            return iset;
+        }
     }
 }

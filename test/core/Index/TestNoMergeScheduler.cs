@@ -1,3 +1,4 @@
+using System;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
@@ -24,21 +25,23 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
-
+    [TestFixture]
 	public class TestNoMergeScheduler : LuceneTestCase
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoMergeScheduler() throws Exception
+      [Test]
 	  public virtual void TestNoMergeScheduler_Mem()
 	  {
 		MergeScheduler ms = NoMergeScheduler.INSTANCE;
 		ms.Dispose();
-		ms.Merge(null, RandomInts.RandomFrom(Random(), MergeTrigger.values()), Random().NextBoolean());
+		ms.Merge(null, RandomInts.RandomFrom(Random(), Enum.GetValues(typeof(MergeTrigger))), Random().NextBoolean());
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFinalSingleton() throws Exception
+      [Test]
 	  public virtual void TestFinalSingleton()
 	  {
 		Assert.IsTrue(Modifier.isFinal(typeof(NoMergeScheduler).Modifiers));
@@ -51,7 +54,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMethodsOverridden() throws Exception
-	  public virtual void TestMethodsOverridden()
+      [Test]
+      public virtual void TestMethodsOverridden()
 	  {
 		// Ensures that all methods of MergeScheduler are overridden. That's
 		// important to ensure that NoMergeScheduler overrides everything, so that

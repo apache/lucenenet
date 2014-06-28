@@ -44,7 +44,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestLongPostings extends Lucene.Net.Util.LuceneTestCase
-	public class TestLongPostings : LuceneTestCase
+	[TestFixture]
+    public class TestLongPostings : LuceneTestCase
 	{
 
 	  // Produces a realistic unicode random string that
@@ -100,7 +101,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestLongPostings_Mem()
+      [Test]
+      public virtual void TestLongPostings_Mem()
 	  {
 		// Don't use TestUtil.getTempDir so that we own the
 		// randomness (ie same seed will point to same dir):
@@ -158,7 +160,7 @@ namespace Lucene.Net.Index
 		}
 
 		r = riw.Reader;
-        riw.Close();
+        riw.Dispose();
 
 		/*
 		if (VERBOSE) {
@@ -332,7 +334,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // a weaker form of testLongPostings, that doesnt check positions
-	  public virtual void TestLongPostingsNoPositions()
+      [Test]
+      public virtual void TestLongPostingsNoPositions()
 	  {
 		DoTestLongPostingsNoPositions(IndexOptions.DOCS_ONLY);
 		DoTestLongPostingsNoPositions(IndexOptions.DOCS_AND_FREQS);
@@ -400,7 +403,7 @@ namespace Lucene.Net.Index
 		  }
 
 		  r = riw.Reader;
-          riw.Close();
+          riw.Dispose();
 		}
 		else
 		{

@@ -35,8 +35,10 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestPerSegmentDeletes : LuceneTestCase
 	{
+      [Test]
 	  public virtual void TestDeletes1()
 	  {
 		//IndexWriter.debug2 = System.out;
@@ -78,12 +80,12 @@ namespace Lucene.Net.Index
 		// flushing without applying deletes means
 		// there will still be deletes in the segment infos
 		writer.Flush(false, false);
-		Assert.IsTrue(writer.BufferedUpdatesStream.Any());
+		Assert.IsTrue(writer.BufferedUpdatesStreamAny);
 
 		// get reader flushes pending deletes
 		// so there should not be anymore
 		IndexReader r1 = writer.Reader;
-		Assert.IsFalse(writer.BufferedUpdatesStream.Any());
+		Assert.IsFalse(writer.BufferedUpdatesStreamAny);
 		r1.Dispose();
 
 		// delete id:2 from the first segment
@@ -106,7 +108,7 @@ namespace Lucene.Net.Index
 		Assert.IsTrue(id2docs == null);
 		r2.Dispose();
 
-		/// <summary>
+		/*
 		/// // added docs are in the ram buffer
 		/// for (int x = 15; x < 20; x++) {
 		///  writer.AddDocument(TestIndexWriterReader.CreateDocument(x, "4", 2));
@@ -163,7 +165,7 @@ namespace Lucene.Net.Index
 		/// 
 		/// part2(writer, fsmp);
 		/// 
-		/// </summary>
+		*/
 		// System.out.println("segdels2:"+writer.docWriter.segmentDeletes.toString());
 		//System.out.println("close");
 		writer.Dispose();

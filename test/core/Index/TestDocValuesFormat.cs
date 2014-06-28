@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Index
 {
 
@@ -26,9 +28,7 @@ namespace Lucene.Net.Index
 	/// Tests the codec configuration defined by LuceneTestCase randomly
 	///  (typically a mix across different fields).
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestDocValuesFormat extends BaseDocValuesFormatTestCase
-	public class TestDocValuesFormat : BaseDocValuesFormatTestCase
+    public class TestDocValuesFormat : BaseDocValuesFormatTestCase
 	{
 		protected internal override Codec Codec
 		{

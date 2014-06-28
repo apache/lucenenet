@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 				if (InnerScorerClassName != null && value is ConstantScoreQuery.ConstantScorer)
 				{
 				  ConstantScoreQuery.ConstantScorer innerScorer = (ConstantScoreQuery.ConstantScorer) value;
-				  Assert.AreEqual(InnerScorerClassName, innerScorer.DocIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
+				  Assert.AreEqual(InnerScorerClassName, innerScorer.GetDocIDIteratorTypeName(), "inner Scorer is implemented by wrong class");
 				}
 			  }
 		  }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
 		  writer.AddDocument(doc);
 
 		  reader = writer.Reader;
-          writer.Close();
+          writer.Dispose();
 		  // we don't wrap with AssertingIndexSearcher in order to have the original scorer in setScorer.
 		  searcher = NewSearcher(reader, true, false);
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewStringField("field", "b", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		Filter filterB = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "b"))));
 		Query query = new ConstantScoreQuery(filterB);
@@ -227,7 +227,7 @@ namespace Lucene.Net.Search
 		doc.Add(NewStringField("field", "a", Field.Store.NO));
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random(), new TermQuery(new Term("field", "a"))));
 		IndexSearcher s = NewSearcher(r);

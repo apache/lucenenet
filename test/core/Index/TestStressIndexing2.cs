@@ -37,6 +37,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestStressIndexing2 : LuceneTestCase
 	{
 	  internal static int MaxFields = 4;
@@ -66,7 +67,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 	//  
-	  public virtual void TestRandomIWReader()
+      [Test]
+      public virtual void TestRandomIWReader()
 	  {
 		Directory dir = NewDirectory();
 
@@ -80,7 +82,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		Directory dir1 = NewDirectory();
 		Directory dir2 = NewDirectory();
@@ -99,7 +102,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestMultiConfig()
+      [Test]
+      public virtual void TestMultiConfig()
 	  {
 		// test lots of smaller different params together
 
@@ -177,14 +181,12 @@ namespace Lucene.Net.Index
 		LogMergePolicy lmp = (LogMergePolicy) w.Config.MergePolicy;
 		lmp.NoCFSRatio = 0.0;
 		lmp.MergeFactor = MergeFactor;
-		/// <summary>
-		///*
+		/*
 		///    w.setMaxMergeDocs(Integer.MAX_VALUE);
 		///    w.setMaxFieldLength(10000);
 		///    w.SetRAMBufferSizeMB(1);
 		///    w.setMergeFactor(10);
-		/// **
-		/// </summary>
+        */
 
 		Threads = new IndexingThread[nThreads];
 		for (int i = 0; i < Threads.Length; i++)
@@ -799,7 +801,7 @@ namespace Lucene.Net.Index
 		Assert.IsFalse(fieldsEnum2.MoveNext());
 	  }
 
-	    internal class IndexingThread : ThreadClass
+	  internal class IndexingThread : ThreadClass
 	  {
 		  private readonly TestStressIndexing2 OuterInstance;
 

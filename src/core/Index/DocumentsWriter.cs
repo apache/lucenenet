@@ -745,8 +745,6 @@ namespace Lucene.Net.Index
 	   */
 	  internal bool FlushAllThreads(IndexWriter indexWriter)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterDeleteQueue flushingDeleteQueue;
 		DocumentsWriterDeleteQueue flushingDeleteQueue;
 		if (InfoStream.IsEnabled("DW"))
 		{

@@ -33,13 +33,15 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestParallelAtomicReader : LuceneTestCase
 	{
 
 	  private IndexSearcher Parallel_Renamed, Single_Renamed;
 	  private Directory Dir, Dir1, Dir2;
 
-	  public virtual void TestQueries()
+      [Test]
+      public virtual void TestQueries()
 	  {
 		Single_Renamed = Single(Random());
 		Parallel_Renamed = Parallel(Random());
@@ -70,7 +72,8 @@ namespace Lucene.Net.Index
 		Dir2 = null;
 	  }
 
-	  public virtual void TestFieldNames()
+      [Test]
+      public virtual void TestFieldNames()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -86,7 +89,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestRefCounts1()
+      [Test]
+      public virtual void TestRefCounts1()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -104,7 +108,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestRefCounts2()
+      [Test]
+      public virtual void TestRefCounts2()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());
@@ -126,7 +131,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestCloseInnerReader()
+      [Test]
+      public virtual void TestCloseInnerReader()
 	  {
 		Directory dir1 = GetDir1(Random());
 		AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
@@ -151,7 +157,8 @@ namespace Lucene.Net.Index
 		dir1.Dispose();
 	  }
 
-	  public virtual void TestIncompatibleIndexes()
+      [Test]
+      public virtual void TestIncompatibleIndexes()
 	  {
 		// two documents:
 		Directory dir1 = GetDir1(Random());
@@ -196,7 +203,8 @@ namespace Lucene.Net.Index
 		dir2.Dispose();
 	  }
 
-	  public virtual void TestIgnoreStoredFields()
+      [Test]
+      public virtual void TestIgnoreStoredFields()
 	  {
 		Directory dir1 = GetDir1(Random());
 		Directory dir2 = GetDir2(Random());

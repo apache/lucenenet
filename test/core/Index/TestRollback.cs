@@ -27,10 +27,12 @@ namespace Lucene.Net.Index
 	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestRollback : LuceneTestCase
 	{
 
 	  // LUCENE-2536
+      [Test]
 	  public virtual void TestRollbackIntegrityWithBufferFlush()
 	  {
 		Directory dir = NewDirectory();
@@ -41,7 +43,7 @@ namespace Lucene.Net.Index
 		  doc.Add(NewStringField("pk", Convert.ToString(i), Field.Store.YES));
 		  rw.AddDocument(doc);
 		}
-        rw.Close();
+        rw.Dispose();
 
 		// If buffer size is small enough to cause a flush, errors ensue...
 		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(IndexWriterConfig.OpenMode_e.APPEND));

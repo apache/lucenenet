@@ -40,6 +40,7 @@ namespace Lucene.Net.Index
     using System.IO;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestTermVectorsReader : LuceneTestCase
 	{
 		private bool InstanceFieldsInitialized = false;
@@ -91,6 +92,7 @@ namespace Lucene.Net.Index
 
 	  internal TestToken[] Tokens;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -162,6 +164,7 @@ namespace Lucene.Net.Index
 		FieldInfos = SegmentReader.ReadFieldInfos(Seg);
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Dir.Dispose();
@@ -232,7 +235,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		//Check to see the files were created properly in setup
 		DirectoryReader reader = DirectoryReader.Open(Dir);
@@ -244,7 +248,8 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestReader()
+      [Test]
+      public virtual void TestReader()
 	  {
 		TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
 		for (int j = 0; j < 5; j++)
@@ -266,7 +271,8 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestDocsEnum()
+      [Test]
+      public virtual void TestDocsEnum()
 	  {
 		TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
 		for (int j = 0; j < 5; j++)
@@ -296,7 +302,8 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestPositionReader()
+      [Test]
+      public virtual void TestPositionReader()
 	  {
 		TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
 		BytesRef[] terms;
@@ -358,7 +365,8 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestOffsetReader()
+      [Test]
+      public virtual void TestOffsetReader()
 	  {
 		TermVectorsReader reader = Codec.Default.TermVectorsFormat().VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
 		Terms vector = reader.Get(0).Terms(TestFields[0]);
@@ -399,7 +407,8 @@ namespace Lucene.Net.Index
 		reader.Dispose();
 	  }
 
-	  public virtual void TestIllegalIndexableField()
+      [Test]
+      public virtual void TestIllegalIndexableField()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -467,7 +476,7 @@ namespace Lucene.Net.Index
 		  Assert.AreEqual("cannot index term vector payloads when term vectors are not indexed (field=\"field\")", iae.Message);
 		}
 
-		w.Close();
+		w.Dispose();
 
 		dir.Dispose();
 	  }

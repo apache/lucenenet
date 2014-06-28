@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 		Reader = writer.Reader;
 		Searcher = NewSearcher(Reader);
-		writer.Close();
+		writer.Dispose();
 	  }
 
       [TearDown]

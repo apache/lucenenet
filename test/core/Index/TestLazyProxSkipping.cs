@@ -40,7 +40,8 @@ namespace Lucene.Net.Index
 	/// Tests lazy skipping on the proximity file.
 	/// 
 	/// </summary>
-	public class TestLazyProxSkipping : LuceneTestCase
+	[TestFixture]
+    public class TestLazyProxSkipping : LuceneTestCase
 	{
 		private IndexSearcher Searcher;
 		private int SeeksCounter = 0;
@@ -152,7 +153,8 @@ namespace Lucene.Net.Index
 			Searcher.IndexReader.Dispose();
 		}
 
-		public virtual void TestLazySkipping()
+        [Test]
+        public virtual void TestLazySkipping()
 		{
 		  string fieldFormat = TestUtil.GetPostingsFormat(this.Field);
 		  AssumeFalse("this test cannot run with Memory postings format", fieldFormat.Equals("Memory"));
@@ -165,7 +167,8 @@ namespace Lucene.Net.Index
 			PerformTest(10);
 		}
 
-		public virtual void TestSeek()
+        [Test]
+        public virtual void TestSeek()
 		{
 			Directory directory = NewDirectory();
 			IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));

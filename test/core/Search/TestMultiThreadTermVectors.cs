@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
@@ -122,8 +123,8 @@ namespace Lucene.Net.Search
 		}
 
 
-		/// <summary>
-		/// run until all threads finished </summary>
+		
+		// run until all threads finished
 		int threadsAlive = mtr.Length;
 		while (threadsAlive > 0)
 		{
@@ -154,11 +155,11 @@ namespace Lucene.Net.Search
 
 	}
 
-	internal class MultiThreadTermVectorsReader : Runnable
+	internal class MultiThreadTermVectorsReader : IThreadRunnable
 	{
 
 	  private IndexReader Reader = null;
-	  private Thread t = null;
+      private ThreadClass t = null;
 
 	  private readonly int RunsToDo = 100;
 	  internal long TimeElapsed = 0;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Search
 	  {
 		this.Reader = reader;
 		TimeElapsed = 0;
-		t = new Thread(this);
+        t = new ThreadClass(new System.Threading.ThreadStart(this.Run));
 		t.Start();
 	  }
 
@@ -186,7 +187,7 @@ namespace Lucene.Net.Search
 	  }
 
       [Test]
-      public override void Run()
+      public void Run()
 	  {
 		  try
 		  {

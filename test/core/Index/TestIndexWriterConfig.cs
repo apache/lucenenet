@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
 	//using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestIndexWriterConfig : LuceneTestCase
 	{
 
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
 	  {
 		// Does not implement anything - used only for type checking on IndexWriterConfig.
 
-		internal override DocConsumer GetChain(DocumentsWriterPerThread documentsWriter)
+		internal DocConsumer GetChain(DocumentsWriterPerThread documentsWriter)
 		{
 		  return null;
 		}
@@ -59,7 +60,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testDefaults() throws Exception
-	  public virtual void TestDefaults()
+      [Test]
+      public virtual void TestDefaults()
 	  {
 		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		Assert.AreEqual(typeof(MockAnalyzer), conf.Analyzer.GetType());
@@ -76,7 +78,7 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB, conf.RAMBufferSizeMB, 0.0);
 		Assert.AreEqual(IndexWriterConfig.DEFAULT_MAX_BUFFERED_DOCS, conf.MaxBufferedDocs);
 		Assert.AreEqual(IndexWriterConfig.DEFAULT_READER_POOLING, conf.ReaderPooling);
-		Assert.IsTrue(DocumentsWriterPerThread.defaultIndexingChain == conf.IndexingChain);
+		Assert.IsTrue(DocumentsWriterPerThread.DefaultIndexingChain == conf.IndexingChain);
 		Assert.IsNull(conf.MergedSegmentWarmer);
 		Assert.AreEqual(IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR, conf.ReaderTermsIndexDivisor);
 		Assert.AreEqual(typeof(TieredMergePolicy), conf.MergePolicy.GetType());
@@ -88,31 +90,31 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM, conf.UseCompoundFile);
 		// Sanity check - validate that all getters are covered.
 		HashSet<string> getters = new HashSet<string>();
-		getters.Add("getAnalyzer");
-		getters.Add("getIndexCommit");
-		getters.Add("getIndexDeletionPolicy");
-		getters.Add("getMaxFieldLength");
-		getters.Add("getMergeScheduler");
-		getters.Add("getOpenMode");
-		getters.Add("getSimilarity");
-		getters.Add("getTermIndexInterval");
-		getters.Add("getWriteLockTimeout");
-		getters.Add("getDefaultWriteLockTimeout");
-		getters.Add("getMaxBufferedDeleteTerms");
-		getters.Add("getRAMBufferSizeMB");
-		getters.Add("getMaxBufferedDocs");
-		getters.Add("getIndexingChain");
-		getters.Add("getMergedSegmentWarmer");
-		getters.Add("getMergePolicy");
-		getters.Add("getMaxThreadStates");
-		getters.Add("getReaderPooling");
-		getters.Add("getIndexerThreadPool");
-		getters.Add("getReaderTermsIndexDivisor");
-		getters.Add("getFlushPolicy");
-		getters.Add("getRAMPerThreadHardLimitMB");
-		getters.Add("getCodec");
-		getters.Add("getInfoStream");
-		getters.Add("getUseCompoundFile");
+		getters.Add("GetAnalyzer");
+		getters.Add("GetIndexCommit");
+		getters.Add("GetIndexDeletionPolicy");
+		getters.Add("GetMaxFieldLength");
+		getters.Add("GetMergeScheduler");
+		getters.Add("GetOpenMode");
+		getters.Add("GetSimilarity");
+		getters.Add("GetTermIndexInterval");
+		getters.Add("GetWriteLockTimeout");
+		getters.Add("GetDefaultWriteLockTimeout");
+		getters.Add("GetMaxBufferedDeleteTerms");
+		getters.Add("GetRAMBufferSizeMB");
+		getters.Add("GetMaxBufferedDocs");
+		getters.Add("GetIndexingChain");
+		getters.Add("GetMergedSegmentWarmer");
+		getters.Add("GetMergePolicy");
+		getters.Add("GetMaxThreadStates");
+		getters.Add("GetReaderPooling");
+		getters.Add("GetIndexerThreadPool");
+		getters.Add("GetReaderTermsIndexDivisor");
+		getters.Add("GetFlushPolicy");
+		getters.Add("GetRAMPerThreadHardLimitMB");
+		getters.Add("GetCodec");
+		getters.Add("GetInfoStream");
+		getters.Add("GetUseCompoundFile");
 
 		foreach (Method m in typeof(IndexWriterConfig).DeclaredMethods)
 		{
@@ -125,7 +127,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testSettersChaining() throws Exception
-	  public virtual void TestSettersChaining()
+      [Test]
+      public virtual void TestSettersChaining()
 	  {
 		// Ensures that every setter returns IndexWriterConfig to allow chaining.
 		HashSet<string> liveSetters = new HashSet<string>();
@@ -157,12 +160,13 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testReuse() throws Exception
-	  public virtual void TestReuse()
+      [Test]
+      public virtual void TestReuse()
 	  {
 		Directory dir = NewDirectory();
 		// test that IWC cannot be reused across two IWs
 		IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-        (new RandomIndexWriter(Random(), dir, conf)).Close();
+        (new RandomIndexWriter(Random(), dir, conf)).Dispose();
 
 		// this should fail
 		try
@@ -188,15 +192,16 @@ namespace Lucene.Net.Index
 
 		// if it's cloned in advance, it should be ok
 		conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-		(new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone())).Close();
-        (new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone())).Close();
+		(new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone())).Dispose();
+        (new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone())).Dispose();
 
 		dir.Dispose();
 	  }
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testOverrideGetters() throws Exception
-	  public virtual void TestOverrideGetters()
+      [Test]
+      public virtual void TestOverrideGetters()
 	  {
 		// Test that IndexWriterConfig overrides all getters, so that javadocs
 		// contain all methods for the users. Also, ensures that IndexWriterConfig
@@ -222,7 +227,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testConstants() throws Exception
-	  public virtual void TestConstants()
+      [Test]
+      public virtual void TestConstants()
 	  {
 		// Tests that the values of the constants does not change
 		Assert.AreEqual(1000, IndexWriterConfig.WRITE_LOCK_TIMEOUT);
@@ -238,7 +244,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testToString() throws Exception
-	  public virtual void TestToString()
+      [Test]
+      public virtual void TestToString()
 	  {
 		string str = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).ToString();
 		foreach (Field f in typeof(IndexWriterConfig).DeclaredFields)
@@ -265,7 +272,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testClone() throws Exception
-	  public virtual void TestClone()
+      [Test]
+      public virtual void TestClone()
 	  {
 		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 		IndexWriterConfig clone = (IndexWriterConfig)conf.Clone();
@@ -297,7 +305,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testInvalidValues() throws Exception
-	  public virtual void TestInvalidValues()
+      [Test]
+      public virtual void TestInvalidValues()
 	  {
 		IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
@@ -461,7 +470,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestLiveChangeToCFS()
+      [Test]
+      public virtual void TestLiveChangeToCFS()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));

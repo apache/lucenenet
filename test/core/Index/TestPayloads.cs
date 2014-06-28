@@ -43,11 +43,13 @@ namespace Lucene.Net.Index
     using System.IO;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestPayloads : LuceneTestCase
 	{
 
 		// Simple tests to test the payloads
-		public virtual void TestPayload()
+        [Test]
+        public virtual void TestPayload()
 		{
 			BytesRef payload = new BytesRef("this is a test!");
             Assert.AreEqual(payload.Length, "this is a test!".Length, "Wrong payload length.");
@@ -63,7 +65,8 @@ namespace Lucene.Net.Index
 
 		// Tests whether the DocumentWriter and SegmentMerger correctly enable the
 		// payload bit in the FieldInfo
-		public virtual void TestPayloadFieldBit()
+        [Test]
+        public virtual void TestPayloadFieldBit()
 		{
 			Directory ram = NewDirectory();
 			PayloadAnalyzer analyzer = new PayloadAnalyzer();
@@ -102,8 +105,8 @@ namespace Lucene.Net.Index
 			d.Add(NewTextField("f2", "this field has payloads in all docs", Field.Store.NO));
 			d.Add(NewTextField("f3", "this field has payloads in some docs", Field.Store.NO));
 			// add payload data for field f2 and f3
-			analyzer.SetPayloadData("f2", "somedata".getBytes(IOUtils.CHARSET_UTF_8), 0, 1);
-			analyzer.SetPayloadData("f3", "somedata".getBytes(IOUtils.CHARSET_UTF_8), 0, 3);
+			analyzer.SetPayloadData("f2", "somedata".GetBytes(IOUtils.CHARSET_UTF_8), 0, 1);
+			analyzer.SetPayloadData("f3", "somedata".GetBytes(IOUtils.CHARSET_UTF_8), 0, 3);
 			writer.AddDocument(d);
 
 			// force merge
@@ -121,7 +124,8 @@ namespace Lucene.Net.Index
 		}
 
 		// Tests if payloads are correctly stored and loaded using both RamDirectory and FSDirectory
-		public virtual void TestPayloadsEncoding()
+        [Test]
+        public virtual void TestPayloadsEncoding()
 		{
 			Directory dir = NewDirectory();
 			PerformTest(dir);
@@ -468,7 +472,8 @@ namespace Lucene.Net.Index
 		  }
 		}
 
-		public virtual void TestThreadSafety()
+        [Test]
+        public virtual void TestThreadSafety()
 		{
 			const int numThreads = 5;
 			int numDocs = AtLeast(50);
@@ -570,7 +575,7 @@ namespace Lucene.Net.Index
 				this.Pool = pool;
 				Payload = pool.Get();
 				OuterInstance.GenerateRandomData(Payload);
-				Term = new string(Payload, 0, Payload.Length, Utf8);
+			    Term = Encoding.UTF8.GetString((byte[])(Array)Payload);
 				First = true;
 				PayloadAtt = AddAttribute<PayloadAttribute>();
 				TermAtt = AddAttribute<CharTermAttribute>();
@@ -636,6 +641,7 @@ namespace Lucene.Net.Index
 			}
 		}
 
+      [Test]
 	  public virtual void TestAcrossFields()
 	  {
 		Directory dir = NewDirectory();
@@ -643,7 +649,7 @@ namespace Lucene.Net.Index
 		Document doc = new Document();
 		doc.Add(new TextField("hasMaybepayload", "here we go", Field.Store.YES));
 		writer.AddDocument(doc);
-        writer.Close();
+        writer.Dispose();
 
 		writer = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true));
 		doc = new Document();
@@ -651,14 +657,15 @@ namespace Lucene.Net.Index
 		writer.AddDocument(doc);
 		writer.AddDocument(doc);
 		writer.ForceMerge(1);
-        writer.Close();
+        writer.Dispose();
 
 		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// some docs have payload att, some not </summary>
-	  public virtual void TestMixupDocs()
+      [Test]
+      public virtual void TestMixupDocs()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
@@ -687,14 +694,15 @@ namespace Lucene.Net.Index
 		de.NextDoc();
 		de.NextPosition();
 		Assert.AreEqual(new BytesRef("test"), de.Payload);
-        writer.Close();
+        writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }
 
 	  /// <summary>
 	  /// some field instances have payload att, some not </summary>
-	  public virtual void TestMixupMultiValued()
+      [Test]
+      public virtual void TestMixupMultiValued()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter writer = new RandomIndexWriter(Random(), dir);
@@ -723,7 +731,7 @@ namespace Lucene.Net.Index
 		de.NextDoc();
 		de.NextPosition();
 		Assert.AreEqual(new BytesRef("test"), de.Payload);
-        writer.Close();
+        writer.Dispose();
 		reader.Dispose();
 		dir.Dispose();
 	  }

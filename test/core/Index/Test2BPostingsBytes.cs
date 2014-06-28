@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Index
 {
 
@@ -44,88 +46,90 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct", "Lucene3x" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test2BPostingsBytes extends Lucene.Net.Util.LuceneTestCase
-	public class Test2BPostingsBytes : LuceneTestCase
+	[TestFixture]
+    public class Test2BPostingsBytes : LuceneTestCase
 	// disable Lucene3x: older lucene formats always had this issue.
 	  // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.
 	  // with some codecs needs more heap space as well.
 	{
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Ignore("Very slow. Enable manually by removing @Ignore.") public void test() throws Exception
-		public virtual void Test()
+        [Test]
+        public virtual void Test()
 		{
-		BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
-		if (dir is MockDirectoryWrapper)
-		{
-		  ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
-		}
+		    BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
+		    if (dir is MockDirectoryWrapper)
+		    {
+		      ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+		    }
 
-		IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-	   .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
+		    IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+	       .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(new ConcurrentMergeScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE));
 
-		MergePolicy mp = w.Config.MergePolicy;
-		if (mp is LogByteSizeMergePolicy)
-		{
-		 // 1 petabyte:
-		 ((LogByteSizeMergePolicy) mp).MaxMergeMB = 1024 * 1024 * 1024;
-		}
+		    MergePolicy mp = w.Config.MergePolicy;
+		    if (mp is LogByteSizeMergePolicy)
+		    {
+		     // 1 petabyte:
+		     ((LogByteSizeMergePolicy) mp).MaxMergeMB = 1024 * 1024 * 1024;
+		    }
 
-		Document doc = new Document();
-		FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS;
-		ft.OmitNorms = true;
-		MyTokenStream tokenStream = new MyTokenStream();
-		Field field = new Field("field", tokenStream, ft);
-		doc.Add(field);
+		    Document doc = new Document();
+		    FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+		    ft.IndexOptionsValue = IndexOptions.DOCS_AND_FREQS;
+		    ft.OmitNorms = true;
+		    MyTokenStream tokenStream = new MyTokenStream();
+		    Field field = new Field("field", tokenStream, ft);
+		    doc.Add(field);
 
-		const int numDocs = 1000;
-		for (int i = 0; i < numDocs; i++)
-		{
-		  if (i % 2 == 1) // trick blockPF's little optimization
-		  {
-			tokenStream.n = 65536;
-		  }
-		  else
-		  {
-			tokenStream.n = 65537;
-		  }
-		  w.AddDocument(doc);
-		}
-		w.ForceMerge(1);
-		w.Dispose();
+		    const int numDocs = 1000;
+		    for (int i = 0; i < numDocs; i++)
+		    {
+		      if (i % 2 == 1) // trick blockPF's little optimization
+		      {
+			    tokenStream.n = 65536;
+		      }
+		      else
+		      {
+			    tokenStream.n = 65537;
+		      }
+		      w.AddDocument(doc);
+		    }
+		    w.ForceMerge(1);
+		    w.Dispose();
 
-		DirectoryReader oneThousand = DirectoryReader.Open(dir);
-		IndexReader[] subReaders = new IndexReader[1000];
-		Arrays.Fill(subReaders, oneThousand);
-		MultiReader mr = new MultiReader(subReaders);
-		BaseDirectoryWrapper dir2 = NewFSDirectory(CreateTempDir("2BPostingsBytes2"));
-		if (dir2 is MockDirectoryWrapper)
-		{
-		  ((MockDirectoryWrapper)dir2).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
-		}
-		IndexWriter w2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
-		w2.AddIndexes(mr);
-		w2.ForceMerge(1);
-		w2.Dispose();
-		oneThousand.Dispose();
+		    DirectoryReader oneThousand = DirectoryReader.Open(dir);
+		    IndexReader[] subReaders = new IndexReader[1000];
+		    Arrays.Fill(subReaders, oneThousand);
+		    MultiReader mr = new MultiReader(subReaders);
+		    BaseDirectoryWrapper dir2 = NewFSDirectory(CreateTempDir("2BPostingsBytes2"));
+		    if (dir2 is MockDirectoryWrapper)
+		    {
+		      ((MockDirectoryWrapper)dir2).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+		    }
+		    IndexWriter w2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
+		    w2.AddIndexes(mr);
+		    w2.ForceMerge(1);
+		    w2.Dispose();
+		    oneThousand.Dispose();
 
-		DirectoryReader oneMillion = DirectoryReader.Open(dir2);
-		subReaders = new IndexReader[2000];
-		Arrays.Fill(subReaders, oneMillion);
-		mr = new MultiReader(subReaders);
-		BaseDirectoryWrapper dir3 = NewFSDirectory(CreateTempDir("2BPostingsBytes3"));
-		if (dir3 is MockDirectoryWrapper)
-		{
-		  ((MockDirectoryWrapper)dir3).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
-		}
-		IndexWriter w3 = new IndexWriter(dir3, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
-		w3.AddIndexes(mr);
-		w3.ForceMerge(1);
-		w3.Dispose();
-		oneMillion.Dispose();
+		    DirectoryReader oneMillion = DirectoryReader.Open(dir2);
+		    subReaders = new IndexReader[2000];
+		    Arrays.Fill(subReaders, oneMillion);
+		    mr = new MultiReader(subReaders);
+		    BaseDirectoryWrapper dir3 = NewFSDirectory(CreateTempDir("2BPostingsBytes3"));
+		    if (dir3 is MockDirectoryWrapper)
+		    {
+		      ((MockDirectoryWrapper)dir3).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+		    }
+		    IndexWriter w3 = new IndexWriter(dir3, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
+		    w3.AddIndexes(mr);
+		    w3.ForceMerge(1);
+		    w3.Dispose();
+		    oneMillion.Dispose();
 
-		dir.Dispose();
-		dir2.Dispose();
-		dir3.Dispose();
+		    dir.Dispose();
+		    dir2.Dispose();
+		    dir3.Dispose();
 		}
 
 	  public sealed class MyTokenStream : TokenStream

@@ -329,7 +329,7 @@ namespace Lucene.Net.Index
 
 	  // you cannot subclass this without being in o.a.l.index package anyway, so
 	  // the class is already pkg-private... fix me: see LUCENE-4013
-	  internal abstract ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter);
+	  public abstract ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter);
 
 
 	  /// <summary>

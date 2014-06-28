@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
 		  doc.Add(NewTextField(field, contents[i], Field.Store.YES));
 		  writer.AddDocument(doc);
 		}
-		writer.Close();
+		writer.Dispose();
 
 		return indexStore;
 	  }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search
 		  doc.Add(NewTextField(field, docs[i], Field.Store.NO));
 		  iw.AddDocument(doc);
 		}
-		iw.Close();
+		iw.Dispose();
 
 		IndexReader reader = DirectoryReader.Open(dir);
 		IndexSearcher searcher = NewSearcher(reader);

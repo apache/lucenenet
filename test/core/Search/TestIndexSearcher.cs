@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
 		  iw.AddDocument(doc);
 		}
 		Reader = iw.Reader;
-		iw.Close();
+		iw.Dispose();
 	  }
 
       [TearDown]
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
 		w.AddDocument(new Document());
 		IndexReader r = w.Reader;
-		w.Close();
+		w.Dispose();
 
 		IndexSearcher s = new IndexSearcher(r);
 		try

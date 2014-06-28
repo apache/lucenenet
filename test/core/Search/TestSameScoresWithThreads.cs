@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 		}
 		IndexReader r = w.Reader;
 		//System.out.println("numDocs=" + r.NumDocs());
-		w.Close();
+		w.Dispose();
 
 		IndexSearcher s = NewSearcher(r);
 		Terms terms = MultiFields.GetFields(r).Terms("body");

@@ -25,7 +25,8 @@ namespace Lucene.Net.Util.Automaton
 	public class CharacterRunAutomaton : RunAutomaton
 	{
 
-	  public CharacterRunAutomaton(Automaton a) : base(a, Character.MAX_CODE_POINT, false)
+	  public CharacterRunAutomaton(Automaton a) 
+          : base(a, Character.MAX_CODE_POINT, false)
 	  {
 	  }
 

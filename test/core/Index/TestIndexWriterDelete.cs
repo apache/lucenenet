@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using Apache.NMS.Util;
@@ -47,10 +48,12 @@ namespace Lucene.Net.Index
     using System.IO;
     using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestIndexWriterDelete : LuceneTestCase
 	{
 
 	  // test the simple case
+      [Test]
 	  public virtual void TestSimpleCase()
 	  {
 		string[] keywords = new string[] {"1", "2"};
@@ -97,7 +100,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // test when delete terms only apply to disk segments
-	  public virtual void TestNonRAMDelete()
+      [Test]
+      public virtual void TestNonRAMDelete()
 	  {
 
 		Directory dir = NewDirectory();
@@ -131,7 +135,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestMaxBufferedDeletes()
+      [Test]
+      public virtual void TestMaxBufferedDeletes()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDeleteTerms(1));
@@ -146,7 +151,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // test when delete terms only apply to ram segments
-	  public virtual void TestRAMDeletes()
+      [Test]
+      public virtual void TestRAMDeletes()
 	  {
 		for (int t = 0;t < 2;t++)
 		{
@@ -196,7 +202,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // test when delete terms apply to both disk and ram segments
-	  public virtual void TestBothDeletes()
+      [Test]
+      public virtual void TestBothDeletes()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(100).SetMaxBufferedDeleteTerms(100));
@@ -232,7 +239,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // test that batched delete terms are flushed together
-	  public virtual void TestBatchDeletes()
+      [Test]
+      public virtual void TestBatchDeletes()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter modifier = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
@@ -276,7 +284,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // test deleteAll()
-	  public virtual void TestDeleteAll()
+      [Test]
+      public virtual void TestDeleteAll()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter modifier = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
@@ -322,7 +331,8 @@ namespace Lucene.Net.Index
 	  }
 
 
-	  public virtual void TestDeleteAllNoDeadLock()
+      [Test]
+      public virtual void TestDeleteAllNoDeadLock()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter modifier = new RandomIndexWriter(Random(), dir);
@@ -352,7 +362,7 @@ namespace Lucene.Net.Index
 		  thread.Join();
 		}
 
-        modifier.Close();
+        modifier.Dispose();
 		DirectoryReader reader = DirectoryReader.Open(dir);
 		Assert.AreEqual(reader.MaxDoc(), 0);
 		Assert.AreEqual(reader.NumDocs(), 0);
@@ -420,7 +430,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // test rollback of deleteAll()
-	  public virtual void TestDeleteAllRollback()
+      [Test]
+      public virtual void TestDeleteAllRollback()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter modifier = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
@@ -457,7 +468,8 @@ namespace Lucene.Net.Index
 
 
 	  // test deleteAll() w/ near real-time reader
-	  public virtual void TestDeleteAllNRT()
+      [Test]
+      public virtual void TestDeleteAllNRT()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter modifier = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMaxBufferedDocs(2).SetMaxBufferedDeleteTerms(2));
@@ -535,12 +547,14 @@ namespace Lucene.Net.Index
 		return hitCount;
 	  }
 
-	  public virtual void TestDeletesOnDiskFull()
+      [Test]
+      public virtual void TestDeletesOnDiskFull()
 	  {
 		DoTestOperationsOnDiskFull(false);
 	  }
 
-	  public virtual void TestUpdatesOnDiskFull()
+      [Test]
+      public virtual void TestUpdatesOnDiskFull()
 	  {
 		DoTestOperationsOnDiskFull(true);
 	  }
@@ -798,7 +812,8 @@ namespace Lucene.Net.Index
 
 	  // this test tests that buffered deletes are cleared when
 	  // an Exception is hit during flush.
-	  public virtual void TestErrorAfterApplyDeletes()
+      [Test]
+      public virtual void TestErrorAfterApplyDeletes()
 	  {
 
 		MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper(this);
@@ -944,16 +959,19 @@ namespace Lucene.Net.Index
 			}
 			if (sawMaybe && !failed)
 			{
-			  bool seen = false;
-			  string[] trace = (new Exception()).StackTrace;
-			  for (int i = 0; i < trace.Length; i++)
-			  {
-				if ("applyDeletesAndUpdates".Equals(trace[i].MethodName) || "slowFileExists".Equals(trace[i].MethodName))
-				{
-				  seen = true;
-				  break;
-				}
-			  }
+
+			    bool seen = false;
+			    var trace = new StackTrace(new Exception());
+			    foreach (var frame in trace.GetFrames())
+			    {
+			        var method = frame.GetMethod();
+                    if ("ApplyDeletesAndUpdates".Equals(method.Name) || "SlowFileExists".Equals(method.Name))
+                    {
+                        seen = true;
+                        break;
+                    }
+			    }
+
 			  if (!seen)
 			  {
 				// Only fail once we are no longer in applyDeletes
@@ -968,20 +986,22 @@ namespace Lucene.Net.Index
 			}
 			if (!failed)
 			{
-			  string[] trace = (new Exception()).StackTrace;
-			  for (int i = 0; i < trace.Length; i++)
-			  {
-				if ("applyDeletesAndUpdates".Equals(trace[i].MethodName))
-				{
-				  if (VERBOSE)
-				  {
-					Console.WriteLine("TEST: mock failure: saw applyDeletes");
-                    Console.WriteLine((new Exception()).StackTrace);
-				  }
-				  sawMaybe = true;
-				  break;
-				}
-			  }
+
+			    var trace = new StackTrace(new Exception());
+			    foreach (var frame in trace.GetFrames())
+			    {
+			        var method = frame.GetMethod();
+                    if ("ApplyDeletesAndUpdates".Equals(method.Name))
+                    {
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("TEST: mock failure: saw applyDeletes");
+                            Console.WriteLine((new Exception()).StackTrace);
+                        }
+                        sawMaybe = true;
+                        break;
+                    }
+			    }
 			}
 		  }
 	  }
@@ -989,7 +1009,8 @@ namespace Lucene.Net.Index
 	  // this test tests that the files created by the docs writer before
 	  // a segment is written are cleaned up if there's an i/o error
 
-	  public virtual void TestErrorInDocsWriterAdd()
+      [Test]
+      public virtual void TestErrorInDocsWriterAdd()
 	  {
 
 		MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper2(this);
@@ -1061,7 +1082,8 @@ namespace Lucene.Net.Index
 		  }
 	  }
 
-	  public virtual void TestDeleteNullQuery()
+      [Test]
+      public virtual void TestDeleteNullQuery()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter modifier = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
@@ -1078,7 +1100,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestDeleteAllSlowly()
+      [Test]
+      public virtual void TestDeleteAllSlowly()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter w = new RandomIndexWriter(Random(), dir);
@@ -1111,11 +1134,12 @@ namespace Lucene.Net.Index
 		  r.Dispose();
 		}
 
-        w.Close();
+        w.Dispose();
 		dir.Dispose();
 	  }
 
-	  public virtual void TestIndexingThenDeleting()
+      [Test]
+      public virtual void TestIndexingThenDeleting()
 	  {
 		// TODO: move this test to its own class and just @SuppressCodecs?
 		// TODO: is it enough to just use newFSDirectory?
@@ -1184,7 +1208,8 @@ namespace Lucene.Net.Index
 	  // LUCENE-3340: make sure deletes that we don't apply
 	  // during flush (ie are just pushed into the stream) are
 	  // in fact later flushed due to their RAM usage:
-	  public virtual void TestFlushPushedDeletesByRAM()
+      [Test]
+      public virtual void TestFlushPushedDeletesByRAM()
 	  {
 		Directory dir = NewDirectory();
 		// Cannot use RandomIndexWriter because we don't want to
@@ -1236,7 +1261,8 @@ namespace Lucene.Net.Index
 	  // LUCENE-3340: make sure deletes that we don't apply
 	  // during flush (ie are just pushed into the stream) are
 	  // in fact later flushed due to their RAM usage:
-	  public virtual void TestFlushPushedDeletesByCount()
+      [Test]
+      public virtual void TestFlushPushedDeletesByCount()
 	  {
 		Directory dir = NewDirectory();
 		// Cannot use RandomIndexWriter because we don't want to
@@ -1281,7 +1307,8 @@ namespace Lucene.Net.Index
 	  // much RAM that it forces long tail of tiny segments:
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Nightly public void testApplyDeletesOnFlush() throws Exception
-	  public virtual void TestApplyDeletesOnFlush()
+      [Test]
+      public virtual void TestApplyDeletesOnFlush()
 	  {
 		Directory dir = NewDirectory();
 		// Cannot use RandomIndexWriter because we don't want to
@@ -1349,7 +1376,8 @@ namespace Lucene.Net.Index
 	  }
 
 	  // LUCENE-4455
-	  public virtual void TestDeletesCheckIndexOutput()
+      [Test]
+      public virtual void TestDeletesCheckIndexOutput()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1370,12 +1398,13 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(1, w.SegmentCount);
 		w.Dispose();
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+		//ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+	    MemoryStream bos = new MemoryStream(1024);
 		CheckIndex checker = new CheckIndex(dir);
-		checker.SetInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
+		checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8), false);
 		CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
 		Assert.IsTrue(indexStatus.Clean);
-		string s = bos.ToString(IOUtils.UTF_8);
+        string s = bos.ToString();
 
 		// Segment should have deletions:
 		Assert.IsTrue(s.Contains("has deletions"));
@@ -1383,16 +1412,17 @@ namespace Lucene.Net.Index
 		w.ForceMerge(1);
 		w.Dispose();
 
-		bos = new ByteArrayOutputStream(1024);
-		checker.SetInfoStream(new PrintStream(bos, false, IOUtils.UTF_8), false);
+		bos = new MemoryStream(1024);
+        checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8), false);
 		indexStatus = checker.DoCheckIndex(null);
 		Assert.IsTrue(indexStatus.Clean);
-		s = bos.ToString(IOUtils.UTF_8);
+        s = bos.ToString();
 		Assert.IsFalse(s.Contains("has deletions"));
 		dir.Dispose();
 	  }
 
-	  public virtual void TestTryDeleteDocument()
+      [Test]
+      public virtual void TestTryDeleteDocument()
 	  {
 
 		Directory d = NewDirectory();

@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Index
 {
 
@@ -22,11 +24,13 @@ namespace Lucene.Net.Index
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
+    [TestFixture]
 	public class TestNoMergePolicy : LuceneTestCase
 	{
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testNoMergePolicy() throws Exception
+      [Test]
 	  public virtual void TestNoMergePolicy_Mem()
 	  {
 		MergePolicy mp = NoMergePolicy.NO_COMPOUND_FILES;
@@ -39,7 +43,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testCompoundFiles() throws Exception
-	  public virtual void TestCompoundFiles()
+      [Test]
+      public virtual void TestCompoundFiles()
 	  {
 		Assert.IsFalse(NoMergePolicy.NO_COMPOUND_FILES.UseCompoundFile(null, null));
 		Assert.IsTrue(NoMergePolicy.COMPOUND_FILES.UseCompoundFile(null, null));
@@ -47,6 +52,7 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testFinalSingleton() throws Exception
+      [Test]
 	  public virtual void TestFinalSingleton()
 	  {
 		Assert.IsTrue(Modifier.isFinal(typeof(NoMergePolicy).Modifiers));
@@ -59,7 +65,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Test public void testMethodsOverridden() throws Exception
-	  public virtual void TestMethodsOverridden()
+      [Test]
+      public virtual void TestMethodsOverridden()
 	  {
 		// Ensures that all methods of MergePolicy are overridden. That's important
 		// to ensure that NoMergePolicy overrides everything, so that no unexpected

@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 		    foreach (var frame in trace.GetFrames())
 		    {
 		        var method = frame.GetMethod();
-		        if ("merge".Equals(method.Name))
+		        if ("Merge".Equals(method.Name))
 		        {
 		            unicodeSortOrder = false;
 		            if (LuceneTestCase.VERBOSE)

@@ -1,3 +1,6 @@
+using Lucene.Net.Util;
+using NUnit.Framework;
+
 namespace Lucene.Net.Index
 {
 
@@ -28,7 +31,8 @@ namespace Lucene.Net.Index
 	/// other specific instantiations since we want to test some test-only impls
 	/// like Asserting, as well as make it easy to write a codec and pass -Dtests.codec
 	/// </summary>
-	public class TestTermVectorsFormat : BaseTermVectorsFormatTestCase
+	[TestFixture]
+    public class TestTermVectorsFormat : BaseTermVectorsFormatTestCase
 	{
 
 	  protected internal override Codec Codec
@@ -52,7 +56,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public override void TestMergeStability()
+      [Test]
+      public override void TestMergeStability()
 	  {
 		AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
 	  }

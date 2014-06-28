@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -74,7 +75,7 @@ namespace Lucene.Net.Search
 
 		  Explanation exp = searcher.Explain(q, doc);
 		  Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-		  Assert.IsFalse(exp.Match, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
+		  Assert.IsFalse(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " doesn't indicate non-match: " + exp.ToString());
 		}
 
 	  }
@@ -373,7 +374,7 @@ namespace Lucene.Net.Search
 			// - end with one of: "product of:", "sum of:", "max of:", or
 			// - have "max plus <x> times others" (where <x> is float).
 			float x = 0;
-			string descr = expl.Description.ToLower(Locale.ROOT);
+			string descr = expl.Description.ToLower(CultureInfo.InvariantCulture);
 			bool productOf = descr.EndsWith("product of:");
 			bool sumOf = descr.EndsWith("sum of:");
 			bool maxOf = descr.EndsWith("max of:");
@@ -531,7 +532,7 @@ namespace Lucene.Net.Search
 
 		  Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
 		  VerifyExplanation(d,doc,Scorer_Renamed.Score(),Deep,exp);
-		  Assert.IsTrue("Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString(), exp.Match);
+		  Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
 		}
 		public override AtomicReaderContext NextReader
 		{

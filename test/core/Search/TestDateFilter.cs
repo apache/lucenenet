@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 		IndexSearcher searcher = NewSearcher(reader);
 
 		// filter that should preserve matches
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 		writer.AddDocument(doc);
 
 		IndexReader reader = writer.Reader;
-		writer.Close();
+		writer.Dispose();
 		IndexSearcher searcher = NewSearcher(reader);
 
 		// filter that should preserve matches

@@ -23,9 +23,11 @@ namespace Lucene.Net.Index
     using RecyclingByteBlockAllocator = Lucene.Net.Util.RecyclingByteBlockAllocator;
     using Lucene.Net.Randomized.Generators;
 
+    [TestFixture]
 	public class TestByteSlices : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestBasic()
 	  {
 		ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));

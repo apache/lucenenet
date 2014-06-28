@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Spans
 		field.StringValue = "jumps over extremely very lazy broxn dog";
 		iw.AddDocument(doc);
 		Reader = iw.Reader;
-		iw.Close();
+		iw.Dispose();
 		Searcher = NewSearcher(Reader);
 	  }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Search
 {
@@ -24,7 +25,6 @@ namespace Lucene.Net.Search
 
 
 	using DocsEnum = Lucene.Net.Index.DocsEnum;
-	using VirtualMethod = Lucene.Net.Util.VirtualMethod;
 
 	/// <summary>
 	/// Wraps a Scorer with additional checks </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 
 	  public static bool ShouldWrap(BulkScorer inScorer)
 	  {
-		return SCORE_COLLECTOR.isOverriddenAsOf(inScorer.GetType()) || SCORE_COLLECTOR_RANGE.isOverriddenAsOf(inScorer.GetType());
+		return SCORE_COLLECTOR.IsOverriddenAsOf(inScorer.GetType()) || SCORE_COLLECTOR_RANGE.IsOverriddenAsOf(inScorer.GetType());
 	  }
 
 	  internal readonly Random Random;

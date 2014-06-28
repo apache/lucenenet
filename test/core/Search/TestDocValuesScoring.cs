@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 		dvField.FloatValue = 4f; // boost x4
 		iw.AddDocument(doc);
 		IndexReader ir = iw.Reader;
-		iw.Close();
+		iw.Dispose();
 
 		// no boosting
 		IndexSearcher searcher1 = NewSearcher(ir, false);

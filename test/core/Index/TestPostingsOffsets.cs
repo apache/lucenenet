@@ -54,17 +54,20 @@ namespace Lucene.Net.Index
 	// TODO: fix sep codec to index offsets so we can greatly reduce this list!
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({"Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"}) public class TestPostingsOffsets extends Lucene.Net.Util.LuceneTestCase
-	public class TestPostingsOffsets : LuceneTestCase
+	[TestFixture]
+    public class TestPostingsOffsets : LuceneTestCase
 	{
 	  internal IndexWriterConfig Iwc;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
 		Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 	  }
 
-	  public virtual void TestBasic()
+      [Test]
+      public virtual void TestBasic()
 	  {
 		Directory dir = NewDirectory();
 
@@ -84,7 +87,7 @@ namespace Lucene.Net.Index
 
 		w.AddDocument(doc);
 		IndexReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		DocsAndPositionsEnum dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("a"));
 		Assert.IsNotNull(dp);
@@ -120,12 +123,14 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestSkipping()
+      [Test]
+      public virtual void TestSkipping()
 	  {
 		DoTestNumbers(false);
 	  }
 
-	  public virtual void TestPayloads()
+      [Test]
+      public virtual void TestPayloads()
 	  {
 		DoTestNumbers(true);
 	  }
@@ -158,7 +163,7 @@ namespace Lucene.Net.Index
 		}
 
 		IndexReader reader = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		string[] terms = new string[] {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "hundred"};
 
@@ -233,7 +238,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestRandom()
+      [Test]
+      public virtual void TestRandom()
 	  {
 		// token -> docID -> tokens
 		IDictionary<string, IDictionary<int?, IList<Token>>> actualTokens = new Dictionary<string, IDictionary<int?, IList<Token>>>();
@@ -316,7 +322,7 @@ namespace Lucene.Net.Index
 		  w.AddDocument(doc);
 		}
 		DirectoryReader r = w.Reader;
-        w.Close();
+        w.Dispose();
 
 		string[] terms = new string[] {"a", "b", "c", "d"};
 		foreach (AtomicReaderContext ctx in r.Leaves())
@@ -390,7 +396,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestWithUnindexedFields()
+      [Test]
+      public virtual void TestWithUnindexedFields()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, Iwc);
@@ -427,11 +434,12 @@ namespace Lucene.Net.Index
 		Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, fis.FieldInfo("foo").IndexOptions);
 		slow.Dispose();
 		ir.Dispose();
-        riw.Close();
+        riw.Dispose();
 		dir.Dispose();
 	  }
 
-	  public virtual void TestAddFieldTwice()
+      [Test]
+      public virtual void TestAddFieldTwice()
 	  {
 		Directory dir = NewDirectory();
 		RandomIndexWriter iw = new RandomIndexWriter(Random(), dir);
@@ -444,12 +452,13 @@ namespace Lucene.Net.Index
 		doc.Add(new Field("content3", "here is more content with aaa aaa aaa", customType3));
 		doc.Add(new Field("content3", "here is more content with aaa aaa aaa", customType3));
 		iw.AddDocument(doc);
-        iw.Close();
+        iw.Dispose();
 		dir.Dispose(); // checkindex
 	  }
 
 	  // NOTE: the next two tests aren't that good as we need an EvilToken...
-	  public virtual void TestNegativeOffsets()
+      [Test]
+      public virtual void TestNegativeOffsets()
 	  {
 		try
 		{
@@ -462,7 +471,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestIllegalOffsets()
+      [Test]
+      public virtual void TestIllegalOffsets()
 	  {
 		try
 		{
@@ -475,7 +485,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestBackwardsOffsets()
+      [Test]
+      public virtual void TestBackwardsOffsets()
 	  {
 		try
 		{
@@ -488,12 +499,14 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestStackedTokens()
+      [Test]
+      public virtual void TestStackedTokens()
 	  {
 		CheckTokens(new Token[] {MakeToken("foo", 1, 0, 3), MakeToken("foo", 0, 0, 3), MakeToken("foo", 0, 0, 3)});
 	  }
 
-	  public virtual void TestLegalbutVeryLargeOffsets()
+      [Test]
+      public virtual void TestLegalbutVeryLargeOffsets()
 	  {
 		Directory dir = NewDirectory();
 		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));

@@ -30,8 +30,10 @@ namespace Lucene.Net.Index
 	using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
+    [TestFixture]
 	public class TestIndexWriterForceMerge : LuceneTestCase
 	{
+      [Test]
 	  public virtual void TestPartialMerge()
 	  {
 
@@ -78,7 +80,8 @@ namespace Lucene.Net.Index
 		dir.Dispose();
 	  }
 
-	  public virtual void TestMaxNumSegments2()
+      [Test]
+      public virtual void TestMaxNumSegments2()
 	  {
 		Directory dir = NewDirectory();
 
@@ -131,7 +134,8 @@ namespace Lucene.Net.Index
 	  /// starting index size as its temporary free space
 	  /// required.
 	  /// </summary>
-	  public virtual void TestForceMergeTempSpaceUsage()
+      [Test]
+      public virtual void TestForceMergeTempSpaceUsage()
 	  {
 
 		MockDirectoryWrapper dir = NewMockDirectory();
@@ -184,7 +188,8 @@ namespace Lucene.Net.Index
 	  // Test calling forceMerge(1, false) whereby forceMerge is kicked
 	  // off but we don't wait for it to finish (but
 	  // writer.Dispose()) does wait
-	  public virtual void TestBackgroundForceMerge()
+      [Test]
+      public virtual void TestBackgroundForceMerge()
 	  {
 
 		Directory dir = NewDirectory();

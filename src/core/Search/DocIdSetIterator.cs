@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
 	  /// When returned by <seealso cref="#nextDoc()"/>, <seealso cref="#advance(int)"/> and
 	  /// <seealso cref="#docID()"/> it means there are no more docs in the iterator.
 	  /// </summary>
-	  public static readonly int NO_MORE_DOCS = int.MaxValue;
+	  public const int NO_MORE_DOCS = int.MaxValue;
 
 	  /// <summary>
 	  /// Returns the following:

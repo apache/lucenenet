@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Lucene.Net.Randomized;
+using Lucene.Net.Randomized.Generators;
 
 namespace Lucene.Net.Index
 {
 
-	/// <summary>
+	/*
 	///  Licensed to the Apache Software Foundation (ASF) under one or more
 	///  contributor license agreements.  See the NOTICE file distributed with
 	///  this work for additional information regarding copyright ownership.
@@ -21,7 +23,7 @@ namespace Lucene.Net.Index
 	///  See the License for the specific language governing permissions and
 	///  limitations under the License.
 	/// 
-	/// </summary>
+	*/
 
 
 	using Codec = Lucene.Net.Codecs.Codec;
@@ -36,10 +38,12 @@ namespace Lucene.Net.Index
 	/// Runs TestNRTThreads in a separate process, crashes the JRE in the middle
 	/// of execution, then runs checkindex to make sure its not corrupt.
 	/// </summary>
-	public class TestIndexWriterOnJRECrash : TestNRTThreads
+	[TestFixture]
+    public class TestIndexWriterOnJRECrash : TestNRTThreads
 	{
 	  private DirectoryInfo TempDir;
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -50,7 +54,8 @@ namespace Lucene.Net.Index
 
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @Override @Nightly public void testNRTThreads() throws Exception
-	  public override void TestNRTThreads_Mem()
+      [Test]
+      public override void TestNRTThreads_Mem()
 	  {
 		// if we are not the fork
 		if (System.getProperty("tests.crashmode") == null)

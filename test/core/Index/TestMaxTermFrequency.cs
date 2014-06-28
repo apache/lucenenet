@@ -38,13 +38,15 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// Tests the maxTermFrequency statistic in FieldInvertState
 	/// </summary>
-	public class TestMaxTermFrequency : LuceneTestCase
+	[TestFixture]
+    public class TestMaxTermFrequency : LuceneTestCase
 	{
 	  internal Directory Dir;
 	  internal IndexReader Reader;
 	  /* expected maxTermFrequency values for our documents */
 	  internal List<int?> Expected = new List<int?>();
 
+      [SetUp]
 	  public override void SetUp()
 	  {
 		base.SetUp();
@@ -61,9 +63,10 @@ namespace Lucene.Net.Index
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
-        writer.Close();
+        writer.Dispose();
 	  }
 
+      [TearDown]
 	  public override void TearDown()
 	  {
 		Reader.Dispose();
@@ -71,7 +74,8 @@ namespace Lucene.Net.Index
 		base.TearDown();
 	  }
 
-	  public virtual void Test()
+      [Test]
+      public virtual void Test()
 	  {
 		NumericDocValues fooNorms = MultiDocValues.GetNormValues(Reader, "foo");
 		for (int i = 0; i < Reader.MaxDoc(); i++)

@@ -552,7 +552,7 @@ namespace Lucene.Net.Search
 		{
 		  // expected
 		}
-		w.Close();
+		w.Dispose();
 		other.Dispose();
 		dir.Dispose();
 	  }

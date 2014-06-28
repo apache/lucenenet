@@ -38,9 +38,11 @@ namespace Lucene.Net.Index
 using NUnit.Framework;
 using Lucene.Net.Support;
 
+    [TestFixture]
 	public class TestDirectoryReaderReopen : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestReopen_Mem()
 	  {
 		Directory dir1 = NewDirectory();
@@ -111,13 +113,15 @@ using Lucene.Net.Support;
 	  // at the end of every iteration, commit the index and reopen/recreate the reader.
 	  // in each iteration verify the work of previous iteration. 
 	  // try this once with reopen once recreate, on both RAMDir and FSDir.
-	  public virtual void TestCommitReopen()
+      [Test]
+      public virtual void TestCommitReopen()
 	  {
 		Directory dir = NewDirectory();
 		DoTestReopenWithCommit(Random(), dir, true);
 		dir.Dispose();
 	  }
-	  public virtual void TestCommitRecreate()
+      [Test]
+      public virtual void TestCommitRecreate()
 	  {
 		Directory dir = NewDirectory();
 		DoTestReopenWithCommit(Random(), dir, false);
@@ -232,7 +236,8 @@ using Lucene.Net.Support;
 		AssertReaderClosed(index2, true);
 	  }
 
-	  public virtual void TestThreadSafety()
+      [Test]
+      public virtual void TestThreadSafety()
 	  {
 		Directory dir = NewDirectory();
 		// NOTE: this also controls the number of threads!
@@ -247,12 +252,12 @@ using Lucene.Net.Support;
 
 		TestReopen test = new TestReopenAnonymousInnerClassHelper3(this, dir, n);
 
-		IList<ReaderCouple> readers = Collections.synchronizedList(new List<ReaderCouple>());
+		IList<ReaderCouple> readers = new ConcurrentList<ReaderCouple>(new List<ReaderCouple>());
 		DirectoryReader firstReader = DirectoryReader.Open(dir);
 		DirectoryReader reader = firstReader;
 
 		ReaderThread[] threads = new ReaderThread[n];
-		ISet<DirectoryReader> readersToClose = Collections.synchronizedSet(new HashSet<DirectoryReader>());
+		ISet<DirectoryReader> readersToClose = new ConcurrentHashSet<DirectoryReader>(new HashSet<DirectoryReader>());
 
 		for (int i = 0; i < n; i++)
 		{
@@ -683,20 +688,22 @@ using Lucene.Net.Support;
 		protected internal abstract void ModifyIndex(int i);
 	  }
 
-	  internal class KeepAllCommits : IndexDeletionPolicy
+	  internal class KeepAllCommits<T> : IndexDeletionPolicy
+          where T : IndexCommit
 	  {
-		public override void OnInit(IList<IndexCommit> commits)
+		public override void OnInit<T>(IList<T> commits)
 		{
 		}
-		public override void OnCommit(IList<IndexCommit> commits)
+		public override void OnCommit<T>(IList<T> commits)
 		{
 		}
 	  }
 
-	  public virtual void TestReopenOnCommit()
+      [Test]
+      public virtual void TestReopenOnCommit()
 	  {
 		Directory dir = NewDirectory();
-		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new KeepAllCommits()).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new KeepAllCommits<IndexCommit>()).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
 		for (int i = 0;i < 4;i++)
 		{
 		  Document doc = new Document();
@@ -753,7 +760,8 @@ using Lucene.Net.Support;
 		dir.Dispose();
 	  }
 
-	  public virtual void TestOpenIfChangedNRTToCommit()
+      [Test]
+      public virtual void TestOpenIfChangedNRTToCommit()
 	  {
 		Directory dir = NewDirectory();
 

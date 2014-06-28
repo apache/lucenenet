@@ -30,9 +30,11 @@ namespace Lucene.Net.Index
 	/// <summary>
 	/// tests basic <seealso cref="IntBlockPool"/> functionality
 	/// </summary>
-	public class TestIntBlockPool : LuceneTestCase
+	[TestFixture]
+    public class TestIntBlockPool : LuceneTestCase
 	{
 
+      [Test]
 	  public virtual void TestSingleWriterReader()
 	  {
         Counter bytesUsed = Util.Counter.NewCounter();
@@ -69,7 +71,8 @@ namespace Lucene.Net.Index
 		}
 	  }
 
-	  public virtual void TestMultipleWriterReader()
+      [Test]
+      public virtual void TestMultipleWriterReader()
 	  {
 		Counter bytesUsed = Util.Counter.NewCounter();
 		IntBlockPool pool = new IntBlockPool(new ByteTrackingAllocator(bytesUsed));
