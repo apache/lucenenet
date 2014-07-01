@@ -306,14 +306,14 @@ namespace Lucene.Net.Document
 	  {
 		 get
             {
-                if (FieldsData is string || FieldsData is Number)
-                {
+                /*if (FieldsData is string || FieldsData is Number)
+                {*/
                     return FieldsData.ToString();
-                }
+                /*}
                 else
                 {
                     return null;
-                }
+                }*/
             }
             set
             {
@@ -517,7 +517,7 @@ namespace Lucene.Net.Document
 	  /// {@inheritDoc}
 	  /// <p>
 	  /// The default value is <code>1.0f</code> (no boost). </summary>
-	  /// <seealso cref= #setBoost(float) </seealso>
+	  /// <seealso> cref= #setBoost(float) </seealso>
 	  public float GetBoost()
 	  {
 		return Boost_Renamed;
@@ -527,7 +527,7 @@ namespace Lucene.Net.Document
 	  /// Sets the boost factor on this field. </summary>
 	  /// <exception cref="IllegalArgumentException"> if this field is not indexed, 
 	  ///         or if it omits norms. </exception>
-	  /// <seealso cref= #boost() </seealso>
+	  /// <seealso> cref= #boost() </seealso>
 	  public virtual float Boost
 	  {
 		  set
@@ -545,16 +545,16 @@ namespace Lucene.Net.Document
 
 	  public object NumericValue
 	  {
-          get 
+          get
           {
-                if (FieldsData is Number)
+              return FieldsData; /*if (FieldsData is Number)
 		        {
 		          return (Number) FieldsData;
 		        }
 		        else
 		        {
 		          return null;
-		        }
+		        }*/
           }
 		
 	  }

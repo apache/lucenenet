@@ -71,7 +71,9 @@ namespace Lucene.Net.Store
 
 	    public RAMFile GetNameFromFileMap_Nunit(string name)
 	    {
-	        return FileMap[name];
+            RAMFile ramFile;
+            FileMap.TryGetValue(name, out ramFile);
+	        return ramFile;
 	    }
 
 	    public void SetNameForFileMap_Nunit(string name, RAMFile ramFile)

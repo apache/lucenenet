@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -33,10 +34,10 @@ namespace Lucene.Net.Analysis
 	{
 
 	  private readonly TokenStream @in;
-	  private readonly CharTermAttribute TermAtt;
-	  private readonly PositionIncrementAttribute PosIncAtt;
-	  private readonly PositionLengthAttribute PosLengthAtt;
-	  private readonly OffsetAttribute OffsetAtt;
+	  private readonly ICharTermAttribute TermAtt;
+	  private readonly IPositionIncrementAttribute PosIncAtt;
+	  private readonly IPositionLengthAttribute PosLengthAtt;
+	  private readonly IOffsetAttribute OffsetAtt;
 	  private readonly string InputText;
       protected internal readonly TextWriter @out;
 
@@ -50,12 +51,12 @@ namespace Lucene.Net.Analysis
 		this.@in = @in;
 		this.@out = @out;
 		this.InputText = inputText;
-		TermAtt = @in.AddAttribute<CharTermAttribute>();
-		PosIncAtt = @in.AddAttribute<PositionIncrementAttribute>();
-		PosLengthAtt = @in.AddAttribute<PositionLengthAttribute>();
-		if (@in.HasAttribute(typeof(OffsetAttribute)))
+		TermAtt = @in.AddAttribute<ICharTermAttribute>();
+		PosIncAtt = @in.AddAttribute<IPositionIncrementAttribute>();
+		PosLengthAtt = @in.AddAttribute<IPositionLengthAttribute>();
+		if (@in.HasAttribute(typeof(IOffsetAttribute)))
 		{
-		  OffsetAtt = @in.AddAttribute<OffsetAttribute>();
+		  OffsetAtt = @in.AddAttribute<IOffsetAttribute>();
 		}
 		else
 		{

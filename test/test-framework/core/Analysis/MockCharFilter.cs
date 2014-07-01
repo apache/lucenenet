@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis
 
 	  // for testing only
       public MockCharFilter(TextReader @in, int remainder)
-          : base((StreamReader)@in)
+          : base(@in)
 	  {
 		// TODO: instead of fixed remainder... maybe a fixed
 		// random seed?

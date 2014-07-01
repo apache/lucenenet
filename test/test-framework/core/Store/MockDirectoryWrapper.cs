@@ -728,7 +728,10 @@ namespace Lucene.Net.Store
 	  {
 		  lock (this)
 		  {
-			int v = OpenFiles[name];
+		      int v;
+
+		      OpenFiles.TryGetValue(name, out v);
+
 			if (v != null)
 			{
 			  v = Convert.ToInt32((int)v + 1);

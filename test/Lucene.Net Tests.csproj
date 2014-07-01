@@ -108,6 +108,40 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="core\AssemblyInfo.cs" />
+    <Compile Include="core\Codecs\Compressing\AbstractTestCompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\AbstractTestLZ4CompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\TestCompressingStoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Compressing\TestCompressingTermVectorsFormat.cs" />
+    <Compile Include="core\Codecs\Compressing\TestFastCompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\TestFastDecompressionMode.cs" />
+    <Compile Include="core\Codecs\Compressing\TestHighCompressionMode.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestImpersonation.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestLucene3xPostingsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestLucene3xStoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestLucene3xTermVectorsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestSurrogates.cs" />
+    <Compile Include="core\Codecs\Lucene3x\TestTermInfosReaderIndex.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestBitVector.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40DocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40PostingsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40PostingsReader.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40StoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestLucene40TermVectorsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene40\TestReuseDocsEnum.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestBlockPostingsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestBlockPostingsFormat2.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestBlockPostingsFormat3.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestForUtil.cs" />
+    <Compile Include="core\Codecs\Lucene41\TestLucene41StoredFieldsFormat.cs" />
+    <Compile Include="core\Codecs\Lucene42\TestLucene42DocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Lucene45\TestLucene45DocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Perfield\TestPerFieldDocValuesFormat.cs" />
+    <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat.cs" />
+    <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat2.cs" />
+    <Compile Include="core\Document\TestBinaryDocument.cs" />
+    <Compile Include="core\Document\TestDateTools.cs" />
+    <Compile Include="core\Document\TestDocument.cs" />
+    <Compile Include="core\Document\TestField.cs" />
     <Compile Include="core\RectangularArrays.cs">
       <SubType>Code</SubType>
     </Compile>

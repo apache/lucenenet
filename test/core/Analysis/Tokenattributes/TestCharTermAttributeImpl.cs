@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 		t.Append("foobar");
 		TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() 
         {
-                { typeof(ICharTermAttribute).Name + "#term", "foobar" }, 
+                { typeof(CharTermAttribute).Name + "#term", "foobar" }, 
                 { typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") }
         });
 	  }

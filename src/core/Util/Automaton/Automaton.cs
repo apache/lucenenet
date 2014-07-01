@@ -609,8 +609,6 @@ namespace Lucene.Net.Util.Automaton
 	  {
 		  get
 		  {
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final State[] states = getNumberedStates();
 			State[] states = NumberedStates;
 			Transition[][] transitions = new Transition[states.Length][];
 			foreach (State s in states)
@@ -687,10 +685,10 @@ namespace Lucene.Net.Util.Automaton
 		throw new System.NotSupportedException("use BasicOperations.sameLanguage instead");
 	  }
 
-	  public override int GetHashCode()
+	  /*public override int GetHashCode()
 	  {
 		throw new System.NotSupportedException();
-	  }
+	  }*/
 
 	  /// <summary>
 	  /// Must be invoked when the stored hash code may no longer be valid.

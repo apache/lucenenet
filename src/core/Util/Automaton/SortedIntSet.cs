@@ -27,8 +27,8 @@ namespace Lucene.Net.Util.Automaton
 	// Just holds a set of int[] states, plus a corresponding
 	// int[] count per state.  Used by
 	// BasicOperations.determinize
-	internal sealed class SortedIntSet
-	{
+    public sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet>
+    {
 	  internal int[] Values;
 	  internal int[] Counts;
 	  internal int Upto;
@@ -187,6 +187,13 @@ namespace Lucene.Net.Util.Automaton
 		}
 	  }
 
+	    public FrozenIntSet ToFrozenIntSet()
+	    {
+            int[] c = new int[Upto];
+            Array.Copy(Values, 0, c, 0, Upto);
+	        return new FrozenIntSet(c, this.HashCode_Renamed, this.State);
+	    }
+
 	  public FrozenIntSet Freeze(State state)
 	  {
 		int[] c = new int[Upto];
@@ -201,7 +208,8 @@ namespace Lucene.Net.Util.Automaton
 
 	  public override bool Equals(object _other)
 	  {
-		if (_other == null)
+        throw new NotImplementedException("ObjectEquals");
+        if (_other == null)
 		{
 		  return false;
 		}
@@ -229,7 +237,39 @@ namespace Lucene.Net.Util.Automaton
 		return true;
 	  }
 
-	  public override string ToString()
+        public bool Equals(SortedIntSet other)
+        {
+            throw new NotImplementedException("SortedIntSet Equals");
+        }
+
+        public bool Equals(FrozenIntSet other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (HashCode_Renamed != other.HashCode_Renamed)
+            {
+                return false;
+            }
+            if (other.Values.Length != Upto)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < Upto; i++)
+            {
+                if (other.Values[i] != Values[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+      public override string ToString()
 	  {
 		StringBuilder sb = (new StringBuilder()).Append('[');
 		for (int i = 0;i < Upto;i++)
@@ -244,7 +284,7 @@ namespace Lucene.Net.Util.Automaton
 		return sb.ToString();
 	  }
 
-	  public sealed class FrozenIntSet
+	  public sealed class FrozenIntSet : IEquatable<SortedIntSet>, IEquatable<FrozenIntSet>
 	  {
 		internal readonly int[] Values;
 		internal readonly int HashCode_Renamed;
@@ -271,7 +311,8 @@ namespace Lucene.Net.Util.Automaton
 
 		public override bool Equals(object _other)
 		{
-		  if (_other == null)
+		  throw new NotImplementedException();
+          if (_other == null)
 		  {
 			return false;
 		  }
@@ -319,7 +360,57 @@ namespace Lucene.Net.Util.Automaton
 		  return false;
 		}
 
-		public override string ToString()
+	      public bool Equals(SortedIntSet other)
+	      {
+	          if (other == null)
+	          {
+	              return false;
+	          }
+
+              if (HashCode_Renamed != other.HashCode_Renamed)
+              {
+                  return false;
+              }
+              if (other.Values.Length != Values.Length)
+              {
+                  return false;
+              }
+              for (int i = 0; i < Values.Length; i++)
+              {
+                  if (other.Values[i] != Values[i])
+                  {
+                      return false;
+                  }
+              }
+              return true;
+	      }
+
+	      public bool Equals(FrozenIntSet other)
+	      {
+              if (other == null)
+              {
+                  return false;
+              }
+
+              if (HashCode_Renamed != other.HashCode_Renamed)
+              {
+                  return false;
+              }
+              if (other.Values.Length != Values.Length)
+              {
+                  return false;
+              }
+              for (int i = 0; i < Values.Length; i++)
+              {
+                  if (other.Values[i] != Values[i])
+                  {
+                      return false;
+                  }
+              }
+              return true;
+	      }
+
+	      public override string ToString()
 		{
 		  StringBuilder sb = (new StringBuilder()).Append('[');
 		  for (int i = 0;i < Values.Length;i++)

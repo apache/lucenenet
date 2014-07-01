@@ -360,17 +360,17 @@ namespace Lucene.Net.Support
             return result;
         }
 
-        public static bool Equals<TKey, TValue>(Dictionary<TKey, TValue> first, Dictionary<TKey, TValue> second)
+        public static bool Equals<TKey>(Dictionary<TKey, object> first, Dictionary<TKey, object> second)
         {
             if (first == second) return true;
             if ((first == null) || (second == null)) return false;
             if (first.Count != second.Count) return false;
 
-            var comparer = EqualityComparer<TValue>.Default;
+            var comparer = EqualityComparer<object>.Default;
 
             foreach (var kvp in first)
             {
-                TValue secondValue;
+                object secondValue;
                 if (!second.TryGetValue(kvp.Key, out secondValue)) return false;
                 if (!comparer.Equals(kvp.Value, secondValue)) return false;
             }

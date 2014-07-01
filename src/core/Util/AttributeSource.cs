@@ -263,7 +263,7 @@ namespace Lucene.Net.Util
 		  {
 			foreach (Type curInterface in actClazz.GetInterfaces())
 			{
-			  if (curInterface != typeof(Attribute) && curInterface.IsSubclassOf(typeof(Attribute)))
+			  if (curInterface != typeof(IAttribute) && curInterface.IsSubclassOf(typeof(IAttribute)))
 			  {
 				foundInterfaces.AddLast(new WeakReference(curInterface));
 			  }
@@ -318,7 +318,7 @@ namespace Lucene.Net.Util
           var attClass = typeof(T);
           if (!Attributes.ContainsKey(attClass))
           {
-               if (!(attClass.IsInterface &&  typeof(IAttribute).IsAssignableFrom(attClass))) 
+                if (!(attClass.IsInterface &&  typeof(IAttribute).IsAssignableFrom(attClass))) 
                 {
                     throw new ArgumentException("AddAttribute() only accepts an interface that extends Attribute, but " + attClass.FullName + " does not fulfil this contract."
                     );
@@ -326,7 +326,18 @@ namespace Lucene.Net.Util
                 
                 AddAttributeImpl(this.Factory.CreateAttributeInstance(attClass));
           }
-          return (T)(IAttribute)Attributes[attClass].Value;
+
+          T returnAttr;
+          
+          try
+          {
+              returnAttr = (T) (IAttribute) Attributes[attClass].Value;
+          }
+          catch (KeyNotFoundException knf)
+          {
+              return default(T);
+          }
+          return returnAttr;
       }
 
 	  /// <summary>

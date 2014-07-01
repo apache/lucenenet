@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 using Lucene.Net.Search;
 
@@ -95,9 +96,9 @@ namespace Lucene.Net.Analysis
 
 		private void InitializeInstanceFields()
 		{
-			NumericAtt = AddAttribute<NumericTermAttribute>();
-			TypeAtt = AddAttribute<TypeAttribute>();
-			PosIncrAtt = AddAttribute<PositionIncrementAttribute>();
+			NumericAtt = AddAttribute<INumericTermAttribute>();
+			TypeAtt = AddAttribute<ITypeAttribute>();
+			PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 		}
 
 
@@ -173,7 +174,7 @@ namespace Lucene.Net.Analysis
 
 		/// <summary>
 		/// Creates, but does not yet initialize this attribute instance </summary>
-		/// <seealso cref= #init(long, int, int, int) </seealso>
+		/// <seealso> cref= #init(long, int, int, int) </seealso>
 		public NumericTermAttribute()
 		{
 		}
@@ -392,9 +393,9 @@ namespace Lucene.Net.Analysis
 	  }
 
 	  // members
-	  private NumericTermAttribute NumericAtt;
-	  private TypeAttribute TypeAtt;
-	  private PositionIncrementAttribute PosIncrAtt;
+	  private INumericTermAttribute NumericAtt;
+	  private ITypeAttribute TypeAtt;
+	  private IPositionIncrementAttribute PosIncrAtt;
 
 	  private int ValSize = 0; // valSize==0 means not initialized
 	  private readonly int PrecisionStep_Renamed;

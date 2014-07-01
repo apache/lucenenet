@@ -109,11 +109,7 @@ namespace Lucene.Net.Store
 
 	  public override long ReadLong()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
 		int i1 = ((Bytes[Pos++] & 0xff) << 24) | ((Bytes[Pos++] & 0xff) << 16) | ((Bytes[Pos++] & 0xff) << 8) | (Bytes[Pos++] & 0xff);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
 		int i2 = ((Bytes[Pos++] & 0xff) << 24) | ((Bytes[Pos++] & 0xff) << 16) | ((Bytes[Pos++] & 0xff) << 8) | (Bytes[Pos++] & 0xff);
 		return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
 	  }
@@ -216,7 +212,7 @@ namespace Lucene.Net.Store
 	  // NOTE: AIOOBE not EOF if you read too much
 	  public override byte ReadByte()
 	  {
-		return Bytes[Pos++];
+		return (byte)Bytes[Pos++];
 	  }
 
 	  // NOTE: AIOOBE not EOF if you read too much

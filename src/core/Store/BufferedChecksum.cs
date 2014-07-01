@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
     public class BufferedChecksum : IChecksum
 	{
       private readonly IChecksum @in;
-	  private readonly sbyte[] Buffer;
+	  private readonly byte[] Buffer;
 	  private int Upto;
 	  /// <summary>
 	  /// Default buffer size: 256 </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
       public BufferedChecksum(IChecksum @in, int bufferSize)
 	  {
 		this.@in = @in;
-		this.Buffer = new sbyte[bufferSize];
+		this.Buffer = new byte[bufferSize];
 	  }
 
 	  public void Update(int b)
@@ -54,7 +54,7 @@ namespace Lucene.Net.Store
 		{
 		  Flush();
 		}
-		Buffer[Upto++] = (sbyte) b;
+		Buffer[Upto++] = (byte) b;
 	  }
 
       public void Update(byte[] b)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
 		  {
 			Flush();
 		  }
-		  Array.Copy(b, off, Buffer, Upto, len);
+          Array.Copy(b, off, Buffer, Upto, len);
 		  Upto += len;
 		}
 	  }

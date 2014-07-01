@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis
 
         Analyzer analyzer = new MockAnalyzer(new Random());
 		Exception priorException = null;
-		TokenStream stream = analyzer.TokenStream("dummy", new StreamReader(testString));
+		TokenStream stream = analyzer.TokenStream("dummy", new StringReader(testString));
 		try
 		{
 		  stream.Reset();
@@ -281,7 +281,7 @@ namespace Lucene.Net.Analysis
 		for (int i = 0; i < num; i++)
 		{
           string s = TestUtil.RandomHtmlishString(new Random(), 20);
-          StreamReader reader = new StreamReader(s);
+          StringReader reader = new StringReader(s);
 		  MockCharFilter charfilter = new MockCharFilter(reader, 2);
 		  MockAnalyzer analyzer = new MockAnalyzer(Random());
 		  Exception priorException = null;

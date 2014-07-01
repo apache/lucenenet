@@ -435,6 +435,13 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
+        [Test]
+        public void TestMockTokenizerCtor()
+        {
+            var sr = new StringReader("Hello");
+            var mt = new MockTokenizer(sr);
+        }
+
 	  private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
 	  {
 		  private readonly TestGraphTokenizers OuterInstance;

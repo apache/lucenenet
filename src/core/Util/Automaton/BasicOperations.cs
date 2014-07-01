@@ -689,8 +689,6 @@ namespace Lucene.Net.Util.Automaton
 		  // 1st time we are seeing this point
 		  if (Count == Points.Length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PointTransitions[] newArray = new PointTransitions[Lucene.Net.Util.ArrayUtil.oversize(1+count, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			PointTransitions[] newArray = new PointTransitions[ArrayUtil.Oversize(1 + Count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 			Array.Copy(Points, 0, newArray, 0, Count);
 			Points = newArray;
@@ -709,8 +707,6 @@ namespace Lucene.Net.Util.Automaton
 		{
 		  if (UseHash)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer pi = point;
 			int? pi = point;
 			PointTransitions p = Map[pi];
 			if (p == null)
@@ -730,8 +726,6 @@ namespace Lucene.Net.Util.Automaton
 			  }
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PointTransitions p = next(point);
 			PointTransitions p = Next(point);
 			if (Count == HASHMAP_CUTOVER)
 			{
@@ -799,16 +793,10 @@ namespace Lucene.Net.Util.Automaton
 		  return;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] allStates = a.getNumberedStates();
 		State[] allStates = a.NumberedStates;
 
 		// subset construction
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final boolean initAccept = a.initial.accept;
 		bool initAccept = a.Initial.accept;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int initNumber = a.initial.number;
 		int initNumber = a.Initial.number;
 		a.Initial = new State();
 		SortedIntSet.FrozenIntSet initialset = new SortedIntSet.FrozenIntSet(initNumber, a.Initial);
@@ -828,15 +816,14 @@ namespace Lucene.Net.Util.Automaton
 		newStateUpto++;
 
 		// like Set<Integer,PointTransitions>
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final PointTransitionSet points = new PointTransitionSet();
 		PointTransitionSet points = new PointTransitionSet();
 
 		// like SortedMap<Integer,Integer>
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortedIntSet statesSet = new SortedIntSet(5);
-		SortedIntSet statesSet = new SortedIntSet(5);
+        SortedIntSet statesSet = new SortedIntSet(5);
 
+
+
+        //THIS IS INFINITE LOOPING
 		while (worklist.Count > 0)
 		{
 		  SortedIntSet.FrozenIntSet s = worklist.First.Value;
@@ -845,8 +832,6 @@ namespace Lucene.Net.Util.Automaton
 		  // Collate all outgoing transitions by min/1+max:
 		  for (int i = 0;i < s.Values.Length;i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State s0 = allStates[s.values[i]];
 			State s0 = allStates[s.Values[i]];
 			for (int j = 0;j < s0.numTransitions;j++)
 			{
@@ -865,14 +850,10 @@ namespace Lucene.Net.Util.Automaton
 		  int lastPoint = -1;
 		  int accCount = 0;
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State r = s.state;
 		  State r = s.State;
 		  for (int i = 0;i < points.Count;i++)
 		  {
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int point = points.points[i].point;
 			int point = points.Points[i].Point;
 
 			if (statesSet.Upto > 0)
@@ -881,18 +862,16 @@ namespace Lucene.Net.Util.Automaton
 
 			  statesSet.ComputeHash();
 
-			  /*State q = newstate[statesSet];
+			  State q;
+              newstate.TryGetValue(statesSet.ToFrozenIntSet(), out q);
 			  if (q == null)
-			  {*/
-				State q = new State();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final SortedIntSet.FrozenIntSet p = statesSet.freeze(q);
+			  {
+                q = new State();
+
 				SortedIntSet.FrozenIntSet p = statesSet.Freeze(q);
 				worklist.AddLast(p);
 				if (newStateUpto == newStatesArray.Length)
 				{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final State[] newArray = new State[Lucene.Net.Util.ArrayUtil.oversize(1+newStateUpto, Lucene.Net.Util.RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 				  State[] newArray = new State[ArrayUtil.Oversize(1 + newStateUpto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
 				  Array.Copy(newStatesArray, 0, newArray, 0, newStateUpto);
 				  newStatesArray = newArray;
@@ -902,11 +881,11 @@ namespace Lucene.Net.Util.Automaton
 				newStateUpto++;
 				q.accept = accCount > 0;
 				newstate[p] = q;
-			  /*}
+			  }
 			  else
 			  {
-				Debug.Assert((accCount > 0 ? true:false) == q.accept, "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
-			  }*/
+				Debug.Assert((accCount > 0) == q.accept, "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
+			  }
 
 			  r.AddTransition(new Transition(lastPoint, point - 1, q));
 			}
@@ -917,11 +896,7 @@ namespace Lucene.Net.Util.Automaton
 			int limit = points.Points[i].Ends.Count;
 			for (int j = 0;j < limit;j++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = transitions[j];
 			  Transition t = transitions[j];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer num = t.to.number;
 			  int num = t.To.number;
 			  statesSet.Decr(num);
 			  accCount -= t.To.accept ? 1:0;
@@ -934,11 +909,7 @@ namespace Lucene.Net.Util.Automaton
 			limit = points.Points[i].Starts.Count;
 			for (int j = 0;j < limit;j++)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Transition t = transitions[j];
 			  Transition t = transitions[j];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer num = t.to.number;
 			  int num = t.To.number;
 			  statesSet.Incr(num);
 			  accCount += t.To.accept ? 1:0;
