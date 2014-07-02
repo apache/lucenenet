@@ -31,9 +31,10 @@ namespace Lucene.Net.Analysis
 	{
 	  private readonly AttributeSource.AttributeFactory @delegate = DEFAULT_ATTRIBUTE_FACTORY;
 
-	  public override Attribute CreateAttributeInstance(Type attClass)
+	  public override Attribute CreateAttributeInstance<T>()
 	  {
-		return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance(attClass);
+	    var attClass = typeof (T);
+		return attClass.IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance<T>();
 	  }
 
 	}

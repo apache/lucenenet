@@ -53,7 +53,9 @@ namespace Lucene.Net.Support
         {
             get
             {
-                return _dict[key];
+                TValue ret;
+                _dict.TryGetValue(key, out ret);
+                return ret;
             }
             set
             {

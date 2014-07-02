@@ -122,7 +122,8 @@ namespace Lucene.Net.Index
 
 	  internal void AddBinaryField(FieldInfo fieldInfo, int docID, BytesRef value)
 	  {
-		DocValuesWriter writer = Writers[fieldInfo.Name];
+		DocValuesWriter writer;
+        Writers.TryGetValue(fieldInfo.Name, out writer);
 		BinaryDocValuesWriter binaryWriter;
 		if (writer == null)
 		{
@@ -142,7 +143,8 @@ namespace Lucene.Net.Index
 
 	  internal void AddSortedField(FieldInfo fieldInfo, int docID, BytesRef value)
 	  {
-		DocValuesWriter writer = Writers[fieldInfo.Name];
+		DocValuesWriter writer;
+        Writers.TryGetValue(fieldInfo.Name, out writer);
 		SortedDocValuesWriter sortedWriter;
 		if (writer == null)
 		{
@@ -182,7 +184,8 @@ namespace Lucene.Net.Index
 
 	  internal void AddNumericField(FieldInfo fieldInfo, int docID, long value)
 	  {
-		DocValuesWriter writer = Writers[fieldInfo.Name];
+		DocValuesWriter writer;
+        Writers.TryGetValue(fieldInfo.Name, out writer);
 		NumericDocValuesWriter numericWriter;
 		if (writer == null)
 		{

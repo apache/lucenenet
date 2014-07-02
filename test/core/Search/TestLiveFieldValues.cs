@@ -178,7 +178,6 @@ namespace Lucene.Net.Search
 		  }
 
 
-          [Test]
 		  public override void Run()
 		  {
 			try

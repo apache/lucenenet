@@ -229,11 +229,11 @@ namespace Lucene.Net.Analysis
 		Assert.AreNotSame(pl, copy.Payload);
 	  }
 
-	  public interface SenselessAttribute : Lucene.Net.Util.IAttribute
+	  public interface ISenselessAttribute : Lucene.Net.Util.IAttribute
 	  {
 	  }
 
-	  public sealed class SenselessAttributeImpl : Attribute, SenselessAttribute
+	  public sealed class SenselessAttribute : Attribute, ISenselessAttribute
 	  {
 		public override void CopyTo(Attribute target)
 		{
@@ -243,7 +243,7 @@ namespace Lucene.Net.Analysis
 		}
 		public override bool Equals(object o)
 		{
-			return (o is SenselessAttributeImpl);
+			return (o is SenselessAttribute);
 		}
 		public override int GetHashCode()
 		{
@@ -256,7 +256,7 @@ namespace Lucene.Net.Analysis
 	  {
 		TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
 
-		Assert.IsTrue( ts.AddAttribute<SenselessAttribute>() is SenselessAttributeImpl, "SenselessAttribute is not implemented by SenselessAttributeImpl");
+		Assert.IsTrue( ts.AddAttribute<ISenselessAttribute>() is SenselessAttribute, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 
 		Assert.IsTrue( ts.AddAttribute<ICharTermAttribute>() is Token, "CharTermAttribute is not implemented by Token");
 		Assert.IsTrue( ts.AddAttribute<IOffsetAttribute>() is Token, "OffsetAttribute is not implemented by Token");

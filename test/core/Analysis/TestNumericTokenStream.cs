@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Analysis
 {
 
@@ -40,8 +42,8 @@ namespace Lucene.Net.Analysis
 		NumericTokenStream stream = (new NumericTokenStream()).SetLongValue(Lvalue);
 		// use getAttribute to test if attributes really exist, if not an IAE will be throwed
 		TermToBytesRefAttribute bytesAtt = stream.GetAttribute<TermToBytesRefAttribute>();
-		TypeAttribute typeAtt = stream.GetAttribute<TypeAttribute>();
-		NumericTokenStream.NumericTermAttribute numericAtt = stream.GetAttribute<NumericTokenStream.NumericTermAttribute>();
+		ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
+		NumericTokenStream.INumericTermAttribute numericAtt = stream.GetAttribute<NumericTokenStream.INumericTermAttribute>();
 		BytesRef bytes = bytesAtt.BytesRef;
 		stream.Reset();
 		Assert.AreEqual(64, numericAtt.ValueSize);
@@ -65,8 +67,8 @@ namespace Lucene.Net.Analysis
 		NumericTokenStream stream = (new NumericTokenStream()).SetIntValue(Ivalue);
 		// use getAttribute to test if attributes really exist, if not an IAE will be throwed
 		TermToBytesRefAttribute bytesAtt = stream.GetAttribute<TermToBytesRefAttribute>();
-		TypeAttribute typeAtt = stream.GetAttribute<TypeAttribute>();
-		NumericTokenStream.NumericTermAttribute numericAtt = stream.GetAttribute<NumericTokenStream.NumericTermAttribute>();
+		ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
+		NumericTokenStream.INumericTermAttribute numericAtt = stream.GetAttribute<NumericTokenStream.INumericTermAttribute>();
 		BytesRef bytes = bytesAtt.BytesRef;
 		stream.Reset();
 		Assert.AreEqual(32, numericAtt.ValueSize);
@@ -123,7 +125,7 @@ namespace Lucene.Net.Analysis
 		NumericTokenStream stream = new NumericTokenStream();
 		try
 		{
-		  stream.AddAttribute<CharTermAttribute>();
+		  stream.AddAttribute<ICharTermAttribute>();
 		  Assert.Fail("Succeeded to add CharTermAttribute.");
 		}
 		catch (System.ArgumentException iae)

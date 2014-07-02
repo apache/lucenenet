@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
 		/// <summary>
 		/// returns an <seealso cref="Attribute"/> for the supplied <seealso cref="Attribute"/> interface class.
 		/// </summary>
-		public abstract Attribute CreateAttributeInstance(Type attClass);
+		public abstract Attribute CreateAttributeInstance<T>() where T : IAttribute;
 
 		/// <summary>
 		/// this is the default factory that creates <seealso cref="Attribute"/>s using the
@@ -65,22 +65,24 @@ namespace Lucene.Net.Util
 		  {
 		  }
 
-		  public override Attribute CreateAttributeInstance(Type attClass)
+		  public override Attribute CreateAttributeInstance<S>()
 		  {
               try
               {
-                  return (Attribute)System.Activator.CreateInstance(GetClassForInterface(attClass));
+                  return (Attribute)System.Activator.CreateInstance(GetClassForInterface<S>());
               }
               catch (ArgumentException)
               {
-                  throw new System.ArgumentException("Could not instantiate implementing class for " + attClass.Name);
+                  throw new System.ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName);
               }
 		  }
 
-		  internal static Type GetClassForInterface(Type attClass)
+		  internal static Type GetClassForInterface<T>() where T : IAttribute
 		  {
-			WeakReference @ref = AttClassImplMap[attClass];
-			Type clazz = (@ref == null) ? null : @ref.GetType();
+            var attClass = typeof(T);
+			WeakReference @ref;
+            AttClassImplMap.TryGetValue(attClass, out @ref);
+			Type clazz = (@ref == null) ? null : (Type)@ref.Target;
 			if (clazz == null)
 			{
 			  // we have the slight chance that another thread may do the same, but who cares?
@@ -247,31 +249,35 @@ namespace Lucene.Net.Util
 */
 	  /// <summary>
 	  /// a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
-      private static readonly WeakIdentityMap<Type, LinkedList<WeakReference>> KnownImplClasses = WeakIdentityMap<Type, LinkedList<WeakReference>>.NewHashMap(false);
+      private static readonly WeakDictionary<Type, LinkedList<WeakReference>> KnownImplClasses = new WeakDictionary<Type, LinkedList<WeakReference>>();
 
 	  internal static LinkedList<WeakReference> GetAttributeInterfaces(Type clazz)
 	  {
-		LinkedList<WeakReference> foundInterfaces = KnownImplClasses.Get(clazz);
-		if (foundInterfaces == null)
-		{
-		  // we have the slight chance that another thread may do the same, but who cares?
-          foundInterfaces = new LinkedList<WeakReference>();
-		  // find all interfaces that this attribute instance implements
-		  // and that extend the Attribute interface
-		  Type actClazz = clazz;
-		  do
-		  {
-			foreach (Type curInterface in actClazz.GetInterfaces())
-			{
-			  if (curInterface != typeof(IAttribute) && curInterface.IsSubclassOf(typeof(IAttribute)))
-			  {
-				foundInterfaces.AddLast(new WeakReference(curInterface));
-			  }
-			}
-			actClazz = actClazz.BaseType;
-		  } while (actClazz != null);
-		  KnownImplClasses.Put(clazz, foundInterfaces);
-		}
+		LinkedList<WeakReference> foundInterfaces;
+        lock (KnownImplClasses) 
+        { 
+            KnownImplClasses.TryGetValue(clazz, out foundInterfaces);
+            if (foundInterfaces == null)
+            {
+                // we have the slight chance that another thread may do the same, but who cares?
+                foundInterfaces = new LinkedList<WeakReference>();
+                // find all interfaces that this attribute instance implements
+                // and that extend the Attribute interface
+                Type actClazz = clazz;
+                do
+                {
+                    foreach (Type curInterface in actClazz.GetInterfaces())
+                    {
+                        if (curInterface != typeof (IAttribute) && (typeof (IAttribute)).IsAssignableFrom(curInterface))
+                        {
+                            foundInterfaces.AddLast(new WeakReference(curInterface));
+                        }
+                    }
+                    actClazz = actClazz.BaseType;
+                } while (actClazz != null);
+                KnownImplClasses[clazz] = foundInterfaces;
+            }
+        }
 		return foundInterfaces;
 	  }
 
@@ -284,19 +290,20 @@ namespace Lucene.Net.Util
 	  /// The recommended way to use custom implementations is using an <seealso cref="AttributeFactory"/>.
 	  /// </font></p>
 	  /// </summary>
-	  public void AddAttributeImpl(Attribute att)
+	  public virtual void AddAttributeImpl(Attribute att)
 	  {
 		Type clazz = att.GetType();
 		if (AttributeImpls.ContainsKey(clazz))
 		{
 			return;
 		}
+        
 		LinkedList<WeakReference> foundInterfaces = GetAttributeInterfaces(clazz);
 
 		// add all interfaces of this Attribute to the maps
 		foreach (WeakReference curInterfaceRef in foundInterfaces)
 		{
-		  Type curInterface = curInterfaceRef.GetType();
+		  Type curInterface = (Type)curInterfaceRef.Target;
 		  Debug.Assert(curInterface != null, "We have a strong reference on the class holding the interfaces, so they should never get evicted");
 		  // Attribute is a superclass of this interface
 		  if (!Attributes.ContainsKey(curInterface))
@@ -320,15 +327,13 @@ namespace Lucene.Net.Util
           {
                 if (!(attClass.IsInterface &&  typeof(IAttribute).IsAssignableFrom(attClass))) 
                 {
-                    throw new ArgumentException("AddAttribute() only accepts an interface that extends Attribute, but " + attClass.FullName + " does not fulfil this contract."
-                    );
+                    throw new ArgumentException("AddAttribute() only accepts an interface that extends IAttribute, but " + attClass.FullName + " does not fulfil this contract.");
                 }
                 
-                AddAttributeImpl(this.Factory.CreateAttributeInstance(attClass));
+                AddAttributeImpl(this.Factory.CreateAttributeInstance<T>());
           }
 
           T returnAttr;
-          
           try
           {
               returnAttr = (T) (IAttribute) Attributes[attClass].Value;
@@ -351,8 +356,9 @@ namespace Lucene.Net.Util
 	  /// The caller must pass in a Class&lt;? extends Attribute&gt; value. 
 	  /// Returns true, iff this AttributeSource contains the passed-in Attribute.
 	  /// </summary>
-	  public bool HasAttribute(Type attClass)
+	  public bool HasAttribute<T>() where T : IAttribute
 	  {
+	    var attClass = typeof (T);
 		return this.Attributes.ContainsKey(attClass);
 	  }
 

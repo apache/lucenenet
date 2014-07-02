@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis
 		TermAtt = @in.AddAttribute<ICharTermAttribute>();
 		PosIncAtt = @in.AddAttribute<IPositionIncrementAttribute>();
 		PosLengthAtt = @in.AddAttribute<IPositionLengthAttribute>();
-		if (@in.HasAttribute(typeof(IOffsetAttribute)))
+		if (@in.HasAttribute<IOffsetAttribute>())
 		{
 		  OffsetAtt = @in.AddAttribute<IOffsetAttribute>();
 		}

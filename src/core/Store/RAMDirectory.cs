@@ -193,7 +193,8 @@ namespace Lucene.Net.Store
 	  public override void DeleteFile(string name)
 	  {
 		EnsureOpen();
-        RAMFile file = FileMap[name];
+        RAMFile file;
+        FileMap.TryGetValue(name, out file);
         FileMap.Remove(name);
 		if (file != null)
 		{
@@ -212,7 +213,8 @@ namespace Lucene.Net.Store
 	  {
 		EnsureOpen();
 		RAMFile file = NewRAMFile();
-        RAMFile existing = FileMap[name];
+        RAMFile existing;
+        FileMap.TryGetValue(name, out existing);
 		if (existing != null)
 		{
 		  sizeInBytes.AddAndGet(-existing.SizeInBytes_Renamed);
@@ -241,7 +243,8 @@ namespace Lucene.Net.Store
 	  public override IndexInput OpenInput(string name, IOContext context)
 	  {
 		EnsureOpen();
-		RAMFile file = FileMap[name];
+		RAMFile file;
+        FileMap.TryGetValue(name, out file);
 		if (file == null)
 		{
 		  throw new FileNotFoundException(name);

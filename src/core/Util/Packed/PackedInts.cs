@@ -43,32 +43,32 @@ namespace Lucene.Net.Util.Packed
 	  /// <summary>
 	  /// At most 700% memory overhead, always select a direct implementation.
 	  /// </summary>
-	  public const float FASTEST = 7f;
+        public static float FASTEST = 7f;
 
 	  /// <summary>
 	  /// At most 50% memory overhead, always select a reasonably fast implementation.
 	  /// </summary>
-	  public const float FAST = 0.5f;
+      public static float FAST = 0.5f;
 
 	  /// <summary>
 	  /// At most 20% memory overhead.
 	  /// </summary>
-	  public const float DEFAULT = 0.2f;
+      public static float DEFAULT = 0.2f;
 
 	  /// <summary>
 	  /// No memory overhead at all, but the returned implementation may be slow.
 	  /// </summary>
-	  public const float COMPACT = 0f;
+      public static float COMPACT = 0f;
 
 	  /// <summary>
 	  /// Default amount of memory to use for bulk operations.
 	  /// </summary>
-	  public const int DEFAULT_BUFFER_SIZE = 1024; // 1K
+      public static int DEFAULT_BUFFER_SIZE = 1024; // 1K
 
-	  public const string CODEC_NAME = "PackedInts";
-	  public const int VERSION_START = 0; // PackedInts were long-aligned
-	  public const int VERSION_BYTE_ALIGNED = 1;
-	  public const int VERSION_CURRENT = VERSION_BYTE_ALIGNED;
+      public static string CODEC_NAME = "PackedInts";
+	  public static int VERSION_START = 0; // PackedInts were long-aligned
+      public static int VERSION_BYTE_ALIGNED = 1;
+      public static int VERSION_CURRENT = VERSION_BYTE_ALIGNED;
 
 	  /// <summary>
 	  /// Check the validity of a version number.
@@ -636,8 +636,6 @@ namespace Lucene.Net.Util.Packed
 		  Debug.Assert(index >= 0 && index < Size());
 		  Debug.Assert(off + len <= arr.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int gets = Math.min(size() - index, len);
 		  int gets = Math.Min(Size() - index, len);
 		  for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
 		  {

@@ -127,8 +127,15 @@ namespace Lucene.Net.Store
 	  // returns the canonical version of the directory, creating it if it doesn't exist.
 	  private static DirectoryInfo GetCanonicalPath(DirectoryInfo file)
 	  {
-          if (!file.Exists)
-              file.Create();
+	      try
+	      {
+	          file.Create();
+	      }
+	      catch (IOException ioe)
+	      {
+	          //File already exists
+	      }
+
           return file;
 	  }
 
@@ -247,10 +254,10 @@ namespace Lucene.Net.Store
 		{
 		  throw new NoSuchDirectoryException("directory '" + dir + "' does not exist");
 		}
-		else if (!File.Exists(dir.FullName))
+		/*else if (!File.Exists(dir.FullName))
 		{
 		  throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
-		}
+		}*/
 
 		// Exclude subdirs
         FileInfo[] files = dir.GetFiles();

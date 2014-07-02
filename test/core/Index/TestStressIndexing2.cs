@@ -750,8 +750,8 @@ namespace Lucene.Net.Index
 			  int freq1 = dpEnum1.Freq();
 			  int freq2 = dpEnum2.Freq();
 			  Assert.AreEqual(freq1, freq2);
-			  OffsetAttribute offsetAtt1 = dpEnum1.Attributes().HasAttribute(typeof(OffsetAttribute)) ? dpEnum1.Attributes().GetAttribute<OffsetAttribute>() : null;
-			  OffsetAttribute offsetAtt2 = dpEnum2.Attributes().HasAttribute(typeof(OffsetAttribute)) ? dpEnum2.Attributes().GetAttribute<OffsetAttribute>() : null;
+			  OffsetAttribute offsetAtt1 = dpEnum1.Attributes().HasAttribute<OffsetAttribute>() ? dpEnum1.Attributes().GetAttribute<OffsetAttribute>() : null;
+			  OffsetAttribute offsetAtt2 = dpEnum2.Attributes().HasAttribute<OffsetAttribute>() ? dpEnum2.Attributes().GetAttribute<OffsetAttribute>() : null;
 
 			  if (offsetAtt1 != null)
 			  {

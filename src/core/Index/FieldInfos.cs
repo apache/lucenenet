@@ -230,7 +230,8 @@ namespace Lucene.Net.Index
 			{
 			  if (dvType != null)
 			  {
-				DocValuesType_e? currentDVType = DocValuesType[fieldName];
+				DocValuesType_e? currentDVType;
+                DocValuesType.TryGetValue(fieldName, out currentDVType);
 				if (currentDVType == null)
 				{
 				  DocValuesType[fieldName] = dvType;
@@ -240,11 +241,10 @@ namespace Lucene.Net.Index
 				  throw new System.ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
 				}
 			  }
-			  int? fieldNumber = NameToNumber[fieldName];
+			  int? fieldNumber;
+              NameToNumber.TryGetValue(fieldName, out fieldNumber);
 			  if (fieldNumber == null)
 			  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Integer preferredBoxed = Integer.valueOf(preferredFieldNumber);
 				int? preferredBoxed = Convert.ToInt32(preferredFieldNumber);
         
 				if (preferredFieldNumber != -1 && !NumberToName.ContainsKey(preferredBoxed))
@@ -412,7 +412,9 @@ namespace Lucene.Net.Index
 
 		public FieldInfo FieldInfo(string fieldName)
 		{
-		  return ByName[fieldName];
+		    FieldInfo ret;
+		    ByName.TryGetValue(fieldName, out ret);
+		    return ret;
 		}
 
 	      public FieldInfos Finish()

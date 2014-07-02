@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
 
 	  public ISet<string> AvailableServices()
 	  {
-		return (ISet<string>)Services.Keys;
+		return new HashSet<string>(Services.Keys);
 	  }
 
 	  public IEnumerator<S> GetEnumerator()

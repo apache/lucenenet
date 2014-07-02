@@ -2013,7 +2013,7 @@ namespace Lucene.Net.Index
 		  // problems at least with ConcurrentMergeScheduler.
 		  ChangeCount++;
 		  SegmentInfos.Changed();
-		  return "_" + Convert.ToString(SegmentInfos.Counter++, Character.MAX_RADIX);
+		  return "_" + Number.ToString(SegmentInfos.Counter++, Character.MAX_RADIX);
 		}
 	  }
 

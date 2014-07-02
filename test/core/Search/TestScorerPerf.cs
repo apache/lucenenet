@@ -61,8 +61,7 @@ namespace Lucene.Net.Search
 		r = DirectoryReader.Open(d);
 		s = NewSearcher(r);
 	  }
-        
-      [SetUp]
+
 	  public virtual void CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
 	  {
 		int[] freq = new int[nTerms];
@@ -419,7 +418,7 @@ namespace Lucene.Net.Search
 		d.Dispose();
 	  }
 
-	  /// <summary>
+	 /*
 	  ///*
 	  /// int bigIter=10;
 	  /// 
@@ -504,7 +503,7 @@ namespace Lucene.Net.Search
 	  ///  s.Dispose();
 	  /// }
 	  /// **
-	  /// </summary>
+	  */
 
 
 	}

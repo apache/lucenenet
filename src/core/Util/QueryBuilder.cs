@@ -216,11 +216,11 @@ namespace Lucene.Net.Util
 		  buffer = new CachingTokenFilter(source);
 		  buffer.Reset();
 
-		  if (buffer.HasAttribute(typeof(TermToBytesRefAttribute)))
+		  if (buffer.HasAttribute<TermToBytesRefAttribute>())
 		  {
 			termAtt = buffer.GetAttribute<TermToBytesRefAttribute>();
 		  }
-		  if (buffer.HasAttribute(typeof(PositionIncrementAttribute)))
+		  if (buffer.HasAttribute<PositionIncrementAttribute>())
 		  {
 			posIncrAtt = buffer.GetAttribute<PositionIncrementAttribute>();
 		  }

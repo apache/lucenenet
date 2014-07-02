@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis
 	  {
 
         var att = typeof(A);  
-        if (HasAttribute(att))
+        if (HasAttribute<A>())
 		{
 		  return GetAttribute<A>();
 		}

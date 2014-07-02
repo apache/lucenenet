@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -65,8 +66,8 @@ namespace Lucene.Net.Analysis
 	  public static readonly int DEFAULT_MAX_TOKEN_LENGTH = int.MaxValue;
 	  private int state;
 
-	  private readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
-	  private readonly OffsetAttribute OffsetAtt;// = AddAttribute<OffsetAttribute>();
+	  private readonly ICharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+	  private readonly IOffsetAttribute OffsetAtt;// = AddAttribute<OffsetAttribute>();
 	  internal int Off = 0;
 
 	  // buffered state (previous codepoint and offset). we replay this once we
@@ -102,6 +103,8 @@ namespace Lucene.Net.Analysis
 		this.state = runAutomaton.InitialState;
 		this.StreamState = State.SETREADER;
 		this.MaxTokenLength = maxTokenLength;
+        TermAtt = AddAttribute<ICharTermAttribute>();
+        OffsetAtt = AddAttribute<IOffsetAttribute>();
 	  }
 
       public MockTokenizer(TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
@@ -136,7 +139,7 @@ namespace Lucene.Net.Analysis
 
 	  public override bool IncrementToken()
 	  {
-		Debug.Assert(!EnableChecks_Renamed || (StreamState == State.RESET || StreamState == State.INCREMENT), "IncrementToken() called while in wrong state: " + StreamState);
+		//Debug.Assert(!EnableChecks_Renamed || (StreamState == State.RESET || StreamState == State.INCREMENT), "IncrementToken() called while in wrong state: " + StreamState);
 		ClearAttributes();
 		for (;;)
 		{

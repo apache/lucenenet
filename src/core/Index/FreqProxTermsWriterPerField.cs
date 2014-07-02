@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
 
 	  internal override void Start(IndexableField f)
 	  {
-		if (FieldState.AttributeSource_Renamed.HasAttribute(typeof(PayloadAttribute)))
+		if (FieldState.AttributeSource_Renamed.HasAttribute<PayloadAttribute>())
 		{
 		  PayloadAttribute = FieldState.AttributeSource_Renamed.GetAttribute<PayloadAttribute>();
 		}

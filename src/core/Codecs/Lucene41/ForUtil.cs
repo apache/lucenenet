@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene41
 		int maxDataSize = 0;
 		for (int version = PackedInts.VERSION_START;version <= PackedInts.VERSION_CURRENT;version++)
 		{
-		  foreach (PackedInts.Format format in Enum.GetValues(typeof(PackedInts.Format)))
+		  foreach (PackedInts.Format format in PackedInts.Format.Values()/* Enum.GetValues(typeof(PackedInts.Format))*/)
 		  {
 			for (int bpv = 1; bpv <= 32; ++bpv)
 			{
@@ -71,11 +71,7 @@ namespace Lucene.Net.Codecs.Lucene41
 			  {
 				continue;
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Decoder decoder = Lucene.Net.Util.Packed.PackedInts.getDecoder(format, version, bpv);
 			  PackedInts.Decoder decoder = PackedInts.GetDecoder(format, version, bpv);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int iterations = computeIterations(decoder);
 			  int iterations = ComputeIterations(decoder);
 			  maxDataSize = Math.Max(maxDataSize, iterations * decoder.ByteValueCount());
 			}
@@ -99,8 +95,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// </summary>
 	  private static int EncodedSize(PackedInts.Format format, int packedIntsVersion, int bitsPerValue)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long byteCount = format.byteCount(packedIntsVersion, BLOCK_SIZE, bitsPerValue);
 		long byteCount = format.ByteCount(packedIntsVersion, Lucene41PostingsFormat.BLOCK_SIZE, bitsPerValue);
 		Debug.Assert(byteCount >= 0 && byteCount <= int.MaxValue, byteCount.ToString());
 		return (int) byteCount;
@@ -202,30 +196,20 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
 	  public void ReadBlock(IndexInput @in, sbyte[] encoded, int[] decoded)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBits = in.readByte();
 		int numBits = @in.ReadByte();
 		Debug.Assert(numBits <= 32, numBits.ToString());
 
 		if (numBits == ALL_VALUES_EQUAL)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int value = in.readVInt();
 		  int value = @in.ReadVInt();
           CollectionsHelper.Fill(decoded, 0, Lucene41PostingsFormat.BLOCK_SIZE, value);
 		  return;
 		}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int encodedSize = encodedSizes[numBits];
 		int encodedSize = EncodedSizes[numBits];
 		@in.ReadBytes(encoded, 0, encodedSize);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Util.Packed.PackedInts.Decoder decoder = decoders[numBits];
         PackedInts.Decoder decoder = Decoders[numBits];
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int iters = iterations[numBits];
 		int iters = Iterations[numBits];
         Debug.Assert(iters * decoder.ByteValueCount() >= Lucene41PostingsFormat.BLOCK_SIZE);
 
@@ -239,8 +223,6 @@ namespace Lucene.Net.Codecs.Lucene41
 	  /// <exception cref="IOException"> If there is a low-level I/O error </exception>
 	  public void SkipBlock(IndexInput @in)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int numBits = in.readByte();
 		int numBits = @in.ReadByte();
 		if (numBits == ALL_VALUES_EQUAL)
 		{
@@ -248,16 +230,12 @@ namespace Lucene.Net.Codecs.Lucene41
 		  return;
 		}
 		Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int encodedSize = encodedSizes[numBits];
 		int encodedSize = EncodedSizes[numBits];
 		@in.Seek(@in.FilePointer + encodedSize);
 	  }
 
 	  private static bool IsAllEqual(int[] data)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int v = data[0];
 		int v = data[0];
 		for (int i = 1; i < Lucene41PostingsFormat.BLOCK_SIZE; ++i)
 		{

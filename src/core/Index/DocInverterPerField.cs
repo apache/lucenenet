@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Index
 {
 
@@ -116,8 +118,8 @@ namespace Lucene.Net.Index
 
 			  FieldState.AttributeSource_Renamed = stream;
 
-			  OffsetAttribute offsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<OffsetAttribute>();
-			  PositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource_Renamed.AddAttribute<PositionIncrementAttribute>();
+			  IOffsetAttribute offsetAttribute = FieldState.AttributeSource_Renamed.AddAttribute<IOffsetAttribute>();
+			  IPositionIncrementAttribute posIncrAttribute = FieldState.AttributeSource_Renamed.AddAttribute<IPositionIncrementAttribute>();
 
 			  if (hasMoreTokens)
 			  {

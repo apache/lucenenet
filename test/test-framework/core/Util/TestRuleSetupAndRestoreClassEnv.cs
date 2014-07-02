@@ -88,6 +88,166 @@ namespace Lucene.Net.Util
 	  /// <seealso cref= SuppressCodecs </seealso>
 	  internal HashSet<string> AvoidCodecs;
 
+	    public TestRuleSetupAndRestoreClassEnv()
+	    {
+            /*// if verbose: print some debugging stuff about which codecs are loaded.
+            if (LuceneTestCase.VERBOSE)
+            {
+                ISet<string> codecs = Codec.AvailableCodecs();
+                foreach (string codec in codecs)
+                {
+                    Console.WriteLine("Loaded codec: '" + codec + "': " + Codec.ForName(codec).GetType().Name);
+                }
+
+                ISet<string> postingsFormats = PostingsFormat.AvailablePostingsFormats();
+                foreach (string postingsFormat in postingsFormats)
+                {
+                    Console.WriteLine("Loaded postingsFormat: '" + postingsFormat + "': " + PostingsFormat.ForName(postingsFormat).GetType().Name);
+                }
+            }
+
+            SavedInfoStream = InfoStream.Default;
+            Random random = RandomizedContext.Current.Random;
+            bool v = random.NextBoolean();
+            if (LuceneTestCase.INFOSTREAM)
+            {
+                InfoStream.Default = new ThreadNameFixingPrintStreamInfoStream(Console.Out);
+            }
+            else if (v)
+            {
+                InfoStream.Default = new NullInfoStream();
+            }
+
+            Type targetClass = RandomizedContext.Current.GetTargetType;
+            AvoidCodecs = new HashSet<string>();
+
+            // set back to default
+            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+
+            SavedCodec = Codec.Default;
+            int randomVal = random.Next(10);
+            if ("Lucene3x".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT) && "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT) && randomVal == 3 && !ShouldAvoidCodec("Lucene3x"))) // preflex-only setup
+            {
+                Codec = Codec.ForName("Lucene3x");
+                Debug.Assert((Codec is PreFlexRWCodec), "fix your classpath to have tests-framework.jar before lucene-core.jar");
+                LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            }
+            else if ("Lucene40".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT) && randomVal == 0 && !ShouldAvoidCodec("Lucene40"))) // 4.0 setup
+            {
+                Codec = Codec.ForName("Lucene40");
+                LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+                Debug.Assert(Codec is Lucene40RWCodec, "fix your classpath to have tests-framework.jar before lucene-core.jar");
+                Debug.Assert((PostingsFormat.ForName("Lucene40") is Lucene40RWPostingsFormat), "fix your classpath to have tests-framework.jar before lucene-core.jar");
+            }
+            else if ("Lucene41".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT) && "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT) && randomVal == 1 && !ShouldAvoidCodec("Lucene41")))
+            {
+                Codec = Codec.ForName("Lucene41");
+                LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+                Debug.Assert(Codec is Lucene41RWCodec, "fix your classpath to have tests-framework.jar before lucene-core.jar");
+            }
+            else if ("Lucene42".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT) && "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT) && randomVal == 2 && !ShouldAvoidCodec("Lucene42")))
+            {
+                Codec = Codec.ForName("Lucene42");
+                LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+                Debug.Assert(Codec is Lucene42RWCodec, "fix your classpath to have tests-framework.jar before lucene-core.jar");
+            }
+            else if ("Lucene45".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT) && "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT) && randomVal == 5 && !ShouldAvoidCodec("Lucene45")))
+            {
+                Codec = Codec.ForName("Lucene45");
+                LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+                Debug.Assert(Codec is Lucene45RWCodec, "fix your classpath to have tests-framework.jar before lucene-core.jar");
+            }
+            else if (("random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT) == false) || ("random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT) == false))
+            {
+                // the user wired postings or DV: this is messy
+                // refactor into RandomCodec....
+
+                PostingsFormat format;
+                if ("random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT))
+                {
+                    format = PostingsFormat.ForName("Lucene41");
+                }
+                else
+                {
+                    format = PostingsFormat.ForName(LuceneTestCase.TEST_POSTINGSFORMAT);
+                }
+
+                DocValuesFormat dvFormat;
+                if ("random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT))
+                {
+                    dvFormat = DocValuesFormat.ForName("Lucene45");
+                }
+                else
+                {
+                    dvFormat = DocValuesFormat.ForName(LuceneTestCase.TEST_DOCVALUESFORMAT);
+                }
+
+                Codec = new Lucene46CodecAnonymousInnerClassHelper(this, format, dvFormat);
+            }
+            else if ("Asserting".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && randomVal == 6 && !ShouldAvoidCodec("Asserting")))
+            {
+                Codec = new AssertingCodec();
+            }
+            else if ("Compressing".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && randomVal == 5 && !ShouldAvoidCodec("Compressing")))
+            {
+                Codec = CompressingCodec.RandomInstance(random);
+            }
+            else if (!"random".Equals(LuceneTestCase.TEST_CODEC))
+            {
+                Codec = Codec.ForName(LuceneTestCase.TEST_CODEC);
+            }
+            else if ("random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT))
+            {
+                Codec = new RandomCodec(random, AvoidCodecs);
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
+            Codec.Default = Codec;
+            */
+            Random random = new Random();
+            Similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(new Random());
+            /*
+            // Check codec restrictions once at class level.
+            try
+            {
+                CheckCodecRestrictions(Codec);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine("NOTE: " + e.Message + " Suppressed codecs: " + Arrays.ToString(AvoidCodecs.ToArray()));
+                throw e;
+            }*/
+	    }
+
+	    /*~TestRuleSetupAndRestoreClassEnv()
+	    {
+            foreach (KeyValuePair<string, string> e in RestoreProperties)
+            {
+                if (e.Value == null)
+                {
+                    System.ClearProperty(e.Key);
+                }
+                else
+                {
+                    System.setProperty(e.Key, e.Value);
+                }
+            }
+            RestoreProperties.Clear();
+
+            Codec.Default = SavedCodec;
+            InfoStream.Default = SavedInfoStream;
+            if (SavedLocale != null)
+            {
+                Locale = SavedLocale;
+            }
+            if (SavedTimeZone != null)
+            {
+                TimeZone = SavedTimeZone;
+            }
+	    }*/
+
 	  internal class ThreadNameFixingPrintStreamInfoStream : PrintStreamInfoStream
 	  {
 

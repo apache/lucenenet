@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
 	  private bool Locked()
 	  {
           //LUCENE TO-DO Check this logic
-		return Writer == null /*|| Monitor.IsEntered(Writer)*/;
+		  return Writer == null || true /*Monitor. IsEntered(Writer)*/;
 	  }
 
 	  /// <summary>

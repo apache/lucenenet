@@ -154,8 +154,9 @@ namespace Lucene.Net.Index
 			this.@delegate = @delegate;
 		  }
 
-		  public override Attribute CreateAttributeInstance(Type attClass)
+		  public override Attribute CreateAttributeInstance<T>()
 		  {
+            var attClass = typeof(T);
 			if (attClass == typeof(TermToBytesRefAttribute))
 			{
 			  return new MyTermAttributeImpl();
@@ -164,7 +165,7 @@ namespace Lucene.Net.Index
 			{
 			  throw new System.ArgumentException("no");
 			}
-			return @delegate.CreateAttributeInstance(attClass);
+			return @delegate.CreateAttributeInstance<T>();
 		  }
 		}
 	  }

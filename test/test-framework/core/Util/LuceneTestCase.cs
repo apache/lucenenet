@@ -413,6 +413,8 @@ namespace Lucene.Net.Util
 	      public static bool LEAVE_TEMPORARY;
 	      static LuceneTestCase()
 	      {
+            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
+
 		    bool defaultValue = false;
 		    foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
 		    {
@@ -610,16 +612,19 @@ namespace Lucene.Net.Util
         /// <summary>
         /// For subclasses to override. Overrides must call {@code super.setUp()}.
         /// </summary>
+        [SetUp]
         public virtual void SetUp()
         {
             ///* LUCENE TO-DO: Not sure how to convert these
 		    //ParentChainCallRule.SetupCalled = true;
+            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         
         }
 
         /// <summary>
         /// For subclasses to override. Overrides must call {@code super.tearDown()}.
         /// </summary>
+        [TearDown]
         public virtual void TearDown()
         {
         /* LUCENE TO-DO: Not sure how to convert these

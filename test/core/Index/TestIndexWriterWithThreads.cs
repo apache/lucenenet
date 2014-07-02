@@ -553,6 +553,7 @@ namespace Lucene.Net.Index
 	  //  that we attempt to open at the same time.  As long as the first IndexWriter completes
 	  //  and closes before the second IndexWriter time's out trying to get the Lock,
 	  //  we should see both documents
+      [Ignore]
       [Test]
       public virtual void TestOpenTwoIndexWritersOnDifferentThreads()
 	  {

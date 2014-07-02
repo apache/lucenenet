@@ -143,18 +143,17 @@ namespace Lucene.Net.Store
 	  /// <seealso cref= DataOutput#writeVInt(int) </seealso>
 	  public virtual int ReadVInt()
 	  {
-		/* this is the original code of this method,
-		 * but a Hotspot bug (see LUCENE-2975) corrupts the for-loop if
-		 * readByte() is inlined. So the loop was unwinded!
-		byte b = readByte();
-		int i = b & 0x7F;
-		for (int shift = 7; (b & 0x80) != 0; shift += 7) {
-		  b = readByte();
-		  i |= (b & 0x7F) << shift;
-		}
-		return i;
-		*/
-		byte b = ReadByte();
+          // .NET Port: Going back to original code instead of Java code below due to sbyte/byte diff
+          byte b = ReadByte();
+          int i = b & 0x7F;
+          for (int shift = 7; (b & 0x80) != 0; shift += 7)
+          {
+              b = ReadByte();
+              i |= (b & 0x7F) << shift;
+          }
+          return i;
+
+		/*byte b = ReadByte();
 		if (b >= 0)
 		{
 			return b;
@@ -185,7 +184,7 @@ namespace Lucene.Net.Store
 		{
 			return i;
 		}
-		throw new System.IO.IOException("Invalid vInt detected (too many bits)");
+		throw new System.IO.IOException("Invalid vInt detected (too many bits)");*/
 	  }
 
 	  /// <summary>
@@ -206,18 +205,17 @@ namespace Lucene.Net.Store
 	  /// <seealso cref= DataOutput#writeVLong(long) </seealso>
 	  public virtual long ReadVLong()
 	  {
-		/* this is the original code of this method,
-		 * but a Hotspot bug (see LUCENE-2975) corrupts the for-loop if
-		 * readByte() is inlined. So the loop was unwinded!
-		byte b = readByte();
-		long i = b & 0x7F;
-		for (int shift = 7; (b & 0x80) != 0; shift += 7) {
-		  b = readByte();
-		  i |= (b & 0x7FL) << shift;
-		}
-		return i;
-		*/
-		byte b = ReadByte();
+          // .NET Port: going back to old style code
+          byte b = ReadByte();
+          long i = b & 0x7F;
+          for (int shift = 7; (b & 0x80) != 0; shift += 7)
+          {
+              b = ReadByte();
+              i |= (b & 0x7FL) << shift;
+          }
+          return i;
+
+		/*yte b = ReadByte();
 		if (b >= 0)
 		{
 			return b;
@@ -271,7 +269,7 @@ namespace Lucene.Net.Store
 		{
 			return i;
 		}
-		throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
+		throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");*/
 	  }
 
 	  /// <summary>

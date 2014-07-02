@@ -102,7 +102,7 @@ namespace Lucene.Net.Util
 		if (unremoved.Count != 0)
 		{
 		  StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
-		  foreach (FileInfo f in unremoved)
+          foreach (FileSystemInfo f in unremoved)
 		  {
 			b.Append("   ").Append(f.FullName).Append("\n");
 		  }
@@ -356,7 +356,7 @@ namespace Lucene.Net.Util
 		else
 		{
 		  // probably not evenly distributed when range is large, but OK for tests
-		  BigInteger augend = new BigInteger(new decimal(end+1-start) * (new decimal(r.NextDouble())));
+		  BigInteger augend = new BigInteger(end+1-start) * (BigInteger)(r.NextDouble());
 		  long result = start + (long)augend;
 		  Debug.Assert(result >= start);
 		  Debug.Assert(result <= end);

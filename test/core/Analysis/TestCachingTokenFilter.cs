@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Analysis
 {
 
@@ -86,19 +88,24 @@ namespace Lucene.Net.Analysis
 
 	  private class TokenStreamAnonymousInnerClassHelper : TokenStream
 	  {
-		  private readonly TestCachingTokenFilter OuterInstance;
+		  private TestCachingTokenFilter OuterInstance;
 
 		  public TokenStreamAnonymousInnerClassHelper(TestCachingTokenFilter outerInstance)
 		  {
-			  this.OuterInstance = outerInstance;
-			  index = 0;
-			  termAtt = AddAttribute<CharTermAttribute>();
-			  offsetAtt = AddAttribute<OffsetAttribute>();
+		      InitMembers(outerInstance);
 		  }
 
+	      public void InitMembers(TestCachingTokenFilter outerInstance)
+	      {
+	          this.OuterInstance = outerInstance;
+              index = 0;
+              termAtt = AddAttribute<ICharTermAttribute>();
+              offsetAtt = AddAttribute<IOffsetAttribute>();
+	      }
+
 		  private int index;
-		  private CharTermAttribute termAtt;
-		  private OffsetAttribute offsetAtt;
+	      private ICharTermAttribute termAtt;
+		  private IOffsetAttribute offsetAtt;
 
 		  public override bool IncrementToken()
 		  {
@@ -121,7 +128,7 @@ namespace Lucene.Net.Analysis
 	  {
 		int count = 0;
 
-		CharTermAttribute termAtt = stream.GetAttribute<CharTermAttribute>();
+		ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
 		while (stream.IncrementToken())
 		{
 		  Assert.IsTrue(count < Tokens.Length);

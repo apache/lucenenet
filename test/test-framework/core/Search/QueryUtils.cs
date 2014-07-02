@@ -212,9 +212,10 @@ namespace Lucene.Net.Search
 		return @out;
 	  }
 
-	  internal static readonly IndexReader[] EmptyReaders = new IndexReader[8];
+	  internal static readonly IndexReader[] EmptyReaders;// = new IndexReader[8];
 	  static QueryUtils()
 	  {
+        EmptyReaders = new IndexReader[8];
 		try
 		{
 		  EmptyReaders[0] = new MultiReader();

@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis
 	  /// Attribute that records if it was cleared or not.  this is used 
 	  /// for testing that ClearAttributes() was called correctly.
 	  /// </summary>
-	  public interface CheckClearAttributesAttribute : IAttribute
+	  public interface ICheckClearAttributesAttribute : IAttribute
 	  {
 		bool AndResetClearCalled {get;}
 	  }
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis
 	  /// Attribute that records if it was cleared or not.  this is used 
 	  /// for testing that ClearAttributes() was called correctly.
 	  /// </summary>
-	  public sealed class CheckClearAttributesAttributeImpl : Attribute, CheckClearAttributesAttribute
+	  public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute
 	  {
 		internal bool ClearCalled = false;
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Analysis
 
 		public override bool Equals(object other)
 		{
-		  return (other is CheckClearAttributesAttributeImpl && ((CheckClearAttributesAttributeImpl) other).ClearCalled == this.ClearCalled);
+		  return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute) other).ClearCalled == this.ClearCalled);
 		}
 
 		public override int GetHashCode()
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis
 
 		public override void CopyTo(Attribute target)
 		{
-		  ((CheckClearAttributesAttributeImpl) target).Clear();
+		  ((CheckClearAttributesAttribute) target).Clear();
 		}
 	  }
 
@@ -123,47 +123,47 @@ namespace Lucene.Net.Analysis
 	  public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect)
 	  {
 		Assert.IsNotNull(output);
-		CheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<CheckClearAttributesAttribute>();
+		ICheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
 		CharTermAttribute termAtt = null;
 		if (output.Length > 0)
 		{
-		  Assert.IsTrue(ts.HasAttribute(typeof(CharTermAttribute)), "has no CharTermAttribute");
+		  Assert.IsTrue(ts.HasAttribute<CharTermAttribute>(), "has no CharTermAttribute");
 		  termAtt = ts.GetAttribute<CharTermAttribute>();
 		}
 
 		OffsetAttribute offsetAtt = null;
 		if (startOffsets != null || endOffsets != null || finalOffset != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute(typeof(OffsetAttribute)), "has no OffsetAttribute");
+		  Assert.IsTrue(ts.HasAttribute<OffsetAttribute>(), "has no OffsetAttribute");
 		  offsetAtt = ts.GetAttribute<OffsetAttribute>();
 		}
 
 		TypeAttribute typeAtt = null;
 		if (types != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute(typeof(TypeAttribute)), "has no TypeAttribute");
+		  Assert.IsTrue(ts.HasAttribute<TypeAttribute>(), "has no TypeAttribute");
 		  typeAtt = ts.GetAttribute<TypeAttribute>();
 		}
 
 		PositionIncrementAttribute posIncrAtt = null;
 		if (posIncrements != null || finalPosInc != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute(typeof(PositionIncrementAttribute)), "has no PositionIncrementAttribute");
+		  Assert.IsTrue(ts.HasAttribute<PositionIncrementAttribute>(), "has no PositionIncrementAttribute");
 		  posIncrAtt = ts.GetAttribute<PositionIncrementAttribute>();
 		}
 
 		PositionLengthAttribute posLengthAtt = null;
 		if (posLengths != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute(typeof(PositionLengthAttribute)), "has no PositionLengthAttribute");
+		  Assert.IsTrue(ts.HasAttribute<PositionLengthAttribute>(), "has no PositionLengthAttribute");
 		  posLengthAtt = ts.GetAttribute<PositionLengthAttribute>();
 		}
 
 		KeywordAttribute keywordAtt = null;
 		if (keywordAtts != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute(typeof(KeywordAttribute)), "has no KeywordAttribute");
+		  Assert.IsTrue(ts.HasAttribute<KeywordAttribute>(), "has no KeywordAttribute");
 		  keywordAtt = ts.GetAttribute<KeywordAttribute>();
 		}
 
@@ -865,11 +865,11 @@ namespace Lucene.Net.Analysis
 		int remainder = random.Next(10);
 		StringReader reader = new StringReader(text);
 		TokenStream ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
-		CharTermAttribute termAtt = ts.HasAttribute(typeof(CharTermAttribute)) ? ts.GetAttribute<CharTermAttribute>() : null;
-		OffsetAttribute offsetAtt = ts.HasAttribute(typeof(OffsetAttribute)) ? ts.GetAttribute<OffsetAttribute>() : null;
-		PositionIncrementAttribute posIncAtt = ts.HasAttribute(typeof(PositionIncrementAttribute)) ? ts.GetAttribute<PositionIncrementAttribute>() : null;
-		PositionLengthAttribute posLengthAtt = ts.HasAttribute(typeof(PositionLengthAttribute)) ? ts.GetAttribute<PositionLengthAttribute>() : null;
-		TypeAttribute typeAtt = ts.HasAttribute(typeof(TypeAttribute)) ? ts.GetAttribute<TypeAttribute>() : null;
+		CharTermAttribute termAtt = ts.HasAttribute<CharTermAttribute>() ? ts.GetAttribute<CharTermAttribute>() : null;
+		OffsetAttribute offsetAtt = ts.HasAttribute<OffsetAttribute>() ? ts.GetAttribute<OffsetAttribute>() : null;
+		PositionIncrementAttribute posIncAtt = ts.HasAttribute<PositionIncrementAttribute>() ? ts.GetAttribute<PositionIncrementAttribute>() : null;
+		PositionLengthAttribute posLengthAtt = ts.HasAttribute<PositionLengthAttribute>() ? ts.GetAttribute<PositionLengthAttribute>() : null;
+		TypeAttribute typeAtt = ts.HasAttribute<TypeAttribute>() ? ts.GetAttribute<TypeAttribute>() : null;
 		IList<string> tokens = new List<string>();
 		IList<string> types = new List<string>();
 		IList<int> positions = new List<int>();

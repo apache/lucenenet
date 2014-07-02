@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
 		{
 		  OffsetAttribute = null;
 		}
-		if (DoVectorPayloads && FieldState.AttributeSource_Renamed.HasAttribute(typeof(PayloadAttribute)))
+		if (DoVectorPayloads && FieldState.AttributeSource_Renamed.HasAttribute<PayloadAttribute>())
 		{
 		  PayloadAttribute = FieldState.AttributeSource_Renamed.GetAttribute<PayloadAttribute>();
 		}

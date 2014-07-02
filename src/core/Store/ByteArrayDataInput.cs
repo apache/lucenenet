@@ -116,7 +116,18 @@ namespace Lucene.Net.Store
 
 	  public override int ReadVInt()
 	  {
-		byte b = Bytes[Pos++];
+
+          // .NET Port: going back to original style code instead of Java code below due to sbyte/byte diff
+          byte b = Bytes[Pos++];
+          int i = b & 0x7F;
+          for (int shift = 7; (b & 0x80) != 0; shift += 7)
+          {
+              b = Bytes[Pos++];
+              i |= (b & 0x7F) << shift;
+          }
+          return i;
+
+		/*byte b = Bytes[Pos++];
 		if (b >= 0)
 		{
 			return b;
@@ -147,11 +158,22 @@ namespace Lucene.Net.Store
 		{
 			return i;
 		}
-		throw new Exception("Invalid vInt detected (too many bits)");
+		throw new Exception("Invalid vInt detected (too many bits)");*/
 	  }
 
 	  public override long ReadVLong()
 	  {
+
+          // .NET Port: going back to old style code
+          byte b = Bytes[Pos++];
+          long i = b & 0x7F;
+          for (int shift = 7; (b & 0x80) != 0; shift += 7)
+          {
+              b = Bytes[Pos++];
+              i |= (b & 0x7FL) << shift;
+          }
+          return i;
+          /*
 		byte b = Bytes[Pos++];
 		if (b >= 0)
 		{
@@ -206,7 +228,7 @@ namespace Lucene.Net.Store
 		{
 			return i;
 		}
-		throw new Exception("Invalid vLong detected (negative values disallowed)");
+		throw new Exception("Invalid vLong detected (negative values disallowed)");*/
 	  }
 
 	  // NOTE: AIOOBE not EOF if you read too much

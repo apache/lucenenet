@@ -659,9 +659,10 @@ namespace Lucene.Net.Analysis
 		  this.@delegate = @delegate;
 		}
 
-		public override Attribute CreateAttributeInstance(Type attClass)
+		public override Attribute CreateAttributeInstance<T>()
 		{
-		  return attClass.IsAssignableFrom(typeof(Token)) ? new Token() : @delegate.CreateAttributeInstance(attClass);
+		  var attClass = typeof (T);
+		  return attClass.IsAssignableFrom(typeof(Token)) ? new Token() : @delegate.CreateAttributeInstance<T>();
 		}
 
 		public override bool Equals(object other)

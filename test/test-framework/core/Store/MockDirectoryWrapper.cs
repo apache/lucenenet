@@ -776,7 +776,7 @@ namespace Lucene.Net.Store
 			// output, except for segments.gen and segments_N
 			if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
 			{
-                throw (System.IO.IOException)FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                throw FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
 			}
         
 			IndexInput delegateInput = @in.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
