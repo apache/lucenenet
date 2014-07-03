@@ -99,7 +99,7 @@ namespace Lucene.Net.Document
 		TrySetStringValue(field);
 		TrySetTokenStreamValue(field);
 
-		Assert.AreEqual(6f, Number.IntBitsToFloat((int)field.NumericValue), 0.0f);
+		Assert.AreEqual(6f, Number.IntBitsToFloat(Convert.ToInt32(field.NumericValue)), 0.0f);
 	  }
 
       [Test]

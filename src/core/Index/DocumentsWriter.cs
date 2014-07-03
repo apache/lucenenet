@@ -774,7 +774,7 @@ namespace Lucene.Net.Index
 			anythingFlushed |= DoFlush(flushingDWPT);
 		  }
 		  // If a concurrent flush is still in flight wait for it
-		  FlushControl.WaitForFlush();
+		  //FlushControl.WaitForFlush();
 		  if (!anythingFlushed && flushingDeleteQueue.AnyChanges()) // apply deletes if we did not flush any document
 		  {
 			if (InfoStream.IsEnabled("DW"))

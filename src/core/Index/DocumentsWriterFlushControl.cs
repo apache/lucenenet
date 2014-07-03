@@ -109,26 +109,18 @@ namespace Lucene.Net.Index
 
 	  private long StallLimitBytes()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double maxRamMB = config.getRAMBufferSizeMB();
 		double maxRamMB = Config.RAMBufferSizeMB;
 		return maxRamMB != IndexWriterConfig.DISABLE_AUTO_FLUSH ? (long)(2 * (maxRamMB * 1024 * 1024)) : long.MaxValue;
 	  }
 
 	  private bool AssertMemory()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final double maxRamMB = config.getRAMBufferSizeMB();
 		double maxRamMB = Config.RAMBufferSizeMB;
 		if (maxRamMB != IndexWriterConfig.DISABLE_AUTO_FLUSH)
 		{
 		  // for this assert we must be tolerant to ram buffer changes!
 		  MaxConfiguredRamBuffer = Math.Max(maxRamMB, MaxConfiguredRamBuffer);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long ram = flushBytes + activeBytes;
 		  long ram = FlushBytes_Renamed + ActiveBytes_Renamed;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long ramBufferBytes = (long)(maxConfiguredRamBuffer * 1024 * 1024);
 		  long ramBufferBytes = (long)(MaxConfiguredRamBuffer * 1024 * 1024);
 		  // take peakDelta into account - worst case is that all flushing, pending and blocked DWPT had maxMem and the last doc had the peakDelta
 
@@ -136,8 +128,6 @@ namespace Lucene.Net.Index
 		  // (numPending + numFlushingDWPT() + numBlockedFlushes()) * peakDelta) -> those are the total number of DWPT that are not active but not yet fully fluhsed
 		  // all of them could theoretically be taken out of the loop once they crossed the RAM buffer and the last document was the peak delta
 		  // (numDocsSinceStalled * peakDelta) -> at any given time there could be n threads in flight that crossed the stall control before we reached the limit and each of them could hold a peak document
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long expected = (2 * (ramBufferBytes)) + ((numPending + numFlushingDWPT() + numBlockedFlushes()) * peakDelta) + (numDocsSinceStalled * peakDelta);
 		  long expected = (2 * (ramBufferBytes)) + ((NumPending + NumFlushingDWPT() + NumBlockedFlushes()) * PeakDelta) + (NumDocsSinceStalled * PeakDelta);
 		  // the expected ram consumption is an upper bound at this point and not really the expected consumption
 		  if (PeakDelta < (ramBufferBytes >> 1))
@@ -159,8 +149,6 @@ namespace Lucene.Net.Index
 
 	  private void CommitPerThreadBytes(ThreadState perThread)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long delta = perThread.dwpt.bytesUsed() - perThread.bytesUsed;
 		long delta = perThread.Dwpt.BytesUsed() - perThread.BytesUsed;
 		perThread.BytesUsed += delta;
 		/*
@@ -214,8 +202,6 @@ namespace Lucene.Net.Index
 				  FlushPending = perThread;
 				}
 			  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread flushingDWPT;
 			  DocumentsWriterPerThread flushingDWPT;
 			  if (FullFlush_Renamed)
 			  {
@@ -340,8 +326,6 @@ namespace Lucene.Net.Index
 				if (value.Dwpt.NumDocsInRAM > 0)
 				{
 				  value.FlushPending_Renamed = true; // write access synced
-	//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-	//ORIGINAL LINE: final long bytes = value.bytesUsed;
 				  long bytes = value.BytesUsed;
 				  FlushBytes_Renamed += bytes;
 				  ActiveBytes_Renamed -= bytes;
@@ -393,11 +377,7 @@ namespace Lucene.Net.Index
 		{
 		  Debug.Assert(perThread.FlushPending_Renamed, "can not block non-pending threadstate");
 		  Debug.Assert(FullFlush_Renamed, "can not block if fullFlush == false");
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt;
 		  DocumentsWriterPerThread dwpt;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long bytes = perThread.bytesUsed;
 		  long bytes = perThread.BytesUsed;
 		  dwpt = PerThreadPool.Reset(perThread, Closed);
 		  NumPending--;
@@ -458,8 +438,6 @@ namespace Lucene.Net.Index
 		bool fullFlush;
 		lock (this)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread poll;
             DocumentsWriterPerThread poll;
             if (FlushQueue.Count > 0 && (poll = FlushQueue.Dequeue()) != null)
             {
@@ -471,18 +449,12 @@ namespace Lucene.Net.Index
 		}
 		if (numPending > 0 && !fullFlush) // don't check if we are doing a full flush
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = perThreadPool.getActiveThreadState();
 		  int limit = PerThreadPool.ActiveThreadState;
 		  for (int i = 0; i < limit && numPending > 0; i++)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState next = perThreadPool.getThreadState(i);
 			ThreadState next = PerThreadPool.GetThreadState(i);
 			if (next.FlushPending_Renamed)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt = tryCheckoutForFlush(next);
 			  DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
 			  if (dwpt != null)
 			  {
@@ -650,8 +622,6 @@ namespace Lucene.Net.Index
 
 	  internal void MarkForFullFlush()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterDeleteQueue flushingQueue;
 		DocumentsWriterDeleteQueue flushingQueue;
 		lock (this)
 		{
@@ -664,13 +634,9 @@ namespace Lucene.Net.Index
 		  DocumentsWriterDeleteQueue newQueue = new DocumentsWriterDeleteQueue(flushingQueue.Generation + 1);
 		  DocumentsWriter.DeleteQueue = newQueue;
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = perThreadPool.getActiveThreadState();
 		int limit = PerThreadPool.ActiveThreadState;
 		for (int i = 0; i < limit; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState next = perThreadPool.getThreadState(i);
 		  ThreadState next = PerThreadPool.GetThreadState(i);
 		  next.@Lock();
 		  try
@@ -717,13 +683,9 @@ namespace Lucene.Net.Index
 
 	  private bool AssertActiveDeleteQueue(DocumentsWriterDeleteQueue queue)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int limit = perThreadPool.getActiveThreadState();
 		int limit = PerThreadPool.ActiveThreadState;
 		for (int i = 0; i < limit; i++)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState next = perThreadPool.getThreadState(i);
 		  ThreadState next = PerThreadPool.GetThreadState(i);
 		  next.@Lock();
 		  try
@@ -746,8 +708,6 @@ namespace Lucene.Net.Index
 		{
 		  InfoStream_Renamed.Message("DWFC", "addFlushableState " + perThread.Dwpt);
 		}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread dwpt = perThread.dwpt;
 		DocumentsWriterPerThread dwpt = perThread.Dwpt;
 		//Debug.Assert(perThread.HeldByCurrentThread);
 		Debug.Assert(perThread.Initialized);
@@ -761,8 +721,6 @@ namespace Lucene.Net.Index
 			{
 			  FlushPending = perThread;
 			}
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final DocumentsWriterPerThread flushingDWPT = internalTryCheckOutForFlush(perThread);
 			DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread);
 			Debug.Assert(flushingDWPT != null, "DWPT must never be null here since we hold the lock and it holds documents");
 			Debug.Assert(dwpt == flushingDWPT, "flushControl returned different DWPT");

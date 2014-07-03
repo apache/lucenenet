@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
@@ -23,8 +24,7 @@ namespace Lucene.Net.Index
 	 */
 
 
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
-	using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
+    using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using BytesRefHash = Lucene.Net.Util.BytesRefHash;
 	using Counter = Lucene.Net.Util.Counter;
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
 	  internal readonly TermsHashPerField NextPerField;
 	  internal readonly DocumentsWriterPerThread.DocState DocState;
 	  internal readonly FieldInvertState FieldState;
-	  internal TermToBytesRefAttribute TermAtt;
+	  internal ITermToBytesRefAttribute TermAtt;
 	  internal BytesRef TermBytesRef;
 
 	  // Copied from our perThread
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 
 	  internal override void Start(IndexableField f)
 	  {
-		TermAtt = FieldState.AttributeSource_Renamed.GetAttribute<TermToBytesRefAttribute>();
+		TermAtt = FieldState.AttributeSource_Renamed.GetAttribute<ITermToBytesRefAttribute>();
 		TermBytesRef = TermAtt.BytesRef;
 		Consumer.Start(f);
 		if (NextPerField != null)

@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
 
 		  int remainInBuffer = CurrentBuffer.Length - BufferPosition;
 		  int bytesToCopy = len < remainInBuffer ? len : remainInBuffer;
-		  Array.Copy(b, offset, CurrentBuffer, BufferPosition, bytesToCopy);
+		  System.Buffer.BlockCopy(b, offset, CurrentBuffer, BufferPosition, bytesToCopy);
 		  offset += bytesToCopy;
 		  len -= bytesToCopy;
 		  BufferPosition += bytesToCopy;

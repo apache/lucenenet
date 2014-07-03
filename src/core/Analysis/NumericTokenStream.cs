@@ -26,8 +26,7 @@ namespace Lucene.Net.Analysis
 
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
     using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-    using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
-    using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
+	using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 	using DoubleField = Lucene.Net.Document.DoubleField; // for javadocs
     using FloatField = Lucene.Net.Document.FloatField; // for javadocs
     using IntField = Lucene.Net.Document.IntField; // for javadocs
@@ -89,7 +88,7 @@ namespace Lucene.Net.Analysis
 	/// 
 	/// @since 2.9
 	/// </summary>
-	public sealed class NumericTokenStream : TokenStream, IAttribute
+	public sealed class NumericTokenStream : TokenStream
 	{
         
         private bool InstanceFieldsInitialized = false;
@@ -167,7 +166,7 @@ namespace Lucene.Net.Analysis
 	  /// @lucene.internal
 	  /// @since 4.0
 	  /// </summary>
-      public sealed class NumericTermAttribute : Util.Attribute, INumericTermAttribute, TermToBytesRefAttribute
+      public sealed class NumericTermAttribute : Util.Attribute, INumericTermAttribute, ITermToBytesRefAttribute
 	  {
 		internal long Value = 0L;
 		internal int ValueSize_Renamed = 0, Shift_Renamed = 0, PrecisionStep = 0;
@@ -190,7 +189,7 @@ namespace Lucene.Net.Analysis
 
 		public void FillBytesRef()
 		{
-		  Debug.Assert(ValueSize_Renamed == 64 || ValueSize_Renamed == 32);
+		  //Debug.Assert(ValueSize_Renamed == 64 || ValueSize_Renamed == 32);
 		  if (ValueSize_Renamed == 64)
 		  {
 			NumericUtils.LongToPrefixCoded(Value, Shift_Renamed, Bytes);
@@ -248,10 +247,10 @@ namespace Lucene.Net.Analysis
 		public override void ReflectWith(IAttributeReflector reflector)
 		{
 		  FillBytesRef();
-		  reflector.Reflect(typeof(TermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
-		  reflector.Reflect(typeof(NumericTermAttribute), "shift", Shift_Renamed);
-		  reflector.Reflect(typeof(NumericTermAttribute), "rawValue", RawValue);
-		  reflector.Reflect(typeof(NumericTermAttribute), "valueSize", ValueSize_Renamed);
+		  reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
+		  reflector.Reflect(typeof(INumericTermAttribute), "shift", Shift_Renamed);
+		  reflector.Reflect(typeof(INumericTermAttribute), "rawValue", RawValue);
+		  reflector.Reflect(typeof(INumericTermAttribute), "valueSize", ValueSize_Renamed);
 		}
 
         public override void CopyTo(Util.Attribute target)

@@ -59,7 +59,7 @@ namespace Lucene.Net.Store
 		return @in.ListAll();
 	  }
 
-	  public override bool FileExists(string name)
+	    public override bool FileExists(string name)
 	  {
 		return @in.FileExists(name);
 	  }
@@ -129,6 +129,44 @@ namespace Lucene.Net.Store
 	  {
 		return this.GetType().Name + "(" + @in.ToString() + ")";
 	  }
+
+
+
+      //All of the following methods are here for TestFilterDirectory
+      public override ChecksumIndexInput OpenChecksumInput(string name, IOContext context)
+      {
+          return base.OpenChecksumInput(name, context);
+      }
+
+      public override void Copy(Directory to, string src, string dest, IOContext context)
+      {
+          base.Copy(to, src, dest, context);
+      }
+
+      public override IndexInputSlicer CreateSlicer(string name, IOContext context)
+      {
+          return base.CreateSlicer(name, context);
+      }
+
+      public override void EnsureOpen()
+      {
+          base.EnsureOpen();
+      }
+
+      public override bool Equals(object obj)
+      {
+          return base.Equals(obj);
+      }
+
+      public override int GetHashCode()
+      {
+          return base.GetHashCode();
+      }
+
+	    public override bool IsOpen 
+	    {
+	        get { return base.IsOpen; }
+	    }
 
 	}
 

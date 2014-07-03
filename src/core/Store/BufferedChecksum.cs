@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
 		  {
 			Flush();
 		  }
-          Array.Copy(b, off, Buffer, Upto, len);
+          System.Buffer.BlockCopy(b, off, Buffer, Upto, len);
 		  Upto += len;
 		}
 	  }

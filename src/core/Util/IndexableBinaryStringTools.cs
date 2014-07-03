@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Util
 {
@@ -21,9 +22,7 @@ namespace Lucene.Net.Util
          * limitations under the License.
          */
 
-    using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
-
-	/// <summary>
+    /// <summary>
 	/// Provides support for converting byte sequences to Strings and back again.
 	/// The resulting Strings preserve the original byte sequences' sort order.
 	/// <p/>
@@ -42,7 +41,7 @@ namespace Lucene.Net.Util
 	/// <p/>
 	/// 
 	/// @lucene.experimental </summary>
-	/// @deprecated Implement <seealso cref="TermToBytesRefAttribute"/> and store bytes directly
+	/// @deprecated Implement <seealso cref="ITermToBytesRefAttribute"/> and store bytes directly
 	/// instead. this class will be removed in Lucene 5.0 
 	[Obsolete("Implement <seealso cref=TermToBytesRefAttribute/> and store bytes directly")]
 	public sealed class IndexableBinaryStringTools

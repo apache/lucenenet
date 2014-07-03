@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -24,9 +25,7 @@ namespace Lucene.Net.Analysis
 	 */
 
 
-
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
-	using Document = Lucene.Net.Document.Document;
+    using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
 	using StringField = Lucene.Net.Document.StringField;
@@ -273,7 +272,7 @@ namespace Lucene.Net.Analysis
 		  TokenStream ts = analyzer.TokenStream("fake", new StreamReader(term));
 		  try
 		  {
-			TermToBytesRefAttribute termAtt = ts.AddAttribute<TermToBytesRefAttribute>();
+			ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
 			BytesRef bytes = termAtt.BytesRef;
 			ts.Reset();
 			Assert.IsTrue(ts.IncrementToken());
@@ -334,7 +333,7 @@ namespace Lucene.Net.Analysis
 				TokenStream ts = Analyzer.TokenStream("fake", new StreamReader(term));
 				try
 				{
-				  TermToBytesRefAttribute termAtt = ts.AddAttribute<TermToBytesRefAttribute>();
+				  ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
 				  BytesRef bytes = termAtt.BytesRef;
 				  ts.Reset();
 				  Assert.IsTrue(ts.IncrementToken());

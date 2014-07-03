@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Analysis
 {
 
@@ -31,11 +33,11 @@ namespace Lucene.Net.Analysis
 	{
 	  private readonly Token[] Tokens;
 	  private int Upto = 0;
-	  private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
-	  private readonly PositionIncrementAttribute PosIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
-	  private readonly PositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
-	  private readonly PayloadAttribute PayloadAtt;// = addAttribute(typeof(PayloadAttribute));
+	  private ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
+	  private IPositionIncrementAttribute PosIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
+	  private IPositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+	  private IOffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+	  private IPayloadAttribute PayloadAtt;// = addAttribute(typeof(PayloadAttribute));
 	  private readonly int FinalOffset;
 	  private readonly int FinalPosInc;
 
@@ -44,6 +46,7 @@ namespace Lucene.Net.Analysis
 		this.Tokens = tokens;
 		FinalOffset = 0;
 		FinalPosInc = 0;
+	    InitParams();
 	  }
 
 	  /// <summary>
@@ -55,7 +58,17 @@ namespace Lucene.Net.Analysis
 		this.Tokens = tokens;
 		this.FinalOffset = finalOffset;
 		this.FinalPosInc = finalPosInc;
+        InitParams();
 	  }
+
+	    private void InitParams()
+	    {
+	        TermAtt = AddAttribute<ICharTermAttribute>();
+   	        PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+	        PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
+	        OffsetAtt = AddAttribute<IOffsetAttribute>();
+	        PayloadAtt = AddAttribute<IPayloadAttribute>();
+	    }
 
 	  public override void End()
 	  {

@@ -94,8 +94,6 @@ namespace Lucene.Net.Search.Spans
 
 	  internal static Analyzer SimplePayloadAnalyzer;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
 	  [TestFixtureSetUp]
       public static void BeforeClass()
 	  {
@@ -107,7 +105,7 @@ namespace Lucene.Net.Search.Spans
 		for (int i = 0; i < 2000; i++)
 		{
 		  Document doc = new Document();
-		  doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
+		  doc.Add(NewTextField("field", i.ToString()/*English.IntToEnglish(i)*/, Field.Store.YES));
 		  writer.AddDocument(doc);
 		}
 		Reader = writer.Reader;
@@ -128,8 +126,6 @@ namespace Lucene.Net.Search.Spans
 		  }
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
 	  [TestFixtureTearDown]
       public static void AfterClass()
 	  {
@@ -141,8 +137,6 @@ namespace Lucene.Net.Search.Spans
 		SimplePayloadAnalyzer = null;
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testTerm() throws Exception
       [Test]
       public virtual void TestTerm()
 	  {
@@ -150,8 +144,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1170, 1171, 1172, 1173, 1174, 1175, 1176, 1177, 1178, 1179, 1270, 1271, 1272, 1273, 1274, 1275, 1276, 1277, 1278, 1279, 1370, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379, 1470, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 1570, 1571, 1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1670, 1671, 1672, 1673, 1674, 1675, 1676, 1677, 1678, 1679, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1870, 1871, 1872, 1873, 1874, 1875, 1876, 1877, 1878, 1879, 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testTerm2() throws Exception
       [Test]
       public virtual void TestTerm2()
 	  {
@@ -159,8 +151,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testPhrase() throws Exception
       [Test]
       public virtual void TestPhrase()
 	  {
@@ -170,8 +160,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {77, 177, 277, 377, 477, 577, 677, 777, 877, 977, 1077, 1177, 1277, 1377, 1477, 1577, 1677, 1777, 1877, 1977});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testPhrase2() throws Exception
       [Test]
       public virtual void TestPhrase2()
 	  {
@@ -181,8 +169,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testBoolean() throws Exception
       [Test]
       public virtual void TestBoolean()
 	  {
@@ -192,8 +178,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {77, 177, 277, 377, 477, 577, 677, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 877, 977, 1077, 1177, 1277, 1377, 1477, 1577, 1677, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1877, 1977});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testBoolean2() throws Exception
       [Test]
       public virtual void TestBoolean2()
 	  {
@@ -203,8 +187,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNearExact() throws Exception
       [Test]
       public virtual void TestSpanNearExact()
 	  {
@@ -228,8 +210,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(term1, new int[] {70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1170, 1270, 1370, 1470, 1570, 1670, 1770, 1870, 1970, 1171, 1172, 1173, 1174, 1175, 1176, 1177, 1178, 1179, 1271, 1272, 1273, 1274, 1275, 1276, 1277, 1278, 1279, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479, 1571, 1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1671, 1672, 1673, 1674, 1675, 1676, 1677, 1678, 1679, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1871, 1872, 1873, 1874, 1875, 1876, 1877, 1878, 1879, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNearUnordered() throws Exception
       [Test]
       public virtual void TestSpanNearUnordered()
 	  {
@@ -240,8 +220,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {609, 629, 639, 649, 659, 669, 679, 689, 699, 906, 926, 936, 946, 956, 966, 976, 986, 996, 1609, 1629, 1639, 1649, 1659, 1669, 1679, 1689, 1699, 1906, 1926, 1936, 1946, 1956, 1966, 1976, 1986, 1996});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNearOrdered() throws Exception
       [Test]
       public virtual void TestSpanNearOrdered()
 	  {
@@ -251,8 +229,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {906, 926, 936, 946, 956, 966, 976, 986, 996, 1906, 1926, 1936, 1946, 1956, 1966, 1976, 1986, 1996});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNot() throws Exception
       [Test]
       public virtual void TestSpanNot()
 	  {
@@ -268,8 +244,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanWithMultipleNotSingle() throws Exception
       [Test]
       public virtual void TestSpanWithMultipleNotSingle()
 	  {
@@ -288,8 +262,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanWithMultipleNotMany() throws Exception
       [Test]
       public virtual void TestSpanWithMultipleNotMany()
 	  {
@@ -310,8 +282,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testNpeInSpanNearWithSpanNot() throws Exception
       [Test]
       public virtual void TestNpeInSpanNearWithSpanNot()
 	  {
@@ -330,8 +300,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testNpeInSpanNearInSpanFirstInSpanNot() throws Exception
       [Test]
       public virtual void TestNpeInSpanNearInSpanFirstInSpanNot()
 	  {
@@ -348,8 +316,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(q, new int[]{40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048, 1049, 1140, 1141, 1142, 1143, 1144, 1145, 1146, 1147, 1148, 1149, 1240, 1241, 1242, 1243, 1244, 1245, 1246, 1247, 1248, 1249, 1340, 1341, 1342, 1343, 1344, 1345, 1346, 1347, 1348, 1349, 1440, 1441, 1442, 1443, 1444, 1445, 1446, 1447, 1448, 1449, 1540, 1541, 1542, 1543, 1544, 1545, 1546, 1547, 1548, 1549, 1640, 1641, 1642, 1643, 1644, 1645, 1646, 1647, 1648, 1649, 1740, 1741, 1742, 1743, 1744, 1745, 1746, 1747, 1748, 1749, 1840, 1841, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849, 1940, 1941, 1942, 1943, 1944, 1945, 1946, 1947, 1948, 1949});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNotWindowOne() throws Exception
       [Test]
       public virtual void TestSpanNotWindowOne()
 	  {
@@ -365,8 +331,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 1842).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNotWindowTwoBefore() throws Exception
       [Test]
       public virtual void TestSpanNotWindowTwoBefore()
 	  {
@@ -382,8 +346,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 849).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNotWindowNeg() throws Exception
       [Test]
       public virtual void TestSpanNotWindowNeg()
 	  {
@@ -403,8 +365,6 @@ namespace Lucene.Net.Search.Spans
 		 Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNotWindowDoubleExcludesBefore() throws Exception
       [Test]
       public virtual void TestSpanNotWindowDoubleExcludesBefore()
 	  {
@@ -422,8 +382,6 @@ namespace Lucene.Net.Search.Spans
 		 Assert.IsTrue(Searcher.Explain(query, 942).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanFirst() throws Exception
       [Test]
       public virtual void TestSpanFirst()
 	  {
@@ -437,8 +395,6 @@ namespace Lucene.Net.Search.Spans
 
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanPositionRange() throws Exception
       [Test]
       public virtual void TestSpanPositionRange()
 	  {
@@ -456,8 +412,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[]{});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanPayloadCheck() throws Exception
       [Test]
       public virtual void TestSpanPayloadCheck()
 	  {
@@ -534,8 +488,6 @@ namespace Lucene.Net.Search.Spans
 	  }
 
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanOr() throws Exception
       [Test]
       public virtual void TestSpanOr()
 	  {
@@ -554,8 +506,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 947).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanExactNested() throws Exception
       [Test]
       public virtual void TestSpanExactNested()
 	  {
@@ -573,8 +523,6 @@ namespace Lucene.Net.Search.Spans
 		Assert.IsTrue(Searcher.Explain(query, 333).Value > 0.0f);
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanNearOr() throws Exception
       [Test]
       public virtual void TestSpanNearOr()
 	  {
@@ -593,8 +541,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797, 1606, 1607, 1626, 1627, 1636, 1637, 1646, 1647, 1656, 1657, 1666, 1667, 1676, 1677, 1686, 1687, 1696, 1697, 1706, 1707, 1726, 1727, 1736, 1737, 1746, 1747, 1756, 1757, 1766, 1767, 1776, 1777, 1786, 1787, 1796, 1797});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpanComplex1() throws Exception
       [Test]
       public virtual void TestSpanComplex1()
 	  {
@@ -618,8 +564,6 @@ namespace Lucene.Net.Search.Spans
 		CheckHits(query, new int[] {606, 607, 626, 627, 636, 637, 646, 647, 656, 657, 666, 667, 676, 677, 686, 687, 696, 697, 706, 707, 726, 727, 736, 737, 746, 747, 756, 757, 766, 767, 776, 777, 786, 787, 796, 797, 1606, 1607, 1626, 1627, 1636, 1637, 1646, 1647, 1656, 1657, 1666, 1667, 1676, 1677, 1686, 1687, 1696, 1697, 1706, 1707, 1726, 1727, 1736, 1737, 1746, 1747, 1756, 1757, 1766, 1767, 1776, 1777, 1786, 1787, 1796, 1797});
 	  }
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testSpansSkipTo() throws Exception
       [Test]
       public virtual void TestSpansSkipTo()
 	  {

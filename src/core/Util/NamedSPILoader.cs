@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
 	  public S Lookup(string name)
 	  {
 		S service = Services[name];
-		if (service != null)
+		if (!service.Equals(default(S)))
 		{
 			return service;
 		}

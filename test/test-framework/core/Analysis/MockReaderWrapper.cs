@@ -25,94 +25,100 @@ namespace Lucene.Net.Analysis
 
     using TestUtil = Lucene.Net.Util.TestUtil;
 
-	/// <summary>
-	/// Wraps a Reader, and can throw random or fixed
-	///  exceptions, and spoon feed read chars. 
-	/// </summary>
+    /// <summary>
+    /// Wraps a Reader, and can throw random or fixed
+    ///  exceptions, and spoon feed read chars. 
+    /// </summary>
 
     public class MockReaderWrapper : StringReader
-	{
+    {
 
-      private readonly StringReader @in;
-	  private readonly Random Random;
+        private readonly StringReader @in;
+        private readonly Random Random;
 
-	  private int ExcAtChar = -1;
-	  private int ReadSoFar;
-	  private bool ThrowExcNext_Renamed;
+        private int ExcAtChar = -1;
+        private int ReadSoFar;
+        private bool ThrowExcNext_Renamed;
 
-      public MockReaderWrapper(Random random, StringReader @in)
-          :base(@in.ToString())
-	  {
-		this.@in = @in;
-		this.Random = random;
-	  }
+        public MockReaderWrapper(Random random, StringReader @in)
+            : base(@in.ToString())
+        {
+            this.@in = @in;
+            this.Random = random;
+        }
 
-	  /// <summary>
-	  /// Throw an exception after reading this many chars. </summary>
-	  public virtual void ThrowExcAfterChar(int charUpto)
-	  {
-		ExcAtChar = charUpto;
-		// You should only call this on init!:
-		Debug.Assert(ReadSoFar == 0);
-	  }
+        /// <summary>
+        /// Throw an exception after reading this many chars. </summary>
+        public virtual void ThrowExcAfterChar(int charUpto)
+        {
+            ExcAtChar = charUpto;
+            // You should only call this on init!:
+            Debug.Assert(ReadSoFar == 0);
+        }
 
-	  public virtual void ThrowExcNext()
-	  {
-		ThrowExcNext_Renamed = true;
-	  }
+        public virtual void ThrowExcNext()
+        {
+            ThrowExcNext_Renamed = true;
+        }
 
-	  public override void Close()
-	  {
-		@in.Close();
-	  }
+        public override void Close()
+        {
+            @in.Close();
+        }
 
-	  public override int Read(char[] cbuf, int off, int len)
-	  {
-		if (ThrowExcNext_Renamed || (ExcAtChar != -1 && ReadSoFar >= ExcAtChar))
-		{
-		  throw new Exception("fake exception now!");
-		}
-		int read;
-		int realLen;
-		if (len == 1)
-		{
-		  realLen = 1;
-		}
-		else
-		{
-		  // Spoon-feed: intentionally maybe return less than
-		  // the consumer asked for
-		  realLen = TestUtil.NextInt(Random, 1, len);
-		}
-		if (ExcAtChar != -1)
-		{
-		  int left = ExcAtChar - ReadSoFar;
-		  Debug.Assert(left != 0);
-		  read = @in.Read(cbuf, off, Math.Min(realLen, left));
-		  Debug.Assert(read != -1);
-		  ReadSoFar += read;
-		}
-		else
-		{
-		  read = @in.Read(cbuf, off, realLen);
-		}
-		return read;
-	  }
+        public override int Read(char[] cbuf, int off, int len)
+        {
+            if (ThrowExcNext_Renamed || (ExcAtChar != -1 && ReadSoFar >= ExcAtChar))
+            {
+                throw new Exception("fake exception now!");
+            }
+            int read;
+            int realLen;
+            if (len == 1)
+            {
+                realLen = 1;
+            }
+            else
+            {
+                // Spoon-feed: intentionally maybe return less than
+                // the consumer asked for
+                realLen = TestUtil.NextInt(Random, 1, len);
+            }
+            if (ExcAtChar != -1)
+            {
+                int left = ExcAtChar - ReadSoFar;
+                Debug.Assert(left != 0);
+                read = @in.Read(cbuf, off, Math.Min(realLen, left));
+                //Characters are left
+                Debug.Assert(read != 0);
+                ReadSoFar += read;
+            }
+            else
+            {
+                read = @in.Read(cbuf, off, realLen);
+                //Terrible TextReader::Read semantics
+                if (read == 0)
+                {
+                    read = -1;
+                }
+            }
+            return read;
+        }
 
-	  public bool MarkSupported()
-	  {
-		return false;
-	  }
+        public bool MarkSupported()
+        {
+            return false;
+        }
 
-	  public bool Ready()
-	  {
-		return false;
-	  }
+        public bool Ready()
+        {
+            return false;
+        }
 
-	  public static bool IsMyEvilException(Exception t)
-	  {
-		return (t is Exception) && "fake exception now!".Equals(t.Message);
-	  }
-	}
+        public static bool IsMyEvilException(Exception t)
+        {
+            return (t is Exception) && "fake exception now!".Equals(t.Message);
+        }
+    }
 
 }

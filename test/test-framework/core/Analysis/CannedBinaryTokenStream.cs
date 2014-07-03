@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Analysis
 {
 
@@ -21,8 +23,7 @@ namespace Lucene.Net.Analysis
 	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
 	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
 	using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
-    using Lucene.Net.Util;
+	using Lucene.Net.Util;
     using System.Runtime.CompilerServices;
 
 	/// <summary>
@@ -59,17 +60,17 @@ namespace Lucene.Net.Analysis
 
 	  private readonly BinaryToken[] Tokens;
 	  private int Upto = 0;
-	  private readonly BinaryTermAttribute TermAtt;// = AddAttribute<BinaryTermAttribute>();
-	  private readonly PositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
-	  private readonly PositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-	  private readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+	  private readonly IBinaryTermAttribute TermAtt;// = AddAttribute<BinaryTermAttribute>();
+	  private readonly IPositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
+	  private readonly IPositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+	  private readonly IOffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
 	  /// <summary>
 	  /// An attribute extending {@link
 	  ///  TermToBytesRefAttribute} but exposing {@link
 	  ///  #setBytesRef} method. 
 	  /// </summary>
-	  public interface BinaryTermAttribute : TermToBytesRefAttribute
+	  public interface IBinaryTermAttribute : ITermToBytesRefAttribute
 	  {
 
 		/// <summary>
@@ -78,8 +79,8 @@ namespace Lucene.Net.Analysis
 	  }
 
 	  /// <summary>
-	  /// Implementation for <seealso cref="BinaryTermAttribute"/>. </summary>
-	  public sealed class BinaryTermAttributeImpl : Attribute, BinaryTermAttribute, TermToBytesRefAttribute
+	  /// Implementation for <seealso cref="IBinaryTermAttribute"/>. </summary>
+	  public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute
 	  {
 		internal readonly BytesRef Bytes = new BytesRef();
 
@@ -117,7 +118,7 @@ namespace Lucene.Net.Analysis
 
 		public override void CopyTo(Attribute target)
 		{
-		  BinaryTermAttributeImpl other = (BinaryTermAttributeImpl) target;
+		  BinaryTermAttribute other = (BinaryTermAttribute) target;
 		  other.Bytes.CopyBytes(Bytes);
 		}
 
@@ -130,6 +131,10 @@ namespace Lucene.Net.Analysis
 	  public CannedBinaryTokenStream(params BinaryToken[] tokens) : base()
 	  {
 		this.Tokens = tokens;
+        TermAtt = AddAttribute<IBinaryTermAttribute>();
+        PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+        PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
+        OffsetAtt = AddAttribute<IOffsetAttribute>();
 	  }
 
 	  public override bool IncrementToken()

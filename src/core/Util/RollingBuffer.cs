@@ -53,11 +53,19 @@ namespace Lucene.Net.Util
 
 	  protected RollingBuffer()
 	  {
-		for (int idx = 0; idx < Buffer.Length; idx++)
+		/*for (int idx = 0; idx < Buffer.Length; idx++)
 		{
 		  Buffer[idx] = NewInstance();
-		}
+		}*/
 	  }
+
+      protected RollingBuffer(Func<T> factory)
+      {
+          for (int idx = 0; idx < Buffer.Length; idx++)
+          {
+              Buffer[idx] = factory();
+          }
+      }
 
 	  protected internal abstract T NewInstance();
 
@@ -102,7 +110,7 @@ namespace Lucene.Net.Util
 	  public virtual T Get(int pos)
 	  {
 		//System.out.println("RA.get pos=" + pos + " nextPos=" + nextPos + " nextWrite=" + nextWrite + " count=" + count);
-		while (NextPos < pos)
+		while (pos >= NextPos)
 		{
 		  if (Count == Buffer.Length)
 		  {

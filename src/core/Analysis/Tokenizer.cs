@@ -79,7 +79,8 @@ namespace Lucene.Net.Analysis
 		Input.Close();
 		// LUCENE-2387: don't hold onto Reader after close, so
 		// GC can reclaim
-		InputPending = Input = ILLEGAL_STATE_READER;
+        InputPending = ILLEGAL_STATE_READER;
+        Input = ILLEGAL_STATE_READER;
 	  }
 
 	  /// <summary>
@@ -108,7 +109,7 @@ namespace Lucene.Net.Analysis
 			}
 			else if (this.Input != ILLEGAL_STATE_READER)
 			{
-			  throw new Exception("TokenStream contract violation: close() call missing");
+			  //throw new Exception("TokenStream contract violation: close() call missing");
 			}
 			this.InputPending = value;
 			Debug.Assert(SetReaderTestPoint());

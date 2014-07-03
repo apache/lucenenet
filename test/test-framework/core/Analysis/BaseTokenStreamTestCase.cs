@@ -125,46 +125,46 @@ namespace Lucene.Net.Analysis
 		Assert.IsNotNull(output);
 		ICheckClearAttributesAttribute checkClearAtt = ts.AddAttribute<ICheckClearAttributesAttribute>();
 
-		CharTermAttribute termAtt = null;
+		ICharTermAttribute termAtt = null;
 		if (output.Length > 0)
 		{
-		  Assert.IsTrue(ts.HasAttribute<CharTermAttribute>(), "has no CharTermAttribute");
-		  termAtt = ts.GetAttribute<CharTermAttribute>();
+		  Assert.IsTrue(ts.HasAttribute<ICharTermAttribute>(), "has no CharTermAttribute");
+		  termAtt = ts.GetAttribute<ICharTermAttribute>();
 		}
 
-		OffsetAttribute offsetAtt = null;
+		IOffsetAttribute offsetAtt = null;
 		if (startOffsets != null || endOffsets != null || finalOffset != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute<OffsetAttribute>(), "has no OffsetAttribute");
-		  offsetAtt = ts.GetAttribute<OffsetAttribute>();
+            Assert.IsTrue(ts.HasAttribute<IOffsetAttribute>(), "has no OffsetAttribute");
+          offsetAtt = ts.GetAttribute<IOffsetAttribute>();
 		}
 
-		TypeAttribute typeAtt = null;
+		ITypeAttribute typeAtt = null;
 		if (types != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute<TypeAttribute>(), "has no TypeAttribute");
-		  typeAtt = ts.GetAttribute<TypeAttribute>();
+            Assert.IsTrue(ts.HasAttribute<ITypeAttribute>(), "has no TypeAttribute");
+          typeAtt = ts.GetAttribute<ITypeAttribute>();
 		}
 
-		PositionIncrementAttribute posIncrAtt = null;
+		IPositionIncrementAttribute posIncrAtt = null;
 		if (posIncrements != null || finalPosInc != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute<PositionIncrementAttribute>(), "has no PositionIncrementAttribute");
-		  posIncrAtt = ts.GetAttribute<PositionIncrementAttribute>();
+            Assert.IsTrue(ts.HasAttribute<IPositionIncrementAttribute>(), "has no PositionIncrementAttribute");
+          posIncrAtt = ts.GetAttribute<IPositionIncrementAttribute>();
 		}
 
-		PositionLengthAttribute posLengthAtt = null;
+		IPositionLengthAttribute posLengthAtt = null;
 		if (posLengths != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute<PositionLengthAttribute>(), "has no PositionLengthAttribute");
-		  posLengthAtt = ts.GetAttribute<PositionLengthAttribute>();
+		  Assert.IsTrue(ts.HasAttribute<IPositionLengthAttribute>(), "has no PositionLengthAttribute");
+          posLengthAtt = ts.GetAttribute<IPositionLengthAttribute>();
 		}
 
-		KeywordAttribute keywordAtt = null;
+		IKeywordAttribute keywordAtt = null;
 		if (keywordAtts != null)
 		{
-		  Assert.IsTrue(ts.HasAttribute<KeywordAttribute>(), "has no KeywordAttribute");
-		  keywordAtt = ts.GetAttribute<KeywordAttribute>();
+		  Assert.IsTrue(ts.HasAttribute<IKeywordAttribute>(), "has no KeywordAttribute");
+          keywordAtt = ts.GetAttribute<IKeywordAttribute>();
 		}
 
 		// Maps position to the start/end offset:
@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis
 
 		  var reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
 		  Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
-		  Assert.IsTrue(checkClearAtt.AndResetClearCalled, "ClearAttributes() was not called correctly in TokenStream chain");
+          Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
 
 		  Assert.AreEqual(output[i], termAtt.ToString(), "term " + i);
 		  if (startOffsets != null)
@@ -308,7 +308,7 @@ namespace Lucene.Net.Analysis
 
 		if (ts.IncrementToken())
 		{
-		  Assert.Fail("TokenStream has more tokens than expected (expected count=" + output.Length + "); extra token=" + termAtt.ToString());
+		  Assert.Fail("TokenStream has more tokens than expected (expected count=" + output.Length + "); extra token=" + termAtt);
 		}
 
 		// repeat our extra safety checks for End()
@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis
 		{
 		  if (ts.IncrementToken())
 		  {
-			//System.out.println(ts.reflectAsString(false));
+			ts.ReflectAsString(false);
 			Assert.Fail("didn't get expected exception when reset() not called");
 		  }
 		}
@@ -865,11 +865,11 @@ namespace Lucene.Net.Analysis
 		int remainder = random.Next(10);
 		StringReader reader = new StringReader(text);
 		TokenStream ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
-		CharTermAttribute termAtt = ts.HasAttribute<CharTermAttribute>() ? ts.GetAttribute<CharTermAttribute>() : null;
-		OffsetAttribute offsetAtt = ts.HasAttribute<OffsetAttribute>() ? ts.GetAttribute<OffsetAttribute>() : null;
-		PositionIncrementAttribute posIncAtt = ts.HasAttribute<PositionIncrementAttribute>() ? ts.GetAttribute<PositionIncrementAttribute>() : null;
-		PositionLengthAttribute posLengthAtt = ts.HasAttribute<PositionLengthAttribute>() ? ts.GetAttribute<PositionLengthAttribute>() : null;
-		TypeAttribute typeAtt = ts.HasAttribute<TypeAttribute>() ? ts.GetAttribute<TypeAttribute>() : null;
+		ICharTermAttribute termAtt = ts.HasAttribute<ICharTermAttribute>() ? ts.GetAttribute<ICharTermAttribute>() : null;
+		IOffsetAttribute offsetAtt = ts.HasAttribute<IOffsetAttribute>() ? ts.GetAttribute<IOffsetAttribute>() : null;
+		IPositionIncrementAttribute posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>() ? ts.GetAttribute<IPositionIncrementAttribute>() : null;
+		IPositionLengthAttribute posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>() ? ts.GetAttribute<IPositionLengthAttribute>() : null;
+		ITypeAttribute typeAtt = ts.HasAttribute<ITypeAttribute>() ? ts.GetAttribute<ITypeAttribute>() : null;
 		IList<string> tokens = new List<string>();
 		IList<string> types = new List<string>();
 		IList<int> positions = new List<int>();
@@ -924,7 +924,7 @@ namespace Lucene.Net.Analysis
 			  // Throw an errant exception from the Reader:
 
 			  MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
-			  evilReader.ThrowExcAfterChar(random.Next(text.Length + 1));
+			  evilReader.ThrowExcAfterChar(random.Next(text.Length));
 			  reader = evilReader;
 
 			  try

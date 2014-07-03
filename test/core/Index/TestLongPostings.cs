@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
@@ -24,7 +25,6 @@ namespace Lucene.Net.Index
 	using Analyzer = Lucene.Net.Analysis.Analyzer;
 	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 	using TokenStream = Lucene.Net.Analysis.TokenStream;
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 	using Document = Lucene.Net.Document.Document;
 	using Field = Lucene.Net.Document.Field;
 	using FieldType = Lucene.Net.Document.FieldType;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 		  TokenStream ts = a.TokenStream("foo", new StreamReader(s));
 		  try
 		  {
-			TermToBytesRefAttribute termAtt = ts.GetAttribute<TermToBytesRefAttribute>();
+			ITermToBytesRefAttribute termAtt = ts.GetAttribute<ITermToBytesRefAttribute>();
 			BytesRef termBytes = termAtt.BytesRef;
 			ts.Reset();
 

@@ -85,7 +85,7 @@ namespace Lucene.Net.Util
 	  /// Longs are stored at lower precision by shifting off lower bits. The shift count is
 	  /// stored as <code>SHIFT_START_LONG+shift</code> in the first byte
 	  /// </summary>
-	  public const sbyte SHIFT_START_LONG = 0x20;
+	  public const char SHIFT_START_LONG = (char)0x20;
 
 	  /// <summary>
 	  /// The maximum term length (used for <code>byte[]</code> buffer size)
@@ -201,8 +201,6 @@ namespace Lucene.Net.Util
 	  /// not correctly prefix encoded. </exception>
 	  public static int GetPrefixCodedLongShift(BytesRef val)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int shift = val.bytes[val.offset] - SHIFT_START_LONG;
 		int shift = val.Bytes[val.Offset] - SHIFT_START_LONG;
 		if (shift > 63 || shift < 0)
 		{
@@ -217,8 +215,6 @@ namespace Lucene.Net.Util
 	  /// not correctly prefix encoded. </exception>
 	  public static int GetPrefixCodedIntShift(BytesRef val)
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int shift = val.bytes[val.offset] - SHIFT_START_INT;
 		int shift = val.Bytes[val.Offset] - SHIFT_START_INT;
 		if (shift > 31 || shift < 0)
 		{

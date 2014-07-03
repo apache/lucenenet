@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 		  // The '6' part in the length is: 1 for '.', 1 for '_' and 4 as estimate
 		  // to the gen length as string (hopefully an upper limit so SB won't
 		  // expand in the middle.
-		  StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length)).Append(@base).Append('_').Append(Convert.ToString(gen, Character.MAX_RADIX));
+		  StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length)).Append(@base).Append('_').Append(gen.ToString());
 		  if (ext.Length > 0)
 		  {
 			res.Append('.').Append(ext);

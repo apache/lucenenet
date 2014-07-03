@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
 		public MyTokenStream(Random random, int tokensPerDoc) : base(new MyAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY))
 		{
 		  this.TokensPerDoc = tokensPerDoc;
-          AddAttribute<TermToBytesRefAttribute>();
+          AddAttribute<ITermToBytesRefAttribute>();
 		  Bytes.Length = TOKEN_LEN;
 		  this.Random = random;
 		  NextSave = TestUtil.NextInt(random, 500000, 1000000);
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 		  TokenCount = 0;
 		}
 
-		private sealed class MyTermAttributeImpl : Attribute, TermToBytesRefAttribute
+		private sealed class MyTermAttributeImpl : Attribute, ITermToBytesRefAttribute
 		{
 		  public void FillBytesRef()
 		  {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
 		  public override Attribute CreateAttributeInstance<T>()
 		  {
             var attClass = typeof(T);
-			if (attClass == typeof(TermToBytesRefAttribute))
+			if (attClass == typeof(ITermToBytesRefAttribute))
 			{
 			  return new MyTermAttributeImpl();
 			}

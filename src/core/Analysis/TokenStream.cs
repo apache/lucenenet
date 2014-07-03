@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// A TokenStream using the default attribute factory.
 	  /// </summary>
-	  protected internal TokenStream() : base()
+	  protected internal TokenStream()
 	  {
 		//Debug.Assert(AssertFinal());
 	  }
@@ -97,7 +97,8 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// A TokenStream that uses the same attributes as the supplied one.
 	  /// </summary>
-	  protected internal TokenStream(AttributeSource input) : base(input)
+	  protected internal TokenStream(AttributeSource input) 
+          : base(input)
 	  {
 		//Debug.Assert(AssertFinal());
 	  }

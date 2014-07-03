@@ -236,7 +236,7 @@ namespace Lucene.Net.Analysis
 	  /// <summary>
 	  /// blast some random strings through differently configured tokenizers </summary>
       [Ignore]
-        [Test]
+      [Test]
       public virtual void TestRandomRegexps()
 	  {
 		int iters = AtLeast(30);

@@ -22,7 +22,6 @@ namespace Lucene.Net.Analysis
 
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using NumericUtils = Lucene.Net.Util.NumericUtils;
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 	using TypeAttribute = Lucene.Net.Analysis.Tokenattributes.TypeAttribute;
 	using ICharTermAttribute = Lucene.Net.Analysis.Tokenattributes.ICharTermAttribute;
 	using CharTermAttribute = Lucene.Net.Analysis.Tokenattributes.CharTermAttribute;
@@ -41,7 +40,7 @@ namespace Lucene.Net.Analysis
 	  {
 		NumericTokenStream stream = (new NumericTokenStream()).SetLongValue(Lvalue);
 		// use getAttribute to test if attributes really exist, if not an IAE will be throwed
-		TermToBytesRefAttribute bytesAtt = stream.GetAttribute<TermToBytesRefAttribute>();
+		ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
 		ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
 		NumericTokenStream.INumericTermAttribute numericAtt = stream.GetAttribute<NumericTokenStream.INumericTermAttribute>();
 		BytesRef bytes = bytesAtt.BytesRef;
@@ -66,7 +65,7 @@ namespace Lucene.Net.Analysis
 	  {
 		NumericTokenStream stream = (new NumericTokenStream()).SetIntValue(Ivalue);
 		// use getAttribute to test if attributes really exist, if not an IAE will be throwed
-		TermToBytesRefAttribute bytesAtt = stream.GetAttribute<TermToBytesRefAttribute>();
+		ITermToBytesRefAttribute bytesAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
 		ITypeAttribute typeAtt = stream.GetAttribute<ITypeAttribute>();
 		NumericTokenStream.INumericTermAttribute numericAtt = stream.GetAttribute<NumericTokenStream.INumericTermAttribute>();
 		BytesRef bytes = bytesAtt.BytesRef;
@@ -79,7 +78,7 @@ namespace Lucene.Net.Analysis
 		  bytesAtt.FillBytesRef();
 		  Assert.AreEqual(Ivalue & ~((1 << shift) - 1), NumericUtils.PrefixCodedToInt(bytes), "Term is incorrectly encoded");
 		  Assert.AreEqual(((long) Ivalue) & ~((1L << shift) - 1L), numericAtt.RawValue, "Term raw value is incorrectly encoded");
-		  Assert.AreEqual("Type incorrect", (shift == 0) ? NumericTokenStream.TOKEN_TYPE_FULL_PREC : NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type);
+		  Assert.AreEqual((shift == 0) ? NumericTokenStream.TOKEN_TYPE_FULL_PREC : NumericTokenStream.TOKEN_TYPE_LOWER_PREC, typeAtt.Type, "Type incorrect");
 		}
 		Assert.IsFalse( stream.IncrementToken(), "More tokens available");
 		stream.End();
@@ -112,10 +111,10 @@ namespace Lucene.Net.Analysis
 		}
 	  }
 
-	  public interface TestAttribute : ICharTermAttribute
+	  public interface ITestAttribute : ICharTermAttribute
 	  {
 	  }
-	  public class TestAttributeImpl : CharTermAttribute, TestAttribute
+	  public class TestAttribute : CharTermAttribute, ITestAttribute
 	  {
 	  }
 
@@ -134,7 +133,7 @@ namespace Lucene.Net.Analysis
 		}
 		try
 		{
-		  stream.AddAttribute<TestAttribute>();
+		  stream.AddAttribute<ITestAttribute>();
 		  Assert.Fail("Succeeded to add TestAttribute.");
 		}
 		catch (System.ArgumentException iae)

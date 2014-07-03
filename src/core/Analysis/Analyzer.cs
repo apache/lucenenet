@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
@@ -140,7 +141,7 @@ namespace Lucene.Net.Analysis
 		}
 		else
 		{
-		  components.Reader = r;
+		    components.Reader = r;//new TextReaderWrapper(r);
 		}
 		return components.TokenStream;
 	  }
@@ -418,8 +419,14 @@ namespace Lucene.Net.Analysis
 		  }
 		  public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
 		  {
-		  IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>) GetStoredValue(analyzer);
-		  return componentsPerField != null ? componentsPerField[fieldName] : null;
+		      IDictionary<string, TokenStreamComponents> componentsPerField = (IDictionary<string, TokenStreamComponents>) GetStoredValue(analyzer);
+		      TokenStreamComponents ret;
+		      if (componentsPerField != null)
+		      {
+		          componentsPerField.TryGetValue(fieldName, out ret);
+		          return ret;
+		      }
+		      return null;
 		  }
 
 		public override void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components)

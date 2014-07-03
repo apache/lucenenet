@@ -272,7 +272,7 @@ namespace Lucene.Net.Analysis
 		Token t = new Token("foobar", 6, 22, 8);
 		TestUtil.AssertAttributeReflection(t, new Dictionary<string, object>() {
                 { typeof(CharTermAttribute).Name + "#term", "foobar" },
-                { typeof(TermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") },
+                { typeof(ITermToBytesRefAttribute).Name + "#bytes", new BytesRef("foobar") },
                 { typeof(OffsetAttribute).Name + "#startOffset", 6 }, 
                 { typeof(OffsetAttribute).Name + "#endOffset", 22 },
                 { typeof(PositionIncrementAttribute).Name + "#positionIncrement", 1 }, 

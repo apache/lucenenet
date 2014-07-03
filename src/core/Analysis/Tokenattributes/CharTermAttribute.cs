@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
 	/// <summary>
 	/// Default implementation of <seealso cref="CharTermAttribute"/>. </summary>
-	public class CharTermAttribute : Attribute, ICharTermAttribute, TermToBytesRefAttribute
+	public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
 	{
 	  private static int MIN_BUFFER_SIZE = 10;
 
@@ -46,9 +46,9 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
 	  public void CopyBuffer(char[] buffer, int offset, int length)
 	  {
-		GrowTermBuffer(length);
-		Array.Copy(buffer, offset, TermBuffer, 0, length);
-		TermLength = length;
+          GrowTermBuffer(length);
+          Array.Copy(buffer, offset, TermBuffer, 0, length);
+          TermLength = length;
 	  }
 
 	  public char[] Buffer()
@@ -308,7 +308,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 	  {
 		reflector.Reflect(typeof(CharTermAttribute), "term", ToString());
 		FillBytesRef();
-		reflector.Reflect(typeof(TermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
+		reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
 	  }
 
 	  public override void CopyTo(Attribute target)

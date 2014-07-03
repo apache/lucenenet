@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
@@ -25,8 +26,7 @@ namespace Lucene.Net.Analysis
 	using OffsetAttribute = Lucene.Net.Analysis.Tokenattributes.OffsetAttribute;
     using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
     using PositionLengthAttribute = Lucene.Net.Analysis.Tokenattributes.PositionLengthAttribute;
-    using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
-    using Automaton = Lucene.Net.Util.Automaton.Automaton;
+	using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using State = Lucene.Net.Util.Automaton.State;
     using Transition = Lucene.Net.Util.Automaton.Transition;
 
@@ -129,10 +129,10 @@ namespace Lucene.Net.Analysis
 		Automaton a = new Automaton();
 		bool deterministic = true;
 
-        TermToBytesRefAttribute termBytesAtt = @in.AddAttribute<TermToBytesRefAttribute>();
-        PositionIncrementAttribute posIncAtt = @in.AddAttribute<PositionIncrementAttribute>();
-		PositionLengthAttribute posLengthAtt = @in.AddAttribute<PositionLengthAttribute>();
-		OffsetAttribute offsetAtt = @in.AddAttribute<OffsetAttribute>();
+        IPositionIncrementAttribute posIncAtt = @in.AddAttribute<IPositionIncrementAttribute>();
+		IPositionLengthAttribute posLengthAtt = @in.AddAttribute<IPositionLengthAttribute>();
+		IOffsetAttribute offsetAtt = @in.AddAttribute<IOffsetAttribute>();
+        ITermToBytesRefAttribute termBytesAtt = @in.AddAttribute<ITermToBytesRefAttribute>();
 
 		BytesRef term = termBytesAtt.BytesRef;
 

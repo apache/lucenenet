@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Util
 {
@@ -28,7 +29,6 @@ namespace Lucene.Net.Util
 	using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
 	using TokenStream = Lucene.Net.Analysis.TokenStream;
 	using PositionIncrementAttribute = Lucene.Net.Analysis.Tokenattributes.PositionIncrementAttribute;
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 	using Term = Lucene.Net.Index.Term;
 	using BooleanClause = Lucene.Net.Search.BooleanClause;
 	using BooleanQuery = Lucene.Net.Search.BooleanQuery;
@@ -201,7 +201,7 @@ namespace Lucene.Net.Util
 		// Use the analyzer to get all the tokens, and then build a TermQuery,
 		// PhraseQuery, or nothing based on the term count
 		CachingTokenFilter buffer = null;
-		TermToBytesRefAttribute termAtt = null;
+		ITermToBytesRefAttribute termAtt = null;
 		PositionIncrementAttribute posIncrAtt = null;
 		int numTokens = 0;
 		int positionCount = 0;
@@ -216,9 +216,9 @@ namespace Lucene.Net.Util
 		  buffer = new CachingTokenFilter(source);
 		  buffer.Reset();
 
-		  if (buffer.HasAttribute<TermToBytesRefAttribute>())
+		  if (buffer.HasAttribute<ITermToBytesRefAttribute>())
 		  {
-			termAtt = buffer.GetAttribute<TermToBytesRefAttribute>();
+			termAtt = buffer.GetAttribute<ITermToBytesRefAttribute>();
 		  }
 		  if (buffer.HasAttribute<PositionIncrementAttribute>())
 		  {

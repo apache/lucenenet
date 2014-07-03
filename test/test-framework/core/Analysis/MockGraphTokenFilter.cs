@@ -1,4 +1,5 @@
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Analysis
 
 	  private static bool DEBUG = false;
 
-      private readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
+      private readonly ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
 
 	  private readonly long Seed;
 	  private Random Random;
@@ -45,6 +46,7 @@ namespace Lucene.Net.Analysis
 	  public MockGraphTokenFilter(Random random, TokenStream input) : base(input)
 	  {
 		Seed = random.Next();
+        TermAtt = AddAttribute<ICharTermAttribute>();
 	  }
 
       protected internal override LookaheadTokenFilter.Position NewPosition()

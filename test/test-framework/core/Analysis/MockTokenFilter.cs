@@ -48,8 +48,8 @@ namespace Lucene.Net.Analysis
 
 	  private readonly CharacterRunAutomaton Filter;
 
-	  private readonly CharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
-	  private readonly PositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
+	  private readonly ICharTermAttribute TermAtt;// = AddAttribute<CharTermAttribute>();
+	  private readonly IPositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
 	  private int SkippedPositions;
 
 	  /// <summary>
@@ -59,7 +59,9 @@ namespace Lucene.Net.Analysis
 	  /// <param name="filter"> DFA representing the terms that should be removed. </param>
 	  public MockTokenFilter(TokenStream input, CharacterRunAutomaton filter) : base(input)
 	  {
-		this.Filter = filter;
+		  this.Filter = filter;
+	      TermAtt = AddAttribute<ICharTermAttribute>();
+	      PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
 	  }
 
 	  public override bool IncrementToken()

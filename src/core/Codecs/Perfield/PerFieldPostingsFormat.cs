@@ -114,17 +114,18 @@ namespace Lucene.Net.Codecs.Perfield
 		  string formatName = format.Name;
 
 		  string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
-		  Debug.Assert(previousValue == null);
+		  //Debug.Assert(previousValue == null);
 
 		  int suffix;
 
-		  FieldsConsumerAndSuffix consumer = Formats[format];
+		  FieldsConsumerAndSuffix consumer;
+          Formats.TryGetValue(format, out consumer);
 		  if (consumer == null)
 		  {
 			// First time we are seeing this format; create a new instance
 
 			// bump the suffix
-			suffix = Suffixes[formatName];
+            Suffixes.TryGetValue(formatName, out suffix);
 			if (suffix == null)
 			{
 			  suffix = 0;
@@ -149,7 +150,7 @@ namespace Lucene.Net.Codecs.Perfield
 		  }
 
 		  previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix));
-		  Debug.Assert(previousValue == null);
+		  //Debug.Assert(previousValue == null);
 
 		  // TODO: we should only provide the "slice" of FIS
 		  // that this PF actually sees ... then stuff like

@@ -385,7 +385,7 @@ namespace Lucene.Net.Store
 		}
 	  }
 
-	    public bool IsOpen
+	    public virtual bool IsOpen
 	    {
 	        get { return IsOpen; }
 	    }

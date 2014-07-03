@@ -247,14 +247,14 @@ namespace Lucene.Net.Analysis
 			// read(char[])
 			char[] c = new char[1];
 			int ret = Input.Read(c, 0, c.Length);
-			return ret < 0 ? ret : c[0];
+			return ret == 0 ? -1 : c[0];
 		  }
 		  case 1:
 		  {
 			// read(char[], int, int)
 			char[] c = new char[2];
 			int ret = Input.Read(c, 1, 1);
-			return ret < 0 ? ret : c[1];
+			return ret == 0 ? -1 : c[1];
 		  }
         /* LUCENE TO-DO not sure if needed, CharBuffer not supported
 		  case 2:

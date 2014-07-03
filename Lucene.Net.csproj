@@ -9014,8 +9014,9 @@
     <Compile Include="src\core\Analysis\Tokenattributes\PositionIncrementAttribute.cs" />
     <Compile Include="src\core\Analysis\Tokenattributes\IPositionLengthAttribute.cs" />
     <Compile Include="src\core\Analysis\Tokenattributes\PositionLengthAttribute.cs" />
-    <Compile Include="src\core\Analysis\Tokenattributes\TermToBytesRefAttribute.cs" />
+    <Compile Include="src\core\Analysis\Tokenattributes\ITermToBytesRefAttribute.cs" />
     <Compile Include="src\core\Analysis\Tokenattributes\ITypeAttribute.cs" />
+    <Compile Include="src\core\Analysis\Tokenattributes\TermToBytesRefAttribute.cs" />
     <Compile Include="src\core\Analysis\Tokenattributes\TypeAttribute.cs" />
     <Compile Include="src\core\Analysis\TokenFilter.cs" />
     <Compile Include="src\core\Analysis\Tokenizer.cs" />
@@ -9570,6 +9571,7 @@
     <Compile Include="src\core\Support\SetExtensions.cs" />
     <Compile Include="src\core\Support\StringBuilderExtensions.cs" />
     <Compile Include="src\core\Support\StringCharSequenceWrapper.cs" />
+    <Compile Include="src\core\Support\TextReaderWrapper.cs" />
     <Compile Include="src\core\Support\StringSupport.cs" />
     <Compile Include="src\core\Support\StringTokenizer.cs" />
     <Compile Include="src\core\Support\TaskSchedulerCompletionService.cs" />

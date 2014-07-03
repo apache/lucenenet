@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Index
 {
 
@@ -19,7 +21,6 @@ namespace Lucene.Net.Index
 	 */
 
 	using TokenStream = Lucene.Net.Analysis.TokenStream;
-	using TermToBytesRefAttribute = Lucene.Net.Analysis.Tokenattributes.TermToBytesRefAttribute;
 	using Attribute = Lucene.Net.Util.Attribute;
 	using BytesRef = Lucene.Net.Util.BytesRef;
 	using CannedBinaryTokenStream = Lucene.Net.Analysis.CannedBinaryTokenStream; // javadocs
@@ -31,13 +32,14 @@ namespace Lucene.Net.Index
 	/// <seealso> cref= CannedBinaryTokenStream </seealso>
     public sealed class BinaryTokenStream : TokenStream
 	{
-	  private readonly ByteTermAttribute BytesAtt;// = addAttribute(typeof(ByteTermAttribute));
+	  private readonly IByteTermAttribute BytesAtt;// = addAttribute(typeof(ByteTermAttribute));
 	  private readonly BytesRef Bytes;
 	  private bool Available = true;
 
 	  public BinaryTokenStream(BytesRef bytes)
 	  {
 		this.Bytes = bytes;
+        BytesAtt = AddAttribute<IByteTermAttribute>();
 	  }
 
 	  public override bool IncrementToken()
@@ -57,12 +59,12 @@ namespace Lucene.Net.Index
 		Available = true;
 	  }
 
-	  public interface ByteTermAttribute : TermToBytesRefAttribute
+	  public interface IByteTermAttribute : ITermToBytesRefAttribute
 	  {
 		BytesRef BytesRef {set;}
 	  }
 
-	  public class ByteTermAttributeImpl : Attribute, ByteTermAttribute, TermToBytesRefAttribute
+	  public class ByteTermAttribute : Attribute, IByteTermAttribute
 	  {
 		internal BytesRef Bytes;
 
@@ -89,7 +91,7 @@ namespace Lucene.Net.Index
 		}
 		public override void CopyTo(Attribute target)
 		{
-		  ByteTermAttributeImpl other = (ByteTermAttributeImpl) target;
+		  ByteTermAttribute other = (ByteTermAttribute) target;
 		  other.Bytes = Bytes;
 		}
 	  }

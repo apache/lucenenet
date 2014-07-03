@@ -787,6 +787,9 @@
   <ItemGroup>
     <Content Include="core\Lucene.Net.Test.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="core\Util\Junitcompat\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
