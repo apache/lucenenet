@@ -1,162 +1,165 @@
 using System;
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Search.Payloads
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using Lucene.Net.Analysis;
-	using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
-	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-	using IndexWriter = Lucene.Net.Index.IndexWriter;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using TextField = Lucene.Net.Document.TextField;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using English = Lucene.Net.Util.English;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using Similarity = Lucene.Net.Search.Similarities.Similarity;
-	using Directory = Lucene.Net.Store.Directory;
-	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using Lucene.Net.Analysis;
+    using PayloadAttribute = Lucene.Net.Analysis.Tokenattributes.PayloadAttribute;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using TextField = Lucene.Net.Document.TextField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using English = Lucene.Net.Util.English;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using System.IO;
 
 
-	/// 
-	/// 
-	/// 
-	[TestFixture]
+    /// 
+    /// 
+    /// 
+    [TestFixture]
     public class PayloadHelper
-	{
+    {
 
-	  private sbyte[] PayloadField = new sbyte[]{1};
-	  private sbyte[] PayloadMultiField1 = new sbyte[]{2};
-	  private sbyte[] PayloadMultiField2 = new sbyte[]{4};
-	  public const string NO_PAYLOAD_FIELD = "noPayloadField";
-	  public const string MULTI_FIELD = "multiField";
-	  public const string FIELD = "field";
+        private sbyte[] PayloadField = new sbyte[] { 1 };
+        private sbyte[] PayloadMultiField1 = new sbyte[] { 2 };
+        private sbyte[] PayloadMultiField2 = new sbyte[] { 4 };
+        public const string NO_PAYLOAD_FIELD = "noPayloadField";
+        public const string MULTI_FIELD = "multiField";
+        public const string FIELD = "field";
 
-	  public IndexReader Reader;
+        public IndexReader Reader;
 
-	  public sealed class PayloadAnalyzer : Analyzer
-	  {
-		  private readonly PayloadHelper OuterInstance;
+        public sealed class PayloadAnalyzer : Analyzer
+        {
+            private readonly PayloadHelper OuterInstance;
 
 
-		public PayloadAnalyzer(PayloadHelper outerInstance) : base(PER_FIELD_REUSE_STRATEGY)
-		{
-			this.OuterInstance = outerInstance;
-		}
+            public PayloadAnalyzer(PayloadHelper outerInstance)
+                : base(PER_FIELD_REUSE_STRATEGY)
+            {
+                this.OuterInstance = outerInstance;
+            }
 
-		protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-		{
-		  Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-		  return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result, fieldName));
-		}
-	  }
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result, fieldName));
+            }
+        }
 
-	  public sealed class PayloadFilter : TokenFilter
-	  {
-		  private readonly PayloadHelper OuterInstance;
+        public sealed class PayloadFilter : TokenFilter
+        {
+            private readonly PayloadHelper OuterInstance;
 
-		internal readonly string FieldName;
-		internal int NumSeen = 0;
-		internal readonly PayloadAttribute PayloadAtt;
+            internal readonly string FieldName;
+            internal int NumSeen = 0;
+            internal readonly IPayloadAttribute PayloadAtt;
 
-		public PayloadFilter(PayloadHelper outerInstance, TokenStream input, string fieldName) : base(input)
-		{
-			this.OuterInstance = outerInstance;
-		  this.FieldName = fieldName;
-		  PayloadAtt = AddAttribute<PayloadAttribute>();
-		}
+            public PayloadFilter(PayloadHelper outerInstance, TokenStream input, string fieldName)
+                : base(input)
+            {
+                this.OuterInstance = outerInstance;
+                this.FieldName = fieldName;
+                PayloadAtt = AddAttribute<IPayloadAttribute>();
+            }
 
-		public override bool IncrementToken()
-		{
+            public override bool IncrementToken()
+            {
 
-		  if (Input.IncrementToken())
-		  {
-			if (FieldName.Equals(FIELD))
-			{
-                PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadField);
-			}
-			else if (FieldName.Equals(MULTI_FIELD))
-			{
-			  if (NumSeen % 2 == 0)
-			  {
-                  PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField1);
-			  }
-			  else
-			  {
-                  PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField2);
-			  }
-			  NumSeen++;
-			}
-			return true;
-		  }
-		  return false;
-		}
+                if (Input.IncrementToken())
+                {
+                    if (FieldName.Equals(FIELD))
+                    {
+                        PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadField);
+                    }
+                    else if (FieldName.Equals(MULTI_FIELD))
+                    {
+                        if (NumSeen % 2 == 0)
+                        {
+                            PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField1);
+                        }
+                        else
+                        {
+                            PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField2);
+                        }
+                        NumSeen++;
+                    }
+                    return true;
+                }
+                return false;
+            }
 
-		public override void Reset()
-		{
-		  base.Reset();
-		  this.NumSeen = 0;
-		}
-	  }
+            public override void Reset()
+            {
+                base.Reset();
+                this.NumSeen = 0;
+            }
+        }
 
-	  /// <summary>
-	  /// Sets up a RAMDirectory, and adds documents (using English.IntToEnglish()) with two fields: field and multiField
-	  /// and analyzes them using the PayloadAnalyzer </summary>
-	  /// <param name="similarity"> The Similarity class to use in the Searcher </param>
-	  /// <param name="numDocs"> The num docs to add </param>
-	  /// <returns> An IndexSearcher </returns>
-	  // TODO: randomize
-	  public virtual IndexSearcher SetUp(Random random, Similarity similarity, int numDocs)
-	  {
-		Directory directory = new MockDirectoryWrapper(random, new RAMDirectory());
-		PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
+        /// <summary>
+        /// Sets up a RAMDirectory, and adds documents (using English.IntToEnglish()) with two fields: field and multiField
+        /// and analyzes them using the PayloadAnalyzer </summary>
+        /// <param name="similarity"> The Similarity class to use in the Searcher </param>
+        /// <param name="numDocs"> The num docs to add </param>
+        /// <returns> An IndexSearcher </returns>
+        // TODO: randomize
+        public virtual IndexSearcher SetUp(Random random, Similarity similarity, int numDocs)
+        {
+            Directory directory = new MockDirectoryWrapper(random, new RAMDirectory());
+            PayloadAnalyzer analyzer = new PayloadAnalyzer(this);
 
-		// TODO randomize this
-        IndexWriter writer = new IndexWriter(directory, (new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity));
-		// writer.infoStream = System.out;
-		for (int i = 0; i < numDocs; i++)
-		{
-		  Document doc = new Document();
-		  doc.Add(new TextField(FIELD, English.IntToEnglish(i), Field.Store.YES));
-		  doc.Add(new TextField(MULTI_FIELD, English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES));
-		  doc.Add(new TextField(NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES));
-		  writer.AddDocument(doc);
-		}
-		Reader = DirectoryReader.Open(writer, true);
-		writer.Dispose();
+            // TODO randomize this
+            IndexWriter writer = new IndexWriter(directory, (new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity));
+            // writer.infoStream = System.out;
+            for (int i = 0; i < numDocs; i++)
+            {
+                Document doc = new Document();
+                doc.Add(new TextField(FIELD, English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField(MULTI_FIELD, English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField(NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES));
+                writer.AddDocument(doc);
+            }
+            Reader = DirectoryReader.Open(writer, true);
+            writer.Dispose();
 
-		IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader);
-		searcher.Similarity = similarity;
-		return searcher;
-	  }
-      
-      [TearDown]
-	  public virtual void TearDown()
-	  {
-		Reader.Dispose();
-	  }
-	}
+            IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader);
+            searcher.Similarity = similarity;
+            return searcher;
+        }
+
+        [TearDown]
+        public virtual void TearDown()
+        {
+            Reader.Dispose();
+        }
+    }
 
 }

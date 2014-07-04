@@ -25,8 +25,8 @@ namespace Lucene.Net.Randomized
 {
     public class RandomizedContext : IDisposable
     {
-        private static readonly object globalLock = new object();
-        protected readonly object contextLock = new object();
+        private static  readonly object globalLock  = new object();
+        protected       readonly object contextLock = new object();
 
         private class ThreadResources
         {
@@ -125,7 +125,6 @@ namespace Lucene.Net.Randomized
                 if(context == null)
                 {
                     context = contexts[group] = new RandomizedContext(group, null, null);
-
                 }
             }
 
@@ -168,8 +167,6 @@ namespace Lucene.Net.Randomized
                 return context;
             }
         }
-
-
 
         public void Dispose()
         {

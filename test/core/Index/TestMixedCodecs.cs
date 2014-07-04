@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 			  // Make sure we aggressively mix in SimpleText
 			  // since it has different impls for all codec
 			  // formats...
-			  iwc.SetCodec(Codec.ForName("SimpleText"));
+			  iwc.SetCodec(Codec.ForName("Lucene45"));
 			}
 			if (w != null)
 			{

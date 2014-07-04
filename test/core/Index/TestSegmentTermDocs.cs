@@ -1,272 +1,272 @@
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using Directory = Lucene.Net.Store.Directory;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Directory = Lucene.Net.Store.Directory;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
 
     [TestFixture]
-	public class TestSegmentTermDocs : LuceneTestCase
-	{
-	  private Document TestDoc = new Document();
-	  private Directory Dir;
-	  private SegmentCommitInfo Info;
+    public class TestSegmentTermDocs : LuceneTestCase
+    {
+        private Document TestDoc = new Document();
+        private Directory Dir;
+        private SegmentCommitInfo Info;
 
-      [SetUp]
-      public override void SetUp()
-	  {
-		base.SetUp();
-		Dir = NewDirectory();
-		DocHelper.SetupDoc(TestDoc);
-		Info = DocHelper.WriteDoc(Random(), Dir, TestDoc);
-	  }
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
+            Dir = NewDirectory();
+            DocHelper.SetupDoc(TestDoc);
+            Info = DocHelper.WriteDoc(Random(), Dir, TestDoc);
+        }
 
-      [TearDown]
-	  public override void TearDown()
-	  {
-		Dir.Dispose();
-		base.TearDown();
-	  }
+        [TearDown]
+        public override void TearDown()
+        {
+            Dir.Dispose();
+            base.TearDown();
+        }
 
-      [Test]
-      public virtual void Test()
-	  {
-		Assert.IsTrue(Dir != null);
-	  }
+        [Test]
+        public virtual void Test()
+        {
+            Assert.IsTrue(Dir != null);
+        }
 
-      [Test]
-      public virtual void TestTermDocs()
-	  {
-		TestTermDocs(1);
-	  }
+        [Test]
+        public virtual void TestTermDocs()
+        {
+            TestTermDocs(1);
+        }
 
-	  public virtual void TestTermDocs(int indexDivisor)
-	  {
-		//After adding the document, we should be able to read it back in
-		SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
-		Assert.IsTrue(reader != null);
-		Assert.AreEqual(indexDivisor, reader.TermInfosIndexDivisor);
+        public virtual void TestTermDocs(int indexDivisor)
+        {
+            //After adding the document, we should be able to read it back in
+            SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
+            Assert.IsTrue(reader != null);
+            Assert.AreEqual(indexDivisor, reader.TermInfosIndexDivisor);
 
-		TermsEnum terms = reader.Fields().Terms(DocHelper.TEXT_FIELD_2_KEY).Iterator(null);
-		terms.SeekCeil(new BytesRef("field"));
-		DocsEnum termDocs = TestUtil.Docs(Random(), terms, reader.LiveDocs, null, DocsEnum.FLAG_FREQS);
-		if (termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
-		{
-		  int docId = termDocs.DocID();
-		  Assert.IsTrue(docId == 0);
-		  int freq = termDocs.Freq();
-		  Assert.IsTrue(freq == 3);
-		}
-		reader.Dispose();
-	  }
+            TermsEnum terms = reader.Fields().Terms(DocHelper.TEXT_FIELD_2_KEY).Iterator(null);
+            terms.SeekCeil(new BytesRef("field"));
+            DocsEnum termDocs = TestUtil.Docs(Random(), terms, reader.LiveDocs, null, DocsEnum.FLAG_FREQS);
+            if (termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+            {
+                int docId = termDocs.DocID();
+                Assert.IsTrue(docId == 0);
+                int freq = termDocs.Freq();
+                Assert.IsTrue(freq == 3);
+            }
+            reader.Dispose();
+        }
 
-      [Test]
-      public virtual void TestBadSeek()
-	  {
-		TestBadSeek(1);
-	  }
+        [Test]
+        public virtual void TestBadSeek()
+        {
+            TestBadSeek(1);
+        }
 
-	  public virtual void TestBadSeek(int indexDivisor)
-	  {
-	      {
-		      //After adding the document, we should be able to read it back in
-		      SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
-		      Assert.IsTrue(reader != null);
-		      DocsEnum termDocs = TestUtil.Docs(Random(), reader, "textField2", new BytesRef("bad"), reader.LiveDocs, null, 0);
+        public virtual void TestBadSeek(int indexDivisor)
+        {
+            {
+                //After adding the document, we should be able to read it back in
+                SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
+                Assert.IsTrue(reader != null);
+                DocsEnum termDocs = TestUtil.Docs(Random(), reader, "textField2", new BytesRef("bad"), reader.LiveDocs, null, 0);
 
-		      Assert.IsNull(termDocs);
-		      reader.Dispose();
-		    }
-		    {
-		      //After adding the document, we should be able to read it back in
-		      SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
-		      Assert.IsTrue(reader != null);
-		      DocsEnum termDocs = TestUtil.Docs(Random(), reader, "junk", new BytesRef("bad"), reader.LiveDocs, null, 0);
-		      Assert.IsNull(termDocs);
-		      reader.Dispose();
-		    }
-	    }
+                Assert.IsNull(termDocs);
+                reader.Dispose();
+            }
+            {
+                //After adding the document, we should be able to read it back in
+                SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random()));
+                Assert.IsTrue(reader != null);
+                DocsEnum termDocs = TestUtil.Docs(Random(), reader, "junk", new BytesRef("bad"), reader.LiveDocs, null, 0);
+                Assert.IsNull(termDocs);
+                reader.Dispose();
+            }
+        }
 
-      [Test]
-      public virtual void TestSkipTo()
-	  {
-		TestSkipTo(1);
-	  }
+        [Test]
+        public virtual void TestSkipTo()
+        {
+            TestSkipTo(1);
+        }
 
-	  public virtual void TestSkipTo(int indexDivisor)
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+        public virtual void TestSkipTo(int indexDivisor)
+        {
+            Directory dir = NewDirectory();
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
 
-		Term ta = new Term("content","aaa");
-		for (int i = 0; i < 10; i++)
-		{
-		  AddDoc(writer, "aaa aaa aaa aaa");
-		}
+            Term ta = new Term("content", "aaa");
+            for (int i = 0; i < 10; i++)
+            {
+                AddDoc(writer, "aaa aaa aaa aaa");
+            }
 
-		Term tb = new Term("content","bbb");
-		for (int i = 0; i < 16; i++)
-		{
-		  AddDoc(writer, "bbb bbb bbb bbb");
-		}
+            Term tb = new Term("content", "bbb");
+            for (int i = 0; i < 16; i++)
+            {
+                AddDoc(writer, "bbb bbb bbb bbb");
+            }
 
-		Term tc = new Term("content","ccc");
-		for (int i = 0; i < 50; i++)
-		{
-		  AddDoc(writer, "ccc ccc ccc ccc");
-		}
+            Term tc = new Term("content", "ccc");
+            for (int i = 0; i < 50; i++)
+            {
+                AddDoc(writer, "ccc ccc ccc ccc");
+            }
 
-		// assure that we deal with a single segment  
-		writer.ForceMerge(1);
-		writer.Dispose();
+            // assure that we deal with a single segment  
+            writer.ForceMerge(1);
+            writer.Dispose();
 
-		IndexReader reader = DirectoryReader.Open(dir, indexDivisor);
+            IndexReader reader = DirectoryReader.Open(dir, indexDivisor);
 
-		DocsEnum tdocs = TestUtil.Docs(Random(), reader, ta.Field(), new BytesRef(ta.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            DocsEnum tdocs = TestUtil.Docs(Random(), reader, ta.Field(), new BytesRef(ta.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
 
-		// without optimization (assumption skipInterval == 16)
+            // without optimization (assumption skipInterval == 16)
 
-		// with next
-		Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(0, tdocs.DocID());
-		Assert.AreEqual(4, tdocs.Freq());
-		Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(1, tdocs.DocID());
-		Assert.AreEqual(4, tdocs.Freq());
-		Assert.IsTrue(tdocs.Advance(2) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(2, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(4) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(4, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(9) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(9, tdocs.DocID());
-		Assert.IsFalse(tdocs.Advance(10) != DocIdSetIterator.NO_MORE_DOCS);
+            // with next
+            Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(0, tdocs.DocID());
+            Assert.AreEqual(4, tdocs.Freq());
+            Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(1, tdocs.DocID());
+            Assert.AreEqual(4, tdocs.Freq());
+            Assert.IsTrue(tdocs.Advance(2) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(2, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(4) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(4, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(9) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(9, tdocs.DocID());
+            Assert.IsFalse(tdocs.Advance(10) != DocIdSetIterator.NO_MORE_DOCS);
 
-		// without next
-		tdocs = TestUtil.Docs(Random(), reader, ta.Field(), new BytesRef(ta.Text()), MultiFields.GetLiveDocs(reader), null, 0);
+            // without next
+            tdocs = TestUtil.Docs(Random(), reader, ta.Field(), new BytesRef(ta.Text()), MultiFields.GetLiveDocs(reader), null, 0);
 
-		Assert.IsTrue(tdocs.Advance(0) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(0, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(4) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(4, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(9) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(9, tdocs.DocID());
-		Assert.IsFalse(tdocs.Advance(10) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(tdocs.Advance(0) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(0, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(4) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(4, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(9) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(9, tdocs.DocID());
+            Assert.IsFalse(tdocs.Advance(10) != DocIdSetIterator.NO_MORE_DOCS);
 
-		// exactly skipInterval documents and therefore with optimization
+            // exactly skipInterval documents and therefore with optimization
 
-		// with next
-		tdocs = TestUtil.Docs(Random(), reader, tb.Field(), new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            // with next
+            tdocs = TestUtil.Docs(Random(), reader, tb.Field(), new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
 
-		Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(10, tdocs.DocID());
-		Assert.AreEqual(4, tdocs.Freq());
-		Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(11, tdocs.DocID());
-		Assert.AreEqual(4, tdocs.Freq());
-		Assert.IsTrue(tdocs.Advance(12) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(12, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(15) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(15, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(24) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(24, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(25) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(25, tdocs.DocID());
-		Assert.IsFalse(tdocs.Advance(26) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(10, tdocs.DocID());
+            Assert.AreEqual(4, tdocs.Freq());
+            Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(11, tdocs.DocID());
+            Assert.AreEqual(4, tdocs.Freq());
+            Assert.IsTrue(tdocs.Advance(12) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(12, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(15) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(15, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(24) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(24, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(25) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(25, tdocs.DocID());
+            Assert.IsFalse(tdocs.Advance(26) != DocIdSetIterator.NO_MORE_DOCS);
 
-		// without next
-		tdocs = TestUtil.Docs(Random(), reader, tb.Field(), new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            // without next
+            tdocs = TestUtil.Docs(Random(), reader, tb.Field(), new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
 
-		Assert.IsTrue(tdocs.Advance(5) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(10, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(15) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(15, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(24) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(24, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(25) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(25, tdocs.DocID());
-		Assert.IsFalse(tdocs.Advance(26) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(tdocs.Advance(5) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(10, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(15) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(15, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(24) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(24, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(25) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(25, tdocs.DocID());
+            Assert.IsFalse(tdocs.Advance(26) != DocIdSetIterator.NO_MORE_DOCS);
 
-		// much more than skipInterval documents and therefore with optimization
+            // much more than skipInterval documents and therefore with optimization
 
-		// with next
-		tdocs = TestUtil.Docs(Random(), reader, tc.Field(), new BytesRef(tc.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            // with next
+            tdocs = TestUtil.Docs(Random(), reader, tc.Field(), new BytesRef(tc.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
 
-		Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(26, tdocs.DocID());
-		Assert.AreEqual(4, tdocs.Freq());
-		Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(27, tdocs.DocID());
-		Assert.AreEqual(4, tdocs.Freq());
-		Assert.IsTrue(tdocs.Advance(28) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(28, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(40) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(40, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(57) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(57, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(74) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(74, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(75) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(75, tdocs.DocID());
-		Assert.IsFalse(tdocs.Advance(76) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(26, tdocs.DocID());
+            Assert.AreEqual(4, tdocs.Freq());
+            Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(27, tdocs.DocID());
+            Assert.AreEqual(4, tdocs.Freq());
+            Assert.IsTrue(tdocs.Advance(28) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(28, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(40) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(40, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(57) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(57, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(74) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(74, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(75) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(75, tdocs.DocID());
+            Assert.IsFalse(tdocs.Advance(76) != DocIdSetIterator.NO_MORE_DOCS);
 
-		//without next
-		tdocs = TestUtil.Docs(Random(), reader, tc.Field(), new BytesRef(tc.Text()), MultiFields.GetLiveDocs(reader), null, 0);
-		Assert.IsTrue(tdocs.Advance(5) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(26, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(40) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(40, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(57) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(57, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(74) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(74, tdocs.DocID());
-		Assert.IsTrue(tdocs.Advance(75) != DocIdSetIterator.NO_MORE_DOCS);
-		Assert.AreEqual(75, tdocs.DocID());
-		Assert.IsFalse(tdocs.Advance(76) != DocIdSetIterator.NO_MORE_DOCS);
+            //without next
+            tdocs = TestUtil.Docs(Random(), reader, tc.Field(), new BytesRef(tc.Text()), MultiFields.GetLiveDocs(reader), null, 0);
+            Assert.IsTrue(tdocs.Advance(5) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(26, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(40) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(40, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(57) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(57, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(74) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(74, tdocs.DocID());
+            Assert.IsTrue(tdocs.Advance(75) != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.AreEqual(75, tdocs.DocID());
+            Assert.IsFalse(tdocs.Advance(76) != DocIdSetIterator.NO_MORE_DOCS);
 
-		reader.Dispose();
-		dir.Dispose();
-	  }
+            reader.Dispose();
+            dir.Dispose();
+        }
 
-      [Test]
-      public virtual void TestIndexDivisor()
-	  {
-		TestDoc = new Document();
-		DocHelper.SetupDoc(TestDoc);
-		DocHelper.WriteDoc(Random(), Dir, TestDoc);
-		TestTermDocs(2);
-		TestBadSeek(2);
-		TestSkipTo(2);
-	  }
+        [Test]
+        public virtual void TestIndexDivisor()
+        {
+            TestDoc = new Document();
+            DocHelper.SetupDoc(TestDoc);
+            DocHelper.WriteDoc(Random(), Dir, TestDoc);
+            TestTermDocs(2);
+            TestBadSeek(2);
+            TestSkipTo(2);
+        }
 
-	  private void AddDoc(IndexWriter writer, string value)
-	  {
-		  Document doc = new Document();
-		  doc.Add(NewTextField("content", value, Field.Store.NO));
-		  writer.AddDocument(doc);
-	  }
-	}
+        private void AddDoc(IndexWriter writer, string value)
+        {
+            Document doc = new Document();
+            doc.Add(NewTextField("content", value, Field.Store.NO));
+            writer.AddDocument(doc);
+        }
+    }
 
 }

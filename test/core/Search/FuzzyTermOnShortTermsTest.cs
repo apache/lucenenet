@@ -19,99 +19,97 @@ namespace Lucene.Net.Search
 
 
 
-	using Analyzer = Lucene.Net.Analysis.Analyzer;
-	using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-	using Tokenizer = Lucene.Net.Analysis.Tokenizer;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-	using Term = Lucene.Net.Index.Term;
-	using Directory = Lucene.Net.Store.Directory;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using Tokenizer = Lucene.Net.Analysis.Tokenizer;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Term = Lucene.Net.Index.Term;
+    using Directory = Lucene.Net.Store.Directory;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using System.IO;
 
     [TestFixture]
-	public class FuzzyTermOnShortTermsTest : LuceneTestCase
-	{
-	   private const string FIELD = "field";
+    public class FuzzyTermOnShortTermsTest : LuceneTestCase
+    {
+        private const string FIELD = "field";
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void test() throws Exception
-       [Test]
-       public virtual void Test()
-	   {
-		  // proves rule that edit distance between the two terms
-		  // must be > smaller term for there to be a match
-		  Analyzer a = Analyzer;
-		  //these work
-		  CountHits(a, new string[]{"abc"}, new FuzzyQuery(new Term(FIELD, "ab"), 1), 1);
-		  CountHits(a, new string[]{"ab"}, new FuzzyQuery(new Term(FIELD, "abc"), 1), 1);
+        [Test]
+        public virtual void Test()
+        {
+            // proves rule that edit distance between the two terms
+            // must be > smaller term for there to be a match
+            Analyzer a = Analyzer;
+            //these work
+            CountHits(a, new string[] { "abc" }, new FuzzyQuery(new Term(FIELD, "ab"), 1), 1);
+            CountHits(a, new string[] { "ab" }, new FuzzyQuery(new Term(FIELD, "abc"), 1), 1);
 
-		  CountHits(a, new string[]{"abcde"}, new FuzzyQuery(new Term(FIELD, "abc"), 2), 1);
-		  CountHits(a, new string[]{"abc"}, new FuzzyQuery(new Term(FIELD, "abcde"), 2), 1);
+            CountHits(a, new string[] { "abcde" }, new FuzzyQuery(new Term(FIELD, "abc"), 2), 1);
+            CountHits(a, new string[] { "abc" }, new FuzzyQuery(new Term(FIELD, "abcde"), 2), 1);
 
-		  //these don't      
-		  CountHits(a, new string[]{"ab"}, new FuzzyQuery(new Term(FIELD, "a"), 1), 0);
-		  CountHits(a, new string[]{"a"}, new FuzzyQuery(new Term(FIELD, "ab"), 1), 0);
+            //these don't      
+            CountHits(a, new string[] { "ab" }, new FuzzyQuery(new Term(FIELD, "a"), 1), 0);
+            CountHits(a, new string[] { "a" }, new FuzzyQuery(new Term(FIELD, "ab"), 1), 0);
 
-		  CountHits(a, new string[]{"abc"}, new FuzzyQuery(new Term(FIELD, "a"), 2), 0);
-		  CountHits(a, new string[]{"a"}, new FuzzyQuery(new Term(FIELD, "abc"), 2), 0);
+            CountHits(a, new string[] { "abc" }, new FuzzyQuery(new Term(FIELD, "a"), 2), 0);
+            CountHits(a, new string[] { "a" }, new FuzzyQuery(new Term(FIELD, "abc"), 2), 0);
 
-		  CountHits(a, new string[]{"abcd"}, new FuzzyQuery(new Term(FIELD, "ab"), 2), 0);
-		  CountHits(a, new string[]{"ab"}, new FuzzyQuery(new Term(FIELD, "abcd"), 2), 0);
-	   }
+            CountHits(a, new string[] { "abcd" }, new FuzzyQuery(new Term(FIELD, "ab"), 2), 0);
+            CountHits(a, new string[] { "ab" }, new FuzzyQuery(new Term(FIELD, "abcd"), 2), 0);
+        }
 
-	   private void CountHits(Analyzer analyzer, string[] docs, Query q, int expected)
-	   {
-		  Directory d = GetDirectory(analyzer, docs);
-		  IndexReader r = DirectoryReader.Open(d);
-		  IndexSearcher s = new IndexSearcher(r);
-		  TotalHitCountCollector c = new TotalHitCountCollector();
-		  s.Search(q, c);
-		  Assert.AreEqual(expected, c.TotalHits, q.ToString());
-		  r.Dispose();
-		  d.Dispose();
-	   }
+        private void CountHits(Analyzer analyzer, string[] docs, Query q, int expected)
+        {
+            Directory d = GetDirectory(analyzer, docs);
+            IndexReader r = DirectoryReader.Open(d);
+            IndexSearcher s = new IndexSearcher(r);
+            TotalHitCountCollector c = new TotalHitCountCollector();
+            s.Search(q, c);
+            Assert.AreEqual(expected, c.TotalHits, q.ToString());
+            r.Dispose();
+            d.Dispose();
+        }
 
-	   public static Analyzer Analyzer
-	   {
-		   get
-		   {
-			  return new AnalyzerAnonymousInnerClassHelper();
-		   }
-	   }
+        public static Analyzer Analyzer
+        {
+            get
+            {
+                return new AnalyzerAnonymousInnerClassHelper();
+            }
+        }
 
-	   private class AnalyzerAnonymousInnerClassHelper : Analyzer
-	   {
-		   public AnalyzerAnonymousInnerClassHelper()
-		   {
-		   }
+        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        {
+            public AnalyzerAnonymousInnerClassHelper()
+            {
+            }
 
-		   protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-		   {
-			  Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-			  return new TokenStreamComponents(tokenizer, tokenizer);
-		   }
-	   }
-	   public static Directory GetDirectory(Analyzer analyzer, string[] vals)
-	   {
-		  Directory directory = NewDirectory();
-		  RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+        }
+        public static Directory GetDirectory(Analyzer analyzer, string[] vals)
+        {
+            Directory directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 
-		  foreach (string s in vals)
-		  {
-			 Document d = new Document();
-			 d.Add(NewTextField(FIELD, s, Field.Store.YES));
-			 writer.AddDocument(d);
+            foreach (string s in vals)
+            {
+                Document d = new Document();
+                d.Add(NewTextField(FIELD, s, Field.Store.YES));
+                writer.AddDocument(d);
 
-		  }
-		  writer.Dispose();
-		  return directory;
-	   }
-	}
+            }
+            writer.Dispose();
+            return directory;
+        }
+    }
 
 }

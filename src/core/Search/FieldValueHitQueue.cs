@@ -3,28 +3,28 @@ using System.Diagnostics;
 namespace Lucene.Net.Search
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using Lucene.Net.Util;
+    using Lucene.Net.Util;
     using System;
-    
+
     //Used to hold non-generic nested types
-    public static class FieldValueHitQueue 
+    public static class FieldValueHitQueue
     {
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
         public class Entry : ScoreDoc
@@ -172,101 +172,101 @@ namespace Lucene.Net.Search
         }
     }
 
-	/// <summary>
-	/// Expert: A hit queue for sorting by hits by terms in more than one field.
-	/// Uses <code>FieldCache.DEFAULT</code> for maintaining
-	/// internal term lookup tables.
-	/// 
-	/// @lucene.experimental
-	/// @since 2.9 </summary>
-	/// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-	/// <seealso cref= FieldCache </seealso>
-	public abstract class FieldValueHitQueue<T> : PriorityQueue<T> 
+    /// <summary>
+    /// Expert: A hit queue for sorting by hits by terms in more than one field.
+    /// Uses <code>FieldCache.DEFAULT</code> for maintaining
+    /// internal term lookup tables.
+    /// 
+    /// @lucene.experimental
+    /// @since 2.9 </summary>
+    /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
+    /// <seealso cref= FieldCache </seealso>
+    public abstract class FieldValueHitQueue<T> : PriorityQueue<T>
         where T : FieldValueHitQueue.Entry
-	{
+    {
 
-	  
-	  // prevent instantiation and extension.
-	  internal FieldValueHitQueue(SortField[] fields, int size) 
-          : base(size)
-	  {
-		// When we get here, fields.length is guaranteed to be > 0, therefore no
-		// need to check it again.
 
-		// All these are required by this class's API - need to return arrays.
-		// Therefore even in the case of a single comparator, create an array
-		// anyway.
-		this.feilds = fields;
-		int numComparators = fields.Length;
-		comparators = new FieldComparator<T>[numComparators];
-		reverseMul = new int[numComparators];
-	  }
+        // prevent instantiation and extension.
+        internal FieldValueHitQueue(SortField[] fields, int size)
+            : base(size)
+        {
+            // When we get here, fields.length is guaranteed to be > 0, therefore no
+            // need to check it again.
 
-	  public virtual FieldComparator[] Comparators
-	  {
-		  get
-		  {
-			return comparators;
-		  }
-	  }
+            // All these are required by this class's API - need to return arrays.
+            // Therefore even in the case of a single comparator, create an array
+            // anyway.
+            this.feilds = fields;
+            int numComparators = fields.Length;
+            comparators = new FieldComparator<T>[numComparators];
+            reverseMul = new int[numComparators];
+        }
 
-	  public virtual int[] ReverseMul
-	  {
-		  get
-		  {
-			return reverseMul;
-		  }
-	  }
+        public virtual FieldComparator[] Comparators
+        {
+            get
+            {
+                return comparators;
+            }
+        }
 
-	  public virtual void SetComparator(int pos, FieldComparator comparator)
-	  {
-		if (pos == 0)
-		{
-			FirstComparator = comparator;
-		}
-		comparators[pos] = comparator;
-	  }
+        public virtual int[] ReverseMul
+        {
+            get
+            {
+                return reverseMul;
+            }
+        }
 
-	  /// <summary>
-	  /// Stores the sort criteria being used. </summary>
-	  protected internal readonly SortField[] feilds;
-	  protected internal readonly FieldComparator[] comparators; // use setComparator to change this array
-	  protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0]
-	  protected internal readonly int[] reverseMul;
+        public virtual void SetComparator(int pos, FieldComparator comparator)
+        {
+            if (pos == 0)
+            {
+                FirstComparator = comparator;
+            }
+            comparators[pos] = comparator;
+        }
 
-      public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
+        /// <summary>
+        /// Stores the sort criteria being used. </summary>
+        protected internal readonly SortField[] feilds;
+        protected internal readonly FieldComparator[] comparators; // use setComparator to change this array
+        protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0]
+        protected internal readonly int[] reverseMul;
 
-	  /// <summary>
-	  /// Given a queue Entry, creates a corresponding FieldDoc
-	  /// that contains the values used to sort the given document.
-	  /// These values are not the raw values out of the index, but the internal
-	  /// representation of them. this is so the given search hit can be collated by
-	  /// a MultiSearcher with other search hits.
-	  /// </summary>
-	  /// <param name="entry"> The Entry used to create a FieldDoc </param>
-	  /// <returns> The newly created FieldDoc </returns>
-	  /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-      internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
-	  {
-		int n = Comparators.Length;
-		object[] fields = new object[n];
-		for (int i = 0; i < n; ++i)
-		{
-		  fields[i] = Comparators[i].Value(entry.Slot);
-		}
-		//if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
-		return new FieldDoc(entry.Doc, entry.Score, fields);
-	  }
+        public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
-	  /// <summary>
-	  /// Returns the SortFields being used by this hit queue. </summary>
-	  internal virtual SortField[] Fields
-	  {
-		  get
-		  {
-			return feilds;
-		  }
-	  }
-	}
+        /// <summary>
+        /// Given a queue Entry, creates a corresponding FieldDoc
+        /// that contains the values used to sort the given document.
+        /// These values are not the raw values out of the index, but the internal
+        /// representation of them. this is so the given search hit can be collated by
+        /// a MultiSearcher with other search hits.
+        /// </summary>
+        /// <param name="entry"> The Entry used to create a FieldDoc </param>
+        /// <returns> The newly created FieldDoc </returns>
+        /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
+        internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
+        {
+            int n = Comparators.Length;
+            object[] fields = new object[n];
+            for (int i = 0; i < n; ++i)
+            {
+                fields[i] = Comparators[i].Value(entry.Slot);
+            }
+            //if (maxscore > 1.0f) doc.score /= maxscore;   // normalize scores
+            return new FieldDoc(entry.Doc, entry.Score, fields);
+        }
+
+        /// <summary>
+        /// Returns the SortFields being used by this hit queue. </summary>
+        internal virtual SortField[] Fields
+        {
+            get
+            {
+                return feilds;
+            }
+        }
+    }
 
 }

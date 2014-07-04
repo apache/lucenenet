@@ -99,7 +99,7 @@ namespace Lucene.Net.Store
 		  {
 			length = (int)(end - pos);
 		  }
-		  Array.Copy(File.GetBuffer(buffer++), 0, bytes, bytesUpto, length);
+		  System.Buffer.BlockCopy(File.GetBuffer(buffer++), 0, bytes, bytesUpto, length);
 		  bytesUpto += length;
 		  pos = nextPos;
 		}

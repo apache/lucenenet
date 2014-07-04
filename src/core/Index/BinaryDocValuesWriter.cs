@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                   int length = (int)lengthsIterator.Next();
                   value.Grow(length);
                   value.Length = length;
-                  //LUCENE TO-DO: This modification is slightly fishy, 4x port uses ByteBlockPool
+                  //LUCENE TODO: This modification is slightly fishy, 4x port uses ByteBlockPool
                   BytesIn.ReadBytes(/*byteOffset,*/ value.Bytes, value.Offset, value.Length);
                   byteOffset += length;
               }

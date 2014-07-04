@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 			  int bufferOffset = start % Buffer.Length;
 			  int bytesInBuffer = Buffer.Length - bufferOffset;
 			  int bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
-			  Array.Copy(Buffer, bufferOffset, dest, destOffset, bytesToCopy);
+			  System.Buffer.BlockCopy(Buffer, bufferOffset, dest, destOffset, bytesToCopy);
 			  destOffset += bytesToCopy;
 			  start += bytesToCopy;
 			  remainder -= bytesToCopy;

@@ -60,14 +60,18 @@ namespace Lucene.Net.Analysis
             internal int Upto;
             internal int InputLength;
 
-            internal readonly CharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
-            internal readonly OffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
-            internal readonly PositionIncrementAttribute PosIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
-            internal readonly PositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+            internal readonly ICharTermAttribute TermAtt;
+            internal readonly IOffsetAttribute OffsetAtt;
+            internal readonly IPositionIncrementAttribute PosIncrAtt;
+            internal readonly IPositionLengthAttribute PosLengthAtt;
 
             public GraphTokenizer(TextReader input)
                 : base(input)
             {
+                TermAtt = AddAttribute<ICharTermAttribute>();
+                OffsetAtt = AddAttribute<IOffsetAttribute>();
+                PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
             }
 
             public override void Reset()

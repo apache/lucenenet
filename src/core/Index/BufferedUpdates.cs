@@ -28,300 +28,303 @@ namespace Lucene.Net.Index
     using Query = Lucene.Net.Search.Query;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
-	/* Holds buffered deletes and updates, by docID, term or query for a
-	 * single segment. this is used to hold buffered pending
-	 * deletes and updates against the to-be-flushed segment.  Once the
-	 * deletes and updates are pushed (on flush in DocumentsWriter), they
-	 * are converted to a FrozenDeletes instance. */
+    /* Holds buffered deletes and updates, by docID, term or query for a
+     * single segment. this is used to hold buffered pending
+     * deletes and updates against the to-be-flushed segment.  Once the
+     * deletes and updates are pushed (on flush in DocumentsWriter), they
+     * are converted to a FrozenDeletes instance. */
 
-	// NOTE: instances of this class are accessed either via a private
-	// instance on DocumentWriterPerThread, or via sync'd code by
-	// DocumentsWriterDeleteQueue
+    // NOTE: instances of this class are accessed either via a private
+    // instance on DocumentWriterPerThread, or via sync'd code by
+    // DocumentsWriterDeleteQueue
 
-	public class BufferedUpdates
-	{
+    public class BufferedUpdates
+    {
 
-	  /* Rough logic: HashMap has an array[Entry] w/ varying
-	     load factor (say 2 * POINTER).  Entry is object w/ Term
-	     key, Integer val, int hash, Entry next
-	     (OBJ_HEADER + 3*POINTER + INT).  Term is object w/
-	     String field and String text (OBJ_HEADER + 2*POINTER).
-	     Term's field is String (OBJ_HEADER + 4*INT + POINTER +
-	     OBJ_HEADER + string.length*CHAR).
-	     Term's text is String (OBJ_HEADER + 4*INT + POINTER +
-	     OBJ_HEADER + string.length*CHAR).  Integer is
-	     OBJ_HEADER + INT. */
-	  internal static readonly int BYTES_PER_DEL_TERM = 9 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 7 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 10 * RamUsageEstimator.NUM_BYTES_INT;
+        /* Rough logic: HashMap has an array[Entry] w/ varying
+           load factor (say 2 * POINTER).  Entry is object w/ Term
+           key, Integer val, int hash, Entry next
+           (OBJ_HEADER + 3*POINTER + INT).  Term is object w/
+           String field and String text (OBJ_HEADER + 2*POINTER).
+           Term's field is String (OBJ_HEADER + 4*INT + POINTER +
+           OBJ_HEADER + string.length*CHAR).
+           Term's text is String (OBJ_HEADER + 4*INT + POINTER +
+           OBJ_HEADER + string.length*CHAR).  Integer is
+           OBJ_HEADER + INT. */
+        internal static readonly int BYTES_PER_DEL_TERM = 9 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 7 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 10 * RamUsageEstimator.NUM_BYTES_INT;
 
-	  /* Rough logic: del docIDs are List<Integer>.  Say list
-	     allocates ~2X size (2*POINTER).  Integer is OBJ_HEADER
-	     + int */
-	  internal static readonly int BYTES_PER_DEL_DOCID = 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+        /* Rough logic: del docIDs are List<Integer>.  Say list
+           allocates ~2X size (2*POINTER).  Integer is OBJ_HEADER
+           + int */
+        internal static readonly int BYTES_PER_DEL_DOCID = 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
 
-	  /* Rough logic: HashMap has an array[Entry] w/ varying
-	     load factor (say 2 * POINTER).  Entry is object w/
-	     Query key, Integer val, int hash, Entry next
-	     (OBJ_HEADER + 3*POINTER + INT).  Query we often
-	     undercount (say 24 bytes).  Integer is OBJ_HEADER + INT. */
-	  internal static readonly int BYTES_PER_DEL_QUERY = 5 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + 24;
+        /* Rough logic: HashMap has an array[Entry] w/ varying
+           load factor (say 2 * POINTER).  Entry is object w/
+           Query key, Integer val, int hash, Entry next
+           (OBJ_HEADER + 3*POINTER + INT).  Query we often
+           undercount (say 24 bytes).  Integer is OBJ_HEADER + INT. */
+        internal static readonly int BYTES_PER_DEL_QUERY = 5 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + 24;
 
-	  /* Rough logic: NumericUpdate calculates its actual size,
-	   * including the update Term and DV field (String). The 
-	   * per-field map holds a reference to the updated field, and
-	   * therefore we only account for the object reference and 
-	   * map space itself. this is incremented when we first see
-	   * an updated field.
-	   * 
-	   * HashMap has an array[Entry] w/ varying load
-	   * factor (say 2*POINTER). Entry is an object w/ String key, 
-	   * LinkedHashMap val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).
-	   * 
-	   * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
-	   * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
-	   */
-	  internal static readonly int BYTES_PER_NUMERIC_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT;
+        /* Rough logic: NumericUpdate calculates its actual size,
+         * including the update Term and DV field (String). The 
+         * per-field map holds a reference to the updated field, and
+         * therefore we only account for the object reference and 
+         * map space itself. this is incremented when we first see
+         * an updated field.
+         * 
+         * HashMap has an array[Entry] w/ varying load
+         * factor (say 2*POINTER). Entry is an object w/ String key, 
+         * LinkedHashMap val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).
+         * 
+         * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
+         * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
+         */
+        internal static readonly int BYTES_PER_NUMERIC_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT;
 
-	  /* Rough logic: Incremented when we see another Term for an already updated
-	   * field.
-	   * LinkedHashMap has an array[Entry] w/ varying load factor 
-	   * (say 2*POINTER). Entry is an object w/ Term key, NumericUpdate val, 
-	   * int hash, Entry next, Entry before, Entry after (OBJ_HEADER + 5*POINTER + INT).
-	   * 
-	   * Term (key) is counted only as POINTER.
-	   * NumericUpdate (val) counts its own size and isn't accounted for here.
-	   */
-	  internal static readonly int BYTES_PER_NUMERIC_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+        /* Rough logic: Incremented when we see another Term for an already updated
+         * field.
+         * LinkedHashMap has an array[Entry] w/ varying load factor 
+         * (say 2*POINTER). Entry is an object w/ Term key, NumericUpdate val, 
+         * int hash, Entry next, Entry before, Entry after (OBJ_HEADER + 5*POINTER + INT).
+         * 
+         * Term (key) is counted only as POINTER.
+         * NumericUpdate (val) counts its own size and isn't accounted for here.
+         */
+        internal static readonly int BYTES_PER_NUMERIC_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
 
-	  /* Rough logic: BinaryUpdate calculates its actual size,
-	   * including the update Term and DV field (String). The 
-	   * per-field map holds a reference to the updated field, and
-	   * therefore we only account for the object reference and 
-	   * map space itself. this is incremented when we first see
-	   * an updated field.
-	   * 
-	   * HashMap has an array[Entry] w/ varying load
-	   * factor (say 2*POINTER). Entry is an object w/ String key, 
-	   * LinkedHashMap val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).
-	   * 
-	   * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
-	   * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
-	   */
-	  internal static readonly int BYTES_PER_BINARY_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT;
+        /* Rough logic: BinaryUpdate calculates its actual size,
+         * including the update Term and DV field (String). The 
+         * per-field map holds a reference to the updated field, and
+         * therefore we only account for the object reference and 
+         * map space itself. this is incremented when we first see
+         * an updated field.
+         * 
+         * HashMap has an array[Entry] w/ varying load
+         * factor (say 2*POINTER). Entry is an object w/ String key, 
+         * LinkedHashMap val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).
+         * 
+         * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
+         * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
+         */
+        internal static readonly int BYTES_PER_BINARY_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT;
 
-	  /* Rough logic: Incremented when we see another Term for an already updated
-	   * field.
-	   * LinkedHashMap has an array[Entry] w/ varying load factor 
-	   * (say 2*POINTER). Entry is an object w/ Term key, BinaryUpdate val, 
-	   * int hash, Entry next, Entry before, Entry after (OBJ_HEADER + 5*POINTER + INT).
-	   * 
-	   * Term (key) is counted only as POINTER.
-	   * BinaryUpdate (val) counts its own size and isn't accounted for here.
-	   */
-	  internal static readonly int BYTES_PER_BINARY_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+        /* Rough logic: Incremented when we see another Term for an already updated
+         * field.
+         * LinkedHashMap has an array[Entry] w/ varying load factor 
+         * (say 2*POINTER). Entry is an object w/ Term key, BinaryUpdate val, 
+         * int hash, Entry next, Entry before, Entry after (OBJ_HEADER + 5*POINTER + INT).
+         * 
+         * Term (key) is counted only as POINTER.
+         * BinaryUpdate (val) counts its own size and isn't accounted for here.
+         */
+        internal static readonly int BYTES_PER_BINARY_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
 
-	  internal readonly AtomicInteger NumTermDeletes = new AtomicInteger();
-	  internal readonly AtomicInteger NumNumericUpdates = new AtomicInteger();
-	  internal readonly AtomicInteger NumBinaryUpdates = new AtomicInteger();
-	  internal readonly IDictionary<Term, int?> Terms = new Dictionary<Term, int?>();
-	  internal readonly IDictionary<Query, int?> Queries = new Dictionary<Query, int?>();
-	  internal readonly IList<int?> DocIDs = new List<int?>();
+        internal readonly AtomicInteger NumTermDeletes = new AtomicInteger();
+        internal readonly AtomicInteger NumNumericUpdates = new AtomicInteger();
+        internal readonly AtomicInteger NumBinaryUpdates = new AtomicInteger();
+        internal readonly IDictionary<Term, int?> Terms = new Dictionary<Term, int?>();
+        internal readonly IDictionary<Query, int?> Queries = new Dictionary<Query, int?>();
+        internal readonly IList<int?> DocIDs = new List<int?>();
 
-	  // Map<dvField,Map<updateTerm,NumericUpdate>>
-	  // For each field we keep an ordered list of NumericUpdates, key'd by the
-	  // update Term. LinkedHashMap guarantees we will later traverse the map in
-	  // insertion order (so that if two terms affect the same document, the last
-	  // one that came in wins), and helps us detect faster if the same Term is
-	  // used to update the same field multiple times (so we later traverse it
-	  // only once).
-	  internal readonly IDictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>> NumericUpdates = new Dictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>>();
+        // Map<dvField,Map<updateTerm,NumericUpdate>>
+        // For each field we keep an ordered list of NumericUpdates, key'd by the
+        // update Term. LinkedHashMap guarantees we will later traverse the map in
+        // insertion order (so that if two terms affect the same document, the last
+        // one that came in wins), and helps us detect faster if the same Term is
+        // used to update the same field multiple times (so we later traverse it
+        // only once).
+        internal readonly IDictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>> NumericUpdates = new Dictionary<string, /*Linked*/HashMap<Term, NumericDocValuesUpdate>>();
 
-	  // Map<dvField,Map<updateTerm,BinaryUpdate>>
-	  // For each field we keep an ordered list of BinaryUpdates, key'd by the
-	  // update Term. LinkedHashMap guarantees we will later traverse the map in
-	  // insertion order (so that if two terms affect the same document, the last
-	  // one that came in wins), and helps us detect faster if the same Term is
-	  // used to update the same field multiple times (so we later traverse it
-	  // only once).
-      internal readonly IDictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>> BinaryUpdates = new Dictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>>();
+        // Map<dvField,Map<updateTerm,BinaryUpdate>>
+        // For each field we keep an ordered list of BinaryUpdates, key'd by the
+        // update Term. LinkedHashMap guarantees we will later traverse the map in
+        // insertion order (so that if two terms affect the same document, the last
+        // one that came in wins), and helps us detect faster if the same Term is
+        // used to update the same field multiple times (so we later traverse it
+        // only once).
+        internal readonly IDictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>> BinaryUpdates = new Dictionary<string, /*Linked*/HashMap<Term, BinaryDocValuesUpdate>>();
 
-	  public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
+        public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
 
-	  internal readonly AtomicLong BytesUsed;
+        internal readonly AtomicLong BytesUsed;
 
-	  private const bool VERBOSE_DELETES = false;
+        private const bool VERBOSE_DELETES = false;
 
-	  internal long Gen;
+        internal long Gen;
 
-	  public BufferedUpdates()
-	  {
-		this.BytesUsed = new AtomicLong();
-	  }
+        public BufferedUpdates()
+        {
+            this.BytesUsed = new AtomicLong();
+        }
 
-	  public override string ToString()
-	  {
-		if (VERBOSE_DELETES)
-		{
-		  return "gen=" + Gen + " numTerms=" + NumTermDeletes + ", terms=" + Terms + ", queries=" + Queries + ", docIDs=" + DocIDs + ", numericUpdates=" + NumericUpdates + ", binaryUpdates=" + BinaryUpdates + ", bytesUsed=" + BytesUsed;
-		}
-		else
-		{
-		  string s = "gen=" + Gen;
-		  if (NumTermDeletes.Get() != 0)
-		  {
-			s += " " + NumTermDeletes.Get() + " deleted terms (unique count=" + Terms.Count + ")";
-		  }
-		  if (Queries.Count != 0)
-		  {
-			s += " " + Queries.Count + " deleted queries";
-		  }
-		  if (DocIDs.Count != 0)
-		  {
-			s += " " + DocIDs.Count + " deleted docIDs";
-		  }
-		  if (NumNumericUpdates.Get() != 0)
-		  {
-			s += " " + NumNumericUpdates.Get() + " numeric updates (unique count=" + NumericUpdates.Count + ")";
-		  }
-          if (NumBinaryUpdates.Get() != 0)
-		  {
-              s += " " + NumBinaryUpdates.Get() + " binary updates (unique count=" + BinaryUpdates.Count + ")";
-		  }
-          if (BytesUsed.Get() != 0)
-		  {
-              s += " bytesUsed=" + BytesUsed.Get();
-		  }
+        public override string ToString()
+        {
+            if (VERBOSE_DELETES)
+            {
+                return "gen=" + Gen + " numTerms=" + NumTermDeletes + ", terms=" + Terms + ", queries=" + Queries + ", docIDs=" + DocIDs + ", numericUpdates=" + NumericUpdates + ", binaryUpdates=" + BinaryUpdates + ", bytesUsed=" + BytesUsed;
+            }
+            else
+            {
+                string s = "gen=" + Gen;
+                if (NumTermDeletes.Get() != 0)
+                {
+                    s += " " + NumTermDeletes.Get() + " deleted terms (unique count=" + Terms.Count + ")";
+                }
+                if (Queries.Count != 0)
+                {
+                    s += " " + Queries.Count + " deleted queries";
+                }
+                if (DocIDs.Count != 0)
+                {
+                    s += " " + DocIDs.Count + " deleted docIDs";
+                }
+                if (NumNumericUpdates.Get() != 0)
+                {
+                    s += " " + NumNumericUpdates.Get() + " numeric updates (unique count=" + NumericUpdates.Count + ")";
+                }
+                if (NumBinaryUpdates.Get() != 0)
+                {
+                    s += " " + NumBinaryUpdates.Get() + " binary updates (unique count=" + BinaryUpdates.Count + ")";
+                }
+                if (BytesUsed.Get() != 0)
+                {
+                    s += " bytesUsed=" + BytesUsed.Get();
+                }
 
-		  return s;
-		}
-	  }
+                return s;
+            }
+        }
 
-	  public virtual void AddQuery(Query query, int docIDUpto)
-	  {
-		int? current = Queries[query] = docIDUpto;
-		// increment bytes used only if the query wasn't added so far.
-		if (current == null)
-		{
-		  BytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
-		}
-	  }
+        public virtual void AddQuery(Query query, int docIDUpto)
+        {
+            int? current = Queries[query] = docIDUpto;
+            // increment bytes used only if the query wasn't added so far.
+            if (current == null)
+            {
+                BytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
+            }
+        }
 
-	  public virtual void AddDocID(int docID)
-	  {
-		DocIDs.Add(Convert.ToInt32(docID));
-		BytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
-	  }
+        public virtual void AddDocID(int docID)
+        {
+            DocIDs.Add(Convert.ToInt32(docID));
+            BytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
+        }
 
-	  public virtual void AddTerm(Term term, int docIDUpto)
-	  {
-		int? current = Terms[term];
-		if (current != null && docIDUpto < current)
-		{
-		  // Only record the new number if it's greater than the
-		  // current one.  this is important because if multiple
-		  // threads are replacing the same doc at nearly the
-		  // same time, it's possible that one thread that got a
-		  // higher docID is scheduled before the other
-		  // threads.  If we blindly replace than we can
-		  // incorrectly get both docs indexed.
-		  return;
-		}
+        public virtual void AddTerm(Term term, int docIDUpto)
+        {
+            int? current;
+            Terms.TryGetValue(term, out current);
+            if (current != null && docIDUpto < current)
+            {
+                // Only record the new number if it's greater than the
+                // current one.  this is important because if multiple
+                // threads are replacing the same doc at nearly the
+                // same time, it's possible that one thread that got a
+                // higher docID is scheduled before the other
+                // threads.  If we blindly replace than we can
+                // incorrectly get both docs indexed.
+                return;
+            }
 
-		Terms[term] = Convert.ToInt32(docIDUpto);
-		// note that if current != null then it means there's already a buffered
-		// delete on that term, therefore we seem to over-count. this over-counting
-		// is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
-		NumTermDeletes.IncrementAndGet();
-		if (current == null)
-		{
-		  BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes_Renamed.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field().Length));
-		}
-	  }
+            Terms[term] = Convert.ToInt32(docIDUpto);
+            // note that if current != null then it means there's already a buffered
+            // delete on that term, therefore we seem to over-count. this over-counting
+            // is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
+            NumTermDeletes.IncrementAndGet();
+            if (current == null)
+            {
+                BytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes_Renamed.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field().Length));
+            }
+        }
 
-	  public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
-	  {
-		/*Linked*/HashMap<Term, NumericDocValuesUpdate> fieldUpdates = NumericUpdates[update.Field];
-		if (fieldUpdates == null)
-		{
-		  fieldUpdates = new /*Linked*/HashMap<Term, NumericDocValuesUpdate>();
-		  NumericUpdates[update.Field] = fieldUpdates;
-		  BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
-		}
-		NumericDocValuesUpdate current = fieldUpdates[update.Term];
-		if (current != null && docIDUpto < current.DocIDUpto)
-		{
-		  // Only record the new number if it's greater than or equal to the current
-		  // one. this is important because if multiple threads are replacing the
-		  // same doc at nearly the same time, it's possible that one thread that
-		  // got a higher docID is scheduled before the other threads.
-		  return;
-		}
+        public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
+        {
+            /*Linked*/
+            HashMap<Term, NumericDocValuesUpdate> fieldUpdates = NumericUpdates[update.Field];
+            if (fieldUpdates == null)
+            {
+                fieldUpdates = new /*Linked*/HashMap<Term, NumericDocValuesUpdate>();
+                NumericUpdates[update.Field] = fieldUpdates;
+                BytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
+            }
+            NumericDocValuesUpdate current = fieldUpdates[update.Term];
+            if (current != null && docIDUpto < current.DocIDUpto)
+            {
+                // Only record the new number if it's greater than or equal to the current
+                // one. this is important because if multiple threads are replacing the
+                // same doc at nearly the same time, it's possible that one thread that
+                // got a higher docID is scheduled before the other threads.
+                return;
+            }
 
-		update.DocIDUpto = docIDUpto;
-		// since it's a LinkedHashMap, we must first remove the Term entry so that
-		// it's added last (we're interested in insertion-order).
-		if (current != null)
-		{
-		  fieldUpdates.Remove(update.Term);
-		}
-		fieldUpdates[update.Term] = update;
-		NumNumericUpdates.IncrementAndGet();
-		if (current == null)
-		{
-		  BytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
-		}
-	  }
+            update.DocIDUpto = docIDUpto;
+            // since it's a LinkedHashMap, we must first remove the Term entry so that
+            // it's added last (we're interested in insertion-order).
+            if (current != null)
+            {
+                fieldUpdates.Remove(update.Term);
+            }
+            fieldUpdates[update.Term] = update;
+            NumNumericUpdates.IncrementAndGet();
+            if (current == null)
+            {
+                BytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
+            }
+        }
 
-	  public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
-	  {
-		/*Linked*/HashMap<Term, BinaryDocValuesUpdate> fieldUpdates = BinaryUpdates[update.Field];
-		if (fieldUpdates == null)
-		{
-		  fieldUpdates = new /*Linked*/HashMap<Term, BinaryDocValuesUpdate>();
-		  BinaryUpdates[update.Field] = fieldUpdates;
-		  BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
-		}
-		BinaryDocValuesUpdate current = fieldUpdates[update.Term];
-		if (current != null && docIDUpto < current.DocIDUpto)
-		{
-		  // Only record the new number if it's greater than or equal to the current
-		  // one. this is important because if multiple threads are replacing the
-		  // same doc at nearly the same time, it's possible that one thread that
-		  // got a higher docID is scheduled before the other threads.
-		  return;
-		}
+        public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
+        {
+            /*Linked*/
+            HashMap<Term, BinaryDocValuesUpdate> fieldUpdates = BinaryUpdates[update.Field];
+            if (fieldUpdates == null)
+            {
+                fieldUpdates = new /*Linked*/HashMap<Term, BinaryDocValuesUpdate>();
+                BinaryUpdates[update.Field] = fieldUpdates;
+                BytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
+            }
+            BinaryDocValuesUpdate current = fieldUpdates[update.Term];
+            if (current != null && docIDUpto < current.DocIDUpto)
+            {
+                // Only record the new number if it's greater than or equal to the current
+                // one. this is important because if multiple threads are replacing the
+                // same doc at nearly the same time, it's possible that one thread that
+                // got a higher docID is scheduled before the other threads.
+                return;
+            }
 
-		update.DocIDUpto = docIDUpto;
-		// since it's a LinkedHashMap, we must first remove the Term entry so that
-		// it's added last (we're interested in insertion-order).
-		if (current != null)
-		{
-		  fieldUpdates.Remove(update.Term);
-		}
-		fieldUpdates[update.Term] = update;
-		NumBinaryUpdates.IncrementAndGet();
-		if (current == null)
-		{
-		  BytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
-		}
-	  }
+            update.DocIDUpto = docIDUpto;
+            // since it's a LinkedHashMap, we must first remove the Term entry so that
+            // it's added last (we're interested in insertion-order).
+            if (current != null)
+            {
+                fieldUpdates.Remove(update.Term);
+            }
+            fieldUpdates[update.Term] = update;
+            NumBinaryUpdates.IncrementAndGet();
+            if (current == null)
+            {
+                BytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
+            }
+        }
 
-	  internal virtual void Clear()
-	  {
-		Terms.Clear();
-		Queries.Clear();
-		DocIDs.Clear();
-		NumericUpdates.Clear();
-		BinaryUpdates.Clear();
-		NumTermDeletes.Set(0);
-		NumNumericUpdates.Set(0);
-		NumBinaryUpdates.Set(0);
-		BytesUsed.Set(0);
-	  }
+        internal virtual void Clear()
+        {
+            Terms.Clear();
+            Queries.Clear();
+            DocIDs.Clear();
+            NumericUpdates.Clear();
+            BinaryUpdates.Clear();
+            NumTermDeletes.Set(0);
+            NumNumericUpdates.Set(0);
+            NumBinaryUpdates.Set(0);
+            BytesUsed.Set(0);
+        }
 
-	  internal virtual bool Any()
-	  {
-		return Terms.Count > 0 || DocIDs.Count > 0 || Queries.Count > 0 || NumericUpdates.Count > 0 || BinaryUpdates.Count > 0;
-	  }
-	}
+        internal virtual bool Any()
+        {
+            return Terms.Count > 0 || DocIDs.Count > 0 || Queries.Count > 0 || NumericUpdates.Count > 0 || BinaryUpdates.Count > 0;
+        }
+    }
 
 }

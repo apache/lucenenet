@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Analysis
 {
 	/*
@@ -54,18 +56,18 @@ namespace Lucene.Net.Analysis
 
 	  internal int i;
 
-	  internal readonly PositionIncrementAttribute PosIncrAttr;
-	  internal readonly PayloadAttribute PayloadAttr;
-	  internal readonly CharTermAttribute TermAttr;
+	  internal readonly IPositionIncrementAttribute PosIncrAttr;
+	  internal readonly IPayloadAttribute PayloadAttr;
+	  internal readonly ICharTermAttribute TermAttr;
 
 	  public MockPayloadFilter(TokenStream input, string fieldName) : base(input)
 	  {
 		this.FieldName = fieldName;
 		Pos = 0;
 		i = 0;
-		PosIncrAttr = input.AddAttribute<PositionIncrementAttribute>();
-		PayloadAttr = input.AddAttribute<PayloadAttribute>();
-		TermAttr = input.AddAttribute<CharTermAttribute>();
+		PosIncrAttr = input.AddAttribute<IPositionIncrementAttribute>();
+		PayloadAttr = input.AddAttribute<IPayloadAttribute>();
+		TermAttr = input.AddAttribute<ICharTermAttribute>();
 	  }
 
 	  public override bool IncrementToken()

@@ -145,7 +145,7 @@ namespace Lucene.Net.Store
 		  // the buffer contains enough data to satisfy this request
 		  if (len > 0) // to allow b to be null if len is 0...
 		  {
-			Array.Copy(Buffer, BufferPosition, b, offset, len);
+			System.Buffer.BlockCopy(Buffer, BufferPosition, b, offset, len);
 		  }
 		  BufferPosition += len;
 		}
@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
 			}
 			else
 			{
-			  Array.Copy(Buffer, 0, b, offset, len);
+			  System.Buffer.BlockCopy(Buffer, 0, b, offset, len);
 			  BufferPosition = len;
 			}
 		  }

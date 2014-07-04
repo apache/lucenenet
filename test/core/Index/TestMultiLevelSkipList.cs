@@ -1,3 +1,5 @@
+using Lucene.Net.Analysis.Tokenattributes;
+
 namespace Lucene.Net.Index
 {
 
@@ -139,13 +141,13 @@ namespace Lucene.Net.Index
 	  private class PayloadFilter : TokenFilter
 	  {
 
-		internal PayloadAttribute PayloadAtt;
+		internal IPayloadAttribute PayloadAtt;
 		internal AtomicInteger PayloadCount;
 
 		protected internal PayloadFilter(AtomicInteger payloadCount, TokenStream input) : base(input)
 		{
 		  this.PayloadCount = payloadCount;
-		  PayloadAtt = AddAttribute<PayloadAttribute>();
+		  PayloadAtt = AddAttribute<IPayloadAttribute>();
 		}
 
 		public override bool IncrementToken()

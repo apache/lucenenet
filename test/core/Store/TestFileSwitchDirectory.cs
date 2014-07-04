@@ -6,182 +6,182 @@ using NUnit.Framework;
 namespace Lucene.Net.Store
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using Codec = Lucene.Net.Codecs.Codec;
-	using Lucene40StoredFieldsWriter = Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsWriter;
-	using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using IndexWriter = Lucene.Net.Index.IndexWriter;
-	using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-	using TestIndexWriterReader = Lucene.Net.Index.TestIndexWriterReader;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Codec = Lucene.Net.Codecs.Codec;
+    using Lucene40StoredFieldsWriter = Lucene.Net.Codecs.Lucene40.Lucene40StoredFieldsWriter;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using TestIndexWriterReader = Lucene.Net.Index.TestIndexWriterReader;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
-	public class TestFileSwitchDirectory : LuceneTestCase
-	{
-	  /// <summary>
-	  /// Test if writing doc stores to disk and everything else to ram works.
-	  /// </summary>
-      [Test]
-	  public virtual void TestBasic()
-	  {
-		HashSet<string> fileExtensions = new HashSet<string>();
-		fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
-		fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
+    public class TestFileSwitchDirectory : LuceneTestCase
+    {
+        /// <summary>
+        /// Test if writing doc stores to disk and everything else to ram works.
+        /// </summary>
+        [Test]
+        public virtual void TestBasic()
+        {
+            HashSet<string> fileExtensions = new HashSet<string>();
+            fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
+            fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
 
-		MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-		primaryDir.CheckIndexOnClose = false; // only part of an index
-		MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-		secondaryDir.CheckIndexOnClose = false; // only part of an index
+            MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            primaryDir.CheckIndexOnClose = false; // only part of an index
+            MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            secondaryDir.CheckIndexOnClose = false; // only part of an index
 
-		FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
-		// for now we wire Lucene40Codec because we rely upon its specific impl
-		bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-		IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
-		TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
-		IndexReader reader = DirectoryReader.Open(writer, true);
-		Assert.AreEqual(100, reader.MaxDoc());
-		writer.Commit();
-		// we should see only fdx,fdt files here
-		string[] files = primaryDir.ListAll();
-		Assert.IsTrue(files.Length > 0);
-		for (int x = 0; x < files.Length; x++)
-		{
-		  string ext = FileSwitchDirectory.GetExtension(files[x]);
-		  Assert.IsTrue(fileExtensions.Contains(ext));
-		}
-		files = secondaryDir.ListAll();
-		Assert.IsTrue(files.Length > 0);
-		// we should not see fdx,fdt files here
-		for (int x = 0; x < files.Length; x++)
-		{
-		  string ext = FileSwitchDirectory.GetExtension(files[x]);
-		  Assert.IsFalse(fileExtensions.Contains(ext));
-		}
-		reader.Dispose();
-		writer.Dispose();
+            FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
+            // for now we wire Lucene40Codec because we rely upon its specific impl
+            bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
+            TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
+            IndexReader reader = DirectoryReader.Open(writer, true);
+            Assert.AreEqual(100, reader.MaxDoc());
+            writer.Commit();
+            // we should see only fdx,fdt files here
+            string[] files = primaryDir.ListAll();
+            Assert.IsTrue(files.Length > 0);
+            for (int x = 0; x < files.Length; x++)
+            {
+                string ext = FileSwitchDirectory.GetExtension(files[x]);
+                Assert.IsTrue(fileExtensions.Contains(ext));
+            }
+            files = secondaryDir.ListAll();
+            Assert.IsTrue(files.Length > 0);
+            // we should not see fdx,fdt files here
+            for (int x = 0; x < files.Length; x++)
+            {
+                string ext = FileSwitchDirectory.GetExtension(files[x]);
+                Assert.IsFalse(fileExtensions.Contains(ext));
+            }
+            reader.Dispose();
+            writer.Dispose();
 
-		files = fsd.ListAll();
-		for (int i = 0;i < files.Length;i++)
-		{
-		  Assert.IsNotNull(files[i]);
-		}
-		fsd.Dispose();
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
-	  }
+            files = fsd.ListAll();
+            for (int i = 0; i < files.Length; i++)
+            {
+                Assert.IsNotNull(files[i]);
+            }
+            fsd.Dispose();
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
+        }
 
-	  private Directory NewFSSwitchDirectory(ISet<string> primaryExtensions)
-	  {
-		DirectoryInfo primDir = CreateTempDir("foo");
-        DirectoryInfo secondDir = CreateTempDir("bar");
-		return NewFSSwitchDirectory(primDir, secondDir, primaryExtensions);
-	  }
+        private Directory NewFSSwitchDirectory(ISet<string> primaryExtensions)
+        {
+            DirectoryInfo primDir = CreateTempDir("foo");
+            DirectoryInfo secondDir = CreateTempDir("bar");
+            return NewFSSwitchDirectory(primDir, secondDir, primaryExtensions);
+        }
 
-      private Directory NewFSSwitchDirectory(DirectoryInfo aDir, DirectoryInfo bDir, ISet<string> primaryExtensions)
-	  {
-		Directory a = new SimpleFSDirectory(aDir);
-		Directory b = new SimpleFSDirectory(bDir);
-		FileSwitchDirectory switchDir = new FileSwitchDirectory(primaryExtensions, a, b, true);
-		return new MockDirectoryWrapper(Random(), switchDir);
-	  }
+        private Directory NewFSSwitchDirectory(DirectoryInfo aDir, DirectoryInfo bDir, ISet<string> primaryExtensions)
+        {
+            Directory a = new SimpleFSDirectory(aDir);
+            Directory b = new SimpleFSDirectory(bDir);
+            FileSwitchDirectory switchDir = new FileSwitchDirectory(primaryExtensions, a, b, true);
+            return new MockDirectoryWrapper(Random(), switchDir);
+        }
 
-	  // LUCENE-3380 -- make sure we get exception if the directory really does not exist.
-      [Test]
-	  public virtual void TestNoDir()
-	  {
-		DirectoryInfo primDir = CreateTempDir("foo");
-        DirectoryInfo secondDir = CreateTempDir("bar");
-		TestUtil.Rm(primDir);
-		TestUtil.Rm(secondDir);
-		Directory dir = NewFSSwitchDirectory(primDir, secondDir, new HashSet<string>());
-		try
-		{
-		  DirectoryReader.Open(dir);
-		  Assert.Fail("did not hit expected exception");
-		}
-		catch (NoSuchDirectoryException nsde)
-		{
-		  // expected
-		}
-		dir.Dispose();
-	  }
+        // LUCENE-3380 -- make sure we get exception if the directory really does not exist.
+        [Test]
+        public virtual void TestNoDir()
+        {
+            DirectoryInfo primDir = CreateTempDir("foo");
+            DirectoryInfo secondDir = CreateTempDir("bar");
+            TestUtil.Rm(primDir);
+            TestUtil.Rm(secondDir);
+            Directory dir = NewFSSwitchDirectory(primDir, secondDir, new HashSet<string>());
+            try
+            {
+                DirectoryReader.Open(dir);
+                Assert.Fail("did not hit expected exception");
+            }
+            catch (NoSuchDirectoryException nsde)
+            {
+                // expected
+            }
+            dir.Dispose();
+        }
 
-	  // LUCENE-3380 test that we can add a file, and then when we call list() we get it back
-      [Test]
-	  public virtual void TestDirectoryFilter()
-	  {
-		Directory dir = NewFSSwitchDirectory(new HashSet<string>());
-		string name = "file";
-		try
-		{
-		  dir.CreateOutput(name, NewIOContext(Random())).Dispose();
-		  Assert.IsTrue(SlowFileExists(dir, name));
-		  Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
-		}
-		finally
-		{
-		  dir.Dispose();
-		}
-	  }
+        // LUCENE-3380 test that we can add a file, and then when we call list() we get it back
+        [Test]
+        public virtual void TestDirectoryFilter()
+        {
+            Directory dir = NewFSSwitchDirectory(new HashSet<string>());
+            string name = "file";
+            try
+            {
+                dir.CreateOutput(name, NewIOContext(Random())).Dispose();
+                Assert.IsTrue(SlowFileExists(dir, name));
+                Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
+            }
+            finally
+            {
+                dir.Dispose();
+            }
+        }
 
-	  // LUCENE-3380 test that delegate compound files correctly.
-      [Test]
-	  public virtual void TestCompoundFileAppendTwice()
-	  {
-		Directory newDir = NewFSSwitchDirectory(CollectionsHelper.Singleton("cfs"));
-		CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
-		CreateSequenceFile(newDir, "d1", (sbyte) 0, 15);
-		IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
-		@out.WriteInt(0);
-		@out.Dispose();
-		Assert.AreEqual(1, csw.ListAll().Length);
-		Assert.AreEqual("d.xyz", csw.ListAll()[0]);
+        // LUCENE-3380 test that delegate compound files correctly.
+        [Test]
+        public virtual void TestCompoundFileAppendTwice()
+        {
+            Directory newDir = NewFSSwitchDirectory(CollectionsHelper.Singleton("cfs"));
+            CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+            CreateSequenceFile(newDir, "d1", (sbyte)0, 15);
+            IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
+            @out.WriteInt(0);
+            @out.Dispose();
+            Assert.AreEqual(1, csw.ListAll().Length);
+            Assert.AreEqual("d.xyz", csw.ListAll()[0]);
 
-		csw.Dispose();
+            csw.Dispose();
 
-		CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
-		Assert.AreEqual(1, cfr.ListAll().Length);
-		Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
-		cfr.Dispose();
-		newDir.Dispose();
-	  }
+            CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+            Assert.AreEqual(1, cfr.ListAll().Length);
+            Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
+            cfr.Dispose();
+            newDir.Dispose();
+        }
 
-	  /// <summary>
-	  /// Creates a file of the specified size with sequential data. The first
-	  ///  byte is written as the start byte provided. All subsequent bytes are
-	  ///  computed as start + offset where offset is the number of the byte.
-	  /// </summary>
-	  private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
-	  {
-		  IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
-		  for (int i = 0; i < size; i++)
-		  {
-			  os.WriteByte(start);
-			  start++;
-		  }
-		  os.Dispose();
-	  }
+        /// <summary>
+        /// Creates a file of the specified size with sequential data. The first
+        ///  byte is written as the start byte provided. All subsequent bytes are
+        ///  computed as start + offset where offset is the number of the byte.
+        /// </summary>
+        private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
+        {
+            IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
+            for (int i = 0; i < size; i++)
+            {
+                os.WriteByte(start);
+                start++;
+            }
+            os.Dispose();
+        }
 
-	}
+    }
 
 }

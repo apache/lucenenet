@@ -51,8 +51,8 @@ namespace Lucene.Net.Index
 	{
 	  private readonly R[] SubReaders;
 	  private readonly int[] Starts; // 1st docno for each reader
-	  private readonly int MaxDoc_Renamed;
-	  private readonly int NumDocs_Renamed;
+	  private readonly int maxDoc;
+	  private readonly int numDocs;
 
 	  /// <summary>
 	  /// List view solely for <seealso cref="#getSequentialSubReaders()"/>,
@@ -86,8 +86,8 @@ namespace Lucene.Net.Index
 		  r.RegisterParentReader(this);
 		}
 		Starts[subReaders.Length] = maxDoc;
-		this.MaxDoc_Renamed = maxDoc;
-		this.NumDocs_Renamed = numDocs;
+		this.maxDoc = maxDoc;
+		this.numDocs = numDocs;
 	  }
 
 	  public override sealed Fields GetTermVectors(int docID)
@@ -100,13 +100,13 @@ namespace Lucene.Net.Index
 	  public override sealed int NumDocs()
 	  {
 		// Don't call ensureOpen() here (it could affect performance)
-		return NumDocs_Renamed;
+		return numDocs;
 	  }
 
 	  public override sealed int MaxDoc()
 	  {
 		// Don't call ensureOpen() here (it could affect performance)
-		return MaxDoc_Renamed;
+		return maxDoc;
 	  }
 
 	  public override sealed void Document(int docID, StoredFieldVisitor visitor)
@@ -195,9 +195,9 @@ namespace Lucene.Net.Index
 	  /// Helper method for subclasses to get the corresponding reader for a doc ID </summary>
 	  protected internal int ReaderIndex(int docID)
 	  {
-		if (docID < 0 || docID >= MaxDoc_Renamed)
+		if (docID < 0 || docID >= maxDoc)
 		{
-		  throw new System.ArgumentException("docID must be >= 0 and < maxDoc=" + MaxDoc_Renamed + " (got docID=" + docID + ")");
+		  throw new System.ArgumentException("docID must be >= 0 and < maxDoc=" + maxDoc + " (got docID=" + docID + ")");
 		}
 		return ReaderUtil.SubIndex(docID, this.Starts);
 	  }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
 
       public override IList<IndexReader> GetSequentialSubReaders()
       {
-          return (IList<IndexReader>)SubReadersList;
+          return SubReadersList.Cast<IndexReader>().ToList();
       }
 	}
 

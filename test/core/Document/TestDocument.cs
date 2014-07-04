@@ -142,7 +142,6 @@ namespace Lucene.Net.Document
         Assert.AreEqual(0, doc.Fields.Count);
 	  }
 
-      [Ignore]
       [Test]
 	  public virtual void TestConstructorExceptions()
 	  {

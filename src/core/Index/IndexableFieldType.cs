@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
 	  /// </summary>
       IndexOptions_e? IndexOptionsValue { get; set; }
 
-      FieldType.NumericType NumericTypeValue { get; set; }
+      FieldType.NumericType? NumericTypeValue { get; set; }
 
 	  /// <summary>
 	  /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value

@@ -605,23 +605,23 @@ namespace Lucene.Net.Analysis
 		else
 		{
 		  base.CopyTo(target);
-		  ((OffsetAttribute) target).SetOffset(startOffset, endOffset);
-		  ((PositionIncrementAttribute) target).PositionIncrement = positionIncrement;
-          ((PayloadAttribute)target).Payload = (payload == null) ? null : (BytesRef)payload.Clone();
-		  ((FlagsAttribute) target).Flags = flags;
-		  ((TypeAttribute) target).Type = type;
+		  ((IOffsetAttribute) target).SetOffset(startOffset, endOffset);
+		  ((IPositionIncrementAttribute) target).PositionIncrement = positionIncrement;
+          ((IPayloadAttribute)target).Payload = (payload == null) ? null : (BytesRef)payload.Clone();
+		  ((IFlagsAttribute) target).Flags = flags;
+		  ((ITypeAttribute) target).Type = type;
 		}
 	  }
 
 	  public override void ReflectWith(IAttributeReflector reflector)
 	  {
 		base.ReflectWith(reflector);
-		reflector.Reflect(typeof(OffsetAttribute), "startOffset", startOffset);
-		reflector.Reflect(typeof(OffsetAttribute), "endOffset", endOffset);
-		reflector.Reflect(typeof(PositionIncrementAttribute), "positionIncrement", positionIncrement);
-		reflector.Reflect(typeof(PayloadAttribute), "payload", payload);
-		reflector.Reflect(typeof(FlagsAttribute), "flags", flags);
-		reflector.Reflect(typeof(TypeAttribute), "type", type);
+		reflector.Reflect(typeof(IOffsetAttribute), "startOffset", startOffset);
+		reflector.Reflect(typeof(IOffsetAttribute), "endOffset", endOffset);
+		reflector.Reflect(typeof(IPositionIncrementAttribute), "positionIncrement", positionIncrement);
+		reflector.Reflect(typeof(IPayloadAttribute), "payload", payload);
+		reflector.Reflect(typeof(IFlagsAttribute), "flags", flags);
+		reflector.Reflect(typeof(ITypeAttribute), "type", type);
 	  }
 
 	  private void CheckOffsets(int startOffset, int endOffset)

@@ -308,10 +308,12 @@ namespace Lucene.Net.Document
         {
             get
             {
+                return FieldsData == null ? null : FieldsData.ToString();
+
                 /*if (FieldsData is string || FieldsData is Number)
-                {*/
+                {
                 return FieldsData.ToString();
-                /*}
+                }
                 else
                 {
                     return null;
@@ -502,10 +504,10 @@ namespace Lucene.Net.Document
                 {
                     throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
                 }
-                /*if (Type.NumericTypeValue != null)
+                if (Type.NumericTypeValue != null)
                 {
                   throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
-                }*/
+                }
                 this.TokenStream_Renamed = value;
             }
         }
@@ -664,10 +666,8 @@ namespace Lucene.Net.Document
             }
             else if (StringValue != null)
             {
-                using (TextReader sr = new StringReader(StringValue))
-                {
-                    return analyzer.TokenStream(Name(), sr);
-                }
+                TextReader sr = new StringReader(StringValue);
+                return analyzer.TokenStream(Name(), sr);
             }
 
             throw new System.ArgumentException("Field must have either TokenStream, String, Reader or Number value; got " + this);
@@ -679,14 +679,14 @@ namespace Lucene.Net.Document
 
             internal void InitializeInstanceFields()
             {
-                TermAttribute = AddAttribute<CharTermAttribute>();
-                OffsetAttribute = AddAttribute<OffsetAttribute>();
+                TermAttribute = AddAttribute<ICharTermAttribute>();
+                OffsetAttribute = AddAttribute<IOffsetAttribute>();
             }
 
-            internal CharTermAttribute TermAttribute;
-            internal OffsetAttribute OffsetAttribute;
+            internal ICharTermAttribute TermAttribute;
+            internal IOffsetAttribute OffsetAttribute;
             internal bool Used = false;
-            internal string Value_Renamed = null;
+            internal string value = null;
 
             /// <summary>
             /// Creates a new TokenStream that returns a String as single token.
@@ -708,7 +708,7 @@ namespace Lucene.Net.Document
             {
                 set
                 {
-                    this.Value_Renamed = value;
+                    this.value = value;
                 }
             }
 
@@ -719,8 +719,8 @@ namespace Lucene.Net.Document
                     return false;
                 }
                 ClearAttributes();
-                TermAttribute.Append(Value_Renamed);
-                OffsetAttribute.SetOffset(0, Value_Renamed.Length);
+                TermAttribute.Append(value);
+                OffsetAttribute.SetOffset(0, value.Length);
                 Used = true;
                 return true;
             }
@@ -728,7 +728,7 @@ namespace Lucene.Net.Document
             public override void End()
             {
                 base.End();
-                int finalOffset = Value_Renamed.Length;
+                int finalOffset = value.Length;
                 OffsetAttribute.SetOffset(finalOffset, finalOffset);
             }
 
@@ -740,7 +740,7 @@ namespace Lucene.Net.Document
             public void Dispose(bool disposing)
             {
                 if (disposing)
-                    Value_Renamed = null;
+                    value = null;
             }
         }
 

@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
 		}
 		else if (fileName.StartsWith(IndexFileNames.SEGMENTS))
 		{
-		  return Convert.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), Character.MAX_RADIX);
+		  return Convert.ToInt64(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length));
 		}
 		else
 		{

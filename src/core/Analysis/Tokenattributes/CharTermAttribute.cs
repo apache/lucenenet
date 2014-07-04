@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
 	  public override void ReflectWith(IAttributeReflector reflector)
 	  {
-		reflector.Reflect(typeof(CharTermAttribute), "term", ToString());
+		reflector.Reflect(typeof(ICharTermAttribute), "term", ToString());
 		FillBytesRef();
 		reflector.Reflect(typeof(ITermToBytesRefAttribute), "bytes", BytesRef.DeepCopyOf(Bytes));
 	  }
