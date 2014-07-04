@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        /*LUCENE TO-DO I don't think this is ever used
+
         /// <summary>
         /// Returns a new iterator that iterates the attribute classes
         /// in the same order they were added in.
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-              return Collections.unmodifiableSet(Attributes.Keys).GetEnumerator();
+                return Attributes.Keys.GetEnumerator();
             }
         }
         /// <summary>
@@ -198,15 +198,15 @@ namespace Lucene.Net.Util
         {
             get
             {
-              State initState = CurrentState;
-              if (initState != null)
-              {
-                return new IteratorAnonymousInnerClassHelper(this, initState);
-              }
-              else
-              {
-                return Collections.emptySet<Attribute>().GetEnumerator();
-              }
+                State initState = CurrentState;
+                if (initState != null)
+                {
+                    return new IteratorAnonymousInnerClassHelper(this, initState);
+                }
+                else
+                {
+                    return (new HashSet<Attribute>()).GetEnumerator();
+                }
             }
         }
 
@@ -215,6 +215,7 @@ namespace Lucene.Net.Util
             private readonly AttributeSource OuterInstance;
 
             private AttributeSource.State InitState;
+            private Attribute current;
 
             public IteratorAnonymousInnerClassHelper(AttributeSource outerInstance, AttributeSource.State initState)
             {
@@ -227,26 +228,43 @@ namespace Lucene.Net.Util
 
             public virtual void Remove()
             {
-              throw new System.NotSupportedException();
+                throw new System.NotSupportedException();
             }
 
-            public virtual Attribute Next()
+            public void Dispose()
             {
-              if (state == null)
-              {
-                throw new Exception();
-              }
-              Attribute att = state.Attribute;
-              state = state.Next;
-              return att;
             }
 
-            public virtual bool HasNext()
+            public bool MoveNext()
             {
-              return state != null;
+                if (state == null)
+                {
+                    return false;
+                }
+
+                Attribute att = state.attribute;
+                state = state.next;
+                current = att;
+                return true;
+            }
+
+            public void Reset()
+            {
+                throw new NotImplementedException();
+            }
+
+            public Attribute Current
+            {
+                get { return current; }
+                set { current = value; }
+            }
+
+            object IEnumerator.Current
+            {
+                get { return Current; }
             }
         }
-  */
+
         /// <summary>
         /// a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
         private static readonly WeakDictionary<Type, LinkedList<WeakReference>> KnownImplClasses = new WeakDictionary<Type, LinkedList<WeakReference>>();

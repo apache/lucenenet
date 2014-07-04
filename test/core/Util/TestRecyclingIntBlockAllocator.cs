@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
 
         private RecyclingIntBlockAllocator NewAllocator()
         {
-            return new RecyclingIntBlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Counter.NewCounter());
+            return new RecyclingIntBlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Util.Counter.NewCounter());
         }
 
         [Test]

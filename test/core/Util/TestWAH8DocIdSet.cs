@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
         public override WAH8DocIdSet CopyOf(BitArray bs, int length)
         {
             int indexInterval = TestUtil.NextInt(Random(), 8, 256);
-            var builder = (new WAH8DocIdSet.Builder()).SetIndexInterval(indexInterval);
+            WAH8DocIdSet.Builder builder = (WAH8DocIdSet.Builder)(new WAH8DocIdSet.Builder()).SetIndexInterval(indexInterval);
             for (int i = bs.NextSetBit(0); i != -1; i = bs.NextSetBit(i + 1))
             {
                 builder.Add(i);
@@ -95,14 +95,26 @@ namespace Lucene.Net.Util
             {
                 for (int previousDoc = -1, doc = set.NextSetBit(0); ; previousDoc = doc, doc = set.NextSetBit(doc + 1))
                 {
+                    int startIdx = previousDoc + 1;
+                    int endIdx;
                     if (doc == -1)
                     {
-                        expected.Clear(previousDoc + 1, set.Count);
+                        endIdx = startIdx + set.Count;
+                        //expected.Clear(previousDoc + 1, set.Count);
+                        for (int i = startIdx; i < endIdx; i++)
+                        {
+                            expected[i] = false;
+                        }
                         break;
                     }
                     else
                     {
-                        expected.Clear(previousDoc + 1, doc);
+                        endIdx = startIdx + doc;
+                        for (int i = startIdx; i > endIdx; i++)
+                        {
+                            expected[i] = false;
+                        }
+                        //expected.Clear(previousDoc + 1, doc);
                     }
                 }
             }

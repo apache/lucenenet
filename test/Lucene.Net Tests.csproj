@@ -378,57 +378,6 @@
     <Compile Include="core\TestMergeSchedulerExternal.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="core\Util\BaseSortTestCase.cs" />
-    <Compile Include="core\Util\StressRamUsageEstimator.cs" />
-    <Compile Include="core\Util\Test2BPagedBytes.cs" />
-    <Compile Include="core\Util\TestArrayUtil.cs" />
-    <Compile Include="core\Util\TestAttributeSource.cs" />
-    <Compile Include="core\Util\TestBroadWord.cs" />
-    <Compile Include="core\Util\TestByteBlockPool.cs" />
-    <Compile Include="core\Util\TestBytesRef.cs" />
-    <Compile Include="core\Util\TestBytesRefArray.cs" />
-    <Compile Include="core\Util\TestBytesRefHash.cs" />
-    <Compile Include="core\Util\TestCharsRef.cs" />
-    <Compile Include="core\Util\TestCloseableThreadLocal.cs" />
-    <Compile Include="core\Util\TestCollectionUtil.cs" />
-    <Compile Include="core\Util\TestConstants.cs" />
-    <Compile Include="core\Util\TestDocIdBitSet.cs" />
-    <Compile Include="core\Util\TestDoubleBarrelLRUCache.cs" />
-    <Compile Include="core\Util\TestFieldCacheSanityChecker.cs" />
-    <Compile Include="core\Util\TestFilterIterator.cs" />
-    <Compile Include="core\Util\TestFixedBitSet.cs" />
-    <Compile Include="core\Util\TestIdentityHashSet.cs" />
-    <Compile Include="core\Util\TestIndexableBinaryStringTools.cs" />
-    <Compile Include="core\Util\TestInPlaceMergeSorter.cs" />
-    <Compile Include="core\Util\TestIntroSorter.cs" />
-    <Compile Include="core\Util\TestIntsRef.cs" />
-    <Compile Include="core\Util\TestIOUtils.cs" />
-    <Compile Include="core\Util\TestLongBitSet.cs" />
-    <Compile Include="core\Util\TestMathUtil.cs" />
-    <Compile Include="core\Util\TestMaxFailuresRule.cs" />
-    <Compile Include="core\Util\TestMergedIterator.cs" />
-    <Compile Include="core\Util\TestNamedSPILoader.cs" />
-    <Compile Include="core\Util\TestNumericUtils.cs" />
-    <Compile Include="core\Util\TestOfflineSorter.cs" />
-    <Compile Include="core\Util\TestOpenBitSet.cs" />
-    <Compile Include="core\Util\TestPagedBytes.cs" />
-    <Compile Include="core\Util\TestPForDeltaDocIdSet.cs" />
-    <Compile Include="core\Util\TestPriorityQueue.cs" />
-    <Compile Include="core\Util\TestQueryBuilder.cs" />
-    <Compile Include="core\Util\TestRamUsageEstimator.cs" />
-    <Compile Include="core\Util\TestRamUsageEstimatorOnWildAnimals.cs" />
-    <Compile Include="core\Util\TestRecyclingByteBlockAllocator.cs" />
-    <Compile Include="core\Util\TestRecyclingIntBlockAllocator.cs" />
-    <Compile Include="core\Util\TestRollingBuffer.cs" />
-    <Compile Include="core\Util\TestSentinelIntSet.cs" />
-    <Compile Include="core\Util\TestSetOnce.cs" />
-    <Compile Include="core\Util\TestSloppyMath.cs" />
-    <Compile Include="core\Util\TestSmallFloat.cs" />
-    <Compile Include="core\Util\TestStringHelper.cs" />
-    <Compile Include="core\Util\TestTimSorter.cs" />
-    <Compile Include="core\Util\TestUnicodeUtil.cs" />
-    <Compile Include="core\Util\TestVersion.cs" />
-    <Compile Include="core\Util\TestVersionComparator.cs" />
     <Compile Include="test-framework\core\Analysis\BaseTokenStreamTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -840,7 +789,11 @@
     <Content Include="lib\ICSharpCode.SharpZipLib.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="core\Util\Automaton\" />
+    <Folder Include="core\Util\Cache\" />
+    <Folder Include="core\Util\Fst\" />
     <Folder Include="core\Util\Junitcompat\" />
+    <Folder Include="core\Util\Packed\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

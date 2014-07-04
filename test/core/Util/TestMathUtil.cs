@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
         // slow version used for testing
         internal static long Gcd(long l1, long l2)
         {
-            System.Numerics.BigInteger gcd = System.Numerics.BigInteger.valueOf(l1).gcd(System.Numerics.BigInteger.valueOf(l2));
+            System.Numerics.BigInteger gcd = System.Numerics.BigInteger.ValueOf(l1).gcd(System.Numerics.BigInteger.ValueOf(l2));
             Debug.Assert(gcd.BitCount() <= 64);
             return (long)gcd;
         }

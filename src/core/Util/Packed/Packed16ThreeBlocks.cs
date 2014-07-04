@@ -27,129 +27,113 @@ namespace Lucene.Net.Util.Packed
     using DataInput = Lucene.Net.Store.DataInput;
 
 
-	/// <summary>
-	/// Packs integers into 3 shorts (48 bits per value).
-	/// @lucene.internal
-	/// </summary>
-	internal sealed class Packed16ThreeBlocks : PackedInts.MutableImpl
-	{
-	  internal readonly short[] Blocks;
+    /// <summary>
+    /// Packs integers into 3 shorts (48 bits per value).
+    /// @lucene.internal
+    /// </summary>
+    public sealed class Packed16ThreeBlocks : PackedInts.MutableImpl
+    {
+        internal readonly short[] Blocks;
 
-	  public static readonly int MAX_SIZE = int.MaxValue / 3;
+        public static readonly int MAX_SIZE = int.MaxValue / 3;
 
-	  internal Packed16ThreeBlocks(int valueCount) : base(valueCount, 48)
-	  {
-		if (valueCount > MAX_SIZE)
-		{
-		  throw new System.IndexOutOfRangeException("MAX_SIZE exceeded");
-		}
-		Blocks = new short[valueCount * 3];
-	  }
+        public Packed16ThreeBlocks(int valueCount)
+            : base(valueCount, 48)
+        {
+            if (valueCount > MAX_SIZE)
+            {
+                throw new System.IndexOutOfRangeException("MAX_SIZE exceeded");
+            }
+            Blocks = new short[valueCount * 3];
+        }
 
-	  internal Packed16ThreeBlocks(int packedIntsVersion, DataInput @in, int valueCount) : this(valueCount)
-	  {
-		for (int i = 0; i < 3 * valueCount; ++i)
-		{
-		  Blocks[i] = @in.ReadShort();
-		}
-		// because packed ints have not always been byte-aligned
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int remaining = (int)(PackedInts.Format.PACKED.byteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
-		int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
-		for (int i = 0; i < remaining; ++i)
-		{
-		   @in.ReadByte();
-		}
-	  }
+        internal Packed16ThreeBlocks(int packedIntsVersion, DataInput @in, int valueCount)
+            : this(valueCount)
+        {
+            for (int i = 0; i < 3 * valueCount; ++i)
+            {
+                Blocks[i] = @in.ReadShort();
+            }
+            // because packed ints have not always been byte-aligned
+            int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);
+            for (int i = 0; i < remaining; ++i)
+            {
+                @in.ReadByte();
+            }
+        }
 
-	  public override long Get(int index)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int o = index * 3;
-		int o = index * 3;
-		return (Blocks[o] & 0xFFFFL) << 32 | (Blocks[o + 1] & 0xFFFFL) << 16 | (Blocks[o + 2] & 0xFFFFL);
-	  }
+        public override long Get(int index)
+        {
+            int o = index * 3;
+            return (Blocks[o] & 0xFFFFL) << 32 | (Blocks[o + 1] & 0xFFFFL) << 16 | (Blocks[o + 2] & 0xFFFFL);
+        }
 
-	  public override int Get(int index, long[] arr, int off, int len)
-	  {
-		Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		Debug.Assert(index >= 0 && index < valueCount);
-		Debug.Assert(off + len <= arr.Length);
+        public override int Get(int index, long[] arr, int off, int len)
+        {
+            Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
+            Debug.Assert(index >= 0 && index < valueCount);
+            Debug.Assert(off + len <= arr.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int gets = Math.min(valueCount - index, len);
-		int gets = Math.Min(valueCount - index, len);
-		for (int i = index * 3, end = (index + gets) * 3; i < end; i += 3)
-		{
-		  arr[off++] = (Blocks[i] & 0xFFFFL) << 32 | (Blocks[i + 1] & 0xFFFFL) << 16 | (Blocks[i + 2] & 0xFFFFL);
-		}
-		return gets;
-	  }
+            int gets = Math.Min(valueCount - index, len);
+            for (int i = index * 3, end = (index + gets) * 3; i < end; i += 3)
+            {
+                arr[off++] = (Blocks[i] & 0xFFFFL) << 32 | (Blocks[i + 1] & 0xFFFFL) << 16 | (Blocks[i + 2] & 0xFFFFL);
+            }
+            return gets;
+        }
 
-	  public override void Set(int index, long value)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int o = index * 3;
-		int o = index * 3;
-		Blocks[o] = (short)((long)((ulong)value >> 32));
-		Blocks[o + 1] = (short)((long)((ulong)value >> 16));
-		Blocks[o + 2] = (short) value;
-	  }
+        public override void Set(int index, long value)
+        {
+            int o = index * 3;
+            Blocks[o] = (short)((long)((ulong)value >> 32));
+            Blocks[o + 1] = (short)((long)((ulong)value >> 16));
+            Blocks[o + 2] = (short)value;
+        }
 
-	  public override int Set(int index, long[] arr, int off, int len)
-	  {
-		Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-		Debug.Assert(index >= 0 && index < valueCount);
-		Debug.Assert(off + len <= arr.Length);
+        public override int Set(int index, long[] arr, int off, int len)
+        {
+            Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
+            Debug.Assert(index >= 0 && index < valueCount);
+            Debug.Assert(off + len <= arr.Length);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int sets = Math.min(valueCount - index, len);
-		int sets = Math.Min(valueCount - index, len);
-		for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long value = arr[i];
-		  long value = arr[i];
-		  Blocks[o++] = (short)((long)((ulong)value >> 32));
-		  Blocks[o++] = (short)((long)((ulong)value >> 16));
-		  Blocks[o++] = (short) value;
-		}
-		return sets;
-	  }
+            int sets = Math.Min(valueCount - index, len);
+            for (int i = off, o = index * 3, end = off + sets; i < end; ++i)
+            {
+                long value = arr[i];
+                Blocks[o++] = (short)((long)((ulong)value >> 32));
+                Blocks[o++] = (short)((long)((ulong)value >> 16));
+                Blocks[o++] = (short)value;
+            }
+            return sets;
+        }
 
-	  public override void Fill(int fromIndex, int toIndex, long val)
-	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short block1 = (short)(val >>> 32);
-		short block1 = (short)((long)((ulong)val >> 32));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short block2 = (short)(val >>> 16);
-		short block2 = (short)((long)((ulong)val >> 16));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final short block3 = (short) val;
-		short block3 = (short) val;
-		for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
-		{
-		  Blocks[i] = block1;
-		  Blocks[i + 1] = block2;
-		  Blocks[i + 2] = block3;
-		}
-	  }
+        public override void Fill(int fromIndex, int toIndex, long val)
+        {
+            short block1 = (short)((long)((ulong)val >> 32));
+            short block2 = (short)((long)((ulong)val >> 16));
+            short block3 = (short)val;
+            for (int i = fromIndex * 3, end = toIndex * 3; i < end; i += 3)
+            {
+                Blocks[i] = block1;
+                Blocks[i + 1] = block2;
+                Blocks[i + 2] = block3;
+            }
+        }
 
-	  public override void Clear()
-	  {
-		Arrays.Fill(Blocks, (short) 0);
-	  }
+        public override void Clear()
+        {
+            Arrays.Fill(Blocks, (short)0);
+        }
 
-	  public override long RamBytesUsed()
-	  {
-		return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Blocks); // blocks ref -  valueCount,bitsPerValue
-	  }
+        public override long RamBytesUsed()
+        {
+            return RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF) + RamUsageEstimator.SizeOf(Blocks); // blocks ref -  valueCount,bitsPerValue
+        }
 
-	  public override string ToString()
-	  {
-          return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
-	  }
-	}
+        public override string ToString()
+        {
+            return this.GetType().Name + "(bitsPerValue=" + bitsPerValue + ", size=" + Size() + ", elements.length=" + Blocks.Length + ")";
+        }
+    }
 
 }

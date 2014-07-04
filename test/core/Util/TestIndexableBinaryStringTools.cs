@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Text;
 using NUnit.Framework;
 
@@ -50,7 +51,7 @@ namespace Lucene.Net.Util
             sbyte[] decoded = new sbyte[decodedLen];
             IndexableBinaryStringTools.Decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
 
-            Assert.AreEqual("Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "original: " + BinaryDump(binary, binary.Length) + System.getProperty("line.separator") + " encoded: " + CharArrayDump(encoded, encoded.Length) + System.getProperty("line.separator") + " decoded: " + BinaryDump(decoded, decoded.Length), BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length));
+            Assert.AreEqual(BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length), "Round trip decode/decode returned different results:\noriginal: " + BinaryDump(binary, binary.Length) + "\n encoded: " + CharArrayDump(encoded, encoded.Length) + "\n decoded: " + BinaryDump(decoded, decoded.Length));
         }
 
         [Test]
@@ -102,7 +103,7 @@ namespace Lucene.Net.Util
                 int encodedComparison = (new string(encoded1, 0, encodedLen1)).CompareTo(new string(encoded2, 0, encodedLen2));
                 encodedComparison = encodedComparison < 0 ? -1 : encodedComparison > 0 ? 1 : 0;
 
-                Assert.AreEqual("Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + System.getProperty("line.separator") + " binary 1: " + BinaryDump(originalArray1, numBytes1) + System.getProperty("line.separator") + " binary 2: " + BinaryDump(original2, numBytes2) + System.getProperty("line.separator") + "encoded 1: " + CharArrayDump(encoded1, encodedLen1) + System.getProperty("line.separator") + "encoded 2: " + CharArrayDump(encoded2, encodedLen2) + System.getProperty("line.separator"), originalComparison, encodedComparison);
+                Assert.AreEqual(originalComparison, encodedComparison, "Test #" + (testNum + 1) + ": Original bytes and encoded chars compare differently:" + " \nbinary 1: " + BinaryDump(originalArray1, numBytes1) + " \nbinary 2: " + BinaryDump(original2, numBytes2) + "\nencoded 1: " + CharArrayDump(encoded1, encodedLen1) + "\nencoded 2: " + CharArrayDump(encoded2, encodedLen2));
             }
         }
 
@@ -135,7 +136,7 @@ namespace Lucene.Net.Util
             sbyte[] decoded = new sbyte[decodedLen];
             IndexableBinaryStringTools.Decode(encoded, 0, encoded.Length, decoded, 0, decoded.Length);
 
-            Assert.AreEqual("Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "  original: " + BinaryDump(binary, binary.Length) + System.getProperty("line.separator") + "decodedBuf: " + BinaryDump(decoded, decoded.Length), BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length));
+            Assert.AreEqual(BinaryDump(binary, binary.Length), BinaryDump(decoded, decoded.Length), "Round trip decode/decode returned different results:" + "\n  original: " + BinaryDump(binary, binary.Length) + "\ndecodedBuf: " + BinaryDump(decoded, decoded.Length));
         }
 
         [Test]
@@ -163,7 +164,7 @@ namespace Lucene.Net.Util
                 int decodedLen = IndexableBinaryStringTools.GetDecodedLength(encoded, 0, encodedLen);
                 IndexableBinaryStringTools.Decode(encoded, 0, encodedLen, decoded, 0, decodedLen);
 
-                Assert.AreEqual("Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + System.getProperty("line.separator") + "  original: " + BinaryDump(binary, numBytes) + System.getProperty("line.separator") + "encodedBuf: " + CharArrayDump(encoded, encodedLen) + System.getProperty("line.separator") + "decodedBuf: " + BinaryDump(decoded, decodedLen), BinaryDump(binary, numBytes), BinaryDump(decoded, decodedLen));
+                Assert.AreEqual(BinaryDump(binary, numBytes), BinaryDump(decoded, decodedLen), "Test #" + (testNum + 1) + ": Round trip decode/decode returned different results:" + "\n  original: " + BinaryDump(binary, numBytes) + "\nencodedBuf: " + CharArrayDump(encoded, encodedLen) + "\ndecodedBuf: " + BinaryDump(decoded, decodedLen));
             }
         }
 
@@ -172,12 +173,12 @@ namespace Lucene.Net.Util
             StringBuilder buf = new StringBuilder();
             for (int byteNum = 0; byteNum < numBytes; ++byteNum)
             {
-                string hex = binary[byteNum] & 0xFF.ToString("x");
+                string hex = (binary[byteNum] & 0xFF).ToString("x");
                 if (hex.Length == 1)
                 {
                     buf.Append('0');
                 }
-                buf.Append(hex.ToUpper(Locale.ROOT));
+                buf.Append(hex.ToUpper(CultureInfo.InvariantCulture));
                 if (byteNum < numBytes - 1)
                 {
                     buf.Append(' ');
@@ -191,12 +192,12 @@ namespace Lucene.Net.Util
             StringBuilder buf = new StringBuilder();
             for (int charNum = 0; charNum < numBytes; ++charNum)
             {
-                string hex = charArray[charNum].ToString("x");
+                string hex = ((int)charArray[charNum]).ToString("x");
                 for (int digit = 0; digit < 4 - hex.Length; ++digit)
                 {
                     buf.Append('0');
                 }
-                buf.Append(hex.ToUpper(Locale.ROOT));
+                buf.Append(hex.ToUpper(CultureInfo.InvariantCulture));
                 if (charNum < numBytes - 1)
                 {
                     buf.Append(' ');

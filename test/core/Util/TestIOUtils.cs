@@ -62,9 +62,10 @@ namespace Lucene.Net.Util
             {
                 Assert.AreEqual("BASE-EXCEPTION", e1.Message);
                 StringWriter sw = new StringWriter();
-                StreamWriter pw = new StreamWriter(sw);
-                e1.printStackTrace(pw);
-                pw.Flush();
+                //StreamWriter pw = new StreamWriter(sw);
+                //e1.printStackTrace(pw);
+                Console.Error.WriteLine(e1.StackTrace);
+                //pw.Flush();
                 string trace = sw.ToString();
                 if (VERBOSE)
                 {
@@ -92,9 +93,10 @@ namespace Lucene.Net.Util
             {
                 Assert.AreEqual("TEST-IO-EXCEPTION-1", e2.Message);
                 StringWriter sw = new StringWriter();
-                StreamWriter pw = new StreamWriter(sw);
-                e2.printStackTrace(pw);
-                pw.Flush();
+                Console.Error.WriteLine(e2.StackTrace);
+                //StreamWriter pw = new StreamWriter(sw);
+                //e2.printStackTrace(pw);
+                //pw.Flush();
                 string trace = sw.ToString();
                 if (VERBOSE)
                 {

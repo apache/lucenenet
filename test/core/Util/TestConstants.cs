@@ -43,11 +43,11 @@ namespace Lucene.Net.Util
         {
             // common-build.xml sets lucene.version, if not, we skip this test!
             string version = System.getProperty("lucene.version");
-            assumeTrue("Null lucene.version test property. You should run the tests with the official Lucene build file", version != null);
+            AssumeTrue("Null lucene.version test property. You should run the tests with the official Lucene build file", version != null);
 
             // remove anything after a "-" from the version string:
-            version = version.replaceAll("-.*$", "");
-            string versionConstant = Constants.LUCENE_VERSION.replaceAll("-.*$", "");
+            version = version.ReplaceAll("-.*$", "");
+            string versionConstant = Constants.LUCENE_VERSION.ReplaceAll("-.*$", "");
             Assert.IsTrue(versionConstant.StartsWith(version) || version.StartsWith(versionConstant), "LUCENE_VERSION should share the same prefix with lucene.version test property ('" + version + "')." + VersionDetails);
         }
 

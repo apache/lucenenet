@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestReadAndWrite()
         {
-            Counter bytesUsed = Counter.NewCounter();
+            Counter bytesUsed = Util.Counter.NewCounter();
             ByteBlockPool pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
             pool.NextBuffer();
             bool reuseFirst = Random().NextBoolean();

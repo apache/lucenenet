@@ -28,18 +28,18 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestSanity()
         {
-            Assert.IsTrue(sizeOf(new string("test string")) > shallowSizeOfInstance(typeof(string)));
+            Assert.IsTrue(sizeof(new string("test string")) > ShallowSizeOfInstance(typeof(string)));
 
             Holder holder = new Holder();
             holder.Holder_Renamed = new Holder("string2", 5000L);
-            Assert.IsTrue(sizeOf(holder) > shallowSizeOfInstance(typeof(Holder)));
-            Assert.IsTrue(sizeOf(holder) > sizeOf(holder.Holder_Renamed));
+            Assert.IsTrue(sizeof(holder) > shallowSizeOfInstance(typeof(Holder)));
+            Assert.IsTrue(sizeof(holder) > sizeof(holder.Holder_Renamed));
 
             Assert.IsTrue(shallowSizeOfInstance(typeof(HolderSubclass)) >= shallowSizeOfInstance(typeof(Holder)));
             Assert.IsTrue(shallowSizeOfInstance(typeof(Holder)) == shallowSizeOfInstance(typeof(HolderSubclass2)));
 
             string[] strings = new string[] { new string("test string"), new string("hollow"), new string("catchmaster") };
-            Assert.IsTrue(sizeOf(strings) > shallowSizeOf(strings));
+            Assert.IsTrue(sizeof(strings) > shallowSizeOf(strings));
         }
 
         [Test]
@@ -48,45 +48,45 @@ namespace Lucene.Net.Util
             Random rnd = Random();
             {
                 sbyte[] array = new sbyte[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 bool[] array = new bool[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 char[] array = new char[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 short[] array = new short[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 int[] array = new int[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 float[] array = new float[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 long[] array = new long[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
 
             {
                 double[] array = new double[rnd.Next(1024)];
-                Assert.AreEqual(sizeOf(array), sizeOf((object)array));
+                Assert.AreEqual(sizeof(array), sizeof((object)array));
             }
         }
-
+        /*
         [Test]
         public virtual void TestReferenceSize()
         {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
             {
                 Assert.AreEqual("For 32bit JVMs, reference size must always be 4?", 4, NUM_BYTES_OBJECT_REF);
             }
-        }
+        }*/
 
         private class Holder
         {

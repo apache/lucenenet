@@ -100,24 +100,24 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestHaversin()
         {
-            Assert.IsTrue(double.IsNaN(haversin(1, 1, 1, double.NaN)));
-            Assert.IsTrue(double.IsNaN(haversin(1, 1, double.NaN, 1)));
-            Assert.IsTrue(double.IsNaN(haversin(1, double.NaN, 1, 1)));
-            Assert.IsTrue(double.IsNaN(haversin(double.NaN, 1, 1, 1)));
+            Assert.IsTrue(double.IsNaN(SloppyMath.Haversin(1, 1, 1, double.NaN)));
+            Assert.IsTrue(double.IsNaN(SloppyMath.Haversin(1, 1, double.NaN, 1)));
+            Assert.IsTrue(double.IsNaN(SloppyMath.Haversin(1, double.NaN, 1, 1)));
+            Assert.IsTrue(double.IsNaN(SloppyMath.Haversin(double.NaN, 1, 1, 1)));
 
-            Assert.AreEqual(0, haversin(0, 0, 0, 0), 0D);
-            Assert.AreEqual(0, haversin(0, -180, 0, -180), 0D);
-            Assert.AreEqual(0, haversin(0, -180, 0, 180), 0D);
-            Assert.AreEqual(0, haversin(0, 180, 0, 180), 0D);
-            Assert.AreEqual(0, haversin(90, 0, 90, 0), 0D);
-            Assert.AreEqual(0, haversin(90, -180, 90, -180), 0D);
-            Assert.AreEqual(0, haversin(90, -180, 90, 180), 0D);
-            Assert.AreEqual(0, haversin(90, 180, 90, 180), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(0, 0, 0, 0), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(0, -180, 0, -180), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(0, -180, 0, 180), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(0, 180, 0, 180), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(90, 0, 90, 0), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(90, -180, 90, -180), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(90, -180, 90, 180), 0D);
+            Assert.AreEqual(0, SloppyMath.Haversin(90, 180, 90, 180), 0D);
 
             // Test half a circle on the equator, using WGS84 earth radius
             double earthRadiusKMs = 6378.137;
             double halfCircle = earthRadiusKMs * Math.PI;
-            Assert.AreEqual(halfCircle, haversin(0, 0, 0, 180), 0D);
+            Assert.AreEqual(halfCircle, SloppyMath.Haversin(0, 0, 0, 180), 0D);
 
             Random r = Random();
             double randomLat1 = 40.7143528 + (r.Next(10) - 5) * 360;
@@ -126,17 +126,17 @@ namespace Lucene.Net.Util
             double randomLat2 = 40.65 + (r.Next(10) - 5) * 360;
             double randomLon2 = -73.95 + (r.Next(10) - 5) * 360;
 
-            Assert.AreEqual(8.572, haversin(randomLat1, randomLon1, randomLat2, randomLon2), 0.01D);
+            Assert.AreEqual(8.572, SloppyMath.Haversin(randomLat1, randomLon1, randomLat2, randomLon2), 0.01D);
 
 
             // from solr and ES tests (with their respective epsilons)
-            Assert.AreEqual(0, haversin(40.7143528, -74.0059731, 40.7143528, -74.0059731), 0D);
-            Assert.AreEqual(5.286, haversin(40.7143528, -74.0059731, 40.759011, -73.9844722), 0.01D);
-            Assert.AreEqual(0.4621, haversin(40.7143528, -74.0059731, 40.718266, -74.007819), 0.01D);
-            Assert.AreEqual(1.055, haversin(40.7143528, -74.0059731, 40.7051157, -74.0088305), 0.01D);
-            Assert.AreEqual(1.258, haversin(40.7143528, -74.0059731, 40.7247222, -74), 0.01D);
-            Assert.AreEqual(2.029, haversin(40.7143528, -74.0059731, 40.731033, -73.9962255), 0.01D);
-            Assert.AreEqual(8.572, haversin(40.7143528, -74.0059731, 40.65, -73.95), 0.01D);
+            Assert.AreEqual(0, SloppyMath.Haversin(40.7143528, -74.0059731, 40.7143528, -74.0059731), 0D);
+            Assert.AreEqual(5.286, SloppyMath.Haversin(40.7143528, -74.0059731, 40.759011, -73.9844722), 0.01D);
+            Assert.AreEqual(0.4621, SloppyMath.Haversin(40.7143528, -74.0059731, 40.718266, -74.007819), 0.01D);
+            Assert.AreEqual(1.055, SloppyMath.Haversin(40.7143528, -74.0059731, 40.7051157, -74.0088305), 0.01D);
+            Assert.AreEqual(1.258, SloppyMath.Haversin(40.7143528, -74.0059731, 40.7247222, -74), 0.01D);
+            Assert.AreEqual(2.029, SloppyMath.Haversin(40.7143528, -74.0059731, 40.731033, -73.9962255), 0.01D);
+            Assert.AreEqual(8.572, SloppyMath.Haversin(40.7143528, -74.0059731, 40.65, -73.95), 0.01D);
         }
     }
 

@@ -20,7 +20,10 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Support
 {
@@ -85,6 +88,21 @@ namespace Lucene.Net.Support
             else
             {
                 return false;
+            }
+        }
+
+        public ICollection<TKey> Keys
+        {
+            get
+            {
+                if (this.Dictionary != null)
+                {
+                    return this.Dictionary.Keys;
+                }
+                else
+                {
+                    return new Collection<TKey>(this.Select(this.GetKeyForItem).ToArray());
+                }
             }
         }
 

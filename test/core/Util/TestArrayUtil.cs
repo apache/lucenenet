@@ -117,15 +117,15 @@ namespace Lucene.Net.Util
             try
             {
                 test = ArrayUtil.ParseInt("1".ToCharArray());
-                Assert.IsTrue(test + " does not equal: " + 1, test == 1);
+                Assert.IsTrue(test == 1, test + " does not equal: " + 1);
                 test = ArrayUtil.ParseInt("-10000".ToCharArray());
-                Assert.IsTrue(test + " does not equal: " + -10000, test == -10000);
+                Assert.IsTrue(test == -10000, test + " does not equal: " + -10000);
                 test = ArrayUtil.ParseInt("1923".ToCharArray());
-                Assert.IsTrue(test + " does not equal: " + 1923, test == 1923);
+                Assert.IsTrue(test == 1923, test + " does not equal: " + 1923);
                 test = ArrayUtil.ParseInt("-1".ToCharArray());
-                Assert.IsTrue(test + " does not equal: " + -1, test == -1);
+                Assert.IsTrue(test == -1, test + " does not equal: " + -1);
                 test = ArrayUtil.ParseInt("foo 1923 bar".ToCharArray(), 4, 4);
-                Assert.IsTrue(test + " does not equal: " + 1923, test == 1923);
+                Assert.IsTrue(test == 1923, test + " does not equal: " + 1923);
             }
             catch (FormatException e)
             {
@@ -143,13 +143,13 @@ namespace Lucene.Net.Util
             string right = left;
             char[] leftChars = left.ToCharArray();
             char[] rightChars = right.ToCharArray();
-            Assert.IsTrue(left + " does not equal: " + right, ArrayUtil.Equals(leftChars, 0, rightChars, 0, left.Length));
+            Assert.IsTrue(ArrayUtil.Equals(leftChars, 0, rightChars, 0, left.Length), left + " does not equal: " + right);
 
-            Assert.IsFalse(left + " does not equal: " + right, ArrayUtil.Equals(leftChars, 1, rightChars, 0, left.Length));
-            Assert.IsFalse(left + " does not equal: " + right, ArrayUtil.Equals(leftChars, 1, rightChars, 2, left.Length));
+            Assert.IsFalse(ArrayUtil.Equals(leftChars, 1, rightChars, 0, left.Length), left + " does not equal: " + right);
+            Assert.IsFalse(ArrayUtil.Equals(leftChars, 1, rightChars, 2, left.Length), left + " does not equal: " + right);
 
-            Assert.IsFalse(left + " does not equal: " + right, ArrayUtil.Equals(leftChars, 25, rightChars, 0, left.Length));
-            Assert.IsFalse(left + " does not equal: " + right, ArrayUtil.Equals(leftChars, 12, rightChars, 0, left.Length));
+            Assert.IsFalse(ArrayUtil.Equals(leftChars, 25, rightChars, 0, left.Length), left + " does not equal: " + right);
+            Assert.IsFalse(ArrayUtil.Equals(leftChars, 12, rightChars, 0, left.Length), left + " does not equal: " + right);
         }
 
         private int[] CreateRandomArray(int maxSize)
@@ -170,27 +170,27 @@ namespace Lucene.Net.Util
             for (int i = 0; i < num; i++)
             {
                 int[] a1 = CreateRandomArray(2000);
-                int[] a2 = a1.Clone();
+                int[] a2 = (int[])a1.Clone();
                 ArrayUtil.IntroSort(a1);
                 Array.Sort(a2);
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
 
                 a1 = CreateRandomArray(2000);
-                a2 = a1.Clone();
+                a2 = (int[])a1.Clone();
                 ArrayUtil.IntroSort(a1, Collections.reverseOrder());
                 Array.Sort(a2, Collections.reverseOrder());
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 ArrayUtil.IntroSort(a1);
                 Array.Sort(a2);
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
             }
         }
 
-        private int?[] CreateSparseRandomArray(int maxSize)
+        private int[] CreateSparseRandomArray(int maxSize)
         {
             Random rnd = Random();
-            int?[] a = new int?[rnd.Next(maxSize) + 1];
+            int[] a = new int[rnd.Next(maxSize) + 1];
             for (int i = 0; i < a.Length; i++)
             {
                 a[i] = Convert.ToInt32(rnd.Next(2));
@@ -205,10 +205,11 @@ namespace Lucene.Net.Util
             int num = AtLeast(50);
             for (int i = 0; i < num; i++)
             {
-                int?[] a1 = CreateSparseRandomArray(40000), a2 = a1.Clone();
+                int[] a1 = CreateSparseRandomArray(40000);
+                int[] a2 = (int[])a1.Clone();
                 ArrayUtil.IntroSort(a1);
                 Array.Sort(a2);
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
             }
         }
 
@@ -218,20 +219,20 @@ namespace Lucene.Net.Util
             int num = AtLeast(50);
             for (int i = 0; i < num; i++)
             {
-                int[] a1 = CreateRandomArray(2000), a2 = a1.Clone();
+                int[] a1 = CreateRandomArray(2000), a2 = (int[])a1.Clone();
                 ArrayUtil.TimSort(a1);
                 Array.Sort(a2);
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
 
                 a1 = CreateRandomArray(2000);
-                a2 = a1.Clone();
+                a2 = (int[])a1.Clone();
                 ArrayUtil.TimSort(a1, Collections.reverseOrder());
                 Array.Sort(a2, Collections.reverseOrder());
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 ArrayUtil.TimSort(a1);
                 Array.Sort(a2);
-                assertArrayEquals(a2, a1);
+                Assert.AreEqual(a2, a1);
             }
         }
 

@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
 
         private RecyclingByteBlockAllocator NewAllocator()
         {
-            return new RecyclingByteBlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Counter.NewCounter());
+            return new RecyclingByteBlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Util.Counter.NewCounter());
         }
 
         [Test]

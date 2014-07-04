@@ -122,8 +122,9 @@ namespace Lucene.Net.Util
             for (int i = 0; i < num; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random());
-                UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8);
-                Assert.AreEqual(s.CodePointCount(0, s.Length), UnicodeUtil.CodePointCount(utf8));
+                UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8);
+                //Assert.AreEqual(s.CodePointCount(0, s.Length), UnicodeUtil.CodePointCount(utf8));
+                Assert.AreEqual(s.Length, UnicodeUtil.CodePointCount(utf8));
             }
         }
 
@@ -161,14 +162,15 @@ namespace Lucene.Net.Util
             for (int i = 0; i < num; i++)
             {
                 string s = TestUtil.RandomUnicodeString(Random());
-                UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8);
+                UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8);
                 UnicodeUtil.UTF8toUTF32(utf8, utf32);
 
                 int charUpto = 0;
                 int intUpto = 0;
                 while (charUpto < s.Length)
                 {
-                    int cp = s.CodePointAt(charUpto);
+                    //int cp = s.CodePointAt(charUpto);
+                    int cp = s[charUpto];
                     codePoints[intUpto++] = cp;
                     charUpto += Character.CharCount(cp);
                 }
@@ -177,7 +179,7 @@ namespace Lucene.Net.Util
                     Console.WriteLine("FAILED");
                     for (int j = 0; j < s.Length; j++)
                     {
-                        Console.WriteLine("  char[" + j + "]=" + s[j].ToString("x"));
+                        Console.WriteLine("  char[" + j + "]=" + ((int)s[j]).ToString("x"));
                     }
                     Console.WriteLine();
                     Assert.AreEqual(intUpto, utf32.Length);
