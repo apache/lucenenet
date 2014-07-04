@@ -19,49 +19,52 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
+    [TestFixture]
+    public class TestIDisposableThreadLocal : LuceneTestCase
+    {
+        public const string TEST_VALUE = "initvaluetest";
 
-	public class TestIDisposableThreadLocal : LuceneTestCase
-	{
-	  public const string TEST_VALUE = "initvaluetest";
+        [Test]
+        public virtual void TestInitValue()
+        {
+            InitValueThreadLocal tl = new InitValueThreadLocal(this);
+            string str = (string)tl.Get();
+            Assert.AreEqual(TEST_VALUE, str);
+        }
 
-	  public virtual void TestInitValue()
-	  {
-		InitValueThreadLocal tl = new InitValueThreadLocal(this);
-		string str = (string)tl.Get();
-		Assert.AreEqual(TEST_VALUE, str);
-	  }
+        [Test]
+        public virtual void TestNullValue()
+        {
+            // Tests that null can be set as a valid value (LUCENE-1805). this
+            // previously failed in get().
+            IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
+            ctl.Set(null);
+            Assert.IsNull(ctl.Get());
+        }
 
-	  public virtual void TestNullValue()
-	  {
-		// Tests that null can be set as a valid value (LUCENE-1805). this
-		// previously failed in get().
-		IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
-		ctl.Set(null);
-		Assert.IsNull(ctl.Get());
-	  }
+        [Test]
+        public virtual void TestDefaultValueWithoutSetting()
+        {
+            // LUCENE-1805: make sure default get returns null,
+            // twice in a row
+            IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
+            Assert.IsNull(ctl.Get());
+        }
 
-	  public virtual void TestDefaultValueWithoutSetting()
-	  {
-		// LUCENE-1805: make sure default get returns null,
-		// twice in a row
-		IDisposableThreadLocal<object> ctl = new IDisposableThreadLocal<object>();
-		Assert.IsNull(ctl.Get());
-	  }
+        public class InitValueThreadLocal : IDisposableThreadLocal<object>
+        {
+            private readonly TestIDisposableThreadLocal OuterInstance;
 
-	  public class InitValueThreadLocal : IDisposableThreadLocal<object>
-	  {
-		  private readonly TestIDisposableThreadLocal OuterInstance;
+            public InitValueThreadLocal(TestIDisposableThreadLocal outerInstance)
+            {
+                this.OuterInstance = outerInstance;
+            }
 
-		  public InitValueThreadLocal(TestIDisposableThreadLocal outerInstance)
-		  {
-			  this.OuterInstance = outerInstance;
-		  }
-
-		protected override object InitialValue()
-		{
-		  return TEST_VALUE;
-		}
-	  }
-	}
+            protected override object InitialValue()
+            {
+                return TEST_VALUE;
+            }
+        }
+    }
 
 }
