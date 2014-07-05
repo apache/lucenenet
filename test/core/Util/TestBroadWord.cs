@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
                 {
                     long ii = i * BroadWord.L8_L;
                     long jj = j * BroadWord.L8_L;
-                    Assert.AreEqual(ToStringUtils.LongHex(ii) + " < " + ToStringUtils.LongHex(jj), ToStringUtils.LongHex((i < j) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.SmallerUpTo7_8(ii, jj)));
+                    Assert.AreEqual(ToStringUtils.LongHex(ii) + " < " + ToStringUtils.LongHex(jj), ToStringUtils.LongHex((i < j) ? unchecked(0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.SmallerUpTo7_8(ii, jj)));
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
                 {
                     long ii = i * BroadWord.L8_L;
                     long jj = j * BroadWord.L8_L;
-                    Assert.AreEqual(ToStringUtils.LongHex(ii) + " < " + ToStringUtils.LongHex(jj), ToStringUtils.LongHex((i < j) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.Smalleru_8(ii, jj)));
+                    Assert.AreEqual(ToStringUtils.LongHex(ii) + " < " + ToStringUtils.LongHex(jj), ToStringUtils.LongHex((i < j) ? unchecked(0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.Smalleru_8(ii, jj)));
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
             for (long i = 0x0L; i <= 0xFFL; i++)
             {
                 long ii = i * BroadWord.L8_L;
-                Assert.AreEqual(ToStringUtils.LongHex(ii) + " <> 0", ToStringUtils.LongHex((i != 0L) ? (0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.NotEquals0_8(ii)));
+                Assert.AreEqual(ToStringUtils.LongHex(ii) + " <> 0", ToStringUtils.LongHex((i != 0L) ? unchecked(0x80L * BroadWord.L8_L) : 0x0L), ToStringUtils.LongHex(BroadWord.NotEquals0_8(ii)));
             }
         }
     }

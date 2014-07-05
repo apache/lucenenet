@@ -378,6 +378,174 @@
     <Compile Include="core\TestMergeSchedulerExternal.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="core\Util\Automaton\TestBasicOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestCompiledAutomaton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestDeterminism.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestDeterminizeLexicon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestLevenshteinAutomata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestMinimize.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestSpecialOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Automaton\TestUTF32ToUTF8.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\BaseSortTestCase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Fst\Test2BFST.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Packed\TestEliasFanoDocIdSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Packed\TestEliasFanoSequence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\Test2BPagedBytes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestArrayUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestAttributeSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBroadWord.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestByteBlockPool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBytesRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBytesRefArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestBytesRefHash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestCharsRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestCloseableThreadLocal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestCollectionUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestDocIdBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestDoubleBarrelLRUCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestFieldCacheSanityChecker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestFilterIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestFixedBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIndexableBinaryStringTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestInPlaceMergeSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIntroSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIntsRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestIOUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestLongBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestMergedIterator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestNamedSPILoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestNumericUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestOpenBitSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestPagedBytes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestPForDeltaDocIdSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestPriorityQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestQueryBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRamUsageEstimatorOnWildAnimals.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRecyclingByteBlockAllocator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRecyclingIntBlockAllocator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestRollingBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSentinelIntSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSetOnce.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSloppyMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestSmallFloat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestStringHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestTimSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestUnicodeUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestVersionComparator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="core\Util\TestWAH8DocIdSet.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test-framework\core\Analysis\BaseTokenStreamTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -789,11 +957,8 @@
     <Content Include="lib\ICSharpCode.SharpZipLib.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="core\Util\Automaton\" />
     <Folder Include="core\Util\Cache\" />
-    <Folder Include="core\Util\Fst\" />
     <Folder Include="core\Util\Junitcompat\" />
-    <Folder Include="core\Util\Packed\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

@@ -90,10 +90,10 @@ namespace Lucene.Net.Util.Automaton
                 Assert.IsNotNull(tautomata[n]);
                 Assert.IsTrue(automata[n].Deterministic);
                 Assert.IsTrue(tautomata[n].Deterministic);
-                Assert.IsTrue(SpecialOperations.isFinite(automata[n]));
-                Assert.IsTrue(SpecialOperations.isFinite(tautomata[n]));
-                AutomatonTestUtil.assertNoDetachedStates(automata[n]);
-                AutomatonTestUtil.assertNoDetachedStates(tautomata[n]);
+                Assert.IsTrue(SpecialOperations.IsFinite(automata[n]));
+                Assert.IsTrue(SpecialOperations.IsFinite(tautomata[n]));
+                AutomatonTestUtil.AssertNoDetachedStates(automata[n]);
+                AutomatonTestUtil.AssertNoDetachedStates(tautomata[n]);
                 // check that the dfa for n-1 accepts a subset of the dfa for n
                 if (n > 0)
                 {
@@ -110,13 +110,13 @@ namespace Lucene.Net.Util.Automaton
                 {
                     case 0:
                         // easy, matches the string itself
-                        Assert.IsTrue(BasicOperations.sameLanguage(BasicAutomata.makeString(s), automata[0]));
-                        Assert.IsTrue(BasicOperations.sameLanguage(BasicAutomata.makeString(s), tautomata[0]));
+                        Assert.IsTrue(BasicOperations.SameLanguage(BasicAutomata.MakeString(s), automata[0]));
+                        Assert.IsTrue(BasicOperations.SameLanguage(BasicAutomata.MakeString(s), tautomata[0]));
                         break;
                     case 1:
                         // generate a lev1 naively, and check the accepted lang is the same.
-                        Assert.IsTrue(BasicOperations.sameLanguage(NaiveLev1(s), automata[1]));
-                        Assert.IsTrue(BasicOperations.sameLanguage(NaiveLev1T(s), tautomata[1]));
+                        Assert.IsTrue(BasicOperations.SameLanguage(NaiveLev1(s), automata[1]));
+                        Assert.IsTrue(BasicOperations.SameLanguage(NaiveLev1T(s), tautomata[1]));
                         break;
                     default:
                         AssertBruteForce(s, automata[n], n);
@@ -132,13 +132,13 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         private Automaton NaiveLev1(string s)
         {
-            Automaton a = BasicAutomata.makeString(s);
-            a = BasicOperations.union(a, InsertionsOf(s));
-            MinimizationOperations.minimize(a);
-            a = BasicOperations.union(a, DeletionsOf(s));
-            MinimizationOperations.minimize(a);
-            a = BasicOperations.union(a, SubstitutionsOf(s));
-            MinimizationOperations.minimize(a);
+            Automaton a = BasicAutomata.MakeString(s);
+            a = BasicOperations.Union(a, InsertionsOf(s));
+            MinimizationOperations.Minimize(a);
+            a = BasicOperations.Union(a, DeletionsOf(s));
+            MinimizationOperations.Minimize(a);
+            a = BasicOperations.Union(a, SubstitutionsOf(s));
+            MinimizationOperations.Minimize(a);
 
             return a;
         }
@@ -150,8 +150,8 @@ namespace Lucene.Net.Util.Automaton
         private Automaton NaiveLev1T(string s)
         {
             Automaton a = NaiveLev1(s);
-            a = BasicOperations.union(a, TranspositionsOf(s));
-            MinimizationOperations.minimize(a);
+            a = BasicOperations.Union(a, TranspositionsOf(s));
+            MinimizationOperations.Minimize(a);
             return a;
         }
 
@@ -165,14 +165,14 @@ namespace Lucene.Net.Util.Automaton
 
             for (int i = 0; i <= s.Length; i++)
             {
-                Automaton a = BasicAutomata.makeString(s.Substring(0, i));
-                a = BasicOperations.concatenate(a, BasicAutomata.makeAnyChar());
-                a = BasicOperations.concatenate(a, BasicAutomata.makeString(s.Substring(i)));
-                list.Add(a);
+                Automaton au = BasicAutomata.MakeString(s.Substring(0, i));
+                au = BasicOperations.Concatenate(au, BasicAutomata.MakeAnyChar());
+                au = BasicOperations.Concatenate(au, BasicAutomata.MakeString(s.Substring(i)));
+                list.Add(au);
             }
 
-            Automaton a = BasicOperations.union(list);
-            MinimizationOperations.minimize(a);
+            Automaton a = BasicOperations.Union(list);
+            MinimizationOperations.Minimize(a);
             return a;
         }
 
@@ -186,14 +186,14 @@ namespace Lucene.Net.Util.Automaton
 
             for (int i = 0; i < s.Length; i++)
             {
-                Automaton a = BasicAutomata.makeString(s.Substring(0, i));
-                a = BasicOperations.concatenate(a, BasicAutomata.makeString(s.Substring(i + 1)));
-                a.expandSingleton();
-                list.Add(a);
+                Automaton au = BasicAutomata.MakeString(s.Substring(0, i));
+                au = BasicOperations.Concatenate(au, BasicAutomata.MakeString(s.Substring(i + 1)));
+                au.ExpandSingleton();
+                list.Add(au);
             }
 
-            Automaton a = BasicOperations.union(list);
-            MinimizationOperations.minimize(a);
+            Automaton a = BasicOperations.Union(list);
+            MinimizationOperations.Minimize(a);
             return a;
         }
 
@@ -207,14 +207,14 @@ namespace Lucene.Net.Util.Automaton
 
             for (int i = 0; i < s.Length; i++)
             {
-                Automaton a = BasicAutomata.makeString(s.Substring(0, i));
-                a = BasicOperations.concatenate(a, BasicAutomata.makeAnyChar());
-                a = BasicOperations.concatenate(a, BasicAutomata.makeString(s.Substring(i + 1)));
-                list.Add(a);
+                Automaton au = BasicAutomata.MakeString(s.Substring(0, i));
+                au = BasicOperations.Concatenate(au, BasicAutomata.MakeAnyChar());
+                au = BasicOperations.Concatenate(au, BasicAutomata.MakeString(s.Substring(i + 1)));
+                list.Add(au);
             }
 
-            Automaton a = BasicOperations.union(list);
-            MinimizationOperations.minimize(a);
+            Automaton a = BasicOperations.Union(list);
+            MinimizationOperations.Minimize(a);
             return a;
         }
 
@@ -226,7 +226,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (s.Length < 2)
             {
-                return BasicAutomata.makeEmpty();
+                return BasicAutomata.MakeEmpty();
             }
             IList<Automaton> list = new List<Automaton>();
             for (int i = 0; i < s.Length - 1; i++)
@@ -239,11 +239,11 @@ namespace Lucene.Net.Util.Automaton
                 string st = sb.ToString();
                 if (!st.Equals(s))
                 {
-                    list.Add(BasicAutomata.makeString(st));
+                    list.Add(BasicAutomata.MakeString(st));
                 }
             }
-            Automaton a = BasicOperations.union(list);
-            MinimizationOperations.minimize(a);
+            Automaton a = BasicOperations.Union(list);
+            MinimizationOperations.Minimize(a);
             return a;
         }
 
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < maxNum; i++)
             {
                 string encoded = Convert.ToString(i, 2);
-                bool accepts = ra.run(encoded);
+                bool accepts = ra.Run(encoded);
                 if (accepts)
                 {
                     Assert.IsTrue(GetDistance(input, encoded) <= distance);
@@ -275,7 +275,7 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < maxNum; i++)
             {
                 string encoded = Convert.ToString(i, 2);
-                bool accepts = ra.run(encoded);
+                bool accepts = ra.Run(encoded);
                 if (accepts)
                 {
                     Assert.IsTrue(GetTDistance(input, encoded) <= distance);

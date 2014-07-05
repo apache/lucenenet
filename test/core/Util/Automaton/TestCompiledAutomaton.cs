@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Automaton
 
         private CompiledAutomaton Build(params string[] strings)
         {
-            IList<BytesRef> terms = new List<BytesRef>();
+            List<BytesRef> terms = new List<BytesRef>();
             foreach (string s in strings)
             {
                 terms.Add(new BytesRef(s));
@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Automaton
             else
             {
                 Assert.IsNotNull(result);
-                Assert.AreEqual("actual=" + result.Utf8ToString() + " vs expected=" + expected + " (input=" + input + ")", result, new BytesRef(expected));
+                Assert.AreEqual(result, new BytesRef(expected), "actual=" + result.Utf8ToString() + " vs expected=" + expected + " (input=" + input + ")");
             }
         }
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     Console.WriteLine("\nTEST: floor(" + s + ")");
                 }
-                int loc = Arrays.BinarySearch(termBytes, new BytesRef(s));
+                int loc = Array.BinarySearch(termBytes, new BytesRef(s));
                 string expected;
                 if (loc >= 0)
                 {

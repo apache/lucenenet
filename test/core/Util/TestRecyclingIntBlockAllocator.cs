@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -86,7 +87,7 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(allocated.Add(block), "block is returned twice");
                     Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed());
                 }
-                int[][] array = allocated.ToArray(new int[0][]);
+                int[][] array = allocated.ToArray(/*new int[0][]*/);
                 int begin = Random().Next(array.Length);
                 int end = begin + Random().Next(array.Length - begin);
                 IList<int[]> selected = new List<int[]>();
@@ -130,7 +131,7 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks()), allocator.BytesUsed(), "" + (4 * size * (allocated.Count + allocator.NumBufferedBlocks()) - allocator.BytesUsed()));
                 }
 
-                int[][] array = allocated.ToArray(new int[0][]);
+                int[][] array = allocated.ToArray(/*new int[0][]*/);
                 int begin = Random().Next(array.Length);
                 int end = begin + Random().Next(array.Length - begin);
                 for (int j = begin; j < end; j++)

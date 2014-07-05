@@ -30,8 +30,6 @@ namespace Lucene.Net.Util.Fst
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using MMapDirectory = Lucene.Net.Store.MMapDirectory;
     using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    using Ignore = org.junit.Ignore;
-    using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
 
     //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
     //ORIGINAL LINE: @Ignore("Requires tons of heap to run (420G works)") @TimeoutSuite(millis = 100 * TimeUnits.HOUR) public class Test2BFST extends Lucene.Net.Util.LuceneTestCase
@@ -47,7 +45,7 @@ namespace Lucene.Net.Util.Fst
 	    {
 	        int[] ints = new int[7];
 	        IntsRef input = new IntsRef(ints, 0, ints.Length);
-	        long seed = Random().NextLong();
+	        int seed = Random().Next();
 
 	        Directory dir = new MMapDirectory(CreateTempDir("2BFST"));
 
@@ -78,7 +76,7 @@ namespace Lucene.Net.Util.Fst
 			        count++;
 			        if (count % 100000 == 0)
 			        {
-			        Console.WriteLine(count + ": " + b.fstSizeInBytes() + " bytes; " + b.TotStateCount + " nodes");
+			        Console.WriteLine(count + ": " + b.FstSizeInBytes() + " bytes; " + b.TotStateCount + " nodes");
 			        }
 			        if (b.TotStateCount > int.MaxValue + 100L * 1024 * 1024)
 			        {
@@ -93,7 +91,7 @@ namespace Lucene.Net.Util.Fst
 		        {
 			        Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
-			        Arrays.fill(ints2, 0);
+			        Arrays.Fill(ints2, 0);
 			        r = new Random(seed);
 
 			        for (int i = 0;i < count;i++)
@@ -113,12 +111,12 @@ namespace Lucene.Net.Util.Fst
 			        Console.WriteLine("\nTEST: enum all input/outputs");
 			        IntsRefFSTEnum<object> fstEnum = new IntsRefFSTEnum<object>(fst);
 
-			        Arrays.fill(ints2, 0);
+			        Arrays.Fill(ints2, 0);
 			        r = new Random(seed);
 			        int upto = 0;
 			        while (true)
 			        {
-			        IntsRefFSTEnum.InputOutput<object> pair = fstEnum.Next();
+			        IntsRefFSTEnum<object>.InputOutput<object> pair = fstEnum.Next();
 			        if (pair == null)
 			        {
 				        break;
@@ -127,7 +125,7 @@ namespace Lucene.Net.Util.Fst
 			        {
 				        ints2[j] = r.Next(256);
 			        }
-			        Assert.AreEqual(input2, pair.input);
+			        Assert.AreEqual(input2, pair.Input);
 			        Assert.AreEqual(NO_OUTPUT, pair.Output);
 			        upto++;
 			        NextInput(r, ints2);
@@ -141,12 +139,12 @@ namespace Lucene.Net.Util.Fst
 			        fst.Save(@out);
 			        @out.Dispose();
 			        IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
-			        fst = new FST<>(@in, outputs);
+			        fst = new FST<object>(@in, outputs);
 			        @in.Dispose();
 			        }
 			        else
 			        {
-			        dir.deleteFile("fst");
+			        dir.DeleteFile("fst");
 			        }
 		        }
 		        }
@@ -160,20 +158,20 @@ namespace Lucene.Net.Util.Fst
 
 		        sbyte[] outputBytes = new sbyte[20];
 		        BytesRef output = new BytesRef(outputBytes);
-		        Arrays.fill(ints, 0);
+		        Arrays.Fill(ints, 0);
 		        int count = 0;
 		        Random r = new Random(seed);
 		        while (true)
 		        {
-			        r.NextBytes(outputBytes);
+			        r.NextBytes((byte[])(Array)outputBytes);
 			        //System.out.println("add: " + input + " -> " + output);
-			        b.Add(input, BytesRef.deepCopyOf(output));
+			        b.Add(input, BytesRef.DeepCopyOf(output));
 			        count++;
 			        if (count % 1000000 == 0)
 			        {
-			        Console.WriteLine(count + "...: " + b.fstSizeInBytes() + " bytes");
+			        Console.WriteLine(count + "...: " + b.FstSizeInBytes() + " bytes");
 			        }
-			        if (b.fstSizeInBytes() > LIMIT)
+			        if (b.FstSizeInBytes() > LIMIT)
 			        {
 			        break;
 			        }
@@ -187,7 +185,7 @@ namespace Lucene.Net.Util.Fst
 			        Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
 			        r = new Random(seed);
-			        Arrays.fill(ints, 0);
+			        Arrays.Fill(ints, 0);
 
 			        for (int i = 0;i < count;i++)
 			        {
@@ -195,7 +193,7 @@ namespace Lucene.Net.Util.Fst
 			        {
 				        Console.WriteLine(i + "...: ");
 			        }
-			        r.NextBytes(outputBytes);
+			        r.NextBytes((byte[])(Array)outputBytes);
 			        Assert.AreEqual(output, Util.Get(fst, input));
 			        NextInput(r, ints);
 			        }
@@ -203,18 +201,18 @@ namespace Lucene.Net.Util.Fst
 			        Console.WriteLine("\nTEST: enum all input/outputs");
 			        IntsRefFSTEnum<BytesRef> fstEnum = new IntsRefFSTEnum<BytesRef>(fst);
 
-			        Arrays.fill(ints, 0);
+			        Arrays.Fill(ints, 0);
 			        r = new Random(seed);
 			        int upto = 0;
 			        while (true)
 			        {
-			        IntsRefFSTEnum.InputOutput<BytesRef> pair = fstEnum.Next();
+			        IntsRefFSTEnum<BytesRef>.InputOutput<BytesRef> pair = fstEnum.Next();
 			        if (pair == null)
 			        {
 				        break;
 			        }
-			        Assert.AreEqual(input, pair.input);
-			        r.NextBytes(outputBytes);
+			        Assert.AreEqual(input, pair.Input);
+			        r.NextBytes((byte[])(Array)outputBytes);
 			        Assert.AreEqual(output, pair.Output);
 			        upto++;
 			        NextInput(r, ints);
@@ -228,12 +226,12 @@ namespace Lucene.Net.Util.Fst
 			        fst.Save(@out);
 			        @out.Dispose();
 			        IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
-			        fst = new FST<>(@in, outputs);
+			        fst = new FST<BytesRef>(@in, outputs);
 			        @in.Dispose();
 			        }
 			        else
 			        {
-			        dir.deleteFile("fst");
+			        dir.DeleteFile("fst");
 			        }
 		        }
 		        }
@@ -242,12 +240,12 @@ namespace Lucene.Net.Util.Fst
 		        // size = 3GB
 		        {
 		        Console.WriteLine("\nTEST: 3 GB size; doPack=" + doPack + " outputs=long");
-		        Outputs<long?> outputs = PositiveIntOutputs.Singleton;
-		        Builder<long?> b = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
+		        Outputs<long> outputs = PositiveIntOutputs.Singleton;
+		        Builder<long> b = new Builder<long>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPack, PackedInts.COMPACT, true, 15);
 
 		        long output = 1;
 
-		        Arrays.fill(ints, 0);
+		        Arrays.Fill(ints, 0);
 		        int count = 0;
 		        Random r = new Random(seed);
 		        while (true)
@@ -258,23 +256,23 @@ namespace Lucene.Net.Util.Fst
 			        count++;
 			        if (count % 1000000 == 0)
 			        {
-			        Console.WriteLine(count + "...: " + b.fstSizeInBytes() + " bytes");
+			        Console.WriteLine(count + "...: " + b.FstSizeInBytes() + " bytes");
 			        }
-			        if (b.fstSizeInBytes() > LIMIT)
+			        if (b.FstSizeInBytes() > LIMIT)
 			        {
 			        break;
 			        }
 			        NextInput(r, ints);
 		        }
 
-		        FST<long?> fst = b.Finish();
+		        FST<long> fst = b.Finish();
 
 		        for (int verify = 0;verify < 2;verify++)
 		        {
 
 			        Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
-			        Arrays.fill(ints, 0);
+			        Arrays.Fill(ints, 0);
 
 			        output = 1;
 			        r = new Random(seed);
@@ -294,20 +292,20 @@ namespace Lucene.Net.Util.Fst
 			        }
 
 			        Console.WriteLine("\nTEST: enum all input/outputs");
-			        IntsRefFSTEnum<long?> fstEnum = new IntsRefFSTEnum<long?>(fst);
+			        IntsRefFSTEnum<long> fstEnum = new IntsRefFSTEnum<long>(fst);
 
-			        Arrays.fill(ints, 0);
+			        Arrays.Fill(ints, 0);
 			        r = new Random(seed);
 			        int upto = 0;
 			        output = 1;
 			        while (true)
 			        {
-			        IntsRefFSTEnum.InputOutput<long?> pair = fstEnum.Next();
+			        IntsRefFSTEnum<long>.InputOutput<long> pair = fstEnum.Next();
 			        if (pair == null)
 			        {
 				        break;
 			        }
-			        Assert.AreEqual(input, pair.input);
+			        Assert.AreEqual(input, pair.Input);
 			        Assert.AreEqual(output, (long)pair.Output);
 			        output += 1 + r.Next(10);
 			        upto++;
@@ -322,12 +320,12 @@ namespace Lucene.Net.Util.Fst
 			        fst.Save(@out);
 			        @out.Dispose();
 			        IndexInput @in = dir.OpenInput("fst", IOContext.DEFAULT);
-			        fst = new FST<>(@in, outputs);
+			        fst = new FST<long>(@in, outputs);
 			        @in.Dispose();
 			        }
 			        else
 			        {
-			        dir.deleteFile("fst");
+			        dir.DeleteFile("fst");
 			        }
 		        }
 		        }

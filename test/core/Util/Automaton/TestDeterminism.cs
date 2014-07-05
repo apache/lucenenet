@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(500);
             for (int i = 0; i < num; i++)
             {
-                AssertAutomaton((new RegExp(AutomatonTestUtil.randomRegexp(Random()), RegExp.NONE)).ToAutomaton());
+                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExp.NONE)).ToAutomaton());
             }
         }
 
@@ -54,39 +54,39 @@ namespace Lucene.Net.Util.Automaton
                 b.Deterministic = false; // force det
                 b.Determinize();
                 // TODO: more verifications possible?
-                Assert.IsTrue(BasicOperations.sameLanguage(a, b));
+                Assert.IsTrue(BasicOperations.SameLanguage(a, b));
             }
         }
 
         private static void AssertAutomaton(Automaton a)
         {
-            Automaton clone = a.Clone();
+            Automaton clone = (Automaton)a.Clone();
             // complement(complement(a)) = a
-            Automaton equivalent = BasicOperations.complement(BasicOperations.complement(a));
-            Assert.IsTrue(BasicOperations.sameLanguage(a, equivalent));
+            Automaton equivalent = BasicOperations.Complement(BasicOperations.Complement(a));
+            Assert.IsTrue(BasicOperations.SameLanguage(a, equivalent));
 
             // a union a = a
-            equivalent = BasicOperations.union(a, clone);
-            Assert.IsTrue(BasicOperations.sameLanguage(a, equivalent));
+            equivalent = BasicOperations.Union(a, clone);
+            Assert.IsTrue(BasicOperations.SameLanguage(a, equivalent));
 
             // a intersect a = a
-            equivalent = BasicOperations.intersection(a, clone);
-            Assert.IsTrue(BasicOperations.sameLanguage(a, equivalent));
+            equivalent = BasicOperations.Intersection(a, clone);
+            Assert.IsTrue(BasicOperations.SameLanguage(a, equivalent));
 
             // a minus a = empty
-            Automaton empty = BasicOperations.minus(a, clone);
-            Assert.IsTrue(BasicOperations.isEmpty(empty));
+            Automaton empty = BasicOperations.Minus(a, clone);
+            Assert.IsTrue(BasicOperations.IsEmpty(empty));
 
             // as long as don't accept the empty string
             // then optional(a) - empty = a
-            if (!BasicOperations.run(a, ""))
+            if (!BasicOperations.Run(a, ""))
             {
                 //System.out.println("test " + a);
-                Automaton optional = BasicOperations.optional(a);
+                Automaton optional = BasicOperations.Optional(a);
                 //System.out.println("optional " + optional);
-                equivalent = BasicOperations.minus(optional, BasicAutomata.makeEmptyString());
+                equivalent = BasicOperations.Minus(optional, BasicAutomata.MakeEmptyString());
                 //System.out.println("equiv " + equivalent);
-                Assert.IsTrue(BasicOperations.sameLanguage(a, equivalent));
+                Assert.IsTrue(BasicOperations.SameLanguage(a, equivalent));
             }
         }
     }

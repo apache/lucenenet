@@ -427,5 +427,13 @@ namespace Lucene.Net.Support
                 {key, value}
             };
         }
+
+        public class ReverseComparer<T> : IComparer<T>
+        {
+            public int Compare(T x, T y)
+            {
+                return (new CaseInsensitiveComparer()).Compare(y, x);
+            }
+        }
     }
 }

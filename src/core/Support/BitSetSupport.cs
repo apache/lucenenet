@@ -20,6 +20,8 @@
 */
 
 using System.Collections;
+using System.Diagnostics;
+
 namespace Lucene.Net.Support
 {
     /// <summary>
@@ -127,6 +129,46 @@ namespace Lucene.Net.Support
         public static void Clear(this BitArray bits)
         {
             bits.SetAll(false);
+        }
+
+        //Flip all bits in the desired range, startIdx inclusive to endIdx exclusive
+        public static void Flip(this BitArray bits, int startIdx, int endIdx)
+        {
+            for (int i = startIdx; i < endIdx; i++)
+            {
+                bits[i] = !bits[i];
+            }
+        }
+
+        // Sets all bits in the range to false [startIdx, endIdx)
+        public static void Clear(this BitArray bits, int startIdx, int endIdx)
+        {
+            for (int i = startIdx; i < endIdx; i++)
+            {
+                bits[i] = false;
+            }
+        }
+
+        // Sets all bits in the range to true [startIdx, endIdx)
+        public static void Set(this BitArray bits, int startIdx, int endIdx)
+        {
+            for (int i = startIdx; i < endIdx; i++)
+            {
+                bits[i] = true;
+            }
+        }
+
+        // Clears all bits in this BitArray that correspond to a set bit in the parameter BitArray
+        public static void AndNot(this BitArray bitsA, BitArray bitsB)
+        {
+            Debug.Assert(bitsA.Length == bitsB.Length, "BitArray lengths are not the same");
+            for (int i = 0; i < bitsA.Length; i++)
+            {
+                if (bitsA[i] && bitsB[i])
+                {
+                    bitsA[i] = false;
+                }   
+            }
         }
     }
 }

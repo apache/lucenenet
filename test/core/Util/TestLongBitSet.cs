@@ -317,7 +317,7 @@ namespace Lucene.Net.Util
 
         private BitArray MakeBitSet(int[] a)
         {
-            BitArray bs = new BitArray();
+            BitArray bs = new BitArray(a.Length);
             foreach (int e in a)
             {
                 bs.Set(e, true);

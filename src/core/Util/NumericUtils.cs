@@ -26,7 +26,6 @@ namespace Lucene.Net.Util
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using Lucene.Net.Search;
-    using Lucene.Net.Search;
     using System;
     using Lucene.Net.Support; // for javadocs
 

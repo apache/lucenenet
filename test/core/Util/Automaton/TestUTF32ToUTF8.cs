@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.Text;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util.Automaton
@@ -38,9 +40,9 @@ namespace Lucene.Net.Util.Automaton
 
         private bool Matches(ByteRunAutomaton a, int code)
         {
-            char[] chars = char.toChars(code);
+            char[] chars = Character.ToChars(code);
             UnicodeUtil.UTF16toUTF8(chars, 0, chars.Length, b);
-            return a.run(b.Bytes, 0, b.Length);
+            return a.Run(b.Bytes, 0, b.Length);
         }
 
         private void TestOne(Random r, ByteRunAutomaton a, int startCode, int endCode, int iters)
@@ -96,7 +98,7 @@ namespace Lucene.Net.Util.Automaton
                 Debug.Assert(code >= startCode && code <= endCode, "code=" + code + " start=" + startCode + " end=" + endCode);
                 Debug.Assert(!IsSurrogate(code));
 
-                Assert.IsTrue("DFA for range " + startCode + "-" + endCode + " failed to match code=" + code, Matches(a, code));
+                Assert.IsTrue(Matches(a, code), "DFA for range " + startCode + "-" + endCode + " failed to match code=" + code);
             }
 
             // Verify invalid ints are not accepted
@@ -120,7 +122,7 @@ namespace Lucene.Net.Util.Automaton
                         iter--;
                         continue;
                     }
-                    Assert.IsFalse("DFA for range " + startCode + "-" + endCode + " matched invalid code=" + code, Matches(a, code));
+                    Assert.IsFalse(Matches(a, code), "DFA for range " + startCode + "-" + endCode + " matched invalid code=" + code);
 
                 }
             }
@@ -180,7 +182,7 @@ namespace Lucene.Net.Util.Automaton
                 Automaton a = new Automaton();
                 State end = new State();
                 end.Accept = true;
-                a.InitialState.addTransition(new Transition(startCode, endCode, end));
+                a.InitialState.AddTransition(new Transition(startCode, endCode, end));
                 a.Deterministic = true;
 
                 TestOne(r, new ByteRunAutomaton(a), startCode, endCode, ITERS_PER_DFA);
@@ -195,13 +197,13 @@ namespace Lucene.Net.Util.Automaton
             CharacterRunAutomaton cra = new CharacterRunAutomaton(automaton);
             ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
             // make sure character dfa accepts empty string
-            Assert.IsTrue(cra.isAccept(cra.InitialState));
-            Assert.IsTrue(cra.run(""));
-            Assert.IsTrue(cra.run(new char[0], 0, 0));
+            Assert.IsTrue(cra.IsAccept(cra.InitialState));
+            Assert.IsTrue(cra.Run(""));
+            Assert.IsTrue(cra.Run(new char[0], 0, 0));
 
             // make sure byte dfa accepts empty string
-            Assert.IsTrue(bra.isAccept(bra.InitialState));
-            Assert.IsTrue(bra.run(new sbyte[0], 0, 0));
+            Assert.IsTrue(bra.IsAccept(bra.InitialState));
+            Assert.IsTrue(bra.Run(new sbyte[0], 0, 0));
         }
 
         [Test]
@@ -213,10 +215,10 @@ namespace Lucene.Net.Util.Automaton
             CharacterRunAutomaton cra = new CharacterRunAutomaton(automaton);
             ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
 
-            Assert.IsTrue(cra.run(input));
+            Assert.IsTrue(cra.Run(input));
 
-            sbyte[] bytes = input.getBytes(StandardCharsets.UTF_8);
-            Assert.IsTrue(bra.run(bytes, 0, bytes.Length)); // this one fails!
+            sbyte[] bytes = input.GetBytes(Encoding.UTF8);
+            Assert.IsTrue(bra.Run(bytes, 0, bytes.Length)); // this one fails!
         }
 
         [Test]
@@ -228,10 +230,10 @@ namespace Lucene.Net.Util.Automaton
             CharacterRunAutomaton cra = new CharacterRunAutomaton(automaton);
             ByteRunAutomaton bra = new ByteRunAutomaton(automaton);
 
-            Assert.IsTrue(cra.run(input));
+            Assert.IsTrue(cra.Run(input));
 
-            sbyte[] bytes = input.getBytes(StandardCharsets.UTF_8);
-            Assert.IsTrue(bra.run(bytes, 0, bytes.Length));
+            sbyte[] bytes = input.GetBytes(Encoding.UTF8);
+            Assert.IsTrue(bra.Run(bytes, 0, bytes.Length));
         }
 
         [Test]
@@ -240,7 +242,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(250);
             for (int i = 0; i < num; i++)
             {
-                AssertAutomaton((new RegExp(AutomatonTestUtil.randomRegexp(Random()), RegExp.NONE)).ToAutomaton());
+                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExp.NONE)).ToAutomaton());
             }
         }
 
@@ -262,10 +264,10 @@ namespace Lucene.Net.Util.Automaton
                 else
                 {
                     // will be accepted
-                    int[] codepoints = ras.getRandomAcceptedString(Random());
+                    int[] codepoints = ras.GetRandomAcceptedString(Random());
                     try
                     {
-                        @string = UnicodeUtil.newString(codepoints, 0, codepoints.Length);
+                        @string = UnicodeUtil.NewString(codepoints, 0, codepoints.Length);
                     }
                     catch (Exception e)
                     {
@@ -277,8 +279,8 @@ namespace Lucene.Net.Util.Automaton
                         throw e;
                     }
                 }
-                sbyte[] bytes = @string.getBytes(StandardCharsets.UTF_8);
-                Assert.AreEqual(cra.run(@string), bra.run(bytes, 0, bytes.Length));
+                sbyte[] bytes = @string.GetBytes(Encoding.UTF8);
+                Assert.AreEqual(cra.Run(@string), bra.Run(bytes, 0, bytes.Length));
             }
         }
     }
