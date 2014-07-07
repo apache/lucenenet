@@ -245,7 +245,11 @@ namespace Lucene.Net.Index
         }
 
         [Test]
-        public virtual void TestManyFields()
+        public virtual void 
+            
+            
+            
+            TestManyFields()
         {
             int NUM_DOCS = AtLeast(200);
             int MAX_FIELDS = AtLeast(50);

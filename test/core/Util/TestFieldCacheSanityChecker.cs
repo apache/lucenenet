@@ -102,7 +102,17 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        public virtual void TestSanity()
+        public virtual void 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            TestSanity()
         {
             FieldCache cache = FieldCache_Fields.DEFAULT;
             cache.PurgeAllCaches();
@@ -151,7 +161,12 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        public virtual void TestInsanity2()
+        public virtual void 
+            
+            
+            
+            
+            TestInsanity2()
         {
             FieldCache cache = FieldCache_Fields.DEFAULT;
             cache.PurgeAllCaches();
