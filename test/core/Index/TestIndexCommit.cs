@@ -26,157 +26,155 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
-	public class TestIndexCommit : LuceneTestCase
-	{
+    public class TestIndexCommit : LuceneTestCase
+    {
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @Test public void testEqualsHashCode() throws Exception
-      [Test]
-	  public virtual void TestEqualsHashCode()
-	  {
-		// LUCENE-2417: equals and hashCode() impl was inconsistent
-		Directory dir = NewDirectory();
+        [Test]
+        public virtual void TestEqualsHashCode()
+        {
+            // LUCENE-2417: equals and hashCode() impl was inconsistent
+            Directory dir = NewDirectory();
 
-		IndexCommit ic1 = new IndexCommitAnonymousInnerClassHelper(this, dir);
+            IndexCommit ic1 = new IndexCommitAnonymousInnerClassHelper(this, dir);
 
-		IndexCommit ic2 = new IndexCommitAnonymousInnerClassHelper2(this, dir);
+            IndexCommit ic2 = new IndexCommitAnonymousInnerClassHelper2(this, dir);
 
-		Assert.AreEqual(ic1, ic2);
-		Assert.AreEqual(ic1.GetHashCode(), ic2.GetHashCode(), "hash codes are not equals");
-		dir.Dispose();
-	  }
+            Assert.AreEqual(ic1, ic2);
+            Assert.AreEqual(ic1.GetHashCode(), ic2.GetHashCode(), "hash codes are not equals");
+            dir.Dispose();
+        }
 
-	  private class IndexCommitAnonymousInnerClassHelper : IndexCommit
-	  {
-		  private readonly TestIndexCommit OuterInstance;
+        private class IndexCommitAnonymousInnerClassHelper : IndexCommit
+        {
+            private readonly TestIndexCommit OuterInstance;
 
-		  private Directory Dir;
+            private Directory Dir;
 
-		  public IndexCommitAnonymousInnerClassHelper(TestIndexCommit outerInstance, Directory dir)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.Dir = dir;
-		  }
+            public IndexCommitAnonymousInnerClassHelper(TestIndexCommit outerInstance, Directory dir)
+            {
+                this.OuterInstance = outerInstance;
+                this.Dir = dir;
+            }
 
-		  public override string SegmentsFileName
-		  {
-			  get
-			  {
-				  return "a";
-			  }
-		  }
-		  public override Directory Directory
-		  {
-			  get
-			  {
-				  return Dir;
-			  }
-		  }
-		  public override ICollection<string> FileNames
-		  {
-			  get
-			  {
-				  return null;
-			  }
-		  }
-		  public override void Delete()
-		  {
-		  }
-		  public override long Generation
-		  {
-			  get
-			  {
-				  return 0;
-			  }
-		  }
-		  public override IDictionary<string, string> UserData
-		  {
-			  get
-			  {
-				  return null;
-			  }
-		  }
-		  public override bool Deleted
-		  {
-			  get
-			  {
-				  return false;
-			  }
-		  }
-		  public override int SegmentCount
-		  {
-			  get
-			  {
-				  return 2;
-			  }
-		  }
-	  }
+            public override string SegmentsFileName
+            {
+                get
+                {
+                    return "a";
+                }
+            }
+            public override Directory Directory
+            {
+                get
+                {
+                    return Dir;
+                }
+            }
+            public override ICollection<string> FileNames
+            {
+                get
+                {
+                    return null;
+                }
+            }
+            public override void Delete()
+            {
+            }
+            public override long Generation
+            {
+                get
+                {
+                    return 0;
+                }
+            }
+            public override IDictionary<string, string> UserData
+            {
+                get
+                {
+                    return null;
+                }
+            }
+            public override bool Deleted
+            {
+                get
+                {
+                    return false;
+                }
+            }
+            public override int SegmentCount
+            {
+                get
+                {
+                    return 2;
+                }
+            }
+        }
 
-	  private class IndexCommitAnonymousInnerClassHelper2 : IndexCommit
-	  {
-		  private readonly TestIndexCommit OuterInstance;
+        private class IndexCommitAnonymousInnerClassHelper2 : IndexCommit
+        {
+            private readonly TestIndexCommit OuterInstance;
 
-		  private Directory Dir;
+            private Directory Dir;
 
-		  public IndexCommitAnonymousInnerClassHelper2(TestIndexCommit outerInstance, Directory dir)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.Dir = dir;
-		  }
+            public IndexCommitAnonymousInnerClassHelper2(TestIndexCommit outerInstance, Directory dir)
+            {
+                this.OuterInstance = outerInstance;
+                this.Dir = dir;
+            }
 
-		  public override string SegmentsFileName
-		  {
-			  get
-			  {
-				  return "b";
-			  }
-		  }
-		  public override Directory Directory
-		  {
-			  get
-			  {
-				  return Dir;
-			  }
-		  }
-		  public override ICollection<string> FileNames
-		  {
-			  get
-			  {
-				  return null;
-			  }
-		  }
-		  public override void Delete()
-		  {
-		  }
-		  public override long Generation
-		  {
-			  get
-			  {
-				  return 0;
-			  }
-		  }
-		  public override IDictionary<string, string> UserData
-		  {
-			  get
-			  {
-				  return null;
-			  }
-		  }
-		  public override bool Deleted
-		  {
-			  get
-			  {
-				  return false;
-			  }
-		  }
-		  public override int SegmentCount
-		  {
-			  get
-			  {
-				  return 2;
-			  }
-		  }
-	  }
-	}
+            public override string SegmentsFileName
+            {
+                get
+                {
+                    return "b";
+                }
+            }
+            public override Directory Directory
+            {
+                get
+                {
+                    return Dir;
+                }
+            }
+            public override ICollection<string> FileNames
+            {
+                get
+                {
+                    return null;
+                }
+            }
+            public override void Delete()
+            {
+            }
+            public override long Generation
+            {
+                get
+                {
+                    return 0;
+                }
+            }
+            public override IDictionary<string, string> UserData
+            {
+                get
+                {
+                    return null;
+                }
+            }
+            public override bool Deleted
+            {
+                get
+                {
+                    return false;
+                }
+            }
+            public override int SegmentCount
+            {
+                get
+                {
+                    return 2;
+                }
+            }
+        }
+    }
 
 }

@@ -23,9 +23,7 @@ namespace Lucene.Net.Util
 {
 
     [TestFixture]
-    public class 
-        
-        TestFilterIterator : LuceneTestCase
+    public class TestFilterIterator : LuceneTestCase
     {
 
         private static readonly SortedSet<string> Set = new SortedSet<string>(Arrays.AsList("a", "b", "c"));

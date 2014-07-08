@@ -21,20 +21,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
-	/// <summary>
-	/// Test that the SPI magic is returning "PreFlexRWCodec" for Lucene3x
-	/// 
-	/// @lucene.experimental
-	/// </summary>
-	[TestFixture]
+    /// <summary>
+    /// Test that the SPI magic is returning "PreFlexRWCodec" for Lucene3x
+    /// 
+    /// @lucene.experimental
+    /// </summary>
+    [TestFixture]
     public class TestImpersonation : LuceneTestCase
-	{
-      [Test]
-	  public virtual void Test()
-	  {
-		Codec codec = Codec.ForName("Lucene3x");
-		Assert.IsTrue(codec is PreFlexRWCodec);
-	  }
-	}
+    {
+        [Test]
+        public virtual void Test()
+        {
+            Codec codec = Codec.ForName("Lucene3x");
+            Assert.IsTrue(codec is PreFlexRWCodec);
+        }
+    }
 
 }

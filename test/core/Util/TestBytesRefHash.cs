@@ -120,7 +120,8 @@ namespace Lucene.Net.Util
                     int key = Hash.Add(@ref);
                     if (key >= 0)
                     {
-                        Assert.IsNull(strings[str] = Convert.ToInt32(key));
+                        Assert.IsFalse(strings.ContainsKey(str));
+                        strings[str] = Convert.ToInt32(key);
                         Assert.AreEqual(uniqueCount, key);
                         uniqueCount++;
                         Assert.AreEqual(Hash.Size(), count + 1);

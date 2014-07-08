@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
             // All these are required by this class's API - need to return arrays.
             // Therefore even in the case of a single comparator, create an array
             // anyway.
-            this.feilds = fields;
+            this.fields = fields;
             int numComparators = fields.Length;
             comparators = new FieldComparator<T>[numComparators];
             reverseMul = new int[numComparators];
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Stores the sort criteria being used. </summary>
-        protected internal readonly SortField[] feilds;
+        protected internal readonly SortField[] fields;
         protected internal readonly FieldComparator[] comparators; // use setComparator to change this array
         protected internal FieldComparator FirstComparator; // this must always be equal to comparators[0]
         protected internal readonly int[] reverseMul;
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                return feilds;
+                return fields;
             }
         }
     }

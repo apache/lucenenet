@@ -185,7 +185,9 @@ namespace Lucene.Net.Util
       public static Version ParseLeniently(string version)
       {
           string upperVersionString = version.ToUpper();
-          return stringToEnum[upperVersionString];
+          Version ret;
+          stringToEnum.TryGetValue(upperVersionString, out ret);
+          return ret;
       }
 	}
 

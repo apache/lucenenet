@@ -21,32 +21,32 @@ namespace Lucene.Net.Codecs.Lucene42
 
     using BaseCompressingDocValuesFormatTestCase = Lucene.Net.Index.BaseCompressingDocValuesFormatTestCase;
 
-	/// <summary>
-	/// Tests Lucene42DocValuesFormat
-	/// </summary>
+    /// <summary>
+    /// Tests Lucene42DocValuesFormat
+    /// </summary>
     [TestFixture]
     public class TestLucene42DocValuesFormat : BaseCompressingDocValuesFormatTestCase
-	{
-	  private readonly Codec Codec_Renamed = new Lucene42RWCodec();
+    {
+        private readonly Codec Codec_Renamed = new Lucene42RWCodec();
 
-      [TestFixtureSetUp]
-	  public static void BeforeClass()
-	  {
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-	  }
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return Codec_Renamed;
-		  }
-	  }
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return Codec_Renamed;
+            }
+        }
 
-	  protected internal override bool CodecAcceptsHugeBinaryValues(string field)
-	  {
-		return false;
-	  }
-	}
+        protected internal override bool CodecAcceptsHugeBinaryValues(string field)
+        {
+            return false;
+        }
+    }
 
 }

@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
                 int a = 0;
                 while ((spare = iter.Next()) != null)
                 {
-                    Assert.AreEqual("entry " + a + " doesn't match", stringList[a], spare.Utf8ToString());
+                    Assert.AreEqual(stringList[a], spare.Utf8ToString(), "entry " + a + " doesn't match");
                     a++;
                 }
                 Assert.IsNull(iter.Next());

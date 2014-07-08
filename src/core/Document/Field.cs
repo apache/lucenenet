@@ -551,14 +551,25 @@ namespace Lucene.Net.Document
         {
             get
             {
-                return FieldsData; /*if (FieldsData is Number)
-		        {
-		          return (Number) FieldsData;
-		        }
-		        else
-		        {
-		          return null;
-		        }*/
+                
+                string str = FieldsData as string;
+                if (str != null)
+                {
+                    long ret;
+                    if (long.TryParse(str, out ret))
+                    {
+                        return ret;
+                    }
+                }
+
+                if (FieldsData is int || FieldsData is float || FieldsData is double || FieldsData is long)
+                {
+                    return FieldsData;
+                }
+
+
+                return null;
+
             }
 
         }

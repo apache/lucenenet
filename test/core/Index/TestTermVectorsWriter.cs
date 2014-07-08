@@ -1,602 +1,602 @@
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using Analyzer = Lucene.Net.Analysis.Analyzer;
-	using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using MockTokenFilter = Lucene.Net.Analysis.MockTokenFilter;
-	using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-	using TokenStream = Lucene.Net.Analysis.TokenStream;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using FieldType = Lucene.Net.Document.FieldType;
-	using StringField = Lucene.Net.Document.StringField;
-	using TextField = Lucene.Net.Document.TextField;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using Directory = Lucene.Net.Store.Directory;
-	using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-	using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using IOUtils = Lucene.Net.Util.IOUtils;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using CachingTokenFilter = Lucene.Net.Analysis.CachingTokenFilter;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenFilter = Lucene.Net.Analysis.MockTokenFilter;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using StringField = Lucene.Net.Document.StringField;
+    using TextField = Lucene.Net.Document.TextField;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Directory = Lucene.Net.Store.Directory;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
     using System.IO;
 
-	/// <summary>
-	/// tests for writing term vectors </summary>
-	[TestFixture]
+    /// <summary>
+    /// tests for writing term vectors </summary>
+    [TestFixture]
     public class TestTermVectorsWriter : LuceneTestCase
-	{
-	  // LUCENE-1442
-      [Test]
-	  public virtual void TestDoubleOffsetCounting()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document doc = new Document();
-		FieldType customType = new FieldType(StringField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
-		Field f = NewField("field", "abcd", customType);
-		doc.Add(f);
-		doc.Add(f);
-		Field f2 = NewField("field", "", customType);
-		doc.Add(f2);
-		doc.Add(f);
-		w.AddDocument(doc);
-		w.Dispose();
+    {
+        // LUCENE-1442
+        [Test]
+        public virtual void TestDoubleOffsetCounting()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document doc = new Document();
+            FieldType customType = new FieldType(StringField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
+            Field f = NewField("field", "abcd", customType);
+            doc.Add(f);
+            doc.Add(f);
+            Field f2 = NewField("field", "", customType);
+            doc.Add(f2);
+            doc.Add(f);
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		Terms vector = r.GetTermVectors(0).Terms("field");
-		Assert.IsNotNull(vector);
-		TermsEnum termsEnum = vector.Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		Assert.AreEqual("", termsEnum.Term().Utf8ToString());
+            IndexReader r = DirectoryReader.Open(dir);
+            Terms vector = r.GetTermVectors(0).Terms("field");
+            Assert.IsNotNull(vector);
+            TermsEnum termsEnum = vector.Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            Assert.AreEqual("", termsEnum.Term().Utf8ToString());
 
-		// Token "" occurred once
-		Assert.AreEqual(1, termsEnum.TotalTermFreq());
+            // Token "" occurred once
+            Assert.AreEqual(1, termsEnum.TotalTermFreq());
 
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(8, dpEnum.StartOffset());
-		Assert.AreEqual(8, dpEnum.EndOffset());
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(8, dpEnum.StartOffset());
+            Assert.AreEqual(8, dpEnum.EndOffset());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
-		// Token "abcd" occurred three times
-		Assert.AreEqual(new BytesRef("abcd"), termsEnum.Next());
-		dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-		Assert.AreEqual(3, termsEnum.TotalTermFreq());
+            // Token "abcd" occurred three times
+            Assert.AreEqual(new BytesRef("abcd"), termsEnum.Next());
+            dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+            Assert.AreEqual(3, termsEnum.TotalTermFreq());
 
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		dpEnum.NextPosition();
-		Assert.AreEqual(4, dpEnum.StartOffset());
-		Assert.AreEqual(8, dpEnum.EndOffset());
+            dpEnum.NextPosition();
+            Assert.AreEqual(4, dpEnum.StartOffset());
+            Assert.AreEqual(8, dpEnum.EndOffset());
 
-		dpEnum.NextPosition();
-		Assert.AreEqual(8, dpEnum.StartOffset());
-		Assert.AreEqual(12, dpEnum.EndOffset());
+            dpEnum.NextPosition();
+            Assert.AreEqual(8, dpEnum.StartOffset());
+            Assert.AreEqual(12, dpEnum.EndOffset());
 
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
-		Assert.IsNull(termsEnum.Next());
-		r.Dispose();
-		dir.Dispose();
-	  }
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
+            Assert.IsNull(termsEnum.Next());
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1442
-      [Test]
-      public virtual void TestDoubleOffsetCounting2()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document doc = new Document();
-		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
-		Field f = NewField("field", "abcd", customType);
-		doc.Add(f);
-		doc.Add(f);
-		w.AddDocument(doc);
-		w.Dispose();
+        // LUCENE-1442
+        [Test]
+        public virtual void TestDoubleOffsetCounting2()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document doc = new Document();
+            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
+            Field f = NewField("field", "abcd", customType);
+            doc.Add(f);
+            doc.Add(f);
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
-		Assert.AreEqual(2, termsEnum.TotalTermFreq());
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            Assert.AreEqual(2, termsEnum.TotalTermFreq());
 
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		dpEnum.NextPosition();
-		Assert.AreEqual(5, dpEnum.StartOffset());
-		Assert.AreEqual(9, dpEnum.EndOffset());
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
+            dpEnum.NextPosition();
+            Assert.AreEqual(5, dpEnum.StartOffset());
+            Assert.AreEqual(9, dpEnum.EndOffset());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1448
-      [Test]
-      public virtual void TestEndOffsetPositionCharAnalyzer()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document doc = new Document();
-		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
-		Field f = NewField("field", "abcd   ", customType);
-		doc.Add(f);
-		doc.Add(f);
-		w.AddDocument(doc);
-		w.Dispose();
+        // LUCENE-1448
+        [Test]
+        public virtual void TestEndOffsetPositionCharAnalyzer()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document doc = new Document();
+            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
+            Field f = NewField("field", "abcd   ", customType);
+            doc.Add(f);
+            doc.Add(f);
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
-		Assert.AreEqual(2, termsEnum.TotalTermFreq());
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            Assert.AreEqual(2, termsEnum.TotalTermFreq());
 
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		dpEnum.NextPosition();
-		Assert.AreEqual(8, dpEnum.StartOffset());
-		Assert.AreEqual(12, dpEnum.EndOffset());
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
+            dpEnum.NextPosition();
+            Assert.AreEqual(8, dpEnum.StartOffset());
+            Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1448
-      [Test]
-      public virtual void TestEndOffsetPositionWithCachingTokenFilter()
-	  {
-		Directory dir = NewDirectory();
-		Analyzer analyzer = new MockAnalyzer(Random());
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
-		Document doc = new Document();
-		IOException priorException = null;
-		TokenStream stream = analyzer.TokenStream("field", new StreamReader("abcd   "));
-		try
-		{
-		  stream.Reset(); // TODO: weird to reset before wrapping with CachingTokenFilter... correct?
-		  TokenStream cachedStream = new CachingTokenFilter(stream);
-		  FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		  customType.StoreTermVectors = true;
-		  customType.StoreTermVectorPositions = true;
-		  customType.StoreTermVectorOffsets = true;
-		  Field f = new Field("field", cachedStream, customType);
-		  doc.Add(f);
-		  doc.Add(f);
-		  w.AddDocument(doc);
-		}
-		catch (IOException e)
-		{
-		  priorException = e;
-		}
-		finally
-		{
-		  IOUtils.CloseWhileHandlingException(priorException, stream);
-		}
-		w.Dispose();
+        // LUCENE-1448
+        [Test]
+        public virtual void TestEndOffsetPositionWithCachingTokenFilter()
+        {
+            Directory dir = NewDirectory();
+            Analyzer analyzer = new MockAnalyzer(Random());
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+            Document doc = new Document();
+            IOException priorException = null;
+            TokenStream stream = analyzer.TokenStream("field", new StringReader("abcd   "));
+            try
+            {
+                stream.Reset(); // TODO: weird to reset before wrapping with CachingTokenFilter... correct?
+                TokenStream cachedStream = new CachingTokenFilter(stream);
+                FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+                customType.StoreTermVectors = true;
+                customType.StoreTermVectorPositions = true;
+                customType.StoreTermVectorOffsets = true;
+                Field f = new Field("field", cachedStream, customType);
+                doc.Add(f);
+                doc.Add(f);
+                w.AddDocument(doc);
+            }
+            catch (IOException e)
+            {
+                priorException = e;
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(priorException, stream);
+            }
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
-		Assert.AreEqual(2, termsEnum.TotalTermFreq());
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            Assert.AreEqual(2, termsEnum.TotalTermFreq());
 
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		dpEnum.NextPosition();
-		Assert.AreEqual(8, dpEnum.StartOffset());
-		Assert.AreEqual(12, dpEnum.EndOffset());
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
+            dpEnum.NextPosition();
+            Assert.AreEqual(8, dpEnum.StartOffset());
+            Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1448
-      [Test]
-      public virtual void TestEndOffsetPositionStopFilter()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
-		Document doc = new Document();
-		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
-		Field f = NewField("field", "abcd the", customType);
-		doc.Add(f);
-		doc.Add(f);
-		w.AddDocument(doc);
-		w.Dispose();
+        // LUCENE-1448
+        [Test]
+        public virtual void TestEndOffsetPositionStopFilter()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
+            Document doc = new Document();
+            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
+            Field f = NewField("field", "abcd the", customType);
+            doc.Add(f);
+            doc.Add(f);
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
-		Assert.AreEqual(2, termsEnum.TotalTermFreq());
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            Assert.AreEqual(2, termsEnum.TotalTermFreq());
 
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		dpEnum.NextPosition();
-		Assert.AreEqual(9, dpEnum.StartOffset());
-		Assert.AreEqual(13, dpEnum.EndOffset());
-		Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
+            dpEnum.NextPosition();
+            Assert.AreEqual(9, dpEnum.StartOffset());
+            Assert.AreEqual(13, dpEnum.EndOffset());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1448
-      [Test]
-      public virtual void TestEndOffsetPositionStandard()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document doc = new Document();
-		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
-		Field f = NewField("field", "abcd the  ", customType);
-		Field f2 = NewField("field", "crunch man", customType);
-		doc.Add(f);
-		doc.Add(f2);
-		w.AddDocument(doc);
-		w.Dispose();
+        // LUCENE-1448
+        [Test]
+        public virtual void TestEndOffsetPositionStandard()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document doc = new Document();
+            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
+            Field f = NewField("field", "abcd the  ", customType);
+            Field f2 = NewField("field", "crunch man", customType);
+            doc.Add(f);
+            doc.Add(f2);
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		Assert.IsNotNull(termsEnum.Next());
-		dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(11, dpEnum.StartOffset());
-		Assert.AreEqual(17, dpEnum.EndOffset());
+            Assert.IsNotNull(termsEnum.Next());
+            dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(11, dpEnum.StartOffset());
+            Assert.AreEqual(17, dpEnum.EndOffset());
 
-		Assert.IsNotNull(termsEnum.Next());
-		dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(18, dpEnum.StartOffset());
-		Assert.AreEqual(21, dpEnum.EndOffset());
+            Assert.IsNotNull(termsEnum.Next());
+            dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(18, dpEnum.StartOffset());
+            Assert.AreEqual(21, dpEnum.EndOffset());
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1448
-      [Test]
-      public virtual void TestEndOffsetPositionStandardEmptyField()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document doc = new Document();
-		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
-		Field f = NewField("field", "", customType);
-		Field f2 = NewField("field", "crunch man", customType);
-		doc.Add(f);
-		doc.Add(f2);
-		w.AddDocument(doc);
-		w.Dispose();
+        // LUCENE-1448
+        [Test]
+        public virtual void TestEndOffsetPositionStandardEmptyField()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document doc = new Document();
+            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
+            Field f = NewField("field", "", customType);
+            Field f2 = NewField("field", "crunch man", customType);
+            doc.Add(f);
+            doc.Add(f2);
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
-		Assert.AreEqual(1, (int) termsEnum.TotalTermFreq());
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(1, dpEnum.StartOffset());
-		Assert.AreEqual(7, dpEnum.EndOffset());
+            Assert.AreEqual(1, (int)termsEnum.TotalTermFreq());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(1, dpEnum.StartOffset());
+            Assert.AreEqual(7, dpEnum.EndOffset());
 
-		Assert.IsNotNull(termsEnum.Next());
-		dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(8, dpEnum.StartOffset());
-		Assert.AreEqual(11, dpEnum.EndOffset());
+            Assert.IsNotNull(termsEnum.Next());
+            dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(8, dpEnum.StartOffset());
+            Assert.AreEqual(11, dpEnum.EndOffset());
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1448
-      [Test]
-      public virtual void TestEndOffsetPositionStandardEmptyField2()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document doc = new Document();
-		FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		customType.StoreTermVectorPositions = true;
-		customType.StoreTermVectorOffsets = true;
+        // LUCENE-1448
+        [Test]
+        public virtual void TestEndOffsetPositionStandardEmptyField2()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document doc = new Document();
+            FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            customType.StoreTermVectorPositions = true;
+            customType.StoreTermVectorOffsets = true;
 
-		Field f = NewField("field", "abcd", customType);
-		doc.Add(f);
-		doc.Add(NewField("field", "", customType));
+            Field f = NewField("field", "abcd", customType);
+            doc.Add(f);
+            doc.Add(NewField("field", "", customType));
 
-		Field f2 = NewField("field", "crunch", customType);
-		doc.Add(f2);
+            Field f2 = NewField("field", "crunch", customType);
+            doc.Add(f2);
 
-		w.AddDocument(doc);
-		w.Dispose();
+            w.AddDocument(doc);
+            w.Dispose();
 
-		IndexReader r = DirectoryReader.Open(dir);
-		TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
-		Assert.IsNotNull(termsEnum.Next());
-		DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
+            IndexReader r = DirectoryReader.Open(dir);
+            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").Iterator(null);
+            Assert.IsNotNull(termsEnum.Next());
+            DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
-		Assert.AreEqual(1, (int) termsEnum.TotalTermFreq());
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(0, dpEnum.StartOffset());
-		Assert.AreEqual(4, dpEnum.EndOffset());
+            Assert.AreEqual(1, (int)termsEnum.TotalTermFreq());
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(0, dpEnum.StartOffset());
+            Assert.AreEqual(4, dpEnum.EndOffset());
 
-		Assert.IsNotNull(termsEnum.Next());
-		dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
-		Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-		dpEnum.NextPosition();
-		Assert.AreEqual(6, dpEnum.StartOffset());
-		Assert.AreEqual(12, dpEnum.EndOffset());
+            Assert.IsNotNull(termsEnum.Next());
+            dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
+            Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            dpEnum.NextPosition();
+            Assert.AreEqual(6, dpEnum.StartOffset());
+            Assert.AreEqual(12, dpEnum.EndOffset());
 
 
-		r.Dispose();
-		dir.Dispose();
-	  }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1168
-      [Test]
-      public virtual void TestTermVectorCorruption()
-	  {
+        // LUCENE-1168
+        [Test]
+        public virtual void TestTermVectorCorruption()
+        {
 
-		Directory dir = NewDirectory();
-		for (int iter = 0;iter < 2;iter++)
-		{
-		  IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+            Directory dir = NewDirectory();
+            for (int iter = 0; iter < 2; iter++)
+            {
+                IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
 
-		  Document document = new Document();
-		  FieldType customType = new FieldType();
-		  customType.Stored = true;
+                Document document = new Document();
+                FieldType customType = new FieldType();
+                customType.Stored = true;
 
-		  Field storedField = NewField("stored", "stored", customType);
-		  document.Add(storedField);
-		  writer.AddDocument(document);
-		  writer.AddDocument(document);
+                Field storedField = NewField("stored", "stored", customType);
+                document.Add(storedField);
+                writer.AddDocument(document);
+                writer.AddDocument(document);
 
-		  document = new Document();
-		  document.Add(storedField);
-		  FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
-		  customType2.StoreTermVectors = true;
-		  customType2.StoreTermVectorPositions = true;
-		  customType2.StoreTermVectorOffsets = true;
-		  Field termVectorField = NewField("termVector", "termVector", customType2);
+                document = new Document();
+                document.Add(storedField);
+                FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
+                customType2.StoreTermVectors = true;
+                customType2.StoreTermVectorPositions = true;
+                customType2.StoreTermVectorOffsets = true;
+                Field termVectorField = NewField("termVector", "termVector", customType2);
 
-		  document.Add(termVectorField);
-		  writer.AddDocument(document);
-		  writer.ForceMerge(1);
-		  writer.Dispose();
+                document.Add(termVectorField);
+                writer.AddDocument(document);
+                writer.ForceMerge(1);
+                writer.Dispose();
 
-		  IndexReader reader = DirectoryReader.Open(dir);
-		  for (int i = 0;i < reader.NumDocs();i++)
-		  {
-			reader.Document(i);
-			reader.GetTermVectors(i);
-		  }
-		  reader.Dispose();
+                IndexReader reader = DirectoryReader.Open(dir);
+                for (int i = 0; i < reader.NumDocs(); i++)
+                {
+                    reader.Document(i);
+                    reader.GetTermVectors(i);
+                }
+                reader.Dispose();
 
-          writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+                writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
 
-		  Directory[] indexDirs = new Directory[] {new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random())))};
-		  writer.AddIndexes(indexDirs);
-		  writer.ForceMerge(1);
-		  writer.Dispose();
-		}
-		dir.Dispose();
-	  }
+                Directory[] indexDirs = new Directory[] { new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random()))) };
+                writer.AddIndexes(indexDirs);
+                writer.ForceMerge(1);
+                writer.Dispose();
+            }
+            dir.Dispose();
+        }
 
-	  // LUCENE-1168
-      [Test]
-      public virtual void TestTermVectorCorruption2()
-	  {
-		Directory dir = NewDirectory();
-		for (int iter = 0;iter < 2;iter++)
-		{
+        // LUCENE-1168
+        [Test]
+        public virtual void TestTermVectorCorruption2()
+        {
+            Directory dir = NewDirectory();
+            for (int iter = 0; iter < 2; iter++)
+            {
+                IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+
+                Document document = new Document();
+
+                FieldType customType = new FieldType();
+                customType.Stored = true;
+
+                Field storedField = NewField("stored", "stored", customType);
+                document.Add(storedField);
+                writer.AddDocument(document);
+                writer.AddDocument(document);
+
+                document = new Document();
+                document.Add(storedField);
+                FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
+                customType2.StoreTermVectors = true;
+                customType2.StoreTermVectorPositions = true;
+                customType2.StoreTermVectorOffsets = true;
+                Field termVectorField = NewField("termVector", "termVector", customType2);
+                document.Add(termVectorField);
+                writer.AddDocument(document);
+                writer.ForceMerge(1);
+                writer.Dispose();
+
+                IndexReader reader = DirectoryReader.Open(dir);
+                Assert.IsNull(reader.GetTermVectors(0));
+                Assert.IsNull(reader.GetTermVectors(1));
+                Assert.IsNotNull(reader.GetTermVectors(2));
+                reader.Dispose();
+            }
+            dir.Dispose();
+        }
+
+        // LUCENE-1168
+        [Test]
+        public virtual void TestTermVectorCorruption3()
+        {
+            Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
 
-		  Document document = new Document();
+            Document document = new Document();
+            FieldType customType = new FieldType();
+            customType.Stored = true;
 
-		  FieldType customType = new FieldType();
-		  customType.Stored = true;
+            Field storedField = NewField("stored", "stored", customType);
+            document.Add(storedField);
+            FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
+            customType2.StoreTermVectors = true;
+            customType2.StoreTermVectorPositions = true;
+            customType2.StoreTermVectorOffsets = true;
+            Field termVectorField = NewField("termVector", "termVector", customType2);
+            document.Add(termVectorField);
+            for (int i = 0; i < 10; i++)
+            {
+                writer.AddDocument(document);
+            }
+            writer.Dispose();
 
-		  Field storedField = NewField("stored", "stored", customType);
-		  document.Add(storedField);
-		  writer.AddDocument(document);
-		  writer.AddDocument(document);
+            writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+            for (int i = 0; i < 6; i++)
+            {
+                writer.AddDocument(document);
+            }
 
-		  document = new Document();
-		  document.Add(storedField);
-		  FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
-		  customType2.StoreTermVectors = true;
-		  customType2.StoreTermVectorPositions = true;
-		  customType2.StoreTermVectorOffsets = true;
-		  Field termVectorField = NewField("termVector", "termVector", customType2);
-		  document.Add(termVectorField);
-		  writer.AddDocument(document);
-		  writer.ForceMerge(1);
-		  writer.Dispose();
+            writer.ForceMerge(1);
+            writer.Dispose();
 
-		  IndexReader reader = DirectoryReader.Open(dir);
-		  Assert.IsNull(reader.GetTermVectors(0));
-		  Assert.IsNull(reader.GetTermVectors(1));
-		  Assert.IsNotNull(reader.GetTermVectors(2));
-		  reader.Dispose();
-		}
-		dir.Dispose();
-	  }
+            IndexReader reader = DirectoryReader.Open(dir);
+            for (int i = 0; i < 10; i++)
+            {
+                reader.GetTermVectors(i);
+                reader.Document(i);
+            }
+            reader.Dispose();
+            dir.Dispose();
+        }
 
-	  // LUCENE-1168
-      [Test]
-      public virtual void TestTermVectorCorruption3()
-	  {
-		Directory dir = NewDirectory();
-        IndexWriter writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
+        // LUCENE-1008
+        [Test]
+        public virtual void TestNoTermVectorAfterTermVector()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document document = new Document();
+            FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
+            customType2.StoreTermVectors = true;
+            customType2.StoreTermVectorPositions = true;
+            customType2.StoreTermVectorOffsets = true;
+            document.Add(NewField("tvtest", "a b c", customType2));
+            iw.AddDocument(document);
+            document = new Document();
+            document.Add(NewTextField("tvtest", "x y z", Field.Store.NO));
+            iw.AddDocument(document);
+            // Make first segment
+            iw.Commit();
 
-		Document document = new Document();
-		FieldType customType = new FieldType();
-		customType.Stored = true;
+            FieldType customType = new FieldType(StringField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            document.Add(NewField("tvtest", "a b c", customType));
+            iw.AddDocument(document);
+            // Make 2nd segment
+            iw.Commit();
 
-		Field storedField = NewField("stored", "stored", customType);
-		document.Add(storedField);
-		FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
-		customType2.StoreTermVectors = true;
-		customType2.StoreTermVectorPositions = true;
-		customType2.StoreTermVectorOffsets = true;
-		Field termVectorField = NewField("termVector", "termVector", customType2);
-		document.Add(termVectorField);
-		for (int i = 0;i < 10;i++)
-		{
-		  writer.AddDocument(document);
-		}
-		writer.Dispose();
+            iw.ForceMerge(1);
+            iw.Dispose();
+            dir.Dispose();
+        }
 
-        writer = new IndexWriter(dir, ((IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(new LogDocMergePolicy()));
-		for (int i = 0;i < 6;i++)
-		{
-		  writer.AddDocument(document);
-		}
+        // LUCENE-1010
+        [Test]
+        public virtual void TestNoTermVectorAfterTermVectorMerge()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Document document = new Document();
+            FieldType customType = new FieldType(StringField.TYPE_NOT_STORED);
+            customType.StoreTermVectors = true;
+            document.Add(NewField("tvtest", "a b c", customType));
+            iw.AddDocument(document);
+            iw.Commit();
 
-		writer.ForceMerge(1);
-		writer.Dispose();
+            document = new Document();
+            document.Add(NewTextField("tvtest", "x y z", Field.Store.NO));
+            iw.AddDocument(document);
+            // Make first segment
+            iw.Commit();
 
-		IndexReader reader = DirectoryReader.Open(dir);
-		for (int i = 0;i < 10;i++)
-		{
-		  reader.GetTermVectors(i);
-		  reader.Document(i);
-		}
-		reader.Dispose();
-		dir.Dispose();
-	  }
+            iw.ForceMerge(1);
 
-	  // LUCENE-1008
-      [Test]
-      public virtual void TestNoTermVectorAfterTermVector()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document document = new Document();
-		FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
-		customType2.StoreTermVectors = true;
-		customType2.StoreTermVectorPositions = true;
-		customType2.StoreTermVectorOffsets = true;
-		document.Add(NewField("tvtest", "a b c", customType2));
-		iw.AddDocument(document);
-		document = new Document();
-		document.Add(NewTextField("tvtest", "x y z", Field.Store.NO));
-		iw.AddDocument(document);
-		// Make first segment
-		iw.Commit();
+            FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
+            customType2.StoreTermVectors = true;
+            document.Add(NewField("tvtest", "a b c", customType2));
+            iw.AddDocument(document);
+            // Make 2nd segment
+            iw.Commit();
+            iw.ForceMerge(1);
 
-		FieldType customType = new FieldType(StringField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		document.Add(NewField("tvtest", "a b c", customType));
-		iw.AddDocument(document);
-		// Make 2nd segment
-		iw.Commit();
-
-		iw.ForceMerge(1);
-		iw.Dispose();
-		dir.Dispose();
-	  }
-
-	  // LUCENE-1010
-      [Test]
-      public virtual void TestNoTermVectorAfterTermVectorMerge()
-	  {
-		Directory dir = NewDirectory();
-		IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		Document document = new Document();
-		FieldType customType = new FieldType(StringField.TYPE_NOT_STORED);
-		customType.StoreTermVectors = true;
-		document.Add(NewField("tvtest", "a b c", customType));
-		iw.AddDocument(document);
-		iw.Commit();
-
-		document = new Document();
-		document.Add(NewTextField("tvtest", "x y z", Field.Store.NO));
-		iw.AddDocument(document);
-		// Make first segment
-		iw.Commit();
-
-		iw.ForceMerge(1);
-
-		FieldType customType2 = new FieldType(StringField.TYPE_NOT_STORED);
-		customType2.StoreTermVectors = true;
-		document.Add(NewField("tvtest", "a b c", customType2));
-		iw.AddDocument(document);
-		// Make 2nd segment
-		iw.Commit();
-		iw.ForceMerge(1);
-
-		iw.Dispose();
-		dir.Dispose();
-	  }
-	}
+            iw.Dispose();
+            dir.Dispose();
+        }
+    }
 
 }

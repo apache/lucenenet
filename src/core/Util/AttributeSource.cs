@@ -439,10 +439,10 @@ namespace Lucene.Net.Util
         /// Captures the state of all Attributes. The return value can be passed to
         /// <seealso cref="#restoreState"/> to restore the state of this or another AttributeSource.
         /// </summary>
-        public State CaptureState()
+        public virtual State CaptureState()
         {
             State state = this.CurrentState;
-            return (State)((state == null) ? null : state.Clone());
+            return (state == null) ? null : (State)state.Clone();
         }
 
         /// <summary>
@@ -469,8 +469,7 @@ namespace Lucene.Net.Util
 
             do
             {
-                var targetImpl = AttributeImpls[state.attribute.GetType()];
-                if (targetImpl == null)
+                if (!AttributeImpls.ContainsKey(state.attribute.GetType()))
                 {
                     throw new System.ArgumentException("State contains Attribute of type " + state.attribute.GetType().Name + " that is not in in this AttributeSource");
                 }

@@ -22,22 +22,22 @@ namespace Lucene.Net.Codecs.Lucene40
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
 
     [TestFixture]
-	public class TestLucene40StoredFieldsFormat : BaseStoredFieldsFormatTestCase
-	{
+    public class TestLucene40StoredFieldsFormat : BaseStoredFieldsFormatTestCase
+    {
 
-      [TestFixtureSetUp]
-	  public static void BeforeClass()
-	  {
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-	  }
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return new Lucene40RWCodec();
-		  }
-	  }
-	}
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return new Lucene40RWCodec();
+            }
+        }
+    }
 
 }

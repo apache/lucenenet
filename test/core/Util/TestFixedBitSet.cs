@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -68,7 +69,7 @@ namespace Lucene.Net.Util
             {
                 // aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (!a.Get(aa)))
+                while ((aa >= 0) && (aa >= a.Length || !a.Get(aa)))
                 {
                     aa--;
                 }
@@ -374,6 +375,13 @@ namespace Lucene.Net.Util
             BitArray bs = new BitArray(a.Length);
             foreach (int e in a)
             {
+                if (e >= bs.Length)
+                {
+                    // Grow by a factor of two to avoid resizing as often
+                    int[] copy = new int[e*2];
+                    bs.CopyTo(copy, bs.Length - 1);
+                    bs = MakeBitSet(copy);
+                }
                 bs.Set(e, true);
             }
             return bs;

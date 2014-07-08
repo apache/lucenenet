@@ -24,76 +24,76 @@ namespace Lucene.Net.Analysis
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
-	public class TestCharFilter : LuceneTestCase
-	{
+    public class TestCharFilter : LuceneTestCase
+    {
 
-      [Test]
-	  public virtual void TestCharFilter1()
-	  {
-		CharFilter cs = new CharFilter1(new StringReader(""));
-		Assert.AreEqual(1, cs.CorrectOffset(0), "corrected offset is invalid");
-	  }
+        [Test]
+        public virtual void TestCharFilter1()
+        {
+            CharFilter cs = new CharFilter1(new StringReader(""));
+            Assert.AreEqual(1, cs.CorrectOffset(0), "corrected offset is invalid");
+        }
 
-      [Test]
-      public virtual void TestCharFilter2()
-	  {
-          CharFilter cs = new CharFilter2(new StringReader(""));
-		Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
-	  }
+        [Test]
+        public virtual void TestCharFilter2()
+        {
+            CharFilter cs = new CharFilter2(new StringReader(""));
+            Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
+        }
 
-      [Test]
-      public virtual void TestCharFilter12()
-	  {
-          CharFilter cs = new CharFilter2(new CharFilter1(new StringReader("")));
-		Assert.AreEqual(3, cs.CorrectOffset(0), "corrected offset is invalid");
-	  }
+        [Test]
+        public virtual void TestCharFilter12()
+        {
+            CharFilter cs = new CharFilter2(new CharFilter1(new StringReader("")));
+            Assert.AreEqual(3, cs.CorrectOffset(0), "corrected offset is invalid");
+        }
 
-      [Test]
-	  public virtual void TestCharFilter11()
-	  {
-          CharFilter cs = new CharFilter1(new CharFilter1(new StringReader("")));
-		Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
-	  }
+        [Test]
+        public virtual void TestCharFilter11()
+        {
+            CharFilter cs = new CharFilter1(new CharFilter1(new StringReader("")));
+            Assert.AreEqual(2, cs.CorrectOffset(0), "corrected offset is invalid");
+        }
 
-	  internal class CharFilter1 : CharFilter
-	  {
+        internal class CharFilter1 : CharFilter
+        {
 
-          protected internal CharFilter1(TextReader @in) 
-            : base(@in)
-		{
-		}
+            protected internal CharFilter1(TextReader @in)
+                : base(@in)
+            {
+            }
 
-		public override int Read(char[] cbuf, int off, int len)
-		{
-            int numRead = Input.Read(cbuf, off, len);
-		    return numRead == 0 ? -1 : numRead;
-		}
+            public override int Read(char[] cbuf, int off, int len)
+            {
+                int numRead = Input.Read(cbuf, off, len);
+                return numRead == 0 ? -1 : numRead;
+            }
 
-		protected override int Correct(int currentOff)
-		{
-		  return currentOff + 1;
-		}
-	  }
+            protected override int Correct(int currentOff)
+            {
+                return currentOff + 1;
+            }
+        }
 
-	  internal class CharFilter2 : CharFilter
-	  {
+        internal class CharFilter2 : CharFilter
+        {
 
-          protected internal CharFilter2(TextReader @in)
-              : base(@in)
-		{
-		}
+            protected internal CharFilter2(TextReader @in)
+                : base(@in)
+            {
+            }
 
-		public override int Read(char[] cbuf, int off, int len)
-		{
-            int numRead = Input.Read(cbuf, off, len);
-		    return numRead == 0 ? -1 : numRead;
-		}
+            public override int Read(char[] cbuf, int off, int len)
+            {
+                int numRead = Input.Read(cbuf, off, len);
+                return numRead == 0 ? -1 : numRead;
+            }
 
-		protected override int Correct(int currentOff)
-		{
-		  return currentOff + 2;
-		}
-	  }
-	}
+            protected override int Correct(int currentOff)
+            {
+                return currentOff + 2;
+            }
+        }
+    }
 
 }

@@ -479,16 +479,21 @@ namespace Lucene.Net.Analysis
                     Assert.Fail("didn't get expected exception when reset() not called");
                 }
             }
-            catch (Exception expected)
+            catch (InvalidOperationException expected)
+            {
+                //ok
+            }
+            catch (AssertionException expected)
             {
                 // ok: MockTokenizer
                 Assert.IsTrue(expected.Message != null && expected.Message.Contains("wrong state"), expected.Message);
             }
-            /*catch (Exception unexpected)
+            catch (Exception unexpected)
             {
-              //unexpected.printStackTrace(System.err);
-              Assert.Fail("got wrong exception when reset() not called: " + unexpected);
-            }*/
+                //unexpected.printStackTrace(System.err);
+                Console.Error.WriteLine(unexpected.StackTrace);
+                Assert.Fail("got wrong exception when reset() not called: " + unexpected);
+            }
             finally
             {
                 // consume correctly

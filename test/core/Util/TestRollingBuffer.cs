@@ -95,8 +95,16 @@ namespace Lucene.Net.Util
             private readonly TestRollingBuffer OuterInstance;
 
             public RollingBufferAnonymousInnerClassHelper(TestRollingBuffer outerInstance)
+                :base(NewInstanceFunc)
             {
                 this.OuterInstance = outerInstance;
+            }
+
+            public static Position NewInstanceFunc()
+            {
+                Position pos = new Position();
+                pos.Pos = -1;
+                return pos;
             }
 
             protected override Position NewInstance()

@@ -22,21 +22,21 @@ namespace Lucene.Net.Codecs.Lucene45
     using BaseCompressingDocValuesFormatTestCase = Lucene.Net.Index.BaseCompressingDocValuesFormatTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
-	/// <summary>
-	/// Tests Lucene45DocValuesFormat
-	/// </summary>
+    /// <summary>
+    /// Tests Lucene45DocValuesFormat
+    /// </summary>
     [TestFixture]
     public class TestLucene45DocValuesFormat : BaseCompressingDocValuesFormatTestCase
-	{
-	  private readonly Codec Codec_Renamed = TestUtil.AlwaysDocValuesFormat(new Lucene45DocValuesFormat());
+    {
+        private readonly Codec Codec_Renamed = TestUtil.AlwaysDocValuesFormat(new Lucene45DocValuesFormat());
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return Codec_Renamed;
-		  }
-	  }
-	}
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return Codec_Renamed;
+            }
+        }
+    }
 
 }

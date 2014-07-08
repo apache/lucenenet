@@ -26,29 +26,29 @@ namespace Lucene.Net.Codecs.Lucene3x
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
-	public class TestLucene3xTermVectorsFormat : BaseTermVectorsFormatTestCase
-	{
+    public class TestLucene3xTermVectorsFormat : BaseTermVectorsFormatTestCase
+    {
 
-      [SetUp]
-	  public override void SetUp()
-	  {
-		LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-		base.SetUp();
-	  }
+        [SetUp]
+        public override void SetUp()
+        {
+            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            base.SetUp();
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return new PreFlexRWCodec();
-		  }
-	  }
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return new PreFlexRWCodec();
+            }
+        }
 
-	  protected internal override IEnumerable<Options> ValidOptions()
-	  {
-		return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
-	  }
+        protected internal override IEnumerable<Options> ValidOptions()
+        {
+            return ValidOptions(Options.NONE, Options.POSITIONS_AND_OFFSETS);
+        }
 
-	}
+    }
 
 }

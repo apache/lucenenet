@@ -21,28 +21,28 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
 
-	/// <summary>
-	/// Tests Lucene40PostingsFormat
-	/// </summary>
-	[TestFixture]
+    /// <summary>
+    /// Tests Lucene40PostingsFormat
+    /// </summary>
+    [TestFixture]
     public class TestLucene40PostingsFormat : BasePostingsFormatTestCase
-	{
-	  private readonly Codec Codec_Renamed = new Lucene40RWCodec();
+    {
+        private readonly Codec Codec_Renamed = new Lucene40RWCodec();
 
-      [TestFixtureSetUp]
-	  public static void BeforeClass()
-	  {
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-	  }
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return Codec_Renamed;
-		  }
-	  }
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return Codec_Renamed;
+            }
+        }
 
-	}
+    }
 
 }

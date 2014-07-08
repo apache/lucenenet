@@ -107,8 +107,7 @@ namespace Lucene.Net.Analysis
             Analyzer a = new MockAnalyzer(new Random(), single, false);
             AssertAnalyzesTo(a, "foobar", new string[] { "fo", "ob", "ar" }, new int[] { 0, 2, 4 }, new int[] { 2, 4, 6 });
             // make sure when last term is a "partial" match that End() is correct
-            AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "fo", "ob" }, new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 }, new int?(5)
-           );
+            AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "fo", "ob" }, new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 }, new int?(5));
             CheckRandomData(new Random(), a, 100);
         }
 
@@ -121,8 +120,7 @@ namespace Lucene.Net.Analysis
             Analyzer a = new MockAnalyzer(new Random(), single, false);
             AssertAnalyzesTo(a, "foobar", new string[] { "foo", "bar" }, new int[] { 0, 3 }, new int[] { 3, 6 });
             // make sure when last term is a "partial" match that End() is correct
-            AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "foo" }, new int[] { 0 }, new int[] { 3 }, new int[] { 1 }, new int?(5)
-           );
+            AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "foo" }, new int[] { 0 }, new int[] { 3 }, new int[] { 1 }, new int?(5));
             CheckRandomData(new Random(), a, 100);
         }
 
@@ -174,9 +172,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestTooLongToken()
         {
             Analyzer whitespace = new AnalyzerAnonymousInnerClassHelper(this);
-
             AssertTokenStreamContents(whitespace.TokenStream("bogus", new StringReader("test 123 toolong ok ")), new string[] { "test", "123", "toolo", "ng", "ok" }, new int[] { 0, 5, 9, 14, 17 }, new int[] { 4, 8, 14, 16, 19 }, new int?(20));
-
             AssertTokenStreamContents(whitespace.TokenStream("bogus", new StringReader("test 123 toolo")), new string[] { "test", "123", "toolo" }, new int[] { 0, 5, 9 }, new int[] { 4, 8, 14 }, new int?(14));
         }
 
@@ -235,7 +231,6 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// blast some random strings through differently configured tokenizers </summary>
-        [Ignore]
         [Test]
         public virtual void TestRandomRegexps()
         {

@@ -5,537 +5,537 @@ using System.Collections.Generic;
 namespace Lucene.Net.Util
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 
-	using DataInput = Lucene.Net.Store.DataInput;
-	using DataOutput = Lucene.Net.Store.DataOutput;
-	using IndexInput = Lucene.Net.Store.IndexInput;
+    using DataInput = Lucene.Net.Store.DataInput;
+    using DataOutput = Lucene.Net.Store.DataOutput;
+    using IndexInput = Lucene.Net.Store.IndexInput;
 
-	/// <summary>
-	/// Represents a logical byte[] as a series of pages.  You
-	///  can write-once into the logical byte[] (append only),
-	///  using copy, and then retrieve slices (BytesRef) into it
-	///  using fill.
-	/// 
-	/// @lucene.internal
-	/// 
-	/// </summary>
-	// TODO: refactor this, byteblockpool, fst.bytestore, and any
-	// other "shift/mask big arrays". there are too many of these classes!
-	public sealed class PagedBytes
-	{
-	  private readonly IList<sbyte[]> Blocks = new List<sbyte[]>();
-	  // TODO: these are unused?
-	  private readonly IList<int> BlockEnd = new List<int>();
-	  private readonly int BlockSize;
-	  private readonly int BlockBits;
-	  private readonly int BlockMask;
-	  private bool DidSkipBytes;
-	  private bool Frozen;
-	  private int Upto;
-	  private sbyte[] CurrentBlock;
-	  private readonly long BytesUsedPerBlock;
+    /// <summary>
+    /// Represents a logical byte[] as a series of pages.  You
+    ///  can write-once into the logical byte[] (append only),
+    ///  using copy, and then retrieve slices (BytesRef) into it
+    ///  using fill.
+    /// 
+    /// @lucene.internal
+    /// 
+    /// </summary>
+    // TODO: refactor this, byteblockpool, fst.bytestore, and any
+    // other "shift/mask big arrays". there are too many of these classes!
+    public sealed class PagedBytes
+    {
+        private readonly IList<sbyte[]> Blocks = new List<sbyte[]>();
+        // TODO: these are unused?
+        private readonly IList<int> BlockEnd = new List<int>();
+        private readonly int BlockSize;
+        private readonly int BlockBits;
+        private readonly int BlockMask;
+        private bool DidSkipBytes;
+        private bool Frozen;
+        private int Upto;
+        private sbyte[] CurrentBlock;
+        private readonly long BytesUsedPerBlock;
 
-	  private static readonly sbyte[] EMPTY_BYTES = new sbyte[0];
+        private static readonly sbyte[] EMPTY_BYTES = new sbyte[0];
 
-	  /// <summary>
-	  /// Provides methods to read BytesRefs from a frozen
-	  ///  PagedBytes.
-	  /// </summary>
-	  /// <seealso cref= #freeze  </seealso>
-	  public sealed class Reader
-	  {
-		internal readonly sbyte[][] Blocks;
-		internal readonly int[] BlockEnds;
-		internal readonly int BlockBits;
-		internal readonly int BlockMask;
-		internal readonly int BlockSize;
+        /// <summary>
+        /// Provides methods to read BytesRefs from a frozen
+        ///  PagedBytes.
+        /// </summary>
+        /// <seealso cref= #freeze  </seealso>
+        public sealed class Reader
+        {
+            internal readonly sbyte[][] Blocks;
+            internal readonly int[] BlockEnds;
+            internal readonly int BlockBits;
+            internal readonly int BlockMask;
+            internal readonly int BlockSize;
 
-		internal Reader(PagedBytes pagedBytes)
-		{
-		  Blocks = new sbyte[pagedBytes.Blocks.Count][];
-		  for (int i = 0;i < Blocks.Length;i++)
-		  {
-			Blocks[i] = pagedBytes.Blocks[i];
-		  }
-		  BlockEnds = new int[Blocks.Length];
-		  for (int i = 0;i < BlockEnds.Length;i++)
-		  {
-			BlockEnds[i] = pagedBytes.BlockEnd[i];
-		  }
-		  BlockBits = pagedBytes.BlockBits;
-		  BlockMask = pagedBytes.BlockMask;
-		  BlockSize = pagedBytes.BlockSize;
-		}
+            internal Reader(PagedBytes pagedBytes)
+            {
+                Blocks = new sbyte[pagedBytes.Blocks.Count][];
+                for (int i = 0; i < Blocks.Length; i++)
+                {
+                    Blocks[i] = pagedBytes.Blocks[i];
+                }
+                BlockEnds = new int[Blocks.Length];
+                for (int i = 0; i < BlockEnds.Length; i++)
+                {
+                    BlockEnds[i] = pagedBytes.BlockEnd[i];
+                }
+                BlockBits = pagedBytes.BlockBits;
+                BlockMask = pagedBytes.BlockMask;
+                BlockSize = pagedBytes.BlockSize;
+            }
 
-		/// <summary>
-		/// Gets a slice out of <seealso cref="PagedBytes"/> starting at <i>start</i> with a
-		/// given length. Iff the slice spans across a block border this method will
-		/// allocate sufficient resources and copy the paged data.
-		/// <p>
-		/// Slices spanning more than two blocks are not supported.
-		/// </p>
-		/// @lucene.internal 
-		/// 
-		/// </summary>
-		public void FillSlice(BytesRef b, long start, int length)
-		{
-		  Debug.Assert(length >= 0, "length=" + length);
-		  Debug.Assert(length <= BlockSize+1, "length=" + length);
-		  b.Length = length;
-		  if (length == 0)
-		  {
-			return;
-		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int index = (int)(start >> blockBits);
-		  int index = (int)(start >> BlockBits);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offset = (int)(start & blockMask);
-		  int offset = (int)(start & BlockMask);
-		  if (BlockSize - offset >= length)
-		  {
-			// Within block
-			b.Bytes = Blocks[index];
-			b.Offset = offset;
-		  }
-		  else
-		  {
-			// Split
-			b.Bytes = new sbyte[length];
-			b.Offset = 0;
-			Array.Copy(Blocks[index], offset, b.Bytes, 0, BlockSize - offset);
-			Array.Copy(Blocks[1 + index], 0, b.Bytes, BlockSize - offset, length - (BlockSize - offset));
-		  }
-		}
+            /// <summary>
+            /// Gets a slice out of <seealso cref="PagedBytes"/> starting at <i>start</i> with a
+            /// given length. Iff the slice spans across a block border this method will
+            /// allocate sufficient resources and copy the paged data.
+            /// <p>
+            /// Slices spanning more than two blocks are not supported.
+            /// </p>
+            /// @lucene.internal 
+            /// 
+            /// </summary>
+            public void FillSlice(BytesRef b, long start, int length)
+            {
+                Debug.Assert(length >= 0, "length=" + length);
+                Debug.Assert(length <= BlockSize + 1, "length=" + length);
+                b.Length = length;
+                if (length == 0)
+                {
+                    return;
+                }
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final int index = (int)(start >> blockBits);
+                int index = (int)(start >> BlockBits);
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final int offset = (int)(start & blockMask);
+                int offset = (int)(start & BlockMask);
+                if (BlockSize - offset >= length)
+                {
+                    // Within block
+                    b.Bytes = Blocks[index];
+                    b.Offset = offset;
+                }
+                else
+                {
+                    // Split
+                    b.Bytes = new sbyte[length];
+                    b.Offset = 0;
+                    Array.Copy(Blocks[index], offset, b.Bytes, 0, BlockSize - offset);
+                    Array.Copy(Blocks[1 + index], 0, b.Bytes, BlockSize - offset, length - (BlockSize - offset));
+                }
+            }
 
-		/// <summary>
-		/// Reads length as 1 or 2 byte vInt prefix, starting at <i>start</i>.
-		/// <p>
-		/// <b>Note:</b> this method does not support slices spanning across block
-		/// borders.
-		/// </p>
-		/// 
-		/// @lucene.internal
-		/// 
-		/// </summary>
-		// TODO: this really needs to be refactored into fieldcacheimpl
-		public void Fill(BytesRef b, long start)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int index = (int)(start >> blockBits);
-		  int index = (int)(start >> BlockBits);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int offset = (int)(start & blockMask);
-		  int offset = (int)(start & BlockMask);
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] block = b.bytes = blocks[index];
-		  sbyte[] block = b.Bytes = Blocks[index];
+            /// <summary>
+            /// Reads length as 1 or 2 byte vInt prefix, starting at <i>start</i>.
+            /// <p>
+            /// <b>Note:</b> this method does not support slices spanning across block
+            /// borders.
+            /// </p>
+            /// 
+            /// @lucene.internal
+            /// 
+            /// </summary>
+            // TODO: this really needs to be refactored into fieldcacheimpl
+            public void Fill(BytesRef b, long start)
+            {
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final int index = (int)(start >> blockBits);
+                int index = (int)(start >> BlockBits);
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final int offset = (int)(start & blockMask);
+                int offset = (int)(start & BlockMask);
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final byte[] block = b.bytes = blocks[index];
+                sbyte[] block = b.Bytes = Blocks[index];
 
-		  if ((block[offset] & 128) == 0)
-		  {
-			b.Length = block[offset];
-			b.Offset = offset + 1;
-		  }
-		  else
-		  {
-			b.Length = ((block[offset] & 0x7f) << 8) | (block[1 + offset] & 0xff);
-			b.Offset = offset + 2;
-			Debug.Assert(b.Length > 0);
-		  }
-		}
+                if ((block[offset] & 128) == 0)
+                {
+                    b.Length = block[offset];
+                    b.Offset = offset + 1;
+                }
+                else
+                {
+                    b.Length = ((block[offset] & 0x7f) << 8) | (block[1 + offset] & 0xff);
+                    b.Offset = offset + 2;
+                    Debug.Assert(b.Length > 0);
+                }
+            }
 
-		/// <summary>
-		/// Returns approximate RAM bytes used </summary>
-		public long RamBytesUsed()
-		{
-		  return ((Blocks != null) ? (BlockSize * Blocks.Length) : 0);
-		}
-	  }
+            /// <summary>
+            /// Returns approximate RAM bytes used </summary>
+            public long RamBytesUsed()
+            {
+                return ((Blocks != null) ? (BlockSize * Blocks.Length) : 0);
+            }
+        }
 
-	  /// <summary>
-	  /// 1&lt;&lt;blockBits must be bigger than biggest single
-	  ///  BytesRef slice that will be pulled 
-	  /// </summary>
-	  public PagedBytes(int blockBits)
-	  {
-		Debug.Assert(blockBits > 0 && blockBits <= 31, blockBits.ToString());
-		this.BlockSize = 1 << blockBits;
-		this.BlockBits = blockBits;
-		BlockMask = BlockSize-1;
-		Upto = BlockSize;
-		BytesUsedPerBlock = BlockSize + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
-	  }
+        /// <summary>
+        /// 1&lt;&lt;blockBits must be bigger than biggest single
+        ///  BytesRef slice that will be pulled 
+        /// </summary>
+        public PagedBytes(int blockBits)
+        {
+            Debug.Assert(blockBits > 0 && blockBits <= 31, blockBits.ToString());
+            this.BlockSize = 1 << blockBits;
+            this.BlockBits = blockBits;
+            BlockMask = BlockSize - 1;
+            Upto = BlockSize;
+            BytesUsedPerBlock = BlockSize + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+        }
 
-	  /// <summary>
-	  /// Read this many bytes from in </summary>
-	  public void Copy(IndexInput @in, long byteCount)
-	  {
-		while (byteCount > 0)
-		{
-		  int left = BlockSize - Upto;
-		  if (left == 0)
-		  {
-			if (CurrentBlock != null)
-			{
-			  Blocks.Add(CurrentBlock);
-			  BlockEnd.Add(Upto);
-			}
-			CurrentBlock = new sbyte[BlockSize];
-			Upto = 0;
-			left = BlockSize;
-		  }
-		  if (left < byteCount)
-		  {
-			@in.ReadBytes(CurrentBlock, Upto, left, false);
-			Upto = BlockSize;
-			byteCount -= left;
-		  }
-		  else
-		  {
-			@in.ReadBytes(CurrentBlock, Upto, (int) byteCount, false);
-			Upto += (int)byteCount;
-			break;
-		  }
-		}
-	  }
+        /// <summary>
+        /// Read this many bytes from in </summary>
+        public void Copy(IndexInput @in, long byteCount)
+        {
+            while (byteCount > 0)
+            {
+                int left = BlockSize - Upto;
+                if (left == 0)
+                {
+                    if (CurrentBlock != null)
+                    {
+                        Blocks.Add(CurrentBlock);
+                        BlockEnd.Add(Upto);
+                    }
+                    CurrentBlock = new sbyte[BlockSize];
+                    Upto = 0;
+                    left = BlockSize;
+                }
+                if (left < byteCount)
+                {
+                    @in.ReadBytes(CurrentBlock, Upto, left, false);
+                    Upto = BlockSize;
+                    byteCount -= left;
+                }
+                else
+                {
+                    @in.ReadBytes(CurrentBlock, Upto, (int)byteCount, false);
+                    Upto += (int)byteCount;
+                    break;
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Copy BytesRef in, setting BytesRef out to the result.
-	  /// Do not use this if you will use freeze(true).
-	  /// this only supports bytes.length <= blockSize 
-	  /// </summary>
-	  public void Copy(BytesRef bytes, BytesRef @out)
-	  {
-		int left = BlockSize - Upto;
-		if (bytes.Length > left || CurrentBlock == null)
-		{
-		  if (CurrentBlock != null)
-		  {
-			Blocks.Add(CurrentBlock);
-			BlockEnd.Add(Upto);
-			DidSkipBytes = true;
-		  }
-		  CurrentBlock = new sbyte[BlockSize];
-		  Upto = 0;
-		  left = BlockSize;
-		  Debug.Assert(bytes.Length <= BlockSize);
-		  // TODO: we could also support variable block sizes
-		}
+        /// <summary>
+        /// Copy BytesRef in, setting BytesRef out to the result.
+        /// Do not use this if you will use freeze(true).
+        /// this only supports bytes.length <= blockSize 
+        /// </summary>
+        public void Copy(BytesRef bytes, BytesRef @out)
+        {
+            int left = BlockSize - Upto;
+            if (bytes.Length > left || CurrentBlock == null)
+            {
+                if (CurrentBlock != null)
+                {
+                    Blocks.Add(CurrentBlock);
+                    BlockEnd.Add(Upto);
+                    DidSkipBytes = true;
+                }
+                CurrentBlock = new sbyte[BlockSize];
+                Upto = 0;
+                left = BlockSize;
+                Debug.Assert(bytes.Length <= BlockSize);
+                // TODO: we could also support variable block sizes
+            }
 
-		@out.Bytes = CurrentBlock;
-		@out.Offset = Upto;
-		@out.Length = bytes.Length;
+            @out.Bytes = CurrentBlock;
+            @out.Offset = Upto;
+            @out.Length = bytes.Length;
 
-		Array.Copy(bytes.Bytes, bytes.Offset, CurrentBlock, Upto, bytes.Length);
-		Upto += bytes.Length;
-	  }
+            Array.Copy(bytes.Bytes, bytes.Offset, CurrentBlock, Upto, bytes.Length);
+            Upto += bytes.Length;
+        }
 
-	  /// <summary>
-	  /// Commits final byte[], trimming it if necessary and if trim=true </summary>
-	  public Reader Freeze(bool trim)
-	  {
-		if (Frozen)
-		{
-		  throw new InvalidOperationException("already frozen");
-		}
-		if (DidSkipBytes)
-		{
-		  throw new InvalidOperationException("cannot freeze when copy(BytesRef, BytesRef) was used");
-		}
-		if (trim && Upto < BlockSize)
-		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final byte[] newBlock = new byte[upto];
-		  sbyte[] newBlock = new sbyte[Upto];
-		  Array.Copy(CurrentBlock, 0, newBlock, 0, Upto);
-		  CurrentBlock = newBlock;
-		}
-		if (CurrentBlock == null)
-		{
-		  CurrentBlock = EMPTY_BYTES;
-		}
-		Blocks.Add(CurrentBlock);
-		BlockEnd.Add(Upto);
-		Frozen = true;
-		CurrentBlock = null;
-		return new PagedBytes.Reader(this);
-	  }
+        /// <summary>
+        /// Commits final byte[], trimming it if necessary and if trim=true </summary>
+        public Reader Freeze(bool trim)
+        {
+            if (Frozen)
+            {
+                throw new InvalidOperationException("already frozen");
+            }
+            if (DidSkipBytes)
+            {
+                throw new InvalidOperationException("cannot freeze when copy(BytesRef, BytesRef) was used");
+            }
+            if (trim && Upto < BlockSize)
+            {
+                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+                //ORIGINAL LINE: final byte[] newBlock = new byte[upto];
+                sbyte[] newBlock = new sbyte[Upto];
+                Array.Copy(CurrentBlock, 0, newBlock, 0, Upto);
+                CurrentBlock = newBlock;
+            }
+            if (CurrentBlock == null)
+            {
+                CurrentBlock = EMPTY_BYTES;
+            }
+            Blocks.Add(CurrentBlock);
+            BlockEnd.Add(Upto);
+            Frozen = true;
+            CurrentBlock = null;
+            return new PagedBytes.Reader(this);
+        }
 
-	  public long Pointer
-	  {
-		  get
-		  {
-			if (CurrentBlock == null)
-			{
-			  return 0;
-			}
-			else
-			{
-			  return (Blocks.Count * ((long) BlockSize)) + Upto;
-			}
-		  }
-	  }
+        public long Pointer
+        {
+            get
+            {
+                if (CurrentBlock == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return (Blocks.Count * ((long)BlockSize)) + Upto;
+                }
+            }
+        }
 
-	  /// <summary>
-	  /// Return approx RAM usage in bytes. </summary>
-	  public long RamBytesUsed()
-	  {
-		return (Blocks.Count + (CurrentBlock != null ? 1 : 0)) * BytesUsedPerBlock;
-	  }
+        /// <summary>
+        /// Return approx RAM usage in bytes. </summary>
+        public long RamBytesUsed()
+        {
+            return (Blocks.Count + (CurrentBlock != null ? 1 : 0)) * BytesUsedPerBlock;
+        }
 
-	  /// <summary>
-	  /// Copy bytes in, writing the length as a 1 or 2 byte
-	  ///  vInt prefix. 
-	  /// </summary>
-	  // TODO: this really needs to be refactored into fieldcacheimpl
-	  public long CopyUsingLengthPrefix(BytesRef bytes)
-	  {
-		if (bytes.Length >= 32768)
-		{
-		  throw new System.ArgumentException("max length is 32767 (got " + bytes.Length + ")");
-		}
+        /// <summary>
+        /// Copy bytes in, writing the length as a 1 or 2 byte
+        ///  vInt prefix. 
+        /// </summary>
+        // TODO: this really needs to be refactored into fieldcacheimpl
+        public long CopyUsingLengthPrefix(BytesRef bytes)
+        {
+            if (bytes.Length >= 32768)
+            {
+                throw new System.ArgumentException("max length is 32767 (got " + bytes.Length + ")");
+            }
 
-		if (Upto + bytes.Length + 2 > BlockSize)
-		{
-		  if (bytes.Length + 2 > BlockSize)
-		  {
-			throw new System.ArgumentException("block size " + BlockSize + " is too small to store length " + bytes.Length + " bytes");
-		  }
-		  if (CurrentBlock != null)
-		  {
-			Blocks.Add(CurrentBlock);
-			BlockEnd.Add(Upto);
-		  }
-		  CurrentBlock = new sbyte[BlockSize];
-		  Upto = 0;
-		}
+            if (Upto + bytes.Length + 2 > BlockSize)
+            {
+                if (bytes.Length + 2 > BlockSize)
+                {
+                    throw new System.ArgumentException("block size " + BlockSize + " is too small to store length " + bytes.Length + " bytes");
+                }
+                if (CurrentBlock != null)
+                {
+                    Blocks.Add(CurrentBlock);
+                    BlockEnd.Add(Upto);
+                }
+                CurrentBlock = new sbyte[BlockSize];
+                Upto = 0;
+            }
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long pointer = getPointer();
-		long pointer = Pointer;
+            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+            //ORIGINAL LINE: final long pointer = getPointer();
+            long pointer = Pointer;
 
-		if (bytes.Length < 128)
-		{
-		  CurrentBlock[Upto++] = (sbyte) bytes.Length;
-		}
-		else
-		{
-		  CurrentBlock[Upto++] = unchecked((sbyte)(0x80 | (bytes.Length >> 8)));
-		  CurrentBlock[Upto++] = unchecked((sbyte)(bytes.Length & 0xff));
-		}
-		Array.Copy(bytes.Bytes, bytes.Offset, CurrentBlock, Upto, bytes.Length);
-		Upto += bytes.Length;
+            if (bytes.Length < 128)
+            {
+                CurrentBlock[Upto++] = (sbyte)bytes.Length;
+            }
+            else
+            {
+                CurrentBlock[Upto++] = unchecked((sbyte)(0x80 | (bytes.Length >> 8)));
+                CurrentBlock[Upto++] = unchecked((sbyte)(bytes.Length & 0xff));
+            }
+            Array.Copy(bytes.Bytes, bytes.Offset, CurrentBlock, Upto, bytes.Length);
+            Upto += bytes.Length;
 
-		return pointer;
-	  }
+            return pointer;
+        }
 
-	  public sealed class PagedBytesDataInput : DataInput
-	  {
-		  private readonly PagedBytes OuterInstance;
+        public sealed class PagedBytesDataInput : DataInput
+        {
+            private readonly PagedBytes OuterInstance;
 
-		internal int CurrentBlockIndex;
-		internal int CurrentBlockUpto;
-		internal sbyte[] CurrentBlock;
+            internal int CurrentBlockIndex;
+            internal int CurrentBlockUpto;
+            internal sbyte[] CurrentBlock;
 
-		internal PagedBytesDataInput(PagedBytes outerInstance)
-		{
-			this.OuterInstance = outerInstance;
-		  CurrentBlock = outerInstance.Blocks[0];
-		}
+            internal PagedBytesDataInput(PagedBytes outerInstance)
+            {
+                this.OuterInstance = outerInstance;
+                CurrentBlock = outerInstance.Blocks[0];
+            }
 
-		public override object Clone()
-		{
-		  PagedBytesDataInput clone = OuterInstance.DataInput;
-		  clone.Position = Position;
-		  return clone;
-		}
+            public override object Clone()
+            {
+                PagedBytesDataInput clone = OuterInstance.DataInput;
+                clone.Position = Position;
+                return clone;
+            }
 
-		/// <summary>
-		/// Returns the current byte position. </summary>
-		public long Position
-		{
-			get
-			{
-                return (long)CurrentBlockIndex * OuterInstance.BlockSize + CurrentBlockUpto;
-			}
-			set
-			{
-                CurrentBlockIndex = (int)(value >> OuterInstance.BlockBits);
+            /// <summary>
+            /// Returns the current byte position. </summary>
+            public long Position
+            {
+                get
+                {
+                    return (long)CurrentBlockIndex * OuterInstance.BlockSize + CurrentBlockUpto;
+                }
+                set
+                {
+                    CurrentBlockIndex = (int)(value >> OuterInstance.BlockBits);
+                    CurrentBlock = OuterInstance.Blocks[CurrentBlockIndex];
+                    CurrentBlockUpto = (int)(value & OuterInstance.BlockMask);
+                }
+            }
+
+
+            public override byte ReadByte()
+            {
+                if (CurrentBlockUpto == OuterInstance.BlockSize)
+                {
+                    NextBlock();
+                }
+                return (byte)CurrentBlock[CurrentBlockUpto++];
+            }
+
+            public override void ReadBytes(byte[] b, int offset, int len)
+            {
+                Debug.Assert(b.Length >= offset + len);
+                int offsetEnd = offset + len;
+                while (true)
+                {
+                    int blockLeft = OuterInstance.BlockSize - CurrentBlockUpto;
+                    int left = offsetEnd - offset;
+                    if (blockLeft < left)
+                    {
+                        System.Buffer.BlockCopy(CurrentBlock, CurrentBlockUpto, b, offset, blockLeft);
+                        NextBlock();
+                        offset += blockLeft;
+                    }
+                    else
+                    {
+                        // Last block
+                        System.Buffer.BlockCopy(CurrentBlock, CurrentBlockUpto, b, offset, left);
+                        CurrentBlockUpto += left;
+                        break;
+                    }
+                }
+            }
+
+            internal void NextBlock()
+            {
+                CurrentBlockIndex++;
+                CurrentBlockUpto = 0;
                 CurrentBlock = OuterInstance.Blocks[CurrentBlockIndex];
-                CurrentBlockUpto = (int)(value & OuterInstance.BlockMask);
-			}
-		}
+            }
+        }
 
+        public sealed class PagedBytesDataOutput : DataOutput
+        {
+            private readonly PagedBytes OuterInstance;
 
-		public override byte ReadByte()
-		{
-            if (CurrentBlockUpto == OuterInstance.BlockSize)
-		  {
-			NextBlock();
-		  }
-		  return (byte)CurrentBlock[CurrentBlockUpto++];
-		}
+            public PagedBytesDataOutput(PagedBytes outerInstance)
+            {
+                this.OuterInstance = outerInstance;
+            }
 
-		public override void ReadBytes(byte[] b, int offset, int len)
-		{
-		  Debug.Assert(b.Length >= offset + len);
-		  int offsetEnd = offset + len;
-		  while (true)
-		  {
-            int blockLeft = OuterInstance.BlockSize - CurrentBlockUpto;
-			int left = offsetEnd - offset;
-			if (blockLeft < left)
-			{
-			  Array.Copy(CurrentBlock, CurrentBlockUpto, b, offset, blockLeft);
-			  NextBlock();
-			  offset += blockLeft;
-			}
-			else
-			{
-			  // Last block
-			  Array.Copy(CurrentBlock, CurrentBlockUpto, b, offset, left);
-			  CurrentBlockUpto += left;
-			  break;
-			}
-		  }
-		}
+            public override void WriteByte(byte b)
+            {
+                if (OuterInstance.Upto == OuterInstance.BlockSize)
+                {
+                    if (OuterInstance.CurrentBlock != null)
+                    {
+                        OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
+                        OuterInstance.BlockEnd.Add(OuterInstance.Upto);
+                    }
+                    OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+                    OuterInstance.Upto = 0;
+                }
+                OuterInstance.CurrentBlock[OuterInstance.Upto++] = (sbyte)b;
+            }
 
-		internal void NextBlock()
-		{
-		  CurrentBlockIndex++;
-		  CurrentBlockUpto = 0;
-          CurrentBlock = OuterInstance.Blocks[CurrentBlockIndex];
-		}
-	  }
+            public override void WriteBytes(byte[] b, int offset, int length)
+            {
+                Debug.Assert(b.Length >= offset + length);
+                if (length == 0)
+                {
+                    return;
+                }
 
-	  public sealed class PagedBytesDataOutput : DataOutput
-	  {
-		  private readonly PagedBytes OuterInstance;
+                if (OuterInstance.Upto == OuterInstance.BlockSize)
+                {
+                    if (OuterInstance.CurrentBlock != null)
+                    {
+                        OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
+                        OuterInstance.BlockEnd.Add(OuterInstance.Upto);
+                    }
+                    OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+                    OuterInstance.Upto = 0;
+                }
 
-		  public PagedBytesDataOutput(PagedBytes outerInstance)
-		  {
-			  this.OuterInstance = outerInstance;
-		  }
+                int offsetEnd = offset + length;
+                while (true)
+                {
+                    int left = offsetEnd - offset;
+                    int blockLeft = OuterInstance.BlockSize - OuterInstance.Upto;
+                    if (blockLeft < left)
+                    {
+                        System.Buffer.BlockCopy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, blockLeft);
+                        OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
+                        OuterInstance.BlockEnd.Add(OuterInstance.BlockSize);
+                        OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
+                        OuterInstance.Upto = 0;
+                        offset += blockLeft;
+                    }
+                    else
+                    {
+                        // Last block
+                        System.Buffer.BlockCopy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, left);
+                        OuterInstance.Upto += left;
+                        break;
+                    }
+                }
+            }
 
-		public override void WriteByte(byte b)
-		{
-          if (OuterInstance.Upto == OuterInstance.BlockSize)
-		  {
-            if (OuterInstance.CurrentBlock != null)
-			{
-                OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
-                OuterInstance.BlockEnd.Add(OuterInstance.Upto);
-			}
-            OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
-            OuterInstance.Upto = 0;
-		  }
-          OuterInstance.CurrentBlock[OuterInstance.Upto++] = (sbyte)b;
-		}
+            /// <summary>
+            /// Return the current byte position. </summary>
+            public long Position
+            {
+                get
+                {
+                    return OuterInstance.Pointer;
+                }
+            }
+        }
 
-		public override void WriteBytes(byte[] b, int offset, int length)
-		{
-		  Debug.Assert(b.Length >= offset + length);
-		  if (length == 0)
-		  {
-			return;
-		  }
+        /// <summary>
+        /// Returns a DataInput to read values from this
+        ///  PagedBytes instance. 
+        /// </summary>
+        public PagedBytesDataInput DataInput
+        {
+            get
+            {
+                if (!Frozen)
+                {
+                    throw new InvalidOperationException("must call freeze() before getDataInput");
+                }
+                return new PagedBytesDataInput(this);
+            }
+        }
 
-		  if (OuterInstance.Upto == OuterInstance.BlockSize)
-		  {
-			if (OuterInstance.CurrentBlock != null)
-			{
-			  OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
-			  OuterInstance.BlockEnd.Add(OuterInstance.Upto);
-			}
-			OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
-			OuterInstance.Upto = 0;
-		  }
-
-		  int offsetEnd = offset + length;
-		  while (true)
-		  {
-			int left = offsetEnd - offset;
-			int blockLeft = OuterInstance.BlockSize - OuterInstance.Upto;
-			if (blockLeft < left)
-			{
-			  Array.Copy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, blockLeft);
-			  OuterInstance.Blocks.Add(OuterInstance.CurrentBlock);
-			  OuterInstance.BlockEnd.Add(OuterInstance.BlockSize);
-			  OuterInstance.CurrentBlock = new sbyte[OuterInstance.BlockSize];
-			  OuterInstance.Upto = 0;
-			  offset += blockLeft;
-			}
-			else
-			{
-			  // Last block
-			  Array.Copy(b, offset, OuterInstance.CurrentBlock, OuterInstance.Upto, left);
-              OuterInstance.Upto += left;
-			  break;
-			}
-		  }
-		}
-
-		/// <summary>
-		/// Return the current byte position. </summary>
-		public long Position
-		{
-			get
-			{
-			  return OuterInstance.Pointer;
-			}
-		}
-	  }
-
-	  /// <summary>
-	  /// Returns a DataInput to read values from this
-	  ///  PagedBytes instance. 
-	  /// </summary>
-	  public PagedBytesDataInput DataInput
-	  {
-		  get
-		  {
-			if (!Frozen)
-			{
-			  throw new InvalidOperationException("must call freeze() before getDataInput");
-			}
-			return new PagedBytesDataInput(this);
-		  }
-	  }
-
-	  /// <summary>
-	  /// Returns a DataOutput that you may use to write into
-	  ///  this PagedBytes instance.  If you do this, you should
-	  ///  not call the other writing methods (eg, copy);
-	  ///  results are undefined. 
-	  /// </summary>
-	  public PagedBytesDataOutput DataOutput
-	  {
-		  get
-		  {
-			if (Frozen)
-			{
-			  throw new InvalidOperationException("cannot get DataOutput after freeze()");
-			}
-			return new PagedBytesDataOutput(this);
-		  }
-	  }
-	}
+        /// <summary>
+        /// Returns a DataOutput that you may use to write into
+        ///  this PagedBytes instance.  If you do this, you should
+        ///  not call the other writing methods (eg, copy);
+        ///  results are undefined. 
+        /// </summary>
+        public PagedBytesDataOutput DataOutput
+        {
+            get
+            {
+                if (Frozen)
+                {
+                    throw new InvalidOperationException("cannot get DataOutput after freeze()");
+                }
+                return new PagedBytesDataOutput(this);
+            }
+        }
+    }
 
 }

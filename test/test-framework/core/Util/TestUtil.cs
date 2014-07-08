@@ -279,7 +279,7 @@ namespace Lucene.Net.Util
             MemoryStream bos = new MemoryStream(1024);
             CheckIndex checker = new CheckIndex(dir);
             checker.CrossCheckTermVectors = crossCheckTermVectors;
-            checker.SetInfoStream(new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8), false);
+            checker.SetInfoStream(new StreamWriter(bos, Encoding.UTF8), false);
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             if (indexStatus == null || indexStatus.Clean == false)
             {

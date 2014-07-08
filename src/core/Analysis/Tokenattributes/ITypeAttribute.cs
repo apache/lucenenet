@@ -23,24 +23,24 @@ namespace Lucene.Net.Analysis.Tokenattributes
 
     using Attribute = Lucene.Net.Util.Attribute;
 
-	/// <summary>
-	/// A Token's lexical type. The Default value is "word". 
-	/// </summary>
-	public interface ITypeAttribute : IAttribute
-	{
+    /// <summary>
+    /// A Token's lexical type. The Default value is "word". 
+    /// </summary>
+    public interface ITypeAttribute : IAttribute
+    {
 
-	  /// <summary>
-	  /// the default type </summary>
+        /// <summary>
+        /// the default type </summary>
 
-	  /// <summary>
-	  /// Set the lexical type. </summary>
-	  /// <seealso cref= #type()  </seealso>
-      string Type { get; set; }//Not used
-	}
+        /// <summary>
+        /// Set the lexical type. </summary>
+        /// <seealso cref= #type()  </seealso>
+        string Type { get; set; }
+    }
 
-	public static class TypeAttribute_Fields
-	{
-	  public const string DEFAULT_TYPE = "word";
-	}
+    public static class TypeAttribute_Fields
+    {
+        public const string DEFAULT_TYPE = "word";
+    }
 
 }

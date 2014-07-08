@@ -22,23 +22,23 @@ namespace Lucene.Net.Codecs.Lucene40
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
 
     [TestFixture]
-	public class TestLucene40TermVectorsFormat : BaseTermVectorsFormatTestCase
-	{
+    public class TestLucene40TermVectorsFormat : BaseTermVectorsFormatTestCase
+    {
 
-      [TestFixtureSetUp]
-	  public static void BeforeClass()
-	  {
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-	  }
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return new Lucene40RWCodec();
-		  }
-	  }
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return new Lucene40RWCodec();
+            }
+        }
 
-	}
+    }
 
 }

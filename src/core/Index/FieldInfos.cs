@@ -180,7 +180,9 @@ namespace Lucene.Net.Index
         /// doesn't exist. </returns>
         public virtual FieldInfo FieldInfo(string fieldName)
         {
-            return ByName[fieldName];
+            FieldInfo ret;
+            ByName.TryGetValue(fieldName, out ret);
+            return ret;
         }
 
         /// <summary>
@@ -195,7 +197,9 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("Illegal field number: " + fieldNumber);
             }
-            return ByNumber[fieldNumber];
+            Index.FieldInfo ret;
+            ByNumber.TryGetValue(fieldNumber, out ret);
+            return ret;
         }
 
         public sealed class FieldNumbers

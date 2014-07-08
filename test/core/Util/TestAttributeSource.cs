@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
 
             src.RestoreState(state);
             Assert.AreEqual(termAtt.ToString(), "TestTerm");
-            Assert.AreEqual(typeAtt.GetType(), "TestType");
+            Assert.AreEqual(typeAtt.Type, "TestType");
             Assert.AreEqual(hashCode, src.GetHashCode(), "Hash code should be equal after restore");
 
             // restore into an exact configured copy
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util
 
             src2.RestoreState(state);
             Assert.AreEqual(termAtt.ToString(), "TestTerm");
-            Assert.AreEqual(typeAtt.GetType(), "TestType");
+            Assert.AreEqual(typeAtt.Type, "TestType");
             Assert.AreEqual(12345, flagsAtt.Flags, "FlagsAttribute should not be touched");
 
             // init a third instance missing one Attribute
@@ -99,9 +99,9 @@ namespace Lucene.Net.Util
             AttributeSource clone = src.CloneAttributes();
             IEnumerator<Type> it = clone.AttributeClassesIterator;
             it.MoveNext();
-            Assert.AreEqual(typeof(FlagsAttribute), it.Current, "FlagsAttribute must be the first attribute");
+            Assert.AreEqual(typeof(IFlagsAttribute), it.Current, "FlagsAttribute must be the first attribute");
             it.MoveNext();
-            Assert.AreEqual(typeof(TypeAttribute), it.Current, "TypeAttribute must be the second attribute");
+            Assert.AreEqual(typeof(ITypeAttribute), it.Current, "TypeAttribute must be the second attribute");
             Assert.IsFalse(it.MoveNext(), "No more attributes");
 
             IFlagsAttribute flagsAtt2 = clone.GetAttribute<IFlagsAttribute>();
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
             typeAtt2.Type = "OtherType";
             clone.CopyTo(src);
             Assert.AreEqual(4711, flagsAtt.Flags, "FlagsAttribute of original must now contain updated term");
-            Assert.AreEqual(typeAtt.GetType(), "TypeAttribute of original must now contain updated type", "OtherType");
+            Assert.AreEqual(typeAtt.Type, "OtherType", "TypeAttribute of original must now contain updated type");
             // verify again:
             Assert.AreNotSame(flagsAtt2, flagsAtt, "FlagsAttribute of original and clone must be different instances");
             Assert.AreNotSame(typeAtt2, typeAtt, "TypeAttribute of original and clone must be different instances");
@@ -176,10 +176,10 @@ namespace Lucene.Net.Util
         public virtual void TestLUCENE_3042()
         {
             AttributeSource src1 = new AttributeSource();
-            src1.AddAttribute<CharTermAttribute>().Append("foo");
+            src1.AddAttribute<ICharTermAttribute>().Append("foo");
             int hash1 = src1.GetHashCode(); // this triggers a cached state
             AttributeSource src2 = new AttributeSource(src1);
-            src2.AddAttribute<TypeAttribute>().Type = "bar";
+            src2.AddAttribute<ITypeAttribute>().Type = "bar";
             Assert.IsTrue(hash1 != src1.GetHashCode(), "The hashCode is identical, so the captured state was preserved.");
             Assert.AreEqual(src2.GetHashCode(), src1.GetHashCode());
         }

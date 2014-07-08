@@ -21,34 +21,34 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using BaseDocValuesFormatTestCase = Lucene.Net.Index.BaseDocValuesFormatTestCase;
 
-	/// <summary>
-	/// Tests Lucene40DocValuesFormat
-	/// </summary>
-	[TestFixture]
+    /// <summary>
+    /// Tests Lucene40DocValuesFormat
+    /// </summary>
+    [TestFixture]
     public class TestLucene40DocValuesFormat : BaseDocValuesFormatTestCase
-	{
-	  private readonly Codec Codec_Renamed = new Lucene40RWCodec();
+    {
+        private readonly Codec Codec_Renamed = new Lucene40RWCodec();
 
-      [TestFixtureSetUp]
-	  public static void BeforeClass()
-	  {
-		OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-	  }
+        [TestFixtureSetUp]
+        public static void BeforeClass()
+        {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+        }
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return Codec_Renamed;
-		  }
-	  }
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return Codec_Renamed;
+            }
+        }
 
-	  // LUCENE-4583: this codec should throw IAE on huge binary values:
-	  protected internal override bool CodecAcceptsHugeBinaryValues(string field)
-	  {
-		return false;
-	  }
+        // LUCENE-4583: this codec should throw IAE on huge binary values:
+        protected internal override bool CodecAcceptsHugeBinaryValues(string field)
+        {
+            return false;
+        }
 
-	}
+    }
 
 }

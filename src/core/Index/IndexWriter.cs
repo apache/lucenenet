@@ -485,7 +485,8 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    ReadersAndUpdates rld = ReaderMap[info];
+                    ReadersAndUpdates rld;
+                    ReaderMap.TryGetValue(info, out rld);
                     if (rld != null)
                     {
                         Debug.Assert(info == rld.Info);

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Analysis
 {
@@ -177,12 +178,12 @@ namespace Lucene.Net.Analysis
         public virtual void End()
         {
             ClearAttributes(); // LUCENE-3849: don't consume dirty atts
-            /* LUCENE TO-DO Not sure what this is doing
-            if (HasAttribute(typeof(PositionIncrementAttribute)))
+            
+            if (HasAttribute<IPositionIncrementAttribute>())
             {
-              var attr = GetAttribute(typeof(PositionIncrementAttribute));
+              var attr = GetAttribute<IPositionIncrementAttribute>();
               attr.PositionIncrement = 0;
-            }*/
+            }
         }
 
         /// <summary>

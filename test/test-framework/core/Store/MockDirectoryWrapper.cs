@@ -63,7 +63,7 @@ namespace Lucene.Net.Store
         internal double RandomIOExceptionRateOnOpen_Renamed;
         internal Random RandomState;
         internal bool NoDeleteOpenFile_Renamed = true;
-        internal bool AssertNoDeleteOpenFile_Renamed = false;
+        internal bool assertNoDeleteOpenFile = false;
         internal bool PreventDoubleWrite_Renamed = true;
         internal bool TrackDiskUsage_Renamed = false;
         internal bool WrapLockFactory_Renamed = true;
@@ -445,11 +445,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.AssertNoDeleteOpenFile_Renamed = value;
+                this.assertNoDeleteOpenFile = value;
             }
             get
             {
-                return AssertNoDeleteOpenFile_Renamed;
+                return assertNoDeleteOpenFile;
             }
         }
 
@@ -583,15 +583,15 @@ namespace Lucene.Net.Store
                 {
                     UnSyncedFiles.Remove(name);
                 }
-                if (!forced && (NoDeleteOpenFile_Renamed || AssertNoDeleteOpenFile_Renamed))
+                if (!forced && (NoDeleteOpenFile_Renamed || assertNoDeleteOpenFile))
                 {
                     if (OpenFiles.ContainsKey(name))
                     {
                         OpenFilesDeleted.Add(name);
 
-                        if (!AssertNoDeleteOpenFile_Renamed)
+                        if (!assertNoDeleteOpenFile)
                         {
-                            throw FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
+                            throw FillOpenTrace(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                         }
                         else
                         {
@@ -651,9 +651,9 @@ namespace Lucene.Net.Store
                         throw new System.IO.IOException("file \"" + name + "\" was already written to");
                     }
                 }
-                if ((NoDeleteOpenFile_Renamed || AssertNoDeleteOpenFile_Renamed) && OpenFiles.ContainsKey(name))
+                if ((NoDeleteOpenFile_Renamed || assertNoDeleteOpenFile) && OpenFiles.ContainsKey(name))
                 {
-                    if (!AssertNoDeleteOpenFile_Renamed)
+                    if (!assertNoDeleteOpenFile)
                     {
                         throw new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
                     }
@@ -730,10 +730,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 int v;
-
-                OpenFiles.TryGetValue(name, out v);
-
-                if (v != null)
+                if (OpenFiles.TryGetValue(name, out v))
                 {
                     v = Convert.ToInt32((int)v + 1);
                     OpenFiles[name] = v;
@@ -1073,11 +1070,10 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                int v = OpenFiles[name];
-                // Could be null when crash() was called
-                if (v != null)
+                int v;
+                if (OpenFiles.TryGetValue(name, out v))
                 {
-                    if ((int)v == 1)
+                    if (v == 1)
                     {
                         OpenFiles.Remove(name);
                     }
@@ -1299,6 +1295,7 @@ namespace Lucene.Net.Store
             }
             // cannot open a file for input if it's still open for
             // output, except for segments.gen and segments_N
+
             if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
             {
                 throw (System.IO.IOException)FillOpenTrace(new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);

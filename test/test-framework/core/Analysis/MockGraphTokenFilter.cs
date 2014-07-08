@@ -1,5 +1,6 @@
 using System;
 using Lucene.Net.Analysis.Tokenattributes;
+using NUnit.Framework;
 
 namespace Lucene.Net.Analysis
 {
@@ -130,7 +131,7 @@ namespace Lucene.Net.Analysis
 		}
 		if (Random == null)
 		{
-		  throw new Exception("incrementToken called in wrong state!");
+		  throw new AssertionException("incrementToken called in wrong state!");
 		}
 		return NextToken();
 	  }
