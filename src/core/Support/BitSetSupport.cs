@@ -19,8 +19,10 @@
  *
 */
 
+using System;
 using System.Collections;
 using System.Diagnostics;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
 {
@@ -49,6 +51,61 @@ namespace Lucene.Net.Support
             }
             // if no bits are set at or after index, return -1
             return -1;
+        }
+
+        // Produces a bitwise-and of the two BitArrays without requiring they be the same length
+        public static BitArray And_UnequalLengths(this BitArray bitsA, BitArray bitsB)
+        {
+            //Cycle only through fewest bits neccessary without requiring size equality
+            int maxIdx = Math.Min(bitsA.Length, bitsB.Length);//exclusive
+            BitArray bits = new BitArray(maxIdx);
+            for (int i = 0; i < maxIdx; i++)
+            {
+                bitsA[i] = bitsA[i] & bitsB[i];
+            }
+            return bits;
+        }
+
+        // Produces a bitwise-or of the two BitArrays without requiring they be the same length
+        public static BitArray Or_UnequalLengths(this BitArray bitsA, BitArray bitsB)
+        {
+            BitArray shorter = bitsA.Length < bitsB.Length ? bitsA : bitsB;
+            BitArray longer = bitsA.Length >= bitsB.Length ? bitsA : bitsB;
+            BitArray bits = new BitArray(longer.Length);
+            for (int i = 0; i < longer.Length; i++)
+            {
+                if (i >= shorter.Length)
+                {
+                    bits[i] = longer[i];
+                }
+                else
+                {
+                    bits[i] = shorter[i] | longer[i];
+                }
+            }
+           
+            return bits;
+        }
+
+        // Produces a bitwise-xor of the two BitArrays without requiring they be the same length
+        public static BitArray Xor_UnequalLengths(this BitArray bitsA, BitArray bitsB)
+        {
+            BitArray shorter = bitsA.Length < bitsB.Length ? bitsA : bitsB;
+            BitArray longer = bitsA.Length >= bitsB.Length ? bitsA : bitsB;
+            BitArray bits = new BitArray(longer.Length);
+            for (int i = 0; i < longer.Length; i++)
+            {
+                if (i >= shorter.Length)
+                {
+                    bits[i] = longer[i];
+                }
+                else
+                {
+                    bits[i] = shorter[i] ^ longer[i];
+                }
+            }
+
+            return bits;
         }
 
         /// <summary>
@@ -105,7 +162,8 @@ namespace Lucene.Net.Support
         /// <param name="fromIndex">The start of the range to set(inclusive)</param>
         /// <param name="toIndex">The end of the range to set(exclusive)</param>
         /// <param name="value">the value to set to the range</param>
-        public static void Set(this BitArray bits, int fromIndex, int toIndex, bool value) {
+        public static void Set(this BitArray bits, int fromIndex, int toIndex, bool value)
+        {
             for (int i = fromIndex; i < toIndex; ++i)
             {
                 bits.Set(i, value);
@@ -161,13 +219,18 @@ namespace Lucene.Net.Support
         // Clears all bits in this BitArray that correspond to a set bit in the parameter BitArray
         public static void AndNot(this BitArray bitsA, BitArray bitsB)
         {
-            Debug.Assert(bitsA.Length == bitsB.Length, "BitArray lengths are not the same");
+            //Debug.Assert(bitsA.Length == bitsB.Length, "BitArray lengths are not the same");
             for (int i = 0; i < bitsA.Length; i++)
             {
+                //bitsA was longer than bitsB
+                if (i >= bitsB.Length)
+                {
+                    return;
+                }
                 if (bitsA[i] && bitsB[i])
                 {
                     bitsA[i] = false;
-                }   
+                }
             }
         }
     }

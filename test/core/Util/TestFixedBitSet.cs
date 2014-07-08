@@ -16,6 +16,7 @@ using System.Collections;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Linq;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -219,11 +220,11 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(a.Cardinality(), b.Cardinality());
 
                     BitArray a_and = (BitArray)a.Clone();
-                    a_and = a_and.And(a0);
+                    a_and = a_and.And_UnequalLengths(a0);
                     BitArray a_or = (BitArray)a.Clone();
-                    a_or = a_or.Or(a0);
+                    a_or = a_or.Or_UnequalLengths(a0);
                     BitArray a_xor = (BitArray)a.Clone();
-                    a_xor = a_xor.Xor(a0);
+                    a_xor = a_xor.Xor_UnequalLengths(a0);
                     BitArray a_andn = (BitArray)a.Clone();
                     a_andn.AndNot(a0);
 
@@ -372,16 +373,17 @@ namespace Lucene.Net.Util
 
         private BitArray MakeBitSet(int[] a)
         {
-            BitArray bs = new BitArray(a.Length);
+            int neccLength = a.Length == 0 ? 0 : a.Max() + 1;
+            BitArray bs = new BitArray(neccLength);
             foreach (int e in a)
             {
-                if (e >= bs.Length)
+                /*if (e >= bs.Length)
                 {
                     // Grow by a factor of two to avoid resizing as often
-                    int[] copy = new int[e*2];
+                    int[] copy = new int[e + 1];
                     bs.CopyTo(copy, bs.Length - 1);
                     bs = MakeBitSet(copy);
-                }
+                }*/
                 bs.Set(e, true);
             }
             return bs;
