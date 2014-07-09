@@ -249,7 +249,7 @@ namespace Lucene.Net.Store
                 }
                 bb.Limit = limit;
                 int i = Channel.Read(bb, pos);
-                if (i < 0) // be defensive here, even though we checked before hand, something could have changed
+                if (i <= 0) // be defensive here, even though we checked before hand, something could have changed
                 {
                     throw new Exception("read past EOF: " + this + " off: " + offset + " len: " + len + " pos: " + pos + " chunkLen: " + readLength + " end: " + End);
                 }

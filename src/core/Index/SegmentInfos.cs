@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -423,7 +424,7 @@ namespace Lucene.Net.Index
                     actualFormat = -1;
                     Lucene3xSegmentInfoReader.ReadLegacyInfos(this, directory, input, format);
                     Codec codec = Codec.ForName("Lucene3x");
-                    foreach (SegmentCommitInfo info in this)
+                    foreach (SegmentCommitInfo info in Segments)
                     {
                         info.Info.Codec = codec;
                     }
@@ -435,11 +436,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final long checksumNow = input.getChecksum();
                     long checksumNow = input.Checksum;
-                    //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                    //ORIGINAL LINE: final long checksumThen = input.readLong();
                     long checksumThen = input.ReadLong();
                     if (checksumNow != checksumThen)
                     {
@@ -532,7 +529,7 @@ namespace Lucene.Net.Index
                 segnOutput.WriteLong(Version_Renamed);
                 segnOutput.WriteInt(Counter); // write counter
                 segnOutput.WriteInt(Size()); // write infos
-                foreach (SegmentCommitInfo siPerCommit in this)
+                foreach (SegmentCommitInfo siPerCommit in Segments)
                 {
                     SegmentInfo si = siPerCommit.Info;
                     segnOutput.WriteString(si.Name);
@@ -720,7 +717,7 @@ namespace Lucene.Net.Index
             SegmentInfos sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:
             sis.Segments = new List<SegmentCommitInfo>(Size());
-            foreach (SegmentCommitInfo info in this)
+            foreach (SegmentCommitInfo info in Segments)
             {
                 Debug.Assert(info.Info.Codec != null);
                 // dont directly access segments, use add method!!!
@@ -1359,12 +1356,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public int TotalDocCount()
         {
-            int count = 0;
-            foreach (SegmentCommitInfo info in this)
-            {
-                count += info.Info.DocCount;
-            }
-            return count;
+            return Segments.Sum(info => info.Info.DocCount);
         }
 
         /// <summary>
@@ -1420,7 +1412,7 @@ namespace Lucene.Net.Index
         internal IList<SegmentCommitInfo> CreateBackupSegmentInfos()
         {
             IList<SegmentCommitInfo> list = new List<SegmentCommitInfo>(Size());
-            foreach (SegmentCommitInfo info in this)
+            foreach (SegmentCommitInfo info in Segments)
             {
                 Debug.Assert(info.Info.Codec != null);
                 list.Add((SegmentCommitInfo)(info.Clone()));

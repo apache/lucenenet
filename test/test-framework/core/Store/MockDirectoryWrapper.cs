@@ -905,6 +905,12 @@ namespace Lucene.Net.Store
                     {
                         cause = stacktraces.Current;
                     }
+
+                    foreach (var kvp in OpenFiles)
+                    {
+                        
+                    }
+
                     // RuntimeException instead ofSystem.IO.IOException because
                     // super() does not throwSystem.IO.IOException currently:
                     throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: " + OpenFiles, cause);

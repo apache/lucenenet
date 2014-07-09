@@ -518,7 +518,8 @@ namespace Lucene.Net.Index
             dvs = (NumericDocValues)dvsDummy;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer = DvProducersByField[field];
+                DocValuesProducer dvProducer;
+                DvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetNumeric(fi);
                 dvFields[field] = dvs;
@@ -544,10 +545,12 @@ namespace Lucene.Net.Index
 
             IDictionary<string, Bits> dvFields = docsWithFieldLocal.Get();
 
-            Bits dvs = dvFields[field];
+            Bits dvs;
+            dvFields.TryGetValue(field, out dvs);
             if (dvs == null)
             {
-                DocValuesProducer dvProducer = DvProducersByField[field];
+                DocValuesProducer dvProducer;
+                DvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetDocsWithField(fi);
                 dvFields[field] = dvs;
@@ -567,10 +570,14 @@ namespace Lucene.Net.Index
 
             IDictionary<string, object> dvFields = docValuesLocal.Get();
 
-            BinaryDocValues dvs = (BinaryDocValues)dvFields[field];
+            object ret;
+            BinaryDocValues dvs;
+            dvFields.TryGetValue(field, out ret);
+            dvs = (BinaryDocValues)ret;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer = DvProducersByField[field];
+                DocValuesProducer dvProducer;
+                DvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetBinary(fi);
                 dvFields[field] = dvs;
@@ -591,12 +598,13 @@ namespace Lucene.Net.Index
             IDictionary<string, object> dvFields = docValuesLocal.Get();
 
             SortedDocValues dvs;
-            object dvsDummy;
-            dvFields.TryGetValue(field, out dvsDummy);
-            dvs = (SortedDocValues) dvsDummy;
+            object ret;
+            dvFields.TryGetValue(field, out ret);
+            dvs = (SortedDocValues)ret;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer = DvProducersByField[field];
+                DocValuesProducer dvProducer;
+                DvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetSorted(fi);
                 dvFields[field] = dvs;
@@ -616,10 +624,14 @@ namespace Lucene.Net.Index
 
             IDictionary<string, object> dvFields = docValuesLocal.Get();
 
-            SortedSetDocValues dvs = (SortedSetDocValues)dvFields[field];
+            object ret;
+            SortedSetDocValues dvs;
+            dvFields.TryGetValue(field, out ret);
+            dvs = (SortedSetDocValues)ret;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer = DvProducersByField[field];
+                DocValuesProducer dvProducer;
+                DvProducersByField.TryGetValue(field, out dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetSortedSet(fi);
                 dvFields[field] = dvs;

@@ -710,6 +710,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [Ignore]
         [Test]
         public virtual void TestMergeWarmer()
         {
@@ -1282,8 +1283,6 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @Test public void testNRTOpenExceptions() throws Exception
         [Test]
         public virtual void TestNRTOpenExceptions()
         {

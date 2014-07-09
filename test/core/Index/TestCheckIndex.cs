@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -59,9 +61,9 @@ namespace Lucene.Net.Index
             writer.DeleteDocuments(new Term("field", "aaa5"));
             writer.Dispose();
 
-            MemoryStream bos = new MemoryStream(1024);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
-            checker.InfoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
+            checker.InfoStream = new StreamWriter(bos, Encoding.UTF8);
             if (VERBOSE)
             {
                 checker.InfoStream = (StreamWriter)Console.Out;

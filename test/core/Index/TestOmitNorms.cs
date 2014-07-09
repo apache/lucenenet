@@ -31,8 +31,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
 
     [TestFixture]
-	public class 
-        TestOmitNorms : LuceneTestCase
+	public class TestOmitNorms : LuceneTestCase
 	{
 	  // Tests whether the DocumentWriter correctly enable the
 	  // omitNorms bit in the FieldInfo

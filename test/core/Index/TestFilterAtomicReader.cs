@@ -4,218 +4,223 @@ using System.Reflection;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 
 
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-	using Directory = Lucene.Net.Store.Directory;
-	using Bits = Lucene.Net.Util.Bits;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
+    using Directory = Lucene.Net.Store.Directory;
+    using Bits = Lucene.Net.Util.Bits;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NUnit.Framework;
 
     [TestFixture]
-	public class TestFilterAtomicReader : LuceneTestCase
-	{
+    public class TestFilterAtomicReader : LuceneTestCase
+    {
 
-	  private class TestReader : FilterAtomicReader
-	  {
+        private class TestReader : FilterAtomicReader
+        {
 
-		/// <summary>
-		/// Filter that only permits terms containing 'e'. </summary>
-		private class TestFields : FilterFields
-		{
-		  internal TestFields(Fields @in) : base(@in)
-		  {
-		  }
+            /// <summary>
+            /// Filter that only permits terms containing 'e'. </summary>
+            private class TestFields : FilterFields
+            {
+                internal TestFields(Fields @in)
+                    : base(@in)
+                {
+                }
 
-		  public override Terms Terms(string field)
-		  {
-			return new TestTerms(base.Terms(field));
-		  }
-		}
+                public override Terms Terms(string field)
+                {
+                    return new TestTerms(base.Terms(field));
+                }
+            }
 
-		private class TestTerms : FilterTerms
-		{
-		  internal TestTerms(Terms @in) : base(@in)
-		  {
-		  }
+            private class TestTerms : FilterTerms
+            {
+                internal TestTerms(Terms @in)
+                    : base(@in)
+                {
+                }
 
-		  public override TermsEnum Iterator(TermsEnum reuse)
-		  {
-			return new TestTermsEnum(base.Iterator(reuse));
-		  }
-		}
+                public override TermsEnum Iterator(TermsEnum reuse)
+                {
+                    return new TestTermsEnum(base.Iterator(reuse));
+                }
+            }
 
-		private class TestTermsEnum : FilterTermsEnum
-		{
-		  public TestTermsEnum(TermsEnum @in) : base(@in)
-		  {
-		  }
+            private class TestTermsEnum : FilterTermsEnum
+            {
+                public TestTermsEnum(TermsEnum @in)
+                    : base(@in)
+                {
+                }
 
-		  /// <summary>
-		  /// Scan for terms containing the letter 'e'. </summary>
-		  public override BytesRef Next()
-		  {
-			BytesRef text;
-			while ((text = @in.Next()) != null)
-			{
-			  if (text.Utf8ToString().IndexOf('e') != -1)
-			  {
-				return text;
-			  }
-			}
-			return null;
-		  }
+                /// <summary>
+                /// Scan for terms containing the letter 'e'. </summary>
+                public override BytesRef Next()
+                {
+                    BytesRef text;
+                    while ((text = @in.Next()) != null)
+                    {
+                        if (text.Utf8ToString().IndexOf('e') != -1)
+                        {
+                            return text;
+                        }
+                    }
+                    return null;
+                }
 
-		  public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
-		  {
-			return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum) reuse).@in, flags));
-		  }
-		}
+                public override DocsAndPositionsEnum DocsAndPositions(Bits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                {
+                    return new TestPositions(base.DocsAndPositions(liveDocs, reuse == null ? null : ((FilterDocsAndPositionsEnum)reuse).@in, flags));
+                }
+            }
 
-		/// <summary>
-		/// Filter that only returns odd numbered documents. </summary>
-		private class TestPositions : FilterDocsAndPositionsEnum
-		{
-		  public TestPositions(DocsAndPositionsEnum @in) : base(@in)
-		  {
-		  }
+            /// <summary>
+            /// Filter that only returns odd numbered documents. </summary>
+            private class TestPositions : FilterDocsAndPositionsEnum
+            {
+                public TestPositions(DocsAndPositionsEnum @in)
+                    : base(@in)
+                {
+                }
 
-		  /// <summary>
-		  /// Scan for odd numbered documents. </summary>
-		  public override int NextDoc()
-		  {
-			int doc;
-			while ((doc = @in.NextDoc()) != NO_MORE_DOCS)
-			{
-			  if ((doc % 2) == 1)
-			  {
-				return doc;
-			  }
-			}
-			return NO_MORE_DOCS;
-		  }
-		}
+                /// <summary>
+                /// Scan for odd numbered documents. </summary>
+                public override int NextDoc()
+                {
+                    int doc;
+                    while ((doc = @in.NextDoc()) != NO_MORE_DOCS)
+                    {
+                        if ((doc % 2) == 1)
+                        {
+                            return doc;
+                        }
+                    }
+                    return NO_MORE_DOCS;
+                }
+            }
 
-		public TestReader(IndexReader reader) : base(SlowCompositeReaderWrapper.Wrap(reader))
-		{
-		}
+            public TestReader(IndexReader reader)
+                : base(SlowCompositeReaderWrapper.Wrap(reader))
+            {
+            }
 
-		public override Fields Fields()
-		{
-		  return new TestFields(base.Fields());
-		}
-	  }
+            public override Fields Fields()
+            {
+                return new TestFields(base.Fields());
+            }
+        }
 
-	  /// <summary>
-	  /// Tests the IndexReader.getFieldNames implementation </summary>
-	  /// <exception cref="Exception"> on error </exception>
-      [Test]
-      public virtual void TestFilterIndexReader()
-	  {
-		Directory directory = NewDirectory();
+        /// <summary>
+        /// Tests the IndexReader.getFieldNames implementation </summary>
+        /// <exception cref="Exception"> on error </exception>
+        [Test]
+        public virtual void TestFilterIndexReader()
+        {
+            Directory directory = NewDirectory();
 
-		IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
-		Document d1 = new Document();
-		d1.Add(NewTextField("default", "one two", Field.Store.YES));
-		writer.AddDocument(d1);
+            Document d1 = new Document();
+            d1.Add(NewTextField("default", "one two", Field.Store.YES));
+            writer.AddDocument(d1);
 
-		Document d2 = new Document();
-		d2.Add(NewTextField("default", "one three", Field.Store.YES));
-		writer.AddDocument(d2);
+            Document d2 = new Document();
+            d2.Add(NewTextField("default", "one three", Field.Store.YES));
+            writer.AddDocument(d2);
 
-		Document d3 = new Document();
-		d3.Add(NewTextField("default", "two four", Field.Store.YES));
-		writer.AddDocument(d3);
+            Document d3 = new Document();
+            d3.Add(NewTextField("default", "two four", Field.Store.YES));
+            writer.AddDocument(d3);
 
-		writer.Dispose();
+            writer.Dispose();
 
-		Directory target = NewDirectory();
+            Directory target = NewDirectory();
 
-		// We mess with the postings so this can fail:
-		((BaseDirectoryWrapper) target).CrossCheckTermVectorsOnClose = false;
+            // We mess with the postings so this can fail:
+            ((BaseDirectoryWrapper)target).CrossCheckTermVectorsOnClose = false;
 
-		writer = new IndexWriter(target, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-		IndexReader reader = new TestReader(DirectoryReader.Open(directory));
-		writer.AddIndexes(reader);
-		writer.Dispose();
-		reader.Dispose();
-		reader = DirectoryReader.Open(target);
+            writer = new IndexWriter(target, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexReader reader = new TestReader(DirectoryReader.Open(directory));
+            writer.AddIndexes(reader);
+            writer.Dispose();
+            reader.Dispose();
+            reader = DirectoryReader.Open(target);
 
-		TermsEnum terms = MultiFields.GetTerms(reader, "default").Iterator(null);
-		while (terms.Next() != null)
-		{
-		  Assert.IsTrue(terms.Term().Utf8ToString().IndexOf('e') != -1);
-		}
+            TermsEnum terms = MultiFields.GetTerms(reader, "default").Iterator(null);
+            while (terms.Next() != null)
+            {
+                Assert.IsTrue(terms.Term().Utf8ToString().IndexOf('e') != -1);
+            }
 
-		Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(new BytesRef("one")));
+            Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(new BytesRef("one")));
 
-		DocsAndPositionsEnum positions = terms.DocsAndPositions(MultiFields.GetLiveDocs(reader), null);
-		while (positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
-		{
-		  Assert.IsTrue((positions.DocID() % 2) == 1);
-		}
+            DocsAndPositionsEnum positions = terms.DocsAndPositions(MultiFields.GetLiveDocs(reader), null);
+            while (positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+            {
+                Assert.IsTrue((positions.DocID() % 2) == 1);
+            }
 
-		reader.Dispose();
-		directory.Dispose();
-		target.Dispose();
-	  }
+            reader.Dispose();
+            directory.Dispose();
+            target.Dispose();
+        }
 
-	  private static void CheckOverrideMethods(Type clazz)
-	  {
-		Type superClazz = clazz.BaseType;
-		foreach (MethodInfo m in superClazz.GetMethods())
-		{
-		  if (m.IsStatic || m.IsAbstract || m.IsFinal || /*m.Synthetic ||*/ m.Name.Equals("Attributes"))
-		  {
-			continue;
-		  }
-		  // The point of these checks is to ensure that methods that have a default
-		  // impl through other methods are not overridden. this makes the number of
-		  // methods to override to have a working impl minimal and prevents from some
-		  // traps: for example, think about having getCoreCacheKey delegate to the
-		  // filtered impl by default
-		  MethodInfo subM = clazz.GetMethod(m.Name, m.ParameterTypes);
-		  if (subM.DeclaringClass == clazz && m.DeclaringClass != typeof(object) && m.DeclaringClass != subM.DeclaringClass)
-		  {
-			Assert.Fail(clazz + " overrides " + m + " although it has a default impl");
-		  }
-		}
-	  }
+        private static void CheckOverrideMethods(Type clazz)
+        {
+            Type superClazz = clazz.BaseType;
+            foreach (MethodInfo m in superClazz.GetMethods())
+            {
+                if (m.IsStatic || m.IsAbstract || m.IsFinal || /*m.Synthetic ||*/ m.Name.Equals("Attributes"))
+                {
+                    continue;
+                }
+                // The point of these checks is to ensure that methods that have a default
+                // impl through other methods are not overridden. this makes the number of
+                // methods to override to have a working impl minimal and prevents from some
+                // traps: for example, think about having getCoreCacheKey delegate to the
+                // filtered impl by default
+                MethodInfo subM = clazz.GetMethod(m.Name, m.ParameterTypes);
+                if (subM.DeclaringClass == clazz && m.DeclaringClass != typeof(object) && m.DeclaringClass != subM.DeclaringClass)
+                {
+                    Assert.Fail(clazz + " overrides " + m + " although it has a default impl");
+                }
+            }
+        }
 
-      [Test]
-      public virtual void TestOverrideMethods()
-	  {
-		CheckOverrideMethods(typeof(FilterAtomicReader));
-		CheckOverrideMethods(typeof(FilterAtomicReader.FilterFields));
-		CheckOverrideMethods(typeof(FilterAtomicReader.FilterTerms));
-		CheckOverrideMethods(typeof(FilterAtomicReader.FilterTermsEnum));
-		CheckOverrideMethods(typeof(FilterAtomicReader.FilterDocsEnum));
-		CheckOverrideMethods(typeof(FilterAtomicReader.FilterDocsAndPositionsEnum));
-	  }
+        [Test]
+        public virtual void TestOverrideMethods()
+        {
+            CheckOverrideMethods(typeof(FilterAtomicReader));
+            CheckOverrideMethods(typeof(FilterAtomicReader.FilterFields));
+            CheckOverrideMethods(typeof(FilterAtomicReader.FilterTerms));
+            CheckOverrideMethods(typeof(FilterAtomicReader.FilterTermsEnum));
+            CheckOverrideMethods(typeof(FilterAtomicReader.FilterDocsEnum));
+            CheckOverrideMethods(typeof(FilterAtomicReader.FilterDocsAndPositionsEnum));
+        }
 
-	}
+    }
 
 }

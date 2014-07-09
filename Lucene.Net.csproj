@@ -9547,6 +9547,7 @@
     <Compile Include="src\core\Support\BitSetSupport.cs" />
     <Compile Include="src\core\Support\BufferUnderflowException.cs" />
     <Compile Include="src\core\Support\BuildType.cs" />
+    <Compile Include="src\core\Support\ByteArrayOutputStream.cs" />
     <Compile Include="src\core\Support\ByteBuffer.cs" />
     <Compile Include="src\core\Support\Character.cs" />
     <Compile Include="src\core\Support\Arrays.cs" />
@@ -9571,7 +9572,6 @@
     <Compile Include="src\core\Support\SetExtensions.cs" />
     <Compile Include="src\core\Support\StringBuilderExtensions.cs" />
     <Compile Include="src\core\Support\StringCharSequenceWrapper.cs" />
-    <Compile Include="src\core\Support\TextReaderWrapper.cs" />
     <Compile Include="src\core\Support\StringSupport.cs" />
     <Compile Include="src\core\Support\StringTokenizer.cs" />
     <Compile Include="src\core\Support\TaskSchedulerCompletionService.cs" />

@@ -34,6 +34,7 @@ namespace Lucene.Net.Util
     using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
     using InsanityType = Lucene.Net.Util.FieldCacheSanityChecker.InsanityType;
 
+    [Ignore]
     [TestFixture]
     public class TestFieldCacheSanityChecker : LuceneTestCase
     {

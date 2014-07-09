@@ -270,7 +270,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        value = innerCache[key];
+                        innerCache.TryGetValue(key, out value);
                     }
                     if (value == null)
                     {

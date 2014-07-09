@@ -101,17 +101,17 @@ namespace Lucene.Net.Search
 			  this.OuterInstance = outerInstance;
 			  this.MaxSize = maxSize;
 			  this.StQueue = stQueue;
-			  maxBoostAtt = Attributes.AddAttribute<MaxNonCompetitiveBoostAttribute>();
+			  maxBoostAtt = Attributes.AddAttribute<IMaxNonCompetitiveBoostAttribute>();
 			  visitedTerms = new Dictionary<BytesRef, ScoreTerm>();
 		  }
 
-		  private readonly MaxNonCompetitiveBoostAttribute maxBoostAtt;
+		  private readonly IMaxNonCompetitiveBoostAttribute maxBoostAtt;
 
 		  private readonly IDictionary<BytesRef, ScoreTerm> visitedTerms;
 
 		  private TermsEnum termsEnum;
 		  private IComparer<BytesRef> termComp;
-		  private BoostAttribute boostAtt;
+          private IBoostAttribute boostAtt;
 		  private ScoreTerm st;
 
 		  public override TermsEnum NextEnum
@@ -128,7 +128,7 @@ namespace Lucene.Net.Search
 				{
 				  st = new ScoreTerm(this.termComp, new TermContext(TopReaderContext));
 				}
-				boostAtt = value.Attributes().AddAttribute<BoostAttribute>();
+				boostAtt = value.Attributes().AddAttribute<IBoostAttribute>();
 			  }
 		  }
 

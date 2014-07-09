@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
 
+    [Ignore]
     [TestFixture]
     public class TestAtomicUpdate : LuceneTestCase
     {

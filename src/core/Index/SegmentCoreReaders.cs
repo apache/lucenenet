@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Lucene.Net.Codecs;
 
 namespace Lucene.Net.Index
 {
@@ -66,13 +67,14 @@ namespace Lucene.Net.Index
         // Thingy class holding fieldsReader, termVectorsReader,
         // normsProducer
 
-        internal readonly IDisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;// = new IDisposableThreadLocalAnonymousInnerClassHelper();
+        internal readonly IDisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;
 
         private class AnonymousFieldsReaderLocal : IDisposableThreadLocal<StoredFieldsReader>
         {
             private readonly SegmentCoreReaders OuterInstance;
             public AnonymousFieldsReaderLocal(SegmentCoreReaders outerInstance)
             {
+                OuterInstance = outerInstance;
             }
 
             protected internal override StoredFieldsReader InitialValue()
@@ -81,7 +83,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal readonly IDisposableThreadLocal<TermVectorsReader> termVectorsLocal;// = new IDisposableThreadLocalAnonymousInnerClassHelper2();
+        internal readonly IDisposableThreadLocal<TermVectorsReader> termVectorsLocal;
 
         private class AnonymousTermVectorsLocal : IDisposableThreadLocal<TermVectorsReader>
         {
@@ -162,7 +164,19 @@ namespace Lucene.Net.Index
                     NormsProducer = null;
                 }
 
-                FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
+                StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat();
+
+                try
+                {
+                    FieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
+                }
+                catch (System.AccessViolationException ave)
+                {
+                    
+                }
+                
+
+                //FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
                 if (fieldInfos.HasVectors()) // open term vector files only as needed
                 {
@@ -211,7 +225,10 @@ namespace Lucene.Net.Index
 
             IDictionary<string, object> normFields = normsLocal.Get();
 
-            NumericDocValues norms = (NumericDocValues)normFields[fi.Name];
+            object ret;
+            NumericDocValues norms;
+            normFields.TryGetValue(fi.Name, out ret);
+            norms = (NumericDocValues) ret;
             if (norms == null)
             {
                 norms = NormsProducer.GetNumeric(fi);

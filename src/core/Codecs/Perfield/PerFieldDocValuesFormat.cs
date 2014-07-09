@@ -153,9 +153,11 @@ namespace Lucene.Net.Codecs.Perfield
                 string formatName_ = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
-                Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName_ + " prevValue=" + previousValue);
+                //LUCENE TODO
+                //Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName_ + " prevValue=" + previousValue);
 
-                int suffix = default(int);
+                //int? suffix = default(int?);
+                int suffix = -1;
 
                 ConsumerAndSuffix consumer;
                 Formats.TryGetValue(format, out consumer);
@@ -175,11 +177,10 @@ namespace Lucene.Net.Codecs.Perfield
                         }
                     }
 
-                    if (suffix == null)
+                    if (suffix == -1)
                     {
                         // bump the suffix
-                        suffix = Suffixes[formatName_];
-                        if (suffix == null)
+                        if (!Suffixes.TryGetValue(formatName_, out suffix))
                         {
                             suffix = 0;
                         }
@@ -204,7 +205,8 @@ namespace Lucene.Net.Codecs.Perfield
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix));
-                Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "suffix=" + Convert.ToString(suffix) + " prevValue=" + previousValue);
+                //LUCENE TODO
+                //Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "suffix=" + Convert.ToString(suffix) + " prevValue=" + previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...
@@ -311,32 +313,52 @@ namespace Lucene.Net.Codecs.Perfield
 
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
-                DocValuesProducer producer = Fields[field.Name];
-                return producer == null ? null : producer.GetNumeric(field);
+                DocValuesProducer producer;
+                if (Fields.TryGetValue(field.Name, out producer))
+                {
+                    return producer.GetNumeric(field);
+                }
+                return null;
             }
 
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
-                DocValuesProducer producer = Fields[field.Name];
-                return producer == null ? null : producer.GetBinary(field);
+                DocValuesProducer producer;
+                if (Fields.TryGetValue(field.Name, out producer))
+                {
+                    return producer.GetBinary(field);
+                }
+                return null;
             }
 
             public override SortedDocValues GetSorted(FieldInfo field)
             {
-                DocValuesProducer producer = Fields[field.Name];
-                return producer == null ? null : producer.GetSorted(field);
+                DocValuesProducer producer;
+                if (Fields.TryGetValue(field.Name, out producer))
+                {
+                    return producer.GetSorted(field);
+                }
+                return null;
             }
 
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
-                DocValuesProducer producer = Fields[field.Name];
-                return producer == null ? null : producer.GetSortedSet(field);
+                DocValuesProducer producer;
+                if (Fields.TryGetValue(field.Name, out producer))
+                {
+                    return producer.GetSortedSet(field);
+                }
+                return null;
             }
 
             public override Bits GetDocsWithField(FieldInfo field)
             {
-                DocValuesProducer producer = Fields[field.Name];
-                return producer == null ? null : producer.GetDocsWithField(field);
+                DocValuesProducer producer;
+                if (Fields.TryGetValue(field.Name, out producer))
+                {
+                    return producer.GetDocsWithField(field);
+                }
+                return null;
             }
 
             protected override void Dispose(bool disposing)

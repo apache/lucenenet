@@ -95,7 +95,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestRandom()
         {
@@ -197,7 +196,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestRandomWithPrefix()
         {

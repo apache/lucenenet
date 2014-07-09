@@ -1,3 +1,4 @@
+
 using System;
 
 namespace Lucene.Net.Search

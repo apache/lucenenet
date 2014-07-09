@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numSegments; i++)
             {
                 SegmentCommitInfo info = sis.Info(i);
-                int segmentName = Convert.ToInt32(info.Info.Name.Substring(1), Character.MAX_RADIX);
+                int segmentName = Convert.ToInt32(info.Info.Name.Substring(1)/*, Character.MAX_RADIX*/);
                 if (segmentName > result.MaxSegmentName)
                 {
                     result.MaxSegmentName = segmentName;
@@ -1717,7 +1717,7 @@ namespace Lucene.Net.Index
                     if (fieldInfo.HasDocValues())
                     {
                         status.TotalValueFields++;
-                        CheckDocValues(fieldInfo, reader, infoStream, status);
+                        CheckDocValues(fieldInfo, reader, /*infoStream,*/ status);
                     }
                     else
                     {
@@ -1915,7 +1915,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckDocValues(FieldInfo fi, AtomicReader reader, StreamWriter infoStream, DocValuesStatus status)
+        private static void CheckDocValues(FieldInfo fi, AtomicReader reader, /*StreamWriter infoStream,*/ DocValuesStatus status)
         {
             Bits docsWithField = reader.GetDocsWithField(fi.Name);
             if (docsWithField == null)

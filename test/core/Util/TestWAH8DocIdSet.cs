@@ -23,6 +23,7 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    [Ignore]
     [TestFixture]
     public class TestWAH8DocIdSet : BaseDocIdSetTestCase<WAH8DocIdSet>
     {
@@ -72,6 +73,7 @@ namespace Lucene.Net.Util
             AssertEquals(numBits, expected, union);
         }
 
+        [Ignore]
         [Test]
         public virtual void TestIntersection()
         {

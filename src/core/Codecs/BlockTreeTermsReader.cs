@@ -856,7 +856,7 @@ namespace Lucene.Net.Codecs
                             {
                                 this.FloorData = new byte[ArrayUtil.Oversize(frameIndexData.Length, 1)];
                             }
-                            Array.Copy(frameIndexData.Bytes, frameIndexData.Offset, FloorData, 0, frameIndexData.Length);
+                            System.Buffer.BlockCopy(frameIndexData.Bytes, frameIndexData.Offset, FloorData, 0, frameIndexData.Length);
                             FloorDataReader.Reset(FloorData, 0, frameIndexData.Length);
                             // Skip first long -- has redundant fp, hasTerms
                             // flag, isFloor flag
@@ -1251,7 +1251,7 @@ namespace Lucene.Net.Codecs
                             {
                                 Term_Renamed.Bytes = ArrayUtil.Grow(Term_Renamed.Bytes, Term_Renamed.Length);
                             }
-                            Array.Copy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
+                            System.Buffer.BlockCopy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
 
                             if (isSubBlock && StringHelper.StartsWith(target, Term_Renamed))
                             {
@@ -1473,6 +1473,7 @@ namespace Lucene.Net.Codecs
                         {
                             CopyTerm();
                             //if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
+
                             Debug.Assert(SavedStartTerm_Renamed == null || Term_Renamed.CompareTo(SavedStartTerm_Renamed) > 0, "saveStartTerm=" + SavedStartTerm_Renamed.Utf8ToString() + " term=" + Term_Renamed.Utf8ToString());
                             return Term_Renamed;
                         }
@@ -1492,7 +1493,7 @@ namespace Lucene.Net.Codecs
                     {
                         Term_Renamed.Bytes = ArrayUtil.Grow(Term_Renamed.Bytes, len);
                     }
-                    Array.Copy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
+                    System.Buffer.BlockCopy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
                     Term_Renamed.Length = len;
                 }
 

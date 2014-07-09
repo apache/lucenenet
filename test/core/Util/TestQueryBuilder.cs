@@ -1,4 +1,5 @@
 using System.IO;
+using Lucene.Net.Analysis.Tokenattributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -149,13 +150,15 @@ namespace Lucene.Net.Util
         /// </summary>
         protected internal class MockSynonymFilter : TokenFilter
         {
-            internal CharTermAttribute TermAtt;// = AddAttribute(typeof(CharTermAttribute));
-            internal PositionIncrementAttribute PosIncAtt;// = AddAttribute(typeof(PositionIncrementAttribute));
+            internal ICharTermAttribute TermAtt;// = AddAttribute(typeof(CharTermAttribute));
+            internal IPositionIncrementAttribute PosIncAtt;// = AddAttribute(typeof(PositionIncrementAttribute));
             internal bool AddSynonym = false;
 
             public MockSynonymFilter(TokenStream input)
                 : base(input)
             {
+                TermAtt = AddAttribute<ICharTermAttribute>();
+                PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
             public override bool IncrementToken()

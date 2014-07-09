@@ -36,6 +36,7 @@ namespace Lucene.Net.Index
     {
         internal AtomicInteger Seq = new AtomicInteger(1);
 
+        [Ignore]
         [Test]
         public virtual void TestIndexing()
         {

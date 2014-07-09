@@ -34,8 +34,6 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Test indexing and searching some byte[] terms
     /// </summary>
-    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-    //ORIGINAL LINE: @SuppressCodecs("Lucene3x") public class TestBinaryTerms extends Lucene.Net.Util.LuceneTestCase
     [TestFixture]
     public class TestBinaryTerms : LuceneTestCase
     {

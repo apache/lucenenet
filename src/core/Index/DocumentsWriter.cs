@@ -534,8 +534,7 @@ namespace Lucene.Net.Index
                 {
                     if (dwpt.CheckAndResetHasAborted())
                     {
-                        //LUCENE TO-DO make sure this was a .Empty()
-                        if (!(dwpt.PendingFilesToDelete().Count == 0))
+                        if (dwpt.PendingFilesToDelete().Count > 0)
                         {
                             PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete()));
                         }
@@ -582,8 +581,7 @@ namespace Lucene.Net.Index
                 {
                     if (dwpt.CheckAndResetHasAborted())
                     {
-                        //LUCENE TO-DO make sure this was a .Empty()
-                        if (!(dwpt.PendingFilesToDelete().Count == 0))
+                        if (dwpt.PendingFilesToDelete().Count > 0)
                         {
                             PutEvent(new DeleteNewFilesEvent(dwpt.PendingFilesToDelete()));
                         }
@@ -644,8 +642,7 @@ namespace Lucene.Net.Index
                         finally
                         {
                             SubtractFlushedNumDocs(flushingDocsInRam);
-                            //LUCENE TO-DO make sure this was a .Empty()
-                            if (!(flushingDWPT.PendingFilesToDelete().Count == 0))
+                            if (flushingDWPT.PendingFilesToDelete().Count > 0)
                             {
                                 PutEvent(new DeleteNewFilesEvent(flushingDWPT.PendingFilesToDelete()));
                                 hasEvents = true;

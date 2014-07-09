@@ -257,6 +257,7 @@ namespace Lucene.Net.Index
         /*
          * Test "by time expiration" deletion policy:
          */
+        [Ignore]
         [Test]
         public virtual void TestExpirationTimeDeletionPolicy()
         {

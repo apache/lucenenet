@@ -686,7 +686,7 @@ namespace Lucene.Net.Index
             Token withPayload = new Token("withPayload", 0, 11);
             withPayload.Payload = new BytesRef("test");
             ts = new CannedTokenStream(withPayload);
-            Assert.IsTrue(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>());
             field.TokenStream = ts;
             writer.AddDocument(doc);
             ts = new MockTokenizer(new StringReader("another"), MockTokenizer.WHITESPACE, true);
@@ -721,7 +721,7 @@ namespace Lucene.Net.Index
             Token withPayload = new Token("withPayload", 0, 11);
             withPayload.Payload = new BytesRef("test");
             ts = new CannedTokenStream(withPayload);
-            Assert.IsTrue(ts.HasAttribute<PayloadAttribute>());
+            Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>());
             field2.TokenStream = ts;
             doc.Add(field2);
             Field field3 = new TextField("field", "", Field.Store.NO);

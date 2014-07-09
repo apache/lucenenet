@@ -198,6 +198,7 @@ namespace Lucene.Net.Index
           Run above stress test against RAMDirectory and then
           FSDirectory.
         */
+        [Ignore]
         [Test]
         public virtual void TestStressIndexAndSearching()
         {

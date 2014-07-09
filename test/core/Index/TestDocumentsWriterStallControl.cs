@@ -29,450 +29,452 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
 
-	/// <summary>
-	/// Tests for <seealso cref="DocumentsWriterStallControl"/>
-	/// </summary>
-	[TestFixture]
+    /// <summary>
+    /// Tests for <seealso cref="DocumentsWriterStallControl"/>
+    /// </summary>
+    [TestFixture]
     public class TestDocumentsWriterStallControl : LuceneTestCase
-	{
+    {
 
-      [Test]
-	  public virtual void TestSimpleStall()
-	  {
-		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
+        [Test]
+        public virtual void TestSimpleStall()
+        {
+            DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 
-		ctrl.UpdateStalled(false);
-        ThreadClass[] waitThreads = WaitThreads(AtLeast(1), ctrl);
-		Start(waitThreads);
-		Assert.IsFalse(ctrl.HasBlocked());
-		Assert.IsFalse(ctrl.AnyStalledThreads());
-		Join(waitThreads);
+            ctrl.UpdateStalled(false);
+            ThreadClass[] waitThreads = WaitThreads(AtLeast(1), ctrl);
+            Start(waitThreads);
+            Assert.IsFalse(ctrl.HasBlocked());
+            Assert.IsFalse(ctrl.AnyStalledThreads());
+            Join(waitThreads);
 
-		// now stall threads and wake them up again
-		ctrl.UpdateStalled(true);
-		waitThreads = WaitThreads(AtLeast(1), ctrl);
-		Start(waitThreads);
-		AwaitState(Thread.State.WAITING, waitThreads);
-		Assert.IsTrue(ctrl.HasBlocked());
-		Assert.IsTrue(ctrl.AnyStalledThreads());
-		ctrl.UpdateStalled(false);
-		Assert.IsFalse(ctrl.AnyStalledThreads());
-		Join(waitThreads);
-	  }
+            // now stall threads and wake them up again
+            ctrl.UpdateStalled(true);
+            waitThreads = WaitThreads(AtLeast(1), ctrl);
+            Start(waitThreads);
+            AwaitState(Thread.State.WAITING, waitThreads);
+            Assert.IsTrue(ctrl.HasBlocked());
+            Assert.IsTrue(ctrl.AnyStalledThreads());
+            ctrl.UpdateStalled(false);
+            Assert.IsFalse(ctrl.AnyStalledThreads());
+            Join(waitThreads);
+        }
 
-      [Test]
-      public virtual void TestRandom()
-	  {
-		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
-		ctrl.UpdateStalled(false);
+        [Test]
+        public virtual void TestRandom()
+        {
+            DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
+            ctrl.UpdateStalled(false);
 
-        ThreadClass[] stallThreads = new ThreadClass[AtLeast(3)];
-		for (int i = 0; i < stallThreads.Length; i++)
-		{
-		  int stallProbability = 1 + Random().Next(10);
-		  stallThreads[i] = new ThreadAnonymousInnerClassHelper(this, ctrl, stallProbability);
-		}
-		Start(stallThreads);
-		long time = DateTime.Now.Millisecond;
-		/*
-		 * use a 100 sec timeout to make sure we not hang forever. join will fail in
-		 * that case
-		 */
-		while ((DateTime.Now.Millisecond - time) < 100 * 1000 && !Terminated(stallThreads))
-		{
-		  ctrl.UpdateStalled(false);
-		  if (Random().NextBoolean())
-		  {
-			Thread.@Yield();
-		  }
-		  else
-		  {
-			Thread.Sleep(1);
-		  }
+            ThreadClass[] stallThreads = new ThreadClass[AtLeast(3)];
+            for (int i = 0; i < stallThreads.Length; i++)
+            {
+                int stallProbability = 1 + Random().Next(10);
+                stallThreads[i] = new ThreadAnonymousInnerClassHelper(this, ctrl, stallProbability);
+            }
+            Start(stallThreads);
+            long time = DateTime.Now.Millisecond;
+            /*
+             * use a 100 sec timeout to make sure we not hang forever. join will fail in
+             * that case
+             */
+            while ((DateTime.Now.Millisecond - time) < 100 * 1000 && !Terminated(stallThreads))
+            {
+                ctrl.UpdateStalled(false);
+                if (Random().NextBoolean())
+                {
+                    Thread.@Yield();
+                }
+                else
+                {
+                    Thread.Sleep(1);
+                }
 
-		}
-		Join(stallThreads);
+            }
+            Join(stallThreads);
 
-	  }
+        }
 
-      private class ThreadAnonymousInnerClassHelper : ThreadClass
-	  {
-		  private readonly TestDocumentsWriterStallControl OuterInstance;
+        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        {
+            private readonly TestDocumentsWriterStallControl OuterInstance;
 
-		  private DocumentsWriterStallControl Ctrl;
-		  private int StallProbability;
+            private DocumentsWriterStallControl Ctrl;
+            private int StallProbability;
 
-		  public ThreadAnonymousInnerClassHelper(TestDocumentsWriterStallControl outerInstance, DocumentsWriterStallControl ctrl, int stallProbability)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.Ctrl = ctrl;
-			  this.StallProbability = stallProbability;
-		  }
+            public ThreadAnonymousInnerClassHelper(TestDocumentsWriterStallControl outerInstance, DocumentsWriterStallControl ctrl, int stallProbability)
+            {
+                this.OuterInstance = outerInstance;
+                this.Ctrl = ctrl;
+                this.StallProbability = stallProbability;
+            }
 
-		  public override void Run()
-		  {
+            public override void Run()
+            {
 
-			int iters = AtLeast(1000);
-			for (int j = 0; j < iters; j++)
-			{
-			  Ctrl.UpdateStalled(Random().Next(StallProbability) == 0);
-			  if (Random().Next(5) == 0) // thread 0 only updates
-			  {
-				Ctrl.WaitIfStalled();
-			  }
-			}
-		  }
-	  }
+                int iters = AtLeast(1000);
+                for (int j = 0; j < iters; j++)
+                {
+                    Ctrl.UpdateStalled(Random().Next(StallProbability) == 0);
+                    if (Random().Next(5) == 0) // thread 0 only updates
+                    {
+                        Ctrl.WaitIfStalled();
+                    }
+                }
+            }
+        }
 
-      [Test]
-      public virtual void TestAccquireReleaseRace()
-	  {
-		DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
-		ctrl.UpdateStalled(false);
-		AtomicBoolean stop = new AtomicBoolean(false);
-		AtomicBoolean checkPoint = new AtomicBoolean(true);
+        [Test]
+        public virtual void TestAccquireReleaseRace()
+        {
+            DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
+            ctrl.UpdateStalled(false);
+            AtomicBoolean stop = new AtomicBoolean(false);
+            AtomicBoolean checkPoint = new AtomicBoolean(true);
 
-		int numStallers = AtLeast(1);
-		int numReleasers = AtLeast(1);
-		int numWaiters = AtLeast(1);
-		Synchronizer sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-        ThreadClass[] threads = new ThreadClass[numReleasers + numStallers + numWaiters];
-		IList<Exception> exceptions = new ConcurrentList<Exception>(new List<Exception>());
-		for (int i = 0; i < numReleasers; i++)
-		{
-		  threads[i] = new Updater(stop, checkPoint, ctrl, sync, true, exceptions);
-		}
-		for (int i = numReleasers; i < numReleasers + numStallers; i++)
-		{
-		  threads[i] = new Updater(stop, checkPoint, ctrl, sync, false, exceptions);
+            int numStallers = AtLeast(1);
+            int numReleasers = AtLeast(1);
+            int numWaiters = AtLeast(1);
+            Synchronizer sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
+            ThreadClass[] threads = new ThreadClass[numReleasers + numStallers + numWaiters];
+            IList<Exception> exceptions = new ConcurrentList<Exception>(new List<Exception>());
+            for (int i = 0; i < numReleasers; i++)
+            {
+                threads[i] = new Updater(stop, checkPoint, ctrl, sync, true, exceptions);
+            }
+            for (int i = numReleasers; i < numReleasers + numStallers; i++)
+            {
+                threads[i] = new Updater(stop, checkPoint, ctrl, sync, false, exceptions);
 
-		}
-		for (int i = numReleasers + numStallers; i < numReleasers + numStallers + numWaiters; i++)
-		{
-		  threads[i] = new Waiter(stop, checkPoint, ctrl, sync, exceptions);
+            }
+            for (int i = numReleasers + numStallers; i < numReleasers + numStallers + numWaiters; i++)
+            {
+                threads[i] = new Waiter(stop, checkPoint, ctrl, sync, exceptions);
 
-		}
+            }
 
-		Start(threads);
-		int iters = AtLeast(10000);
-		float checkPointProbability = TEST_NIGHTLY ? 0.5f : 0.1f;
-		for (int i = 0; i < iters; i++)
-		{
-		  if (checkPoint.Get())
-		  {
+            Start(threads);
+            int iters = AtLeast(10000);
+            float checkPointProbability = TEST_NIGHTLY ? 0.5f : 0.1f;
+            for (int i = 0; i < iters; i++)
+            {
+                if (checkPoint.Get())
+                {
 
-			Assert.IsTrue("timed out waiting for update threads - deadlock?", sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
-			if (exceptions.Count > 0)
-			{
-			  foreach (Exception throwable in exceptions)
-			  {
-				Console.WriteLine(throwable.ToString());
-				Console.Write(throwable.StackTrace);
-			  }
-			  Assert.Fail("got exceptions in threads");
-			}
+                    Assert.IsTrue("timed out waiting for update threads - deadlock?", sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
+                    if (exceptions.Count > 0)
+                    {
+                        foreach (Exception throwable in exceptions)
+                        {
+                            Console.WriteLine(throwable.ToString());
+                            Console.Write(throwable.StackTrace);
+                        }
+                        Assert.Fail("got exceptions in threads");
+                    }
 
-			if (ctrl.HasBlocked() && ctrl.Healthy)
-			{
-			  AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
-
-
-			}
-
-			checkPoint.Set(false);
-			sync.Waiter.countDown();
-			sync.LeftCheckpoint.@await();
-		  }
-		  Assert.IsFalse(checkPoint.Get());
-		  Assert.AreEqual(0, sync.Waiter.Remaining);
-		  if (checkPointProbability >= (float)Random().NextDouble())
-		  {
-			sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-			checkPoint.Set(true);
-		  }
-
-		}
-		if (!checkPoint.Get())
-		{
-		  sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-		  checkPoint.Set(true);
-		}
-
-		Assert.IsTrue(sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
-		AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
-		checkPoint.Set(false);
-		stop.Set(true);
-		sync.Waiter.countDown();
-		sync.LeftCheckpoint.@await();
+                    if (ctrl.HasBlocked() && ctrl.Healthy)
+                    {
+                        AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
 
 
-		for (int i = 0; i < threads.Length; i++)
-		{
-		  ctrl.UpdateStalled(false);
-		  threads[i].Join(2000);
-		  if (threads[i].IsAlive && threads[i] is Waiter)
-		  {
-			if (threads[i].State == Thread.State.WAITING)
-			{
-			  Assert.Fail("waiter is not released - anyThreadsStalled: " + ctrl.AnyStalledThreads());
-			}
-		  }
-		}
-	  }
+                    }
 
-	  private void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadClass[] threads, DocumentsWriterStallControl ctrl)
-	  {
-		int millisToSleep = 100;
-		while (true)
-		{
-		  if (ctrl.HasBlocked() && ctrl.Healthy)
-		  {
-			for (int n = numReleasers + numStallers; n < numReleasers + numStallers + numWaiters; n++)
-			{
-			  if (ctrl.IsThreadQueued(threads[n]))
-			  {
-				if (millisToSleep < 60000)
-				{
-				  Thread.Sleep(millisToSleep);
-				  millisToSleep *= 2;
-				  break;
-				}
-				else
-				{
-				  Assert.Fail("control claims no stalled threads but waiter seems to be blocked ");
-				}
-			  }
-			}
-			break;
-		  }
-		  else
-		  {
-			break;
-		  }
-		}
+                    checkPoint.Set(false);
+                    sync.Waiter.countDown();
+                    sync.LeftCheckpoint.@await();
+                }
+                Assert.IsFalse(checkPoint.Get());
+                Assert.AreEqual(0, sync.Waiter.Remaining);
+                if (checkPointProbability >= (float)Random().NextDouble())
+                {
+                    sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
+                    checkPoint.Set(true);
+                }
 
-	  }
+            }
+            if (!checkPoint.Get())
+            {
+                sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
+                checkPoint.Set(true);
+            }
 
-	  public class Waiter : ThreadClass
-	  {
-		internal Synchronizer Sync;
-		internal DocumentsWriterStallControl Ctrl;
-		internal AtomicBoolean CheckPoint;
-		internal AtomicBoolean Stop;
-		internal IList<Exception> Exceptions;
+            Assert.IsTrue(sync.UpdateJoin.@await(10, TimeUnit.SECONDS));
+            AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
+            checkPoint.Set(false);
+            stop.Set(true);
+            sync.Waiter.countDown();
+            sync.LeftCheckpoint.@await();
 
-		public Waiter(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, IList<Exception> exceptions) : base("waiter")
-		{
-		  this.Stop = stop;
-		  this.CheckPoint = checkPoint;
-		  this.Ctrl = ctrl;
-		  this.Sync = sync;
-		  this.Exceptions = exceptions;
-		}
 
-		public override void Run()
-		{
-		  try
-		  {
-			while (!Stop.Get())
-			{
-			  Ctrl.WaitIfStalled();
-			  if (CheckPoint.Get())
-			  {
-				try
-				{
-				  Assert.IsTrue(Sync.@await());
-				}
-				catch (ThreadInterruptedException e)
-				{
-				  Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Remaining);
-				  throw new ThreadInterruptedException(e);
-				}
-			  }
-			}
-		  }
-		  catch (Exception e)
-		  {
-			Console.WriteLine(e.ToString());
-			Console.Write(e.StackTrace);
-			Exceptions.Add(e);
-		  }
-		}
-	  }
+            for (int i = 0; i < threads.Length; i++)
+            {
+                ctrl.UpdateStalled(false);
+                threads[i].Join(2000);
+                if (threads[i].IsAlive && threads[i] is Waiter)
+                {
+                    if (threads[i].State == Thread.State.WAITING)
+                    {
+                        Assert.Fail("waiter is not released - anyThreadsStalled: " + ctrl.AnyStalledThreads());
+                    }
+                }
+            }
+        }
 
-      public class Updater : ThreadClass
-	  {
+        private void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadClass[] threads, DocumentsWriterStallControl ctrl)
+        {
+            int millisToSleep = 100;
+            while (true)
+            {
+                if (ctrl.HasBlocked() && ctrl.Healthy)
+                {
+                    for (int n = numReleasers + numStallers; n < numReleasers + numStallers + numWaiters; n++)
+                    {
+                        if (ctrl.IsThreadQueued(threads[n]))
+                        {
+                            if (millisToSleep < 60000)
+                            {
+                                Thread.Sleep(millisToSleep);
+                                millisToSleep *= 2;
+                                break;
+                            }
+                            else
+                            {
+                                Assert.Fail("control claims no stalled threads but waiter seems to be blocked ");
+                            }
+                        }
+                    }
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
 
-		internal Synchronizer Sync;
-		internal DocumentsWriterStallControl Ctrl;
-		internal AtomicBoolean CheckPoint;
-		internal AtomicBoolean Stop;
-		internal bool Release;
-		internal IList<Exception> Exceptions;
+        }
 
-		public Updater(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, bool release, IList<Exception> exceptions) : base("updater")
-		{
-		  this.Stop = stop;
-		  this.CheckPoint = checkPoint;
-		  this.Ctrl = ctrl;
-		  this.Sync = sync;
-		  this.Release = release;
-		  this.Exceptions = exceptions;
-		}
+        public class Waiter : ThreadClass
+        {
+            internal Synchronizer Sync;
+            internal DocumentsWriterStallControl Ctrl;
+            internal AtomicBoolean CheckPoint;
+            internal AtomicBoolean Stop;
+            internal IList<Exception> Exceptions;
 
-		public override void Run()
-		{
-		  try
-		  {
+            public Waiter(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, IList<Exception> exceptions)
+                : base("waiter")
+            {
+                this.Stop = stop;
+                this.CheckPoint = checkPoint;
+                this.Ctrl = ctrl;
+                this.Sync = sync;
+                this.Exceptions = exceptions;
+            }
 
-			while (!Stop.Get())
-			{
-			  int internalIters = Release && Random().NextBoolean() ? AtLeast(5) : 1;
-			  for (int i = 0; i < internalIters; i++)
-			  {
-				Ctrl.UpdateStalled(Random().NextBoolean());
-			  }
-			  if (CheckPoint.Get())
-			  {
-				Sync.UpdateJoin.countDown();
-				try
-				{
-				  Assert.IsTrue(Sync.@await());
-				}
-				catch (ThreadInterruptedException e)
-				{
-				  Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Remaining);
-				  throw new ThreadInterruptedException(e);
-				}
-                Sync.LeftCheckpoint.countDown();
-			  }
-			  if (Random().NextBoolean())
-			  {
-				Thread.@Yield();
-			  }
-			}
-		  }
-		  catch (Exception e)
-		  {
-			Console.WriteLine(e.ToString());
-			Console.Write(e.StackTrace);
-			Exceptions.Add(e);
-		  }
-          Sync.UpdateJoin.countDown();
-		}
+            public override void Run()
+            {
+                try
+                {
+                    while (!Stop.Get())
+                    {
+                        Ctrl.WaitIfStalled();
+                        if (CheckPoint.Get())
+                        {
+                            try
+                            {
+                                Assert.IsTrue(Sync.@await());
+                            }
+                            catch (ThreadInterruptedException e)
+                            {
+                                Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.Remaining);
+                                throw new ThreadInterruptedException(e);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    Console.Write(e.StackTrace);
+                    Exceptions.Add(e);
+                }
+            }
+        }
 
-	  }
+        public class Updater : ThreadClass
+        {
 
-	  public static bool Terminated(ThreadClass[] threads)
-	  {
-		foreach (ThreadClass thread in threads)
-		{
-		  if (Thread.State.TERMINATED != thread.State)
-		  {
-			  return false;
-		  }
-		}
-		return true;
-	  }
+            internal Synchronizer Sync;
+            internal DocumentsWriterStallControl Ctrl;
+            internal AtomicBoolean CheckPoint;
+            internal AtomicBoolean Stop;
+            internal bool Release;
+            internal IList<Exception> Exceptions;
 
-      public static void Start(ThreadClass[] tostart)
-	  {
-		foreach (ThreadClass thread in tostart)
-		{
-		  thread.Start();
-		}
-		Thread.Sleep(1); // let them start
-	  }
+            public Updater(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, bool release, IList<Exception> exceptions)
+                : base("updater")
+            {
+                this.Stop = stop;
+                this.CheckPoint = checkPoint;
+                this.Ctrl = ctrl;
+                this.Sync = sync;
+                this.Release = release;
+                this.Exceptions = exceptions;
+            }
 
-      public static void Join(ThreadClass[] toJoin)
-	  {
-		foreach (ThreadClass thread in toJoin)
-		{
-		  thread.Join();
-		}
-	  }
+            public override void Run()
+            {
+                try
+                {
 
-      public static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
-	  {
-		ThreadClass[] array = new ThreadClass[num];
-		for (int i = 0; i < array.Length; i++)
-		{
-		  array[i] = new ThreadAnonymousInnerClassHelper2(ctrl);
-		}
-		return array;
-	  }
+                    while (!Stop.Get())
+                    {
+                        int internalIters = Release && Random().NextBoolean() ? AtLeast(5) : 1;
+                        for (int i = 0; i < internalIters; i++)
+                        {
+                            Ctrl.UpdateStalled(Random().NextBoolean());
+                        }
+                        if (CheckPoint.Get())
+                        {
+                            Sync.UpdateJoin.countDown();
+                            try
+                            {
+                                Assert.IsTrue(Sync.@await());
+                            }
+                            catch (ThreadInterruptedException e)
+                            {
+                                Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.Remaining);
+                                throw new ThreadInterruptedException(e);
+                            }
+                            Sync.LeftCheckpoint.countDown();
+                        }
+                        if (Random().NextBoolean())
+                        {
+                            Thread.@Yield();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    Console.Write(e.StackTrace);
+                    Exceptions.Add(e);
+                }
+                Sync.UpdateJoin.countDown();
+            }
 
-      private class ThreadAnonymousInnerClassHelper2 : ThreadClass
-	  {
-		  private DocumentsWriterStallControl Ctrl;
+        }
 
-		  public ThreadAnonymousInnerClassHelper2(DocumentsWriterStallControl ctrl)
-		  {
-			  this.Ctrl = ctrl;
-		  }
+        public static bool Terminated(ThreadClass[] threads)
+        {
+            foreach (ThreadClass thread in threads)
+            {
+                if (Thread.State.TERMINATED != thread.State)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-		  public override void Run()
-		  {
-			Ctrl.WaitIfStalled();
-		  }
-	  }
+        public static void Start(ThreadClass[] tostart)
+        {
+            foreach (ThreadClass thread in tostart)
+            {
+                thread.Start();
+            }
+            Thread.Sleep(1); // let them start
+        }
 
-	  /// <summary>
-	  /// Waits for all incoming threads to be in wait()
-	  ///  methods. 
-	  /// </summary>
-	  public static void AwaitState(Thread.State state, params ThreadClass[] threads)
-	  {
-		while (true)
-		{
-		  bool done = true;
-          foreach (ThreadClass thread in threads)
-		  {
-			if (thread.State != state)
-			{
-			  done = false;
-			  break;
-			}
-		  }
-		  if (done)
-		  {
-			return;
-		  }
-		  if (Random().NextBoolean())
-		  {
-			Thread.@Yield();
-		  }
-		  else
-		  {
-			Thread.Sleep(1);
-		  }
-		}
-	  }
+        public static void Join(ThreadClass[] toJoin)
+        {
+            foreach (ThreadClass thread in toJoin)
+            {
+                thread.Join();
+            }
+        }
 
-	  public sealed class Synchronizer
-	  {
-		internal volatile CountDownLatch Waiter;
-		internal volatile CountDownLatch UpdateJoin;
-		internal volatile CountDownLatch LeftCheckpoint;
+        public static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
+        {
+            ThreadClass[] array = new ThreadClass[num];
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = new ThreadAnonymousInnerClassHelper2(ctrl);
+            }
+            return array;
+        }
 
-		public Synchronizer(int numUpdater, int numThreads)
-		{
-		  Reset(numUpdater, numThreads);
-		}
+        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        {
+            private DocumentsWriterStallControl Ctrl;
 
-		public void Reset(int numUpdaters, int numThreads)
-		{
-		  this.Waiter = new CountDownLatch(1);
-		  this.UpdateJoin = new CountDownLatch(numUpdaters);
-		  this.LeftCheckpoint = new CountDownLatch(numUpdaters);
-		}
+            public ThreadAnonymousInnerClassHelper2(DocumentsWriterStallControl ctrl)
+            {
+                this.Ctrl = ctrl;
+            }
 
-		public bool @await()
-		{
-		  return Waiter.@await(10, TimeUnit.SECONDS);
-		}
+            public override void Run()
+            {
+                Ctrl.WaitIfStalled();
+            }
+        }
 
-	  }
-	}
+        /// <summary>
+        /// Waits for all incoming threads to be in wait()
+        ///  methods. 
+        /// </summary>
+        public static void AwaitState(Thread.State state, params ThreadClass[] threads)
+        {
+            while (true)
+            {
+                bool done = true;
+                foreach (ThreadClass thread in threads)
+                {
+                    if (thread.State != state)
+                    {
+                        done = false;
+                        break;
+                    }
+                }
+                if (done)
+                {
+                    return;
+                }
+                if (Random().NextBoolean())
+                {
+                    Thread.@Yield();
+                }
+                else
+                {
+                    Thread.Sleep(1);
+                }
+            }
+        }
+
+        public sealed class Synchronizer
+        {
+            internal volatile CountDownLatch Waiter;
+            internal volatile CountDownLatch UpdateJoin;
+            internal volatile CountDownLatch LeftCheckpoint;
+
+            public Synchronizer(int numUpdater, int numThreads)
+            {
+                Reset(numUpdater, numThreads);
+            }
+
+            public void Reset(int numUpdaters, int numThreads)
+            {
+                this.Waiter = new CountDownLatch(1);
+                this.UpdateJoin = new CountDownLatch(numUpdaters);
+                this.LeftCheckpoint = new CountDownLatch(numUpdaters);
+            }
+
+            public bool @await()
+            {
+                return Waiter.@await(10, TimeUnit.SECONDS);
+            }
+
+        }
+    }
 
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -93,8 +94,8 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter writer;
             IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
-            MemoryStream infoBytes = new MemoryStream();
-            StreamWriter infoPrintStream = new StreamWriter(infoBytes.ToString(), true, IOUtils.CHARSET_UTF_8);
+            ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
+            StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
             PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
             c.InfoStream = printStreamInfoStream;
             writer = new IndexWriter(dir, c);
@@ -122,7 +123,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter writer;
             IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
-            MemoryStream infoBytes = new MemoryStream();
+            ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
             StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
             PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
             c.InfoStream = printStreamInfoStream;

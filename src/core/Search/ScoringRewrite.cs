@@ -174,14 +174,14 @@ namespace Lucene.Net.Search
 		internal BytesRefHash Terms;
 		internal TermsEnum TermsEnum;
 
-		internal BoostAttribute BoostAtt;
+		internal IBoostAttribute BoostAtt;
 
 		public override TermsEnum NextEnum
 		{
 			set
 			{
 			  this.TermsEnum = value;
-			  this.BoostAtt = value.Attributes().AddAttribute<BoostAttribute>();
+			  this.BoostAtt = value.Attributes().AddAttribute<IBoostAttribute>();
 			}
 		}
 

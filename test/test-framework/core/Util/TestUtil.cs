@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Zip;
@@ -274,12 +275,13 @@ namespace Lucene.Net.Util
             return CheckIndex(dir, true);
         }
 
+
         public static CheckIndex.Status CheckIndex(Directory dir, bool crossCheckTermVectors)
         {
-            MemoryStream bos = new MemoryStream(1024);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
             CheckIndex checker = new CheckIndex(dir);
             checker.CrossCheckTermVectors = crossCheckTermVectors;
-            checker.SetInfoStream(new StreamWriter(bos, Encoding.UTF8), false);
+            checker.SetInfoStream(new StreamWriter(bos, Encoding.UTF8), true);//TODO set to false
             CheckIndex.Status indexStatus = checker.DoCheckIndex(null);
             if (indexStatus == null || indexStatus.Clean == false)
             {
@@ -311,8 +313,8 @@ namespace Lucene.Net.Util
 
         public static void CheckReader(AtomicReader reader, bool crossCheckTermVectors)
         {
-            MemoryStream bos = new MemoryStream(1024);
-            StreamWriter infoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            StreamWriter infoStream = new StreamWriter(bos, Encoding.UTF8);
 
             reader.CheckIntegrity();
             CheckIndex.Status.FieldNormStatus fieldNormStatus = Index.CheckIndex.TestFieldNorms(reader, infoStream);

@@ -93,11 +93,11 @@ namespace Lucene.Net.Util
             // Try primary first
             V result;
             primary.TryGetValue(key, out result);
-            if (result == null)
+            if (default(V).Equals(result))
             {
                 // Not found -- try secondary
-                result = secondary[key];
-                if (result != null)
+                secondary.TryGetValue(key, out result);
+                if (!(default(V)).Equals(result))
                 {
                     // Promote to primary
                     Put((K)key.Clone(), result);
@@ -108,11 +108,7 @@ namespace Lucene.Net.Util
 
         public void Put(K key, V value)
         {
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.Map<K,V> primary;
             IDictionary<K, V> primary;
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final java.util.Map<K,V> secondary;
             IDictionary<K, V> secondary;
             if (Swapped)
             {

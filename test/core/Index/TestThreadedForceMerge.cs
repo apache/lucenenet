@@ -35,6 +35,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using Lucene.Net.Support;
 
+    [Ignore]
     [TestFixture]
 	public class TestThreadedForceMerge : LuceneTestCase
 	{

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Lucene.Net.Store;
 using NUnit.Framework;
 using Lucene.Net.Support;
 using Lucene.Net.Randomized;
@@ -1152,7 +1153,9 @@ namespace Lucene.Net.Util
         /// </summary>
         public static BaseDirectoryWrapper NewDirectory(Random r)
         {
-            return WrapDirectory(r, NewDirectoryImpl(r, TEST_DIRECTORY), Rarely(r));
+            var newDir = NewDirectoryImpl(r, TEST_DIRECTORY);
+
+            return WrapDirectory(r, newDir, Rarely(r));
         }
 
         public static MockDirectoryWrapper NewMockDirectory()
@@ -1434,7 +1437,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    clazzName = "RAMDirectory";
+                    clazzName = "Lucene.Net.Store.RAMDirectory";
                 }
             }
 
