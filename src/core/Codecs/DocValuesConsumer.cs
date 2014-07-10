@@ -122,7 +122,6 @@ namespace Lucene.Net.Codecs
 
       private IEnumerable<long> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge)
       {
-            
             int readerUpto = -1;
             int docIDUpto = 0;
             AtomicReader currentReader = null;
@@ -151,8 +150,7 @@ namespace Lucene.Net.Codecs
 
 				if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
-                    docIDUpto++;
-                    yield return currentValues.Get(docIDUpto);
+                    yield return currentValues.Get(docIDUpto++);
                     continue;
                 }
 

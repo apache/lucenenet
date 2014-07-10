@@ -274,7 +274,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     RamBytesUsed_Renamed.AddAndGet(reader.RamBytesUsed());
                     return reader;
                 case UNCOMPRESSED:
-                    sbyte[] bytes = new sbyte[MaxDoc];
+                    byte[] bytes = new byte[MaxDoc];
                     Data.ReadBytes(bytes, 0, bytes.Length);
                     RamBytesUsed_Renamed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
                     return new NumericDocValuesAnonymousInnerClassHelper2(this, bytes);
@@ -314,9 +314,9 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             private readonly Lucene42DocValuesProducer OuterInstance;
 
-            private sbyte[] Bytes;
+            private byte[] Bytes;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(Lucene42DocValuesProducer outerInstance, sbyte[] bytes)
+            public NumericDocValuesAnonymousInnerClassHelper2(Lucene42DocValuesProducer outerInstance, byte[] bytes)
             {
                 this.OuterInstance = outerInstance;
                 this.Bytes = bytes;

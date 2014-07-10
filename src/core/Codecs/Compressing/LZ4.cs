@@ -110,8 +110,8 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     if (literalLen == 0x0F)
                     {
-                        sbyte len;
-                        while ((len = compressed.ReadSByte()) == unchecked((sbyte)0xFF))
+                        byte len;
+                        while ((len = compressed.ReadByte()) == 0xFF)
                         {
                             literalLen += 0xFF;
                         }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Compressing
                 if (matchLen == 0x0F)
                 {
                     int len;
-                    while ((len = compressed.ReadByte()) == unchecked((sbyte)0xFF))
+                    while ((len = compressed.ReadByte()) == 0xFF)
                     {
                         matchLen += 0xFF;
                     }

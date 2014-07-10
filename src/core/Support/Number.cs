@@ -350,7 +350,7 @@ namespace Lucene.Net.Support
 
         public static int Signum(long a)
         {
-            return (int) (a / Math.Abs(a));
+            return a == 0 ? 0 : (int) (a / Math.Abs(a));
         }
         public static int Signum(long a, long b)
         {

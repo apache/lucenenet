@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
                         ReaderCache[readerKey] = innerCache;
                         Wrapper.InitReader(reader);
                     }
-                    if (innerCache[key] == null)
+                    if (!innerCache.TryGetValue(key, out value))
                     {
                         innerCache[key] = value;
                     }

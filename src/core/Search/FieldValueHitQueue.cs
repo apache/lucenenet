@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             // anyway.
             this.fields = fields;
             int numComparators = fields.Length;
-            comparators = new FieldComparator<T>[numComparators];
+            comparators = new FieldComparator[numComparators];
             reverseMul = new int[numComparators];
         }
 

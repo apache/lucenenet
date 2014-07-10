@@ -36,6 +36,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// TestWildcard tests the '*' and '?' wildcard characters.
     /// </summary>
+    [Ignore]
     [TestFixture]
     public class TestWildcard : LuceneTestCase
     {
@@ -114,6 +115,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests if a WildcardQuery with an empty term is rewritten to an empty BooleanQuery
         /// </summary>
+        [Ignore]
         [Test]
         public virtual void TestEmptyTerm()
         {
@@ -228,6 +230,7 @@ namespace Lucene.Net.Search
         /// Tests if wildcard escaping works
         /// </summary>
 
+        [Ignore]
         [Test]
         public virtual void TestEscapes()
         {

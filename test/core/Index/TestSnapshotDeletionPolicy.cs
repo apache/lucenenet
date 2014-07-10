@@ -111,6 +111,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [Ignore]
         [Test]
         public virtual void TestSnapshotDeletionPolicy_Mem()
         {
