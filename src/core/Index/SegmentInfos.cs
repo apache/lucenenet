@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     [Serializable]
-    public sealed class SegmentInfos : List<SegmentCommitInfo>, ICloneable
+    public sealed class SegmentInfos : /*List<SegmentCommitInfo>,*/ ICloneable
     {
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
         /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
         public IDictionary<string, string> UserData_Renamed = CollectionsHelper.EmptyMap<string, string>();
 
-        private List<SegmentCommitInfo> Segments = new List<SegmentCommitInfo>();
+        private List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
 
         /// <summary>
         /// If non-null, information about loading segments_N files </summary>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public SegmentCommitInfo Info(int i)
         {
-            return Segments[i];
+            return segments[i];
         }
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                     actualFormat = -1;
                     Lucene3xSegmentInfoReader.ReadLegacyInfos(this, directory, input, format);
                     Codec codec = Codec.ForName("Lucene3x");
-                    foreach (SegmentCommitInfo info in Segments)
+                    foreach (SegmentCommitInfo info in segments)
                     {
                         info.Info.Codec = codec;
                     }
@@ -529,7 +529,7 @@ namespace Lucene.Net.Index
                 segnOutput.WriteLong(Version_Renamed);
                 segnOutput.WriteInt(Counter); // write counter
                 segnOutput.WriteInt(Size()); // write infos
-                foreach (SegmentCommitInfo siPerCommit in Segments)
+                foreach (SegmentCommitInfo siPerCommit in segments)
                 {
                     SegmentInfo si = siPerCommit.Info;
                     segnOutput.WriteString(si.Name);
@@ -716,8 +716,8 @@ namespace Lucene.Net.Index
         {
             SegmentInfos sis = (SegmentInfos)base.MemberwiseClone();
             // deep clone, first recreate all collections:
-            sis.Segments = new List<SegmentCommitInfo>(Size());
-            foreach (SegmentCommitInfo info in Segments)
+            sis.segments = new List<SegmentCommitInfo>(Size());
+            foreach (SegmentCommitInfo info in segments)
             {
                 Debug.Assert(info.Info.Codec != null);
                 // dont directly access segments, use add method!!!
@@ -725,6 +725,11 @@ namespace Lucene.Net.Index
             }
             sis.UserData_Renamed = new Dictionary<string, string>(UserData_Renamed);
             return sis;
+        }
+
+        public List<SegmentCommitInfo> Segments
+        {
+            get { return segments; }
         }
 
         /// <summary>
@@ -1356,7 +1361,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public int TotalDocCount()
         {
-            return Segments.Sum(info => info.Info.DocCount);
+            return segments.Sum(info => info.Info.DocCount);
         }
 
         /// <summary>
@@ -1375,28 +1380,28 @@ namespace Lucene.Net.Index
             HashSet<SegmentCommitInfo> mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
             bool inserted = false;
             int newSegIdx = 0;
-            for (int segIdx = 0, cnt = Segments.Count; segIdx < cnt; segIdx++)
+            for (int segIdx = 0, cnt = segments.Count; segIdx < cnt; segIdx++)
             {
                 Debug.Assert(segIdx >= newSegIdx);
-                SegmentCommitInfo info = Segments[segIdx];
+                SegmentCommitInfo info = segments[segIdx];
                 if (mergedAway.Contains(info))
                 {
                     if (!inserted && !dropSegment)
                     {
-                        Segments[segIdx] = merge.Info_Renamed;
+                        segments[segIdx] = merge.Info_Renamed;
                         inserted = true;
                         newSegIdx++;
                     }
                 }
                 else
                 {
-                    Segments[newSegIdx] = info;
+                    segments[newSegIdx] = info;
                     newSegIdx++;
                 }
             }
 
             // the rest of the segments in list are duplicates, so don't remove from map, only list!
-            Segments.SubList(newSegIdx, Segments.Count).Clear();
+            segments.SubList(newSegIdx, segments.Count).Clear();
 
             // Either we found place to insert segment, or, we did
             // not, but only because all segments we merged becamee
@@ -1405,14 +1410,14 @@ namespace Lucene.Net.Index
             // we insert it at the beginning if it should not be dropped:
             if (!inserted && !dropSegment)
             {
-                Segments.Insert(0, merge.Info_Renamed);
+                segments.Insert(0, merge.Info_Renamed);
             }
         }
 
         internal IList<SegmentCommitInfo> CreateBackupSegmentInfos()
         {
             IList<SegmentCommitInfo> list = new List<SegmentCommitInfo>(Size());
-            foreach (SegmentCommitInfo info in Segments)
+            foreach (SegmentCommitInfo info in segments)
             {
                 Debug.Assert(info.Info.Codec != null);
                 list.Add((SegmentCommitInfo)(info.Clone()));
@@ -1430,21 +1435,21 @@ namespace Lucene.Net.Index
         /// Returns all contained segments as an <b>unmodifiable</b> <seealso cref="List"/> view. </summary>
         public List<SegmentCommitInfo> AsList()
         {
-            return /*Collections.unmodifiableList*/(Segments);
+            return /*Collections.unmodifiableList*/(segments);
         }
 
         /// <summary>
         /// Returns number of <seealso cref="SegmentCommitInfo"/>s. </summary>
         public int Size()
         {
-            return Segments.Count;
+            return segments.Count;
         }
 
         /// <summary>
         /// Appends the provided <seealso cref="SegmentCommitInfo"/>. </summary>
         public void Add(SegmentCommitInfo si)
         {
-            Segments.Add(si);
+            segments.Add(si);
         }
 
         /// <summary>
@@ -1461,7 +1466,7 @@ namespace Lucene.Net.Index
         /// Clear all <seealso cref="SegmentCommitInfo"/>s. </summary>
         public void Clear()
         {
-            Segments.Clear();
+            segments.Clear();
         }
 
         /// <summary>
@@ -1471,7 +1476,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Remove(SegmentCommitInfo si)
         {
-            Segments.Remove(si);
+            segments.Remove(si);
         }
 
         /// <summary>
@@ -1482,7 +1487,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void Remove(int index)
         {
-            Segments.RemoveAt(index);
+            segments.RemoveAt(index);
         }
 
         /// <summary>
@@ -1493,7 +1498,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal bool Contains(SegmentCommitInfo si)
         {
-            return Segments.Contains(si);
+            return segments.Contains(si);
         }
 
         /// <summary>
@@ -1504,7 +1509,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal int IndexOf(SegmentCommitInfo si)
         {
-            return Segments.IndexOf(si);
+            return segments.IndexOf(si);
         }
     }
 

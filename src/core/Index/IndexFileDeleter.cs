@@ -508,7 +508,7 @@ namespace Lucene.Net.Index
             if (InfoStream.IsEnabled("IFD"))
             {
                 t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
-                InfoStream.Message("IFD", "now checkpoint \"" + Writer.SegString(Writer.ToLiveInfos(segmentInfos)) + "\" [" + segmentInfos.Size() + " segments " + "; isCommit = " + isCommit + "]");
+                InfoStream.Message("IFD", "now checkpoint \"" + Writer.SegString(Writer.ToLiveInfos(segmentInfos).Segments) + "\" [" + segmentInfos.Size() + " segments " + "; isCommit = " + isCommit + "]");
             }
 
             // Try again now to delete any previously un-deletable

@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
 		IList<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
 		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
 
-		foreach (SegmentCommitInfo sipc in segmentInfos)
+        foreach (SegmentCommitInfo sipc in segmentInfos.Segments)
 		{
 		  if (!merging.Contains(sipc))
 		  {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
 	  {
 
 		IList<SegmentCommitInfo> eligibleSegments = new List<SegmentCommitInfo>();
-		foreach (SegmentCommitInfo info in segmentInfos)
+        foreach (SegmentCommitInfo info in segmentInfos.Segments)
 		{
 		  if (segmentsToMerge.ContainsKey(info))
 		  {

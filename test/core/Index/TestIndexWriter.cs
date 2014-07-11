@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
@@ -1023,14 +1024,14 @@ namespace Lucene.Net.Index
             public TokenStreamAnonymousInnerClassHelper(TestIndexWriter outerInstance)
             {
                 this.OuterInstance = outerInstance;
-                termAtt = AddAttribute<CharTermAttribute>();
-                posIncrAtt = AddAttribute<PositionIncrementAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
+                posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
                 terms = Arrays.AsList("a", "b", "c").GetEnumerator();
                 first = true;
             }
 
-            internal readonly CharTermAttribute termAtt;
-            internal readonly PositionIncrementAttribute posIncrAtt;
+            internal readonly ICharTermAttribute termAtt;
+            internal readonly IPositionIncrementAttribute posIncrAtt;
 
             internal readonly IEnumerator<string> terms;
             internal bool first;

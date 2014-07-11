@@ -1297,7 +1297,7 @@ namespace Lucene.Net.Codecs
                                     CurrentFrame.Suffix = saveSuffix;
                                     CurrentFrame.SuffixesReader.Position = savePos;
                                     CurrentFrame.TermState.TermBlockOrd = saveTermBlockOrd;
-                                    Array.Copy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
+                                    System.Buffer.BlockCopy(CurrentFrame.SuffixBytes, CurrentFrame.StartBytePos, Term_Renamed.Bytes, CurrentFrame.Prefix, CurrentFrame.Suffix);
                                     Term_Renamed.Length = CurrentFrame.Prefix + CurrentFrame.Suffix;
                                     // If the last entry was a block we don't
                                     // need to bother recursing and pushing to

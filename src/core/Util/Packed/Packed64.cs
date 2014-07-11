@@ -126,12 +126,36 @@ namespace Lucene.Net.Util.Packed
             // The abstract index in a bit stream
             long majorBitPos = (long)index * bitsPerValue;
             // The index in the backing long-array
+            int elementPos = (int) (((ulong) majorBitPos) >> BLOCK_BITS);
+            //int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
+            // The number of value-bits in the second long
+            long endBits = (majorBitPos & MOD_MASK) + BpvMinusBlockSize;
+
+            if (endBits <= 0) // Single block
+            {
+                return ((long)((ulong)Blocks[elementPos] >> (int)-endBits)) & MaskRight;
+            }
+            // Two blocks
+            return ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
+        }
+
+        /*/// <param name="index"> the position of the value. </param>
+        /// <returns> the value at the given index. </returns>
+        public override long Get(int index)
+        {
+            // The abstract index in a bit stream
+            long majorBitPos = (long)index * bitsPerValue;
+            // The index in the backing long-array
             int elementPos = (int)((long)((ulong)majorBitPos >> BLOCK_BITS));
             // The number of value-bits in the second long
             long endBits = (majorBitPos & MOD_MASK) + BpvMinusBlockSize;
 
             if (endBits <= 0) // Single block
             {
+                var mod = (long) ((ulong) (Blocks[elementPos]) >> (int) (-endBits)) & MaskRight;
+                var og = ((long) ((ulong) Blocks[elementPos] >> (int) -endBits)) & MaskRight;
+                Debug.Assert(mod == og);
+
                 //return (long)((ulong)(Blocks[elementPos]) >> (int)(-endBits)) & MaskRight;
                 return ((long)((ulong)Blocks[elementPos] >> (int)-endBits)) & MaskRight;
             }
@@ -143,7 +167,7 @@ namespace Lucene.Net.Util.Packed
 
             //return (((Blocks[elementPos] << (int)endBits) | (long)(((ulong)(Blocks[elementPos + 1])) >> (int)(BLOCK_SIZE - endBits))) & MaskRight);
             return ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
-        }
+        }*/
 
         public override int Get(int index, long[] arr, int off, int len)
         {

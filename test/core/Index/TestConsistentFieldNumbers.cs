@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            foreach (SegmentCommitInfo si in sis)
+            foreach (SegmentCommitInfo si in sis.Segments)
             {
                 FieldInfos fis = SegmentReader.ReadFieldInfos(si);
 

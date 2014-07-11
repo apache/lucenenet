@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
                 return true;
             }
             long totalSize = 0;
-            foreach (SegmentCommitInfo info in infos)
+            foreach (SegmentCommitInfo info in infos.Segments)
             {
                 totalSize += Size(info);
             }

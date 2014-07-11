@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 	  {
 		// first find all old segments
 		IDictionary<SegmentCommitInfo, bool?> oldSegments = new Dictionary<SegmentCommitInfo, bool?>();
-		foreach (SegmentCommitInfo si in segmentInfos)
+        foreach (SegmentCommitInfo si in segmentInfos.Segments)
 		{
 		  bool? v = segmentsToMerge[si];
 		  if (v != null && ShouldUpgradeSegment(si))
@@ -132,10 +132,8 @@ namespace Lucene.Net.Index
 		  {
 			Message("findForcedMerges: " + @base.GetType().Name + " does not want to merge all old segments, merge remaining ones into new segment: " + oldSegments);
 		  }
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final java.util.List<SegmentCommitInfo> newInfos = new java.util.ArrayList<>();
 		  IList<SegmentCommitInfo> newInfos = new List<SegmentCommitInfo>();
-		  foreach (SegmentCommitInfo si in segmentInfos)
+          foreach (SegmentCommitInfo si in segmentInfos.Segments)
 		  {
 			if (oldSegments.ContainsKey(si))
 			{

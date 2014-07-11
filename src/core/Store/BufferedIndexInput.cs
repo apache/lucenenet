@@ -246,26 +246,26 @@ namespace Lucene.Net.Store
             if (5 <= (BufferLength - BufferPosition))
             {
                 byte b = Buffer[BufferPosition++];
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return b;
                 }
                 int i = b & 0x7F;
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7F) << 7;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7F) << 14;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7F) << 21;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
@@ -289,56 +289,56 @@ namespace Lucene.Net.Store
             if (9 <= BufferLength - BufferPosition)
             {
                 byte b = Buffer[BufferPosition++];
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return b;
                 }
                 long i = b & 0x7FL;
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 7;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 14;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 21;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 28;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 35;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 42;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 49;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }
                 b = Buffer[BufferPosition++];
                 i |= (b & 0x7FL) << 56;
-                if (b >= 0)
+                if ((sbyte)b >= 0)
                 {
                     return i;
                 }

@@ -681,14 +681,14 @@ namespace Lucene.Net.Index
 	  {
 		if (Verbose())
 		{
-		  Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + Writer.Get().SegString(infos) + " segmentsToMerge=" + segmentsToMerge);
+            Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + Writer.Get().SegString(infos.Segments) + " segmentsToMerge=" + segmentsToMerge);
 		}
 
 		List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
 		bool forceMergeRunning = false;
 		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
 		bool? segmentIsOriginal = false;
-		foreach (SegmentCommitInfo info in infos)
+        foreach (SegmentCommitInfo info in infos.Segments)
 		{
 		  bool? isOriginal = segmentsToMerge[info];
 		  if (isOriginal != null)
@@ -767,11 +767,11 @@ namespace Lucene.Net.Index
 	  {
 		if (Verbose())
 		{
-		  Message("findForcedDeletesMerges infos=" + Writer.Get().SegString(infos) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
+            Message("findForcedDeletesMerges infos=" + Writer.Get().SegString(infos.Segments) + " forceMergeDeletesPctAllowed=" + ForceMergeDeletesPctAllowed_Renamed);
 		}
 		List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
 		ICollection<SegmentCommitInfo> merging = Writer.Get().MergingSegments;
-		foreach (SegmentCommitInfo info in infos)
+        foreach (SegmentCommitInfo info in infos.Segments)
 		{
 		  double pctDeletes = 100.0 * ((double) Writer.Get().NumDeletedDocs(info)) / info.Info.DocCount;
 		  if (pctDeletes > ForceMergeDeletesPctAllowed_Renamed && !merging.Contains(info))

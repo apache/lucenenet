@@ -135,10 +135,8 @@ namespace Lucene.Net.Util.Automaton
             {
                 Debug.Assert(Array.BinarySearch(Labels, label) < 0, "State already has transition labeled: " + label);
 
-                Labels = new int[Labels.Length + 1];
-                Array.Copy(Labels, Labels, Labels.Length + 1);
-                States = new Lucene.Net.Util.Automaton.DaciukMihovAutomatonBuilder.State[States.Length + 1];
-                Array.Copy(States, States, States.Length + 1);
+                Labels = Arrays.CopyOf(Labels, Labels.Length + 1);
+                States = Arrays.CopyOf(States, States.Length + 1);
 
                 Labels[Labels.Length - 1] = label;
                 return States[States.Length - 1] = new State();
@@ -343,8 +341,8 @@ namespace Lucene.Net.Util.Automaton
                 ReplaceOrRegister(child);
             }
 
-            State registered = StateRegistry[child];
-            if (registered != null)
+            State registered;
+            if (StateRegistry.TryGetValue(child, out registered))
             {
                 state.ReplaceLastChild(registered);
             }

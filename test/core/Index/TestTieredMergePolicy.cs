@@ -101,8 +101,8 @@ namespace Lucene.Net.Index
             }
             ((TieredMergePolicy)w.Config.MergePolicy).ForceMergeDeletesPctAllowed = 10.0;
             w.ForceMergeDeletes();
-            Assert.AreEqual(60, w.MaxDoc());
             Assert.AreEqual(60, w.NumDocs());
+            Assert.AreEqual(60, w.MaxDoc());
             w.Dispose();
             dir.Dispose();
         }

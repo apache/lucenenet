@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 // literals
                 int token = compressed.ReadByte() & 0xFF;
-                int literalLen = (int)((uint)token >> 4);
+                int literalLen = (int)(((uint)token) >> 4);
 
                 if (literalLen != 0)
                 {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.Compressing
                 matchLen += MIN_MATCH;
 
                 // copying a multiple of 8 bytes can make decompression from 5% to 10% faster
-                int fastLen = (matchLen + 7) & unchecked((int)0xFFFFFFF8);
+                int fastLen = (int)((matchLen + 7) & 0xFFFFFFF8);
                 if (matchDec < matchLen || dOff + fastLen > destEnd)
                 {
                     // overlap -> naive incremental copy

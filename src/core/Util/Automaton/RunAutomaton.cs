@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-
 /*
  * dk.brics.automaton
  * 
@@ -29,6 +28,7 @@ using System.Text;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * this SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -257,15 +257,15 @@ namespace Lucene.Net.Util.Automaton
 		{
 			return false;
 		}
-		if (!Array.Equals(Points, other.Points))
+		if (!Arrays.Equals(Points, other.Points))
 		{
 			return false;
 		}
-		if (!Array.Equals(Accept, other.Accept))
+		if (!Arrays.Equals(Accept, other.Accept))
 		{
 			return false;
 		}
-		if (!Array.Equals(Transitions, other.Transitions))
+		if (!Arrays.Equals(Transitions, other.Transitions))
 		{
 			return false;
 		}

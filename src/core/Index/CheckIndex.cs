@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
             string oldSegs = null;
             bool foundNonNullVersion = false;
             IComparer<string> versionComparator = StringHelper.VersionComparator;
-            foreach (SegmentCommitInfo si in sis)
+            foreach (SegmentCommitInfo si in sis.Segments)
             {
                 string version = si.Info.Version;
                 if (version == null)

@@ -16,6 +16,7 @@ using System;
  * limitations under the License.
  */
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -93,7 +94,7 @@ namespace Lucene.Net.Util
                         read += chunk;
                     }
                 }
-                Assert.IsTrue(Array.Equals(answer, verify));
+                Assert.IsTrue(Arrays.Equals(answer, verify));
 
                 BytesRef slice = new BytesRef();
                 for (int iter2 = 0; iter2 < 100; iter2++)
@@ -162,7 +163,7 @@ namespace Lucene.Net.Util
                         read += chunk;
                     }
                 }
-                Assert.IsTrue(Array.Equals(answer, verify));
+                Assert.IsTrue(Arrays.Equals(answer, verify));
 
                 BytesRef slice = new BytesRef();
                 for (int iter2 = 0; iter2 < 100; iter2++)
@@ -172,7 +173,7 @@ namespace Lucene.Net.Util
                     reader.FillSlice(slice, pos, len);
                     for (int byteUpto = 0; byteUpto < len; byteUpto++)
                     {
-                        Assert.AreEqual(answer[pos + byteUpto], slice.Bytes[slice.Offset + byteUpto]);
+                        Assert.AreEqual(answer[pos + byteUpto], (byte)slice.Bytes[slice.Offset + byteUpto]);
                     }
                 }
             }

@@ -665,10 +665,10 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    foreach (SegmentCommitInfo info in infos)
+                    foreach (SegmentCommitInfo info in infos.Segments)
                     {
-                        ReadersAndUpdates rld = ReaderMap[info];
-                        if (rld != null)
+                        ReadersAndUpdates rld;
+                        if (ReaderMap.TryGetValue(info, out rld))
                         {
                             Debug.Assert(rld.Info == info);
                             if (rld.WriteLiveDocs(OuterInstance.directory))
@@ -715,7 +715,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        Debug.Assert(rld.Info == info, "rld.info=" + rld.Info + " info=" + info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
+                        Debug.Assert(rld.Info == info, "Infos are not equal");//, "rld.info=" + rld.Info + " info=" + info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
                     }
 
                     if (create)
@@ -974,7 +974,7 @@ namespace Lucene.Net.Index
             {
                 FieldNumbers map = new FieldNumbers();
 
-                foreach (SegmentCommitInfo info in segmentInfos)
+                foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
                     foreach (FieldInfo fi in SegmentReader.ReadFieldInfos(info))
                     {
@@ -1352,7 +1352,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 EnsureOpen();
-                return DocWriter.NumDocs + segmentInfos.Sum(info => info.Info.DocCount - NumDeletedDocs(info));
+                return DocWriter.NumDocs + segmentInfos.Segments.Sum(info => info.Info.DocCount - NumDeletedDocs(info));
             }
         }
 
@@ -1380,7 +1380,7 @@ namespace Lucene.Net.Index
                 {
                     return true;
                 }
-                foreach (SegmentCommitInfo info in segmentInfos)
+                foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
                     if (info.HasDeletions())
                     {
@@ -1648,8 +1648,6 @@ namespace Lucene.Net.Index
                     throw new System.ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
                 }
 
-                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                //ORIGINAL LINE: final SegmentCommitInfo info = ((SegmentReader) reader).getSegmentInfo();
                 SegmentCommitInfo info = ((SegmentReader)reader).SegmentInfo;
 
                 // TODO: this is a slow linear search, but, number of
@@ -1667,8 +1665,6 @@ namespace Lucene.Net.Index
                             rld.InitWritableLiveDocs();
                             if (rld.Delete(docID))
                             {
-                                //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-                                //ORIGINAL LINE: final int fullDelCount = rld.info.getDelCount() + rld.getPendingDeleteCount();
                                 int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
                                 if (fullDelCount == rld.Info.Info.DocCount)
                                 {
@@ -2139,7 +2135,7 @@ namespace Lucene.Net.Index
             {
                 ResetMergeExceptions();
                 SegmentsToMerge.Clear();
-                foreach (SegmentCommitInfo info in segmentInfos)
+                foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
                     SegmentsToMerge[info] = true;
                 }
@@ -2585,7 +2581,7 @@ namespace Lucene.Net.Index
                     segmentInfos.RollbackSegmentInfos(RollbackSegments);
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos));
+                        infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos.Segments));
                     }
 
                     Debug.Assert(TestPoint("rollback before checkpoint"));
@@ -3077,7 +3073,7 @@ namespace Lucene.Net.Index
                         HashSet<string> dsFilesCopied = new HashSet<string>();
                         IDictionary<string, string> dsNames = new Dictionary<string, string>();
                         HashSet<string> copiedFiles = new HashSet<string>();
-                        foreach (SegmentCommitInfo info in sis)
+                        foreach (SegmentCommitInfo info in sis.Segments)
                         {
                             Debug.Assert(!infos.Contains(info), "dup info dir=" + info.Info.Dir + " name=" + info.Info.Name);
 
@@ -4525,7 +4521,7 @@ namespace Lucene.Net.Index
             merge.Exception = t;
             AddMergeException(merge);
 
-            if (t is MergePolicy.MergeAbortedException)
+            if ((t as MergePolicy.MergeAbortedException) != null)
             {
                 // We can ignore this exception (it happens when
                 // close(false) or rollback is called), unless the
@@ -4535,7 +4531,7 @@ namespace Lucene.Net.Index
                 // executed.
                 if (merge.IsExternal)
                 {
-                    throw (MergePolicy.MergeAbortedException)t;
+                    throw t;
                 }
             }
             else
@@ -5331,7 +5327,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                return SegString(segmentInfos);
+                return SegString(segmentInfos.Segments);
             }
         }
 
@@ -5438,15 +5434,15 @@ namespace Lucene.Net.Index
             {
                 SegmentInfos newSIS = new SegmentInfos();
                 IDictionary<SegmentCommitInfo, SegmentCommitInfo> liveSIS = new Dictionary<SegmentCommitInfo, SegmentCommitInfo>();
-                foreach (SegmentCommitInfo info in segmentInfos)
+                foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
                     liveSIS[info] = info;
                 }
-                foreach (SegmentCommitInfo info in sis)
+                foreach (SegmentCommitInfo info in sis.Segments)
                 {
                     SegmentCommitInfo infoMod = info;
-                    SegmentCommitInfo liveInfo = liveSIS[info];
-                    if (liveInfo != null)
+                    SegmentCommitInfo liveInfo;
+                    if (liveSIS.TryGetValue(info, out liveInfo))
                     {
                         infoMod = liveInfo;
                     }
@@ -5501,7 +5497,7 @@ namespace Lucene.Net.Index
 
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync)) + " changeCount=" + ChangeCount);
+                        infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync).Segments) + " changeCount=" + ChangeCount);
                     }
 
                     Debug.Assert(FilesExist(toSync));

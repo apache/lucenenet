@@ -574,7 +574,7 @@ namespace Lucene.Net.Index
             {
                 FieldInfo fieldInfo1 = fieldInfos1.FieldInfo(fieldID);
                 FieldInfo fieldInfo2 = fieldInfos2.FieldInfo(fieldID);
-                Assert.AreEqual("Different field names.", fieldInfo1.Name, fieldInfo2.Name);
+                Assert.AreEqual(fieldInfo1.Name, fieldInfo2.Name, "Different field names.");
             }
 
             // check norms
@@ -623,8 +623,8 @@ namespace Lucene.Net.Index
                         Field curField1 = (Field)itField1.Current;
                         itField2.MoveNext();
                         Field curField2 = (Field)itField2.Current;
-                        Assert.AreEqual("Different fields names for doc " + i + ".", curField1.Name(), curField2.Name());
-                        Assert.AreEqual("Different field values for doc " + i + ".", curField1.StringValue, curField2.StringValue);
+                        Assert.AreEqual(curField1.Name(), curField2.Name(), "Different fields names for doc " + i + ".");
+                        Assert.AreEqual(curField1.StringValue, curField2.StringValue, "Different field values for doc " + i + ".");
                     }
                 }
             }
@@ -637,7 +637,7 @@ namespace Lucene.Net.Index
             foreach (string field1 in fields1)
             {
                 fenum2.MoveNext();
-                Assert.AreEqual("Different fields", field1, fenum2.Current);
+                Assert.AreEqual(field1, fenum2.Current, "Different fields");
                 Terms terms1 = fields1.Terms(field1);
                 if (terms1 == null)
                 {
