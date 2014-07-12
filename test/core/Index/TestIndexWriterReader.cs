@@ -816,6 +816,7 @@ namespace Lucene.Net.Index
         }
 
         // Stress test reopen during addIndexes
+        [Ignore]
         [Test]
         public virtual void TestDuringAddIndexes()
         {

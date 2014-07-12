@@ -732,15 +732,14 @@ namespace Lucene.Net.Store
                 int v;
                 if (OpenFiles.TryGetValue(name, out v))
                 {
-                    v = Convert.ToInt32((int)v + 1);
+                    v++;
                     OpenFiles[name] = v;
                 }
                 else
                 {
-                    OpenFiles[name] = Convert.ToInt32(1);
+                    OpenFiles[name] = 1;
+                    OpenFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
                 }
-
-                OpenFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
             }
         }
 
@@ -904,11 +903,6 @@ namespace Lucene.Net.Store
                     if (stacktraces.MoveNext())
                     {
                         cause = stacktraces.Current;
-                    }
-
-                    foreach (var kvp in OpenFiles)
-                    {
-                        
                     }
 
                     // RuntimeException instead ofSystem.IO.IOException because
@@ -1082,15 +1076,14 @@ namespace Lucene.Net.Store
                     if (v == 1)
                     {
                         OpenFiles.Remove(name);
+                        OpenFileHandles.Remove(c);
                     }
                     else
                     {
-                        v = Convert.ToInt32((int)v - 1);
+                        v--;
                         OpenFiles[name] = v;
                     }
                 }
-
-                OpenFileHandles.Remove(c);
             }
         }
 

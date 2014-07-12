@@ -318,6 +318,7 @@ namespace Lucene.Net.Search
             MultiPhraseQuery query2 = new MultiPhraseQuery();
 
             Assert.AreEqual(query1.GetHashCode(), query2.GetHashCode());
+            Assert.IsTrue(query1.Equals(query2));
             Assert.AreEqual(query1, query2);
 
             Term term1 = new Term("someField", "someText");

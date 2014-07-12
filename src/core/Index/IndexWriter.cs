@@ -5943,7 +5943,7 @@ namespace Lucene.Net.Index
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
                 return true;
             }
-            catch (NoSuchFileException/* | FileNotFoundException*/)
+            catch (FileNotFoundException)
             {
                 return false;
             }

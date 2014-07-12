@@ -1473,8 +1473,10 @@ namespace Lucene.Net.Codecs
                         {
                             CopyTerm();
                             //if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
-
-                            Debug.Assert(SavedStartTerm_Renamed == null || Term_Renamed.CompareTo(SavedStartTerm_Renamed) > 0, "saveStartTerm=" + SavedStartTerm_Renamed.Utf8ToString() + " term=" + Term_Renamed.Utf8ToString());
+                            if (!(SavedStartTerm_Renamed == null || Term_Renamed.CompareTo(SavedStartTerm_Renamed) > 0))
+                            {
+                                Debug.Assert(false, "saveStartTerm=" + SavedStartTerm_Renamed.Utf8ToString() + " term=" + Term_Renamed.Utf8ToString());
+                            }
                             return Term_Renamed;
                         }
                         else

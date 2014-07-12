@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -57,7 +58,7 @@ namespace Lucene.Net.Search
     {
         private string Field;
         private List<Term[]> termArrays = new List<Term[]>();
-        private List<int> positions = new List<int>();
+        private readonly List<int> positions = new List<int>();
 
         private int slop = 0;
 
@@ -450,14 +451,15 @@ namespace Lucene.Net.Search
                 return false;
             }
             MultiPhraseQuery other = (MultiPhraseQuery)o;
-            return this.Boost == other.Boost && this.slop == other.slop && TermArraysEquals(this.termArrays, other.termArrays) && this.positions.Equals(other.positions);
+            return this.Boost == other.Boost && this.slop == other.slop && TermArraysEquals(this.termArrays, other.termArrays) && this.positions.SequenceEqual(other.positions);
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ slop ^ TermArraysHashCode() ^ positions.GetHashCode() ^ 0x4AC65113;
+            //If this doesn't work hash all elements of positions. This was used to reduce time overhead
+            return Number.FloatToIntBits(Boost) ^ slop ^ TermArraysHashCode() ^ ((positions.Count == 0) ? 0 : HashHelpers.CombineHashCodes(positions.First().GetHashCode(), positions.Last().GetHashCode(), positions.Count) ^ 0x4AC65113);
         }
 
         // Breakout calculation of the termArrays hashcode
@@ -485,7 +487,7 @@ namespace Lucene.Net.Search
                 Term[] termArray1 = iterator1.Current;
                 iterator2.MoveNext();
                 Term[] termArray2 = iterator2.Current;
-                if (!(termArray1 == null ? termArray2 == null : Array.Equals(termArray1, termArray2)))
+                if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
                 {
                     return false;
                 }

@@ -50,6 +50,7 @@ namespace Lucene.Net.Search
             RUN_TIME_MSEC = AtLeast(1000);
         }
 
+        [Ignore]
         [Test]
         public virtual void Test()
         {

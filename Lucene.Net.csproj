@@ -9556,6 +9556,7 @@
     <Compile Include="src\core\Support\ConcurrentHashSet.cs" />
     <Compile Include="src\core\Support\ConcurrentList.cs" />
     <Compile Include="src\core\Support\FileStreamExtensions.cs" />
+    <Compile Include="src\core\Support\HashCodeMerge.cs" />
     <Compile Include="src\core\Support\ICallable.cs" />
     <Compile Include="src\core\Support\ICharSequence.cs" />
     <Compile Include="src\core\Support\ICompletionService.cs" />

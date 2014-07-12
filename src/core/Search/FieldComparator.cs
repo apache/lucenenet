@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
             protected internal readonly string Field;
             protected internal Bits DocsWithField;
 
-            public NumericComparator(string field, T missingValue)
+            public NumericComparator(string field, T? missingValue)
             {
 	            this.Field = field;
 	            this.MissingValue = missingValue;
@@ -389,7 +389,7 @@ namespace Lucene.Net.Search
             internal sbyte bottom;
             internal sbyte topValue;
 
-            internal ByteComparator(int numHits, string field, FieldCache_Fields.IParser parser, sbyte missingValue) 
+            internal ByteComparator(int numHits, string field, FieldCache_Fields.IParser parser, sbyte? missingValue) 
                 : base(field, missingValue)
             {
 	            Values = new sbyte[numHits];
@@ -482,7 +482,7 @@ namespace Lucene.Net.Search
             internal double Bottom_Renamed;
             internal double TopValue_Renamed;
 
-            internal DoubleComparator(int numHits, string field, FieldCache_Fields.IParser parser, double missingValue) 
+            internal DoubleComparator(int numHits, string field, FieldCache_Fields.IParser parser, double? missingValue) 
                 : base(field, missingValue)
             {
 	            Values = new double[numHits];
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search
             internal float Bottom_Renamed;
             internal float TopValue_Renamed;
 
-            internal FloatComparator(int numHits, string field, FieldCache_Fields.IParser parser, float missingValue) 
+            internal FloatComparator(int numHits, string field, FieldCache_Fields.IParser parser, float? missingValue) 
                 : base(field, missingValue)
             {
 	            Values = new float[numHits];
@@ -668,7 +668,7 @@ namespace Lucene.Net.Search
             internal short Bottom_Renamed;
             internal short TopValue_Renamed;
 
-            internal ShortComparator(int numHits, string field, FieldCache_Fields.IParser parser, short missingValue) 
+            internal ShortComparator(int numHits, string field, FieldCache_Fields.IParser parser, short? missingValue) 
                 : base(field, missingValue)
             {
 	            Values = new short[numHits];
@@ -762,7 +762,7 @@ namespace Lucene.Net.Search
             internal int Bottom_Renamed; // Value of bottom of queue
             internal int TopValue_Renamed;
 
-            internal IntComparator(int numHits, string field, FieldCache_Fields.IParser parser, int missingValue) 
+            internal IntComparator(int numHits, string field, FieldCache_Fields.IParser parser, int? missingValue) 
                 : base(field, missingValue)
             {
 	            Values = new int[numHits];
@@ -853,7 +853,7 @@ namespace Lucene.Net.Search
         internal long Bottom_Renamed;
         internal long TopValue_Renamed;
 
-        internal LongComparator(int numHits, string field, FieldCache_Fields.IParser parser, long missingValue) 
+        internal LongComparator(int numHits, string field, FieldCache_Fields.IParser parser, long? missingValue) 
             : base(field, missingValue)
         {
 	        Values = new long[numHits];

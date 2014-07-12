@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -270,7 +271,7 @@ namespace Lucene.Net.Search.Spans
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
             Document doc = new Document();
-            doc.Add(new TextField("content", new StreamReader("a b c d e f g h i j a k")));
+            doc.Add(new TextField("content", new StringReader("a b c d e f g h i j a k")));
             writer.AddDocument(doc);
 
             IndexReader reader = writer.Reader;
@@ -538,9 +539,9 @@ namespace Lucene.Net.Search.Spans
             internal HashSet<string> Entities = new HashSet<string>();
             internal HashSet<string> Nopayload = new HashSet<string>();
             internal int Pos;
-            internal PayloadAttribute PayloadAtt;
-            internal CharTermAttribute TermAtt;
-            internal PositionIncrementAttribute PosIncrAtt;
+            internal IPayloadAttribute PayloadAtt;
+            internal ICharTermAttribute TermAtt;
+            internal IPositionIncrementAttribute PosIncrAtt;
 
             public PayloadFilter(TestPayloadSpans outerInstance, TokenStream input)
                 : base(input)
@@ -551,9 +552,9 @@ namespace Lucene.Net.Search.Spans
                 Entities.Add("one");
                 Nopayload.Add("nopayload");
                 Nopayload.Add("np");
-                TermAtt = AddAttribute<CharTermAttribute>();
-                PosIncrAtt = AddAttribute<PositionIncrementAttribute>();
-                PayloadAtt = AddAttribute<PayloadAttribute>();
+                TermAtt = AddAttribute<ICharTermAttribute>();
+                PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                PayloadAtt = AddAttribute<IPayloadAttribute>();
             }
 
             public override bool IncrementToken()

@@ -533,22 +533,22 @@ namespace Lucene.Net.Search
                     return new FieldComparator.DocComparator(numHits);
 
                 case Type_e.INT:
-                    return new FieldComparator.IntComparator(numHits, field, parser, (int)missingValue);
+                    return new FieldComparator.IntComparator(numHits, field, parser, (int?)missingValue);
 
                 case Type_e.FLOAT:
-                    return new FieldComparator.FloatComparator(numHits, field, parser, (float)missingValue);
+                    return new FieldComparator.FloatComparator(numHits, field, parser, (float?)missingValue);
 
                 case Type_e.LONG:
-                    return new FieldComparator.LongComparator(numHits, field, parser, (long)missingValue);
+                    return new FieldComparator.LongComparator(numHits, field, parser, (long?)missingValue);
 
                 case Type_e.DOUBLE:
-                    return new FieldComparator.DoubleComparator(numHits, field, parser, (double)missingValue);
+                    return new FieldComparator.DoubleComparator(numHits, field, parser, (double?)missingValue);
 
                 case Type_e.BYTE:
-                    return new FieldComparator.ByteComparator(numHits, field, parser, (sbyte)missingValue);
+                    return new FieldComparator.ByteComparator(numHits, field, parser, (sbyte?)missingValue);
 
                 case Type_e.SHORT:
-                    return new FieldComparator.ShortComparator(numHits, field, parser, (short)missingValue);
+                    return new FieldComparator.ShortComparator(numHits, field, parser, (short?)missingValue);
 
                 case Type_e.CUSTOM:
                     Debug.Assert(comparatorSource != null);

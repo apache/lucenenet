@@ -108,6 +108,8 @@ namespace Lucene.Net.Search.Spans
             SpanPositionRangeQuery sprq = new SpanPositionRangeQuery(sfq, 0, 100);
             Assert.AreEqual(1, Searcher.Search(sprq, 10).TotalHits);
         }
+
+        [Ignore]
         [Test]
         public virtual void TestNoSuchMultiTermsInNear()
         {

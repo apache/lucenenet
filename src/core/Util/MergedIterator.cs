@@ -94,11 +94,6 @@ namespace Lucene.Net.Util
             }
             else
             {
-                current = default(T);
-            }
-
-            if ((object)current == (object)default(T))
-            {
                 return false;
             }
 

@@ -401,32 +401,32 @@ namespace Lucene.Net.Util
         public virtual void TestSplitLongRange()
         {
             // a hard-coded "standard" range
-            AssertLongRangeSplit(-5000L, 9500L, 4, true, Arrays.AsList(0x7fffffffffffec78L, 0x7fffffffffffec7fL, unchecked((long)0x8000000000002510L), unchecked((long)0x800000000000251cL), 0x7fffffffffffec8L, 0x7fffffffffffecfL, 0x800000000000250L, 0x800000000000250L, 0x7fffffffffffedL, 0x7fffffffffffefL, 0x80000000000020L, 0x80000000000024L, 0x7ffffffffffffL, 0x8000000000001L), Arrays.AsList(0, 0, 4, 4, 8, 8, 12));
+            AssertLongRangeSplit(-5000L, 9500L, 4, true, new long[] { 0x7fffffffffffec78L, 0x7fffffffffffec7fL, unchecked((long)0x8000000000002510L), unchecked((long)0x800000000000251cL), 0x7fffffffffffec8L, 0x7fffffffffffecfL, 0x800000000000250L, 0x800000000000250L, 0x7fffffffffffedL, 0x7fffffffffffefL, 0x80000000000020L, 0x80000000000024L, 0x7ffffffffffffL, 0x8000000000001L }, new int[] { 0, 0, 4, 4, 8, 8, 12 });
 
             // the same with no range splitting
-            AssertLongRangeSplit(-5000L, 9500L, 64, true, Arrays.AsList(0x7fffffffffffec78L, unchecked((long)0x800000000000251cL)), Arrays.AsList(0));
+            AssertLongRangeSplit(-5000L, 9500L, 64, true, new long[] { 0x7fffffffffffec78L, unchecked((long)0x800000000000251cL) }, new int[] { 0 });
 
             // this tests optimized range splitting, if one of the inner bounds
             // is also the bound of the next lower precision, it should be used completely
-            AssertLongRangeSplit(0L, 1024L + 63L, 4, true, Arrays.AsList(0x800000000000040L, 0x800000000000043L, 0x80000000000000L, 0x80000000000003L), Arrays.AsList(4, 8));
+            AssertLongRangeSplit(0L, 1024L + 63L, 4, true, new long[] { 0x800000000000040L, 0x800000000000043L, 0x80000000000000L, 0x80000000000003L }, new int[] { 4, 8 });
 
             // the full long range should only consist of a lowest precision range; no bitset testing here, as too much memory needed :-)
-            AssertLongRangeSplit(long.MinValue, long.MaxValue, 8, false, Arrays.AsList(0x00L, 0xffL), Arrays.AsList(56));
+            AssertLongRangeSplit(long.MinValue, long.MaxValue, 8, false, new long[] { 0x00L, 0xffL }, new int[] { 56 });
 
             // the same with precisionStep=4
-            AssertLongRangeSplit(long.MinValue, long.MaxValue, 4, false, Arrays.AsList(0x0L, 0xfL), Arrays.AsList(60));
+            AssertLongRangeSplit(long.MinValue, long.MaxValue, 4, false, new long[] { 0x0L, 0xfL }, new int[] { 60 });
 
             // the same with precisionStep=2
-            AssertLongRangeSplit(long.MinValue, long.MaxValue, 2, false, Arrays.AsList(0x0L, 0x3L), Arrays.AsList(62));
+            AssertLongRangeSplit(long.MinValue, long.MaxValue, 2, false, new long[] { 0x0L, 0x3L }, new int[] { 62 });
 
             // the same with precisionStep=1
-            AssertLongRangeSplit(long.MinValue, long.MaxValue, 1, false, Arrays.AsList(0x0L, 0x1L), Arrays.AsList(63));
+            AssertLongRangeSplit(long.MinValue, long.MaxValue, 1, false, new long[] { 0x0L, 0x1L }, new int[] { 63 });
 
             // a inverse range should produce no sub-ranges
-            AssertLongRangeSplit(9500L, -5000L, 4, false, new List<long>(), new List<int>());
+            AssertLongRangeSplit(9500L, -5000L, 4, false, new long[] { }, new int[] { });
 
             // a 0-length range should reproduce the range itself
-            AssertLongRangeSplit(9500L, 9500L, 4, false, Arrays.AsList(unchecked((long)0x800000000000251cL), unchecked((long)0x800000000000251cL)), Arrays.AsList(0));
+            AssertLongRangeSplit(9500L, 9500L, 4, false, new long[] {unchecked((long)0x800000000000251cL), unchecked((long)0x800000000000251cL)}, new int[] { 0 });
         }
 
         /// <summary>

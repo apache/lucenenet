@@ -973,7 +973,8 @@ namespace Lucene.Net.Util
         {
             IDictionary<string, object> map = new Dictionary<string, object>();
             att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
-            Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
+            //Assert.AreEqual(reflectedValues, map, "Reflection does not produce same map");
+            Assert.IsTrue(CollectionsHelper.DictEquals((Dictionary<string, object>)reflectedValues, map), "Reflection does not produce same map");
             //Assert.IsTrue(CollectionsHelper.Equals((Dictionary<string, object>)reflectedValues, (Dictionary<string, object>)map), "Reflection does not produce same map");
         }
 

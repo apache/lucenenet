@@ -360,7 +360,7 @@ namespace Lucene.Net.Support
             return result;
         }
 
-        public static bool Equals<TKey>(Dictionary<TKey, object> first, Dictionary<TKey, object> second)
+        public static bool DictEquals<TKey>(IDictionary<TKey, object> first, IDictionary<TKey, object> second)
         {
             if (first == second) return true;
             if ((first == null) || (second == null)) return false;

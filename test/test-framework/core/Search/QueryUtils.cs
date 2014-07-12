@@ -93,6 +93,7 @@ namespace Lucene.Net.Search
 
         public static void CheckEqual(Query q1, Query q2)
         {
+            Assert.IsTrue(q1.Equals(q2));
             Assert.AreEqual(q1, q2);
             Assert.AreEqual(q1.GetHashCode(), q2.GetHashCode());
         }
