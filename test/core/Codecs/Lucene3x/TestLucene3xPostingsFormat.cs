@@ -25,14 +25,12 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// <summary>
     /// Tests Lucene3x postings format
     /// </summary>
-    [TestFixture]
     public class TestLucene3xPostingsFormat : BasePostingsFormatTestCase
     {
         private readonly Codec Codec_Renamed = new PreFlexRWCodec();
 
         /// <summary>
         /// we will manually instantiate preflex-rw here </summary>
-        [SetUp]
         public static void BeforeClass3xPostingsFormat()
         {
             LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;

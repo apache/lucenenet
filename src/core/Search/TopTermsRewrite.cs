@@ -174,14 +174,14 @@ namespace Lucene.Net.Search
                         return true;
                     }
                 }
-                ScoreTerm st;
+                ScoreTerm t2;
                 TermState state = termsEnum.TermState();
                 Debug.Assert(state != null);
-                if (visitedTerms.TryGetValue(bytes, out st))
+                if (visitedTerms.TryGetValue(bytes, out t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
-                    Debug.Assert(st.Boost == boost, "boost should be equal in all segment TermsEnums");
-                    st.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
+                    Debug.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
+                    t2.TermState.Register(state, ReaderContext.Ord, termsEnum.DocFreq(), termsEnum.TotalTermFreq());
                 }
                 else
                 {
@@ -207,9 +207,9 @@ namespace Lucene.Net.Search
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
                     if (StQueue.Count == MaxSize)
                     {
-                        st = StQueue.Peek();
-                        maxBoostAtt.MaxNonCompetitiveBoost = st.Boost;
-                        maxBoostAtt.CompetitiveTerm = st.Bytes;
+                        t2 = StQueue.Peek();
+                        maxBoostAtt.MaxNonCompetitiveBoost = t2.Boost;
+                        maxBoostAtt.CompetitiveTerm = t2.Bytes;
                     }
                 }
 

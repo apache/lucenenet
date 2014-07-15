@@ -23,52 +23,52 @@ namespace org.apache.lucene
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
-	/// <summary>
-	/// validate that assertions are enabled during tests
-	/// </summary>
-	public class TestAssertions : LuceneTestCase
-	{
+    /// <summary>
+    /// validate that assertions are enabled during tests
+    /// </summary>
+    public class TestAssertions : LuceneTestCase
+    {
 
-	  internal class TestTokenStream1 : TokenStream
-	  {
-		public override bool IncrementToken()
-		{
-			return false;
-		}
-	  }
+        internal class TestTokenStream1 : TokenStream
+        {
+            public override bool IncrementToken()
+            {
+                return false;
+            }
+        }
 
-	  internal sealed class TestTokenStream2 : TokenStream
-	  {
-		public override bool IncrementToken()
-		{
-			return false;
-		}
-	  }
+        internal sealed class TestTokenStream2 : TokenStream
+        {
+            public override bool IncrementToken()
+            {
+                return false;
+            }
+        }
 
-	  internal class TestTokenStream3 : TokenStream
-	  {
-		public override bool IncrementToken()
-		{
-			return false;
-		}
-	  }
+        internal class TestTokenStream3 : TokenStream
+        {
+            public override bool IncrementToken()
+            {
+                return false;
+            }
+        }
 
-	  public virtual void TestTokenStreams()
-	  {
-		new TestTokenStream1();
-		new TestTokenStream2();
-		bool doFail = false;
-		try
-		{
-		  new TestTokenStream3();
-		  doFail = true;
-		}
-		catch (InvalidOperationException e)
-		{
-		  // expected
-		}
-		Assert.IsFalse(doFail, "TestTokenStream3 should fail assertion");
-	  }
-	}
+        public virtual void TestTokenStreams()
+        {
+            new TestTokenStream1();
+            new TestTokenStream2();
+            bool doFail = false;
+            try
+            {
+                new TestTokenStream3();
+                doFail = true;
+            }
+            catch (InvalidOperationException e)
+            {
+                // expected
+            }
+            Assert.IsFalse(doFail, "TestTokenStream3 should fail assertion");
+        }
+    }
 
 }

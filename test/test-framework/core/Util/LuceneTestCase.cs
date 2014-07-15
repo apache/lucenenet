@@ -2547,7 +2547,7 @@ namespace Lucene.Net.Util
         /// this method is deprecated for a reason. Do not use it. Call <seealso cref="#createTempDir()"/>
         /// or <seealso cref="#createTempDir(String)"/> or <seealso cref="#createTempFile(String, String)"/>.
         /// </summary>
-        [Obsolete]
+        /*[Obsolete]
         public static DirectoryInfo BaseTempDirForTestClass()
         {
             lock (typeof(LuceneTestCase))
@@ -2560,8 +2560,8 @@ namespace Lucene.Net.Util
                     RandomizedContext ctx = RandomizedContext.Current;
                     Type clazz = ctx.GetTargetType;
                     string prefix = clazz.Name;
-                    /*prefix = prefix.replaceFirst("^org.apache.lucene.", "lucene.");
-                    prefix = prefix.replaceFirst("^org.apache.solr.", "solr.");*/
+                    prefix = prefix.replaceFirst("^org.apache.lucene.", "lucene.");
+                    prefix = prefix.replaceFirst("^org.apache.solr.", "solr.");
 
                     int attempt = 0;
                     DirectoryInfo f;
@@ -2589,7 +2589,7 @@ namespace Lucene.Net.Util
                 }
             }
             return TempDirBase;
-        }
+        }*/
 
 
         /// <summary>
@@ -2611,7 +2611,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static DirectoryInfo CreateTempDir(string prefix)
         {
-            DirectoryInfo @base = BaseTempDirForTestClass();
+            //DirectoryInfo @base = BaseTempDirForTestClass();
 
             int attempt = 0;
             DirectoryInfo f;
@@ -2620,16 +2620,17 @@ namespace Lucene.Net.Util
             {
                 if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
                 {
-                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.FullName);
+                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
-                f = new DirectoryInfo(Path.Combine(@base.FullName, prefix + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt)));
+                f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + attempt));
                 try
                 {
                     f.Create();
+                    iterate = false;
                 }
                 catch (IOException exc)
                 {
-                    iterate = false;
+                    iterate = true;
                 }
             } while (iterate);
 
@@ -2647,7 +2648,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static FileInfo CreateTempFile(string prefix, string suffix)
         {
-            DirectoryInfo @base = BaseTempDirForTestClass();
+            //DirectoryInfo @base = BaseTempDirForTestClass();
 
             int attempt = 0;
             FileInfo f;
@@ -2655,9 +2656,9 @@ namespace Lucene.Net.Util
             {
                 if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
                 {
-                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + @base.FullName);
+                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
-                f = new FileInfo(Path.Combine(@base.FullName, prefix + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt) + suffix));
+                f = new FileInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt) + suffix));
             } while (f.Create() == null);
 
             RegisterToRemoveAfterSuite(f);

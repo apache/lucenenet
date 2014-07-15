@@ -5,570 +5,570 @@ using Lucene.Net.Analysis.Tokenattributes;
 namespace Lucene.Net.Index
 {
 
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using Analyzer = Lucene.Net.Analysis.Analyzer;
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using TokenStream = Lucene.Net.Analysis.TokenStream;
-	using Document = Lucene.Net.Document.Document;
-	using Field = Lucene.Net.Document.Field;
-	using FieldType = Lucene.Net.Document.FieldType;
-	using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
-	using TextField = Lucene.Net.Document.TextField;
-	using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-	using Directory = Lucene.Net.Store.Directory;
-	using BytesRef = Lucene.Net.Util.BytesRef;
-	using IOUtils = Lucene.Net.Util.IOUtils;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
-	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using Document = Lucene.Net.Document.Document;
+    using Field = Lucene.Net.Document.Field;
+    using FieldType = Lucene.Net.Document.FieldType;
+    using IndexOptions = Lucene.Net.Index.FieldInfo.IndexOptions_e;
+    using TextField = Lucene.Net.Document.TextField;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Directory = Lucene.Net.Store.Directory;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using TestUtil = Lucene.Net.Util.TestUtil;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using System.IO;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestLongPostings extends Lucene.Net.Util.LuceneTestCase
-	[TestFixture]
+    //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+    //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) public class TestLongPostings extends Lucene.Net.Util.LuceneTestCase
+    [TestFixture]
     public class TestLongPostings : LuceneTestCase
-	{
+    {
 
-	  // Produces a realistic unicode random string that
-	  // survives MockAnalyzer unchanged:
-	  private string GetRandomTerm(string other)
-	  {
-		Analyzer a = new MockAnalyzer(Random());
-		while (true)
-		{
-		  string s = TestUtil.RandomRealisticUnicodeString(Random());
-		  if (other != null && s.Equals(other))
-		  {
-			continue;
-		  }
-		  IOException priorException = null;
-		  TokenStream ts = a.TokenStream("foo", new StreamReader(s));
-		  try
-		  {
-			ITermToBytesRefAttribute termAtt = ts.GetAttribute<ITermToBytesRefAttribute>();
-			BytesRef termBytes = termAtt.BytesRef;
-			ts.Reset();
+        // Produces a realistic unicode random string that
+        // survives MockAnalyzer unchanged:
+        private string GetRandomTerm(string other)
+        {
+            Analyzer a = new MockAnalyzer(Random());
+            while (true)
+            {
+                string s = TestUtil.RandomRealisticUnicodeString(Random());
+                if (other != null && s.Equals(other))
+                {
+                    continue;
+                }
+                IOException priorException = null;
+                TokenStream ts = a.TokenStream("foo", new StringReader(s));
+                try
+                {
+                    ITermToBytesRefAttribute termAtt = ts.GetAttribute<ITermToBytesRefAttribute>();
+                    BytesRef termBytes = termAtt.BytesRef;
+                    ts.Reset();
 
-			int count = 0;
-			bool changed = false;
+                    int count = 0;
+                    bool changed = false;
 
-			while (ts.IncrementToken())
-			{
-			  termAtt.FillBytesRef();
-			  if (count == 0 && !termBytes.Utf8ToString().Equals(s))
-			  {
-				// The value was changed during analysis.  Keep iterating so the
-				// tokenStream is exhausted.
-				changed = true;
-			  }
-			  count++;
-			}
+                    while (ts.IncrementToken())
+                    {
+                        termAtt.FillBytesRef();
+                        if (count == 0 && !termBytes.Utf8ToString().Equals(s))
+                        {
+                            // The value was changed during analysis.  Keep iterating so the
+                            // tokenStream is exhausted.
+                            changed = true;
+                        }
+                        count++;
+                    }
 
-			ts.End();
-			// Did we iterate just once and the value was unchanged?
-			if (!changed && count == 1)
-			{
-			  return s;
-			}
-		  }
-		  catch (IOException e)
-		  {
-			priorException = e;
-		  }
-		  finally
-		  {
-			IOUtils.CloseWhileHandlingException(priorException, ts);
-		  }
-		}
-	  }
+                    ts.End();
+                    // Did we iterate just once and the value was unchanged?
+                    if (!changed && count == 1)
+                    {
+                        return s;
+                    }
+                }
+                catch (IOException e)
+                {
+                    priorException = e;
+                }
+                finally
+                {
+                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                }
+            }
+        }
 
-      [Test]
-      public virtual void TestLongPostings_Mem()
-	  {
-		// Don't use TestUtil.getTempDir so that we own the
-		// randomness (ie same seed will point to same dir):
-		Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
+        [Test]
+        public virtual void TestLongPostings_Mem()
+        {
+            // Don't use TestUtil.getTempDir so that we own the
+            // randomness (ie same seed will point to same dir):
+            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
 
-		int NUM_DOCS = AtLeast(2000);
+            int NUM_DOCS = AtLeast(2000);
 
-		if (VERBOSE)
-		{
-		  Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
-		}
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
+            }
 
-		string s1 = GetRandomTerm(null);
-		string s2 = GetRandomTerm(s1);
+            string s1 = GetRandomTerm(null);
+            string s2 = GetRandomTerm(s1);
 
-		if (VERBOSE)
-		{
-		  Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
-		  /*
-		  for(int idx=0;idx<s1.Length();idx++) {
-		    System.out.println("  s1 ch=0x" + Integer.toHexString(s1.charAt(idx)));
-		  }
-		  for(int idx=0;idx<s2.Length();idx++) {
-		    System.out.println("  s2 ch=0x" + Integer.toHexString(s2.charAt(idx)));
-		  }
-		  */
-		}
+            if (VERBOSE)
+            {
+                Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
+                /*
+                for(int idx=0;idx<s1.Length();idx++) {
+                  System.out.println("  s1 ch=0x" + Integer.toHexString(s1.charAt(idx)));
+                }
+                for(int idx=0;idx<s2.Length();idx++) {
+                  System.out.println("  s2 ch=0x" + Integer.toHexString(s2.charAt(idx)));
+                }
+                */
+            }
 
-		FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
-		for (int idx = 0;idx < NUM_DOCS;idx++)
-		{
-		  if (Random().NextBoolean())
-		  {
-			isS1.Set(idx);
-		  }
-		}
+            FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
+            for (int idx = 0; idx < NUM_DOCS; idx++)
+            {
+                if (Random().NextBoolean())
+                {
+                    isS1.Set(idx);
+                }
+            }
 
-		IndexReader r;
-		IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy());
-		iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
-		iwc.SetMaxBufferedDocs(-1);
-		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
+            IndexReader r;
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy());
+            iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
+            iwc.SetMaxBufferedDocs(-1);
+            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
-		for (int idx = 0;idx < NUM_DOCS;idx++)
-		{
-		  Document doc = new Document();
-		  string s = isS1.Get(idx) ? s1 : s2;
-		  Field f = NewTextField("field", s, Field.Store.NO);
-		  int count = TestUtil.NextInt(Random(), 1, 4);
-		  for (int ct = 0;ct < count;ct++)
-		  {
-			doc.Add(f);
-		  }
-		  riw.AddDocument(doc);
-		}
+            for (int idx = 0; idx < NUM_DOCS; idx++)
+            {
+                Document doc = new Document();
+                string s = isS1.Get(idx) ? s1 : s2;
+                Field f = NewTextField("field", s, Field.Store.NO);
+                int count = TestUtil.NextInt(Random(), 1, 4);
+                for (int ct = 0; ct < count; ct++)
+                {
+                    doc.Add(f);
+                }
+                riw.AddDocument(doc);
+            }
 
-		r = riw.Reader;
-        riw.Dispose();
+            r = riw.Reader;
+            riw.Dispose();
 
-		/*
-		if (VERBOSE) {
-		  System.out.println("TEST: terms");
-		  TermEnum termEnum = r.Terms();
-		  while(termEnum.Next()) {
-		    System.out.println("  term=" + termEnum.Term() + " len=" + termEnum.Term().Text().Length());
-		    Assert.IsTrue(termEnum.DocFreq() > 0);
-		    System.out.println("    s1?=" + (termEnum.Term().Text().equals(s1)) + " s1len=" + s1.Length());
-		    System.out.println("    s2?=" + (termEnum.Term().Text().equals(s2)) + " s2len=" + s2.Length());
-		    final String s = termEnum.Term().Text();
-		    for(int idx=0;idx<s.Length();idx++) {
-		      System.out.println("      ch=0x" + Integer.toHexString(s.charAt(idx)));
-		    }
-		  }
-		}
-		*/
+            /*
+            if (VERBOSE) {
+              System.out.println("TEST: terms");
+              TermEnum termEnum = r.Terms();
+              while(termEnum.Next()) {
+                System.out.println("  term=" + termEnum.Term() + " len=" + termEnum.Term().Text().Length());
+                Assert.IsTrue(termEnum.DocFreq() > 0);
+                System.out.println("    s1?=" + (termEnum.Term().Text().equals(s1)) + " s1len=" + s1.Length());
+                System.out.println("    s2?=" + (termEnum.Term().Text().equals(s2)) + " s2len=" + s2.Length());
+                final String s = termEnum.Term().Text();
+                for(int idx=0;idx<s.Length();idx++) {
+                  System.out.println("      ch=0x" + Integer.toHexString(s.charAt(idx)));
+                }
+              }
+            }
+            */
 
-		Assert.AreEqual(NUM_DOCS, r.NumDocs());
-		Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
-		Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
+            Assert.AreEqual(NUM_DOCS, r.NumDocs());
+            Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
+            Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
 
-		int num = AtLeast(1000);
-		for (int iter = 0;iter < num;iter++)
-		{
+            int num = AtLeast(1000);
+            for (int iter = 0; iter < num; iter++)
+            {
 
-		  string term;
-		  bool doS1;
-		  if (Random().NextBoolean())
-		  {
-			term = s1;
-			doS1 = true;
-		  }
-		  else
-		  {
-			term = s2;
-			doS1 = false;
-		  }
+                string term;
+                bool doS1;
+                if (Random().NextBoolean())
+                {
+                    term = s1;
+                    doS1 = true;
+                }
+                else
+                {
+                    term = s2;
+                    doS1 = false;
+                }
 
-		  if (VERBOSE)
-		  {
-			Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1);
-		  }
+                if (VERBOSE)
+                {
+                    Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1);
+                }
 
-		  DocsAndPositionsEnum postings = MultiFields.GetTermPositionsEnum(r, null, "field", new BytesRef(term));
+                DocsAndPositionsEnum postings = MultiFields.GetTermPositionsEnum(r, null, "field", new BytesRef(term));
 
-		  int docID = -1;
-		  while (docID < DocIdSetIterator.NO_MORE_DOCS)
-		  {
-			int what = Random().Next(3);
-			if (what == 0)
-			{
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("TEST: docID=" + docID + "; do next()");
-			  }
-			  // nextDoc
-			  int expected = docID + 1;
-			  while (true)
-			  {
-				if (expected == NUM_DOCS)
-				{
-				  expected = int.MaxValue;
-				  break;
-				}
-				else if (isS1.Get(expected) == doS1)
-				{
-				  break;
-				}
-				else
-				{
-				  expected++;
-				}
-			  }
-			  docID = postings.NextDoc();
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("  got docID=" + docID);
-			  }
-			  Assert.AreEqual(expected, docID);
-			  if (docID == DocIdSetIterator.NO_MORE_DOCS)
-			  {
-				break;
-			  }
+                int docID = -1;
+                while (docID < DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    int what = Random().Next(3);
+                    if (what == 0)
+                    {
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("TEST: docID=" + docID + "; do next()");
+                        }
+                        // nextDoc
+                        int expected = docID + 1;
+                        while (true)
+                        {
+                            if (expected == NUM_DOCS)
+                            {
+                                expected = int.MaxValue;
+                                break;
+                            }
+                            else if (isS1.Get(expected) == doS1)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                expected++;
+                            }
+                        }
+                        docID = postings.NextDoc();
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("  got docID=" + docID);
+                        }
+                        Assert.AreEqual(expected, docID);
+                        if (docID == DocIdSetIterator.NO_MORE_DOCS)
+                        {
+                            break;
+                        }
 
-			  if (Random().Next(6) == 3)
-			  {
-				int freq = postings.Freq();
-				Assert.IsTrue(freq >= 1 && freq <= 4);
-				for (int pos = 0;pos < freq;pos++)
-				{
-				  Assert.AreEqual(pos, postings.NextPosition());
-				  if (Random().NextBoolean())
-				  {
-					var dummy = postings.Payload;
-					if (Random().NextBoolean())
-					{
-					  dummy = postings.Payload; // get it again
-					}
-				  }
-				}
-			  }
-			}
-			else
-			{
-			  // advance
-			  int targetDocID;
-			  if (docID == -1)
-			  {
-				targetDocID = Random().Next(NUM_DOCS + 1);
-			  }
-			  else
-			  {
-				targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
-			  }
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("TEST: docID=" + docID + "; do advance(" + targetDocID + ")");
-			  }
-			  int expected = targetDocID;
-			  while (true)
-			  {
-				if (expected == NUM_DOCS)
-				{
-				  expected = int.MaxValue;
-				  break;
-				}
-				else if (isS1.Get(expected) == doS1)
-				{
-				  break;
-				}
-				else
-				{
-				  expected++;
-				}
-			  }
+                        if (Random().Next(6) == 3)
+                        {
+                            int freq = postings.Freq();
+                            Assert.IsTrue(freq >= 1 && freq <= 4);
+                            for (int pos = 0; pos < freq; pos++)
+                            {
+                                Assert.AreEqual(pos, postings.NextPosition());
+                                if (Random().NextBoolean())
+                                {
+                                    var dummy = postings.Payload;
+                                    if (Random().NextBoolean())
+                                    {
+                                        dummy = postings.Payload; // get it again
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // advance
+                        int targetDocID;
+                        if (docID == -1)
+                        {
+                            targetDocID = Random().Next(NUM_DOCS + 1);
+                        }
+                        else
+                        {
+                            targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
+                        }
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("TEST: docID=" + docID + "; do advance(" + targetDocID + ")");
+                        }
+                        int expected = targetDocID;
+                        while (true)
+                        {
+                            if (expected == NUM_DOCS)
+                            {
+                                expected = int.MaxValue;
+                                break;
+                            }
+                            else if (isS1.Get(expected) == doS1)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                expected++;
+                            }
+                        }
 
-			  docID = postings.Advance(targetDocID);
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("  got docID=" + docID);
-			  }
-			  Assert.AreEqual(expected, docID);
-			  if (docID == DocIdSetIterator.NO_MORE_DOCS)
-			  {
-				break;
-			  }
+                        docID = postings.Advance(targetDocID);
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("  got docID=" + docID);
+                        }
+                        Assert.AreEqual(expected, docID);
+                        if (docID == DocIdSetIterator.NO_MORE_DOCS)
+                        {
+                            break;
+                        }
 
-			  if (Random().Next(6) == 3)
-			  {
-				int freq = postings.Freq();
-				Assert.IsTrue(freq >= 1 && freq <= 4);
-				for (int pos = 0;pos < freq;pos++)
-				{
-				  Assert.AreEqual(pos, postings.NextPosition());
-				  if (Random().NextBoolean())
-				  {
-					var dummy = postings.Payload;
-					if (Random().NextBoolean())
-					{
-					  dummy = postings.Payload; // get it again
-					}
-				  }
-				}
-			  }
-			}
-		  }
-		}
-		r.Dispose();
-		dir.Dispose();
-	  }
+                        if (Random().Next(6) == 3)
+                        {
+                            int freq = postings.Freq();
+                            Assert.IsTrue(freq >= 1 && freq <= 4);
+                            for (int pos = 0; pos < freq; pos++)
+                            {
+                                Assert.AreEqual(pos, postings.NextPosition());
+                                if (Random().NextBoolean())
+                                {
+                                    var dummy = postings.Payload;
+                                    if (Random().NextBoolean())
+                                    {
+                                        dummy = postings.Payload; // get it again
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            r.Dispose();
+            dir.Dispose();
+        }
 
-	  // a weaker form of testLongPostings, that doesnt check positions
-      [Test]
-      public virtual void TestLongPostingsNoPositions()
-	  {
-		DoTestLongPostingsNoPositions(IndexOptions.DOCS_ONLY);
-		DoTestLongPostingsNoPositions(IndexOptions.DOCS_AND_FREQS);
-	  }
+        // a weaker form of testLongPostings, that doesnt check positions
+        [Test]
+        public virtual void TestLongPostingsNoPositions()
+        {
+            DoTestLongPostingsNoPositions(IndexOptions.DOCS_ONLY);
+            DoTestLongPostingsNoPositions(IndexOptions.DOCS_AND_FREQS);
+        }
 
-	  public virtual void DoTestLongPostingsNoPositions(IndexOptions options)
-	  {
-		// Don't use TestUtil.getTempDir so that we own the
-		// randomness (ie same seed will point to same dir):
-		Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
+        public virtual void DoTestLongPostingsNoPositions(IndexOptions options)
+        {
+            // Don't use TestUtil.getTempDir so that we own the
+            // randomness (ie same seed will point to same dir):
+            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
 
-		int NUM_DOCS = AtLeast(2000);
+            int NUM_DOCS = AtLeast(2000);
 
-		if (VERBOSE)
-		{
-		  Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
-		}
+            if (VERBOSE)
+            {
+                Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
+            }
 
-		string s1 = GetRandomTerm(null);
-		string s2 = GetRandomTerm(s1);
+            string s1 = GetRandomTerm(null);
+            string s2 = GetRandomTerm(s1);
 
-		if (VERBOSE)
-		{
-		  Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
-		  /*
-		  for(int idx=0;idx<s1.Length();idx++) {
-		    System.out.println("  s1 ch=0x" + Integer.toHexString(s1.charAt(idx)));
-		  }
-		  for(int idx=0;idx<s2.Length();idx++) {
-		    System.out.println("  s2 ch=0x" + Integer.toHexString(s2.charAt(idx)));
-		  }
-		  */
-		}
+            if (VERBOSE)
+            {
+                Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
+                /*
+                for(int idx=0;idx<s1.Length();idx++) {
+                  System.out.println("  s1 ch=0x" + Integer.toHexString(s1.charAt(idx)));
+                }
+                for(int idx=0;idx<s2.Length();idx++) {
+                  System.out.println("  s2 ch=0x" + Integer.toHexString(s2.charAt(idx)));
+                }
+                */
+            }
 
-		FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
-		for (int idx = 0;idx < NUM_DOCS;idx++)
-		{
-		  if (Random().NextBoolean())
-		  {
-			isS1.Set(idx);
-		  }
-		}
+            FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
+            for (int idx = 0; idx < NUM_DOCS; idx++)
+            {
+                if (Random().NextBoolean())
+                {
+                    isS1.Set(idx);
+                }
+            }
 
-		IndexReader r;
-		if (true)
-		{
-		  IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy());
-		  iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
-		  iwc.SetMaxBufferedDocs(-1);
-		  RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
+            IndexReader r;
+            if (true)
+            {
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(IndexWriterConfig.OpenMode_e.CREATE).SetMergePolicy(NewLogMergePolicy());
+                iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
+                iwc.SetMaxBufferedDocs(-1);
+                RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
 
-		  FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-		  ft.IndexOptionsValue = options;
-		  for (int idx = 0;idx < NUM_DOCS;idx++)
-		  {
-			Document doc = new Document();
-			string s = isS1.Get(idx) ? s1 : s2;
-			Field f = NewField("field", s, ft);
-			int count = TestUtil.NextInt(Random(), 1, 4);
-			for (int ct = 0;ct < count;ct++)
-			{
-			  doc.Add(f);
-			}
-			riw.AddDocument(doc);
-		  }
+                FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+                ft.IndexOptionsValue = options;
+                for (int idx = 0; idx < NUM_DOCS; idx++)
+                {
+                    Document doc = new Document();
+                    string s = isS1.Get(idx) ? s1 : s2;
+                    Field f = NewField("field", s, ft);
+                    int count = TestUtil.NextInt(Random(), 1, 4);
+                    for (int ct = 0; ct < count; ct++)
+                    {
+                        doc.Add(f);
+                    }
+                    riw.AddDocument(doc);
+                }
 
-		  r = riw.Reader;
-          riw.Dispose();
-		}
-		else
-		{
-		  r = DirectoryReader.Open(dir);
-		}
+                r = riw.Reader;
+                riw.Dispose();
+            }
+            else
+            {
+                r = DirectoryReader.Open(dir);
+            }
 
-		/*
-		if (VERBOSE) {
-		  System.out.println("TEST: terms");
-		  TermEnum termEnum = r.Terms();
-		  while(termEnum.Next()) {
-		    System.out.println("  term=" + termEnum.Term() + " len=" + termEnum.Term().Text().Length());
-		    Assert.IsTrue(termEnum.DocFreq() > 0);
-		    System.out.println("    s1?=" + (termEnum.Term().Text().equals(s1)) + " s1len=" + s1.Length());
-		    System.out.println("    s2?=" + (termEnum.Term().Text().equals(s2)) + " s2len=" + s2.Length());
-		    final String s = termEnum.Term().Text();
-		    for(int idx=0;idx<s.Length();idx++) {
-		      System.out.println("      ch=0x" + Integer.toHexString(s.charAt(idx)));
-		    }
-		  }
-		}
-		*/
+            /*
+            if (VERBOSE) {
+              System.out.println("TEST: terms");
+              TermEnum termEnum = r.Terms();
+              while(termEnum.Next()) {
+                System.out.println("  term=" + termEnum.Term() + " len=" + termEnum.Term().Text().Length());
+                Assert.IsTrue(termEnum.DocFreq() > 0);
+                System.out.println("    s1?=" + (termEnum.Term().Text().equals(s1)) + " s1len=" + s1.Length());
+                System.out.println("    s2?=" + (termEnum.Term().Text().equals(s2)) + " s2len=" + s2.Length());
+                final String s = termEnum.Term().Text();
+                for(int idx=0;idx<s.Length();idx++) {
+                  System.out.println("      ch=0x" + Integer.toHexString(s.charAt(idx)));
+                }
+              }
+            }
+            */
 
-		Assert.AreEqual(NUM_DOCS, r.NumDocs());
-		Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
-		Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
+            Assert.AreEqual(NUM_DOCS, r.NumDocs());
+            Assert.IsTrue(r.DocFreq(new Term("field", s1)) > 0);
+            Assert.IsTrue(r.DocFreq(new Term("field", s2)) > 0);
 
-		int num = AtLeast(1000);
-		for (int iter = 0;iter < num;iter++)
-		{
+            int num = AtLeast(1000);
+            for (int iter = 0; iter < num; iter++)
+            {
 
-		  string term;
-		  bool doS1;
-		  if (Random().NextBoolean())
-		  {
-			term = s1;
-			doS1 = true;
-		  }
-		  else
-		  {
-			term = s2;
-			doS1 = false;
-		  }
+                string term;
+                bool doS1;
+                if (Random().NextBoolean())
+                {
+                    term = s1;
+                    doS1 = true;
+                }
+                else
+                {
+                    term = s2;
+                    doS1 = false;
+                }
 
-		  if (VERBOSE)
-		  {
-			Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1 + " term=" + term);
-		  }
+                if (VERBOSE)
+                {
+                    Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1 + " term=" + term);
+                }
 
-		  DocsEnum docs;
-		  DocsEnum postings;
+                DocsEnum docs;
+                DocsEnum postings;
 
-		  if (options == IndexOptions.DOCS_ONLY)
-		  {
-			docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_NONE);
-			postings = null;
-		  }
-		  else
-		  {
-			docs = postings = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_FREQS);
-			Debug.Assert(postings != null);
-		  }
-		  Debug.Assert(docs != null);
+                if (options == IndexOptions.DOCS_ONLY)
+                {
+                    docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_NONE);
+                    postings = null;
+                }
+                else
+                {
+                    docs = postings = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_FREQS);
+                    Debug.Assert(postings != null);
+                }
+                Debug.Assert(docs != null);
 
-		  int docID = -1;
-		  while (docID < DocIdSetIterator.NO_MORE_DOCS)
-		  {
-			int what = Random().Next(3);
-			if (what == 0)
-			{
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("TEST: docID=" + docID + "; do next()");
-			  }
-			  // nextDoc
-			  int expected = docID + 1;
-			  while (true)
-			  {
-				if (expected == NUM_DOCS)
-				{
-				  expected = int.MaxValue;
-				  break;
-				}
-				else if (isS1.Get(expected) == doS1)
-				{
-				  break;
-				}
-				else
-				{
-				  expected++;
-				}
-			  }
-			  docID = docs.NextDoc();
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("  got docID=" + docID);
-			  }
-			  Assert.AreEqual(expected, docID);
-			  if (docID == DocIdSetIterator.NO_MORE_DOCS)
-			  {
-				break;
-			  }
+                int docID = -1;
+                while (docID < DocIdSetIterator.NO_MORE_DOCS)
+                {
+                    int what = Random().Next(3);
+                    if (what == 0)
+                    {
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("TEST: docID=" + docID + "; do next()");
+                        }
+                        // nextDoc
+                        int expected = docID + 1;
+                        while (true)
+                        {
+                            if (expected == NUM_DOCS)
+                            {
+                                expected = int.MaxValue;
+                                break;
+                            }
+                            else if (isS1.Get(expected) == doS1)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                expected++;
+                            }
+                        }
+                        docID = docs.NextDoc();
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("  got docID=" + docID);
+                        }
+                        Assert.AreEqual(expected, docID);
+                        if (docID == DocIdSetIterator.NO_MORE_DOCS)
+                        {
+                            break;
+                        }
 
-			  if (Random().Next(6) == 3 && postings != null)
-			  {
-				int freq = postings.Freq();
-				Assert.IsTrue(freq >= 1 && freq <= 4);
-			  }
-			}
-			else
-			{
-			  // advance
-			  int targetDocID;
-			  if (docID == -1)
-			  {
-				targetDocID = Random().Next(NUM_DOCS + 1);
-			  }
-			  else
-			  {
-				targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
-			  }
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("TEST: docID=" + docID + "; do advance(" + targetDocID + ")");
-			  }
-			  int expected = targetDocID;
-			  while (true)
-			  {
-				if (expected == NUM_DOCS)
-				{
-				  expected = int.MaxValue;
-				  break;
-				}
-				else if (isS1.Get(expected) == doS1)
-				{
-				  break;
-				}
-				else
-				{
-				  expected++;
-				}
-			  }
+                        if (Random().Next(6) == 3 && postings != null)
+                        {
+                            int freq = postings.Freq();
+                            Assert.IsTrue(freq >= 1 && freq <= 4);
+                        }
+                    }
+                    else
+                    {
+                        // advance
+                        int targetDocID;
+                        if (docID == -1)
+                        {
+                            targetDocID = Random().Next(NUM_DOCS + 1);
+                        }
+                        else
+                        {
+                            targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
+                        }
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("TEST: docID=" + docID + "; do advance(" + targetDocID + ")");
+                        }
+                        int expected = targetDocID;
+                        while (true)
+                        {
+                            if (expected == NUM_DOCS)
+                            {
+                                expected = int.MaxValue;
+                                break;
+                            }
+                            else if (isS1.Get(expected) == doS1)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                expected++;
+                            }
+                        }
 
-			  docID = docs.Advance(targetDocID);
-			  if (VERBOSE)
-			  {
-				Console.WriteLine("  got docID=" + docID);
-			  }
-			  Assert.AreEqual(expected, docID);
-			  if (docID == DocIdSetIterator.NO_MORE_DOCS)
-			  {
-				break;
-			  }
+                        docID = docs.Advance(targetDocID);
+                        if (VERBOSE)
+                        {
+                            Console.WriteLine("  got docID=" + docID);
+                        }
+                        Assert.AreEqual(expected, docID);
+                        if (docID == DocIdSetIterator.NO_MORE_DOCS)
+                        {
+                            break;
+                        }
 
-			  if (Random().Next(6) == 3 && postings != null)
-			  {
-				int freq = postings.Freq();
-				Assert.IsTrue(freq >= 1 && freq <= 4, "got invalid freq=" + freq);
-			  }
-			}
-		  }
-		}
-		r.Dispose();
-		dir.Dispose();
-	  }
-	}
+                        if (Random().Next(6) == 3 && postings != null)
+                        {
+                            int freq = postings.Freq();
+                            Assert.IsTrue(freq >= 1 && freq <= 4, "got invalid freq=" + freq);
+                        }
+                    }
+                }
+            }
+            r.Dispose();
+            dir.Dispose();
+        }
+    }
 
 }

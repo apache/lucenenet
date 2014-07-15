@@ -92,12 +92,10 @@ namespace Lucene.Net.Util
 
             // Try primary first
             V result;
-            primary.TryGetValue(key, out result);
-            if (default(V).Equals(result))
+            if (!primary.TryGetValue(key, out result))
             {
                 // Not found -- try secondary
-                secondary.TryGetValue(key, out result);
-                if (!(default(V)).Equals(result))
+                if (secondary.TryGetValue(key, out result))
                 {
                     // Promote to primary
                     Put((K)key.Clone(), result);

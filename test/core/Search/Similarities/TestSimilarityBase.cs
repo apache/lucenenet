@@ -605,7 +605,7 @@ namespace Lucene.Net.Search.Similarities
 		{
 		  Searcher.Similarity = sim;
 		  TopDocs topDocs = Searcher.Search(q, 1000);
-		  Assert.AreEqual("Failed: " + sim.ToString(), "2", Reader.Document(topDocs.ScoreDocs[0].Doc).Get(FIELD_ID));
+		  Assert.AreEqual("2", Reader.Document(topDocs.ScoreDocs[0].Doc).Get(FIELD_ID), "Failed: " + sim.ToString());
 		}
 	  }
 

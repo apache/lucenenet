@@ -939,15 +939,15 @@ namespace Lucene.Net.Util.Automaton
             Dictionary<State, HashSet<State>> back = new Dictionary<State, HashSet<State>>();
             foreach (StatePair p in pairs)
             {
-                HashSet<State> to = forward[p.S1];
-                if (to == null)
+                HashSet<State> to;
+                if (!forward.TryGetValue(p.S1, out to))
                 {
                     to = new HashSet<State>();
                     forward[p.S1] = to;
                 }
                 to.Add(p.S2);
-                HashSet<State> from = back[p.S2];
-                if (from == null)
+                HashSet<State> from;
+                if (!back.TryGetValue(p.S2, out from))
                 {
                     from = new HashSet<State>();
                     back[p.S2] = from;
@@ -962,9 +962,9 @@ namespace Lucene.Net.Util.Automaton
                 StatePair p = worklist.First.Value;
                 worklist.RemoveFirst();
                 workset.Remove(p);
-                HashSet<State> to = forward[p.S2];
-                HashSet<State> from = back[p.S1];
-                if (to != null)
+                HashSet<State> to;
+                HashSet<State> from;
+                if (forward.TryGetValue(p.S2, out to))
                 {
                     foreach (State s in to)
                     {
@@ -976,7 +976,7 @@ namespace Lucene.Net.Util.Automaton
                             back[s].Add(p.S1);
                             worklist.AddLast(pp);
                             workset.Add(pp);
-                            if (from != null)
+                            if (back.TryGetValue(p.S1, out from))
                             {
                                 foreach (State q in from)
                                 {

@@ -25,37 +25,6 @@ namespace Lucene.Net.Codecs.Compressing
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-    /*
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.BYTE_ARR;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.CODEC_SFX_DAT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.CODEC_SFX_IDX;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_DOUBLE;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_FLOAT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_INT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.NUMERIC_LONG;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.STRING;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.TYPE_BITS;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.TYPE_MASK;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_CHECKSUM;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_CURRENT;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-	import static Lucene.Net.Codecs.compressing.CompressingStoredFieldsWriter.VERSION_START;
-//JAVA TO C# CONVERTER TODO TASK: this Java 'import static' statement cannot be converted to .NET:
-    */
 
 	using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
 	using FieldInfo = Lucene.Net.Index.FieldInfo;
@@ -533,11 +502,7 @@ namespace Lucene.Net.Codecs.Compressing
 		  Debug.Assert(doc >= DocBase + ChunkDocs, doc + " " + DocBase + " " + ChunkDocs);
 		  FieldsStream.Seek(OuterInstance.IndexReader.GetStartPointer(doc));
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int docBase = fieldsStream.readVInt();
 		  int docBase = FieldsStream.ReadVInt();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int chunkDocs = fieldsStream.readVInt();
 		  int chunkDocs = FieldsStream.ReadVInt();
 		  if (docBase < this.DocBase + this.ChunkDocs || docBase + chunkDocs > OuterInstance.NumDocs)
 		  {
@@ -548,8 +513,6 @@ namespace Lucene.Net.Codecs.Compressing
 
 		  if (chunkDocs > NumStoredFields.Length)
 		  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final int newLength = Lucene.Net.Util.ArrayUtil.oversize(chunkDocs, 4);
 			int newLength = ArrayUtil.Oversize(chunkDocs, 4);
 			NumStoredFields = new int[newLength];
 			Lengths = new int[newLength];

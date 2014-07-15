@@ -683,8 +683,8 @@ namespace Lucene.Net.Codecs.Lucene45
             MonotonicBlockPackedReader ordIndex;
             lock (OrdIndexInstances)
             {
-                MonotonicBlockPackedReader ordIndexInstance = OrdIndexInstances[field.Number];
-                if (ordIndexInstance == null)
+                MonotonicBlockPackedReader ordIndexInstance;
+                if (!OrdIndexInstances.TryGetValue(field.Number, out ordIndexInstance))
                 {
                     data.Seek(entry.Offset);
                     ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, false);

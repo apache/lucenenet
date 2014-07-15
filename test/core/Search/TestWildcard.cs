@@ -47,7 +47,6 @@ namespace Lucene.Net.Search
             base.SetUp();
         }
 
-        [Ignore]
         [Test]
         public virtual void TestEquals()
         {
@@ -115,7 +114,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests if a WildcardQuery with an empty term is rewritten to an empty BooleanQuery
         /// </summary>
-        [Ignore]
         [Test]
         public virtual void TestEmptyTerm()
         {
@@ -161,6 +159,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests Wildcard queries with an asterisk.
         /// </summary>
+        [Ignore]
         [Test]
         public virtual void TestAsterisk()
         {
@@ -229,8 +228,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests if wildcard escaping works
         /// </summary>
-
-        [Ignore]
         [Test]
         public virtual void TestEscapes()
         {

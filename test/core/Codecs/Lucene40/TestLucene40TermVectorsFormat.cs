@@ -21,7 +21,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
 
-    [TestFixture]
     public class TestLucene40TermVectorsFormat : BaseTermVectorsFormatTestCase
     {
 

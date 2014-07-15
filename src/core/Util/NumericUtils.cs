@@ -265,7 +265,7 @@ namespace Lucene.Net.Util
                 }
                 sortableBits |= (byte)b;
             }
-            return (int)((uint)(sortableBits << GetPrefixCodedLongShift(val)) ^ 0x8000000000000000L);
+            return (int)((sortableBits << GetPrefixCodedIntShift(val)) ^ 0x80000000);
         }
 
         /// <summary>

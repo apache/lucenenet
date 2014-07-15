@@ -126,7 +126,6 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Test a configuration where word starts with one uppercase </summary>
-        [Ignore]
         [Test]
         public virtual void TestUppercase()
         {

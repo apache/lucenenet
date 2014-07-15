@@ -374,7 +374,9 @@ namespace Lucene.Net.Store
             // delete it
             try
             {
-                new DirectoryInfo(Path.Combine(path.FullName, "afile")).Delete();
+                var newDir = new DirectoryInfo(Path.Combine(path.FullName, "afile"));
+                newDir.Create();
+                newDir.Delete();
             }
             catch (Exception)
             {

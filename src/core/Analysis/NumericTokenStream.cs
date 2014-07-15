@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis
             public override Util.Attribute CreateAttributeInstance<T>()
             {
                 var attClass = typeof(T);
-                if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
+                if (typeof(ICharTermAttribute).IsAssignableFrom(attClass))
                 {
                     throw new System.ArgumentException("NumericTokenStream does not support CharTermAttribute.");
                 }

@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
 		  {
 			TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
 
-			Assert.IsTrue(tdc.GetType().Name.EndsWith("$" + actualTFCClasses[j]));
+			Assert.IsTrue(tdc.GetType().Name.EndsWith(actualTFCClasses[j]));
 
 			@is.Search(bq, tdc);
 
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
 		  {
 			TopDocsCollector<Entry> tdc = TopFieldCollector.Create(sort[i], 10, tfcOptions[j][0], tfcOptions[j][1], tfcOptions[j][2], false);
 
-			Assert.IsTrue(tdc.GetType().Name.EndsWith("$" + actualTFCClasses[j]));
+			Assert.IsTrue(tdc.GetType().Name.EndsWith(actualTFCClasses[j]));
 
 			@is.Search(bq, tdc);
 

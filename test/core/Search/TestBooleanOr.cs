@@ -1,260 +1,260 @@
 namespace Lucene.Net.Search
 {
-	/*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-	using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-	using Document = Lucene.Net.Document.Document;
-	using TextField = Lucene.Net.Document.TextField;
-	using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-	using IndexReader = Lucene.Net.Index.IndexReader;
-	using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-	using Term = Lucene.Net.Index.Term;
-	using Directory = Lucene.Net.Store.Directory;
-	using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-	using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-	using TestUtil = Lucene.Net.Util.TestUtil;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Document = Lucene.Net.Document.Document;
+    using TextField = Lucene.Net.Document.TextField;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Term = Lucene.Net.Index.Term;
+    using Directory = Lucene.Net.Store.Directory;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TestUtil = Lucene.Net.Util.TestUtil;
     using NUnit.Framework;
     using Lucene.Net.Support;
 
     [TestFixture]
-	public class TestBooleanOr : LuceneTestCase
-	{
+    public class TestBooleanOr : LuceneTestCase
+    {
 
-	  private static string FIELD_T = "T";
-	  private static string FIELD_C = "C";
+        private static string FIELD_T = "T";
+        private static string FIELD_C = "C";
 
-	  private TermQuery T1 = new TermQuery(new Term(FIELD_T, "files"));
-	  private TermQuery T2 = new TermQuery(new Term(FIELD_T, "deleting"));
-	  private TermQuery C1 = new TermQuery(new Term(FIELD_C, "production"));
-	  private TermQuery C2 = new TermQuery(new Term(FIELD_C, "optimize"));
+        private TermQuery T1 = new TermQuery(new Term(FIELD_T, "files"));
+        private TermQuery T2 = new TermQuery(new Term(FIELD_T, "deleting"));
+        private TermQuery C1 = new TermQuery(new Term(FIELD_C, "production"));
+        private TermQuery C2 = new TermQuery(new Term(FIELD_C, "optimize"));
 
-	  private IndexSearcher Searcher = null;
-	  private Directory Dir;
-	  private IndexReader Reader;
-
-
-	  private int Search(Query q)
-	  {
-		QueryUtils.Check(Random(), q,Searcher);
-		return Searcher.Search(q, null, 1000).TotalHits;
-	  }
-
-      [Test]
-      public virtual void TestElements()
-	  {
-		Assert.AreEqual(1, Search(T1));
-		Assert.AreEqual(1, Search(T2));
-		Assert.AreEqual(1, Search(C1));
-		Assert.AreEqual(1, Search(C2));
-	  }
-
-	  /// <summary>
-	  /// <code>T:files T:deleting C:production C:optimize </code>
-	  /// it works.
-	  /// </summary>
-      [Test]
-      public virtual void TestFlat()
-	  {
-		BooleanQuery q = new BooleanQuery();
-		q.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
-		q.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
-		q.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
-		Assert.AreEqual(1, Search(q));
-	  }
-
-	  /// <summary>
-	  /// <code>(T:files T:deleting) (+C:production +C:optimize)</code>
-	  /// it works.
-	  /// </summary>
-      [Test]
-      public virtual void TestParenthesisMust()
-	  {
-		BooleanQuery q3 = new BooleanQuery();
-		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
-		BooleanQuery q4 = new BooleanQuery();
-		q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.MUST));
-		q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.MUST));
-		BooleanQuery q2 = new BooleanQuery();
-		q2.Add(q3, BooleanClause.Occur_e.SHOULD);
-		q2.Add(q4, BooleanClause.Occur_e.SHOULD);
-		Assert.AreEqual(1, Search(q2));
-	  }
-
-	  /// <summary>
-	  /// <code>(T:files T:deleting) +(C:production C:optimize)</code>
-	  /// not working. results NO HIT.
-	  /// </summary>
-      [Test]
-      public virtual void TestParenthesisMust2()
-	  {
-		BooleanQuery q3 = new BooleanQuery();
-		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
-		BooleanQuery q4 = new BooleanQuery();
-		q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
-		q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
-		BooleanQuery q2 = new BooleanQuery();
-		q2.Add(q3, BooleanClause.Occur_e.SHOULD);
-		q2.Add(q4, BooleanClause.Occur_e.MUST);
-		Assert.AreEqual(1, Search(q2));
-	  }
-
-	  /// <summary>
-	  /// <code>(T:files T:deleting) (C:production C:optimize)</code>
-	  /// not working. results NO HIT.
-	  /// </summary>
-      [Test]
-      public virtual void TestParenthesisShould()
-	  {
-		BooleanQuery q3 = new BooleanQuery();
-		q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
-		q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
-		BooleanQuery q4 = new BooleanQuery();
-		q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
-		q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
-		BooleanQuery q2 = new BooleanQuery();
-		q2.Add(q3, BooleanClause.Occur_e.SHOULD);
-		q2.Add(q4, BooleanClause.Occur_e.SHOULD);
-		Assert.AreEqual(1, Search(q2));
-	  }
-
-      [SetUp]
-	  public override void SetUp()
-	  {
-		base.SetUp();
-
-		//
-		Dir = NewDirectory();
+        private IndexSearcher Searcher = null;
+        private Directory Dir;
+        private IndexReader Reader;
 
 
-		//
-		RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
+        private int Search(Query q)
+        {
+            QueryUtils.Check(Random(), q, Searcher);
+            return Searcher.Search(q, null, 1000).TotalHits;
+        }
 
-		//
-		Document d = new Document();
-		d.Add(NewField(FIELD_T, "Optimize not deleting all files", TextField.TYPE_STORED));
-		d.Add(NewField(FIELD_C, "Deleted When I run an optimize in our production environment.", TextField.TYPE_STORED));
+        [Test]
+        public virtual void TestElements()
+        {
+            Assert.AreEqual(1, Search(T1));
+            Assert.AreEqual(1, Search(T2));
+            Assert.AreEqual(1, Search(C1));
+            Assert.AreEqual(1, Search(C2));
+        }
 
-		//
-		writer.AddDocument(d);
+        /// <summary>
+        /// <code>T:files T:deleting C:production C:optimize </code>
+        /// it works.
+        /// </summary>
+        [Test]
+        public virtual void TestFlat()
+        {
+            BooleanQuery q = new BooleanQuery();
+            q.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+            q.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+            q.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
+            q.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
+            Assert.AreEqual(1, Search(q));
+        }
 
-		Reader = writer.Reader;
-		//
-		Searcher = NewSearcher(Reader);
-		writer.Dispose();
-	  }
+        /// <summary>
+        /// <code>(T:files T:deleting) (+C:production +C:optimize)</code>
+        /// it works.
+        /// </summary>
+        [Test]
+        public virtual void TestParenthesisMust()
+        {
+            BooleanQuery q3 = new BooleanQuery();
+            q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+            q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+            BooleanQuery q4 = new BooleanQuery();
+            q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.MUST));
+            q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.MUST));
+            BooleanQuery q2 = new BooleanQuery();
+            q2.Add(q3, BooleanClause.Occur_e.SHOULD);
+            q2.Add(q4, BooleanClause.Occur_e.SHOULD);
+            Assert.AreEqual(1, Search(q2));
+        }
 
-      [TearDown]
-	  public override void TearDown()
-	  {
-		Reader.Dispose();
-		Dir.Dispose();
-		base.TearDown();
-	  }
+        /// <summary>
+        /// <code>(T:files T:deleting) +(C:production C:optimize)</code>
+        /// not working. results NO HIT.
+        /// </summary>
+        [Test]
+        public virtual void TestParenthesisMust2()
+        {
+            BooleanQuery q3 = new BooleanQuery();
+            q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+            q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+            BooleanQuery q4 = new BooleanQuery();
+            q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
+            q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
+            BooleanQuery q2 = new BooleanQuery();
+            q2.Add(q3, BooleanClause.Occur_e.SHOULD);
+            q2.Add(q4, BooleanClause.Occur_e.MUST);
+            Assert.AreEqual(1, Search(q2));
+        }
 
-      [Test]
-      public virtual void TestBooleanScorerMax()
-	  {
-		Directory dir = NewDirectory();
-		RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+        /// <summary>
+        /// <code>(T:files T:deleting) (C:production C:optimize)</code>
+        /// not working. results NO HIT.
+        /// </summary>
+        [Test]
+        public virtual void TestParenthesisShould()
+        {
+            BooleanQuery q3 = new BooleanQuery();
+            q3.Add(new BooleanClause(T1, BooleanClause.Occur_e.SHOULD));
+            q3.Add(new BooleanClause(T2, BooleanClause.Occur_e.SHOULD));
+            BooleanQuery q4 = new BooleanQuery();
+            q4.Add(new BooleanClause(C1, BooleanClause.Occur_e.SHOULD));
+            q4.Add(new BooleanClause(C2, BooleanClause.Occur_e.SHOULD));
+            BooleanQuery q2 = new BooleanQuery();
+            q2.Add(q3, BooleanClause.Occur_e.SHOULD);
+            q2.Add(q4, BooleanClause.Occur_e.SHOULD);
+            Assert.AreEqual(1, Search(q2));
+        }
 
-		int docCount = AtLeast(10000);
+        [SetUp]
+        public override void SetUp()
+        {
+            base.SetUp();
 
-		for (int i = 0;i < docCount;i++)
-		{
-		  Document doc = new Document();
-		  doc.Add(NewField("field", "a", TextField.TYPE_NOT_STORED));
-		  riw.AddDocument(doc);
-		}
+            //
+            Dir = NewDirectory();
 
-		riw.ForceMerge(1);
-		IndexReader r = riw.Reader;
-		riw.Dispose();
 
-		IndexSearcher s = NewSearcher(r);
-		BooleanQuery bq = new BooleanQuery();
-		bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
-		bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+            //
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir);
 
-		Weight w = s.CreateNormalizedWeight(bq);
+            //
+            Document d = new Document();
+            d.Add(NewField(FIELD_T, "Optimize not deleting all files", TextField.TYPE_STORED));
+            d.Add(NewField(FIELD_C, "Deleted When I run an optimize in our production environment.", TextField.TYPE_STORED));
 
-		Assert.AreEqual(1, s.IndexReader.Leaves().Count);
-		BulkScorer scorer = w.BulkScorer(s.IndexReader.Leaves()[0], false, null);
+            //
+            writer.AddDocument(d);
 
-		FixedBitSet hits = new FixedBitSet(docCount);
-		AtomicInteger end = new AtomicInteger();
-		Collector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
+            Reader = writer.Reader;
+            //
+            Searcher = NewSearcher(Reader);
+            writer.Dispose();
+        }
 
-		while (end.Get() < docCount)
-		{
-		  int inc = TestUtil.NextInt(Random(), 1, 1000);
-		  end.AddAndGet(inc);
-		  scorer.Score(c, end.Get());
-		}
+        [TearDown]
+        public override void TearDown()
+        {
+            Reader.Dispose();
+            Dir.Dispose();
+            base.TearDown();
+        }
 
-		Assert.AreEqual(docCount, hits.Cardinality());
-		r.Dispose();
-		dir.Dispose();
-	  }
+        [Test]
+        public virtual void TestBooleanScorerMax()
+        {
+            Directory dir = NewDirectory();
+            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
 
-	  private class CollectorAnonymousInnerClassHelper : Collector
-	  {
-		  private readonly TestBooleanOr OuterInstance;
+            int docCount = AtLeast(10000);
 
-		  private BulkScorer scorer;
-		  private FixedBitSet Hits;
-		  private AtomicInteger End;
+            for (int i = 0; i < docCount; i++)
+            {
+                Document doc = new Document();
+                doc.Add(NewField("field", "a", TextField.TYPE_NOT_STORED));
+                riw.AddDocument(doc);
+            }
 
-		  public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInteger end)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.scorer = scorer;
-			  this.Hits = hits;
-			  this.End = end;
-		  }
+            riw.ForceMerge(1);
+            IndexReader r = riw.Reader;
+            riw.Dispose();
 
-		  public override AtomicReaderContext NextReader
-		  {
-			  set
-			  {
-			  }
-		  }
+            IndexSearcher s = NewSearcher(r);
+            BooleanQuery bq = new BooleanQuery();
+            bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
+            bq.Add(new TermQuery(new Term("field", "a")), BooleanClause.Occur_e.SHOULD);
 
-		  public override void Collect(int doc)
-		  {
-			Assert.IsTrue(doc < End.Get(), "collected doc=" + doc + " beyond max=" + End);
-			Hits.Set(doc);
-		  }
+            Weight w = s.CreateNormalizedWeight(bq);
 
-		  public override Scorer Scorer
-		  {
-			  set
-			  {
-			  }
-		  }
+            Assert.AreEqual(1, s.IndexReader.Leaves().Count);
+            BulkScorer scorer = w.BulkScorer(s.IndexReader.Leaves()[0], false, null);
 
-		  public override bool AcceptsDocsOutOfOrder()
-		  {
-			return true;
-		  }
-	  }
-	}
+            FixedBitSet hits = new FixedBitSet(docCount);
+            AtomicInteger end = new AtomicInteger();
+            Collector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
+
+            while (end.Get() < docCount)
+            {
+                int inc = TestUtil.NextInt(Random(), 1, 1000);
+                end.AddAndGet(inc);
+                scorer.Score(c, end.Get());
+            }
+
+            Assert.AreEqual(docCount, hits.Cardinality());
+            r.Dispose();
+            dir.Dispose();
+        }
+
+        private class CollectorAnonymousInnerClassHelper : Collector
+        {
+            private readonly TestBooleanOr OuterInstance;
+
+            private BulkScorer scorer;
+            private FixedBitSet Hits;
+            private AtomicInteger End;
+
+            public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInteger end)
+            {
+                this.OuterInstance = outerInstance;
+                this.scorer = scorer;
+                this.Hits = hits;
+                this.End = end;
+            }
+
+            public override AtomicReaderContext NextReader
+            {
+                set
+                {
+                }
+            }
+
+            public override void Collect(int doc)
+            {
+                Assert.IsTrue(doc < End.Get(), "collected doc=" + doc + " beyond max=" + End);
+                Hits.Set(doc);
+            }
+
+            public override Scorer Scorer
+            {
+                set
+                {
+                }
+            }
+
+            public override bool AcceptsDocsOutOfOrder()
+            {
+                return true;
+            }
+        }
+    }
 
 }

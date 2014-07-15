@@ -22,21 +22,20 @@ namespace Lucene.Net.Codecs.Lucene41
     using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
-	/// <summary>
-	/// Tests BlockPostingsFormat
-	/// </summary>
-    [TestFixture]
+    /// <summary>
+    /// Tests BlockPostingsFormat
+    /// </summary>
     public class TestBlockPostingsFormat : BasePostingsFormatTestCase
-	{
-	  private readonly Codec Codec_Renamed = TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat());
+    {
+        private readonly Codec Codec_Renamed = TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat());
 
-	  protected internal override Codec Codec
-	  {
-		  get
-		  {
-			return Codec_Renamed;
-		  }
-	  }
-	}
+        protected internal override Codec Codec
+        {
+            get
+            {
+                return Codec_Renamed;
+            }
+        }
+    }
 
 }

@@ -44,7 +44,6 @@ namespace Lucene.Net.Search.Payloads
     /// 
     /// 
     /// 
-    [TestFixture]
     public class PayloadHelper
     {
 

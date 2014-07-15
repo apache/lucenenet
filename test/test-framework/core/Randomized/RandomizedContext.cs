@@ -32,10 +32,10 @@ namespace Lucene.Net.Randomized
         {
             public ThreadResources()
             {
-                this.Queue = new Queue<Randomness>();
+                //this.Queue = new Queue<Randomness>();
             }
 
-            public Queue<Randomness> Queue { get; private set; }
+            //public Queue<Randomness> Queue { get; private set; }
         }
 
         private static readonly IdentityHashMap<ThreadGroup, RandomizedContext> contexts = 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Randomized
             }
         }
 
-        public Random Random
+        /*public Random Random
         {
             get { return this.Randomness.Random; }
         }
@@ -74,10 +74,10 @@ namespace Lucene.Net.Randomized
         public Randomness Randomness
         {
             get {
-                var randomness = this.PerThreadResources.Queue.Peek();
-                return randomness;
+                //var randomness = this.PerThreadResources.Queue.Peek();
+                //return randomness;
             }
-        }
+        }*/
 
         private ThreadResources PerThreadResources
         {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Randomized
                 {
                     var resources = new ThreadResources();
 
-                    resources.Queue.Enqueue(context.runner.Randomness.Clone(thread));
+                    //resources.Queue.Enqueue(context.runner.Randomness.Clone(thread));
 
                     context.threadResources.Add(thread, resources);
                 }
