@@ -1,0 +1,20 @@
+﻿{
+    "dependencies": {
+    },
+
+    "configurations" : {
+        "net451" : { 
+            "dependencies": {
+            }
+        },
+        "k10" : { 
+            "dependencies": {
+                "System.Linq": "",
+                "System.Reflection": "",
+                "System.Runtime": "",
+                "System.Text.RegularExpressions": "",
+                "System.Diagnostics.Debug": ""
+            }
+        }
+    }
+}
