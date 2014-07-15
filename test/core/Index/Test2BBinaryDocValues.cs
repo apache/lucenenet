@@ -37,6 +37,7 @@ namespace Lucene.Net.Index
     using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
     using NUnit.Framework;
 
+    [Ignore]
     [TestFixture]
     public class Test2BBinaryDocValues : LuceneTestCase
     {

@@ -81,7 +81,10 @@ namespace Lucene.Net.Util.Packed
             var b = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
             Debug.Assert(a == b, "a: " + a, ", b: " + b);*/
 
-            MaskRight = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);    //mod
+            MaskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));    //mod
+
+            //Debug.Assert((long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue)) == (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
+
             BpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
@@ -115,7 +118,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 Blocks[Blocks.Length - 1] = lastLong;
             }
-            MaskRight = (uint)(~0L << (BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));
+            MaskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
             BpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
@@ -196,7 +199,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk get
             Debug.Assert(index % decoder.LongValueCount() == 0);
-            int blockIndex = (int)((int)((uint)((long)index * bitsPerValue) >> BLOCK_BITS));
+            int blockIndex = (int)((ulong)((long)index * bitsPerValue) >> BLOCK_BITS);
             Debug.Assert((((long)index * bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / decoder.LongValueCount();
             decoder.Decode(Blocks, blockIndex, arr, off, iterations);
@@ -264,7 +267,7 @@ namespace Lucene.Net.Util.Packed
 
             // bulk set
             Debug.Assert(index % encoder.LongValueCount() == 0);
-            int blockIndex = (int)((int)((uint)((long)index * bitsPerValue) >> BLOCK_BITS));
+            int blockIndex = (int)((ulong)((long)index * bitsPerValue) >> BLOCK_BITS);
             Debug.Assert((((long)index * bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / encoder.LongValueCount();
             encoder.Encode(arr, off, Blocks, blockIndex, iterations);
@@ -337,8 +340,8 @@ namespace Lucene.Net.Util.Packed
                 nAlignedValuesBlocks = values.Blocks;
                 Debug.Assert(nAlignedBlocks <= nAlignedValuesBlocks.Length);
             }
-            int startBlock = (int)((int)((uint)((long)fromIndex * bitsPerValue) >> 6));
-            int endBlock = (int)((int)((uint)((long)toIndex * bitsPerValue) >> 6));
+            int startBlock = (int)((ulong)((long)fromIndex * bitsPerValue) >> 6);
+            int endBlock = (int)((ulong)((long)toIndex * bitsPerValue) >> 6);
             for (int block = startBlock; block < endBlock; ++block)
             {
                 long blockValue = nAlignedValuesBlocks[block % nAlignedBlocks];

@@ -37,43 +37,43 @@ namespace Lucene.Net.Codecs.Compressing
     public sealed class CompressingTermVectorsReader : TermVectorsReader, IDisposable
     {
 
-        private readonly FieldInfos FieldInfos;
-        internal readonly CompressingStoredFieldsIndexReader IndexReader;
-        internal readonly IndexInput VectorsStream_Renamed;
-        private readonly int Version_Renamed;
-        private readonly int PackedIntsVersion_Renamed;
-        private readonly CompressionMode CompressionMode_Renamed;
-        private readonly Decompressor Decompressor;
-        private readonly int ChunkSize_Renamed;
-        private readonly int NumDocs;
-        private bool Closed;
-        private readonly BlockPackedReaderIterator Reader;
+        private readonly FieldInfos fieldInfos;
+        internal readonly CompressingStoredFieldsIndexReader indexReader;
+        internal readonly IndexInput vectorsStream;
+        private readonly int version;
+        private readonly int packedIntsVersion;
+        private readonly CompressionMode compressionMode;
+        private readonly Decompressor decompressor;
+        private readonly int chunkSize;
+        private readonly int numDocs;
+        private bool closed;
+        private readonly BlockPackedReaderIterator reader;
 
         // used by clone
         private CompressingTermVectorsReader(CompressingTermVectorsReader reader)
         {
-            this.FieldInfos = reader.FieldInfos;
-            this.VectorsStream_Renamed = (IndexInput)reader.VectorsStream_Renamed.Clone();
-            this.IndexReader = (CompressingStoredFieldsIndexReader)reader.IndexReader.Clone();
-            this.PackedIntsVersion_Renamed = reader.PackedIntsVersion_Renamed;
-            this.CompressionMode_Renamed = reader.CompressionMode_Renamed;
-            this.Decompressor = (Decompressor)reader.Decompressor.Clone();
-            this.ChunkSize_Renamed = reader.ChunkSize_Renamed;
-            this.NumDocs = reader.NumDocs;
-            this.Reader = new BlockPackedReaderIterator(VectorsStream_Renamed, PackedIntsVersion_Renamed, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
-            this.Version_Renamed = reader.Version_Renamed;
-            this.Closed = false;
+            this.fieldInfos = reader.fieldInfos;
+            this.vectorsStream = (IndexInput)reader.vectorsStream.Clone();
+            this.indexReader = (CompressingStoredFieldsIndexReader)reader.indexReader.Clone();
+            this.packedIntsVersion = reader.packedIntsVersion;
+            this.compressionMode = reader.compressionMode;
+            this.decompressor = (Decompressor)reader.decompressor.Clone();
+            this.chunkSize = reader.chunkSize;
+            this.numDocs = reader.numDocs;
+            this.reader = new BlockPackedReaderIterator(vectorsStream, packedIntsVersion, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
+            this.version = reader.version;
+            this.closed = false;
         }
 
         /// <summary>
         /// Sole constructor. </summary>
         public CompressingTermVectorsReader(Directory d, SegmentInfo si, string segmentSuffix, FieldInfos fn, IOContext context, string formatName, CompressionMode compressionMode)
         {
-            this.CompressionMode_Renamed = compressionMode;
+            this.compressionMode = compressionMode;
             string segment = si.Name;
             bool success = false;
-            FieldInfos = fn;
-            NumDocs = si.DocCount;
+            fieldInfos = fn;
+            numDocs = si.DocCount;
             ChecksumIndexInput indexStream = null;
             try
             {
@@ -81,11 +81,11 @@ namespace Lucene.Net.Codecs.Compressing
                 string indexStreamFN = IndexFileNames.SegmentFileName(segment, segmentSuffix, CompressingTermVectorsWriter.VECTORS_INDEX_EXTENSION);
                 indexStream = d.OpenChecksumInput(indexStreamFN, context);
                 string codecNameIdx = formatName + CompressingTermVectorsWriter.CODEC_SFX_IDX;
-                Version_Renamed = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
+                version = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
                 Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
-                IndexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
+                indexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
 
-                if (Version_Renamed >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
+                if (version >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
                 {
                     indexStream.ReadVLong(); // the end of the data file
                     CodecUtil.CheckFooter(indexStream);
@@ -99,19 +99,19 @@ namespace Lucene.Net.Codecs.Compressing
 
                 // Open the data file and read metadata
                 string vectorsStreamFN = IndexFileNames.SegmentFileName(segment, segmentSuffix, CompressingTermVectorsWriter.VECTORS_EXTENSION);
-                VectorsStream_Renamed = d.OpenInput(vectorsStreamFN, context);
+                vectorsStream = d.OpenInput(vectorsStreamFN, context);
                 string codecNameDat = formatName + CompressingTermVectorsWriter.CODEC_SFX_DAT;
-                int version2 = CodecUtil.CheckHeader(VectorsStream_Renamed, codecNameDat, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
-                if (Version_Renamed != version2)
+                int version2 = CodecUtil.CheckHeader(vectorsStream, codecNameDat, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
+                if (version != version2)
                 {
-                    throw new Exception("Version mismatch between stored fields index and data: " + Version_Renamed + " != " + version2);
+                    throw new Exception("Version mismatch between stored fields index and data: " + version + " != " + version2);
                 }
-                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == VectorsStream_Renamed.FilePointer);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.FilePointer);
 
-                PackedIntsVersion_Renamed = VectorsStream_Renamed.ReadVInt();
-                ChunkSize_Renamed = VectorsStream_Renamed.ReadVInt();
-                Decompressor = compressionMode.NewDecompressor();
-                this.Reader = new BlockPackedReaderIterator(VectorsStream_Renamed, PackedIntsVersion_Renamed, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
+                packedIntsVersion = vectorsStream.ReadVInt();
+                chunkSize = vectorsStream.ReadVInt();
+                decompressor = compressionMode.NewDecompressor();
+                this.reader = new BlockPackedReaderIterator(vectorsStream, packedIntsVersion, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
 
                 success = true;
             }
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return CompressionMode_Renamed;
+                return compressionMode;
             }
         }
 
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return ChunkSize_Renamed;
+                return chunkSize;
             }
         }
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return PackedIntsVersion_Renamed;
+                return packedIntsVersion;
             }
         }
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return Version_Renamed;
+                return version;
             }
         }
 
@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return IndexReader;
+                return indexReader;
             }
         }
 
@@ -168,14 +168,14 @@ namespace Lucene.Net.Codecs.Compressing
         {
             get
             {
-                return VectorsStream_Renamed;
+                return vectorsStream;
             }
         }
 
         /// <exception cref="AlreadyClosedException"> if this TermVectorsReader is closed </exception>
         private void EnsureOpen()
         {
-            if (Closed)
+            if (closed)
             {
                 throw new Exception("this FieldsReader is closed");
             }
@@ -183,10 +183,10 @@ namespace Lucene.Net.Codecs.Compressing
 
         protected override void Dispose(bool disposing)
         {
-            if (!Closed)
+            if (!closed)
             {
-                IOUtils.Close(VectorsStream_Renamed);
-                Closed = true;
+                IOUtils.Close(vectorsStream);
+                closed = true;
             }
         }
 
@@ -201,18 +201,18 @@ namespace Lucene.Net.Codecs.Compressing
 
             // seek to the right place
             {
-                long startPointer = IndexReader.GetStartPointer(doc);
-                VectorsStream_Renamed.Seek(startPointer);
+                long startPointer = indexReader.GetStartPointer(doc);
+                vectorsStream.Seek(startPointer);
             }
 
             // decode
             // - docBase: first doc ID of the chunk
             // - chunkDocs: number of docs of the chunk
-            int docBase = VectorsStream_Renamed.ReadVInt();
-            int chunkDocs = VectorsStream_Renamed.ReadVInt();
-            if (doc < docBase || doc >= docBase + chunkDocs || docBase + chunkDocs > NumDocs)
+            int docBase = vectorsStream.ReadVInt();
+            int chunkDocs = vectorsStream.ReadVInt();
+            if (doc < docBase || doc >= docBase + chunkDocs || docBase + chunkDocs > numDocs)
             {
-                throw new CorruptIndexException("docBase=" + docBase + ",chunkDocs=" + chunkDocs + ",doc=" + doc + " (resource=" + VectorsStream_Renamed + ")");
+                throw new CorruptIndexException("docBase=" + docBase + ",chunkDocs=" + chunkDocs + ",doc=" + doc + " (resource=" + vectorsStream + ")");
             }
 
             int skip; // number of fields to skip
@@ -221,22 +221,22 @@ namespace Lucene.Net.Codecs.Compressing
             if (chunkDocs == 1)
             {
                 skip = 0;
-                numFields = totalFields = VectorsStream_Renamed.ReadVInt();
+                numFields = totalFields = vectorsStream.ReadVInt();
             }
             else
             {
-                Reader.Reset(VectorsStream_Renamed, chunkDocs);
+                reader.Reset(vectorsStream, chunkDocs);
                 int sum = 0;
                 for (int i = docBase; i < doc; ++i)
                 {
-                    sum += (int)Reader.Next();
+                    sum += (int)reader.Next();
                 }
                 skip = sum;
-                numFields = (int)Reader.Next();
+                numFields = (int)reader.Next();
                 sum += numFields;
                 for (int i = doc + 1; i < docBase + chunkDocs; ++i)
                 {
-                    sum += (int)Reader.Next();
+                    sum += (int)reader.Next();
                 }
                 totalFields = sum;
             }
@@ -250,16 +250,16 @@ namespace Lucene.Net.Codecs.Compressing
             // read field numbers that have term vectors
             int[] fieldNums;
             {
-                int token = VectorsStream_Renamed.ReadByte() & 0xFF;
+                int token = vectorsStream.ReadByte() & 0xFF;
                 Debug.Assert(token != 0); // means no term vectors, cannot happen since we checked for numFields == 0
                 int bitsPerFieldNum = token & 0x1F;
                 int totalDistinctFields = (int)((uint)token >> 5);
                 if (totalDistinctFields == 0x07)
                 {
-                    totalDistinctFields += VectorsStream_Renamed.ReadVInt();
+                    totalDistinctFields += vectorsStream.ReadVInt();
                 }
                 ++totalDistinctFields;
-                PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(VectorsStream_Renamed, PackedInts.Format.PACKED, PackedIntsVersion_Renamed, totalDistinctFields, bitsPerFieldNum, 1);
+                PackedInts.ReaderIterator it = PackedInts.GetReaderIteratorNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalDistinctFields, bitsPerFieldNum, 1);
                 fieldNums = new int[totalDistinctFields];
                 for (int i = 0; i < totalDistinctFields; ++i)
                 {
@@ -272,11 +272,11 @@ namespace Lucene.Net.Codecs.Compressing
             PackedInts.Reader flags;
             {
                 int bitsPerOff = PackedInts.BitsRequired(fieldNums.Length - 1);
-                PackedInts.Reader allFieldNumOffs = PackedInts.GetReaderNoHeader(VectorsStream_Renamed, PackedInts.Format.PACKED, PackedIntsVersion_Renamed, totalFields, bitsPerOff);
-                switch (VectorsStream_Renamed.ReadVInt())
+                PackedInts.Reader allFieldNumOffs = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, bitsPerOff);
+                switch (vectorsStream.ReadVInt())
                 {
                     case 0:
-                        PackedInts.Reader fieldFlags = PackedInts.GetReaderNoHeader(VectorsStream_Renamed, PackedInts.Format.PACKED, PackedIntsVersion_Renamed, fieldNums.Length, CompressingTermVectorsWriter.FLAGS_BITS);
+                        PackedInts.Reader fieldFlags = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, fieldNums.Length, CompressingTermVectorsWriter.FLAGS_BITS);
                         PackedInts.Mutable f = PackedInts.GetMutable(totalFields, CompressingTermVectorsWriter.FLAGS_BITS, PackedInts.COMPACT);
                         for (int i = 0; i < totalFields; ++i)
                         {
@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.Compressing
                         flags = f;
                         break;
                     case 1:
-                        flags = PackedInts.GetReaderNoHeader(VectorsStream_Renamed, PackedInts.Format.PACKED, PackedIntsVersion_Renamed, totalFields, CompressingTermVectorsWriter.FLAGS_BITS);
+                        flags = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, CompressingTermVectorsWriter.FLAGS_BITS);
                         break;
                     default:
                         throw new Exception();
@@ -303,8 +303,8 @@ namespace Lucene.Net.Codecs.Compressing
             PackedInts.Reader numTerms;
             int totalTerms;
             {
-                int bitsRequired = VectorsStream_Renamed.ReadVInt();
-                numTerms = PackedInts.GetReaderNoHeader(VectorsStream_Renamed, PackedInts.Format.PACKED, PackedIntsVersion_Renamed, totalFields, bitsRequired);
+                int bitsRequired = vectorsStream.ReadVInt();
+                numTerms = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, bitsRequired);
                 int sum = 0;
                 for (int i = 0; i < totalFields; ++i)
                 {
@@ -319,14 +319,14 @@ namespace Lucene.Net.Codecs.Compressing
             int[][] prefixLengths = new int[numFields][];
             int[][] suffixLengths = new int[numFields][];
             {
-                Reader.Reset(VectorsStream_Renamed, totalTerms);
+                reader.Reset(vectorsStream, totalTerms);
                 // skip
                 int toSkip = 0;
                 for (int i = 0; i < skip; ++i)
                 {
                     toSkip += (int)numTerms.Get(i);
                 }
-                Reader.Skip(toSkip);
+                reader.Skip(toSkip);
                 // read prefix lengths
                 for (int i = 0; i < numFields; ++i)
                 {
@@ -335,23 +335,23 @@ namespace Lucene.Net.Codecs.Compressing
                     prefixLengths[i] = fieldPrefixLengths;
                     for (int j = 0; j < termCount; )
                     {
-                        LongsRef next = Reader.Next(termCount - j);
+                        LongsRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
                         {
                             fieldPrefixLengths[j++] = (int)next.Longs[next.Offset + k];
                         }
                     }
                 }
-                Reader.Skip(totalTerms - Reader.Ord());
+                reader.Skip(totalTerms - reader.Ord());
 
-                Reader.Reset(VectorsStream_Renamed, totalTerms);
+                reader.Reset(vectorsStream, totalTerms);
                 // skip
                 toSkip = 0;
                 for (int i = 0; i < skip; ++i)
                 {
                     for (int j = 0; j < numTerms.Get(i); ++j)
                     {
-                        docOff += (int)Reader.Next();
+                        docOff += (int)reader.Next();
                     }
                 }
                 for (int i = 0; i < numFields; ++i)
@@ -361,7 +361,7 @@ namespace Lucene.Net.Codecs.Compressing
                     suffixLengths[i] = fieldSuffixLengths;
                     for (int j = 0; j < termCount; )
                     {
-                        LongsRef next = Reader.Next(termCount - j);
+                        LongsRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
                         {
                             fieldSuffixLengths[j++] = (int)next.Longs[next.Offset + k];
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     for (int j = 0; j < numTerms.Get(i); ++j)
                     {
-                        totalLen += (int)Reader.Next();
+                        totalLen += (int)reader.Next();
                     }
                 }
             }
@@ -383,10 +383,10 @@ namespace Lucene.Net.Codecs.Compressing
             // term freqs
             int[] termFreqs = new int[totalTerms];
             {
-                Reader.Reset(VectorsStream_Renamed, totalTerms);
+                reader.Reset(vectorsStream, totalTerms);
                 for (int i = 0; i < totalTerms; )
                 {
-                    LongsRef next = Reader.Next(totalTerms - i);
+                    LongsRef next = reader.Next(totalTerms - i);
                     for (int k = 0; k < next.Length; ++k)
                     {
                         termFreqs[i++] = 1 + (int)next.Longs[next.Offset + k];
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.Compressing
                 float[] charsPerTerm = new float[fieldNums.Length];
                 for (int i = 0; i < charsPerTerm.Length; ++i)
                 {
-                    charsPerTerm[i] = Number.IntBitsToFloat(VectorsStream_Renamed.ReadInt());
+                    charsPerTerm[i] = Number.IntBitsToFloat(vectorsStream.ReadInt());
                 }
                 startOffsets = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
                 lengths = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
@@ -505,7 +505,7 @@ namespace Lucene.Net.Codecs.Compressing
             int payloadLen = 0;
             if (totalPayloads > 0)
             {
-                Reader.Reset(VectorsStream_Renamed, totalPayloads);
+                reader.Reset(vectorsStream, totalPayloads);
                 // skip
                 int termIndex = 0;
                 for (int i = 0; i < skip; ++i)
@@ -519,7 +519,7 @@ namespace Lucene.Net.Codecs.Compressing
                             int freq = termFreqs[termIndex + j];
                             for (int k = 0; k < freq; ++k)
                             {
-                                int l = (int)Reader.Next();
+                                int l = (int)reader.Next();
                                 payloadOff += l;
                             }
                         }
@@ -543,7 +543,7 @@ namespace Lucene.Net.Codecs.Compressing
                             int freq = termFreqs[termIndex + j];
                             for (int k = 0; k < freq; ++k)
                             {
-                                int payloadLength = (int)Reader.Next();
+                                int payloadLength = (int)reader.Next();
                                 payloadLen += payloadLength;
                                 payloadIndex[i][posIdx + 1] = payloadLen;
                                 ++posIdx;
@@ -565,7 +565,7 @@ namespace Lucene.Net.Codecs.Compressing
                             int freq = termFreqs[termIndex + j];
                             for (int k = 0; k < freq; ++k)
                             {
-                                totalPayloadLength += (int)Reader.Next();
+                                totalPayloadLength += (int)reader.Next();
                             }
                         }
                     }
@@ -576,7 +576,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             // decompress data
             BytesRef suffixBytes = new BytesRef();
-            Decompressor.Decompress(VectorsStream_Renamed, totalLen + totalPayloadLength, docOff + payloadOff, docLen + payloadLen, suffixBytes);
+            decompressor.Decompress(vectorsStream, totalLen + totalPayloadLength, docOff + payloadOff, docLen + payloadLen, suffixBytes);
             suffixBytes.Length = docLen;
             BytesRef payloadBytes = new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + docLen, payloadLen);
 
@@ -642,7 +642,7 @@ namespace Lucene.Net.Codecs.Compressing
         private int[][] ReadPositions(int skip, int numFields, PackedInts.Reader flags, PackedInts.Reader numTerms, int[] termFreqs, int flag, int totalPositions, int[][] positionIndex)
         {
             int[][] positions = new int[numFields][];
-            Reader.Reset(VectorsStream_Renamed, totalPositions);
+            reader.Reset(vectorsStream, totalPositions);
             // skip
             int toSkip = 0;
             int termIndex = 0;
@@ -660,7 +660,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 termIndex += termCount;
             }
-            Reader.Skip(toSkip);
+            reader.Skip(toSkip);
             // read doc positions
             for (int i = 0; i < numFields; ++i)
             {
@@ -673,7 +673,7 @@ namespace Lucene.Net.Codecs.Compressing
                     positions[i] = fieldPositions;
                     for (int j = 0; j < totalFreq; )
                     {
-                        LongsRef nextPositions = Reader.Next(totalFreq - j);
+                        LongsRef nextPositions = reader.Next(totalFreq - j);
                         for (int k = 0; k < nextPositions.Length; ++k)
                         {
                             fieldPositions[j++] = (int)nextPositions.Longs[nextPositions.Offset + k];
@@ -682,7 +682,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 termIndex += termCount;
             }
-            Reader.Skip(totalPositions - Reader.Ord());
+            reader.Skip(totalPositions - reader.Ord());
             return positions;
         }
 
@@ -727,13 +727,13 @@ namespace Lucene.Net.Codecs.Compressing
                 while (i < FieldNumOffs.Length)
                 {
                     int fieldNum = FieldNums[FieldNumOffs[i++]];
-                    yield return OuterInstance.FieldInfos.FieldInfo(fieldNum).Name;
+                    yield return OuterInstance.fieldInfos.FieldInfo(fieldNum).Name;
                 }
             }
 
             public override Terms Terms(string field)
             {
-                FieldInfo fieldInfo = OuterInstance.FieldInfos.FieldInfo(field);
+                FieldInfo fieldInfo = OuterInstance.fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)
                 {
                     return null;
@@ -1212,14 +1212,14 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override long RamBytesUsed()
         {
-            return IndexReader.RamBytesUsed();
+            return indexReader.RamBytesUsed();
         }
 
         public override void CheckIntegrity()
         {
-            if (Version_Renamed >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
+            if (version >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
             {
-                CodecUtil.ChecksumEntireFile(VectorsStream_Renamed);
+                CodecUtil.ChecksumEntireFile(vectorsStream);
             }
         }
 

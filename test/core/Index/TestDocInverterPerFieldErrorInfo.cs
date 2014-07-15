@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
             {
                 infoPrintStream.Flush();
                 string infoStream = Encoding.UTF8.GetString(infoBytes.GetBuffer());
-                Assert.IsTrue(infoStream.Contains("DistinctiveFieldName"));
+                Assert.IsTrue(infoStream.Contains("distinctiveFieldName"));
             }
 
             writer.Dispose();

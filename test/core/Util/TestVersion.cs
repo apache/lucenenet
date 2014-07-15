@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
             {
                 if (i + 1 == values.Length)
                 {
-                    Assert.AreSame(Version.LUCENE_CURRENT, values[i], "Last constant must be LUCENE_CURRENT");
+                    Assert.AreEqual(Version.LUCENE_CURRENT, values[i], "Last constant must be LUCENE_CURRENT");
                 }
                 /*bool dep = typeof(Version).GetField(values[i].Name()).isAnnotationPresent(typeof(Deprecated));
                 if (i + 2 != values.Length)
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(values.Length >= 2);
             string mainVersionWithoutAlphaBeta = Constants.MainVersionWithoutAlphaBeta();
             Version mainVersionParsed = VersionEnumExtensionMethods.ParseLeniently(mainVersionWithoutAlphaBeta);
-            Assert.AreSame(mainVersionParsed, values[values.Length - 2], "Constant one before last must be the same as the parsed LUCENE_MAIN_VERSION (without alpha/beta) constant: " + mainVersionWithoutAlphaBeta);
+            Assert.AreEqual(mainVersionParsed, values[values.Length - 2], "Constant one before last must be the same as the parsed LUCENE_MAIN_VERSION (without alpha/beta) constant: " + mainVersionWithoutAlphaBeta);
         }
     }
 

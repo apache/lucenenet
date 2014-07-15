@@ -46,7 +46,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct", "Lucene3x" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test2BPostingsBytes extends Lucene.Net.Util.LuceneTestCase
-	[TestFixture]
+	[Ignore]
+    [TestFixture]
     public class Test2BPostingsBytes : LuceneTestCase
 	// disable Lucene3x: older lucene formats always had this issue.
 	  // @Absurd @Ignore takes ~20GB-30GB of space and 10 minutes.

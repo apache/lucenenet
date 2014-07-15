@@ -58,7 +58,8 @@ namespace Lucene.Net.Util
             expected.Add(new TermQuery(new Term("field", "foo")), BooleanClause.Occur_e.SHOULD);
             expected.Add(new TermQuery(new Term("field", "bar")), BooleanClause.Occur_e.SHOULD);
             QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
-            Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "foo bar"));
+            Assert.IsTrue(expected.Equals(builder.CreateBooleanQuery("field", "foo bar")));
+            //Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "foo bar"));
         }
 
         [Test]

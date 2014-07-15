@@ -311,6 +311,31 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        public virtual void ExposeCompTermVR()
+        {
+            bool doFullMerge = false;
+            Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            if (iwc.MaxBufferedDocs < 20)
+            {
+                iwc.SetMaxBufferedDocs(20);
+            }
+            // no merging
+            if (Random().NextBoolean())
+            {
+                iwc.SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES);
+            }
+            else
+            {
+                iwc.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            }
+            IndexWriter writer = new IndexWriter(dir1, iwc);
+            CreateIndexNoClose(!doFullMerge, "index1", writer);
+            writer.Dispose();
+            dir1.Dispose();
+        }
+
+        [Test]
         public virtual void TestAddIndexes2()
         {
             bool doFullMerge = false;

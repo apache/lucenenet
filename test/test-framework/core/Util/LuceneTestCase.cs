@@ -1437,7 +1437,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    clazzName = "Lucene.Net.Store.RAMDirectory";
+                    clazzName = "RAMDirectory";
                 }
             }
 
@@ -1449,7 +1449,7 @@ namespace Lucene.Net.Util
                 {
                     DirectoryInfo dir = CreateTempDir("index-" + clazzName);
                     dir.Create(); // ensure it's created so we 'have' it.
-                    return NewFSDirectoryImpl(typeof(FSDirectory), dir);
+                    return NewFSDirectoryImpl(clazz, dir);
                 }
 
                 // try empty ctor
@@ -1458,7 +1458,7 @@ namespace Lucene.Net.Util
             catch (Exception e)
             {
                 Rethrow.DoRethrow(e);
-                throw null; // dummy to prevent compiler failure
+                throw null;
             }
         }
 

@@ -177,6 +177,26 @@ namespace Lucene.Net.Util
             {"LUCENE_CURRENT", Version.LUCENE_CURRENT}
         };
 
+        private static Dictionary<string, Version> longToEnum = new Dictionary<string, Version>()
+        {
+            {"3.0", Version.LUCENE_30},
+            {"3.1", Version.LUCENE_31},
+            {"3.2", Version.LUCENE_32},
+            {"3.3", Version.LUCENE_33},
+            {"3.4", Version.LUCENE_34},
+            {"3.5", Version.LUCENE_35},
+            {"3.6", Version.LUCENE_36},
+            {"4.0", Version.LUCENE_40},
+            {"4.1", Version.LUCENE_41},
+            {"4.2", Version.LUCENE_42},
+            {"4.3", Version.LUCENE_43},
+            {"4.4", Version.LUCENE_44},
+            {"4.5", Version.LUCENE_45},
+            {"4.6", Version.LUCENE_46},
+            {"4.7", Version.LUCENE_47},
+            {"4.8", Version.LUCENE_48}
+        };
+
         public static bool OnOrAfter(this Version instance, Version other)
         {
             return other <= instance;
@@ -187,7 +207,14 @@ namespace Lucene.Net.Util
         {
             string upperVersionString = version.ToUpper();
             Version ret;
-            stringToEnum.TryGetValue(upperVersionString, out ret);
+            if (stringToEnum.TryGetValue(upperVersionString, out ret))
+            {
+                return ret;
+            }
+            else if (longToEnum.TryGetValue(upperVersionString, out ret))
+            {
+                return ret;
+            }
             return ret;
         }
     }

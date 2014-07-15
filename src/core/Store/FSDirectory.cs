@@ -139,6 +139,11 @@ namespace Lucene.Net.Store
             return file;
         }
 
+        public FSDirectory(DirectoryInfo dir)
+            : this(dir, null)
+        {
+        }
+
         /// <summary>
         /// Create a new FSDirectory for the named location (ctor for subclasses). </summary>
         /// <param name="path"> the path of the directory </param>

@@ -746,6 +746,7 @@ namespace Lucene.Net.Index
                     BlockedFlush blockedFlush = iterator.Current;
                     if (blockedFlush.Dwpt.DeleteQueue == flushingQueue)
                     {
+                        //LUCENE TODO: Move to try finally
                         BlockedFlushes.Remove(blockedFlush);
                         Debug.Assert(!FlushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
                         // Record the flushing DWPT to reduce flushBytes in doAfterFlush

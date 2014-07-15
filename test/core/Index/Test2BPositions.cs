@@ -45,7 +45,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressCodecs({ "SimpleText", "Memory", "Direct" }) @TimeoutSuite(millis = 4 * TimeUnits.HOUR) public class Test2BPositions extends Lucene.Net.Util.LuceneTestCase
-	[TestFixture]
+	[Ignore]
+    [TestFixture]
     public class Test2BPositions : LuceneTestCase
 	  // uses lots of space and takes a few minutes
 	{

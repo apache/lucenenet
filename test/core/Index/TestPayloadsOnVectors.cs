@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Lucene.Net.Analysis.Tokenattributes;
 
 namespace Lucene.Net.Index
 {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Index
 		customType.StoreTermVectorOffsets = Random().NextBoolean();
 		Field field = new Field("field", "", customType);
 		TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
-		Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+		Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
 		field.TokenStream = ts;
 		doc.Add(field);
 		writer.AddDocument(doc);
@@ -69,12 +70,12 @@ namespace Lucene.Net.Index
 		Token withPayload = new Token("withPayload", 0, 11);
 		withPayload.Payload = new BytesRef("test");
 		ts = new CannedTokenStream(withPayload);
-		Assert.IsTrue(ts.HasAttribute<PayloadAttribute>());
+		Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>());
 		field.TokenStream = ts;
 		writer.AddDocument(doc);
 
 		ts = new MockTokenizer(new StringReader("another"), MockTokenizer.WHITESPACE, true);
-		Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+		Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
 		field.TokenStream = ts;
 		writer.AddDocument(doc);
 
@@ -107,19 +108,19 @@ namespace Lucene.Net.Index
 		customType.StoreTermVectorOffsets = Random().NextBoolean();
 		Field field = new Field("field", "", customType);
 		TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
-		Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+		Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
 		field.TokenStream = ts;
 		doc.Add(field);
 		Field field2 = new Field("field", "", customType);
 		Token withPayload = new Token("withPayload", 0, 11);
 		withPayload.Payload = new BytesRef("test");
 		ts = new CannedTokenStream(withPayload);
-		Assert.IsTrue(ts.HasAttribute<PayloadAttribute>());
+		Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>());
 		field2.TokenStream = ts;
 		doc.Add(field2);
 		Field field3 = new Field("field", "", customType);
 		ts = new MockTokenizer(new StringReader("nopayload"), MockTokenizer.WHITESPACE, true);
-		Assert.IsFalse(ts.HasAttribute<PayloadAttribute>());
+		Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
 		field3.TokenStream = ts;
 		doc.Add(field3);
 		writer.AddDocument(doc);

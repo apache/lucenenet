@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numSegments; i++)
             {
                 SegmentCommitInfo info = sis.Info(i);
-                int segmentName = Convert.ToInt32(info.Info.Name.Substring(1)/*, Character.MAX_RADIX*/);
+                int segmentName = int.Parse/*Convert.ToInt32*/(info.Info.Name.Substring(1));
                 if (segmentName > result.MaxSegmentName)
                 {
                     result.MaxSegmentName = segmentName;

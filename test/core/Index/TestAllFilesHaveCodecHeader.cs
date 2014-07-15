@@ -40,7 +40,6 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestAllFilesHaveCodecHeader : LuceneTestCase
     {
-        [Ignore]
         [Test]
         public virtual void Test()
         {

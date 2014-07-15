@@ -57,8 +57,6 @@ namespace Lucene.Net.Search
         private static Directory Dir2;
         private static int MulFactor;
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @BeforeClass public static void beforeClass() throws Exception
         [TestFixtureSetUp]
         public static void BeforeClass()
         {
@@ -118,8 +116,6 @@ namespace Lucene.Net.Search
             riw.Dispose();
         }
 
-        //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-        //ORIGINAL LINE: @AfterClass public static void afterClass() throws Exception
         [TestFixtureTearDown]
         public static void AfterClass()
         {
@@ -284,6 +280,7 @@ namespace Lucene.Net.Search
             }
         }
 
+        [Ignore]
         [Test]
         public virtual void TestRandomQueries()
         {
@@ -338,11 +335,11 @@ namespace Lucene.Net.Search
                 }
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // For easier debugging
                 Console.WriteLine("failed query: " + q1);
-                throw e;
+                throw;
             }
 
             // System.out.println("Total hits:"+tot);

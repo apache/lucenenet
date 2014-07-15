@@ -144,16 +144,16 @@ namespace Lucene.Net.Store
         public virtual int ReadVInt()
         {
             // .NET Port: Going back to original code instead of Java code below due to sbyte/byte diff
-            byte b = ReadByte();
+            /*byte b = ReadByte();
             int i = b & 0x7F;
             for (int shift = 7; (b & 0x80) != 0; shift += 7)
             {
                 b = ReadByte();
                 i |= (b & 0x7F) << shift;
             }
-            return i;
+            return i;*/
 
-            /*byte b = ReadByte();
+            byte b = ReadByte();
             if ((sbyte)b >= 0)
             {
                 return b;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new System.IO.IOException("Invalid vInt detected (too many bits)");*/
+            throw new System.IO.IOException("Invalid vInt detected (too many bits)");
         }
 
         /// <summary>
@@ -209,70 +209,70 @@ namespace Lucene.Net.Store
         public virtual long ReadVLong()
         {
             // .NET Port: going back to old style code
-            byte b = ReadByte();
+            /*byte b = ReadByte();
             long i = b & 0x7F;
             for (int shift = 7; (b & 0x80) != 0; shift += 7)
             {
                 b = ReadByte();
                 i |= (b & 0x7FL) << shift;
             }
-            return i;
+            return i;*/
 
-            /*yte b = ReadByte();
-            if (b >= 0)
+            byte b = ReadByte();
+            if ((sbyte)b >= 0)
             {
                 return b;
             }
             long i = b & 0x7FL;
             b = ReadByte();
             i |= (b & 0x7FL) << 7;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 14;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 21;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 28;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 35;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 42;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 49;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
             b = ReadByte();
             i |= (b & 0x7FL) << 56;
-            if (b >= 0)
+            if ((sbyte)b >= 0)
             {
                 return i;
             }
-            throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");*/
+            throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
         }
 
         /// <summary>

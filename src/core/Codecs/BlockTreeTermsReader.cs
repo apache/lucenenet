@@ -294,7 +294,9 @@ namespace Lucene.Net.Codecs
         public override Terms Terms(string field)
         {
             Debug.Assert(field != null);
-            return Fields[field];
+            FieldReader ret;
+            Fields.TryGetValue(field, out ret);
+            return ret;
         }
 
         public override int Size()

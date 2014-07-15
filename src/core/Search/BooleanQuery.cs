@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -659,7 +660,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             BooleanQuery other = (BooleanQuery)o;
-            return this.Boost == other.Boost && this.clauses.Equals(other.clauses) && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch && this.DisableCoord == other.DisableCoord;
+            return this.Boost == other.Boost && this.clauses.SequenceEqual(other.clauses) && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch && this.DisableCoord == other.DisableCoord;
         }
 
         /// <summary>

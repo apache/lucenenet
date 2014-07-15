@@ -196,8 +196,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
 
                 // seek to it
-                TermsEnum te = tes[field];
-                if (te == null)
+                TermsEnum te;
+                if (!tes.TryGetValue(field, out te))
                 {
                     te = MultiFields.GetTerms(reader, field).Iterator(null);
                     tes[field] = te;
@@ -274,8 +274,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                         }
 
                         // term does not exist:
-                        TermsEnum te = tes[field];
-                        if (te == null)
+                        TermsEnum te;
+                        if (!tes.TryGetValue(field, out te))
                         {
                             te = MultiFields.GetTerms(reader, field).Iterator(null);
                             tes[field] = te;
