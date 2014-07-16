@@ -12,7 +12,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>46467889-dcdd-4e2b-b583-6aacce996eac</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Lucene.Net.Core.Tests</RootNamespace>
+    <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="$(OutputType) == 'Console'">
     <DebuggerFlavor>ConsoleDebugger</DebuggerFlavor>
@@ -26,13 +26,14 @@
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="default.ruleset" />
+    <Content Include="default1.ruleset" />
     <Content Include="packages.config" />
     <Content Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\ICloneableTests.cs" />
     <Compile Include="Util\TestVersion.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />

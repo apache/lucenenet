@@ -21,6 +21,7 @@
 
 namespace Lucene.Net.Support
 {
+    using System.Text;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -28,6 +29,7 @@ namespace Lucene.Net.Support
     /// </summary>
     public static class StringExtensionMethods
     {
+
         /// <summary>
         /// Replaces the first substring of this string that matches the given regular expression with the given replacement.
         /// </summary>

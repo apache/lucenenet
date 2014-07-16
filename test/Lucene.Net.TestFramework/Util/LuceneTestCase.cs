@@ -31,9 +31,6 @@ namespace Lucene.Net.TestFramework
     {
 	    public LuceneTestCase()
 	    {
-		    //
-		    // TODO: Add constructor logic here
-		    //
 	    }
 
 

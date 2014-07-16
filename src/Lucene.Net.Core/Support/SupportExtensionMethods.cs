@@ -18,29 +18,25 @@
  * under the License.
  *
  */
-
-namespace Lucene.Net
+namespace Lucene.Net.Support
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-
-    public static class EnumUtil
+    /// <summary>
+    /// Summary description for SupportExtensionMethods
+    /// </summary>
+    public static class SupportExtensionMethods
     {
         /// <summary>
-        /// Returns all the values of the Enum as an IEnumerable&lt;T&gt; where T : enum
+        /// Clones and casts the new instance to the same type of the old instance. 
         /// </summary>
-        /// <typeparam name="T">The enum type.</typeparam>
-        /// <exception cref="System.ArgumentException">Throws when T is not an enum.</exception>
-        /// <returns>Returns an IEnumerable&lt;T&gt; of enum values for type T.</returns>
-        public static IList<T> ValuesOf<T>()
+        /// <typeparam name="T">The Type that implements <see cref="Lucene.Net.Support.ICloneable"/></typeparam>
+        /// <param name="instance">The instance of type T that will be cloned.</param>
+        /// <param name="deepClone">Instructs instance to perform a deep clone when true.</param>
+        /// <returns>A new clone of type T</returns>
+        public static T CloneAndCast<T>(this T instance, bool deepClone = false) where T : ICloneable
         {
-            // TODO: 5.0 resource: put exception message in resource.
-            if (!typeof(T).GetTypeInfo().IsEnum)
-                throw new ArgumentException("Type of T must be an enum");
+            Check.NotNull("instance", instance);
 
-            return Enum.GetValues(typeof(T)).Cast<T>().ToList();
+            return (T)instance.Clone(deepClone);
         }
     }
 }

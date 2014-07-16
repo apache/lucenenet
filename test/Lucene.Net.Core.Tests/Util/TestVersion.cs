@@ -42,6 +42,7 @@ namespace Lucene.Net.Util
         {
 
             var values = EnumUtil.ValuesOf<Version>();
+
             foreach (Version v in values)
             {
                 Ok(Version.LUCENE_CURRENT.OnOrAfter(v), "LUCENE_CURRENT must be always onOrAfter(" + v + ")");
@@ -80,6 +81,7 @@ namespace Lucene.Net.Util
                 {
                     // Object.ReferenceEquals will not work for enums
                     var same = Enum.Equals(Version.LUCENE_CURRENT, version);
+
                     Ok(same, "Last constant must be LUCENE_CURRENT, version was {0}", name);
                 }
 

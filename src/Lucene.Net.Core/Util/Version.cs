@@ -39,6 +39,7 @@ namespace Lucene.Net.Util
     ///         Java <see href="https://github.com/apache/lucene-solr/blob/trunk/lucene/core/src/test/org/apache/lucene/util/TestVersion.java">Source</see>
     ///     </para>
     /// </remarks>
+    [Flags]
     public enum Version
     {
 

@@ -19,25 +19,12 @@
  *
  */
 
-namespace Lucene.Net.TestFramework
-{
-    /// <summary>
-    /// Summary description for TestAttribute
-    /// </summary>
-    public class TestAttribute : Xunit.FactAttribute
-    {
 
-        public string JavaMethodName { get; set; }
+using System;
+using System.Reflection;
 
-        public TestAttribute(string displayName, string javaMethodName = null, string skip = null)
-        {
-            this.DisplayName = displayName;
-            this.Skip = skip;
-            this.JavaMethodName = javaMethodName;
-        }
 
-	    public TestAttribute()
-	    {
-	    }
-    }
-}
+[assembly: CLSCompliant(true)]
+#if PORTABLE
+    [assembly:AssemblyVersion("5.0.0.*")]
+#endif
