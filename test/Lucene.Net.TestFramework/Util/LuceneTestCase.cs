@@ -29,16 +29,58 @@ namespace Lucene.Net.TestFramework
 
     public class LuceneTestCase
     {
-	    public LuceneTestCase()
-	    {
-	    }
+        public LuceneTestCase()
+        {
+        }
+
+
+#if XUNIT
+
+        /// <summary>
+        /// Asserts that two object are the same.
+        /// </summary>
+        /// <param name="expected">The expected value.</param>
+        /// <param name="actual">The actual value.</param>
+        [DebuggerHidden]
+        public static void Same(object expected, object actual)
+        {
+            Assert.Same(expected, actual);
+        }
+
+        /// <summary>
+        /// Assert that two objects are not the same.
+        /// </summary>
+        /// <param name="expected">The expected value.</param>
+        /// <param name="actual">The actual value.</param>
+        [DebuggerHidden]
+        public static void NotSame(object expected, object actual)
+        {
+            Assert.NotSame(expected, actual);
+        }
+
+        [DebuggerHidden]
+        public static void Equal(string expected, string actual)
+        {
+            Assert.Equal(expected, actual);
+        }
+
+        [DebuggerHidden]
+        public static void Equal<T>(T expected, T actual)
+        {
+            Assert.Equal(expected, actual);
+        }
+
+        [DebuggerHidden]
+        public static void Equal<T>(IEnumerable<T> expected, IEnumerable<T> actual)
+        {
+            Assert.Equal(expected, actual);
+        }
 
 
 
         [DebuggerHidden]
         public static void Ok(bool condition, string message = null, params object[] values)
         {
-#if XUNIT
             if (!string.IsNullOrWhiteSpace(message))
             {
                 var exceptionMessage = message;
@@ -54,39 +96,14 @@ namespace Lucene.Net.TestFramework
             {
                 Assert.True(condition);    
             }
-#endif
-        }
-
-        [DebuggerHidden]
-        public static void Equal(string expected, string actual)
-        {
-#if XUNIT
-            Assert.Equal(expected, actual);
-#endif 
-        }
-
-        [DebuggerHidden]
-        public static void Equal<T>(T expected, T actual)
-        {
-#if XUNIT
-            Assert.Equal(expected, actual);
-#endif
-        }
-
-        [DebuggerHidden]
-        public static void Equal<T>(IEnumerable<T> expected, IEnumerable<T> actual)
-        {
-#if XUNIT
-            Assert.Equal(expected, actual);
-#endif
         }
 
         [DebuggerHidden]
         public static void Throws<T>(Action code) where T : Exception
         {
-#if XUNIT
             Assert.Throws<T>(code);
-#endif
         }
+        
+        #endif
     }
 }

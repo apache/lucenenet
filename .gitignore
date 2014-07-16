@@ -3,7 +3,7 @@
 [Oo]bj/
 [Bb]in/
 TestResults/
-.nuget/
+## enable package restore  .nuget/
 *.sln.ide/
 _ReSharper.*/
 packages/
