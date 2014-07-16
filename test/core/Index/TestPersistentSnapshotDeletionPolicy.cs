@@ -171,11 +171,11 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                var trace = new StackTrace(new Exception());
+                var trace = new StackTrace();
                 foreach (var frame in trace.GetFrames())
                 {
                     var method = frame.GetMethod();
-                    if (typeof(PersistentSnapshotDeletionPolicy).Name.Equals(frame.GetType().Name) && "Persist".Equals(method.Name))
+                    if (/*typeof(PersistentSnapshotDeletionPolicy).Name.Equals(frame.GetType().Name) && */"Persist".Equals(method.Name))
                     {
                         throw new IOException("now fail on purpose");
                     }

@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
 
                 if (DoFail)
                 {
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     bool sawAbortOrFlushDoc = false;
                     bool sawClose = false;
                     bool sawMerge = false;
@@ -502,11 +502,11 @@ namespace Lucene.Net.Index
             {
                 if (DoFail)
                 {
-                    var trace = new StackTrace(new Exception());
+                    var trace = new StackTrace();
                     foreach (var frame in trace.GetFrames())
                     {
                         var method = frame.GetMethod();
-                        if ("Flush".Equals(method.Name) && "Lucene.Net.Index.DocFieldProcessor".Equals(frame.GetType().Name))
+                        if ("Flush".Equals(method.Name) /*&& "Lucene.Net.Index.DocFieldProcessor".Equals(frame.GetType().Name)*/)
                         {
                             if (OnlyOnce)
                             {

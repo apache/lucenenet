@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Linq;
 
 namespace Lucene.Net.Support
 {
@@ -96,7 +97,9 @@ namespace Lucene.Net.Support
 
         public int Inflate(byte[] buffer, int offset, int count)
         {
-            return inflate3Method(buffer, offset, count);
+            //LUCENE TODO: brute-force converting for now to eliminate TypeMismatchError
+            byte[] byteBuffer = buffer.Select(b => (byte) b).ToArray();
+            return inflate3Method(byteBuffer, offset, count);
         }
 
         public void Reset()

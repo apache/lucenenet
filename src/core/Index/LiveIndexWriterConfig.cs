@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 	  /// <seealso cref="OpenMode"/> that <seealso cref="IndexWriter"/> is opened
 	  ///  with. 
 	  /// </summary>
-	  protected internal volatile OpenMode_e openMode;
+	  protected internal OpenMode_e? openMode;
 
 	  /// <summary>
 	  /// <seealso cref="Similarity"/> to use when encoding norms. </summary>
@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
 
 	  /// <summary>
 	  /// Returns the <seealso cref="OpenMode"/> set by <seealso cref="IndexWriterConfig#setOpenMode(OpenMode)"/>. </summary>
-	  public virtual OpenMode_e OpenMode
+	  public virtual OpenMode_e? OpenMode
 	  {
 		  get
 		  {

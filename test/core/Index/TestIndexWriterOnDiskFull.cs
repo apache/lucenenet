@@ -570,16 +570,16 @@ namespace Lucene.Net.Index
                     return;
                 }
 
-                var trace = new StackTrace(new Exception());
+                var trace = new StackTrace();
                 foreach (var frame in trace.GetFrames())
                 {
                     var method = frame.GetMethod();
-                    if (typeof(SegmentMerger).Name.Equals(frame.GetType().Name) && "mergeTerms".Equals(method.Name) && !DidFail1)
+                    if (/*typeof(SegmentMerger).Name.Equals(frame.GetType().Name) && */"MergeTerms".Equals(method.Name) && !DidFail1)
                     {
                         DidFail1 = true;
                         throw new IOException("fake disk full during mergeTerms");
                     }
-                    if (typeof(LiveDocsFormat).Name.Equals(frame.GetType().Name) && "writeLiveDocs".Equals(method.Name) && !DidFail2)
+                    if (/*typeof(LiveDocsFormat).Name.Equals(frame.GetType().Name) && */"WriteLiveDocs".Equals(method.Name) && !DidFail2)
                     {
                         DidFail2 = true;
                         throw new IOException("fake disk full while writing LiveDocs");

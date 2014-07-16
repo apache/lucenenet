@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                             w.Commit();
                             DirectoryReader r2 = DirectoryReader.OpenIfChanged(r);
                             Assert.IsNotNull(r2);
-                            Assert.IsTrue(r2 != r);
+                            Assert.IsTrue(!r2.Equals(r));
                             r.Dispose();
                             r = r2;
                             Assert.AreEqual(1, r.DocFreq(new Term("f", s)), "term=f:" + s + "; r=" + r);

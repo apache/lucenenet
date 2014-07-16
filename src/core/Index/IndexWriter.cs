@@ -847,7 +847,7 @@ namespace Lucene.Net.Index
             bool success = false;
             try
             {
-                OpenMode_e mode = Config_Renamed.OpenMode;
+                OpenMode_e? mode = Config_Renamed.OpenMode;
                 bool create;
                 if (mode == OpenMode_e.CREATE)
                 {
@@ -959,6 +959,7 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "init: hit exception on init; releasing write lock");
                     }
                     IOUtils.CloseWhileHandlingException(WriteLock);
+                    WriteLock.Release();
                     WriteLock = null;
                 }
             }
@@ -2597,6 +2598,7 @@ namespace Lucene.Net.Index
                     Deleter.Dispose();
 
                     IOUtils.Close(WriteLock); // release write lock
+                    WriteLock.Release();
                     WriteLock = null;
 
                     Debug.Assert(DocWriter.PerThreadPool.NumDeactivatedThreadStates() == DocWriter.PerThreadPool.MaxThreadStates, "" + DocWriter.PerThreadPool.NumDeactivatedThreadStates() + " " + DocWriter.PerThreadPool.MaxThreadStates);
@@ -2638,6 +2640,7 @@ namespace Lucene.Net.Index
 
                         // close all the closeables we can (but important is readerPool and writeLock to prevent leaks)
                         IOUtils.CloseWhileHandlingException(readerPool, Deleter, WriteLock);
+                        WriteLock.Release();
                         WriteLock = null;
                     }
                     closed = true;
