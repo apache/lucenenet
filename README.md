@@ -30,15 +30,15 @@ Submit any articles and tutorials to the developers list, dev @ lucenenet.apache
 
 ### Contributing Code For Lucene.Net 5.0 PCL Branch
  * The current branch that is being ported is master on [lucene-solr](https://github.com/apache/lucene-solr). This will change to a tag in the future. 
- * Create a _task_ issue in [Jira](https://issues.apache.org/jira/browse/LUCENENET/) 
-    * Add the label _patch_ 
-    * Set the affects version _Lucene.Net 5.0 PCL_ 
+ * Create a __task__ issue in [Jira](https://issues.apache.org/jira/browse/LUCENENET/) 
+    * Add the label __patch__ 
+    * Set the affects version __Lucene.Net 5.0 PCL__ 
     * State the intended work. 
  	* Acknowledge that the code in the pull request is licensed under Apache 2.0 and the work is not copied. If it is copied, it must be under an apache 2 compatible license and the license must be in the code.
  * Follow the internal [Micrsoft code style guides](http://blogs.msdn.com/b/brada/archive/2005/01/26/361363.aspx).
  * Make sure to submit tests and document public code. Use code comments to explain decisions. 
    * If the pull request lacks tests and documentation, it will take longer for the commiters to adjust and merge the code to make it available for everyone.
-   * _Contributing something is better than nothing*_and maybe someone will take the patch / pull request and complete it. 
+   * __Contributing something is better than nothing__. Maybe another contributor will take the patch / pull request and complete it. 
  * Put the ticket number in commit messages. i.e. LUCENENET-168
  * Send a pull request with the ticket number to [github](https://github.com/apache/lucene.net).
  * See Also: [Contributor's Guide](http://www.apache.org/dev/contributors)
