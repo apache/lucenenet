@@ -29,7 +29,7 @@ The Apache Lucene.Net web site is at:
 Submit any articles and tutorials to the developers list, dev @ lucenenet.apache.org.
 
 ### Contributing Code For Lucene.Net 5.0 PCL Branch
- * The current branch that is being ported is master on [lucene-solor](https://github.com/apache/lucene-solr). This will change to a tag in the future. 
+ * The current branch that is being ported is master on [lucene-solr](https://github.com/apache/lucene-solr). This will change to a tag in the future. 
  * Create a *task* in [Jira](https://issues.apache.org/jira/browse/LUCENENET/) 
     * Add a label *patch* 
     * Set the affects version *Lucene.Net 5.0 PCL* 
