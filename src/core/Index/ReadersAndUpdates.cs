@@ -630,8 +630,8 @@ namespace Lucene.Net.Index
                 }
 
                 // create a new map, keeping only the gens that are in use
-                IDictionary<long?, ISet<string>> genUpdatesFiles = Info.UpdatesFiles;
-                IDictionary<long?, ISet<string>> newGenUpdatesFiles = new Dictionary<long?, ISet<string>>();
+                IDictionary<long, ISet<string>> genUpdatesFiles = Info.UpdatesFiles;
+                IDictionary<long, ISet<string>> newGenUpdatesFiles = new Dictionary<long, ISet<string>>();
                 long fieldInfosGen = Info.FieldInfosGen;
                 foreach (FieldInfo fi in fieldInfos)
                 {

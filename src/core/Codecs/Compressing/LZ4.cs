@@ -127,7 +127,9 @@ namespace Lucene.Net.Codecs.Compressing
                 }
 
                 // matchs
-                int matchDec = (compressed.ReadByte() & 0xFF) | ((compressed.ReadByte() & 0xFF) << 8);
+                var byte1 = compressed.ReadByte();
+                var byte2 = compressed.ReadByte();
+                int matchDec = (byte1 & 0xFF) | ((byte2 & 0xFF) << 8);
                 Debug.Assert(matchDec > 0);
 
                 int matchLen = token & 0x0F;

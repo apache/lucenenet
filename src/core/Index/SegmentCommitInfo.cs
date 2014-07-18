@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
         private long NextWriteFieldInfosGen;
 
         // Track the per-generation updates files
-        private readonly IDictionary<long?, ISet<string>> GenUpdatesFiles_Renamed = new Dictionary<long?, ISet<string>>();
+        private readonly IDictionary<long, ISet<string>> GenUpdatesFiles_Renamed = new Dictionary<long, ISet<string>>();
 
         private long SizeInBytes_Renamed = -1;
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the per generation updates files. </summary>
-        public virtual IDictionary<long?, ISet<string>> UpdatesFiles
+        public virtual IDictionary<long, ISet<string>> UpdatesFiles
         {
             get
             {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sets the updates file names per generation. Does not deep clone the map. </summary>
-        public virtual IDictionary<long?, ISet<string>> GenUpdatesFiles
+        public virtual IDictionary<long, ISet<string>> GenUpdatesFiles
         {
             set
             {
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index
             other.NextWriteFieldInfosGen = NextWriteFieldInfosGen;
 
             // deep clone
-            foreach (KeyValuePair<long?, ISet<string>> e in GenUpdatesFiles_Renamed)
+            foreach (KeyValuePair<long, ISet<string>> e in GenUpdatesFiles_Renamed)
             {
                 other.GenUpdatesFiles_Renamed[e.Key] = new HashSet<string>(e.Value);
             }

@@ -42,7 +42,6 @@ namespace Lucene.Net.Index
         /// Tests that index merging (specifically addIndexes(Directory...)) doesn't
         /// change the index order of documents.
         /// </summary>
-        [Ignore]
         [Test]
         public virtual void TestLucene()
         {

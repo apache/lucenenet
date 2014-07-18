@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using NUnit.Framework;
 using Lucene.Net.Support;
@@ -962,9 +963,9 @@ namespace Lucene.Net.Util
                     {
                         // Retrieve the package-private setIndexerThreadPool
                         // method:
-                        MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod("SetIndexerThreadPool", new Type[] { Type.GetType("Lucene.Net.Index.DocumentsWriterPerThreadPool") });
+                        MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
                         //setIndexerThreadPoolMethod.setAccessible(true);
-                        Type clazz = Type.GetType("Lucene.Net.Index.RandomDocumentsWriterPerThreadPool");
+                        Type clazz = typeof(RandomDocumentsWriterPerThreadPool);
                         ConstructorInfo ctor = clazz.GetConstructor(new Type[] { typeof(int), typeof(Random) });
                         //ctor.Accessible = true;
                         // random thread pool
@@ -2521,15 +2522,16 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool SlowFileExists(Directory dir, string fileName)
         {
-            try
+            return dir.FileExists(fileName);
+            /*try
             {
                 dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
                 return true;
             }
-            catch (Exception /*NoSuchFileException | FileNotFoundException*/ e)
+            catch (FileNotFoundException e)
             {
                 return false;
-            }
+            }*/
         }
 
         /// <summary>

@@ -766,7 +766,7 @@ namespace Lucene.Net.Store
                 }
                 if (!LuceneTestCase.SlowFileExists(@in, name))
                 {
-                    throw RandomState.NextBoolean() ? new FileNotFoundException(name + " in dir=" + @in) : new FileNotFoundException(name + " in dir=" + @in);
+                    throw new FileNotFoundException(name + " in dir=" + @in);
                 }
 
                 // cannot open a file for input if it's still open for

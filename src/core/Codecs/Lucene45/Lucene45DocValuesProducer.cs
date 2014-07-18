@@ -499,8 +499,8 @@ namespace Lucene.Net.Codecs.Lucene45
             MonotonicBlockPackedReader addresses;
             lock (AddressInstances)
             {
-                MonotonicBlockPackedReader addrInstance = AddressInstances[field.Number];
-                if (addrInstance == null)
+                MonotonicBlockPackedReader addrInstance;
+                if (!AddressInstances.TryGetValue(field.Number, out addrInstance))
                 {
                     data.Seek(bytes.AddressesOffset);
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, bytes.Count, false);

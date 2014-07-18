@@ -1,3 +1,4 @@
+using Lucene.Net.Store;
 using NUnit.Framework;
 
 namespace Lucene.Net.Index
@@ -36,6 +37,45 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), d);
             int numDocs = AtLeast(100);
+            for (int i = 0; i < numDocs; i++)
+            {
+                Document doc = new Document();
+                doc.Add(NewField("foo", "bar", TextField.TYPE_NOT_STORED));
+                w.AddDocument(doc);
+            }
+
+            IndexReader r = w.Reader;
+            w.Dispose();
+
+            foreach (string fileName in d.ListAll())
+            {
+                try
+                {
+                    d.DeleteFile(fileName);
+                }
+                catch (IOException ioe)
+                {
+                    // ignore: this means codec (correctly) is holding
+                    // the file open
+                }
+            }
+
+            foreach (AtomicReaderContext cxt in r.Leaves())
+            {
+                TestUtil.CheckReader(cxt.Reader());
+            }
+
+            r.Dispose();
+            d.Dispose();
+        }
+
+        [Test]
+        public virtual void TestExposeUnclosedFiles()
+        {
+            Directory d = NewDirectory();
+            RandomIndexWriter w = new RandomIndexWriter(Random(), d);
+            //int numDocs = AtLeast(100);
+            int numDocs = 5;
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();

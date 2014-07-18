@@ -237,7 +237,7 @@ namespace Lucene.Net.Util.Packed
             }
             // Two blocks
             Blocks[elementPos] = Blocks[elementPos] & ~((long)((ulong)MaskRight >> (int)endBits)) | ((long)((ulong)value >> (int)endBits));
-            Blocks[elementPos + 1] = Blocks[elementPos + 1] & (~(int)((uint)0L >> (int)endBits)) | (value << (int)(BLOCK_SIZE - endBits));
+            Blocks[elementPos + 1] = Blocks[elementPos + 1] & ((long)(unchecked((ulong)~0L) >> (int)endBits)) | (value << (int)(BLOCK_SIZE - endBits));
         }
 
         public override int Set(int index, long[] arr, int off, int len)

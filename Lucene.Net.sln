@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "Lucene.Net.csproj", "{9B06B39D-9B24-45D3-AB54-87F3A0DB7735}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net Tests", "test\Lucene.Net Tests.csproj", "{DE63DB10-975F-460D-AF85-572C17A91284}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests", "test\Lucene.Net.Tests.csproj", "{DE63DB10-975F-460D-AF85-572C17A91284}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

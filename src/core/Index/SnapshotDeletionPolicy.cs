@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         /// Records how many snapshots are held against each
         ///  commit generation 
         /// </summary>
-        protected internal IDictionary<long?, int?> RefCounts = new Dictionary<long?, int?>();
+        protected internal IDictionary<long, int> RefCounts = new Dictionary<long, int>();
 
         /// <summary>
         /// Used to map gen to IndexCommit. </summary>
@@ -153,10 +153,9 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 long gen = ic.Generation;
-                int? refCount;
-                RefCounts.TryGetValue(gen, out refCount);
+                int refCount;
                 int refCountInt;
-                if (refCount == null)
+                if (!RefCounts.TryGetValue(gen, out refCount))
                 {
                     IndexCommits[gen] = LastCommit;
                     refCountInt = 0;
@@ -257,7 +256,7 @@ namespace Lucene.Net.Index
                 SnapshotDeletionPolicy other = (SnapshotDeletionPolicy)base.Clone();
                 other.Primary = (IndexDeletionPolicy)this.Primary.Clone();
                 other.LastCommit = null;
-                other.RefCounts = new Dictionary<long?, int?>(RefCounts);
+                other.RefCounts = new Dictionary<long, int>(RefCounts);
                 other.IndexCommits = new Dictionary<long?, IndexCommit>(IndexCommits);
                 return other;
             }

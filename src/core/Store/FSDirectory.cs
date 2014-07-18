@@ -312,8 +312,11 @@ namespace Lucene.Net.Store
         public override bool FileExists(string name)
         {
             EnsureOpen();
+            return File.Exists(Path.Combine(Directory_Renamed.FullName, name));
+            /*
             FileInfo file = new FileInfo(Path.Combine(Directory_Renamed.FullName, name));
             return file.Exists;
+            */
         }
 
         /// <summary>

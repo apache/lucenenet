@@ -119,7 +119,7 @@ namespace Lucene.Net.Store
         private System.IO.FileStream f;
         private FileStream Channel;
         private bool @lock;
-        private FileInfo Path;
+        private DirectoryInfo Path;
         private DirectoryInfo LockDir;
 
         /*
@@ -137,7 +137,7 @@ namespace Lucene.Net.Store
         public NativeFSLock(DirectoryInfo lockDir, string lockFileName)
         {
             this.LockDir = lockDir;
-            Path = new FileInfo(/*System.IO.Path.Combine(*/lockDir.FullName/*, lockFileName)*/);
+            Path = new DirectoryInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
         }
 
         private bool LockExists()
@@ -212,7 +212,7 @@ namespace Lucene.Net.Store
 
                     try
                     {
-                        f = new System.IO.FileStream(Path.FullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
+                        f = new System.IO.FileStream(Path.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write);
                     }
                     catch (System.IO.IOException e)
                     {

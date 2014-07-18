@@ -400,14 +400,14 @@ namespace Lucene.Net.Index
                         if (actualFormat >= VERSION_46)
                         {
                             int numGensUpdatesFiles = input.ReadInt();
-                            IDictionary<long?, ISet<string>> genUpdatesFiles;
+                            IDictionary<long, ISet<string>> genUpdatesFiles;
                             if (numGensUpdatesFiles == 0)
                             {
-                                genUpdatesFiles = CollectionsHelper.EmptyMap<long?, ISet<string>>();
+                                genUpdatesFiles = CollectionsHelper.EmptyMap<long, ISet<string>>();
                             }
                             else
                             {
-                                genUpdatesFiles = new Dictionary<long?, ISet<string>>(numGensUpdatesFiles);
+                                genUpdatesFiles = new Dictionary<long, ISet<string>>(numGensUpdatesFiles);
                                 for (int i = 0; i < numGensUpdatesFiles; i++)
                                 {
                                     genUpdatesFiles[input.ReadLong()] = input.ReadStringSet();
@@ -542,9 +542,9 @@ namespace Lucene.Net.Index
                     }
                     segnOutput.WriteInt(delCount);
                     segnOutput.WriteLong(siPerCommit.FieldInfosGen);
-                    IDictionary<long?, ISet<string>> genUpdatesFiles = siPerCommit.UpdatesFiles;
+                    IDictionary<long, ISet<string>> genUpdatesFiles = siPerCommit.UpdatesFiles;
                     segnOutput.WriteInt(genUpdatesFiles.Count);
-                    foreach (KeyValuePair<long?, ISet<string>> e in genUpdatesFiles)
+                    foreach (KeyValuePair<long, ISet<string>> e in genUpdatesFiles)
                     {
                         segnOutput.WriteLong(e.Key);
                         segnOutput.WriteStringSet(e.Value);

@@ -163,6 +163,7 @@ namespace Lucene.Net.Index
             BytesRef value = new BytesRef();
             AppendingDeltaPackedLongBuffer.Iterator lengthsIterator = (AppendingDeltaPackedLongBuffer.Iterator)Lengths.GetIterator();
             int size = (int)Lengths.Size();
+            DataInput bytesIterator = Bytes.DataInput;
             int maxDoc = maxDocParam;
             int upto = 0;
             long byteOffset = 0L;
@@ -175,7 +176,7 @@ namespace Lucene.Net.Index
                     value.Grow(length);
                     value.Length = length;
                     //LUCENE TODO: This modification is slightly fishy, 4x port uses ByteBlockPool
-                    BytesIn.ReadBytes(/*byteOffset,*/ value.Bytes, value.Offset, value.Length);
+                    bytesIterator.ReadBytes(/*byteOffset,*/ value.Bytes, value.Offset, value.Length);
                     byteOffset += length;
                 }
                 else
