@@ -34,8 +34,11 @@ Target "Restore" (fun _ ->
                 info.FileName <- exe
                 info.Arguments <- command
             ) (TimeSpan.FromMinutes 5.0))
-    let code = sprintf "%i" out.ExitCode
-    trace code
+    
+    let exitCode = out.ExitCode
+    
+    if not (exitCode = 0 || exitCode = 100) then 
+        failwithf "Unable to Restore Packages: %i" exitCode
 )
 
 Target "Build:Core" (fun _ ->
@@ -50,7 +53,10 @@ Target "Build:Core" (fun _ ->
                 info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
 
-    trace "done"
+    let exitCode = out.ExitCode
+    
+    if not (exitCode = 0 || exitCode = 100) then 
+        failwithf "Unable to Build Core: %i" exitCode
 )
 
 Target "Build:TestFramework" (fun _ ->
@@ -66,8 +72,10 @@ Target "Build:TestFramework" (fun _ ->
                 info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
    
-    let code = sprintf "%i" out.ExitCode
-    trace code
+    let exitCode = out.ExitCode
+    
+    if not (exitCode = 0 || exitCode = 100) then 
+        failwithf "Unable to Build TestFramework: %i" exitCode
 )
 
 Target "Build:Core:Tests" (fun _ ->
@@ -83,8 +91,10 @@ Target "Build:Core:Tests" (fun _ ->
                 info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
 
-    let code = sprintf "%i" out.ExitCode
-    trace code
+    let exitCode = out.ExitCode
+    
+    if not (exitCode = 0 || exitCode = 100) then 
+        failwithf "Unable to Build Core Tests: %i" exitCode
 )
 
 Target "Test:Core" (fun _ ->
@@ -99,15 +109,14 @@ Target "Test:Core" (fun _ ->
                 info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
 
-    let code = sprintf "%i" out.ExitCode
-    let message = 
-        if out.ExitCode = 0 then "pass"
-        else "fail"
-    trace message
+    let exitCode = out.ExitCode
+    
+    if not (exitCode = 0 || exitCode = 100) then 
+        failwithf "Tests Failed: %i" exitCode
 )
 
 Target "Default" (fun _ ->
-    trace "Hello Word"
+    trace "Done!"
 )
 
 "Clean"
