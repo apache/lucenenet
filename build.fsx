@@ -4,36 +4,61 @@ open Fake
 
 let buildDir = "./build"
 
-// from SO http://stackoverflow.com/questions/3065409/starting-a-process-synchronously-and-streaming-the-output
-type ProcessResult = { exitCode : int; stdout : string; stderr : string }
+let exe = 
+    if isMono then "/bin/bash"
+        else "cmd"
 
-
-    
 
 Target "Clean" (fun _ -> 
     trace "Clean"
     CleanDir buildDir
 )
 
-Target "Build:Core" (fun _ ->
-    //let errorCode = Shell.Exec "cmd","/c k build ./src/Lucene.Net.Core"
-    //do something with the error code
-    //()
+Target "Restore" (fun _ ->
+    
+    let exe = 
+        if isMono then "/bin/bash"
+        else "cmd"
+    
+    let command = 
+        if isMono then "-c 'kpm restore -s https://www.myget.org/F/aspnetvnext'"
+        else "/c kpm restore -s https://www.myget.org/F/aspnetvnext"
+
     let out = (ExecProcessAndReturnMessages(fun info ->
-                info.FileName <- "cmd"
-                info.Arguments <- "/c k build ./src/Lucene.Net.Core/"
+                info.FileName <- exe
+                info.Arguments <- command
             ) (TimeSpan.FromMinutes 5.0))
     let code = sprintf "%i" out.ExitCode
     trace code
 )
 
-Target "Build:TestFramework" (fun _ ->
+Target "Build:Core" (fun _ ->
 
+    let command = 
+        if isMono then "-c 'cd ./src/Lucene.Net.Core/ && k build'"
+        else "/c k build ./src/Lucene.Net.Core/"
+
+    // Shell.Exec(exe, )
     let out =  (ExecProcessAndReturnMessages(fun info ->
-                info.FileName <- "cmd"
-                info.Arguments <- "/c k build ./test/Lucene.Net.TestFramework/"
+                info.FileName <- exe
+                info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
 
+    trace "done"
+)
+
+Target "Build:TestFramework" (fun _ ->
+
+    
+    let command = 
+        if isMono then "-c 'cd ./test/Lucene.Net.TestFramework/ && k build'"
+        else "/c k build ./test/Lucene.Net.TestFramework/"
+
+    // Shell.Exec(exe, )
+    let out =  (ExecProcessAndReturnMessages(fun info ->
+                info.FileName <- exe
+                info.Arguments <- command.ToString()
+            ) (TimeSpan.FromMinutes 5.0))
    
     let code = sprintf "%i" out.ExitCode
     trace code
@@ -41,25 +66,37 @@ Target "Build:TestFramework" (fun _ ->
 
 Target "Build:Core:Tests" (fun _ ->
 
-    let out = (ExecProcessAndReturnMessages(fun info ->
-                info.FileName <- "cmd"
-                info.Arguments <- "/c k build ./test/Lucene.Net.Core.Tests/"
+        
+    let command = 
+        if isMono then "-c 'cd ./test/Lucene.Net.Core.Tests/ && k build'"
+        else "/c k build ./test/Lucene.Net.Core.Tests/"
+
+    // Shell.Exec(exe, )
+    let out =  (ExecProcessAndReturnMessages(fun info ->
+                info.FileName <- exe
+                info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
+
     let code = sprintf "%i" out.ExitCode
     trace code
 )
 
 Target "Test:Core" (fun _ ->
-    let out = (ExecProcessAndReturnMessages(fun info ->
-                info.FileName <- "cmd"
-                info.Arguments <- "/c k test"
-                info.WorkingDirectory <- "./test/Lucene.Net.Core.Tests/"
+
+    let command = 
+        if isMono then "-c 'cd ./test/Lucene.Net.Core.Tests/ && k test'"
+        else "/c cd ./test/Lucene.Net.Core.Tests/ & k test "
+
+    let out =  (ExecProcessAndReturnMessages(fun info ->
+                info.FileName <- exe
+                info.Arguments <- command.ToString()
             ) (TimeSpan.FromMinutes 5.0))
-   
+
     let code = sprintf "%i" out.ExitCode
-    trace code
-    //trace result.stdout
-    //trace result.stderr
+    let message = 
+        if out.ExitCode = 0 then "pass"
+        else "fail"
+    trace message
 )
 
 Target "Default" (fun _ ->
@@ -67,6 +104,7 @@ Target "Default" (fun _ ->
 )
 
 "Clean"
+    ==> "Restore"
     ==> "Build:Core"
     ==> "Build:TestFramework"
     ==> "Build:Core:Tests"
