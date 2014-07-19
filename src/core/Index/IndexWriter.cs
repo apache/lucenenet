@@ -958,8 +958,8 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IW", "init: hit exception on init; releasing write lock");
                     }
-                    IOUtils.CloseWhileHandlingException(WriteLock);
                     WriteLock.Release();
+                    IOUtils.CloseWhileHandlingException(WriteLock);
                     WriteLock = null;
                 }
             }
@@ -1272,6 +1272,7 @@ namespace Lucene.Net.Index
                 if (WriteLock != null)
                 {
                     WriteLock.Release(); // release write lock
+                    WriteLock.Dispose();
                     WriteLock = null;
                 }
                 lock (this)
@@ -2597,8 +2598,8 @@ namespace Lucene.Net.Index
                     Deleter.Refresh();
                     Deleter.Dispose();
 
-                    IOUtils.Close(WriteLock); // release write lock
                     WriteLock.Release();
+                    IOUtils.Close(WriteLock); // release write lock
                     WriteLock = null;
 
                     Debug.Assert(DocWriter.PerThreadPool.NumDeactivatedThreadStates() == DocWriter.PerThreadPool.MaxThreadStates, "" + DocWriter.PerThreadPool.NumDeactivatedThreadStates() + " " + DocWriter.PerThreadPool.MaxThreadStates);

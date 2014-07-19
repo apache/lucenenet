@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Compatibility;
+using NUnit.Framework;
 
 namespace Lucene.Net.Util
 {
@@ -98,8 +99,6 @@ namespace Lucene.Net.Util
                 Stream @is;
                 bool needSkip = true, failed = false;
                 long size = 0L, seekTo = 0L;
-
-
 
                 try
                 {

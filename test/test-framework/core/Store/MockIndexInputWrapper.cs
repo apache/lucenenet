@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Store
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Store
             {
                 // turn on the following to look for leaks closing inputs,
                 // after fixing TestTransactions
-                // dir.maybeThrowDeterministicException();
+                Dir.MaybeThrowDeterministicException();
             }
             finally
             {

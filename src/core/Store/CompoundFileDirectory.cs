@@ -133,6 +133,7 @@ namespace Lucene.Net.Store
                 this.Entries = SENTINEL;
                 this.IsOpen = true;
                 Writer = new CompoundFileWriter(directory, fileName);
+                Handle.Dispose();
                 Handle = null;
             }
         }

@@ -146,10 +146,6 @@ namespace Lucene.Net.Index
                 {
                     throw (Exception)th;
                 }
-                if (th is Exception)
-                {
-                    throw (Exception)th;
-                }
                 // defensive code - we should not hit unchecked exceptions
                 throw new Exception(th.Message, th);
             }

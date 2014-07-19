@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
                         int howMany = Random().Next(20) == 0 ? pos.Length - Random().Next(pos.Length) : pos.Length;
                         for (int j = 0; j < howMany; j++)
                         {
-                            Assert.AreEqual((int)pos[j], docsAndPosEnum.NextPosition(), "iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.DocBase + " positions: " + (string[])(Array)(pos)); /* TODO: + " usePayloads: "
+                            Assert.AreEqual(pos[j], docsAndPosEnum.NextPosition(), "iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.DocBase + " positions: " + pos); /* TODO: + " usePayloads: "
 	                + usePayload*/
                         }
 

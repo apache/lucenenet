@@ -388,7 +388,16 @@ namespace Lucene.Net.Index
             {
                 Attributes_Renamed = new Dictionary<string, string>();
             }
-            return Attributes_Renamed[key] = value;
+
+            string ret;
+            // The key was not previously assigned, null will be returned
+            if (!Attributes_Renamed.TryGetValue(key, out ret))
+            {
+                ret = null;
+            }
+
+            Attributes_Renamed[key] = value;
+            return ret;
         }
 
         /// <summary>

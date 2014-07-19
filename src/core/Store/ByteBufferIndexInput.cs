@@ -271,8 +271,6 @@ namespace Lucene.Net.Store
             {
                 throw new InvalidOperationException("cannot slice() " + sliceDescription + " from a cloned IndexInput: " + this);
             }
-            //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-            //ORIGINAL LINE: final ByteBufferIndexInput clone = buildSlice(offset, length);
             ByteBufferIndexInput clone = BuildSlice(offset, length);
             clone.SliceDescription = sliceDescription;
             try

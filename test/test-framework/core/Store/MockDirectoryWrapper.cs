@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
         private ISet<string> UnSyncedFiles;
         private ISet<string> CreatedFiles;
         private ISet<string> OpenFilesForWrite = new HashSet<string>();
-        internal ISet<string> OpenLocks = /*Collections.synchronizedSet(*/new HashSet<string>()/*)*/;
+        internal ISet<string> OpenLocks = new ConcurrentHashSet<string>();
         internal volatile bool Crashed;
         private ThrottledIndexOutput ThrottledOutput;
         private Throttling_e throttling = Throttling_e.SOMETIMES;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Store
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private IDictionary<IDisposable, Exception> OpenFileHandles = new HashMap<IDisposable, Exception>();
+        private IDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentHashMap<IDisposable, Exception>();
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
@@ -727,6 +727,9 @@ namespace Lucene.Net.Store
 
         internal virtual void AddFileHandle(IDisposable c, string name, Handle handle)
         {
+
+            Trace.TraceInformation("Add {0} {1}", c, name);
+
             lock (this)
             {
                 int v;
@@ -1068,6 +1071,8 @@ namespace Lucene.Net.Store
 
         internal virtual void RemoveOpenFile(IDisposable c, string name)
         {
+            Trace.TraceInformation("Remove {0} {1}", c, name);
+
             lock (this)
             {
                 int v;
@@ -1321,17 +1326,15 @@ namespace Lucene.Net.Store
                 this.DelegateHandle = delegateHandle;
             }
 
-
-            private bool isClosed;
+            private int disposed = 0;
             public override void Dispose(bool disposing)
             {
-                if (disposing)
+                if (0 == Interlocked.CompareExchange(ref this.disposed, 1, 0))
                 {
-                    if (!isClosed)
+                    if (disposing)
                     {
                         DelegateHandle.Dispose();
                         OuterInstance.RemoveOpenFile(this, Name);
-                        isClosed = true;
                     }
                 }
             }

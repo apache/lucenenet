@@ -206,8 +206,6 @@ namespace Lucene.Net.Util
                         }
                     }
                 }
-
-
             }
 
 

@@ -138,7 +138,7 @@ namespace Lucene.Net.Store
         /// <code>true</code>, if this platform supports unmapping mmapped files.
         /// </summary>
         public static readonly bool UNMAP_SUPPORTED;
-        static MMapDirectory()
+        /*static MMapDirectory()
         {
             bool v;
             try
@@ -152,7 +152,7 @@ namespace Lucene.Net.Store
                 v = false;
             }
             UNMAP_SUPPORTED = v;
-        }
+        }*/
 
         /// <summary>
         /// this method enables the workaround for unmapping the buffers
@@ -200,7 +200,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite);
+            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
 
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file.ToString() + "\")", c);
         }
@@ -209,7 +209,14 @@ namespace Lucene.Net.Store
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
-            MMapIndexInput full = (MMapIndexInput)OpenInput(name, context);
+            EnsureOpen();
+            FileInfo file = new FileInfo(Path.Combine(Directory.FullName, name));
+
+            FileStream c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+
+            var full = new MMapIndexInput(this, "MMapIndexInputSlicer(path=\"" + file.ToString() + "\")", c);
+
+            //MMapIndexInput full = (MMapIndexInput)OpenInput(name, context);
             return new IndexInputSlicerAnonymousInnerClassHelper(this, full);
         }
 
@@ -249,10 +256,12 @@ namespace Lucene.Net.Store
 
             internal readonly bool UseUnmapHack;
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
+            internal MMapDirectory outerInstance;
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
                 : base(resourceDescription, null, fc.Length, outerInstance.ChunkSizePower, outerInstance.UseUnmap)
             {
+                this.outerInstance = outerInstance;
                 this.UseUnmapHack = outerInstance.UseUnmap;
                 this.Buffers = outerInstance.Map(this, fc, 0, fc.Length);
 
@@ -262,6 +271,7 @@ namespace Lucene.Net.Store
 
             public override sealed void Dispose()
             {
+
                 if (null != this.memoryMappedFile)
                 {
                     this.memoryMappedFile.Dispose();
@@ -345,7 +355,7 @@ namespace Lucene.Net.Store
              */
 
             if (input.memoryMappedFile == null)
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.None, false);
+                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, length == 0 ? 100 : length, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.None, false);
 
             long bufferStart = 0L;
             for (int bufNr = 0; bufNr < nrBuffers; bufNr++)

@@ -70,15 +70,17 @@ namespace Lucene.Net.Support
 
         public override char GetChar()
         {
-            var c = _accessor.ReadChar(Position);
+            char c = _accessor.ReadChar(Position);
             Position += 2;
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutChar(char value)
         {
-            _accessor.Write(Position, value);
+            //conform to how the index was written
+            _accessor.Write(Position, Number.FlipEndian(value));
             Position += 2;
 
             return this;
@@ -88,12 +90,13 @@ namespace Lucene.Net.Support
         {
             var c = _accessor.ReadChar(index);
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutChar(int index, char value)
         {
-            _accessor.Write(index, value);
+            _accessor.Write(index, Number.FlipEndian(value));
 
             return this;
         }
@@ -103,12 +106,14 @@ namespace Lucene.Net.Support
             var c = _accessor.ReadInt16(Position);
             Position += 2;
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutShort(short value)
         {
-            _accessor.Write(Position, value);
+            //conform to how the index was written
+            _accessor.Write(Position, Number.FlipEndian(value));
             Position += 2;
 
             return this;
@@ -118,12 +123,14 @@ namespace Lucene.Net.Support
         {
             var c = _accessor.ReadInt16(index);
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutShort(int index, short value)
         {
-            _accessor.Write(index, value);
+            //conform to how the index was written
+            _accessor.Write(index, Number.FlipEndian(value));
 
             return this;
         }
@@ -133,12 +140,14 @@ namespace Lucene.Net.Support
             var c = _accessor.ReadInt32(Position);
             Position += 4;
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutInt(int value)
         {
-            _accessor.Write(Position, value);
+            //conform to how the index was written
+            _accessor.Write(Position, Number.FlipEndian(value));
             Position += 4;
 
             return this;
@@ -148,12 +157,14 @@ namespace Lucene.Net.Support
         {
             var c = _accessor.ReadInt32(index);
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutInt(int index, int value)
         {
-            _accessor.Write(index, value);
+            //conform to how the index was written
+            _accessor.Write(index, Number.FlipEndian(value));
 
             return this;
         }
@@ -163,12 +174,14 @@ namespace Lucene.Net.Support
             var c = _accessor.ReadInt64(Position);
             Position += 8;
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutLong(long value)
         {
-            _accessor.Write(Position, value);
+            //conform to how the index was written
+            _accessor.Write(Position, Number.FlipEndian(value));
             Position += 8;
 
             return this;
@@ -178,12 +191,14 @@ namespace Lucene.Net.Support
         {
             var c = _accessor.ReadInt64(index);
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutLong(int index, long value)
         {
-            _accessor.Write(index, value);
+            //conform to how the index was written
+            _accessor.Write(index, Number.FlipEndian(value));
 
             return this;
         }
@@ -193,12 +208,14 @@ namespace Lucene.Net.Support
             var c = _accessor.ReadSingle(Position);
             Position += 4;
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutFloat(float value)
         {
-            _accessor.Write(Position, value);
+            //conform to how the index was written
+            _accessor.Write(Position, Number.FlipEndian(value));
             Position += 4;
 
             return this;
@@ -208,12 +225,14 @@ namespace Lucene.Net.Support
         {
             var c = _accessor.ReadSingle(index);
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutFloat(int index, float value)
         {
-            _accessor.Write(index, value);
+            //conform to how the index was written
+            _accessor.Write(index, Number.FlipEndian(value));
 
             return this;
         }
@@ -223,12 +242,14 @@ namespace Lucene.Net.Support
             var c = _accessor.ReadDouble(Position);
             Position += 4;
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutDouble(double value)
         {
-            _accessor.Write(Position, value);
+            //conform to how the index was written
+            _accessor.Write(Position, Number.FlipEndian(value));
             Position += 8;
 
             return this;
@@ -238,12 +259,14 @@ namespace Lucene.Net.Support
         {
             var c = _accessor.ReadDouble(index);
 
-            return c;
+            //conform to how the index was written
+            return Number.FlipEndian(c);
         }
 
         public override ByteBuffer PutDouble(int index, double value)
         {
-            _accessor.Write(index, value);
+            //conform to how the index was written
+            _accessor.Write(index, Number.FlipEndian(value));
 
             return this;
         }

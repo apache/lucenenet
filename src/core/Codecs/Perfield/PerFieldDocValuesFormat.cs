@@ -153,10 +153,8 @@ namespace Lucene.Net.Codecs.Perfield
                 string formatName_ = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
-                //LUCENE TODO
-                //Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName_ + " prevValue=" + previousValue);
+                Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName_ + " prevValue=" + previousValue);
 
-                //int? suffix = default(int?);
                 int suffix = -1;
 
                 ConsumerAndSuffix consumer;
@@ -205,8 +203,7 @@ namespace Lucene.Net.Codecs.Perfield
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix));
-                //LUCENE TODO
-                //Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "suffix=" + Convert.ToString(suffix) + " prevValue=" + previousValue);
+                Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "suffix=" + Convert.ToString(suffix) + " prevValue=" + previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...

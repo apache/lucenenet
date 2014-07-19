@@ -86,8 +86,6 @@ namespace Lucene.Net.Index
 
 	  private void UpdateBytesUsed()
 	  {
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final long newBytesUsed = pending.ramBytesUsed() + docsWithFieldBytesUsed();
 		long newBytesUsed = Pending.RamBytesUsed() + DocsWithFieldBytesUsed();
 		IwBytesUsed.AddAndGet(newBytesUsed - BytesUsed);
 		BytesUsed = newBytesUsed;

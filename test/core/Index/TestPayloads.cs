@@ -571,8 +571,8 @@ namespace Lucene.Net.Index
             internal ByteArrayPool Pool;
             internal string Term;
 
-            internal CharTermAttribute TermAtt;
-            internal PayloadAttribute PayloadAtt;
+            internal ICharTermAttribute TermAtt;
+            internal IPayloadAttribute PayloadAtt;
 
             internal PoolingPayloadTokenStream(TestPayloads outerInstance, ByteArrayPool pool)
             {
@@ -582,8 +582,8 @@ namespace Lucene.Net.Index
                 OuterInstance.GenerateRandomData(Payload);
                 Term = Encoding.UTF8.GetString((byte[])(Array)Payload);
                 First = true;
-                PayloadAtt = AddAttribute<PayloadAttribute>();
-                TermAtt = AddAttribute<CharTermAttribute>();
+                PayloadAtt = AddAttribute<IPayloadAttribute>();
+                TermAtt = AddAttribute<ICharTermAttribute>();
             }
 
             public override bool IncrementToken()
