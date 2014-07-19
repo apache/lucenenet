@@ -37,7 +37,7 @@ Target "Restore" (fun _ ->
     
     let exitCode = out.ExitCode
     
-    if not (exitCode = 0 || exitCode = 100) then 
+    if not (exitCode = 0 || exitCode = 100 || exitCode = 255) then 
         failwithf "Unable to Restore Packages: %i" exitCode
 )
 
@@ -55,7 +55,7 @@ Target "Build:Core" (fun _ ->
 
     let exitCode = out.ExitCode
     
-    if not (exitCode = 0 || exitCode = 100) then 
+    if not (exitCode = 0 || exitCode = 100 || exitCode = 255) then 
         failwithf "Unable to Build Core: %i" exitCode
 )
 
@@ -74,7 +74,7 @@ Target "Build:TestFramework" (fun _ ->
    
     let exitCode = out.ExitCode
     
-    if not (exitCode = 0 || exitCode = 100) then 
+    if not (exitCode = 0 || exitCode = 100 || exitCode = 255) then 
         failwithf "Unable to Build TestFramework: %i" exitCode
 )
 
@@ -93,7 +93,7 @@ Target "Build:Core:Tests" (fun _ ->
 
     let exitCode = out.ExitCode
     
-    if not (exitCode = 0 || exitCode = 100) then 
+    if not (exitCode = 0 || exitCode = 100 || exitCode = 255) then 
         failwithf "Unable to Build Core Tests: %i" exitCode
 )
 
@@ -111,7 +111,7 @@ Target "Test:Core" (fun _ ->
 
     let exitCode = out.ExitCode
     
-    if not (exitCode = 0 || exitCode = 100) then 
+    if not (exitCode = 0 || exitCode = 100 || exitCode = 255) then 
         failwithf "Tests Failed: %i" exitCode
 )
 
