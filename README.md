@@ -56,6 +56,10 @@ $ cd path/to/lucene.net/tests/Lucene.Net.Core.Tests
 $ k test
  ```
 
+## Build Scripts
+ * uses FAKE
+ * see [build docs](docs/build.md)
+
 
 ## Milestone 1
  * Implement Build Scripts with [Fake](http://fsharp.github.io/FAKE/)
