@@ -8,6 +8,12 @@ let exe =
     if isMono then "/bin/bash"
         else "cmd"
 
+let ci =
+    System.Environment.GetEnvironmentVariable("CI")
+
+let isCi =
+    if ci <> null then true
+    else false
 
 Target "Clean" (fun _ -> 
     trace "Clean"
@@ -85,7 +91,8 @@ Target "Test:Core" (fun _ ->
 
     let command = 
         if isMono then "-c 'cd ./test/Lucene.Net.Core.Tests/ && k test'"
-        else "/c cd ./test/Lucene.Net.Core.Tests/ & k test "
+        elif isCi then "/c cd ./test/Lucene.Net.Core.Tests/ & ./../../k.cmd test"
+        else "/c cd ./test/Lucene.Net.Core.Tests/ & k test"
 
     let out =  (ExecProcessAndReturnMessages(fun info ->
                 info.FileName <- exe
