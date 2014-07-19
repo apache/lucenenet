@@ -91,7 +91,7 @@ Target "Test:Core" (fun _ ->
 
     let command = 
         if isMono then "-c 'cd ./test/Lucene.Net.Core.Tests/ && k test'"
-        elif isCi then "/c cd ./test/Lucene.Net.Core.Tests/ & ./../../k.cmd test"
+        elif isCi then "/c cd test\\Lucene.Net.Core.Tests\\ & ..\\..\\k.cmd test"
         else "/c cd ./test/Lucene.Net.Core.Tests/ & k test"
 
     let out =  (ExecProcessAndReturnMessages(fun info ->
