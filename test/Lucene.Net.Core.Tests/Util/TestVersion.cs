@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         [Test(JavaMethodName = "testParseLenietly")]
         public void ParseLenietly()
         {
-            // There isn't a C# equivelant of having methods on enums
+            // There isn't a C# equivelant of having static methods on enums
 
             Equal(Version.LUCENE_4_3, default(Version).ParseLeniently("4.3"));
             Equal(Version.LUCENE_4_3, default(Version).ParseLeniently("LUCENE_43"));
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    Ok(!isObsolete, "{0} should not be deprecased", name);
+                    Ok(!isObsolete, "{0} should not be deprecated", name);
                 }
             }
         }

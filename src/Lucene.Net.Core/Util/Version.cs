@@ -83,17 +83,17 @@ namespace Lucene.Net.Util
         LUCENE_CURRENT,
     }
 
-    public static class VersionEnumExtensions
+    public static class VersionUtil
     {
         /// <summary>
         /// Verifies that the other version number is equal to or greater than the first version.
         /// </summary>
-        /// <param name="first">The floor version.</param>
-        /// <param name="other">The actual version.</param>
+        /// <param name="current">The current version which is treated as minimum value.</param>
+        /// <param name="other">The other version that is being compared.</param>
         /// <returns><see cref="bool"/> True, if the other version is equal or greater than the first, otherwise, false.</returns>
-        public static bool OnOrAfter(this Version first, Version other)
+        public static bool OnOrAfter(this Version current, Version other)
         {
-            return first.CompareTo(other) >= 0;
+            return current.CompareTo(other) >= 0;
         }
 
         /// <summary>

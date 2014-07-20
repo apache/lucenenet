@@ -25,10 +25,22 @@ namespace Lucene.Net
     using System.Diagnostics;
 
     /// <summary>
-    /// Summary description for Check
+    /// Checks for code for issues that causes an error. Think of it as the replacement for Guard.
     /// </summary>
-    public static class Check
+    internal static class Check
     {
+
+        [DebuggerStepThrough]
+        public static void InRangeOfLength(string argument, int value, int length) 
+        {
+            if (value < 0 || value >= length)
+            {
+                var message = string.Format("{0} must not be less than 0 or "+
+                    "greater than or equal to the Length, {1}. {0} was {2}", argument, length, value);
+
+                throw new IndexOutOfRangeException(message);
+            }
+        }
 
         [DebuggerStepThrough]
         public static T NotNull<T>(string argument, T value, bool reference = false)
