@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     {
         // TODO: figure out how ordinal positions are supposed to match up.
         public TestInPlaceMergeSorter()
-            :base(false)
+            :base(true)
         {
 
         }

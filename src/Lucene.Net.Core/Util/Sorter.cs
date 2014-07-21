@@ -35,12 +35,12 @@ namespace Lucene.Net.Util
         protected Sorter() { }
 
         /// <summary>
-        /// Sort a slice or range which begins at the <paramref name="start"/> index to the <paramref name="end"/> index.
+        /// Sort a slice or range which begins at the <paramref name="start"/> index to the <paramref name="count"/> index.
         /// </summary>
         /// <param name="start">The position to start the slice.</param>
-        /// <param name="end">The position to end the slice. </param>
+        /// <param name="count">The count or length of the slice. </param>
         /// <exception cref="IndexOutOfRangeException">Throws when start is greater or equal the length or when the start + count </exception>
-        public abstract void SortSlice(int start, int end);
+        public abstract void SortRange(int start, int count);
 
 
         /// <summary>
@@ -63,26 +63,26 @@ namespace Lucene.Net.Util
         /// Throws an exception when start is greater than end.
         /// </summary>
         /// <param name="start">The start index position.</param>
-        /// <param name="end">the end index position.</param>
-        protected void CheckSlice(int start, int end)
+        /// <param name="count">the end index position.</param>
+        protected void CheckSlice(int start, int count)
         {
-            if(start > end)
+            if(start > count)
             {
                 string message = string.Format("The start parameter must be less than the end parameter." +
-                    " start was {0} and end was {1}", start, end);
+                    " start was {0} and count was {1}", start, count);
 
                 throw new ArgumentException(message);
             }
         }
 
 
-        protected void MergeInPlace(int start, int middle, int end)
+        protected void MergeInPlace(int start, int middle, int count)
         {
-            if (start == middle || middle == end || this.Compare(middle - 1, middle) <= 0)
+            if (start == middle || middle == count || this.Compare(middle - 1, middle) <= 0)
             {
                 return;
             }
-            else if (end - start == 2)
+            else if (count - start == 2)
             {
                 this.Swap(middle - 1, middle);
                 return;
@@ -91,24 +91,24 @@ namespace Lucene.Net.Util
             {
                 ++start;
             }
-            while (this.Compare(middle - 1, end - 1) <= 0)
+            while (this.Compare(middle - 1, count - 1) <= 0)
             {
-                --end;
+                --count;
             }
 
             int firstCut, secondCut;
             int len11, len22;
 
-            if (middle - start > end - middle)
+            if (middle - start > count - middle)
             {
                 len11 = (middle - start) >> 1;
                 firstCut = start + len11;
-                secondCut = this.Lower(middle, end, firstCut);
+                secondCut = this.Lower(middle, count, firstCut);
                 len22 = secondCut - middle;
             }
             else
             {
-                len22 = (end - middle) >> 1;
+                len22 = (count - middle) >> 1;
                 secondCut = middle + len22;
                 firstCut = this.Upper(start, middle, secondCut);
                 len11 = firstCut - start;
@@ -118,13 +118,13 @@ namespace Lucene.Net.Util
 
             var newMiddle = firstCut + len22;
             this.MergeInPlace(start, firstCut, newMiddle);
-            this.MergeInPlace(newMiddle, secondCut, end);
+            this.MergeInPlace(newMiddle, secondCut, count);
         }
 
 
-        protected int Lower(int start, int end, int value)
+        protected int Lower(int start, int count, int value)
         {
-            int len = end - start;
+            int len = count - start;
             while (len > 0)
             {
                 int half = len >> 1;
@@ -142,9 +142,9 @@ namespace Lucene.Net.Util
             return start;
         }
 
-        protected int Upper(int start, int end, int value)
+        protected int Upper(int start, int count, int value)
         {
-            int len = end - start;
+            int len = count - start;
             while (len > 0)
             {
                 int half = len >> 1;
@@ -163,9 +163,9 @@ namespace Lucene.Net.Util
         }
 
         // faster than lower when val is at the end of [from:to[
-        protected int LowerFromReverse(int start, int end, int value)
+        protected int LowerFromReverse(int start, int count, int value)
         {
-            int f = end - 1, t = end;
+            int f = count - 1, t = count;
             while (f > start)
             {
                 if (this.Compare(f, value) < 0)
@@ -181,10 +181,10 @@ namespace Lucene.Net.Util
         }
 
         // faster than upper when val is at the beginning of [from:to[
-        public int UpperFromReverse(int start, int end, int value)
+        public int UpperFromReverse(int start, int count, int value)
         {
             int f = start, t = f + 1;
-            while (t < end)
+            while (t < count)
             {
                 if (this.Compare(t, value) > 0)
                 {
@@ -195,33 +195,33 @@ namespace Lucene.Net.Util
                 f = t;
                 t += delta << 1;
             }
-            return this.Upper(f, end, value);
+            return this.Upper(f, count, value);
         }
 
-        protected void Reverse(int start, int end)
+        protected void Reverse(int start, int count)
         {
-            for (--end; start < end; ++start, --end)
+            for (--count; start < count; ++start, --count)
             {
-                this.Swap(start, end);
+                this.Swap(start, count);
             }
         }
 
-        protected void Rotate(int start, int middle, int end)
+        protected void Rotate(int start, int middle, int count)
         {
-            Debug.Assert(start <= middle && middle <= end);
-            if (start == middle || middle == end)
+            Debug.Assert(start <= middle && middle <= count);
+            if (start == middle || middle == count)
             {
                 return;
             }
-            this.DoRotate(start, middle, end);
+            this.DoRotate(start, middle, count);
         }
 
-        void DoRotate(int start, int middle, int end)
+        void DoRotate(int start, int middle, int count)
         {
-            if (middle - start == end - middle)
+            if (middle - start == count - middle)
             {
                 // happens rarely but saves n/2 swaps
-                while (middle < end)
+                while (middle < count)
                 {
                    this.Swap(start++, middle++);
                 }
@@ -229,14 +229,14 @@ namespace Lucene.Net.Util
             else
             {
                 this.Reverse(start, middle);
-                this.Reverse(middle, end);
-                this.Reverse(start, end);
+                this.Reverse(middle, count);
+                this.Reverse(start, count);
             }
         }
 
-        protected void InsertionSort(int start, int end)
+        protected void InsertionSort(int start, int count)
         {
-            for (int i = start + 1; i < end; ++i)
+            for (int i = start + 1; i < count; ++i)
             {
                 for (int j = i; j > start; --j)
                 {
@@ -252,14 +252,14 @@ namespace Lucene.Net.Util
             }
         }
 
-        void BinarySort(int start, int end)
+        void BinarySort(int start, int count)
         {
-            this.BinarySort(start, end, start + 1);
+            this.BinarySort(start, count, start + 1);
         }
 
-        void BinarySort(int start, int end, int i)
+        void BinarySort(int start, int count, int i)
         {
-            for (; i < end; ++i)
+            for (; i < count; ++i)
             {
                 int l = start;
                 int h = i - 1;
@@ -297,38 +297,38 @@ namespace Lucene.Net.Util
             }
         }
 
-        void HeapSort(int from, int to)
+        void HeapSort(int start, int count)
         {
-            if (to - from <= 1)
+            if (count - start <= 1)
             {
                 return;
             }
 
-            this.Heapify(from, to);
+            this.Heapify(start, count);
 
-            for (int end = to - 1; end > from; --end)
+            for (int end = count - 1; end > start; --end)
             {
-                this.Swap(from, end);
-                this.SiftDown(from, from, end);
+                this.Swap(start, end);
+                this.SiftDown(start, start, end);
             }
         }
 
-        void Heapify(int from, int to)
+        void Heapify(int start, int count)
         {
-            for (int i = HeapParent(from, to - 1); i >= from; --i)
+            for (int i = HeapParent(start, count - 1); i >= start; --i)
             {
-                SiftDown(i, from, to);
+                SiftDown(i, start, count);
             }
         }
 
-        void SiftDown(int i, int from, int to)
+        void SiftDown(int i, int start, int count)
         {
-            for (int leftChild = HeapChild(from, i); leftChild < to; leftChild = HeapChild(from, i))
+            for (int leftChild = HeapChild(start, i); leftChild < count; leftChild = HeapChild(start, i))
             {
                 int rightChild = leftChild + 1;
                 if (this.Compare(i, leftChild) < 0)
                 {
-                    if (rightChild < to && this.Compare(leftChild, rightChild) < 0)
+                    if (rightChild < count && this.Compare(leftChild, rightChild) < 0)
                     {
                         this.Swap(i, rightChild);
                         i = rightChild;
@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
                         i = leftChild;
                     }
                 }
-                else if (rightChild < to && this.Compare(i, rightChild) < 0)
+                else if (rightChild < count && this.Compare(i, rightChild) < 0)
                 {
                     this.Swap(i, rightChild);
                     i = rightChild;
@@ -356,9 +356,9 @@ namespace Lucene.Net.Util
             return ((i - 1 - start) >> 1) + start;
         }
 
-        static int HeapChild(int from, int i)
+        static int HeapChild(int start, int i)
         {
-            return ((i - from) << 1) + 1 + from;
+            return ((i - start) << 1) + 1 + start;
         }
 
         #region IComparer<int>

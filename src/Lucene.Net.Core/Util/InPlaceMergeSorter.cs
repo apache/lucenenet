@@ -30,10 +30,10 @@ namespace Lucene.Net.Util
         public InPlaceMergeSorter() { }
 
        
-        public sealed override void SortSlice(int start, int end)
+        public sealed override void SortRange(int start, int count)
         {
-            this.CheckSlice(start, end);
-            this.MergeSort(start, end);
+            this.CheckSlice(start, count);
+            this.MergeSort(start, count);
         }
 
       

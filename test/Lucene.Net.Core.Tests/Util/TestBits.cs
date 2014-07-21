@@ -68,9 +68,9 @@ namespace Lucene.Net.Util
 
             Equal(limit, bits.Length);
 
-            for(var i = 0; i < 10; i++)
+            for (var i = 0; i < limit; i++)
             {
-                Ok(bits[1], "All bits must be false. Position {0} failed. Length was {1}", i, limit);
+                Ok(bits[i], "All bits must be false. Position {0} failed. Length was {1}", i, limit);
             }
 
             ThrowsRangeException(bits);

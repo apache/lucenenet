@@ -31,13 +31,13 @@ namespace Lucene.Net
     {
 
         [DebuggerStepThrough]
-        public static void SliceInRangeOfLength(int start, int end, int length)
+        public static void InRangeOfLength(int start, int count, int length)
         {
-            if (start < 0 || start > length || end >= length || start > end)
+            if (start < 0 || start > length || count > length || start > count)
             {
                 var message = string.Format("The argument, start, must not be less than 0 or " +
-                    " greater than end or Length. The argument, end, must be less than Length. " +
-                    " Start was {0}. End was {1}. Length was {2}", start, end, length);
+                    " greater than end or Length. The argument, count, must be equal to or less than Length. " +
+                    " Start was {0}. Count was {1}. Length was {2}", start, count, length);
 
                 throw new IndexOutOfRangeException(message);
             }
@@ -46,7 +46,7 @@ namespace Lucene.Net
         [DebuggerStepThrough]
         public static void InRangeOfLength(string argument, int value, int length)
         {
-            if (value < 0 || value >= length)
+            if (value < 0 || value > length)
             {
                 var message = string.Format("{0} must not be less than 0 or " +
                     "greater than or equal to the Length, {1}. {0} was {2}", argument, length, value);
