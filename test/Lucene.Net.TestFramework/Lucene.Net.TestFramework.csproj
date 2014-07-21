@@ -61,6 +61,7 @@
     <Compile Include="Random\RandomExtensions.cs" />
     <Compile Include="Util\LuceneTestCase.cs" />
     <Compile Include="Util\TestAttribute.cs" />
+    <Compile Include="Util\TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="xunit.abstractions">

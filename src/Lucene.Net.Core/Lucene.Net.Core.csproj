@@ -66,10 +66,13 @@
     <Compile Include="Support\ShallowCloneNotSupportedException.cs" />
     <Compile Include="Support\StringExtensionMethods.cs" />
     <Compile Include="Support\SupportExtensionMethods.cs" />
+    <Compile Include="Util\ArrayInPlaceMergeSorter`.cs" />
+    <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Bits.cs" />
     <Compile Include="Util\IAccountable.cs" />
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\IBits.cs" />
+    <Compile Include="Util\InPlaceMergeSorter.cs" />
     <Compile Include="Util\Sorter.cs" />
     <Compile Include="Util\Version.cs" />
   </ItemGroup>

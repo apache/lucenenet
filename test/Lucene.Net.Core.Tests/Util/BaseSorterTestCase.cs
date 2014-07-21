@@ -109,33 +109,36 @@ namespace Lucene.Net.Util
 
         protected void TestGeneratedEntries(Entry[] entries)
         {
-            int o = this.Random.Next(1000);
-            var actual = new Entry[o + entries.Length + this.Random.Next(3)];
-            Array.Copy(entries, 0, actual, o, entries.Length);
-            var sorter = this.CreateSorter(actual);
-            sorter.SortSlice(o, o + entries.Length);
+            int start = this.Random.Next(1000);
+            var toSort = new Entry[start + entries.Length + this.Random.Next(3)];
+            Array.Copy(entries, 0, toSort, start, entries.Length);
 
-            VerifySorted(entries, actual);
+            var sorter = this.CreateSorter(toSort);
+
+            sorter.SortSlice(start, start + entries.Length);
+
+
+
+            VerifySorted(entries, toSort.CopyOfRange(start, start + entries.Length));
         }
 
-        protected void VerifySorted(IEnumerable<Entry> original, IEnumerable<Entry> sorted)
+        protected void VerifySorted(Entry[] original, Entry[] sorted)
         {
-            var originalCount = original.Count();
+            Equal(original.Length, sorted.Length);
+            var actuallySorted = original.CopyOf(original.Length);
 
-            Equal(originalCount, sorted.Count());
-            var copy = original.ToList();
-            copy.Sort();
+            Array.Sort(actuallySorted);
 
-            for (var i = 0; i < originalCount; i++)
+            for (var i = 0; i < original.Length; i++)
             {
-                var actual = copy.ElementAt(i);
-                var expected = copy.ElementAt(i);
+                var actual = actuallySorted[i];
+                var expected = sorted[i];
 
-                Equal(actual.Value, expected.Value);
+                Ok(actual.Value == expected.Value, "original {0} must equal {1} at position {2}", actual.Value, expected.Value, i);
 
                 if (this.Stable)
                 {
-                    Equal(actual.Ordinal, expected.Ordinal);
+                    Ok(actual.Ordinal == expected.Ordinal, "original oridinal {0} should be equal to {1} at position {2}", actual.Ordinal, expected.Ordinal, i);
                 }
             }
         }
@@ -181,7 +184,7 @@ namespace Lucene.Net.Util
                 if (index == 0)
                     value = new Entry(random.Next(6), 0);
                 else
-                    value = new Entry(col[index - 1].Value + random.Next(6), index);
+                    value = new Entry(col[index - 1].Value - random.Next(6), index);
 
                 col[index] = value;
             });
@@ -193,7 +196,7 @@ namespace Lucene.Net.Util
                 if (index == 0)
                     value = new Entry(random.Next(6), 0);
                 else
-                    value = new Entry(col[index - 1].Value - random.NextBetween(1, 5), index);
+                    value = new Entry(col[index - 1].Value - random.Next(1, 5), index);
 
                 col[index] = value;
             });

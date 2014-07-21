@@ -29,15 +29,26 @@ namespace Lucene.Net
     /// </summary>
     internal static class Check
     {
-     
-
 
         [DebuggerStepThrough]
-        public static void InRangeOfLength(string argument, int value, int length) 
+        public static void SliceInRangeOfLength(int start, int end, int length)
+        {
+            if (start < 0 || start > length || end >= length || start > end)
+            {
+                var message = string.Format("The argument, start, must not be less than 0 or " +
+                    " greater than end or Length. The argument, end, must be less than Length. " +
+                    " Start was {0}. End was {1}. Length was {2}", start, end, length);
+
+                throw new IndexOutOfRangeException(message);
+            }
+        }
+
+        [DebuggerStepThrough]
+        public static void InRangeOfLength(string argument, int value, int length)
         {
             if (value < 0 || value >= length)
             {
-                var message = string.Format("{0} must not be less than 0 or "+
+                var message = string.Format("{0} must not be less than 0 or " +
                     "greater than or equal to the Length, {1}. {0} was {2}", argument, length, value);
 
                 throw new IndexOutOfRangeException(message);
