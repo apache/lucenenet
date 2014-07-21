@@ -176,16 +176,18 @@ namespace Lucene.Net.Util
         /// <summary>
         /// TODO: figure out the differences between the Java Version and .NET 
         /// 
-        /// Porting the logic as it currently causes the sort to randomly fail.
+        /// Porting the logic as it currently is causes the oridinal position to mismatch and randomly fail
+        /// when the same value is generated for Entry.
         /// 
-        /// For instance, Entry only sorts by the VALUE. If you have multiple entries
+        /// Entry only sorts by the VALUE. If you have multiple entries
         /// with the same value like in RANDOM_LOW_CARDINALITY, then the sort can have the ordinal position out
         /// of order.
         /// 
-        /// If you don't constrain, the random.Next() to have a minValue of 1, then zero could be added to the previous value
-        /// causing the the value to appear multiple times with different ordinal positions causing the test to fail. 
+        /// This could be caused by the differences in implementation of Array.Sort, the Java version of Array.sort
+        /// and the SortRange impelementation.
         /// 
-        /// This could be caused by the differences in implementation of Array.Sort.  
+        ///  To work around this for the short term, the minValue is currently constrained to have a minValue of 1 and
+        ///  RANDOM_LOW_CARDINALITY strategy currently omits checking for matching ordinal positions.
         /// </summary>
         internal protected class Strategy
         {
