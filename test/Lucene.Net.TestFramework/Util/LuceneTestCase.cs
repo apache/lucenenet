@@ -25,14 +25,32 @@ namespace Lucene.Net.TestFramework
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Threading;
     using Xunit;
 
     public class LuceneTestCase
     {
-        public LuceneTestCase()
+        private static ThreadLocal<System.Random> random;
+
+        static LuceneTestCase()
         {
+            random = new ThreadLocal<System.Random>(() => {
+                return new System.Random();
+            });
         }
 
+        public LuceneTestCase()
+        {
+           
+        }
+
+        /// <summary>
+        /// Placeholder for random values.
+        /// </summary>
+        public System.Random Random
+        {
+            get { return random.Value; }  
+        }
 
 #if XUNIT
 

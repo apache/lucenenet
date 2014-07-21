@@ -63,6 +63,7 @@
     <Compile Include="Util\IAccountable.cs" />
     <Compile Include="Util\IAttribute.cs" />
     <Compile Include="Util\IBits.cs" />
+    <Compile Include="Util\Sorter.cs" />
     <Compile Include="Util\Version.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />

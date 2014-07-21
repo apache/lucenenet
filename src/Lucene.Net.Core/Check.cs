@@ -29,6 +29,8 @@ namespace Lucene.Net
     /// </summary>
     internal static class Check
     {
+     
+
 
         [DebuggerStepThrough]
         public static void InRangeOfLength(string argument, int value, int length) 

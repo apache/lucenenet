@@ -25,7 +25,9 @@
         "k10" : { 
             "dependencies": {
                 "System.Runtime": "4.0.20.0",
-                "System.Diagnostics.Debug": "4.0.10.0"
+                "System.Linq": "",
+                "System.Diagnostics.Debug": "4.0.10.0",
+                "System.Threading": ""
             }
         }
     }

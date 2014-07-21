@@ -58,6 +58,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Random\RandomExtensions.cs" />
     <Compile Include="Util\LuceneTestCase.cs" />
     <Compile Include="Util\TestAttribute.cs" />
   </ItemGroup>

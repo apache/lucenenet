@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\ICloneableTests.cs" />
+    <Compile Include="Util\BaseSorterTestCase.cs" />
     <Compile Include="Util\TestBits.cs" />
     <Compile Include="Util\TestVersion.cs" />
   </ItemGroup>
